@@ -5,7 +5,8 @@
 <link href="@routes.Assets.versioned("styles/reformat-jobview.css")" rel="stylesheet">
 
 <div class="jobline">
-    <span class="toolname">Reformat</span>
+    <span class="toolname"><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Reformat</a></span>
+    <i class="icon-white_question helpicon"></i>
 </div>
 <div style="display: block; margin: auto;">
 
@@ -17,9 +18,10 @@
                 <li id="tab-Alignment" class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="tabpanel-Alignment" aria-labelledby="ui-id-4" aria-selected="true" aria-expanded="true">
                     <a href="#tabpanel-Alignment" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-4">Reformat View</a>
                 </li>
+                    <!--
                 <li id="tab-Freqs" class="ui-state-default ui-corner-top" role="tab" tabindex="-1" aria-controls="tabpanel-Freqs" aria-labelledby="ui-id-5" aria-selected="false" aria-expanded="false">
                     <a href="#tabpanel-Freqs" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-5">Relative Frequencies</a>
-                </li>
+                </li> -->
                 <li style="float: right;">
                     <i type="button" id="expandTabReformat" class="button_fullscreen fa fa-expand" onclick="javascript:fullscreenReformat();"></i>
                 </li>
@@ -29,50 +31,17 @@
 
             <div class="tabs-panel ui-tabs-panel ui-widget-content ui-corner-bottom" id="tabpanel-Alignment" aria-labelledby="ui-id-4" role="tabpanel" aria-hidden="false">
 
-                <div id="reformatcontainer" style="min-height: 800px; margin: 0 auto">
+                <div id="reformatcontainer" style="min-height: 650px; margin: 0 auto">
 
-                            <ul class="menu horizontal nested" style="font-size: 12px;">
-                                <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
-                                <li><a id="dropzonetoggle">Upload</a></li>
+                            <ul class="show-for-medium menu horizontal nested" style="font-size: 12px;" id="reformatTopbar">
+                                <li><a download="reformat_download.txt" class="download" onclick="downloadResult()">Download</a></li>
+                                <!--<li><a id="dropzonetoggle">Upload</a></li> -->
                                 <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
-                                <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
-                                <li style="padding-top: 15px; padding-left: 10px;">
-                                    <select id="forwardTool" style="font-size: 12px;">
-                                        <option selected>Forward To</option>
-                                        <option  id="clans" onclick="forwardTo('clans')" value="psi">Clans</option>
-                                        <option  id="csblast" onclick="forwardTo('csblast')" value="psi">CS-BLAST</option>
-                                        <option  id="hhblits" onclick="forwardTo('hhblits')" value="psi">HHblits</option>
-                                        <option  id="hhpred" onclick="forwardTo('hhpred')" value="psi">HHpred</option>
-                                        <option  id="hmmer3" onclick="forwardTo('hmmer3')" value="psi">Hmmer3</option>
-                                        <option  id="mafft" onclick="forwardTo('mafft')" value="psi">Mafft</option>
-                                        <option  id="psiblast" onclick="forwardTo('psiblast')" value="psi">PSI-BLAST</option>
-                                        <option  id="tcoffee" onclick="forwardTo('tcoffee')" value="psi">T-Coffee</option>
-                                    </select>
-                                </li>
                             </ul>
-
-                    <ul class="reformat-small menu show-for-small-only">
-                        <li><a download="export.txt" class="download" onclick="downloadResult()">Export</a></li>
-                        <li><a id="dropzonetoggle">Upload</a></li>
-                        <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
-                        <li><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Clear</a></li>
-                        <select id="forwardTool">
-                            <option selected>Forward To</option>
-                            <option  id="clans" onclick="forwardTo('clans')" value="psi">Clans</option>
-                            <option  id="csblast" onclick="forwardTo('csblast')" value="psi">CS-BLAST</option>
-                            <option  id="hhblits" onclick="forwardTo('hhblits')" value="psi">HHblits</option>
-                            <option  id="hhpred" onclick="forwardTo('hhpred')" value="psi">HHpred</option>
-                            <option  id="hmmer3" onclick="forwardTo('hmmer3')" value="psi">Hmmer3</option>
-                            <option  id="mafft" onclick="forwardTo('mafft')" value="psi">Mafft</option>
-                            <option  id="psiblast" onclick="forwardTo('psiblast')" value="psi">PSI-BLAST</option>
-                            <option  id="tcoffee" onclick="forwardTo('tcoffee')" value="psi">T-Coffee</option>
-                        </select>
-                    </ul>
 
 
 
                 <div class="large-6 large-centered columns" id="dropzonewrapper" style="display: none;">
-                    <div id="progress_bar"><div class="percent">0%</div></div>
                     <input type="file" id="files" name="file" />
                         <!--<div id="drop_zone" type="file" class="dropzone" name="file" style="margin-top: 10px; text-align: center; line-height: 150px; vertical-align: middle;">Drop files here</div>-->
                     <output id="list"></output>
@@ -97,24 +66,10 @@
                         <input type="button" id="reformatExample" class="button small alignmentExample exampleReformat" value="Paste Example">
 
                     </div>
-                    <div class="large-12 columns" style="padding-top: 9px;">
-                        <div id="outputMirror" style="width: 99%; border: 1px solid lightgray ;"></div>
-                    </div>
 
-
-                </div>
-                <p>&nbsp;</p>
-
-                <div class="show-for-medium large-12 columns" style="padding-top: 20px;">
-                    <div class="success callout" id="callout" data-closable="slide-out-right" style="width: 50%; display: block; margin: auto;">
-                        <p style="width: 80%;">Found <span id="nonalignedwarning" style="color: red; display: none;">non-aligned</span> <span id="format"></span> formatted input.</p>
-                        <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-
-                        <label>Select Output Format
+                    <div class="show-for-medium selectContainer">
                             <select id="outformat">
-                                <option selected>Choose</option>
+                                <option selected>Select Output Format</option>
                                 <option id="Fasta" value="Fasta">Fasta</option>
                                 <option id="A3M" value="A3M">A3M</option>
                                 <option id="Clustal" value="Clustal" class="clustaloption">CLUSTAL</option>
@@ -122,17 +77,55 @@
                                 <option id="Stockholm" value="Stockholm">STOCKHOLM</option>
                                 <option id="PIR" value="PIR">PIR</option>
                                 <option id="EMBL" value="EMBL">EMBL</option>
-                                <option id="NEXUS" value="NEXUS">Nexus</option>
+                                <option id="NEXUS" value="NEXUS">NEXUS</option>
                                 <option id="Genbank" value="Genbank">Genbank</option>
-                                <option id="GetGIs" value="GetGIs">Extract GIs</option>
                                 <option id="GetAccessions" value="GetAccessions">Extract Accessions</option>
                                 <option id="Consensus" value="Consensus">Consensus</option>
                                 <option id="Alphabet" value="Alphabet">Alphabet</option>
                             </select>
-                        </label>
+
+                        <select id="forwardTool" style="font-size: 12px;" onchange="forwardChanged()">
+                            <option selected>Forward To</option>
+                            <option  id="alnvizual" value="alnviz">AlignmentViewer</option>
+                            <option  id="aln2plot" value="aln2plot">Aln2Plot</option>
+                            <option  id="ancescon" value="ancescon">ANCESCON</option>
+                            <option  id="clans" value="clans">CLANS</option>
+                            <option  id="clustalo" value="clustalo">ClustalO</option>
+                            <option  id="hhblits" value="hhblits">HHblits</option>
+                            <option  id="hhfilter" value="hhfilter">HHfilter</option>
+                            <option  id="hhpred" value="hhpred">HHpred</option>
+                            <option  id="hhrepid" value="hhrepid">HHrepID</option>
+                            <option  id="hmmer" value="hmmer">Hmmer</option>
+                            <option  id="kalign" value="kalign">Kalign</option>
+                            <option  id="mafft" value="mafft">Mafft</option>
+                            <option  id="mmseqs2" value="mmseqs2">MMseqs2</option>
+                            <option  id="msaprobs" value="msaprobs">MSAProbs</option>
+                            <option  id="muscle" value="muscle">MUSCLE</option>
+                            <option  id="pcoils" value="pcoils">PCOILS</option>
+                            <option  id="phyml" value="phyml">PhyML</option>
+                            <option  id="psiblast" value="psiblast">PSI-BLAST</option>
+                            <option  id="tcoffee" value="tcoffee">T-Coffee</option>
+                            <option  id="retseq" value="retseq">RetrieveSeq</option>
+                        </select>
+
+                        <div class="show-for-medium large-4 columns">
+                            <div class="success callout" id="callout">
+                                <p>Found format: <span id="nonalignedwarning" style="color: red; display: none;">non-aligned</span> <b id="format"></b></p>
+                            </div>
+                        </div>
                     </div>
 
+
+                    <div class="large-12 columns" style="padding-top: 9px;">
+                        <div id="outputMirror" style="width: 99%; border: 1px solid lightgray ;"></div>
+                    </div>
+
+
+
                 </div>
+                <p>&nbsp;</p>
+
+
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>
 
@@ -165,16 +158,22 @@
 
 <script>
 
-        $("#tool-tabs").tabs();
+        function forwardChanged() {
+            var selectBox = document.getElementById("forwardTool");
+            var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+            forwardTo(selectedValue);
+        }
 
-           hideTools("");
+        $("#tool-tabs").tabs();
+        $("#callout").hide();
+
         var inputFasta = ">gi|33300828|ref|NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]\nPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\nD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\n>gi|114796395|emb|CAK25951#9 putative ATP-dependent DNA ligase [Bacteriophage LKD16]\nPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\nA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\n>gi|114796457|emb|CAK24995#5 putative DNA ligase [Bacteriophage LKA1]   E=4e-40 s/c=1.7\nPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\nEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\n>gi|29366706|ref|NP_813751#8 putative DNA ligase [Pseudomonas phage gh-1]   gi|29243565\nPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\n-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\n>gi|68299729|ref|YP_249578#6 DNA ligase [Vibriophage VP4]   gi|66473268|gb|AAY46277.1|\nPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\nD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\n>gi|77118174|ref|YP_338096#3 ligase [Enterobacteria phage K1F]   gi|72527918|gb|AAZ7297\nPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\n------DYYKGWACQITYMEETPDGSLRHPSFDQWR\n>gi|17570796|ref|NP_523305#4 DNA ligase [Bacteriophage T3]   gi|118769|sp|P07717|DNLI_B\nPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\nD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\n>gi|119637753|ref|YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ\nPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\nD------YYNGWACQVAYMEETSDGSLRHPSFVMFR\n";
         // document.getElementById("alignment").value = inputFasta;
         var inputClustal = "CLUSTAL multiple sequence alignment\n\ngi|33300828\tPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\ngi|11479639\tPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\ngi|11479645\tPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\ngi|29366706\tPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\ngi|68299729\tPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\ngi|77118174\tPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\ngi|17570796\tPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\ngi|11963775\tPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\n\ngi|33300828\tD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\ngi|11479639\tA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\ngi|11479645\tEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\ngi|29366706\t-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\ngi|68299729\tD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\ngi|77118174\t------DYYKGWACQITYMEETPDGSLRHPSFDQWR\ngi|17570796\tD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\ngi|11963775\tD------YYNGWACQVAYMEETSDGSLRHPSFVMFR";
 
 
         var myCodeMirror = CodeMirror(document.getElementById("inputMirror"), {
-            value: inputClustal,
+            //value: inputClustal,
             lineNumbers: false,
             mode:  "none",
             theme: "reformat"
@@ -200,6 +199,7 @@
         if(localStorage.getItem("resultcookie")  != null){
         myCodeMirror.setValue(localStorage.getItem("resultcookie"));
         localStorage.removeItem("resultcookie");
+        $.LoadingOverlay("hide");
         }
 
         $('#format').text(getFormat(myCodeMirror.getValue()));
@@ -431,9 +431,9 @@
             // Basic jQuery plugin pattern
             return function (options) {
                 options = $.extend({}, defaultOptions, (options || {}));
-                return this.each(function () {
-                    animate($(this), options);
-                });
+                //return this.each(function () {
+                   // animate($(this), options);
+                //});
             };
         }(jQuery));
 
@@ -488,81 +488,65 @@
 
         // hides tools for forwarding that are not able to process the current format
         function hideTools(currentVal) {
-                console.log(currentVal);
                 var ddl = $('#forwardTool');
                 for (var m = 0; m < ddl.length; m++) {
                     for (var i = 0; i < ddl[m].length; i++) {
                          ddl[m].options[i].disabled = false;
                     }
                 }
-            if (currentVal == 'Genbank') {
-                $('#clans').prop('disabled', true);
-                $('#csblast').prop('disabled', true);
-                $('#hhblits').prop('disabled', true);
-                $('#hhpred').prop('disabled', true);
-                $('#hmmer3').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#psiblast').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
 
-            }
-            else if (currentVal == 'NEXUS') {
-                $('#clans').prop('disabled', true);
-                $('#csblast').prop('disabled', true);
-                $('#hhblits').prop('disabled', true);
-                $('#hhpred').prop('disabled', true);
-                $('#hmmer3').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#psiblast').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
-            }
-            else if (currentVal == 'EMBL') {
-                $('#clans').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
-            }
-            else if (currentVal == 'Phylip') {
-                $('#clans').prop('disabled', true);
-                $('#csblast').prop('disabled', true);
-                $('#hhblits').prop('disabled', true);
-                $('#hhpred').prop('disabled', true);
-                $('#hmmer3').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#psiblast').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
-            }
-            else if (currentVal == 'A3M') {
-                $('#clans').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
-            }
-            else if (currentVal == 'Clustal') {
-                $('#clans').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
-            }
-            else if (currentVal == 'Fasta') {
+            if (currentVal === 'Fasta' || currentVal === 'Clustal') {
+                $('#forwardTool').prop('disabled', false);
+                $('#alnvizual').show();
+                $('#aln2plot').show();
+                $('#ancescon').show();
+                $('#clans').show();
+                $('#clustalo').show();
+                $('#hhblits').show();
+                $('#hhfilter').show();
+                $('#hhpred').show();
+                $('#hhrepid').show();
+                $('#hmmer').show();
+                $('#kalign').show();
+                $('#mafft').show();
+                $('#mmseqs2').show();
+                $('#msaprobs').show();
+                $('#muscle').show();
+                $('#pcoils').show();
+                $('#phyml').show();
+                $('#psiblast').show();
+                $('#tcoffee').show();
+                $('#retseq').hide();
 
+            } else if (currentVal === 'GetAccessions') {
+                $('#forwardTool').prop('disabled', false);
+                $('#alnvizual').hide();
+                $('#aln2plot').hide();
+                $('#ancescon').hide();
+                $('#clans').hide();
+                $('#clustalo').hide();
+                $('#hhblits').hide();
+                $('#hhfilter').hide();
+                $('#hhpred').hide();
+                $('#hhrepid').hide();
+                $('#hmmer').hide();
+                $('#kalign').hide();
+                $('#mafft').hide();
+                $('#mmseqs2').hide();
+                $('#msaprobs').hide();
+                $('#muscle').hide();
+                $('#pcoils').hide();
+                $('#phyml').hide();
+                $('#psiblast').hide();
+                $('#tcoffee').hide();
+                $('#retseq').show();
+
+            } else {
+                $('#forwardTool').prop('disabled', true);
             }
-            else if (currentVal == 'Stockholm') {
-                $('#clans').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
-            }
-            else if (currentVal == 'PIR') {
-                $('#clans').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
-            }else{
-                $('#clans').prop('disabled', true);
-                $('#csblast').prop('disabled', true);
-                $('#hhblits').prop('disabled', true);
-                $('#hhpred').prop('disabled', true);
-                $('#hmmer3').prop('disabled', true);
-                $('#mafft').prop('disabled', true);
-                $('#psiblast').prop('disabled', true);
-                $('#tcoffee').prop('disabled', true);
-            }
+
+
+
         }
 
         function hideFormats(currentVal) {
@@ -624,7 +608,7 @@
                var seqs = myCodeMirror2.getValue ( ) ;
                localStorage.setItem ( "resultcookie", seqs ) ;
                window.location.href = "/#/tools/" + tool ;
-               } else alert("No output to forwardTo.");
+               } else alert("No output to forward to.");
             }
 
 
@@ -635,7 +619,7 @@
             m.request({
                 method: "POST",
                 url: "/api/frontendSubmit/Reformat"
-            }).then(function(result) { console.log(result) })
+            })
 
         }
 

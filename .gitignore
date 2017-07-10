@@ -1,3 +1,6 @@
+tel/paramspec/hmmerdb.py
+tel/paramspec/patsearchdb.py
+conf/tel.conf
 project/project
 project/target
 bioprogs/tools
@@ -38,3 +41,4 @@ public/javascripts/typescriptc.js.map
 /development
 *.sbt.swp
 native
+*.swp

@@ -7,6 +7,7 @@ import org.joda.time.DateTime
 import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._
+import javax.inject.Inject
 
 case class Job(mainID: BSONObjectID, // ID of the Job in the System
                parentID: Option[BSONObjectID] = None, // ID of the Parent Job
@@ -25,8 +26,9 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
                clusterData: Option[JobClusterData] = None, // Cluster Data
                dateCreated: Option[DateTime], // Creation time of the Job
                dateUpdated: Option[DateTime], // Last Updated on
-               dateViewed: Option[DateTime]) // Last Viewed on
-    extends Constants {
+               dateViewed: Option[DateTime], // Last Viewed on
+               IPHash: Option[String]) // hash of the ip
+   {
 
   // Returns if the job is private or not
   def isPrivate: Boolean = {
@@ -113,6 +115,7 @@ object Job {
   val DATEUPDATED  = "dateUpdated" //              changed on field
   val DATEVIEWED   = "dateViewed" //              last view on field
   val TOOLNAMELONG = "toolnameLong" //           long tool name
+  val IPHASH       = "IPHash" //                  ip hash
 
   implicit object JsonReader extends Reads[Job] {
     // TODO this is unused at the moment, as there is no convertion of JSON -> Job needed.
@@ -134,6 +137,7 @@ object Job {
           val dateUpdated  = (obj \ DATEUPDATED).asOpt[String]
           val dateViewed   = (obj \ DATEVIEWED).asOpt[String]
           val toolnameLong = (obj \ TOOLNAMELONG).asOpt[String]
+          val IPHash       = (obj \ IPHASH).asOpt[String]
           JsSuccess(
             Job(
               mainID = BSONObjectID.generate(),
@@ -148,8 +152,10 @@ object Job {
               label = Some(""),
               dateCreated = Some(new DateTime()),
               dateUpdated = Some(new DateTime()),
-              dateViewed = Some(new DateTime())
-            ))
+              dateViewed = Some(new DateTime()),
+              IPHash = IPHash
+            )
+          )
         } catch {
           case cause: Throwable => JsError(cause.getMessage)
         }
@@ -174,7 +180,8 @@ object Job {
       CLUSTERDATA  -> job.clusterData,
       DATECREATED  -> job.dateCreated.fold(-1L)(_.getMillis),
       DATEUPDATED  -> job.dateUpdated.fold(-1L)(_.getMillis),
-      DATEVIEWED   -> job.dateViewed.fold(-1L)(_.getMillis)
+      DATEVIEWED   -> job.dateViewed.fold(-1L)(_.getMillis),
+      IPHASH       -> job.IPHash
     )
   }
 
@@ -200,7 +207,8 @@ object Job {
         clusterData = bson.getAs[JobClusterData](CLUSTERDATA),
         dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
         dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value)),
-        dateViewed = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => new DateTime(dt.value))
+        dateViewed = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => new DateTime(dt.value)),
+        IPHash = bson.getAs[String](IPHASH)
       )
     }
   }
@@ -227,7 +235,8 @@ object Job {
         CLUSTERDATA  -> job.clusterData,
         DATECREATED  -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis)),
         DATEUPDATED  -> BSONDateTime(job.dateUpdated.fold(-1L)(_.getMillis)),
-        DATEVIEWED   -> BSONDateTime(job.dateViewed.fold(-1L)(_.getMillis))
+        DATEVIEWED   -> BSONDateTime(job.dateViewed.fold(-1L)(_.getMillis)),
+        IPHASH       -> job.IPHash
       )
     }
   }

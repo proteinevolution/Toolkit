@@ -13,6 +13,7 @@
     <li>
         <a>Alignment</a>
         <ul class="vertical menu">
+            <li><a href='/#/tools/alnviz'>AlignmentViewer</a></li>
         @for(tool <- tools.filter(_.category == "alignment")) {
             <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
         }
@@ -57,7 +58,7 @@
             @for(tool <- tools.filter(_.category == "utils")) {
                 <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
             }
-            <li><a href='/#/reformat'>Reformat</a></li>
+            <li><a href='/#/tools/reformat'>Reformat</a></li>
         </ul>
     </li>
 </ul>

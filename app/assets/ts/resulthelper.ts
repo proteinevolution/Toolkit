@@ -5,74 +5,78 @@ declare var showMore : any;
 declare var numHits : any;
 declare var getHits: any;
 declare var colorAAs: boolean;
-
+declare var wrapped: boolean;
+declare var JobModel: any;
 let count = 0;
 
+
+/**
+ * Helpers for all Search Tools
+ * 1. Highlights the position in the control bar
+ * 2. Fixes/Unfixes the control bar at the top
+ * 3. triggers getHits on scroll
+ *
+ */
 // add scrollcontainer highlighting
 let followScroll = function(element : any) {
-    
-    $(element).on('scroll', function () {
-    let detached;
-
-        try {
-
-            let top = $(element).scrollTop();
-            if(typeof top !== 'undefined'){
-                if (top >= $('#visualization').position().top + 75) {
-                        // detached = $('#collapseMe').detach();
-                        // $('.scrollContainer').append(detached);
-
-
-                        $('.scrollContainer').addClass('fixed');
-                        $('.scrollContainer').removeClass('scrollContainerWhite');
-                        $('.scrollContainerDiv').removeClass('scrollContainerDivWhite');
-
-                } else {
-                    // detached = $('#collapseMe').detach();
-                    // $('.ui-widget-header').append(detached);
-
-
-                    $('.scrollContainer').removeClass('fixed');
-                    $('.scrollContainer').addClass('scrollContainerWhite');
-                    $('.scrollContainerDiv').addClass('scrollContainerDivWhite');
-
-                }
-            }
-
-            if ($('#flat-slider').visible()) {
-                $("#visualizationScroll").addClass("colorToggleBar");
-                $("#hitlistScroll").removeClass("colorToggleBar");
-                $("#alignmentsScroll").removeClass("colorToggleBar");
-            } else if ($('#alignments').visible(true)) {
-                $("#alignmentsScroll").addClass("colorToggleBar");
-                $("#hitlistScroll").removeClass("colorToggleBar");
-                $("#visualizationScroll").removeClass("colorToggleBar");
-            } else if ($('#htb').visible(true)) {
-                $("#hitlistScroll").addClass("colorToggleBar");
-                $("#alignmentsScroll").removeClass("colorToggleBar");
-                $("#visualizationScroll").removeClass("colorToggleBar");
-            }
-            // trigger lazyload for loading alignment
-            if ($(this).scrollTop() == $(this).height() - $(window).height()) {
-                if (!loading) {
-                    let end = parseInt(shownHits) + parseInt(showMore);
-                    end = end < numHits ? end : numHits;
-                    if (shownHits != end) {
-                            getHits(shownHits, end, colorAAs).then(function () {
-                                // hide loadHits
-                                if (shownHits == numHits) {
-                                    $('#loadHits').hide();
-                                }
-                            });
-                    }else{
-                        $('#loadHits').hide();
-                    }
-                    shownHits = end;
-                }
-            }
-            $("#alignments").floatingScroll('init');
-
-        } catch(e) { console.warn(e); }
+    try {
+    $(element).ready(function () {
+        // Highlights the position in the control bar on click
+        $("#alignments").floatingScroll('init');
+        //smoothscroll
+        $('#scrollLinks a').on('click', function (e) {
+            $('a').each(function () {
+                $(this).removeClass('colorToggleBar');
+            });
+            $(this).addClass('colorToggleBar');
+        });
     });
+    //  Fixes/Unfixes the control bar at the top
+    $(element).on("scroll", function(){
+        let top = Number($(document).scrollTop());
+        if($('#visualization').position() != undefined) {
+            if (top >= $('#visualization').position().top + 75) {
+                $('.scrollContainer').addClass('fixed');
+                $('.scrollContainer').removeClass('scrollContainerWhite');
+                $('.scrollContainerDiv').removeClass('scrollContainerDivWhite');
+                $('#wrap').show();
+                $(".colorAA").show();
+            } else {
+                $('.scrollContainer').removeClass('fixed');
+                $('.scrollContainer').addClass('scrollContainerWhite');
+                $('.scrollContainerDiv').addClass('scrollContainerDivWhite');
+                $('#wrap').hide();
+                $(".colorAA").hide();
 
+            }
+        }
+        // triggers getHits on scroll
+        if (top == $(this).height() - $(window).height()) {
+            if (!loading) {
+                let end = parseInt(shownHits) + parseInt(showMore);
+                end = end < numHits ? end : numHits;
+                if (shownHits != end) {
+                    getHits(shownHits, end,wrapped,colorAAs);
+                }
+                shownHits = end;
+            }
+        }
+        // Highlights the position in the control bar on scroll
+        $('#scrollLinks a').each(function () {
+            let currLink = $(this);
+            let  refElement = $(currLink.attr("name"));
+            if(typeof refElement.position() != "undefined") {
+                if (refElement.position().top <= top && refElement.position().top + refElement.height() > top) {
+                    $('#scrollLinks a').removeClass("colorToggleBar");
+                    currLink.addClass("colorToggleBar");
+                }
+                else {
+                    currLink.removeClass("colorToggleBar");
+                }
+            }
+        });
+
+
+    });
+    } catch(e) { console.warn(e); }
 };

@@ -1,13 +1,12 @@
 @import play.api.libs.json.JsObject
 @import play.api.libs.json.JsValue
 @import play.api.Logger
-@import models.results.FileLoader
 @import play.api.libs.json.JsUndefined
 @import play.api.libs.json.JsDefined
 @import models.results.BlastVisualization
 @import modules.tel.TEL
 @import models.database.results.HHBlitsHSP
-@(jobID: String, hit: HHBlitsHSP)(implicit request: RequestHeader)
+@(jobID: String, hit: HHBlitsHSP, wrapped: Boolean)(implicit request: RequestHeader)
 @* hit number, links *@
 <tr>
     <td></td>
@@ -18,7 +17,7 @@
 </tr>
 @* checkboxes, accession, name of hit*@
 <tr class="header">
-    <td class="indexCheckbox"><input type="checkbox" name="templates" class="checkbox" value='@{hit.num}'> @{hit.num}.</td>
+    <td class="indexCheckbox"><input type="checkbox" name="alignment_elem" class="checkbox aln" value='@{hit.num}'> @{hit.num}.</td>
 <td class="hitInfo" colspan="4">
     @BlastVisualization.getSingleLinkHHBlits(hit.template.accession)
     @{"  "+ hit.description}
@@ -37,33 +36,21 @@
     <td><br /></td>
 </tr>
 
-@if(!hit.query.seq.isEmpty) {
-    @{
-        BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query.accession, hit.query.start.toString, BlastVisualization.colorRegexReplacer(hit.query.seq) +"    "+hit.query.end.toString + " "+"("+hit.query.ref+")"))
-    }
-}
-@*Consensus of query, if present*@
-@if(!hit.query.consensus.isEmpty) {
-    @{
-        BlastVisualization.makeRow("sequence", Array("", "Q  Consensus",hit.query.start.toString, hit.query.consensus +"    "+hit.query.end.toString +" "+"("+hit.query.ref+")"))
-    }
-}
-@* agree of query, if present *@
-
-@BlastVisualization.makeRow("sequence", Array("","","",hit.agree))
-
-@*  consensus template, if present *@
-@if(!hit.template.consensus.isEmpty) {
-    @{
-        BlastVisualization.makeRow("sequence", Array("", "T  Consensus",hit.template.start.toString, hit.template.consensus + "    "+hit.template.end.toString +" "+"("+hit.template.ref+")"))
-    }
-}
-@*  seq template, if present *@
-@if(!hit.template.seq.isEmpty) {
-    @{
-        BlastVisualization.makeRow("sequence", Array("", "T  " + hit.template.accession, hit.template.start.toString, BlastVisualization.colorRegexReplacer(hit.template.seq) +"    "+hit.template.end.toString + " "+"("+hit.template.ref+")"))
-    }
+@if(wrapped){
+    @Html(BlastVisualization.hhblitsHitWrapped(hit, 0, 65, hit.query.start, hit.template.start))
+}else {
+    @BlastVisualization.makeRow("sequence", Array("", "Q " + hit.query.accession, hit.query.start.toString, hit.query.seq + "    " + hit.query.end.toString + " " + "(" + hit.query.ref + ")"))
+    @*Consensus of query, if present*@
+    @BlastVisualization.makeRow("sequence", Array("", "Q Consensus", hit.query.start.toString, hit.query.consensus + "    " + hit.query.end.toString + " " + "(" + hit.query.ref + ")"))
+    @* agree of query, if present *@
+    @BlastVisualization.makeRow("sequence", Array("", "", "", hit.agree))
+    @* consensus template, if present *@
+    @BlastVisualization.makeRow("sequence", Array("", "T Consensus", hit.template.start.toString, hit.template.consensus + "    " + hit.template.end.toString + " " + "(" + hit.template.ref + ")"))
+    @* seq template, if present *@
+    @BlastVisualization.makeRow("sequence", Array("", "T " + hit.template.accession, hit.template.start.toString, hit.template.seq + "    " + hit.template.end.toString + " " + "(" + hit.template.ref + ")"))
+    <tr class="blank_row"><td colspan="5"></td></tr>
 }
 <tr>
     <td colspan="5"><hr id="line-element" colspan="4" class="horizontal-line"></td>
 </tr>
+

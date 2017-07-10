@@ -1,12 +1,14 @@
 package modules.tel.param
 
 import java.nio.file.attribute.PosixFilePermission
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import better.files._
 import models.Implicits._
 import modules.tel.env.Env
 import play.api.Logger
+
+import scala.collection.immutable.ListMap
 
 /**
   Provides methods to read Generative Params from a file
@@ -59,11 +61,11 @@ class ExecGenParamFile(name: String, path: String) extends GenerativeParamFile(n
   }
 
   // Remembers parameter values that are allowed to be used
-  private var allowed: Set[String]                = _
-  private var clearTextNames: Map[String, String] = _
+  private var allowed: Set[String]                    = _
+  private var clearTextNames: ListMap[String, String] = _
 
   def load(): Unit = {
-    clearTextNames = Map.empty
+    clearTextNames = ListMap.empty
     val lines = this.env match {
       case Some(e) =>
         val tempFile = File.newTemporaryFile()
@@ -75,7 +77,8 @@ class ExecGenParamFile(name: String, path: String) extends GenerativeParamFile(n
             PosixFilePermission.GROUP_EXECUTE,
             PosixFilePermission.GROUP_READ,
             PosixFilePermission.GROUP_WRITE
-          ))
+          )
+        )
         tempFile.write(envString.replaceAllIn(path.toFile.contentAsString, m => e.get(m.group("constant"))))
         val x = Process(tempFile.pathAsString).!!.split('\n')
         tempFile.delete(swallowIOExceptions = true)
@@ -89,7 +92,7 @@ class ExecGenParamFile(name: String, path: String) extends GenerativeParamFile(n
       spt(0)
     }.toSet
   }
-  def generate: Map[String, String] = this.clearTextNames
+  def generate: ListMap[String, String] = this.clearTextNames
 }
 
 class ListGenParamFile(name: String, path: String) extends GenerativeParamFile(name, path) {
@@ -102,11 +105,11 @@ class ListGenParamFile(name: String, path: String) extends GenerativeParamFile(n
   this.load()
 
   // Remembers parameter values that are allowed to be used
-  private var allowed: Set[String]                = _
-  private var clearTextNames: Map[String, String] = _
+  private var allowed: Set[String]                    = _
+  private var clearTextNames: ListMap[String, String] = _
 
   def load(): Unit = {
-    clearTextNames = Map.empty
+    clearTextNames = ListMap.empty
 
     this.allowed = f.lineIterator.map { line =>
       Logger.info("Reading line " + line)
@@ -116,5 +119,5 @@ class ListGenParamFile(name: String, path: String) extends GenerativeParamFile(n
     }.toSet
   }
 
-  def generate: Map[String, String] = this.clearTextNames
+  def generate: ListMap[String, String] = this.clearTextNames
 }

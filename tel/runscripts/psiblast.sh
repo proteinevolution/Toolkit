@@ -10,7 +10,7 @@ FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
@@ -20,14 +20,13 @@ if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
 
       if [ ${CHAR_COUNT} -gt "10000" ] ; then
             echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
-            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+            updateProcessLog
             false
       else
             sed -i "1 i\>${JOBID}" ../params/alignment1
             mv ../params/alignment1 ../params/alignment
       fi
 fi
-
 
 if [ ${FORMAT} = "1" ] ; then
       reformatValidator.pl clu fas \
@@ -43,27 +42,27 @@ fi
 
 if [ ! -f ../results/${JOBID}.fas ]; then
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
     false
 fi
 
 SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
 
-if [ ${SEQ_COUNT} -gt "2000" ] ; then
-      echo "#Input contains more than 2000 sequences." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+if [ ${SEQ_COUNT} -gt "5000" ] ; then
+      echo "#Input contains more than 5000 sequences." >> ../results/process.log
+      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} -gt "1" ] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+       updateProcessLog
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
-       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+       updateProcessLog
 fi
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 
 
@@ -82,7 +81,20 @@ if [ "%matrix.content" = "BLOSUM45" ] ; then
     GAPEXT=2
 fi
 
-#%inclusion_ethresh.content (switch to this after the slider is fixed)
+
+head -n 2 ../results/${JOBID}.fas > ../results/firstSeq0.fas
+sed 's/[\.\-]//g' ../results/firstSeq0.fas > ../results/firstSeq.fas
+
+TMPRED=`tmhmm ../results/firstSeq.fas -short`
+
+run_Coils -c -min_P 0.8 < ../results/firstSeq.fas >& ../results/firstSeq.cc
+COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
+
+rm ../results/firstSeq0.fas ../results/firstSeq.fas ../results/firstSeq.cc
+
+echo "#Running PSI-BLAST against the %standarddb.content DB." >> ../results/process.log
+updateProcessLog
+
 
 psiblast -db %STANDARD/%standarddb.content \
          -matrix %matrix.content \
@@ -97,6 +109,13 @@ psiblast -db %STANDARD/%standarddb.content \
          -out ../results/output_psiblastp.asn \
          -outfmt 11 \
          -max_hsps 1
+
+echo "done" >> ../results/process.log
+updateProcessLog
+
+
+echo "#Preparing output." >> ../results/process.log
+updateProcessLog
 
 #converst ASN.1 output to JSON
 blast_formatter -archive ../results/output_psiblastp.asn \
@@ -133,11 +152,24 @@ fasta2json.py ../results/${JOBID}.fas ../results/query.json
 # Generate Query in JSON
 fasta2json.py ../results/output_psiblastp.aln ../results/alignment.json
 
-# Produce Evalues list
-awk {'print $(NF-6)'} ../results/output_psiblastp.tab >> ../results/evalues
 
 # add DB to json
 manipulate_json.py -k 'db' -v '%standarddb.content' ../results/output_psiblastp.json
 
 # add evalue to json
 manipulate_json.py -k 'evalue' -v '%hhpred_incl_eval.content' ../results/output_psiblastp.json
+
+# add transmembrane prediction info to json
+manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/output_psiblastp.json
+
+# add coiled coil prediction info to json
+manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/output_psiblastp.json
+
+
+cd ../results
+
+rm output_psiblastp.asn output_psiblastp.tab
+
+
+echo "done" >> ../results/process.log
+updateProcessLog

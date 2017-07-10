@@ -3,21 +3,21 @@ JOBID=%jobid.content
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 
-if [ $CHAR_COUNT -gt "10000000" ] ; then
+if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
-if [ $SEQ_COUNT = "0" ] ; then
+if [ ${SEQ_COUNT} = "0" ] ; then
       echo "#Invalid input format. Input should be in FASTA format." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
-if [ $SEQ_COUNT -lt "2" ] ; then
+if [ ${SEQ_COUNT} -lt "2" ] ; then
       echo "#Input should contain at least 2 sequences." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
@@ -26,21 +26,21 @@ OUTFORMAT=$(reformatValidator.pl fas ufas \
             $(readlink -f ../params/alignment) \
             -d 160 -uc -l 32000)
 
-if [ "$OUTFORMAT" = "ufas" ] ; then
+if [ "${OUTFORMAT}" = "ufas" ] ; then
     SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
     echo "#Read ${SEQ_COUNT} sequences." >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
 else
     echo "#Input is not in FASTA format." >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
     false
 fi
 echo "done"  >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
-if [ $SEQ_COUNT -gt "20000" ] ; then
-      echo "#Input contains more than 20000 sequences." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+if [ ${SEQ_COUNT} -gt "10000" ] ; then
+      echo "#Input contains more than 10000 sequences." >> ../results/process.log
+      updateProcessLog
       false
 fi
 
@@ -64,7 +64,7 @@ fi
 prepareForClans.pl %alignment.path ../results/${JOBID}.0.fas ../results/${JOBID}.1.fas
 
 echo "#Performing ${SEQ_COUNT} X ${SEQ_COUNT} pairwise BLAST+ comparisons." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 #BLAST formatted database
 makeblastdb -in ../results/${JOBID}.1.fas -dbtype prot
@@ -74,7 +74,7 @@ blastp -query ../results/${JOBID}.1.fas \
        -db ../results/${JOBID}.1.fas \
        -outfmt "6 qacc sacc evalue" \
        -matrix %matrix.content \
-       -evalue 1  \
+       -evalue %clans_eval.content  \
        -gapopen ${GAPOPEN} \
        -gapextend ${GAPEXT} \
        -max_target_seqs ${SEQ_COUNT} \
@@ -84,15 +84,19 @@ blastp -query ../results/${JOBID}.1.fas \
        -num_threads %THREADS
        
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 echo "#Generating CLANS file." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1       
+updateProcessLog       
 
 blast2clans.pl ../results/${JOBID} ../results/${JOBID}.0.fas ${SEQ_COUNT}
 
-rm ../results/${JOBID}.nxnblast
-rm ../results/${JOBID}*fas*
+cd ../results/
+zip -q ${JOBID}.clans.zip ${JOBID}.clans
+
+rm ${JOBID}.clans
+rm ${JOBID}.nxnblast
+rm ${JOBID}*fas*
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog

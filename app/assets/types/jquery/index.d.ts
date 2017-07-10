@@ -1504,7 +1504,7 @@ interface JQuery {
      * @param value A value to set for the attribute. If this is `null`, the attribute will be deleted.
      * @see {@link https://api.jquery.com/attr/#attr-attributeName-value}
      */
-    attr(attributeName: string, value: string|number|null): JQuery;
+    attr(attributeName: string, value: string|number|null|boolean): JQuery;
     /**
      * Set one or more attributes for the set of matched elements.
      *
@@ -1586,7 +1586,7 @@ interface JQuery {
      * @param attributeName An attribute to remove; as of version 1.7, it can be a space-separated list of attributes.
      * @see {@link https://api.jquery.com/removeAttr/}
      */
-    removeAttr(attributeName: string): JQuery;
+    removeAttr(attributeName: string, attributeMod?: any): JQuery;
 
     /**
      * Remove a single class, multiple classes, or all classes from each element in the set of matched elements.

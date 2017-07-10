@@ -1,6 +1,8 @@
 package models.database.users
 
-import play.api.libs.json.{Json, JsObject, Writes}
+import java.security.MessageDigest
+
+import play.api.libs.json.{JsObject, Json, Writes}
 import reactivemongo.bson._
 
 /**
@@ -16,7 +18,7 @@ object SessionData {
 
   implicit object JobWrites extends Writes[SessionData] {
     def writes(sessionData: SessionData): JsObject = Json.obj(
-      IP        -> sessionData.ip,
+      IP        -> MessageDigest.getInstance("MD5").digest(sessionData.ip.getBytes).mkString,
       USERAGENT -> sessionData.userAgent,
       LOCATION  -> s"${sessionData.location.country} - ${sessionData.location.city.getOrElse("/")}"
     )

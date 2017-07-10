@@ -9,6 +9,7 @@ import com.sksamuel.elastic4s.analyzers.{StandardAnalyzer, WhitespaceAnalyzer}
 import com.typesafe.config.ConfigFactory
 import models.database.jobs.JobHash
 import models.tools.ToolFactory
+import modules.RunscriptPathProvider
 import modules.tel.TELConstants
 import modules.tools.FNV
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
@@ -22,7 +23,7 @@ import scala.concurrent.Future
 @Singleton
 final class JobDAO @Inject()(cs: ClusterSetup,
                              elasticFactory: PlayElasticFactory,
-                             toolFactory: ToolFactory,
+                             toolFactory: ToolFactory, runscriptPathProvider :RunscriptPathProvider,
                              @Named("jobs") indexAndType: IndexAndType)
     extends ElasticDsl
     with PlayElasticJsonSupport
@@ -56,9 +57,9 @@ final class JobDAO @Inject()(cs: ClusterSetup,
     * @return
     */
   def generateRSHash(toolname: String): String = {
-
-    val runscript = s"$runscriptPath$toolname.sh"
-    val content   = scala.io.Source.fromFile(runscript).getLines().mkString
+    val runscript = runscriptPathProvider.get() + s"$toolname.sh"
+    val source    = scala.io.Source.fromFile(runscript)
+    val content   = try { source.getLines().mkString } finally { source.close() }
 
     MurmurHash3.stringHash(content, 0).toString
 
@@ -120,6 +121,8 @@ final class JobDAO @Inject()(cs: ClusterSetup,
       }
     )
   }
+
+
 
   // Removes a Hash from ES
   def deleteJob(mainID: String): Future[BulkResult] = {

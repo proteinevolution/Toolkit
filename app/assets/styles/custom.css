@@ -325,26 +325,6 @@ textarea { resize:both; }
     color: #d6d6d6;
 }
 
-.reformat-small {
-    color: black;
-    font-family: Monaco, Consolas, "Lucida Console", monospace;
-    font-size: small;
-}
-
-.reformat-small li {
-    display: block;
-    width: 6em;
-}
-
-.reformat-small a:hover {
-    color: black;
-}
-
-.reformat-small select {
-    width: 30%;
-    margin-left: 1.5em;
-}
-
 #site-notifications {
     margin-top: 0.75em;
     margin-left: 1em;
@@ -499,4 +479,18 @@ textarea { resize:both; }
 *:-ms-input-placeholder {
     /* IE 10+ */
     color: #767676 !important;
+}
+
+.maintenance_alert {
+    background: linear-gradient(to bottom,rgba(245,245,245,1) 0%,rgba(240,240,240,1) 100%);
+    text-shadow: 0 1px 0 #FFF;
+    color: #848484;
+    font-size: 0.65em;
+    border: 1px solid #c0c0c0;
+    padding: 6px 8px 7px 8px;
+    margin-bottom: 8px;
+    border-radius: 2px;
+    box-shadow: 0 0 3px 0 #d85000;
+    transition: box-shadow 1.5s;
+    display: none;
 }

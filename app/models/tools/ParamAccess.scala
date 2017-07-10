@@ -1,7 +1,7 @@
 package models.tools
 
 import modules.tel.TEL
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -10,12 +10,12 @@ import play.api.libs.json._
 abstract class SequenceMode(val label: String)
 case class Alignment(formats: Seq[(String, String)])
     extends SequenceMode("Multiple protein sequence alignment in FASTA/CLUSTAL format")
-case object SingleSequence    extends SequenceMode("Single protein sequence in FASTA format")
-case object SingleSequenceDNA extends SequenceMode("Single DNA sequence in FASTA format")
-case object MultiSequence     extends SequenceMode("Muliple protein sequences in FASTA/CLUSTAL format")
-case object BLASTHTML         extends SequenceMode("BLAST HTML page") // BLAMMER
-case object PIR               extends SequenceMode("PIR Format")
-case object FASTAHeaders      extends SequenceMode("Sequences/headers in FASTA format") // BLAMMER
+case object SingleSequence    extends SequenceMode("")
+case object SingleSequenceDNA extends SequenceMode("")
+case object MultiSequence     extends SequenceMode("")
+case object BLASTHTML         extends SequenceMode("") // BLAMMER
+case object PIR               extends SequenceMode("")
+case object FASTAHeaders      extends SequenceMode("") // BLAMMER
 
 object SequenceMode {
 
@@ -122,6 +122,10 @@ case object Text extends ParamType {
   def validate(value: String): Option[String] = Some(value)
 }
 
+case object ModellerKey extends ParamType {
+  def validate(value: String): Option[String] = Some(value)
+}
+
 object ParamType {
 
   implicit def tuple2Writes[A, B](implicit a: Writes[A], b: Writes[B]): Writes[(A, B)] = new Writes[(A, B)] {
@@ -146,6 +150,7 @@ object ParamType {
       case Radio                         => Json.obj(FIELD_TYPE -> 5)
       case Decimal(step, minVal, maxVal) => Json.obj(FIELD_TYPE -> 2, "step" -> step, "min" -> minVal, "max" -> maxVal)
       case Text                          => Json.obj(FIELD_TYPE -> 7)
+      case ModellerKey                   => Json.obj(FIELD_TYPE -> 8)
     }
   }
 }
@@ -156,9 +161,9 @@ case class Param(name: String, paramType: ParamType, internalOrdering: Int, labe
 object Param {
   implicit val paramWrites: Writes[Param] = (
     (JsPath \ "name").write[String] and
-      (JsPath \ "paramType").write[ParamType] and
-      (JsPath \ "internalOrdering").write[Int] and
-      (JsPath \ "label").write[String]
+    (JsPath \ "paramType").write[ParamType] and
+    (JsPath \ "internalOrdering").write[Int] and
+    (JsPath \ "label").write[String]
   )(unlift(Param.unapply))
 }
 
@@ -168,8 +173,7 @@ object Param {
 @Singleton
 class ParamAccess @Inject()(tel: TEL) {
 
-  def select(name: String, label: String) = Param(name, Select(tel.generateValues(name).toSeq.sortBy(_._2)), 1, label)
-
+  def select(name: String, label: String) = Param(name, Select(tel.generateValues(name).toSeq), 1, label)
   final val alignmentFormats = Seq(
     "fas" -> "fas",
     "a2m" -> "a2m",
@@ -178,6 +182,7 @@ class ParamAccess @Inject()(tel: TEL) {
     "psi" -> "psi",
     "clu" -> "clu"
   )
+
   def getParam(paramName: String) = paramName match {
       case "ALIGNMENT" =>               Param ("alignment", Sequence (Seq.empty, false), 1, "")
       case "TWOTEXTALIGNMENT" =>        Param ("alignment", Sequence (Seq (SingleSequence, Alignment (alignmentFormats) ), true), 1, "")
@@ -259,6 +264,6 @@ class ParamAccess @Inject()(tel: TEL) {
       case "SAMCC_HELIXTHREE" =>        Param ("samcc_helixthree", Text, 1, "Definition for helix 3")
       case "SAMCC_HELIXFOUR" =>         Param ("samcc_helixfour", Text, 1, "Definition for helix 4")
       case "INVOKE_PSIPRED" =>          Param ("invoke_psipred", ParamType.Percentage, 1, "% identity cutoff to invoke a new PSIPRED run")
-
+      case "CLANS_EVAL" =>              select("clans_eval", "Extract BLAST HSP's up to E-values of")
       }
 }

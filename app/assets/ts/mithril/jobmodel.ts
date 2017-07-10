@@ -8,6 +8,7 @@ window.JobModel = {
         "min_cov": "20",
         "min_seqid_query": "0",
         "gap_open": 11,
+        "mafft_gap_open": "1.53",
         "desc": "250",
         "alignmode": "local",
         "maxrounds": "1",
@@ -24,18 +25,18 @@ window.JobModel = {
         "seq_count": 1000,
         "codon_table": "1",
         "genetic_code": "1",
-        "msa_gen_max_iter": "2",
+        "msa_gen_max_iter": "4",
         "grammar": "Prosite_grammar",
-        "macmode":"off",
+        "macmode": "off",
         "macthreshold":"0.3",
         "max_hhblits_iter":"0",
-        "score_ss":"1",
+        "score_ss":"2",
+        "ss_scoring":"2",
         "rep_pval_threshold":"1e-2",
         "self_aln_pval_threshold":"1e-1",
         "merge_iters":"3",
-        "mac_cutoff":"0.5",
-        "domain_bound_detection":"0",
-        "aln_stringency":"0.3",
+        "mac_cutoff":"0.3",
+        "domain_bound_detection":"1",
         "gap_ext_kaln":"0.85",
         "gap_term":"0.45",
         "bonusscore":"0",
@@ -44,11 +45,9 @@ window.JobModel = {
         "clustering_pval_threshold":"1",
         "eval_tpr":"1e-6",
         "msa_gen_method":"hhblits",
-        "hhsuitedb": "mmcif70/pdb70",
-        "hmmerdb": "nr70",
-        "standarddb": "nr50",
-        "hhpred_incl_eval": "1e-3",
-        "hhblits_incl_eval": "1e-3",
+        "hhsuitedb":"mmcif70/pdb70",
+        "hhpred_incl_eval":"1e-3",
+        "hhblits_incl_eval":"1e-3",
         "pcoils_matrix": "2",
         "pcoils_weighting":"1",
         "pcoils_input_mode":"0",
@@ -57,13 +56,10 @@ window.JobModel = {
         "eff_crick_angle":"1",
         "samcc_periodicity":"7",
         "seqcount":"500",
-        "invoke_psipred":"30"
+        "invoke_psipred":"30",
+        "clans_eval":"1e-4"
 },
 
-    /* Seems not to be used
-    pushMessage: function(msg : string) {
-        return messages().push(msg);
-    }, */
 
     update: function(args : any, value : string) : any {
         if (args.isJob) {
@@ -72,6 +68,9 @@ window.JobModel = {
                 url: "/api/job/" + value
             }).then(function(data) {
                 window.JobModel.paramValues = data.paramValues;
+                if(JobModel.paramValues.proteomes && !JobModel.paramValues.hhsuitedb){
+                    JobModel.paramValues["hhsuitedb"]= "";
+                }
                 return {
                     tool: data.toolitem,
                     isJob: true,
@@ -107,11 +106,12 @@ window.JobModel = {
             }, 100);
             window.JobModel.paramValues["alignment"] = resultcookie;
             localStorage.removeItem("resultcookie");
-            $.LoadingOverlay("hide")
+            $.LoadingOverlay("hide");
         }
         let val = window.JobModel.paramValues[param];
         let defVal = window.JobModel.defaultValues[param];
-        if (val) {
+
+        if (val || val === "") {
             return val;
         } else if (defVal) {
             return defVal;

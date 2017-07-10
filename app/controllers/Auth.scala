@@ -1,28 +1,29 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
-import actors.WebSocketActor.{ChangeSessionID, LogOut}
+import actors.WebSocketActor.{ ChangeSessionID, LogOut }
 import akka.actor.ActorRef
+import models.Constants
 import models.auth._
-import models.database.users.{User, UserToken}
+import models.database.users.{ User, UserConfig, UserToken }
 import models.job.JobActorAccess
-import models.mailing.{ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail}
+import models.mailing.{ ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail }
 import models.tools.ToolFactory
-import modules.{CommonModule, LocationProvider}
-import modules.tel.TEL
+import modules.LocationProvider
+import modules.db.MongoStore
 import org.joda.time.DateTime
 import play.Logger
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{ Action, AnyContent, Controller }
 import play.api.libs.mailer._
-import play.modules.reactivemongo.ReactiveMongoApi
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.bson._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 
 /**
   * Controller for Authentication interactions
@@ -32,18 +33,20 @@ import scala.concurrent.{Await, Future}
 final class Auth @Inject()(webJarAssets: WebJarAssets,
                            val messagesApi: MessagesApi,
                            jobActorAccess: JobActorAccess,
+                           mongoStore: MongoStore,
+                           val reactiveMongoApi: ReactiveMongoApi,
                            toolFactory: ToolFactory,
+                           userSessions: UserSessions,
                            implicit val mailerClient: MailerClient,
                            implicit val locationProvider: LocationProvider,
                            @NamedCache("userCache") implicit val userCache: CacheApi,
-                           @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi,
-                           val reactiveMongoApi: ReactiveMongoApi) // Mailing Controller
+                           @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi, // Mailing Controller
+                           constants: Constants)
     extends Controller
     with I18nSupport
     with JSONTemplate
-    with UserSessions
     with Common
-    with CommonModule {
+    with ReactiveMongoComponents {
 
   /**
     * User wants to sign out
@@ -52,8 +55,8 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     * @return
     */
   def signOut(): Action[AnyContent] = Action.async { implicit request =>
-    getUser.map { user =>
-      removeUserFromCache(user)
+    userSessions.getUser.map { user =>
+      userSessions.removeUserFromCache(user)
 
       Redirect(routes.Application.index()).withNewSession.flashing(
         "success" -> "You've been logged out"
@@ -67,7 +70,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     * @return
     */
   def profile2json(): Action[AnyContent] = Action.async { implicit request =>
-    getUser.map { user =>
+    userSessions.getUser.map { user =>
       user.userData match {
         case Some(userData) => Ok(Json.obj("user" -> userData.nameLogin))
         case _              => NotFound
@@ -77,7 +80,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
   }
 
   def getUserData: Action[AnyContent] = Action.async { implicit request =>
-    getUser.map { user =>
+    userSessions.getUser.map { user =>
       Logger.info("Sending user data.")
       Ok(Json.toJson(user.userData))
     }
@@ -85,7 +88,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
 
   def matchUserToPW(username: String, password: String): Future[Boolean] = {
 
-    findUser(BSONDocument("userData.nameLogin" -> username)).map {
+    mongoStore.findUser(BSONDocument("userData.nameLogin" -> username)).map {
 
       case Some(user) if user.checkPassword(password) => true
       case None                                       => false
@@ -122,7 +125,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     */
   def signInSubmit(): Action[AnyContent] =
     Action.async { implicit request =>
-      getUser.flatMap { unregisteredUser =>
+      userSessions.getUser.flatMap { unregisteredUser =>
         if (unregisteredUser.accountType < 0) {
           // Evaluate the Form
           FormDefinitions.SignIn.bindFromRequest.fold(
@@ -132,9 +135,12 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
             },
             // if no error, then insert the user to the collection
             signInFormUser => {
-              val futureUser = findUser(
-                BSONDocument("$or" -> List(BSONDocument(User.EMAIL -> signInFormUser.nameLogin),
-                                           BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin))))
+              val futureUser = mongoStore.findUser(
+                BSONDocument(
+                  "$or" -> List(BSONDocument(User.EMAIL -> signInFormUser.nameLogin),
+                                BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin))
+                )
+              )
               futureUser.flatMap {
                 case Some(databaseUser) =>
                   // Check the password
@@ -145,23 +151,25 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                     // Additionally add the watched jobs to the users watchlist.
                     val modifier = BSONDocument(
                       "$set" ->
-                        BSONDocument(User.SESSIONID     -> databaseUser.sessionID.getOrElse(BSONObjectID.generate()),
-                                     User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))
+                      BSONDocument(User.SESSIONID     -> databaseUser.sessionID.getOrElse(BSONObjectID.generate()),
+                                   User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis))
+                    )
                     // TODO this adds the non logged in user's jobs to the now logged in user's job list
                     //                            "$addToSet"        ->
                     //               BSONDocument(User.JOBS          ->
                     //               BSONDocument("$each"            -> unregisteredUser.jobs)))
                     // Finally add the edits to the collection
-                    modifyUserWithCache(selector, modifier).map {
+                    userSessions.modifyUserWithCache(selector, modifier).map {
                       case Some(loggedInUser) =>
                         Logger.info(
                           "\n-[old user]-\n"
-                            + unregisteredUser.toString
-                            + "\n-[new user]-\n"
-                            + loggedInUser.toString)
+                          + unregisteredUser.toString
+                          + "\n-[new user]-\n"
+                          + loggedInUser.toString
+                        )
                         // Remove the old, not logged in user
                         //removeUser(BSONDocument(User.IDDB -> unregisteredUser.userID))
-                        removeUserFromCache(unregisteredUser)
+                        userSessions.removeUserFromCache(unregisteredUser)
 
                         // Tell the job actors to copy all jobs connected to the old user to the new user
                         wsActorCache.get(unregisteredUser.userID.stringify) match {
@@ -176,9 +184,10 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                         // Everything is ok, let the user know that they are logged in now
                         Ok(LoggedIn(loggedInUser))
                           .withSession(
-                            sessionCookie(request,
-                                          loggedInUser.sessionID.get,
-                                          Some(loggedInUser.getUserData.nameLogin)))
+                            userSessions.sessionCookie(request,
+                                                       loggedInUser.sessionID.get,
+                                                       Some(loggedInUser.getUserData.nameLogin))
+                          )
                       case None =>
                         Ok(LoginIncorrect())
                     }
@@ -202,7 +211,6 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
       }
     }
 
-
   /**
     * Submission of the sign up form
     * Checks Database if there is a preexisting user and adds him if there is none
@@ -210,7 +218,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     * @return
     */
   def signUpSubmit(): Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { user =>
+    userSessions.getUser.flatMap { user =>
       if (user.accountType < 0) {
         // Create a new user from the information given in the form
         FormDefinitions
@@ -231,14 +239,13 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                 }
               } else {
                 // Check database for existing users with the same email
-                val selectorMail = BSONDocument(BSONDocument(User.EMAIL -> signUpFormUser.getUserData.eMail))
-                println(signUpFormUser.getUserData.eMail)
+                val selectorMail = BSONDocument(BSONDocument(User.EMAIL     -> signUpFormUser.getUserData.eMail))
                 val selectorName = BSONDocument(BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin))
-                findUser(selectorName).flatMap {
+                mongoStore.findUser(selectorName).flatMap {
                   case Some(x) =>
                     Future.successful(Ok(AccountNameUsed()))
                   case None =>
-                    findUser(selectorMail).flatMap {
+                    mongoStore.findUser(selectorMail).flatMap {
                       case Some(x) =>
                         Future.successful(Ok(AccountEmailUsed()))
                       case None =>
@@ -246,8 +253,9 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                         val newUser = signUpFormUser.copy(
                           userID = BSONObjectID.generate(),
                           sessionID = None,
-                          userToken = Some(UserToken(tokenType = 1, eMail = Some(signUpFormUser.getUserData.eMail))))
-                        upsertUser(newUser).map {
+                          userToken = Some(UserToken(tokenType = 1, eMail = Some(signUpFormUser.getUserData.eMail)))
+                        )
+                        mongoStore.upsertUser(newUser).map {
                           case Some(registeredUser) =>
                             // All done. User is registered, now send the welcome eMail
                             registeredUser.userToken match {
@@ -277,7 +285,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     * @return
     */
   def profileSubmit(): Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { user: User =>
+    userSessions.getUser.flatMap { user: User =>
       user.userData match {
         case Some(userData) =>
           // change the userData with the help of the form input
@@ -297,24 +305,27 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                   val selector        = BSONDocument(User.IDDB -> user.userID)
                   val modifier = BSONDocument(
                     "$set" ->
-                      BSONDocument(User.USERDATA      -> editedProfileUserData.copy(nameLogin = userData.nameLogin),
-                                   User.DATELASTLOGIN -> bsonCurrentTime,
-                                   User.DATEUPDATED   -> bsonCurrentTime))
+                    BSONDocument(User.USERDATA      -> editedProfileUserData.copy(nameLogin = userData.nameLogin),
+                                 User.DATELASTLOGIN -> bsonCurrentTime,
+                                 User.DATEUPDATED   -> bsonCurrentTime)
+                  )
 
-                  val selectorMail = BSONDocument(BSONDocument(User.EMAIL -> editedProfileUserData.eMail))
-                  findUser(selectorMail).flatMap {
-                    case Some(_) =>
-                      Future.successful(Ok(AccountEmailUsed()))
-                    case None =>
-                      modifyUserWithCache(selector, modifier).map {
-                        case Some(updatedUser) =>
-                          // Everything is ok, let the user know that they are logged in now
-                          Ok(EditSuccessful(updatedUser))
-                        case None =>
-                          // User has been found in the DB at first but now it cant be retrieved
-                          Ok(LoginError())
-                      }
+                  if (editedProfileUserData.eMail != user.getUserData.eMail) {
+                    val selectorMail = BSONDocument(BSONDocument(User.EMAIL -> editedProfileUserData.eMail))
+                    mongoStore.findUser(selectorMail).flatMap {
+                      case Some(_) =>
+                        Future.successful(Ok(AccountEmailUsed()))
+                    }
                   }
+                  userSessions.modifyUserWithCache(selector, modifier).map {
+                    case Some(updatedUser) =>
+                      // Everything is ok, let the user know that they are logged in now
+                      Ok(EditSuccessful(updatedUser))
+                    case None =>
+                      // User has been found in the DB at first but now it cant be retrieved
+                      Ok(LoginError())
+                  }
+
                 case None =>
                   // Password was incorrect
                   Future.successful(Ok(PasswordWrong()))
@@ -335,7 +346,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     * @return
     */
   def passwordChangeSubmit(): Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { user: User =>
+    userSessions.getUser.flatMap { user: User =>
       user.userData match {
         case Some(userData) =>
           // Validate the password and return the new password Hash
@@ -357,11 +368,11 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                   // Push to the database using selector and modifier
                   val selector = BSONDocument(User.IDDB -> user.userID)
                   val modifier = BSONDocument("$set" ->
-                                                BSONDocument(User.DATELASTLOGIN -> bsonCurrentTime,
-                                                             User.DATEUPDATED   -> bsonCurrentTime),
+                                              BSONDocument(User.DATELASTLOGIN -> bsonCurrentTime,
+                                                           User.DATEUPDATED   -> bsonCurrentTime),
                                               "$set" ->
-                                                BSONDocument(User.USERTOKEN -> token))
-                  modifyUserWithCache(selector, modifier).map {
+                                              BSONDocument(User.USERTOKEN -> token))
+                  userSessions.modifyUserWithCache(selector, modifier).map {
                     case Some(updatedUser) =>
                       // All done. Now send the eMail
                       val eMail = ChangePasswordMail(updatedUser, token.token)
@@ -402,7 +413,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
           val selector =
             BSONDocument("$or" -> List(BSONDocument(User.EMAIL -> user), BSONDocument(User.NAMELOGIN -> user)))
 
-          findUser(selector).flatMap {
+          mongoStore.findUser(selector).flatMap {
             case Some(user) =>
               user.userData match {
                 case Some(userData) =>
@@ -413,10 +424,10 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                   // Push to the database using selector and modifier
                   val selector = BSONDocument(User.IDDB -> user.userID)
                   val modifier = BSONDocument("$set" ->
-                                                BSONDocument(User.DATEUPDATED -> bsonCurrentTime),
+                                              BSONDocument(User.DATEUPDATED -> bsonCurrentTime),
                                               "$set" ->
-                                                BSONDocument(User.USERTOKEN -> token))
-                  modifyUserWithCache(selector, modifier).map {
+                                              BSONDocument(User.USERTOKEN -> token))
+                  userSessions.modifyUserWithCache(selector, modifier).map {
                     case Some(registeredUser) =>
                       // All done. User is registered, now send the welcome eMail
                       val eMail = ResetPasswordMail(registeredUser, token.token)
@@ -445,7 +456,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     * @return
     */
   def resetPasswordChange: Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { user: User =>
+    userSessions.getUser.flatMap { user: User =>
       // Validate the password and return the new password Hash
       FormDefinitions.ForgottenPasswordChange.bindFromRequest.fold(
         errors => Future.successful(Ok(FormError(errors.errors.mkString(",\n")))), { newPasswordHash =>
@@ -457,22 +468,26 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                 val selector = BSONDocument(User.IDDB -> token.userID)
                 val modifier =
                   BSONDocument("$set" ->
-                                 BSONDocument(User.DATEUPDATED -> bsonCurrentTime, User.PASSWORD -> newPasswordHash),
+                               BSONDocument(User.DATEUPDATED -> bsonCurrentTime, User.PASSWORD -> newPasswordHash),
                                "$unset" ->
-                                 BSONDocument(User.USERTOKEN -> ""))
-                modifyUserWithCache(selector, modifier).flatMap {
+                               BSONDocument(User.USERTOKEN -> ""))
+                userSessions.modifyUserWithCache(selector, modifier).flatMap {
                   case Some(userWithUpdatedAccount) =>
-                    modifyUserWithCache(BSONDocument(User.IDDB -> userWithUpdatedAccount.userID),
-                                        BSONDocument("$unset" ->
-                                          BSONDocument(User.USERTOKEN -> ""))).map {
-                      case Some(updatedUser) =>
-                        // All done. Now send the eMail to notify the user that the password has been changed
-                        val eMail = PasswordChangedMail(updatedUser)
-                        eMail.send
-                        Ok(PasswordChanged(updatedUser))
-                      case None =>
-                        Ok(DatabaseError)
-                    }
+                    userSessions
+                      .modifyUserWithCache(BSONDocument(User.IDDB -> userWithUpdatedAccount.userID),
+                                           BSONDocument(
+                                             "$unset" ->
+                                             BSONDocument(User.USERTOKEN -> "")
+                                           ))
+                      .map {
+                        case Some(updatedUser) =>
+                          // All done. Now send the eMail to notify the user that the password has been changed
+                          val eMail = PasswordChangedMail(updatedUser)
+                          eMail.send
+                          Ok(PasswordChanged(updatedUser))
+                        case None =>
+                          Ok(DatabaseError)
+                      }
                   case None =>
                     // User has been found in the DB at first but now it cant be retrieved
                     Future.successful(Ok(DatabaseError))
@@ -494,92 +509,104 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
     * 3 - password reset verification
     * 4 -                             + reset
     *
-    * @param email
+    *
     * @param token
     * @return
     */
   def verification(nameLogin: String, token: String): Action[AnyContent] = Action.async { implicit request =>
-    getUser.flatMap { user: User =>
+    userSessions.getUser.flatMap { user: User =>
       // Grab the user from the database in case that the logged in user is not the user to verify
       // TODO check for both name or email
-      findUser(BSONDocument(User.NAMELOGIN -> nameLogin)).flatMap {
+      mongoStore.findUser(BSONDocument(User.NAMELOGIN -> nameLogin)).flatMap {
         case Some(userToVerify) =>
           userToVerify.userToken match {
             case Some(userToken) =>
               if (userToken.token == token) {
                 userToken.tokenType match {
                   case 1 => // Token for eMail verification
-                    modifyUser(
-                      BSONDocument(User.IDDB -> userToVerify.userID),
-                      BSONDocument(
-                        "$set" ->
+                    mongoStore
+                      .modifyUser(
+                        BSONDocument(User.IDDB -> userToVerify.userID),
+                        BSONDocument(
+                          "$set" ->
                           BSONDocument(User.ACCOUNTTYPE -> 1,
                                        User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis)),
-                        BSONDocument("$unset" ->
-                          BSONDocument(User.USERTOKEN -> ""))
+                          BSONDocument(
+                            "$unset" ->
+                            BSONDocument(User.USERTOKEN -> "")
+                          )
+                        )
                       )
-                    ).map {
-                      case Some(modifiedUser) =>
-                        Ok(
-                          views.html.main(webJarAssets,
-                                          toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                          "Account verification was successful. Please log in."))
-                      case None => // Could not save the modified user to the DB
-                        Ok(
-                          views.html.main(
-                            webJarAssets,
-                            toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                            "Verification was not successful due to a database error. Please try again later."
-                          ))
-                    }
+                      .map {
+                        case Some(modifiedUser) =>
+                          Ok(
+                            views.html.main(webJarAssets,
+                                            toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                                            "Account verification was successful. Please log in.")
+                          )
+                        case None => // Could not save the modified user to the DB
+                          Ok(
+                            views.html.main(
+                              webJarAssets,
+                              toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                              "Verification was not successful due to a database error. Please try again later."
+                            )
+                          )
+                      }
                   case 2 => // Token for password change validation
                     userToVerify.userToken match {
                       case Some(token) =>
                         token.passwordHash match {
                           case Some(newPassword) =>
-                            modifyUser(
-                              BSONDocument(User.IDDB -> userToVerify.userID),
-                              BSONDocument(
-                                "$set" ->
+                            mongoStore
+                              .modifyUser(
+                                BSONDocument(User.IDDB -> userToVerify.userID),
+                                BSONDocument(
+                                  "$set" ->
                                   BSONDocument(User.PASSWORD    -> newPassword,
                                                User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis)),
-                                "$unset" ->
+                                  "$unset" ->
                                   BSONDocument(User.SESSIONID -> "", User.CONNECTED -> "", User.USERTOKEN -> "")
+                                )
                               )
-                            ).map {
-                              case Some(modifiedUser) =>
-                                removeUserFromCache(user)
-                                val eMail = PasswordChangedMail(modifiedUser)
-                                eMail.send
-                                // Force Log Out on all connected users.
-                                (wsActorCache.get(modifiedUser.userID.stringify): Option[List[ActorRef]]) match {
-                                  case Some(webSocketActors) =>
-                                    webSocketActors.foreach(_ ! LogOut)
-                                  case None =>
-                                }
-                                // User modified properly
-                                Ok(
-                                  views.html.main(
-                                    webJarAssets,
-                                    toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                    "Password change verification was successful. Please log in with Your new password."
-                                  ))
-                              case None => // Could not save the modified user to the DB
-                                Ok(
-                                  views.html.main(
-                                    webJarAssets,
-                                    toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                    "Verification was not successful due to a database error. Please try again later."
-                                  ))
-                            }
+                              .map {
+                                case Some(modifiedUser) =>
+                                  userSessions.removeUserFromCache(user)
+                                  val eMail = PasswordChangedMail(modifiedUser)
+                                  eMail.send
+                                  // Force Log Out on all connected users.
+                                  (wsActorCache.get(modifiedUser.userID.stringify): Option[List[ActorRef]]) match {
+                                    case Some(webSocketActors) =>
+                                      webSocketActors.foreach(_ ! LogOut)
+                                    case None =>
+                                  }
+                                  // User modified properly
+                                  Ok(
+                                    views.html.main(
+                                      webJarAssets,
+                                      toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                                      "Password change verification was successful. Please log in with Your new password."
+                                    )
+                                  )
+                                case None => // Could not save the modified user to the DB
+                                  Ok(
+                                    views.html.main(
+                                      webJarAssets,
+                                      toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                                      "Verification was not successful due to a database error. Please try again later."
+                                    )
+                                  )
+                              }
                           case None =>
                             // This should not happen - Failsafe
                             Future.successful(
                               Ok(
-                                views.html.main(
-                                  webJarAssets,
-                                  toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                  "The Password you had entered was insufficient, please create a new one.")))
+                                views.html
+                                  .main(webJarAssets,
+                                        toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                                        "The Password you had entered was insufficient, please create a new one.")
+                              )
+                            )
                         }
                       case None => Future.successful(NotFound)
                     }
@@ -591,28 +618,33 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                     val selector = BSONDocument(User.IDDB -> user.userID)
                     val modifier = BSONDocument(
                       "$set" -> BSONDocument(User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis),
-                                             User.USERTOKEN -> newToken))
-                    modifyUserWithCache(selector, modifier).map {
+                                             User.USERTOKEN -> newToken)
+                    )
+                    userSessions.modifyUserWithCache(selector, modifier).map {
                       case Some(changedUser) =>
                         Ok(
                           views.html.main(webJarAssets,
                                           toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                           "",
-                                          "passwordReset"))
+                                          "passwordReset")
+                        )
                       case None => // Could not save the modified user to the DB
                         Ok(
                           views.html.main(
                             webJarAssets,
                             toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                             "Verification was not successful due to a database error. Please try again later."
-                          ))
+                          )
+                        )
                     }
                   case _ =>
                     Future.successful(
                       Ok(
                         views.html.main(webJarAssets,
                                         toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                        "There was an error finding your token.")))
+                                        "There was an error finding your token.")
+                      )
+                    )
                 }
 
               } else {
@@ -621,21 +653,53 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                   Ok(
                     views.html.main(webJarAssets,
                                     toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                    "The token you used is not valid.")))
+                                    "The token you used is not valid.")
+                  )
+                )
               }
             case None =>
               Future.successful(
                 Ok(
                   views.html.main(webJarAssets,
                                   toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                  "There was an error finding your token.")))
+                                  "There was an error finding your token.")
+                )
+              )
           }
         case None =>
           Future.successful(
             Ok(
               views.html.main(webJarAssets,
                               toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                              "There was an error finding your account.")))
+                              "There was an error finding your account.")
+            )
+          )
+      }
+    }
+  }
+
+  def validateModellerKey(input: String): Action[AnyContent] = Action.async { implicit request =>
+    userSessions.getUser.flatMap { user =>
+      if (user.userConfig.hasMODELLERKey) {
+        Future.successful(Ok(Json.obj("isValid" -> true)))
+      } else if (input == constants.modellerKey) {
+        userSessions
+          .modifyUserWithCache(BSONDocument(User.IDDB -> user.userID),
+                               BSONDocument(
+                                 "$set" ->
+                                 BSONDocument(
+                                   s"${User.USERCONFIG}.${UserConfig.HASMODELLERKEY}" ->
+                                   true
+                                 )
+                               ))
+          .map {
+            case Some(_) =>
+              Ok(Json.obj("isValid" -> true))
+            case None =>
+              BadRequest
+          }
+      } else {
+        Future.successful(Ok(Json.obj("isValid" -> false)))
       }
     }
   }
