@@ -96,6 +96,7 @@ final class ToolFactory @Inject()(
     final val BACKTRANS           = "backtrans"
     final val HHFILTER            = "hhfilter"
     final val PATSEARCH           = "patsearch"
+    final val HHOMP               = "hhomp"
   }
 
   // Encompasses some shared views of the result pages
@@ -123,6 +124,18 @@ final class ToolFactory @Inject()(
          paramAccess.DESC),
      Seq("hhblits", "hhpred", "hhrepid"),
      Seq("clans", "mmseqs2")),
+    ("hhomp",
+      Seq(paramAccess.SEQORALI,
+        paramAccess.MAXROUNDS,
+        paramAccess.MIN_COV,
+        paramAccess.HHOMP_INCL_EVAL,
+        paramAccess.ALIGNMODE,
+        paramAccess.MSA_GEN_MAX_ITER,
+        paramAccess.PMIN,
+        paramAccess.DESC,
+        paramAccess.HHOMPDB),
+      Seq(""),
+      Seq("")),
     // HHpred
     ("hhpred",
      Seq(
@@ -1144,6 +1157,7 @@ final class ToolFactory @Inject()(
         paramAccess.STANDARD_DB.name,
         paramAccess.HHSUITEDB.name,
         paramAccess.PROTBLASTPROGRAM.name,
+        paramAccess.HHOMPDB.name,
         paramAccess.HHBLITSDB.name,
         paramAccess.PROTEOMES.name,
         paramAccess.HMMER_DB.name,
