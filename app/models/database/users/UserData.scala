@@ -1,7 +1,7 @@
 package models.database.users
 
-import play.api.libs.json.{Json, JsObject, Writes}
-import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter}
+import play.api.libs.json.{ JsObject, Json, Writes }
+import reactivemongo.bson.{ BSONDocument, BSONDocumentReader, BSONDocumentWriter }
 
 case class UserData(nameLogin: String, // User Login Name
                     password: String, // Password of the User (Hashed)
@@ -28,7 +28,6 @@ object UserData {
       NAMEFIRST -> userData.nameFirst,
       NAMELAST  -> userData.nameLast,
       COUNTRY   -> userData.country
-
     )
   }
 
@@ -43,7 +42,6 @@ object UserData {
       nameFirst = bson.getAs[String](NAMEFIRST),
       nameLast = bson.getAs[String](NAMELAST),
       country = bson.getAs[String](COUNTRY)
-
     )
   }
 

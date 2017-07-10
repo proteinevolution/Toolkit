@@ -22,60 +22,18 @@ var ncbiReg = "^([A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9])$";
 
 
 function download(filename, text){
-    var pom = document.createElement('a');
-    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    pom.setAttribute('download', filename);
-
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    blob = new Blob([text], {type: "octet/stream"}),
+        url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = filename;
+    a.click();
+    window.URL.revokeObjectURL(url);
     $.LoadingOverlay("hide");
-
-    if (document.createEvent) {
-        var event = document.createEvent('MouseEvents');
-        event.initEvent('click', true, true);
-        pom.dispatchEvent(event);
-    }
-    else {
-        pom.click();
-    }
 }
 
-// Makes a table row with the specified content
-function makeRow(entries) {
-
-    var row = document.createElement("tr");
-    for(var i = 0; i < entries.length; i++ ) {
-        var entry = document.createElement("td");
-        entry.innerHTML = entries[i];
-        row.appendChild(entry);
-    }
-    return row;
-}
-// Makes a table row with colspan=num
-function makeRowColspan(entries, num, HTMLElement) {
-
-    var row = document.createElement("tr");
-    for(var i = 0; i < entries.length; i++ ) {
-        var entry = document.createElement(HTMLElement);
-        entry.setAttribute("padding", "0");
-        entry.setAttribute("colspan",num);
-        entry.innerHTML = entries[i];
-        row.appendChild(entry);
-    }
-    return row;
-}
-
-// Makes a table row with colspan=num
-function makeRowDiffColspan(entries, num, HTMLElement) {
-
-    var row = document.createElement("tr");
-    for(var i = 0; i < entries.length; i++ ) {
-        var entry = document.createElement(HTMLElement);
-        entry.setAttribute("padding", "0");
-        entry.setAttribute("colspan",num[i]);
-        entry.innerHTML = entries[i];
-        row.appendChild(entry);
-    }
-    return row;
-}
 
 
 /* Slider */
@@ -135,33 +93,64 @@ function resubmitSection(sequence, name) {
     resubmitSeqs.push(name + '\n');
     resubmitSeqs.push(sequence.substr(sliderRange[0], sliderRange[1]) + '\n');
 
-    $('#tool-tabs').tabs('option', 'active', $('#tool-tabs').tabs('option', 'active') -2);
+    $('a[href="#tabpanel-Input"]').click();
     $('#alignment').val(resubmitSeqs.join(''));
 }
 
 
-
-
-/* FORWARDING */
-
-// parameter: tool (String)
-// forwards all checked identifier and sequences to tool
+/**
+ * forward the given forwardData to the given tool
+ * @param tool
+ * @param forwardData
+ */
 function forward(tool, forwardData){
     if(forwardData == ""){
-        alert("No hits selected!");
+        alert("No sequence(s) selected!");
         $.LoadingOverlay("hide");
         return;
     }
-    localStorage.setItem("resultcookie", forwardData);
-    window.location.href = "/#/tools/" + tool;
+    try {
+        localStorage.setItem("resultcookie", forwardData);
+        window.location.href = "/#/tools/" + tool;
+    } catch(e) {
+        if (isQuotaExceeded(e)) {
+            // Storage full, maybe notify user or do some clean-up
+            $.LoadingOverlay("hide");
+            alert("File is too big to be forwarded. Please download the file and use the upload function of the selected tool." )
+        }
+
+    }
 }
 
+
+function isQuotaExceeded(e) {
+    var quotaExceeded = false;
+    if (e) {
+        if (e.code) {
+            switch (e.code) {
+                case 22:
+                    quotaExceeded = true;
+                    break;
+                case 1014:
+                    // Firefox
+                    if (e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+                        quotaExceeded = true;
+                    }
+                    break;
+            }
+        } else if (e.number === -2147024882) {
+            // Internet Explorer 8
+            quotaExceeded = true;
+        }
+    }
+    return quotaExceeded;
+}
 // load forwarded data into alignment field
 $(document).ready(function() {
     var resultcookie = localStorage.getItem("resultcookie");
     $('#alignment').val(resultcookie);
     localStorage.removeItem("resultcookie");
-    $.LoadingOverlay("hide")
+    $.LoadingOverlay("hide");
 });
 
 
@@ -253,52 +242,54 @@ function calcColor(prob) {
 
 
 function scrollToElem(num){
+    num = parseInt(num);
     var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
     if (num > shownHits) {
         $.LoadingOverlay("show");
-        getHits(shownHits, num, colorAAs).done(function(data){
-            var pos = $('input[name=templates][value=' + num + ']').offset().top;
+        getHits(shownHits, num, wrapped,colorAAs).done(function(data){
+            var pos = $('input[class="checkbox aln"][value=' + num + ']').offset().top;
             $(elem).animate({
                 scrollTop: pos - 100
-            }, 'fast')
+            }, 1)
         }).then(function(){
             $.LoadingOverlay("hide");
         });
         shownHits = num;
     }else{
-        var pos = $('input[name=templates][value=' + num + ']').offset().top;
+        var pos = $('input[class="checkbox aln"][value=' + num + ']').offset().top;
         $(elem).animate({
             scrollTop: pos - 100
-        }, 'fast')
+        }, 1)
     }
 }
 
-function scrollToSection(name){
+function scrollToSection(name) {
     var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
-    var pos = $('#tool-tabs').hasClass("fullscreen") ? $('#'+name).offset().top + $(elem).scrollTop(): $('#'+name).offset().top;
+    var pos = $('#tool-tabs').hasClass("fullscreen") ? $('#' + name).offset().top + $(elem).scrollTop() : $('#' + name).offset().top;
     $(elem).animate({
-        scrollTop: pos-30}, 'fast');
+        scrollTop: pos
+    }, 'fast');
+
 }
-
-
 // select all checkboxes
 function selectAllHelper(name) {
-    $('input:checkbox.'+name+'').each(function () {
+    $('input:checkbox.'+name+'[name="alignment_elem"]').each(function () {
         $(this).prop('checked', true);
     });
 
 }
 function deselectAll(name){
     $('input:checkbox.'+name+'').prop('checked', false);
+    checkboxes = [];
 }
 function selectFromArray(checkboxes){
-    checkboxes.forEach(function (currentVal) {
-        $('input:checkbox[value='+currentVal+']').prop('checked', true);
+    _.range(1, numHits+1).forEach(function (currentVal) {
+        $('input:checkbox[value='+currentVal+'][name="alignment_elem"]').prop('checked', checkboxes.indexOf(currentVal) != -1 ? true : false);
     })
 }
 
 function getCheckedCheckboxes(){
-    $('input:checkbox:checked').each(function(){checkboxes.push(parseInt($(this).val()));});
+    $('input:checkbox:checked[name="alignment_elem"]').each(function(){var num = parseInt($(this).val()); if(checkboxes.indexOf(num) == -1){checkboxes.push(num)}});
 }
 
 
@@ -312,35 +303,7 @@ function hitlistBaseFunctions(){
             contentAsHTML: true,
             debug: false
         });
-            $.LoadingOverlay("hide");
-
-            // check checkboxes that are stored in array
-            // in order to make it work with pagination/lazyload
-            selectFromArray(checkboxes);
-
-            $('input:checkbox').on('change',function (e) {
-                var currentVal = $(this).val();
-                var currentState = $(this).prop('checked');
-
-                // link checkboxes with same value
-                $('input:checkbox[value=' + currentVal + ']').each(function () {
-                    $(this).prop('checked', currentState);
-                });
-
-                if (currentState) {
-                    // push num of checked checkbox into array
-                    checkboxes.push(currentVal);
-                    // make sure array contains no duplicates
-                    checkboxes = checkboxes.filter(function (value, index, array) {
-                        return array.indexOf(value) == index;
-                    });
-                } else {
-                    // delete num of unchecked checkbox from array
-                    checkboxes = checkboxes.filter(function(x){return x != currentVal});
-                }
-
-            });
-
+        $.LoadingOverlay("hide");
         followScroll(document);
 
         // add slider val
@@ -369,12 +332,13 @@ Array.prototype.removeDuplicates = function () {
 };
 
 
-
 function selectAll(){
     selectAllBool = !selectAllBool;
     if(selectAllBool) {
         selectAllHelper(checkbox);
+        $(".selectAllSeqBar").text("Deselect all");
         $(".selectAllSeqBar").addClass("colorToggleBar");
+
         // first empty array
         checkboxes = [];
         // push all checkboxes (1 to num_hits) into array
@@ -382,6 +346,7 @@ function selectAll(){
     }
     else {
         deselectAll(checkbox);
+        $(".selectAllSeqBar").text("Select all");
         $(".selectAllSeqBar").removeClass("colorToggleBar");
         // delete all checkboxes from array
         checkboxes = [];
@@ -394,9 +359,80 @@ function getsHitsManually(){
         var end = shownHits + showMore;
         end = end < numHits ? end : numHits;
         if (shownHits != end) {
-            getHits(shownHits, end);
+            getHits(shownHits, end, wrapped, colorAAs);
         }
         shownHits = end;
     }
 }
 
+function linkCheckboxes(){
+    $('input:checkbox').on('change',function (e) {
+        var currentVal = $(this).val();
+        var currentState = $(this).prop('checked');
+
+        // link checkboxes with same value
+        $('input:checkbox[value=' + currentVal + '][name=alignment_elem]').each(function () {
+            $(this).prop('checked', currentState);
+        });
+
+        if (currentState) {
+            // push num of checked checkbox into array
+            checkboxes.push(parseInt(currentVal));
+            // make sure array contains no duplicates
+            checkboxes = checkboxes.filter(function (value, index, array) {
+                return array.indexOf(value) == index;
+            });
+        } else {
+            // delete num of unchecked checkbox from array
+            checkboxes = checkboxes.filter(function(x){return x != currentVal});
+        }
+
+    });
+}
+
+
+function generateFilename(){
+    return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+/**
+ * wraps sequences for search tools
+ * for this it empties the table "#alignmentTable"
+ * and calls get Hits taking the boolean wrapped as a parameter
+ */
+function wrap(){
+    wrapped = !wrapped;
+    var checkboxesWrap =  $("input:checkbox").toArray();
+    var num = 1;
+    for(var i =0 ; i < checkboxesWrap.length; i++){
+        if($(checkboxesWrap[i]).isOnScreen()){
+            num  = $(checkboxesWrap[i]).val();
+            break;
+        }
+    }
+    $("#wrap").toggleClass("colorToggleBar");
+    $("#wrap").toggleText("Unwrap Seqs", "Wrap Seqs");
+    $("#alignmentTable").empty();
+    getHits(0, shownHits, wrapped, colorAAs).then(function(){
+        linkCheckboxes();
+        scrollToElem(num);
+    });
+
+}
+
+
+$.fn.extend({
+    toggleText: function(a, b){
+        return this.text(this.text() == b ? a : b);
+    }
+});
+
+$.fn.isOnScreen = function(){
+    var viewport = {};
+    viewport.top = $(window).scrollTop();
+    viewport.bottom = viewport.top + $(window).height();
+    var bounds = {};
+    bounds.top = this.offset().top;
+    bounds.bottom = bounds.top + this.outerHeight();
+    return ((bounds.top <= viewport.bottom) && (bounds.bottom >= viewport.top));
+};

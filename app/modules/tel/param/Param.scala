@@ -3,6 +3,8 @@ package modules.tel.param
 import modules.tel.TELRegex
 import modules.tel.env.EnvAware
 
+import scala.collection.immutable.ListMap
+
 /**
   * Created by lzimmermann on 10/11/16.
   */
@@ -22,5 +24,5 @@ abstract class GenerativeParam(name: String) extends PredicativeParam(name) {
 
   // Sequence of allowed values with respective clear text name
   def validate(value: String): Boolean = this.generate.contains(value)
-  def generate: Map[String, String]
+  def generate: ListMap[String, String]
 }

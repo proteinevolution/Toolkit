@@ -81,8 +81,8 @@ let typeAhead = function (elem : any, isInit : boolean) : any {
                 source: tools.ttAdapter(),
                 templates: {
                     suggestion: function (data: any) {
-                        if(data !=null && data.short != "hhpred_automatic" && data.short != "hhpred_manual") {
-                            console.log(data.long)
+                        if(data !=null) {
+                            //console.log(data.long);
                             return '<div class="list-group-item"><a class="search-results" href="#/tools/' + data.short + '" name="' + data.long + '">' + data.long + '</a></div>';
                         }else {
                             return '<div style="display: none"></div>';
@@ -177,7 +177,6 @@ window.Index = {
     }
 };
 
-
 let trafficBarComponent = {
     controller : function() : any {},
     view: function () {
@@ -208,7 +207,7 @@ let trafficBarComponent = {
 let tilescomponent = {
 
     controller: function () {
-        let getRecentArticlesRoute = jsRoutes.controllers.DataController.getRecentArticles(2);
+        let getRecentArticlesRoute = jsRoutes.controllers.DataController.getRecentArticles(1);
         return {
             articles: m.request({
                 url: getRecentArticlesRoute.url,
@@ -218,24 +217,134 @@ let tilescomponent = {
     },
     view: function (ctrl : any) {
         return m("div", {
-                "class": "row article_container small-up-1 medium-up-2 large-up-3"
+                "class": "row article_container small-up-1 medium-up-2 large-up-3 hide-for-small-only"
             },
             ctrl.articles().map(function (article : any) { // TODO this javascript error existed before migration "Uncaught TypeError: Cannot read property 'map' of undefined"
                 return m("div", {
                         "class": "column column-block tile_main_container"
                     },
-                    m("div", {"class": "tile_container"},
-                        m("div", {"class": "tile_left", 'style': {'background-image': 'url(' + article.imagePath + ')'}}
-                        ),
-                        m("div", {"class": "tile_right"},
-                            m("div", {"class": "rightContainer"},
-                                m("a", {href: article.link},article.title),
-                                m("hr"),
-                                m("p", m.trust(article.text)),
-                                m("a", {href: article.link}, m("i", {"class": "fa  fa-angle-right fa-2x"}))
+                        m("div", {"class": "tile_container"},
+                            m("div", {"class": "tile_img", 'style': {'background-image': 'url(/assets/images/fold_galaxy.png)'}}
+                            ),
+                            m("div", {"class": "text_part"},
+                                m("h5", "Recent Updates"),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
+                                    m("h6", "July 4, 2017"),
+                                    m("p", "HMM databases of the ",
+                                        m("b", "human proteome"), " and ",
+                                        m("em", " Chaetomium thermophilum"),
+                                        " are online"
+                                    )
+                                ),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
+                                    m("h6", "June 20, 2017"),
+                                    m("p", "Profile HMM database of",
+                                        m("em", " Arabidopsis thaliana"),
+                                        m("span", " is online")
+                                    )
+                                ),
+                                m("a", {"data-open": "recentUpdatesModal"},
+                                    m("h6", "June 10, 2017"),
+                                    m("p", "Profile HMM databases of many bacterial proteomes are online")
+                                ),
+                                m("a", {"data-open": "recentUpdatesModal"},
+                                    m("h6", "May 27, 2017"),
+                                    m("p", "Profile HMM databases of",
+                                        m("em", " Mycobacterium tuberculosis"),
+                                        m("span", " is now available for HHpred")
+                                    )
+                                )
+                            ),
+                            m("div", {"class": "quick_links"},
+                                m("h5", "Quick Links"),
+                                m("table",
+                                    m("tr",
+                                        m("td",
+                                            m("a", {href: "/#/tools/hhpred"},
+                                                m("a", "HHpred")
+                                            )
+                                        ),
+                                        m("td",
+                                            m("a", {href: "/#/tools/hhpred"},
+                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
+                                            )
+                                        )
+                                    ),
+                                    m("tr",
+                                        m("td",
+                                            m("a", {href: "/#/tools/hhblits"},
+                                                m("a", "HHblits")
+                                            )
+                                        ),
+                                        m("td",
+                                            m("a", {href: "/#/tools/hhblits"},
+                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
+                                            )
+                                        )
+                                    ),
+                                    m("tr",
+                                        m("td",
+                                            m("a", {href: "/#/tools/hhrepid"},
+                                                m("a", "HHrepID")
+                                            )
+                                        ),
+                                        m("td",
+                                            m("a", {href: "/#/tools/hhprepid"},
+                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
+                                            )
+                                        )
+                                    ),
+                                    m("tr",
+                                        m("td",
+                                            m("a", {href: "/#/tools/psiblast"},
+                                                m("a", "PSI-BLAST")
+                                            )
+                                        ),
+                                        m("td",
+                                            m("a", {href: "/#/tools/psiblast"},
+                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
+                                            )
+                                        )
+                                    ),
+                                    m("tr",
+                                        m("td",
+                                            m("a", {href: "/#/tools/pcoils"},
+                                                m("a", "PCOILS")
+                                            )
+                                        ),
+                                        m("td",
+                                            m("a", {href: "/#/tools/pcoils"},
+                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
+                                            )
+                                        )
+                                    ),
+                                    m("tr",
+                                        m("td",
+                                            m("a", {href: "/#/tools/clans"},
+                                                m("a", "CLANS")
+                                            )
+                                        ),
+                                        m("td",
+                                            m("a", {href: "/#/tools/clans"},
+                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
+                                            )
+                                        )
+                                    ),
+                                    m("tr",
+                                        m("td",
+                                            m("a", {href: "/#/tools/mafft"},
+                                                m("a", "MAFFT")
+                                            )
+                                        ),
+                                        m("td",
+                                            m("a", {href: "/#/tools/mafft"},
+                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
+                                            )
+                                        )
+                                    )
+                                )
                             )
                         )
-                    )
                 )
 
             })

@@ -3,21 +3,21 @@ JOBID=%jobid.content
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 
-if [ $CHAR_COUNT -gt "10000000" ] ; then
+if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
-if [ $SEQ_COUNT = "0" ] ; then
+if [ ${SEQ_COUNT} = "0" ] ; then
       echo "#Invalid input format. Input should be in FASTA format." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
-if [ $SEQ_COUNT -lt "2" ] ; then
+if [ ${SEQ_COUNT} -lt "2" ] ; then
       echo "#Input should contain at least 2 sequences." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
@@ -26,32 +26,32 @@ OUTFORMAT=$(reformatValidator.pl fas ufas \
             $(readlink -f ../params/alignment) \
             -d 160 -uc -l 32000)
 
-if [ "$OUTFORMAT" = "ufas" ] ; then
+if [ "${OUTFORMAT}" = "ufas" ] ; then
     SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
     echo "#Read ${SEQ_COUNT} sequences." >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
 else
     echo "#Input is not in FASTA format." >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
     false
 fi
 echo "done"  >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
-if [ $SEQ_COUNT -gt "20000" ] ; then
+if [ ${SEQ_COUNT} -gt "20000" ] ; then
       echo "#Input contains more than 20000 sequences." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
 THREADS_TO_USE=%THREADS
 
-if [ $SEQ_COUNT -lt "100" ] ; then
+if [ ${SEQ_COUNT} -lt "100" ] ; then
     THREADS_TO_USE=1
 fi
 
 echo "#Clustering down input set." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 #convert input sequences into the MMseqs database format
 mmseqs createdb %alignment.path \
@@ -74,10 +74,10 @@ mmseqs cluster  ../results/${JOBID}_seqDB \
                 --threads ${THREADS_TO_USE}
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 echo "#Generating output." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 #Generate FASTA-style output
 mmseqs createseqfiledb ../results/${JOBID}_seqDB \
@@ -98,4 +98,4 @@ rm -r ../results/tmp
 rm ../results/${JOBID}_*
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog

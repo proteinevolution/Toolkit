@@ -107,7 +107,7 @@
                     }
                 }).then(function(submissionReturnData : any){
                     console.log("Data(then):", submissionReturnData);
-                    if (submissionReturnData.successful === true) {
+                    if (submissionReturnData.successful) {
                         console.log("Job Submission was successful.");
                         jobID = submissionReturnData.jobID;
                         let jobListComp = JobListComponent.Job(

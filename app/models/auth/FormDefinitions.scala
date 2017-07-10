@@ -1,6 +1,6 @@
 package models.auth
 
-import models.database.users.{UserToken, UserData, User}
+import models.database.users.{ User, UserData, UserToken }
 import org.joda.time.DateTime
 import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Form
@@ -40,7 +40,8 @@ object FormDefinitions {
         userData = Some(
           UserData(nameLogin = nameLogin,
                    password = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)),
-                   eMail = eMail)),
+                   eMail = eMail)
+        ),
         jobs = user.jobs,
         dateLastLogin = Some(new DateTime()),
         dateCreated = Some(new DateTime()),
@@ -71,25 +72,27 @@ object FormDefinitions {
   def ProfileEdit(user: User) =
     Form(
       mapping(
-        UserData.EMAIL     -> email,
-        UserData.NAMEFIRST -> optional(text(1, 100) verifying pattern(textRegex, error = "error.NameFirst")),
-        UserData.NAMELAST  -> optional(text(1, 100) verifying pattern(textRegex, error = "error.NameLast")),
+        UserData.EMAIL     -> optional(email),
+        UserData.NAMEFIRST -> optional(text(1, 25) verifying pattern(textRegex, error = "error.NameFirst")),
+        UserData.NAMELAST  -> optional(text(1, 25) verifying pattern(textRegex, error = "error.NameLast")),
         UserData.COUNTRY   -> optional(text(3, 3) verifying pattern(textRegex, error = "error.Country")),
         UserData.PASSWORD  -> (text(8, 128) verifying pattern(textRegex, error = "error.Password"))
       ) { (eMail, nameFirst, nameLast, country, password) =>
         if (user.checkPassword(password)) {
           Some(
-            user.getUserData.copy(eMail = eMail,
+            user.getUserData.copy(eMail = eMail.getOrElse(user.getUserData.eMail),
                                   nameFirst = nameFirst,
                                   nameLast = nameLast,
-                                  country = country))
+                                  country = country)
+          )
         } else {
           None
         }
       } {
         case _ =>
           None
-      })
+      }
+    )
 
   /**
     * Edit form for the password change in the Profile

@@ -5,13 +5,13 @@ FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
 
 if [ ${CHAR_COUNT} -gt "10000" ] ; then
       echo "#Input may not contain more than 10000 characters." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
 if [ ${FORMAT} = "1" ] || [ ${SEQ_COUNT} -gt "1" ] ; then
       echo "#Input is a multiple sequence alignment; expecting a single protein sequence." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
@@ -20,9 +20,9 @@ if [ ${SEQ_COUNT} = "0" ] ; then
       perl -pe 's/\s+//g' ../params/alignment1 > ../params/alignment
       CHAR_COUNT=$(wc -m < ../params/alignment)
 
-      if [ $CHAR_COUNT -gt "10000" ] ; then
+      if [ ${CHAR_COUNT} -gt "10000" ] ; then
             echo "#Input may not contain more than 10000 characters." >> ../results/process.log
-            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+            updateProcessLog
             false
       else
             sed -i "1 i\>${JOBID}" ../params/alignment
@@ -30,14 +30,14 @@ if [ ${SEQ_COUNT} = "0" ] ; then
 fi
 
 echo "#Query is a protein sequence with ${CHAR_COUNT} residues." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 
 echo "#Executing MARCOIL." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 # Switch on correct Matrix
 if [ "mtk" = "%matrix_marcoil.content" ] ; then
@@ -72,10 +72,10 @@ marcoil  ${PARAMMATRIX} \
                       "$(readlink -f ../params/alignment.in)"
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 echo "#Preparting OUTPUT." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 # Prepare MARCOIL GNUPLOT
 if [ "${PARAMMATRIX}" = "-C -i" ] || [ "${PARAMMATRIX}" = "-C" ] ;then
@@ -95,4 +95,4 @@ create_numerical_marcoil.rb "$(readlink -f ../params/)/"
 cp ../params/* ../results/
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog

@@ -1,18 +1,65 @@
-#TODO: check the matrix modes on Rye; pcoils needs to be installed in "/cluster/toolkit/production/bioprogs/pcoils"
-#TODO: because of hard-coded paths. Executables are not easy to rebuild
 JOBID=%jobid.content
-SEQ_COUNT=$(egrep '^>' ../params/alignment  -c)
+SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
+CHAR_COUNT=$(wc -m < ../params/alignment)
+FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
 
-if [ ${SEQ_COUNT} -eq "1" ] ; then
-        echo "#Query is a single protein sequence." >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
-else
-        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+if [ ${CHAR_COUNT} -gt "10000000" ] ; then
+      echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
+      updateProcessLog
+      false
 fi
 
+if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
+      sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
+      CHAR_COUNT=$(wc -m < ../params/alignment1)
+
+      if [ ${CHAR_COUNT} -gt "10000" ] ; then
+            echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
+            updateProcessLog
+            false
+      else
+            sed -i "1 i\>${JOBID}" ../params/alignment1
+            mv ../params/alignment1 ../params/alignment
+      fi
+fi
+
+if [ ${FORMAT} = "1" ] ; then
+      reformatValidator.pl clu fas \
+            $(readlink -f %alignment.path) \
+            $(readlink -f ../results/${JOBID}.fas) \
+            -d 160 -uc -l 32000
+else
+      reformatValidator.pl fas fas \
+            $(readlink -f %alignment.path) \
+            $(readlink -f ../results/${JOBID}.fas) \
+            -d 160 -uc -l 32000
+fi
+
+if [ ! -f ../results/${JOBID}.fas ]; then
+    echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
+    updateProcessLog
+    false
+fi
+
+SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
+
+if [ ${SEQ_COUNT} -gt "2000" ] ; then
+      echo "#Input contains more than 2000 sequences." >> ../results/process.log
+      updateProcessLog
+      false
+fi
+
+if [ ${SEQ_COUNT} -gt "1" ] ; then
+       echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
+       updateProcessLog
+else
+       echo "#Query is a single protein sequence." >> ../results/process.log
+       updateProcessLog
+fi
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
+
+mv ../results/${JOBID}.fas ../params/alignment
 
 WEIGHTING_MODE=""
 declare -a COMMAND_TO_RUN_SINGLE=(run_Coils_iterated run_Coils_pdb run_Coils run_Coils_old)
@@ -26,11 +73,11 @@ fi
 
 if [ "%pcoils_input_mode.content" = "2" ]; then
 
-        echo "#MSA generation required. Running 1 iterations of PSI-BLAST against nr70." >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        echo "#MSA generation required. Running 1 iteration of PSI-BLAST against nr70." >> ../results/process.log
+        updateProcessLog
 
         INPUT="query"
-        if [ $SEQ_COUNT -gt 1 ] ; then
+        if [ ${SEQ_COUNT} -gt 1 ] ; then
             INPUT="in_msa"
         fi
 
@@ -62,7 +109,7 @@ if [ "%pcoils_input_mode.content" = "2" ]; then
                  -uc -num -r
 
         echo "done" >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        updateProcessLog
 
 else
         cp ../params/alignment ../params/${JOBID}.in
@@ -72,7 +119,7 @@ deal_with_sequence.pl ../params/${JOBID} ../params/${JOBID}.in  ../results/${JOB
 cp ../params/${JOBID}.deal_with_sequence ../results
 
 echo "#Predicting coiled coils using PCOILS." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 if [ "%pcoils_input_mode.content" = "0" ]; then
         ${COMMAND_TO_RUN_SINGLE[%pcoils_matrix.content]} ${WEIGHTING_MODE} -win 14 < ../results/${JOBID}.buffer > ../results/${JOBID}.coils_n14
@@ -80,16 +127,16 @@ if [ "%pcoils_input_mode.content" = "0" ]; then
         ${COMMAND_TO_RUN_SINGLE[%pcoils_matrix.content]} ${WEIGHTING_MODE} -win 28 < ../results/${JOBID}.buffer > ../results/${JOBID}.coils_n28
 
         echo "done" >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        updateProcessLog
 
         echo "#Generating output." >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        updateProcessLog
 
         prepare_coils_gnuplot.pl ../results/${JOBID} ../results/${JOBID}.coils_n14 ../results/${JOBID}.coils_n21 ../results/${JOBID}.coils_n28
         create_numerical.rb -i ../results/${JOBID} -m %pcoils_matrix.content -s ../params/${JOBID}.in -w %pcoils_weighting.content
 
         echo "done" >> ../results/process.log
-        curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+        updateProcessLog
 
 fi
 
@@ -108,14 +155,14 @@ if [ "%pcoils_input_mode.content" = "1" ] || [ "%pcoils_input_mode.content" = "2
          ${COMMAND_TO_RUN_MSA[%pcoils_matrix.content]} ${WEIGHTING_MODE} -win 28 -prof ../results/${JOBID}.myhmmmake.out < ../results/${JOBID}.buffer > ../results/${JOBID}.coils_n28
 
          echo "done" >> ../results/process.log
-         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+         updateProcessLog
 
          echo "#Generating output." >> ../results/process.log
-         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+         updateProcessLog
 
          prepare_for_gnuplot.pl ../results/${JOBID} F 2 ../results/${JOBID}.coils_n14 ../results/${JOBID}.coils_n21 ../results/${JOBID}.coils_n28 ../results/${JOBID}.horiz
          create_numerical.rb -i ../results/${JOBID} -m %pcoils_matrix.content -a ../params/${JOBID}.in -w %pcoils_weighting.content
 
          echo "done" >> ../results/process.log
-         curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+         updateProcessLog
 fi

@@ -1,6 +1,6 @@
 package modules.tel.runscripts
 
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 
 import better.files._
 import play.api.Logger

@@ -12,7 +12,7 @@ let JobErrorComponent = {
     },
     view: function(ctrl : any, args : any) {
         return m("div", { "class": "running-panel", config: foundationConfig }, [
-            m('h5', "Your Job has reached error state!"),
+            m('h5', "Your job has reached error state!"),
             m("div", {"class": "processJobIdContainer"},
                 m('p', "Job ID:"),
                 m('p', '' + args.job().jobID)),

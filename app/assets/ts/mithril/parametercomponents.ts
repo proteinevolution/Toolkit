@@ -1,26 +1,36 @@
+/// <reference path="jobview/input.ts"/>
+
 let renderParameter = function(content : any, moreClasses? : any) : any {
     return m("div", { "class": moreClasses ? "parameter " + moreClasses : "parameter" }, content);
 };
 
 let mapParam = function(param : any, ctrl : any) {
-    let comp = formComponents[param.paramType.type];
-    return m(comp, {
+    return m(formComponents[param.paramType.type], {
         param: param,
         value: ctrl.getParamValue(param.name)
     });
 };
 
-
-
 let selectBoxAccess = function(elem : any, isInit : boolean) {
     if (!isInit) {
+
+        $("#alignmode").on('change', function(){
+
+            if ($("#alignmode").val() === 'glob'){
+                $("#macmode").prop("value", "-realign");
+                $('#macmode option[value="-norealign"]').attr("disabled", true);
+                $("#macmode").niceSelect('update');
+            }
+            else {
+                $('#macmode option[value="-norealign"]').attr("disabled", false);
+                $("#macmode").niceSelect('update');
+            }
+        });
         return $(elem).niceSelect();
     } else {
         return $(elem).niceSelect('update');
     }
 };
-
-
 
 let ParameterSlideComponent = {
     model: function(args : any) {
@@ -100,12 +110,6 @@ let ParameterRadioComponent = {
 };
 
 let ParameterSelectComponent = {
-    //not needed so far but is working
-    controller: function(args : any) {
-        return {
-
-        }
-    },
 
     view: function(ctrl : any, args : any) {
         let paramAttrs : any = {
@@ -114,19 +118,32 @@ let ParameterSelectComponent = {
             id: args.param.name,
             config: select2Config
         };
-        if(args.param.name == "hhsuitedb" || args.param.name == "proteomes") {
+
+
+        let multiselect : boolean = args.param.name === "hhsuitedb" || args.param.name === "proteomes";
+
+        if(args.param.name === "patsearchdb"){
+            paramAttrs["config"] = select2Single;
+            paramAttrs["class"] = "wide inputDBs";
+        }
+        else if (multiselect) {
+
             paramAttrs["multiple"] = "multiple";
             paramAttrs["class"] = "inputDBs";
-        }else{
+            args.value = args.value.split(/\s+/);
+
+        } else {
             paramAttrs["config"] = selectBoxAccess;
         }
+
         return renderParameter([
             m("label", {
                 "for": args.param.name
             }, args.param.label),
             m("select", paramAttrs,
                 args.param.paramType.options.map(function(entry : any) {
-                    return m("option", (args.value.indexOf(entry[0]) > -1 ? {
+
+                    return m("option", ( (multiselect ? args.value.indexOf(entry[0]) > -1  : args.value === entry[0]) ? {
                         value: entry[0],
                         selected: "selected"
                     } : {
@@ -199,13 +216,53 @@ let ParameterBoolComponent = {
 
 
 
+let ParameterModellerKeyComponent = {
+    keyStored: false,
+    value: "",
+    validate: function(val: string, checkLen?: boolean){
+        ParameterModellerKeyComponent.value = val;
+        if(checkLen || val.length >= 11) {
+            m.request({method: "POST", url: "/validate/modeller?input="+val}).then(function (response) {
+                ParameterModellerKeyComponent.keyStored = response.isValid;
+                if(ParameterModellerKeyComponent.keyStored){
+                    validationProcess($('#alignment'),"modeller");
+                }
+            });
+        }
+    },
+    controller: function(){
+        ParameterModellerKeyComponent.validate("", true);
+        return {}
+    },
+    view: function(ctrl : any, args : any) {
+        let paramAttrs = {
+            type: "text",
+            id: args.param.name,
+            value: ParameterModellerKeyComponent.value,
+            onkeyup: m.withAttr("value", ParameterModellerKeyComponent.validate),
+            config: paramValidation,
+            "class": "modellerKey invalid"
+
+        };
+
+        return renderParameter([
+            ParameterModellerKeyComponent.keyStored ?  m("text",{"class": "modellerKey valid"},"MODELLER-key is stored in your profile.") : [
+                    m("label", {
+                        "for": args.param.name,
+                    }, args.param.label), m("input", paramAttrs)]
+        ]);
+    }
+};
+
 
 let formComponents : any = {
-    1: (<any>window).ParameterAlignmentComponent,
+    1: ParameterAlignmentComponent,
     2: ParameterNumberComponent,
     3: ParameterSelectComponent,
     4: ParameterBoolComponent,
     5: ParameterRadioComponent,
     6: ParameterSlideComponent,
-    7: ParameterTextComponent
+    7: ParameterTextComponent,
+    8: ParameterModellerKeyComponent
+
 };

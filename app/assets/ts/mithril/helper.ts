@@ -8,9 +8,25 @@ let closeShortcut = function() {
     });
 };
 
+let nonJsonErrors = function(xhr : XMLHttpRequest) {
+    return xhr.status > 200 ? JSON.stringify(xhr.responseText) : xhr.responseText
+};
 
 let tabulated = function(element : any, isInit : boolean) : any {
-    if (!isInit) { return $(element).tabs({ active: this.active, beforeLoad: function(event, ui){ ui.panel.addClass("result-panel")}});}
+    if (!isInit) {
+        return $(element).tabs({
+            active: this.active,
+            beforeLoad:
+            function(event, ui){
+                ui.panel.addClass("result-panel");
+                let timerOverlay = setTimeout(function(){
+                    $.LoadingOverlay("show")}, 300);
+                    ui.jqXHR.then(function () {
+                    clearTimeout(timerOverlay);$.LoadingOverlay("hide");
+                });
+            },
+        });
+    }
 };
 
 // clear input forms when clicking on a tool again
@@ -44,6 +60,17 @@ let select2Config = function(elem : any, isInit : boolean) : any {
 
 };
 
+let select2Single = function(elem : any, isInit : boolean) : any {
+    if(!isInit) {
+        $(elem).select2({
+            dropdownAutoWidth : true,
+            width: '17.5em',
+        });
+    }
+};
+
+
+
 
 let helpModalAccess = function(elem : any, isInit: boolean) {
     if (!isInit) {
@@ -68,6 +95,7 @@ let hideSubmitButtons = function (elem : any, isInit : boolean) : any {
 
     }
 };
+
 
 
 let submitModal = function(elem : any, isInit : boolean) : any {

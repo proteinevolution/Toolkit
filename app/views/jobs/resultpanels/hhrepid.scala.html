@@ -1,0 +1,32 @@
+@import models.results.HHrepID
+@(jobID: String, filePath: String, resultName: String,  tool : models.tools.Tool)(implicit request: RequestHeader)
+@views.html.forwardmodals.simpler(tool, resultName)
+
+@if(HHrepID.existsResult(jobID, filePath)) {
+    <div class="colorOptsAlignment">
+        <a type="button" data-open="forwardModal_@resultName"><span>Forward Query MSA</span></a>
+        <hr id="line-element" colspan="4" class="horizontal-line">
+    </div>
+
+    <div class="hhrepidResult">
+    @HHrepID.getResult(jobID, filePath)
+    </div>
+}else{
+    <div class="callout alert noHitsWide" id="noHitsWide">No repeats found!</div>
+}
+
+<script>
+
+        window["@{resultName}_forward"] = function(selectedTool){
+            $.LoadingOverlay("show");
+            $.ajax({
+                type: 'GET',
+                url: 'files/@jobID/query.msa',
+                error: function(){
+                    $.LoadingOverlay("hide")
+                }
+            }).done(function (data_) {
+                forward(selectedTool, data_.toString());
+            });
+        };
+</script>

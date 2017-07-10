@@ -1,0 +1,185 @@
+@import play.api.libs.json.JsObject
+@import play.api.libs.json.JsValue
+@import play.api.libs.json.JsArray
+@import play.api.Logger
+@import play.api.libs.json.JsUndefined
+@import play.api.libs.json.JsDefined
+@import models.results.BlastVisualization
+@import modules.tel.TEL
+@import play.api.libs.json.JsLookupResult
+@import models.database.results.AlignmentResult
+@(jobID: String, alignment: AlignmentResult, resultName: String,  tool : models.tools.Tool)(implicit request: RequestHeader)
+<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
+
+@views.html.forwardmodals.simpler(tool, resultName)
+
+<div class="colorOptsAlignment">
+    <a onclick="selectAll()" class="selectAllSeq"><span class="selectAllSeqSpan">Select all</span></a>
+    <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
+    <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Reduced MSA</span></a>
+    <a type="button" id="downloadAlignmentFull"  onclick="@{resultName}_downloadFull()"><span>Download Full MSA</span></a>
+    <hr id="line-element" colspan="4" class="horizontal-line">
+</div>
+<div id="alignmentResultView">
+    Number of sequences: <b>@alignment.alignment.length</b>
+        <br />
+        <br />
+<form id="alignmentResult">
+    <table class="unstriped">
+        <tbody class="alignmentTBody">
+        </tbody>
+        <tr>
+            <td colspan="4" ><a onclick="getsHitsManually()" id="loadHitsQaln">Load Hits</a></td>
+        </tr>
+        <tr>
+            <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
+        </tr>
+    </table>
+</form>
+</div>
+
+<script>
+
+        var fileUrl = "/files/@jobID/reduced.fas";
+        var downloadFilename = "@{tool.toolNameShort}_@{resultName}_jobID_@{jobID}.fasta";
+
+        var fileUrlFull = "/files/@jobID/full.fas";
+        var downloadFilenameFull = "@{tool.toolNameShort}_full_jobID_@{jobID}.fasta";
+
+        var selectAllBool = false;
+        var shownHits = 20;
+        var showMore = 100;
+        var loading = false;
+        var numHits = @alignment.alignment.length;
+         var resultName = '@resultName';
+        var jobID = '@jobID';
+        var checkboxes = [];
+        var checkbox = "checkbox";
+        var colorAAs = false;
+
+
+        window["@{resultName}_forward"] = function(selectedTool){
+            var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
+            var route = jsRoutes.controllers.AlignmentController.getAln(jobID);
+
+            $.LoadingOverlay("show");
+            // get result json
+            $.ajax({
+                type: route.method,
+                url: route.url,
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                error: function(){
+                    $.LoadingOverlay("hide")
+                }
+            }).done(function (data) {
+                    forward(selectedTool, data);
+            });
+        };
+
+
+        window["@{resultName}_download"] = function(){
+            // get result json
+
+            $.LoadingOverlay("show");
+
+            $.ajax({
+                type: 'GET',
+                url: fileUrl
+            }).done(function (data) {
+                download(downloadFilename, data.toString());
+            });
+        };
+
+        window["@{resultName}_downloadFull"] = function(){
+            // get result json
+
+            $.LoadingOverlay("show");
+
+            $.ajax({
+                type: 'GET',
+                url: fileUrlFull
+            }).done(function (data) {
+                download(downloadFilenameFull, data.toString());
+            });
+        };
+
+        function getHits(start, end){
+            if(start <= numHits && end <= numHits && !loading){
+                var data = {"start": start, "end": end, "resultName": resultName};
+                loading = true;
+                $('#loadHitsQaln').hide();
+                $('#loadingHits').show();
+                var route = {};
+                route.url = "/AlignmentLoadHits/" + jobID;
+                route.method = "POST";
+                return $.ajax({
+                    method: route.method,
+                    url: route.url,
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    error: function(){
+                        $(".alignmentTBody").append("Error loading Data.");
+                    }
+                }).done(function (data_) {
+                    $(".alignmentTBody").append(data_);
+                    loading = false;
+                    $('#loadingHits').hide();
+                    // hide loadHitsQaln
+                    if (shownHits != numHits) {
+                        $('#loadHitsQaln').show();
+                    }
+                });
+            }
+        }
+
+
+        $(document).ready(function () {
+
+            // trigger lazyload for loading alignment
+            shownHits = shownHits > numHits ? numHits : shownHits;
+            getHits(0, shownHits).then(function(){
+                // check checkboxes that are stored in array
+                // in order to make it work with pagination/lazyload
+                selectFromArray(checkboxes);
+                $(document).on('scroll', function () {
+                    if ($(this).scrollTop() == $(this).height() - $(window).height()) {
+                        if (!loading) {
+                            var end = shownHits + showMore;
+                            end = end < numHits ? end : numHits;
+                            if (shownHits != end) {
+                                getHits(shownHits, end);
+                            }else{
+                                $('#loadHitsQaln').hide();
+                            }
+                            shownHits = end;
+
+
+                        }
+                    }
+                    $("#alignmentResult").floatingScroll('init');
+                });
+                $('input:checkbox').click(function (e) {
+                    var currentVal = $(this).val();
+                    var currentState = $(this).prop('checked');
+                    if (currentState) {
+                        // push num of checked checkbox into array
+                        checkboxes.push(parseInt(currentVal));
+                        // make sure array contains no duplicates
+                        checkboxes = checkboxes.filter(function (value, index, array) {
+                            return array.indexOf(value) == index;
+                        });
+                    } else {
+                        // delete num of unchecked checkbox from array
+                        checkboxes = checkboxes.filter(function (x) {
+                            return x != currentVal
+                        });
+                    }
+                });
+                // hide loadHitsQaln
+                if(shownHits == numHits){
+                    $('#loadHitsQaln').hide();
+                }
+            });
+        });
+</script>

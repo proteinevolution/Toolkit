@@ -33,6 +33,8 @@ POST          /backend/users                          @controllers.Backend.users
 # Websocket
 GET           /ws                                     @controllers.Application.ws
 
+# Maintenance
+POST          /maintenance                            controllers.Application.maintenance
 
 # Serve files
 GET           /files/:mainID/:filename                @controllers.Application.file(filename: String, mainID: String)
@@ -48,10 +50,6 @@ GET           /assets/*file                           controllers.Assets.version
 GET           /tools/:toolname                        @controllers.Application.showTool(toolname : String)
 # Redirects to a job with the jobID // mainID
 GET           /jobs/:idString                         @controllers.Application.showJob(idString: String)
-
-# File Uploader
-
-POST          /upload                                 @controllers.Application.upload()
 
 
 # Contact
@@ -84,7 +82,7 @@ POST          /jobs/updateLog/:jobID                  @controllers.Jobs.updateLo
 
 # Validation Controller
 
-GET           /validate/modeller/:input               @controllers.Validation.validateModellerKey(input: String)
+POST          /validate/modeller                      @controllers.Auth.validateModellerKey(input: String)
 
 # Cluster
 
@@ -118,14 +116,11 @@ GET           /api/jobs                               @controllers.JobController
 POST          /api/job                                @controllers.JobController.submitJob(toolName: String)
 GET           /api/job/:jobID/start                   @controllers.JobController.startJob(jobID: String)
 GET           /api/job/:jobID/checkHash               @controllers.JobController.checkHash(jobID: String)
-# TODO Remove this route in favor of submitJob
-POST          /api/job/create                         @controllers.JobController.create(toolname: String, jobID: String)
-# TODO Remove this route in favor of submitJob
-POST          /api/job/check                          @controllers.JobController.check(toolname: String, jobID: Option[String], hash: Boolean)
 GET           /api/job/:jobID                         @controllers.Service.getJob(jobID)
 GET           /api/job/result/:jobID/:tool/:panel     @controllers.Service.getResult(jobID : String, tool: String, panel: String)
 DELETE        /api/job/:jobID                         @controllers.JobController.delete(jobID)
 GET           /api/job/load/:jobID                    @controllers.JobController.loadJob(jobID: String)
+
 
 
 # Frontend Stuff
@@ -152,36 +147,39 @@ GET  /api/getRecentArticles/:numArticles              @controllers.DataControlle
 GET         /structure3D/:accession                   @controllers.HHpredController.show3DStructure(accession : String)
 GET         /getStructure/:filename                   @controllers.Application.getStructureFile(filename : String)
 # template alignment
-GET  /templateAlignment/:jobID/:accession             @controllers.HHpredController.runScript(jobID : String, accession : String)
-GET  /templateAlignmentHHblits/:jobID/:accession      @controllers.HHblitsController.retrieveTemplateAlignment(jobID : String, accession : String)
+GET  /templateAlignment/:jobID/:accession             @controllers.HHpredController.retrieveTemplateAlignment(jobID : String, accession: String)
+GET  /templateAlignmentHHblits/:jobID/:accession      @controllers.HHblitsController.retrieveTemplateAlignment(jobID : String, accession: String)
 
 
 # Hmmer
-POST        /HmmerLoadHits                            @controllers.HmmerController.loadHits(jobID: String, start: Int, end: Int)
-POST        /alnEvalHmmer                             @controllers.HmmerController.alnEval(jobID: String, eval:String)
+POST        /HmmerLoadHits                            @controllers.HmmerController.loadHits(jobID: String)
+POST        /alnEvalHmmer                             @controllers.HmmerController.alnEval(jobID: String)
 POST        /alnHmmer                                 @controllers.HmmerController.aln(jobID: String)
-POST        /evalHmmerFull                            @controllers.HmmerController.evalFull(jobID: String, eval:String)
+POST        /evalHmmerFull                            @controllers.HmmerController.evalFull(jobID: String)
 POST        /HmmerFull                                @controllers.HmmerController.full(jobID: String)
 
 # PSIblast
-POST        /evalPSIBlast                             @controllers.PSIBlastController.alnEval(jobID: String, eval:String)
-POST        /alnPSIBlast                              @controllers.PSIBlastController.aln(jobID:String)
-POST        /evalPSIBlastFull                         @controllers.PSIBlastController.evalFull(jobID : String, eval: String)
-POST        /PSIBlastFull                             @controllers.PSIBlastController.full(jobID : String)
-POST        /PSIBlastLoadHits                         @controllers.PSIBlastController.loadHits(jobID: String, start: Int, end: Int)
+
+POST        /evalPSIBlast                             @controllers.PSIBlastController.alnEval(jobID: String)
+POST        /alnPSIBlast                              @controllers.PSIBlastController.aln(jobID: String)
+POST        /evalPSIBlastFull                         @controllers.PSIBlastController.evalFull(jobID: String)
+POST        /PSIBlastFull                             @controllers.PSIBlastController.full(jobID: String)
+POST        /PSIBlastLoadHits                         @controllers.PSIBlastController.loadHits(jobID: String)
+
 
 # HHblits
-POST        /evalHHBlits                              @controllers.HHblitsController.alnEval(jobID: String, eval:String)
+POST        /evalHHBlits                              @controllers.HHblitsController.alnEval(jobID: String)
 POST        /alnHHBlits                               @controllers.HHblitsController.aln(jobID:String)
-POST        /evalHHBlitsFull                          @controllers.HHblitsController.evalFull(jobID : String, eval: String)
+POST        /evalHHBlitsFull                          @controllers.HHblitsController.evalFull(jobID : String)
 POST        /HHBlitsFull                              @controllers.HHblitsController.full(jobID : String)
-POST        /HHblitsLoadHits                          @controllers.HHblitsController.loadHits(jobID: String, start: Int, end: Int)
+POST        /HHblitsLoadHits                          @controllers.HHblitsController.loadHits(jobID: String)
 
 # HHPred
-POST        /evalHHpred                               @controllers.HHpredController.alnEval(jobID: String, eval:String)
+POST        /evalHHpred                               @controllers.HHpredController.alnEval(jobID: String)
 POST        /alnHHpred                                @controllers.HHpredController.aln(jobID:String)
-POST        /HHpredLoadHits                           @controllers.HHpredController.loadHits(jobID: String, start: Int, end: Int, isColor: Boolean)
+POST        /HHpredLoadHits                           @controllers.HHpredController.loadHits(jobID: String)
 
 # Alignment
-POST        /AlignmentLoadHits                        @controllers.AlignmentController.loadHits(jobID: String, start: Int, end: Int, resultName: String)
-POST        /AlignmentGetAln                          @controllers.AlignmentController.getAln(jobID: String, resultName: String)
+POST        /AlignmentLoadHits/:jobID                 @controllers.AlignmentController.loadHits(jobID: String)
+POST        /AlignmentLoadHitsClustal/:jobID          @controllers.AlignmentController.loadHitsClustal(jobID: String)
+POST        /AlignmentGetAln                          @controllers.AlignmentController.getAln(jobID: String)

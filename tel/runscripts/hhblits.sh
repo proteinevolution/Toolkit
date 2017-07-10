@@ -4,19 +4,19 @@ SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
 
-if [ $CHAR_COUNT -gt "10000000" ] ; then
+if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+      updateProcessLog
       false
 fi
 
-if [ $SEQ_COUNT = "0" ] && [ $FORMAT = "0" ] ; then
+if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
       sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
       CHAR_COUNT=$(wc -m < ../params/alignment1)
 
-      if [ $CHAR_COUNT -gt "10000" ] ; then
+      if [ ${CHAR_COUNT} -gt "10000" ] ; then
             echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
-            curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+            updateProcessLog
             false
       else
             sed -i "1 i\>${JOBID}" ../params/alignment1
@@ -24,7 +24,7 @@ if [ $SEQ_COUNT = "0" ] && [ $FORMAT = "0" ] ; then
       fi
 fi
 
-if [ $FORMAT = "1" ] ; then
+if [ ${FORMAT} = "1" ] ; then
       reformatValidator.pl clu fas \
             $(readlink -f %alignment.path) \
             $(readlink -f ../results/${JOBID}.in.fas) \
@@ -38,31 +38,45 @@ fi
 
 if [ ! -f ../results/${JOBID}.in.fas ]; then
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-    curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+    updateProcessLog
     false
 fi
 
 SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.in.fas | wc -l)
 
-if [ $SEQ_COUNT -gt "2000" ] ; then
-      echo "#Input contains more than 2000 sequences." >> ../results/process.log
-      curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+if [ ${SEQ_COUNT} -gt "10000" ] ; then
+      echo "#Input contains more than 10000 sequences." >> ../results/process.log
+      updateProcessLog
       false
 fi
 
-if [ $SEQ_COUNT -gt "1" ] ; then
+if [ ${SEQ_COUNT} -gt "1" ] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+       updateProcessLog
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
-       curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+       updateProcessLog
 fi
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 echo "#Searching %hhblitsdb.content." >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
+
+
+
+head -n 2 ../results/${JOBID}.in.fas > ../results/firstSeq0.fas
+sed 's/[\.\-]//g' ../results/firstSeq0.fas > ../results/firstSeq.fas
+
+TMPRED=`tmhmm ../results/firstSeq.fas -short`
+
+run_Coils -c -min_P 0.8 < ../results/firstSeq.fas >& ../results/firstSeq.cc
+COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
+
+rm ../results/firstSeq0.fas ../results/firstSeq.fas ../results/firstSeq.cc
+
+
 
 hhblits -cpu %THREADS \
         -i ../results/${JOBID}.in.fas \
@@ -78,11 +92,11 @@ hhblits -cpu %THREADS \
         -B %desc.content
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 
 echo "#Generating output" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog
 
 #Generate query template alignment
 hhmakemodel.pl -i ../results/${JOBID}.hhr -fas ../results/querytemplateMSA.fas -p %pmin.content
@@ -113,10 +127,14 @@ fasta2json.py ../results/alignment.fas ../results/rep100.json
 # add DB to json
 manipulate_json.py -k 'db' -v '%hhblitsdb.content' ../results/${JOBID}.json
 
+# add transmembrane prediction info to json
+manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/${JOBID}.json
 
+# add coiled coil prediction info to json
+manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/${JOBID}.json
 
 # Generate Query in JSON
 fasta2json.py ../results/${JOBID}.in.fas ../results/query.json
 
 echo "done" >> ../results/process.log
-curl -X POST http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content > /dev/null 2>&1
+updateProcessLog

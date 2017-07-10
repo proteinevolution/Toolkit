@@ -131,3 +131,4 @@ let aa_color_background : Map<string, string> = new Map<string, string>();
                             "message": "We use cookies to ensure you get the best experience on our website. By using our services you agree to our privacy policies.",
                         },
                     })});
+

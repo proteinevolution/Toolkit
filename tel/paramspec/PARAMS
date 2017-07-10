@@ -1,7 +1,8 @@
 hmmerdb GEN hmmerdb.py
-standarddb GEN standarddb.sh
+standarddb GEN standarddb.py
 hhblitsdb  GEN hhblitsdb.py
 hhsuitedb  GEN hhsuitedb.py
+patsearchdb GEN patsearchdb.py
 msa_gen_max_iter GEN msa_gen_max_iter.prop
 inc_amino GEN inc_amino.prop
 genetic_code GEN genetic_code.prop
@@ -15,7 +16,6 @@ transition_probability GEN transition_probability.prop
 alignmode GEN alignmode.prop
 ss_scoring GEN ss_scoring.prop
 maxrounds GEN maxrounds.prop
-unique_sequence GEN unique_sequence.prop
 min_seqid GEN min_seqid.prop
 min_aln_cov GEN min_aln_cov.prop
 grammar GEN grammar.prop
@@ -33,7 +33,6 @@ self_aln_pval_threshold GEN self_aln_pval_threshold.prop
 merge_iters GEN merge_iters.prop
 mac_cutoff GEN mac_cutoff.prop
 domain_bound_detection GEN domain_bound_detection.prop
-aln_stringency GEN aln_stringency.prop
 proteomes GEN proteomes.py
 output_order GEN output_order.prop
 eval_tpr GEN eval_tpr.prop
@@ -47,4 +46,4 @@ evalue GEN evalue.prop
 no_replicates GEN no_replicates.prop
 samcc_periodicity GEN samcc_periodicity.prop
 eff_crick_angle GEN eff_crick_angle.prop
-
+clans_eval GEN clans_eval.prop

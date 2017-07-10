@@ -1,6 +1,6 @@
 package models.database.users
 
-import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter}
+import reactivemongo.bson.{ BSONDocument, BSONDocumentReader, BSONDocumentWriter }
 
 /**
   * Created by astephens on 19.08.16.

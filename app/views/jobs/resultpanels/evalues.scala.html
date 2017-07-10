@@ -1,18 +1,13 @@
-@import models.results.PsiBlast
-
-@(jobID : String)(implicit request: RequestHeader)
+@(evalues: List[Double])(implicit request: RequestHeader)
 
 
 <div id="hcontainer" style="min-width: 610px; height: 400px; margin: 0 auto"></div>
 
 <script>
         var bins = new Array();
-
-        @for(lines <- PsiBlast.evalues(jobID)){
-            bins.push(@lines);
+        @for(evalue <- evalues){
+                bins.push(Array(@(-Math.log(evalue)/Math.log(10)), bins.length));
         }
-
-        //console.log(bins);
 
         $(function() {
             var width= $("#tool-tabs").width() - 30;
@@ -23,12 +18,13 @@
                 },
                 xAxis: {
                     title: {
-                        text: '-log(E-Value)'
+                        text: '-log10(E-Value)'
                     }
                 },
+
                 yAxis: {
                     title: {
-                        text: 'No. of HSPs below E-Value'
+                        text: 'No. of matches'
                     },
                     plotLines: [{
                         value: 0,
@@ -36,7 +32,7 @@
                         color: '#808080'
                     }]
                 },
-                tooltip: {
+                              tooltip: {
                 },
                 legend: {
                     layout: 'vertical',
