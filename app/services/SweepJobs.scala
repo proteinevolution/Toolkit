@@ -152,4 +152,6 @@ class SweepJobsImpl @Inject() (appLifecycle: ApplicationLifecycle,
     mongoStore.addDeletedJob(DeletedJob(jobID, DateTime.now))
   }
 
+  // TODO: is not only called on startup but also called on application stop
+  sweep()
 }
