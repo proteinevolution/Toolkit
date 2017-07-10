@@ -676,7 +676,7 @@ table.dataTable.no-footer{
 }
 
 .citation{
-    border-left: 3px solid rgba(0, 110, 98, 0.75);
+    border-left: 2px solid rgba(0, 110, 98, 0.75);
     margin: 0.5em !important;
     margin-bottom: 1em !important;
 }
