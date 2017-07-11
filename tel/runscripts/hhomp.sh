@@ -1,70 +1,173 @@
-#Create alignment
+JOBID=%jobid.content
 
-echo "#Running PSI-BLAST for query MSA and A3M generation." >> ../results/process.log
-updateProcessLog
-#Check if input is a single sequence or an MSA
-INPUT="query"
-if [ ${SEQ_COUNT} -gt 1 ] ; then
-    INPUT="in_msa"
+SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
+CHAR_COUNT=$(wc -m < ../params/alignment)
+FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
+
+if [ ${CHAR_COUNT} -gt "10000000" ] ; then
+      echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
+      updateProcessLog
+      false
 fi
 
-psiblast -db ${STANDARD}/nre70 \
-         -num_iterations %msa_gen_max_iter.content \
-         -evalue %hhomp_incl_eval.content \
-         -inclusion_ethresh 0.001 \
-         -num_threads %THREADS \
-         -num_descriptions 20000 \
-         -num_alignments 20000 \
-         -${INPUT} %alignment.path \
-         -out ../results/output_psiblastp.html
+if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
+      sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
+      CHAR_COUNT=$(wc -m < ../params/alignment1)
 
-#keep results only of the last iteration
-shorten_psiblast_output.pl ../results/output_psiblastp.html ../results/output_psiblastp.html
+      if [ ${CHAR_COUNT} -gt "10000" ] ; then
+            echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
+            updateProcessLog
+            false
+      else
+            sed -i "1 i\>Q_${JOBID}" ../params/alignment1
+            mv ../params/alignment1 ../params/alignment
+      fi
+fi
 
-#extract MSA in a3m format
-alignhits_html.pl   ../results/output_psiblastp.html ../results/${JOBID}.a3m \
-            -Q ../results/${JOBID}.fas \
-            -e %hhomp_incl_eval.content \
-            -cov %min_cov.content \
-            -a3m \
-            -no_link \
-            -blastplus
+if [ ${FORMAT} = "1" ] ; then
+      reformatValidator.pl clu fas \
+            $(readlink -f %alignment.path) \
+            $(readlink -f ../results/${JOBID}.fas) \
+            -d 160 -uc -l 32000
+else
+      reformatValidator.pl fas fas \
+            $(readlink -f %alignment.path) \
+            $(readlink -f ../results/${JOBID}.fas) \
+            -d 160 -uc -l 32000
+fi
+
+if [ ! -f ../results/${JOBID}.fas ]; then
+    echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
+    updateProcessLog
+    false
+fi
+
+SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
+
+if [ ${SEQ_COUNT} -gt "10000" ] ; then
+      echo "#Input contains more than 10000 sequences." >> ../results/process.log
+      updateProcessLog
+      false
+fi
+
+if [ ${SEQ_COUNT} -gt "1" ] ; then
+       echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
+       updateProcessLog
+else
+       echo "#Query is a single protein sequence." >> ../results/process.log
+       updateProcessLog
+fi
+
 echo "done" >> ../results/process.log
 updateProcessLog
 
 
+#CHECK IF MSA generation is required or not
+if [ "%msa_gen_max_iter.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
+        echo "#No MSA generation required for building A3M." >> ../results/process.log
+        updateProcessLog
+        reformat_hhsuite.pl fas a3m ../results/${JOBID}.fas ${JOBID}.a3m -M first
+        mv ${JOBID}.a3m ../results/${JOBID}.a3m
+        hhfilter -i ../results/${JOBID}.a3m \
+                 -o ../results/${JOBID}.a3m \
+                 -cov %min_cov.content\
+                 -qid %min_seqid_query.content
 
-#Make HMM file
-echo "#Making profile HMM from alignment." >> ../results/process.log
-updateProcessLog
-# dont know if min_cov=0 makes sense
-hhmake -cov %min_cov -diff 100 -i ../results/${JOBID}.a3m -o ../results/${JOBID}.hhm
+        echo "done" >> ../results/process.log
+        updateProcessLog
+else
+    #MSA generation required
+    #Check what method to use (PSI-BLAST? HHblits?)
 
-# Calibrate HMM file
-echo "#Calibrating query HMM." >> ../results/process.log
-updateProcessLog
+        echo "#Query MSA generation required." >> ../results/process.log
+        updateProcessLog
+        echo "done" >> ../results/process.log
+        updateProcessLog
 
-#HHomp with query HMM against HMM database
-hhomp -cpu 2 -v 2 -i ../results/${JOBID}.hhm -d ${CAL_HMM} -cal -%alignment_mode.content %bb_scoring.content
+    #MSA generation by HHblits
+    if [ "%msa_gen_method.content" = "hhblits" ] ; then
+        echo "#Running HHblits for query MSA and A3M generation." >> ../results/process.log
+        updateProcessLog
+        hhblits -cpu %THREADS \
+                -v 2 \
+                -e %hhpred_incl_eval.content \
+                -i ../results/${JOBID}.fas \
+                -d %UNIPROT  \
+                -oa3m ../results/${JOBID}.a3m \
+                -n %msa_gen_max_iter.content \
+                -qid %min_seqid_query.content \
+                -cov %min_cov.content \
+                -mact 0.35
 
-echo "#Searching %hhompdb.content." >> ../results/process.log
-updateProcessLog
+        echo "done" >> ../results/process.log
+        updateProcessLog
 
-hhomp -cpu 2 -v 2 -i ../results/${JOBID}.hhm -d '%hhompdb.content' -o ../results/${JOBID}.hhr -p %pmin.content -Z 20000 -B %desc.content -seq 20000 -%alignment_mode.content %bb_scoring.content
+    fi
+    #MSA generation by PSI-BLAST
+    if [ "%msa_gen_method.content" = "psiblast" ] ; then
 
+        echo "#Running PSI-BLAST for query MSA and A3M generation." >> ../results/process.log
+        updateProcessLog
+        #Check if input is a single sequence or an MSA
+        INPUT="query"
+        if [ ${SEQ_COUNT} -gt 1 ] ; then
+            INPUT="in_msa"
+        fi
 
+        psiblast -db ${STANDARD}/nre70 \
+                 -num_iterations %msa_gen_max_iter.content \
+                 -evalue 0.001 \
+                 -inclusion_ethresh %hhpred_incl_eval.content\
+                 -num_threads %THREADS \
+                 -num_descriptions 20000 \
+                 -num_alignments 20000 \
+                 -${INPUT} ../results/${JOBID}.fas \
+                 -out ../results/output_psiblastp.html
 
+        #keep results only of the last iteration
+        shorten_psiblast_output.pl ../results/output_psiblastp.html ../results/output_psiblastp.html
 
-# Reformat query into fasta format; 100 most diverse sequences
-hhfilter -i $(readlink -f ../results/${JOBID}.a3m) \
-         -o $(readlink -f ../results/${JOBID}.rep100.a3m) \
+        #extract MSA in a3m format
+        alignhits_html.pl   ../results/output_psiblastp.html ../results/${JOBID}.a3m \
+                    -Q ../results/${JOBID}.fas \
+                    -e %hhpred_incl_eval.content \
+                    -cov %min_cov.content \
+                    -a3m \
+                    -no_link \
+                    -blastplus
+        echo "done" >> ../results/process.log
+        updateProcessLog
+    fi
+fi
+
+#Generate representative MSA for forwarding
+
+hhfilter -i ../results/${JOBID}.a3m \
+         -o ../results/reduced.fas \
          -diff 100
 
-# Reformat query into fasta format; full alignment
 reformat_hhsuite.pl a3m fas \
-            $(readlink -f ../results/${JOBID}.rep100.a3m) \
-            $(readlink -f ../results/alignment.fas) \
-            -d 160
+         $(readlink -f ../results/reduced.fas) \
+         $(readlink -f ../results/reduced.fas) \
+         -d 160
 
-#Visualization
-hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
+${HHOMPPATH}/hhmake -v 1 -cov 20 -qid 0 -diff 100 \
+                    -i ../results/${JOBID}.a3m \
+                    -o ../results/${JOBID}.hhm
+
+${HHOMPPATH}/hhomp -cpu %THREADS \
+                   -i ../results/${JOBID}.hhm \
+                   -d ${HHOMPPATH}/cal.hhm \
+                   -cal -local
+
+${HHOMPPATH}/hhomp -cpu %THREADS \
+                   -i ../results/${JOBID}.hhm \
+                   -d %HHOMPHMM/%hhompdb.content \
+                   -o ../results/${JOBID}.hhr \
+                   -p %pmin.content \
+                   -P %pmin.content \
+                   -Z %desc.content \
+                   -%alignmode.content \
+                   -B %desc.content \
+                   -seq 1 \
+                   -b 1
