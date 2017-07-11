@@ -1,8 +1,9 @@
 package models.tools
 
 import modules.tel.TEL
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
+import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -183,7 +184,7 @@ class ParamAccess @Inject()(tel: TEL) {
     "clu" -> "clu"
   )
 
-  def getParam(paramName: String) = paramName match {
+  def getParam(paramName: String) : Param = paramName match {
       case "ALIGNMENT" =>               Param ("alignment", Sequence (Seq.empty, false), 1, "")
       case "TWOTEXTALIGNMENT" =>        Param ("alignment", Sequence (Seq (SingleSequence, Alignment (alignmentFormats) ), true), 1, "")
       case "SEQORALI" =>                Param ("alignment", Sequence (Seq (SingleSequence, Alignment (alignmentFormats) ), false), 1, "")
@@ -265,5 +266,9 @@ class ParamAccess @Inject()(tel: TEL) {
       case "SAMCC_HELIXFOUR" =>         Param ("samcc_helixfour", Text, 1, "Definition for helix 4")
       case "INVOKE_PSIPRED" =>          Param ("invoke_psipred", ParamType.Percentage, 1, "% identity cutoff to invoke a new PSIPRED run")
       case "CLANS_EVAL" =>              select("clans_eval", "Extract BLAST HSP's up to E-values of")
+      case "CLANS_EVAL" =>              select("clans_eval", "Extract BLAST HSP's up to E-values of")
+      case "PATSEARCH_DB" =>            select("patsearchdb", "Select database")
+      case "MAFFT_GAP_OPEN" =>          Param("mafft_gap_open", Decimal("0.01", Some(0), Some(10)), 1, "Gap open penalty")
+      case default  =>                  Logger.error("Parameter" + default.toString + "needs to be defined in ParamAccess"); select("","")
       }
 }
