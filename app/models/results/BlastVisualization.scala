@@ -22,6 +22,7 @@ object BlastVisualization  {
   private val smartReg = """(^SM0[0-9]{4})""".r
   private val ncbiCDReg   = """(^[cs]d[0-9]{5})""".r
   private val cogkogReg   = """(^[CK]OG[0-9]{4})""".r
+  private val tigrReg   = """(^TIGR[0-9]{5})""".r
   private val mmcifReg = """(...._[0-9a-zA-Z][0-9a-zA-Z]?[0-9a-zA-Z]?[0-9a-zA-Z]?)""".r
   private val mmcifShortReg = """([0-9]+)""".r
   private val pfamReg = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
@@ -90,6 +91,8 @@ object BlastVisualization  {
     } else if (db == "ncbicd") {
       link += generateLink(cddBaseLink, id, id)
     } else if (db == "cogkog") {
+      link += generateLink(cddBaseLink, id, id)
+    } else if (db == "tigr") {
       link += generateLink(cddBaseLink, id, id)
     } else if (db == "pfam") {
       link += generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
@@ -235,6 +238,7 @@ object BlastVisualization  {
     case mmcifReg(_) => "mmcif"
     case ncbiCDReg(_) => "ncbicd"
     case cogkogReg(_) => "cogkog"
+    case tigrReg(_) => "tigr"
     case smartReg(_) => "smart"
     case pfamReg(_, _) => "pfam"
     case uniprotReg(_) => "uniprot"
