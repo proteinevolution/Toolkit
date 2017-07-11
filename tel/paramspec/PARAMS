@@ -49,4 +49,3 @@ eff_crick_angle GEN eff_crick_angle.prop
 clans_eval GEN clans_eval.prop
 hhomp_incl_eval GEN hhomp_incl_eval.prop
 hhompdb GEN hhompdb.py
-bb_scoring GEN bb_scoring.prop
