@@ -60,20 +60,6 @@ $(window).scroll(function() {
         $('#scrollTop').hide();
     }
 });
-$(document).ready(function () {
-
-    $('textarea').focus(function(){
-        if($(this).val() === $(this).attr('placeholder')){
-            $(this).attr('value', '');
-        }
-    });
-
-    $('textarea').blur(function(){
-        if($(this).val() ===''){
-            $(this).attr('value', $(this).attr('placeholder'));
-        }
-    });
-});
 
 window.onfocus = function(){notifications = 0; titlenotifier.reset()};
 window.onclick = function(){notifications = 0; titlenotifier.reset()};
