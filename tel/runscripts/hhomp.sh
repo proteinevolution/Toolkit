@@ -151,6 +151,12 @@ reformat_hhsuite.pl a3m fas \
          $(readlink -f ../results/reduced.fas) \
          -d 160
 
+addss.pl ../results/${JOBID}.a3m
+
+
+echo "#Searching profile HMM database(s)." >> ../results/process.log
+updateProcessLog
+
 ${HHOMPPATH}/hhmake -v 1 -cov 20 -qid 0 -diff 100 \
                     -i ../results/${JOBID}.a3m \
                     -o ../results/${JOBID}.hhm
@@ -162,7 +168,7 @@ ${HHOMPPATH}/hhomp -cpu %THREADS \
 
 ${HHOMPPATH}/hhomp -cpu %THREADS \
                    -i ../results/${JOBID}.hhm \
-                   -d %HHOMPHMM/%hhompdb.content \
+                   -d ${HHOMPDBPATH}/%hhompdb.content \
                    -o ../results/${JOBID}.hhr \
                    -p %pmin.content \
                    -P %pmin.content \
@@ -171,3 +177,27 @@ ${HHOMPPATH}/hhomp -cpu %THREADS \
                    -B %desc.content \
                    -seq 1 \
                    -b 1
+
+echo "done" >> ../results/process.log
+updateProcessLog
+
+echo "#Preparing output." >> ../results/process.log
+updateProcessLog
+
+hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
+
+#create full alignment json; use for forwarding
+fasta2json.py ../results/reduced.fas ../results/reduced.json
+
+
+# Generate Hitlist in JSON for hhrfile
+hhomp_hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/${JOBID}.json
+
+# add DB to json
+manipulate_json.py -k 'db' -v '%hhompdb.content' ../results/${JOBID}.json
+
+# Generate Query in JSON
+fasta2json.py ../results/${JOBID}.fas ../results/query.json
+
+echo "done" >> ../results/process.log
+updateProcessLog

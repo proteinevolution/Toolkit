@@ -4,7 +4,7 @@ import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.ConfigFactory
 import models.Constants
-import models.database.results.{ HHBlits, HHPred, Hmmer, PSIBlast }
+import models.database.results._
 import modules.db.MongoStore
 
 import scala.collection.immutable.ListMap
@@ -57,6 +57,7 @@ final class ToolFactory @Inject()(
     hmmer: Hmmer,
     hhpred: HHPred,
     hhblits: HHBlits,
+    hhomp: HHomp,
     aln: models.database.results.Alignment,
     constants: Constants
 )(paramAccess: ParamAccess, mongoStore: MongoStore) {
@@ -766,6 +767,25 @@ final class ToolFactory @Inject()(
           }
         }
       ),
+
+      Toolnames.HHOMP -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.hhomp
+                .hitlist(jobID, hhomp.parseResult(jsvalue), this.values(Toolnames.HHOMP), s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
+          }
+        },
+        "Raw Output (HHR)" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels
+              .fileviewWithDownload(jobID + ".hhr", s"${constants.jobPath}$jobID/results/" + jobID + ".hhr", jobID, "hhomp_hhr")
+          )
+        }
+      ),
+
       Toolnames.HHPRED_ALIGN -> ListMap(
         Resultviews.HITLIST -> { (jobID, requestHeader) =>
           implicit val r = requestHeader

@@ -256,7 +256,7 @@ function scrollToElem(num){
         });
         shownHits = num;
     }else{
-        var pos = $('input[class="checkbox aln"][value=' + num + ']').offset().top;
+        var pos = $('.aln[value=' + num + ']').offset().top;
         $(elem).animate({
             scrollTop: pos - 100
         }, 1)
