@@ -3,50 +3,9 @@ package models.tools
 import modules.tel.TEL
 import javax.inject.{Inject, Singleton}
 
-import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-// Modes in which Sequences might be entered
-abstract class SequenceMode(val label: String)
-case class Alignment(formats: Seq[(String, String)])
-    extends SequenceMode("Multiple protein sequence alignment in FASTA/CLUSTAL format")
-case object SingleSequence    extends SequenceMode("")
-case object SingleSequenceDNA extends SequenceMode("")
-case object MultiSequence     extends SequenceMode("")
-case object BLASTHTML         extends SequenceMode("") // BLAMMER
-case object PIR               extends SequenceMode("")
-case object FASTAHeaders      extends SequenceMode("") // BLAMMER
-
-object SequenceMode {
-
-  implicit def tuple2Writes[A, B](implicit a: Writes[A], b: Writes[B]): Writes[(A, B)] = new Writes[(A, B)] {
-    def writes(tuple: (A, B)) = JsArray(Seq(a.writes(tuple._1), b.writes(tuple._2)))
-  }
-
-  implicit object ParamTypeWrites extends Writes[SequenceMode] {
-
-    final val FIELD_MODE    = "mode"
-    final val FIELD_LABEL   = "label"
-    final val FIELD_FORMATS = "formats"
-    final val FIELD_NAME    = "name"
-
-    def writes(sequenceMode: SequenceMode): JsObject = sequenceMode match {
-      case a @ Alignment(formats) =>
-        Json.obj(FIELD_MODE -> 1, FIELD_LABEL -> a.label, FIELD_FORMATS -> formats, FIELD_NAME -> "Alignment")
-      case SingleSequence =>
-        Json.obj(FIELD_MODE -> 2, FIELD_LABEL -> SingleSequence.label, FIELD_NAME -> "Single Sequence")
-      case MultiSequence =>
-        Json.obj(FIELD_MODE -> 3, FIELD_LABEL -> MultiSequence.label, FIELD_NAME -> "MultiSequence")
-      case BLASTHTML => Json.obj(FIELD_MODE -> 4, FIELD_LABEL -> BLASTHTML.label, FIELD_NAME -> "BLASTHTML")
-      case PIR       => Json.obj(FIELD_MODE -> 5, FIELD_LABEL -> PIR.label, FIELD_NAME       -> "PIR")
-      case SingleSequenceDNA =>
-        Json.obj(FIELD_MODE -> 6, FIELD_LABEL -> SingleSequenceDNA.label, FIELD_NAME -> "Single Sequence DNA")
-      case FASTAHeaders =>
-        Json.obj(FIELD_MODE -> 7, FIELD_LABEL -> FASTAHeaders.label, FIELD_NAME -> "Sequences/headers in FASTA format")
-    }
-  }
-}
 
 sealed trait ParamType {
 
@@ -57,7 +16,7 @@ sealed trait ParamType {
     */
   def validate(value: String): Option[String]
 }
-case class Sequence(modes: Seq[SequenceMode], allowTwoTextAreas: Boolean) extends ParamType {
+case class Sequence(formats: Seq[(String, String)], placeholder: String, allowTwoTextAreas: Boolean) extends ParamType {
 
   // Sequence currently alwasus valid
   def validate(value: String): Option[String] = Some(value)
@@ -143,8 +102,8 @@ object ParamType {
 
     def writes(paramType: ParamType): JsObject = paramType match {
 
-      case Sequence(modes, allowsTwoTextAreas) =>
-        Json.obj(FIELD_TYPE -> 1, "modes" -> modes, "allowsTwoTextAreas" -> allowsTwoTextAreas)
+      case Sequence(formats: Seq[(String, String)], placeholder: String, allowsTwoTextAreas: Boolean) =>
+        Json.obj(FIELD_TYPE -> 1, "modes" -> formats, "allowsTwoTextAreas" -> allowsTwoTextAreas, "placeholder" -> placeholder)
       case Number(minOpt, maxOpt)        => Json.obj(FIELD_TYPE -> 2, "min" -> minOpt, "max" -> maxOpt)
       case Select(options)               => Json.obj(FIELD_TYPE -> 3, "options" -> options)
       case Bool                          => Json.obj(FIELD_TYPE -> 4)
@@ -184,14 +143,9 @@ class ParamAccess @Inject()(tel: TEL) {
     "clu" -> "clu"
   )
 
-  def getParam(paramName: String) : Param = paramName match {
-      case "ALIGNMENT" =>               Param ("alignment", Sequence (Seq.empty, false), 1, "")
-      case "TWOTEXTALIGNMENT" =>        Param ("alignment", Sequence (Seq (SingleSequence, Alignment (alignmentFormats) ), true), 1, "")
-      case "SEQORALI" =>                Param ("alignment", Sequence (Seq (SingleSequence, Alignment (alignmentFormats) ), false), 1, "")
-      case "MULTISEQ" =>                Param ("alignment", Sequence (Seq (MultiSequence), false), 1, "") // for Alignment Tools
-      case "SINGLESEQ" =>               Param ("alignment", Sequence (Seq (SingleSequence), false), 1, "")
-      case "SINGLESEQDNA" =>            Param ("alignment", Sequence (Seq (SingleSequenceDNA), false), 1, "")
-      case "FASTAHEADERS" =>            Param ("alignment", Sequence (Seq (FASTAHeaders), false), 1, "")
+  def getParam(paramName: String, placeholder: String = "") : Param = paramName match {
+      case "ALIGNMENT" =>               Param ("alignment", Sequence (alignmentFormats, placeholder, false), 1, "")
+      case "TWOTEXTALIGNMENT" =>        Param ("alignment", Sequence (alignmentFormats, placeholder, true), 1, "")
       case "HMMER_DB" =>                select ("hmmerdb", "Select Database")
       case "STANDARD_DB" =>             select ("standarddb", "Select Standard Database")
       case "HHSUITEDB" =>               select ("hhsuitedb", "Select HH-Suite Database")
