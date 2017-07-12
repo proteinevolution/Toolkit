@@ -4,7 +4,8 @@ import javax.inject.{Inject, Singleton}
 
 import com.typesafe.config.{Config, ConfigFactory, ConfigObject}
 import models.Constants
-import models.database.results.{HHBlits, HHPred, Hmmer, PSIBlast}
+import models.database.results._
+
 import modules.db.MongoStore
 
 import scala.collection.immutable.ListMap
@@ -58,6 +59,7 @@ final class ToolFactory @Inject()(
     hmmer: Hmmer,
     hhpred: HHPred,
     hhblits: HHBlits,
+    hhomp: HHomp,
     aln: models.database.results.Alignment,
     constants: Constants
 )(paramAccess: ParamAccess, mongoStore: MongoStore) {
@@ -97,6 +99,7 @@ final class ToolFactory @Inject()(
     final val BACKTRANS           = "backtrans"
     final val HHFILTER            = "hhfilter"
     final val PATSEARCH           = "patsearch"
+    final val HHOMP               = "hhomp"
   }
 
   // Encompasses some shared views of the result pages
@@ -111,7 +114,6 @@ final class ToolFactory @Inject()(
     final val SUMMARY         = "Summary"
     final val DATA            = "Data"
   }
-
 
   // reads the tool specifications from tools.conf and generates tool objects accordingly
   val values: Map[String, Tool] = {
@@ -367,6 +369,25 @@ final class ToolFactory @Inject()(
           }
         }
       ),
+
+      Toolnames.HHOMP -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.hhomp
+                .hitlist(jobID, hhomp.parseResult(jsvalue), this.values(Toolnames.HHOMP), s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
+          }
+        },
+        "Raw Output (HHR)" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels
+              .fileviewWithDownload(jobID + ".hhr", s"${constants.jobPath}$jobID/results/" + jobID + ".hhr", jobID, "hhomp_hhr")
+          )
+        }
+      ),
+
       Toolnames.HHPRED_ALIGN -> ListMap(
         Resultviews.HITLIST -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
@@ -762,6 +783,7 @@ final class ToolFactory @Inject()(
         paramAccess.getParam("HHSUITEDB").name,
         paramAccess.getParam("PROTBLASTPROGRAM").name,
         paramAccess.getParam("HHBLITSDB").name,
+        paramAccess.getParam("HHOMPDB").name,
         paramAccess.getParam("PROTEOMES").name,
         paramAccess.getParam("HMMER_DB").name,
         paramAccess.getParam("PATSEARCH_DB").name,
@@ -771,6 +793,7 @@ final class ToolFactory @Inject()(
         paramAccess.getParam("SAMCC_HELIXTWO").name,
         paramAccess.getParam("SAMCC_HELIXTHREE").name,
         paramAccess.getParam("SAMCC_HELIXFOUR").name
+        
       )
     )
     // Params which are not a part of any group (given by the name)
