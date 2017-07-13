@@ -441,7 +441,7 @@ table.dataTable.no-footer{
     margin-top: 3em !important;
     margin: 0 auto;
     margin-bottom: 1em;
-    font-size: 1.2em;
+    font-size: 1.3em;
 }
 
 #htb_wrapper {
@@ -585,9 +585,6 @@ table.dataTable.no-footer{
     width: 12em;
 }
 
-#templateAlignmentModal h4 {
-    margin-bottom: 0;
-}
 
 #accessionStructure {
     height: 2em;

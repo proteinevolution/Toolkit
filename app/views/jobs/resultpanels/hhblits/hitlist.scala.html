@@ -2,11 +2,11 @@
 @import models.database.results.HHBlitsResult
 @import better.files._
 @(jobID: String, result: HHBlitsResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
-@if(result.num_hits < 1) {
-    <div class="callout alert noHits" id="noHits">
-        <h6>No hits found!</h6>
-    </div>
-}else{
+    @if(result.num_hits < 1) {
+        <div class="callout alert noHitsWide" id="noHits">
+            No hits found!
+        </div>
+    } else{
     @* Loads ForwardModal *@
     @views.html.forwardmodals.normal(tool, tool.toolNameShort)
     @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort+"_hhsuite")
@@ -128,7 +128,7 @@
 
 
 <div class="reveal" id="templateAlignmentModal" data-reveal>
-    <h4>Template Alignment</h4>
+    <p>Template Alignment</p>
     <div>
         <select onclick="forwardTemplateAlignment_(this.value, $('#alignmentTemplate').val())" id="alignmentTemplate_tool">
             <option value="" selected>Forward To</option>

@@ -3,8 +3,8 @@
 @import models.database.results.HHompResult
 @(jobID: String, result: HHompResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
 @if(result.num_hits < 1) {
-    <div class="callout alert noHits" id="noHits">
-        <h6>No hits found!</h6>
+    <div class="callout alert noHitsWide" id="noHits">
+        No hits found!
     </div>
 } else {
     @* Loads ForwardModals *@
@@ -103,7 +103,7 @@
 
     @*MODALS*@
     <div class="reveal" id="templateAlignmentModal" data-reveal>
-        <h4>Template Alignment</h4><br>
+        <p>Template Alignment</p><br>
         <textarea rows="35" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
         <button class="close-button" id="alignmentTemplateClose" data-close aria-label="Close modal" type="button">
             <span aria-hidden="true">&times;</span>
@@ -211,7 +211,6 @@
         }
 
 
-
         function hhomp_forwardQueryMSA(selectedTool) {
             $.ajax({
                 type: 'GET',
@@ -246,7 +245,4 @@
             // hide loadHits
 
         }
-
-
-
 </script>
