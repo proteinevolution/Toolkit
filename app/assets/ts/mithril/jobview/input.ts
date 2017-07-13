@@ -1,9 +1,11 @@
 // input textarea
 
 let ParameterAlignmentComponent = {
+    placeholder: "",
     model: function(args : any) {
         this.modes = args.param.paramType.modes;
         this.label = "";
+        ParameterAlignmentComponent.placeholder = args.param.paramType.placeholder;
         this.formats = [];
         if(this.modes.length > 0) {
             this.label = this.modes[0].label;
@@ -135,7 +137,7 @@ let ParameterAlignmentComponent = {
                 },
                 m("textarea", {
                     name: ctrl.name,
-                    placeholder: ctrl.getLabel(),
+                    placeholder: ParameterAlignmentComponent.placeholder,
                     rows: 14,
                     cols: 70,
                     id: ctrl.id,
