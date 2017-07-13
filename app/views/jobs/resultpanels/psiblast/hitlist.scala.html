@@ -4,12 +4,11 @@
 @(jobID: String, result: PSIBlastResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
 @* Load html Map used for the image representation *@
 
-@if(result.num_hits < 1) {
-    <div class="callout alert noHits" id="noHits">
-        <h6>No hits found!</h6>
-    </div>
-
-}else{
+    @if(result.num_hits < 1) {
+        <div class="callout alert noHitsWide" id="noHits">
+            No hits found!
+        </div>
+    } else{
     @* Loads ForwardModal *@
     @views.html.forwardmodals.normal(tool, tool.toolNameShort)
     <div class="scrollContainer scrollContainerWhite">

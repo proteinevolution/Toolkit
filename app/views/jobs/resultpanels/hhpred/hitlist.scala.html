@@ -2,11 +2,11 @@
 @import better.files._
 @import models.database.results.HHPredResult
 @(jobID: String, result: HHPredResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
-@if(result.num_hits < 1) {
-    <div class="callout alert noHits" id="noHits">
-        <h6>No hits found!</h6>
-    </div>
-} else {
+    @if(result.num_hits < 1) {
+        <div class="callout alert noHitsWide" id="noHits">
+            No hits found!
+        </div>
+    } else {
     @* Loads ForwardModals *@
     @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort + "_hhsuite")
     @views.html.forwardmodals.simple(tool, tool.toolNameShort)
@@ -135,7 +135,7 @@
 
     @*MODALS*@
     <div class="reveal" id="templateAlignmentModal" data-reveal>
-        <h4>Template Alignment</h4>
+        <p>Template Alignment</p>
         <div>
             <select onclick="forwardTemplateAlignment_(this.value, $('#alignmentTemplate').val())" id="alignmentTemplate_tool">
                 <option value="" selected>Forward to</option>
@@ -152,8 +152,7 @@
 
     <div class="reveal" id="structureModal" data-reveal>
         <p>Template 3D structure</p>
-        <div id="accessionStructure">  <a type="button" class="button success tiny data-close" onclick="detachStructure()">
-            Open in new window</a></div>
+        <div id="accessionStructure"> </div>
 
         <div id="viewport"></div>
         <button class="close-button" data-close aria-label="Close modal" type="button">
@@ -338,15 +337,15 @@
             }
             var url = '/getStructure/' + accession + fileEnding;
             $(document).ready(function () {
+                $('#accessionStructure').append("<h6 class='structureAccession'>3D Structure: " + accession + "</h6>");
+                $('#viewport').width(800).height(700).find('canvas').first().remove();
+                stage = new NGL.Stage("viewport");
                 $.get(url).done(function () {
                     $(document).ready(function () {
-                        $('#accessionStructure').append("<h6 class='structureAccession'>3D Structure: " + accession + "</h6>");
-                        $('#viewport').width(800).height(700);
-                        stage = new NGL.Stage("viewport");
                         stage.loadFile(url, {defaultRepresentation: true, sele: ":A or :B or DPPC"});
                     });
                 }).fail(function () {
-                    $('#viewport').append("<div class='fetchError'>Sorry, failed to fetch structure.</div>");
+                    $('#accessionStructure').append("<div class='fetchError'>Sorry, failed to fetch structure.</div>");
                     $.LoadingOverlay("hide")
                 });
             });
@@ -401,11 +400,6 @@
             }
             $('#templateAlignmentModal').foundation('close');
             forward(tool, forwardData);
-        }
-
-        function detachStructure() {
-            $('#structureModal').foundation('close');
-            window.open('/structure3D/' + currentStructureAccession, '_blank', 'location=yes,height=550,width=850,scrollbars=yes,status=yes');
         }
 
 

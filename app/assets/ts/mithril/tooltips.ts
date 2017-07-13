@@ -35,6 +35,8 @@ $( "#frp" ).prop('title', 'Prediction of functional residues in multiple sequenc
 
 $( "#hhr" ).prop('title', 'De novo identification of repeats');
 
+$( "#hho" ).prop('title', 'Detection of outer membrane proteins by HMM-HMM comparison.');
+
 $( "#mar" ).prop('title', 'Prediction of coiled coils based on HMMs');
 
 $( "#pco" ).prop('title', 'Prediction of coiled coils');
