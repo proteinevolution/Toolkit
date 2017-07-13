@@ -9,215 +9,73 @@ let modellerIsValid : boolean = false;
 let samccIsValid : boolean = false;
 
 let validation = function(elem : any, isInit : boolean, ctx : any) : any {
+    if (!isInit) {
 
-        if(!isInit) {
+        let toolname: string;
+        try {
+            toolname = $("#toolnameAccess").val();
+        }
+        catch (err) {
+            toolname = "unknown";
+            console.warn("toolname unspecified");
+        }
 
-            let toolname : string, placeholder :  string;
-            try { toolname = $("#toolnameAccess").val(); }
-            catch(err) {
-                toolname = "unknown";
-                console.warn("toolname unspecified");
-            }
+        let pastedContent = $(elem).val();
+        if (pastedContent == '') {
+            if (toolname == 'hhpred')
+                elem = $("[name='alignment']");
 
+            let path = window.location.href;
+            let url = path.split("/");
 
-            let linebreak = function(elem : any, placeholder : string) {
+            if (url[url.length - 2] != 'jobs') {
+                $(document).ready(function(){
+                    $(elem).val(ParameterAlignmentComponent.placeholder).css('color', 'grey');
+                });
 
-                let pastedContent = $(elem).val();
-                if (pastedContent == '') {
-                    if (toolname == 'hhpred')
-                        elem = $("[name='alignment']");
-
-                    let path = window.location.href;
-                    let url = path.split("/");
-
-                    if (url[url.length - 2] != 'jobs') {
-                        $(elem).val(placeholder).css('color', 'grey');
-                        $(elem).focus(function () {
-                            if ($(elem).val() === placeholder) {
-                                $(elem).attr('value', '').css('color', '#0a0a0a');
-                                m.redraw(true);
-                            }
-                        });
-                        $('#pasteButton').on('click', function () {
-                            $(elem).css('color', '#0a0a0a');
-                            m.redraw(true);
-                            setTimeout(function () {
-                                validationProcess($(elem), toolname)
-                            }, 200);
-                            $(elem).focus();
-                        });
-                        $('.inputDBs').on('change', function () {
-                                validationProcess($(elem), toolname)
-                        });
-                        $(elem).blur(function () {
-                            if ($(elem).val() === '') {
-                                $(elem).attr('value', placeholder).css('color', 'grey');
-                                m.redraw(true);
-                            }
-                        });
+                $(elem).focus(function () {
+                    if (ParameterAlignmentComponent.placeholder.match("\n")) {
+                        $(elem).removeAttr('placeholder');
                     }
-                } else {
+                    if ($(elem).val() === ParameterAlignmentComponent.placeholder) {
+                        $(elem).prop('value', '').css('color', '#0a0a0a');
+                        m.redraw(true);
+                    }
+                });
+                $('#pasteButton').on('click', function () {
+                    $(elem).css('color', '#0a0a0a');
                     m.redraw(true);
                     setTimeout(function () {
-                        $(elem).css('color', '#0a0a0a');
-                        $(elem).val(pastedContent);
                         validationProcess($(elem), toolname)
                     }, 200);
                     $(elem).focus();
-                }
-            };
-
-
-            // Placeholder overrides
-
-            switch(toolname) {
-
-                case "hhblits":
-                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format.");
-                    break;
-
-                case "hhpred":
-                    placeholder = "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format. \n\nTo create a structural model of your query protein, run a HHpred search with it against the PDB_mmCIF70 database, select the top-scoring template(s) and click on 'Create model using selection'. This will generate a PIR file that can be subsequently submitted to MODELLER.";
-                    linebreak($(elem), placeholder);
-                    break;
-
-                case "hmmer":
-                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format.");
-                    break;
-
-                case "hhomp":
-                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format.");
-                    break;
-
-                case "psiblast":
-                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format.");
-                    break;
-
-                case "patsearch":
-                    $(elem).attr("placeholder", "Enter a PROSITE grammar/regular expression");
-                    break;
-
-                case "clustalo":
-                    $(elem).attr("placeholder", "Enter up to 2000 protein/nucleotide sequences in FASTA format");
-                    break;
-
-                case "kalign":
-                    $(elem).attr("placeholder", "Enter up to 2000 protein/nucleotide sequences in FASTA format");
-                    break;
-
-                case "mafft":
-                    $(elem).attr("placeholder", "Enter up to 2000 protein/nucleotide sequences in FASTA format");
-                    break;
-
-                case "msaprobs":
-                    $(elem).attr("placeholder", "Enter up to 2000 protein sequences in FASTA format");
-                    break;
-
-                case "muscle":
-                    $(elem).attr("placeholder", "Enter up to 2000 protein/nucleotide sequences in FASTA format");
-                    break;
-
-                case "tcoffee":
-                    $(elem).attr("placeholder", "Enter up to 500 protein/nucleotide sequences in FASTA format");
-                    break;
-
-                case "aln2plot":
-                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
-                    break;
-
-                case "frpred":
-                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
-                    break;
-
-                case "hhrepid":
-                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
-                    break;
-
-                case "marcoil":
-                    $(elem).attr("placeholder", "Enter a protein sequence in FASTA format");
-                    break;
-
-                case "pcoils":
-                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
-                    break;
-
-                case "repper":
-                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
-                    break;
-
-                case "tprpred":
-                    $(elem).attr("placeholder", "Enter a protein sequence in FASTA format");
-                    break;
-
-                case "ali2d":
-                    placeholder = "Enter a protein multiple sequence alignment with up to 100 sequences in FASTA/CLUSTAL format.\n\n\nPlease note: Runtime of ~30 mins for N=100 sequences of length L=200. Scales as N*L.";
-                    linebreak($(elem), placeholder);
-                    break;
-
-                case "quick2d":
-                    $(elem).attr("placeholder", "Enter a protein sequence/multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
-                    break;
-
-                case "modeller":
-                    placeholder = "Please note: MODELLER is configured to work with PIR alignments forwarded by HHpred. \n\nRun a HHpred search with your query, select the top-scoring templates and click on 'Create model using selection'. This will generate a PIR file that can be subsequently submitted to MODELLER. \n\nTo obtain a key for MODELLER go to: http://salilab.org/modeller/registration.shtml.";
-                    linebreak($(elem), placeholder);
-                    break;
-
-                case "samcc":
-                    placeholder = "Enter PDB coordinates of a four-helical bundle.\n\nNote: The definitions for helices below need to be entered according to their sequential position in the bundle (it is not relevant whether this done clockwise or counterclockwise, and whether one starts with the N-terminal helix or any other one), and not in their order from N- to C-terminus. For helices in anti-parallel orientation, the residue range should be given with the larger residue number before the smaller one.";
-                    linebreak($(elem), placeholder);
-                    break;
-
-                case "ancescon":
-                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 2000 sequences in FASTA/CLUSTAL format");
-                    break;
-
-                case "clans":
-                    $(elem).attr("placeholder", "Enter protein sequences with up to 10000 sequences in FASTA format");
-                    break;
-
-                case "mmseqs2":
-                    $(elem).attr("placeholder", "Enter up to 20000 protein sequences in FASTA format");
-                    break;
-
-                case "phyml":
-                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 100 sequences in FASTA/CLUSTAL format");
-                    break;
-
-                case "sixframe":
-                    $(elem).attr("placeholder", "Enter a DNA sequence in FASTA format");
-                    break;
-
-                case "backtrans":
-                    $(elem).attr("placeholder", "Enter a protein sequence");
-                    break;
-
-                case "hhfilter":
-                    $(elem).attr("placeholder", "Enter a protein multiple sequence alignment with up to 10000 sequences in FASTA/CLUSTAL format");
-                    break;
-
-                case "retseq":
-                    $(elem).attr("placeholder", "Enter a newline separated list of identifiers and choose the corresponding database");
-                    break;
-
-                case "seq2id":
-                    $(elem).attr("placeholder", "Enter protein sequences (or their headers) in FASTA format");
-                    break;
-
-                default:
-                    break;
-
+                });
+                $('.inputDBs').on('change', function () {
+                    validationProcess($(elem), toolname)
+                });
+                $(elem).blur(function () {
+                    if ($(elem).val() === '') {
+                        $(elem).prop('value', ParameterAlignmentComponent.placeholder).css('color', 'grey');
+                        m.redraw(true);
+                    }
+                });
             }
-
-
-
-
-            return $(elem).on("input", function (e) {
-
-                validationProcess(elem, toolname);
-            });
+        } else {
+            m.redraw(true);
+            setTimeout(function () {
+                $(elem).css('color', '#0a0a0a');
+                $(elem).val(pastedContent);
+                validationProcess($(elem), toolname)
+            }, 200);
+            $(elem).focus();
         }
+        return $(elem).on("input", function (e) {
+            validationProcess(elem, toolname);
+        });
+    }
 };
+
+
 
 
 let validationProcess = function(elem: any,toolname: string) {
@@ -432,9 +290,9 @@ let validationProcess = function(elem: any,toolname: string) {
             let hhompTarget = new alignmentVal($(elem));
 
 
-            if (hhpredTarget.basicValidation("yes")) {
-                hhpredTarget.sameLengthValidation();
-                hhpredTarget.hhMaxDB();
+            if (hhompTarget.basicValidation("yes")) {
+                hhompTarget.sameLengthValidation();
+                hhompTarget.hhMaxDB();
             }
 
             break;
