@@ -185,9 +185,28 @@ tr.job a:visited {
     padding-left: 0.10em;
 }
 
+
 #helpModal h6 {
 
     font-weight: bold;
+}
+
+.helpModals .section {
+    margin-top: 1em;
+}
+
+.helpModals p {
+    font-weight: normal;
+}
+
+.helpModals h5 {
+    color: #2E8C81;
+}
+
+.helpModals h6 {
+    font-weight: bold;
+    font-size: 1em;
+    margin-bottom:0;
 }
 
 #help-psiblast {
