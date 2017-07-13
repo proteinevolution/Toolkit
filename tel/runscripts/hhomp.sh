@@ -191,7 +191,7 @@ fasta2json.py ../results/reduced.fas ../results/reduced.json
 
 
 # Generate Hitlist in JSON for hhrfile
-hhomp_hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/${JOBID}.json
+${HHOMPPATH}/hhomp_hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/${JOBID}.json
 
 # add DB to json
 manipulate_json.py -k 'db' -v '%hhompdb.content' ../results/${JOBID}.json
