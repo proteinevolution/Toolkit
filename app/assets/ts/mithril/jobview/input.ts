@@ -137,6 +137,7 @@ let ParameterAlignmentComponent = {
                 },
                 m("textarea", {
                     name: ctrl.name,
+                    placeholder: ParameterAlignmentComponent.placeholder,
                     rows: 14,
                     cols: 70,
                     id: ctrl.id,
