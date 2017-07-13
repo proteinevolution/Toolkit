@@ -2,11 +2,11 @@
 @import better.files._
 @import models.database.results.HHPredResult
 @(jobID: String, result: HHPredResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
-@if(result.num_hits < 1) {
-    <div class="callout alert noHits" id="noHits">
-        <h6>No hits found!</h6>
-    </div>
-} else {
+    @if(result.num_hits < 1) {
+        <div class="callout alert noHitsWide" id="noHits">
+            No hits found!
+        </div>
+    } else {
     @* Loads ForwardModals *@
     @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort + "_hhsuite")
     @views.html.forwardmodals.simple(tool, tool.toolNameShort)
@@ -28,7 +28,7 @@
                 }_hhsuite">Forward Query MSA</a>
                 @*only show create model when chosen db=mmcif70/pdb70*@
                 @if(result.db.matches("mmcif70/pdb70")) {
-                    <a onclick="hhpred_manual()">Create model using selection</a>
+                    <a onclick="@{tool.toolNameShort}_manual()">Create model using selection</a>
                 }
                 <a onclick="colorAA()" class="colorAA">Color Seqs</a>
                 <a onclick="wrap()" id="wrap">Wrap Seqs</a>
@@ -116,13 +116,18 @@
         <h5 id="refTitle">References</h5>
         If you use our HHpred server for your research, please cite:
         <div class="citation">
-            <div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank"> Alva et al. NAR (2016)</a>.</div>
+            <div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<br>
+                Alva V, Nam SZ, Söding J, Lupas AN.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank"> Nucleic Acids Res. 2016 Jul 8;44(W1):W410-5</a>.
+            </div>
         </div>
             And one or more of the following:
         <div class="citation">
-            <div>Protein homology detection by HMM-HMM comparison.<a href="https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/bti125" target="_blank"> Söding J. Bioinformatics (2005)</a>,</div>
-            <div>Fast and accurate automatic structure prediction with HHpred.<a href="http://onlinelibrary.wiley.com/doi/10.1002/prot.22499/abstract;jsessionid=6FF63B8F61E35391B79F4681BB12DB2C.f02t04" target="_blank"> Hildebrand et al. Proteins (2009)</a>,</div>
-            <div>Automatic Prediction of Protein 3D Structures by Probabilistic Multi-template Homology Modeling.<<a href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004343" target="_blank"> Meier et al. PLoS Comput Biol (2015)</a>.</div>
+            <div>Protein homology detection by HMM-HMM comparison.<br>
+                Söding J.<a href="https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/bti125" target="_blank"> Bioinformatics. 2005 Apr 1;21(7):951-60</a>,</div><br>
+            <div>Fast and accurate automatic structure prediction with HHpred.<br>
+                Hildebrand A, Remmert M, Biegert A, Söding J.<a href="http://onlinelibrary.wiley.com/doi/10.1002/prot.22499/abstract;jsessionid=6FF63B8F61E35391B79F4681BB12DB2C.f02t04" target="_blank"> Proteins. 2009;77 Suppl 9:128-32</a>,</div><br>
+            <div>Automatic Prediction of Protein 3D Structures by Probabilistic Multi-template Homology Modeling.<br>
+                Meier A, Söding J.<a href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004343" target="_blank"> PLoS Comput Biol. 2015 Oct 23;11(10):e1004343</a>.</div><br>
         </div>
         </div>
     <hr id="line-element" colspan="4" class="horizontal-line">
@@ -130,7 +135,7 @@
 
     @*MODALS*@
     <div class="reveal" id="templateAlignmentModal" data-reveal>
-        <h4>Template Alignment</h4>
+        <p>Template Alignment</p>
         <div>
             <select onclick="forwardTemplateAlignment_(this.value, $('#alignmentTemplate').val())" id="alignmentTemplate_tool">
                 <option value="" selected>Forward to</option>
@@ -147,8 +152,7 @@
 
     <div class="reveal" id="structureModal" data-reveal>
         <p>Template 3D structure</p>
-        <div id="accessionStructure">  <a type="button" class="button success tiny data-close" onclick="detachStructure()">
-            Open in new window</a></div>
+        <div id="accessionStructure"> </div>
 
         <div id="viewport"></div>
         <button class="close-button" data-close aria-label="Close modal" type="button">
@@ -187,26 +191,6 @@
         // checked checkboxes
         // due to pagination/lazyload
         var checkboxes = [];
-
-        function colorAA(){
-            colorAAs = !colorAAs;
-            $.LoadingOverlay("show");
-            $("#alignmentTable").empty();
-            $(".colorAA").toggleClass("colorToggleBar");
-            var checkboxesWrap =  $("input:checkbox").toArray();
-            var num = 1;
-            for(var i =0 ; i < checkboxesWrap.length; i++){
-                if($(checkboxesWrap[i]).isOnScreen()){
-                    num  = $(checkboxesWrap[i]).val();
-                    break;
-                }
-            }
-            getHits(0, shownHits, wrapped, colorAAs).then(function(){
-                $.LoadingOverlay("hide");
-                linkCheckboxes();
-                scrollToElem(num);
-            });
-        }
 
         $(document).ready(function () {
             hitlistBaseFunctions();
@@ -265,7 +249,7 @@
         }
 
 
-        function hhpred_manual() {
+        function @{tool.toolNameShort}_manual() {
             // Get selected templates and append parentID
             var formData = new FormData(document.getElementById("hhpred_templates"));
             if ($('input:checkbox[name=alignment_elem]:checked').length == 0) {
@@ -353,22 +337,22 @@
             }
             var url = '/getStructure/' + accession + fileEnding;
             $(document).ready(function () {
+                $('#accessionStructure').append("<h6 class='structureAccession'>3D Structure: " + accession + "</h6>");
+                $('#viewport').width(800).height(700).find('canvas').first().remove();
+                stage = new NGL.Stage("viewport");
                 $.get(url).done(function () {
                     $(document).ready(function () {
-                        $('#accessionStructure').append("<h6 class='structureAccession'>3D Structure: " + accession + "</h6>");
-                        $('#viewport').width(800).height(700);
-                        stage = new NGL.Stage("viewport");
                         stage.loadFile(url, {defaultRepresentation: true, sele: ":A or :B or DPPC"});
                     });
                 }).fail(function () {
-                    $('#viewport').append("<div class='fetchError'>Sorry, failed to fetch structure.</div>");
+                    $('#accessionStructure').append("<div class='fetchError'>Sorry, failed to fetch structure.</div>");
                     $.LoadingOverlay("hide")
                 });
             });
 
         }
 
-        function hhpred_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength) {
+        function @{tool.toolNameShort}_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength) {
             var data = {"checkboxes": checkboxes.removeDuplicates()};
             $.LoadingOverlay("show");
             var route = null;
@@ -418,13 +402,8 @@
             forward(tool, forwardData);
         }
 
-        function detachStructure() {
-            $('#structureModal').foundation('close');
-            window.open('/structure3D/' + currentStructureAccession, '_blank', 'location=yes,height=550,width=850,scrollbars=yes,status=yes');
-        }
 
-
-        function hhpred_forwardQueryMSA(selectedTool) {
+        function @{tool.toolNameShort}_forwardQueryMSA(selectedTool) {
             $.ajax({
                 type: 'GET',
                 url: "files/" + jobID + "/reduced.fas"
