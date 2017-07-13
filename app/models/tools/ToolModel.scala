@@ -82,6 +82,7 @@ final class ToolFactory @Inject()(
     final val HHPRED_MANUAL       = "hhpred_manual"
     final val HHREPID             = "hhrepid"
     final val ALI2D               = "ali2d"
+    final val QUICK2D               = "quick2d"
     final val CLUSTALO            = "clustalo"
     final val KALIGN              = "kalign"
     final val MAFFT               = "mafft"
@@ -439,6 +440,7 @@ final class ToolFactory @Inject()(
           )
         }
       ),
+      Toolnames.QUICK2D -> ListMap(),
       Toolnames.CLUSTALO -> ListMap(
         Resultviews.CLUSTAL -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
