@@ -126,7 +126,7 @@ final class ToolFactory @Inject()(
       config.getString("code"),
       config.getString("section").toLowerCase,
       "TODO",
-      config.getStringList("parameter").map{ param => paramAccess.getParam(param)},
+      config.getStringList("parameter").map{ param => paramAccess.getParam(param, config.getString("input_placeholder"))},
       config.getStringList("forwarding.alignment"),
       config.getStringList("forwarding.multi_seq")
     )
