@@ -19,14 +19,25 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                 console.warn("toolname unspecified");
             }
 
-            if (toolname == 'hhpred')
-                elem = $("[name='alignment']");
+                let pastedContent = $(elem).val();
+                if (pastedContent == '') {
+                    if (toolname == 'hhpred')
+                        elem = $("[name='alignment']");
 
-            let path = window.location.href;
-            let url = path.split("/");
+                    let path = window.location.href;
+                    let url = path.split("/");
 
             if (url[url.length - 2] != 'jobs') {
+                $(elem).val(ParameterAlignmentComponent.placeholder).css('color', 'grey');
+                $(elem).focus(function () {
+                    if ($(elem).val() === ParameterAlignmentComponent.placeholder) {
+                        $(elem).attr('value', '').css('color', '#0a0a0a');
+                        $(elem).attr('placeholder', '');
+                        m.redraw(true);
+                    }
+                });
                 $('#pasteButton').on('click', function () {
+                    $(elem).css('color', '#0a0a0a');
                     m.redraw(true);
                     setTimeout(function () {
                         validationProcess($(elem), toolname)
@@ -36,14 +47,28 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                 $('.inputDBs').on('change', function () {
                         validationProcess($(elem), toolname)
                 });
+                $(elem).blur(function () {
+                    if ($(elem).val() === '') {
+                        $(elem).attr('value', ParameterAlignmentComponent.placeholder).css('color', 'grey');
+                        m.redraw(true);
+                    }
+                });
             }
+        } else {
+            m.redraw(true);
+            setTimeout(function () {
+                $(elem).css('color', '#0a0a0a');
+                $(elem).val(pastedContent);
+                validationProcess($(elem), toolname)
+            }, 300);
+            $(elem).focus();
+    return $(elem).on("input", function (e) {
 
-            return $(elem).on("input", function (e) {
+        validationProcess(elem, toolname);
+    });
+}
 
-                validationProcess(elem, toolname);
-            });
-        }
-};
+
 
 
 let validationProcess = function(elem: any,toolname: string) {
