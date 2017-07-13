@@ -23,11 +23,12 @@ object BlastVisualization  {
   private val ncbiCDReg   = """(^[cs]d[0-9]{5})""".r
   private val cogkogReg   = """(^[CK]OG[0-9]{4})""".r
   private val tigrReg   = """(^TIGR[0-9]{5})""".r
+  private val prkReg = """(CHL|MTH|PHA|PLN|PTZ|PRK)[0-9]{5}""".r
   private val mmcifReg = """(...._[0-9a-zA-Z][0-9a-zA-Z]?[0-9a-zA-Z]?[0-9a-zA-Z]?)""".r
   private val mmcifShortReg = """([0-9]+)""".r
   private val pfamReg = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
   private val ncbiReg = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
-
+  
   private val envNrNameReg = """(env.*|nr.*)""".r
   private val pdbNameReg = """(pdb.*)""".r
   private val uniprotNameReg = """(uniprot.*)""".r
@@ -88,6 +89,8 @@ object BlastVisualization  {
       link += generateLink(scopBaseLink, id, id)
     } else if (db == "mmcif") {
       link += generateLink(pdbBaseLink, idPdb, id)
+    } else if (db == "prk") {
+      link += generateLink(cddBaseLink, id, id)
     } else if (db == "ncbicd") {
       link += generateLink(cddBaseLink, id, id)
     } else if (db == "cogkog") {
@@ -236,6 +239,7 @@ object BlastVisualization  {
     case scopReg(_) => "scop"
     case mmcifShortReg(_) => "mmcif"
     case mmcifReg(_) => "mmcif"
+    case prkReg(_) => "prk"
     case ncbiCDReg(_) => "ncbicd"
     case cogkogReg(_) => "cogkog"
     case tigrReg(_) => "tigr"
