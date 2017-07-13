@@ -9,7 +9,6 @@ let ParameterAlignmentComponent = {
         this.formats = [];
         if(this.modes.length > 0) {
             this.label = this.modes[0].label;
-            console.log(this.placeholder);
             if(this.modes[0].mode == 1) {
                 this.formats = this.modes[0].formats
             }
