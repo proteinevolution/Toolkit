@@ -9,32 +9,36 @@ let modellerIsValid : boolean = false;
 let samccIsValid : boolean = false;
 
 let validation = function(elem : any, isInit : boolean, ctx : any) : any {
+    if (!isInit) {
 
-        if(!isInit) {
+        let toolname: string;
+        try {
+            toolname = $("#toolnameAccess").val();
+        }
+        catch (err) {
+            toolname = "unknown";
+            console.warn("toolname unspecified");
+        }
 
-            let toolname : string;
-            try { toolname = $("#toolnameAccess").val(); }
-            catch(err) {
-                toolname = "unknown";
-                console.warn("toolname unspecified");
-            }
+        let pastedContent = $(elem).val();
+        if (pastedContent == '') {
+            if (toolname == 'hhpred')
+                elem = $("[name='alignment']");
 
-                let pastedContent = $(elem).val();
-                if (pastedContent == '') {
-                    if (toolname == 'hhpred')
-                        elem = $("[name='alignment']");
-
-                    let path = window.location.href;
-                    let url = path.split("/");
+            let path = window.location.href;
+            let url = path.split("/");
 
             if (url[url.length - 2] != 'jobs') {
-                $(elem).val(ParameterAlignmentComponent.placeholder).css('color', 'grey');
+                $(document).ready(function(){
+                    $(elem).val(ParameterAlignmentComponent.placeholder).css('color', 'grey');
+                });
+
                 $(elem).focus(function () {
-                    if(ParameterAlignmentComponent.placeholder.match("\n")){
+                    if (ParameterAlignmentComponent.placeholder.match("\n")) {
                         $(elem).removeAttr('placeholder');
                     }
                     if ($(elem).val() === ParameterAlignmentComponent.placeholder) {
-                        $(elem).attr('value', '').css('color', '#0a0a0a');
+                        $(elem).prop('value', '').css('color', '#0a0a0a');
                         m.redraw(true);
                     }
                 });
@@ -47,28 +51,29 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     $(elem).focus();
                 });
                 $('.inputDBs').on('change', function () {
-                        validationProcess($(elem), toolname)
+                    validationProcess($(elem), toolname)
                 });
                 $(elem).blur(function () {
                     if ($(elem).val() === '') {
-                        $(elem).attr('value', ParameterAlignmentComponent.placeholder).css('color', 'grey');
+                        $(elem).prop('value', ParameterAlignmentComponent.placeholder).css('color', 'grey');
                         m.redraw(true);
                     }
                 });
-                }
+            }
         } else {
             m.redraw(true);
             setTimeout(function () {
                 $(elem).css('color', '#0a0a0a');
                 $(elem).val(pastedContent);
                 validationProcess($(elem), toolname)
-            }, 300);
+            }, 200);
             $(elem).focus();
-    return $(elem).on("input", function (e) {
-
-        validationProcess(elem, toolname);
-    });
-}
+        }
+        return $(elem).on("input", function (e) {
+            validationProcess(elem, toolname);
+        });
+    }
+};
 
 
 
@@ -285,9 +290,9 @@ let validationProcess = function(elem: any,toolname: string) {
             let hhompTarget = new alignmentVal($(elem));
 
 
-            if (hhpredTarget.basicValidation("yes")) {
-                hhpredTarget.sameLengthValidation();
-                hhpredTarget.hhMaxDB();
+            if (hhompTarget.basicValidation("yes")) {
+                hhompTarget.sameLengthValidation();
+                hhompTarget.hhMaxDB();
             }
 
             break;
