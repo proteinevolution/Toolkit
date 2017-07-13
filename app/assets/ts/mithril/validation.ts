@@ -294,7 +294,7 @@ let validationProcess = function(elem: any,toolname: string) {
             break;
 
         case "aln2plot":
-
+            charLimitPerSeq = 10000;
             seqLimit = 2000;
 
             let aln2plotTarget = new alignmentVal($(elem));
@@ -310,6 +310,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "frpred":
 
+            charLimitPerSeq = 3000;
             seqLimit = 2000;
 
             let frpredTarget = new alignmentVal($(elem));
@@ -350,6 +351,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "repper":
 
+            charLimitPerSeq = 10000;
             seqLimit = 2000;
 
             let repperTarget = new alignmentVal($(elem));
@@ -362,6 +364,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "marcoil":
 
+            charLimitPerSeq = 10000;
             seqLimit = 2000;
 
             let marcoilTarget = new alignmentVal($(elem));
@@ -373,6 +376,9 @@ let validationProcess = function(elem: any,toolname: string) {
             break;
 
         case "tprpred":
+
+            charLimitPerSeq = 10000;
+
 
             let tprpredTarget = new alignmentVal($(elem));
 
@@ -426,6 +432,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "ancescon":
 
+            charLimitPerSeq = 3000;
             seqLimit = 2000;
 
             let ancesconTarget = new alignmentVal($(elem));
@@ -447,6 +454,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * Limit the maximum number of sequences to 20000.
              */
 
+            charLimitPerSeq = 30000;
             seqLimit = 20000;
 
             let mmseqs2Target = new alignmentVal($(elem));
@@ -481,6 +489,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * Limit the maximum number of sequences to 10000.
              **/
 
+            charLimitPerSeq = 20000;
             seqLimit = 10000;
 
             let clansTarget = new alignmentVal($(elem));
@@ -516,7 +525,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              * Limit the maximum number of sequences to 10000.
              */
-
+            charLimitPerSeq = 3000;
             seqLimit = 10000;
 
             let hhfilterTarget = new alignmentVal($(elem));
