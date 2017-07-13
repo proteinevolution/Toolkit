@@ -521,5 +521,19 @@ object BlastVisualization  {
     }
   }
 
-
+  def quick2dWrapped(result: Quick2DResult, charCount: Int, breakAfter: Int): String = {
+    val length = result.query.seq.length
+    if (charCount >= length){
+      return ""
+    }
+    else {
+      var htmlString = ""
+      val query = result.query.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val psipred = result.psipred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      htmlString += "<tr class='sequence'><td>Q<td></td><td>"+query+"</td><td>"+Math.min(length,charCount+breakAfter)+"</td>"
+      htmlString += "<tr class='sequence'><td>CO<td>"+result.psipred.name.toUpperCase()+"</td><td>"+this.SSColorReplace(psipred.replace("C", "&nbsp;"))+"</td><td></td>"
+      htmlString += "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>"
+      return htmlString + quick2dWrapped(result, charCount + breakAfter, breakAfter)
+      }
+    }
 }
