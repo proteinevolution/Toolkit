@@ -63,10 +63,10 @@ case class HHompTemplate(consensus: String,
                           bb_conf: String,
                           start: Int)
 case class HHompResult(HSPS: List[HHompHSP],
-                        alignment: AlignmentResult,
-                        num_hits: Int,
-                        query: Query,
-                        db: String,
+                       alignment: AlignmentResult,
+                       num_hits: Int,
+                       query: Query,
+                       db: String,
                        overall_prob: Double)
 
 @Singleton

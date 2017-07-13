@@ -60,6 +60,7 @@ final class ToolFactory @Inject()(
     hhpred: HHPred,
     hhblits: HHBlits,
     hhomp: HHomp,
+    quick2d: Quick2D,
     aln: models.database.results.Alignment,
     constants: Constants
 )(paramAccess: ParamAccess, mongoStore: MongoStore) {
@@ -440,7 +441,15 @@ final class ToolFactory @Inject()(
           )
         }
       ),
-      Toolnames.QUICK2D -> ListMap(),
+      Toolnames.QUICK2D -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.quick2d(quick2d.parseResult(jsvalue))
+          }
+        }
+      ),
       Toolnames.CLUSTALO -> ListMap(
         Resultviews.CLUSTAL -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
