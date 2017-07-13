@@ -12,8 +12,8 @@
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 @views.html.forwardmodals.simpler(tool, tool.toolNameShort)
 @if((jsValue \ jobID \ "hits").as[List[JsObject]].size < 1) {
-    <div class="callout alert noHits" id="noHits">
-        <h6>No hits found!</h6>
+    <div class="callout alert noHitsWide" id="noHits">
+        No hits found!
     </div>
 
 }else{
@@ -58,18 +58,20 @@
     </form>
     }
 </div>
-    <br>
-    <hr id="line-element" colspan="4" class="horizontal-line"><br>
+    <hr id="line-element" colspan="4" class="horizontal-line">
     <div id="toolReferences">
         <h5 id="refTitle">References</h5>
         If you use PatternSearch for your research, please cite:
-        <div><em>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.</em><a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank"> Alva et al. NAR (2016)</a>.</div>
-    </div><br>
+        <div class="citation">
+            <div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<br>
+                Alva V, Nam SZ, Söding J, Lupas AN.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank"> Nucleic Acids Res. 2016 Jul 8;44(W1):W410-5</a>.</div>
+        </div>
+    </div>
     <hr id="line-element" colspan="4" class="horizontal-line">
 
 
 
-<script>
+    <script>
         var data;
         var wrapSequencesBool = false;
 

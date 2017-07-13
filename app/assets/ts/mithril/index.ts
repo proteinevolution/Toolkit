@@ -229,6 +229,10 @@ let tilescomponent = {
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
                                 m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
+                                    m("h6", "July 10, 2017"),
+                                    m("p", "HMM databases of the COG, KOG, SMART, and NCBI CD databases are online now")
+                                ),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
                                     m("h6", "July 4, 2017"),
                                     m("p", "HMM databases of the ",
                                         m("b", "human proteome"), " and ",
@@ -246,13 +250,6 @@ let tilescomponent = {
                                 m("a", {"data-open": "recentUpdatesModal"},
                                     m("h6", "June 10, 2017"),
                                     m("p", "Profile HMM databases of many bacterial proteomes are online")
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal"},
-                                    m("h6", "May 27, 2017"),
-                                    m("p", "Profile HMM databases of",
-                                        m("em", " Mycobacterium tuberculosis"),
-                                        m("span", " is now available for HHpred")
-                                    )
                                 )
                             ),
                             m("div", {"class": "quick_links"},

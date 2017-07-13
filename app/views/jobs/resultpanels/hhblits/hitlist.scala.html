@@ -2,11 +2,11 @@
 @import models.database.results.HHBlitsResult
 @import better.files._
 @(jobID: String, result: HHBlitsResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
-@if(result.num_hits < 1) {
-    <div class="callout alert noHits" id="noHits">
-        <h6>No hits found!</h6>
-    </div>
-}else{
+    @if(result.num_hits < 1) {
+        <div class="callout alert noHitsWide" id="noHits">
+            No hits found!
+        </div>
+    } else{
     @* Loads ForwardModal *@
     @views.html.forwardmodals.normal(tool, tool.toolNameShort)
     @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort+"_hhsuite")
@@ -109,11 +109,15 @@
 
         If you use our HHblits server for your research, please cite:
         <div class="citation">
-            <div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank"> Alva et al. NAR (2016)</a>.</div>
+            <div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<br>
+                Alva V, Nam SZ, Söding J, Lupas AN.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank"> Nucleic Acids Res. 2016 Jul 8;44(W1):W410-5</a>.
+            </div>
         </div>
         And the HHblits paper:
         <div class="citation">
-            <div>HHblits: lightning-fast iterative protein sequence searching by HMM-HMM alignment.<a href="https://www.nature.com/nmeth/journal/v9/n2/full/nmeth.1818.html" target="_blank"> Remmert et al. Nat Methods (2011)</a>.</div>
+            <div>HHblits: lightning-fast iterative protein sequence searching by HMM-HMM alignment.<br>
+                Remmert M, Biegert A, Hauser A, Söding J.<a href="https://www.nature.com/nmeth/journal/v9/n2/full/nmeth.1818.html" target="_blank"> Nat Methods. 2011 Dec 25;9(2):173-5</a>.
+            </div>
         </div>
     </div>
     <hr id="line-element" colspan="4" class="horizontal-line">
@@ -124,7 +128,7 @@
 
 
 <div class="reveal" id="templateAlignmentModal" data-reveal>
-    <h4>Template Alignment</h4>
+    <p>Template Alignment</p>
     <div>
         <select onclick="forwardTemplateAlignment_(this.value, $('#alignmentTemplate').val())" id="alignmentTemplate_tool">
             <option value="" selected>Forward To</option>

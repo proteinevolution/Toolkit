@@ -223,5 +223,7 @@ class ParamAccess @Inject()(tel: TEL) {
       case "CLANS_EVAL" =>              select("clans_eval", "Extract BLAST HSP's up to E-values of")
       case "PATSEARCH_DB" =>            select("patsearchdb", "Select database")
       case "MAFFT_GAP_OPEN" =>          Param("mafft_gap_open", Decimal("0.01", Some(0), Some(10)), 1, "Gap open penalty")
+      case "HHOMPDB" =>                 select("hhompdb", "Select HMM databases")
+
       }
 }
