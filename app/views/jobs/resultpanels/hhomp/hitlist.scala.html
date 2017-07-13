@@ -127,25 +127,6 @@
         var wrapped = true;
 
 
-        function colorAA(){
-            colorAAs = !colorAAs;
-            $.LoadingOverlay("show");
-            $("#alignmentTable").empty();
-            $(".colorAA").toggleClass("colorToggleBar");
-            var checkboxesWrap =  $("input:checkbox").toArray();
-            var num = 1;
-            for(var i =0 ; i < checkboxesWrap.length; i++){
-                if($(checkboxesWrap[i]).isOnScreen()){
-                    num  = $(checkboxesWrap[i]).val();
-                    break;
-                }
-            }
-            getHits(0, shownHits, wrapped, colorAAs).then(function(){
-                $.LoadingOverlay("hide");
-                scrollToElem(num);
-            });
-        }
-
         $(document).ready(function () {
             hitlistBaseFunctions();
             if (numHits > 0) {
@@ -212,7 +193,7 @@
 
 
 
-        function hhomp_forwardQueryMSA(selectedTool) {
+        function @{tool.toolNameShort}_forwardQueryMSA(selectedTool) {
             $.ajax({
                 type: 'GET',
                 url: "files/" + jobID + "/reduced.fas"

@@ -28,7 +28,7 @@
                 }_hhsuite">Forward Query MSA</a>
                 @*only show create model when chosen db=mmcif70/pdb70*@
                 @if(result.db.matches("mmcif70/pdb70")) {
-                    <a onclick="hhpred_manual()">Create model using selection</a>
+                    <a onclick="@{tool.toolNameShort}_manual()">Create model using selection</a>
                 }
                 <a onclick="colorAA()" class="colorAA">Color Seqs</a>
                 <a onclick="wrap()" id="wrap">Wrap Seqs</a>
@@ -193,26 +193,6 @@
         // due to pagination/lazyload
         var checkboxes = [];
 
-        function colorAA(){
-            colorAAs = !colorAAs;
-            $.LoadingOverlay("show");
-            $("#alignmentTable").empty();
-            $(".colorAA").toggleClass("colorToggleBar");
-            var checkboxesWrap =  $("input:checkbox").toArray();
-            var num = 1;
-            for(var i =0 ; i < checkboxesWrap.length; i++){
-                if($(checkboxesWrap[i]).isOnScreen()){
-                    num  = $(checkboxesWrap[i]).val();
-                    break;
-                }
-            }
-            getHits(0, shownHits, wrapped, colorAAs).then(function(){
-                $.LoadingOverlay("hide");
-                linkCheckboxes();
-                scrollToElem(num);
-            });
-        }
-
         $(document).ready(function () {
             hitlistBaseFunctions();
             if (numHits > 0) {
@@ -270,7 +250,7 @@
         }
 
 
-        function hhpred_manual() {
+        function @{tool.toolNameShort}_manual() {
             // Get selected templates and append parentID
             var formData = new FormData(document.getElementById("hhpred_templates"));
             if ($('input:checkbox[name=alignment_elem]:checked').length == 0) {
@@ -373,7 +353,7 @@
 
         }
 
-        function hhpred_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength) {
+        function @{tool.toolNameShort}_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength) {
             var data = {"checkboxes": checkboxes.removeDuplicates()};
             $.LoadingOverlay("show");
             var route = null;
@@ -429,7 +409,7 @@
         }
 
 
-        function hhpred_forwardQueryMSA(selectedTool) {
+        function @{tool.toolNameShort}_forwardQueryMSA(selectedTool) {
             $.ajax({
                 type: 'GET',
                 url: "files/" + jobID + "/reduced.fas"
