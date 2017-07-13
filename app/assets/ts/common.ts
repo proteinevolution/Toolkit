@@ -60,6 +60,7 @@ $(window).scroll(function() {
         $('#scrollTop').hide();
     }
 });
+
 window.onfocus = function(){notifications = 0; titlenotifier.reset()};
 window.onclick = function(){notifications = 0; titlenotifier.reset()};
 
