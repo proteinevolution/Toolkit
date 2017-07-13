@@ -45,7 +45,7 @@ case class HHBlitsTemplate(consensus: String, end: Int, accession: String, ref: 
 case class HHBlitsResult(HSPS: List[HHBlitsHSP],
                          alignment: AlignmentResult,
                          num_hits: Int,
-                         query: Query,
+                         query: SingleSeq,
                          db: String,
                          TMPRED: String,
                          COILPRED: String)
@@ -70,7 +70,7 @@ class HHBlits @Inject()(general: General, aln: Alignment) {
       }
       val db        = (obj \ jobID \ "db").as[String]
       val alignment = aln.parseAlignment((obj \ "rep100").as[JsArray])
-      val query     = general.parseQuery((obj \ "query").as[JsArray])
+      val query     = general.parseSingleSeq((obj \ "query").as[JsArray])
       val num_hits  = hsplist.length
 
       val TMPRED = (obj \ jobID \ "TMPRED").asOpt[String] match {
