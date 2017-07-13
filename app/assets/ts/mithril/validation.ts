@@ -55,7 +55,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                         m.redraw(true);
                     }
                 });
-            }
+                }
         } else {
             m.redraw(true);
             setTimeout(function () {
@@ -262,6 +262,27 @@ let validationProcess = function(elem: any,toolname: string) {
             seqLimit = 10000;
 
             let hhpredTarget = new alignmentVal($(elem));
+
+
+            if (hhpredTarget.basicValidation("yes")) {
+                hhpredTarget.sameLengthValidation();
+                hhpredTarget.hhMaxDB();
+            }
+
+            break;
+
+        case "hhomp":
+            /** validation model for hhomp:
+             * Input has to be a single FASTA sequence
+             * or aligned FASTA with at least two sequences.
+             * only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             */
+
+            charLimitPerSeq = 3000; // TODO: why was the charLimit defined after it's usage?
+            seqLimit = 10000;
+
+            let hhompTarget = new alignmentVal($(elem));
 
 
             if (hhpredTarget.basicValidation("yes")) {
@@ -678,13 +699,8 @@ class alignmentVal implements ToolkitValidator {
             feedback(false, "Invalid characters!", "error");
             return false;
         }
-        else if( !this.elem.reformat('NUCLEOTIDE') && !this.elem.reformat('PROTEIN')){
-            feedback(false, "Found both protein and nucleotide sequences!", "error");
-            return false;
-        }
-
         else if(checkNucleotide === "yes" && !this.elem.reformat('PROTEIN')){
-            feedback(false, "Nucleotide FASTA. Expecting protein sequence(s).", "error");
+            feedback(false, "Input contains nucleotide sequence(s). Expecting protein sequence(s).", "error");
             return false;
         }
         else if(checkNucleotide === "no" && !this.elem.reformat('PROTEIN')){

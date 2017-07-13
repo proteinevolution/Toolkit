@@ -9,4 +9,3 @@ PDBALL   = %DBROOT/pdb/all
 HHOMP    = %DBROOT/hhomp/pdb
 HHBLITS  = %DBROOT/hhblits/
 SCOPE    = %DBROOT/hh-suite/scope/pdb
-
