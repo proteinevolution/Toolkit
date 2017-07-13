@@ -432,9 +432,9 @@ let validationProcess = function(elem: any,toolname: string) {
             let hhompTarget = new alignmentVal($(elem));
 
 
-            if (hhompTarget.basicValidation("yes")) {
-                hhompTarget.sameLengthValidation();
-                hhompTarget.hhMaxDB();
+            if (hhpredTarget.basicValidation("yes")) {
+                hhpredTarget.sameLengthValidation();
+                hhpredTarget.hhMaxDB();
             }
 
             break;
@@ -846,13 +846,8 @@ class alignmentVal implements ToolkitValidator {
             feedback(false, "Invalid characters!", "error");
             return false;
         }
-        else if( !this.elem.reformat('NUCLEOTIDE') && !this.elem.reformat('PROTEIN')){
-            feedback(false, "Found both protein and nucleotide sequences!", "error");
-            return false;
-        }
-
         else if(checkNucleotide === "yes" && !this.elem.reformat('PROTEIN')){
-            feedback(false, "Nucleotide FASTA. Expecting protein sequence(s).", "error");
+            feedback(false, "Input contains nucleotide sequence(s). Expecting protein sequence(s).", "error");
             return false;
         }
         else if(checkNucleotide === "no" && !this.elem.reformat('PROTEIN')){
