@@ -49,7 +49,7 @@ case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
 case class HmmerResult(HSPS: List[HmmerHSP],
                        num_hits: Int,
                        alignment: List[AlignmentItem],
-                       query: Query,
+                       query: SingleSeq,
                        db: String,
                        TMPRED: String,
                        COILPRED: String)
@@ -66,7 +66,7 @@ class Hmmer @Inject()(general: General, aln: Alignment) {
             aln.parseAlignmentItem(x, index)
         }
         val db       = (obj \ jobID \ "db").as[String]
-        val query    = general.parseQuery((obj \ "query").as[JsArray])
+        val query    = general.parseSingleSeq((obj \ "query").as[JsArray])
         val hsps     = (obj \ jobID \ "hsps").as[List[JsObject]]
         val num_hits = hsps.length
 

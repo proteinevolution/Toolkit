@@ -62,7 +62,7 @@ case class HHPredTemplate(consensus: String,
 case class HHPredResult(HSPS: List[HHPredHSP],
                         alignment: AlignmentResult,
                         num_hits: Int,
-                        query: Query,
+                        query: SingleSeq,
                         db: String,
                         proteomes: String,
                         TMPRED: String,
@@ -100,7 +100,7 @@ class HHPred @Inject()(general: General, aln: Alignment) {
         }
 
         val alignment = aln.parseAlignment((obj \ "reduced").as[JsArray])
-        val query     = general.parseQuery((obj \ "query").as[JsArray])
+        val query     = general.parseSingleSeq((obj \ "query").as[JsArray])
         val num_hits  = hsplist.length
 
         HHPredResult(hsplist, alignment, num_hits, query, db, proteomes, TMPRED, COILPRED)
