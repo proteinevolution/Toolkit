@@ -441,7 +441,7 @@ table.dataTable.no-footer{
     margin-top: 3em !important;
     margin: 0 auto;
     margin-bottom: 1em;
-    font-size: 1.2em;
+    font-size: 1.3em;
 }
 
 #htb_wrapper {
@@ -520,7 +520,6 @@ table.dataTable.no-footer{
 #extraWide {
     width: 5.7em;
     margin-right: 0.9em !important;
-    margin-left: 1em;
     height: 1.7em;
 }
 
@@ -551,8 +550,9 @@ table.dataTable.no-footer{
 }
 
 .headerDivider {
-    border-right:1px solid #006e62;
-    opacity: 0.3;
+    margin-right: 2em;
+    border-right: 1px solid #666;
+    opacity: 0.4;
 }
 
 #ancescon_output_tree div {
@@ -585,9 +585,6 @@ table.dataTable.no-footer{
     width: 12em;
 }
 
-#templateAlignmentModal h4 {
-    margin-bottom: 0;
-}
 
 #accessionStructure {
     height: 2em;
