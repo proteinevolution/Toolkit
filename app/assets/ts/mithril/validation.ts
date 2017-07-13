@@ -30,9 +30,11 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
             if (url[url.length - 2] != 'jobs') {
                 $(elem).val(ParameterAlignmentComponent.placeholder).css('color', 'grey');
                 $(elem).focus(function () {
+                    if(ParameterAlignmentComponent.placeholder.match("\n")){
+                        $(elem).removeAttr('placeholder');
+                    }
                     if ($(elem).val() === ParameterAlignmentComponent.placeholder) {
                         $(elem).attr('value', '').css('color', '#0a0a0a');
-                        $(elem).attr('placeholder', '');
                         m.redraw(true);
                     }
                 });
