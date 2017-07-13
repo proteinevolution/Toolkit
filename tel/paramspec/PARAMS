@@ -4,6 +4,7 @@ hhblitsdb  GEN hhblitsdb.py
 hhsuitedb  GEN hhsuitedb.py
 patsearchdb GEN patsearchdb.py
 msa_gen_max_iter GEN msa_gen_max_iter.prop
+quick_iters GEN quick_iters.prop
 inc_amino GEN inc_amino.prop
 genetic_code GEN genetic_code.prop
 inclusion_ethresh GEN inclusion_ethresh.prop
