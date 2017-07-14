@@ -171,15 +171,10 @@ tr.job a:visited {
     float: right;
 }
 
-#helpModal {
-
-    height: 40em;
-
-}
 
 #helpModal p {
 
-    font-size: small;
+    font-size: 0.85em;
 }
 
 #helpModal h4 {
@@ -201,7 +196,7 @@ tr.job a:visited {
 }
 
 #help-tabs {
-    font-size: 0.95em !important;
+    font-size: 0.85em !important;
 }
 
 #help-tabs .ui-widget-header {

@@ -1,7 +1,7 @@
 package controllers
 
 import javax.inject.Inject
-
+import play.twirl.api.Html
 import models.database.CMS.FeaturedArticle
 import play.api.mvc._
 import reactivemongo.bson.BSONObjectID
@@ -71,6 +71,15 @@ class DataController @Inject()(mongoStore: MongoStore,
         BadRequest
       }
     }
+  }
+
+
+  def getHelp(toolname: String) = Action {
+    val help = toolname match{
+  case "psiblast"=>
+    views.html.help.psiblast()
+  }
+  Ok(help)
   }
 
 }
