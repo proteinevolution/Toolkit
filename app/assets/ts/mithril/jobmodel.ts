@@ -57,7 +57,9 @@ window.JobModel = {
         "samcc_periodicity":"7",
         "seqcount":"500",
         "invoke_psipred":"30",
-        "clans_eval":"1e-4"
+        "clans_eval":"1e-4",
+        "transition_probability":"1",
+        "matrix_marcoil":"mtk"
 },
 
 
