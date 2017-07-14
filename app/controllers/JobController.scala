@@ -162,7 +162,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                   // Notify user that the job has been submitted
                   Ok(Json.obj("successful" -> true, "jobID" -> jobID))
                     .withSession(
-                      userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin))
+                      userSessions.sessionCookie(request, user.sessionID.get)
                     )
                 case None =>
                   // Something went wrong when pushing to the DB
