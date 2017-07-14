@@ -27,22 +27,33 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
                              val reactiveMongoApi: ReactiveMongoApi,
                              mongoStore: MongoStore,
                              toolFactory: ToolFactory,
-                             val jobDao: JobDAO)
+                             val jobDao: JobDAO,
+                             constants: Constants)
     extends Controller
-    with Constants
     with ReactiveMongoComponents
     with Common {
 
   def getToolList: Action[AnyContent] = Action {
-    Ok(Json.toJson(toolFactory.values.values.map(a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort))))
+    Ok(Json.toJson(toolFactory.values.values.filterNot(_.toolNameShort == "hhpred_manual").map(a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort))))
   }
 
+  /**
+    * fetches data for a given query
+    *
+    * if no tool is found for a given query,
+    * it looks for jobs which belong to the current user.
+    * only jobIDs that belong to the user are autocompleted
+    *
+    * @param queryString_
+    * @return
+    */
   def autoComplete(queryString_ : String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       val queryString = queryString_.trim()
       val tools: List[models.tools.Tool] = toolFactory.values.values
         .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
         .filter(tool => tool.toolNameShort != "hhpred_manual")
+
         .toList
       // Find out if the user looks for a certain tool or for a jobID
       if (tools.isEmpty) {

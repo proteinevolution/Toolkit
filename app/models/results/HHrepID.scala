@@ -4,17 +4,16 @@ import models.Constants
 import play.twirl.api.Html
 
 import scala.io.Source
-import java.nio.file.{ Files, Paths }
+import java.nio.file.{Files, Paths}
+import javax.inject.Inject
 
 /**
   * Created by drau on 30.05.17.
   */
-object HHrepID extends Constants {
-  def getResult(jobID: String): Html = {
+object HHrepID{
+  def getResult(jobID: String, filePath: String): Html = {
     val headerLine = """(Results for repeats type )([A-Z])(:)""".r
     val seqLine    = """([\S]+\s+[\S]+\s+[\S]+\s+[\S]+\s)([\S]+)""".r
-
-    val filePath = s"$jobPath$jobID/results/query.hhrepid"
 
     val imagePath = s"/files/$jobID/query_"
     val source    = Source.fromFile(filePath)
@@ -32,8 +31,8 @@ object HHrepID extends Constants {
     Html(data.mkString(""))
   }
 
-  def existsResult(jobID: String): Boolean = {
-    val filePath = s"$jobPath$jobID/results/query.hhrepid"
+  def existsResult(jobID: String, filePath: String): Boolean = {
+
     Files.exists(Paths.get(filePath))
   }
 

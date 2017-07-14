@@ -53,10 +53,10 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
                                   val cluster: Cluster,
                                   val search: Search,
                                   val settings: Settings,
-                                  configuration: Configuration)
+                                  configuration: Configuration,
+                                  constants: Constants)
     extends Controller
     with I18nSupport
-    with Constants
     with Common {
 
   private val toolkitMode = ConfigFactory.load().getString(s"toolkit_mode")
@@ -201,8 +201,8 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   def file(filename: String, mainID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
       // mainID exists, allow send File
-      if (new java.io.File(s"$jobPath$SEPARATOR$mainID${SEPARATOR}results$SEPARATOR$filename").exists)
-        Ok.sendFile(new java.io.File(s"$jobPath$SEPARATOR$mainID${SEPARATOR}results$SEPARATOR$filename"))
+      if (new java.io.File(s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename").exists)
+        Ok.sendFile(new java.io.File(s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"))
           .withSession(userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
           .as("text/plain") //TODO Only text/plain for files currently supported
       else
@@ -221,7 +221,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
         case "mmcif" =>
           env.get("CIF")
       }
-      Future.successful(Ok.sendFile(new java.io.File(s"$filepath$SEPARATOR$filename")).as("text/plain"))
+      Future.successful(Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$filename")).as("text/plain"))
     }
   }
 
@@ -270,6 +270,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
         routes.javascript.HmmerController.loadHits,
         routes.javascript.HHblitsController.loadHits,
         routes.javascript.HHpredController.loadHits,
+        routes.javascript.HHompController.loadHits,
         routes.javascript.AlignmentController.loadHits,
         routes.javascript.AlignmentController.getAln,
         routes.javascript.AlignmentController.loadHitsClustal,

@@ -57,7 +57,9 @@ window.JobModel = {
         "samcc_periodicity":"7",
         "seqcount":"500",
         "invoke_psipred":"30",
-        "clans_eval":"1e-4"
+        "clans_eval":"1e-4",
+        "transition_probability":"1",
+        "matrix_marcoil":"mtk"
 },
 
 
@@ -68,6 +70,9 @@ window.JobModel = {
                 url: "/api/job/" + value
             }).then(function(data) {
                 window.JobModel.paramValues = data.paramValues;
+                if(JobModel.paramValues.proteomes && !JobModel.paramValues.hhsuitedb){
+                    JobModel.paramValues["hhsuitedb"]= "";
+                }
                 return {
                     tool: data.toolitem,
                     isJob: true,

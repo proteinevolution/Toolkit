@@ -333,7 +333,8 @@ hhsearch -cpu %THREADS \
          -seq 1 \
          -dbstrlen 10000 \
          ${MACT} \
-         -cs ${HHLIB}/data/context_data.lib
+         -maxres 32000 \
+         -contxt ${HHLIB}/data/context_data.crf
 
 echo "done" >> ../results/process.log
 updateProcessLog
