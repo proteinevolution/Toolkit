@@ -1,22 +1,22 @@
 @import models.results.BlastVisualization
 @import models.database.results.PSIBlastResult
-@(jobID: String, result: PSIBlastResult, tool: models.tools.Tool)(implicit request: RequestHeader)
+@import better.files._
+@(jobID: String, result: PSIBlastResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
 @* Load html Map used for the image representation *@
 
-@if(result.num_hits < 1) {
-    <div class="callout alert noHits" id="noHits">
-        <h6>No hits found!</h6>
-    </div>
-
-}else{
+    @if(result.num_hits < 1) {
+        <div class="callout alert noHitsWide" id="noHits">
+            No hits found!
+        </div>
+    } else{
     @* Loads ForwardModal *@
     @views.html.forwardmodals.normal(tool, tool.toolNameShort)
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
             <div id="scrollLinks">
-                <a id="visualizationScroll" name="#visualization" onclick="scrollToSection('visualization')">Visualization</a>
-                <a id="hitlistScroll" name="#hitlist" onclick="scrollToSection('hitlist')">Hitlist</a>
-                <a id="alignmentsScroll" name="#alignments" onclick="scrollToSection('alignments')">Alignments</a>
+                <a id="visualizationScroll" name="#visualization" onclick="scrollToSection('visualization')">Vis</a>
+                <a id="hitlistScroll" name="#hitlist" onclick="scrollToSection('hitlist')">Hits</a>
+                <a id="alignmentsScroll" name="#alignments" onclick="scrollToSection('alignments')">Aln</a>
             </div>
             <span class="headerDivider"></span>
             <div id="controlls">
@@ -24,7 +24,7 @@
                 <a type="button" id="forwardButtonNormal" data-open="forwardModal_@{
                     tool.toolNameShort
                 }">Forward</a>
-                <a onclick="wrap()" id="wrap">Wrap sequences</a>
+                <a onclick="wrap()" id="wrap">Wrap Seqs</a>
             </div>
         </div>
     </div>
@@ -63,7 +63,7 @@
         <div><a class="success button tiny resubmitSection" onclick="resubmitSection('@{result.query.seq}', '>' + '@{result.query.accession}')" type="button" id="resubmitSection">Resubmit section</a></div>
             <div id='blastviz'>
                 <div class='flat-slider' id='flat-slider'></div>
-                    @BlastVisualization.html(s"$jobID/results/blastviz.html")
+                    @Html(htmlPath.toFile.contentAsString)
                     <p><img src="files/@{jobID}/blastviz.png" border="0" alt="blasthits" usemap="#blastmap"></p>
             </div>
     </div>
@@ -83,6 +83,7 @@
                 </thead>
             </table>
     </div>
+    <br>
     <div id="alignments">
         <h5 id="alignmentsTitle">Alignments</h5>
             <form id="psiblast_templates">
@@ -98,6 +99,21 @@
                   </table>
             </form>
     </div>
+    <div id="toolReferences">
+        <h5 id="refTitle">References</h5>
+        If you use our PSI-BLAST+ server for your research, please cite:
+        <div class="citation">
+            <div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<br>
+                Alva V, Nam SZ, Söding J, Lupas AN.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank"> Nucleic Acids Res. 2016 Jul 8;44(W1):W410-5</a>.</div>
+            </div>
+        And the BLAST+ paper:
+        <div class="citation">
+            <div>BLAST+: architecture and applications.<br>
+                Camacho C, Coulouris G, Avagyan V, Ma N, Papadopoulos J, Bealer K, Madden TL.<a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-10-421" target="_blank"> BMC Bioinformatics. 2009 Dec 15;10:421</a>.</div>
+        </div>
+    </div>
+    <hr id="line-element" colspan="4" class="horizontal-line">
+
 }
 <script>
 
@@ -118,7 +134,7 @@ var colorAAs = false;
 $(document).ready( function(){
     hitlistBaseFunctions();
     if(numHits > 0 ){
-        $("#wrap").text("Unwrap sequences");
+        $("#wrap").text("Unwrap Seqs");
         $("#wrap").addClass("colorToggleBar");
         initiallyCheckCheckboxes();
         drawDataTable();
@@ -234,7 +250,7 @@ function getHits(start, end, isWrapped){
         var data = {};
         data.start = start;
         data.end = end;
-        data.wrapped = wrapped;
+        data.wrapped = isWrapped;
         var route = jsRoutes.controllers.PSIBlastController.loadHits(jobID);
         return $.ajax({
             contentType: 'application/json; charset=utf-8',

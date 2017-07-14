@@ -2,7 +2,6 @@
 @import play.api.libs.json.JsValue
 @import play.api.libs.json.JsArray
 @import play.api.Logger
-@import models.results.FileLoader
 @import play.api.libs.json.JsUndefined
 @import play.api.libs.json.JsDefined
 @import models.results.BlastVisualization
@@ -18,7 +17,7 @@
     <a onclick="@{tool.toolNameShort}_selectAll()" class="selectAllSeq"><span class="selectAllSeqSpan">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Alignment</span></a>
-    <a type="button" onclick="colorAA()"><span id="colorAA">Color Alignment</span></a>
+    <a type="button" onclick="@{tool.toolNameShort}_colorAA()"><span id="colorAA">Color Alignment</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
@@ -122,7 +121,7 @@
                 });
         };
 
-        function colorAA(){
+        function @{tool.toolNameShort}_colorAA(){
             colorAAsClustal = !colorAAsClustal;
             $("#clustalTable").empty();
             $("#colorAA").toggleClass("colorToggle");

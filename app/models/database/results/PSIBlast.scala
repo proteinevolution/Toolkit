@@ -55,7 +55,7 @@ case class PSIBlastResult(HSPS: List[PSIBlastHSP],
                           db: String,
                           evalue: Double,
                           alignment: List[AlignmentItem],
-                          query: Query,
+                          query: SingleSeq,
                           belowEvalThreshold: Int,
                           TMPRED: String,
                           COILPRED: String)
@@ -72,7 +72,7 @@ class PSIBlast @Inject()(general: General, aln: Alignment) {
           case (x, index) =>
             aln.parseAlignmentItem(x, index)
         }
-        val query = general.parseQuery((obj \ "query").as[JsArray])
+        val query = general.parseSingleSeq((obj \ "query").as[JsArray])
         val iter_num = (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations")
           .as[List[JsObject]]
           .size - 1

@@ -242,11 +242,12 @@ function calcColor(prob) {
 
 
 function scrollToElem(num){
+    num = parseInt(num);
     var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
     if (num > shownHits) {
         $.LoadingOverlay("show");
         getHits(shownHits, num, wrapped,colorAAs).done(function(data){
-            var pos = $('input[class="checkbox aln"][value=' + num + ']').offset().top;
+            var pos = $('.aln"][value=' + num + ']').offset().top;
             $(elem).animate({
                 scrollTop: pos - 100
             }, 1)
@@ -255,7 +256,7 @@ function scrollToElem(num){
         });
         shownHits = num;
     }else{
-        var pos = $('input[class="checkbox aln"][value=' + num + ']').offset().top;
+        var pos = $('.aln[value=' + num + ']').offset().top;
         $(elem).animate({
             scrollTop: pos - 100
         }, 1)
@@ -264,7 +265,7 @@ function scrollToElem(num){
 
 function scrollToSection(name) {
     var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
-    var pos = $('#tool-tabs').hasClass("fullscreen") ? $('#' + name).offset().top + $(elem).scrollTop() : $('#' + name).offset().top;
+    var pos = $('#tool-tabs').hasClass("fullscreen") ? $('#' + name).offset().top + $(elem).scrollTop() : $('#' + name).offset().top + 25;
     $(elem).animate({
         scrollTop: pos
     }, 'fast');
@@ -401,22 +402,44 @@ function generateFilename(){
  */
 function wrap(){
     wrapped = !wrapped;
-    var checkboxesWrap =  $("input:checkbox").toArray();
+    var elemArr =  $(".aln").toArray();
     var num = 1;
-    for(var i =0 ; i < checkboxesWrap.length; i++){
-        if($(checkboxesWrap[i]).isOnScreen()){
-            num  = $(checkboxesWrap[i]).val();
+    for(var i =0 ; i < elemArr.length; i++){
+        if($(elemArr[i]).isOnScreen()){
+            num  = $(elemArr[i]).attr("value");
             break;
         }
     }
     $("#wrap").toggleClass("colorToggleBar");
-    $("#wrap").toggleText("Unwrap sequences", "Wrap sequences");
+    $("#wrap").toggleText("Unwrap Seqs", "Wrap Seqs");
     $("#alignmentTable").empty();
     getHits(0, shownHits, wrapped, colorAAs).then(function(){
         linkCheckboxes();
         scrollToElem(num);
     });
 
+}
+
+
+
+function colorAA(){
+    colorAAs = !colorAAs;
+    $.LoadingOverlay("show");
+    $(".colorAA").toggleClass("colorToggleBar");
+    var elemArr =  $(".aln").toArray();
+    var num = 1;
+    for(var i =0 ; i < elemArr.length; i++){
+        if($(elemArr[i]).isOnScreen()){
+            num  = $(elemArr[i]).attr("value");
+            break;
+        }
+    }
+    $("#alignmentTable").empty();
+    getHits(0, shownHits, wrapped, colorAAs).then(function(){
+        $.LoadingOverlay("hide");
+        linkCheckboxes();
+        scrollToElem(num);
+    });
 }
 
 

@@ -1,6 +1,6 @@
 package models.results
 
-
+import javax.inject.Inject
 import better.files._
 import models.Constants
 import models.database.results.AlignmentResult
@@ -10,7 +10,7 @@ import models.database.results._
 import scala.collection.mutable.ArrayBuffer
 import scala.util.matching.Regex
 
-object BlastVisualization extends Constants {
+object BlastVisualization  {
 
   private val color_regex = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
   private val helix_pattern = """([Hh]+)""".r
@@ -19,11 +19,16 @@ object BlastVisualization extends Constants {
 
   private val uniprotReg = """([A-Z0-9]{10}|[A-Z0-9]{6})""".r
   private val scopReg = """([defgh][0-9a-zA-Z\.\_]+)""".r
+  private val smartReg = """(^SM0[0-9]{4})""".r
+  private val ncbiCDReg   = """(^[cs]d[0-9]{5})""".r
+  private val cogkogReg   = """(^[CK]OG[0-9]{4})""".r
+  private val tigrReg   = """(^TIGR[0-9]{5})""".r
+  private val prkReg = """(CHL|MTH|PHA|PLN|PTZ|PRK)[0-9]{5}""".r
   private val mmcifReg = """(...._[0-9a-zA-Z][0-9a-zA-Z]?[0-9a-zA-Z]?[0-9a-zA-Z]?)""".r
   private val mmcifShortReg = """([0-9]+)""".r
   private val pfamReg = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
   private val ncbiReg = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
-
+  
   private val envNrNameReg = """(env.*|nr.*)""".r
   private val pdbNameReg = """(pdb.*)""".r
   private val uniprotNameReg = """(uniprot.*)""".r
@@ -38,17 +43,7 @@ object BlastVisualization extends Constants {
   private val pfamBaseLink = "http://pfam.xfam.org/family/"
   private val cddBaseLink = "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid="
   private val uniprotBaseLik = "http://www.uniprot.org/uniprot/"
-
-  /**
-    * Renders file content as plain HTML. Can be used for scripts that produce HTML from the old Toolkit
-    *
-    * @param filepath
-    * @return
-    */
-  def html(filepath: String): Html = {
-    Logger.info("Getting file: " + s"$jobPath/$filepath")
-    Html(s"$jobPath/$filepath".toFile.contentAsString)
-  }
+  private val smartBaseLink = "http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN="
 
   def SSColorReplace(sequence: String): String =
     this.helix_sheets.replaceAllIn(
@@ -84,7 +79,7 @@ object BlastVisualization extends Constants {
     val db = identifyDatabase(id)
     var link = ""
     val idTrimmed = if (id.length > 4) {
-      id.substring(1, 5)
+      id.slice(1, 5)
     } else {
       id
     }
@@ -94,12 +89,22 @@ object BlastVisualization extends Constants {
       link += generateLink(scopBaseLink, id, id)
     } else if (db == "mmcif") {
       link += generateLink(pdbBaseLink, idPdb, id)
+    } else if (db == "prk") {
+      link += generateLink(cddBaseLink, id, id)
+    } else if (db == "ncbicd") {
+      link += generateLink(cddBaseLink, id, id)
+    } else if (db == "cogkog") {
+      link += generateLink(cddBaseLink, id, id)
+    } else if (db == "tigr") {
+      link += generateLink(cddBaseLink, id, id)
     } else if (db == "pfam") {
       link += generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
     } else if (db == "ncbi") {
       link += generateLink(ncbiProteinBaseLink, id, id)
     } else if (db == "uniprot") {
       link += generateLink(uniprotBaseLik, id, id)
+    } else if (db == "smart") {
+      link += generateLink(smartBaseLink, id, id)
     } else {
       link = id
     }
@@ -112,7 +117,7 @@ object BlastVisualization extends Constants {
     var idNcbi = id.replaceAll("#", ".") + "?report=fasta"
     var idPdb = id.replaceAll("_.*$", "").toLowerCase
     val idTrimmed = if (id.length > 4) {
-      id.substring(1, 5)
+      id.slice(1, 5)
     } else {
       id
     }
@@ -135,7 +140,7 @@ object BlastVisualization extends Constants {
   def getSingleLinkDB(db: String, id: String): Html = {
     var link = ""
     val idTrimmed = if (id.length > 4) {
-      id.substring(1, 5)
+      id.slice(1, 5)
     } else {
       id
     }
@@ -156,7 +161,7 @@ object BlastVisualization extends Constants {
     var idNcbi = id.replaceAll("#", ".") + "?report=fasta"
     var idPdb = id.replaceAll("_.*$", "").toLowerCase
     val idTrimmed = if (id.length > 4) {
-      id.substring(1, 5)
+      id.slice(1, 5)
     } else {
       id
     }
@@ -193,7 +198,7 @@ object BlastVisualization extends Constants {
 
     var idPdb = id.replaceAll("_.*$", "").toLowerCase
     val idTrimmed = if (id.length > 4) {
-      id.substring(1, 5)
+      id.slice(1, 5)
     } else {
       id
     }
@@ -213,6 +218,7 @@ object BlastVisualization extends Constants {
     } else if (db == "ncbi") {
       links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
     }
+
     Html(links.mkString(" | "))
   }
 
@@ -233,9 +239,15 @@ object BlastVisualization extends Constants {
     case scopReg(_) => "scop"
     case mmcifShortReg(_) => "mmcif"
     case mmcifReg(_) => "mmcif"
+    case prkReg(_) => "prk"
+    case ncbiCDReg(_) => "ncbicd"
+    case cogkogReg(_) => "cogkog"
+    case tigrReg(_) => "tigr"
+    case smartReg(_) => "smart"
     case pfamReg(_, _) => "pfam"
-    case ncbiReg(_) => "ncbi"
     case uniprotReg(_) => "uniprot"
+    case ncbiReg(_) => "ncbi"
+
     case e: String => Logger.info("Struc: (" + e + ") could not be matched against any database!"); ""
   }
 
@@ -255,7 +267,7 @@ object BlastVisualization extends Constants {
   def wrapSequence(seq: String, num: Int): String = {
     var seqWrapped = ""
     for {i <- 0 to seq.length if i % num == 0} if (i + num < seq.length) {
-      seqWrapped += "<tr><td></td><td class=\"sequence\">" + seq.substring(i, (i + num)) + "</td></tr>"
+      seqWrapped += "<tr><td></td><td class=\"sequence\">" + seq.slice(i, (i + num)) + "</td></tr>"
     } else {
       seqWrapped += "<tr><td></td><td class=\"sequence\">" + seq.substring(i) + "</td></tr>"
     }
@@ -267,6 +279,10 @@ object BlastVisualization extends Constants {
     "<input type=\"checkbox\" value=\"" + num + "\" name=\"alignment_elem\" class=\"checkbox\"><a onclick=\"scrollToElem(" + num + ")\">" + num + "</a>"
   }
 
+  def getAddScrollLink(num: Int): String = {
+    "<a onclick=\"scrollToElem(" + num + ")\">" + num + "</a>"
+  }
+
   def addBreak(description: String): String = {
     description.replaceAll("(\\S{40})", "$1</br>");
   }
@@ -275,7 +291,7 @@ object BlastVisualization extends Constants {
     var newSeq = ""
     for (starPos <- hitArr) {
       val endPos = starPos + length
-      newSeq += seq.substring(0, starPos) + "<span class=\"patternMatch\">" + seq.substring(starPos, endPos) + "</span>" + seq
+      newSeq += seq.slice(0, starPos) + "<span class=\"patternMatch\">" + seq.slice(starPos, endPos) + "</span>" + seq
         .substring(endPos)
 
     }
@@ -296,7 +312,7 @@ object BlastVisualization extends Constants {
           "</td>" +
           "</td>" +
           "<td class=\"sequence\">" + {
-          if (color) colorRegexReplacer(elem.seq.substring(begin, Math.min(begin + breakAfter, elem.seq.length))) else elem.seq.substring(begin, Math.min(begin + breakAfter, elem.seq.length))
+          if (color) colorRegexReplacer(elem.seq.slice(begin, Math.min(begin + breakAfter, elem.seq.length))) else elem.seq.slice(begin, Math.min(begin + breakAfter, elem.seq.length))
         } +
           "</td>" +
           "</tr>"
@@ -312,18 +328,18 @@ object BlastVisualization extends Constants {
       return ""
     }
     else {
-      val query = hit.query_seq.substring(charCount, Math.min(charCount + breakAfter, hit.query_seq.length))
-      val midline = hit.midline.substring(charCount, Math.min(charCount + breakAfter, hit.midline.length))
-      val template = hit.hit_seq.substring(charCount, Math.min(charCount + breakAfter, hit.hit_seq.length))
+      val query = hit.query_seq.slice(charCount, Math.min(charCount + breakAfter, hit.query_seq.length))
+      val midline = hit.midline.slice(charCount, Math.min(charCount + breakAfter, hit.midline.length))
+      val template = hit.hit_seq.slice(charCount, Math.min(charCount + breakAfter, hit.hit_seq.length))
       val queryEnd = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
       if (beginQuery == beginQuery + queryEnd) {
         return ""
       } else {
         return {
-          "<tr class='sequence'><td></td><td>Q " + beginQuery + "</td><td>" + query + "    " + (beginQuery + queryEnd - 1) + "</td></tr>" +
+          "<tr class='sequence'><td></td><td>Q " + (beginQuery + 1) + "</td><td>" + query + "   " + (beginQuery + queryEnd) + "</td></tr>" +
             "<tr class='sequence'><td></td><td></td><td>" + midline + "</td></tr>" +
-            "<tr class='sequence'><td></td><td>T " + beginTemplate + "</td><td>" + template + "    " + (beginTemplate + templateEnd - 1) + "</td></tr>" +
+            "<tr class='sequence'><td></td><td>T " + (beginTemplate  + 1) + "</td><td>" + template + "   " + (beginTemplate + templateEnd) + "</td></tr>" +
             "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" +
             hmmerHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
         }
@@ -336,18 +352,18 @@ object BlastVisualization extends Constants {
       return ""
     }
     else {
-      val query = hit.query_seq.substring(charCount, Math.min(charCount + breakAfter, hit.query_seq.length))
-      val midline = hit.midline.substring(charCount, Math.min(charCount + breakAfter, hit.midline.length))
-      val template = hit.hit_seq.substring(charCount, Math.min(charCount + breakAfter, hit.hit_seq.length))
+      val query = hit.query_seq.slice(charCount, Math.min(charCount + breakAfter, hit.query_seq.length))
+      val midline = hit.midline.slice(charCount, Math.min(charCount + breakAfter, hit.midline.length))
+      val template = hit.hit_seq.slice(charCount, Math.min(charCount + breakAfter, hit.hit_seq.length))
       val queryEnd = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
       if (beginQuery == beginQuery + queryEnd) {
         return ""
       } else {
         return {
-          "<tr class='sequence'><td></td><td>Q " + beginQuery + "</td><td>" + query + "    " + (beginQuery + queryEnd - 1) + "</td></tr>" +
+          "<tr class='sequence'><td></td><td>Q " + beginQuery + "</td><td>" + query + "  " + (beginQuery + queryEnd - 1) + "</td></tr>" +
             "<tr class='sequence'><td></td><td></td><td>" + midline + "</td></tr>" +
-            "<tr class='sequence'><td></td><td>T " + beginTemplate + "</td><td>" + template + "    " + (beginTemplate + templateEnd - 1) + "</td></tr>" +
+            "<tr class='sequence'><td></td><td>T " + beginTemplate + "</td><td>" + template + "  " + (beginTemplate + templateEnd - 1) + "</td></tr>" +
             "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" +
             psiblastHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
         }
@@ -365,11 +381,11 @@ object BlastVisualization extends Constants {
       return ""
     }
     else {
-      val query = hit.query.seq.substring(charCount, Math.min(charCount + breakAfter, hit.query.seq.length))
-      val queryCons = hit.query.consensus.substring(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
-      val midline = hit.agree.substring(charCount, Math.min(charCount + breakAfter, hit.agree.length))
-      val templateCons = hit.template.consensus.substring(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
-      val template = hit.template.seq.substring(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
+      val query = hit.query.seq.slice(charCount, Math.min(charCount + breakAfter, hit.query.seq.length))
+      val queryCons = hit.query.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
+      val midline = hit.agree.slice(charCount, Math.min(charCount + breakAfter, hit.agree.length))
+      val templateCons = hit.template.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
+      val template = hit.template.seq.slice(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
       val queryEnd = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
       if (beginQuery == beginQuery + queryEnd) {
@@ -393,16 +409,16 @@ object BlastVisualization extends Constants {
       return ""
     }
     else {
-      val querySSDSSP = hit.query.ss_dssp.drop(charCount).take(Math.min(charCount + breakAfter, hit.query.ss_dssp.length))
-      val querySSPRED = hit.query.ss_pred.drop(charCount).take(Math.min(charCount + breakAfter, hit.query.ss_pred.length))
-      val query = hit.query.seq.substring(charCount, Math.min(charCount + breakAfter, hit.query.seq.length))
-      val queryCons = hit.query.consensus.substring(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
-      val midline = hit.agree.substring(charCount, Math.min(charCount + breakAfter, hit.agree.length))
-      val templateCons = hit.template.consensus.substring(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
-      val template = hit.template.seq.substring(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
-      val templateSSDSSP = hit.template.ss_dssp.drop(charCount).take(Math.min(charCount + breakAfter, hit.template.ss_dssp.length))
-      val templateSSPRED = hit.template.ss_pred.drop(charCount).take(Math.min(charCount + breakAfter, hit.template.ss_pred.length))
-      val confidence = hit.confidence.drop(charCount).take(Math.min(charCount + breakAfter, hit.confidence.length))
+      val querySSDSSP = hit.query.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_dssp.length))
+      val querySSPRED = hit.query.ss_pred.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_pred.length))
+      val query = hit.query.seq.slice(charCount, Math.min(charCount + breakAfter, hit.query.seq.length))
+      val queryCons = hit.query.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
+      val midline = hit.agree.slice(charCount, Math.min(charCount + breakAfter, hit.agree.length))
+      val templateCons = hit.template.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
+      val template = hit.template.seq.slice(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
+      val templateSSDSSP = hit.template.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_dssp.length))
+      val templateSSPRED = hit.template.ss_pred.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_pred.length))
+      val confidence = hit.confidence.slice(charCount, Math.min(charCount + breakAfter, hit.confidence.length))
       val queryEnd = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
 
@@ -435,6 +451,72 @@ object BlastVisualization extends Constants {
         html += "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>"
 
             return html + hhpredHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd, color)
+      }
+    }
+  }
+
+
+  def hhompHitWrapped(hit: HHompHSP, charCount: Int, breakAfter: Int, beginQuery: Int, beginTemplate: Int, color: Boolean): String ={
+    if (charCount >= hit.length){
+      return ""
+    }
+    else {
+      val querySSCONF = hit.query.ss_conf.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_conf.length))
+      val querySSDSSP = hit.query.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_dssp.length))
+      val querySSPRED = hit.query.ss_pred.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_pred.length))
+      val query = hit.query.seq.slice(charCount, Math.min(charCount + breakAfter, hit.query.seq.length))
+      val queryCons = hit.query.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
+      val midline = hit.agree.slice(charCount, Math.min(charCount + breakAfter, hit.agree.length))
+      val templateCons = hit.template.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
+      val template = hit.template.seq.slice(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
+      val templateSSDSSP = hit.template.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_dssp.length))
+      val templateSSPRED = hit.template.ss_pred.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_pred.length))
+      val templateSSCONF = hit.template.ss_conf.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_conf.length))
+      val templateBBPRED = hit.template.bb_pred.slice(charCount, Math.min(charCount + breakAfter, hit.template.bb_pred.length))
+      val templateBBCONF = hit.template.bb_conf.slice(charCount, Math.min(charCount + breakAfter, hit.template.bb_conf.length))
+
+      val queryEnd = lengthWithoutDashDots(query)
+      val templateEnd = lengthWithoutDashDots(template)
+
+      if (beginQuery == beginQuery + queryEnd) {
+        return ""
+      } else {
+
+        var html = ""
+
+        if(!querySSCONF.isEmpty) {
+          html +=" <tr class='sequence'><td></td><td>Q ss_conf" + "</td><td>" + "</td><td>" + querySSCONF + "</td></tr>"
+        }
+        if(!querySSPRED.isEmpty) {
+          html +=" <tr class='sequence'><td></td><td>Q ss_pred" + "</td><td>" + "</td><td>" + BlastVisualization.SSColorReplace(querySSPRED) + "</td></tr>"
+        }
+        if(!querySSDSSP.isEmpty) {
+          html += "<tr class='sequence'><td></td><td>Q ss_dssp" + "</td><td>" + "</td><td>" + BlastVisualization.SSColorReplace(querySSDSSP) + "</td></tr>"
+        }
+        html +="<tr class='sequence'><td></td><td>Q " +  hit.query.accession + "</td><td>" + beginQuery + "</td><td>" + {if(color) colorRegexReplacer(query) else query} + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")" + "</td></tr>" +
+          "<tr class='sequence'><td></td><td>Q Consensus " + "</td><td>" + beginQuery + "</td><td>" + queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")" + "</td></tr>" +
+          "<tr class='sequence'><td></td><td></td><td></td><td>" + midline + "</td></tr>" +
+          "<tr class='sequence'><td></td><td>T Consensus " + "</td><td>" + beginTemplate + "</td><td>" + templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")" + "</td></tr>" +
+          "<tr class='sequence'><td></td><td>T " + hit.template.accession + "</td><td>" + beginTemplate + "</td><td>" + {if(color) colorRegexReplacer(template) else template} + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")" + "</td></tr>"
+        if(!templateSSDSSP.isEmpty) {
+          html += "<tr class='sequence'><td></td><td>T ss_dssp" + "</td><td>" + "</td><td>" + BlastVisualization.SSColorReplace(templateSSDSSP) + "</td></tr>"
+        }
+        if(!templateSSPRED.isEmpty) {
+          html +=" <tr class='sequence'><td></td><td>T ss_pred" + "</td><td>" + "</td><td>" + BlastVisualization.SSColorReplace(templateSSPRED) + "</td></tr>"
+        }
+        if(!templateSSCONF.isEmpty) {
+          html +=" <tr class='sequence'><td></td><td>T ss_conf" + "</td><td>" + "</td><td>" + templateSSCONF + "</td></tr>"
+        }
+        if(!templateBBPRED.isEmpty) {
+          html +=" <tr class='sequence'><td></td><td>T bb_pred" + "</td><td>" + "</td><td>" + templateBBPRED + "</td></tr>"
+        }
+        if(!templateBBCONF.isEmpty) {
+          html +=" <tr class='sequence'><td></td><td>T bb_conf" + "</td><td>" + "</td><td>" + templateBBCONF + "</td></tr>"
+        }
+
+        html += "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>"
+
+        return html + hhompHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd, color)
       }
     }
   }

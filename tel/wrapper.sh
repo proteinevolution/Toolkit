@@ -38,6 +38,7 @@ elif [ "$HOSTNAME" = "rye" ]
       qsub -sync n \
                -l h_rt=%HARDRUNTIME \
                -l h_vmem=%MEMORY,h="node33|node34|node35|node36" \
+               -pe parallel %THREADS \
                -cwd  \
                %r | grep -oE "[0-9]+" > jobIDCluster
   fi

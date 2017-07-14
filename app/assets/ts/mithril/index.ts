@@ -81,8 +81,8 @@ let typeAhead = function (elem : any, isInit : boolean) : any {
                 source: tools.ttAdapter(),
                 templates: {
                     suggestion: function (data: any) {
-                        if(data !=null && data.short != "hhpred_manual") {
-                            console.log(data.long)
+                        if(data !=null) {
+                            //console.log(data.long);
                             return '<div class="list-group-item"><a class="search-results" href="#/tools/' + data.short + '" name="' + data.long + '">' + data.long + '</a></div>';
                         }else {
                             return '<div style="display: none"></div>';
@@ -229,6 +229,18 @@ let tilescomponent = {
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
                                 m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
+                                    m("h6", "July 10, 2017"),
+                                    m("p", "HMM databases of the COG, KOG, SMART, and NCBI CD databases are online now")
+                                ),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
+                                    m("h6", "July 4, 2017"),
+                                    m("p", "HMM databases of the ",
+                                        m("b", "human proteome"), " and ",
+                                        m("em", " Chaetomium thermophilum"),
+                                        " are online"
+                                    )
+                                ),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
                                     m("h6", "June 20, 2017"),
                                     m("p", "Profile HMM database of",
                                         m("em", " Arabidopsis thaliana"),
@@ -238,19 +250,6 @@ let tilescomponent = {
                                 m("a", {"data-open": "recentUpdatesModal"},
                                     m("h6", "June 10, 2017"),
                                     m("p", "Profile HMM databases of many bacterial proteomes are online")
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal"},
-                                    m("h6", "May 27, 2017"),
-                                    m("p", "Profile HMM databases of",
-                                        m("em", " Mycobacterium tuberculosis"),
-                                        m("span", " is now available for HHpred")
-                                    )
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal"},
-                                    m("h6", "May 19, 2017"),
-                                    m("p", "Welcome to the new version of the MPI Bioinformatics Toolkit",
-                                        m("span", {"class": "read_more"}, "  (read more)")
-                                    )
                                 )
                             ),
                             m("div", {"class": "quick_links"},

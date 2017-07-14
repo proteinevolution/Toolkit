@@ -1,7 +1,7 @@
 (<any>window).JobViewComponent = {
 
     controller: function(args : any) {
-
+       return {}
     },
     view: function(ctrl : any, args : any) {
         if (!args.job()) {

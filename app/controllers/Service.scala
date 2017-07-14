@@ -40,10 +40,10 @@ final class Service @Inject()(webJarAssets: WebJarAssets,
                               userSessions: UserSessions,
                               @NamedCache("userCache") implicit val userCache: CacheApi,
                               implicit val locationProvider: LocationProvider,
-                              toolFactory: ToolFactory)
+                              toolFactory: ToolFactory,
+                              constants: Constants)
     extends Controller
     with I18nSupport
-    with Constants
     with ReactiveMongoComponents {
 
   implicit val timeout = Timeout(1.seconds)
@@ -153,8 +153,8 @@ final class Service @Inject()(webJarAssets: WebJarAssets,
             }
             // Read parameters from serialized file
             val paramValues: Map[String, String] = {
-              if ((jobPath / jobID / "sparam").exists) {
-                val ois = new ObjectInputStream(new FileInputStream((jobPath / jobID / "sparam").pathAsString))
+              if ((constants.jobPath / jobID / "sparam").exists) {
+                val ois = new ObjectInputStream(new FileInputStream((constants.jobPath / jobID / "sparam").pathAsString))
                 val x   = ois.readObject().asInstanceOf[Map[String, String]]
                 ois.close()
                 x
