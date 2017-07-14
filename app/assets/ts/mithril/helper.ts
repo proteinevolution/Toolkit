@@ -72,13 +72,6 @@ let select2Single = function(elem : any, isInit : boolean) : any {
 
 
 
-let helpModalAccess = function(elem : any, isInit: boolean) {
-    if (!isInit) {
-        return elem.setAttribute("data-open", "help-" + (this.job().tool.toolname));
-    }
-};
-
-
 
 let hideSubmitButtons = function (elem : any, isInit : boolean) : any {
     if (!isInit) {
