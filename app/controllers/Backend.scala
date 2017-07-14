@@ -81,24 +81,6 @@ final class Backend @Inject()(webJarAssets: WebJarAssets,
     }
   }
 
-  def pushMonthlyStatistics: Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      if (user.isSuperuser) {
-        mongoStore.getStatistics
-          .map { toolStatisticList: List[ToolStatistic] =>
-            toolStatisticList.map { toolStatistic =>
-              val updatedToolStatistic = toolStatistic.pushMonth()
-              mongoStore.upsertStatistics(updatedToolStatistic)
-              toolStatistic
-            }
-          }
-          .map(toolStatistic => NoCache(Ok(Json.toJson(toolStatistic))))
-      } else {
-        Future.successful(NotFound)
-      }
-    }
-  }
-
   def cms: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       if (user.isSuperuser) {
