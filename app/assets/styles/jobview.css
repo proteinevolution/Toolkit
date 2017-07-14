@@ -161,6 +161,7 @@ hr {
 }
 
 .unstriped{
+    border-collapse: unset !important;
     margin: 0 ;
     width: auto;
 }

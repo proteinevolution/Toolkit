@@ -6,10 +6,9 @@
 <h5>@result.query.accession.slice(0, 50)</h5>
 <br />
 <br />
-<form id="alignmentResult">
-    <table class="unstriped">
-            @Html(BlastVisualization.quick2dWrapped(result, 0, 85))
-    </table>
-</form>
-
+<table class="unstriped" id="resultTable">
+    <tbody class="alignmentTBody">
+    @Html(BlastVisualization.quick2dWrapped(result, 0, 85))
+    </tbody>
+</table>
 
