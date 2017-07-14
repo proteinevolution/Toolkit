@@ -19,7 +19,6 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
                emailUpdate: Boolean = false, // Owner wants to be notified when the job is ready
                deletion: Option[JobDeletion] = None, // Deletion Flag showing the reason for the deletion
                tool: String, // Tool used for this Job
-               toolnameLong: Option[String],
                label: Option[String],
                watchList: List[BSONObjectID] = List.empty, // List of the users who watch this job, None if not public
                commentList: List[BSONObjectID] = List.empty, // List of comment IDs for the Job
@@ -32,7 +31,7 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
 
   // Returns if the job is private or not
   def isPrivate: Boolean = {
-    ownerID.isDefined // TODO why is this the only measure for being a private job?
+    ownerID.isDefined && !isPublic // TODO why is this the only measure for being a private job?
   }
 
   /**
@@ -148,7 +147,6 @@ object Job {
               status = status.get,
               deletion = deletion,
               tool = "",
-              toolnameLong = None,
               label = Some(""),
               dateCreated = Some(new DateTime()),
               dateUpdated = Some(new DateTime()),
@@ -174,7 +172,6 @@ object Job {
       EMAILUPDATE  -> job.emailUpdate,
       DELETION     -> job.deletion,
       TOOL         -> job.tool,
-      TOOLNAMELONG -> job.toolnameLong,
       WATCHLIST    -> job.watchList,
       COMMENTLIST  -> job.commentList,
       CLUSTERDATA  -> job.clusterData,
@@ -200,7 +197,6 @@ object Job {
         emailUpdate = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
         deletion = bson.getAs[JobDeletion](DELETION),
         tool = bson.getAs[String](TOOL).getOrElse(""),
-        toolnameLong = bson.getAs[String](TOOLNAMELONG),
         label = bson.getAs[String](LABEL),
         watchList = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
         commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
@@ -228,7 +224,6 @@ object Job {
         EMAILUPDATE  -> job.emailUpdate,
         DELETION     -> job.deletion,
         TOOL         -> job.tool,
-        TOOLNAMELONG -> job.toolnameLong,
         LABEL        -> job.label,
         WATCHLIST    -> job.watchList,
         COMMENTLIST  -> job.commentList,
