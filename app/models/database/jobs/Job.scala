@@ -14,12 +14,10 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
                jobID: String, // User visible ID of the Job
                ownerID: Option[BSONObjectID] = None, // User to whom the Job belongs
                isPublic: Boolean = false,
-               project: Option[BSONObjectID] = None,
                status: JobState, // Status of the Job
                emailUpdate: Boolean = false, // Owner wants to be notified when the job is ready
                deletion: Option[JobDeletion] = None, // Deletion Flag showing the reason for the deletion
                tool: String, // Tool used for this Job
-               label: Option[String],
                watchList: List[BSONObjectID] = List.empty, // List of the users who watch this job, None if not public
                commentList: List[BSONObjectID] = List.empty, // List of comment IDs for the Job
                clusterData: Option[JobClusterData] = None, // Cluster Data
@@ -42,7 +40,6 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
   def cleaned(): JsObject = {
     Json.obj(
       Job.JOBID        -> jobID,
-      "project"        -> project,
       Job.STATUS       -> status,
       Job.DATECREATED  -> dateCreated.map(_.getMillis),
       Job.TOOL         -> tool,
@@ -58,7 +55,6 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
   def jobManagerJob(): JsObject = {
     Json.obj(
       Job.JOBID        -> jobID,
-      Job.PROJECT      -> project,
       Job.STATUS       -> status,
       Job.TOOL         -> tool,
       Job.COMMENTLIST  -> commentList.length,
@@ -82,10 +78,7 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
 }
 
 // Server returns such an object when asked for a job
-case class Jobitem(mainID: String,
-                   newMainID: String, // Used for job resubmission
-                   jobID: String,
-                   project: String,
+case class Jobitem(jobID: String,
                    state: JobState,
                    ownerName: String,
                    dateCreated: String,
@@ -143,11 +136,9 @@ object Job {
               parentID = None,
               jobID = "",
               ownerID = Some(BSONObjectID.generate()),
-              project = Some(BSONObjectID.generate()),
               status = status.get,
               deletion = deletion,
               tool = "",
-              label = Some(""),
               dateCreated = Some(new DateTime()),
               dateUpdated = Some(new DateTime()),
               dateViewed = Some(new DateTime()),
@@ -167,7 +158,6 @@ object Job {
       PARENTID     -> job.parentID,
       JOBID        -> job.jobID,
       OWNERID      -> job.ownerID,
-      PROJECT      -> job.project,
       STATUS       -> job.status,
       EMAILUPDATE  -> job.emailUpdate,
       DELETION     -> job.deletion,
@@ -192,12 +182,10 @@ object Job {
         parentID = bson.getAs[BSONObjectID](PARENTID),
         jobID = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
         ownerID = bson.getAs[BSONObjectID](OWNERID),
-        project = bson.getAs[BSONObjectID](PROJECT),
         status = bson.getAs[JobState](STATUS).getOrElse(Error),
         emailUpdate = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
         deletion = bson.getAs[JobDeletion](DELETION),
         tool = bson.getAs[String](TOOL).getOrElse(""),
-        label = bson.getAs[String](LABEL),
         watchList = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
         commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
         clusterData = bson.getAs[JobClusterData](CLUSTERDATA),
@@ -219,12 +207,10 @@ object Job {
         PARENTID     -> job.parentID,
         JOBID        -> job.jobID,
         OWNERID      -> job.ownerID,
-        PROJECT      -> job.project,
         STATUS       -> job.status,
         EMAILUPDATE  -> job.emailUpdate,
         DELETION     -> job.deletion,
         TOOL         -> job.tool,
-        LABEL        -> job.label,
         WATCHLIST    -> job.watchList,
         COMMENTLIST  -> job.commentList,
         CLUSTERDATA  -> job.clusterData,
