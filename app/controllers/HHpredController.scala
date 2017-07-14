@@ -18,28 +18,50 @@ import play.api.libs.json.{ JsArray, JsObject, Json }
 
 /**
   * Created by drau on 01.03.17.
+  *
+  * HHpred Controller process all requests
+  * made from the HHpred result view
   */
-class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val reactiveMongoApi: ReactiveMongoApi)(
+class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val reactiveMongoApi: ReactiveMongoApi, constants: Constants)(
     webJarAssets: WebJarAssets
 ) extends Controller
-    with Constants
     with Common {
+
+  /* gets the path to all scripts that are executed
+     on the server (not executed on the grid eninge) */
   private val serverScripts           = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignment.sh").toFile
   private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile
 
+
+  /**
+    * returns 3D structure view for a given accession
+    * in scop or mmcif
+    * @param accession
+    * @return 3D structure view
+    */
   def show3DStructure(accession: String): Action[AnyContent] = Action { implicit request =>
     Ok(views.html.jobs.resultpanels.structure(accession, webJarAssets))
   }
 
-  def runScript(jobID: String, accession: String): Action[AnyContent] = Action.async { implicit request =>
+  /**
+    * Retrieves the template alignment for a given
+    * accession, for this it runs a script on the server
+    * (now grid engine) and writes it to the current job folder
+    * to 'accession'.fas
+    *
+    * @param jobID
+    * @param accession
+    * @return Http response
+    */
+  def retrieveTemplateAlignment(jobID: String, accession: String): Action[AnyContent] = Action.async { implicit request =>
     if (!templateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${templateAlignmentScript.name} is not executable.")
     } else {
       Future.successful {
         Process(templateAlignmentScript.pathAsString,
-                (jobPath + jobID).toFile.toJava,
+                (constants.jobPath + jobID).toFile.toJava,
                 "jobID"     -> jobID,
                 "accession" -> accession).run().exitValue() match {
 
@@ -49,6 +71,23 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
       }
     }
   }
+
+  /**
+    * Retrieves the aligned sequences
+    * (parsable alignment must be
+    * provided in the result folder as JSON) of all hits with
+    * an evalue below a threshold and writes the sequences to the
+    * current job folder to '@resultName'.fa
+    * Expects json sent by POST including:
+    *
+    * fileName: to which the aligned sequences are written
+    * evalue: seqs of all hits below this threshold
+    * are retrieved from the alignment
+    *
+    * @param jobID
+    * @return
+    */
+
   def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
     val filename  = (json \ "fileName").as[String]
@@ -62,7 +101,7 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
           val result     = hhpred.parseResult(jsValue)
           val numListStr = getNumListEval(result, eval.toDouble)
           Process(generateAlignmentScript.pathAsString,
-                  (jobPath + jobID).toFile.toJava,
+                  (constants.jobPath + jobID).toFile.toJava,
                   "jobID"   -> jobID,
                   "filename" -> filename,
                   "numList" -> numListStr).run().exitValue() match {
@@ -74,7 +113,22 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
       }
     }
   }
-
+  /**
+    * Retrieves the aligned sequences (parsable alignment
+    * must be provided in the result folder as JSON)
+    * of all selected hits in the result view and
+    * writes the sequences to the
+    * current job folder to '@resultName'.fa
+    *
+    * Expects json sent by POST including:
+    *
+    * fileName: to which the aligned sequences are written
+    * checkboxes: an array which contains the numbers (in the HSP list)
+    * of all hits that will be retrieved
+    *
+    * @param jobID
+    * @return
+    */
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
     val filename  = (json \ "fileName").as[String]
@@ -85,7 +139,7 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
     } else {
       val numListStr = numList.mkString(" ")
       Process(generateAlignmentScript.pathAsString,
-              (jobPath + jobID).toFile.toJava,
+              (constants.jobPath + jobID).toFile.toJava,
               "jobID"   -> jobID,
               "filename"-> filename,
               "numList" -> numListStr).run().exitValue() match {
@@ -95,10 +149,26 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
     }
   }
 
+  /**
+    * filters HSPS for hits below a given threshold
+    * and returns a string with the numbers of the filtered hits
+    * whitespace separated
+    * @param result
+    * @param eval
+    * @return
+    */
   def getNumListEval(result: HHPredResult, eval: Double): String = {
     val numList = result.HSPS.filter(_.info.evalue < eval).map { _.num }
     numList.mkString(" ")
   }
+
+  /**
+    * given dataTable specific paramters, this function
+    * filters for eg. a specific column and returns the data
+    * @param jobID
+    * @param params
+    * @return
+    */
 
   def getHitsByKeyWord(jobID: String, params: DTParam): Future[List[HHPredHSP]] = {
     if (params.sSearch.isEmpty) {
@@ -113,6 +183,23 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
     }
     //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
+
+  /**
+    * Retrieves hit rows (String containing Html)
+    * for the alignment section in the result view
+    * for a given range (start, end). Those can be either
+    * wrapped or unwrapped, colored or uncolored
+    *
+    * Expects json sent by POST including:
+    *
+    * start: index of first HSP that is retrieved
+    * end: index of last HSP that is retrieved
+    * wrapped: Boolean true = wrapped, false = unwrapped
+    * isColored: Boolean true = colored, false = uncolored
+    *
+    * @param jobID
+    * @return Https response: HSP row(s) as String
+    */
 
   def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json      = request.body.asJson.get
@@ -131,7 +218,13 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
           }
       }
   }
-
+  /**
+    * this method fetches the data for the PSIblast hitlist
+    * datatable
+    *
+    * @param jobID
+    * @return
+    */
   def dataTable(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     var db = ""
     val total = mongoStore.getResult(jobID).map {

@@ -595,7 +595,8 @@ td#joblistIcon i {
 /*Hide Livetable on small screen and adjust page elements */
 @media screen and (max-width: 730px) {
     .grid {
-        margin-top: -55px;
+        margin-top: 20px;
+        width: 90%;
     }
 }
 

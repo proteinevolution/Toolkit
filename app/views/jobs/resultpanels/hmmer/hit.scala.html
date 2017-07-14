@@ -32,11 +32,11 @@
     <td><br /></td>
 </tr>
 @if(wrapped) {
-    @Html(BlastVisualization.hmmerHitWrapped(hit, 0, 90, hit.query_start, hit.hit_start))
+    @Html(BlastVisualization.hmmerHitWrapped(hit, 0, 85, hit.query_start, hit.hit_start))
 }else{
     @* seq of query, if present *@
     @{
-        BlastVisualization.makeRow("sequence", Array("", "Q  " + hit.query_start.toString, hit.query_seq + "    " + hit.query_end.toString))
+        BlastVisualization.makeRow("sequence", Array("", "Q " + (hit.query_start + 1).toString, hit.query_seq + "    " + hit.query_end.toString))
     }
     @* agree of query, if present *@
     @{
@@ -44,7 +44,7 @@
     }
     @* seq of hit, if present *@
     @{
-        BlastVisualization.makeRow("sequence", Array("", "T  " + hit.hit_start.toString, hit.hit_seq + "    " + hit.hit_end.toString))
+        BlastVisualization.makeRow("sequence", Array("", "T " + (hit.hit_start + 1).toString, hit.hit_seq + "    " + hit.hit_end.toString))
     }
     <tr class="blank_row"><td colspan="5"></td></tr>
 }

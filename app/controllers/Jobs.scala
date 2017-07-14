@@ -19,7 +19,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * This controller is supposed to handle request coming from the Backend, such as compute
-  * nodes from a gridengine.
+  * nodes from a gridengine. It checks if the posted key matches up with the key that is stored in
+  * each job folder in order to prevent unauthorized status changes.
   *
   */
 @Singleton
@@ -27,9 +28,9 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
                            userSessions: UserSessions,
                            @NamedCache("userCache") implicit val userCache: CacheApi,
                            implicit val locationProvider: LocationProvider,
-                           mongoStore: MongoStore)
-    extends Controller
-    with Constants {
+                           mongoStore: MongoStore,
+                           constants: Constants)
+    extends Controller {
 
   def jobStatusDone(jobID: String, key: String) = Action {
 
@@ -169,7 +170,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
     * @return
     */
   def checkKey(jobID: String, key: String): Boolean = {
-    val source = Source.fromFile(jobPath + "/" + jobID + "/key")
+    val source = Source.fromFile(constants.jobPath + "/" + jobID + "/key")
     val refKey = try { source.mkString.replaceAll("\n", "") } finally { source.close() }
     key == refKey
   }

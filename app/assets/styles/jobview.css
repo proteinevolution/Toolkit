@@ -1040,6 +1040,7 @@ textarea:focus{
     content: "";
     position: absolute;
     left: 0;
+    top: -1px;
     z-index: 1;
     width: 1rem;
     height: 1rem;
@@ -1063,6 +1064,7 @@ textarea:focus{
     position: absolute;
     left: 0;
     width: 1rem;
+    top: -1px;
     height: 1rem;
     background: #fff;
     cursor: pointer;

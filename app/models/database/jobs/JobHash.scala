@@ -78,7 +78,7 @@ object JobHash {
     */
   def generateJobHash(job: Job, params: Map[String, String], env: Env, jobDAO: JobDAO): JobHash = {
     // filter unique parameters
-    val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid"
+    val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid" - Job.IPHASH
 
     // Create the job Hash depending on what db is used
 

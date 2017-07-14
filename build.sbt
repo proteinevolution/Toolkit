@@ -1,5 +1,4 @@
-import com.typesafe.sbt.packager.MappingsHelper._
-lazy val akkaVersion  = "2.4.19"
+lazy val akkaVersion  = "2.5.3"
 lazy val kamonVersion = "0.6.6"
 
 lazy val commonDeps = Seq(
@@ -30,7 +29,7 @@ lazy val commonDeps = Seq(
   "com.beachape"         %% "enumeratum-play-json"    % "1.4.13",
   "net.ruippeixotog"     %% "scala-scraper"           % "1.1.0",
   "com.lihaoyi"          %% "fastparse"               % "0.4.1",
-  "com.vmunier"          %% "scalajs-scripts"         % "1.0.0",
+  "com.vmunier"          %% "scalajs-scripts"         % "1.1.1",
   "org.typelevel"        %% "cats"                    % "0.9.0",
   "com.mohiva"           %% "play-html-compressor"    % "0.6.3"
   //"io.kamon"             %% "kamon-play-2.5"          % kamonVersion,
@@ -49,7 +48,7 @@ lazy val commonSettings = Seq(
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   logLevel := Level.Warn,
-  dependencyOverrides ++= Set("org.webjars" % "jquery" % "3.1.1", "com.typesafe.akka" %% "akka-actor" % akkaVersion)
+  dependencyOverrides ++= Set("org.webjars" % "jquery" % "3.2.1", "com.typesafe.akka" %% "akka-actor" % akkaVersion)
 )
 
 lazy val metadata = List(
@@ -58,6 +57,7 @@ lazy val metadata = List(
     Developer("JoKuebler", "Jonas Kuebler", "jkuebler@tuebingen.mpg.de", url("https://github.com/JoKuebler")),
     Developer("zy4", "Seung-Zin Nam", "seungzin.nam@tuebingen.mpg.de", url("https://github.com/zy4")),
     Developer("davidrau", "David Rau", "drau@tuebingen.mpg.de", url("https://github.com/davidmrau")),
+    Developer("felixgabler", "Felix Gabler", "felix.gabler@tuebingen.mpg.de", url("https://github.com/felixgabler")),
     Developer("anjestephens",
               "Andrew Jesse Stephens",
               "astephens@tuebingen.mpg.de",
@@ -77,10 +77,10 @@ lazy val root = (project in file("."))
     name := "mpi-toolkit",
     libraryDependencies ++= (commonDeps ++ Seq(
       "org.webjars"       %% "webjars-play"       % "2.5.0-3",
-      "org.webjars"       % "jquery"              % "3.1.1",
+      "org.webjars"       % "jquery"              % "3.2.1",
       "org.webjars.bower" % "jquery.lazyload"     % "1.9.7",
       "org.webjars"       % "jquery-ui"           % "1.12.1",
-      "org.webjars.npm"   % "foundation-sites"    % "6.3.1",
+      "org.webjars.npm"   % "foundation-sites"    % "6.4.1",
       "org.webjars.bower" % "fastclick"           % "1.0.6",
       "org.webjars.npm"   % "mithril"             % "0.2.5",
       "org.webjars.bower" % "d3"                  % "4.4.1",
