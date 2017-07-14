@@ -178,7 +178,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
     userSessions.getUser.map { user =>
       Logger.info(user.toString)
       Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message))
-        .withSession(userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
+        .withSession(userSessions.sessionCookie(request, user.sessionID.get))
     }
   }
 
@@ -203,7 +203,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
       // mainID exists, allow send File
       if (new java.io.File(s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename").exists)
         Ok.sendFile(new java.io.File(s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"))
-          .withSession(userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
+          .withSession(userSessions.sessionCookie(request, user.sessionID.get))
           .as("text/plain") //TODO Only text/plain for files currently supported
       else
         Ok // TODO This needs more case validations
