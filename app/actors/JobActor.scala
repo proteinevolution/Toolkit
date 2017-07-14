@@ -343,9 +343,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               internalJob = isInternalJob,
               events = List(JobEvent(job.status, Some(DateTime.now)))))
 
-        // Update the statistics
-        mongoStore.increaseJobCount(job.tool) // TODO switch to better statistic handling
-
         // Get new runscript instance from the runscript manager
         val runscript: Runscript = runscriptManager(job.tool).withEnvironment(env)
 
@@ -667,9 +664,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
                 // Tell the user that their job failed via eMail
                 sendJobUpdateMail(job)
-
-                // Update the statistics for the failed job TODO - swap to better statistic handling
-                mongoStore.increaseJobCount(job.tool, failed = true)
               }
 
             case _ =>

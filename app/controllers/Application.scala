@@ -8,7 +8,6 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import models.sge.Cluster
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
-import models.database.statistics.ToolStatistic
 import models.database.users.User
 import models.search.JobDAO
 import models.Constants
@@ -68,15 +67,6 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   val SID            = "sid"
 
   private[this] val blacklist = ConfigFactory.load().getStringList("banned.ip")
-
-  // Run this once to generate database objects for the statistics
-  def generateStatisticsDB(): Unit = {
-    for (toolName: String <- toolFactory.values.keys) {
-      mongoStore.addStatistic(
-        ToolStatistic(BSONObjectID.generate(), toolName, 0, 0, List.empty, List.empty, List.empty)
-      )
-    }
-  }
 
   /**
     * Creates a websocket.  `acceptOrResult` is preferable here because it returns a

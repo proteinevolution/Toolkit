@@ -213,47 +213,54 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[JobEventLog]]()))
   }
 
+
+
+
+  /**
+    * Statistics
+    */
+  // Deletion Statistics DB access
+  def deletedJobsCollection: Future[BSONCollection] =
+  reactiveMongoApi.database.map(_.collection[BSONCollection]("deleted"))
+
+  def addDeletedJob(deletedJob: DeletedJob): Future[WriteResult] =
+    deletedJobsCollection.flatMap(_.insert(deletedJob))
+
+
+
   // Statistics DB access
+  /**
+    * Returns the collection
+    * @return
+    */
   def statisticsCollection: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection[BSONCollection]("statistics"))
 
-  // Statistics DB access
-  def deletedJobsCollection: Future[BSONCollection] =
-    reactiveMongoApi.database.map(_.collection[BSONCollection]("deleted"))
-
+  /**
+    * Returns the statistics for all tools at once
+    * @return
+    */
   def getStatistics: Future[scala.List[ToolStatistic]] = {
     statisticsCollection
       .map(_.find(BSONDocument.empty).cursor[ToolStatistic]())
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[ToolStatistic]]()))
   }
 
-  def addStatistic(toolStatistic: ToolStatistic): Future[WriteResult] =
-    statisticsCollection.flatMap(_.insert(toolStatistic))
-
-  def addDeletedJob(deletedJob: DeletedJob): Future[WriteResult] =
-    deletedJobsCollection.flatMap(_.insert(deletedJob))
-
+  /**
+    * updates or inserts the statistics for a tool
+    * @param toolStatistic
+    * @return
+    */
   def upsertStatistics(toolStatistic: ToolStatistic): Future[Option[ToolStatistic]] = {
     statisticsCollection.flatMap(
-      _.findAndUpdate(selector = BSONDocument(ToolStatistic.IDDB -> toolStatistic.toolID),
+      _.findAndUpdate(selector = BSONDocument(ToolStatistic.TOOLNAME -> toolStatistic.toolName),
                       update = toolStatistic,
                       upsert = true).map(_.result[ToolStatistic])
     )
   }
 
-  def increaseJobCount(toolName: String, failed: Boolean = false): Future[WriteResult] = {
-    statisticsCollection.flatMap(
-      _.update(
-        BSONDocument(ToolStatistic.TOOLNAME -> toolName),
-        BSONDocument(
-          "$inc" ->
-          BSONDocument({ if (failed) { ToolStatistic.CURRENTFAILED } else { ToolStatistic.CURRENT } }
-          -> 1)
-        )
-      )
-    )
-  }
 
+  // Cluster load statistics
   def loadStatisticsCollection: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection[BSONCollection]("loadStatistics"))
 
