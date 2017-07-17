@@ -26,7 +26,8 @@ let ParameterAlignmentComponent = {
                 return this.modes;
             }).bind(this.mo),
             getLabel: (function() {
-                return this.label;
+                //return this.label;
+                return "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format."
             }).bind(this.mo),
             getAllowsTwoTextAreas: (function() {
                 return this.allowsTwoTextAreas;
