@@ -13,6 +13,8 @@ import scala.util.matching.Regex
 object BlastVisualization  {
 
   private val color_regex = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
+  private val CC_pattern = """(C+)""".r("C")
+  private val TM_pattern = """(M+)""".r("M")
   private val helix_pattern = """([Hh]+)""".r
   private val sheet_pattern = """([Ee]+)""".r
   private val helix_sheets = """([Hh]+|[Ee]+)""".r("ss")
@@ -54,6 +56,25 @@ object BlastVisualization  {
         }
       }
     )
+
+  def Q2DColorReplace(name: String, sequence: String): String =
+         name match {
+           case "psipred" => this.helix_sheets.replaceAllIn(
+             sequence, { m =>
+               m.group("ss") match {
+                 case this.helix_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
+                 case this.sheet_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
+               }
+             }
+           )
+
+           case "marcoil" => this.CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
+           case "coils" => this.CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
+           case "pcoils" => this.CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
+           case "tmhmm" => this.TM_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
+        }
+
+
 
   def colorRegexReplacer(sequence: String): String =
     this.color_regex.replaceAllIn(sequence, { m =>
@@ -530,9 +551,26 @@ object BlastVisualization  {
       var htmlString = ""
       val query = result.query.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val psipred = result.psipred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      htmlString += "<tr class='sequence'><td>Q<td></td><td>"+query+"</td><td>"+Math.min(length,charCount+breakAfter)+"</td>"
-      htmlString += "<tr class='sequence'><td>CO<td>"+result.psipred.name.toUpperCase()+"</td><td>"+this.SSColorReplace(psipred.replace("C", "&nbsp;"))+"</td><td></td>"
-      htmlString += "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>"
+      val marcoil = result.marcoil.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val coils = result.coils.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val pcoils = result.pcoils.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val tmhmm = result.tmhmm.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+
+      htmlString += "<tr class='sequenceCompact sequenceBold'><td>AA_QUERY</td><td>"+(charCount + 1)+"</td><td>"+query+"&nbsp;&nbsp;&nbsp;&nbsp;"+Math.min(length,charCount+breakAfter)+"</td>"
+      htmlString += "<tr class='sequenceCompact'><td>SS_"+result.psipred.name.toUpperCase()+"</td><td></td><td>"+this.Q2DColorReplace(result.psipred.name, psipred.replace("C", "&nbsp;"))+"</td>"
+      if(!marcoil.isEmpty) {
+        htmlString += "<tr class='sequenceCompact'><td>CC_" + result.marcoil.name.toUpperCase() + "</td><td></td><td>" + this.Q2DColorReplace(result.marcoil.name, marcoil.replace("x","&nbsp;")) + "</td>"
+      }
+      if(!coils.isEmpty) {
+        htmlString += "<tr class='sequenceCompact'><td>CC_" + result.coils.name.toUpperCase() + "_W28</td><td></td><td>" + this.Q2DColorReplace(result.coils.name, coils.replace("x","&nbsp;")) + "</td>"
+      }
+      if(!pcoils.isEmpty) {
+        htmlString += "<tr class='sequenceCompact'><td>CC_" + result.pcoils.name.toUpperCase() + "_W28</td><td></td><td>" + this.Q2DColorReplace(result.pcoils.name, pcoils.replace("x","&nbsp;")) + "</td>"
+      }
+      if(!tmhmm.isEmpty) {
+        htmlString += "<tr class='sequenceCompact'><td>TM_" + result.tmhmm.name.toUpperCase() + "</td><td></td><td>" + this.Q2DColorReplace(result.tmhmm.name, tmhmm) + "</td>"
+      }
+      htmlString += "<tr class=\"blank_row\"><td colspan=\"4\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"4\"></td></tr>"  + "<tr class=\"blank_row\"><td colspan=\"4\"></td></tr>"
       return htmlString + quick2dWrapped(result, charCount + breakAfter, breakAfter)
       }
     }
