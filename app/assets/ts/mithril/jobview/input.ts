@@ -90,7 +90,7 @@ let ParameterAlignmentComponent = {
                     } else {
                         $(".inputDBs").prop('disabled', false);
                         $("#hhpred_align").prop('checked', false);
-                        $("#alignment").attr("rows", "19");
+                        $("#alignment").attr("rows", "14");
                         $("#alignment_two").hide();
                         $("#alignment_two").removeAttr("required", false);
 
