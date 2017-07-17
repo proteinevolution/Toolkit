@@ -173,9 +173,19 @@ hr {
 
 .sequence{
     font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.025em;
     font-size: 0.75rem;
     white-space: pre;
+}
+
+.sequenceCompact{
+    font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 0.75rem;
+    white-space: pre;
+}
+
+.sequenceBold{
+    font-weight:600;
 }
 
 .sequenceAlignment{
