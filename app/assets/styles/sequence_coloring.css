@@ -93,10 +93,17 @@ span.ss_e{
     color: #D00000;;
 }
 
+span.CC_b{
+    background-color: rgba(192, 53, 208, 0.66);;
+}
 
+span.ss_h_b{
+    background-color: rgba(127, 139, 208, 0.86);
+}
 
-
-
+span.ss_e_b{
+    background-color: rgba(208, 0, 0, 0.4);;
+}
 
 
 
