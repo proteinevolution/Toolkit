@@ -8,7 +8,6 @@ if [ "%regkey.content" = "MODELIRANJE" ] ; then
       updateProcessLog
 else
       echo "#Incorrect registration key. Please register here: https://salilab.org/modeller/registration.html." >> ../results/process.log
-      echo "error" >> ../results/process.log
       updateProcessLog
       false
 fi
