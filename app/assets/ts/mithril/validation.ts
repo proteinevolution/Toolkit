@@ -866,9 +866,9 @@ class alignmentVal implements ToolkitValidator {
             valReset();
         }
 
-        //else if(!ParameterModellerKeyComponent.keyStored){
-          //  feedback(false, "Please enter your MODELLER-key!", "error");
-        //}
+        else if(!ParameterModellerKeyComponent.keyStored){
+            feedback(false, "Please enter your MODELLER-key!", "error");
+        }
 
         else {
             feedback(true, "Valid PIR alignment.", "success");

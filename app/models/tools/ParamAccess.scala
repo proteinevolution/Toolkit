@@ -213,7 +213,7 @@ class ParamAccess @Inject()(tel: TEL) {
       case "NO_REPLICATES" =>           select ("no_replicates", "Number of replicates")
       case "SAMCC_PERIODICITY" =>       select ("samcc_periodicity", "Periodicity")
       case "EFF_CRICK_ANGLE" =>         select ("eff_crick_angle", "Effective Crick angle")
-      case "REGKEY" =>                  Param ("regkey", Text, 1, "Enter MODELLER-key (see help pages for details)")
+      case "REGKEY" =>                  Param ("regkey", ModellerKey, 1, "Enter MODELLER-key (see help pages for details)")
       case "SAMCC_HELIXONE" =>          Param ("samcc_helixone", Text, 1, "Definition for helix 1")
       case "SAMCC_HELIXTWO" =>          Param ("samcc_helixtwo", Text, 1, "Definition for helix 2")
       case "SAMCC_HELIXTHREE" =>        Param ("samcc_helixthree", Text, 1, "Definition for helix 3")
