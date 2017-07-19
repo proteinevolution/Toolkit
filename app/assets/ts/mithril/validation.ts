@@ -879,7 +879,6 @@ class alignmentVal implements ToolkitValidator {
             feedback(false, "Must have at least two sequences!", "error");
 
         else if (this.elem.val() == "") {
-            console.log("lhjh")
             feedback(false);
             valReset();
         }
