@@ -10,7 +10,6 @@ let samccIsValid : boolean = false;
 
 let validation = function(elem : any, isInit : boolean, ctx : any) : any {
     if (!isInit) {
-
         let toolname: string;
         try {
             toolname = $("#toolnameAccess").val();
@@ -38,8 +37,9 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     validationProcess($(elem), toolname)
                 });
             }
+        validationProcess($(elem), toolname);
         return $(elem).on("input", function (e) {
-            validationProcess(elem, toolname);
+            validationProcess($(elem), toolname);
         });
     }
 };
@@ -47,7 +47,6 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
 
 let validationProcess = function(elem: any,toolname: string) {
-
     //---------------------------------Validation Visitors------------------------------------------//
 
     // in order to modularize validation we use the visitor pattern
@@ -60,7 +59,6 @@ let validationProcess = function(elem: any,toolname: string) {
 
 
     //---------------------------------------------------------------------------------------------//
-
     switch (toolname) {
         case "tcoffee":
             /** validation model for tcoffee:
@@ -416,9 +414,7 @@ let validationProcess = function(elem: any,toolname: string) {
             break;
 
         case "modeller":
-
             let modellerTarget = new alignmentVal($(elem));
-
             modellerTarget.modellerValidation();
 
             break;
@@ -865,7 +861,6 @@ class alignmentVal implements ToolkitValidator {
     }
 
     modellerValidation(): any {
-
         modellerIsValid = false;
         if($("#fileUpload").val() !== "") {
             feedback(true, "Uploaded file", "success");
@@ -884,10 +879,10 @@ class alignmentVal implements ToolkitValidator {
             feedback(false, "Must have at least two sequences!", "error");
 
         else if (this.elem.val() == "") {
+            console.log("lhjh")
             feedback(false);
             valReset();
         }
-
         else if(!ParameterModellerKeyComponent.keyStored){
             feedback(false, "Please enter your MODELLER-key!", "error");
         }
