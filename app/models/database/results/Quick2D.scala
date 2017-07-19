@@ -13,7 +13,7 @@ import play.api.libs.json._
 
 
 case class Quick2DResult(jobID: String,
-                         query: Query,
+                         query: SingleSeq,
                          psipred: Psipred,
                          marcoil: Marcoil,
                          coils: Coils,
@@ -43,7 +43,7 @@ class Quick2D @Inject()(general: General) {
   def parseResult(jsValue: JsValue): Quick2DResult = jsValue match {
     case obj: JsObject =>
       val jobID      = (obj \ "jobID").as[String]
-      val query = general.parseQuery((obj \ "query").as[JsArray])
+      val query = general.parseSingleSeq((obj \ "query").as[JsArray])
       val psipred = parsePsipred((obj \ jobID).as[JsObject])
       val marcoil = parseMarcoil((obj \ jobID).as[JsObject])
       val coils = parseCoils((obj \ jobID).as[JsObject])

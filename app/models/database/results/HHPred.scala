@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import controllers.DTParam
-import models.results.Commmon
+import models.results.Common
 import play.api.libs.json._
 
 import scala.concurrent.Future
@@ -25,9 +25,9 @@ case class HHPredHSP(query: HHPredQuery,
   def toDataTable(db: String): JsValue =
     Json.toJson(
       Map(
-        "0" -> Json.toJson(Commmon.getCheckbox(num)),
-        "1" -> Json.toJson(Commmon.getSingleLink(template.accession).toString),
-        "2" -> Json.toJson(Commmon.addBreak(description)),
+        "0" -> Json.toJson(Common.getCheckbox(num)),
+        "1" -> Json.toJson(Common.getSingleLink(template.accession).toString),
+        "2" -> Json.toJson(Common.addBreak(description)),
         "3" -> Json.toJson(info.probab),
         "4" -> Json.toJson(info.evalue),
         "5" -> Json.toJson(ss_score),
