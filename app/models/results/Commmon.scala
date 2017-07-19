@@ -10,7 +10,7 @@ import models.database.results._
 import scala.collection.mutable.ArrayBuffer
 import scala.util.matching.Regex
 
-object BlastVisualization  {
+object Commmon  {
 
   private val color_regex = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
   private val CC_pattern = """(C+)""".r("C")
@@ -31,7 +31,7 @@ object BlastVisualization  {
   private val mmcifShortReg = """([0-9]+)""".r
   private val pfamReg = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
   private val ncbiReg = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
-  
+
   private val envNrNameReg = """(env.*|nr.*)""".r
   private val pdbNameReg = """(pdb.*)""".r
   private val uniprotNameReg = """(uniprot.*)""".r
@@ -47,6 +47,8 @@ object BlastVisualization  {
   private val cddBaseLink = "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid="
   private val uniprotBaseLik = "http://www.uniprot.org/uniprot/"
   private val smartBaseLink = "http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN="
+
+  private val emptyRow = "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>"
 
   def SSColorReplace(sequence: String): String =
     this.helix_sheets.replaceAllIn(
@@ -95,17 +97,17 @@ object BlastVisualization  {
       "<span class=\"aa_" + m.toString().charAt(0) + "\">" + m.toString() + "</span>"
     })
 
-  def makeRow(rowClass: String, entries: Array[String]): Html = {
-    var html = ""
+  def makeRow(rowClass: String, entries: Array[Any]): String = {
+    var str = ""
     if (rowClass == null)
-      html += "<tr>"
+      str += "<tr>"
     else
-      html += "<tr class='" + rowClass + "'>"
+      str += "<tr class='" + rowClass + "'>"
     for (entry <- entries) {
-      html += "<td>" + entry + "</td>"
+      str += "<td>" + entry.toString + "</td>"
     }
-    html += "<tr>"
-    Html(html)
+    str += "<tr>"
+    str
   }
 
   /* GENERATING LINKS FOR HHPRED */
@@ -302,9 +304,9 @@ object BlastVisualization  {
   def wrapSequence(seq: String, num: Int): String = {
     var seqWrapped = ""
     for {i <- 0 to seq.length if i % num == 0} if (i + num < seq.length) {
-      seqWrapped += "<tr><td></td><td class=\"sequence\">" + seq.slice(i, (i + num)) + "</td></tr>"
+      seqWrapped += makeRow("sequence", Array("", seq.slice(i, (i + num))))
     } else {
-      seqWrapped += "<tr><td></td><td class=\"sequence\">" + seq.substring(i) + "</td></tr>"
+      seqWrapped += makeRow("sequence", Array("", seq.substring(i)))
     }
 
     seqWrapped
@@ -353,7 +355,7 @@ object BlastVisualization  {
           "</tr>"
       }
         return {
-          string.mkString + "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr><tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + clustal(alignment, begin + breakAfter, breakAfter, color)
+          string.mkString + emptyRow + emptyRow + clustal(alignment, begin + breakAfter, breakAfter, color)
         }
     }
   }
@@ -372,10 +374,10 @@ object BlastVisualization  {
         return ""
       } else {
         return {
-          "<tr class='sequence'><td></td><td>Q " + (beginQuery + 1) + "</td><td>" + query + "   " + (beginQuery + queryEnd) + "</td></tr>" +
-            "<tr class='sequence'><td></td><td></td><td>" + midline + "</td></tr>" +
-            "<tr class='sequence'><td></td><td>T " + (beginTemplate  + 1) + "</td><td>" + template + "   " + (beginTemplate + templateEnd) + "</td></tr>" +
-            "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" +
+          makeRow("sequence", Array("", "Q "+(beginQuery + 1), query + "   " + (beginQuery + queryEnd))) +
+          makeRow("sequence", Array("", "", midline)) +
+          makeRow("sequence", Array("", "T "+( beginTemplate + 1), template + "   " + (beginTemplate + templateEnd))) +
+            emptyRow + emptyRow +
             hmmerHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
         }
       }
@@ -396,10 +398,10 @@ object BlastVisualization  {
         return ""
       } else {
         return {
-          "<tr class='sequence'><td></td><td>Q " + beginQuery + "</td><td>" + query + "  " + (beginQuery + queryEnd - 1) + "</td></tr>" +
-            "<tr class='sequence'><td></td><td></td><td>" + midline + "</td></tr>" +
-            "<tr class='sequence'><td></td><td>T " + beginTemplate + "</td><td>" + template + "  " + (beginTemplate + templateEnd - 1) + "</td></tr>" +
-            "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" +
+          makeRow("sequence", Array("", "Q "+(beginQuery + 1), query + "   " + (beginQuery + queryEnd))) +
+          makeRow("sequence", Array("", "", midline)) +
+          makeRow("sequence", Array("", "T "+( beginTemplate + 1), template + "   " + (beginTemplate + templateEnd))) +
+            emptyRow + emptyRow +
             psiblastHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
         }
       }
@@ -427,12 +429,12 @@ object BlastVisualization  {
         return ""
       } else {
         return {
-          "<tr class='sequence'><td></td><td>Q " +  hit.query.accession + "</td><td>" + beginQuery + "</td><td>" + query + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")" + "</td></tr>" +
-            "<tr class='sequence'><td></td><td>Q Consensus " + "</td><td>" + beginQuery + "</td><td>" + queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")" + "</td></tr>" +
-            "<tr class='sequence'><td></td><td></td><td></td><td>" + midline + "</td></tr>" +
-            "<tr class='sequence'><td></td><td>T Consensus " + "</td><td>" + beginTemplate + "</td><td>" + templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")" + "</td></tr>" +
-            "<tr class='sequence'><td></td><td>T " + hit.template.accession + "</td><td>" + beginTemplate + "</td><td>" + template + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")" + "</td></tr>" +
-            "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" +
+          makeRow("sequence", Array("", "Q " + hit.query.accession, beginQuery, query + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")")) +
+          makeRow("sequence", Array("","Q Consensus", beginQuery, queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")")) +
+          makeRow("sequence", Array("","", "", midline )) +
+          makeRow("sequence", Array("","T Consensus", beginTemplate, templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")" )) +
+          makeRow("sequence", Array("", "T " + hit.template.accession , beginTemplate , template + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")")) +
+            emptyRow + emptyRow +
             hhblitsHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
         }
       }
@@ -461,29 +463,30 @@ object BlastVisualization  {
         return ""
       } else {
 
-          var html = ""
-          if(!querySSPRED.isEmpty) {
-          html +=" <tr class='sequence'><td></td><td>Q ss_pred" + "</td><td>" + "</td><td>" + BlastVisualization.SSColorReplace(querySSPRED) + "</td></tr>"
-          }
-          if(!querySSDSSP.isEmpty) {
-            html += "<tr class='sequence'><td></td><td>Q ss_dssp" + "</td><td>" + "</td><td>" + BlastVisualization.SSColorReplace(querySSDSSP) + "</td></tr>"
-          }
-        html +="<tr class='sequence'><td></td><td>Q " +  hit.query.accession + "</td><td>" + beginQuery + "</td><td>" + {if(color) colorRegexReplacer(query) else query} + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")" + "</td></tr>" +
-         "<tr class='sequence'><td></td><td>Q Consensus " + "</td><td>" + beginQuery + "</td><td>" + queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")" + "</td></tr>" +
-            "<tr class='sequence'><td></td><td></td><td></td><td>" + midline + "</td></tr>" +
-            "<tr class='sequence'><td></td><td>T Consensus " + "</td><td>" + beginTemplate + "</td><td>" + templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")" + "</td></tr>" +
-            "<tr class='sequence'><td></td><td>T " + hit.template.accession + "</td><td>" + beginTemplate + "</td><td>" + {if(color) colorRegexReplacer(template) else template} + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")" + "</td></tr>"
+        var html = ""
+        if(!querySSPRED.isEmpty) {
+
+        html += makeRow("sequence", Array("","Q ss_pred", "",Commmon.SSColorReplace(querySSPRED)))
+        }
+        if(!querySSDSSP.isEmpty) {
+          html += makeRow("sequence", Array("","Q ss_dssp", "", "", Commmon.SSColorReplace(querySSDSSP)))
+        }
+        html += makeRow("sequence", Array("","Q " +  hit.query.accession, beginQuery, {if(color) colorRegexReplacer(query) else query} + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")" ))
+        html += makeRow("sequence", Array("","Q Consensus ",beginQuery, queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"))
+        html += makeRow("sequence", Array("","", "", midline))
+        html += makeRow("sequence", Array("","T Consensus ", beginTemplate, templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")" ))
+        html += makeRow("sequence", Array("","T " + hit.template.accession, beginTemplate, {if(color) colorRegexReplacer(template) else template} + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"))
         if(!templateSSDSSP.isEmpty) {
-          html += "<tr class='sequence'><td></td><td>T ss_dssp" + "</td><td>" + "</td><td>" + BlastVisualization.SSColorReplace(templateSSDSSP) + "</td></tr>"
+          html += makeRow("sequence", Array("","T ss_dssp", "", Commmon.SSColorReplace(templateSSDSSP)))
         }
         if(!templateSSPRED.isEmpty) {
-          html +=" <tr class='sequence'><td></td><td>T ss_pred" + "</td><td>" + "</td><td>" + BlastVisualization.SSColorReplace(templateSSPRED) + "</td></tr>"
+          html += makeRow("sequence", Array("","T ss_pred", "", Commmon.SSColorReplace(templateSSPRED)))
         }
         if(!confidence.isEmpty) {
-          html +=" <tr class='sequence'><td></td><td>Confidence" + "</td><td>" + "</td><td>" + confidence + "</td></tr>"
+          html += makeRow("sequence", Array("","Confidence", "", confidence))
         }
 
-        html += "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>"
+        html += emptyRow + emptyRow
 
             return html + hhpredHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd, color)
       }
@@ -520,36 +523,36 @@ object BlastVisualization  {
         var html = ""
 
         if(!querySSCONF.isEmpty) {
-          html +=" <tr class='sequence'><td></td><td>Q ss_conf" + "</td><td>" + "</td><td>" + querySSCONF + "</td></tr>"
+          html += makeRow("sequence", Array("","Q ss_conf", "",  querySSCONF))
         }
         if(!querySSPRED.isEmpty) {
-          html +=" <tr class='sequence'><td></td><td>Q ss_pred" + "</td><td>" + "</td><td>" + BlastVisualization.SSColorReplace(querySSPRED) + "</td></tr>"
+          html += makeRow("sequence", Array("","Q ss_pred", "", Commmon.SSColorReplace(querySSPRED)))
         }
         if(!querySSDSSP.isEmpty) {
-          html += "<tr class='sequence'><td></td><td>Q ss_dssp" + "</td><td>" + "</td><td>" + BlastVisualization.SSColorReplace(querySSDSSP) + "</td></tr>"
+          html += makeRow("sequence", Array("","Q ss_dssp", "", Commmon.SSColorReplace(querySSDSSP)))
         }
-        html +="<tr class='sequence'><td></td><td>Q " +  hit.query.accession + "</td><td>" + beginQuery + "</td><td>" + {if(color) colorRegexReplacer(query) else query} + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")" + "</td></tr>" +
-          "<tr class='sequence'><td></td><td>Q Consensus " + "</td><td>" + beginQuery + "</td><td>" + queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")" + "</td></tr>" +
-          "<tr class='sequence'><td></td><td></td><td></td><td>" + midline + "</td></tr>" +
-          "<tr class='sequence'><td></td><td>T Consensus " + "</td><td>" + beginTemplate + "</td><td>" + templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")" + "</td></tr>" +
-          "<tr class='sequence'><td></td><td>T " + hit.template.accession + "</td><td>" + beginTemplate + "</td><td>" + {if(color) colorRegexReplacer(template) else template} + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")" + "</td></tr>"
+        html += makeRow("sequence", Array("","Q " +  hit.query.accession, beginQuery, {if(color) colorRegexReplacer(query) else query} + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"))
+        html += makeRow("sequence", Array("","Q Consensus ",beginQuery,queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"))
+        html += makeRow("sequence", Array("", "", "", midline))
+        html += makeRow("sequence", Array("","T Consensus ",beginTemplate,templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"))
+        html += makeRow("sequence", Array("","T " + hit.template.accession,beginTemplate,{if(color) colorRegexReplacer(template) else template} + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"))
         if(!templateSSDSSP.isEmpty) {
-          html += "<tr class='sequence'><td></td><td>T ss_dssp" + "</td><td>" + "</td><td>" + BlastVisualization.SSColorReplace(templateSSDSSP) + "</td></tr>"
+          html += makeRow("sequence", Array("","T ss_dssp", "",  Commmon.SSColorReplace(templateSSDSSP)))
         }
         if(!templateSSPRED.isEmpty) {
-          html +=" <tr class='sequence'><td></td><td>T ss_pred" + "</td><td>" + "</td><td>" + BlastVisualization.SSColorReplace(templateSSPRED) + "</td></tr>"
+          html += makeRow("sequence", Array("","T ss_pred", "",  Commmon.SSColorReplace(templateSSPRED)))
         }
         if(!templateSSCONF.isEmpty) {
-          html +=" <tr class='sequence'><td></td><td>T ss_conf" + "</td><td>" + "</td><td>" + templateSSCONF + "</td></tr>"
+          html += makeRow("sequence", Array("","T ss_conf" , "",templateSSCONF))
         }
         if(!templateBBPRED.isEmpty) {
-          html +=" <tr class='sequence'><td></td><td>T bb_pred" + "</td><td>" + "</td><td>" + templateBBPRED + "</td></tr>"
+          html += makeRow("sequence", Array("","T bb_pred", "", templateBBPRED))
         }
         if(!templateBBCONF.isEmpty) {
-          html +=" <tr class='sequence'><td></td><td>T bb_conf" + "</td><td>" + "</td><td>" + templateBBCONF + "</td></tr>"
+          html += makeRow("sequence", Array("","T bb_conf", "",  templateBBCONF))
         }
 
-        html += "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>"
+        html += emptyRow + emptyRow
 
         return html + hhompHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd, color)
       }
