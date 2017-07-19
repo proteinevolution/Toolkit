@@ -180,12 +180,17 @@ hr {
 
 .sequenceCompact{
     font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
-    font-size: 0.75rem;
+    font-size: 0.95em;
     white-space: pre;
+
+}
+.sequenceCompact span{
+    display: inline-block;
 }
 
 .sequenceBold{
     font-weight:600;
+    background-color: rgb(220, 220, 220) !important;
 }
 
 .sequenceAlignment{

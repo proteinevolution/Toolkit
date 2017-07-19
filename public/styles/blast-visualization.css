@@ -652,12 +652,18 @@ table.dataTable.no-footer{
     height: 1em;
 }
 
-#resultTable {
+#resultTable, #resultTableQ2D {
     width: auto;
+    border-spacing: 0;
 }
 
-#resultTable td {
+#resultTable td,  #resultTableQ2D td {
     padding-right: 2em !important;
+    border-spacing: 0;
+}
+
+#resultTableQ2D {
+    margin-left: 1.2em;
 }
 
 .clustalAcc {
