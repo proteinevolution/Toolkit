@@ -179,7 +179,6 @@ let ParameterAlignmentComponent = {
                             onchange: function() {
                                 if (this.value) {
                                     $(".uploadFileName").show();
-                                    $("#alignment").val("Uploaded file.");
 				                    $("#uploadBoxClose").show();
                                     $("#" + ctrl.id).prop("disabled", true);
                                     $("#" + ctrl.id + "_two").prop("disabled", true);
@@ -194,7 +193,6 @@ let ParameterAlignmentComponent = {
                                 "id": "uploadBoxClose",
                                 onclick: function(){
                                     $(".uploadFileName").hide();
-				    $("#alignment").val("");
                                     $("input[type=file]").val(null);
                                     validationProcess($('#alignment'),$("#toolnameAccess").val());
 			            return $("#" + ctrl.id).prop("disabled", false);
