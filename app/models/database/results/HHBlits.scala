@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import controllers.DTParam
-import models.results.BlastVisualization
+import models.results.Commmon
 import play.api.libs.json._
 
 import scala.concurrent.Future
@@ -23,9 +23,9 @@ case class HHBlitsHSP(query: HHBlitsQuery,
   def toDataTable(db: String): JsValue =
     Json.toJson(
       Map(
-        "0" -> Json.toJson(BlastVisualization.getCheckbox(num)),
-        "1" -> Json.toJson(BlastVisualization.getSingleLinkHHBlits(template.accession).toString),
-        "2" -> Json.toJson(BlastVisualization.addBreak(description)),
+        "0" -> Json.toJson(Commmon.getCheckbox(num)),
+        "1" -> Json.toJson(Commmon.getSingleLinkHHBlits(template.accession).toString),
+        "2" -> Json.toJson(Commmon.addBreak(description)),
         "3" -> Json.toJson(info.probab),
         "4" -> Json.toJson(info.evalue),
         "5" -> Json.toJson(info.aligned_cols),

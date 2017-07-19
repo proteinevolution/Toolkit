@@ -1,7 +1,7 @@
 @import play.api.libs.json.JsValue
 @import play.api.libs.json.JsObject
 @import play.api.libs.json.JsDefined
-@import models.results.BlastVisualization
+@import models.results.Commmon
 
 @(toolName: String, jobID: String,jsValue: JsValue)(implicit request: RequestHeader)
 
@@ -35,7 +35,7 @@
                                 <td>@{{seq \ 2 }.get.as[String]} </td>
                                 <td class="tprHit">
                                         @{seq \ 0 match {
-                                                case JsDefined(jsValue) => Html(BlastVisualization.colorRegexReplacer((seq \ 0).get.as[String]))
+                                                case JsDefined(jsValue) => Html(Commmon.colorRegexReplacer((seq \ 0).get.as[String]))
                                         }
                                         }
 
