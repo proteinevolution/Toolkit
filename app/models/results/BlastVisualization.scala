@@ -13,6 +13,9 @@ import scala.util.matching.Regex
 object BlastVisualization  {
 
   private val color_regex = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
+  private val CC_pattern = """(C+)""".r("C")
+  private val TM_pattern = """(M+)""".r("M")
+  private val DO_pattern = """(D+)""".r("D")
   private val helix_pattern = """([Hh]+)""".r
   private val sheet_pattern = """([Ee]+)""".r
   private val helix_sheets = """([Hh]+|[Ee]+)""".r("ss")
@@ -54,6 +57,38 @@ object BlastVisualization  {
         }
       }
     )
+
+  def Q2DColorReplace(name: String, sequence: String): String =
+         name match {
+           case "psipred" => this.helix_sheets.replaceAllIn(
+             sequence, { m =>
+               m.group("ss") match {
+                 case this.helix_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
+                 case this.sheet_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
+               }
+             }
+           )
+           case "spider2" => this.helix_sheets.replaceAllIn(
+             sequence, { m =>
+               m.group("ss") match {
+                 case this.helix_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
+                 case this.sheet_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
+               }
+             }
+           )
+
+           case "marcoil" => this.CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
+           case "coils" => this.CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
+           case "pcoils" => this.CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
+           case "tmhmm" => this.TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
+           case "phobius" => this.TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
+           case "polyphobius" => this.TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
+           case "spotd" => this.DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
+           case "iupred" => this.DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
+
+         }
+
+
 
   def colorRegexReplacer(sequence: String): String =
     this.color_regex.replaceAllIn(sequence, { m =>
@@ -521,5 +556,57 @@ object BlastVisualization  {
     }
   }
 
+  def quick2dWrapped(result: Quick2DResult, charCount: Int, breakAfter: Int): String = {
+    val length = result.query.seq.length
+    if (charCount >= length){
+      return ""
+    }
+    else {
+      var htmlString = ""
+      val query = result.query.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val psipred = result.psipred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val marcoil = result.marcoil.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val coils = result.coils.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val pcoils = result.pcoils.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val tmhmm = result.tmhmm.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val phobius = result.phobius.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val polyphobius = result.polyphobius.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val spider2 = result.spider2.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val spotd = result.spotd.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val iupred = result.iupred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
 
+      htmlString += "<tr class='sequenceCompact sequenceBold'><td>&nbsp;&nbsp;&nbsp;AA_QUERY</td><td>"+(charCount + 1)+"</td><td>"+query+"&nbsp;&nbsp;&nbsp;&nbsp;"+"<td>"+Math.min(length,charCount+breakAfter)+"</td>"
+      htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;SS_"+result.psipred.name.toUpperCase()+"</td><td></td><td>"+this.Q2DColorReplace(result.psipred.name, psipred.replace("C", "&nbsp;"))+"</td>"
+      if(!spider2.isEmpty) {
+        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;SS_" + result.spider2.name.toUpperCase() + "</td><td></td><td>" + this.Q2DColorReplace(result.spider2.name, spider2.replace("C","&nbsp;")) + "</td>"
+      }
+      if(!marcoil.isEmpty) {
+        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;CC_" + result.marcoil.name.toUpperCase() + "</td><td></td><td>" + this.Q2DColorReplace(result.marcoil.name, marcoil.replace("x","&nbsp;")) + "</td>"
+      }
+      if(!coils.isEmpty) {
+        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;CC_" + result.coils.name.toUpperCase() + "_W28</td><td></td><td>" + this.Q2DColorReplace(result.coils.name, coils.replace("x","&nbsp;")) + "</td>"
+      }
+      if(!pcoils.isEmpty) {
+        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;CC_" + result.pcoils.name.toUpperCase() + "_W28</td><td></td><td>" + this.Q2DColorReplace(result.pcoils.name, pcoils.replace("x","&nbsp;")) + "</td>"
+      }
+      if(!tmhmm.isEmpty) {
+        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;TM_" + result.tmhmm.name.toUpperCase() + "</td><td></td><td>" + this.Q2DColorReplace(result.tmhmm.name, tmhmm.replace("x","&nbsp;")) + "</td>"
+      }
+      if(!phobius.isEmpty) {
+        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;TM_" + result.phobius.name.toUpperCase() + "</td><td></td><td>" + this.Q2DColorReplace(result.phobius.name, phobius.replace("x","&nbsp;")) + "</td>"
+      }
+      if(!polyphobius.isEmpty) {
+        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;TM_" + result.polyphobius.name.toUpperCase() + "</td><td></td><td>" + this.Q2DColorReplace(result.polyphobius.name, polyphobius.replace("x","&nbsp;")) + "</td>"
+      }
+      if(!spotd.isEmpty) {
+        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;DO_" + result.spotd.name.toUpperCase() + "</td><td></td><td>" + this.Q2DColorReplace(result.spotd.name, spotd.replace("O","&nbsp;")) + "</td>"
+      }
+      if(!iupred.isEmpty) {
+        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;DO_" + result.iupred.name.toUpperCase() + "</td><td></td><td>" + this.Q2DColorReplace(result.iupred.name, iupred.replace("O","&nbsp;")) + "</td>"
+      }
+
+      htmlString += "<tr class=\"blank_row\"><td colspan=\"4\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"4\"></td></tr>"  + "<tr class=\"blank_row\"><td colspan=\"4\"></td></tr>"  + "<tr class=\"blank_row\"><td colspan=\"4\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"4\"></td></tr>"
+      return htmlString + quick2dWrapped(result, charCount + breakAfter, breakAfter)
+      }
+    }
 }
