@@ -18,7 +18,12 @@ case class Quick2DResult(jobID: String,
                          marcoil: Marcoil,
                          coils: Coils,
                          pcoils: Pcoils,
-                         tmhmm: Tmhmm
+                         tmhmm: Tmhmm,
+                         phobius: Phobius,
+                         polyphobius: Polyphobius,
+                         spider2: Spider2,
+                         spotd: Spotd,
+                         iupred: Iupred
                         )
 
 case class Psipred(name: String, seq: String, conf: String)
@@ -26,6 +31,11 @@ case class Marcoil(name: String, seq: String)
 case class Coils(name: String, seq: String)
 case class Pcoils(name: String, seq: String)
 case class Tmhmm(name: String, seq: String)
+case class Phobius(name: String, seq: String)
+case class Polyphobius(name: String, seq: String)
+case class Spider2(name: String, seq: String)
+case class Spotd(name: String, seq: String)
+case class Iupred(name: String, seq: String)
 
 @Singleton
 class Quick2D @Inject()(general: General) {
@@ -39,7 +49,12 @@ class Quick2D @Inject()(general: General) {
       val coils = parseCoils((obj \ jobID).as[JsObject])
       val pcoils = parsePcoils((obj \ jobID).as[JsObject])
       val tmhmm = parseTmhmm((obj \ jobID).as[JsObject])
-      Quick2DResult(jobID, query, psipred, marcoil, coils, pcoils, tmhmm)
+      val phobius = parsePhobius((obj \ jobID).as[JsObject])
+      val polyphobius = parsePolyphobius((obj \ jobID).as[JsObject])
+      val spider2 = parseSpider2((obj \ jobID).as[JsObject])
+      val spotd = parseSpotd((obj \ jobID).as[JsObject])
+      val iupred = parseIupred((obj \ jobID).as[JsObject])
+      Quick2DResult(jobID, query, psipred, marcoil, coils, pcoils, tmhmm, phobius, polyphobius, spider2, spotd, iupred)
 
   }
 
@@ -69,5 +84,26 @@ class Quick2D @Inject()(general: General) {
     Tmhmm("tmhmm", seq)
   }
 
+  def parsePhobius(obj: JsObject) : Phobius = {
+    val seq        = (obj \ "phobius").getOrElse(Json.toJson("")).as[String]
+    Phobius("phobius", seq)
+  }
+
+  def parsePolyphobius(obj: JsObject) : Polyphobius = {
+    val seq        = (obj \ "jphobius").getOrElse(Json.toJson("")).as[String]
+    Polyphobius("polyphobius", seq)
+  }
+  def parseSpider2(obj: JsObject) : Spider2 = {
+    val seq        = (obj \ "spider2").getOrElse(Json.toJson("")).as[String]
+    Spider2("spider2", seq)
+  }
+  def parseSpotd(obj: JsObject) : Spotd = {
+    val seq        = (obj \ "spot-d").getOrElse(Json.toJson("")).as[String]
+    Spotd("spotd", seq)
+  }
+  def parseIupred(obj: JsObject) : Iupred = {
+    val seq        = (obj \ "iupred").getOrElse(Json.toJson("")).as[String]
+    Iupred("iupred", seq)
+  }
 
 }
