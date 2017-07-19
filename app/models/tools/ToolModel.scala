@@ -60,6 +60,7 @@ final class ToolFactory @Inject()(
     hhpred: HHPred,
     hhblits: HHBlits,
     hhomp: HHomp,
+    quick2d: Quick2D,
     aln: models.database.results.Alignment,
     constants: Constants
 )(paramAccess: ParamAccess, mongoStore: MongoStore) {
@@ -82,6 +83,7 @@ final class ToolFactory @Inject()(
     final val HHPRED_MANUAL       = "hhpred_manual"
     final val HHREPID             = "hhrepid"
     final val ALI2D               = "ali2d"
+    final val QUICK2D               = "quick2d"
     final val CLUSTALO            = "clustalo"
     final val KALIGN              = "kalign"
     final val MAFFT               = "mafft"
@@ -437,6 +439,15 @@ final class ToolFactory @Inject()(
           Future.successful(
             views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".results_colorC")
           )
+        }
+      ),
+      Toolnames.QUICK2D -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.quick2d(quick2d.parseResult(jsvalue))
+          }
         }
       ),
       Toolnames.CLUSTALO -> ListMap(

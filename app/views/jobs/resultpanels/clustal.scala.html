@@ -25,15 +25,13 @@
         <br />
         <br />
 
-<form id="alignmentResult">
-    <table class="unstriped">
-        <table id="clustalTable">
-        </table>
-        <tr>
-            <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
-        </tr>
+<table class="unstriped">
+    <table id="resultTable">
     </table>
-</form>
+    <tr>
+        <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
+    </tr>
+</table>
 </div>
 
 <script>
@@ -112,7 +110,7 @@
                     contentType: "application/json",
                     data: JSON.stringify(data)
                 }).done(function (data_) {
-                    $("#clustalTable").append(data_);
+                    $("#resultTable").append(data_);
                     loading = false;
                     linkCheckboxes();
                     selectFromArray(checkboxes);
@@ -123,7 +121,7 @@
 
         function @{tool.toolNameShort}_colorAA(){
             colorAAsClustal = !colorAAsClustal;
-            $("#clustalTable").empty();
+            $("#resultTable").empty();
             $("#colorAA").toggleClass("colorToggle");
             @{tool.toolNameShort}_getHits(colorAAsClustal);
         }

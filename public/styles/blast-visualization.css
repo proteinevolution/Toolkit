@@ -406,7 +406,7 @@ table.dataTable.no-footer{
 }
 
 .alignmentTBody td{
-    padding: unset !important;
+    padding: unset;
 }
 
 #alignmentResultView{
@@ -652,16 +652,18 @@ table.dataTable.no-footer{
     height: 1em;
 }
 
-#fastaTable {
+#resultTable, #resultTableQ2D {
     width: auto;
+    border-spacing: 0;
 }
 
-#clustalTable {
-    width: auto;
+#resultTable td,  #resultTableQ2D td {
+    padding-right: 2em !important;
+    border-spacing: 0;
 }
 
-#clustalTable td {
-    padding-right: 0.2em;
+#resultTableQ2D {
+    margin-left: 1.2em;
 }
 
 .clustalAcc {
