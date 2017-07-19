@@ -161,6 +161,7 @@ hr {
 }
 
 .unstriped{
+    border-collapse: unset !important;
     margin: 0 ;
     width: auto;
     border-collapse: unset !important;
@@ -173,9 +174,24 @@ hr {
 
 .sequence{
     font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.025em;
     font-size: 0.75rem;
     white-space: pre;
+}
+
+.sequenceCompact{
+    font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 0.95em;
+    white-space: pre;
+
+}
+.sequenceCompact span{
+    display: inline-block;
+}
+
+.sequenceBold{
+    font-weight:600;
+    background-color: rgb(220, 220, 220) !important;
 }
 
 .sequenceAlignment{
