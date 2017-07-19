@@ -7,7 +7,7 @@ import play.api.mvc.{Action, AnyContent, Controller}
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.Constants
 import models.database.results.{Alignment, AlignmentResult, General}
-import models.results.BlastVisualization
+import models.results.Commmon
 import modules.db.MongoStore
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import play.api.libs.json.JsArray
@@ -107,7 +107,7 @@ class AlignmentController @Inject()(aln: Alignment,
       mongoStore.getResult(jobID).map {
         case Some(jsValue) =>
           val result = aln.parseAlignment((jsValue \ resultName).as[JsArray])
-            val hits = BlastVisualization.clustal(result, 0, constants.breakAfterClustal, color)
+            val hits = Commmon.clustal(result, 0, constants.breakAfterClustal, color)
             Ok(hits.mkString)
           }
       }
