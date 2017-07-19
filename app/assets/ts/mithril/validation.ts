@@ -10,7 +10,6 @@ let samccIsValid : boolean = false;
 
 let validation = function(elem : any, isInit : boolean, ctx : any) : any {
     if (!isInit) {
-
         let toolname: string;
         try {
             toolname = $("#toolnameAccess").val();
@@ -19,9 +18,6 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
             toolname = "unknown";
             console.warn("toolname unspecified");
         }
-
-        let pastedContent = $(elem).val();
-        if (pastedContent == '') {
             if (toolname == 'hhpred')
                 elem = $("[name='alignment']");
 
@@ -29,21 +25,8 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
             let url = path.split("/");
 
             if (url[url.length - 2] != 'jobs') {
-                $(document).ready(function(){
-                    $(elem).val(ParameterAlignmentComponent.placeholder).css('color', 'grey');
-                });
 
-                $(elem).focus(function () {
-                    if (ParameterAlignmentComponent.placeholder.match("\n")) {
-                        $(elem).removeAttr('placeholder');
-                    }
-                    if ($(elem).val() === ParameterAlignmentComponent.placeholder) {
-                        $(elem).prop('value', '').css('color', '#0a0a0a');
-                        m.redraw(true);
-                    }
-                });
                 $('#pasteButton').on('click', function () {
-                    $(elem).css('color', '#0a0a0a');
                     m.redraw(true);
                     setTimeout(function () {
                         validationProcess($(elem), toolname)
@@ -53,33 +36,17 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                 $('.inputDBs').on('change', function () {
                     validationProcess($(elem), toolname)
                 });
-                $(elem).blur(function () {
-                    if ($(elem).val() === '') {
-                        $(elem).prop('value', ParameterAlignmentComponent.placeholder).css('color', 'grey');
-                        m.redraw(true);
-                    }
-                });
             }
-        } else {
-            m.redraw(true);
-            setTimeout(function () {
-                $(elem).css('color', '#0a0a0a');
-                $(elem).val(pastedContent);
-                validationProcess($(elem), toolname)
-            }, 200);
-            $(elem).focus();
-        }
+        validationProcess($(elem), toolname);
         return $(elem).on("input", function (e) {
-            validationProcess(elem, toolname);
+            validationProcess($(elem), toolname);
         });
     }
 };
 
 
 
-
 let validationProcess = function(elem: any,toolname: string) {
-
     //---------------------------------Validation Visitors------------------------------------------//
 
     // in order to modularize validation we use the visitor pattern
@@ -92,7 +59,6 @@ let validationProcess = function(elem: any,toolname: string) {
 
 
     //---------------------------------------------------------------------------------------------//
-
     switch (toolname) {
         case "tcoffee":
             /** validation model for tcoffee:
@@ -292,7 +258,6 @@ let validationProcess = function(elem: any,toolname: string) {
 
             if (hhompTarget.basicValidation("yes")) {
                 hhompTarget.sameLengthValidation();
-                hhompTarget.hhMaxDB();
             }
 
             break;
@@ -326,7 +291,7 @@ let validationProcess = function(elem: any,toolname: string) {
             break;
 
         case "aln2plot":
-
+            charLimitPerSeq = 10000;
             seqLimit = 2000;
 
             let aln2plotTarget = new alignmentVal($(elem));
@@ -342,6 +307,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "frpred":
 
+            charLimitPerSeq = 3000;
             seqLimit = 2000;
 
             let frpredTarget = new alignmentVal($(elem));
@@ -382,6 +348,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "repper":
 
+            charLimitPerSeq = 10000;
             seqLimit = 2000;
 
             let repperTarget = new alignmentVal($(elem));
@@ -394,6 +361,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "marcoil":
 
+            charLimitPerSeq = 10000;
             seqLimit = 2000;
 
             let marcoilTarget = new alignmentVal($(elem));
@@ -405,6 +373,9 @@ let validationProcess = function(elem: any,toolname: string) {
             break;
 
         case "tprpred":
+
+            charLimitPerSeq = 10000;
+
 
             let tprpredTarget = new alignmentVal($(elem));
 
@@ -442,9 +413,7 @@ let validationProcess = function(elem: any,toolname: string) {
             break;
 
         case "modeller":
-
             let modellerTarget = new alignmentVal($(elem));
-
             modellerTarget.modellerValidation();
 
             break;
@@ -458,6 +427,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "ancescon":
 
+            charLimitPerSeq = 3000;
             seqLimit = 2000;
 
             let ancesconTarget = new alignmentVal($(elem));
@@ -479,6 +449,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * Limit the maximum number of sequences to 20000.
              */
 
+            charLimitPerSeq = 30000;
             seqLimit = 20000;
 
             let mmseqs2Target = new alignmentVal($(elem));
@@ -513,6 +484,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * Limit the maximum number of sequences to 10000.
              **/
 
+            charLimitPerSeq = 20000;
             seqLimit = 10000;
 
             let clansTarget = new alignmentVal($(elem));
@@ -548,7 +520,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              * Limit the maximum number of sequences to 10000.
              */
-
+            charLimitPerSeq = 3000;
             seqLimit = 10000;
 
             let hhfilterTarget = new alignmentVal($(elem));
@@ -689,7 +661,11 @@ class alignmentVal implements ToolkitValidator {
 
     basicValidation(checkNucleotide: string): boolean {
 
-        if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') !== '') {
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
+	    else if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') !== '') {
             originIsFasta = false;
             let t = this.elem.reformat('detect');
             feedback(false, t + " format found:  <b>Auto-transformed to Fasta</b>", "success", t);
@@ -740,11 +716,10 @@ class alignmentVal implements ToolkitValidator {
             feedback(true, "FASTA but identifiers are not unique!", "warning");
             return true;
         }
-
-        else if (this.elem.val() === "") {
+	    else if (this.elem.val() === "") {
             feedback(false);
             valReset();
-        }
+        } 
 
         else feedback(true, "<b>Protein FASTA</b>", "success");
 
@@ -753,8 +728,11 @@ class alignmentVal implements ToolkitValidator {
     }
 
     sameLengthValidation(): boolean {
-
-        if (!this.elem.reformat('samelength')) {
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
+        else if (!this.elem.reformat('samelength')) {
             feedback(false, "Invalid MSA! Sequences should have the same length.", "error");
             return false;
         }
@@ -763,8 +741,11 @@ class alignmentVal implements ToolkitValidator {
     }
 
     mustHave2() : boolean {
-
-        if(this.elem.validate('fasta') && this.elem.reformat('numbers') < 2) {
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
+        else if(this.elem.validate('fasta') && this.elem.reformat('numbers') < 2) {
             feedback(false, "Must have at least two sequences!", "error");
             return false;
         }
@@ -772,8 +753,11 @@ class alignmentVal implements ToolkitValidator {
     }
 
     mustHave1() : boolean {
-
-        if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1){
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
+        else if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1){
             feedback(false, "Input must be a single protein sequence!", "error");
             return false;
         }
@@ -783,7 +767,10 @@ class alignmentVal implements ToolkitValidator {
     DNAvalidation(): any {
 
         console.log(this.elem.reformat('DNA'));
-
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
         if (!this.elem.validate('fasta')) {
             feedback(false, "This is no FASTA!", "error");
             return false;
@@ -819,8 +806,10 @@ class alignmentVal implements ToolkitValidator {
     }
 
     seq2IDvalidation(): any {
-
-        if (!this.elem.validate('fasta') && this.elem.reformat('detect') != '') {
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+        }
+        else if (!this.elem.validate('fasta') && this.elem.reformat('detect') != '') {
             originIsFasta = false;
             let t = this.elem.reformat('detect');
             feedback(false, t + " format found:  <b>Auto-transformed to Fasta</b>", "success", t);
@@ -849,10 +838,12 @@ class alignmentVal implements ToolkitValidator {
     }
 
     patternSearchValidation(): any {
-
-        if (!this.elem.reformat('line'))
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+        }
+        else if (!this.elem.reformat('line')) {
             feedback(false, "Please enter a valid regular expression/PROSITE grammar!", "error");
-
+        }
         else if (/\s/.test(this.elem.val()))
             feedback(false, "Input must not contain spaces!", "error");
 
@@ -869,10 +860,12 @@ class alignmentVal implements ToolkitValidator {
     }
 
     modellerValidation(): any {
-
         modellerIsValid = false;
-
-        if (!this.elem.validate('pir'))
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            modellerIsValid = true;
+        }
+        else if (!this.elem.validate('pir'))
             feedback(false, "MODELLER only works with PIR alignments forwarded by HHpred.", "error");
 
         else if (!this.elem.reformat('star'))
@@ -888,7 +881,6 @@ class alignmentVal implements ToolkitValidator {
             feedback(false);
             valReset();
         }
-
         else if(!ParameterModellerKeyComponent.keyStored){
             feedback(false, "Please enter your MODELLER-key!", "error");
         }
@@ -902,10 +894,12 @@ class alignmentVal implements ToolkitValidator {
     samccValidation(): any {
 
         samccIsValid = false;
-
-        if(!this.elem.reformat('atoms'))
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            samccIsValid = true;
+        }
+        else if(!this.elem.reformat('atoms'))
             feedback(false, "Must contain at least 28 PDB ATOM records", "error");
-
         else if (this.elem.val() == "") {
             feedback(false);
             valReset();
@@ -919,7 +913,10 @@ class alignmentVal implements ToolkitValidator {
 
     //retseq validation is only a stub
     retSeqValidation(): any {
-        if(this.elem.val() != "")
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+        }
+        else if(this.elem.val() != "")
             feedback(true, "Valid input", "success");
 
         else if (this.elem.val() == "") {

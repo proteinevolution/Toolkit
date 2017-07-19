@@ -164,6 +164,7 @@ hr {
     border-collapse: unset !important;
     margin: 0 ;
     width: auto;
+    border-collapse: unset !important;
 }
 
 .wrapSpan{

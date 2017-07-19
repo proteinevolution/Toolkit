@@ -26,7 +26,8 @@ let ParameterAlignmentComponent = {
                 return this.modes;
             }).bind(this.mo),
             getLabel: (function() {
-                return this.label;
+                //return this.label;
+                return "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format."
             }).bind(this.mo),
             getAllowsTwoTextAreas: (function() {
                 return this.allowsTwoTextAreas;
@@ -90,7 +91,7 @@ let ParameterAlignmentComponent = {
                     } else {
                         $(".inputDBs").prop('disabled', false);
                         $("#hhpred_align").prop('checked', false);
-                        $("#alignment").attr("rows", "19");
+                        $("#alignment").attr("rows", "14");
                         $("#alignment_two").hide();
                         $("#alignment_two").removeAttr("required", false);
 
@@ -177,12 +178,11 @@ let ParameterAlignmentComponent = {
                             "class": "show-for-sr",
                             onchange: function() {
                                 if (this.value) {
-
                                     $(".uploadFileName").show();
-                                    $("#uploadBoxClose").show();
+				                    $("#uploadBoxClose").show();
                                     $("#" + ctrl.id).prop("disabled", true);
                                     $("#" + ctrl.id + "_two").prop("disabled", true);
-                                    $(".submitJob").prop("disabled", false);
+				                    validationProcess($('#alignment'),$("#toolnameAccess").val());
                                 }
                             }
                         }), m("div",
@@ -194,8 +194,8 @@ let ParameterAlignmentComponent = {
                                 onclick: function(){
                                     $(".uploadFileName").hide();
                                     $("input[type=file]").val(null);
-                                    $(".submitJob").prop("disabled", true);
-                                    return $("#" + ctrl.id).prop("disabled", false);
+                                    validationProcess($('#alignment'),$("#toolnameAccess").val());
+			            return $("#" + ctrl.id).prop("disabled", false);
                                 }
                             }, m("i", {"class": "fa fa-trash-o"})))),
                     m(JobValidationComponent, {})
