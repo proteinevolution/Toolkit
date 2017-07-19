@@ -12,7 +12,7 @@ import models.database.statistics.ToolStatistic
 import models.database.users.User
 import models.search.JobDAO
 import models.Constants
-import models.results.Commmon
+import models.results.Common
 import models.tools.ToolFactory
 import modules.common.HTTPRequest
 import modules.tel.TEL
@@ -214,7 +214,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   def getStructureFile(filename: String): Action[AnyContent] = Action.async { implicit request =>
     {
 
-      val db = Commmon.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
+      val db = Common.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
       val filepath = db match {
         case "scop" =>
           env.get("SCOPE")
