@@ -258,7 +258,6 @@ let validationProcess = function(elem: any,toolname: string) {
 
             if (hhompTarget.basicValidation("yes")) {
                 hhompTarget.sameLengthValidation();
-                hhompTarget.hhMaxDB();
             }
 
             break;
