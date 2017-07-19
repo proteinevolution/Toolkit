@@ -61,6 +61,10 @@ fi
 echo "done" >> ../results/process.log
 updateProcessLog
 
+head -n 2 ../results/${JOBID}.fas > ../results/tmp
+sed 's/[\.\-]//g' ../results/tmp > ../results/${JOBID}.seq
+rm ../results/tmp
+
 
 #CHECK IF MSA generation is required or not
 if [ "%quick_iters.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
@@ -68,6 +72,17 @@ if [ "%quick_iters.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
         updateProcessLog
 
         cp ../results/${JOBID}.fas ../results/${JOBID}.aln
+
+        reformat_hhsuite.pl fas a3m \
+         $(readlink -f ../results/${JOBID}.aln) \
+         $(readlink -f ../results/${JOBID}.a3m) \
+         -d 160 -uc -num -r -M first
+
+         hhfilter -i ../results/${JOBID}.a3m \
+                  -o ../results/${JOBID}.a3m
+
+        echo "done" >> ../results/process.log
+        updateProcessLog
 else
     #MSA generation required
     #Check what method to use (PSI-BLAST? HHblits?)
@@ -76,7 +91,9 @@ else
         updateProcessLog
         echo "done" >> ../results/process.log
         updateProcessLog
-    #MSA generation by PSI-BLAST
+
+
+
         echo "#Running PSI-BLAST for query MSA and A3M generation." >> ../results/process.log
         updateProcessLog
         #Check if input is a single sequence or an MSA
@@ -85,15 +102,14 @@ else
             INPUT="in_msa"
         fi
 
-        psiblast -db ${STANDARD}/nr_euk70 \
+        psiblast -db ${STANDARD}/nr90 \
                  -num_iterations %quick_iters.content \
-                 -evalue %hhpred_incl_eval.content \
-                 -inclusion_ethresh 0.001 \
                  -num_threads %THREADS \
                  -num_descriptions 20000 \
                  -num_alignments 20000 \
                  -${INPUT} ../results/${JOBID}.fas \
-                 -out ../results/output_psiblastp.html
+                 -out ../results/output_psiblastp.html \
+                 -out_ascii_pssm ../results/${JOBID}.pssm
 
         #keep results only of the last iteration
         shorten_psiblast_output.pl ../results/output_psiblastp.html ../results/output_psiblastp.html
@@ -101,23 +117,25 @@ else
         #extract MSA in a3m format
         alignhits_html.pl   ../results/output_psiblastp.html ../results/${JOBID}.aln \
                     -Q ../results/${JOBID}.fas \
-                    -e %hhpred_incl_eval.content \
-                    -cov 50 \
                     -fas \
                     -no_link \
                     -blastplus
-        echo "done" >> ../results/process.log
-        updateProcessLog
-fi
 
-reformat_hhsuite.pl fas a3m \
+        reformat_hhsuite.pl fas a3m \
          $(readlink -f ../results/${JOBID}.aln) \
          $(readlink -f ../results/${JOBID}.a3m) \
          -d 160 -uc -num -r -M first
 
+        echo "done" >> ../results/process.log
+        updateProcessLog
+fi
+
+
+#psiblast -subject ../results/${JOBID}.seq \
+#         -in_msa ../results/${JOBID}.aln \
+#         -out_ascii_pssm ../results/${JOBID}.pssm
 
 addss.pl ../results/${JOBID}.a3m
-
 
 #Write query sequence without gaps into JSON
 fasta2json.py ../results/${JOBID}.fas ../results/query.json
@@ -139,9 +157,7 @@ matrix_copy.sh "${MARCOILMTIDK}" ../0/R5.MTIDK
 PARAMMATRIX="-C -i"
 TRANSPROB="${MARCOILINPUT}/R3.transProbHigh"
 
-head -n 2 ../results/${JOBID}.fas > ../results/tmp
-sed 's/[\.\-]//g' ../results/tmp > ../results/${JOBID}.seq
-rm ../results/tmp
+
 
 marcoil  ${PARAMMATRIX} \
                       +dssSl \
@@ -161,7 +177,25 @@ ${COILSDIR}/hhmake -i ../results/${JOBID}.a3m \
 deal_with_profile.pl ../results/${JOBID}.hhmake.out ../results/${JOBID}.myhmmmake.out
 run_PCoils -win 28 -prof ../results/${JOBID}.myhmmmake.out < ../results/${JOBID}.buffer > ../results/${JOBID}.pcoils_n21
 
+#Run TMHMM
 tmhmm ../results/${JOBID}.seq > ../results/${JOBID}.tmhmm_dat
+
+#Run PHOBIUS
+phobius.pl ../results/${JOBID}.seq > ../results/${JOBID}.phobius_dat
+
+#Run POLYPHOBIUS
+perl ${POLYPHOBIUS}/jphobius.pl -poly ../results/${JOBID}.aln > ../results/${JOBID}.jphobius_dat
+
+cd ../results/
+
+#RUN SPOT-D and SPIDER2
+${SPOTD}/run_local.sh ${JOBID}.pssm
+
+cd ../0/
+
+#RUN IUPred
+
+iupred ../results/${JOBID}.seq long > ../results/${JOBID}.iupred_dat
 
 parseMARCOIL.pl ${JOBID}
 
@@ -201,4 +235,54 @@ if [ ${TM_COUNT} -gt "5" ] ; then
     manipulate_json.py -k 'tmhmm' -v "$TMH" ../results/${JOBID}.json
 else
     manipulate_json.py -k 'tmhmm' -v "" ../results/${JOBID}.json
+fi
+
+TM_COUNT=0
+TM_COUNT=$(tr -cd "M" <  ../results/${JOBID}.phobius | wc -c)
+
+if [ ${TM_COUNT} -gt "5" ] ; then
+    TMH="$(sed -n '1{p;q;}' ../results/${JOBID}.phobius)"
+    manipulate_json.py -k 'phobius' -v "$TMH" ../results/${JOBID}.json
+else
+    manipulate_json.py -k 'phobius' -v "" ../results/${JOBID}.json
+fi
+
+TM_COUNT=0
+TM_COUNT=$(tr -cd "M" <  ../results/${JOBID}.jphobius | wc -c)
+
+if [ ${TM_COUNT} -gt "5" ] ; then
+    TMH="$(sed -n '1{p;q;}' ../results/${JOBID}.phobius)"
+    manipulate_json.py -k 'jphobius' -v "$TMH" ../results/${JOBID}.json
+else
+    manipulate_json.py -k 'polyphobius' -v "" ../results/${JOBID}.json
+fi
+
+ALPHA=0
+BETA=0
+ALPHA=$(tr -cd "H" <  ../results/${JOBID}.spider2 | wc -c)
+BETA=$(tr -cd "E" <  ../results/${JOBID}.spider2 | wc -c)
+
+if [ ${ALPHA} -gt "0" ] || [ ${BETA} -gt "0" ] ; then
+    SS="$(sed -n '1{p;q;}' ../results/${JOBID}.spider2)"
+    manipulate_json.py -k 'spider2' -v "$SS" ../results/${JOBID}.json
+else
+    manipulate_json.py -k 'spider2' -v "" ../results/${JOBID}.json
+fi
+
+IDR=$(tr -cd "D" <  ../results/${JOBID}.spot | wc -c)
+
+if [ ${IDR} -gt "0" ] ; then
+    SS="$(sed -n '1{p;q;}' ../results/${JOBID}.spot)"
+    manipulate_json.py -k 'spot-d' -v "$SS" ../results/${JOBID}.json
+else
+    manipulate_json.py -k 'spot-d' -v "" ../results/${JOBID}.json
+fi
+
+IDR=$(tr -cd "D" <  ../results/${JOBID}.iupred | wc -c)
+
+if [ ${IDR} -gt "0" ] ; then
+    SS="$(sed -n '1{p;q;}' ../results/${JOBID}.iupred)"
+    manipulate_json.py -k 'iupred' -v "$SS" ../results/${JOBID}.json
+else
+    manipulate_json.py -k 'iupred' -v "" ../results/${JOBID}.json
 fi

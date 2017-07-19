@@ -3,7 +3,7 @@ interface Window { JobModel: any; }
 window.JobModel = {
     paramValues: {},
     defaultValues: {
-        "evalue": "1",
+        "evalue": "1e-3",
         "inclusion_ethresh": "0.001",
         "min_cov": "20",
         "min_seqid_query": "0",
@@ -58,7 +58,8 @@ window.JobModel = {
         "samcc_periodicity":"7",
         "seqcount":"500",
         "invoke_psipred":"30",
-        "clans_eval":"1e-4"
+        "clans_eval":"1e-4",
+        "target_psi_db":"nre70"
 },
 
 
