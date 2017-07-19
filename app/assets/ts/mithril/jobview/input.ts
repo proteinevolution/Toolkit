@@ -178,12 +178,11 @@ let ParameterAlignmentComponent = {
                             "class": "show-for-sr",
                             onchange: function() {
                                 if (this.value) {
-
                                     $(".uploadFileName").show();
-                                    $("#uploadBoxClose").show();
+				                    $("#uploadBoxClose").show();
                                     $("#" + ctrl.id).prop("disabled", true);
                                     $("#" + ctrl.id + "_two").prop("disabled", true);
-                                    $(".submitJob").prop("disabled", false);
+				                    validationProcess($('#alignment'),$("#toolnameAccess").val());
                                 }
                             }
                         }), m("div",
@@ -195,8 +194,8 @@ let ParameterAlignmentComponent = {
                                 onclick: function(){
                                     $(".uploadFileName").hide();
                                     $("input[type=file]").val(null);
-                                    $(".submitJob").prop("disabled", true);
-                                    return $("#" + ctrl.id).prop("disabled", false);
+                                    validationProcess($('#alignment'),$("#toolnameAccess").val());
+			            return $("#" + ctrl.id).prop("disabled", false);
                                 }
                             }, m("i", {"class": "fa fa-trash-o"})))),
                     m(JobValidationComponent, {})
