@@ -25,7 +25,9 @@ let paramValidation = function(elem : any, isInit : boolean, ctx : any) : any {
                 switch (toolname) {
                     case "samcc":
                             let counter = 0;
-
+                            if($("#fileUpload").val() !== "" && samccIsValid) {
+                                $(".submitJob").prop("disabled", false);
+                            }
                             if (helixValid($("#samcc_helixone").val())) {
                                 $("#samcc_helixone").css("background-color", "rgb(219, 255, 219)");
                                 counter++;
