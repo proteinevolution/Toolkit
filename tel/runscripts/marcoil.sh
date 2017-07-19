@@ -58,7 +58,7 @@ elif  [ "9fam" = "%matrix_marcoil.content" ] ; then
 fi
 
 TRANSPROB=${MARCOILINPUT}/R3.transProbHigh
-if [ "%transition_probability.content" = "1" ] ; then
+if [ "%transition_probability.content" = "0" ] ; then
 
     TRANSPROB="${MARCOILINPUT}/R3.transProbLow"
 fi

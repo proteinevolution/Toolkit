@@ -1,7 +1,7 @@
 @import play.api.mvc.RequestHeader
 @import java.util.Date
 @import models.tools.Tool
-@(webJarAssets: WebJarAssets, tools: Iterable[Tool], message : String = "", view : String = "")(implicit messages: Messages, request: RequestHeader)
+@(webJarAssets: WebJarAssets, tools: Iterable[Tool], message: String = "", view: String = "")(implicit messages: Messages, request: RequestHeader)
 
 <!DOCTYPE html>
 
@@ -20,7 +20,7 @@
 
         <link rel="shortcut icon" href="@routes.Assets.versioned("images/favicons/favicon-32x32.png")">
 
-        <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 
 
         <link href="@routes.Assets.versioned("styles/hamburgers.min.css")" rel="stylesheet">
@@ -37,7 +37,7 @@
         <link href="@routes.WebJarAssets.at(webJarAssets.locate("slick.css"))" rel="stylesheet">
         <link href="@routes.WebJarAssets.at(webJarAssets.locate("slick-theme.css"))" rel="stylesheet">
 
-        <!-- JQuery -->
+            <!-- JQuery -->
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("3.2.1/jquery.min.js"))" type="text/javascript" ></script>
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("jquery.lazyload.js"))" type="text/javascript" ></script>
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("jquery-ui.js"))" type="text/javascript" ></script>
@@ -45,6 +45,8 @@
         <script src="@routes.Assets.versioned("javascripts/vendor/newick.js")" type="text/javascript"></script>
         <script src="@routes.Assets.versioned("javascripts/vendor/jquery.nice-select.js")" type="text/javascript"></script>
 
+            <!-- Foundation
+        <link rel="stylesheet" href="@routes.WebJarAssets.at(webJarAssets.locate("foundation.min.css"))" /> -->
 
         <link href="@routes.Assets.versioned("styles/index.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("styles/reformat.css")" rel="stylesheet">
@@ -54,38 +56,38 @@
         <link href="@routes.Assets.versioned("styles/joblist.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("styles/news.css")" rel="stylesheet">
 
-        <!-- Mithril -->
+            <!-- Mithril -->
 
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("mithril.min.js"))" type="text/javascript" ></script>
 
-        <!-- Velocity -->
+            <!-- Velocity -->
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("velocity.min.js"))" type="text/javascript" ></script>
 
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("4.4.1/d3.min.js"))"></script>
         <script src="@routes.Assets.versioned("javascripts/vendor/d3.layout.min.js")" type="text/javascript"></script>
 
-        <!-- Highcharts -->
+            <!-- Highcharts -->
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("5.0.6/highcharts.js"))"></script>
 
-        <!-- Dropzone & Clipboard-->
+            <!-- Dropzone & Clipboard-->
         <link href="@routes.WebJarAssets.at(webJarAssets.locate("dropzone.min.css"))" rel="stylesheet">
 
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("clipboard.min.js"))"></script>
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("dropzone.min.js"))"></script>
 
-        <!-- Select2 -->
+            <!-- Select2 -->
         <link href="@routes.WebJarAssets.at(webJarAssets.locate("select2.min.css"))" rel="stylesheet">
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("select2.min.js"))"></script>
 
 
-        <!-- NGL 3D Viewer -->
-       <script src="@routes.Assets.versioned("javascripts/vendor/ngl.js")"></script>
+            <!-- NGL 3D Viewer -->
+        <script src="@routes.Assets.versioned("javascripts/vendor/ngl.js")"></script>
 
-        <!-- Typeahead.js -->
+            <!-- Typeahead.js -->
 
         <script src="@routes.Assets.versioned("javascripts/vendor/typeahead.jquery.min.js")"></script>
 
-        <!-- VISIBLE -->
+            <!-- VISIBLE -->
         <script src="@routes.Assets.versioned("javascripts/vendor/jquery.visible.min.js")"></script>
 
             <!-- Loadingoverlay -->
@@ -95,21 +97,21 @@
         <script src="@routes.Assets.versioned("javascripts/vendor/title_notifier.js")"></script>
 
 
-        <!-- Slick Slider -->
+            <!-- Slick Slider -->
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("slick.min.js"))"></script>
 
-        <!-- Tooltipster -->
+            <!-- Tooltipster -->
         <link href="@routes.WebJarAssets.at(webJarAssets.locate("tooltipster.bundle.min.css"))" rel="stylesheet">
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("tooltipster.bundle.min.js"))"></script>
 
-        <!-- MOMENT.JS -->
+            <!-- MOMENT.JS -->
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("moment.min.js"))"></script>
 
             <!-- FloatingScroll -->
         <script src="@routes.Assets.versioned("javascripts/vendor/floatingscroll.min.js")" type="text/javascript"></script>
         <link href="@routes.Assets.versioned("styles/floatingscroll.css")" rel="stylesheet">
 
-        <!-- Codemirror -->
+            <!-- Codemirror -->
 
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("codemirror.js"))"></script>
         <link rel="stylesheet" href="@routes.WebJarAssets.at(webJarAssets.locate("codemirror.css"))">
@@ -118,125 +120,144 @@
         <link href="@routes.Assets.versioned("styles/custom.css")" rel="stylesheet">
 
 
-        <!-- Datatables -->
+            <!-- Datatables -->
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/zf/dt-1.10.15/datatables.min.css"/>
         <script type="text/javascript" src="https://cdn.datatables.net/v/zf/dt-1.10.15/datatables.min.js"></script>
 
 
-        <!-- Javascript Router -->
+            <!-- Javascript Router -->
         <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
 
     </head>
     <body>
         <input type="hidden" id="authView" value="@view">
 
-        <div id="message-float" style="position: fixed; top: 0px; left: 0px; width: 100%; text-align: center; z-index: 1000;">
-            <div id="message-container" data-closable data-close class="callout" @if(message==""){hidden="hidden"} style="text-align: center; position:relative;height:50px;padding:10px;margin:0 auto;">
-                @{message}
+        <div id="message-float" style="position: fixed;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            text-align: center;
+            z-index: 1000;">
+            <div id="message-container" data-closable data-close class="callout" @if(message == "") {
+                hidden="hidden"
+            } style="text-align: center;
+                position: relative;
+                height: 50px;
+                padding: 10px;
+                margin: 0 auto;">
+            @{
+                message
+            }
             </div>
         </div>
 
         <div id="main-container">
 
-            <div id="main" class="row" style="max-width: 75rem; margin: 0 auto">
-             <div class="medium-12 large-12 small-12 padded-column columns">
+            <div id="main" class="row" style="max-width: 75rem;
+                margin: 0 auto">
+                <div class="small-12 padded-column columns">
 
 
-            <div class="row">
-                <div class="medium-12 large-12 small-12 padded-column columns">
-
-            <!---All purpose Modal --->
-            <div id="modal" class="reveal large" data-reveal>
-                <button class="close-button" data-close aria-label="Close modal" type="button">
-                <span aria-hidden="true">&times;</span>
-            </button></div>
-
-            <!---Hamburger Navbar --->
-            <div id="myNav" class="overlay">
-                <button id="hamburgerInside" class="hamburger hamburger--elastic is-active" type="button" onclick="closeNav()">
-                    <span class="hamburger-box">
-                        <span class="hamburger-inner overlayed"></span>
-                    </span>
-                </button>
-                <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
-                <div class="overlay-content" id="overlay-content">
-                    <div class="mithril-overlay-content" id="mithril-overlay-content"></div>
-                </div>
-            </div>
-
-
-            <!---Navigation Bar --->
-             <div class="row" id="metanav">
-                 <div id="metauser"></div> <!-- TODO: ugly construction -->
-                 <div id="social">
-                     <a href="https://www.facebook.com/mpitoolkit" target="_blank"><i class="icon-facebook"></i></a>
-                     <a href="https://twitter.com/mpitoolkit" target="_blank"><i class="icon-twitter"></i></a>
-                 </div>
-             </div>
-
-
-            <div class="row show-for-large" id="navcontainer">
-
-                <!--logo-->
-                <div class="large-2 columns" id="mainlogo">
-                    <a href="/#/">
-                        <div class="row">
-                            <div class="column large-6" id="mainface">
-                                <img style="width: 70%; margin-bottom: 2em;" src="@routes.Assets.versioned("images/minlogo.svg")">
-                            </div>
-                            <div class="column large-6" id="mainlabel">
-                                MPI Bioinformatics Toolkit
-                            </div>
-                        </div>
-                    </a>
-                    <div class="maintenance_alert">
-                        <i class="fa fa-wrench" aria-hidden="true"></i><b>  Maintenance in a few seconds!</b>
-                    </div>
-                </div>
-                <!--navbar-->
-                <div class="large-10 columns show-for-large">
                     <div class="row">
-                        <div class="columns large-10" style="padding-left: 4em; padding-right: 1.4em;">
-                            @elements.navbar(tools)
-                        </div>
-                        <div class="columns large-2">
-                            <!--offline callout-->
-                            <div class="alert callout" id="offline-alert" onclick="window.location.reload()"><i class="icon-retweet" id="rcnbtn"></i> Reconnecting...</div>
-                        </div>
-                    </div>
-                </div>
+                        <div class="small-12 padded-column columns">
 
+                                <!---All purpose Modal --->
+                            <div id="modal" class="reveal large" data-reveal>
+                                <button class="close-button" data-close aria-label="Close modal" type="button">
+                                    <span aria-hidden="true">&times;</span>
+                                </button></div>
 
-            </div>
-
-            <!--Off Canvas Menu for mobile version of Toolkit-->
-            <div class="off-canvas-wrapper">
-                <div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
-                    <div class="off-canvas position-left" id="offCanvas" data-off-canvas>
-                        @elements.offcanvas(tools)
-                        <div id="off-canvas-joblist"></div>
-                    </div>
-
-                     <!---Off Canvas Content includes main content--->
-                     <div class="off-canvas-content" data-off-canvas-content>
-                           <div class="title-bar hide-for-large">
-                                <div class="title-bar-left">
-                                    <button id="hambutton" type="button" data-open="offCanvas"><i class="icon-reorder icon2x"></i></button>
+                                <!---Hamburger Navbar --->
+                            <div id="myNav" class="overlay">
+                                <button id="hamburgerInside" class="hamburger hamburger--elastic is-active" type="button" onclick="closeNav()">
+                                    <span class="hamburger-box">
+                                        <span class="hamburger-inner overlayed"></span>
+                                    </span>
+                                </button>
+                                    <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
+                                <div class="overlay-content" id="overlay-content">
+                                    <div class="mithril-overlay-content" id="mithril-overlay-content"></div>
                                 </div>
-                           </div>
-                     </div>
+                            </div>
 
-                      <!--- Mount point for Mithril Application -->
-                      <div class="row" id="main-content">
-                          <noscript><div class="noscript">It's okay to hate JavaScript... <br/> ...but you won't be able to use this website properly! <!-- or another slogan --></div></noscript>
-                      </div>
+
+                                <!---Navigation Bar --->
+                            <div class="row" id="metanav">
+                                <div id="metauser"></div> <!-- TODO: ugly construction -->
+                                <div id="social">
+                                    <a href="https://www.facebook.com/mpitoolkit" target="_blank"><i class="icon-facebook"></i></a>
+                                    <a href="https://twitter.com/mpitoolkit" target="_blank"><i class="icon-twitter"></i></a>
+                                </div>
+                            </div>
+
+
+                            <div class="row show-for-large" id="navcontainer">
+
+                                    <!--logo-->
+                                <div class="large-2 columns" id="mainlogo">
+                                    <a href="/#/">
+                                        <div class="row">
+                                            <div class="column large-6" id="mainface">
+                                                <img style="width: 70%;
+                                                    margin-bottom: 2em;" src="@routes.Assets.versioned("images/minlogo.svg")">
+                                            </div>
+                                            <div class="column large-6" id="mainlabel">
+                                                MPI Bioinformatics Toolkit
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <div class="maintenance_alert">
+                                        <i class="fa fa-wrench" aria-hidden="true"></i><b>
+                                        Maintenance in a few seconds!</b>
+                                    </div>
+                                </div>
+                                    <!--navbar-->
+                                <div class="large-10 columns show-for-large">
+                                    <div class="row">
+                                        <div class="columns large-10" style="padding-left: 4em;
+                                            padding-right: 1.4em;">
+                                        @elements.navbar(tools)
+                                        </div>
+                                        <div class="columns large-2">
+                                                <!--offline callout-->
+                                            <div class="alert callout" id="offline-alert" onclick="window.location.reload()"><i class="icon-retweet" id="rcnbtn"></i>
+                                                Reconnecting...</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                                <!--Off Canvas Menu for mobile version of Toolkit-->
+                            <div class="off-canvas-wrapper">
+                                <div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+                                    <div class="off-canvas position-left" id="offCanvas" data-off-canvas>
+                                        @elements.offcanvas(tools)
+                                        <div id="off-canvas-joblist"></div>
+                                    </div>
+
+                                        <!---Off Canvas Content includes main content--->
+                                    <div class="off-canvas-content" data-off-canvas-content>
+                                        <div class="title-bar hide-for-large">
+                                            <div class="title-bar-left">
+                                                <button id="hambutton" type="button" data-open="offCanvas"><i class="icon-reorder icon2x"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                        <!--- Mount point for Mithril Application -->
+                                    <div class="row" id="main-content">
+                                        <noscript><div class="noscript">It's okay to hate JavaScript... <br/>
+                                            ...but you won't be able to use this website properly! <!-- or another slogan --></div></noscript>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
                 </div>
-            </div>
-
-            </div>
-
-                </div>
-            </div>
                 <footer class="row" id="app">
                     <div class="columns large-12">
                         <div id="sub-nav">
@@ -248,49 +269,68 @@
                             <a data-open="citeModal">Cite Us</a>
                             <a data-open="recentUpdatesModal">Recent Updates</a>
                         </div>
-                        <div id="socket"> © 2008-@(new Date().format("yyyy")), Dept. of Protein Evolution, Max Planck Institute for Developmental Biology, Tübingen</div>
+                        <div id="socket">
+                            © 2008-@(new Date().format("yyyy")), Dept. of Protein Evolution, Max Planck Institute for Developmental Biology, Tübingen</div>
                     </div>
                 </footer>
-        </div>
             </div>
+        </div>
 
             <!-- scroll-top arrow -->
         <div id="scrollTop"></div>
 
 
-        <div class="small reveal" id="imprintModal" data-reveal>
+        <div class="small reveal helpModals" id="imprintModal" data-reveal>
             @helpmodals.imprintmodal()
+            <button class="close-button" data-close aria-label="Close modal" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
 
-        <div class="small reveal" id="subnavHelpModal" data-reveal>
+        <div class="small reveal helpModals" id="subnavHelpModal" data-reveal>
             @helpmodals.helpmodal()
+            <button class="close-button" data-close aria-label="Close modal" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
 
-        <div class="small reveal" id="subnavFAQModal" data-reveal>
+        <div class="small reveal helpModals" id="subnavFAQModal" data-reveal>
             @helpmodals.faqmodal()
+            <button class="close-button" data-close aria-label="Close modal" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
 
-        <div class="small reveal" id="privacyPolicyModal" data-reveal>
+        <div class="small reveal helpModals" id="privacyPolicyModal" data-reveal>
             @helpmodals.privacypolicymodal()
+            <button class="close-button" data-close aria-label="Close modal" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
 
-        <div class="small reveal" id="contactModal" data-reveal>
+        <div class="small reveal helpModals" id="contactModal" data-reveal>
             @helpmodals.contactmodal()
+            <button class="close-button" data-close aria-label="Close modal" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
 
-        <div class="small reveal" id="citeModal" data-reveal>
-        @helpmodals.citemodal()
+        <div class="small reveal helpModals" id="citeModal" data-reveal>
+            @helpmodals.citemodal()
+            <button class="close-button" data-close aria-label="Close modal" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
 
-        <div class="small reveal" id="recentUpdatesModal" data-reveal>
-        @helpmodals.recentupdatesmodal()
+        <div class="small reveal helpModals" id="recentUpdatesModal" data-reveal>
+            @helpmodals.recentupdatesmodal()
+            <button class="close-button" data-close aria-label="Close modal" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
 
 
-
-
-
-        <!-- Foundation 6 -->
+            <!-- Foundation 6 -->
         <script src="@routes.WebJarAssets.at(webJarAssets.locate("foundation.min.js"))"></script>
 
 
@@ -307,7 +347,7 @@
         <script src='@routes.Assets.versioned("javascripts/vendor/snap.svg-min.js")'></script>
         <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
         <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
-	    <script src="@routes.Assets.versioned("javascripts/typescriptc.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/typescriptc.js")"></script>
 
             <!-- ScalaJS assets -->
 
