@@ -666,7 +666,11 @@ class alignmentVal implements ToolkitValidator {
 
     basicValidation(checkNucleotide: string): boolean {
 
-        if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') !== '') {
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
+	    else if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') !== '') {
             originIsFasta = false;
             let t = this.elem.reformat('detect');
             feedback(false, t + " format found:  <b>Auto-transformed to Fasta</b>", "success", t);
@@ -717,11 +721,10 @@ class alignmentVal implements ToolkitValidator {
             feedback(true, "FASTA but identifiers are not unique!", "warning");
             return true;
         }
-
-        else if (this.elem.val() === "") {
+	    else if (this.elem.val() === "") {
             feedback(false);
             valReset();
-        }
+        } 
 
         else feedback(true, "<b>Protein FASTA</b>", "success");
 
@@ -730,8 +733,11 @@ class alignmentVal implements ToolkitValidator {
     }
 
     sameLengthValidation(): boolean {
-
-        if (!this.elem.reformat('samelength')) {
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
+        else if (!this.elem.reformat('samelength')) {
             feedback(false, "Invalid MSA! Sequences should have the same length.", "error");
             return false;
         }
@@ -740,8 +746,11 @@ class alignmentVal implements ToolkitValidator {
     }
 
     mustHave2() : boolean {
-
-        if(this.elem.validate('fasta') && this.elem.reformat('numbers') < 2) {
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
+        else if(this.elem.validate('fasta') && this.elem.reformat('numbers') < 2) {
             feedback(false, "Must have at least two sequences!", "error");
             return false;
         }
@@ -749,8 +758,11 @@ class alignmentVal implements ToolkitValidator {
     }
 
     mustHave1() : boolean {
-
-        if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1){
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
+        else if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1){
             feedback(false, "Input must be a single protein sequence!", "error");
             return false;
         }
@@ -760,7 +772,10 @@ class alignmentVal implements ToolkitValidator {
     DNAvalidation(): any {
 
         console.log(this.elem.reformat('DNA'));
-
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
         if (!this.elem.validate('fasta')) {
             feedback(false, "This is no FASTA!", "error");
             return false;
@@ -796,8 +811,10 @@ class alignmentVal implements ToolkitValidator {
     }
 
     seq2IDvalidation(): any {
-
-        if (!this.elem.validate('fasta') && this.elem.reformat('detect') != '') {
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+        }
+        else if (!this.elem.validate('fasta') && this.elem.reformat('detect') != '') {
             originIsFasta = false;
             let t = this.elem.reformat('detect');
             feedback(false, t + " format found:  <b>Auto-transformed to Fasta</b>", "success", t);
@@ -826,10 +843,12 @@ class alignmentVal implements ToolkitValidator {
     }
 
     patternSearchValidation(): any {
-
-        if (!this.elem.reformat('line'))
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+        }
+        else if (!this.elem.reformat('line')) {
             feedback(false, "Please enter a valid regular expression/PROSITE grammar!", "error");
-
+        }
         else if (/\s/.test(this.elem.val()))
             feedback(false, "Input must not contain spaces!", "error");
 
@@ -848,8 +867,11 @@ class alignmentVal implements ToolkitValidator {
     modellerValidation(): any {
 
         modellerIsValid = false;
-
-        if (!this.elem.validate('pir'))
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            modellerIsValid = true;
+        }
+        else if (!this.elem.validate('pir'))
             feedback(false, "MODELLER only works with PIR alignments forwarded by HHpred.", "error");
 
         else if (!this.elem.reformat('star'))
@@ -879,10 +901,12 @@ class alignmentVal implements ToolkitValidator {
     samccValidation(): any {
 
         samccIsValid = false;
-
-        if(!this.elem.reformat('atoms'))
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            samccIsValid = true;
+        }
+        else if(!this.elem.reformat('atoms'))
             feedback(false, "Must contain at least 28 PDB ATOM records", "error");
-
         else if (this.elem.val() == "") {
             feedback(false);
             valReset();
@@ -896,7 +920,10 @@ class alignmentVal implements ToolkitValidator {
 
     //retseq validation is only a stub
     retSeqValidation(): any {
-        if(this.elem.val() != "")
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+        }
+        else if(this.elem.val() != "")
             feedback(true, "Valid input", "success");
 
         else if (this.elem.val() == "") {
