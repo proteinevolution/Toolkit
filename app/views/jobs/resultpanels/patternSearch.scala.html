@@ -4,7 +4,7 @@
 @import play.api.Logger
 @import play.api.libs.json.JsUndefined
 @import play.api.libs.json.JsDefined
-@import models.results.Commmon
+@import models.results.Common
 @import modules.tel.TEL
 @(toolName: String, jobID: String, jsValue: JsValue, tool: models.tools.Tool)(implicit request: RequestHeader)
 @import java.lang.String; var fileURL="/files/" + jobID + "/" + jobID + ".fas";
@@ -43,7 +43,7 @@
                     <tr>
                         <td class="sequenceAlignment">
                         @{ hit \ "seq" match {
-                            case JsDefined(jsVal) => Html(Commmon.insertMatch((hit \ "seq").get.as[String], (jsValue \ jobID \ "len").get.as[Int],(hit \ "pats").get.as[List[Int]]))
+                            case JsDefined(jsVal) => Html(Common.insertMatch((hit \ "seq").get.as[String], (jsValue \ jobID \ "len").get.as[Int],(hit \ "pats").get.as[List[Int]]))
                         }
                         }
                         </td>

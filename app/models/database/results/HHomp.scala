@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import controllers.DTParam
-import models.results.Commmon
+import models.results.Common
 import play.api.libs.json._
 
 import scala.concurrent.Future
@@ -24,7 +24,7 @@ case class HHompHSP(query: HHompQuery,
   def toDataTable(db: String): JsValue =
     Json.toJson(
       Map(
-        "0" -> Json.toJson(Commmon.getAddScrollLink(num)),
+        "0" -> Json.toJson(Common.getAddScrollLink(num)),
         "1" -> Json.toJson(template.accession),
         "2" -> Json.toJson(description.slice(0, 18)),
         "3" -> Json.toJson(info.probab_hit),
