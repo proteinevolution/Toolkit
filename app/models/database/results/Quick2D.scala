@@ -23,6 +23,7 @@ case class Quick2DResult(jobID: String,
                          spider2: Spider2,
                          spotd: Spotd,
                          iupred: Iupred,
+                         disopred3: Disopred3,
                          signal: Signal
                         )
 
@@ -35,6 +36,7 @@ case class Phobius(name: String, seq: String)
 case class Spider2(name: String, seq: String)
 case class Spotd(name: String, seq: String)
 case class Iupred(name: String, seq: String)
+case class Disopred3(name: String, seq: String)
 case class Signal(name: String, seq: String)
 
 @Singleton
@@ -53,8 +55,9 @@ class Quick2D @Inject()(general: General) {
       val spider2 = parseSpider2((obj \ jobID).as[JsObject])
       val spotd = parseSpotd((obj \ jobID).as[JsObject])
       val iupred = parseIupred((obj \ jobID).as[JsObject])
+      val disopred3 = parseDisopred3((obj \ jobID).as[JsObject])
       val signal = parseSignal((obj \ jobID).as[JsObject])
-      Quick2DResult(jobID, query, psipred, marcoil, coils, pcoils, tmhmm, phobius, spider2, spotd, iupred, signal)
+      Quick2DResult(jobID, query, psipred, marcoil, coils, pcoils, tmhmm, phobius, spider2, spotd, iupred, disopred3, signal)
 
   }
 
@@ -100,6 +103,10 @@ class Quick2D @Inject()(general: General) {
   def parseIupred(obj: JsObject) : Iupred = {
     val seq        = (obj \ "iupred").getOrElse(Json.toJson("")).as[String]
     Iupred("iupred", seq)
+  }
+  def parseDisopred3(obj: JsObject) : Disopred3 = {
+    val seq        = (obj \ "disopred3").getOrElse(Json.toJson("")).as[String]
+    Disopred3("disopred3", seq)
   }
   def parseSignal(obj: JsObject) : Signal = {
     val seq        = (obj \ "signal").getOrElse(Json.toJson("")).as[String]
