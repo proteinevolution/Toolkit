@@ -74,12 +74,10 @@ if [ "%quick_iters.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
         cp ../results/${JOBID}.fas ../results/${JOBID}.aln
 
         reformat_hhsuite.pl fas a3m \
-         $(readlink -f ../results/${JOBID}.aln) \
-         $(readlink -f ../results/${JOBID}.a3m) \
-         -d 160 -uc -num -r -M first
+            $(readlink -f ../results/${JOBID}.aln) \
+            $(readlink -f ../results/${JOBID}.a3m) \
+            -d 160 -uc -num -r -M first
 
-         hhfilter -i ../results/${JOBID}.a3m \
-                  -o ../results/${JOBID}.a3m
 
         echo "done" >> ../results/process.log
         updateProcessLog
@@ -92,8 +90,6 @@ else
         echo "done" >> ../results/process.log
         updateProcessLog
 
-
-
         echo "#Running PSI-BLAST for query MSA and A3M generation." >> ../results/process.log
         updateProcessLog
         #Check if input is a single sequence or an MSA
@@ -102,14 +98,13 @@ else
             INPUT="in_msa"
         fi
 
-        psiblast -db ${STANDARD}/nr90 \
+        psiblast -db ${STANDARD}/%target_psi_db.content \
                  -num_iterations %quick_iters.content \
                  -num_threads %THREADS \
-                 -num_descriptions 20000 \
-                 -num_alignments 20000 \
+                 -num_descriptions 10000 \
+                 -num_alignments 10000 \
                  -${INPUT} ../results/${JOBID}.fas \
-                 -out ../results/output_psiblastp.html \
-                 -out_ascii_pssm ../results/${JOBID}.pssm
+                 -out ../results/output_psiblastp.html
 
         #keep results only of the last iteration
         shorten_psiblast_output.pl ../results/output_psiblastp.html ../results/output_psiblastp.html
@@ -126,38 +121,51 @@ else
          $(readlink -f ../results/${JOBID}.a3m) \
          -d 160 -uc -num -r -M first
 
+
         echo "done" >> ../results/process.log
         updateProcessLog
 fi
+        psiblast -subject ../results/${JOBID}.seq \
+             -in_msa ../results/${JOBID}.aln \
+            -out_ascii_pssm ../results/${JOBID}.pssm
 
-
-#psiblast -subject ../results/${JOBID}.seq \
-#         -in_msa ../results/${JOBID}.aln \
-#         -out_ascii_pssm ../results/${JOBID}.pssm
+echo "#Executing PSIPRED." >> ../results/process.log
+updateProcessLog
 
 addss.pl ../results/${JOBID}.a3m
 
-#Write query sequence without gaps into JSON
-fasta2json.py ../results/${JOBID}.fas ../results/query.json
+echo "done" >> ../results/process.log
+updateProcessLog
 
+echo "#Executing SPIDER2 and SPOT-Disorder." >> ../results/process.log
+updateProcessLog
 
-echo "{}" > ../results/${JOBID}.json
+#RUN SPOT-D and SPIDER2
 
-#Write PSIPRED results into JSON
-PSIPRED="$(sed -n '2{p;q;}' ../results/${JOBID}.a3m)"
-manipulate_json.py -k 'psipred' -v "$PSIPRED" ../results/${JOBID}.json
-PSIPREDCONF="$(sed -n '4{p;q;}' ../results/${JOBID}.a3m)"
-manipulate_json.py -k 'psipred_conf' -v "$PSIPREDCONF" ../results/${JOBID}.json
+cd ../results/
+${SPOTD}/run_local.sh ${JOBID}.pssm
+cd ../0/
 
+echo "done" >> ../results/process.log
+updateProcessLog
+
+echo "#Executing IUpred." >> ../results/process.log
+updateProcessLog
+
+#RUN IUPred
+iupred ../results/${JOBID}.seq long > ../results/${JOBID}.iupred_dat
+
+echo "done" >> ../results/process.log
+updateProcessLog
+
+echo "#Executing MARCOIL." >> ../results/process.log
+updateProcessLog
 
 #Running MARCOIL for coiled coil prediction
 # Switch on correct Matrix
-#matrix_copy.sh "${MARCOILMTK}" ../0/R5.MTK
 matrix_copy.sh "${MARCOILMTIDK}" ../0/R5.MTIDK
 PARAMMATRIX="-C -i"
 TRANSPROB="${MARCOILINPUT}/R3.transProbHigh"
-
-
 
 marcoil  ${PARAMMATRIX} \
                       +dssSl \
@@ -166,9 +174,21 @@ marcoil  ${PARAMMATRIX} \
                       -P "$(readlink -f ../results/${JOBID}.seq)" \
                       "$(readlink -f ../results/${JOBID}.seq)"
 
+echo "done" >> ../results/process.log
+updateProcessLog
+
+echo "#Executing COILS." >> ../results/process.log
+updateProcessLog
+
 #Run COILS
 deal_with_sequence.pl ../results/${JOBID} ../results/${JOBID}.seq  ../results/${JOBID}.buffer
 run_Coils -win 28 < ../results/${JOBID}.buffer > ../results/${JOBID}.coils_n21
+
+echo "done" >> ../results/process.log
+updateProcessLog
+
+echo "#Executing PCOILS." >> ../results/process.log
+updateProcessLog
 
 #Run PCOILS
 ${COILSDIR}/hhmake -i ../results/${JOBID}.a3m \
@@ -177,86 +197,57 @@ ${COILSDIR}/hhmake -i ../results/${JOBID}.a3m \
 deal_with_profile.pl ../results/${JOBID}.hhmake.out ../results/${JOBID}.myhmmmake.out
 run_PCoils -win 28 -prof ../results/${JOBID}.myhmmmake.out < ../results/${JOBID}.buffer > ../results/${JOBID}.pcoils_n21
 
+echo "done" >> ../results/process.log
+updateProcessLog
+
+
+echo "#Executing TMHMM." >> ../results/process.log
+updateProcessLog
+
 #Run TMHMM
 tmhmm ../results/${JOBID}.seq > ../results/${JOBID}.tmhmm_dat
+
+echo "done" >> ../results/process.log
+updateProcessLog
+
+echo "#Executing Phobius." >> ../results/process.log
+updateProcessLog
 
 #Run PHOBIUS
 phobius.pl ../results/${JOBID}.seq > ../results/${JOBID}.phobius_dat
 
-#Run POLYPHOBIUS
-perl ${POLYPHOBIUS}/jphobius.pl -poly ../results/${JOBID}.aln > ../results/${JOBID}.jphobius_dat
+echo "done" >> ../results/process.log
+updateProcessLog
 
-cd ../results/
+echo "#Generating output" >> ../results/process.log
+updateProcessLog
 
-#RUN SPOT-D and SPIDER2
-${SPOTD}/run_local.sh ${JOBID}.pssm
+parseQ2D.pl ${JOBID}
 
-cd ../0/
+#Write query sequence without gaps into JSON
+fasta2json.py ../results/${JOBID}.seq ../results/query.json
 
-#RUN IUPred
+#Initialize JSON
+echo "{}" > ../results/${JOBID}.json
 
-iupred ../results/${JOBID}.seq long > ../results/${JOBID}.iupred_dat
+#Write PSIPRED results into JSON
+PSIPRED="$(sed -n '2{p;q;}' ../results/${JOBID}.a3m)"
 
-parseMARCOIL.pl ${JOBID}
+ALPHA=0
+BETA=0
+ALPHA=$(echo ${PSIPRED} | tr -cd "H" | wc -c)
+BETA=$(echo ${PSIPRED} | tr -cd "E" | wc -c)
 
-CC_COUNT=$(tr -cd "C" <  ../results/${JOBID}.marcoil | wc -c)
-
-if [ ${CC_COUNT} -gt "7" ] ; then
-    MARCOIL="$(sed -n '1{p;q;}' ../results/${JOBID}.marcoil)"
-    manipulate_json.py -k 'marcoil' -v "$MARCOIL" ../results/${JOBID}.json
+if [ ${ALPHA} -gt "0" ] || [ ${BETA} -gt "0" ] ; then
+    manipulate_json.py -k 'psipred' -v "$PSIPRED" ../results/${JOBID}.json
+    manipulate_json.py -k 'psipred_conf' -v "" ../results/${JOBID}.json
 else
-    manipulate_json.py -k 'marcoil' -v "" ../results/${JOBID}.json
-fi
-CC_COUNT=0
-CC_COUNT=$(tr -cd "C" <  ../results/${JOBID}.coils | wc -c)
-
-if [ ${CC_COUNT} -gt "7" ] ; then
-    COILS="$(sed -n '1{p;q;}' ../results/${JOBID}.coils)"
-    manipulate_json.py -k 'coils_w28' -v "$COILS" ../results/${JOBID}.json
-else
-    manipulate_json.py -k 'coils_w28' -v "" ../results/${JOBID}.json
+        manipulate_json.py -k 'psipred' -v "" ../results/${JOBID}.json
+        manipulate_json.py -k 'psipred_conf' -v "" ../results/${JOBID}.json
 fi
 
-CC_COUNT=0
-CC_COUNT=$(tr -cd "C" <  ../results/${JOBID}.pcoils | wc -c)
 
-if [ ${CC_COUNT} -gt "7" ] ; then
-    PCOILS="$(sed -n '1{p;q;}' ../results/${JOBID}.pcoils)"
-    manipulate_json.py -k 'pcoils_w28' -v "$PCOILS" ../results/${JOBID}.json
-else
-    manipulate_json.py -k 'pcoils_w28' -v "" ../results/${JOBID}.json
-fi
-
-TM_COUNT=0
-TM_COUNT=$(tr -cd "M" <  ../results/${JOBID}.tmhmm | wc -c)
-
-if [ ${TM_COUNT} -gt "5" ] ; then
-    TMH="$(sed -n '1{p;q;}' ../results/${JOBID}.tmhmm)"
-    manipulate_json.py -k 'tmhmm' -v "$TMH" ../results/${JOBID}.json
-else
-    manipulate_json.py -k 'tmhmm' -v "" ../results/${JOBID}.json
-fi
-
-TM_COUNT=0
-TM_COUNT=$(tr -cd "M" <  ../results/${JOBID}.phobius | wc -c)
-
-if [ ${TM_COUNT} -gt "5" ] ; then
-    TMH="$(sed -n '1{p;q;}' ../results/${JOBID}.phobius)"
-    manipulate_json.py -k 'phobius' -v "$TMH" ../results/${JOBID}.json
-else
-    manipulate_json.py -k 'phobius' -v "" ../results/${JOBID}.json
-fi
-
-TM_COUNT=0
-TM_COUNT=$(tr -cd "M" <  ../results/${JOBID}.jphobius | wc -c)
-
-if [ ${TM_COUNT} -gt "5" ] ; then
-    TMH="$(sed -n '1{p;q;}' ../results/${JOBID}.phobius)"
-    manipulate_json.py -k 'jphobius' -v "$TMH" ../results/${JOBID}.json
-else
-    manipulate_json.py -k 'polyphobius' -v "" ../results/${JOBID}.json
-fi
-
+#Write SPIDER2 and SPOTD results into JSON
 ALPHA=0
 BETA=0
 ALPHA=$(tr -cd "H" <  ../results/${JOBID}.spider2 | wc -c)
@@ -278,6 +269,11 @@ else
     manipulate_json.py -k 'spot-d' -v "" ../results/${JOBID}.json
 fi
 
+echo "done" >> ../results/process.log
+updateProcessLog
+
+
+#Write IUPred results into JSON
 IDR=$(tr -cd "D" <  ../results/${JOBID}.iupred | wc -c)
 
 if [ ${IDR} -gt "0" ] ; then
@@ -286,3 +282,72 @@ if [ ${IDR} -gt "0" ] ; then
 else
     manipulate_json.py -k 'iupred' -v "" ../results/${JOBID}.json
 fi
+
+#Write MARCOIL results
+CC_COUNT=$(tr -cd "C" <  ../results/${JOBID}.marcoil | wc -c)
+
+if [ ${CC_COUNT} -gt "7" ] ; then
+    MARCOIL="$(sed -n '1{p;q;}' ../results/${JOBID}.marcoil)"
+    manipulate_json.py -k 'marcoil' -v "$MARCOIL" ../results/${JOBID}.json
+else
+    manipulate_json.py -k 'marcoil' -v "" ../results/${JOBID}.json
+fi
+
+#Write COILS results
+CC_COUNT=0
+CC_COUNT=$(tr -cd "C" <  ../results/${JOBID}.coils | wc -c)
+
+if [ ${CC_COUNT} -gt "7" ] ; then
+    COILS="$(sed -n '1{p;q;}' ../results/${JOBID}.coils)"
+    manipulate_json.py -k 'coils_w28' -v "$COILS" ../results/${JOBID}.json
+else
+    manipulate_json.py -k 'coils_w28' -v "" ../results/${JOBID}.json
+fi
+
+#Write PCOILS results
+CC_COUNT=0
+CC_COUNT=$(tr -cd "C" <  ../results/${JOBID}.pcoils | wc -c)
+
+if [ ${CC_COUNT} -gt "7" ] ; then
+    PCOILS="$(sed -n '1{p;q;}' ../results/${JOBID}.pcoils)"
+    manipulate_json.py -k 'pcoils_w28' -v "$PCOILS" ../results/${JOBID}.json
+else
+    manipulate_json.py -k 'pcoils_w28' -v "" ../results/${JOBID}.json
+fi
+
+#Write TMHMM results
+TM_COUNT=0
+TM_COUNT=$(tr -cd "M" <  ../results/${JOBID}.tmhmm | wc -c)
+
+if [ ${TM_COUNT} -gt "5" ] ; then
+    TMH="$(sed -n '1{p;q;}' ../results/${JOBID}.tmhmm)"
+    manipulate_json.py -k 'tmhmm' -v "$TMH" ../results/${JOBID}.json
+else
+    manipulate_json.py -k 'tmhmm' -v "" ../results/${JOBID}.json
+fi
+
+#Write PHOBIUS results
+TM_COUNT=0
+TM_COUNT=$(tr -cd "M" <  ../results/${JOBID}.phobius | wc -c)
+
+if [ ${TM_COUNT} -gt "5" ] ; then
+    TMH="$(sed -n '1{p;q;}' ../results/${JOBID}.phobius)"
+    manipulate_json.py -k 'phobius' -v "$TMH" ../results/${JOBID}.json
+else
+    manipulate_json.py -k 'phobius' -v "" ../results/${JOBID}.json
+fi
+
+EUK=$(signalp -t euk -f short ../results/${JOBID}.seq | grep " Y " | wc -l)
+GRAMP=$(signalp -t gram+ -f short ../results/${JOBID}.seq | grep " Y " | wc -l)
+GRAMN=$(signalp -t gram+ -f short ../results/${JOBID}.seq | grep " Y " | wc -l)
+PHOBIUSSIGNAL=$(grep "FT   SIGNAL" ../results/${JOBID}.phobius_dat | wc -l)
+
+if [ ${EUK} -gt "0" ] || [ ${GRAMP} -gt "0" ] || [ ${GRAMN} -gt "0" ] || [ ${PHOBIUSSIGNAL} -gt "0" ] ; then
+    TMH="$(sed -n '1{p;q;}' ../results/${JOBID}.tmhmm)"
+    manipulate_json.py -k 'signal' -v "yes" ../results/${JOBID}.json
+else
+    manipulate_json.py -k 'signal' -v "no" ../results/${JOBID}.json
+fi
+
+echo "done" >> ../results/process.log
+updateProcessLog
