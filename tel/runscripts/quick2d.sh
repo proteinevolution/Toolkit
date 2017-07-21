@@ -125,9 +125,14 @@ else
         echo "done" >> ../results/process.log
         updateProcessLog
 fi
+echo "#Calculating PSSM." >> ../results/process.log
+updateProcessLog
+
         psiblast -subject ../results/${JOBID}.seq \
              -in_msa ../results/${JOBID}.aln \
             -out_ascii_pssm ../results/${JOBID}.pssm
+echo "done" >> ../results/process.log
+updateProcessLog
 
 echo "#Executing PSIPRED." >> ../results/process.log
 updateProcessLog
@@ -349,5 +354,8 @@ else
     manipulate_json.py -k 'signal' -v "no" ../results/${JOBID}.json
 fi
 
+cd ../results/
+find . -type f -not -name '*.json' -a -not -name '*.log' -print0 | xargs -0 rm --
 echo "done" >> ../results/process.log
 updateProcessLog
+
