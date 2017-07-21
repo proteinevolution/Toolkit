@@ -3,15 +3,28 @@
 @(result: Quick2DResult)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
-<h5>@result.query.accession.slice(0, 50)</h5>
+<h5>Protein ID: @result.query.accession.slice(0, 50)</h5>
+
+@if(result.signal.seq == "yes"){
+    <br>
+    <text class="note"><b> We have detected a potential signal peptide in your query protein!</b></text>
+}
 <br />
 <br />
+<br />
+
 <table class="unstriped" id="resultTableQ2D">
     <tbody class="alignmentTBody">
     @Html(Common.quick2dWrapped(result, 0, 90))
     </tbody>
 </table>
-
+<hr id="line-element" colspan="4" class="horizontal-line">
+<br>
+<div align="center">
+SS = <span class="ss_h_b">Alpha-helix</span><span class="ss_e_b">Beta-strand</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CC = <span class="CC_b">Coiled Coils</span>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TM = <span class="CC_m">Transmembrane</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DO = <span class="CC_do">Disorder</span>
+    </div>
+<br>
 <br>
 <hr id="line-element" colspan="4" class="horizontal-line">
 <div id="toolReferences">

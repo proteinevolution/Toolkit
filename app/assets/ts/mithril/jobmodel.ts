@@ -26,7 +26,7 @@ window.JobModel = {
         "codon_table": "1",
         "genetic_code": "1",
         "msa_gen_max_iter": "4",
-        "quick_iters": "1",
+        "quick_iters": "3",
         "grammar": "Prosite_grammar",
         "macmode": "off",
         "macthreshold":"0.3",
@@ -59,7 +59,7 @@ window.JobModel = {
         "seqcount":"500",
         "invoke_psipred":"30",
         "clans_eval":"1e-4",
-        "target_psi_db":"nre70"
+        "target_psi_db":"nr70",
         "transition_probability":"1",
         "matrix_marcoil":"mtk"
 },
