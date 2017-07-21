@@ -181,7 +181,7 @@ hr {
 
 .sequenceCompact{
     font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
-    font-size: 0.95em;
+    font-size: 1.em;
     white-space: pre;
 
 }
@@ -191,7 +191,8 @@ hr {
 
 .sequenceBold{
     font-weight:600;
-    background-color: rgb(220, 220, 220) !important;
+    border-bottom: 0.2em solid rgba(128, 128, 128, 0.37);*/
+
 }
 
 .sequenceAlignment{

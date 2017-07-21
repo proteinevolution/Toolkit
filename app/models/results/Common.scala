@@ -65,16 +65,16 @@ object Common  {
            case "psipred" => this.helix_sheets.replaceAllIn(
              sequence, { m =>
                m.group("ss") match {
-                 case this.helix_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
-                 case this.sheet_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
+                 case this.helix_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
+                 case this.sheet_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
                }
              }
            )
            case "spider2" => this.helix_sheets.replaceAllIn(
              sequence, { m =>
                m.group("ss") match {
-                 case this.helix_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
-                 case this.sheet_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
+                 case this.helix_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
+                 case this.sheet_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
                }
              }
            )
@@ -84,7 +84,6 @@ object Common  {
            case "pcoils" => this.CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
            case "tmhmm" => this.TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
            case "phobius" => this.TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
-           case "polyphobius" => this.TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
            case "spotd" => this.DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
            case "iupred" => this.DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
 
@@ -96,6 +95,11 @@ object Common  {
     this.color_regex.replaceAllIn(sequence, { m =>
       "<span class=\"aa_" + m.toString().charAt(0) + "\">" + m.toString() + "</span>"
     })
+
+
+  def Highlight(sequence: String): String = {
+          "<span class=\"sequenceBold\">" + sequence + "</span>"
+    }
 
   def makeRow(rowClass: String, entries: Array[Any]): String = {
     var str = ""
@@ -573,42 +577,41 @@ object Common  {
       val pcoils = result.pcoils.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val tmhmm = result.tmhmm.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val phobius = result.phobius.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val polyphobius = result.polyphobius.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val spider2 = result.spider2.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val spotd = result.spotd.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val iupred = result.iupred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
 
-      htmlString += "<tr class='sequenceCompact sequenceBold'><td>&nbsp;&nbsp;&nbsp;AA_QUERY</td><td>"+(charCount + 1)+"</td><td>"+query+"&nbsp;&nbsp;&nbsp;&nbsp;"+"<td>"+Math.min(length,charCount+breakAfter)+"</td>"
-      htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;SS_"+result.psipred.name.toUpperCase()+"</td><td></td><td>"+this.Q2DColorReplace(result.psipred.name, psipred.replace("C", "&nbsp;"))+"</td>"
+      htmlString += makeRow("sequenceCompact", Array("AA_QUERY", (charCount + 1), this.Highlight(query) + "&nbsp;&nbsp;&nbsp;&nbsp;" +Math.min(length,charCount+breakAfter)))
+
+      if(!psipred.isEmpty) {
+        htmlString += makeRow("sequenceCompact", Array("SS_" + result.psipred.name.toUpperCase(), "",  this.Q2DColorReplace(result.psipred.name, psipred.replace("C", "&nbsp;"))))
+      }
       if(!spider2.isEmpty) {
-        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;SS_" + result.spider2.name.toUpperCase() + "</td><td></td><td>" + this.Q2DColorReplace(result.spider2.name, spider2.replace("C","&nbsp;")) + "</td>"
+        htmlString += makeRow("sequenceCompact", Array("SS_" + result.spider2.name.toUpperCase(), "",  this.Q2DColorReplace(result.spider2.name, spider2.replace("C", "&nbsp;"))))
       }
       if(!marcoil.isEmpty) {
-        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;CC_" + result.marcoil.name.toUpperCase() + "</td><td></td><td>" + this.Q2DColorReplace(result.marcoil.name, marcoil.replace("x","&nbsp;")) + "</td>"
+        htmlString += makeRow("sequenceCompact", Array("CC_" + result.marcoil.name.toUpperCase(), "",  this.Q2DColorReplace(result.marcoil.name, marcoil.replace("x", "&nbsp;"))))
       }
       if(!coils.isEmpty) {
-        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;CC_" + result.coils.name.toUpperCase() + "_W28</td><td></td><td>" + this.Q2DColorReplace(result.coils.name, coils.replace("x","&nbsp;")) + "</td>"
+        htmlString += makeRow("sequenceCompact", Array("CC_" + result.coils.name.toUpperCase() + "_W28", "",  this.Q2DColorReplace(result.coils.name, coils.replace("x", "&nbsp;"))))
       }
       if(!pcoils.isEmpty) {
-        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;CC_" + result.pcoils.name.toUpperCase() + "_W28</td><td></td><td>" + this.Q2DColorReplace(result.pcoils.name, pcoils.replace("x","&nbsp;")) + "</td>"
+        htmlString += makeRow("sequenceCompact", Array("CC_" + result.pcoils.name.toUpperCase() + "_W28", "",  this.Q2DColorReplace(result.pcoils.name, pcoils.replace("x", "&nbsp;"))))
       }
       if(!tmhmm.isEmpty) {
-        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;TM_" + result.tmhmm.name.toUpperCase() + "</td><td></td><td>" + this.Q2DColorReplace(result.tmhmm.name, tmhmm.replace("x","&nbsp;")) + "</td>"
+        htmlString += makeRow("sequenceCompact", Array("TM_" + result.tmhmm.name.toUpperCase(), "",  this.Q2DColorReplace(result.tmhmm.name, tmhmm.replace("x", "&nbsp;"))))
       }
       if(!phobius.isEmpty) {
-        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;TM_" + result.phobius.name.toUpperCase() + "</td><td></td><td>" + this.Q2DColorReplace(result.phobius.name, phobius.replace("x","&nbsp;")) + "</td>"
-      }
-      if(!polyphobius.isEmpty) {
-        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;TM_" + result.polyphobius.name.toUpperCase() + "</td><td></td><td>" + this.Q2DColorReplace(result.polyphobius.name, polyphobius.replace("x","&nbsp;")) + "</td>"
+        htmlString += makeRow("sequenceCompact", Array("TM_" + result.phobius.name.toUpperCase(), "",  this.Q2DColorReplace(result.phobius.name, phobius.replace("x", "&nbsp;"))))
       }
       if(!spotd.isEmpty) {
-        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;DO_" + result.spotd.name.toUpperCase() + "</td><td></td><td>" + this.Q2DColorReplace(result.spotd.name, spotd.replace("O","&nbsp;")) + "</td>"
+        htmlString += makeRow("sequenceCompact", Array("DO_" + result.spotd.name.toUpperCase(), "", this.Q2DColorReplace(result.spotd.name, spotd.replace("O","&nbsp;"))))
       }
       if(!iupred.isEmpty) {
-        htmlString += "<tr class='sequenceCompact'><td>&nbsp;&nbsp;&nbsp;DO_" + result.iupred.name.toUpperCase() + "</td><td></td><td>" + this.Q2DColorReplace(result.iupred.name, iupred.replace("O","&nbsp;")) + "</td>"
+        htmlString += makeRow("sequenceCompact", Array("DO_" + result.iupred.name.toUpperCase(), "",  this.Q2DColorReplace(result.iupred.name, iupred.replace("O","&nbsp;"))))
       }
 
-      htmlString += "<tr class=\"blank_row\"><td colspan=\"4\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"4\"></td></tr>"  + "<tr class=\"blank_row\"><td colspan=\"4\"></td></tr>"  + "<tr class=\"blank_row\"><td colspan=\"4\"></td></tr>" + "<tr class=\"blank_row\"><td colspan=\"4\"></td></tr>"
+      htmlString += emptyRow + emptyRow  + emptyRow  + emptyRow
       return htmlString + quick2dWrapped(result, charCount + breakAfter, breakAfter)
       }
     }
