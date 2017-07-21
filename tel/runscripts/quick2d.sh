@@ -78,6 +78,9 @@ if [ "%quick_iters.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
             $(readlink -f ../results/${JOBID}.a3m) \
             -d 160 -uc -num -r -M first
 
+        psiblast -subject ../results/${JOBID}.seq \
+             -in_msa ../results/${JOBID}.aln \
+            -out_ascii_pssm ../results/${JOBID}.pssm
 
         echo "done" >> ../results/process.log
         updateProcessLog
@@ -104,7 +107,8 @@ else
                  -num_descriptions 10000 \
                  -num_alignments 10000 \
                  -${INPUT} ../results/${JOBID}.fas \
-                 -out ../results/output_psiblastp.html
+                 -out ../results/output_psiblastp.html \
+                 -out_ascii_pssm ../results/${JOBID}.pssm
 
         #keep results only of the last iteration
         shorten_psiblast_output.pl ../results/output_psiblastp.html ../results/output_psiblastp.html
@@ -121,18 +125,19 @@ else
          $(readlink -f ../results/${JOBID}.a3m) \
          -d 160 -uc -num -r -M first
 
+        seq2id.pl ../results/${JOBID}.a3m ../results/tmp > ../results/${JOBID}.ids
+
+        seq_retrieve.pl -i ../results/${JOBID}.ids \
+                -o ../results/sequencedb \
+                -d %STANDARD/%target_psi_db.content \
+                -unique T
+
+        formatdb -p T -i ../results/sequencedb
+
 
         echo "done" >> ../results/process.log
         updateProcessLog
 fi
-echo "#Calculating PSSM." >> ../results/process.log
-updateProcessLog
-
-        psiblast -subject ../results/${JOBID}.seq \
-             -in_msa ../results/${JOBID}.aln \
-            -out_ascii_pssm ../results/${JOBID}.pssm
-echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Executing PSIPRED." >> ../results/process.log
 updateProcessLog
@@ -159,6 +164,14 @@ updateProcessLog
 
 #RUN IUPred
 iupred ../results/${JOBID}.seq long > ../results/${JOBID}.iupred_dat
+
+echo "done" >> ../results/process.log
+updateProcessLog
+
+echo "#Executing DISOPRED3." >> ../results/process.log
+updateProcessLog
+
+run_disopred.pl ../results/${JOBID}.seq ../results/sequencedb
 
 echo "done" >> ../results/process.log
 updateProcessLog
@@ -288,6 +301,16 @@ else
     manipulate_json.py -k 'iupred' -v "" ../results/${JOBID}.json
 fi
 
+#Write DISORDER3 results into JSON
+IDR=$(tr -cd "D" <  ../results/${JOBID}.disopred | wc -c)
+
+if [ ${IDR} -gt "0" ] ; then
+    SS="$(sed -n '1{p;q;}' ../results/${JOBID}.disopred)"
+    manipulate_json.py -k 'disopred3' -v "$SS" ../results/${JOBID}.json
+else
+    manipulate_json.py -k 'disopred3' -v "" ../results/${JOBID}.json
+fi
+
 #Write MARCOIL results
 CC_COUNT=$(tr -cd "C" <  ../results/${JOBID}.marcoil | wc -c)
 
@@ -355,7 +378,6 @@ else
 fi
 
 cd ../results/
-find . -type f -not -name '*.json' -a -not -name '*.log' -print0 | xargs -0 rm --
+#find . -type f -not -name '*.json' -a -not -name '*.log' -print0 | xargs -0 rm --
 echo "done" >> ../results/process.log
 updateProcessLog
-

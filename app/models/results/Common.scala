@@ -86,6 +86,7 @@ object Common  {
            case "phobius" => this.TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
            case "spotd" => this.DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
            case "iupred" => this.DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
+           case "disopred3" => this.DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
 
          }
 
@@ -580,6 +581,7 @@ object Common  {
       val spider2 = result.spider2.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val spotd = result.spotd.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val iupred = result.iupred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val disopred3 = result.disopred3.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
 
       htmlString += makeRow("sequenceCompact", Array("AA_QUERY", (charCount + 1), this.Highlight(query) + "&nbsp;&nbsp;&nbsp;&nbsp;" +Math.min(length,charCount+breakAfter)))
 
@@ -603,6 +605,9 @@ object Common  {
       }
       if(!phobius.isEmpty) {
         htmlString += makeRow("sequenceCompact", Array("TM_" + result.phobius.name.toUpperCase(), "",  this.Q2DColorReplace(result.phobius.name, phobius.replace("x", "&nbsp;"))))
+      }
+      if(!disopred3.isEmpty) {
+        htmlString += makeRow("sequenceCompact", Array("DO_" + result.disopred3.name.toUpperCase(), "",  this.Q2DColorReplace(result.disopred3.name, disopred3.replace("O","&nbsp;"))))
       }
       if(!spotd.isEmpty) {
         htmlString += makeRow("sequenceCompact", Array("DO_" + result.spotd.name.toUpperCase(), "", this.Q2DColorReplace(result.spotd.name, spotd.replace("O","&nbsp;"))))
