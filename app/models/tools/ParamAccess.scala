@@ -227,6 +227,6 @@ class ParamAccess @Inject()(tel: TEL) {
       case "MAFFT_GAP_OPEN" =>          Param("mafft_gap_open", Decimal("0.01", Some(0), Some(10)), 1, "Gap open penalty")
       case "HHOMPDB" =>                 select("hhompdb", "Select HMM databases")
       case "QUICK_ITERS" =>             select("quick_iters", "Maximal no. of MSA generation steps")
-      case "TARGET_PSI_DB" =>           select("target_psi_db", "Select target database for building MSA")
+      case "TARGET_PSI_DB" =>           select("target_psi_db", "Select database for MSA generation ")
       }
 }
