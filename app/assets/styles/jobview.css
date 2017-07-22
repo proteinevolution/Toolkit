@@ -1151,7 +1151,12 @@ h6 {
     color: #000;
 }
 
+.select2-search {
+    width: 100%;
+}
+
 .select2-search__field {
     margin-bottom: 0.5em;
     font-size: 0.8em;
+    width: 100% !important;
 }
