@@ -20,6 +20,7 @@ case class Quick2DResult(jobID: String,
                          pcoils: Pcoils,
                          tmhmm: Tmhmm,
                          phobius: Phobius,
+                         polyphobius: Polyphobius,
                          spider2: Spider2,
                          spotd: Spotd,
                          iupred: Iupred,
@@ -33,6 +34,7 @@ case class Coils(name: String, seq: String)
 case class Pcoils(name: String, seq: String)
 case class Tmhmm(name: String, seq: String)
 case class Phobius(name: String, seq: String)
+case class Polyphobius(name: String, seq: String)
 case class Spider2(name: String, seq: String)
 case class Spotd(name: String, seq: String)
 case class Iupred(name: String, seq: String)
@@ -52,12 +54,13 @@ class Quick2D @Inject()(general: General) {
       val pcoils = parsePcoils((obj \ jobID).as[JsObject])
       val tmhmm = parseTmhmm((obj \ jobID).as[JsObject])
       val phobius = parsePhobius((obj \ jobID).as[JsObject])
+      val polyphobius = parsePolyphobius((obj \ jobID).as[JsObject])
       val spider2 = parseSpider2((obj \ jobID).as[JsObject])
       val spotd = parseSpotd((obj \ jobID).as[JsObject])
       val iupred = parseIupred((obj \ jobID).as[JsObject])
       val disopred3 = parseDisopred3((obj \ jobID).as[JsObject])
       val signal = parseSignal((obj \ jobID).as[JsObject])
-      Quick2DResult(jobID, query, psipred, marcoil, coils, pcoils, tmhmm, phobius, spider2, spotd, iupred, disopred3, signal)
+      Quick2DResult(jobID, query, psipred, marcoil, coils, pcoils, tmhmm, phobius, polyphobius, spider2, spotd, iupred, disopred3, signal)
 
   }
 
@@ -90,6 +93,10 @@ class Quick2D @Inject()(general: General) {
   def parsePhobius(obj: JsObject) : Phobius = {
     val seq        = (obj \ "phobius").getOrElse(Json.toJson("")).as[String]
     Phobius("phobius", seq)
+  }
+  def parsePolyphobius(obj: JsObject) : Polyphobius = {
+    val seq        = (obj \ "polyphobius").getOrElse(Json.toJson("")).as[String]
+    Polyphobius("polyphobius", seq)
   }
 
   def parseSpider2(obj: JsObject) : Spider2 = {
