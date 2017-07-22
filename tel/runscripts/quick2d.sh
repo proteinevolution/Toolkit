@@ -82,6 +82,12 @@ if [ "%quick_iters.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
              -in_msa ../results/${JOBID}.aln \
             -out_ascii_pssm ../results/${JOBID}.pssm
 
+        sed 's/[\.\-]//g' ../results/${JOBID}.aln > ../results/sequencedb
+
+        formatdb -p T -i ../results/sequencedb
+
+
+
         echo "done" >> ../results/process.log
         updateProcessLog
 else
@@ -104,8 +110,6 @@ else
         psiblast -db ${STANDARD}/%target_psi_db.content \
                  -num_iterations %quick_iters.content \
                  -num_threads %THREADS \
-                 -num_descriptions 10000 \
-                 -num_alignments 10000 \
                  -${INPUT} ../results/${JOBID}.fas \
                  -out ../results/output_psiblastp.html \
                  -out_ascii_pssm ../results/${JOBID}.pssm
@@ -115,7 +119,7 @@ else
 
         #extract MSA in a3m format
         alignhits_html.pl   ../results/output_psiblastp.html ../results/${JOBID}.aln \
-                    -Q ../results/${JOBID}.fas \
+                    -Q ../results/${JOBID}.seq \
                     -fas \
                     -no_link \
                     -blastplus
@@ -233,6 +237,15 @@ updateProcessLog
 
 #Run PHOBIUS
 phobius.pl ../results/${JOBID}.seq > ../results/${JOBID}.phobius_dat
+
+echo "done" >> ../results/process.log
+updateProcessLog
+
+echo "#Executing PolyPhobius." >> ../results/process.log
+updateProcessLog
+
+#Run POLYPHOBIUS
+perl ${POLYPHOBIUS}/jphobius.pl -poly ../results/${JOBID}.aln > ../results/${JOBID}.jphobius_dat
 
 echo "done" >> ../results/process.log
 updateProcessLog
@@ -365,6 +378,17 @@ else
     manipulate_json.py -k 'phobius' -v "" ../results/${JOBID}.json
 fi
 
+TM_COUNT=0
+TM_COUNT=$(tr -cd "M" <  ../results/${JOBID}.polyphobius | wc -c)
+
+if [ ${TM_COUNT} -gt "5" ] ; then
+    TMH="$(sed -n '1{p;q;}' ../results/${JOBID}.polyphobius)"
+    manipulate_json.py -k 'polyphobius' -v "$TMH" ../results/${JOBID}.json
+else
+    manipulate_json.py -k 'polyphobius' -v "" ../results/${JOBID}.json
+fi
+
+
 EUK=$(signalp -t euk -f short ../results/${JOBID}.seq | grep " Y " | wc -l)
 GRAMP=$(signalp -t gram+ -f short ../results/${JOBID}.seq | grep " Y " | wc -l)
 GRAMN=$(signalp -t gram+ -f short ../results/${JOBID}.seq | grep " Y " | wc -l)
@@ -378,6 +402,6 @@ else
 fi
 
 cd ../results/
-#find . -type f -not -name '*.json' -a -not -name '*.log' -print0 | xargs -0 rm --
+find . -type f -not -name '*.json' -a -not -name '*.log' -print0 | xargs -0 rm --
 echo "done" >> ../results/process.log
 updateProcessLog

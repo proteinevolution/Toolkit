@@ -84,6 +84,7 @@ object Common  {
            case "pcoils" => this.CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
            case "tmhmm" => this.TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
            case "phobius" => this.TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
+           case "polyphobius" => this.TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
            case "spotd" => this.DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
            case "iupred" => this.DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
            case "disopred3" => this.DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
@@ -578,6 +579,7 @@ object Common  {
       val pcoils = result.pcoils.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val tmhmm = result.tmhmm.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val phobius = result.phobius.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val polyphobius = result.polyphobius.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val spider2 = result.spider2.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val spotd = result.spotd.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val iupred = result.iupred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
@@ -605,6 +607,9 @@ object Common  {
       }
       if(!phobius.isEmpty) {
         htmlString += makeRow("sequenceCompact", Array("TM_" + result.phobius.name.toUpperCase(), "",  this.Q2DColorReplace(result.phobius.name, phobius.replace("x", "&nbsp;"))))
+      }
+      if(!polyphobius.isEmpty) {
+        htmlString += makeRow("sequenceCompact", Array("TM_" + result.polyphobius.name.toUpperCase(), "",  this.Q2DColorReplace(result.polyphobius.name, polyphobius.replace("x", "&nbsp;"))))
       }
       if(!disopred3.isEmpty) {
         htmlString += makeRow("sequenceCompact", Array("DO_" + result.disopred3.name.toUpperCase(), "",  this.Q2DColorReplace(result.disopred3.name, disopred3.replace("O","&nbsp;"))))
