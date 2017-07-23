@@ -86,7 +86,14 @@ object Common  {
                }
              }
            )
-
+           case "deepcnf" => this.helix_sheets.replaceAllIn(
+             sequence, { m =>
+               m.group("ss") match {
+                 case this.helix_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
+                 case this.sheet_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
+               }
+             }
+           )
            case "marcoil" => this.CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
            case "coils" => this.CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
            case "pcoils" => this.CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
@@ -593,6 +600,7 @@ object Common  {
       val iupred = result.iupred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val disopred3 = result.disopred3.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val psspred = result.psspred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val deepcnf = result.deepcnf.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
 
       htmlString += makeRow("sequenceCompact", Array("AA_QUERY", (charCount + 1), this.Highlight(query) + "&nbsp;&nbsp;&nbsp;&nbsp;" +Math.min(length,charCount+breakAfter)))
 
@@ -604,6 +612,9 @@ object Common  {
       }
       if(!psspred.isEmpty) {
         htmlString += makeRow("sequenceCompact", Array("SS_" + result.psspred.name.toUpperCase(), "",  this.Q2DColorReplace(result.psspred.name, psspred.replace("C", "&nbsp;"))))
+      }
+      if(!deepcnf.isEmpty) {
+        htmlString += makeRow("sequenceCompact", Array("SS_" + result.deepcnf.name.toUpperCase(), "",  this.Q2DColorReplace(result.deepcnf.name, deepcnf.replace("C", "&nbsp;"))))
       }
       if(!marcoil.isEmpty) {
         htmlString += makeRow("sequenceCompact", Array("CC_" + result.marcoil.name.toUpperCase(), "",  this.Q2DColorReplace(result.marcoil.name, marcoil.replace("x", "&nbsp;"))))
