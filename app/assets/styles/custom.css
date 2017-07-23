@@ -171,9 +171,9 @@ tr.job a:visited {
     float: right;
 }
 
-
-#helpModal p {
-
+#helpModal {
+    width: 90em;
+    top: 209px !important;
     font-size: 0.85em;
 }
 
@@ -187,17 +187,10 @@ tr.job a:visited {
    font-weight: bold;
 }
 
-#help-psiblast  {
-    font-size: 0.85em !important;
-}
-
 .accordion-title {
     font-weight: bold;
 }
 
-#help-tabs {
-    font-size: 0.85em !important;
-}
 
 #help-tabs .ui-widget-header {
     height: 3.5em;
@@ -210,8 +203,6 @@ tr.job a:visited {
 .off-canvas-wrapper-inner {
 
     min-height: 31.250em;
-
-
 }
 
 #offCanvas {
