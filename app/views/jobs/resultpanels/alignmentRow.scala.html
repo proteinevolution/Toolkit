@@ -1,5 +1,5 @@
 @import models.database.results.AlignmentItem
-@import models.results.BlastVisualization
+@import models.results.Common
 @(alignment: AlignmentItem)(implicit request: RequestHeader)
 <tr class="header">
     <td class="indexCheckbox" ><input type="checkbox" name="alignment_elem" class="checkbox" value='@{alignment.num}'> @{alignment.num}. </td>
@@ -12,6 +12,6 @@
 
     </td>
     <td>
-        @{Html(BlastVisualization.wrapSequence(alignment.seq, 95))}
+        @{Html(Common.wrapSequence(alignment.seq, 95))}
     </td>
 </tr>

@@ -23,7 +23,7 @@ object HHrepID{
           "<h5>" + wholeMatch + "</h5>" + "<div class='hhrepImage'>" + views.html.jobs.resultpanels
             .image(s"$imagePath$m2.png") + "</div>"
         case wholeMatch @ seqLine(m1, m2) =>
-          "<pre class='sequence'>" + wholeMatch.replace(m2, BlastVisualization.colorRegexReplacer(m2)) + "</pre>"
+          "<pre class='sequence'>" + wholeMatch.replace(m2, Common.colorRegexReplacer(m2)) + "</pre>"
         case "" => "<br />"
         case m  => "<pre class='sequence'>" + m + "</pre>"
       }

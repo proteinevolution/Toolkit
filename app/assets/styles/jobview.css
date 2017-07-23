@@ -161,8 +161,10 @@ hr {
 }
 
 .unstriped{
+    border-collapse: unset !important;
     margin: 0 ;
     width: auto;
+    border-collapse: unset !important;
 }
 
 .wrapSpan{
@@ -172,9 +174,25 @@ hr {
 
 .sequence{
     font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.025em;
     font-size: 0.75rem;
     white-space: pre;
+}
+
+.sequenceCompact{
+    font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 1.em;
+    white-space: pre;
+
+}
+.sequenceCompact span{
+    display: inline-block;
+}
+
+.sequenceBold{
+    font-weight:600;
+    border-bottom: 0.2em solid rgba(128, 128, 128, 0.37);*/
+
 }
 
 .sequenceAlignment{
@@ -1133,7 +1151,12 @@ h6 {
     color: #000;
 }
 
+.select2-search {
+    width: 100%;
+}
+
 .select2-search__field {
     margin-bottom: 0.5em;
     font-size: 0.8em;
+    width: 100% !important;
 }

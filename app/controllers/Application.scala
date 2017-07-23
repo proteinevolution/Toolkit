@@ -12,7 +12,7 @@ import models.database.statistics.ToolStatistic
 import models.database.users.User
 import models.search.JobDAO
 import models.Constants
-import models.results.BlastVisualization
+import models.results.Common
 import models.tools.ToolFactory
 import modules.common.HTTPRequest
 import modules.tel.TEL
@@ -217,14 +217,14 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   def getStructureFile(filename: String): Action[AnyContent] = Action.async { implicit request =>
     {
 
-      val db = BlastVisualization.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
+      val db = Common.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
       val filepath = db match {
         case "scop" =>
           env.get("SCOPE")
         case "mmcif" =>
           env.get("CIF")
       }
-      Future.successful(Ok.sendFile(new java.io.File(s"$filepath$constants.SEPARATOR$filename")).as("text/plain"))
+      Future.successful(Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$filename")).as("text/plain"))
     }
   }
 
@@ -273,6 +273,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
         routes.javascript.HmmerController.loadHits,
         routes.javascript.HHblitsController.loadHits,
         routes.javascript.HHpredController.loadHits,
+        routes.javascript.HHompController.loadHits,
         routes.javascript.AlignmentController.loadHits,
         routes.javascript.AlignmentController.getAln,
         routes.javascript.AlignmentController.loadHitsClustal,

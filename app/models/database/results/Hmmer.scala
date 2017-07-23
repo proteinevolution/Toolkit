@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import controllers.DTParam
-import models.results.BlastVisualization
+import models.results.Common
 import play.api.libs.json._
 
 import scala.concurrent.Future
@@ -33,9 +33,9 @@ case class HmmerHSP(evalue: Double,
   def toDataTable(db: String): JsValue =
     Json.toJson(
       Map(
-        "0" -> Json.toJson(BlastVisualization.getCheckbox(num)),
-        "1" -> Json.toJson(BlastVisualization.getSingleLinkDB(db, accession).toString),
-        "2" -> Json.toJson(BlastVisualization.addBreak(description)),
+        "0" -> Json.toJson(Common.getCheckbox(num)),
+        "1" -> Json.toJson(Common.getSingleLinkDB(db, accession).toString),
+        "2" -> Json.toJson(Common.addBreak(description)),
         "3" -> Json.toJson(full_evalue),
         "4" -> Json.toJson(evalue),
         "5" -> Json.toJson(bitscore),
@@ -49,7 +49,7 @@ case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
 case class HmmerResult(HSPS: List[HmmerHSP],
                        num_hits: Int,
                        alignment: List[AlignmentItem],
-                       query: Query,
+                       query: SingleSeq,
                        db: String,
                        TMPRED: String,
                        COILPRED: String)
@@ -66,7 +66,7 @@ class Hmmer @Inject()(general: General, aln: Alignment) {
             aln.parseAlignmentItem(x, index)
         }
         val db       = (obj \ jobID \ "db").as[String]
-        val query    = general.parseQuery((obj \ "query").as[JsArray])
+        val query    = general.parseSingleSeq((obj \ "query").as[JsArray])
         val hsps     = (obj \ jobID \ "hsps").as[List[JsObject]]
         val num_hits = hsps.length
 

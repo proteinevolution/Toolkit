@@ -148,10 +148,10 @@ class SweepJobsImpl @Inject() (appLifecycle: ApplicationLifecycle,
     * @param jobID
     */
   def writeJob(jobID: String) : Unit = {
-    constants.deletionLogPath.toFile.appendLine(jobID +"\t" + DateTime.now().toString() + "\n")
+    constants.deletionLogPath.toFile.appendLine(jobID +"\t" + DateTime.now().toString())
     mongoStore.addDeletedJob(DeletedJob(jobID, DateTime.now))
   }
-  // Called when this singleton is constructed
-  sweep()
 
+  // TODO: is not only called on startup but also called on application stop
+  sweep()
 }
