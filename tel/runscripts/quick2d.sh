@@ -163,6 +163,21 @@ echo "done" >> ../results/process.log
 updateProcessLog
 
 
+echo "#Executing DeepCNF-SS." >> ../results/process.log
+updateProcessLog
+
+cd ../results/
+hhmake -i ${JOBID}.a3m -o ${JOBID}.feat
+
+${DEEPCNF}/DeepCNF_SS.sh -i ${JOBID}.seq \
+                         -d sequencedb \
+                         -t "${PWD}" \
+                         -c %THREADS
+cd ../0/
+
+echo "done" >> ../results/process.log
+updateProcessLog
+
 echo "#Executing SPIDER2 and SPOT-Disorder." >> ../results/process.log
 updateProcessLog
 
@@ -301,6 +316,20 @@ if [ ${ALPHA} -gt "0" ] || [ ${BETA} -gt "0" ] ; then
 else
     manipulate_json.py -k 'psspred' -v "" ../results/${JOBID}.json
 fi
+
+#Write DeepCNF results into JSON
+ALPHA=0
+BETA=0
+ALPHA=$(tr -cd "H" <  ../results/${JOBID}.deepcnf | wc -c)
+BETA=$(tr -cd "E" <  ../results/${JOBID}.deepcnf | wc -c)
+
+if [ ${ALPHA} -gt "0" ] || [ ${BETA} -gt "0" ] ; then
+    SS="$(sed -n '1{p;q;}' ../results/${JOBID}.deepcnf)"
+    manipulate_json.py -k 'deepcnf' -v "$SS" ../results/${JOBID}.json
+else
+    manipulate_json.py -k 'deepcnf' -v "" ../results/${JOBID}.json
+fi
+
 
 #Write SPIDER2 and SPOTD results into JSON
 ALPHA=0

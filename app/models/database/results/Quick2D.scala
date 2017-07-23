@@ -26,7 +26,8 @@ case class Quick2DResult(jobID: String,
                          iupred: Iupred,
                          disopred3: Disopred3,
                          signal: Signal,
-                         psspred: Psspred
+                         psspred: Psspred,
+                         deepcnf: Deepcnf
                         )
 
 case class Psipred(name: String, seq: String, conf: String)
@@ -42,6 +43,7 @@ case class Iupred(name: String, seq: String)
 case class Disopred3(name: String, seq: String)
 case class Signal(name: String, seq: String)
 case class Psspred(name: String, seq: String)
+case class Deepcnf(name: String, seq: String)
 
 @Singleton
 class Quick2D @Inject()(general: General) {
@@ -63,7 +65,9 @@ class Quick2D @Inject()(general: General) {
       val disopred3 = parseDisopred3((obj \ jobID).as[JsObject])
       val signal = parseSignal((obj \ jobID).as[JsObject])
       val psspred = parsePsspred((obj \ jobID).as[JsObject])
-      Quick2DResult(jobID, query, psipred, marcoil, coils, pcoils, tmhmm, phobius, polyphobius, spider2, spotd, iupred, disopred3, signal, psspred)
+      val deepcnf = parseDeepcnf((obj \ jobID).as[JsObject])
+
+      Quick2DResult(jobID, query, psipred, marcoil, coils, pcoils, tmhmm, phobius, polyphobius, spider2, spotd, iupred, disopred3, signal, psspred, deepcnf)
 
   }
 
@@ -131,5 +135,10 @@ class Quick2D @Inject()(general: General) {
   def parsePsspred(obj: JsObject) : Psspred = {
     val seq        = (obj \ "psspred").getOrElse(Json.toJson("")).as[String]
     Psspred("psspred", seq)
+  }
+
+  def parseDeepcnf(obj: JsObject) : Deepcnf = {
+    val seq        = (obj \ "deepcnf").getOrElse(Json.toJson("")).as[String]
+    Deepcnf("deepcnf", seq)
   }
 }
