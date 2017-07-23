@@ -139,6 +139,8 @@ GET  /api/job/results/dataTableHmmer/:jobID           @controllers.HmmerControll
 GET  /api/job/results/dataTablePSIBlast/:jobID        @controllers.PSIBlastController.dataTable(jobID: String)
 GET  /api/job/results/dataTableHHpred/:jobID          @controllers.HHpredController.dataTable(jobID: String)
 GET  /api/job/results/dataTableHHblits/:jobID         @controllers.HHblitsController.dataTable(jobID: String)
+GET  /api/job/results/dataTableHHomp/:jobID           @controllers.HHompController.dataTable(jobID: String)
+
 
 # Article
 GET  /api/getRecentArticles/:numArticles              @controllers.DataController.getRecentArticles(numArticles: Integer)
@@ -147,8 +149,9 @@ GET  /api/getRecentArticles/:numArticles              @controllers.DataControlle
 GET         /structure3D/:accession                   @controllers.HHpredController.show3DStructure(accession : String)
 GET         /getStructure/:filename                   @controllers.Application.getStructureFile(filename : String)
 # template alignment
-GET  /templateAlignment/:jobID/:accession             @controllers.HHpredController.runScript(jobID : String, accession: String)
+GET  /templateAlignment/:jobID/:accession             @controllers.HHpredController.retrieveTemplateAlignment(jobID : String, accession: String)
 GET  /templateAlignmentHHblits/:jobID/:accession      @controllers.HHblitsController.retrieveTemplateAlignment(jobID : String, accession: String)
+GET  /templateAlignmentHHomp/:jobID/:accession        @controllers.HHompController.retrieveTemplateAlignment(jobID : String, accession: String)
 
 
 # Hmmer
@@ -183,3 +186,7 @@ POST        /HHpredLoadHits                           @controllers.HHpredControl
 POST        /AlignmentLoadHits/:jobID                 @controllers.AlignmentController.loadHits(jobID: String)
 POST        /AlignmentLoadHitsClustal/:jobID          @controllers.AlignmentController.loadHitsClustal(jobID: String)
 POST        /AlignmentGetAln                          @controllers.AlignmentController.getAln(jobID: String)
+
+
+#HHomp
+POST        /HHompLoadHits                           @controllers.HHompController.loadHits(jobID: String)

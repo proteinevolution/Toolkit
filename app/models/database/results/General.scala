@@ -32,18 +32,18 @@ class Alignment @Inject()() {
       }
   }
 }
-case class Query(accession: String, seq: String)
+case class SingleSeq(accession: String, seq: String)
 
 class General() {
 
   private val accessionMalFormat = """.*\|(.*)\|.*""".r
 
-  def parseQuery(jsArray: JsArray): Query = jsArray match {
+  def parseSingleSeq(jsArray: JsArray): SingleSeq = jsArray match {
     case arr: JsArray =>
       try {
         val accession = (arr \ 0 \ 0).get.as[String]
         val seq       = (arr \ 0 \ 1).get.as[String]
-        Query(accession, seq)
+        SingleSeq(accession, seq)
       }
   }
 

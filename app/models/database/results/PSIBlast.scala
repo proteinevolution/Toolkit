@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import controllers.DTParam
-import models.results.BlastVisualization
+import models.results.Common
 import play.api.libs.json._
 
 import scala.concurrent.Future
@@ -36,9 +36,9 @@ PSIBlastHSP(evalue: Double,
   def toDataTable(db: String): JsValue =
     Json.toJson(
       Map(
-        "0" -> Json.toJson(BlastVisualization.getCheckbox(num)),
-        "1" -> Json.toJson(BlastVisualization.getSingleLinkDB(db, accession).toString),
-        "2" -> Json.toJson(BlastVisualization.addBreak(description)),
+        "0" -> Json.toJson(Common.getCheckbox(num)),
+        "1" -> Json.toJson(Common.getSingleLinkDB(db, accession).toString),
+        "2" -> Json.toJson(Common.addBreak(description)),
         "3" -> Json.toJson("%.2e".format(evalue)),
         "4" -> Json.toJson(bitscore),
         "5" -> Json.toJson(ref_len),
@@ -55,7 +55,7 @@ case class PSIBlastResult(HSPS: List[PSIBlastHSP],
                           db: String,
                           evalue: Double,
                           alignment: List[AlignmentItem],
-                          query: Query,
+                          query: SingleSeq,
                           belowEvalThreshold: Int,
                           TMPRED: String,
                           COILPRED: String)
@@ -72,7 +72,7 @@ class PSIBlast @Inject()(general: General, aln: Alignment) {
           case (x, index) =>
             aln.parseAlignmentItem(x, index)
         }
-        val query = general.parseQuery((obj \ "query").as[JsArray])
+        val query = general.parseSingleSeq((obj \ "query").as[JsArray])
         val iter_num = (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations")
           .as[List[JsObject]]
           .size - 1

@@ -81,8 +81,8 @@ let typeAhead = function (elem : any, isInit : boolean) : any {
                 source: tools.ttAdapter(),
                 templates: {
                     suggestion: function (data: any) {
-                        if(data !=null && data.short != "hhpred_manual") {
-                            console.log(data.long)
+                        if(data !=null) {
+                            //console.log(data.long);
                             return '<div class="list-group-item"><a class="search-results" href="#/tools/' + data.short + '" name="' + data.long + '">' + data.long + '</a></div>';
                         }else {
                             return '<div style="display: none"></div>';
@@ -229,29 +229,26 @@ let tilescomponent = {
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
                                 m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
+                                    m("h6", "July 21, 2017"),
+                                    m("p", "Our Quick2D tool for the annotation of protein secondary structural features is back.")
+                                ),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
+                                    m("h6", "July 18, 2017"),
+                                    m("p", "HMM databases of ",
+                                        m("em", "Caenorhabitis elegans"), " and ",
+                                        m("em", "Drosophila melanogaster"), " are online."
+                                    )
+                                ),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
+                                    m("h6", "July 10, 2017"),
+                                    m("p", "HMM databases of the COG, KOG, SMART, and NCBI CD databases are online now")
+                                ),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
                                     m("h6", "July 4, 2017"),
                                     m("p", "HMM databases of the ",
                                         m("b", "human proteome"), " and ",
                                         m("em", " Chaetomium thermophilum"),
                                         " are online"
-                                    )
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
-                                    m("h6", "June 20, 2017"),
-                                    m("p", "Profile HMM database of",
-                                        m("em", " Arabidopsis thaliana"),
-                                        m("span", " is online")
-                                    )
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal"},
-                                    m("h6", "June 10, 2017"),
-                                    m("p", "Profile HMM databases of many bacterial proteomes are online")
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal"},
-                                    m("h6", "May 27, 2017"),
-                                    m("p", "Profile HMM databases of",
-                                        m("em", " Mycobacterium tuberculosis"),
-                                        m("span", " is now available for HHpred")
                                     )
                                 )
                             ),
@@ -338,6 +335,18 @@ let tilescomponent = {
                                         ),
                                         m("td",
                                             m("a", {href: "/#/tools/mafft"},
+                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
+                                            )
+                                        )
+                                    ),
+                                    m("tr",
+                                        m("td",
+                                            m("a", {href: "/#/tools/quick2d"},
+                                                m("a", "Quick2D")
+                                            )
+                                        ),
+                                        m("td",
+                                            m("a", {href: "/#/tools/quick2d"},
                                                 m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
                                             )
                                         )

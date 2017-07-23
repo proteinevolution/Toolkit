@@ -9,10 +9,19 @@ declare var wrapped: boolean;
 declare var JobModel: any;
 let count = 0;
 
+
+/**
+ * Helpers for all Search Tools
+ * 1. Highlights the position in the control bar
+ * 2. Fixes/Unfixes the control bar at the top
+ * 3. triggers getHits on scroll
+ *
+ */
 // add scrollcontainer highlighting
 let followScroll = function(element : any) {
     try {
     $(element).ready(function () {
+        // Highlights the position in the control bar on click
         $("#alignments").floatingScroll('init');
         //smoothscroll
         $('#scrollLinks a').on('click', function (e) {
@@ -22,7 +31,7 @@ let followScroll = function(element : any) {
             $(this).addClass('colorToggleBar');
         });
     });
-
+    //  Fixes/Unfixes the control bar at the top
     $(element).on("scroll", function(){
         let top = Number($(document).scrollTop());
         if($('#visualization').position() != undefined) {
@@ -41,7 +50,7 @@ let followScroll = function(element : any) {
 
             }
         }
-        // trigger lazyload for loading alignment
+        // triggers getHits on scroll
         if (top == $(this).height() - $(window).height()) {
             if (!loading) {
                 let end = parseInt(shownHits) + parseInt(showMore);
@@ -52,6 +61,7 @@ let followScroll = function(element : any) {
                 shownHits = end;
             }
         }
+        // Highlights the position in the control bar on scroll
         $('#scrollLinks a').each(function () {
             let currLink = $(this);
             let  refElement = $(currLink.attr("name"));
