@@ -77,6 +77,10 @@ object JobActor {
   // Job Controller receives push message to update the log
   case class UpdateLog(jobID: String)
 
+  // forward filewatching task to ws actor
+
+  case class WatchLogFile(job : Job)
+
 }
 
 class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscripts to be executed
@@ -346,7 +350,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         val runscript: Runscript = runscriptManager(job.tool).withEnvironment(env)
 
         // Validate the Parameters right away
-        var validParameters = this.validatedParameters(job, runscript, extendedParams)
+        val validParameters = this.validatedParameters(job, runscript, extendedParams)
 
         // adds the params of the disabled controls from formData, sets value of those to "false"
         validParameters.filterNot(pv => extendedParams.contains(pv._1)).foreach { pv =>
@@ -408,7 +412,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
                 // Find the Jobs in the Database
                 mongoStore.findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
-                  val foundMainIDs = jobList.map(_.mainID)
 
                   if (jobList.exists(_.status == Done)) {
                     Logger.info("JobID " + jobID + " is a duplicate.")
@@ -539,7 +542,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                     // Load the parameters from the serialized parameters file
                     val params = executionContext.reloadParams
                     // Validate the Parameters (again) to ensure that everything works
-                    var validParameters = this.validatedParameters(job, runscript, params)
+                    val validParameters = this.validatedParameters(job, runscript, params)
 
                     // adds the params of the disabled controls from formData, sets value of those to "false"
                     validParameters.filterNot(pv => params.contains(pv._1)).foreach { pv =>
@@ -682,7 +685,9 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           val foundWatchers =
             job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
           foundWatchers.flatten.foreach(_ ! PushJob(job))
+          foundWatchers.flatten.foreach(_ ! WatchLogFile(job))
         case None =>
       }
+     println("NOWNOWNOW")
   }
 }
