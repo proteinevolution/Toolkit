@@ -78,6 +78,14 @@ object Common  {
                }
              }
            )
+           case "psspred" => this.helix_sheets.replaceAllIn(
+             sequence, { m =>
+               m.group("ss") match {
+                 case this.helix_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
+                 case this.sheet_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
+               }
+             }
+           )
 
            case "marcoil" => this.CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
            case "coils" => this.CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
@@ -584,6 +592,7 @@ object Common  {
       val spotd = result.spotd.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val iupred = result.iupred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val disopred3 = result.disopred3.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val psspred = result.psspred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
 
       htmlString += makeRow("sequenceCompact", Array("AA_QUERY", (charCount + 1), this.Highlight(query) + "&nbsp;&nbsp;&nbsp;&nbsp;" +Math.min(length,charCount+breakAfter)))
 
@@ -592,6 +601,9 @@ object Common  {
       }
       if(!spider2.isEmpty) {
         htmlString += makeRow("sequenceCompact", Array("SS_" + result.spider2.name.toUpperCase(), "",  this.Q2DColorReplace(result.spider2.name, spider2.replace("C", "&nbsp;"))))
+      }
+      if(!psspred.isEmpty) {
+        htmlString += makeRow("sequenceCompact", Array("SS_" + result.psspred.name.toUpperCase(), "",  this.Q2DColorReplace(result.psspred.name, psspred.replace("C", "&nbsp;"))))
       }
       if(!marcoil.isEmpty) {
         htmlString += makeRow("sequenceCompact", Array("CC_" + result.marcoil.name.toUpperCase(), "",  this.Q2DColorReplace(result.marcoil.name, marcoil.replace("x", "&nbsp;"))))
@@ -621,7 +633,7 @@ object Common  {
         htmlString += makeRow("sequenceCompact", Array("DO_" + result.iupred.name.toUpperCase(), "",  this.Q2DColorReplace(result.iupred.name, iupred.replace("O","&nbsp;"))))
       }
 
-      htmlString += emptyRow + emptyRow  + emptyRow  + emptyRow
+      htmlString += emptyRow + emptyRow  + emptyRow  + emptyRow  + emptyRow
       return htmlString + quick2dWrapped(result, charCount + breakAfter, breakAfter)
       }
     }
