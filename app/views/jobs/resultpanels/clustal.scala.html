@@ -4,7 +4,7 @@
 @import play.api.Logger
 @import play.api.libs.json.JsUndefined
 @import play.api.libs.json.JsDefined
-@import models.results.BlastVisualization
+@import models.results.Common
 @import modules.tel.TEL
 @import play.api.libs.json.JsLookupResult
 @import models.database.results.AlignmentResult
@@ -17,7 +17,7 @@
     <a onclick="@{tool.toolNameShort}_selectAll()" class="selectAllSeq"><span class="selectAllSeqSpan">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Alignment</span></a>
-    <a type="button" onclick="colorAA()"><span id="colorAA">Color Alignment</span></a>
+    <a type="button" onclick="@{tool.toolNameShort}_colorAA()"><span id="colorAA">Color Alignment</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
@@ -25,15 +25,13 @@
         <br />
         <br />
 
-<form id="alignmentResult">
-    <table class="unstriped">
-        <table id="clustalTable">
-        </table>
-        <tr>
-            <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
-        </tr>
+<table class="unstriped">
+    <table id="resultTable">
     </table>
-</form>
+    <tr>
+        <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
+    </tr>
+</table>
 </div>
 
 <script>
@@ -112,7 +110,7 @@
                     contentType: "application/json",
                     data: JSON.stringify(data)
                 }).done(function (data_) {
-                    $("#clustalTable").append(data_);
+                    $("#resultTable").append(data_);
                     loading = false;
                     linkCheckboxes();
                     selectFromArray(checkboxes);
@@ -121,9 +119,9 @@
                 });
         };
 
-        function colorAA(){
+        function @{tool.toolNameShort}_colorAA(){
             colorAAsClustal = !colorAAsClustal;
-            $("#clustalTable").empty();
+            $("#resultTable").empty();
             $("#colorAA").toggleClass("colorToggle");
             @{tool.toolNameShort}_getHits(colorAAsClustal);
         }

@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import controllers.DTParam
-import models.results.BlastVisualization
+import models.results.Common
 import play.api.libs.json._
 
 import scala.concurrent.Future
@@ -25,9 +25,9 @@ case class HHPredHSP(query: HHPredQuery,
   def toDataTable(db: String): JsValue =
     Json.toJson(
       Map(
-        "0" -> Json.toJson(BlastVisualization.getCheckbox(num)),
-        "1" -> Json.toJson(BlastVisualization.getSingleLink(template.accession).toString),
-        "2" -> Json.toJson(BlastVisualization.addBreak(description)),
+        "0" -> Json.toJson(Common.getCheckbox(num)),
+        "1" -> Json.toJson(Common.getSingleLink(template.accession).toString),
+        "2" -> Json.toJson(Common.addBreak(description)),
         "3" -> Json.toJson(info.probab),
         "4" -> Json.toJson(info.evalue),
         "5" -> Json.toJson(ss_score),
@@ -62,7 +62,7 @@ case class HHPredTemplate(consensus: String,
 case class HHPredResult(HSPS: List[HHPredHSP],
                         alignment: AlignmentResult,
                         num_hits: Int,
-                        query: Query,
+                        query: SingleSeq,
                         db: String,
                         proteomes: String,
                         TMPRED: String,
@@ -100,7 +100,7 @@ class HHPred @Inject()(general: General, aln: Alignment) {
         }
 
         val alignment = aln.parseAlignment((obj \ "reduced").as[JsArray])
-        val query     = general.parseQuery((obj \ "query").as[JsArray])
+        val query     = general.parseSingleSeq((obj \ "query").as[JsArray])
         val num_hits  = hsplist.length
 
         HHPredResult(hsplist, alignment, num_hits, query, db, proteomes, TMPRED, COILPRED)

@@ -105,7 +105,7 @@ fasta2json.py ../results/querytemplateMSA.fas ../results/querytemplate.json
 
 
 hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > $(readlink -f ../results/${JOBID}.json)
-json2fasta.py ../results/${JOBID}.json ../results/${JOBID}.fasta
+#json2fasta.py ../results/${JOBID}.json ../results/${JOBID}.fasta
 #Visualization
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 

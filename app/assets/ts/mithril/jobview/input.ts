@@ -1,9 +1,11 @@
 // input textarea
 
 let ParameterAlignmentComponent = {
+    placeholder: "",
     model: function(args : any) {
         this.modes = args.param.paramType.modes;
         this.label = "";
+        ParameterAlignmentComponent.placeholder = args.param.paramType.placeholder;
         this.formats = [];
         if(this.modes.length > 0) {
             this.label = this.modes[0].label;
@@ -24,7 +26,8 @@ let ParameterAlignmentComponent = {
                 return this.modes;
             }).bind(this.mo),
             getLabel: (function() {
-                return this.label;
+                //return this.label;
+                return "Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL format."
             }).bind(this.mo),
             getAllowsTwoTextAreas: (function() {
                 return this.allowsTwoTextAreas;
@@ -88,7 +91,7 @@ let ParameterAlignmentComponent = {
                     } else {
                         $(".inputDBs").prop('disabled', false);
                         $("#hhpred_align").prop('checked', false);
-                        $("#alignment").attr("rows", "19");
+                        $("#alignment").attr("rows", "14");
                         $("#alignment_two").hide();
                         $("#alignment_two").removeAttr("required", false);
 
@@ -135,7 +138,7 @@ let ParameterAlignmentComponent = {
                 },
                 m("textarea", {
                     name: ctrl.name,
-                    placeholder: ctrl.getLabel(),
+                    placeholder: ParameterAlignmentComponent.placeholder,
                     rows: 14,
                     cols: 70,
                     id: ctrl.id,
@@ -175,12 +178,11 @@ let ParameterAlignmentComponent = {
                             "class": "show-for-sr",
                             onchange: function() {
                                 if (this.value) {
-
                                     $(".uploadFileName").show();
-                                    $("#uploadBoxClose").show();
+				                    $("#uploadBoxClose").show();
                                     $("#" + ctrl.id).prop("disabled", true);
                                     $("#" + ctrl.id + "_two").prop("disabled", true);
-                                    $(".submitJob").prop("disabled", false);
+				                    validationProcess($('#alignment'),$("#toolnameAccess").val());
                                 }
                             }
                         }), m("div",
@@ -192,8 +194,8 @@ let ParameterAlignmentComponent = {
                                 onclick: function(){
                                     $(".uploadFileName").hide();
                                     $("input[type=file]").val(null);
-                                    $(".submitJob").prop("disabled", true);
-                                    return $("#" + ctrl.id).prop("disabled", false);
+                                    validationProcess($('#alignment'),$("#toolnameAccess").val());
+			            return $("#" + ctrl.id).prop("disabled", false);
                                 }
                             }, m("i", {"class": "fa fa-trash-o"})))),
                     m(JobValidationComponent, {})

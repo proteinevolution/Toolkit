@@ -19,7 +19,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * This controller is supposed to handle request coming from the Backend, such as compute
-  * nodes from a gridengine.
+  * nodes from a gridengine. It checks if the posted key matches up with the key that is stored in
+  * each job folder in order to prevent unauthorized status changes.
   *
   */
 @Singleton

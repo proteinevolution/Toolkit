@@ -3,7 +3,7 @@ interface Window { JobModel: any; }
 window.JobModel = {
     paramValues: {},
     defaultValues: {
-        "evalue": "1",
+        "evalue": "1e-3",
         "inclusion_ethresh": "0.001",
         "min_cov": "20",
         "min_seqid_query": "0",
@@ -26,6 +26,7 @@ window.JobModel = {
         "codon_table": "1",
         "genetic_code": "1",
         "msa_gen_max_iter": "4",
+        "quick_iters": "3",
         "grammar": "Prosite_grammar",
         "macmode": "off",
         "macthreshold":"0.3",
@@ -57,7 +58,10 @@ window.JobModel = {
         "samcc_periodicity":"7",
         "seqcount":"500",
         "invoke_psipred":"30",
-        "clans_eval":"1e-4"
+        "clans_eval":"1e-4",
+        "target_psi_db":"nr70",
+        "transition_probability":"1",
+        "matrix_marcoil":"mtk"
 },
 
 
