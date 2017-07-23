@@ -151,6 +151,18 @@ addss.pl ../results/${JOBID}.a3m
 echo "done" >> ../results/process.log
 updateProcessLog
 
+
+echo "#Executing PSSpred." >> ../results/process.log
+updateProcessLog
+
+cd ../results/
+${PSSPRED}/PSSpred.pl ../results/${JOBID}.seq ../results/sequencedb
+cd ../0/
+
+echo "done" >> ../results/process.log
+updateProcessLog
+
+
 echo "#Executing SPIDER2 and SPOT-Disorder." >> ../results/process.log
 updateProcessLog
 
@@ -277,6 +289,18 @@ else
         manipulate_json.py -k 'psipred_conf' -v "" ../results/${JOBID}.json
 fi
 
+#Write PSSPRED results into JSON
+ALPHA=0
+BETA=0
+ALPHA=$(tr -cd "H" <  ../results/${JOBID}.psspred | wc -c)
+BETA=$(tr -cd "E" <  ../results/${JOBID}.psspred | wc -c)
+
+if [ ${ALPHA} -gt "0" ] || [ ${BETA} -gt "0" ] ; then
+    SS="$(sed -n '1{p;q;}' ../results/${JOBID}.psspred)"
+    manipulate_json.py -k 'psspred' -v "$SS" ../results/${JOBID}.json
+else
+    manipulate_json.py -k 'psspred' -v "" ../results/${JOBID}.json
+fi
 
 #Write SPIDER2 and SPOTD results into JSON
 ALPHA=0
