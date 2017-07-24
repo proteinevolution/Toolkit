@@ -116,15 +116,13 @@ onMessage = function(event : MessageEvent) : any {
                 "type": "Ping"
             });
             break;
-        case "UpdateLog":
+        case "WatchLogFile":
             m.startComputation();
-            JobRunningComponent.updateLog();
+            JobRunningComponent.updateLog(message.jobID, message.lines);
             m.endComputation();
             break;
         case "MaintenanceAlert":
-            //m.startComputation();
             $('.maintenance_alert').show();
-            //m.endComputation();
             break;
         default:
             break;
