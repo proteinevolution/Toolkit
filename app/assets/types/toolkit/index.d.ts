@@ -31,7 +31,6 @@ declare class JobListComponent {
 
 }
 
-
 declare class FrontendAlnvizComponent {
 
     public static controller : any;

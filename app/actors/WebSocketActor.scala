@@ -18,7 +18,6 @@ import play.api.cache._
 import play.api.libs.json.{JsValue, Json}
 import reactivemongo.bson.BSONObjectID
 import java.nio.file.{Paths, Files}
-import scala.io.Source
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -132,7 +131,7 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
 
 
     case WatchLogFile(job : Job) =>
-      // TODO do filewatching here
+      // Do filewatching here
       val file = s"${constants.jobPath}${constants.SEPARATOR}${job.jobID}${constants.SEPARATOR}results${constants.SEPARATOR}process.log"
       Logger.info("Watching: " + file)
       if (job.status.equals(Running)) {
@@ -140,9 +139,9 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
           val source = scala.io.Source.fromFile(file)
           val lines = try source.mkString finally source.close()
           println(lines)
+          out ! Json.obj("type" -> "WatchLogFile", "jobID" -> job.jobID, "lines" -> lines)
          }
       }
-
 
 
     case UpdateLoad(load: Double) =>
