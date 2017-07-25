@@ -66,8 +66,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
     Ok
   }
 
-
-  def SGEID(jobID: String, sgeID: String) : Action[AnyContent] = Action.async {
+  def SGEID(jobID: String, sgeID: String): Action[AnyContent] = Action.async {
 
     mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).map {
 

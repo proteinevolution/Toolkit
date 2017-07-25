@@ -19,12 +19,10 @@ import scala.sys.process.Process
 /**
   * Created by drau on 18.04.17.
   */
-class HmmerController @Inject()(hmmer: Hmmer,
-                                general: General,
-                                aln: Alignment,
-                                constants: Constants)(mongoStore: MongoStore,
-                                                                                val reactiveMongoApi: ReactiveMongoApi)
-    extends Controller
+class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment, constants: Constants)(
+    mongoStore: MongoStore,
+    val reactiveMongoApi: ReactiveMongoApi
+) extends Controller
     with Common {
   /* gets the path to all scripts that are executed
      on the server (not executed on the grid engine) */
@@ -46,9 +44,9 @@ class HmmerController @Inject()(hmmer: Hmmer,
     * @return Https response
     */
   def evalFull(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val filename  = (json \ "filename").as[String]
-    val eval      = (json \ "evalue").as[String]
+    val json     = request.body.asJson.get
+    val filename = (json \ "filename").as[String]
+    val eval     = (json \ "evalue").as[String]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
@@ -87,11 +85,10 @@ class HmmerController @Inject()(hmmer: Hmmer,
     * @param jobID
     * @return Https response
     */
-
   def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val filename  = (json \ "filename").as[String]
-    val numList = (json \ "checkboxes").as[List[Int]]
+    val json     = request.body.asJson.get
+    val filename = (json \ "filename").as[String]
+    val numList  = (json \ "checkboxes").as[List[Int]]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
@@ -126,13 +123,13 @@ class HmmerController @Inject()(hmmer: Hmmer,
     * @return string containing whitespace
     *         separated accessions
     */
-
   def getAccessions(result: HmmerResult, numList: Seq[Int]): String = {
     val fas = numList.map { num =>
       result.HSPS(num - 1).accession + " "
     }
     fas.mkString
   }
+
   /**
     * given an evalue threshold this method
     * returns the corresponding accessions whitespace
@@ -146,6 +143,7 @@ class HmmerController @Inject()(hmmer: Hmmer,
     val fas = result.HSPS.filter(_.evalue < eval).map { _.accession + " " }
     fas.mkString
   }
+
   /**
     * Retrieves the aligned sequences
     * (parsable alignment must be
@@ -163,13 +161,14 @@ class HmmerController @Inject()(hmmer: Hmmer,
     *         encapsulated in the response
     */
   def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val eval      = (json \ "evalue").as[String]
+    val json = request.body.asJson.get
+    val eval = (json \ "evalue").as[String]
     mongoStore.getResult(jobID).map {
       case Some(jsValue) => Ok(getAlnEval(hmmer.parseResult(jsValue), eval.toDouble))
       case _             => NotFound
     }
   }
+
   /**
     * Retrieves the aligned sequences (parsable alignment
     * must be provided in the result folder as JSON)
@@ -202,13 +201,13 @@ class HmmerController @Inject()(hmmer: Hmmer,
     * @param eval
     * @return fasta as String
     */
-
   def getAlnEval(result: HmmerResult, eval: Double): String = {
     val fas = result.HSPS.filter(_.evalue < eval).map { hit =>
       ">" + result.alignment(hit.num - 1).accession + "\n" + result.alignment(hit.num - 1).seq + "\n"
     }
     fas.mkString
   }
+
   /**
     * given an array of hit numbers this method
     * returns a fasta containing the corresponding
@@ -218,7 +217,6 @@ class HmmerController @Inject()(hmmer: Hmmer,
     * @param numList
     * @return fasta as String
     */
-
   def getAln(alignment: AlignmentResult, numList: Seq[Int]): String = {
     val fas = numList.map { num =>
       ">" + alignment.alignment(num - 1).accession + "\n" + alignment.alignment(num - 1).seq + "\n"
@@ -233,7 +231,6 @@ class HmmerController @Inject()(hmmer: Hmmer,
     * @param params
     * @return
     */
-
   def getHitsByKeyWord(jobID: String, params: DTParam): Future[List[HmmerHSP]] = {
     if (params.sSearch.isEmpty) {
       mongoStore.getResult(jobID).map {
@@ -262,19 +259,19 @@ class HmmerController @Inject()(hmmer: Hmmer,
     * @param jobID
     * @return Https response: HSP row(s) as String
     */
-
   def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json      = request.body.asJson.get
-    val start     = (json \ "start").as[Int]
-    val end       = (json \ "end").as[Int]
-    val wrapped       = (json \ "wrapped").as[Boolean]
+    val json    = request.body.asJson.get
+    val start   = (json \ "start").as[Int]
+    val end     = (json \ "end").as[Int]
+    val wrapped = (json \ "wrapped").as[Boolean]
     mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
         val result = hmmer.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
           BadRequest
         } else {
-          val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hmmer.hit(jobID, _, result.db, wrapped))
+          val hits =
+            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hmmer.hit(jobID, _, result.db, wrapped))
           Ok(hits.mkString)
         }
 

@@ -13,8 +13,7 @@ import scala.concurrent.Future
 /**
   * Created by drau on 18.04.17.
   */
-case class
-PSIBlastHSP(evalue: Double,
+case class PSIBlastHSP(evalue: Double,
                        num: Int,
                        bitscore: Double,
                        score: Int,
@@ -67,7 +66,7 @@ class PSIBlast @Inject()(general: General, aln: Alignment) {
     case obj: JsObject =>
       try {
         var belowEvalThreshold = -1;
-        val jobID = (obj \ "jobID").as[String]
+        val jobID              = (obj \ "jobID").as[String]
         val alignment = (obj \ "alignment").as[List[JsArray]].zipWithIndex.map {
           case (x, index) =>
             aln.parseAlignmentItem(x, index)
@@ -84,15 +83,15 @@ class PSIBlast @Inject()(general: General, aln: Alignment) {
         val num_hits = hits.length
         val hsplist = hits.map { hit =>
           // get num of last checkboxes that is checked by default
-          if (belowEvalThreshold == -1 && ( hit \ "hsps" \ 0 \ "evalue").as[Double] >= evalue){
+          if (belowEvalThreshold == -1 && (hit \ "hsps" \ 0 \ "evalue").as[Double] >= evalue) {
             belowEvalThreshold = (hit \ "num").as[Int]
           }
           parseHSP(hit, db, evalue)
         }
         // if all hits are below threshold
         // set belowEvalThreshold to total number of found hits
-        if(belowEvalThreshold == -1){
-          belowEvalThreshold = hsplist.length +1
+        if (belowEvalThreshold == -1) {
+          belowEvalThreshold = hsplist.length + 1
         }
         val TMPRED = (obj \ "output_psiblastp" \ "TMPRED").asOpt[String] match {
           case Some(data) => data
@@ -102,7 +101,7 @@ class PSIBlast @Inject()(general: General, aln: Alignment) {
           case Some(data) => data
           case None       => "1"
         }
-        PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, alignment, query,belowEvalThreshold, TMPRED, COILPRED)
+        PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, alignment, query, belowEvalThreshold, TMPRED, COILPRED)
       }
   }
 

@@ -1,23 +1,23 @@
 package actors
 
-import javax.inject.{Inject, Named}
+import javax.inject.{ Inject, Named }
 
 import actors.ClusterMonitor._
 import actors.JobActor._
-import actors.WebSocketActor.{ChangeSessionID, LogOut, MaintenanceAlert}
-import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
+import actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
+import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
 import controllers.UserSessions
 import models.Constants
-import models.database.jobs.{Job, Running}
+import models.database.jobs.{ Job, Running }
 import models.job.JobActorAccess
 import modules.LocationProvider
 import play.api.Logger
 import play.api.cache._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{ JsValue, Json }
 import reactivemongo.bson.BSONObjectID
-import java.nio.file.{Paths, Files}
+import java.nio.file.{ Files, Paths }
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -34,7 +34,6 @@ object WebSocketActor {
   }
 }
 
-
 final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
                                      @Named("clusterMonitor") clusterMonitor: ActorRef,
                                      @Assisted("out") out: ActorRef,
@@ -44,7 +43,6 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
                                      @NamedCache("userCache") val userCache: CacheApi,
                                      @NamedCache("wsActorCache") val wsActorCache: CacheApi,
                                      @Assisted("sessionID") private var sessionID: BSONObjectID)
-
     extends Actor
     with ActorLogging {
 
@@ -125,22 +123,21 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
     case PushJob(job: Job) =>
       out ! Json.obj("type" -> "PushJob", "job" -> job.cleaned())
 
-
     case UpdateLog(jobID: String) =>
       out ! Json.obj("type" -> "UpdateLog", "jobID" -> jobID)
 
-
-    case WatchLogFile(job : Job) =>
+    case WatchLogFile(job: Job) =>
       // Do filewatching here
       val file = s"${constants.jobPath}${job.jobID}${constants.SEPARATOR}results${constants.SEPARATOR}process.log"
       Logger.info("Watching: " + file)
       if (job.status.equals(Running)) {
-        if(Files.exists(Paths.get(file))){
+        if (Files.exists(Paths.get(file))) {
           val source = scala.io.Source.fromFile(file)
-          val lines = try source.mkString finally source.close()
+          val lines = try source.mkString
+          finally source.close()
           println(lines)
           out ! Json.obj("type" -> "WatchLogFile", "jobID" -> job.jobID, "lines" -> lines)
-         }
+        }
       }
 
     case UpdateLoad(load: Double) =>

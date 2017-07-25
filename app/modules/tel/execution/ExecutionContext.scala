@@ -42,7 +42,6 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
   // TODO Why is this a member of Execution Context?
   def writeParams(params: Map[String, String]): Unit = {
 
-
     val oos = new ObjectOutputStream(new FileOutputStream(serializedParameters.pathAsString))
     oos.writeObject(params)
     oos.close()
