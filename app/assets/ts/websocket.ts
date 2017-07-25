@@ -88,7 +88,7 @@ onMessage = function(event : MessageEvent) : any {
                 notifications += 1;
                 titlenotifier.set(notifications);
                 JobRunningComponent.terminate(message.jobID);
-                console.log(message.jobID + " has finished with status: " + message.job.status);
+                console.log(message.job.jobID + " has finished with status: " + message.job.status);
             }
             m.endComputation();
             break;
