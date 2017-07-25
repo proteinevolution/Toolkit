@@ -4,13 +4,11 @@
  */
 
 let ws : WebSocket = null,
-    connect   : Function,
+    connect      : Function,
     onClose   : Function,
     onError   : Function,
     onMessage : Function,
     onOpen    : Function,
-    wsConnected  : boolean = false,
-    wsConnecting : boolean = false,
     addJob : Function;
 let notifications = 0;
 let attempts = 1;
@@ -18,20 +16,15 @@ declare var titlenotifier: any;
 let connectCount = 0;
 
 
-connect = function() : boolean {
-    if (!wsConnected && !wsConnecting) {
-        wsConnecting = true;
-        let wsRoute  = jsRoutes.controllers.Application.ws;
+connect = function() : any {
+        let wsRoute = jsRoutes.controllers.Application.ws;
         let isSecure : boolean = location.protocol === "https:";
-        ws = new WebSocket(wsRoute().webSocketURL(isSecure));   // create the new web socket
+        ws = new WebSocket(wsRoute().webSocketURL(isSecure));   // create the new websocket
         ws.onopen    = function(evt : Event)        : any { return onOpen(evt); };
         ws.onclose   = function(evt : CloseEvent)   : any { return onClose(evt); };
         ws.onmessage = function(evt : MessageEvent) : any { return onMessage(evt); };
         ws.onerror   = function(evt : ErrorEvent)   : any { return onError(evt); };
-        return true;
-    } else {
-        return false;
-    }
+        return;
 };
 
 // use exponential backoff algorithm
@@ -48,15 +41,12 @@ let generateInterval = function(k : number) {
 };
 
 onOpen = function(event : Event) : any {
-    wsConnected  = true;
-    wsConnecting = false;
     attempts = 1;
     console.log("Websocket is Connected.");
     $("#offline-alert").fadeOut();  // Hide the Offline alert
 };
 
 onError = function(event : ErrorEvent) : any {
-    wsConnected = false;
     $("#offline-alert").fadeIn();   // show the "Reconnecting ..." message
     let time = generateInterval(attempts);
     console.log("trying to reconnect in ... " + time);
@@ -66,7 +56,6 @@ onError = function(event : ErrorEvent) : any {
 };
 
 onClose = function(event : CloseEvent) : any {
-    wsConnected = false;
     $("#offline-alert").fadeIn();   // show the "Reconnecting ..." message
     let time = generateInterval(attempts);
     console.log("trying to reconnect in ... " + time);
