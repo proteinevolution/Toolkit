@@ -21,7 +21,8 @@ class JobRunningComponent {
 
     public static terminate(jobID: string){
 
-        m.redraw(true);
+        if(jobID == this.jobID)
+            m.redraw(true);
 
     }
 

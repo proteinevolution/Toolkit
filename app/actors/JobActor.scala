@@ -81,10 +81,6 @@ object JobActor {
 
   case class WatchLogFile(job : Job)
 
-  // Terminate in order to refresh the view
-
-  case class Terminate(job : Job)
-
 }
 
 class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscripts to be executed
@@ -291,6 +287,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         foundWatchers.flatten.foreach(_ ! PushJob(job))
         job
       }
+
+
   }
 
   /**
@@ -690,9 +688,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
             job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
           foundWatchers.flatten.foreach(_ ! PushJob(job))
           foundWatchers.flatten.foreach(_ ! WatchLogFile(job))
-
-          if (job.status.equals(Done) || job.status.equals(Error))
-            foundWatchers.flatten.foreach(_ ! Terminate(job))
 
         case None =>
       }
