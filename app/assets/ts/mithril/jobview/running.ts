@@ -17,6 +17,15 @@ class JobRunningComponent {
     }
 
 
+    // ensure that the running tab gets terminated
+
+    public static terminate(jobID: string){
+
+        m.redraw(true);
+
+    }
+
+
     public static controller(args : any) : any {
         let logs = m.request({ method: "GET", url: "files/"+args.job().jobID+"/process.log", background: true, initialValue: [], contentType: "charset=utf-8",
             deserialize: function (data) {JobRunningComponent.RunningLog = data.split('#')}});
