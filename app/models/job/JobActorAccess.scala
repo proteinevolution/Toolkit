@@ -12,7 +12,8 @@ import models.Constants
 final class JobActorAccess @Inject()(actorSystem: ActorSystem, jobActorFactory: JobActor.Factory, constants: Constants) {
 
   // Just spawn all the JobActors
-  private val jobActors: Seq[ActorRef] = Seq.fill(constants.nJobActors)(actorSystem.actorOf(Props(jobActorFactory.apply)))
+  private val jobActors: Seq[ActorRef] =
+    Seq.fill(constants.nJobActors)(actorSystem.actorOf(Props(jobActorFactory.apply)))
 
   def sendToJobActor(jobID: String, message: Any): Unit = {
     this.jobActors(Math.abs(jobID.trim().hashCode()) % constants.nJobActors) ! message

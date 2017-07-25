@@ -6,7 +6,7 @@ import models.Constants
 /**
   * Created by lzimmermann on 6/30/16.
   */
-trait TELConstants  {
+trait TELConstants {
   // TODO Get this from the configuration of the toolkit
 
   // How the file of the final execution is called n

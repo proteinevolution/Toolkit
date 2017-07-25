@@ -34,7 +34,13 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
     with Common {
 
   def getToolList: Action[AnyContent] = Action {
-    Ok(Json.toJson(toolFactory.values.values.filterNot(_.toolNameShort == "hhpred_manual").map(a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort))))
+    Ok(
+      Json.toJson(
+        toolFactory.values.values
+          .filterNot(_.toolNameShort == "hhpred_manual")
+          .map(a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort))
+      )
+    )
   }
 
   /**
@@ -53,7 +59,6 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
       val tools: List[models.tools.Tool] = toolFactory.values.values
         .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
         .filter(tool => tool.toolNameShort != "hhpred_manual")
-
         .toList
       // Find out if the user looks for a certain tool or for a jobID
       if (tools.isEmpty) {
