@@ -86,12 +86,10 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
 
     case rh if sameOriginCheck(rh) =>
-
-      println("Creating new WebSocket. ip: "+rh.remoteAddress.toString() + ", with sessionId: " + rh.session)
+      println("Creating new WebSocket. ip: " + rh.remoteAddress.toString() + ", with sessionId: " + rh.session)
 
       userSessions
         .getUser(rh)
-
         .map { user =>
           Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.sessionID.get, out))))
         }
@@ -203,8 +201,14 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   def file(filename: String, mainID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
       // mainID exists, allow send File
-      if (new java.io.File(s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename").exists)
-        Ok.sendFile(new java.io.File(s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"))
+      if (new java.io.File(
+            s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"
+          ).exists)
+        Ok.sendFile(
+            new java.io.File(
+              s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"
+            )
+          )
           .withSession(userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
           .as("text/plain") //TODO Only text/plain for files currently supported
       else

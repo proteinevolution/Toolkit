@@ -5,13 +5,9 @@ import javax.inject.Singleton
 
 import play.api.libs.json._
 
-
 /**
   * Created by drau on 13.07.17.
   */
-
-
-
 case class Quick2DResult(jobID: String,
                          query: SingleSeq,
                          psipred: Psipred,
@@ -27,8 +23,7 @@ case class Quick2DResult(jobID: String,
                          disopred3: Disopred3,
                          signal: Signal,
                          psspred: Psspred,
-                         deepcnf: Deepcnf
-                        )
+                         deepcnf: Deepcnf)
 
 case class Psipred(name: String, seq: String, conf: String)
 case class Marcoil(name: String, seq: String)
@@ -50,95 +45,110 @@ class Quick2D @Inject()(general: General) {
 
   def parseResult(jsValue: JsValue): Quick2DResult = jsValue match {
     case obj: JsObject =>
-      val jobID      = (obj \ "jobID").as[String]
-      val query = general.parseSingleSeq((obj \ "query").as[JsArray])
-      val psipred = parsePsipred((obj \ jobID).as[JsObject])
-      val marcoil = parseMarcoil((obj \ jobID).as[JsObject])
-      val coils = parseCoils((obj \ jobID).as[JsObject])
-      val pcoils = parsePcoils((obj \ jobID).as[JsObject])
-      val tmhmm = parseTmhmm((obj \ jobID).as[JsObject])
-      val phobius = parsePhobius((obj \ jobID).as[JsObject])
+      val jobID       = (obj \ "jobID").as[String]
+      val query       = general.parseSingleSeq((obj \ "query").as[JsArray])
+      val psipred     = parsePsipred((obj \ jobID).as[JsObject])
+      val marcoil     = parseMarcoil((obj \ jobID).as[JsObject])
+      val coils       = parseCoils((obj \ jobID).as[JsObject])
+      val pcoils      = parsePcoils((obj \ jobID).as[JsObject])
+      val tmhmm       = parseTmhmm((obj \ jobID).as[JsObject])
+      val phobius     = parsePhobius((obj \ jobID).as[JsObject])
       val polyphobius = parsePolyphobius((obj \ jobID).as[JsObject])
-      val spider2 = parseSpider2((obj \ jobID).as[JsObject])
-      val spotd = parseSpotd((obj \ jobID).as[JsObject])
-      val iupred = parseIupred((obj \ jobID).as[JsObject])
-      val disopred3 = parseDisopred3((obj \ jobID).as[JsObject])
-      val signal = parseSignal((obj \ jobID).as[JsObject])
-      val psspred = parsePsspred((obj \ jobID).as[JsObject])
-      val deepcnf = parseDeepcnf((obj \ jobID).as[JsObject])
+      val spider2     = parseSpider2((obj \ jobID).as[JsObject])
+      val spotd       = parseSpotd((obj \ jobID).as[JsObject])
+      val iupred      = parseIupred((obj \ jobID).as[JsObject])
+      val disopred3   = parseDisopred3((obj \ jobID).as[JsObject])
+      val signal      = parseSignal((obj \ jobID).as[JsObject])
+      val psspred     = parsePsspred((obj \ jobID).as[JsObject])
+      val deepcnf     = parseDeepcnf((obj \ jobID).as[JsObject])
 
-      Quick2DResult(jobID, query, psipred, marcoil, coils, pcoils, tmhmm, phobius, polyphobius, spider2, spotd, iupred, disopred3, signal, psspred, deepcnf)
+      Quick2DResult(jobID,
+                    query,
+                    psipred,
+                    marcoil,
+                    coils,
+                    pcoils,
+                    tmhmm,
+                    phobius,
+                    polyphobius,
+                    spider2,
+                    spotd,
+                    iupred,
+                    disopred3,
+                    signal,
+                    psspred,
+                    deepcnf)
 
   }
 
-  def parsePsipred(obj: JsObject) : Psipred = {
-    val conf       = (obj \ "psipred_conf").getOrElse(Json.toJson("")).as[String]
-    val seq        = (obj \ "psipred").getOrElse(Json.toJson("")).as[String]
+  def parsePsipred(obj: JsObject): Psipred = {
+    val conf = (obj \ "psipred_conf").getOrElse(Json.toJson("")).as[String]
+    val seq  = (obj \ "psipred").getOrElse(Json.toJson("")).as[String]
     Psipred("psipred", seq, conf)
   }
 
-  def parseMarcoil(obj: JsObject) : Marcoil = {
-    val seq        = (obj \ "marcoil").getOrElse(Json.toJson("")).as[String]
+  def parseMarcoil(obj: JsObject): Marcoil = {
+    val seq = (obj \ "marcoil").getOrElse(Json.toJson("")).as[String]
     Marcoil("marcoil", seq)
   }
 
-  def parseCoils(obj: JsObject) : Coils = {
-    val seq        = (obj \ "coils_w28").getOrElse(Json.toJson("")).as[String]
+  def parseCoils(obj: JsObject): Coils = {
+    val seq = (obj \ "coils_w28").getOrElse(Json.toJson("")).as[String]
     Coils("coils", seq)
   }
 
-  def parsePcoils(obj: JsObject) : Pcoils = {
-    val seq        = (obj \ "pcoils_w28").getOrElse(Json.toJson("")).as[String]
+  def parsePcoils(obj: JsObject): Pcoils = {
+    val seq = (obj \ "pcoils_w28").getOrElse(Json.toJson("")).as[String]
     Pcoils("pcoils", seq)
   }
 
-  def parseTmhmm(obj: JsObject) : Tmhmm = {
-    val seq        = (obj \ "tmhmm").getOrElse(Json.toJson("")).as[String]
+  def parseTmhmm(obj: JsObject): Tmhmm = {
+    val seq = (obj \ "tmhmm").getOrElse(Json.toJson("")).as[String]
     Tmhmm("tmhmm", seq)
   }
 
-  def parsePhobius(obj: JsObject) : Phobius = {
-    val seq        = (obj \ "phobius").getOrElse(Json.toJson("")).as[String]
+  def parsePhobius(obj: JsObject): Phobius = {
+    val seq = (obj \ "phobius").getOrElse(Json.toJson("")).as[String]
     Phobius("phobius", seq)
   }
 
-  def parsePolyphobius(obj: JsObject) : Polyphobius = {
-    val seq        = (obj \ "polyphobius").getOrElse(Json.toJson("")).as[String]
+  def parsePolyphobius(obj: JsObject): Polyphobius = {
+    val seq = (obj \ "polyphobius").getOrElse(Json.toJson("")).as[String]
     Polyphobius("polyphobius", seq)
   }
 
-  def parseSpider2(obj: JsObject) : Spider2 = {
-    val seq        = (obj \ "spider2").getOrElse(Json.toJson("")).as[String]
+  def parseSpider2(obj: JsObject): Spider2 = {
+    val seq = (obj \ "spider2").getOrElse(Json.toJson("")).as[String]
     Spider2("spider2", seq)
   }
 
-  def parseSpotd(obj: JsObject) : Spotd = {
-    val seq        = (obj \ "spot-d").getOrElse(Json.toJson("")).as[String]
+  def parseSpotd(obj: JsObject): Spotd = {
+    val seq = (obj \ "spot-d").getOrElse(Json.toJson("")).as[String]
     Spotd("spotd", seq)
   }
 
-  def parseIupred(obj: JsObject) : Iupred = {
-    val seq        = (obj \ "iupred").getOrElse(Json.toJson("")).as[String]
+  def parseIupred(obj: JsObject): Iupred = {
+    val seq = (obj \ "iupred").getOrElse(Json.toJson("")).as[String]
     Iupred("iupred", seq)
   }
 
-  def parseDisopred3(obj: JsObject) : Disopred3 = {
-    val seq        = (obj \ "disopred3").getOrElse(Json.toJson("")).as[String]
+  def parseDisopred3(obj: JsObject): Disopred3 = {
+    val seq = (obj \ "disopred3").getOrElse(Json.toJson("")).as[String]
     Disopred3("disopred3", seq)
   }
 
-  def parseSignal(obj: JsObject) : Signal = {
-    val seq        = (obj \ "signal").getOrElse(Json.toJson("")).as[String]
+  def parseSignal(obj: JsObject): Signal = {
+    val seq = (obj \ "signal").getOrElse(Json.toJson("")).as[String]
     Signal("Signal", seq)
   }
 
-  def parsePsspred(obj: JsObject) : Psspred = {
-    val seq        = (obj \ "psspred").getOrElse(Json.toJson("")).as[String]
+  def parsePsspred(obj: JsObject): Psspred = {
+    val seq = (obj \ "psspred").getOrElse(Json.toJson("")).as[String]
     Psspred("psspred", seq)
   }
 
-  def parseDeepcnf(obj: JsObject) : Deepcnf = {
-    val seq        = (obj \ "deepcnf").getOrElse(Json.toJson("")).as[String]
+  def parseDeepcnf(obj: JsObject): Deepcnf = {
+    val seq = (obj \ "deepcnf").getOrElse(Json.toJson("")).as[String]
     Deepcnf("deepcnf", seq)
   }
 }
