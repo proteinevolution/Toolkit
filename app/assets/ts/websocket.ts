@@ -121,6 +121,11 @@ onMessage = function(event : MessageEvent) : any {
             JobRunningComponent.updateLog(message.jobID, message.lines);
             m.endComputation();
             break;
+        case "Terminate":
+            m.startComputation();
+            JobRunningComponent.terminate(message.jobID);
+            m.endComputation();
+            break;
         case "MaintenanceAlert":
             $('.maintenance_alert').show();
             break;
