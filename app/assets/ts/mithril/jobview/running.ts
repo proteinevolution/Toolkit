@@ -6,31 +6,32 @@ class JobRunningComponent {
 
     public static updateLog(jobID : string, lines : any){
 
-        this.jobID = jobID;
-        this.lines = lines;
-        this.RunningLog = lines.split("#");
-        //console.log(jobID);
-        //console.log(lines);
-        m.redraw.strategy("diff");
-        m.redraw();
+        console.log(this.jobID + " " + jobID);
+        console.log(lines);
+
+        if(JobRunningComponent.jobID == jobID) {
+            this.lines = lines;
+            this.RunningLog = lines.split("#");
+            m.redraw.strategy("diff");
+            m.redraw();
+        }
 
     }
-
 
     // ensure that the running tab gets terminated
 
     public static terminate(jobID: string){
 
-        if(jobID == this.jobID)
+        if(jobID == JobRunningComponent.jobID || JobRunningComponent.jobID == "undefined")
             m.redraw(true);
 
     }
 
 
     public static controller(args : any) : any {
-        let logs = m.request({ method: "GET", url: "files/"+args.job().jobID+"/process.log", background: true, initialValue: [], contentType: "charset=utf-8",
+        m.request({ method: "GET", url: "files/"+args.job().jobID+"/process.log", contentType: "charset=utf-8",
             deserialize: function (data) {JobRunningComponent.RunningLog = data.split('#')}});
-        logs.then(m.redraw);
+        JobRunningComponent.jobID = args.job().jobID;
         return {}
     }
     public static view(ctrl : any, args : any) : any {
@@ -45,7 +46,6 @@ class JobRunningComponent {
             m("div", {"class": "processJobIdContainer"},
                 m('p', "Job ID:"),
                 m('p',  {style: "margin-left: 5px"}, ' ' + args.job().jobID)),
-                //(this.jobID == args.job().jobID || this.jobID == 'undefined') ?
                     JobRunningComponent.RunningLog.map(function(logElem : any) : any{
                         if(logElem == "")
                             return;
@@ -65,7 +65,7 @@ class JobRunningComponent {
                         return m("div", {"class": "logElem"},
                             m("div", {"class": "logElemRunning"}),
                             m("div", {"class": "logElemText"}, logElem[0]))
-                    }) //: []
+                    })
             ]);
 
     }
