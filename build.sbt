@@ -145,4 +145,3 @@ scalacOptions ++= Seq(
 )
 
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
-

@@ -22,8 +22,9 @@ class JobRunningComponent {
 
     public static terminate(jobID: string){
 
-        if(jobID == JobRunningComponent.jobID || JobRunningComponent.jobID == "undefined")
+        if(jobID == JobRunningComponent.jobID || JobRunningComponent.jobID == "undefined"){
             m.redraw(true);
+        }
 
     }
 
