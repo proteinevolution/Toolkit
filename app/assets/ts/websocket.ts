@@ -87,6 +87,8 @@ onMessage = function(event : MessageEvent) : any {
             if(message.job.status == 4 || message.job.status == 5) {
                 notifications += 1;
                 titlenotifier.set(notifications);
+                JobRunningComponent.terminate(message.jobID);
+                console.log(message.jobID + " has finished with status: " + message.job.status);
             }
             m.endComputation();
             break;
@@ -104,11 +106,6 @@ onMessage = function(event : MessageEvent) : any {
         case "WatchLogFile":
             m.startComputation();
             JobRunningComponent.updateLog(message.jobID, message.lines);
-            m.endComputation();
-            break;
-        case "Terminate":
-            m.startComputation();
-            JobRunningComponent.terminate(message.jobID);
             m.endComputation();
             break;
         case "MaintenanceAlert":

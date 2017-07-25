@@ -143,10 +143,6 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
          }
       }
 
-    case Terminate(job : Job) =>
-      // Terminate the running tab
-      out ! Json.obj("type" -> "Terminate", "jobID" -> job.jobID)
-
     case UpdateLoad(load: Double) =>
       out ! Json.obj("type" -> "UpdateLoad", "load" -> load)
 
