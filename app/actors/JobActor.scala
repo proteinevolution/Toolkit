@@ -33,6 +33,7 @@ import play.api.libs.json._
 import scala.concurrent.Future
 import scala.util.{ Failure, Success }
 import better.files._
+import scala.concurrent.duration._
 
 object JobActor {
 
@@ -80,6 +81,8 @@ object JobActor {
 
   case class WatchLogFile(job: Job)
 
+  case object UpdateLog2
+
 }
 
 class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscripts to be executed
@@ -101,6 +104,14 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
   private var currentJobs: Map[String, Job]                           = Map.empty
   private var currentJobLogs: Map[String, JobEventLog]                = Map.empty
   private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty
+
+  // long polling stuff
+
+  private val fetchLatestInterval                 = 1.seconds
+  private val Tick: Cancellable = {
+    // scheduler should use the system dispatcher
+    context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, UpdateLog2)(context.system.dispatcher)
+  }
 
   // Running executions
   private var runningExecutions: Map[String, RunningExecution] = Map.empty
@@ -320,6 +331,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       false
     }
   }
+
+  override def postStop(): Unit = Tick.cancel()
 
   override def receive = LoggingReceive {
 
@@ -682,6 +695,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           Logger.info("Job not found: " + jobID)
       }
 
+    // gets updatelog notifications via curl
+
     case UpdateLog(jobID: String) =>
       currentJobs.get(jobID) match {
         case Some(job) =>
@@ -695,6 +710,21 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           }
 
         case None =>
+      }
+
+
+    // does longpolling
+
+    case UpdateLog2 =>
+      currentJobs.foreach {
+        job =>
+          val foundWatchers =
+            job._2.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
+          job._2.status match {
+            case Running => foundWatchers.flatten.foreach(_ ! WatchLogFile(job._2))
+            case _ =>
+          }
+
       }
   }
 }

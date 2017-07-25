@@ -30,8 +30,8 @@ class JobRunningComponent {
 
 
     public static controller(args : any) : any {
-        m.request({ method: "GET", url: "files/"+args.job().jobID+"/process.log", contentType: "charset=utf-8",
-            deserialize: function (data) {JobRunningComponent.RunningLog = data.split('#')}});
+        //m.request({ method: "GET", url: "files/"+args.job().jobID+"/process.log", contentType: "charset=utf-8",
+        //    deserialize: function (data) {JobRunningComponent.RunningLog = data.split('#')}});
         JobRunningComponent.jobID = args.job().jobID;
         return {}
     }
