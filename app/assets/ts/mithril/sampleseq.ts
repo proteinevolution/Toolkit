@@ -210,6 +210,8 @@ let sampleSeqConfig = function(elem: any, isInit: boolean, ctx: any) : any {
                     console.warn("implement me");
             }
 
+            localStorage.setItem('alignmentcontent', $a.val());
+
         })
 
     }
