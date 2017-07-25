@@ -49,6 +49,7 @@ updateProcessLog
 if [ %output_order.content = "input" ] ; then
 
     mafft --op %mafft_gap_open.content \
+          --preservecase \
           --ep %offset.content \
           --quiet \
           --auto \
@@ -56,6 +57,7 @@ if [ %output_order.content = "input" ] ; then
           %alignment.path > ../results/alignment.fas
 else
     mafft --op %mafft_gap_open.content \
+          --preservecase \
           --ep %offset.content \
           --quiet \
           --reorder \
