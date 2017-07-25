@@ -23,9 +23,6 @@ import scala.language.postfixOps
 
 /**
   * Created by zin on 03.08.16.
-  *
-  * TODO may need to break this into multiple classes in the future  *
-  *
   */
 @Singleton
 final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends ReactiveMongoComponents {
