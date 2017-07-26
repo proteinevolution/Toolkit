@@ -141,7 +141,7 @@ TMPRED=`tmhmm ../results/firstSeq.fas -short`
 run_Coils -c -min_P 0.8 < ../results/firstSeq.fas >& ../results/firstSeq.cc
 COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
 
-rm ../results/firstSeq0.fas ../results/firstSeq.fas ../results/firstSeq.cc
+rm ../results/firstSeq0.fas ../results/firstSeq.cc
 
 
 #CHECK IF MSA generation is required or not
@@ -174,6 +174,7 @@ else
                 -v 2 \
                 -e %hhpred_incl_eval.content \
                 -i ../results/${JOBID}.fas \
+                -M first \
                 -d %UNIPROT  \
                 -oa3m ../results/${JOBID}.a3m \
                 -n %msa_gen_max_iter.content \
@@ -360,7 +361,7 @@ hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/${JOBID}.json
 fasta2json.py ../results/${JOBID}.fas ../results/query.json
 
 # Generate Query in JSON
-fasta2json.py %alignment.path ../results/query.json
+fasta2json.py ../results/firstSeq.fas ../results/query.json
 
 # add DB to json
 manipulate_json.py -k 'db' -v '%hhsuitedb.content' ../results/${JOBID}.json

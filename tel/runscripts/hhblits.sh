@@ -74,12 +74,13 @@ TMPRED=`tmhmm ../results/firstSeq.fas -short`
 run_Coils -c -min_P 0.8 < ../results/firstSeq.fas >& ../results/firstSeq.cc
 COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
 
-rm ../results/firstSeq0.fas ../results/firstSeq.fas ../results/firstSeq.cc
+rm ../results/firstSeq0.fas ../results/firstSeq.cc
 
 
 
 hhblits -cpu %THREADS \
         -i ../results/${JOBID}.in.fas \
+        -M first \
         -d %HHBLITS/%hhblitsdb.content     \
         -o $(readlink -f ../results/${JOBID}.hhr) \
         -oa3m $(readlink -f ../results/${JOBID}.a3m)  \
@@ -134,7 +135,7 @@ manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/${JOBID}.json
 manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/${JOBID}.json
 
 # Generate Query in JSON
-fasta2json.py ../results/${JOBID}.in.fas ../results/query.json
+fasta2json.py ../results/firstSeq.fas ../results/query.json
 
 echo "done" >> ../results/process.log
 updateProcessLog
