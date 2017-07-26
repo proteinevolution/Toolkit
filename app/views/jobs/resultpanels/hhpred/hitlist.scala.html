@@ -135,7 +135,7 @@
 
     @*MODALS*@
     <div class="reveal" id="templateAlignmentModal" data-reveal>
-        <p>Template Alignment</p>
+        <p>Template Alignment (~100 most distinct sequences)</p>
         <div>
             <select onclick="forwardTemplateAlignment_(this.value, $('#alignmentTemplate').val())" id="alignmentTemplate_tool">
                 <option value="" selected>Forward to</option>
@@ -393,7 +393,6 @@
             });
         }
 
-
         function forwardTemplateAlignment_(tool, forwardData) {
             if (tool == "") {
                 return;
@@ -404,6 +403,7 @@
 
 
         function @{tool.toolNameShort}_forwardQueryMSA(selectedTool) {
+            $.LoadingOverlay("show");
             $.ajax({
                 type: 'GET',
                 url: "files/" + jobID + "/reduced.fas"
