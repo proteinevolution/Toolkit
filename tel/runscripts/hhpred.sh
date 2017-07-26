@@ -227,12 +227,13 @@ fi
 
 hhfilter -i ../results/${JOBID}.a3m \
          -o ../results/reduced.fas \
+         -neff 12.0 \
          -diff 100
 
 reformat_hhsuite.pl a3m fas \
          $(readlink -f ../results/reduced.fas) \
          $(readlink -f ../results/reduced.fas) \
-         -d 160
+         -d 160 -uc
 
 # Here assume that the query alignment exists
 # prepare histograms
