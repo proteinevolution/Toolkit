@@ -199,6 +199,15 @@ let validationProcess = function(elem: any,toolname: string) {
 
             if (hmmerTarget.basicValidation("yes")) {
                 hmmerTarget.sameLengthValidation();
+
+                if(hmmerTarget.hasTwo()) {
+                    $("#max_hhblits_iter").val("0");
+                    $("#max_hhblits_iter").niceSelect('update');
+                }
+                else {
+                    $("#max_hhblits_iter").val("1");
+                    $("#max_hhblits_iter").niceSelect('update');
+                }
             }
 
             break;
@@ -238,6 +247,15 @@ let validationProcess = function(elem: any,toolname: string) {
             if (hhpredTarget.basicValidation("yes")) {
                 hhpredTarget.sameLengthValidation();
                 hhpredTarget.hhMaxDB();
+
+                if(hhpredTarget.hasTwo()) {
+                    $("#msa_gen_max_iter").val("0");
+                    $("#msa_gen_max_iter").niceSelect('update');
+                }
+                else {
+                    $("#msa_gen_max_iter").val("4");
+                    $("#msa_gen_max_iter").niceSelect('update');
+                }
             }
 
             break;
@@ -258,6 +276,15 @@ let validationProcess = function(elem: any,toolname: string) {
 
             if (hhompTarget.basicValidation("yes")) {
                 hhompTarget.sameLengthValidation();
+
+                if(hhompTarget.hasTwo()) {
+                    $("#msa_gen_max_iter").val("0");
+                    $("#msa_gen_max_iter").niceSelect('update');
+                }
+                else {
+                    $("#msa_gen_max_iter").val("4");
+                    $("#msa_gen_max_iter").niceSelect('update');
+                }
             }
 
             break;
@@ -328,8 +355,16 @@ let validationProcess = function(elem: any,toolname: string) {
 
             if (hhrepidTarget.basicValidation("yes")) {
                 hhrepidTarget.sameLengthValidation();
-            }
 
+                if(hhrepidTarget.hasTwo()) {
+                    $("#msa_gen_max_iter").val("0");
+                    $("#msa_gen_max_iter").niceSelect('update');
+                }
+                else {
+                    $("#msa_gen_max_iter").val("4");
+                    $("#msa_gen_max_iter").niceSelect('update');
+                }
+            }
             break;
 
 
@@ -408,6 +443,14 @@ let validationProcess = function(elem: any,toolname: string) {
 
             if (quick2dTarget.basicValidation("yes")) {
                 quick2dTarget.sameLengthValidation();
+
+                if(quick2dTarget.hasTwo()) {
+                    $("#quick_iters").val("0");
+                    $("#quick_iters").niceSelect('update');
+                } else {
+                    $("#quick_iters").val("3");
+                    $("#quick_iters").niceSelect('update');
+                }
             }
 
             break;
@@ -763,6 +806,19 @@ class alignmentVal implements ToolkitValidator {
         }
         return true;
     }
+
+    hasTwo() : boolean {
+
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
+        else if (this.elem.reformat('numbers') > 1){
+            return true;
+        }
+       return false;
+    }
+
 
     DNAvalidation(): any {
 
