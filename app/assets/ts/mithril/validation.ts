@@ -192,7 +192,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 3000;
+            charLimitPerSeq = 6000;
             seqLimit = 10000;
 
             let hmmerTarget = new alignmentVal($(elem));
@@ -219,7 +219,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
              * first space, in the header are used as ID.
              */
-            charLimitPerSeq = 3000;
+            charLimitPerSeq = 6000;
             seqLimit = 10000;
 
             let hhblitsTarget = new alignmentVal($(elem));
@@ -238,7 +238,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 3000; // TODO: why was the charLimit defined after it's usage?
+            charLimitPerSeq = 6000; // TODO: why was the charLimit defined after it's usage?
             seqLimit = 10000;
 
             let hhpredTarget = new alignmentVal($(elem));
@@ -268,7 +268,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 3000; // TODO: why was the charLimit defined after it's usage?
+            charLimitPerSeq = 6000; // TODO: why was the charLimit defined after it's usage?
             seqLimit = 10000;
 
             let hhompTarget = new alignmentVal($(elem));
@@ -348,7 +348,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "hhrepid":
 
-            charLimitPerSeq = 3000;
+            charLimitPerSeq = 6000;
             seqLimit = 10000;
 
             let hhrepidTarget = new alignmentVal($(elem));
