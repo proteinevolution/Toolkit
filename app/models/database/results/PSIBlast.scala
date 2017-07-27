@@ -38,7 +38,7 @@ PSIBlastHSP(evalue: Double,
       Map(
         "0" -> Json.toJson(Common.getCheckbox(num)),
         "1" -> Json.toJson(Common.getSingleLinkDB(db, accession).toString),
-        "2" -> Json.toJson(Common.addBreak(description)),
+        "2" -> Json.toJson(Common.addBreak(description.slice(0, 84))),
         "3" -> Json.toJson("%.2e".format(evalue)),
         "4" -> Json.toJson(bitscore),
         "5" -> Json.toJson(ref_len),
