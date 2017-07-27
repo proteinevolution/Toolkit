@@ -14,7 +14,7 @@
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="@{resultName}_selectAll()" class="selectAllSeq"><span class="selectAllSeqSpan">Select all</span></a>
+    <a onclick="@{resultName}_selectAllAln()" class="selectAllSeq"><span class="@{resultName}_selectAllSeqSpan">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Alignment</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
@@ -41,7 +41,7 @@
 
         var fileUrl = "/files/@jobID/alignment.fas";
         var downloadFilename = "@{tool.toolNameShort}_@{resultName}_jobID_@{jobID}.fasta";
-        var selectAllBool = false;
+        var selectAllBoolAln = false;
         var shownHits = 20;
         var showMore = 100;
         var loading = false;
@@ -115,11 +115,11 @@
             }
         }
 
-        window["@{resultName}_selectAll"] = function(){
-            selectAllBool = !selectAllBool;
-            $(".selectAllSeqSpan").toggleText("Select all","Deselect all");
-            $(".selectAllSeqSpan").toggleClass("colorToggle");
-            if(selectAllBool) {
+        window["@{resultName}_selectAllAln"] = function(){
+            selectAllBoolAln = !selectAllBoolAln;
+            $(".@{resultName}_selectAllSeqSpan").toggleText("Select all","Deselect all");
+            $(".@{resultName}_selectAllSeqSpan").toggleClass("colorToggle");
+            if(selectAllBoolAln) {
                 selectAllHelper(checkbox);
                 // first empty array
                 checkboxes = [];
@@ -132,6 +132,8 @@
                 checkboxes = [];
             }
         };
+
+
 
 
         $(document).ready(function () {
