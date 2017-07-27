@@ -14,7 +14,7 @@
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="selectAll()" class="selectAllSeq"><span class="selectAllSeqSpan">Select all</span></a>
+    <a onclick="@{resultName}_selectAllAlnq()" class="selectAllSeq"><span class="selectAllSeqSpanAlnq">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Reduced MSA</span></a>
     <a type="button" id="downloadAlignmentFull"  onclick="@{resultName}_downloadFull()"><span>Download Full MSA</span></a>
@@ -46,7 +46,7 @@
         var fileUrlFull = "/files/@jobID/full.fas";
         var downloadFilenameFull = "@{tool.toolNameShort}_full_jobID_@{jobID}.fasta";
 
-        var selectAllBool = false;
+        var selectAllBoolAlnq = false;
         var shownHits = 20;
         var showMore = 100;
         var loading = false;
@@ -133,6 +133,23 @@
             }
         }
 
+        window["@{resultName}_selectAllAlnq"] = function(){
+            selectAllBoolAlnq = !selectAllBoolAlnq;
+            $(".selectAllSeqSpanAlnq").toggleText("Select all","Deselect all");
+            $(".selectAllSeqSpanAlnq").toggleClass("colorToggle");
+            if(selectAllBoolAlnq) {
+                selectAllHelper(checkbox);
+                // first empty array
+                checkboxes = [];
+                // push all checkboxes (1 to num_hits) into array
+                _.range(1, numHits+1).forEach(function(x){checkboxes.push(x)});
+            }
+            else {
+                deselectAll(checkbox);
+                // delete all checkboxes from array
+                checkboxes = [];
+            }
+        };
 
         $(document).ready(function () {
 
