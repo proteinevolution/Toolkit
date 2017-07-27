@@ -120,7 +120,7 @@ hhfilter -i $(readlink -f ../results/${JOBID}.a3m) \
 reformat_hhsuite.pl a3m fas \
             $(readlink -f ../results/${JOBID}.rep100.a3m) \
             $(readlink -f ../results/alignment.fas) \
-            -d 160
+            -d 160 -uc
 
 #create full alignment json; use for forwarding
 fasta2json.py ../results/alignment.fas ../results/rep100.json

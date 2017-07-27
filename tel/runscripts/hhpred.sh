@@ -248,7 +248,7 @@ hhfilter -i ../results/${JOBID}.a3m \
 reformat_hhsuite.pl a3m fas \
          $(readlink -f ../results/${JOBID}.a3m) \
          $(readlink -f ../results/full.fas) \
-         -d 160
+         -d 160 -uc
 
 DBJOINED=""
 #create file in which selected dbs are written
