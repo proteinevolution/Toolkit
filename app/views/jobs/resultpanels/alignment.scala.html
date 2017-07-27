@@ -86,7 +86,7 @@
         };
 
 
-        window["@{resultName}_getHits"] = function(start, end){
+        function getHits(start, end){
             if(start <= numHits && end <= numHits && !loading){
                 var data = { "start": start, "end": end, "resultName": resultName };
                 loading = true;
@@ -113,7 +113,7 @@
                     }
                 });
             }
-        };
+        }
 
         window["@{resultName}_selectAll"] = function(){
             selectAllBool = !selectAllBool;
@@ -138,7 +138,7 @@
 
             // trigger lazyload for loading alignment
             shownHits = shownHits > numHits ? numHits : shownHits;
-            @{resultName}_getHits(0, shownHits).then(function(){
+            getHits(0, shownHits).then(function(){
                 // check checkboxes that are stored in array
                 // in order to make it work with pagination/lazyload
                 selectFromArray(checkboxes);
@@ -148,7 +148,7 @@
                             var end = shownHits + showMore;
                             end = end < numHits ? end : numHits;
                             if (shownHits != end) {
-                                @{resultName}_getHits(shownHits, end);
+                                getHits(shownHits, end);
                             }else{
                                 $('#loadHitsAln').hide();
                             }
