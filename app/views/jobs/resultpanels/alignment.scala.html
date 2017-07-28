@@ -1,3 +1,5 @@
+@import play.api.mvc.RequestHeader
+
 @import play.api.libs.json.JsObject
 @import play.api.libs.json.JsValue
 @import play.api.libs.json.JsArray
@@ -20,7 +22,7 @@
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
-    Number of sequences: <b>@alignment.alignment.length</b>
+        Number of sequences: <b>@alignment.alignment.length</b>
         <br />
         <br />
 <form id="alignmentResult">

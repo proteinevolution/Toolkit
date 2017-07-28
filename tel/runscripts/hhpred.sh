@@ -3,6 +3,8 @@ JOBID=%jobid.content
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
+A3M=$(head -1 ../params/alignment | egrep "^#A3M#" | wc -l)
+
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
@@ -226,29 +228,34 @@ fi
 #Generate representative MSA for forwarding
 
 hhfilter -i ../results/${JOBID}.a3m \
-         -o ../results/reduced.fas \
+         -o ../results/reduced.a3m \
          -neff 12.0 \
          -diff 100
 
+sed -i "1 i\#A3M#" ../results/reduced.a3m
+
+reformat_hhsuite.pl a3m a3m \
+         $(readlink -f ../results/${JOBID}.a3m) \
+         $(readlink -f ../results/tmp0) \
+         -d 160 -l 32000
+
+head -n 400 ../results/tmp0 > ../results/tmp1
+
 reformat_hhsuite.pl a3m fas \
+         $(readlink -f ../results/tmp1) \
          $(readlink -f ../results/reduced.fas) \
-         $(readlink -f ../results/reduced.fas) \
-         -d 160 -uc
+         -d 160 -l 32000 -uc
+
+rm ../results/tmp0 ../results/tmp1
+
 
 # Here assume that the query alignment exists
 # prepare histograms
 # Reformat query into fasta format ('full' alignment, i.e. 100 maximally diverse sequences, to limit amount of data to transfer)
 
-addss.pl ../results/${JOBID}.a3m
+mv ../results/${JOBID}.a3m ../results/full.a3m
 
-hhfilter -i ../results/${JOBID}.a3m \
-         -o ../results/${JOBID}.reduced.a3m \
-         -diff 100
-
-reformat_hhsuite.pl a3m fas \
-         $(readlink -f ../results/${JOBID}.a3m) \
-         $(readlink -f ../results/full.fas) \
-         -d 160 -uc
+addss.pl ../results/full.a3m
 
 DBJOINED=""
 #create file in which selected dbs are written
@@ -320,7 +327,7 @@ fi
 
 # Perform HHsearch #
 hhsearch -cpu %THREADS \
-         -i ../results/${JOBID}.reduced.a3m \
+         -i ../results/full.a3m \
          ${DBJOINED} \
          -o ../results/${JOBID}.hhr \
          -oa3m ../results/${JOBID}.a3m \
@@ -337,6 +344,7 @@ hhsearch -cpu %THREADS \
          ${MACT} \
          -maxres 32000 \
          -contxt ${HHLIB}/data/context_data.crf
+
 
 echo "done" >> ../results/process.log
 updateProcessLog
