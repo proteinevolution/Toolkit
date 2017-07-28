@@ -245,7 +245,11 @@ let validationProcess = function(elem: any,toolname: string) {
 
 
             if (hhpredTarget.basicValidation("yes")) {
-                hhpredTarget.sameLengthValidation();
+                if (!hhpredTarget.validateA3M()) {
+                    hhpredTarget.sameLengthValidation();
+
+                }
+
                 hhpredTarget.hhMaxDB();
 
                 if(hhpredTarget.hasTwo()) {
@@ -700,6 +704,14 @@ class alignmentVal implements ToolkitValidator {
         }else{
             return true;
         }
+    }
+
+    validateA3M(): boolean {
+        if($("#alignment").val().slice(0,5) == "#A3M#") {
+            feedback(true, "A3M format", "success");
+            return true;
+        }
+        return false;
     }
 
     basicValidation(checkNucleotide: string): boolean {
