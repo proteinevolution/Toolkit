@@ -14,7 +14,7 @@
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="@{tool.toolNameShort}_selectAll()" class="selectAllSeq"><span class="selectAllSeqSpan">Select all</span></a>
+    <a onclick="@{tool.toolNameShort}_selectAllClustal()" class="selectAllSeq"><span class="selectAllSeqSpanClustal">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Alignment</span></a>
     <a type="button" onclick="@{tool.toolNameShort}_colorAA()"><span id="colorAA">Color Alignment</span></a>
@@ -38,7 +38,7 @@
 
         var fileUrl = "/files/@jobID/alignment.clustalw_aln";
         var downloadFilename = "@{tool.toolNameShort}_@{resultName}_jobID_@{jobID}.clustal";
-        var selectAllBool = false;
+        var selectAllBoolClustal = false;
         var colorAAsClustal = false;
         var numHits = @alignment.alignment.length;
         var resultName = '@resultName';
@@ -79,11 +79,11 @@
             });
         };
 
-        window["@{tool.toolNameShort}_selectAll"] = function(){
-            selectAllBool = !selectAllBool;
-            $(".selectAllSeqSpan").toggleClass("colorToggle");
-            $(".selectAllSeqSpan").toggleText("Select all", "Deselect all");
-            if(selectAllBool) {
+        window["@{tool.toolNameShort}_selectAllClustal"] = function(){
+            selectAllBoolClustal = !selectAllBoolClustal;
+            $(".selectAllSeqSpanClustal").toggleClass("colorToggle");
+            $(".selectAllSeqSpanClustal").toggleText("Select all", "Deselect all");
+            if(selectAllBoolClustal) {
                 selectAllHelper(checkbox);
                 // first empty array
                 checkboxes = [];
@@ -96,7 +96,6 @@
                 checkboxes = [];
             }
         };
-
 
         window["@{tool.toolNameShort}_getHits"] = function(color){
                 $('#loadingHits').show();
