@@ -62,7 +62,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
   }
 
   def updateLog(jobID: String) = Action {
-    jobActorAccess.sendToJobActor(jobID, UpdateLog(jobID)) // TODO somehow this is getting triggered to rarely
+    jobActorAccess.sendToJobActor(jobID, UpdateLog(jobID)) // TODO somehow this is getting triggered too rarely
     Ok
   }
 

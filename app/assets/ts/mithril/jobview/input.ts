@@ -144,8 +144,7 @@ let ParameterAlignmentComponent = {
                     cols: 70,
                     id: ctrl.id,
                     "class": "alignment",
-                    //value: args.value,
-                    value: localStorage.getItem('alignmentcontent'),
+                    value: args.value,
                     required: "required",
                     spellcheck: false,
                     config: validation
