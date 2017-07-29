@@ -194,13 +194,22 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 3000;
+            charLimitPerSeq = 6000;
             seqLimit = 10000;
 
             let hmmerTarget = new alignmentVal($(elem));
 
             if (hmmerTarget.basicValidation("yes")) {
                 hmmerTarget.sameLengthValidation();
+
+                if(hmmerTarget.hasTwo()) {
+                    $("#max_hhblits_iter").val("0");
+                    $("#max_hhblits_iter").niceSelect('update');
+                }
+                else {
+                    $("#max_hhblits_iter").val("1");
+                    $("#max_hhblits_iter").niceSelect('update');
+                }
             }
 
             break;
@@ -212,7 +221,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
              * first space, in the header are used as ID.
              */
-            charLimitPerSeq = 3000;
+            charLimitPerSeq = 6000;
             seqLimit = 10000;
 
             let hhblitsTarget = new alignmentVal($(elem));
@@ -231,7 +240,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 3000; // TODO: why was the charLimit defined after it's usage?
+            charLimitPerSeq = 6000; // TODO: why was the charLimit defined after it's usage?
             seqLimit = 10000;
 
             let hhpredTarget = new alignmentVal($(elem));
@@ -240,6 +249,15 @@ let validationProcess = function(elem: any,toolname: string) {
             if (hhpredTarget.basicValidation("yes")) {
                 hhpredTarget.sameLengthValidation();
                 hhpredTarget.hhMaxDB();
+
+                if(hhpredTarget.hasTwo()) {
+                    $("#msa_gen_max_iter").val("0");
+                    $("#msa_gen_max_iter").niceSelect('update');
+                }
+                else {
+                    $("#msa_gen_max_iter").val("4");
+                    $("#msa_gen_max_iter").niceSelect('update');
+                }
             }
 
             break;
@@ -252,7 +270,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 3000; // TODO: why was the charLimit defined after it's usage?
+            charLimitPerSeq = 6000; // TODO: why was the charLimit defined after it's usage?
             seqLimit = 10000;
 
             let hhompTarget = new alignmentVal($(elem));
@@ -260,6 +278,15 @@ let validationProcess = function(elem: any,toolname: string) {
 
             if (hhompTarget.basicValidation("yes")) {
                 hhompTarget.sameLengthValidation();
+
+                if(hhompTarget.hasTwo()) {
+                    $("#msa_gen_max_iter").val("0");
+                    $("#msa_gen_max_iter").niceSelect('update');
+                }
+                else {
+                    $("#msa_gen_max_iter").val("4");
+                    $("#msa_gen_max_iter").niceSelect('update');
+                }
             }
 
             break;
@@ -323,15 +350,23 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "hhrepid":
 
-            charLimitPerSeq = 3000;
+            charLimitPerSeq = 6000;
             seqLimit = 10000;
 
             let hhrepidTarget = new alignmentVal($(elem));
 
             if (hhrepidTarget.basicValidation("yes")) {
                 hhrepidTarget.sameLengthValidation();
-            }
 
+                if(hhrepidTarget.hasTwo()) {
+                    $("#msa_gen_max_iter").val("0");
+                    $("#msa_gen_max_iter").niceSelect('update');
+                }
+                else {
+                    $("#msa_gen_max_iter").val("4");
+                    $("#msa_gen_max_iter").niceSelect('update');
+                }
+            }
             break;
 
 
@@ -410,6 +445,14 @@ let validationProcess = function(elem: any,toolname: string) {
 
             if (quick2dTarget.basicValidation("yes")) {
                 quick2dTarget.sameLengthValidation();
+
+                if(quick2dTarget.hasTwo()) {
+                    $("#quick_iters").val("0");
+                    $("#quick_iters").niceSelect('update');
+                } else {
+                    $("#quick_iters").val("3");
+                    $("#quick_iters").niceSelect('update');
+                }
             }
 
             break;
@@ -765,6 +808,19 @@ class alignmentVal implements ToolkitValidator {
         }
         return true;
     }
+
+    hasTwo() : boolean {
+
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
+        else if (this.elem.reformat('numbers') > 1){
+            return true;
+        }
+       return false;
+    }
+
 
     DNAvalidation(): any {
 

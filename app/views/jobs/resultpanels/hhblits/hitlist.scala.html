@@ -128,7 +128,7 @@
 
 
 <div class="reveal" id="templateAlignmentModal" data-reveal>
-    <p>Template Alignment</p>
+    <p>Template Alignment (~100 most distinct sequences)</p>
     <div>
         <select onclick="forwardTemplateAlignment_(this.value, $('#alignmentTemplate').val())" id="alignmentTemplate_tool">
             <option value="" selected>Forward To</option>
@@ -278,6 +278,7 @@
 
 
         function hhblits_forwardQueryMSA(selectedTool){
+            $.LoadingOverlay("show");
             $.ajax({
                 type: 'GET',
                 url: fileUrlQueryMSAFas
