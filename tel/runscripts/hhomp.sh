@@ -61,6 +61,11 @@ fi
 echo "done" >> ../results/process.log
 updateProcessLog
 
+head -n 2 ../results/${JOBID}.fas > ../results/firstSeq0.fas
+sed 's/[\.\-]//g' ../results/firstSeq0.fas > ../results/firstSeq.fas
+rm ../results/firstSeq0.fas
+
+
 
 #CHECK IF MSA generation is required or not
 if [ "%msa_gen_max_iter.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
@@ -92,6 +97,7 @@ else
                 -v 2 \
                 -e %hhpred_incl_eval.content \
                 -i ../results/${JOBID}.fas \
+                -M first \
                 -d %UNIPROT  \
                 -oa3m ../results/${JOBID}.a3m \
                 -n %msa_gen_max_iter.content \
@@ -197,7 +203,7 @@ ${HHOMPPATH}/hhomp_hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../res
 manipulate_json.py -k 'db' -v '%hhompdb.content' ../results/${JOBID}.json
 
 # Generate Query in JSON
-fasta2json.py ../results/${JOBID}.fas ../results/query.json
+fasta2json.py ../results/firstSeq.fas ../results/query.json
 
 echo "done" >> ../results/process.log
 updateProcessLog
