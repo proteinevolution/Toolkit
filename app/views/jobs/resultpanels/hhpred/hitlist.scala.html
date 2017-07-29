@@ -25,7 +25,7 @@
                 }">Forward</a>
                 <a id="forwardButtonHHsuite" data-open="forwardModal_@{
                     tool.toolNameShort
-                }_hhsuite">Forward Query MSA</a>
+                }_hhsuite">Forward Query A3M</a>
                 @*only show create model when chosen db=mmcif70/pdb70*@
                 @if(result.db.matches("mmcif70/pdb70")) {
                     <a onclick="@{tool.toolNameShort}_manual()">Create model using selection</a>
@@ -307,7 +307,7 @@
             }).done(function () {
                 $.ajax({
                     type: 'GET',
-                    url: 'files/' + jobID + '/' + accession + '.fas',
+                    url: 'files/' + jobID + '/' + accession + '.a3m',
                     error: function(){
                         $.LoadingOverlay("hide")
                     }
@@ -406,7 +406,7 @@
             $.LoadingOverlay("show");
             $.ajax({
                 type: 'GET',
-                url: "files/" + jobID + "/reduced.fas"
+                url: "files/" + jobID + "/reduced.a3m"
             }).done(function (data_) {
                 forward(selectedTool, data_.toString());
             });
