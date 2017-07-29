@@ -26,7 +26,7 @@
                 }">Forward</a>
                 <a id="forwardButtonHHsuite" data-open="forwardModal_@{
                     tool.toolNameShort
-                }_hhsuite">Forward Query MSA</a>
+                }_hhsuite">Forward Query A3M</a>
                 <a onclick="wrap()" id="wrap">Wrap Seqs</a>
             </div>
         </div>
@@ -149,7 +149,7 @@
             $.LoadingOverlay("hide");
         }));
         var jobID = '@{jobID}';
-        var fileUrlQueryMSAFas = "/files/"+jobID+"/alignment.fas";
+        var fileUrlQueryMSAFas = "/files/"+jobID+"/reduced.a3m";
         var checkbox = "checkbox";
         var selectAllBool = false;
         var numHits = @{result.num_hits};
@@ -299,7 +299,7 @@
             }).done(function () {
                 $.ajax({
                     type: 'GET',
-                    url: 'files/@jobID/' + accession + '.fas',
+                    url: 'files/@jobID/' + accession + '.ra3m',
                     error: function(){
                         $.LoadingOverlay("hide")
                     }
