@@ -136,12 +136,12 @@ let aa_color_background : Map<string, string> = new Map<string, string>();
     // make content of main textarea persistent against mithril redraws
 
 
-
+    /*
     let cleanupAlignment = function(){
         localStorage.setItem('alignmentcontent', "");
     };
 
-    window.addEventListener("hashchange", cleanupAlignment, false);
+    window.addEventListener("hashchange", cleanupAlignment, false); */
 
     //window.onbeforeunload = function() {
     //    localStorage.setItem("alignmentcontent", localStorage.getItem('alignmentcontent'));
