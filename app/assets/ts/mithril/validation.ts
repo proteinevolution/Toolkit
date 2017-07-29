@@ -225,7 +225,9 @@ let validationProcess = function(elem: any,toolname: string) {
             let hhblitsTarget = new alignmentVal($(elem));
 
             if (hhblitsTarget.basicValidation("yes")) {
-                hhblitsTarget.sameLengthValidation();
+                if (!hhblitsTarget.validateA3M()) {
+                    hhblitsTarget.sameLengthValidation();
+                }
             }
 
             break;
@@ -707,9 +709,16 @@ class alignmentVal implements ToolkitValidator {
     }
 
     validateA3M(): boolean {
-        if($("#alignment").val().slice(0,5) == "#A3M#") {
-            feedback(true, "A3M format", "success");
-            return true;
+        if($("#alignment").val().slice(0,5) == "#A3M#"){
+
+            if(this.elem.reformat('numbers') > 2) {
+                feedback(true, "A3M format", "success");
+                return true;
+            }
+            else{
+                feedback(false, "Invalid A3M! Expecting two or more sequences!", "error");
+                return true;
+            }
         }
         return false;
     }

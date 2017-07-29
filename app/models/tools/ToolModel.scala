@@ -207,16 +207,6 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.evalues(hhblits.parseResult(jsvalue).HSPS.map(_.info.evalue))
           }
         },
-        "Representative Alignment" -> { (jobID, requestHeader) =>
-          mongoStore.getResult(jobID).map {
-            case Some(jsvalue) =>
-              implicit val r = requestHeader
-              views.html.jobs.resultpanels.alignment(jobID,
-                                                     aln.parseAlignment((jsvalue \ "rep100").as[JsArray]),
-                                                     "rep100",
-                                                     this.values(Toolnames.HHBLITS))
-          }
-        },
         "Query Template MSA" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           mongoStore.getResult(jobID).map {
@@ -226,7 +216,16 @@ final class ToolFactory @Inject()(
                                                      "querytemplate",
                                                      this.values(Toolnames.HHBLITS))
           }
-        }
+        },
+        "Representative Alignment" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+            mongoStore.getResult(jobID).map {
+              case Some(jsvalue) =>
+              views.html.jobs.resultpanels.alignmentQueryMSA(jobID, aln.parseAlignment((jsvalue \ "reduced").as[JsArray]),
+                "reduced",
+                this.values(Toolnames.HHBLITS))
+    }
+  }
       ),
       Toolnames.MARCOIL -> ListMap(
         "CC-Prob" -> { (jobID, requestHeader) =>
