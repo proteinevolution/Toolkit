@@ -884,7 +884,8 @@ final class ToolFactory @Inject()(
         paramAccess.getParam("SAMCC_HELIXTHREE").name,
         paramAccess.getParam("SAMCC_HELIXFOUR").name,
         paramAccess.getParam("TARGET_PSI_DB").name,
-        paramAccess.getParam("QUICK_ITERS").name
+        paramAccess.getParam("QUICK_ITERS").name,
+        paramAccess.getParam("PCOILS_INPUT_MODE").name
       )
     )
     // Params which are not a part of any group (given by the name)

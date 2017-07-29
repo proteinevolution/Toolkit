@@ -30,7 +30,7 @@ window.JobModel = {
         "grammar": "Prosite_grammar",
         "macmode": "off",
         "macthreshold":"0.3",
-        "max_hhblits_iter":"0",
+        "max_hhblits_iter":"1",
         "score_ss":"2",
         "ss_scoring":"2",
         "rep_pval_threshold":"1e-2",

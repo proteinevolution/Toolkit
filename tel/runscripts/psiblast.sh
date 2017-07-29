@@ -90,7 +90,7 @@ TMPRED=`tmhmm ../results/firstSeq.fas -short`
 run_Coils -c -min_P 0.8 < ../results/firstSeq.fas >& ../results/firstSeq.cc
 COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
 
-rm ../results/firstSeq0.fas ../results/firstSeq.fas ../results/firstSeq.cc
+rm ../results/firstSeq0.fas ../results/firstSeq.cc
 
 echo "#Running PSI-BLAST against the %standarddb.content DB." >> ../results/process.log
 updateProcessLog
@@ -146,7 +146,7 @@ blastJson2tab.py ../results/output_psiblastp.json ../results/output_psiblastp.ta
 blastviz_json.pl ../results/output_psiblastp.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
 
 # Generate Query in JSON
-fasta2json.py ../results/${JOBID}.fas ../results/query.json
+fasta2json.py ../results/firstSeq.fas ../results/query.json
 
 
 # Generate Query in JSON
