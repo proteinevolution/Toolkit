@@ -1,7 +1,7 @@
 package controllers
 
 import javax.inject.Inject
-
+import play.twirl.api.Html
 import models.database.CMS.FeaturedArticle
 import play.api.mvc._
 import reactivemongo.bson.BSONObjectID
@@ -71,6 +71,24 @@ class DataController @Inject()(mongoStore: MongoStore,
         BadRequest
       }
     }
+  }
+
+
+  def getHelp(toolname: String) = Action {
+    val help = toolname match{
+  case "psiblast" => views.html.help.psiblast()
+  case "hhblits" => views.html.help.hhblits()
+  case "hhpred" => views.html.help.hhpred()
+  case "hmmer" => views.html.help.hmmer()
+  case "patsearch" => views.html.help.patsearch()
+  case "clustalo" => views.html.help.clustalo()
+  case "kalign" => views.html.help.kalign()
+  case "mafft" => views.html.help.mafft()
+  case "msaprobs" => views.html.help.msaprobs()
+  case "muscle" => views.html.help.muscle()
+  case "tcoffee" => views.html.help.tcoffee()
+  }
+  Ok(help)
   }
 
 }
