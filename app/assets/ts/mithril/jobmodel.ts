@@ -25,7 +25,7 @@ window.JobModel = {
         "seq_count": 1000,
         "codon_table": "1",
         "genetic_code": "1",
-        "msa_gen_max_iter": "4",
+        "msa_gen_max_iter": "3",
         "quick_iters": "3",
         "grammar": "Prosite_grammar",
         "macmode": "off",

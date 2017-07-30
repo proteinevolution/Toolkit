@@ -249,17 +249,11 @@ let validationProcess = function(elem: any,toolname: string) {
             if (hhpredTarget.basicValidation("yes")) {
                 if (!hhpredTarget.validateA3M()) {
                     hhpredTarget.sameLengthValidation();
-
                 }
-
                 hhpredTarget.hhMaxDB();
 
                 if(hhpredTarget.hasTwo()) {
                     $("#msa_gen_max_iter").val("0");
-                    $("#msa_gen_max_iter").niceSelect('update');
-                }
-                else {
-                    $("#msa_gen_max_iter").val("4");
                     $("#msa_gen_max_iter").niceSelect('update');
                 }
             }
@@ -360,14 +354,12 @@ let validationProcess = function(elem: any,toolname: string) {
             let hhrepidTarget = new alignmentVal($(elem));
 
             if (hhrepidTarget.basicValidation("yes")) {
-                hhrepidTarget.sameLengthValidation();
+                if (!hhrepidTarget.validateA3M()) {
+                    hhrepidTarget.sameLengthValidation();
+                }
 
                 if(hhrepidTarget.hasTwo()) {
                     $("#msa_gen_max_iter").val("0");
-                    $("#msa_gen_max_iter").niceSelect('update');
-                }
-                else {
-                    $("#msa_gen_max_iter").val("4");
                     $("#msa_gen_max_iter").niceSelect('update');
                 }
             }
