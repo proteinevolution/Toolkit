@@ -273,16 +273,12 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let hhompTarget = new alignmentVal($(elem));
 
-
             if (hhompTarget.basicValidation("yes")) {
-                hhompTarget.sameLengthValidation();
-
-                if(hhompTarget.hasTwo()) {
-                    $("#msa_gen_max_iter").val("0");
-                    $("#msa_gen_max_iter").niceSelect('update');
+                if (!hhompTarget.validateA3M()) {
+                    hhompTarget.sameLengthValidation();
                 }
                 else {
-                    $("#msa_gen_max_iter").val("4");
+                    $("#msa_gen_max_iter").val("0");
                     $("#msa_gen_max_iter").niceSelect('update');
                 }
             }
