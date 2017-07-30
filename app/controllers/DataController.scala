@@ -78,6 +78,7 @@ class DataController @Inject()(mongoStore: MongoStore,
     val help = toolname match{
   case "psiblast" => views.html.help.psiblast()
   case "hhblits" => views.html.help.hhblits()
+  case "hhpred" => views.html.help.hhpred()
   }
   Ok(help)
   }
