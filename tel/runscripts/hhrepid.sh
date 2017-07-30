@@ -2,11 +2,34 @@ JOBID=%jobid.content
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
+A3M_INPUT=$(head -1 ../params/alignment | egrep "^#A3M#" | wc -l)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
       updateProcessLog
       false
+fi
+
+if [ ${A3M_INPUT} = "1" ] ; then
+
+    sed -i '1d' ../params/alignment
+
+    reformatValidator.pl a3m fas \
+           $(readlink -f ../params/alignment) \
+           $(readlink -f ../params/alignment.tmp) \
+           -d 160 -uc -l 32000
+
+     if [ ! -f ../params/alignment.tmp ]; then
+            echo "#Input is not in valid A3M format." >> ../results/process.log
+            updateProcessLog
+            false
+     else
+            echo "#Query is in A3M format." >> ../results/process.log
+            updateProcessLog
+            mv ../params/alignment.tmp ../params/alignment
+            echo "done" >> ../results/process.log
+            updateProcessLog
+     fi
 fi
 
 if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
@@ -74,24 +97,35 @@ else
     #MSA generation by HHblits
     if [ %msa_gen_max_iter.content -lt "2" ] ; then
         echo "#MSA generation required. Running 1 iteration of HHblits." >> ../results/process.log
+        ITERS=1
     else
         echo "#MSA generation required. Running %msa_gen_max_iter.content iterations of HHblits." >> ../results/process.log
+        ITERS=%msa_gen_max_iter.content
+    fi
+
+    if [ ${SEQ_COUNT} -gt "1" ] ; then
+        INPUT="%alignment.path -M first"
+    else
+        INPUT="%alignment.path"
     fi
 
     updateProcessLog
     hhblits -cpu 8 \
             -v 2 \
-            -i %alignment.path \
+            -i ${INPUT} \
             -d %UNIPROT  \
             -o /dev/null \
             -oa3m ../results/query.a3m \
-            -n %msa_gen_max_iter.content \
+            -n ${ITERS} \
             -mact 0.35
-
 fi
 
 echo "done" >> ../results/process.log
 updateProcessLog
+
+echo "#Running HHblits." >> ../results/process.log
+updateProcessLog
+
 
 addss.pl ../results/query.a3m
 
@@ -99,17 +133,15 @@ addss.pl ../results/query.a3m
 hhfilter -i ../results/query.a3m \
          -o ../results/query.reduced.a3m \
          -diff 100
-
-#max. 160 characters in description
-reformat_hhsuite.pl a3m fas \
-         $(readlink -f ../results/query.reduced.a3m) \
-         $(readlink -f ../results/query.msa) \
-         -d 160 -noss
-
 cp ../results/query.reduced.a3m ../results/query.a3m
 
-echo "#Running HHblits." >> ../results/process.log
-updateProcessLog
+reformat_hhsuite.pl a3m a3m \
+         $(readlink -f ../results/query.reduced.a3m) \
+         $(readlink -f ../results/reduced.a3m) \
+         -d 160 -noss
+sed -i "1 i\#A3M#" ../results/reduced.a3m
+
+
 
 hhrepid -qsc 0.$i \
         -i ../results/query.a3m \
@@ -129,5 +161,6 @@ hhrepid -qsc 0.$i \
 
 echo "done" >> ../results/process.log
 updateProcessLog
+
 
 rm ../results/query.reduced.a3m ../results/query.a3m

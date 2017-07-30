@@ -7,7 +7,7 @@
     <div class="colorOptsAlignment">
         <a id="forwardButtonHHsuite" data-open="forwardModal_@{
             tool.toolNameShort
-        }_hhrepid">Forward Query MSA</a>
+        }_hhrepid">Forward Query A3M</a>
         <hr id="line-element" colspan="4" class="horizontal-line">
     </div>
 
@@ -24,7 +24,7 @@
             $.LoadingOverlay("show");
             $.ajax({
                 type: 'GET',
-                url: 'files/@jobID/query.msa'
+                url: 'files/@jobID/reduced.a3m'
             }).done(function (data_) {
                 forward(selectedTool, data_.toString());
             });
