@@ -1,0 +1,46 @@
+@()
+<div id="tabs">
+    <ul>
+        <li><a href="#tabs-1">Overview</a></li>
+        <li><a href="#tabs-2">Parameters</a></li>
+        <li><a href="#tabs-3">References</a></li>
+    </ul>
+    <div id="tabs-1" class="greenlink">
+        Retrieves all sequences which contain a given PROSITE pattern or regular expression.
+    </div>
+    <div id="tabs-2" class="greenlink">
+        <ul class="accordion" data-accordion data-allow-all-closed='true'>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Input format</a>
+                <div class="accordion-content" data-tab-content>
+                    <pre>Prosite grammar:<br/><br/>Example:<br/>G[VLIM](2)x(3,10)W{A}Dxx[ST]<br/><br/>A prosite pattern is described using the following conventions:<br/><br/>-> The standard IUPAC one-letter codes for the amino acids are used.<br/>-> The symbol 'x' is used for a position where any amino acid is accepted. <br/>-> Ambiguities are indicated by listing the acceptable amino acids for a given position, <br/>   between square parentheses '[ ]'. For example: [ALT] stands for Ala or Leu or Thr. <br/>-> Ambiguities are also indicated by listing between a pair of curly brackets '{ }' the <br/>   amino acids that are not accepted at a given position. For example: {AM} stands for any <br/>   amino acid except Ala and Met. <br/>-> Repetition of an element of the pattern can be indicated by following that element with <br/>   a numerical value or a numerical range between parenthesis. <br/>   Examples: x(3) corresponds to xxx, x(2,4) corresponds to xx or xxx or xxxx. <br/>-> When a pattern is restricted to either the N- or C-terminal of a sequence, <br/>   that pattern either starts with a '<' symbol or respectively ends with a '>' symbol. <br/>   In some rare cases (e.g. PS00267 or PS00539), '>' can also occur inside square brackets for the <br/>   C-terminal element. 'F[GSTV]PRL[G>]' means that either 'F[GSTV]PRLG' or 'F[GSTV]PRL>' are considered.<br/><br/>(<a href = http://prosite.expasy.org/#convent35>Prosite user manual</a>)<br/><br/>Regular expression:<br/><br/>Example:<br/>G[VLIM]{2}.{3,10}W[^A]D..[ST]<br/><br/>-> A character class, defined by square parentheses '[ ]', matches a single amino acid out <br/>   of all the possibilities offered by the character class.<br/>   For example: [ALT] stands for Ala or Leu or Thr<br/>-> A caret '^' immediately after the opening '[' negates the character class.<br/>   For example: [^ALT] stands for all amino acid except Ala and Leu and Thr<br/>-> A dot '.' matches any amino acid.<br/>-> A pair of curly brackets '{}' repeats the previous item exactly n times '{n}' <br/>   or between n and m times '{n,m}'.<br/>   For example: A{3} correspond to AAA, .{2,4} corresponds to .. or ... or ....<br/>-> A caret '^' match the start of the sequence.<br/>-> A dollar '$' match the end of the sequence.</pre>
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Select database</a>
+                <div class="accordion-content" data-tab-content>
+                    The selected databases are used in the pattern search. You may press CTRL to select multiple databases.
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Sequence count cutoff</a>
+                <div class="accordion-content" data-tab-content>
+                    You can select the max. count of sequences that will be fetched by your Pattern Search. Default value is 1000 sequences. You can increase the cutoff for degenerate Prosite Patterns, however the Bioinformatics Toolkit may not be able to display all results due to to size constraints of the output file.
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">FASTA sequences</a>
+                <div class="accordion-content" data-tab-content>
+                    Here you can enter your own sequences in which the pattern will be searched.
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div id="tabs-3" class="greenlink">
+        <p>Alva V., Nam SZ., Söding J., Lupas AN. (2016) <b>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.</b> Nucleic Acids Res. pii: gkw348. <a href=https://www.ncbi.nlm.nih.gov/pubmed/27131380>PMID: 27131380</a></p>
+    </div>
+</div>
+
+<script>
+        $(".accordion").foundation();
+</script>

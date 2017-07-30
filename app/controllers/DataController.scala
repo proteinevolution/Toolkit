@@ -79,6 +79,8 @@ class DataController @Inject()(mongoStore: MongoStore,
   case "psiblast" => views.html.help.psiblast()
   case "hhblits" => views.html.help.hhblits()
   case "hhpred" => views.html.help.hhpred()
+  case "hmmer" => views.html.help.hmmer()
+  case "patsearch" => views.html.help.patsearch()
   }
   Ok(help)
   }
