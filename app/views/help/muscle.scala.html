@@ -1,0 +1,47 @@
+@()
+<div id="tabs">
+    <ul>
+        <li><a href="#tabs-1">Overview</a></li>
+        <li><a href="#tabs-2">Parameters</a></li>
+        <li><a href="#tabs-3">References</a></li>
+    </ul>
+    <div id="tabs-1" class="greenlink">
+        MUSCLE is a multiple alignment program for protein sequences. MUSCLE stands for multiple sequence comparison by log-expectation.<br/>[MUSCLE 3.8.31; <a href = http://www.drive5.com/muscle/>http://www.drive5.com/muscle/</a>]
+    </div>
+    <div id="tabs-2" class="greenlink">
+        <ul class="accordion" data-accordion data-allow-all-closed='true'>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Input format</a>
+                <div class="accordion-content" data-tab-content>
+                    Enter multiple sequences in fasta format. A sequence in FASTA format begins with a single-line description, followed by lines of sequence data. The description line is distinguished from the sequence data by a greater-than (\">\") symbol in the first column. It is recommended that all lines of text be shorter than 80 characters in length. An example sequence in FASTA format is:<br/><br/><br/><pre>>gi|532319|pir|TVFV2E|TVFV2E envelope protein<br/>ELRLRYCAPAGFALLKCNDADYDGFKTNCSNVSVVHCTNLMNTTVTTGLLLNGSYSENRT<br/>QIWQKHRTSNDSALILLNKHYNLTVTCKRPGNKTVLPVTIMAGLVFHSQKYNLRLRQAWC<br/>HFPSNWKGAWKEVKEEIVNLPKERYRGTNDPKRIFFQRQWGDPETANLWFNCHGEFFYCK<br/>MDWFLNYLNNLTVDADHNECKNTSGTKSGNKRAPGPCVQRTYVACHIRSVIIWLETISKK<br/>TYAPPREGHLECTSTVTGMTVELNYIPKNRTNVTLSPQIESIWAAELDRYKLVEITPIGF<br/>APTEVRRYTGGHERQKRVPFVXXXXXXXXXXXXXXXXXXXXXXVQSQHLLAGILQQQKNL<br/>LAAVEAQQQMLKLTIWGVK</pre><br/><br/>Sequences are expected to be represented in the standard IUB/IUPAC amino acid codes, with these exceptions: lower-case letters are accepted and are mapped into upper-case; a single hyphen or dash can be used to represent a gap of indeterminate length; and in amino acid sequences, U and * are acceptable letters (see below). Before submitting a request, any numerical digits in the query sequence should either be removed or replaced by appropriate letter codes (e.g., X for unknown amino acid residue).<br/><br/>The accepted amino acid codes are:<br/><br/><pre>    A  alanine                         P  proline<br/>    B  aspartate or asparagine         Q  glutamine<br/>    C  cystine                         R  arginine<br/>    D  aspartate                       S  serine<br/>    E  glutamate                       T  threonine<br/>    F  phenylalanine                   U  selenocysteine<br/>    G  glycine                         V  valine<br/>    H  histidine                       W  tryptophan<br/>    I  isoleucine                      Y  tyrosine<br/>    K  lysine                          Z  glutamate or glutamine<br/>    L  leucine                         X  any<br/>    M  methionine                      *  translation stop<br/>    N  asparagine                      -  gap of indeterminate length</pre>
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Select output format</a>
+                <div class="accordion-content" data-tab-content>
+                    Use this radio button to specify if the output should be in Fasta or in ClustalW format.
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Maximum number of iterations</a>
+                <div class="accordion-content" data-tab-content>
+                    Specify the maximum number of iterations.
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Other advanced options</a>
+                <div class="accordion-content" data-tab-content>
+                    Use this text field to specify advanced options via commandline.
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div id="tabs-3" class="greenlink">
+        <p>Alva V., Nam SZ., Söding J., Lupas AN. (2016) <b>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.</b> Nucleic Acids Res. pii: gkw348. <a href=https://www.ncbi.nlm.nih.gov/pubmed/27131380>PMID: 27131380</a></p>
+        <p>Edgar RC. (2004) <b>MUSCLE: multiple sequence alignment with high accuracy and high throughput.</b> Nucl Acid Res 32(5):1792-1797. <a href = https://www.ncbi.nlm.nih.gov/pubmed/15034147>PMID: 15034147</a></p>
+    </div>
+</div>
+
+<script>
+        $(".accordion").foundation();
+</script>
