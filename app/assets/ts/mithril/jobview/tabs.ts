@@ -170,7 +170,7 @@ let JobTabsComponent = {
                     })
                 ])
             ] : null,
-            m("form", { id: "jobform" },
+            m("div", { id: "jobform" },
                 ctrl.params.map(function(paramGroup : any) : any {
                     let elements;
                     if (paramGroup[1].length !== 0) {
@@ -207,16 +207,6 @@ let JobTabsComponent = {
                             )
                         ])
                     }}),
-                ctrl.isJob && ctrl.state === 2 ? m("div", { "class": "tabs-panel", id: "tabpanel-Queued"  },
-                    m(JobQueuedComponent, { job: ctrl.job })) : void 0,
-                ctrl.isJob && ctrl.state === 3 ? m("div", { "class": "tabs-panel", id: "tabpanel-Running" },
-                    m(JobRunningComponent, { job: ctrl.job })) : void 0,
-                ctrl.isJob && ctrl.state === 4 ? m("div", { "class": "tabs-panel", id: "tabpanel-Error"   },
-                    m(JobErrorComponent, {job: ctrl.job})) : void 0,
-                ctrl.isJob && ctrl.state === 7 ? m("div", { "class": "tabs-panel", id: "tabpanel-Pending" },
-                    m(JobPendingComponent, {job: ctrl.job})) : void 0,
-                ctrl.isJob && ctrl.state === 8 ? m("div", { "class": "tabs-panel", id: "tabpanel-Warning" },
-                    m(JobLimitReachedComponent, {job: ctrl.job})) : void 0,
                 m(JobSubmissionComponent, { job: ctrl.job, isJob: ctrl.isJob })
             ),
             ctrl.views ? ctrl.views.map(function(view : any) {
