@@ -76,6 +76,7 @@ final class ToolFactory @Inject()(
     final val HHBLITS             = "hhblits"
     final val MARCOIL             = "marcoil"
     final val PCOILS              = "pcoils"
+    final val REPPER              = "repper"
     final val MODELLER            = "modeller"
     final val HMMER               = "hmmer"
     final val HHPRED              = "hhpred"
@@ -220,16 +221,6 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.evalues(hhblits.parseResult(jsvalue).HSPS.map(_.info.evalue))
           }
         },
-        "Representative Alignment" -> { (jobID, requestHeader) =>
-          mongoStore.getResult(jobID).map {
-            case Some(jsvalue) =>
-              implicit val r = requestHeader
-              views.html.jobs.resultpanels.alignment(jobID,
-                                                     aln.parseAlignment((jsvalue \ "rep100").as[JsArray]),
-                                                     "rep100",
-                                                     this.values(Toolnames.HHBLITS))
-          }
-        },
         "Query Template MSA" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           mongoStore.getResult(jobID).map {
@@ -239,7 +230,16 @@ final class ToolFactory @Inject()(
                                                      "querytemplate",
                                                      this.values(Toolnames.HHBLITS))
           }
-        }
+        },
+        "Representative Alignment" -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+            mongoStore.getResult(jobID).map {
+              case Some(jsvalue) =>
+              views.html.jobs.resultpanels.alignmentQueryMSA(jobID, aln.parseAlignment((jsvalue \ "reduced").as[JsArray]),
+                "reduced",
+                this.values(Toolnames.HHBLITS))
+    }
+  }
       ),
       Toolnames.MARCOIL -> ListMap(
         "CC-Prob" -> { (jobID, requestHeader) =>
@@ -286,6 +286,12 @@ final class ToolFactory @Inject()(
           Future.successful(
             views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".numerical")
           )
+        }
+      ),
+      Toolnames.REPPER -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.repper(jobID, s"${constants.jobPath}$jobID/results/" + jobID))
         }
       ),
       Toolnames.MODELLER -> ListMap(
@@ -885,7 +891,8 @@ final class ToolFactory @Inject()(
         paramAccess.getParam("SAMCC_HELIXFOUR").name,
         paramAccess.getParam("TARGET_PSI_DB").name,
         paramAccess.getParam("QUICK_ITERS").name,
-        paramAccess.getParam("PCOILS_INPUT_MODE").name
+        paramAccess.getParam("PCOILS_INPUT_MODE").name,
+        paramAccess.getParam("REPPER_INPUT_MODE").name
       )
     )
     // Params which are not a part of any group (given by the name)

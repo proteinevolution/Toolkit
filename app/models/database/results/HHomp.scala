@@ -63,7 +63,6 @@ case class HHompTemplate(consensus: String,
                          bb_conf: String,
                          start: Int)
 case class HHompResult(HSPS: List[HHompHSP],
-                       alignment: AlignmentResult,
                        num_hits: Int,
                        query: SingleSeq,
                        db: String,
@@ -90,12 +89,10 @@ class HHomp @Inject()(general: General, aln: Alignment) {
         }
         val db           = (obj \ jobID \ "db").as[String]
         val overall_prob = (obj \ jobID \ "overallprob").as[Double]
-
-        val alignment = aln.parseAlignment((obj \ "reduced").as[JsArray])
         val query     = general.parseSingleSeq((obj \ "query").as[JsArray])
         val num_hits  = hsplist.length
 
-        HHompResult(hsplist, alignment, num_hits, query, db, overall_prob)
+        HHompResult(hsplist, num_hits, query, db, overall_prob)
       } catch {
 
         case e: Exception => e.printStackTrace(); null

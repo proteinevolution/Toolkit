@@ -20,7 +20,7 @@
             <div id="controlls">
                 <a id="forwardButtonHHsuite" data-open="forwardModal_@{
                     tool.toolNameShort
-                }_hhomp">Forward Query MSA</a>
+                }_hhomp">Forward Query A3M</a>
                 <a onclick="colorAA()" class="colorAA">Color Seqs</a>
                 <a onclick="wrap()" id="wrap">Wrap Seqs</a>
                 </div>
@@ -190,7 +190,7 @@
             $.LoadingOverlay("show");
             $.ajax({
                 type: 'GET',
-                url: "files/" + jobID + "/reduced.fas"
+                url: "files/" + jobID + "/reduced.a3m"
             }).done(function (data_) {
                 forward(selectedTool, data_.toString());
             });

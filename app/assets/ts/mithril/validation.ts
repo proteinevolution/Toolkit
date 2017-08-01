@@ -202,14 +202,6 @@ let validationProcess = function(elem: any,toolname: string) {
             if (hmmerTarget.basicValidation("yes")) {
                 hmmerTarget.sameLengthValidation();
 
-                if(hmmerTarget.hasTwo()) {
-                    $("#max_hhblits_iter").val("0");
-                    $("#max_hhblits_iter").niceSelect('update');
-                }
-                else {
-                    $("#max_hhblits_iter").val("1");
-                    $("#max_hhblits_iter").niceSelect('update');
-                }
             }
 
             break;
@@ -227,7 +219,13 @@ let validationProcess = function(elem: any,toolname: string) {
             let hhblitsTarget = new alignmentVal($(elem));
 
             if (hhblitsTarget.basicValidation("yes")) {
-                hhblitsTarget.sameLengthValidation();
+                if (!hhblitsTarget.validateA3M()) {
+                    hhblitsTarget.sameLengthValidation();
+                }
+                else {
+                    $("#maxrounds").val("1");
+                    $("#maxrounds").niceSelect('update');
+                }
             }
 
             break;
@@ -249,19 +247,12 @@ let validationProcess = function(elem: any,toolname: string) {
             if (hhpredTarget.basicValidation("yes")) {
                 if (!hhpredTarget.validateA3M()) {
                     hhpredTarget.sameLengthValidation();
-
                 }
-
-                hhpredTarget.hhMaxDB();
-
-                if(hhpredTarget.hasTwo()) {
+                else {
                     $("#msa_gen_max_iter").val("0");
                     $("#msa_gen_max_iter").niceSelect('update');
                 }
-                else {
-                    $("#msa_gen_max_iter").val("4");
-                    $("#msa_gen_max_iter").niceSelect('update');
-                }
+                hhpredTarget.hhMaxDB();
             }
 
             break;
@@ -279,16 +270,12 @@ let validationProcess = function(elem: any,toolname: string) {
 
             let hhompTarget = new alignmentVal($(elem));
 
-
             if (hhompTarget.basicValidation("yes")) {
-                hhompTarget.sameLengthValidation();
-
-                if(hhompTarget.hasTwo()) {
-                    $("#msa_gen_max_iter").val("0");
-                    $("#msa_gen_max_iter").niceSelect('update');
+                if (!hhompTarget.validateA3M()) {
+                    hhompTarget.sameLengthValidation();
                 }
                 else {
-                    $("#msa_gen_max_iter").val("4");
+                    $("#msa_gen_max_iter").val("0");
                     $("#msa_gen_max_iter").niceSelect('update');
                 }
             }
@@ -360,14 +347,11 @@ let validationProcess = function(elem: any,toolname: string) {
             let hhrepidTarget = new alignmentVal($(elem));
 
             if (hhrepidTarget.basicValidation("yes")) {
-                hhrepidTarget.sameLengthValidation();
-
-                if(hhrepidTarget.hasTwo()) {
-                    $("#msa_gen_max_iter").val("0");
-                    $("#msa_gen_max_iter").niceSelect('update');
+                if (!hhrepidTarget.validateA3M()) {
+                    hhrepidTarget.sameLengthValidation();
                 }
                 else {
-                    $("#msa_gen_max_iter").val("4");
+                    $("#msa_gen_max_iter").val("0");
                     $("#msa_gen_max_iter").niceSelect('update');
                 }
             }
@@ -450,13 +434,6 @@ let validationProcess = function(elem: any,toolname: string) {
             if (quick2dTarget.basicValidation("yes")) {
                 quick2dTarget.sameLengthValidation();
 
-                if(quick2dTarget.hasTwo()) {
-                    $("#quick_iters").val("0");
-                    $("#quick_iters").niceSelect('update');
-                } else {
-                    $("#quick_iters").val("3");
-                    $("#quick_iters").niceSelect('update');
-                }
             }
 
             break;
@@ -709,9 +686,16 @@ class alignmentVal implements ToolkitValidator {
     }
 
     validateA3M(): boolean {
-        if($("#alignment").val().slice(0,5) == "#A3M#") {
-            feedback(true, "A3M format", "success");
-            return true;
+        if($("#alignment").val().slice(0,5) == "#A3M#"){
+
+            if(this.elem.reformat('numbers') > 2) {
+                feedback(true, "A3M format", "success");
+                return true;
+            }
+            else{
+                feedback(false, "Invalid A3M! Expecting two or more sequences!", "error");
+                return true;
+            }
         }
         return false;
     }
