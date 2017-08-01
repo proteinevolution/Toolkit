@@ -170,7 +170,7 @@ let JobTabsComponent = {
                     })
                 ])
             ] : null,
-            m("div", { id: "jobform" },
+            m("form", { id: "jobform" },
                 ctrl.params.map(function(paramGroup : any) : any {
                     let elements;
                     if (paramGroup[1].length !== 0) {
