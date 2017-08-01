@@ -32,22 +32,16 @@ object Router extends js.JSApp {
       "/:path..."         -> ErrorComponent
     )
 
-
-
     m.route(mountpoint, "/", routes)
-
 
     // in absence of multi-tenancy support: mount the joblist, which gets redrawn independently from other view changes, in a separate mithril instance
 
     g.jobList = g.m.deps.factory(g.window)
-
     g.jobList.mount(g.document.getElementById("off-canvas-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
-
     g.jobList.mount(g.document.getElementById("sidebar").asInstanceOf[HTMLDivElement], JobListComponent)
 
-    //m.mount(g.document.getElementById("off-canvas-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
 
-
+    //TODO the activejobID is not passed from the toolkit component to the joblistcomponent at the moment
     // m(JobListComponent, { activejobID : m.route.param("jobID") })
 
 
