@@ -97,6 +97,26 @@ let hideSubmitButtons = function (elem : any, isInit : boolean) : any {
 };
 
 
+let hideSidebar = function (elem : any, isInit : boolean) : any {
+    if (!isInit) {
+
+        $('#sidebar').hide();
+        $('#main-content').removeClass();
+
+    }
+};
+
+
+let showSidebar = function (elem : any, isInit : boolean) : any {
+    if (!isInit) {
+
+        $('#sidebar').show();
+        $('#main-content').removeClass().addClass('large-10 small-12 columns padded-column');
+
+    }
+};
+
+
 
 let submitModal = function(elem : any, isInit : boolean) : any {
     if (!isInit) {

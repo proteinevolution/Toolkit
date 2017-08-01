@@ -79,10 +79,10 @@ onMessage = function(event : MessageEvent) : any {
             m.endComputation();
             break;
         case "PushJob":
-            m.startComputation();
+            jobList.startComputation();
             //console.log("WSS " + JSON.stringify(message.job));
             JobListComponent.pushJob(JobListComponent.Job(message.job));
-            LiveTable.pushJob(message.job);
+            //LiveTable.pushJob(message.job);
             JobManager.pushToTable(message.job);
             if(message.job.status == 4 || message.job.status == 5) {
                 notifications += 1;
@@ -90,7 +90,7 @@ onMessage = function(event : MessageEvent) : any {
                 JobRunningComponent.terminate(message.jobID);
                 console.log(message.job.jobID + " has finished with status: " + message.job.status);
             }
-            m.endComputation();
+            jobList.endComputation();
             break;
         case "UpdateLoad":
             // Tried to limit this by saving the "currentRoute", but we might need something proper in the future.
@@ -104,9 +104,9 @@ onMessage = function(event : MessageEvent) : any {
             });
             break;
         case "WatchLogFile":
-            m.startComputation();
+            //m.startComputation();
             JobRunningComponent.updateLog(message.jobID, message.lines);
-            m.endComputation();
+            //m.endComputation();
             break;
         case "MaintenanceAlert":
             $('.maintenance_alert').show();

@@ -9,7 +9,14 @@ class JobRunningComponent {
         console.log(this.jobID + " " + jobID);
         console.log(lines);
 
-        if(JobRunningComponent.jobID == jobID) {
+        let path = window.location.href;
+        let url = path.split("/");
+
+
+        //console.log(url[url.length - 1] + " " + jobID);
+
+
+        if(url[url.length - 1] == jobID) {
             this.lines = lines;
             this.RunningLog = lines.split("#");
             m.redraw.strategy("diff");
@@ -22,7 +29,7 @@ class JobRunningComponent {
 
     public static terminate(jobID: string){
 
-        if(jobID == JobRunningComponent.jobID || JobRunningComponent.jobID == "undefined"){
+        if(jobID == JobRunningComponent.jobID){
             m.redraw(true);
         }
 
