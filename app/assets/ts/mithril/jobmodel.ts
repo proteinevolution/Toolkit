@@ -52,6 +52,7 @@ window.JobModel = {
         "pcoils_matrix": "2",
         "pcoils_weighting":"1",
         "pcoils_input_mode":"0",
+        "repper_input_mode":"0",
         "no_replicates":"0",
         "matrix_phyml":"LG",
         "eff_crick_angle":"1",
@@ -61,10 +62,13 @@ window.JobModel = {
         "clans_eval":"1e-4",
         "target_psi_db":"UniRef90",
         "transition_probability":"1",
-        "matrix_marcoil":"mtk"
-},
-
-
+        "matrix_marcoil":"mtk",
+        "window_size":"100",
+        "periodicity_min":"2",
+        "periodicity_max":"100",
+        "ftwin_threshold":"6",
+        "repwin_threshold":"2"
+    },
     update: function(args : any, value : string) : any {
         if (args.isJob) {
             return m.request({
