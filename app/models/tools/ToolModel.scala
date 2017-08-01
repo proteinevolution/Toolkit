@@ -76,6 +76,7 @@ final class ToolFactory @Inject()(
     final val HHBLITS             = "hhblits"
     final val MARCOIL             = "marcoil"
     final val PCOILS              = "pcoils"
+    final val REPPER              = "repper"
     final val MODELLER            = "modeller"
     final val HMMER               = "hmmer"
     final val HHPRED              = "hhpred"
@@ -268,6 +269,12 @@ final class ToolFactory @Inject()(
         "ProbList" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".numerical"))
+        }
+      ),
+      Toolnames.REPPER -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.repper(jobID, s"${constants.jobPath}$jobID/results/" + jobID))
         }
       ),
       Toolnames.MODELLER -> ListMap(
@@ -805,7 +812,8 @@ final class ToolFactory @Inject()(
         paramAccess.getParam("SAMCC_HELIXFOUR").name,
         paramAccess.getParam("TARGET_PSI_DB").name,
         paramAccess.getParam("QUICK_ITERS").name,
-        paramAccess.getParam("PCOILS_INPUT_MODE").name
+        paramAccess.getParam("PCOILS_INPUT_MODE").name,
+        paramAccess.getParam("REPPER_INPUT_MODE").name
       )
     )
     // Params which are not a part of any group (given by the name)
