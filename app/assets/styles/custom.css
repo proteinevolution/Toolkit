@@ -148,11 +148,7 @@ tr.job a:visited {
     height: 400px;
 }
 
-.vertical {
 
-    z-index: 99;
-
-}
 
 #alert {
     color: white;
@@ -225,43 +221,6 @@ tr.job a:visited {
     height: 3.5em;
 }
 
-.off-canvas-wrapper {
-
-    min-height: 31.250em;
-}
-
-.off-canvas-wrapper-inner {
-
-    min-height: 31.250em;
-
-}
-
-#offCanvas {
-    height: 100%;
-    font-size: 0.8em;
-}
-
-.vertical a {
-    color: black;
-    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-}
-
-.vertical a:hover {
-    background-color: white;
-}
-
-#responsive-menu ul {
-    background-color: #e6e6e6;
-}
-
-.off-canvas {
-    z-index: 99;
-}
-
-.off-canvas-wrapper {
-    position: relative;
-    overflow: visible;
-}
 
 :focus {
     outline: 0;
