@@ -1,4 +1,3 @@
-// Velocity animation config
 declare var moment : any;
 interface Window { JobManager: any; }
 window.JobManager = {
@@ -141,9 +140,9 @@ window.JobManager = {
 
     view: function (ctrl : any) {
         return [
-            m("div", { "class": "large-2 padded-column columns show-for-large", id: "sidebar" }, [
-                m(JobListComponent, { activejobID : m.route.param("jobID") })
-            ]),
+            //m("div", { "class": "large-2 padded-column columns show-for-large", id: "sidebar" }, [
+            //    m(JobListComponent, { activejobID : m.route.param("jobID") })
+            //]),
             m("div", {"class": "jobManagerContainer large-10"},
                 m("div", {"class": "jobline"}, [
                     m("span", {"class": "toolname"}, [

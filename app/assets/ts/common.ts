@@ -139,9 +139,23 @@ let aa_color_background : Map<string, string> = new Map<string, string>();
     /*
     let cleanupAlignment = function(){
         localStorage.setItem('alignmentcontent', "");
+    }; */
+
+    let toggleSidebar = function(){
+        let path = window.location.href;
+        let url = path.split("/");
+
+        if(url[url.length - 2] == 'tools' || url[url.length - 2] == 'jobs'){
+            $('#sidebar').show();
+            $('#main-content').removeClass().addClass('large-10 small-12 columns padded-column');
+        }
+        else {
+            $('#sidebar').hide();
+            $('#main-content').removeClass();
+        }
     };
 
-    window.addEventListener("hashchange", cleanupAlignment, false); */
+    window.addEventListener("hashchange", toggleSidebar, false);
 
     //window.onbeforeunload = function() {
     //    localStorage.setItem("alignmentcontent", localStorage.getItem('alignmentcontent'));

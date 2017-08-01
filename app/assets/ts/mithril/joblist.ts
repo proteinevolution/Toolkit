@@ -1,5 +1,3 @@
-
-
 let tooltipSearch = function(elem : any, isInit : boolean) {
     if (!isInit) {
         elem.setAttribute("data-tooltip", "data-tooltip");
@@ -11,7 +9,11 @@ let tooltipSearch = function(elem : any, isInit : boolean) {
 
 interface Window { JobListComponent: any; }
 
+declare var jobList : any;
+
 window.JobListComponent = {
+
+
     // Generates a job Object
     Job : function (data : any) {
         return {
@@ -30,10 +32,11 @@ window.JobListComponent = {
                 }
             },
             // View component
-            controller : function (args : any) { return {} },
+            controller : function (args : any) {
+                return {} },
             view : function (ctrl : any) {
                 return m("div", {
-                    "class"   : ("job " + a[this.status]).concat(this.jobID === JobListComponent.selectedJobID ? " selected" : ""),
+                    "class"   : ("job " +   a[this.status]).concat(this.jobID === JobListComponent.selectedJobID ? " selected" : ""),
                     id      : this.jobID,
                     onclick : this.select(this)
                 }, [
@@ -186,6 +189,11 @@ window.JobListComponent = {
             m.route("/jobs/" + newJob.jobID);                   // actualize the content view and
             this.scrollToJobListItem(index);                    // scroll to the new position in the joblist
         }
+
+
+        jobList.redraw.strategy("diff");
+        jobList.redraw(true);
+
     },
     visibleJobs : function () {     // function cuts the list down to the visible elements
         return JobListComponent.list.slice(JobListComponent.index, JobListComponent.index + JobListComponent.numVisibleItems);
@@ -216,7 +224,6 @@ window.JobListComponent = {
         JobListComponent.reloadList();
         // TODO this is a hack to make the controller use the reload list command only once
         JobListComponent.controller = function(){return {}};
-
 
         return {}
     },
