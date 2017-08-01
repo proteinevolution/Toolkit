@@ -145,7 +145,7 @@ let aa_color_background : Map<string, string> = new Map<string, string>();
         let path = window.location.href;
         let url = path.split("/");
 
-        if(url[url.length - 2] == 'tools' || url[url.length - 2] == 'jobs'){
+        if(url[url.length - 2] == 'tools' || url[url.length - 2] == 'jobs' || url[url.length - 1] == 'jobmanager'){
             $('#sidebar').show();
             $('#main-content').removeClass().addClass('large-10 small-12 columns padded-column');
         }
