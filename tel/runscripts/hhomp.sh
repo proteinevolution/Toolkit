@@ -1,14 +1,38 @@
 JOBID=%jobid.content
-
+A3M_INPUT=$(head -1 ../params/alignment | egrep "^#A3M#" | wc -l)
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
+
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
       updateProcessLog
       false
 fi
+
+if [ ${A3M_INPUT} = "1" ] ; then
+
+    sed -i '1d' ../params/alignment
+
+    reformatValidator.pl a3m fas \
+           $(readlink -f ../params/alignment) \
+           $(readlink -f ../params/alignment.tmp) \
+           -d 160 -uc -l 32000
+
+     if [ ! -f ../params/alignment.tmp ]; then
+            echo "#Input is not in valid A3M format." >> ../results/process.log
+            updateProcessLog
+            false
+     else
+            echo "#Query is in A3M format." >> ../results/process.log
+            updateProcessLog
+            mv ../params/alignment.tmp ../params/alignment
+            echo "done" >> ../results/process.log
+            updateProcessLog
+     fi
+fi
+
 
 if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
       sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
@@ -84,23 +108,35 @@ else
     #MSA generation required
     #Check what method to use (PSI-BLAST? HHblits?)
 
-        echo "#Query MSA generation required." >> ../results/process.log
-        updateProcessLog
-        echo "done" >> ../results/process.log
-        updateProcessLog
+    echo "#Query MSA generation required." >> ../results/process.log
+    updateProcessLog
+    echo "done" >> ../results/process.log
+    updateProcessLog
+
+    if [ %msa_gen_max_iter.content -lt "2" ] ; then
+        ITERS=1
+    else
+        ITERS=%msa_gen_max_iter.content
+    fi
 
     #MSA generation by HHblits
     if [ "%msa_gen_method.content" = "hhblits" ] ; then
-        echo "#Running HHblits for query MSA and A3M generation." >> ../results/process.log
+        echo "#Running ${ITERS} iteration(s) of HHblits for query MSA and A3M generation." >> ../results/process.log
         updateProcessLog
+
+        INPUT="../results/${JOBID}.fas"
+        if [ ${SEQ_COUNT} -gt "1" ] ; then
+            INPUT="../results/${JOBID}.fas -M first"
+        fi
+
         hhblits -cpu %THREADS \
                 -v 2 \
                 -e %hhpred_incl_eval.content \
-                -i ../results/${JOBID}.fas \
+                -i ${INPUT} \
                 -M first \
                 -d %UNIPROT  \
                 -oa3m ../results/${JOBID}.a3m \
-                -n %msa_gen_max_iter.content \
+                -n -${ITERS} \
                 -qid %min_seqid_query.content \
                 -cov %min_cov.content \
                 -mact 0.35
@@ -112,7 +148,7 @@ else
     #MSA generation by PSI-BLAST
     if [ "%msa_gen_method.content" = "psiblast" ] ; then
 
-        echo "#Running PSI-BLAST for query MSA and A3M generation." >> ../results/process.log
+        echo "#Running ${ITERS} iteration(s) of PSI-BLAST for query MSA and A3M generation." >> ../results/process.log
         updateProcessLog
         #Check if input is a single sequence or an MSA
         INPUT="query"
@@ -121,7 +157,7 @@ else
         fi
 
         psiblast -db ${STANDARD}/nre70 \
-                 -num_iterations %msa_gen_max_iter.content \
+                 -num_iterations ${ITERS} \
                  -evalue 0.001 \
                  -inclusion_ethresh %hhpred_incl_eval.content\
                  -num_threads %THREADS \
@@ -149,13 +185,11 @@ fi
 #Generate representative MSA for forwarding
 
 hhfilter -i ../results/${JOBID}.a3m \
-         -o ../results/reduced.fas \
+         -o ../results/reduced.a3m \
          -diff 100
 
-reformat_hhsuite.pl a3m fas \
-         $(readlink -f ../results/reduced.fas) \
-         $(readlink -f ../results/reduced.fas) \
-         -d 160
+sed -i "1 i\#A3M#" ../results/reduced.a3m
+
 
 addss.pl ../results/${JOBID}.a3m
 
@@ -191,9 +225,6 @@ echo "#Preparing output." >> ../results/process.log
 updateProcessLog
 
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
-
-#create full alignment json; use for forwarding
-fasta2json.py ../results/reduced.fas ../results/reduced.json
 
 
 # Generate Hitlist in JSON for hhrfile
