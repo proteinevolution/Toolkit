@@ -67,7 +67,9 @@ window.JobModel = {
         "periodicity_min":"2",
         "periodicity_max":"100",
         "ftwin_threshold":"6",
-        "repwin_threshold":"2"
+        "repwin_threshold":"2",
+        "in_format":"a3m",
+        "out_format":"fas",
     },
     update: function(args : any, value : string) : any {
         if (args.isJob) {
