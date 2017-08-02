@@ -60,6 +60,36 @@ let validationProcess = function(elem: any,toolname: string) {
 
     //---------------------------------------------------------------------------------------------//
     switch (toolname) {
+
+
+        case "formatseq":
+            /** validation model for hhblits:
+             * Input has to be a single FASTA sequence
+             * or aligned FASTA with at least two sequences.
+             * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             */
+            charLimitPerSeq = 6000;
+            seqLimit = 10000;
+
+            let formatseqTarget = new alignmentVal($(elem));
+
+            if (formatseqTarget.basicValidation("yes")) {
+                if (!formatseqTarget.validateA3M()) {
+                    if (formatseqTarget.sameLengthValidation()) {
+                        formatseqTarget.mustHave2();
+                        $("#in_format").val("fas");
+                        $("#in_format").niceSelect('update');
+                    }
+                } else {
+                    $("#in_format").val("a3m");
+                    $("#in_format").niceSelect('update');
+                }
+            }
+
+            break;
+
+
         case "tcoffee":
             /** validation model for tcoffee:
              * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
@@ -550,8 +580,10 @@ let validationProcess = function(elem: any,toolname: string) {
             let hhfilterTarget = new alignmentVal($(elem));
 
             if (hhfilterTarget.basicValidation("yes")) {
-                if(hhfilterTarget.sameLengthValidation())
-                    hhfilterTarget.mustHave2();
+                if (!hhfilterTarget.validateA3M()) {
+                    if (hhfilterTarget.sameLengthValidation())
+                        hhfilterTarget.mustHave2();
+                }
             }
 
             break;

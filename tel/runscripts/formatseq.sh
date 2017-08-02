@@ -41,7 +41,10 @@ OUT_FORMAT=%out_format.content
 LINE_LENGTH=100
 
 if [ ${IN_FORMAT} = "a3m" ] ; then
-    sed -i '1d' ../results/${JOBID}.in
+    A3M_INPUT=$(head -1 ../results/${JOBID}.in | egrep "^#A3M#" | wc -l)
+    if [ ${A3M_INPUT} = "1" ] ; then
+        sed -i '1d' ../results/${JOBID}.in
+    fi
 fi
 
 if [ ${OUT_FORMAT} = "clu" ] ; then
@@ -51,10 +54,15 @@ fi
 echo "#Converting input from ${IN_FORMAT^^} to ${OUT_FORMAT^^} format." >> ../results/process.log
 updateProcessLog
 
+CASE="-uc"
+if [ ${OUT_FORMAT} = "a3m" ] ; then
+   CASE=""
+fi
+
 reformatValidator.pl ${IN_FORMAT} ${OUT_FORMAT} \
 	        $(readlink -f ../results/${JOBID}.in) \
             $(readlink -f ../results/${JOBID}.out) \
-            -l ${LINE_LENGTH}
+            -l ${LINE_LENGTH} ${CASE}
 
 if [ ${OUT_FORMAT} = "a3m" ] ; then
     sed -i "1 i\#A3M#" ../results/${JOBID}.out
