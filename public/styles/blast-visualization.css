@@ -687,3 +687,7 @@ table.dataTable.no-footer{
     margin-left: 1em;
 }
 
+#hcontainer {
+    overflow: auto;
+}
+

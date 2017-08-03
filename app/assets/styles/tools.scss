@@ -14,7 +14,7 @@
 
 .ui-state-active {
   background: #fefefe !important;
-  height: 120%;
+  height: 100%;
 }
 
 #tool-tabs {
@@ -23,9 +23,6 @@
 }
 
 .ui-widget-header {
-  -webkit-box-shadow: 0 1px 6px 0 #ccc;
-  -moz-box-shadow: 0 1px 6px 0 #ccc;
-  box-shadow: 0 1px 6px 0 #ccc;
   background: #888;
   background-color: #eee;
   background-clip: border-box;
@@ -51,6 +48,8 @@
 .ui-tabs-panel {
   padding: 2em !important;
 }
+
+
 .tooltipster-bottom{
   font-size: 0.8em;
   max-width: 15em;
@@ -135,6 +134,10 @@
 .smenu-dropdown {
   left: auto !important;
   top: 3cm !important;
+}
 
-
+@media screen and (max-width: 550px) {
+  .ui-tabs .ui-tabs-nav li {
+    float: none;
+  }
 }
