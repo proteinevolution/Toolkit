@@ -69,9 +69,6 @@ let select2Single = function(elem : any, isInit : boolean) : any {
     }
 };
 
-
-
-
 let helpModalAccess = function(elem : any, isInit: boolean) {
     if (!isInit) {
         return elem.setAttribute("data-open", "help-" + (this.job().tool.toolname));
@@ -116,8 +113,6 @@ let showSidebar = function (elem : any, isInit : boolean) : any {
     }
 };
 
-
-
 let submitModal = function(elem : any, isInit : boolean) : any {
     if (!isInit) {
         $(elem).foundation();
@@ -145,7 +140,7 @@ let fadesIn = function(element : any, isInitialized : boolean, context : any) {
     let url = window.location.href;
     let parts = url.split("/");
     let isJob = parts[parts.length-2] == "jobs";
-
+    //let isTool = parts[parts.length-2] == "tools";
     if (!isInitialized && !isJob) {
         element.style.opacity = 0;
         $(element).velocity({opacity: 1, top: "50%"}, 750);
