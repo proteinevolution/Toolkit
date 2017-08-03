@@ -417,6 +417,7 @@ FIELDSET {
     box-shadow: 0 1px 2px 0 #ccc;
     border-radius: 3px;
     border: 1px solid #ccc;
+    background: #eeeeee;
 }
 
 #searchInput{
@@ -567,12 +568,10 @@ td#joblistIcon i {
 
 }
 
-
 /*Hide Livetable on small screen and adjust page elements */
 @media screen and (max-width: 730px) {
     .grid {
         margin-top: 20px;
-        width: 90%;
     }
 }
 
@@ -631,11 +630,6 @@ td#joblistIcon i {
     }
 }
 
-@media screen and (max-width: 800px) {
-    .tile_container {
-        width: 93vw;
-    }
-}
 
 @media screen and (max-width: 800px) {
     .text_part {

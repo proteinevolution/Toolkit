@@ -4,7 +4,6 @@ SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
 
-
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
       updateProcessLog
@@ -27,46 +26,47 @@ if [ ${A3M_INPUT} = "1" ] ; then
      else
             echo "#Query is in A3M format." >> ../results/process.log
             updateProcessLog
-            mv ../params/alignment.tmp ../params/alignment
+            cp ../params/alignment ../results/${JOBID}.in.a3m
+            rm ../params/alignment.tmp
             echo "done" >> ../results/process.log
             updateProcessLog
      fi
-fi
-
-
-if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
-      sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
-      CHAR_COUNT=$(wc -m < ../params/alignment1)
-
-      if [ ${CHAR_COUNT} -gt "10000" ] ; then
-            echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
-            updateProcessLog
-            false
-      else
-            sed -i "1 i\>Q_${JOBID}" ../params/alignment1
-            mv ../params/alignment1 ../params/alignment
-      fi
-fi
-
-if [ ${FORMAT} = "1" ] ; then
-      reformatValidator.pl clu fas \
-            $(readlink -f %alignment.path) \
-            $(readlink -f ../results/${JOBID}.fas) \
-            -d 160 -uc -l 32000
 else
-      reformatValidator.pl fas fas \
-            $(readlink -f %alignment.path) \
-            $(readlink -f ../results/${JOBID}.fas) \
-            -d 160 -uc -l 32000
+
+    if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
+          sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
+          CHAR_COUNT=$(wc -m < ../params/alignment1)
+
+          if [ ${CHAR_COUNT} -gt "10000" ] ; then
+                echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
+                updateProcessLog
+                false
+          else
+                sed -i "1 i\>Q_${JOBID}" ../params/alignment1
+                mv ../params/alignment1 ../params/alignment
+          fi
+    fi
+
+    if [ ${FORMAT} = "1" ] ; then
+          reformatValidator.pl clu a3m \
+                $(readlink -f %alignment.path) \
+                $(readlink -f ../results/${JOBID}.in.a3m) \
+                -d 160 -l 32000
+    else
+          reformatValidator.pl fas a3m \
+                $(readlink -f %alignment.path) \
+                $(readlink -f ../results/${JOBID}.in.a3m) \
+                -d 160 -l 32000
+    fi
+
+    if [ ! -f ../results/${JOBID}.in.a3m ]; then
+        echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
+        updateProcessLog
+        false
+    fi
 fi
 
-if [ ! -f ../results/${JOBID}.fas ]; then
-    echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-    updateProcessLog
-    false
-fi
-
-SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
+SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.in.a3m | wc -l)
 
 if [ ${SEQ_COUNT} -gt "10000" ] ; then
       echo "#Input contains more than 10000 sequences." >> ../results/process.log
@@ -85,9 +85,14 @@ fi
 echo "done" >> ../results/process.log
 updateProcessLog
 
+reformatValidator.pl a3m fas \
+       $(readlink -f ../results/${JOBID}.in.a3m) \
+       $(readlink -f ../results/${JOBID}.fas) \
+       -d 160 -uc -l 32000
+
 head -n 2 ../results/${JOBID}.fas > ../results/firstSeq0.fas
 sed 's/[\.\-]//g' ../results/firstSeq0.fas > ../results/firstSeq.fas
-rm ../results/firstSeq0.fas
+rm ../results/firstSeq0.fas ../results/${JOBID}.fas
 
 
 
@@ -95,9 +100,7 @@ rm ../results/firstSeq0.fas
 if [ "%msa_gen_max_iter.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
         echo "#No MSA generation required for building A3M." >> ../results/process.log
         updateProcessLog
-        reformat_hhsuite.pl fas a3m ../results/${JOBID}.fas ${JOBID}.a3m -M first
-        mv ${JOBID}.a3m ../results/${JOBID}.a3m
-        hhfilter -i ../results/${JOBID}.a3m \
+        hhfilter -i ../results/${JOBID}.in.a3m \
                  -o ../results/${JOBID}.a3m \
                  -cov %min_cov.content\
                  -qid %min_seqid_query.content
@@ -106,8 +109,6 @@ if [ "%msa_gen_max_iter.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
         updateProcessLog
 else
     #MSA generation required
-    #Check what method to use (PSI-BLAST? HHblits?)
-
     echo "#Query MSA generation required." >> ../results/process.log
     updateProcessLog
     echo "done" >> ../results/process.log
@@ -120,19 +121,13 @@ else
     fi
 
     #MSA generation by HHblits
-    if [ "%msa_gen_method.content" = "hhblits" ] ; then
         echo "#Running ${ITERS} iteration(s) of HHblits for query MSA and A3M generation." >> ../results/process.log
         updateProcessLog
-
-        INPUT="../results/${JOBID}.fas"
-        if [ ${SEQ_COUNT} -gt "1" ] ; then
-            INPUT="../results/${JOBID}.fas -M first"
-        fi
 
         hhblits -cpu %THREADS \
                 -v 2 \
                 -e %hhpred_incl_eval.content \
-                -i ${INPUT} \
+                -i ../results/${JOBID}.in.a3m \
                 -M first \
                 -d %UNIPROT  \
                 -oa3m ../results/${JOBID}.a3m \
@@ -144,42 +139,6 @@ else
         echo "done" >> ../results/process.log
         updateProcessLog
 
-    fi
-    #MSA generation by PSI-BLAST
-    if [ "%msa_gen_method.content" = "psiblast" ] ; then
-
-        echo "#Running ${ITERS} iteration(s) of PSI-BLAST for query MSA and A3M generation." >> ../results/process.log
-        updateProcessLog
-        #Check if input is a single sequence or an MSA
-        INPUT="query"
-        if [ ${SEQ_COUNT} -gt 1 ] ; then
-            INPUT="in_msa"
-        fi
-
-        psiblast -db ${STANDARD}/nre70 \
-                 -num_iterations ${ITERS} \
-                 -evalue 0.001 \
-                 -inclusion_ethresh %hhpred_incl_eval.content\
-                 -num_threads %THREADS \
-                 -num_descriptions 20000 \
-                 -num_alignments 20000 \
-                 -${INPUT} ../results/${JOBID}.fas \
-                 -out ../results/output_psiblastp.html
-
-        #keep results only of the last iteration
-        shorten_psiblast_output.pl ../results/output_psiblastp.html ../results/output_psiblastp.html
-
-        #extract MSA in a3m format
-        alignhits_html.pl   ../results/output_psiblastp.html ../results/${JOBID}.a3m \
-                    -Q ../results/${JOBID}.fas \
-                    -e %hhpred_incl_eval.content \
-                    -cov %min_cov.content \
-                    -a3m \
-                    -no_link \
-                    -blastplus
-        echo "done" >> ../results/process.log
-        updateProcessLog
-    fi
 fi
 
 #Generate representative MSA for forwarding
@@ -189,7 +148,6 @@ hhfilter -i ../results/${JOBID}.a3m \
          -diff 100
 
 sed -i "1 i\#A3M#" ../results/reduced.a3m
-
 
 addss.pl ../results/${JOBID}.a3m
 
