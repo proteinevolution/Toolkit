@@ -82,7 +82,7 @@ onMessage = function(event : MessageEvent) : any {
             jobList.startComputation();
             //console.log("WSS " + JSON.stringify(message.job));
             JobListComponent.pushJob(JobListComponent.Job(message.job));
-            //LiveTable.pushJob(message.job);
+            LiveTable.pushJob(message.job);
             JobManager.pushToTable(message.job);
             if(message.job.status == 4 || message.job.status == 5) {
                 notifications += 1;
