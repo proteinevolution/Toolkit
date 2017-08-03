@@ -20,11 +20,6 @@ body {
     }
 }
 
-/* Fix until right foundation 6.4.1 is properly included TODO revisit and remove */
-.tabs-panel.is-active {
-    display: block;
-}
-
 div#main-container {
     height: 100%;
     min-width: 930px;
