@@ -84,7 +84,7 @@ final class ToolFactory @Inject()(
     final val HHPRED_MANUAL       = "hhpred_manual"
     final val HHREPID             = "hhrepid"
     final val ALI2D               = "ali2d"
-    final val QUICK2D               = "quick2d"
+    final val QUICK2D             = "quick2d"
     final val CLUSTALO            = "clustalo"
     final val KALIGN              = "kalign"
     final val MAFFT               = "mafft"
@@ -103,6 +103,7 @@ final class ToolFactory @Inject()(
     final val HHFILTER            = "hhfilter"
     final val PATSEARCH           = "patsearch"
     final val HHOMP               = "hhomp"
+    final val FORMATSEQ              = "formatseq"
   }
 
   // Encompasses some shared views of the result pages
@@ -166,6 +167,17 @@ final class ToolFactory @Inject()(
               implicit val r = requestHeader
               views.html.jobs.resultpanels.evalues(psi.parseResult(jsvalue).HSPS.map(_.evalue))
           }
+        }
+      ),
+      Toolnames.FORMATSEQ -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.fileviewWithDownloadForward(jobID + ".out",
+              s"${constants.jobPath}$jobID/results/" + jobID + ".out",
+              jobID,
+              "FormatSeq",
+              this.values(Toolnames.FORMATSEQ)))
         }
       ),
       Toolnames.CLANS -> ListMap(
@@ -813,7 +825,9 @@ final class ToolFactory @Inject()(
         paramAccess.getParam("TARGET_PSI_DB").name,
         paramAccess.getParam("QUICK_ITERS").name,
         paramAccess.getParam("PCOILS_INPUT_MODE").name,
-        paramAccess.getParam("REPPER_INPUT_MODE").name
+        paramAccess.getParam("REPPER_INPUT_MODE").name,
+        paramAccess.getParam("IN_FORMAT").name,
+        paramAccess.getParam("OUT_FORMAT").name
       )
     )
     // Params which are not a part of any group (given by the name)
