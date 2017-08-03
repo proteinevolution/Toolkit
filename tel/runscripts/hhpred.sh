@@ -228,21 +228,21 @@ else
         echo "#Running ${ITERS} iteration(s) of HHblits for query MSA and A3M generation." >> ../results/process.log
         updateProcessLog
 
-        INPUT="../results/${JOBID}.fas"
-        if [ ${SEQ_COUNT} -gt "1" ] ; then
-            INPUT="../results/${JOBID}.fas -M first"
-        fi
+        reformat_hhsuite.pl fas a3m \
+                            $(readlink -f ../results/${JOBID}.fas) \
+                            $(readlink -f ../results/${JOBID}.in.a3m)
 
         hhblits -cpu %THREADS \
                 -v 2 \
                 -e %hhpred_incl_eval.content \
-                -i ${INPUT} \
+                -i ../results/${JOBID}.in.a3m \
                 -d %UNIPROT  \
                 -oa3m ../results/${JOBID}.a3m \
                 -n ${ITERS} \
                 -qid %min_seqid_query.content \
                 -cov %min_cov.content \
                 -mact 0.35
+        rm ../results/${JOBID}.in.a3m
 
         echo "done" >> ../results/process.log
         updateProcessLog
@@ -331,12 +331,12 @@ then
     if [ "%msa_gen_max_iter.content" = "0" ] && [ ${SEQ_COUNT2} -gt "1" ] ; then
             reformat_hhsuite.pl fas a3m %alignment_two.path db.a3m -M first
     else
-        INPUT2="%alignment_two.path"
-        if [ ${SEQ_COUNT2} -gt "1" ] ; then
-            INPUT2="%alignment_two.path -M first"
-        fi
+            reformat_hhsuite.pl fas a3m \
+                  $(readlink -f %alignment_two.path) \
+                  $(readlink -f ../results/${JOBID}.in2.a3m)
 
-        hhblits -d %UNIPROT -i ${INPUT2} -oa3m db.a3m -n 3 -cpu %THREADS -v 2
+        hhblits -d %UNIPROT -i ../results/${JOBID}.in2.a3m -oa3m db.a3m -n 3 -cpu %THREADS -v 2
+        rm ../results/${JOBID}.in2.a3m
     fi
 
     ffindex_build -as db_a3m_wo_ss.ff{data,index} db.a3m
@@ -430,9 +430,6 @@ fasta2json.py ../results/alignment.fas ../results/querytemplate.json
 
 # Generate Hitlist in JSON for hhrfile
 hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/${JOBID}.json
-
-# Generate Query in JSON
-fasta2json.py ../results/${JOBID}.fas ../results/query.json
 
 # Generate Query in JSON
 fasta2json.py ../results/firstSeq.fas ../results/query.json

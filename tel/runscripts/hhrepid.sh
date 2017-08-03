@@ -13,11 +13,12 @@ fi
 if [ ${A3M_INPUT} = "1" ] ; then
 
     sed -i '1d' ../params/alignment
+    cp ../params/alignment ../results/${JOBID}.a3m
 
     reformatValidator.pl a3m fas \
-           $(readlink -f ../params/alignment) \
+           $(readlink -f ../results/${JOBID}.a3m) \
            $(readlink -f ../params/alignment.tmp) \
-           -d 160 -uc -l 32000
+           -d 160 -l 32000
 
      if [ ! -f ../params/alignment.tmp ]; then
             echo "#Input is not in valid A3M format." >> ../results/process.log
@@ -26,45 +27,46 @@ if [ ${A3M_INPUT} = "1" ] ; then
      else
             echo "#Query is in A3M format." >> ../results/process.log
             updateProcessLog
-            mv ../params/alignment.tmp ../params/alignment
+            rm ../params/alignment.tmp
             echo "done" >> ../results/process.log
             updateProcessLog
      fi
-fi
-
-if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
-      sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
-      CHAR_COUNT=$(wc -m < ../params/alignment1)
-
-      if [ ${CHAR_COUNT} -gt "10000" ] ; then
-            echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
-            updateProcessLog
-            false
-      else
-            sed -i "1 i\>${JOBID}" ../params/alignment1
-            mv ../params/alignment1 ../params/alignment
-      fi
-fi
-
-if [ ${FORMAT} = "1" ] ; then
-      reformatValidator.pl clu fas \
-            $(readlink -f %alignment.path) \
-            $(readlink -f ../results/${JOBID}.fas) \
-            -d 160 -uc -l 32000
 else
-      reformatValidator.pl fas fas \
-            $(readlink -f %alignment.path) \
-            $(readlink -f ../results/${JOBID}.fas) \
-            -d 160 -uc -l 32000
+
+    if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
+          sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
+          CHAR_COUNT=$(wc -m < ../params/alignment1)
+
+          if [ ${CHAR_COUNT} -gt "10000" ] ; then
+                echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
+                updateProcessLog
+                false
+          else
+                sed -i "1 i\>${JOBID}" ../params/alignment1
+                mv ../params/alignment1 ../params/alignment
+          fi
+    fi
+
+    if [ ${FORMAT} = "1" ] ; then
+          reformatValidator.pl clu a3m \
+                $(readlink -f %alignment.path) \
+                $(readlink -f ../results/${JOBID}.a3m) \
+                -d 160 -l 32000
+    else
+          reformatValidator.pl fas a3m \
+                $(readlink -f %alignment.path) \
+                $(readlink -f ../results/${JOBID}.a3m) \
+                -d 160 -l 32000
+    fi
+
+    if [ ! -f ../results/${JOBID}.a3m ]; then
+        echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
+        updateProcessLog
+        false
+    fi
 fi
 
-if [ ! -f ../results/${JOBID}.fas ]; then
-    echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-    updateProcessLog
-    false
-fi
-
-SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
+SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.a3m | wc -l)
 
 if [ ${SEQ_COUNT} -gt "10000" ] ; then
       echo "#Input contains more than 10000 sequences." >> ../results/process.log
@@ -82,16 +84,12 @@ fi
 echo "done" >> ../results/process.log
 updateProcessLog
 
-mv ../results/${JOBID}.fas ../params/alignment
-
 #CHECK IF MSA generation is required or not
 if [ %msa_gen_max_iter.content == "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
         echo "#No MSA generation required." >> ../results/process.log
         updateProcessLog
 
-        reformat_hhsuite.pl fas a3m %alignment.path query.a3m -M first
-        mv query.a3m ../results/query.a3m
-
+        mv ../results/${JOBID}.a3m ../results/query.a3m
 else
     #MSA generation required
     #MSA generation by HHblits
@@ -103,16 +101,10 @@ else
         ITERS=%msa_gen_max_iter.content
     fi
 
-    if [ ${SEQ_COUNT} -gt "1" ] ; then
-        INPUT="%alignment.path -M first"
-    else
-        INPUT="%alignment.path"
-    fi
-
     updateProcessLog
-    hhblits -cpu 8 \
+    hhblits -cpu  %THREADS \
             -v 2 \
-            -i ${INPUT} \
+            -i  ../results/${JOBID}.a3m \
             -d %UNIPROT  \
             -o /dev/null \
             -oa3m ../results/query.a3m \
@@ -140,7 +132,6 @@ reformat_hhsuite.pl a3m a3m \
          $(readlink -f ../results/reduced.a3m) \
          -d 160 -noss
 sed -i "1 i\#A3M#" ../results/reduced.a3m
-
 
 
 hhrepid -qsc 0.$i \

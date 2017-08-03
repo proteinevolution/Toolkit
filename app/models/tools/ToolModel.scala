@@ -206,7 +206,7 @@ final class ToolFactory @Inject()(
                 .hitlist(jobID, hhblits.parseResult(jsvalue), this.values(Toolnames.HHBLITS), s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
           }
         },
-        "Raw Output (HHR)" -> { (jobID, requestHeader) =>
+        "Raw Output" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels
@@ -354,7 +354,7 @@ final class ToolFactory @Inject()(
                 .hitlist(jobID, hhpred.parseResult(jsvalue), this.values(Toolnames.HHPRED), s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
           }
         },
-        "Raw Output (HHR)" -> { (jobID, requestHeader) =>
+        "Raw Output" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels
@@ -399,7 +399,7 @@ final class ToolFactory @Inject()(
                 .hitlist(jobID, hhomp.parseResult(jsvalue), this.values(Toolnames.HHOMP), s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
           }
         },
-        "Raw Output (HHR)" -> { (jobID, requestHeader) =>
+        "Raw Output" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels
