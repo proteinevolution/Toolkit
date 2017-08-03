@@ -217,7 +217,7 @@ let tilescomponent = {
     },
     view: function (ctrl : any) {
         return m("div", {
-                "class": "row article_container small-up-1 medium-up-2 large-up-3 hide-for-small-only"
+                "class": "row article_container small-up-1 medium-up-2 large-up-3"
             },
             ctrl.articles().map(function (article : any) { // TODO this javascript error existed before migration "Uncaught TypeError: Cannot read property 'map' of undefined"
                 return m("div", {
