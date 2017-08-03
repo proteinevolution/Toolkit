@@ -71,7 +71,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
              * first space, in the header are used as ID.
              */
-            charLimitPerSeq = 6000;
+            charLimitPerSeq = 20000;
             seqLimit = 10000;
 
             let formatseqTarget = new alignmentVal($(elem));
@@ -224,7 +224,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 6000;
+            charLimitPerSeq = 20000;
             seqLimit = 10000;
 
             let hmmerTarget = new alignmentVal($(elem));
@@ -243,7 +243,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
              * first space, in the header are used as ID.
              */
-            charLimitPerSeq = 6000;
+            charLimitPerSeq = 20000;
             seqLimit = 10000;
 
             let hhblitsTarget = new alignmentVal($(elem));
@@ -268,7 +268,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 6000; // TODO: why was the charLimit defined after it's usage?
+            charLimitPerSeq = 20000; // TODO: why was the charLimit defined after it's usage?
             seqLimit = 10000;
 
             let hhpredTarget = new alignmentVal($(elem));
@@ -295,7 +295,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 6000; // TODO: why was the charLimit defined after it's usage?
+            charLimitPerSeq = 20000; // TODO: why was the charLimit defined after it's usage?
             seqLimit = 10000;
 
             let hhompTarget = new alignmentVal($(elem));
@@ -371,7 +371,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "hhrepid":
 
-            charLimitPerSeq = 6000;
+            charLimitPerSeq = 20000;
             seqLimit = 10000;
 
             let hhrepidTarget = new alignmentVal($(elem));
@@ -390,7 +390,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "pcoils":
 
-            charLimitPerSeq = 6000;
+            charLimitPerSeq = 20000;
             seqLimit = 2000;
 
             let pcoilsTarget = new alignmentVal($(elem));
