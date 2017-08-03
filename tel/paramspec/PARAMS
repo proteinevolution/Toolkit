@@ -52,3 +52,5 @@ hhomp_incl_eval GEN hhomp_incl_eval.prop
 hhompdb GEN hhompdb.py
 target_psi_db GEN target_psi_db.prop
 repper_input_mode GEN repper_input_mode.prop
+in_format GEN in_format.prop
+out_format GEN out_format.prop
