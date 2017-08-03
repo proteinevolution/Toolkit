@@ -14,7 +14,7 @@ declare var jobList : any;
 window.JobListComponent = {
 
 
-    // Generates a job Object
+    // Generates a job object
     Job : function (data : any) {
         return {
             jobID       : ((data && data.jobID        != null) ? data.jobID       : null),
@@ -224,7 +224,6 @@ window.JobListComponent = {
         JobListComponent.reloadList();
         // TODO this is a hack to make the controller use the reload list command only once
         JobListComponent.controller = function(){return {}};
-
         return {}
     },
     view: function(ctrl : any, args : any) {

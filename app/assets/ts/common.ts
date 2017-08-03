@@ -128,37 +128,36 @@ let aa_color_background : Map<string, string> = new Map<string, string>();
                             }
                         },
                         "content": {
-                            "link": '<a data-open="privacyPolicyModal" style="color:#15423b" text-decoration="underline";>Learn More</a>',
+                            "link": '<a data-open="privacyPolicyModal" style="color:#15423b; text-decoration: underline;">Learn More</a>',
                             "message": "We use cookies to ensure you get the best experience on our website. By using our services you agree to our privacy policies.",
                         },
                     })});
 
-    // make content of main textarea persistent against mithril redraws
-
-
-    /*
-    let cleanupAlignment = function(){
-        localStorage.setItem('alignmentcontent', "");
-    }; */
+    // toggle sidebar so that the joblist is only present when there is no static content
 
     let toggleSidebar = function(){
         let path = window.location.href;
         let url = path.split("/");
+        let $mc = $('#main-content');
+        let $sb = $('#sidebar');
 
         if(url[url.length - 2] == 'tools' || url[url.length - 2] == 'jobs' || url[url.length - 1] == 'jobmanager'){
-            $('#sidebar').show();
-            $('#main-content').removeClass().addClass('large-10 small-12 columns padded-column');
+            //console.log(m.route());
+            $mc.removeClass();
+            $sb.fadeIn(1000);
+            $mc.show();
+            jobList.redraw(true);
+            m.redraw(true);
         }
         else {
-            $('#sidebar').hide();
-            $('#main-content').removeClass();
+            $mc.removeClass();
+            $sb.hide();
         }
     };
 
     window.addEventListener("hashchange", toggleSidebar, false);
 
-    //window.onbeforeunload = function() {
-    //    localStorage.setItem("alignmentcontent", localStorage.getItem('alignmentcontent'));
-    //};
-
+    let reloadJobList = function() {
+        setTimeout(function(){ jobList.redraw(true); }, 200);
+    };
 
