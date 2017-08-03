@@ -111,7 +111,7 @@ $breakpoints: (
         xxlarge: 1440px,
 );
 $print-breakpoint: large;
-$breakpoint-classes: (small medium large);
+$breakpoint-classes: (small medium large xlarge);
 
 // 3. The Grid
 // -----------
@@ -470,6 +470,7 @@ $mediaobject-image-width-stacked: 100%;
 $menu-margin: 0;
 $menu-nested-margin: $global-menu-nested-margin;
 $menu-items-padding: $global-menu-padding;
+$menu-item-padding: $global-menu-padding;
 $menu-simple-margin: 1rem;
 $menu-item-color-active: $white;
 $menu-item-background-active: get-color(primary);
