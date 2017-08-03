@@ -600,7 +600,7 @@ td#joblistIcon i {
     }
 }
 
-@media screen and (max-width: 730px) {
+@media screen and (max-width: 830px) {
     .liveTable {
         display: none;
     }
@@ -612,7 +612,7 @@ td#joblistIcon i {
     /*}*/
 /*}*/
 
-@media screen and (max-width: 730px) {
+@media screen and (max-width: 830px) {
     .liveTableContainer {
         height: 5em;
     }
