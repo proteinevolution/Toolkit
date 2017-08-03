@@ -276,7 +276,7 @@ final class ToolFactory @Inject()(
       Toolnames.PCOILS -> ListMap(
         "CC-Prob" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          Future.successful(views.html.jobs.resultpanels.image(s"/files/$jobID/" + jobID + "_ncoils.png"))
+          Future.successful(views.html.jobs.resultpanels.pcoils(s"/files/$jobID/" + jobID))
         },
         "ProbList" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader

@@ -81,7 +81,7 @@ if [ "%pcoils_input_mode.content" = "2" ]; then
             INPUT="in_msa"
         fi
 
-        psiblast -db ${STANDARD}/nr70 \
+        psiblast -db %STANDARD/nr70 \
                  -num_iterations 1 \
                  -evalue 0.0001 \
                  -inclusion_ethresh 0.0001 \
@@ -118,6 +118,16 @@ fi
 deal_with_sequence.pl ../params/${JOBID} ../params/${JOBID}.in  ../results/${JOBID}.buffer
 cp ../params/${JOBID}.deal_with_sequence ../results
 
+reformat_hhsuite.pl fas a3m \
+         $(readlink -f ../params/${JOBID}.in) \
+         $(readlink -f ../results/${JOBID}.alignment.a3m) \
+         -uc -num -r -M first
+
+${REPPERDIR}/addss.pl -i ../results/${JOBID}.alignment.a3m \
+                      -o ../results/${JOBID}.alignment.ss \
+                      -t ../results/${JOBID}.horiz
+
+
 echo "#Predicting coiled coils using PCOILS." >> ../results/process.log
 updateProcessLog
 
@@ -132,7 +142,10 @@ if [ "%pcoils_input_mode.content" = "0" ]; then
         echo "#Generating output." >> ../results/process.log
         updateProcessLog
 
-        prepare_coils_gnuplot.pl ../results/${JOBID} ../results/${JOBID}.coils_n14 ../results/${JOBID}.coils_n21 ../results/${JOBID}.coils_n28
+        prepare_coils_gnuplot.pl ../results/${JOBID} ../results/${JOBID}.coils_n14 \
+                                 ../results/${JOBID}.coils_n21 ../results/${JOBID}.coils_n28 \
+                                 ../results/${JOBID}.horiz
+
         create_numerical.rb -i ../results/${JOBID} -m %pcoils_matrix.content -s ../params/${JOBID}.in -w %pcoils_weighting.content
 
         echo "done" >> ../results/process.log
@@ -160,7 +173,7 @@ if [ "%pcoils_input_mode.content" = "1" ] || [ "%pcoils_input_mode.content" = "2
          echo "#Generating output." >> ../results/process.log
          updateProcessLog
 
-         prepare_for_gnuplot.pl ../results/${JOBID} F 2 ../results/${JOBID}.coils_n14 ../results/${JOBID}.coils_n21 ../results/${JOBID}.coils_n28 ../results/${JOBID}.horiz
+         prepare_for_gnuplot.pl ../results/${JOBID} T 2 ../results/${JOBID}.coils_n14 ../results/${JOBID}.coils_n21 ../results/${JOBID}.coils_n28 ../results/${JOBID}.horiz
          create_numerical.rb -i ../results/${JOBID} -m %pcoils_matrix.content -a ../params/${JOBID}.in -w %pcoils_weighting.content
 
          echo "done" >> ../results/process.log

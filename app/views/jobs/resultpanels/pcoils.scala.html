@@ -1,0 +1,13 @@
+@(pathToImageFile : String)
+@import java.lang.String; var ncoils=pathToImageFile + "_ncoils.png";
+@import java.lang.String; var psipred=pathToImageFile + "_psipred.png";
+
+<div class="notePlain">
+    <span>PSIPRED</span>
+    <br/><hr>
+    <img hspace="100" src="@psipred">
+        <br/><br/><br/>
+        <span>PCOILS</span>
+        <br/><hr>
+    <img hspace="100" src="@ncoils">
+</div>
