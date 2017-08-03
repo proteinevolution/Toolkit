@@ -216,7 +216,7 @@ final class ToolFactory @Inject()(
                          s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
           }
         },
-        "Raw Output (HHR)" -> { (jobID, requestHeader) =>
+        "Raw Output" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels
@@ -379,7 +379,7 @@ final class ToolFactory @Inject()(
                          s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
           }
         },
-        "Raw Output (HHR)" -> { (jobID, requestHeader) =>
+        "Raw Output" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels
@@ -429,7 +429,7 @@ final class ToolFactory @Inject()(
                          s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
           }
         },
-        "Raw Output (HHR)" -> { (jobID, requestHeader) =>
+        "Raw Output" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels
