@@ -23,4 +23,13 @@
 
 .vertical a {
     color: black;
+    background: #e6e6e6 !important;
+}
+
+.vertical a:hover {
+    background: #F2F2F2 !important;
+}
+
+#responsive-menu {
+    font-size: 0.8em;
 }
