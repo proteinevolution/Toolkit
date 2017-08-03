@@ -137,7 +137,7 @@ window.Index = {
                     ),
                     m("div",
                         m("img", {style: "width: 100%",
-                            'data-interchange': '[/assets/images/Toolkit100.png, large]',
+                            'data-interchange': '[/assets/images/Toolkit100.png, small]',
                             config: foundationConfig
                         })
                     ), m("a", {
