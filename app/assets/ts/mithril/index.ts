@@ -294,7 +294,7 @@ let tilescomponent = {
                                     m("tr",
                                         m("td",
                                             m("a", {href: "/#/tools/psiblast"},
-                                                m("a", "PSI-BLAST")
+                                                m("a", "BLAST")
                                             )
                                         ),
                                         m("td",
