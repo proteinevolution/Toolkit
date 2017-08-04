@@ -60,6 +60,36 @@ let validationProcess = function(elem: any,toolname: string) {
 
     //---------------------------------------------------------------------------------------------//
     switch (toolname) {
+
+
+        case "formatseq":
+            /** validation model for hhblits:
+             * Input has to be a single FASTA sequence
+             * or aligned FASTA with at least two sequences.
+             * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             */
+            charLimitPerSeq = 20000;
+            seqLimit = 10000;
+
+            let formatseqTarget = new alignmentVal($(elem));
+
+            if (formatseqTarget.basicValidation("yes")) {
+                if (!formatseqTarget.validateA3M()) {
+                    if (formatseqTarget.sameLengthValidation()) {
+                        formatseqTarget.mustHave2();
+                        $("#in_format").val("fas");
+                        $("#in_format").niceSelect('update');
+                    }
+                } else {
+                    $("#in_format").val("a3m");
+                    $("#in_format").niceSelect('update');
+                }
+            }
+
+            break;
+
+
         case "tcoffee":
             /** validation model for tcoffee:
              * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
@@ -192,7 +222,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 6000;
+            charLimitPerSeq = 20000;
             seqLimit = 10000;
 
             let hmmerTarget = new alignmentVal($(elem));
@@ -200,14 +230,6 @@ let validationProcess = function(elem: any,toolname: string) {
             if (hmmerTarget.basicValidation("yes")) {
                 hmmerTarget.sameLengthValidation();
 
-                if(hmmerTarget.hasTwo()) {
-                    $("#max_hhblits_iter").val("0");
-                    $("#max_hhblits_iter").niceSelect('update');
-                }
-                else {
-                    $("#max_hhblits_iter").val("1");
-                    $("#max_hhblits_iter").niceSelect('update');
-                }
             }
 
             break;
@@ -219,7 +241,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
              * first space, in the header are used as ID.
              */
-            charLimitPerSeq = 6000;
+            charLimitPerSeq = 20000;
             seqLimit = 10000;
 
             let hhblitsTarget = new alignmentVal($(elem));
@@ -227,6 +249,10 @@ let validationProcess = function(elem: any,toolname: string) {
             if (hhblitsTarget.basicValidation("yes")) {
                 if (!hhblitsTarget.validateA3M()) {
                     hhblitsTarget.sameLengthValidation();
+                }
+                else {
+                    $("#maxrounds").val("1");
+                    $("#maxrounds").niceSelect('update');
                 }
             }
 
@@ -240,7 +266,7 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 6000; // TODO: why was the charLimit defined after it's usage?
+            charLimitPerSeq = 20000; // TODO: why was the charLimit defined after it's usage?
             seqLimit = 10000;
 
             let hhpredTarget = new alignmentVal($(elem));
@@ -250,12 +276,11 @@ let validationProcess = function(elem: any,toolname: string) {
                 if (!hhpredTarget.validateA3M()) {
                     hhpredTarget.sameLengthValidation();
                 }
-                hhpredTarget.hhMaxDB();
-
-                if(hhpredTarget.hasTwo()) {
+                else {
                     $("#msa_gen_max_iter").val("0");
                     $("#msa_gen_max_iter").niceSelect('update');
                 }
+                hhpredTarget.hhMaxDB();
             }
 
             break;
@@ -268,21 +293,17 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 6000; // TODO: why was the charLimit defined after it's usage?
+            charLimitPerSeq = 20000; // TODO: why was the charLimit defined after it's usage?
             seqLimit = 10000;
 
             let hhompTarget = new alignmentVal($(elem));
 
-
             if (hhompTarget.basicValidation("yes")) {
-                hhompTarget.sameLengthValidation();
-
-                if(hhompTarget.hasTwo()) {
-                    $("#msa_gen_max_iter").val("0");
-                    $("#msa_gen_max_iter").niceSelect('update');
+                if (!hhompTarget.validateA3M()) {
+                    hhompTarget.sameLengthValidation();
                 }
                 else {
-                    $("#msa_gen_max_iter").val("4");
+                    $("#msa_gen_max_iter").val("0");
                     $("#msa_gen_max_iter").niceSelect('update');
                 }
             }
@@ -348,7 +369,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "hhrepid":
 
-            charLimitPerSeq = 6000;
+            charLimitPerSeq = 20000;
             seqLimit = 10000;
 
             let hhrepidTarget = new alignmentVal($(elem));
@@ -357,8 +378,7 @@ let validationProcess = function(elem: any,toolname: string) {
                 if (!hhrepidTarget.validateA3M()) {
                     hhrepidTarget.sameLengthValidation();
                 }
-
-                if(hhrepidTarget.hasTwo()) {
+                else {
                     $("#msa_gen_max_iter").val("0");
                     $("#msa_gen_max_iter").niceSelect('update');
                 }
@@ -368,7 +388,7 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "pcoils":
 
-            charLimitPerSeq = 6000;
+            charLimitPerSeq = 20000;
             seqLimit = 2000;
 
             let pcoilsTarget = new alignmentVal($(elem));
@@ -442,13 +462,6 @@ let validationProcess = function(elem: any,toolname: string) {
             if (quick2dTarget.basicValidation("yes")) {
                 quick2dTarget.sameLengthValidation();
 
-                if(quick2dTarget.hasTwo()) {
-                    $("#quick_iters").val("0");
-                    $("#quick_iters").niceSelect('update');
-                } else {
-                    $("#quick_iters").val("3");
-                    $("#quick_iters").niceSelect('update');
-                }
             }
 
             break;
@@ -567,8 +580,10 @@ let validationProcess = function(elem: any,toolname: string) {
             let hhfilterTarget = new alignmentVal($(elem));
 
             if (hhfilterTarget.basicValidation("yes")) {
-                if(hhfilterTarget.sameLengthValidation())
-                    hhfilterTarget.mustHave2();
+                if (!hhfilterTarget.validateA3M()) {
+                    if (hhfilterTarget.sameLengthValidation())
+                        hhfilterTarget.mustHave2();
+                }
             }
 
             break;

@@ -76,6 +76,7 @@ final class ToolFactory @Inject()(
     final val HHBLITS             = "hhblits"
     final val MARCOIL             = "marcoil"
     final val PCOILS              = "pcoils"
+    final val REPPER              = "repper"
     final val MODELLER            = "modeller"
     final val HMMER               = "hmmer"
     final val HHPRED              = "hhpred"
@@ -83,7 +84,7 @@ final class ToolFactory @Inject()(
     final val HHPRED_MANUAL       = "hhpred_manual"
     final val HHREPID             = "hhrepid"
     final val ALI2D               = "ali2d"
-    final val QUICK2D               = "quick2d"
+    final val QUICK2D             = "quick2d"
     final val CLUSTALO            = "clustalo"
     final val KALIGN              = "kalign"
     final val MAFFT               = "mafft"
@@ -102,6 +103,7 @@ final class ToolFactory @Inject()(
     final val HHFILTER            = "hhfilter"
     final val PATSEARCH           = "patsearch"
     final val HHOMP               = "hhomp"
+    final val FORMATSEQ              = "formatseq"
   }
 
   // Encompasses some shared views of the result pages
@@ -167,6 +169,17 @@ final class ToolFactory @Inject()(
           }
         }
       ),
+      Toolnames.FORMATSEQ -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(
+            views.html.jobs.resultpanels.fileviewWithDownloadForward(jobID + ".out",
+              s"${constants.jobPath}$jobID/results/" + jobID + ".out",
+              jobID,
+              "FormatSeq",
+              this.values(Toolnames.FORMATSEQ)))
+        }
+      ),
       Toolnames.CLANS -> ListMap(
         Resultviews.RESULTS -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
@@ -193,7 +206,7 @@ final class ToolFactory @Inject()(
                 .hitlist(jobID, hhblits.parseResult(jsvalue), this.values(Toolnames.HHBLITS), s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
           }
         },
-        "Raw Output (HHR)" -> { (jobID, requestHeader) =>
+        "Raw Output" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels
@@ -230,7 +243,7 @@ final class ToolFactory @Inject()(
       Toolnames.MARCOIL -> ListMap(
         "CC-Prob" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          Future.successful(views.html.jobs.resultpanels.image(s"/files/$jobID/alignment_ncoils.png"))
+          Future.successful(views.html.jobs.resultpanels.marcoil(s"/files/$jobID/alignment_ncoils.png"))
         },
         "ProbList" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
@@ -263,11 +276,17 @@ final class ToolFactory @Inject()(
       Toolnames.PCOILS -> ListMap(
         "CC-Prob" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          Future.successful(views.html.jobs.resultpanels.image(s"/files/$jobID/" + jobID + "_ncoils.png"))
+          Future.successful(views.html.jobs.resultpanels.pcoils(s"/files/$jobID/" + jobID))
         },
         "ProbList" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".numerical"))
+        }
+      ),
+      Toolnames.REPPER -> ListMap(
+        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+          implicit val r = requestHeader
+          Future.successful(views.html.jobs.resultpanels.repper(jobID, s"${constants.jobPath}$jobID/results/" + jobID))
         }
       ),
       Toolnames.MODELLER -> ListMap(
@@ -335,7 +354,7 @@ final class ToolFactory @Inject()(
                 .hitlist(jobID, hhpred.parseResult(jsvalue), this.values(Toolnames.HHPRED), s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
           }
         },
-        "Raw Output (HHR)" -> { (jobID, requestHeader) =>
+        "Raw Output" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels
@@ -380,7 +399,7 @@ final class ToolFactory @Inject()(
                 .hitlist(jobID, hhomp.parseResult(jsvalue), this.values(Toolnames.HHOMP), s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
           }
         },
-        "Raw Output (HHR)" -> { (jobID, requestHeader) =>
+        "Raw Output" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels
@@ -805,7 +824,10 @@ final class ToolFactory @Inject()(
         paramAccess.getParam("SAMCC_HELIXFOUR").name,
         paramAccess.getParam("TARGET_PSI_DB").name,
         paramAccess.getParam("QUICK_ITERS").name,
-        paramAccess.getParam("PCOILS_INPUT_MODE").name
+        paramAccess.getParam("PCOILS_INPUT_MODE").name,
+        paramAccess.getParam("REPPER_INPUT_MODE").name,
+        paramAccess.getParam("IN_FORMAT").name,
+        paramAccess.getParam("OUT_FORMAT").name
       )
     )
     // Params which are not a part of any group (given by the name)

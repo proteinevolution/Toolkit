@@ -33,32 +33,10 @@
 }
 
 .tool-finder {
-
-    /*background: #f2f2f2; !* Old browsers *!*/
-    /*background: -moz-linear-gradient(top, #f2f2f2 0%, #e5e5e5 100%); !* FF3.6-15 *!*/
-    /*background: -webkit-linear-gradient(top, #f2f2f2 0%,#e5e5e5 100%); !* Chrome10-25,Safari5.1-6 *!*/
-    /*background: linear-gradient(to bottom, #f2f2f2 0%,#e5e5e5 100%); !* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ *!*/
-    /*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f2f2', endColorstr='#e5e5e5',GradientType=0 ); !* IE6-9 *!*/
-    /*border: 1px solid #ccc;*/
-    /*-webkit-border-radius: 4px;*/
-    /*-moz-border-radius: 4px;*/
-    /*-ms-border-radius: 4px;*/
-    /*-o-border-radius: 4px;*/
-    /*border-radius: 4px;*/
-    /*-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);*/
-    /*-moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);*/
-    /*-ms-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);*/
-    /*-o-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);*/
-    /*box-shadow: inset 0 1px 1px rgba(0,0,0,.075);*/
     z-index: 9;
     position: relative;
     height: 11em !important;
     width: 100% !important;
-    /*-webkit-box-shadow: 3px 3px 5px 0px lightgray;*/
-    /*-moz-box-shadow: 3px 3px 5px 0px lightgray;*/
-    /*box-shadow: 3px 3px 5px 0px lightgray;*/
-
-
 }
 
 FIELDSET {
@@ -209,9 +187,7 @@ FIELDSET {
 }
 
 .twitter-typeahead {
-
     width: 100% !important;
-
 }
 
 .list-group {
@@ -220,16 +196,16 @@ FIELDSET {
 }
 
 .tt-menu{
-    position: relative;
     -webkit-box-shadow: 0px 0px 1px 0px #cacaca;
     -moz-box-shadow: 0px 0px 1px 0px #cacaca;
     box-shadow: 0px 0px 1px 0px #cacaca;
     width: 100% !important;
-    display: block;
     margin-top: 5px !important;
-    margin: auto;
     border-radius: 4px;
+    border: 1px solid #eeeeee;
     background-color: white;
+    max-height: 420px;
+    overflow-y: scroll;
 }
 
 .tt-dataset {
@@ -441,6 +417,7 @@ FIELDSET {
     box-shadow: 0 1px 2px 0 #ccc;
     border-radius: 3px;
     border: 1px solid #ccc;
+    background: #eeeeee;
 }
 
 #searchInput{
@@ -591,16 +568,14 @@ td#joblistIcon i {
 
 }
 
-
 /*Hide Livetable on small screen and adjust page elements */
 @media screen and (max-width: 730px) {
     .grid {
         margin-top: 20px;
-        width: 90%;
     }
 }
 
-@media screen and (max-width: 730px) {
+@media screen and (max-width: 830px) {
     .liveTable {
         display: none;
     }
@@ -612,7 +587,7 @@ td#joblistIcon i {
     /*}*/
 /*}*/
 
-@media screen and (max-width: 730px) {
+@media screen and (max-width: 830px) {
     .liveTableContainer {
         height: 5em;
     }
@@ -655,11 +630,6 @@ td#joblistIcon i {
     }
 }
 
-@media screen and (max-width: 800px) {
-    .tile_container {
-        width: 93vw;
-    }
-}
 
 @media screen and (max-width: 800px) {
     .text_part {

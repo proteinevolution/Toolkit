@@ -11,7 +11,6 @@ body.is-reveal-open {
 
 
 #jobview {
-
     padding-left: 3px;
     padding-right: 15px;
 }
@@ -1103,6 +1102,10 @@ h6 {
     font-size: 1.2em;
 }
 
+.notePlain p{
+    padding-left: 20em;
+}
+
 .note {
     font-size: 1.1em;
     font-weight: 600;
@@ -1155,4 +1158,17 @@ h6 {
     margin-bottom: 0.5em;
     font-size: 0.8em;
     width: 100% !important;
+}
+
+#repperGrad {
+    height: 3px;
+    width: 250px;
+    background: -webkit-linear-gradient(left, yellow, blue); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, yellow, blue); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, yellow, blue); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(to right, yellow, blue); /* Standard syntax (must be last) */
+}
+
+.repperTable {
+    padding-left: 19em;
 }

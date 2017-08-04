@@ -210,6 +210,7 @@ class ParamAccess @Inject()(tel: TEL) {
       case "HHPRED_INCL_EVAL" =>        select ("hhpred_incl_eval", "E-value inclusion threshold")
       case "HHBLITS_INCL_EVAL" =>       select ("hhblits_incl_eval", "E-value inclusion threshold")
       case "PCOILS_INPUT_MODE" =>       select ("pcoils_input_mode", "Input mode")
+      case "REPPER_INPUT_MODE" =>       select ("repper_input_mode", "Input mode")
       case "PCOILS_WEIGHTING" =>        select ("pcoils_weighting", "Weighting")
       case "PCOILS_MATRIX" =>           select ("pcoils_matrix", "Matrix")
       case "NO_REPLICATES" =>           select ("no_replicates", "Number of replicates")
@@ -228,5 +229,12 @@ class ParamAccess @Inject()(tel: TEL) {
       case "HHOMPDB" =>                 select("hhompdb", "Select HMM databases")
       case "QUICK_ITERS" =>             select("quick_iters", "Maximal no. of MSA generation steps")
       case "TARGET_PSI_DB" =>           select("target_psi_db", "Select database for MSA generation ")
-      }
+      case "WINDOW_SIZE" =>             Param ("window_size", ParamType.UnconstrainedNumber, 1, "Window size (< sequence length)")
+      case "PERIODICITY_MIN" =>         Param ("periodicity_min", ParamType.UnconstrainedNumber, 1, "Periodicity range - Min")
+      case "PERIODICITY_MAX" =>         Param ("periodicity_max", ParamType.UnconstrainedNumber, 1, "Periodicity range - Max")
+      case "FTWIN_THRESHOLD" =>         Param ("ftwin_threshold", ParamType.UnconstrainedNumber, 1, "FTwin threshold")
+      case "REPWIN_THRESHOLD" =>        Param ("repwin_threshold", ParamType.UnconstrainedNumber, 1, "REPwin threshold")
+      case "IN_FORMAT" =>               select("in_format", "Input format")
+      case "OUT_FORMAT" =>              select("out_format", "Output format")
+  }
 }
