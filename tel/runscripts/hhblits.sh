@@ -127,13 +127,35 @@ echo "#Generating output" >> ../results/process.log
 updateProcessLog
 
 #Generate query template alignment
-hhmakemodel.pl -i ../results/${JOBID}.hhr -fas ../results/querytemplateMSA.fas -p %pmin.content
+hhmakemodel.pl -i ../results/${JOBID}.hhr -a3m ../results/querytemplateMSA.a3m -p %pmin.content -v 0
+
+reformat_hhsuite.pl a3m a3m \
+         $(readlink -f ../results/querytemplateMSA.a3m) \
+         $(readlink -f ../results/fullQT.a3m) \
+         -d 160 -l 32000
+
+head -n 2000 ../results/fullQT.a3m > ../results/tmp
+
+reformat_hhsuite.pl a3m fas \
+         $(readlink -f ../results/tmp) \
+         $(readlink -f ../results/reducedQT.fas) \
+         -d 160 -l 32000 -uc
+
+reformat_hhsuite.pl fas a3m \
+         $(readlink -f ../results/reducedQT.fas) \
+         $(readlink -f ../results/reducedQT.a3m) \
+         -d 160 -l 32000
+
+sed -i "1 i\#A3M#" ../results/fullQT.a3m
+sed -i "1 i\#A3M#" ../results/reducedQT.a3m
+
+rm ../results/tmp ../results/querytemplateMSA.a3m
+
 # Generate Query in JSON
-fasta2json.py ../results/querytemplateMSA.fas ../results/querytemplate.json
+fasta2json.py ../results/reducedQT.fas ../results/querytemplate.json
 
 
 hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > $(readlink -f ../results/${JOBID}.json)
-#json2fasta.py ../results/${JOBID}.json ../results/${JOBID}.fasta
 #Visualization
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
