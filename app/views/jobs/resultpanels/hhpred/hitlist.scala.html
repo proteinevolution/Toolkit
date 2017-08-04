@@ -28,7 +28,7 @@
                 }_hhsuite">Forward Query A3M</a>
                 @*only show create model when chosen db=mmcif70/pdb70*@
                 @if(result.db.matches("mmcif70/pdb70")) {
-                    <a onclick="@{tool.toolNameShort}_manual()">Create model using selection</a>
+                    <a onclick="@{tool.toolNameShort}_manual()">Model using selection</a>
                 }
                 <a onclick="colorAA()" class="colorAA">Color Seqs</a>
                 <a onclick="wrap()" id="wrap">Wrap Seqs</a>
@@ -139,8 +139,10 @@
         <div>
             <select onclick="forwardTemplateAlignment_(this.value, $('#alignmentTemplate').val())" id="alignmentTemplate_tool">
                 <option value="" selected>Forward to</option>
-                <option value="hhpred" >HHpred</option>
+                <option value="formatseq" >FormatSeq</option>
                 <option value="hhblits" >HHblits</option>
+                <option value="hhomp" >HHomp</option>
+                <option value="hhpred" >HHpred</option>
                 <option value="hhrepid" >HHrepID</option>
             </select>
         </div>
