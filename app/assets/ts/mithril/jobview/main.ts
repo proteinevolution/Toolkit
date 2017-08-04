@@ -44,7 +44,8 @@ let JobLineComponent = {
                         m("i", { "class": "icon-white_question helpicon" })
                 )
             ]),
-            m("span", { "class": "jobdate" }, isJob ? "Created: " + (moment(args.job().dateCreated).local().format('lll')): "")
+            m("span", { "class": "jobdate" }, isJob ? "Created: " + (moment(args.job().dateCreated).local().format('lll')): ""),
+            m("span", { "class": "jobinfo" }, isJob ? "JobID: " + args.job().jobID: "")
         ]);
     }
 };

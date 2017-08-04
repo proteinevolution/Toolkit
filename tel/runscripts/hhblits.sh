@@ -11,7 +11,6 @@ if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       false
 fi
 
-
 if [ ${A3M_INPUT} = "1" ] ; then
 
     sed -i '1d' ../params/alignment
@@ -19,8 +18,7 @@ if [ ${A3M_INPUT} = "1" ] ; then
 
     reformatValidator.pl a3m fas \
            $(readlink -f ../results/${JOBID}.in.a3m) \
-           $(readlink -f ../results/${JOBID}.in.fas) \
-           -d 160 -uc -l 32000
+           $(readlink -f ../results/${JOBID}.in.fas)
 
      if [ ! -f ../results/${JOBID}.in.fas ]; then
             echo "#Input is not in valid A3M format." >> ../results/process.log
@@ -29,6 +27,7 @@ if [ ${A3M_INPUT} = "1" ] ; then
      else
             echo "#Query is in A3M format." >> ../results/process.log
             updateProcessLog
+            rm ../results/${JOBID}.in.fas
             echo "done" >> ../results/process.log
             updateProcessLog
      fi
@@ -50,48 +49,50 @@ else
     fi
 
     if [ ${FORMAT} = "1" ] ; then
-          reformatValidator.pl clu fas \
+          reformatValidator.pl clu a3m \
                 $(readlink -f %alignment.path) \
-                $(readlink -f ../results/${JOBID}.in.fas) \
-                -d 160 -uc -l 32000
+                $(readlink -f ../results/${JOBID}.in.a3m) \
+                -d 160 -l 32000
     else
-          reformatValidator.pl fas fas \
+          reformatValidator.pl fas a3m \
                 $(readlink -f %alignment.path) \
-                $(readlink -f ../results/${JOBID}.in.fas) \
-                -d 160 -uc -l 32000
+                $(readlink -f ../results/${JOBID}.in.a3m) \
+                -d 160 -l 32000
     fi
 
-    if [ ! -f ../results/${JOBID}.in.fas ]; then
+    if [ ! -f ../results/${JOBID}.in.a3m ]; then
         echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
         updateProcessLog
         false
     fi
-
-    SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.in.fas | wc -l)
-
-    if [ ${SEQ_COUNT} -gt "10000" ] ; then
-          echo "#Input contains more than 10000 sequences." >> ../results/process.log
-          updateProcessLog
-          false
-    fi
-
-    if [ ${SEQ_COUNT} -gt "1" ] ; then
-           echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-           updateProcessLog
-    else
-           echo "#Query is a single protein sequence." >> ../results/process.log
-           updateProcessLog
-    fi
-
-
-    echo "done" >> ../results/process.log
-    updateProcessLog
-
 fi
+
+SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.in.a3m | wc -l)
+
+if [ ${SEQ_COUNT} -gt "10000" ] ; then
+    echo "#Input contains more than 10000 sequences." >> ../results/process.log
+    updateProcessLog
+    false
+fi
+
+if [ ${SEQ_COUNT} -gt "1" ] ; then
+    echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
+    updateProcessLog
+else
+    echo "#Query is a single protein sequence." >> ../results/process.log
+    updateProcessLog
+fi
+
+echo "done" >> ../results/process.log
+updateProcessLog
+
 echo "#Searching %hhblitsdb.content." >> ../results/process.log
 updateProcessLog
 
-
+reformatValidator.pl a3m fas \
+       $(readlink -f ../results/${JOBID}.in.a3m) \
+       $(readlink -f ../results/${JOBID}.in.fas) \
+       -d 160 -uc -l 32000
 
 head -n 2 ../results/${JOBID}.in.fas > ../results/firstSeq0.fas
 sed 's/[\.\-]//g' ../results/firstSeq0.fas > ../results/firstSeq.fas
@@ -101,18 +102,11 @@ TMPRED=`tmhmm ../results/firstSeq.fas -short`
 run_Coils -c -min_P 0.8 < ../results/firstSeq.fas >& ../results/firstSeq.cc
 COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
 
-rm ../results/firstSeq0.fas ../results/firstSeq.cc
+rm ../results/firstSeq0.fas ../results/firstSeq.cc ../results/${JOBID}.in.fas
 
-
-
-if [ ${A3M_INPUT} = "1" ] ; then
-    INPUT="../results/${JOBID}.in.a3m"
-else
-    INPUT="../results/${JOBID}.in.fas  -M first"
-fi
 
 hhblits -cpu %THREADS \
-        -i ${INPUT} \
+        -i ../results/${JOBID}.in.a3m \
         -d %HHBLITS/%hhblitsdb.content     \
         -o $(readlink -f ../results/${JOBID}.hhr) \
         -oa3m $(readlink -f ../results/${JOBID}.a3m)  \
@@ -158,6 +152,8 @@ reformat_hhsuite.pl a3m a3m \
          -d 160 -l 32000
 
 mv ../results/${JOBID}.a3m ../results/full.a3m
+sed -i "1 i\#A3M#" ../results/full.a3m
+
 
 head -n 400 ../results/tmp0 > ../results/tmp1
 
