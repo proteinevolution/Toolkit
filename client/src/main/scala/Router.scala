@@ -40,6 +40,7 @@ object Router extends js.JSApp {
     g.jobList.mount(g.document.getElementById("off-canvas-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
     g.jobList.mount(g.document.getElementById("sidebar").asInstanceOf[HTMLDivElement], JobListComponent)
 
+    // m.component(JobListComponent,js.Dynamic.literal("activejobID" -> m.route.param("jobID"))).asInstanceOf[MithrilComponent]
 
   }
 }

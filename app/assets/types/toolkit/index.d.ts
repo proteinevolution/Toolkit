@@ -28,6 +28,7 @@ declare class JobListComponent {
     public static index : number;
     public static numVisibleItems : number;
     public static scrollJobList(scrollItems : any, pos: any) : any;
+    public static selectJob() : any;
 
 }
 
