@@ -1,5 +1,7 @@
 lazy val akkaVersion  = "2.5.3"
 lazy val kamonVersion = "0.6.6"
+lazy val elastic4sVersion = "2.4.0"
+lazy val scalazVersion = "7.2.10"
 
 lazy val commonDeps = Seq(
   ws,
@@ -17,11 +19,13 @@ lazy val commonDeps = Seq(
   "com.typesafe.play"    %% "play-mailer"             % "6.0.1",
   "com.github.pathikrit" %% "better-files"            % "2.17.1",
   "org.mindrot"          % "jbcrypt"                  % "0.3m",
-  "com.evojam"           %% "play-elastic4s"          % "0.3.2",
+  "com.sksamuel.elastic4s" %% "elastic4s-core" % elastic4sVersion,
+  // for the tcp client
+  "com.sksamuel.elastic4s" %% "elastic4s-tcp" % elastic4sVersion,
   "org.reactivemongo"    %% "play2-reactivemongo"     % "0.12.5-play26",
   "co.fs2"               %% "fs2-core"                % "0.9.2",
-  "org.scalaz"           %% "scalaz-core"             % "7.2.10",
-  "org.scalaz"           %% "scalaz-concurrent"       % "7.2.10",
+  "org.scalaz"           %% "scalaz-core"             % scalazVersion,
+  "org.scalaz"           %% "scalaz-concurrent"       % scalazVersion,
   "com.chuusai"          %% "shapeless"               % "2.3.2",
   "org.clapper"          %% "classutil"               % "1.1.2",
   "com.lihaoyi"          %% "fastparse"               % "0.4.2",
