@@ -1,19 +1,16 @@
 package models.database.community
 
-import org.joda.time.DateTime
-import play.api.libs.json._
-import reactivemongo.bson._
-import reactivemongo.play.json._
+import java.time.ZonedDateTime
 
 case class Comment(
-    commentID: BSONObjectID, // ID of the Comment
-    title: Option[String] = None, //Title of the comment
-    text: String, // Comment
-    commentList: List[BSONObjectID] = List.empty, // List of child comments
-    deleted: Option[Boolean] = None, // Unset: Not hidden, False: Hidden by Owner, True: Deleted by Moderators
-    oldVersion: Option[BSONObjectID] = None, // Older version of the comment (set this to link to the original comment after a edit)
-    dateCreated: Option[DateTime], // Creation time of the Comment
-    dateUpdated: Option[DateTime]
+                    commentID: BSONObjectID, // ID of the Comment
+                    title: Option[String] = None, //Title of the comment
+                    text: String, // Comment
+                    commentList: List[BSONObjectID] = List.empty, // List of child comments
+                    deleted: Option[Boolean] = None, // Unset: Not hidden, False: Hidden by Owner, True: Deleted by Moderators
+                    oldVersion: Option[BSONObjectID] = None, // Older version of the comment (set this to link to the original comment after a edit)
+                    dateCreated: Option[ZonedDateTime], // Creation time of the Comment
+                    dateUpdated: Option[ZonedDateTime]
 ) // Last changed on (set this when replaced by a newer version)
 
 object Comment {
@@ -40,8 +37,8 @@ object Comment {
           JsSuccess(
             Comment(commentID = BSONObjectID.generate(),
                     text = "",
-                    dateCreated = Some(new DateTime()),
-                    dateUpdated = Some(new DateTime()))
+                    dateCreated = Some(new ZonedDateTime()),
+                    dateUpdated = Some(new ZonedDateTime()))
           )
         } catch {
           case cause: Throwable => JsError(cause.getMessage)
@@ -75,8 +72,8 @@ object Comment {
         commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
         deleted = bson.getAs[Boolean](DELETED),
         oldVersion = bson.getAs[BSONObjectID](OLDVERSION),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value))
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new ZonedDateTime(dt.value)),
+        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new ZonedDateTime(dt.value))
       )
     }
   }

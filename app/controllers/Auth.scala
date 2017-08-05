@@ -17,7 +17,7 @@ import play.Logger
 import play.api.cache._
 import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.libs.json.Json
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.mvc._
 import play.api.libs.mailer._
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.bson._
@@ -41,8 +41,9 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                            implicit val locationProvider: LocationProvider,
                            @NamedCache("userCache") implicit val userCache: CacheApi,
                            @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi, // Mailing Controller
-                           constants: Constants)
-    extends Controller
+                           constants: Constants,
+                           cc: ControllerComponents)
+  extends AbstractController(cc)
     with I18nSupport
     with JSONTemplate
     with Common

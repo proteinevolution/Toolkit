@@ -13,7 +13,7 @@ import scala.sys.process._
 import better.files._
 import models.Constants
 import models.database.results._
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.mvc._
 import javax.inject.Inject
 
 import modules.db.MongoStore
@@ -29,8 +29,9 @@ class PSIBlastController @Inject()(
                                     general: General,
                                     alignment: Alignment,
                                     constants: Constants
-)(webJarAssets: WebJarAssets, mongoStore: MongoStore, val reactiveMongoApi: ReactiveMongoApi)
-    extends Controller with Common{
+)(webJarAssets: WebJarAssets, mongoStore: MongoStore, val reactiveMongoApi: ReactiveMongoApi,
+  cc: ControllerComponents)
+  extends AbstractController(cc) with Common{
 
   /* gets the path to all scripts that are executed
      on the server (not executed on the grid engine) */

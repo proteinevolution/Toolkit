@@ -4,7 +4,7 @@ import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.ConfigFactory
 import play.api.Logger
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.mvc._
 
 import scala.concurrent.Future
 import scala.sys.process._
@@ -25,8 +25,9 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
                                   val reactiveMongoApi: ReactiveMongoApi,
                                   hhblits: HHBlits,
                                   general: General,
-                                  constants: Constants)
-    extends Controller
+                                  constants: Constants,
+                                  cc: ControllerComponents)
+  extends AbstractController(cc)
     with Common {
 
   /* gets the path to all scripts that are executed
