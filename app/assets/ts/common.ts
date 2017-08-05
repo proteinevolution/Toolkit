@@ -142,10 +142,12 @@ let aa_color_background : Map<string, string> = new Map<string, string>();
         let $sb = $('#sidebar');
 
         if(url[url.length - 2] == 'tools' || url[url.length - 2] == 'jobs' || url[url.length - 1] == 'jobmanager'){
-            $mc.removeClass();
-            $sb.show();
+
+            // all logic to make the sidebar visible is located in the configs in mithril/helpers.ts
+
         }
         else {
+            // this code is used to smooth out the transition TO the index page
             $mc.removeClass();
             $sb.hide();
         }
