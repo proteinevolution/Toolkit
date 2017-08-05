@@ -1,6 +1,9 @@
 package models.database.community
 
 import java.time.ZonedDateTime
+import play.api.libs.json._
+import reactivemongo.bson._
+import reactivemongo.play.json._
 
 case class Comment(
                     commentID: BSONObjectID, // ID of the Comment
@@ -65,6 +68,7 @@ object Comment {
     */
   implicit object Reader extends BSONDocumentReader[Comment] {
     def read(bson: BSONDocument): Comment = {
+      println(bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTime.parse(dt.toString())))
       Comment(
         commentID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         title = bson.getAs[String](TITLE),
@@ -72,8 +76,8 @@ object Comment {
         commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
         deleted = bson.getAs[Boolean](DELETED),
         oldVersion = bson.getAs[BSONObjectID](OLDVERSION),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new ZonedDateTime(dt.value)),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new ZonedDateTime(dt.value))
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTime.parse(dt.toString())),
+        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTime.parse(dt.toString()))
       )
     }
   }
@@ -89,8 +93,8 @@ object Comment {
       COMMENTLIST -> comment.commentList,
       DELETED     -> comment.deleted,
       OLDVERSION  -> comment.oldVersion,
-      DATECREATED -> BSONDateTime(comment.dateCreated.fold(-1L)(_.getMillis)),
-      DATEUPDATED -> BSONDateTime(comment.dateUpdated.fold(-1L)(_.getMillis))
+      DATECREATED -> BSONDateTime(comment.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
+      DATEUPDATED -> BSONDateTime(comment.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli))
     )
   }
 }

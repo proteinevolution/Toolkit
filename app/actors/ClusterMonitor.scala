@@ -11,7 +11,7 @@ import models.database.statistics.ClusterLoadEvent
 import models.sge.Cluster
 import modules.db.MongoStore
 import modules.tel.TEL
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
 import reactivemongo.bson.BSONObjectID
 
 import sys.process._
@@ -27,7 +27,7 @@ final class ClusterMonitor @Inject()(cluster: Cluster, mongoStore: MongoStore, v
     extends Actor
     with ActorLogging {
 
-  case class RecordedTick(load: Double, timestamp: DateTime)
+  case class RecordedTick(load: Double, timestamp: ZonedDateTime)
   private val fetchLatestInterval                 = 3.seconds
   private val recordMaxLength                     = 20
   private var record: List[Double]                = List.empty[Double]
@@ -75,7 +75,6 @@ final class ClusterMonitor @Inject()(cluster: Cluster, mongoStore: MongoStore, v
       }
 
       record = record.::(load)
-      //val messagingTime = DateTime.now()
       watchers.foreach(_ ! UpdateLoad(load))
       if (record.length >= recordMaxLength) self ! Recording
     //Logger.info( s"""Updated Load with ${watchers.size} Users. Time needed: ${DateTime.now().getMillis - messagingTime.getMillis}ms""".stripMargin)
@@ -84,7 +83,7 @@ final class ClusterMonitor @Inject()(cluster: Cluster, mongoStore: MongoStore, v
 
     case Recording =>
       val loadAverage      = record.sum[Double] / record.length
-      val currentTimestamp = DateTime.now()
+      val currentTimestamp = ZonedDateTime.now
       mongoStore
         .upsertLoadStatistic(ClusterLoadEvent(BSONObjectID.generate(), record, loadAverage, Some(currentTimestamp)))
         .map { clusterLoadEvent =>

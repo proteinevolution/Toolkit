@@ -35,7 +35,7 @@ import scala.concurrent.{Await, Future}
 
 @Singleton
 final class Application @Inject()(webJarAssets: WebJarAssets,
-                                  val messagesApi: MessagesApi,
+                                  messagesApi: MessagesApi,
                                   @Named("clusterMonitor") clusterMonitor: ActorRef,
                                   webSocketActorFactory: WebSocketActor.Factory,
                                   @NamedCache("userCache") implicit val userCache: CacheApi,

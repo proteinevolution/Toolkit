@@ -14,7 +14,7 @@ import models.database.users.User
 import models.job.JobActorAccess
 import models.search.JobDAO
 import modules.LocationProvider
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
 import play.api.Logger
 import play.api.cache._
 import play.api.libs.json.{JsNull, Json}
@@ -131,7 +131,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               // Set job as either private or public
               val ownerOption = if (params.get("public").isEmpty) { Some(user.userID) } else { None }
               // Get the current date to set it for all three dates
-              val jobCreationTime = DateTime.now()
+              val jobCreationTime = ZonedDateTime.now()
               // Create a new Job object for the job and set the initial values
               val job = Job(
                 mainID = BSONObjectID.generate(),

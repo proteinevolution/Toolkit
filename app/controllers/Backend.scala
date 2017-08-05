@@ -31,7 +31,7 @@ final class Backend @Inject()(webJarAssets: WebJarAssets,
                               @NamedCache("userCache") implicit val userCache: CacheApi,
                               implicit val locationProvider: LocationProvider,
                               val reactiveMongoApi: ReactiveMongoApi,
-                              val messagesApi: MessagesApi,
+                              messagesApi: MessagesApi,
                               cc: ControllerComponents)
   extends AbstractController(cc)
     with I18nSupport
