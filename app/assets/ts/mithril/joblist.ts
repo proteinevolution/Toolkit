@@ -218,10 +218,10 @@ window.JobListComponent = {
     },
     model: function() {},
     controller: function(args : any) {
-        if (args && args.activejobID) {
-            let activeJob = JobListComponent.getJob(args.activejobID);
-            JobListComponent.pushJob(activeJob, true);
-        }
+
+        let activeJob = JobListComponent.getJob(m.route.param("jobID"));
+        JobListComponent.pushJob(activeJob, true);
+
         JobListComponent.reloadList();
         // TODO this is a hack to make the controller use the reload list command only once
         JobListComponent.controller = function(){return {}};

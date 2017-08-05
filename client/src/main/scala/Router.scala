@@ -41,9 +41,5 @@ object Router extends js.JSApp {
     g.jobList.mount(g.document.getElementById("sidebar").asInstanceOf[HTMLDivElement], JobListComponent)
 
 
-    //TODO the activejobID is not passed from the toolkit component to the joblistcomponent at the moment
-    // m(JobListComponent, { activejobID : m.route.param("jobID") })
-
-
   }
 }
