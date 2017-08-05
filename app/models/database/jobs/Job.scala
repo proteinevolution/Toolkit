@@ -28,7 +28,7 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
                dateUpdated: Option[DateTime], // Last Updated on
                dateViewed: Option[DateTime], // Last Viewed on
                IPHash: Option[String]) // hash of the ip
-   {
+{
 
   // Returns if the job is private or not
   def isPrivate: Boolean = {

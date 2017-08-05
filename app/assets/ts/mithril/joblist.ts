@@ -1,5 +1,3 @@
-
-
 let tooltipSearch = function(elem : any, isInit : boolean) {
     if (!isInit) {
         elem.setAttribute("data-tooltip", "data-tooltip");
@@ -11,8 +9,12 @@ let tooltipSearch = function(elem : any, isInit : boolean) {
 
 interface Window { JobListComponent: any; }
 
+declare var jobList : any;
+
 window.JobListComponent = {
-    // Generates a job Object
+
+
+    // Generates a job object
     Job : function (data : any) {
         return {
             jobID       : ((data && data.jobID        != null) ? data.jobID       : null),
@@ -30,10 +32,11 @@ window.JobListComponent = {
                 }
             },
             // View component
-            controller : function (args : any) { return {} },
+            controller : function (args : any) {
+                return {} },
             view : function (ctrl : any) {
                 return m("div", {
-                    "class"   : ("job " + a[this.status]).concat(this.jobID === JobListComponent.selectedJobID ? " selected" : ""),
+                    "class"   : ("job " +   a[this.status]).concat(this.jobID === JobListComponent.selectedJobID ? " selected" : ""),
                     id      : this.jobID,
                     onclick : this.select(this)
                 }, [
@@ -132,6 +135,7 @@ window.JobListComponent = {
                 }
             }
         });
+        jobList.redraw();
     },
     sortList        : function(sortMode? : string, reverse? : boolean) : boolean {      // Sorting the list elements
         let oldSort, sameMode : boolean, inv : number, selectedJobID : string, selectedInView : boolean = false;
@@ -186,6 +190,17 @@ window.JobListComponent = {
             m.route("/jobs/" + newJob.jobID);                   // actualize the content view and
             this.scrollToJobListItem(index);                    // scroll to the new position in the joblist
         }
+
+
+        jobList.redraw.strategy("diff");
+        jobList.redraw(true);
+
+    },
+    selectJob : function() {
+        let activeJob = JobListComponent.getJob(m.route.param("jobID"));
+        JobListComponent.pushJob(activeJob, true);
+        //JobListComponent.reloadList();
+        jobList.redraw();
     },
     visibleJobs : function () {     // function cuts the list down to the visible elements
         return JobListComponent.list.slice(JobListComponent.index, JobListComponent.index + JobListComponent.numVisibleItems);
@@ -209,15 +224,13 @@ window.JobListComponent = {
     },
     model: function() {},
     controller: function(args : any) {
-        if (args && args.activejobID) {
-            let activeJob = JobListComponent.getJob(args.activejobID);
-            JobListComponent.pushJob(activeJob, true);
-        }
+        //console.log(args.activejobID + " : " + m.route.param("jobID"));
+        let activeJob = JobListComponent.getJob(m.route.param("jobID"));
+        JobListComponent.pushJob(activeJob, true);
+
         JobListComponent.reloadList();
         // TODO this is a hack to make the controller use the reload list command only once
         JobListComponent.controller = function(){return {}};
-
-
         return {}
     },
     view: function(ctrl : any, args : any) {

@@ -8,7 +8,6 @@ import javax.inject.Singleton
   *
   * Created by lzimmermann on 29.05.16.
   */
-
 @Singleton
 class Constants {
 

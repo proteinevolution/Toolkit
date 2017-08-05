@@ -62,12 +62,11 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
   }
 
   def updateLog(jobID: String) = Action {
-    jobActorAccess.sendToJobActor(jobID, UpdateLog(jobID))
+    jobActorAccess.sendToJobActor(jobID, UpdateLog(jobID)) // TODO somehow this is getting triggered too rarely
     Ok
   }
 
-  //TODO make <strike>america</strike> Jobs <strike>great</strike> secure again!
-  def SGEID(jobID: String, sgeID: String) = Action.async {
+  def SGEID(jobID: String, sgeID: String): Action[AnyContent] = Action.async {
 
     mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).map {
 

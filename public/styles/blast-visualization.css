@@ -327,7 +327,7 @@ table.dataTable thead th {
 }
 
 .jobManagerContainer {
-    width: 82%;
+    width: 95%;
     padding-left: 0.75em;
 }
 table.dataTable.no-footer{
@@ -688,6 +688,16 @@ table.dataTable.no-footer{
 }
 
 #hcontainer {
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    min-width: 610px;
+    height: 400px;
+    margin: 0 auto;
+    padding-left: 50px;
 }
 
+@media screen and (max-width: 1200px) {
+    #hcontainer {
+        padding-left: 0;
+    }
+}
