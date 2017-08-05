@@ -1,7 +1,7 @@
 package models.database.statistics
 
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import play.api.libs.json._
 import reactivemongo.bson._
 
@@ -14,7 +14,7 @@ case class ToolStatistic(toolID: BSONObjectID,
                          currentFailed: Int,
                          monthly: List[Int],
                          monthlyFailed: List[Int],
-                         datePushed: List[DateTime]) {
+                         datePushed: List[ZonedDateTime]) {
   def total: Long       = monthly.map(_.toLong).sum[Long]
   def totalFailed: Long = monthlyFailed.map(_.toLong).sum[Long]
 
@@ -24,7 +24,7 @@ case class ToolStatistic(toolID: BSONObjectID,
       currentFailed = 0,
       monthly = this.monthly.::(this.current),
       monthlyFailed = this.monthlyFailed.::(this.currentFailed),
-      datePushed = this.datePushed.::(DateTime.now)
+      datePushed = this.datePushed.::(ZonedDateTime.now)
     )
   }
 }
@@ -49,7 +49,7 @@ object ToolStatistic {
           val currentFailed = (obj \ CURRENT).as[Int]
           val monthly       = (obj \ MONTHLY).as[List[Int]]
           val monthlyFailed = (obj \ MONTHLYFAILED).as[List[Int]]
-          val datePushed    = (obj \ DATEPUSHED).as[List[DateTime]]
+          val datePushed    = (obj \ DATEPUSHED).as[List[ZonedDateTime]]
           JsSuccess(ToolStatistic(toolID, toolName, current, currentFailed, monthly, monthlyFailed, datePushed))
         } catch {
           case cause: Throwable => JsError(cause.getMessage)
@@ -59,7 +59,7 @@ object ToolStatistic {
   }
 
   implicit object JsonWriter extends Writes[ToolStatistic] {
-    val dtf = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss")
+    val dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")
     override def writes(toolStatistic: ToolStatistic): JsObject = Json.obj(
       IDDB          -> toolStatistic.toolID.stringify,
       TOOLNAME      -> toolStatistic.toolName,
@@ -68,7 +68,7 @@ object ToolStatistic {
       MONTHLY       -> toolStatistic.monthly,
       MONTHLYFAILED -> toolStatistic.monthlyFailed,
       DATEPUSHED -> toolStatistic.datePushed.map(
-        dt => Json.obj("string" -> dtf.print(dt), "month" -> dt.monthOfYear().getAsShortText, "year" -> dt.year().get)
+        dt => Json.obj("string" -> dtf.format(dt), "month" -> DateTimeFormatter.ofPattern("MMM").format(dt), "year" -> dt.getYear)
       )
     )
   }
@@ -82,7 +82,7 @@ object ToolStatistic {
         currentFailed = bson.getAs[Int](CURRENTFAILED).getOrElse(0),
         monthly = bson.getAs[List[Int]](MONTHLY).getOrElse(List.empty),
         monthlyFailed = bson.getAs[List[Int]](MONTHLYFAILED).getOrElse(List.empty),
-        datePushed = bson.getAs[List[BSONDateTime]](DATEPUSHED).getOrElse(List.empty).map(dt => new DateTime(dt.value))
+        datePushed = bson.getAs[List[BSONDateTime]](DATEPUSHED).getOrElse(List.empty).map(dt => ZonedDateTime.parse(dt.toString))
       )
     }
   }
@@ -95,7 +95,7 @@ object ToolStatistic {
       CURRENTFAILED -> toolStatistic.current,
       MONTHLY       -> toolStatistic.monthly,
       MONTHLYFAILED -> toolStatistic.monthlyFailed,
-      DATEPUSHED    -> toolStatistic.datePushed.map(a => BSONDateTime(a.getMillis))
+      DATEPUSHED    -> toolStatistic.datePushed.map(a => BSONDateTime(a.toInstant.toEpochMilli))
     )
   }
 }

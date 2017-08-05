@@ -3,7 +3,7 @@ package models.database.jobs
 import com.typesafe.config.ConfigFactory
 import models.Constants
 import models.tools.Toolitem
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
 import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._
@@ -24,9 +24,9 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
                watchList: List[BSONObjectID] = List.empty, // List of the users who watch this job, None if not public
                commentList: List[BSONObjectID] = List.empty, // List of comment IDs for the Job
                clusterData: Option[JobClusterData] = None, // Cluster Data
-               dateCreated: Option[DateTime], // Creation time of the Job
-               dateUpdated: Option[DateTime], // Last Updated on
-               dateViewed: Option[DateTime], // Last Viewed on
+               dateCreated: Option[ZonedDateTime], // Creation time of the Job
+               dateUpdated: Option[ZonedDateTime], // Last Updated on
+               dateViewed: Option[ZonedDateTime], // Last Viewed on
                IPHash: Option[String]) // hash of the ip
    {
 
@@ -45,7 +45,7 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
       Job.JOBID        -> jobID,
       "project"        -> project,
       Job.STATUS       -> status,
-      Job.DATECREATED  -> dateCreated.map(_.getMillis),
+      Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli),
       Job.TOOL         -> tool,
       Job.TOOLNAMELONG -> ConfigFactory.load().getString(s"Tools.$tool.longname")
     )
@@ -63,9 +63,9 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
       Job.STATUS       -> status,
       Job.TOOL         -> tool,
       Job.COMMENTLIST  -> commentList.length,
-      Job.DATECREATED  -> dateCreated.map(_.getMillis),
-      Job.DATEUPDATED  -> dateUpdated.map(_.getMillis),
-      Job.DATEVIEWED   -> dateViewed.map(_.getMillis),
+      Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli),
+      Job.DATEUPDATED  -> dateUpdated.map(_.toInstant.toEpochMilli),
+      Job.DATEVIEWED   -> dateViewed.map(_.toInstant.toEpochMilli),
       Job.TOOLNAMELONG -> ConfigFactory.load().getString(s"Tools.$tool.longname")
     )
   }
@@ -138,6 +138,7 @@ object Job {
           val dateViewed   = (obj \ DATEVIEWED).asOpt[String]
           val toolnameLong = (obj \ TOOLNAMELONG).asOpt[String]
           val IPHash       = (obj \ IPHASH).asOpt[String]
+          val datetimenow = ZonedDateTime.now()
           JsSuccess(
             Job(
               mainID = BSONObjectID.generate(),
@@ -150,9 +151,9 @@ object Job {
               tool = "",
               toolnameLong = None,
               label = Some(""),
-              dateCreated = Some(new DateTime()),
-              dateUpdated = Some(new DateTime()),
-              dateViewed = Some(new DateTime()),
+              dateCreated = Some(datetimenow),
+              dateUpdated = Some(datetimenow),
+              dateViewed = Some(datetimenow),
               IPHash = IPHash
             )
           )
@@ -178,9 +179,9 @@ object Job {
       WATCHLIST    -> job.watchList,
       COMMENTLIST  -> job.commentList,
       CLUSTERDATA  -> job.clusterData,
-      DATECREATED  -> job.dateCreated.fold(-1L)(_.getMillis),
-      DATEUPDATED  -> job.dateUpdated.fold(-1L)(_.getMillis),
-      DATEVIEWED   -> job.dateViewed.fold(-1L)(_.getMillis),
+      DATECREATED  -> job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli),
+      DATEUPDATED  -> job.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli),
+      DATEVIEWED   -> job.dateViewed.fold(-1L)(_.toInstant.toEpochMilli),
       IPHASH       -> job.IPHash
     )
   }
@@ -205,9 +206,9 @@ object Job {
         watchList = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
         commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
         clusterData = bson.getAs[JobClusterData](CLUSTERDATA),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value)),
-        dateViewed = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => new DateTime(dt.value)),
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTime.parse(dt.toString())),
+        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTime.parse(dt.toString())),
+        dateViewed = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => ZonedDateTime.parse(dt.toString())),
         IPHash = bson.getAs[String](IPHASH)
       )
     }
@@ -233,9 +234,9 @@ object Job {
         WATCHLIST    -> job.watchList,
         COMMENTLIST  -> job.commentList,
         CLUSTERDATA  -> job.clusterData,
-        DATECREATED  -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis)),
-        DATEUPDATED  -> BSONDateTime(job.dateUpdated.fold(-1L)(_.getMillis)),
-        DATEVIEWED   -> BSONDateTime(job.dateViewed.fold(-1L)(_.getMillis)),
+        DATECREATED  -> BSONDateTime(job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATEUPDATED  -> BSONDateTime(job.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATEVIEWED   -> BSONDateTime(job.dateViewed.fold(-1L)(_.toInstant.toEpochMilli)),
         IPHASH       -> job.IPHash
       )
     }

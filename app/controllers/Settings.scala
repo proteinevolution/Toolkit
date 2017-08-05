@@ -20,10 +20,9 @@ import scala.sys.process._
   *
   */
 @Singleton
-final class Settings @Inject()(val messagesApi: MessagesApi, val reactiveMongoApi: ReactiveMongoApi,
+final class Settings @Inject()(messagesApi: MessagesApi, val reactiveMongoApi: ReactiveMongoApi,
                                cc: ControllerComponents)
   extends AbstractController(cc)
-    with MongoController
     with ReactiveMongoComponents {
 
   val clusterSettings: Future[BSONCollection] =

@@ -18,7 +18,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 
 @Singleton
-final class Tool @Inject()(val messagesApi: MessagesApi,
+final class Tool @Inject()(messagesApi: MessagesApi,
                            @NamedCache("userCache") implicit val userCache: CacheApi,
                            mongoStore: MongoStore,
                            implicit val mat: Materializer,

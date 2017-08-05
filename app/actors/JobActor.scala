@@ -23,7 +23,7 @@ import modules.tel.env.Env
 import modules.tel.execution.ExecutionContext.FileAlreadyExists
 import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
 import modules.tel.runscripts.Runscript.Evaluation
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
 import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
 import play.api.libs.mailer.MailerClient
@@ -243,7 +243,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           BSONDocument(Job.IDDB -> job.mainID),
           BSONDocument(
             "$set" ->
-            BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.OwnerRequest, Some(DateTime.now()))),
+            BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.OwnerRequest, Some(ZonedDateTime.now))),
             "$unset" ->
             BSONDocument(Job.WATCHLIST -> "")
           )
@@ -280,7 +280,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           case None =>
             JobEventLog(mainID = job.mainID,
                         toolName = job.tool,
-                        events = List(JobEvent(job.status, Some(DateTime.now))))
+                        events = List(JobEvent(job.status, Some(ZonedDateTime.now))))
         }
         this.currentJobLogs = this.currentJobLogs.updated(job.jobID, jobLog)
         val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
@@ -341,7 +341,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
             JobEventLog(mainID = job.mainID,
               toolName = job.tool,
               internalJob = isInternalJob,
-              events = List(JobEvent(job.status, Some(DateTime.now)))))
+              events = List(JobEvent(job.status, Some(ZonedDateTime.now)))))
 
         // Update the statistics
         mongoStore.increaseJobCount(job.tool) // TODO switch to better statistic handling
@@ -472,7 +472,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 List(
                   BSONDocument(Job.IPHASH -> hash),
                   BSONDocument(Job.DATECREATED ->
-                    BSONDocument("$gt" -> BSONDateTime(new DateTime().minusMinutes(constants.maxJobsWithin).getMillis)))
+                    BSONDocument("$gt" -> BSONDateTime(new ZonedDateTime().minusMinutes(constants.maxJobsWithin).toEpochSecond * 1000)))
                 )
               )
 
@@ -480,12 +480,12 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 List(
                   BSONDocument(Job.IPHASH -> hash),
                   BSONDocument(Job.DATECREATED ->
-                    BSONDocument("$gt" -> BSONDateTime(new DateTime().minusDays(constants.maxJobsWithinDay).getMillis)))
+                    BSONDocument("$gt" -> BSONDateTime(new ZonedDateTime().minusDays(constants.maxJobsWithinDay).toEpochSecond * 1000)))
                 )
               )
               mongoStore.countJobs(selector).map{count =>
                 mongoStore.countJobs(selectorDay).map{countDay =>
-                  println(BSONDateTime(new DateTime().minusMinutes(constants.maxJobsWithin).getMillis).toString)
+                  println(BSONDateTime(new ZonedDateTime().minusMinutes(constants.maxJobsWithin).toEpochSecond * 1000).toString)
                   Logger.info("IP " + job.IPHash + " has requested " + count +" jobs within the last " + constants.maxJobsWithin + " minute and "+countDay+" within the last 24 hours.")
 
                   if(count <= constants.maxJobNum && countDay <= constants.maxJobNumDay){
