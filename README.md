@@ -1,6 +1,9 @@
 # Toolkit
 MPI Bioinformatics Toolkit 2
 
+<img src="https://raw.githubusercontent.com/zy4/Toolkit/public/images/toolkitscreenshot.png" alt="MPI Bioinformatics Toolkit" />
+
+
 Credits
 -------
 
