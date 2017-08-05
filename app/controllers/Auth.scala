@@ -31,7 +31,7 @@ import scala.concurrent.{ Await, Future }
   */
 @Singleton
 final class Auth @Inject()(webJarAssets: WebJarAssets,
-                           val messagesApi: MessagesApi,
+                           messagesApi: MessagesApi,
                            jobActorAccess: JobActorAccess,
                            mongoStore: MongoStore,
                            val reactiveMongoApi: ReactiveMongoApi,

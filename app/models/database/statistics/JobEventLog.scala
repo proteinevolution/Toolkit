@@ -1,7 +1,7 @@
 package models.database.statistics
 
 import models.database.jobs.JobState
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
 import play.api.libs.json._
 import reactivemongo.bson._
 
@@ -14,8 +14,8 @@ case class JobEventLog(mainID: BSONObjectID, // ID of the Job in the System
                        events: List[JobEvent],
                        runtime: Long = 0L) {
   def addJobStateEvent(jobState: JobState): JobEventLog = {
-    val runtimeDiff: Long = events.head.timestamp.map(d => DateTime.now.getMillis - d.getMillis).getOrElse(0L)
-    this.copy(events = events.::(JobEvent(jobState, Some(DateTime.now), runtimeDiff)), runtime = runtime + runtimeDiff)
+    val runtimeDiff: Long = events.head.timestamp.map(d => ZonedDateTime.now.toInstant.toEpochMilli - d.toInstant.toEpochMilli).getOrElse(0L)
+    this.copy(events = events.::(JobEvent(jobState, Some(ZonedDateTime.now), runtimeDiff)), runtime = runtime + runtimeDiff)
   }
 }
 
