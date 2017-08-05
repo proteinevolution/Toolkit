@@ -16,7 +16,12 @@ object ErrorComponent extends Component {
       m("input", js.Dynamic.literal("id" -> "hidden404", "type" -> "hidden", "value" -> ctrl.notFoundRandomized)),
       m(
         "div",
-        js.Dynamic.literal("id" -> "404wrapper", "style" -> "display: block; margin: auto; margin-top: 100px;"),
+        js.Dynamic.literal("class" -> "large-2 columns show-for-large", "style" -> "display: block; margin: auto; margin-top: 100px;"),
+        ""
+      ),
+      m(
+        "div",
+        js.Dynamic.literal("id" -> "404wrapper", "class" -> "large-10 columns show-for-large", "style" -> "display: block; margin: auto; margin-top: 100px;"),
         m("div", js.Dynamic.literal("id" -> "404msa", "config" -> g.call404))
       ),
       m("p",
