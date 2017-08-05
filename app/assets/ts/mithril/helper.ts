@@ -109,6 +109,7 @@ let showSidebar = function (elem : any, isInit : boolean) : any {
 
         $('#sidebar').show();
         $('#main-content').removeClass().addClass('large-10 small-12 columns padded-column');
+        JobListComponent.selectJob();
 
     }
 };
