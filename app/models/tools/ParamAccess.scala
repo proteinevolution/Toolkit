@@ -1,11 +1,10 @@
 package models.tools
 
 import modules.tel.TEL
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-
 
 sealed trait ParamType {
 
@@ -16,7 +15,8 @@ sealed trait ParamType {
     */
   def validate(value: String): Option[String]
 }
-case class Sequence(formats: Seq[(String, String)], placeholder: String, allowTwoTextAreas: Boolean) extends ParamType {
+case class Sequence(formats: Seq[(String, String)], placeholder: String, allowTwoTextAreas: Boolean)
+    extends ParamType {
 
   // Sequence currently alwasus valid
   def validate(value: String): Option[String] = Some(value)
@@ -77,11 +77,10 @@ case class Decimal(step: String, min: Option[Double], max: Option[Double]) exten
   }
 }
 
-case class Text(placeholder: String="") extends ParamType {
+case class Text(placeholder: String = "") extends ParamType {
 
   def validate(value: String): Option[String] = Some(value)
 }
-
 
 case object ModellerKey extends ParamType {
   def validate(value: String): Option[String] = Some(value)
@@ -104,13 +103,16 @@ object ParamType {
     def writes(paramType: ParamType): JsObject = paramType match {
 
       case Sequence(formats: Seq[(String, String)], placeholder: String, allowsTwoTextAreas: Boolean) =>
-        Json.obj(FIELD_TYPE -> 1, "modes" -> formats, "allowsTwoTextAreas" -> allowsTwoTextAreas, "placeholder" -> placeholder)
+        Json.obj(FIELD_TYPE           -> 1,
+                 "modes"              -> formats,
+                 "allowsTwoTextAreas" -> allowsTwoTextAreas,
+                 "placeholder"        -> placeholder)
       case Number(minOpt, maxOpt)        => Json.obj(FIELD_TYPE -> 2, "min" -> minOpt, "max" -> maxOpt)
       case Select(options)               => Json.obj(FIELD_TYPE -> 3, "options" -> options)
       case Bool                          => Json.obj(FIELD_TYPE -> 4)
       case Radio                         => Json.obj(FIELD_TYPE -> 5)
       case Decimal(step, minVal, maxVal) => Json.obj(FIELD_TYPE -> 2, "step" -> step, "min" -> minVal, "max" -> maxVal)
-      case Text(placeholder)                          => Json.obj(FIELD_TYPE -> 7, "placeholder" -> placeholder)
+      case Text(placeholder)             => Json.obj(FIELD_TYPE -> 7, "placeholder" -> placeholder)
       case ModellerKey                   => Json.obj(FIELD_TYPE -> 8)
     }
   }
