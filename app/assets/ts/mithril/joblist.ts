@@ -196,6 +196,12 @@ window.JobListComponent = {
         jobList.redraw(true);
 
     },
+    selectJob : function() {
+        let activeJob = JobListComponent.getJob(m.route.param("jobID"));
+        JobListComponent.pushJob(activeJob, true);
+        //JobListComponent.reloadList();
+        jobList.redraw();
+    },
     visibleJobs : function () {     // function cuts the list down to the visible elements
         return JobListComponent.list.slice(JobListComponent.index, JobListComponent.index + JobListComponent.numVisibleItems);
     },
@@ -218,7 +224,7 @@ window.JobListComponent = {
     },
     model: function() {},
     controller: function(args : any) {
-
+        //console.log(args.activejobID + " : " + m.route.param("jobID"));
         let activeJob = JobListComponent.getJob(m.route.param("jobID"));
         JobListComponent.pushJob(activeJob, true);
 
