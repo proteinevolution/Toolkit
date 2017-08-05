@@ -20,8 +20,9 @@ class DataController @Inject()(mongoStore: MongoStore,
                                psiblastController: PSIBlastController,
                                hmmerController: HmmerController,
                                hmmer: Hmmer,
-                               psi: PSIBlast)
-    extends Controller {
+                               psi: PSIBlast,
+                               cc: ControllerComponents)
+  extends AbstractController(cc) {
 
   /** Check whether the user is allowed to fetch the data for the particular job and retrieves the data with
     * stored given a particular key

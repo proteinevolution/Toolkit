@@ -29,8 +29,9 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
                            @NamedCache("userCache") implicit val userCache: CacheApi,
                            implicit val locationProvider: LocationProvider,
                            mongoStore: MongoStore,
-                           constants: Constants)
-    extends Controller {
+                           constants: Constants,
+cc: ControllerComponents)
+extends AbstractController(cc) {
 
   def jobStatusDone(jobID: String, key: String) = Action {
 

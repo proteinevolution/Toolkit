@@ -18,7 +18,7 @@ import org.joda.time.DateTime
 import play.api.Logger
 import play.api.cache._
 import play.api.libs.json.{JsNull, Json}
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc._
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 
@@ -47,8 +47,9 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                     implicit val locationProvider: LocationProvider,
                                     val jobDao: JobDAO,
                                     val toolFactory: ToolFactory,
-                                    constants: Constants)
-    extends Controller
+                                    constants: Constants,
+                                    cc: ControllerComponents)
+  extends AbstractController(cc)
     with Common {
 
   /**

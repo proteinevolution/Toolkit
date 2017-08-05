@@ -10,7 +10,7 @@ import models.database.users.User
 import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{ I18nSupport, MessagesApi }
-import play.api.mvc.{ Action, AnyContent, Controller, Request }
+import play.api.mvc._
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import better.files._
 import models.tools.{ Param, ToolFactory, Toolitem }
@@ -41,8 +41,9 @@ final class Service @Inject()(webJarAssets: WebJarAssets,
                               @NamedCache("userCache") implicit val userCache: CacheApi,
                               implicit val locationProvider: LocationProvider,
                               toolFactory: ToolFactory,
-                              constants: Constants)
-    extends Controller
+                              constants: Constants,
+                              cc: ControllerComponents)
+  extends AbstractController(cc)
     with I18nSupport
     with ReactiveMongoComponents {
 

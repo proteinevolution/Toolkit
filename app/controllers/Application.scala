@@ -54,8 +54,9 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
                                   val search: Search,
                                   val settings: Settings,
                                   configuration: Configuration,
-                                  constants: Constants)
-    extends Controller
+                                  constants: Constants,
+                                  cc: ControllerComponents)
+    extends AbstractController(cc)
     with I18nSupport
     with Common {
 

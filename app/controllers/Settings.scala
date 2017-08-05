@@ -1,7 +1,7 @@
 package controllers
 
 import java.util.Date
-import play.api.mvc.{ Action, Controller }
+import play.api.mvc._
 import play.api.i18n.MessagesApi
 import play.modules.reactivemongo.{ MongoController, ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.api.FailoverStrategy
@@ -20,8 +20,9 @@ import scala.sys.process._
   *
   */
 @Singleton
-final class Settings @Inject()(val messagesApi: MessagesApi, val reactiveMongoApi: ReactiveMongoApi)
-    extends Controller
+final class Settings @Inject()(val messagesApi: MessagesApi, val reactiveMongoApi: ReactiveMongoApi,
+                               cc: ControllerComponents)
+  extends AbstractController(cc)
     with MongoController
     with ReactiveMongoComponents {
 
