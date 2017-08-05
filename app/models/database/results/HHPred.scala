@@ -86,7 +86,15 @@ class HHPred @Inject()(general: General, aln: Alignment) {
           val num            = (x._1 \ "no").getOrElse(Json.toJson(-1)).as[String].toInt
           val ss_score       = (x._2 \ "ss").getOrElse(Json.toJson(-1)).as[Double]
           val confidence     = (x._1 \ "confidence").getOrElse(Json.toJson("")).as[String]
-          HHPredHSP(queryResult, templateResult, infoResult, agree, description, num, ss_score, confidence, agree.length)
+          HHPredHSP(queryResult,
+                    templateResult,
+                    infoResult,
+                    agree,
+                    description,
+                    num,
+                    ss_score,
+                    confidence,
+                    agree.length)
         }
         val db        = (obj \ jobID \ "db").as[String]
         val proteomes = (obj \ jobID \ "proteomes").as[String]

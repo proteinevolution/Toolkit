@@ -69,10 +69,6 @@ let select2Single = function(elem : any, isInit : boolean) : any {
     }
 };
 
-
-
-
-
 let hideSubmitButtons = function (elem : any, isInit : boolean) : any {
     if (!isInit) {
         return $(elem).on("click", function() {
@@ -90,6 +86,25 @@ let hideSubmitButtons = function (elem : any, isInit : boolean) : any {
 };
 
 
+let hideSidebar = function (elem : any, isInit : boolean) : any {
+    if (!isInit) {
+
+        $('#sidebar').hide();
+        $('#main-content').removeClass();
+
+    }
+};
+
+
+let showSidebar = function (elem : any, isInit : boolean) : any {
+    if (!isInit) {
+
+        $('#sidebar').show();
+        $('#main-content').removeClass().addClass('large-10 small-12 columns padded-column');
+        JobListComponent.selectJob();
+
+    }
+};
 
 let submitModal = function(elem : any, isInit : boolean) : any {
     if (!isInit) {
@@ -118,7 +133,7 @@ let fadesIn = function(element : any, isInitialized : boolean, context : any) {
     let url = window.location.href;
     let parts = url.split("/");
     let isJob = parts[parts.length-2] == "jobs";
-
+    //let isTool = parts[parts.length-2] == "tools";
     if (!isInitialized && !isJob) {
         element.style.opacity = 0;
         $(element).velocity({opacity: 1, top: "50%"}, 750);

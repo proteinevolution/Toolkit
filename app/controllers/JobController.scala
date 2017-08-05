@@ -1,10 +1,10 @@
 package controllers
 
-import java.io.{FileInputStream, ObjectInputStream}
+import java.io.{ FileInputStream, ObjectInputStream }
 
 import actors.JobActor._
 import java.security.MessageDigest
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 import actors.JobIDActor
 
 import akka.actor.ActorRef
@@ -17,10 +17,9 @@ import modules.LocationProvider
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.cache._
-import play.api.libs.json.{JsNull, Json}
-import play.api.mvc.{Action, AnyContent, Controller}
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
-
+import play.api.libs.json.{ JsNull, Json }
+import play.api.mvc.{ Action, AnyContent, Controller }
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -30,8 +29,6 @@ import modules.db.MongoStore
 import modules.tel.env.Env
 
 import play.modules.reactivemongo.ReactiveMongoApi
-
-
 
 /**
   * Created by lzimmermann on 02.12.16.
@@ -182,7 +179,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
   /**
     * Sends a deletion request to the job actor.
- *
+    *
     * @return
     */
   def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
@@ -193,11 +190,9 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     }
   }
 
-
-
   /**
     * TODO implement me
- *
+    *
     * @param jobID
     * @return
     */
@@ -206,8 +201,10 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
       mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).flatMap {
         case Some(job) =>
           val params: Map[String, String] = {
-            val ois = new ObjectInputStream(new FileInputStream((constants.jobPath / jobID / constants.serializedParam).pathAsString))
-            val x   = ois.readObject().asInstanceOf[Map[String, String]]
+            val ois = new ObjectInputStream(
+              new FileInputStream((constants.jobPath / jobID / constants.serializedParam).pathAsString)
+            )
+            val x = ois.readObject().asInstanceOf[Map[String, String]]
             ois.close()
             x
           }

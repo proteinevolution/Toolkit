@@ -34,7 +34,6 @@ div#main-container {
 #main-content {
     padding-top: 20px;
     min-height: 100%;
-    display: flex;
     margin-left: 0;
     margin-right: 0;
 }

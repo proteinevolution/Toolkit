@@ -2,7 +2,7 @@ package models.database.users
 
 import java.security.MessageDigest
 
-import play.api.libs.json.{JsObject, Json, Writes}
+import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
 
 /**

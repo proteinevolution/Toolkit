@@ -154,8 +154,9 @@ final class Service @Inject()(webJarAssets: WebJarAssets,
             // Read parameters from serialized file
             val paramValues: Map[String, String] = {
               if ((constants.jobPath / jobID / "sparam").exists) {
-                val ois = new ObjectInputStream(new FileInputStream((constants.jobPath / jobID / "sparam").pathAsString))
-                val x   = ois.readObject().asInstanceOf[Map[String, String]]
+                val ois =
+                  new ObjectInputStream(new FileInputStream((constants.jobPath / jobID / "sparam").pathAsString))
+                val x = ois.readObject().asInstanceOf[Map[String, String]]
                 ois.close()
                 x
               } else {
