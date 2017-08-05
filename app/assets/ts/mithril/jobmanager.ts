@@ -113,6 +113,7 @@ window.JobManager = {
         m.request({ url: "/api/job/" + jobID, method: "DELETE" }).then(function(){
             JobManager.removeFromTable(jobID);
         });
+        jobList.redraw();
     },
 
     /** send message to websocket */
