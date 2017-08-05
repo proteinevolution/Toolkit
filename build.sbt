@@ -5,6 +5,7 @@ lazy val commonDeps = Seq(
   ws,
   filters,
   cache,
+  guice,
   "com.typesafe.akka"    %% "akka-actor"              % akkaVersion,
   "com.sanoma.cda"       %% "maxmind-geoip2-scala"    % "1.5.4",
   "com.typesafe.akka"    %% "akka-cluster"            % akkaVersion,
@@ -31,7 +32,8 @@ lazy val commonDeps = Seq(
   "com.lihaoyi"          %% "fastparse"               % "0.4.1",
   "com.vmunier"          %% "scalajs-scripts"         % "1.1.1",
   "org.typelevel"        %% "cats"                    % "0.9.0",
-  "com.mohiva"           %% "play-html-compressor"    % "0.6.3"
+  "com.mohiva"           %% "play-html-compressor"    % "0.6.3",
+  "com.typesafe.play"    %% "play-json"               % "2.6.0"
   //"io.kamon"             %% "kamon-play-2.5"          % kamonVersion,
   //"io.kamon"             %% "kamon-system-metrics"    % kamonVersion,
   //"io.kamon"             %% "kamon-statsd"            % kamonVersion,
@@ -44,7 +46,7 @@ lazy val commonDeps = Seq(
  */
 lazy val commonSettings = Seq(
   version := "0.0.0",
-  scalaVersion := "2.11.8",
+  scalaVersion := "2.12.1",
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   logLevel := Level.Warn,

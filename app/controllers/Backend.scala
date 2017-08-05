@@ -13,7 +13,7 @@ import play.api.cache._
 import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.libs.json
 import play.api.libs.json.Json
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
@@ -31,8 +31,9 @@ final class Backend @Inject()(webJarAssets: WebJarAssets,
                               @NamedCache("userCache") implicit val userCache: CacheApi,
                               implicit val locationProvider: LocationProvider,
                               val reactiveMongoApi: ReactiveMongoApi,
-                              val messagesApi: MessagesApi)
-    extends Controller
+                              val messagesApi: MessagesApi,
+                              cc: ControllerComponents)
+  extends AbstractController(cc)
     with I18nSupport
     with Common {
 

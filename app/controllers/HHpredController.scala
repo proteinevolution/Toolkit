@@ -4,7 +4,7 @@ import javax.inject.Inject
 import java.nio.file.attribute.PosixFilePermission
 
 import com.typesafe.config.ConfigFactory
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.mvc._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -23,8 +23,9 @@ import play.api.libs.json.{ JsArray, JsObject, Json }
   * made from the HHpred result view
   */
 class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val reactiveMongoApi: ReactiveMongoApi, constants: Constants)(
-    webJarAssets: WebJarAssets
-) extends Controller
+    webJarAssets: WebJarAssets,
+    cc: ControllerComponents)
+  extends AbstractController(cc)
     with Common {
 
   /* gets the path to all scripts that are executed
