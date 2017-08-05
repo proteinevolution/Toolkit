@@ -142,12 +142,8 @@ let aa_color_background : Map<string, string> = new Map<string, string>();
         let $sb = $('#sidebar');
 
         if(url[url.length - 2] == 'tools' || url[url.length - 2] == 'jobs' || url[url.length - 1] == 'jobmanager'){
-            //console.log(m.route());
             $mc.removeClass();
-            $sb.fadeIn(1000);
-            $mc.show();
-            jobList.redraw(true);
-            m.redraw(true);
+            $sb.show();
         }
         else {
             $mc.removeClass();
