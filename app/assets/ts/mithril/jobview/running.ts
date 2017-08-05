@@ -6,8 +6,8 @@ class JobRunningComponent {
 
     public static updateLog(jobID : string, lines : any){
 
-        console.log(this.jobID + " " + jobID);
-        console.log(lines);
+        //console.log(this.jobID + " " + jobID);
+        //console.log(lines);
 
         let path = window.location.href;
         let url = path.split("/");
