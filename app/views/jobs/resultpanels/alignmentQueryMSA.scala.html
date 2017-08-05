@@ -15,14 +15,18 @@
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="@{resultName}_selectAllAlnq()" class="selectAllSeq"><span class="selectAllSeqSpanAlnq">Select all</span></a>
+    <a onclick="@{resultName}_selectAllAlnq()" class="selectAllSeq"><span class="@{resultName}_selectAllSeqSpanAlnq">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Reduced A3M</span></a>
     <a type="button" id="downloadAlignmentFull"  onclick="@{resultName}_downloadFull()"><span>Download Full A3M</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
-    Number of sequences (up to 200 best matches): <b>@alignment.alignment.length</b>
+    @if(resultName == "querytemplate") {
+        Number of sequences (up to 1000 best matches): <b>@alignment.alignment.length</b>
+    } else {
+        Number of sequences (up to 200 best matches): <b>@alignment.alignment.length</b>
+    }
         <br />
         <br />
 <form id="alignmentResult">
@@ -41,10 +45,6 @@
 
 <script>
         var jobID = '@jobID';
-        var fileUrl = "/files/@jobID/reduced.a3m";
-        var downloadFilename = "@{tool.toolNameShort}_@{resultName}_@{jobID}.a3m";
-        var fileUrlFull = "/files/@jobID/full.a3m";
-        var downloadFilenameFull = "@{tool.toolNameShort}_full_@{jobID}.a3m";
         var selectAllBoolAlnq = false;
         var shownHits = 20;
         var showMore = 100;
@@ -81,6 +81,15 @@
 
             $.LoadingOverlay("show");
 
+            var fileUrl = "/files/@jobID/reduced.a3m";
+            var downloadFilename = "@{tool.toolNameShort}_@{resultName}Q_@{jobID}.a3m";
+
+            if("@{resultName}" == "querytemplate"){
+                fileUrl = "/files/@jobID/reducedQT.a3m";
+                downloadFilename = "@{tool.toolNameShort}_reducedQT_@{jobID}.a3m";
+
+            }
+
             $.ajax({
                 type: 'GET',
                 url: fileUrl
@@ -91,6 +100,14 @@
 
         window["@{resultName}_downloadFull"] = function(){
             // get result json
+
+            var fileUrlFull = "/files/@jobID/full.a3m";
+            var downloadFilenameFull = "@{tool.toolNameShort}_fullQ_@{jobID}.a3m";
+
+            if("@{resultName}" == "querytemplate") {
+                fileUrlFull = "/files/@jobID/fullQT.a3m";
+                downloadFilenameFull = "@{tool.toolNameShort}_fullQT_@{jobID}.a3m";
+            }
 
             $.LoadingOverlay("show");
 
@@ -133,8 +150,8 @@
 
         window["@{resultName}_selectAllAlnq"] = function(){
             selectAllBoolAlnq = !selectAllBoolAlnq;
-            $(".selectAllSeqSpanAlnq").toggleText("Select all","Deselect all");
-            $(".selectAllSeqSpanAlnq").toggleClass("colorToggle");
+            $(".@{resultName}_selectAllSeqSpanAlnq").toggleText("Select all","Deselect all");
+            $(".@{resultName}_selectAllSeqSpanAlnq").toggleClass("colorToggle");
             if(selectAllBoolAlnq) {
                 selectAllHelper(checkbox);
                 // first empty array
