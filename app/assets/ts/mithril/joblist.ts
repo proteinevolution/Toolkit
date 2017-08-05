@@ -135,6 +135,7 @@ window.JobListComponent = {
                 }
             }
         });
+        jobList.redraw();
     },
     sortList        : function(sortMode? : string, reverse? : boolean) : boolean {      // Sorting the list elements
         let oldSort, sameMode : boolean, inv : number, selectedJobID : string, selectedInView : boolean = false;
