@@ -237,13 +237,13 @@ final class ToolFactory @Inject()(
           implicit val r = requestHeader
           mongoStore.getResult(jobID).map {
             case Some(jsvalue) =>
-              views.html.jobs.resultpanels.alignment(jobID,
+              views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
                                                      aln.parseAlignment((jsvalue \ "querytemplate").as[JsArray]),
                                                      "querytemplate",
                                                      this.values(Toolnames.HHBLITS))
           }
         },
-        "Representative Alignment" -> { (jobID, requestHeader) =>
+        "Query Alignment" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
             mongoStore.getResult(jobID).map {
               case Some(jsvalue) =>
