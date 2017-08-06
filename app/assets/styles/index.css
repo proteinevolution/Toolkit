@@ -443,7 +443,7 @@ FIELDSET {
 }
 .trafficbar.done {
     background: rgba(0, 180, 40, 0.9);
-    box-shadow: 0 1px 6px #C3FFC3;
+    box-shadow: 0 1px 6px #3b8058;
 }
 .trafficbar.error {
     background: rgba(180, 0, 40, 0.9);
