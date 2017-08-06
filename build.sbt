@@ -20,7 +20,7 @@ lazy val commonDeps = Seq(
   "com.github.pathikrit"   %% "better-files"         % "2.17.1",
   "org.mindrot"            % "jbcrypt"               % "0.3m",
   "com.sksamuel.elastic4s" %% "elastic4s-core"       % elastic4sVersion, // for the tcp client
-  "com.sksamuel.elastic4s" %% "elastic4s-tcp"        % elastic4sVersion,
+  //"com.sksamuel.elastic4s" %% "elastic4s-tcp"        % elastic4sVersion,
   "org.reactivemongo"      %% "play2-reactivemongo"  % "0.12.5-play26",
   "co.fs2"                 %% "fs2-core"             % "0.9.2",
   "org.scalaz"             %% "scalaz-core"          % scalazVersion,
