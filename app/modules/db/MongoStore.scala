@@ -25,7 +25,7 @@ import scala.language.postfixOps
   * Created by zin on 03.08.16.
   */
 @Singleton
-final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends ReactiveMongoComponents {
+final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi, gridFSDAO: GridFSDAO) extends ReactiveMongoComponents {
 
   def selectjobID(jobID: String) = BSONDocument("jobID" -> BSONDocument("$eq" -> jobID))
 
