@@ -35,6 +35,7 @@ GET           /ws                                     @controllers.Application.w
 
 # Maintenance
 POST          /maintenance                            controllers.Application.maintenance
+GET           /uptime                                 controllers.UptimeController.uptime
 
 # Serve files
 GET           /files/:mainID/:filename                @controllers.Application.file(filename: String, mainID: String)
