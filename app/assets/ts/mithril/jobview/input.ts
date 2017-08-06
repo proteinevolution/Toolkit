@@ -21,6 +21,7 @@ let ParameterAlignmentComponent = {
         return {
             name: "alignment",
             id: "alignment",
+            //value: localStorage.getItem('alignmentcontent'),
             // Function to List all supported modes of the component
             getModes: (function() {
                 return this.modes;

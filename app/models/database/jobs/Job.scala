@@ -28,7 +28,7 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
                dateUpdated: Option[ZonedDateTime], // Last Updated on
                dateViewed: Option[ZonedDateTime], // Last Viewed on
                IPHash: Option[String]) // hash of the ip
-   {
+{
 
   // Returns if the job is private or not
   def isPrivate: Boolean = {
@@ -138,7 +138,7 @@ object Job {
           val dateViewed   = (obj \ DATEVIEWED).asOpt[String]
           val toolnameLong = (obj \ TOOLNAMELONG).asOpt[String]
           val IPHash       = (obj \ IPHASH).asOpt[String]
-          val datetimenow = ZonedDateTime.now()
+          val datetimenow  = ZonedDateTime.now()
           JsSuccess(
             Job(
               mainID = BSONObjectID.generate(),

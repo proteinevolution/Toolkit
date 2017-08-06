@@ -39,6 +39,8 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
             }
         validationProcess($(elem), toolname);
         return $(elem).on("input", function (e) {
+            //localStorage.setItem('alignmentcontent', $(elem).val());
+            //console.log(localStorage.getItem('alignmentcontent'));
             validationProcess($(elem), toolname);
         });
     }

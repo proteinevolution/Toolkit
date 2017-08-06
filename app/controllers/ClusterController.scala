@@ -15,9 +15,11 @@ import sys.process._
   * Created by snam on 19.03.17.
   */
 @Singleton
-final class ClusterController @Inject()(ws: WSClient, configuration: Configuration, cluster: Cluster,
+final class ClusterController @Inject()(ws: WSClient,
+                                        configuration: Configuration,
+                                        cluster: Cluster,
                                         cc: ControllerComponents)
-  extends AbstractController(cc) {
+    extends AbstractController(cc) {
 
   def getLoad: Action[AnyContent] = Action { implicit request =>
     Ok(Json.toJson(("qstat" #| "wc -l").!!.toDouble / 32))

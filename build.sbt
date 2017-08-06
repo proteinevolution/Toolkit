@@ -1,38 +1,37 @@
-lazy val akkaVersion  = "2.5.3"
-lazy val kamonVersion = "0.6.6"
+lazy val akkaVersion      = "2.5.3"
+lazy val kamonVersion     = "0.6.6"
 lazy val elastic4sVersion = "2.4.0"
-lazy val scalazVersion = "7.2.10"
+lazy val scalazVersion    = "7.2.10"
 
 lazy val commonDeps = Seq(
   ws,
   filters,
   cache,
   guice,
-  "com.typesafe.akka"    %% "akka-actor"              % akkaVersion,
-  "com.sanoma.cda"       %% "maxmind-geoip2-scala"    % "1.5.4",
-  "com.typesafe.akka"    %% "akka-cluster"            % akkaVersion,
-  "com.typesafe.akka"    %% "akka-cluster-tools"      % akkaVersion,
-  "com.typesafe.akka"    %% "akka-cluster-metrics"    % akkaVersion,
-  "com.typesafe.akka"    %% "akka-slf4j"              % akkaVersion,
-  "com.typesafe.akka"    %% "akka-stream"             % akkaVersion,
-  "com.typesafe.akka"    %% "akka-persistence"        % akkaVersion,
-  "com.typesafe.play"    %% "play-mailer"             % "6.0.1",
-  "com.github.pathikrit" %% "better-files"            % "2.17.1",
-  "org.mindrot"          % "jbcrypt"                  % "0.3m",
-  "com.sksamuel.elastic4s" %% "elastic4s-core" % elastic4sVersion,
-  // for the tcp client
-  "com.sksamuel.elastic4s" %% "elastic4s-tcp" % elastic4sVersion,
-  "org.reactivemongo"    %% "play2-reactivemongo"     % "0.12.5-play26",
-  "co.fs2"               %% "fs2-core"                % "0.9.2",
-  "org.scalaz"           %% "scalaz-core"             % scalazVersion,
-  "org.scalaz"           %% "scalaz-concurrent"       % scalazVersion,
-  "com.chuusai"          %% "shapeless"               % "2.3.2",
-  "org.clapper"          %% "classutil"               % "1.1.2",
-  "com.lihaoyi"          %% "fastparse"               % "0.4.2",
-  "com.vmunier"          %% "scalajs-scripts"         % "1.1.1",
-  "org.typelevel"        %% "cats"                    % "0.9.0",
-  "com.mohiva"           %% "play-html-compressor"    % "0.7.1",
-  "com.typesafe.play"    %% "play-json"               % "2.6.0"
+  "com.typesafe.akka"      %% "akka-actor"           % akkaVersion,
+  "com.sanoma.cda"         %% "maxmind-geoip2-scala" % "1.5.4",
+  "com.typesafe.akka"      %% "akka-cluster"         % akkaVersion,
+  "com.typesafe.akka"      %% "akka-cluster-tools"   % akkaVersion,
+  "com.typesafe.akka"      %% "akka-cluster-metrics" % akkaVersion,
+  "com.typesafe.akka"      %% "akka-slf4j"           % akkaVersion,
+  "com.typesafe.akka"      %% "akka-stream"          % akkaVersion,
+  "com.typesafe.akka"      %% "akka-persistence"     % akkaVersion,
+  "com.typesafe.play"      %% "play-mailer"          % "6.0.1",
+  "com.github.pathikrit"   %% "better-files"         % "2.17.1",
+  "org.mindrot"            % "jbcrypt"               % "0.3m",
+  "com.sksamuel.elastic4s" %% "elastic4s-core"       % elastic4sVersion, // for the tcp client
+  "com.sksamuel.elastic4s" %% "elastic4s-tcp"        % elastic4sVersion,
+  "org.reactivemongo"      %% "play2-reactivemongo"  % "0.12.5-play26",
+  "co.fs2"                 %% "fs2-core"             % "0.9.2",
+  "org.scalaz"             %% "scalaz-core"          % scalazVersion,
+  "org.scalaz"             %% "scalaz-concurrent"    % scalazVersion,
+  "com.chuusai"            %% "shapeless"            % "2.3.2",
+  "org.clapper"            %% "classutil"            % "1.1.2",
+  "com.lihaoyi"            %% "fastparse"            % "0.4.2",
+  "com.vmunier"            %% "scalajs-scripts"      % "1.1.1",
+  "org.typelevel"          %% "cats"                 % "0.9.0",
+  "com.mohiva"             %% "play-html-compressor" % "0.7.1",
+  "com.typesafe.play"      %% "play-json"            % "2.6.0"
   //"io.kamon"             %% "kamon-play-2.5"          % kamonVersion,
   //"io.kamon"             %% "kamon-system-metrics"    % kamonVersion,
   //"io.kamon"             %% "kamon-statsd"            % kamonVersion,
@@ -83,7 +82,7 @@ lazy val root = (project in file("."))
       "org.webjars"       % "jquery-ui"           % "1.12.1",
       "org.webjars.npm"   % "foundation-sites"    % "6.4.1",
       "org.webjars.bower" % "fastclick"           % "1.0.6",
-      "org.webjars.npm"   % "mithril"             % "0.2.5",
+      "org.webjars.npm"   % "mithril"             % "0.2.8",
       "org.webjars.bower" % "d3"                  % "4.4.1",
       "org.webjars.bower" % "slick-carousel"      % "1.6.0",
       "org.webjars.npm"   % "codemirror-minified" % "5.22.0",
@@ -146,4 +145,3 @@ scalacOptions ++= Seq(
 )
 
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
-
