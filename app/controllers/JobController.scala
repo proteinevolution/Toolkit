@@ -1,14 +1,14 @@
 package controllers
 
-import java.io.{ FileInputStream, ObjectInputStream }
+import java.io.{FileInputStream, ObjectInputStream}
 
 import actors.JobActor._
 import java.security.MessageDigest
-import javax.inject.{ Inject, Named, Singleton }
-import actors.JobIDActor
+import javax.inject.{Inject, Named, Singleton}
 
+import actors.JobIDActor
 import akka.actor.ActorRef
-import models.Constants
+import models.{Constants, UserSessions}
 import models.database.jobs._
 import models.database.users.User
 import models.job.JobActorAccess
@@ -17,9 +17,9 @@ import modules.LocationProvider
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.cache._
-import play.api.libs.json.{ JsNull, Json }
-import play.api.mvc.{ Action, AnyContent, Controller }
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import play.api.libs.json.{JsNull, Json}
+import play.api.mvc.{Action, AnyContent, Controller}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -27,7 +27,6 @@ import better.files._
 import models.tools.ToolFactory
 import modules.db.MongoStore
 import modules.tel.env.Env
-
 import play.modules.reactivemongo.ReactiveMongoApi
 
 /**
