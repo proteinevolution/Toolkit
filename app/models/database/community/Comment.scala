@@ -6,14 +6,14 @@ import reactivemongo.bson._
 import reactivemongo.play.json._
 
 case class Comment(
-                    commentID: BSONObjectID, // ID of the Comment
-                    title: Option[String] = None, //Title of the comment
-                    text: String, // Comment
-                    commentList: List[BSONObjectID] = List.empty, // List of child comments
-                    deleted: Option[Boolean] = None, // Unset: Not hidden, False: Hidden by Owner, True: Deleted by Moderators
-                    oldVersion: Option[BSONObjectID] = None, // Older version of the comment (set this to link to the original comment after a edit)
-                    dateCreated: Option[ZonedDateTime], // Creation time of the Comment
-                    dateUpdated: Option[ZonedDateTime]
+    commentID: BSONObjectID, // ID of the Comment
+    title: Option[String] = None, //Title of the comment
+    text: String, // Comment
+    commentList: List[BSONObjectID] = List.empty, // List of child comments
+    deleted: Option[Boolean] = None, // Unset: Not hidden, False: Hidden by Owner, True: Deleted by Moderators
+    oldVersion: Option[BSONObjectID] = None, // Older version of the comment (set this to link to the original comment after a edit)
+    dateCreated: Option[ZonedDateTime], // Creation time of the Comment
+    dateUpdated: Option[ZonedDateTime]
 ) // Last changed on (set this when replaced by a newer version)
 
 object Comment {

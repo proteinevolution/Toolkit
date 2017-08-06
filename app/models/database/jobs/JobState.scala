@@ -28,7 +28,7 @@ case object Submitted extends JobState
 // Job State which is set when the job was validated by the hash search but a different job was found
 case object Pending extends JobState
 // Job State which is set when the maximal number of jobs is reached within a fixed time
-case object LimitReached extends  JobState
+case object LimitReached extends JobState
 
 object JobState {
   implicit object JobStateReads extends Reads[JobState] {
@@ -91,14 +91,14 @@ object JobState {
   implicit object JobStateWriter extends BSONWriter[JobState, BSONInteger] {
     def write(state: JobState): BSONInteger = {
       state match {
-        case Prepared  => BSONInteger(1)
-        case Queued    => BSONInteger(2)
-        case Running   => BSONInteger(3)
-        case Error     => BSONInteger(4)
-        case Done      => BSONInteger(5)
-        case Submitted => BSONInteger(6)
-        case Pending   => BSONInteger(7)
-        case LimitReached   => BSONInteger(8)
+        case Prepared     => BSONInteger(1)
+        case Queued       => BSONInteger(2)
+        case Running      => BSONInteger(3)
+        case Error        => BSONInteger(4)
+        case Done         => BSONInteger(5)
+        case Submitted    => BSONInteger(6)
+        case Pending      => BSONInteger(7)
+        case LimitReached => BSONInteger(8)
       }
     }
   }

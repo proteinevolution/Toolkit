@@ -130,7 +130,7 @@
         <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
 
     </head>
-    <body>
+    <body onload="reloadJobList();">
         <input type="hidden" id="authView" value="@view">
 
         <div id="message-float" style="position: fixed;
@@ -247,10 +247,13 @@
                                         </div>
                                     </div>
 
-                                        <!--- Mount point for Mithril Application -->
-                                    <div class="row" id="main-content">
-                                        <noscript><div class="noscript">It's okay to hate JavaScript... <br/>
-                                            ...but you won't be able to use this website properly! <!-- or another slogan --></div></noscript>
+                                        <!--- Mount points for Mithril Application -->
+                                    <div class="row">
+                                        <div class="large-2 padded-column columns show-for-large" id="sidebar" style="display: none;"></div>
+                                        <div id="main-content">
+                                            <noscript><div class="noscript">It's okay to hate JavaScript... <br/>
+                                                ...but you won't be able to use this website properly! <!-- or another slogan --></div></noscript>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

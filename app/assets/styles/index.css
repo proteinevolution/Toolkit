@@ -443,7 +443,7 @@ FIELDSET {
 }
 .trafficbar.done {
     background: rgba(0, 180, 40, 0.9);
-    box-shadow: 0 1px 6px #C3FFC3;
+    box-shadow: 0 1px 6px #3b8058;
 }
 .trafficbar.error {
     background: rgba(180, 0, 40, 0.9);
@@ -568,42 +568,6 @@ td#joblistIcon i {
 
 }
 
-/*Hide Livetable on small screen and adjust page elements */
-@media screen and (max-width: 730px) {
-    .grid {
-        margin-top: 20px;
-    }
-}
-
-@media screen and (max-width: 830px) {
-    .liveTable {
-        display: none;
-    }
-}
-
-/*@media screen and (max-width: 730px) {*/
-    /*.trafficbar {*/
-        /*display: none;*/
-    /*}*/
-/*}*/
-
-@media screen and (max-width: 830px) {
-    .liveTableContainer {
-        height: 5em;
-    }
-}
-
-@media screen and (max-width: 730px) {
-    .article_container {
-        margin-top: 0;
-    }
-}
-
-@media screen and (max-width: 730px) {
-    .tool-finder{
-        height: 8em !important;
-    }
-}
 
 /*Hide slider on very small screen and adjust page elements */
 @media screen and (max-width: 900px) {
@@ -623,22 +587,6 @@ td#joblistIcon i {
         width: 75%;
     }
 }
-
-@media screen and (max-width: 850px) {
-    .quick_links {
-        display: none;
-    }
-}
-
-
-@media screen and (max-width: 800px) {
-    .text_part {
-        width: 100%;
-    }
-}
-
-
-
 
 /*Load Bar styling*/
 

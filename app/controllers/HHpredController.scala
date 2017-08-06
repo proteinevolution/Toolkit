@@ -22,10 +22,11 @@ import play.api.libs.json.{ JsArray, JsObject, Json }
   * HHpred Controller process all requests
   * made from the HHpred result view
   */
-class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val reactiveMongoApi: ReactiveMongoApi, constants: Constants)(
-    webJarAssets: WebJarAssets,
-    cc: ControllerComponents)
-  extends AbstractController(cc)
+class HHpredController @Inject()(hhpred: HHPred,
+                                 mongoStore: MongoStore,
+                                 val reactiveMongoApi: ReactiveMongoApi,
+                                 constants: Constants)(webJarAssets: WebJarAssets, cc: ControllerComponents)
+    extends AbstractController(cc)
     with Common {
 
   /* gets the path to all scripts that are executed
@@ -33,7 +34,6 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
   private val serverScripts           = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignment.sh").toFile
   private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile
-
 
   /**
     * returns 3D structure view for a given accession
@@ -55,22 +55,23 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
     * @param accession
     * @return Http response
     */
-  def retrieveTemplateAlignment(jobID: String, accession: String): Action[AnyContent] = Action.async { implicit request =>
-    if (!templateAlignmentScript.isExecutable) {
-      Future.successful(BadRequest)
-      throw FileException(s"File ${templateAlignmentScript.name} is not executable.")
-    } else {
-      Future.successful {
-        Process(templateAlignmentScript.pathAsString,
-                (constants.jobPath + jobID).toFile.toJava,
-                "jobID"     -> jobID,
-                "accession" -> accession).run().exitValue() match {
+  def retrieveTemplateAlignment(jobID: String, accession: String): Action[AnyContent] = Action.async {
+    implicit request =>
+      if (!templateAlignmentScript.isExecutable) {
+        Future.successful(BadRequest)
+        throw FileException(s"File ${templateAlignmentScript.name} is not executable.")
+      } else {
+        Future.successful {
+          Process(templateAlignmentScript.pathAsString,
+                  (constants.jobPath + jobID).toFile.toJava,
+                  "jobID"     -> jobID,
+                  "accession" -> accession).run().exitValue() match {
 
-          case 0 => Ok
-          case _ => BadRequest
+            case 0 => Ok
+            case _ => BadRequest
+          }
         }
       }
-    }
   }
 
   /**
@@ -88,11 +89,10 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
     * @param jobID
     * @return
     */
-
   def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val filename  = (json \ "fileName").as[String]
-    val eval      = (json \ "evalue").as[String]
+    val json     = request.body.asJson.get
+    val filename = (json \ "fileName").as[String]
+    val eval     = (json \ "evalue").as[String]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
@@ -103,9 +103,9 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
           val numListStr = getNumListEval(result, eval.toDouble)
           Process(generateAlignmentScript.pathAsString,
                   (constants.jobPath + jobID).toFile.toJava,
-                  "jobID"   -> jobID,
+                  "jobID"    -> jobID,
                   "filename" -> filename,
-                  "numList" -> numListStr).run().exitValue() match {
+                  "numList"  -> numListStr).run().exitValue() match {
             case 0 => Ok
             case _ => BadRequest
           }
@@ -114,6 +114,7 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
       }
     }
   }
+
   /**
     * Retrieves the aligned sequences (parsable alignment
     * must be provided in the result folder as JSON)
@@ -131,9 +132,9 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
     * @return
     */
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val filename  = (json \ "fileName").as[String]
-    val numList = (json \ "checkboxes").as[List[Int]]
+    val json     = request.body.asJson.get
+    val filename = (json \ "fileName").as[String]
+    val numList  = (json \ "checkboxes").as[List[Int]]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
@@ -141,9 +142,9 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
       val numListStr = numList.mkString(" ")
       Process(generateAlignmentScript.pathAsString,
               (constants.jobPath + jobID).toFile.toJava,
-              "jobID"   -> jobID,
-              "filename"-> filename,
-              "numList" -> numListStr).run().exitValue() match {
+              "jobID"    -> jobID,
+              "filename" -> filename,
+              "numList"  -> numListStr).run().exitValue() match {
         case 0 => Future.successful(Ok)
         case _ => Future.successful(BadRequest)
       }
@@ -170,7 +171,6 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
     * @param params
     * @return
     */
-
   def getHitsByKeyWord(jobID: String, params: DTParam): Future[List[HHPredHSP]] = {
     if (params.sSearch.isEmpty) {
       mongoStore.getResult(jobID).map {
@@ -201,24 +201,25 @@ class HHpredController @Inject()(hhpred: HHPred, mongoStore: MongoStore, val rea
     * @param jobID
     * @return Https response: HSP row(s) as String
     */
-
   def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json      = request.body.asJson.get
-    val start     = (json \ "start").as[Int]
-    val end       = (json \ "end").as[Int]
-    val isColor   = (json \ "isColor").as[Boolean]
-    val wrapped   = (json \ "wrapped").as[Boolean]
-      mongoStore.getResult(jobID).map {
-        case Some(jsValue) =>
-          val result = hhpred.parseResult(jsValue)
-          if (end > result.num_hits || start > result.num_hits) {
-            BadRequest
-          } else {
-            val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(jobID, _, isColor, wrapped))
-            Ok(hits.mkString)
-          }
-      }
+    val json    = request.body.asJson.get
+    val start   = (json \ "start").as[Int]
+    val end     = (json \ "end").as[Int]
+    val isColor = (json \ "isColor").as[Boolean]
+    val wrapped = (json \ "wrapped").as[Boolean]
+    mongoStore.getResult(jobID).map {
+      case Some(jsValue) =>
+        val result = hhpred.parseResult(jsValue)
+        if (end > result.num_hits || start > result.num_hits) {
+          BadRequest
+        } else {
+          val hits =
+            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(jobID, _, isColor, wrapped))
+          Ok(hits.mkString)
+        }
+    }
   }
+
   /**
     * this method fetches the data for the PSIblast hitlist
     * datatable
