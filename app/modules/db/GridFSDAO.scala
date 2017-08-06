@@ -11,7 +11,7 @@ import reactivemongo.api.gridfs.Implicits._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-class GridFSDAO {
+object GridFSDAO {
 
 
   type GFile = ReadFile[BSONSerializationPack.type, BSONValue]
@@ -28,7 +28,7 @@ class GridFSDAO {
 
   def saveResultToGridFS(filename : String, contentType: Option[String], data: Enumerator[Array[Byte]]) : Future[GridFSDAO.this.GFile] = {
 
-    saveToGridFS(GridFS[BSONSerializationPack.type](db, "resultCollection"), filename, contentType, data)
+    saveToGridFS(GridFS[BSONSerializationPack.type](db), filename, contentType, data)
 
   }
 
