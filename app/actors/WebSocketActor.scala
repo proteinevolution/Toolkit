@@ -1,23 +1,23 @@
 package actors
 
-import javax.inject.{ Inject, Named }
+import javax.inject.{Inject, Named}
 
 import actors.ClusterMonitor._
 import actors.JobActor._
-import actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
-import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
+import actors.WebSocketActor.{ChangeSessionID, LogOut, MaintenanceAlert}
+import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
-import controllers.UserSessions
-import models.Constants
-import models.database.jobs.{ Job, Running }
+import models.{Constants, UserSessions}
+import models.database.jobs.{Job, Running}
 import models.job.JobActorAccess
 import modules.LocationProvider
 import play.api.Logger
 import play.api.cache._
-import play.api.libs.json.{ JsValue, Json }
+import play.api.libs.json.{JsValue, Json}
 import reactivemongo.bson.BSONObjectID
-import java.nio.file.{ Files, Paths }
+import java.nio.file.{Files, Paths}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -129,13 +129,13 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
     case WatchLogFile(job: Job) =>
       // Do filewatching here
       val file = s"${constants.jobPath}${job.jobID}${constants.SEPARATOR}results${constants.SEPARATOR}process.log"
-      Logger.info("Watching: " + file)
+      //Logger.info("Watching: " + file)
       if (job.status.equals(Running)) {
         if (Files.exists(Paths.get(file))) {
           val source = scala.io.Source.fromFile(file)
           val lines = try source.mkString
           finally source.close()
-          println(lines)
+          //println(lines)
           out ! Json.obj("type" -> "WatchLogFile", "jobID" -> job.jobID, "lines" -> lines)
         }
       }
