@@ -27,7 +27,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
                                   general: General,
                                   constants: Constants,
                                   cc: ControllerComponents)
-  extends AbstractController(cc)
+    extends AbstractController(cc)
     with Common {
 
   /* gets the path to all scripts that are executed
@@ -37,6 +37,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
   private val templateAlignmentScript = (serverScripts + "/templateAlignmentHHblits.sh").toFile
   private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile
   private val retrieveFullSeq         = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
+
   /**
     * returns 3D structure view for a given accession
     * in scop or mmcif
@@ -46,6 +47,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
   def show3DStructure(accession: String): Action[AnyContent] = Action { implicit request =>
     Ok(views.html.jobs.resultpanels.structure(accession, webJarAssets))
   }
+
   /**
     * Retrieves the template alignment for a given
     * accession, therefore it runs a script on the server
@@ -90,11 +92,10 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     * @param jobID
     * @return Https response
     */
-
   def evalFull(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val filename  = (json \ "fileName").as[String]
-    val eval      = (json \ "evalue").as[String]
+    val json     = request.body.asJson.get
+    val filename = (json \ "fileName").as[String]
+    val eval     = (json \ "evalue").as[String]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
@@ -118,6 +119,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
       }
     }
   }
+
   /**
     * Retrieves the full sequences of all selected hits
     * in the result view and writes the sequences
@@ -133,9 +135,9 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     * @return Https response
     */
   def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val filename  = (json \ "fileName").as[String]
-    val numList = (json \ "checkboxes").as[List[Int]]
+    val json     = request.body.asJson.get
+    val filename = (json \ "fileName").as[String]
+    val numList  = (json \ "checkboxes").as[List[Int]]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
@@ -175,11 +177,10 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     * @param jobID
     * @return
     */
-
   def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val filename  = (json \ "fileName").as[String]
-    val eval      = (json \ "evalue").as[String]
+    val json     = request.body.asJson.get
+    val filename = (json \ "fileName").as[String]
+    val eval     = (json \ "evalue").as[String]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
@@ -190,9 +191,9 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
           val numListStr = getNumListEval(result, eval.toDouble)
           Process(generateAlignmentScript.pathAsString,
                   (constants.jobPath + jobID).toFile.toJava,
-                  "jobID"   -> jobID,
-                  "filename"-> filename,
-                  "numList" -> numListStr).run().exitValue() match {
+                  "jobID"    -> jobID,
+                  "filename" -> filename,
+                  "numList"  -> numListStr).run().exitValue() match {
             case 0 => Ok
             case _ => BadRequest
           }
@@ -218,11 +219,10 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     * @param jobID
     * @return
     */
-
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val filename  = (json \ "fileName").as[String]
-    val numList = (json \ "checkboxes").as[List[Int]]
+    val json     = request.body.asJson.get
+    val filename = (json \ "fileName").as[String]
+    val numList  = (json \ "checkboxes").as[List[Int]]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
       throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
@@ -230,14 +230,15 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
       val numListStr = numList.mkString(" ")
       Process(generateAlignmentScript.pathAsString,
               (constants.jobPath + jobID).toFile.toJava,
-              "jobID"   -> jobID,
-              "filename"-> filename,
-              "numList" -> numListStr).run().exitValue() match {
+              "jobID"    -> jobID,
+              "filename" -> filename,
+              "numList"  -> numListStr).run().exitValue() match {
         case 0 => Future.successful(Ok)
         case _ => Future.successful(BadRequest)
       }
     }
   }
+
   /**
     * filters HSPS for hits below a given evalue threshold
     * and returns a string with the numbers whitespace speparated
@@ -260,14 +261,12 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     * @return string containing whitespace
     *         separated accessions
     */
-
   def getAccessions(result: HHBlitsResult, numList: Seq[Int]): String = {
     val fas = numList.map { num =>
       result.HSPS(num - 1).template.accession + " "
     }
     fas.mkString
   }
-
 
   /**
     * given an evalue threshold this method
@@ -278,11 +277,11 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     * @return string containing whitespace
     *         separated accessions
     */
-
   def getAccessionsEval(result: HHBlitsResult, eval: Double): String = {
     val fas = result.HSPS.filter(_.info.evalue < eval).map { _.template.accession + " " }
     fas.mkString
   }
+
   /**
     * given dataTable specific paramters, this function
     * filters for eg. a specific column and returns the data
@@ -290,7 +289,6 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     * @param params
     * @return
     */
-
   def getHitsByKeyWord(jobID: String, params: DTParam): Future[List[HHBlitsHSP]] = {
     if (params.sSearch.isEmpty) {
       mongoStore.getResult(jobID).map {
@@ -304,6 +302,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     }
     //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
+
   /**
     * Retrieves hit rows (String containing Html)
     * for the alignment section in the result view
@@ -320,9 +319,9 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     * @return Https response: HSP row(s) as String
     */
   def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json      = request.body.asJson.get
-    val start     = (json \ "start").as[Int]
-    val end       = (json \ "end").as[Int]
+    val json    = request.body.asJson.get
+    val start   = (json \ "start").as[Int]
+    val end     = (json \ "end").as[Int]
     val wrapped = (json \ "wrapped").as[Boolean]
     mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
@@ -330,11 +329,13 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
         if (end > result.num_hits || start > result.num_hits) {
           BadRequest
         } else {
-          val hits = result.HSPS.slice(start, end).map {(views.html.jobs.resultpanels.hhblits.hit(jobID, _, wrapped))}
+          val hits =
+            result.HSPS.slice(start, end).map { (views.html.jobs.resultpanels.hhblits.hit(jobID, _, wrapped)) }
           Ok(hits.mkString)
         }
     }
   }
+
   /**
     * this method fetches the data for the PSIblast hitlist
     * datatable
@@ -342,7 +343,6 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     * @param jobID
     * @return
     */
-
   def dataTable(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val params = DTParam(
       request.getQueryString("sSearch").getOrElse(""),

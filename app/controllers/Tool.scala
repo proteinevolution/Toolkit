@@ -25,7 +25,7 @@ final class Tool @Inject()(messagesApi: MessagesApi,
                            implicit val locationProvider: LocationProvider,
                            val jobDao: JobDAO,
                            cc: ControllerComponents)
-  extends AbstractController(cc)
+    extends AbstractController(cc)
     with I18nSupport {
 
   implicit val timeout = Timeout(5.seconds)

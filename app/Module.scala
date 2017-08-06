@@ -2,7 +2,7 @@
   * Created by snam on 22.05.17.
   */
 import com.google.inject.AbstractModule
-import services.{Configuration, ConfigurationImpl, SweepJobs, SweepJobsImpl}
+import services.{ Configuration, ConfigurationImpl, SweepJobs, SweepJobsImpl }
 
 class Module extends AbstractModule {
 

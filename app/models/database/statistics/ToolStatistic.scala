@@ -68,7 +68,10 @@ object ToolStatistic {
       MONTHLY       -> toolStatistic.monthly,
       MONTHLYFAILED -> toolStatistic.monthlyFailed,
       DATEPUSHED -> toolStatistic.datePushed.map(
-        dt => Json.obj("string" -> dtf.format(dt), "month" -> DateTimeFormatter.ofPattern("MMM").format(dt), "year" -> dt.getYear)
+        dt =>
+          Json.obj("string" -> dtf.format(dt),
+                   "month"  -> DateTimeFormatter.ofPattern("MMM").format(dt),
+                   "year"   -> dt.getYear)
       )
     )
   }
@@ -82,7 +85,8 @@ object ToolStatistic {
         currentFailed = bson.getAs[Int](CURRENTFAILED).getOrElse(0),
         monthly = bson.getAs[List[Int]](MONTHLY).getOrElse(List.empty),
         monthlyFailed = bson.getAs[List[Int]](MONTHLYFAILED).getOrElse(List.empty),
-        datePushed = bson.getAs[List[BSONDateTime]](DATEPUSHED).getOrElse(List.empty).map(dt => ZonedDateTime.parse(dt.toString))
+        datePushed =
+          bson.getAs[List[BSONDateTime]](DATEPUSHED).getOrElse(List.empty).map(dt => ZonedDateTime.parse(dt.toString))
       )
     }
   }

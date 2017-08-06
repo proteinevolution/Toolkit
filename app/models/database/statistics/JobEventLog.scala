@@ -14,8 +14,10 @@ case class JobEventLog(mainID: BSONObjectID, // ID of the Job in the System
                        events: List[JobEvent],
                        runtime: Long = 0L) {
   def addJobStateEvent(jobState: JobState): JobEventLog = {
-    val runtimeDiff: Long = events.head.timestamp.map(d => ZonedDateTime.now.toInstant.toEpochMilli - d.toInstant.toEpochMilli).getOrElse(0L)
-    this.copy(events = events.::(JobEvent(jobState, Some(ZonedDateTime.now), runtimeDiff)), runtime = runtime + runtimeDiff)
+    val runtimeDiff: Long =
+      events.head.timestamp.map(d => ZonedDateTime.now.toInstant.toEpochMilli - d.toInstant.toEpochMilli).getOrElse(0L)
+    this.copy(events = events.::(JobEvent(jobState, Some(ZonedDateTime.now), runtimeDiff)),
+              runtime = runtime + runtimeDiff)
   }
 }
 

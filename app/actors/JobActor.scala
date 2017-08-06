@@ -1,43 +1,39 @@
 package actors
 
-import javax.inject.{Inject, Named}
+import javax.inject.{ Inject, Named }
 
-import actors.FileWatcher.{StartProcessReport, StopProcessReport}
 import actors.JobActor._
-import akka.actor.{Actor, ActorRef}
+import akka.actor._
 import akka.event.LoggingReceive
 import models.Constants
 import models.database.jobs._
-import models.database.statistics.{JobEvent, JobEventLog}
+import models.database.statistics.{ JobEvent, JobEventLog }
 import models.database.users.User
 import models.mailing.JobFinishedMail
 import models.search.JobDAO
 import modules.tel.TEL
 import modules.tel.runscripts._
 import com.typesafe.config.ConfigFactory
-import controllers.{FileException, UserSessions}
+import controllers.{ FileException, UserSessions }
 import models.sge.Qdel
 import modules.LocationProvider
 import modules.db.MongoStore
 import modules.tel.env.Env
 import modules.tel.execution.ExecutionContext.FileAlreadyExists
-import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
+import modules.tel.execution.{ ExecutionContext, RunningExecution, WrapperExecutionFactory }
 import modules.tel.runscripts.Runscript.Evaluation
 import java.time.ZonedDateTime
 import play.api.Logger
-import play.api.cache.{CacheApi, NamedCache}
+import play.api.cache.{ CacheApi, NamedCache }
 import play.api.libs.mailer.MailerClient
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
-
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json._
-
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.util.{ Failure, Success }
 import better.files._
-
-
+import scala.concurrent.duration._
 
 object JobActor {
 
@@ -67,7 +63,7 @@ object JobActor {
 
   // checks if user has submitted max number of jobs
   // of jobs within a given time
-  case class CheckIPHash(jobID:  String)
+  case class CheckIPHash(jobID: String)
 
   // UserActor Stops Watching this Job
   case class RemoveFromWatchlist(jobID: String, userID: BSONObjectID)
@@ -80,6 +76,13 @@ object JobActor {
 
   // Job Controller receives push message to update the log
   case class UpdateLog(jobID: String)
+
+  // forward filewatching task to ws actor
+
+  case class WatchLogFile(job: Job)
+
+  case object UpdateLog2
+
 }
 
 class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscripts to be executed
@@ -92,7 +95,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                          wrapperExecutionFactory: WrapperExecutionFactory,
                          implicit val locationProvider: LocationProvider,
                          @Named("jobIDActor") jobIDActor: ActorRef,
-                         @Named("fileWatcher") fileWatcher: ActorRef,
                          @NamedCache("userCache") implicit val userCache: CacheApi,
                          @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi,
                          constants: Constants)
@@ -102,6 +104,14 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
   private var currentJobs: Map[String, Job]                           = Map.empty
   private var currentJobLogs: Map[String, JobEventLog]                = Map.empty
   private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty
+
+  // long polling stuff
+
+  private val fetchLatestInterval = 1.seconds
+  private val Tick: Cancellable = {
+    // scheduler should use the system dispatcher
+    context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, UpdateLog2)(context.system.dispatcher)
+  }
 
   // Running executions
   private var runningExecutions: Map[String, RunningExecution] = Map.empty
@@ -287,6 +297,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         foundWatchers.flatten.foreach(_ ! PushJob(job))
         job
       }
+
   }
 
   /**
@@ -321,6 +332,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     }
   }
 
+  override def postStop(): Unit = Tick.cancel()
+
   override def receive = LoggingReceive {
 
     case PrepareJob(job, params, startJob, isInternalJob) =>
@@ -338,10 +351,10 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         // Create a log for this job
         this.currentJobLogs =
           this.currentJobLogs.updated(job.jobID,
-            JobEventLog(mainID = job.mainID,
-              toolName = job.tool,
-              internalJob = isInternalJob,
-              events = List(JobEvent(job.status, Some(ZonedDateTime.now)))))
+                                      JobEventLog(mainID = job.mainID,
+                                                  toolName = job.tool,
+                                                  internalJob = isInternalJob,
+                                                  events = List(JobEvent(job.status, Some(ZonedDateTime.now)))))
 
         // Update the statistics
         mongoStore.increaseJobCount(job.tool) // TODO switch to better statistic handling
@@ -350,7 +363,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         val runscript: Runscript = runscriptManager(job.tool).withEnvironment(env)
 
         // Validate the Parameters right away
-        var validParameters = this.validatedParameters(job, runscript, extendedParams)
+        val validParameters = this.validatedParameters(job, runscript, extendedParams)
 
         // adds the params of the disabled controls from formData, sets value of those to "false"
         validParameters.filterNot(pv => extendedParams.contains(pv._1)).foreach { pv =>
@@ -396,7 +409,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           this.getCurrentExecutionContext(jobID) match {
             case Some(executionContext) =>
               // Ensure that the jobID is not being hashed
-              val params = executionContext.reloadParams
+              val params  = executionContext.reloadParams
               val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
               Logger.info("JobHash: " + jobHash.toString)
               // Match the hash
@@ -412,8 +425,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
                 // Find the Jobs in the Database
                 mongoStore.findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
-                  val foundMainIDs = jobList.map(_.mainID)
-
                   if (jobList.exists(_.status == Done)) {
                     Logger.info("JobID " + jobID + " is a duplicate.")
                     self ! JobStateChanged(job.jobID, Pending)
@@ -458,39 +469,55 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               Logger.info("Removing Job from DB")
               this.delete(job, userID, ownerRequest)
             case None =>
-              Logger.error("[JobActor.Delete] No such jobID "+jobID+" found in Database. Ignoring.")
+              Logger.error("[JobActor.Delete] No such jobID " + jobID + " found in Database. Ignoring.")
           }
       }
 
-
-    case CheckIPHash (jobID) =>
+    case CheckIPHash(jobID) =>
       this.getCurrentJob(jobID).foreach {
         case Some(job) =>
           job.IPHash match {
             case Some(hash) =>
-              val selector = BSONDocument("$and" ->
+              val selector = BSONDocument(
+                "$and" ->
                 List(
                   BSONDocument(Job.IPHASH -> hash),
-                  BSONDocument(Job.DATECREATED ->
-                    BSONDocument("$gt" -> BSONDateTime(new ZonedDateTime().minusMinutes(constants.maxJobsWithin).toEpochSecond * 1000)))
+                  BSONDocument(
+                    Job.DATECREATED ->
+                    BSONDocument(
+                      "$gt" -> BSONDateTime(
+                        new ZonedDateTime().minusMinutes(constants.maxJobsWithin).toEpochSecond * 1000
+                      )
+                    )
+                  )
                 )
               )
 
-              val selectorDay = BSONDocument("$and" ->
+              val selectorDay = BSONDocument(
+                "$and" ->
                 List(
                   BSONDocument(Job.IPHASH -> hash),
-                  BSONDocument(Job.DATECREATED ->
-                    BSONDocument("$gt" -> BSONDateTime(new ZonedDateTime().minusDays(constants.maxJobsWithinDay).toEpochSecond * 1000)))
+                  BSONDocument(
+                    Job.DATECREATED ->
+                    BSONDocument(
+                      "$gt" -> BSONDateTime(
+                        new ZonedDateTime().minusDays(constants.maxJobsWithinDay).toEpochSecond * 1000
+                      )
+                    )
+                  )
                 )
               )
-              mongoStore.countJobs(selector).map{count =>
-                mongoStore.countJobs(selectorDay).map{countDay =>
-                  println(BSONDateTime(new ZonedDateTime().minusMinutes(constants.maxJobsWithin).toEpochSecond * 1000).toString)
-                  Logger.info("IP " + job.IPHash + " has requested " + count +" jobs within the last " + constants.maxJobsWithin + " minute and "+countDay+" within the last 24 hours.")
-
-                  if(count <= constants.maxJobNum && countDay <= constants.maxJobNumDay){
+              mongoStore.countJobs(selector).map { count =>
+                mongoStore.countJobs(selectorDay).map { countDay =>
+                  println(
+                    BSONDateTime(new ZonedDateTime().minusMinutes(constants.maxJobsWithin).toEpochSecond * 1000).toString
+                  )
+                  Logger.info(
+                    "IP " + job.IPHash + " has requested " + count + " jobs within the last " + constants.maxJobsWithin + " minute and " + countDay + " within the last 24 hours."
+                  )
+                  if (count <= constants.maxJobNum && countDay <= constants.maxJobNumDay) {
                     self ! StartJob(job.jobID)
-                  }else{
+                  } else {
                     self ! JobStateChanged(job.jobID, LimitReached)
                   }
                 }
@@ -501,7 +528,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           }
         case None =>
       }
-
 
     /**
       * Starts the job
@@ -543,7 +569,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                     // Load the parameters from the serialized parameters file
                     val params = executionContext.reloadParams
                     // Validate the Parameters (again) to ensure that everything works
-                    var validParameters = this.validatedParameters(job, runscript, params)
+                    val validParameters = this.validatedParameters(job, runscript, params)
 
                     // adds the params of the disabled controls from formData, sets value of those to "false"
                     validParameters.filterNot(pv => params.contains(pv._1)).foreach { pv =>
@@ -578,7 +604,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         case None =>
           Logger.error("[JobActor.StartJob] Job not found in DB: " + jobID)
       }
-
 
     // User Starts watching job
     case AddToWatchlist(jobID, userID) =>
@@ -679,13 +704,34 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           Logger.info("Job not found: " + jobID)
       }
 
+    // gets updatelog notifications via curl
+
     case UpdateLog(jobID: String) =>
       currentJobs.get(jobID) match {
         case Some(job) =>
           val foundWatchers =
             job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
-          foundWatchers.flatten.foreach(_ ! PushJob(job))
+          job.status match {
+            case Running => foundWatchers.flatten.foreach(_ ! WatchLogFile(job))
+            case _ =>
+              foundWatchers.flatten.foreach(_ ! WatchLogFile(job))
+              foundWatchers.flatten.foreach(_ ! PushJob(job))
+          }
+
         case None =>
+      }
+
+    // does longpolling
+
+    case UpdateLog2 =>
+      currentJobs.foreach { job =>
+        val foundWatchers =
+          job._2.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
+        job._2.status match {
+          case Running => foundWatchers.flatten.foreach(_ ! WatchLogFile(job._2))
+          case _       =>
+        }
+
       }
   }
 }

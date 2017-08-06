@@ -33,7 +33,7 @@ final class Backend @Inject()(webJarAssets: WebJarAssets,
                               val reactiveMongoApi: ReactiveMongoApi,
                               messagesApi: MessagesApi,
                               cc: ControllerComponents)
-  extends AbstractController(cc)
+    extends AbstractController(cc)
     with I18nSupport
     with Common {
 
