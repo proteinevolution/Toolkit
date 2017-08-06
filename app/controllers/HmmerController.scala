@@ -19,7 +19,7 @@ import scala.sys.process.Process
 /**
   * Created by drau on 18.04.17.
   */
-<<<<<<< HEAD
+
 class HmmerController @Inject()(hmmer: Hmmer,
                                 general: General,
                                 aln: Alignment,
@@ -27,12 +27,6 @@ class HmmerController @Inject()(hmmer: Hmmer,
                                                                                 val reactiveMongoApi: ReactiveMongoApi,
                                                       cc: ControllerComponents)
   extends AbstractController(cc)
-=======
-class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment, constants: Constants)(
-    mongoStore: MongoStore,
-    val reactiveMongoApi: ReactiveMongoApi
-) extends Controller
->>>>>>> master
     with Common {
   /* gets the path to all scripts that are executed
      on the server (not executed on the grid engine) */
