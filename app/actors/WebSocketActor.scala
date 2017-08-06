@@ -129,13 +129,13 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
     case WatchLogFile(job: Job) =>
       // Do filewatching here
       val file = s"${constants.jobPath}${job.jobID}${constants.SEPARATOR}results${constants.SEPARATOR}process.log"
-      Logger.info("Watching: " + file)
+      //Logger.info("Watching: " + file)
       if (job.status.equals(Running)) {
         if (Files.exists(Paths.get(file))) {
           val source = scala.io.Source.fromFile(file)
           val lines = try source.mkString
           finally source.close()
-          println(lines)
+          //println(lines)
           out ! Json.obj("type" -> "WatchLogFile", "jobID" -> job.jobID, "lines" -> lines)
         }
       }

@@ -6,23 +6,15 @@ class JobRunningComponent {
 
     public static updateLog(jobID : string, lines : any){
 
-        //console.log(this.jobID + " " + jobID);
-        //console.log(lines);
-
         let path = window.location.href;
         let url = path.split("/");
 
-
-        //console.log(url[url.length - 1] + " " + jobID);
-
-
-        if(url[url.length - 1] == jobID) {
+        if(url[url.length - 1] == jobID && $('#tab-Input').attr('aria-expanded') === "false") {
             this.lines = lines;
             this.RunningLog = lines.split("#");
             m.redraw.strategy("diff");
             m.redraw();
         }
-
     }
 
     // ensure that the running tab gets terminated
