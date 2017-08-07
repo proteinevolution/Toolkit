@@ -35,7 +35,6 @@ import play.api.libs.json._
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 import better.files._
-
 import scala.concurrent.duration._
 
 object JobActor {
@@ -658,6 +657,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 .map { file =>
                   (file.nameWithoutExtension,
                    reactivemongo.play.json.BSONFormats.toBSON(Json.parse(file.contentAsString)).get)
+
                 }
                 .toTraversable
               if (result.nonEmpty) {
