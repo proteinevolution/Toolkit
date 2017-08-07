@@ -1,10 +1,30 @@
 @import play.api.mvc.RequestHeader
 @import models.results.FileLoader
-@(filepath : String)(implicit request: RequestHeader)
+@(filepath : String, resultName : String)(implicit request: RequestHeader)
 
 <pre class="fileview" id="fileviewer">@Html(FileLoader.loadFile(filepath))</pre>
-<script>
+<br/><br/>
+<br/><hr><br/>
+@if(resultName == "ALI2D_COLOR") {
+<div id="toolReferences">
+        If you use our Ali2D server for your research, please cite:
+    <div class="citation">
+        <div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<br>
+            Alva V, Nam SZ, Söding J, Lupas AN.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank"> Nucleic Acids Res. 2016 Jul 8;44(W1):W410-5.</a>
+            </div><br>
+    </div>
+    And one or more of the following as appropriate:
+    <div class="citation">
+        <div>PSIPRED: Protein secondary structure prediction based on position-specific scoring matrices.<br>
+            Jones DT.<a href="http://www.sciencedirect.com/science/article/pii/S0022283699930917?via%3Dihub" target="_blank"> J Mol Biol. 1999 Sep 17;292(2):195-202.</a></div><br>
+        <div>MEMSAT: Transmembrane protein topology prediction using support vector machines.<br>
+            Nugent T, Jones DT.<a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-10-159" target="_blank"> BMC Bioinformatics. 2009 May 26;10:159.</a></div>
+    </div>
+    <hr id="line-element" colspan="4" class="horizontal-line">
+</div>
+}
 
+<script>
         //using both functions is not pretty and somewhat redundant but gets the job done
         $( "#fileviewer" ).ready(function() {
             if ($('#tool-tabs').hasClass('fullscreen')) {
