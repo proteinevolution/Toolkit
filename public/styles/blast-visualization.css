@@ -701,3 +701,27 @@ table.dataTable.no-footer{
         padding-left: 0;
     }
 }
+
+@media screen and (max-width: 930px) {
+    #extraWide {
+        width: 4.5em;
+    }
+}
+
+@media screen and (max-width: 930px) {
+    #scrollLinks a, #controlls a {
+        margin-right: 1em;
+    }
+}
+
+@media screen and (max-width: 930px) {
+    [class*="scrollContainer"] {
+        font-size: 1.05em;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    [class*="scrollContainer"] {
+        font-size: 1.0em;
+    }
+}
