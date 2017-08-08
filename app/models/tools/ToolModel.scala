@@ -704,7 +704,7 @@ final class ToolFactory @Inject()(
               .tree(jobID + ".clu.tre",
                     s"${constants.jobPath}$jobID/results/" + jobID + ".clu.tre",
                     jobID,
-                    "ancescon_output_tree")
+                    "ANCESCON")
           )
         },
         Resultviews.DATA -> { (jobID, requestHeader) =>
@@ -726,7 +726,7 @@ final class ToolFactory @Inject()(
             views.html.jobs.resultpanels.tree(jobID + ".phy_phyml_tree.txt",
                                               s"${constants.jobPath}$jobID/results/" + jobID + ".phy_phyml_tree.txt",
                                               jobID,
-                                              "phyml_tree")
+                                              "PhyML")
           )
         },
         Resultviews.DATA -> { (jobID, requestHeader) =>
