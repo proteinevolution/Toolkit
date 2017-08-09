@@ -51,3 +51,6 @@ mkdir ../logs
 
 # Set environment
 source %ENVIRONMENT
+
+#remove empty lines
+sed -i '/^\s*$/d' ../params/alignment
