@@ -21,7 +21,6 @@ let ParameterAlignmentComponent = {
         return {
             name: "alignment",
             id: "alignment",
-            //value: localStorage.getItem('alignmentcontent'),
             // Function to List all supported modes of the component
             getModes: (function() {
                 return this.modes;
@@ -79,6 +78,7 @@ let ParameterAlignmentComponent = {
     },
     view: function(ctrl : any, args : any) {
         let params = {
+            // TODO Jquery stuff should be handled in config
             oninit: function (elem : any, isInit : boolean) {
                 if (!isInit) {
                     if (ctrl.getTwoTextAreas()) {
