@@ -1,7 +1,7 @@
 @(evalues: List[Double])(implicit request: RequestHeader)
 
 
-<div id="hcontainer" style="min-width: 610px; height: 400px; margin: 0 auto"></div>
+<div id="hcontainer"></div>
 
 <script>
         var bins = new Array();
@@ -10,7 +10,7 @@
         }
 
         $(function() {
-            var width= $("#tool-tabs").width() - 30;
+            var width= $("#tool-tabs").width() - 140;
             var chart = new Highcharts.Chart({
                 title: {
                     text: 'E-Value Distribution',

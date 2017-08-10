@@ -5,11 +5,11 @@ import javax.inject.Inject
 import better.files._
 import com.typesafe.config.ConfigFactory
 import models.Constants
-import models.database.results.{HHomp, HHompHSP, HHompResult}
+import models.database.results.{ HHomp, HHompHSP, HHompResult }
 import modules.db.MongoStore
 import play.api.Logger
-import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.libs.json.{ JsObject, Json }
+import play.api.mvc.{ Action, AnyContent, Controller }
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -22,7 +22,10 @@ import scala.sys.process._
   * HHpred Controller process all requests
   * made from the HHpred result view
   */
-class HHompController @Inject()(hhomp: HHomp, mongoStore: MongoStore, val reactiveMongoApi: ReactiveMongoApi, constants: Constants)(
+class HHompController @Inject()(hhomp: HHomp,
+                                mongoStore: MongoStore,
+                                val reactiveMongoApi: ReactiveMongoApi,
+                                constants: Constants)(
     webJarAssets: WebJarAssets
 ) extends Controller
     with Common {
@@ -31,7 +34,6 @@ class HHompController @Inject()(hhomp: HHomp, mongoStore: MongoStore, val reacti
      on the server (not executed on the grid eninge) */
   private val serverScripts           = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignmentHHomp.sh").toFile
-
 
   /**
     * Retrieves the template alignment for a given
@@ -53,17 +55,15 @@ class HHompController @Inject()(hhomp: HHomp, mongoStore: MongoStore, val reacti
     } else {
       Future.successful {
         Process(templateAlignmentScript.pathAsString,
-          (constants.jobPath + jobID).toFile.toJava,
-          "jobID"     -> jobID,
-          "accession" -> accession).run().exitValue() match {
+                (constants.jobPath + jobID).toFile.toJava,
+                "jobID"     -> jobID,
+                "accession" -> accession).run().exitValue() match {
           case 0 => Ok
           case _ => BadRequest
         }
       }
     }
   }
-
-
 
   /**
     * given dataTable specific paramters, this function
@@ -73,7 +73,6 @@ class HHompController @Inject()(hhomp: HHomp, mongoStore: MongoStore, val reacti
     * @param params
     * @return
     */
-
   def getHitsByKeyWord(jobID: String, params: DTParam): Future[List[HHompHSP]] = {
     if (params.sSearch.isEmpty) {
       mongoStore.getResult(jobID).map {
@@ -104,24 +103,25 @@ class HHompController @Inject()(hhomp: HHomp, mongoStore: MongoStore, val reacti
     * @param jobID
     * @return Https response: HSP row(s) as String
     */
-
   def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json      = request.body.asJson.get
-    val start     = (json \ "start").as[Int]
-    val end       = (json \ "end").as[Int]
-    val isColor   = (json \ "isColor").as[Boolean]
-    val wrapped   = (json \ "wrapped").as[Boolean]
-      mongoStore.getResult(jobID).map {
-        case Some(jsValue) =>
-          val result = hhomp.parseResult(jsValue)
-          if (end > result.num_hits || start > result.num_hits) {
-            BadRequest
-          } else {
-            val hits = result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhomp.hit(jobID, _, isColor, wrapped))
-            Ok(hits.mkString)
-          }
-      }
+    val json    = request.body.asJson.get
+    val start   = (json \ "start").as[Int]
+    val end     = (json \ "end").as[Int]
+    val isColor = (json \ "isColor").as[Boolean]
+    val wrapped = (json \ "wrapped").as[Boolean]
+    mongoStore.getResult(jobID).map {
+      case Some(jsValue) =>
+        val result = hhomp.parseResult(jsValue)
+        if (end > result.num_hits || start > result.num_hits) {
+          BadRequest
+        } else {
+          val hits =
+            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhomp.hit(jobID, _, isColor, wrapped))
+          Ok(hits.mkString)
+        }
+    }
   }
+
   /**
     * this method fetches the data for the PSIblast hitlist
     * datatable

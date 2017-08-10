@@ -5,29 +5,27 @@ import javax.inject.{Inject, Named, Singleton}
 import actors.ClusterMonitor.Multicast
 import actors.WebSocketActor
 import akka.actor.{ActorRef, ActorSystem, Props}
-import models.sge.Cluster
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
-import models.database.users.User
+import models.results.Common
 import models.search.JobDAO
-import models.Constants
-import models.results.BlastVisualization
+import models.sge.Cluster
 import models.tools.ToolFactory
-import modules.common.HTTPRequest
-import modules.tel.TEL
+import models.{Constants, UserSessions}
 import modules.LocationProvider
+import modules.common.HTTPRequest
 import modules.db.MongoStore
+import modules.tel.TEL
 import modules.tel.env.Env
-import play.api.{Configuration, Logger}
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.Files
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
+import play.api.{Configuration, Logger}
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
@@ -77,7 +75,8 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
 
     case rh if sameOriginCheck(rh) =>
-      println("Creating new WebSocket. ip: "+rh.remoteAddress.toString() + ", with sessionId: " + rh.session)
+      println("Creating new WebSocket. ip: " + rh.remoteAddress.toString() + ", with sessionId: " + rh.session)
+
       userSessions
         .getUser(rh)
         .map { user =>
@@ -191,8 +190,14 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   def file(filename: String, mainID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
       // mainID exists, allow send File
-      if (new java.io.File(s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename").exists)
-        Ok.sendFile(new java.io.File(s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"))
+      if (new java.io.File(
+            s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"
+          ).exists)
+        Ok.sendFile(
+            new java.io.File(
+              s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"
+            )
+          )
           .withSession(userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
           .as("text/plain") //TODO Only text/plain for files currently supported
       else
@@ -204,7 +209,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   def getStructureFile(filename: String): Action[AnyContent] = Action.async { implicit request =>
     {
 
-      val db = BlastVisualization.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
+      val db = Common.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
       val filepath = db match {
         case "scop" =>
           env.get("SCOPE")
@@ -270,8 +275,9 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   }
 
   def matchSuperUserToPW(username: String, password: String): Future[Boolean] = {
-    // TODO smells like a hack
-    mongoStore.findUser(BSONDocument(User.NAMELOGIN -> username)).map {
+
+    mongoStore.findUser(BSONDocument("userData.nameLogin" -> username)).map {
+
       case Some(user) if user.checkPassword(password) && user.isSuperuser => true
       case None                                                           => false
 

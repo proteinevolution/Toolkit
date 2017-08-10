@@ -1,11 +1,10 @@
 package models.tools
 
 import modules.tel.TEL
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-
 
 sealed trait ParamType {
 
@@ -16,7 +15,8 @@ sealed trait ParamType {
     */
   def validate(value: String): Option[String]
 }
-case class Sequence(formats: Seq[(String, String)], placeholder: String, allowTwoTextAreas: Boolean) extends ParamType {
+case class Sequence(formats: Seq[(String, String)], placeholder: String, allowTwoTextAreas: Boolean)
+    extends ParamType {
 
   // Sequence currently alwasus valid
   def validate(value: String): Option[String] = Some(value)
@@ -77,7 +77,7 @@ case class Decimal(step: String, min: Option[Double], max: Option[Double]) exten
   }
 }
 
-case object Text extends ParamType {
+case class Text(placeholder: String = "") extends ParamType {
 
   def validate(value: String): Option[String] = Some(value)
 }
@@ -103,13 +103,16 @@ object ParamType {
     def writes(paramType: ParamType): JsObject = paramType match {
 
       case Sequence(formats: Seq[(String, String)], placeholder: String, allowsTwoTextAreas: Boolean) =>
-        Json.obj(FIELD_TYPE -> 1, "modes" -> formats, "allowsTwoTextAreas" -> allowsTwoTextAreas, "placeholder" -> placeholder)
+        Json.obj(FIELD_TYPE           -> 1,
+                 "modes"              -> formats,
+                 "allowsTwoTextAreas" -> allowsTwoTextAreas,
+                 "placeholder"        -> placeholder)
       case Number(minOpt, maxOpt)        => Json.obj(FIELD_TYPE -> 2, "min" -> minOpt, "max" -> maxOpt)
       case Select(options)               => Json.obj(FIELD_TYPE -> 3, "options" -> options)
       case Bool                          => Json.obj(FIELD_TYPE -> 4)
       case Radio                         => Json.obj(FIELD_TYPE -> 5)
       case Decimal(step, minVal, maxVal) => Json.obj(FIELD_TYPE -> 2, "step" -> step, "min" -> minVal, "max" -> maxVal)
-      case Text                          => Json.obj(FIELD_TYPE -> 7)
+      case Text(placeholder)             => Json.obj(FIELD_TYPE -> 7, "placeholder" -> placeholder)
       case ModellerKey                   => Json.obj(FIELD_TYPE -> 8)
     }
   }
@@ -145,6 +148,7 @@ class ParamAccess @Inject()(tel: TEL) {
 
   def getParam(paramName: String, placeholder: String = "") : Param = paramName match {
       case "ALIGNMENT" =>               Param ("alignment", Sequence (alignmentFormats, placeholder, false), 1, "")
+
       case "TWOTEXTALIGNMENT" =>        Param ("alignment", Sequence (alignmentFormats, placeholder, true), 1, "")
       case "HMMER_DB" =>                select ("hmmerdb", "Select database")
       case "STANDARD_DB" =>             select ("standarddb", "Select standard database")
@@ -204,26 +208,35 @@ class ParamAccess @Inject()(tel: TEL) {
       case "ALN_STRINGENCY" =>          select ("aln_stringency", "Alignment stringency")
       case "OUTPUT_ORDER" =>            select ("output_order", "Output the alignment in:")
       case "EVAL_TPR" =>                select ("eval_tpr", "E-value inclusion TPR & SEL")
-      case "CODON_TABLE_ORGANISM" =>    Param ("codon_table_organism", Text, 1, "Use codon usage table of")
+      case "CODON_TABLE_ORGANISM" =>    Param ("codon_table_organism", Text(""), 1, "Use codon usage table of")
       case "HHPRED_INCL_EVAL" =>        select ("hhpred_incl_eval", "E-value inclusion threshold")
       case "HHBLITS_INCL_EVAL" =>       select ("hhblits_incl_eval", "E-value inclusion threshold")
       case "PCOILS_INPUT_MODE" =>       select ("pcoils_input_mode", "Input mode")
+      case "REPPER_INPUT_MODE" =>       select ("repper_input_mode", "Input mode")
       case "PCOILS_WEIGHTING" =>        select ("pcoils_weighting", "Weighting")
       case "PCOILS_MATRIX" =>           select ("pcoils_matrix", "Matrix")
       case "NO_REPLICATES" =>           select ("no_replicates", "Number of replicates")
       case "SAMCC_PERIODICITY" =>       select ("samcc_periodicity", "Periodicity")
       case "EFF_CRICK_ANGLE" =>         select ("eff_crick_angle", "Effective Crick angle")
       case "REGKEY" =>                  Param ("regkey", ModellerKey, 1, "Enter MODELLER-key (see help pages for details)")
-      case "SAMCC_HELIXONE" =>          Param ("samcc_helixone", Text, 1, "Definition for helix 1")
-      case "SAMCC_HELIXTWO" =>          Param ("samcc_helixtwo", Text, 1, "Definition for helix 2")
-      case "SAMCC_HELIXTHREE" =>        Param ("samcc_helixthree", Text, 1, "Definition for helix 3")
-      case "SAMCC_HELIXFOUR" =>         Param ("samcc_helixfour", Text, 1, "Definition for helix 4")
+      case "SAMCC_HELIXONE" =>          Param ("samcc_helixone", Text("CC_first_position;chain;start_pos;end_pos"), 1, "Definition for helix 1")
+      case "SAMCC_HELIXTWO" =>          Param ("samcc_helixtwo", Text("CC_first_position;chain;start_pos;end_pos"), 1, "Definition for helix 2")
+      case "SAMCC_HELIXTHREE" =>        Param ("samcc_helixthree", Text("CC_first_position;chain;start_pos;end_pos"), 1, "Definition for helix 3")
+      case "SAMCC_HELIXFOUR" =>         Param ("samcc_helixfour", Text("CC_first_position;chain;start_pos;end_pos"), 1, "Definition for helix 4")
       case "INVOKE_PSIPRED" =>          Param ("invoke_psipred", ParamType.Percentage, 1, "% identity cutoff to invoke a new PSIPRED run")
       case "CLANS_EVAL" =>              select("clans_eval", "Extract BLAST HSP's up to E-values of")
       case "CLANS_EVAL" =>              select("clans_eval", "Extract BLAST HSP's up to E-values of")
       case "PATSEARCH_DB" =>            select("patsearchdb", "Select database")
       case "MAFFT_GAP_OPEN" =>          Param("mafft_gap_open", Decimal("0.01", Some(0), Some(10)), 1, "Gap open penalty")
       case "HHOMPDB" =>                 select("hhompdb", "Select HMM databases")
-
-      }
+      case "QUICK_ITERS" =>             select("quick_iters", "Maximal no. of MSA generation steps")
+      case "TARGET_PSI_DB" =>           select("target_psi_db", "Select database for MSA generation ")
+      case "WINDOW_SIZE" =>             Param ("window_size", ParamType.UnconstrainedNumber, 1, "Window size (< sequence length)")
+      case "PERIODICITY_MIN" =>         Param ("periodicity_min", ParamType.UnconstrainedNumber, 1, "Periodicity range - Min")
+      case "PERIODICITY_MAX" =>         Param ("periodicity_max", ParamType.UnconstrainedNumber, 1, "Periodicity range - Max")
+      case "FTWIN_THRESHOLD" =>         Param ("ftwin_threshold", ParamType.UnconstrainedNumber, 1, "FTwin threshold")
+      case "REPWIN_THRESHOLD" =>        Param ("repwin_threshold", ParamType.UnconstrainedNumber, 1, "REPwin threshold")
+      case "IN_FORMAT" =>               select("in_format", "Input format")
+      case "OUT_FORMAT" =>              select("out_format", "Output format")
+  }
 }

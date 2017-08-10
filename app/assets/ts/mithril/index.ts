@@ -137,7 +137,7 @@ window.Index = {
                     ),
                     m("div",
                         m("img", {style: "width: 100%",
-                            'data-interchange': '[/assets/images/Toolkit100.png, large]',
+                            'data-interchange': '[/assets/images/Toolkit100.png, small]',
                             config: foundationConfig
                         })
                     ), m("a", {
@@ -217,7 +217,9 @@ let tilescomponent = {
     },
     view: function (ctrl : any) {
         return m("div", {
-                "class": "row article_container small-up-1 medium-up-2 large-up-3 hide-for-small-only"
+                "class": "row article_container small-up-1 medium-up-2 large-up-3",
+                config: hideSidebar
+
             },
             ctrl.articles().map(function (article : any) { // TODO this javascript error existed before migration "Uncaught TypeError: Cannot read property 'map' of undefined"
                 return m("div", {
@@ -229,6 +231,17 @@ let tilescomponent = {
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
                                 m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
+                                    m("h6", "July 21, 2017"),
+                                    m("p", "Our Quick2D tool for the annotation of protein secondary structural features is back.")
+                                ),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
+                                    m("h6", "July 18, 2017"),
+                                    m("p", "HMM databases of ",
+                                        m("em", "Caenorhabitis elegans"), " and ",
+                                        m("em", "Drosophila melanogaster"), " are online."
+                                    )
+                                ),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
                                     m("h6", "July 10, 2017"),
                                     m("p", "HMM databases of the COG, KOG, SMART, and NCBI CD databases are online now")
                                 ),
@@ -239,17 +252,6 @@ let tilescomponent = {
                                         m("em", " Chaetomium thermophilum"),
                                         " are online"
                                     )
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
-                                    m("h6", "June 20, 2017"),
-                                    m("p", "Profile HMM database of",
-                                        m("em", " Arabidopsis thaliana"),
-                                        m("span", " is online")
-                                    )
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal"},
-                                    m("h6", "June 10, 2017"),
-                                    m("p", "Profile HMM databases of many bacterial proteomes are online")
                                 )
                             ),
                             m("div", {"class": "quick_links"},
@@ -294,7 +296,7 @@ let tilescomponent = {
                                     m("tr",
                                         m("td",
                                             m("a", {href: "/#/tools/psiblast"},
-                                                m("a", "PSI-BLAST")
+                                                m("a", "BLAST")
                                             )
                                         ),
                                         m("td",
@@ -335,6 +337,18 @@ let tilescomponent = {
                                         ),
                                         m("td",
                                             m("a", {href: "/#/tools/mafft"},
+                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
+                                            )
+                                        )
+                                    ),
+                                    m("tr",
+                                        m("td",
+                                            m("a", {href: "/#/tools/quick2d"},
+                                                m("a", "Quick2D")
+                                            )
+                                        ),
+                                        m("td",
+                                            m("a", {href: "/#/tools/quick2d"},
                                                 m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
                                             )
                                         )
