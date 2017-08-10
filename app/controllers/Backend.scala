@@ -1,21 +1,22 @@
 package controllers
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
+import models.UserSessions
 import models.database.jobs.Job
-import models.database.statistics.{ JobEvent, JobEventLog, ToolStatistic }
+import models.database.statistics.{JobEvent, JobEventLog, ToolStatistic}
 import models.database.users.User
 import modules.LocationProvider
 import modules.db.MongoStore
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.cache._
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

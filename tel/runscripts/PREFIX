@@ -51,3 +51,12 @@ mkdir ../logs
 
 # Set environment
 source %ENVIRONMENT
+
+FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
+
+if [ ${FORMAT} = "0" ] ; then
+    #remove empty lines
+    sed -i '/^\s*$/d' ../params/alignment
+fi
+
+JOBID=%jobid.content

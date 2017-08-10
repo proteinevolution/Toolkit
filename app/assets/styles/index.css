@@ -568,24 +568,12 @@ td#joblistIcon i {
 
 }
 
-
 /*Hide slider on very small screen and adjust page elements */
-@media screen and (max-width: 900px) {
-    .tile_img {
-        display: none;
-    }
-}
 
 @media screen and (max-width: 900px) {
-    .tile_main_container {
-        width: 760px !important;
-    }
-}
-
-@media screen and (max-width: 900px) {
-    .text_part {
-        width: 75%;
-    }
+    [class*="tile_img"] {  display: none;  }
+    [class*="tile_main_container"] {  width: 760px !important;  }
+    [class*="text_part"] { width: 75%; }
 }
 
 /*Load Bar styling*/

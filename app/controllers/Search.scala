@@ -2,12 +2,12 @@ package controllers
 
 import models.database.jobs.Job
 import play.Logger
-import models.Constants
+import models.{Constants, UserSessions}
 import play.api.cache._
 import play.api.libs.json.Json
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
-import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
+import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global

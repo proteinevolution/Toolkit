@@ -1,37 +1,39 @@
 package actors
 
-import javax.inject.{ Inject, Named }
+import javax.inject.{Inject, Named}
 
 import actors.JobActor._
 import akka.actor._
 import akka.event.LoggingReceive
-import models.Constants
+import models.{Constants, UserSessions}
 import models.database.jobs._
-import models.database.statistics.{ JobEvent, JobEventLog }
+import models.database.statistics.{JobEvent, JobEventLog}
 import models.database.users.User
 import models.mailing.JobFinishedMail
 import models.search.JobDAO
 import modules.tel.TEL
 import modules.tel.runscripts._
 import com.typesafe.config.ConfigFactory
-import controllers.{ FileException, UserSessions }
+import controllers.FileException
 import models.sge.Qdel
 import modules.LocationProvider
 import modules.db.MongoStore
 import modules.tel.env.Env
 import modules.tel.execution.ExecutionContext.FileAlreadyExists
-import modules.tel.execution.{ ExecutionContext, RunningExecution, WrapperExecutionFactory }
+import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
 import modules.tel.runscripts.Runscript.Evaluation
 import java.time.ZonedDateTime
 import play.api.Logger
-import play.api.cache.{ CacheApi, NamedCache }
+import play.api.cache.{CacheApi, NamedCache}
 import play.api.libs.mailer.MailerClient
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json._
+
 import scala.concurrent.Future
-import scala.util.{ Failure, Success }
+import scala.util.{Failure, Success}
 import better.files._
 import scala.concurrent.duration._
 
@@ -664,6 +666,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 .map { file =>
                   (file.nameWithoutExtension,
                    reactivemongo.play.json.BSONFormats.toBSON(Json.parse(file.contentAsString)).get)
+
                 }
                 .toTraversable
               if (result.nonEmpty) {
