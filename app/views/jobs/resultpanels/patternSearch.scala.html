@@ -4,7 +4,7 @@
 @import play.api.Logger
 @import play.api.libs.json.JsUndefined
 @import play.api.libs.json.JsDefined
-@import models.results.BlastVisualization
+@import models.results.Common
 @import modules.tel.TEL
 @(toolName: String, jobID: String, jsValue: JsValue, tool: models.tools.Tool)(implicit request: RequestHeader)
 @import java.lang.String; var fileURL="/files/" + jobID + "/" + jobID + ".fas";
@@ -43,7 +43,7 @@
                     <tr>
                         <td class="sequenceAlignment">
                         @{ hit \ "seq" match {
-                            case JsDefined(jsVal) => Html(BlastVisualization.insertMatch((hit \ "seq").get.as[String], (jsValue \ jobID \ "len").get.as[Int],(hit \ "pats").get.as[List[Int]]))
+                            case JsDefined(jsVal) => Html(Common.insertMatch((hit \ "seq").get.as[String], (jsValue \ jobID \ "len").get.as[Int],(hit \ "pats").get.as[List[Int]]))
                         }
                         }
                         </td>
@@ -58,9 +58,9 @@
     </form>
     }
 </div>
+    <br>
     <hr id="line-element" colspan="4" class="horizontal-line">
     <div id="toolReferences">
-        <h5 id="refTitle">References</h5>
         If you use PatternSearch for your research, please cite:
         <div class="citation">
             <div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<br>

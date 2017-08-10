@@ -70,15 +70,13 @@
                     <div class="show-for-medium selectContainer">
                             <select id="outformat">
                                 <option selected>Select Output Format</option>
-                                <option id="Fasta" value="Fasta">Fasta</option>
-                                <option id="A3M" value="A3M">A3M</option>
+                                <option id="Fasta" value="Fasta">FASTA</option>
                                 <option id="Clustal" value="Clustal" class="clustaloption">CLUSTAL</option>
                                 <option id="Phylip" value="Phylip" class="clustaloption">PHYLIP</option>
                                 <option id="Stockholm" value="Stockholm">STOCKHOLM</option>
                                 <option id="PIR" value="PIR">PIR</option>
                                 <option id="EMBL" value="EMBL">EMBL</option>
                                 <option id="NEXUS" value="NEXUS">NEXUS</option>
-                                <option id="Genbank" value="Genbank">Genbank</option>
                                 <option id="GetAccessions" value="GetAccessions">Extract Accessions</option>
                                 <option id="Consensus" value="Consensus">Consensus</option>
                                 <option id="Alphabet" value="Alphabet">Alphabet</option>
@@ -94,6 +92,7 @@
                             <option  id="hhblits" value="hhblits">HHblits</option>
                             <option  id="hhfilter" value="hhfilter">HHfilter</option>
                             <option  id="hhpred" value="hhpred">HHpred</option>
+                            <option  id="hhomp" value="hhomp">HHomp</option>
                             <option  id="hhrepid" value="hhrepid">HHrepID</option>
                             <option  id="hmmer" value="hmmer">Hmmer</option>
                             <option  id="kalign" value="kalign">Kalign</option>
@@ -102,6 +101,8 @@
                             <option  id="msaprobs" value="msaprobs">MSAProbs</option>
                             <option  id="muscle" value="muscle">MUSCLE</option>
                             <option  id="pcoils" value="pcoils">PCOILS</option>
+                            <option  id="repper" value="repper">REPPER</option>
+                            <option  id="quick2d" value="quick2d">Quick2D</option>
                             <option  id="phyml" value="phyml">PhyML</option>
                             <option  id="psiblast" value="psiblast">PSI-BLAST</option>
                             <option  id="tcoffee" value="tcoffee">T-Coffee</option>
@@ -505,6 +506,7 @@
                 $('#hhblits').show();
                 $('#hhfilter').show();
                 $('#hhpred').show();
+                $('#hhomp').show();
                 $('#hhrepid').show();
                 $('#hmmer').show();
                 $('#kalign').show();
@@ -513,6 +515,8 @@
                 $('#msaprobs').show();
                 $('#muscle').show();
                 $('#pcoils').show();
+                $('#repper').show();
+                $('#quick2d').show();
                 $('#phyml').show();
                 $('#psiblast').show();
                 $('#tcoffee').show();
@@ -528,6 +532,7 @@
                 $('#hhblits').hide();
                 $('#hhfilter').hide();
                 $('#hhpred').hide();
+                $('#hhomp').hide();
                 $('#hhrepid').hide();
                 $('#hmmer').hide();
                 $('#kalign').hide();
@@ -536,6 +541,8 @@
                 $('#msaprobs').hide();
                 $('#muscle').hide();
                 $('#pcoils').hide();
+                $('#repper').hide();
+                $('#quick2d').hide();
                 $('#phyml').hide();
                 $('#psiblast').hide();
                 $('#tcoffee').hide();
@@ -561,9 +568,6 @@
             case "Fasta":
                 $('#Fasta').prop('disabled', true);
                 break;
-            case "A3M":
-                $('#A3M').prop('disabled', true);
-                break;
             case "Phylip":
                 $('#Phylip').prop('disabled', true);
                 break;
@@ -576,9 +580,6 @@
             case "EMBL":
                 $('#EMBL').prop('disabled', true);
                 break;
-            case "Genbank":
-                $('#Genbank').prop('disabled', true);
-                break;
             case "PIR":
                 $('#PIR').prop('disabled', true);
                 break;
@@ -587,12 +588,10 @@
                 break;
             default:
                 $('#Fasta').prop('disabled', true);
-                $('#A3M').prop('disabled', true);
                 $('#Phylip').prop('disabled', true);
                 $('#Clustal').prop('disabled', true);
                 $('#NEXUS').prop('disabled', true);
                 $('#EMBL').prop('disabled', true);
-                $('#Genbank').prop('disabled', true);
                 $('#PIR').prop('disabled', true);
                 $('#Stockholm').prop('disabled', true);
                 break;

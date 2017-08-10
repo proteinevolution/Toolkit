@@ -1,4 +1,4 @@
-@import models.results.BlastVisualization
+@import models.results.Common
 @import better.files._
 @import models.database.results.HHPredResult
 @(jobID: String, result: HHPredResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
@@ -25,10 +25,10 @@
                 }">Forward</a>
                 <a id="forwardButtonHHsuite" data-open="forwardModal_@{
                     tool.toolNameShort
-                }_hhsuite">Forward Query MSA</a>
+                }_hhsuite">Forward Query A3M</a>
                 @*only show create model when chosen db=mmcif70/pdb70*@
                 @if(result.db.matches("mmcif70/pdb70")) {
-                    <a onclick="@{tool.toolNameShort}_manual()">Create model using selection</a>
+                    <a onclick="@{tool.toolNameShort}_manual()">Model using selection</a>
                 }
                 <a onclick="colorAA()" class="colorAA">Color Seqs</a>
                 <a onclick="wrap()" id="wrap">Wrap Seqs</a>
@@ -135,12 +135,14 @@
 
     @*MODALS*@
     <div class="reveal" id="templateAlignmentModal" data-reveal>
-        <p>Template Alignment</p>
+        <p>Template Alignment (~100 most distinct sequences)</p>
         <div>
             <select onclick="forwardTemplateAlignment_(this.value, $('#alignmentTemplate').val())" id="alignmentTemplate_tool">
                 <option value="" selected>Forward to</option>
-                <option value="hhpred" >HHpred</option>
+                <option value="formatseq" >FormatSeq</option>
                 <option value="hhblits" >HHblits</option>
+                <option value="hhomp" >HHomp</option>
+                <option value="hhpred" >HHpred</option>
                 <option value="hhrepid" >HHrepID</option>
             </select>
         </div>
@@ -307,7 +309,7 @@
             }).done(function () {
                 $.ajax({
                     type: 'GET',
-                    url: 'files/' + jobID + '/' + accession + '.fas',
+                    url: 'files/' + jobID + '/' + accession + '.a3m',
                     error: function(){
                         $.LoadingOverlay("hide")
                     }
@@ -393,7 +395,6 @@
             });
         }
 
-
         function forwardTemplateAlignment_(tool, forwardData) {
             if (tool == "") {
                 return;
@@ -404,9 +405,10 @@
 
 
         function @{tool.toolNameShort}_forwardQueryMSA(selectedTool) {
+            $.LoadingOverlay("show");
             $.ajax({
                 type: 'GET',
-                url: "files/" + jobID + "/reduced.fas"
+                url: "files/" + jobID + "/reduced.a3m"
             }).done(function (data_) {
                 forward(selectedTool, data_.toString());
             });

@@ -3,6 +3,9 @@
 
 <ul class="vertical menu" id="responsive-menu" data-drilldown>
     <li>
+        <a href="/#/">Home</a>
+    </li>
+    <li>
         <a>Search</a>
         <ul class="vertical menu">
             @for(tool <- tools.filter(_.category == "search")) {
@@ -62,3 +65,11 @@
         </ul>
     </li>
 </ul>
+
+<script>
+        $('.vertical ul').on('click', function () {
+            $('.off-canvas').foundation('close');
+        });
+
+
+</script>

@@ -3,7 +3,7 @@ interface Window { JobModel: any; }
 window.JobModel = {
     paramValues: {},
     defaultValues: {
-        "evalue": "1",
+        "evalue": "1e-3",
         "inclusion_ethresh": "0.001",
         "min_cov": "20",
         "min_seqid_query": "0",
@@ -25,11 +25,12 @@ window.JobModel = {
         "seq_count": 1000,
         "codon_table": "1",
         "genetic_code": "1",
-        "msa_gen_max_iter": "4",
+        "msa_gen_max_iter": "3",
+        "quick_iters": "3",
         "grammar": "Prosite_grammar",
         "macmode": "off",
         "macthreshold":"0.3",
-        "max_hhblits_iter":"0",
+        "max_hhblits_iter":"1",
         "score_ss":"2",
         "ss_scoring":"2",
         "rep_pval_threshold":"1e-2",
@@ -51,6 +52,7 @@ window.JobModel = {
         "pcoils_matrix": "2",
         "pcoils_weighting":"1",
         "pcoils_input_mode":"0",
+        "repper_input_mode":"0",
         "no_replicates":"0",
         "matrix_phyml":"LG",
         "eff_crick_angle":"1",
@@ -58,11 +60,17 @@ window.JobModel = {
         "seqcount":"500",
         "invoke_psipred":"30",
         "clans_eval":"1e-4",
+        "target_psi_db":"UniRef90",
         "transition_probability":"1",
-        "matrix_marcoil":"mtk"
-},
-
-
+        "matrix_marcoil":"mtk",
+        "window_size":"100",
+        "periodicity_min":"2",
+        "periodicity_max":"100",
+        "ftwin_threshold":"6",
+        "repwin_threshold":"2",
+        "in_format":"a3m",
+        "out_format":"fas",
+    },
     update: function(args : any, value : string) : any {
         if (args.isJob) {
             return m.request({

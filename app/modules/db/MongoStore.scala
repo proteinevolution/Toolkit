@@ -1,7 +1,6 @@
 package modules.db
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 
 import models.database.CMS.FeaturedArticle
 import models.database.jobs.{DeletedJob, FrontendJob, Job, JobAnnotation}
@@ -23,9 +22,6 @@ import scala.language.postfixOps
 
 /**
   * Created by zin on 03.08.16.
-  *
-  * TODO may need to break this into multiple classes in the future  *
-  *
   */
 @Singleton
 final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends ReactiveMongoComponents {
@@ -92,7 +88,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
       case None          => Logger.info("Could not find JSON file."); None
     }
   }
-
 
   def findJob(selector: BSONDocument): Future[Option[Job]] = jobCollection.flatMap(_.find(selector).one[Job])
 
@@ -180,16 +175,14 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
     )
   }
 
-
   // Updates multiple Jobs in the database but does not return them
   def updateAndFetchJobs(selector: BSONDocument, modifier: BSONDocument): Future[List[Future[Option[Job]]]] = {
-    findJobs(selector).map{ jobList =>
-      jobList.map{ job =>
+    findJobs(selector).map { jobList =>
+      jobList.map { job =>
         modifyJob(BSONDocument(Job.JOBID -> job.jobID), modifier)
-        }
       }
     }
-
+  }
 
   // Updates multiple Jobs in the database but does not return them
   def updateJobs(selector: BSONDocument, modifier: BSONDocument): Future[UpdateWriteResult] = {
@@ -323,11 +316,10 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
   }
 
   //def removeUser(selector : BSONDocument) : Future[WriteResult] = userCollection.flatMap(_.remove(selector))
-  def removeJob(selector : BSONDocument) : Future[WriteResult] = {
+  def removeJob(selector: BSONDocument): Future[WriteResult] = {
     jobAnnotationCollection.flatMap(_.remove(selector))
     jobCollection.flatMap(_.remove(selector))
     resultCollection.flatMap(_.remove(selector))
   }
-
 
 }

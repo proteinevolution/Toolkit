@@ -1,4 +1,4 @@
-@import models.results.BlastVisualization
+@import models.results.Common
 @import better.files._
 @import models.database.results.HHompResult
 @(jobID: String, result: HHompResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
@@ -8,7 +8,7 @@
     </div>
 } else {
     @* Loads ForwardModals *@
-    @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort + "_hhsuite")
+    @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort + "_hhomp")
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
             <div id="scrollLinks">
@@ -20,7 +20,7 @@
             <div id="controlls">
                 <a id="forwardButtonHHsuite" data-open="forwardModal_@{
                     tool.toolNameShort
-                }_hhsuite">Forward Query MSA</a>
+                }_hhomp">Forward Query A3M</a>
                 <a onclick="colorAA()" class="colorAA">Color Seqs</a>
                 <a onclick="wrap()" id="wrap">Wrap Seqs</a>
                 </div>
@@ -98,9 +98,9 @@
 
 
     @*MODALS*@
-    <div class="reveal" id="templateAlignmentModal" data-reveal>
-        <p>Template Alignment</p><br>
-        <textarea rows="35" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
+    <div class="reveal" id="templateAlignmentModalhhomp" data-reveal>
+        <p>Template Alignment (~100 most distinct sequences)</p><br>
+        <textarea rows="35" id="alignmentTemplatehhomp" placeholder="Loading..." spellcheck="false"></textarea>
         <button class="close-button" id="alignmentTemplateClose" data-close aria-label="Close modal" type="button">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -109,8 +109,7 @@
 }
 <script>
 
-        $("#templateAlignmentModal").bind('closed.zf.reveal', (function () {
-            $('#alignmentTemplate_tool').val('');
+        $("#templateAlignmentModalhhomp").bind('closed.zf.reveal', (function () {
             $.LoadingOverlay("hide");
         }));
 
@@ -135,7 +134,7 @@
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
                 getHits(0, shownHits, wrapped, colorAAs);
-                $('#templateAlignmentModal').foundation();
+                $('#templateAlignmentModalhhomp').foundation();
                 $(".colorAA").addClass("colorToggleBar");
                 $("#wrap").hide();
                 $(".colorAA").hide();
@@ -152,14 +151,14 @@
                 "autoWidth": false,
                 "lengthMenu": [[10, 25, 50, 100, numHits], [10, 25, 50, 100, "All"]],
                 "searching": false,
-                "iDisplayLength": 25,
+                "iDisplayLength": 25
             });
         }
 
 
         function templateAlignment(accession) {
             $.LoadingOverlay("show");
-            $('textarea#alignmentTemplate').val(" ");
+            $('textarea#alignmentTemplatehhomp').val(" ");
             // replace '#' for url
             accession = accession.replace("#", "%23");
 
@@ -177,26 +176,25 @@
                         $.LoadingOverlay("hide")
                     }
                 }).done(function (data) {
-                    $("#alignmentTemplate").val(data.toString());
+                    $("#alignmentTemplatehhomp").val(data.toString());
                     $.LoadingOverlay("hide")
                 });
             }).fail(function () {
-                $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
+                $("#alignmentTemplatehhomp").val("Sorry, failed to fetch Template Alignment.");
                 $.LoadingOverlay("hide")
             });
 
         }
 
-
         function @{tool.toolNameShort}_forwardQueryMSA(selectedTool) {
-
+            $.LoadingOverlay("show");
             $.ajax({
                 type: 'GET',
-                url: "files/" + jobID + "/reduced.fas"
+                url: "files/" + jobID + "/reduced.a3m"
             }).done(function (data_) {
                 forward(selectedTool, data_.toString());
             });
-        };
+        }
 
         function getHits(start, end, isWrapped, isColor) {
             if (start <= numHits && end <= numHits && !loading) {
