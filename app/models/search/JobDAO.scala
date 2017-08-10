@@ -26,8 +26,8 @@ final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: Ru
     with TELConstants {
 
   private val noHash       = Set("mainID", "jobID")
-  //private val settings     = Settings.builder().put("cluster.name", "elasticsearch").build()
-  private val client       = TcpClient.transport(ElasticsearchClientUri("balata", 9300))
+  private val settings     = Settings.builder().put("cluster.name", "elasticsearch").build()
+  private val client       = TcpClient.transport(settings, ElasticsearchClientUri("balata", 9300))
   private val Index        = ConfigFactory.load().getString(s"elastic4s.indexAndTypes.jobs.index")
   private val jobIndex     = Index / "jobs"
   private val jobHashIndex = Index / "jobhashes"

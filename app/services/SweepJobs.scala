@@ -83,7 +83,7 @@ class SweepJobsImpl @Inject()(appLifecycle: ApplicationLifecycle,
       .findJobs(
         BSONDocument(
           Job.DATECREATED -> BSONDocument(
-            "$lt" -> BSONDateTime(new ZonedDateTime().minusDays(constants.deletionThreshold).toInstant.toEpochMilli)
+            "$lt" -> BSONDateTime(ZonedDateTime.now.minusDays(constants.deletionThreshold).toInstant.toEpochMilli)
           )
         )
       )
