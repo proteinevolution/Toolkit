@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 import models.database.CMS.FeaturedArticle
 import models.database.jobs.{DeletedJob, FrontendJob, Job, JobAnnotation}
-import models.database.statistics.{ClusterLoadEvent, JobEventLog, ToolStatistic}
+import models.database.statistics.{ClusterLoadEvent, JobEventLog, StatisticsObject, ToolStatistic}
 import models.database.users.{User, UserData}
 import org.joda.time.DateTime
 import play.api.Logger
@@ -258,6 +258,27 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
                       upsert = true).map(_.result[ToolStatistic])
     )
   }
+
+  /**
+    * Complete Statistics collection
+    * @return
+    */
+  def statisticsCol: Future[BSONCollection] =
+    reactiveMongoApi.database.map(_.collection[BSONCollection]("statistics"))
+
+  def getStats : Future[Option[StatisticsObject]] = {
+    statisticsCol.map(_.find(BSONDocument())).flatMap(_.one[StatisticsObject])
+  }
+
+  def updateStats(statisticsObject : StatisticsObject) : Future[Option[StatisticsObject]] = {
+    statisticsCol.flatMap(
+      _.findAndUpdate(selector = BSONDocument(StatisticsObject.IDDB -> statisticsObject.statisticsID),
+                      update   = statisticsObject,
+                      upsert   = true,
+                      fetchNewObject = true).map(_.result[StatisticsObject])
+    )
+  }
+
 
 
   // Cluster load statistics

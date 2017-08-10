@@ -1,6 +1,6 @@
 package models.database.statistics
 
-import models.database.jobs.JobState
+import models.database.jobs.{Deleted, Error, JobState, Submitted}
 import org.joda.time.DateTime
 import play.api.libs.json._
 import reactivemongo.bson._
@@ -13,9 +13,22 @@ case class JobEventLog(mainID: BSONObjectID, // ID of the Job in the System
                        internalJob: Boolean = false,
                        events: List[JobEvent],
                        runtime: Long = 0L) {
+
   def addJobStateEvent(jobState: JobState): JobEventLog = {
     val runtimeDiff: Long = events.head.timestamp.map(d => DateTime.now.getMillis - d.getMillis).getOrElse(0L)
     this.copy(events = events.::(JobEvent(jobState, Some(DateTime.now), runtimeDiff)), runtime = runtime + runtimeDiff)
+  }
+
+  def isDeleted : Boolean = {
+    events.exists(_.jobState == Deleted)
+  }
+
+  def hasFailed : Boolean = {
+    events.exists(_.jobState == Error)
+  }
+
+  def dateCreated : DateTime = {
+    events.find(_.jobState == Submitted).flatMap(_.timestamp).getOrElse(DateTime.now())
   }
 }
 
@@ -74,5 +87,19 @@ object JobEventLog {
       EVENTS      -> jobEventLog.events,
       RUNTIME     -> jobEventLog.runtime
     )
+  }
+
+  /**
+    * Returns the jobEvent list partitioned in to a map of tools
+    * @param jobEventList
+    * @return
+    */
+  def toSortedMap(jobEventList : List[JobEventLog]) : Map[String,List[JobEventLog]] = {
+    var jobEventMap = Map.empty[String,List[JobEventLog]]
+    jobEventList.foreach { jobEvent =>
+      jobEventMap = jobEventMap.updated(jobEvent.toolName, jobEventMap.getOrElse(jobEvent.toolName,List.empty[JobEventLog]).::(jobEvent))
+    }
+
+    jobEventMap
   }
 }
