@@ -2,7 +2,8 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import models.database.statistics.{JobEvent, JobEventLog, StatisticsObject, ToolStatistic}
+import models.UserSessions
+import models.database.statistics.{JobEvent, JobEventLog, StatisticsObject}
 import models.database.users.User
 import models.tools.ToolFactory
 import modules.LocationProvider

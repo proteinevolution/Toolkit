@@ -1,4 +1,4 @@
-@import models.results.BlastVisualization
+@import models.results.Common
 @import models.database.results.HHBlitsResult
 @import better.files._
 @(jobID: String, result: HHBlitsResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
@@ -26,7 +26,7 @@
                 }">Forward</a>
                 <a id="forwardButtonHHsuite" data-open="forwardModal_@{
                     tool.toolNameShort
-                }_hhsuite">Forward Query MSA</a>
+                }_hhsuite">Forward Query A3M</a>
                 <a onclick="wrap()" id="wrap">Wrap Seqs</a>
             </div>
         </div>
@@ -128,11 +128,13 @@
 
 
 <div class="reveal" id="templateAlignmentModal" data-reveal>
-    <p>Template Alignment</p>
+    <p>Template Alignment (~100 most distinct sequences)</p>
     <div>
         <select onclick="forwardTemplateAlignment_(this.value, $('#alignmentTemplate').val())" id="alignmentTemplate_tool">
             <option value="" selected>Forward To</option>
+            <option value="formatseq" >FormatSeq</option>
             <option value="hhblits" >HHblits</option>
+            <option value="hhomp" >HHomp</option>
             <option value="hhpred" >HHpred</option>
             <option value="hhrepid" >HHrepID</option>
         </select>
@@ -149,7 +151,7 @@
             $.LoadingOverlay("hide");
         }));
         var jobID = '@{jobID}';
-        var fileUrlQueryMSAFas = "/files/"+jobID+"/alignment.fas";
+        var fileUrlQueryMSAFas = "/files/"+jobID+"/reduced.a3m";
         var checkbox = "checkbox";
         var selectAllBool = false;
         var numHits = @{result.num_hits};
@@ -278,6 +280,7 @@
 
 
         function hhblits_forwardQueryMSA(selectedTool){
+            $.LoadingOverlay("show");
             $.ajax({
                 type: 'GET',
                 url: fileUrlQueryMSAFas
@@ -298,7 +301,7 @@
             }).done(function () {
                 $.ajax({
                     type: 'GET',
-                    url: 'files/@jobID/' + accession + '.fas',
+                    url: 'files/@jobID/' + accession + '.ra3m',
                     error: function(){
                         $.LoadingOverlay("hide")
                     }

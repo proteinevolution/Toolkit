@@ -2,14 +2,14 @@ package controllers
 
 import javax.inject.Inject
 
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc.{ Action, AnyContent, Controller }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.Constants
-import models.database.results.{Alignment, AlignmentResult, General}
-import models.results.BlastVisualization
+import models.database.results.{ Alignment, AlignmentResult, General }
+import models.results.Common
 import modules.db.MongoStore
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import play.api.libs.json.JsArray
 
 /**
@@ -38,11 +38,10 @@ class AlignmentController @Inject()(aln: Alignment,
     * @param jobID
     * @return alignment as fasta
     */
-
   def getAln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val resultName  = (json \ "resultName").as[String]
-    val numList = (json \ "checkboxes").as[List[Int]]
+    val json       = request.body.asJson.get
+    val resultName = (json \ "resultName").as[String]
+    val numList    = (json \ "checkboxes").as[List[Int]]
     mongoStore.getResult(jobID).map {
       case Some(jsValue) =>
         val result = aln.parseAlignment((jsValue \ resultName).as[JsArray]).alignment
@@ -53,7 +52,6 @@ class AlignmentController @Inject()(aln: Alignment,
       case None => BadRequest
     }
   }
-
 
   /**
     * Retrieves alignment rows (String containing Html)
@@ -68,24 +66,22 @@ class AlignmentController @Inject()(aln: Alignment,
     * @param jobID
     * @return HSP row(s) as String
     */
-
   def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json             = request.body.asJson.get
-    val start            = (json \ "start").as[Int]
-    val end              = (json \ "end").as[Int]
-    val resultName       = (json \ "resultName").as[String]
-      mongoStore.getResult(jobID).map {
-        case Some(jsValue) =>
-          val result = aln.parseAlignment((jsValue \ resultName).as[JsArray])
-          if (end > result.alignment.length || start > result.alignment.length) {
-            BadRequest
-          } else {
-            val hits = result.alignment.slice(start, end).map(views.html.jobs.resultpanels.alignmentRow(_))
-            Ok(hits.mkString)
-          }
-      }
+    val json       = request.body.asJson.get
+    val start      = (json \ "start").as[Int]
+    val end        = (json \ "end").as[Int]
+    val resultName = (json \ "resultName").as[String]
+    mongoStore.getResult(jobID).map {
+      case Some(jsValue) =>
+        val result = aln.parseAlignment((jsValue \ resultName).as[JsArray])
+        if (end > result.alignment.length || start > result.alignment.length) {
+          BadRequest
+        } else {
+          val hits = result.alignment.slice(start, end).map(views.html.jobs.resultpanels.alignmentRow(_))
+          Ok(hits.mkString)
+        }
+    }
   }
-
 
   /**
     * Retrieves an alignment in clustal format
@@ -99,17 +95,16 @@ class AlignmentController @Inject()(aln: Alignment,
     * @param jobID
     * @return the whole alignment containing Html as a String
     */
-
   def loadHitsClustal(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val resultName  = (json \ "resultName").as[String]
+    val json       = request.body.asJson.get
+    val resultName = (json \ "resultName").as[String]
     val color      = (json \ "color").as[Boolean]
-      mongoStore.getResult(jobID).map {
-        case Some(jsValue) =>
-          val result = aln.parseAlignment((jsValue \ resultName).as[JsArray])
-            val hits = BlastVisualization.clustal(result, 0, constants.breakAfterClustal, color)
-            Ok(hits.mkString)
-          }
-      }
+    mongoStore.getResult(jobID).map {
+      case Some(jsValue) =>
+        val result = aln.parseAlignment((jsValue \ resultName).as[JsArray])
+        val hits   = Common.clustal(result, 0, constants.breakAfterClustal, color)
+        Ok(hits.mkString)
+    }
+  }
 
 }

@@ -1,20 +1,20 @@
-package controllers
+package models
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import models.database.users.{ SessionData, User }
+import javax.inject.{Inject, Singleton}
+
+import models.database.users.{SessionData, User}
 import modules.LocationProvider
 import modules.common.HTTPRequest
 import modules.db.MongoStore
 import org.joda.time.DateTime
 import play.api.cache._
-import play.api.{ mvc, Logger }
 import play.api.mvc.RequestHeader
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import play.api.{Logger, mvc}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by astephens on 24.08.16.

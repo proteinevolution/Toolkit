@@ -68,10 +68,10 @@ TMPRED=`tmhmm ../results/firstSeq.fas -short`
 run_Coils -c -min_P 0.8 < ../results/firstSeq.fas >& ../results/firstSeq.cc
 COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
 
-rm ../results/firstSeq0.fas ../results/firstSeq.fas ../results/firstSeq.cc
+rm ../results/firstSeq0.fas ../results/firstSeq.cc
 
 
-fasta2json.py ../results/${JOBID}.fas ../results/query.json
+fasta2json.py ../results/firstSeq.fas ../results/query.json
 
 if [ "%max_hhblits_iter.content" = "0" ] && [ $SEQ_COUNT -gt "1" ] ; then
     #Use user MSA to build HMM
@@ -89,16 +89,22 @@ else
     echo "#Running HHblits for query MSA generation." >> ../results/process.log
     updateProcessLog
 
-    # Generate Query in JSON
+
+    reformat_hhsuite.pl fas a3m \
+                        $(readlink -f ../results/${JOBID}.fas) \
+                        $(readlink -f ../results/${JOBID}.in.a3m)
 
     #MSA generation required; generation by HHblits
     hhblits -cpu %THREADS \
             -v 2 \
-            -i ../results/${JOBID}.fas \
+            -i ../results/${JOBID}.in.a3m \
+            -M first \
             -d %UNIPROT  \
             -oa3m ../results/${JOBID}.a3m \
             -n %max_hhblits_iter.content \
-            -mact 0.35
+            -mact 0.35 \
+            -cov 20 \
+            -qid 20
 
     #Convert to fasta format
     reformat_hhsuite.pl a3m fas ../results/${JOBID}.a3m $(readlink -f ../results/${JOBID}.fas)

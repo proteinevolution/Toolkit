@@ -2,12 +2,12 @@ package controllers
 
 import models.database.jobs.Job
 import play.Logger
-import models.Constants
+import models.{Constants, UserSessions}
 import play.api.cache._
 import play.api.libs.json.Json
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
-import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
+import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -15,7 +15,7 @@ import models.search.JobDAO
 import models.tools.ToolFactory
 import modules.LocationProvider
 import modules.db.MongoStore
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.mvc.{Action, AnyContent, Controller}
 
 import scala.concurrent.Future
 import scala.language.postfixOps
@@ -34,7 +34,13 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
     with Common {
 
   def getToolList: Action[AnyContent] = Action {
-    Ok(Json.toJson(toolFactory.values.values.filterNot(_.toolNameShort == "hhpred_manual").map(a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort))))
+    Ok(
+      Json.toJson(
+        toolFactory.values.values
+          .filterNot(_.toolNameShort == "hhpred_manual")
+          .map(a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort))
+      )
+    )
   }
 
   /**
@@ -53,7 +59,6 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Ca
       val tools: List[models.tools.Tool] = toolFactory.values.values
         .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
         .filter(tool => tool.toolNameShort != "hhpred_manual")
-
         .toList
       // Find out if the user looks for a certain tool or for a jobID
       if (tools.isEmpty) {
