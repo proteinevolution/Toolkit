@@ -47,3 +47,13 @@
 #jobManagerTable {
   width: 100% !important;
 }
+
+#job-manager-button {
+  background-color: rgba(46, 140, 129, 0.88) !important;
+  border: solid 1px lightgray !important;
+}
+
+#job-manager-button:hover {
+  background-color: rgba(46, 140, 129, 0.96) !important;
+  border: solid 1px lightgray !important;
+}

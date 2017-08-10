@@ -552,6 +552,50 @@ td#joblistIcon i {
     font-size: 2em;
 }
 
+#social {
+    float: right;
+    padding-right: 10px;
+}
+
+#social i {
+    margin-left: 20px;
+    color: #666;
+}
+
+#social i:hover {
+    color: #008979;
+}
+
+.maintenance_alert {
+    background: linear-gradient(to bottom, rgba(245, 245, 245, 1) 0%, rgba(240, 240, 240, 1) 100%);
+    text-shadow: 0 1px 0 #FFF;
+    color: #848484;
+    font-size: 0.65em;
+    border: 1px solid #c0c0c0;
+    padding: 6px 8px 7px 8px;
+    margin-bottom: 8px;
+    border-radius: 2px;
+    box-shadow: 0 0 3px 0 #d85000;
+    transition: box-shadow 1.5s;
+    display: none;
+}
+
+#offline-alert {
+    font-size: 0.78em;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    margin-top: 1.15em;
+    color: red;
+    display: none;
+    text-align: center;
+    cursor: pointer;
+}
+
+#signinButtonContainer {
+    height: 100%;
+}
+
 /*Responsiveness*/
 
 /*Change slider on medium screen and adjust page elements */
@@ -679,4 +723,13 @@ noscript {
     padding-top: 200px;
     display: block;
     margin: auto;
+}
+
+#site-notifications {
+    margin-top: 0.75em;
+    margin-left: 1em;
+}
+
+#site-notifications i::before {
+    padding-left: 10px;
 }

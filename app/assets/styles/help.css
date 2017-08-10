@@ -1,0 +1,72 @@
+#help-tabs {
+    font-size: 0.95em !important;
+}
+
+#help-tabs .ui-widget-header {
+    height: 3.5em;
+}
+
+
+#helpDiv {
+    float: right;
+}
+
+#helpModal {
+
+    height: 40em;
+
+}
+
+#helpModal p {
+
+    font-size: small;
+}
+
+#helpModal h4 {
+
+    padding-left: 0.10em;
+}
+
+
+#helpModal h6 {
+
+    font-weight: bold;
+}
+
+.helpModals .section {
+    margin-top: 1em;
+}
+
+.helpModals p {
+    font-weight: normal;
+}
+
+.helpModals h5 {
+    color: #2E8C81;
+}
+
+.helpModals h6 {
+    font-weight: bold;
+    font-size: 1em;
+    margin-bottom:0;
+}
+
+#help-psiblast {
+    font-size: 0.85em !important;
+}
+
+.helpicon:hover {
+    color: #008979;
+}
+
+.tooltip {
+    display: none;
+    position: absolute;
+    border: 1px solid #333;
+    background-color: #161616;
+    border-radius: 5px;
+    padding: 10px;
+    color: #fff;
+    font-size: 12px;
+}
+

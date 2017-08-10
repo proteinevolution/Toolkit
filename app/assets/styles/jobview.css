@@ -33,6 +33,13 @@ body.is-reveal-open {
     overflow-x: scroll;
 }
 
+.biojs_msa_labels {
+    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .tabs-panel {
     background: inherit;
 }
@@ -821,6 +828,20 @@ input:checked + .sliderSwitch:before {
     margin-left: 1em;
 }
 
+.jobnotes textarea {
+    border: 1px solid #ccc;
+    font-size: 0.75em;
+    flex-grow: 1;
+    padding: 8px;
+    box-sizing: border-box;
+    background-color: transparent;
+    color: #343434;
+    line-height: 1.7em;
+    outline: none;
+    resize: none;
+    height: 200px;
+}
+
 a.hasNotes:link,
 a.hasNotes:visited,
 a.hasNotes:hover,
@@ -1150,3 +1171,36 @@ h6 {
 .repperTable {
     padding-left: 19em;
 }
+
+/* To make elements on the website full screen */
+.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    overflow: auto;
+}
+
+tr.job a:link {
+
+    color: #000;
+}
+
+tr.job a:visited {
+
+    color: #000;
+}
+
+#job_id span {
+    color: grey !important;
+}
+
+.jobid a {
+    color: #666;
+}
+
+.jobid a:visited {
+    color: #666;
+}
+
