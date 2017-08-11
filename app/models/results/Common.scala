@@ -439,7 +439,7 @@ object Common {
   }
 
   def lengthWithoutDashDots(str: String): Int = {
-    str.length - str.count(char => char == '-' || char == ".")
+    str.length - str.count(char => char == '-') - str.count(char => char == '.')
   }
 
   def hhblitsHitWrapped(hit: HHBlitsHSP,
