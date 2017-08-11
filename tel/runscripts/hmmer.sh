@@ -112,9 +112,6 @@ else
              ../results/${JOBID}.hmm \
              ../results/${JOBID}.fas
 
-    rm ../results/*.hhr
-    rm ../results/*.a3m
-
 fi
 
 echo "done" >> ../results/process.log
@@ -139,19 +136,22 @@ updateProcessLog
 echo "#Preparing output." >> ../results/process.log
 updateProcessLog
 
-    #Convert to fasta format
-    reformat_hhsuite.pl sto fas ../results/${JOBID}.msa_sto $(readlink -f ../results/${JOBID}.msa_fas)
+#Convert to fasta format
+reformat_hhsuite.pl sto a3m ../results/${JOBID}.msa_sto $(readlink -f ../results/${JOBID}.msa_a3m)
 
-    #remove tmp sto file
-    rm ../results/${JOBID}.msa_sto
+#remove tmp sto file
+rm ../results/${JOBID}.msa_sto
 
-    prepareForHMMER.py ../results/${JOBID}.outfile ../results/${JOBID}.outfilefl
+prepareForHMMER.py ../results/${JOBID}.outfile ../results/${JOBID}.outfilefl
 
-    hmmer2json.py -i ../results/${JOBID}.outfilefl \
+hmmer2json.py -i ../results/${JOBID}.outfilefl \
                   -o ../results/${JOBID}.json \
                   -m %desc.content \
-                  -e %evalue.content
+                  -e %evalue.content > ../results/${JOBID}.list
 
+extractFasta.py ../results/${JOBID}.msa_a3m ../results/${JOBID}.list
+
+reformat_hhsuite.pl a3m fas ../results/${JOBID}.msa_a3m.subset $(readlink -f ../results/${JOBID}.msa_fas)
 
 manipulate_json.py -k 'db' -v '%hmmerdb.content' ../results/${JOBID}.json
 #create tab separated file to feed into blastviz
@@ -164,13 +164,12 @@ manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/${JOBID}.json
 # add coiled coil prediction info to json
 manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/${JOBID}.json
 
-
-
 # Generate MSA in JSON
 fasta2json.py ../results/${JOBID}.msa_fas ../results/alignment.json
 
 cd ../results
-rm *.hmm *.outfile
+rm -f *.hmm *.outfile* *.list *.msa_* ${JOBID}.fas firstSeq.fas
+
 
 echo "done" >> ../results/process.log
 updateProcessLog
