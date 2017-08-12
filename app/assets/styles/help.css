@@ -70,3 +70,13 @@
     font-size: 12px;
 }
 
+
+#imprintModal, #subnavHelpModal, #subnavFAQModal, #privacyPolicyModal, #contactModal, #citeModal, #recentUpdatesModal {
+    font-size: 0.85em;
+    width: 55%;
+
+}
+
+#imprintContent, #helpModalContent, #FAQModalContent, #privacyPolicyContent, #contactModelContent, #citeModalContent, #recentUpdatesContent {
+    padding: 1em;
+}
