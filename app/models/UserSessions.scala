@@ -56,7 +56,6 @@ class UserSessions @Inject()(mongoStore: MongoStore,
         val user = User(
           userID = BSONObjectID.generate(),
           sessionID = Some(sessionID),
-          connected = true,
           sessionData = List(newSessionData),
           dateCreated = Some(new DateTime()),
           dateLastLogin = Some(new DateTime()),
@@ -72,18 +71,23 @@ class UserSessions @Inject()(mongoStore: MongoStore,
     * Returns a Future User
     */
   def getUser(implicit request: RequestHeader): Future[User] = {
-    val sessionID = request.session.get(SID) match {
-      case Some(sid) =>
-        // Check if the session ID is parseable - otherwise generate a new one
-        BSONObjectID.parse(sid).getOrElse(BSONObjectID.generate())
-      case None =>
-        BSONObjectID.generate()
-    }
-    userCache.get(sessionID.stringify) match {
-      case Some(user) =>
-        Future.successful(user)
-      case None =>
-        putUser(request, sessionID)
+    // Ignore our monitoring service and don't update it in the DB
+    if (request.remoteAddress.contentEquals("10.3.7.70")) { // TODO Put this in the config?
+      Future.successful(User())
+    } else {
+      val sessionID = request.session.get(SID) match {
+        case Some(sid) =>
+          // Check if the session ID is parseable - otherwise generate a new one
+          BSONObjectID.parse(sid).getOrElse(BSONObjectID.generate())
+        case None =>
+          BSONObjectID.generate()
+      }
+      userCache.get(sessionID.stringify) match {
+        case Some(user) =>
+          Future.successful(user)
+        case None =>
+          putUser(request, sessionID)
+      }
     }
   }
 
