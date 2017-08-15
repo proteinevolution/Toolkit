@@ -1,10 +1,12 @@
+@import play.api.mvc.RequestHeader
+
 @import play.api.libs.json.JsObject
 @import play.api.libs.json.JsValue
 @import play.api.libs.json.JsArray
 @import play.api.Logger
 @import play.api.libs.json.JsUndefined
 @import play.api.libs.json.JsDefined
-@import models.results.BlastVisualization
+@import models.results.Common
 @import modules.tel.TEL
 @import play.api.libs.json.JsLookupResult
 @import models.database.results.AlignmentResult
@@ -14,13 +16,13 @@
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="@{resultName}_selectAll()" class="selectAllSeq"><span class="selectAllSeqSpan">Select all</span></a>
+    <a onclick="@{resultName}_selectAllAln()" class="selectAllSeq"><span class="@{resultName}_selectAllSeqSpan">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Alignment</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
-    Number of sequences: <b>@alignment.alignment.length</b>
+        Number of sequences: <b>@alignment.alignment.length</b>
         <br />
         <br />
 <form id="alignmentResult">
@@ -40,8 +42,8 @@
 <script>
 
         var fileUrl = "/files/@jobID/alignment.fas";
-        var downloadFilename = "@{tool.toolNameShort}_@{resultName}_jobID_@{jobID}.fasta";
-        var selectAllBool = false;
+        var downloadFilename = "@{tool.toolNameShort}_@{resultName}_@{jobID}.fasta";
+        var selectAllBoolAln = false;
         var shownHits = 20;
         var showMore = 100;
         var loading = false;
@@ -86,7 +88,7 @@
         };
 
 
-        window["@{resultName}_getHits"] = function(start, end){
+        function getHits(start, end){
             if(start <= numHits && end <= numHits && !loading){
                 var data = { "start": start, "end": end, "resultName": resultName };
                 loading = true;
@@ -113,13 +115,13 @@
                     }
                 });
             }
-        };
+        }
 
-        window["@{resultName}_selectAll"] = function(){
-            selectAllBool = !selectAllBool;
-            $(".selectAllSeqSpan").toggleText("Select all","Deselect all");
-            $(".selectAllSeqSpan").toggleClass("colorToggle");
-            if(selectAllBool) {
+        window["@{resultName}_selectAllAln"] = function(){
+            selectAllBoolAln = !selectAllBoolAln;
+            $(".@{resultName}_selectAllSeqSpan").toggleText("Select all","Deselect all");
+            $(".@{resultName}_selectAllSeqSpan").toggleClass("colorToggle");
+            if(selectAllBoolAln) {
                 selectAllHelper(checkbox);
                 // first empty array
                 checkboxes = [];
@@ -134,11 +136,13 @@
         };
 
 
+
+
         $(document).ready(function () {
 
             // trigger lazyload for loading alignment
             shownHits = shownHits > numHits ? numHits : shownHits;
-            @{resultName}_getHits(0, shownHits).then(function(){
+            getHits(0, shownHits).then(function(){
                 // check checkboxes that are stored in array
                 // in order to make it work with pagination/lazyload
                 selectFromArray(checkboxes);
@@ -148,7 +152,7 @@
                             var end = shownHits + showMore;
                             end = end < numHits ? end : numHits;
                             if (shownHits != end) {
-                                @{resultName}_getHits(shownHits, end);
+                                getHits(shownHits, end);
                             }else{
                                 $('#loadHitsAln').hide();
                             }

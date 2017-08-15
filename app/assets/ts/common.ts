@@ -128,8 +128,39 @@ let aa_color_background : Map<string, string> = new Map<string, string>();
                             }
                         },
                         "content": {
-                            "link": '<a data-open="privacyPolicyModal" style="color:#15423b" text-decoration="underline";>Learn More</a>',
+                            "link": '<a data-open="privacyPolicyModal" style="color:#15423b; text-decoration: underline;">Learn More</a>',
                             "message": "We use cookies to ensure you get the best experience on our website. By using our services you agree to our privacy policies.",
                         },
                     })});
+
+    // toggle sidebar so that the joblist is only present when there is no static content
+
+    let toggleSidebar = function(){
+        let path = window.location.href;
+        let url = path.split("/");
+        let $mc = $('#main-content');
+        let $sb = $('#sidebar');
+
+        if(url[url.length - 2] == 'tools' || url[url.length - 2] == 'jobs' || url[url.length - 1] == 'jobmanager'){
+
+            // all logic to make the sidebar visible is located in the configs in mithril/helpers.ts
+
+        }
+        else {
+            // this code is used to smooth out the transition TO the index page
+            $mc.removeClass();
+            $sb.hide();
+        }
+    };
+
+    window.addEventListener("hashchange", toggleSidebar, false);
+
+    let reloadJobList = function() {
+        setTimeout(function(){ jobList.redraw(true); }, 200);
+    };
+
+    //close off canvas menu on click
+    $('.vertical ul').on('click', function () {
+        $('.off-canvas').foundation('close');
+    });
 

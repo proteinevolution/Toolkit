@@ -1,11 +1,11 @@
 package models.search
 
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 
 import com.sksamuel.elastic4s._
 import com.evojam.play.elastic4s.configuration.ClusterSetup
-import com.evojam.play.elastic4s.{PlayElasticFactory, PlayElasticJsonSupport}
-import com.sksamuel.elastic4s.analyzers.{StandardAnalyzer, WhitespaceAnalyzer}
+import com.evojam.play.elastic4s.{ PlayElasticFactory, PlayElasticJsonSupport }
+import com.sksamuel.elastic4s.analyzers.{ StandardAnalyzer, WhitespaceAnalyzer }
 import com.typesafe.config.ConfigFactory
 import models.database.jobs.JobHash
 import models.tools.ToolFactory
@@ -23,7 +23,8 @@ import scala.concurrent.Future
 @Singleton
 final class JobDAO @Inject()(cs: ClusterSetup,
                              elasticFactory: PlayElasticFactory,
-                             toolFactory: ToolFactory, runscriptPathProvider :RunscriptPathProvider,
+                             toolFactory: ToolFactory,
+                             runscriptPathProvider: RunscriptPathProvider,
                              @Named("jobs") indexAndType: IndexAndType)
     extends ElasticDsl
     with PlayElasticJsonSupport
@@ -121,8 +122,6 @@ final class JobDAO @Inject()(cs: ClusterSetup,
       }
     )
   }
-
-
 
   // Removes a Hash from ES
   def deleteJob(mainID: String): Future[BulkResult] = {

@@ -4,7 +4,7 @@
 #Check if MODELLER license key is correct
 
 if [ "%regkey.content" = "MODELIRANJE" ] ; then
-      echo "#Starting MODELLER." >> ../results/process.log
+      echo "#Executing MODELLER." >> ../results/process.log
       updateProcessLog
 else
       echo "#Incorrect registration key. Please register here: https://salilab.org/modeller/registration.html." >> ../results/process.log
@@ -60,7 +60,7 @@ mv modeller.py modeller_script.py
 chmod 0777 modeller_script.py
 chmod 0777 alignment.pir
 # run modeller
-mod9.18 modeller_script.py >> modeller.log
+mod modeller_script.py >> modeller.log
 mv modeller.log ../logs/
 mv ${FILENAME}* ../results/
 

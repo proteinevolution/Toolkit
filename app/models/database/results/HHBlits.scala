@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import controllers.DTParam
-import models.results.BlastVisualization
+import models.results.Common
 import play.api.libs.json._
 
 import scala.concurrent.Future
@@ -23,9 +23,9 @@ case class HHBlitsHSP(query: HHBlitsQuery,
   def toDataTable(db: String): JsValue =
     Json.toJson(
       Map(
-        "0" -> Json.toJson(BlastVisualization.getCheckbox(num)),
-        "1" -> Json.toJson(BlastVisualization.getSingleLinkHHBlits(template.accession).toString),
-        "2" -> Json.toJson(BlastVisualization.addBreak(description)),
+        "0" -> Json.toJson(Common.getCheckbox(num)),
+        "1" -> Json.toJson(Common.getSingleLinkHHBlits(template.accession).toString),
+        "2" -> Json.toJson(Common.addBreak(description)),
         "3" -> Json.toJson(info.probab),
         "4" -> Json.toJson(info.evalue),
         "5" -> Json.toJson(info.aligned_cols),
@@ -69,7 +69,7 @@ class HHBlits @Inject()(general: General, aln: Alignment) {
         HHBlitsHSP(queryResult, templateResult, infoResult, agree, description, num, agree.length)
       }
       val db        = (obj \ jobID \ "db").as[String]
-      val alignment = aln.parseAlignment((obj \ "rep100").as[JsArray])
+      val alignment = aln.parseAlignment((obj \ "reduced").as[JsArray])
       val query     = general.parseSingleSeq((obj \ "query").as[JsArray])
       val num_hits  = hsplist.length
 

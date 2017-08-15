@@ -1,14 +1,37 @@
-JOBID=%jobid.content
-
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
-FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
+A3M_INPUT=$(head -1 ../params/alignment | egrep "^#A3M#" | wc -l)
+
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
       updateProcessLog
       false
 fi
+
+
+if [ ${A3M_INPUT} = "1" ] ; then
+
+    sed -i '1d' ../params/alignment
+
+    reformatValidator.pl a3m fas \
+           $(readlink -f ../params/alignment) \
+           $(readlink -f ../params/alignment.tmp) \
+           -d 160 -uc -l 32000
+
+     if [ ! -f ../params/alignment.tmp ]; then
+            echo "#Input is not in valid A3M format." >> ../results/process.log
+            updateProcessLog
+            false
+     else
+            echo "#Query is in A3M format." >> ../results/process.log
+            updateProcessLog
+            mv ../params/alignment.tmp ../params/alignment
+            echo "done" >> ../results/process.log
+            updateProcessLog
+     fi
+fi
+
 
 if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
       sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
@@ -72,11 +95,36 @@ if [ "%hhpred_align.content" = "true" ] ; then
         SEQ_COUNT2=$(egrep '^>' ../params/alignment_two | wc -l)
         CHAR_COUNT2=$(wc -m < ../params/alignment_two)
         FORMAT2=$(head -1 ../params/alignment_two | egrep "^CLUSTAL" | wc -l)
+        A3M_INPUT2=$(head -1 ../params/alignment_two | egrep "^#A3M#" | wc -l)
+
 
         if [ ${CHAR_COUNT2} -gt "10000000" ] ; then
             echo "#Template sequence/MSA may not contain more than 10000000 characters." >> ../results/process.log
             updateProcessLog
             false
+        fi
+
+
+        if [ ${A3M_INPUT2} = "1" ] ; then
+
+            sed -i '1d' ../params/alignment_two
+
+            reformatValidator.pl a3m fas \
+                $(readlink -f ../params/alignment_two) \
+                $(readlink -f ../params/alignment_two.tmp) \
+                -d 160 -uc -l 32000
+
+            if [ ! -f ../params/alignment_two.tmp ]; then
+                echo "#Template is not in valid A3M format." >> ../results/process.log
+                updateProcessLog
+                false
+            else
+                echo "#Template is in A3M format." >> ../results/process.log
+                updateProcessLog
+                mv ../params/alignment_two.tmp ../params/alignment_two
+                echo "done" >> ../results/process.log
+                updateProcessLog
+            fi
         fi
 
         if [ ${SEQ_COUNT2} = "0" ] && [ ${FORMAT2} = "0" ] ; then
@@ -99,6 +147,8 @@ if [ "%hhpred_align.content" = "true" ] ; then
             $(readlink -f ../results/${JOBID}.2.fas) \
             -d 160 -uc -l 32000
         else
+            #remove empty lines
+            sed -i '/^\s*$/d' ../params/alignment_two
             reformatValidator.pl fas fas \
             $(readlink -f %alignment_two.path) \
             $(readlink -f ../results/${JOBID}.2.fas) \
@@ -141,7 +191,7 @@ TMPRED=`tmhmm ../results/firstSeq.fas -short`
 run_Coils -c -min_P 0.8 < ../results/firstSeq.fas >& ../results/firstSeq.cc
 COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
 
-rm ../results/firstSeq0.fas ../results/firstSeq.fas ../results/firstSeq.cc
+rm ../results/firstSeq0.fas ../results/firstSeq.cc
 
 
 #CHECK IF MSA generation is required or not
@@ -166,20 +216,32 @@ else
         echo "done" >> ../results/process.log
         updateProcessLog
 
+        if [ %msa_gen_max_iter.content -lt "1" ] ; then
+            ITERS=3
+        else
+            ITERS=%msa_gen_max_iter.content
+        fi
+
     #MSA generation by HHblits
     if [ "%msa_gen_method.content" = "hhblits" ] ; then
-        echo "#Running HHblits for query MSA and A3M generation." >> ../results/process.log
+        echo "#Running ${ITERS} iteration(s) of HHblits for query MSA and A3M generation." >> ../results/process.log
         updateProcessLog
+
+        reformat_hhsuite.pl fas a3m \
+                            $(readlink -f ../results/${JOBID}.fas) \
+                            $(readlink -f ../results/${JOBID}.in.a3m)
+
         hhblits -cpu %THREADS \
                 -v 2 \
                 -e %hhpred_incl_eval.content \
-                -i ../results/${JOBID}.fas \
+                -i ../results/${JOBID}.in.a3m \
                 -d %UNIPROT  \
                 -oa3m ../results/${JOBID}.a3m \
-                -n %msa_gen_max_iter.content \
+                -n ${ITERS} \
                 -qid %min_seqid_query.content \
                 -cov %min_cov.content \
                 -mact 0.35
+        rm ../results/${JOBID}.in.a3m
 
         echo "done" >> ../results/process.log
         updateProcessLog
@@ -188,7 +250,7 @@ else
     #MSA generation by PSI-BLAST
     if [ "%msa_gen_method.content" = "psiblast" ] ; then
 
-        echo "#Running PSI-BLAST for query MSA and A3M generation." >> ../results/process.log
+        echo "#Running ${ITERS} iteration(s) of PSI-BLAST for query MSA and A3M generation." >> ../results/process.log
         updateProcessLog
         #Check if input is a single sequence or an MSA
         INPUT="query"
@@ -197,7 +259,7 @@ else
         fi
 
         psiblast -db ${STANDARD}/nre70 \
-                 -num_iterations %msa_gen_max_iter.content \
+                 -num_iterations ${ITERS} \
                  -evalue %hhpred_incl_eval.content \
                  -inclusion_ethresh 0.001 \
                  -num_threads %THREADS \
@@ -225,28 +287,34 @@ fi
 #Generate representative MSA for forwarding
 
 hhfilter -i ../results/${JOBID}.a3m \
-         -o ../results/reduced.fas \
+         -o ../results/reduced.a3m \
+         -neff 12.0 \
          -diff 100
 
+sed -i "1 i\#A3M#" ../results/reduced.a3m
+
+reformat_hhsuite.pl a3m a3m \
+         $(readlink -f ../results/${JOBID}.a3m) \
+         $(readlink -f ../results/tmp0) \
+         -d 160 -l 32000
+
+head -n 400 ../results/tmp0 > ../results/tmp1
+
 reformat_hhsuite.pl a3m fas \
+         $(readlink -f ../results/tmp1) \
          $(readlink -f ../results/reduced.fas) \
-         $(readlink -f ../results/reduced.fas) \
-         -d 160
+         -d 160 -l 32000 -uc
+
+rm ../results/tmp0 ../results/tmp1
+
 
 # Here assume that the query alignment exists
 # prepare histograms
 # Reformat query into fasta format ('full' alignment, i.e. 100 maximally diverse sequences, to limit amount of data to transfer)
 
-addss.pl ../results/${JOBID}.a3m
+mv ../results/${JOBID}.a3m ../results/full.a3m
 
-hhfilter -i ../results/${JOBID}.a3m \
-         -o ../results/${JOBID}.reduced.a3m \
-         -diff 100
-
-reformat_hhsuite.pl a3m fas \
-         $(readlink -f ../results/${JOBID}.a3m) \
-         $(readlink -f ../results/full.fas) \
-         -d 160
+addss.pl ../results/full.a3m
 
 DBJOINED=""
 #create file in which selected dbs are written
@@ -254,7 +322,7 @@ touch ../params/dbs
 # creating alignment of query and subject input
 if [  "%hhpred_align.content" = "true" ]
 then
-    echo "#Running HHblits for template MSA and A3M generation." >> ../results/process.log
+    echo "#Running 3 iterations of HHblits for template MSA and A3M generation." >> ../results/process.log
     updateProcessLog
 
     cd ../results
@@ -262,7 +330,12 @@ then
     if [ "%msa_gen_max_iter.content" = "0" ] && [ ${SEQ_COUNT2} -gt "1" ] ; then
             reformat_hhsuite.pl fas a3m %alignment_two.path db.a3m -M first
     else
-            hhblits -d %UNIPROT -i %alignment_two.path -oa3m db.a3m -n %msa_gen_max_iter.content -cpu %THREADS -v 2
+            reformat_hhsuite.pl fas a3m \
+                  $(readlink -f %alignment_two.path) \
+                  $(readlink -f ../results/${JOBID}.in2.a3m)
+
+        hhblits -d %UNIPROT -i ../results/${JOBID}.in2.a3m -oa3m db.a3m -n 3 -cpu %THREADS -v 2
+        rm ../results/${JOBID}.in2.a3m
     fi
 
     ffindex_build -as db_a3m_wo_ss.ff{data,index} db.a3m
@@ -318,7 +391,7 @@ fi
 
 # Perform HHsearch #
 hhsearch -cpu %THREADS \
-         -i ../results/${JOBID}.reduced.a3m \
+         -i ../results/full.a3m \
          ${DBJOINED} \
          -o ../results/${JOBID}.hhr \
          -oa3m ../results/${JOBID}.a3m \
@@ -335,6 +408,7 @@ hhsearch -cpu %THREADS \
          ${MACT} \
          -maxres 32000 \
          -contxt ${HHLIB}/data/context_data.crf
+
 
 echo "done" >> ../results/process.log
 updateProcessLog
@@ -357,10 +431,7 @@ fasta2json.py ../results/alignment.fas ../results/querytemplate.json
 hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/${JOBID}.json
 
 # Generate Query in JSON
-fasta2json.py ../results/${JOBID}.fas ../results/query.json
-
-# Generate Query in JSON
-fasta2json.py %alignment.path ../results/query.json
+fasta2json.py ../results/firstSeq.fas ../results/query.json
 
 # add DB to json
 manipulate_json.py -k 'db' -v '%hhsuitedb.content' ../results/${JOBID}.json
