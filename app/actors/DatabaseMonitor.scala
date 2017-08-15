@@ -35,7 +35,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
   private val userDeletionInterval = 3 hours              // Sweeps in this interval
   private val userDeletingAfterMonths = 1                 // Deletes regular accounts after this timeframe
   private val userAwaitingRegistrationDeletingAfterDays = 3        // Deletes users awaiting registration after this timeframe (in days)
-  private val userLoggedInDeletingAfterMonths = 3         // Deletes registered accounts after this timeframe
+  private val userLoggedInDeletingAfterMonths = 24        // Deletes registered accounts after this timeframe
   private val userLoggedInWarningDaysBeforeDeletion = 14  // Sending an eMail to the user this many days prior to the deletion
 
   private val Tick: Cancellable = {
