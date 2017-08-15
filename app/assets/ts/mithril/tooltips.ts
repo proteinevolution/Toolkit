@@ -63,6 +63,8 @@ $( "#phym" ).prop('title', 'Infer phylogenies');
 
 $( "#6frt" ).prop('title', 'Six-frame translation of nucleotide sequences');
 
+$( "#fseq" ).prop('title', 'Converts A3M to FASTA');
+
 $( "#bac" ).prop('title', 'Reverse translation of protein sequences into nucleotide sequences');
 
 $( "#hhfi" ).prop('title', 'Extraction of a representative set of sequences from an alignment');

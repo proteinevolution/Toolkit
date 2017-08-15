@@ -66,8 +66,11 @@ class LiveTable {
     static pushJob (job : Job) : void {
         LiveTable.lastJob = job;
         //console.log("Last job:", job);
-        m.redraw.strategy("diff");
-        m.redraw();
+        // only redraw when on index page since a m.redraw would affect the inputs
+        if(m.route() == '/') {
+            m.redraw.strategy("diff");
+            m.redraw();
+        }
     }
     static controller (args : any) : any {
         currentRoute = "index"; // Need to use this method to find the current route

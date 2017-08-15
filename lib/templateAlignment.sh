@@ -40,10 +40,11 @@ then
         ffindex_get results/db_a3m.ffdata results/db_a3m.ffindex $accession >> results/$accession.a3m
     fi
 
-
     hhfilter -i results/$accession.a3m -o results/$accession.reduced.a3m -diff 100
-    reformat.pl a3m fas results/$accession.reduced.a3m results/${accession}_tmp.fas
+    reformat.pl a3m a3m results/$accession.reduced.a3m results/${accession}_tmp.a3m -noss
 
-    template_alignment_filter.sh results/${accession}_tmp.fas results/$accession.fas
-    rm results/${accession}_tmp.fas
+    mv results/${accession}_tmp.a3m results/$accession.a3m
+
+    sed -i "1 i\#A3M#" results/$accession.a3m
+
 fi

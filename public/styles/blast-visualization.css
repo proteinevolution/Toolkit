@@ -97,7 +97,7 @@
     height: 18.5em;
 }
 
-.forwardModal p, #templateAlignmentModal p, #structureModal p {
+.forwardModal p, #templateAlignmentModal p, #templateAlignmentModalhhomp p, #structureModal p {
     font-size: 1em;
     font-weight: bold;
     color: rgba(0, 110, 98, 166);
@@ -215,9 +215,8 @@ label.forwardLabel input[type=radio] {
     font-size: 1em;
 }
 
-
 .forwardFormDiv {
-    width: 45%;
+    width: 60%;
     margin: 1em;
 }
 
@@ -328,7 +327,7 @@ table.dataTable thead th {
 }
 
 .jobManagerContainer {
-    width: 82%;
+    width: 95%;
     padding-left: 0.75em;
 }
 table.dataTable.no-footer{
@@ -362,7 +361,7 @@ table.dataTable.no-footer{
 }
 
 
-#alignmentTemplate{
+#alignmentTemplate, #alignmentTemplatehhomp{
     font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
     font-size: 0.7rem !important;
     margin: 0 auto;
@@ -406,7 +405,7 @@ table.dataTable.no-footer{
 }
 
 .alignmentTBody td{
-    padding: unset !important;
+    padding: unset;
 }
 
 #alignmentResultView{
@@ -564,14 +563,14 @@ table.dataTable.no-footer{
     margin-top: 1.5em;
 }
 
-#templateAlignmentModal, #structureModal {
+#templateAlignmentModal, #templateAlignmentModalhhomp, #structureModal {
     width:  60em;
     max-width: 60em;
     background-color: #eee;
     overflow-y: initial;
 }
 
-#templateAlignmentModal select {
+#templateAlignmentModal select, #templateAlignmentModalhhomp select {
     font-size: 0.80em !important;
     -moz-appearance: none !important;
     -webkit-appearance: none !important;
@@ -652,16 +651,18 @@ table.dataTable.no-footer{
     height: 1em;
 }
 
-#fastaTable {
+#resultTable, #resultTableQ2D {
     width: auto;
+    border-spacing: 0;
 }
 
-#clustalTable {
-    width: auto;
+#resultTable td,  #resultTableQ2D td {
+    padding-right: 2em !important;
+    border-spacing: 0;
 }
 
-#clustalTable td {
-    padding-right: 0.2em;
+#resultTableQ2D {
+    margin-left: 1.2em;
 }
 
 .clustalAcc {
@@ -686,3 +687,41 @@ table.dataTable.no-footer{
     margin-left: 1em;
 }
 
+#hcontainer {
+    overflow-x: auto;
+    overflow-y: hidden;
+    min-width: 610px;
+    height: 400px;
+    margin: 0 auto;
+    padding-left: 50px;
+}
+
+@media screen and (max-width: 1200px) {
+    #hcontainer {
+        padding-left: 0;
+    }
+}
+
+@media screen and (max-width: 930px) {
+    #extraWide {
+        width: 4.5em;
+    }
+}
+
+@media screen and (max-width: 930px) {
+    #scrollLinks a, #controlls a {
+        margin-right: 1em;
+    }
+}
+
+@media screen and (max-width: 930px) {
+    [class*="scrollContainer"] {
+        font-size: 1.05em;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    [class*="scrollContainer"] {
+        font-size: 1.0em;
+    }
+}

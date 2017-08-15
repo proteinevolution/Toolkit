@@ -209,7 +209,8 @@ let JobTabsComponent = {
                 ctrl.isJob && ctrl.state === 2 ? m("div", { "class": "tabs-panel", id: "tabpanel-Queued"  },
                     m(JobQueuedComponent, { job: ctrl.job })) : void 0,
                 ctrl.isJob && ctrl.state === 3 ? m("div", { "class": "tabs-panel", id: "tabpanel-Running" },
-                    m(JobRunningComponent, { job: ctrl.job })) : void 0,
+                    // m.component is needed when component is a typescript class
+                    m.component(JobRunningComponent, { job: ctrl.job })) : void 0,
                 ctrl.isJob && ctrl.state === 4 ? m("div", { "class": "tabs-panel", id: "tabpanel-Error"   },
                     m(JobErrorComponent, {job: ctrl.job})) : void 0,
                 ctrl.isJob && ctrl.state === 7 ? m("div", { "class": "tabs-panel", id: "tabpanel-Pending" },

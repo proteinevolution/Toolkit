@@ -1,4 +1,4 @@
-@import models.results.BlastVisualization
+@import models.results.Common
 @import models.database.results.PSIBlastHSP
 @(jobID: String, hit: PSIBlastHSP, db: String, wrapped: Boolean)(implicit request: RequestHeader)
 @* hit number, links *@
@@ -6,7 +6,7 @@
     <td></td>
     <td colspan="3">
 
-        @BlastVisualization.getLinksDB(db, hit.accession)
+        @Common.getLinksDB(db, hit.accession)
     </td>
     <td></td>
 </tr>
@@ -14,7 +14,7 @@
 <tr class="header">
     <td class="indexCheckbox"><input type="checkbox" name="alignment_elem" class="checkbox aln" value='@{hit.num}'> @{hit.num}.</td>
 <td class="hitInfo" colspan="4">
-    @{BlastVisualization.getSingleLinkDB(db , hit.accession)}
+    @{Common.getSingleLinkDB(db , hit.accession)}
     @{"  "+hit.description}
 </td>
 </tr>
@@ -25,11 +25,11 @@
         Length: @{hit.ref_len} <br>
         E-value: @{hit.evalue}&emsp;&emsp;Score: @{hit.bitscore}bits (@{hit.score})&emsp;&emsp;
         Identities: @{hit.identity}/@{hit.hit_len}
-        (@{BlastVisualization.calculatePercentage(hit.identity, hit.hit_len)})&emsp;&emsp;
+        (@{Common.calculatePercentage(hit.identity, hit.hit_len)})&emsp;&emsp;
         Positives: @{hit.positive}/@{hit.hit_len}
-        (@{BlastVisualization.calculatePercentage(hit.positive, hit.hit_len)})&emsp;&emsp;
+        (@{Common.calculatePercentage(hit.positive, hit.hit_len)})&emsp;&emsp;
         Gaps: @{hit.gaps}/@{hit.hit_len}
-        (@{BlastVisualization.calculatePercentage(hit.gaps, hit.hit_len)})
+        (@{Common.calculatePercentage(hit.gaps, hit.hit_len)})
 
     </td>
 </tr>
@@ -40,18 +40,18 @@
 
 @if(wrapped) {
 
-    @Html(BlastVisualization.psiblastHitWrapped(hit, 0, 85, hit.query_start, hit.hit_start))
+    @Html(Common.psiblastHitWrapped(hit, 0, 85, hit.query_start, hit.hit_start))
 } else {
     @{
-        BlastVisualization.makeRow("sequence", Array("", "Q " + hit.query_start.toString, hit.query_seq+ "   " + hit.query_end.toString))
+        Html(Common.makeRow("sequence", Array("", "Q " + hit.query_start.toString, hit.query_seq+ "   " + hit.query_end.toString)))
     }
     @* Midline *@
     @{
-        BlastVisualization.makeRow("sequence", Array("", "", hit.midline))
+        Html(Common.makeRow("sequence", Array("", "", hit.midline)))
     }
     @* Hit *@
     @{
-        BlastVisualization.makeRow("sequence", Array("", "T " + hit.hit_start.toString, hit.hit_seq + "   " + hit.hit_end.toString))
+        Html(Common.makeRow("sequence", Array("", "T " + hit.hit_start.toString, hit.hit_seq + "   " + hit.hit_end.toString)))
     }
     <tr class="blank_row"><td colspan="5"></td></tr>
 }
