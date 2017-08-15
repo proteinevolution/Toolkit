@@ -38,17 +38,17 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
   private val userLoggedInDeletingAfterMonths = 24        // Deletes registered accounts after this timeframe
   private val userLoggedInWarningDaysBeforeDeletion = 14  // Sending an eMail to the user this many days prior to the deletion
 
-  private val Tick: Cancellable = {
+  //private val Tick: Cancellable = {
     // scheduler should use the system dispatcher
-    context.system.scheduler.schedule(userDeletionDelay, userDeletionInterval, self, DeleteOldUsers)(context.system.dispatcher)
-  }
+    //context.system.scheduler.schedule(userDeletionDelay, userDeletionInterval, self, DeleteOldUsers)(context.system.dispatcher)
+  //}
 
   override def preStart(): Unit = {
     Logger.info("Starting Database Monitor")
   }
 
   override def postStop(): Unit = {
-    Tick.cancel()
+    //Tick.cancel()
   }
 
   override def receive: Receive = {
