@@ -1,101 +1,117 @@
 package models.database.statistics
 
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
 import play.api.libs.json._
 import reactivemongo.bson._
 
 /**
   * Created by astephens on 19.02.17.
   */
-case class ToolStatistic(toolID: BSONObjectID,
-                         toolName: String,
-                         current: Int,
-                         currentFailed: Int,
-                         monthly: List[Int],
-                         monthlyFailed: List[Int],
-                         datePushed: List[DateTime]) {
-  def total: Long       = monthly.map(_.toLong).sum[Long]
-  def totalFailed: Long = monthlyFailed.map(_.toLong).sum[Long]
+case class ToolStatistic(toolName        : String,
+                         monthly         : List[Int] = List.empty[Int],
+                         monthlyFailed   : List[Int] = List.empty[Int],
+                         monthlyDeleted  : List[Int] = List.empty[Int],
+                         monthlyInternal : List[Int] = List.empty[Int]) {
+  /**
+    * Returns the total amount of jobs used with the tool
+    * @return
+    */
+  def total         : Long = monthly.map(_.toLong).sum[Long]
 
-  def pushMonth(): ToolStatistic = {
-    this.copy(
-      current = 0,
-      currentFailed = 0,
-      monthly = this.monthly.::(this.current),
-      monthlyFailed = this.monthlyFailed.::(this.currentFailed),
-      datePushed = this.datePushed.::(DateTime.now)
-    )
+  /**
+    * Returns the total amount of failed jobs used with the tool
+    * @return
+    */
+  def totalFailed   : Long = monthlyFailed.map(_.toLong).sum[Long]
+
+  /**
+    * Returns the total amount of deleted jobs used with the tool
+    * @return
+    */
+  def totalDeleted  : Long = monthlyFailed.map(_.toLong).sum[Long]
+
+  /**
+    * Returns the total amount of internal jobs used with the tool
+    * @return
+    */
+  def totalInternal : Long = monthlyInternal.map(_.toLong).sum[Long]
+
+  /**
+    * Creates a new ToolStatistic object which is a copy of this one - with the current month added
+    * @param current
+    * @param currentFailed
+    * @param currentDeleted
+    * @return
+    */
+  def addMonth(current : Int, currentFailed : Int, currentDeleted : Int, currentInternal : Int): ToolStatistic = {
+    this.copy(monthly         = monthly.::(current),
+              monthlyFailed   = monthlyFailed.::(currentFailed),
+              monthlyDeleted  = monthlyDeleted.::(currentDeleted),
+              monthlyInternal = monthlyInternal.::(currentInternal))
+  }
+
+  /**
+    * Creates a new ToolStatistic object which is a copy of this one - with the current month added
+    * @param currents
+    * @param currentsFailed
+    * @param currentsDeleted
+    * @return
+    */
+  def addMonths(currents         : List[Int],
+                currentsFailed   : List[Int],
+                currentsDeleted  : List[Int],
+                currentsInternal : List[Int]) : ToolStatistic = {
+    this.copy(monthly         = monthly         ::: currents,
+              monthlyFailed   = monthlyFailed   ::: currentsFailed,
+              monthlyDeleted  = monthlyDeleted  ::: currentsDeleted,
+              monthlyInternal = monthlyInternal ::: currentsInternal)
+  }
+
+  /**
+    * Adds empty months "amount" of times recursively
+    * @param amount
+    */
+  def addEmptyMonths(amount : Int = 1) : ToolStatistic = {
+    if (amount >0) this.addMonth(0,0,0,0).addEmptyMonths(amount - 1)
+    else           this
   }
 }
 
 object ToolStatistic {
-  val ID            = "toolID"
-  val IDDB          = "_id"
-  val TOOLNAME      = "toolName"
-  val CURRENT       = "current"
-  val CURRENTFAILED = "currentFailed"
-  val MONTHLY       = "monthly"
-  val MONTHLYFAILED = "monthlyFailed"
-  val DATEPUSHED    = "datePushed"
-
-  implicit object JsonReader extends Reads[ToolStatistic] {
-    override def reads(json: JsValue): JsResult[ToolStatistic] = json match {
-      case obj: JsObject =>
-        try {
-          val toolID        = BSONObjectID.parse((obj \ ID).as[String]).getOrElse(BSONObjectID.generate())
-          val toolName      = (obj \ TOOLNAME).asOpt[String].getOrElse("invalid")
-          val current       = (obj \ CURRENT).as[Int]
-          val currentFailed = (obj \ CURRENT).as[Int]
-          val monthly       = (obj \ MONTHLY).as[List[Int]]
-          val monthlyFailed = (obj \ MONTHLYFAILED).as[List[Int]]
-          val datePushed    = (obj \ DATEPUSHED).as[List[DateTime]]
-          JsSuccess(ToolStatistic(toolID, toolName, current, currentFailed, monthly, monthlyFailed, datePushed))
-        } catch {
-          case cause: Throwable => JsError(cause.getMessage)
-        }
-      case _ => JsError("expected.jsobject")
-    }
-  }
+  val TOOLNAME        = "tool"
+  val MONTHLY         = "monthly"
+  val MONTHLYFAILED   = "monthlyFailed"
+  val MONTHLYDELETED  = "monthlyDeleted"
+  val MONTHLYINTERNAL = "monthlyInternal"
 
   implicit object JsonWriter extends Writes[ToolStatistic] {
-    val dtf = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss")
     override def writes(toolStatistic: ToolStatistic): JsObject = Json.obj(
-      IDDB          -> toolStatistic.toolID.stringify,
-      TOOLNAME      -> toolStatistic.toolName,
-      CURRENT       -> toolStatistic.current,
-      CURRENTFAILED -> toolStatistic.currentFailed,
-      MONTHLY       -> toolStatistic.monthly,
-      MONTHLYFAILED -> toolStatistic.monthlyFailed,
-      DATEPUSHED -> toolStatistic.datePushed.map(
-        dt => Json.obj("string" -> dtf.print(dt), "month" -> dt.monthOfYear().getAsShortText, "year" -> dt.year().get)
-      )
+      TOOLNAME        -> toolStatistic.toolName,
+      MONTHLY         -> toolStatistic.monthly,
+      MONTHLYFAILED   -> toolStatistic.monthlyFailed,
+      MONTHLYDELETED  -> toolStatistic.monthlyDeleted,
+      MONTHLYINTERNAL -> toolStatistic.monthlyInternal
     )
   }
 
   implicit object Reader extends BSONDocumentReader[ToolStatistic] {
     def read(bson: BSONDocument): ToolStatistic = {
       ToolStatistic(
-        toolID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
-        toolName = bson.getAs[String](TOOLNAME).getOrElse("invalid"),
-        current = bson.getAs[Int](CURRENT).getOrElse(0),
-        currentFailed = bson.getAs[Int](CURRENTFAILED).getOrElse(0),
-        monthly = bson.getAs[List[Int]](MONTHLY).getOrElse(List.empty),
-        monthlyFailed = bson.getAs[List[Int]](MONTHLYFAILED).getOrElse(List.empty),
-        datePushed = bson.getAs[List[BSONDateTime]](DATEPUSHED).getOrElse(List.empty).map(dt => new DateTime(dt.value))
+        toolName        = bson.getAs[String](TOOLNAME).getOrElse("invalid"),
+        monthly         = bson.getAs[List[Int]](MONTHLY).getOrElse(List.empty),
+        monthlyFailed   = bson.getAs[List[Int]](MONTHLYFAILED).getOrElse(List.empty),
+        monthlyDeleted  = bson.getAs[List[Int]](MONTHLYDELETED).getOrElse(List.empty),
+        monthlyInternal = bson.getAs[List[Int]](MONTHLYINTERNAL).getOrElse(List.empty)
       )
     }
   }
 
   implicit object Writer extends BSONDocumentWriter[ToolStatistic] {
     def write(toolStatistic: ToolStatistic): BSONDocument = BSONDocument(
-      IDDB          -> toolStatistic.toolID,
-      TOOLNAME      -> toolStatistic.toolName,
-      CURRENT       -> toolStatistic.current,
-      CURRENTFAILED -> toolStatistic.current,
-      MONTHLY       -> toolStatistic.monthly,
-      MONTHLYFAILED -> toolStatistic.monthlyFailed,
-      DATEPUSHED    -> toolStatistic.datePushed.map(a => BSONDateTime(a.getMillis))
+      TOOLNAME       -> toolStatistic.toolName,
+      MONTHLY         -> toolStatistic.monthly,
+      MONTHLYFAILED   -> toolStatistic.monthlyFailed,
+      MONTHLYDELETED  -> toolStatistic.monthlyDeleted,
+      MONTHLYINTERNAL -> toolStatistic.monthlyDeleted
     )
   }
 }
