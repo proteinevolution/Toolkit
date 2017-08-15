@@ -1,7 +1,9 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 
+import actors.DatabaseMonitor.DeleteOldUsers
+import akka.actor.ActorRef
 import models.UserSessions
 import models.database.statistics.{JobEvent, JobEventLog, StatisticsObject}
 import models.database.users.User
@@ -30,6 +32,7 @@ final class Backend @Inject()(webJarAssets: WebJarAssets,
                               mongoStore: MongoStore,
                               @NamedCache("userCache") implicit val userCache: CacheApi,
                               toolFactory: ToolFactory,
+                              @Named("DatabaseMonitor") databaseMonitor : ActorRef,
                               implicit val locationProvider: LocationProvider,
                               val reactiveMongoApi: ReactiveMongoApi,
                               val messagesApi: MessagesApi)
@@ -102,46 +105,17 @@ final class Backend @Inject()(webJarAssets: WebJarAssets,
     }
   }
 
-//  def statistics: Action[AnyContent] = Action.async { implicit request =>
-//    userSessions.getUser.flatMap { user =>
-//      if (user.isSuperuser) {
-//        val dateTimeFirstOfMonth: DateTime = DateTime.now().dayOfMonth().withMinimumValue().withTimeAtStartOfDay()
-//        val lastMonthQuery =
-//          BSONDocument("$gte" -> BSONDateTime(dateTimeFirstOfMonth.minusMonths(1).getMillis),
-//                       "$lt"  -> BSONDateTime(dateTimeFirstOfMonth.getMillis))
-//        val currentMonthJobs = mongoStore
-//          .findJobEventLogs(
-//            BSONDocument(
-//              JobEventLog.EVENTS ->
-//              BSONDocument(
-//                "$elemMatch" ->
-//                BSONDocument(
-//                  JobEvent.TIMESTAMP ->
-//                  BSONDocument("$gte" -> BSONDateTime(dateTimeFirstOfMonth.getMillis))
-//                )
-//              )
-//            )
-//          )
-//
-//        val jobEventsSortedByTool = currentMonthJobs.map{ jobEventList =>
-//          JobEventLog.toSortedMap(jobEventList)
-//        }
-//        jobEventsSortedByTool.map(_.map{ toolStatMap =>
-//          val toolName = toolStatMap._1
-//          val toolStat = toolStatMap._2
-//          ToolStatistic(toolName,
-//                        List(toolStat.length),
-//                        List(toolStat.count(_.hasFailed)),
-//                        List(toolStat.count(_.isDeleted)))
-//        })
-//        mongoStore.getStatistics.map { toolStatisticList: List[ToolStatistic] =>
-//          NoCache(Ok(Json.toJson(toolStatisticList)))
-//        }
-//      } else {
-//        Future.successful(NotFound)
-//      }
-//    }
-//  }
+  def runUserSweep : Action[AnyContent] =  Action.async { implicit request =>
+    userSessions.getUser.flatMap { user =>
+      Logger.info("User deletion called. Access " + (if (user.isSuperuser) "granted." else "denied."))
+      if (user.isSuperuser) {
+        databaseMonitor ! DeleteOldUsers
+        Future.successful(Ok)
+      } else {
+        Future.successful(NotFound)
+      }
+    }
+  }
 
   def cms: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
