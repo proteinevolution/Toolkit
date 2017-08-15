@@ -34,7 +34,13 @@ object Router extends js.JSApp {
 
     m.route(mountpoint, "/", routes)
 
-    m.mount(g.document.getElementById("off-canvas-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
+    // in absence of multi-tenancy support: mount the joblist, which gets redrawn independently from other view changes, in a separate mithril instance
+
+    g.jobList = g.m.deps.factory(g.window)
+    g.jobList.mount(g.document.getElementById("off-canvas-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
+    g.jobList.mount(g.document.getElementById("sidebar").asInstanceOf[HTMLDivElement], JobListComponent)
+
+    // m.component(JobListComponent,js.Dynamic.literal("activejobID" -> m.route.param("jobID"))).asInstanceOf[MithrilComponent]
 
   }
 }

@@ -7,7 +7,7 @@
 
     <div class="forward_form">
         <div class="forwardFormDiv">
-            <label style="font-weight: bold">Forward MSA to:</label>
+            <label style="font-weight: bold">Forward MSA (~100 most distinct sequences) to:</label>
         </div>
     </div>
 
@@ -16,11 +16,11 @@
             <select class="selectedHits_@viewName" id="forwardSelect_@viewName">
                 <option value="">Select a tool</option>
                 <div>
+                    <option class="alignmentOptions_@viewName" value="formatseq">FormatSeq</option>
                     <option class="alignmentOptions_@viewName" value="hhblits">HHblits</option>
+                    <option class="alignmentOptions_@viewName" value="hhomp">HHomp</option>
                     <option class="alignmentOptions_@viewName" value="hhpred">HHpred</option>
                     <option class="alignmentOptions_@viewName" value="hhrepid">HHrepID</option>
-                    <option class="alignmentOptions_@viewName" value="hhomp">HHomp</option>
-
                 </div>
             </select>
         </div>

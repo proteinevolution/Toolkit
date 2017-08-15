@@ -10,7 +10,6 @@ let samccIsValid : boolean = false;
 
 let validation = function(elem : any, isInit : boolean, ctx : any) : any {
     if (!isInit) {
-
         let toolname: string;
         try {
             toolname = $("#toolnameAccess").val();
@@ -38,8 +37,11 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
                     validationProcess($(elem), toolname)
                 });
             }
+        validationProcess($(elem), toolname);
         return $(elem).on("input", function (e) {
-            validationProcess(elem, toolname);
+            //localStorage.setItem('alignmentcontent', $(elem).val());
+            //console.log(localStorage.getItem('alignmentcontent'));
+            validationProcess($(elem), toolname);
         });
     }
 };
@@ -47,7 +49,6 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
 
 let validationProcess = function(elem: any,toolname: string) {
-
     //---------------------------------Validation Visitors------------------------------------------//
 
     // in order to modularize validation we use the visitor pattern
@@ -60,8 +61,37 @@ let validationProcess = function(elem: any,toolname: string) {
 
 
     //---------------------------------------------------------------------------------------------//
-
     switch (toolname) {
+
+
+        case "formatseq":
+            /** validation model for hhblits:
+             * Input has to be a single FASTA sequence
+             * or aligned FASTA with at least two sequences.
+             * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
+             * first space, in the header are used as ID.
+             */
+            charLimitPerSeq = 20000;
+            seqLimit = 10000;
+
+            let formatseqTarget = new alignmentVal($(elem));
+
+            if (formatseqTarget.basicValidation("yes")) {
+                if (!formatseqTarget.validateA3M()) {
+                    if (formatseqTarget.sameLengthValidation()) {
+                        formatseqTarget.mustHave2();
+                        $("#in_format").val("fas");
+                        $("#in_format").niceSelect('update');
+                    }
+                } else {
+                    $("#in_format").val("a3m");
+                    $("#in_format").niceSelect('update');
+                }
+            }
+
+            break;
+
+
         case "tcoffee":
             /** validation model for tcoffee:
              * Input has to be in FASTA format and may comprise multiple sequences of varying lengths.
@@ -194,13 +224,14 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 3000;
+            charLimitPerSeq = 20000;
             seqLimit = 10000;
 
             let hmmerTarget = new alignmentVal($(elem));
 
             if (hmmerTarget.basicValidation("yes")) {
                 hmmerTarget.sameLengthValidation();
+
             }
 
             break;
@@ -212,13 +243,19 @@ let validationProcess = function(elem: any,toolname: string) {
              * Sequences should have unique IDs; only the characters directly following the '>' sign, until the
              * first space, in the header are used as ID.
              */
-            charLimitPerSeq = 3000;
+            charLimitPerSeq = 20000;
             seqLimit = 10000;
 
             let hhblitsTarget = new alignmentVal($(elem));
 
             if (hhblitsTarget.basicValidation("yes")) {
-                hhblitsTarget.sameLengthValidation();
+                if (!hhblitsTarget.validateA3M()) {
+                    hhblitsTarget.sameLengthValidation();
+                }
+                else {
+                    $("#maxrounds").val("1");
+                    $("#maxrounds").niceSelect('update');
+                }
             }
 
             break;
@@ -231,14 +268,20 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 3000; // TODO: why was the charLimit defined after it's usage?
+            charLimitPerSeq = 20000; // TODO: why was the charLimit defined after it's usage?
             seqLimit = 10000;
 
             let hhpredTarget = new alignmentVal($(elem));
 
 
             if (hhpredTarget.basicValidation("yes")) {
-                hhpredTarget.sameLengthValidation();
+                if (!hhpredTarget.validateA3M()) {
+                    hhpredTarget.sameLengthValidation();
+                }
+                else {
+                    $("#msa_gen_max_iter").val("0");
+                    $("#msa_gen_max_iter").niceSelect('update');
+                }
                 hhpredTarget.hhMaxDB();
             }
 
@@ -252,15 +295,19 @@ let validationProcess = function(elem: any,toolname: string) {
              * first space, in the header are used as ID.
              */
 
-            charLimitPerSeq = 3000; // TODO: why was the charLimit defined after it's usage?
+            charLimitPerSeq = 20000; // TODO: why was the charLimit defined after it's usage?
             seqLimit = 10000;
 
             let hhompTarget = new alignmentVal($(elem));
 
-
             if (hhompTarget.basicValidation("yes")) {
-                hhompTarget.sameLengthValidation();
-                hhompTarget.hhMaxDB();
+                if (!hhompTarget.validateA3M()) {
+                    hhompTarget.sameLengthValidation();
+                }
+                else {
+                    $("#msa_gen_max_iter").val("0");
+                    $("#msa_gen_max_iter").niceSelect('update');
+                }
             }
 
             break;
@@ -324,21 +371,26 @@ let validationProcess = function(elem: any,toolname: string) {
 
         case "hhrepid":
 
-            charLimitPerSeq = 3000;
+            charLimitPerSeq = 20000;
             seqLimit = 10000;
 
             let hhrepidTarget = new alignmentVal($(elem));
 
             if (hhrepidTarget.basicValidation("yes")) {
-                hhrepidTarget.sameLengthValidation();
+                if (!hhrepidTarget.validateA3M()) {
+                    hhrepidTarget.sameLengthValidation();
+                }
+                else {
+                    $("#msa_gen_max_iter").val("0");
+                    $("#msa_gen_max_iter").niceSelect('update');
+                }
             }
-
             break;
 
 
         case "pcoils":
 
-            charLimitPerSeq = 6000;
+            charLimitPerSeq = 20000;
             seqLimit = 2000;
 
             let pcoilsTarget = new alignmentVal($(elem));
@@ -411,14 +463,13 @@ let validationProcess = function(elem: any,toolname: string) {
 
             if (quick2dTarget.basicValidation("yes")) {
                 quick2dTarget.sameLengthValidation();
+
             }
 
             break;
 
         case "modeller":
-
             let modellerTarget = new alignmentVal($(elem));
-
             modellerTarget.modellerValidation();
 
             break;
@@ -531,8 +582,10 @@ let validationProcess = function(elem: any,toolname: string) {
             let hhfilterTarget = new alignmentVal($(elem));
 
             if (hhfilterTarget.basicValidation("yes")) {
-                if(hhfilterTarget.sameLengthValidation())
-                    hhfilterTarget.mustHave2();
+                if (!hhfilterTarget.validateA3M()) {
+                    if (hhfilterTarget.sameLengthValidation())
+                        hhfilterTarget.mustHave2();
+                }
             }
 
             break;
@@ -664,12 +717,31 @@ class alignmentVal implements ToolkitValidator {
         }
     }
 
+    validateA3M(): boolean {
+        if($("#alignment").val().slice(0,5) == "#A3M#"){
+
+            if(this.elem.reformat('numbers') > 2) {
+                feedback(true, "A3M format", "success");
+                return true;
+            }
+            else{
+                feedback(false, "Invalid A3M! Expecting two or more sequences!", "error");
+                return true;
+            }
+        }
+        return false;
+    }
+
     basicValidation(checkNucleotide: string): boolean {
 
-        if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') !== '') {
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
+	    else if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') !== '') {
             originIsFasta = false;
             let t = this.elem.reformat('detect');
-            feedback(false, t + " format found:  <b>Auto-transformed to Fasta</b>", "success", t);
+            feedback(true, t.toUpperCase() + " format found:  <b>Auto-transformed to FASTA</b>", "success");
             $("#alignment").val(this.elem.reformat('fasta'));
             return true;
         }
@@ -717,11 +789,10 @@ class alignmentVal implements ToolkitValidator {
             feedback(true, "FASTA but identifiers are not unique!", "warning");
             return true;
         }
-
-        else if (this.elem.val() === "") {
+	    else if (this.elem.val() === "") {
             feedback(false);
             valReset();
-        }
+        } 
 
         else feedback(true, "<b>Protein FASTA</b>", "success");
 
@@ -730,8 +801,11 @@ class alignmentVal implements ToolkitValidator {
     }
 
     sameLengthValidation(): boolean {
-
-        if (!this.elem.reformat('samelength')) {
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
+        else if (!this.elem.reformat('samelength')) {
             feedback(false, "Invalid MSA! Sequences should have the same length.", "error");
             return false;
         }
@@ -740,8 +814,11 @@ class alignmentVal implements ToolkitValidator {
     }
 
     mustHave2() : boolean {
-
-        if(this.elem.validate('fasta') && this.elem.reformat('numbers') < 2) {
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
+        else if(this.elem.validate('fasta') && this.elem.reformat('numbers') < 2) {
             feedback(false, "Must have at least two sequences!", "error");
             return false;
         }
@@ -749,18 +826,37 @@ class alignmentVal implements ToolkitValidator {
     }
 
     mustHave1() : boolean {
-
-        if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1){
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
+        else if (this.elem.validate('fasta') && this.elem.reformat('numbers') > 1){
             feedback(false, "Input must be a single protein sequence!", "error");
             return false;
         }
         return true;
     }
 
+    hasTwo() : boolean {
+
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
+        else if (this.elem.reformat('numbers') > 1){
+            return true;
+        }
+       return false;
+    }
+
+
     DNAvalidation(): any {
 
         console.log(this.elem.reformat('DNA'));
-
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            return true;
+        }
         if (!this.elem.validate('fasta')) {
             feedback(false, "This is no FASTA!", "error");
             return false;
@@ -796,8 +892,10 @@ class alignmentVal implements ToolkitValidator {
     }
 
     seq2IDvalidation(): any {
-
-        if (!this.elem.validate('fasta') && this.elem.reformat('detect') != '') {
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+        }
+        else if (!this.elem.validate('fasta') && this.elem.reformat('detect') != '') {
             originIsFasta = false;
             let t = this.elem.reformat('detect');
             feedback(false, t + " format found:  <b>Auto-transformed to Fasta</b>", "success", t);
@@ -826,10 +924,12 @@ class alignmentVal implements ToolkitValidator {
     }
 
     patternSearchValidation(): any {
-
-        if (!this.elem.reformat('line'))
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+        }
+        else if (!this.elem.reformat('line')) {
             feedback(false, "Please enter a valid regular expression/PROSITE grammar!", "error");
-
+        }
         else if (/\s/.test(this.elem.val()))
             feedback(false, "Input must not contain spaces!", "error");
 
@@ -846,10 +946,12 @@ class alignmentVal implements ToolkitValidator {
     }
 
     modellerValidation(): any {
-
         modellerIsValid = false;
-
-        if (!this.elem.validate('pir'))
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            modellerIsValid = true;
+        }
+        else if (!this.elem.validate('pir'))
             feedback(false, "MODELLER only works with PIR alignments forwarded by HHpred.", "error");
 
         else if (!this.elem.reformat('star'))
@@ -865,7 +967,6 @@ class alignmentVal implements ToolkitValidator {
             feedback(false);
             valReset();
         }
-
         else if(!ParameterModellerKeyComponent.keyStored){
             feedback(false, "Please enter your MODELLER-key!", "error");
         }
@@ -879,10 +980,12 @@ class alignmentVal implements ToolkitValidator {
     samccValidation(): any {
 
         samccIsValid = false;
-
-        if(!this.elem.reformat('atoms'))
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+            samccIsValid = true;
+        }
+        else if(!this.elem.reformat('atoms'))
             feedback(false, "Must contain at least 28 PDB ATOM records", "error");
-
         else if (this.elem.val() == "") {
             feedback(false);
             valReset();
@@ -896,7 +999,10 @@ class alignmentVal implements ToolkitValidator {
 
     //retseq validation is only a stub
     retSeqValidation(): any {
-        if(this.elem.val() != "")
+        if($("#fileUpload").val() !== "") {
+            feedback(true, "Uploaded file", "success");
+        }
+        else if(this.elem.val() != "")
             feedback(true, "Valid input", "success");
 
         else if (this.elem.val() == "") {

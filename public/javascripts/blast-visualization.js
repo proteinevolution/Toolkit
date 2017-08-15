@@ -2,7 +2,7 @@
 
 /* BASELINKS */
 
-var pdbBaseLink = "http://pdb.rcsb.org/pdb/explore.do?structureId=";
+var pdbBaseLink = "http://www.rcsb.org/pdb/explore/explore.do?structureId=";
 var pdbeBaseLink = "http://www.ebi.ac.uk/pdbe/entry/pdb/";
 var ncbiBaseLink = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?SUBMIT=y&db=structure&orig_db=structure&term=";
 var ncbiProteinBaseLink = "https://www.ncbi.nlm.nih.gov/protein/";

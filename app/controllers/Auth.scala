@@ -1,29 +1,29 @@
 package controllers
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
-import actors.WebSocketActor.{ ChangeSessionID, LogOut }
+import actors.WebSocketActor.{ChangeSessionID, LogOut}
 import akka.actor.ActorRef
-import models.Constants
+import models.{Constants, UserSessions}
 import models.auth._
-import models.database.users.{ User, UserConfig, UserToken }
+import models.database.users.{User, UserConfig, UserToken}
 import models.job.JobActorAccess
-import models.mailing.{ ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail }
+import models.mailing.{ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail}
 import models.tools.ToolFactory
 import modules.LocationProvider
 import modules.db.MongoStore
 import org.joda.time.DateTime
 import play.Logger
 import play.api.cache._
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.mvc.{Action, AnyContent, Controller}
 import play.api.libs.mailer._
-import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
+import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.bson._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{Await, Future}
 
 /**
   * Controller for Authentication interactions

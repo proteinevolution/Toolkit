@@ -1,18 +1,18 @@
 package controllers
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
-import actors.JobActor.{ JobStateChanged, UpdateLog }
-import models.Constants
+import actors.JobActor.{JobStateChanged, UpdateLog}
+import models.{Constants, UserSessions}
 import models.database.jobs._
 import models.job.JobActorAccess
 import modules.LocationProvider
 import modules.db.MongoStore
 import org.joda.time.DateTime
 import play.api.Logger
-import play.api.cache.{ CacheApi, NamedCache }
+import play.api.cache.{CacheApi, NamedCache}
 import play.api.mvc._
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.io.Source
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -62,12 +62,11 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
   }
 
   def updateLog(jobID: String) = Action {
-    jobActorAccess.sendToJobActor(jobID, UpdateLog(jobID))
+    jobActorAccess.sendToJobActor(jobID, UpdateLog(jobID)) // TODO somehow this is getting triggered too rarely
     Ok
   }
 
-  //TODO make <strike>america</strike> Jobs <strike>great</strike> secure again!
-  def SGEID(jobID: String, sgeID: String) = Action.async {
+  def SGEID(jobID: String, sgeID: String): Action[AnyContent] = Action.async {
 
     mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).map {
 

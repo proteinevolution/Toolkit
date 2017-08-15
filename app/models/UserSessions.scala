@@ -1,20 +1,21 @@
-package controllers
+package models
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import models.database.users.{ SessionData, User }
+import javax.inject.{Inject, Singleton}
+
+import models.database.users.{SessionData, User}
 import modules.LocationProvider
 import modules.common.HTTPRequest
 import modules.db.MongoStore
 import org.joda.time.DateTime
 import play.api.cache._
-import play.api.{ mvc, Logger }
 import play.api.mvc.RequestHeader
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import play.api.{Logger, mvc}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.hashing.MurmurHash3
 
 /**
   * Created by astephens on 24.08.16.
@@ -32,9 +33,9 @@ class UserSessions @Inject()(mongoStore: MongoStore,
     */
   def putUser(implicit request: RequestHeader, sessionID: BSONObjectID): Future[User] = {
     val httpRequest = HTTPRequest(request)
-    val newSessionData = SessionData(ip = request.remoteAddress,
+    val newSessionData = SessionData(ip        = MurmurHash3.stringHash(request.remoteAddress).toString,
                                      userAgent = httpRequest.userAgent.getOrElse("Not Specified"),
-                                     location = locationProvider.getLocation(request))
+                                     location  = locationProvider.getLocation(request))
 
     mongoStore.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
       case Some(user) =>
@@ -55,7 +56,6 @@ class UserSessions @Inject()(mongoStore: MongoStore,
         val user = User(
           userID = BSONObjectID.generate(),
           sessionID = Some(sessionID),
-          connected = true,
           sessionData = List(newSessionData),
           dateCreated = Some(new DateTime()),
           dateLastLogin = Some(new DateTime()),
@@ -71,18 +71,23 @@ class UserSessions @Inject()(mongoStore: MongoStore,
     * Returns a Future User
     */
   def getUser(implicit request: RequestHeader): Future[User] = {
-    val sessionID = request.session.get(SID) match {
-      case Some(sid) =>
-        // Check if the session ID is parseable - otherwise generate a new one
-        BSONObjectID.parse(sid).getOrElse(BSONObjectID.generate())
-      case None =>
-        BSONObjectID.generate()
-    }
-    userCache.get(sessionID.stringify) match {
-      case Some(user) =>
-        Future.successful(user)
-      case None =>
-        putUser(request, sessionID)
+    // Ignore our monitoring service and don't update it in the DB
+    if (request.remoteAddress.contentEquals("10.3.7.70")) { // TODO Put this in the config?
+      Future.successful(User())
+    } else {
+      val sessionID = request.session.get(SID) match {
+        case Some(sid) =>
+          // Check if the session ID is parseable - otherwise generate a new one
+          BSONObjectID.parse(sid).getOrElse(BSONObjectID.generate())
+        case None =>
+          BSONObjectID.generate()
+      }
+      userCache.get(sessionID.stringify) match {
+        case Some(user) =>
+          Future.successful(user)
+        case None =>
+          putUser(request, sessionID)
+      }
     }
   }
 
