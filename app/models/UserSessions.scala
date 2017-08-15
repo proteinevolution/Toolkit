@@ -15,6 +15,7 @@ import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
+import scala.util.hashing.MurmurHash3
 
 /**
   * Created by astephens on 24.08.16.
@@ -33,9 +34,9 @@ class UserSessions @Inject()(mongoStore: MongoStore,
     */
   def putUser(implicit request: RequestHeader, sessionID: BSONObjectID): Future[User] = {
     val httpRequest = HTTPRequest(request)
-    val newSessionData = SessionData(ip = request.remoteAddress,
+    val newSessionData = SessionData(ip        = MurmurHash3.stringHash(request.remoteAddress).toString,
                                      userAgent = httpRequest.userAgent.getOrElse("Not Specified"),
-                                     location = locationProvider.getLocation(request))
+                                     location  = locationProvider.getLocation(request))
 
     mongoStore.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
       case Some(user) =>
