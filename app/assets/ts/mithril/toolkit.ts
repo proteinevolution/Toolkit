@@ -90,10 +90,11 @@ window.Toolkit = {
     },
     view: function(ctrl : any) {
         return [
-            m("div", { "class": "large-2 padded-column columns show-for-large", id: "sidebar" }, [
-                m(JobListComponent, { activejobID : m.route.param("jobID") })
-            ]),
-            m("div", { id: "content", "class": "large-10 small-12 columns padded-column", config: fadesIn },
+            m("div", {config: showSidebar}),
+            //m("div", { "class": "large-2 padded-column columns show-for-large", id: "sidebar" }, [
+                //m(JobListComponent, { activejobID : m.route.param("jobID") })
+            //]),
+            m("div", { id: "content", config: fadesIn },
                 ctrl.viewComponent())
         ];
     }

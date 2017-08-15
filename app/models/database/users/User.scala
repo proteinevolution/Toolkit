@@ -6,7 +6,7 @@ import org.mindrot.jbcrypt.BCrypt
 import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
 
-case class User(userID: BSONObjectID, // ID of the User
+case class User(userID: BSONObjectID = BSONObjectID.generate(), // ID of the User
                 sessionID: Option[BSONObjectID] = None, // Session ID
                 sessionData: List[SessionData] = List.empty, // Session data separately from sid
                 connected: Boolean = true,
@@ -15,9 +15,9 @@ case class User(userID: BSONObjectID, // ID of the User
                 userConfig: UserConfig = UserConfig(), // Configurable parts for the user
                 userToken: Option[UserToken] = None,
                 jobs: List[String] = List.empty, // List of Jobs the User has
-                dateLastLogin: Option[DateTime], // Last seen on
-                dateCreated: Option[DateTime], // Account creation date
-                dateUpdated: Option[DateTime]) { // Account updated on
+                dateLastLogin: Option[DateTime] = Some(DateTime.now), // Last seen on
+                dateCreated: Option[DateTime] = Some(DateTime.now), // Account creation date
+                dateUpdated: Option[DateTime] = Some(DateTime.now)) { // Account updated on
 
   def checkPassword(plainPassword: String): Boolean = {
     BCrypt.checkpw(plainPassword, getUserData.password)

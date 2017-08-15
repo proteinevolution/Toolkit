@@ -4,7 +4,7 @@ import javax.inject._
 
 import actors.JobActor.Delete
 import akka.actor.ActorSystem
-import models.database.jobs.{DeletedJob, Job}
+import models.database.jobs.{ DeletedJob, Job }
 import models.database.users.User
 import models.job.JobActorAccess
 import models.search.JobDAO
@@ -13,7 +13,7 @@ import org.joda.time.DateTime
 import play.api.Logger
 import play.api.inject.ApplicationLifecycle
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDateTime, BSONDocument}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 import better.files._
 import models.Constants
 
@@ -44,15 +44,17 @@ trait SweepJobs {
   *     jobAnnotationCollection and jobCollection in mongoDB
   */
 @Singleton
-class SweepJobsImpl @Inject() (appLifecycle: ApplicationLifecycle,
-                               actorSystem: ActorSystem,
-                                val reactiveMongoApi: ReactiveMongoApi,
-                                mongoStore: MongoStore,
-                                val jobDao: JobDAO,
-                                jobActorAccess: JobActorAccess, constants: Constants) extends SweepJobs {
+class SweepJobsImpl @Inject()(appLifecycle: ApplicationLifecycle,
+                              actorSystem: ActorSystem,
+                              val reactiveMongoApi: ReactiveMongoApi,
+                              mongoStore: MongoStore,
+                              val jobDao: JobDAO,
+                              jobActorAccess: JobActorAccess,
+                              constants: Constants)
+    extends SweepJobs {
 
   override def sweep(): Unit = actorSystem.scheduler.schedule(0 seconds, constants.deletionCycle hours) {
-  deleteJobsPermanently()
+    deleteJobsPermanently()
   }
 
   /**
@@ -68,57 +70,72 @@ class SweepJobsImpl @Inject() (appLifecycle: ApplicationLifecycle,
     *
     * @return
     */
-  def deleteJobsPermanently() : Unit = {
+  def deleteJobsPermanently(): Unit = {
 
     Logger.info("Sweep Jobs routine active!")
     /*
-      * deletes jobs are older than a given number of days
-      * ('deletionThresholdLoggedIn' for registered users and  'deletionThreshold' for others)
-      * and informs all watching users about it in behalf of the job maintenance routine
-      *
-      */
-    mongoStore.findJobs(BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(new DateTime().minusDays(constants.deletionThreshold).getMillis)))).map { jobList =>
-      jobList.map { job =>
-        job.ownerID match {
-          case Some(id) =>
-            mongoStore.findUser(BSONDocument(User.IDDB -> BSONDocument("$eq" -> id))).map {
-              case Some(user) =>
-                val storageTime = new DateTime().minusDays(if (user.accountType == -1) {constants.deletionThreshold} else constants.deletionThresholdRegistered)
-                mongoStore.findJob(BSONDocument(
-                  "$and" -> List(
-                    BSONDocument(Job.JOBID -> job.jobID),
-                    BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(storageTime.getMillis)))
-                  )
-                )).map {
-                  case Some(deletedJob) =>
-                    Logger.info("Deleting job: "+deletedJob.jobID)
-                    // Message user clients to remove the job from their watchlist
-                    jobActorAccess.sendToJobActor(deletedJob.jobID, Delete(deletedJob.jobID, deletedJob.ownerID.get, false))
-                    this.deleteJobPermanently(job)
-                    this.writeJob(job.jobID)
-                  case None =>
-                }
-              case None =>
-                Logger.info("User not found: " + id.stringify + s". Job ${job.jobID} is directely deleted.")
-                jobDao.deleteJob(job.mainID.stringify)
-                this.writeJob(job.jobID)
-                this.deleteJobPermanently(job)
-            }
-          case None =>
-            Logger.info("Job " + job.jobID + " has no owner ID. It is directely deleted")
-            this.deleteJobPermanently(job)
-            this.writeJob(job.jobID)
-            jobDao.deleteJob(job.mainID.stringify)
+     * deletes jobs are older than a given number of days
+     * ('deletionThresholdLoggedIn' for registered users and  'deletionThreshold' for others)
+     * and informs all watching users about it in behalf of the job maintenance routine
+     *
+     */
+    mongoStore
+      .findJobs(
+        BSONDocument(
+          Job.DATECREATED -> BSONDocument(
+            "$lt" -> BSONDateTime(new DateTime().minusDays(constants.deletionThreshold).getMillis)
+          )
+        )
+      )
+      .map { jobList =>
+        jobList.map { job =>
+          job.ownerID match {
+            case Some(id) =>
+              mongoStore.findUser(BSONDocument(User.IDDB -> BSONDocument("$eq" -> id))).map {
+                case Some(user) =>
+                  val storageTime = new DateTime().minusDays(if (user.accountType == -1) {
+                    constants.deletionThreshold
+                  } else constants.deletionThresholdRegistered)
+                  mongoStore
+                    .findJob(
+                      BSONDocument(
+                        "$and" -> List(
+                          BSONDocument(Job.JOBID       -> job.jobID),
+                          BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(storageTime.getMillis)))
+                        )
+                      )
+                    )
+                    .map {
+                      case Some(deletedJob) =>
+                        Logger.info("Deleting job: " + deletedJob.jobID)
+                        // Message user clients to remove the job from their watchlist
+                        jobActorAccess.sendToJobActor(deletedJob.jobID,
+                                                      Delete(deletedJob.jobID, deletedJob.ownerID.get, false))
+                        this.deleteJobPermanently(job)
+                        this.writeJob(job.jobID)
+                      case None =>
+                    }
+                case None =>
+                  Logger.info("User not found: " + id.stringify + s". Job ${job.jobID} is directely deleted.")
+                  jobDao.deleteJob(job.mainID.stringify)
+                  this.writeJob(job.jobID)
+                  this.deleteJobPermanently(job)
+              }
+            case None =>
+              Logger.info("Job " + job.jobID + " has no owner ID. It is directely deleted")
+              this.deleteJobPermanently(job)
+              this.writeJob(job.jobID)
+              jobDao.deleteJob(job.mainID.stringify)
 
+          }
         }
       }
-    }
 
     /*
-      * deletes all jobs that are marked for deletion with
-      * (deletion.flag == 1)
-      * the duration of keeping the job is dependent on whether the user is a registered user
-      */
+     * deletes all jobs that are marked for deletion with
+     * (deletion.flag == 1)
+     * the duration of keeping the job is dependent on whether the user is a registered user
+     */
     mongoStore.findJobs(BSONDocument(BSONDocument("deletion.flag" -> BSONDocument("$eq" -> 1)))).map { jobList =>
       jobList.foreach { job =>
         this.deleteJobPermanently(job)
@@ -133,13 +150,12 @@ class SweepJobsImpl @Inject() (appLifecycle: ApplicationLifecycle,
     *
     * @param job
     */
-  def deleteJobPermanently(job: Job): Unit ={
-    Logger.info("Deleting jobFolder" + {constants.jobPath}+ "/"+job.jobID)
+  def deleteJobPermanently(job: Job): Unit = {
+    Logger.info("Deleting jobFolder" + { constants.jobPath } + "/" + job.jobID)
     s"${constants.jobPath}${job.jobID}".toFile.delete(true)
-    Logger.info("Removing Job "+job.jobID+" from mongo DB")
+    Logger.info("Removing Job " + job.jobID + " from mongo DB")
     mongoStore.removeJob(BSONDocument(Job.JOBID -> job.jobID))
   }
-
 
   /**
     * writes the jobID and deletion date to a file in deletionLogPath
@@ -147,8 +163,8 @@ class SweepJobsImpl @Inject() (appLifecycle: ApplicationLifecycle,
     *
     * @param jobID
     */
-  def writeJob(jobID: String) : Unit = {
-    constants.deletionLogPath.toFile.appendLine(jobID +"\t" + DateTime.now().toString())
+  def writeJob(jobID: String): Unit = {
+    constants.deletionLogPath.toFile.appendLine(jobID + "\t" + DateTime.now().toString())
     mongoStore.addDeletedJob(DeletedJob(jobID, DateTime.now))
   }
 

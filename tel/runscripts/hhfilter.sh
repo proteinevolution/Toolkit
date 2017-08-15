@@ -1,13 +1,34 @@
-JOBID=%jobid.content
-
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
-FORMAT=$(head -1 ../params/alignment | egrep ^CLUSTAL | wc -l)
+A3M_INPUT=$(head -1 ../params/alignment | egrep "^#A3M#" | wc -l)
+
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
       updateProcessLog
       false
+fi
+
+if [ ${A3M_INPUT} = "1" ] ; then
+
+    sed -i '1d' ../params/alignment
+
+    reformatValidator.pl a3m fas \
+           $(readlink -f ../params/alignment) \
+           $(readlink -f ../params/alignment.tmp) \
+           -d 160 -uc -l 32000
+
+     if [ ! -f ../params/alignment.tmp ]; then
+            echo "#Input is not in valid A3M format." >> ../results/process.log
+            updateProcessLog
+            false
+     else
+            echo "#Query is in A3M format." >> ../results/process.log
+            updateProcessLog
+            mv ../params/alignment.tmp ../params/alignment
+            echo "done" >> ../results/process.log
+            updateProcessLog
+     fi
 fi
 
 if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then

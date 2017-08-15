@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import controllers.DTParam
-import models.results.BlastVisualization
+import models.results.Common
 import play.api.libs.json._
 
 import scala.concurrent.Future
@@ -33,9 +33,9 @@ case class HmmerHSP(evalue: Double,
   def toDataTable(db: String): JsValue =
     Json.toJson(
       Map(
-        "0" -> Json.toJson(BlastVisualization.getCheckbox(num)),
-        "1" -> Json.toJson(BlastVisualization.getSingleLinkDB(db, accession).toString),
-        "2" -> Json.toJson(BlastVisualization.addBreak(description)),
+        "0" -> Json.toJson(Common.getCheckbox(num)),
+        "1" -> Json.toJson(Common.getSingleLinkDB(db, accession).toString),
+        "2" -> Json.toJson(Common.addBreak(description.slice(0, 84))),
         "3" -> Json.toJson(full_evalue),
         "4" -> Json.toJson(evalue),
         "5" -> Json.toJson(bitscore),

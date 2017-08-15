@@ -9,8 +9,7 @@
 <html>
     <head>
             <!-- Google Fonts -->
-        <link href='//fonts.googleapis.com/css?family=Noto+Sans:400,700|Roboto:300' rel='stylesheet' type='text/css'>
-        <link href='//fonts.googleapis.com/css?family=Vollkorn:400,700' rel='stylesheet' type='text/css'>
+        <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700|Noto+Sans:400,700|Roboto:300|Source+Code+Pro:400,700|Vollkorn:400,700" rel="stylesheet">
 
         <title>Bioinformatics Toolkit</title>
 
@@ -55,6 +54,7 @@
         <link href="@routes.Assets.versioned("styles/jobview.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("styles/joblist.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("styles/news.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/offcanvas.css")" rel="stylesheet">
 
             <!-- Mithril -->
 
@@ -129,7 +129,7 @@
         <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
 
     </head>
-    <body>
+    <body onload="reloadJobList();">
         <input type="hidden" id="authView" value="@view">
 
         <div id="message-float" style="position: fixed;
@@ -246,10 +246,13 @@
                                         </div>
                                     </div>
 
-                                        <!--- Mount point for Mithril Application -->
-                                    <div class="row" id="main-content">
-                                        <noscript><div class="noscript">It's okay to hate JavaScript... <br/>
-                                            ...but you won't be able to use this website properly! <!-- or another slogan --></div></noscript>
+                                        <!--- Mount points for Mithril Application -->
+                                    <div class="row">
+                                        <div class="large-2 padded-column columns show-for-large" id="sidebar" style="display: none;"></div>
+                                        <div id="main-content">
+                                            <noscript><div class="noscript">It's okay to hate JavaScript... <br/>
+                                                ...but you won't be able to use this website properly! <!-- or another slogan --></div></noscript>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

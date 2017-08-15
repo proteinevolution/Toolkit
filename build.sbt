@@ -17,8 +17,7 @@ lazy val commonDeps = Seq(
   "com.github.pathikrit" %% "better-files"            % "2.17.1",
   "org.mindrot"          % "jbcrypt"                  % "0.3m",
   "com.evojam"           %% "play-elastic4s"          % "0.3.1",
-  "org.reactivemongo"    %% "play2-reactivemongo"     % "0.12.3",
-  "org.reactivemongo"    %% "reactivemongo-play-json" % "0.12.3",
+  "org.reactivemongo"    %% "play2-reactivemongo"     % "0.12.5-play25",
   "co.fs2"               %% "fs2-core"                % "0.9.2",
   "org.scalaz"           %% "scalaz-core"             % "7.2.10",
   "org.scalaz"           %% "scalaz-concurrent"       % "7.2.10",
@@ -82,7 +81,7 @@ lazy val root = (project in file("."))
       "org.webjars"       % "jquery-ui"           % "1.12.1",
       "org.webjars.npm"   % "foundation-sites"    % "6.4.1",
       "org.webjars.bower" % "fastclick"           % "1.0.6",
-      "org.webjars.npm"   % "mithril"             % "0.2.5",
+      "org.webjars.npm"   % "mithril"             % "0.2.8",
       "org.webjars.bower" % "d3"                  % "4.4.1",
       "org.webjars.bower" % "slick-carousel"      % "1.6.0",
       "org.webjars.npm"   % "codemirror-minified" % "5.22.0",
@@ -145,4 +144,3 @@ scalacOptions ++= Seq(
 )
 
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
-
