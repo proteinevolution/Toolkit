@@ -14,13 +14,15 @@ body {
 
 }
 
-/* Fix until right foundation 6.4.1 is properly included TODO revisit and remove */
-.tabs-panel.is-active {
-    display: block;
+@media (max-width: 930px) {
+    body {
+        overflow-x: auto;
+    }
 }
 
 div#main-container {
     height: 100%;
+    min-width: 930px;
 }
 
 #main-container .row {
@@ -32,7 +34,6 @@ div#main-container {
 #main-content {
     padding-top: 20px;
     min-height: 100%;
-    display: flex;
     margin-left: 0;
     margin-right: 0;
 }
@@ -148,11 +149,7 @@ tr.job a:visited {
     height: 400px;
 }
 
-.vertical {
 
-    z-index: 99;
-
-}
 
 #alert {
     color: white;
@@ -225,43 +222,6 @@ tr.job a:visited {
     height: 3.5em;
 }
 
-.off-canvas-wrapper {
-
-    min-height: 31.250em;
-}
-
-.off-canvas-wrapper-inner {
-
-    min-height: 31.250em;
-
-}
-
-#offCanvas {
-    height: 100%;
-    font-size: 0.8em;
-}
-
-.vertical a {
-    color: black;
-    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-}
-
-.vertical a:hover {
-    background-color: white;
-}
-
-#responsive-menu ul {
-    background-color: #e6e6e6;
-}
-
-.off-canvas {
-    z-index: 99;
-}
-
-.off-canvas-wrapper {
-    position: relative;
-    overflow: visible;
-}
 
 :focus {
     outline: 0;

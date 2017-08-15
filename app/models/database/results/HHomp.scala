@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import controllers.DTParam
-import models.results.BlastVisualization
+import models.results.Common
 import play.api.libs.json._
 
 import scala.concurrent.Future
@@ -14,17 +14,17 @@ import scala.concurrent.Future
   * Created by drau on 18.04.17.
   */
 case class HHompHSP(query: HHompQuery,
-                     template: HHompTemplate,
-                     info: HHompInfo,
-                     agree: String,
-                     description: String,
-                     num: Int,
-                     ss_score: Double,
-                     length: Int) {
+                    template: HHompTemplate,
+                    info: HHompInfo,
+                    agree: String,
+                    description: String,
+                    num: Int,
+                    ss_score: Double,
+                    length: Int) {
   def toDataTable(db: String): JsValue =
     Json.toJson(
       Map(
-        "0" -> Json.toJson(BlastVisualization.getAddScrollLink(num)),
+        "0" -> Json.toJson(Common.getAddScrollLink(num)),
         "1" -> Json.toJson(template.accession),
         "2" -> Json.toJson(description.slice(0, 18)),
         "3" -> Json.toJson(info.probab_hit),
@@ -37,33 +37,32 @@ case class HHompHSP(query: HHompQuery,
     )
 }
 case class HHompInfo(aligned_cols: Int,
-                      evalue: Double,
-                      identities: Double,
-                      probab_hit: Double,
-                      probab_omp: Double,
-                      score: Double)
+                     evalue: Double,
+                     identities: Double,
+                     probab_hit: Double,
+                     probab_omp: Double,
+                     score: Double)
 case class HHompQuery(consensus: String,
-                       end: Int,
-                       accession: String,
-                       ref: Int,
-                       seq: String,
-                       ss_conf: String,
-                       ss_dssp: String,
-                       ss_pred: String,
-                       start: Int)
+                      end: Int,
+                      accession: String,
+                      ref: Int,
+                      seq: String,
+                      ss_conf: String,
+                      ss_dssp: String,
+                      ss_pred: String,
+                      start: Int)
 case class HHompTemplate(consensus: String,
-                          end: Int,
-                          accession: String,
-                          ref: Int,
-                          seq: String,
-                          ss_conf: String,
-                          ss_dssp: String,
-                          ss_pred: String,
-                          bb_pred: String,
-                          bb_conf: String,
-                          start: Int)
+                         end: Int,
+                         accession: String,
+                         ref: Int,
+                         seq: String,
+                         ss_conf: String,
+                         ss_dssp: String,
+                         ss_pred: String,
+                         bb_pred: String,
+                         bb_conf: String,
+                         start: Int)
 case class HHompResult(HSPS: List[HHompHSP],
-                       alignment: AlignmentResult,
                        num_hits: Int,
                        query: SingleSeq,
                        db: String,
@@ -88,14 +87,12 @@ class HHomp @Inject()(general: General, aln: Alignment) {
           val ss_score       = (x._2 \ "ss").getOrElse(Json.toJson(-1)).as[Double]
           HHompHSP(queryResult, templateResult, infoResult, agree, description, num, ss_score, agree.length)
         }
-        val db        = (obj \ jobID \ "db").as[String]
+        val db           = (obj \ jobID \ "db").as[String]
         val overall_prob = (obj \ jobID \ "overallprob").as[Double]
-
-        val alignment = aln.parseAlignment((obj \ "reduced").as[JsArray])
         val query     = general.parseSingleSeq((obj \ "query").as[JsArray])
         val num_hits  = hsplist.length
 
-        HHompResult(hsplist, alignment, num_hits, query, db, overall_prob)
+        HHompResult(hsplist, num_hits, query, db, overall_prob)
       } catch {
 
         case e: Exception => e.printStackTrace(); null
@@ -119,8 +116,8 @@ class HHomp @Inject()(general: General, aln: Alignment) {
     val aligned_cols = (obj \ "aligned_cols").getOrElse(Json.toJson(-1)).as[Int]
     val eval         = (obj \ "eval").getOrElse(Json.toJson(-1)).as[Double]
     val identities   = (obj \ "identities").getOrElse(Json.toJson(-1)).as[Double]
-    val probab_hit       = (obj \ "probab_hit").getOrElse(Json.toJson(-1)).as[Double]
-    val probab_omp       = (obj \ "probab_OMP").getOrElse(Json.toJson(-1)).as[Double]
+    val probab_hit   = (obj \ "probab_hit").getOrElse(Json.toJson(-1)).as[Double]
+    val probab_omp   = (obj \ "probab_OMP").getOrElse(Json.toJson(-1)).as[Double]
     val score        = (obj \ "score").getOrElse(Json.toJson(-1)).as[Double]
     val similarity   = (obj \ "similarity").getOrElse(Json.toJson(-1)).as[Double]
     HHompInfo(aligned_cols, eval, identities, probab_hit, probab_omp, score)
@@ -141,7 +138,6 @@ class HHomp @Inject()(general: General, aln: Alignment) {
     val bb_conf   = (obj \ "bb_conf").getOrElse(Json.toJson("")).as[String]
     HHompTemplate(consensus, end, accession, ref, seq, ss_conf, ss_dssp, ss_pred, bb_pred, bb_conf, start)
   }
-
 
   def hitsOrderBy(params: DTParam, hits: List[HHompHSP]): List[HHompHSP] = {
     (params.iSortCol, params.sSortDir) match {

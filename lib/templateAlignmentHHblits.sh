@@ -21,8 +21,8 @@ then
     MAPPEDID=`grep ${accession} ${HHBLITS}${MAPPINGFILE} | awk '{print $1}'`
 
     ffindex_get ${HHBLITS}${DB}_a3m.ffdata ${HHBLITS}${DB}_a3m.ffindex $MAPPEDID >> results/$accession.a3m
+    sed -i '1d' results/$accession.a3m
+    hhfilter -i results/$accession.a3m -o results/$accession.ra3m -diff 100
+    sed -i "1 i\#A3M#" results/$accession.ra3m
 
-
-    hhfilter -i results/$accession.a3m -o results/$accession.reduced.a3m -diff 100
-    reformat.pl a3m fas results/$accession.reduced.a3m results/$accession.fas
 fi

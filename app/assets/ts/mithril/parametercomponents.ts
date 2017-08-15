@@ -181,7 +181,6 @@ let ParameterNumberComponent = {
     }
 };
 
-
 let ParameterTextComponent = {
     view: function(ctrl : any, args : any) {
         let paramAttrs = {
@@ -189,6 +188,7 @@ let ParameterTextComponent = {
             id: args.param.name,
             name: args.param.name,
             value: args.value,
+            placeholder: args.param.paramType.placeholder,
             config: paramValidation
         };
         return renderParameter([

@@ -1,6 +1,5 @@
 # fetch parameters from the parent here
 cp ../../%parentid.content/results/%parentid.content.hhr ../params
-cp ../../%parentid.content/results/%parentid.content.reduced.a3m ../params
 
 mkdir -p ../results/cif
 

@@ -1,7 +1,5 @@
-JOBID=%jobid.content
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
-FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
@@ -68,10 +66,10 @@ TMPRED=`tmhmm ../results/firstSeq.fas -short`
 run_Coils -c -min_P 0.8 < ../results/firstSeq.fas >& ../results/firstSeq.cc
 COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
 
-rm ../results/firstSeq0.fas ../results/firstSeq.fas ../results/firstSeq.cc
+rm ../results/firstSeq0.fas ../results/firstSeq.cc
 
 
-fasta2json.py ../results/${JOBID}.fas ../results/query.json
+fasta2json.py ../results/firstSeq.fas ../results/query.json
 
 if [ "%max_hhblits_iter.content" = "0" ] && [ $SEQ_COUNT -gt "1" ] ; then
     #Use user MSA to build HMM
@@ -89,16 +87,22 @@ else
     echo "#Running HHblits for query MSA generation." >> ../results/process.log
     updateProcessLog
 
-    # Generate Query in JSON
+
+    reformat_hhsuite.pl fas a3m \
+                        $(readlink -f ../results/${JOBID}.fas) \
+                        $(readlink -f ../results/${JOBID}.in.a3m)
 
     #MSA generation required; generation by HHblits
     hhblits -cpu %THREADS \
             -v 2 \
-            -i ../results/${JOBID}.fas \
+            -i ../results/${JOBID}.in.a3m \
+            -M first \
             -d %UNIPROT  \
             -oa3m ../results/${JOBID}.a3m \
             -n %max_hhblits_iter.content \
-            -mact 0.35
+            -mact 0.35 \
+            -cov 20 \
+            -qid 20
 
     #Convert to fasta format
     reformat_hhsuite.pl a3m fas ../results/${JOBID}.a3m $(readlink -f ../results/${JOBID}.fas)
@@ -107,9 +111,6 @@ else
              -n "${JOBID}" \
              ../results/${JOBID}.hmm \
              ../results/${JOBID}.fas
-
-    rm ../results/*.hhr
-    rm ../results/*.a3m
 
 fi
 
@@ -135,19 +136,22 @@ updateProcessLog
 echo "#Preparing output." >> ../results/process.log
 updateProcessLog
 
-    #Convert to fasta format
-    reformat_hhsuite.pl sto fas ../results/${JOBID}.msa_sto $(readlink -f ../results/${JOBID}.msa_fas)
+#Convert to fasta format
+reformat_hhsuite.pl sto a3m ../results/${JOBID}.msa_sto $(readlink -f ../results/${JOBID}.msa_a3m)
 
-    #remove tmp sto file
-    rm ../results/${JOBID}.msa_sto
+#remove tmp sto file
+rm ../results/${JOBID}.msa_sto
 
-    prepareForHMMER.py ../results/${JOBID}.outfile ../results/${JOBID}.outfilefl
+prepareForHMMER.py ../results/${JOBID}.outfile ../results/${JOBID}.outfilefl
 
-    hmmer2json.py -i ../results/${JOBID}.outfilefl \
+hmmer2json.py -i ../results/${JOBID}.outfilefl \
                   -o ../results/${JOBID}.json \
                   -m %desc.content \
-                  -e %evalue.content
+                  -e %evalue.content > ../results/${JOBID}.list
 
+extractFasta.py ../results/${JOBID}.msa_a3m ../results/${JOBID}.list
+
+reformat_hhsuite.pl a3m fas ../results/${JOBID}.msa_a3m.subset $(readlink -f ../results/${JOBID}.msa_fas)
 
 manipulate_json.py -k 'db' -v '%hmmerdb.content' ../results/${JOBID}.json
 #create tab separated file to feed into blastviz
@@ -160,13 +164,12 @@ manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/${JOBID}.json
 # add coiled coil prediction info to json
 manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/${JOBID}.json
 
-
-
 # Generate MSA in JSON
 fasta2json.py ../results/${JOBID}.msa_fas ../results/alignment.json
 
 cd ../results
-rm *.hmm *.outfile
+rm -f *.hmm *.outfile* *.list *.msa_* ${JOBID}.fas firstSeq.fas
+
 
 echo "done" >> ../results/process.log
 updateProcessLog
