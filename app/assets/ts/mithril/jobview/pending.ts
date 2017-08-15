@@ -30,6 +30,7 @@ let JobPendingComponent = {
             m('div',{"class":"copySpacer"}),
             m('div', {"class": "openSimilarJob"}, [
                 m("button",{ "class"   : "button submitJob",
+                    config : enabled,
                     onclick : function(e : any){
                         e.preventDefault();
                         let route = jsRoutes.controllers.JobController.startJob(args.job().jobID);
@@ -39,6 +40,7 @@ let JobPendingComponent = {
                     }
                 }, "Start job anyway"),
                 m("button",{ "class" : "hashPrompt button submitJob",
+                    config: enabled,
                     onclick : function(e : any){
                         e.preventDefault();
                         let route = jsRoutes.controllers.JobController.checkHash(args.job().jobID);

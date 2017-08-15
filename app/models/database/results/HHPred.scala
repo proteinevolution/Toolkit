@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import controllers.DTParam
-import models.results.BlastVisualization
+import models.results.Common
 import play.api.libs.json._
 
 import scala.concurrent.Future
@@ -25,9 +25,9 @@ case class HHPredHSP(query: HHPredQuery,
   def toDataTable(db: String): JsValue =
     Json.toJson(
       Map(
-        "0" -> Json.toJson(BlastVisualization.getCheckbox(num)),
-        "1" -> Json.toJson(BlastVisualization.getSingleLink(template.accession).toString),
-        "2" -> Json.toJson(BlastVisualization.addBreak(description)),
+        "0" -> Json.toJson(Common.getCheckbox(num)),
+        "1" -> Json.toJson(Common.getSingleLink(template.accession).toString),
+        "2" -> Json.toJson(Common.addBreak(description)),
         "3" -> Json.toJson(info.probab),
         "4" -> Json.toJson(info.evalue),
         "5" -> Json.toJson(ss_score),
@@ -86,7 +86,15 @@ class HHPred @Inject()(general: General, aln: Alignment) {
           val num            = (x._1 \ "no").getOrElse(Json.toJson(-1)).as[String].toInt
           val ss_score       = (x._2 \ "ss").getOrElse(Json.toJson(-1)).as[Double]
           val confidence     = (x._1 \ "confidence").getOrElse(Json.toJson("")).as[String]
-          HHPredHSP(queryResult, templateResult, infoResult, agree, description, num, ss_score, confidence, agree.length)
+          HHPredHSP(queryResult,
+                    templateResult,
+                    infoResult,
+                    agree,
+                    description,
+                    num,
+                    ss_score,
+                    confidence,
+                    agree.length)
         }
         val db        = (obj \ jobID \ "db").as[String]
         val proteomes = (obj \ jobID \ "proteomes").as[String]

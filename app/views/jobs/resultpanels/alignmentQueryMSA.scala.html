@@ -1,10 +1,11 @@
+@import play.api.mvc.RequestHeader
 @import play.api.libs.json.JsObject
 @import play.api.libs.json.JsValue
 @import play.api.libs.json.JsArray
 @import play.api.Logger
 @import play.api.libs.json.JsUndefined
 @import play.api.libs.json.JsDefined
-@import models.results.BlastVisualization
+@import models.results.Common
 @import modules.tel.TEL
 @import play.api.libs.json.JsLookupResult
 @import models.database.results.AlignmentResult
@@ -14,14 +15,18 @@
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="selectAll()" class="selectAllSeq"><span class="selectAllSeqSpan">Select all</span></a>
+    <a onclick="@{resultName}_selectAllAlnq()" class="selectAllSeq"><span class="@{resultName}_selectAllSeqSpanAlnq">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
-    <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Reduced MSA</span></a>
-    <a type="button" id="downloadAlignmentFull"  onclick="@{resultName}_downloadFull()"><span>Download Full MSA</span></a>
+    <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Reduced A3M</span></a>
+    <a type="button" id="downloadAlignmentFull"  onclick="@{resultName}_downloadFull()"><span>Download Full A3M</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
-    Number of sequences: <b>@alignment.alignment.length</b>
+    @if(resultName == "querytemplate") {
+        Number of sequences (up to 1000 best matches): <b>@alignment.alignment.length</b>
+    } else {
+        Number of sequences (up to 200 best matches): <b>@alignment.alignment.length</b>
+    }
         <br />
         <br />
 <form id="alignmentResult">
@@ -39,20 +44,13 @@
 </div>
 
 <script>
-
-        var fileUrl = "/files/@jobID/reduced.fas";
-        var downloadFilename = "@{tool.toolNameShort}_@{resultName}_jobID_@{jobID}.fasta";
-
-        var fileUrlFull = "/files/@jobID/full.fas";
-        var downloadFilenameFull = "@{tool.toolNameShort}_full_jobID_@{jobID}.fasta";
-
-        var selectAllBool = false;
+        var jobID = '@jobID';
+        var selectAllBoolAlnq = false;
         var shownHits = 20;
         var showMore = 100;
         var loading = false;
         var numHits = @alignment.alignment.length;
          var resultName = '@resultName';
-        var jobID = '@jobID';
         var checkboxes = [];
         var checkbox = "checkbox";
         var colorAAs = false;
@@ -83,6 +81,15 @@
 
             $.LoadingOverlay("show");
 
+            var fileUrl = "/files/@jobID/reduced.a3m";
+            var downloadFilename = "@{tool.toolNameShort}_@{resultName}Q_@{jobID}.a3m";
+
+            if("@{resultName}" == "querytemplate"){
+                fileUrl = "/files/@jobID/reducedQT.a3m";
+                downloadFilename = "@{tool.toolNameShort}_reducedQT_@{jobID}.a3m";
+
+            }
+
             $.ajax({
                 type: 'GET',
                 url: fileUrl
@@ -93,6 +100,14 @@
 
         window["@{resultName}_downloadFull"] = function(){
             // get result json
+
+            var fileUrlFull = "/files/@jobID/full.a3m";
+            var downloadFilenameFull = "@{tool.toolNameShort}_fullQ_@{jobID}.a3m";
+
+            if("@{resultName}" == "querytemplate") {
+                fileUrlFull = "/files/@jobID/fullQT.a3m";
+                downloadFilenameFull = "@{tool.toolNameShort}_fullQT_@{jobID}.a3m";
+            }
 
             $.LoadingOverlay("show");
 
@@ -133,6 +148,23 @@
             }
         }
 
+        window["@{resultName}_selectAllAlnq"] = function(){
+            selectAllBoolAlnq = !selectAllBoolAlnq;
+            $(".@{resultName}_selectAllSeqSpanAlnq").toggleText("Select all","Deselect all");
+            $(".@{resultName}_selectAllSeqSpanAlnq").toggleClass("colorToggle");
+            if(selectAllBoolAlnq) {
+                selectAllHelper(checkbox);
+                // first empty array
+                checkboxes = [];
+                // push all checkboxes (1 to num_hits) into array
+                _.range(1, numHits+1).forEach(function(x){checkboxes.push(x)});
+            }
+            else {
+                deselectAll(checkbox);
+                // delete all checkboxes from array
+                checkboxes = [];
+            }
+        };
 
         $(document).ready(function () {
 

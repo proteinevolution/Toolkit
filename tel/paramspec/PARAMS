@@ -4,6 +4,7 @@ hhblitsdb  GEN hhblitsdb.py
 hhsuitedb  GEN hhsuitedb.py
 patsearchdb GEN patsearchdb.py
 msa_gen_max_iter GEN msa_gen_max_iter.prop
+quick_iters GEN quick_iters.prop
 inc_amino GEN inc_amino.prop
 genetic_code GEN genetic_code.prop
 inclusion_ethresh GEN inclusion_ethresh.prop
@@ -49,3 +50,7 @@ eff_crick_angle GEN eff_crick_angle.prop
 clans_eval GEN clans_eval.prop
 hhomp_incl_eval GEN hhomp_incl_eval.prop
 hhompdb GEN hhompdb.py
+target_psi_db GEN target_psi_db.prop
+repper_input_mode GEN repper_input_mode.prop
+in_format GEN in_format.prop
+out_format GEN out_format.prop

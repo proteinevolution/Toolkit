@@ -1,4 +1,3 @@
-// Velocity animation config
 declare var moment : any;
 interface Window { JobManager: any; }
 window.JobManager = {
@@ -114,6 +113,7 @@ window.JobManager = {
         m.request({ url: "/api/job/" + jobID, method: "DELETE" }).then(function(){
             JobManager.removeFromTable(jobID);
         });
+        jobList.redraw();
     },
 
     /** send message to websocket */
@@ -141,10 +141,10 @@ window.JobManager = {
 
     view: function (ctrl : any) {
         return [
-            m("div", { "class": "large-2 padded-column columns show-for-large", id: "sidebar" }, [
-                m(JobListComponent, { activejobID : m.route.param("jobID") })
-            ]),
-            m("div", {"class": "jobManagerContainer large-10"},
+            //m("div", { "class": "large-2 padded-column columns show-for-large", id: "sidebar" }, [
+            //    m(JobListComponent, { activejobID : m.route.param("jobID") })
+            //]),
+            m("div", {"class": "jobManagerContainer large-12", config: showSidebar},
                 m("div", {"class": "jobline"}, [
                     m("span", {"class": "toolname"}, [
                         m("a", "Job Manager")

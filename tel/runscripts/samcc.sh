@@ -1,4 +1,3 @@
-JOBID=%jobid.content
 cp %alignment.path ../results/${JOBID}.pdb
 
 echo "#Initializing SamCC." >> ../results/process.log
