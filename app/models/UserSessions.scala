@@ -113,8 +113,13 @@ class UserSessions @Inject()(mongoStore: MongoStore,
             // Update the last login time
             val selector = BSONDocument(User.IDDB -> user.userID)
             val modifier = BSONDocument(
-              "$set" ->
-              BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis))
+              "$set" -> {
+                if (user.accountType == User.CLOSETODELETIONUSER) {
+                  BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis), User.ACCOUNTTYPE -> 1)
+                } else {
+                  BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis))
+                }
+              }
             )
             modifyUserWithCache(selector, modifier).map {
               case Some(updatedUser) =>
