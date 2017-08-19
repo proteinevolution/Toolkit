@@ -149,11 +149,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                     val selector = BSONDocument(User.IDDB -> databaseUser.userID)
                     // Change the login time and give the new Session ID to the user.
                     // Additionally add the watched jobs to the users watchlist.
-                    val modifier = BSONDocument(
-                      "$set" ->
-                      BSONDocument(User.SESSIONID     -> databaseUser.sessionID.getOrElse(BSONObjectID.generate()),
-                                   User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis))
-                    )
+                    val modifier = userSessions.getUserModifier(databaseUser, forceSessionID = true)
                     // TODO this adds the non logged in user's jobs to the now logged in user's job list
                     //                            "$addToSet"        ->
                     //               BSONDocument(User.JOBS          ->
