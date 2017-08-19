@@ -3,7 +3,7 @@ package models.database.jobs
 import com.typesafe.config.ConfigFactory
 import models.Constants
 import models.tools.Toolitem
-import java.time.ZonedDateTime
+import java.time.{ZonedDateTime, Instant, ZoneId}
 import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._
@@ -206,9 +206,9 @@ object Job {
         watchList = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
         commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
         clusterData = bson.getAs[JobClusterData](CLUSTERDATA),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTime.parse(dt.toString())),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTime.parse(dt.toString())),
-        dateViewed = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => ZonedDateTime.parse(dt.toString())),
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
+        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
+        dateViewed = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
         IPHash = bson.getAs[String](IPHASH)
       )
     }
