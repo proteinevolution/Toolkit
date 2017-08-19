@@ -354,17 +354,6 @@ final class ToolFactory @Inject()(
                          s"${constants.jobPath}/$jobID/results/blastviz.html")
           }
         },
-        "Raw Output" -> { (jobID, requestHeader) =>
-          implicit val r = requestHeader
-          Future.successful(
-            views.html.jobs.resultpanels.fileviewWithDownload(
-              jobID + ".outfilefl",
-              s"${constants.jobPath}$jobID/results/" + jobID + ".outfilefl",
-              jobID,
-              "HMMER_OUTPUT"
-            )
-          )
-        },
         "E-Value Plot" -> { (jobID, requestHeader) =>
           mongoStore.getResult(jobID).map {
             case Some(jsvalue) =>
