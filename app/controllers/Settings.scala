@@ -1,6 +1,6 @@
 package controllers
 
-import java.util.Date
+import java.time.ZonedDateTime
 import play.api.mvc._
 import play.api.i18n.MessagesApi
 import play.modules.reactivemongo.{ MongoController, ReactiveMongoApi, ReactiveMongoComponents }
@@ -40,7 +40,7 @@ final class Settings @Inject()(messagesApi: MessagesApi,
     */
   def setClusterMode(clusterMode: String) = Action {
 
-    val document = BSONDocument("clusterMode" -> clusterMode, "created_on" -> new Date(), "update_on" -> new Date())
+    val document = BSONDocument("clusterMode" -> clusterMode, "created_on" -> ZonedDateTime.now, "update_on" -> ZonedDateTime.now)
 
     val future = clusterSettings.flatMap(_.insert(document))
 
@@ -74,7 +74,7 @@ final class Settings @Inject()(messagesApi: MessagesApi,
   def setMemoryAllocation(memory: Int, toolName: String) = Action {
 
     val document =
-      BSONDocument("toolname" -> toolName, "memory" -> memory, "created_on" -> new Date(), "update_on" -> new Date())
+      BSONDocument("toolname" -> toolName, "memory" -> memory, "created_on" -> ZonedDateTime.now, "update_on" -> ZonedDateTime.now)
 
     val future = toolSettings.flatMap(_.insert(document))
 

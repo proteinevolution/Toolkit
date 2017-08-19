@@ -4,7 +4,7 @@ package models.database.jobs
   * Created by snam on 30.03.17.
   *
   */
-import java.time.ZonedDateTime
+import java.time.{ZonedDateTime, Instant, ZoneId}
 import play.api.libs.json._
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID }
 import reactivemongo.play.json._
@@ -81,8 +81,8 @@ object Project {
         ownerID = bson.getAs[BSONObjectID](OWNERID).getOrElse(BSONObjectID.generate()),
         jobIDs = bson.getAs[List[String]](JOBIDS).getOrElse(Nil),
         content = bson.getAs[String](CONTENT).getOrElse(""),
-        dateModified = bson.getAs[BSONDateTime](DATEMODIFIED).map(dt => ZonedDateTime.parse(dt.toString)),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTime.parse(dt.toString))
+        dateModified = bson.getAs[BSONDateTime](DATEMODIFIED).map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault()))
       )
     }
   }
