@@ -1,7 +1,7 @@
 package models.database.statistics
 
 import java.time.ZonedDateTime
-import models.database.jobs.{Deleted, Error, JobState, Submitted}
+import models.database.jobs.{ Deleted, Error, JobState, Submitted }
 import play.api.libs.json._
 import reactivemongo.bson._
 
@@ -21,15 +21,15 @@ case class JobEventLog(mainID: BSONObjectID, // ID of the Job in the System
               runtime = runtime + runtimeDiff)
   }
 
-  def isDeleted : Boolean = {
+  def isDeleted: Boolean = {
     events.exists(_.jobState == Deleted)
   }
 
-  def hasFailed : Boolean = {
+  def hasFailed: Boolean = {
     events.exists(_.jobState == Error)
   }
 
-  def dateCreated : ZonedDateTime = {
+  def dateCreated: ZonedDateTime = {
     events.find(_.jobState == Submitted).flatMap(_.timestamp).getOrElse(ZonedDateTime.now)
   }
 }
@@ -96,10 +96,11 @@ object JobEventLog {
     * @param jobEventList
     * @return
     */
-  def toSortedMap(jobEventList : List[JobEventLog]) : Map[String,List[JobEventLog]] = {
-    var jobEventMap = Map.empty[String,List[JobEventLog]]
+  def toSortedMap(jobEventList: List[JobEventLog]): Map[String, List[JobEventLog]] = {
+    var jobEventMap = Map.empty[String, List[JobEventLog]]
     jobEventList.foreach { jobEvent =>
-      jobEventMap = jobEventMap.updated(jobEvent.toolName, jobEventMap.getOrElse(jobEvent.toolName,List.empty[JobEventLog]).::(jobEvent))
+      jobEventMap = jobEventMap.updated(jobEvent.toolName,
+                                        jobEventMap.getOrElse(jobEvent.toolName, List.empty[JobEventLog]).::(jobEvent))
     }
 
     jobEventMap

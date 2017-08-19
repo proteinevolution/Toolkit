@@ -1,6 +1,6 @@
 package models.database.jobs
 
-import java.time.{ZonedDateTime, Instant, ZoneId}
+import java.time.{ Instant, ZoneId, ZonedDateTime }
 import play.api.libs.json._
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter }
 

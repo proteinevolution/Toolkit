@@ -1,7 +1,7 @@
 package models.database.statistics
 
 import models.database.jobs.{ Error, JobState }
-import java.time.{ZonedDateTime, Instant, ZoneId}
+import java.time.{ Instant, ZoneId, ZonedDateTime }
 import play.api.libs.json._
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter }
 
@@ -42,7 +42,9 @@ object JobEvent {
     def read(bson: BSONDocument): JobEvent = {
       JobEvent(
         bson.getAs[JobState](JOBSTATE).getOrElse(Error),
-        bson.getAs[BSONDateTime](TIMESTAMP).map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
+        bson
+          .getAs[BSONDateTime](TIMESTAMP)
+          .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
         bson.getAs[Long](RUNTIME).getOrElse(0L)
       )
     }

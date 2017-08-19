@@ -1,6 +1,6 @@
 package models.database.community
 
-import java.time.{ZonedDateTime, Instant, ZoneId}
+import java.time.{ Instant, ZoneId, ZonedDateTime }
 import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._
@@ -75,8 +75,12 @@ object Comment {
         commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
         deleted = bson.getAs[Boolean](DELETED),
         oldVersion = bson.getAs[BSONObjectID](OLDVERSION),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault()))
+        dateCreated = bson
+          .getAs[BSONDateTime](DATECREATED)
+          .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
+        dateUpdated = bson
+          .getAs[BSONDateTime](DATEUPDATED)
+          .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault()))
       )
     }
   }
