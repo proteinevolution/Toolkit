@@ -139,16 +139,21 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
       }
 
       if (verbose)
-        Logger.info("[User Deletion] All users eMailed.")
+        Logger.info(s"[User Deletion] All ${userIDs.length} users eMailed.")
 
       // Set all the eMailed users to "User.CLOSETODELETIONUSER", so that they do not receive another eMail for the same reason
-      mongoStore.modifyUser(BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs)),
-                            BSONDocument("$set"    ->
-                              BSONDocument(
-                                User.ACCOUNTTYPE   -> User.CLOSETODELETIONUSER,
-                                User.DATEDELETEDON -> BSONDateTime(registeredUserDeletionDateForEmail.getMillis)
-                              )
-                            ))
+      mongoStore.modifyUsers(
+        BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs)),
+        BSONDocument("$set"    ->
+          BSONDocument(
+            User.ACCOUNTTYPE   -> User.CLOSETODELETIONUSER,
+            User.DATEDELETEDON -> BSONDateTime(registeredUserDeletionDateForEmail.getMillis)
+          )
+        )
+      ).foreach { writeResult =>
+        if (verbose)
+          Logger.info(s"[User Deletion] Writing ${if(writeResult.ok){"successful"} else {"failed"}}")
+      }
     }
   }
 
