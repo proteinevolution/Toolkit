@@ -1,6 +1,6 @@
 @import play.api.mvc.RequestHeader
-@import java.util.Date
 @import models.tools.Tool
+@import java.time.ZonedDateTime
 @(webJarAssets: WebJarAssets, tools: Iterable[Tool], message: String = "", view: String = "")(implicit messages: Messages, request: RequestHeader)
 
 <!DOCTYPE html>
@@ -273,7 +273,7 @@
                             <a data-open="recentUpdatesModal">Recent Updates</a>
                         </div>
                         <div id="socket">
-                            © 2008-@(new Date().format("yyyy")), Dept. of Protein Evolution, Max Planck Institute for Developmental Biology, Tübingen</div>
+                            © 2008-@(ZonedDateTime.now.getYear), Dept. of Protein Evolution, Max Planck Institute for Developmental Biology, Tübingen</div>
                     </div>
                 </footer>
             </div>

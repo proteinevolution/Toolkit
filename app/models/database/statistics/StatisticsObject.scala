@@ -1,8 +1,8 @@
 package models.database.statistics
 
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
+import java.time.{ZonedDateTime, Instant, ZoneId}
 import java.time.temporal.ChronoUnit
+import java.time.format.DateTimeFormatter
 
 import play.api.libs.json._
 import reactivemongo.bson._
@@ -129,7 +129,7 @@ object StatisticsObject {
         statisticsID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         userStatistics = bson.getAs[UserStatistic](USERSTATISTICS).getOrElse(UserStatistic()),
         toolStatistics = bson.getAs[List[ToolStatistic]](TOOLSTATISTICS).getOrElse(List.empty),
-        datePushed = bson.getAs[List[BSONDateTime]](DATEPUSHED).getOrElse(List.empty).map(dt => ZonedDateTime.parse(dt.toString))
+        datePushed = bson.getAs[List[BSONDateTime]](DATEPUSHED).getOrElse(List.empty).map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault()))
       )
     }
   }

@@ -1,6 +1,6 @@
 package models.database.statistics
 
-import java.time.ZonedDateTime
+import java.time.{ZonedDateTime, Instant, ZoneId}
 import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
 
@@ -33,7 +33,7 @@ object ClusterLoadEvent {
         bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         bson.getAs[List[Double]](LISTLOAD).getOrElse(List.empty[Double]),
         bson.getAs[Double](AVERAGE).getOrElse(0.0),
-        bson.getAs[BSONDateTime](TIMESTAMP).map(dt => ZonedDateTime.parse(dt.toString))
+        bson.getAs[BSONDateTime](TIMESTAMP).map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault()))
       )
     }
   }

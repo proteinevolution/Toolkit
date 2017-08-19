@@ -1,6 +1,6 @@
 package models.database.community
 
-import java.time.ZonedDateTime
+import java.time.{ZonedDateTime, Instant, ZoneId}
 import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._
@@ -40,8 +40,8 @@ object Comment {
           JsSuccess(
             Comment(commentID = BSONObjectID.generate(),
                     text = "",
-                    dateCreated = Some(new ZonedDateTime()),
-                    dateUpdated = Some(new ZonedDateTime()))
+                    dateCreated = Some(ZonedDateTime.now),
+                    dateUpdated = Some(ZonedDateTime.now))
           )
         } catch {
           case cause: Throwable => JsError(cause.getMessage)
@@ -68,7 +68,6 @@ object Comment {
     */
   implicit object Reader extends BSONDocumentReader[Comment] {
     def read(bson: BSONDocument): Comment = {
-      println(bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTime.parse(dt.toString())))
       Comment(
         commentID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         title = bson.getAs[String](TITLE),
@@ -76,8 +75,8 @@ object Comment {
         commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
         deleted = bson.getAs[Boolean](DELETED),
         oldVersion = bson.getAs[BSONObjectID](OLDVERSION),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTime.parse(dt.toString())),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTime.parse(dt.toString()))
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
+        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault()))
       )
     }
   }

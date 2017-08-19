@@ -485,7 +485,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                     Job.DATECREATED ->
                     BSONDocument(
                       "$gt" -> BSONDateTime(
-                        new ZonedDateTime().minusMinutes(constants.maxJobsWithin).toEpochSecond * 1000
+                        ZonedDateTime.now.minusMinutes(constants.maxJobsWithin).toInstant.toEpochMilli
                       )
                     )
                   )
@@ -500,7 +500,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                     Job.DATECREATED ->
                     BSONDocument(
                       "$gt" -> BSONDateTime(
-                        new ZonedDateTime().minusDays(constants.maxJobsWithinDay).toEpochSecond * 1000
+                        ZonedDateTime.now.minusDays(constants.maxJobsWithinDay).toInstant.toEpochMilli
                       )
                     )
                   )
@@ -509,7 +509,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               mongoStore.countJobs(selector).map { count =>
                 mongoStore.countJobs(selectorDay).map { countDay =>
                   println(
-                    BSONDateTime(new ZonedDateTime().minusMinutes(constants.maxJobsWithin).toEpochSecond * 1000).toString
+                    BSONDateTime(ZonedDateTime.now.minusMinutes(constants.maxJobsWithin).toInstant.toEpochMilli).toString
                   )
                   Logger.info(
                     "IP " + job.IPHash + " has requested " + count + " jobs within the last " + constants.maxJobsWithin + " minute and " + countDay + " within the last 24 hours."
