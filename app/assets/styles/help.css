@@ -1,38 +1,4 @@
-#help-tabs {
-    font-size: 0.95em !important;
-}
-
-#help-tabs .ui-widget-header {
-    height: 3.5em;
-}
-
-
-#helpDiv {
-    float: right;
-}
-
-#helpModal {
-
-    height: 40em;
-
-}
-
-#helpModal p {
-
-    font-size: small;
-}
-
-#helpModal h4 {
-
-    padding-left: 0.10em;
-}
-
-
-#helpModal h6 {
-
-    font-weight: bold;
-}
-
+/* Helpmodal in Subnavigation */
 .helpModals .section {
     margin-top: 1em;
 }
@@ -51,6 +17,32 @@
     margin-bottom:0;
 }
 
+#imprintModal,
+#subnavHelpModal,
+#subnavFAQModal,
+#privacyPolicyModal,
+#contactModal,
+#citeModal,
+#recentUpdatesModal {
+    font-size: 0.85em;
+    width: 55%;
+}
+
+#imprintContent,
+#helpModalContent,
+#FAQModalContent,
+#privacyPolicyContent,
+#contactModelContent,
+#citeModalContent,
+#recentUpdatesContent {
+    padding: 1em;
+}
+
+/* Help Modals for Tools */
+#help-tabs {
+    font-size: 0.95em !important;
+}
+
 #help-psiblast {
     font-size: 0.85em !important;
 }
@@ -59,6 +51,7 @@
     color: #008979;
 }
 
+/* Tooltip */
 .tooltip {
     display: none;
     position: absolute;
@@ -68,15 +61,4 @@
     padding: 10px;
     color: #fff;
     font-size: 12px;
-}
-
-
-#imprintModal, #subnavHelpModal, #subnavFAQModal, #privacyPolicyModal, #contactModal, #citeModal, #recentUpdatesModal {
-    font-size: 0.85em;
-    width: 55%;
-
-}
-
-#imprintContent, #helpModalContent, #FAQModalContent, #privacyPolicyContent, #contactModelContent, #citeModalContent, #recentUpdatesContent {
-    padding: 1em;
 }

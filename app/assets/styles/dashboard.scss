@@ -1,5 +1,4 @@
 body {
-
   margin: 0 auto;
   font-size: 1.25em;
   line-height: 1.75em;
@@ -7,13 +6,10 @@ body {
   background: #f6f6f6;
   font-family: Monaco, Consolas, "Lucida Console", monospace;
   font-weight: 400;
-
 }
 
 img {
-
   width: 100%;
-
 }
 
 .container {
@@ -39,10 +35,9 @@ header {
   background: #006F62;
 }
 
-header a, .navBtn {
-
+header a,
+.navBtn {
   color: #fff;
-
 }
 
 .toggle {
@@ -65,14 +60,17 @@ nav {
   opacity: 0;
   height: 100%;
 }
+
 nav a {
   float: left;
   width: 100%;
   font-size: .75em;
   font-weight: bolder;
-
 }
-nav a:hover, .current, .toggle .navBtn {
+
+nav a:hover,
+.current,
+.toggle .navBtn {
   opacity: 1;
 }
 
