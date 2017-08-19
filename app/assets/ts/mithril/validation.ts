@@ -741,7 +741,7 @@ class alignmentVal implements ToolkitValidator {
 	    else if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') !== '') {
             originIsFasta = false;
             let t = this.elem.reformat('detect');
-            feedback(false, t + " format found:  <b>Auto-transformed to Fasta</b>", "success", t);
+            feedback(true, t.toUpperCase() + " format found:  <b>Auto-transformed to FASTA</b>", "success");
             $("#alignment").val(this.elem.reformat('fasta'));
             return true;
         }

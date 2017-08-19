@@ -6,24 +6,25 @@ import org.mindrot.jbcrypt.BCrypt
 import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
 
-case class User(userID: BSONObjectID, // ID of the User
+case class User(userID: BSONObjectID = BSONObjectID.generate(), // ID of the User
                 sessionID: Option[BSONObjectID] = None, // Session ID
                 sessionData: List[SessionData] = List.empty, // Session data separately from sid
                 connected: Boolean = true,
-                accountType: Int = -1, // User Access level
+                accountType: Int = User.NORMALUSER, // User Access level
                 userData: Option[UserData] = None, // Personal Data of the User //TODO possibly encrypt?
                 userConfig: UserConfig = UserConfig(), // Configurable parts for the user
                 userToken: Option[UserToken] = None,
                 jobs: List[String] = List.empty, // List of Jobs the User has
-                dateLastLogin: Option[DateTime], // Last seen on
-                dateCreated: Option[DateTime], // Account creation date
-                dateUpdated: Option[DateTime]) { // Account updated on
+                dateDeletedOn: Option[DateTime] = None, // Date at which the account will be deleted on
+                dateLastLogin: Option[DateTime] = Some(DateTime.now), // Last seen on
+                dateCreated: Option[DateTime] = Some(DateTime.now), // Account creation date
+                dateUpdated: Option[DateTime] = Some(DateTime.now)) { // Account updated on
 
   def checkPassword(plainPassword: String): Boolean = {
     BCrypt.checkpw(plainPassword, getUserData.password)
   }
 
-  def getUserData = {
+  def getUserData: UserData = {
     // This should only return user data when the user is logged in.
     userData.getOrElse(UserData("invalid", "invalid", "invalid"))
   }
@@ -31,11 +32,14 @@ case class User(userID: BSONObjectID, // ID of the User
   // Mock up function to show how a possible function to check user levels could look like.
   def isSuperuser: Boolean = {
     accountType match {
-      case 10 => true
-      case 11 => true
+      case User.ADMINLEVEL     => true
+      case User.MODERATORLEVEL => true
       case _  => false
     }
   }
+
+  def hasNotLoggedIn : Boolean = accountType == 3
+
   override def toString: String = {
     s"""userID: ${userID.stringify}
        |sessionID: ${sessionID match {
@@ -44,7 +48,11 @@ case class User(userID: BSONObjectID, // ID of the User
        }}
        |connected: ${if (connected) "Yes" else "No"}
        |nameLogin: ${getUserData.nameLogin}
-       |watched jobIDs: ${jobs.mkString(",")}""".stripMargin
+       |watched jobIDs: ${jobs.mkString(",")}
+       |Deletion on: ${dateDeletedOn match {
+      case Some(dateTime) => dateTime.toString()
+      case None           => "no deletion date set"
+       }}""".stripMargin
   }
 }
 
@@ -68,13 +76,22 @@ object User {
   final val JOBS          = "jobs" //              job reference pointers field
   final val ACCEPTEDTOS   = "acceptToS" // needed for checking if the TOS was accepted
   final val DATELASTLOGIN = "dateLastLogin" // name for the last login field
+  final val DATEDELETEDON = "dateDeletedOn" // name for the field which holds the date when the account is going to be deleted
   final val DATECREATED   = "dateCreated" //              account created on field
   final val DATEUPDATED   = "dateUpdated" //              account data changed on field
+
+  final val ADMINLEVEL                     : Int =  11
+  final val MODERATORLEVEL                 : Int =  10
+  final val BANNEDUSER                     : Int =   4
+  final val CLOSETODELETIONUSER            : Int =   3
+  final val REGISTEREDUSER                 : Int =   1
+  final val NORMALUSERAWAITINGREGISTRATION : Int =   0
+  final val NORMALUSER                     : Int = - 1
 
   /**
     * Define how the User object is formatted when turned into a json object
     */
-  implicit object JobWrites extends Writes[User] {
+  implicit object UserWrites extends Writes[User] {
     val dtf = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss")
     def writes(user: User): JsObject = Json.obj(
       ID                 -> user.userID.stringify,
@@ -94,7 +111,7 @@ object User {
   }
 
   /**
-    * Define how the User object is formatted in the DB
+    * Define how the User object is formatted as a BSON Document
     */
   implicit object Reader extends BSONDocumentReader[User] {
     override def read(bson: BSONDocument): User =
@@ -108,6 +125,7 @@ object User {
         userConfig = bson.getAs[UserConfig](USERCONFIG).getOrElse(UserConfig()),
         userToken = bson.getAs[UserToken](USERTOKEN),
         jobs = bson.getAs[List[String]](JOBS).getOrElse(List.empty),
+        dateDeletedOn = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => new DateTime(dt.value)),
         dateLastLogin = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => new DateTime(dt.value)),
         dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
         dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value))
@@ -126,6 +144,7 @@ object User {
         USERCONFIG    -> user.userConfig,
         USERTOKEN     -> user.userToken,
         JOBS          -> user.jobs,
+        DATEDELETEDON -> user.dateDeletedOn.map(dt => BSONDateTime(dt.getMillis)),
         DATELASTLOGIN -> BSONDateTime(user.dateLastLogin.fold(-1L)(_.getMillis)),
         DATECREATED   -> BSONDateTime(user.dateCreated.fold(-1L)(_.getMillis)),
         DATEUPDATED   -> BSONDateTime(user.dateUpdated.fold(-1L)(_.getMillis))

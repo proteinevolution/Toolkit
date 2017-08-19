@@ -14,21 +14,23 @@ sealed trait JobState
  and when a job depends on the successful execution of another job.
  */
 // Job State which is set to save a job without submitting it
-case object Prepared extends JobState
+case object Prepared     extends JobState
 // Job State which is set when the job is submitted to the cluster but has to wait in the queue
-case object Queued extends JobState
+case object Queued       extends JobState
 // Job State which is set when the job is being executed
-case object Running extends JobState
+case object Running      extends JobState
 // Job State which is set when the job has reached an error state
-case object Error extends JobState
+case object Error        extends JobState
 // Job State which is set when the job has completed successfully
-case object Done extends JobState
+case object Done         extends JobState
 // Job State which is set when the job was successfully sent to the server
-case object Submitted extends JobState
+case object Submitted    extends JobState
 // Job State which is set when the job was validated by the hash search but a different job was found
-case object Pending extends JobState
+case object Pending      extends JobState
 // Job State which is set when the maximal number of jobs is reached within a fixed time
-case object LimitReached extends JobState
+case object LimitReached extends  JobState
+// Job State which is set when the maximal number of jobs is reached within a fixed time
+case object Deleted      extends  JobState
 
 object JobState {
   implicit object JobStateReads extends Reads[JobState] {
@@ -44,6 +46,7 @@ object JobState {
             case 6 => Submitted
             case 7 => Pending
             case 8 => LimitReached
+            case 9 => Deleted
             case _ => Error
           })
         } catch {
@@ -63,6 +66,7 @@ object JobState {
       case Submitted    => JsNumber(6)
       case Pending      => JsNumber(7)
       case LimitReached => JsNumber(8)
+      case Deleted      => JsNumber(9)
     }
   }
 
@@ -80,6 +84,7 @@ object JobState {
         case BSONInteger(6) => Submitted
         case BSONInteger(7) => Pending
         case BSONInteger(8) => LimitReached
+        case BSONInteger(9) => Deleted
         case _              => Error
       }
     }
@@ -99,6 +104,7 @@ object JobState {
         case Submitted    => BSONInteger(6)
         case Pending      => BSONInteger(7)
         case LimitReached => BSONInteger(8)
+        case Deleted      => BSONInteger(9)
       }
     }
   }

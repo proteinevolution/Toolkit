@@ -159,3 +159,8 @@ let aa_color_background : Map<string, string> = new Map<string, string>();
         setTimeout(function(){ jobList.redraw(true); }, 200);
     };
 
+    //close off canvas menu on click
+    $('.vertical ul').on('click', function () {
+        $('.off-canvas').foundation('close');
+    });
+

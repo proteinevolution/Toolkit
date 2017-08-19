@@ -24,7 +24,7 @@ POST          /settings/memset                        @controllers.Settings.setM
 # integrated mithril route backend routes
 GET           /backend/index                          @controllers.Backend.index
 GET           /backend/statistics                     @controllers.Backend.statistics
-GET           /backend/pushMonthlyStatistics          @controllers.Backend.pushMonthlyStatistics
+GET           /backend/runusersweep                   @controllers.Backend.runUserSweep
 GET           /backend/cms                            @controllers.Backend.cms
 POST          /backend/cms                            @controllers.Backend.cms
 GET           /backend/users                          @controllers.Backend.users
