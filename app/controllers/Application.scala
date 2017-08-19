@@ -5,29 +5,27 @@ import javax.inject.{Inject, Named, Singleton}
 import actors.ClusterMonitor.Multicast
 import actors.WebSocketActor
 import akka.actor.{ActorRef, ActorSystem, Props}
-import models.sge.Cluster
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
-import models.database.statistics.ToolStatistic
-import models.search.JobDAO
-import models.{Constants, UserSessions}
 import models.results.Common
+import models.search.JobDAO
+import models.sge.Cluster
 import models.tools.ToolFactory
-import modules.common.HTTPRequest
-import modules.tel.TEL
+import models.{Constants, UserSessions}
 import modules.LocationProvider
+import modules.common.HTTPRequest
 import modules.db.MongoStore
+import modules.tel.TEL
 import modules.tel.env.Env
-import play.api.{Configuration, Logger}
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.Files
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
+import play.api.{Configuration, Logger}
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
@@ -68,15 +66,6 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
   val SID            = "sid"
 
   private[this] val blacklist = ConfigFactory.load().getStringList("banned.ip")
-
-  // Run this once to generate database objects for the statistics
-  def generateStatisticsDB(): Unit = {
-    for (toolName: String <- toolFactory.values.keys) {
-      mongoStore.addStatistic(
-        ToolStatistic(BSONObjectID.generate(), toolName, 0, 0, List.empty, List.empty, List.empty)
-      )
-    }
-  }
 
   /**
     * Creates a websocket.  `acceptOrResult` is preferable here because it returns a

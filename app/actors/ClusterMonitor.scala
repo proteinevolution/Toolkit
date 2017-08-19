@@ -37,11 +37,10 @@ final class ClusterMonitor @Inject()(cluster: Cluster, mongoStore: MongoStore, v
     // scheduler should use the system dispatcher
     context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, FetchLatest)(context.system.dispatcher)
   }
+  private var nextStatisticsUpdateDate : ZonedDateTime = ZonedDateTime.now.plusMonths(1)
 
   override def preStart(): Unit = {
-
-    if (settings.clusterMode == "LOCAL")
-      context.stop(self)
+    if (settings.clusterMode == "LOCAL") context.stop(self)
   }
 
   override def postStop(): Unit = Tick.cancel()

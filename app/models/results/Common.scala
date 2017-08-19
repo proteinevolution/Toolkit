@@ -37,7 +37,8 @@ object Common {
   private val uniprotNameReg = """(uniprot.*)""".r
   private val pfamNameReg    = """(Pfam.*)""".r
 
-  private val pdbBaseLink  = "http://pdb.rcsb.org/pdb/explore.do?structureId="
+  private val pdbBaseLink  = "http://www.rcsb.org/pdb/explore/explore.do?structureId="
+
   private val pdbeBaseLink = "http://www.ebi.ac.uk/pdbe/entry/pdb/"
   private val ncbiBaseLink =
     "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?SUBMIT=y&db=structure&orig_db=structure&term="
@@ -438,7 +439,7 @@ object Common {
   }
 
   def lengthWithoutDashDots(str: String): Int = {
-    str.length - str.count(char => char == '-' || char == ".")
+    str.length - str.count(char => char == '-') - str.count(char => char == '.')
   }
 
   def hhblitsHitWrapped(hit: HHBlitsHSP,
