@@ -259,8 +259,8 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
   def statisticsCol: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection[BSONCollection]("statistics"))
 
-  def getStats : Future[Option[StatisticsObject]] = {
-    statisticsCol.map(_.find(BSONDocument())).flatMap(_.one[StatisticsObject])
+  def getStats : Future[StatisticsObject] = {
+    statisticsCol.map(_.find(BSONDocument())).flatMap(_.one[StatisticsObject]).map(_.getOrElse(StatisticsObject()))
   }
 
   def updateStats(statisticsObject : StatisticsObject) : Future[Option[StatisticsObject]] = {
@@ -272,6 +272,13 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
     )
   }
 
+  def modifyStats(statisticsObject: StatisticsObject, modifier : BSONDocument): Future[Option[StatisticsObject]] =  {
+    statisticsCol.flatMap(
+      _.findAndUpdate(selector = BSONDocument(StatisticsObject.IDDB -> statisticsObject.statisticsID),
+                      update   = modifier,
+                      fetchNewObject = true).map(_.result[StatisticsObject])
+    )
+  }
 
 
   // Cluster load statistics
