@@ -9,7 +9,7 @@ import reactivemongo.bson._
   * Created by astephens on 14.07.17.
   */
 case class StatisticsObject(statisticsID   : BSONObjectID        = BSONObjectID.generate(),
-                            userStatistics : List[UserStatistic] = List.empty[UserStatistic],
+                            userStatistics : UserStatistic       = UserStatistic(),
                             toolStatistics : List[ToolStatistic] = List.empty[ToolStatistic],
                             datePushed     : List[DateTime]      = List.empty[DateTime]) {
   /**
@@ -113,14 +113,11 @@ object StatisticsObject {
   val DATEPUSHED     = "datePushed"
 
   implicit object JsonWriter extends Writes[StatisticsObject] {
-    val dtf = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss")
-    override def writes(toolStatistic: StatisticsObject): JsObject = Json.obj(
-      IDDB           -> toolStatistic.statisticsID.stringify,
-      USERSTATISTICS -> toolStatistic.userStatistics,
-      TOOLSTATISTICS -> toolStatistic.toolStatistics,
-      DATEPUSHED -> toolStatistic.datePushed.map(
-        dt => Json.obj("string" -> dtf.print(dt), "month" -> dt.monthOfYear().getAsShortText, "year" -> dt.year().get)
-      )
+    override def writes(statisticObject: StatisticsObject): JsObject = Json.obj(
+      IDDB           -> statisticObject.statisticsID.stringify,
+      USERSTATISTICS -> statisticObject.userStatistics,
+      TOOLSTATISTICS -> statisticObject.toolStatistics,
+      DATEPUSHED     -> statisticObject.datePushed
     )
   }
 
@@ -128,7 +125,7 @@ object StatisticsObject {
     def read(bson: BSONDocument): StatisticsObject = {
       StatisticsObject(
         statisticsID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
-        userStatistics = bson.getAs[List[UserStatistic]](USERSTATISTICS).getOrElse(List.empty),
+        userStatistics = bson.getAs[UserStatistic](USERSTATISTICS).getOrElse(UserStatistic()),
         toolStatistics = bson.getAs[List[ToolStatistic]](TOOLSTATISTICS).getOrElse(List.empty),
         datePushed = bson.getAs[List[BSONDateTime]](DATEPUSHED).getOrElse(List.empty).map(dt => new DateTime(dt.value))
       )
@@ -136,11 +133,11 @@ object StatisticsObject {
   }
 
   implicit object Writer extends BSONDocumentWriter[StatisticsObject] {
-    def write(toolStatistic: StatisticsObject): BSONDocument = BSONDocument(
-      IDDB           -> toolStatistic.statisticsID,
-      USERSTATISTICS -> toolStatistic.userStatistics,
-      TOOLSTATISTICS -> toolStatistic.toolStatistics,
-      DATEPUSHED     -> toolStatistic.datePushed.map(a => BSONDateTime(a.getMillis))
+    def write(statisticObject: StatisticsObject): BSONDocument = BSONDocument(
+      IDDB           -> statisticObject.statisticsID,
+      USERSTATISTICS -> statisticObject.userStatistics,
+      TOOLSTATISTICS -> statisticObject.toolStatistics,
+      DATEPUSHED     -> statisticObject.datePushed.map(a => BSONDateTime(a.getMillis))
     )
   }
 }
