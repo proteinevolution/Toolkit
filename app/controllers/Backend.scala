@@ -60,7 +60,7 @@ final class Backend @Inject()(webJarAssets: WebJarAssets,
 
         // Grab the current statistics
         Logger.info("Loading Statistics...")
-        val stats = mongoStore.getStats.map(_.getOrElse(StatisticsObject()))
+        val stats = mongoStore.getStats
 
         // Ensure all tools are in the statistics, even if they have not been used yet
         Logger.info("Statistics loaded.... checking for new tools")

@@ -28,6 +28,41 @@ class UserSessions @Inject()(mongoStore: MongoStore,
   private val USERNAME = "username"
 
   /**
+    * Creates a update modifier for the user according to the
+    * @param user
+    * @param sessionDataOption
+    * @return
+    */
+  def getUserModifier(user : User,
+                      sessionDataOption : Option[SessionData]  = None,
+                      forceSessionID    : Boolean = false) : BSONDocument = {
+    // Build the modifier - first the last login date
+    BSONDocument("$set" -> BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis))).merge(
+      // In the case that the user has been emailed about their inactivity, reset that status to a regular user status
+      if (user.accountType == User.CLOSETODELETIONUSER) {
+        BSONDocument(
+          "$set"   -> BSONDocument(User.ACCOUNTTYPE   -> 1),
+          "$unset" -> BSONDocument(User.DATEDELETEDON -> "")
+        )
+      } else {
+        BSONDocument.empty
+      }
+    ).merge(sessionDataOption.map(sessionData =>
+      // Add the session Data to the set
+      BSONDocument("$addToSet" -> BSONDocument(User.SESSIONDATA -> sessionData))).getOrElse(BSONDocument.empty)
+    ).merge(
+      // Add the session ID to the user
+      if (forceSessionID) {
+        BSONDocument("$set" ->
+          BSONDocument(User.SESSIONID -> Some(user.sessionID.getOrElse(BSONObjectID.generate())))
+        )
+      } else {
+        BSONDocument.empty
+      }
+    )
+  }
+
+  /**
     *
     * Associates a user with the provided sessionID
     *
@@ -40,12 +75,13 @@ class UserSessions @Inject()(mongoStore: MongoStore,
 
     mongoStore.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
       case Some(user) =>
-        Logger.info("User found by SessionID")
+        Logger.info(s"User found by SessionID:\n${user.toString}")
         val selector = BSONDocument(User.IDDB -> user.userID)
-        val modifier = BSONDocument("$set" ->
-                                    BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)),
-                                    "$addToSet" ->
-                                    BSONDocument(User.SESSIONDATA -> newSessionData))
+
+        // This resets the user's deletion date in case they have been eMailed for inactivity already
+        val modifier = getUserModifier(user, Some(newSessionData))
+
+        // Add the user to the cache and update the collection
         modifyUserWithCache(selector, modifier).map {
           case Some(updatedUser) =>
             updatedUser
@@ -53,7 +89,7 @@ class UserSessions @Inject()(mongoStore: MongoStore,
             user
         }
       case None =>
-        Logger.info("User is new")
+        // Create a new user as there is no user with this sessionID
         val user = User(
           userID = BSONObjectID.generate(),
           sessionID = Some(sessionID),
@@ -63,6 +99,7 @@ class UserSessions @Inject()(mongoStore: MongoStore,
           dateUpdated = Some(new DateTime())
         )
         mongoStore.addUser(user).map { _ =>
+          Logger.info(s"User is new:\n${user.toString}")
           user
         }
     }
@@ -108,19 +145,9 @@ class UserSessions @Inject()(mongoStore: MongoStore,
         // Pull it from the DB, as it is not in the cache
         mongoStore.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
           case Some(user) =>
-            // There is a user in the DB
-            //Logger.info("User found in collection by sessionID")
             // Update the last login time
             val selector = BSONDocument(User.IDDB -> user.userID)
-            val modifier = BSONDocument(
-              "$set" -> {
-                if (user.accountType == User.CLOSETODELETIONUSER) {
-                  BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis), User.ACCOUNTTYPE -> 1)
-                } else {
-                  BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis))
-                }
-              }
-            )
+            val modifier = getUserModifier(user)
             modifyUserWithCache(selector, modifier).map {
               case Some(updatedUser) =>
                 Some(updatedUser)
@@ -172,7 +199,18 @@ class UserSessions @Inject()(mongoStore: MongoStore,
     if (withDB) {
       mongoStore.userCollection.flatMap(
         _.update(BSONDocument(User.IDDB -> user.userID),
-                 BSONDocument("$unset"  -> BSONDocument(User.SESSIONID -> "", User.CONNECTED -> "")))
+          BSONDocument(
+            "$set"    ->
+              BSONDocument(
+                User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)
+              ),
+            "$unset"  ->
+              BSONDocument(
+                User.SESSIONID -> "",
+                User.CONNECTED -> ""
+              )
+          )
+        )
       )
     }
   }
