@@ -1,8 +1,5 @@
-JOBID=%jobid.content
-
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
-FORMAT=$(head -1 ../params/alignment | egrep ^CLUSTAL | wc -l)
 A3M_INPUT=$(head -1 ../params/alignment | egrep "^#A3M#" | wc -l)
 
 
