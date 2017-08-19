@@ -114,8 +114,8 @@ resolvers += "Madoushi sbt-plugins" at "https://dl.bintray.com/madoushi/sbt-plug
 lazy val client = (project in file("client"))
   .settings(
     scalaVersion := "2.11.8",
-    persistLauncher := true,
-    persistLauncher in Test := false,
+    scalaJSUseMainModuleInitializer := true,
+    scalaJSUseMainModuleInitializer in Test := false,
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom"     % "0.9.1",
       "co.technius"  %%% "scalajs-mithril" % "0.1.0",
