@@ -24,7 +24,7 @@ body.is-reveal-open {
 }
 
 #alignmentViewerPanel textarea {
-    font-size: 0.7em;
+    font-size: 0.75em;
     font-family: "Source Code Pro", "Liberation Mono", monospace;
     margin-bottom: 0.5em;
 }
