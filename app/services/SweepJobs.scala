@@ -93,7 +93,7 @@ class SweepJobsImpl @Inject()(appLifecycle: ApplicationLifecycle,
             case Some(id) =>
               mongoStore.findUser(BSONDocument(User.IDDB -> BSONDocument("$eq" -> id))).map {
                 case Some(user) =>
-                  val storageTime = new ZonedDateTime().minusDays(if (user.accountType == -1) {
+                  val storageTime = ZonedDateTime.now.minusDays(if (user.accountType == -1) {
                     constants.deletionThreshold
                   } else constants.deletionThresholdRegistered)
                   mongoStore
