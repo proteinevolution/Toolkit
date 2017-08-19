@@ -14,7 +14,6 @@ import models.search.JobDAO
 import modules.tel.TEL
 import modules.tel.runscripts._
 import com.typesafe.config.ConfigFactory
-import controllers.FileException
 import models.sge.Qdel
 import modules.LocationProvider
 import modules.db.MongoStore
@@ -26,7 +25,6 @@ import org.joda.time.DateTime
 import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
 import play.api.libs.mailer.MailerClient
-import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
