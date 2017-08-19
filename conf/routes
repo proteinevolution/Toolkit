@@ -18,8 +18,6 @@ GET           /javascriptRoutes                       controllers.Application.ja
 # Dashboard for Admin
 
 POST          /settings/clustermode                   @controllers.Settings.setClusterMode(clusterMode : String)
-POST          /settings/memset                        @controllers.Settings.setMemoryAllocation(memory: Int, toolName: String)
-
 
 # integrated mithril route backend routes
 GET           /backend/index                          @controllers.Backend.index

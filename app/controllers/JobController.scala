@@ -1,14 +1,14 @@
 package controllers
 
-import java.io.{FileInputStream, ObjectInputStream}
+import java.io.{ FileInputStream, ObjectInputStream }
 
 import actors.JobActor._
 import java.security.MessageDigest
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 
 import actors.JobIDActor
 import akka.actor.ActorRef
-import models.{Constants, UserSessions}
+import models.{ Constants, UserSessions }
 import models.database.jobs._
 import models.database.users.User
 import models.job.JobActorAccess
@@ -17,9 +17,9 @@ import modules.LocationProvider
 import java.time.ZonedDateTime
 import play.api.Logger
 import play.api.cache._
-import play.api.libs.json.{JsNull, Json}
+import play.api.libs.json.{ JsNull, Json }
 import play.api.mvc._
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -231,7 +231,11 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               jobsFiltered.lastOption match {
                 case Some(oldJob) =>
                   println(oldJob)
-                  Ok(Json.toJson(Json.obj("jobID" -> oldJob.jobID, "dateCreated" -> oldJob.dateCreated.get.toInstant.toEpochMilli)))
+                  Ok(
+                    Json.toJson(
+                      Json.obj("jobID" -> oldJob.jobID, "dateCreated" -> oldJob.dateCreated.get.toInstant.toEpochMilli)
+                    )
+                  )
                 case None => NotFound("job is new.")
               }
             }

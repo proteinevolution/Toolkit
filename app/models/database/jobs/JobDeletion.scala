@@ -1,7 +1,7 @@
 package models.database.jobs
 
 import models.database.jobs.JobDeletionFlag.JobDeletionFlag
-import java.time.{ZonedDateTime, Instant, ZoneId}
+import java.time.{ Instant, ZoneId, ZonedDateTime }
 import play.api.libs.json._
 import reactivemongo.bson._
 
@@ -48,8 +48,12 @@ object JobDeletion {
     def read(bson: BSONDocument): JobDeletion = {
       JobDeletion(
         deletionFlag = bson.getAs[JobDeletionFlag](DELETIONFLAG).getOrElse(JobDeletionFlag.Error),
-        deletionDate = bson.getAs[BSONDateTime](DELETIONDATE).map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
-        fileRemovalDateO = bson.getAs[BSONDateTime](FILEDELETIONDATE).map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault()))
+        deletionDate = bson
+          .getAs[BSONDateTime](DELETIONDATE)
+          .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
+        fileRemovalDateO = bson
+          .getAs[BSONDateTime](FILEDELETIONDATE)
+          .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault()))
       )
     }
   }

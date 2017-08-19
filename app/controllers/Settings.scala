@@ -40,7 +40,9 @@ final class Settings @Inject()(messagesApi: MessagesApi,
     */
   def setClusterMode(clusterMode: String) = Action {
 
-    val document = BSONDocument("clusterMode" -> clusterMode, "created_on" -> ZonedDateTime.now, "update_on" -> ZonedDateTime.now)
+    val document = BSONDocument("clusterMode" -> clusterMode,
+                                "created_on" -> ZonedDateTime.now.toInstant.toEpochMilli,
+                                "update_on"  -> ZonedDateTime.now.toInstant.toEpochMilli)
 
     val future = clusterSettings.flatMap(_.insert(document))
 
@@ -65,29 +67,4 @@ final class Settings @Inject()(messagesApi: MessagesApi,
 
     cm
   }
-
-  /**
-    * sets h_vmem for a specific tool
-    *
-    * @param memory
-    */
-  def setMemoryAllocation(memory: Int, toolName: String) = Action {
-
-    val document =
-      BSONDocument("toolname" -> toolName, "memory" -> memory, "created_on" -> ZonedDateTime.now, "update_on" -> ZonedDateTime.now)
-
-    val future = toolSettings.flatMap(_.insert(document))
-
-    future.onComplete {
-      case Failure(e) => throw e
-      case Success(lastError) => {
-        println("successfully inserted document with lastError = " + lastError)
-      }
-    }
-
-    Ok("Got request")
-
-  }
-
-  def getMemoryAlloc(toolName: String) = "42" // IMPLEMENT ME
 }

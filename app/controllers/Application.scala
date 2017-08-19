@@ -1,34 +1,34 @@
 package controllers
 
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 
 import actors.ClusterMonitor.Multicast
 import actors.WebSocketActor
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
 import models.results.Common
 import models.search.JobDAO
 import models.sge.Cluster
 import models.tools.ToolFactory
-import models.{Constants, UserSessions}
+import models.{ Constants, UserSessions }
 import modules.LocationProvider
 import modules.common.HTTPRequest
 import modules.db.MongoStore
 import modules.tel.TEL
 import modules.tel.env.Env
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsValue, Json}
+import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.libs.json.{ JsValue, Json }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
-import play.api.{Configuration, Logger}
+import play.api.{ Configuration, Logger }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 
 @Singleton
 final class Application @Inject()(webJarAssets: WebJarAssets,
