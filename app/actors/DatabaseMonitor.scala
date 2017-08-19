@@ -90,7 +90,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
       Logger.info("Checking if there are any old accounts to send the owner an eMail")
       mongoStore.findUsers(BSONDocument(
         User.DATELASTLOGIN -> BSONDocument("$lt"     -> BSONDateTime(DateTime.now()
-          .minusMonths(userDeletingAfterMonths)
+          .minusMonths(userLoggedInDeletingAfterMonths) //
           .plusDays(userLoggedInWarningDaysBeforeDeletion)
           .getMillis)),
         User.ACCOUNTTYPE   -> User.REGISTEREDUSER
