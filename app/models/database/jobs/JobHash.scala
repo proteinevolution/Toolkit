@@ -3,7 +3,7 @@ package models.database.jobs
 import models.search.JobDAO
 import modules.tel.env.Env
 import better.files._
-import java.time.{ZonedDateTime, Instant, ZoneId}
+import java.time.{ Instant, ZoneId, ZonedDateTime }
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID }
 
 /**
@@ -51,7 +51,9 @@ object JobHash {
       bson.getAs[String](DBMTIME),
       bson.getAs[String](TOOLNAME).getOrElse(""),
       bson.getAs[String](TOOLHASH).getOrElse("No matching hash value found"),
-      bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
+      bson
+        .getAs[BSONDateTime](DATECREATED)
+        .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
       bson.getAs[String](JOBID).getOrElse("")
     )
   }

@@ -303,7 +303,8 @@ final class ToolFactory @Inject()(
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".numerical",
-              "PCOILS_PROBLIST"))
+                                                  "PCOILS_PROBLIST")
+          )
         }
       ),
       Toolnames.REPPER -> ListMap(
@@ -464,8 +465,9 @@ final class ToolFactory @Inject()(
         },
         Resultviews.SUMMARY -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          Future.successful(views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/results.out",
-            "HHPRED_MANUAL"))
+          Future.successful(
+            views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/results.out", "HHPRED_MANUAL")
+          )
         }
       ),
       Toolnames.HHREPID -> ListMap(
@@ -484,14 +486,14 @@ final class ToolFactory @Inject()(
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".results_color",
-              "ALI2D_COLOR")
+                                                  "ALI2D_COLOR")
           )
         },
         "Results With Confidence" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".results_colorC",
-              "ALI2D_COLOR_CONF")
+                                                  "ALI2D_COLOR_CONF")
           )
         },
         "Text output" -> { (jobID, requestHeader) =>
@@ -696,10 +698,7 @@ final class ToolFactory @Inject()(
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels
-              .tree(jobID + ".clu.tre",
-                    s"${constants.jobPath}$jobID/results/" + jobID + ".clu.tre",
-                    jobID,
-                    "ANCESCON")
+              .tree(jobID + ".clu.tre", s"${constants.jobPath}$jobID/results/" + jobID + ".clu.tre", jobID, "ANCESCON")
           )
         },
         Resultviews.DATA -> { (jobID, requestHeader) =>
@@ -761,8 +760,9 @@ final class ToolFactory @Inject()(
       Toolnames.RETSEQ -> ListMap(
         Resultviews.SUMMARY -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          Future.successful(views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/unretrievable",
-            "RETSEQ"))
+          Future.successful(
+            views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/unretrievable", "RETSEQ")
+          )
         },
         Resultviews.RESULTS -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
