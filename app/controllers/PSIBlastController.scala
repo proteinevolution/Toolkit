@@ -24,12 +24,13 @@ import play.api.libs.json.{ JsArray, JsObject, Json }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class PSIBlastController @Inject()(
-    psiblast: PSIBlast,
-    general: General,
-    alignment: Alignment,
-    constants: Constants
-)(webJarAssets: WebJarAssets, mongoStore: MongoStore, val reactiveMongoApi: ReactiveMongoApi, cc: ControllerComponents)
+class PSIBlastController @Inject()(psiblast: PSIBlast,
+                                   general: General,
+                                   alignment: Alignment,
+                                   constants: Constants,
+                                   mongoStore: MongoStore,
+                                   val reactiveMongoApi: ReactiveMongoApi,
+                                   cc: ControllerComponents)
     extends AbstractController(cc)
     with Common {
 

@@ -15,6 +15,7 @@ import models.database.results.{ HHPred, HHPredHSP, HHPredResult }
 import modules.db.MongoStore
 import play.modules.reactivemongo.ReactiveMongoApi
 import play.api.libs.json.{ JsArray, JsObject, Json }
+import org.webjars.play.WebJarsUtil
 
 /**
   * Created by drau on 01.03.17.
@@ -25,7 +26,9 @@ import play.api.libs.json.{ JsArray, JsObject, Json }
 class HHpredController @Inject()(hhpred: HHPred,
                                  mongoStore: MongoStore,
                                  val reactiveMongoApi: ReactiveMongoApi,
-                                 constants: Constants)(webJarAssets: WebJarAssets, cc: ControllerComponents)
+                                 constants: Constants,
+                                 webJarsUtil: WebJarsUtil,
+                                 cc: ControllerComponents)
     extends AbstractController(cc)
     with Common {
 
@@ -42,7 +45,7 @@ class HHpredController @Inject()(hhpred: HHPred,
     * @return 3D structure view
     */
   def show3DStructure(accession: String): Action[AnyContent] = Action { implicit request =>
-    Ok(views.html.jobs.resultpanels.structure(accession, webJarAssets))
+    Ok(views.html.jobs.resultpanels.structure(accession, webJarsUtil))
   }
 
   /**

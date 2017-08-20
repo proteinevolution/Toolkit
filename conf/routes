@@ -39,11 +39,10 @@ GET           /files/:mainID/:filename                @controllers.Application.f
 
 
 
-# WebJars (for webjars-play 2.6.1, but raises other exceptions)
-# ->            /webjars                                webjars.Routes
+# WebJars
+->            /webjars                                webjars.Routes
 
 # Assets
-GET           /webjars/*file                          controllers.WebJarAssets.at(file)
 GET           /assets/*file                           controllers.Assets.versioned(path="/public", file: Asset)
 
 

@@ -28,8 +28,7 @@ import scala.concurrent.Future
   * Created by zin on 28.07.16.
   */
 @Singleton
-final class Backend @Inject()(webJarAssets: WebJarAssets,
-                              settingsController: Settings,
+final class Backend @Inject()(settingsController: Settings,
                               userSessions: UserSessions,
                               mongoStore: MongoStore,
                               @NamedCache("userCache") implicit val userCache: CacheApi,

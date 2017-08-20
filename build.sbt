@@ -1,4 +1,4 @@
-lazy val akkaVersion      = "2.5.3"
+lazy val akkaVersion      = "2.5.4"
 lazy val kamonVersion     = "0.6.6"
 lazy val elastic4sVersion = "2.4.0"
 lazy val scalazVersion    = "7.2.10"
@@ -31,7 +31,7 @@ lazy val commonDeps = Seq(
   "com.vmunier"            %% "scalajs-scripts"      % "1.1.1",
   "org.typelevel"          %% "cats"                 % "0.9.0",
   "com.mohiva"             %% "play-html-compressor" % "0.7.1",
-  "com.typesafe.play"      %% "play-json"            % "2.6.0"
+  "com.typesafe.play"      %% "play-json"            % "2.6.3"
   //"io.kamon"             %% "kamon-play-2.5"          % kamonVersion,
   //"io.kamon"             %% "kamon-system-metrics"    % kamonVersion,
   //"io.kamon"             %% "kamon-statsd"            % kamonVersion,
@@ -48,6 +48,7 @@ lazy val commonSettings = Seq(
   crossScalaVersions := Seq("2.11.8", "2.12.1"),
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
+  //pipelineStages := Seq(rjs, uglify, concat, digest, gzip),
   logLevel := Level.Warn,
   dependencyOverrides ++= Set("org.webjars" % "jquery" % "3.2.1", "com.typesafe.akka" %% "akka-actor" % akkaVersion)
 )
@@ -80,7 +81,7 @@ lazy val root = (project in file("."))
     commonSettings,
     name := "mpi-toolkit",
     libraryDependencies ++= (commonDeps ++ Seq(
-      "org.webjars"       %% "webjars-play"       % "2.6.0-M1",
+      "org.webjars"       %% "webjars-play"       % "2.6.1",
       "org.webjars"       % "jquery"              % "3.2.1",
       "org.webjars.bower" % "jquery.lazyload"     % "1.9.7",
       "org.webjars"       % "jquery-ui"           % "1.12.1",
@@ -122,9 +123,9 @@ lazy val client = (project in file("client"))
     persistLauncher := true,
     persistLauncher in Test := false,
     libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-dom"     % "0.9.1",
+      "org.scala-js" %%% "scalajs-dom"     % "0.9.3",
       "co.technius"  %%% "scalajs-mithril" % "0.1.0",
-      "be.doeraene"  %%% "scalajs-jquery"  % "0.9.1",
+      "be.doeraene"  %%% "scalajs-jquery"  % "0.9.2",
       "com.lihaoyi"  %%% "upickle"         % "0.4.3"
     )
   )
