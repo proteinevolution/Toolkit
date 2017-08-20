@@ -91,8 +91,8 @@ lazy val root = (project in file("."))
       "org.webjars.npm"   % "codemirror-minified" % "5.28.0",
       "org.webjars.bower" % "clipboard"           % "1.7.1",
       "org.webjars"       % "linkurious.js"       % "1.5.1",
-      "org.webjars.bower" % "tinymce"             % "4.5.5", // 4.6.5 available
-      "org.webjars.bower" % "datatables"          % "1.10.13", // 1.10.15 available
+      "org.webjars.bower" % "tinymce"             % "4.6.5",
+      "org.webjars.bower" % "datatables"          % "1.10.15",
       "org.webjars"       % "highcharts"          % "5.0.6", // 5.0.14 available
       "org.webjars.bower" % "velocity"            % "1.5.0",
       "org.webjars"       % "font-awesome"        % "4.7.0",
