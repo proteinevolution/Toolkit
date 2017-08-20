@@ -26,12 +26,13 @@ import play.api.routing.JavaScriptReverseRouter
 import play.api.{ Configuration, Logger }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONDocument
+import org.webjars.play.WebJarsUtil
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ Await, Future }
 
 @Singleton
-final class Application @Inject()(webJarAssets: WebJarAssets,
+final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   messagesApi: MessagesApi,
                                   @Named("clusterMonitor") clusterMonitor: ActorRef,
                                   webSocketActorFactory: WebSocketActor.Factory,
@@ -167,7 +168,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
 
     userSessions.getUser.map { user =>
       Logger.info(user.toString)
-      Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message))
+      Ok(views.html.main(webJarsUtil, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message))
         .withSession(userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
     }
   }
