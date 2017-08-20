@@ -25,8 +25,9 @@ final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: Ru
     extends ElasticDsl
     with TELConstants {
 
-  private val noHash       = Set("mainID", "jobID")
-  private val client       = ElasticClient.transport(ElasticsearchClientUri(ConfigFactory.load().getString(s"elastic4s.hostname"), 9300))
+  private val noHash = Set("mainID", "jobID")
+  private val client =
+    ElasticClient.transport(ElasticsearchClientUri(ConfigFactory.load().getString(s"elastic4s.hostname"), 9300))
   private val Index        = ConfigFactory.load().getString(s"elastic4s.indexAndTypes.jobs.index")
   private val jobIndex     = Index / "jobs"
   private val jobHashIndex = Index / "jobhashes"

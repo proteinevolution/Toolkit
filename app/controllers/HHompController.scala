@@ -25,7 +25,8 @@ import scala.sys.process._
 class HHompController @Inject()(hhomp: HHomp,
                                 mongoStore: MongoStore,
                                 val reactiveMongoApi: ReactiveMongoApi,
-                                constants: Constants)(webJarAssets: WebJarAssets, cc: ControllerComponents)
+                                constants: Constants,
+                                cc: ControllerComponents)
     extends AbstractController(cc)
     with Common {
 

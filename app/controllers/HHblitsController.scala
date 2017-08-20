@@ -14,13 +14,14 @@ import models.database.results.{ General, HHBlits, HHBlitsHSP, HHBlitsResult }
 import modules.db.MongoStore
 import play.api.libs.json.{ JsArray, JsObject, Json }
 import play.modules.reactivemongo.ReactiveMongoApi
+import org.webjars.play.WebJarsUtil
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by drau on 01.03.17.
   */
-class HHblitsController @Inject()(webJarAssets: WebJarAssets,
+class HHblitsController @Inject()(webJarsUtil: WebJarsUtil,
                                   mongoStore: MongoStore,
                                   val reactiveMongoApi: ReactiveMongoApi,
                                   hhblits: HHBlits,
@@ -45,7 +46,7 @@ class HHblitsController @Inject()(webJarAssets: WebJarAssets,
     * @return 3D structure view
     */
   def show3DStructure(accession: String): Action[AnyContent] = Action { implicit request =>
-    Ok(views.html.jobs.resultpanels.structure(accession, webJarAssets))
+    Ok(views.html.jobs.resultpanels.structure(accession, webJarsUtil))
   }
 
   /**

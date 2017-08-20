@@ -26,6 +26,7 @@ import reactivemongo.bson.{ BSONDocument, BSONObjectID }
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
+import org.webjars.play.WebJarsUtil
 
 /**
   *
@@ -33,7 +34,7 @@ import scala.concurrent.duration._
   * Created by lukas on 2/27/16.
   */
 @Singleton
-final class Service @Inject()(webJarAssets: WebJarAssets,
+final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
                               messagesApi: MessagesApi,
                               val reactiveMongoApi: ReactiveMongoApi,
                               mongoStore: MongoStore,
@@ -57,7 +58,7 @@ final class Service @Inject()(webJarAssets: WebJarAssets,
 
       // Frontend tools
       case "reformat" =>
-        Ok(views.html.tools.forms.reformat(webJarAssets, "Utils"))
+        Ok(views.html.tools.forms.reformat("Utils"))
 
       case _ =>
         Ok(views.html.errors.pagenotfound()) //Bug: Mithril only accepts 200 to re-route
