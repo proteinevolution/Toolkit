@@ -87,20 +87,20 @@ lazy val root = (project in file("."))
       "org.webjars"       % "jquery-ui"           % "1.12.1",
       "org.webjars.npm"   % "foundation-sites"    % "6.4.1",
       "org.webjars.bower" % "fastclick"           % "1.0.6",
-      "org.webjars.npm"   % "mithril"             % "0.2.8",
-      "org.webjars.bower" % "d3"                  % "4.4.1",
+      "org.webjars.npm"   % "mithril"             % "0.2.8", // 1.1.3 available
+      "org.webjars.bower" % "d3"                  % "4.9.1", // npm 4.10.0 available
       "org.webjars.bower" % "slick-carousel"      % "1.6.0",
-      "org.webjars.npm"   % "codemirror-minified" % "5.22.0",
-      "org.webjars"       % "dropzone"            % "4.3.0",
-      "org.webjars.bower" % "clipboard"           % "1.5.10",
+      "org.webjars.npm"   % "codemirror-minified" % "5.22.0", // 5.28 available
+      "org.webjars"       % "dropzone"            % "4.3.0", // 5.1.1 available
+      "org.webjars.bower" % "clipboard"           % "1.5.10", // 1.7.1 available
       "org.webjars"       % "linkurious.js"       % "1.5.1",
-      "org.webjars.bower" % "tinymce"             % "4.5.5",
-      "org.webjars.bower" % "datatables"          % "1.10.13",
-      "org.webjars"       % "highcharts"          % "5.0.6",
+      "org.webjars.bower" % "tinymce"             % "4.5.5", // 4.6.5 available
+      "org.webjars.bower" % "datatables"          % "1.10.13", // 1.10.15 available
+      "org.webjars"       % "highcharts"          % "5.0.6", // 5.0.14 available
       "org.webjars.bower" % "velocity"            % "1.5.0",
       "org.webjars"       % "font-awesome"        % "4.7.0",
       "org.webjars"       % "select2"             % "4.0.3",
-      "org.webjars"       % "tooltipster"         % "4.1.4-1",
+      "org.webjars"       % "tooltipster"         % "4.1.4-1", // npm 4.2.5 available
       "org.webjars"       % "momentjs"            % "2.18.1"
     )),
     pipelineStages := Seq(digest, gzip),
