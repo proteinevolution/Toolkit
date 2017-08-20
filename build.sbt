@@ -48,7 +48,6 @@ lazy val commonSettings = Seq(
   crossScalaVersions := Seq("2.11.8", "2.12.1"),
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
-  //pipelineStages := Seq(rjs, uglify, concat, digest, gzip),
   logLevel := Level.Warn,
   dependencyOverrides ++= Set("org.webjars" % "jquery" % "3.2.1", "com.typesafe.akka" %% "akka-actor" % akkaVersion)
 )
@@ -86,13 +85,11 @@ lazy val root = (project in file("."))
       "org.webjars.bower" % "jquery.lazyload"     % "1.9.7",
       "org.webjars"       % "jquery-ui"           % "1.12.1",
       "org.webjars.npm"   % "foundation-sites"    % "6.4.1",
-      "org.webjars.bower" % "fastclick"           % "1.0.6",
       "org.webjars.npm"   % "mithril"             % "0.2.8", // 1.1.3 available
       "org.webjars.bower" % "d3"                  % "4.9.1", // npm 4.10.0 available
       "org.webjars.bower" % "slick-carousel"      % "1.6.0",
       "org.webjars.npm"   % "codemirror-minified" % "5.28.0",
-      "org.webjars"       % "dropzone"            % "4.3.0", // 5.1.1 available
-      "org.webjars.bower" % "clipboard"           % "1.5.10", // 1.7.1 available
+      "org.webjars.bower" % "clipboard"           % "1.7.1",
       "org.webjars"       % "linkurious.js"       % "1.5.1",
       "org.webjars.bower" % "tinymce"             % "4.5.5", // 4.6.5 available
       "org.webjars.bower" % "datatables"          % "1.10.13", // 1.10.15 available
@@ -103,7 +100,7 @@ lazy val root = (project in file("."))
       "org.webjars"       % "tooltipster"         % "4.1.4-1", // npm 4.2.5 available
       "org.webjars"       % "momentjs"            % "2.18.1"
     )),
-    pipelineStages := Seq(digest, gzip),
+    pipelineStages := Seq(digest, gzip), // rjs, uglify, concat,
     compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
