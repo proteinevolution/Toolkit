@@ -89,15 +89,15 @@ lazy val root = (project in file("."))
       "org.webjars.bower" % "d3"                  % "4.9.1", // npm 4.10.0 available
       "org.webjars.bower" % "slick-carousel"      % "1.6.0",
       "org.webjars.npm"   % "codemirror-minified" % "5.28.0",
-      "org.webjars.bower" % "clipboard"           % "1.7.1",
+      "org.webjars.bower" % "clipboard"           % "1.7.1", // currently not in use
       "org.webjars"       % "linkurious.js"       % "1.5.1",
-      "org.webjars.bower" % "tinymce"             % "4.6.5",
+      "org.webjars.bower" % "tinymce"             % "4.6.5", // currently not in use
       "org.webjars.bower" % "datatables"          % "1.10.15",
-      "org.webjars"       % "highcharts"          % "5.0.6", // 5.0.14 available
+      "org.webjars"       % "highcharts"          % "5.0.14",
       "org.webjars.bower" % "velocity"            % "1.5.0",
       "org.webjars"       % "font-awesome"        % "4.7.0",
       "org.webjars"       % "select2"             % "4.0.3",
-      "org.webjars"       % "tooltipster"         % "4.1.4-1", // npm 4.2.5 available
+      "org.webjars.bower" % "tooltipster"         % "4.2.5",
       "org.webjars"       % "momentjs"            % "2.18.1"
     )),
     pipelineStages := Seq(digest, gzip), // rjs, uglify, concat,
