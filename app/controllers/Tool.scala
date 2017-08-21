@@ -19,7 +19,7 @@ import scala.concurrent.duration._
 
 @Singleton
 final class Tool @Inject()(messagesApi: MessagesApi,
-                           @NamedCache("userCache") implicit val userCache: CacheApi,
+                           @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                            mongoStore: MongoStore,
                            implicit val mat: Materializer,
                            implicit val locationProvider: LocationProvider,
@@ -28,7 +28,7 @@ final class Tool @Inject()(messagesApi: MessagesApi,
     extends AbstractController(cc)
     with I18nSupport {
 
-  implicit val timeout = Timeout(5.seconds)
+  implicit val timeout : Timeout = Timeout(5.seconds)
 
   // counts usage of frontend tools in order to keep track for our stats
 

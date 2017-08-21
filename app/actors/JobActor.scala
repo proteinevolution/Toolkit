@@ -23,7 +23,7 @@ import modules.tel.execution.{ ExecutionContext, RunningExecution, WrapperExecut
 import modules.tel.runscripts.Runscript.Evaluation
 import java.time.ZonedDateTime
 import play.api.Logger
-import play.api.cache.{ CacheApi, NamedCache }
+import play.api.cache.{ SyncCacheApi, NamedCache }
 import play.api.libs.mailer.MailerClient
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -93,8 +93,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                          wrapperExecutionFactory: WrapperExecutionFactory,
                          implicit val locationProvider: LocationProvider,
                          @Named("jobIDActor") jobIDActor: ActorRef,
-                         @NamedCache("userCache") implicit val userCache: CacheApi,
-                         @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi,
+                         @NamedCache("userCache") implicit val userCache: SyncCacheApi,
+                         @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
                          constants: Constants)
     extends Actor {
 

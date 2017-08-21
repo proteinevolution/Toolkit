@@ -26,7 +26,6 @@ lazy val commonDeps = Seq(
   "org.scalaz"             %% "scalaz-core"          % scalazVersion,
   "org.scalaz"             %% "scalaz-concurrent"    % scalazVersion,
   "com.chuusai"            %% "shapeless"            % "2.3.2",
-  "org.clapper"            %% "classutil"            % "1.1.2",
   "com.lihaoyi"            %% "fastparse"            % "0.4.2",
   "com.vmunier"            %% "scalajs-scripts"      % "1.1.1",
   "org.typelevel"          %% "cats"                 % "0.9.0",
