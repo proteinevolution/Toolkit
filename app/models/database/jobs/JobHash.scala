@@ -3,7 +3,7 @@ package models.database.jobs
 import models.search.JobDAO
 import modules.tel.env.Env
 import better.files._
-import org.joda.time.DateTime
+import java.time.{ Instant, ZoneId, ZonedDateTime }
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID }
 
 /**
@@ -21,7 +21,7 @@ case class JobHash(mainID: BSONObjectID,
                    dbMtime: Option[String],
                    toolName: String,
                    toolHash: String,
-                   dateCreated: Option[DateTime],
+                   dateCreated: Option[ZonedDateTime],
                    jobID: String) {
 
   override def toString: String = {
@@ -51,7 +51,9 @@ object JobHash {
       bson.getAs[String](DBMTIME),
       bson.getAs[String](TOOLNAME).getOrElse(""),
       bson.getAs[String](TOOLHASH).getOrElse("No matching hash value found"),
-      bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
+      bson
+        .getAs[BSONDateTime](DATECREATED)
+        .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
       bson.getAs[String](JOBID).getOrElse("")
     )
   }
@@ -65,7 +67,7 @@ object JobHash {
       DBMTIME       -> jobHash.dbMtime,
       TOOLNAME      -> jobHash.toolName,
       TOOLHASH      -> jobHash.toolHash,
-      DATECREATED   -> BSONDateTime(jobHash.dateCreated.fold(-1L)(_.getMillis)),
+      DATECREATED   -> BSONDateTime(jobHash.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
       JOBID         -> jobHash.jobID
     )
   }

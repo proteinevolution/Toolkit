@@ -37,7 +37,7 @@ object Common {
   private val uniprotNameReg = """(uniprot.*)""".r
   private val pfamNameReg    = """(Pfam.*)""".r
 
-  private val pdbBaseLink  = "http://www.rcsb.org/pdb/explore/explore.do?structureId="
+  private val pdbBaseLink = "http://www.rcsb.org/pdb/explore/explore.do?structureId="
 
   private val pdbeBaseLink = "http://www.ebi.ac.uk/pdbe/entry/pdb/"
   private val ncbiBaseLink =
