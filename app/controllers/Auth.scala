@@ -1,37 +1,38 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
-import actors.WebSocketActor.{ChangeSessionID, LogOut}
+import actors.WebSocketActor.{ ChangeSessionID, LogOut }
 import akka.actor.ActorRef
-import models.{Constants, UserSessions}
+import models.{ Constants, UserSessions }
 import models.auth._
-import models.database.users.{User, UserConfig, UserToken}
+import models.database.users.{ User, UserConfig, UserToken }
 import models.job.JobActorAccess
-import models.mailing.{ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail}
+import models.mailing.{ ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail }
 import models.tools.ToolFactory
 import modules.LocationProvider
 import modules.db.MongoStore
 import org.joda.time.DateTime
 import play.Logger
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc._
 import play.api.libs.mailer._
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.bson._
+import org.webjars.play.WebJarsUtil
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 
 /**
   * Controller for Authentication interactions
   * Created by astephens on 03.04.16.
   */
 @Singleton
-final class Auth @Inject()(webJarAssets: WebJarAssets,
-                           val messagesApi: MessagesApi,
+final class Auth @Inject()(webJarsUtil: WebJarsUtil,
+                           messagesApi: MessagesApi,
                            jobActorAccess: JobActorAccess,
                            mongoStore: MongoStore,
                            val reactiveMongoApi: ReactiveMongoApi,
@@ -41,8 +42,9 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                            implicit val locationProvider: LocationProvider,
                            @NamedCache("userCache") implicit val userCache: CacheApi,
                            @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi, // Mailing Controller
-                           constants: Constants)
-    extends Controller
+                           constants: Constants,
+                           cc: ControllerComponents)
+    extends AbstractController(cc)
     with I18nSupport
     with JSONTemplate
     with Common
@@ -536,14 +538,14 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                       .map {
                         case Some(modifiedUser) =>
                           Ok(
-                            views.html.main(webJarAssets,
+                            views.html.main(webJarsUtil,
                                             toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                             "Account verification was successful. Please log in.")
                           )
                         case None => // Could not save the modified user to the DB
                           Ok(
                             views.html.main(
-                              webJarAssets,
+                              webJarsUtil,
                               toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                               "Verification was not successful due to a database error. Please try again later."
                             )
@@ -579,7 +581,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                                   // User modified properly
                                   Ok(
                                     views.html.main(
-                                      webJarAssets,
+                                      webJarsUtil,
                                       toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                       "Password change verification was successful. Please log in with Your new password."
                                     )
@@ -587,7 +589,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                                 case None => // Could not save the modified user to the DB
                                   Ok(
                                     views.html.main(
-                                      webJarAssets,
+                                      webJarsUtil,
                                       toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                       "Verification was not successful due to a database error. Please try again later."
                                     )
@@ -598,7 +600,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                             Future.successful(
                               Ok(
                                 views.html
-                                  .main(webJarAssets,
+                                  .main(webJarsUtil,
                                         toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                         "The Password you had entered was insufficient, please create a new one.")
                               )
@@ -619,7 +621,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                     userSessions.modifyUserWithCache(selector, modifier).map {
                       case Some(changedUser) =>
                         Ok(
-                          views.html.main(webJarAssets,
+                          views.html.main(webJarsUtil,
                                           toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                           "",
                                           "passwordReset")
@@ -627,7 +629,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                       case None => // Could not save the modified user to the DB
                         Ok(
                           views.html.main(
-                            webJarAssets,
+                            webJarsUtil,
                             toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                             "Verification was not successful due to a database error. Please try again later."
                           )
@@ -636,7 +638,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                   case _ =>
                     Future.successful(
                       Ok(
-                        views.html.main(webJarAssets,
+                        views.html.main(webJarsUtil,
                                         toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                         "There was an error finding your token.")
                       )
@@ -647,7 +649,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                 // No Token in DB
                 Future.successful(
                   Ok(
-                    views.html.main(webJarAssets,
+                    views.html.main(webJarsUtil,
                                     toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                     "The token you used is not valid.")
                   )
@@ -656,7 +658,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
             case None =>
               Future.successful(
                 Ok(
-                  views.html.main(webJarAssets,
+                  views.html.main(webJarsUtil,
                                   toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                   "There was an error finding your token.")
                 )
@@ -665,7 +667,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
         case None =>
           Future.successful(
             Ok(
-              views.html.main(webJarAssets,
+              views.html.main(webJarsUtil,
                               toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                               "There was an error finding your account.")
             )

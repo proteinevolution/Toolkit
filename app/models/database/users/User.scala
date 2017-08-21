@@ -34,11 +34,11 @@ case class User(userID: BSONObjectID = BSONObjectID.generate(), // ID of the Use
     accountType match {
       case User.ADMINLEVEL     => true
       case User.MODERATORLEVEL => true
-      case _  => false
+      case _                   => false
     }
   }
 
-  def hasNotLoggedIn : Boolean = accountType == 3
+  def hasNotLoggedIn: Boolean = accountType == 3
 
   override def toString: String = {
     s"""userID: ${userID.stringify}
@@ -50,8 +50,8 @@ case class User(userID: BSONObjectID = BSONObjectID.generate(), // ID of the Use
        |nameLogin: ${getUserData.nameLogin}
        |watched jobIDs: ${jobs.mkString(",")}
        |Deletion on: ${dateDeletedOn match {
-      case Some(dateTime) => dateTime.toString()
-      case None           => "no deletion date set"
+         case Some(dateTime) => dateTime.toString()
+         case None           => "no deletion date set"
        }}""".stripMargin
   }
 }
@@ -80,13 +80,13 @@ object User {
   final val DATECREATED   = "dateCreated" //              account created on field
   final val DATEUPDATED   = "dateUpdated" //              account data changed on field
 
-  final val ADMINLEVEL                     : Int =  11
-  final val MODERATORLEVEL                 : Int =  10
-  final val BANNEDUSER                     : Int =   4
-  final val CLOSETODELETIONUSER            : Int =   3
-  final val REGISTEREDUSER                 : Int =   1
-  final val NORMALUSERAWAITINGREGISTRATION : Int =   0
-  final val NORMALUSER                     : Int = - 1
+  final val ADMINLEVEL: Int                     = 11
+  final val MODERATORLEVEL: Int                 = 10
+  final val BANNEDUSER: Int                     = 4
+  final val CLOSETODELETIONUSER: Int            = 3
+  final val REGISTEREDUSER: Int                 = 1
+  final val NORMALUSERAWAITINGREGISTRATION: Int = 0
+  final val NORMALUSER: Int                     = -1
 
   /**
     * Define how the User object is formatted when turned into a json object

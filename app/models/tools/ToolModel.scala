@@ -103,7 +103,7 @@ final class ToolFactory @Inject()(
     final val HHFILTER            = "hhfilter"
     final val PATSEARCH           = "patsearch"
     final val HHOMP               = "hhomp"
-    final val FORMATSEQ              = "formatseq"
+    final val FORMATSEQ           = "formatseq"
   }
 
   // Encompasses some shared views of the result pages
@@ -180,11 +180,14 @@ final class ToolFactory @Inject()(
         Resultviews.RESULTS -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
-            views.html.jobs.resultpanels.fileviewWithDownloadForward(jobID + ".out",
+            views.html.jobs.resultpanels.fileviewWithDownloadForward(
+              jobID + ".out",
               s"${constants.jobPath}$jobID/results/" + jobID + ".out",
               jobID,
               "FormatSeq",
-              this.values(Toolnames.FORMATSEQ)))
+              this.values(Toolnames.FORMATSEQ)
+            )
+          )
         }
       ),
       Toolnames.CLANS -> ListMap(
@@ -237,21 +240,24 @@ final class ToolFactory @Inject()(
           implicit val r = requestHeader
           mongoStore.getResult(jobID).map {
             case Some(jsvalue) =>
-              views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
-                                                     aln.parseAlignment((jsvalue \ "querytemplate").as[JsArray]),
-                                                     "querytemplate",
-                                                     this.values(Toolnames.HHBLITS))
+              views.html.jobs.resultpanels.alignmentQueryMSA(
+                jobID,
+                aln.parseAlignment((jsvalue \ "querytemplate").as[JsArray]),
+                "querytemplate",
+                this.values(Toolnames.HHBLITS)
+              )
           }
         },
         "Query Alignment" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-            mongoStore.getResult(jobID).map {
-              case Some(jsvalue) =>
-              views.html.jobs.resultpanels.alignmentQueryMSA(jobID, aln.parseAlignment((jsvalue \ "reduced").as[JsArray]),
-                "reduced",
-                this.values(Toolnames.HHBLITS))
-    }
-  }
+          mongoStore.getResult(jobID).map {
+            case Some(jsvalue) =>
+              views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
+                                                             aln.parseAlignment((jsvalue \ "reduced").as[JsArray]),
+                                                             "reduced",
+                                                             this.values(Toolnames.HHBLITS))
+          }
+        }
       ),
       Toolnames.MARCOIL -> ListMap(
         "CC-Prob" -> { (jobID, requestHeader) =>
@@ -297,7 +303,8 @@ final class ToolFactory @Inject()(
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".numerical",
-              "PCOILS_PROBLIST"))
+                                                  "PCOILS_PROBLIST")
+          )
         }
       ),
       Toolnames.REPPER -> ListMap(
@@ -458,8 +465,9 @@ final class ToolFactory @Inject()(
         },
         Resultviews.SUMMARY -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          Future.successful(views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/results.out",
-            "HHPRED_MANUAL"))
+          Future.successful(
+            views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/results.out", "HHPRED_MANUAL")
+          )
         }
       ),
       Toolnames.HHREPID -> ListMap(
@@ -478,14 +486,14 @@ final class ToolFactory @Inject()(
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".results_color",
-              "ALI2D_COLOR")
+                                                  "ALI2D_COLOR")
           )
         },
         "Results With Confidence" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".results_colorC",
-              "ALI2D_COLOR_CONF")
+                                                  "ALI2D_COLOR_CONF")
           )
         },
         "Text output" -> { (jobID, requestHeader) =>
@@ -690,10 +698,7 @@ final class ToolFactory @Inject()(
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels
-              .tree(jobID + ".clu.tre",
-                    s"${constants.jobPath}$jobID/results/" + jobID + ".clu.tre",
-                    jobID,
-                    "ANCESCON")
+              .tree(jobID + ".clu.tre", s"${constants.jobPath}$jobID/results/" + jobID + ".clu.tre", jobID, "ANCESCON")
           )
         },
         Resultviews.DATA -> { (jobID, requestHeader) =>
@@ -755,8 +760,9 @@ final class ToolFactory @Inject()(
       Toolnames.RETSEQ -> ListMap(
         Resultviews.SUMMARY -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          Future.successful(views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/unretrievable",
-            "RETSEQ"))
+          Future.successful(
+            views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/unretrievable", "RETSEQ")
+          )
         },
         Resultviews.RESULTS -> { (jobID, requestHeader) =>
           implicit val r = requestHeader

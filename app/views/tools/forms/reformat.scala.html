@@ -1,5 +1,5 @@
 @import play.api.mvc.RequestHeader
-@(webJarAssets: WebJarAssets, sectionname : String)(implicit messages: Messages, request: RequestHeader)
+@(sectionname : String)(implicit messages: Messages, request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/reformat.css")" rel="stylesheet">
 <link href="@routes.Assets.versioned("styles/reformat-common.css")" rel="stylesheet">
 <link href="@routes.Assets.versioned("styles/reformat-jobview.css")" rel="stylesheet">
@@ -35,15 +35,13 @@
 
                             <ul class="show-for-medium menu horizontal nested" style="font-size: 12px;" id="reformatTopbar">
                                 <li><a download="reformat_download.txt" class="download" onclick="downloadResult()">Download</a></li>
-                                <!--<li><a id="dropzonetoggle">Upload</a></li> -->
                                 <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
                             </ul>
 
 
 
-                <div class="large-6 large-centered columns" id="dropzonewrapper" style="display: none;">
+                <div class="large-6 large-centered columns" style="display: none;">
                     <input type="file" id="files" name="file" />
-                        <!--<div id="drop_zone" type="file" class="dropzone" name="file" style="margin-top: 10px; text-align: center; line-height: 150px; vertical-align: middle;">Drop files here</div>-->
                     <output id="list"></output>
 
 
@@ -120,7 +118,6 @@
                     <div class="large-12 columns" style="padding-top: 9px;">
                         <div id="outputMirror" style="width: 99%; border: 1px solid lightgray ;"></div>
                     </div>
-
 
 
                 </div>
@@ -354,21 +351,6 @@
             if (myCodeMirror2.getValue())
                 $('a.download').attr('href', 'data:application/octet-stream;content-disposition:attachment;filename=file.txt;charset=utf-8,' + encodeURIComponent(myCodeMirror2.getValue()));
         }
-
-
-
-        // Dropzone Toggle
-
-        $("#dropzonetoggle").on("click", function(){
-            if($("#dropzonewrapper").css("display") == "none")
-            {
-                $("#dropzonewrapper").show();
-            } else {
-                $("#dropzonewrapper").hide();
-            }
-
-            return false;
-        });
 
         /* Paste left */
 

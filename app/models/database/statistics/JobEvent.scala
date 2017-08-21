@@ -1,14 +1,14 @@
 package models.database.statistics
 
 import models.database.jobs.{ Error, JobState }
-import org.joda.time.DateTime
+import java.time.{ Instant, ZoneId, ZonedDateTime }
 import play.api.libs.json._
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter }
 
 /**
   * Created by astephens on 19.02.17.
   */
-case class JobEvent(jobState: JobState, timestamp: Option[DateTime], runtime: Long = 0L)
+case class JobEvent(jobState: JobState, timestamp: Option[ZonedDateTime], runtime: Long = 0L)
 
 object JobEvent {
   val JOBSTATE  = "jobState"
@@ -20,7 +20,7 @@ object JobEvent {
       case obj: JsObject =>
         try {
           val jobState  = (obj \ JOBSTATE).asOpt[JobState].getOrElse(Error)
-          val timestamp = (obj \ TIMESTAMP).asOpt[DateTime]
+          val timestamp = (obj \ TIMESTAMP).asOpt[ZonedDateTime]
           val runtime   = (obj \ RUNTIME).asOpt[Long].getOrElse(0L)
           JsSuccess(JobEvent(jobState, timestamp, runtime))
         } catch {
@@ -42,7 +42,9 @@ object JobEvent {
     def read(bson: BSONDocument): JobEvent = {
       JobEvent(
         bson.getAs[JobState](JOBSTATE).getOrElse(Error),
-        bson.getAs[BSONDateTime](TIMESTAMP).map(dt => new DateTime(dt.value)),
+        bson
+          .getAs[BSONDateTime](TIMESTAMP)
+          .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
         bson.getAs[Long](RUNTIME).getOrElse(0L)
       )
     }
@@ -51,7 +53,7 @@ object JobEvent {
   implicit object Writer extends BSONDocumentWriter[JobEvent] {
     def write(jobEvent: JobEvent): BSONDocument = BSONDocument(
       JOBSTATE  -> jobEvent.jobState,
-      TIMESTAMP -> BSONDateTime(jobEvent.timestamp.fold(-1L)(_.getMillis)),
+      TIMESTAMP -> BSONDateTime(jobEvent.timestamp.fold(-1L)(_.toInstant.toEpochMilli)),
       RUNTIME   -> jobEvent.runtime
     )
   }

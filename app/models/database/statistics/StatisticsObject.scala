@@ -1,22 +1,25 @@
 package models.database.statistics
 
-import org.joda.time.{DateTime, Months, DateTimeZone}
-import org.joda.time.format.DateTimeFormat
+import java.time.{ Instant, ZoneId, ZonedDateTime }
+import java.time.temporal.ChronoUnit
+import java.time.format.DateTimeFormatter
+
 import play.api.libs.json._
 import reactivemongo.bson._
 
 /**
   * Created by astephens on 14.07.17.
   */
-case class StatisticsObject(statisticsID   : BSONObjectID        = BSONObjectID.generate(),
-                            userStatistics : UserStatistic       = UserStatistic(),
-                            toolStatistics : List[ToolStatistic] = List.empty[ToolStatistic],
-                            datePushed     : List[DateTime]      = List.empty[DateTime]) {
+case class StatisticsObject(statisticsID: BSONObjectID = BSONObjectID.generate(),
+                            userStatistics: UserStatistic = UserStatistic(),
+                            toolStatistics: List[ToolStatistic] = List.empty[ToolStatistic],
+                            datePushed: List[ZonedDateTime] = List.empty[ZonedDateTime]) {
+
   /**
     * Returns the tool Statistic elements as a map
     * @return
     */
-  def getToolStatisticMap : Map[String, ToolStatistic] = {
+  def getToolStatisticMap: Map[String, ToolStatistic] = {
     toolStatistics.map(toolStatistic => (toolStatistic.toolName, toolStatistic)).toMap
   }
 
@@ -25,16 +28,20 @@ case class StatisticsObject(statisticsID   : BSONObjectID        = BSONObjectID.
     * @param toolNames
     * @return
     */
-  def updateTools(toolNames : List[String]) : StatisticsObject = {
+  def updateTools(toolNames: List[String]): StatisticsObject = {
     this.copy(
-      toolStatistics = toolNames.map(toolName =>
-          this.toolStatistics.find(_.toolName == toolName).getOrElse(
-            ToolStatistic(toolName,
-                          List.fill[Int](this.datePushed.length)(0),
-                          List.fill[Int](this.datePushed.length)(0),
-                          List.fill[Int](this.datePushed.length)(0),
-                          List.fill[Int](this.datePushed.length)(0)
-            )
+      toolStatistics = toolNames.map(
+        toolName =>
+          this.toolStatistics
+            .find(_.toolName == toolName)
+            .getOrElse(
+              ToolStatistic(
+                toolName,
+                List.fill[Int](this.datePushed.length)(0),
+                List.fill[Int](this.datePushed.length)(0),
+                List.fill[Int](this.datePushed.length)(0),
+                List.fill[Int](this.datePushed.length)(0)
+              )
           )
       )
     )
@@ -45,12 +52,15 @@ case class StatisticsObject(statisticsID   : BSONObjectID        = BSONObjectID.
     * @param jobEventLogs
     * @return
     */
-  def addMonthsToTools(jobEventLogs : List[JobEventLog], beginDate : DateTime, endDate : DateTime) : StatisticsObject = {
+  def addMonthsToTools(jobEventLogs: List[JobEventLog],
+                       beginDate: ZonedDateTime,
+                       endDate: ZonedDateTime): StatisticsObject = {
     // Get the total amount of months in between the two given dates (expecting the first moment of the months here)
-    val totalMonths = Months.monthsBetween(beginDate.withTimeAtStartOfDay(), endDate.withTimeAtStartOfDay()).getMonths
+    val totalMonths: Int = beginDate.until(endDate, ChronoUnit.MONTHS).toInt
 
     // Get all months in between the two dates
-    val monthsInInteval = for (extraMonths <- 0 to totalMonths) yield beginDate.withZone(DateTimeZone.getDefault).plusMonths(extraMonths).dayOfMonth().withMinimumValue().withTimeAtStartOfDay()
+    val monthsInInterval = for (extraMonths <- 0 to totalMonths)
+      yield beginDate.plusMonths(extraMonths).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1)
 
     // Group the job events by tool
     val jobEventsGroupedByTool = jobEventLogs.groupBy(_.toolName)
@@ -59,37 +69,40 @@ case class StatisticsObject(statisticsID   : BSONObjectID        = BSONObjectID.
     this.copy(
       toolStatistics = {
         // map over all tool statistics
-        this.toolStatistics.map { toolStatistic =>
-          // check if there are any elements available for this tool
-          jobEventsGroupedByTool.get(toolStatistic.toolName) match {
-            case Some(jobEventLogsForMonths) =>
-              // since there are elements from this tool, group them by month
-              val jobEventsInMonths = jobEventLogsForMonths.groupBy(_.dateCreated.withZone(DateTimeZone.getDefault).dayOfMonth().withMinimumValue().withTimeAtStartOfDay())
-              // iterate over all months
-              val counts = monthsInInteval.map { startOfMonth =>
-                // check if the month is in the group
-                jobEventsInMonths.get(startOfMonth) match {
-                  case Some(jobEventLogsForMonth) =>
-                    // Found events within this month.
-                    (jobEventLogsForMonth.length,
-                    jobEventLogsForMonth.count(_.hasFailed),
-                    jobEventLogsForMonth.count(_.isDeleted),
-                    jobEventLogsForMonth.count(_.internalJob))
-                  case None =>
-                    // Found nothing for this month.
-                    (0,0,0,0)
-                }
-              }.toList
-              // add the months to the old tool statistics
-              toolStatistic.addMonths(counts.map(_._1),counts.map(_._2), counts.map(_._3), counts.map(_._4))
-            case None =>
-              // add the empty months to the old tool statistics
-              toolStatistic.addEmptyMonths(totalMonths)
-          }
+        this.toolStatistics.map {
+          toolStatistic =>
+            // check if there are any elements available for this tool
+            jobEventsGroupedByTool.get(toolStatistic.toolName) match {
+              case Some(jobEventLogsForMonths) =>
+                // since there are elements from this tool, group them by month
+                val jobEventsInMonths =
+                  jobEventLogsForMonths.groupBy(_.dateCreated.truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1))
+                // iterate over all months
+                val counts = monthsInInterval.map {
+                  startOfMonth =>
+                    // check if the month is in the group
+                    jobEventsInMonths.get(startOfMonth) match {
+                      case Some(jobEventLogsForMonth) =>
+                        // Found events within this month.
+                        (jobEventLogsForMonth.length,
+                         jobEventLogsForMonth.count(_.hasFailed),
+                         jobEventLogsForMonth.count(_.isDeleted),
+                         jobEventLogsForMonth.count(_.internalJob))
+                      case None =>
+                        // Found nothing for this month.
+                        (0, 0, 0, 0)
+                    }
+                }.toList
+                // add the months to the old tool statistics
+                toolStatistic.addMonths(counts.map(_._1), counts.map(_._2), counts.map(_._3), counts.map(_._4))
+              case None =>
+                // add the empty months to the old tool statistics
+                toolStatistic.addEmptyMonths(totalMonths)
+            }
         }
       },
       // add the months which have been added to the list
-      datePushed = this.datePushed ::: monthsInInteval.toList
+      datePushed = this.datePushed ::: monthsInInterval.toList
     )
   }
 
@@ -97,10 +110,10 @@ case class StatisticsObject(statisticsID   : BSONObjectID        = BSONObjectID.
     * Returns the date when the last push happened
     * @return
     */
-  def lastPushed : DateTime = {
+  def lastPushed: ZonedDateTime = {
     datePushed.headOption match {
-      case Some(_) => datePushed.max[DateTime](Ordering.fromLessThan(_ isBefore _)).withTimeAtStartOfDay()
-      case None    => DateTime.parse("2017-02-01T00:00:00.000+02:00")
+      case Some(_) => datePushed.max[ZonedDateTime](Ordering.fromLessThan(_ isBefore _)).truncatedTo(ChronoUnit.DAYS)
+      case None    => ZonedDateTime.parse("2017-02-01T00:00:00.000+02:00")
     }
   }
 }
@@ -127,7 +140,10 @@ object StatisticsObject {
         statisticsID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         userStatistics = bson.getAs[UserStatistic](USERSTATISTICS).getOrElse(UserStatistic()),
         toolStatistics = bson.getAs[List[ToolStatistic]](TOOLSTATISTICS).getOrElse(List.empty),
-        datePushed = bson.getAs[List[BSONDateTime]](DATEPUSHED).getOrElse(List.empty).map(dt => new DateTime(dt.value))
+        datePushed = bson
+          .getAs[List[BSONDateTime]](DATEPUSHED)
+          .getOrElse(List.empty)
+          .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault()))
       )
     }
   }
@@ -137,8 +153,7 @@ object StatisticsObject {
       IDDB           -> statisticObject.statisticsID,
       USERSTATISTICS -> statisticObject.userStatistics,
       TOOLSTATISTICS -> statisticObject.toolStatistics,
-      DATEPUSHED     -> statisticObject.datePushed.map(a => BSONDateTime(a.getMillis))
+      DATEPUSHED     -> statisticObject.datePushed.map(a => BSONDateTime(a.toInstant.toEpochMilli))
     )
   }
 }
-
