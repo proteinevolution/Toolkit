@@ -41,10 +41,10 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
 
   // interval calling the user deletion method automatically
-  //private val Tick: Cancellable = {
-  // scheduler should use the system dispatcher
-  //context.system.scheduler.schedule(userDeletionDelay, userDeletionInterval, self, DeleteOldUsers)(context.system.dispatcher)
-  //}
+  private val Tick: Cancellable = {
+    // scheduler should use the system dispatcher
+    context.system.scheduler.schedule(userDeletionDelay, userDeletionInterval, self, DeleteOldUsers)(context.system.dispatcher)
+  }
 
   /**
     * Function removes old users and eMails registered users who may be deleted soon
@@ -162,7 +162,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
   }
 
   override def postStop(): Unit = {
-    //Tick.cancel()
+    Tick.cancel()
   }
 
   override def receive: Receive = {
