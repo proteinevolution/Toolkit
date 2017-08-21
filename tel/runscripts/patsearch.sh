@@ -1,4 +1,3 @@
-JOBID=%jobid.content
 SEQ_COUNT=$(wc -l < ../params/alignment)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 

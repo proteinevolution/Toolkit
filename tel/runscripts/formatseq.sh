@@ -1,11 +1,7 @@
-JOBID=%jobid.content
-
-
 cp %alignment.path ../results/${JOBID}.in
 
 SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.in | wc -l)
 CHAR_COUNT=$(wc -m < ../results/${JOBID}.in)
-FORMAT=$(head -1 ../results/${JOBID}.in | egrep "^CLUSTAL" | wc -l)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log

@@ -1,5 +1,6 @@
 package controllers
 
+import java.time.ZonedDateTime
 import javax.inject.{Inject, Singleton}
 
 import actors.WebSocketActor.{ChangeSessionID, LogOut}
@@ -12,15 +13,15 @@ import models.mailing.{ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMa
 import models.tools.ToolFactory
 import modules.LocationProvider
 import modules.db.MongoStore
-import org.joda.time.DateTime
 import play.Logger
 import play.api.cache._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc._
 import play.api.libs.mailer._
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.bson._
+import org.webjars.play.WebJarsUtil
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
@@ -30,8 +31,8 @@ import scala.concurrent.{Await, Future}
   * Created by astephens on 03.04.16.
   */
 @Singleton
-final class Auth @Inject()(webJarAssets: WebJarAssets,
-                           val messagesApi: MessagesApi,
+final class Auth @Inject()(webJarsUtil: WebJarsUtil,
+                           messagesApi: MessagesApi,
                            jobActorAccess: JobActorAccess,
                            mongoStore: MongoStore,
                            val reactiveMongoApi: ReactiveMongoApi,
@@ -41,8 +42,9 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                            implicit val locationProvider: LocationProvider,
                            @NamedCache("userCache") implicit val userCache: CacheApi,
                            @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi, // Mailing Controller
-                           constants: Constants)
-    extends Controller
+                           constants: Constants,
+                           cc: ControllerComponents)
+    extends AbstractController(cc)
     with I18nSupport
     with JSONTemplate
     with Common
@@ -149,11 +151,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                     val selector = BSONDocument(User.IDDB -> databaseUser.userID)
                     // Change the login time and give the new Session ID to the user.
                     // Additionally add the watched jobs to the users watchlist.
-                    val modifier = BSONDocument(
-                      "$set" ->
-                      BSONDocument(User.SESSIONID     -> databaseUser.sessionID.getOrElse(BSONObjectID.generate()),
-                                   User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis))
-                    )
+                    val modifier = userSessions.getUserModifier(databaseUser, forceSessionID = true)
                     // TODO this adds the non logged in user's jobs to the now logged in user's job list
                     //                            "$addToSet"        ->
                     //               BSONDocument(User.JOBS          ->
@@ -301,7 +299,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
               {
                 case Some(editedProfileUserData) =>
                   // create a modifier document to change the last login date in the Database
-                  val bsonCurrentTime = BSONDateTime(new DateTime().getMillis)
+                  val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
                   val selector        = BSONDocument(User.IDDB -> user.userID)
                   val modifier = BSONDocument(
                     "$set" ->
@@ -364,7 +362,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                   // Generate a new Token to wait for the confirmation eMail
                   val token = UserToken(tokenType = 2, passwordHash = Some(newPasswordHash))
                   // create a modifier document to change the last login date in the Database
-                  val bsonCurrentTime = BSONDateTime(new DateTime().getMillis)
+                  val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
                   // Push to the database using selector and modifier
                   val selector = BSONDocument(User.IDDB -> user.userID)
                   val modifier = BSONDocument("$set" ->
@@ -420,7 +418,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                   // Generate a new Token to wait for the confirmation eMail
                   val token = UserToken(tokenType = 3)
                   // create a modifier document to change the last login date in the Database
-                  val bsonCurrentTime = BSONDateTime(new DateTime().getMillis)
+                  val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
                   // Push to the database using selector and modifier
                   val selector = BSONDocument(User.IDDB -> user.userID)
                   val modifier = BSONDocument("$set" ->
@@ -463,7 +461,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
           user.userToken match {
             case Some(token) =>
               if (token.tokenType == 4 && token.userID.isDefined) {
-                val bsonCurrentTime = BSONDateTime(new DateTime().getMillis)
+                val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
                 // Push to the database using selector and modifier
                 val selector = BSONDocument(User.IDDB -> token.userID)
                 val modifier =
@@ -530,7 +528,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                         BSONDocument(
                           "$set" ->
                           BSONDocument(User.ACCOUNTTYPE -> 1,
-                                       User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis)),
+                                       User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)),
                           BSONDocument(
                             "$unset" ->
                             BSONDocument(User.USERTOKEN -> "")
@@ -540,14 +538,14 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                       .map {
                         case Some(modifiedUser) =>
                           Ok(
-                            views.html.main(webJarAssets,
+                            views.html.main(webJarsUtil,
                                             toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                             "Account verification was successful. Please log in.")
                           )
                         case None => // Could not save the modified user to the DB
                           Ok(
                             views.html.main(
-                              webJarAssets,
+                              webJarsUtil,
                               toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                               "Verification was not successful due to a database error. Please try again later."
                             )
@@ -564,7 +562,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                                 BSONDocument(
                                   "$set" ->
                                   BSONDocument(User.PASSWORD    -> newPassword,
-                                               User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis)),
+                                               User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)),
                                   "$unset" ->
                                   BSONDocument(User.SESSIONID -> "", User.CONNECTED -> "", User.USERTOKEN -> "")
                                 )
@@ -583,7 +581,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                                   // User modified properly
                                   Ok(
                                     views.html.main(
-                                      webJarAssets,
+                                      webJarsUtil,
                                       toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                       "Password change verification was successful. Please log in with Your new password."
                                     )
@@ -591,7 +589,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                                 case None => // Could not save the modified user to the DB
                                   Ok(
                                     views.html.main(
-                                      webJarAssets,
+                                      webJarsUtil,
                                       toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                       "Verification was not successful due to a database error. Please try again later."
                                     )
@@ -602,7 +600,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                             Future.successful(
                               Ok(
                                 views.html
-                                  .main(webJarAssets,
+                                  .main(webJarsUtil,
                                         toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                         "The Password you had entered was insufficient, please create a new one.")
                               )
@@ -617,13 +615,13 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                       UserToken(tokenType = 4, token = userToken.token, userID = Some(userToVerify.userID))
                     val selector = BSONDocument(User.IDDB -> user.userID)
                     val modifier = BSONDocument(
-                      "$set" -> BSONDocument(User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis),
+                      "$set" -> BSONDocument(User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli),
                                              User.USERTOKEN -> newToken)
                     )
                     userSessions.modifyUserWithCache(selector, modifier).map {
                       case Some(changedUser) =>
                         Ok(
-                          views.html.main(webJarAssets,
+                          views.html.main(webJarsUtil,
                                           toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                           "",
                                           "passwordReset")
@@ -631,7 +629,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                       case None => // Could not save the modified user to the DB
                         Ok(
                           views.html.main(
-                            webJarAssets,
+                            webJarsUtil,
                             toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                             "Verification was not successful due to a database error. Please try again later."
                           )
@@ -640,7 +638,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                   case _ =>
                     Future.successful(
                       Ok(
-                        views.html.main(webJarAssets,
+                        views.html.main(webJarsUtil,
                                         toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                         "There was an error finding your token.")
                       )
@@ -651,7 +649,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
                 // No Token in DB
                 Future.successful(
                   Ok(
-                    views.html.main(webJarAssets,
+                    views.html.main(webJarsUtil,
                                     toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                     "The token you used is not valid.")
                   )
@@ -660,7 +658,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
             case None =>
               Future.successful(
                 Ok(
-                  views.html.main(webJarAssets,
+                  views.html.main(webJarsUtil,
                                   toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                   "There was an error finding your token.")
                 )
@@ -669,7 +667,7 @@ final class Auth @Inject()(webJarAssets: WebJarAssets,
         case None =>
           Future.successful(
             Ok(
-              views.html.main(webJarAssets,
+              views.html.main(webJarsUtil,
                               toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                               "There was an error finding your account.")
             )

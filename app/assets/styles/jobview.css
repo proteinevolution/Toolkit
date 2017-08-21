@@ -24,8 +24,8 @@ body.is-reveal-open {
 }
 
 #alignmentViewerPanel textarea {
-    font-size: 0.7em;
-    font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 0.75em;
+    font-family: "Source Code Pro", "Liberation Mono", monospace;
     margin-bottom: 0.5em;
 }
 
@@ -241,7 +241,7 @@ hr {
 }
 .parameter #alignment, #alignment_two {
 
-    font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+    font-family: Consolas, "SFMono-Regular", "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
     margin: 0 0 0;
 }
 
