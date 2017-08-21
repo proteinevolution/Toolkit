@@ -1,20 +1,20 @@
 package modules.db
 
 import java.time.ZonedDateTime
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import models.database.CMS.FeaturedArticle
-import models.database.jobs.{DeletedJob, FrontendJob, Job, JobAnnotation}
-import models.database.statistics.{ClusterLoadEvent, JobEventLog, StatisticsObject, ToolStatistic}
-import models.database.users.{User, UserData}
+import models.database.jobs.{ DeletedJob, FrontendJob, Job, JobAnnotation }
+import models.database.statistics.{ ClusterLoadEvent, JobEventLog, StatisticsObject, ToolStatistic }
+import models.database.users.{ User, UserData }
 import play.api.Logger
 import play.api.libs.json.JsValue
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.{BSONDateTime, BSONDocument}
+import reactivemongo.api.commands.{ UpdateWriteResult, WriteResult }
+import reactivemongo.api.indexes.{ Index, IndexType }
+import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -169,7 +169,11 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
     jobCollection.flatMap(
       _.findAndUpdate(
         selector,
-        modifier.merge(BSONDocument("$set" -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)))),
+        modifier.merge(
+          BSONDocument(
+            "$set" -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli))
+          )
+        ),
         fetchNewObject = true
       ).map(_.result[Job])
     )

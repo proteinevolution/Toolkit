@@ -77,9 +77,11 @@ object JobClusterData {
         threads = bson.getAs[Int](THREADS),
         hardruntime = bson.getAs[String](HARDRUNTIME),
         dateStarted = bson
-          .getAs[BSONDateTime](DATESTARTED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+          .getAs[BSONDateTime](DATESTARTED)
+          .map(dt => ZonedDateTimeHelper.getZDT(dt)),
         dateFinished = bson
-          .getAs[BSONDateTime](DATESTARTED).map(dt => ZonedDateTimeHelper.getZDT(dt))
+          .getAs[BSONDateTime](DATESTARTED)
+          .map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
     }
   }

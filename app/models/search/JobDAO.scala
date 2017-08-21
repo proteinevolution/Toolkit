@@ -79,7 +79,7 @@ final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: Ru
                 dbName: Option[String],
                 dbMtime: Option[String],
                 toolname: String,
-                toolHash: String) : Future[RichSearchResponse] = {
+                toolHash: String): Future[RichSearchResponse] = {
     client.execute(
       search in jobHashIndex query {
         bool(
@@ -97,7 +97,7 @@ final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: Ru
   }
 
   // Searches for a matching hash in the Hash DB
-  def matchHash(jobHash: JobHash) : Future[RichSearchResponse] = {
+  def matchHash(jobHash: JobHash): Future[RichSearchResponse] = {
     client.execute(
       search in jobHashIndex query {
         bool(
@@ -115,7 +115,7 @@ final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: Ru
   }
 
   // Removes a Hash from ES
-  def deleteJob(mainID: String) : Future[BulkResult] = {
+  def deleteJob(mainID: String): Future[BulkResult] = {
     client.execute {
       bulk(
         delete id mainID from jobIndex,
@@ -125,7 +125,7 @@ final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: Ru
   }
 
   // Checks if a mainID exists
-  def existsMainID(mainID: String) : Future[RichSearchResponse] = {
+  def existsMainID(mainID: String): Future[RichSearchResponse] = {
     client.execute {
       search in jobIndex query {
         bool(
@@ -138,7 +138,7 @@ final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: Ru
   }
 
   // Checks if a jobID already exists
-  def existsJobID(jobID: String) : Future[RichSearchResponse] = {
+  def existsJobID(jobID: String): Future[RichSearchResponse] = {
     client.execute {
       search in jobIndex query {
         bool(
@@ -150,7 +150,7 @@ final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: Ru
     }
   }
 
-  def jobIDtermSuggester(queryString: String) : Future[RichSearchResponse] = { // this is a spelling correction mechanism, don't use this for autocompletion
+  def jobIDtermSuggester(queryString: String): Future[RichSearchResponse] = { // this is a spelling correction mechanism, don't use this for autocompletion
     client.execute {
       search in jobIndex suggestions {
         termSuggestion("jobID") field "jobID" text queryString mode SuggestMode.Always
@@ -170,7 +170,7 @@ final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: Ru
     }
   }
 
-  def jobIDcompletionSuggester(queryString: String) :  Future[RichSearchResponse] = {
+  def jobIDcompletionSuggester(queryString: String): Future[RichSearchResponse] = {
     val suggestionBuild = search in jobIndex suggestions {
       completionSuggestion("jobIDfield").field("jobID").text(queryString).size(10)
     }
@@ -180,8 +180,7 @@ final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: Ru
     }
   }
 
-
-  def jobsWithTool(toolName: String, userID: BSONObjectID) : Future[RichSearchResponse] = {
+  def jobsWithTool(toolName: String, userID: BSONObjectID): Future[RichSearchResponse] = {
     val queryBuild = search in jobIndex query {
       bool(
         should(
