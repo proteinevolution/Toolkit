@@ -1,12 +1,12 @@
 package modules.db
 
+import java.time.ZonedDateTime
 import javax.inject.{Inject, Singleton}
 
 import models.database.CMS.FeaturedArticle
 import models.database.jobs.{DeletedJob, FrontendJob, Job, JobAnnotation}
 import models.database.statistics.{ClusterLoadEvent, JobEventLog, StatisticsObject, ToolStatistic}
 import models.database.users.{User, UserData}
-import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.json.JsValue
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
@@ -169,7 +169,7 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
     jobCollection.flatMap(
       _.findAndUpdate(
         selector,
-        modifier.merge(BSONDocument("$set" -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(DateTime.now().getMillis)))),
+        modifier.merge(BSONDocument("$set" -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)))),
         fetchNewObject = true
       ).map(_.result[Job])
     )
@@ -206,20 +206,15 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[JobEventLog]]()))
   }
 
-
-
-
   /**
     * Statistics
     */
   // Deletion Statistics DB access
   def deletedJobsCollection: Future[BSONCollection] =
-  reactiveMongoApi.database.map(_.collection[BSONCollection]("deleted"))
+    reactiveMongoApi.database.map(_.collection[BSONCollection]("deleted"))
 
   def addDeletedJob(deletedJob: DeletedJob): Future[WriteResult] =
     deletedJobsCollection.flatMap(_.insert(deletedJob))
-
-
 
   // Statistics DB access
   /**
@@ -259,27 +254,26 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
   def statisticsCol: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection[BSONCollection]("statistics"))
 
-  def getStats : Future[StatisticsObject] = {
+  def getStats: Future[StatisticsObject] = {
     statisticsCol.map(_.find(BSONDocument())).flatMap(_.one[StatisticsObject]).map(_.getOrElse(StatisticsObject()))
   }
 
-  def updateStats(statisticsObject : StatisticsObject) : Future[Option[StatisticsObject]] = {
+  def updateStats(statisticsObject: StatisticsObject): Future[Option[StatisticsObject]] = {
     statisticsCol.flatMap(
       _.findAndUpdate(selector = BSONDocument(StatisticsObject.IDDB -> statisticsObject.statisticsID),
-                      update   = statisticsObject,
-                      upsert   = true,
+                      update = statisticsObject,
+                      upsert = true,
                       fetchNewObject = true).map(_.result[StatisticsObject])
     )
   }
 
-  def modifyStats(statisticsObject: StatisticsObject, modifier : BSONDocument): Future[Option[StatisticsObject]] =  {
+  def modifyStats(statisticsObject: StatisticsObject, modifier: BSONDocument): Future[Option[StatisticsObject]] = {
     statisticsCol.flatMap(
       _.findAndUpdate(selector = BSONDocument(StatisticsObject.IDDB -> statisticsObject.statisticsID),
-                      update   = modifier,
+                      update = modifier,
                       fetchNewObject = true).map(_.result[StatisticsObject])
     )
   }
-
 
   // Cluster load statistics
   def loadStatisticsCollection: Future[BSONCollection] =

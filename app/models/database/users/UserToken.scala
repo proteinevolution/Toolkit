@@ -1,8 +1,10 @@
 package models.database.users
 
+import java.time.ZonedDateTime
+
 import modules.common.RandomString
-import org.joda.time.DateTime
 import reactivemongo.bson._
+import util.ZonedDateTimeHelper
 
 /**
   * Created by astephens on 22.11.16.
@@ -12,7 +14,7 @@ case class UserToken(tokenType: Int,
                      passwordHash: Option[String] = None,
                      eMail: Option[String] = None,
                      userID: Option[BSONObjectID] = None,
-                     changeDate: Option[DateTime] = Some(DateTime.now()))
+                     changeDate: Option[ZonedDateTime] = Some(ZonedDateTime.now))
 
 object UserToken {
   lazy val TYPE            = "type"
@@ -33,7 +35,7 @@ object UserToken {
         passwordHash = doc.getAs[String](NEWPASSWORDHASH),
         eMail = doc.getAs[String](NEWEMAIL),
         userID = doc.getAs[BSONObjectID](USERID),
-        changeDate = doc.getAs[BSONDateTime](CHANGEDATE).map(dt => new DateTime(dt.value))
+        changeDate = doc.getAs[BSONDateTime](CHANGEDATE).map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
   }
 
@@ -48,7 +50,7 @@ object UserToken {
         NEWPASSWORDHASH -> userToken.passwordHash,
         NEWEMAIL        -> userToken.eMail,
         USERID          -> userToken.userID,
-        CHANGEDATE      -> BSONDateTime(userToken.changeDate.fold(-1L)(_.getMillis))
+        CHANGEDATE      -> BSONDateTime(userToken.changeDate.fold(-1L)(_.toInstant.toEpochMilli))
       )
   }
 }

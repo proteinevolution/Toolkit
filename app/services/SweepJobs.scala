@@ -9,7 +9,7 @@ import models.database.users.User
 import models.job.JobActorAccess
 import models.search.JobDAO
 import modules.db.MongoStore
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
 import play.api.Logger
 import play.api.inject.ApplicationLifecycle
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -83,7 +83,7 @@ class SweepJobsImpl @Inject()(appLifecycle: ApplicationLifecycle,
       .findJobs(
         BSONDocument(
           Job.DATECREATED -> BSONDocument(
-            "$lt" -> BSONDateTime(new DateTime().minusDays(constants.deletionThreshold).getMillis)
+            "$lt" -> BSONDateTime(ZonedDateTime.now.minusDays(constants.deletionThreshold).toInstant.toEpochMilli)
           )
         )
       )
@@ -93,15 +93,17 @@ class SweepJobsImpl @Inject()(appLifecycle: ApplicationLifecycle,
             case Some(id) =>
               mongoStore.findUser(BSONDocument(User.IDDB -> BSONDocument("$eq" -> id))).map {
                 case Some(user) =>
-                  val storageTime = new DateTime().minusDays(if (user.accountType == -1) {
+                  val storageTime = ZonedDateTime.now.minusDays(if (user.accountType == -1) {
                     constants.deletionThreshold
                   } else constants.deletionThresholdRegistered)
                   mongoStore
                     .findJob(
                       BSONDocument(
                         "$and" -> List(
-                          BSONDocument(Job.JOBID       -> job.jobID),
-                          BSONDocument(Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(storageTime.getMillis)))
+                          BSONDocument(Job.JOBID -> job.jobID),
+                          BSONDocument(
+                            Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(storageTime.toInstant.toEpochMilli))
+                          )
                         )
                       )
                     )
@@ -126,7 +128,6 @@ class SweepJobsImpl @Inject()(appLifecycle: ApplicationLifecycle,
               this.deleteJobPermanently(job)
               this.writeJob(job.jobID)
               jobDao.deleteJob(job.mainID.stringify)
-
           }
         }
       }
@@ -164,8 +165,9 @@ class SweepJobsImpl @Inject()(appLifecycle: ApplicationLifecycle,
     * @param jobID
     */
   def writeJob(jobID: String): Unit = {
-    constants.deletionLogPath.toFile.appendLine(jobID + "\t" + DateTime.now().toString())
-    mongoStore.addDeletedJob(DeletedJob(jobID, DateTime.now))
+    constants.deletionLogPath.toFile.appendLine(jobID + "\t" + ZonedDateTime.now.toString())
+    mongoStore.addDeletedJob(DeletedJob(jobID, ZonedDateTime.now))
+
   }
 
   // TODO: is not only called on startup but also called on application stop
