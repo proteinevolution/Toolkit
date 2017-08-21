@@ -1,8 +1,10 @@
 package controllers
 
+import javax.inject.Inject
+
 import play.api.mvc._
 
-class UptimeController extends Controller {
+class UptimeController @Inject()(cc : ControllerComponents) extends AbstractController(cc) {
 
   val startTime : Long = System.currentTimeMillis()
 
