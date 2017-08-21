@@ -1,13 +1,13 @@
 package actors
 
-import javax.inject.{Inject, Named}
+import javax.inject.{ Inject, Named }
 
 import actors.JobActor._
 import akka.actor._
 import akka.event.LoggingReceive
-import models.{Constants, UserSessions}
+import models.{ Constants, UserSessions }
 import models.database.jobs._
-import models.database.statistics.{JobEvent, JobEventLog}
+import models.database.statistics.{ JobEvent, JobEventLog }
 import models.database.users.User
 import models.mailing.JobFinishedMail
 import models.search.JobDAO
@@ -19,19 +19,17 @@ import modules.LocationProvider
 import modules.db.MongoStore
 import modules.tel.env.Env
 import modules.tel.execution.ExecutionContext.FileAlreadyExists
-import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
+import modules.tel.execution.{ ExecutionContext, RunningExecution, WrapperExecutionFactory }
 import modules.tel.runscripts.Runscript.Evaluation
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
 import play.api.Logger
-import play.api.cache.{CacheApi, NamedCache}
+import play.api.cache.{ CacheApi, NamedCache }
 import play.api.libs.mailer.MailerClient
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
-
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json._
-
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.util.{ Failure, Success }
 import better.files._
 import scala.concurrent.duration._
 
@@ -107,7 +105,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
   // long polling stuff
 
-  private val fetchLatestInterval                 = 1.seconds
+  private val fetchLatestInterval = 1.seconds
   private val Tick: Cancellable = {
     // scheduler should use the system dispatcher
     context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, UpdateLog2)(context.system.dispatcher)
@@ -253,7 +251,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           BSONDocument(Job.IDDB -> job.mainID),
           BSONDocument(
             "$set" ->
-            BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.OwnerRequest, Some(DateTime.now()))),
+            BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.OwnerRequest, Some(ZonedDateTime.now))),
             "$unset" ->
             BSONDocument(Job.WATCHLIST -> "")
           )
@@ -290,7 +288,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           case None =>
             JobEventLog(mainID = job.mainID,
                         toolName = job.tool,
-                        events = List(JobEvent(job.status, Some(DateTime.now))))
+                        events = List(JobEvent(job.status, Some(ZonedDateTime.now))))
         }
         this.currentJobLogs = this.currentJobLogs.updated(job.jobID, jobLog)
         val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
@@ -354,7 +352,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                                       JobEventLog(mainID = job.mainID,
                                                   toolName = job.tool,
                                                   internalJob = isInternalJob,
-                                                  events = List(JobEvent(job.status, Some(DateTime.now)))))
+                                                  events = List(JobEvent(job.status, Some(ZonedDateTime.now)))))
 
         // Get new runscript instance from the runscript manager
         val runscript: Runscript = runscriptManager(job.tool).withEnvironment(env)
@@ -481,7 +479,11 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                   BSONDocument(Job.IPHASH -> hash),
                   BSONDocument(
                     Job.DATECREATED ->
-                    BSONDocument("$gt" -> BSONDateTime(new DateTime().minusMinutes(constants.maxJobsWithin).getMillis))
+                    BSONDocument(
+                      "$gt" -> BSONDateTime(
+                        ZonedDateTime.now.minusMinutes(constants.maxJobsWithin).toInstant.toEpochMilli
+                      )
+                    )
                   )
                 )
               )
@@ -492,17 +494,22 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                   BSONDocument(Job.IPHASH -> hash),
                   BSONDocument(
                     Job.DATECREATED ->
-                    BSONDocument("$gt" -> BSONDateTime(new DateTime().minusDays(constants.maxJobsWithinDay).getMillis))
+                    BSONDocument(
+                      "$gt" -> BSONDateTime(
+                        ZonedDateTime.now.minusDays(constants.maxJobsWithinDay).toInstant.toEpochMilli
+                      )
+                    )
                   )
                 )
               )
               mongoStore.countJobs(selector).map { count =>
                 mongoStore.countJobs(selectorDay).map { countDay =>
-                  println(BSONDateTime(new DateTime().minusMinutes(constants.maxJobsWithin).getMillis).toString)
+                  println(
+                    BSONDateTime(ZonedDateTime.now.minusMinutes(constants.maxJobsWithin).toInstant.toEpochMilli).toString
+                  )
                   Logger.info(
                     "IP " + job.IPHash + " has requested " + count + " jobs within the last " + constants.maxJobsWithin + " minute and " + countDay + " within the last 24 hours."
                   )
-
                   if (count <= constants.maxJobNum && countDay <= constants.maxJobNumDay) {
                     self ! StartJob(job.jobID)
                   } else {
@@ -707,18 +714,16 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         case None =>
       }
 
-
     // does longpolling
 
     case UpdateLog2 =>
-      currentJobs.foreach {
-        job =>
-          val foundWatchers =
-            job._2.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
-          job._2.status match {
-            case Running => foundWatchers.flatten.foreach(_ ! WatchLogFile(job._2))
-            case _ =>
-          }
+      currentJobs.foreach { job =>
+        val foundWatchers =
+          job._2.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
+        job._2.status match {
+          case Running => foundWatchers.flatten.foreach(_ ! WatchLogFile(job._2))
+          case _       =>
+        }
 
       }
   }

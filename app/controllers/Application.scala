@@ -1,38 +1,41 @@
 package controllers
 
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 
 import actors.ClusterMonitor.Multicast
 import actors.WebSocketActor
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
 import models.results.Common
 import models.search.JobDAO
 import models.sge.Cluster
 import models.tools.ToolFactory
-import models.{Constants, UserSessions}
+import models.{ Constants, UserSessions }
 import modules.LocationProvider
 import modules.common.HTTPRequest
 import modules.db.MongoStore
 import modules.tel.TEL
 import modules.tel.env.Env
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsValue, Json}
+import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.libs.json.{ JsValue, Json }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
-import play.api.{Configuration, Logger}
+import play.api.{ Configuration, Logger }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONDocument
+import org.webjars.play.WebJarsUtil
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
+
+import models.stats.Counter
 
 @Singleton
-final class Application @Inject()(webJarAssets: WebJarAssets,
-                                  val messagesApi: MessagesApi,
+final class Application @Inject()(webJarsUtil: WebJarsUtil,
+                                  messagesApi: MessagesApi,
                                   @Named("clusterMonitor") clusterMonitor: ActorRef,
                                   webSocketActorFactory: WebSocketActor.Factory,
                                   @NamedCache("userCache") implicit val userCache: CacheApi,
@@ -51,8 +54,9 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
                                   val search: Search,
                                   val settings: Settings,
                                   configuration: Configuration,
-                                  constants: Constants)
-    extends Controller
+                                  constants: Constants,
+                                  cc: ControllerComponents)
+    extends AbstractController(cc)
     with I18nSupport
     with Common {
 
@@ -80,6 +84,14 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
       userSessions
         .getUser(rh)
         .map { user =>
+          Counter.websocketsCount.get(user.sessionID.get.stringify) match {
+            case Some(x) => Counter.websocketsCount(user.sessionID.get.stringify) = x + 1
+            case None => Counter.websocketsCount += (user.sessionID.get.stringify -> 1)
+          }
+
+          println("Add new websocket to counter:")
+          Counter.websocketsCount.map(println)
+
           Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.sessionID.get, out))))
         }
         .recover {
@@ -166,7 +178,7 @@ final class Application @Inject()(webJarAssets: WebJarAssets,
 
     userSessions.getUser.map { user =>
       Logger.info(user.toString)
-      Ok(views.html.main(webJarAssets, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message))
+      Ok(views.html.main(webJarsUtil, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message))
         .withSession(userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
     }
   }

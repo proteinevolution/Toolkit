@@ -1,10 +1,11 @@
 package models.database.users
 
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
+import java.time.ZonedDateTime
+
 import org.mindrot.jbcrypt.BCrypt
-import play.api.libs.json.{ JsObject, Json, Writes }
+import play.api.libs.json.{JsObject, Json, Writes}
 import reactivemongo.bson._
+import util.ZonedDateTimeHelper
 
 case class User(userID: BSONObjectID = BSONObjectID.generate(), // ID of the User
                 sessionID: Option[BSONObjectID] = None, // Session ID
@@ -15,10 +16,10 @@ case class User(userID: BSONObjectID = BSONObjectID.generate(), // ID of the Use
                 userConfig: UserConfig = UserConfig(), // Configurable parts for the user
                 userToken: Option[UserToken] = None,
                 jobs: List[String] = List.empty, // List of Jobs the User has
-                dateDeletedOn: Option[DateTime] = None, // Date at which the account will be deleted on
-                dateLastLogin: Option[DateTime] = Some(DateTime.now), // Last seen on
-                dateCreated: Option[DateTime] = Some(DateTime.now), // Account creation date
-                dateUpdated: Option[DateTime] = Some(DateTime.now)) { // Account updated on
+                dateDeletedOn: Option[ZonedDateTime] = None, // Date at which the account will be deleted on
+                dateLastLogin: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Last seen on
+                dateCreated: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Account creation date
+                dateUpdated: Option[ZonedDateTime] = Some(ZonedDateTime.now)) { // Account updated on
 
   def checkPassword(plainPassword: String): Boolean = {
     BCrypt.checkpw(plainPassword, getUserData.password)
@@ -34,11 +35,11 @@ case class User(userID: BSONObjectID = BSONObjectID.generate(), // ID of the Use
     accountType match {
       case User.ADMINLEVEL     => true
       case User.MODERATORLEVEL => true
-      case _  => false
+      case _                   => false
     }
   }
 
-  def hasNotLoggedIn : Boolean = accountType == 3
+  def hasNotLoggedIn: Boolean = accountType == 3
 
   override def toString: String = {
     s"""userID: ${userID.stringify}
@@ -50,8 +51,8 @@ case class User(userID: BSONObjectID = BSONObjectID.generate(), // ID of the Use
        |nameLogin: ${getUserData.nameLogin}
        |watched jobIDs: ${jobs.mkString(",")}
        |Deletion on: ${dateDeletedOn match {
-      case Some(dateTime) => dateTime.toString()
-      case None           => "no deletion date set"
+         case Some(dateTime) => dateTime.toString()
+         case None           => "no deletion date set"
        }}""".stripMargin
   }
 }
@@ -80,19 +81,19 @@ object User {
   final val DATECREATED   = "dateCreated" //              account created on field
   final val DATEUPDATED   = "dateUpdated" //              account data changed on field
 
-  final val ADMINLEVEL                     : Int =  11
-  final val MODERATORLEVEL                 : Int =  10
-  final val BANNEDUSER                     : Int =   4
-  final val CLOSETODELETIONUSER            : Int =   3
-  final val REGISTEREDUSER                 : Int =   1
-  final val NORMALUSERAWAITINGREGISTRATION : Int =   0
-  final val NORMALUSER                     : Int = - 1
+  final val ADMINLEVEL: Int                     = 11
+  final val MODERATORLEVEL: Int                 = 10
+  final val BANNEDUSER: Int                     = 4
+  final val CLOSETODELETIONUSER: Int            = 3
+  final val REGISTEREDUSER: Int                 = 1
+  final val NORMALUSERAWAITINGREGISTRATION: Int = 0
+  final val NORMALUSER: Int                     = -1
 
   /**
     * Define how the User object is formatted when turned into a json object
     */
   implicit object UserWrites extends Writes[User] {
-    val dtf = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss")
+    val dtf = "dd.MM.yyyy HH:mm:ss"
     def writes(user: User): JsObject = Json.obj(
       ID                 -> user.userID.stringify,
       SESSIONID          -> user.sessionID.map(_.stringify),
@@ -104,9 +105,9 @@ object User {
       //USERCONFIG    -> user.userConfig,
       //USERTOKENS    -> user.userTokens,
       JOBS          -> user.jobs,
-      DATELASTLOGIN -> user.dateLastLogin.map(dt => dtf.print(dt)),
-      DATECREATED   -> user.dateCreated.map(dt => dtf.print(dt)),
-      DATEUPDATED   -> user.dateUpdated.map(dt => dtf.print(dt))
+      DATELASTLOGIN -> user.dateLastLogin.map(_.format(ZonedDateTimeHelper.dateTimeFormatter)),
+      DATECREATED   -> user.dateCreated.map(_.format(ZonedDateTimeHelper.dateTimeFormatter)),
+      DATEUPDATED   -> user.dateUpdated.map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
     )
   }
 
@@ -125,10 +126,10 @@ object User {
         userConfig = bson.getAs[UserConfig](USERCONFIG).getOrElse(UserConfig()),
         userToken = bson.getAs[UserToken](USERTOKEN),
         jobs = bson.getAs[List[String]](JOBS).getOrElse(List.empty),
-        dateDeletedOn = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => new DateTime(dt.value)),
-        dateLastLogin = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => new DateTime(dt.value)),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value))
+        dateDeletedOn = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateLastLogin = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
   }
 
@@ -144,10 +145,10 @@ object User {
         USERCONFIG    -> user.userConfig,
         USERTOKEN     -> user.userToken,
         JOBS          -> user.jobs,
-        DATEDELETEDON -> user.dateDeletedOn.map(dt => BSONDateTime(dt.getMillis)),
-        DATELASTLOGIN -> BSONDateTime(user.dateLastLogin.fold(-1L)(_.getMillis)),
-        DATECREATED   -> BSONDateTime(user.dateCreated.fold(-1L)(_.getMillis)),
-        DATEUPDATED   -> BSONDateTime(user.dateUpdated.fold(-1L)(_.getMillis))
+        DATEDELETEDON -> user.dateDeletedOn.map(dt => BSONDateTime(dt.toInstant.toEpochMilli)),
+        DATELASTLOGIN -> BSONDateTime(user.dateLastLogin.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATECREATED   -> BSONDateTime(user.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATEUPDATED   -> BSONDateTime(user.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli))
       )
   }
 
