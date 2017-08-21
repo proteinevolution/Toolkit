@@ -18,13 +18,11 @@ GET           /javascriptRoutes                       controllers.Application.ja
 # Dashboard for Admin
 
 POST          /settings/clustermode                   @controllers.Settings.setClusterMode(clusterMode : String)
-POST          /settings/memset                        @controllers.Settings.setMemoryAllocation(memory: Int, toolName: String)
-
 
 # integrated mithril route backend routes
 GET           /backend/index                          @controllers.Backend.index
 GET           /backend/statistics                     @controllers.Backend.statistics
-GET           /backend/pushMonthlyStatistics          @controllers.Backend.pushMonthlyStatistics
+GET           /backend/runusersweep                   @controllers.Backend.runUserSweep
 GET           /backend/cms                            @controllers.Backend.cms
 POST          /backend/cms                            @controllers.Backend.cms
 GET           /backend/users                          @controllers.Backend.users
@@ -41,9 +39,12 @@ GET           /files/:mainID/:filename                @controllers.Application.f
 
 
 
+# WebJars
+->            /webjars                                webjars.Routes
+
 # Assets
-GET           /webjars/*file                          controllers.WebJarAssets.at(file)
 GET           /assets/*file                           controllers.Assets.versioned(path="/public", file: Asset)
+
 
 
 # Route for direct get requests

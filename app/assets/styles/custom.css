@@ -308,23 +308,6 @@ textarea {
     height: 100%;
 }
 
-.dropzone {
-
-    border: dashed 1px darkblue;
-    background-color: #c6d6e5;
-    margin-top: 15px;
-    width: 40%;
-    max-height: 20%;
-    display: block;
-    box-shadow: 0 1px 6px 0 lightgray;
-    color: gray;
-
-}
-
-#dropzoneContainer {
-    padding-top: 25px;
-}
-
 #metauser {
     float: right;
 }
