@@ -89,6 +89,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
             case None => Counter.websocketsCount += (user.sessionID.get.stringify -> 1)
           }
 
+          println("Add new websocket to counter:")
           Counter.websocketsCount.map(println)
 
           Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.sessionID.get, out))))
