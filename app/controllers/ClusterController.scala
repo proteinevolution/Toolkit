@@ -6,7 +6,7 @@ import models.sge.Cluster
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.mvc._
 import sys.process._
 
 /**
@@ -15,8 +15,11 @@ import sys.process._
   * Created by snam on 19.03.17.
   */
 @Singleton
-final class ClusterController @Inject()(ws: WSClient, configuration: Configuration, cluster: Cluster)
-    extends Controller {
+final class ClusterController @Inject()(ws: WSClient,
+                                        configuration: Configuration,
+                                        cluster: Cluster,
+                                        cc: ControllerComponents)
+    extends AbstractController(cc) {
 
   def getLoad: Action[AnyContent] = Action { implicit request =>
     Ok(Json.toJson(("qstat" #| "wc -l").!!.toDouble / 32))

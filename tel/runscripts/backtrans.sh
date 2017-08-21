@@ -1,7 +1,5 @@
-JOBID=%jobid.content
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
-FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
 
 if [ ${CHAR_COUNT} -gt "10000" ] ; then
       echo "#Input may not contain more than 10000 characters." >> ../results/process.log

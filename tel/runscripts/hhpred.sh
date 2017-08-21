@@ -1,8 +1,5 @@
-JOBID=%jobid.content
-
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
-FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
 A3M_INPUT=$(head -1 ../params/alignment | egrep "^#A3M#" | wc -l)
 
 
@@ -151,6 +148,8 @@ if [ "%hhpred_align.content" = "true" ] ; then
             $(readlink -f ../results/${JOBID}.2.fas) \
             -d 160 -uc -l 32000
         else
+            #remove empty lines
+            sed -i '/^\s*$/d' ../params/alignment_two
             reformatValidator.pl fas fas \
             $(readlink -f %alignment_two.path) \
             $(readlink -f ../results/${JOBID}.2.fas) \
