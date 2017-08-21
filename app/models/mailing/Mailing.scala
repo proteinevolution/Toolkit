@@ -5,7 +5,7 @@ import java.time.ZonedDateTime
 import models.database.jobs._
 import models.database.users.User
 import modules.tel.TEL
-import play.api.libs.mailer.{Email, MailerClient}
+import play.api.libs.mailer.{ Email, MailerClient }
 import util.ZonedDateTimeHelper
 
 /**
@@ -222,7 +222,7 @@ case class OldAccountEmail(userParam: User, deletionDate: ZonedDateTime) extends
        |To keep our system running smoothly and to keep the data we collect from our users to a minimum,
        |we delete old user accounts.
        |This is why Your account will be deleted on ${user.dateLastLogin
-      .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
+         .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
          .getOrElse("[date not supplied]")}.
        |Just log into Your account to let us know that You are still interested in our services.
        |
@@ -241,7 +241,9 @@ case class OldAccountEmail(userParam: User, deletionDate: ZonedDateTime) extends
          |To keep our system running smoothly and to keep the data we collect from our users to a minimum,
          |we delete old user accounts.<br />
          |This is why Your account will be deleted on<br />
-         |${user.dateLastLogin.map(_.format(ZonedDateTimeHelper.dateTimeFormatter)).getOrElse("[date not supplied]")}.<br />
+         |${user.dateLastLogin
+           .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
+           .getOrElse("[date not supplied]")}.<br />
          |Just log into Your account to let us know that You are still interested in our services.<br /><br />
          |<a href="$origin">Your Toolkit Team</a>
      """.stripMargin

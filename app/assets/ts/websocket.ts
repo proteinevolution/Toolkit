@@ -1,8 +1,3 @@
-/*
- *  Handles the Connection to the WebSocket and its connection to ModelView elements like provided by
- *  Mithril.
- */
-
 let ws : WebSocket = null,
     connect      : Function,
     onClose   : Function,
@@ -13,8 +8,6 @@ let ws : WebSocket = null,
 let notifications = 0;
 let attempts = 1;
 declare var titlenotifier: any;
-let connectCount = 0;
-
 
 connect = function() : any {
         let wsRoute = jsRoutes.controllers.Application.ws;

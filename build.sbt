@@ -3,7 +3,6 @@ lazy val kamonVersion     = "0.6.6"
 lazy val elastic4sVersion = "2.4.0"
 lazy val scalazVersion    = "7.2.10"
 
-
 lazy val commonDeps = Seq(
   ws,
   filters,

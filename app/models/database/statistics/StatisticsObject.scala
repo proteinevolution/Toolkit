@@ -140,7 +140,10 @@ object StatisticsObject {
         statisticsID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         userStatistics = bson.getAs[UserStatistic](USERSTATISTICS).getOrElse(UserStatistic()),
         toolStatistics = bson.getAs[List[ToolStatistic]](TOOLSTATISTICS).getOrElse(List.empty),
-        datePushed = bson.getAs[List[BSONDateTime]](DATEPUSHED).getOrElse(List.empty[BSONDateTime]).map(dt => ZonedDateTimeHelper.getZDT(dt))
+        datePushed = bson
+          .getAs[List[BSONDateTime]](DATEPUSHED)
+          .getOrElse(List.empty[BSONDateTime])
+          .map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
     }
   }

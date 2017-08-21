@@ -2,10 +2,10 @@ package models.database.statistics
 
 import java.time.ZonedDateTime
 
-import models.database.jobs.{Error, JobState}
+import models.database.jobs.{ Error, JobState }
 import util.ZonedDateTimeHelper
 import play.api.libs.json._
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter }
 
 /**
   * Created by astephens on 19.02.17.
