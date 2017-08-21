@@ -1,10 +1,12 @@
 package models.database.jobs
 
+import java.time.ZonedDateTime
+
+import better.files._
 import models.search.JobDAO
 import modules.tel.env.Env
-import better.files._
-import java.time.{ Instant, ZoneId, ZonedDateTime }
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID }
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
+import util.ZonedDateTimeHelper
 
 /**
   *
@@ -52,8 +54,7 @@ object JobHash {
       bson.getAs[String](TOOLNAME).getOrElse(""),
       bson.getAs[String](TOOLHASH).getOrElse("No matching hash value found"),
       bson
-        .getAs[BSONDateTime](DATECREATED)
-        .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
+        .getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
       bson.getAs[String](JOBID).getOrElse("")
     )
   }
