@@ -10,7 +10,7 @@ import models.job.JobActorAccess
 import modules.LocationProvider
 import modules.db.MongoStore
 import play.api.Logger
-import play.api.cache.{ CacheApi, NamedCache }
+import play.api.cache.{ SyncCacheApi, NamedCache }
 import play.api.mvc._
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
@@ -26,7 +26,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 final class Jobs @Inject()(jobActorAccess: JobActorAccess,
                            userSessions: UserSessions,
-                           @NamedCache("userCache") implicit val userCache: CacheApi,
+                           @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                            implicit val locationProvider: LocationProvider,
                            mongoStore: MongoStore,
                            constants: Constants,

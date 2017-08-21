@@ -22,7 +22,7 @@ import scala.util.hashing.MurmurHash3
   */
 @Singleton
 class UserSessions @Inject()(mongoStore: MongoStore,
-                             @NamedCache("userCache") val userCache: CacheApi,
+                             @NamedCache("userCache") val userCache: SyncCacheApi,
                              locationProvider: LocationProvider) {
   private val SID      = "sid"
   private val USERNAME = "username"
