@@ -1,20 +1,16 @@
 package models.search
 
-import javax.inject.{ Inject, Named, Singleton }
+import javax.inject.{ Inject, Singleton }
 
 import com.sksamuel.elastic4s._
-import com.sksamuel.elastic4s.analyzers.{ StandardAnalyzer, WhitespaceAnalyzer }
-import com.sksamuel.elastic4s.ElasticDsl._
+import com.sksamuel.elastic4s.analyzers.StandardAnalyzer
 import com.typesafe.config.ConfigFactory
 import models.database.jobs.JobHash
 import models.tools.ToolFactory
 import modules.RunscriptPathProvider
 import modules.tel.TELConstants
 import modules.tools.FNV
-import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
-import org.elasticsearch.common.unit.Fuzziness
-import play.libs.Json
 import reactivemongo.bson.BSONObjectID
 
 import scala.util.hashing.MurmurHash3
@@ -184,13 +180,6 @@ final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: Ru
     }
   }
 
-  /*def fuzzySearchJobID(queryString: String) = { // similarity search with Levensthein edit distance
-    client.execute {
-      search in jobIndex query {
-        fuzzyQuery("jobID", queryString).fuzziness(Fuzziness.AUTO).prefixLength(4).maxExpansions(10)
-      }
-    }
-  } */
 
   def jobsWithTool(toolName: String, userID: BSONObjectID) : Future[RichSearchResponse] = {
     val queryBuild = search in jobIndex query {
