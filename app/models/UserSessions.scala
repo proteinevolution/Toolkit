@@ -1,16 +1,16 @@
 package models
 
-import javax.inject.{ Inject, Singleton }
+import java.time.ZonedDateTime
+import javax.inject.{Inject, Singleton}
 
-import models.database.users.{ SessionData, User }
+import models.database.users.{SessionData, User}
 import modules.LocationProvider
 import modules.common.HTTPRequest
 import modules.db.MongoStore
-import org.joda.time.DateTime
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{ mvc, Logger }
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import play.api.{Logger, mvc}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -37,7 +37,7 @@ class UserSessions @Inject()(mongoStore: MongoStore,
                       sessionDataOption: Option[SessionData] = None,
                       forceSessionID: Boolean = false): BSONDocument = {
     // Build the modifier - first the last login date
-    BSONDocument("$set" -> BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)))
+    BSONDocument("$set" -> BSONDocument(User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)))
       .merge(
         // In the case that the user has been emailed about their inactivity, reset that status to a regular user status
         if (user.accountType == User.CLOSETODELETIONUSER) {
@@ -105,9 +105,9 @@ class UserSessions @Inject()(mongoStore: MongoStore,
           userID = BSONObjectID.generate(),
           sessionID = Some(sessionID),
           sessionData = List(newSessionData),
-          dateCreated = Some(new DateTime()),
-          dateLastLogin = Some(new DateTime()),
-          dateUpdated = Some(new DateTime())
+          dateCreated = Some(ZonedDateTime.now),
+          dateLastLogin = Some(ZonedDateTime.now),
+          dateUpdated = Some(ZonedDateTime.now)
         )
         mongoStore.addUser(user).map { _ =>
           Logger.info(s"User is new:\n${user.toString}")
@@ -214,7 +214,7 @@ class UserSessions @Inject()(mongoStore: MongoStore,
           BSONDocument(
             "$set" ->
             BSONDocument(
-              User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)
+              User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
             ),
             "$unset" ->
             BSONDocument(

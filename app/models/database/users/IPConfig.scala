@@ -3,9 +3,10 @@ package models.database.users
 /**
   * Created by astephens on 15.08.17.
   */
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
-import play.api.libs.json.{ JsObject, Json, Writes }
+import java.time.ZonedDateTime
+
+import util.ZonedDateTimeHelper
+import play.api.libs.json.{JsObject, Json, Writes}
 import reactivemongo.bson._
 
 case class IPConfig(id: BSONObjectID = BSONObjectID.generate(), // ID in MongoDB
@@ -13,8 +14,8 @@ case class IPConfig(id: BSONObjectID = BSONObjectID.generate(), // ID in MongoDB
                     openSessions: Int = 0,
                     score: Int = 0,
                     scoreMax: Int = IPConfig.scoreMaxDefault,
-                    dateCreated: Option[DateTime] = Some(DateTime.now), // Creation date
-                    dateUpdated: Option[DateTime] = Some(DateTime.now)) { // Last used on
+                    dateCreated: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Creation date
+                    dateUpdated: Option[ZonedDateTime] = Some(ZonedDateTime.now)) { // Last used on
   def isInLimits: Boolean = {
     score <= scoreMax &&
     openSessions <= IPConfig.sessionsMax
@@ -42,15 +43,14 @@ object IPConfig {
     * Define how the User object is formatted when turned into a json object
     */
   implicit object JobWrites extends Writes[IPConfig] {
-    val dtf = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss")
     def writes(ipConfig: IPConfig): JsObject = Json.obj(
       ID           -> ipConfig.id.stringify,
       IPHASH       -> ipConfig.ipHash,
       OPENSESSIONS -> ipConfig.openSessions,
       SCORE        -> ipConfig.score,
       SCOREMAX     -> ipConfig.scoreMax,
-      DATECREATED  -> ipConfig.dateCreated.map(dt => dtf.print(dt)),
-      DATEUPDATED  -> ipConfig.dateUpdated.map(dt => dtf.print(dt))
+      DATECREATED  -> ipConfig.dateCreated.map(_.format(ZonedDateTimeHelper.dateTimeFormatter)),
+      DATEUPDATED  -> ipConfig.dateUpdated.map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
     )
   }
 
@@ -65,8 +65,8 @@ object IPConfig {
         openSessions = bson.getAs[Int](OPENSESSIONS).getOrElse(0),
         score = bson.getAs[Int](SCORE).getOrElse(0),
         scoreMax = bson.getAs[Int](SCOREMAX).getOrElse(IPConfig.scoreMaxDefault),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value))
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
   }
 
@@ -78,8 +78,8 @@ object IPConfig {
         OPENSESSIONS -> ipConfig.openSessions,
         SCORE        -> ipConfig.score,
         SCOREMAX     -> ipConfig.scoreMax,
-        DATECREATED  -> BSONDateTime(ipConfig.dateCreated.fold(-1L)(_.getMillis)),
-        DATEUPDATED  -> BSONDateTime(ipConfig.dateUpdated.fold(-1L)(_.getMillis))
+        DATECREATED  -> BSONDateTime(ipConfig.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATEUPDATED  -> BSONDateTime(ipConfig.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli))
       )
   }
 }

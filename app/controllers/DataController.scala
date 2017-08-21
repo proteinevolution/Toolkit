@@ -1,14 +1,13 @@
 package controllers
 
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
 import models.database.CMS.FeaturedArticle
 import play.api.mvc._
 import reactivemongo.bson.BSONObjectID
-import org.joda.time.DateTime
-import play.api.libs.json.{ JsArray, JsObject, Json }
-
-import models.database.results.{ Hmmer, PSIBlast }
+import play.api.libs.json.{JsArray, JsObject, Json}
+import models.database.results.{Hmmer, PSIBlast}
 import modules.db.MongoStore
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -64,7 +63,7 @@ class DataController @Inject()(mongoStore: MongoStore,
                    imagePath: String): Action[AnyContent] = Action.async {
     // TODO ensure that only authorized people can write a front page article
     val article =
-      FeaturedArticle(BSONObjectID.generate(), title, text, textlong, link, imagePath, Some(DateTime.now()), None)
+      FeaturedArticle(BSONObjectID.generate(), title, text, textlong, link, imagePath, Some(ZonedDateTime.now), None)
     mongoStore.writeArticleDatabase(article).map { wr =>
       if (wr.ok) {
         Ok

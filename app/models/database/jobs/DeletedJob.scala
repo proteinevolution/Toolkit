@@ -1,8 +1,10 @@
 package models.database.jobs
 
-import java.time.{ Instant, ZoneId, ZonedDateTime }
+import java.time.ZonedDateTime
+
+import util.ZonedDateTimeHelper
 import play.api.libs.json._
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter }
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter}
 
 /**
   * This class holds jobID and Deletion date for
@@ -44,7 +46,7 @@ object DeletedJob {
         bson.getAs[String](JOBID).getOrElse(""),
         bson
           .getAs[BSONDateTime](DELETIONDATE)
-          .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault()))
+          .map(dt => ZonedDateTimeHelper.getZDT(dt))
           .getOrElse(new ZonedDateTime().minusYears(100))
       )
     }

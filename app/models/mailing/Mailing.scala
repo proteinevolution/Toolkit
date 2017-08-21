@@ -1,18 +1,19 @@
 package models.mailing
 
+import java.time.ZonedDateTime
+
 import models.database.jobs._
 import models.database.users.User
-import play.api.libs.mailer.{ Email, MailerClient }
 import modules.tel.TEL
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
+import play.api.libs.mailer.{Email, MailerClient}
+import util.ZonedDateTimeHelper
 
 /**
   * Created by astephens on 24.05.16.
   */
 object MailTemplate {
   // Date time format for the "deleting your account on" mail
-  val dtf = DateTimeFormat.forPattern("EEEE, dd.MM.yyyy")
+  val dtf = "EEEE, dd.MM.yyyy"
 }
 
 /**
@@ -208,7 +209,7 @@ case class JobFinishedMail(userParam: User, job: Job) extends MailTemplate {
   }
 }
 
-case class OldAccountEmail(userParam: User, deletionDate: DateTime) extends MailTemplate {
+case class OldAccountEmail(userParam: User, deletionDate: ZonedDateTime) extends MailTemplate {
   override def subject = "Old Account - Bioinformatics Toolkit"
 
   val user: User = userParam
@@ -216,15 +217,14 @@ case class OldAccountEmail(userParam: User, deletionDate: DateTime) extends Mail
   val bodyText: String = {
     s"""Dear ${user.getUserData.nameLogin},
        |we have noticed, that you have not logged in since ${user.dateLastLogin
-         .map(d => MailTemplate.dtf.print(d))
+         .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
          .getOrElse("[date not supplied]")}.
        |To keep our system running smoothly and to keep the data we collect from our users to a minimum,
        |we delete old user accounts.
        |This is why Your account will be deleted on ${user.dateLastLogin
-         .map(d => MailTemplate.dtf.print(deletionDate))
+      .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
          .getOrElse("[date not supplied]")}.
-       |To prevent this from happening, just log in to your account to let us know,
-       |that You are still interested in our services.
+       |Just log into Your account to let us know that You are still interested in our services.
        |
        |Your Toolkit Team
        |
@@ -236,14 +236,13 @@ case class OldAccountEmail(userParam: User, deletionDate: DateTime) extends Mail
     super.bodyHtmlTemplate(
       s"""Dear ${user.getUserData.nameLogin},<br />""".stripMargin,
       s"""we have noticed, that you have not logged in since ${user.dateLastLogin
-           .map(d => MailTemplate.dtf.print(d))
+           .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
            .getOrElse("[date not supplied]")}.<br />
          |To keep our system running smoothly and to keep the data we collect from our users to a minimum,
          |we delete old user accounts.<br />
          |This is why Your account will be deleted on<br />
-         |${user.dateLastLogin.map(d => MailTemplate.dtf.print(deletionDate)).getOrElse("[date not supplied]")}.<br />
-         |To prevent this from happening, just log in to your account to let us know,
-         |that You are still interested in our services.<br /><br />
+         |${user.dateLastLogin.map(_.format(ZonedDateTimeHelper.dateTimeFormatter)).getOrElse("[date not supplied]")}.<br />
+         |Just log into Your account to let us know that You are still interested in our services.<br /><br />
          |<a href="$origin">Your Toolkit Team</a>
      """.stripMargin
     )

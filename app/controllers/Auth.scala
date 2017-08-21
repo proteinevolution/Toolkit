@@ -1,30 +1,30 @@
 package controllers
 
-import javax.inject.{ Inject, Singleton }
+import java.time.ZonedDateTime
+import javax.inject.{Inject, Singleton}
 
-import actors.WebSocketActor.{ ChangeSessionID, LogOut }
+import actors.WebSocketActor.{ChangeSessionID, LogOut}
 import akka.actor.ActorRef
-import models.{ Constants, UserSessions }
+import models.{Constants, UserSessions}
 import models.auth._
-import models.database.users.{ User, UserConfig, UserToken }
+import models.database.users.{User, UserConfig, UserToken}
 import models.job.JobActorAccess
-import models.mailing.{ ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail }
+import models.mailing.{ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail}
 import models.tools.ToolFactory
 import modules.LocationProvider
 import modules.db.MongoStore
-import org.joda.time.DateTime
 import play.Logger
 import play.api.cache._
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.libs.mailer._
-import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
+import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.bson._
 import org.webjars.play.WebJarsUtil
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{Await, Future}
 
 /**
   * Controller for Authentication interactions
@@ -299,7 +299,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
               {
                 case Some(editedProfileUserData) =>
                   // create a modifier document to change the last login date in the Database
-                  val bsonCurrentTime = BSONDateTime(new DateTime().getMillis)
+                  val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
                   val selector        = BSONDocument(User.IDDB -> user.userID)
                   val modifier = BSONDocument(
                     "$set" ->
@@ -362,7 +362,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                   // Generate a new Token to wait for the confirmation eMail
                   val token = UserToken(tokenType = 2, passwordHash = Some(newPasswordHash))
                   // create a modifier document to change the last login date in the Database
-                  val bsonCurrentTime = BSONDateTime(new DateTime().getMillis)
+                  val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
                   // Push to the database using selector and modifier
                   val selector = BSONDocument(User.IDDB -> user.userID)
                   val modifier = BSONDocument("$set" ->
@@ -418,7 +418,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                   // Generate a new Token to wait for the confirmation eMail
                   val token = UserToken(tokenType = 3)
                   // create a modifier document to change the last login date in the Database
-                  val bsonCurrentTime = BSONDateTime(new DateTime().getMillis)
+                  val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
                   // Push to the database using selector and modifier
                   val selector = BSONDocument(User.IDDB -> user.userID)
                   val modifier = BSONDocument("$set" ->
@@ -461,7 +461,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
           user.userToken match {
             case Some(token) =>
               if (token.tokenType == 4 && token.userID.isDefined) {
-                val bsonCurrentTime = BSONDateTime(new DateTime().getMillis)
+                val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
                 // Push to the database using selector and modifier
                 val selector = BSONDocument(User.IDDB -> token.userID)
                 val modifier =
@@ -528,7 +528,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                         BSONDocument(
                           "$set" ->
                           BSONDocument(User.ACCOUNTTYPE -> 1,
-                                       User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis)),
+                                       User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)),
                           BSONDocument(
                             "$unset" ->
                             BSONDocument(User.USERTOKEN -> "")
@@ -562,7 +562,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                                 BSONDocument(
                                   "$set" ->
                                   BSONDocument(User.PASSWORD    -> newPassword,
-                                               User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis)),
+                                               User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)),
                                   "$unset" ->
                                   BSONDocument(User.SESSIONID -> "", User.CONNECTED -> "", User.USERTOKEN -> "")
                                 )
@@ -615,7 +615,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                       UserToken(tokenType = 4, token = userToken.token, userID = Some(userToVerify.userID))
                     val selector = BSONDocument(User.IDDB -> user.userID)
                     val modifier = BSONDocument(
-                      "$set" -> BSONDocument(User.DATEUPDATED -> BSONDateTime(new DateTime().getMillis),
+                      "$set" -> BSONDocument(User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli),
                                              User.USERTOKEN -> newToken)
                     )
                     userSessions.modifyUserWithCache(selector, modifier).map {

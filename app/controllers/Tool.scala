@@ -1,6 +1,7 @@
 package controllers
 
-import javax.inject.{ Inject, Singleton }
+import java.time.ZonedDateTime
+import javax.inject.{Inject, Singleton}
 
 import akka.stream.Materializer
 import akka.util.Timeout
@@ -8,9 +9,8 @@ import models.database.jobs.FrontendJob
 import models.search.JobDAO
 import modules.LocationProvider
 import modules.db.MongoStore
-import org.joda.time.DateTime
 import play.api.cache._
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import reactivemongo.bson.BSONObjectID
 
@@ -39,7 +39,7 @@ final class Tool @Inject()(messagesApi: MessagesApi,
       FrontendJob(mainID = BSONObjectID.generate(),
                   parentID = None,
                   tool = toolname,
-                  dateCreated = Some(DateTime.now()))
+                  dateCreated = Some(ZonedDateTime.now))
     )
 
     Future.successful(Ok)

@@ -1,13 +1,13 @@
 package models.database.jobs
 
+import java.time.ZonedDateTime
+
+import util.ZonedDateTimeHelper
 import com.typesafe.config.ConfigFactory
-import models.Constants
 import models.tools.Toolitem
-import java.time.{ Instant, ZoneId, ZonedDateTime }
 import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._
-import javax.inject.Inject
 
 case class Job(mainID: BSONObjectID, // ID of the Job in the System
                parentID: Option[BSONObjectID] = None, // ID of the Parent Job
@@ -206,15 +206,9 @@ object Job {
         watchList = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
         commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
         clusterData = bson.getAs[JobClusterData](CLUSTERDATA),
-        dateCreated = bson
-          .getAs[BSONDateTime](DATECREATED)
-          .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
-        dateUpdated = bson
-          .getAs[BSONDateTime](DATEUPDATED)
-          .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
-        dateViewed = bson
-          .getAs[BSONDateTime](DATEVIEWED)
-          .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateViewed = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
         IPHash = bson.getAs[String](IPHASH)
       )
     }
