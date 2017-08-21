@@ -1,16 +1,13 @@
 package modules
 
-import java.nio.file.attribute.PosixFilePermission
-import javax.inject.{ Inject, Provider }
+
+import javax.inject.{Inject, Provider}
 
 import com.google.inject.AbstractModule
-import com.google.inject.assistedinject.FactoryModuleBuilder
-import modules.tel.env.{ Env, ExecFile, PropFile, TELEnv }
-import modules.tel.param.{ GenerativeParamFileParser, ParamCollector, Params }
-import play.api.{ Configuration, Logger }
+import modules.tel.env.{Env, ExecFile, PropFile, TELEnv}
+import modules.tel.param.{GenerativeParamFileParser, ParamCollector, Params}
+import play.api.{ConfigLoader, Configuration, Logger}
 import com.google.inject.name.Names
-import grizzled.sys.OperatingSystem.Posix
-import modules.tel.execution.WrapperExecutionFactory
 
 /**
   * Created by lukas on 8/28/16.
@@ -41,12 +38,6 @@ class TELModule extends AbstractModule {
   }
 }
 
-/*
-install(new FactoryModuleBuilder()
-     .implement(Payment.class, RealPayment.class)
-     .build(PaymentFactory.class));
-
- */
 
 import better.files._
 
@@ -54,7 +45,7 @@ class WrapperPathProvider @Inject()(configuration: Configuration) extends Provid
 
   override def get(): String = {
 
-    configuration.getString("tel.wrapper").getOrElse {
+    configuration.get[Option[String]]("tel.wrapper").getOrElse {
       val fallBackFile = "tel/wrapper.sh"
       Logger.warn(s"Key 'tel.wrapper' was not found in configuration. Fall back to '$fallBackFile'")
       fallBackFile
@@ -66,7 +57,7 @@ class RunscriptPathProvider @Inject()(configuration: Configuration) extends Prov
 
   override def get(): String = {
 
-    configuration.getString("tel.runscripts").getOrElse {
+    configuration.get[Option[String]]("tel.runscripts").getOrElse {
       val fallBackFile = "tel/runscripts"
 
       Logger.warn(s"Key 'tel.runscripts' was not found in configuration. Fall back to '$fallBackFile'")
@@ -82,7 +73,7 @@ class ParamCollectorProvider @Inject()(pc: ParamCollector,
 
   override def get(): ParamCollector = {
 
-    lazy val paramFilePath = configuration.getString("tel.params").getOrElse {
+    lazy val paramFilePath = configuration.get[Option[String]]("tel.params").getOrElse {
 
       val fallBackFile = "tel/paramspec/PARAMS"
       Logger.warn(s"Key 'tel.params' was not found in configuration. Fall back to '$fallBackFile'")
@@ -107,8 +98,7 @@ class TELEnvProvider @Inject()(tv: TELEnv, configuration: Configuration) extends
 
     // Try loading the environment files from the configured directory
     configuration
-      .getString("tel.env")
-      .getOrElse {
+      .get[Option[String]]("tel.env").getOrElse {
 
         val fallBackFile = "tel/env"
 
