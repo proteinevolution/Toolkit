@@ -31,6 +31,8 @@ import org.webjars.play.WebJarsUtil
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ Await, Future }
 
+import models.stats.Counter
+
 @Singleton
 final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   messagesApi: MessagesApi,
@@ -82,6 +84,13 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
       userSessions
         .getUser(rh)
         .map { user =>
+          Counter.websocketsCount.get(user.sessionID.get.stringify) match {
+            case Some(x) => Counter.websocketsCount(user.sessionID.get.stringify) = x + 1
+            case None => Counter.websocketsCount += (user.sessionID.get.stringify -> 1)
+          }
+
+          Counter.websocketsCount.map(println)
+
           Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.sessionID.get, out))))
         }
         .recover {
