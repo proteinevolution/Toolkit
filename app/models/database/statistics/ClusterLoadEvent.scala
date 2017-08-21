@@ -1,8 +1,10 @@
 package models.database.statistics
 
-import java.time.{ Instant, ZoneId, ZonedDateTime }
-import play.api.libs.json.{ JsObject, Json, Writes }
+import java.time.ZonedDateTime
+
+import play.api.libs.json.{JsObject, Json, Writes}
 import reactivemongo.bson._
+import util.ZonedDateTimeHelper
 
 /**
   * Created by astephens on 27.03.17.
@@ -33,9 +35,7 @@ object ClusterLoadEvent {
         bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         bson.getAs[List[Double]](LISTLOAD).getOrElse(List.empty[Double]),
         bson.getAs[Double](AVERAGE).getOrElse(0.0),
-        bson
-          .getAs[BSONDateTime](TIMESTAMP)
-          .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault()))
+        bson.getAs[BSONDateTime](TIMESTAMP).map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
     }
   }

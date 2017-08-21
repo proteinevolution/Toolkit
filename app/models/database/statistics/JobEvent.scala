@@ -1,9 +1,11 @@
 package models.database.statistics
 
-import models.database.jobs.{ Error, JobState }
-import java.time.{ Instant, ZoneId, ZonedDateTime }
+import java.time.ZonedDateTime
+
+import models.database.jobs.{Error, JobState}
+import util.ZonedDateTimeHelper
 import play.api.libs.json._
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter }
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter}
 
 /**
   * Created by astephens on 19.02.17.
@@ -42,9 +44,7 @@ object JobEvent {
     def read(bson: BSONDocument): JobEvent = {
       JobEvent(
         bson.getAs[JobState](JOBSTATE).getOrElse(Error),
-        bson
-          .getAs[BSONDateTime](TIMESTAMP)
-          .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
+        bson.getAs[BSONDateTime](TIMESTAMP).map(dt => ZonedDateTimeHelper.getZDT(dt)),
         bson.getAs[Long](RUNTIME).getOrElse(0L)
       )
     }

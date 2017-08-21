@@ -1,8 +1,10 @@
 package models.database.jobs
 
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
+
+import util.ZonedDateTimeHelper
 import play.api.libs.json._
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID }
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
 import reactivemongo.play.json._
 
 /**
@@ -11,7 +13,7 @@ import reactivemongo.play.json._
 case class JobAnnotation(mainID: BSONObjectID, // ID of the Job in the System
                          jobID: String,
                          content: String,
-                         dateCreated: Option[DateTime]) // Creation time of the Job
+                         dateCreated: Option[ZonedDateTime]) // Creation time of the Job
 
 object JobAnnotation {
   // Constants for the JSON object identifiers
@@ -36,7 +38,7 @@ object JobAnnotation {
             JobAnnotation(mainID = BSONObjectID.generate(),
                           jobID = "",
                           content = "",
-                          dateCreated = Some(new DateTime()))
+                          dateCreated = Some(ZonedDateTime.now))
           )
         } catch {
           case cause: Throwable => JsError(cause.getMessage)
@@ -50,7 +52,7 @@ object JobAnnotation {
       IDDB        -> jobAnnotation.mainID,
       JOBID       -> jobAnnotation.jobID,
       CONTENT     -> jobAnnotation.content,
-      DATECREATED -> BSONDateTime(jobAnnotation.dateCreated.fold(-1L)(_.getMillis))
+      DATECREATED -> BSONDateTime(jobAnnotation.dateCreated.fold(-1L)(_.toInstant.toEpochMilli))
     )
   }
 
@@ -63,7 +65,7 @@ object JobAnnotation {
         mainID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         jobID = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
         content = bson.getAs[String](CONTENT).getOrElse(""),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value))
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
     }
   }
@@ -76,7 +78,7 @@ object JobAnnotation {
       IDDB        -> jobAnnotation.mainID,
       JOBID       -> jobAnnotation.jobID,
       CONTENT     -> jobAnnotation.content,
-      DATECREATED -> BSONDateTime(jobAnnotation.dateCreated.fold(-1L)(_.getMillis))
+      DATECREATED -> BSONDateTime(jobAnnotation.dateCreated.fold(-1L)(_.toInstant.toEpochMilli))
     )
   }
 }

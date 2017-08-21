@@ -1,6 +1,8 @@
 package models.database.jobs
 
-import java.time.{ Instant, ZoneId, ZonedDateTime }
+import java.time.ZonedDateTime
+
+import util.ZonedDateTimeHelper
 import play.api.libs.json._
 import reactivemongo.bson._
 
@@ -75,11 +77,9 @@ object JobClusterData {
         threads = bson.getAs[Int](THREADS),
         hardruntime = bson.getAs[String](HARDRUNTIME),
         dateStarted = bson
-          .getAs[BSONDateTime](DATESTARTED)
-          .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
+          .getAs[BSONDateTime](DATESTARTED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
         dateFinished = bson
-          .getAs[BSONDateTime](DATESTARTED)
-          .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault()))
+          .getAs[BSONDateTime](DATESTARTED).map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
     }
   }

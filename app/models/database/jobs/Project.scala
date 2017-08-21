@@ -4,9 +4,11 @@ package models.database.jobs
   * Created by snam on 30.03.17.
   *
   */
-import java.time.{ Instant, ZoneId, ZonedDateTime }
+import java.time.ZonedDateTime
+
+import util.ZonedDateTimeHelper
 import play.api.libs.json._
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID }
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
 import reactivemongo.play.json._
 
 case class Project(mainID: BSONObjectID, // Unique Project ID
@@ -81,12 +83,8 @@ object Project {
         ownerID = bson.getAs[BSONObjectID](OWNERID).getOrElse(BSONObjectID.generate()),
         jobIDs = bson.getAs[List[String]](JOBIDS).getOrElse(Nil),
         content = bson.getAs[String](CONTENT).getOrElse(""),
-        dateModified = bson
-          .getAs[BSONDateTime](DATEMODIFIED)
-          .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault())),
-        dateCreated = bson
-          .getAs[BSONDateTime](DATECREATED)
-          .map(dt => ZonedDateTime.ofInstant(Instant.ofEpochMilli(dt.value), ZoneId.systemDefault()))
+        dateModified = bson.getAs[BSONDateTime](DATEMODIFIED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
     }
   }
