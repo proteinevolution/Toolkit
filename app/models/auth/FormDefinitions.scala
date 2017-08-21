@@ -1,7 +1,8 @@
 package models.auth
 
-import models.database.users.{ User, UserData, UserToken }
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
+
+import models.database.users.{User, UserData}
 import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Form
 import play.api.data.Forms._
@@ -43,9 +44,9 @@ object FormDefinitions {
                    eMail = eMail)
         ),
         jobs = user.jobs,
-        dateLastLogin = Some(new DateTime()),
-        dateCreated = Some(new DateTime()),
-        dateUpdated = Some(new DateTime())
+        dateLastLogin = Some(ZonedDateTime.now),
+        dateCreated = Some(ZonedDateTime.now),
+        dateUpdated = Some(ZonedDateTime.now)
       )
     } { _ =>
       None
