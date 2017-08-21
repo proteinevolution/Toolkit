@@ -86,7 +86,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
         .map { user =>
           Counter.websocketsCount.get(user.sessionID.get.stringify) match {
             case Some(x) => Counter.websocketsCount(user.sessionID.get.stringify) = x + 1
-            case None => Counter.websocketsCount += (user.sessionID.get.stringify -> 1)
+            case None    => Counter.websocketsCount += (user.sessionID.get.stringify -> 1)
           }
 
           println("Add new websocket to counter:")

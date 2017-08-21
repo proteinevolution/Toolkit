@@ -1,7 +1,7 @@
 package controllers
 
 import java.time.ZonedDateTime
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import akka.stream.Materializer
 import akka.util.Timeout
@@ -10,7 +10,7 @@ import models.search.JobDAO
 import modules.LocationProvider
 import modules.db.MongoStore
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.mvc._
 import reactivemongo.bson.BSONObjectID
 

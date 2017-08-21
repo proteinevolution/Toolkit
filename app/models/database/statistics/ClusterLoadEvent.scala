@@ -2,7 +2,7 @@ package models.database.statistics
 
 import java.time.ZonedDateTime
 
-import play.api.libs.json.{JsObject, Json, Writes}
+import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
 import util.ZonedDateTimeHelper
 

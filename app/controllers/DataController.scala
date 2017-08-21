@@ -6,8 +6,8 @@ import javax.inject.Inject
 import models.database.CMS.FeaturedArticle
 import play.api.mvc._
 import reactivemongo.bson.BSONObjectID
-import play.api.libs.json.{JsArray, JsObject, Json}
-import models.database.results.{Hmmer, PSIBlast}
+import play.api.libs.json.{ JsArray, JsObject, Json }
+import models.database.results.{ Hmmer, PSIBlast }
 import modules.db.MongoStore
 
 import scala.concurrent.ExecutionContext.Implicits.global
