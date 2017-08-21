@@ -10,7 +10,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import models.database.results._
 import modules.db.MongoStore
 import play.api.libs.json.{ JsArray, JsObject, Json }
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.Future
@@ -21,8 +21,9 @@ import scala.sys.process.Process
   */
 class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment, constants: Constants)(
     mongoStore: MongoStore,
-    val reactiveMongoApi: ReactiveMongoApi
-) extends Controller
+    val reactiveMongoApi: ReactiveMongoApi,
+    cc: ControllerComponents
+) extends AbstractController(cc)
     with Common {
   /* gets the path to all scripts that are executed
      on the server (not executed on the grid engine) */

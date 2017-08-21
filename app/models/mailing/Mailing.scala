@@ -2,7 +2,7 @@ package models.mailing
 
 import models.database.jobs._
 import models.database.users.User
-import play.api.libs.mailer.{Email, MailerClient}
+import play.api.libs.mailer.{ Email, MailerClient }
 import modules.tel.TEL
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -10,11 +10,11 @@ import org.joda.time.format.DateTimeFormat
 /**
   * Created by astephens on 24.05.16.
   */
-
 object MailTemplate {
   // Date time format for the "deleting your account on" mail
   val dtf = DateTimeFormat.forPattern("EEEE, dd.MM.yyyy")
 }
+
 /**
   * Template trait to the Mail object
   */
@@ -208,18 +208,21 @@ case class JobFinishedMail(userParam: User, job: Job) extends MailTemplate {
   }
 }
 
-
-case class OldAccountEmail(userParam: User, deletionDate : DateTime) extends MailTemplate {
+case class OldAccountEmail(userParam: User, deletionDate: DateTime) extends MailTemplate {
   override def subject = "Old Account - Bioinformatics Toolkit"
 
   val user: User = userParam
 
   val bodyText: String = {
     s"""Dear ${user.getUserData.nameLogin},
-       |we have noticed, that you have not logged in since ${user.dateLastLogin.map(d => MailTemplate.dtf.print(d)).getOrElse("[date not supplied]")}.
+       |we have noticed, that you have not logged in since ${user.dateLastLogin
+         .map(d => MailTemplate.dtf.print(d))
+         .getOrElse("[date not supplied]")}.
        |To keep our system running smoothly and to keep the data we collect from our users to a minimum,
        |we delete old user accounts.
-       |This is why Your account will be deleted on ${user.dateLastLogin.map(d => MailTemplate.dtf.print(deletionDate)).getOrElse("[date not supplied]")}.
+       |This is why Your account will be deleted on ${user.dateLastLogin
+         .map(d => MailTemplate.dtf.print(deletionDate))
+         .getOrElse("[date not supplied]")}.
        |To prevent this from happening, just log in to your account to let us know,
        |that You are still interested in our services.
        |
@@ -232,7 +235,9 @@ case class OldAccountEmail(userParam: User, deletionDate : DateTime) extends Mai
   val bodyHtml: String = {
     super.bodyHtmlTemplate(
       s"""Dear ${user.getUserData.nameLogin},<br />""".stripMargin,
-      s"""we have noticed, that you have not logged in since ${user.dateLastLogin.map(d => MailTemplate.dtf.print(d)).getOrElse("[date not supplied]")}.<br />
+      s"""we have noticed, that you have not logged in since ${user.dateLastLogin
+           .map(d => MailTemplate.dtf.print(d))
+           .getOrElse("[date not supplied]")}.<br />
          |To keep our system running smoothly and to keep the data we collect from our users to a minimum,
          |we delete old user accounts.<br />
          |This is why Your account will be deleted on<br />

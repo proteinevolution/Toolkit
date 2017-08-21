@@ -1,18 +1,18 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
-import actors.JobActor.{JobStateChanged, UpdateLog}
-import models.{Constants, UserSessions}
+import actors.JobActor.{ JobStateChanged, UpdateLog }
+import models.{ Constants, UserSessions }
 import models.database.jobs._
 import models.job.JobActorAccess
 import modules.LocationProvider
 import modules.db.MongoStore
 import org.joda.time.DateTime
 import play.api.Logger
-import play.api.cache.{CacheApi, NamedCache}
+import play.api.cache.{ CacheApi, NamedCache }
 import play.api.mvc._
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.io.Source
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -29,8 +29,9 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
                            @NamedCache("userCache") implicit val userCache: CacheApi,
                            implicit val locationProvider: LocationProvider,
                            mongoStore: MongoStore,
-                           constants: Constants)
-    extends Controller {
+                           constants: Constants,
+                           cc: ControllerComponents)
+    extends AbstractController(cc) {
 
   def jobStatusDone(jobID: String, key: String) = Action {
 
