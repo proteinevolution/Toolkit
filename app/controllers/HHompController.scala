@@ -9,7 +9,7 @@ import models.database.results.{ HHomp, HHompHSP, HHompResult }
 import modules.db.MongoStore
 import play.api.Logger
 import play.api.libs.json.{ JsObject, Json }
-import play.api.mvc.{ Action, AnyContent, Controller }
+import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -25,9 +25,9 @@ import scala.sys.process._
 class HHompController @Inject()(hhomp: HHomp,
                                 mongoStore: MongoStore,
                                 val reactiveMongoApi: ReactiveMongoApi,
-                                constants: Constants)(
-    webJarAssets: WebJarAssets
-) extends Controller
+                                constants: Constants,
+                                cc: ControllerComponents)
+    extends AbstractController(cc)
     with Common {
 
   /* gets the path to all scripts that are executed

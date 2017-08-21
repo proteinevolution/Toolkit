@@ -62,11 +62,7 @@ case class HHompTemplate(consensus: String,
                          bb_pred: String,
                          bb_conf: String,
                          start: Int)
-case class HHompResult(HSPS: List[HHompHSP],
-                       num_hits: Int,
-                       query: SingleSeq,
-                       db: String,
-                       overall_prob: Double)
+case class HHompResult(HSPS: List[HHompHSP], num_hits: Int, query: SingleSeq, db: String, overall_prob: Double)
 
 @Singleton
 class HHomp @Inject()(general: General, aln: Alignment) {
@@ -89,8 +85,8 @@ class HHomp @Inject()(general: General, aln: Alignment) {
         }
         val db           = (obj \ jobID \ "db").as[String]
         val overall_prob = (obj \ jobID \ "overallprob").as[Double]
-        val query     = general.parseSingleSeq((obj \ "query").as[JsArray])
-        val num_hits  = hsplist.length
+        val query        = general.parseSingleSeq((obj \ "query").as[JsArray])
+        val num_hits     = hsplist.length
 
         HHompResult(hsplist, num_hits, query, db, overall_prob)
       } catch {

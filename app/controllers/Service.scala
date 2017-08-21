@@ -1,31 +1,32 @@
 package controllers
 
-import java.io.{FileInputStream, ObjectInputStream}
-import javax.inject.{Inject, Singleton}
+import java.io.{ FileInputStream, ObjectInputStream }
+import javax.inject.{ Inject, Singleton }
 
 import akka.util.Timeout
-import models.{Constants, UserSessions}
-import models.database.jobs.{Done, JobState, Jobitem}
+import models.{ Constants, UserSessions }
+import models.database.jobs.{ Done, JobState, Jobitem }
 import models.database.users.User
 import play.api.Logger
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Controller, Request}
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
+import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.mvc._
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import better.files._
-import models.tools.{Param, ToolFactory, Toolitem}
+import models.tools.{ Param, ToolFactory, Toolitem }
 import modules.LocationProvider
 import modules.db.MongoStore
-import org.joda.time.format.DateTimeFormat
+import java.time.format.DateTimeFormatter
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.twirl.api.Html
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
+import org.webjars.play.WebJarsUtil
 
 /**
   *
@@ -33,16 +34,17 @@ import scala.concurrent.duration._
   * Created by lukas on 2/27/16.
   */
 @Singleton
-final class Service @Inject()(webJarAssets: WebJarAssets,
-                              val messagesApi: MessagesApi,
+final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
+                              messagesApi: MessagesApi,
                               val reactiveMongoApi: ReactiveMongoApi,
                               mongoStore: MongoStore,
                               userSessions: UserSessions,
                               @NamedCache("userCache") implicit val userCache: CacheApi,
                               implicit val locationProvider: LocationProvider,
                               toolFactory: ToolFactory,
-                              constants: Constants)
-    extends Controller
+                              constants: Constants,
+                              cc: ControllerComponents)
+    extends AbstractController(cc)
     with I18nSupport
     with ReactiveMongoComponents {
 
@@ -56,26 +58,26 @@ final class Service @Inject()(webJarAssets: WebJarAssets,
 
       // Frontend tools
       case "reformat" =>
-        Ok(views.html.tools.forms.reformat(webJarAssets, "Utils"))
+        Ok(views.html.tools.forms.reformat("Utils"))
 
       case _ =>
         Ok(views.html.errors.pagenotfound()) //Bug: Mithril only accepts 200 to re-route
 
     }
   }
+  /*
   // Allows serialization of tuples
-  implicit def tuple2Reads[A, B](implicit aReads: Reads[A], bReads: Reads[B]): Reads[(A, B)] = Reads[(A, B)] {
-    case JsArray(arr) if arr.size == 2 =>
-      for {
-        a <- aReads.reads(arr.head)
-        b <- bReads.reads(arr(1))
-      } yield (a, b)
-    case _ => JsError(Seq(JsPath() -> Seq(ValidationError("Expected array of three elements"))))
+  implicit def tuple2Reads[B, T1, T2](c : (T1, T2) => B)(implicit aReads: Reads[T1], bReads: Reads[T2]): Reads[B] = Reads[B] {
+    case JsArray(arr) if arr.size == 2 => for {
+      a <- aReads.reads(arr(0))
+      b <- bReads.reads(arr(1))
+    } yield c(a, b)
+    case _ => JsError(Seq(JsPath() -> Seq(ValidationError("Expected array of two elements"))))
   }
 
-  implicit def tuple2Writes[A, B](implicit a: Writes[A], b: Writes[B]): Writes[(A, B)] = new Writes[(A, B)] {
-    def writes(tuple: (A, B)) = JsArray(Seq(a.writes(tuple._1), b.writes(tuple._2)))
-  }
+  implicit def tuple2Writes[T1, T2](implicit aWrites: Writes[T1], bWrites: Writes[T2]): Writes[Tuple2[T1, T2]] = new Writes[Tuple2[T1, T2]] {
+    def writes(tuple: Tuple2[T1, T2]) = JsArray(Seq(aWrites.writes(tuple._1), bWrites.writes(tuple._2)))
+  } */
 
   implicit def htmlWrites: Writes[Html] = new Writes[Html] {
 
@@ -174,7 +176,7 @@ final class Service @Inject()(webJarAssets: WebJarAssets,
                       BSONObjectID.generate().stringify,
                       job.status,
                       ownerN,
-                      DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(job.dateCreated.get),
+                      job.dateCreated.get.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                       toolitem,
                       jobViewsN,
                       paramValues

@@ -1,7 +1,7 @@
 package controllers
 
-import java.util.Date
-import play.api.mvc.{ Action, Controller }
+import java.time.ZonedDateTime
+import play.api.mvc._
 import play.api.i18n.MessagesApi
 import play.modules.reactivemongo.{ MongoController, ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.api.FailoverStrategy
@@ -20,9 +20,10 @@ import scala.sys.process._
   *
   */
 @Singleton
-final class Settings @Inject()(val messagesApi: MessagesApi, val reactiveMongoApi: ReactiveMongoApi)
-    extends Controller
-    with MongoController
+final class Settings @Inject()(messagesApi: MessagesApi,
+                               val reactiveMongoApi: ReactiveMongoApi,
+                               cc: ControllerComponents)
+    extends AbstractController(cc)
     with ReactiveMongoComponents {
 
   val clusterSettings: Future[BSONCollection] =
@@ -39,7 +40,9 @@ final class Settings @Inject()(val messagesApi: MessagesApi, val reactiveMongoAp
     */
   def setClusterMode(clusterMode: String) = Action {
 
-    val document = BSONDocument("clusterMode" -> clusterMode, "created_on" -> new Date(), "update_on" -> new Date())
+    val document = BSONDocument("clusterMode" -> clusterMode,
+                                "created_on" -> ZonedDateTime.now.toInstant.toEpochMilli,
+                                "update_on"  -> ZonedDateTime.now.toInstant.toEpochMilli)
 
     val future = clusterSettings.flatMap(_.insert(document))
 
@@ -64,29 +67,4 @@ final class Settings @Inject()(val messagesApi: MessagesApi, val reactiveMongoAp
 
     cm
   }
-
-  /**
-    * sets h_vmem for a specific tool
-    *
-    * @param memory
-    */
-  def setMemoryAllocation(memory: Int, toolName: String) = Action {
-
-    val document =
-      BSONDocument("toolname" -> toolName, "memory" -> memory, "created_on" -> new Date(), "update_on" -> new Date())
-
-    val future = toolSettings.flatMap(_.insert(document))
-
-    future.onComplete {
-      case Failure(e) => throw e
-      case Success(lastError) => {
-        println("successfully inserted document with lastError = " + lastError)
-      }
-    }
-
-    Ok("Got request")
-
-  }
-
-  def getMemoryAlloc(toolName: String) = "42" // IMPLEMENT ME
 }
