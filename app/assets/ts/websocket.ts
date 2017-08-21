@@ -44,8 +44,8 @@ onError = function(event : ErrorEvent) : any {
     let time = generateInterval(attempts);
     console.log("trying to reconnect in ... " + time);
     // We've tried to reconnect so increment the attempts by 1
-    attempts++;
-    setTimeout(connect(), time);
+    //attempts++;
+    //setTimeout(connect(), time);
 };
 
 onClose = function(event : CloseEvent) : any {
