@@ -15,7 +15,7 @@ The MPI-Toolkit is to some extent the product of volunteer work. Thanks to
 Supported browsers
 ------------------
 
-- [Chrome](https://www.google.com/chrome) or [Chromium](https://www.chromium.org/getting-involved/download-chromium), 1 year old or newer (fastest local analysis!)
+- [Chrome](https://www.google.com/chrome) or [Chromium](https://www.chromium.org/getting-involved/download-chromium), 1 year old or newer
 - [Firefox](https://www.mozilla.org/firefox), 1 year old or newer
 - Opera 34 and newer (needs to be tested)
 - Safari 9 and newer (needs to be tested)

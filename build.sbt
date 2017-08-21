@@ -1,36 +1,37 @@
-lazy val akkaVersion  = "2.5.3"
-lazy val kamonVersion = "0.6.6"
+lazy val akkaVersion      = "2.5.4"
+lazy val kamonVersion     = "0.6.6"
+lazy val elastic4sVersion = "2.4.0"
+lazy val scalazVersion    = "7.2.10"
 
 lazy val commonDeps = Seq(
   ws,
   filters,
   cache,
-  "com.typesafe.akka"    %% "akka-actor"              % akkaVersion,
-  "com.sanoma.cda"       %% "maxmind-geoip2-scala"    % "1.5.4",
-  "com.typesafe.akka"    %% "akka-cluster"            % akkaVersion,
-  "com.typesafe.akka"    %% "akka-cluster-tools"      % akkaVersion,
-  "com.typesafe.akka"    %% "akka-cluster-metrics"    % akkaVersion,
-  "com.typesafe.akka"    %% "akka-slf4j"              % akkaVersion,
-  "com.typesafe.akka"    %% "akka-stream"             % akkaVersion,
-  "com.typesafe.akka"    %% "akka-persistence"        % akkaVersion,
-  "com.typesafe.play"    %% "play-mailer"             % "5.0.0",
-  "com.github.pathikrit" %% "better-files"            % "2.17.1",
-  "org.mindrot"          % "jbcrypt"                  % "0.3m",
-  "com.evojam"           %% "play-elastic4s"          % "0.3.1",
-  "org.reactivemongo"    %% "play2-reactivemongo"     % "0.12.5-play25",
-  "co.fs2"               %% "fs2-core"                % "0.9.2",
-  "org.scalaz"           %% "scalaz-core"             % "7.2.10",
-  "org.scalaz"           %% "scalaz-concurrent"       % "7.2.10",
-  "com.chuusai"          %% "shapeless"               % "2.3.2",
-  "org.clapper"          %% "classutil"               % "1.0.11",
-  "com.beachape"         %% "enumeratum"              % "1.4.13",
-  "com.beachape"         %% "enumeratum-play"         % "1.4.13",
-  "com.beachape"         %% "enumeratum-play-json"    % "1.4.13",
-  "net.ruippeixotog"     %% "scala-scraper"           % "1.1.0",
-  "com.lihaoyi"          %% "fastparse"               % "0.4.1",
-  "com.vmunier"          %% "scalajs-scripts"         % "1.1.1",
-  "org.typelevel"        %% "cats"                    % "0.9.0",
-  "com.mohiva"           %% "play-html-compressor"    % "0.6.3"
+  guice,
+  "com.typesafe.akka"      %% "akka-actor"           % akkaVersion,
+  "com.sanoma.cda"         %% "maxmind-geoip2-scala" % "1.5.4",
+  "com.typesafe.akka"      %% "akka-cluster"         % akkaVersion,
+  "com.typesafe.akka"      %% "akka-cluster-tools"   % akkaVersion,
+  "com.typesafe.akka"      %% "akka-cluster-metrics" % akkaVersion,
+  "com.typesafe.akka"      %% "akka-slf4j"           % akkaVersion,
+  "com.typesafe.akka"      %% "akka-stream"          % akkaVersion,
+  "com.typesafe.akka"      %% "akka-persistence"     % akkaVersion,
+  "com.typesafe.play"      %% "play-mailer"          % "6.0.1",
+  "com.typesafe.play"      %% "play-mailer-guice"    % "6.0.1",
+  "com.github.pathikrit"   %% "better-files"         % "2.17.1",
+  "org.mindrot"            % "jbcrypt"               % "0.3m",
+  "com.sksamuel.elastic4s" %% "elastic4s-core"       % elastic4sVersion,
+  "org.reactivemongo"      %% "play2-reactivemongo"  % "0.12.5-play26",
+  "co.fs2"                 %% "fs2-core"             % "0.9.2",
+  "org.scalaz"             %% "scalaz-core"          % scalazVersion,
+  "org.scalaz"             %% "scalaz-concurrent"    % scalazVersion,
+  "com.chuusai"            %% "shapeless"            % "2.3.2",
+  "org.clapper"            %% "classutil"            % "1.1.2",
+  "com.lihaoyi"            %% "fastparse"            % "0.4.2",
+  "com.vmunier"            %% "scalajs-scripts"      % "1.1.1",
+  "org.typelevel"          %% "cats"                 % "0.9.0",
+  "com.mohiva"             %% "play-html-compressor" % "0.7.1",
+  "com.typesafe.play"      %% "play-json"            % "2.6.3"
   //"io.kamon"             %% "kamon-play-2.5"          % kamonVersion,
   //"io.kamon"             %% "kamon-system-metrics"    % kamonVersion,
   //"io.kamon"             %% "kamon-statsd"            % kamonVersion,
@@ -42,8 +43,9 @@ lazy val commonDeps = Seq(
  * Settings which apply to all modules of this application
  */
 lazy val commonSettings = Seq(
-  version := "0.0.0",
+  version := "0.1.0",
   scalaVersion := "2.11.8",
+  crossScalaVersions := Seq("2.11.8", "2.12.1"),
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   logLevel := Level.Warn,
@@ -61,7 +63,10 @@ lazy val metadata = List(
               "Andrew Jesse Stephens",
               "astephens@tuebingen.mpg.de",
               url("https://github.com/anjestephens")),
-    Developer("lkszmn", "Lukas Zimmermann", "lukas.zimmermann@tuebingen.mpg.de", url("https://github.com/lkszmn")),
+    Developer("lukaszimmermann",
+              "Lukas Zimmermann",
+              "lukas.zimmermann@tuebingen.mpg.de",
+              url("https://github.com/lukaszimmermann")),
     Developer("markolozajic",
               "Marko Lozajic",
               "marko.lozajic@tuebingen.mpg.de",
@@ -75,29 +80,27 @@ lazy val root = (project in file("."))
     commonSettings,
     name := "mpi-toolkit",
     libraryDependencies ++= (commonDeps ++ Seq(
-      "org.webjars"       %% "webjars-play"       % "2.5.0-3",
+      "org.webjars"       %% "webjars-play"       % "2.6.1",
       "org.webjars"       % "jquery"              % "3.2.1",
       "org.webjars.bower" % "jquery.lazyload"     % "1.9.7",
       "org.webjars"       % "jquery-ui"           % "1.12.1",
       "org.webjars.npm"   % "foundation-sites"    % "6.4.1",
-      "org.webjars.bower" % "fastclick"           % "1.0.6",
-      "org.webjars.npm"   % "mithril"             % "0.2.8",
-      "org.webjars.bower" % "d3"                  % "4.4.1",
+      "org.webjars.npm"   % "mithril"             % "0.2.8", // 1.1.3 available
+      "org.webjars.bower" % "d3"                  % "4.9.1", // npm 4.10.0 available
       "org.webjars.bower" % "slick-carousel"      % "1.6.0",
-      "org.webjars.npm"   % "codemirror-minified" % "5.22.0",
-      "org.webjars"       % "dropzone"            % "4.3.0",
-      "org.webjars.bower" % "clipboard"           % "1.5.10",
+      "org.webjars.npm"   % "codemirror-minified" % "5.28.0",
+      "org.webjars.bower" % "clipboard"           % "1.7.1", // currently not in use
       "org.webjars"       % "linkurious.js"       % "1.5.1",
-      "org.webjars.bower" % "tinymce"             % "4.5.5",
-      "org.webjars.bower" % "datatables"          % "1.10.13",
-      "org.webjars"       % "highcharts"          % "5.0.6",
+      "org.webjars.bower" % "tinymce"             % "4.6.5", // currently not in use
+      "org.webjars.bower" % "datatables"          % "1.10.15",
+      "org.webjars"       % "highcharts"          % "5.0.14",
       "org.webjars.bower" % "velocity"            % "1.5.0",
       "org.webjars"       % "font-awesome"        % "4.7.0",
       "org.webjars"       % "select2"             % "4.0.3",
-      "org.webjars"       % "tooltipster"         % "4.1.4-1",
+      "org.webjars.bower" % "tooltipster"         % "4.2.5",
       "org.webjars"       % "momentjs"            % "2.18.1"
     )),
-    pipelineStages := Seq(digest, gzip),
+    pipelineStages := Seq(digest, gzip), // rjs, uglify, concat,
     compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
@@ -117,9 +120,9 @@ lazy val client = (project in file("client"))
     persistLauncher := true,
     persistLauncher in Test := false,
     libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-dom"     % "0.9.1",
+      "org.scala-js" %%% "scalajs-dom"     % "0.9.3",
       "co.technius"  %%% "scalajs-mithril" % "0.1.0",
-      "be.doeraene"  %%% "scalajs-jquery"  % "0.9.1",
+      "be.doeraene"  %%% "scalajs-jquery"  % "0.9.2",
       "com.lihaoyi"  %%% "upickle"         % "0.4.3"
     )
   )

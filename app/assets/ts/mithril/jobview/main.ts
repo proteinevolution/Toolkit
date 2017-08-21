@@ -22,6 +22,7 @@ let JobLineComponent = {
     controller : function() {},
     view: function(ctrl : any, args : any) {
         let isJob;
+        let dateCreated = moment.utc(args.job().dateCreated).utcOffset(2, true).local();
         isJob = args.job().isJob;
         return m("div", {
             "class": "jobline"
@@ -34,7 +35,7 @@ let JobLineComponent = {
                         m("i", { "class": "icon-white_question helpicon" })
                 )
             ]),
-            m("span", { "class": "jobdate" }, isJob ? "Created: " + (moment(args.job().dateCreated).local().format('lll')): ""),
+            m("span", { "class": "jobdate" }, isJob ? "Created: " + dateCreated.format("lll") : ""),
             m("span", { "class": "jobinfo" }, isJob ? "JobID: " + args.job().jobID: "")
         ]);
     }

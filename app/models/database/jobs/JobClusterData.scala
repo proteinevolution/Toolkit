@@ -1,6 +1,8 @@
 package models.database.jobs
 
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
+
+import util.ZonedDateTimeHelper
 import play.api.libs.json._
 import reactivemongo.bson._
 
@@ -11,11 +13,11 @@ case class JobClusterData(sgeID: String, // sun grid engine job id
                           memory: Option[String],
                           threads: Option[Int],
                           hardruntime: Option[String],
-                          dateStarted: Option[DateTime] = Some(DateTime.now),
-                          dateFinished: Option[DateTime] = None) {
+                          dateStarted: Option[ZonedDateTime] = Some(ZonedDateTime.now),
+                          dateFinished: Option[ZonedDateTime] = None) {
   def runtime: Long = {
-    val now = DateTime.now
-    dateFinished.getOrElse(now).getMillis - dateStarted.getOrElse(now).getMillis
+    val now = ZonedDateTime.now
+    dateFinished.getOrElse(now).toInstant.toEpochMilli - dateStarted.getOrElse(now).toInstant.toEpochMilli
   }
 }
 
@@ -43,8 +45,8 @@ object JobClusterData {
                            memory = Some(""),
                            threads = Some(0),
                            hardruntime = Some(""),
-                           dateStarted = Some(new DateTime()),
-                           dateFinished = Some(new DateTime()))
+                           dateStarted = Some(ZonedDateTime.now),
+                           dateFinished = Some(ZonedDateTime.now))
           )
         } catch {
           case cause: Throwable => JsError(cause.getMessage)
@@ -74,8 +76,10 @@ object JobClusterData {
         memory = bson.getAs[String](MEMORY),
         threads = bson.getAs[Int](THREADS),
         hardruntime = bson.getAs[String](HARDRUNTIME),
-        dateStarted = bson.getAs[BSONDateTime](DATESTARTED).map(dt => new DateTime(dt.value)),
-        dateFinished = bson.getAs[BSONDateTime](DATESTARTED).map(dt => new DateTime(dt.value))
+        dateStarted = bson
+          .getAs[BSONDateTime](DATESTARTED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateFinished = bson
+          .getAs[BSONDateTime](DATESTARTED).map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
     }
   }
@@ -89,8 +93,8 @@ object JobClusterData {
       MEMORY       -> clusterData.memory,
       THREADS      -> clusterData.threads,
       HARDRUNTIME  -> clusterData.hardruntime,
-      DATESTARTED  -> BSONDateTime(clusterData.dateStarted.fold(-1L)(_.getMillis)),
-      DATEFINISHED -> BSONDateTime(clusterData.dateStarted.fold(-1L)(_.getMillis))
+      DATESTARTED  -> BSONDateTime(clusterData.dateStarted.fold(-1L)(_.toInstant.toEpochMilli)),
+      DATEFINISHED -> BSONDateTime(clusterData.dateStarted.fold(-1L)(_.toInstant.toEpochMilli))
     )
   }
 }

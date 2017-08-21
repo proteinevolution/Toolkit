@@ -14,7 +14,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   *
   * Created by snam on 12.11.16.
   */
-private[controllers] trait Common extends Controller with ContentTypes with ReactiveMongoComponents {
+private[controllers] trait Common extends AbstractController with ContentTypes with ReactiveMongoComponents {
 
   var loggedOut = true
 

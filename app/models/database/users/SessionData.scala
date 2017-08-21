@@ -24,9 +24,9 @@ object SessionData {
 
   implicit object Reader extends BSONDocumentReader[SessionData] {
     override def read(bson: BSONDocument): SessionData = SessionData(
-      ip        = bson.getAs[String](IP).getOrElse("none"),
+      ip = bson.getAs[String](IP).getOrElse("none"),
       userAgent = bson.getAs[String](USERAGENT).getOrElse("none"),
-      location  = bson.getAs[Location](LOCATION).getOrElse(Location("none", None, None, None))
+      location = bson.getAs[Location](LOCATION).getOrElse(Location("none", None, None, None))
     )
   }
 

@@ -1,12 +1,12 @@
 package models
 
+import java.time.ZonedDateTime
 import javax.inject.{Inject, Singleton}
 
 import models.database.users.{SessionData, User}
 import modules.LocationProvider
 import modules.common.HTTPRequest
 import modules.db.MongoStore
-import org.joda.time.DateTime
 import play.api.cache._
 import play.api.mvc.RequestHeader
 import play.api.{Logger, mvc}
@@ -33,33 +33,42 @@ class UserSessions @Inject()(mongoStore: MongoStore,
     * @param sessionDataOption
     * @return
     */
-  def getUserModifier(user : User,
-                      sessionDataOption : Option[SessionData]  = None,
-                      forceSessionID    : Boolean = false) : BSONDocument = {
+  def getUserModifier(user: User,
+                      sessionDataOption: Option[SessionData] = None,
+                      forceSessionID: Boolean = false): BSONDocument = {
     // Build the modifier - first the last login date
-    BSONDocument("$set" -> BSONDocument(User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis))).merge(
-      // In the case that the user has been emailed about their inactivity, reset that status to a regular user status
-      if (user.accountType == User.CLOSETODELETIONUSER) {
-        BSONDocument(
-          "$set"   -> BSONDocument(User.ACCOUNTTYPE   -> 1),
-          "$unset" -> BSONDocument(User.DATEDELETEDON -> "")
-        )
-      } else {
-        BSONDocument.empty
-      }
-    ).merge(sessionDataOption.map(sessionData =>
-      // Add the session Data to the set
-      BSONDocument("$addToSet" -> BSONDocument(User.SESSIONDATA -> sessionData))).getOrElse(BSONDocument.empty)
-    ).merge(
-      // Add the session ID to the user
-      if (forceSessionID) {
-        BSONDocument("$set" ->
-          BSONDocument(User.SESSIONID -> Some(user.sessionID.getOrElse(BSONObjectID.generate())))
-        )
-      } else {
-        BSONDocument.empty
-      }
-    )
+    BSONDocument("$set" -> BSONDocument(User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)))
+      .merge(
+        // In the case that the user has been emailed about their inactivity, reset that status to a regular user status
+        if (user.accountType == User.CLOSETODELETIONUSER) {
+          BSONDocument(
+            "$set"   -> BSONDocument(User.ACCOUNTTYPE   -> 1),
+            "$unset" -> BSONDocument(User.DATEDELETEDON -> "")
+          )
+        } else {
+          BSONDocument.empty
+        }
+      )
+      .merge(
+        sessionDataOption
+          .map(
+            sessionData =>
+              // Add the session Data to the set
+              BSONDocument("$addToSet" -> BSONDocument(User.SESSIONDATA -> sessionData))
+          )
+          .getOrElse(BSONDocument.empty)
+      )
+      .merge(
+        // Add the session ID to the user
+        if (forceSessionID) {
+          BSONDocument(
+            "$set" ->
+            BSONDocument(User.SESSIONID -> Some(user.sessionID.getOrElse(BSONObjectID.generate())))
+          )
+        } else {
+          BSONDocument.empty
+        }
+      )
   }
 
   /**
@@ -69,9 +78,11 @@ class UserSessions @Inject()(mongoStore: MongoStore,
     */
   def putUser(implicit request: RequestHeader, sessionID: BSONObjectID): Future[User] = {
     val httpRequest = HTTPRequest(request)
-    val newSessionData = SessionData(ip        = MurmurHash3.stringHash(request.remoteAddress).toString,
-                                     userAgent = httpRequest.userAgent.getOrElse("Not Specified"),
-                                     location  = locationProvider.getLocation(request))
+    val newSessionData = SessionData(
+      ip = MurmurHash3.stringHash(request.remoteAddress).toString,
+      userAgent = httpRequest.userAgent.getOrElse("Not Specified"),
+      location = locationProvider.getLocation(request)
+    )
 
     mongoStore.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
       case Some(user) =>
@@ -94,9 +105,9 @@ class UserSessions @Inject()(mongoStore: MongoStore,
           userID = BSONObjectID.generate(),
           sessionID = Some(sessionID),
           sessionData = List(newSessionData),
-          dateCreated = Some(new DateTime()),
-          dateLastLogin = Some(new DateTime()),
-          dateUpdated = Some(new DateTime())
+          dateCreated = Some(ZonedDateTime.now),
+          dateLastLogin = Some(ZonedDateTime.now),
+          dateUpdated = Some(ZonedDateTime.now)
         )
         mongoStore.addUser(user).map { _ =>
           Logger.info(s"User is new:\n${user.toString}")
@@ -198,17 +209,18 @@ class UserSessions @Inject()(mongoStore: MongoStore,
 
     if (withDB) {
       mongoStore.userCollection.flatMap(
-        _.update(BSONDocument(User.IDDB -> user.userID),
+        _.update(
+          BSONDocument(User.IDDB -> user.userID),
           BSONDocument(
-            "$set"    ->
-              BSONDocument(
-                User.DATELASTLOGIN -> BSONDateTime(new DateTime().getMillis)
-              ),
-            "$unset"  ->
-              BSONDocument(
-                User.SESSIONID -> "",
-                User.CONNECTED -> ""
-              )
+            "$set" ->
+            BSONDocument(
+              User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
+            ),
+            "$unset" ->
+            BSONDocument(
+              User.SESSIONID -> "",
+              User.CONNECTED -> ""
+            )
           )
         )
       )
