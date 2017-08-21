@@ -40,8 +40,8 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                            userSessions: UserSessions,
                            implicit val mailerClient: MailerClient,
                            implicit val locationProvider: LocationProvider,
-                           @NamedCache("userCache") implicit val userCache: CacheApi,
-                           @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi, // Mailing Controller
+                           @NamedCache("userCache") implicit val userCache: SyncCacheApi,
+                           @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi, // Mailing Controller
                            constants: Constants,
                            cc: ControllerComponents)
     extends AbstractController(cc)

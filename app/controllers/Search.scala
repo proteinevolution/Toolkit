@@ -21,7 +21,7 @@ import scala.concurrent.Future
 import scala.language.postfixOps
 
 @Singleton
-final class Search @Inject()(@NamedCache("userCache") implicit val userCache: CacheApi,
+final class Search @Inject()(@NamedCache("userCache") implicit val userCache: SyncCacheApi,
                              implicit val locationProvider: LocationProvider,
                              userSessions: UserSessions,
                              val reactiveMongoApi: ReactiveMongoApi,
