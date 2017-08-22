@@ -3,7 +3,7 @@ package models.database.users
 import java.time.ZonedDateTime
 
 import org.mindrot.jbcrypt.BCrypt
-import play.api.libs.json.{JsObject, Json, Writes}
+import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
 import util.ZonedDateTimeHelper
 

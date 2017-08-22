@@ -38,10 +38,10 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   messagesApi: MessagesApi,
                                   @Named("clusterMonitor") clusterMonitor: ActorRef,
                                   webSocketActorFactory: WebSocketActor.Factory,
-                                  @NamedCache("userCache") implicit val userCache: CacheApi,
+                                  @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                                   implicit val locationProvider: LocationProvider,
                                   val reactiveMongoApi: ReactiveMongoApi,
-                                  @NamedCache("viewCache") val viewCache: CacheApi,
+                                  @NamedCache("viewCache") val viewCache: SyncCacheApi,
                                   toolFactory: ToolFactory,
                                   val jobDao: JobDAO,
                                   mongoStore: MongoStore,
@@ -86,11 +86,11 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
         .map { user =>
           Counter.websocketsCount.get(user.sessionID.get.stringify) match {
             case Some(x) => Counter.websocketsCount(user.sessionID.get.stringify) = x + 1
-            case None => Counter.websocketsCount += (user.sessionID.get.stringify -> 1)
+            case None    => Counter.websocketsCount += (user.sessionID.get.stringify -> 1)
           }
 
-          println("Add new websocket to counter:")
-          Counter.websocketsCount.map(println)
+//          println("Add new websocket to counter:")
+//          Counter.websocketsCount.map(println)
 
           Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.sessionID.get, out))))
         }
@@ -179,7 +179,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     userSessions.getUser.map { user =>
       Logger.info(user.toString)
       Ok(views.html.main(webJarsUtil, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message))
-        .withSession(userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
+        .withSession(userSessions.sessionCookie(request, user.sessionID.get))
     }
   }
 
@@ -210,7 +210,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
               s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"
             )
           )
-          .withSession(userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
+          .withSession(userSessions.sessionCookie(request, user.sessionID.get))
           .as("text/plain") //TODO Only text/plain for files currently supported
       else
         Ok // TODO This needs more case validations
@@ -242,7 +242,6 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
         routes.javascript.JobController.checkHash,
         routes.javascript.JobController.delete,
         routes.javascript.JobController.loadJob,
-        routes.javascript.Jobs.annotation,
         routes.javascript.DataController.get,
         routes.javascript.DataController.getHelp,
         routes.javascript.DataController.getRecentArticles,

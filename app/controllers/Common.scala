@@ -1,14 +1,8 @@
 package controllers
 
-import java.nio.file.attribute.PosixFilePermission
-
-import play.api.data._
-import play.api.data.Forms._
-import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoComponents
-import play.api.mvc.Controller
+import play.api.mvc._
 import play.api.http.ContentTypes
-import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   *
@@ -16,33 +10,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 private[controllers] trait Common extends AbstractController with ContentTypes with ReactiveMongoComponents {
 
-  var loggedOut = true
-
-  protected def CheckBackendPath(implicit request: RequestHeader): Boolean = {
-    request.headers.get("referer").getOrElse("").matches("http://" + request.host + "/@/backend.*")
-  }
-
   protected def NoCache(res: Result): Result = res.withHeaders(
     CACHE_CONTROL -> "no-cache, no-store, must-revalidate",
     EXPIRES       -> "0"
   )
 
-  protected val filePermissions = Set(
-    PosixFilePermission.OWNER_EXECUTE,
-    PosixFilePermission.OWNER_READ,
-    PosixFilePermission.OWNER_WRITE,
-    PosixFilePermission.GROUP_EXECUTE,
-    PosixFilePermission.GROUP_READ,
-    PosixFilePermission.GROUP_WRITE
-  )
-  val forwardForm = Form(
-    mapping(
-      "checkboxes" -> seq(number)
-    )(ForwardForm.apply)(ForwardForm.unapply)
-  )
-
 }
 // Exceptions
 case class FileException(message: String) extends Exception(message)
-
-case class ForwardForm(checkboxes: Seq[Int])

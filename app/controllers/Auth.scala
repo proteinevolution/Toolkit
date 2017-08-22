@@ -1,30 +1,30 @@
 package controllers
 
 import java.time.ZonedDateTime
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
-import actors.WebSocketActor.{ChangeSessionID, LogOut}
+import actors.WebSocketActor.{ ChangeSessionID, LogOut }
 import akka.actor.ActorRef
-import models.{Constants, UserSessions}
+import models.{ Constants, UserSessions }
 import models.auth._
-import models.database.users.{User, UserConfig, UserToken}
+import models.database.users.{ User, UserConfig, UserToken }
 import models.job.JobActorAccess
-import models.mailing.{ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail}
+import models.mailing.{ ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail }
 import models.tools.ToolFactory
 import modules.LocationProvider
 import modules.db.MongoStore
 import play.Logger
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.libs.mailer._
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.bson._
 import org.webjars.play.WebJarsUtil
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 
 /**
   * Controller for Authentication interactions
@@ -40,8 +40,8 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                            userSessions: UserSessions,
                            implicit val mailerClient: MailerClient,
                            implicit val locationProvider: LocationProvider,
-                           @NamedCache("userCache") implicit val userCache: CacheApi,
-                           @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi, // Mailing Controller
+                           @NamedCache("userCache") implicit val userCache: SyncCacheApi,
+                           @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi, // Mailing Controller
                            constants: Constants,
                            cc: ControllerComponents)
     extends AbstractController(cc)
@@ -182,9 +182,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                         // Everything is ok, let the user know that they are logged in now
                         Ok(LoggedIn(loggedInUser))
                           .withSession(
-                            userSessions.sessionCookie(request,
-                                                       loggedInUser.sessionID.get,
-                                                       Some(loggedInUser.getUserData.nameLogin))
+                            userSessions.sessionCookie(request, loggedInUser.sessionID.get)
                           )
                       case None =>
                         Ok(LoginIncorrect())
@@ -561,8 +559,10 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                                 BSONDocument(User.IDDB -> userToVerify.userID),
                                 BSONDocument(
                                   "$set" ->
-                                  BSONDocument(User.PASSWORD    -> newPassword,
-                                               User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)),
+                                  BSONDocument(
+                                    User.PASSWORD    -> newPassword,
+                                    User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
+                                  ),
                                   "$unset" ->
                                   BSONDocument(User.SESSIONID -> "", User.CONNECTED -> "", User.USERTOKEN -> "")
                                 )
@@ -615,8 +615,10 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                       UserToken(tokenType = 4, token = userToken.token, userID = Some(userToVerify.userID))
                     val selector = BSONDocument(User.IDDB -> user.userID)
                     val modifier = BSONDocument(
-                      "$set" -> BSONDocument(User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli),
-                                             User.USERTOKEN -> newToken)
+                      "$set" -> BSONDocument(
+                        User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli),
+                        User.USERTOKEN   -> newToken
+                      )
                     )
                     userSessions.modifyUserWithCache(selector, modifier).map {
                       case Some(changedUser) =>

@@ -1,18 +1,18 @@
 package controllers
 
 import java.time.ZonedDateTime
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
-import actors.JobActor.{JobStateChanged, UpdateLog}
-import models.{Constants, UserSessions}
+import actors.JobActor.{ JobStateChanged, UpdateLog }
+import models.{ Constants, UserSessions }
 import models.database.jobs._
 import models.job.JobActorAccess
 import modules.LocationProvider
 import modules.db.MongoStore
 import play.api.Logger
-import play.api.cache.{CacheApi, NamedCache}
+import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.mvc._
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.io.Source
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -26,7 +26,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 final class Jobs @Inject()(jobActorAccess: JobActorAccess,
                            userSessions: UserSessions,
-                           @NamedCache("userCache") implicit val userCache: CacheApi,
+                           @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                            implicit val locationProvider: LocationProvider,
                            mongoStore: MongoStore,
                            constants: Constants,
@@ -97,68 +97,6 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
       BSONDocument("$set"    -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)))
     )
     Ok
-  }
-
-  /**
-    *
-    * Creates new annotation document and modifies this if it already exists in one method
-    *
-    *
-    * @param jobID
-    * @param content
-    * @return
-    */
-  def annotation(jobID: String, content: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).map {
-
-        case x if x.get.ownerID.get == user.userID =>
-          val entry = JobAnnotation(mainID = BSONObjectID.generate(),
-                                    jobID = jobID,
-                                    content = content,
-                                    dateCreated = Some(ZonedDateTime.now))
-
-          mongoStore.upsertAnnotation(entry)
-
-          mongoStore.modifyAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID),
-                                      BSONDocument("$set"              -> BSONDocument(JobAnnotation.CONTENT -> content)))
-          Ok("annotation upserted")
-
-        case _ =>
-          Logger.info("Unknown ID " + jobID.toString)
-          BadRequest("Permission denied")
-
-      }
-    }
-
-  }
-
-  def getAnnotation(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      mongoStore.findJobAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID)).flatMap {
-
-        case Some(x) =>
-          mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).map { jobList =>
-            if (jobList.get.ownerID.get == user.userID) {
-
-              Ok(x.content)
-
-            } else BadRequest("Permission denied")
-
-          }
-
-        case None =>
-          mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).map { jobList =>
-            if (jobList.get.ownerID.get == user.userID) {
-
-              Ok
-
-            } else BadRequest("Permission denied")
-
-          }
-
-      }
-    }
   }
 
   /**
