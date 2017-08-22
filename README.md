@@ -1,7 +1,7 @@
 # Toolkit
 MPI Bioinformatics Toolkit 2
 
-<img src="https://raw.githubusercontent.com/zy4/Toolkit/master/public/images/toolkitscreenshot.png?token=AJBfhp32P_d1PI1Rt9cyzWC2hMAmxy0Zks5Zj1s7wA%3D%3D" alt="MPI Bioinformatics Toolkit" />
+<img src="https://raw.githubusercontent.com/zy4/Toolkit/master/public/images/toolkitscreenshot.png?token=AJBfhvc--oKnyCoxU_VZXcNZbHU7xTeRks5ZoVm5wA%3D%3D" alt="MPI Bioinformatics Toolkit" />
 
 
 Credits
@@ -15,7 +15,7 @@ The MPI-Toolkit is to some extent the product of volunteer work. Thanks to
 Supported browsers
 ------------------
 
-- [Chrome](https://www.google.com/chrome) or [Chromium](https://www.chromium.org/getting-involved/download-chromium), 1 year old or newer (fastest local analysis!)
+- [Chrome](https://www.google.com/chrome) or [Chromium](https://www.chromium.org/getting-involved/download-chromium), 1 year old or newer
 - [Firefox](https://www.mozilla.org/firefox), 1 year old or newer
 - Opera 34 and newer (needs to be tested)
 - Safari 9 and newer (needs to be tested)
