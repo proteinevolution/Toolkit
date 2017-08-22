@@ -100,68 +100,6 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
   }
 
   /**
-    *
-    * Creates new annotation document and modifies this if it already exists in one method
-    *
-    *
-    * @param jobID
-    * @param content
-    * @return
-    */
-  def annotation(jobID: String, content: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).map {
-
-        case x if x.get.ownerID.get == user.userID =>
-          val entry = JobAnnotation(mainID = BSONObjectID.generate(),
-                                    jobID = jobID,
-                                    content = content,
-                                    dateCreated = Some(ZonedDateTime.now))
-
-          mongoStore.upsertAnnotation(entry)
-
-          mongoStore.modifyAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID),
-                                      BSONDocument("$set"              -> BSONDocument(JobAnnotation.CONTENT -> content)))
-          Ok("annotation upserted")
-
-        case _ =>
-          Logger.info("Unknown ID " + jobID.toString)
-          BadRequest("Permission denied")
-
-      }
-    }
-
-  }
-
-  def getAnnotation(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      mongoStore.findJobAnnotation(BSONDocument(JobAnnotation.JOBID -> jobID)).flatMap {
-
-        case Some(x) =>
-          mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).map { jobList =>
-            if (jobList.get.ownerID.get == user.userID) {
-
-              Ok(x.content)
-
-            } else BadRequest("Permission denied")
-
-          }
-
-        case None =>
-          mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).map { jobList =>
-            if (jobList.get.ownerID.get == user.userID) {
-
-              Ok
-
-            } else BadRequest("Permission denied")
-
-          }
-
-      }
-    }
-  }
-
-  /**
     * checks given key against the key that is
     * located in the folder jobPath/jobID/key
     *
