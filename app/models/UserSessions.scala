@@ -24,7 +24,7 @@ import scala.util.hashing.MurmurHash3
 class UserSessions @Inject()(mongoStore: MongoStore,
                              @NamedCache("userCache") val userCache: SyncCacheApi,
                              locationProvider: LocationProvider) {
-  private val SID      = "sid"
+  private val SID = "sid"
 
   /**
     * Creates a update modifier for the user according to the
