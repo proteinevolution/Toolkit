@@ -65,6 +65,7 @@ let JobTabsComponent = {
             getParamValue: window.JobModel.getParamValue,
             job: args.job,
             active: active,
+            ownsJob : false,
             getLabel: (function() {
                 return this.label;
             }).bind(mo),
@@ -128,14 +129,12 @@ let JobTabsComponent = {
                         );
                     }
                 }),
-                document.cookie.split("&username=")[1] === ctrl.owner ? [ m("li", {
+                ctrl.ownsJob ? [ m("li", {
                     "class" : "notesheader"
                 }, m("a", {
                     href: "#tabpanel-notes",
                     id: "notesTab"
                 }, "Notes")) ] : [] ,
-                document.cookie.split("&username=")[1] != 'invalid' ? [m("li", { style: "float: right;" }
-                )] : [],
                 m("li", { style: "float: right;" },
                     m("i", {
                         type:    "button",
@@ -154,7 +153,7 @@ let JobTabsComponent = {
                     })
                 ) : void 0
             ]), // Actual Tab Divs start here
-            document.cookie.split("&username=")[1] === ctrl.owner ? [
+            ctrl.ownsJob ? [
                 m("div", {
                     "class": "tab-panel parameter-panel",
                     id:    "tabpanel-notes"
