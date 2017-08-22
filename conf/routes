@@ -122,15 +122,8 @@ GET           /api/job/result/:jobID/:tool/:panel     @controllers.Service.getRe
 DELETE        /api/job/:jobID                         @controllers.JobController.delete(jobID)
 GET           /api/job/load/:jobID                    @controllers.JobController.loadJob(jobID: String)
 
-
-
 # Frontend Stuff
 POST          /api/frontendSubmit/:toolname           @controllers.Tool.frontendCount(toolname: String)
-
-# Job Annotations
-
-POST          /api/job/addnotes                       @controllers.Jobs.annotation(jobID: String, content : String ?= "")
-GET           /api/jobs/getnotes/:jobID               @controllers.Jobs.getAnnotation(jobID: String)
 
 # Results
 GET           /api/job/results/:jobID                 @controllers.DataController.get(jobID: String)
