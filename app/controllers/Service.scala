@@ -94,10 +94,7 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
   )(unlift(Toolitem.unapply))
 
   implicit val jobitemWrites: Writes[Jobitem] = (
-    (JsPath \ "mainID").write[String] and
-    (JsPath \ "newMainID").write[String] and
     (JsPath \ "jobID").write[String] and
-    (JsPath \ "project").write[String] and
     (JsPath \ "state").write[JobState] and
     (JsPath \ "ownerName").write[String] and
     (JsPath \ "dateCreated").write[String] and
@@ -170,10 +167,7 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
                 Ok(
                   Json.toJson(
                     Jobitem(
-                      job.mainID.stringify,
-                      BSONObjectID.generate().stringify, // Used for resubmitting
                       job.jobID,
-                      BSONObjectID.generate().stringify,
                       job.status,
                       ownerN,
                       job.dateCreated.get.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),

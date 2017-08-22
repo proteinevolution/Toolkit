@@ -39,7 +39,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                     userSessions: UserSessions,
                                     mongoStore: MongoStore,
                                     env: Env,
-                                    @NamedCache("userCache") implicit val userCache: CacheApi,
+                                    @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                                     implicit val locationProvider: LocationProvider,
                                     val jobDao: JobDAO,
                                     val toolFactory: ToolFactory,
@@ -136,8 +136,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 status = Submitted,
                 emailUpdate = emailUpdate,
                 tool = toolName,
-                toolnameLong = None,
-                label = params.get("label"),
                 watchList = List(user.userID),
                 dateCreated = Some(jobCreationTime),
                 dateUpdated = Some(jobCreationTime),
@@ -160,7 +158,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                   // Notify user that the job has been submitted
                   Ok(Json.obj("successful" -> true, "jobID" -> jobID))
                     .withSession(
-                      userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin))
+                      userSessions.sessionCookie(request, user.sessionID.get)
                     )
                 case None =>
                   // Something went wrong when pushing to the DB
