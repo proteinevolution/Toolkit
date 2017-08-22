@@ -1,5 +1,6 @@
 package controllers
 
+import java.time.ZonedDateTime
 import javax.inject.{Inject, Singleton}
 
 import actors.JobActor.{JobStateChanged, UpdateLog}
@@ -8,7 +9,6 @@ import models.database.jobs._
 import models.job.JobActorAccess
 import modules.LocationProvider
 import modules.db.MongoStore
-import org.joda.time.DateTime
 import play.api.Logger
 import play.api.cache.{CacheApi, NamedCache}
 import play.api.mvc._
@@ -29,8 +29,9 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
                            @NamedCache("userCache") implicit val userCache: CacheApi,
                            implicit val locationProvider: LocationProvider,
                            mongoStore: MongoStore,
-                           constants: Constants)
-    extends Controller {
+                           constants: Constants,
+                           cc: ControllerComponents)
+    extends AbstractController(cc) {
 
   def jobStatusDone(jobID: String, key: String) = Action {
 
@@ -93,7 +94,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
 
     mongoStore.modifyJob(
       BSONDocument(Job.JOBID -> jobID),
-      BSONDocument("$set"    -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(DateTime.now().getMillis)))
+      BSONDocument("$set"    -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)))
     )
     Ok
   }
@@ -115,7 +116,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
           val entry = JobAnnotation(mainID = BSONObjectID.generate(),
                                     jobID = jobID,
                                     content = content,
-                                    dateCreated = Some(DateTime.now()))
+                                    dateCreated = Some(ZonedDateTime.now))
 
           mongoStore.upsertAnnotation(entry)
 

@@ -21,7 +21,7 @@ class Alignment @Inject()() {
             parseAlignmentItem(data, index.toInt + 1)
         }
         AlignmentResult(list)
-      }
+      } finally {}
   }
   def parseAlignmentItem(jsArray: JsArray, index: Int): AlignmentItem = jsArray match {
     case arr: JsArray =>
@@ -29,7 +29,7 @@ class Alignment @Inject()() {
         val accession = (arr \ 0).as[String]
         val seq       = (arr \ 1).as[String]
         AlignmentItem(accession, seq, index)
-      }
+      } finally {}
   }
 }
 case class SingleSeq(accession: String, seq: String)
@@ -44,7 +44,7 @@ class General() {
         val accession = (arr \ 0 \ 0).get.as[String]
         val seq       = (arr \ 0 \ 1).get.as[String]
         SingleSeq(accession, seq)
-      }
+      } finally {}
   }
 
   def refineAccession(seq: String) = seq match {

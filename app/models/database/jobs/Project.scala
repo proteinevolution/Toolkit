@@ -4,9 +4,11 @@ package models.database.jobs
   * Created by snam on 30.03.17.
   *
   */
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
+
+import util.ZonedDateTimeHelper
 import play.api.libs.json._
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID }
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
 import reactivemongo.play.json._
 
 case class Project(mainID: BSONObjectID, // Unique Project ID
@@ -14,8 +16,8 @@ case class Project(mainID: BSONObjectID, // Unique Project ID
                    ownerID: BSONObjectID,
                    jobIDs: List[String],
                    content: String,
-                   dateModified: Option[DateTime],
-                   dateCreated: Option[DateTime]) // Creation time of the project
+                   dateModified: Option[ZonedDateTime],
+                   dateCreated: Option[ZonedDateTime]) // Creation time of the project
 
 object Project {
   // Constants for the JSON object identifiers
@@ -48,8 +50,8 @@ object Project {
               ownerID = BSONObjectID.generate(),
               jobIDs = Nil,
               content = "",
-              dateModified = Some(new DateTime()),
-              dateCreated = Some(new DateTime())
+              dateModified = Some(new ZonedDateTime()),
+              dateCreated = Some(new ZonedDateTime())
             )
           )
         } catch {
@@ -66,7 +68,7 @@ object Project {
       JOBIDS       -> project.jobIDs,
       CONTENT      -> project.content,
       DATEMODIFIED -> project.dateModified,
-      DATECREATED  -> BSONDateTime(project.dateCreated.fold(-1L)(_.getMillis))
+      DATECREATED  -> BSONDateTime(project.dateCreated.fold(-1L)(_.toInstant.toEpochMilli))
     )
   }
 
@@ -81,8 +83,8 @@ object Project {
         ownerID = bson.getAs[BSONObjectID](OWNERID).getOrElse(BSONObjectID.generate()),
         jobIDs = bson.getAs[List[String]](JOBIDS).getOrElse(Nil),
         content = bson.getAs[String](CONTENT).getOrElse(""),
-        dateModified = bson.getAs[BSONDateTime](DATEMODIFIED).map(dt => new DateTime(dt.value)),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value))
+        dateModified = bson.getAs[BSONDateTime](DATEMODIFIED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
     }
   }
@@ -97,8 +99,8 @@ object Project {
       OWNERID      -> project.ownerID,
       JOBIDS       -> project.jobIDs,
       CONTENT      -> project.content,
-      DATEMODIFIED -> BSONDateTime(project.dateModified.fold(-1L)(_.getMillis)),
-      DATECREATED  -> BSONDateTime(project.dateCreated.fold(-1L)(_.getMillis))
+      DATEMODIFIED -> BSONDateTime(project.dateModified.fold(-1L)(_.toInstant.toEpochMilli)),
+      DATECREATED  -> BSONDateTime(project.dateCreated.fold(-1L)(_.toInstant.toEpochMilli))
     )
   }
 }
