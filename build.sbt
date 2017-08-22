@@ -26,7 +26,6 @@ lazy val commonDeps = Seq(
   "org.scalaz"             %% "scalaz-core"          % scalazVersion,
   "org.scalaz"             %% "scalaz-concurrent"    % scalazVersion,
   "com.chuusai"            %% "shapeless"            % "2.3.2",
-  "org.clapper"            %% "classutil"            % "1.1.2",
   "com.lihaoyi"            %% "fastparse"            % "0.4.2",
   "com.vmunier"            %% "scalajs-scripts"      % "1.1.1",
   "org.typelevel"          %% "cats"                 % "0.9.0",
@@ -117,8 +116,8 @@ resolvers += "Madoushi sbt-plugins" at "https://dl.bintray.com/madoushi/sbt-plug
 lazy val client = (project in file("client"))
   .settings(
     scalaVersion := "2.11.8",
-    persistLauncher := true,
-    persistLauncher in Test := false,
+    scalaJSUseMainModuleInitializer := true,
+    scalaJSUseMainModuleInitializer in Test := false,
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom"     % "0.9.3",
       "co.technius"  %%% "scalajs-mithril" % "0.1.0",

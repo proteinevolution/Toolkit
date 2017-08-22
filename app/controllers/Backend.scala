@@ -31,7 +31,7 @@ import scala.concurrent.Future
 final class Backend @Inject()(settingsController: Settings,
                               userSessions: UserSessions,
                               mongoStore: MongoStore,
-                              @NamedCache("userCache") implicit val userCache: CacheApi,
+                              @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                               toolFactory: ToolFactory,
                               @Named("DatabaseMonitor") databaseMonitor: ActorRef,
                               implicit val locationProvider: LocationProvider,

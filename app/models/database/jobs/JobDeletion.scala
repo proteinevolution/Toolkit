@@ -51,9 +51,11 @@ object JobDeletion {
       JobDeletion(
         deletionFlag = bson.getAs[JobDeletionFlag](DELETIONFLAG).getOrElse(JobDeletionFlag.Error),
         deletionDate = bson
-          .getAs[BSONDateTime](DELETIONDATE).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+          .getAs[BSONDateTime](DELETIONDATE)
+          .map(dt => ZonedDateTimeHelper.getZDT(dt)),
         fileRemovalDateO = bson
-          .getAs[BSONDateTime](FILEDELETIONDATE).map(dt => ZonedDateTimeHelper.getZDT(dt))
+          .getAs[BSONDateTime](FILEDELETIONDATE)
+          .map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
     }
   }
