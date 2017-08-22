@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 import javax.inject.{Inject, Singleton}
 
 import models.database.CMS.FeaturedArticle
-import models.database.jobs.{DeletedJob, FrontendJob, Job, JobAnnotation}
+import models.database.jobs.{DeletedJob, FrontendJob, Job}
 import models.database.statistics.{ClusterLoadEvent, JobEventLog, StatisticsObject, ToolStatistic}
 import models.database.users.{User, UserData}
 import play.api.Logger
@@ -65,8 +65,7 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
 
   lazy val frontendJobCollection: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection[BSONCollection]("frontendjobs"))
-  lazy val jobAnnotationCollection: Future[BSONCollection] =
-    reactiveMongoApi.database.map(_.collection[BSONCollection]("jobannotations"))
+
   // ResultfilesCollection
   lazy val resultCollection: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection[BSONCollection]("results"))
@@ -90,9 +89,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
   }
 
   def findJob(selector: BSONDocument): Future[Option[Job]] = jobCollection.flatMap(_.find(selector).one[Job])
-
-  def findJobAnnotation(selector: BSONDocument): Future[Option[JobAnnotation]] =
-    jobAnnotationCollection.flatMap(_.find(selector).one[JobAnnotation])
 
   def findJobs(selector: BSONDocument): Future[scala.List[Job]] = {
     jobCollection.map(_.find(selector).cursor[Job]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
@@ -144,17 +140,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
     jobCollection.flatMap(_.insert(job)).map { a =>
       if (a.ok) { Some(job) } else { None }
     }
-  }
-
-  def upsertAnnotation(notes: JobAnnotation): Future[Option[JobAnnotation]] = {
-
-    jobAnnotationCollection.flatMap(
-      _.findAndUpdate(selectjobID(notes.jobID), update = notes, upsert = true).map(_.result[JobAnnotation])
-    )
-  }
-
-  def modifyAnnotation(selector: BSONDocument, modifier: BSONDocument): Future[Option[Job]] = {
-    jobAnnotationCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[Job]))
   }
 
   // Modifies result in database
@@ -326,7 +311,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
 
   //def removeUser(selector : BSONDocument) : Future[WriteResult] = userCollection.flatMap(_.remove(selector))
   def removeJob(selector: BSONDocument): Future[WriteResult] = {
-    jobAnnotationCollection.flatMap(_.remove(selector))
     jobCollection.flatMap(_.remove(selector))
     resultCollection.flatMap(_.remove(selector))
   }
