@@ -1,6 +1,8 @@
 package models.database.jobs
 
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
+
+import util.ZonedDateTimeHelper
 import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._
@@ -13,7 +15,7 @@ case class FrontendJob(mainID: BSONObjectID, // ID of the Job in the System
                        parentID: Option[BSONObjectID] = None, // ID of the Parent Job
                        ownerID: Option[BSONObjectID] = None, // User to whom the Job belongs
                        tool: String, // Tool used for this Job
-                       dateCreated: Option[DateTime]) // Creation time of the Job
+                       dateCreated: Option[ZonedDateTime]) // Creation time of the Job
 
 object FrontendJob {
   // Constants for the JSON object identifiers
@@ -41,7 +43,7 @@ object FrontendJob {
               parentID = None,
               ownerID = Some(BSONObjectID.generate()),
               tool = "",
-              dateCreated = Some(new DateTime())
+              dateCreated = Some(new ZonedDateTime())
             )
           )
         } catch {
@@ -56,7 +58,7 @@ object FrontendJob {
       IDDB        -> job.mainID,
       PARENTID    -> job.parentID,
       TOOL        -> job.tool,
-      DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis))
+      DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli))
     )
   }
 
@@ -69,7 +71,7 @@ object FrontendJob {
         mainID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         parentID = bson.getAs[BSONObjectID](PARENTID),
         tool = bson.getAs[String](TOOL).getOrElse(""),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value))
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
     }
   }
@@ -82,7 +84,7 @@ object FrontendJob {
       IDDB        -> job.mainID,
       PARENTID    -> job.parentID,
       TOOL        -> job.tool,
-      DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis))
+      DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli))
     )
   }
 }

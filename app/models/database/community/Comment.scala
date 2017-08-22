@@ -1,6 +1,8 @@
 package models.database.community
 
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
+
+import util.ZonedDateTimeHelper
 import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._
@@ -12,8 +14,8 @@ case class Comment(
     commentList: List[BSONObjectID] = List.empty, // List of child comments
     deleted: Option[Boolean] = None, // Unset: Not hidden, False: Hidden by Owner, True: Deleted by Moderators
     oldVersion: Option[BSONObjectID] = None, // Older version of the comment (set this to link to the original comment after a edit)
-    dateCreated: Option[DateTime], // Creation time of the Comment
-    dateUpdated: Option[DateTime]
+    dateCreated: Option[ZonedDateTime], // Creation time of the Comment
+    dateUpdated: Option[ZonedDateTime]
 ) // Last changed on (set this when replaced by a newer version)
 
 object Comment {
@@ -40,8 +42,8 @@ object Comment {
           JsSuccess(
             Comment(commentID = BSONObjectID.generate(),
                     text = "",
-                    dateCreated = Some(new DateTime()),
-                    dateUpdated = Some(new DateTime()))
+                    dateCreated = Some(ZonedDateTime.now),
+                    dateUpdated = Some(ZonedDateTime.now))
           )
         } catch {
           case cause: Throwable => JsError(cause.getMessage)
@@ -75,8 +77,8 @@ object Comment {
         commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
         deleted = bson.getAs[Boolean](DELETED),
         oldVersion = bson.getAs[BSONObjectID](OLDVERSION),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value))
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
     }
   }
@@ -92,8 +94,8 @@ object Comment {
       COMMENTLIST -> comment.commentList,
       DELETED     -> comment.deleted,
       OLDVERSION  -> comment.oldVersion,
-      DATECREATED -> BSONDateTime(comment.dateCreated.fold(-1L)(_.getMillis)),
-      DATEUPDATED -> BSONDateTime(comment.dateUpdated.fold(-1L)(_.getMillis))
+      DATECREATED -> BSONDateTime(comment.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
+      DATEUPDATED -> BSONDateTime(comment.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli))
     )
   }
 }

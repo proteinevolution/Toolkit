@@ -1,13 +1,21 @@
 package models.mailing
 
+import java.time.ZonedDateTime
+
 import models.database.jobs._
 import models.database.users.User
-import play.api.libs.mailer.{ Email, MailerClient }
 import modules.tel.TEL
+import play.api.libs.mailer.{Email, MailerClient}
+import util.ZonedDateTimeHelper
 
 /**
   * Created by astephens on 24.05.16.
   */
+object MailTemplate {
+  // Date time format for the "deleting your account on" mail
+  val dtf = "EEEE, dd.MM.yyyy"
+}
+
 /**
   * Template trait to the Mail object
   */
@@ -196,6 +204,46 @@ case class JobFinishedMail(userParam: User, job: Job) extends MailTemplate {
           |You can view it at any time <a href=\"$origin/jobs/${job.jobID}>here</a>
           |or go to $origin/jobs/${job.jobID} in your browser<br /><br />
           |Your Toolkit Team
+     """.stripMargin
+    )
+  }
+}
+
+case class OldAccountEmail(userParam: User, deletionDate: ZonedDateTime) extends MailTemplate {
+  override def subject = "Old Account - Bioinformatics Toolkit"
+
+  val user: User = userParam
+
+  val bodyText: String = {
+    s"""Dear ${user.getUserData.nameLogin},
+       |we have noticed, that you have not logged in since ${user.dateLastLogin
+         .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
+         .getOrElse("[date not supplied]")}.
+       |To keep our system running smoothly and to keep the data we collect from our users to a minimum,
+       |we delete old user accounts.
+       |This is why Your account will be deleted on ${user.dateLastLogin
+      .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
+         .getOrElse("[date not supplied]")}.
+       |Just log into Your account to let us know that You are still interested in our services.
+       |
+       |Your Toolkit Team
+       |
+       |$origin
+     """.stripMargin
+  }
+
+  val bodyHtml: String = {
+    super.bodyHtmlTemplate(
+      s"""Dear ${user.getUserData.nameLogin},<br />""".stripMargin,
+      s"""we have noticed, that you have not logged in since ${user.dateLastLogin
+           .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
+           .getOrElse("[date not supplied]")}.<br />
+         |To keep our system running smoothly and to keep the data we collect from our users to a minimum,
+         |we delete old user accounts.<br />
+         |This is why Your account will be deleted on<br />
+         |${user.dateLastLogin.map(_.format(ZonedDateTimeHelper.dateTimeFormatter)).getOrElse("[date not supplied]")}.<br />
+         |Just log into Your account to let us know that You are still interested in our services.<br /><br />
+         |<a href="$origin">Your Toolkit Team</a>
      """.stripMargin
     )
   }

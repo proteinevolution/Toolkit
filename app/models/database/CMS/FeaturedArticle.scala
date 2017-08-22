@@ -3,12 +3,13 @@ package models.database.CMS
 /**
   * Created by drau on 30.01.17.
   */
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
+import util.ZonedDateTimeHelper
 import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._
-import reactivemongo.bson.Macros
 
 case class FeaturedArticle(
     articleID: BSONObjectID, // ID of the Article
@@ -17,8 +18,8 @@ case class FeaturedArticle(
     textlong: String,
     link: String,
     imagePath: String, // path of the image
-    dateCreated: Option[DateTime], // Creation time of the Article
-    dateUpdated: Option[DateTime]
+    dateCreated: Option[ZonedDateTime], // Creation time of the Article
+    dateUpdated: Option[ZonedDateTime]
 ) // Last changed on (set this when replaced by a newer version)
 
 object FeaturedArticle {
@@ -47,8 +48,9 @@ object FeaturedArticle {
                             textlong = "",
                             link = "",
                             imagePath = "",
-                            dateCreated = Some(new DateTime()),
-                            dateUpdated = Some(new DateTime()))
+                            dateCreated = Some(ZonedDateTime.now),
+                            dateUpdated = Some(ZonedDateTime.now)
+            )
           )
         } catch {
           case cause: Throwable => JsError(cause.getMessage)
@@ -58,7 +60,6 @@ object FeaturedArticle {
   }
 
   implicit object ArticleWrites extends Writes[FeaturedArticle] {
-    val dtf = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss")
     def writes(featuredArticle: FeaturedArticle): JsObject = Json.obj(
       IDDB        -> featuredArticle.articleID,
       TITLE       -> featuredArticle.title,
@@ -66,8 +67,8 @@ object FeaturedArticle {
       TEXTLONG    -> featuredArticle.textlong,
       LINK        -> featuredArticle.link,
       IMAGEPATH   -> featuredArticle.imagePath,
-      DATECREATED -> featuredArticle.dateCreated.map(dt => dtf.print(dt)),
-      DATEUPDATED -> featuredArticle.dateUpdated.map(dt => dtf.print(dt))
+      DATECREATED -> featuredArticle.dateCreated.map(_.format(ZonedDateTimeHelper.dateTimeFormatter)),
+      DATEUPDATED -> featuredArticle.dateUpdated.map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
     )
   }
 
@@ -83,8 +84,8 @@ object FeaturedArticle {
         textlong = bson.getAs[String](TEXTLONG).getOrElse("Error Loading Article."),
         link = bson.getAs[String](LINK).get,
         imagePath = bson.getAs[String](IMAGEPATH).getOrElse("Error Loading URL."),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value))
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
     }
   }
@@ -100,8 +101,8 @@ object FeaturedArticle {
       TEXTLONG    -> featuredArticle.textlong,
       LINK        -> featuredArticle.link,
       IMAGEPATH   -> featuredArticle.imagePath,
-      DATECREATED -> BSONDateTime(featuredArticle.dateCreated.fold(-1L)(_.getMillis)),
-      DATEUPDATED -> BSONDateTime(featuredArticle.dateUpdated.fold(-1L)(_.getMillis))
+      DATECREATED -> BSONDateTime(featuredArticle.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
+      DATEUPDATED -> BSONDateTime(featuredArticle.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli))
     )
   }
 
