@@ -42,14 +42,15 @@ object FeaturedArticle {
           val dateCreated = (obj \ DATECREATED).asOpt[String]
           val dateUpdated = (obj \ DATEUPDATED).asOpt[String]
           JsSuccess(
-            FeaturedArticle(articleID = BSONObjectID.generate(),
-                            title = "",
-                            text = "",
-                            textlong = "",
-                            link = "",
-                            imagePath = "",
-                            dateCreated = Some(ZonedDateTime.now),
-                            dateUpdated = Some(ZonedDateTime.now)
+            FeaturedArticle(
+              articleID = BSONObjectID.generate(),
+              title = "",
+              text = "",
+              textlong = "",
+              link = "",
+              imagePath = "",
+              dateCreated = Some(ZonedDateTime.now),
+              dateUpdated = Some(ZonedDateTime.now)
             )
           )
         } catch {

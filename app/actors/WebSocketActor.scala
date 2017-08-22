@@ -40,8 +40,8 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
                                      jobActorAccess: JobActorAccess,
                                      userSessions: UserSessions,
                                      constants: Constants,
-                                     @NamedCache("userCache") val userCache: CacheApi,
-                                     @NamedCache("wsActorCache") val wsActorCache: CacheApi,
+                                     @NamedCache("userCache") val userCache: SyncCacheApi,
+                                     @NamedCache("wsActorCache") val wsActorCache: SyncCacheApi,
                                      @Assisted("sessionID") private var sessionID: BSONObjectID)
     extends Actor
     with ActorLogging {

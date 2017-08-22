@@ -6,7 +6,7 @@ package models.database.users
 import java.time.ZonedDateTime
 
 import util.ZonedDateTimeHelper
-import play.api.libs.json.{JsObject, Json, Writes}
+import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
 
 case class IPConfig(id: BSONObjectID = BSONObjectID.generate(), // ID in MongoDB

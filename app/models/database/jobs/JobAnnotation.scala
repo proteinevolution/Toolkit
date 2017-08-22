@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 
 import util.ZonedDateTimeHelper
 import play.api.libs.json._
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID }
 import reactivemongo.play.json._
 
 /**

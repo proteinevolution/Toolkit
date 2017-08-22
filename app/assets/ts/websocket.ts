@@ -1,8 +1,3 @@
-/*
- *  Handles the Connection to the WebSocket and its connection to ModelView elements like provided by
- *  Mithril.
- */
-
 let ws : WebSocket = null,
     connect      : Function,
     onClose   : Function,
@@ -13,8 +8,6 @@ let ws : WebSocket = null,
 let notifications = 0;
 let attempts = 1;
 declare var titlenotifier: any;
-let connectCount = 0;
-
 
 connect = function() : any {
         let wsRoute = jsRoutes.controllers.Application.ws;
@@ -51,8 +44,8 @@ onError = function(event : ErrorEvent) : any {
     let time = generateInterval(attempts);
     console.log("trying to reconnect in ... " + time);
     // We've tried to reconnect so increment the attempts by 1
-    attempts++;
-    setTimeout(connect(), time);
+    //attempts++;
+    //setTimeout(connect(), time);
 };
 
 onClose = function(event : CloseEvent) : any {
