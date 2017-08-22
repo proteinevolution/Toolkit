@@ -129,12 +129,6 @@ let JobTabsComponent = {
                         );
                     }
                 }),
-                ctrl.ownsJob ? [ m("li", {
-                    "class" : "notesheader"
-                }, m("a", {
-                    href: "#tabpanel-notes",
-                    id: "notesTab"
-                }, "Notes")) ] : [] ,
                 m("li", { style: "float: right;" },
                     m("i", {
                         type:    "button",
@@ -153,22 +147,6 @@ let JobTabsComponent = {
                     })
                 ) : void 0
             ]), // Actual Tab Divs start here
-            ctrl.ownsJob ? [
-                m("div", {
-                    "class": "tab-panel parameter-panel",
-                    id:    "tabpanel-notes"
-                }, [
-                    m("textarea", {
-                        "class" : "noteArea",
-                        placeholder: "Type notes here",
-                        rows: 18,
-                        cols: 70,
-                        id: "notepad" + ctrl.job().jobID,
-                        spellcheck: true,
-                        config: jobNoteArea
-                    })
-                ])
-            ] : null,
             m("form", { id: "jobform" },
                 ctrl.params.map(function(paramGroup : any) : any {
                     let elements;
