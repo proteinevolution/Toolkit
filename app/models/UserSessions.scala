@@ -1,16 +1,16 @@
 package models
 
 import java.time.ZonedDateTime
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
-import models.database.users.{SessionData, User}
+import models.database.users.{ SessionData, User }
 import modules.LocationProvider
 import modules.common.HTTPRequest
 import modules.db.MongoStore
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{Logger, mvc}
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import play.api.{ mvc, Logger }
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -22,10 +22,9 @@ import scala.util.hashing.MurmurHash3
   */
 @Singleton
 class UserSessions @Inject()(mongoStore: MongoStore,
-                             @NamedCache("userCache") val userCache: CacheApi,
+                             @NamedCache("userCache") val userCache: SyncCacheApi,
                              locationProvider: LocationProvider) {
-  private val SID      = "sid"
-  private val USERNAME = "username"
+  private val SID = "sid"
 
   /**
     * Creates a update modifier for the user according to the
@@ -230,7 +229,7 @@ class UserSessions @Inject()(mongoStore: MongoStore,
   /**
     * Handles cookie creation
     */
-  def sessionCookie(implicit request: RequestHeader, sessionID: BSONObjectID, userName: Option[String]): mvc.Session = {
-    request.session + (SID -> sessionID.stringify) + (USERNAME -> userName.getOrElse(""))
+  def sessionCookie(implicit request: RequestHeader, sessionID: BSONObjectID): mvc.Session = {
+    request.session + (SID -> sessionID.stringify)
   }
 }

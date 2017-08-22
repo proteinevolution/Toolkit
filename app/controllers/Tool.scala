@@ -1,7 +1,7 @@
 package controllers
 
 import java.time.ZonedDateTime
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import akka.stream.Materializer
 import akka.util.Timeout
@@ -10,7 +10,7 @@ import models.search.JobDAO
 import modules.LocationProvider
 import modules.db.MongoStore
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.mvc._
 import reactivemongo.bson.BSONObjectID
 
@@ -19,7 +19,7 @@ import scala.concurrent.duration._
 
 @Singleton
 final class Tool @Inject()(messagesApi: MessagesApi,
-                           @NamedCache("userCache") implicit val userCache: CacheApi,
+                           @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                            mongoStore: MongoStore,
                            implicit val mat: Materializer,
                            implicit val locationProvider: LocationProvider,
@@ -28,7 +28,7 @@ final class Tool @Inject()(messagesApi: MessagesApi,
     extends AbstractController(cc)
     with I18nSupport {
 
-  implicit val timeout = Timeout(5.seconds)
+  implicit val timeout: Timeout = Timeout(5.seconds)
 
   // counts usage of frontend tools in order to keep track for our stats
 

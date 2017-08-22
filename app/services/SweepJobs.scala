@@ -40,8 +40,7 @@ trait SweepJobs {
   * 3.  pull job from watchlist, delete from ElasticSearch
   * 4.  if jobs has no ownerID or user is not found:
   *     delete job from ElasticSearch
-  * 5.  delete job folder, resultCollection,
-  *     jobAnnotationCollection and jobCollection in mongoDB
+  * 5.  delete job folder, resultCollection
   */
 @Singleton
 class SweepJobsImpl @Inject()(appLifecycle: ApplicationLifecycle,
@@ -146,9 +145,7 @@ class SweepJobsImpl @Inject()(appLifecycle: ApplicationLifecycle,
   }
 
   /**
-    * deletes job from job path, resultCollection,
-    * jobAnnotationCollection and jobCollection
-    *
+    * deletes job from job path, resultCollection, jobCollection
     * @param job
     */
   def deleteJobPermanently(job: Job): Unit = {
