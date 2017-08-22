@@ -1,18 +1,18 @@
 package actors
 
 import java.time.ZonedDateTime
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import actors.DatabaseMonitor.DeleteOldUsers
-import akka.actor.{Actor, ActorLogging, Cancellable}
-import models.database.statistics.{StatisticsObject, UserStatistic}
+import akka.actor.{ Actor, ActorLogging, Cancellable }
+import models.database.statistics.{ StatisticsObject, UserStatistic }
 import models.database.users.User
 import models.mailing.OldAccountEmail
 import modules.db.MongoStore
 import play.api.Logger
 import play.api.libs.mailer.MailerClient
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDateTime, BSONDocument}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -43,7 +43,9 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
   // interval calling the user deletion method automatically
   private val Tick: Cancellable = {
     // scheduler should use the system dispatcher
-    context.system.scheduler.schedule(userDeletionDelay, userDeletionInterval, self, DeleteOldUsers)(context.system.dispatcher)
+    context.system.scheduler.schedule(userDeletionDelay, userDeletionInterval, self, DeleteOldUsers)(
+      context.system.dispatcher
+    )
   }
 
   /**
@@ -70,7 +72,8 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
     // Date to delete the Registered account at
     val registeredUserDeletionDateForEmail = now
       .plusDays(userLoggedInWarningDaysBeforeDeletion)
-      .toLocalDate.atStartOfDay(now.getZone)
+      .toLocalDate
+      .atStartOfDay(now.getZone)
 
     if (verbose)
       Logger.info(s"""[User Deletion] Deletion Times:
@@ -91,8 +94,10 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
               User.DATELASTLOGIN -> BSONDocument("$lt" -> BSONDateTime(regularUserDeletionDate.toInstant.toEpochMilli))
             ),
             BSONDocument( // Removing regular users who await registration
-              User.ACCOUNTTYPE   -> User.NORMALUSERAWAITINGREGISTRATION,
-              User.DATELASTLOGIN -> BSONDocument("$lt" -> BSONDateTime(awitingRegistrationUserDeletionDate.toInstant.toEpochMilli))
+              User.ACCOUNTTYPE -> User.NORMALUSERAWAITINGREGISTRATION,
+              User.DATELASTLOGIN -> BSONDocument(
+                "$lt" -> BSONDateTime(awitingRegistrationUserDeletionDate.toInstant.toEpochMilli)
+              )
             ),
             BSONDocument( // Removing registered users with no privileges
               User.ACCOUNTTYPE   -> User.CLOSETODELETIONUSER,
@@ -132,8 +137,10 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
     mongoStore
       .findUsers(
         BSONDocument(
-          User.DATELASTLOGIN -> BSONDocument("$lt" -> BSONDateTime(registeredUserDeletionEMailDate.toInstant.toEpochMilli)),
-          User.ACCOUNTTYPE   -> User.REGISTEREDUSER
+          User.DATELASTLOGIN -> BSONDocument(
+            "$lt" -> BSONDateTime(registeredUserDeletionEMailDate.toInstant.toEpochMilli)
+          ),
+          User.ACCOUNTTYPE -> User.REGISTEREDUSER
         )
       )
       .foreach { users =>
