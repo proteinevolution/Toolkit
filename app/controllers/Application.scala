@@ -179,7 +179,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     userSessions.getUser.map { user =>
       Logger.info(user.toString)
       Ok(views.html.main(webJarsUtil, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message))
-        .withSession(userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
+        .withSession(userSessions.sessionCookie(request, user.sessionID.get))
     }
   }
 
@@ -210,7 +210,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
               s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"
             )
           )
-          .withSession(userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin)))
+          .withSession(userSessions.sessionCookie(request, user.sessionID.get))
           .as("text/plain") //TODO Only text/plain for files currently supported
       else
         Ok // TODO This needs more case validations
@@ -242,7 +242,6 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
         routes.javascript.JobController.checkHash,
         routes.javascript.JobController.delete,
         routes.javascript.JobController.loadJob,
-        routes.javascript.Jobs.annotation,
         routes.javascript.DataController.get,
         routes.javascript.DataController.getRecentArticles,
         routes.javascript.Search.autoComplete,

@@ -182,9 +182,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                         // Everything is ok, let the user know that they are logged in now
                         Ok(LoggedIn(loggedInUser))
                           .withSession(
-                            userSessions.sessionCookie(request,
-                                                       loggedInUser.sessionID.get,
-                                                       Some(loggedInUser.getUserData.nameLogin))
+                            userSessions.sessionCookie(request, loggedInUser.sessionID.get)
                           )
                       case None =>
                         Ok(LoginIncorrect())

@@ -25,7 +25,6 @@ class UserSessions @Inject()(mongoStore: MongoStore,
                              @NamedCache("userCache") val userCache: CacheApi,
                              locationProvider: LocationProvider) {
   private val SID      = "sid"
-  private val USERNAME = "username"
 
   /**
     * Creates a update modifier for the user according to the
@@ -230,7 +229,7 @@ class UserSessions @Inject()(mongoStore: MongoStore,
   /**
     * Handles cookie creation
     */
-  def sessionCookie(implicit request: RequestHeader, sessionID: BSONObjectID, userName: Option[String]): mvc.Session = {
-    request.session + (SID -> sessionID.stringify) + (USERNAME -> userName.getOrElse(""))
+  def sessionCookie(implicit request: RequestHeader, sessionID: BSONObjectID): mvc.Session = {
+    request.session + (SID -> sessionID.stringify)
   }
 }
