@@ -97,8 +97,7 @@ lazy val root = (project in file("."))
       "org.webjars"       % "font-awesome"                               % "4.7.0",
       "org.webjars"       % "select2"                                    % "4.0.3",
       "org.webjars.bower" % "tooltipster"                                % "4.2.5",
-      "org.webjars"       % "momentjs"                                   % "2.18.1",
-      "org.webjars.npm"   % "github-com-pladaria-reconnecting-websocket" % "3.2.0" // websocket library
+      "org.webjars"       % "momentjs"                                   % "2.18.1"
     )),
     pipelineStages := Seq(digest, gzip), // rjs, uglify, concat,
     compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
