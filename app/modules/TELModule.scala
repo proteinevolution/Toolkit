@@ -1,12 +1,11 @@
 package modules
 
-
-import javax.inject.{Inject, Provider}
+import javax.inject.{ Inject, Provider }
 
 import com.google.inject.AbstractModule
-import modules.tel.env.{Env, ExecFile, PropFile, TELEnv}
-import modules.tel.param.{GenerativeParamFileParser, ParamCollector, Params}
-import play.api.{ConfigLoader, Configuration, Logger}
+import modules.tel.env.{ Env, ExecFile, PropFile, TELEnv }
+import modules.tel.param.{ GenerativeParamFileParser, ParamCollector, Params }
+import play.api.{ ConfigLoader, Configuration, Logger }
 import com.google.inject.name.Names
 
 /**
@@ -37,7 +36,6 @@ class TELModule extends AbstractModule {
       .asEagerSingleton()
   }
 }
-
 
 import better.files._
 
@@ -98,7 +96,8 @@ class TELEnvProvider @Inject()(tv: TELEnv, configuration: Configuration) extends
 
     // Try loading the environment files from the configured directory
     configuration
-      .get[Option[String]]("tel.env").getOrElse {
+      .get[Option[String]]("tel.env")
+      .getOrElse {
 
         val fallBackFile = "tel/env"
 
