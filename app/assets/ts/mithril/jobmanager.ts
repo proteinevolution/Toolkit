@@ -118,11 +118,11 @@ window.JobManager = {
 
     /** send message to websocket */
     removeFromList: function(jobID: string): any{
-        sendMessage({ "type" : "ClearJob",  "jobIDs" : [jobID] });
+        ws.send({ "type" : "ClearJob",  "jobIDs" : [jobID] });
     },
 
     addToList: function(jobID: string): any{
-        sendMessage({ "type" : "RegisterJobs",  "jobIDs" : [jobID]});
+        ws.send({ "type" : "RegisterJobs",  "jobIDs" : [jobID]});
     },
 
     /**
