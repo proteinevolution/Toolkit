@@ -10,7 +10,7 @@ import models.job.JobActorAccess
 import modules.LocationProvider
 import modules.db.MongoStore
 import play.api.Logger
-import play.api.cache.{ SyncCacheApi, NamedCache }
+import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.mvc._
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 

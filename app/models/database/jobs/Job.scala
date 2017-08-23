@@ -155,21 +155,21 @@ object Job {
 
   implicit object JobWrites extends Writes[Job] {
     def writes(job: Job): JsObject = Json.obj(
-      IDDB         -> job.mainID,
-      PARENTID     -> job.parentID,
-      JOBID        -> job.jobID,
-      OWNERID      -> job.ownerID,
-      STATUS       -> job.status,
-      EMAILUPDATE  -> job.emailUpdate,
-      DELETION     -> job.deletion,
-      TOOL         -> job.tool,
-      WATCHLIST    -> job.watchList,
-      COMMENTLIST  -> job.commentList,
-      CLUSTERDATA  -> job.clusterData,
-      DATECREATED  -> job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli),
-      DATEUPDATED  -> job.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli),
-      DATEVIEWED   -> job.dateViewed.fold(-1L)(_.toInstant.toEpochMilli),
-      IPHASH       -> job.IPHash
+      IDDB        -> job.mainID,
+      PARENTID    -> job.parentID,
+      JOBID       -> job.jobID,
+      OWNERID     -> job.ownerID,
+      STATUS      -> job.status,
+      EMAILUPDATE -> job.emailUpdate,
+      DELETION    -> job.deletion,
+      TOOL        -> job.tool,
+      WATCHLIST   -> job.watchList,
+      COMMENTLIST -> job.commentList,
+      CLUSTERDATA -> job.clusterData,
+      DATECREATED -> job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli),
+      DATEUPDATED -> job.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli),
+      DATEVIEWED  -> job.dateViewed.fold(-1L)(_.toInstant.toEpochMilli),
+      IPHASH      -> job.IPHash
     )
   }
 
@@ -204,21 +204,21 @@ object Job {
   implicit object Writer extends BSONDocumentWriter[Job] {
     def write(job: Job): BSONDocument = {
       BSONDocument(
-        IDDB         -> job.mainID,
-        PARENTID     -> job.parentID,
-        JOBID        -> job.jobID,
-        OWNERID      -> job.ownerID,
-        STATUS       -> job.status,
-        EMAILUPDATE  -> job.emailUpdate,
-        DELETION     -> job.deletion,
-        TOOL         -> job.tool,
-        WATCHLIST    -> job.watchList,
-        COMMENTLIST  -> job.commentList,
-        CLUSTERDATA  -> job.clusterData,
-        DATECREATED  -> BSONDateTime(job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
-        DATEUPDATED  -> BSONDateTime(job.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli)),
-        DATEVIEWED   -> BSONDateTime(job.dateViewed.fold(-1L)(_.toInstant.toEpochMilli)),
-        IPHASH       -> job.IPHash
+        IDDB        -> job.mainID,
+        PARENTID    -> job.parentID,
+        JOBID       -> job.jobID,
+        OWNERID     -> job.ownerID,
+        STATUS      -> job.status,
+        EMAILUPDATE -> job.emailUpdate,
+        DELETION    -> job.deletion,
+        TOOL        -> job.tool,
+        WATCHLIST   -> job.watchList,
+        COMMENTLIST -> job.commentList,
+        CLUSTERDATA -> job.clusterData,
+        DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATEUPDATED -> BSONDateTime(job.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATEVIEWED  -> BSONDateTime(job.dateViewed.fold(-1L)(_.toInstant.toEpochMilli)),
+        IPHASH      -> job.IPHash
       )
     }
   }
