@@ -42,7 +42,7 @@ window.Toolkit = {
             Toolkit.currentJobID = jobID;
             if (!JobListComponent.contains(jobID) || !(Toolkit.currentJobID === jobID)) {
                 // ensure addition to the job list
-                //sendMessage({ type: "RegisterJobs", "jobIDs": [jobID] });
+                //ws.send({ type: "RegisterJobs", "jobIDs": [jobID] });
                 // request job
                 let route = jsRoutes.controllers.JobController.loadJob(jobID);
                 m.request({method: route.method, url: route.url}).catch(function (e) {

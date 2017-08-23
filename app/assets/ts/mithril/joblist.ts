@@ -89,9 +89,9 @@ window.JobListComponent = {
     // Notices the server to send update messages about the jobs
     register        : function (jobIDs? : Array<string>) : void {
         if (jobIDs != null) {
-            sendMessage({ type: "RegisterJobs", "jobIDs": jobIDs });
+            ws.send({ type: "RegisterJobs", "jobIDs": jobIDs });
         } else {
-            sendMessage({ type: "RegisterJobs", "jobIDs": JobListComponent.jobIDsFiltered() });
+            ws.send({ type: "RegisterJobs", "jobIDs": JobListComponent.jobIDsFiltered() });
         }
     },
     emptyList       : function () { JobListComponent.list = [] },   // empties the job list
@@ -128,10 +128,10 @@ window.JobListComponent = {
                 if (messageServer) {
 
                     if (deleteJob) {
-                        //sendMessage({ "type" : "DeleteJob", "jobID" : job.jobID }) TODO reimplement the deletion over WS
+                        //ws.send({ "type" : "DeleteJob", "jobID" : job.jobID }) TODO reimplement the deletion over WS
                         m.request({ url: "/api/job/" + job.jobID, method: "DELETE" })
                     }
-                    else           { sendMessage({ "type" : "ClearJob",  "jobIDs" : [job.jobID] }) }
+                    else           { ws.send({ "type" : "ClearJob",  "jobIDs" : [job.jobID] }) }
                 }
             }
         });
