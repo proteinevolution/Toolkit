@@ -28,7 +28,7 @@ final class Tool @Inject()(messagesApi: MessagesApi,
     extends AbstractController(cc)
     with I18nSupport {
 
-  implicit val timeout : Timeout = Timeout(5.seconds)
+  implicit val timeout: Timeout = Timeout(5.seconds)
 
   // counts usage of frontend tools in order to keep track for our stats
 

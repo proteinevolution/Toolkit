@@ -2,29 +2,27 @@ package modules.db
 
 import com.typesafe.config.ConfigFactory
 import play.api.libs.iteratee.Enumerator
-import reactivemongo.api.{BSONSerializationPack, MongoConnection, MongoDriver}
-import reactivemongo.api.gridfs.{DefaultFileToSave, GridFS, ReadFile}
+import reactivemongo.api.{ BSONSerializationPack, MongoConnection, MongoDriver }
+import reactivemongo.api.gridfs.{ DefaultFileToSave, GridFS, ReadFile }
 import reactivemongo.bson.BSONValue
 import scala.concurrent.ExecutionContext.Implicits.global
 import reactivemongo.api.gridfs.Implicits._
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Try
 
 object GridFSDAO {
-
 
   type GFile = ReadFile[BSONSerializationPack.type, BSONValue]
 
   // this part looks quite deprecated
 
   private val dbname = "tkplay_dev"
-  private val uri    = s"mongodb://${ConfigFactory.load().getString("elastic4s.hostname")}"  // simply identical to elastic4s.hostname
+  private val uri    = s"mongodb://${ConfigFactory.load().getString("elastic4s.hostname")}" // simply identical to elastic4s.hostname
   private val driver = new MongoDriver()
   private val connection: Try[MongoConnection] = MongoConnection.parseURI(uri).map { parsedUri =>
     driver.connection(parsedUri)
   }
   private val db = connection.get.db(dbname)
-
 
   // this part is from the reactivemongo docs
 
@@ -35,7 +33,6 @@ object GridFSDAO {
     saveToGridFS(GridFS[BSONSerializationPack.type](db), filename, contentType, data)
 
   }
-
 
   // this is the original method
 
@@ -50,7 +47,5 @@ object GridFSDAO {
   }
 
   // well there are some more examples
-
-
 
 }
