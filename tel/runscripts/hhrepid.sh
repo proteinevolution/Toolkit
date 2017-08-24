@@ -113,7 +113,7 @@ fi
 echo "done" >> ../results/process.log
 updateProcessLog
 
-echo "#Running HHblits." >> ../results/process.log
+echo "#Running HHrepID." >> ../results/process.log
 updateProcessLog
 
 
