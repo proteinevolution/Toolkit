@@ -11,7 +11,7 @@ import models.database.statistics.ClusterLoadEvent
 import models.sge.Cluster
 import modules.db.MongoStore
 import modules.tel.TEL
-import java.time.ZonedDateTime
+import java.time.{ZonedDateTime, DateTimeFormatter}
 import reactivemongo.bson.BSONObjectID
 
 import sys.process._
@@ -28,6 +28,10 @@ final class ClusterMonitor @Inject()(cluster: Cluster, mongoStore: MongoStore, v
     with ActorLogging {
 
   case class RecordedTick(load: Double, timestamp: ZonedDateTime)
+     
+  private val qstatRegEx = "(\d+)\s+\S+\s+\S+\s+\S+\s+([a-z]+)\s+(\d\d\/\d\d\/\d\d\d\d \d\d:\d\d:\d\d)+\s+(\d+)\s*".r
+  private val qstatDateTimePattern = DateTimeFormatter.ofPattern("d/M/yyyy H:m:s").withZone(ZoneId.systemDefault())
+     
   private val fetchLatestInterval                 = 3.seconds
   private val recordMaxLength                     = 20
   private var record: List[Double]                = List.empty[Double]
@@ -58,7 +62,18 @@ final class ClusterMonitor @Inject()(cluster: Cluster, mongoStore: MongoStore, v
 
     case FetchLatest =>
       //val load = cluster.getLoad.loadEst
-      val load = ("qstat" #| "wc -l").!!.toDouble / 32
+      val qstatReply : String = ("qstat").!!
+      val qstatParsed : List[QStatObject] = qstat.split("\n").drop(2).map(_ match {
+          case qstatRegEx(clusterID, status, date, queueNumber) =>
+            val dateFormatted = ZonedDateTime.parse(date, qstatDateTimePattern)
+            status match {
+              case "e" =>  Some(QStatObject(clusterID, failed, done, dateFormatted, queueNumber))
+              case _ =>    Some(QStatObject(clusterID, failed, done, dateFormatted, queueNumber))
+            }
+          case _ =>
+            None
+        }).filterNot(_ == None).map(_.get)
+      val load : Double = qstatParsed.lenght.toDouble / 32
 
       /**
         * dynamically adjust the cluster resources dependent on the current cluster load
@@ -108,4 +123,5 @@ object ClusterMonitor {
 
   case class ConnectedUsers(users: Int)
 
+  case class QStatJob(
 }
