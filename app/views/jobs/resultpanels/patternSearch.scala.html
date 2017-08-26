@@ -9,7 +9,7 @@
 @(toolName: String, jobID: String, jsValue: JsValue, tool: models.tools.Tool)(implicit request: RequestHeader)
 @import java.lang.String; var fileURL="/files/" + jobID + "/" + jobID + ".fas";
 
-<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
+<link href="@routes.Assets.versioned("styles/resultView.css")" rel="stylesheet">
 @views.html.forwardmodals.simpler(tool, tool.toolNameShort)
 @if((jsValue \ jobID \ "hits").as[List[JsObject]].size < 1) {
     <div class="callout alert noHitsWide" id="noHits">

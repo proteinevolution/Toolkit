@@ -1,7 +1,7 @@
 @import play.api.libs.json.JsValue
 
 @(toolName: String, jobID: String, jsValue: JsValue, tool : models.tools.Tool)(implicit request: RequestHeader)
-<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
+<link href="@routes.Assets.versioned("styles/resultView.css")" rel="stylesheet">
 <div class="colorOptsAlignment">
     <a type="button" data-open="forwardModal_@toolName""><span>Forward selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="download_()"><span>Download File</span></a>

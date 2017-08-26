@@ -1,7 +1,7 @@
 @import models.database.results.Quick2DResult
 @import models.results.Common
 @(result: Quick2DResult)(implicit request: RequestHeader)
-<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
+<link href="@routes.Assets.versioned("styles/resultView.css")" rel="stylesheet">
 
 <h5>Protein ID: @result.query.accession.slice(0, 50)</h5>
 

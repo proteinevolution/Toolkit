@@ -3,7 +3,7 @@
 @(filename: String, filePath: String, jobID: String, resultname: String, tool: models.tools.Tool)(implicit request: RequestHeader)
     @import java.lang.String;
 
-    <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
+    <link href="@routes.Assets.versioned("styles/resultView.css")" rel="stylesheet">
     @views.html.forwardmodals.simpler(tool, tool.toolNameShort)
 
     <div class="colorOptsAlignment">
