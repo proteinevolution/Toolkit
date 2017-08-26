@@ -30,7 +30,7 @@ final class ClusterMonitor @Inject()(cluster: Cluster, mongoStore: MongoStore, v
   case class RecordedTick(load: Double, timestamp: ZonedDateTime)
      
   private val qstatRegEx = "(\d+)\s+\S+\s+\S+\s+\S+\s+([a-z]+)\s+(\d\d\/\d\d\/\d\d\d\d \d\d:\d\d:\d\d)+\s+(\d+)\s*".r
-  private val qstatDateTimePattern = DateTimeFormatter.ofPattern("d/M/yyyy H:m:s").withZone(ZoneId.systemDefault())
+  private val qstatDateTimePattern = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss").withZone(ZoneId.systemDefault())
      
   private val fetchLatestInterval                 = 3.seconds
   private val recordMaxLength                     = 20
@@ -67,34 +67,37 @@ final class ClusterMonitor @Inject()(cluster: Cluster, mongoStore: MongoStore, v
           case qstatRegEx(clusterID, status, date, queueNumber) =>
             val dateFormatted = ZonedDateTime.parse(date, qstatDateTimePattern)
             status match {
-              case "e" =>  Some(QStatObject(clusterID, failed, done, dateFormatted, queueNumber))
-              case _ =>    Some(QStatObject(clusterID, failed, done, dateFormatted, queueNumber))
+              case "e" =>  Some(QStatObject(clusterID, failed = true,  finished = true,  dateFormatted, queueNumber.toInteger))
+              case "x" =>  Some(QStatObject(clusterID, failed = false, finished = true,  dateFormatted, queueNumber.toInteger))
+              case _ =>    Some(QStatObject(clusterID, failed = false, finished = false, dateFormatted, queueNumber.toInteger))
             }
           case _ =>
             None
         }).filterNot(_ == None).map(_.get)
+   
+      // 32 Tasks are 100% - calculate the load from this.
       val load : Double = qstatParsed.lenght.toDouble / 32
 
       /**
         * dynamically adjust the cluster resources dependent on the current cluster load
         */
       load match {
-
         //reducing the number of cores and memory is not a good idea! Some jobs need a minimum of these to run
         case x if x > 1.2            => TEL.memFactor = 1; TEL.threadsFactor = 1
         case x if x < 0.5 && x > 0.1 => TEL.memFactor = 1; TEL.threadsFactor = 1
         case x if x < 0.1            => TEL.memFactor = 1; TEL.threadsFactor = 1
         case _                       => TEL.memFactor = 1; TEL.threadsFactor = 1
-
       }
-
+      // Update the record
       record = record.::(load)
+      // send load message
       watchers.foreach(_ ! UpdateLoad(load))
+      // if there are enough records, group them in and stick them in the DB collection
       if (record.length >= recordMaxLength) self ! Recording
-    //Logger.info( s"""Updated Load with ${watchers.size} Users. Time needed: ${DateTime.now().getMillis - messagingTime.getMillis}ms""".stripMargin)
-    //watchers.foreach(_ ! ConnectedUsers(watchers.size))
-    //println(load)
-
+    
+    /**
+      * Writes the current load to the database and clears the record.
+      */
     case Recording =>
       val loadAverage      = record.sum[Double] / record.length
       val currentTimestamp = ZonedDateTime.now
@@ -123,5 +126,5 @@ object ClusterMonitor {
 
   case class ConnectedUsers(users: Int)
 
-  case class QStatJob(
+  case class QStatObject(clusterID : String, failed : Boolean, finished : Boolean, dateFormatted : ZonedDateTime, queueNumber : Int)
 }
