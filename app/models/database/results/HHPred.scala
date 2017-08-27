@@ -27,7 +27,7 @@ case class HHPredHSP(query: HHPredQuery,
       Map(
         "0" -> Json.toJson(Common.getCheckbox(num)),
         "1" -> Json.toJson(Common.getSingleLink(template.accession).toString),
-        "2" -> Json.toJson(Common.addBreak(description)),
+        "2" -> Json.toJson(Common.addBreakHHpred(description)),
         "3" -> Json.toJson(info.probab),
         "4" -> Json.toJson(info.evalue),
         "5" -> Json.toJson(ss_score),
