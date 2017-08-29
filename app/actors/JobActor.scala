@@ -665,13 +665,15 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               if (result.nonEmpty) {
                 // Put the result files into the database, JobActor has to wait until this process has finished
                 val x = mongoStore.result2Job(job.jobID, BSONDocument(result)) onComplete {
-                  case Success(doc) =>
+                  case Success(_) =>
                     // Now we can update the JobState and remove it, once the update has completed
                     this.updateJobState(job).map { job =>
                       this.removeJob(job.jobID)
                       Logger.info("Job has been removed from JobActor")
                     }
-                  case Failure(t) => println("An error has occured: " + t.getMessage)
+                  case Failure(t) =>
+                    this.updateJobState(job.copy(status=Error))
+                    Logger.error("An error has occured while writing to the Results DB:\n" + t.getMessage)
                 }
               } else {
                 // Now we can update the JobState and remove it, once the update has completed
