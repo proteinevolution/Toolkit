@@ -347,6 +347,16 @@ object Common {
     description.replaceAll("(\\S{40})", "$1</br>");
   }
 
+  def addBreakHHpred(description: String): String = {
+    var slice = description
+    val index = slice.indexOfSlice("; Related PDB entries")
+    if(index > 1) {
+      slice = description.slice(0, index)
+    }
+    slice.replaceAll("(\\S{40})", "$1</br>")
+  }
+
+
   def insertMatch(seq: String, length: Int, hitArr: List[Int]): String = {
     var newSeq = ""
     for (starPos <- hitArr) {
