@@ -1,23 +1,28 @@
 package actors
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
 import actors.ClusterMonitor._
 import actors.WebSocketActor.MaintenanceAlert
-import akka.actor.{ ActorLogging, _ }
+import akka.actor.{ActorLogging, _}
 import akka.event.LoggingReceive
 import controllers.Settings
 import models.database.statistics.ClusterLoadEvent
 import models.sge.Cluster
 import modules.db.MongoStore
 import modules.tel.TEL
-import java.time.{ZonedDateTime, DateTimeFormatter}
+import java.time.{ZoneId, ZonedDateTime}
+import java.time.format.DateTimeFormatter
+
+import actors.ClusterMonitor.Qstat.QStatObject
+import play.api.Logger
 import reactivemongo.bson.BSONObjectID
 
 import sys.process._
 import scala.collection.immutable.HashSet
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.matching.Regex
 
 /**
   * Created by snam on 24.03.17.
@@ -28,10 +33,7 @@ final class ClusterMonitor @Inject()(cluster: Cluster, mongoStore: MongoStore, v
     with ActorLogging {
 
   case class RecordedTick(load: Double, timestamp: ZonedDateTime)
-     
-  private val qstatRegEx = "(\d+)\s+\S+\s+\S+\s+\S+\s+([a-z]+)\s+(\d\d\/\d\d\/\d\d\d\d \d\d:\d\d:\d\d)+\s+(\d+)\s*".r
-  private val qstatDateTimePattern = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss").withZone(ZoneId.systemDefault())
-     
+
   private val fetchLatestInterval                 = 3.seconds
   private val recordMaxLength                     = 20
   private var record: List[Double]                = List.empty[Double]
@@ -62,21 +64,12 @@ final class ClusterMonitor @Inject()(cluster: Cluster, mongoStore: MongoStore, v
 
     case FetchLatest =>
       //val load = cluster.getLoad.loadEst
-      val qstatReply : String = ("qstat").!!
-      val qstatParsed : List[QStatObject] = qstat.split("\n").drop(2).map(_ match {
-          case qstatRegEx(clusterID, status, date, queueNumber) =>
-            val dateFormatted = ZonedDateTime.parse(date, qstatDateTimePattern)
-            status match {
-              case "e" =>  Some(QStatObject(clusterID, failed = true,  finished = true,  dateFormatted, queueNumber.toInteger))
-              case "x" =>  Some(QStatObject(clusterID, failed = false, finished = true,  dateFormatted, queueNumber.toInteger))
-              case _ =>    Some(QStatObject(clusterID, failed = false, finished = false, dateFormatted, queueNumber.toInteger))
-            }
-          case _ =>
-            None
-        }).filterNot(_ == None).map(_.get)
+      val qstat = Qstat("qstat".!!)
+      
+      Logger.info(qstat.qstatParsed.mkString(", ")) // Logging for testing
    
       // 32 Tasks are 100% - calculate the load from this.
-      val load : Double = qstatParsed.lenght.toDouble / 32
+      val load : Double = qstat.totalJobs.toDouble / 32
 
       /**
         * dynamically adjust the cluster resources dependent on the current cluster load
@@ -126,5 +119,32 @@ object ClusterMonitor {
 
   case class ConnectedUsers(users: Int)
 
-  case class QStatObject(clusterID : String, failed : Boolean, finished : Boolean, dateFormatted : ZonedDateTime, queueNumber : Int)
+
+  object Qstat {
+    // Pattern of a qstat entry
+    final val qstatRegEx : Regex =
+      "(\\d+)\\s+\\S+\\s+\\S+\\s+\\S+\\s+([a-z]+)\\s+(\\d\\d\\/\\d\\d\\/\\d\\d\\d\\d \\d\\d:\\d\\d:\\d\\d).*".r
+    // Pattern of the Date used in the qstat command
+    final val qstatDateTimePattern : DateTimeFormatter =
+      DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss").withZone(ZoneId.systemDefault())
+
+    case class QStatObject(clusterID : String, state : String, dateFormatted : ZonedDateTime)
+  }
+
+  case class Qstat(qstatString : String) {
+    val qstatParsed : List[QStatObject] =
+      qstatString.split("\n").drop(2).map {
+        case Qstat.qstatRegEx(clusterID, status, date) =>
+          val dateFormatted = ZonedDateTime.parse(date, Qstat.qstatDateTimePattern)
+          Some(QStatObject(clusterID, status, dateFormatted))
+        case _ =>
+          None
+      }.filterNot(_.isEmpty).map(_.get).toList
+
+    def totalJobs : Int = qstatParsed.length
+
+    def runningJobs : Int = qstatParsed.count(_.state.contains("r"))
+
+    def queuedJobs : Int = qstatParsed.count(_.state.contains("q"))
+  }
 }
