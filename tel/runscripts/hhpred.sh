@@ -224,7 +224,7 @@ else
 
     #MSA generation by HHblits
     if [ "%msa_gen_method.content" = "hhblits" ] ; then
-        echo "#Running ${ITERS} iteration(s) of HHblits for query MSA and A3M generation." >> ../results/process.log
+        echo "#Running ${ITERS} iteration(s) of HHblits for query MSA generation." >> ../results/process.log
         updateProcessLog
 
         reformat_hhsuite.pl fas a3m \
@@ -250,7 +250,7 @@ else
     #MSA generation by PSI-BLAST
     if [ "%msa_gen_method.content" = "psiblast" ] ; then
 
-        echo "#Running ${ITERS} iteration(s) of PSI-BLAST for query MSA and A3M generation." >> ../results/process.log
+        echo "#Running ${ITERS} iteration(s) of PSI-BLAST for query MSA generation." >> ../results/process.log
         updateProcessLog
         #Check if input is a single sequence or an MSA
         INPUT="query"
@@ -284,6 +284,9 @@ else
     fi
 fi
 
+echo "#Generating query A3M." >> ../results/process.log
+updateProcessLog
+
 #Generate representative MSA for forwarding
 
 hhfilter -i ../results/${JOBID}.a3m \
@@ -315,6 +318,9 @@ rm ../results/tmp0 ../results/tmp1
 mv ../results/${JOBID}.a3m ../results/full.a3m
 
 addss.pl ../results/full.a3m
+
+echo "done" >> ../results/process.log
+updateProcessLog
 
 DBJOINED=""
 #create file in which selected dbs are written
