@@ -27,20 +27,26 @@ done
 if [ "$HOSTNAME" = "olt" ]
   then
     qsub -sync n \
+         -l s_rt=%SOFTRUNTIME \
          -l h_rt=%HARDRUNTIME \
+         -l s_vmem=%SOFTMEMORY \
          -l h_vmem=%MEMORY,h="node502|node503|node504|node505|node506|node507|node508|node509|node510|node511|node512|node513" \
          -cwd  \
-         %r | grep -oE "[0-9]+" > jobIDCluster
+         -terse \
+         %r > jobIDCluster
 
 elif [ "$HOSTNAME" = "rye" ]
   then
       HOSTNAME="rye"
       qsub -sync n \
+               -l s_rt=%SOFTRUNTIME \
                -l h_rt=%HARDRUNTIME \
+               -l s_vmem=%SOFTMEMORY \
                -l h_vmem=%MEMORY,h="node33|node34|node35|node36" \
                -pe parallel %THREADS \
                -cwd  \
-               %r | grep -oE "[0-9]+" > jobIDCluster
+               -terse \
+               %r > jobIDCluster
   fi
 
 
