@@ -533,19 +533,27 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           this.getCurrentExecutionContext(jobID) match {
             case Some(executionContext) =>
               Logger.info("[JobActor.StartJob] reached. starting job " + jobID)
-              // set memory allocation on the cluster and let the clusterMonitor define the multiplier
-              val h_rt = ConfigFactory.load().getString(s"Tools.${job.tool}.hardruntime")
-              val h_vmem = (ConfigFactory
-                .load()
-                .getString(s"Tools.${job.tool}.memory")
-                .dropRight(1)
-                .toInt * TEL.memFactor).toString + "G"
+              // Set memory allocation on the cluster and let the clusterMonitor define the multiplier.
+              // To receive a catchable signal in an SGE job, one must set soft limits
+              // in addition to hard limits; by definition "hard" means SIGKILL.
+
+              val h_rt = ConfigFactory.load().getInt(s"Tools.${job.tool}.hardruntime")
+
+              //Set soft runtime to 30s less than hard runtime
+              val s_rt = h_rt - 30
+              val h_vmem = (ConfigFactory.load().getInt(s"Tools.${job.tool}.memory") * TEL.memFactor).toInt
+              //Set soft memory limit to 95% of hard memory limit
+              val s_vmem = h_vmem * 0.95
               val threads =
                 math.ceil(ConfigFactory.load().getInt(s"Tools.${job.tool}.threads") * TEL.threadsFactor).toInt
-              env.configure(s"MEMORY", h_vmem)
+
+              env.configure(s"MEMORY", h_vmem.toString + "G")
+              env.configure(s"SOFTMEMORY", s_vmem.toString + "G")
               env.configure(s"THREADS", threads.toString)
               env.configure(s"HARDRUNTIME", h_rt.toString)
-              Logger.info(s"$jobID is running with $h_vmem h_vmem")
+              env.configure(s"SOFTRUNTIME", s_rt.toString)
+
+              Logger.info(s"$jobID is running with $h_vmem GB h_vmem")
               Logger.info(s"$jobID is running with $threads threads")
               Logger.info(s"$jobID is running with $h_rt h_rt")
 
