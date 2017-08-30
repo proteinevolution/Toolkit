@@ -10,9 +10,9 @@ import reactivemongo.bson._
   * Created by astephens on 27.01.17.
   */
 case class JobClusterData(sgeID: String, // sun grid engine job id
-                          memory: Option[String],
+                          memory: Option[Int],
                           threads: Option[Int],
-                          hardruntime: Option[String],
+                          hardruntime: Option[Int],
                           dateStarted: Option[ZonedDateTime] = Some(ZonedDateTime.now),
                           dateFinished: Option[ZonedDateTime] = None) {
   def runtime: Long = {
@@ -42,9 +42,9 @@ object JobClusterData {
           val dateFinished = (obj \ DATEFINISHED).asOpt[String]
           JsSuccess(
             JobClusterData(sgeID = "",
-                           memory = Some(""),
+                           memory = Some(0),
                            threads = Some(0),
-                           hardruntime = Some(""),
+                           hardruntime = Some(0),
                            dateStarted = Some(ZonedDateTime.now),
                            dateFinished = Some(ZonedDateTime.now))
           )
@@ -73,9 +73,9 @@ object JobClusterData {
     def read(bson: BSONDocument): JobClusterData = {
       JobClusterData(
         sgeID = bson.getAs[String](SGEID).getOrElse(""),
-        memory = bson.getAs[String](MEMORY),
+        memory = bson.getAs[Int](MEMORY),
         threads = bson.getAs[Int](THREADS),
-        hardruntime = bson.getAs[String](HARDRUNTIME),
+        hardruntime = bson.getAs[Int](HARDRUNTIME),
         dateStarted = bson
           .getAs[BSONDateTime](DATESTARTED)
           .map(dt => ZonedDateTimeHelper.getZDT(dt)),
