@@ -14,7 +14,6 @@
     height: 1.1rem;
     background-color: black;
     font-color: white;
-
 }
 
 .slider-handle:hover {
@@ -35,6 +34,7 @@
     -ms-user-select: none;
     user-select: none;
 }
+
 #lefthandle {
     -webkit-user-select: none;
     -moz-user-select: none;
