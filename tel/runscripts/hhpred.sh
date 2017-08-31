@@ -195,7 +195,7 @@ rm ../results/firstSeq0.fas ../results/firstSeq.cc
 
 
 #CHECK IF MSA generation is required or not
-if [ "%msa_gen_max_iter.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
+if [ "%msa_gen_max_iter.content" = "0" ] ; then
         echo "#No MSA generation required for building A3M." >> ../results/process.log
         updateProcessLog
         reformat_hhsuite.pl fas a3m ../results/${JOBID}.fas ${JOBID}.a3m -M first
