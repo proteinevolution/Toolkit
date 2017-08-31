@@ -1,25 +1,25 @@
 package controllers
 
-import java.io.{FileInputStream, ObjectInputStream}
+import java.io.{ FileInputStream, ObjectInputStream }
 
 import actors.JobActor._
 import java.security.MessageDigest
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 
 import actors.JobIDActor
 import akka.actor.ActorRef
-import models.{Constants, UserSessions}
+import models.{ Constants, UserSessions }
 import models.database.jobs._
 import models.database.users.User
 import models.job.JobActorAccess
 import models.search.JobDAO
 import modules.LocationProvider
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
 import play.api.Logger
 import play.api.cache._
-import play.api.libs.json.{JsNull, Json}
-import play.api.mvc.{Action, AnyContent, Controller}
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import play.api.libs.json.{ JsNull, Json }
+import play.api.mvc._
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -39,12 +39,13 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                     userSessions: UserSessions,
                                     mongoStore: MongoStore,
                                     env: Env,
-                                    @NamedCache("userCache") implicit val userCache: CacheApi,
+                                    @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                                     implicit val locationProvider: LocationProvider,
                                     val jobDao: JobDAO,
                                     val toolFactory: ToolFactory,
-                                    constants: Constants)
-    extends Controller
+                                    constants: Constants,
+                                    cc: ControllerComponents)
+    extends AbstractController(cc)
     with Common {
 
   /**
@@ -126,7 +127,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               // Set job as either private or public
               val ownerOption = if (params.get("public").isEmpty) { Some(user.userID) } else { None }
               // Get the current date to set it for all three dates
-              val jobCreationTime = DateTime.now()
+              val jobCreationTime = ZonedDateTime.now()
               // Create a new Job object for the job and set the initial values
               val job = Job(
                 mainID = BSONObjectID.generate(),
@@ -135,8 +136,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 status = Submitted,
                 emailUpdate = emailUpdate,
                 tool = toolName,
-                toolnameLong = None,
-                label = params.get("label"),
                 watchList = List(user.userID),
                 dateCreated = Some(jobCreationTime),
                 dateUpdated = Some(jobCreationTime),
@@ -159,7 +158,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                   // Notify user that the job has been submitted
                   Ok(Json.obj("successful" -> true, "jobID" -> jobID))
                     .withSession(
-                      userSessions.sessionCookie(request, user.sessionID.get, Some(user.getUserData.nameLogin))
+                      userSessions.sessionCookie(request, user.sessionID.get)
                     )
                 case None =>
                   // Something went wrong when pushing to the DB
@@ -229,7 +228,12 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               }
               jobsFiltered.lastOption match {
                 case Some(oldJob) =>
-                  Ok(Json.toJson(Json.obj("jobID" -> oldJob.jobID, "dateCreated" -> oldJob.dateCreated)))
+                  println(oldJob)
+                  Ok(
+                    Json.toJson(
+                      Json.obj("jobID" -> oldJob.jobID, "dateCreated" -> oldJob.dateCreated.get.toInstant.toEpochMilli)
+                    )
+                  )
                 case None => NotFound("job is new.")
               }
             }

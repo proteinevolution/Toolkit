@@ -1,11 +1,9 @@
 package models.search
 
-import javax.inject.{ Inject, Named, Singleton }
+import javax.inject.{ Inject, Singleton }
 
 import com.sksamuel.elastic4s._
-import com.evojam.play.elastic4s.configuration.ClusterSetup
-import com.evojam.play.elastic4s.{ PlayElasticFactory, PlayElasticJsonSupport }
-import com.sksamuel.elastic4s.analyzers.{ StandardAnalyzer, WhitespaceAnalyzer }
+import com.sksamuel.elastic4s.analyzers.StandardAnalyzer
 import com.typesafe.config.ConfigFactory
 import models.database.jobs.JobHash
 import models.tools.ToolFactory
@@ -13,26 +11,19 @@ import modules.RunscriptPathProvider
 import modules.tel.TELConstants
 import modules.tools.FNV
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
-import org.elasticsearch.common.unit.Fuzziness
-import play.libs.Json
 import reactivemongo.bson.BSONObjectID
 
 import scala.util.hashing.MurmurHash3
 import scala.concurrent.Future
 
 @Singleton
-final class JobDAO @Inject()(cs: ClusterSetup,
-                             elasticFactory: PlayElasticFactory,
-                             toolFactory: ToolFactory,
-                             runscriptPathProvider: RunscriptPathProvider,
-                             @Named("jobs") indexAndType: IndexAndType)
+final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: RunscriptPathProvider)
     extends ElasticDsl
-    with PlayElasticJsonSupport
     with TELConstants {
 
-  private[this] lazy val client = elasticFactory(cs)
-  private val noHash            = Set("mainID", "jobID")
-
+  private val noHash = Set("mainID", "jobID")
+  private val client =
+    ElasticClient.transport(ElasticsearchClientUri(ConfigFactory.load().getString(s"elastic4s.hostname"), 9300))
   private val Index        = ConfigFactory.load().getString(s"elastic4s.indexAndTypes.jobs.index")
   private val jobIndex     = Index / "jobs"
   private val jobHashIndex = Index / "jobhashes"
@@ -159,21 +150,6 @@ final class JobDAO @Inject()(cs: ClusterSetup,
     }
   }
 
-  def multiExistsJobID(set: Traversable[String]): Future[RichSearchResponse] = {
-    client.execute {
-      search in jobIndex query termsQuery("jobID", set.toSeq: _*) // opt: "limit 100"
-    }
-  }
-
-  // Simple multiple jobID search
-  def getJobIDs(jobIDs: List[String]): Future[RichSearchResponse] = {
-    client.execute {
-      search in jobIndex query {
-        termsQuery("jobID", jobIDs: _*) // - termsQuery does not seem to work
-      }
-    }
-  }
-
   def jobIDtermSuggester(queryString: String): Future[RichSearchResponse] = { // this is a spelling correction mechanism, don't use this for autocompletion
     client.execute {
       search in jobIndex suggestions {
@@ -194,19 +170,6 @@ final class JobDAO @Inject()(cs: ClusterSetup,
     }
   }
 
-  /* TODO this is the output of the query builder - a valid jobID is provided, yet no proper output is delivered due to an mapping error.
-curl -XPOST 'balata:9200/tkplay_dev/jobs/_search?pretty' -H 'Content-Type: application/json' -d'{
-  "suggest" : {
-    "jobIDfield" : {
-      "text" : "3791643",
-      "completion" : {
-        "field" : "jobID",
-        "size" : 10
-      }
-    }
-  }
-}'
-   */
   def jobIDcompletionSuggester(queryString: String): Future[RichSearchResponse] = {
     val suggestionBuild = search in jobIndex suggestions {
       completionSuggestion("jobIDfield").field("jobID").text(queryString).size(10)
@@ -214,14 +177,6 @@ curl -XPOST 'balata:9200/tkplay_dev/jobs/_search?pretty' -H 'Content-Type: appli
     println(suggestionBuild)
     client.execute {
       suggestionBuild
-    }
-  }
-
-  def fuzzySearchJobID(queryString: String): Future[RichSearchResponse] = { // similarity search with Levensthein edit distance
-    client.execute {
-      search in jobIndex query {
-        fuzzyQuery("jobID", queryString).fuzziness(Fuzziness.AUTO).prefixLength(4).maxExpansions(10)
-      }
     }
   }
 

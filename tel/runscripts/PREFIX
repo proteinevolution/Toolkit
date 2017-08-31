@@ -4,6 +4,53 @@
 export http_proxy=
 key=$(<../key)
 SGE_ID=""
+REPEATED=""
+
+trap 'sig_handler ERR' ERR
+
+# handles signals caused by -l s_vmem
+trap 'sig_handler XCPU' SIGXCPU
+
+# handles signals caused by -l s_rt
+trap 'sig_handler USR1' SIGUSR1
+
+# handles signals caused by -notify and hard limits
+trap 'sig_handler USR1' SIGUSR2
+
+#HANDLE errors related to SGE
+function sig_handler () {
+
+    if [ -e ../results/process.log ]
+    then
+        STATUS=$(tail -n 1 ../results/process.log | cut -c 1)
+
+        if [ ${STATUS} = "#" ] ; then
+            echo "error" >> ../results/process.log
+            updateProcessLog
+        fi
+    fi
+
+    until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/error/%jobid.content/$key); do
+    printf 'host unreachable\n...waiting to set job status to error\n'
+    sleep 5
+    done
+
+    case "$1" in
+        USR1) echo "#Execution time limit reached! Terminating job!" >> ../results/process.log
+            ;;
+        USR2) echo "#Reached a resource limit! Terminating job!" >> ../results/process.log
+            ;;
+        XCPU) echo "#Execution memory limit reached! Terminating job!" >> ../results/process.log
+            ;;
+        SIGTERM) echo "#Terminating job!" >> ../results/process.log
+            ;;
+        ERR) echo "#Terminating job because of errors!" >> ../results/process.log
+            ;;
+    esac
+    echo "error" >> ../results/process.log
+    updateProcessLog
+    exit 0
+}
 
 # update process log
 updateProcessLog () {
@@ -17,24 +64,14 @@ if [ -e jobIDCluster ]
 then
     SGE_ID=$(<jobIDCluster)
 fi
-# Make Request to Toolkit to indicate current state of execution
-trap catch_errors ERR;
-function catch_errors() {
-    echo "error" >> ../results/process.log
-    until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/error/%jobid.content/$key); do
-        printf 'host unreachable\n...waiting to set job status to error\n'
-        sleep 5
-    done
-    echo "script aborted, because of errors"
-    exit 0
-}
+
 
 until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/running/%jobid.content/$key); do
     printf 'host unreachable\n...waiting to set job status to running\n'
     sleep 5
 done
 
-# retrieve sge id
+# Write sge id
 
 until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/sge/%jobid.content/${SGE_ID}); do
     printf 'host unreachable\n...waiting to retrieve sge id\n'
@@ -52,11 +89,12 @@ mkdir ../logs
 # Set environment
 source %ENVIRONMENT
 
-FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
-
-if [ ${FORMAT} = "0" ] ; then
-    #remove empty lines
-    sed -i '/^\s*$/d' ../params/alignment
+if [ -f ../params/alignment ]; then
+    FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
+    if [ ${FORMAT} = "0" ] ; then
+        #remove empty lines
+        sed -i '/^\s*$/d' ../params/alignment
+    fi
 fi
 
 JOBID=%jobid.content

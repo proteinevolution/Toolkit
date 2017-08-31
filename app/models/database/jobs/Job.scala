@@ -1,38 +1,35 @@
 package models.database.jobs
 
+import java.time.ZonedDateTime
+
+import util.ZonedDateTimeHelper
 import com.typesafe.config.ConfigFactory
-import models.Constants
 import models.tools.Toolitem
-import org.joda.time.DateTime
 import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._
-import javax.inject.Inject
 
 case class Job(mainID: BSONObjectID, // ID of the Job in the System
                parentID: Option[BSONObjectID] = None, // ID of the Parent Job
                jobID: String, // User visible ID of the Job
                ownerID: Option[BSONObjectID] = None, // User to whom the Job belongs
                isPublic: Boolean = false,
-               project: Option[BSONObjectID] = None,
                status: JobState, // Status of the Job
                emailUpdate: Boolean = false, // Owner wants to be notified when the job is ready
                deletion: Option[JobDeletion] = None, // Deletion Flag showing the reason for the deletion
                tool: String, // Tool used for this Job
-               toolnameLong: Option[String],
-               label: Option[String],
                watchList: List[BSONObjectID] = List.empty, // List of the users who watch this job, None if not public
                commentList: List[BSONObjectID] = List.empty, // List of comment IDs for the Job
                clusterData: Option[JobClusterData] = None, // Cluster Data
-               dateCreated: Option[DateTime], // Creation time of the Job
-               dateUpdated: Option[DateTime], // Last Updated on
-               dateViewed: Option[DateTime], // Last Viewed on
+               dateCreated: Option[ZonedDateTime], // Creation time of the Job
+               dateUpdated: Option[ZonedDateTime], // Last Updated on
+               dateViewed: Option[ZonedDateTime], // Last Viewed on
                IPHash: Option[String]) // hash of the ip
 {
 
   // Returns if the job is private or not
   def isPrivate: Boolean = {
-    ownerID.isDefined // TODO why is this the only measure for being a private job?
+    ownerID.isDefined && !isPublic // TODO why is this the only measure for being a private job?
   }
 
   /**
@@ -43,9 +40,8 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
   def cleaned(): JsObject = {
     Json.obj(
       Job.JOBID        -> jobID,
-      "project"        -> project,
       Job.STATUS       -> status,
-      Job.DATECREATED  -> dateCreated.map(_.getMillis),
+      Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli),
       Job.TOOL         -> tool,
       Job.TOOLNAMELONG -> ConfigFactory.load().getString(s"Tools.$tool.longname")
     )
@@ -59,13 +55,12 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
   def jobManagerJob(): JsObject = {
     Json.obj(
       Job.JOBID        -> jobID,
-      Job.PROJECT      -> project,
       Job.STATUS       -> status,
       Job.TOOL         -> tool,
       Job.COMMENTLIST  -> commentList.length,
-      Job.DATECREATED  -> dateCreated.map(_.getMillis),
-      Job.DATEUPDATED  -> dateUpdated.map(_.getMillis),
-      Job.DATEVIEWED   -> dateViewed.map(_.getMillis),
+      Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli),
+      Job.DATEUPDATED  -> dateUpdated.map(_.toInstant.toEpochMilli),
+      Job.DATEVIEWED   -> dateViewed.map(_.toInstant.toEpochMilli),
       Job.TOOLNAMELONG -> ConfigFactory.load().getString(s"Tools.$tool.longname")
     )
   }
@@ -83,10 +78,7 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
 }
 
 // Server returns such an object when asked for a job
-case class Jobitem(mainID: String,
-                   newMainID: String, // Used for job resubmission
-                   jobID: String,
-                   project: String,
+case class Jobitem(jobID: String,
                    state: JobState,
                    ownerName: String,
                    dateCreated: String,
@@ -138,21 +130,19 @@ object Job {
           val dateViewed   = (obj \ DATEVIEWED).asOpt[String]
           val toolnameLong = (obj \ TOOLNAMELONG).asOpt[String]
           val IPHash       = (obj \ IPHASH).asOpt[String]
+          val datetimenow  = ZonedDateTime.now()
           JsSuccess(
             Job(
               mainID = BSONObjectID.generate(),
               parentID = None,
               jobID = "",
               ownerID = Some(BSONObjectID.generate()),
-              project = Some(BSONObjectID.generate()),
               status = status.get,
               deletion = deletion,
               tool = "",
-              toolnameLong = None,
-              label = Some(""),
-              dateCreated = Some(new DateTime()),
-              dateUpdated = Some(new DateTime()),
-              dateViewed = Some(new DateTime()),
+              dateCreated = Some(datetimenow),
+              dateUpdated = Some(datetimenow),
+              dateViewed = Some(datetimenow),
               IPHash = IPHash
             )
           )
@@ -165,23 +155,21 @@ object Job {
 
   implicit object JobWrites extends Writes[Job] {
     def writes(job: Job): JsObject = Json.obj(
-      IDDB         -> job.mainID,
-      PARENTID     -> job.parentID,
-      JOBID        -> job.jobID,
-      OWNERID      -> job.ownerID,
-      PROJECT      -> job.project,
-      STATUS       -> job.status,
-      EMAILUPDATE  -> job.emailUpdate,
-      DELETION     -> job.deletion,
-      TOOL         -> job.tool,
-      TOOLNAMELONG -> job.toolnameLong,
-      WATCHLIST    -> job.watchList,
-      COMMENTLIST  -> job.commentList,
-      CLUSTERDATA  -> job.clusterData,
-      DATECREATED  -> job.dateCreated.fold(-1L)(_.getMillis),
-      DATEUPDATED  -> job.dateUpdated.fold(-1L)(_.getMillis),
-      DATEVIEWED   -> job.dateViewed.fold(-1L)(_.getMillis),
-      IPHASH       -> job.IPHash
+      IDDB        -> job.mainID,
+      PARENTID    -> job.parentID,
+      JOBID       -> job.jobID,
+      OWNERID     -> job.ownerID,
+      STATUS      -> job.status,
+      EMAILUPDATE -> job.emailUpdate,
+      DELETION    -> job.deletion,
+      TOOL        -> job.tool,
+      WATCHLIST   -> job.watchList,
+      COMMENTLIST -> job.commentList,
+      CLUSTERDATA -> job.clusterData,
+      DATECREATED -> job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli),
+      DATEUPDATED -> job.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli),
+      DATEVIEWED  -> job.dateViewed.fold(-1L)(_.toInstant.toEpochMilli),
+      IPHASH      -> job.IPHash
     )
   }
 
@@ -195,19 +183,16 @@ object Job {
         parentID = bson.getAs[BSONObjectID](PARENTID),
         jobID = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
         ownerID = bson.getAs[BSONObjectID](OWNERID),
-        project = bson.getAs[BSONObjectID](PROJECT),
         status = bson.getAs[JobState](STATUS).getOrElse(Error),
         emailUpdate = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
         deletion = bson.getAs[JobDeletion](DELETION),
         tool = bson.getAs[String](TOOL).getOrElse(""),
-        toolnameLong = bson.getAs[String](TOOLNAMELONG),
-        label = bson.getAs[String](LABEL),
         watchList = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
         commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
         clusterData = bson.getAs[JobClusterData](CLUSTERDATA),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => new DateTime(dt.value)),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => new DateTime(dt.value)),
-        dateViewed = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => new DateTime(dt.value)),
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateViewed = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
         IPHash = bson.getAs[String](IPHASH)
       )
     }
@@ -219,24 +204,21 @@ object Job {
   implicit object Writer extends BSONDocumentWriter[Job] {
     def write(job: Job): BSONDocument = {
       BSONDocument(
-        IDDB         -> job.mainID,
-        PARENTID     -> job.parentID,
-        JOBID        -> job.jobID,
-        OWNERID      -> job.ownerID,
-        PROJECT      -> job.project,
-        STATUS       -> job.status,
-        EMAILUPDATE  -> job.emailUpdate,
-        DELETION     -> job.deletion,
-        TOOL         -> job.tool,
-        TOOLNAMELONG -> job.toolnameLong,
-        LABEL        -> job.label,
-        WATCHLIST    -> job.watchList,
-        COMMENTLIST  -> job.commentList,
-        CLUSTERDATA  -> job.clusterData,
-        DATECREATED  -> BSONDateTime(job.dateCreated.fold(-1L)(_.getMillis)),
-        DATEUPDATED  -> BSONDateTime(job.dateUpdated.fold(-1L)(_.getMillis)),
-        DATEVIEWED   -> BSONDateTime(job.dateViewed.fold(-1L)(_.getMillis)),
-        IPHASH       -> job.IPHash
+        IDDB        -> job.mainID,
+        PARENTID    -> job.parentID,
+        JOBID       -> job.jobID,
+        OWNERID     -> job.ownerID,
+        STATUS      -> job.status,
+        EMAILUPDATE -> job.emailUpdate,
+        DELETION    -> job.deletion,
+        TOOL        -> job.tool,
+        WATCHLIST   -> job.watchList,
+        COMMENTLIST -> job.commentList,
+        CLUSTERDATA -> job.clusterData,
+        DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATEUPDATED -> BSONDateTime(job.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATEVIEWED  -> BSONDateTime(job.dateViewed.fold(-1L)(_.toInstant.toEpochMilli)),
+        IPHASH      -> job.IPHash
       )
     }
   }

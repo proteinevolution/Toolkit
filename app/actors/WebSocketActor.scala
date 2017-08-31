@@ -1,22 +1,22 @@
 package actors
 
-import javax.inject.{Inject, Named}
+import javax.inject.{ Inject, Named }
 
 import actors.ClusterMonitor._
 import actors.JobActor._
-import actors.WebSocketActor.{ChangeSessionID, LogOut, MaintenanceAlert}
-import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
+import actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
+import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
-import models.{Constants, UserSessions}
-import models.database.jobs.{Job, Running}
+import models.{ Constants, UserSessions }
+import models.database.jobs.{ Job, Running }
 import models.job.JobActorAccess
 import modules.LocationProvider
 import play.api.Logger
 import play.api.cache._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{ JsValue, Json }
 import reactivemongo.bson.BSONObjectID
-import java.nio.file.{Files, Paths}
+import java.nio.file.{ Files, Paths }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -40,8 +40,8 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
                                      jobActorAccess: JobActorAccess,
                                      userSessions: UserSessions,
                                      constants: Constants,
-                                     @NamedCache("userCache") val userCache: CacheApi,
-                                     @NamedCache("wsActorCache") val wsActorCache: CacheApi,
+                                     @NamedCache("userCache") val userCache: SyncCacheApi,
+                                     @NamedCache("wsActorCache") val wsActorCache: SyncCacheApi,
                                      @Assisted("sessionID") private var sessionID: BSONObjectID)
     extends Actor
     with ActorLogging {

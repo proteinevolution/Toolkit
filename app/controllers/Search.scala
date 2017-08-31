@@ -2,12 +2,12 @@ package controllers
 
 import models.database.jobs.Job
 import play.Logger
-import models.{Constants, UserSessions}
+import models.{ Constants, UserSessions }
 import play.api.cache._
 import play.api.libs.json.Json
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -15,21 +15,22 @@ import models.search.JobDAO
 import models.tools.ToolFactory
 import modules.LocationProvider
 import modules.db.MongoStore
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc._
 
 import scala.concurrent.Future
 import scala.language.postfixOps
 
 @Singleton
-final class Search @Inject()(@NamedCache("userCache") implicit val userCache: CacheApi,
+final class Search @Inject()(@NamedCache("userCache") implicit val userCache: SyncCacheApi,
                              implicit val locationProvider: LocationProvider,
                              userSessions: UserSessions,
                              val reactiveMongoApi: ReactiveMongoApi,
                              mongoStore: MongoStore,
                              toolFactory: ToolFactory,
                              val jobDao: JobDAO,
-                             constants: Constants)
-    extends Controller
+                             constants: Constants,
+                             cc: ControllerComponents)
+    extends AbstractController(cc)
     with ReactiveMongoComponents
     with Common {
 

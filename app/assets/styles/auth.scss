@@ -151,6 +151,9 @@ button.loggedIn {
   border: none;
   position: absolute;
   box-shadow: 2px 5px 6px rgba(0,0,0,0.3);
+  right: 0;
+  left: auto;
+  top: 100%;
 }
 
 .userMenu a {

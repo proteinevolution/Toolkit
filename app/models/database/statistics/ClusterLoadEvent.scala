@@ -1,8 +1,10 @@
 package models.database.statistics
 
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
+
 import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
+import util.ZonedDateTimeHelper
 
 /**
   * Created by astephens on 27.03.17.
@@ -10,7 +12,7 @@ import reactivemongo.bson._
 case class ClusterLoadEvent(id: BSONObjectID,
                             listLoad: List[Double],
                             averageLoad: Double,
-                            timestamp: Option[DateTime] = Some(DateTime.now()))
+                            timestamp: Option[ZonedDateTime] = Some(ZonedDateTime.now))
 
 object ClusterLoadEvent {
   val IDDB      = "_id"
@@ -33,7 +35,7 @@ object ClusterLoadEvent {
         bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         bson.getAs[List[Double]](LISTLOAD).getOrElse(List.empty[Double]),
         bson.getAs[Double](AVERAGE).getOrElse(0.0),
-        bson.getAs[BSONDateTime](TIMESTAMP).map(dt => new DateTime(dt.value))
+        bson.getAs[BSONDateTime](TIMESTAMP).map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
     }
   }
@@ -43,7 +45,7 @@ object ClusterLoadEvent {
       IDDB      -> clusterLoadEvent.id,
       LISTLOAD  -> clusterLoadEvent.listLoad,
       AVERAGE   -> clusterLoadEvent.averageLoad,
-      TIMESTAMP -> BSONDateTime(clusterLoadEvent.timestamp.fold(-1L)(_.getMillis))
+      TIMESTAMP -> BSONDateTime(clusterLoadEvent.timestamp.fold(-1L)(_.toInstant.toEpochMilli))
     )
   }
 }

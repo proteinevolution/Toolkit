@@ -1,39 +1,35 @@
 package actors
 
-import javax.inject.{Inject, Named}
+import javax.inject.{ Inject, Named }
 
 import actors.JobActor._
 import akka.actor._
 import akka.event.LoggingReceive
-import models.{Constants, UserSessions}
+import models.{ Constants, UserSessions }
 import models.database.jobs._
-import models.database.statistics.{JobEvent, JobEventLog}
+import models.database.statistics.{ JobEvent, JobEventLog }
 import models.database.users.User
 import models.mailing.JobFinishedMail
 import models.search.JobDAO
 import modules.tel.TEL
 import modules.tel.runscripts._
 import com.typesafe.config.ConfigFactory
-import controllers.FileException
 import models.sge.Qdel
 import modules.LocationProvider
 import modules.db.MongoStore
 import modules.tel.env.Env
 import modules.tel.execution.ExecutionContext.FileAlreadyExists
-import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
+import modules.tel.execution.{ ExecutionContext, RunningExecution, WrapperExecutionFactory }
 import modules.tel.runscripts.Runscript.Evaluation
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
 import play.api.Logger
-import play.api.cache.{CacheApi, NamedCache}
+import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
-import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
-
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json._
-
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.util.{ Failure, Success }
 import better.files._
 import scala.concurrent.duration._
 
@@ -97,8 +93,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                          wrapperExecutionFactory: WrapperExecutionFactory,
                          implicit val locationProvider: LocationProvider,
                          @Named("jobIDActor") jobIDActor: ActorRef,
-                         @NamedCache("userCache") implicit val userCache: CacheApi,
-                         @NamedCache("wsActorCache") implicit val wsActorCache: CacheApi,
+                         @NamedCache("userCache") implicit val userCache: SyncCacheApi,
+                         @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
                          constants: Constants)
     extends Actor {
 
@@ -109,7 +105,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
   // long polling stuff
 
-  private val fetchLatestInterval                 = 1.seconds
+  private val fetchLatestInterval = 1.seconds
   private val Tick: Cancellable = {
     // scheduler should use the system dispatcher
     context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, UpdateLog2)(context.system.dispatcher)
@@ -255,7 +251,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           BSONDocument(Job.IDDB -> job.mainID),
           BSONDocument(
             "$set" ->
-            BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.OwnerRequest, Some(DateTime.now()))),
+            BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.OwnerRequest, Some(ZonedDateTime.now))),
             "$unset" ->
             BSONDocument(Job.WATCHLIST -> "")
           )
@@ -292,7 +288,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           case None =>
             JobEventLog(mainID = job.mainID,
                         toolName = job.tool,
-                        events = List(JobEvent(job.status, Some(DateTime.now))))
+                        events = List(JobEvent(job.status, Some(ZonedDateTime.now))))
         }
         this.currentJobLogs = this.currentJobLogs.updated(job.jobID, jobLog)
         val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
@@ -356,10 +352,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                                       JobEventLog(mainID = job.mainID,
                                                   toolName = job.tool,
                                                   internalJob = isInternalJob,
-                                                  events = List(JobEvent(job.status, Some(DateTime.now)))))
-
-        // Update the statistics
-        mongoStore.increaseJobCount(job.tool) // TODO switch to better statistic handling
+                                                  events = List(JobEvent(job.status, Some(ZonedDateTime.now)))))
 
         // Get new runscript instance from the runscript manager
         val runscript: Runscript = runscriptManager(job.tool).withEnvironment(env)
@@ -486,7 +479,11 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                   BSONDocument(Job.IPHASH -> hash),
                   BSONDocument(
                     Job.DATECREATED ->
-                    BSONDocument("$gt" -> BSONDateTime(new DateTime().minusMinutes(constants.maxJobsWithin).getMillis))
+                    BSONDocument(
+                      "$gt" -> BSONDateTime(
+                        ZonedDateTime.now.minusMinutes(constants.maxJobsWithin).toInstant.toEpochMilli
+                      )
+                    )
                   )
                 )
               )
@@ -497,17 +494,22 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                   BSONDocument(Job.IPHASH -> hash),
                   BSONDocument(
                     Job.DATECREATED ->
-                    BSONDocument("$gt" -> BSONDateTime(new DateTime().minusDays(constants.maxJobsWithinDay).getMillis))
+                    BSONDocument(
+                      "$gt" -> BSONDateTime(
+                        ZonedDateTime.now.minusDays(constants.maxJobsWithinDay).toInstant.toEpochMilli
+                      )
+                    )
                   )
                 )
               )
               mongoStore.countJobs(selector).map { count =>
                 mongoStore.countJobs(selectorDay).map { countDay =>
-                  println(BSONDateTime(new DateTime().minusMinutes(constants.maxJobsWithin).getMillis).toString)
+                  println(
+                    BSONDateTime(ZonedDateTime.now.minusMinutes(constants.maxJobsWithin).toInstant.toEpochMilli).toString
+                  )
                   Logger.info(
                     "IP " + job.IPHash + " has requested " + count + " jobs within the last " + constants.maxJobsWithin + " minute and " + countDay + " within the last 24 hours."
                   )
-
                   if (count <= constants.maxJobNum && countDay <= constants.maxJobNumDay) {
                     self ! StartJob(job.jobID)
                   } else {
@@ -531,19 +533,27 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           this.getCurrentExecutionContext(jobID) match {
             case Some(executionContext) =>
               Logger.info("[JobActor.StartJob] reached. starting job " + jobID)
-              // set memory allocation on the cluster and let the clusterMonitor define the multiplier
-              val h_rt = ConfigFactory.load().getString(s"Tools.${job.tool}.hardruntime")
-              val h_vmem = (ConfigFactory
-                .load()
-                .getString(s"Tools.${job.tool}.memory")
-                .dropRight(1)
-                .toInt * TEL.memFactor).toString + "G"
+              // Set memory allocation on the cluster and let the clusterMonitor define the multiplier.
+              // To receive a catchable signal in an SGE job, one must set soft limits
+              // in addition to hard limits; by definition "hard" means SIGKILL.
+
+              val h_rt = ConfigFactory.load().getInt(s"Tools.${job.tool}.hardruntime")
+
+              //Set soft runtime to 30s less than hard runtime
+              val s_rt = h_rt - 30
+              val h_vmem = (ConfigFactory.load().getInt(s"Tools.${job.tool}.memory") * TEL.memFactor).toInt
+              //Set soft memory limit to 95% of hard memory limit
+              val s_vmem = h_vmem * 0.95
               val threads =
                 math.ceil(ConfigFactory.load().getInt(s"Tools.${job.tool}.threads") * TEL.threadsFactor).toInt
-              env.configure(s"MEMORY", h_vmem)
+
+              env.configure(s"MEMORY", h_vmem.toString + "G")
+              env.configure(s"SOFTMEMORY", s_vmem.toString + "G")
               env.configure(s"THREADS", threads.toString)
               env.configure(s"HARDRUNTIME", h_rt.toString)
-              Logger.info(s"$jobID is running with $h_vmem h_vmem")
+              env.configure(s"SOFTRUNTIME", s_rt.toString)
+
+              Logger.info(s"$jobID is running with $h_vmem GB h_vmem")
               Logger.info(s"$jobID is running with $threads threads")
               Logger.info(s"$jobID is running with $h_rt h_rt")
 
@@ -663,13 +673,15 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               if (result.nonEmpty) {
                 // Put the result files into the database, JobActor has to wait until this process has finished
                 val x = mongoStore.result2Job(job.jobID, BSONDocument(result)) onComplete {
-                  case Success(doc) =>
+                  case Success(_) =>
                     // Now we can update the JobState and remove it, once the update has completed
                     this.updateJobState(job).map { job =>
                       this.removeJob(job.jobID)
                       Logger.info("Job has been removed from JobActor")
                     }
-                  case Failure(t) => println("An error has occured: " + t.getMessage)
+                  case Failure(t) =>
+                    this.updateJobState(job.copy(status=Error))
+                    Logger.error("An error has occured while writing to the Results DB:\n" + t.getMessage)
                 }
               } else {
                 // Now we can update the JobState and remove it, once the update has completed
@@ -686,9 +698,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
                 // Tell the user that their job failed via eMail
                 sendJobUpdateMail(job)
-
-                // Update the statistics for the failed job TODO - swap to better statistic handling
-                mongoStore.increaseJobCount(job.tool, failed = true)
               }
 
             case _ =>
@@ -715,18 +724,16 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         case None =>
       }
 
-
     // does longpolling
 
     case UpdateLog2 =>
-      currentJobs.foreach {
-        job =>
-          val foundWatchers =
-            job._2.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
-          job._2.status match {
-            case Running => foundWatchers.flatten.foreach(_ ! WatchLogFile(job._2))
-            case _ =>
-          }
+      currentJobs.foreach { job =>
+        val foundWatchers =
+          job._2.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
+        job._2.status match {
+          case Running => foundWatchers.flatten.foreach(_ ! WatchLogFile(job._2))
+          case _       =>
+        }
 
       }
   }

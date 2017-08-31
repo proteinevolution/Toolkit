@@ -1,22 +1,25 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 
+import actors.DatabaseMonitor.DeleteOldUsers
+import akka.actor.ActorRef
 import models.UserSessions
-import models.database.jobs.Job
-import models.database.statistics.{JobEvent, JobEventLog, ToolStatistic}
+import models.database.statistics.{ JobEvent, JobEventLog, StatisticsObject }
 import models.database.users.User
+import models.tools.ToolFactory
 import modules.LocationProvider
 import modules.db.MongoStore
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
+
 import play.api.Logger
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json
+import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -25,15 +28,17 @@ import scala.concurrent.Future
   * Created by zin on 28.07.16.
   */
 @Singleton
-final class Backend @Inject()(webJarAssets: WebJarAssets,
-                              settingsController: Settings,
+final class Backend @Inject()(settingsController: Settings,
                               userSessions: UserSessions,
                               mongoStore: MongoStore,
-                              @NamedCache("userCache") implicit val userCache: CacheApi,
+                              @NamedCache("userCache") implicit val userCache: SyncCacheApi,
+                              toolFactory: ToolFactory,
+                              @Named("DatabaseMonitor") databaseMonitor: ActorRef,
                               implicit val locationProvider: LocationProvider,
                               val reactiveMongoApi: ReactiveMongoApi,
-                              val messagesApi: MessagesApi)
-    extends Controller
+                              messagesApi: MessagesApi,
+                              cc: ControllerComponents)
+    extends AbstractController(cc)
     with I18nSupport
     with Common {
 
@@ -50,31 +55,76 @@ final class Backend @Inject()(webJarAssets: WebJarAssets,
 
   def statistics: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
+      Logger.info("Statistics called. Access " + (if (user.isSuperuser) "granted." else "denied."))
       if (user.isSuperuser) {
-        val dateTimeFirstOfMonth: DateTime = DateTime.now().dayOfMonth().withMinimumValue().withTimeAtStartOfDay()
-        mongoStore
-          .findJobEventLogs(
-            BSONDocument(
-              JobEventLog.EVENTS ->
-              BSONDocument(
-                "$elemMatch" ->
+        // Get the first moment of the last month as a DateTime object
+        val firstOfLastMonth: ZonedDateTime =
+          ZonedDateTime.now.minusMonths(1).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1)
+
+        // Grab the current statistics
+        Logger.info("Loading Statistics...")
+        val stats = mongoStore.getStats
+
+        // Ensure all tools are in the statistics, even if they have not been used yet
+        Logger.info("Statistics loaded.... checking for new tools")
+        val statsUpdated = stats.map(_.updateTools(toolFactory.values.values.map(_.toolNameShort).toList))
+
+        // Collect the job events up until the first of the last month
+        statsUpdated.flatMap { statistics =>
+          if (statistics.lastPushed.compareTo(firstOfLastMonth) < 0) {
+            mongoStore
+              .findJobEventLogs(
                 BSONDocument(
-                  JobEvent.TIMESTAMP ->
-                  BSONDocument("$gte" -> BSONDateTime(dateTimeFirstOfMonth.minusMonths(1).getMillis),
-                               "$lt"  -> BSONDateTime(dateTimeFirstOfMonth.getMillis))
+                  JobEventLog.EVENTS ->
+                  BSONDocument(
+                    "$elemMatch" ->
+                    BSONDocument(
+                      JobEvent.TIMESTAMP ->
+                      BSONDocument("$lt" -> BSONDateTime(firstOfLastMonth.toInstant.toEpochMilli))
+                    )
+                  )
                 )
               )
-            )
-          )
-          .foreach { jobEventList =>
-            Logger.info(
-              "Found " + jobEventList.length + " Jobs for the last Month (From " + dateTimeFirstOfMonth
-                .minusMonths(1) + " to " + dateTimeFirstOfMonth + ")"
+              .map { jobEventLogs =>
+                Logger.info(
+                  "Collected " + jobEventLogs.length + " elements from the job event logs. Last Push: " + statistics.lastPushed
+                )
+                statistics.addMonthsToTools(
+                  jobEventLogs,
+                  statistics.lastPushed.plusMonths(1).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1),
+                  firstOfLastMonth
+                )
+              }
+              .flatMap { statisticsObject =>
+                mongoStore.updateStats(statisticsObject).map {
+                  case Some(statisticsObjectUpdated) =>
+                    Logger.info(
+                      "Successfully pushed statistics for Months: " + statisticsObjectUpdated.datePushed
+                        .filterNot(a => statistics.datePushed.contains(a))
+                        .mkString(", ")
+                    )
+                    // TODO add a way to remove the now collected elements from the JobEventLogs
+                    NoCache(
+                      Ok(Json.toJson(Json.obj("success" -> "new statistics added", "stat" -> statisticsObjectUpdated)))
+                    )
+                  case None =>
+                    Logger
+                      .info("Statistics generated, but it seems like the statistics could not be reloaded from the db")
+                    NoCache(
+                      Ok(
+                        Json.toJson(
+                          Json.obj("error" -> "could not reload new stats from DB", "stat" -> statisticsObject)
+                        )
+                      )
+                    )
+                }
+              }
+          } else {
+            Logger.info("No need to push statistics. Last Push: " + statistics.lastPushed)
+            Future.successful(
+              NoCache(Ok(Json.toJson(Json.obj("success" -> "old statistics used", "stat" -> statistics))))
             )
           }
-
-        mongoStore.getStatistics.map { toolStatisticList: List[ToolStatistic] =>
-          NoCache(Ok(Json.toJson(toolStatisticList)))
         }
       } else {
         Future.successful(NotFound)
@@ -82,18 +132,12 @@ final class Backend @Inject()(webJarAssets: WebJarAssets,
     }
   }
 
-  def pushMonthlyStatistics: Action[AnyContent] = Action.async { implicit request =>
+  def runUserSweep: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
+      Logger.info("User deletion called. Access " + (if (user.isSuperuser) "granted." else "denied."))
       if (user.isSuperuser) {
-        mongoStore.getStatistics
-          .map { toolStatisticList: List[ToolStatistic] =>
-            toolStatisticList.map { toolStatistic =>
-              val updatedToolStatistic = toolStatistic.pushMonth()
-              mongoStore.upsertStatistics(updatedToolStatistic)
-              toolStatistic
-            }
-          }
-          .map(toolStatistic => NoCache(Ok(Json.toJson(toolStatistic))))
+        databaseMonitor ! DeleteOldUsers
+        Future.successful(Ok)
       } else {
         Future.successful(NotFound)
       }

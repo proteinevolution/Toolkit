@@ -1,6 +1,8 @@
 package models.database.jobs
 
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
+
+import util.ZonedDateTimeHelper
 import play.api.libs.json._
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter }
 
@@ -11,7 +13,7 @@ import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSON
   *
   * Created by drau on 04.07.17.
   */
-case class DeletedJob(jobID: String, deletionDate: DateTime)
+case class DeletedJob(jobID: String, deletionDate: ZonedDateTime)
 
 object DeletedJob {
   val JOBID        = "jobID"
@@ -22,7 +24,7 @@ object DeletedJob {
       case obj: JsObject =>
         try {
           val jobID        = (obj \ JOBID).asOpt[String].getOrElse("")
-          val deletionDate = (obj \ DELETIONDATE).asOpt[DateTime].getOrElse(new DateTime().minusYears(100))
+          val deletionDate = (obj \ DELETIONDATE).asOpt[ZonedDateTime].getOrElse(new ZonedDateTime().minusYears(100))
           JsSuccess(DeletedJob(jobID, deletionDate))
         } catch {
           case cause: Throwable => JsError(cause.getMessage)
@@ -34,7 +36,7 @@ object DeletedJob {
   implicit object JsonWriter extends Writes[DeletedJob] {
     override def writes(deletedJob: DeletedJob): JsObject = Json.obj(
       JOBID        -> deletedJob.jobID,
-      DELETIONDATE -> deletedJob.deletionDate.getMillis
+      DELETIONDATE -> deletedJob.deletionDate.toEpochSecond * 1000
     )
   }
 
@@ -44,8 +46,8 @@ object DeletedJob {
         bson.getAs[String](JOBID).getOrElse(""),
         bson
           .getAs[BSONDateTime](DELETIONDATE)
-          .map(dt => new DateTime(dt.value))
-          .getOrElse(new DateTime().minusYears(100))
+          .map(dt => ZonedDateTimeHelper.getZDT(dt))
+          .getOrElse(new ZonedDateTime().minusYears(100))
       )
     }
   }
@@ -54,7 +56,7 @@ object DeletedJob {
     def write(deletedJob: DeletedJob): BSONDocument =
       BSONDocument(
         JOBID        -> deletedJob.jobID,
-        DELETIONDATE -> BSONDateTime(deletedJob.deletionDate.getMillis)
+        DELETIONDATE -> BSONDateTime(deletedJob.deletionDate.toInstant.toEpochMilli)
       )
   }
 }

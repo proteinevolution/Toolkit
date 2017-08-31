@@ -37,7 +37,8 @@ object Common {
   private val uniprotNameReg = """(uniprot.*)""".r
   private val pfamNameReg    = """(Pfam.*)""".r
 
-  private val pdbBaseLink  = "http://pdb.rcsb.org/pdb/explore.do?structureId="
+  private val pdbBaseLink = "http://www.rcsb.org/pdb/explore/explore.do?structureId="
+
   private val pdbeBaseLink = "http://www.ebi.ac.uk/pdbe/entry/pdb/"
   private val ncbiBaseLink =
     "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?SUBMIT=y&db=structure&orig_db=structure&term="
@@ -346,6 +347,16 @@ object Common {
     description.replaceAll("(\\S{40})", "$1</br>");
   }
 
+  def addBreakHHpred(description: String): String = {
+    var slice = description
+    val index = slice.indexOfSlice("; Related PDB entries")
+    if(index > 1) {
+      slice = description.slice(0, index)
+    }
+    slice.replaceAll("(\\S{40})", "$1</br>")
+  }
+
+
   def insertMatch(seq: String, length: Int, hitArr: List[Int]): String = {
     var newSeq = ""
     for (starPos <- hitArr) {
@@ -438,7 +449,7 @@ object Common {
   }
 
   def lengthWithoutDashDots(str: String): Int = {
-    str.length - str.count(char => char == '-' || char == ".")
+    str.length - str.count(char => char == '-') - str.count(char => char == '.')
   }
 
   def hhblitsHitWrapped(hit: HHBlitsHSP,
