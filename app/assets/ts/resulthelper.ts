@@ -41,12 +41,14 @@ let followScroll = function(element : any) {
                 $('.scrollContainerDiv').removeClass('scrollContainerDivWhite');
                 $('#wrap').show();
                 $(".colorAA").show();
+                $(".downloadHHR").hide();
             } else {
                 $('.scrollContainer').removeClass('fixed');
                 $('.scrollContainer').addClass('scrollContainerWhite');
                 $('.scrollContainerDiv').addClass('scrollContainerDivWhite');
                 $('#wrap').hide();
                 $(".colorAA").hide();
+                $(".downloadHHR").show();
 
             }
         }
