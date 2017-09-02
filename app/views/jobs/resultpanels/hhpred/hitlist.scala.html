@@ -30,6 +30,7 @@
                 @if(result.db.matches("mmcif70/pdb70")) {
                     <a onclick="@{tool.toolNameShort}_manual()">Model using selection</a>
                 }
+                <a onclick="downloadHHR()" class="downloadHHR">HHR file</a>
                 <a onclick="colorAA()" class="colorAA">Color Seqs</a>
                 <a onclick="wrap()" id="wrap">Wrap Seqs</a>
                 </div>
@@ -215,6 +216,16 @@
 
         });
 
+        window["downloadHHR"] = function(){
+            var downloadFilename = "hhpred_" + jobID + ".hhr";
+            var fileURL="/files/" + jobID + "/" + jobID + ".hhr";
+            $.ajax({
+                method: "GET",
+                url: fileURL
+            }).done(function(data){
+                download(downloadFilename, data);
+            })
+        };
 
         function drawDataTable() {
             hitlist = $('#htb').dataTable({

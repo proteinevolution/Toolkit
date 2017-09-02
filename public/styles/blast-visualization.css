@@ -490,11 +490,11 @@ table.dataTable.no-footer{
 }
 
 #scrollLinks a{
-    margin-right: 2em;
+    margin-right: 1em;
     margin-bottom: 1.5em;
 }
 #controlls a{
-    margin-right: 2em;
+    margin-right: 1.85em;
     display: block;
 }
 
@@ -709,19 +709,19 @@ table.dataTable.no-footer{
 }
 
 @media screen and (max-width: 930px) {
-    #scrollLinks a, #controlls a {
+     #controlls a {
         margin-right: 1em;
     }
 }
 
 @media screen and (max-width: 930px) {
     [class*="scrollContainer"] {
-        font-size: 1.05em;
+        font-size: 1.1em;
     }
 }
 
 @media screen and (max-width: 750px) {
     [class*="scrollContainer"] {
-        font-size: 1.0em;
+        font-size: 1.05em;
     }
 }
