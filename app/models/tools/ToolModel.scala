@@ -382,7 +382,7 @@ final class ToolFactory @Inject()(
               .fileviewWithDownload(jobID + ".hhr",
                                     s"${constants.jobPath}$jobID/results/" + jobID + ".hhr",
                                     jobID,
-                                    "hhpred_hhr")
+                                    "hhpred")
           )
         },
         "Probability  Plot" -> { (jobID, requestHeader) =>
