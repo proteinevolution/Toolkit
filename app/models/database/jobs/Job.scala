@@ -16,7 +16,6 @@ case class Job(mainID: BSONObjectID, // ID of the Job in the System
                isPublic: Boolean = false,
                status: JobState, // Status of the Job
                emailUpdate: Boolean = false, // Owner wants to be notified when the job is ready
-               deletion: Option[JobDeletion] = None, // Deletion Flag showing the reason for the deletion
                tool: String, // Tool used for this Job
                watchList: List[BSONObjectID] = List.empty, // List of the users who watch this job, None if not public
                commentList: List[BSONObjectID] = List.empty, // List of comment IDs for the Job
@@ -120,7 +119,6 @@ object Job {
           val ownerID      = (obj \ OWNERID).asOpt[String]
           val project      = (obj \ PROJECT).asOpt[String]
           val status       = (obj \ STATUS).asOpt[JobState]
-          val deletion     = (obj \ DELETION).asOpt[JobDeletion]
           val tool         = (obj \ TOOL).asOpt[String]
           val label        = (obj \ LABEL).asOpt[String]
           val watchList    = (obj \ WATCHLIST).asOpt[List[String]]
@@ -138,7 +136,6 @@ object Job {
               jobID = "",
               ownerID = Some(BSONObjectID.generate()),
               status = status.get,
-              deletion = deletion,
               tool = "",
               dateCreated = Some(datetimenow),
               dateUpdated = Some(datetimenow),
@@ -161,7 +158,6 @@ object Job {
       OWNERID     -> job.ownerID,
       STATUS      -> job.status,
       EMAILUPDATE -> job.emailUpdate,
-      DELETION    -> job.deletion,
       TOOL        -> job.tool,
       WATCHLIST   -> job.watchList,
       COMMENTLIST -> job.commentList,
@@ -185,7 +181,6 @@ object Job {
         ownerID = bson.getAs[BSONObjectID](OWNERID),
         status = bson.getAs[JobState](STATUS).getOrElse(Error),
         emailUpdate = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
-        deletion = bson.getAs[JobDeletion](DELETION),
         tool = bson.getAs[String](TOOL).getOrElse(""),
         watchList = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
         commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
@@ -210,7 +205,6 @@ object Job {
         OWNERID     -> job.ownerID,
         STATUS      -> job.status,
         EMAILUPDATE -> job.emailUpdate,
-        DELETION    -> job.deletion,
         TOOL        -> job.tool,
         WATCHLIST   -> job.watchList,
         COMMENTLIST -> job.commentList,

@@ -247,14 +247,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
       // Mark the job in mongoDB
       mongoStore
-        .modifyJob(
-          BSONDocument(Job.IDDB -> job.mainID),
-          BSONDocument(
-            "$set" ->
-            BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.OwnerRequest, Some(ZonedDateTime.now))),
-            "$unset" ->
-            BSONDocument(Job.WATCHLIST -> "")
-          )
+        .(
+          BSONDocument(Job.IDDB -> job.mainID)
         )
         .foreach {
           case Some(deletedJob) =>
