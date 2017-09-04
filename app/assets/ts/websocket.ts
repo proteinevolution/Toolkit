@@ -207,7 +207,7 @@ class WebsocketWrapper {
 
     // error event just returns the error for now
     eventError : Function = function(event : ErrorEvent) : any {
-        console.error("[Websocket] Error:", event.error);
+        if (event.message) console.error("[Websocket] Error:", event.message);
     };
 
     /**
