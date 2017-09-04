@@ -152,7 +152,7 @@ class SweepJobsImpl @Inject()(appLifecycle: ApplicationLifecycle,
     Logger.info("Deleting jobFolder" + { constants.jobPath } + "/" + job.jobID)
     s"${constants.jobPath}${job.jobID}".toFile.delete(true)
     Logger.info("Removing Job " + job.jobID + " from mongo DB")
-    mongoStore.removeJob(BSONDocument(Job.JOBID -> job.jobID))
+    mongoStore.removeJob(BSONDocument(Job.IDDB -> job.mainID))
   }
 
   /**
