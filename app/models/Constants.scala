@@ -28,20 +28,28 @@ class Constants {
   val maxJobsWithinDay: Int           = 1 // time in days within the max number of jobs is applied for a day
 
   // Job deletion settings
-  // all jobs of registered users that are older than the given number are permanently deleted everywhere
-  val deletionThresholdRegistered : Int = 90
-  // all jobs of non registered users that are older than the given number are permanently deleted everywhere
-  val deletionThreshold           : Int = 24
-  // time in hours in which the job sweeping routine is executed
-  val deletionCycle               : Int = 1
+  /** all jobs of registered users that are older than the given number are permanently deleted everywhere */
+  val jobDeletionRegistered : Int = 90
+  /** all jobs of non registered users that are older than the given number are permanently deleted everywhere */
+  val jobDeletion           : Int = 24
+  /** time in days in which the job should not have been viewed */
+  val jobDeletionLastViewed : Int = 7
+  /** time in hours in which the job sweeping routine is executed */
+  val jobDeletionInterval   : Int = 1
 
   // User Deletion settings
-  val userDeletionDelay              : FiniteDuration = 10 minutes // Sweeps at this time after server start
-  val userDeletionInterval           : FiniteDuration = 3 hours // Sweeps in this interval
-  val userDeletingAfterMonths                   : Int = 1 // Deletes regular accounts after this timeframe
-  val userAwaitingRegistrationDeletingAfterDays : Int = 3 // Deletes users awaiting registration after this timeframe (in days)
-  val userLoggedInDeletingAfterMonths           : Int = 24 // Deletes registered accounts after this timeframe
-  val userLoggedInWarningDaysBeforeDeletion     : Int = 14 // Sending an eMail to the user this many days prior to the deletion
+  /** Sweeps at this time after server start */
+  val userDeletionDelay         : FiniteDuration = 10 minutes
+  /** Sweeps in this interval */
+  val userDeletionInterval      : FiniteDuration = 3 hours
+  /** Sending an eMail to the user this many days before the deletion */
+  val userDeletionWarning       : Int = 14 //days
+  /** Deletes regular accounts after this time frame */
+  val userDeleting              : Int =  1 //months
+  /** Deletes users awaiting registration after this time frame */
+  val userDeletingRegisterEmail : Int =  3 //days
+  /** Deletes registered accounts after this time frame */
+  val userDeletingRegistered    : Int = 24 //months
 }
 
 trait ExitCodes {

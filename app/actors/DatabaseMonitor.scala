@@ -4,11 +4,13 @@ import java.time.ZonedDateTime
 import javax.inject.{Inject, Singleton}
 
 import actors.DatabaseMonitor.{DeleteOldJobs, DeleteOldUsers}
+import actors.JobActor.Delete
 import akka.actor.{Actor, ActorLogging, Cancellable}
 import models.Constants
 import models.database.jobs.Job
 import models.database.statistics.{StatisticsObject, UserStatistic}
 import models.database.users.User
+import models.job.JobActorAccess
 import models.mailing.OldAccountEmail
 import modules.db.MongoStore
 import play.api.Logger
@@ -32,6 +34,7 @@ object DatabaseMonitor {
 final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
                                       implicit val mailerClient: MailerClient,
                                       mongoStore: MongoStore,
+                                      jobActorAccess: JobActorAccess,
                                       constants: Constants)
     extends Actor
     with ActorLogging {
@@ -56,20 +59,20 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
     // Date at the moment
     val now = ZonedDateTime.now
     // Date from when the regular users should have logged in last
-    val regularUserDeletionDate = now.minusMonths(constants.userDeletingAfterMonths)
+    val regularUserDeletionDate =
+      now.minusMonths(constants.userDeleting)
     // Date from when the user registered and
-    val awitingRegistrationUserDeletionDate = now.minusDays(constants.userAwaitingRegistrationDeletingAfterDays)
+    val awitingRegistrationUserDeletionDate =
+      now.minusDays(constants.userDeletingRegisterEmail)
     // Date the registered user was logged in last
-    val registeredUserDeletionDate = now.minusMonths(constants.userLoggedInDeletingAfterMonths)
+    val registeredUserDeletionDate =
+      now.minusMonths(constants.userDeletingRegistered)
     // Date the registered user was logged in last plus the days they have to be messaged prior to actual deletion
-    val registeredUserDeletionEMailDate = now
-      .minusMonths(constants.userLoggedInDeletingAfterMonths)
-      .plusDays(constants.userLoggedInWarningDaysBeforeDeletion)
+    val registeredUserDeletionEMailDate =
+      now.minusMonths(constants.userDeletingRegistered).plusDays(constants.userDeletionWarning)
     // Date to delete the Registered account at
-    val registeredUserDeletionDateForEmail = now
-      .plusDays(constants.userLoggedInWarningDaysBeforeDeletion)
-      .toLocalDate
-      .atStartOfDay(now.getZone)
+    val registeredUserDeletionDateForEmail =
+      now.plusDays(constants.userDeletionWarning).toLocalDate.atStartOfDay(now.getZone)
 
     if (verbose)
       Logger.info(s"""[User Deletion] Deletion Times:
@@ -86,18 +89,23 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
           "$or" ->
           List(
             BSONDocument( // Removing regular users with no privileges
-              User.ACCOUNTTYPE   -> User.NORMALUSER,
-              User.DATELASTLOGIN -> BSONDocument("$lt" -> BSONDateTime(regularUserDeletionDate.toInstant.toEpochMilli))
+              User.ACCOUNTTYPE   ->
+                User.NORMALUSER,
+              User.DATELASTLOGIN ->
+                BSONDocument("$lt" -> BSONDateTime(regularUserDeletionDate.toInstant.toEpochMilli))
             ),
             BSONDocument( // Removing regular users who await registration
-              User.ACCOUNTTYPE -> User.NORMALUSERAWAITINGREGISTRATION,
-              User.DATELASTLOGIN -> BSONDocument(
-                "$lt" -> BSONDateTime(awitingRegistrationUserDeletionDate.toInstant.toEpochMilli)
+              User.ACCOUNTTYPE ->
+                User.NORMALUSERAWAITINGREGISTRATION,
+              User.DATELASTLOGIN ->
+                BSONDocument("$lt" -> BSONDateTime(awitingRegistrationUserDeletionDate.toInstant.toEpochMilli)
               )
             ),
             BSONDocument( // Removing registered users with no privileges
-              User.ACCOUNTTYPE   -> User.CLOSETODELETIONUSER,
-              User.DATEDELETEDON -> BSONDocument("$lt" -> BSONDateTime(now.toInstant.toEpochMilli))
+              User.ACCOUNTTYPE   ->
+                User.CLOSETODELETIONUSER,
+              User.DATEDELETEDON ->
+                BSONDocument("$lt" -> BSONDateTime(now.toInstant.toEpochMilli))
             )
           )
         )
@@ -108,12 +116,10 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
         // Store the deleted users in the user statistics
         mongoStore.getStats.foreach { statisticsObject =>
           val currentDeleted: Int = statisticsObject.userStatistics.currentDeleted + users.count(_.userData.nonEmpty)
-          val modifier = BSONDocument(
-            "$set" ->
-            BSONDocument(
-              s"${StatisticsObject.USERSTATISTICS}.${UserStatistic.CURRENTDELETED}" -> currentDeleted
+          val modifier: BSONDocument =
+            BSONDocument("$set" ->
+              BSONDocument(s"${StatisticsObject.USERSTATISTICS}.${UserStatistic.CURRENTDELETED}" -> currentDeleted)
             )
-          )
           mongoStore.modifyStats(statisticsObject, modifier)
         }
 
@@ -180,17 +186,21 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
   }
 
   private def deleteOldJobs(verbose: Boolean = false): Unit = {
+    // grab the current time
     val now : ZonedDateTime = ZonedDateTime.now
-    val regularJobStorageDate : ZonedDateTime = now.minusDays(constants.deletionThreshold)
-    val lastViewedDate : ZonedDateTime = now.minusDays(7)
+    // calculate the date at which the job should have been created
+    val regularJobStorageDate : ZonedDateTime = now.minusDays(constants.jobDeletion)
+    // calculate the date at which it should have been viewed before
+    val lastViewedDate : ZonedDateTime = now.minusDays(constants.jobDeletionLastViewed)
     mongoStore.findJobs(
       BSONDocument(
         Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(regularJobStorageDate.toInstant.toEpochMilli)),
         Job.DATEVIEWED  -> BSONDocument("$lt" -> BSONDateTime(lastViewedDate.toInstant.toEpochMilli))
       )
-    ).foreach{ jobList =>
-      jobList.map(_.jobID)
-    }
+    ).foreach(_.foreach{ job =>
+      // Just send a deletion request to the job actor responsible for the job
+      jobActorAccess.sendToJobActor(job.jobID, Delete(job.jobID))
+    })
   }
 
   override def preStart(): Unit = {
