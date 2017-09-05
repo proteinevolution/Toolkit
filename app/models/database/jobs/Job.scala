@@ -9,21 +9,22 @@ import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._
 
-case class Job(mainID: BSONObjectID, // ID of the Job in the System
-               parentID: Option[BSONObjectID] = None, // ID of the Parent Job
-               jobID: String, // User visible ID of the Job
-               ownerID: Option[BSONObjectID] = None, // User to whom the Job belongs
-               isPublic: Boolean = false,
-               status: JobState, // Status of the Job
-               emailUpdate: Boolean = false, // Owner wants to be notified when the job is ready
-               tool: String, // Tool used for this Job
-               watchList: List[BSONObjectID] = List.empty, // List of the users who watch this job, None if not public
-               commentList: List[BSONObjectID] = List.empty, // List of comment IDs for the Job
-               clusterData: Option[JobClusterData] = None, // Cluster Data
-               dateCreated: Option[ZonedDateTime], // Creation time of the Job
-               dateUpdated: Option[ZonedDateTime], // Last Updated on
-               dateViewed: Option[ZonedDateTime], // Last Viewed on
-               IPHash: Option[String]) // hash of the ip
+case class Job(mainID      : BSONObjectID           = BSONObjectID.generate, // ID of the Job in the System
+               parentID    : Option[BSONObjectID]   = None,                  // ID of the Parent Job
+               jobID       : String,                              // User visible ID of the Job
+               ownerID     : Option[BSONObjectID]   = None,       // User to whom the Job belongs
+               isPublic    : Boolean                = false,
+               status      : JobState               = Submitted,  // Status of the Job
+               emailUpdate : Boolean                = false,      // Owner wants to be notified when the job is ready
+               tool        : String,                              // Tool used for this Job
+               watchList   : List[BSONObjectID]     = List.empty, // List of the users who watch this job, None if not public
+               commentList : List[BSONObjectID]     = List.empty, // List of comment IDs for the Job
+               clusterData : Option[JobClusterData] = None,       // Cluster Data
+               dateCreated : Option[ZonedDateTime]  = Some(ZonedDateTime.now), // Creation time of the Job
+               dateUpdated : Option[ZonedDateTime]  = Some(ZonedDateTime.now), // Last Updated on
+               dateViewed  : Option[ZonedDateTime]  = Some(ZonedDateTime.now), // Last Viewed on
+               dateExtendedStorage : Option[ZonedDateTime] = None, //
+               IPHash      : Option[String]) // hash of the ip
 {
 
   // Returns if the job is private or not
