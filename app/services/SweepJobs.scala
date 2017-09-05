@@ -52,7 +52,7 @@ class SweepJobsImpl @Inject()(appLifecycle: ApplicationLifecycle,
                               constants: Constants)
     extends SweepJobs {
 
-  override def sweep(): Unit = actorSystem.scheduler.schedule(0 seconds, constants.deletionCycle hours) {
+  override def sweep(): Unit = actorSystem.scheduler.schedule(0 seconds, constants.jobDeletionInterval hours) {
     deleteJobsPermanently()
   }
 
@@ -82,7 +82,7 @@ class SweepJobsImpl @Inject()(appLifecycle: ApplicationLifecycle,
       .findJobs(
         BSONDocument(
           Job.DATECREATED -> BSONDocument(
-            "$lt" -> BSONDateTime(ZonedDateTime.now.minusDays(constants.deletionThreshold).toInstant.toEpochMilli)
+            "$lt" -> BSONDateTime(ZonedDateTime.now.minusDays(constants.jobDeletion).toInstant.toEpochMilli)
           )
         )
       )
@@ -93,8 +93,8 @@ class SweepJobsImpl @Inject()(appLifecycle: ApplicationLifecycle,
               mongoStore.findUser(BSONDocument(User.IDDB -> BSONDocument("$eq" -> id))).map {
                 case Some(user) =>
                   val storageTime = ZonedDateTime.now.minusDays(if (user.accountType == -1) {
-                    constants.deletionThreshold
-                  } else constants.deletionThresholdRegistered)
+                    constants.jobDeletion
+                  } else constants.jobDeletionRegistered)
                   mongoStore
                     .findJob(
                       BSONDocument(
@@ -110,7 +110,7 @@ class SweepJobsImpl @Inject()(appLifecycle: ApplicationLifecycle,
                       case Some(deletedJob) =>
                         Logger.info("Deleting job: " + deletedJob.jobID)
                         // Message user clients to remove the job from their watchlist
-                        jobActorAccess.sendToJobActor(deletedJob.jobID, Delete(deletedJob.jobID, deletedJob.ownerID.get))
+                        jobActorAccess.sendToJobActor(deletedJob.jobID, Delete(deletedJob.jobID))
                         this.deleteJobPermanently(job)
                         this.writeJob(job.jobID)
                       case None =>
