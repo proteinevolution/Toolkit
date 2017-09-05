@@ -116,11 +116,10 @@ GET           /api/tools/:toolname                    @controllers.Service.getTo
 GET           /api/jobs                               @controllers.JobController.listJobs
 # Submit a job directly
 POST          /api/job                                @controllers.JobController.submitJob(toolName: String)
-GET           /api/job/:jobID/start                   @controllers.JobController.startJob(jobID: String)
-GET           /api/job/:jobID/checkHash               @controllers.JobController.checkHash(jobID: String)
 GET           /api/job/:jobID                         @controllers.Service.getJob(jobID)
-GET           /api/job/result/:jobID/:tool/:panel     @controllers.Service.getResult(jobID : String, tool: String, panel: String)
 DELETE        /api/job/:jobID                         @controllers.JobController.delete(jobID)
+GET           /api/job/:jobID/start                   @controllers.JobController.startJob(jobID: String)
+GET           /api/job/result/:jobID/:tool/:panel     @controllers.Service.getResult(jobID : String, tool: String, panel: String)
 GET           /api/job/load/:jobID                    @controllers.JobController.loadJob(jobID: String)
 
 # Frontend Stuff
