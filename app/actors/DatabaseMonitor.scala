@@ -6,6 +6,7 @@ import javax.inject.{Inject, Singleton}
 import actors.DatabaseMonitor.{DeleteOldJobs, DeleteOldUsers}
 import akka.actor.{Actor, ActorLogging, Cancellable}
 import models.Constants
+import models.database.jobs.Job
 import models.database.statistics.{StatisticsObject, UserStatistic}
 import models.database.users.User
 import models.mailing.OldAccountEmail
@@ -179,7 +180,17 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
   }
 
   private def deleteOldJobs(verbose: Boolean = false): Unit = {
-
+    val now : ZonedDateTime = ZonedDateTime.now
+    val regularJobStorageDate : ZonedDateTime = now.minusDays(constants.deletionThreshold)
+    val lastViewedDate : ZonedDateTime = now.minusDays(7)
+    mongoStore.findJobs(
+      BSONDocument(
+        Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(regularJobStorageDate.toInstant.toEpochMilli)),
+        Job.DATEVIEWED  -> BSONDocument("$lt" -> BSONDateTime(lastViewedDate.toInstant.toEpochMilli))
+      )
+    ).foreach{ jobList =>
+      jobList.map(_.jobID)
+    }
   }
 
   override def preStart(): Unit = {

@@ -110,8 +110,7 @@ class SweepJobsImpl @Inject()(appLifecycle: ApplicationLifecycle,
                       case Some(deletedJob) =>
                         Logger.info("Deleting job: " + deletedJob.jobID)
                         // Message user clients to remove the job from their watchlist
-                        jobActorAccess.sendToJobActor(deletedJob.jobID,
-                                                      Delete(deletedJob.jobID, deletedJob.ownerID.get, false))
+                        jobActorAccess.sendToJobActor(deletedJob.jobID, Delete(deletedJob.jobID, deletedJob.ownerID.get))
                         this.deleteJobPermanently(job)
                         this.writeJob(job.jobID)
                       case None =>
