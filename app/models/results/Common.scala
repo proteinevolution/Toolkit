@@ -31,6 +31,7 @@ object Common {
   private val mmcifShortReg = """([0-9]+)""".r
   private val pfamReg       = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
   private val ncbiReg       = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
+  private val ecodReg       = """(ECOD_[0-9]+)_.*""".r
 
   private val envNrNameReg   = """(env.*|nr.*)""".r
   private val pdbNameReg     = """(pdb.*)""".r
@@ -48,6 +49,7 @@ object Common {
   private val cddBaseLink         = "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid="
   private val uniprotBaseLik      = "http://www.uniprot.org/uniprot/"
   private val smartBaseLink       = "http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN="
+  private val ecodBaseLink       = "http://prodata.swmed.edu/ecod/complete/domain/"
 
   private val emptyRow = "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>"
 
@@ -165,7 +167,11 @@ object Common {
       link += generateLink(uniprotBaseLik, id, id)
     } else if (db == "smart") {
       link += generateLink(smartBaseLink, id, id)
-    } else {
+    } else if (db == "ecod") {
+      val idEcod = id.slice(5,14)
+      link += generateLink(ecodBaseLink, idEcod, id)
+    }
+    else {
       link = id
     }
     Html(link)
@@ -269,7 +275,11 @@ object Common {
       links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
       links += generateLink(pdbBaseLink, idTrimmed, "PDB")
       links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
-    } else if (db == "mmcif") {
+    } else if (db == "ecod") {
+      idPdb = id.slice(16,20)
+      links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
+      links += generateLink(pdbBaseLink, idPdb, "PDB")
+      } else if (db == "mmcif") {
       links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
       links += generateLink(pdbeBaseLink, idPdb, "PDBe")
     } else if (db == "pfam") {
@@ -306,6 +316,7 @@ object Common {
     case smartReg(_)      => "smart"
     case pfamReg(_, _)    => "pfam"
     case uniprotReg(_)    => "uniprot"
+    case ecodReg(_)    => "ecod"
     case ncbiReg(_)       => "ncbi"
 
     case e: String => Logger.info("Struc: (" + e + ") could not be matched against any database!"); ""
@@ -541,7 +552,7 @@ object Common {
           html += makeRow("sequence", Array("", "Q ss_pred", "", Common.SSColorReplace(querySSPRED)))
         }
         if (!querySSDSSP.isEmpty) {
-          html += makeRow("sequence", Array("", "Q ss_dssp", "", "", Common.SSColorReplace(querySSDSSP)))
+          html += makeRow("sequence", Array("", "Q ss_dssp", "", Common.SSColorReplace(querySSDSSP)))
         }
         html += makeRow(
           "sequence",
