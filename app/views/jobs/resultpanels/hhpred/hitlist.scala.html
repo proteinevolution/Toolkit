@@ -343,12 +343,16 @@
                 case "scop":
                     fileEnding = ".pdb";
                     break;
+                case "ecod":
+                    fileEnding = ".pdb";
+                    break;
                 case "mmcif":
                     fileEnding = ".cif";
                     accession = accession;
                     break;
             }
             var url = '/getStructure/' + accession + fileEnding;
+
             $(document).ready(function () {
                 $('#accessionStructure').append("<h6 class='structureAccession'>3D Structure: " + accession + "</h6>");
                 $('#viewport').width(800).height(700).find('canvas').first().remove();
