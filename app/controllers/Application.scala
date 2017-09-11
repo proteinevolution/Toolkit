@@ -225,6 +225,8 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
       val filepath = db match {
         case "scop" =>
           env.get("SCOPE")
+        case "ecod" =>
+          env.get("ECOD")
         case "mmcif" =>
           env.get("CIF")
       }
