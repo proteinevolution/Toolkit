@@ -27,7 +27,7 @@ if [  "%hhpred_align.content" != "true" ] ; then
     DBCOUNT=${#DBARRAY[@]}
 
     if [ ${DBCOUNT} -gt "8" ] ; then
-        echo "#Gotcha! Only 4 databases may be selected at a time!" >> ../results/process.log
+        echo "#Only 4 databases may be selected at a time!" >> ../results/process.log
         updateProcessLog
         false
     fi
