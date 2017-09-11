@@ -1,22 +1,23 @@
 package actors
 
-import javax.inject.{ Inject, Named }
+import javax.inject.{Inject, Named}
 
 import actors.ClusterMonitor._
 import actors.JobActor._
-import actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
-import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
+import actors.WebSocketActor.{ChangeSessionID, LogOut, MaintenanceAlert}
+import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
-import models.{ Constants, UserSessions }
-import models.database.jobs.{ Job, Running }
+import models.{Constants, UserSessions}
+import models.database.jobs.{Job, Running}
 import models.job.JobActorAccess
 import modules.LocationProvider
 import play.api.Logger
 import play.api.cache._
-import play.api.libs.json.{ JsValue, Json }
+import play.api.libs.json.{JsValue, Json}
 import reactivemongo.bson.BSONObjectID
-import java.nio.file.{ Files, Paths }
+import java.nio.file.{Files, Paths}
+import java.time.ZonedDateTime
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -64,7 +65,6 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
   } // TODO May not be able to send any messages at this point of init
 
   override def postStop(): Unit = {
-    println("Websocket closed!")
     clusterMonitor ! Disconnect(self)
     userSessions.getUser(sessionID).foreach {
       case Some(user) =>
@@ -77,6 +77,8 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
         }
       case None =>
     }
+
+    Logger.info(s"[WSActor] Websocket closed for session ${sessionID.stringify}")
   }
 
   def receive = LoggingReceive {
@@ -115,6 +117,24 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
             //// Request to no longer receive load messages
             case "UnregisterLoad" =>
               clusterMonitor ! Disconnect(self)
+
+            // Received a ping, so we return a pong
+            case "Ping" =>
+              (js \ "date").validate[Long].asOpt match {
+                case Some(msTime) =>
+                  Logger.info(s"[WSActor] Ping from session ${sessionID.stringify} with msTime $msTime")
+                  out ! Json.obj("type" -> "Pong", "date" -> msTime)
+                case None =>
+              }
+
+            // Received a pong message from the client - lets see how long it took
+            case "Pong" =>
+              (js \ "date").validate[Long].asOpt match {
+                case Some(msTime) =>
+                  val ping = ZonedDateTime.now.toInstant.toEpochMilli - msTime
+                  Logger.info(s"[WSActor] Ping of session ${sessionID.stringify} is ${ping}ms.")
+                case None =>
+              }
           }
         case None =>
           self ! PoisonPill

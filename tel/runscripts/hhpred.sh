@@ -1,7 +1,37 @@
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 A3M_INPUT=$(head -1 ../params/alignment | egrep "^#A3M#" | wc -l)
+DBJOINED=""
+#create file in which selected dbs are written
+touch ../params/dbs
 
+if [  "%hhpred_align.content" != "true" ] ; then
+    #splitting input databases into array and completing with -d
+    if [ "%hhsuitedb.content" != "false" ]
+    then
+        DBS=$(echo "%hhsuitedb.content" | tr " " "\n")
+        DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
+        #write selected databses into file
+        printf "${DBS[@]}" >> ../params/dbs
+        printf "\n" >> ../params/dbs
+    fi
+    if [ "%proteomes.content" != "false" ]
+    then
+        PROTEOMES=$(echo "%proteomes.content" | tr " " "\n")
+        DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${PROTEOMES[@]}`
+        #write selected databses into file
+        printf "${PROTEOMES[@]}" >> ../params/dbs
+    fi
+
+    DBARRAY=( ${DBJOINED} )
+    DBCOUNT=${#DBARRAY[@]}
+
+    if [ ${DBCOUNT} -gt "8" ] ; then
+        echo "#Only 4 databases may be selected at a time!" >> ../results/process.log
+        updateProcessLog
+        false
+    fi
+fi
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
@@ -196,7 +226,7 @@ rm ../results/firstSeq0.fas ../results/firstSeq.cc
 
 
 #CHECK IF MSA generation is required or not
-if [ "%msa_gen_max_iter.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
+if [ "%msa_gen_max_iter.content" = "0" ] ; then
         echo "#No MSA generation required for building A3M." >> ../results/process.log
         updateProcessLog
         reformat_hhsuite.pl fas a3m ../results/${JOBID}.fas ${JOBID}.a3m -M first
@@ -225,7 +255,7 @@ else
 
     #MSA generation by HHblits
     if [ "%msa_gen_method.content" = "hhblits" ] ; then
-        echo "#Running ${ITERS} iteration(s) of HHblits for query MSA and A3M generation." >> ../results/process.log
+        echo "#Running ${ITERS} iteration(s) of HHblits for query MSA generation." >> ../results/process.log
         updateProcessLog
 
         reformat_hhsuite.pl fas a3m \
@@ -251,7 +281,7 @@ else
     #MSA generation by PSI-BLAST
     if [ "%msa_gen_method.content" = "psiblast" ] ; then
 
-        echo "#Running ${ITERS} iteration(s) of PSI-BLAST for query MSA and A3M generation." >> ../results/process.log
+        echo "#Running ${ITERS} iteration(s) of PSI-BLAST for query MSA generation." >> ../results/process.log
         updateProcessLog
         #Check if input is a single sequence or an MSA
         INPUT="query"
@@ -285,6 +315,9 @@ else
     fi
 fi
 
+echo "#Generating query A3M." >> ../results/process.log
+updateProcessLog
+
 #Generate representative MSA for forwarding
 
 hhfilter -i ../results/${JOBID}.a3m \
@@ -317,9 +350,10 @@ mv ../results/${JOBID}.a3m ../results/full.a3m
 
 addss.pl ../results/full.a3m
 
-DBJOINED=""
-#create file in which selected dbs are written
-touch ../params/dbs
+echo "done" >> ../results/process.log
+updateProcessLog
+
+
 # creating alignment of query and subject input
 if [  "%hhpred_align.content" = "true" ]
 then
@@ -348,23 +382,6 @@ then
     cd ../0
     echo "done" >> ../results/process.log
     updateProcessLog
-else
-    #splitting input databases into array and completing with -d
-    if [ "%hhsuitedb.content" != "false" ]
-    then
-        DBS=$(echo "%hhsuitedb.content" | tr " " "\n")
-        DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
-        #write selected databses into file
-        printf "${DBS[@]}" >> ../params/dbs
-        printf "\n" >> ../params/dbs
-    fi
-    if [ "%proteomes.content" != "false" ]
-    then
-        PROTEOMES=$(echo "%proteomes.content" | tr " " "\n")
-        DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${PROTEOMES[@]}`
-        #write selected databses into file
-        printf "${PROTEOMES[@]}" >> ../params/dbs
-    fi
 fi
 
 
