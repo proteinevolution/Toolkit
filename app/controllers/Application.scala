@@ -1,36 +1,37 @@
 package controllers
 
-import javax.inject.{ Inject, Named, Singleton }
+import java.util.Date
+import javax.inject.{Inject, Named, Singleton}
 
 import actors.ClusterMonitor.Multicast
 import actors.WebSocketActor
-import akka.actor.{ ActorRef, ActorSystem, Props }
+import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
 import models.results.Common
 import models.search.JobDAO
 import models.sge.Cluster
 import models.tools.ToolFactory
-import models.{ Constants, UserSessions }
+import models.{Constants, UserSessions}
 import modules.LocationProvider
 import modules.common.HTTPRequest
 import modules.db.MongoStore
 import modules.tel.TEL
 import modules.tel.env.Env
 import play.api.cache._
-import play.api.i18n.{ I18nSupport, MessagesApi }
-import play.api.libs.json.{ JsValue, Json }
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsValue, Json}
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
-import play.api.{ Configuration, Logger }
+import play.api.{Configuration, Logger, Environment}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
+import com.redfin.sitemapgenerator.{WebSitemapGenerator, WebSitemapUrl, ChangeFreq}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ Await, Future }
-
+import scala.concurrent.{Await, Future}
 import models.stats.Counter
 
 @Singleton
@@ -55,7 +56,8 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   val settings: Settings,
                                   configuration: Configuration,
                                   constants: Constants,
-                                  cc: ControllerComponents)
+                                  cc: ControllerComponents,
+                                  environment: Environment)
     extends AbstractController(cc)
     with I18nSupport
     with Common {
@@ -181,6 +183,21 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
       Ok(views.html.main(webJarsUtil, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message))
         .withSession(userSessions.sessionCookie(request, user.sessionID.get))
     }
+  }
+
+  def sitemapGenerator: Action[AnyContent] = Action { implicit request =>
+    val file: java.io.File = environment.getFile("public/")
+    if(!file.exists) Ok("Sitemap nicht gefunden")
+    val uri = "https://toolkit.tuebingen.mpg.de"
+
+    val wsg = WebSitemapGenerator.builder(uri, file).gzip(true).build
+
+    // add pages here
+    val url: WebSitemapUrl = new WebSitemapUrl.Options("https://toolkit.tuebingen.mpg.de/#/tools/hhblits").lastMod(new Date()).priority(1.0).changeFreq(ChangeFreq.HOURLY).build
+    wsg.addUrl(url)
+
+    wsg.write
+    Ok("Sitemap created!")
   }
 
   // Routes are handled by Mithril, redirect.
