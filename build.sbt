@@ -82,16 +82,16 @@ lazy val root = (project in file("."))
       "org.webjars"       %% "webjars-play"                              % "2.6.1",
       "org.webjars"       % "jquery"                                     % "3.2.1",
       "org.webjars.bower" % "jquery.lazyload"                            % "1.9.7",
-      "org.webjars"       % "jquery-ui"                                  % "1.12.1",
+      "org.webjars"       % "jquery-ui"                                  % "1.12.1", // css included over cdn
       "org.webjars.npm"   % "foundation-sites"                           % "6.4.3",
       "org.webjars.npm"   % "mithril"                                    % "0.2.8", // 1.1.3 available
       "org.webjars.bower" % "d3"                                         % "4.10.2",
-      "org.webjars.bower" % "slick-carousel"                             % "1.6.0",
+      "org.webjars.bower" % "slick-carousel"                             % "1.6.0", // 1.8 available but missing jquery dependency
       "org.webjars.npm"   % "codemirror-minified"                        % "5.28.0",
       "org.webjars.bower" % "clipboard"                                  % "1.7.1", // currently not in use
       "org.webjars"       % "linkurious.js"                              % "1.5.1",
       "org.webjars.bower" % "tinymce"                                    % "4.6.5", // currently not in use
-      "org.webjars.bower" % "datatables"                                 % "1.10.15",
+      "org.webjars.bower" % "datatables"                                 % "1.10.16",
       "org.webjars"       % "highcharts"                                 % "5.0.14",
       "org.webjars.bower" % "velocity"                                   % "1.5.0",
       "org.webjars"       % "font-awesome"                               % "4.7.0",
