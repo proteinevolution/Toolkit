@@ -124,6 +124,7 @@ updateProcessLog
     ${HMMERPATH}/hmmsearch --cpu %THREADS \
           -E %evalue.content \
           --incE %evalue.content \
+          --incdomE 100000000 \
           -o ../results/${JOBID}.outfile \
           -A ../results/${JOBID}.msa_sto \
           ../results/${JOBID}.hmm  %STANDARD/%hmmerdb.content
