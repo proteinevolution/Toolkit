@@ -106,7 +106,6 @@
         <link href="@routes.Assets.versioned("styles/floatingscroll.css")" rel="stylesheet">
 
             <!-- Codemirror -->
-
         @Html(webJarsUtil.script("codemirror.js"))
         @Html(webJarsUtil.css("codemirror.css"))
         @Html(webJarsUtil.script("javascript.js"))
@@ -115,9 +114,9 @@
 
 
             <!-- Datatables -->
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/zf/dt-1.10.15/datatables.min.css"/>
-        <script type="text/javascript" src="https://cdn.datatables.net/v/zf/dt-1.10.15/datatables.min.js"></script>
-
+        @Html(webJarsUtil.css("dataTables.foundation.min.css"))
+        @Html(webJarsUtil.script("jquery.dataTables.min.js"))
+        @Html(webJarsUtil.script("dataTables.foundation.min.js"))
 
             <!-- Javascript Router -->
         <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
