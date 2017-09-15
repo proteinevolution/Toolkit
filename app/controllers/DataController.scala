@@ -87,6 +87,7 @@ class DataController @Inject()(mongoStore: MongoStore,
   case "msaprobs" => views.html.help.msaprobs()
   case "muscle" => views.html.help.muscle()
   case "tcoffee" => views.html.help.tcoffee()
+  case "aln2plot" => views.html.help.aln2plot()
   }
   Ok(help)
   }
