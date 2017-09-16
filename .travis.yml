@@ -7,6 +7,5 @@ jdk:
 - oraclejdk8
 
 before_script:
-  - git clone https://github.com/Sanoma-CDA/maxmind-geoip2-scala.git
-  - cd maxmind-geoip2-scala
-  - sbt +publish-local
+  - git clone https://github.com/Sanoma-CDA/maxmind-geoip2-scala.git $HOME/sanoma
+  - cd $HOME/sanoma; sbt +publish-local; cd -
