@@ -113,6 +113,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 resolvers += "Madoushi sbt-plugins" at "https://dl.bintray.com/madoushi/sbt-plugins/"
+resolvers += Resolver.typesafeRepo("releases")
 
 lazy val client = (project in file("client"))
   .settings(
