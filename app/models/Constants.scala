@@ -29,7 +29,7 @@ class Constants {
 
   // Job deletion settings
   /** Sweeps at this time after server start */
-  val jobDeletionDelay         : FiniteDuration = 3 seconds
+  val jobDeletionDelay         : FiniteDuration = 12 minutes
   /** Sweeps in this interval */
   val jobDeletionInterval      : FiniteDuration = 3 hours
 
