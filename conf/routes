@@ -15,6 +15,9 @@ GET           /                                       @controllers.Application.i
 
 GET           /javascriptRoutes                       controllers.Application.javascriptRoutes
 
+GET           /sitemapgen                             controllers.Application.sitemapGenerator
+GET           /sitemap.xml                            controllers.Assets.at(path="/public", file = "sitemap.xml")
+
 # Dashboard for Admin
 
 POST          /settings/clustermode                   @controllers.Settings.setClusterMode(clusterMode : String)

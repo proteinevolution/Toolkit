@@ -15,6 +15,7 @@ var uniprotBaseLik = "http://www.uniprot.org/uniprot/";
 /* REGEX FOR DB IDENTIFICATION*/
 var uniprotReg = "^([A-Z0-9]{10}|[A-Z0-9]{6})$";
 var scopReg = "^([defgh][0-9a-zA-Z\.\_]+)$";
+var ecodReg = "^(ECOD_)";
 var mmcifReg = "^(...._[a-zA-Z])$";
 var mmcifShortReg = "^([0-9]+)$";
 var pfamReg = "^(pfam[0-9]+&|^PF[0-9]+(\.[0-9]+)?)$";
@@ -159,6 +160,8 @@ function identifyDatabase(id){
         return null;
     if(id.match(scopReg))
         return "scop";
+    else if(id.match(ecodReg))
+        return "ecod";
     else if(id.match(mmcifShortReg))
         return "mmcif";
     else if(id.match(mmcifReg))

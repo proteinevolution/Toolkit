@@ -230,6 +230,11 @@ let tilescomponent = {
                             ),
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#ecod"},
+                                    m("h6", "September 9, 2017"),
+                                    m("p", "HHpred: profile HMMs of the ECOD database (Grishin Lab) are online."
+                                    )
+                                ),
                                 m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
                                     m("h6", "August 31, 2017"),
                                     m("p", "HHpred: profile HMM database of ",
@@ -237,23 +242,19 @@ let tilescomponent = {
                                         " is online."
                                     )
                                 ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
+                                m("a", {"data-open": "recentUpdatesModal", href: "#patens"},
                                     m("h6", "August 28, 2017"),
                                     m("p", "HHpred: profile HMM database of ",
                                         m("em", "Physcomitrella patens"),
                                         " is online."
                                     )
                                 ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
+                                m("a", {"data-open": "recentUpdatesModal", href: "#tetra"},
                                     m("h6", "August 23, 2017"),
-                                    m("p", "HHpred: HMM DBs of ",
+                                    m("p", "HHpred: DBs of ",
                                         m("em", "Brachypodium distachyon"), " & ",
                                         m("em", "Tetrahymena thermophila"), " are online."
                                     )
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
-                                    m("h6", "July 21, 2017"),
-                                    m("p", "Our Quick2D tool for the annotation of protein secondary structural features is back.")
                                 )
                             ),
                             m("div", {"class": "quick_links"},
