@@ -20,7 +20,7 @@ import models.Constants
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 trait SweepJobs {
-  def sweep(): Unit
+  //def sweep(): Unit
 }
 
 /**
@@ -52,9 +52,9 @@ class SweepJobsImpl @Inject()(appLifecycle: ApplicationLifecycle,
                               constants: Constants)
     extends SweepJobs {
 
-  override def sweep(): Unit = actorSystem.scheduler.schedule(0 seconds, constants.jobDeletionInterval hours) {
-    deleteJobsPermanently()
-  }
+  //override def sweep(): Unit = actorSystem.scheduler.schedule(0 seconds, constants.jobDeletionInterval hours) {
+  //  deleteJobsPermanently()
+  //}
 
   /**
     * this method finds jobs of non registered users
@@ -167,5 +167,5 @@ class SweepJobsImpl @Inject()(appLifecycle: ApplicationLifecycle,
   }
 
   // TODO: is not only called on startup but also called on application stop
-  sweep()
+  //sweep()
 }

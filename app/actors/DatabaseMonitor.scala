@@ -40,9 +40,17 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
     with ActorLogging {
 
   // interval calling the user deletion method automatically
-  private val Tick: Cancellable = {
+  private val userDeletionScheduler: Cancellable = {
     // scheduler should use the system dispatcher
     context.system.scheduler.schedule(constants.userDeletionDelay, constants.userDeletionInterval, self, DeleteOldUsers)(
+      context.system.dispatcher
+    )
+  }
+
+  // interval calling the user deletion method automatically
+  private val jobDeletionScheduler: Cancellable = {
+    // scheduler should use the system dispatcher
+    context.system.scheduler.schedule(constants.jobDeletionDelay, constants.userDeletionInterval, self, DeleteOldJobs)(
       context.system.dispatcher
     )
   }
@@ -186,29 +194,43 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
   }
 
   private def deleteOldJobs(verbose: Boolean = false): Unit = {
+    Logger.info("[Job Deletion] finding old jobs...")
     // grab the current time
     val now : ZonedDateTime = ZonedDateTime.now
-    // calculate the date at which the job should have been created
-    val regularJobStorageDate : ZonedDateTime = now.minusDays(constants.jobDeletion)
-    // calculate the date at which it should have been viewed before
+    // calculate the date at which the job should have been created at
+    val dateCreated : ZonedDateTime = now.minusDays(constants.jobDeletion)
+    // calculate the date at which it should have been viewed last
     val lastViewedDate : ZonedDateTime = now.minusDays(constants.jobDeletionLastViewed)
     mongoStore.findJobs(
       BSONDocument(
-        Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(regularJobStorageDate.toInstant.toEpochMilli)),
-        Job.DATEVIEWED  -> BSONDocument("$lt" -> BSONDateTime(lastViewedDate.toInstant.toEpochMilli))
+        Job.DATEVIEWED  -> BSONDocument("$lt" -> BSONDateTime(lastViewedDate.toInstant.toEpochMilli)),
+        BSONDocument("$or" -> List(
+          BSONDocument(
+            Job.DATEDELETION -> BSONDocument("$lt" -> BSONDateTime(now.toInstant.toEpochMilli))
+          ),
+          BSONDocument(
+            Job.DATEDELETION -> BSONDocument("$exists" -> false),
+            Job.DATECREATED -> BSONDocument("$lt" -> BSONDateTime(dateCreated.toInstant.toEpochMilli))
+          )
+        ))
       )
-    ).foreach(_.foreach{ job =>
-      // Just send a deletion request to the job actor responsible for the job
-      jobActorAccess.sendToJobActor(job.jobID, Delete(job.jobID))
-    })
+    ).foreach { jobList =>
+      Logger.info(s"[Job Deletion] found ${jobList.length} jobs for deletion. Sending to job actors.")
+      jobList.foreach { job =>
+        // Just send a deletion request to the job actor responsible for the job
+        jobActorAccess.sendToJobActor(job.jobID, Delete(job.jobID))
+      }
+    }
   }
 
   override def preStart(): Unit = {
-    Logger.info("Starting Database Monitor")
+    Logger.info("[Database Monitor] starting DB Monitor")
   }
 
   override def postStop(): Unit = {
-    Tick.cancel()
+    userDeletionScheduler.cancel()
+    jobDeletionScheduler.cancel()
+    Logger.info("[Database Monitor] stopping DB Monitor")
   }
 
   override def receive: Receive = {
