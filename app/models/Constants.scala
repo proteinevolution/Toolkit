@@ -28,14 +28,17 @@ class Constants {
   val maxJobsWithinDay: Int           = 1 // time in days within the max number of jobs is applied for a day
 
   // Job deletion settings
+  /** Sweeps at this time after server start */
+  val jobDeletionDelay         : FiniteDuration = 3 seconds
+  /** Sweeps in this interval */
+  val jobDeletionInterval      : FiniteDuration = 3 hours
+
   /** all jobs of registered users that are older than the given number are permanently deleted everywhere */
   val jobDeletionRegistered : Int = 90
   /** all jobs of non registered users that are older than the given number are permanently deleted everywhere */
   val jobDeletion           : Int = 24
   /** time in days in which the job should not have been viewed */
   val jobDeletionLastViewed : Int = 7
-  /** time in hours in which the job sweeping routine is executed */
-  val jobDeletionInterval   : Int = 1
 
   // User Deletion settings
   /** Sweeps at this time after server start */
