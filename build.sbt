@@ -59,6 +59,7 @@ lazy val metadata = List(
     Developer("zy4", "Seung-Zin Nam", "seungzin.nam@tuebingen.mpg.de", url("https://github.com/zy4")),
     Developer("davidmrau", "David Rau", "drau@tuebingen.mpg.de", url("https://github.com/davidmrau")),
     Developer("felixgabler", "Felix Gabler", "felix.gabler@tuebingen.mpg.de", url("https://github.com/felixgabler")),
+    Developer("vikramalva", "Vikram Alva", "vikram.alva@tuebingen.mpg.de", url("https://github.com/vikramalva")),
     Developer("anjestephens",
               "Andrew Jesse Stephens",
               "astephens@tuebingen.mpg.de",
