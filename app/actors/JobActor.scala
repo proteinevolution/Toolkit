@@ -540,7 +540,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               val h_rt = ConfigFactory.load().getInt(s"Tools.${job.tool}.hardruntime")
 
               //Set soft runtime to 30s less than hard runtime
-              val s_rt = h_rt - 30
+              val s_rt   = h_rt - 30
               val h_vmem = (ConfigFactory.load().getInt(s"Tools.${job.tool}.memory") * TEL.memFactor).toInt
               //Set soft memory limit to 95% of hard memory limit
               val s_vmem = h_vmem * 0.95
@@ -680,7 +680,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                       Logger.info("Job has been removed from JobActor")
                     }
                   case Failure(t) =>
-                    this.updateJobState(job.copy(status=Error))
+                    this.updateJobState(job.copy(status = Error))
                     Logger.error("An error has occured while writing to the Results DB:\n" + t.getMessage)
                 }
               } else {

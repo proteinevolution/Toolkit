@@ -29,8 +29,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
   lazy val hashCollection: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))
 
-
-
   /*
    *                Article Collection
    */
@@ -58,9 +56,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
 
   def writeArticleDatabase(featuredArticle: FeaturedArticle): Future[WriteResult] =
     articleCollection.flatMap(_.insert(featuredArticle))
-
-
-
 
   /*
    *                Job Collection
@@ -170,8 +165,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
     resultCollection.flatMap(_.remove(selector))
   }
 
-
-
   /*
    *                Result file DB Access
    */
@@ -203,8 +196,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
     }
   }
 
-
-
   /*
    *                Front end job DB Access
    */
@@ -217,8 +208,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
   def modifyFrontendJob(selector: BSONDocument, modifier: BSONDocument): Future[Option[Job]] = {
     frontendJobCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[Job]))
   }
-
-
 
   /*
    *                Job event Log DB Access
@@ -235,8 +224,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[JobEventLog]]()))
   }
 
-
-
   /**
     *                Statistics
     */
@@ -246,8 +233,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
 
   def addDeletedJob(deletedJob: DeletedJob): Future[WriteResult] =
     deletedJobsCollection.flatMap(_.insert(deletedJob))
-
-
 
   /*
    *                Complete Statistics collection
@@ -294,8 +279,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
     )
   }
 
-
-
   /*
    *                Cluster load statistics
    */
@@ -320,8 +303,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
                       upsert = true,
                       fetchNewObject = true).map(_.result[ClusterLoadEvent])
     )
-
-
 
   /*
    *                User collection access
