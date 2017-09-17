@@ -186,15 +186,49 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
   }
 
   def sitemapGenerator: Action[AnyContent] = Action { implicit request =>
-    val file: java.io.File = environment.getFile("public/")
-    if(!file.exists) Ok("Sitemap nicht gefunden")
-    val uri = "https://toolkit.tuebingen.mpg.de"
-
-    val wsg = WebSitemapGenerator.builder(uri, file).gzip(true).build
+    val wsg = WebSitemapGenerator.builder("https://toolkit.tuebingen.mpg.de", environment.getFile("public/")).gzip(true).build
 
     // add pages here
-    val url: WebSitemapUrl = new WebSitemapUrl.Options("https://toolkit.tuebingen.mpg.de/#/tools/hhblits").lastMod(new Date()).priority(1.0).changeFreq(ChangeFreq.HOURLY).build
-    wsg.addUrl(url)
+    val pages = List(
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/hhblits", "priority"-> 1.0),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/hhpred", "priority"-> 1.0),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/hmmer"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/patsearch"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/psiblast"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/alnviz"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/clustalo"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/kalign"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/mafft"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/msaprobs"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/muscle"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/tcoffee"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/aln2plot"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/hhpredid", "priority"-> 1.0),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/marcoil"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/pcoils", "priority"-> 1.0),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/repper"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/tprpred"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/ali2d"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/hhomp"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/quick2d", "priority"-> 1.0),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/modeller"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/samcc"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/ancescon"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/clans", "priority"-> 1.0),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/mmseqs2"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/phyml"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/sixframe"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/backtrans"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/formatseq"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/hhfilter"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/retseq"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/seq2id"),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/reformat")
+    )
+    pages.foreach{ page =>
+      val url: WebSitemapUrl = new WebSitemapUrl.Options(page apply "url" toString).changeFreq(ChangeFreq.YEARLY).priority((page getOrElse ("priority", 0.5)).asInstanceOf[Double]).build
+      wsg.addUrl(url)
+    }
 
     wsg.write
     Ok("Sitemap created!")
