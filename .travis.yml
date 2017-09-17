@@ -1,0 +1,13 @@
+language: scala
+dist: trusty
+sudo: required
+scala:
+- 2.12.2
+jdk:
+- oraclejdk8
+cache:
+  directories:
+  - "$HOME/.ivy2/cache"
+before_cache:
+  - git clone https://github.com/Sanoma-CDA/maxmind-geoip2-scala.git $HOME/sanoma
+  - cd $HOME/sanoma; sbt +publish-local; cd -
