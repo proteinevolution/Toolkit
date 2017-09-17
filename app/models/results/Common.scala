@@ -49,7 +49,7 @@ object Common {
   private val cddBaseLink         = "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid="
   private val uniprotBaseLik      = "http://www.uniprot.org/uniprot/"
   private val smartBaseLink       = "http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN="
-  private val ecodBaseLink       = "http://prodata.swmed.edu/ecod/complete/domain/"
+  private val ecodBaseLink        = "http://prodata.swmed.edu/ecod/complete/domain/"
 
   private val emptyRow = "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>"
 
@@ -168,10 +168,9 @@ object Common {
     } else if (db == "smart") {
       link += generateLink(smartBaseLink, id, id)
     } else if (db == "ecod") {
-      val idEcod = id.slice(5,14)
+      val idEcod = id.slice(5, 14)
       link += generateLink(ecodBaseLink, idEcod, id)
-    }
-    else {
+    } else {
       link = id
     }
     Html(link)
@@ -276,10 +275,10 @@ object Common {
       links += generateLink(pdbBaseLink, idTrimmed, "PDB")
       links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
     } else if (db == "ecod") {
-      idPdb = id.slice(16,20)
+      idPdb = id.slice(16, 20)
       links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
       links += generateLink(pdbBaseLink, idPdb, "PDB")
-      } else if (db == "mmcif") {
+    } else if (db == "mmcif") {
       links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
       links += generateLink(pdbeBaseLink, idPdb, "PDBe")
     } else if (db == "pfam") {
@@ -316,7 +315,7 @@ object Common {
     case smartReg(_)      => "smart"
     case pfamReg(_, _)    => "pfam"
     case uniprotReg(_)    => "uniprot"
-    case ecodReg(_)    => "ecod"
+    case ecodReg(_)       => "ecod"
     case ncbiReg(_)       => "ncbi"
 
     case e: String => Logger.info("Struc: (" + e + ") could not be matched against any database!"); ""
@@ -361,12 +360,11 @@ object Common {
   def addBreakHHpred(description: String): String = {
     var slice = description
     val index = slice.indexOfSlice("; Related PDB entries")
-    if(index > 1) {
+    if (index > 1) {
       slice = description.slice(0, index)
     }
     slice.replaceAll("(\\S{40})", "$1</br>")
   }
-
 
   def insertMatch(seq: String, length: Int, hitArr: List[Int]): String = {
     var newSeq = ""
