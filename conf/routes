@@ -17,6 +17,7 @@ GET           /javascriptRoutes                       controllers.Application.ja
 
 GET           /sitemapgen                             controllers.Application.sitemapGenerator
 GET           /sitemap.xml                            controllers.Assets.at(path="/public", file = "sitemap.xml")
+GET           /sitemap.xml.gz                         controllers.Assets.at(path="/public", file = "sitemap.xml.gz")
 
 # Dashboard for Admin
 
