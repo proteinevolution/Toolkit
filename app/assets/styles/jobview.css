@@ -629,7 +629,7 @@ hr {
     padding-bottom: 2px;
 }
 
-.greenlink div a , .greenlink p a{
+.greenlink a:not(.accordion-title){
     color : #2aa198;
 }
 
