@@ -135,9 +135,6 @@ tr.job a:visited {
     font-size: 0.85em;
     height: 40em;
 }
-#helpModal p {
-    font-size: small;
-}
 #helpModal h4 {
     padding-left: 0.10em;
 }

@@ -1,0 +1,82 @@
+@()
+<div id="tabs">
+    <ul>
+        <li><a href="#tabs-1">Overview</a></li>
+        <li><a href="#tabs-2">Parameters</a></li>
+        <li><a href="#tabs-3">References</a></li>
+    </ul>
+    <div id="tabs-1" class="greenlink">
+        PhyML is a software that estimates maximum likelihood phylogenies from alignments of amino acid sequences.
+    </div>
+    <div id="tabs-2" class="greenlink">
+        <ul class="accordion" data-accordion data-allow-all-closed='true'>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Input</a>
+                <div class="accordion-content" data-tab-content>
+                    Enter protein sequence alignment in FASTA/CLUSTAL format.
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Input format</a>
+                <div class="accordion-content" data-tab-content>
+                    Accepted formats are listed in the dropdown menu.
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Enable bootstrapping</a>
+                <div class="accordion-content" data-tab-content>
+                    Checking this box enables bootstrapping. The data is resampled using the program <a href = http://evolution.genetics.washington.edu/phylip/doc/seqboot.html>SEQBOOT</a> (regular bootstrap mode) of the PHYLIP package. A consensus tree can be used to determine the reliability of a phylogenetic tree.
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Number of replicates</a>
+                <div class="accordion-content" data-tab-content>
+                    Number of resampled datasets asked by <a href = http://evolution.genetics.washington.edu/phylip/doc/seqboot.html>SEQBOOT</a>.
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">DNA or Protein</a>
+                <div class="accordion-content" data-tab-content>
+                    <p>Please enter the biochemical type of your input sequences.</p>
+                    <p>"DNA" refers to nucleic acid sequences using the following one letter code.</p>
+                    <pre>   A --> adenosine           M --> A C (amino)<br/>   C --> cytidine            S --> G C (strong)<br/>   G --> guanine             W --> A T (weak)<br/>   T --> thymidine           B --> G T C<br/>   U --> uridine             D --> G A T<br/>   R --> G A (purine)        H --> A C T<br/>   Y --> T C (pyrimidine)    V --> G C A<br/>   K --> G T (keto)          N --> A G C T (any)<br/>                             -  gap of indeterminate length</pre><br/>
+                    <p>"Protein" refers to amino acid sequences using the following one letter code.</p>
+                    <pre>    A  alanine                         P  proline<br/>    B  aspartate or asparagine         Q  glutamine<br/>    C  cystine                         R  arginine<br/>    D  aspartate                       S  serine<br/>    E  glutamate                       T  threonine<br/>    F  phenylalanine                   U  selenocysteine<br/>    G  glycine                         V  valine<br/>    H  histidine                       W  tryptophan<br/>    I  isoleucine                      Y  tyrosine<br/>    K  lysine                          Z  glutamate or glutamine<br/>    L  leucine                         X  any<br/>    M  methionine                      N  asparagine  <br/>                                       -  gap of indeterminate length</pre>
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Model of amino acid replacement</a>
+                <div class="accordion-content" data-tab-content>
+                    Amino acid substitution model that is used for the computation of the distance matrix by <a href = http://evolution.genetics.washington.edu/phylip/doc/protdist.html>PROTDIST</a> (Please have a look at the link for a more detailed description).
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Model of nucleotide substitution</a>
+                <div class="accordion-content" data-tab-content>
+                    Nucleotide substitution model that is used for the computation of the distance matrix by <a href = http://evolution.genetics.washington.edu/phylip/doc/dnadist.html>DNADIST</a> (Please take the link for a more detailed description).
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Gamma distributed rates across sites</a>
+                <div class="accordion-content" data-tab-content>
+                    Enable distance correction for unequal rates of change at different amino acid positions. This correction assumes that the distribution of rates of change among amino acid positions follows a Gamma distribution.<br/>Further information can be found here: <a href = http://evolution.genetics.washington.edu/phylip/doc/dnadist.html>DNADIST</a> or <a href = http://evolution.genetics.washington.edu/phylip/doc/protdist.html>PROTDIST</a>.
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Amount of variation</a>
+                <div class="accordion-content" data-tab-content>
+                    <p>Enter the value that determines the amount of variation of rates among amino acid positions. Instead of the more widely-known coefficient alpha, PROTDIST uses the coefficient of variation (ratio of the standard deviation to the mean) of rates among amino acid positions. So if there is 20% variation in rates, the CV is is 0.20. The square of the C.V. is also the reciprocal of the better-known "shape parameter" alpha, of the Gamma distribution, so in this case the shape parameter alpha = 1/(0.20*0.20) = 25. If you want to achieve a particular value of alpha, such as 10, you will want to use a CV of 1/sqrt(100) = 1/10 = 0.1.</p>
+                    <p>Further information can be found here <a href = http://evolution.genetics.washington.edu/phylip/doc/dnadist.html>DNADIST</a> or <a href = http://evolution.genetics.washington.edu/phylip/doc/protdist.html>PROTDIST</a>.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div id="tabs-3" class="greenlink">
+        <p>Alva V., Nam SZ., Söding J., Lupas AN. (2016) <b>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.</b> Nucleic Acids Res. pii: gkw348. <a href=https://www.ncbi.nlm.nih.gov/pubmed/27131380>PMID: 27131380</a></p>
+        <p>Guindon S., Dufayard J.F., Lefort V., Anisimova M., Hordijk W., Gascuel O. <b>New Algorithms and Methods to Estimate Maximum-Likelihood Phylogenies: Assessing the Performance of PhyML 3.0.</b> Molecular Biology and Evolution, msx149, 2017.</p>
+    </div>
+</div>
+
+<script>
+        $(".accordion").foundation();
+</script>
