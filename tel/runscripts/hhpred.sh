@@ -362,8 +362,12 @@ then
     cd ../results
 
     if [ "%msa_gen_max_iter.content" = "0" ] && [ ${SEQ_COUNT2} -gt "1" ] ; then
+            echo "#No MSA generation required for building template A3M." >> ../results/process.log
+            updateProcessLog
             reformat_hhsuite.pl fas a3m %alignment_two.path db.a3m -M first
     else
+            echo "#Running 3 iterations of HHblits for template MSA and A3M generation." >> ../results/process.log
+            updateProcessLog
             reformat_hhsuite.pl fas a3m \
                   $(readlink -f %alignment_two.path) \
                   $(readlink -f ../results/${JOBID}.in2.a3m)
