@@ -101,6 +101,11 @@ class DataController @Inject()(mongoStore: MongoStore,
   case "clans" => views.html.help.clans()
   case "mmseqs2" => views.html.help.mmseqs2()
   case "phyml" => views.html.help.phyml()
+  case "sixframe" => views.html.help.sixframe()
+  case "backtrans" => views.html.help.backtrans()
+  case "hhfilter" => views.html.help.hhfilter()
+  case "retseq" => views.html.help.retseq()
+  case "seq2id" => views.html.help.seq2id()
   }
   Ok(help)
   }

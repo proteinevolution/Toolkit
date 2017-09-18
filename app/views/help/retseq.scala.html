@@ -1,0 +1,34 @@
+@()
+<div id="tabs">
+    <ul>
+        <li><a href="#tabs-1">Overview</a></li>
+        <li><a href="#tabs-2">Parameters</a></li>
+        <li><a href="#tabs-3">References</a></li>
+    </ul>
+    <div id="tabs-1" class="greenlink">
+        This utility performs a sequence retrieval from the nre and nr database using a list of identifiers.
+    </div>
+    <div id="tabs-2" class="greenlink">
+        <ul class="accordion" data-accordion data-allow-all-closed='true'>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Input</a>
+                <div class="accordion-content" data-tab-content>
+                    Enter a newline separated list of identifiers.
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Retrieve identical sequence only once</a>
+                <div class="accordion-content" data-tab-content>
+                    With this option the program filters identical identifiers and identical sequences, so that the result sequences are unique.
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div id="tabs-3" class="greenlink">
+        <p>Alva V., Nam SZ., Söding J., Lupas AN. (2016) <b>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.</b> Nucleic Acids Res. pii: gkw348. <a href=https://www.ncbi.nlm.nih.gov/pubmed/27131380>PMID: 27131380</a></p>
+    </div>
+</div>
+
+<script>
+        $(".accordion").foundation();
+</script>
