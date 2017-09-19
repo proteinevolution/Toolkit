@@ -98,6 +98,11 @@
   padding: 1em;
 }
 
+#imprintContent, #helpModalContent, #privacyPolicyContent, #recentUpdatesContent {
+  overflow-y: scroll;
+  height: 1000px;
+}
+
 .half {
   float: left;
   width: 48%;
