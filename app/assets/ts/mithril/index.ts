@@ -230,6 +230,16 @@ let tilescomponent = {
                             ),
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#aqui"},
+                                    m("h6", "September 19, 2017"),
+                                    m("p", "HHpred: DBs of ",
+                                        m("em", "Aquifex aeolicus"), ", ",
+                                        m("em", "Deinococcus radiodurans"), ", ",
+                                        m("em", "Dictyostelium discoideum"), ", ",
+                                        m("em", "Schizosaccharomyces pombe"), " and ",
+                                        m("em", "Thermus thermophilus"), " are online."
+                                    )
+                                ),
                                 m("a", {"data-open": "recentUpdatesModal", href: "#ecod"},
                                     m("h6", "September 9, 2017"),
                                     m("p", "HHpred: profile HMMs of the ECOD database (Grishin Lab) are online."
@@ -247,13 +257,6 @@ let tilescomponent = {
                                     m("p", "HHpred: profile HMM database of ",
                                         m("em", "Physcomitrella patens"),
                                         " is online."
-                                    )
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#tetra"},
-                                    m("h6", "August 23, 2017"),
-                                    m("p", "HHpred: DBs of ",
-                                        m("em", "Brachypodium distachyon"), " & ",
-                                        m("em", "Tetrahymena thermophila"), " are online."
                                     )
                                 )
                             ),
