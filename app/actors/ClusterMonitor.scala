@@ -37,7 +37,7 @@ final class ClusterMonitor @Inject()(cluster: Cluster,
 
   case class RecordedTick(load: Double, timestamp: ZonedDateTime)
 
-  private val fetchLatestInterval                 = 3.seconds
+  private val fetchLatestInterval                 = 5.seconds
   private val recordMaxLength                     = 20
   private var record: List[Double]                = List.empty[Double]
   protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
