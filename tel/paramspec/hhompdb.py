@@ -7,8 +7,9 @@ def print_args(args):
 
 
 def main(argv):
-    path = "/ebio/abt1_share/toolkit_support1/code/bioprogs/env/HHOMPDB"
-    # If directory does not exist, print random stuff
+    path = "%HHOMP/HHOMPDB"
+
+# If directory does not exist, print random stuff
     if not os.path.exists(path):
         print("foo bar")
         return
