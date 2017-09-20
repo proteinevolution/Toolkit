@@ -213,8 +213,8 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
             mongoStore.findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
               val foundMainIDs   = jobList.map(_.mainID)
               val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
-              val jobsFiltered   = jobList.filter(job => job.status == Done && job.ownerID.contains(user.userID))
-              val oldJob = jobList.maxBy(_.dateCreated.getOrElse(ZonedDateTime.now.minusYears(10)).toInstant.toEpochMilli)
+              val jobsFiltered   = jobList.filter(_.status == Done)
+              val oldJob = jobsFiltered.maxBy(_.dateCreated.getOrElse(ZonedDateTime.now.minusYears(10)).toInstant.toEpochMilli)
 
               // Delete index-zombie jobs
               unFoundMainIDs.foreach { mainID =>
