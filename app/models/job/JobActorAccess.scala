@@ -13,7 +13,7 @@ final class JobActorAccess @Inject()(actorSystem: ActorSystem, jobActorFactory: 
 
   // Just spawn all the JobActors
   private val jobActors: Seq[ActorRef] =
-    Seq.fill(constants.nJobActors)(actorSystem.actorOf(Props(jobActorFactory.apply)))
+    Seq.tabulate(constants.nJobActors)(i => actorSystem.actorOf(Props(jobActorFactory.apply(i))))
 
   def sendToJobActor(jobID: String, message: Any): Unit = {
     this.jobActors(Math.abs(jobID.trim().hashCode()) % constants.nJobActors) ! message

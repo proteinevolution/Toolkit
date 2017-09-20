@@ -35,6 +35,7 @@ import play.api.libs.json._
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 import better.files._
+import com.google.inject.assistedinject.Assisted
 import modules.parsers.Ops.QStat
 
 import scala.concurrent.duration._
@@ -53,7 +54,7 @@ object JobActor {
 
   trait Factory {
 
-    def apply: Actor
+    def apply(@Assisted("jobActorNumber") jobActorNumber : Int): Actor
   }
 
   // Messages the jobActor accepts from outside
@@ -78,6 +79,8 @@ object JobActor {
   // Job Controller receives a job state change from the SGE or from any other valid source
   case class JobStateChanged(jobID: String, jobState: JobState)
 
+  case class SetSGEID(jobID : String, sgeID : String)
+
   // Job Controller receives push message to update the log
   case class UpdateLog(jobID: String)
 
@@ -101,7 +104,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                          @Named("jobIDActor") jobIDActor: ActorRef,
                          @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                          @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
-                         constants: Constants)
+                         constants: Constants,
+                         @Assisted("jobActorNumber") jobActorNumber : Int)
     extends Actor {
 
   // Attributes asssocidated with a Job
@@ -715,21 +719,38 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           Logger.info("Job not found: " + jobID)
       }
 
+    // Checks the current jobs against the currently running cluster jobs to see if there are any dead jobs
     case PolledJobs(qStat : QStat) =>
       val clusterJobIDs = qStat.qStatJobs.map(_.sgeID)
+      //if(this.currentJobs.nonEmpty)
+        //Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] sge Jobs to check: ${clusterJobIDs.mkString(", ")}\nactor Jobs to check:${this.currentJobs.values.flatMap(_.clusterData.map(_.sgeID)).mkString(", ")}")
       this.currentJobs.values.foreach { job =>
-        job.clusterData.foreach{ clusterData =>
-          if((job.status != Done && job.status != Error) && !clusterJobIDs.contains(clusterData.sgeID)) {
-            val strikes = currentJobStrikes.getOrElse(job.jobID, 0) + 1
+        job.clusterData match {
+          case Some(clusterData) =>
+          val jobInCluster = clusterJobIDs.contains(clusterData.sgeID)
+          //Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} with sgeID ${clusterData.sgeID}: ${if(jobInCluster) "active" else "inactive"}")
+          if(!job.isFinished && !jobInCluster) {
+            val strikes = this.currentJobStrikes.getOrElse(job.jobID, 0) + 1
             if (strikes >= 5) {
-              currentJobStrikes = currentJobStrikes.filter(_._1 != job.jobID)
+              this.currentJobStrikes = this.currentJobStrikes.filter(_._1 != job.jobID)
               self ! JobStateChanged(job.jobID, Error)
             } else {
-              currentJobStrikes = currentJobStrikes.updated(job.jobID, strikes)
-              Logger.info(s"[JobActor.PolledJobs] Job with jobID ${job.jobID} and sgeID ${clusterData.sgeID} is not in qstat. Strikes: $strikes.")
+              this.currentJobStrikes = this.currentJobStrikes.updated(job.jobID, strikes)
+              Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} strikes: $strikes.")
             }
           }
+          case None =>
+            //Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} has no SGE data yet.")
         }
+      }
+
+    // Sets the cluster job ID for a job
+    case SetSGEID(jobID : String, sgeID : String) =>
+      mongoStore.modifyJob(BSONDocument(Job.JOBID -> jobID),
+                           BSONDocument("$set"    -> BSONDocument(Job.SGEID -> sgeID))).foreach{
+        case Some(job) =>
+          this.currentJobs = this.currentJobs.updated(job.jobID, job)
+        case None =>
       }
 
     // gets updatelog notifications via curl
