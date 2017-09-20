@@ -1,0 +1,64 @@
+@()
+<div id="tabs">
+    <ul>
+        <li><a href="#tabs-1">Overview</a></li>
+        <li><a href="#tabs-2">Parameters</a></li>
+        <li><a href="#tabs-3">References</a></li>
+    </ul>
+    <div id="tabs-1" class="greenlink">
+        ClustalO is a general purpose multiple alignment program for DNA or proteins.
+    </div>
+    <div id="tabs-2" class="greenlink">
+        <ul class="accordion" data-accordion data-allow-all-closed='true'>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Input format</a>
+                <div class="accordion-content" data-tab-content>
+                    <p>Enter multiple sequences in fasta format. A sequence in FASTA format begins with a single-line description, followed by lines of sequence data. The description line is distinguished from the sequence data by a greater-than (">") symbol in the first column. It is recommended that all lines of text be shorter than 80 characters in length. An example sequence in FASTA format is:</p><br/>
+                    <pre>>gi|532319|pir|TVFV2E|TVFV2E envelope protein<br/>ELRLRYCAPAGFALLKCNDADYDGFKTNCSNVSVVHCTNLMNTTVTTGLLLNGSYSENRT<br/>QIWQKHRTSNDSALILLNKHYNLTVTCKRPGNKTVLPVTIMAGLVFHSQKYNLRLRQAWC<br/>HFPSNWKGAWKEVKEEIVNLPKERYRGTNDPKRIFFQRQWGDPETANLWFNCHGEFFYCK<br/>MDWFLNYLNNLTVDADHNECKNTSGTKSGNKRAPGPCVQRTYVACHIRSVIIWLETISKK<br/>TYAPPREGHLECTSTVTGMTVELNYIPKNRTNVTLSPQIESIWAAELDRYKLVEITPIGF<br/>APTEVRRYTGGHERQKRVPFVXXXXXXXXXXXXXXXXXXXXXXVQSQHLLAGILQQQKNL<br/>LAAVEAQQQMLKLTIWGVK</pre><br/>
+                    <p>Sequences are expected to be represented in the standard IUB/IUPAC amino acid and nucleic acid codes, with these exceptions: lower-case letters are accepted and are mapped into upper-case; a single hyphen or dash can be used to represent a gap of indeterminate length; and in amino acid sequences, U and * are acceptable letters (see below). Before submitting a request, any numerical digits in the query sequence should either be removed or replaced by appropriate letter codes (e.g., N for unknown nucleic acid residue or X for unknown amino acid residue).</p>
+                    <p>The nucleic acid codes supported are:</p><br/>
+                    <pre>   A --> adenosine           M --> A C (amino)<br/>   C --> cytidine            S --> G C (strong)<br/>   G --> guanine             W --> A T (weak)<br/>   T --> thymidine           B --> G T C<br/>   U --> uridine             D --> G A T<br/>   R --> G A (purine)        H --> A C T<br/>   Y --> T C (pyrimidine)    V --> G C A<br/>   K --> G T (keto)          N --> A G C T (any)<br/>                             -  gap of indeterminate length</pre><br/>
+                    <p>The accepted amino acid codes are:</p><br/>
+                    <pre>    A  alanine                         P  proline<br/>    B  aspartate or asparagine         Q  glutamine<br/>    C  cystine                         R  arginine<br/>    D  aspartate                       S  serine<br/>    E  glutamate                       T  threonine<br/>    F  phenylalanine                   U  selenocysteine<br/>    G  glycine                         V  valine<br/>    H  histidine                       W  tryptophan<br/>    I  isoleucine                      Y  tyrosine<br/>    K  lysine                          Z  glutamate or glutamine<br/>    L  leucine                         X  any<br/>    M  methionine                      *  translation stop<br/>    N  asparagine                      -  gap of indeterminate length</pre>
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">Clustal Omega: Other advanced options</a>
+                <div class="accordion-content" data-tab-content>
+                    <p>Use this textfield to specify advanced options via commandline. After removing some options not useful in this toolkit web environment, remaining options supported by Clustal Omega are (for ClustalW options see next section):</p>
+                    <pre>
+                        <p>Sequence Input:<br/>  --dealign                 Dealign input sequences<br/>  --is-profile              disable check if profile, force profile (default no)</p>
+                        <p>Clustering:<br/>  --pileup                  Sequentially align sequences<br/>  --full                    Use full distance matrix for guide-tree calculation (might be slow; mBed is default)<br/>  --full-iter               Use full distance matrix for guide-tree calculation during iteration (might be slowish; mBed is default)<br/>  --cluster-size=&ltn&gt        soft maximum of sequences in sub-clusters<br/>  --trans=&ltn&gt               use transitivity (default: 0)<br/>  --use-kimura              use Kimura distance correction for aligned sequences (default no)<br/>  --percent-id              convert distances into percent identities (default no)</p>
+                        <p>Alignment Output:<br/>  --residuenumber, --resno  print residue numbers (default no)<br/>  --wrap=&ltn&gt                number of residues before line-wrap in output<br/>  --output-order={input-order,tree-order} MSA output order like in input/guide-tree</p>
+                        <p>Iteration:<br/>  --iterations, --iter=&ltn&gt  Number of (combined guide-tree/HMM) iterations<br/>  --max-guidetree-iterations=&ltn&gt Maximum number of guidetree iterations<br/>  --max-hmm-iterations=&ltn&gt  Maximum number of HMM iterations</p>
+                        <p>Limits (will exit early, if exceeded):<br/>  --maxnumseq=&ltn&gt           Maximum allowed number of sequences<br/>  --maxseqlen=&ltl&gt           Maximum allowed sequence length</p>
+                        <p>Miscellaneous:<br/>  -h, --help                Print this help and exit<br/>  -v, --verbose             Verbose output (increases if given multiple times)<br/>  --version                 Print version information and exit<br/>  --long-version            Print long version information and exit
+                    </pre>
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">ClustalW: Other advanced options</a>
+                <div class="accordion-content" data-tab-content>
+                    <p>Use this text field to specify advanced options via commandline. Options supported by ClustalW are (for Clustal Omega options see previous section):</p>
+                    <pre>
+                        <p>***General settings:****<br/><br/>-INTERACTIVE :read command line, then enter normal interactive menus<br/>-QUICKTREE   :use FAST algorithm for the alignment guide tree<br/>-TYPE=       :PROTEIN or DNA sequences<br/>-NEGATIVE    :protein alignment with negative values in matrix<br/>-OUTFILE=    :sequence alignment file name<br/>-OUTPUT=     :GCG, GDE, PHYLIP, PIR or NEXUS<br/>-OUTORDER=   :INPUT or ALIGNED<br/>-CASE        :LOWER or UPPER (for GDE output only)<br/>-SEQNOS=     :OFF or ON (for Clustal output only)</p><br/>
+                        <p>***Fast Pairwise Alignments:***<br/><br/>-KTUPLE=n    :word size<br/>-TOPDIAGS=n  :number of best diags.<br/>-WINDOW=n    :window around best diags.<br/>-PAIRGAP=n   :gap penalty<br/>-SCORE       :PERCENT or ABSOLUTE</p>
+                        <p>***Slow Pairwise Alignments:***<br/><br/>-PWMATRIX=    :Protein weight matrix=BLOSUM, PAM, GONNET, ID or filename<br/>-PWDNAMATRIX= :DNA weight matrix=IUB, CLUSTALW or filename<br/>-PWGAPOPEN=f  :gap opening penalty<br/>-PWGAPEXT=f   :gap opening penalty</p>
+                        <p>***Multiple Alignments:***<br/><br/>-NEWTREE=      :file for new guide tree<br/>-USETREE=      :file for old guide tree<br/>-MATRIX=       :Protein weight matrix=BLOSUM, PAM, GONNET, ID or filename<br/>-DNAMATRIX=    :DNA weight matrix=IUB, CLUSTALW or filename<br/>-GAPOPEN=f     :gap opening penalty<br/>-GAPEXT=f      :gap extension penalty<br/>-ENDGAPS       :no end gap separation pen.<br/>-GAPDIST=n     :gap separation pen. range<br/>-NOPGAP        :residue-specific gaps off<br/>-NOHGAP        :hydrophilic gaps off<br/>-HGAPRESIDUES= :list hydrophilic res.<br/>-MAXDIV=n      :% ident. for delay<br/>-TYPE=         :PROTEIN or DNA<br/>-TRANSWEIGHT=f :transitions weighting</p>
+                        <p>***Profile Alignments:***<br/><br/>-PROFILE      :Merge two alignments by profile alignment<br/>-NEWTREE1=    :file for new guide tree for profile1<br/>-NEWTREE2=    :file for new guide tree for profile2<br/>-USETREE1=    :file for old guide tree for profile1<br/>-USETREE2=    :file for old guide tree for profile2</p>
+                        <p>***Sequence to Profile Alignments:***<br/><br/>-SEQUENCES   :Sequentially add profile2 sequences to profile1 alignment<br/>-NEWTREE=    :file for new guide tree<br/>-USETREE=    :file for old guide tree</p>
+                        <p>***Structure Alignments:***<br/><br/>-NOSECSTR1     :do not use secondary structure-gap penalty mask for profile 1<br/>-NOSECSTR2     :do not use secondary structure-gap penalty mask for profile 2<br/>-SECSTROUT=STRUCTURE or MASK or BOTH or NONE   :output in alignment file<br/>-HELIXGAP=n    :gap penalty for helix core residues<br/>-STRANDGAP=n   :gap penalty for strand core residues<br/>-LOOPGAP=n     :gap penalty for loop regions<br/>-TERMINALGAP=n :gap penalty for structure termini<br/>-HELIXENDIN=n  :number of residues inside helix to be treated as terminal<br/>-HELIXENDOUT=n :number of residues outside helix to be treated as terminal<br/>-STRANDENDIN=n :number of residues inside strand to be treated as terminal<br/>-STRANDENDOUT=n:number of residues outside strand to be treated as terminal</p>
+                        <p>***Trees:***<br/><br/>-OUTPUTTREE=nj OR phylip OR dist OR nexus<br/>-SEED=n        :seed number for bootstraps.<br/>-KIMURA        :use Kimura's correction.<br/>-TOSSGAPS      :ignore positions with gaps.<br/>-BOOTLABELS=node OR branch :position of bootstrap values in tree display</p>
+                    </pre>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div id="tabs-3" class="greenlink">
+        <p>Alva V., Nam SZ., Söding J., Lupas AN. (2016) <b>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.</b> Nucleic Acids Res. pii: gkw348. <a href=https://www.ncbi.nlm.nih.gov/pubmed/27131380>PMID: 27131380</a></p>
+    </div>
+</div>
+
+<script>
+        $(".accordion").foundation();
+</script>

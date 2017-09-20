@@ -21,7 +21,7 @@
 let JobLineComponent = {
     controller : function() {},
     view: function(ctrl : any, args : any) {
-        let isJob;
+        let isJob: boolean;
         let dateCreated = moment.utc(args.job().dateCreated).utcOffset(2, true).local();
         isJob = args.job().isJob;
         return m("div", {
@@ -31,7 +31,17 @@ let JobLineComponent = {
             m("span", { "class": "toolname" }, [
                 m("input", { id: "toolnameAccess", "style": "display: none;", type: "text", value: args.job().tool.toolname}),
                 m("a", { onclick: function(){m.route("/tools/" + args.job().tool.toolname)}}, args.job().tool.toolnameLong),
-                m("a", { config: helpModalAccess.bind(args) },
+                m("a", { onclick: function(){
+                        let route = jsRoutes.controllers.DataController.getHelp(args.job().tool.toolname);
+                        $.ajax({
+                            url: route.url,
+                            method: route.method
+                        }).done(function (help) {
+
+                            $("#helpModal").html(help).foundation('open');
+                            $("#tabs").tabs();
+                        });
+                    } },
                         m("i", { "class": "icon-white_question helpicon" })
                 )
             ]),

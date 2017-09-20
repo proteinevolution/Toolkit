@@ -130,10 +130,9 @@ tr.job a:visited {
     float: right;
 }
 #helpModal {
-    height: 40em;
-}
-#helpModal p {
-    font-size: small;
+    width: 90em;
+    top: 209px !important;
+    font-size: 0.85em;
 }
 #helpModal h4 {
     padding-left: 0.10em;
@@ -155,18 +154,16 @@ tr.job a:visited {
     font-size: 1em;
     margin-bottom: 0;
 }
-#help-psiblast {
-    font-size: 0.85em !important;
-}
+
 .accordion-title {
     font-weight: bold;
 }
-#help-tabs {
-    font-size: 0.95em !important;
-}
+
+
 #help-tabs .ui-widget-header {
     height: 3.5em;
 }
+
 :focus {
     outline: 0;
 }
