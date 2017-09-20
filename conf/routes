@@ -78,7 +78,7 @@ POST          /jobs/done/:jobID/:key                  @controllers.Jobs.jobStatu
 POST          /jobs/error/:jobID/:key                 @controllers.Jobs.jobStatusError(jobID : String, key: String)
 POST          /jobs/running/:jobID/:key               @controllers.Jobs.jobStatusRunning(jobID : String, key: String)
 POST          /jobs/queued/:jobID/:key                @controllers.Jobs.jobStatusQueued(jobID : String, key: String)
-POST          /jobs/sge/:jobID/:sgeID                 @controllers.Jobs.SGEID(jobID: String, sgeID: String)
+POST          /jobs/sge/:jobID/:sgeID/:key            @controllers.Jobs.SGEID(jobID: String, sgeID: String, key: String)
 POST          /jobs/message/:mainID                   @controllers.Jobs.pushMessage(mainID, message: String)
 POST          /jobs/dateviewed/:mainID                @controllers.Jobs.updateDateViewed(mainID)
 # update process log
