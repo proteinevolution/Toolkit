@@ -56,18 +56,8 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     userSessions.getUser.flatMap { user =>
       // Find the Job in the database
       mongoStore.selectJob(jobID).map {
-        case Some(job) =>
-          // Check if the Job was deleted or not
-          job.deletion match {
-            case Some(_) =>
-              NotFound
-            case None =>
-              // Check if the user is the Owner or if the job is public
-              //if (job.ownerID.contains(user.userID) || job.ownerID.isEmpty)
-              Ok(job.cleaned())
-            //else NotFound
-          }
-        case None => NotFound
+        case Some(job) => Ok(job.cleaned())
+        case None      => NotFound
       }
     }
   }
@@ -127,19 +117,23 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               // Set job as either private or public
               val ownerOption = if (params.get("public").isEmpty) { Some(user.userID) } else { None }
               // Get the current date to set it for all three dates
-              val jobCreationTime = ZonedDateTime.now()
+              val now = ZonedDateTime.now
+
+              // Check the users bonus time for jobs
+              val dateDeletion = user.userData.map(_ => now.plusDays(constants.jobDeletion))
+
               // Create a new Job object for the job and set the initial values
               val job = Job(
-                mainID = BSONObjectID.generate(),
                 jobID = jobID,
                 ownerID = ownerOption,
                 status = Submitted,
                 emailUpdate = emailUpdate,
                 tool = toolName,
                 watchList = List(user.userID),
-                dateCreated = Some(jobCreationTime),
-                dateUpdated = Some(jobCreationTime),
-                dateViewed = Some(jobCreationTime),
+                dateCreated = Some(now),
+                dateUpdated = Some(now),
+                dateViewed = Some(now),
+                dateDeletion = dateDeletion,
                 IPHash = Some(MessageDigest.getInstance("MD5").digest(user.sessionData.head.ip.getBytes).mkString)
               )
 
@@ -165,7 +159,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                   Ok(Json.obj("successful" -> false, "message" -> "Could not write to DB."))
               }
             case None =>
-              // TODO Should not be a Bad Request but a message stating that the job ID is already taken.
+              // The job ID is already taken
               Future.successful(Ok(Json.obj("successful" -> false, "message" -> "Job ID is already taken.")))
           }
         case None =>
@@ -183,7 +177,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
   def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     Logger.info("Delete Action in JobController reached")
     userSessions.getUser.map { user =>
-      jobActorAccess.sendToJobActor(jobID, Delete(jobID, user.userID, true))
+      jobActorAccess.sendToJobActor(jobID, Delete(jobID, Some(user.userID)))
       Ok
     }
   }
