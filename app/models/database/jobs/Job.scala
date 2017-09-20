@@ -75,6 +75,10 @@ case class Job(mainID       : BSONObjectID           = BSONObjectID.generate, //
         |--[Job Object end]--
      """.stripMargin
   }
+
+  def isFinished: Boolean = {
+    status == Done || status == Error
+  }
 }
 
 // Server returns such an object when asked for a job
@@ -103,6 +107,7 @@ object Job {
   val WATCHLIST    = "watchList" //              optional list of watching users references
   val COMMENTLIST  = "commentList" //              comment list references
   val CLUSTERDATA  = "clusterData" //              detailed data on the cluster usage
+  val SGEID        = s"$CLUSTERDATA.${JobClusterData.SGEID}"
   val DATECREATED  = "dateCreated" //              created on field
   val DATEUPDATED  = "dateUpdated" //              changed on field
   val DATEVIEWED   = "dateViewed" //              last view on field
