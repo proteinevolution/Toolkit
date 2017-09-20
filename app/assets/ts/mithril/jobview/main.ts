@@ -21,7 +21,7 @@
 let JobLineComponent = {
     controller : function() {},
     view: function(ctrl : any, args : any) {
-        let isJob;
+        let isJob: boolean;
         let dateCreated = moment.utc(args.job().dateCreated).utcOffset(2, true).local();
         isJob = args.job().isJob;
         return m("div", {
