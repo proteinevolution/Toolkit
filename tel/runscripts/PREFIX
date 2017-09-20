@@ -73,7 +73,7 @@ done
 
 # Write sge id
 
-until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/sge/%jobid.content/${SGE_ID}); do
+until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/sge/%jobid.content/${SGE_ID}/$key); do
     printf 'host unreachable\n...waiting to retrieve sge id\n'
     sleep 5
 done

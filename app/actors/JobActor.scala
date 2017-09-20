@@ -1,13 +1,13 @@
 package actors
 
-import javax.inject.{ Inject, Named }
+import javax.inject.{Inject, Named}
 
 import actors.JobActor._
 import akka.actor._
 import akka.event.LoggingReceive
-import models.{ Constants, UserSessions }
+import models.{Constants, UserSessions}
 import models.database.jobs._
-import models.database.statistics.{ JobEvent, JobEventLog }
+import models.database.statistics.{JobEvent, JobEventLog}
 import models.database.users.User
 import models.mailing.JobFinishedMail
 import models.search.JobDAO
@@ -19,18 +19,25 @@ import modules.LocationProvider
 import modules.db.MongoStore
 import modules.tel.env.Env
 import modules.tel.execution.ExecutionContext.FileAlreadyExists
-import modules.tel.execution.{ ExecutionContext, RunningExecution, WrapperExecutionFactory }
+import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
 import modules.tel.runscripts.Runscript.Evaluation
 import java.time.ZonedDateTime
+
+import actors.ClusterMonitor.PolledJobs
 import play.api.Logger
-import play.api.cache.{ NamedCache, SyncCacheApi }
+import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json._
+
 import scala.concurrent.Future
-import scala.util.{ Failure, Success }
+import scala.util.{Failure, Success}
 import better.files._
+import com.google.inject.assistedinject.Assisted
+import modules.parsers.Ops.QStat
+
 import scala.concurrent.duration._
 
 object JobActor {
@@ -47,7 +54,7 @@ object JobActor {
 
   trait Factory {
 
-    def apply: Actor
+    def apply(@Assisted("jobActorNumber") jobActorNumber : Int): Actor
   }
 
   // Messages the jobActor accepts from outside
@@ -72,6 +79,8 @@ object JobActor {
   // Job Controller receives a job state change from the SGE or from any other valid source
   case class JobStateChanged(jobID: String, jobState: JobState)
 
+  case class SetSGEID(jobID : String, sgeID : String)
+
   // Job Controller receives push message to update the log
   case class UpdateLog(jobID: String)
 
@@ -95,13 +104,16 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                          @Named("jobIDActor") jobIDActor: ActorRef,
                          @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                          @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
-                         constants: Constants)
+                         constants: Constants,
+                         @Assisted("jobActorNumber") jobActorNumber : Int)
     extends Actor {
 
   // Attributes asssocidated with a Job
   private var currentJobs: Map[String, Job]                           = Map.empty[String, Job]
   private var currentJobLogs: Map[String, JobEventLog]                = Map.empty[String, JobEventLog]
   private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty[String, ExecutionContext]
+
+  private var currentJobStrikes        :Map[String, Int]              = Map.empty[String,Int]
 
   // long polling stuff
 
@@ -720,6 +732,40 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           }
         case None =>
           Logger.info("Job not found: " + jobID)
+      }
+
+    // Checks the current jobs against the currently running cluster jobs to see if there are any dead jobs
+    case PolledJobs(qStat : QStat) =>
+      val clusterJobIDs = qStat.qStatJobs.map(_.sgeID)
+      //if(this.currentJobs.nonEmpty)
+        //Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] sge Jobs to check: ${clusterJobIDs.mkString(", ")}\nactor Jobs to check:${this.currentJobs.values.flatMap(_.clusterData.map(_.sgeID)).mkString(", ")}")
+      this.currentJobs.values.foreach { job =>
+        job.clusterData match {
+          case Some(clusterData) =>
+          val jobInCluster = clusterJobIDs.contains(clusterData.sgeID)
+          //Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} with sgeID ${clusterData.sgeID}: ${if(jobInCluster) "active" else "inactive"}")
+          if(!job.isFinished && !jobInCluster) {
+            val strikes = this.currentJobStrikes.getOrElse(job.jobID, 0) + 1
+            if (strikes >= 5) {
+              this.currentJobStrikes = this.currentJobStrikes.filter(_._1 != job.jobID)
+              self ! JobStateChanged(job.jobID, Error)
+            } else {
+              this.currentJobStrikes = this.currentJobStrikes.updated(job.jobID, strikes)
+              Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} strikes: $strikes.")
+            }
+          }
+          case None =>
+            //Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} has no SGE data yet.")
+        }
+      }
+
+    // Sets the cluster job ID for a job
+    case SetSGEID(jobID : String, sgeID : String) =>
+      mongoStore.modifyJob(BSONDocument(Job.JOBID -> jobID),
+                           BSONDocument("$set"    -> BSONDocument(Job.SGEID -> sgeID))).foreach{
+        case Some(job) =>
+          this.currentJobs = this.currentJobs.updated(job.jobID, job)
+        case None =>
       }
 
     // gets updatelog notifications via curl
