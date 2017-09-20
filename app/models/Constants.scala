@@ -27,7 +27,7 @@ class Constants {
   val deletionThreshold
     : Int                    = 24 // all jobs of non registered users that are older than the given number are permanently deleted everywhere
   val breakAfterClustal: Int = 85 // clustal format breaks after n chars
-  val deletionCycle: Int     = 1  // time in hours in which the job sweeping routine is executed
+  val deletionCycle: Int     = 5  // time in hours in which the job sweeping routine is executed
 }
 
 trait ExitCodes {
