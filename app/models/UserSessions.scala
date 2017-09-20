@@ -109,7 +109,7 @@ class UserSessions @Inject()(mongoStore: MongoStore,
           dateUpdated = Some(ZonedDateTime.now)
         )
         mongoStore.addUser(user).map { _ =>
-          Logger.info(s"User is new:\n${user.toString}")
+          Logger.info(s"User is new:\n${user.toString}\nIP: ${request.remoteAddress.toString}")
           user
         }
     }
