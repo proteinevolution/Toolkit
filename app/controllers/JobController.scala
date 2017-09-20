@@ -213,23 +213,19 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
             mongoStore.findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
               val foundMainIDs   = jobList.map(_.mainID)
               val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
-              val jobsFiltered   = jobList.filter(_.status == Done)
+              val jobsFiltered   = jobList.filter(job => job.status == Done && job.ownerID.contains(user.userID))
+              val oldJob = jobList.maxBy(_.dateCreated.getOrElse(ZonedDateTime.now.minusYears(10)).toInstant.toEpochMilli)
 
               // Delete index-zombie jobs
               unFoundMainIDs.foreach { mainID =>
                 Logger.info("[WARNING]: job in index but not in database: " + mainID.stringify)
                 jobDao.deleteJob(mainID.stringify)
               }
-              jobsFiltered.lastOption match {
-                case Some(oldJob) =>
-                  println(oldJob)
-                  Ok(
-                    Json.toJson(
-                      Json.obj("jobID" -> oldJob.jobID, "dateCreated" -> oldJob.dateCreated.get.toInstant.toEpochMilli)
-                    )
-                  )
-                case None => NotFound("job is new.")
-              }
+              Ok(
+                Json.toJson(
+                  Json.obj("jobID" -> oldJob.jobID, "dateCreated" -> oldJob.dateCreated.get.toInstant.toEpochMilli)
+                )
+              )
             }
           }
       }
