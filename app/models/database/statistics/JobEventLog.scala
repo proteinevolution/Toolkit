@@ -32,6 +32,14 @@ case class JobEventLog(mainID: BSONObjectID, // ID of the Job in the System
   def dateCreated: ZonedDateTime = {
     events.find(_.jobState == Submitted).flatMap(_.timestamp).getOrElse(ZonedDateTime.now)
   }
+
+  override def toString : String = {
+    s"""---[JobEventLog Object]---
+       |mainID: ${mainID.stringify}
+       |tool name: $toolName
+       |internalJob? ${if(internalJob){"yes"}else{"no"}}
+       |events: ${events.mkString(",")}""".stripMargin
+  }
 }
 
 object JobEventLog {
