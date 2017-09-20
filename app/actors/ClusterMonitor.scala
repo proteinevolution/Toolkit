@@ -72,7 +72,7 @@ final class ClusterMonitor @Inject()(cluster: Cluster,
       jobActorAccess.broadcast(PolledJobs(qStat))
    
       // 32 Tasks are 100% - calculate the load from this.
-      val load : Double = qStat.totalJobs.toDouble / 32
+      val load : Double = qStat.totalJobs().toDouble / 32
 
       /**
         * dynamically adjust the cluster resources dependent on the current cluster load
