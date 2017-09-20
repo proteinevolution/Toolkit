@@ -1,13 +1,13 @@
 package actors
 
-import javax.inject.{ Inject, Named }
+import javax.inject.{Inject, Named}
 
 import actors.JobActor._
 import akka.actor._
 import akka.event.LoggingReceive
-import models.{ Constants, UserSessions }
+import models.{Constants, UserSessions}
 import models.database.jobs._
-import models.database.statistics.{ JobEvent, JobEventLog }
+import models.database.statistics.{JobEvent, JobEventLog}
 import models.database.users.User
 import models.mailing.JobFinishedMail
 import models.search.JobDAO
@@ -19,18 +19,24 @@ import modules.LocationProvider
 import modules.db.MongoStore
 import modules.tel.env.Env
 import modules.tel.execution.ExecutionContext.FileAlreadyExists
-import modules.tel.execution.{ ExecutionContext, RunningExecution, WrapperExecutionFactory }
+import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
 import modules.tel.runscripts.Runscript.Evaluation
 import java.time.ZonedDateTime
+
+import actors.ClusterMonitor.PolledJobs
 import play.api.Logger
-import play.api.cache.{ NamedCache, SyncCacheApi }
+import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json._
+
 import scala.concurrent.Future
-import scala.util.{ Failure, Success }
+import scala.util.{Failure, Success}
 import better.files._
+import modules.parsers.Ops.QStat
+
 import scala.concurrent.duration._
 
 object JobActor {
@@ -102,6 +108,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
   private var currentJobs: Map[String, Job]                           = Map.empty
   private var currentJobLogs: Map[String, JobEventLog]                = Map.empty
   private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty
+
+  private var currentJobStrikes        :Map[String, Int]              = Map.empty[String,Int]
 
   // long polling stuff
 
@@ -705,6 +713,23 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           }
         case None =>
           Logger.info("Job not found: " + jobID)
+      }
+
+    case PolledJobs(qStat : QStat) =>
+      val clusterJobIDs = qStat.qStatJobs.map(_.sgeID)
+      this.currentJobs.values.foreach { job =>
+        job.clusterData.foreach{ clusterData =>
+          if((job.status != Done && job.status != Error) && !clusterJobIDs.contains(clusterData.sgeID)) {
+            val strikes = currentJobStrikes.getOrElse(job.jobID, 0) + 1
+            if (strikes >= 5) {
+              currentJobStrikes = currentJobStrikes.filter(_._1 != job.jobID)
+              self ! JobStateChanged(job.jobID, Error)
+            } else {
+              currentJobStrikes = currentJobStrikes.updated(job.jobID, strikes)
+              Logger.info(s"[JobActor.PolledJobs] Job with jobID ${job.jobID} and sgeID ${clusterData.sgeID} is not in qstat. Strikes: $strikes.")
+            }
+          }
+        }
       }
 
     // gets updatelog notifications via curl
