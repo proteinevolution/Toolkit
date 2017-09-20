@@ -8,19 +8,23 @@ import modules.parsers.Ops.QStat.QStatJob
 import scala.xml._
 
 object QStat {
+  // The QStat dates are formatted in the Default ISO format but without a Zone
   val qstatDateTimePattern : DateTimeFormatter =
     DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").withZone(ZoneId.systemDefault())
 
+  // Predefined XML Tags for parsing
   val JOBID = "JB_job_number"
   val STATE = "state"
   val SUBMISSIONDATE = "JB_submission_time"
   val STARTDATE = "JAT_start_time"
   val EXECUTIONDATE = "JB_execution_time"
 
+  // QStat Job objects contain the sge job ID, the state of the job and the time of the last event
   case class QStatJob(sgeID : String, state : String, date : ZonedDateTime) {
     val isStarted : Boolean = state.contains("r")
   }
 
+  // Parser for QStatJobs
   object QStatJob {
     def parse(node : Node) : QStatJob = {
       val date : String = {
@@ -37,15 +41,28 @@ object QStat {
     }
   }
 }
+
+/**
+  * QStat object contains a list of QStat jobs which
+  * @param xml
+  */
 case class QStat(private val xml : String) {
+  // Parse the xml first
   private val parsed : Elem = XML.loadString(xml)
+
+  // Return the QStatJobs second
   val qStatJobs : List[QStatJob] = {
     (parsed \ "_" \ "job_list").map(n => QStatJob.parse(n)).toList
   }
 
-  def totalJobs : Int = qStatJobs.length
-
-  def runningJobs : Int = qStatJobs.count(_.state.contains("r"))
-
-  def queuedJobs : Int = qStatJobs.count(_.state.contains("q"))
+  /**
+    * Returns the total job count or the count for a specific type of job
+    * @param status
+    * @return
+    */
+  def totalJobs(status : String = "") : Int = status match {
+    case "running" => qStatJobs.count(_.state.contains("r"))
+    case "queued"  => qStatJobs.count(_.state.contains("q"))
+    case _         => qStatJobs.length
+  }
 }
