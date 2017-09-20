@@ -9,22 +9,22 @@ import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._
 
-case class Job(mainID: BSONObjectID, // ID of the Job in the System
-               parentID: Option[BSONObjectID] = None, // ID of the Parent Job
-               jobID: String, // User visible ID of the Job
-               ownerID: Option[BSONObjectID] = None, // User to whom the Job belongs
-               isPublic: Boolean = false,
-               status: JobState, // Status of the Job
-               emailUpdate: Boolean = false, // Owner wants to be notified when the job is ready
-               deletion: Option[JobDeletion] = None, // Deletion Flag showing the reason for the deletion
-               tool: String, // Tool used for this Job
-               watchList: List[BSONObjectID] = List.empty, // List of the users who watch this job, None if not public
-               commentList: List[BSONObjectID] = List.empty, // List of comment IDs for the Job
-               clusterData: Option[JobClusterData] = None, // Cluster Data
-               dateCreated: Option[ZonedDateTime], // Creation time of the Job
-               dateUpdated: Option[ZonedDateTime], // Last Updated on
-               dateViewed: Option[ZonedDateTime], // Last Viewed on
-               IPHash: Option[String]) // hash of the ip
+case class Job(mainID       : BSONObjectID           = BSONObjectID.generate, // ID of the Job in the System
+               parentID     : Option[BSONObjectID]   = None,                  // ID of the Parent Job
+               jobID        : String,                              // User visible ID of the Job
+               ownerID      : Option[BSONObjectID]   = None,       // User to whom the Job belongs
+               isPublic     : Boolean                = false,
+               status       : JobState               = Submitted,  // Status of the Job
+               emailUpdate  : Boolean                = false,      // Owner wants to be notified when the job is ready
+               tool         : String,                              // Tool used for this Job
+               watchList    : List[BSONObjectID]     = List.empty, // List of the users who watch this job, None if not public
+               commentList  : List[BSONObjectID]     = List.empty, // List of comment IDs for the Job
+               clusterData  : Option[JobClusterData] = None,       // Cluster Data
+               dateCreated  : Option[ZonedDateTime]  = Some(ZonedDateTime.now), // Creation time of the Job
+               dateUpdated  : Option[ZonedDateTime]  = Some(ZonedDateTime.now), // Last Updated on
+               dateViewed   : Option[ZonedDateTime]  = Some(ZonedDateTime.now), // Last Viewed on
+               dateDeletion : Option[ZonedDateTime]  = None, // Date the job should be deleted on (if non standard)
+               IPHash       : Option[String]) // hash of the ip
 {
 
   // Returns if the job is private or not
@@ -106,6 +106,7 @@ object Job {
   val DATECREATED  = "dateCreated" //              created on field
   val DATEUPDATED  = "dateUpdated" //              changed on field
   val DATEVIEWED   = "dateViewed" //              last view on field
+  val DATEDELETION = "dateDeletion" // date wh
   val TOOLNAMELONG = "toolnameLong" //           long tool name
   val IPHASH       = "IPHash" //                  ip hash
 
@@ -120,7 +121,6 @@ object Job {
           val ownerID      = (obj \ OWNERID).asOpt[String]
           val project      = (obj \ PROJECT).asOpt[String]
           val status       = (obj \ STATUS).asOpt[JobState]
-          val deletion     = (obj \ DELETION).asOpt[JobDeletion]
           val tool         = (obj \ TOOL).asOpt[String]
           val label        = (obj \ LABEL).asOpt[String]
           val watchList    = (obj \ WATCHLIST).asOpt[List[String]]
@@ -138,7 +138,6 @@ object Job {
               jobID = "",
               ownerID = Some(BSONObjectID.generate()),
               status = status.get,
-              deletion = deletion,
               tool = "",
               dateCreated = Some(datetimenow),
               dateUpdated = Some(datetimenow),
@@ -155,21 +154,21 @@ object Job {
 
   implicit object JobWrites extends Writes[Job] {
     def writes(job: Job): JsObject = Json.obj(
-      IDDB        -> job.mainID,
-      PARENTID    -> job.parentID,
-      JOBID       -> job.jobID,
-      OWNERID     -> job.ownerID,
-      STATUS      -> job.status,
-      EMAILUPDATE -> job.emailUpdate,
-      DELETION    -> job.deletion,
-      TOOL        -> job.tool,
-      WATCHLIST   -> job.watchList,
-      COMMENTLIST -> job.commentList,
-      CLUSTERDATA -> job.clusterData,
-      DATECREATED -> job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli),
-      DATEUPDATED -> job.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli),
-      DATEVIEWED  -> job.dateViewed.fold(-1L)(_.toInstant.toEpochMilli),
-      IPHASH      -> job.IPHash
+      IDDB         -> job.mainID,
+      PARENTID     -> job.parentID,
+      JOBID        -> job.jobID,
+      OWNERID      -> job.ownerID,
+      STATUS       -> job.status,
+      EMAILUPDATE  -> job.emailUpdate,
+      TOOL         -> job.tool,
+      WATCHLIST    -> job.watchList,
+      COMMENTLIST  -> job.commentList,
+      CLUSTERDATA  -> job.clusterData,
+      DATECREATED  -> job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli),
+      DATEUPDATED  -> job.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli),
+      DATEVIEWED   -> job.dateViewed.fold(-1L)(_.toInstant.toEpochMilli),
+      DATEDELETION -> job.dateDeletion.map(_.toInstant.toEpochMilli),
+      IPHASH       -> job.IPHash
     )
   }
 
@@ -179,21 +178,21 @@ object Job {
   implicit object Reader extends BSONDocumentReader[Job] {
     def read(bson: BSONDocument): Job = {
       Job(
-        mainID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
-        parentID = bson.getAs[BSONObjectID](PARENTID),
-        jobID = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
-        ownerID = bson.getAs[BSONObjectID](OWNERID),
-        status = bson.getAs[JobState](STATUS).getOrElse(Error),
-        emailUpdate = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
-        deletion = bson.getAs[JobDeletion](DELETION),
-        tool = bson.getAs[String](TOOL).getOrElse(""),
-        watchList = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
-        commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
-        clusterData = bson.getAs[JobClusterData](CLUSTERDATA),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateViewed = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        IPHash = bson.getAs[String](IPHASH)
+        mainID       = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
+        parentID     = bson.getAs[BSONObjectID](PARENTID),
+        jobID        = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
+        ownerID      = bson.getAs[BSONObjectID](OWNERID),
+        status       = bson.getAs[JobState](STATUS).getOrElse(Error),
+        emailUpdate  = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
+        tool         = bson.getAs[String](TOOL).getOrElse(""),
+        watchList    = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
+        commentList  = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
+        clusterData  = bson.getAs[JobClusterData](CLUSTERDATA),
+        dateCreated  = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateUpdated  = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateViewed   = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateDeletion = bson.getAs[BSONDateTime](DATEDELETION).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        IPHash       = bson.getAs[String](IPHASH)
       )
     }
   }
@@ -204,21 +203,21 @@ object Job {
   implicit object Writer extends BSONDocumentWriter[Job] {
     def write(job: Job): BSONDocument = {
       BSONDocument(
-        IDDB        -> job.mainID,
-        PARENTID    -> job.parentID,
-        JOBID       -> job.jobID,
-        OWNERID     -> job.ownerID,
-        STATUS      -> job.status,
-        EMAILUPDATE -> job.emailUpdate,
-        DELETION    -> job.deletion,
-        TOOL        -> job.tool,
-        WATCHLIST   -> job.watchList,
-        COMMENTLIST -> job.commentList,
-        CLUSTERDATA -> job.clusterData,
-        DATECREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
-        DATEUPDATED -> BSONDateTime(job.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli)),
-        DATEVIEWED  -> BSONDateTime(job.dateViewed.fold(-1L)(_.toInstant.toEpochMilli)),
-        IPHASH      -> job.IPHash
+        IDDB         -> job.mainID,
+        PARENTID     -> job.parentID,
+        JOBID        -> job.jobID,
+        OWNERID      -> job.ownerID,
+        STATUS       -> job.status,
+        EMAILUPDATE  -> job.emailUpdate,
+        TOOL         -> job.tool,
+        WATCHLIST    -> job.watchList,
+        COMMENTLIST  -> job.commentList,
+        CLUSTERDATA  -> job.clusterData,
+        DATECREATED  -> BSONDateTime(job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATEUPDATED  -> BSONDateTime(job.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATEVIEWED   -> BSONDateTime(job.dateViewed.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATEDELETION -> job.dateDeletion.map(d => BSONDateTime(d.toInstant.toEpochMilli)),
+        IPHASH       -> job.IPHash
       )
     }
   }
