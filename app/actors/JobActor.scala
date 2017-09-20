@@ -67,7 +67,7 @@ object JobActor {
   case class RemoveFromWatchlist(jobID: String, userID: BSONObjectID)
 
   // JobActor is requested to Delete the job
-  case class Delete(jobID: String, userID: BSONObjectID, ownerRequest: Boolean)
+  case class Delete(jobID: String, userID: Option[BSONObjectID] = None)
 
   // Job Controller receives a job state change from the SGE or from any other valid source
   case class JobStateChanged(jobID: String, jobState: JobState)
@@ -99,9 +99,9 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     extends Actor {
 
   // Attributes asssocidated with a Job
-  private var currentJobs: Map[String, Job]                           = Map.empty
-  private var currentJobLogs: Map[String, JobEventLog]                = Map.empty
-  private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty
+  private var currentJobs: Map[String, Job]                           = Map.empty[String, Job]
+  private var currentJobLogs: Map[String, JobEventLog]                = Map.empty[String, JobEventLog]
+  private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty[String, ExecutionContext]
 
   // long polling stuff
 
@@ -207,69 +207,80 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
   }
 
   /**
-    * JobActor removes the Job from its maps
-    *
+    * JobActor removes the Job with the matching jobID from its maps
     * @param jobID
     */
-  private def removeJob(jobID: String) = {
-    val job = this.currentJobs(jobID)
-
+  private def removeJob(jobID: String) : Boolean = {
+    var wasActive = this.currentJobs.contains(jobID)
     // If the job is in the current jobs remove it
-    this.currentJobs = this.currentJobs.filter(_._1 == jobID)
+    if (wasActive) {
+      this.currentJobs = this.currentJobs.filter(_._1 != jobID)
+    }
 
     // Save Job Event Log to the collection and remove it from the map afterwards
     if (this.currentJobLogs.contains(jobID)) {
       mongoStore.addJobLog(this.currentJobLogs(jobID))
-      this.currentJobLogs = this.currentJobLogs.filter(_._1 == jobID)
+      this.currentJobLogs = this.currentJobLogs.filter(_._1 != jobID)
+      wasActive = true
     }
 
-    // If the job Appears in the running Execution, terminate it
+    // If the job appears in the running Execution, terminate it
     if (this.runningExecutions.contains(jobID)) {
       this.runningExecutions(jobID).terminate()
-      this.runningExecutions = this.runningExecutions.filter(_._1 == jobID)
+      this.runningExecutions = this.runningExecutions.filter(_._1 != jobID)
+      wasActive = true
     }
-    this.currentExecutionContexts = this.currentExecutionContexts.filter(_._1 == jobID)
+
+    // if the job appears in the current execution contexts, remove it from there too
+    if (this.currentExecutionContexts.contains(jobID)) {
+      this.currentExecutionContexts = this.currentExecutionContexts.filter(_._1 != jobID)
+      wasActive = true
+    }
+    wasActive
   }
 
   /**
-    * Marks a job as deleted and informs all watching users about it
-    * also deleted job from
-    *
-    * @param job
-    * @param userID
+    * Deletes a job from all instances and tells all the watching users about it
+    * @param job the job to be deleted
     */
-  private def delete(job: Job, userID: BSONObjectID, ownerRequest: Boolean): Unit = {
-    if (job.ownerID.contains(userID) && ownerRequest) {
-      // Message user clients to remove the job from their watchlist
-      Logger.info("Informing Users of deletion.")
-      val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
-      foundWatchers.flatten.foreach(_ ! ClearJob(job.jobID))
+  private def delete(job: Job, verbose : Boolean = false): Unit = {
+    val now : ZonedDateTime = ZonedDateTime.now
+    if (verbose) Logger.info(s"[JobActor.Delete] Deletion of job folder for jobID ${job.jobID} is done")
+    s"${constants.jobPath}${job.jobID}".toFile.delete(true)
+    if (verbose) Logger.info("[JobActor.Delete] Removing Job from Elastic Search.")
+    jobDao.deleteJob(job.mainID.stringify) // Remove job from elastic search
+    if (verbose) Logger.info("[JobActor.Delete] Removing Job from current Jobs.")
+    this.removeJob(job.jobID) // Remove the job from the current job map
+    // Message user clients to remove the job from their watchlist
+    if (verbose) Logger.info(s"[JobActor.Delete] Informing Users of deletion of Job with JobID ${job.jobID}.")
+    val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
+    foundWatchers.flatten.foreach(_ ! ClearJob(job.jobID))
 
-      // Mark the job in mongoDB
-      mongoStore
-        .modifyJob(
-          BSONDocument(Job.IDDB -> job.mainID),
-          BSONDocument(
-            "$set" ->
-            BSONDocument(Job.DELETION -> JobDeletion(JobDeletionFlag.OwnerRequest, Some(ZonedDateTime.now))),
-            "$unset" ->
-            BSONDocument(Job.WATCHLIST -> "")
-          )
-        )
-        .foreach {
-          case Some(deletedJob) =>
-            Logger.info(s"Marking job as deleted in DB was successful:\n${deletedJob.toString()}")
-          case None =>
-            Logger.info("Marking job as deleted in DB failed.")
+    mongoStore.eventLogCollection.flatMap(_.findAndUpdate(
+      BSONDocument(JobEventLog.IDDB -> job.mainID),
+      BSONDocument("$push" ->
+        BSONDocument(JobEventLog.EVENTS -> JobEvent(Deleted, Some(now), 0))
+      ),
+      fetchNewObject = true
+    ).map(_.result[JobEventLog])).foreach{ jobEventLogOpt =>
+      if (verbose) Logger.info(s"""[JobActor.Delete] Event Log: ${
+        jobEventLogOpt match {
+          case Some(x) => x.toString
+          case None => ""
         }
-    } else {
-      // Just clear a job which is not owned by the user
-      mongoStore.modifyJob(BSONDocument(Job.IDDB -> job.mainID),
-                           BSONDocument("$pull"  -> BSONDocument(Job.WATCHLIST -> userID)))
+      }""".stripMargin
+        )
     }
-    // clear job from the user's watchlist
-    userSessions.modifyUserWithCache(BSONDocument(User.IDDB -> userID),
-                                     BSONDocument("$pull"   -> BSONDocument(User.JOBS -> job.jobID)))
+
+    // Remove the job from mongoDB collection
+    mongoStore.removeJob(BSONDocument(Job.IDDB -> job.mainID)).foreach { writeResult =>
+      if(writeResult.ok) {
+        if (verbose) Logger.info(s"[JobActor.Delete] Deletion of Job was successful:\n${job.toString()}")
+      } else {
+        if (verbose) Logger.info(s"[JobActor.Delete] Deleting the job with jobID ${job.jobID} from the collection failed.")
+      }
+    }
+    if (verbose) Logger.info(s"[JobActor.Delete] Deletion of job with jobID ${job.jobID} Complete.")
   }
 
   /**
@@ -319,9 +330,13 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     if (job.emailUpdate && job.ownerID.isDefined) {
       mongoStore.findUser(BSONDocument(User.IDDB -> job.ownerID)).foreach {
         case Some(user) =>
-          Logger.info("Sending EMail to owner: " + user.getUserData.eMail)
-          val eMail = JobFinishedMail(user, job)
-          eMail.send
+          user.userData match {
+            case Some(userData) =>
+              Logger.info("Sending EMail to owner: " + userData.eMail)
+              val eMail = JobFinishedMail(user, job)
+              eMail.send
+            case None =>
+          }
         case None =>
       }
       true
@@ -443,29 +458,29 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       * Creating the job deleted object and inserting it to the database
       * Removing the job from ES
       */
-    case Delete(jobID, userID, ownerRequest) =>
-      Logger.info(s"Received Delete for $jobID")
-      this.getCurrentJob(jobID).foreach {
-        case Some(job) =>
-          Logger.info("Removing Job from Elastic Search.")
-          jobDao.deleteJob(job.mainID.stringify) // Remove job from elastic search
-          Logger.info("Removing Job from current Jobs.")
-          this.removeJob(jobID)
-          Logger.info("Marking job as deleted in DB")
-          this.delete(job, userID, ownerRequest)
-          Logger.info("Deletion Complete.")
+    case Delete(jobID, userIDOption) =>
+      val verbose = true // just switch this on / off for logging
+      if (verbose) Logger.info(s"[JobActor.Delete] Received Delete for $jobID")
+      this.getCurrentJob(jobID).flatMap {
+        case Some(job) => Future.successful(Some(job))
         case None =>
-          Logger.info("No such jobID found in current jobs. Loading job from DB.")
-          mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).map {
-            case Some(job) =>
-              Logger.info("Found Job in DB. Deleting.")
-              Logger.info("Removing Job from Elastic Search.")
-              jobDao.deleteJob(job.mainID.stringify) // Remove job from elastic search
-              Logger.info("Removing Job from DB")
-              this.delete(job, userID, ownerRequest)
-            case None =>
-              Logger.error("[JobActor.Delete] No such jobID " + jobID + " found in Database. Ignoring.")
+          if (verbose) Logger.info(s"[JobActor.Delete] jobID $jobID not found in current jobs. Loading job from DB.")
+          mongoStore.findJob(BSONDocument(Job.JOBID -> jobID))
+      }.foreach{
+        case Some(job) =>
+          // Delete the job when the user is the owner and clear it otherwise
+          if (userIDOption.isEmpty || userIDOption == job.ownerID) {
+            if (verbose) Logger.info(s"[JobActor.Delete] Found Job with ${job.jobID} - starting file deletion")
+            this.delete(job, verbose)
+          } else {
+            userIDOption match {
+              case Some(userID) =>
+                self ! RemoveFromWatchlist(jobID, userID)
+              case None =>
+            }
           }
+        case None =>
+          Logger.error(s"[JobActor.Delete] Could not find job with JobID $jobID.")
       }
 
     case CheckIPHash(jobID) =>

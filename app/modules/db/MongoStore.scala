@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 import javax.inject.{ Inject, Singleton }
 
 import models.database.CMS.FeaturedArticle
-import models.database.jobs.{ DeletedJob, FrontendJob, Job }
+import models.database.jobs.{ FrontendJob, Job }
 import models.database.statistics.{ ClusterLoadEvent, JobEventLog, StatisticsObject, ToolStatistic }
 import models.database.users.{ User, UserData }
 import play.api.Logger
@@ -223,16 +223,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
       .map(_.find(selector).cursor[JobEventLog]())
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[JobEventLog]]()))
   }
-
-  /**
-    *                Statistics
-    */
-  // Deletion Statistics DB access
-  def deletedJobsCollection: Future[BSONCollection] =
-    reactiveMongoApi.database.map(_.collection[BSONCollection]("deleted"))
-
-  def addDeletedJob(deletedJob: DeletedJob): Future[WriteResult] =
-    deletedJobsCollection.flatMap(_.insert(deletedJob))
 
   /*
    *                Complete Statistics collection
