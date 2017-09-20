@@ -447,7 +447,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
                 // Find the Jobs in the Database
                 mongoStore.findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
-                  if (jobList.exists(_.status == Done)) {
+                  if (jobList.exists(existingJob => existingJob.status == Done && existingJob.ownerID == job.ownerID)) {
                     Logger.info("JobID " + jobID + " is a duplicate.")
                     self ! JobStateChanged(job.jobID, Pending)
                   } else {
