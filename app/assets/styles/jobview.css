@@ -629,11 +629,7 @@ hr {
     padding-bottom: 2px;
 }
 
-.helpModal {
-    width: 80em;
-}
-
-.helpModal .greenlink a {
+.greenlink a:not(.accordion-title){
     color : #2aa198;
 }
 
