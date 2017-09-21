@@ -121,7 +121,8 @@ if [ "%hhpred_align.content" = "true" ] ; then
 
         echo "done" >> ../results/process.log
         updateProcessLog
-
+        #remove empty lines
+        sed -i '/^\s*$/d' ../params/alignment_two
         SEQ_COUNT2=$(egrep '^>' ../params/alignment_two | wc -l)
         CHAR_COUNT2=$(wc -m < ../params/alignment_two)
         FORMAT2=$(head -1 ../params/alignment_two | egrep "^CLUSTAL" | wc -l)
