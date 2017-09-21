@@ -70,6 +70,7 @@ final class ClusterMonitor @Inject()(cluster: Cluster,
       val qStat = QStat("qstat -xml".!!)
 
       jobActorAccess.broadcast(PolledJobs(qStat))
+      Logger.info(s"[ClusterMonitor] Jobs currently listed: ${qStat.qStatJobs.map(_.sgeID).mkString}")
    
       // 32 Tasks are 100% - calculate the load from this.
       val load : Double = qStat.totalJobs().toDouble / 32

@@ -746,7 +746,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           //Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} with sgeID ${clusterData.sgeID}: ${if(jobInCluster) "active" else "inactive"}")
           if(!job.isFinished && !jobInCluster) {
             val strikes = this.currentJobStrikes.getOrElse(job.jobID, 0) + 1
-            if (strikes >= 10) {
+            if (strikes >= 1000) {
               this.currentJobStrikes = this.currentJobStrikes.filter(_._1 != job.jobID)
               self ! JobStateChanged(job.jobID, Error)
             } else {
