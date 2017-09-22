@@ -17,7 +17,7 @@ declare var Map: MapConstructor;
 interface JobManagerObject {
     jobID: string,
     project: any,
-    status: number,
+    state: number,
     tool: string,
     commentList: number,
     dateCreated: Object,

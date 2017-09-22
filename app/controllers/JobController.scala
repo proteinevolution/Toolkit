@@ -126,7 +126,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               val job = Job(
                 jobID = jobID,
                 ownerID = ownerOption,
-                status = Submitted,
+                state = Submitted,
                 emailUpdate = emailUpdate,
                 tool = toolName,
                 watchList = List(user.userID),
@@ -214,7 +214,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs)),
               BSONDocument(Job.DATECREATED -> -1)
             ).map { jobList =>
-              jobList.find(_.status == Done) match {
+              jobList.find(_.state == Done) match {
                 case Some(latestOldJob) =>
                   Ok(
                     Json.toJson(
@@ -223,6 +223,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                   )
                 case None =>
                   NotFound
+
               }
             }
           }

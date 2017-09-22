@@ -181,8 +181,8 @@ case class JobFinishedMail(userParam: User, job: Job) extends MailTemplate {
 
   val user: User = userParam
 
-  def statusMessage: String = {
-    job.status match {
+  def stateMessage: String = {
+    job.state match {
       case Done  => "your job has finished successfully. You can now look at the results."
       case Error => "your job has failed. Please check all parameters and see if you find any issues."
       case _     => "your job has changed state."
@@ -191,7 +191,7 @@ case class JobFinishedMail(userParam: User, job: Job) extends MailTemplate {
 
   val bodyText: String = {
     s"""Dear ${user.getUserData.nameLogin},
-        |$statusMessage
+        |$stateMessage
         |you can view it at any time at $origin/jobs/${job.jobID}
         |Your Toolkit Team
      """.stripMargin
@@ -200,7 +200,7 @@ case class JobFinishedMail(userParam: User, job: Job) extends MailTemplate {
   val bodyHtml: String = {
     super.bodyHtmlTemplate(
       s"""Dear ${user.getUserData.nameLogin},<br />""".stripMargin,
-      s"""$statusMessage
+      s"""$stateMessage
           |You can view it at any time <a href=\"$origin/jobs/${job.jobID}>here</a>
           |or go to $origin/jobs/${job.jobID} in your browser<br /><br />
           |Your Toolkit Team

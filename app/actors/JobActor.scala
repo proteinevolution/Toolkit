@@ -303,14 +303,14 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
     // Update job in the database and notify watcher upon completion
     mongoStore
-      .modifyJob(BSONDocument(Job.IDDB -> job.mainID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
+      .modifyJob(BSONDocument(Job.IDDB -> job.mainID), BSONDocument("$set" -> BSONDocument(Job.STATE -> job.state)))
       .map { modifiedJob =>
         val jobLog = this.currentJobLogs.get(job.jobID) match {
-          case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
+          case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.state)
           case None =>
             JobEventLog(mainID = job.mainID,
-                        toolName = job.tool,
-                        events = List(JobEvent(job.status, Some(ZonedDateTime.now))))
+                        tool = job.tool,
+                        events = List(JobEvent(job.state, Some(ZonedDateTime.now))))
         }
         this.currentJobLogs = this.currentJobLogs.updated(job.jobID, jobLog)
         val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
@@ -343,7 +343,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         case Some(user) =>
           user.userData match {
             case Some(userData) =>
-              Logger.info(s"[JobActor[$jobActorNumber].sendJobUpdateMail] Sending eMail to job owner for job ${job.jobID}: Job is ${job.status.toString}")
+              Logger.info(s"[JobActor[$jobActorNumber].sendJobUpdateMail] Sending eMail to job owner for job ${job.jobID}: Job is ${job.state.toString}")
               val eMail = JobFinishedMail(user, job)
               eMail.send
             case None =>
@@ -376,9 +376,9 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         this.currentJobLogs =
           this.currentJobLogs.updated(job.jobID,
                                       JobEventLog(mainID = job.mainID,
-                                                  toolName = job.tool,
+                                                  tool = job.tool,
                                                   internalJob = isInternalJob,
-                                                  events = List(JobEvent(job.status, Some(ZonedDateTime.now)))))
+                                                  events = List(JobEvent(job.state, Some(ZonedDateTime.now)))))
 
         // Get new runscript instance from the runscript manager
         val runscript: Runscript = runscriptManager(job.tool).withEnvironment(env)
@@ -448,7 +448,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                   BSONDocument(Job.IDDB        -> BSONDocument("$in" -> mainIDs)),
                   BSONDocument(Job.DATECREATED -> -1)
                 ).map { jobList =>
-                  jobList.find(_.status == Done) match {
+                  jobList.find(_.state == Done) match {
                     case Some(oldJob) =>
                     Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID is a duplicate of ${oldJob.jobID}.")
                     self ! JobStateChanged(job.jobID, Pending)
@@ -690,12 +690,12 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       this.getCurrentJob(jobID).foreach {
         case Some(oldJob) =>
           // Update the job object
-          val job = oldJob.copy(status = jobState)
+          val job = oldJob.copy(state = jobState)
           // Give a update message to all
-          Logger.info(s"[JobActor[$jobActorNumber].JobStateChanged] State has changed to ${job.status.toString} for the Job with the JobID ${job.jobID}")
+          Logger.info(s"[JobActor[$jobActorNumber].JobStateChanged] State has changed to ${job.state.toString} for the Job with the JobID ${job.jobID}")
 
           // Dependent on the state, we have to do different things
-          job.status match {
+          job.state match {
             case Done =>
               // Job is no longer running
               Logger.info(s"[JobActor[$jobActorNumber].JobStateChanged] Removing execution context")
@@ -724,7 +724,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                       Logger.info("Job has been removed from JobActor")
                     }
                   case Failure(t) =>
-                    this.updateJobState(job.copy(status = Error))
+                    this.updateJobState(job.copy(state = Error))
                     Logger.error("An error has occured while writing to the Results DB:\n" + t.getMessage)
                 }
               } else {
@@ -792,7 +792,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         case Some(job) =>
           val foundWatchers =
             job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
-          job.status match {
+          job.state match {
             case Running => foundWatchers.flatten.foreach(_ ! WatchLogFile(job))
             case _ =>
               foundWatchers.flatten.foreach(_ ! WatchLogFile(job))
@@ -808,7 +808,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       currentJobs.foreach { job =>
         val foundWatchers =
           job._2.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
-        job._2.status match {
+        job._2.state match {
           case Running => foundWatchers.flatten.foreach(_ ! WatchLogFile(job._2))
           case _       =>
         }
