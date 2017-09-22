@@ -31,7 +31,7 @@ class Constants {
   /** Sweeps at this time after server start */
   val jobDeletionDelay         : FiniteDuration = 10 minutes
   /** Sweeps in this interval */
-  val jobDeletionInterval      : FiniteDuration = 3 hours
+  val jobDeletionInterval      : FiniteDuration =  3 hours
 
   /** all jobs of registered users that are older than the given number are permanently deleted everywhere */
   val jobDeletionRegistered : Int = 90
@@ -44,7 +44,7 @@ class Constants {
   /** Sweeps at this time after server start */
   val userDeletionDelay         : FiniteDuration = 70 minutes
   /** Sweeps in this interval */
-  val userDeletionInterval      : FiniteDuration = 3 hours
+  val userDeletionInterval      : FiniteDuration =  3 hours
   /** Sending an eMail to the user this many days before the deletion */
   val userDeletionWarning       : Int = 14 //days
   /** Deletes regular accounts after this time frame */
@@ -53,6 +53,19 @@ class Constants {
   val userDeletingRegisterEmail : Int =  3 //days
   /** Deletes registered accounts after this time frame */
   val userDeletingRegistered    : Int = 24 //months
+
+  // Polling and cluster load checking settings
+  /** Interval of the qstat requests */
+  val pollingInterval       : FiniteDuration =  5 seconds
+
+  /** Maximum amount of strikes a job may have before it is set to the Error state */
+  val pollingMaximumStrikes : Int            = 10 // strikes
+
+  /** The marker for 100% load capacity */
+  val loadPercentageMarker : Int = 32 // Jobs
+
+  /** Amount of elements stored in a load log record */
+  val loadRecordElements : Int = 20 // elements
 }
 
 trait ExitCodes {

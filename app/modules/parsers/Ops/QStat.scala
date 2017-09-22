@@ -21,7 +21,9 @@ object QStat {
 
   // QStat Job objects contain the sge job ID, the state of the job and the time of the last event
   case class QStatJob(sgeID : String, state : String, date : ZonedDateTime) {
+    val isQueued  : Boolean = state.contains("qw")
     val isStarted : Boolean = state.contains("r")
+    val hasFailed : Boolean = state.contains("E")
   }
 
   // Parser for QStatJobs

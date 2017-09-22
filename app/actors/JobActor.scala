@@ -53,7 +53,6 @@ object JobActor {
   case class StartJob(jobID: String)
 
   trait Factory {
-
     def apply(@Assisted("jobActorNumber") jobActorNumber : Int): Actor
   }
 
@@ -109,15 +108,15 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     extends Actor {
 
   // Attributes asssocidated with a Job
-  private var currentJobs: Map[String, Job]                           = Map.empty[String, Job]
-  private var currentJobLogs: Map[String, JobEventLog]                = Map.empty[String, JobEventLog]
-  private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty[String, ExecutionContext]
+  private var currentJobs              : Map[String, Job]              = Map.empty[String, Job]
+  private var currentJobLogs           : Map[String, JobEventLog]      = Map.empty[String, JobEventLog]
+  private var currentExecutionContexts : Map[String, ExecutionContext] = Map.empty[String, ExecutionContext]
 
-  private var currentJobStrikes        :Map[String, Int]              = Map.empty[String,Int]
+  private var currentJobStrikes        : Map[String, Int]              = Map.empty[String, Int]
 
   // long polling stuff
 
-  private val fetchLatestInterval = 1.seconds
+  private val fetchLatestInterval = 1 seconds
   private val Tick: Cancellable = {
     // scheduler should use the system dispatcher
     context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, UpdateLog2)(context.system.dispatcher)
@@ -344,7 +343,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         case Some(user) =>
           user.userData match {
             case Some(userData) =>
-              Logger.info("Sending EMail to owner: " + userData.eMail)
+              Logger.info(s"[JobActor[$jobActorNumber].sendJobUpdateMail] Sending eMail to job owner for job ${job.jobID}: Job is ${job.status.toString}")
               val eMail = JobFinishedMail(user, job)
               eMail.send
             case None =>
@@ -677,17 +676,19 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           // Update the job object
           val job = oldJob.copy(status = jobState)
           // Give a update message to all
-          Logger.info("Job State has changed to " + job.status.toString + " for the Job with the JobID " + job.jobID)
+          Logger.info(s"[JobActor[$jobActorNumber].JobStateChanged] State has changed to ${job.status.toString} for the Job with the JobID ${job.jobID}")
 
           // Dependent on the state, we have to do different things
           job.status match {
             case Done =>
               // Job is no longer running
-              Logger.info("Removing execution context")
+              Logger.info(s"[JobActor[$jobActorNumber].JobStateChanged] Removing execution context")
               this.runningExecutions = this.runningExecutions.-(job.jobID)
-              Logger.info("DONE Removing execution context")
+
               // Tell the user that their job finished via eMail
               sendJobUpdateMail(job)
+
+              // TODO refactor the result gathering
               val result = (constants.jobPath / job.jobID / "results").list
                 .withFilter(_.hasExtension)
                 .withFilter(_.extension.get == ".json")
@@ -746,7 +747,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           //Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} with sgeID ${clusterData.sgeID}: ${if(jobInCluster) "active" else "inactive"}")
           if(!job.isFinished && !jobInCluster) {
             val strikes = this.currentJobStrikes.getOrElse(job.jobID, 0) + 1
-            if (strikes >= 1000) {
+            if (strikes >= constants.pollingMaximumStrikes) {
               this.currentJobStrikes = this.currentJobStrikes.filter(_._1 != job.jobID)
               self ! JobStateChanged(job.jobID, Error)
             } else {
