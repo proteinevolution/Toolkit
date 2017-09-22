@@ -120,5 +120,5 @@ interface JobData {
 declare class Job {
     jobID : string;
     toolnameLong : string;
-    status : Number
+    state : Number
 }

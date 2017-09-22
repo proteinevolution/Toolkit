@@ -40,7 +40,7 @@ case class Job(mainID       : BSONObjectID           = BSONObjectID.generate, //
   def cleaned(): JsObject = {
     Json.obj(
       Job.JOBID        -> jobID,
-      Job.STATE       -> state,
+      Job.STATEOUT     -> state,
       Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli),
       Job.TOOL         -> tool,
       Job.TOOLNAMELONG -> ConfigFactory.load().getString(s"Tools.$tool.longname")
@@ -55,7 +55,7 @@ case class Job(mainID       : BSONObjectID           = BSONObjectID.generate, //
   def jobManagerJob(): JsObject = {
     Json.obj(
       Job.JOBID        -> jobID,
-      Job.STATE       -> state,
+      Job.STATEOUT     -> state,
       Job.TOOL         -> tool,
       Job.COMMENTLIST  -> commentList.length,
       Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli),
@@ -100,6 +100,7 @@ object Job {
   val OWNERID      = "ownerID" //              ID of the job owner
   val OWNER        = "owner" //              Name of the job owner
   val STATE        = "status" //              Status of the job field
+  val STATEOUT     = "state"
   val EMAILUPDATE  = "emailUpdate" //              check if the user wants a notification when the job is done
   val DELETION     = "deletion" //              Deletion status flag
   val TOOL         = "tool" //              name of the tool field
@@ -163,7 +164,7 @@ object Job {
       PARENTID     -> job.parentID,
       JOBID        -> job.jobID,
       OWNERID      -> job.ownerID,
-      STATE       -> job.state,
+      STATE        -> job.state,
       EMAILUPDATE  -> job.emailUpdate,
       TOOL         -> job.tool,
       WATCHLIST    -> job.watchList,
@@ -187,7 +188,7 @@ object Job {
         parentID     = bson.getAs[BSONObjectID](PARENTID),
         jobID        = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
         ownerID      = bson.getAs[BSONObjectID](OWNERID),
-        state       = bson.getAs[JobState](STATE).getOrElse(Error),
+        state        = bson.getAs[JobState](STATE).getOrElse(Error),
         emailUpdate  = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
         tool         = bson.getAs[String](TOOL).getOrElse(""),
         watchList    = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
@@ -212,7 +213,7 @@ object Job {
         PARENTID     -> job.parentID,
         JOBID        -> job.jobID,
         OWNERID      -> job.ownerID,
-        STATE       -> job.state,
+        STATE        -> job.state,
         EMAILUPDATE  -> job.emailUpdate,
         TOOL         -> job.tool,
         WATCHLIST    -> job.watchList,

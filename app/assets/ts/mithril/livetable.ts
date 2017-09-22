@@ -87,7 +87,7 @@ class LiveTable {
     static view (ctrl : any, args : any) : any {
         let trafficBarStatus: any;
         if(LiveTable.lastJob != null) {
-            switch (LiveTable.lastJob.status) {
+            switch (LiveTable.lastJob.state) {
                 case 2:
                     trafficBarStatus = "queue";
                     break;
