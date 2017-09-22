@@ -424,7 +424,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       * Checks the jobHashDB for matches and generates one for the job if there are none.
       */
     case CheckJobHashes(jobID) =>
-      Logger.info("JobID " + jobID + " will now be hashed.")
+      Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] Job with jobID $jobID will now be hashed.")
       this.getCurrentJob(jobID).foreach {
         case Some(job) =>
           this.getCurrentExecutionContext(jobID) match {
@@ -432,12 +432,11 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               // Ensure that the jobID is not being hashed
               val params  = executionContext.reloadParams
               val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
-              Logger.info("JobHash: " + jobHash.toString)
+              Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobHash: " + jobHash.toString)
               // Match the hash
               jobDao.matchHash(jobHash).map { richSearchResponse =>
-                Logger.info("Retrieved richSearchResponse")
-                Logger.info("success: " + richSearchResponse.getHits.getHits.map(_.getId).mkString(", "))
-                Logger.info("hits: " + richSearchResponse.totalHits)
+                Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] Retrieved richSearchResponse with ${richSearchResponse.totalHits} hits.")
+                Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] success: ${richSearchResponse.getHits.getHits.map(_.getId).mkString(", ")}")
 
                 // Generate a list of hits and convert them into a list of future option jobs
                 val mainIDs = richSearchResponse.getHits.getHits.toList.map { hit =>
@@ -445,22 +444,25 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 }
 
                 // Find the Jobs in the Database
-                mongoStore.findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
-                  if (jobList.exists(_.status == Done)) {
-                    Logger.info("JobID " + jobID + " is a duplicate.")
+                mongoStore.findAndSortJobs(
+                  BSONDocument(Job.IDDB        -> BSONDocument("$in" -> mainIDs)),
+                  BSONDocument(Job.DATECREATED -> -1)
+                ).map { jobList =>
+                  jobList.find(_.status == Done) match {
+                    case Some(oldJob) =>
+                    Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID is a duplicate of ${oldJob.jobID}.")
                     self ! JobStateChanged(job.jobID, Pending)
-                  } else {
-                    Logger.info("JobID " + jobID + " will now be started.")
-                    mongoStore.hashCollection.flatMap(_.insert(jobHash))
+                    case None =>
+                    Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID will now be started.")
                     self ! CheckIPHash(job.jobID)
                   }
                 }
               }
             case None =>
-              Logger.error("[JobActor.CheckJobHashes] Could not recreate execution context for jobID " + jobID)
+              Logger.error(s"[JobActor[$jobActorNumber].CheckJobHashes] Could not recreate execution context for jobID " + jobID)
           }
         case None =>
-          Logger.error("[JobActor.CheckJobHashes] Could not find the jobID " + jobID + " in the Cache or DB.")
+          Logger.error(s"[JobActor[$jobActorNumber].CheckJobHashes] Could not find the jobID " + jobID + " in the Cache or DB.")
       }
 
     /**
@@ -471,17 +473,17 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       */
     case Delete(jobID, userIDOption) =>
       val verbose = true // just switch this on / off for logging
-      if (verbose) Logger.info(s"[JobActor.Delete] Received Delete for $jobID")
+      if (verbose) Logger.info(s"[JobActor[$jobActorNumber].Delete] Received Delete for $jobID")
       this.getCurrentJob(jobID).flatMap {
         case Some(job) => Future.successful(Some(job))
         case None =>
-          if (verbose) Logger.info(s"[JobActor.Delete] jobID $jobID not found in current jobs. Loading job from DB.")
+          if (verbose) Logger.info(s"[JobActor[$jobActorNumber].Delete] jobID $jobID not found in current jobs. Loading job from DB.")
           mongoStore.findJob(BSONDocument(Job.JOBID -> jobID))
       }.foreach{
         case Some(job) =>
           // Delete the job when the user is the owner and clear it otherwise
           if (userIDOption.isEmpty || userIDOption == job.ownerID) {
-            if (verbose) Logger.info(s"[JobActor.Delete] Found Job with ${job.jobID} - starting file deletion")
+            if (verbose) Logger.info(s"[JobActor[$jobActorNumber].Delete] Found Job with ${job.jobID} - starting file deletion")
             this.delete(job, verbose)
           } else {
             userIDOption match {
@@ -491,7 +493,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
             }
           }
         case None =>
-          Logger.error(s"[JobActor.Delete] Could not find job with JobID $jobID.")
+          Logger.error(s"[JobActor[$jobActorNumber].Delete] Could not find job with JobID $jobID.")
       }
 
     case CheckIPHash(jobID) =>
@@ -534,7 +536,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                     BSONDateTime(ZonedDateTime.now.minusMinutes(constants.maxJobsWithin).toInstant.toEpochMilli).toString
                   )
                   Logger.info(
-                    "IP " + job.IPHash + " has requested " + count + " jobs within the last " + constants.maxJobsWithin + " minute and " + countDay + " within the last 24 hours."
+                    s"[JobActor[$jobActorNumber].StartJob] IP ${job.IPHash} has requested $count jobs within the last ${constants.maxJobsWithin} minute and $countDay within the last 24 hours."
                   )
                   if (count <= constants.maxJobNum && countDay <= constants.maxJobNumDay) {
                     self ! StartJob(job.jobID)
@@ -558,7 +560,21 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         case Some(job) =>
           this.getCurrentExecutionContext(jobID) match {
             case Some(executionContext) =>
-              Logger.info("[JobActor.StartJob] reached. starting job " + jobID)
+              Logger.info(s"[JobActor[$jobActorNumber].StartJob] reached. starting job " + jobID)
+
+              // get the params
+              val params = executionContext.reloadParams
+              // generate job hash
+              val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
+              // Send job hash to the db
+              mongoStore.insertHash(jobHash).onComplete{
+                case Success(writeResult) =>
+                  Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID Hash ${if(!writeResult.ok) "not "}stored.")
+                case Failure(t) =>
+                  Logger.error(s"[JobActor[$jobActorNumber].CheckJobHashes] Error thrown: ${t.getMessage}")
+                case _ =>
+              }
+
               // Set memory allocation on the cluster and let the clusterMonitor define the multiplier.
               // To receive a catchable signal in an SGE job, one must set soft limits
               // in addition to hard limits; by definition "hard" means SIGKILL.
@@ -613,7 +629,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                       if (!executionContext.blocked) {
 
                         executionContext.accept(pendingExecution)
-                        Logger.info("[JobActor.StartJob] Running job now.")
+                        Logger.info(s"[JobActor[$jobActorNumber].StartJob] Running job now.")
                         this.runningExecutions =
                           this.runningExecutions.updated(job.jobID, executionContext.executeNext.run())
                       }
@@ -624,14 +640,14 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
                     self ! JobStateChanged(job.jobID, Prepared)
                   case None =>
-                    Logger.error("[JobActor.StartJob] Job could not be written to DB: " + jobID)
+                    Logger.error(s"[JobActor[$jobActorNumber].StartJob] Job could not be written to DB: " + jobID)
                 }
             //env.remove(s"MEMORY")
             //env.remove(s"THREADS")
             case None =>
           }
         case None =>
-          Logger.error("[JobActor.StartJob] Job not found in DB: " + jobID)
+          Logger.error(s"[JobActor[$jobActorNumber].StartJob] Job not found in DB: " + jobID)
       }
 
     // User Starts watching job

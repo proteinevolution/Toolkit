@@ -183,8 +183,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
   }
 
   /**
-    * TODO implement me
-    *
+    * Generates the job hash for the given jobID and looks it up in the DB.
     * @param jobID
     * @return
     */
@@ -192,6 +191,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     userSessions.getUser.flatMap { user =>
       mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).flatMap {
         case Some(job) =>
+          // Reload the paramaters of the file
           val params: Map[String, String] = {
             val ois = new ObjectInputStream(
               new FileInputStream((constants.jobPath / jobID / constants.serializedParam).pathAsString)
@@ -200,32 +200,30 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
             ois.close()
             x
           }
+          // Generate the job hash
           val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
           // Match the hash
           jobDao.matchHash(jobHash).flatMap { richSearchResponse =>
-            // Generate a list of hits and convert them into a list of future option jobs
-            val mainIDs = richSearchResponse.getHits.getHits.toList.map { hit =>
-              BSONObjectID.parse(hit.getId).getOrElse(BSONObjectID.generate())
-            }
+            // Get the
+            val mainIDs : List[BSONObjectID] =
+              richSearchResponse.getHits.getHits.toList.flatMap(hit => BSONObjectID.parse(hit.getId).toOption)
 
-            Logger.info(mainIDs.map(_.stringify).mkString(", "))
+            Logger.info(s"[CheckHash] Found mainIDs: ${mainIDs.map(_.stringify).mkString(", ")}")
             // Find the Jobs in the Database
-            mongoStore.findJobs(BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs))).map { jobList =>
-              val foundMainIDs   = jobList.map(_.mainID)
-              val unFoundMainIDs = mainIDs.filterNot(checkMainID => foundMainIDs contains checkMainID)
-              val jobsFiltered   = jobList.filter(_.status == Done)
-              val oldJob = jobsFiltered.maxBy(_.dateCreated.getOrElse(ZonedDateTime.now.minusYears(10)).toInstant.toEpochMilli)
-
-              // Delete index-zombie jobs
-              unFoundMainIDs.foreach { mainID =>
-                Logger.info("[WARNING]: job in index but not in database: " + mainID.stringify)
-                jobDao.deleteJob(mainID.stringify)
+            mongoStore.findAndSortJobs(
+              BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs)),
+              BSONDocument(Job.DATECREATED -> -1)
+            ).map { jobList =>
+              jobList.find(_.status == Done) match {
+                case Some(latestOldJob) =>
+                  Ok(
+                    Json.toJson(
+                      Json.obj("jobID" -> latestOldJob.jobID, "dateCreated" -> latestOldJob.dateCreated.get.toInstant.toEpochMilli)
+                    )
+                  )
+                case None =>
+                  NotFound
               }
-              Ok(
-                Json.toJson(
-                  Json.obj("jobID" -> oldJob.jobID, "dateCreated" -> oldJob.dateCreated.get.toInstant.toEpochMilli)
-                )
-              )
             }
           }
       }
