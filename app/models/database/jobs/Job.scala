@@ -40,7 +40,7 @@ case class Job(mainID       : BSONObjectID           = BSONObjectID.generate, //
   def cleaned(): JsObject = {
     Json.obj(
       Job.JOBID        -> jobID,
-      Job.STATEOUT     -> state,
+      Job.STATE        -> state,
       Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli),
       Job.TOOL         -> tool,
       Job.TOOLNAMELONG -> ConfigFactory.load().getString(s"Tools.$tool.longname")
@@ -55,7 +55,7 @@ case class Job(mainID       : BSONObjectID           = BSONObjectID.generate, //
   def jobManagerJob(): JsObject = {
     Json.obj(
       Job.JOBID        -> jobID,
-      Job.STATEOUT     -> state,
+      Job.STATE        -> state,
       Job.TOOL         -> tool,
       Job.COMMENTLIST  -> commentList.length,
       Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli),
@@ -99,8 +99,8 @@ object Job {
   val PROJECT      = "project" //              project id
   val OWNERID      = "ownerID" //              ID of the job owner
   val OWNER        = "owner" //              Name of the job owner
-  val STATE        = "status" //              Status of the job field
-  val STATEOUT     = "state"
+  val STATUS       = "status" //              Status of the job field
+  val STATE        = "state"
   val EMAILUPDATE  = "emailUpdate" //              check if the user wants a notification when the job is done
   val DELETION     = "deletion" //              Deletion status flag
   val TOOL         = "tool" //              name of the tool field
@@ -126,7 +126,7 @@ object Job {
           val jobID        = (obj \ JOBID).asOpt[String]
           val ownerID      = (obj \ OWNERID).asOpt[String]
           val project      = (obj \ PROJECT).asOpt[String]
-          val status       = (obj \ STATE).asOpt[JobState]
+          val state       = (obj \ STATE).asOpt[JobState]
           val tool         = (obj \ TOOL).asOpt[String]
           val label        = (obj \ LABEL).asOpt[String]
           val watchList    = (obj \ WATCHLIST).asOpt[List[String]]
@@ -143,7 +143,7 @@ object Job {
               parentID = None,
               jobID = "",
               ownerID = Some(BSONObjectID.generate()),
-              state = status.get,
+              state = state.get,
               tool = "",
               dateCreated = Some(datetimenow),
               dateUpdated = Some(datetimenow),
@@ -188,7 +188,7 @@ object Job {
         parentID     = bson.getAs[BSONObjectID](PARENTID),
         jobID        = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
         ownerID      = bson.getAs[BSONObjectID](OWNERID),
-        state        = bson.getAs[JobState](STATE).getOrElse(Error),
+        state        = bson.getAs[JobState](STATE).getOrElse(bson.getAs[JobState](STATUS).getOrElse(Error)),
         emailUpdate  = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
         tool         = bson.getAs[String](TOOL).getOrElse(""),
         watchList    = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),

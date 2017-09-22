@@ -85,26 +85,26 @@ class LiveTable {
         return {}
     }
     static view (ctrl : any, args : any) : any {
-        let trafficBarStatus: any;
+        let trafficBarState: any;
         if(LiveTable.lastJob != null) {
             switch (LiveTable.lastJob.state) {
                 case 2:
-                    trafficBarStatus = "queue";
+                    trafficBarState = "queue";
                     break;
                 case 3:
-                    trafficBarStatus = "running";
+                    trafficBarState = "running";
                     break;
                 case 4:
-                    trafficBarStatus = "error";
+                    trafficBarState = "error";
                     break;
                 case 5:
-                    trafficBarStatus = "done";
+                    trafficBarState = "done";
                     break;
                 default:
-                    trafficBarStatus = "not_init";
+                    trafficBarState = "not_init";
                     break;
             }
-        } else trafficBarStatus = "not_init";
+        } else trafficBarState = "not_init";
         return m('div', [
             //m('div', {"class" : "clusterLoad column large-4"}, ""),
             m('table', {"class" : "liveTable"}, [
@@ -120,7 +120,7 @@ class LiveTable {
                 )
             ]),
             m("div", { id: "trafficbar",
-                       "class": ("trafficbar " + trafficBarStatus),
+                       "class": ("trafficbar " + trafficBarState),
                        config: trafficBarConfig(LiveTable.lastJob),
                        onclick: function () { m.route("/jobs/" + LiveTable.lastJob.jobID); }
             })
