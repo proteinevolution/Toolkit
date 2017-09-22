@@ -1,23 +1,23 @@
 #!/bin/bash
-
-
+# get the jobID
+JOBID=$(basename $(dirname $(pwd)))
+# initialize the sgeID
+SGEID=""
+# get the Hostname of this server
 HOSTNAME=$(hostname)
 # get key for job status update to job folder
 key=`date | md5sum | awk '{print $1}'`
-
+# return the current key
 echo $key > ../key
 if [ "$HOSTNAME" = "olt" ] || [ "$HOSTNAME" = "rye" ]; then
 
-
 # update process log
 updateProcessLog () {
-    until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content); do
+    until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/updateLog/$JOBID); do
         printf 'host unreachable\n...waiting to update process log\n'
         sleep 5
     done
 }
-
-JOBID=$(basename $(dirname $(pwd)))
 
 until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/queued/$JOBID/$key); do
     printf 'host unreachable\n...waiting to set job status to queued\n'
@@ -49,6 +49,17 @@ elif [ "$HOSTNAME" = "rye" ]
                %r > jobIDCluster
   fi
 
+# Grab the sge ID from the generated file
+if [ -e jobIDCluster ]
+then
+    SGEID=$(<jobIDCluster)
+fi
+
+# Set sge id in the Toolkit
+until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/sge/$JOBID/$SGEID/$key); do
+    printf 'host unreachable\n...waiting to retrieve sge id\n'
+    sleep 5
+done
 
 # Write the file to delete the execution. This is necessary for the Toolkit being able to delete the job from the gridengine
 echo "#!/bin/bash" > delete.sh
