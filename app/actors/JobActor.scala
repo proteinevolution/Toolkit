@@ -309,7 +309,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.state)
           case None =>
             JobEventLog(mainID = job.mainID,
-                        toolName = job.tool,
+                        tool = job.tool,
                         events = List(JobEvent(job.state, Some(ZonedDateTime.now))))
         }
         this.currentJobLogs = this.currentJobLogs.updated(job.jobID, jobLog)
@@ -376,7 +376,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         this.currentJobLogs =
           this.currentJobLogs.updated(job.jobID,
                                       JobEventLog(mainID = job.mainID,
-                                                  toolName = job.tool,
+                                                  tool = job.tool,
                                                   internalJob = isInternalJob,
                                                   events = List(JobEvent(job.state, Some(ZonedDateTime.now)))))
 
