@@ -182,7 +182,7 @@ case class JobFinishedMail(userParam: User, job: Job) extends MailTemplate {
   val user: User = userParam
 
   def statusMessage: String = {
-    job.status match {
+    job.state match {
       case Done  => "your job has finished successfully. You can now look at the results."
       case Error => "your job has failed. Please check all parameters and see if you find any issues."
       case _     => "your job has changed state."
