@@ -48,16 +48,26 @@ let JobPendingComponent = {
                             if (data != null && data.jobID != null) {
                                 m.route("/jobs/"+data.jobID);
                                 JobListComponent.reloadJob(data.jobID);
-
-                                console.log("DELETE",args.job().jobID);
-                                m.request({ url: "/api/job/" + args.job().jobID, method: "DELETE" }).then(function(){
-                                    JobManager.removeFromTable(args.job().jobID);
-                                });
                             }
                             console.log("requested:",data);
                         }, function(error) {console.log(error)}).catch(function(e) {});
                     }
-                }, "Load existing job")
+                }, "Load existing job"),
+                m("button",{ "class" : "hashPrompt button submitJob",
+                    config: enabled,
+                    onclick : function(e : any){
+                        e.preventDefault();
+                        let route = jsRoutes.controllers.JobController.checkHash(args.job().jobID);
+                        m.request({method:route.method, url:route.url, extract: nonJsonErrors}).then(function(data : any){
+                            if (data != null && data.jobID != null) {
+                                JobListComponent.removeJob(args.job().jobID, true, true);
+                                m.route("/jobs/"+data.jobID);
+                                JobListComponent.reloadJob(data.jobID);
+                            }
+                            console.log("requested:",data);
+                        }, function(error) {console.log(error)}).catch(function(e) {});
+                    }
+                }, "Load existing job and delete this one")
             ]),
             m("div", {"class": "processJobIdContainer"},
             )
