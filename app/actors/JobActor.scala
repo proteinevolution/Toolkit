@@ -433,21 +433,11 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               val params  = executionContext.reloadParams
               val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
               Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobHash: " + jobHash.toString)
-              // Match the hash
-              jobDao.matchHash(jobHash).map { richSearchResponse =>
-                Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] Retrieved richSearchResponse with ${richSearchResponse.totalHits} hits.")
-                Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] success: ${richSearchResponse.getHits.getHits.map(_.getId).mkString(", ")}")
-
-                // Generate a list of hits and convert them into a list of future option jobs
-                val mainIDs = richSearchResponse.getHits.getHits.toList.map { hit =>
-                  BSONObjectID.parse(hit.getId).getOrElse(BSONObjectID.generate())
-                }
-
                 // Find the Jobs in the Database
                 mongoStore.findAndSortJobs(
-                  BSONDocument(Job.IDDB        -> BSONDocument("$in" -> mainIDs)),
+                  BSONDocument(Job.JOBHASH     -> jobHash.toHash),
                   BSONDocument(Job.DATECREATED -> -1)
-                ).map { jobList =>
+                ).foreach { jobList =>
                   jobList.find(_.status == Done) match {
                     case Some(oldJob) =>
                     Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID is a duplicate of ${oldJob.jobID}.")
@@ -457,7 +447,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                     self ! CheckIPHash(job.jobID)
                   }
                 }
-              }
             case None =>
               Logger.error(s"[JobActor[$jobActorNumber].CheckJobHashes] Could not recreate execution context for jobID " + jobID)
           }
@@ -569,7 +558,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               // Send job hash to the db
               mongoStore.insertHash(jobHash).onComplete{
                 case Success(writeResult) =>
-                  Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID Hash ${if(!writeResult.ok) "not "}stored.")
+                  Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID Hash ${if(writeResult.ok) "" else "not "}stored.")
                 case Failure(t) =>
                   Logger.error(s"[JobActor[$jobActorNumber].CheckJobHashes] Error thrown: ${t.getMessage}")
                 case _ =>
@@ -602,11 +591,10 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               val clusterData = JobClusterData("", Some(h_vmem), Some(threads), Some(h_rt))
 
               mongoStore
-                .modifyJob(BSONDocument(Job.IDDB -> job.mainID),
-                           BSONDocument(
-                             "$set" ->
-                             BSONDocument(Job.CLUSTERDATA -> clusterData)
-                           ))
+                .modifyJob(
+                  BSONDocument(Job.IDDB -> job.mainID),
+                  BSONDocument("$set"   -> BSONDocument(Job.CLUSTERDATA -> clusterData, Job.JOBHASH -> jobHash.toHash))
+                )
                 .foreach {
                   case Some(updatedJob) =>
                     // Get new runscript instance from the runscript manager
