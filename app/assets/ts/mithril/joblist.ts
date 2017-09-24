@@ -182,9 +182,9 @@ window.JobListComponent = {
             JobListComponent.list[index] = newJob;              // Job is not new, update it
         } else {
             JobListComponent.list.push(newJob);                 // Job is new, push it to the list
-            JobListComponent.sortList();                        // Sort the list with the current sorting mode
             JobListComponent.register([newJob.jobID]);
         }
+        JobListComponent.sortList();                            // Sort the list with the current sorting mode
         if (newJob.jobID === JobListComponent.selectedJobID) {  // Since the job is selected
             index = this.getJobIndex(newJob.jobID);             // find the new index of the job,
             m.route("/jobs/" + newJob.jobID);                   // actualize the content view and
