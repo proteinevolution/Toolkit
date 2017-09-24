@@ -10,8 +10,8 @@ import reactivemongo.bson._
 import reactivemongo.play.json._
 
 case class Job(mainID       : BSONObjectID           = BSONObjectID.generate, // ID of the Job in the System
-               parentID     : Option[BSONObjectID]   = None,                  // ID of the Parent Job
                jobID        : String,                              // User visible ID of the Job
+               jobHash      : String                 = "",
                ownerID      : Option[BSONObjectID]   = None,       // User to whom the Job belongs
                isPublic     : Boolean                = false,
                status       : JobState               = Submitted,  // Status of the Job
@@ -94,8 +94,8 @@ object Job {
   // Constants for the JSON object identifiers
   val ID           = "id" // name for the ID in scala
   val IDDB         = "_id" //              ID in MongoDB
-  val PARENTID     = "parentID" //              ID of the parent job
   val JOBID        = "jobID" //              ID for the job
+  val JOBHASH      = "jobHash"
   val PROJECT      = "project" //              project id
   val OWNERID      = "ownerID" //              ID of the job owner
   val OWNER        = "owner" //              Name of the job owner
@@ -121,7 +121,6 @@ object Job {
       case obj: JsObject =>
         try {
           val mainID       = (obj \ ID).asOpt[String]
-          val parentID     = (obj \ PARENTID).asOpt[String]
           val jobID        = (obj \ JOBID).asOpt[String]
           val ownerID      = (obj \ OWNERID).asOpt[String]
           val project      = (obj \ PROJECT).asOpt[String]
@@ -139,7 +138,6 @@ object Job {
           JsSuccess(
             Job(
               mainID = BSONObjectID.generate(),
-              parentID = None,
               jobID = "",
               ownerID = Some(BSONObjectID.generate()),
               status = status.get,
@@ -160,8 +158,8 @@ object Job {
   implicit object JobWrites extends Writes[Job] {
     def writes(job: Job): JsObject = Json.obj(
       IDDB         -> job.mainID,
-      PARENTID     -> job.parentID,
       JOBID        -> job.jobID,
+      JOBHASH      -> job.jobHash,
       OWNERID      -> job.ownerID,
       STATUS       -> job.status,
       EMAILUPDATE  -> job.emailUpdate,
@@ -184,8 +182,8 @@ object Job {
     def read(bson: BSONDocument): Job = {
       Job(
         mainID       = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
-        parentID     = bson.getAs[BSONObjectID](PARENTID),
         jobID        = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
+        jobHash      = bson.getAs[String](JOBHASH).getOrElse(""),
         ownerID      = bson.getAs[BSONObjectID](OWNERID),
         status       = bson.getAs[JobState](STATUS).getOrElse(Error),
         emailUpdate  = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
@@ -209,8 +207,8 @@ object Job {
     def write(job: Job): BSONDocument = {
       BSONDocument(
         IDDB         -> job.mainID,
-        PARENTID     -> job.parentID,
         JOBID        -> job.jobID,
+        JOBHASH      -> job.jobHash,
         OWNERID      -> job.ownerID,
         STATUS       -> job.status,
         EMAILUPDATE  -> job.emailUpdate,

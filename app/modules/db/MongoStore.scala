@@ -48,6 +48,17 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
     hashCollection.flatMap(_.update(selector, jobHash, upsert = true))
   }
 
+  /**
+    * Returns a list of matching jobHashes
+    * @param jobHash
+    * @return
+    */
+  def findHash(jobHash : JobHash) : Future[List[JobHash]] = {
+    val selector = jobHash.selector
+    Logger.info(s"Find BSONDocument: ${selector.elements.map(a => s"${a.name}:${a.value.toString}").mkString(", ")}")
+    jobCollection.map(_.find(selector).cursor[JobHash]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[JobHash]]()))
+  }
+
   /*
    *                Article Collection
    */
