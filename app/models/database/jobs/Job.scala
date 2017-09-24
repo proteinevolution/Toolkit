@@ -10,16 +10,16 @@ import reactivemongo.bson._
 import reactivemongo.play.json._
 
 case class Job(mainID       : BSONObjectID           = BSONObjectID.generate, // ID of the Job in the System
-               jobID        : String,                              // User visible ID of the Job
-               jobHash      : String                 = "",
-               ownerID      : Option[BSONObjectID]   = None,       // User to whom the Job belongs
-               isPublic     : Boolean                = false,
-               status       : JobState               = Submitted,  // Status of the Job
-               emailUpdate  : Boolean                = false,      // Owner wants to be notified when the job is ready
-               tool         : String,                              // Tool used for this Job
-               watchList    : List[BSONObjectID]     = List.empty, // List of the users who watch this job, None if not public
-               commentList  : List[BSONObjectID]     = List.empty, // List of comment IDs for the Job
-               clusterData  : Option[JobClusterData] = None,       // Cluster Data
+               jobID        : String,                                         // User visible ID of the Job
+               hash         : String                 = "",                    // Non unique ID to identify duplicate jobs
+               ownerID      : Option[BSONObjectID]   = None,                  // User to whom the Job belongs
+               isPublic     : Boolean                = false,                 // User wants this job to be public
+               status       : JobState               = Submitted,             // Status of the Job
+               emailUpdate  : Boolean                = false,                 // Owner wants to be notified when the job is ready
+               tool         : String,                                         // Tool used for this Job
+               watchList    : List[BSONObjectID]     = List.empty,            // List of the users who watch this job, None if not public
+               commentList  : List[BSONObjectID]     = List.empty,            // List of comment IDs for the Job
+               clusterData  : Option[JobClusterData] = None,                  // Cluster Data
                dateCreated  : Option[ZonedDateTime]  = Some(ZonedDateTime.now), // Creation time of the Job
                dateUpdated  : Option[ZonedDateTime]  = Some(ZonedDateTime.now), // Last Updated on
                dateViewed   : Option[ZonedDateTime]  = Some(ZonedDateTime.now), // Last Viewed on
@@ -95,7 +95,7 @@ object Job {
   val ID           = "id" // name for the ID in scala
   val IDDB         = "_id" //              ID in MongoDB
   val JOBID        = "jobID" //              ID for the job
-  val JOBHASH      = "jobHash"
+  val HASH         = "hash"
   val PROJECT      = "project" //              project id
   val OWNERID      = "ownerID" //              ID of the job owner
   val OWNER        = "owner" //              Name of the job owner
@@ -159,7 +159,7 @@ object Job {
     def writes(job: Job): JsObject = Json.obj(
       IDDB         -> job.mainID,
       JOBID        -> job.jobID,
-      JOBHASH      -> job.jobHash,
+      HASH         -> job.hash,
       OWNERID      -> job.ownerID,
       STATUS       -> job.status,
       EMAILUPDATE  -> job.emailUpdate,
@@ -183,7 +183,7 @@ object Job {
       Job(
         mainID       = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         jobID        = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
-        jobHash      = bson.getAs[String](JOBHASH).getOrElse(""),
+        hash         = bson.getAs[String](HASH).getOrElse(""),
         ownerID      = bson.getAs[BSONObjectID](OWNERID),
         status       = bson.getAs[JobState](STATUS).getOrElse(Error),
         emailUpdate  = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
@@ -208,7 +208,7 @@ object Job {
       BSONDocument(
         IDDB         -> job.mainID,
         JOBID        -> job.jobID,
-        JOBHASH      -> job.jobHash,
+        HASH         -> job.hash,
         OWNERID      -> job.ownerID,
         STATUS       -> job.status,
         EMAILUPDATE  -> job.emailUpdate,
