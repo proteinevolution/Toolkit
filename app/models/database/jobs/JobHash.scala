@@ -5,7 +5,8 @@ import java.time.ZonedDateTime
 import better.files._
 import models.search.JobDAO
 import modules.tel.env.Env
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID }
+import play.Logger
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID}
 import util.ZonedDateTimeHelper
 
 /**
@@ -25,11 +26,41 @@ case class JobHash(mainID: BSONObjectID,
                    toolHash: String,
                    dateCreated: Option[ZonedDateTime],
                    jobID: String) {
-
+  /**
+    * Returns a formatted string with all the information being human readable
+    * @return
+    */
   override def toString: String = {
-    "\nmainID: " + mainID.stringify + "\nJobHash: " + inputHash + "\nrsHash: " + runscriptHash +
-    "\ndbName: " + dbName + "\ndbMtime: " + dbMtime + "\nTool: " + toolName + "\ntoolHash: " + toolHash +
-    "\ndateCreated: " + dateCreated + "\njobID: " + jobID
+    s"""--[Job Hash Object]--
+       |mainID:   ${mainID.stringify}
+       |jobID:    $jobID
+       |JobHash:  $inputHash
+       |rsHash:   $runscriptHash
+       |dbName:   $dbName
+       |dbMtime:  $dbMtime
+       |tool:     $toolName
+       |toolHash: $toolHash
+       |dateCreated: $dateCreated
+       |--[Job Hash Object end]--""".stripMargin
+  }
+
+  /**
+    * Generates the selector for the job hash
+    * @return
+    */
+  def selector : BSONDocument = {
+    BSONDocument(
+      JobHash.INPUTHASH     -> inputHash,
+      JobHash.RUNSCRIPTHASH -> runscriptHash,
+      JobHash.DBNAME        -> dbName,
+      JobHash.DBMTIME       -> dbMtime,
+      JobHash.TOOLNAME      -> toolName,
+      JobHash.TOOLHASH      -> toolHash
+    )
+  }
+
+  def toHash : String = {
+    s"$inputHash $runscriptHash $dbName $dbMtime $toolName $toolHash"
   }
 }
 
