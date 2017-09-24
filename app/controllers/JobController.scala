@@ -223,7 +223,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                   )
                 case None =>
                   NotFound
-
               }
             }
           }

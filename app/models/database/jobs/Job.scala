@@ -126,7 +126,7 @@ object Job {
           val jobID        = (obj \ JOBID).asOpt[String]
           val ownerID      = (obj \ OWNERID).asOpt[String]
           val project      = (obj \ PROJECT).asOpt[String]
-          val state       = (obj \ STATE).asOpt[JobState]
+          val state        = (obj \ STATE).asOpt[JobState]
           val tool         = (obj \ TOOL).asOpt[String]
           val label        = (obj \ LABEL).asOpt[String]
           val watchList    = (obj \ WATCHLIST).asOpt[List[String]]
