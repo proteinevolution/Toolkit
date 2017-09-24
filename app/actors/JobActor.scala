@@ -95,7 +95,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                          env: Env, // To supply the runscripts with an environment
                          implicit val mailerClient: MailerClient,
                          val jobDao: JobDAO,
-                         qdel: Qdel,
                          mongoStore: MongoStore,
                          userSessions: UserSessions,
                          wrapperExecutionFactory: WrapperExecutionFactory,
@@ -258,8 +257,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     val now : ZonedDateTime = ZonedDateTime.now
     if (verbose) Logger.info(s"[JobActor.Delete] Deletion of job folder for jobID ${job.jobID} is done")
     s"${constants.jobPath}${job.jobID}".toFile.delete(true)
-    if (verbose) Logger.info("[JobActor.Delete] Removing Job from Elastic Search.")
-    jobDao.deleteJob(job.mainID.stringify) // Remove job from elastic search
     if (verbose) Logger.info("[JobActor.Delete] Removing Job from current Jobs.")
     this.removeJob(job.jobID) // Remove the job from the current job map
     // Message user clients to remove the job from their watchlist
@@ -398,8 +395,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         if (isComplete(validParameters)) {
           // When the user wants to force the job to start without job hash check, then this will jump right to prepared
           if (startJob) {
-            val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
-            mongoStore.hashCollection.flatMap(_.insert(jobHash))
             self ! CheckIPHash(job.jobID)
           } else {
             Logger.info("JobID " + job.jobID + " will now be hashed.")
@@ -431,23 +426,13 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
             case Some(executionContext) =>
               // Ensure that the jobID is not being hashed
               val params  = executionContext.reloadParams
-              val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
-              Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobHash: " + jobHash.toString)
-              // Match the hash
-              jobDao.matchHash(jobHash).map { richSearchResponse =>
-                Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] Retrieved richSearchResponse with ${richSearchResponse.totalHits} hits.")
-                Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] success: ${richSearchResponse.getHits.getHits.map(_.getId).mkString(", ")}")
-
-                // Generate a list of hits and convert them into a list of future option jobs
-                val mainIDs = richSearchResponse.getHits.getHits.toList.map { hit =>
-                  BSONObjectID.parse(hit.getId).getOrElse(BSONObjectID.generate())
-                }
-
+              val jobHash = jobDao.generateJobHash(job, params, env)
+              Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] Job hash: " + jobHash)
                 // Find the Jobs in the Database
                 mongoStore.findAndSortJobs(
-                  BSONDocument(Job.IDDB        -> BSONDocument("$in" -> mainIDs)),
+                  BSONDocument(Job.HASH        -> jobHash),
                   BSONDocument(Job.DATECREATED -> -1)
-                ).map { jobList =>
+                ).foreach { jobList =>
                   jobList.find(_.status == Done) match {
                     case Some(oldJob) =>
                     Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID is a duplicate of ${oldJob.jobID}.")
@@ -457,7 +442,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                     self ! CheckIPHash(job.jobID)
                   }
                 }
-              }
             case None =>
               Logger.error(s"[JobActor[$jobActorNumber].CheckJobHashes] Could not recreate execution context for jobID " + jobID)
           }
@@ -565,15 +549,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               // get the params
               val params = executionContext.reloadParams
               // generate job hash
-              val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
-              // Send job hash to the db
-              mongoStore.insertHash(jobHash).onComplete{
-                case Success(writeResult) =>
-                  Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID Hash ${if(!writeResult.ok) "not "}stored.")
-                case Failure(t) =>
-                  Logger.error(s"[JobActor[$jobActorNumber].CheckJobHashes] Error thrown: ${t.getMessage}")
-                case _ =>
-              }
+              val jobHash = jobDao.generateJobHash(job, params, env)
 
               // Set memory allocation on the cluster and let the clusterMonitor define the multiplier.
               // To receive a catchable signal in an SGE job, one must set soft limits
@@ -602,11 +578,10 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               val clusterData = JobClusterData("", Some(h_vmem), Some(threads), Some(h_rt))
 
               mongoStore
-                .modifyJob(BSONDocument(Job.IDDB -> job.mainID),
-                           BSONDocument(
-                             "$set" ->
-                             BSONDocument(Job.CLUSTERDATA -> clusterData)
-                           ))
+                .modifyJob(
+                  BSONDocument(Job.IDDB -> job.mainID),
+                  BSONDocument("$set"   -> BSONDocument(Job.CLUSTERDATA -> clusterData, Job.HASH -> jobHash))
+                )
                 .foreach {
                   case Some(updatedJob) =>
                     // Get new runscript instance from the runscript manager
