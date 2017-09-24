@@ -4,9 +4,9 @@ import java.time.ZonedDateTime
 import javax.inject.{Inject, Singleton}
 
 import models.database.CMS.FeaturedArticle
-import models.database.jobs.{FrontendJob, Job, JobHash}
-import models.database.statistics.{ClusterLoadEvent, JobEventLog, StatisticsObject, ToolStatistic}
-import models.database.users.{User, UserData}
+import models.database.jobs.{FrontendJob, Job}
+import models.database.statistics.{ClusterLoadEvent, JobEventLog, StatisticsObject}
+import models.database.users.User
 import play.api.Logger
 import play.api.libs.json.JsValue
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
@@ -25,40 +25,6 @@ import scala.language.postfixOps
   */
 @Singleton
 final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends ReactiveMongoComponents {
-  /* Hash collections */
-  lazy val hashCollection: Future[BSONCollection] =
-    reactiveMongoApi.database.map(_.collection[BSONCollection]("jobhashes"))
-
-  /**
-    * Inserts a jobHash object in the hash collection
-    * @param jobHash
-    * @return
-    */
-  def insertHash(jobHash : JobHash) : Future[WriteResult] = {
-    hashCollection.flatMap(_.insert(jobHash))
-  }
-
-  /**
-    * Updates a hash by upserting a hashing object
-    * @param jobHash
-    * @return
-    */
-  def updateHash(jobHash : JobHash) : Future[WriteResult] = {
-    val selector : BSONDocument = BSONDocument(JobHash.ID -> jobHash.mainID)
-    hashCollection.flatMap(_.update(selector, jobHash, upsert = true))
-  }
-
-  /**
-    * Returns a list of matching jobHashes
-    * @param jobHash
-    * @return
-    */
-  def findHash(jobHash : JobHash) : Future[List[JobHash]] = {
-    val selector = jobHash.selector
-    Logger.info(s"Find BSONDocument: ${selector.elements.map(a => s"${a.name}:${a.value.toString}").mkString(", ")}")
-    jobCollection.map(_.find(selector).cursor[JobHash]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[JobHash]]()))
-  }
-
   /*
    *                Article Collection
    */
