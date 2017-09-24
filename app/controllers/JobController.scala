@@ -201,23 +201,24 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
             x
           }
           // Generate the job hash
-          val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
+          val jobHash = jobDao.generateJobHash(job, params, env)
           // Match the hash
           mongoStore.findAndSortJobs(
-            BSONDocument(Job.JOBHASH     -> jobHash.toHash),
+            BSONDocument(Job.HASH        -> jobHash),
             BSONDocument(Job.DATECREATED -> -1)
           ).map { jobList =>
-              jobList.find(_.status == Done) match {
-                case Some(latestOldJob) =>
-                  Ok(
-                    Json.toJson(
-                      Json.obj("jobID" -> latestOldJob.jobID, "dateCreated" -> latestOldJob.dateCreated.get.toInstant.toEpochMilli)
-                    )
+            jobList.find(_.status == Done) match {
+              case Some(latestOldJob) =>
+                Ok(Json.toJson(
+                  Json.obj(
+                    "jobID"       -> latestOldJob.jobID,
+                    "dateCreated" -> latestOldJob.dateCreated.get.toInstant.toEpochMilli
                   )
-                case None =>
-                  NotFound
-              }
+                ))
+              case None =>
+                NotFound
             }
+          }
       }
     }
   }
