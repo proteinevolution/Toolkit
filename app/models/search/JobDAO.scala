@@ -66,7 +66,7 @@ final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: Ru
     */
   def generateJobHash(job: Job, params: Map[String, String], env: Env) : String = {
     // filter unique parameters
-    val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid" - Job.IPHASH
+    val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid" - Job.IPHASH - "parentID"
 
     // Create the job Hash depending on what db is used
     val dbParam = params match {
