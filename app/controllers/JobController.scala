@@ -201,29 +201,22 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
             x
           }
           // Generate the job hash
-          val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
+          val jobHash = jobDao.generateJobHash(job, params, env)
           // Match the hash
-          jobDao.matchHash(jobHash).flatMap { richSearchResponse =>
-            // Get the
-            val mainIDs : List[BSONObjectID] =
-              richSearchResponse.getHits.getHits.toList.flatMap(hit => BSONObjectID.parse(hit.getId).toOption)
-
-            Logger.info(s"[CheckHash] Found mainIDs: ${mainIDs.map(_.stringify).mkString(", ")}")
-            // Find the Jobs in the Database
-            mongoStore.findAndSortJobs(
-              BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs)),
-              BSONDocument(Job.DATECREATED -> -1)
-            ).map { jobList =>
-              jobList.find(_.status == Done) match {
-                case Some(latestOldJob) =>
-                  Ok(
-                    Json.toJson(
-                      Json.obj("jobID" -> latestOldJob.jobID, "dateCreated" -> latestOldJob.dateCreated.get.toInstant.toEpochMilli)
-                    )
+          mongoStore.findAndSortJobs(
+            BSONDocument(Job.HASH        -> jobHash),
+            BSONDocument(Job.DATECREATED -> -1)
+          ).map { jobList =>
+            jobList.find(_.status == Done) match {
+              case Some(latestOldJob) =>
+                Ok(Json.toJson(
+                  Json.obj(
+                    "jobID"       -> latestOldJob.jobID,
+                    "dateCreated" -> latestOldJob.dateCreated.get.toInstant.toEpochMilli
                   )
-                case None =>
-                  NotFound
-              }
+                ))
+              case None =>
+                NotFound
             }
           }
       }

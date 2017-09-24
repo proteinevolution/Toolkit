@@ -1,6 +1,5 @@
 lazy val akkaVersion      = "2.5.4"
 lazy val kamonVersion     = "0.6.6"
-lazy val elastic4sVersion = "2.4.0"
 lazy val scalazVersion    = "7.2.10"
 
 lazy val commonDeps = Seq(
@@ -20,7 +19,6 @@ lazy val commonDeps = Seq(
   "com.typesafe.play"      %% "play-mailer-guice"    % "6.0.1",
   "com.github.pathikrit"   %% "better-files"         % "2.17.1",
   "org.mindrot"            % "jbcrypt"               % "0.3m",
-  "com.sksamuel.elastic4s" %% "elastic4s-core"       % elastic4sVersion,
   "org.reactivemongo"      %% "play2-reactivemongo"  % "0.12.6-play26",
   "co.fs2"                 %% "fs2-core"             % "0.9.2",
   "org.scalaz"             %% "scalaz-core"          % scalazVersion,
