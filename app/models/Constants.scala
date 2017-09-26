@@ -1,9 +1,12 @@
 package models
 
 import java.io.File
+
 import com.typesafe.config.ConfigFactory
 import javax.inject.Singleton
+
 import scala.concurrent.duration._
+import scala.util.matching.Regex
 
 /**
   *
@@ -66,6 +69,16 @@ class Constants {
 
   /** Amount of elements stored in a load log record */
   val loadRecordElements : Int = 20 // elements
+
+  // The regular jobID pattern to match against
+  val jobIDNoVersionPattern     : Regex = "([0-9a-zA-Z]{3,96})".r
+  // The additional pattern for versioning
+  val jobVersionPattern         : Regex = "(_([0-9]{1,3}))".r
+  // The combined pattern
+  val jobIDPattern              : Regex = (jobIDNoVersionPattern.regex + jobVersionPattern.regex).r
+  // The combined pattern with the version as an option
+  val jobIDVersionOptionPattern : Regex = (jobIDNoVersionPattern.regex + jobVersionPattern.regex + "?").r
+
 }
 
 trait ExitCodes {
