@@ -150,7 +150,7 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Sy
         Logger.info(s"[Search.checkJobID] invalid jobID: ${jobID.trim}")
         Future.successful(Ok(Json.obj("exists" -> true)))
       case Some(mainJobID) =>
-        val jobIDSearch = s"$mainJobID(_[0-9]{1,3})?"
+        val jobIDSearch = s"$mainJobID(${constants.jobIDVersioningCharacter}[0-9]{1,3})?"
         Logger.info(s"[Search.checkJobID] Old job ID: $mainJobID Current job ID: $jobID Searching for: $jobIDSearch")
         mongoStore.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> jobIDSearch))).map { jobs =>
           if (jobs.isEmpty) {
@@ -158,6 +158,7 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Sy
             Ok(Json.obj("exists" -> false))
           } else {
             if (resubmit) {
+              // Check if there is a versioned job already - if so, take the highest version and add one
               Logger.info(s"[Search.checkJobID] Found ${jobs.length} Jobs: ${jobs.map(_.jobID).mkString(",")}")
               val jobVersions = jobs.map { job =>
                 Logger.info(s"[Search.checkJobID] jobID to match: ${job.jobID}")
@@ -167,10 +168,11 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Sy
                 }
               }
               val version: Int = jobVersions.max[Int] + 1
-              Logger.info(s"[Search.checkJobID] Resubmitting job ID version: $version for $mainJobID")
-              Ok(Json.obj("exists" -> true, "version" -> version, "suggested" -> (mainJobID + "_" + version)))
+              Logger.info(s"[Search.checkJobID] Resubmitting jobID version: $version for $mainJobID")
+              Ok(Json.obj("exists" -> true, "version" -> version, "suggested" -> s"$mainJobID${constants.jobIDVersioningCharacter}$version"))
             } else {
-              Logger.info(s"[Search.checkJobID] Resubmitting job ID $mainJobID")
+              // Just check if the jobID is taken, it is a regular job
+              Logger.info(s"[Search.checkJobID] Checking jobID $mainJobID")
               Ok(Json.obj("exists" -> jobs.map(_.jobID).contains(jobID)))
             }
           }
