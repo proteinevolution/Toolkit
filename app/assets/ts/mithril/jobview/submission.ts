@@ -3,33 +3,64 @@
     currentJobID    : null,     // Currently entered jobID
     jobIDValid      : false,    // Is the current jobID valid?
     jobIDValidationTimeout : null,     // timer ID for the timeout
-    jobIDRegExp     : new RegExp(/^([0-9a-zA-Z_]+){6,96}(_[0-9]{1,3})?$/),
+    jobIDRegExp     : new RegExp(/^([0-9a-zA-Z]{3,96})(_([0-9]{1,3}))?$/),
     jobResubmit     : false,
-    checkJobID : function (jobID : string, addResubmitVersion : boolean) {
-        clearTimeout(JobSubmissionComponent.jobIDValidationTimeout);    // clear all previous timeouts
-        JobSubmissionComponent.jobIDValid   = false;    // ensure that the user can not send the job form
-        JobSubmissionComponent.currentJobID = jobID;    // set the jobID to the new jobID
-        if (jobID !== "") { // ignore checking if the field is empty as the server will generate a jobID in that case.
+    checkJobID : function (jobID : string) {
+        // clear all previous timeouts
+        clearTimeout(JobSubmissionComponent.jobIDValidationTimeout);
+        // ensure that the user can not send the job form
+        JobSubmissionComponent.jobIDValid   = false;
+        // set the jobID to the new jobID
+        if (jobID != null) JobSubmissionComponent.currentJobID = jobID;
+        // ignore checking if the field is empty as the server will generate a jobID in that case.
+        if (jobID !== "") {
             if (JobSubmissionComponent.jobIDRegExp.test(jobID)) {   // Check if the JobID is passing the Regex
-                JobSubmissionComponent.jobIDValidationTimeout = setTimeout(function (a) {   // create the timeout
-                    let checkJobIDroute = jsRoutes.controllers.Search.checkJobID(jobID, addResubmitVersion);
-                    m.request({ method: checkJobIDroute.method, url: checkJobIDroute.url}).then(
-                        function (data : any) {
-                            console.log(data);
-                            JobSubmissionComponent.jobIDValid = !data.exists;
-                            if (data.exists && data.suggested != null) {
-                                JobSubmissionComponent.currentJobID = data.suggested;
-                                JobSubmissionComponent.jobIDValid = true;
-                            }
-                            console.log("Current JobID is: ", jobID, "suggested version", data.version, "valid:", JobSubmissionComponent.jobIDValid);
+                let checkJobIDroute = jsRoutes.controllers.Search.checkJobID(
+                                       JobSubmissionComponent.currentJobID,
+                                       JobSubmissionComponent.jobResubmit);
+                m.request({ method: checkJobIDroute.method, url: checkJobIDroute.url}).then(
+                    function (data : any) {
+                        console.log(data);
+                        JobSubmissionComponent.jobIDValid = !data.exists;
+                        if (data.exists && data.suggested != null) {
+                            JobSubmissionComponent.currentJobID = data.suggested;
+                            JobSubmissionComponent.jobIDValid = true;
                         }
-                    );
-                }, 800);
+                        console.log("Current JobID is:",    JobSubmissionComponent.currentJobID,
+                                    "suggested version",    data.version,
+                                    "valid:",               JobSubmissionComponent.jobIDValid,
+                                    "we are resubmitting?", JobSubmissionComponent.jobResubmit);
+                    },
+                    function(data : any) {
+                        console.log(data);
+                    }
+                );
             }
         } else {
             JobSubmissionComponent.jobIDValid = true;
         }
-        return jobID;
+        return JobSubmissionComponent.currentJobID;
+    },
+    checkJobIDTimed : function (timeout : number) : Function {
+        return function(jobID : string) : string {
+            // clear all previous timeouts
+            clearTimeout(JobSubmissionComponent.jobIDValidationTimeout);
+            // ensure that the user can not send the job form
+            JobSubmissionComponent.jobIDValid = false;
+            // set the jobID to the new jobID
+            if (jobID != null) JobSubmissionComponent.currentJobID = jobID;
+            // ignore checking if the field is empty as the server will generate a jobID in that case.
+            if (jobID !== "") {
+                if (JobSubmissionComponent.jobIDRegExp.test(jobID)) {   // Check if the JobID is passing the Regex
+                    JobSubmissionComponent.jobIDValidationTimeout = setTimeout(function (a) {   // create the timeout
+                        JobSubmissionComponent.checkJobID(jobID);
+                    }, timeout);
+                }
+            } else {
+                JobSubmissionComponent.jobIDValid = true;
+            }
+            return JobSubmissionComponent.currentJobID;
+        }
     },
     jobIDComponent : function (ctrl : any) {
         let style : string = "jobid";
@@ -39,33 +70,29 @@
                             id:          "jobID",
                             "class":       style,
                             placeholder: "Custom JobID",
-                            onkeyup:     m.withAttr("value", JobSubmissionComponent.checkJobID),
+                            onkeyup:     m.withAttr("value", JobSubmissionComponent.checkJobIDTimed(800)),
                             onchange:    m.withAttr("value", JobSubmissionComponent.checkJobID),
-                            //value:       JobSubmissionComponent.currentJobID
+                            value:       JobSubmissionComponent.currentJobID
         });
     },
     controller: function(args : any) {
         if (JobSubmissionComponent.currentJobID == null) {
-            let newJobID;
-            if (args.isJob) {
-                //JobSubmissionComponent.jobResubmit = true;
-                //JobSubmissionComponent.jobIDValid  = false;
-                //newJobID = args.job().jobID;
-                //JobSubmissionComponent.checkJobID(newJobID, true); // ask server for new jobID
-                JobSubmissionComponent.jobIDValid  = true; // Disable versioning for now, can easily re-enabled later
-
-            } else {
-                JobSubmissionComponent.jobIDValid  = true;
-            }
+            JobSubmissionComponent.jobResubmit = args.isJob;
+            JobSubmissionComponent.jobIDValid  = false;
+            JobSubmissionComponent.checkJobID(""); // ask server for new jobID
         }
         return {
             submit: function(startJob : boolean) {
-                if (JobSubmissionComponent.submitting || !JobSubmissionComponent.jobIDValid) {
-                    console.log("Job Submission is blocked: Already submitting: ", JobSubmissionComponent.submitting,
-                                "jobID valid: ",                                   JobSubmissionComponent.jobIDValid);
+                if (!JobSubmissionComponent.jobIDValid) {
+                    console.log("[Job Submission] failed to submit - jobID is invalid: ", JobSubmissionComponent.submitting);
                     return;
                 }
-                JobSubmissionComponent.submitting = true; // ensure that the submission is not reinitiated while a submission is ongoing
+                if (JobSubmissionComponent.submitting) {
+                    console.log("[Job Submission] failed to submit - Already submitting: ", JobSubmissionComponent.submitting);
+                    return;
+                }
+                // ensure that the submission is not reinitiated while a submission is ongoing
+                JobSubmissionComponent.submitting = true;
 
                 let submitRoute : any, formData : FormData, jobID : string, tool : string, submitButton : JQuery, form : any;
                 form = document.getElementById("jobform");
@@ -92,11 +119,6 @@
                 let file = ((<any>$("input[type=file]"))[0].files[0]);
                 formData.append("file", file);
 
-                // appendParentID if in storage // TODO use a better method for this (save it for the current job in the job view)
-                let parentid = localStorage.getItem("parentid");
-                if(parentid) {
-                    formData.append('parentid', parentid);
-                }
                 submitRoute = jsRoutes.controllers.JobController.submitJob(tool);
                 m.request({
                     method: submitRoute.method,
@@ -117,11 +139,22 @@
                             JobListComponent.pushJob(jobListComp, true);
                         }
                     } else {
-                        console.log("Error while submitting:", submissionReturnData.message)
+                        console.log("Error while submitting:", submissionReturnData.message);
+                        switch(submissionReturnData.code) {
+                            case 2:
+                                JobSubmissionComponent.jobIDValid = false;
+                                break;
+                            case 4:
+                                JobSubmissionComponent.jobIDValid = false;
+                                break;
+                            default:
+                                // Add more error handling stuff here
+                                break;
+                        }
                     }
                     $(".submitJob").prop("disabled", false);
                     JobSubmissionComponent.submitting = false;
-                }).catch(function(error : any){
+                },function(error : any){
                     console.log("Error while submitting:", error);
                     $(".submitJob").prop("disabled", false);
                     JobSubmissionComponent.submitting = false;
