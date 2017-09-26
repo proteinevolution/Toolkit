@@ -2,12 +2,12 @@ package controllers
 
 import models.database.jobs.Job
 import play.Logger
-import models.{ Constants, UserSessions }
+import models.{Constants, UserSessions}
 import play.api.cache._
 import play.api.libs.json.Json
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
-import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
+import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -19,6 +19,7 @@ import play.api.mvc._
 
 import scala.concurrent.Future
 import scala.language.postfixOps
+import scala.util.matching.Regex
 
 @Singleton
 final class Search @Inject()(@NamedCache("userCache") implicit val userCache: SyncCacheApi,
@@ -136,44 +137,46 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Sy
     * @return
     */
   def checkJobID(jobID: String, resubmit: Boolean = false): Action[AnyContent] = Action.async {
-    val jobIDNoVersionPattern = "([0-9a-zA-Z_]{3,96})".r
-    val jobVersionPattern     = "(_([0-9]{1,3}))".r
-    val jobIDPattern          = (jobIDNoVersionPattern.regex + jobVersionPattern.regex).r
-    val foundMainJobID: Option[String] =
+    // Parse the jobID of the job (it can look like this: 1234XYtz, 1263412, 1252rttr_1, 1244124_12)
+    val parentJobID: Option[String] =
       jobID match {
-        case jobIDPattern(mainJobID, _, _)    => Some(mainJobID)
-        case jobIDNoVersionPattern(mainJobID) => Some(mainJobID)
+        case constants.jobIDPattern(mainJobID, _, _)    => if(resubmit) Some(mainJobID) else None
+        case constants.jobIDNoVersionPattern(mainJobID) => Some(mainJobID)
         case _                                => None
       }
 
-    foundMainJobID match {
-      case None => Future.successful(Ok(Json.obj("exists" -> true)))
+    parentJobID match {
+      case None =>
+        Logger.info(s"[Search.checkJobID] invalid jobID: ${jobID.trim}")
+        Future.successful(Ok(Json.obj("exists" -> true)))
       case Some(mainJobID) =>
-        val jobIDSearch = mainJobID + "(_[0-9]{1,3})?"
-        Logger.info("Old job ID: " + mainJobID + " Current job ID: " + jobID + " Searching for: " + jobIDSearch)
+        val jobIDSearch = s"$mainJobID(${constants.jobIDVersioningCharacter}[0-9]{1,3})?"
+        Logger.info(s"[Search.checkJobID] Old job ID: $mainJobID Current job ID: $jobID Searching for: $jobIDSearch")
         mongoStore.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> jobIDSearch))).map { jobs =>
           if (jobs.isEmpty) {
-            Logger.info("Found no such jobs.")
+            Logger.info(s"[Search.checkJobID] Found no jobs for the jobID $jobID.")
             Ok(Json.obj("exists" -> false))
           } else {
             if (resubmit) {
-              Logger.info("Found " + jobs.length + " Jobs: " + jobs.map(_.jobID).mkString(","))
+              // Check if there is a versioned job already - if so, take the highest version and add one
+              Logger.info(s"[Search.checkJobID] Found ${jobs.length} Jobs: ${jobs.map(_.jobID).mkString(",")}")
               val jobVersions = jobs.map { job =>
-                Logger.info("jobID to match: " + job.jobID)
+                Logger.info(s"[Search.checkJobID] jobID to match: ${job.jobID}")
                 job.jobID match {
-                  case jobIDPattern(_, _, v) => if (v.isEmpty) { -1 } else { Integer.parseInt(v) }
-                  case _                     => 0
+                  case constants.jobIDPattern(_, _, v) => if (v.isEmpty) { -1 } else { Integer.parseInt(v) }
+                  case _                               => 0
                 }
               }
-              val version: Int = jobVersions.max + 1
-              //Logger.info("Resubmitting job ID version: " + version + " for " + mainJobID)
-              Ok(Json.obj("exists" -> true, "version" -> version, "suggested" -> (mainJobID + "_" + version)))
+              val version: Int = jobVersions.max[Int] + 1
+              Logger.info(s"[Search.checkJobID] Resubmitting jobID version: $version for $mainJobID")
+              Ok(Json.obj("exists" -> true, "version" -> version, "suggested" -> s"$mainJobID${constants.jobIDVersioningCharacter}$version"))
             } else {
+              // Just check if the jobID is taken, it is a regular job
+              Logger.info(s"[Search.checkJobID] Checking jobID $mainJobID")
               Ok(Json.obj("exists" -> jobs.map(_.jobID).contains(jobID)))
             }
           }
         }
-
     }
   }
 }
