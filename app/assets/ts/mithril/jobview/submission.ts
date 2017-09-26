@@ -79,7 +79,7 @@
         if (JobSubmissionComponent.currentJobID == null) {
             JobSubmissionComponent.jobResubmit = args.isJob;
             JobSubmissionComponent.jobIDValid  = false;
-            JobSubmissionComponent.checkJobID(); // ask server for new jobID
+            JobSubmissionComponent.checkJobID(""); // ask server for new jobID
         }
         return {
             submit: function(startJob : boolean) {
