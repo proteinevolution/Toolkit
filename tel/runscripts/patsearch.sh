@@ -15,7 +15,7 @@ fi
 
 PATTERN=$(less ../params/alignment)
 
-echo "#Searching %standarddb.content DB for sequences '${PATTERN}' pattern." >> ../results/process.log
+echo "#Searching %patsearchdb.content DB for sequences '${PATTERN}' pattern." >> ../results/process.log
 updateProcessLog
 
 patsearch.pl        -i  %alignment.path \
