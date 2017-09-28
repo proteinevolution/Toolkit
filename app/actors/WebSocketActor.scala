@@ -150,7 +150,7 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
       // Do filewatching here
       val file = s"${constants.jobPath}${job.jobID}${constants.SEPARATOR}results${constants.SEPARATOR}process.log"
       //Logger.info("Watching: " + file)
-      if (job.status.equals(Running)) {
+      if (job.state.equals(Running)) {
         if (Files.exists(Paths.get(file))) {
           val source = scala.io.Source.fromFile(file)
           val lines = try source.mkString

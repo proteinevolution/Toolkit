@@ -160,12 +160,12 @@ class WebsocketWrapper {
                 JobListComponent.pushJob(JobListComponent.Job(message.job));
                 LiveTable.pushJob(message.job);
                 JobManager.pushToTable(message.job);
-                if(message.job.status == 4 || message.job.status == 5) {
+                if(message.job.state == 4 || message.job.state == 5) {
                     notifications += 1;
                     titlenotifier.set(notifications);
                     JobRunningComponent.terminate(message.jobID);
                     if (WebsocketWrapper.showConsoleMessages)
-                        console.log("[Websocket] " + message.job.jobID + " has finished with status: " + message.job.status);
+                        console.log("[Websocket] " + message.job.jobID + " has finished with state: " + message.job.state);
                 }
                 break;
 

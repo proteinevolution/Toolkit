@@ -59,10 +59,10 @@ case class QStat(private val xml : String) {
 
   /**
     * Returns the total job count or the count for a specific type of job
-    * @param status
+    * @param state
     * @return
     */
-  def totalJobs(status : String = "") : Int = status match {
+  def totalJobs(state : String = "") : Int = state match {
     case "running" => qStatJobs.count(_.state.contains("r"))
     case "queued"  => qStatJobs.count(_.state.contains("q"))
     case _         => qStatJobs.length

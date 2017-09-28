@@ -121,7 +121,7 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
   def getJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     mongoStore.selectJob(jobID).flatMap {
       case Some(job) =>
-            Logger.info("Requested job has been found in MongoDB, the jobState is " + job.status)
+            Logger.info("Requested job has been found in MongoDB, the jobState is " + job.state)
             val toolitem = toolFactory.values(job.tool).toolitem
             val ownerName =
               if (job.isPrivate) {
@@ -141,7 +141,7 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
               }
             // The jobState decides which views will be appended to the job
 
-            val jobViews: Future[Seq[String]] = job.status match {
+            val jobViews: Future[Seq[String]] = job.state match {
 
               case Done => Future.successful(toolFactory.resultPanels(toolitem.toolname))
 
@@ -166,7 +166,7 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
                   Json.toJson(
                     Jobitem(
                       job.jobID,
-                      job.status,
+                      job.state,
                       ownerN,
                       job.dateCreated.get.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                       toolitem,

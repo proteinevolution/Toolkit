@@ -10,16 +10,16 @@ import reactivemongo.bson._
 import reactivemongo.play.json._
 
 case class Job(mainID       : BSONObjectID           = BSONObjectID.generate, // ID of the Job in the System
-               jobID        : String,                                         // User visible ID of the Job
                hash         : String                 = "",                    // Non unique ID to identify duplicate jobs
-               ownerID      : Option[BSONObjectID]   = None,                  // User to whom the Job belongs
-               isPublic     : Boolean                = false,                 // User wants this job to be public
-               status       : JobState               = Submitted,             // Status of the Job
-               emailUpdate  : Boolean                = false,                 // Owner wants to be notified when the job is ready
-               tool         : String,                                         // Tool used for this Job
-               watchList    : List[BSONObjectID]     = List.empty,            // List of the users who watch this job, None if not public
-               commentList  : List[BSONObjectID]     = List.empty,            // List of comment IDs for the Job
-               clusterData  : Option[JobClusterData] = None,                  // Cluster Data
+               jobID        : String, // User visible ID of the Job
+               ownerID      : Option[BSONObjectID]   = None, // User to whom the Job belongs
+               isPublic     : Boolean                = false,
+               state        : JobState               = Submitted, // Status of the Job
+               emailUpdate  : Boolean                = false, // Owner wants to be notified when the job is ready
+               tool         : String, // Tool used for this Job
+               watchList    : List[BSONObjectID]     = List.empty, // List of the users who watch this job, None if not public
+               commentList  : List[BSONObjectID]     = List.empty, // List of comment IDs for the Job
+               clusterData  : Option[JobClusterData] = None, // Cluster Data
                dateCreated  : Option[ZonedDateTime]  = Some(ZonedDateTime.now), // Creation time of the Job
                dateUpdated  : Option[ZonedDateTime]  = Some(ZonedDateTime.now), // Last Updated on
                dateViewed   : Option[ZonedDateTime]  = Some(ZonedDateTime.now), // Last Viewed on
@@ -40,7 +40,7 @@ case class Job(mainID       : BSONObjectID           = BSONObjectID.generate, //
   def cleaned(): JsObject = {
     Json.obj(
       Job.JOBID        -> jobID,
-      Job.STATUS       -> status,
+      Job.STATE        -> state,
       Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli),
       Job.TOOL         -> tool,
       Job.TOOLNAMELONG -> ConfigFactory.load().getString(s"Tools.$tool.longname")
@@ -55,7 +55,7 @@ case class Job(mainID       : BSONObjectID           = BSONObjectID.generate, //
   def jobManagerJob(): JsObject = {
     Json.obj(
       Job.JOBID        -> jobID,
-      Job.STATUS       -> status,
+      Job.STATE        -> state,
       Job.TOOL         -> tool,
       Job.COMMENTLIST  -> commentList.length,
       Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli),
@@ -69,7 +69,7 @@ case class Job(mainID       : BSONObjectID           = BSONObjectID.generate, //
         |mainID: ${this.mainID}
         |jobID: ${this.jobID}
         |tool: ${this.tool}
-        |state: ${this.status}
+        |state: ${this.state}
         |ownerID: ${this.ownerID.map(_.stringify).getOrElse("no Owner")}
         |created on: ${this.dateCreated.map(_.toString()).getOrElse("--")}
         |--[Job Object end]--
@@ -77,7 +77,7 @@ case class Job(mainID       : BSONObjectID           = BSONObjectID.generate, //
   }
 
   def isFinished: Boolean = {
-    status == Done || status == Error
+    state == Done || state == Error
   }
 }
 
@@ -100,6 +100,7 @@ object Job {
   val OWNERID      = "ownerID" //              ID of the job owner
   val OWNER        = "owner" //              Name of the job owner
   val STATUS       = "status" //              Status of the job field
+  val STATE        = "state"
   val EMAILUPDATE  = "emailUpdate" //              check if the user wants a notification when the job is done
   val DELETION     = "deletion" //              Deletion status flag
   val TOOL         = "tool" //              name of the tool field
@@ -124,7 +125,7 @@ object Job {
           val jobID        = (obj \ JOBID).asOpt[String]
           val ownerID      = (obj \ OWNERID).asOpt[String]
           val project      = (obj \ PROJECT).asOpt[String]
-          val status       = (obj \ STATUS).asOpt[JobState]
+          val state        = (obj \ STATE).asOpt[JobState]
           val tool         = (obj \ TOOL).asOpt[String]
           val label        = (obj \ LABEL).asOpt[String]
           val watchList    = (obj \ WATCHLIST).asOpt[List[String]]
@@ -140,7 +141,7 @@ object Job {
               mainID = BSONObjectID.generate(),
               jobID = "",
               ownerID = Some(BSONObjectID.generate()),
-              status = status.get,
+              state = state.get,
               tool = "",
               dateCreated = Some(datetimenow),
               dateUpdated = Some(datetimenow),
@@ -161,7 +162,7 @@ object Job {
       JOBID        -> job.jobID,
       HASH         -> job.hash,
       OWNERID      -> job.ownerID,
-      STATUS       -> job.status,
+      STATE        -> job.state,
       EMAILUPDATE  -> job.emailUpdate,
       TOOL         -> job.tool,
       WATCHLIST    -> job.watchList,
@@ -185,7 +186,7 @@ object Job {
         jobID        = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
         hash         = bson.getAs[String](HASH).getOrElse(""),
         ownerID      = bson.getAs[BSONObjectID](OWNERID),
-        status       = bson.getAs[JobState](STATUS).getOrElse(Error),
+        state        = bson.getAs[JobState](STATE).getOrElse(bson.getAs[JobState](STATUS).getOrElse(Error)),
         emailUpdate  = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
         tool         = bson.getAs[String](TOOL).getOrElse(""),
         watchList    = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
@@ -210,7 +211,7 @@ object Job {
         JOBID        -> job.jobID,
         HASH         -> job.hash,
         OWNERID      -> job.ownerID,
-        STATUS       -> job.status,
+        STATE        -> job.state,
         EMAILUPDATE  -> job.emailUpdate,
         TOOL         -> job.tool,
         WATCHLIST    -> job.watchList,

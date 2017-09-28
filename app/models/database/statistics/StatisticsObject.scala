@@ -63,7 +63,7 @@ case class StatisticsObject(statisticsID: BSONObjectID = BSONObjectID.generate()
       yield beginDate.plusMonths(extraMonths).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1)
 
     // Group the job events by tool
-    val jobEventsGroupedByTool = jobEventLogs.groupBy(_.toolName)
+    val jobEventsGroupedByTool = jobEventLogs.groupBy(_.tool)
 
     // Return a new instance of this object with the updated data
     this.copy(

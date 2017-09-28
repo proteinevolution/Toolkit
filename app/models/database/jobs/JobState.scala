@@ -37,7 +37,7 @@ object JobState {
     override def reads(json: JsValue): JsResult[JobState] = json match {
       case obj: JsObject =>
         try {
-          JsSuccess((obj \ "status").as[Int] match {
+          JsSuccess((obj \ Job.STATE).as[Int] match {
             case 1 => Prepared
             case 2 => Queued
             case 3 => Running

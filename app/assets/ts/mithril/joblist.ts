@@ -18,7 +18,7 @@ window.JobListComponent = {
     Job : function (data : any) {
         return {
             jobID       : ((data && data.jobID        != null) ? data.jobID       : null),
-            status      : ((data && data.status       != null) ? data.status      : null),
+            state       : ((data && data.state        != null) ? data.state       : null),
             dateCreated : ((data && data.dateCreated  != null) ? data.dateCreated : null),
             tool        : ((data && data.tool         != null) ? data.tool        : null),
             toolnameLong: ((data && data.toolnameLong != null) ? data.toolnameLong        : null),
@@ -36,7 +36,7 @@ window.JobListComponent = {
                 return {} },
             view : function (ctrl : any) {
                 return m("div", {
-                    "class"   : ("job " +   a[this.status]).concat(this.jobID === JobListComponent.selectedJobID ? " selected" : ""),
+                    "class"   : ("job " +   a[this.state]).concat(this.jobID === JobListComponent.selectedJobID ? " selected" : ""),
                     id      : this.jobID,
                     onclick : this.select(this)
                 }, [
@@ -83,7 +83,7 @@ window.JobListComponent = {
     // Returns all the jobIDs from the list which can still be updated
     jobIDsFiltered  : function () : Array<string> {
         return JobListComponent.list.filter(function(job : any){
-            return job.status != 4 && job.status != 5
+            return job.state != 4 && job.state != 5
         }).map(function(job : any){ return job.jobID })
     },
     // Notices the server to send update messages about the jobs

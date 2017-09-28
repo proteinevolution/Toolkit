@@ -46,8 +46,8 @@ window.JobManager = {
                                         if (job.length < 1) {
                                             return;
                                         }
-                                        let status = a[job[0].status];
-                                        $(td).addClass(status);
+                                        let state = a[job[0].state];
+                                        $(td).addClass(state);
 
 
                                     },

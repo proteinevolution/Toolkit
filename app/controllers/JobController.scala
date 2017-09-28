@@ -133,7 +133,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               val job = Job(
                 jobID = jobID,
                 ownerID = ownerOption,
-                status = Submitted,
+                state = Submitted,
                 emailUpdate = emailUpdate,
                 tool = toolName,
                 watchList = List(user.userID),
@@ -213,15 +213,16 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
           mongoStore.findAndSortJobs(
             BSONDocument(Job.HASH        -> jobHash),
             BSONDocument(Job.DATECREATED -> -1)
-          ).map { jobList =>
-            jobList.find(_.status == Done) match {
+          ).map { _.find(_.state == Done) match {
               case Some(latestOldJob) =>
-                Ok(Json.toJson(
-                  Json.obj(
-                    "jobID"       -> latestOldJob.jobID,
-                    "dateCreated" -> latestOldJob.dateCreated.get.toInstant.toEpochMilli
+                Ok(
+                  Json.toJson(
+                    Json.obj(
+                      "jobID"       -> latestOldJob.jobID,
+                      "dateCreated" -> latestOldJob.dateCreated.get.toInstant.toEpochMilli
+                    )
                   )
-                ))
+                )
               case None =>
                 NotFound
             }
