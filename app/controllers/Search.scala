@@ -140,10 +140,10 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Sy
     // Parse the jobID of the job (it can look like this: 1234XYtz, 1263412, 1252rttr_1, 1244124_12)
     val parentJobID: Option[String] =
       newJobID match {
-        case constants.jobIDPattern(mainJobID, _, _)    =>
+        case constants.jobIDPattern(mainJobID, _)    =>
           // Check if the main part of the new jobID matches with the (main part) of the oldJobID
           resubmitForJobID match {
-            case Some(constants.jobIDPattern(oldJobID, _, _))    => if (mainJobID == oldJobID) Some(mainJobID) else None
+            case Some(constants.jobIDPattern(oldJobID, _))       => if (mainJobID == oldJobID) Some(mainJobID) else None
             case Some(constants.jobIDNoVersionPattern(oldJobID)) => if (mainJobID == oldJobID) Some(mainJobID) else None
             case _                                               => None
           }
@@ -168,8 +168,8 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Sy
               Logger.info(s"[Search.checkJobID] Found ${jobs.length} Jobs: ${jobs.map(_.jobID).mkString(",")}")
               val jobVersions = jobs.map { job =>
                 job.jobID match {
-                  case constants.jobIDPattern(_, _, v) =>
-                    try { v.toInt } catch { case _ => 0 }
+                  case constants.jobIDPattern(_, version) =>
+                    try { version.toInt } catch { case _     => 0 }
                   case _                               => 0
                 }
               }
