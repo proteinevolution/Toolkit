@@ -56,7 +56,6 @@ let JobTabsComponent = {
             }));
         }
         return {
-            owner: args.job().ownerName,
             params: params,
             isJob: args.job().isJob,
             state: args.job().jobstate,
