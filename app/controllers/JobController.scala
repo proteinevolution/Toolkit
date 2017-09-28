@@ -93,7 +93,8 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
             case Some(jobID) =>
               // Match the pattern of the jobID to check if there are no illegal characters
               jobID match {
-                case constants.jobIDVersionOptionPattern(_,_,_) =>
+                case constants.jobIDVersionOptionPattern(mainJobID, version) =>
+                  Logger.info(s"[JobController.submitJob] main jobID: $mainJobID version: $version")
                   // Check if the jobID is already used by a different job
                   mongoStore.selectJob(jobID).map { job =>
                     if (job.isDefined) None else Some(jobID)

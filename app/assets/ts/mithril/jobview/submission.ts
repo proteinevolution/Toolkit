@@ -4,7 +4,7 @@
     currentJobID    : null,     // Currently entered jobID
     jobIDValid      : false,    // Is the current jobID valid?
     jobIDValidationTimeout : null,     // timer ID for the timeout
-    jobIDRegExp     : new RegExp(/^([0-9a-zA-Z]{3,96})(_([0-9]{1,3}))?$/),
+    jobIDRegExp     : new RegExp(/^([0-9a-zA-Z_]{3,96})(?:_([0-9]{1,3}))?$/),
     checkJobID : function (jobID : string) {
         // ensure that the user can not send the job form
         JobSubmissionComponent.jobIDValid = false;
