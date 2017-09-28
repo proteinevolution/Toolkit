@@ -96,7 +96,6 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
   implicit val jobitemWrites: Writes[Jobitem] = (
     (JsPath \ "jobID").write[String] and
     (JsPath \ "state").write[JobState] and
-    (JsPath \ "ownerName").write[String] and
     (JsPath \ "dateCreated").write[String] and
     (JsPath \ "toolitem").write[Toolitem] and
     (JsPath \ "views").write[Seq[String]] and
@@ -123,30 +122,12 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
       case Some(job) =>
             Logger.info("Requested job has been found in MongoDB, the jobState is " + job.status)
             val toolitem = toolFactory.values(job.tool).toolitem
-            val ownerName =
-              if (job.isPrivate) {
-                mongoStore.findUser(BSONDocument(User.IDDB -> job.ownerID.get)).map {
-                  case Some(owner) =>
-                    owner.userData match {
-                      case Some(ownerData) => // Owner is registered
-                        ownerData.nameLogin
-                      case None => // Owner is not registered
-                        "Guest"
-                    }
-                  case None => // User does no longer exist in the Database.
-                    "Unknown User"
-                }
-              } else {
-                Future.successful("Public Job")
-              }
+
             // The jobState decides which views will be appended to the job
-
             val jobViews: Future[Seq[String]] = job.status match {
-
               case Done => Future.successful(toolFactory.resultPanels(toolitem.toolname))
-
               // All other views are currently computed on Clientside
-              case _ => Future.successful(Nil)
+              case _ => Future.successful(Seq.empty[String])
             }
             // Read parameters from serialized file
             val paramValues: Map[String, String] = {
@@ -160,14 +141,13 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
                 Map.empty[String, String]
               }
             }
-            ownerName.flatMap { ownerN =>
+
               jobViews.map { jobViewsN =>
                 Ok(
                   Json.toJson(
                     Jobitem(
                       job.jobID,
                       job.status,
-                      ownerN,
                       job.dateCreated.get.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                       toolitem,
                       jobViewsN,
@@ -175,7 +155,7 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
                     )
                   )
                 )
-              }
+
             }
       case _ =>
         Logger.info("Job could not be found")

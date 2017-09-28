@@ -91,7 +91,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
           // Determine the jobID
           (formData.get("jobID") match {
             case Some(jobID) =>
-              // Match the pattern of the jobID
+              // Match the pattern of the jobID to check if there are no illegal characters
               jobID match {
                 case constants.jobIDVersionOptionPattern(_,_,_) =>
                   // Check if the jobID is already used by a different job

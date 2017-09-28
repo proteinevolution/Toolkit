@@ -84,7 +84,6 @@ case class Job(mainID       : BSONObjectID           = BSONObjectID.generate, //
 // Server returns such an object when asked for a job
 case class Jobitem(jobID: String,
                    state: JobState,
-                   ownerName: String,
                    dateCreated: String,
                    toolitem: Toolitem,
                    views: Seq[String],

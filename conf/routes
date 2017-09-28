@@ -101,7 +101,7 @@ GET           /static/get/:static                     @controllers.Service.stati
 # Search controller access
 GET           /jobs                                   @controllers.Search.get
 GET           /indexPageInfo                          @controllers.Search.getIndexPageInfo
-GET           /search/checkJobID/:jobID               @controllers.Search.checkJobID(jobID : String, resubmit : Boolean)
+GET           /search/checkJobID/:jobID               @controllers.Search.checkJobID(jobID : String, resubmitJobID : Option[String])
 GET           /getToolList                            @controllers.Search.getToolList
 GET           /suggest/:jobID                         @controllers.Search.autoComplete(jobID: String)
 GET           /checktool/:tool                        @controllers.Search.existsTool(tool: String)

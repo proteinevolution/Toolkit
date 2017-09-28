@@ -85,7 +85,6 @@ window.JobModel = {
                     tool: data.toolitem,
                     isJob: true,
                     jobID: data.jobID,
-                    ownerName: data.ownerName,
                     dateCreated: data.dateCreated,
                     jobstate: data.state,
                     views: data.views,
