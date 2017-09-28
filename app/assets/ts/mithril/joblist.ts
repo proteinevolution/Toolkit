@@ -191,7 +191,6 @@ window.JobListComponent = {
             this.scrollToJobListItem(index);                    // scroll to the new position in the joblist
         }
 
-
         jobList.redraw.strategy("diff");
         jobList.redraw(true);
 

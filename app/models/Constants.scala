@@ -71,17 +71,17 @@ class Constants {
   val loadRecordElements : Int = 20 // elements
 
   // jobID pattern settings
-  // allowed elements in the jobID
-  val jobIDCharacters           : String = "[0-9a-zA-Z]"
-  // versioning character
+  /** allowed elements in the jobID */
+  val jobIDCharacters           : String = "[0-9a-zA-Z_]"
+  /** versioning character */
   val jobIDVersioningCharacter  : String = "_"
-  // The regular jobID pattern to match against
+  /** The regular jobID pattern to match against */
   val jobIDNoVersionPattern     : Regex = s"($jobIDCharacters{3,96})".r
-  // The additional pattern for versioning
-  val jobVersionPattern         : Regex = s"($jobIDVersioningCharacter([0-9]{1,3}))".r
-  // The combined pattern
+  /** The additional pattern for versioning */
+  val jobVersionPattern         : Regex = s"(?:$jobIDVersioningCharacter([0-9]{1,3}))".r
+  /** The combined pattern */
   val jobIDPattern              : Regex = (jobIDNoVersionPattern.regex + jobVersionPattern.regex).r
-  // The combined pattern with the version as an option
+  /** The combined pattern with the version as an option */
   val jobIDVersionOptionPattern : Regex = (jobIDNoVersionPattern.regex + jobVersionPattern.regex + "?").r
 
 }
