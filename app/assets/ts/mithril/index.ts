@@ -230,6 +230,15 @@ let tilescomponent = {
                             ),
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#fisc"},
+                                    m("h6", "September 24, 2017"),
+                                    m("p", "HHpred: DBs of ",
+                                        m("em", "Fischerella muscicola"), ", ",
+                                        m("em", "Frankia alni"), ", ",
+                                        m("em", "Streptomyces scabiei"), " and ",
+                                        m("em", "Thermus aquaticus"), " are online."
+                                    )
+                                ),
                                 m("a", {"data-open": "recentUpdatesModal", href: "#aqui"},
                                     m("h6", "September 19, 2017"),
                                     m("p", "HHpred: DBs of ",
@@ -243,20 +252,6 @@ let tilescomponent = {
                                 m("a", {"data-open": "recentUpdatesModal", href: "#ecod"},
                                     m("h6", "September 9, 2017"),
                                     m("p", "HHpred: profile HMMs of the ECOD database (Grishin Lab) are online."
-                                    )
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#releaseNotes"},
-                                    m("h6", "August 31, 2017"),
-                                    m("p", "HHpred: profile HMM database of ",
-                                        m("em", "Giardia lamblia"),
-                                        " is online."
-                                    )
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#patens"},
-                                    m("h6", "August 28, 2017"),
-                                    m("p", "HHpred: profile HMM database of ",
-                                        m("em", "Physcomitrella patens"),
-                                        " is online."
                                     )
                                 )
                             ),

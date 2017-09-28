@@ -1,34 +1,19 @@
 package models.search
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
-import com.sksamuel.elastic4s._
-import com.sksamuel.elastic4s.analyzers.StandardAnalyzer
+import better.files._
 import com.typesafe.config.ConfigFactory
-import models.database.jobs.JobHash
+import models.database.jobs.Job
 import models.tools.ToolFactory
 import modules.RunscriptPathProvider
-import modules.tel.TELConstants
+import modules.tel.env.Env
 import modules.tools.FNV
-import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
-import reactivemongo.bson.BSONObjectID
 
 import scala.util.hashing.MurmurHash3
-import scala.concurrent.Future
 
 @Singleton
-final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: RunscriptPathProvider)
-    extends ElasticDsl
-    with TELConstants {
-
-  private val noHash = Set("mainID", "jobID")
-  private val client =
-    ElasticClient.transport(ElasticsearchClientUri(ConfigFactory.load().getString(s"elastic4s.hostname"), 9300))
-  private val Index        = ConfigFactory.load().getString(s"elastic4s.indexAndTypes.jobs.index")
-  private val jobIndex     = Index / "jobs"
-  private val jobHashIndex = Index / "jobhashes"
-
-  //private def toolNameLong(name : String) : String = toolFactory.values.get(name).get.toolNameLong
+final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: RunscriptPathProvider) {
 
   /**
     * generates Param hash for matching already existing jobs
@@ -73,125 +58,33 @@ final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: Ru
 
   }
 
-  // Searches for a matching hash in the Hash DB
-  def matchHash(hash: String,
-                rsHash: String,
-                dbName: Option[String],
-                dbMtime: Option[String],
-                toolname: String,
-                toolHash: String): Future[RichSearchResponse] = {
-    client.execute(
-      search in jobHashIndex query {
-        bool(
-          must(
-            matchQuery(JobHash.INPUTHASH, hash).analyzer(StandardAnalyzer),
-            matchQuery(JobHash.DBNAME, dbName.getOrElse("none")).analyzer(StandardAnalyzer),
-            termQuery(JobHash.DBMTIME, dbMtime.getOrElse("1970-01-01T00:00:00Z")),
-            matchQuery(JobHash.TOOLNAME, toolname).analyzer(StandardAnalyzer),
-            matchQuery(JobHash.RUNSCRIPTHASH, rsHash).analyzer(StandardAnalyzer),
-            matchQuery(JobHash.TOOLHASH, toolHash).analyzer(StandardAnalyzer)
-          )
-        )
-      }
-    )
-  }
+  /**
+    * Generates a JobHash for the job from the supplied parameters
+    * @param job
+    * @param params
+    * @return
+    */
+  def generateJobHash(job: Job, params: Map[String, String], env: Env) : String = {
+    // filter unique parameters
+    val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid" - Job.IPHASH - "parentID"
 
-  // Searches for a matching hash in the Hash DB
-  def matchHash(jobHash: JobHash): Future[RichSearchResponse] = {
-    client.execute(
-      search in jobHashIndex query {
-        bool(
-          must(
-            matchQuery(JobHash.INPUTHASH, jobHash.inputHash).analyzer(StandardAnalyzer),
-            matchQuery(JobHash.DBNAME, jobHash.dbName.getOrElse("none")).analyzer(StandardAnalyzer),
-            termQuery(JobHash.DBMTIME, jobHash.dbMtime.getOrElse("1970-01-01T00:00:00Z")),
-            matchQuery(JobHash.TOOLNAME, jobHash.toolName).analyzer(StandardAnalyzer),
-            matchQuery(JobHash.RUNSCRIPTHASH, jobHash.runscriptHash).analyzer(StandardAnalyzer),
-            matchQuery(JobHash.TOOLHASH, jobHash.toolHash).analyzer(StandardAnalyzer)
-          )
-        )
-      }
-    )
-  }
+    // Create the job Hash depending on what db is used
+    val dbParam = params match {
+      case x if x isDefinedAt "standarddb" =>
+        val STANDARDDB = (env.get("STANDARD") + "/" + params.getOrElse("standarddb", "")).toFile
+        (Some("standarddb"), Some(STANDARDDB.lastModifiedTime.toString))
 
-  // Removes a Hash from ES
-  def deleteJob(mainID: String): Future[BulkResult] = {
-    client.execute {
-      bulk(
-        delete id mainID from jobIndex,
-        delete id mainID from jobHashIndex
-      )
-    }
-  }
+      case x if x isDefinedAt "hhsuitedb" =>
+        val HHSUITEDB = env.get("HHSUITE").toFile
+        (Some("hhsuitedb"), Some(HHSUITEDB.lastModifiedTime.toString))
 
-  // Checks if a mainID exists
-  def existsMainID(mainID: String): Future[RichSearchResponse] = {
-    client.execute {
-      search in jobIndex query {
-        bool(
-          must(
-            termQuery("_id", mainID)
-          )
-        )
-      }
-    }
-  }
+      case x if x isDefinedAt "hhblitsdb" =>
+        val HHBLITSDB = env.get("HHBLITS").toFile
+        (Some("hhblitsdb"), Some(HHBLITSDB.lastModifiedTime.toString))
 
-  // Checks if a jobID already exists
-  def existsJobID(jobID: String): Future[RichSearchResponse] = {
-    client.execute {
-      search in jobIndex query {
-        bool(
-          must(
-            termQuery("jobID", jobID)
-          )
-        )
-      }
+      case _ => (None, None)
     }
-  }
 
-  def jobIDtermSuggester(queryString: String): Future[RichSearchResponse] = { // this is a spelling correction mechanism, don't use this for autocompletion
-    client.execute {
-      search in jobIndex suggestions {
-        termSuggestion("jobID") field "jobID" text queryString mode SuggestMode.Always
-      }
-    }
-  }
-
-  // only use this for setting completion type for the jobID field
-
-  def preMap: Future[CreateIndexResponse] = {
-    client.execute {
-      createIndex("tkplay_dev").mappings(
-        mapping("jobs").fields(
-          completionField("jobID")
-        )
-      )
-    }
-  }
-
-  def jobIDcompletionSuggester(queryString: String): Future[RichSearchResponse] = {
-    val suggestionBuild = search in jobIndex suggestions {
-      completionSuggestion("jobIDfield").field("jobID").text(queryString).size(10)
-    }
-    println(suggestionBuild)
-    client.execute {
-      suggestionBuild
-    }
-  }
-
-  def jobsWithTool(toolName: String, userID: BSONObjectID): Future[RichSearchResponse] = {
-    val queryBuild = search in jobIndex query {
-      bool(
-        should(
-          termQuery("tool", toolName),
-          termQuery("ownerID", userID)
-        )
-      )
-    }
-    println(queryBuild)
-    client.execute {
-      queryBuild
-    }
+    s"${generateHash(paramsWithoutMainID).toString()} ${generateRSHash(job.tool)} ${dbParam._1.getOrElse("")} ${dbParam._2.getOrElse("")} ${job.tool} ${generateToolHash(job.tool)}"
   }
 }

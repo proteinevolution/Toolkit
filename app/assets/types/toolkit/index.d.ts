@@ -55,7 +55,8 @@ declare class JobSubmissionComponent {
     public static jobIDValidationTimeout : number;
     public static jobIDRegExp     : RegExp;
     public static jobResubmit     : boolean;
-    public static checkJobID(jobID : string, addResubmitVersion? : boolean) : any;
+    public static checkJobID(jobID? : string) : any;
+    public static checkJobIDTimed(timeout : number) : any;
     public static jobIDComponent(ctrl : any) : any;
     public static hide(ctrl : any, args : any) : any;
     public static controller(args : any) : any;

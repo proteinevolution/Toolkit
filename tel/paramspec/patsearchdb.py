@@ -7,7 +7,7 @@ def print_args(args):
 
 
 def main(argv):
-    path = "%STANDARD/DB"
+    path = "%STANDARD/PATDB"
     # If directory does not exist, print random stuff
     if not os.path.exists(path):
         print("foo bar")

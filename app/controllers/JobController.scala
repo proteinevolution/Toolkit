@@ -91,9 +91,16 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
           // Determine the jobID
           (formData.get("jobID") match {
             case Some(jobID) =>
-              // Bad Request if the jobID can be matched to one from the database
-              mongoStore.selectJob(jobID).map { job =>
-                if (job.isDefined) None else Some(jobID)
+              // Match the pattern of the jobID
+              jobID match {
+                case constants.jobIDVersionOptionPattern(_,_,_) =>
+                  // Check if the jobID is already used by a different job
+                  mongoStore.selectJob(jobID).map { job =>
+                    if (job.isDefined) None else Some(jobID)
+                  }
+                case _ =>
+                  // Pattern failed
+                  Future.successful(None)
               }
             case None =>
               // Use jobID Actor to get a new random jobID
@@ -150,21 +157,21 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                   // Send the job to the jobActor for preparation
                   jobActorAccess.sendToJobActor(jobID, PrepareJob(job, params, startJob = false, isFromInstitute))
                   // Notify user that the job has been submitted
-                  Ok(Json.obj("successful" -> true, "jobID" -> jobID))
+                  Ok(Json.obj("successful" -> true, "code" -> 0, "message" -> "Submission successful.", "jobID" -> jobID))
                     .withSession(
                       userSessions.sessionCookie(request, user.sessionID.get)
                     )
                 case None =>
                   // Something went wrong when pushing to the DB
-                  Ok(Json.obj("successful" -> false, "message" -> "Could not write to DB."))
+                  Ok(Json.obj("successful" -> false, "code" -> 3, "message" -> "Could not write to DB."))
               }
             case None =>
               // The job ID is already taken
-              Future.successful(Ok(Json.obj("successful" -> false, "message" -> "Job ID is already taken.")))
+              Future.successful(Ok(Json.obj("successful" -> false, "code" -> 2, "message" -> "Job ID is already taken.")))
           }
         case None =>
           // No form data - something went wrong.
-          Future.successful(Ok(Json.obj("successful" -> false, "message" -> "The form was invalid.")))
+          Future.successful(Ok(Json.obj("successful" -> false, "code" -> 1, "message" -> "The form was invalid.")))
       }
     }
   }
@@ -201,29 +208,23 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
             x
           }
           // Generate the job hash
-          val jobHash = JobHash.generateJobHash(job, params, env, jobDao)
+          val jobHash = jobDao.generateJobHash(job, params, env)
           // Match the hash
-          jobDao.matchHash(jobHash).flatMap { richSearchResponse =>
-            // Get the
-            val mainIDs : List[BSONObjectID] =
-              richSearchResponse.getHits.getHits.toList.flatMap(hit => BSONObjectID.parse(hit.getId).toOption)
-
-            Logger.info(s"[CheckHash] Found mainIDs: ${mainIDs.map(_.stringify).mkString(", ")}")
-            // Find the Jobs in the Database
-            mongoStore.findAndSortJobs(
-              BSONDocument(Job.IDDB -> BSONDocument("$in" -> mainIDs)),
-              BSONDocument(Job.DATECREATED -> -1)
-            ).map { jobList =>
-              jobList.find(_.state == Done) match {
-                case Some(latestOldJob) =>
-                  Ok(
-                    Json.toJson(
-                      Json.obj("jobID" -> latestOldJob.jobID, "dateCreated" -> latestOldJob.dateCreated.get.toInstant.toEpochMilli)
+          mongoStore.findAndSortJobs(
+            BSONDocument(Job.HASH        -> jobHash),
+            BSONDocument(Job.DATECREATED -> -1)
+          ).map { _.find(_.state == Done) match {
+              case Some(latestOldJob) =>
+                Ok(
+                  Json.toJson(
+                    Json.obj(
+                      "jobID"       -> latestOldJob.jobID,
+                      "dateCreated" -> latestOldJob.dateCreated.get.toInstant.toEpochMilli
                     )
                   )
-                case None =>
-                  NotFound
-              }
+                )
+              case None =>
+                NotFound
             }
           }
       }
