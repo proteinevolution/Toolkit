@@ -230,6 +230,10 @@ let tilescomponent = {
                             ),
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#uniclust_2017_7"},
+                                    m("h6", "September 29, 2017"),
+                                    m("p", "HHblits: a new version of the Uniclust30 DB is online.")
+                                ),
                                 m("a", {"data-open": "recentUpdatesModal", href: "#fisc"},
                                     m("h6", "September 24, 2017"),
                                     m("p", "HHpred: DBs of ",
@@ -247,11 +251,6 @@ let tilescomponent = {
                                         m("em", "Dictyostelium discoideum"), ", ",
                                         m("em", "Schizosaccharomyces pombe"), " and ",
                                         m("em", "Thermus thermophilus"), " are online."
-                                    )
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#ecod"},
-                                    m("h6", "September 9, 2017"),
-                                    m("p", "HHpred: profile HMMs of the ECOD database (Grishin Lab) are online."
                                     )
                                 )
                             ),
