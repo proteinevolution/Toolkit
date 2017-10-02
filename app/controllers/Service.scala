@@ -39,7 +39,7 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
                               val reactiveMongoApi: ReactiveMongoApi,
                               mongoStore: MongoStore,
                               userSessions: UserSessions,
-                              @NamedCache("userCache") implicit val userCache: CacheApi,
+                              @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                               implicit val locationProvider: LocationProvider,
                               toolFactory: ToolFactory,
                               constants: Constants,
