@@ -14,14 +14,24 @@ import scala.util.matching.Regex
   */
 @Singleton
 class Constants {
+  /** Number of jobActors */
+  val nJobActors              : Int    = 100
 
-  val SEPARATOR: String               = File.separator
-  val jobPath                         = s"${ConfigFactory.load().getString("job_path")}$SEPARATOR"
-  val deletionLogPath: String         = s"${ConfigFactory.load().getString("deletion_log_path")}$SEPARATOR"
-  val serializedParam                 = "sparam"
-  val nJobActors                      = 100
-  val formMultiValueSeparator: String = " "
-  val modellerKey: String             = "MODELIRANJE"
+  /** Key for the Modeller tool */
+  val modellerKey             : String = "MODELIRANJE"
+
+  // File Settings
+  /** File Seperator */
+  val SEPARATOR               : String = File.separator
+  /** Path to the jobs folder */
+  val jobPath                 : String = s"${ConfigFactory.load().getString("job_path")}$SEPARATOR"
+  /** results folder name */
+  val resultFolderName        : String = "results"
+  /** name of the parameter file */
+  val serializedParam         : String = "sparam"
+
+
+  val formMultiValueSeparator : String = " "
   val breakAfterClustal: Int = 85 // clustal format breaks after n chars
 
   // Job limitation settings

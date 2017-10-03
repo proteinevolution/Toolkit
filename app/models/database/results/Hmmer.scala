@@ -52,7 +52,27 @@ case class HmmerResult(HSPS: List[HmmerHSP],
                        query: SingleSeq,
                        db: String,
                        TMPRED: String,
-                       COILPRED: String)
+                       COILPRED: String) {
+  def hitsOrderBy(params: DTParam): List[HmmerHSP] = {
+    (params.iSortCol, params.sSortDir) match {
+      case (1, "asc")  => HSPS.sortBy(_.accession)
+      case (1, "desc") => HSPS.sortWith(_.accession > _.accession)
+      case (2, "asc")  => HSPS.sortBy(_.description)
+      case (2, "desc") => HSPS.sortWith(_.description > _.description)
+      case (3, "asc")  => HSPS.sortBy(_.full_evalue)
+      case (3, "desc") => HSPS.sortWith(_.full_evalue > _.full_evalue)
+      case (4, "asc")  => HSPS.sortBy(_.evalue)
+      case (4, "desc") => HSPS.sortWith(_.evalue > _.evalue)
+      case (5, "asc")  => HSPS.sortBy(_.bitscore)
+      case (5, "desc") => HSPS.sortWith(_.bitscore > _.bitscore)
+      case (6, "asc")  => HSPS.sortBy(_.hit_len)
+      case (6, "desc") => HSPS.sortWith(_.hit_len > _.hit_len)
+      case (_, "asc")  => HSPS.sortBy(_.num)
+      case (_, "desc") => HSPS.sortWith(_.num > _.num)
+      case (_, _)      => HSPS.sortBy(_.num)
+    }
+  }
+}
 
 @Singleton
 class Hmmer @Inject()(general: General, aln: Alignment) {
@@ -120,26 +140,5 @@ class Hmmer @Inject()(general: General, aln: Alignment) {
       description,
       domain_obs_num
     )
-
-  }
-
-  def hitsOrderBy(params: DTParam, hsp: List[HmmerHSP]): List[HmmerHSP] = {
-    (params.iSortCol, params.sSortDir) match {
-      case (1, "asc")  => hsp.sortBy(_.accession)
-      case (1, "desc") => hsp.sortWith(_.accession > _.accession)
-      case (2, "asc")  => hsp.sortBy(_.description)
-      case (2, "desc") => hsp.sortWith(_.description > _.description)
-      case (3, "asc")  => hsp.sortBy(_.full_evalue)
-      case (3, "desc") => hsp.sortWith(_.full_evalue > _.full_evalue)
-      case (4, "asc")  => hsp.sortBy(_.evalue)
-      case (4, "desc") => hsp.sortWith(_.evalue > _.evalue)
-      case (5, "asc")  => hsp.sortBy(_.bitscore)
-      case (5, "desc") => hsp.sortWith(_.bitscore > _.bitscore)
-      case (6, "asc")  => hsp.sortBy(_.hit_len)
-      case (6, "desc") => hsp.sortWith(_.hit_len > _.hit_len)
-      case (_, "asc")  => hsp.sortBy(_.num)
-      case (_, "desc") => hsp.sortWith(_.num > _.num)
-      case (_, _)      => hsp.sortBy(_.num)
-    }
   }
 }
