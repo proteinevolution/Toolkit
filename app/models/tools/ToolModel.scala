@@ -1,23 +1,18 @@
 package models.tools
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
-import com.typesafe.config.{ Config, ConfigFactory, ConfigObject }
+import com.typesafe.config.{Config, ConfigFactory, ConfigObject}
 import models.Constants
 import models.database.results._
-
-import modules.db.MongoStore
-
-import scala.collection.immutable.ListMap
-import scala.collection.mutable
-import scala.concurrent._
-import collection.JavaConversions._
-import ExecutionContext.Implicits.global
+import modules.db.{MongoStore, ResultFileAccessor}
 import play.api.libs.json.JsArray
-import play.modules.reactivemongo.ReactiveMongoApi
-import play.twirl.api.{ Html, HtmlFormat }
+import play.twirl.api.HtmlFormat
 
-import scala.concurrent.Future
+import scala.collection.JavaConversions._
+import scala.collection.immutable.ListMap
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Future, _}
 
 // Returned to the View if a tool is requested with the getTool route
 case class Toolitem(toolname: String,
@@ -63,7 +58,7 @@ final class ToolFactory @Inject()(
     quick2d: Quick2D,
     aln: models.database.results.Alignment,
     constants: Constants
-)(paramAccess: ParamAccess, mongoStore: MongoStore) {
+)(paramAccess: ParamAccess, mongoStore: MongoStore, resultFiles : ResultFileAccessor) {
 
   // Encompasses all the toolnames
   object Toolnames {
@@ -147,8 +142,7 @@ final class ToolFactory @Inject()(
     Map(
       Toolnames.PSIBLAST -> ListMap(
         Resultviews.RESULTS -> { (jobID, requestHeader) =>
-          mongoStore.getResult(jobID).map {
-
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               implicit val r = requestHeader
               views.html.jobs.resultpanels.psiblast.hitlist(jobID,
@@ -169,7 +163,7 @@ final class ToolFactory @Inject()(
           )
         },
         "E-Value Plot" -> { (jobID, requestHeader) =>
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               implicit val r = requestHeader
               views.html.jobs.resultpanels.evalues(psi.parseResult(jsvalue).HSPS.map(_.evalue))
@@ -199,7 +193,7 @@ final class ToolFactory @Inject()(
       Toolnames.TPRPRED -> ListMap(
         Resultviews.RESULTS -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               implicit val r = requestHeader
               views.html.jobs.resultpanels.tprpred("TPRpred", jobID, jsvalue)
@@ -209,7 +203,7 @@ final class ToolFactory @Inject()(
       Toolnames.HHBLITS -> ListMap(
         Resultviews.RESULTS -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               implicit val r = requestHeader
               views.html.jobs.resultpanels.hhblits
@@ -230,7 +224,7 @@ final class ToolFactory @Inject()(
           )
         },
         "E-Value Plot" -> { (jobID, requestHeader) =>
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               implicit val r = requestHeader
               views.html.jobs.resultpanels.evalues(hhblits.parseResult(jsvalue).HSPS.map(_.info.evalue))
@@ -238,7 +232,7 @@ final class ToolFactory @Inject()(
         },
         "Query Template MSA" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.alignmentQueryMSA(
                 jobID,
@@ -250,7 +244,7 @@ final class ToolFactory @Inject()(
         },
         "Query Alignment" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
                                                              aln.parseAlignment((jsvalue \ "reduced").as[JsArray]),
@@ -345,7 +339,7 @@ final class ToolFactory @Inject()(
       Toolnames.HMMER -> ListMap(
         Resultviews.RESULTS -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               implicit val r = requestHeader
               views.html.jobs.resultpanels.hmmer
@@ -356,7 +350,7 @@ final class ToolFactory @Inject()(
           }
         },
         "E-Value Plot" -> { (jobID, requestHeader) =>
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               implicit val r = requestHeader
               views.html.jobs.resultpanels.evalues(hmmer.parseResult(jsvalue).HSPS.map(_.evalue))
@@ -366,7 +360,7 @@ final class ToolFactory @Inject()(
       Toolnames.HHPRED -> ListMap(
         Resultviews.RESULTS -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.hhpred
                 .hitlist(jobID,
@@ -386,7 +380,7 @@ final class ToolFactory @Inject()(
           )
         },
         "Probability  Plot" -> { (jobID, requestHeader) =>
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               implicit val r = requestHeader
               views.html.jobs.resultpanels.probability(hhpred.parseResult(jsvalue).HSPS.map(_.info.probab))
@@ -394,7 +388,7 @@ final class ToolFactory @Inject()(
         },
         "Query Template MSA" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.alignment(jobID,
                                                      aln.parseAlignment((jsvalue \ "querytemplate").as[JsArray]),
@@ -404,7 +398,7 @@ final class ToolFactory @Inject()(
         },
         "Query MSA" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
                                                              aln.parseAlignment((jsvalue \ "reduced").as[JsArray]),
@@ -416,7 +410,7 @@ final class ToolFactory @Inject()(
       Toolnames.HHOMP -> ListMap(
         Resultviews.RESULTS -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.hhomp
                 .hitlist(jobID,
@@ -439,7 +433,7 @@ final class ToolFactory @Inject()(
       Toolnames.HHPRED_ALIGN -> ListMap(
         Resultviews.HITLIST -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.hhpred
                 .hitlist(jobID,
@@ -507,7 +501,7 @@ final class ToolFactory @Inject()(
       Toolnames.QUICK2D -> ListMap(
         Resultviews.RESULTS -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.quick2d(quick2d.parseResult(jsvalue))
           }
@@ -516,7 +510,7 @@ final class ToolFactory @Inject()(
       Toolnames.CLUSTALO -> ListMap(
         Resultviews.CLUSTAL -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.clustal(jobID,
                                                    aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
@@ -526,7 +520,7 @@ final class ToolFactory @Inject()(
         },
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.alignment(jobID,
                                                      aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
@@ -545,7 +539,7 @@ final class ToolFactory @Inject()(
       Toolnames.KALIGN -> ListMap(
         Resultviews.CLUSTAL -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.clustal(jobID,
                                                    aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
@@ -555,7 +549,7 @@ final class ToolFactory @Inject()(
         },
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.alignment(jobID,
                                                      aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
@@ -574,7 +568,7 @@ final class ToolFactory @Inject()(
       Toolnames.MAFFT -> ListMap(
         Resultviews.CLUSTAL -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.clustal(jobID,
                                                    aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
@@ -583,7 +577,7 @@ final class ToolFactory @Inject()(
           }
         },
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               implicit val r = requestHeader
               views.html.jobs.resultpanels.alignment(jobID,
@@ -603,7 +597,7 @@ final class ToolFactory @Inject()(
       Toolnames.MSAPROBS -> ListMap(
         Resultviews.CLUSTAL -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.clustal(jobID,
                                                    aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
@@ -613,7 +607,7 @@ final class ToolFactory @Inject()(
         },
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.alignment(jobID,
                                                      aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
@@ -632,7 +626,7 @@ final class ToolFactory @Inject()(
       Toolnames.MUSCLE -> ListMap(
         Resultviews.CLUSTAL -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.clustal(jobID,
                                                    aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
@@ -642,7 +636,7 @@ final class ToolFactory @Inject()(
         },
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.alignment(jobID,
                                                      aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
@@ -661,7 +655,7 @@ final class ToolFactory @Inject()(
       Toolnames.TCOFFEE -> ListMap(
         Resultviews.CLUSTAL -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.clustal(jobID,
                                                    aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
@@ -670,7 +664,7 @@ final class ToolFactory @Inject()(
           }
         },
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               implicit val r = requestHeader
               views.html.jobs.resultpanels.alignment(jobID,
@@ -780,7 +774,7 @@ final class ToolFactory @Inject()(
       Toolnames.SEQ2ID -> ListMap(
         Resultviews.RESULTS -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.unchecked_list("Seq2ID", jobID, jsvalue, this.values(Toolnames.SEQ2ID))
           }
@@ -840,7 +834,7 @@ final class ToolFactory @Inject()(
       Toolnames.HHFILTER -> ListMap(
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels.alignment(jobID,
                                                      aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
@@ -859,7 +853,7 @@ final class ToolFactory @Inject()(
       Toolnames.PATSEARCH -> ListMap(
         Resultviews.RESULTS -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
-          mongoStore.getResult(jobID).map {
+          resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels
                 .patternSearch("PatternSearch", jobID, jsvalue, this.values(Toolnames.PATSEARCH))

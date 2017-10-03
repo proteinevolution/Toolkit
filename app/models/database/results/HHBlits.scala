@@ -48,7 +48,27 @@ case class HHBlitsResult(HSPS: List[HHBlitsHSP],
                          query: SingleSeq,
                          db: String,
                          TMPRED: String,
-                         COILPRED: String)
+                         COILPRED: String) {
+  def hitsOrderBy(params: DTParam): List[HHBlitsHSP] = {
+    (params.iSortCol, params.sSortDir) match {
+      case (1, "asc")  => HSPS.sortBy(_.template.accession)
+      case (1, "desc") => HSPS.sortWith(_.template.accession > _.template.accession)
+      case (2, "asc")  => HSPS.sortBy(_.description)
+      case (2, "desc") => HSPS.sortWith(_.description > _.description)
+      case (3, "asc")  => HSPS.sortBy(_.info.probab)
+      case (3, "desc") => HSPS.sortWith(_.info.probab > _.info.probab)
+      case (4, "asc")  => HSPS.sortBy(_.info.evalue)
+      case (4, "desc") => HSPS.sortWith(_.info.evalue > _.info.evalue)
+      case (5, "asc")  => HSPS.sortBy(_.info.aligned_cols)
+      case (5, "desc") => HSPS.sortWith(_.info.aligned_cols > _.info.aligned_cols)
+      case (6, "asc")  => HSPS.sortBy(_.template.ref)
+      case (6, "desc") => HSPS.sortWith(_.template.ref > _.template.ref)
+      case (_, "asc")  => HSPS.sortBy(_.num)
+      case (_, "desc") => HSPS.sortWith(_.num > _.num)
+      case (_, _)      => HSPS.sortBy(_.num)
+    }
+  }
+}
 
 @Singleton
 class HHBlits @Inject()(general: General, aln: Alignment) {
@@ -114,25 +134,5 @@ class HHBlits @Inject()(general: General, aln: Alignment) {
     val seq       = (obj \ "seq").getOrElse(Json.toJson("")).as[String]
     val start     = (obj \ "start").getOrElse(Json.toJson(-1)).as[Int]
     HHBlitsTemplate(consensus, end, accession, ref, seq, start)
-  }
-
-  def hitsOrderBy(params: DTParam, hits: List[HHBlitsHSP]): List[HHBlitsHSP] = {
-    (params.iSortCol, params.sSortDir) match {
-      case (1, "asc")  => hits.sortBy(_.template.accession)
-      case (1, "desc") => hits.sortWith(_.template.accession > _.template.accession)
-      case (2, "asc")  => hits.sortBy(_.description)
-      case (2, "desc") => hits.sortWith(_.description > _.description)
-      case (3, "asc")  => hits.sortBy(_.info.probab)
-      case (3, "desc") => hits.sortWith(_.info.probab > _.info.probab)
-      case (4, "asc")  => hits.sortBy(_.info.evalue)
-      case (4, "desc") => hits.sortWith(_.info.evalue > _.info.evalue)
-      case (5, "asc")  => hits.sortBy(_.info.aligned_cols)
-      case (5, "desc") => hits.sortWith(_.info.aligned_cols > _.info.aligned_cols)
-      case (6, "asc")  => hits.sortBy(_.template.ref)
-      case (6, "desc") => hits.sortWith(_.template.ref > _.template.ref)
-      case (_, "asc")  => hits.sortBy(_.num)
-      case (_, "desc") => hits.sortWith(_.num > _.num)
-      case (_, _)      => hits.sortBy(_.num)
-    }
   }
 }

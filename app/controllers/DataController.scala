@@ -2,13 +2,13 @@ package controllers
 
 import java.time.ZonedDateTime
 import javax.inject.Inject
-import play.twirl.api.Html
+
 import models.database.CMS.FeaturedArticle
+import models.database.results.{Hmmer, PSIBlast}
+import modules.db.{MongoStore, ResultFileAccessor}
+import play.api.libs.json.Json
 import play.api.mvc._
 import reactivemongo.bson.BSONObjectID
-import play.api.libs.json.{ JsArray, JsObject, Json }
-import models.database.results.{ Hmmer, PSIBlast }
-import modules.db.MongoStore
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -20,14 +20,15 @@ class DataController @Inject()(mongoStore: MongoStore,
                                hmmerController: HmmerController,
                                hmmer: Hmmer,
                                psi: PSIBlast,
-                               cc: ControllerComponents)
+                               cc: ControllerComponents,
+                               resultFiles : ResultFileAccessor)
     extends AbstractController(cc) {
 
   /** Check whether the user is allowed to fetch the data for the particular job and retrieves the data with
     * stored given a particular key
     */
   def get(jobID: String): Action[AnyContent] = Action.async {
-    mongoStore.getResult(jobID).map {
+    resultFiles.getResults(jobID).map {
       case Some(jsValue) => Ok(jsValue)
       case None          => NotFound
     }
