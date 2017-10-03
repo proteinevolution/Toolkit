@@ -57,7 +57,27 @@ case class PSIBlastResult(HSPS: List[PSIBlastHSP],
                           query: SingleSeq,
                           belowEvalThreshold: Int,
                           TMPRED: String,
-                          COILPRED: String)
+                          COILPRED: String) {
+  def hitsOrderBy(params: DTParam): List[PSIBlastHSP] = {
+    (params.iSortCol, params.sSortDir) match {
+      case (1, "asc")  => HSPS.sortBy(_.accession)
+      case (1, "desc") => HSPS.sortWith(_.accession > _.accession)
+      case (2, "asc")  => HSPS.sortBy(_.description)
+      case (2, "desc") => HSPS.sortWith(_.description > _.description)
+      case (3, "asc")  => HSPS.sortBy(_.evalue)
+      case (3, "desc") => HSPS.sortWith(_.evalue > _.evalue)
+      case (4, "asc")  => HSPS.sortBy(_.bitscore)
+      case (4, "desc") => HSPS.sortWith(_.bitscore > _.bitscore)
+      case (5, "asc")  => HSPS.sortBy(_.ref_len)
+      case (5, "desc") => HSPS.sortWith(_.ref_len > _.ref_len)
+      case (6, "asc")  => HSPS.sortBy(_.hit_len)
+      case (6, "desc") => HSPS.sortWith(_.hit_len > _.hit_len)
+      case (_, "asc")  => HSPS.sortBy(_.num)
+      case (_, "desc") => HSPS.sortWith(_.num > _.num)
+      case (_, _)      => HSPS.sortBy(_.num)
+    }
+  }
+}
 
 @Singleton
 class PSIBlast @Inject()(general: General, aln: Alignment) {
@@ -157,25 +177,5 @@ class PSIBlast @Inject()(general: General, aln: Alignment) {
       description
     )
 
-  }
-
-  def hitsOrderBy(params: DTParam, hits: List[PSIBlastHSP]): List[PSIBlastHSP] = {
-    (params.iSortCol, params.sSortDir) match {
-      case (1, "asc")  => hits.sortBy(_.accession)
-      case (1, "desc") => hits.sortWith(_.accession > _.accession)
-      case (2, "asc")  => hits.sortBy(_.description)
-      case (2, "desc") => hits.sortWith(_.description > _.description)
-      case (3, "asc")  => hits.sortBy(_.evalue)
-      case (3, "desc") => hits.sortWith(_.evalue > _.evalue)
-      case (4, "asc")  => hits.sortBy(_.bitscore)
-      case (4, "desc") => hits.sortWith(_.bitscore > _.bitscore)
-      case (5, "asc")  => hits.sortBy(_.ref_len)
-      case (5, "desc") => hits.sortWith(_.ref_len > _.ref_len)
-      case (6, "asc")  => hits.sortBy(_.hit_len)
-      case (6, "desc") => hits.sortWith(_.hit_len > _.hit_len)
-      case (_, "asc")  => hits.sortBy(_.num)
-      case (_, "desc") => hits.sortWith(_.num > _.num)
-      case (_, _)      => hits.sortBy(_.num)
-    }
   }
 }
