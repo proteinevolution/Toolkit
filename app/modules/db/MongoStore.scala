@@ -171,38 +171,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
     */
   def removeJob(selector: BSONDocument): Future[WriteResult] = {
     jobCollection.flatMap(_.remove(selector))
-    resultCollection.flatMap(_.remove(selector))
-  }
-
-  /*
-   *                Result file DB Access
-   */
-  /**
-    * Basic access to the result files Collection
-    */
-  lazy val resultCollection: Future[BSONCollection] =
-    reactiveMongoApi.database.map(_.collection[BSONCollection]("results"))
-
-  /**
-    *  Modifies a result in the database
-    */
-  def modifyResult(selector: BSONDocument, modifier: BSONDocument): Future[Option[BSONDocument]] = {
-    resultCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true, upsert = true).map { x =>
-      x.result
-    })
-  }
-
-  def result2Job(jobID: String, x: BSONDocument): Future[Option[BSONDocument]] = {
-    modifyResult(BSONDocument("jobID" -> jobID), BSONDocument("$set" -> x))
-  }
-
-  // Able to fetch one field for the respective result
-  def getResult(jobID: String): Future[Option[JsValue]] = {
-    val selector = BSONDocument("jobID" -> BSONDocument("$eq" -> jobID))
-    resultCollection.map(_.find(selector).cursor[BSONDocument]()).flatMap(_.headOption).map {
-      case Some(bsonDoc) => Some(reactivemongo.play.json.BSONFormats.toJSON(bsonDoc))
-      case None          => Logger.info("Could not find JSON file."); None
-    }
   }
 
   /*
