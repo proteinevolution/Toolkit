@@ -62,7 +62,31 @@ case class HHompTemplate(consensus: String,
                          bb_pred: String,
                          bb_conf: String,
                          start: Int)
-case class HHompResult(HSPS: List[HHompHSP], num_hits: Int, query: SingleSeq, db: String, overall_prob: Double)
+case class HHompResult(HSPS: List[HHompHSP], num_hits: Int, query: SingleSeq, db: String, overall_prob: Double) {
+  def hitsOrderBy(params: DTParam): List[HHompHSP] = {
+    (params.iSortCol, params.sSortDir) match {
+      case (1, "asc")  => HSPS.sortBy(_.template.accession)
+      case (1, "desc") => HSPS.sortWith(_.template.accession > _.template.accession)
+      case (2, "asc")  => HSPS.sortBy(_.description)
+      case (2, "desc") => HSPS.sortWith(_.description > _.description)
+      case (3, "asc")  => HSPS.sortBy(_.info.probab_hit)
+      case (3, "desc") => HSPS.sortWith(_.info.probab_hit > _.info.probab_hit)
+      case (4, "asc")  => HSPS.sortBy(_.info.probab_omp)
+      case (4, "desc") => HSPS.sortWith(_.info.probab_omp > _.info.probab_omp)
+      case (5, "asc")  => HSPS.sortBy(_.info.evalue)
+      case (5, "desc") => HSPS.sortWith(_.info.evalue > _.info.evalue)
+      case (6, "asc")  => HSPS.sortBy(_.ss_score)
+      case (6, "desc") => HSPS.sortWith(_.ss_score > _.ss_score)
+      case (7, "asc")  => HSPS.sortBy(_.info.aligned_cols)
+      case (7, "desc") => HSPS.sortWith(_.info.aligned_cols > _.info.aligned_cols)
+      case (8, "asc")  => HSPS.sortBy(_.template.ref)
+      case (8, "desc") => HSPS.sortWith(_.template.ref > _.template.ref)
+      case (_, "asc")  => HSPS.sortBy(_.num)
+      case (_, "desc") => HSPS.sortWith(_.num > _.num)
+      case (_, _)      => HSPS.sortBy(_.num)
+    }
+  }
+}
 
 @Singleton
 class HHomp @Inject()(general: General, aln: Alignment) {
@@ -133,29 +157,5 @@ class HHomp @Inject()(general: General, aln: Alignment) {
     val bb_pred   = (obj \ "bb_pred").getOrElse(Json.toJson("")).as[String]
     val bb_conf   = (obj \ "bb_conf").getOrElse(Json.toJson("")).as[String]
     HHompTemplate(consensus, end, accession, ref, seq, ss_conf, ss_dssp, ss_pred, bb_pred, bb_conf, start)
-  }
-
-  def hitsOrderBy(params: DTParam, hits: List[HHompHSP]): List[HHompHSP] = {
-    (params.iSortCol, params.sSortDir) match {
-      case (1, "asc")  => hits.sortBy(_.template.accession)
-      case (1, "desc") => hits.sortWith(_.template.accession > _.template.accession)
-      case (2, "asc")  => hits.sortBy(_.description)
-      case (2, "desc") => hits.sortWith(_.description > _.description)
-      case (3, "asc")  => hits.sortBy(_.info.probab_hit)
-      case (3, "desc") => hits.sortWith(_.info.probab_hit > _.info.probab_hit)
-      case (4, "asc")  => hits.sortBy(_.info.probab_omp)
-      case (4, "desc") => hits.sortWith(_.info.probab_omp > _.info.probab_omp)
-      case (5, "asc")  => hits.sortBy(_.info.evalue)
-      case (5, "desc") => hits.sortWith(_.info.evalue > _.info.evalue)
-      case (6, "asc")  => hits.sortBy(_.ss_score)
-      case (6, "desc") => hits.sortWith(_.ss_score > _.ss_score)
-      case (7, "asc")  => hits.sortBy(_.info.aligned_cols)
-      case (7, "desc") => hits.sortWith(_.info.aligned_cols > _.info.aligned_cols)
-      case (8, "asc")  => hits.sortBy(_.template.ref)
-      case (8, "desc") => hits.sortWith(_.template.ref > _.template.ref)
-      case (_, "asc")  => hits.sortBy(_.num)
-      case (_, "desc") => hits.sortWith(_.num > _.num)
-      case (_, _)      => hits.sortBy(_.num)
-    }
   }
 }
