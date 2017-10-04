@@ -2,25 +2,27 @@ package controllers
 
 import javax.inject.Inject
 
-import com.typesafe.config.ConfigFactory
 import better.files._
+import com.typesafe.config.ConfigFactory
 import models.Constants
-
-import scala.concurrent.ExecutionContext.Implicits.global
 import models.database.results._
-import modules.db.MongoStore
-import play.api.libs.json.{ JsArray, JsObject, Json }
+import modules.db.ResultFileAccessor
+import play.api.libs.json.{JsArray, JsObject, Json}
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.sys.process.Process
 
 /**
   * Created by drau on 18.04.17.
   */
-class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment, constants: Constants)(
-    mongoStore: MongoStore,
+class HmmerController @Inject()(resultFiles : ResultFileAccessor,
+                                hmmer: Hmmer,
+                                general: General,
+                                aln: Alignment,
+                                constants: Constants)(
     val reactiveMongoApi: ReactiveMongoApi,
     cc: ControllerComponents
 ) extends AbstractController(cc)
@@ -52,7 +54,8 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment, 
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
-      mongoStore.getResult(jobID).map {
+      resultFiles.getResults(jobID).map {
+        case None          => NotFound
         case Some(jsValue) =>
           val result        = hmmer.parseResult(jsValue)
           val accessionsStr = getAccessionsEval(result, eval.toDouble)
@@ -66,8 +69,6 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment, 
             case 0 => Ok
             case _ => BadRequest
           }
-
-        case _ => NotFound
       }
     }
   }
@@ -94,7 +95,8 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment, 
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
-      mongoStore.getResult(jobID).map {
+      resultFiles.getResults(jobID).map {
+        case None          => NotFound
         case Some(jsValue) =>
           val result        = hmmer.parseResult(jsValue)
           val accessionsStr = getAccessions(result, numList)
@@ -108,8 +110,6 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment, 
             case 0 => Ok
             case _ => BadRequest
           }
-
-        case _ => NotFound
       }
     }
   }
@@ -164,9 +164,9 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment, 
   def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json = request.body.asJson.get
     val eval = (json \ "evalue").as[String]
-    mongoStore.getResult(jobID).map {
+    resultFiles.getResults(jobID).map {
+      case None          => NotFound
       case Some(jsValue) => Ok(getAlnEval(hmmer.parseResult(jsValue), eval.toDouble))
-      case _             => NotFound
     }
   }
 
@@ -187,9 +187,9 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment, 
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
     val numList = (json \ "checkboxes").as[List[Int]]
-    mongoStore.getResult(jobID).map {
+    resultFiles.getResults(jobID).map {
+      case None          => NotFound
       case Some(jsValue) => Ok(getAln(aln.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
-      case _             => NotFound
     }
   }
 
@@ -228,20 +228,15 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment, 
   /**
     * given dataTable specific paramters, this function
     * filters for eg. a specific column and returns the data
-    * @param jobID
+    * @param hits
     * @param params
     * @return
     */
-  def getHitsByKeyWord(jobID: String, params: DTParam): Future[List[HmmerHSP]] = {
+  def getHitsByKeyWord(hits : HmmerResult, params: DTParam): List[HmmerHSP] = {
     if (params.sSearch.isEmpty) {
-      mongoStore.getResult(jobID).map {
-        case Some(result) =>
-          hmmer
-            .hitsOrderBy(params, hmmer.parseResult(result).HSPS)
-            .slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
-      }
+      hits.hitsOrderBy(params).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
     } else {
-      ???
+      hits.hitsOrderBy(params).filter(_.description.contains(params.sSearch))
     }
   }
 
@@ -265,7 +260,7 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment, 
     val start   = (json \ "start").as[Int]
     val end     = (json \ "end").as[Int]
     val wrapped = (json \ "wrapped").as[Boolean]
-    mongoStore.getResult(jobID).map {
+    resultFiles.getResults(jobID).map {
       case Some(jsValue) =>
         val result = hmmer.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
@@ -295,24 +290,17 @@ class HmmerController @Inject()(hmmer: Hmmer, general: General, aln: Alignment, 
       request.getQueryString("sSortDir_0").getOrElse("asc")
     )
 
-    val hits = getHitsByKeyWord(jobID, params)
-    var db   = ""
-    val total = mongoStore.getResult(jobID).map {
+    resultFiles.getResults(jobID).map {
+      case None          => NotFound
       case Some(jsValue) =>
         val result = hmmer.parseResult(jsValue)
-        db = result.db
-        result.num_hits
-
-    }
-    hits.flatMap { list =>
-      total.map { total_ =>
+        val hits = getHitsByKeyWord(result, params)
         Ok(
           Json
-            .toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
+            .toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))
             .as[JsObject]
-            .deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db))))
+            .deepMerge(Json.obj("aaData" -> hits.map(_.toDataTable(result.db))))
         )
-      }
     }
   }
 }

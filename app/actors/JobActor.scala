@@ -670,60 +670,19 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           Logger.info(s"[JobActor[$jobActorNumber].JobStateChanged] State has changed to ${job.status.toString} for the Job with the JobID ${job.jobID}")
 
           // Dependent on the state, we have to do different things
-          job.status match {
-            case Done =>
-              // Job is no longer running
-              Logger.info(s"[JobActor[$jobActorNumber].JobStateChanged] Removing execution context")
-              this.runningExecutions = this.runningExecutions.-(job.jobID)
-
-              // Tell the user that their job finished via eMail
+          if (job.isFinished) {
+            // Now we can update the JobState and remove it, once the update has completed
+            this.updateJobState(job).map { job =>
+              //Remove the job from the jobActor
+              this.removeJob(job.jobID)
+              // Tell the user that their job finished via eMail (can be either failed or done)
               sendJobUpdateMail(job)
-
-              // TODO refactor the result gathering
-              val result = (constants.jobPath / job.jobID / "results").list
-                .withFilter(_.hasExtension)
-                .withFilter(_.extension.get == ".json")
-                .map { file =>
-                  (file.nameWithoutExtension,
-                   reactivemongo.play.json.BSONFormats.toBSON(Json.parse(file.contentAsString)).get)
-
-                }
-                .toTraversable
-              if (result.nonEmpty) {
-                // Put the result files into the database, JobActor has to wait until this process has finished
-                val x = mongoStore.result2Job(job.jobID, BSONDocument(result)) onComplete {
-                  case Success(_) =>
-                    // Now we can update the JobState and remove it, once the update has completed
-                    this.updateJobState(job).map { job =>
-                      this.removeJob(job.jobID)
-                      Logger.info("Job has been removed from JobActor")
-                    }
-                  case Failure(t) =>
-                    this.updateJobState(job.copy(status = Error))
-                    Logger.error("An error has occured while writing to the Results DB:\n" + t.getMessage)
-                }
-              } else {
-                // Now we can update the JobState and remove it, once the update has completed
-                this.updateJobState(job).map { job =>
-                  this.removeJob(job.jobID)
-                  Logger.info("Job has been removed from JobActor")
-                }
-              }
-
-            // Currently no further error handling
-            case Error =>
-              this.updateJobState(job).map { job =>
-                this.removeJob(job.jobID)
-
-                // Tell the user that their job failed via eMail
-                sendJobUpdateMail(job)
-              }
-
-            case _ =>
-              this.updateJobState(job)
+            }
+          } else {
+            this.updateJobState(job)
           }
         case None =>
-          Logger.info("Job not found: " + jobID)
+          Logger.info(s"[JobActor[$jobActorNumber].JobStateChanged] Job not found: " + jobID)
       }
 
     // Checks the current jobs against the currently running cluster jobs to see if there are any dead jobs
@@ -761,7 +720,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       }
 
     // gets updatelog notifications via curl
-
     case UpdateLog(jobID: String) =>
       currentJobs.get(jobID) match {
         case Some(job) =>
