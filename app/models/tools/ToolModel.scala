@@ -39,10 +39,7 @@ case class Tool(toolNameShort: String,
                 forwardAlignment: Seq[String],
                 forwardMultiSeq: Seq[String]) {
   def isToolName(toolName: String, caseSensitive: Boolean = false): Boolean = {
-
-    if (toolName.toUpperCase == "REFORMAT" || toolName.toUpperCase == "ALNVIZ")
-      true
-    else if (caseSensitive) {
+    if (caseSensitive) {
       toolNameAbbrev.contains(toolName) || toolNameShort.contains(toolName) || toolNameLong.contains(toolName)
     } else {
       toolNameAbbrev.toLowerCase.contains(toolName.toLowerCase) ||
@@ -141,6 +138,15 @@ final class ToolFactory @Inject()(
     }
 
   }.toMap
+
+  /**
+    * Returns true if the string is a toolname, false if it isn't
+    * @param toolName
+    * @return
+    */
+  def isTool(toolName : String) : Boolean = {
+    toolName.toUpperCase == "REFORMAT" || toolName.toUpperCase == "ALNVIZ" || values.exists(_._2.isToolName(toolName))
+  }
 
   // Maps toolname and resultpanel name to the function which transfers jobID and jobPath to an appropriate view
   val resultMap: Map[String, ListMap[String, (String, play.api.mvc.RequestHeader) => Future[HtmlFormat.Appendable]]] =
