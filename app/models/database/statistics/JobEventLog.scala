@@ -8,11 +8,11 @@ import reactivemongo.bson._
 /**
   * Created by astephens on 19.02.17.
   */
-case class JobEventLog(mainID: BSONObjectID, // ID of the Job in the System
-                       toolName: String,
-                       internalJob: Boolean = false,
-                       events: List[JobEvent],
-                       runtime: Long = 0L) {
+case class JobEventLog(mainID      : BSONObjectID   = BSONObjectID.generate(), // ID of the Job in the System
+                       toolName    : String,
+                       internalJob : Boolean        = false,
+                       events      : List[JobEvent] = List.empty[JobEvent],
+                       runtime     : Long           = 0L) {
 
   def addJobStateEvent(jobState: JobState): JobEventLog = {
     val runtimeDiff: Long =
