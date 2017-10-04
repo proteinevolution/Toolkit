@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 import javax.inject.{Inject, Singleton}
 
 import models.database.CMS.FeaturedArticle
-import models.database.jobs.{FrontendJob, Job}
+import models.database.jobs.Job
 import models.database.statistics.{ClusterLoadEvent, JobEventLog, StatisticsObject}
 import models.database.users.User
 import play.api.Logger
@@ -203,19 +203,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends
       case Some(bsonDoc) => Some(reactivemongo.play.json.BSONFormats.toJSON(bsonDoc))
       case None          => Logger.info("Could not find JSON file."); None
     }
-  }
-
-  /*
-   *                Front end job DB Access
-   */
-  lazy val frontendJobCollection: Future[BSONCollection] =
-    reactiveMongoApi.database.map(_.collection[BSONCollection]("frontendjobs"))
-
-  def addFrontendJob(frontendJob: FrontendJob): Future[WriteResult] =
-    frontendJobCollection.flatMap(_.insert(frontendJob))
-
-  def modifyFrontendJob(selector: BSONDocument, modifier: BSONDocument): Future[Option[Job]] = {
-    frontendJobCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[Job]))
   }
 
   /*
