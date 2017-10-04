@@ -90,11 +90,11 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Sy
   }
 
   def existsTool(queryString: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      val toolOpt: Option[models.tools.Tool] = toolFactory.values.values.find(_.isToolName(queryString))
-      toolOpt match {
-        case Some(_) => Future.successful(Ok(Json.toJson(true)))
-        case None    => Future.successful(NotFound)
+    userSessions.getUser.map { user =>
+      if (toolFactory.isTool(queryString)) {
+        Ok(Json.toJson(true))
+      } else {
+        NotFound
       }
     }
   }
