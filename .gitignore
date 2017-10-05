@@ -1,3 +1,4 @@
+conf/ehcache.xml
 conf/tel.conf
 project/project
 project/target
