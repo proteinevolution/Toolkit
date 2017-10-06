@@ -1,4 +1,4 @@
-lazy val akkaVersion      = "2.5.4"
+lazy val akkaVersion      = "2.5.6"
 lazy val kamonVersion     = "0.6.6"
 lazy val scalazVersion    = "7.2.10"
 
