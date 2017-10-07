@@ -1,3 +1,5 @@
+import ElementConfig = Mithril.ElementConfig;
+
 const helpModalReveal : ElementConfig = function(elem : any, isInit : boolean) : any {
     if (!isInit) {
         elem.setAttribute("data-reveal", "data-reveal");
