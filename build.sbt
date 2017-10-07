@@ -29,7 +29,7 @@ lazy val commonDeps = Seq(
   "org.typelevel"          %% "cats"                 % "0.9.0",
   "com.mohiva"             %% "play-html-compressor" % "0.7.1",
   "com.typesafe.play"      %% "play-json"            % "2.6.3",
-  "com.github.dfabulich"   % "sitemapgen4j"         % "1.0.6"
+  "com.github.dfabulich"   % "sitemapgen4j"          % "1.0.6"
   //"io.kamon"             %% "kamon-play-2.5"          % kamonVersion,
   //"io.kamon"             %% "kamon-system-metrics"    % kamonVersion,
   //"io.kamon"             %% "kamon-statsd"            % kamonVersion,
@@ -43,7 +43,7 @@ lazy val commonDeps = Seq(
 lazy val commonSettings = Seq(
   version := "0.1.0",
   scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.11.8", "2.12.1"),
+  crossScalaVersions := Seq("2.11.8", "2.12.3"),
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   logLevel := Level.Warn,
@@ -126,6 +126,17 @@ lazy val client = (project in file("client"))
     )
   )
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
+
+
+lazy val disableDocs = Seq[Setting[_]](
+  sources in(Compile, doc) := Seq.empty,
+  publishArtifact in(Compile, packageDoc) := false
+)
+
+lazy val api = (project in file("modules/api"))
+  .settings(disableDocs)
+  .enablePlugins(JavaAppPackaging)
+  .dependsOn(root)
 
 fork in run := false
 
