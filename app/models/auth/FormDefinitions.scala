@@ -22,7 +22,7 @@ object FormDefinitions {
   /**
     * Form mapping for the Sign up form
     */
-  def SignUp(user: User) = Form(
+  def signUp(user: User) = Form(
     mapping(
       UserData.NAMELOGIN -> (text(6, 40) verifying pattern(textRegex, error = "error.NameLogin")),
       UserData.PASSWORD  -> (text(8, 128) verifying pattern(textRegex, error = "error.Password")),
@@ -56,7 +56,7 @@ object FormDefinitions {
   /**
     * Form mapping for the Sign in form
     */
-  val SignIn = Form(
+  lazy val signIn = Form(
     mapping(UserData.NAMELOGIN -> text(6, 40), UserData.PASSWORD -> text(8, 128)) { (nameLogin, password) =>
       User.Login(
         nameLogin,
@@ -70,7 +70,7 @@ object FormDefinitions {
   /**
     * Edit form for the profile
     */
-  def ProfileEdit(user: User) =
+  def profileEdit(user: User) =
     Form(
       mapping(
         UserData.EMAIL     -> optional(email),
@@ -98,7 +98,7 @@ object FormDefinitions {
   /**
     * Edit form for the password change in the Profile
     */
-  def ProfilePasswordEdit(user: User) = Form(
+  def profilePasswordEdit(user: User) = Form(
     mapping(
       UserData.PASSWORDOLD -> (text(8, 128) verifying pattern(textRegex, error = "error.OldPassword")),
       UserData.PASSWORDNEW -> (text(8, 128) verifying pattern(textRegex, error = "error.NewPassword"))
@@ -113,7 +113,7 @@ object FormDefinitions {
     }
   )
 
-  def ForgottenPasswordEdit = Form(
+  def forgottenPasswordEdit = Form(
     mapping(UserData.EMAIL -> email) {
       Some(_)
     } { _ =>
@@ -121,7 +121,7 @@ object FormDefinitions {
     }
   )
 
-  def ForgottenPasswordChange = Form(
+  def forgottenPasswordChange = Form(
     mapping(UserData.PASSWORDNEW -> (text(8, 128) verifying pattern(textRegex, error = "error.NewPassword"))) {
       (passwordNew) =>
         BCrypt.hashpw(passwordNew, BCrypt.gensalt(LOG_ROUNDS))
