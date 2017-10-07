@@ -1,4 +1,4 @@
-mapParam = function(param, ctrl) {
+mapParam = function(param : any, ctrl : any) {
 
     let comp = formComponents[param.paramType.type];
     return m(comp, {

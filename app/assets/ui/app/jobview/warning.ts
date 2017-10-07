@@ -1,5 +1,5 @@
 /// <reference path="helper.ts"/>
-let JobLimitReachedComponent = {
+const JobLimitReachedComponent = {
 
     controller : function(args : any){
         return {

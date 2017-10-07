@@ -1,4 +1,4 @@
-let tooltipSearch = function(elem : any, isInit : boolean) {
+const tooltipSearch = function(elem : any, isInit : boolean) {
     if (!isInit) {
         elem.setAttribute("data-tooltip", "data-tooltip");
         elem.setAttribute("aria-haspopup", "true");

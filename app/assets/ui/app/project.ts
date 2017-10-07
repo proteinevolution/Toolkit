@@ -1,11 +1,7 @@
 
-let ProjectComponent = {
+const ProjectComponent = {
 
-    controller(args: any) {
-
-
-
-    },
+    controller(args: any) {},
 
     view(ctrl: any, args: any) {
 

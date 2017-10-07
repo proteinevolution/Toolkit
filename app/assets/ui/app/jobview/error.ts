@@ -1,6 +1,6 @@
 let ErrorLog : Array<string> = [];
 
-let JobErrorComponent = {
+const JobErrorComponent = {
     updateLog: function(){
         m.redraw(true);
     },

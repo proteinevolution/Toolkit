@@ -118,7 +118,7 @@ window.FrontendAlnvizComponent = {
 
 
 
-let fndt = function(elem : any, isInit : boolean) : any {
+const fndt = function(elem : any, isInit : boolean) : any {
     if (!isInit) {
         return $(elem).foundation();
     }
@@ -150,7 +150,7 @@ window.FrontendReformatComponent = {
 
 
 
-let renderTabs = function(tabs : any, content : any) {
+const renderTabs = function(tabs : any, content : any) {
     return m("div", {
         "class": "tool-tabs",
         id: "tool-tabs",
@@ -171,7 +171,7 @@ let renderTabs = function(tabs : any, content : any) {
     ]);
 };
 
-let GeneralTabComponent = {
+const GeneralTabComponent = {
 
     controller: function() {
         let mo = {
@@ -254,7 +254,7 @@ let GeneralTabComponent = {
 };
 
 
-let tabsContents : any = {
+const tabsContents : any = {
     "Alignment": function(ctrl : any) {
         return m("div", {
             "class": "parameter-panel", "id": "alignmentViewerPanel"

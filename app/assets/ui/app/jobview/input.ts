@@ -1,6 +1,6 @@
 // input textarea
 
-let ParameterAlignmentComponent = {
+const ParameterAlignmentComponent = {
     placeholder: "",
     model: function(args : any) {
         this.modes = args.param.paramType.modes;

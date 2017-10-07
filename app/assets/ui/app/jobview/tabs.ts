@@ -1,6 +1,6 @@
 declare var onCollapse : any, onFullscreenToggle : any, onExpand : any, setViewport : any, onCollapsescreen : any;
 
-let JobTabsComponent = {
+const JobTabsComponent = {
     model: function() {
         return {
             isFullscreen: false,
