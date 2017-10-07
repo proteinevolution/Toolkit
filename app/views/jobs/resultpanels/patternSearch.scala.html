@@ -18,7 +18,6 @@
 
 }else{
 <div class="colorOptsAlignment">
-    <a onclick='wrapSequences()' type="button"><span id="wrapSequences">Wrap sequences</span></a>
     <a onclick="download_()" type="button"><span id="downloadAlignment">Download Hits</span></a>
     <a data-open="forwardModal_@{tool.toolNameShort}" type="button"><span id="downloadAlignment">Forward All</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
@@ -73,9 +72,7 @@
 
     <script>
         var data;
-        var wrapSequencesBool = false;
-
-        // wrap seqs by default
+       // wrap seqs by default
         $(document).ready(function () {
             wrapSequences()
         });
@@ -89,15 +86,8 @@
 
 
         function wrapSequences(){
-            this.wrapSequencesBool = !this.wrapSequencesBool;
-            if(wrapSequencesBool) {
                 $(".sequenceAlignment").addClass("wrap");
                 $("#wrapSequences").addClass("colorToggle");
-            }
-            else {
-                $(".sequenceAlignment").removeClass("wrap");
-                $("#wrapSequences").removeClass("colorToggle");
-            }
         }
 
         window["@{tool.toolNameShort}_forward"] = function(selectedTool){
