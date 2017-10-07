@@ -18,7 +18,7 @@
             // set the jobID to the new jobID
             JobSubmissionComponent.currentJobID = jobID;
             if (JobSubmissionComponent.jobIDRegExp.test(jobID)) {   // Check if the JobID is passing the Regex
-                let checkJobIDroute = jsRoutes.controllers.Search.checkJobID(
+                const checkJobIDroute = jsRoutes.controllers.Search.checkJobID(
                                        JobSubmissionComponent.currentJobID,
                                        JobSubmissionComponent.oldJobID);
                 m.request({ method: checkJobIDroute.method, url: checkJobIDroute.url}).then(
@@ -209,7 +209,7 @@
                     m("input", {
                         id: "emailUpdate",
                         type: "checkbox",
-                        class: "checkbox",
+                        "class": "checkbox",
                         name: "emailUpdate",
                         value: true}),
                     m("div", {"class": "sliderSwitch round"})

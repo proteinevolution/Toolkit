@@ -49,7 +49,7 @@ const protyadA : string = ">gi|401465|sp|P31489|YDA1_YEREN Adhesin yadA precurso
 
 
 
-let sampleSeqConfig = function(elem: any, isInit: boolean, ctx: any) : any {
+const sampleSeqConfig = function(elem: any, isInit: boolean, ctx: any) : any {
 
 
     let $a = $('#alignment');

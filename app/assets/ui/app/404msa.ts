@@ -9,7 +9,7 @@ window.call404 = function(elem : any, isInit: boolean) : any {
 
     // msa viewer for 404 page
     if(!isInit) {
-        let ErrorOpts = {
+        const ErrorOpts = {
             colorscheme: {
                 "scheme": "taylor"
             },
@@ -38,7 +38,7 @@ window.call404 = function(elem : any, isInit: boolean) : any {
         };
 
         //console.log($('#hidden404').val());
-        let a = new msa.msa(ErrorOpts);
+        const a = new msa.msa(ErrorOpts);
         a.render();
 
     }

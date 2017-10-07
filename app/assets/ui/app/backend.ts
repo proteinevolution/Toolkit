@@ -65,7 +65,7 @@ window.Backend = {
     plotter : function (ctrl : any) {
         return function (elem : any, isin : boolean, context : any) {
             if (!isin) {
-                let chartElements = ctrl.data();//.map(function (item) {
+                const chartElements = ctrl.data();//.map(function (item) {
                 //console.log(item);
                 //return item
                 //});
@@ -95,7 +95,7 @@ window.Backend = {
                             }
                         },
                         series: chartElements.map(function (item : any) {
-                            let monthlyElements = [item.current];
+                            const monthlyElements = [item.current];
                             item.monthly.forEach(function(element : any){monthlyElements.push(element)});
                             //console.log(monthlyElements);
                             return {

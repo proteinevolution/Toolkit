@@ -18,11 +18,11 @@
 };
 
 
-let JobLineComponent = {
+const JobLineComponent = {
     controller : function() {},
     view: function(ctrl : any, args : any) {
         let isJob: boolean;
-        let dateCreated = moment.utc(args.job().dateCreated).utcOffset(2, true).local();
+        const dateCreated = moment.utc(args.job().dateCreated).utcOffset(2, true).local();
         isJob = args.job().isJob;
         return m("div", {
             "class": "jobline"
@@ -51,7 +51,7 @@ let JobLineComponent = {
     }
 };
 
-let initLoader = function(elem: any, isInit: boolean) : any {
+const initLoader = function(elem: any, isInit: boolean) : any {
     if(!isInit) {
         return setTimeout(function(){ $(elem).show(); }, 1000); // css loading animation to be shown only when the transition to job state tabs takes too long
     }

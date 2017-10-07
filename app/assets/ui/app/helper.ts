@@ -1,6 +1,6 @@
 /// <reference path="validation.ts"/>
 
-let closeShortcut = function() {
+const closeShortcut = function() {
     return $(document).keydown(function(e) {
         if (e.keyCode === 27 && $("#tool-tabs").hasClass("fullscreen")) {
             $("#collapseMe").click();
@@ -8,11 +8,11 @@ let closeShortcut = function() {
     });
 };
 
-let nonJsonErrors = function(xhr : XMLHttpRequest) {
+const nonJsonErrors = function(xhr : XMLHttpRequest) {
     return xhr.status > 200 ? JSON.stringify(xhr.responseText) : xhr.responseText
 };
 
-let tabulated = function(element : any, isInit : boolean) : any {
+const tabulated = function(element : any, isInit : boolean) : any {
     if (!isInit) {
         return $(element).tabs({
             active: this.active,
@@ -35,7 +35,7 @@ $('.toolsec').on('click', 'a', function() { /*m.route(this.href)*/ });
 
 
 
-let select2Config = function(elem : any, isInit : boolean) : any {
+const select2Config = function(elem : any, isInit : boolean) : any {
 
     if(!isInit) {
 
@@ -60,7 +60,7 @@ let select2Config = function(elem : any, isInit : boolean) : any {
 
 };
 
-let select2Single = function(elem : any, isInit : boolean) : any {
+const select2Single = function(elem : any, isInit : boolean) : any {
     if(!isInit) {
         $(elem).select2({
             dropdownAutoWidth : true,
@@ -69,7 +69,7 @@ let select2Single = function(elem : any, isInit : boolean) : any {
     }
 };
 
-let hideSubmitButtons = function (elem : any, isInit : boolean) : any {
+const hideSubmitButtons = function (elem : any, isInit : boolean) : any {
     if (!isInit) {
         return $(elem).on("click", function() {
             if($(this).attr('href') == "#tabpanel-Input" || $(this).attr('href') == "#tabpanel-Parameters") {
@@ -86,7 +86,7 @@ let hideSubmitButtons = function (elem : any, isInit : boolean) : any {
 };
 
 
-let hideSidebar = function (elem : any, isInit : boolean) : any {
+const hideSidebar = function (elem : any, isInit : boolean) : any {
     if (!isInit) {
 
         $('#sidebar').hide();
@@ -96,7 +96,7 @@ let hideSidebar = function (elem : any, isInit : boolean) : any {
 };
 
 
-let showSidebar = function (elem : any, isInit : boolean) : any {
+const showSidebar = function (elem : any, isInit : boolean) : any {
     if (!isInit) {
 
         $('#sidebar').show();
@@ -106,7 +106,7 @@ let showSidebar = function (elem : any, isInit : boolean) : any {
     }
 };
 
-let submitModal = function(elem : any, isInit : boolean) : any {
+const submitModal = function(elem : any, isInit : boolean) : any {
     if (!isInit) {
         $(elem).foundation();
         return $(elem).bind('closed.zf.reveal', (function() {
@@ -116,7 +116,7 @@ let submitModal = function(elem : any, isInit : boolean) : any {
 };
 
 
-let alignment_format = function(elem : any, isInit : boolean) {
+const alignment_format = function(elem : any, isInit : boolean) {
 
     if (!isInit) {
         $(elem).niceSelect();
@@ -128,7 +128,7 @@ let alignment_format = function(elem : any, isInit : boolean) {
     }
 };
 
-let fadesIn = function(element : any, isInitialized : boolean, context : any) {
+const fadesIn = function(element : any, isInitialized : boolean, context : any) {
 
     let url = window.location.href;
     let parts = url.split("/");
@@ -140,7 +140,7 @@ let fadesIn = function(element : any, isInitialized : boolean, context : any) {
     }
 };
 
-let tooltipsterConf = function(elem: any, isInit: boolean) {
+const tooltipsterConf = function(elem: any, isInit: boolean) {
     if(!isInit){
         $('.job-button div').tooltipster({
             theme: 'tooltipster-borderless',

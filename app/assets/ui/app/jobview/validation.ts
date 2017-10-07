@@ -1,5 +1,4 @@
-
-let JobValidationComponent = {
+const JobValidationComponent = {
     controller: function() : any {
         return null;
     },

@@ -8,7 +8,7 @@ let charLimitPerSeq : any;
 let modellerIsValid : boolean = false;
 let samccIsValid : boolean = false;
 
-let validation = function(elem : any, isInit : boolean, ctx : any) : any {
+const validation = function(elem : any, isInit : boolean, ctx : any) : any {
     if (!isInit) {
         let toolname: string;
         try {
@@ -48,7 +48,7 @@ let validation = function(elem : any, isInit : boolean, ctx : any) : any {
 
 
 
-let validationProcess = function(elem: any,toolname: string) {
+const validationProcess = function(elem: any,toolname: string) {
     //---------------------------------Validation Visitors------------------------------------------//
 
     // in order to modularize validation we use the visitor pattern

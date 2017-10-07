@@ -6,8 +6,8 @@ class JobRunningComponent {
 
     public static updateLog(jobID : string, lines : any){
 
-        let path = window.location.href;
-        let url = path.split("/");
+        const path = window.location.href;
+        const url = path.split("/");
 
         if(url[url.length - 1] == jobID && $('#tab-Input').attr('aria-expanded') != "true" && $('#tab-Parameters').attr('aria-expanded') != "true") {
             //console.log(lines);
