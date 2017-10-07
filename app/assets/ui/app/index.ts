@@ -1,13 +1,13 @@
 /// <reference path="helper.ts"/>
 
-let foundationConfig = function(elem : any, isInit : boolean) : any {
+const foundationConfig = function(elem : any, isInit : boolean) : any {
     if (!isInit) {
         return $(elem).foundation();
     }
 };
 
 /** Slick slider in frontend not in use
-let slickSlider = function (elem : any, isInit : boolean) {
+const slickSlider = function (elem : any, isInit : boolean) {
     if (!isInit) {
         return ($(elem).on("init", function () {
             return $(this).fadeIn(3000);
@@ -37,7 +37,7 @@ let slickSlider = function (elem : any, isInit : boolean) {
     }
 }; */
 
-let typeAhead = function (elem : any, isInit : boolean) : any {
+const typeAhead = function (elem : any, isInit : boolean) : any {
     let engine;
     let tools;
     if (!isInit) {
@@ -177,7 +177,7 @@ window.Index = {
     }
 };
 
-let trafficBarComponent = {
+const trafficBarComponent = {
     controller : function() : any {},
     view: function () {
         return m("div", {
@@ -204,7 +204,7 @@ let trafficBarComponent = {
 };
 
 // TODO add different type of tile (bigger one?)
-let tilescomponent = {
+const tilescomponent = {
 
     controller: function () {
         let getRecentArticlesRoute = jsRoutes.controllers.DataController.getRecentArticles(1);

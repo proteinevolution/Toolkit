@@ -1,5 +1,5 @@
 /// <reference path="helper.ts"/>
-let JobPendingComponent = {
+const JobPendingComponent = {
 
     controller : function(args : any){
 
@@ -33,7 +33,7 @@ let JobPendingComponent = {
                     config : enabled,
                     onclick : function(e : any){
                         e.preventDefault();
-                        let route = jsRoutes.controllers.JobController.startJob(args.job().jobID);
+                        const route = jsRoutes.controllers.JobController.startJob(args.job().jobID);
                         m.request({method:route.method, url:route.url}).then(function(data : any){
                             console.log("requested:",data);
                         });
@@ -57,7 +57,7 @@ let JobPendingComponent = {
                     config: enabled,
                     onclick : function(e : any){
                         e.preventDefault();
-                        let route = jsRoutes.controllers.JobController.checkHash(args.job().jobID);
+                        const route = jsRoutes.controllers.JobController.checkHash(args.job().jobID);
                         m.request({method:route.method, url:route.url, extract: nonJsonErrors}).then(function(data : any){
                             if (data != null && data.jobID != null) {
                                 JobListComponent.removeJob(args.job().jobID, true, true);

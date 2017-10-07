@@ -1,16 +1,16 @@
 /// <reference path="websocket.ts"/>
-let jqueryUITabsInit = function(elem : Element, isInit : boolean) : void {
+const jqueryUITabsInit = function(elem : Element, isInit : boolean) : void {
     if (!isInit) {
         $("#" + elem.id).tabs().addClass( "ui-tabs-vertical");
     }
 };
-let foundationInit = function(elem : Element, isInit : boolean) : void {
+const foundationInit = function(elem : Element, isInit : boolean) : void {
     if (!isInit) {
         $("#" + elem.id).foundation();
     }
 };
 
-let openNav = function(view : string = "") : void {
+const openNav = function(view : string = "") : void {
     let lt = $("#login-tabs");
     let pt = $("#profile-tabs");
     switch(view) {
@@ -41,11 +41,11 @@ let openNav = function(view : string = "") : void {
     document.getElementById("myNav").style.height = "100%";
 };
 
-let closeNav = function() : void {
+const closeNav = function() : void {
     document.getElementById("myNav").style.height = "0%";
 };
 
-let color_regex = /(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)/g;
+const color_regex = /(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)/g;
 
 
 function color_regex_replacer(match : string) {
@@ -69,7 +69,7 @@ $('#scrollTop').click(function() {
     return false;
 });
 
-let aa_color_font : Map<string, string> = new Map<string, string>();
+const aa_color_font : Map<string, string> = new Map<string, string>();
     aa_color_font.set("aa_W", "#808080");
     aa_color_font.set("aa_Y", "#808080");
     aa_color_font.set("aa_F", "#808080");
@@ -91,7 +91,7 @@ let aa_color_font : Map<string, string> = new Map<string, string>();
     aa_color_font.set("aa_P", "#191919");
     aa_color_font.set("aa_G", "#404040");
 
-let aa_color_background : Map<string, string> = new Map<string, string>();
+const aa_color_background : Map<string, string> = new Map<string, string>();
     aa_color_background.set("aa_W", "#00c000");
     aa_color_background.set("aa_Y", "#00c000");
     aa_color_background.set("aa_F", "#00c000");
@@ -135,7 +135,7 @@ let aa_color_background : Map<string, string> = new Map<string, string>();
 
     // toggle sidebar so that the joblist is only present when there is no static content
 
-    let toggleSidebar = function(){
+    const toggleSidebar = function(){
         let path = window.location.href;
         let url = path.split("/");
         let $mc = $('#main-content');
@@ -155,7 +155,7 @@ let aa_color_background : Map<string, string> = new Map<string, string>();
 
     window.addEventListener("hashchange", toggleSidebar, false);
 
-    let reloadJobList = function() {
+    const reloadJobList = function() {
         setTimeout(function(){ jobList.redraw(true); }, 200);
     };
 

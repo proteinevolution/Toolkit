@@ -1,6 +1,4 @@
-let helpModalReveal : ElementConfig;
-
-helpModalReveal = function(elem : any, isInit : boolean) : any {
+const helpModalReveal : ElementConfig = function(elem : any, isInit : boolean) : any {
     if (!isInit) {
         elem.setAttribute("data-reveal", "data-reveal");
         return $(elem).foundation();

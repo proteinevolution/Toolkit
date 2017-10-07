@@ -1,4 +1,4 @@
-let JobQueuedComponent = {
+const JobQueuedComponent = {
     updateLog: function(){
         m.redraw(true);
     },

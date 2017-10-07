@@ -1,6 +1,6 @@
 /// <reference path="jobview/input.ts"/>
 
-let renderParameter = function(content : any, moreClasses? : any) : any {
+const renderParameter = function(content : any, moreClasses? : any) : any {
     return m("div", { "class": moreClasses ? "parameter " + moreClasses : "parameter" }, content);
 };
 
@@ -11,7 +11,7 @@ let mapParam = function(param : any, ctrl : any) {
     });
 };
 
-let selectBoxAccess = function(elem : any, isInit : boolean) {
+const selectBoxAccess = function(elem : any, isInit : boolean) {
     if (!isInit) {
 
         $("#alignmode").on('change', function(){
@@ -32,7 +32,7 @@ let selectBoxAccess = function(elem : any, isInit : boolean) {
     }
 };
 
-let ParameterSlideComponent = {
+const ParameterSlideComponent = {
     model: function(args : any) {
 
     },
@@ -91,7 +91,7 @@ let ParameterSlideComponent = {
 
 
 
-let ParameterRadioComponent = {
+const ParameterRadioComponent = {
     view: function(ctrl : any, args : any) {
         return renderParameter([
             m("label", {
@@ -109,7 +109,7 @@ let ParameterRadioComponent = {
     }
 };
 
-let ParameterSelectComponent = {
+const ParameterSelectComponent = {
 
     view: function(ctrl : any, args : any) {
         let paramAttrs : any = {
@@ -155,7 +155,7 @@ let ParameterSelectComponent = {
 };
 
 
-let ParameterNumberComponent = {
+const ParameterNumberComponent = {
     view: function(ctrl : any, args : any) {
         let paramAttrs : any = {
             type: "number",
@@ -181,7 +181,7 @@ let ParameterNumberComponent = {
     }
 };
 
-let ParameterTextComponent = {
+const ParameterTextComponent = {
     view: function(ctrl : any, args : any) {
         let paramAttrs = {
             type: "text",
@@ -199,7 +199,7 @@ let ParameterTextComponent = {
     }
 };
 
-let ParameterBoolComponent = {
+const ParameterBoolComponent = {
     view: function(ctrl : any, args : any) {
         return renderParameter([
             m("label", {
@@ -216,7 +216,7 @@ let ParameterBoolComponent = {
 
 
 
-let ParameterModellerKeyComponent = {
+const ParameterModellerKeyComponent = {
     keyStored: false,
     value: "",
     validate: function(val: string, checkLen?: boolean){
@@ -255,7 +255,7 @@ let ParameterModellerKeyComponent = {
 };
 
 
-let formComponents : any = {
+const formComponents : any = {
     1: ParameterAlignmentComponent,
     2: ParameterNumberComponent,
     3: ParameterSelectComponent,

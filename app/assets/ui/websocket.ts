@@ -1,4 +1,4 @@
-let wsRoute = jsRoutes.controllers.Application.ws;
+const wsRoute = jsRoutes.controllers.Application.ws;
 
 class WebsocketWrapper {
     attempts  : number        = 0;      // current number of attempts for the reconnect
@@ -14,7 +14,7 @@ class WebsocketWrapper {
     static connectionCheckTimeout : number  = 20000; //ms // time between each timeout check
 
     constructor() {
-        let self = this;
+        const self = this;
         // Start the connection process
         this.connect();
         // set the timer for connection checks
@@ -55,7 +55,7 @@ class WebsocketWrapper {
      */
     reconnect : Function = function() : any {
         // remember self for later
-        let self = this;
+        const self = this;
 
         // generate a random time to reconnect at (between 2 and 40 seconds)
         let time = WebsocketWrapper.backoffTime(
@@ -106,7 +106,7 @@ class WebsocketWrapper {
      * @returns {any}
      */
     eventOpen : Function = function(event : Event) : any {
-        let self = this;
+        const self = this;
         if (WebsocketWrapper.showConsoleMessages)
             console.log("[Websocket] Connected successfully.");
 
@@ -133,7 +133,7 @@ class WebsocketWrapper {
      */
     eventMessage : Function = function(event : MessageEvent) : any {
         // Parse the message
-        let message : any = JSON.parse(event.data);
+        const message : any = JSON.parse(event.data);
 
         // log it to the console
         if (WebsocketWrapper.showConsoleMessages)
@@ -273,7 +273,7 @@ class WebsocketWrapper {
  * Websocket wrapper object
  * @type {WebsocketWrapper}
  */
-let ws : WebsocketWrapper = new WebsocketWrapper();
+const ws : WebsocketWrapper = new WebsocketWrapper();
 
 let notifications = 0;
 declare var titlenotifier: any;

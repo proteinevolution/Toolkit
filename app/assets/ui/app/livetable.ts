@@ -1,6 +1,4 @@
-import ElementConfig = Mithril.ElementConfig;
-
-let trafficBarConfig = function(lastJob : any) {
+const trafficBarConfig = function(lastJob : any) {
     return function (elem : any, isInit : Boolean) : void {
         if (lastJob != null && !isInit) {
             elem.setAttribute("data-disable-hover", "false");
