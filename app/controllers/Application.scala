@@ -380,4 +380,8 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
 
   }
 
+  val robots = Action { _ =>
+    Ok("User-agent: *\nAllow: /\nDisallow: /#/jobmanager/\nDisallow: /#/jobs/\nSitemap: https://toolkit.tuebingen.mpg.de/sitemap.xml")
+  }
+
 }
