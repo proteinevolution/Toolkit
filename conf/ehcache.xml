@@ -1,7 +1,7 @@
 <!--
   ~ Copyright (C) 2009-2017 Lightbend Inc. <https://www.lightbend.com>
   -->
-<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../config/ehcache.xsd" updateCheck="false">
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ehcache.xsd" updateCheck="false">
 
 <sizeOfPolicy maxDepth="10000000" maxDepthExceededBehavior="abort" />
 
