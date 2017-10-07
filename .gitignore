@@ -5,7 +5,6 @@ project/target
 bioprogs/tools
 /db
 /dist/
-/modules
 /logs/
 /target
 tmp
