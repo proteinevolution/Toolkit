@@ -81,7 +81,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
   def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
 
     case rh if sameOriginCheck(rh) =>
-      println("Creating new WebSocket. ip: " + rh.remoteAddress.toString() + ", with sessionId: " + rh.session)
+      println("Creating new WebSocket. ip: " + rh.remoteAddress.toString + ", with sessionId: " + rh.session)
 
       userSessions
         .getUser(rh)
@@ -170,7 +170,10 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
         val port     = request.host.slice(request.host.indexOf(":") + 1, request.host.length)
         val hostname = request.host.slice(0, request.host.indexOf(":"))
         env.configure("PORT", port)
-        env.configure("HOSTNAME", hostname)
+        if(!hostname.startsWith("olt")) {
+          env.configure("headLessMode", "true")
+        }
+        env.configure("HOSTNAME", "olt")
         TEL.port = port
         TEL.hostname = hostname
         println("[CONFIG:] running on port " + TEL.port)
@@ -179,7 +182,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     }
 
     userSessions.getUser.map { user =>
-      Logger.info(InetAddress.getLocalHost().getHostName() + "\n" + user.toString)
+      Logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
       Ok(views.html.main(webJarsUtil, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message))
         .withSession(userSessions.sessionCookie(request, user.sessionID.get))
     }
