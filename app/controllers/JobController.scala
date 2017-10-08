@@ -83,7 +83,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
         case Some(mpfd) =>
           var formData = mpfd.dataParts.mapValues(_.mkString(constants.formMultiValueSeparator))
           mpfd.file("file").foreach { file =>
-            var source = scala.io.Source.fromFile(file.ref.file)
+            val source = scala.io.Source.fromFile(file.ref.file)
             formData = try { formData.updated("alignment", source.getLines().mkString("\n")) } finally {
               source.close()
             }

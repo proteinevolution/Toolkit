@@ -5,7 +5,7 @@ lazy val scalazVersion    = "7.2.10"
 lazy val commonDeps = Seq(
   ws,
   filters,
-  cache,
+  ehcache,
   guice,
   "com.typesafe.akka"      %% "akka-actor"           % akkaVersion,
   "com.sanoma.cda"         %% "maxmind-geoip2-scala" % "1.5.4",
@@ -73,8 +73,23 @@ lazy val metadata = List(
   )
 )
 
+lazy val disableDocs = Seq[Setting[_]](
+  sources in(Compile, doc) := Seq.empty,
+  publishArtifact in(Compile, packageDoc) := false
+)
+
+lazy val headless = (project in file("modules/headless"))
+  .enablePlugins(PlayScala,JavaAppPackaging)
+  .settings(
+    disableDocs,
+    scalaVersion := "2.11.8",
+    crossScalaVersions := Seq("2.11.8", "2.12.3")
+  )
+
 lazy val root = (project in file("."))
-  .enablePlugins(PlayScala, JavaAppPackaging, SbtWeb)
+  .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb)
+  .dependsOn(client,headless)
+  .aggregate(client,headless)
   .settings(
     commonSettings,
     name := "mpi-toolkit",
@@ -127,16 +142,6 @@ lazy val client = (project in file("client"))
   )
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
 
-
-lazy val disableDocs = Seq[Setting[_]](
-  sources in(Compile, doc) := Seq.empty,
-  publishArtifact in(Compile, packageDoc) := false
-)
-
-lazy val api = (project in file("modules/api"))
-  .settings(disableDocs)
-  .enablePlugins(JavaAppPackaging)
-  .dependsOn(root)
 
 fork in run := false
 

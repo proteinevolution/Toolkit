@@ -40,3 +40,5 @@ public/javascripts/typescriptc.js.map
 *.sbt.swp
 native
 *.swp
+.ensime
+.sass-cache
