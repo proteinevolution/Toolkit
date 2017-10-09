@@ -1,26 +1,4 @@
-
-
-/* Search form */
-#job-search-div {
-    width: 90%;
-    display: table;
-    margin-left: 15px;
-}
-
-#job-search-div .button {
-    width: 100%;
-}
-
-#job-search-div #iconsidebar {
-    color: gray;
-}
-
-/* Job Manager */
-#job-manager-panel {
-    width : 960px;
-}
-
-/* The containder for the JobListComponent. Let is behave like a table and occupy the full width1 */
+/* Job List in Sidebar */
 .job-list {
     display: table;
     width: 90%;
@@ -38,38 +16,20 @@
 .job-list .sort {
     color: #707070;
 }
-.job-list .sort.id {
-    width: 25%;
-}
 
-.job-list .sort.tool {
-    width: 25%;
-}
-
-.job-list .sort.date {
-    width: 25%;
-}
-
+.job-list .sort.id,
+.job-list .sort.tool,
+.job-list .sort.date,
 .job-list .openmanager {
     width: 25%;
 }
 
 .job-list .openmanager .icon-list {
-    margin:unset;
-}
-
-.job-list .boxclose {
-    width: 20%;
-    opacity: 0.8;
+    font-size: 1.5em;
 }
 
 .job-list .sort.selected {
     color: #2E8C81;
-}
-
-.icon-list {
-    font-size: 1.5em;
-    margin-left: 1.5em;
 }
 
 .textcenter {
@@ -90,10 +50,6 @@
     padding-bottom: 0.5em;
     padding-top: 0.5em;
 }
-
-/*.job-list .selected {*/
-    /*border-right: 1px solid transparent;*/
-/*}*/
 
 .job-list div.job{
     display: flex;
@@ -122,7 +78,7 @@
     border-right: 1px solid lightgray;
 }
 
-.job-list .boxclose{
+.job-list .boxclose {
     float:right;
     cursor:pointer;
     color: #808080;
@@ -131,6 +87,8 @@
     display: inline-block;
     line-height: 0px;
     padding: 0.26em;
+    width: 20%;
+    opacity: 0.8;
 }
 
 .job-list .boxclose:before {
@@ -138,17 +96,6 @@
 }
 
 .job-list .job-button {
-    /*Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#eeeeee+0,cccccc+100;Gren+3D */
-    /*
-    -webkit-box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
-    -moz-box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
-    box-shadow: 4px 3px 21px -5px rgba(153,153,153,1);
-    background: rgb(238,238,238);  Old browsers
-    background: -moz-linear-gradient(top, rgba(238,238,238,1) 0%, rgba(204,204,204,1) 100%);  FF3.6-15
-    background: -webkit-linear-gradient(top, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%);   Chrome10-25,Safari5.1-6
-    background: linear-gradient(to bottom, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%);  W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#cccccc',GradientType=0 );   IE6-9
-    */
     display: flex;
     height: 2.5em;
     width: 100%;
@@ -334,7 +281,6 @@
 .noselect {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
-    -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
