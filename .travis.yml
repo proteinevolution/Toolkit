@@ -2,13 +2,16 @@ language: scala
 dist: trusty
 sudo: required
 scala:
-- 2.11.8
-- 2.12.3
+  - 2.11.8
+rvm:
+  - 2.4.0
 jdk:
-- oraclejdk8
+  - openjdk8
 cache:
   directories:
   - "$HOME/.ivy2/cache"
+before_install:
+  - gem install compass
 before_script:
   - git clone https://github.com/Sanoma-CDA/maxmind-geoip2-scala.git $HOME/sanoma
   - cd $HOME/sanoma; sbt +publish-local; cd -
