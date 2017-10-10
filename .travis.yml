@@ -3,7 +3,6 @@ dist: trusty
 sudo: required
 scala:
   - 2.11.8
-  - 2.12.3
 rvm:
   - 2.4.0
 jdk:
