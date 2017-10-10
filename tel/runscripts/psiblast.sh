@@ -147,10 +147,6 @@ blastviz_json.pl ../results/output_psiblastp.tab %jobid.content ../results/ ../r
 fasta2json.py ../results/firstSeq.fas ../results/query.json
 
 
-# Generate Query in JSON
-fasta2json.py ../results/output_psiblastp.aln ../results/alignment.json
-
-
 # add DB to json
 manipulate_json.py -k 'db' -v '%standarddb.content' ../results/output_psiblastp.json
 

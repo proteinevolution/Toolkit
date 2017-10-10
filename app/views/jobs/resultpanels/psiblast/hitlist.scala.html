@@ -24,6 +24,8 @@
                 <a type="button" id="forwardButtonNormal" data-open="forwardModal_@{
                     tool.toolNameShort
                 }">Forward</a>
+                <a type="button" id="downloadAlignment"  onclick="@{tool.toolNameShort}_download()"><span>Download Alignment</span></a>
+
                 <a onclick="wrap()" id="wrap">Wrap Seqs</a>
             </div>
         </div>
@@ -228,16 +230,33 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
             data.evalue = evalue;
             route = jsRoutes.controllers.PSIBlastController.alnEval(jobID);
         }else{
-            data.evalue = evalue;
+            if(data.checkboxes.length == 0){
+                $('#forwardModal_@{tool.toolNameShort}').foundation('close');
+                $.LoadingOverlay("hide");
+                alert("No sequence(s) selected!");
+                return false;
+            }
+            data.filename = filename;
             route = jsRoutes.controllers.PSIBlastController.aln(jobID);
         }
         $.ajax({
             url: route.url,
-            contentType: "application/json",
+            contentType: 'application/json',
             data: JSON.stringify(data),
-            method: route.method
+            method: route.method,
+            error: function(){
+                $.LoadingOverlay("hide")
+            }
         }).done(function (data_) {
-            forward(selectedTool, data_);
+            $.ajax({
+                type: 'GET',
+                url: 'files/'+jobID+'/'+filename+'.fa',
+                error: function(){
+                    $.LoadingOverlay("hide")
+                }
+            }).done(function (data_) {
+                forward(selectedTool, data_.toString());
+            })
         })
     }
 }
@@ -271,6 +290,21 @@ function getHits(start, end, isWrapped){
         });
     }
 }
+
+window["@{tool.toolNameShort}_download"] = function(){
+    var fileUrl = "/files/@jobID/output_psiblastp.aln";
+    var downloadFilename = "@{tool.toolNameShort}_@{jobID}.aln";
+
+    $.LoadingOverlay("show");
+    $.ajax({
+        type: 'GET',
+        url: fileUrl
+    }).done(function (data) {
+        download(downloadFilename, data.toString());
+    });
+};
+
+
 
 function initiallyCheckCheckboxes(){
     _.range(1, @result.belowEvalThreshold).forEach(function (currentVal) {
