@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/zy4/Toolkit.svg?token=cSsDamUt1rppSqiMYpS2&branch=master)](https://travis-ci.com/zy4/Toolkit)
+
 # Toolkit
 MPI Bioinformatics Toolkit 2
 
