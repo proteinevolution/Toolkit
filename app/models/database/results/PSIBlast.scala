@@ -53,7 +53,6 @@ case class PSIBlastResult(HSPS: List[PSIBlastHSP],
                           iter_num: Int,
                           db: String,
                           evalue: Double,
-                          alignment: List[AlignmentItem],
                           query: SingleSeq,
                           belowEvalThreshold: Int,
                           TMPRED: String,
@@ -80,17 +79,14 @@ case class PSIBlastResult(HSPS: List[PSIBlastHSP],
 }
 
 @Singleton
-class PSIBlast @Inject()(general: General, aln: Alignment) {
+class PSIBlast @Inject()(general: General) {
 
   def parseResult(json: JsValue): PSIBlastResult = json match {
     case obj: JsObject =>
       try {
         var belowEvalThreshold = -1;
         val jobID              = (obj \ "jobID").as[String]
-        val alignment = (obj \ "alignment").as[List[JsArray]].zipWithIndex.map {
-          case (x, index) =>
-            aln.parseAlignmentItem(x, index)
-        }
+
         val query = general.parseSingleSeq((obj \ "query").as[JsArray])
         val iter_num = (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations")
           .as[List[JsObject]]
@@ -121,7 +117,7 @@ class PSIBlast @Inject()(general: General, aln: Alignment) {
           case Some(data) => data
           case None       => "1"
         }
-        PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, alignment, query, belowEvalThreshold, TMPRED, COILPRED)
+        PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, query, belowEvalThreshold, TMPRED, COILPRED)
       }
   }
 

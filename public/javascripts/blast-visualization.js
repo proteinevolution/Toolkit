@@ -124,6 +124,23 @@ function forward(tool, forwardData){
 }
 
 
+function forwardPath(tool, forwardPath){
+    window.location.href = "/#/tools/" + tool;
+
+    $.ajax({
+        type: 'GET',
+        url: forwardPath,
+        error: function(){
+            $.LoadingOverlay("hide")
+        }
+    }).done(function (data) {
+        console.log("data", data);
+        $("#alignment").val(data.toString());
+        $.LoadingOverlay("hide")
+    })
+}
+
+
 function isQuotaExceeded(e) {
     var quotaExceeded = false;
     if (e) {
