@@ -7,12 +7,11 @@ scala:
 rvm:
   - 2.4.0
 jdk:
-  - oraclejdk8
+  - openjdk8
 cache:
   directories:
   - "$HOME/.ivy2/cache"
 before_install:
-  - gem install sass
   - gem install compass
 before_script:
   - git clone https://github.com/Sanoma-CDA/maxmind-geoip2-scala.git $HOME/sanoma
