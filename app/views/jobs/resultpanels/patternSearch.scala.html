@@ -93,13 +93,8 @@
         window["@{tool.toolNameShort}_forward"] = function(selectedTool){
             $.LoadingOverlay("show");
             var fileURL="/files/@{jobID}/@{jobID}" + ".fas";
-            $.ajax({
-                method: "GET",
-                url: fileURL
-            }).done(function(data){
-                forward(selectedTool, data);
+            forwardPath(selectedTool, fileURL);
 
-            })
         };
 
         function download_(){
