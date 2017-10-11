@@ -125,8 +125,7 @@ function forward(tool, forwardData){
 
 
 function forwardPath(tool, forwardPath){
-    window.location.href = "/#/tools/" + tool;
-
+    m.route("/tools/" + tool);
     $.ajax({
         type: 'GET',
         url: forwardPath,
@@ -135,7 +134,7 @@ function forwardPath(tool, forwardPath){
         }
     }).done(function (data) {
         console.log("data", data);
-        $("#alignment").val(data.toString());
+        window.JobModel.setParamValue("alignment", data);
         $.LoadingOverlay("hide")
     })
 }

@@ -248,15 +248,7 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
                 $.LoadingOverlay("hide")
             }
         }).done(function (data_) {
-            $.ajax({
-                type: 'GET',
-                url: 'files/'+jobID+'/'+filename+'.fa',
-                error: function(){
-                    $.LoadingOverlay("hide")
-                }
-            }).done(function (data_) {
-                forward(selectedTool, data_.toString());
-            })
+            forwardPath(selectedTool, 'files/'+jobID+'/'+filename+'.fa');
         })
     }
 }
