@@ -11,7 +11,7 @@ import reactivemongo.play.json._
 
 case class Job(mainID       : BSONObjectID           = BSONObjectID.generate, // ID of the Job in the System
                jobID        : String,                                         // User visible ID of the Job
-               hash         : String                 = "",                    // Non unique ID to identify duplicate jobs
+               hash         : Option[String]         = None,                  // Non unique ID to identify duplicate jobs
                ownerID      : Option[BSONObjectID]   = None,                  // User to whom the Job belongs
                isPublic     : Boolean                = false,                 // User wants this job to be public
                status       : JobState               = Submitted,             // Status of the Job
@@ -182,7 +182,7 @@ object Job {
       Job(
         mainID       = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         jobID        = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
-        hash         = bson.getAs[String](HASH).getOrElse(""),
+        hash         = bson.getAs[String](HASH),
         ownerID      = bson.getAs[BSONObjectID](OWNERID),
         status       = bson.getAs[JobState](STATUS).getOrElse(Error),
         emailUpdate  = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),

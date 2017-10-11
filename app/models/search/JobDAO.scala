@@ -7,8 +7,10 @@ import com.typesafe.config.ConfigFactory
 import models.database.jobs.Job
 import models.tools.ToolFactory
 import modules.RunscriptPathProvider
+import modules.parsers.FASTA
 import modules.tel.env.Env
 import modules.tools.FNV
+import play.api.Logger
 
 import scala.util.hashing.MurmurHash3
 
@@ -66,7 +68,22 @@ final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: Ru
     */
   def generateJobHash(job: Job, params: Map[String, String], env: Env) : String = {
     // filter unique parameters
-    val paramsWithoutMainID = params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid" - Job.IPHASH - "parentID"
+    val paramsWithoutUniques : Map[String,String] =
+      params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid" - Job.IPHASH - "parentID" - "htb_length" - "alignment" - "file"
+
+    Logger.info(s"[JobDAO.enerateJobHash] Hashing values: ${paramsWithoutUniques.map(kv => s"${kv._1} ${kv._2}").mkString(", ")}")
+
+    val sequenceHash = params.get("alignment") match {
+      case Some(alignment) =>
+        FASTA.fromString(alignment) match {
+          case Some(fastA) =>
+            fastA.generateHashCode(MurmurHash3.stringHash)
+          case None =>
+            ""
+        }
+      case None =>
+        ""
+    }
 
     // Create the job Hash depending on what db is used
     val dbParam = params match {
@@ -85,6 +102,6 @@ final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: Ru
       case _ => (None, None)
     }
 
-    s"${generateHash(paramsWithoutMainID).toString()} ${generateRSHash(job.tool)} ${dbParam._1.getOrElse("")} ${dbParam._2.getOrElse("")} ${job.tool} ${generateToolHash(job.tool)}"
+    s"$sequenceHash ${generateHash(paramsWithoutUniques).toString()} ${generateRSHash(job.tool)} ${dbParam._1.getOrElse("")} ${dbParam._2.getOrElse("")} ${job.tool} ${generateToolHash(job.tool)}"
   }
 }
