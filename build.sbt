@@ -18,7 +18,7 @@ lazy val commonDeps = Seq(
   "com.typesafe.play"      %% "play-mailer"          % "6.0.1",
   "com.typesafe.play"      %% "play-mailer-guice"    % "6.0.1",
   "com.github.pathikrit"   %% "better-files"         % "2.17.1",
-  "org.mindrot"            % "jbcrypt"               % "0.3m",
+  "org.mindrot"            %  "jbcrypt"              % "0.3m",
   "org.reactivemongo"      %% "play2-reactivemongo"  % "0.12.6-play26",
   "co.fs2"                 %% "fs2-core"             % "0.9.2",
   "org.scalaz"             %% "scalaz-core"          % scalazVersion,
@@ -29,7 +29,7 @@ lazy val commonDeps = Seq(
   "org.typelevel"          %% "cats"                 % "0.9.0",
   "com.mohiva"             %% "play-html-compressor" % "0.7.1",
   "com.typesafe.play"      %% "play-json"            % "2.6.3",
-  "com.github.dfabulich"   % "sitemapgen4j"         % "1.0.6"
+  "com.github.dfabulich"   %  "sitemapgen4j"         % "1.0.6"
   //"io.kamon"             %% "kamon-play-2.5"          % kamonVersion,
   //"io.kamon"             %% "kamon-system-metrics"    % kamonVersion,
   //"io.kamon"             %% "kamon-statsd"            % kamonVersion,
@@ -86,7 +86,7 @@ lazy val root = (project in file("."))
       "org.webjars.npm"   % "foundation-sites"    % "6.4.3",
       "org.webjars.npm"   % "mithril"             % "0.2.8", // 1.1.3 available
       "org.webjars.bower" % "d3"                  % "4.10.2",
-      "org.webjars.npm"   % "slick-carousel"      % "1.8.1", 
+      "org.webjars.npm"   % "slick-carousel"      % "1.6.0",
       "org.webjars.npm"   % "codemirror-minified" % "5.28.0",
       "org.webjars.bower" % "clipboard"           % "1.7.1", // currently not in use
       "org.webjars"       % "linkurious.js"       % "1.5.1",
@@ -96,7 +96,7 @@ lazy val root = (project in file("."))
       "org.webjars.bower" % "velocity"            % "1.5.0",
       "org.webjars"       % "font-awesome"        % "4.7.0",
       "org.webjars"       % "select2"             % "4.0.3",
-      "org.webjars.npm" % "tooltipster"         % "4.2.5",
+      "org.webjars.npm"   % "tooltipster"         % "4.2.5",
       "org.webjars"       % "momentjs"            % "2.18.1"
     )),
     pipelineStages := Seq(digest, gzip), // rjs, uglify, concat,
