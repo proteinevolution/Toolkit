@@ -123,7 +123,6 @@ function forward(tool, forwardData){
     }
 }
 
-
 function forwardPath(tool, forwardPath){
     m.route("/tools/" + tool);
     $.ajax({
@@ -141,10 +140,10 @@ function forwardPath(tool, forwardPath){
         if(tool === "reformat"){
             myCodeMirror.setValue(data);
         }
+        validationProcess($('#alignment'),$("#toolnameAccess").val());
         $.LoadingOverlay("hide")
     })
 }
-
 
 function isQuotaExceeded(e) {
     var quotaExceeded = false;
