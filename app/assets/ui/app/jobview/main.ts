@@ -11,7 +11,7 @@
                 id: "jobview"
             }, [
                 m(JobLineComponent, { job: args.job }),
-                m(JobTabsComponent, { job: args.job, owner: args.owner })
+                m(JobTabsComponent, { job: args.job })
             ]);
         }
     }
