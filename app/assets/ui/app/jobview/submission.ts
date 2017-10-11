@@ -130,7 +130,7 @@
 
                 // Append file to upload
                 let file = ((<any>$("input[type=file]"))[0].files[0]);
-                formData.append("file", file);
+                if (file) formData.append("file", file);
 
                 submitRoute = jsRoutes.controllers.JobController.submitJob(tool);
                 m.request({
