@@ -132,7 +132,7 @@ shorten_psiblast_output.pl ../results/output_psiblastp.html ../results/output_ps
 
 
 #extract MSA
-alignhits_html.pl   ../results/output_psiblastp.html ../results/output_psiblastp.aln \
+alignhits_html.pl   ../results/output_psiblastp.html ../results/output.aln_fas \
                     -Q ../results/firstSeq0.fas \
                     -e %evalue.content \
                     -fas \
