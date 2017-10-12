@@ -132,7 +132,6 @@ function forwardPath(tool, forwardPath){
             $.LoadingOverlay("hide")
         }
     }).done(function (data) {
-        console.log("data", data);
         window.JobModel.setParamValue("alignment", data);
         if(tool === "alnviz"){
             $('#alignment').val(data);
