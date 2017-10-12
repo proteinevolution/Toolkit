@@ -17,7 +17,7 @@ elif [ "$HOSTNAME" = "rye" ]
     # write accessions to be retrieved in file
     printf "${ACCESSIONS[@]}" >> results/${filename}_accessionsToRetrieve
 
-    retrieveAlignment.pl  results/output_psiblastp.aln \
+    retrieveAlignment.pl  results/output.aln_fas \
                           results/${filename}_accessionsToRetrieve \
                           results/${filename}.fa \
                           ${mode}

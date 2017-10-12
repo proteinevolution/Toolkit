@@ -146,9 +146,9 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
     val filename = (json \ "filename").as[String]
     val eval     = (json \ "evalue").as[String]
     // check if the retrieve script is executable
-    if (!retrieveFullSeq.isExecutable) {
+    if (!retrieveAlnEval.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
+      throw FileException(s"File ${retrieveAlnEval.name} is not executable.")
     } else {
       resultFiles.getResults(jobID).map {
         case None          => NotFound
@@ -188,9 +188,9 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
     val json     = request.body.asJson.get
     val numList  = (json \ "checkboxes").as[List[Int]].mkString("\n")
     val filename = (json \ "filename").as[String]
-    if (!retrieveFullSeq.isExecutable) {
+    if (!retrieveAlnEval.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
+      throw FileException(s"File ${retrieveAlnEval.name} is not executable.")
     } else {
       resultFiles.getResults(jobID).map {
         case None          => NotFound

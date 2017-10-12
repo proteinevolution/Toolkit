@@ -31,6 +31,7 @@ class HmmerController @Inject()(resultFiles : ResultFileAccessor,
      on the server (not executed on the grid engine) */
   private val serverScripts   = ConfigFactory.load().getString("serverScripts")
   private val retrieveFullSeq = (serverScripts + "/retrieveFullSeq.sh").toFile
+  private val retrieveAlnEval = (serverScripts + "/retrieveAlnEval.sh").toFile
 
   /**
     * Retrieves the full sequences of all hits with
@@ -161,12 +162,35 @@ class HmmerController @Inject()(resultFiles : ResultFileAccessor,
     * @return aligned sequences as a String
     *         encapsulated in the response
     */
+
+
   def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json = request.body.asJson.get
+    val filename = (json \ "filename").as[String]
     val eval = (json \ "evalue").as[String]
-    resultFiles.getResults(jobID).map {
-      case None          => NotFound
-      case Some(jsValue) => Ok(getAlnEval(hmmer.parseResult(jsValue), eval.toDouble))
+
+
+    if (!retrieveAlnEval.isExecutable) {
+      Future.successful(BadRequest)
+      throw FileException(s"File ${retrieveAlnEval.name} is not executable.")
+    } else {
+
+      resultFiles.getResults(jobID).map {
+        case None => NotFound
+        case Some(jsValue) =>
+
+          val result = hmmer.parseResult(jsValue)
+          val accessionsStr = getAlnEval(hmmer.parseResult(jsValue), eval.toDouble)
+          // execute the script and pass parameters
+          Process(retrieveAlnEval.pathAsString,
+            (constants.jobPath + jobID).toFile.toJava,
+            "accessionsStr" -> accessionsStr,
+            "filename" -> filename,
+            "mode" -> "count").run().exitValue() match {
+            case 0 => Ok
+            case _ => BadRequest
+          }
+      }
     }
   }
 
@@ -186,44 +210,48 @@ class HmmerController @Inject()(resultFiles : ResultFileAccessor,
     */
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
-    val numList = (json \ "checkboxes").as[List[Int]]
-    resultFiles.getResults(jobID).map {
-      case None          => NotFound
-      case Some(jsValue) => Ok(getAln(aln.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
+    val numList = (json \ "checkboxes").as[List[Int]].mkString("\n")
+    val filename = (json \ "filename").as[String]
+
+    if (!retrieveAlnEval.isExecutable) {
+      Future.successful(BadRequest)
+      throw FileException(s"File ${retrieveAlnEval.name} is not executable.")
+    } else {
+
+      resultFiles.getResults(jobID).map {
+        case None => NotFound
+        case Some(jsValue) =>
+          val result = hmmer.parseResult(jsValue)
+          val accessionsStr = numList
+          // execute the script and pass parameters
+          Process(retrieveAlnEval.pathAsString,
+            (constants.jobPath + jobID).toFile.toJava,
+            "accessionsStr" -> accessionsStr,
+            "filename" -> filename,
+            "mode" -> "sel").run().exitValue() match {
+            case 0 => Ok
+            case _ => BadRequest
+          }
+      }
     }
   }
 
   /**
     * filters all HSPS that are below
     * a given threshold from the PSIblast
-    * result model and returns a fasta
-    * of the filtered hits
+    * result model and returns a count of hits
+    * that pass the filter
     * @param result
     * @param eval
     * @return fasta as String
     */
   def getAlnEval(result: HmmerResult, eval: Double): String = {
     val fas = result.HSPS.filter(_.evalue < eval).map { hit =>
-      ">" + result.alignment(hit.num - 1).accession + "\n" + result.alignment(hit.num - 1).seq + "\n"
+      result.alignment(hit.num - 1).accession + "\n"
     }
-    fas.mkString
+    fas.size.toString
   }
 
-  /**
-    * given an array of hit numbers this method
-    * returns a fasta containing the corresponding
-    * aligned hits
-    *
-    * @param alignment
-    * @param numList
-    * @return fasta as String
-    */
-  def getAln(alignment: AlignmentResult, numList: Seq[Int]): String = {
-    val fas = numList.map { num =>
-      ">" + alignment.alignment(num - 1).accession + "\n" + alignment.alignment(num - 1).seq + "\n"
-    }
-    fas.mkString
-  }
 
   /**
     * given dataTable specific paramters, this function
