@@ -209,8 +209,9 @@ updateProcessLog
 
 #Running MARCOIL for coiled coil prediction
 # Switch on correct Matrix
+matrix_copy.sh "${MARCOILMTK}" ../0/R5.MTK
 matrix_copy.sh "${MARCOILMTIDK}" ../0/R5.MTIDK
-PARAMMATRIX="-C -i"
+PARAMMATRIX="-C"
 TRANSPROB="${MARCOILINPUT}/R3.transProbHigh"
 
 marcoil  ${PARAMMATRIX} \
