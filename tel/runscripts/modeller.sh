@@ -13,8 +13,6 @@ else
       false
 fi
 
-echo "done" >> ../results/process.log
-updateProcessLog
 
 #convert alignment file to PIR, if it is not already PIR
 
@@ -63,6 +61,9 @@ chmod 0777 alignment.pir
 mod modeller_script.py >> modeller.log
 mv modeller.log ../logs/
 mv ${FILENAME}* ../results/
+
+echo "done" >> ../results/process.log
+updateProcessLog
 
 echo "#Running quality checks on the model." >> ../results/process.log
 updateProcessLog
