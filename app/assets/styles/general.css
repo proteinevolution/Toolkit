@@ -12,10 +12,22 @@ body {
     margin: 0;
 }
 
+body.is-reveal-open {
+    overflow: visible;
+}
+
 @media (max-width: 930px) {
     body {
         overflow-x: auto;
     }
+}
+
+hr {
+    width: 100%;
+    margin: 0 auto !important;
+    padding: 0;
+    border-bottom: 1px solid rgba(180, 180, 180, 0.3) !important;
+    max-width: none;
 }
 
 div#main-container {
@@ -56,6 +68,9 @@ div#main {
     padding: 0.625em;
 }
 
+.accordion a {
+    color: #000;
+}
 
 :focus {
     outline: 0;

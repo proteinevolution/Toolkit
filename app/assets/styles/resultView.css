@@ -101,6 +101,14 @@
 
 
 /* Alignments section */
+.header {
+    font-weight: bold;
+}
+
+.header :hover {
+    background-color: #eee;
+}
+
 #alignmentTemplate, #alignmentTemplatehhomp {
     font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
     font-size: 0.7rem !important;
@@ -164,6 +172,10 @@
     overflow: auto;
 }
 
+#alignments td {
+    padding: 0 1rem 0 0 !important;
+}
+
 #alignmentsTitle{
     padding-top: 2em;
     padding-bottom: 1em;
@@ -204,13 +216,91 @@
     margin-bottom: 1em;
 }
 
-.structureAccession{
+.structureAccession {
     float: left;
 }
 
 .blank_row {
     height: 1em;
 }
+
+.unstriped {
+    border-collapse: unset !important;
+    margin: 0 ;
+    width: auto;
+}
+
+.unstriped a {
+    color:#27776e !important;
+}
+
+.sequence {
+    font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+    letter-spacing: 0.025em;
+    font-size: 0.75rem;
+    white-space: pre;
+}
+
+.sequence :hover {
+    background-color: #eee;
+}
+
+.sequenceCompact {
+    font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 1em;
+    white-space: pre;
+}
+
+.sequenceCompact span {
+    display: inline-block;
+}
+
+.sequenceBold {
+    font-weight:600;
+    border-bottom: 0.2em solid rgba(128, 128, 128, 0.37);
+
+}
+
+.sequenceAlignment {
+    font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+}
+
+.h1 {
+    font-weight: bold;
+    font-size: 12px;
+    font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+}
+
+.wrap {
+    word-break: break-all;
+    white-space: unset;
+}
+
+.tprHit {
+    width: 27em;
+    text-align: left;
+}
+
+.tprResults table {
+    width: 80%;
+}
+
+.tprInfo {
+    font-size: 1.1em !important;
+}
+
+.tprInfo span {
+    font-weight: bold;
+}
+
+.uncheckedListWrap {
+    font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
 
 
 /* Classification Tools Result View */
@@ -229,6 +319,15 @@
 .ancescon_download {
     float: right;
     margin-top: 1.5em;
+}
+
+.clansResults {
+    font-size:1.2em;
+}
+
+.clansResults a {
+    color: #27776e;
+    font-weight: bold;
 }
 
 
@@ -496,6 +595,7 @@ label.forwardLabel input[type=radio] {
 }
 
 
+
 /* References Section */
 #toolReferences a {
     color: rgba(0, 110, 98, 166);
@@ -521,10 +621,12 @@ label.forwardLabel input[type=radio] {
 }
 
 
+
 /* Result View PSI blast */
 #psiblast_templates {
     margin-top: 1em;
 }
+
 
 
 /* Result View Resubmit Button */
