@@ -76,6 +76,11 @@ div#main {
     outline: 0;
 }
 
+.nice-select ul {
+    width: 20em;
+    max-height: 15em;
+}
+
 textarea {
     resize: both;
 }

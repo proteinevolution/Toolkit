@@ -1,4 +1,4 @@
-/* Jobview Components*/
+/* Jobview Tab Components*/
 #jobview {
     padding-left: 3px;
     padding-right: 15px;
@@ -55,6 +55,75 @@
     border-radius: 4px;
 }
 
+.switchDiv {
+    width: 15em;
+    padding-top: 0.5em;
+}
+
+.alignmentParameter input {
+    background-color: transparent;
+    color: black;
+    float: left;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 0 !important;
+}
+
+.alignmentParameter input:hover {
+    background-color: transparent;
+    color: black;
+}
+
+.alignmentParameter input:focus {
+    background-color: transparent;
+    color: black;
+}
+
+.submitJob {
+    background-color: rgba(0, 110, 98, 166) !important;
+    border-radius: 3px !important;
+    margin-right: 2em !important;
+    color: white !important;
+    margin-left: 2em;
+}
+
+.submitJob:hover {
+    background-color: gray !important;
+}
+
+.submitbuttons {
+    display: inline-block;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding-left: 1.9375em;
+    padding-bottom: 0.3em;
+    padding-right: 0.5em;
+}
+
+.submitbuttons .jobid {
+    color: #000;
+    text-shadow: 0 0 0 #878787;
+    height: 2.6em;
+    width: 9.5em;
+    float: right;
+    border-radius: 3px;
+    font-size: 0.75em;
+    padding-left: 1.3em;
+}
+
+.submitbuttons .jobid.white {
+    border:1px solid #cacaca;
+}
+
+.submitbuttons .jobid.green {
+    border:1px solid green;
+}
+
+.submitbuttons .jobid.red {
+    border:1px solid #da4453;
+}
+
 
 
 /*Parameter Tab */
@@ -62,6 +131,10 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+
+.parameter {
+    font-size: small;
 }
 
 .parameter label {
@@ -84,97 +157,13 @@
     margin: 0 0 0;
 }
 
-
-
-/* Alignment Viewer */
-#alignmentViewerPanel {
-    height: 27em;
-}
-
-#alignmentViewerPanel textarea {
-    font-size: 0.75em;
-    font-family: "Source Code Pro", "Liberation Mono", monospace;
-    margin-bottom: 0.5em;
-}
-
-#bioJSContainer,
-#rootDiv {
-    overflow-x: scroll;
-}
-
-.biojs_msa_labels {
-    font-size: 12px;
-}
-
-
-
-
-
-.switchDiv {
-    width: 15em;
-    padding-top: 0.5em;
-}
-
 .parameter .nice-select {
     width: 20em !important;
 }
 
-.nice-select ul {
-    width: 20em;
-    max-height: 15em;
-}
-
-.exampleReformat {
-    margin-top: 0 !important;
-    height: 2.7em;
-    padding-left: 0;
-    border-width: 0 0 1px 0;
-    background-color: transparent;
-}
-
-.exampleReformat:hover, .exampleReformat:focus {
-    background-color: transparent;
-}
-
+.parameters input,
 #alignmentViewerPanel .alignmentExample {
-    padding-left: 0;
-    padding-right: 0;
-    width: 7em;
-    text-align: left;
-}
-
-
-.alignmentParameter input {
-    background-color: transparent;
-    color: black;
-    float: left;
-    padding-left: 0;
-    padding-right: 0;
-    margin-left: 0 !important;
-}
-
-.alignmentParameter input:hover {
-    background-color: transparent;
-    color: black;
-}
-
-.alignmentParameter input:focus {
-    background-color: transparent;
-    color: black;
-}
-
-
-.parameter {
-    font-size: small;
-}
-
-/*.parameters {*/
-    /*margin-bottom: 1.3em;*/
-/*}*/
-
-.parameters input, #alignmentViewerPanel .alignmentExample {
     text-shadow: 0 0 0 #878787;
-    /*width: 15em;*/
     height: 3em;
     border-width: 0 0 1px 0;
     box-shadow: none;
@@ -193,69 +182,45 @@
     -o-transition : border 100ms ease-out;
     background-color: transparent;
 }
+
 .parameters input:invalid {
     border-color: red;
 }
 
-.submitJob {
-    background-color: rgba(0, 110, 98, 166) !important;
-    border-radius: 3px !important;
-    margin-right: 2em !important;
-    color: white !important;
-    margin-left: 2em;
+
+
+/* Alignment Viewer */
+#alignmentViewerPanel {
+    height: 27em;
 }
 
-.submitJob:hover {
-    background-color: gray !important;
-}
-
-
-.submitbuttons .jobid {
-    color: #000;
-    text-shadow: 0 0 0 #878787;
-    height: 2.6em;
-    width: 9.5em;
-    float: right;
-    border-radius: 3px;
+#alignmentViewerPanel textarea {
     font-size: 0.75em;
-    padding-left: 1.3em;
+    font-family: "Source Code Pro", "Liberation Mono", monospace;
+    margin-bottom: 0.5em;
+}
+
+#alignmentViewerPanel .alignmentExample {
+    padding-left: 0;
+    padding-right: 0;
+    width: 7em;
+    text-align: left;
+}
+
+#bioJSContainer,
+#rootDiv {
+    overflow-x: scroll;
+}
+
+.biojs_msa_labels {
+    font-size: 12px;
 }
 
 
-.submitbuttons .jobid.white {
-    border:1px solid #cacaca;
-}
 
-.submitbuttons .jobid.green {
-    border:1px solid green;
-}
 
-.submitbuttons .jobid.red {
-    border:1px solid #da4453;
-}
 
-.submitbuttons {
-    display: inline-block;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding-left: 1.9375em;
-    padding-bottom: 0.3em;
-    padding-right: 0.5em;
-}
-
-.result-panel{
-    font-size: 0.65em;
-    min-height: 30em;
-}
-
-.result-panel a {
-    -webkit-appearance: none;
-}
-
-.result-panel button {
-    background-color: #eee;
-}
+/* TODO CONTINUE HERE */
 
 .fileview {
     width: 100%;
