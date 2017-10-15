@@ -48,7 +48,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
     extends AbstractController(cc)
     with I18nSupport
     with JSONTemplate
-    with Common
+    with CommonController
     with ReactiveMongoComponents {
 
   /**

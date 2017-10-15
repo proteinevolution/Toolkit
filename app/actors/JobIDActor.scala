@@ -5,7 +5,7 @@ import javax.inject.{ Inject, Singleton }
 import actors.JobIDActor._
 import akka.actor.{ ActorLogging, _ }
 import akka.event.LoggingReceive
-import models.search.JobDAO
+import de.proteinevolution.models.search.JobDAO
 import de.proteinevolution.db.MongoStore
 import play.api.Logger
 import play.modules.reactivemongo.ReactiveMongoApi

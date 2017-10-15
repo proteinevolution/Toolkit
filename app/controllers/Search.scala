@@ -13,7 +13,7 @@ import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import models.search.JobDAO
+import de.proteinevolution.models.search.JobDAO
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
 import play.api.mvc._
@@ -34,7 +34,7 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Sy
                              cc: ControllerComponents)
     extends AbstractController(cc)
     with ReactiveMongoComponents
-    with Common {
+    with CommonController {
 
   def getToolList: Action[AnyContent] = Action {
     Ok(

@@ -130,9 +130,10 @@ class UserSessions @Inject()(mongoStore: MongoStore,
           BSONObjectID.generate()
       }
       // TODO: this seems not to be typesafe! user has type nothing
+      // cache related stuff should remain in the project where the cache is bound
       userCache.get(sessionID.stringify) match {
         case Some(user) =>
-          Future.successful(user)
+          Future.successful[User](user)
         case None =>
           putUser(request, sessionID)
       }
