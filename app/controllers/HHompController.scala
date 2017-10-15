@@ -29,7 +29,7 @@ class HHompController @Inject()(resultFiles : ResultFileAccessor,
                                 constants: Constants,
                                 cc: ControllerComponents)
     extends AbstractController(cc)
-    with Common {
+    with CommonController {
 
   /* gets the path to all scripts that are executed
      on the server (not executed on the grid eninge) */

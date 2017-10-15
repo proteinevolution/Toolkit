@@ -10,7 +10,7 @@ import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
 import models.mailing.JobFinishedMail
-import models.search.JobDAO
+import de.proteinevolution.models.search.JobDAO
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.runscripts._
 import com.typesafe.config.ConfigFactory

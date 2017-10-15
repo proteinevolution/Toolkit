@@ -8,7 +8,7 @@ import play.api.http.ContentTypes
   *
   * Created by snam on 12.11.16.
   */
-private[controllers] trait Common extends AbstractController with ContentTypes with ReactiveMongoComponents {
+private[controllers] trait CommonController extends AbstractController with ContentTypes with ReactiveMongoComponents {
 
   protected def NoCache(res: Result): Result = res.withHeaders(
     CACHE_CONTROL -> "no-cache, no-store, must-revalidate",

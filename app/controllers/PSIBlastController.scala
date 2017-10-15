@@ -31,7 +31,7 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
                                    val reactiveMongoApi: ReactiveMongoApi,
                                    cc: ControllerComponents)
     extends AbstractController(cc)
-    with Common {
+    with CommonController {
 
   /* gets the path to all scripts that are executed
      on the server (not executed on the grid engine) */
