@@ -1,4 +1,4 @@
-package modules.tel.env
+package de.proteinevolution.tel.env
 
 /**
   * An Env is anything that provides key/value pairs

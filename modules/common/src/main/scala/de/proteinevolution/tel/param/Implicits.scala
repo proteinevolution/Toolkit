@@ -1,4 +1,4 @@
-package models
+package de.proteinevolution.tel.param
 
 /**
   *

@@ -11,15 +11,15 @@ import models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
 import models.mailing.JobFinishedMail
 import models.search.JobDAO
-import modules.tel.TEL
-import modules.tel.runscripts._
+import de.proteinevolution.tel.TEL
+import de.proteinevolution.tel.runscripts._
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.sge.Qdel
 import modules.db.MongoStore
-import modules.tel.env.Env
-import modules.tel.execution.ExecutionContext.FileAlreadyExists
-import modules.tel.execution.{ ExecutionContext, RunningExecution, WrapperExecutionFactory }
-import modules.tel.runscripts.Runscript.Evaluation
+import de.proteinevolution.tel.env.Env
+import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
+import de.proteinevolution.tel.execution.{ ExecutionContext, RunningExecution, WrapperExecutionFactory }
+import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import java.time.ZonedDateTime
 
 import actors.ClusterMonitor.PolledJobs

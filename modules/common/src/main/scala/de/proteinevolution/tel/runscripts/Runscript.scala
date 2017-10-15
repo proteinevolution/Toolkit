@@ -1,10 +1,10 @@
-package modules.tel.runscripts
+package de.proteinevolution.tel.runscripts
 
 import better.files._
-import modules.tel.TELRegex
-import modules.tel.env.{ Env, EnvAware }
-import modules.tel.execution.ExecutionContext
-import modules.tel.runscripts.Runscript.Evaluation
+import de.proteinevolution.tel.TELRegex
+import de.proteinevolution.tel.env.{ Env, EnvAware }
+import de.proteinevolution.tel.execution.ExecutionContext
+import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 
 import scala.collection.mutable
 import scala.util.matching.Regex

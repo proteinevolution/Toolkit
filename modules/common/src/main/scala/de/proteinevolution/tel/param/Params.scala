@@ -1,4 +1,4 @@
-package modules.tel.param
+package de.proteinevolution.tel.param
 
 /**
   * Created by lzimmermann on 10/12/16.

@@ -3,8 +3,8 @@ package modules
 import javax.inject.{ Inject, Provider }
 
 import com.google.inject.AbstractModule
-import modules.tel.env.{ Env, ExecFile, PropFile, TELEnv }
-import modules.tel.param.{ GenerativeParamFileParser, ParamCollector, Params }
+import de.proteinevolution.tel.env.{ Env, ExecFile, PropFile, TELEnv }
+import de.proteinevolution.tel.param.{ GenerativeParamFileParser, ParamCollector, Params }
 import play.api.{ ConfigLoader, Configuration, Logger }
 import com.google.inject.name.Names
 

@@ -1,4 +1,4 @@
-package modules.tel
+package de.proteinevolution.tel
 import scala.util.matching.Regex
 
 /**

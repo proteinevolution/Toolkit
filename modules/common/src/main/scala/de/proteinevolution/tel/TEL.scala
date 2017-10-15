@@ -1,8 +1,8 @@
-package modules.tel
+package de.proteinevolution.tel
 
 import javax.inject.{ Inject, Singleton }
-import modules.tel.env.Env
-import modules.tel.param.Params
+import de.proteinevolution.tel.env.Env
+import de.proteinevolution.tel.param.Params
 
 /**
   * TEL is the access point to get ExecutionContexts in which runscripts can be executed

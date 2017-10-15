@@ -1,4 +1,4 @@
-package modules.tel
+package de.proteinevolution.tel
 
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.Constants
