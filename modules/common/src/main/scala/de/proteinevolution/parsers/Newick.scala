@@ -1,4 +1,4 @@
-package modules.parsers
+package de.proteinevolution.parsers
 import scala.util.parsing.combinator._
 
 sealed abstract class Tree
