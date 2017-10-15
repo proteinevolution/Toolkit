@@ -1,6 +1,7 @@
-package models.job
+package services
 
 import javax.inject.{ Inject, Singleton }
+
 import actors.JobActor
 import akka.actor.{ ActorRef, ActorSystem, Props }
 import models.Constants

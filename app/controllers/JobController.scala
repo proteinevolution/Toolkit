@@ -4,13 +4,13 @@ import java.io.{ FileInputStream, ObjectInputStream }
 import java.security.MessageDigest
 import java.time.ZonedDateTime
 import javax.inject.{ Inject, Named, Singleton }
+
 import actors.JobActor._
 import actors.JobIDActor
 import akka.actor.ActorRef
 import better.files._
 import models.database.jobs._
 import models.database.users.User
-import models.job.JobActorAccess
 import models.search.JobDAO
 import models.tools.ToolFactory
 import models.{ Constants, UserSessions }
@@ -23,6 +23,7 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONDocument
+import services.JobActorAccess
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import com.typesafe.config.{Config, ConfigFactory, ConfigObject}
 import models.Constants
-import models.database.results._
+import de.proteinevolution.models.database.results._
 import modules.db.{MongoStore, ResultFileAccessor}
 import play.api.libs.json.JsArray
 import play.twirl.api.HtmlFormat
@@ -53,7 +53,7 @@ final class ToolFactory @Inject()(
     hhblits: HHBlits,
     hhomp: HHomp,
     quick2d: Quick2D,
-    aln: models.database.results.Alignment,
+    aln: de.proteinevolution.models.database.results.Alignment,
     constants: Constants
 )(paramAccess: ParamAccess, mongoStore: MongoStore, resultFiles : ResultFileAccessor) {
 

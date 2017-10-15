@@ -6,10 +6,10 @@
 @import play.api.Logger
 @import play.api.libs.json.JsUndefined
 @import play.api.libs.json.JsDefined
-@import models.results.Common
+@import de.proteinevolution.models.results.Common
 @import modules.tel.TEL
 @import play.api.libs.json.JsLookupResult
-@import models.database.results.AlignmentResult
+@import de.proteinevolution.models.database.results.AlignmentResult
 @(jobID: String, alignment: AlignmentResult, resultName: String,  tool : models.tools.Tool)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 @import java.lang.String; var fileURL="/files/" + jobID + "/" + "alignment.fas";

@@ -1,6 +1,6 @@
-@import models.results.Common
+@import de.proteinevolution.models.results.Common
 @import better.files._
-@import models.database.results.HHompResult
+@import de.proteinevolution.models.database.results.HHompResult
 @(jobID: String, result: HHompResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
 @if(result.num_hits < 1) {
     <div class="callout alert noHitsWide" id="noHits">
