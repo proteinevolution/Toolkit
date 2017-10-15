@@ -5,8 +5,7 @@ import javax.inject.{ Inject, Singleton }
 
 import akka.util.Timeout
 import models.UserSessions
-import models.database.jobs.{ Done, JobState, Jobitem }
-import de.proteinevolution.models.database.users.User
+import de.proteinevolution.models.database.jobs.{ Done, JobState }
 import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{ I18nSupport, MessagesApi }
@@ -19,11 +18,10 @@ import java.time.format.DateTimeFormatter
 
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.Constants
-import play.api.data.validation.ValidationError
+import models.tools.JobItem.Jobitem
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.twirl.api.Html
-import reactivemongo.bson.{ BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -50,7 +48,7 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
     with I18nSupport
     with ReactiveMongoComponents {
 
-  implicit val timeout = Timeout(1.seconds)
+  implicit val timeout: Timeout = Timeout(1.seconds)
 
   def static(static: String): Action[AnyContent] = Action { implicit request =>
     static match {

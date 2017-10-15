@@ -1,6 +1,6 @@
 package controllers
 
-import models.database.jobs.Job
+import de.proteinevolution.models.database.jobs.Job
 import play.Logger
 import models.UserSessions
 import play.api.cache._

@@ -7,7 +7,7 @@ import actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import actors.JobActor.Delete
 import akka.actor.{ Actor, ActorLogging, Cancellable }
 import de.proteinevolution.models.Constants
-import models.database.jobs.Job
+import de.proteinevolution.models.database.jobs.Job
 import models.database.statistics.{ StatisticsObject, UserStatistic }
 import de.proteinevolution.models.database.users.User
 import models.mailing.OldAccountEmail

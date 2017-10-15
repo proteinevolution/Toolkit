@@ -6,7 +6,7 @@ import actors.JobActor._
 import akka.actor._
 import akka.event.LoggingReceive
 import models.UserSessions
-import models.database.jobs._
+import de.proteinevolution.models.database.jobs._
 import models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
 import models.mailing.JobFinishedMail
