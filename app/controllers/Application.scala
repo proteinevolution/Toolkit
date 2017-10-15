@@ -1,38 +1,38 @@
 package controllers
 
 import java.net.InetAddress
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 
 import actors.ClusterMonitor.Multicast
 import actors.WebSocketActor
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.results.Common
 import models.search.JobDAO
-import models.sge.Cluster
+import de.proteinevolution.models.sge.Cluster
 import models.tools.ToolFactory
-import models.{Constants, UserSessions}
-import modules.LocationProvider
-import de.proteinevolution.common.HTTPRequest
+import models.UserSessions
+import de.proteinevolution.common.{ HTTPRequest, LocationProvider }
 import modules.db.MongoStore
 import modules.tel.TEL
 import modules.tel.env.Env
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsValue, Json}
+import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.libs.json.{ JsValue, Json }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
-import play.api.{Configuration, Logger, Environment}
+import play.api.{ Configuration, Environment, Logger }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
-import com.redfin.sitemapgenerator.{WebSitemapGenerator, WebSitemapUrl, ChangeFreq}
+import com.redfin.sitemapgenerator.{ ChangeFreq, WebSitemapGenerator, WebSitemapUrl }
+import de.proteinevolution.models.Constants
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
-import models.stats.Counter
+import scala.concurrent.{ Await, Future }
+import de.proteinevolution.models.stats.Counter
 
 @Singleton
 final class Application @Inject()(webJarsUtil: WebJarsUtil,

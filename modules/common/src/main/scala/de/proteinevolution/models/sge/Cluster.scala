@@ -1,4 +1,4 @@
-package models.sge
+package de.proteinevolution.models.sge
 
 import javax.inject.{ Inject, Singleton }
 

@@ -5,12 +5,13 @@ import javax.inject.{ Inject, Singleton }
 
 import actors.WebSocketActor.{ ChangeSessionID, LogOut }
 import akka.actor.ActorRef
-import models.{ Constants, UserSessions }
+import de.proteinevolution.common.LocationProvider
+import de.proteinevolution.models.Constants
+import models.UserSessions
 import models.auth._
-import models.database.users.{ User, UserConfig, UserToken }
+import de.proteinevolution.models.database.users.{ User, UserConfig, UserToken }
 import models.mailing.{ ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail }
 import models.tools.ToolFactory
-import modules.LocationProvider
 import modules.db.MongoStore
 import play.Logger
 import play.api.cache._

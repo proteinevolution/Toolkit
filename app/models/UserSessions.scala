@@ -3,13 +3,12 @@ package models
 import java.time.ZonedDateTime
 import javax.inject.{ Inject, Singleton }
 
-import models.database.users.{ SessionData, User }
-import modules.LocationProvider
-import de.proteinevolution.common.HTTPRequest
+import de.proteinevolution.models.database.users.{ SessionData, User }
+import de.proteinevolution.common.{ HTTPRequest, LocationProvider }
 import modules.db.MongoStore
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{ mvc, Logger }
+import play.api.{ Logger, mvc }
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global

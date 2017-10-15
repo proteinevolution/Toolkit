@@ -1,18 +1,18 @@
 package models.tools
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
-import com.typesafe.config.{Config, ConfigFactory, ConfigObject}
-import models.Constants
+import com.typesafe.config.{ Config, ConfigFactory, ConfigObject }
+import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.results._
-import modules.db.{MongoStore, ResultFileAccessor}
+import modules.db.{ MongoStore, ResultFileAccessor }
 import play.api.libs.json.JsArray
 import play.twirl.api.HtmlFormat
 
 import scala.collection.JavaConversions._
 import scala.collection.immutable.ListMap
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Future, _}
+import scala.concurrent.{ Future, _ }
 
 // Returned to the View if a tool is requested with the getTool route
 case class Toolitem(toolname: String,

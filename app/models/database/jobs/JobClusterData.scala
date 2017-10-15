@@ -2,7 +2,7 @@ package models.database.jobs
 
 import java.time.ZonedDateTime
 
-import util.ZonedDateTimeHelper
+import de.proteinevolution.models.util.ZonedDateTimeHelper
 import play.api.libs.json._
 import reactivemongo.bson._
 

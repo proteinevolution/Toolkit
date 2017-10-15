@@ -1,4 +1,4 @@
-package models.sge
+package de.proteinevolution.models.sge
 
 import sys.process._
 import scala.language.postfixOps

@@ -8,12 +8,12 @@ import akka.actor.{ ActorLogging, _ }
 import akka.event.LoggingReceive
 import controllers.Settings
 import models.database.statistics.ClusterLoadEvent
-import models.sge.Cluster
+import de.proteinevolution.models.sge.Cluster
 import modules.db.MongoStore
 import modules.tel.TEL
 import java.time.ZonedDateTime
 
-import models.Constants
+import de.proteinevolution.models.Constants
 import de.proteinevolution.parsers.Ops.QStat
 import play.api.Logger
 import reactivemongo.bson.BSONObjectID

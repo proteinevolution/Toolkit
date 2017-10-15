@@ -1,10 +1,9 @@
-package models.database.users
+package de.proteinevolution.models.database.users
 
 import java.time.ZonedDateTime
-
 import scala.util.Random
 import reactivemongo.bson._
-import util.ZonedDateTimeHelper
+import de.proteinevolution.models.util.ZonedDateTimeHelper
 
 /**
   * Created by astephens on 22.11.16.

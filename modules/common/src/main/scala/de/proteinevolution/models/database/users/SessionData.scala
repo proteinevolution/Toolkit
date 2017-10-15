@@ -1,5 +1,6 @@
-package models.database.users
+package de.proteinevolution.models.database.users
 
+import de.proteinevolution.models.database.users.Location
 import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
 

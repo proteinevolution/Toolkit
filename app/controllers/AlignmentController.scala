@@ -2,13 +2,13 @@ package controllers
 
 import javax.inject.Inject
 
-import models.Constants
-import de.proteinevolution.models.database.results.{Alignment, General}
+import de.proteinevolution.models.Constants
+import de.proteinevolution.models.database.results.{ Alignment, General }
 import de.proteinevolution.models.results.Common
 import modules.db.ResultFileAccessor
 import play.api.libs.json.JsArray
 import play.api.mvc._
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
