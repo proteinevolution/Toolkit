@@ -70,6 +70,7 @@ window.JobModel = {
         "repwin_threshold":"2",
         "in_format":"a3m",
         "out_format":"fas",
+        "patsearchdb":"nr50"
     },
     update: function(args : any, value : string) : any {
         if (args.isJob) {
@@ -127,5 +128,10 @@ window.JobModel = {
         } else {
             return "";
         }
+    },
+    setParamValue: function(param : string, value : any) : void {
+        console.log("[JobModel.setParamValue]", param, value);
+        window.JobModel.paramValues[param] = value;
+        m.redraw(true);
     }
 };
