@@ -1,4 +1,4 @@
-package models.database.jobs
+package de.proteinevolution.models.database.jobs
 
 import java.time.ZonedDateTime
 
