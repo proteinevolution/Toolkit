@@ -4,9 +4,10 @@ import java.time.ZonedDateTime
 import javax.inject.{ Inject, Singleton }
 
 import actors.JobActor.{ JobStateChanged, SetSGEID, UpdateLog }
-import models.{ Constants, UserSessions }
+import de.proteinevolution.common.LocationProvider
+import de.proteinevolution.models.Constants
+import models.UserSessions
 import models.database.jobs._
-import modules.LocationProvider
 import modules.db.MongoStore
 import play.api.Logger
 import play.api.cache.{ NamedCache, SyncCacheApi }

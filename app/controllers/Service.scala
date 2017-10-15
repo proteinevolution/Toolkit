@@ -4,9 +4,9 @@ import java.io.{ FileInputStream, ObjectInputStream }
 import javax.inject.{ Inject, Singleton }
 
 import akka.util.Timeout
-import models.{ Constants, UserSessions }
+import models.UserSessions
 import models.database.jobs.{ Done, JobState, Jobitem }
-import models.database.users.User
+import de.proteinevolution.models.database.users.User
 import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{ I18nSupport, MessagesApi }
@@ -14,9 +14,11 @@ import play.api.mvc._
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import better.files._
 import models.tools.{ Param, ToolFactory, Toolitem }
-import modules.LocationProvider
 import modules.db.MongoStore
 import java.time.format.DateTimeFormatter
+
+import de.proteinevolution.common.LocationProvider
+import de.proteinevolution.models.Constants
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._

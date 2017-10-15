@@ -1,11 +1,11 @@
-package models.database.users
+package de.proteinevolution.models.database.users
 
 /**
   * Created by astephens on 15.08.17.
   */
 import java.time.ZonedDateTime
 
-import util.ZonedDateTimeHelper
+import de.proteinevolution.models.util.ZonedDateTimeHelper
 import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
 

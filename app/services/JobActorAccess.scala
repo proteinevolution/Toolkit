@@ -4,7 +4,7 @@ import javax.inject.{ Inject, Singleton }
 
 import actors.JobActor
 import akka.actor.{ ActorRef, ActorSystem, Props }
-import models.Constants
+import de.proteinevolution.models.Constants
 
 /**
   * Created by lzimmermann on 29.01.17.

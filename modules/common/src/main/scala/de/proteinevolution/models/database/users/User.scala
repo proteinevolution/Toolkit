@@ -1,11 +1,11 @@
-package models.database.users
+package de.proteinevolution.models.database.users
 
 import java.time.ZonedDateTime
 
 import org.mindrot.jbcrypt.BCrypt
 import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
-import util.ZonedDateTimeHelper
+import de.proteinevolution.models.util.ZonedDateTimeHelper
 
 case class User(userID: BSONObjectID = BSONObjectID.generate(), // ID of the User
                 sessionID: Option[BSONObjectID] = None, // Session ID

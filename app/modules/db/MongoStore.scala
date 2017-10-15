@@ -6,7 +6,7 @@ import javax.inject.{Inject, Singleton}
 import models.database.CMS.FeaturedArticle
 import models.database.jobs.Job
 import models.database.statistics.{ClusterLoadEvent, JobEventLog, StatisticsObject}
-import models.database.users.User
+import de.proteinevolution.models.database.users.User
 import play.api.Logger
 import play.api.libs.json.JsValue
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}

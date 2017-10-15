@@ -1,41 +1,42 @@
 package actors
 
-import javax.inject.{Inject, Named}
+import javax.inject.{ Inject, Named }
 
 import actors.JobActor._
 import akka.actor._
 import akka.event.LoggingReceive
-import models.{Constants, UserSessions}
+import models.UserSessions
 import models.database.jobs._
-import models.database.statistics.{JobEvent, JobEventLog}
-import models.database.users.User
+import models.database.statistics.{ JobEvent, JobEventLog }
+import de.proteinevolution.models.database.users.User
 import models.mailing.JobFinishedMail
 import models.search.JobDAO
 import modules.tel.TEL
 import modules.tel.runscripts._
 import com.typesafe.config.ConfigFactory
-import models.sge.Qdel
-import modules.LocationProvider
+import de.proteinevolution.models.sge.Qdel
 import modules.db.MongoStore
 import modules.tel.env.Env
 import modules.tel.execution.ExecutionContext.FileAlreadyExists
-import modules.tel.execution.{ExecutionContext, RunningExecution, WrapperExecutionFactory}
+import modules.tel.execution.{ ExecutionContext, RunningExecution, WrapperExecutionFactory }
 import modules.tel.runscripts.Runscript.Evaluation
 import java.time.ZonedDateTime
 
 import actors.ClusterMonitor.PolledJobs
 import play.api.Logger
-import play.api.cache.{NamedCache, SyncCacheApi}
+import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json._
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.util.{ Failure, Success }
 import better.files._
 import com.google.inject.assistedinject.Assisted
+import de.proteinevolution.common.LocationProvider
+import de.proteinevolution.models.Constants
 import de.proteinevolution.parsers.Ops.QStat
 
 import scala.concurrent.duration._

@@ -1,11 +1,11 @@
-package modules
+package de.proteinevolution.common
 
 import javax.inject.Singleton
 
 import com.google.inject.ImplementedBy
 import com.sanoma.cda.geoip.MaxMindIpGeo
 import com.typesafe.config.ConfigFactory
-import models.database.users.Location
+import de.proteinevolution.models.database.users.Location
 import play.api.mvc.RequestHeader
 
 @ImplementedBy(classOf[GeoIPLocationProvider])

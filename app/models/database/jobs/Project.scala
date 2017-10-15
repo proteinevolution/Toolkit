@@ -6,7 +6,7 @@ package models.database.jobs
   */
 import java.time.ZonedDateTime
 
-import util.ZonedDateTimeHelper
+import de.proteinevolution.models.util.ZonedDateTimeHelper
 import play.api.libs.json._
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID }
 import reactivemongo.play.json._

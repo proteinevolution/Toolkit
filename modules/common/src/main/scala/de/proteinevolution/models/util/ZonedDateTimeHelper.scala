@@ -1,4 +1,4 @@
-package util
+package de.proteinevolution.models.util
 
 import java.time.format.DateTimeFormatter
 import java.time.{ Instant, ZoneId, ZonedDateTime }

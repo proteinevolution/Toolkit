@@ -1,4 +1,4 @@
-package models.stats
+package de.proteinevolution.models.stats
 
 object Counter {
 

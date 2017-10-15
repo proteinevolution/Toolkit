@@ -6,7 +6,7 @@ package models.database.CMS
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-import util.ZonedDateTimeHelper
+import de.proteinevolution.models.util.ZonedDateTimeHelper
 import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._

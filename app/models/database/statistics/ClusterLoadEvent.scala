@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 
 import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
-import util.ZonedDateTimeHelper
+import de.proteinevolution.models.util.ZonedDateTimeHelper
 
 /**
   * Created by astephens on 27.03.17.
