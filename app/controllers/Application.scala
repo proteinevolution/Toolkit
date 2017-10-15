@@ -8,7 +8,7 @@ import actors.WebSocketActor
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
-import models.results.Common
+import de.proteinevolution.models.results.Common
 import models.search.JobDAO
 import models.sge.Cluster
 import models.tools.ToolFactory

@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 import javax.inject.Inject
 
 import models.database.CMS.FeaturedArticle
-import models.database.results.{Hmmer, PSIBlast}
+import de.proteinevolution.models.database.results.{Hmmer, PSIBlast}
 import modules.db.{MongoStore, ResultFileAccessor}
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -112,5 +112,3 @@ class DataController @Inject()(mongoStore: MongoStore,
   }
 
 }
-
-case class DTParam(sSearch: String, iDisplayStart: Int, iDisplayLength: Int, iSortCol: Int, sSortDir: String)

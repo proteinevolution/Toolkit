@@ -4,11 +4,12 @@ import javax.inject.Inject
 
 import better.files._
 import com.typesafe.config.ConfigFactory
+import de.proteinevolution.models.database.results.General.DTParam
 import models.Constants
-import models.database.results._
+import de.proteinevolution.models.database.results._
 import modules.db.ResultFileAccessor
 import org.webjars.play.WebJarsUtil
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 

@@ -1,14 +1,11 @@
-package models.results
+package de.proteinevolution.models.results
 
-import javax.inject.Inject
-import better.files._
-import models.Constants
-import models.database.results.AlignmentResult
+
+import de.proteinevolution.models.database.results.AlignmentResult
 import play.twirl.api.Html
 import play.api.Logger
-import models.database.results._
+import de.proteinevolution.models.database.results._
 import scala.collection.mutable.ArrayBuffer
-import scala.util.matching.Regex
 
 object Common {
 

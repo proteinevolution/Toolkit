@@ -1,15 +1,13 @@
-package models.results
+package de.proteinevolution.models.results
 
-import models.Constants
 import play.twirl.api.Html
 
 import scala.io.Source
 import java.nio.file.{ Files, Paths }
-import javax.inject.Inject
 
 /**
-  * Created by drau on 30.05.17.
-  */
+ * Created by drau on 30.05.17.
+ */
 object HHrepID {
   def getResult(jobID: String, filePath: String): Html = {
     val headerLine = """(Results for repeats type )([A-Z])(:)""".r
@@ -20,8 +18,8 @@ object HHrepID {
     val data = try {
       source.getLines().toList.map {
         case wholeMatch @ headerLine(m1, m2, m3) =>
-          "<h5>" + wholeMatch + "</h5>" + "<div class='hhrepImage'>" + views.html.jobs.resultpanels
-            .image(s"$imagePath$m2.png") + "</div>"
+          "<h5>" + wholeMatch + "</h5>" + "<div class='hhrepImage'>" +
+              s"<img hspace='14' src='$imagePath$m2.png'>" + "</div>"
         case wholeMatch @ seqLine(m1, m2) =>
           "<pre class='sequence'>" + wholeMatch.replace(m2, Common.colorRegexReplacer(m2)) + "</pre>"
         case "" => "<br />"
