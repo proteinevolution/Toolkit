@@ -257,9 +257,10 @@ label.forwardLabel input[type=radio] {
 }
 .colorOptsAlignment a{
     float: left;
-    width: 25%;
+    width: 20%;
     margin-bottom: 0.5em;
 }
+
 
 input {
     vertical-align: -2px;

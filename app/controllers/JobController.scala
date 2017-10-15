@@ -1,37 +1,35 @@
 package controllers
 
 import java.io.{ FileInputStream, ObjectInputStream }
-
-import actors.JobActor._
 import java.security.MessageDigest
+import java.time.ZonedDateTime
 import javax.inject.{ Inject, Named, Singleton }
-
+import actors.JobActor._
 import actors.JobIDActor
 import akka.actor.ActorRef
-import models.{ Constants, UserSessions }
+import better.files._
 import models.database.jobs._
 import models.database.users.User
 import models.job.JobActorAccess
 import models.search.JobDAO
+import models.tools.ToolFactory
+import models.{ Constants, UserSessions }
 import modules.LocationProvider
-import java.time.ZonedDateTime
+import modules.db.MongoStore
+import modules.tel.env.Env
 import play.api.Logger
 import play.api.cache._
-import play.api.libs.json.{ JsNull, Json }
+import play.api.libs.json.Json
 import play.api.mvc._
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import play.modules.reactivemongo.ReactiveMongoApi
+import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import better.files._
-import models.tools.ToolFactory
-import modules.db.MongoStore
-import modules.tel.env.Env
-import play.modules.reactivemongo.ReactiveMongoApi
 
 /**
-  * Created by lzimmermann on 02.12.16.
-  */
+ * Created by lzimmermann on 02.12.16.
+ */
 @Singleton
 final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                     val reactiveMongoApi: ReactiveMongoApi,
@@ -49,9 +47,9 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     with Common {
 
   /**
-    *  Loads one minified version of a job to the view, given the jobID
-    *
-    */
+   *  Loads one minified version of a job to the view, given the jobID
+   *
+   */
   def loadJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       // Find the Job in the database
@@ -81,13 +79,19 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
       // Grab the formData from the request data
       request.body.asMultipartFormData match {
         case Some(mpfd) =>
-          var formData = mpfd.dataParts.mapValues(_.mkString(constants.formMultiValueSeparator))
+          // map the form data as parameters with values
+          var formData = mpfd.dataParts.mapValues(_.mkString(constants.formMultiValueSeparator)) - "file"
+
+          // Merge the file into the "alignment" parameter, if it exists
           mpfd.file("file").foreach { file =>
-            val source = scala.io.Source.fromFile(file.ref.file)
-            formData = try { formData.updated("alignment", source.getLines().mkString("\n")) } finally {
+            val source = scala.io.Source.fromFile(file.ref.path.toFile)
+            try {
+              formData = formData.updated("alignment", source.getLines().mkString("\n"))
+            } finally {
               source.close()
             }
           }
+
           // Determine the jobID
           (formData.get("jobID") match {
             case Some(jobID) =>
@@ -110,20 +114,36 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
             case Some(jobID) =>
               // Load the parameters for the tool
               val toolParams = toolFactory.values(toolName).params
+
               // Filter invalid parameters
               var params: Map[String, String] = formData
-              formData.filterKeys(parameter => toolParams.contains(parameter)).map { paramWithValue =>
-                paramWithValue._1 -> toolParams(paramWithValue._1).paramType.validate(paramWithValue._2)
+
+              // Quick fix to remove unused parameter from job hashing TODO fix this.
+              formData.get("alignment_two").foreach { alignment =>
+                if (alignment.isEmpty) params = params - "alignment_two"
               }
-              params = params.updated("regkey", constants.modellerKey)
-              // get checkbox value
-              // TODO: mailUpdate some how gets lost in the filter function above
+
+              /**
+               * TODO Validate here!
+               */
+              val validatedFormData: Map[String, Option[String]] =
+                formData.filterKeys(parameter => toolParams.contains(parameter)).map { paramWithValue =>
+                  paramWithValue._1 -> toolParams(paramWithValue._1).paramType.validate(paramWithValue._2)
+                }
+
+              // Check if the user has the Modeller Key when the requested tool is Modeller
+              if (toolName == toolFactory.Toolnames.MODELLER && user.userConfig.hasMODELLERKey)
+                params = params.updated("regkey", constants.modellerKey)
+
+              // get checkbox value for the update per mail option
               val emailUpdate = formData.get("emailUpdate") match {
                 case Some(x) => true
                 case _       => false
               }
+
               // Set job as either private or public
               val ownerOption = if (params.get("public").isEmpty) { Some(user.userID) } else { None }
+
               // Get the current date to set it for all three dates
               val now = ZonedDateTime.now
 
@@ -134,7 +154,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               val job = Job(
                 jobID = jobID,
                 ownerID = ownerOption,
-                status = Submitted,
                 emailUpdate = emailUpdate,
                 tool = toolName,
                 watchList = List(user.userID),
@@ -148,27 +167,37 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               // TODO may want to use a different way to identify our users - use the account type in the user perhaps?
               val isFromInstitute = user.getUserData.eMail.matches(".+@tuebingen.mpg.de")
 
-              // Add Job to user in database
-              userSessions.modifyUserWithCache(BSONDocument(User.IDDB   -> user.userID),
-                                               BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> job.jobID)))
-
               // Add job to database
-              mongoStore.insertJob(job).map {
+              mongoStore.insertJob(job).flatMap {
                 case Some(_) =>
                   // Send the job to the jobActor for preparation
                   jobActorAccess.sendToJobActor(jobID, PrepareJob(job, params, startJob = false, isFromInstitute))
-                  // Notify user that the job has been submitted
-                  Ok(Json.obj("successful" -> true, "code" -> 0, "message" -> "Submission successful.", "jobID" -> jobID))
-                    .withSession(
-                      userSessions.sessionCookie(request, user.sessionID.get)
-                    )
+
+                  // Add Job to user in database
+                  userSessions
+                    .modifyUserWithCache(BSONDocument(User.IDDB   -> user.userID),
+                                         BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> job.jobID)))
+                    .map { _ =>
+                      // Notify user that the job has been submitted
+                      Ok(
+                        Json.obj("successful" -> true,
+                                 "code"       -> 0,
+                                 "message"    -> "Submission successful.",
+                                 "jobID"      -> jobID)
+                      ).withSession(
+                          userSessions.sessionCookie(request, user.sessionID.get)
+                        )
+                    }
                 case None =>
                   // Something went wrong when pushing to the DB
-                  Ok(Json.obj("successful" -> false, "code" -> 3, "message" -> "Could not write to DB."))
+                  Future
+                    .successful(Ok(Json.obj("successful" -> false, "code" -> 3, "message" -> "Could not write to DB.")))
               }
             case None =>
               // The job ID is already taken
-              Future.successful(Ok(Json.obj("successful" -> false, "code" -> 2, "message" -> "Job ID is already taken.")))
+              Future.successful(
+                Ok(Json.obj("successful" -> false, "code" -> 2, "message" -> "Job ID is already taken."))
+              )
           }
         case None =>
           // No form data - something went wrong.
@@ -178,10 +207,10 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
   }
 
   /**
-    * Sends a deletion request to the job actor.
-    *
-    * @return
-    */
+   * Sends a deletion request to the job actor.
+   *
+   * @return
+   */
   def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     Logger.info("Delete Action in JobController reached")
     userSessions.getUser.map { user =>
@@ -191,10 +220,10 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
   }
 
   /**
-    * Generates the job hash for the given jobID and looks it up in the DB.
-    * @param jobID
-    * @return
-    */
+   * Generates the job hash for the given jobID and looks it up in the DB.
+   * @param jobID
+   * @return
+   */
   def checkHash(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).flatMap {
@@ -211,22 +240,26 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
           // Generate the job hash
           val jobHash = jobDao.generateJobHash(job, params, env)
           // Match the hash
-          mongoStore.findAndSortJobs(
-            BSONDocument(Job.HASH        -> jobHash),
-            BSONDocument(Job.DATECREATED -> -1)
-          ).map { jobList =>
-            jobList.find(_.status == Done) match {
-              case Some(latestOldJob) =>
-                Ok(Json.toJson(
-                  Json.obj(
-                    "jobID"       -> latestOldJob.jobID,
-                    "dateCreated" -> latestOldJob.dateCreated.get.toInstant.toEpochMilli
+          mongoStore
+            .findAndSortJobs(
+              BSONDocument(Job.HASH        -> jobHash),
+              BSONDocument(Job.DATECREATED -> -1)
+            )
+            .map { jobList =>
+              jobList.find(_.status == Done) match {
+                case Some(latestOldJob) =>
+                  Ok(
+                    Json.toJson(
+                      Json.obj(
+                        "jobID"       -> latestOldJob.jobID,
+                        "dateCreated" -> latestOldJob.dateCreated.get.toInstant.toEpochMilli
+                      )
+                    )
                   )
-                ))
-              case None =>
-                NotFound
+                case None =>
+                  NotFound
+              }
             }
-          }
       }
     }
   }

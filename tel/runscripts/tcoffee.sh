@@ -48,32 +48,24 @@ export DIR_4_TCOFFEE=./tmp
 export TMP_4_TCOFFEE=./tmp
 export CACHE_4_TCOFFEE=./tmp
 
-if [ %output_order.content = "input"] ; then
+
+if [ %output_order.content = "input" ] ; then
     OUTPUTORDER="-outorder=input"
 else
-    OUTPUTORDER="-outorder=aligned "
+    OUTPUTORDER="-outorder=aligned"
 fi
 
 echo "#Aligning sequences with T-Coffee."  >> ../results/process.log
 updateProcessLog
 
-if [ %output_order.content = "input"] ; then
-        t_coffee -in ../results/alignment \
-                -cache=no \
-                ${OUTPUTORDER} \
-                -output clustalw_aln \
-                -case=upper \
-                -mode=regular \
-                -n_core=%THREADS
-else
-        t_coffee -in ../results/alignment \
-                -cache=no \
-                ${OUTPUTORDER} \
-                -output clustalw_aln \
-                -case=upper \
-                -mode=regular \
-                -n_core=%THREADS
-fi
+t_coffee -in ../results/alignment \
+             -cache=no \
+             ${OUTPUTORDER} \
+             -output clustalw_aln \
+             -case=upper \
+             -mode=regular \
+             -n_core=%THREADS
+
 
 echo "done"  >> ../results/process.log
 updateProcessLog

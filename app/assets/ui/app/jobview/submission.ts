@@ -130,7 +130,7 @@
 
                 // Append file to upload
                 let file = ((<any>$("input[type=file]"))[0].files[0]);
-                formData.append("file", file);
+                if (file) formData.append("file", file);
 
                 submitRoute = jsRoutes.controllers.JobController.submitJob(tool);
                 m.request({
@@ -191,7 +191,7 @@
     view: function(ctrl : any, args : any) {
         return m("div", { "class":  "submitbuttons", config: JobSubmissionComponent.hide(ctrl, args) }, [
             m("div", {
-                "class":                 "reveal",
+                "class":               "reveal",
                 "data-reveal":         "data-reveal",
                 "data-animation-in":   "fade-in",
                 "data-overlay":        "true",
@@ -228,7 +228,7 @@
                 style: "float: right;",
                 onclick: ctrl.submit.bind(ctrl, true)
             }),
-            JobSubmissionComponent.jobIDComponent(ctrl), m(ProjectComponent, {})
+            JobSubmissionComponent.jobIDComponent(ctrl)
         ])
     }
 };
