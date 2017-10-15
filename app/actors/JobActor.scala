@@ -36,7 +36,7 @@ import scala.concurrent.Future
 import scala.util.{Failure, Success}
 import better.files._
 import com.google.inject.assistedinject.Assisted
-import modules.parsers.Ops.QStat
+import de.proteinevolution.parsers.Ops.QStat
 
 import scala.concurrent.duration._
 

@@ -1,9 +1,9 @@
-package modules.parsers.Ops
+package de.proteinevolution.parsers.Ops
 
 import java.time.{ZoneId, ZonedDateTime}
 import java.time.format.DateTimeFormatter
 
-import modules.parsers.Ops.QStat.QStatJob
+import de.proteinevolution.parsers.Ops.QStat.QStatJob
 
 import scala.xml._
 

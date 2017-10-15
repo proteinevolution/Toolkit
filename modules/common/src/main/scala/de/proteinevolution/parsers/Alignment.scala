@@ -1,4 +1,4 @@
-package modules.parsers
+package de.proteinevolution.parsers
 
 /**
   * modified from bioscala: https://github.com/bioscala/bioscala

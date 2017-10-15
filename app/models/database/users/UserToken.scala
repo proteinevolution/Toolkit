@@ -2,7 +2,7 @@ package models.database.users
 
 import java.time.ZonedDateTime
 
-import modules.common.RandomString
+import scala.util.Random
 import reactivemongo.bson._
 import util.ZonedDateTimeHelper
 
@@ -10,7 +10,7 @@ import util.ZonedDateTimeHelper
   * Created by astephens on 22.11.16.
   */
 case class UserToken(tokenType: Int,
-                     token: String = RandomString.randomAlphaNumString(15),
+                     token: String = Random.alphanumeric.take(15).mkString,
                      passwordHash: Option[String] = None,
                      eMail: Option[String] = None,
                      userID: Option[BSONObjectID] = None,

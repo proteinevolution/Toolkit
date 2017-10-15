@@ -1,1 +1,1 @@
-POST /submit                  controllers.headless.APIController.submit()
+GET /submit                  controllers.headless.APIController.submit()

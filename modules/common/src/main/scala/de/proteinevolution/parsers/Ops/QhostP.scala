@@ -1,4 +1,4 @@
-package modules.parsers.Ops
+package de.proteinevolution.parsers.Ops
 
 import scala.util.parsing.combinator.RegexParsers
 
