@@ -15,8 +15,8 @@ import models.tools.ToolFactory
 import models.UserSessions
 import de.proteinevolution.common.{ HTTPRequest, LocationProvider }
 import modules.db.MongoStore
-import modules.tel.TEL
-import modules.tel.env.Env
+import de.proteinevolution.tel.TEL
+import de.proteinevolution.tel.env.Env
 import play.api.cache._
 import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.libs.json.{ JsValue, Json }

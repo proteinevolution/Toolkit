@@ -1,4 +1,4 @@
-package modules.tel.runscripts
+package de.proteinevolution.tel.runscripts
 
 import javax.inject.{ Inject, Named, Singleton }
 

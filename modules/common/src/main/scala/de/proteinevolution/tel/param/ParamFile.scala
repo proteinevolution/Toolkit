@@ -1,13 +1,12 @@
-package modules.tel.param
+package de.proteinevolution.tel.param
 
 import java.nio.file.attribute.PosixFilePermission
 import javax.inject.{ Inject, Singleton }
 
 import better.files._
-import models.Implicits._
-import modules.tel.env.Env
+import de.proteinevolution.tel.env.Env
 import play.api.Logger
-
+import de.proteinevolution.tel.param.Implicits._
 import scala.collection.immutable.ListMap
 
 /**

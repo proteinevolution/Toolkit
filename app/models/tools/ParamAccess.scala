@@ -1,6 +1,6 @@
 package models.tools
 
-import modules.tel.TEL
+import de.proteinevolution.tel.TEL
 import javax.inject.{ Inject, Singleton }
 
 import play.api.libs.functional.syntax._

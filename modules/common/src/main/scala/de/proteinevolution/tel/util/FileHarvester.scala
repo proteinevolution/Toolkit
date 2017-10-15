@@ -1,4 +1,4 @@
-package modules.tel.util
+package de.proteinevolution.tel.util
 import better.files.File
 
 import scala.sys.process.Process

@@ -1,8 +1,8 @@
-package modules.tel.env
+package de.proteinevolution.tel.env
 
 import better.files._
 import com.typesafe.config.ConfigFactory
-import modules.tel.Subject
+import de.proteinevolution.tel.Subject
 import play.api.Logger
 
 import scala.sys.process.Process
