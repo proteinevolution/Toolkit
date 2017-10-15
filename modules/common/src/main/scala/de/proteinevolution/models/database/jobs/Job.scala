@@ -1,10 +1,9 @@
-package models.database.jobs
+package de.proteinevolution.models.database.jobs
 
 import java.time.ZonedDateTime
 
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 import com.typesafe.config.ConfigFactory
-import models.tools.Toolitem
 import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._
@@ -81,13 +80,6 @@ case class Job(mainID       : BSONObjectID           = BSONObjectID.generate, //
   }
 }
 
-// Server returns such an object when asked for a job
-case class Jobitem(jobID: String,
-                   state: JobState,
-                   dateCreated: String,
-                   toolitem: Toolitem,
-                   views: Seq[String],
-                   paramValues: Map[String, String])
 
 object Job {
   // Constants for the JSON object identifiers

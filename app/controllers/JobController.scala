@@ -11,7 +11,7 @@ import akka.actor.ActorRef
 import better.files._
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.Constants
-import models.database.jobs._
+import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.users.User
 import models.search.JobDAO
 import models.tools.ToolFactory

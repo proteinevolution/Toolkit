@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import better.files._
 import com.typesafe.config.ConfigFactory
-import models.database.jobs.Job
+import de.proteinevolution.models.database.jobs.Job
 import models.tools.ToolFactory
 import modules.RunscriptPathProvider
 import de.proteinevolution.parsers.FASTA

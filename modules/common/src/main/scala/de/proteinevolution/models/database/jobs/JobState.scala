@@ -1,4 +1,4 @@
-package models.database.jobs
+package de.proteinevolution.models.database.jobs
 
 import play.api.libs.json._
 import reactivemongo.bson.{ BSONInteger, BSONReader, BSONWriter }

@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 import javax.inject.{Inject, Singleton}
 
 import models.database.CMS.FeaturedArticle
-import models.database.jobs.Job
+import de.proteinevolution.models.database.jobs.Job
 import models.database.statistics.{ClusterLoadEvent, JobEventLog, StatisticsObject}
 import de.proteinevolution.models.database.users.User
 import play.api.Logger
