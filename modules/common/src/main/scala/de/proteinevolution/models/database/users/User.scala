@@ -51,7 +51,7 @@ case class User(userID: BSONObjectID = BSONObjectID.generate(), // ID of the Use
        |nameLogin: ${getUserData.nameLogin}
        |watched jobIDs: ${jobs.mkString(",")}
        |Deletion on: ${dateDeletedOn match {
-         case Some(dateTime) => dateTime.toString()
+         case Some(dateTime) => dateTime.toString
          case None           => "no deletion date set"
        }}""".stripMargin
   }

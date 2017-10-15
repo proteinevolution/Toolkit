@@ -14,7 +14,7 @@ import de.proteinevolution.models.sge.Cluster
 import models.tools.ToolFactory
 import models.UserSessions
 import de.proteinevolution.common.{ HTTPRequest, LocationProvider }
-import modules.db.MongoStore
+import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
 import play.api.cache._

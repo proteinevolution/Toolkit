@@ -1,4 +1,4 @@
-package models.database.CMS
+package de.proteinevolution.models.database.CMS
 
 /**
   * Created by drau on 30.01.17.

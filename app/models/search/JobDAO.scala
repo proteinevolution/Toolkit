@@ -5,7 +5,6 @@ import javax.inject.{Inject, Singleton}
 import better.files._
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.database.jobs.Job
-import models.tools.ToolFactory
 import modules.RunscriptPathProvider
 import de.proteinevolution.parsers.FASTA
 import de.proteinevolution.tel.env.Env
@@ -14,7 +13,7 @@ import de.proteinevolution.tools.FNV
 import scala.util.hashing.MurmurHash3
 
 @Singleton
-final class JobDAO @Inject()(toolFactory: ToolFactory, runscriptPathProvider: RunscriptPathProvider) {
+final class JobDAO @Inject()(runscriptPathProvider: RunscriptPathProvider) {
 
   /**
     * generates Param hash for matching already existing jobs
