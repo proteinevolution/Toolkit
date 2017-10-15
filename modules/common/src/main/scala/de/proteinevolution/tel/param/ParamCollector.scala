@@ -1,4 +1,4 @@
-package modules.tel.param
+package de.proteinevolution.tel.param
 
 import javax.inject.Singleton
 

@@ -1,4 +1,4 @@
-package modules.tel
+package de.proteinevolution.tel
 
 /**
   * Created by lzimmermann on 10/19/16.

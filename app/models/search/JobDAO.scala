@@ -8,7 +8,7 @@ import models.database.jobs.Job
 import models.tools.ToolFactory
 import modules.RunscriptPathProvider
 import de.proteinevolution.parsers.FASTA
-import modules.tel.env.Env
+import de.proteinevolution.tel.env.Env
 import play.api.Logger
 import de.proteinevolution.tools.FNV
 import scala.util.hashing.MurmurHash3

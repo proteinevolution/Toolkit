@@ -1,7 +1,7 @@
-package modules.tel.param
+package de.proteinevolution.tel.param
 
-import modules.tel.TELRegex
-import modules.tel.env.EnvAware
+import de.proteinevolution.tel.TELRegex
+import de.proteinevolution.tel.env.EnvAware
 
 import scala.collection.immutable.ListMap
 

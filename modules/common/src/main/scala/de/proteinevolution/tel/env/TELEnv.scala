@@ -1,8 +1,8 @@
-package modules.tel.env
+package de.proteinevolution.tel.env
 
 import javax.inject.Singleton
 
-import modules.tel.Observer
+import de.proteinevolution.tel.Observer
 import play.api.Logger
 
 /**

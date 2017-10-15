@@ -17,7 +17,7 @@ import models.search.JobDAO
 import models.tools.ToolFactory
 import models.UserSessions
 import modules.db.MongoStore
-import modules.tel.env.Env
+import de.proteinevolution.tel.env.Env
 import play.api.Logger
 import play.api.cache._
 import play.api.libs.json.Json
