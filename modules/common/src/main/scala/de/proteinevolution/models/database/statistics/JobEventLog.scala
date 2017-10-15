@@ -1,4 +1,4 @@
-package models.database.statistics
+package de.proteinevolution.models.database.statistics
 
 import java.time.ZonedDateTime
 import de.proteinevolution.models.database.jobs.{ Deleted, Error, JobState, Submitted }

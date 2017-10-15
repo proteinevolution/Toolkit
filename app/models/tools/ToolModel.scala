@@ -6,7 +6,7 @@ import com.typesafe.config.{ Config, ConfigFactory, ConfigObject }
 import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.jobs.JobState
 import de.proteinevolution.models.database.results._
-import modules.db.{ MongoStore, ResultFileAccessor }
+import de.proteinevolution.db.{ MongoStore, ResultFileAccessor }
 import play.api.libs.json.JsArray
 import play.twirl.api.HtmlFormat
 

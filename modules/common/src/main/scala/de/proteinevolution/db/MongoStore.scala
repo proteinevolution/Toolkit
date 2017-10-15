@@ -1,11 +1,11 @@
-package modules.db
+package de.proteinevolution.db
 
 import java.time.ZonedDateTime
 import javax.inject.{Inject, Singleton}
 
-import models.database.CMS.FeaturedArticle
+import de.proteinevolution.models.database.CMS.FeaturedArticle
 import de.proteinevolution.models.database.jobs.Job
-import models.database.statistics.{ClusterLoadEvent, JobEventLog, StatisticsObject}
+import de.proteinevolution.models.database.statistics.{ClusterLoadEvent, JobEventLog, StatisticsObject}
 import de.proteinevolution.models.database.users.User
 import play.api.Logger
 import play.api.libs.json.JsValue

@@ -5,7 +5,7 @@ import javax.inject.Inject
 import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.results.{ Alignment, General }
 import de.proteinevolution.models.results.Common
-import modules.db.ResultFileAccessor
+import de.proteinevolution.db.ResultFileAccessor
 import play.api.libs.json.JsArray
 import play.api.mvc._
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }

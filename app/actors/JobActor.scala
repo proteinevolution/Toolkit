@@ -7,7 +7,7 @@ import akka.actor._
 import akka.event.LoggingReceive
 import models.UserSessions
 import de.proteinevolution.models.database.jobs._
-import models.database.statistics.{ JobEvent, JobEventLog }
+import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
 import models.mailing.JobFinishedMail
 import models.search.JobDAO
@@ -15,7 +15,7 @@ import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.runscripts._
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.sge.Qdel
-import modules.db.MongoStore
+import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
 import de.proteinevolution.tel.execution.{ ExecutionContext, RunningExecution, WrapperExecutionFactory }

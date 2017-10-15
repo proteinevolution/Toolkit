@@ -12,7 +12,7 @@ import models.auth._
 import de.proteinevolution.models.database.users.{ User, UserConfig, UserToken }
 import models.mailing.{ ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail }
 import models.tools.ToolFactory
-import modules.db.MongoStore
+import de.proteinevolution.db.MongoStore
 import play.Logger
 import play.api.cache._
 import play.api.i18n.{ I18nSupport, MessagesApi }

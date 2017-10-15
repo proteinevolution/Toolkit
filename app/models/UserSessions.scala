@@ -5,7 +5,7 @@ import javax.inject.{ Inject, Singleton }
 
 import de.proteinevolution.models.database.users.{ SessionData, User }
 import de.proteinevolution.common.{ HTTPRequest, LocationProvider }
-import modules.db.MongoStore
+import de.proteinevolution.db.MongoStore
 import play.api.cache._
 import play.api.mvc.RequestHeader
 import play.api.{ Logger, mvc }
@@ -129,6 +129,7 @@ class UserSessions @Inject()(mongoStore: MongoStore,
         case None =>
           BSONObjectID.generate()
       }
+      // TODO: this seems not to be typesafe! user has type nothing
       userCache.get(sessionID.stringify) match {
         case Some(user) =>
           Future.successful(user)
