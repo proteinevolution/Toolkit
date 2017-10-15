@@ -1,7 +1,6 @@
 package controllers
 
 import java.net.InetAddress
-import java.util.Date
 import javax.inject.{Inject, Named, Singleton}
 
 import actors.ClusterMonitor.Multicast
@@ -15,7 +14,7 @@ import models.sge.Cluster
 import models.tools.ToolFactory
 import models.{Constants, UserSessions}
 import modules.LocationProvider
-import modules.common.HTTPRequest
+import de.proteinevolution.common.HTTPRequest
 import modules.db.MongoStore
 import modules.tel.TEL
 import modules.tel.env.Env

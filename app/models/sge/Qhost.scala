@@ -1,6 +1,6 @@
 package models.sge
 
-import modules.parsers.Ops.QhostP
+import de.proteinevolution.parsers.Ops.QhostP
 
 import sys.process._
 import scala.language.postfixOps

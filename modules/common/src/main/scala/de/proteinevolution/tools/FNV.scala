@@ -1,9 +1,9 @@
-package modules.tools
+package de.proteinevolution.tools
 
 /**
-  * Object FNV implements FNV-1 and FNV-1a, non-cryptographic hash functions created by Glenn Fowler, Landon Curt Noll, and Phong Vo.
-  * See http://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function.
-  */
+ * Object FNV implements FNV-1 and FNV-1a, non-cryptographic hash functions created by Glenn Fowler, Landon Curt Noll, and Phong Vo.
+ * See http://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function.
+ */
 object FNV {
 
   private val INIT32  = BigInt("811c9dc5", 16)
@@ -20,30 +20,30 @@ object FNV {
     ((hash ^ (b & MASK)) * prime) % mod
 
   /**
-    * Calculates 32bit FNV-1 hash
-    * @param data the data to be hashed
-    * @return a 32bit hash value
-    */
+   * Calculates 32bit FNV-1 hash
+   * @param data the data to be hashed
+   * @return a 32bit hash value
+   */
   @inline final def hash32(data: Array[Byte]): BigInt = data.foldLeft(INIT32)(calc(PRIME32, MOD32))
 
   /**
-    * Calculates 32bit FNV-1a hash
-    * @param data the data to be hashed
-    * @return a 32bit hash value
-    */
+   * Calculates 32bit FNV-1a hash
+   * @param data the data to be hashed
+   * @return a 32bit hash value
+   */
   @inline final def hash32a(data: Array[Byte]): BigInt = data.foldLeft(INIT32)(calcA(PRIME32, MOD32))
 
   /**
-    * Calculates 64bit FNV-1 hash
-    * @param data the data to be hashed
-    * @return a 64bit hash value
-    */
+   * Calculates 64bit FNV-1 hash
+   * @param data the data to be hashed
+   * @return a 64bit hash value
+   */
   @inline final def hash64(data: Array[Byte]): BigInt = data.foldLeft(INIT64)(calc(PRIME64, MOD64))
 
   /**
-    * Calculates 64bit FNV-1a hash
-    * @param data the data to be hashed
-    * @return a 64bit hash value
-    */
+   * Calculates 64bit FNV-1a hash
+   * @param data the data to be hashed
+   * @return a 64bit hash value
+   */
   @inline final def hash64a(data: Array[Byte]): BigInt = data.foldLeft(INIT64)(calcA(PRIME64, MOD64))
 }

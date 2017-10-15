@@ -15,7 +15,7 @@ import java.time.ZonedDateTime
 
 import models.Constants
 import models.job.JobActorAccess
-import modules.parsers.Ops.QStat
+import de.proteinevolution.parsers.Ops.QStat
 import play.api.Logger
 import reactivemongo.bson.BSONObjectID
 

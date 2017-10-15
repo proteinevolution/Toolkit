@@ -5,7 +5,7 @@ import javax.inject.{ Inject, Singleton }
 
 import models.database.users.{ SessionData, User }
 import modules.LocationProvider
-import modules.common.HTTPRequest
+import de.proteinevolution.common.HTTPRequest
 import modules.db.MongoStore
 import play.api.cache._
 import play.api.mvc.RequestHeader
