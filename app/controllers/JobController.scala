@@ -9,12 +9,13 @@ import actors.JobActor._
 import actors.JobIDActor
 import akka.actor.ActorRef
 import better.files._
+import de.proteinevolution.common.LocationProvider
+import de.proteinevolution.models.Constants
 import models.database.jobs._
-import models.database.users.User
+import de.proteinevolution.models.database.users.User
 import models.search.JobDAO
 import models.tools.ToolFactory
-import models.{ Constants, UserSessions }
-import modules.LocationProvider
+import models.UserSessions
 import modules.db.MongoStore
 import modules.tel.env.Env
 import play.api.Logger

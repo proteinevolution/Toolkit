@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject._
 
-import models.sge.Cluster
+import de.proteinevolution.models.sge.Cluster
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient

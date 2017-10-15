@@ -1,6 +1,6 @@
 package models.auth
 
-import models.database.users.User
+import de.proteinevolution.models.database.users.User
 import play.api.libs.json.{ JsObject, JsValue, Json }
 
 /**

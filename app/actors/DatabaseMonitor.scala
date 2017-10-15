@@ -6,10 +6,10 @@ import javax.inject.{ Inject, Singleton }
 import actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import actors.JobActor.Delete
 import akka.actor.{ Actor, ActorLogging, Cancellable }
-import models.Constants
+import de.proteinevolution.models.Constants
 import models.database.jobs.Job
 import models.database.statistics.{ StatisticsObject, UserStatistic }
-import models.database.users.User
+import de.proteinevolution.models.database.users.User
 import models.mailing.OldAccountEmail
 import modules.db.MongoStore
 import play.api.Logger

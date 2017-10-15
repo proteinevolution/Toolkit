@@ -1,4 +1,4 @@
-package models.database.users
+package de.proteinevolution.models.database.users
 
 import reactivemongo.bson._
 

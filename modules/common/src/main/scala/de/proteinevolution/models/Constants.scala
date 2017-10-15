@@ -1,9 +1,9 @@
-package models
+package de.proteinevolution.models
 
 import java.io.File
+import javax.inject.Singleton
 
 import com.typesafe.config.ConfigFactory
-import javax.inject.Singleton
 
 import scala.concurrent.duration._
 import scala.util.matching.Regex

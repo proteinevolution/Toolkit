@@ -2,7 +2,7 @@ package models.database.jobs
 
 import java.time.ZonedDateTime
 
-import util.ZonedDateTimeHelper
+import de.proteinevolution.models.util.ZonedDateTimeHelper
 import com.typesafe.config.ConfigFactory
 import models.tools.Toolitem
 import play.api.libs.json._

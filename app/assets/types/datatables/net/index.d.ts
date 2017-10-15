@@ -421,7 +421,7 @@ declare namespace DataTables {
 
     //#endregion "core-methods"
 
-    //#region "util-methods"
+    //#region "de.proteinevolution.models.util-methods"
 
     interface UtilityMethods {
         /*
@@ -590,7 +590,7 @@ declare namespace DataTables {
         unshift(value_1: any | any[], ...value_2: any[]): number;
     }
 
-    //#endregion "util-methods"
+    //#endregion "de.proteinevolution.models.util-methods"
 
     interface CommonSubMethods {
         /**

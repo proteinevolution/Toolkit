@@ -4,8 +4,8 @@ import javax.inject.Inject
 
 import better.files._
 import com.typesafe.config.ConfigFactory
+import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.results.General.DTParam
-import models.Constants
 import de.proteinevolution.models.database.results.{ General, HHBlits, HHBlitsHSP, HHBlitsResult }
 import modules.db.ResultFileAccessor
 import org.webjars.play.WebJarsUtil

@@ -1,11 +1,11 @@
 package modules.db
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
-import models.Constants
-import play.api.cache.{AsyncCacheApi, NamedCache}
+import play.api.cache.{ AsyncCacheApi, NamedCache }
 import play.api.libs.json.JsValue
 import better.files._
+import de.proteinevolution.models.Constants
 import play.api.Logger
 import play.api.libs.json._
 

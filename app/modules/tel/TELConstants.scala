@@ -1,7 +1,7 @@
 package modules.tel
 
 import com.typesafe.config.ConfigFactory
-import models.Constants
+import de.proteinevolution.models.Constants
 
 /**
   * Created by lzimmermann on 6/30/16.

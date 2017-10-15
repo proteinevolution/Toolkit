@@ -3,7 +3,7 @@ package models.database.statistics
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
-import util.ZonedDateTimeHelper
+import de.proteinevolution.models.util.ZonedDateTimeHelper
 import play.api.libs.json._
 import reactivemongo.bson._
 
