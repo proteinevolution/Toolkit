@@ -1,15 +1,16 @@
-package models.search
+package de.proteinevolution.models.search
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import better.files._
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.database.jobs.Job
-import modules.RunscriptPathProvider
 import de.proteinevolution.parsers.FASTA
+import de.proteinevolution.tel.RunscriptPathProvider
 import de.proteinevolution.tel.env.Env
 import play.api.Logger
 import de.proteinevolution.tools.FNV
+
 import scala.util.hashing.MurmurHash3
 
 @Singleton

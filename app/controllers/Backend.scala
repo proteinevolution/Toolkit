@@ -40,7 +40,7 @@ final class Backend @Inject()(settingsController: Settings,
                               cc: ControllerComponents)
     extends AbstractController(cc)
     with I18nSupport
-    with Common {
+    with CommonController {
 
   //TODO currently working mithril routes for the backend
   def index: Action[AnyContent] = Action.async { implicit request =>

@@ -22,7 +22,7 @@ class AlignmentController @Inject()(resultFiles : ResultFileAccessor,
                                     constants: Constants,
                                     cc: ControllerComponents)
     extends AbstractController(cc)
-    with Common
+    with CommonController
     with ReactiveMongoComponents {
 
   /**

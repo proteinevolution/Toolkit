@@ -4,9 +4,11 @@ import javax.inject.{ Inject, Provider }
 
 import com.google.inject.AbstractModule
 import de.proteinevolution.tel.env.{ Env, ExecFile, PropFile, TELEnv }
-import de.proteinevolution.tel.param.{ GenerativeParamFileParser, ParamCollector, Params }
+import de.proteinevolution.tel.param.Params
 import play.api.{ Configuration, Logger }
 import com.google.inject.name.Names
+import de.proteinevolution.tel.{ ParamCollectorProvider, RunscriptPathProvider, WrapperPathProvider }
+import better.files._
 
 /**
   * Created by lukas on 8/28/16.
@@ -34,56 +36,6 @@ class TELModule extends AbstractModule {
       .annotatedWith(Names.named("wrapperPath"))
       .toProvider(classOf[WrapperPathProvider])
       .asEagerSingleton()
-  }
-}
-
-import better.files._
-
-class WrapperPathProvider @Inject()(configuration: Configuration) extends Provider[String] {
-
-  override def get(): String = {
-
-    configuration.get[Option[String]]("tel.wrapper").getOrElse {
-      val fallBackFile = "tel/wrapper.sh"
-      Logger.warn(s"Key 'tel.wrapper' was not found in configuration. Fall back to '$fallBackFile'")
-      fallBackFile
-    }
-  }
-}
-
-class RunscriptPathProvider @Inject()(configuration: Configuration) extends Provider[String] {
-
-  override def get(): String = {
-
-    configuration.get[Option[String]]("tel.runscripts").getOrElse {
-      val fallBackFile = "tel/runscripts"
-
-      Logger.warn(s"Key 'tel.runscripts' was not found in configuration. Fall back to '$fallBackFile'")
-      fallBackFile
-    }
-  }
-}
-
-class ParamCollectorProvider @Inject()(pc: ParamCollector,
-                                       configuration: Configuration,
-                                       generativeParamFileParser: GenerativeParamFileParser)
-    extends Provider[ParamCollector] {
-
-  override def get(): ParamCollector = {
-
-    lazy val paramFilePath = configuration.get[Option[String]]("tel.params").getOrElse {
-
-      val fallBackFile = "tel/paramspec/PARAMS"
-      Logger.warn(s"Key 'tel.params' was not found in configuration. Fall back to '$fallBackFile'")
-      fallBackFile
-    }
-
-    generativeParamFileParser.read(paramFilePath).foreach { param =>
-      pc.addParam(param.name, param)
-
-    }
-
-    pc
   }
 }
 

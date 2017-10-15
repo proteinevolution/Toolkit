@@ -9,7 +9,7 @@ import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.results.Common
-import models.search.JobDAO
+import de.proteinevolution.models.search.JobDAO
 import de.proteinevolution.models.sge.Cluster
 import models.tools.ToolFactory
 import models.UserSessions
@@ -29,7 +29,7 @@ import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
 import com.redfin.sitemapgenerator.{ ChangeFreq, WebSitemapGenerator, WebSitemapUrl }
 import de.proteinevolution.models.Constants
-
+import scala.language.postfixOps
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ Await, Future }
 import de.proteinevolution.models.stats.Counter
@@ -59,7 +59,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   environment: Environment)
     extends AbstractController(cc)
     with I18nSupport
-    with Common {
+    with CommonController {
 
   private val toolkitMode = ConfigFactory.load().getString(s"toolkit_mode")
 

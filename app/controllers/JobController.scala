@@ -13,7 +13,7 @@ import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.users.User
-import models.search.JobDAO
+import de.proteinevolution.models.search.JobDAO
 import models.tools.ToolFactory
 import models.UserSessions
 import de.proteinevolution.db.MongoStore
@@ -46,7 +46,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                     constants: Constants,
                                     cc: ControllerComponents)
     extends AbstractController(cc)
-    with Common {
+    with CommonController {
 
   /**
    *  Loads one minified version of a job to the view, given the jobID
