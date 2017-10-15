@@ -36,6 +36,7 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
      on the server (not executed on the grid engine) */
   private val serverScripts   = ConfigFactory.load().getString("serverScripts")
   private val retrieveFullSeq = (serverScripts + "/retrieveFullSeq.sh").toFile
+  private val retrieveAlnEval = (serverScripts + "/retrieveAlnEval.sh").toFile
 
   /**
     * Retrieves the full sequences of all hits with
@@ -140,11 +141,31 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
     *         encapsulated in the response
     */
   def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json = request.body.asJson.get
-    val eval = (json \ "evalue").as[String]
-    resultFiles.getResults(jobID).map {
-      case None          => NotFound
-      case Some(jsValue) => Ok(getAlnEval(psiblast.parseResult(jsValue), eval.toDouble))
+    // retrieve parameters from the request
+    val json     = request.body.asJson.get
+    val filename = (json \ "filename").as[String]
+    val eval     = (json \ "evalue").as[String]
+    // check if the retrieve script is executable
+    if (!retrieveAlnEval.isExecutable) {
+      Future.successful(BadRequest)
+      throw FileException(s"File ${retrieveAlnEval.name} is not executable.")
+    } else {
+      resultFiles.getResults(jobID).map {
+        case None          => NotFound
+        case Some(jsValue) =>
+          val result        = psiblast.parseResult(jsValue)
+          val accessionsStr = eval
+          val db            = result.db
+          // execute the script and pass parameters
+          Process(retrieveAlnEval.pathAsString,
+            (constants.jobPath + jobID).toFile.toJava,
+            "accessionsStr" -> accessionsStr,
+            "filename"      -> filename,
+            "mode"            -> "eval").run().exitValue() match {
+            case 0 => Ok
+            case _ => BadRequest
+          }
+      }
     }
   }
 
@@ -163,48 +184,32 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
     * @return Https response containing the aligned sequences as String
     */
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val numList = (json \ "checkboxes").as[List[Int]]
-    resultFiles.getResults(jobID).map {
-      case None          => NotFound
-      case Some(jsValue) => Ok(getAln(alignment.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
+    println("called")
+    val json     = request.body.asJson.get
+    val numList  = (json \ "checkboxes").as[List[Int]].mkString("\n")
+    val filename = (json \ "filename").as[String]
+    if (!retrieveAlnEval.isExecutable) {
+      Future.successful(BadRequest)
+      throw FileException(s"File ${retrieveAlnEval.name} is not executable.")
+    } else {
+      resultFiles.getResults(jobID).map {
+        case None          => NotFound
+        case Some(jsValue) =>
+          val result        = psiblast.parseResult(jsValue)
+          val accessionsStr = numList
+          val db            = result.db
+          Process(retrieveAlnEval.pathAsString,
+            (constants.jobPath + jobID).toFile.toJava,
+            "accessionsStr" -> accessionsStr,
+            "filename"      -> filename,
+            "mode"            -> "sel").run().exitValue() match {
+            case 0 => Ok
+            case _ => BadRequest
+          }
+      }
     }
-
   }
 
-  /**
-    * filters all HSPS that are below
-    * a given threshold from the PSIblast
-    * result model and returns a fasta
-    * of the filtered hits
-    * @param result
-    * @param eval
-    * @return fasta as String
-    */
-  def getAlnEval(result: PSIBlastResult, eval: Double): String = {
-    val fas = result.HSPS.filter(_.evalue < eval).map { hit =>
-      // not hit-num -1 because alginments adds query (+1) to beginning of retrieved file
-      ">" + result.alignment(hit.num).accession + "\n" + result.alignment(hit.num).seq + "\n"
-    }
-    fas.mkString
-  }
-
-  /**
-    * given an array of hit numbers this method
-    * returns a fasta containing the corresponding
-    * aligned hits
-    *
-    * @param alignment
-    * @param numList
-    * @return fasta as String
-    */
-  def getAln(alignment: AlignmentResult, numList: Seq[Int]): String = {
-    val fas = numList.map { num =>
-      // not hit-num -1 because alginments adds query (+1) to beginning of retrieved file
-      ">" + alignment.alignment(num).accession + "\n" + alignment.alignment(num).seq + "\n"
-    }
-    fas.mkString
-  }
 
   /**
     * given an array of hit numbers this method

@@ -123,6 +123,26 @@ function forward(tool, forwardData){
     }
 }
 
+function forwardPath(tool, forwardPath){
+    m.route("/tools/" + tool);
+    $.ajax({
+        type: 'GET',
+        url: forwardPath,
+        error: function(){
+            $.LoadingOverlay("hide")
+        }
+    }).done(function (data) {
+        window.JobModel.setParamValue("alignment", data);
+        if(tool === "alnviz"){
+            $('#alignment').val(data);
+        }
+        if(tool === "reformat"){
+            myCodeMirror.setValue(data);
+        }
+        validationProcess($('#alignment'),$("#toolnameAccess").val());
+        $.LoadingOverlay("hide")
+    })
+}
 
 function isQuotaExceeded(e) {
     var quotaExceeded = false;
