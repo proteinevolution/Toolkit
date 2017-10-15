@@ -16,7 +16,7 @@ import de.proteinevolution.models.database.users.User
 import models.search.JobDAO
 import models.tools.ToolFactory
 import models.UserSessions
-import modules.db.MongoStore
+import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.env.Env
 import play.api.Logger
 import play.api.cache._

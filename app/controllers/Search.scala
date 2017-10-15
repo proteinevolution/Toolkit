@@ -15,7 +15,7 @@ import reactivemongo.bson.BSONDocument
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.search.JobDAO
 import models.tools.ToolFactory
-import modules.db.MongoStore
+import de.proteinevolution.db.MongoStore
 import play.api.mvc._
 
 import scala.concurrent.Future

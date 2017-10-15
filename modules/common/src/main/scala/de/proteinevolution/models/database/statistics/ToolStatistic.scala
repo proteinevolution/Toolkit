@@ -1,4 +1,4 @@
-package models.database.statistics
+package de.proteinevolution.models.database.statistics
 
 import play.api.libs.json._
 import reactivemongo.bson._

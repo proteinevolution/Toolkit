@@ -8,7 +8,7 @@ import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.Constants
 import models.UserSessions
 import de.proteinevolution.models.database.jobs._
-import modules.db.MongoStore
+import de.proteinevolution.db.MongoStore
 import play.api.Logger
 import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.mvc._

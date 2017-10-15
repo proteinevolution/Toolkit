@@ -1,4 +1,4 @@
-package modules.db
+package de.proteinevolution.db
 
 import javax.inject.{ Inject, Singleton }
 

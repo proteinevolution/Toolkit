@@ -3,9 +3,9 @@ package controllers
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
-import models.database.CMS.FeaturedArticle
+import de.proteinevolution.models.database.CMS.FeaturedArticle
 import de.proteinevolution.models.database.results.{Hmmer, PSIBlast}
-import modules.db.{MongoStore, ResultFileAccessor}
+import de.proteinevolution.db.{MongoStore, ResultFileAccessor}
 import play.api.libs.json.Json
 import play.api.mvc._
 import reactivemongo.bson.BSONObjectID

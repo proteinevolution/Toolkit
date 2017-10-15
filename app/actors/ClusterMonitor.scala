@@ -7,9 +7,9 @@ import actors.WebSocketActor.MaintenanceAlert
 import akka.actor.{ ActorLogging, _ }
 import akka.event.LoggingReceive
 import controllers.Settings
-import models.database.statistics.ClusterLoadEvent
+import de.proteinevolution.models.database.statistics.ClusterLoadEvent
 import de.proteinevolution.models.sge.Cluster
-import modules.db.MongoStore
+import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.TEL
 import java.time.ZonedDateTime
 

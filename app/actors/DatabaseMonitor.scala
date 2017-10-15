@@ -8,10 +8,10 @@ import actors.JobActor.Delete
 import akka.actor.{ Actor, ActorLogging, Cancellable }
 import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.jobs.Job
-import models.database.statistics.{ StatisticsObject, UserStatistic }
+import de.proteinevolution.models.database.statistics.{ StatisticsObject, UserStatistic }
 import de.proteinevolution.models.database.users.User
 import models.mailing.OldAccountEmail
-import modules.db.MongoStore
+import de.proteinevolution.db.MongoStore
 import play.api.Logger
 import play.api.libs.mailer.MailerClient
 import play.modules.reactivemongo.ReactiveMongoApi

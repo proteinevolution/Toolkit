@@ -7,7 +7,7 @@ import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.results.General.DTParam
 import de.proteinevolution.models.database.results.{ General, HHBlits, HHBlitsHSP, HHBlitsResult }
-import modules.db.ResultFileAccessor
+import de.proteinevolution.db.ResultFileAccessor
 import org.webjars.play.WebJarsUtil
 import play.api.Logger
 import play.api.libs.json.{ JsObject, Json }
