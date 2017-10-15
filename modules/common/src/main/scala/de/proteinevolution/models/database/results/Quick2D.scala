@@ -1,4 +1,4 @@
-package models.database.results
+package de.proteinevolution.models.database.results
 
 import javax.inject.Inject
 import javax.inject.Singleton

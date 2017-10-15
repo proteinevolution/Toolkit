@@ -1,14 +1,13 @@
-package models.database.results
+package de.proteinevolution.models.database.results
 
 import javax.inject.Inject
 import javax.inject.Singleton
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import controllers.DTParam
-import models.results.Common
-import play.api.libs.json._
+import de.proteinevolution.models.database.results.General.DTParam
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+import de.proteinevolution.models.results.Common
+import play.api.libs.json._
 
 /**
   * Created by drau on 18.04.17.

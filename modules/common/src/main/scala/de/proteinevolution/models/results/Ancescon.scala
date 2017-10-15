@@ -1,4 +1,4 @@
-package models.results
+package de.proteinevolution.models.results
 
 import better.files._
 

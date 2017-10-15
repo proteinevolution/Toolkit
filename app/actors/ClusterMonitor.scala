@@ -1,10 +1,10 @@
 package actors
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import actors.ClusterMonitor._
 import actors.WebSocketActor.MaintenanceAlert
-import akka.actor.{ActorLogging, _}
+import akka.actor.{ ActorLogging, _ }
 import akka.event.LoggingReceive
 import controllers.Settings
 import models.database.statistics.ClusterLoadEvent
@@ -14,10 +14,10 @@ import modules.tel.TEL
 import java.time.ZonedDateTime
 
 import models.Constants
-import models.job.JobActorAccess
 import de.proteinevolution.parsers.Ops.QStat
 import play.api.Logger
 import reactivemongo.bson.BSONObjectID
+import services.JobActorAccess
 
 import sys.process._
 import scala.collection.immutable.HashSet

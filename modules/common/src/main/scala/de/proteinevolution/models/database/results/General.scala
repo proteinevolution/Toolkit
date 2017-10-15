@@ -1,14 +1,13 @@
-package models.database.results
+package de.proteinevolution.models.database.results
 import javax.inject.{ Inject, Singleton }
 
 import play.api.libs.json._
 
 /**
-  * Created by drau on 20.04.17.
-  */
+ * Created by drau on 20.04.17.
+ */
 case class AlignmentItem(accession: String, seq: String, num: Int)
 case class AlignmentResult(alignment: List[AlignmentItem])
-
 @Singleton
 class Alignment @Inject()() {
 
@@ -47,9 +46,13 @@ class General() {
       } finally {}
   }
 
-  def refineAccession(seq: String) = seq match {
+  def refineAccession(seq: String): String = seq match {
     case this.accessionMalFormat(group) => group
     case _                              => seq
   }
 
+}
+
+object General {
+  case class DTParam(sSearch: String, iDisplayStart: Int, iDisplayLength: Int, iSortCol: Int, sSortDir: String)
 }
