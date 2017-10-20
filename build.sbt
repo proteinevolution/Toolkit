@@ -4,7 +4,7 @@
 lazy val commonSettings = Seq(
   version := "0.1.0",
   scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.11.8", "2.12.3"),
+  crossScalaVersions := Seq("2.11.8", "2.12.4"),
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   logLevel := Level.Warn,
@@ -43,7 +43,7 @@ lazy val headless = (project in file("modules/headless"))
   .settings(
     disableDocs,
     scalaVersion := "2.11.8",
-    crossScalaVersions := Seq("2.11.8", "2.12.3")
+    crossScalaVersions := Seq("2.11.8", "2.12.4")
   )
 
 // shared stuff
@@ -53,7 +53,7 @@ lazy val common = (project in file("modules/common"))
     TwirlKeys.templateImports := Seq.empty,
     disableDocs,
     scalaVersion := "2.11.8",
-    crossScalaVersions := Seq("2.11.8", "2.12.3")
+    crossScalaVersions := Seq("2.11.8", "2.12.4")
   )
   .disablePlugins(PlayLayoutPlugin)
 
@@ -130,5 +130,7 @@ scalacOptions ++= Seq(
   "-Ywarn-inaccessible",
   "-Ywarn-dead-code"
 )
+
+scalacOptions in Test ++= Seq("-Yrangepos")
 
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
