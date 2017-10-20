@@ -187,6 +187,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     }
   }
 
+  // why is this needed?
   def sitemapGenerator: Action[AnyContent] = Action { implicit request =>
     val wsg = WebSitemapGenerator.builder("https://toolkit.tuebingen.mpg.de", environment.getFile("public/")).gzip(true).build
 
