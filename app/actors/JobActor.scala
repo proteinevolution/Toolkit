@@ -54,7 +54,7 @@ object JobActor {
   case class StartJob(jobID: String)
 
   trait Factory {
-    def apply(@Assisted("jobActorNumber") jobActorNumber : Int): Actor
+    def apply(@Assisted("jobActorNumber") jobActorNumber: Int): Actor
   }
 
   // Messages the jobActor accepts from outside
@@ -79,7 +79,7 @@ object JobActor {
   // Job Controller receives a job state change from the SGE or from any other valid source
   case class JobStateChanged(jobID: String, jobState: JobState)
 
-  case class SetSGEID(jobID : String, sgeID : String)
+  case class SetSGEID(jobID: String, sgeID: String)
 
   // Job Controller receives push message to update the log
   case class UpdateLog(jobID: String)
@@ -104,15 +104,15 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                          @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                          @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
                          constants: Constants,
-                         @Assisted("jobActorNumber") jobActorNumber : Int)
+                         @Assisted("jobActorNumber") jobActorNumber: Int)
     extends Actor {
 
   // Attributes asssocidated with a Job
-  private var currentJobs              : Map[String, Job]              = Map.empty[String, Job]
-  private var currentJobLogs           : Map[String, JobEventLog]      = Map.empty[String, JobEventLog]
-  private var currentExecutionContexts : Map[String, ExecutionContext] = Map.empty[String, ExecutionContext]
+  @volatile private var currentJobs: Map[String, Job]                           = Map.empty[String, Job]
+  @volatile private var currentJobLogs: Map[String, JobEventLog]                = Map.empty[String, JobEventLog]
+  @volatile private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty[String, ExecutionContext]
 
-  private var currentJobStrikes        : Map[String, Int]              = Map.empty[String, Int]
+  @volatile private var currentJobStrikes: Map[String, Int] = Map.empty[String, Int]
 
   // long polling stuff
 
@@ -123,14 +123,14 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
   }
 
   // Running executions
-  private var runningExecutions: Map[String, RunningExecution] = Map.empty
+  @volatile private var runningExecutions: Map[String, RunningExecution] = Map.empty
 
   /**
-    * Get the job from the current jobs. If it is not there, get it from the DB.
-    *
-    * @param jobID
-    * @return
-    */
+   * Get the job from the current jobs. If it is not there, get it from the DB.
+   *
+   * @param jobID
+   * @return
+   */
   private def getCurrentJob(jobID: String): Future[Option[Job]] = {
     // Check if the job is still in the current jobs.
     this.currentJobs.get(jobID) match {
@@ -152,11 +152,11 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
   }
 
   /**
-    * Gets the execution context for a given jobID, even if it has been removed.
-    *
-    * @param jobID
-    * @return
-    */
+   * Gets the execution context for a given jobID, even if it has been removed.
+   *
+   * @param jobID
+   * @return
+   */
   private def getCurrentExecutionContext(jobID: String): Option[ExecutionContext] = {
     this.currentExecutionContexts.get(jobID) match {
       case Some(executionContext) => Some(executionContext)
@@ -172,13 +172,13 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
   }
 
   /**
-    * Return the validated parameters
-    *
-    * @param job
-    * @param runscript
-    * @param params
-    * @return
-    */
+   * Return the validated parameters
+   *
+   * @param job
+   * @param runscript
+   * @param params
+   * @return
+   */
   private def validatedParameters(job: Job,
                                   runscript: Runscript,
                                   params: Map[String, String]): Seq[(String, (Evaluation, Option[Argument]))] = {
@@ -197,12 +197,12 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
   }
 
   /** Supplies a value for a particular Parameter. Returns params again if the parameter
-    * is not present
-    *
-    * @param name
-    * @param value
-    * @param params
-    */
+   * is not present
+   *
+   * @param name
+   * @param value
+   * @param params
+   */
   private def supply(
       jobID: String,
       name: String,
@@ -218,10 +218,10 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
   }
 
   /**
-    * JobActor removes the Job with the matching jobID from its maps
-    * @param jobID
-    */
-  private def removeJob(jobID: String) : Boolean = {
+   * JobActor removes the Job with the matching jobID from its maps
+   * @param jobID
+   */
+  private def removeJob(jobID: String): Boolean = {
     var wasActive = this.currentJobs.contains(jobID)
     // If the job is in the current jobs remove it
     if (wasActive) {
@@ -251,11 +251,11 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
   }
 
   /**
-    * Deletes a job from all instances and tells all the watching users about it
-    * @param job the job to be deleted
-    */
-  private def delete(job: Job, verbose : Boolean = false): Unit = {
-    val now : ZonedDateTime = ZonedDateTime.now
+   * Deletes a job from all instances and tells all the watching users about it
+   * @param job the job to be deleted
+   */
+  private def delete(job: Job, verbose: Boolean = false): Unit = {
+    val now: ZonedDateTime = ZonedDateTime.now
     if (verbose) Logger.info(s"[JobActor.Delete] Deletion of job folder for jobID ${job.jobID} is done")
     s"${constants.jobPath}${job.jobID}".toFile.delete(true)
     if (verbose) Logger.info("[JobActor.Delete] Removing Job from current Jobs.")
@@ -265,36 +265,39 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
     foundWatchers.flatten.foreach(_ ! ClearJob(job.jobID))
 
-    mongoStore.eventLogCollection.flatMap(_.findAndUpdate(
-      BSONDocument(JobEventLog.IDDB -> job.mainID),
-      BSONDocument("$push" ->
-        BSONDocument(JobEventLog.EVENTS -> JobEvent(Deleted, Some(now), 0))
-      ),
-      fetchNewObject = true
-    ).map(_.result[JobEventLog])).foreach{ jobEventLogOpt =>
-      if (verbose) Logger.info(s"""[JobActor.Delete] Event Log: ${
-        jobEventLogOpt match {
-          case Some(x) => x.toString
-          case None => ""
-        }
-      }""".stripMargin
-        )
-    }
+    mongoStore.eventLogCollection
+      .flatMap(
+        _.findAndUpdate(
+          BSONDocument(JobEventLog.IDDB -> job.mainID),
+          BSONDocument(
+            "$push" ->
+            BSONDocument(JobEventLog.EVENTS -> JobEvent(Deleted, Some(now), 0))
+          ),
+          fetchNewObject = true
+        ).map(_.result[JobEventLog])
+      )
+      .foreach { jobEventLogOpt =>
+        if (verbose) Logger.info(s"""[JobActor.Delete] Event Log: ${jobEventLogOpt match {
+                                      case Some(x) => x.toString
+                                      case None    => ""
+                                    }}""".stripMargin)
+      }
 
     // Remove the job from mongoDB collection
     mongoStore.removeJob(BSONDocument(Job.IDDB -> job.mainID)).foreach { writeResult =>
-      if(writeResult.ok) {
+      if (writeResult.ok) {
         if (verbose) Logger.info(s"[JobActor.Delete] Deletion of Job was successful:\n${job.toString()}")
       } else {
-        if (verbose) Logger.info(s"[JobActor.Delete] Deleting the job with jobID ${job.jobID} from the collection failed.")
+        if (verbose)
+          Logger.info(s"[JobActor.Delete] Deleting the job with jobID ${job.jobID} from the collection failed.")
       }
     }
     if (verbose) Logger.info(s"[JobActor.Delete] Deletion of job with jobID ${job.jobID} Complete.")
   }
 
   /**
-    * Updates Jobstate in Model, in database, and notifies user watchlist
-    */
+   * Updates Jobstate in Model, in database, and notifies user watchlist
+   */
   private def updateJobState(job: Job): Future[Job] = {
     // Push the updated job into the current jobs
     this.currentJobs = this.currentJobs.updated(job.jobID, job)
@@ -319,29 +322,31 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
   }
 
   /**
-    * Determines whether the parameter list is completely supplied
-    *
-    * @param params
-    * @return
-    */
+   * Determines whether the parameter list is completely supplied
+   *
+   * @param params
+   * @return
+   */
   private def isComplete(params: Seq[(String, (Runscript.Evaluation, Option[Argument]))]): Boolean = {
     // If we have an argument for all parameters, we are done
     params.forall(item => item._2._2.isDefined)
   }
 
   /**
-    * Sends an eMail to the owner of the job
-    *
-    * @param job
-    * @return
-    */
+   * Sends an eMail to the owner of the job
+   *
+   * @param job
+   * @return
+   */
   private def sendJobUpdateMail(job: Job): Boolean = {
     if (job.emailUpdate && job.ownerID.isDefined) {
       mongoStore.findUser(BSONDocument(User.IDDB -> job.ownerID)).foreach {
         case Some(user) =>
           user.userData match {
             case Some(userData) =>
-              Logger.info(s"[JobActor[$jobActorNumber].sendJobUpdateMail] Sending eMail to job owner for job ${job.jobID}: Job is ${job.status.toString}")
+              Logger.info(
+                s"[JobActor[$jobActorNumber].sendJobUpdateMail] Sending eMail to job owner for job ${job.jobID}: Job is ${job.status.toString}"
+              )
               val eMail = JobFinishedMail(user, job)
               eMail.send
             case None =>
@@ -417,8 +422,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       }
 
     /**
-      * Checks the jobHashDB for matches and generates one for the job if there are none.
-      */
+     * Checks the jobHashDB for matches and generates one for the job if there are none.
+     */
     case CheckJobHashes(jobID) =>
       Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] Job with jobID $jobID will now be hashed.")
       this.getCurrentJob(jobID).foreach {
@@ -429,57 +434,72 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               val params  = executionContext.reloadParams
               val jobHash = jobDao.generateJobHash(job, params, env)
               Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] Job hash: " + jobHash)
-                // Find the Jobs in the Database
-                mongoStore.findAndSortJobs(
+              // Find the Jobs in the Database
+              mongoStore
+                .findAndSortJobs(
                   BSONDocument(Job.HASH        -> jobHash),
                   BSONDocument(Job.DATECREATED -> -1)
-                ).foreach { jobList =>
+                )
+                .foreach { jobList =>
                   jobList.find(_.status == Done) match {
                     case Some(oldJob) =>
-                    Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID is a duplicate of ${oldJob.jobID}.")
-                    self ! JobStateChanged(job.jobID, Pending)
+                      Logger.info(
+                        s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID is a duplicate of ${oldJob.jobID}."
+                      )
+                      self ! JobStateChanged(job.jobID, Pending)
                     case None =>
-                    Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID will now be started.")
-                    self ! CheckIPHash(job.jobID)
+                      Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID will now be started.")
+                      self ! CheckIPHash(job.jobID)
                   }
                 }
             case None =>
-              Logger.error(s"[JobActor[$jobActorNumber].CheckJobHashes] Could not recreate execution context for jobID " + jobID)
+              Logger.error(
+                s"[JobActor[$jobActorNumber].CheckJobHashes] Could not recreate execution context for jobID " + jobID
+              )
           }
         case None =>
-          Logger.error(s"[JobActor[$jobActorNumber].CheckJobHashes] Could not find the jobID " + jobID + " in the Cache or DB.")
+          Logger.error(
+            s"[JobActor[$jobActorNumber].CheckJobHashes] Could not find the jobID " + jobID + " in the Cache or DB."
+          )
       }
 
     /**
-      * Checks everything and deletes the Job.
-      * Includes: Removing the job from the cluster if the job is still in the current jobs
-      * Creating the job deleted object and inserting it to the database
-      * Removing the job from ES
-      */
+     * Checks everything and deletes the Job.
+     * Includes: Removing the job from the cluster if the job is still in the current jobs
+     * Creating the job deleted object and inserting it to the database
+     * Removing the job from ES
+     */
     case Delete(jobID, userIDOption) =>
       val verbose = true // just switch this on / off for logging
       if (verbose) Logger.info(s"[JobActor[$jobActorNumber].Delete] Received Delete for $jobID")
-      this.getCurrentJob(jobID).flatMap {
-        case Some(job) => Future.successful(Some(job))
-        case None =>
-          if (verbose) Logger.info(s"[JobActor[$jobActorNumber].Delete] jobID $jobID not found in current jobs. Loading job from DB.")
-          mongoStore.findJob(BSONDocument(Job.JOBID -> jobID))
-      }.foreach{
-        case Some(job) =>
-          // Delete the job when the user is the owner and clear it otherwise
-          if (userIDOption.isEmpty || userIDOption == job.ownerID) {
-            if (verbose) Logger.info(s"[JobActor[$jobActorNumber].Delete] Found Job with ${job.jobID} - starting file deletion")
-            this.delete(job, verbose)
-          } else {
-            userIDOption match {
-              case Some(userID) =>
-                self ! RemoveFromWatchlist(jobID, userID)
-              case None =>
+      this
+        .getCurrentJob(jobID)
+        .flatMap {
+          case Some(job) => Future.successful(Some(job))
+          case None =>
+            if (verbose)
+              Logger.info(
+                s"[JobActor[$jobActorNumber].Delete] jobID $jobID not found in current jobs. Loading job from DB."
+              )
+            mongoStore.findJob(BSONDocument(Job.JOBID -> jobID))
+        }
+        .foreach {
+          case Some(job) =>
+            // Delete the job when the user is the owner and clear it otherwise
+            if (userIDOption.isEmpty || userIDOption == job.ownerID) {
+              if (verbose)
+                Logger.info(s"[JobActor[$jobActorNumber].Delete] Found Job with ${job.jobID} - starting file deletion")
+              this.delete(job, verbose)
+            } else {
+              userIDOption match {
+                case Some(userID) =>
+                  self ! RemoveFromWatchlist(jobID, userID)
+                case None =>
+              }
             }
-          }
-        case None =>
-          Logger.error(s"[JobActor[$jobActorNumber].Delete] Could not find job with JobID $jobID.")
-      }
+          case None =>
+            Logger.error(s"[JobActor[$jobActorNumber].Delete] Could not find job with JobID $jobID.")
+        }
 
     case CheckIPHash(jobID) =>
       this.getCurrentJob(jobID).foreach {
@@ -538,8 +558,8 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       }
 
     /**
-      * Starts the job
-      */
+     * Starts the job
+     */
     case StartJob(jobID) =>
       this.getCurrentJob(jobID).foreach {
         case Some(job) =>
@@ -629,8 +649,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     // User Starts watching job
     case AddToWatchlist(jobID, userID) =>
       mongoStore
-        .modifyJob(BSONDocument(Job.JOBID   -> jobID),
-                   BSONDocument("$addToSet" -> BSONDocument(Job.WATCHLIST -> userID)))
+        .modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$addToSet" -> BSONDocument(Job.WATCHLIST -> userID)))
         .map {
           case Some(updatedJob) =>
             userSessions
@@ -668,7 +687,9 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           // Update the job object
           val job = oldJob.copy(status = jobState)
           // Give a update message to all
-          Logger.info(s"[JobActor[$jobActorNumber].JobStateChanged] State has changed to ${job.status.toString} for the Job with the JobID ${job.jobID}")
+          Logger.info(
+            s"[JobActor[$jobActorNumber].JobStateChanged] State has changed to ${job.status.toString} for the Job with the JobID ${job.jobID}"
+          )
 
           // Dependent on the state, we have to do different things
           if (job.isFinished) {
@@ -687,38 +708,39 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
       }
 
     // Checks the current jobs against the currently running cluster jobs to see if there are any dead jobs
-    case PolledJobs(qStat : QStat) =>
+    case PolledJobs(qStat: QStat) =>
       val clusterJobIDs = qStat.qStatJobs.map(_.sgeID)
       //if(this.currentJobs.nonEmpty)
-        //Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] sge Jobs to check: ${clusterJobIDs.mkString(", ")}\nactor Jobs to check:${this.currentJobs.values.flatMap(_.clusterData.map(_.sgeID)).mkString(", ")}")
+      //Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] sge Jobs to check: ${clusterJobIDs.mkString(", ")}\nactor Jobs to check:${this.currentJobs.values.flatMap(_.clusterData.map(_.sgeID)).mkString(", ")}")
       this.currentJobs.values.foreach { job =>
         job.clusterData match {
           case Some(clusterData) =>
-          val jobInCluster = clusterJobIDs.contains(clusterData.sgeID)
-          //Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} with sgeID ${clusterData.sgeID}: ${if(jobInCluster) "active" else "inactive"}")
-          if(!job.isFinished && !jobInCluster) {
-            val strikes = this.currentJobStrikes.getOrElse(job.jobID, 0) + 1
-            if (strikes >= constants.pollingMaximumStrikes) {
-              this.currentJobStrikes = this.currentJobStrikes.filter(_._1 != job.jobID)
-              self ! JobStateChanged(job.jobID, Error)
-            } else {
-              this.currentJobStrikes = this.currentJobStrikes.updated(job.jobID, strikes)
-              Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} strikes: $strikes.")
+            val jobInCluster = clusterJobIDs.contains(clusterData.sgeID)
+            //Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} with sgeID ${clusterData.sgeID}: ${if(jobInCluster) "active" else "inactive"}")
+            if (!job.isFinished && !jobInCluster) {
+              val strikes = this.currentJobStrikes.getOrElse(job.jobID, 0) + 1
+              if (strikes >= constants.pollingMaximumStrikes) {
+                this.currentJobStrikes = this.currentJobStrikes.filter(_._1 != job.jobID)
+                self ! JobStateChanged(job.jobID, Error)
+              } else {
+                this.currentJobStrikes = this.currentJobStrikes.updated(job.jobID, strikes)
+                Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} strikes: $strikes.")
+              }
             }
-          }
           case None =>
-            //Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} has no SGE data yet.")
+          //Logger.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} has no SGE data yet.")
         }
       }
 
     // Sets the cluster job ID for a job
-    case SetSGEID(jobID : String, sgeID : String) =>
-      mongoStore.modifyJob(BSONDocument(Job.JOBID -> jobID),
-                           BSONDocument("$set"    -> BSONDocument(Job.SGEID -> sgeID))).foreach{
-        case Some(job) =>
-          this.currentJobs = this.currentJobs.updated(job.jobID, job)
-        case None =>
-      }
+    case SetSGEID(jobID: String, sgeID: String) =>
+      mongoStore
+        .modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$set" -> BSONDocument(Job.SGEID -> sgeID)))
+        .foreach {
+          case Some(job) =>
+            this.currentJobs = this.currentJobs.updated(job.jobID, job)
+          case None =>
+        }
 
     // gets updatelog notifications via curl
     case UpdateLog(jobID: String) =>
