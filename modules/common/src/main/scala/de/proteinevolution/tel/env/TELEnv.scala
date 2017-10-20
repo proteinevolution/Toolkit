@@ -13,7 +13,7 @@ import play.api.Logger
 @Singleton
 class TELEnv extends Env with Observer[EnvFile] {
 
-  private var env: Map[String, String] = Map.empty
+  @volatile private var env: Map[String, String] = Map.empty
 
   override def get(key: String): String = this.env(key)
 
