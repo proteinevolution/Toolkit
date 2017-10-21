@@ -1,6 +1,6 @@
 package models.tools
 
-import modules.tel.TEL
+import de.proteinevolution.tel.TEL
 import javax.inject.{ Inject, Singleton }
 
 import play.api.libs.functional.syntax._
@@ -40,11 +40,7 @@ case class Select(options: Seq[(String, String)]) extends ParamType {
 
   def validate(value: String): Option[String] = {
 
-    if (this.options.map(_._1).contains(value)) {
-      Some(value)
-    } else {
-      None
-    }
+    Some(value).filter(this.options.map(_._1).contains)
   }
 }
 

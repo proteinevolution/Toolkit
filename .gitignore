@@ -5,7 +5,6 @@ project/target
 bioprogs/tools
 /db
 /dist/
-/modules
 /logs/
 /target
 tmp
@@ -41,3 +40,5 @@ public/javascripts/typescriptc.js.map
 *.sbt.swp
 native
 *.swp
+.ensime
+.sass-cache

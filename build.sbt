@@ -1,53 +1,15 @@
-lazy val akkaVersion      = "2.5.6"
-lazy val kamonVersion     = "0.6.6"
-lazy val scalazVersion    = "7.2.10"
-
-lazy val commonDeps = Seq(
-  ws,
-  filters,
-  cache,
-  guice,
-  "com.typesafe.akka"      %% "akka-actor"           % akkaVersion,
-  "com.sanoma.cda"         %% "maxmind-geoip2-scala" % "1.5.4",
-  "com.typesafe.akka"      %% "akka-cluster"         % akkaVersion,
-  "com.typesafe.akka"      %% "akka-cluster-tools"   % akkaVersion,
-  "com.typesafe.akka"      %% "akka-cluster-metrics" % akkaVersion,
-  "com.typesafe.akka"      %% "akka-slf4j"           % akkaVersion,
-  "com.typesafe.akka"      %% "akka-stream"          % akkaVersion,
-  "com.typesafe.akka"      %% "akka-persistence"     % akkaVersion,
-  "com.typesafe.play"      %% "play-mailer"          % "6.0.1",
-  "com.typesafe.play"      %% "play-mailer-guice"    % "6.0.1",
-  "com.github.pathikrit"   %% "better-files"         % "2.17.1",
-  "org.mindrot"            %  "jbcrypt"              % "0.3m",
-  "org.reactivemongo"      %% "play2-reactivemongo"  % "0.12.6-play26",
-  "co.fs2"                 %% "fs2-core"             % "0.9.2",
-  "org.scalaz"             %% "scalaz-core"          % scalazVersion,
-  "org.scalaz"             %% "scalaz-concurrent"    % scalazVersion,
-  "com.chuusai"            %% "shapeless"            % "2.3.2",
-  "com.lihaoyi"            %% "fastparse"            % "0.4.2",
-  "com.vmunier"            %% "scalajs-scripts"      % "1.1.1",
-  "org.typelevel"          %% "cats"                 % "0.9.0",
-  "com.mohiva"             %% "play-html-compressor" % "0.7.1",
-  "com.typesafe.play"      %% "play-json"            % "2.6.3",
-  "com.github.dfabulich"   %  "sitemapgen4j"         % "1.0.6"
-  //"io.kamon"             %% "kamon-play-2.5"          % kamonVersion,
-  //"io.kamon"             %% "kamon-system-metrics"    % kamonVersion,
-  //"io.kamon"             %% "kamon-statsd"            % kamonVersion,
-  //"io.kamon"             %% "kamon-log-reporter"      % kamonVersion,
-  //"org.aspectj"          % "aspectjweaver"            % "1.8.9"
-)
-
 /*
  * Settings which apply to all modules of this application
  */
 lazy val commonSettings = Seq(
   version := "0.1.0",
   scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.11.8", "2.12.1"),
+  crossScalaVersions := Seq("2.11.8", "2.12.4"),
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   logLevel := Level.Warn,
-  dependencyOverrides ++= Set("org.webjars" % "jquery" % "3.2.1", "com.typesafe.akka" %% "akka-actor" % akkaVersion)
+  dependencyOverrides ++= Set("org.webjars"       % "jquery"      % "3.2.1",
+                              "com.typesafe.akka" %% "akka-actor" % Dependencies.akkaVersion)
 )
 
 lazy val metadata = List(
@@ -66,19 +28,43 @@ lazy val metadata = List(
               "Lukas Zimmermann",
               "lukas.zimmermann@tuebingen.mpg.de",
               url("https://github.com/lukaszimmermann")),
-    Developer("markolozajic",
-              "Marko Lozajic",
-              "marko.lozajic@tuebingen.mpg.de",
-              url("https://github.com/markolozajic"))
+    Developer("markolozajic", "Marko Lozajic", "marko.lozajic@tuebingen.mpg.de", url("https://github.com/markolozajic"))
   )
 )
 
+lazy val disableDocs = Seq[Setting[_]](
+  sources in (Compile, doc) := Seq.empty,
+  publishArtifact in (Compile, packageDoc) := false
+)
+
+lazy val headless = (project in file("modules/headless"))
+  .enablePlugins(PlayScala, JavaAppPackaging)
+  .dependsOn(common)
+  .settings(
+    disableDocs,
+    scalaVersion := "2.11.8",
+    crossScalaVersions := Seq("2.11.8", "2.12.4")
+  )
+
+// shared stuff
+lazy val common = (project in file("modules/common"))
+  .enablePlugins(PlayScala, JavaAppPackaging)
+  .settings(
+    TwirlKeys.templateImports := Seq.empty,
+    disableDocs,
+    scalaVersion := "2.11.8",
+    crossScalaVersions := Seq("2.11.8", "2.12.4")
+  )
+  .disablePlugins(PlayLayoutPlugin)
+
 lazy val root = (project in file("."))
-  .enablePlugins(PlayScala, JavaAppPackaging, SbtWeb)
+  .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb)
+  .dependsOn(client, headless, common)
+  .aggregate(client, headless, common)
   .settings(
     commonSettings,
     name := "mpi-toolkit",
-    libraryDependencies ++= (commonDeps ++ Seq(
+    libraryDependencies ++= (Dependencies.commonDeps ++ Seq(
       "org.webjars"       %% "webjars-play"       % "2.6.1",
       "org.webjars"       % "jquery"              % "3.2.1",
       "org.webjars.bower" % "jquery.lazyload"     % "1.9.7",
@@ -144,5 +130,7 @@ scalacOptions ++= Seq(
   "-Ywarn-inaccessible",
   "-Ywarn-dead-code"
 )
+
+scalacOptions in Test ++= Seq("-Yrangepos")
 
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node

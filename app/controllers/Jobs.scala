@@ -1,18 +1,19 @@
 package controllers
 
 import java.time.ZonedDateTime
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
-import actors.JobActor.{JobStateChanged, SetSGEID, UpdateLog}
-import models.{Constants, UserSessions}
-import models.database.jobs._
-import models.job.JobActorAccess
-import modules.LocationProvider
-import modules.db.MongoStore
+import actors.JobActor.{ JobStateChanged, SetSGEID, UpdateLog }
+import de.proteinevolution.common.LocationProvider
+import de.proteinevolution.models.Constants
+import models.UserSessions
+import de.proteinevolution.models.database.jobs._
+import de.proteinevolution.db.MongoStore
 import play.api.Logger
-import play.api.cache.{NamedCache, SyncCacheApi}
+import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.mvc._
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import services.JobActorAccess
 
 import scala.io.Source
 import scala.concurrent.ExecutionContext.Implicits.global

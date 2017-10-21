@@ -2,11 +2,11 @@ package models.mailing
 
 import java.time.ZonedDateTime
 
-import models.database.jobs._
-import models.database.users.User
-import modules.tel.TEL
+import de.proteinevolution.models.database.jobs._
+import de.proteinevolution.models.database.users.User
+import de.proteinevolution.tel.TEL
 import play.api.libs.mailer.{ Email, MailerClient }
-import util.ZonedDateTimeHelper
+import de.proteinevolution.models.util.ZonedDateTimeHelper
 
 /**
   * Created by astephens on 24.05.16.

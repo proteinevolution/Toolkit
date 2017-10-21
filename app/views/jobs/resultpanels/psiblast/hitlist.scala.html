@@ -1,5 +1,5 @@
-@import models.results.Common
-@import models.database.results.PSIBlastResult
+@import de.proteinevolution.models.results.Common
+@import de.proteinevolution.models.database.results.PSIBlastResult
 @import better.files._
 @(jobID: String, result: PSIBlastResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
 @* Load html Map used for the image representation *@

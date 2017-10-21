@@ -1,39 +1,38 @@
 package controllers
 
 import java.net.InetAddress
-import java.util.Date
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 
 import actors.ClusterMonitor.Multicast
 import actors.WebSocketActor
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
-import models.results.Common
-import models.search.JobDAO
-import models.sge.Cluster
+import de.proteinevolution.models.results.Common
+import de.proteinevolution.models.search.JobDAO
+import de.proteinevolution.models.sge.Cluster
 import models.tools.ToolFactory
-import models.{Constants, UserSessions}
-import modules.LocationProvider
-import modules.common.HTTPRequest
-import modules.db.MongoStore
-import modules.tel.TEL
-import modules.tel.env.Env
+import models.UserSessions
+import de.proteinevolution.common.{ HTTPRequest, LocationProvider }
+import de.proteinevolution.db.MongoStore
+import de.proteinevolution.tel.TEL
+import de.proteinevolution.tel.env.Env
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsValue, Json}
+import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.libs.json.{ JsValue, Json }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
-import play.api.{Configuration, Logger, Environment}
+import play.api.{ Configuration, Environment, Logger }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
-import com.redfin.sitemapgenerator.{WebSitemapGenerator, WebSitemapUrl, ChangeFreq}
-
+import com.redfin.sitemapgenerator.{ ChangeFreq, WebSitemapGenerator, WebSitemapUrl }
+import de.proteinevolution.models.Constants
+import scala.language.postfixOps
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
-import models.stats.Counter
+import scala.concurrent.{ Await, Future }
+import de.proteinevolution.models.stats.Counter
 
 @Singleton
 final class Application @Inject()(webJarsUtil: WebJarsUtil,
@@ -60,7 +59,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   environment: Environment)
     extends AbstractController(cc)
     with I18nSupport
-    with Common {
+    with CommonController {
 
   private val toolkitMode = ConfigFactory.load().getString(s"toolkit_mode")
 
@@ -81,7 +80,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
   def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
 
     case rh if sameOriginCheck(rh) =>
-      println("Creating new WebSocket. ip: " + rh.remoteAddress.toString() + ", with sessionId: " + rh.session)
+      println("Creating new WebSocket. ip: " + rh.remoteAddress.toString + ", with sessionId: " + rh.session)
 
       userSessions
         .getUser(rh)
@@ -170,7 +169,10 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
         val port     = request.host.slice(request.host.indexOf(":") + 1, request.host.length)
         val hostname = request.host.slice(0, request.host.indexOf(":"))
         env.configure("PORT", port)
-        env.configure("HOSTNAME", hostname)
+        if(!hostname.startsWith("olt")) {
+          env.configure("headLessMode", "true")
+        }
+        env.configure("HOSTNAME", "olt")
         TEL.port = port
         TEL.hostname = hostname
         println("[CONFIG:] running on port " + TEL.port)
@@ -179,12 +181,13 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     }
 
     userSessions.getUser.map { user =>
-      Logger.info(InetAddress.getLocalHost().getHostName() + "\n" + user.toString)
+      Logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
       Ok(views.html.main(webJarsUtil, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message))
         .withSession(userSessions.sessionCookie(request, user.sessionID.get))
     }
   }
 
+  // why is this needed?
   def sitemapGenerator: Action[AnyContent] = Action { implicit request =>
     val wsg = WebSitemapGenerator.builder("https://toolkit.tuebingen.mpg.de", environment.getFile("public/")).gzip(true).build
 
