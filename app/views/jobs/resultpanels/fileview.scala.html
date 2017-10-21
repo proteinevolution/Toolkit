@@ -1,5 +1,5 @@
 @import play.api.mvc.RequestHeader
-@import models.results.FileLoader
+@import de.proteinevolution.models.results.FileLoader
 @(filepath : String, resultName : String)(implicit request: RequestHeader)
 
 <pre class="fileview" id="fileviewer">@Html(FileLoader.loadFile(filepath))</pre>

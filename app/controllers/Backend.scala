@@ -1,25 +1,25 @@
 package controllers
 
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 
-import actors.DatabaseMonitor.{DeleteOldJobs, DeleteOldUsers}
+import actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import akka.actor.ActorRef
 import models.UserSessions
-import models.database.statistics.{JobEvent, JobEventLog, StatisticsObject}
-import models.database.users.User
+import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog, StatisticsObject }
+import de.proteinevolution.models.database.users.User
 import models.tools.ToolFactory
-import modules.LocationProvider
-import modules.db.MongoStore
+import de.proteinevolution.db.MongoStore
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
+import de.proteinevolution.common.LocationProvider
 import play.api.Logger
 import play.api.cache._
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.bson.{BSONDateTime, BSONDocument}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -40,7 +40,7 @@ final class Backend @Inject()(settingsController: Settings,
                               cc: ControllerComponents)
     extends AbstractController(cc)
     with I18nSupport
-    with Common {
+    with CommonController {
 
   //TODO currently working mithril routes for the backend
   def index: Action[AnyContent] = Action.async { implicit request =>

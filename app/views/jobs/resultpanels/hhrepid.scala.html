@@ -1,4 +1,4 @@
-@import models.results.HHrepID
+@import de.proteinevolution.models.results.HHrepID
 @(jobID: String, filePath: String, resultName: String,  tool : models.tools.Tool)(implicit request: RequestHeader)
 @views.html.forwardmodals.simpler(tool, resultName)
 @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort + "_hhrepid")

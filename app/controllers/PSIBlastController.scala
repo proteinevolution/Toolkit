@@ -11,10 +11,11 @@ import javax.inject.Inject
 
 import better.files._
 import com.typesafe.config.ConfigFactory
-import models.Constants
-import models.database.results._
-import modules.db.ResultFileAccessor
-import play.api.libs.json.{JsArray, JsObject, Json}
+import de.proteinevolution.models.Constants
+import de.proteinevolution.models.database.results.General.DTParam
+import de.proteinevolution.models.database.results._
+import de.proteinevolution.db.ResultFileAccessor
+import play.api.libs.json.{ JsArray, JsObject, Json }
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 
@@ -30,7 +31,7 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
                                    val reactiveMongoApi: ReactiveMongoApi,
                                    cc: ControllerComponents)
     extends AbstractController(cc)
-    with Common {
+    with CommonController {
 
   /* gets the path to all scripts that are executed
      on the server (not executed on the grid engine) */

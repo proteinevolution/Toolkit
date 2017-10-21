@@ -8,16 +8,18 @@ import actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
 import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
-import models.{ Constants, UserSessions }
-import models.database.jobs.{ Job, Running }
-import models.job.JobActorAccess
-import modules.LocationProvider
+import models.UserSessions
+import de.proteinevolution.models.database.jobs.{ Job, Running }
 import play.api.Logger
 import play.api.cache._
 import play.api.libs.json.{ JsValue, Json }
 import reactivemongo.bson.BSONObjectID
 import java.nio.file.{ Files, Paths }
 import java.time.ZonedDateTime
+
+import de.proteinevolution.common.LocationProvider
+import de.proteinevolution.models.Constants
+import services.JobActorAccess
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

@@ -1,18 +1,19 @@
 package models.tools
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
-import com.typesafe.config.{Config, ConfigFactory, ConfigObject}
-import models.Constants
-import models.database.results._
-import modules.db.{MongoStore, ResultFileAccessor}
+import com.typesafe.config.{ Config, ConfigFactory, ConfigObject }
+import de.proteinevolution.models.Constants
+import de.proteinevolution.models.database.jobs.JobState
+import de.proteinevolution.models.database.results._
+import de.proteinevolution.db.{ MongoStore, ResultFileAccessor }
 import play.api.libs.json.JsArray
 import play.twirl.api.HtmlFormat
 
 import scala.collection.JavaConversions._
 import scala.collection.immutable.ListMap
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Future, _}
+import scala.concurrent.{ Future, _ }
 
 // Returned to the View if a tool is requested with the getTool route
 case class Toolitem(toolname: String,
@@ -53,9 +54,9 @@ final class ToolFactory @Inject()(
     hhblits: HHBlits,
     hhomp: HHomp,
     quick2d: Quick2D,
-    aln: models.database.results.Alignment,
+    aln: de.proteinevolution.models.database.results.Alignment,
     constants: Constants
-)(paramAccess: ParamAccess, mongoStore: MongoStore, resultFiles : ResultFileAccessor) {
+)(paramAccess: ParamAccess, mongoStore: MongoStore, resultFiles: ResultFileAccessor) {
 
   // Encompasses all the toolnames
   object Toolnames {
@@ -135,11 +136,11 @@ final class ToolFactory @Inject()(
   }.toMap
 
   /**
-    * Returns true if the string is a toolname, false if it isn't
-    * @param toolName
-    * @return
-    */
-  def isTool(toolName : String) : Boolean = {
+   * Returns true if the string is a toolname, false if it isn't
+   * @param toolName
+   * @return
+   */
+  def isTool(toolName: String): Boolean = {
     toolName.toUpperCase == "REFORMAT" || toolName.toUpperCase == "ALNVIZ" || values.exists(_._2.isToolName(toolName))
   }
 
@@ -451,8 +452,7 @@ final class ToolFactory @Inject()(
         "FullAlignment" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
-            views.html.jobs.resultpanels.msaviewer(jobID,
-                                                   s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+            views.html.jobs.resultpanels.msaviewer(jobID, s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
           )
         }
       ),
@@ -537,8 +537,7 @@ final class ToolFactory @Inject()(
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
-            views.html.jobs.resultpanels.msaviewer(jobID,
-                                                   s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+            views.html.jobs.resultpanels.msaviewer(jobID, s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
           )
         }
       ),
@@ -566,8 +565,7 @@ final class ToolFactory @Inject()(
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
-            views.html.jobs.resultpanels.msaviewer(jobID,
-                                                   s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+            views.html.jobs.resultpanels.msaviewer(jobID, s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
           )
         }
       ),
@@ -595,8 +593,7 @@ final class ToolFactory @Inject()(
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
-            views.html.jobs.resultpanels.msaviewer(jobID,
-                                                   s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+            views.html.jobs.resultpanels.msaviewer(jobID, s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
           )
         }
       ),
@@ -624,8 +621,7 @@ final class ToolFactory @Inject()(
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
-            views.html.jobs.resultpanels.msaviewer(jobID,
-                                                   s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+            views.html.jobs.resultpanels.msaviewer(jobID, s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
           )
         }
       ),
@@ -653,8 +649,7 @@ final class ToolFactory @Inject()(
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
-            views.html.jobs.resultpanels.msaviewer(jobID,
-                                                   s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+            views.html.jobs.resultpanels.msaviewer(jobID, s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
           )
         }
       ),
@@ -682,8 +677,7 @@ final class ToolFactory @Inject()(
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
-            views.html.jobs.resultpanels.msaviewer(jobID,
-                                                   s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+            views.html.jobs.resultpanels.msaviewer(jobID, s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
           )
         }
       ),
@@ -851,8 +845,7 @@ final class ToolFactory @Inject()(
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
-            views.html.jobs.resultpanels.msaviewer(jobID,
-                                                   s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+            views.html.jobs.resultpanels.msaviewer(jobID, s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
           )
         }
       ),
@@ -937,4 +930,14 @@ final class ToolFactory @Inject()(
          forwardMultiSeq)
   }
 
+}
+
+object JobItem {
+  // Server returns such an object when asked for a job
+  case class Jobitem(jobID: String,
+      state: JobState,
+      dateCreated: String,
+      toolitem: Toolitem,
+      views: Seq[String],
+      paramValues: Map[String, String])
 }

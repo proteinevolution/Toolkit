@@ -4,18 +4,20 @@ import javax.inject.Inject
 
 import better.files._
 import com.typesafe.config.ConfigFactory
-import models.Constants
-import models.database.results.{General, HHBlits, HHBlitsHSP, HHBlitsResult}
-import modules.db.ResultFileAccessor
+import de.proteinevolution.models.Constants
+import de.proteinevolution.models.database.results.General.DTParam
+import de.proteinevolution.models.database.results.{ General, HHBlits, HHBlitsHSP, HHBlitsResult }
+import de.proteinevolution.db.ResultFileAccessor
 import org.webjars.play.WebJarsUtil
 import play.api.Logger
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.sys.process._
+
 
 /**
   * Created by drau on 01.03.17.
@@ -28,7 +30,7 @@ class HHblitsController @Inject()(resultFiles : ResultFileAccessor,
                                   constants: Constants,
                                   cc: ControllerComponents)
     extends AbstractController(cc)
-    with Common {
+    with CommonController {
 
   /* gets the path to all scripts that are executed
    on the server (not executed on the grid engine) */

@@ -2,13 +2,13 @@ package controllers
 
 import javax.inject.Inject
 
-import models.Constants
-import models.database.results.{Alignment, General}
-import models.results.Common
-import modules.db.ResultFileAccessor
+import de.proteinevolution.models.Constants
+import de.proteinevolution.models.database.results.{ Alignment, General }
+import de.proteinevolution.models.results.Common
+import de.proteinevolution.db.ResultFileAccessor
 import play.api.libs.json.JsArray
 import play.api.mvc._
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -22,7 +22,7 @@ class AlignmentController @Inject()(resultFiles : ResultFileAccessor,
                                     constants: Constants,
                                     cc: ControllerComponents)
     extends AbstractController(cc)
-    with Common
+    with CommonController
     with ReactiveMongoComponents {
 
   /**

@@ -3,10 +3,10 @@ package controllers
 import java.time.ZonedDateTime
 import javax.inject.{Inject, Singleton}
 
-import models.database.jobs.Done
-import models.database.statistics.{JobEvent, JobEventLog}
+import de.proteinevolution.models.database.jobs.Done
+import de.proteinevolution.models.database.statistics.{JobEvent, JobEventLog}
 import models.tools.ToolFactory
-import modules.db.MongoStore
+import de.proteinevolution.db.MongoStore
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 
