@@ -1,8 +1,8 @@
 SEQ_COUNT=$(wc -l < ../params/alignment)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 
-if [ ${CHAR_COUNT} -gt "100" ] ; then
-      echo "#Input may not contain more than 100 characters." >> ../results/process.log
+if [ ${CHAR_COUNT} -gt "500" ] ; then
+      echo "#Input may not contain more than 500 characters." >> ../results/process.log
       updateProcessLog
       false
 fi
@@ -15,7 +15,7 @@ fi
 
 PATTERN=$(less ../params/alignment)
 
-echo "#Searching %standarddb.content DB for sequences '${PATTERN}' pattern." >> ../results/process.log
+echo "#Searching %patsearchdb.content DB for sequences '${PATTERN}' pattern." >> ../results/process.log
 updateProcessLog
 
 patsearch.pl        -i  %alignment.path \

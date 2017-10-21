@@ -124,6 +124,7 @@ updateProcessLog
     ${HMMERPATH}/hmmsearch --cpu %THREADS \
           -E %evalue.content \
           --incE %evalue.content \
+          --incdomE 100000000 \
           -o ../results/${JOBID}.outfile \
           -A ../results/${JOBID}.msa_sto \
           ../results/${JOBID}.hmm  %STANDARD/%hmmerdb.content
@@ -139,9 +140,6 @@ updateProcessLog
 #Convert to fasta format
 reformat_hhsuite.pl sto a3m ../results/${JOBID}.msa_sto $(readlink -f ../results/${JOBID}.msa_a3m)
 
-#remove tmp sto file
-rm ../results/${JOBID}.msa_sto
-
 prepareForHMMER.py ../results/${JOBID}.outfile ../results/${JOBID}.outfilefl
 
 hmmer2json.py -i ../results/${JOBID}.outfilefl \
@@ -151,7 +149,7 @@ hmmer2json.py -i ../results/${JOBID}.outfilefl \
 
 extractFasta.py ../results/${JOBID}.msa_a3m ../results/${JOBID}.list
 
-reformat_hhsuite.pl a3m fas ../results/${JOBID}.msa_a3m.subset $(readlink -f ../results/${JOBID}.msa_fas)
+reformat_hhsuite.pl a3m fas ../results/${JOBID}.msa_a3m.subset $(readlink -f ../results/output.aln_fas) -uc -l 32000
 
 manipulate_json.py -k 'db' -v '%hmmerdb.content' ../results/${JOBID}.json
 #create tab separated file to feed into blastviz
@@ -165,7 +163,7 @@ manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/${JOBID}.json
 manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/${JOBID}.json
 
 # Generate MSA in JSON
-fasta2json.py ../results/${JOBID}.msa_fas ../results/alignment.json
+fasta2json.py ../results/output.aln_fas ../results/alignment.json
 
 cd ../results
 rm -f *.hmm *.outfile* *.list *.msa_* ${JOBID}.fas firstSeq.fas

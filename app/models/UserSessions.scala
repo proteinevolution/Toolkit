@@ -3,13 +3,12 @@ package models
 import java.time.ZonedDateTime
 import javax.inject.{ Inject, Singleton }
 
-import models.database.users.{ SessionData, User }
-import modules.LocationProvider
-import modules.common.HTTPRequest
-import modules.db.MongoStore
+import de.proteinevolution.models.database.users.{ SessionData, User }
+import de.proteinevolution.common.{ HTTPRequest, LocationProvider }
+import de.proteinevolution.db.MongoStore
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{ mvc, Logger }
+import play.api.{ Logger, mvc }
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -109,7 +108,7 @@ class UserSessions @Inject()(mongoStore: MongoStore,
           dateUpdated = Some(ZonedDateTime.now)
         )
         mongoStore.addUser(user).map { _ =>
-          Logger.info(s"User is new:\n${user.toString}")
+          Logger.info(s"User is new:\n${user.toString}\nIP: ${request.remoteAddress.toString}")
           user
         }
     }
@@ -130,9 +129,11 @@ class UserSessions @Inject()(mongoStore: MongoStore,
         case None =>
           BSONObjectID.generate()
       }
+      // TODO: this seems not to be typesafe! user has type nothing
+      // cache related stuff should remain in the project where the cache is bound
       userCache.get(sessionID.stringify) match {
         case Some(user) =>
-          Future.successful(user)
+          Future.successful[User](user)
         case None =>
           putUser(request, sessionID)
       }

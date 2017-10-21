@@ -1,12 +1,10 @@
-tel/paramspec/hmmerdb.py
-tel/paramspec/patsearchdb.py
+conf/ehcache.xml
 conf/tel.conf
 project/project
 project/target
 bioprogs/tools
 /db
 /dist/
-/modules
 /logs/
 /target
 tmp
@@ -42,3 +40,5 @@ public/javascripts/typescriptc.js.map
 *.sbt.swp
 native
 *.swp
+.ensime
+.sass-cache

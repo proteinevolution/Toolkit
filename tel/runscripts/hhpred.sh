@@ -1,7 +1,37 @@
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 A3M_INPUT=$(head -1 ../params/alignment | egrep "^#A3M#" | wc -l)
+DBJOINED=""
+#create file in which selected dbs are written
+touch ../params/dbs
 
+if [  "%hhpred_align.content" != "true" ] ; then
+    #splitting input databases into array and completing with -d
+    if [ "%hhsuitedb.content" != "false" ]
+    then
+        DBS=$(echo "%hhsuitedb.content" | tr " " "\n")
+        DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
+        #write selected databses into file
+        printf "${DBS[@]}" >> ../params/dbs
+        printf "\n" >> ../params/dbs
+    fi
+    if [ "%proteomes.content" != "false" ]
+    then
+        PROTEOMES=$(echo "%proteomes.content" | tr " " "\n")
+        DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${PROTEOMES[@]}`
+        #write selected databses into file
+        printf "${PROTEOMES[@]}" >> ../params/dbs
+    fi
+
+    DBARRAY=( ${DBJOINED} )
+    DBCOUNT=${#DBARRAY[@]}
+
+    if [ ${DBCOUNT} -gt "8" ] ; then
+        echo "#Only 4 databases may be selected at a time!" >> ../results/process.log
+        updateProcessLog
+        false
+    fi
+fi
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
@@ -91,7 +121,8 @@ if [ "%hhpred_align.content" = "true" ] ; then
 
         echo "done" >> ../results/process.log
         updateProcessLog
-
+        #remove empty lines
+        sed -i '/^\s*$/d' ../params/alignment_two
         SEQ_COUNT2=$(egrep '^>' ../params/alignment_two | wc -l)
         CHAR_COUNT2=$(wc -m < ../params/alignment_two)
         FORMAT2=$(head -1 ../params/alignment_two | egrep "^CLUSTAL" | wc -l)
@@ -322,9 +353,7 @@ addss.pl ../results/full.a3m
 echo "done" >> ../results/process.log
 updateProcessLog
 
-DBJOINED=""
-#create file in which selected dbs are written
-touch ../params/dbs
+
 # creating alignment of query and subject input
 if [  "%hhpred_align.content" = "true" ]
 then
@@ -334,8 +363,12 @@ then
     cd ../results
 
     if [ "%msa_gen_max_iter.content" = "0" ] && [ ${SEQ_COUNT2} -gt "1" ] ; then
+            echo "#No MSA generation required for building template A3M." >> ../results/process.log
+            updateProcessLog
             reformat_hhsuite.pl fas a3m %alignment_two.path db.a3m -M first
     else
+            echo "#Running 3 iterations of HHblits for template MSA and A3M generation." >> ../results/process.log
+            updateProcessLog
             reformat_hhsuite.pl fas a3m \
                   $(readlink -f %alignment_two.path) \
                   $(readlink -f ../results/${JOBID}.in2.a3m)
@@ -353,23 +386,6 @@ then
     cd ../0
     echo "done" >> ../results/process.log
     updateProcessLog
-else
-    #splitting input databases into array and completing with -d
-    if [ "%hhsuitedb.content" != "false" ]
-    then
-        DBS=$(echo "%hhsuitedb.content" | tr " " "\n")
-        DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
-        #write selected databses into file
-        printf "${DBS[@]}" >> ../params/dbs
-        printf "\n" >> ../params/dbs
-    fi
-    if [ "%proteomes.content" != "false" ]
-    then
-        PROTEOMES=$(echo "%proteomes.content" | tr " " "\n")
-        DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${PROTEOMES[@]}`
-        #write selected databses into file
-        printf "${PROTEOMES[@]}" >> ../params/dbs
-    fi
 fi
 
 

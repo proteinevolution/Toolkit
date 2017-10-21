@@ -1,0 +1,3 @@
+name := "headless"
+
+libraryDependencies ++= Seq()

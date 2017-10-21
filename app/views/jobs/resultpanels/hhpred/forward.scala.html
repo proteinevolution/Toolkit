@@ -1,5 +1,5 @@
 @import play.api.mvc.RequestHeader
-@import models.results.FileLoader
+@import de.proteinevolution.models.results.FileLoader
 
 @(filepath : String, jobID: String)(implicit request: RequestHeader)
 
@@ -13,7 +13,6 @@
 <script>
     function tomodeller() {
         localStorage.setItem('resultcookie', $("#pir").text());
-        localStorage.setItem('parentid', '@jobID');
         m.route("/tools/modeller");
     }
 </script>

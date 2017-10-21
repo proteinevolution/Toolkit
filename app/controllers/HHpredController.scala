@@ -1,21 +1,21 @@
 package controllers
 
 import javax.inject.Inject
-import java.nio.file.attribute.PosixFilePermission
 
+import better.files._
 import com.typesafe.config.ConfigFactory
+import de.proteinevolution.models.Constants
+import de.proteinevolution.models.database.results.General.DTParam
+import de.proteinevolution.models.database.results._
+import de.proteinevolution.db.ResultFileAccessor
+import org.webjars.play.WebJarsUtil
+import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc._
+import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.sys.process._
-import better.files._
-import models.Constants
-import models.database.results.{ HHPred, HHPredHSP, HHPredResult }
-import modules.db.MongoStore
-import play.modules.reactivemongo.ReactiveMongoApi
-import play.api.libs.json.{ JsArray, JsObject, Json }
-import org.webjars.play.WebJarsUtil
 
 /**
   * Created by drau on 01.03.17.
@@ -23,14 +23,14 @@ import org.webjars.play.WebJarsUtil
   * HHpred Controller process all requests
   * made from the HHpred result view
   */
-class HHpredController @Inject()(hhpred: HHPred,
-                                 mongoStore: MongoStore,
+class HHpredController @Inject()(resultFiles : ResultFileAccessor,
+                                 hhpred: HHPred,
                                  val reactiveMongoApi: ReactiveMongoApi,
                                  constants: Constants,
                                  webJarsUtil: WebJarsUtil,
                                  cc: ControllerComponents)
     extends AbstractController(cc)
-    with Common {
+    with CommonController {
 
   /* gets the path to all scripts that are executed
      on the server (not executed on the grid eninge) */
@@ -100,7 +100,8 @@ class HHpredController @Inject()(hhpred: HHPred,
       Future.successful(BadRequest)
       throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
     } else {
-      mongoStore.getResult(jobID).map {
+      resultFiles.getResults(jobID).map {
+        case None => BadRequest
         case Some(jsValue) =>
           val result     = hhpred.parseResult(jsValue)
           val numListStr = getNumListEval(result, eval.toDouble)
@@ -112,8 +113,6 @@ class HHpredController @Inject()(hhpred: HHPred,
             case 0 => Ok
             case _ => BadRequest
           }
-
-        case _ => NotFound
       }
     }
   }
@@ -170,22 +169,16 @@ class HHpredController @Inject()(hhpred: HHPred,
   /**
     * given dataTable specific paramters, this function
     * filters for eg. a specific column and returns the data
-    * @param jobID
+    * @param hits
     * @param params
     * @return
     */
-  def getHitsByKeyWord(jobID: String, params: DTParam): Future[List[HHPredHSP]] = {
+  def getHitsByKeyWord(hits : HHPredResult, params: DTParam): List[HHPredHSP] = {
     if (params.sSearch.isEmpty) {
-      mongoStore.getResult(jobID).map {
-        case Some(result) =>
-          hhpred
-            .hitsOrderBy(params, hhpred.parseResult(result).HSPS)
-            .slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
-      }
+      hits.hitsOrderBy(params).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
     } else {
-      ???
+      hits.hitsOrderBy(params).filter(_.description.contains(params.sSearch))
     }
-    //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
 
   /**
@@ -210,7 +203,7 @@ class HHpredController @Inject()(hhpred: HHPred,
     val end     = (json \ "end").as[Int]
     val isColor = (json \ "isColor").as[Boolean]
     val wrapped = (json \ "wrapped").as[Boolean]
-    mongoStore.getResult(jobID).map {
+    resultFiles.getResults(jobID).map {
       case Some(jsValue) =>
         val result = hhpred.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
@@ -231,14 +224,6 @@ class HHpredController @Inject()(hhpred: HHPred,
     * @return
     */
   def dataTable(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    var db = ""
-    val total = mongoStore.getResult(jobID).map {
-      case Some(jsValue) =>
-        val result = hhpred.parseResult(jsValue)
-        db = result.db
-        result.num_hits
-
-    }
     val params = DTParam(
       request.getQueryString("sSearch").getOrElse(""),
       request.getQueryString("iDisplayStart").getOrElse("0").toInt,
@@ -247,17 +232,17 @@ class HHpredController @Inject()(hhpred: HHPred,
       request.getQueryString("sSortDir_0").getOrElse("asc")
     )
 
-    val hits = getHitsByKeyWord(jobID, params)
-
-    hits.flatMap { list =>
-      total.map { total_ =>
+    resultFiles.getResults(jobID).map {
+      case None          => NotFound
+      case Some(jsValue) =>
+        val result = hhpred.parseResult(jsValue)
+        val hits = getHitsByKeyWord(result, params)
         Ok(
           Json
-            .toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
+            .toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))
             .as[JsObject]
-            .deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db))))
+            .deepMerge(Json.obj("aaData" -> hits.map(_.toDataTable(result.db))))
         )
-      }
     }
   }
 }

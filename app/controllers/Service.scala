@@ -4,9 +4,8 @@ import java.io.{ FileInputStream, ObjectInputStream }
 import javax.inject.{ Inject, Singleton }
 
 import akka.util.Timeout
-import models.{ Constants, UserSessions }
-import models.database.jobs.{ Done, JobState, Jobitem }
-import models.database.users.User
+import models.UserSessions
+import de.proteinevolution.models.database.jobs.{ Done, JobState }
 import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{ I18nSupport, MessagesApi }
@@ -14,14 +13,15 @@ import play.api.mvc._
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import better.files._
 import models.tools.{ Param, ToolFactory, Toolitem }
-import modules.LocationProvider
-import modules.db.MongoStore
+import de.proteinevolution.db.MongoStore
 import java.time.format.DateTimeFormatter
-import play.api.data.validation.ValidationError
+
+import de.proteinevolution.common.LocationProvider
+import de.proteinevolution.models.Constants
+import models.tools.JobItem.Jobitem
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.twirl.api.Html
-import reactivemongo.bson.{ BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -39,7 +39,7 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
                               val reactiveMongoApi: ReactiveMongoApi,
                               mongoStore: MongoStore,
                               userSessions: UserSessions,
-                              @NamedCache("userCache") implicit val userCache: CacheApi,
+                              @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                               implicit val locationProvider: LocationProvider,
                               toolFactory: ToolFactory,
                               constants: Constants,
@@ -48,7 +48,7 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
     with I18nSupport
     with ReactiveMongoComponents {
 
-  implicit val timeout = Timeout(1.seconds)
+  implicit val timeout: Timeout = Timeout(1.seconds)
 
   def static(static: String): Action[AnyContent] = Action { implicit request =>
     static match {
@@ -96,7 +96,6 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
   implicit val jobitemWrites: Writes[Jobitem] = (
     (JsPath \ "jobID").write[String] and
     (JsPath \ "state").write[JobState] and
-    (JsPath \ "ownerName").write[String] and
     (JsPath \ "dateCreated").write[String] and
     (JsPath \ "toolitem").write[Toolitem] and
     (JsPath \ "views").write[Seq[String]] and
@@ -121,34 +120,14 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
   def getJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     mongoStore.selectJob(jobID).flatMap {
       case Some(job) =>
-        job.deletion match {
-          case None =>
             Logger.info("Requested job has been found in MongoDB, the jobState is " + job.status)
             val toolitem = toolFactory.values(job.tool).toolitem
-            val ownerName =
-              if (job.isPrivate) {
-                mongoStore.findUser(BSONDocument(User.IDDB -> job.ownerID.get)).map {
-                  case Some(owner) =>
-                    owner.userData match {
-                      case Some(ownerData) => // Owner is registered
-                        ownerData.nameLogin
-                      case None => // Owner is not registered
-                        "Guest"
-                    }
-                  case None => // User does no longer exist in the Database.
-                    "Unknown User"
-                }
-              } else {
-                Future.successful("Public Job")
-              }
+
             // The jobState decides which views will be appended to the job
-
             val jobViews: Future[Seq[String]] = job.status match {
-
               case Done => Future.successful(toolFactory.resultPanels(toolitem.toolname))
-
               // All other views are currently computed on Clientside
-              case _ => Future.successful(Nil)
+              case _ => Future.successful(Seq.empty[String])
             }
             // Read parameters from serialized file
             val paramValues: Map[String, String] = {
@@ -162,14 +141,13 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
                 Map.empty[String, String]
               }
             }
-            ownerName.flatMap { ownerN =>
+
               jobViews.map { jobViewsN =>
                 Ok(
                   Json.toJson(
                     Jobitem(
                       job.jobID,
                       job.status,
-                      ownerN,
                       job.dateCreated.get.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                       toolitem,
                       jobViewsN,
@@ -177,14 +155,8 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
                     )
                   )
                 )
-              }
-            }
 
-          case Some(deletionReason) =>
-            // The job was deleted, do not show it to the user.
-            Logger.info("Job was found but deleted.")
-            Future.successful(NotFound)
-        }
+            }
       case _ =>
         Logger.info("Job could not be found")
         Future.successful(NotFound)

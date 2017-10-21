@@ -3,16 +3,17 @@ package controllers
 import java.time.ZonedDateTime
 import javax.inject.{ Inject, Singleton }
 
-import actors.JobActor.{ JobStateChanged, UpdateLog }
-import models.{ Constants, UserSessions }
-import models.database.jobs._
-import models.job.JobActorAccess
-import modules.LocationProvider
-import modules.db.MongoStore
+import actors.JobActor.{ JobStateChanged, SetSGEID, UpdateLog }
+import de.proteinevolution.common.LocationProvider
+import de.proteinevolution.models.Constants
+import models.UserSessions
+import de.proteinevolution.models.database.jobs._
+import de.proteinevolution.db.MongoStore
 import play.api.Logger
 import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.mvc._
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import services.JobActorAccess
 
 import scala.io.Source
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -67,20 +68,11 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
     Ok
   }
 
-  def SGEID(jobID: String, sgeID: String): Action[AnyContent] = Action.async {
-
-    mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).map {
-
-      case Some(job) =>
-        mongoStore.modifyJob(BSONDocument(Job.JOBID -> job.jobID),
-                             BSONDocument("$set"    -> BSONDocument("clusterData.sgeid" -> sgeID)))
-        Logger.info(jobID + " gets job-ID " + sgeID + " on SGE")
-        Ok
-      case None =>
-        Logger.info("Unknown ID " + jobID.toString)
-        BadRequest
-    }
-
+  def SGEID(jobID: String, sgeID: String, key : String): Action[AnyContent] = Action {
+    if (checkKey(jobID, key)) {
+      jobActorAccess.sendToJobActor(jobID, SetSGEID(jobID, sgeID))
+      Ok
+    } else BadRequest("Permission denied")
   }
 
   def pushMessage(jobID: String, message: String) = Action {

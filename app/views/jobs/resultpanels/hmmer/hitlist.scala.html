@@ -1,8 +1,8 @@
 @import play.api.libs.json.JsObject
-@import models.results.Common
-@import models.database.results.HmmerResult
+@import de.proteinevolution.models.results.Common
+@import de.proteinevolution.models.database.results.HmmerResult
 @import better.files._
-@import models.database.results.HmmerHSP
+@import de.proteinevolution.models.database.results.HmmerHSP
 @(jobID: String, result: HmmerResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
 @* Load html Map used for the image representation *@
     @if(result.num_hits < 1) {
@@ -127,8 +127,8 @@
 <script>
         var checkbox = "checkbox";
         var selectAllBool = false;
-        var shownHits = 100;
-        var showMore = 100;
+        var shownHits = 50;
+        var showMore = 50;
         var numHits = @{result.num_hits};
         var jobID = '@{jobID}';
         var loading = false;
@@ -201,52 +201,43 @@
                     route = jsRoutes.controllers.HmmerController.evalFull(jobID);
                 } else {
                     data.filename = filename;
-                    route = jsRoutes.controllers.HmmerController.full(jobID);
                     if(data.checkboxes.length == 0){
                         $('#forwardModal_@{tool.toolNameShort}').foundation('close');
                         $.LoadingOverlay("hide");
                         alert("No sequence(s) selected!");
                         return false;
                     }
+                    route = jsRoutes.controllers.HmmerController.full(jobID);
                 }
-                $.ajax({
-                    url: route.url,
-                    method: route.method,
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    error: function(){
-                        $.LoadingOverlay("hide")
-                    }
-                }).done(function () {
-                    $.ajax({
-                        type: 'GET',
-                        url: 'files/' + jobID + '/'+filename+'.fa',
-                        error: function(){
-                            $.LoadingOverlay("hide")
-                        }
-                    }).done(function (data_) {
-                        forward(selectedTool, data_.toString());
-                    })
-                });
+
             } else {
                 if (boolEvalue) {
                     data.evalue = evalue;
+                    data.filename = filename;
                     route = jsRoutes.controllers.HmmerController.alnEval(jobID);
                 } else {
-                    route = jsRoutes.controllers.HmmerController.aln(jobID);
-                }
-                $.ajax({
-                    url: route.url,
-                    method: route.method,
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    error: function(){
-                        $.LoadingOverlay("hide")
+                    data.filename = filename;
+                    if(data.checkboxes.length == 0){
+                        $('#forwardModal_@{tool.toolNameShort}').foundation('close');
+                        $.LoadingOverlay("hide");
+                        alert("No sequence(s) selected!");
+                        return false;
                     }
-                }).done(function (data_) {
-                    forward(selectedTool, data_);
-                });
+                    route = jsRoutes.controllers.HmmerController.aln(jobID);
+
+                }
             }
+            $.ajax({
+                url: route.url,
+                method: route.method,
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                error: function(){
+                    $.LoadingOverlay("hide")
+                }
+            }).done(function (data_) {
+                forwardPath(selectedTool, 'files/' + jobID + '/'+filename+'.fa');
+            });
         }
 
 

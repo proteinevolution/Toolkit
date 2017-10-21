@@ -2,17 +2,17 @@ package controllers
 
 import javax.inject.{ Inject, Named, Singleton }
 
-import actors.DatabaseMonitor.DeleteOldUsers
+import actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import akka.actor.ActorRef
 import models.UserSessions
-import models.database.statistics.{ JobEvent, JobEventLog, StatisticsObject }
-import models.database.users.User
+import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog, StatisticsObject }
+import de.proteinevolution.models.database.users.User
 import models.tools.ToolFactory
-import modules.LocationProvider
-import modules.db.MongoStore
+import de.proteinevolution.db.MongoStore
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
+import de.proteinevolution.common.LocationProvider
 import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{ I18nSupport, MessagesApi }
@@ -40,7 +40,7 @@ final class Backend @Inject()(settingsController: Settings,
                               cc: ControllerComponents)
     extends AbstractController(cc)
     with I18nSupport
-    with Common {
+    with CommonController {
 
   //TODO currently working mithril routes for the backend
   def index: Action[AnyContent] = Action.async { implicit request =>
@@ -133,13 +133,26 @@ final class Backend @Inject()(settingsController: Settings,
   }
 
   def runUserSweep: Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
+    userSessions.getUser.map { user =>
       Logger.info("User deletion called. Access " + (if (user.isSuperuser) "granted." else "denied."))
       if (user.isSuperuser) {
         databaseMonitor ! DeleteOldUsers
-        Future.successful(Ok)
+        Ok("ok")
       } else {
-        Future.successful(NotFound)
+        NotFound
+      }
+    }
+  }
+
+
+  def runJobSweep: Action[AnyContent] = Action.async { implicit request =>
+    userSessions.getUser.map { user =>
+      Logger.info("User deletion called. Access " + (if (user.isSuperuser) "granted." else "denied."))
+      if (user.isSuperuser) {
+        databaseMonitor ! DeleteOldJobs
+        Ok("ok")
+      } else {
+        NotFound
       }
     }
   }

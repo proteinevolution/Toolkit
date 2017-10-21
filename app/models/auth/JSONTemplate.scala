@@ -1,6 +1,6 @@
 package models.auth
 
-import models.database.users.User
+import de.proteinevolution.models.database.users.User
 import play.api.libs.json.{ JsObject, JsValue, Json }
 
 /**
@@ -30,108 +30,108 @@ trait JSONTemplate {
              "user"       -> userOption.map(user => Json.toJson(user.userData)))
   }
 
-  def LoggedIn(user: User): JsValue = {
+  def loggedIn(user: User): JsValue = {
 
     authMessage(s"Welcome, ${user.getUserData.nameLogin}. \n You are now logged in.",
                 success = true,
                 userOption = Some(user))
   }
 
-  def SignedUp: JsValue = {
+  def signedUp: JsValue = {
     authMessage(s"Your Account has been created.\n Please Check your emails to Verify your Account.", success = true)
   }
 
-  def LoggedOut(): JsValue = {
+  def loggedOut(): JsValue = {
     authMessage("You have been logged out successfully. See you soon!", success = true)
   }
 
-  def LoginError(): JsValue = {
+  def loginError(): JsValue = {
     authMessage("There was an error while trying to sign you in. Try again!", success = false)
   }
 
-  def AccountNameUsed(): JsValue = {
+  def accountNameUsed(): JsValue = {
     authMessage("There already is an Account using this username, please use a different one.")
   }
 
-  def AccountEmailUsed(): JsValue = {
+  def accountEmailUsed(): JsValue = {
     authMessage("This email is already used, please try a different one.")
   }
 
-  def LoginIncorrect(): JsValue = {
+  def loginIncorrect(): JsValue = {
     authMessage("There was an error logging you in. Please check your account name and password.")
   }
 
-  def MustAcceptToS(): JsValue = {
+  def mustAcceptToS(): JsValue = {
     authMessage("Please accept the terms for our service to register.")
   }
 
-  def MustVerify(): JsValue = {
+  def mustVerify(): JsValue = {
     authMessage("Please verify your account.\nCheck Your emails for the verification link.")
   }
 
-  def AlreadyLoggedIn(): JsValue = {
+  def alreadyLoggedIn(): JsValue = {
     authMessage("You are already logged in.")
   }
 
-  def PasswordMismatch(): JsValue = {
+  def passwordMismatch(): JsValue = {
     authMessage("Your passwords did not match.")
   }
 
-  def PasswordWrong(): JsValue = {
+  def passwordWrong(): JsValue = {
     authMessage("The Password was incorrect. Please try again.")
   }
 
-  def TokenMismatch(): JsValue = {
+  def tokenMismatch(): JsValue = {
     authMessage("The given token does not match.")
   }
 
-  def TokenNotFound(): JsValue = {
+  def tokenNotFound(): JsValue = {
     authMessage("The given token is missing.")
   }
 
-  def VerificationSuccessful(user: User): JsValue = {
+  def verificationSuccessful(user: User): JsValue = {
     authMessage(s"Your E-Mail Account has been Verified, ${user.getUserData.nameLogin}.",
                 success = true,
                 userOption = Some(user))
   }
 
-  def NotLoggedIn(): JsValue = {
+  def notLoggedIn(): JsValue = {
     authMessage("You are not logged in.")
   }
 
-  def FormError(errorString: String = ""): JsValue = {
+  def formError(errorString: String = ""): JsValue = {
     authMessage("There was a Form error:" + errorString)
   }
 
-  def EditSuccessful(user: User): JsValue = {
+  def editSuccessful(user: User): JsValue = {
     authMessage("Changes have been saved.", success = true, userOption = Some(user))
   }
 
-  def PasswordChanged(user: User): JsValue = {
+  def passwordChanged(user: User): JsValue = {
     authMessage("Password has been accepted.\nPlease check your emails in order to verify the password change.",
                 success = true,
                 userOption = Some(user))
   }
 
-  def PasswordRequestSent: JsValue = {
+  def passwordRequestSent: JsValue = {
     authMessage("We have sent You a link for resetting Your password.\nPlease check your emails.", success = true)
   }
 
-  def PasswordResetChanged(user: User): JsValue = {
+  def passwordResetChanged(user: User): JsValue = {
     authMessage("Password has been accepted.\nPlease sign in with your new Password.",
                 success = true,
                 userOption = Some(user))
   }
 
-  def NoSuchUser: JsValue = {
+  def noSuchUser: JsValue = {
     authMessage("Could not find any Users with the matching user name or email address.", success = false)
   }
 
-  def OneParameterNeeded: JsValue = {
+  def oneParameterNeeded: JsValue = {
     authMessage("Need either a user name or a email address.", success = false)
   }
 
-  def DatabaseError: JsValue = {
+  def databaseError: JsValue = {
     authMessage("The Database could not be reached. Try again later.", success = false)
   }
 }

@@ -5,14 +5,14 @@ import javax.inject.{ Inject, Singleton }
 
 import actors.WebSocketActor.{ ChangeSessionID, LogOut }
 import akka.actor.ActorRef
-import models.{ Constants, UserSessions }
+import de.proteinevolution.common.LocationProvider
+import de.proteinevolution.models.Constants
+import models.UserSessions
 import models.auth._
-import models.database.users.{ User, UserConfig, UserToken }
-import models.job.JobActorAccess
+import de.proteinevolution.models.database.users.{ User, UserConfig, UserToken }
 import models.mailing.{ ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail }
 import models.tools.ToolFactory
-import modules.LocationProvider
-import modules.db.MongoStore
+import de.proteinevolution.db.MongoStore
 import play.Logger
 import play.api.cache._
 import play.api.i18n.{ I18nSupport, MessagesApi }
@@ -22,6 +22,7 @@ import play.api.libs.mailer._
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.bson._
 import org.webjars.play.WebJarsUtil
+import services.JobActorAccess
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ Await, Future }
@@ -47,7 +48,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
     extends AbstractController(cc)
     with I18nSupport
     with JSONTemplate
-    with Common
+    with CommonController
     with ReactiveMongoComponents {
 
   /**
@@ -115,7 +116,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
       .map(_ => action(request))
       .getOrElse {
         //Future.successful(Unauthorized.withHeaders("WWW-Authenticate" -> """Basic realm="Secured Area""""))
-        Future.successful(Ok(LoginIncorrect()))
+        Future.successful(Ok(loginIncorrect()))
       }
   }
 
@@ -130,10 +131,10 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
       userSessions.getUser.flatMap { unregisteredUser =>
         if (unregisteredUser.accountType < 0) {
           // Evaluate the Form
-          FormDefinitions.SignIn.bindFromRequest.fold(
+          FormDefinitions.signIn.bindFromRequest.fold(
             errors =>
               Future.successful {
-                Ok(LoginError())
+                Ok(loginError())
             },
             // if no error, then insert the user to the collection
             signInFormUser => {
@@ -180,29 +181,29 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                         }
 
                         // Everything is ok, let the user know that they are logged in now
-                        Ok(LoggedIn(loggedInUser))
+                        Ok(loggedIn(loggedInUser))
                           .withSession(
                             userSessions.sessionCookie(request, loggedInUser.sessionID.get)
                           )
                       case None =>
-                        Ok(LoginIncorrect())
+                        Ok(loginIncorrect())
                     }
                   } else if (databaseUser.accountType < 1) {
                     // User needs to Verify first
-                    Future.successful(Ok(MustVerify()))
+                    Future.successful(Ok(mustVerify()))
                   } else {
                     // Wrong Password, show the error message
-                    Future.successful(Ok(LoginIncorrect()))
+                    Future.successful(Ok(loginIncorrect()))
                   }
                 case None =>
                   Future.successful {
-                    Ok(LoginIncorrect())
+                    Ok(loginIncorrect())
                   }
               }
             }
           )
         } else {
-          Future.successful(Ok(AlreadyLoggedIn()))
+          Future.successful(Ok(alreadyLoggedIn()))
         }
       }
     }
@@ -218,20 +219,20 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
       if (user.accountType < 0) {
         // Create a new user from the information given in the form
         FormDefinitions
-          .SignUp(user)
+          .signUp(user)
           .bindFromRequest
           .fold(
             errors =>
               // Something went wrong with the Form.
               Future.successful {
-                Ok(FormError())
+                Ok(formError())
             },
             // if no error, then insert the user to the collection
             signUpFormUser => {
               if (signUpFormUser.accountType < 0) {
                 // User did not accept the Terms of Service but managed to get around the JS form validation
                 Future.successful {
-                  Ok(MustAcceptToS())
+                  Ok(mustAcceptToS())
                 }
               } else {
                 // Check database for existing users with the same email
@@ -239,11 +240,11 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                 val selectorName = BSONDocument(BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin))
                 mongoStore.findUser(selectorName).flatMap {
                   case Some(x) =>
-                    Future.successful(Ok(AccountNameUsed()))
+                    Future.successful(Ok(accountNameUsed()))
                   case None =>
                     mongoStore.findUser(selectorMail).flatMap {
                       case Some(x) =>
-                        Future.successful(Ok(AccountEmailUsed()))
+                        Future.successful(Ok(accountEmailUsed()))
                       case None =>
                         // Create the database entry.
                         val newUser = signUpFormUser.copy(
@@ -258,11 +259,11 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                               case Some(token) =>
                                 val eMail = NewUserWelcomeMail(registeredUser, token.token)
                                 eMail.send
-                                Ok(SignedUp)
-                              case None => Ok(TokenMismatch())
+                                Ok(signedUp)
+                              case None => Ok(tokenMismatch())
                             }
                           case None =>
-                            Ok(FormError())
+                            Ok(formError())
                         }
                     }
                 }
@@ -270,7 +271,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
             }
           )
       } else {
-        Future.successful(Ok(AccountNameUsed()))
+        Future.successful(Ok(accountNameUsed()))
       }
     }
   }
@@ -286,12 +287,12 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
         case Some(userData) =>
           // change the userData with the help of the form input
           FormDefinitions
-            .ProfileEdit(user)
+            .profileEdit(user)
             .bindFromRequest
             .fold(
               formWithErrors =>
                 Future.successful {
-                  Ok(FormError())
+                  Ok(formError())
               },
               // when there are no errors, then insert the user to the collection
               {
@@ -310,26 +311,26 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                     val selectorMail = BSONDocument(BSONDocument(User.EMAIL -> editedProfileUserData.eMail))
                     mongoStore.findUser(selectorMail).flatMap {
                       case Some(_) =>
-                        Future.successful(Ok(AccountEmailUsed()))
+                        Future.successful(Ok(accountEmailUsed()))
                     }
                   }
                   userSessions.modifyUserWithCache(selector, modifier).map {
                     case Some(updatedUser) =>
                       // Everything is ok, let the user know that they are logged in now
-                      Ok(EditSuccessful(updatedUser))
+                      Ok(editSuccessful(updatedUser))
                     case None =>
                       // User has been found in the DB at first but now it cant be retrieved
-                      Ok(LoginError())
+                      Ok(loginError())
                   }
 
                 case None =>
                   // Password was incorrect
-                  Future.successful(Ok(PasswordWrong()))
+                  Future.successful(Ok(passwordWrong()))
               }
             )
         case None =>
           // User was not logged in
-          Future.successful(Ok(NotLoggedIn()))
+          Future.successful(Ok(notLoggedIn()))
       }
     }
   }
@@ -347,12 +348,12 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
         case Some(userData) =>
           // Validate the password and return the new password Hash
           FormDefinitions
-            .ProfilePasswordEdit(user)
+            .profilePasswordEdit(user)
             .bindFromRequest
             .fold(
               errors =>
                 Future.successful {
-                  Ok(FormError(errors.errors.mkString(",\n")))
+                  Ok(formError(errors.errors.mkString(",\n")))
               },
               // when there are no errors, then insert the user to the collection
               {
@@ -374,19 +375,19 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                       val eMail = ChangePasswordMail(updatedUser, token.token)
                       eMail.send
                       // Everything is ok, let the user know that they are logged in now
-                      Ok(PasswordChanged(updatedUser))
+                      Ok(passwordChanged(updatedUser))
                     case None =>
                       // User has been found in the DB at first but now it cant be retrieved
-                      Ok(LoginError())
+                      Ok(loginError())
                   }
                 case None =>
                   // Password was incorrect
-                  Future.successful(Ok(PasswordWrong()))
+                  Future.successful(Ok(passwordWrong()))
               }
             )
         case None =>
           // User was not logged in
-          Future.successful(Ok(NotLoggedIn()))
+          Future.successful(Ok(notLoggedIn()))
       }
     }
   }
@@ -398,10 +399,10 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
     * @return
     */
   def resetPassword: Action[AnyContent] = Action.async { implicit request =>
-    FormDefinitions.ForgottenPasswordEdit.bindFromRequest.fold(
+    FormDefinitions.forgottenPasswordEdit.bindFromRequest.fold(
       errors =>
         Future.successful {
-          Ok(FormError())
+          Ok(formError())
       },
       // when there are no errors, then insert the user to the collection
       {
@@ -428,18 +429,18 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                       // All done. User is registered, now send the welcome eMail
                       val eMail = ResetPasswordMail(registeredUser, token.token)
                       eMail.send
-                      Ok(PasswordRequestSent)
+                      Ok(passwordRequestSent)
                     case None =>
-                      Ok(FormError())
+                      Ok(formError())
                   }
 
                 case None =>
                   // User is not registered? Should not happen.
-                  Future.successful(Ok(NoSuchUser))
+                  Future.successful(Ok(noSuchUser))
               }
             case None =>
               // No user found.
-              Future.successful(Ok(NoSuchUser))
+              Future.successful(Ok(noSuchUser))
           }
       }
     )
@@ -454,8 +455,8 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
   def resetPasswordChange: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user: User =>
       // Validate the password and return the new password Hash
-      FormDefinitions.ForgottenPasswordChange.bindFromRequest.fold(
-        errors => Future.successful(Ok(FormError(errors.errors.mkString(",\n")))), { newPasswordHash =>
+      FormDefinitions.forgottenPasswordChange.bindFromRequest.fold(
+        errors => Future.successful(Ok(formError(errors.errors.mkString(",\n")))), { newPasswordHash =>
           user.userToken match {
             case Some(token) =>
               if (token.tokenType == 4 && token.userID.isDefined) {
@@ -480,18 +481,18 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                           // All done. Now send the eMail to notify the user that the password has been changed
                           val eMail = PasswordChangedMail(updatedUser)
                           eMail.send
-                          Ok(PasswordChanged(updatedUser))
+                          Ok(passwordChanged(updatedUser))
                         case None =>
-                          Ok(DatabaseError)
+                          Ok(databaseError)
                       }
                   case None =>
                     // User has been found in the DB at first but now it cant be retrieved
-                    Future.successful(Ok(DatabaseError))
+                    Future.successful(Ok(databaseError))
                 }
               } else {
-                Future.successful(Ok(TokenMismatch()))
+                Future.successful(Ok(tokenMismatch()))
               }
-            case None => Future.successful(Ok(TokenNotFound()))
+            case None => Future.successful(Ok(tokenNotFound()))
           }
         }
       )

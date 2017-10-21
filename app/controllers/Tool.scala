@@ -1,48 +1,41 @@
 package controllers
 
 import java.time.ZonedDateTime
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
-import akka.stream.Materializer
-import akka.util.Timeout
-import models.database.jobs.FrontendJob
-import models.search.JobDAO
-import modules.LocationProvider
-import modules.db.MongoStore
-import play.api.cache._
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import de.proteinevolution.models.database.jobs.Done
+import de.proteinevolution.models.database.statistics.{JobEvent, JobEventLog}
+import models.tools.ToolFactory
+import de.proteinevolution.db.MongoStore
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import reactivemongo.bson.BSONObjectID
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.concurrent.duration._
 
 @Singleton
 final class Tool @Inject()(messagesApi: MessagesApi,
-                           @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                            mongoStore: MongoStore,
-                           implicit val mat: Materializer,
-                           implicit val locationProvider: LocationProvider,
-                           val jobDao: JobDAO,
+                           toolFactory: ToolFactory,
                            cc: ControllerComponents)
-    extends AbstractController(cc)
+  extends AbstractController(cc)
     with I18nSupport {
 
-  implicit val timeout: Timeout = Timeout(5.seconds)
-
-  // counts usage of frontend tools in order to keep track for our stats
-
-  def frontendCount(toolname: String): Action[AnyContent] = Action.async {
-
-    // Add Frontend Job to Database
-    mongoStore.addFrontendJob(
-      FrontendJob(mainID = BSONObjectID.generate(),
-                  parentID = None,
-                  tool = toolname,
-                  dateCreated = Some(ZonedDateTime.now))
-    )
-
-    Future.successful(Ok)
+  /**
+    * counts usage of frontend tools in order to keep track for our stats
+    * @param toolName name of the Frontend Tool
+    * @return
+    */
+  def frontendCount(toolName: String): Action[AnyContent] = Action.async { implicit request =>
+    if (toolFactory.isTool(toolName)) {
+      // Add Frontend Job to Database
+      mongoStore.addJobLog(
+        JobEventLog(toolName = toolName.trim.toLowerCase, events = List(JobEvent(Done, Some(ZonedDateTime.now))))
+      ).map { _ =>
+        Ok
+      }
+    } else {
+      Future.successful(NotFound)
+    }
   }
-
 }

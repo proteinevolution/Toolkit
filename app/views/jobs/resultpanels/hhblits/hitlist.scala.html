@@ -1,5 +1,5 @@
-@import models.results.Common
-@import models.database.results.HHBlitsResult
+@import de.proteinevolution.models.results.Common
+@import de.proteinevolution.models.database.results.HHBlitsResult
 @import better.files._
 @(jobID: String, result: HHBlitsResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
     @if(result.num_hits < 1) {
@@ -155,8 +155,8 @@
         var checkbox = "checkbox";
         var selectAllBool = false;
         var numHits = @{result.num_hits};
-        var shownHits = 100;
-        var showMore = 100;
+        var shownHits = 50;
+        var showMore = 50;
 	    var loading = false;
         var wrapped = true;
         var colorAAs = false;
@@ -265,15 +265,7 @@
                    $.LoadingOverlay("hide")
                }
            }).done(function (data_) {
-               $.ajax({
-                   type: 'GET',
-                   url: 'files/@jobID/'+filename+'.fa',
-                   error: function(){
-                       $.LoadingOverlay("hide")
-                   }
-               }).done(function (data_) {
-                   forward(selectedTool, data_.toString());
-               });
+                   forwardPath(selectedTool, 'files/@jobID/'+filename+'.fa');
            });
         }
 

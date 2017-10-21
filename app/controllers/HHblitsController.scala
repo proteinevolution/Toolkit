@@ -1,35 +1,36 @@
 package controllers
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.Inject
 
-import com.typesafe.config.ConfigFactory
-import play.api.Logger
-import play.api.mvc._
-
-import scala.concurrent.Future
-import scala.sys.process._
 import better.files._
-import models.Constants
-import models.database.results.{ General, HHBlits, HHBlitsHSP, HHBlitsResult }
-import modules.db.MongoStore
-import play.api.libs.json.{ JsArray, JsObject, Json }
-import play.modules.reactivemongo.ReactiveMongoApi
+import com.typesafe.config.ConfigFactory
+import de.proteinevolution.models.Constants
+import de.proteinevolution.models.database.results.General.DTParam
+import de.proteinevolution.models.database.results.{ General, HHBlits, HHBlitsHSP, HHBlitsResult }
+import de.proteinevolution.db.ResultFileAccessor
 import org.webjars.play.WebJarsUtil
+import play.api.Logger
+import play.api.libs.json.{ JsObject, Json }
+import play.api.mvc._
+import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.sys.process._
+
 
 /**
   * Created by drau on 01.03.17.
   */
-class HHblitsController @Inject()(webJarsUtil: WebJarsUtil,
-                                  mongoStore: MongoStore,
-                                  val reactiveMongoApi: ReactiveMongoApi,
+class HHblitsController @Inject()(resultFiles : ResultFileAccessor,
                                   hhblits: HHBlits,
+                                  webJarsUtil: WebJarsUtil,
+                                  val reactiveMongoApi: ReactiveMongoApi,
                                   general: General,
                                   constants: Constants,
                                   cc: ControllerComponents)
     extends AbstractController(cc)
-    with Common {
+    with CommonController {
 
   /* gets the path to all scripts that are executed
    on the server (not executed on the grid engine) */
@@ -101,7 +102,8 @@ class HHblitsController @Inject()(webJarsUtil: WebJarsUtil,
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
-      mongoStore.getResult(jobID).map {
+      resultFiles.getResults(jobID).map {
+        case None          => NotFound
         case Some(jsValue) =>
           val result        = hhblits.parseResult(jsValue)
           val accessionsStr = getAccessionsEval(result, eval.toDouble)
@@ -115,8 +117,6 @@ class HHblitsController @Inject()(webJarsUtil: WebJarsUtil,
             case 0 => Ok
             case _ => BadRequest
           }
-
-        case _ => NotFound
       }
     }
   }
@@ -143,7 +143,8 @@ class HHblitsController @Inject()(webJarsUtil: WebJarsUtil,
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
-      mongoStore.getResult(jobID).map {
+      resultFiles.getResults(jobID).map {
+        case None          => NotFound
         case Some(jsValue) =>
           val result        = hhblits.parseResult(jsValue)
           val accessionsStr = getAccessions(result, numList)
@@ -157,8 +158,6 @@ class HHblitsController @Inject()(webJarsUtil: WebJarsUtil,
             case 0 => Ok
             case _ => BadRequest
           }
-
-        case _ => NotFound
       }
     }
   }
@@ -186,7 +185,8 @@ class HHblitsController @Inject()(webJarsUtil: WebJarsUtil,
       Future.successful(BadRequest)
       throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
     } else {
-      mongoStore.getResult(jobID).map {
+      resultFiles.getResults(jobID).map {
+        case None          => NotFound
         case Some(jsValue) =>
           val result     = hhblits.parseResult(jsValue)
           val numListStr = getNumListEval(result, eval.toDouble)
@@ -198,8 +198,6 @@ class HHblitsController @Inject()(webJarsUtil: WebJarsUtil,
             case 0 => Ok
             case _ => BadRequest
           }
-
-        case _ => NotFound
       }
     }
   }
@@ -286,22 +284,16 @@ class HHblitsController @Inject()(webJarsUtil: WebJarsUtil,
   /**
     * given dataTable specific paramters, this function
     * filters for eg. a specific column and returns the data
-    * @param jobID
+    * @param hits
     * @param params
     * @return
     */
-  def getHitsByKeyWord(jobID: String, params: DTParam): Future[List[HHBlitsHSP]] = {
+  def getHitsByKeyWord(hits : HHBlitsResult, params: DTParam): List[HHBlitsHSP] = {
     if (params.sSearch.isEmpty) {
-      mongoStore.getResult(jobID).map {
-        case Some(result) =>
-          hhblits
-            .hitsOrderBy(params, hhblits.parseResult(result).HSPS)
-            .slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
-      }
+      hits.hitsOrderBy(params).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
     } else {
-      ???
+      hits.hitsOrderBy(params).filter(_.description.contains(params.sSearch))
     }
-    //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
 
   /**
@@ -324,7 +316,8 @@ class HHblitsController @Inject()(webJarsUtil: WebJarsUtil,
     val start   = (json \ "start").as[Int]
     val end     = (json \ "end").as[Int]
     val wrapped = (json \ "wrapped").as[Boolean]
-    mongoStore.getResult(jobID).map {
+    resultFiles.getResults(jobID).map {
+      case None          => NotFound
       case Some(jsValue) =>
         val result = hhblits.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
@@ -353,24 +346,16 @@ class HHblitsController @Inject()(webJarsUtil: WebJarsUtil,
       request.getQueryString("sSortDir_0").getOrElse("asc")
     )
 
-    var db = ""
-    val total = mongoStore.getResult(jobID).map {
+    resultFiles.getResults(jobID).map {
+      case None          => NotFound
       case Some(jsValue) =>
         val result = hhblits.parseResult(jsValue)
-        db = result.db
-        result.num_hits
-    }
-    val hits = getHitsByKeyWord(jobID, params)
+        val hits = getHitsByKeyWord(result, params)
 
-    hits.flatMap { list =>
-      total.map { total_ =>
-        Ok(
-          Json
-            .toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
+        Ok(Json.toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))
             .as[JsObject]
-            .deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db))))
+            .deepMerge(Json.obj("aaData" -> hits.map(_.toDataTable(result.db))))
         )
       }
-    }
   }
 }

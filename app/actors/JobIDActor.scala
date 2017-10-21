@@ -5,8 +5,8 @@ import javax.inject.{ Inject, Singleton }
 import actors.JobIDActor._
 import akka.actor.{ ActorLogging, _ }
 import akka.event.LoggingReceive
-import models.search.JobDAO
-import modules.db.MongoStore
+import de.proteinevolution.models.search.JobDAO
+import de.proteinevolution.db.MongoStore
 import play.api.Logger
 import play.modules.reactivemongo.ReactiveMongoApi
 
@@ -19,7 +19,7 @@ import scala.concurrent.duration._
   * Created by zin on 04.04.17.
   */
 @Singleton
-class JobIDActor @Inject()(val jobDao: JobDAO) extends Actor with ActorLogging {
+class JobIDActor @Inject()(mongoStore: MongoStore) extends Actor with ActorLogging {
 
   private val fetchLatestInterval = 5.seconds
   private val iter = Iterator
@@ -34,7 +34,7 @@ class JobIDActor @Inject()(val jobDao: JobDAO) extends Actor with ActorLogging {
   // check ElasticSearch
 
   private def isValid(id: String): Future[Boolean] = {
-    jobDao.existsJobID(id).map { _.totalHits == 0 }
+    mongoStore.selectJob(id).map(_.isEmpty)
   }
 
   override def receive = LoggingReceive {

@@ -3,7 +3,6 @@
 #unset proxy variable
 export http_proxy=
 key=$(<../key)
-SGE_ID=""
 REPEATED=""
 
 trap 'sig_handler ERR' ERR
@@ -60,21 +59,8 @@ updateProcessLog () {
     done
 }
 
-if [ -e jobIDCluster ]
-then
-    SGE_ID=$(<jobIDCluster)
-fi
-
-
 until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/running/%jobid.content/$key); do
     printf 'host unreachable\n...waiting to set job status to running\n'
-    sleep 5
-done
-
-# Write sge id
-
-until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/sge/%jobid.content/${SGE_ID}); do
-    printf 'host unreachable\n...waiting to retrieve sge id\n'
     sleep 5
 done
 
@@ -88,6 +74,7 @@ mkdir ../logs
 
 # Set environment
 source %ENVIRONMENT
+
 
 if [ -f ../params/alignment ]; then
     FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)

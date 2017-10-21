@@ -1,6 +1,6 @@
 package models.tools
 
-import modules.tel.TEL
+import de.proteinevolution.tel.TEL
 import javax.inject.{ Inject, Singleton }
 
 import play.api.libs.functional.syntax._
@@ -40,11 +40,7 @@ case class Select(options: Seq[(String, String)]) extends ParamType {
 
   def validate(value: String): Option[String] = {
 
-    if (this.options.map(_._1).contains(value)) {
-      Some(value)
-    } else {
-      None
-    }
+    Some(value).filter(this.options.map(_._1).contains)
   }
 }
 
@@ -160,7 +156,7 @@ class ParamAccess @Inject()(tel: TEL) {
     case "GAP_TERM"         => Param("gap_term", Decimal("0.01", Some(0), Some(10)), 1, "Terminal gap penalty")
     case "GAP_EXT_KALN"     => Param("gap_ext_kaln", Decimal("0.01", Some(0), Some(10)), 1, "Gap extension penalty")
     case "BONUSSCORE"       => Param("bonusscore", Decimal("0.01", Some(0), Some(10)), 1, "Bonus Score")
-    case "DESC"             => Param("desc", ParamType.ConstrainedNumber, 1, "No. of target sequences (up to 10000)")
+    case "DESC"             => select("desc", "No. of target sequences (up to 10000)")
     case "CONSISTENCY" =>
       Param("consistency", ParamType.UnconstrainedNumber, 1, "Passes of consistency transformation")
     case "ITREFINE"               => Param("itrefine", ParamType.UnconstrainedNumber, 1, "Passes of iterative refinements")

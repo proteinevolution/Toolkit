@@ -3,12 +3,12 @@ package controllers
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
-import models.database.CMS.FeaturedArticle
+import de.proteinevolution.models.database.CMS.FeaturedArticle
+import de.proteinevolution.models.database.results.{Hmmer, PSIBlast}
+import de.proteinevolution.db.{MongoStore, ResultFileAccessor}
+import play.api.libs.json.Json
 import play.api.mvc._
 import reactivemongo.bson.BSONObjectID
-import play.api.libs.json.{ JsArray, JsObject, Json }
-import models.database.results.{ Hmmer, PSIBlast }
-import modules.db.MongoStore
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -20,14 +20,15 @@ class DataController @Inject()(mongoStore: MongoStore,
                                hmmerController: HmmerController,
                                hmmer: Hmmer,
                                psi: PSIBlast,
-                               cc: ControllerComponents)
+                               cc: ControllerComponents,
+                               resultFiles : ResultFileAccessor)
     extends AbstractController(cc) {
 
   /** Check whether the user is allowed to fetch the data for the particular job and retrieves the data with
     * stored given a particular key
     */
   def get(jobID: String): Action[AnyContent] = Action.async {
-    mongoStore.getResult(jobID).map {
+    resultFiles.getResults(jobID).map {
       case Some(jsValue) => Ok(jsValue)
       case None          => NotFound
     }
@@ -73,6 +74,41 @@ class DataController @Inject()(mongoStore: MongoStore,
     }
   }
 
-}
 
-case class DTParam(sSearch: String, iDisplayStart: Int, iDisplayLength: Int, iSortCol: Int, sSortDir: String)
+  def getHelp(toolname: String) = Action {
+    val help = toolname match{
+  case "psiblast" => views.html.help.psiblast()
+  case "hhblits" => views.html.help.hhblits()
+  case "hhpred" => views.html.help.hhpred()
+  case "hmmer" => views.html.help.hmmer()
+  case "patsearch" => views.html.help.patsearch()
+  case "clustalo" => views.html.help.clustalo()
+  case "kalign" => views.html.help.kalign()
+  case "mafft" => views.html.help.mafft()
+  case "msaprobs" => views.html.help.msaprobs()
+  case "muscle" => views.html.help.muscle()
+  case "tcoffee" => views.html.help.tcoffee()
+  case "aln2plot" => views.html.help.aln2plot()
+  case "hhrepid" => views.html.help.hhrepid()
+  case "marcoil" => views.html.help.marcoil()
+  case "pcoils" => views.html.help.pcoils()
+  case "repper" => views.html.help.repper()
+  case "tprpred" => views.html.help.tprpred()
+  case "ali2d" => views.html.help.ali2d()
+  case "quick2d" => views.html.help.quick2d()
+  case "modeller" => views.html.help.modeller()
+  case "samcc" => views.html.help.samcc()
+  case "ancescon" => views.html.help.ancescon()
+  case "clans" => views.html.help.clans()
+  case "mmseqs2" => views.html.help.mmseqs2()
+  case "phyml" => views.html.help.phyml()
+  case "sixframe" => views.html.help.sixframe()
+  case "backtrans" => views.html.help.backtrans()
+  case "hhfilter" => views.html.help.hhfilter()
+  case "retseq" => views.html.help.retseq()
+  case "seq2id" => views.html.help.seq2id()
+  }
+  Ok(help)
+  }
+
+}

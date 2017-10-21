@@ -1,0 +1,23 @@
+@()
+<div id="tabs">
+    <ul>
+        <li><a href="#tabs-1">Overview</a></li>
+        <li><a href="#tabs-2">Parameters</a></li>
+        <li><a href="#tabs-3">References</a></li>
+    </ul>
+    <div id="tabs-1" class="greenlink">
+        MMseqs2 (Many-against-Many searching) is a software suite to search and cluster huge protein sequence sets. MMseqs2 can run 10000 times faster than BLAST. At 100 times its speed it achieves the same sensitivity. It can also perform profile searches with the same sensitivity as PSI-BLAST but at around 270 times its speed.
+    </div>
+    <div id="tabs-2" class="greenlink">
+        <ul class="accordion" data-accordion data-allow-all-closed='true'>
+        </ul>
+    </div>
+    <div id="tabs-3" class="greenlink">
+        @help.citations.toolkit_citation()
+        <p>Steinegger M and Soeding J. Sensitive protein sequence searching for the analysis of massive data sets. bioRxiv, doi: 10.1101/079681 (2017).</p>
+    </div>
+</div>
+
+<script>
+        $(".accordion").foundation();
+</script>

@@ -7,37 +7,37 @@
   */
 package controllers
 
-import com.typesafe.config.ConfigFactory
-
-import scala.sys.process._
-import better.files._
-import models.Constants
-import models.database.results._
-import play.api.mvc._
 import javax.inject.Inject
 
-import modules.db.MongoStore
+import better.files._
+import com.typesafe.config.ConfigFactory
+import de.proteinevolution.models.Constants
+import de.proteinevolution.models.database.results.General.DTParam
+import de.proteinevolution.models.database.results._
+import de.proteinevolution.db.ResultFileAccessor
+import play.api.libs.json.{ JsArray, JsObject, Json }
+import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 
-import scala.concurrent.Future
-import play.api.libs.json.{ JsArray, JsObject, Json }
-
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.sys.process._
 
-class PSIBlastController @Inject()(psiblast: PSIBlast,
+class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
+                                   psiblast: PSIBlast,
                                    general: General,
                                    alignment: Alignment,
                                    constants: Constants,
-                                   mongoStore: MongoStore,
                                    val reactiveMongoApi: ReactiveMongoApi,
                                    cc: ControllerComponents)
     extends AbstractController(cc)
-    with Common {
+    with CommonController {
 
   /* gets the path to all scripts that are executed
      on the server (not executed on the grid engine) */
   private val serverScripts   = ConfigFactory.load().getString("serverScripts")
   private val retrieveFullSeq = (serverScripts + "/retrieveFullSeq.sh").toFile
+  private val retrieveAlnEval = (serverScripts + "/retrieveAlnEval.sh").toFile
 
   /**
     * Retrieves the full sequences of all hits with
@@ -63,7 +63,8 @@ class PSIBlastController @Inject()(psiblast: PSIBlast,
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
-      mongoStore.getResult(jobID).map {
+      resultFiles.getResults(jobID).map {
+        case None          => NotFound
         case Some(jsValue) =>
           val result        = psiblast.parseResult(jsValue)
           val accessionsStr = getAccessionsEval(result, eval.toDouble)
@@ -78,8 +79,6 @@ class PSIBlastController @Inject()(psiblast: PSIBlast,
             case 0 => Ok
             case _ => BadRequest
           }
-
-        case _ => NotFound
       }
     }
   }
@@ -107,7 +106,8 @@ class PSIBlastController @Inject()(psiblast: PSIBlast,
       Future.successful(BadRequest)
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
-      mongoStore.getResult(jobID).map {
+      resultFiles.getResults(jobID).map {
+        case None          => NotFound
         case Some(jsValue) =>
           val result        = psiblast.parseResult(jsValue)
           val accessionsStr = getAccessions(result, numList)
@@ -121,8 +121,6 @@ class PSIBlastController @Inject()(psiblast: PSIBlast,
             case 0 => Ok
             case _ => BadRequest
           }
-
-        case _ => NotFound
       }
     }
   }
@@ -144,11 +142,31 @@ class PSIBlastController @Inject()(psiblast: PSIBlast,
     *         encapsulated in the response
     */
   def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json = request.body.asJson.get
-    val eval = (json \ "evalue").as[String]
-    mongoStore.getResult(jobID).map {
-      case Some(jsValue) => Ok(getAlnEval(psiblast.parseResult(jsValue), eval.toDouble))
-      case _             => NotFound
+    // retrieve parameters from the request
+    val json     = request.body.asJson.get
+    val filename = (json \ "filename").as[String]
+    val eval     = (json \ "evalue").as[String]
+    // check if the retrieve script is executable
+    if (!retrieveAlnEval.isExecutable) {
+      Future.successful(BadRequest)
+      throw FileException(s"File ${retrieveAlnEval.name} is not executable.")
+    } else {
+      resultFiles.getResults(jobID).map {
+        case None          => NotFound
+        case Some(jsValue) =>
+          val result        = psiblast.parseResult(jsValue)
+          val accessionsStr = eval
+          val db            = result.db
+          // execute the script and pass parameters
+          Process(retrieveAlnEval.pathAsString,
+            (constants.jobPath + jobID).toFile.toJava,
+            "accessionsStr" -> accessionsStr,
+            "filename"      -> filename,
+            "mode"            -> "eval").run().exitValue() match {
+            case 0 => Ok
+            case _ => BadRequest
+          }
+      }
     }
   }
 
@@ -167,48 +185,32 @@ class PSIBlastController @Inject()(psiblast: PSIBlast,
     * @return Https response containing the aligned sequences as String
     */
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val numList = (json \ "checkboxes").as[List[Int]]
-    mongoStore.getResult(jobID).map {
-      case Some(jsValue) => Ok(getAln(alignment.parseAlignment((jsValue \ "alignment").as[JsArray]), numList))
-      case _             => NotFound
+    println("called")
+    val json     = request.body.asJson.get
+    val numList  = (json \ "checkboxes").as[List[Int]].mkString("\n")
+    val filename = (json \ "filename").as[String]
+    if (!retrieveAlnEval.isExecutable) {
+      Future.successful(BadRequest)
+      throw FileException(s"File ${retrieveAlnEval.name} is not executable.")
+    } else {
+      resultFiles.getResults(jobID).map {
+        case None          => NotFound
+        case Some(jsValue) =>
+          val result        = psiblast.parseResult(jsValue)
+          val accessionsStr = numList
+          val db            = result.db
+          Process(retrieveAlnEval.pathAsString,
+            (constants.jobPath + jobID).toFile.toJava,
+            "accessionsStr" -> accessionsStr,
+            "filename"      -> filename,
+            "mode"            -> "sel").run().exitValue() match {
+            case 0 => Ok
+            case _ => BadRequest
+          }
+      }
     }
-
   }
 
-  /**
-    * filters all HSPS that are below
-    * a given threshold from the PSIblast
-    * result model and returns a fasta
-    * of the filtered hits
-    * @param result
-    * @param eval
-    * @return fasta as String
-    */
-  def getAlnEval(result: PSIBlastResult, eval: Double): String = {
-    val fas = result.HSPS.filter(_.evalue < eval).map { hit =>
-      // not hit-num -1 because alginments adds query (+1) to beginning of retrieved file
-      ">" + result.alignment(hit.num).accession + "\n" + result.alignment(hit.num).seq + "\n"
-    }
-    fas.mkString
-  }
-
-  /**
-    * given an array of hit numbers this method
-    * returns a fasta containing the corresponding
-    * aligned hits
-    *
-    * @param alignment
-    * @param numList
-    * @return fasta as String
-    */
-  def getAln(alignment: AlignmentResult, numList: Seq[Int]): String = {
-    val fas = numList.map { num =>
-      // not hit-num -1 because alginments adds query (+1) to beginning of retrieved file
-      ">" + alignment.alignment(num).accession + "\n" + alignment.alignment(num).seq + "\n"
-    }
-    fas.mkString
-  }
 
   /**
     * given an array of hit numbers this method
@@ -241,25 +243,20 @@ class PSIBlastController @Inject()(psiblast: PSIBlast,
     fas.mkString
   }
 
+
   /**
     * given dataTable specific paramters, this function
     * filters for eg. a specific column and returns the data
-    * @param jobID
+    * @param hits
     * @param params
     * @return
     */
-  def getHitsByKeyWord(jobID: String, params: DTParam): Future[List[PSIBlastHSP]] = {
+  def getHitsByKeyWord(hits : PSIBlastResult, params: DTParam): List[PSIBlastHSP] = {
     if (params.sSearch.isEmpty) {
-      mongoStore.getResult(jobID).map {
-        case Some(result) =>
-          psiblast
-            .hitsOrderBy(params, psiblast.parseResult(result).HSPS)
-            .slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
-      }
+      hits.hitsOrderBy(params).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
     } else {
-      ???
+      hits.hitsOrderBy(params).filter(_.description.contains(params.sSearch))
     }
-    //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
 
   /**
@@ -282,7 +279,8 @@ class PSIBlastController @Inject()(psiblast: PSIBlast,
     val start   = (json \ "start").as[Int]
     val end     = (json \ "end").as[Int]
     val wrapped = (json \ "wrapped").as[Boolean]
-    mongoStore.getResult(jobID).map {
+    resultFiles.getResults(jobID).map {
+      case None          => NotFound
       case Some(jsValue) =>
         val result = psiblast.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
@@ -292,7 +290,6 @@ class PSIBlastController @Inject()(psiblast: PSIBlast,
             result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.psiblast.hit(jobID, _, result.db, wrapped))
           Ok(hits.mkString)
         }
-
     }
   }
 
@@ -312,26 +309,17 @@ class PSIBlastController @Inject()(psiblast: PSIBlast,
       request.getQueryString("sSortDir_0").getOrElse("asc")
     )
 
-    var db = ""
-    val total = mongoStore.getResult(jobID).map {
+    resultFiles.getResults(jobID).map {
+      case None          => NotFound
       case Some(jsValue) =>
         val result = psiblast.parseResult(jsValue)
-        db = result.db
-        result.num_hits
-
-    }
-    val hits = getHitsByKeyWord(jobID, params)
-
-    hits.flatMap { list =>
-      total.map { total_ =>
+        val hits = getHitsByKeyWord(result, params)
         Ok(
           Json
-            .toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
+            .toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))
             .as[JsObject]
-            .deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db))))
+            .deepMerge(Json.obj("aaData" -> hits.map(_.toDataTable(result.db))))
         )
-      }
     }
   }
-
 }

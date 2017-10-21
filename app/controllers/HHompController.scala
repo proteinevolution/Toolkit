@@ -4,9 +4,10 @@ import javax.inject.Inject
 
 import better.files._
 import com.typesafe.config.ConfigFactory
-import models.Constants
-import models.database.results.{ HHomp, HHompHSP, HHompResult }
-import modules.db.MongoStore
+import de.proteinevolution.models.Constants
+import de.proteinevolution.models.database.results.General.DTParam
+import de.proteinevolution.models.database.results.{ HHomp, HHompHSP, HHompResult }
+import de.proteinevolution.db.ResultFileAccessor
 import play.api.Logger
 import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc._
@@ -22,13 +23,13 @@ import scala.sys.process._
   * HHpred Controller process all requests
   * made from the HHpred result view
   */
-class HHompController @Inject()(hhomp: HHomp,
-                                mongoStore: MongoStore,
+class HHompController @Inject()(resultFiles : ResultFileAccessor,
+                                hhomp: HHomp,
                                 val reactiveMongoApi: ReactiveMongoApi,
                                 constants: Constants,
                                 cc: ControllerComponents)
     extends AbstractController(cc)
-    with Common {
+    with CommonController {
 
   /* gets the path to all scripts that are executed
      on the server (not executed on the grid eninge) */
@@ -68,23 +69,16 @@ class HHompController @Inject()(hhomp: HHomp,
   /**
     * given dataTable specific paramters, this function
     * filters for eg. a specific column and returns the data
-    *
-    * @param jobID
+    * @param hits
     * @param params
     * @return
     */
-  def getHitsByKeyWord(jobID: String, params: DTParam): Future[List[HHompHSP]] = {
+  def getHitsByKeyWord(hits : HHompResult, params: DTParam): List[HHompHSP] = {
     if (params.sSearch.isEmpty) {
-      mongoStore.getResult(jobID).map {
-        case Some(result) =>
-          hhomp
-            .hitsOrderBy(params, hhomp.parseResult(result).HSPS)
-            .slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
-      }
+      hits.hitsOrderBy(params).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
     } else {
-      ???
+      hits.hitsOrderBy(params).filter(_.description.contains(params.sSearch))
     }
-    //case false => (for (s <- getHits if (title.startsWith(params.sSearch))) yield (s)).list
   }
 
   /**
@@ -109,7 +103,8 @@ class HHompController @Inject()(hhomp: HHomp,
     val end     = (json \ "end").as[Int]
     val isColor = (json \ "isColor").as[Boolean]
     val wrapped = (json \ "wrapped").as[Boolean]
-    mongoStore.getResult(jobID).map {
+    resultFiles.getResults(jobID).map {
+      case None          => NotFound
       case Some(jsValue) =>
         val result = hhomp.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
@@ -130,14 +125,6 @@ class HHompController @Inject()(hhomp: HHomp,
     * @return
     */
   def dataTable(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    var db = ""
-    val total = mongoStore.getResult(jobID).map {
-      case Some(jsValue) =>
-        val result = hhomp.parseResult(jsValue)
-        db = result.db
-        result.num_hits
-
-    }
     val params = DTParam(
       request.getQueryString("sSearch").getOrElse(""),
       request.getQueryString("iDisplayStart").getOrElse("0").toInt,
@@ -145,18 +132,17 @@ class HHompController @Inject()(hhomp: HHomp,
       request.getQueryString("iSortCol_0").getOrElse("1").toInt,
       request.getQueryString("sSortDir_0").getOrElse("asc")
     )
-
-    val hits = getHitsByKeyWord(jobID, params)
-
-    hits.flatMap { list =>
-      total.map { total_ =>
+    resultFiles.getResults(jobID).map {
+      case None          => NotFound
+      case Some(jsValue) =>
+        val result = hhomp.parseResult(jsValue)
+        val hits = getHitsByKeyWord(result, params)
         Ok(
           Json
-            .toJson(Map("iTotalRecords" -> total_, "iTotalDisplayRecords" -> total_))
+            .toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))
             .as[JsObject]
-            .deepMerge(Json.obj("aaData" -> list.map(_.toDataTable(db))))
+            .deepMerge(Json.obj("aaData" -> hits.map(_.toDataTable(result.db))))
         )
-      }
     }
   }
 }

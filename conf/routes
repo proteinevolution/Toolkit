@@ -11,32 +11,37 @@
 ############################################################################
 
 # Index Page requested by user. Note that the controller is injected
-GET           /                                       @controllers.Application.index()
+GET           /                                       controllers.Application.index()
 
 GET           /javascriptRoutes                       controllers.Application.javascriptRoutes
 
+GET           /sitemapgen                             controllers.Application.sitemapGenerator
+GET           /sitemap.xml                            controllers.Assets.at(path="/public", file = "sitemap.xml")
+GET           /sitemap.xml.gz                         controllers.Assets.at(path="/public", file = "sitemap.xml.gz")
+
 # Dashboard for Admin
 
-POST          /settings/clustermode                   @controllers.Settings.setClusterMode(clusterMode : String)
+POST          /settings/clustermode                   controllers.Settings.setClusterMode(clusterMode : String)
 
 # integrated mithril route backend routes
-GET           /backend/index                          @controllers.Backend.index
-GET           /backend/statistics                     @controllers.Backend.statistics
-DELETE        /backend/runusersweep                   @controllers.Backend.runUserSweep
-GET           /backend/cms                            @controllers.Backend.cms
-POST          /backend/cms                            @controllers.Backend.cms
-GET           /backend/users                          @controllers.Backend.users
-POST          /backend/users                          @controllers.Backend.users
+GET           /backend/index                          controllers.Backend.index
+GET           /backend/statistics                     controllers.Backend.statistics
+GET           /backend/runusersweep                   controllers.Backend.runUserSweep
+GET           /backend/runjobsweep                    controllers.Backend.runJobSweep
+GET           /backend/cms                            controllers.Backend.cms
+POST          /backend/cms                            controllers.Backend.cms
+GET           /backend/users                          controllers.Backend.users
+POST          /backend/users                          controllers.Backend.users
 
 # Websocket
-GET           /ws                                     @controllers.Application.ws
+GET           /ws                                     controllers.Application.ws
 
 # Maintenance
 POST          /maintenance                            controllers.Application.maintenance
 GET           /uptime                                 controllers.UptimeController.uptime
 
 # Serve files
-GET           /files/:mainID/:filename                @controllers.Application.file(filename: String, mainID: String)
+GET           /files/:mainID/:filename                controllers.Application.file(filename: String, mainID: String)
 
 
 
@@ -49,139 +54,146 @@ GET           /assets/*file                           controllers.Assets.version
 
 
 # Route for direct get requests
-GET           /tools/:toolname                        @controllers.Application.showTool(toolname : String)
+GET           /tools/:toolname                        controllers.Application.showTool(toolname : String)
 # Redirects to a job with the jobID // mainID
-GET           /jobs/:idString                         @controllers.Application.showJob(idString: String)
+GET           /jobs/:idString                         controllers.Application.showJob(idString: String)
 
 
 # Contact
 
 # Routes for Auth Service
-GET           /userData                               @controllers.Auth.getUserData
-POST          /signin                                 @controllers.Auth.signInSubmit()
-POST          /signup                                 @controllers.Auth.signUpSubmit()
-GET           /signout                                @controllers.Auth.signOut()
-POST          /resetPassword                          @controllers.Auth.resetPassword
-POST          /resetPasswordChange                    @controllers.Auth.resetPasswordChange
-POST          /profile                                @controllers.Auth.profileSubmit()
-POST          /password                               @controllers.Auth.passwordChangeSubmit()
-POST          /profile/submit/userData/               @controllers.Auth.profileSubmit()
-POST          /profile/submit/password/               @controllers.Auth.passwordChangeSubmit()
-GET           /verification/:userName/:token          @controllers.Auth.verification(userName : String, token : String)
-GET           /getCurrentUser                         @controllers.Auth.profile2json()
+GET           /userData                               controllers.Auth.getUserData
+POST          /signin                                 controllers.Auth.signInSubmit()
+POST          /signup                                 controllers.Auth.signUpSubmit()
+GET           /signout                                controllers.Auth.signOut()
+POST          /resetPassword                          controllers.Auth.resetPassword
+POST          /resetPasswordChange                    controllers.Auth.resetPasswordChange
+POST          /profile                                controllers.Auth.profileSubmit()
+POST          /password                               controllers.Auth.passwordChangeSubmit()
+POST          /profile/submit/userData/               controllers.Auth.profileSubmit()
+POST          /profile/submit/password/               controllers.Auth.passwordChangeSubmit()
+GET           /verification/:userName/:token          controllers.Auth.verification(userName : String, token : String)
+GET           /getCurrentUser                         controllers.Auth.profile2json()
 
 # Update Job status (should be server internal access only)
-POST          /jobs/done/:jobID/:key                  @controllers.Jobs.jobStatusDone(jobID : String, key: String)
-POST          /jobs/error/:jobID/:key                 @controllers.Jobs.jobStatusError(jobID : String, key: String)
-POST          /jobs/running/:jobID/:key               @controllers.Jobs.jobStatusRunning(jobID : String, key: String)
-POST          /jobs/queued/:jobID/:key                @controllers.Jobs.jobStatusQueued(jobID : String, key: String)
-POST          /jobs/sge/:jobID/:sgeID                 @controllers.Jobs.SGEID(jobID: String, sgeID: String)
-POST          /jobs/message/:mainID                   @controllers.Jobs.pushMessage(mainID, message: String)
-POST          /jobs/dateviewed/:mainID                @controllers.Jobs.updateDateViewed(mainID)
+POST          /jobs/done/:jobID/:key                  controllers.Jobs.jobStatusDone(jobID : String, key: String)
+POST          /jobs/error/:jobID/:key                 controllers.Jobs.jobStatusError(jobID : String, key: String)
+POST          /jobs/running/:jobID/:key               controllers.Jobs.jobStatusRunning(jobID : String, key: String)
+POST          /jobs/queued/:jobID/:key                controllers.Jobs.jobStatusQueued(jobID : String, key: String)
+POST          /jobs/sge/:jobID/:sgeID/:key            controllers.Jobs.SGEID(jobID: String, sgeID: String, key: String)
+POST          /jobs/message/:mainID                   controllers.Jobs.pushMessage(mainID, message: String)
+POST          /jobs/dateviewed/:mainID                controllers.Jobs.updateDateViewed(mainID)
 # update process log
-POST          /jobs/updateLog/:jobID                  @controllers.Jobs.updateLog(jobID : String)
+POST          /jobs/updateLog/:jobID                  controllers.Jobs.updateLog(jobID : String)
 
 
 # Validation Controller
 
-POST          /validate/modeller                      @controllers.Auth.validateModellerKey(input: String)
+POST          /validate/modeller                      controllers.Auth.validateModellerKey(input: String)
 
 # Cluster
 
-GET           /load                                   @controllers.ClusterController.getLoad
+GET           /load                                   controllers.ClusterController.getLoad
 
 # Static route
-GET           /static/get/:static                     @controllers.Service.static(static : String)
+GET           /static/get/:static                     controllers.Service.static(static : String)
 
 # Search controller access
-GET           /jobs                                   @controllers.Search.get
-GET           /indexPageInfo                          @controllers.Search.getIndexPageInfo
-GET           /search/checkJobID/:jobID               @controllers.Search.checkJobID(jobID : String, resubmit : Boolean)
-GET           /getToolList                            @controllers.Search.getToolList
-GET           /suggest/:jobID                         @controllers.Search.autoComplete(jobID: String)
-GET           /checktool/:tool                        @controllers.Search.existsTool(tool: String)
+GET           /jobs                                   controllers.Search.get
+GET           /indexPageInfo                          controllers.Search.getIndexPageInfo
+GET           /search/checkJobID/:jobID               controllers.Search.checkJobID(jobID : String, resubmitJobID : Option[String])
+GET           /getToolList                            controllers.Search.getToolList
+GET           /suggest/:jobID                         controllers.Search.autoComplete(jobID: String)
+GET           /checktool/:tool                        controllers.Search.existsTool(tool: String)
 
 
 
 # Sitemap
 # Routes for static assets
-GET           /:static                                @controllers.Application.static(static : String)
+GET           /robots.txt                             controllers.Application.robots
+GET           /:static                                controllers.Application.static(static : String)
 
 
 # GetTool
-GET           /api/tools/:toolname                    @controllers.Service.getTool(toolname)
+GET           /api/tools/:toolname                    controllers.Service.getTool(toolname)
 
 
 # Get list of userjobs
-GET           /api/jobs                               @controllers.JobController.listJobs
+GET           /api/jobs                               controllers.JobController.listJobs
 # Submit a job directly
-POST          /api/job                                @controllers.JobController.submitJob(toolName: String)
-GET           /api/job/:jobID/start                   @controllers.JobController.startJob(jobID: String)
-GET           /api/job/:jobID/checkHash               @controllers.JobController.checkHash(jobID: String)
-GET           /api/job/:jobID                         @controllers.Service.getJob(jobID)
-GET           /api/job/result/:jobID/:tool/:panel     @controllers.Service.getResult(jobID : String, tool: String, panel: String)
-DELETE        /api/job/:jobID                         @controllers.JobController.delete(jobID)
-GET           /api/job/load/:jobID                    @controllers.JobController.loadJob(jobID: String)
+POST          /api/job                                controllers.JobController.submitJob(toolName: String)
+GET           /api/job/:jobID/start                   controllers.JobController.startJob(jobID: String)
+GET           /api/job/:jobID/checkHash               controllers.JobController.checkHash(jobID: String)
+GET           /api/job/:jobID                         controllers.Service.getJob(jobID)
+GET           /api/job/result/:jobID/:tool/:panel     controllers.Service.getResult(jobID : String, tool: String, panel: String)
+DELETE        /api/job/:jobID                         controllers.JobController.delete(jobID)
+GET           /api/job/load/:jobID                    controllers.JobController.loadJob(jobID: String)
 
 # Frontend Stuff
-POST          /api/frontendSubmit/:toolname           @controllers.Tool.frontendCount(toolname: String)
+POST          /api/frontendSubmit/:toolname           controllers.Tool.frontendCount(toolname: String)
 
 # Results
-GET           /api/job/results/:jobID                 @controllers.DataController.get(jobID: String)
+GET           /api/job/results/:jobID                 controllers.DataController.get(jobID: String)
+
+#Help
+GET           /getHelp/:tool                          controllers.DataController.getHelp(tool: String)
 
 # DataTables
-GET  /api/job/results/dataTableHmmer/:jobID           @controllers.HmmerController.dataTable(jobID: String)
-GET  /api/job/results/dataTablePSIBlast/:jobID        @controllers.PSIBlastController.dataTable(jobID: String)
-GET  /api/job/results/dataTableHHpred/:jobID          @controllers.HHpredController.dataTable(jobID: String)
-GET  /api/job/results/dataTableHHblits/:jobID         @controllers.HHblitsController.dataTable(jobID: String)
-GET  /api/job/results/dataTableHHomp/:jobID           @controllers.HHompController.dataTable(jobID: String)
+GET  /api/job/results/dataTableHmmer/:jobID           controllers.HmmerController.dataTable(jobID: String)
+GET  /api/job/results/dataTablePSIBlast/:jobID        controllers.PSIBlastController.dataTable(jobID: String)
+GET  /api/job/results/dataTableHHpred/:jobID          controllers.HHpredController.dataTable(jobID: String)
+GET  /api/job/results/dataTableHHblits/:jobID         controllers.HHblitsController.dataTable(jobID: String)
+GET  /api/job/results/dataTableHHomp/:jobID           controllers.HHompController.dataTable(jobID: String)
 
 
 # Article
-GET  /api/getRecentArticles/:numArticles              @controllers.DataController.getRecentArticles(numArticles: Integer)
+GET  /api/getRecentArticles/:numArticles              controllers.DataController.getRecentArticles(numArticles: Integer)
 
 # 3D structure
-GET         /structure3D/:accession                   @controllers.HHpredController.show3DStructure(accession : String)
-GET         /getStructure/:filename                   @controllers.Application.getStructureFile(filename : String)
+GET         /structure3D/:accession                   controllers.HHpredController.show3DStructure(accession : String)
+GET         /getStructure/:filename                   controllers.Application.getStructureFile(filename : String)
 # template alignment
-GET  /templateAlignment/:jobID/:accession             @controllers.HHpredController.retrieveTemplateAlignment(jobID : String, accession: String)
-GET  /templateAlignmentHHblits/:jobID/:accession      @controllers.HHblitsController.retrieveTemplateAlignment(jobID : String, accession: String)
-GET  /templateAlignmentHHomp/:jobID/:accession        @controllers.HHompController.retrieveTemplateAlignment(jobID : String, accession: String)
+GET  /templateAlignment/:jobID/:accession             controllers.HHpredController.retrieveTemplateAlignment(jobID : String, accession: String)
+GET  /templateAlignmentHHblits/:jobID/:accession      controllers.HHblitsController.retrieveTemplateAlignment(jobID : String, accession: String)
+GET  /templateAlignmentHHomp/:jobID/:accession        controllers.HHompController.retrieveTemplateAlignment(jobID : String, accession: String)
 
 
 # Hmmer
-POST        /HmmerLoadHits                            @controllers.HmmerController.loadHits(jobID: String)
-POST        /alnEvalHmmer                             @controllers.HmmerController.alnEval(jobID: String)
-POST        /alnHmmer                                 @controllers.HmmerController.aln(jobID: String)
-POST        /evalHmmerFull                            @controllers.HmmerController.evalFull(jobID: String)
-POST        /HmmerFull                                @controllers.HmmerController.full(jobID: String)
+POST        /HmmerLoadHits                            controllers.HmmerController.loadHits(jobID: String)
+POST        /alnEvalHmmer                             controllers.HmmerController.alnEval(jobID: String)
+POST        /alnHmmer                                 controllers.HmmerController.aln(jobID: String)
+POST        /evalHmmerFull                            controllers.HmmerController.evalFull(jobID: String)
+POST        /HmmerFull                                controllers.HmmerController.full(jobID: String)
 
 # PSIblast
 
-POST        /evalPSIBlast                             @controllers.PSIBlastController.alnEval(jobID: String)
-POST        /alnPSIBlast                              @controllers.PSIBlastController.aln(jobID: String)
-POST        /evalPSIBlastFull                         @controllers.PSIBlastController.evalFull(jobID: String)
-POST        /PSIBlastFull                             @controllers.PSIBlastController.full(jobID: String)
-POST        /PSIBlastLoadHits                         @controllers.PSIBlastController.loadHits(jobID: String)
+POST        /evalPSIBlast                             controllers.PSIBlastController.alnEval(jobID: String)
+POST        /alnPSIBlast                              controllers.PSIBlastController.aln(jobID: String)
+POST        /evalPSIBlastFull                         controllers.PSIBlastController.evalFull(jobID: String)
+POST        /PSIBlastFull                             controllers.PSIBlastController.full(jobID: String)
+POST        /PSIBlastLoadHits                         controllers.PSIBlastController.loadHits(jobID: String)
 
 
 # HHblits
-POST        /evalHHBlits                              @controllers.HHblitsController.alnEval(jobID: String)
-POST        /alnHHBlits                               @controllers.HHblitsController.aln(jobID:String)
-POST        /evalHHBlitsFull                          @controllers.HHblitsController.evalFull(jobID : String)
-POST        /HHBlitsFull                              @controllers.HHblitsController.full(jobID : String)
-POST        /HHblitsLoadHits                          @controllers.HHblitsController.loadHits(jobID: String)
+POST        /evalHHBlits                              controllers.HHblitsController.alnEval(jobID: String)
+POST        /alnHHBlits                               controllers.HHblitsController.aln(jobID:String)
+POST        /evalHHBlitsFull                          controllers.HHblitsController.evalFull(jobID : String)
+POST        /HHBlitsFull                              controllers.HHblitsController.full(jobID : String)
+POST        /HHblitsLoadHits                          controllers.HHblitsController.loadHits(jobID: String)
 
 # HHPred
-POST        /evalHHpred                               @controllers.HHpredController.alnEval(jobID: String)
-POST        /alnHHpred                                @controllers.HHpredController.aln(jobID:String)
-POST        /HHpredLoadHits                           @controllers.HHpredController.loadHits(jobID: String)
+POST        /evalHHpred                               controllers.HHpredController.alnEval(jobID: String)
+POST        /alnHHpred                                controllers.HHpredController.aln(jobID:String)
+POST        /HHpredLoadHits                           controllers.HHpredController.loadHits(jobID: String)
 
 # Alignment
-POST        /AlignmentLoadHits/:jobID                 @controllers.AlignmentController.loadHits(jobID: String)
-POST        /AlignmentLoadHitsClustal/:jobID          @controllers.AlignmentController.loadHitsClustal(jobID: String)
-POST        /AlignmentGetAln                          @controllers.AlignmentController.getAln(jobID: String)
+POST        /AlignmentLoadHits/:jobID                 controllers.AlignmentController.loadHits(jobID: String)
+POST        /AlignmentLoadHitsClustal/:jobID          controllers.AlignmentController.loadHitsClustal(jobID: String)
+POST        /AlignmentGetAln                          controllers.AlignmentController.getAln(jobID: String)
 
 
 #HHomp
-POST        /HHompLoadHits                           @controllers.HHompController.loadHits(jobID: String)
+POST        /HHompLoadHits                            controllers.HHompController.loadHits(jobID: String)
+
+#REST API
+->          /headless                                 headless.Routes
