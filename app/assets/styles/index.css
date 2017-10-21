@@ -268,11 +268,8 @@ td#joblistIcon {
 td#joblistIcon i {
     opacity: 0.9;
     line-height: 1em;
-    font-size: 1.3em;;
-}
-
-.liveTable .icon-list {
-    font-size: 2em;
+    font-size: 1.3em;
+    margin-left: 1.5em;
 }
 
 #indexLoadBar {

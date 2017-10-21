@@ -448,6 +448,11 @@
 }
 
 .flat-slider.ui-slider-horizontal {
+    height: 6px;
+
+}
+
+.flat-slider.ui-slider-horizontal {
     height: 4px;
 }
 

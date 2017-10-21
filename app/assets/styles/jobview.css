@@ -63,7 +63,7 @@
 .alignmentParameter input {
     background-color: transparent;
     color: black;
-    float: left;
+    float: left !important;
     padding-left: 0;
     padding-right: 0;
     margin-left: 0 !important;
@@ -108,6 +108,8 @@
     width: 9.5em;
     float: right;
     border-radius: 3px;
+    font-size: 0.75em;
+    padding-left: 1.3em;
 }
 
 .submitbuttons .jobid.white {
@@ -726,7 +728,6 @@ textarea:focus{
 @media screen and (min-width: 756px) {
 
     .select2-container--default .select2-selection--multiple .select2-selection__rendered {
-
         list-style: none;
         margin: 0;
         padding: 0 5px;
@@ -901,6 +902,10 @@ h6 {
 #select2-patsearchdb-container {
     width: 17.35em;
     color: #000;
+}
+
+#select2-proteomes-results {
+    width: 300px;
 }
 
 .select2-search {
