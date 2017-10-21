@@ -10,6 +10,7 @@ const tooltipSearch = function(elem : any, isInit : boolean) {
 interface Window { JobListComponent: any; }
 
 declare var jobList : any;
+declare var jobListTwo : any;
 
 window.JobListComponent = {
 
@@ -193,6 +194,8 @@ window.JobListComponent = {
 
         jobList.redraw.strategy("diff");
         jobList.redraw(true);
+        jobListTwo.redraw.strategy("diff");
+        jobListTwo.redraw(true);
 
     },
     selectJob : function() {

@@ -1,6 +1,6 @@
 /**
-  * Created by snam on 05.01.17.
-  */
+ * Created by snam on 05.01.17.
+ */
 import co.technius.scalajs.mithril._
 import org.scalajs.dom.raw.HTMLDivElement
 import scala.scalajs.js
@@ -37,7 +37,8 @@ object Router extends js.JSApp {
     // in absence of multi-tenancy support: mount the joblist, which gets redrawn independently from other view changes, in a separate mithril instance
 
     g.jobList = g.m.deps.factory(g.window)
-    g.jobList.mount(g.document.getElementById("off-canvas-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
+    g.jobListTwo = g.m.deps.factory(g.window)
+    g.jobListTwo.mount(g.document.getElementById("off-canvas-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
     g.jobList.mount(g.document.getElementById("sidebar").asInstanceOf[HTMLDivElement], JobListComponent)
 
   }
