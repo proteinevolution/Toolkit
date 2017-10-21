@@ -1,10 +1,10 @@
 package actors
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
 import actors.ClusterMonitor._
 import actors.WebSocketActor.MaintenanceAlert
-import akka.actor.{ ActorLogging, _ }
+import akka.actor.{ActorLogging, _}
 import akka.event.LoggingReceive
 import controllers.Settings
 import de.proteinevolution.models.database.statistics.ClusterLoadEvent
@@ -15,6 +15,7 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.models.Constants
 import de.proteinevolution.parsers.Ops.QStat
+import de.proteinevolution.tel.env.Env
 import play.api.Logger
 import reactivemongo.bson.BSONObjectID
 import services.JobActorAccess
@@ -33,6 +34,7 @@ final class ClusterMonitor @Inject()(cluster: Cluster,
                                      mongoStore: MongoStore,
                                      jobActorAccess: JobActorAccess,
                                      val settings: Settings,
+                                     val env: Env,
                                      constants: Constants)
     extends Actor
     with ActorLogging {
@@ -73,7 +75,9 @@ final class ClusterMonitor @Inject()(cluster: Cluster,
       val load : Double = qStat.totalJobs().toDouble / constants.loadPercentageMarker
 
       jobActorAccess.broadcast(PolledJobs(qStat))
-      Logger.info(s"[ClusterMonitor] Jobs currently listed in the cluster:\n${qStat.qStatJobs.map(_.sgeID).mkString(", ")}")
+
+      if(env.get("hostname").startsWith("rye")) // easier for development if this is muted
+        Logger.info(s"[ClusterMonitor] Jobs currently listed in the cluster:\n${qStat.qStatJobs.map(_.sgeID).mkString(", ")}")
 
       /**
         * dynamically adjust the cluster resources dependent on the current cluster load

@@ -16,8 +16,8 @@ import scala.util.Random
 import scala.concurrent.duration._
 
 /**
-  * Created by zin on 04.04.17.
-  */
+ * Created by zin on 04.04.17.
+ */
 @Singleton
 class JobIDActor @Inject()(mongoStore: MongoStore) extends Actor with ActorLogging {
 
@@ -30,8 +30,6 @@ class JobIDActor @Inject()(mongoStore: MongoStore) extends Actor with ActorLoggi
     // scheduler should use the system dispatcher
     context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, Refill)(context.system.dispatcher)
   }
-
-  // check ElasticSearch
 
   private def isValid(id: String): Future[Boolean] = {
     mongoStore.selectJob(id).map(_.isEmpty)
