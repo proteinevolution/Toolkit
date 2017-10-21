@@ -5,14 +5,14 @@ import javax.inject.{ Inject, Singleton }
 
 import actors.WebSocketActor.{ ChangeSessionID, LogOut }
 import akka.actor.ActorRef
-import models.{ Constants, UserSessions }
+import de.proteinevolution.common.LocationProvider
+import de.proteinevolution.models.Constants
+import models.UserSessions
 import models.auth._
-import models.database.users.{ User, UserConfig, UserToken }
-import models.job.JobActorAccess
+import de.proteinevolution.models.database.users.{ User, UserConfig, UserToken }
 import models.mailing.{ ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail }
 import models.tools.ToolFactory
-import modules.LocationProvider
-import modules.db.MongoStore
+import de.proteinevolution.db.MongoStore
 import play.Logger
 import play.api.cache._
 import play.api.i18n.{ I18nSupport, MessagesApi }
@@ -22,6 +22,7 @@ import play.api.libs.mailer._
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.bson._
 import org.webjars.play.WebJarsUtil
+import services.JobActorAccess
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ Await, Future }
@@ -47,7 +48,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
     extends AbstractController(cc)
     with I18nSupport
     with JSONTemplate
-    with Common
+    with CommonController
     with ReactiveMongoComponents {
 
   /**

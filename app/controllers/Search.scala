@@ -1,20 +1,21 @@
 package controllers
 
-import models.database.jobs.Job
+import de.proteinevolution.models.database.jobs.Job
 import play.Logger
-import models.{Constants, UserSessions}
+import models.UserSessions
 import play.api.cache._
 import play.api.libs.json.Json
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
+import de.proteinevolution.common.LocationProvider
+import de.proteinevolution.models.Constants
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import models.search.JobDAO
+import de.proteinevolution.models.search.JobDAO
 import models.tools.ToolFactory
-import modules.LocationProvider
-import modules.db.MongoStore
+import de.proteinevolution.db.MongoStore
 import play.api.mvc._
 
 import scala.concurrent.Future
@@ -33,7 +34,7 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Sy
                              cc: ControllerComponents)
     extends AbstractController(cc)
     with ReactiveMongoComponents
-    with Common {
+    with CommonController {
 
   def getToolList: Action[AnyContent] = Action {
     Ok(

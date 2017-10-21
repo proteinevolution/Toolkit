@@ -4,9 +4,8 @@ import java.io.{ FileInputStream, ObjectInputStream }
 import javax.inject.{ Inject, Singleton }
 
 import akka.util.Timeout
-import models.{ Constants, UserSessions }
-import models.database.jobs.{ Done, JobState, Jobitem }
-import models.database.users.User
+import models.UserSessions
+import de.proteinevolution.models.database.jobs.{ Done, JobState }
 import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{ I18nSupport, MessagesApi }
@@ -14,14 +13,15 @@ import play.api.mvc._
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import better.files._
 import models.tools.{ Param, ToolFactory, Toolitem }
-import modules.LocationProvider
-import modules.db.MongoStore
+import de.proteinevolution.db.MongoStore
 import java.time.format.DateTimeFormatter
-import play.api.data.validation.ValidationError
+
+import de.proteinevolution.common.LocationProvider
+import de.proteinevolution.models.Constants
+import models.tools.JobItem.Jobitem
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.twirl.api.Html
-import reactivemongo.bson.{ BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -48,7 +48,7 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
     with I18nSupport
     with ReactiveMongoComponents {
 
-  implicit val timeout = Timeout(1.seconds)
+  implicit val timeout: Timeout = Timeout(1.seconds)
 
   def static(static: String): Action[AnyContent] = Action { implicit request =>
     static match {
