@@ -3,8 +3,8 @@
  */
 lazy val commonSettings = Seq(
   version := "0.1.0",
-  scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.11.8", "2.12.4"),
+  scalaVersion := "2.11.11",
+  crossScalaVersions := Seq("2.11.11", "2.12.4"),
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   logLevel := Level.Warn,
@@ -42,8 +42,8 @@ lazy val headless = (project in file("modules/headless"))
   .dependsOn(common)
   .settings(
     disableDocs,
-    scalaVersion := "2.11.8",
-    crossScalaVersions := Seq("2.11.8", "2.12.4")
+    scalaVersion := "2.11.11",
+    crossScalaVersions := Seq("2.11.11", "2.12.4")
   )
 
 // shared stuff
@@ -52,8 +52,8 @@ lazy val common = (project in file("modules/common"))
   .settings(
     TwirlKeys.templateImports := Seq.empty,
     disableDocs,
-    scalaVersion := "2.11.8",
-    crossScalaVersions := Seq("2.11.8", "2.12.4")
+    scalaVersion := "2.11.11",
+    crossScalaVersions := Seq("2.11.11", "2.12.4")
   )
   .disablePlugins(PlayLayoutPlugin)
 
@@ -101,7 +101,7 @@ resolvers += "Madoushi sbt-plugins" at "https://dl.bintray.com/madoushi/sbt-plug
 
 lazy val client = (project in file("client"))
   .settings(
-    scalaVersion := "2.11.8",
+    scalaVersion := "2.11.11",
     scalaJSUseMainModuleInitializer := true,
     scalaJSUseMainModuleInitializer in Test := false,
     libraryDependencies ++= Seq(
@@ -132,5 +132,7 @@ scalacOptions ++= Seq(
 )
 
 scalacOptions in Test ++= Seq("-Yrangepos")
+
+scalacOptions ++= scalafixScalacOptions.value
 
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
