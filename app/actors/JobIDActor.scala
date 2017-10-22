@@ -3,13 +3,10 @@ package actors
 import javax.inject.{ Inject, Singleton }
 
 import actors.JobIDActor._
-import akka.actor.{ ActorLogging, _ }
+import akka.actor._
 import akka.event.LoggingReceive
-import de.proteinevolution.models.search.JobDAO
 import de.proteinevolution.db.MongoStore
 import play.api.Logger
-import play.modules.reactivemongo.ReactiveMongoApi
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ Await, Future }
 import scala.util.Random
