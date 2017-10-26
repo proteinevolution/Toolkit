@@ -115,6 +115,11 @@
     margin-top: 2em !important;
 }
 
+map[name="blastmap"] area {
+    cursor: pointer;
+}
+
+
 
 /* Alignments section */
 .header {
@@ -673,6 +678,11 @@ label.forwardLabel input[type=radio] {
     padding-left: 50px;
 }
 
+.fileview {
+    width: 100%;
+    font-size: 12px;
+    height: 30pc;
+}
 
 /* CSS Media Queries */
 @media screen and (max-width: 1200px) {

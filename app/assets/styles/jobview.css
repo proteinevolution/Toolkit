@@ -217,34 +217,15 @@
 }
 
 
-
-
-
-/* TODO CONTINUE HERE */
-
-.fileview {
-    width: 100%;
-    font-size: 12px;
-    height: 30pc;
-}
-
-.result-title-big{
-    font-size: 1.6em !important;
-}
-.result-title-small{
-    font-size: 1.46em !important;
-}
-
 /* Jobline */
 .jobline {
     height: 50px;
 }
 
-
 .jobline .toolname {
-
     font-size: large;
     font-weight: bold;
+    color: #2E8C81;
 }
 
 .jobline .jobinfo {
@@ -259,61 +240,35 @@
 }
 
 .jobline .jobid {
-
     padding-right: 1em;
 }
 
 .jobline i {
-
     margin-left: 0.5em;
 }
-.jobline .helpicon {
 
+.jobline .helpicon {
     color: grey;
 }
 
-#help-tabs ul .toolname {
 
-    float: right;
-    font-weight: bold;
-}
-
-.job {
-    cursor: pointer;
-}
-
-.job .jobid {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    max-width: 7em;
-}
 
 /* Running Panel  Queued Panel */
-.running-panel, .queued-panel {
+.running-panel,
+.queued-panel {
 
     font-size: 0.75em;
 }
 
+
+
 /* File Upload */
-
-.fileUploadBox{
-    margin-top: 2em;
-    float: left;
-    display: flex;
-    padding: 0.5em;
-}
-
 #uploadBoxClose i {
     color: red;
     opacity: 0.6;
     padding-left: 0.5em;
     font-size: 1.2em;
     margin-top: 0.15em;
-}
-
-.uploadButton{
-    background-color: rgba(0, 110, 98, 166);
-
 }
 
 .uploadFileName {
@@ -326,25 +281,6 @@
     width: 30%;
 }
 
-.addJob { display: none; }
-
-.checkJob {
-    background-color: gray;
-    border-radius: 3px;
-    float: left;
-    margin-right: 1em;
-    color: white;
-    margin-left: 1em;
-}
-
-
-.reveal-overlay.fade-in {
-    transition-duration: 0.2s;
-}
-
-.reveal.fade-in {
-    transition-duration: 0.2s;
-}
 
 #submit_modal {
     background-color: #F7E4E1;
@@ -383,7 +319,6 @@
     background-color: #a6a6a6;
 }
 
-
 #submit_modal input:hover {
     background-color: #a1a1a1 ;
 }
@@ -396,22 +331,12 @@
     padding-bottom: 2px;
 }
 
-.greenlink a:not(.accordion-title){
+.greenlink a:not(.accordion-title) {
     color : #2aa198;
 }
 
-map[name="blastmap"] area { cursor: pointer; }
-
-@media only screen and (max-width: 1100px) {
-
-    .jobline .toolname {
-        padding-left: 0.5em;
-    }
-
-}
 
 /* Side buttons */
-
 i.delete {
     -webkit-appearance: none;
     color: #666 !important;
@@ -492,29 +417,19 @@ i.button_fullscreen:focus {
     line-height: 30px;
 }
 
-.nice-select:active, .nice-select.open, .nice-select:focus {
+.nice-select:active,
+.nice-select.open,
+.nice-select:focus {
     border-color: darkgray;
 }
 
-.result-panel .nice-select, .result-panel .nice-select ul {
+.result-panel .nice-select,
+.result-panel .nice-select ul {
     font-size: 1em;
     width: 15em;
     margin-bottom: 0.5em;
 }
 
-.irs {
-    width: 100%;
-}
-
-.irs-line {
-    overflow: visible;
-    float: none !important;
-}
-
-.irs-slider, .irs-slider:hover {
-    background-color: #da4453;
-    cursor: pointer;
-}
 
 /*Switch for HHpred Alignment*/
 /* The switch - the box around the slider */
@@ -525,7 +440,9 @@ i.button_fullscreen:focus {
 }
 
 /* Hide default HTML checkbox */
-.switch input {display:none;}
+.switch input {
+    display:none;
+}
 
 /* The slider */
 .sliderSwitch {
@@ -566,7 +483,6 @@ input:checked + .sliderSwitch:before {
     transform: translateX(20px);
 }
 
-/* Rounded sliders */
 .sliderSwitch.round {
     border-radius: 34px;
 }
@@ -579,11 +495,13 @@ input:checked + .sliderSwitch:before {
     width: 20em;
     display: flex;
 }
+
 .firstLabel {
     margin-bottom: 0.5em;
     margin-left: 1em;
 }
 
+/* Notes section */
 .jobnotes textarea {
     border: 1px solid #ccc;
     font-size: 0.75em;
@@ -613,18 +531,11 @@ a.hasNotes:active {
     margin-top: -2.55em;
 }
 
-div#calloutSpacer {
-   min-height: 3em;
-}
 
-.inputAlert{
-    color: #D8000C;
-    list-style-type: circle;
-}
 
-textarea:focus{
 
-}
+
+/* TODO CONTINUE HERE */
 .callout{
     border:unset !important;
 }

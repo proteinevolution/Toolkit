@@ -1,4 +1,14 @@
 /* Job List in Sidebar */
+.job {
+    cursor: pointer;
+}
+
+.job .jobid {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 7em;
+}
+
 .job-list {
     display: table;
     width: 90%;
