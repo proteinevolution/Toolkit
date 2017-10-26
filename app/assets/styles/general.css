@@ -85,10 +85,6 @@ textarea {
     resize: both;
 }
 
-textarea:focus{
-
-}
-
 .noFouc {
     display: none;
 }
