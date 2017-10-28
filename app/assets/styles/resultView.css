@@ -13,14 +13,6 @@
     background-color: #eee;
 }
 
-.notePlain {
-    font-size: 1.2em;
-}
-
-.notePlain p {
-    padding-left: 20em;
-}
-
 
 
 /* Blast Visualization Section */
@@ -741,6 +733,14 @@ label.forwardLabel input[type=radio] {
     padding-left: 19em;
 }
 
+/* Result View Repper */
+.notePlain {
+    font-size: 1.2em;
+}
+
+.notePlain p {
+    padding-left: 20em;
+}
 
 
 
