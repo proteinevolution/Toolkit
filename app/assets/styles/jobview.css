@@ -187,6 +187,16 @@
 }
 
 
+#select2-patsearchdb-container {
+    width: 17.35em;
+    color: #000;
+}
+
+#select2-proteomes-results {
+    width: 300px;
+}
+
+
 
 /* Alignment Viewer */
 #alignmentViewerPanel {
@@ -215,6 +225,12 @@
 .biojs_msa_labels {
     font-size: 12px;
 }
+
+#viewAlignment {
+    float: right;
+    margin-right: 0 !important;
+}
+
 
 
 /* Jobline */
@@ -249,15 +265,6 @@
 
 .jobline .helpicon {
     color: grey;
-}
-
-
-
-/* Running Panel  Queued Panel */
-.running-panel,
-.queued-panel {
-
-    font-size: 0.75em;
 }
 
 
@@ -533,70 +540,32 @@ a.hasNotes:active {
 
 
 
-
-
-/* TODO CONTINUE HERE */
-.callout{
+/* Callouts */
+.callout {
     border:unset !important;
+    opacity: 0.9;
+    min-width: 12em;
+    text-align: center;
+    padding: 0.6em 0.7em 0.6em 0.7em;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
 }
 
 .callout.alert{
-    opacity: 0.9;
-    text-align: center;
-    min-width: 12em;
-    padding: 0.6em 0.7em 0.6em 0.7em;
     color:red;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
 }
+
 .callout.success{
     background-color: #DBFFDB;
-    opacity: 0.9;
-    min-width: 12em;
-    text-align: center;
-    padding: 0.6em 0.7em 0.6em 0.7em;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
 }
 
 .callout.warning{
     background-color: #FFF666;
-    opacity: 0.9;
-    min-width: 12em;
-    text-align: center;
-    padding: 0.6em 0.7em 0.6em 0.7em;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
 }
 
-.errorStateCallout{
-    width: 30%;
-    margin: 1em;
-}
-textarea:focus{
-    border: 1px solid #c3c3c3;
-}
-
-
-.invalid{
+.invalid {
     border: 1px solid red;
-}
-
-
-#scrollTop {
-    width: 40px;
-    height: 40px;
-    position: fixed;
-    cursor: pointer;
-    bottom: 20px;
-    right: 20px;
-    display: none;
-    background: url('/assets/images/arrow-top.svg') no-repeat;
-    background-size: 40px 40px;
-    outline: 0;
 }
 
 .patternMatch{
@@ -604,7 +573,28 @@ textarea:focus{
     background-color: rgba(255, 0, 8, 0.1);
 }
 
+
+
 /* Process Logs */
+.running-panel,
+.queued-panel {
+
+    font-size: 0.75em;
+}
+
+.pending-panel {
+    text-align: center;
+    display: block;
+    margin-left: auto;
+}
+
+.openSimilarJob button {
+    font-size: 0.725em !important;
+}
+
+.copySpacer {
+    padding-bottom: 25px;
+}
 
 .logElem{
     display: flex;
@@ -636,24 +626,6 @@ textarea:focus{
     margin-left: 1em;
     margin-top: 0.2em;
 }
-@media screen and (min-width: 756px) {
-
-    .select2-container--default .select2-selection--multiple .select2-selection__rendered {
-        list-style: none;
-        margin: 0;
-        padding: 0 5px;
-        min-width: 300px;
-    }
-}
-
-.addButton {
-
-    cursor: pointer;
-}
-
-.result-panel {
-    padding-bottom: 50px !important;
-}
 
 .processJobIdContainer {
     margin-top:1em;
@@ -665,19 +637,8 @@ textarea:focus{
 }
 
 
-#viewAlignment {
-    float: right;
-    margin-right: 0 !important;
-}
 
-.select2-results__option {
-    font-size: 12px;
-}
-
-.select2-results ul {
-    overflow-x: hidden;
-}
-
+/* Loading Spinner */
 .still_waiting {
     margin-top: 200px;
     display: none;
@@ -704,95 +665,7 @@ textarea:focus{
 }
 
 
-.checkbox {
-    position: relative;
-    margin: 0 1rem 0 0;
-    cursor: pointer;
-    vertical-align: text-top;
-}
-
-.checkbox:before {
-    -webkit-transition: all 0.3s ease-in-out;
-    -moz-transition: all 0.3s ease-in-out;
-    transition: all 0.3s ease-in-out;
-    content: "";
-    position: absolute;
-    left: 0;
-    top: -1px;
-    z-index: 1;
-    width: 1rem;
-    height: 1rem;
-    border: 2px solid #f2f2f2;
-}
-
-.checkbox:checked:before {
-    -webkit-transform: rotate(-45deg);
-    -moz-transform: rotate(-45deg);
-    -ms-transform: rotate(-45deg);
-    -o-transform: rotate(-45deg);
-    transform: rotate(-45deg);
-    height: .5rem;
-    border-color: #009688;
-    border-top-style: none;
-    border-right-style: none;
-}
-
-.checkbox:after {
-    content: "";
-    position: absolute;
-    left: 0;
-    width: 1rem;
-    top: -1px;
-    height: 1rem;
-    background: #fff;
-    cursor: pointer;
-}
-
-
-.pending-panel {
-    text-align: center;
-    display: block;
-    margin-left: auto;
-}
-
-.copySpacer {
-    padding-bottom: 25px;
-}
-
-h6 {
-    font-size: 0.85em;
-    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-}
-.notePlain {
-    font-size: 1.2em;
-}
-
-.notePlain p{
-    padding-left: 20em;
-}
-
-.note {
-    font-size: 1.1em;
-    font-weight: 600;
-}
-
-.openSimilarJob button{
-    font-size: 0.725em !important;
-}
-
-.noteArea {
-    font-size: 0.75em !important;
-}
-
-
-.hhrepResult{
-    margin: 2em;
-}
-
-.hhrepImage{
-    margin: 1em;
-}
-
+/* Modeller */
 .modellerKey .valid{
     color: rgb(219, 255, 219);
 }
@@ -800,47 +673,8 @@ h6 {
 .modellerKey .invalid{
     background-color: rgb(255, 221, 221);
 }
-.select2-container--default .select2-selection--multiple {
 
-    border: 1px solid lightgrey !important;
-}
 
-.select2-container--default .select2-results__option--highlighted[aria-selected] {
-    background-color: #f4f4f4 !important;
-    color: black !important;
-}
-
-#select2-patsearchdb-container {
-    width: 17.35em;
-    color: #000;
-}
-
-#select2-proteomes-results {
-    width: 300px;
-}
-
-.select2-search {
-    width: 100%;
-}
-
-.select2-search__field {
-    margin-bottom: 0.5em;
-    font-size: 0.8em;
-    width: 100% !important;
-}
-
-#repperGrad {
-    height: 3px;
-    width: 250px;
-    background: -webkit-linear-gradient(left, yellow, blue); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(right, yellow, blue); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(right, yellow, blue); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(to right, yellow, blue); /* Standard syntax (must be last) */
-}
-
-.repperTable {
-    padding-left: 19em;
-}
 
 /* To make elements on the website full screen */
 .fullscreen {
@@ -853,17 +687,11 @@ h6 {
 }
 
 tr.job a:link {
-
     color: #000;
 }
 
 tr.job a:visited {
-
     color: #000;
-}
-
-#job_id span {
-    color: grey !important;
 }
 
 .jobid a {

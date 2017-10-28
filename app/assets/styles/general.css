@@ -30,6 +30,11 @@ hr {
     max-width: none;
 }
 
+h6 {
+    font-size: 0.85em;
+    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
 div#main-container {
     height: 100%;
     min-width: 930px;
@@ -85,6 +90,11 @@ textarea {
     resize: both;
 }
 
+textarea:focus {
+    border: 1px solid #c3c3c3;
+}
+
+
 .noFouc {
     display: none;
 }
@@ -133,4 +143,42 @@ tr.spaceUnder > td {
 
 .pagination .current {
     background: #ccc;
+}
+
+.select2-results__option {
+    font-size: 12px;
+}
+
+.select2-results ul {
+    overflow-x: hidden;
+}
+
+.select2-container--default .select2-selection--multiple {
+
+    border: 1px solid lightgrey !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #f4f4f4 !important;
+    color: black !important;
+}
+
+.select2-search {
+    width: 100%;
+}
+
+.select2-search__field {
+    margin-bottom: 0.5em;
+    font-size: 0.8em;
+    width: 100% !important;
+}
+
+@media screen and (min-width: 756px) {
+
+    .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+        list-style: none;
+        margin: 0;
+        padding: 0 5px;
+        min-width: 300px;
+    }
 }

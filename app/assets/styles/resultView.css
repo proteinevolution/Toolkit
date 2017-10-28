@@ -1,7 +1,8 @@
 /* General Result Panel */
-.result-panel{
+.result-panel {
     font-size: 0.65em;
     min-height: 30em;
+    padding-bottom: 50px !important;
 }
 
 .result-panel a {
@@ -10,6 +11,14 @@
 
 .result-panel button {
     background-color: #eee;
+}
+
+.notePlain {
+    font-size: 1.2em;
+}
+
+.notePlain p {
+    padding-left: 20em;
 }
 
 
@@ -27,6 +36,11 @@
 #blastviz p {
    text-align: center;
 }
+
+map[name="blastmap"] area {
+    cursor: pointer;
+}
+
 
 
 /* Hitlist Section */
@@ -115,7 +129,48 @@
     margin-top: 2em !important;
 }
 
-map[name="blastmap"] area {
+
+.checkbox {
+    position: relative;
+    margin: 0 1rem 0 0;
+    cursor: pointer;
+    vertical-align: text-top;
+}
+
+.checkbox:before {
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    content: "";
+    position: absolute;
+    left: 0;
+    top: -1px;
+    z-index: 1;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #f2f2f2;
+}
+
+.checkbox:checked:before {
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    height: .5rem;
+    border-color: #009688;
+    border-top-style: none;
+    border-right-style: none;
+}
+
+.checkbox:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 1rem;
+    top: -1px;
+    height: 1rem;
+    background: #fff;
     cursor: pointer;
 }
 
@@ -444,6 +499,19 @@ map[name="blastmap"] area {
     padding-bottom: 2px;
 }
 
+#scrollTop {
+    width: 40px;
+    height: 40px;
+    position: fixed;
+    cursor: pointer;
+    bottom: 20px;
+    right: 20px;
+    display: none;
+    background: url('/assets/images/arrow-top.svg') no-repeat;
+    background-size: 40px 40px;
+    outline: 0;
+}
+
 
 
 /* Result View Slider */
@@ -652,6 +720,27 @@ label.forwardLabel input[type=radio] {
 #psiblast_templates {
     margin-top: 1em;
 }
+
+
+
+/* Result View hhrep */
+.hhrepImage {
+    margin: 1em;
+}
+
+#repperGrad {
+    height: 3px;
+    width: 250px;
+    background: -webkit-linear-gradient(left, yellow, blue); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, yellow, blue); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, yellow, blue); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(to right, yellow, blue); /* Standard syntax (must be last) */
+}
+
+.repperTable {
+    padding-left: 19em;
+}
+
 
 
 
