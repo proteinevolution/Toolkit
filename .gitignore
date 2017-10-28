@@ -20,6 +20,7 @@ dist
 /.project
 /RUNNING_PID
 /.settings
+node_modules
 project/build.properties
 project/plugins
 .sbtserver/

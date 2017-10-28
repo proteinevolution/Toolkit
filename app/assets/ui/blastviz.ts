@@ -1,32 +1,20 @@
 /* Data table helpers */
 
-/* BASELINKS */
-
-var pdbBaseLink = "http://www.rcsb.org/pdb/explore/explore.do?structureId=";
-var pdbeBaseLink = "http://www.ebi.ac.uk/pdbe/entry/pdb/";
-var ncbiBaseLink = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?SUBMIT=y&db=structure&orig_db=structure&term=";
-var ncbiProteinBaseLink = "https://www.ncbi.nlm.nih.gov/protein/";
-var scopBaseLink = "http://scop.berkeley.edu/sid=";
-var pfamBaseLink = "http://pfam.xfam.org/family/";
-var cddBaseLink = "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=";
-var uniprotBaseLik = "http://www.uniprot.org/uniprot/";
-
-
 /* REGEX FOR DB IDENTIFICATION*/
-var uniprotReg = "^([A-Z0-9]{10}|[A-Z0-9]{6})$";
-var scopReg = "^([defgh][0-9a-zA-Z\.\_]+)$";
-var ecodReg = "^(ECOD_)";
-var mmcifReg = "^(...._[a-zA-Z])$";
-var mmcifShortReg = "^([0-9]+)$";
-var pfamReg = "^(pfam[0-9]+&|^PF[0-9]+(\.[0-9]+)?)$";
-var ncbiReg = "^([A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9])$";
+const uniprotReg = "^([A-Z0-9]{10}|[A-Z0-9]{6})$";
+const scopReg = "^([defgh][0-9a-zA-Z\.\_]+)$";
+const ecodReg = "^(ECOD_)";
+const mmcifReg = "^(...._[a-zA-Z])$";
+const mmcifShortReg = "^([0-9]+)$";
+const pfamReg = "^(pfam[0-9]+&|^PF[0-9]+(\.[0-9]+)?)$";
+const ncbiReg = "^([A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9])$";
 
 
-function download(filename, text){
-    var a = document.createElement("a");
+function download(filename: string, text: string) {
+    let a: any = document.createElement("a");
     document.body.appendChild(a);
     a.style = "display: none";
-    blob = new Blob([text], {type: "octet/stream"}),
+    let blob = new Blob([text], {type: "octet/stream"}),
         url = window.URL.createObjectURL(blob);
     a.href = url;
     a.download = filename;
@@ -36,48 +24,46 @@ function download(filename, text){
 }
 
 
-
 /* Slider */
-function slider_show(sequence_length, start, end) {
+function slider_show(sequence_length: number, start: number, end: number) {
 
-    var tooltip = $('<div id="tooltip" />').css({
+    let tooltip = $('<div id="tooltip" />').css({
         position: 'absolute',
         top: -20
     }).show();
 
-    var tooltip2 = $('<div id="tooltip2" />').css({
+    let tooltip2 = $('<div id="tooltip2" />').css({
         position: 'absolute',
         top: -20
 
     }).show();
 
+    let $flatSlider = $("#flat-slider");
 
-
-    $("#flat-slider").slider({
+    $flatSlider.slider({
         range: true,
         orientation: 'horizontal',
         min: 1,
         max: sequence_length,
         step: 1,
         values: [start, end],
-        slide: function(event, ui) {
+        slide: function (event, ui) {
             tooltip.text(ui.values[0]);
             tooltip2.text(ui.values[1]);
         },
-        change: function(event, ui) {
-            var sliderCoords =  $('#flat-slider').slider("option", "values");
+        change: function (event, ui) {
+            $flatSlider.slider("option", "values");
         }
     });
 
     tooltip.text(start);
     tooltip2.text(end);
 
-    $("#flat-slider").slider({}).find(".ui-slider-handle:first").append(tooltip);
+    $flatSlider.slider({}).find(".ui-slider-handle:first").append(tooltip);
 
-    $("#flat-slider").slider({}).find(".ui-slider-handle:last").append(tooltip2);
+    $flatSlider.slider({}).find(".ui-slider-handle:last").append(tooltip2);
 
 }
-
 
 
 function getSliderRange() {
@@ -86,10 +72,9 @@ function getSliderRange() {
 }
 
 
-
-function resubmitSection(sequence, name) {
-    var sliderRange = getSliderRange();
-    var resubmitSeqs = [];
+function resubmitSection(sequence: string, name: string) {
+    let sliderRange = getSliderRange();
+    let resubmitSeqs = [];
 
     resubmitSeqs.push(name + '\n');
     resubmitSeqs.push(sequence.substr(sliderRange[0], sliderRange[1]) + '\n');
@@ -104,8 +89,8 @@ function resubmitSection(sequence, name) {
  * @param tool
  * @param forwardData
  */
-function forward(tool, forwardData){
-    if(forwardData == ""){
+function forward(tool: string, forwardData: string) {
+    if (forwardData == "") {
         alert("No sequence(s) selected!");
         $.LoadingOverlay("hide");
         return;
@@ -113,39 +98,19 @@ function forward(tool, forwardData){
     try {
         localStorage.setItem("resultcookie", forwardData);
         window.location.href = "/#/tools/" + tool;
-    } catch(e) {
+    } catch (e) {
         if (isQuotaExceeded(e)) {
             // Storage full, maybe notify user or do some clean-up
             $.LoadingOverlay("hide");
-            alert("File is too big to be forwarded. Please download the file and use the upload function of the selected tool." )
+            alert("File is too big to be forwarded. Please download the file and use the upload function of the selected tool.")
         }
 
     }
 }
 
-function forwardPath(tool, forwardPath){
-    m.route("/tools/" + tool);
-    $.ajax({
-        type: 'GET',
-        url: forwardPath,
-        error: function(){
-            $.LoadingOverlay("hide")
-        }
-    }).done(function (data) {
-        window.JobModel.setParamValue("alignment", data);
-        if(tool === "alnviz"){
-            $('#alignment').val(data);
-        }
-        if(tool === "reformat"){
-            myCodeMirror.setValue(data);
-        }
-        validationProcess($('#alignment'),$("#toolnameAccess").val());
-        $.LoadingOverlay("hide")
-    })
-}
 
-function isQuotaExceeded(e) {
-    var quotaExceeded = false;
+function isQuotaExceeded(e: any) {
+    let quotaExceeded = false;
     if (e) {
         if (e.code) {
             switch (e.code) {
@@ -166,60 +131,58 @@ function isQuotaExceeded(e) {
     }
     return quotaExceeded;
 }
+
 // load forwarded data into alignment field
-$(document).ready(function() {
-    var resultcookie = localStorage.getItem("resultcookie");
+$(document).ready(function () {
+    let resultcookie = localStorage.getItem("resultcookie");
     $('#alignment').val(resultcookie);
     localStorage.removeItem("resultcookie");
     $.LoadingOverlay("hide");
 });
 
 
-function identifyDatabase(id){
+function identifyDatabase(id: string) {
     if (id == null)
         return null;
-    if(id.match(scopReg))
+    if (id.match(scopReg))
         return "scop";
-    else if(id.match(ecodReg))
+    else if (id.match(ecodReg))
         return "ecod";
-    else if(id.match(mmcifShortReg))
+    else if (id.match(mmcifShortReg))
         return "mmcif";
-    else if(id.match(mmcifReg))
+    else if (id.match(mmcifReg))
         return "mmcif";
-    else if(id.match(pfamReg))
+    else if (id.match(pfamReg))
         return "pfam";
-    else if(id.match(ncbiReg))
+    else if (id.match(ncbiReg))
         return "ncbi";
-    else if(id.match(uniprotReg))
+    else if (id.match(uniprotReg))
         return "uniprot";
     else
         return null;
 }
 
 
-
-
 /* draw hits */
-function drawHits(id, hits) {
-    var s = Snap("#" + id);
+function drawHits(id: string, hits: Array<any>) {
+    let s = Snap("#" + id);
     // Get maximum of query_end with map and reduce
-    document.getElementById(id).setAttribute("viewBox", "0 0 " + hits.map(function (hit) {
-            return hit.query_end;
-        })
-            .reduce(function (a, b) {
-                return Math.max(a, b);
-            }) + " " + hits.length);
-    for (var i = 0; i < hits.length; ++i) {
-        var hit = hits[i];
-        var diff = hit.query_end - hit.query_begin;
-        var r = s.rect(hit.query_begin, i, diff, 0.5, 0.5, 0.5);
-        var text = s.text(diff / 2, i + 0.4, hit.struc);
+    document.getElementById(id).setAttribute("viewBox", "0 0 " + hits.map(function (hit: any) {
+        return hit.query_end;
+    }).reduce(function (a, b) {
+        return Math.max(a, b);
+    }) + " " + hits.length);
+    for (let i = 0; i < hits.length; ++i) {
+        let hit = hits[i];
+        let diff = hit.query_end - hit.query_begin;
+        let r = s.rect(hit.query_begin, i, diff, 0.5, 0.5, 0.5);
+        let text = s.text(diff / 2, i + 0.4, hit.struc);
         text.attr({
             'font-size': 0.5,
             'fill': 'white',
             'font-weight': 'bold'
         });
-        var colors = calcColor(hit.prob).map(function (val) {
+        let colors = calcColor(hit.prob).map(function (val) {
             return val * 255
         });
         r.attr({
@@ -229,11 +192,11 @@ function drawHits(id, hits) {
 }
 
 
-function calcColor(prob) {
-    var red, grn, blu;
+function calcColor(prob: number) {
+    let red, grn, blu;
     if (prob > 40) {
-        var signif = ((prob - 40) / 60);
-        var col = 4 * signif;
+        let signif = ((prob - 40) / 60);
+        let col = 4 * signif;
         if (col > 3) {
             col -= 3.0;
             red = 1;
@@ -255,7 +218,7 @@ function calcColor(prob) {
             blu = 1;
         }
     } else {
-        signif = Math.pow((prob / 40), 3);
+        let signif = Math.pow((prob / 40), 3);
         red = 0.2 * (1 - signif);
         grn = 0.2 * (1 - signif);
         blu = 0.2 + 0.8 * signif;
@@ -264,60 +227,67 @@ function calcColor(prob) {
 }
 
 
-function scrollToElem(num){
+function scrollToElem(num: any) {
     num = parseInt(num);
-    var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
+    let elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
     if (num > shownHits) {
         $.LoadingOverlay("show");
-        getHits(shownHits, num, wrapped,colorAAs).done(function(data){
-            var pos = $('.aln"][value=' + num + ']').offset().top;
+        getHits(shownHits, num, wrapped, colorAAs).done(function () {
+            let pos = $('.aln"][value=' + num + ']').offset().top;
             $(elem).animate({
                 scrollTop: pos - 100
             }, 1)
-        }).then(function(){
+        }).then(function () {
             $.LoadingOverlay("hide");
         });
         shownHits = num;
-    }else{
-        var pos = $('.aln[value=' + num + ']').offset().top;
+    } else {
+        let pos = $('.aln[value=' + num + ']').offset().top;
         $(elem).animate({
             scrollTop: pos - 100
         }, 1)
     }
 }
 
-function scrollToSection(name) {
-    var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
-    var pos = $('#tool-tabs').hasClass("fullscreen") ? $('#' + name).offset().top + $(elem).scrollTop() : $('#' + name).offset().top + 25;
+function scrollToSection(name: string) {
+    let elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
+    let pos = $('#tool-tabs').hasClass("fullscreen") ? $('#' + name).offset().top + $(elem).scrollTop() : $('#' + name).offset().top + 25;
     $(elem).animate({
         scrollTop: pos
     }, 'fast');
 
 }
+
 // select all checkboxes
-function selectAllHelper(name) {
-    $('input:checkbox.'+name+'[name="alignment_elem"]').each(function () {
+function selectAllHelper(name: string) {
+    $('input:checkbox.' + name + '[name="alignment_elem"]').each(function () {
         $(this).prop('checked', true);
     });
 
 }
-function deselectAll(name){
-    $('input:checkbox.'+name+'').prop('checked', false);
-    checkboxes = [];
-}
-function selectFromArray(checkboxes){
-    _.range(1, numHits+1).forEach(function (currentVal) {
-        $('input:checkbox[value='+currentVal+'][name="alignment_elem"]').prop('checked', checkboxes.indexOf(currentVal) != -1 ? true : false);
-    })
+
+function deselectAll(name: string) {
+    $('input:checkbox.' + name + '').prop('checked', false);
 }
 
-function getCheckedCheckboxes(){
-    $('input:checkbox:checked[name="alignment_elem"]').each(function(){var num = parseInt($(this).val()); if(checkboxes.indexOf(num) == -1){checkboxes.push(num)}});
+function selectFromArray(checkboxes: Array<number>) {
+    for(var currentVal= 1; currentVal <= numHits + 1; currentVal++){
+        $('input:checkbox[value=' + currentVal + '][name="alignment_elem"]').prop('checked', checkboxes.indexOf(currentVal) != -1);
+    }
+}
+
+function getCheckedCheckboxes(checkboxes: Array<number>) {
+    $('input:checkbox:checked[name="alignment_elem"]').each(function () {
+        let num = parseInt($(this).val());
+        if (checkboxes.indexOf(num) == -1) {
+            checkboxes.push(num)
+        }
+    });
 }
 
 
-function hitlistBaseFunctions(){
-    $(document).ready(function() {
+function hitlistBaseFunctions() {
+    $(document).ready(function () {
         // add tooltipser to visualization
         $('#blastviz area').tooltipster({
             theme: 'tooltipster-borderless',
@@ -347,39 +317,18 @@ function hitlistBaseFunctions(){
     });
 }
 
-
+interface Array<T> {
+    removeDuplicates(): any;
+}
 Array.prototype.removeDuplicates = function () {
-    return this.filter(function (item, index, self) {
+    return this.filter(function (item: any, index: number, self: any) {
         return self.indexOf(item) == index;
     });
 };
 
-
-function selectAll(){
-    selectAllBool = !selectAllBool;
-    if(selectAllBool) {
-        selectAllHelper(checkbox);
-        $(".selectAllSeqBar").text("Deselect all");
-        $(".selectAllSeqBar").addClass("colorToggleBar");
-
-        // first empty array
-        checkboxes = [];
-        // push all checkboxes (1 to num_hits) into array
-        _.range(1, numHits+1).forEach(function(num){return checkboxes.push(num)});
-    }
-    else {
-        deselectAll(checkbox);
-        $(".selectAllSeqBar").text("Select all");
-        $(".selectAllSeqBar").removeClass("colorToggleBar");
-        // delete all checkboxes from array
-        checkboxes = [];
-    }
-}
-
-
-function getsHitsManually(){
+function getsHitsManually() {
     if (!loading) {
-        var end = shownHits + showMore;
+        let end = shownHits + showMore;
         end = end < numHits ? end : numHits;
         if (shownHits != end) {
             getHits(shownHits, end, wrapped, colorAAs);
@@ -388,10 +337,10 @@ function getsHitsManually(){
     }
 }
 
-function linkCheckboxes(){
-    $('input:checkbox').on('change',function (e) {
-        var currentVal = $(this).val();
-        var currentState = $(this).prop('checked');
+function linkCheckboxes(checkboxes: Array<number>) {
+    $('input:checkbox').on('change', function (e) {
+        let currentVal = $(this).val();
+        let currentState = $(this).prop('checked');
 
         // link checkboxes with same value
         $('input:checkbox[value=' + currentVal + '][name=alignment_elem]').each(function () {
@@ -407,14 +356,16 @@ function linkCheckboxes(){
             });
         } else {
             // delete num of unchecked checkbox from array
-            checkboxes = checkboxes.filter(function(x){return x != currentVal});
+            checkboxes = checkboxes.filter(function (x) {
+                return x != currentVal
+            });
         }
 
     });
 }
 
 
-function generateFilename(){
+function generateFilename() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
@@ -423,60 +374,59 @@ function generateFilename(){
  * for this it empties the table "#alignmentTable"
  * and calls get Hits taking the boolean wrapped as a parameter
  */
-function wrap(){
+function wrap() {
     wrapped = !wrapped;
-    var elemArr =  $(".aln").toArray();
-    var num = 1;
-    for(var i =0 ; i < elemArr.length; i++){
-        if($(elemArr[i]).isOnScreen()){
-            num  = $(elemArr[i]).attr("value");
+    let elemArr = $(".aln").toArray();
+    let num: any = 1;
+    for (let i = 0; i < elemArr.length; i++) {
+        if ($(elemArr[i]).isOnScreen()) {
+            num = $(elemArr[i]).attr("value");
             break;
         }
     }
     $("#wrap").toggleClass("colorToggleBar");
     $("#wrap").toggleText("Unwrap Seqs", "Wrap Seqs");
     $("#alignmentTable").empty();
-    getHits(0, shownHits, wrapped, colorAAs).then(function(){
-        linkCheckboxes();
+    getHits(0, shownHits, wrapped, colorAAs).then(function () {
+        //linkCheckboxes(checkboxes); todo
         scrollToElem(num);
     });
 
 }
 
 
-
-function colorAA(){
+function colorAA() {
     colorAAs = !colorAAs;
     $.LoadingOverlay("show");
     $(".colorAA").toggleClass("colorToggleBar");
-    var elemArr =  $(".aln").toArray();
-    var num = 1;
-    for(var i =0 ; i < elemArr.length; i++){
-        if($(elemArr[i]).isOnScreen()){
-            num  = $(elemArr[i]).attr("value");
+    let elemArr = $(".aln").toArray();
+    let num: any = 1;
+    for (let i = 0; i < elemArr.length; i++) {
+        if ($(elemArr[i]).isOnScreen()) {
+            num = $(elemArr[i]).attr("value");
             break;
         }
     }
     $("#alignmentTable").empty();
-    getHits(0, shownHits, wrapped, colorAAs).then(function(){
+    getHits(0, shownHits, wrapped, colorAAs).then(function () {
         $.LoadingOverlay("hide");
-        linkCheckboxes();
+        //linkCheckboxes(checkboxes); todo
         scrollToElem(num);
     });
 }
 
 
 $.fn.extend({
-    toggleText: function(a, b){
+    toggleText: function (a: string, b: string) {
         return this.text(this.text() == b ? a : b);
     }
 });
 
-$.fn.isOnScreen = function(){
-    var viewport = {};
+$.fn.isOnScreen = function () {
+    let viewport: any = {};
     viewport.top = $(window).scrollTop();
     viewport.bottom = viewport.top + $(window).height();
-    var bounds = {};
+    let bounds: any = {};
     bounds.top = this.offset().top;
     bounds.bottom = bounds.top + this.outerHeight();
     return ((bounds.top <= viewport.bottom) && (bounds.bottom >= viewport.top));
