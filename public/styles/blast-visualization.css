@@ -445,7 +445,7 @@ table.dataTable.no-footer{
 }
 
 #htb_wrapper {
-    overflow-x: scroll;
+    overflow-x: auto;
 }
 
 #htb_length {
