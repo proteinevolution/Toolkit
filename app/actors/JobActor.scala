@@ -100,7 +100,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                          userSessions: UserSessions,
                          wrapperExecutionFactory: WrapperExecutionFactory,
                          implicit val locationProvider: LocationProvider,
-                         @Named("jobIDActor") jobIDActor: ActorRef,
                          @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                          @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
                          constants: Constants,
