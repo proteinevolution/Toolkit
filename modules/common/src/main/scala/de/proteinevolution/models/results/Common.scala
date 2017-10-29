@@ -128,7 +128,7 @@ object Common {
     for (entry <- entries) {
       str += "<td>" + entry.toString + "</td>"
     }
-    str += "<tr>"
+    str += "</tr>"
     str
   }
 
