@@ -1,6 +1,5 @@
 package de.proteinevolution.models.results
 
-
 import de.proteinevolution.models.database.results.AlignmentResult
 import play.twirl.api.Html
 import play.api.Logger
@@ -481,31 +480,23 @@ object Common {
         return {
           makeRow("sequence",
                   Array("",
-                        "Q " + hit.query.accession,
-                        beginQuery,
+                        "Q " + beginQuery,
                         query + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")")) +
           makeRow("sequence",
                   Array("",
-                        "Q Consensus",
-                        beginQuery,
-                        queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")")) +
-          makeRow("sequence", Array("", "", "", midline)) +
+                        "",
+                        queryCons)) +
+          makeRow("sequence", Array("", "", midline)) +
           makeRow("sequence",
                   Array("",
-                        "T Consensus",
-                        beginTemplate,
-                        templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")")) +
+                        "",
+                        templateCons)) +
           makeRow("sequence",
                   Array("",
-                        "T " + hit.template.accession,
-                        beginTemplate,
+                        "T " + beginTemplate,
                         template + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")")) +
           emptyRow + emptyRow +
-          hhblitsHitWrapped(hit,
-                            charCount + breakAfter,
-                            breakAfter,
-                            beginQuery + queryEnd,
-                            beginTemplate + templateEnd)
+          hhblitsHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
         }
       }
     }
