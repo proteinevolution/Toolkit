@@ -37,17 +37,17 @@
 </tr>
 
 @if(wrapped){
-    @Html(Common.hhblitsHitWrapped(hit, 0, 65, hit.query.start, hit.template.start))
+    @Html(Common.hhblitsHitWrapped(hit, 0, 85, hit.query.start, hit.template.start))
 }else {
-    @Html(Common.makeRow("sequence", Array("", "Q " + hit.query.accession, hit.query.start.toString, hit.query.seq + "    " + hit.query.end.toString + " " + "(" + hit.query.ref + ")")))
+    @Html(Common.makeRow("sequence", Array("", "Q " + hit.query.start.toString, hit.query.seq + "   " + hit.query.end.toString + " " + "(" + hit.query.ref + ")")))
     @*Consensus of query, if present*@
-    @Html(Common.makeRow("sequence", Array("", "Q Consensus", hit.query.start.toString, hit.query.consensus + "    " + hit.query.end.toString + " " + "(" + hit.query.ref + ")")))
+    @Html(Common.makeRow("sequence", Array("", "", hit.query.consensus)))
     @* agree of query, if present *@
-    @Html(Common.makeRow("sequence", Array("", "", "", hit.agree)))
+    @Html(Common.makeRow("sequence", Array("", "", hit.agree)))
     @* consensus template, if present *@
-    @Html(Common.makeRow("sequence", Array("", "T Consensus", hit.template.start.toString, hit.template.consensus + "    " + hit.template.end.toString + " " + "(" + hit.template.ref + ")")))
+    @Html(Common.makeRow("sequence", Array("", "", hit.template.consensus)))
     @* seq template, if present *@
-    @Html(Common.makeRow("sequence", Array("", "T " + hit.template.accession, hit.template.start.toString, hit.template.seq + "    " + hit.template.end.toString + " " + "(" + hit.template.ref + ")")))
+    @Html(Common.makeRow("sequence", Array("", "T " + hit.template.start.toString, hit.template.seq + "   " + hit.template.end.toString + " " + "(" + hit.template.ref + ")")))
     <tr class="blank_row"><td colspan="5"></td></tr>
 }
 <tr>
