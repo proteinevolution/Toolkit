@@ -21,20 +21,18 @@
 @* Alignment Details*@
 <tr>
     <td></td>
-    <td class="hitInfo" colspan="4">
-        Length: @{hit.ref_len} <br>
-        E-value: @{hit.evalue}&emsp;&emsp;Score: @{hit.bitscore}bits (@{hit.score})&emsp;&emsp;
+    <td class="hitInfo" colspan="5">
+        E-value: @{hit.evalue},&emsp;
+        Length: @{hit.ref_len},&emsp;
+        Score: @{hit.bitscore}bits (@{hit.score}),&emsp;
         Identities: @{hit.identity}/@{hit.hit_len}
-        (@{Common.calculatePercentage(hit.identity, hit.hit_len)})&emsp;&emsp;
+        (@{Common.calculatePercentage(hit.identity, hit.hit_len)}),&emsp;
         Positives: @{hit.positive}/@{hit.hit_len}
-        (@{Common.calculatePercentage(hit.positive, hit.hit_len)})&emsp;&emsp;
+        (@{Common.calculatePercentage(hit.positive, hit.hit_len)}),&emsp;
         Gaps: @{hit.gaps}/@{hit.hit_len}
         (@{Common.calculatePercentage(hit.gaps, hit.hit_len)})
-
+        <br><br>
     </td>
-</tr>
-<tr>
-    <td><br /></td>
 </tr>
     @* Query *@
 
@@ -53,7 +51,6 @@
     @{
         Html(Common.makeRow("sequence", Array("", "T " + hit.hit_start.toString, hit.hit_seq + "   " + hit.hit_end.toString)))
     }
-    <tr class="blank_row"><td colspan="5"></td></tr>
 }
 <tr>
     <td colspan="5"><hr id="line-element" class="horizontal-line"></td>

@@ -439,9 +439,9 @@ object Common {
         return ""
       } else {
         return {
-          makeRow("sequence", Array("", "Q " + (beginQuery + 1), query + "   " + (beginQuery + queryEnd))) +
+          makeRow("sequence", Array("", "Q " + beginQuery, query + "   " + (beginQuery + queryEnd - 1))) +
           makeRow("sequence", Array("", "", midline)) +
-          makeRow("sequence", Array("", "T " + (beginTemplate + 1), template + "   " + (beginTemplate + templateEnd))) +
+          makeRow("sequence", Array("", "T " + beginTemplate, template + "   " + (beginTemplate + templateEnd - 1))) +
           emptyRow + emptyRow +
           psiblastHitWrapped(hit,
                              charCount + breakAfter,
