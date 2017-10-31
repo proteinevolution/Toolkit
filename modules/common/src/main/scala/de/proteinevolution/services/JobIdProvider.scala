@@ -28,6 +28,10 @@ class JobIdProvider @Inject()(mongoStore: MongoStore)(
     id
   }
 
+  def trash(id: String): Unit = {
+    this.usedIds -= id
+  }
+
   // TODO add mongodb constraint that jobIds is a unique field
 
 }

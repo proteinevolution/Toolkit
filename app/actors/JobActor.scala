@@ -1,6 +1,6 @@
 package actors
 
-import javax.inject.{ Inject, Named }
+import javax.inject.Inject
 
 import actors.JobActor._
 import akka.actor._
@@ -14,7 +14,6 @@ import de.proteinevolution.models.search.JobDAO
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.runscripts._
 import com.typesafe.config.ConfigFactory
-import de.proteinevolution.models.sge.Qdel
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
@@ -29,10 +28,8 @@ import play.api.libs.mailer.MailerClient
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import play.api.libs.json._
-
+import scala.language.postfixOps
 import scala.concurrent.Future
-import scala.util.{ Failure, Success }
 import better.files._
 import com.google.inject.assistedinject.Assisted
 import de.proteinevolution.common.LocationProvider

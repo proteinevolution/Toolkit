@@ -3,10 +3,9 @@ package controllers
 import java.io.{ FileInputStream, ObjectInputStream }
 import java.security.MessageDigest
 import java.time.ZonedDateTime
-import javax.inject.{ Inject, Named, Singleton }
+import javax.inject.{ Inject, Singleton }
 
 import actors.JobActor._
-import akka.actor.ActorRef
 import better.files._
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.Constants
@@ -174,6 +173,9 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 case Some(_) =>
                   // Send the job to the jobActor for preparation
                   jobActorAccess.sendToJobActor(jobID, PrepareJob(job, params, startJob = false, isFromInstitute))
+
+                  // callback to jobIdProvider that job is safely in the database
+                  jobIdProvider.trash(jobID)
 
                   // Add Job to user in database
                   userSessions
