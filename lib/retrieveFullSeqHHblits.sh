@@ -9,7 +9,6 @@ elif [ "$HOSTNAME" = "rye" ]
     source /cluster/toolkit/production/bioprogs/env/environment_rye.sh
   fi
 
-
     HHBLITS=${DATABASES}/hhblits/
     DB=${STANDARD}/uniprot_trembl
 
@@ -18,10 +17,6 @@ elif [ "$HOSTNAME" = "rye" ]
 
     # write accessions to be retrieved in file
     printf "${ACCESSIONS[@]}" > results/${filename}_accessionsToRetrieve
-
-
-    MAPPINGFILE="uniclust_uniprot_mapping.tsv"
-    MAPPEDID=`grep ${accession} ${HHBLITS}${MAPPINGFILE} | awk '{print $1}'`
 
     #retrieve full length sequences
     seq_retrieve.pl -i results/${filename}_accessionsToRetrieve \
