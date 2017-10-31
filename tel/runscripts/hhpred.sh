@@ -254,8 +254,8 @@ else
         fi
 
     #MSA generation by HHblits
-    if [ "%msa_gen_method.content" = "hhblits" ] ; then
-        echo "#Running ${ITERS} iteration(s) of HHblits for query MSA generation." >> ../results/process.log
+    if [ "%msa_gen_method.content" = "uniprot20" ] || [ "%msa_gen_method.content" = "uniclust30" ] ; then
+        echo "#Running ${ITERS} iteration(s) of HHblits against %msa_gen_method.content for query MSA generation." >> ../results/process.log
         updateProcessLog
 
         reformat_hhsuite.pl fas a3m \
@@ -266,7 +266,7 @@ else
                 -v 2 \
                 -e %hhpred_incl_eval.content \
                 -i ../results/${JOBID}.in.a3m \
-                -d %UNIPROT  \
+                -d %HHBLITS%msa_gen_method.content  \
                 -oa3m ../results/${JOBID}.a3m \
                 -n ${ITERS} \
                 -qid %min_seqid_query.content \
@@ -357,8 +357,6 @@ updateProcessLog
 # creating alignment of query and subject input
 if [  "%hhpred_align.content" = "true" ]
 then
-    echo "#Running 3 iterations of HHblits for template MSA and A3M generation." >> ../results/process.log
-    updateProcessLog
 
     cd ../results
 
@@ -373,7 +371,7 @@ then
                   $(readlink -f %alignment_two.path) \
                   $(readlink -f ../results/${JOBID}.in2.a3m)
 
-        hhblits -d %UNIPROT -i ../results/${JOBID}.in2.a3m -oa3m db.a3m -n 3 -cpu %THREADS -v 2
+        hhblits -d %HHBLITS%msa_gen_method.content -i ../results/${JOBID}.in2.a3m -oa3m db.a3m -n 3 -cpu %THREADS -v 2
         rm ../results/${JOBID}.in2.a3m
     fi
 
