@@ -29,6 +29,8 @@ import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
 import com.redfin.sitemapgenerator.{ ChangeFreq, WebSitemapGenerator, WebSitemapUrl }
 import de.proteinevolution.models.Constants
+import play.api.Mode.Test
+
 import scala.language.postfixOps
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ Await, Future }
@@ -109,21 +111,26 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
    * http://blog.dewhurstsecurity.com/2013/08/30/security-testing-html5-websockets.html
    */
   def sameOriginCheck(rh: RequestHeader): Boolean = {
-    rh.headers.get("Origin") match {
-      case Some(originValue)
-          if originMatches(originValue) && !HTTPRequest(rh).isBot(rh) && !blacklist.contains(rh.remoteAddress) =>
-        logger.debug(s"originCheck: originValue = $originValue")
-        true
 
-      case Some(badOrigin) =>
-        logger.error(
-          s"originCheck: rejecting request because Origin header value $badOrigin is not in the same origin"
-        )
-        false
+    if (environment.mode == play.api.Mode.Test)
+      true
+    else {
+      rh.headers.get("Origin") match {
+        case Some(originValue)
+            if originMatches(originValue) && !HTTPRequest(rh).isBot(rh) && !blacklist.contains(rh.remoteAddress) =>
+          logger.debug(s"originCheck: originValue = $originValue")
+          true
 
-      case None =>
-        logger.error("originCheck: rejecting request because no Origin header found")
-        false
+        case Some(badOrigin) =>
+          logger.error(
+            s"originCheck: rejecting request because Origin header value $badOrigin is not in the same origin"
+          )
+          false
+
+        case None =>
+          logger.error("originCheck: rejecting request because no Origin header found")
+          false
+      }
     }
   }
 

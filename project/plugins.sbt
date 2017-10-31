@@ -30,4 +30,4 @@ addSbtPlugin("com.lightbend.sbt" % "sbt-aspectj" % "0.11.0")
 
 addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.6.8")
 
-addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.5.3")
+//addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.5.3")
