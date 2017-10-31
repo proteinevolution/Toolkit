@@ -230,6 +230,10 @@ const tilescomponent = {
                             ),
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#uniclust_2017_10"},
+                                    m("h6", "October 31, 2017"),
+                                    m("p", "HHpred: the Uniclust30 DB is now available for query A3M generation.")
+                                ),
                                 m("a", {"data-open": "recentUpdatesModal", href: "#uniclust_2017_7"},
                                     m("h6", "September 29, 2017"),
                                     m("p", "HHblits: a new version of the Uniclust30 DB is online.")
@@ -246,11 +250,10 @@ const tilescomponent = {
                                 m("a", {"data-open": "recentUpdatesModal", href: "#aqui"},
                                     m("h6", "September 19, 2017"),
                                     m("p", "HHpred: DBs of ",
-                                        m("em", "Aquifex aeolicus"), ", ",
-                                        m("em", "Deinococcus radiodurans"), ", ",
-                                        m("em", "Dictyostelium discoideum"), ", ",
-                                        m("em", "Schizosaccharomyces pombe"), " and ",
-                                        m("em", "Thermus thermophilus"), " are online."
+                                        m("em", "A. aeolicus"), ", ",
+                                        m("em", "D. radiodurans"), ", ",
+                                        m("em", "S. pombe"), " and ",
+                                        m("em", "T. thermophilus"), " are online."
                                     )
                                 )
                             ),
@@ -349,6 +352,18 @@ const tilescomponent = {
                                         ),
                                         m("td",
                                             m("a", {href: "/#/tools/quick2d"},
+                                                m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
+                                            )
+                                        )
+                                    ),
+                                    m("tr",
+                                        m("td",
+                                            m("a", {href: "/#/tools/mmseqs2"},
+                                                m("a", "MMseqs2")
+                                            )
+                                        ),
+                                        m("td",
+                                            m("a", {href: "/#/tools/mmseqs2"},
                                                 m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
                                             )
                                         )
