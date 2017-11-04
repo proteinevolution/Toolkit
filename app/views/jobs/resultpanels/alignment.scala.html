@@ -24,7 +24,7 @@
     <a onclick="@{resultName}_selectAllAln()" class="selectAllSeq"><span class="@{resultName}_selectAllSeqSpan">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download MSA</span></a>
-    <a type="button" href="@fileURL" target="_blank"><span>Export MSA</span></a>
+    <a type="button" href="@fileURL" target="_blank" rel="noopener"><span>Export MSA</span></a>
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
