@@ -127,16 +127,6 @@ tr.spaceUnder > td {
     display: none;
 }
 
-.ui-widget {
-    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    font-size: 1.1em;
-}
-
-.ui-widget input, .ui-widget select, .ui-widget button {
-    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    font-size: 0.9em;
-}
-
 .accordion-title {
     font-weight: bold;
 }
