@@ -10,16 +10,16 @@
         <p>REPPER is a server that detects and analyses regions with short gapless REPeats in protein sequences. It finds PERiodicities by Fourier Transform (FTwin) and internal homology analysis (REPwin). The exact locations of the periodic patterns are traced by a sliding window. The output is complemented by coiled coil prediction (COILS) and optionally by secondary structure prediction (PSIPRED).</p>
         <h5><b>FTwin</b></h5>
         <p>Sequence analysis by a sliding window Fourier transform (FT) method calculating the periodicity spectra for all possible sequence windows. The overview graph shows all significant periodicities and where in the sequence they are located. Periodicities are considered to be significant if their FT intensity is above the given threshold.</p>
-        <p>Clicking on a colored line on the output graph provides the complete FT spectrum for the sequence fragment defined by the line (the fragment may include closely neighbored lines as well). Alternatively, an arbitrary sequence range may be given (in the boxes under the output graph) in order to get a FT spectrum of this particular sequence fragment. <a href = ftp://ftp.tuebingen.mpg.de/pub/protevo/FTwin target="_blank">Download</a></p>
+        <p>Clicking on a colored line on the output graph provides the complete FT spectrum for the sequence fragment defined by the line (the fragment may include closely neighbored lines as well). Alternatively, an arbitrary sequence range may be given (in the boxes under the output graph) in order to get a FT spectrum of this particular sequence fragment. <a href = ftp://ftp.tuebingen.mpg.de/pub/protevo/FTwin target="_blank" rel="noopener">Download</a></p>
         <h5><b>REPwin</b></h5>
         <p>REPWin compares a protein sequence with itself within a sliding window of choosable length W. For each window starting position i and periodicity p it calculates</p>
         <div align = center><em>Score(i,p) = Sum_k Sum_j S(x[j],x[j+kp])</em></div><br/>
         <p>(x[j],x[j+kp]) is the Gonnet substitution matrix element for residues x[j] and x[j+kp]. The sum runs over all k and j such that j and j+kp are inside the window [i,..,i+W-1]. The score S(i,p) is normalized by dividing through the standard deviation of S(i,p) for nonperiodic sequences. The final score value for each residue number i and periodicity p is the maximum over all windows containing residue i.</p>
-        <p>Clicking on a colored line on the output graph displays the corresponding alignment that shows the internal homology. <a href = "ftp://ftp.tuebingen.mpg.de/pub/protevo/REPwin/" target="_blank">Download</a></p>
+        <p>Clicking on a colored line on the output graph displays the corresponding alignment that shows the internal homology. <a href = "ftp://ftp.tuebingen.mpg.de/pub/protevo/REPwin/" target="_blank" rel="noopener">Download</a></p>
         <h5><b>COILS</b></h5>
-        <p>COILS is a program that compares a sequence to a database of known parallel two-stranded coiled-coils and derives a similarity score. By comparing this score to the distribution of scores in globular and coiled-coil proteins, the program then calculates the probability that the sequence will adopt a coiled-coil conformation. COILS is described in <a href = https://www.ncbi.nlm.nih.gov/pubmed/2031185?dopt=Abstract target="_blank">Lupas, Science 252: 1162-1164 (1991)</a> and Lupas, Meth. Enzymology 266: 513-525 (1996). It is based on a prediction protocol proposed by <a href = https://www.ncbi.nlm.nih.gov/pubmed/7165792?dopt=Abstract>Parry, Biosci. Rep. 2: 1017-1024 (1982)</a>. You can also <a href = ftp://ftp.tuebingen.mpg.de/pub/protevo/COILS target="_blank">download</a> the software.</p>
+        <p>COILS is a program that compares a sequence to a database of known parallel two-stranded coiled-coils and derives a similarity score. By comparing this score to the distribution of scores in globular and coiled-coil proteins, the program then calculates the probability that the sequence will adopt a coiled-coil conformation. COILS is described in <a href = https://www.ncbi.nlm.nih.gov/pubmed/2031185?dopt=Abstract target="_blank" rel="noopener">Lupas, Science 252: 1162-1164 (1991)</a> and Lupas, Meth. Enzymology 266: 513-525 (1996). It is based on a prediction protocol proposed by <a href = https://www.ncbi.nlm.nih.gov/pubmed/7165792?dopt=Abstract>Parry, Biosci. Rep. 2: 1017-1024 (1982)</a>. You can also <a href = ftp://ftp.tuebingen.mpg.de/pub/protevo/COILS target="_blank" rel="noopener">download</a> the software.</p>
         <h5><b>PSIPRED</b></h5>
-        <p>PSIPRED predicts the secondary structure as described in <a href = https://www.ncbi.nlm.nih.gov/pubmed/10493868?dopt=Abstract target="_blank">Jones, J.Mol.Biol. 292:195-202 (1999)</a>.</p>
+        <p>PSIPRED predicts the secondary structure as described in <a href = https://www.ncbi.nlm.nih.gov/pubmed/10493868?dopt=Abstract target="_blank" rel="noopener">Jones, J.Mol.Biol. 292:195-202 (1999)</a>.</p>
     </div>
     <div id="tabs-2" class="greenlink">
         <ul class="accordion" data-accordion data-allow-all-closed='true'>
@@ -85,7 +85,7 @@
     </div>
     <div id="tabs-3" class="greenlink">
         @help.citations.toolkit_citation()
-        <p>Gruber M., Söding J., Lupas AN. (2005) <b>REPPER -- Repeats and their periodicities in fibrous proteins. </b>Nucl Acids Res 33(Web Server issue): W239-W243. <a href = https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1160166 target="_blank">PMCID: PMC1160166</a></p>
+        <p>Gruber M., Söding J., Lupas AN. (2005) <b>REPPER -- Repeats and their periodicities in fibrous proteins. </b>Nucl Acids Res 33(Web Server issue): W239-W243. <a href = https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1160166 target="_blank" rel="noopener">PMCID: PMC1160166</a></p>
     </div>
 </div>
 
