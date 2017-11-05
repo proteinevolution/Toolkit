@@ -21,8 +21,8 @@ const validation = function(elem : any, isInit : boolean, ctx : any) : any {
             if (toolname == 'hhpred')
                 elem = $("[name='alignment']");
 
-            let path = window.location.href;
-            let url = path.split("/");
+            const path = window.location.href;
+            const url = path.split("/");
 
             if (url[url.length - 2] != 'jobs') {
 
@@ -74,7 +74,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 20000;
             seqLimit = 10000;
 
-            let formatseqTarget = new alignmentVal($(elem));
+            const formatseqTarget = new alignmentVal($(elem));
 
             if (formatseqTarget.basicValidation("yes")) {
                 if (!formatseqTarget.validateA3M()) {
@@ -105,7 +105,7 @@ const validationProcess = function(elem: any,toolname: string) {
             seqLimit = 500;
 
 
-            let tcoffeeTarget = new alignmentVal($(elem));
+            const tcoffeeTarget = new alignmentVal($(elem));
 
             if (tcoffeeTarget.basicValidation("no")) {
                 tcoffeeTarget.mustHave2();
@@ -126,7 +126,7 @@ const validationProcess = function(elem: any,toolname: string) {
 
             seqLimit = 2000;
 
-            let mafftTarget = new alignmentVal($(elem));
+            const mafftTarget = new alignmentVal($(elem));
 
             if (mafftTarget.basicValidation("no")) {
                 mafftTarget.mustHave2();
@@ -146,7 +146,7 @@ const validationProcess = function(elem: any,toolname: string) {
 
             seqLimit = 2000;
 
-            let muscleTarget = new alignmentVal($(elem));
+            const muscleTarget = new alignmentVal($(elem));
 
             if (muscleTarget.basicValidation("no")) {
                 muscleTarget.mustHave2();
@@ -166,7 +166,7 @@ const validationProcess = function(elem: any,toolname: string) {
 
             seqLimit = 2000;
 
-            let clustaloTarget = new alignmentVal($(elem));
+            const clustaloTarget = new alignmentVal($(elem));
 
 
             if (clustaloTarget.basicValidation("no")) {
@@ -187,7 +187,7 @@ const validationProcess = function(elem: any,toolname: string) {
 
             seqLimit = 2000;
 
-            let kalignTarget = new alignmentVal($(elem));
+            const kalignTarget = new alignmentVal($(elem));
 
 
             if (kalignTarget.basicValidation("no")) {
@@ -208,7 +208,7 @@ const validationProcess = function(elem: any,toolname: string) {
 
             seqLimit = 2000;
 
-            let msaprobsTarget = new alignmentVal($(elem));
+            const msaprobsTarget = new alignmentVal($(elem));
 
             if (msaprobsTarget.basicValidation("no")) {
                 msaprobsTarget.mustHave2();
@@ -227,7 +227,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 20000;
             seqLimit = 10000;
 
-            let hmmerTarget = new alignmentVal($(elem));
+            const hmmerTarget = new alignmentVal($(elem));
 
             if (hmmerTarget.basicValidation("yes")) {
                 hmmerTarget.sameLengthValidation();
@@ -246,7 +246,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 20000;
             seqLimit = 10000;
 
-            let hhblitsTarget = new alignmentVal($(elem));
+            const hhblitsTarget = new alignmentVal($(elem));
 
             if (hhblitsTarget.basicValidation("yes")) {
                 if (!hhblitsTarget.validateA3M()) {
@@ -271,7 +271,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 20000; // TODO: why was the charLimit defined after it's usage?
             seqLimit = 10000;
 
-            let hhpredTarget = new alignmentVal($(elem));
+            const hhpredTarget = new alignmentVal($(elem));
 
 
             if (hhpredTarget.basicValidation("yes")) {
@@ -298,7 +298,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 20000; // TODO: why was the charLimit defined after it's usage?
             seqLimit = 10000;
 
-            let hhompTarget = new alignmentVal($(elem));
+            const hhompTarget = new alignmentVal($(elem));
 
             if (hhompTarget.basicValidation("yes")) {
                 if (!hhompTarget.validateA3M()) {
@@ -322,7 +322,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 10000;
             seqLimit = 5000;
 
-            let psiblastTarget = new alignmentVal($(elem));
+            const psiblastTarget = new alignmentVal($(elem));
 
             if (psiblastTarget.basicValidation("yes")) {
                 psiblastTarget.sameLengthValidation();
@@ -335,7 +335,7 @@ const validationProcess = function(elem: any,toolname: string) {
              * Input has to be a single line without spaces, and the first character may not be '>'
              */
 
-            let patsearchTarget = new alignmentVal($(elem));
+            const patsearchTarget = new alignmentVal($(elem));
             patsearchTarget.patternSearchValidation();
 
             break;
@@ -344,7 +344,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 10000;
             seqLimit = 2000;
 
-            let aln2plotTarget = new alignmentVal($(elem));
+            const aln2plotTarget = new alignmentVal($(elem));
 
 
             if (aln2plotTarget.basicValidation("yes")) {
@@ -360,7 +360,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 3000;
             seqLimit = 2000;
 
-            let frpredTarget = new alignmentVal($(elem));
+            const frpredTarget = new alignmentVal($(elem));
 
 
             if (frpredTarget.basicValidation("yes")) {
@@ -374,7 +374,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 20000;
             seqLimit = 10000;
 
-            let hhrepidTarget = new alignmentVal($(elem));
+            const hhrepidTarget = new alignmentVal($(elem));
 
             if (hhrepidTarget.basicValidation("yes")) {
                 if (!hhrepidTarget.validateA3M()) {
@@ -393,7 +393,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 20000;
             seqLimit = 2000;
 
-            let pcoilsTarget = new alignmentVal($(elem));
+            const pcoilsTarget = new alignmentVal($(elem));
 
             if (pcoilsTarget.basicValidation("yes")) {
                 pcoilsTarget.sameLengthValidation();
@@ -406,7 +406,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 10000;
             seqLimit = 2000;
 
-            let repperTarget = new alignmentVal($(elem));
+            const repperTarget = new alignmentVal($(elem));
 
             if (repperTarget.basicValidation("yes")) {
                 repperTarget.sameLengthValidation();
@@ -419,7 +419,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 10000;
             seqLimit = 2000;
 
-            let marcoilTarget = new alignmentVal($(elem));
+            const marcoilTarget = new alignmentVal($(elem));
 
             if (marcoilTarget.basicValidation("yes")) {
                 marcoilTarget.mustHave1();
@@ -432,7 +432,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 10000;
 
 
-            let tprpredTarget = new alignmentVal($(elem));
+            const tprpredTarget = new alignmentVal($(elem));
 
             if (tprpredTarget.basicValidation("yes")) {
                 tprpredTarget.mustHave1();
@@ -445,7 +445,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 3000;
             seqLimit = 100;
 
-            let ali2dTarget = new alignmentVal($(elem));
+            const ali2dTarget = new alignmentVal($(elem));
 
             if (ali2dTarget.basicValidation("yes")) {
                 if (ali2dTarget.sameLengthValidation())
@@ -459,7 +459,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 3000;
             seqLimit = 2000;
 
-            let quick2dTarget = new alignmentVal($(elem));
+            const quick2dTarget = new alignmentVal($(elem));
 
             if (quick2dTarget.basicValidation("yes")) {
                 quick2dTarget.sameLengthValidation();
@@ -469,14 +469,14 @@ const validationProcess = function(elem: any,toolname: string) {
             break;
 
         case "modeller":
-            let modellerTarget = new alignmentVal($(elem));
+            const modellerTarget = new alignmentVal($(elem));
             modellerTarget.modellerValidation();
 
             break;
 
         case "samcc":
 
-            let samccTarget = new alignmentVal($(elem));
+            const samccTarget = new alignmentVal($(elem));
             samccTarget.samccValidation();
 
             break;
@@ -486,7 +486,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 3000;
             seqLimit = 2000;
 
-            let ancesconTarget = new alignmentVal($(elem));
+            const ancesconTarget = new alignmentVal($(elem));
 
             if (ancesconTarget.basicValidation("yes")) {
                 if (ancesconTarget.sameLengthValidation())
@@ -508,7 +508,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 30000;
             seqLimit = 20000;
 
-            let mmseqs2Target = new alignmentVal($(elem));
+            const mmseqs2Target = new alignmentVal($(elem));
 
             if (mmseqs2Target.basicValidation("yes")) {
                 mmseqs2Target.mustHave2();
@@ -520,7 +520,7 @@ const validationProcess = function(elem: any,toolname: string) {
 
             seqLimit = 100;
 
-            let phymlTarget = new alignmentVal($(elem));
+            const phymlTarget = new alignmentVal($(elem));
 
             if (phymlTarget.basicValidation("yes")) {
                 if (phymlTarget.sameLengthValidation())
@@ -543,7 +543,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 20000;
             seqLimit = 10000;
 
-            let clansTarget = new alignmentVal($(elem));
+            const clansTarget = new alignmentVal($(elem));
 
             if (clansTarget.basicValidation("yes")) {
                 clansTarget.mustHave2();
@@ -553,14 +553,14 @@ const validationProcess = function(elem: any,toolname: string) {
 
         case "sixframe":
 
-            let sixframetranslationTarget = new alignmentVal($(elem));
+            const sixframetranslationTarget = new alignmentVal($(elem));
             sixframetranslationTarget.DNAvalidation();
 
             break;
 
         case "backtrans":
 
-            let backtransTarget = new alignmentVal($(elem));
+            const backtransTarget = new alignmentVal($(elem));
 
             if (backtransTarget.basicValidation("yes")) {
                 backtransTarget.mustHave1();
@@ -579,7 +579,7 @@ const validationProcess = function(elem: any,toolname: string) {
             charLimitPerSeq = 3000;
             seqLimit = 10000;
 
-            let hhfilterTarget = new alignmentVal($(elem));
+            const hhfilterTarget = new alignmentVal($(elem));
 
             if (hhfilterTarget.basicValidation("yes")) {
                 if (!hhfilterTarget.validateA3M()) {
@@ -591,7 +591,7 @@ const validationProcess = function(elem: any,toolname: string) {
             break;
 
         case "retseq":
-            let retseqTarget = new alignmentVal($(elem));
+            const retseqTarget = new alignmentVal($(elem));
             retseqTarget.retSeqValidation();
 
             break;
@@ -605,7 +605,7 @@ const validationProcess = function(elem: any,toolname: string) {
              * Limit the maximum number of sequences to 10000.
              */
 
-            let seq2idTarget = new alignmentVal($(elem));
+            const seq2idTarget = new alignmentVal($(elem));
 
             seq2idTarget.seq2IDvalidation();
 
@@ -626,7 +626,7 @@ const validationProcess = function(elem: any,toolname: string) {
 
 function feedback(valid : boolean, msg : string = "unknown validation error", type : string = "error", wrongformat : boolean = false) : void {
 
-    let $v = $("#validOrNot");
+    const $v = $("#validOrNot");
 
 
     type = type || "success";
@@ -658,7 +658,7 @@ function feedback(valid : boolean, msg : string = "unknown validation error", ty
 
 function valReset(){
 
-    let $v = $("#validOrNot");
+    const $v = $("#validOrNot");
     $v.hide();
 
 }
@@ -740,7 +740,7 @@ class alignmentVal implements ToolkitValidator {
         }
 	    else if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') !== '') {
             originIsFasta = false;
-            let t = this.elem.reformat('detect');
+            const t = this.elem.reformat('detect');
             feedback(true, t.toUpperCase() + " format found:  <b>Auto-transformed to FASTA</b>", "success");
             $("#alignment").val(this.elem.reformat('fasta'));
             return true;
@@ -897,7 +897,7 @@ class alignmentVal implements ToolkitValidator {
         }
         else if (!this.elem.validate('fasta') && this.elem.reformat('detect') != '') {
             originIsFasta = false;
-            let t = this.elem.reformat('detect');
+            const t = this.elem.reformat('detect');
             feedback(false, t + " format found:  <b>Auto-transformed to Fasta</b>", "success", t);
             $("#alignment").val(this.elem.reformat('fasta'));
         }
