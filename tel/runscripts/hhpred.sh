@@ -2,6 +2,7 @@ SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 A3M_INPUT=$(head -1 ../params/alignment | egrep "^#A3M#" | wc -l)
 DBJOINED=""
+LOW_ALN_DEPTH=""
 #create file in which selected dbs are written
 touch ../params/dbs
 
@@ -224,9 +225,10 @@ COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
 
 rm ../results/firstSeq0.fas ../results/firstSeq.cc
 
+ITERS=%msa_gen_max_iter.content
 
 #CHECK IF MSA generation is required or not
-if [ "%msa_gen_max_iter.content" = "0" ] ; then
+if [ ${ITERS} = "0" ] ; then
         echo "#No MSA generation required for building A3M." >> ../results/process.log
         updateProcessLog
         reformat_hhsuite.pl fas a3m ../results/${JOBID}.fas ${JOBID}.a3m -M first
@@ -246,12 +248,6 @@ else
         updateProcessLog
         echo "done" >> ../results/process.log
         updateProcessLog
-
-        if [ %msa_gen_max_iter.content -lt "1" ] ; then
-            ITERS=3
-        else
-            ITERS=%msa_gen_max_iter.content
-        fi
 
     #MSA generation by HHblits
     if [ "%msa_gen_method.content" = "uniprot20" ] || [ "%msa_gen_method.content" = "uniclust30" ] ; then
@@ -312,11 +308,14 @@ else
                     -blastplus
         echo "done" >> ../results/process.log
         updateProcessLog
+
     fi
 fi
 
 echo "#Generating query A3M." >> ../results/process.log
 updateProcessLog
+
+QA3M_COUNT=$(egrep '^>' ../results/${JOBID}.a3m | wc -l)
 
 #Generate representative MSA for forwarding
 
@@ -360,7 +359,7 @@ then
 
     cd ../results
 
-    if [ "%msa_gen_max_iter.content" = "0" ] && [ ${SEQ_COUNT2} -gt "1" ] ; then
+    if [ ${ITERS} = "0" ] && [ ${SEQ_COUNT2} -gt "1" ] ; then
             echo "#No MSA generation required for building template A3M." >> ../results/process.log
             updateProcessLog
             reformat_hhsuite.pl fas a3m %alignment_two.path db.a3m -M first
@@ -465,6 +464,19 @@ manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/${JOBID}.json
 
 # add coiled coil prediction info to json
 manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/${JOBID}.json
+
+
+# For alerting user if too few homologs are found for building A3M
+
+if [ ${ITERS} = "0" ] ; then
+    manipulate_json.py -k 'MSA_GEN' -v "custom" ../results/${JOBID}.json
+else
+    manipulate_json.py -k 'MSA_GEN' -v "%msa_gen_method.content" ../results/${JOBID}.json
+fi
+
+# Number of sequences in the query A3M
+manipulate_json.py -k 'QA3M_COUNT' -v "${QA3M_COUNT}" ../results/${JOBID}.json
+
 
 
 
