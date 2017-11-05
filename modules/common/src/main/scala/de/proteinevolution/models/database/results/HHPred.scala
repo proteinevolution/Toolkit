@@ -63,7 +63,9 @@ case class HHPredResult(HSPS: List[HHPredHSP],
                         db: String,
                         proteomes: String,
                         TMPRED: String,
-                        COILPRED: String) {
+                        COILPRED: String,
+                        MSA_GEN: String,
+                        QA3M_COUNT: Int) {
 
   def hitsOrderBy(params: DTParam): List[HHPredHSP] = {
     (params.iSortCol, params.sSortDir) match {
@@ -131,7 +133,14 @@ class HHPred @Inject()(general: General, aln: Alignment) {
         val query     = general.parseSingleSeq((obj \ "query").as[JsArray])
         val num_hits  = hsplist.length
 
-        HHPredResult(hsplist, alignment, num_hits, query, db, proteomes, TMPRED, COILPRED)
+        val MSA_GEN = (obj \ jobID \ "MSA_GEN").asOpt[String] match {
+          case Some(data) => data
+          case None       => ""
+        }
+
+        val QA3M_COUNT = (obj \ jobID \ "QA3M_COUNT").getOrElse(Json.toJson(1)).as[String].toInt
+
+        HHPredResult(hsplist, alignment, num_hits, query, db, proteomes, TMPRED, COILPRED, MSA_GEN, QA3M_COUNT)
       } catch {
 
         case e: Exception => e.printStackTrace(); null
