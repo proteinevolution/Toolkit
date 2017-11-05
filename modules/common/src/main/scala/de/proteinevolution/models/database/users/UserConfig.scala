@@ -2,12 +2,7 @@ package de.proteinevolution.models.database.users
 
 import reactivemongo.bson._
 
-/**
-  * Created by astephens on 20.08.16.
-  */
-case class UserConfig(defaultPublic: Boolean = false,
-                      defaultComments: Boolean = false,
-                      hasMODELLERKey: Boolean = false)
+case class UserConfig(defaultPublic: Boolean = false, defaultComments: Boolean = false, hasMODELLERKey: Boolean = false)
 
 object UserConfig {
   final val DEFAULTPUBLIC   = "defaultPublic"

@@ -1,6 +1,3 @@
-/**
- * Created by snam on 03.03.17.
- */
 /// <reference path="parametercomponents.ts"/>
 
 let seqLimit : any;

@@ -3,27 +3,24 @@ package models.auth
 import de.proteinevolution.models.database.users.User
 import play.api.libs.json.{ JsObject, JsValue, Json }
 
-/**
-  * Created by astephens on 26.05.16.
-  */
 trait JSONTemplate {
 
   /**
-    * Creates a simplified JSON Object from a User Object
-    *
-    * @param user
-    * @return
-    */
+   * Creates a simplified JSON Object from a User Object
+   *
+   * @param user
+   * @return
+   */
   def userToJSON(user: User): JsObject = {
     Json.obj("nameLogin" -> user.getUserData.nameLogin)
   }
 
   /**
-    * Creates a JSON Object from an Auth Action Object
-    *
-    * @param userOption
-    * @return
-    */
+   * Creates a JSON Object from an Auth Action Object
+   *
+   * @param userOption
+   * @return
+   */
   def authMessage(message: String, success: Boolean = false, userOption: Option[User] = None): JsValue = {
     Json.obj("message"    -> message,
              "successful" -> success,

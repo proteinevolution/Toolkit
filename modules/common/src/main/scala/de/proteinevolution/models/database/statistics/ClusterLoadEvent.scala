@@ -6,9 +6,6 @@ import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 
-/**
-  * Created by astephens on 27.03.17.
-  */
 case class ClusterLoadEvent(id: BSONObjectID,
                             listLoad: List[Double],
                             averageLoad: Double,
