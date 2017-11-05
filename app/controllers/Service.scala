@@ -28,11 +28,6 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import org.webjars.play.WebJarsUtil
 
-/**
-  *
-  *
-  * Created by lukas on 2/27/16.
-  */
 @Singleton
 final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
                               messagesApi: MessagesApi,
@@ -120,43 +115,43 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
   def getJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     mongoStore.selectJob(jobID).flatMap {
       case Some(job) =>
-            Logger.info("Requested job has been found in MongoDB, the jobState is " + job.status)
-            val toolitem = toolFactory.values(job.tool).toolitem
+        Logger.info("Requested job has been found in MongoDB, the jobState is " + job.status)
+        val toolitem = toolFactory.values(job.tool).toolitem
 
-            // The jobState decides which views will be appended to the job
-            val jobViews: Future[Seq[String]] = job.status match {
-              case Done => Future.successful(toolFactory.resultPanels(toolitem.toolname))
-              // All other views are currently computed on Clientside
-              case _ => Future.successful(Seq.empty[String])
-            }
-            // Read parameters from serialized file
-            val paramValues: Map[String, String] = {
-              if ((constants.jobPath / jobID / "sparam").exists) {
-                val ois =
-                  new ObjectInputStream(new FileInputStream((constants.jobPath / jobID / "sparam").pathAsString))
-                val x = ois.readObject().asInstanceOf[Map[String, String]]
-                ois.close()
-                x
-              } else {
-                Map.empty[String, String]
-              }
-            }
+        // The jobState decides which views will be appended to the job
+        val jobViews: Future[Seq[String]] = job.status match {
+          case Done => Future.successful(toolFactory.resultPanels(toolitem.toolname))
+          // All other views are currently computed on Clientside
+          case _ => Future.successful(Seq.empty[String])
+        }
+        // Read parameters from serialized file
+        val paramValues: Map[String, String] = {
+          if ((constants.jobPath / jobID / "sparam").exists) {
+            val ois =
+              new ObjectInputStream(new FileInputStream((constants.jobPath / jobID / "sparam").pathAsString))
+            val x = ois.readObject().asInstanceOf[Map[String, String]]
+            ois.close()
+            x
+          } else {
+            Map.empty[String, String]
+          }
+        }
 
-              jobViews.map { jobViewsN =>
-                Ok(
-                  Json.toJson(
-                    Jobitem(
-                      job.jobID,
-                      job.status,
-                      job.dateCreated.get.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                      toolitem,
-                      jobViewsN,
-                      paramValues
-                    )
-                  )
-                )
+        jobViews.map { jobViewsN =>
+          Ok(
+            Json.toJson(
+              Jobitem(
+                job.jobID,
+                job.status,
+                job.dateCreated.get.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                toolitem,
+                jobViewsN,
+                paramValues
+              )
+            )
+          )
 
-            }
+        }
       case _ =>
         Logger.info("Job could not be found")
         Future.successful(NotFound)

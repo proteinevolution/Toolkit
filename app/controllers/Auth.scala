@@ -28,9 +28,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ Await, Future }
 
 /**
-  * Controller for Authentication interactions
-  * Created by astephens on 03.04.16.
-  */
+ * Controller for Authentication interactions
+ *
+ */
 @Singleton
 final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                            messagesApi: MessagesApi,
@@ -52,11 +52,11 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
     with ReactiveMongoComponents {
 
   /**
-    * User wants to sign out
-    * -> remove the sessionID from the database, Overwrite their cookie and give them a new Session ID
-    *
-    * @return
-    */
+   * User wants to sign out
+   * -> remove the sessionID from the database, Overwrite their cookie and give them a new Session ID
+   *
+   * @return
+   */
   def signOut(): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
       userSessions.removeUserFromCache(user)
@@ -68,10 +68,10 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
   }
 
   /**
-    * Sending user name as JSON to the mithril model in joblist
-    *
-    * @return
-    */
+   * Sending user name as JSON to the mithril model in joblist
+   *
+   * @return
+   */
   def profile2json(): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
       user.userData match {
@@ -121,11 +121,11 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
   }
 
   /**
-    * Submission of the sign in form
-    * Checks the Database for the user and logs him in if password matches
-    *
-    * @return
-    */
+   * Submission of the sign in form
+   * Checks the Database for the user and logs him in if password matches
+   *
+   * @return
+   */
   def signInSubmit(): Action[AnyContent] =
     Action.async { implicit request =>
       userSessions.getUser.flatMap { unregisteredUser =>
@@ -209,11 +209,11 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
     }
 
   /**
-    * Submission of the sign up form
-    * Checks Database if there is a preexisting user and adds him if there is none
-    *
-    * @return
-    */
+   * Submission of the sign up form
+   * Checks Database if there is a preexisting user and adds him if there is none
+   *
+   * @return
+   */
   def signUpSubmit(): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       if (user.accountType < 0) {
@@ -277,10 +277,10 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
   }
 
   /**
-    * Function handles the profile edit form submission.
-    *
-    * @return
-    */
+   * Function handles the profile edit form submission.
+   *
+   * @return
+   */
   def profileSubmit(): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user: User =>
       user.userData match {
@@ -336,12 +336,12 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
   }
 
   /**
-    * Allows a User to change his password.
-    * sent him an verification link, that he needs
-    * to open
-    *
-    * @return
-    */
+   * Allows a User to change his password.
+   * sent him an verification link, that he needs
+   * to open
+   *
+   * @return
+   */
   def passwordChangeSubmit(): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user: User =>
       user.userData match {
@@ -393,11 +393,11 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
   }
 
   /**
-    * Allows a User to reset his password. A confirmation eMail is send to him to
-    * ensure a secure change
-    *
-    * @return
-    */
+   * Allows a User to reset his password. A confirmation eMail is send to him to
+   * ensure a secure change
+   *
+   * @return
+   */
   def resetPassword: Action[AnyContent] = Action.async { implicit request =>
     FormDefinitions.forgottenPasswordEdit.bindFromRequest.fold(
       errors =>
@@ -447,11 +447,11 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
   }
 
   /**
-    * after user clicks on the verification
-    * link he can reset his password
-    *
-    * @return
-    */
+   * after user clicks on the verification
+   * link he can reset his password
+   *
+   * @return
+   */
   def resetPasswordChange: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user: User =>
       // Validate the password and return the new password Hash
@@ -500,16 +500,16 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
   }
 
   /**
-    * Verifies a Token which was sent to the Users eMail address.
-    * Token Types: 1 - eMail verification
-    * 2 - password change verification
-    * 3 - password reset verification
-    * 4 -                             + reset
-    *
-    *
-    * @param token
-    * @return
-    */
+   * Verifies a Token which was sent to the Users eMail address.
+   * Token Types: 1 - eMail verification
+   * 2 - password change verification
+   * 3 - password reset verification
+   * 4 -                             + reset
+   *
+   *
+   * @param token
+   * @return
+   */
   def verification(nameLogin: String, token: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user: User =>
       // Grab the user from the database in case that the logged in user is not the user to verify

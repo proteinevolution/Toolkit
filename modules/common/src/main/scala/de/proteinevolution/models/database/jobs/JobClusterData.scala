@@ -6,9 +6,6 @@ import de.proteinevolution.models.util.ZonedDateTimeHelper
 import play.api.libs.json._
 import reactivemongo.bson._
 
-/**
-  * Created by astephens on 27.01.17.
-  */
 case class JobClusterData(sgeID: String, // sun grid engine job id
                           memory: Option[Int],
                           threads: Option[Int],
@@ -67,8 +64,8 @@ object JobClusterData {
   }
 
   /**
-    * Object containing the reader for the Class
-    */
+   * Object containing the reader for the Class
+   */
   implicit object Reader extends BSONDocumentReader[JobClusterData] {
     def read(bson: BSONDocument): JobClusterData = {
       JobClusterData(
@@ -87,8 +84,8 @@ object JobClusterData {
   }
 
   /**
-    * Object containing the writer for the Class
-    */
+   * Object containing the writer for the Class
+   */
   implicit object Writer extends BSONDocumentWriter[JobClusterData] {
     def write(clusterData: JobClusterData): BSONDocument = BSONDocument(
       SGEID        -> clusterData.sgeID,

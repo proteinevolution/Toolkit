@@ -1,8 +1,3 @@
-/**
- * Created by mlozajic on 11.04.17.
- */
-
-
 //Tooltips for individual tools
 
 $( "#hhb" ).prop('title', 'Remote homology detection method based on iterative HMM-HMM comparison');

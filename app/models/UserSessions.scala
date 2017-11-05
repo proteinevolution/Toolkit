@@ -8,17 +8,13 @@ import de.proteinevolution.common.{ HTTPRequest, LocationProvider }
 import de.proteinevolution.db.MongoStore
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{ Logger, mvc }
+import play.api.{ mvc, Logger }
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.hashing.MurmurHash3
-
-/**
-  * Created by astephens on 24.08.16.
-  */
 @Singleton
 class UserSessions @Inject()(mongoStore: MongoStore,
                              @NamedCache("userCache") val userCache: SyncCacheApi,
@@ -26,11 +22,11 @@ class UserSessions @Inject()(mongoStore: MongoStore,
   private val SID = "sid"
 
   /**
-    * Creates a update modifier for the user according to the
-    * @param user
-    * @param sessionDataOption
-    * @return
-    */
+   * Creates a update modifier for the user according to the
+   * @param user
+   * @param sessionDataOption
+   * @return
+   */
   def getUserModifier(user: User,
                       sessionDataOption: Option[SessionData] = None,
                       forceSessionID: Boolean = false): BSONDocument = {
@@ -70,10 +66,10 @@ class UserSessions @Inject()(mongoStore: MongoStore,
   }
 
   /**
-    *
-    * Associates a user with the provided sessionID
-    *
-    */
+   *
+   * Associates a user with the provided sessionID
+   *
+   */
   def putUser(implicit request: RequestHeader, sessionID: BSONObjectID): Future[User] = {
     val httpRequest = HTTPRequest(request)
     val newSessionData = SessionData(
@@ -115,8 +111,8 @@ class UserSessions @Inject()(mongoStore: MongoStore,
   }
 
   /**
-    * Returns a Future User
-    */
+   * Returns a Future User
+   */
   def getUser(implicit request: RequestHeader): Future[User] = {
     // Ignore our monitoring service and don't update it in the DB
     if (request.remoteAddress.contentEquals("10.3.7.70")) { // TODO Put this in the config?
@@ -141,11 +137,11 @@ class UserSessions @Inject()(mongoStore: MongoStore,
   }
 
   /**
-    * Grabs the user with the matching sessionID from the cache, or if there is
-    * none, it will try to find it in the database and put it in the cache.
-    * @param sessionID
-    * @return
-    */
+   * Grabs the user with the matching sessionID from the cache, or if there is
+   * none, it will try to find it in the database and put it in the cache.
+   * @param sessionID
+   * @return
+   */
   def getUser(sessionID: BSONObjectID): Future[Option[User]] = {
     // Try the cache
     userCache.get(sessionID.stringify) match {
@@ -173,8 +169,8 @@ class UserSessions @Inject()(mongoStore: MongoStore,
   }
 
   /**
-    * updates a user in the cache
-    */
+   * updates a user in the cache
+   */
   def updateUserCache(user: User): Unit = {
     //Logger.info("User WatchList is now: " + user.jobs.mkString(", "))
     user.sessionID match {
@@ -185,11 +181,11 @@ class UserSessions @Inject()(mongoStore: MongoStore,
   }
 
   /**
-    * saves the user directly to the cache after modification in the DB
-    * @param selector
-    * @param modifier
-    * @return
-    */
+   * saves the user directly to the cache after modification in the DB
+   * @param selector
+   * @param modifier
+   * @return
+   */
   def modifyUserWithCache(selector: BSONDocument, modifier: BSONDocument): Future[Option[User]] = {
     mongoStore
       .modifyUser(selector, modifier)
@@ -200,8 +196,8 @@ class UserSessions @Inject()(mongoStore: MongoStore,
   }
 
   /**
-    * removes a user from the sessions and the database
-    */
+   * removes a user from the sessions and the database
+   */
   def removeUserFromCache(user: User, withDB: Boolean = true): Any = {
     Logger.info("Removing User: \n" + user.toString)
     // Remove user from the cache
@@ -228,8 +224,8 @@ class UserSessions @Inject()(mongoStore: MongoStore,
   }
 
   /**
-    * Handles cookie creation
-    */
+   * Handles cookie creation
+   */
   def sessionCookie(implicit request: RequestHeader, sessionID: BSONObjectID): mvc.Session = {
     request.session + (SID -> sessionID.stringify)
   }

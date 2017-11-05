@@ -5,9 +5,6 @@ import javax.inject.Singleton
 
 import play.api.libs.json._
 
-/**
-  * Created by drau on 13.07.17.
-  */
 case class Quick2DResult(jobID: String,
                          query: SingleSeq,
                          psipred: Psipred,
