@@ -77,7 +77,7 @@ const ParameterAlignmentComponent = {
         };
     },
     view: function(ctrl : any, args : any) {
-        let params = {
+        const params = {
             // TODO Jquery stuff should be handled in config
             oninit: function (elem : any, isInit : boolean) {
                 if (!isInit) {
