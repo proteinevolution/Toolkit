@@ -124,7 +124,7 @@ final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
             case "Ping" =>
               (js \ "date").validate[Long].asOpt match {
                 case Some(msTime) =>
-                  Logger.info(s"[WSActor] Ping from session ${sessionID.stringify} with msTime $msTime")
+                  //Logger.info(s"[WSActor] Ping from session ${sessionID.stringify} with msTime $msTime")
                   out ! Json.obj("type" -> "Pong", "date" -> msTime)
                 case None =>
               }
