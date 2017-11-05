@@ -3,11 +3,9 @@ package controllers
 import java.io.{ FileInputStream, ObjectInputStream }
 import java.security.MessageDigest
 import java.time.ZonedDateTime
-import javax.inject.{ Inject, Named, Singleton }
+import javax.inject.{ Inject, Singleton }
 
 import actors.JobActor._
-import actors.JobIDActor
-import akka.actor.ActorRef
 import better.files._
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.Constants
@@ -17,6 +15,7 @@ import de.proteinevolution.models.search.JobDAO
 import models.tools.ToolFactory
 import models.UserSessions
 import de.proteinevolution.db.MongoStore
+import de.proteinevolution.services.JobIdProvider
 import de.proteinevolution.tel.env.Env
 import play.api.Logger
 import play.api.cache._
@@ -35,7 +34,7 @@ import scala.concurrent.Future
 @Singleton
 final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                     val reactiveMongoApi: ReactiveMongoApi,
-                                    @Named("jobIDActor") jobIDActor: ActorRef,
+                                    jobIdProvider: JobIdProvider,
                                     userSessions: UserSessions,
                                     mongoStore: MongoStore,
                                     env: Env,
@@ -111,7 +110,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               }
             case None =>
               // Use jobID Actor to get a new random jobID
-              Future.successful(Some(JobIDActor.provide))
+              Future.successful(Some(jobIdProvider.provide))
           }).flatMap {
             case Some(jobID) =>
               // Load the parameters for the tool
@@ -175,6 +174,9 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                   // Send the job to the jobActor for preparation
                   jobActorAccess.sendToJobActor(jobID, PrepareJob(job, params, startJob = false, isFromInstitute))
 
+                  // callback to jobIdProvider that job is safely in the database
+                  jobIdProvider.trash(jobID)
+
                   // Add Job to user in database
                   userSessions
                     .modifyUserWithCache(BSONDocument(User.IDDB   -> user.userID),
@@ -187,8 +189,8 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                  "message"    -> "Submission successful.",
                                  "jobID"      -> jobID)
                       ).withSession(
-                          userSessions.sessionCookie(request, user.sessionID.get)
-                        )
+                        userSessions.sessionCookie(request, user.sessionID.get)
+                      )
                     }
                 case None =>
                   // Something went wrong when pushing to the DB

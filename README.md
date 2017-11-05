@@ -3,15 +3,7 @@
 # Toolkit
 MPI Bioinformatics Toolkit 2
 
-<img src="https://raw.githubusercontent.com/zy4/Toolkit/master/public/images/toolkitscreenshot.png?token=AJBfhvc--oKnyCoxU_VZXcNZbHU7xTeRks5ZoVm5wA%3D%3D" alt="MPI Bioinformatics Toolkit" />
-
-
-Credits
--------
-
-The MPI-Toolkit is to some extent the product of volunteer work. Thanks to
-
-...
+<img src="https://raw.githubusercontent.com/zy4/Toolkit/master/public/images/toolkitscreenshot.png" alt="MPI Bioinformatics Toolkit" />
 
 
 Supported browsers
@@ -27,9 +19,3 @@ Supported browsers
 Older browsers will not work. For your own sake, please upgrade.
 Security and performance, think about it!
 
-License
--------
-
-The MPI-Toolkit is licensed under the GNU Affero General Public License 3 or any later
-version at your choice with an exception for Highcharts. See COPYING for
-details.
