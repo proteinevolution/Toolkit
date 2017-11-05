@@ -7,9 +7,6 @@ import de.proteinevolution.models.util.ZonedDateTimeHelper
 import play.api.libs.json._
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter }
 
-/**
-  * Created by astephens on 19.02.17.
-  */
 case class JobEvent(jobState: JobState, timestamp: Option[ZonedDateTime], runtime: Long = 0L)
 
 object JobEvent {

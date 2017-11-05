@@ -7,27 +7,24 @@ import de.proteinevolution.models.util.ZonedDateTimeHelper
 import play.api.libs.json._
 import reactivemongo.bson._
 
-/**
-  * Created by astephens on 14.07.17.
-  */
 case class StatisticsObject(statisticsID: BSONObjectID = BSONObjectID.generate(),
                             userStatistics: UserStatistic = UserStatistic(),
                             toolStatistics: List[ToolStatistic] = List.empty[ToolStatistic],
                             datePushed: List[ZonedDateTime] = List.empty[ZonedDateTime]) {
 
   /**
-    * Returns the tool Statistic elements as a map
-    * @return
-    */
+   * Returns the tool Statistic elements as a map
+   * @return
+   */
   def getToolStatisticMap: Map[String, ToolStatistic] = {
     toolStatistics.map(toolStatistic => (toolStatistic.toolName, toolStatistic)).toMap
   }
 
   /**
-    * Creates new and empty tool statistic elements with the provided name list
-    * @param toolNames
-    * @return
-    */
+   * Creates new and empty tool statistic elements with the provided name list
+   * @param toolNames
+   * @return
+   */
   def updateTools(toolNames: List[String]): StatisticsObject = {
     this.copy(
       toolStatistics = toolNames.map(
@@ -48,10 +45,10 @@ case class StatisticsObject(statisticsID: BSONObjectID = BSONObjectID.generate()
   }
 
   /**
-    * Adds the job events within the begin and end date to the tool statistics
-    * @param jobEventLogs
-    * @return
-    */
+   * Adds the job events within the begin and end date to the tool statistics
+   * @param jobEventLogs
+   * @return
+   */
   def addMonthsToTools(jobEventLogs: List[JobEventLog],
                        beginDate: ZonedDateTime,
                        endDate: ZonedDateTime): StatisticsObject = {
@@ -107,9 +104,9 @@ case class StatisticsObject(statisticsID: BSONObjectID = BSONObjectID.generate()
   }
 
   /**
-    * Returns the date when the last push happened
-    * @return
-    */
+   * Returns the date when the last push happened
+   * @return
+   */
   def lastPushed: ZonedDateTime = {
     datePushed.headOption match {
       case Some(_) => datePushed.max[ZonedDateTime](Ordering.fromLessThan(_ isBefore _)).truncatedTo(ChronoUnit.DAYS)

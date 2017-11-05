@@ -2,9 +2,6 @@ package de.proteinevolution.models.database.users
 
 import reactivemongo.bson.{ BSONDocument, BSONDocumentReader, BSONDocumentWriter }
 
-/**
-  * Created by astephens on 19.08.16.
-  */
 case class Location(country: String, countryCode: Option[String], region: Option[String], city: Option[String])
 
 object Location {

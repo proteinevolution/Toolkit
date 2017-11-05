@@ -2,9 +2,6 @@ package de.proteinevolution.models.sge
 
 import javax.inject.{ Inject, Singleton }
 
-/**
-  * Created by snam on 19.03.17.
-  */
 @Singleton
 final class Cluster @Inject()(qhost: Qhost, qstat: Qstat) {
 

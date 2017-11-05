@@ -5,9 +5,6 @@ import scala.util.Random
 import reactivemongo.bson._
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 
-/**
-  * Created by astephens on 22.11.16.
-  */
 case class UserToken(tokenType: Int,
                      token: String = Random.alphanumeric.take(15).mkString,
                      passwordHash: Option[String] = None,
@@ -24,8 +21,8 @@ object UserToken {
   lazy val CHANGEDATE      = "changeDate"
 
   /**
-    * Object containing the reader for the job state
-    */
+   * Object containing the reader for the job state
+   */
   implicit object UserTokenReader extends BSONReader[BSONDocument, UserToken] {
     def read(doc: BSONDocument) =
       UserToken(
@@ -39,8 +36,8 @@ object UserToken {
   }
 
   /**
-    * Object containing the writer for the job state
-    */
+   * Object containing the writer for the job state
+   */
   implicit object UserTokenWriter extends BSONWriter[UserToken, BSONDocument] {
     def write(userToken: UserToken) =
       BSONDocument(

@@ -1,7 +1,3 @@
-/**
- * Created by astephens on 21.02.17.
- */
-
 let currentRoute : string = null;
 
 interface Window { Backend: any; }

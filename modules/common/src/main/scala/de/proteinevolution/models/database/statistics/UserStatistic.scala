@@ -3,9 +3,6 @@ package de.proteinevolution.models.database.statistics
 import play.api.libs.json._
 import reactivemongo.bson._
 
-/**
-  * Created by astephens on 14.07.17.
-  */
 case class UserStatistic(currentDeleted: Int = 0,
                          monthly: List[Int] = List.empty[Int],
                          monthlyLoggedIn: List[Int] = List.empty[Int],

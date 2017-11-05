@@ -5,14 +5,11 @@ import de.proteinevolution.models.database.jobs.{ Deleted, Error, JobState, Subm
 import play.api.libs.json._
 import reactivemongo.bson._
 
-/**
-  * Created by astephens on 19.02.17.
-  */
-case class JobEventLog(mainID      : BSONObjectID   = BSONObjectID.generate(), // ID of the Job in the System
-                       toolName    : String,
-                       internalJob : Boolean        = false,
-                       events      : List[JobEvent] = List.empty[JobEvent],
-                       runtime     : Long           = 0L) {
+case class JobEventLog(mainID: BSONObjectID = BSONObjectID.generate(), // ID of the Job in the System
+                       toolName: String,
+                       internalJob: Boolean = false,
+                       events: List[JobEvent] = List.empty[JobEvent],
+                       runtime: Long = 0L) {
 
   def addJobStateEvent(jobState: JobState): JobEventLog = {
     val runtimeDiff: Long =
@@ -33,11 +30,11 @@ case class JobEventLog(mainID      : BSONObjectID   = BSONObjectID.generate(), /
     events.find(_.jobState == Submitted).flatMap(_.timestamp).getOrElse(ZonedDateTime.now)
   }
 
-  override def toString : String = {
+  override def toString: String = {
     s"""---[JobEventLog Object]---
        |mainID: ${mainID.stringify}
        |tool name: $toolName
-       |internalJob? ${if(internalJob){"yes"}else{"no"}}
+       |internalJob? ${if (internalJob) { "yes" } else { "no" }}
        |events: ${events.mkString(",")}""".stripMargin
   }
 }
@@ -100,10 +97,10 @@ object JobEventLog {
   }
 
   /**
-    * Returns the jobEvent list partitioned in to a map of tools
-    * @param jobEventList
-    * @return
-    */
+   * Returns the jobEvent list partitioned in to a map of tools
+   * @param jobEventList
+   * @return
+   */
   def toSortedMap(jobEventList: List[JobEventLog]): Map[String, List[JobEventLog]] = {
     var jobEventMap = Map.empty[String, List[JobEventLog]]
     jobEventList.foreach { jobEvent =>

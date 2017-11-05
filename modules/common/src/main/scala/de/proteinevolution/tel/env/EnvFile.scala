@@ -9,10 +9,9 @@ import scala.sys.process.Process
 import scala.util.matching.Regex
 
 /**
-  * Abstract class representing environment files for TEL
-  *
-  * Created by lzimmermann on 8/19/16.
-  */
+ * Abstract class representing environment files for TEL
+ *
+ */
 object EnvFile {
 
   final val placeholder: Regex = "%([A-Z]+)".r("expression")
@@ -41,10 +40,10 @@ class ExecFile(path: String) extends EnvFile(path) {
 }
 
 /**
-  * Represents a Prop file and enables loading
-  * its content
-  *
-  */
+ * Represents a Prop file and enables loading
+ * its content
+ *
+ */
 class PropFile(path: String) extends EnvFile(path) {
 
   def load: Map[String, String] = {

@@ -1,8 +1,5 @@
 package de.proteinevolution.models.database.CMS
 
-/**
-  * Created by drau on 30.01.17.
-  */
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -74,8 +71,8 @@ object FeaturedArticle {
   }
 
   /**
-    * Object containing the writer for the Class
-    */
+   * Object containing the writer for the Class
+   */
   implicit object Reader extends BSONDocumentReader[FeaturedArticle] {
     def read(bson: BSONDocument): FeaturedArticle = {
       FeaturedArticle(
@@ -92,8 +89,8 @@ object FeaturedArticle {
   }
 
   /**
-    * Object containing the writer for the Class
-    */
+   * Object containing the writer for the Class
+   */
   implicit object Writer extends BSONDocumentWriter[FeaturedArticle] {
     def write(featuredArticle: FeaturedArticle): BSONDocument = BSONDocument(
       IDDB        -> featuredArticle.articleID,

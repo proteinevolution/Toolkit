@@ -4,7 +4,6 @@ import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
 
 /**
- * Created by astephens on 01.03.16.
  * Session object used for a simple creation of a session cookie with the sessionID
  */
 case class SessionData(ip: String, userAgent: String, location: Location)

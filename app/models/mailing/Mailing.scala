@@ -8,17 +8,14 @@ import de.proteinevolution.tel.TEL
 import play.api.libs.mailer.{ Email, MailerClient }
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 
-/**
-  * Created by astephens on 24.05.16.
-  */
 object MailTemplate {
   // Date time format for the "deleting your account on" mail
   val dtf = "EEEE, dd.MM.yyyy"
 }
 
 /**
-  * Template trait to the Mail object
-  */
+ * Template trait to the Mail object
+ */
 sealed trait MailTemplate {
   // User to whom the eMail should be sent
   val user: User

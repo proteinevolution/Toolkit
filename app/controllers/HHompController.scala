@@ -18,12 +18,11 @@ import scala.concurrent.Future
 import scala.sys.process._
 
 /**
-  * Created by drau on 01.03.17.
-  *
-  * HHpred Controller process all requests
-  * made from the HHpred result view
-  */
-class HHompController @Inject()(resultFiles : ResultFileAccessor,
+ *
+ * HHpred Controller process all requests
+ * made from the HHpred result view
+ */
+class HHompController @Inject()(resultFiles: ResultFileAccessor,
                                 hhomp: HHomp,
                                 val reactiveMongoApi: ReactiveMongoApi,
                                 constants: Constants,
@@ -37,15 +36,15 @@ class HHompController @Inject()(resultFiles : ResultFileAccessor,
   private val templateAlignmentScript = (serverScripts + "/templateAlignmentHHomp.sh").toFile
 
   /**
-    * Retrieves the template alignment for a given
-    * accession, therefore it runs a script on the server
-    * (now grid engine) and writes it to the current job folder
-    * to 'accession'.fas
-    *
-    * @param jobID
-    * @param accession
-    * @return Http response
-    */
+   * Retrieves the template alignment for a given
+   * accession, therefore it runs a script on the server
+   * (now grid engine) and writes it to the current job folder
+   * to 'accession'.fas
+   *
+   * @param jobID
+   * @param accession
+   * @return Http response
+   */
   def retrieveTemplateAlignment(jobID: String, accession: String): Action[AnyContent] = Action.async {
     if (jobID.isEmpty || accession.isEmpty) {
       Logger.info("either job or accession is empty")
@@ -67,13 +66,13 @@ class HHompController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * given dataTable specific paramters, this function
-    * filters for eg. a specific column and returns the data
-    * @param hits
-    * @param params
-    * @return
-    */
-  def getHitsByKeyWord(hits : HHompResult, params: DTParam): List[HHompHSP] = {
+   * given dataTable specific paramters, this function
+   * filters for eg. a specific column and returns the data
+   * @param hits
+   * @param params
+   * @return
+   */
+  def getHitsByKeyWord(hits: HHompResult, params: DTParam): List[HHompHSP] = {
     if (params.sSearch.isEmpty) {
       hits.hitsOrderBy(params).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
     } else {
@@ -82,21 +81,21 @@ class HHompController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * Retrieves hit rows (String containing Html)
-    * for the alignment section in the result view
-    * for a given range (start, end). Those can be either
-    * wrapped or unwrapped, colored or uncolored
-    *
-    * Expects json sent by POST including:
-    *
-    * start: index of first HSP that is retrieved
-    * end: index of last HSP that is retrieved
-    * wrapped: Boolean true = wrapped, false = unwrapped
-    * isColored: Boolean true = colored, false = uncolored
-    *
-    * @param jobID
-    * @return Https response: HSP row(s) as String
-    */
+   * Retrieves hit rows (String containing Html)
+   * for the alignment section in the result view
+   * for a given range (start, end). Those can be either
+   * wrapped or unwrapped, colored or uncolored
+   *
+   * Expects json sent by POST including:
+   *
+   * start: index of first HSP that is retrieved
+   * end: index of last HSP that is retrieved
+   * wrapped: Boolean true = wrapped, false = unwrapped
+   * isColored: Boolean true = colored, false = uncolored
+   *
+   * @param jobID
+   * @return Https response: HSP row(s) as String
+   */
   def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
     val start   = (json \ "start").as[Int]
@@ -104,7 +103,7 @@ class HHompController @Inject()(resultFiles : ResultFileAccessor,
     val isColor = (json \ "isColor").as[Boolean]
     val wrapped = (json \ "wrapped").as[Boolean]
     resultFiles.getResults(jobID).map {
-      case None          => NotFound
+      case None => NotFound
       case Some(jsValue) =>
         val result = hhomp.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
@@ -118,12 +117,12 @@ class HHompController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * this method fetches the data for the PSIblast hitlist
-    * datatable
-    *
-    * @param jobID
-    * @return
-    */
+   * this method fetches the data for the PSIblast hitlist
+   * datatable
+   *
+   * @param jobID
+   * @return
+   */
   def dataTable(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val params = DTParam(
       request.getQueryString("sSearch").getOrElse(""),
@@ -133,10 +132,10 @@ class HHompController @Inject()(resultFiles : ResultFileAccessor,
       request.getQueryString("sSortDir_0").getOrElse("asc")
     )
     resultFiles.getResults(jobID).map {
-      case None          => NotFound
+      case None => NotFound
       case Some(jsValue) =>
         val result = hhomp.parseResult(jsValue)
-        val hits = getHitsByKeyWord(result, params)
+        val hits   = getHitsByKeyWord(result, params)
         Ok(
           Json
             .toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))
