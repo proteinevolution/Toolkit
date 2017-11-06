@@ -1,6 +1,3 @@
-/**
- * Created by snam on 05.01.17.
- */
 import co.technius.scalajs.mithril._
 import org.scalajs.dom.raw.HTMLDivElement
 import scala.scalajs.js

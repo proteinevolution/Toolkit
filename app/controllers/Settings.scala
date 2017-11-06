@@ -14,11 +14,10 @@ import scala.util.{ Failure, Success }
 import scala.sys.process._
 
 /**
-  * Created by zin on 28.07.16.
-  *
-  * this controller is used to modify system parameters and store them in the database
-  *
-  */
+ *
+ * this controller is used to modify system parameters and store them in the database
+ *
+ */
 @Singleton
 final class Settings @Inject()(messagesApi: MessagesApi,
                                val reactiveMongoApi: ReactiveMongoApi,
@@ -33,11 +32,11 @@ final class Settings @Inject()(messagesApi: MessagesApi,
   private[this] var cm = ""
 
   /**
-    *
-    * // sets if the toolkit is using the sge or executes jobs on localhost
-    *
-    * @param clusterMode
-    */
+   *
+   * // sets if the toolkit is using the sge or executes jobs on localhost
+   *
+   * @param clusterMode
+   */
   def setClusterMode(clusterMode: String) = Action {
 
     val document = BSONDocument("clusterMode" -> clusterMode,

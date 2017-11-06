@@ -10,12 +10,11 @@ import play.api.Logger
 // * Runscript Manager should watch the runscript Path for changes
 
 /**
-  * Class watches the directory of runscripts and monitors changes. Reloads information about runscripts once
-  * the file changes and keeps a map of all Runscripts for quick access.
-  * Allows to provide a runscript to an interested instance, like a JobActor
-  *
-  * Created by lzimmermann on 10/19/16.
-  */
+ * Class watches the directory of runscripts and monitors changes. Reloads information about runscripts once
+ * the file changes and keeps a map of all Runscripts for quick access.
+ * Allows to provide a runscript to an interested instance, like a JobActor
+ *
+ */
 @Singleton
 class RunscriptManager @Inject()(@Named("runscriptPath") runscriptPath: String) {
 

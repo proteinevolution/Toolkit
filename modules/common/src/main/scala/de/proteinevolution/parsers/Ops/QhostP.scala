@@ -2,9 +2,6 @@ package de.proteinevolution.parsers.Ops
 
 import scala.util.parsing.combinator.RegexParsers
 
-/**
-  * Created by snam on 23.03.17.
-  */
 object QhostP {
 
   // Ignored: ARCH, SWAPTO, SWAPUS

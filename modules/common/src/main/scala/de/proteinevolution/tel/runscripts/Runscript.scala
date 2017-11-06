@@ -10,13 +10,10 @@ import scala.collection.mutable
 import scala.util.matching.Regex
 
 /**
-  * Created by lzimmermann on 10/19/16.
-  */
-/**
-  * Represents one particular runscript, specified by the path of the corresponding file.
-  * Instances should be created via the companion object.
-  *
-  */
+ * Represents one particular runscript, specified by the path of the corresponding file.
+ * Instances should be created via the companion object.
+ *
+ */
 class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript] {
 
   val parameters: Seq[(String, Evaluation)] = parameterString
@@ -83,8 +80,8 @@ object Runscript extends TELRegex {
   type Evaluation = (RType, ExecutionContext) => Argument
 
   /**
-    * Reads the lines of a runscript file and returns a new runscript instance
-    *
-    */
+   * Reads the lines of a runscript file and returns a new runscript instance
+   *
+   */
   def apply(files: Seq[File]): Runscript = new Runscript(files)
 }

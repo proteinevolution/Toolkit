@@ -3,9 +3,6 @@ package de.proteinevolution.tel
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.Constants
 
-/**
-  * Created by lzimmermann on 6/30/16.
-  */
 trait TELConstants {
   // TODO Get this from the configuration of the toolkit
 

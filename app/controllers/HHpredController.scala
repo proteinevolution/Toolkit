@@ -18,12 +18,11 @@ import scala.concurrent.Future
 import scala.sys.process._
 
 /**
-  * Created by drau on 01.03.17.
-  *
-  * HHpred Controller process all requests
-  * made from the HHpred result view
-  */
-class HHpredController @Inject()(resultFiles : ResultFileAccessor,
+ *
+ * HHpred Controller process all requests
+ * made from the HHpred result view
+ */
+class HHpredController @Inject()(resultFiles: ResultFileAccessor,
                                  hhpred: HHPred,
                                  val reactiveMongoApi: ReactiveMongoApi,
                                  constants: Constants,
@@ -39,25 +38,25 @@ class HHpredController @Inject()(resultFiles : ResultFileAccessor,
   private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile
 
   /**
-    * returns 3D structure view for a given accession
-    * in scop or mmcif
-    * @param accession
-    * @return 3D structure view
-    */
+   * returns 3D structure view for a given accession
+   * in scop or mmcif
+   * @param accession
+   * @return 3D structure view
+   */
   def show3DStructure(accession: String): Action[AnyContent] = Action { implicit request =>
     Ok(views.html.jobs.resultpanels.structure(accession, webJarsUtil))
   }
 
   /**
-    * Retrieves the template alignment for a given
-    * accession, for this it runs a script on the server
-    * (now grid engine) and writes it to the current job folder
-    * to 'accession'.fas
-    *
-    * @param jobID
-    * @param accession
-    * @return Http response
-    */
+   * Retrieves the template alignment for a given
+   * accession, for this it runs a script on the server
+   * (now grid engine) and writes it to the current job folder
+   * to 'accession'.fas
+   *
+   * @param jobID
+   * @param accession
+   * @return Http response
+   */
   def retrieveTemplateAlignment(jobID: String, accession: String): Action[AnyContent] = Action.async {
     implicit request =>
       if (!templateAlignmentScript.isExecutable) {
@@ -78,20 +77,20 @@ class HHpredController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * Retrieves the aligned sequences
-    * (parsable alignment must be
-    * provided in the result folder as JSON) of all hits with
-    * an evalue below a threshold and writes the sequences to the
-    * current job folder to '@resultName'.fa
-    * Expects json sent by POST including:
-    *
-    * fileName: to which the aligned sequences are written
-    * evalue: seqs of all hits below this threshold
-    * are retrieved from the alignment
-    *
-    * @param jobID
-    * @return
-    */
+   * Retrieves the aligned sequences
+   * (parsable alignment must be
+   * provided in the result folder as JSON) of all hits with
+   * an evalue below a threshold and writes the sequences to the
+   * current job folder to '@resultName'.fa
+   * Expects json sent by POST including:
+   *
+   * fileName: to which the aligned sequences are written
+   * evalue: seqs of all hits below this threshold
+   * are retrieved from the alignment
+   *
+   * @param jobID
+   * @return
+   */
   def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json     = request.body.asJson.get
     val filename = (json \ "fileName").as[String]
@@ -118,21 +117,21 @@ class HHpredController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * Retrieves the aligned sequences (parsable alignment
-    * must be provided in the result folder as JSON)
-    * of all selected hits in the result view and
-    * writes the sequences to the
-    * current job folder to '@resultName'.fa
-    *
-    * Expects json sent by POST including:
-    *
-    * fileName: to which the aligned sequences are written
-    * checkboxes: an array which contains the numbers (in the HSP list)
-    * of all hits that will be retrieved
-    *
-    * @param jobID
-    * @return
-    */
+   * Retrieves the aligned sequences (parsable alignment
+   * must be provided in the result folder as JSON)
+   * of all selected hits in the result view and
+   * writes the sequences to the
+   * current job folder to '@resultName'.fa
+   *
+   * Expects json sent by POST including:
+   *
+   * fileName: to which the aligned sequences are written
+   * checkboxes: an array which contains the numbers (in the HSP list)
+   * of all hits that will be retrieved
+   *
+   * @param jobID
+   * @return
+   */
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json     = request.body.asJson.get
     val filename = (json \ "fileName").as[String]
@@ -154,26 +153,26 @@ class HHpredController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * filters HSPS for hits below a given threshold
-    * and returns a string with the numbers of the filtered hits
-    * whitespace separated
-    * @param result
-    * @param eval
-    * @return
-    */
+   * filters HSPS for hits below a given threshold
+   * and returns a string with the numbers of the filtered hits
+   * whitespace separated
+   * @param result
+   * @param eval
+   * @return
+   */
   def getNumListEval(result: HHPredResult, eval: Double): String = {
     val numList = result.HSPS.filter(_.info.evalue < eval).map { _.num }
     numList.mkString(" ")
   }
 
   /**
-    * given dataTable specific paramters, this function
-    * filters for eg. a specific column and returns the data
-    * @param hits
-    * @param params
-    * @return
-    */
-  def getHitsByKeyWord(hits : HHPredResult, params: DTParam): List[HHPredHSP] = {
+   * given dataTable specific paramters, this function
+   * filters for eg. a specific column and returns the data
+   * @param hits
+   * @param params
+   * @return
+   */
+  def getHitsByKeyWord(hits: HHPredResult, params: DTParam): List[HHPredHSP] = {
     if (params.sSearch.isEmpty) {
       hits.hitsOrderBy(params).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
     } else {
@@ -182,21 +181,21 @@ class HHpredController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * Retrieves hit rows (String containing Html)
-    * for the alignment section in the result view
-    * for a given range (start, end). Those can be either
-    * wrapped or unwrapped, colored or uncolored
-    *
-    * Expects json sent by POST including:
-    *
-    * start: index of first HSP that is retrieved
-    * end: index of last HSP that is retrieved
-    * wrapped: Boolean true = wrapped, false = unwrapped
-    * isColored: Boolean true = colored, false = uncolored
-    *
-    * @param jobID
-    * @return Https response: HSP row(s) as String
-    */
+   * Retrieves hit rows (String containing Html)
+   * for the alignment section in the result view
+   * for a given range (start, end). Those can be either
+   * wrapped or unwrapped, colored or uncolored
+   *
+   * Expects json sent by POST including:
+   *
+   * start: index of first HSP that is retrieved
+   * end: index of last HSP that is retrieved
+   * wrapped: Boolean true = wrapped, false = unwrapped
+   * isColored: Boolean true = colored, false = uncolored
+   *
+   * @param jobID
+   * @return Https response: HSP row(s) as String
+   */
   def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
     val start   = (json \ "start").as[Int]
@@ -217,12 +216,12 @@ class HHpredController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * this method fetches the data for the PSIblast hitlist
-    * datatable
-    *
-    * @param jobID
-    * @return
-    */
+   * this method fetches the data for the PSIblast hitlist
+   * datatable
+   *
+   * @param jobID
+   * @return
+   */
   def dataTable(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val params = DTParam(
       request.getQueryString("sSearch").getOrElse(""),
@@ -233,10 +232,10 @@ class HHpredController @Inject()(resultFiles : ResultFileAccessor,
     )
 
     resultFiles.getResults(jobID).map {
-      case None          => NotFound
+      case None => NotFound
       case Some(jsValue) =>
         val result = hhpred.parseResult(jsValue)
-        val hits = getHitsByKeyWord(result, params)
+        val hits   = getHitsByKeyWord(result, params)
         Ok(
           Json
             .toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))

@@ -4,9 +4,6 @@ import javax.inject.Singleton
 
 import scala.collection.immutable.ListMap
 
-/**
-  * Created by lzimmermann on 10/12/16.
-  */
 @Singleton
 class ParamCollector extends Params {
 

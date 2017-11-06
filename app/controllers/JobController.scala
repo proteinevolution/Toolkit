@@ -28,9 +28,6 @@ import services.JobActorAccess
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-/**
- * Created by lzimmermann on 02.12.16.
- */
 @Singleton
 final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                     val reactiveMongoApi: ReactiveMongoApi,
