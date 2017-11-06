@@ -1,6 +1,3 @@
-/**
-  * Created by zin on 17.07.16.
-  */
 import play.api.http.HttpErrorHandler
 import play.api.mvc._
 import play.api.mvc.Results._

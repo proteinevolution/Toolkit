@@ -32,7 +32,7 @@ const JobLineComponent = {
                 m("input", { id: "toolnameAccess", "style": "display: none;", type: "text", value: args.job().tool.toolname}),
                 m("a", { onclick: function(){m.route("/tools/" + args.job().tool.toolname)}}, args.job().tool.toolnameLong),
                 m("a", { onclick: function(){
-                        let route = jsRoutes.controllers.DataController.getHelp(args.job().tool.toolname);
+                        const route = jsRoutes.controllers.DataController.getHelp(args.job().tool.toolname);
                         $.ajax({
                             url: route.url,
                             method: route.method

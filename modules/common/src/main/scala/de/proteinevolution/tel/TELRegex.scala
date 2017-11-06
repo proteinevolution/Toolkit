@@ -1,9 +1,6 @@
 package de.proteinevolution.tel
 import scala.util.matching.Regex
 
-/**
-  * Created by lzimmermann on 6/30/16.
-  */
 trait TELRegex {
 
   // For translating the runscript template into an executable instance

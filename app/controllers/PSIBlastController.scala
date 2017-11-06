@@ -1,10 +1,9 @@
 /**
-  * Created by drau on 01.03.17.
-  *
-  * PSIblast Controller process all requests
-  * made from the PSIblast result view
-  *
-  */
+ *
+ * PSIblast Controller process all requests
+ * made from the PSIblast result view
+ *
+ */
 package controllers
 
 import javax.inject.Inject
@@ -23,7 +22,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.sys.process._
 
-class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
+class PSIBlastController @Inject()(resultFiles: ResultFileAccessor,
                                    psiblast: PSIBlast,
                                    general: General,
                                    alignment: Alignment,
@@ -40,19 +39,19 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
   private val retrieveAlnEval = (serverScripts + "/retrieveAlnEval.sh").toFile
 
   /**
-    * Retrieves the full sequences of all hits with
-    * an evalue below a threshold and saves the sequences
-    * to a given filename within the current job folder
-    * to '@fileName'.fa
-    * Expects json sent by POST including:
-    *
-    * filename: to which the full
-    * length sequences are written
-    * evalue: seqs of all hits below this threshold
-    * are retrieved from the DB
-    * @param jobID
-    * @return Https response
-    */
+   * Retrieves the full sequences of all hits with
+   * an evalue below a threshold and saves the sequences
+   * to a given filename within the current job folder
+   * to '@fileName'.fa
+   * Expects json sent by POST including:
+   *
+   * filename: to which the full
+   * length sequences are written
+   * evalue: seqs of all hits below this threshold
+   * are retrieved from the DB
+   * @param jobID
+   * @return Https response
+   */
   def evalFull(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     // retrieve parameters from the request
     val json     = request.body.asJson.get
@@ -64,7 +63,7 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
       resultFiles.getResults(jobID).map {
-        case None          => NotFound
+        case None => NotFound
         case Some(jsValue) =>
           val result        = psiblast.parseResult(jsValue)
           val accessionsStr = getAccessionsEval(result, eval.toDouble)
@@ -84,19 +83,19 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * Retrieves the full sequences of all selected hits
-    * in the result view and saves the sequences
-    * to a given filename within the current job folder
-    * to '@fileName'.fa
-    * Expects json sent by POST including:
-    *
-    * filename: to which the full
-    * length sequences are written
-    * checkboxes: an array which contains the numbers (in the HSP list)
-    * of all hits that will be retrieved
-    * @param jobID
-    * @return Https response
-    */
+   * Retrieves the full sequences of all selected hits
+   * in the result view and saves the sequences
+   * to a given filename within the current job folder
+   * to '@fileName'.fa
+   * Expects json sent by POST including:
+   *
+   * filename: to which the full
+   * length sequences are written
+   * checkboxes: an array which contains the numbers (in the HSP list)
+   * of all hits that will be retrieved
+   * @param jobID
+   * @return Https response
+   */
   def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     println("called")
     val json     = request.body.asJson.get
@@ -107,7 +106,7 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
       resultFiles.getResults(jobID).map {
-        case None          => NotFound
+        case None => NotFound
         case Some(jsValue) =>
           val result        = psiblast.parseResult(jsValue)
           val accessionsStr = getAccessions(result, numList)
@@ -126,21 +125,21 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * Retrieves the aligned sequences
-    * (parsable alignment must be
-    * provided in the result folder as JSON) of all hits with
-    * an evalue below a threshold and returns the
-    * sequences as a String
-    *
-    * Expects json sent by POST including:
-    *
-    * evalue: seqs of all hits below this threshold
-    * are retrieved from the alignment
-    *
-    * @param jobID
-    * @return aligned sequences as a String
-    *         encapsulated in the response
-    */
+   * Retrieves the aligned sequences
+   * (parsable alignment must be
+   * provided in the result folder as JSON) of all hits with
+   * an evalue below a threshold and returns the
+   * sequences as a String
+   *
+   * Expects json sent by POST including:
+   *
+   * evalue: seqs of all hits below this threshold
+   * are retrieved from the alignment
+   *
+   * @param jobID
+   * @return aligned sequences as a String
+   *         encapsulated in the response
+   */
   def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     // retrieve parameters from the request
     val json     = request.body.asJson.get
@@ -152,17 +151,17 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
       throw FileException(s"File ${retrieveAlnEval.name} is not executable.")
     } else {
       resultFiles.getResults(jobID).map {
-        case None          => NotFound
+        case None => NotFound
         case Some(jsValue) =>
           val result        = psiblast.parseResult(jsValue)
           val accessionsStr = eval
           val db            = result.db
           // execute the script and pass parameters
           Process(retrieveAlnEval.pathAsString,
-            (constants.jobPath + jobID).toFile.toJava,
-            "accessionsStr" -> accessionsStr,
-            "filename"      -> filename,
-            "mode"            -> "eval").run().exitValue() match {
+                  (constants.jobPath + jobID).toFile.toJava,
+                  "accessionsStr" -> accessionsStr,
+                  "filename"      -> filename,
+                  "mode"          -> "eval").run().exitValue() match {
             case 0 => Ok
             case _ => BadRequest
           }
@@ -171,19 +170,19 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * Retrieves the aligned sequences (parsable alignment
-    * must be provided in the result folder as JSON)
-    * of all selected hits in the result view and
-    * saves returns the sequences as a String
-    *
-    * Expects json sent by POST including:
-    *
-    * checkboxes: an array which contains the numbers (in the HSP list)
-    * of all hits that will be retrieved
-    *
-    * @param jobID
-    * @return Https response containing the aligned sequences as String
-    */
+   * Retrieves the aligned sequences (parsable alignment
+   * must be provided in the result folder as JSON)
+   * of all selected hits in the result view and
+   * saves returns the sequences as a String
+   *
+   * Expects json sent by POST including:
+   *
+   * checkboxes: an array which contains the numbers (in the HSP list)
+   * of all hits that will be retrieved
+   *
+   * @param jobID
+   * @return Https response containing the aligned sequences as String
+   */
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     println("called")
     val json     = request.body.asJson.get
@@ -194,16 +193,16 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
       throw FileException(s"File ${retrieveAlnEval.name} is not executable.")
     } else {
       resultFiles.getResults(jobID).map {
-        case None          => NotFound
+        case None => NotFound
         case Some(jsValue) =>
           val result        = psiblast.parseResult(jsValue)
           val accessionsStr = numList
           val db            = result.db
           Process(retrieveAlnEval.pathAsString,
-            (constants.jobPath + jobID).toFile.toJava,
-            "accessionsStr" -> accessionsStr,
-            "filename"      -> filename,
-            "mode"            -> "sel").run().exitValue() match {
+                  (constants.jobPath + jobID).toFile.toJava,
+                  "accessionsStr" -> accessionsStr,
+                  "filename"      -> filename,
+                  "mode"          -> "sel").run().exitValue() match {
             case 0 => Ok
             case _ => BadRequest
           }
@@ -211,17 +210,16 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
     }
   }
 
-
   /**
-    * given an array of hit numbers this method
-    * returns the corresponding accessions whitespace
-    * separated
-    *
-    * @param result
-    * @param numList
-    * @return string containing whitespace
-    *         separated accessions
-    */
+   * given an array of hit numbers this method
+   * returns the corresponding accessions whitespace
+   * separated
+   *
+   * @param result
+   * @param numList
+   * @return string containing whitespace
+   *         separated accessions
+   */
   def getAccessions(result: PSIBlastResult, numList: Seq[Int]): String = {
     val fas = numList.map { num =>
       result.HSPS(num - 1).accession + " "
@@ -230,28 +228,27 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * given an evalue threshold this method
-    * returns the corresponding accessions whitespace
-    * separated
-    * @param eval
-    * @param result
-    * @return string containing whitespace
-    *         separated accessions
-    */
+   * given an evalue threshold this method
+   * returns the corresponding accessions whitespace
+   * separated
+   * @param eval
+   * @param result
+   * @return string containing whitespace
+   *         separated accessions
+   */
   def getAccessionsEval(result: PSIBlastResult, eval: Double): String = {
     val fas = result.HSPS.filter(_.evalue < eval).map { _.accession + " " }
     fas.mkString
   }
 
-
   /**
-    * given dataTable specific paramters, this function
-    * filters for eg. a specific column and returns the data
-    * @param hits
-    * @param params
-    * @return
-    */
-  def getHitsByKeyWord(hits : PSIBlastResult, params: DTParam): List[PSIBlastHSP] = {
+   * given dataTable specific paramters, this function
+   * filters for eg. a specific column and returns the data
+   * @param hits
+   * @param params
+   * @return
+   */
+  def getHitsByKeyWord(hits: PSIBlastResult, params: DTParam): List[PSIBlastHSP] = {
     if (params.sSearch.isEmpty) {
       hits.hitsOrderBy(params).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
     } else {
@@ -260,27 +257,27 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * Retrieves hit rows (String containing Html)
-    * for the alignment section in the result view
-    * for a given range (start, end). Those can be either
-    * wrapped or unwrapped
-    *
-    * Expects json sent by POST including:
-    *
-    * start: index of first HSP that is retrieved
-    * end: index of last HSP that is retrieved
-    * wrapped: Boolean true = wrapped, false = unwrapped
-    *
-    * @param jobID
-    * @return Https response: HSP row(s) as String
-    */
+   * Retrieves hit rows (String containing Html)
+   * for the alignment section in the result view
+   * for a given range (start, end). Those can be either
+   * wrapped or unwrapped
+   *
+   * Expects json sent by POST including:
+   *
+   * start: index of first HSP that is retrieved
+   * end: index of last HSP that is retrieved
+   * wrapped: Boolean true = wrapped, false = unwrapped
+   *
+   * @param jobID
+   * @return Https response: HSP row(s) as String
+   */
   def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
     val start   = (json \ "start").as[Int]
     val end     = (json \ "end").as[Int]
     val wrapped = (json \ "wrapped").as[Boolean]
     resultFiles.getResults(jobID).map {
-      case None          => NotFound
+      case None => NotFound
       case Some(jsValue) =>
         val result = psiblast.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
@@ -294,12 +291,12 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * this method fetches the data for the PSIblast hitlist
-    * datatable
-    *
-    * @param jobID
-    * @return
-    */
+   * this method fetches the data for the PSIblast hitlist
+   * datatable
+   *
+   * @param jobID
+   * @return
+   */
   def dataTable(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val params = DTParam(
       request.getQueryString("sSearch").getOrElse(""),
@@ -310,10 +307,10 @@ class PSIBlastController @Inject()(resultFiles : ResultFileAccessor,
     )
 
     resultFiles.getResults(jobID).map {
-      case None          => NotFound
+      case None => NotFound
       case Some(jsValue) =>
         val result = psiblast.parseResult(jsValue)
-        val hits = getHitsByKeyWord(result, params)
+        val hits   = getHitsByKeyWord(result, params)
         Ok(
           Json
             .toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))

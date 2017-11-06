@@ -1,8 +1,5 @@
 package de.proteinevolution.models.database.users
 
-/**
-  * Created by astephens on 15.08.17.
-  */
 import java.time.ZonedDateTime
 
 import de.proteinevolution.models.util.ZonedDateTimeHelper
@@ -40,8 +37,8 @@ object IPConfig {
   final val DATEUPDATED  = "dateUpdated"  // Date the object was last updated
 
   /**
-    * Define how the User object is formatted when turned into a json object
-    */
+   * Define how the User object is formatted when turned into a json object
+   */
   implicit object JobWrites extends Writes[IPConfig] {
     def writes(ipConfig: IPConfig): JsObject = Json.obj(
       ID           -> ipConfig.id.stringify,
@@ -55,8 +52,8 @@ object IPConfig {
   }
 
   /**
-    * Define how the User object is formatted in the DB
-    */
+   * Define how the User object is formatted in the DB
+   */
   implicit object Reader extends BSONDocumentReader[IPConfig] {
     override def read(bson: BSONDocument): IPConfig =
       IPConfig(

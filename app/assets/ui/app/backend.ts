@@ -1,7 +1,3 @@
-/**
- * Created by astephens on 21.02.17.
- */
-
 let currentRoute : string = null;
 
 interface Window { Backend: any; }
@@ -194,7 +190,7 @@ window.Backend = {
 
     controller: function(args : any) {
         currentRoute = "backend";
-        let model = new window.Backend.model(m.route.param("section"));
+        const model = new window.Backend.model(m.route.param("section"));
 
         return {
             section : m.route.param("section"),

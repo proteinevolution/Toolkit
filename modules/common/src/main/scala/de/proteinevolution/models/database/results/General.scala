@@ -3,9 +3,6 @@ import javax.inject.{ Inject, Singleton }
 
 import play.api.libs.json._
 
-/**
- * Created by drau on 20.04.17.
- */
 case class AlignmentItem(accession: String, seq: String, num: Int)
 case class AlignmentResult(alignment: List[AlignmentItem])
 @Singleton

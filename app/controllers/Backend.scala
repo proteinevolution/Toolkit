@@ -24,9 +24,6 @@ import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-/**
-  * Created by zin on 28.07.16.
-  */
 @Singleton
 final class Backend @Inject()(settingsController: Settings,
                               userSessions: UserSessions,
@@ -143,7 +140,6 @@ final class Backend @Inject()(settingsController: Settings,
       }
     }
   }
-
 
   def runJobSweep: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>

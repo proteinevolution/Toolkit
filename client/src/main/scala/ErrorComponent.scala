@@ -4,9 +4,6 @@ import scala.scalajs.js
 import js.Dynamic.{ global => g }
 import scala.util.Random
 
-/**
-  * Created by snam on 02.05.17.
-  */
 object ErrorComponent extends Component {
 
   override val controller: js.Function = (args: Any) => new ErrorComponentCtrl(args)
