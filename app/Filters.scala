@@ -1,6 +1,3 @@
-/**
-  * Created by snam on 01.02.17.
-  */
 import javax.inject.Inject
 import com.mohiva.play.htmlcompressor.HTMLCompressorFilter
 import com.mohiva.play.xmlcompressor.XMLCompressorFilter

@@ -4,10 +4,6 @@ import play.modules.reactivemongo.ReactiveMongoComponents
 import play.api.mvc._
 import play.api.http.ContentTypes
 
-/**
-  *
-  * Created by snam on 12.11.16.
-  */
 private[controllers] trait CommonController extends AbstractController with ContentTypes with ReactiveMongoComponents {
 
   protected def NoCache(res: Result): Result = res.withHeaders(

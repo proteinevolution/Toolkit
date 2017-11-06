@@ -6,9 +6,6 @@ import play.api.libs.ws.{ WSClient, WSResponse }
 
 import scala.concurrent.Future
 
-/**
-  * Created by snam on 22.05.17.
-  */
 trait Configuration {
 
   def hello(): Unit

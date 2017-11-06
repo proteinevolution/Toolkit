@@ -16,9 +16,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.sys.process.Process
 
-/**
-  * Created by drau on 18.04.17.
-  */
 class HmmerController @Inject()(resultFiles : ResultFileAccessor,
                                 hmmer: Hmmer,
                                 general: General,

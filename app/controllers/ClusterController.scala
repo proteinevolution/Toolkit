@@ -10,10 +10,9 @@ import play.api.mvc._
 import sys.process._
 
 /**
-  * This controller will be used later for user interaction with the ClusterMonitor
-  *
-  * Created by snam on 19.03.17.
-  */
+ * This controller will be used later for user interaction with the ClusterMonitor
+ *
+ */
 @Singleton
 final class ClusterController @Inject()(ws: WSClient,
                                         configuration: Configuration,
