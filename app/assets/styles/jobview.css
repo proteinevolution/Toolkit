@@ -1140,3 +1140,14 @@ h6 {
 .repperTable {
     padding-left: 19em;
 }
+
+pre {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0;
+    font-size: 1.1em;
+}
+.accordion-content {
+    font-size: 0.9em;
+}

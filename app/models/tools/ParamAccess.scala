@@ -175,7 +175,7 @@ class ParamAccess @Inject()(tel: TEL) {
     case "MACMODE"                => select("macmode", "Realign with MAC")
     case "MACTHRESHOLD"           => select("macthreshold", "MAC realignment threshold")
     case "MIN_COV"                => Param("min_cov", ParamType.Percentage, 1, "Min. coverage of hits (%)")
-    case "PMIN"                   => Param("pmin", ParamType.Percentage, 1, "Min. probability in hitlist (> 10%)")
+    case "PMIN"                   => Param("pmin", ParamType.Percentage, 1, "Min. probability in hit list (> 10%)")
     case "MAX_SEQID"              => Param("max_seqid", ParamType.UnconstrainedNumber, 1, "Maximal Sequence Identity (%)")
     case "MIN_QUERY_COV"          => Param("min_query_cov", ParamType.Percentage, 1, "Minimal coverage with query (%)")
     case "MATRIX_PHYML"           => select("matrix_phyml", "Model of AminoAcid replacement")
