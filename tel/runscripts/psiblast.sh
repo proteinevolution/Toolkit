@@ -98,7 +98,7 @@ psiblast -db %STANDARD/%standarddb.content \
          -matrix %matrix.content \
          -num_iterations %maxrounds.content \
          -evalue %evalue.content \
-         -inclusion_ethresh %hhpred_incl_eval.content \
+         -inclusion_ethresh %blast_incl_eval.content \
          -gapopen ${GAPOPEN} \
          -gapextend ${GAPEXT} \
          -num_threads %THREADS \
@@ -153,7 +153,7 @@ fasta2json.py ../results/firstSeq.fas ../results/query.json
 manipulate_json.py -k 'db' -v '%standarddb.content' ../results/output_psiblastp.json
 
 # add evalue to json
-manipulate_json.py -k 'evalue' -v '%hhpred_incl_eval.content' ../results/output_psiblastp.json
+manipulate_json.py -k 'evalue' -v '%blast_incl_eval.content' ../results/output_psiblastp.json
 
 # add transmembrane prediction info to json
 manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/output_psiblastp.json
