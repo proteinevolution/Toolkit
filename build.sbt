@@ -4,7 +4,6 @@
 lazy val commonSettings = Seq(
   version := "0.1.0",
   scalaVersion := "2.11.11",
-  crossScalaVersions := Seq("2.11.11", "2.12.4"),
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   logLevel := Level.Warn,
@@ -92,6 +91,10 @@ lazy val client = (project in file("client"))
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
 
 fork in run := false
+
+fork in Test := true
+
+logLevel in Test := Level.Debug
 
 scalacOptions ++= Seq(
   "-target:jvm-1.8",
