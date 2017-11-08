@@ -1,5 +1,5 @@
 let noRedraw : boolean = false;
-const focusInNoRedraw = function(event : Event) : void { noRedraw = true;  console.log('focus in - no redraw');  },
+let focusInNoRedraw = function(event : Event) : void { noRedraw = true;  console.log('focus in - no redraw');  },
     focusOutRedraw  = function(event : Event) : void { noRedraw = false; console.log('focus out - redrawing'); };
 
 const regions = [ ["","Country"],
