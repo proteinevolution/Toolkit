@@ -37,12 +37,70 @@ const slickSlider = function (elem : any, isInit : boolean) {
     }
 }; */
 
+let bloodHoundConfig = {
+    engine : new Bloodhound({
+        remote: {
+            url: '/suggest/%QUERY%',
+            wildcard: '%QUERY%'
+        },
+        datumTokenizer: Bloodhound.tokenizers.whitespace('q'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace
+    }),
+    tools : new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('long'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        prefetch: {
+            url: '/getToolList'
+        }
+    })
+};
+bloodHoundConfig.tools.initialize();
+
 const typeAhead = function (elem : any, isInit : boolean) : any {
-    let engine;
-    let tools;
     if (!isInit) {
-        $('#searchInput').on('keyup', function(e : any) : any {
-            let selectables = $('#searchInput').siblings(".tt-menu").find(".tt-selectable").find('.search-results');
+        console.log("Initializing Search on " + elem.id);
+        return $('#'+elem.id +" .search-input").typeahead({
+            highlight: true,
+            minLength: 1,
+            autoselect: 'first'
+
+        },[
+            {
+                displayKey: 'long',
+                source: bloodHoundConfig.tools.ttAdapter(),
+                templates: {
+                    suggestion: function (data: any) {
+                        if(data !=null) {
+                            //console.log(data.long);
+                            return '<div class="list-group-item"><a class="search-results" href="#/tools/' + data.short + '" name="' + data.long + '">' + data.long + '</a></div>';
+                        }else {
+                            return '<div style="display: none"></div>';
+                        }
+                    },
+                    header: '<h6 class="header-name">Tools</h6>',
+                    empty: ['']
+                }
+            }, {
+                source: bloodHoundConfig.engine.ttAdapter(),
+                name: 'jobList',
+                limit: 30,
+                displayKey: "jobID",
+                templates: {
+                    empty: ['<div class="list-group search-results-dropdown"><div class="list-group-item-notfound">Nothing found.</div></div>'],
+                    suggestion: function (data : any) {
+                            if(data != null) {
+                                return '<div class="list-group-item"><a class="search-results" href="#/jobs/' + data.jobID + '" name="' + data.jobID + ' - ' + data.toolnameLong + '">'
+                                       + data.jobID + '<span class="search-result-tool"> - ' + data.toolnameLong + '</span></a></div>';
+                            } else {
+                                return ''
+                            }
+                    },
+                    header: '<h6 class="header-name">Jobs</h6>',
+                }
+            }
+        ]).on('keyup', function(e : any) : any {
+            console.log("Working on element: "+ elem.id);
+            let selectables = $('#'+elem.id).siblings(".tt-menu").find(".tt-selectable").find('.search-results');
             if (e.which == 13) {
                 e.preventDefault();
                 //find the selectable item under the input, if any:
@@ -52,64 +110,20 @@ const typeAhead = function (elem : any, isInit : boolean) : any {
                 }
             }
         });
+    }
+};
 
-        engine = new Bloodhound({
-            remote: {
-                url: '/suggest/%QUERY%',
-                wildcard: '%QUERY%'
-            },
-            datumTokenizer: Bloodhound.tokenizers.whitespace('q'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace
-        });
-        tools = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('long'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            prefetch: {
-                url: '/getToolList'
-            }
-        });
-        tools.initialize();
-        return $('.search_Input').typeahead({
-            highlight: true,
-            minLength: 1,
-            autoselect: 'first'
-
-        },[
-
-            {
-                displayKey: 'long',
-                source: tools.ttAdapter(),
-                templates: {
-                    suggestion: function (data: any) {
-                        if(data !=null) {
-                            //console.log(data.long);
-                            return '<div class="list-group-item"><a class="search-results" href="#/tools/' + data.short + '" name="' + data.long + '">' + data.long + '</a></div>';
-                        }else {
-                            return '<div style="display: none"></div>';
-                        }
-                        },
-                    header: '<h6 class="header-name">Tools</h6>',
-                    empty: ['']
-                }
-            }
-            ,
-            {
-            source: engine.ttAdapter(),
-            name: 'jobList',
-            limit: 30,
-            displayKey: "jobID",
-            templates: {
-                empty: ['<div class="list-group search-results-dropdown"><div class="list-group-item-notfound">Nothing found.</div></div>'],
-                suggestion: function (data : any) {
-                        if(data != null) {
-                            return '<div class="list-group-item"><a class="search-results" href="#/jobs/' + data.jobID + '" name="' + data.jobID + ' - ' + data.toolnameLong + '">'
-                                + data.jobID + '<span class="search-result-tool"> - ' + data.toolnameLong + '</span></a></div>';
-                        }
-                        return ''
-                },
-                header: '<h6 class="header-name">Jobs</h6>',
-            }
-        }]);
+const searchBarComponent = {
+    controller : function() : any {},
+    view : function(ctrl : any, args : any) {
+        return m("div", { id: args.area + "-search", "class": "search-container", config: typeAhead },
+            m("input", {
+                "class": "search-input",
+                type: "text",
+                name: "q",
+                placeholder: "enter a job ID or a tool name"
+            })
+        )
     }
 };
 
@@ -187,17 +201,10 @@ const trafficBarComponent = {
         }, [
             m("div", {"class": "liveTableContainer"},
                 m.component(LiveTable, {}),
-                m("div", {"class": "search_container"},
-                    m("div", {
-                        "class": "columns large-12 form-group"
-                    }, m("input", { "class": "search_Input",
-                        type: "text",
-                        id: "searchInput",
-                        name: "q",
-                        placeholder: "enter a job ID or a tool name",
-                        config: typeAhead
-                    }))
-                )
+                m("div",
+                m("div", { "class": "large-12 form-group"},
+                    m.component(searchBarComponent, {area:"index"})
+                ))
             )
         ]));
     }
