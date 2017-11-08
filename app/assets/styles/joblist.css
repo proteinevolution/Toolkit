@@ -23,9 +23,7 @@
 /* The containder for the JobListComponent. Let is behave like a table and occupy the full width1 */
 .job-list {
     display: table;
-    width: 90%;
-    margin-left: 15px;
-    margin-top: 3.75em;
+    width: 100%;
 }
 
 .job-list .elements {
