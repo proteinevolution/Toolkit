@@ -254,6 +254,7 @@ window.JobListComponent = {
         //             "on Bottom"               : onBottomOfList});
         numScrollItems = JobListComponent.numVisibleItems; // How many items to scroll per click
         return m("div", { "class": "job-list", config: tooltipsterConf }, [
+            m.component(searchBarComponent, {area:"sidebar"}),
             m("div", { "class": "job-button" }, [
                 m("div", { "class": "sort id textcenter" + (JobListComponent.sort.mode == "jobID" ? " selected" : ""),
                            title: "Sort by job ID", onclick: JobListComponent.sortList.bind(ctrl, "jobID", true) }, "ID"),
