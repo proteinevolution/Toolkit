@@ -588,12 +588,6 @@ td#joblistIcon i {
     padding: 0.5em 0.5em 0.5em 0.5em;
 }
 
-#sidebar #indexLoadBar {
-    font-size: 0.7em;
-    margin-top: -1em;
-    padding-bottom: 2.25em;
-}
-
 #indexLoadBar .loadBarGraph {
     text-align: center;
     display: flex;
