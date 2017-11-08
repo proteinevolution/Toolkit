@@ -60,7 +60,7 @@ map[name="blastmap"] area {
 }
 
 #htb_wrapper {
-    overflow-x: scroll;
+    overflow-x: auto;
 }
 
 #htb_length {
@@ -514,7 +514,6 @@ map[name="blastmap"] area {
 
 .flat-slider.ui-slider-horizontal {
     height: 6px;
-
 }
 
 .flat-slider.ui-slider-horizontal {
