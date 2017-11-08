@@ -142,7 +142,7 @@ const fadesIn = function(element : any, isInitialized : boolean, context : any) 
 
 const tooltipsterConf = function(elem: any, isInit: boolean) {
     if(!isInit){
-        $('.job-button div').tooltipster({
+        $('.job-button div, .submitbuttons input, .helpicon, .fa-trash-o').tooltipster({
             theme: 'tooltipster-borderless',
             position: 'bottom',
             animation: 'fade',
