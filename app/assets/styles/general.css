@@ -35,6 +35,10 @@ h6 {
     font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
+i {
+    font-size: 20px;
+}
+
 div#main-container {
     height: 100%;
     min-width: 930px;
