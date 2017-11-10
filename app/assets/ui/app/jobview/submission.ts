@@ -64,12 +64,19 @@
         }
     },
     jobIDComponent : function (ctrl : any) {
-        let style : string = "jobID";
+        let style: string = "jobID";
+        let toolTitle = "";
         style += JobSubmissionComponent.currentJobID === "" ? " white" :
-                (JobSubmissionComponent.jobIDValid          ? " green" : " red");
+            (JobSubmissionComponent.jobIDValid ? " green" : " red");
+
+        if (JobSubmissionComponent.currentJobID === "") {
+            toolTitle = "Alphanumeric IDs are permitted (e.g. HISA, HISA1, HISA_HHPRED). Border turns green when a valid ID is entered.";
+        }
+
         return m("input", { type:        "text",
                             id:          "jobID",
                             "class":     style,
+                            title: toolTitle,
                             placeholder: "Custom JobID",
                             onkeyup:     m.withAttr("value", JobSubmissionComponent.checkJobIDTimed(800)),
                             onchange:    m.withAttr("value", JobSubmissionComponent.checkJobID),
