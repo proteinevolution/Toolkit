@@ -28,7 +28,7 @@ case class Job(mainID       : BSONObjectID           = BSONObjectID.generate, //
 
   // Returns if the job is private or not
   def isPrivate: Boolean = {
-    ownerID.isDefined && !isPublic // TODO why is this the only measure for being a private job?
+    ownerID.isDefined && !isPublic
   }
 
   /**
@@ -90,6 +90,7 @@ object Job {
   val PROJECT      = "project" //              project id
   val OWNERID      = "ownerID" //              ID of the job owner
   val OWNER        = "owner" //              Name of the job owner
+  val ISPUBLIC     = "isPublic"
   val STATUS       = "status" //              Status of the job field
   val EMAILUPDATE  = "emailUpdate" //              check if the user wants a notification when the job is done
   val DELETION     = "deletion" //              Deletion status flag
@@ -152,6 +153,7 @@ object Job {
       JOBID        -> job.jobID,
       HASH         -> job.hash,
       OWNERID      -> job.ownerID,
+      ISPUBLIC     -> job.isPublic,
       STATUS       -> job.status,
       EMAILUPDATE  -> job.emailUpdate,
       TOOL         -> job.tool,
@@ -176,6 +178,7 @@ object Job {
         jobID        = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
         hash         = bson.getAs[String](HASH),
         ownerID      = bson.getAs[BSONObjectID](OWNERID),
+        isPublic     = bson.getAs[Boolean](ISPUBLIC).getOrElse(false),
         status       = bson.getAs[JobState](STATUS).getOrElse(Error),
         emailUpdate  = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
         tool         = bson.getAs[String](TOOL).getOrElse(""),
@@ -201,6 +204,7 @@ object Job {
         JOBID        -> job.jobID,
         HASH         -> job.hash,
         OWNERID      -> job.ownerID,
+        ISPUBLIC     -> job.isPublic,
         STATUS       -> job.status,
         EMAILUPDATE  -> job.emailUpdate,
         TOOL         -> job.tool,
