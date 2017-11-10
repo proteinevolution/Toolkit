@@ -113,15 +113,16 @@ const typeAhead = function (elem : any, isInit : boolean) : any {
     }
 };
 
-const searchBarComponent = {
+interface Window { SearchBarComponent: any; }
+window.SearchBarComponent = {
     controller : function() : any {},
     view : function(ctrl : any, args : any) {
-        return m("div", { id: args.area + "-search", "class": "search-container", config: typeAhead },
+        return m("div", { id: args.id, "class": "search-container", config: typeAhead },
             m("input", {
                 "class": "search-input",
                 type: "text",
                 name: "q",
-                placeholder: "enter a job ID or a tool name"
+                placeholder: args.placeholder ? args.placeholder : "enter a job ID or a tool name"
             })
         )
     }
@@ -203,7 +204,7 @@ const trafficBarComponent = {
                 m.component(LiveTable, {}),
                 m("div",
                 m("div", { "class": "large-12 form-group"},
-                    m.component(searchBarComponent, {area:"index"})
+                    m.component(window.SearchBarComponent, {id:"index-search"})
                 ))
             )
         ]));
