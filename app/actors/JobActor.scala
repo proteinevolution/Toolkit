@@ -442,7 +442,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                               (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done)
                   match {
                     case Some(oldJob) =>
-                      Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID ${oldJob.isPublic}, ${job.isPublic}, ${oldJob.ownerID == job.ownerID} ${oldJob.status == Done}.")
                       Logger.info(
                         s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID is a duplicate of ${oldJob.jobID}."
                       )
