@@ -190,12 +190,14 @@ FIELDSET {
     -moz-box-shadow: 0px 0px 1px 0px #cacaca;
     box-shadow: 0px 0px 1px 0px #cacaca;
     width: 100% !important;
+    min-width:200px;
     margin-top: 5px !important;
     border-radius: 4px;
     border: 1px solid #eeeeee;
     background-color: white;
     max-height: 420px;
-    overflow-y: scroll;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .tt-dataset {

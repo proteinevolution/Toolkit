@@ -88,21 +88,17 @@ const hideSubmitButtons = function (elem : any, isInit : boolean) : any {
 
 const hideSidebar = function (elem : any, isInit : boolean) : any {
     if (!isInit) {
-
         $('#sidebar').hide();
         $('#main-content').removeClass();
-
     }
 };
 
 
 const showSidebar = function (elem : any, isInit : boolean) : any {
     if (!isInit) {
-
         $('#sidebar').show();
         $('#main-content').removeClass().addClass('large-10 small-12 columns padded-column');
         JobListComponent.selectJob();
-
     }
 };
 
