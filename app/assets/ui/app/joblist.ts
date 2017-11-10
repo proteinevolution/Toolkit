@@ -10,11 +10,9 @@ const tooltipSearch = function(elem : any, isInit : boolean) {
 interface Window { JobListComponent: any; }
 
 declare var jobList : any;
-declare var jobListTwo : any;
+declare var jobListOffCanvas : any;
 
 window.JobListComponent = {
-
-
     // Generates a job object
     Job : function (data : any) {
         return {
@@ -192,11 +190,11 @@ window.JobListComponent = {
             this.scrollToJobListItem(index);                    // scroll to the new position in the joblist
         }
 
+        // TODO may need to make the job list into a non static object at some point...
         jobList.redraw.strategy("diff");
         jobList.redraw(true);
-        jobListTwo.redraw.strategy("diff");
-        jobListTwo.redraw(true);
-
+        jobListOffCanvas.redraw.strategy("diff");
+        jobListOffCanvas.redraw(true);
     },
     selectJob : function() {
         let activeJob = JobListComponent.getJob(m.route.param("jobID"));
