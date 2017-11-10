@@ -99,7 +99,7 @@ const typeAhead = function (elem : any, isInit : boolean) : any {
             limit: 30,
             displayKey: "jobID",
             templates: {
-                empty: ['<div class="list-group search-results-dropdown"><div class="list-group-item-notfound">Nothing found.</div></div>'],
+                //empty: '<div class="list-group search-results-dropdown"><div class="list-group-item-notfound">Nothing found.</div></div>',
                 suggestion: function (data : any) {
                         if(data != null) {
                             return '<div class="list-group-item"><a class="search-results" href="#/jobs/' + data.jobID + '" name="' + data.jobID + ' - ' + data.toolnameLong + '">'
