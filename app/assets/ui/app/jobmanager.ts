@@ -148,10 +148,9 @@ window.JobManager = {
                 m("div", {"class": "jobline"}, [
                     m("span", {"class": "toolname"}, [
                         m("a", "Job Manager")
-
                     ])
                 ]),
-                m("div", {id: "content", "class": "row columns padded-column", config: fadesIn},
+                m("div", {id: "content", "class": "row columns", config: fadesIn},
                     m("table", {id: "jobManagerTable", "class": "dataTable hover row-border compact job-manager", config: JobManager.dataTableLoader()}, [
                             m("thead", m("tr", [
                                 m("th", "Job List"),

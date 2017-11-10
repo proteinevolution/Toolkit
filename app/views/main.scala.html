@@ -154,13 +154,14 @@
                     <div class="row">
                         <div class="small-12 padded-column columns">
 
-                                <!---All purpose Modal --->
+                            <!---All purpose Modal --->
                             <div id="modal" class="reveal large" data-reveal>
                                 <button class="close-button" data-close aria-label="Close modal" type="button">
                                     <span aria-hidden="true">&times;</span>
-                                </button></div>
+                                </button>
+                            </div>
 
-                                <!---Hamburger Navbar --->
+                            <!---Hamburger Navbar --->
                             <div id="myNav" class="overlay">
                                 <button id="hamburgerInside" class="hamburger hamburger--elastic is-active" type="button" onclick="closeNav()">
                                     <span class="hamburger-box">
@@ -218,8 +219,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-
                             </div>
 
                                 <!--Off Canvas Menu for mobile version of Toolkit-->
@@ -239,12 +238,17 @@
                                         </div>
                                     </div>
 
-                                        <!--- Mount points for Mithril Application -->
-                                    <div class="row">
-                                        <div class="large-2 padded-column columns show-for-large" id="sidebar" style="display: none;"></div>
+                                    <!--- Mount points for Mithril Application -->
+                                    <div class="row" id="main-window">
+                                        <div class="large-2 padded-column columns show-for-large" id="sidebar">
+                                            <div id="sidebar-search"></div>
+                                            <div id="sidebar-joblist"></div>
+                                        </div>
                                         <div id="main-content">
-                                            <noscript><div class="noscript">It's okay to hate JavaScript... <br/>
-                                                ...but you won't be able to use this website properly! <!-- or another slogan --></div></noscript>
+                                            <noscript><div class="noscript">
+                                                This website relies on JavaScript to work properly.<br />
+                                                Please activate JavaScript in Your browser to see everything we offer.
+                                            </div></noscript>
                                         </div>
                                     </div>
                                 </div>
