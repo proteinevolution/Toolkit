@@ -139,9 +139,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 case _       => false
               }
 
-              // Set job as either private or public
-              val ownerOption = if (params.get("public").isEmpty) { Some(user.userID) } else { None }
-
               // Get the current date to set it for all three dates
               val now = ZonedDateTime.now
 
@@ -151,7 +148,8 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               // Create a new Job object for the job and set the initial values
               val job = Job(
                 jobID = jobID,
-                ownerID = ownerOption,
+                ownerID = Some(user.userID),
+                isPublic = params.get("public").isDefined || user.accountType == User.NORMALUSER,
                 emailUpdate = emailUpdate,
                 tool = toolName,
                 watchList = List(user.userID),
@@ -247,7 +245,9 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               BSONDocument(Job.DATECREATED -> -1)
             )
             .map { jobList =>
-              jobList.find(_.status == Done) match {
+              // Check if the jobs are owned by the user, unless they are public and if the job is Done
+              jobList.find(filterJob =>
+                (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done) match {
                 case Some(latestOldJob) =>
                   Ok(
                     Json.toJson(
