@@ -108,7 +108,7 @@ window.FrontendAlnvizComponent = {
                 "class": "jobline"
             }, m("span", {
                 "class": "toolname"
-            }, "AlignmentViewer"), m("i", {"class": "icon-white_question helpicon"})), m(GeneralTabComponent, {
+            }, "AlignmentViewer"), m("i", {"class": "icon-white_question helpicon", "title": "Help page", "config": tooltipsterConf})), m(GeneralTabComponent, {
                 tabs: ["Alignment", "Visualization"],
                 ctrl: ctrl
             })
