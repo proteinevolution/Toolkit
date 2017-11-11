@@ -2,7 +2,7 @@
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
-        <li><a href="#tabs-2">Parameters</a></li>
+        <li><a href="#tabs-2">Input & Parameters</a></li>
         <li><a href="#tabs-3">References</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
@@ -26,21 +26,20 @@
                 </div>
             </li>
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Genetic code</a>
+                <a class="accordion-title">Choose a genetic Code</a>
                 <div class="accordion-content" data-tab-content>
                     Select the correct genetic code for your organism. The genetic codes are identical to those available on the <a href = https://www.ncbi.nlm.nih.gov/taxonomy target="_blank" rel="noopener">NCBI homepage</a>.
                 </div>
             </li>
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Codon usage table</a>
+                <a class="accordion-title">Use codon usage table of</a>
                 <div class="accordion-content" data-tab-content>
-                    Select this option if you want to use a codon usage table. If this option is not selected all possible codons will have the same probability.
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Codon usage table of organism</a>
-                <div class="accordion-content" data-tab-content>
-                    Here you can search for a codon usage table of an organism. The codon usage database (identical to the one of <a href = http://www.kazusa.or.jp/codon target="_blank" rel="noopener">http://www.kazusa.or.jp/codon/</a>) is based of the <a href = https://www.ncbi.nlm.nih.gov/genbank target="_blank" rel="noopener">NCBI GenBank</a> (GenBank Release 160.0 [June 15 2007]). Please enter the name of the organism in the box.
+                    Enter the species name (e.g. Homo sapiens, Escherichia coli) you want to use the codon table of. If this option is not used all possible codons will have the same probability.
+                    Check at the result page that the correct codon table has been used.
+                    You will see a message like:
+                    <pre>
+                    Generated using codon usage table of: Homo sapiens
+                    </pre>
                 </div>
             </li>
         </ul>
