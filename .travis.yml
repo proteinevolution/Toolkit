@@ -19,6 +19,6 @@ before_install:
   - gem install compass
 install:
   - git submodule update --init --recursive
-  - git clone https://github.com/Sanoma-CDA/maxmind-geoip2-scala.git $HOME/sanoma
-  - cd $HOME/sanoma; sbt +publish-local; cd -
+  - git clone https://github.com/felixgabler/maxmind-geoip2-scala.git $HOME/sanoma
+  - cd $HOME/sanoma; sbt publishLocal; cd -
 script: sbt test:compile test stage
