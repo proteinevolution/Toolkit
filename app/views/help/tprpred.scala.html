@@ -2,7 +2,7 @@
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
-        <li><a href="#tabs-2">Parameters</a></li>
+        <li><a href="#tabs-2">Input & Parameters</a></li>
         <li><a href="#tabs-3">References</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
@@ -11,29 +11,21 @@
     <div id="tabs-2" class="greenlink">
         <ul class="accordion" data-accordion data-allow-all-closed='true'>
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Input format</a>
+                <a class="accordion-title">Input</a>
                 <div class="accordion-content" data-tab-content>
-                    A sequence in FASTA format begins with a single-line description, followed by lines of sequence data. The description line is distinguished from the sequence data by a greater-than (">") symbol in the first column. It is recommended that all lines of text be shorter than 80 characters in length. An example sequence in FASTA format is:<br/><br/><br/><pre>>HcpC_a HcpC Chain A<br/>DPKELVGLGAKSYKEKDFTQAKKYFEKACDLKENSGCFNLGVLYYQGQGV<br/>EKNLKKAASFYAKACDLNYSNGCHLLGNLYYSGQGVSQNTNKALQYYSKA<br/>CDLKYAEGCASLGGIYHDGKVVTRDFKKAVEYFTKACDLNDGDGCTILGS<br/>LYDAGRGTPKDLKKALASYDKACDLKDSPGCFNAGNMYHHGEGATKNFKE<br/>ALARYSKACELENGGGCFNLGAMQYNGEGVTRNEKQAIENFKKGCKLGAK<br/>GACDILKQLKIKVHHH</pre><br/><br/>Sequences are expected to be represented in the standard IUB/IUPAC amino acid acid codes, with these exceptions: lower-case letters are accepted and are mapped into upper-case; a single hyphen or dash can be used to represent a gap of indeterminate length; and in amino acid sequences, U and * are acceptable letters (see below). Before submitting a request, any numerical digits in the query sequence should either be removed or replaced by appropriate letter codes (e.g., X for unknown amino acid residue). The amino acid codes supported are:<br/><br/><pre>    A  alanine                         P  proline<br/>    B  aspartate or asparagine         Q  glutamine<br/>    C  cystine                         R  arginine<br/>    D  aspartate                       S  serine<br/>    E  glutamate                       T  threonine<br/>    F  phenylalanine                   U  selenocysteine<br/>    G  glycine                         V  valine<br/>    H  histidine                       W  tryptophan<br/>    I  isoleucine                      Y  tyrosine<br/>    K  lysine                          Z  glutamate or glutamine<br/>    L  leucine                         X  any<br/>    M  methionine                      *  translation stop<br/>    N  asparagine                      -  gap of indeterminate length</pre>
+                    <p>Enter a single protein sequence in FASTA format, for example:</p><br/>
+                    <pre>>gi|576099|pdb|1ENA|  Staphylococcal Nuclease (E.C.3.1.31.1) Mutation<br/>LHKEPATLIKAIDGETVKLMYKGQPMTFRLLLVDTPETKHPKKGVEKYGPEASAFTKKMVENAKKIEVEF<br/>DKGQRTDKYGRGLAYIYADGKMVNEALVRQGLAKVAYVYKPNNTHEQHLRKSEAQAKKEKLNIWS</pre><br/>
+                    <p>The sequence name (and an optional description) must be contained in a single name line beginning with the ">" symbol and followed directly by the sequence name. The residue data is contained in one or more lines of arbitrary length following the name line. No empty lines should be used. Upper and lower case letters are allowed.
+                        Letters not from the canonical one-letter-code are treated as unknown residues</p>
                 </div>
             </li>
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Maximum whole protein E-value</a>
+                <a class="accordion-title">E-value inclusion TPR & SEL</a>
                 <div class="accordion-content" data-tab-content>
-                    Maximum whole-protein e-value for output of repeat residues to alifile.
+                    Max. E-value for inclusion in output for TPR and SEL.
                 </div>
             </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Minimum number of single-repeat hits</a>
-                <div class="accordion-content" data-tab-content>
-                    Minimum number of single repeat hits for output to alifile.
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Maximum number of rows in hitlist</a>
-                <div class="accordion-content" data-tab-content>
-                    As the name suggests.
-                </div>
-            </li>
+
         </ul>
     </div>
     <div id="tabs-3" class="greenlink">
