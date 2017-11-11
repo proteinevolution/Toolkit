@@ -6,9 +6,7 @@ lazy val commonSettings = Seq(
   scalaVersion := "2.11.11",
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
-  logLevel := Level.Warn,
-  dependencyOverrides ++= Set("org.webjars"       % "jquery"      % "3.2.1",
-                              "com.typesafe.akka" %% "akka-actor" % Dependencies.akkaVersion)
+  logLevel := Level.Warn
 )
 
 lazy val metadata = List(
