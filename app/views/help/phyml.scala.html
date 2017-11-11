@@ -2,7 +2,7 @@
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
-        <li><a href="#tabs-2">Parameters</a></li>
+        <li><a href="#tabs-2">Input & Parameters</a></li>
         <li><a href="#tabs-3">References</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
@@ -13,19 +13,13 @@
             <li class="accordion-item" data-accordion-item>
                 <a class="accordion-title">Input</a>
                 <div class="accordion-content" data-tab-content>
-                    Enter protein sequence alignment in FASTA/CLUSTAL format.
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Input format</a>
-                <div class="accordion-content" data-tab-content>
-                    Accepted formats are listed in the dropdown menu.
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Enable bootstrapping</a>
-                <div class="accordion-content" data-tab-content>
-                    Checking this box enables bootstrapping. The data is resampled using the program <a href = http://evolution.genetics.washington.edu/phylip/doc/seqboot.html target="_blank" rel="noopener">SEQBOOT</a> (regular bootstrap mode) of the PHYLIP package. A consensus tree can be used to determine the reliability of a phylogenetic tree.
+                    You have the option to enter a multiple sequence alignment (MSA) in FASTA or CLUSTAL format.<br/><br/>
+                    <p><b>Multiple sequence alignment</b></p>
+                    <p>You can enter alignments in FASTA or CLUSTAL formats.</p>
+                    <p>Example for aligned FASTA format:</p>
+                    <pre>>d1a1x__ b.63.1.1 (-) p13-MTCP1 {Human (Homo sapiens)}<br/>PPDHLWVHQEGIYRDEYQRTWVAVVEE--E--T--SF---------LR----------ARVQQIQVPLG-------DAARPSHLLTS-----QLPLMWQLYP<br/>>gi|6678257|ref|NP_033363.1|:(7-103) T-cell lymphoma breakpoint 1 [Mus musculus]<br/>HPNRLWIWEKHVYLDEFRRSWLPVVIK--S--N--EK---------FQ----------VILRQEDVTLG-------EAMSPSQLVPY-----ELPLMWQLYP<br/>>gi|7305557|ref|NP_038800.1|:(8-103) T-cell leukemia/lymphoma 1B, 3 [Mus musculus]<br/>PPRFLVCTRDDIYEDENGRQWVVAKVE--T--S--RSpygsrietcIT----------VHLQHMTTIPQ-------EPTPQQPINNN-----SLPTMWRLES<br/>>gi|11415028|ref|NP_068801.1|:(2-106) T-cell lymphoma-1; T-cell lymphoma-1A [Homo sapiens]<br/>HPDRLWAWEKFVYLDEKQHAWLPLTIEikD--R--LQ---------LR----------VLLRREDVVLG-------RPMTPTQIGPS-----LLPIMWQLYP<br/>>gi|7305561|ref|NP_038804.1|:(7-103) T-cell leukemia/lymphoma 1B, 5 [Mus musculus]<br/>----------GIYEDEHHRVWIAVNVE--T--S--HS---------SHgnrietcvt-VHLQHMTTLPQ-------EPTPQQPINNN-----SLPTMWRLES<br/>>gi|7305553|ref|NP_038801.1|:(5-103) T-cell leukemia/lymphoma 1B, 1 [Mus musculus]<br/>LPVYLVSVRLGIYEDEHHRVWIVANVE--TshS--SH---------GN----------RRRTHVTVHLW-------KLIPQQVIPFNplnydFLPTTWKLES<br/>>gi|27668591|ref|XP_234504.1|:(7-103) similar to Chain A, Crystal Structure Of Murine Tcl1<br/>-PDRLWLWEKHVYLDEFRRSWLPIVIK--S--N--GK---------FQ----------VIMRQKDVILG-------DSMTPSQLVPY-----ELPLMWQLYP<br/>>gi|27668589|ref|XP_234503.1|:(9-91) similar to T-cell leukemia/lymphoma 1B, 5;<br/>-PHILTLRTHGIYEDEHHRLWVVLDLQ--A--ShlSF---------SN----------RLLIYLTVYLQqgvafplESTPPSPMNLN-----GLPRRWTLRT<br/>>gi|7305559|ref|NP_038802.1|:(8-102) T-cell leukemia/lymphoma 1B, 4 [Mus musculus] <br/>PPCFLVCTRDDIYEDEHGRQWVAAKVE--T--S--SH---------SPycskietcvtVHLWQMTTLFQ-------EPSPDSLKTFN-----FLPRTWRLES<br/>>gi|7305555|ref|NP_038803.1|:(9-102) T-cell leukemia/lymphoma 1B, 2 [Mus musculus]<br/>---------PGFYEDEHHRLWMVAKLE--T--C--SH---------SPycnkietcvtVHLWQMTRYPQ-------EPAPYNPMNYN-----FLPMTWRLAS</pre><br/>
+                    <p>The same alignment in CLUSTAL format:</p>
+                    <pre>CLUSTAL X (1.83) multiple sequence alignment<br/><br/>d1a1x__                             PPDHLWVHQEGIYRDEYQRTWVAVVEE--E--T--SF---------LR----------AR<br/>gi|6678257|ref|NP_033363.1|__7      HPNRLWIWEKHVYLDEFRRSWLPVVIK--S--N--EK---------FQ----------VI<br/>gi|7305557|ref|NP_038800.1|__8      PPRFLVCTRDDIYEDENGRQWVVAKVE--T--S--RSPYGSRIETCIT----------VH<br/>gi|11415028|ref|NP_068801.1|__      HPDRLWAWEKFVYLDEKQHAWLPLTIEIKD--R--LQ---------LR----------VL<br/>gi|7305561|ref|NP_038804.1|__7      ----------GIYEDEHHRVWIAVNVE--T--S--HS---------SHGNRIETCVT-VH<br/>gi|7305553|ref|NP_038801.1|__5      LPVYLVSVRLGIYEDEHHRVWIVANVE--TSHS--SH---------GN----------RR<br/>gi|27668591|ref|XP_234504.1|__      -PDRLWLWEKHVYLDEFRRSWLPIVIK--S--N--GK---------FQ----------VI<br/>gi|27668589|ref|XP_234503.1|__      -PHILTLRTHGIYEDEHHRLWVVLDLQ--A--SHLSF---------SN----------RL<br/>gi|7305559|ref|NP_038802.1|__8      PPCFLVCTRDDIYEDEHGRQWVAAKVE--T--S--SH---------SPYCSKIETCVTVH<br/>gi|7305555|ref|NP_038803.1|__9      ---------PGFYEDEHHRLWMVAKLE--T--C--SH---------SPYCNKIETCVTVH<br/>                                               .* **  : *:    :                       <br/><br/>d1a1x__                             VQQIQVPLG-------DAARPSHLLTS-----QLPLMWQLYP<br/>gi|6678257|ref|NP_033363.1|__7      LRQEDVTLG-------EAMSPSQLVPY-----ELPLMWQLYP<br/>gi|7305557|ref|NP_038800.1|__8      LQHMTTIPQ-------EPTPQQPINNN-----SLPTMWRLES<br/>gi|11415028|ref|NP_068801.1|__      LRREDVVLG-------RPMTPTQIGPS-----LLPIMWQLYP<br/>gi|7305561|ref|NP_038804.1|__7      LQHMTTLPQ-------EPTPQQPINNN-----SLPTMWRLES<br/>gi|7305553|ref|NP_038801.1|__5      RTHVTVHLW-------KLIPQQVIPFNPLNYDFLPTTWKLES<br/>gi|27668591|ref|XP_234504.1|__      MRQKDVILG-------DSMTPSQLVPY-----ELPLMWQLYP<br/>gi|27668589|ref|XP_234503.1|__      LIYLTVYLQQGVAFPLESTPPSPMNLN-----GLPRRWTLRT<br/>gi|7305559|ref|NP_038802.1|__8      LWQMTTLFQ-------EPSPDSLKTFN-----FLPRTWRLES<br/>gi|7305555|ref|NP_038803.1|__9      LWQMTRYPQ-------EPAPYNPMNYN-----FLPMTWRLAS<br/>                                                                     **  * * .</pre>
                 </div>
             </li>
             <li class="accordion-item" data-accordion-item>
@@ -34,41 +28,14 @@
                     Number of resampled datasets asked by <a href = http://evolution.genetics.washington.edu/phylip/doc/seqboot.html target="_blank" rel="noopener">SEQBOOT</a>.
                 </div>
             </li>
+
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">DNA or Protein</a>
-                <div class="accordion-content" data-tab-content>
-                    <p>Please enter the biochemical type of your input sequences.</p>
-                    <p>"DNA" refers to nucleic acid sequences using the following one letter code.</p>
-                    <pre>   A --> adenosine           M --> A C (amino)<br/>   C --> cytidine            S --> G C (strong)<br/>   G --> guanine             W --> A T (weak)<br/>   T --> thymidine           B --> G T C<br/>   U --> uridine             D --> G A T<br/>   R --> G A (purine)        H --> A C T<br/>   Y --> T C (pyrimidine)    V --> G C A<br/>   K --> G T (keto)          N --> A G C T (any)<br/>                             -  gap of indeterminate length</pre><br/>
-                    <p>"Protein" refers to amino acid sequences using the following one letter code.</p>
-                    <pre>    A  alanine                         P  proline<br/>    B  aspartate or asparagine         Q  glutamine<br/>    C  cystine                         R  arginine<br/>    D  aspartate                       S  serine<br/>    E  glutamate                       T  threonine<br/>    F  phenylalanine                   U  selenocysteine<br/>    G  glycine                         V  valine<br/>    H  histidine                       W  tryptophan<br/>    I  isoleucine                      Y  tyrosine<br/>    K  lysine                          Z  glutamate or glutamine<br/>    L  leucine                         X  any<br/>    M  methionine                      N  asparagine  <br/>                                       -  gap of indeterminate length</pre>
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Model of amino acid replacement</a>
+                <a class="accordion-title">Model of AminoAcid replacement</a>
                 <div class="accordion-content" data-tab-content>
                     Amino acid substitution model that is used for the computation of the distance matrix by <a href = http://evolution.genetics.washington.edu/phylip/doc/protdist.html target="_blank" rel="noopener">PROTDIST</a> (Please have a look at the link for a more detailed description).
                 </div>
             </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Model of nucleotide substitution</a>
-                <div class="accordion-content" data-tab-content>
-                    Nucleotide substitution model that is used for the computation of the distance matrix by <a href = http://evolution.genetics.washington.edu/phylip/doc/dnadist.html target="_blank" rel="noopener">DNADIST</a> (Please take the link for a more detailed description).
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Gamma distributed rates across sites</a>
-                <div class="accordion-content" data-tab-content>
-                    Enable distance correction for unequal rates of change at different amino acid positions. This correction assumes that the distribution of rates of change among amino acid positions follows a Gamma distribution.<br/>Further information can be found here: <a href = http://evolution.genetics.washington.edu/phylip/doc/dnadist.html target="_blank" rel="noopener">DNADIST</a> or <a href = http://evolution.genetics.washington.edu/phylip/doc/protdist.html target="_blank" rel="noopener">PROTDIST</a>.
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Amount of variation</a>
-                <div class="accordion-content" data-tab-content>
-                    <p>Enter the value that determines the amount of variation of rates among amino acid positions. Instead of the more widely-known coefficient alpha, PROTDIST uses the coefficient of variation (ratio of the standard deviation to the mean) of rates among amino acid positions. So if there is 20% variation in rates, the CV is is 0.20. The square of the C.V. is also the reciprocal of the better-known "shape parameter" alpha, of the Gamma distribution, so in this case the shape parameter alpha = 1/(0.20*0.20) = 25. If you want to achieve a particular value of alpha, such as 10, you will want to use a CV of 1/sqrt(100) = 1/10 = 0.1.</p>
-                    <p>Further information can be found here <a href = http://evolution.genetics.washington.edu/phylip/doc/dnadist.html target="_blank" rel="noopener">DNADIST</a> or <a href = http://evolution.genetics.washington.edu/phylip/doc/protdist.html target="_blank" rel="noopener">PROTDIST</a>.</p>
-                </div>
-            </li>
+
         </ul>
     </div>
     <div id="tabs-3" class="greenlink">
