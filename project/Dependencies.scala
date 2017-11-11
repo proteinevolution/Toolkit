@@ -12,7 +12,7 @@ object Dependencies {
     ehcache,
     guice,
     "com.typesafe.akka"    %% "akka-actor"               % akkaVersion,
-    "com.sanoma.cda"       %% "maxmind-geoip2-scala"     % "1.5.4",
+    "com.tgf.pizza"        %% "maxmind-geoip2-scala"     % "1.5.5",
     "com.typesafe.akka"    %% "akka-cluster"             % akkaVersion,
     "com.typesafe.akka"    %% "akka-cluster-tools"       % akkaVersion,
     "com.typesafe.akka"    %% "akka-cluster-metrics"     % akkaVersion,
