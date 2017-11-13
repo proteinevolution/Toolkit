@@ -63,7 +63,7 @@ mkdir ../results/tmp
 #cd ../results
 
 #use linear clustering mode
-mmseqs cluster  ../results/${JOBID}_seqDB \
+mmseqs %clustering_mode.content  ../results/${JOBID}_seqDB \
                 ../results/${JOBID}_clu \
                 ../results/tmp \
                 --min-seq-id %min_seqid.content \
@@ -78,6 +78,21 @@ echo "#Generating output." >> ../results/process.log
 updateProcessLog
 
 #Generate FASTA-style output
+mmseqs result2repseq ../results/${JOBID}_seqDB \
+                       ../results/${JOBID}_clu \
+                       ../results/${JOBID}_clu_rep \
+                       --threads ${THREADS_TO_USE}
+
+mmseqs result2flat     ../results/${JOBID}_seqDB \
+                       ../results/${JOBID}_seqDB \
+                       ../results/${JOBID}_clu_rep \
+                        ../results/${JOBID}.fas \
+                        --use-fasta-header
+
+#remove carriage return
+sed -i 's/\r//g' ../results/${JOBID}.fas
+
+#Generate clusters
 mmseqs createseqfiledb ../results/${JOBID}_seqDB \
                        ../results/${JOBID}_clu \
                        ../results/${JOBID}_clu_seq \
@@ -91,6 +106,13 @@ mmseqs result2flat     ../results/${JOBID}_seqDB \
 
 filtermmseqs.pl -i ../results/${JOBID}_clu_seq.fa \
                 -o ../results/${JOBID}
+
+sed -i "1 i\Number of sequences in the input set: ${SEQ_COUNT}" ../results/${JOBID}.clu
+
+SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
+
+sed -i "2 i\Number of sequences in the reduced set: ${SEQ_COUNT}" ../results/${JOBID}.clu
+
 
 rm -r ../results/tmp
 rm ../results/${JOBID}_*
