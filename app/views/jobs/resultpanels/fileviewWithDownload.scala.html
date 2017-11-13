@@ -2,10 +2,11 @@
 @(filename: String, filePath: String, jobID: String, resultname: String)(implicit request: RequestHeader)
     @import java.lang.String;
 
+    <div class="colorOptsAlignment">
     <a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download</a>
     <hr id="line-element" colspan="4" class="horizontal-line">
     <pre class="fileview" id="fileviewerDownload_@{resultname}" ></pre>
-
+    </div>
     <script>
          $(document).ready( function() {
              $.ajax({
