@@ -72,7 +72,8 @@ window.JobModel = {
         "out_format":"fas",
         "patsearchdb":"nr50",
         "standarddb":"nr50",
-        "hmmerdb":"nr50"
+        "hmmerdb":"nr50",
+        "clustering_mode":"linclust"
     },
     update: function(args : any, value : string) : any {
         if (args.isJob) {
