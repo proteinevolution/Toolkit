@@ -54,6 +54,7 @@
 
 .job-list .openmanager .icon-list {
     margin:unset;
+    margin-right:-8ex;
 }
 
 .job-list .boxclose {
