@@ -6,17 +6,17 @@
         <li><a href="#tabs-3">References</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
-        TPRpred uses the profile representation of the known repeats to detect Tetratrico Peptide Repeats (TPRs), Pentatrico Peptide Repeats(PPRs) and SEL1-like repeats from the query sequence and computes the statistical significance for their occurrence.
+        TPRpred uses the profile representation of the known repeats to detect Tetratrico Peptide Repeats (TPRs),
+        Pentatrico Peptide Repeats(PPRs) and SEL1-like repeats from the query sequence and computes the
+        statistical significance for their occurrence.
     </div>
     <div id="tabs-2" class="greenlink">
         <ul class="accordion" data-accordion data-allow-all-closed='true'>
             <li class="accordion-item" data-accordion-item>
                 <a class="accordion-title">Input</a>
                 <div class="accordion-content" data-tab-content>
-                    <p>Enter a single protein sequence in FASTA format, for example:</p><br/>
-                    <pre>>gi|576099|pdb|1ENA|  Staphylococcal Nuclease (E.C.3.1.31.1) Mutation<br/>LHKEPATLIKAIDGETVKLMYKGQPMTFRLLLVDTPETKHPKKGVEKYGPEASAFTKKMVENAKKIEVEF<br/>DKGQRTDKYGRGLAYIYADGKMVNEALVRQGLAKVAYVYKPNNTHEQHLRKSEAQAKKEKLNIWS</pre><br/>
-                    <p>The sequence name (and an optional description) must be contained in a single name line beginning with the ">" symbol and followed directly by the sequence name. The residue data is contained in one or more lines of arbitrary length following the name line. No empty lines should be used. Upper and lower case letters are allowed.
-                        Letters not from the canonical one-letter-code are treated as unknown residues</p>
+                    Enter a single protein sequence in FASTA format.<br/><br/>
+                    @help.common.singleseq()
                 </div>
             </li>
             <li class="accordion-item" data-accordion-item>
@@ -29,7 +29,7 @@
         </ul>
     </div>
     <div id="tabs-3" class="greenlink">
-        @help.citations.toolkit_citation()
+        @help.common.toolkit_citation()
         <p>Magis C., Taly JF., Bussotti G., Chang JM., Di Tommaso P., Erb I., Espinosa-Carrasco J., Notredame C. (2014) <b>T-Coffee: Tree-based consistency objective function for alignment evaluation. </b>Methods Mol Biol 1079:117-129. <a href = https://www.ncbi.nlm.nih.gov/pubmed/24170398 target="_blank" rel="noopener">PMID: 24170398</a></p>
     </div>
 </div>

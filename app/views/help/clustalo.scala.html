@@ -13,13 +13,7 @@
             <li class="accordion-item" data-accordion-item>
                 <a class="accordion-title">Input</a>
                 <div class="accordion-content" data-tab-content>
-                    <p>Enter multiple sequences in FASTA format. A sequence in FASTA format begins with a single-line description, followed by lines of sequence data. The description line is distinguished from the sequence data by a greater-than (">") symbol in the first column. It is recommended that all lines of text be shorter than 80 characters in length. Currently, up to 2,000 sequences are supported. An example sequence in FASTA format is:</p><br/>
-                    <pre>>gi|532319|pir|TVFV2E|TVFV2E envelope protein<br/>ELRLRYCAPAGFALLKCNDADYDGFKTNCSNVSVVHCTNLMNTTVTTGLLLNGSYSENRT<br/>QIWQKHRTSNDSALILLNKHYNLTVTCKRPGNKTVLPVTIMAGLVFHSQKYNLRLRQAWC<br/>HFPSNWKGAWKEVKEEIVNLPKERYRGTNDPKRIFFQRQWGDPETANLWFNCHGEFFYCK<br/>MDWFLNYLNNLTVDADHNECKNTSGTKSGNKRAPGPCVQRTYVACHIRSVIIWLETISKK<br/>TYAPPREGHLECTSTVTGMTVELNYIPKNRTNVTLSPQIESIWAAELDRYKLVEITPIGF<br/>APTEVRRYTGGHERQKRVPFVXXXXXXXXXXXXXXXXXXXXXXVQSQHLLAGILQQQKNL<br/>LAAVEAQQQMLKLTIWGVK</pre><br/>
-                    <p>Sequences are expected to be represented in the standard IUB/IUPAC amino acid and nucleic acid codes, with these exceptions: lower-case letters are accepted and are mapped into upper-case; a single hyphen or dash can be used to represent a gap of indeterminate length; and in amino acid sequences, U and * are acceptable letters (see below). Before submitting a request, any numerical digits in the query sequence should either be removed or replaced by appropriate letter codes (e.g., N for unknown nucleic acid residue or X for unknown amino acid residue).</p>
-                    <p>The nucleic acid codes supported are:</p><br/>
-                    <pre>   A --> adenosine           M --> A C (amino)<br/>   C --> cytidine            S --> G C (strong)<br/>   G --> guanine             W --> A T (weak)<br/>   T --> thymidine           B --> G T C<br/>   U --> uridine             D --> G A T<br/>   R --> G A (purine)        H --> A C T<br/>   Y --> T C (pyrimidine)    V --> G C A<br/>   K --> G T (keto)          N --> A G C T (any)<br/>                             -  gap of indeterminate length</pre><br/>
-                    <p>The accepted amino acid codes are:</p><br/>
-                    <pre>    A  alanine                         P  proline<br/>    B  aspartate or asparagine         Q  glutamine<br/>    C  cystine                         R  arginine<br/>    D  aspartate                       S  serine<br/>    E  glutamate                       T  threonine<br/>    F  phenylalanine                   U  selenocysteine<br/>    G  glycine                         V  valine<br/>    H  histidine                       W  tryptophan<br/>    I  isoleucine                      Y  tyrosine<br/>    K  lysine                          Z  glutamate or glutamine<br/>    L  leucine                         X  any<br/>    M  methionine                      *  translation stop<br/>    N  asparagine                      -  gap of indeterminate length</pre>
+                    @help.common.multiseq()
                 </div>
             </li>
             <li class="accordion-item" data-accordion-item>
@@ -31,7 +25,7 @@
         </ul>
     </div>
     <div id="tabs-3" class="greenlink">
-        @help.citations.toolkit_citation()
+        @help.common.toolkit_citation()
     </div>
 </div>
 
