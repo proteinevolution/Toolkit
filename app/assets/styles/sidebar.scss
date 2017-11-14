@@ -13,6 +13,14 @@
   height:50px;
 }
 
+#sidebar-search .search-input {
+  color:#cacaca;
+  background-color:transparent;
+}
+#sidebar-search .search-input.white {
+  background-color:white !important;
+}
+
 #sidebar-joblist {
 
 }
