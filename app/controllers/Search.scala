@@ -65,7 +65,7 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Sy
         .toList
       // Find out if the user looks for a certain tool or for a jobID
       if (tools.isEmpty) {
-        // Grab Job ID auto completions
+        // Grab Job ID auto completions, as the user is not looking for a tool
         mongoStore.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))).flatMap { jobs =>
           val jobsFiltered = jobs.filter(job => job.ownerID.contains(user.userID))
           if (jobsFiltered.isEmpty) {
