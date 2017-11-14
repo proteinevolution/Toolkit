@@ -21,6 +21,16 @@
   background-color:white !important;
 }
 
+#sidebar-search input {
+  height:1.9rem;
+  font-size: 0.8rem;
+  margin-top: 6px;
+}
+
+#sidebar-search  .twitter-typeahead::before{
+  top: 8px;
+}
+
 #sidebar-joblist {
 
 }
