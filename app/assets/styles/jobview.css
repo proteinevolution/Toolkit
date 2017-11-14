@@ -464,6 +464,7 @@ hr {
 
 /* Jobline */
 .jobline {
+    padding-top: 5px;
     height: 50px;
 }
 

@@ -1,6 +1,28 @@
+// TODO clean this up - lots of old and unused css elements in here
+
 .sidebar {
   padding-top: 3.75em;
   min-height: 40rem;
+}
+
+#sidebar {
+  display: none;
+}
+
+#sidebar-search {
+  height:50px;
+}
+
+#sidebar-search .search-input {
+  color:#cacaca;
+  background-color:transparent;
+}
+#sidebar-search .search-input.white {
+  background-color:white !important;
+}
+
+#sidebar-joblist {
+
 }
 
 .clear{
