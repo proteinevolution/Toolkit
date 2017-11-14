@@ -437,7 +437,10 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                   BSONDocument(Job.DATECREATED -> -1)
                 )
                 .foreach { jobList =>
-                  jobList.find(_.status == Done) match {
+                  // Check if the jobs are owned by the user, unless they are public and if the job is Done
+                  jobList.find(filterJob =>
+                              (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done)
+                  match {
                     case Some(oldJob) =>
                       Logger.info(
                         s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID is a duplicate of ${oldJob.jobID}."
@@ -566,7 +569,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               // get the params
               val params = executionContext.reloadParams
               // generate job hash
-              val jobHash = jobDao.generateJobHash(job, params, env)
+              val jobHash = Some(jobDao.generateJobHash(job, params, env))
 
               // Set memory allocation on the cluster and let the clusterMonitor define the multiplier.
               // To receive a catchable signal in an SGE job, one must set soft limits

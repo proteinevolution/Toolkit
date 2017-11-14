@@ -2,7 +2,7 @@
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
-        <li><a href="#tabs-2">Parameters</a></li>
+        <li><a href="#tabs-2">Input & Parameters</a></li>
         <li><a href="#tabs-3">References</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
@@ -12,9 +12,9 @@
     <div id="tabs-2" class="greenlink">
         <ul class="accordion" data-accordion data-allow-all-closed='true'>
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Input format</a>
+                <a class="accordion-title">Input</a>
                 <div class="accordion-content" data-tab-content>
-                    <p>Enter multiple sequences in fasta format. A sequence in FASTA format begins with a single-line description, followed by lines of sequence data. The description line is distinguished from the sequence data by a greater-than (">") symbol in the first column. It is recommended that all lines of text be shorter than 80 characters in length. An example sequence in FASTA format is:</p><br/>
+                    <p>Enter multiple sequences in FASTA format. A sequence in FASTA format begins with a single-line description, followed by lines of sequence data. The description line is distinguished from the sequence data by a greater-than (">") symbol in the first column. It is recommended that all lines of text be shorter than 80 characters in length. Currently, up to 2,000 sequences are supported. An example sequence in FASTA format is:</p><br/>
                     <pre>>gi|532319|pir|TVFV2E|TVFV2E envelope protein<br/>ELRLRYCAPAGFALLKCNDADYDGFKTNCSNVSVVHCTNLMNTTVTTGLLLNGSYSENRT<br/>QIWQKHRTSNDSALILLNKHYNLTVTCKRPGNKTVLPVTIMAGLVFHSQKYNLRLRQAWC<br/>HFPSNWKGAWKEVKEEIVNLPKERYRGTNDPKRIFFQRQWGDPETANLWFNCHGEFFYCK<br/>MDWFLNYLNNLTVDADHNECKNTSGTKSGNKRAPGPCVQRTYVACHIRSVIIWLETISKK<br/>TYAPPREGHLECTSTVTGMTVELNYIPKNRTNVTLSPQIESIWAAELDRYKLVEITPIGF<br/>APTEVRRYTGGHERQKRVPFVXXXXXXXXXXXXXXXXXXXXXXVQSQHLLAGILQQQKNL<br/>LAAVEAQQQMLKLTIWGVK</pre><br/>
                     <p>Sequences are expected to be represented in the standard IUB/IUPAC amino acid codes, with these exceptions: lower-case letters are accepted and are mapped into upper-case; a single hyphen or dash can be used to represent a gap of indeterminate length; and in amino acid sequences, U and * are acceptable letters (see below). Before submitting a request, any numerical digits in the query sequence should either be removed or replaced by appropriate letter codes (e.g., X for unknown amino acid residue).</p>
                     <p>The accepted amino acid codes are:</p><br/>
@@ -22,9 +22,9 @@
                 </div>
             </li>
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Output sequence order</a>
+                <a class="accordion-title">Output the alignment in</a>
                 <div class="accordion-content" data-tab-content>
-                    Use this radio button to specify the output order of the sequences.
+                    <p>Specify the order in which the aligned sequences appear within the resulting multiple sequence alignment</p>
                 </div>
             </li>
             <li class="accordion-item" data-accordion-item>

@@ -2,7 +2,7 @@
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
-        <li><a href="#tabs-2">Parameters</a></li>
+        <li><a href="#tabs-2">Input & Parameters</a></li>
         <li><a href="#tabs-3">References</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
@@ -11,9 +11,9 @@
     <div id="tabs-2" class="greenlink">
         <ul class="accordion" data-accordion data-allow-all-closed='true'>
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Input format</a>
+                <a class="accordion-title">Input</a>
                 <div class="accordion-content" data-tab-content>
-                    <p>Enter multiple sequences in fasta format. A sequence in FASTA format begins with a single-line description, followed by lines of sequence data. The description line is distinguished from the sequence data by a greater-than (">") symbol in the first column. It is recommended that all lines of text be shorter than 80 characters in length. An example sequence in FASTA format is:</p><br/>
+                    <p>Enter multiple sequences in FASTA format. A sequence in FASTA format begins with a single-line description, followed by lines of sequence data. The description line is distinguished from the sequence data by a greater-than (">") symbol in the first column. It is recommended that all lines of text be shorter than 80 characters in length. An example sequence in FASTA format is:</p><br/>
                     <pre>>gi|532319|pir|TVFV2E|TVFV2E envelope protein<br/>ELRLRYCAPAGFALLKCNDADYDGFKTNCSNVSVVHCTNLMNTTVTTGLLLNGSYSENRT<br/>QIWQKHRTSNDSALILLNKHYNLTVTCKRPGNKTVLPVTIMAGLVFHSQKYNLRLRQAWC<br/>HFPSNWKGAWKEVKEEIVNLPKERYRGTNDPKRIFFQRQWGDPETANLWFNCHGEFFYCK<br/>MDWFLNYLNNLTVDADHNECKNTSGTKSGNKRAPGPCVQRTYVACHIRSVIIWLETISKK<br/>TYAPPREGHLECTSTVTGMTVELNYIPKNRTNVTLSPQIESIWAAELDRYKLVEITPIGF<br/>APTEVRRYTGGHERQKRVPFVXXXXXXXXXXXXXXXXXXXXXXVQSQHLLAGILQQQKNL<br/>LAAVEAQQQMLKLTIWGVK</pre><br/>
                     <p>Sequences are expected to be represented in the standard IUB/IUPAC amino acid codes, with these exceptions: lower-case letters are accepted and are mapped into upper-case; a single hyphen or dash can be used to represent a gap of indeterminate length; and in amino acid sequences, U and * are acceptable letters (see below). Before submitting a request, any numerical digits in the query sequence should either be removed or replaced by appropriate letter codes (e.g., X for unknown amino acid residue).</p>
                     <p>The accepted amino acid codes are:</p><br/>
@@ -21,66 +21,16 @@
                 </div>
             </li>
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Matrix</a>
+                <a class="accordion-title">Scoring Matrix</a>
                 <div class="accordion-content" data-tab-content>
-                    Specify an alternate scoring matrix for PSIBLAST.
+                    Specify the scoring matrix that is used for PSI-BLAST.
                 </div>
             </li>
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Number of iterations</a>
+                <a class="accordion-title"> Extract BLAST HSP's up to E-values of</a>
                 <div class="accordion-content" data-tab-content>
-                    Specify the maximum number of rounds of search. After each successive round the search alignment is updated.
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">E-value</a>
-                <div class="accordion-content" data-tab-content>
-                    The statistical significance threshold for reporting matches against database sequences; the default value is 10, meaning that 10 matches are expected to be found merely by chance, according to the stochastic model of Karlin and Altschul (1990). If the statistical significance ascribed to a match is greater than the e-value threshold, the match will not be reported. Lower e-value thresholds are more stringent, leading to fewer chance matches being reported. Increasing the threshold shows less stringent matches. Fractional values are acceptable.
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">E-value for inclusion in first iteration</a>
-                <div class="accordion-content" data-tab-content>
-                    The E-value for which sequences should be added to the evolving profile (relevant only for PSI-BLAST and if multiple rounds of searching are performed).
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Filter for low complexity regions</a>
-                <div class="accordion-content" data-tab-content>
-                    <p>Mask off segments of the query sequence that have low compositional complexity, as determined by the SEG program of Wootton & Federhen (Computers and Chemistry, 1993) or, for BLASTN, by the DUST program of Tatusov and Lipman (in preparation). Filtering can eliminate statistically significant but biologically uninteresting reports from the blast output (e.g., hits against common acidic-, basic- or proline-rich regions), leaving the more biologically interesting regions of the query sequence available for specific matching against database sequences.</p>
-                    <p>Filtering is only applied to the query sequence (or its translation products), not to database sequences. Default filtering is DUST for BLASTN, SEG for other programs.</p>
-                    <p>It is not unusual for nothing at all to be masked by SEG, when applied to sequences in SWISS-PROT, so filtering should not be expected to always yield an effect. Furthermore, in some cases, sequences are masked in their entirety, indicating that the statistical significance of any matches reported against the unfiltered query sequence should be suspect.</p>
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Perform ungapped alignment</a>
-                <div class="accordion-content" data-tab-content>
-                    Set BLAST/PSIBLAST parameter changing the alignment behavior of these programs.
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Cutoff</a>
-                <div class="accordion-content" data-tab-content>
-                    The P-value cutoff. Only hits with P-values better than specified will be used in further calculations.
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Min. sequences</a>
-                <div class="accordion-content" data-tab-content>
-                    Determines the minimal number of sequences necessary for a "cluster" to be regarded as such.
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Cluster by...</a>
-                <div class="accordion-content" data-tab-content>
-                    <p>Choose the clustering methodology: linkage; convex or network.</p>
-                    <ul>
-                        <li>Linkage: performs a linkage clustering (you specify the linkage number)</li>
-                        <li>Convex: adds sequences to clusters depending on their average "attraction" (proportional to -log P-value). Will fail if a cluster is not "convex", i.e. the majority of sequences do not share an above average pairwise similarity (one parameter "X": the average attraction of a sequence be to a cluster has to be greater than the average global attraction+("X"*STDEV) for it to be added to a cluster).</li>
-                        <li>Network: A neural net approach. Each sequence is represented by a neuron and emits a number to all other neurons. The input weights are proportional to -log P-value. In the first round each sequence emits its own sequence numbers. In consecutive rounds, each sequence emits the number which had the largest input weight. This process iterates until no further neurons change their emission number (i.e. the cluster assignment has converged)</li>
-                    </ul>
-                    <br/>Alternative:<br/>
-                    <p>View in CLANS. This creates a CLANS file and allows viewing of the results in a more interactive fashion in an java applet (and provides all of the above analyses. You can download a working version of CLANS <a href = ftp://ftp.tuebingen.mpg.de/pub/protevo/CLANS target="_blank" rel="noopener">here</a>)</p>
+                    Specifies the cut-off value for BLAST E-values. HSPs with E-value larger than this are not being
+                    extracted.
                 </div>
             </li>
         </ul>

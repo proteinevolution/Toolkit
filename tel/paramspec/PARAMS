@@ -56,3 +56,4 @@ repper_input_mode GEN repper_input_mode.prop
 in_format GEN in_format.prop
 out_format GEN out_format.prop
 desc GEN desc.prop
+clustering_mode GEN clustering_mode.prop
