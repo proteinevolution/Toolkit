@@ -74,6 +74,7 @@ const JobTabsComponent = {
                 if (this.isFullscreen) {
                     job_tab_component.removeClass("fullscreen");
                     this.isFullscreen = false;
+                    $('#sidebar-search').css({display:'block'});
                     if (typeof onCollapse === "function") {
                         onCollapse();
                     }
@@ -84,6 +85,7 @@ const JobTabsComponent = {
                     }
 
                 } else {
+                    $('#sidebar-search').css({display:'none'});
                     job_tab_component.addClass("fullscreen");
                     this.isFullscreen = true;
                     if (typeof onExpand === "function") {
