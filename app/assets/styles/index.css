@@ -79,7 +79,7 @@ FIELDSET {
     content: "\F50D";
     position:absolute;
     top:calc(50% - 1em + 4px); /*center - font size + padding of 8px*/
-    right:1ex;
+    right:10px;
     font-family: 'mfg_labs_iconsetregular';
     font-style: normal;
     font-weight: normal;
