@@ -75,6 +75,19 @@ FIELDSET {
     box-shadow: 0 0 5px #f1e6f9;
 }
 
+.search-container .twitter-typeahead::before {
+    content: "\F50D";
+    position:absolute;
+    top:calc(50% - 1em + 4px); /*center - font size + padding of 8px*/
+    right:1ex;
+    font-family: 'mfg_labs_iconsetregular';
+    font-style: normal;
+    font-weight: normal;
+    font-size: 1em;
+    z-index:1;
+    pointer-events: none;
+}
+
 .search-input {
     margin-bottom: 0;
 }

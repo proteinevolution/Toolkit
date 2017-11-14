@@ -38,7 +38,7 @@ object Router extends js.JSApp {
     g.jobList.mount(g.document.getElementById("sidebar-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
 
     g.search = g.m.deps.factory(g.window)
-    g.search.mount(g.document.getElementById("sidebar-search").asInstanceOf[HTMLDivElement], m.component(SearchComponent, js.Dynamic.literal("id" -> "side-search", "placeholder" -> "Search")))
+    g.search.mount(g.document.getElementById("sidebar-search").asInstanceOf[HTMLDivElement], m.component(SearchComponent, js.Dynamic.literal("id" -> "side-search", "placeholder" -> "Job id, tool name")))
 
     g.jobListOffCanvas = g.m.deps.factory(g.window)
     g.jobListOffCanvas.mount(g.document.getElementById("off-canvas-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
