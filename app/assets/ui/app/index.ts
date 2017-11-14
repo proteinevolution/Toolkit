@@ -58,12 +58,10 @@ bloodHoundConfig.tools.initialize();
 
 const typeAhead = function (elem : any, isInit : boolean) : any {
     if (!isInit) {
-        console.log("Initializing Search on " + elem.id);
         return $('#'+elem.id +" .search-input").typeahead({
             highlight: true,
             minLength: 1,
             autoselect: 'first'
-
         },[
             {
                 displayKey: 'long',
@@ -99,8 +97,7 @@ const typeAhead = function (elem : any, isInit : boolean) : any {
                 }
             }
         ]).on('keyup', function(e : any) : any {
-            console.log("Working on element: "+ elem.id);
-            let selectables = $('#'+elem.id).siblings(".tt-menu").find(".tt-selectable").find('.search-results');
+            let selectables = $('#'+elem.id+' .search-input').siblings(".tt-menu").find(".tt-selectable").find('.search-results');
             if (e.which == 13) {
                 e.preventDefault();
                 //find the selectable item under the input, if any:
@@ -109,7 +106,11 @@ const typeAhead = function (elem : any, isInit : boolean) : any {
                     return false;
                 }
             }
-        });
+        }).on('focus', function(e : any) : any {
+            $('#'+elem.id+' .search-input.tt-hint').addClass("white");
+        }).on('blur', function(e : any) : any {
+            $('#'+elem.id+' .search-input.tt-hint').removeClass("white");
+        })
     }
 };
 
