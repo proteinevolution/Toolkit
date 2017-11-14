@@ -242,5 +242,6 @@ class ParamAccess @Inject()(tel: TEL) {
     case "REPWIN_THRESHOLD" => Param("repwin_threshold", ParamType.UnconstrainedNumber, 1, "REPwin threshold")
     case "IN_FORMAT"        => select("in_format", "Input format")
     case "OUT_FORMAT"       => select("out_format", "Output format")
+    case "CLUSTERING_MODE"  => select("clustering_mode", "Clustering mode")
   }
 }
