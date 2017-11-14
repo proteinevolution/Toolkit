@@ -16,6 +16,7 @@ object Router extends js.JSApp {
     val JobManager       = g.JobManager.asInstanceOf[MithrilComponent]
     val Toolkit          = g.Toolkit.asInstanceOf[MithrilComponent]
     val JobListComponent = g.JobListComponent.asInstanceOf[MithrilComponent]
+    val SearchComponent  = g.SearchBarComponent.asInstanceOf[MithrilComponent]
 
     //g.console.log("Router initialized")
 
@@ -34,9 +35,12 @@ object Router extends js.JSApp {
     // in absence of multi-tenancy support: mount the joblist, which gets redrawn independently from other view changes, in a separate mithril instance
 
     g.jobList = g.m.deps.factory(g.window)
-    g.jobListTwo = g.m.deps.factory(g.window)
-    g.jobListTwo.mount(g.document.getElementById("off-canvas-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
-    g.jobList.mount(g.document.getElementById("sidebar").asInstanceOf[HTMLDivElement], JobListComponent)
+    g.jobList.mount(g.document.getElementById("sidebar-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
 
+    g.search = g.m.deps.factory(g.window)
+    g.search.mount(g.document.getElementById("sidebar-search").asInstanceOf[HTMLDivElement], m.component(SearchComponent, js.Dynamic.literal("id" -> "side-search", "placeholder" -> "Job id, tool name")))
+
+    g.jobListOffCanvas = g.m.deps.factory(g.window)
+    g.jobListOffCanvas.mount(g.document.getElementById("off-canvas-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
   }
 }
