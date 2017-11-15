@@ -87,8 +87,9 @@ const typeAhead = function (elem : any, isInit : boolean) : any {
                     //empty: '<div class="list-group search-results-dropdown"><div class="list-group-item-notfound">Nothing found.</div></div>',
                     suggestion: function (data : any) {
                             if(data != null) {
-                                return '<div class="list-group-item"><a class="search-results" href="#/jobs/' + data.jobID + '" name="' + data.jobID + ' - ' + data.toolnameLong + '">'
-                                       + data.jobID + '<span class="search-result-tool"> - ' + data.toolnameLong + '</span></a></div>';
+                                return '<div class="list-group-item"><a class="search-results" href="#/jobs/' + data.jobID + '" name="' + data.jobID + ' - ' + data.toolnameLong + '">' +
+                                    '<span class="search-result-jobid">' + data.jobID + '</span> <span class="search-result-tool"> ' +
+                                    '(' + data.toolnameLong + ')</span> <span class="search-result-tool-short"> (' + data.toolnameLong.substr(0, 4).toUpperCase() + ')</span></a></div>';
                             } else {
                                 return ''
                             }

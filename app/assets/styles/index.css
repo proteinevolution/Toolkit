@@ -107,16 +107,22 @@ FIELDSET {
     font-size: 0.9em;
 }
 
-
-
 .search-results{
     color:  #262626;;
     font-size: 0.8em;
-    margin: 0 20px 5px 20px;
+    margin: 0 20px 5px 16px;
 }
 
-.search-result-tool{
+.search-result-jobid {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 50em;
+    vertical-align: middle;
+}
 
+#index-search .search-result-tool-short{
+    display:none;
 }
 
 .header-name {
