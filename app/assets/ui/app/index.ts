@@ -111,6 +111,7 @@ const typeAhead = function (elem : any, isInit : boolean) : any {
             $('#'+elem.id+' .search-input.tt-hint').addClass("white");
         }).on('blur', function(e : any) : any {
             $('#'+elem.id+' .search-input.tt-hint').removeClass("white");
+            $("#sidebar-search input").val('');
         })
     }
 };
