@@ -729,7 +729,7 @@ final class ToolFactory @Inject()(
         }
       ),
       Toolnames.MMSEQS2 -> ListMap(
-        Resultviews.RESULTS -> { (jobID, requestHeader) =>
+        "Reduced set" -> { (jobID, requestHeader) =>
           implicit val r = requestHeader
           Future.successful(
             views.html.jobs.resultpanels

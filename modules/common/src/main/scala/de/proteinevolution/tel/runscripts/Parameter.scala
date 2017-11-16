@@ -2,9 +2,6 @@ package de.proteinevolution.tel.runscripts
 
 import better.files.File
 
-/**
-  * Created by lzimmermann on 07.12.16.
-  */
 class Parameter(val name: String) {
 
   // A constraint decides for a value its validity
@@ -25,20 +22,20 @@ class Parameter(val name: String) {
 }
 
 /**
-  * Encompasses the value representation of a runscript parameter.
-  *
-  */
+ * Encompasses the value representation of a runscript parameter.
+ *
+ */
 abstract class Representation {
 
   def represent: String
 }
 
 /**
-  * Represents Parameter values which can be literally represented by the String value of an arbitrary
-  * type 'A'.
-  *
-  * @param value
-  */
+ * Represents Parameter values which can be literally represented by the String value of an arbitrary
+ * type 'A'.
+ *
+ * @param value
+ */
 class LiteralRepresentation(value: RType) extends Representation {
 
   def represent: String = value.inner().toString

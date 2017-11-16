@@ -2,7 +2,7 @@
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
-        <li><a href="#tabs-2">Parameters</a></li>
+        <li><a href="#tabs-2">Input & Parameters</a></li>
         <li><a href="#tabs-3">References</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
@@ -18,24 +18,22 @@
     <div id="tabs-2" class="greenlink">
         <ul class="accordion" data-accordion data-allow-all-closed='true'>
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Input format</a>
+                <a class="accordion-title">Input</a>
                 <div class="accordion-content" data-tab-content>
-                    <p>Paste a multiple alignment in one of the formats, which are listed in the dropdown menu.</p>
-                    <p>The first sequence in the multiple alignment must be the query sequence. The other sequences are the template sequences. In each template the first word in the header has to be the PDB- or SCOP-identifier. A FASTA formatted example imput is shown below:</p><br/>
-                    <pre>>gi|50121231|ref|YP_050398.1|<br/>AHQEGDFIVRAGSATV-RPSESSD-NVLGSLGSFQVNNNTQLGLTFSYMV----T-DNIGVELLAATPF-<br/>----NHNVGLRSTGTIAEVKHLPPSLVAQYYFGDKEDTLRPYLGVGVNYTLFFDEKFNDTGTNAGLSDLS<br/>-LKNSWGIAAQAGLDYNLDKNWLLNMSVWWMDIDTDVKFKAGNDQQSVHTRLDPWAFMFGVGYRF<br/>>1qj8<br/>--ATSTVTGGYAQSD-A------Q-G----------QMNKMGGFNLKYRYEEDNSPLGVIGSFTYTEKSR<br/>TASS------GD-----YNKNQYYGITAGPAY-RINDWASIYGVVGVGYGKFQTT-------EY-PTYKN<br/>-DTSDYGFSYGAGLQFNPMENVALDFSYEQSRI----------------RSVDVGTWI-AGVGYR<br/>>1qjp<br/>APKDNTWYTGAKLGWSQ-------H-----------ENKLGAGAFGGYQV----N-PYVGFEMGYDWLG-<br/>----RMPY---------AYKAQGVQLTAKLGY-PITDDLDIYTRLGGMVWRADTY-----SNVY---GKN<br/>H-DTGVSPVFAGGVEYAITPEIATRLEYQWT---------------------N-GMLSLGVSYRF<br/>>1p4t<br/>-EGASGFYVQADAAHA-KASSSLG-S----------AKGFSPRISAGYRI----N--DLRFAVDYTRYK-<br/>----N-YKAPST-----DFKLYSIGASAIYDF-DTQSPVKPYLGARLSLNRASVD--------LGG-SDS<br/>FSQTSIGLGVLTGVSYAVTPNVDLDAGYRYNYI----------GKVNTVKNVRSGELSAGVRVKF</pre>
+                    <p>Currently, the input format must be a PIR alignment forwarded by HHpred.</p>
                 </div>
             </li>
             <li class="accordion-item" data-accordion-item>
                 <a class="accordion-title">Modeller key</a>
                 <div class="accordion-content" data-tab-content>
-                    The MODELLER license requires you to enter a MODELLER-key to use this tool. This key is freely available for academic users and easily obtainable at: <a href = "http://salilab.org/modeller/registration.shtml" target="_blank">http://salilab.org/modeller/registration.shtml</a>.
+                    The MODELLER license requires you to enter a MODELLER-key to use this tool. This key is freely available for academic users and easily obtainable at: <a href = "http://salilab.org/modeller/registration.shtml" target="_blank" rel="noopener">http://salilab.org/modeller/registration.shtml</a>.
                 </div>
             </li>
         </ul>
     </div>
     <div id="tabs-3" class="greenlink">
-        @help.citations.toolkit_citation()
-        <p>Sali A., Potterton L., Yuan F., van Vlijmen H., Karplus M. (1995) <b>Evaluation of comparative protein modeling by MODELLER. </b>Proteins 23(3):318-26. <a href = "https://www.ncbi.nlm.nih.gov/pubmed/8710825" target="_blank">PMID: 8710825</a></p>
+        @help.common.toolkit_citation()
+        <p>Sali A., Potterton L., Yuan F., van Vlijmen H., Karplus M. (1995) <b>Evaluation of comparative protein modeling by MODELLER. </b>Proteins 23(3):318-26. <a href = "https://www.ncbi.nlm.nih.gov/pubmed/8710825" target="_blank" rel="noopener">PMID: 8710825</a></p>
     </div>
 </div>
 

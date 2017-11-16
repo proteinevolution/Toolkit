@@ -1,6 +1,6 @@
 package actors
 
-import javax.inject.{ Inject, Named }
+import javax.inject.Inject
 
 import actors.JobActor._
 import akka.actor._
@@ -14,7 +14,6 @@ import de.proteinevolution.models.search.JobDAO
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.runscripts._
 import com.typesafe.config.ConfigFactory
-import de.proteinevolution.models.sge.Qdel
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
@@ -29,10 +28,8 @@ import play.api.libs.mailer.MailerClient
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import play.api.libs.json._
-
+import scala.language.postfixOps
 import scala.concurrent.Future
-import scala.util.{ Failure, Success }
 import better.files._
 import com.google.inject.assistedinject.Assisted
 import de.proteinevolution.common.LocationProvider
@@ -100,7 +97,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                          userSessions: UserSessions,
                          wrapperExecutionFactory: WrapperExecutionFactory,
                          implicit val locationProvider: LocationProvider,
-                         @Named("jobIDActor") jobIDActor: ActorRef,
                          @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                          @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
                          constants: Constants,
@@ -441,7 +437,10 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                   BSONDocument(Job.DATECREATED -> -1)
                 )
                 .foreach { jobList =>
-                  jobList.find(_.status == Done) match {
+                  // Check if the jobs are owned by the user, unless they are public and if the job is Done
+                  jobList.find(filterJob =>
+                              (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done)
+                  match {
                     case Some(oldJob) =>
                       Logger.info(
                         s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID is a duplicate of ${oldJob.jobID}."
@@ -570,7 +569,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               // get the params
               val params = executionContext.reloadParams
               // generate job hash
-              val jobHash = jobDao.generateJobHash(job, params, env)
+              val jobHash = Some(jobDao.generateJobHash(job, params, env))
 
               // Set memory allocation on the cluster and let the clusterMonitor define the multiplier.
               // To receive a catchable signal in an SGE job, one must set soft limits

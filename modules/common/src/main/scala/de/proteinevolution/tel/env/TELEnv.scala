@@ -6,10 +6,10 @@ import de.proteinevolution.tel.Observer
 import play.api.Logger
 
 /**
-  * Manages values of Keys from the TEL environment
-  *
-  * Created by lzimmermann on 8/19/16.
-  */
+ * Manages values of Keys from the TEL environment
+ *
+ */
+
 @Singleton
 class TELEnv extends Env with Observer[EnvFile] {
 

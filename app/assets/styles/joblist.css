@@ -11,9 +11,7 @@
 
 .job-list {
     display: table;
-    width: 90%;
-    margin-left: 15px;
-    margin-top: 3.75em;
+    width: 100%;
 }
 
 .job-list .elements {
@@ -35,7 +33,13 @@
 }
 
 .job-list .openmanager .icon-list {
-    font-size: 1.5em;
+    margin: unset;
+    margin-right: -8px;
+}
+
+.job-list .boxclose {
+    width: 20%;
+    opacity: 0.8;
 }
 
 .job-list .sort.selected {

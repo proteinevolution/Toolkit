@@ -18,11 +18,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.sys.process._
 
-
-/**
-  * Created by drau on 01.03.17.
-  */
-class HHblitsController @Inject()(resultFiles : ResultFileAccessor,
+class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
                                   hhblits: HHBlits,
                                   webJarsUtil: WebJarsUtil,
                                   val reactiveMongoApi: ReactiveMongoApi,
@@ -41,25 +37,25 @@ class HHblitsController @Inject()(resultFiles : ResultFileAccessor,
   private val retrieveFullSeq         = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
 
   /**
-    * returns 3D structure view for a given accession
-    * in scop or mmcif
-    * @param accession
-    * @return 3D structure view
-    */
+   * returns 3D structure view for a given accession
+   * in scop or mmcif
+   * @param accession
+   * @return 3D structure view
+   */
   def show3DStructure(accession: String): Action[AnyContent] = Action { implicit request =>
     Ok(views.html.jobs.resultpanels.structure(accession, webJarsUtil))
   }
 
   /**
-    * Retrieves the template alignment for a given
-    * accession, therefore it runs a script on the server
-    * (now grid engine) and writes it to the current job folder
-    * to 'accession'.fas
-    *
-    * @param jobID
-    * @param accession
-    * @return Http response
-    */
+   * Retrieves the template alignment for a given
+   * accession, therefore it runs a script on the server
+   * (now grid engine) and writes it to the current job folder
+   * to 'accession'.fas
+   *
+   * @param jobID
+   * @param accession
+   * @return Http response
+   */
   def retrieveTemplateAlignment(jobID: String, accession: String): Action[AnyContent] = Action.async {
     if (jobID.isEmpty || accession.isEmpty) {
       Logger.info("either job or accession is empty")
@@ -81,19 +77,19 @@ class HHblitsController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * Retrieves the full sequences of all hits with
-    * an evalue below a threshold and writes the sequences
-    * to a given filename within the current job folder
-    * tp '@fileName'.fa
-    *
-    * Expects json sent by POST including:
-    *
-    * fileName: to which the full length sequences are written
-    * evalue: seqs of all hits below this threshold
-    * are retrieved from the DB
-    * @param jobID
-    * @return Https response
-    */
+   * Retrieves the full sequences of all hits with
+   * an evalue below a threshold and writes the sequences
+   * to a given filename within the current job folder
+   * tp '@fileName'.fa
+   *
+   * Expects json sent by POST including:
+   *
+   * fileName: to which the full length sequences are written
+   * evalue: seqs of all hits below this threshold
+   * are retrieved from the DB
+   * @param jobID
+   * @return Https response
+   */
   def evalFull(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json     = request.body.asJson.get
     val filename = (json \ "fileName").as[String]
@@ -103,7 +99,7 @@ class HHblitsController @Inject()(resultFiles : ResultFileAccessor,
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
       resultFiles.getResults(jobID).map {
-        case None          => NotFound
+        case None => NotFound
         case Some(jsValue) =>
           val result        = hhblits.parseResult(jsValue)
           val accessionsStr = getAccessionsEval(result, eval.toDouble)
@@ -122,19 +118,19 @@ class HHblitsController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * Retrieves the full sequences of all selected hits
-    * in the result view and writes the sequences
-    * to a given filename within the current job folder
-    * to '@resultName'.fas
-    *
-    * Expects json sent by POST including:
-    *
-    * fileName: to which the full length sequences are written
-    * checkboxes: an array which contains the numbers (in the HSP list)
-    * of all hits that will be retrieved
-    * @param jobID
-    * @return Https response
-    */
+   * Retrieves the full sequences of all selected hits
+   * in the result view and writes the sequences
+   * to a given filename within the current job folder
+   * to '@resultName'.fas
+   *
+   * Expects json sent by POST including:
+   *
+   * fileName: to which the full length sequences are written
+   * checkboxes: an array which contains the numbers (in the HSP list)
+   * of all hits that will be retrieved
+   * @param jobID
+   * @return Https response
+   */
   def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json     = request.body.asJson.get
     val filename = (json \ "fileName").as[String]
@@ -144,7 +140,7 @@ class HHblitsController @Inject()(resultFiles : ResultFileAccessor,
       throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
       resultFiles.getResults(jobID).map {
-        case None          => NotFound
+        case None => NotFound
         case Some(jsValue) =>
           val result        = hhblits.parseResult(jsValue)
           val accessionsStr = getAccessions(result, numList)
@@ -163,20 +159,20 @@ class HHblitsController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * Retrieves the aligned sequences
-    * (parsable alignment must be
-    * provided in the result folder as JSON) of all hits with
-    * an evalue below a threshold and writes the sequences to the
-    * current job folder to '@resultName'.fa
-    * Expects json sent by POST including:
-    *
-    * fileName: to which the aligned sequences are written
-    * evalue: seqs of all hits below this threshold
-    * are retrieved from the alignment
-    *
-    * @param jobID
-    * @return
-    */
+   * Retrieves the aligned sequences
+   * (parsable alignment must be
+   * provided in the result folder as JSON) of all hits with
+   * an evalue below a threshold and writes the sequences to the
+   * current job folder to '@resultName'.fa
+   * Expects json sent by POST including:
+   *
+   * fileName: to which the aligned sequences are written
+   * evalue: seqs of all hits below this threshold
+   * are retrieved from the alignment
+   *
+   * @param jobID
+   * @return
+   */
   def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json     = request.body.asJson.get
     val filename = (json \ "fileName").as[String]
@@ -186,7 +182,7 @@ class HHblitsController @Inject()(resultFiles : ResultFileAccessor,
       throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
     } else {
       resultFiles.getResults(jobID).map {
-        case None          => NotFound
+        case None => NotFound
         case Some(jsValue) =>
           val result     = hhblits.parseResult(jsValue)
           val numListStr = getNumListEval(result, eval.toDouble)
@@ -203,21 +199,21 @@ class HHblitsController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * Retrieves the aligned sequences (parsable alignment
-    * must be provided in the result folder as JSON)
-    * of all selected hits in the result view and
-    * writes the sequences to the
-    * current job folder to '@resultName'.fa
-    *
-    * Expects json sent by POST including:
-    *
-    * fileName: to which the aligned sequences are written
-    * checkboxes: an array which contains the numbers (in the HSP list)
-    * of all hits that will be retrieved
-    *
-    * @param jobID
-    * @return
-    */
+   * Retrieves the aligned sequences (parsable alignment
+   * must be provided in the result folder as JSON)
+   * of all selected hits in the result view and
+   * writes the sequences to the
+   * current job folder to '@resultName'.fa
+   *
+   * Expects json sent by POST including:
+   *
+   * fileName: to which the aligned sequences are written
+   * checkboxes: an array which contains the numbers (in the HSP list)
+   * of all hits that will be retrieved
+   *
+   * @param jobID
+   * @return
+   */
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json     = request.body.asJson.get
     val filename = (json \ "fileName").as[String]
@@ -239,27 +235,27 @@ class HHblitsController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * filters HSPS for hits below a given evalue threshold
-    * and returns a string with the numbers whitespace speparated
-    * @param result
-    * @param eval
-    * @return
-    */
+   * filters HSPS for hits below a given evalue threshold
+   * and returns a string with the numbers whitespace speparated
+   * @param result
+   * @param eval
+   * @return
+   */
   def getNumListEval(result: HHBlitsResult, eval: Double): String = {
     val numList = result.HSPS.filter(_.info.evalue < eval).map { _.num }
     numList.mkString(" ")
   }
 
   /**
-    * given an array of hit numbers this method
-    * returns the corresponding accessions whitespace
-    * separated as a string
-    *
-    * @param result
-    * @param numList
-    * @return string containing whitespace
-    *         separated accessions
-    */
+   * given an array of hit numbers this method
+   * returns the corresponding accessions whitespace
+   * separated as a string
+   *
+   * @param result
+   * @param numList
+   * @return string containing whitespace
+   *         separated accessions
+   */
   def getAccessions(result: HHBlitsResult, numList: Seq[Int]): String = {
     val fas = numList.map { num =>
       result.HSPS(num - 1).template.accession + " "
@@ -268,27 +264,27 @@ class HHblitsController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * given an evalue threshold this method
-    * returns the corresponding accessions whitespace
-    * separated
-    * @param eval
-    * @param result
-    * @return string containing whitespace
-    *         separated accessions
-    */
+   * given an evalue threshold this method
+   * returns the corresponding accessions whitespace
+   * separated
+   * @param eval
+   * @param result
+   * @return string containing whitespace
+   *         separated accessions
+   */
   def getAccessionsEval(result: HHBlitsResult, eval: Double): String = {
     val fas = result.HSPS.filter(_.info.evalue < eval).map { _.template.accession + " " }
     fas.mkString
   }
 
   /**
-    * given dataTable specific paramters, this function
-    * filters for eg. a specific column and returns the data
-    * @param hits
-    * @param params
-    * @return
-    */
-  def getHitsByKeyWord(hits : HHBlitsResult, params: DTParam): List[HHBlitsHSP] = {
+   * given dataTable specific paramters, this function
+   * filters for eg. a specific column and returns the data
+   * @param hits
+   * @param params
+   * @return
+   */
+  def getHitsByKeyWord(hits: HHBlitsResult, params: DTParam): List[HHBlitsHSP] = {
     if (params.sSearch.isEmpty) {
       hits.hitsOrderBy(params).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
     } else {
@@ -297,27 +293,27 @@ class HHblitsController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * Retrieves hit rows (String containing Html)
-    * for the alignment section in the result view
-    * for a given range (start, end). Those can be either
-    * wrapped or unwrapped
-    *
-    * Expects json sent by POST including:
-    *
-    * start: index of first HSP that is retrieved
-    * end: index of last HSP that is retrieved
-    * wrapped: Boolean true = wrapped, false = unwrapped
-    *
-    * @param jobID
-    * @return Https response: HSP row(s) as String
-    */
+   * Retrieves hit rows (String containing Html)
+   * for the alignment section in the result view
+   * for a given range (start, end). Those can be either
+   * wrapped or unwrapped
+   *
+   * Expects json sent by POST including:
+   *
+   * start: index of first HSP that is retrieved
+   * end: index of last HSP that is retrieved
+   * wrapped: Boolean true = wrapped, false = unwrapped
+   *
+   * @param jobID
+   * @return Https response: HSP row(s) as String
+   */
   def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
     val start   = (json \ "start").as[Int]
     val end     = (json \ "end").as[Int]
     val wrapped = (json \ "wrapped").as[Boolean]
     resultFiles.getResults(jobID).map {
-      case None          => NotFound
+      case None => NotFound
       case Some(jsValue) =>
         val result = hhblits.parseResult(jsValue)
         if (end > result.num_hits || start > result.num_hits) {
@@ -331,12 +327,12 @@ class HHblitsController @Inject()(resultFiles : ResultFileAccessor,
   }
 
   /**
-    * this method fetches the data for the PSIblast hitlist
-    * datatable
-    *
-    * @param jobID
-    * @return
-    */
+   * this method fetches the data for the PSIblast hitlist
+   * datatable
+   *
+   * @param jobID
+   * @return
+   */
   def dataTable(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val params = DTParam(
       request.getQueryString("sSearch").getOrElse(""),
@@ -347,15 +343,17 @@ class HHblitsController @Inject()(resultFiles : ResultFileAccessor,
     )
 
     resultFiles.getResults(jobID).map {
-      case None          => NotFound
+      case None => NotFound
       case Some(jsValue) =>
         val result = hhblits.parseResult(jsValue)
-        val hits = getHitsByKeyWord(result, params)
+        val hits   = getHitsByKeyWord(result, params)
 
-        Ok(Json.toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))
+        Ok(
+          Json
+            .toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))
             .as[JsObject]
             .deepMerge(Json.obj("aaData" -> hits.map(_.toDataTable(result.db))))
         )
-      }
+    }
   }
 }

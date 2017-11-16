@@ -37,48 +37,35 @@ const slickSlider = function (elem : any, isInit : boolean) {
     }
 }; */
 
-const typeAhead = function (elem : any, isInit : boolean) : any {
-    let engine;
-    let tools;
-    if (!isInit) {
-        $('#searchInput').on('keyup', function(e : any) : any {
-            let selectables = $('#searchInput').siblings(".tt-menu").find(".tt-selectable").find('.search-results');
-            if (e.which == 13) {
-                e.preventDefault();
-                //find the selectable item under the input, if any:
-                if (selectables.length > 0) {
-                    selectables[0].click();
-                    return false;
-                }
-            }
-        });
+let bloodHoundConfig = {
+    engine : new Bloodhound({
+        remote: {
+            url: '/suggest/%QUERY%',
+            wildcard: '%QUERY%'
+        },
+        datumTokenizer: Bloodhound.tokenizers.whitespace('q'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace
+    }),
+    tools : new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('long'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        prefetch: {
+            url: '/getToolList'
+        }
+    })
+};
+bloodHoundConfig.tools.initialize();
 
-        engine = new Bloodhound({
-            remote: {
-                url: '/suggest/%QUERY%',
-                wildcard: '%QUERY%'
-            },
-            datumTokenizer: Bloodhound.tokenizers.whitespace('q'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace
-        });
-        tools = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('long'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            prefetch: {
-                url: '/getToolList'
-            }
-        });
-        tools.initialize();
-        return $('.search_Input').typeahead({
+const typeAhead = function (elem : any, isInit : boolean) : any {
+    if (!isInit) {
+        return $('#'+elem.id +" .search-input").typeahead({
             highlight: true,
             minLength: 1,
             autoselect: 'first'
-
         },[
-
             {
                 displayKey: 'long',
-                source: tools.ttAdapter(),
+                source: bloodHoundConfig.tools.ttAdapter(),
                 templates: {
                     suggestion: function (data: any) {
                         if(data !=null) {
@@ -87,29 +74,59 @@ const typeAhead = function (elem : any, isInit : boolean) : any {
                         }else {
                             return '<div style="display: none"></div>';
                         }
-                        },
+                    },
                     header: '<h6 class="header-name">Tools</h6>',
                     empty: ['']
                 }
+            }, {
+                source: bloodHoundConfig.engine.ttAdapter(),
+                name: 'jobList',
+                limit: 30,
+                displayKey: "jobID",
+                templates: {
+                    //empty: '<div class="list-group search-results-dropdown"><div class="list-group-item-notfound">Nothing found.</div></div>',
+                    suggestion: function (data : any) {
+                            if(data != null) {
+                                return '<div class="list-group-item"><a class="search-results" href="#/jobs/' + data.jobID + '" name="' + data.jobID + ' - ' + data.toolnameLong + '">' +
+                                    '<span class="search-result-jobid">' + data.jobID + '</span> <span class="search-result-tool"> ' +
+                                    '(' + data.toolnameLong + ')</span> <span class="search-result-tool-short"> (' + data.toolnameLong.substr(0, 4).toUpperCase() + ')</span></a></div>';
+                            } else {
+                                return ''
+                            }
+                    },
+                    header: '<h6 class="header-name">Jobs</h6>',
+                }
             }
-            ,
-            {
-            source: engine.ttAdapter(),
-            name: 'jobList',
-            limit: 30,
-            displayKey: "jobID",
-            templates: {
-                empty: ['<div class="list-group search-results-dropdown"><div class="list-group-item-notfound">Nothing found.</div></div>'],
-                suggestion: function (data : any) {
-                        if(data != null) {
-                            return '<div class="list-group-item"><a class="search-results" href="#/jobs/' + data.jobID + '" name="' + data.jobID + ' - ' + data.toolnameLong + '">'
-                                + data.jobID + '<span class="search-result-tool"> - ' + data.toolnameLong + '</span></a></div>';
-                        }
-                        return ''
-                },
-                header: '<h6 class="header-name">Jobs</h6>',
+        ]).on('keyup', function(e : any) : any {
+            let selectables = $('#'+elem.id+' .search-input').siblings(".tt-menu").find(".tt-selectable").find('.search-results');
+            if (e.which == 13) {
+                e.preventDefault();
+                //find the selectable item under the input, if any:
+                if (selectables.length > 0) {
+                    selectables[0].click();
+                    return false;
+                }
             }
-        }]);
+        }).on('focus', function(e : any) : any {
+            $('#'+elem.id+' .search-input.tt-hint').addClass("white");
+        }).on('blur', function(e : any) : any {
+            $('#'+elem.id+' .search-input.tt-hint').removeClass("white");
+        })
+    }
+};
+
+interface Window { SearchBarComponent: any; }
+window.SearchBarComponent = {
+    controller : function() : any {},
+    view : function(ctrl : any, args : any) {
+        return m("div", { id: args.id, "class": "search-container", config: typeAhead },
+            m("input", {
+                "class": "search-input",
+                type: "text",
+                name: "q",
+                placeholder: args.placeholder ? args.placeholder : "enter a job ID or a tool name"
+            })
+        )
     }
 };
 
@@ -187,17 +204,10 @@ const trafficBarComponent = {
         }, [
             m("div", {"class": "liveTableContainer"},
                 m.component(LiveTable, {}),
-                m("div", {"class": "search_container"},
-                    m("div", {
-                        "class": "columns large-12 form-group"
-                    }, m("input", { "class": "search_Input",
-                        type: "text",
-                        id: "searchInput",
-                        name: "q",
-                        placeholder: "enter a job ID or a tool name",
-                        config: typeAhead
-                    }))
-                )
+                m("div",
+                m("div", { "class": "large-12 form-group"},
+                    m.component(window.SearchBarComponent, {id:"index-search"})
+                ))
             )
         ]));
     }
@@ -226,6 +236,10 @@ const tilescomponent = {
                             ),
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#nr30_2017_11"},
+                                    m("h6", "November 13, 2017"),
+                                    m("p", "In addition to nr50, we now also offer nr30 for PSI-BLAST, HMMER, and PatternSearch.")
+                                ),
                                 m("a", {"data-open": "recentUpdatesModal", href: "#uniclust_2017_10"},
                                     m("h6", "October 31, 2017"),
                                     m("p", "HHpred: the Uniclust30 DB is now available for query A3M generation.")
@@ -241,15 +255,6 @@ const tilescomponent = {
                                         m("em", "Frankia alni"), ", ",
                                         m("em", "Streptomyces scabiei"), " and ",
                                         m("em", "Thermus aquaticus"), " are online."
-                                    )
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#aqui"},
-                                    m("h6", "September 19, 2017"),
-                                    m("p", "HHpred: DBs of ",
-                                        m("em", "A. aeolicus"), ", ",
-                                        m("em", "D. radiodurans"), ", ",
-                                        m("em", "S. pombe"), " and ",
-                                        m("em", "T. thermophilus"), " are online."
                                     )
                                 )
                             ),

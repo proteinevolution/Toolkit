@@ -1,6 +1,53 @@
+// TODO clean this up - lots of old and unused css elements in here
+
 .sidebar {
   padding-top: 3.75em;
   min-height: 40rem;
+}
+
+#sidebar {
+  display: none;
+}
+
+#sidebar-search {
+  height:50px;
+}
+
+#sidebar-search .search-input {
+  color:#cacaca;
+  background-color:transparent;
+}
+#sidebar-search .search-input.white {
+  background-color:white !important;
+}
+
+#sidebar-search input {
+  height:1.9rem;
+  font-size: 0.8rem;
+  margin-top: 6px;
+}
+
+#sidebar-search .search-results {
+  font-size: 0.7em;
+}
+#sidebar-search .twitter-typeahead::before{
+  top: 8px;
+}
+
+#sidebar-search .tt-menu {
+  min-width: 150px;
+  overflow: auto;
+}
+
+#sidebar-search .search-result-jobid {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 7.5em;
+  vertical-align: middle;
+}
+#sidebar-search .search-result-tool{
+  display:none;
 }
 
 .clear{
@@ -56,8 +103,6 @@ ul#jobs li {
   outline:none;
 
 }
-
-
 
 .button-group .alert {
   margin-right: 0.8em !important;

@@ -728,6 +728,10 @@ label.forwardLabel input[type=radio] {
     background: linear-gradient(to right, yellow, blue); /* Standard syntax (must be last) */
 }
 
+.clustalAcc {
+    margin-right:1em;
+}
+
 .repperTable {
     padding-left: 19em;
 }

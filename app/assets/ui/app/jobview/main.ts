@@ -22,7 +22,9 @@ const JobLineComponent = {
     controller : function() {},
     view: function(ctrl : any, args : any) {
         let isJob: boolean;
-        const dateCreated = moment.utc(args.job().dateCreated).utcOffset(2, true).local();
+
+        const dateCreated = moment(args.job().dateCreated).utcOffset(1, true).local();
+
         isJob = args.job().isJob;
         return m("div", {
             "class": "jobline"
@@ -32,7 +34,7 @@ const JobLineComponent = {
                 m("input", { id: "toolnameAccess", "style": "display: none;", type: "text", value: args.job().tool.toolname}),
                 m("a", { onclick: function(){m.route("/tools/" + args.job().tool.toolname)}}, args.job().tool.toolnameLong),
                 m("a", { onclick: function(){
-                        let route = jsRoutes.controllers.DataController.getHelp(args.job().tool.toolname);
+                        const route = jsRoutes.controllers.DataController.getHelp(args.job().tool.toolname);
                         $.ajax({
                             url: route.url,
                             method: route.method
@@ -42,7 +44,7 @@ const JobLineComponent = {
                             $("#tabs").tabs();
                         });
                     } },
-                        m("i", { "class": "icon-white_question helpicon" })
+                        m("i", { "class": "icon-white_question helpicon", "title": "Help page", "config": tooltipsterConf})
                 )
             ]),
             m("span", { "class": "jobdate" }, isJob ? "Created: " + dateCreated.format("lll") : ""),

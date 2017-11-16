@@ -3,17 +3,14 @@
  */
 lazy val commonSettings = Seq(
   version := "0.1.0",
-  scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.11.8", "2.12.4"),
+  scalaVersion := "2.11.11",
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
-  logLevel := Level.Warn,
-  dependencyOverrides ++= Set("org.webjars"       % "jquery"      % "3.2.1",
-                              "com.typesafe.akka" %% "akka-actor" % Dependencies.akkaVersion)
+  logLevel := Level.Warn
 )
 
 lazy val metadata = List(
-  organization := "ebio.tuebingen.mpg.de",
+  organization := "de.proteinevolution",
   developers := List(
     Developer("JoKuebler", "Jonas Kuebler", "jkuebler@tuebingen.mpg.de", url("https://github.com/JoKuebler")),
     Developer("zy4", "Seung-Zin Nam", "seungzin.nam@tuebingen.mpg.de", url("https://github.com/zy4")),
@@ -42,8 +39,7 @@ lazy val headless = (project in file("modules/headless"))
   .dependsOn(common)
   .settings(
     disableDocs,
-    scalaVersion := "2.11.8",
-    crossScalaVersions := Seq("2.11.8", "2.12.4")
+    scalaVersion := "2.11.11"
   )
 
 // shared stuff
@@ -52,8 +48,7 @@ lazy val common = (project in file("modules/common"))
   .settings(
     TwirlKeys.templateImports := Seq.empty,
     disableDocs,
-    scalaVersion := "2.11.8",
-    crossScalaVersions := Seq("2.11.8", "2.12.4")
+    scalaVersion := "2.11.11"
   )
   .disablePlugins(PlayLayoutPlugin)
 
@@ -64,27 +59,7 @@ lazy val root = (project in file("."))
   .settings(
     commonSettings,
     name := "mpi-toolkit",
-    libraryDependencies ++= (Dependencies.commonDeps ++ Seq(
-      "org.webjars"       %% "webjars-play"       % "2.6.1",
-      "org.webjars"       % "jquery"              % "3.2.1",
-      "org.webjars.bower" % "jquery.lazyload"     % "1.9.7",
-      "org.webjars"       % "jquery-ui"           % "1.12.1", // css included over cdn
-      "org.webjars.npm"   % "foundation-sites"    % "6.4.3",
-      "org.webjars.npm"   % "mithril"             % "0.2.8", // 1.1.3 available
-      "org.webjars.bower" % "d3"                  % "4.10.2",
-      "org.webjars.npm"   % "slick-carousel"      % "1.6.0",
-      "org.webjars.npm"   % "codemirror-minified" % "5.28.0",
-      "org.webjars.bower" % "clipboard"           % "1.7.1", // currently not in use
-      "org.webjars"       % "linkurious.js"       % "1.5.1",
-      "org.webjars.bower" % "tinymce"             % "4.6.5", // currently not in use
-      "org.webjars.bower" % "datatables"          % "1.10.16",
-      "org.webjars"       % "highcharts"          % "5.0.14",
-      "org.webjars.bower" % "velocity"            % "1.5.0",
-      "org.webjars"       % "font-awesome"        % "4.7.0",
-      "org.webjars"       % "select2"             % "4.0.3",
-      "org.webjars.npm"   % "tooltipster"         % "4.2.5",
-      "org.webjars"       % "momentjs"            % "2.18.1"
-    )),
+    libraryDependencies ++= (Dependencies.commonDeps ++ Dependencies.testDeps ++ Dependencies.frontendDeps),
     pipelineStages := Seq(digest, gzip), // rjs, uglify, concat,
     compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
@@ -101,7 +76,7 @@ resolvers += "Madoushi sbt-plugins" at "https://dl.bintray.com/madoushi/sbt-plug
 
 lazy val client = (project in file("client"))
   .settings(
-    scalaVersion := "2.11.8",
+    scalaVersion := "2.11.11",
     scalaJSUseMainModuleInitializer := true,
     scalaJSUseMainModuleInitializer in Test := false,
     libraryDependencies ++= Seq(
@@ -114,6 +89,10 @@ lazy val client = (project in file("client"))
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
 
 fork in run := false
+
+fork in Test := true
+
+logLevel in Test := Level.Debug
 
 scalacOptions ++= Seq(
   "-target:jvm-1.8",
@@ -132,5 +111,7 @@ scalacOptions ++= Seq(
 )
 
 scalacOptions in Test ++= Seq("-Yrangepos")
+
+testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
 
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node

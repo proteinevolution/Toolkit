@@ -29,10 +29,11 @@ import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
 import com.redfin.sitemapgenerator.{ ChangeFreq, WebSitemapGenerator, WebSitemapUrl }
 import de.proteinevolution.models.Constants
+import play.api.Mode.Test
+
 import scala.language.postfixOps
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ Await, Future }
-import de.proteinevolution.models.stats.Counter
 
 @Singleton
 final class Application @Inject()(webJarsUtil: WebJarsUtil,
@@ -72,11 +73,11 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
   private[this] val blacklist = ConfigFactory.load().getStringList("banned.ip")
 
   /**
-    * Creates a websocket.  `acceptOrResult` is preferable here because it returns a
-    * Future[Flow], which is required internally.
-    *
-    * @return a fully realized websocket.
-    */
+   * Creates a websocket.  `acceptOrResult` is preferable here because it returns a
+   * Future[Flow], which is required internally.
+   *
+   * @return a fully realized websocket.
+   */
   def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
 
     case rh if sameOriginCheck(rh) =>
@@ -85,14 +86,6 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
       userSessions
         .getUser(rh)
         .map { user =>
-          Counter.websocketsCount.get(user.sessionID.get.stringify) match {
-            case Some(x) => Counter.websocketsCount(user.sessionID.get.stringify) = x + 1
-            case None    => Counter.websocketsCount += (user.sessionID.get.stringify -> 1)
-          }
-
-//          println("Add new websocket to counter:")
-//          Counter.websocketsCount.map(println)
-
           Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.sessionID.get, out))))
         }
         .recover {
@@ -111,34 +104,39 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
   }
 
   /**
-    * Checks that the WebSocket comes from the same origin.  This is necessary to protect
-    * against Cross-Site WebSocket Hijacking as WebSocket does not implement Same Origin Policy.
-    *
-    * See https://tools.ietf.org/html/rfc6455#section-1.3 and
-    * http://blog.dewhurstsecurity.com/2013/08/30/security-testing-html5-websockets.html
-    */
+   * Checks that the WebSocket comes from the same origin.  This is necessary to protect
+   * against Cross-Site WebSocket Hijacking as WebSocket does not implement Same Origin Policy.
+   *
+   * See https://tools.ietf.org/html/rfc6455#section-1.3 and
+   * http://blog.dewhurstsecurity.com/2013/08/30/security-testing-html5-websockets.html
+   */
   def sameOriginCheck(rh: RequestHeader): Boolean = {
-    rh.headers.get("Origin") match {
-      case Some(originValue)
-          if originMatches(originValue) && !HTTPRequest(rh).isBot(rh) && !blacklist.contains(rh.remoteAddress) =>
-        logger.debug(s"originCheck: originValue = $originValue")
-        true
 
-      case Some(badOrigin) =>
-        logger.error(
-          s"originCheck: rejecting request because Origin header value $badOrigin is not in the same origin"
-        )
-        false
+    if (environment.mode == play.api.Mode.Test)
+      true
+    else {
+      rh.headers.get("Origin") match {
+        case Some(originValue)
+            if originMatches(originValue) && !HTTPRequest(rh).isBot(rh) && !blacklist.contains(rh.remoteAddress) =>
+          logger.debug(s"originCheck: originValue = $originValue")
+          true
 
-      case None =>
-        logger.error("originCheck: rejecting request because no Origin header found")
-        false
+        case Some(badOrigin) =>
+          logger.error(
+            s"originCheck: rejecting request because Origin header value $badOrigin is not in the same origin"
+          )
+          false
+
+        case None =>
+          logger.error("originCheck: rejecting request because no Origin header found")
+          false
+      }
     }
   }
 
   /**
-    * Returns true if the value of the Origin header contains an acceptable value.
-    */
+   * Returns true if the value of the Origin header contains an acceptable value.
+   */
   def originMatches(origin: String): Boolean = {
     origin.contains(TEL.hostname + ":" + TEL.port) || origin.contains("tuebingen.mpg.de") || origin.contains(
       "tue.mpg.de"
@@ -146,10 +144,10 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
   }
 
   /**
-    * Handles the request of the index page of the toolkit. This will assign a session to the User if
-    * not already present.
-    * Currently the index controller will assign a session id to the user for identification purpose.
-    */
+   * Handles the request of the index page of the toolkit. This will assign a session to the User if
+   * not already present.
+   * Currently the index controller will assign a session id to the user for identification purpose.
+   */
   def index(message: String = ""): Action[AnyContent] = Action.async { implicit request =>
     //generateStatisticsDB
 
@@ -169,7 +167,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
         val port     = request.host.slice(request.host.indexOf(":") + 1, request.host.length)
         val hostname = request.host.slice(0, request.host.indexOf(":"))
         env.configure("PORT", port)
-        if(!hostname.startsWith("olt")) {
+        if (!hostname.startsWith("olt")) {
           env.configure("headLessMode", "true")
         }
         env.configure("HOSTNAME", "olt")
@@ -189,12 +187,13 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
 
   // why is this needed?
   def sitemapGenerator: Action[AnyContent] = Action { implicit request =>
-    val wsg = WebSitemapGenerator.builder("https://toolkit.tuebingen.mpg.de", environment.getFile("public/")).gzip(true).build
+    val wsg =
+      WebSitemapGenerator.builder("https://toolkit.tuebingen.mpg.de", environment.getFile("public/")).gzip(true).build
 
     // add pages here
     val pages = List(
-      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/hhblits", "priority"-> 1.0),
-      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/hhpred", "priority"-> 1.0),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/hhblits", "priority" -> 1.0),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/hhpred", "priority" -> 1.0),
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/hmmer"),
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/patsearch"),
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/psiblast"),
@@ -206,18 +205,18 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/muscle"),
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/tcoffee"),
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/aln2plot"),
-      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/hhpredid", "priority"-> 1.0),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/hhpredid", "priority" -> 1.0),
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/marcoil"),
-      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/pcoils", "priority"-> 1.0),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/pcoils", "priority" -> 1.0),
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/repper"),
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/tprpred"),
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/ali2d"),
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/hhomp"),
-      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/quick2d", "priority"-> 1.0),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/quick2d", "priority" -> 1.0),
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/modeller"),
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/samcc"),
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/ancescon"),
-      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/clans", "priority"-> 1.0),
+      Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/clans", "priority" -> 1.0),
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/mmseqs2"),
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/phyml"),
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/sixframe"),
@@ -228,8 +227,11 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/seq2id"),
       Map("url" -> "https://toolkit.tuebingen.mpg.de/#/tools/reformat")
     )
-    pages.foreach{ page =>
-      val url: WebSitemapUrl = new WebSitemapUrl.Options(page apply "url" toString).changeFreq(ChangeFreq.YEARLY).priority((page getOrElse ("priority", 0.5)).asInstanceOf[Double]).build
+    pages.foreach { page =>
+      val url: WebSitemapUrl = new WebSitemapUrl.Options(page apply "url" toString)
+        .changeFreq(ChangeFreq.YEARLY)
+        .priority((page getOrElse ("priority", 0.5)).asInstanceOf[Double])
+        .build
       wsg.addUrl(url)
     }
 
@@ -251,8 +253,8 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
   }
 
   /**
-    * Allows to access resultpanel files by the filename and a given jobID
-    */
+   * Allows to access resultpanel files by the filename and a given jobID
+   */
   def file(filename: String, mainID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
       // mainID exists, allow send File
@@ -384,7 +386,9 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
   }
 
   val robots = Action { _ =>
-    Ok("User-agent: *\nAllow: /\nDisallow: /#/jobmanager/\nDisallow: /#/jobs/\nSitemap: https://toolkit.tuebingen.mpg.de/sitemap.xml")
+    Ok(
+      "User-agent: *\nAllow: /\nDisallow: /#/jobmanager/\nDisallow: /#/jobs/\nSitemap: https://toolkit.tuebingen.mpg.de/sitemap.xml"
+    )
   }
 
 }

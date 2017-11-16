@@ -1,4 +1,4 @@
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.6.6")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.6.7")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-play-enhancer" % "1.2.1")
 
@@ -29,3 +29,5 @@ addSbtPlugin("net.ground5hark.sbt" % "sbt-concat" % "0.1.9")
 addSbtPlugin("com.lightbend.sbt" % "sbt-aspectj" % "0.11.0")
 
 addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.6.8")
+
+//addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.5.3")

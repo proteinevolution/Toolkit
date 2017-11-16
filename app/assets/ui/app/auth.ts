@@ -1,5 +1,5 @@
 let noRedraw : boolean = false;
-let focusInNoRedraw = function(event : Event) : void { noRedraw = true;  console.log('focus in - no redraw');  },
+const focusInNoRedraw = function(event : Event) : void { noRedraw = true;  console.log('focus in - no redraw');  },
     focusOutRedraw  = function(event : Event) : void { noRedraw = false; console.log('focus out - redrawing'); };
 
 const regions = [ ["","Country"],
@@ -262,7 +262,7 @@ class SignIn {
     static submit(event : Event) : void {
         event.preventDefault();
         let dataS = {nameLogin:SignIn.email, password:SignIn.password};
-        let route = jsRoutes.controllers.Auth.signInSubmit();
+        const route = jsRoutes.controllers.Auth.signInSubmit();
         m.request({method: route.method, url: route.url, data: dataS }).then(function(authMessage) {
             dataS = null;
             if (authMessage.successful) {
@@ -364,7 +364,7 @@ class SignUp {
                          password  : SignUp.password,
                          eMail     : SignUp.eMail,
                          acceptToS : SignUp.acceptToS };
-            let route = jsRoutes.controllers.Auth.signUpSubmit();
+            const route = jsRoutes.controllers.Auth.signUpSubmit();
             m.request({method: route.method, url: route.url, data: dataS }).then(function(authMessage) {
                 dataS = null;
                 Auth.updateStatus(authMessage);
@@ -468,7 +468,7 @@ class ForgotPassword {
         event.preventDefault();
         let dataS = {eMail:ForgotPassword.eMail};
         console.log(dataS);
-        let route = jsRoutes.controllers.Auth.resetPassword();
+        const route = jsRoutes.controllers.Auth.resetPassword();
         m.request({method: route.method, url: route.url, data: dataS }).then(function(authMessage) {
             dataS = null;
             if (authMessage.successful) { SignIn.password = null; SignIn.email = null; }
@@ -527,7 +527,7 @@ class Profile {
         event.preventDefault();
         let userwithpw : any = { password:Profile.password };
         for (let prop in Profile.user){ if (!prop.split("_")[1]){ userwithpw[prop] = Profile.user[prop]; } }
-        let route = jsRoutes.controllers.Auth.profileSubmit();
+        const route = jsRoutes.controllers.Auth.profileSubmit();
         m.request({method: route.method, url: route.url, data: userwithpw }).then(function(authMessage) {
             userwithpw = null;
             Profile.password = "";
@@ -644,7 +644,7 @@ class PasswordChange {
     static submit(event : Event) : void {
         event.preventDefault();
         let password : any = { passwordOld : PasswordChange.passwordOld, passwordNew : PasswordChange.passwordNew };
-        let route = jsRoutes.controllers.Auth.passwordChangeSubmit();
+        const route = jsRoutes.controllers.Auth.passwordChangeSubmit();
         m.request({method: route.method, url: route.url, data: password }).then(function(authMessage) {
             password = null;
             if (authMessage.success) {
@@ -736,7 +736,7 @@ class PasswordReset {
     static submit(event : Event) : void {
         event.preventDefault();
         let password : any = { passwordNew : PasswordReset.passwordNew };
-        let route = jsRoutes.controllers.Auth.resetPasswordChange();
+        const route = jsRoutes.controllers.Auth.resetPasswordChange();
         m.request({method: route.method, url: route.url, data: password }).then(function(authMessage) {
             password = null;
             if (authMessage.success) {
@@ -915,7 +915,7 @@ class Auth {
         return Auth.user
     }
     static loadUser () : any {
-        let route = jsRoutes.controllers.Auth.getUserData();
+        const route = jsRoutes.controllers.Auth.getUserData();
         return m.request({method: route.method, url: route.url, type : User }).then(function(user) {
             if (user) {
                 SignIn.password = null;
@@ -986,7 +986,7 @@ class User {
 
 Auth.loadUser();
 
-let authView : string = $('#authView').val();
+const authView : string = $('#authView').val();
 switch (authView) {
     case "":
         break;

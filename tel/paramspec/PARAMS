@@ -40,6 +40,7 @@ eval_tpr GEN eval_tpr.prop
 msa_gen_method GEN msa_gen_method.prop
 hhpred_incl_eval GEN hhpred_incl_eval.prop
 hhblits_incl_eval GEN hhblits_incl_eval.prop
+blast_incl_eval GEN blast_incl_eval.prop
 pcoils_input_mode GEN pcoils_input_mode.prop
 pcoils_weighting GEN pcoils_weighting.prop
 pcoils_matrix GEN pcoils_matrix.prop
@@ -55,3 +56,4 @@ repper_input_mode GEN repper_input_mode.prop
 in_format GEN in_format.prop
 out_format GEN out_format.prop
 desc GEN desc.prop
+clustering_mode GEN clustering_mode.prop

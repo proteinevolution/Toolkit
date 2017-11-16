@@ -2,7 +2,7 @@
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
-        <li><a href="#tabs-2">Parameters</a></li>
+        <li><a href="#tabs-2">Input & Parameters</a></li>
         <li><a href="#tabs-3">References</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
@@ -13,25 +13,39 @@
             <li class="accordion-item" data-accordion-item>
                 <a class="accordion-title">Input</a>
                 <div class="accordion-content" data-tab-content>
-                    Enter protein sequence alignment in FASTA/CLUSTAL format.
+                    You have the option to enter or upload either a single protein sequence or a multiple sequence
+                    alignment (MSA) in FASTA or CLUSTAL format.<br/><br/>
+                    @help.common.singleseq()
+                    @help.common.msa()
                 </div>
             </li>
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Input format</a>
+                <a class="accordion-title">Select database for MSA generation</a>
                 <div class="accordion-content" data-tab-content>
-                    Accepted formats are listed in the dropdown menu.
+                    Select the database that should be used for MSA generation. You can select between:
+                    UniRef90,
+                    UniRef90,
+                    nr90, and
+                    nr70
                 </div>
             </li>
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Do PSI-BLAST search</a>
+                <a class="accordion-title">Maximal no. of MSA generation steps</a>
                 <div class="accordion-content" data-tab-content>
-                    Search for homologous protein sequences and generate a profile for the predictions. Alignments are extended using the jump-start option of PSI-BLAST.
+                    The maximal number of PSI-BLAST for generating the MSA.
+                </div>
+            </li>
+            <li class="accordion-item" data-accordion-item>
+                <a class="accordion-title">E-value incl. threshold for MSA generation</a>
+                <div class="accordion-content" data-tab-content>
+                    Alignments are extended using the jump-start option of PSI-BLAST.
+                    Only include hits with E-value below this threshold into the resulting multiple sequence alignment.
                 </div>
             </li>
         </ul>
     </div>
     <div id="tabs-3" class="greenlink">
-        @help.citations.toolkit_citation()
+        @help.common.toolkit_citation()
     </div>
 </div>
 

@@ -10,9 +10,6 @@ import com.google.inject.name.Names
 import de.proteinevolution.tel.{ ParamCollectorProvider, RunscriptPathProvider, WrapperPathProvider }
 import better.files._
 
-/**
-  * Created by lukas on 8/28/16.
-  */
 class TELModule extends AbstractModule {
 
   override def configure(): Unit = {
@@ -40,8 +37,8 @@ class TELModule extends AbstractModule {
 }
 
 /**
-  *  Uses the tel configuration to wire the TELEnv environment to the env module
-  */
+ *  Uses the tel configuration to wire the TELEnv environment to the env module
+ */
 class TELEnvProvider @Inject()(tv: TELEnv, configuration: Configuration) extends Provider[TELEnv] {
 
   override def get(): TELEnv = {

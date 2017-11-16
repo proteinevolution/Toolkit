@@ -1,9 +1,5 @@
 package de.proteinevolution.tel.param
 
-/**
-  *
-  * Created by lzimmermann on 6/28/16.
-  */
 object Implicits {
 
   implicit class StringIterator(s: Iterator[String]) {

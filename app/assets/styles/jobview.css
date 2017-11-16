@@ -298,6 +298,7 @@
 
 /* Jobline */
 .jobline {
+    padding-top: 5px;
     height: 50px;
 }
 
@@ -747,6 +748,7 @@ a.hasNotes:active {
     bottom: 0;
     right: 0;
     overflow: auto;
+    z-index: 1000;
 }
 
 tr.job a:link {
@@ -763,4 +765,15 @@ tr.job a:visited {
 
 .jobid a:visited {
     color: #666;
+}
+
+pre {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0;
+    font-size: 1.1em;
+}
+.accordion-content {
+    font-size: 0.9em;
 }

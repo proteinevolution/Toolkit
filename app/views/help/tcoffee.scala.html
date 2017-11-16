@@ -2,59 +2,31 @@
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
-        <li><a href="#tabs-2">Parameters</a></li>
+        <li><a href="#tabs-2">Input & Parameters</a></li>
         <li><a href="#tabs-3">References</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
-        T-Coffee (Tree-based Consistency Objective Function for alignment Evaluation) is one of the most accurate multiple sequence alignment methods for protein and nucleotide sequences.<p>[T-Coffee 11.0; <a href = "http://www.tcoffee.org/" target="_blank">http://www.tcoffee.org/</a>]</p>
+        T-Coffee (Tree-based Consistency Objective Function for alignment Evaluation) is one of the most accurate multiple sequence alignment methods for protein and nucleotide sequences.<p>[T-Coffee 11.0; <a href = "http://www.tcoffee.org/" target="_blank" rel="noopener">http://www.tcoffee.org/</a>]</p>
     </div>
     <div id="tabs-2" class="greenlink">
         <ul class="accordion" data-accordion data-allow-all-closed='true'>
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Input format</a>
+                <a class="accordion-title">Input</a>
                 <div class="accordion-content" data-tab-content>
-                    <p>Enter multiple sequences in fasta format. A sequence in FASTA format begins with a single-line description, followed by lines of sequence data. The description line is distinguished from the sequence data by a greater-than (">") symbol in the first column. It is recommended that all lines of text be shorter than 80 characters in length. An example sequence in FASTA format is:</p><br/>
-                    <pre>>gi|532319|pir|TVFV2E|TVFV2E envelope protein<br/>ELRLRYCAPAGFALLKCNDADYDGFKTNCSNVSVVHCTNLMNTTVTTGLLLNGSYSENRT<br/>QIWQKHRTSNDSALILLNKHYNLTVTCKRPGNKTVLPVTIMAGLVFHSQKYNLRLRQAWC<br/>HFPSNWKGAWKEVKEEIVNLPKERYRGTNDPKRIFFQRQWGDPETANLWFNCHGEFFYCK<br/>MDWFLNYLNNLTVDADHNECKNTSGTKSGNKRAPGPCVQRTYVACHIRSVIIWLETISKK<br/>TYAPPREGHLECTSTVTGMTVELNYIPKNRTNVTLSPQIESIWAAELDRYKLVEITPIGF<br/>APTEVRRYTGGHERQKRVPFVXXXXXXXXXXXXXXXXXXXXXXVQSQHLLAGILQQQKNL<br/>LAAVEAQQQMLKLTIWGVK</pre><br/>
-                    <p>Sequences are expected to be represented in the standard IUB/IUPAC amino acid codes, with these exceptions: lower-case letters are accepted and are mapped into upper-case; a single hyphen or dash can be used to represent a gap of indeterminate length; and in amino acid sequences, U and * are acceptable letters (see below). Before submitting a request, any numerical digits in the query sequence should either be removed or replaced by appropriate letter codes (e.g., X for unknown amino acid residue).</p>
-                    <p>The accepted amino acid codes are:</p>
-                    <pre>    A  alanine                         P  proline<br/>    B  aspartate or asparagine         Q  glutamine<br/>    C  cystine                         R  arginine<br/>    D  aspartate                       S  serine<br/>    E  glutamate                       T  threonine<br/>    F  phenylalanine                   U  selenocysteine<br/>    G  glycine                         V  valine<br/>    H  histidine                       W  tryptophan<br/>    I  isoleucine                      Y  tyrosine<br/>    K  lysine                          Z  glutamate or glutamine<br/>    L  leucine                         X  any<br/>    M  methionine                      *  translation stop<br/>    N  asparagine                      -  gap of indeterminate length</pre>
+                    @help.common.multiseq()
                 </div>
             </li>
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Pairwise method</a>
+                <a class="accordion-title">Output the alignment in:</a>
                 <div class="accordion-content" data-tab-content>
-                    <table><tr><td>mlalign_id_pair</td>	<td>Produces local alignments. The default for lalign_id_pair is GOP=-10, GEP=-4, MATRIX=blosum50mt.</td></tr><tr><td>mfast_pair</td>	<td>Makes a global fasta style pairwise alignment. For proteins, matrix=blosum62mt, GEP=-1, GOP=-10, ktup=2. For DNA, matrix=idmat (id=10), gep=-1, gop=-20, ktup=5. Each pair of residue is given a score function of the weighting mode defined by -weight.</td></tr><tr><td>mslow_pair</td>	<td>Identical to fast pair, but does a full dynamic programming, using the Myers and Miller algorithm. This method is recommended if your sequences are distantly related.</td></tr></table>
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Other advanced options</a>
-                <div class="accordion-content" data-tab-content>
-                    Use this text field to specify advanced options via commandline.
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Character transformation</a>
-                <div class="accordion-content" data-tab-content>
-                    Changes sequence letters to upper or lower case.
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Residue number</a>
-                <div class="accordion-content" data-tab-content>
-                    Causes the output alignment to contain residue numbers at the end of each line.
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Output in alignment order</a>
-                <div class="accordion-content" data-tab-content>
-                    Sets the order of the sequences in the output alignment. Default (unchecked) means to keep the sequences in the original order. Checking the box means the sequences come in the order indicated by the tree.
+                    <p>Specify the order in which the aligned sequences appear within the resulting multiple sequence alignment</p>
                 </div>
             </li>
         </ul>
     </div>
     <div id="tabs-3" class="greenlink">
-        @help.citations.toolkit_citation()
-        <p>Magis C., Taly JF., Bussotti G., Chang JM., Di Tommaso P., Erb I., Espinosa-Carrasco J., Notredame C. (2014) <b>T-Coffee: Tree-based consistency objective function for alignment evaluation. </b>Methods Mol Biol 1079:117-129. <a href = https://www.ncbi.nlm.nih.gov/pubmed/24170398 target="_blank">PMID: 24170398</a></p>
+        @help.common.toolkit_citation()
+        <p>Magis C., Taly JF., Bussotti G., Chang JM., Di Tommaso P., Erb I., Espinosa-Carrasco J., Notredame C. (2014) <b>T-Coffee: Tree-based consistency objective function for alignment evaluation. </b>Methods Mol Biol 1079:117-129. <a href = https://www.ncbi.nlm.nih.gov/pubmed/24170398 target="_blank" rel="noopener">PMID: 24170398</a></p>
     </div>
 </div>
 

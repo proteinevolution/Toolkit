@@ -2,79 +2,70 @@
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
-        <li><a href="#tabs-2">Parameters</a></li>
+        <li><a href="#tabs-2">Input & Parameters</a></li>
         <li><a href="#tabs-3">References</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
-        HMMER3 is a utility for fast and sensitive homology searchers. Input is a single sequence or a multiple alignment in aligned FASTA/CLUSTAL format which is used to build a profile HMM.
+        <a href = https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3125773 target="_blank" rel="noopener">HMMER</a> is a
+        tool for fast and sensitive homology searching based on profile Hidden Markov models. It accepts a single
+        sequence or a multiple alignment in aligned FASTA/CLUSTAL format as input. In case the input is a single sequence,
+        HHblits is run over Uniprot20 to build an alignment required for the calculation of query HMM.
     </div>
     <div id="tabs-2" class="greenlink">
         <ul class="accordion" data-accordion data-allow-all-closed='true'>
             <li class="accordion-item" data-accordion-item>
                 <a class="accordion-title">Input</a>
                 <div class="accordion-content" data-tab-content>
-                    Enter protein sequence alignment in FASTA/CLUSTAL format.
+                    You have the option to enter or upload either a single protein sequence or a multiple sequence
+                    alignment (MSA) in FASTA or CLUSTAL format.<br/><br/>
+                    @help.common.singleseq()
+                    @help.common.msa()
                 </div>
             </li>
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Input format</a>
+                <a class="accordion-title">Select database</a>
                 <div class="accordion-content" data-tab-content>
-                    Accepted formats are listed in the dropdown menu.
+                    The selected database is used by HMMER to perform the search.
+                        <ul>
+                            <li><b>nr50, nr70, nr90:</b> NCBI's nonredundant protein sequence database filtered for a
+                                maximum pairwise sequence identity of 50%, 70% and 90%, respectively.</li>
+                            <li><b>env70, env90:</b> NCBI's environmental sequence database, usually from unknown organisms,
+                                filtered for a maximum pairwise sequence identity of 70% and 90%, respectively.</li>
+                            <li><b>nr_euk*, nr_bac*, nr_arc*, nr_pro*, nr_vir*:</b> eukaryotic, bacterial, archaeal,
+                                prokaryotic, and viral sequences from the nonredundant database nr.</li>
+                            <li><b>pdb_nr: </b>Sequences from proteins whose structures have been deposited in the Protein
+                                Data Bank PDB.</li>
+                            <li><b>Uniprot_sprot:</b> manually annotated and reviewed sequences from the
+                                <a href="http://www.expasy.org/sprot/" target="_blank" rel="noopener">UniProtKB.</a></li>
+                            <li><b>Uniprot_trembl:</b> automatically annotated and not reviewed sequences from the
+                                <a href="http://www.ebi.ac.uk/swissprot/" target="_blank" rel="noopener">UniProtKB.</a></li>
+                        </ul>
                 </div>
             </li>
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Database</a>
+                <a class="accordion-title">MSA enrichment iterations using HHblits</a>
                 <div class="accordion-content" data-tab-content>
-                    The selected databases are used by HMMAccel to perform the search. You may press CTRL to select multiple databases.
+                    Specifies the number of HHblits iterations over Uniprot20 to build an MSA when the input is a single sequence.
                 </div>
             </li>
+
             <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Convert input to uppercase</a>
+                <a class="accordion-title">E-value</a>
                 <div class="accordion-content" data-tab-content>
-                    Convert all residues in the input alignment to upper case.
+                    Report target sequences with an E-value of <= the specified value.
                 </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Compute consensus sequence</a>
-                <div class="accordion-content" data-tab-content>
-                    Create a consensus sequence of the alignment and use that as seed for psi-blast (alternative: use the first sequence in the alignment).
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">Extract sequences up to E-value</a>
-                <div class="accordion-content" data-tab-content>
-                    Up to which E-value will you want sequences to be extracted for? (your filtered database will consist of these sequences).
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">HMM build options</a>
-                <div class="accordion-content" data-tab-content>
-                    <pre>   -h     : help; print brief help on version and usage<br/>   -n &lts&gt : name; name this (first) HMM &lts&gt<br/>   -o &ltf&gt : re-save annotated alignment to &ltf&gt<br/>   -A     : append; append this HMM to <br/>   -F     : force; allow overwriting of <br/><br/>  Alternative search algorithm styles: (default: hmmls domain alignment)<br/>   -f     : multi-hit local (hmmfs style)<br/>   -g     : global alignment (hmms style, Needleman/Wunsch)<br/>   -s     : local alignment (hmmsw style, Smith/Waterman)<br/><br/>  Alternative model construction strategies: (default: MAP)<br/>   --fast        : Krogh/Haussler fast heuristic construction (see --gapmax)<br/>   --hand        : manual construction (requires annotated alignment)<br/><br/>  Expert customization of parameters and priors:<br/>   --null  &ltf&gt   : read null (random sequence) model from &ltf&gt<br/>   --pam   &ltf&gt   : heuristic PAM-based prior, using BLAST PAM matrix in &ltf&gt<br/>   --prior &ltf&gt   : read Dirichlet prior parameters from &ltf&gt<br/><br/>  Alternative sequence weighting strategies: (default: GSC weights)<br/>   --wblosum     : Henikoff simple filter weights (see --idlevel)<br/>   --wgsc        : Gerstein/Sonnhammer/Chothia tree weights (default)<br/>   --wme         : maximum entropy (ME)<br/>   --wpb         : Henikoff position-based weights<br/>   --wvoronoi    : Sibbald/Argos Voronoi weights<br/>   --wnone       : don't do any weighting<br/>   --noeff       : don't use effective sequence number; just use nseq<br/>   --pbswitch &ltn&gt: set switch from GSC to position-based wgts at > n seqs<br/><br/>  Forcing an alphabet: (normally autodetected)<br/>   --amino   : override autodetection, assert that seqs are protein<br/>   --nucleic : override autodetection, assert that seqs are DNA/RNA<br/><br/>  Other expert options:<br/>   --archpri &ltx&gt : set architecture size prior to &ltx&gt {0.85} [0..1]<br/>   --binary      : save the model in binary format, not ASCII text<br/>   --cfile &ltf&gt   : save count vectors to &ltf&gt<br/>   --gapmax &ltx&gt  : max fraction of gaps in mat column {0.50} [0..1]<br/>   --idlevel &ltx&gt : set frac. id level used by eff. nseq and --wblosum {0.62}<br/>   --informat &lts&gt: input alignment is in format &lts&gt, not Stockholm<br/>   --pamwgt &ltx&gt  : set weight on PAM-based prior to &ltx&gt {20.}[>=0]<br/>   --swentry &ltx&gt : set S/W aggregate entry prob. to &ltx&gt {0.5}<br/>   --swexit &ltx&gt  : set S/W aggregate exit prob. to &ltx&gt  {0.5}<br/>   --verbose     : print boring information</pre>
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">HMM calibrate options</a>
-                <div class="accordion-content" data-tab-content>
-                    <pre>  -h             : print short usage and version info, then exit<br/>  --cpu &ltn&gt      : run &ltn&gt threads in parallel (if threaded)<br/>  --fixed &ltn&gt    : fix random sequence length at &ltn&gt<br/>  --histfile &ltf&gt : save histogram(s) to file &ltf&gt<br/>  --mean &ltx&gt     : set random seq length mean at &ltx&gt [350]<br/>  --num &ltn&gt      : set number of sampled seqs to &ltn&gt [5000]<br/>  --pvm          : run on a Parallel Virtual Machine (PVM)<br/>  --sd &ltx&gt       : set random seq length std. dev to &ltx&gt [350]<br/>  --seed &ltn&gt     : set random seed to &ltn&gt [time()]</pre>
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">HMM search options</a>
-                <div class="accordion-content" data-tab-content>
-                    <pre>   -h        : help; print brief help on version and usage<br/>   -A &ltn&gt    : sets alignment output limit to &ltn&gt best domain alignments<br/>   -E &ltx&gt    : sets E value cutoff (globE) to <= x<br/>   -T &ltx&gt    : sets T bit threshold (globT) to >= x<br/>   -Z &ltn&gt    : sets Z (# seqs) for E-value calculation<br/><br/>   --compat  : make best effort to use last version's output style<br/>   --cpu &ltn&gt : run &ltn&gt threads in parallel (if threaded)<br/>   --cut_ga  : use Pfam GA gathering threshold cutoffs<br/>   --cut_nc  : use Pfam NC noise threshold cutoffs<br/>   --cut_tc  : use Pfam TC trusted threshold cutoffs<br/>   --domE &ltx&gt: sets domain Eval cutoff (2nd threshold) to <= x<br/>   --domT &ltx&gt: sets domain T bit thresh (2nd threshold) to >= x<br/>   --forward : use the full Forward() algorithm instead of Viterbi<br/>   --informat &lts&gt: sequence file is in format &lts&gt, not FASTA<br/>   --null2   : turn OFF the post hoc second null model<br/>   --pvm     : run on a Parallel Virtual Machine (PVM)<br/>   --xnu     : turn ON XNU filtering of target protein sequences</pre>
-                </div>
-            </li>
-            <li class="accordion-item" data-accordion-item>
-                <a class="accordion-title">HMM align options</a>
-                <div class="accordion-content" data-tab-content>
-                    <pre>   -h     : help; print brief help on version and usage<br/>   -m     : only print symbols aligned to match states<br/>   -o &ltf&gt : save alignment in file &ltf&gt in SELEX format<br/>   -q     : quiet - suppress verbose banner<br/><br/>   --informat &lts&gt: sequence file is in format &lts&gt, not FASTA<br/>   --mapali &ltf&gt  : include alignment in file &ltf&gt using map in HMM<br/>   --withali &ltf&gt : include alignment to (fixed) alignment in file &ltf&gt</pre>
-                </div>
+        <li class="accordion-item" data-accordion-item>
+            <a class="accordion-title">No. of target sequences</a>
+            <div class="accordion-content" data-tab-content>
+                This parameter controls how many matches will be displayed in the results.
+            </div>
+        </li>
             </li>
         </ul>
     </div>
     <div id="tabs-3" class="greenlink">
-        @help.citations.toolkit_citation()
-        <p>Finn RD., Clements J., Eddy SR. (2011) <b>HMMER web server: interactive sequence similarity searching.</b> Nucleic Acids Res. 39(Web Server issue): W29–W37. <a href = https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3125773 target="_blank">PMCID: PMC3125773</a></p>
+        @help.common.toolkit_citation()
+        <p>Finn RD., Clements J., Eddy SR. (2011) HMMER web server: interactive sequence similarity searching. Nucleic Acids Res. 39(Web Server issue): W29–W37. <a href = https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3125773 target="_blank" rel="noopener">PMCID: PMC3125773</a></p>
     </div>
 </div>
 

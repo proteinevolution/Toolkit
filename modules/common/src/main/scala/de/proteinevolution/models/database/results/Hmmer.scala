@@ -9,9 +9,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import de.proteinevolution.models.results.Common
 import play.api.libs.json._
 
-/**
-  * Created by drau on 18.04.17.
-  */
 case class HmmerHSP(evalue: Double,
                     full_evalue: Double,
                     num: Int,

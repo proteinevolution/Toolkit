@@ -3,9 +3,6 @@ package de.proteinevolution.models.database.statistics
 import play.api.libs.json._
 import reactivemongo.bson._
 
-/**
-  * Created by astephens on 19.02.17.
-  */
 case class ToolStatistic(toolName: String,
                          monthly: List[Int] = List.empty[Int],
                          monthlyFailed: List[Int] = List.empty[Int],
@@ -13,36 +10,36 @@ case class ToolStatistic(toolName: String,
                          monthlyInternal: List[Int] = List.empty[Int]) {
 
   /**
-    * Returns the total amount of jobs used with the tool
-    * @return
-    */
+   * Returns the total amount of jobs used with the tool
+   * @return
+   */
   def total: Long = monthly.map(_.toLong).sum[Long]
 
   /**
-    * Returns the total amount of failed jobs used with the tool
-    * @return
-    */
+   * Returns the total amount of failed jobs used with the tool
+   * @return
+   */
   def totalFailed: Long = monthlyFailed.map(_.toLong).sum[Long]
 
   /**
-    * Returns the total amount of deleted jobs used with the tool
-    * @return
-    */
+   * Returns the total amount of deleted jobs used with the tool
+   * @return
+   */
   def totalDeleted: Long = monthlyFailed.map(_.toLong).sum[Long]
 
   /**
-    * Returns the total amount of internal jobs used with the tool
-    * @return
-    */
+   * Returns the total amount of internal jobs used with the tool
+   * @return
+   */
   def totalInternal: Long = monthlyInternal.map(_.toLong).sum[Long]
 
   /**
-    * Creates a new ToolStatistic object which is a copy of this one - with the current month added
-    * @param current
-    * @param currentFailed
-    * @param currentDeleted
-    * @return
-    */
+   * Creates a new ToolStatistic object which is a copy of this one - with the current month added
+   * @param current
+   * @param currentFailed
+   * @param currentDeleted
+   * @return
+   */
   def addMonth(current: Int, currentFailed: Int, currentDeleted: Int, currentInternal: Int): ToolStatistic = {
     this.copy(
       monthly = monthly.::(current),
@@ -53,12 +50,12 @@ case class ToolStatistic(toolName: String,
   }
 
   /**
-    * Creates a new ToolStatistic object which is a copy of this one - with the current month added
-    * @param currents
-    * @param currentsFailed
-    * @param currentsDeleted
-    * @return
-    */
+   * Creates a new ToolStatistic object which is a copy of this one - with the current month added
+   * @param currents
+   * @param currentsFailed
+   * @param currentsDeleted
+   * @return
+   */
   def addMonths(currents: List[Int],
                 currentsFailed: List[Int],
                 currentsDeleted: List[Int],
@@ -72,9 +69,9 @@ case class ToolStatistic(toolName: String,
   }
 
   /**
-    * Adds empty months "amount" of times recursively
-    * @param amount
-    */
+   * Adds empty months "amount" of times recursively
+   * @param amount
+   */
   def addEmptyMonths(amount: Int = 1): ToolStatistic = {
     if (amount > 0) this.addMonth(0, 0, 0, 0).addEmptyMonths(amount - 1)
     else this

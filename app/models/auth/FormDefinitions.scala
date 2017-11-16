@@ -10,9 +10,6 @@ import play.api.data.validation.Constraints._
 
 import scala.util.matching.Regex
 
-/**
-  * Created by astephens on 03.04.16.
-  */
 object FormDefinitions {
   // Number of rounds for BCrypt to hash the Password (2^x) TODO Move to the config?
   val LOG_ROUNDS: Int = 10
@@ -20,8 +17,8 @@ object FormDefinitions {
   val textRegex: Regex = """[^\\"\\(\\)\\[\\]]*""".r
 
   /**
-    * Form mapping for the Sign up form
-    */
+   * Form mapping for the Sign up form
+   */
   def signUp(user: User) = Form(
     mapping(
       UserData.NAMELOGIN -> (text(6, 40) verifying pattern(textRegex, error = "error.NameLogin")),
@@ -39,9 +36,7 @@ object FormDefinitions {
         connected = user.connected,
         accountType = if (acceptToS) 0 else -1,
         userData = Some(
-          UserData(nameLogin = nameLogin,
-                   password = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)),
-                   eMail = eMail)
+          UserData(nameLogin = nameLogin, password = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)), eMail = eMail)
         ),
         jobs = user.jobs,
         dateLastLogin = Some(ZonedDateTime.now),
@@ -54,8 +49,8 @@ object FormDefinitions {
   )
 
   /**
-    * Form mapping for the Sign in form
-    */
+   * Form mapping for the Sign in form
+   */
   lazy val signIn = Form(
     mapping(UserData.NAMELOGIN -> text(6, 40), UserData.PASSWORD -> text(8, 128)) { (nameLogin, password) =>
       User.Login(
@@ -68,8 +63,8 @@ object FormDefinitions {
   )
 
   /**
-    * Edit form for the profile
-    */
+   * Edit form for the profile
+   */
   def profileEdit(user: User) =
     Form(
       mapping(
@@ -96,8 +91,8 @@ object FormDefinitions {
     )
 
   /**
-    * Edit form for the password change in the Profile
-    */
+   * Edit form for the password change in the Profile
+   */
   def profilePasswordEdit(user: User) = Form(
     mapping(
       UserData.PASSWORDOLD -> (text(8, 128) verifying pattern(textRegex, error = "error.OldPassword")),

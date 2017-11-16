@@ -3,11 +3,9 @@ package controllers
 import java.io.{ FileInputStream, ObjectInputStream }
 import java.security.MessageDigest
 import java.time.ZonedDateTime
-import javax.inject.{ Inject, Named, Singleton }
+import javax.inject.{ Inject, Singleton }
 
 import actors.JobActor._
-import actors.JobIDActor
-import akka.actor.ActorRef
 import better.files._
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.Constants
@@ -17,6 +15,7 @@ import de.proteinevolution.models.search.JobDAO
 import models.tools.ToolFactory
 import models.UserSessions
 import de.proteinevolution.db.MongoStore
+import de.proteinevolution.services.JobIdProvider
 import de.proteinevolution.tel.env.Env
 import play.api.Logger
 import play.api.cache._
@@ -29,13 +28,10 @@ import services.JobActorAccess
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-/**
- * Created by lzimmermann on 02.12.16.
- */
 @Singleton
 final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                     val reactiveMongoApi: ReactiveMongoApi,
-                                    @Named("jobIDActor") jobIDActor: ActorRef,
+                                    jobIdProvider: JobIdProvider,
                                     userSessions: UserSessions,
                                     mongoStore: MongoStore,
                                     env: Env,
@@ -111,7 +107,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               }
             case None =>
               // Use jobID Actor to get a new random jobID
-              Future.successful(Some(JobIDActor.provide))
+              Future.successful(Some(jobIdProvider.provide))
           }).flatMap {
             case Some(jobID) =>
               // Load the parameters for the tool
@@ -143,9 +139,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 case _       => false
               }
 
-              // Set job as either private or public
-              val ownerOption = if (params.get("public").isEmpty) { Some(user.userID) } else { None }
-
               // Get the current date to set it for all three dates
               val now = ZonedDateTime.now
 
@@ -155,7 +148,8 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               // Create a new Job object for the job and set the initial values
               val job = Job(
                 jobID = jobID,
-                ownerID = ownerOption,
+                ownerID = Some(user.userID),
+                isPublic = params.get("public").isDefined || user.accountType == User.NORMALUSER,
                 emailUpdate = emailUpdate,
                 tool = toolName,
                 watchList = List(user.userID),
@@ -175,6 +169,9 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                   // Send the job to the jobActor for preparation
                   jobActorAccess.sendToJobActor(jobID, PrepareJob(job, params, startJob = false, isFromInstitute))
 
+                  // callback to jobIdProvider that job is safely in the database
+                  jobIdProvider.trash(jobID)
+
                   // Add Job to user in database
                   userSessions
                     .modifyUserWithCache(BSONDocument(User.IDDB   -> user.userID),
@@ -187,8 +184,8 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                  "message"    -> "Submission successful.",
                                  "jobID"      -> jobID)
                       ).withSession(
-                          userSessions.sessionCookie(request, user.sessionID.get)
-                        )
+                        userSessions.sessionCookie(request, user.sessionID.get)
+                      )
                     }
                 case None =>
                   // Something went wrong when pushing to the DB
@@ -248,7 +245,9 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               BSONDocument(Job.DATECREATED -> -1)
             )
             .map { jobList =>
-              jobList.find(_.status == Done) match {
+              // Check if the jobs are owned by the user, unless they are public and if the job is Done
+              jobList.find(filterJob =>
+                (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done) match {
                 case Some(latestOldJob) =>
                   Ok(
                     Json.toJson(

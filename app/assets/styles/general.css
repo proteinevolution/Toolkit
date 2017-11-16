@@ -49,8 +49,11 @@ div#main-container {
     margin-right: 0;
 }
 
-#main-content {
+#main-window {
     padding-top: 20px;
+}
+
+#main-content {
     min-height: 100%;
     margin-left: 0;
     margin-right: 0;

@@ -5,10 +5,9 @@ import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tel.param.Params
 
 /**
-  * TEL is the access point to get ExecutionContexts in which runscripts can be executed
-  *
-  * Created by lzimmermann on 26.05.16.
-  */
+ * TEL is the access point to get ExecutionContexts in which runscripts can be executed
+ *
+ */
 @Singleton
 class TEL @Inject()(env: Env, params: Params) extends TELRegex with TELConstants {
 
@@ -21,10 +20,10 @@ class TEL @Inject()(env: Env, params: Params) extends TELRegex with TELConstants
   val context: String = env.get("CONTEXT")
 
   /**
-    * Returns the Array of all values and plain text names of the set params
-    *
-    * @param param
-    */
+   * Returns the Array of all values and plain text names of the set params
+   *
+   * @param param
+   */
   def generateValues(param: String): Map[String, String] = params.generateValues(param)
 }
 

@@ -88,21 +88,17 @@ const hideSubmitButtons = function (elem : any, isInit : boolean) : any {
 
 const hideSidebar = function (elem : any, isInit : boolean) : any {
     if (!isInit) {
-
         $('#sidebar').hide();
         $('#main-content').removeClass();
-
     }
 };
 
 
 const showSidebar = function (elem : any, isInit : boolean) : any {
     if (!isInit) {
-
         $('#sidebar').show();
         $('#main-content').removeClass().addClass('large-10 small-12 columns padded-column');
         JobListComponent.selectJob();
-
     }
 };
 
@@ -142,7 +138,7 @@ const fadesIn = function(element : any, isInitialized : boolean, context : any) 
 
 const tooltipsterConf = function(elem: any, isInit: boolean) {
     if(!isInit){
-        $('.job-button div').tooltipster({
+        $('.job-button div, .submitbuttons input, .helpicon, .fa-trash-o').tooltipster({
             theme: 'tooltipster-borderless',
             position: 'bottom',
             animation: 'fade',

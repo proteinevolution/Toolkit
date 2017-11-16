@@ -7,10 +7,6 @@ import de.proteinevolution.models.database.results.General.DTParam
 import de.proteinevolution.models.results.Common
 import play.api.libs.json._
 
-
-/**
-  * Created by drau on 23.04.17.
-  */
 case class HHBlitsHSP(query: HHBlitsQuery,
                       template: HHBlitsTemplate,
                       info: HHBlitsInfo,
