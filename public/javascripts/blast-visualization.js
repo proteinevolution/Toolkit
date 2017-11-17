@@ -127,6 +127,7 @@ function forwardPath(tool, forwardPath){
     m.route("/tools/" + tool);
     $.ajax({
         type: 'GET',
+        contentType: "charset=utf-8",
         url: forwardPath,
         error: function(){
             $.LoadingOverlay("hide")

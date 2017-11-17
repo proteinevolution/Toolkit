@@ -1,4 +1,4 @@
-@(tool: models.tools.Tool, viewName: String)
+@(tool: models.tools.Tool, viewName: String, defaultTool: String)
 
 
 <div class="reveal forwardModal" id="forwardModal_@viewName" data-reveal>
@@ -52,6 +52,8 @@
 
 <script>
 
+    $('#forwardSelect_@viewName').val("@defaultTool");
+
     window["@{viewName}_forward_"] = function(){
         var selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength, sliderRegion;
         boolFullLength = $('#fullLength_@viewName').is(':checked');
@@ -59,17 +61,17 @@
         boolSelectedHits = $('#selectedHits_@viewName').is(':checked');
         selectedTool = $('#forwardSelect_@viewName').val();
         evalue = $("#forwardEvalue_@viewName").val();
-        sliderRegion = $('#sliderRegion_@viewName').is(':checked')
-        if(selectedTool == ""){
+        sliderRegion = $('#sliderRegion_@viewName').is(':checked');
+        if(selectedTool === ""){
             alert("Please select a tool!")
             $('#forwardModal_@{viewName}').foundation('close');
             return;
         }
         @{viewName}_forward(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength, sliderRegion);
-        if (selectedTool != "") {
+        if (selectedTool !== "") {
             $('#forwardModal_@{viewName}').foundation('close');
         }
-        if(evalue == "") {
+        if(evalue === "") {
             alert("no evalue!")
         }
     };
@@ -84,7 +86,7 @@
         $('#sliderRegion_@viewName').prop("checked", true);
 
         $("input[name='radio2']").change(function (e) {
-            if ($(this).attr('id') == 'fullLength_@viewName') {
+            if ($(this).attr('id') === 'fullLength_@viewName') {
                 $('#forwardWarning').css({display: 'inherit'});
                 $('.alignmentOptions_@viewName').hide();
                 $('.multiSeqOptions_@viewName').show();
@@ -96,7 +98,7 @@
         });
 
     $("#forwardModal_@viewName").bind('closed.zf.reveal', (function () {
-        $('#forwardSelect_@viewName').val('');
+        $('#forwardSelect_@viewName').val("@defaultTool");
         $('#forwardWarning').css({display: 'none'});
         $('#forwardEvalue_@viewName').val('0.001');
         $('#selectedHits_@viewName').prop("checked", true);
