@@ -196,7 +196,7 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
             data.evalue = evalue;
             route = jsRoutes.controllers.PSIBlastController.evalFull(jobID);
         }else{
-            if(data.checkboxes.length == 0){
+            if(data.checkboxes.length === 0){
                 $('#forwardModal_@{tool.toolNameShort}').foundation('close');
                 $.LoadingOverlay("hide");
                 alert("No sequence(s) selected!");
@@ -211,7 +211,7 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
             data.evalue = evalue;
             route = jsRoutes.controllers.PSIBlastController.alnEval(jobID);
         }else{
-            if(data.checkboxes.length == 0){
+            if(data.checkboxes.length === 0){
                 $('#forwardModal_@{tool.toolNameShort}').foundation('close');
                 $.LoadingOverlay("hide");
                 alert("No sequence(s) selected!");
