@@ -90,10 +90,12 @@
                 $('#forwardWarning').css({display: 'inherit'});
                 $('.alignmentOptions_@viewName').hide();
                 $('.multiSeqOptions_@viewName').show();
+                $('#forwardSelect_@viewName').val("");
             } else {
                 $('#forwardWarning').css({display: 'none'});
                 $('.alignmentOptions_@viewName').show();
                 $('.multiSeqOptions_@viewName').hide();
+                $('#forwardSelect_@viewName').val("@defaultTool");
             }
         });
 

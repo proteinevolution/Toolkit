@@ -133,12 +133,12 @@ function forwardPath(tool, forwardPath){
             $.LoadingOverlay("hide")
         }
     }).done(function (data) {
-        window.JobModel.setParamValue("alignment", data);
-        if(tool === "alnviz"){
-            $('#alignment').val(data);
-        }
-        if(tool === "reformat"){
+    if(tool === "reformat"){
             myCodeMirror.setValue(data);
+            $.LoadingOverlay("hide")
+        }
+    else {
+            $('#alignment').val(data);
         }
         validationProcess($('#alignment'),$("#toolnameAccess").val());
         $.LoadingOverlay("hide")
