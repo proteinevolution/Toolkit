@@ -15,12 +15,12 @@ object HHrepID {
     val data = try {
       source.getLines().toList.map {
         case wholeMatch @ headerLine(m1, m2, m3) =>
-          "<h5>" + wholeMatch + "</h5>" + "<div class='hhrepImage'>" +
-          s"<img hspace='14' src='$imagePath$m2.png'>" + "</div>"
+          "<h5>" + wholeMatch + "</h5>" + "<span class='hhrepImage'>" +
+          s"<img hspace='14' src='$imagePath$m2.png'>" + "</div><br />"
         case wholeMatch @ seqLine(m1, m2) =>
-          "<pre class='sequence'>" + wholeMatch.replace(m2, Common.colorRegexReplacer(m2)) + "</pre>"
+          "<pre class='sequence' id='hhrepidview'>" + wholeMatch.replace(m2, Common.colorRegexReplacer(m2)) + "</pre>"
         case "" => "<br />"
-        case m  => "<pre class='sequence'>" + m + "</pre>"
+        case m  => "<pre class='sequence' id='hhrepidview'>" + m + "</pre>"
       }
     } finally { source.close() }
     Html(data.mkString(""))
