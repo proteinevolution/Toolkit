@@ -227,7 +227,7 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
         data: JSON.stringify(data),
         method: route.method,
         error: function(){
-            $.LoadingOverlay("hide")
+            $.LoadingOverlay("hide");
         }
     }).done(function (data_) {
         forwardPath(selectedTool, 'files/'+jobID+'/'+filename+'.fa');
@@ -253,7 +253,7 @@ function getHits(start, end, isWrapped){
             $("#alignmentTable").append(data_);
 	    loading = false;
             $('#loadingHits').hide();
-            if (shownHits != numHits) {
+            if (shownHits !== numHits) {
                 $('#loadHits').show();
             }
             getCheckedCheckboxes();
