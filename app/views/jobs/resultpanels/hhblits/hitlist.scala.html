@@ -231,7 +231,7 @@
                 }else{
                     data.fileName = filename;
                     route = jsRoutes.controllers.HHblitsController.full(jobID);
-                    if(data.checkboxes.length == 0){
+                    if(data.checkboxes.length === 0){
                         $('#forwardModal_@{tool.toolNameShort}').foundation('close');
                         $.LoadingOverlay("hide");
                         alert("No sequences selected!");
@@ -245,7 +245,7 @@
                     data.fileName = filename;
                     route = jsRoutes.controllers.HHblitsController.alnEval(jobID);
                 }else{
-                    if(data.checkboxes.length == 0){
+                    if(data.checkboxes.length === 0){
                         $('#forwardModal_@{tool.toolNameShort}').foundation('close');
                         $.LoadingOverlay("hide");
                         alert("No sequences selected!");
@@ -309,7 +309,7 @@
 
 
         function forwardTemplateAlignment_(tool, forwardData){
-            if(tool == ""){
+            if(tool === ""){
                 return;
             }
             $.LoadingOverlay("show");
@@ -334,7 +334,7 @@
                     $("#alignmentTable").append(data_);
 		            loading = false;
                     $('#loadingHits').hide();
-                    if (shownHits != numHits) {
+                    if (shownHits !== numHits) {
                         $('#loadHits').show();
                     }
                     linkCheckboxes();
