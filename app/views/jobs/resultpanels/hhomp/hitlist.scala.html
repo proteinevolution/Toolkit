@@ -166,22 +166,22 @@
                 type: 'GET',
                 url: '/templateAlignmentHHomp/' + jobID + '/' + accession,
                 error: function(){
-                    $.LoadingOverlay("hide")
+                    $.LoadingOverlay("hide");
                 }
             }).done(function () {
                 $.ajax({
                     type: 'GET',
                     url: 'files/' + jobID + '/' + accession + '.fas',
                     error: function(){
-                        $.LoadingOverlay("hide")
+                        $.LoadingOverlay("hide");
                     }
                 }).done(function (data) {
                     $("#alignmentTemplatehhomp").val(data.toString());
-                    $.LoadingOverlay("hide")
+                    $.LoadingOverlay("hide");
                 });
             }).fail(function () {
                 $("#alignmentTemplatehhomp").val("Sorry, failed to fetch Template Alignment.");
-                $.LoadingOverlay("hide")
+                $.LoadingOverlay("hide");
             });
 
         }
@@ -212,7 +212,7 @@
                     $("#alignmentTable").append(data_);
                     loading = false;
                     $('#loadingHits').hide();
-                    if (shownHits != numHits) {
+                    if (shownHits !== numHits) {
                         $('#loadHits').show();
                     }
                     $("#alignments").floatingScroll('init');

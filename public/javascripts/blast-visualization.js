@@ -105,7 +105,7 @@ function resubmitSection(sequence, name) {
  * @param forwardData
  */
 function forward(tool, forwardData){
-    if(forwardData == ""){
+    if(forwardData === ""){
         alert("No sequence(s) selected!");
         $.LoadingOverlay("hide");
         return;
@@ -117,7 +117,7 @@ function forward(tool, forwardData){
         if (isQuotaExceeded(e)) {
             // Storage full, maybe notify user or do some clean-up
             $.LoadingOverlay("hide");
-            alert("File is too big to be forwarded. Please download the file and use the upload function of the selected tool." )
+            alert("File is too big to be forwarded!" )
         }
 
     }
@@ -127,20 +127,20 @@ function forwardPath(tool, forwardPath){
     m.route("/tools/" + tool);
     $.ajax({
         type: 'GET',
+        contentType: "charset=utf-8",
         url: forwardPath,
         error: function(){
-            $.LoadingOverlay("hide")
+            $.LoadingOverlay("hide");
         }
     }).done(function (data) {
-        window.JobModel.setParamValue("alignment", data);
-        if(tool === "alnviz"){
+    if(tool === "reformat"){
+            setInterval(function(){ myCodeMirror.setValue(data); $.LoadingOverlay("hide"); }, 100);
+        }
+    else {
             $('#alignment').val(data);
         }
-        if(tool === "reformat"){
-            myCodeMirror.setValue(data);
-        }
         validationProcess($('#alignment'),$("#toolnameAccess").val());
-        $.LoadingOverlay("hide")
+        $.LoadingOverlay("hide");
     })
 }
 
@@ -176,7 +176,7 @@ $(document).ready(function() {
 
 
 function identifyDatabase(id){
-    if (id == null)
+    if (id === null)
         return null;
     if(id.match(scopReg))
         return "scop";
@@ -307,12 +307,12 @@ function deselectAll(name){
 }
 function selectFromArray(checkboxes){
     _.range(1, numHits+1).forEach(function (currentVal) {
-        $('input:checkbox[value='+currentVal+'][name="alignment_elem"]').prop('checked', checkboxes.indexOf(currentVal) != -1 ? true : false);
+        $('input:checkbox[value='+currentVal+'][name="alignment_elem"]').prop('checked', checkboxes.indexOf(currentVal) !== -1 ? true : false);
     })
 }
 
 function getCheckedCheckboxes(){
-    $('input:checkbox:checked[name="alignment_elem"]').each(function(){var num = parseInt($(this).val()); if(checkboxes.indexOf(num) == -1){checkboxes.push(num)}});
+    $('input:checkbox:checked[name="alignment_elem"]').each(function(){var num = parseInt($(this).val()); if(checkboxes.indexOf(num) === -1){checkboxes.push(num)}});
 }
 
 
@@ -350,7 +350,7 @@ function hitlistBaseFunctions(){
 
 Array.prototype.removeDuplicates = function () {
     return this.filter(function (item, index, self) {
-        return self.indexOf(item) == index;
+        return self.indexOf(item) === index;
     });
 };
 
@@ -381,7 +381,7 @@ function getsHitsManually(){
     if (!loading) {
         var end = shownHits + showMore;
         end = end < numHits ? end : numHits;
-        if (shownHits != end) {
+        if (shownHits !== end) {
             getHits(shownHits, end, wrapped, colorAAs);
         }
         shownHits = end;
@@ -403,11 +403,11 @@ function linkCheckboxes(){
             checkboxes.push(parseInt(currentVal));
             // make sure array contains no duplicates
             checkboxes = checkboxes.filter(function (value, index, array) {
-                return array.indexOf(value) == index;
+                return array.indexOf(value) === index;
             });
         } else {
             // delete num of unchecked checkbox from array
-            checkboxes = checkboxes.filter(function(x){return x != currentVal});
+            checkboxes = checkboxes.filter(function(x){return x !== currentVal});
         }
 
     });
@@ -468,7 +468,7 @@ function colorAA(){
 
 $.fn.extend({
     toggleText: function(a, b){
-        return this.text(this.text() == b ? a : b);
+        return this.text(this.text() === b ? a : b);
     }
 });
 
