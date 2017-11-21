@@ -331,7 +331,7 @@ i {
 }
 
 #logo {
-  padding: 15px 0;
+  padding: 0em;
 }
 
 #logo img {
@@ -364,5 +364,11 @@ i {
 
 
 #hambutton {
+  position:fixed;
+  z-index: 1001;
+}
+
+#hambutton button {
+  color:gray;
   height: 60%;
 }

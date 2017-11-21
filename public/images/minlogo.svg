@@ -204,5 +204,7 @@
   </g>
   <defs
      id="defs3921" />
-  <text x="120" y="25" style="fill:#006e62; font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; font-size: 150%;">MPI<tspan x="120" y="60">Bioinformatics</tspan><tspan x="120" y="95">Toolkit</tspan></text>
+  <text x="120" y="25" style="fill:#006e62; font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; font-size: 1.3em;">
+    MPI<tspan x="120" y="60">Bioinformatics</tspan><tspan x="120" y="95">Toolkit</tspan>
+  </text>
 </svg>
