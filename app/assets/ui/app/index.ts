@@ -145,7 +145,7 @@ window.Index = {
             m("section", {
 
             }, [
-                m("div", {"class": "captionContainer"}, [
+                m("div", {"class": "caption-container"}, [
                     m("div", {
                             "class": "slide-caption"
                         },
