@@ -31,7 +31,7 @@ const tabulated = function(element : any, isInit : boolean) : any {
 
 // clear input forms when clicking on a tool again
 
-$('.toolsec').on('click', 'a', function() { /*m.route(this.href)*/ });
+$('.toolsection').on('click', 'a', function() { /*m.route(this.href)*/ });
 
 
 
