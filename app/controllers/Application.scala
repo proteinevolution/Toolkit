@@ -391,4 +391,15 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     )
   }
 
+  def maintenanceTest : Action[AnyContent] = Action.async { implicit request =>
+    userSessions.getUser.map { user =>
+      if (user.isSuperuser) {
+        clusterMonitor ! Multicast
+        Ok
+      } else {
+        NotFound
+      }
+    }
+  }
+
 }

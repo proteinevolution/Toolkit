@@ -196,7 +196,7 @@ class WebsocketWrapper {
 
             // Maintenance is going on
             case "MaintenanceAlert":
-                $('.maintenance_alert').show();
+                $('.maintenance-alert').show();
                 break;
 
             // The message was not what we expected
