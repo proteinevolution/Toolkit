@@ -170,8 +170,11 @@ FIELDSET {
     opacity: 0.55;
 }
 
-.captionContainer {
+.caption-container {
     position: relative;
+    padding-left:10px;
+    padding-right:10px;
+    padding-top:0;
 }
 
 .slide-header {
