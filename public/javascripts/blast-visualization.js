@@ -117,7 +117,7 @@ function forward(tool, forwardData){
         if (isQuotaExceeded(e)) {
             // Storage full, maybe notify user or do some clean-up
             $.LoadingOverlay("hide");
-            alert("File is too big to be forwarded. Please download the file and use the upload function of the selected tool." )
+            alert("File is too big to be forwarded!" )
         }
 
     }
@@ -130,18 +130,17 @@ function forwardPath(tool, forwardPath){
         contentType: "charset=utf-8",
         url: forwardPath,
         error: function(){
-            $.LoadingOverlay("hide")
+            $.LoadingOverlay("hide");
         }
     }).done(function (data) {
     if(tool === "reformat"){
-            myCodeMirror.setValue(data);
-            $.LoadingOverlay("hide")
+            setInterval(function(){ myCodeMirror.setValue(data); $.LoadingOverlay("hide"); }, 100);
         }
     else {
             $('#alignment').val(data);
         }
         validationProcess($('#alignment'),$("#toolnameAccess").val());
-        $.LoadingOverlay("hide")
+        $.LoadingOverlay("hide");
     })
 }
 
