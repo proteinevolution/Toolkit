@@ -49,6 +49,7 @@ window.JobModel = {
         "hhsuitedb":"mmcif70/pdb70",
         "hhpred_incl_eval":"1e-3",
         "hhblits_incl_eval":"1e-3",
+        "blast_incl_eval":"1e-3",
         "pcoils_matrix": "2",
         "pcoils_weighting":"1",
         "pcoils_input_mode":"0",

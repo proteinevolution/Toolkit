@@ -89,7 +89,7 @@ const typeAhead = function (elem : any, isInit : boolean) : any {
                             if(data != null) {
                                 return '<div class="list-group-item"><a class="search-results" href="#/jobs/' + data.jobID + '" name="' + data.jobID + ' - ' + data.toolnameLong + '">' +
                                     '<span class="search-result-jobid">' + data.jobID + '</span> <span class="search-result-tool"> ' +
-                                    '(' + data.toolnameLong + ')</span> <span class="search-result-tool-short"> (' + data.toolnameLong.substr(0, 4).toUpperCase() + ')</span></a></div>';
+                                    '(' + data.toolnameLong + ')</span> <span class="search-result-tool-short"> (' + data.tool.substr(0, 4).toUpperCase() + ')</span></a></div>';
                             } else {
                                 return ''
                             }
@@ -111,6 +111,7 @@ const typeAhead = function (elem : any, isInit : boolean) : any {
             $('#'+elem.id+' .search-input.tt-hint').addClass("white");
         }).on('blur', function(e : any) : any {
             $('#'+elem.id+' .search-input.tt-hint').removeClass("white");
+            $("#sidebar-search input").val('');
         })
     }
 };

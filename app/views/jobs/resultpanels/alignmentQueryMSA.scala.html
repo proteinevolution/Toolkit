@@ -84,7 +84,7 @@
             var fileUrl = "/files/@jobID/reduced.a3m";
             var downloadFilename = "@{tool.toolNameShort}_@{resultName}Q_@{jobID}.a3m";
 
-            if("@{resultName}" == "querytemplate"){
+            if("@{resultName}" === "querytemplate"){
                 fileUrl = "/files/@jobID/reducedQT.a3m";
                 downloadFilename = "@{tool.toolNameShort}_reducedQT_@{jobID}.a3m";
 
@@ -104,7 +104,7 @@
             var fileUrlFull = "/files/@jobID/full.a3m";
             var downloadFilenameFull = "@{tool.toolNameShort}_fullQ_@{jobID}.a3m";
 
-            if("@{resultName}" == "querytemplate") {
+            if("@{resultName}" === "querytemplate") {
                 fileUrlFull = "/files/@jobID/fullQT.a3m";
                 downloadFilenameFull = "@{tool.toolNameShort}_fullQT_@{jobID}.a3m";
             }
@@ -175,7 +175,7 @@
                 // in order to make it work with pagination/lazyload
                 selectFromArray(checkboxes);
                 $(document).on('scroll', function () {
-                    if ($(this).scrollTop() == $(this).height() - $(window).height()) {
+                    if ($(this).scrollTop() === $(this).height() - $(window).height()) {
                         if (!loading) {
                             var end = shownHits + showMore;
                             end = end < numHits ? end : numHits;
@@ -199,7 +199,7 @@
                         checkboxes.push(parseInt(currentVal));
                         // make sure array contains no duplicates
                         checkboxes = checkboxes.filter(function (value, index, array) {
-                            return array.indexOf(value) == index;
+                            return array.indexOf(value) === index;
                         });
                     } else {
                         // delete num of unchecked checkbox from array
@@ -209,7 +209,7 @@
                     }
                 });
                 // hide loadHitsQaln
-                if(shownHits == numHits){
+                if(shownHits === numHits){
                     $('#loadHitsQaln').hide();
                 }
             });

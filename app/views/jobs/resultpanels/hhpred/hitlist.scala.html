@@ -288,7 +288,7 @@
         function @{tool.toolNameShort}_manual() {
             // Get selected templates and append parentID
             var formData = new FormData(document.getElementById("hhpred_templates"));
-            if ($('input:checkbox[name=alignment_elem]:checked').length == 0) {
+            if ($('input:checkbox[name=alignment_elem]:checked').length === 0) {
                 $("input:checkbox[name=alignment_elem][value=1]").prop("checked", true);
                 alert("No templates selected. Using first template for modelling.");
             }
@@ -402,7 +402,7 @@
                 data.fileName = filename;
                 route = jsRoutes.controllers.HHpredController.alnEval(jobID);
             } else {
-                if(data.checkboxes.length == 0){
+                if(data.checkboxes.length === 0){
                     $('#forwardModal_@{tool.toolNameShort}').foundation('close');
                     $.LoadingOverlay("hide");
                     alert("No sequence(s) selected!");
@@ -425,7 +425,7 @@
         }
 
         function forwardTemplateAlignment_(tool, forwardData) {
-            if (tool == "") {
+            if (tool === "") {
                 return;
             }
             $('#templateAlignmentModal').foundation('close');
@@ -459,7 +459,7 @@
                     $("#alignmentTable").append(data_);
                     loading = false;
                     $('#loadingHits').hide();
-                    if (shownHits != numHits) {
+                    if (shownHits !== numHits) {
                         $('#loadHits').show();
                     }
                     linkCheckboxes();
