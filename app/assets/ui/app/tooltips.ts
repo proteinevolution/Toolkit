@@ -70,7 +70,7 @@ $( "#s2id" ).prop('title', 'Extraction of accessions IDs');
 
 $( "#reformat" ).prop('title', 'Sequence reformatting utility');
 
-$('.toolsec a').tooltipster({
+$('.toolsection a').tooltipster({
     theme: 'tooltipster-borderless',
     position: 'bottom',
     animation: 'fade',
