@@ -8,9 +8,9 @@
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    version="1.1"
-   width="100"
+   width="300"
    height="100"
-   viewBox="0 0 99.999999 100"
+   viewBox="0 0 300 100"
    id="svg3784">
   <metadata
      id="metadata3925">
@@ -18,8 +18,7 @@
       <cc:Work
          rdf:about="">
         <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
         <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
@@ -205,4 +204,7 @@
   </g>
   <defs
      id="defs3921" />
+  <text x="120" y="25" style="fill:#006e62; font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; font-size: 1.3em;">
+    MPI<tspan x="120" y="60">Bioinformatics</tspan><tspan x="120" y="95">Toolkit</tspan>
+  </text>
 </svg>
