@@ -77,7 +77,7 @@ i {
 
 .title-bar {
   background-color: transparent !important;
-
+  padding: 0;
 }
 
 .title-bar-title {
@@ -364,11 +364,14 @@ i {
 
 
 #hambutton {
-  position:fixed;
+  position: fixed;
   z-index: 1001;
+  padding-top: 0.75em;
+  padding-left: 0.75em;
 }
 
 #hambutton button {
-  color:gray;
+  color: gray;
   height: 60%;
+  cursor: pointer;
 }
