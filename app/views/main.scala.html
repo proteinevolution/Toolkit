@@ -144,16 +144,21 @@
             </div>
         </div>
 
-        <div id="main-container">
+        <div id="main-container" class="off-canvas-wrapper" data-off-canvas-wrapper>
+            <div class="off-canvas position-left" id="offCanvas" data-off-canvas>
+                @elements.offcanvas(tools)
+                <div id="off-canvas-joblist"></div>
+            </div>
 
-            <div id="main" class="row" style="max-width: 75rem;
-                margin: 0 auto">
+            <!---Off Canvas Content includes main content--->
+            <div class="hide-for-large" id="hambutton">
+                <button type="button" data-open="offCanvas"><i class="icon-reorder icon2x"></i></button>
+            </div>
+
+            <div id="main" class="row" style="max-width: 75rem; margin: 0 auto" data-off-canvas-content>
                 <div class="small-12 padded-column columns">
-
-
-                    <div class="row">
+                    <div class="row" style="height:135px; min-height:135px;">
                         <div class="small-12 padded-column columns">
-
                             <!---All purpose Modal --->
                             <div id="modal" class="reveal large" data-reveal>
                                 <button class="close-button" data-close aria-label="Close modal" type="button">
@@ -182,80 +187,48 @@
                                     <a href="https://www.facebook.com/mpitoolkit" target="_blank" rel="noopener"><i class="icon-facebook"></i></a>
                                     <a href="https://twitter.com/mpitoolkit" target="_blank" rel="noopener"><i class="icon-twitter"></i></a>
                                 </div>
+
+                                <div id="offline-alert" aria-hidden="true" onclick="window.location.reload()">
+                                    <i class="icon-retweet" id="rcnbtn"></i>
+                                    <b>Reconnecting...</b>
+                                </div>
+                                <div class="maintenance-alert">
+                                    <i class="fa fa-wrench" aria-hidden="true"></i>
+                                    <b>Maintenance in a few seconds!</b>
+                                </div>
                             </div>
 
 
-                            <div class="row show-for-large" id="navcontainer">
-
+                            <div class="row" id="navcontainer">
                                     <!--logo-->
-                                <div class="large-2 columns" id="mainlogo">
+                                <div class="columns large-2 show-for-large" id="logo">
                                     <a href="/#/">
-                                        <div class="row">
-                                            <div class="column large-6" id="mainface">
-                                                <img style="width: 70%;
-                                                    margin-bottom: 2em;" src="@routes.Assets.versioned("images/minlogo.svg")">
-                                            </div>
-                                            <div class="column large-6" id="mainlabel">
-                                                MPI Bioinformatics Toolkit
-                                            </div>
-                                        </div>
+                                        <img src="@routes.Assets.versioned("images/minlogo.svg")">
                                     </a>
-                                    <div class="maintenance_alert">
-                                        <i class="fa fa-wrench" aria-hidden="true"></i><b>
-                                        Maintenance in a few seconds!</b>
-                                    </div>
                                 </div>
+
                                     <!--navbar-->
-                                <div class="large-10 columns show-for-large">
-                                    <div class="row">
-                                        <div class="columns large-10" style="padding-left: 4em;
-                                            padding-right: 1.4em;">
-                                        @elements.navbar(tools)
-                                        </div>
-                                        <div class="columns large-2">
-                                                <!--offline callout-->
-                                            <div class="alert callout" id="offline-alert" onclick="window.location.reload()"><i class="icon-retweet" id="rcnbtn"></i>
-                                                Reconnecting...</div>
-                                        </div>
-                                    </div>
+                                <div class="columns large-8 show-for-medium" id="navbar">
+                                    @elements.navbar(tools)
+                                </div>
+                                <div class="columns large-2 show-for-large">
                                 </div>
                             </div>
-
-                                <!--Off Canvas Menu for mobile version of Toolkit-->
-                            <div class="off-canvas-wrapper">
-                                <div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
-                                    <div class="off-canvas position-left" id="offCanvas" data-off-canvas>
-                                        @elements.offcanvas(tools)
-                                        <div id="off-canvas-joblist"></div>
-                                    </div>
-
-                                        <!---Off Canvas Content includes main content--->
-                                    <div class="off-canvas-content" data-off-canvas-content>
-                                        <div class="title-bar hide-for-large">
-                                            <div class="title-bar-left">
-                                                <button id="hambutton" type="button" data-open="offCanvas"><i class="icon-reorder icon2x"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!--- Mount points for Mithril Application -->
-                                    <div class="row" id="main-window">
-                                        <div class="large-2 padded-column columns show-for-large" id="sidebar">
-                                            <div id="sidebar-search"></div>
-                                            <div id="sidebar-joblist"></div>
-                                        </div>
-                                        <div id="main-content">
-                                            <noscript><div class="noscript">
-                                                This website relies on JavaScript to work properly.<br />
-                                                Please activate JavaScript in Your browser to see everything we offer.
-                                            </div></noscript>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
+                    </div>
 
+                        <!--- Mount points for Mithril Application -->
+                    <div class="row" id="main-window">
+                        <div class="large-2 padded-column columns show-for-large" id="sidebar">
+                            <div id="sidebar-search"></div>
+                            <div id="sidebar-joblist"></div>
+                        </div>
+                        <div id="main-content">
+                            <noscript><div class="noscript">
+                                This website relies on JavaScript to work properly.<br />
+                                Please activate JavaScript in Your browser to see everything we offer.
+                            </div></noscript>
+                        </div>
                     </div>
                 </div>
                 <footer class="row" id="app">

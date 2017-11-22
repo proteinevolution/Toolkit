@@ -26,30 +26,29 @@
 
 #offline-alert {
     font-size: 0.78em;
-    padding: 0;
     background-color: transparent;
     border: none;
-    margin-top: 1em;
+    margin-top: 1.15em;
     color: red;
     display: none;
     text-align: center;
     cursor: pointer;
+    float: right;
 }
 
-.maintenance_alert {
+.maintenance-alert {
     background: linear-gradient(to bottom, rgba(245, 245, 245, 1) 0%, rgba(240, 240, 240, 1) 100%);
     text-shadow: 0 1px 0 #FFF;
     color: #848484;
     font-size: 0.65em;
     border: 1px solid #c0c0c0;
     padding: 6px 8px 7px 8px;
-    margin-bottom: 8px;
     border-radius: 2px;
     box-shadow: 0 0 3px 0 #d85000;
     transition: box-shadow 1.5s;
     display: none;
+    float: right;
 }
-
 
 
 /* Tool finder, Cluster workload section */
@@ -180,6 +179,59 @@ FIELDSET {
     width: 100% !important;
     float: left;
     display: block;
+}
+
+.select-job  {
+    margin-top: 3em;
+    padding: 1em;
+    font-size: 0.75em;
+}
+
+.gradient {
+    color: black;
+}
+
+.slide-caption{
+    min-height: 80px;
+    position: absolute;
+    background: rgba(4, 4, 4, 0.9);
+    color:white;
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
+    letter-spacing:1px;
+    line-height:1.5rem;
+    height: 100%;
+    width: 22%;
+    top: 0;
+    right: 0;
+    padding:40px 32px 35px;
+    opacity: 0.55;
+}
+
+.caption-container {
+    position: relative;
+    padding-left:10px;
+    padding-right:10px;
+    padding-top:0;
+}
+
+.slide-header {
+    font-size: 1rem;
+}
+
+.slide-text {
+    margin-top: 1em;
+    font-size: 0.8rem;
+}
+
+.slider {
+
+    width: 100%;
+    cursor: default;
+    background-color:  rgb(238, 238, 238);
+}
+
+.slider img {
+    width: 100%;
 }
 
 .twitter-typeahead {
