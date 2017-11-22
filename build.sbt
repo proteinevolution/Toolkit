@@ -9,26 +9,6 @@ lazy val commonSettings = Seq(
   logLevel := Level.Warn
 )
 
-lazy val metadata = List(
-  organization := "de.proteinevolution",
-  developers := List(
-    Developer("JoKuebler", "Jonas Kuebler", "jkuebler@tuebingen.mpg.de", url("https://github.com/JoKuebler")),
-    Developer("zy4", "Seung-Zin Nam", "seungzin.nam@tuebingen.mpg.de", url("https://github.com/zy4")),
-    Developer("davidmrau", "David Rau", "drau@tuebingen.mpg.de", url("https://github.com/davidmrau")),
-    Developer("felixgabler", "Felix Gabler", "felix.gabler@tuebingen.mpg.de", url("https://github.com/felixgabler")),
-    Developer("vikramalva", "Vikram Alva", "vikram.alva@tuebingen.mpg.de", url("https://github.com/vikramalva")),
-    Developer("anjestephens",
-              "Andrew Jesse Stephens",
-              "astephens@tuebingen.mpg.de",
-              url("https://github.com/anjestephens")),
-    Developer("lukaszimmermann",
-              "Lukas Zimmermann",
-              "lukas.zimmermann@tuebingen.mpg.de",
-              url("https://github.com/lukaszimmermann")),
-    Developer("markolozajic", "Marko Lozajic", "marko.lozajic@tuebingen.mpg.de", url("https://github.com/markolozajic"))
-  )
-)
-
 lazy val disableDocs = Seq[Setting[_]](
   sources in (Compile, doc) := Seq.empty,
   publishArtifact in (Compile, packageDoc) := false
@@ -38,8 +18,7 @@ lazy val headless = (project in file("modules/headless"))
   .enablePlugins(PlayScala, JavaAppPackaging)
   .dependsOn(common)
   .settings(
-    disableDocs,
-    scalaVersion := "2.11.11"
+    disableDocs
   )
 
 // shared stuff
@@ -47,8 +26,7 @@ lazy val common = (project in file("modules/common"))
   .enablePlugins(PlayScala, JavaAppPackaging)
   .settings(
     TwirlKeys.templateImports := Seq.empty,
-    disableDocs,
-    scalaVersion := "2.11.11"
+    disableDocs
   )
   .disablePlugins(PlayLayoutPlugin)
 
@@ -60,7 +38,7 @@ lazy val root = (project in file("."))
     commonSettings,
     name := "mpi-toolkit",
     libraryDependencies ++= (Dependencies.commonDeps ++ Dependencies.testDeps ++ Dependencies.frontendDeps),
-    pipelineStages := Seq(digest, gzip), // rjs, uglify, concat,
+    pipelineStages := Seq(digest, gzip),
     compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
     sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
     sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
@@ -82,8 +60,7 @@ lazy val client = (project in file("client"))
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom"     % "0.9.3",
       "co.technius"  %%% "scalajs-mithril" % "0.1.0",
-      "be.doeraene"  %%% "scalajs-jquery"  % "0.9.2",
-      "com.lihaoyi"  %%% "upickle"         % "0.4.3"
+      "be.doeraene"  %%% "scalajs-jquery"  % "0.9.2"
     )
   )
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
