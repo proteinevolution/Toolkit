@@ -36,6 +36,7 @@ POST          /backend/users                          controllers.Backend.users
 GET           /ws                                     controllers.Application.ws
 
 # Maintenance
+GET           /maintenance                            controllers.Application.maintenanceTest
 POST          /maintenance                            controllers.Application.maintenance
 GET           /uptime                                 controllers.UptimeController.uptime
 
