@@ -1,135 +1,118 @@
 @import play.api.mvc.RequestHeader
-@(sectionname : String)(implicit messages: Messages, request: RequestHeader)
+@(sectionname: String)(implicit messages: Messages, request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/reformat.css")" rel="stylesheet">
 <link href="@routes.Assets.versioned("styles/reformat-common.css")" rel="stylesheet">
 <link href="@routes.Assets.versioned("styles/reformat-jobview.css")" rel="stylesheet">
+<script src="@routes.Assets.versioned("javascripts/reformat-view.js")" type="text/javascript"></script>
 
 <div class="jobline">
-    <span class="toolname"><a onclick="myCodeMirror.setValue('');myCodeMirror2.setValue('')">Reformat</a></span>
+    <span class="toolname"><a onclick="myCodeMirror.setValue('');
+    myCodeMirror2.setValue('')">Reformat</a></span>
     <i class="icon-white_question helpicon"></i>
 </div>
-<div style="display: block; margin: auto;">
-
+<div style="display: block;
+    margin: auto;">
 
     <div class="tool-tabs ui-tabs ui-widget ui-widget-content ui-corner-all" id="tool-tabs" style="">
 
-            <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
+        <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
+            <li id="tab-Alignment" class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="tabpanel-Alignment" aria-labelledby="ui-id-4" aria-selected="true" aria-expanded="true">
+                <a href="#tabpanel-Alignment" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-4">
+                    Reformat View</a>
+            </li>
+            <li style="float: right;">
+                <i type="button" id="expandTabReformat" class="button_fullscreen fa fa-expand" onclick="javascript:fullscreenReformat();"></i>
+            </li>
+        </ul>
 
-                <li id="tab-Alignment" class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="tabpanel-Alignment" aria-labelledby="ui-id-4" aria-selected="true" aria-expanded="true">
-                    <a href="#tabpanel-Alignment" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-4">Reformat View</a>
-                </li>
-                    <!--
-                <li id="tab-Freqs" class="ui-state-default ui-corner-top" role="tab" tabindex="-1" aria-controls="tabpanel-Freqs" aria-labelledby="ui-id-5" aria-selected="false" aria-expanded="false">
-                    <a href="#tabpanel-Freqs" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-5">Relative Frequencies</a>
-                </li> -->
-                <li style="float: right;">
-                    <i type="button" id="expandTabReformat" class="button_fullscreen fa fa-expand" onclick="javascript:fullscreenReformat();"></i>
-                </li>
+        <div class="tabs-panel ui-tabs-panel ui-widget-content ui-corner-bottom" id="tabpanel-Alignment" aria-labelledby="ui-id-4" role="tabpanel" aria-hidden="false">
 
-            </ul>
+            <div id="reformatcontainer" style="min-height: 650px;
+                margin: 0 auto">
 
-
-            <div class="tabs-panel ui-tabs-panel ui-widget-content ui-corner-bottom" id="tabpanel-Alignment" aria-labelledby="ui-id-4" role="tabpanel" aria-hidden="false">
-
-                <div id="reformatcontainer" style="min-height: 650px; margin: 0 auto">
-
-                            <ul class="show-for-medium menu horizontal nested" style="font-size: 12px;" id="reformatTopbar">
-                                <li><a download="reformat_download.txt" class="download" onclick="downloadResult()">Download</a></li>
-                                <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
-                            </ul>
-
-
+                <ul class="show-for-medium menu horizontal nested" style="font-size: 12px;" id="reformatTopbar">
+                    <li><a download="reformat_download.txt" class="download" onclick="downloadResult()">Download</a></li>
+                    <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
+                </ul>
 
                 <div class="large-6 large-centered columns" style="display: none;">
                     <input type="file" id="files" name="file" />
                     <output id="list"></output>
-
-
                 </div>
-                <div style="width: 95%; display: block; margin: auto; padding-top: 15px;">
-                    <!--
-                    <div class="large-12 columns" style="padding-right: 12px;">
-                        <div style="float: right; z-index: 9;">
-                            <span data-tooltip aria-haspopup="true" class="has-tip top" tabindex="1" title="Paste output as input">
-                                <button class="small button" id="copy-button" data-clipboard-target="#outputarea" onclick="pasteLeft()" style="margin: 0 -5px 0 0;">Paste</button></span>
-                            <span data-tooltip aria-haspopup="true" class="has-tip top" tabindex="1" title="Copy output to clipboard">
-                                <button class="small button warning" id="copy-button" data-clipboard-target="#outputarea" onclick="(function(){
-                                new Clipboard('#copy-button');
-                                })();" style="margin: 0 0 0 0;">Copy</button></span>
-                        </div>
-                    </div>
-                    -->
-                    <div class="large-12 columns">
-                        <div id="inputMirror" style="width: 99%; border: 1px solid lightgray ;"></div>
-                        <input type="button" id="reformatExample" class="button small alignmentExample exampleReformat" value="Paste Example">
+                <div style="width: 95%;
+                    display: block;
+                    margin: auto;
+                    padding-top: 15px;">
 
+                    <div class="large-12 columns">
+                        <div id="inputMirror" style="width: 99%;
+                            border: 1px solid lightgray ;"></div>
+                        <input type="button" id="reformatExample" class="button small alignmentExample exampleReformat" value="Paste Example">
                     </div>
 
                     <div class="show-for-medium selectContainer">
-                            <select id="outformat">
-                                <option selected>Select Output Format</option>
-                                <option id="Fasta" value="Fasta">FASTA</option>
-                                <option id="Clustal" value="Clustal" class="clustaloption">CLUSTAL</option>
-                                <option id="Phylip" value="Phylip" class="clustaloption">PHYLIP</option>
-                                <option id="Stockholm" value="Stockholm">STOCKHOLM</option>
-                                <option id="PIR" value="PIR">PIR</option>
-                                <option id="EMBL" value="EMBL">EMBL</option>
-                                <option id="NEXUS" value="NEXUS">NEXUS</option>
-                                <option id="GetAccessions" value="GetAccessions">Extract Accessions</option>
-                                <option id="Consensus" value="Consensus">Consensus</option>
-                                <option id="Alphabet" value="Alphabet">Alphabet</option>
-                            </select>
+                        <select id="outformat">
+                            <option selected>Select Output Format</option>
+                            <option id="Fasta" value="Fasta">FASTA</option>
+                            <option id="Clustal" value="Clustal" class="clustaloption">CLUSTAL</option>
+                            <option id="Phylip" value="Phylip" class="clustaloption">PHYLIP</option>
+                            <option id="Stockholm" value="Stockholm">STOCKHOLM</option>
+                            <option id="PIR" value="PIR">PIR</option>
+                            <option id="EMBL" value="EMBL">EMBL</option>
+                            <option id="NEXUS" value="NEXUS">NEXUS</option>
+                            <option id="GetAccessions" value="GetAccessions">Extract Accessions</option>
+                            <option id="Consensus" value="Consensus">Consensus</option>
+                            <option id="Alphabet" value="Alphabet">Alphabet</option>
+                        </select>
 
                         <select id="forwardTool" style="font-size: 12px;" onchange="forwardChanged()">
                             <option selected>Forward To</option>
-                            <option  id="alnvizual" value="alnviz">AlignmentViewer</option>
-                            <option  id="aln2plot" value="aln2plot">Aln2Plot</option>
-                            <option  id="ancescon" value="ancescon">ANCESCON</option>
-                            <option  id="clans" value="clans">CLANS</option>
-                            <option  id="clustalo" value="clustalo">ClustalO</option>
-                            <option  id="hhblits" value="hhblits">HHblits</option>
-                            <option  id="hhfilter" value="hhfilter">HHfilter</option>
-                            <option  id="hhpred" value="hhpred">HHpred</option>
-                            <option  id="hhomp" value="hhomp">HHomp</option>
-                            <option  id="hhrepid" value="hhrepid">HHrepID</option>
-                            <option  id="hmmer" value="hmmer">Hmmer</option>
-                            <option  id="kalign" value="kalign">Kalign</option>
-                            <option  id="mafft" value="mafft">Mafft</option>
-                            <option  id="mmseqs2" value="mmseqs2">MMseqs2</option>
-                            <option  id="msaprobs" value="msaprobs">MSAProbs</option>
-                            <option  id="muscle" value="muscle">MUSCLE</option>
-                            <option  id="pcoils" value="pcoils">PCOILS</option>
-                            <option  id="repper" value="repper">REPPER</option>
-                            <option  id="quick2d" value="quick2d">Quick2D</option>
-                            <option  id="phyml" value="phyml">PhyML</option>
-                            <option  id="psiblast" value="psiblast">PSI-BLAST</option>
-                            <option  id="tcoffee" value="tcoffee">T-Coffee</option>
-                            <option  id="retseq" value="retseq">RetrieveSeq</option>
+                            <option id="alnvizual" value="alnviz">AlignmentViewer</option>
+                            <option id="aln2plot" value="aln2plot">Aln2Plot</option>
+                            <option id="ancescon" value="ancescon">ANCESCON</option>
+                            <option id="clans" value="clans">CLANS</option>
+                            <option id="clustalo" value="clustalo">ClustalO</option>
+                            <option id="hhblits" value="hhblits">HHblits</option>
+                            <option id="hhfilter" value="hhfilter">HHfilter</option>
+                            <option id="hhpred" value="hhpred">HHpred</option>
+                            <option id="hhomp" value="hhomp">HHomp</option>
+                            <option id="hhrepid" value="hhrepid">HHrepID</option>
+                            <option id="hmmer" value="hmmer">Hmmer</option>
+                            <option id="kalign" value="kalign">Kalign</option>
+                            <option id="mafft" value="mafft">Mafft</option>
+                            <option id="mmseqs2" value="mmseqs2">MMseqs2</option>
+                            <option id="msaprobs" value="msaprobs">MSAProbs</option>
+                            <option id="muscle" value="muscle">MUSCLE</option>
+                            <option id="pcoils" value="pcoils">PCOILS</option>
+                            <option id="repper" value="repper">REPPER</option>
+                            <option id="quick2d" value="quick2d">Quick2D</option>
+                            <option id="phyml" value="phyml">PhyML</option>
+                            <option id="psiblast" value="psiblast">PSI-BLAST</option>
+                            <option id="tcoffee" value="tcoffee">T-Coffee</option>
+                            <option id="retseq" value="retseq">RetrieveSeq</option>
                         </select>
 
                         <div class="show-for-medium large-4 columns">
                             <div class="success callout" id="callout">
-                                <p>Found format: <span id="nonalignedwarning" style="color: red; display: none;">non-aligned</span> <b id="format"></b></p>
+                                <p>Found format: <span id="nonalignedwarning" style="color: red;
+                                    display: none;">non-aligned</span> <b id="format"></b></p>
                             </div>
                         </div>
                     </div>
 
-
                     <div class="large-12 columns" style="padding-top: 9px;">
-                        <div id="outputMirror" style="width: 99%; border: 1px solid lightgray ;"></div>
+                        <div id="outputMirror" style="width: 99%;
+                            border: 1px solid lightgray ;"></div>
                     </div>
 
-
                 </div>
+
                 <p>&nbsp;</p>
-
-
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>
 
                 <div class="large reveal" id="alnvizmodal" data-reveal>
                     <h1>AlignmentViewer</h1>
-
                     <div id="menuDiv"></div>
                     <div id="yourDiv">Loading ... </div>
                     <button class="close-button" data-close aria-label="Close modal" type="button">
@@ -137,508 +120,14 @@
                     </button>
                 </div>
 
-              </div>
-
             </div>
 
-
-            <div class="tabs-panel ui-tabs-panel ui-widget-content ui-corner-bottom" id="tabpanel-Freqs" aria-labelledby="ui-id-5" role="tabpanel" style="display: none;" aria-hidden="true">
-
-                    <div id="freqcontainer" style="min-width: 610px; height: 400px; margin: 0 auto"></div>
-            </div>
-
+        </div>
 
     </div>
 </div>
 
-<textarea id="outputarea" style="height: 1px; position: relative; top: -10000px; left: -10000px;"></textarea>
-
-
-<script>
-
-        function forwardChanged() {
-            var selectBox = document.getElementById("forwardTool");
-            var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-            forwardTo(selectedValue);
-        }
-
-        $("#tool-tabs").tabs();
-        $("#callout").hide();
-
-        var inputFasta = ">gi|33300828|ref|NP_877456#7 putative ATP-dependent DNA ligase [Bacteriophage phiKMV]\nPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\nD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\n>gi|114796395|emb|CAK25951#9 putative ATP-dependent DNA ligase [Bacteriophage LKD16]\nPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\nA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\n>gi|114796457|emb|CAK24995#5 putative DNA ligase [Bacteriophage LKA1]   E=4e-40 s/c=1.7\nPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\nEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\n>gi|29366706|ref|NP_813751#8 putative DNA ligase [Pseudomonas phage gh-1]   gi|29243565\nPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\n-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\n>gi|68299729|ref|YP_249578#6 DNA ligase [Vibriophage VP4]   gi|66473268|gb|AAY46277.1|\nPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\nD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\n>gi|77118174|ref|YP_338096#3 ligase [Enterobacteria phage K1F]   gi|72527918|gb|AAZ7297\nPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\n------DYYKGWACQITYMEETPDGSLRHPSFDQWR\n>gi|17570796|ref|NP_523305#4 DNA ligase [Bacteriophage T3]   gi|118769|sp|P07717|DNLI_B\nPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\nD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\n>gi|119637753|ref|YP_91898#2 DNA ligase [Yersinia phage Berlin]   gi|119391784|emb|CAJ\nPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\nD------YYNGWACQVAYMEETSDGSLRHPSFVMFR\n";
-        // document.getElementById("alignment").value = inputFasta;
-        var inputClustal = "CLUSTAL multiple sequence alignment\n\ngi|33300828\tPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\ngi|11479639\tPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\ngi|11479645\tPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\ngi|29366706\tPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\ngi|68299729\tPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\ngi|77118174\tPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\ngi|17570796\tPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\ngi|11963775\tPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\n\ngi|33300828\tD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\ngi|11479639\tA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\ngi|11479645\tEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\ngi|29366706\t-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\ngi|68299729\tD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\ngi|77118174\t------DYYKGWACQITYMEETPDGSLRHPSFDQWR\ngi|17570796\tD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\ngi|11963775\tD------YYNGWACQVAYMEETSDGSLRHPSFVMFR";
-
-
-        var myCodeMirror = CodeMirror(document.getElementById("inputMirror"), {
-            //value: inputClustal,
-            lineNumbers: false,
-            mode:  "none",
-            theme: "reformat"
-        });
-        myCodeMirror.setSize("100%", 220);
-        $("#reformatExample").click(function() {
-
-            myCodeMirror.setValue(inputClustal);
-        });
-
-
-        var myCodeMirror2 = CodeMirror(document.getElementById("outputMirror"), {
-            value: "",
-            lineNumbers: false,
-            readOnly: true,
-            mode:  "none",
-            theme: "reformat"
-        });
-
-        myCodeMirror.setSize("100%", 220);
-        myCodeMirror2.setSize("100%", 220);
-
-        if(localStorage.getItem("resultcookie")  != null){
-        myCodeMirror.setValue(localStorage.getItem("resultcookie"));
-        localStorage.removeItem("resultcookie");
-        $.LoadingOverlay("hide");
-        }
-
-        $('#format').text(getFormat(myCodeMirror.getValue()));
-        // on and off handler like in jQuery
-        myCodeMirror.on('change',function(cMirror){
-            hideFormats(getFormat(myCodeMirror.getValue()));
-
-            // get value right from instance
-            if(validateFasta(myCodeMirror.getValue())) {
-                document.getElementById('callout').style.display = 'block';
-
-                if (validateAlignment(fasta2json(myCodeMirror.getValue()))) {
-                    $(".clustaloption").show();
-                    document.getElementById('nonalignedwarning').style.display = 'none';
-                }
-                else {
-                    $(".clustaloption").hide();
-                    document.getElementById('nonalignedwarning').style.display = 'inline';
-                }
-
-            }
-
-            if(getFormat(myCodeMirror.getValue()) != "") {
-                 document.getElementById('callout').style.display = 'block';
-                 $('#format').text(getFormat(myCodeMirror.getValue()));
-            }
-
-            if(getFormat(myCodeMirror.getValue()) == "") {
-                 document.getElementById('callout').style.display = 'none';
-            }
-
-
-        });
-
-
-        document.getElementById("outformat").onchange = function() {
-
-            var currentVal = this.value;
-             hideTools(currentVal);
-                myCodeMirror2.setValue(($('#inputMirror').val(myCodeMirror.getValue())).reformat(currentVal));
-                tempCode = myCodeMirror.getValue();
-                myCodeMirror.setValue('');
-                $(".CodeMirror-line").decodeEffect();
-                myCodeMirror.setValue(tempCode);
-
-
-            document.getElementById('outputarea').value = myCodeMirror2.getValue();
-            toolCounter(); // write usage into the database for tool stats
-        };
-
-
-        /* Highchart */
-
-        function getBins() {
-        var resultdict = $('#inputMirror').val(myCodeMirror.getValue()).reformat("alphabet");
-
-        var resultArr = resultdict.split ( "" ) ;
-        var bins = [];
-        if(resultdict.indexOf('-') > -1){
-            for ( var a = 1 ; a <= resultdict.length - 1 ; a ++ ) {
-
-            bins[ a - 1 ] = resultArr[ a ] ;
-            }
-
-        } else {
-
-            for ( var a = 0 ; a <= resultdict.length; a ++ ) {
-
-            bins[ a ] = resultArr[ a ] ;
-
-            }
-
-        }
-            return bins;
-        }
-
-        function getFreqs() {
-
-        var freqs = $('#inputMirror').val(myCodeMirror.getValue()).reformat("freq");
-        
-        var freqVals = [];
-
-            for (var index in freqs) {
-                //console.log(freqs[index]);
-                if (!isNaN(parseFloat(freqs[index])))
-                    freqVals.push(freqs[index]);
-                else
-                    freqVals.push(0);
-
-            }
-            //console.log(freqVals);
-            return freqVals;
-        }
-
-        $(function() {
-        var width= $("#tool-tabs").width() - 30;
-        var chart = new Highcharts.Chart({
-            title: {
-            text: 'Relative Frequencies of Amino Acids',
-            x: -20 //center
-            },
-            xAxis: {
-            title: {
-            text: 'Amino Acids'
-            },
-            categories: getBins()
-            },
-            yAxis: {
-            title: {
-            text: 'Relative Frequency'
-            },
-            plotLines: [{
-            value: 0,
-            width: 1,
-            color: '#808080'
-            }]
-            },
-            tooltip: {
-            },
-            legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle',
-            borderWidth: 0
-            },
-            chart: {
-            renderTo: 'freqcontainer',
-            width: width
-            },
-            series: [{
-            name: 'Relative Freq.',
-            data: getFreqs()
-            }],
-            credits: {
-            enabled: false
-            }
-        });
-
-        $('#tab-Freqs').click(function() {
-            chart.xAxis[0].setCategories(getBins());
-            chart.series[0].setData(getFreqs());
-        });
-
-        });
-
-
-
-        /* Export */
-
-        function downloadResult() {
-            if (myCodeMirror2.getValue())
-                $('a.download').attr('href', 'data:application/octet-stream;content-disposition:attachment;filename=file.txt;charset=utf-8,' + encodeURIComponent(myCodeMirror2.getValue()));
-        }
-
-        /* Paste left */
-
-        function pasteLeft() {
-
-            if (myCodeMirror2.getValue()) {
-
-                myCodeMirror.setValue(myCodeMirror2.getValue());
-                myCodeMirror2.setValue("");
-            }
-
-            else alert("no output yet");
-
-        }
-
-
-        /* Decode Effect */
-
-
-        jQuery.fn.decodeEffect = (function ($) {
-            var defaultOptions = {
-                duration:      0.001,
-                stepsPerGlyph: 1,
-                codeGlyphs:    "-ACDEFGHIKLMNPQRSTUVWY",
-                className:     "code"
-            };
-
-            // get a random string from the given set,
-            // or from the 33 - 125 ASCII range
-            function randomString(set, length) {
-                var string = "", i, glyph;
-                for(i = 0 ; i < length ; i++) {
-                    glyph = Math.random() * set.length;
-                    string += set[glyph | 0];
-                }
-                return string;
-            }
-
-            function animate(element, options) {
-                var text = element.text(),
-                        span = $("<span/>").addClass(options.className).insertAfter(element),
-                        interval = options.duration / (text.length * options.stepsPerGlyph),
-                        step = 0,
-                        length = 0,
-                        stepper = function () {
-                            if(++step % options.stepsPerGlyph === 0) {
-                                length++;
-                                element.text(text.slice(0, length));
-                            }
-                            if(length <= text.length) {
-                                span.text(randomString(options.codeGlyphs, text.length - length));
-                                setTimeout(stepper, interval);
-                            } else {
-                                span.remove();
-                            }
-                        };
-                element.text("");
-                stepper();
-            }
-
-            // Basic jQuery plugin pattern
-            return function (options) {
-                options = $.extend({}, defaultOptions, (options || {}));
-                //return this.each(function () {
-                   // animate($(this), options);
-                //});
-            };
-        }(jQuery));
-
-
-        /* MSA */
-
-        function initMSA(){
-
-            // this is a way how you use a bundled file parser
-            msa = require("msa");
-
-            var opts = {colorscheme: {"scheme": "clustal"}};
-
-            opts.el = document.getElementById("yourDiv");
-            opts.vis = {
-                conserv: false,
-                overviewbox: true,
-                seqlogo: true,
-
-                labels: true,
-                labelName: true,
-                labelId: false,
-                labelPartition: false,
-                labelCheckbox: false
-            };
-            opts.conf = {
-                dropImport: true
-            };
-            opts.zoomer = {
-                // Alignment viewer is not scrolling with 'alignmentWidth: "auto"', use fixed numbers instead or
-                // use script for handling
-                alignmentHeight: 525, alignmentWidth: 900, labelNameLength: 165, labelWidth: 85,labelFontsize: 10, labelIdLength: 75,menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 10px 0px 0px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true
-            };
-
-                opts.seqs = (clustalParser($('#inputMirror').val(myCodeMirror.getValue()).reformat("clustal")));
-
-            // init msa
-
-            var ms = new msa.msa(opts);
-            var menuOpts = {};
-            menuOpts.el = document.getElementById('div');
-            menuOpts.msa = ms;
-            var defMenu = new msa.menu.defaultmenu(menuOpts);
-            //ms.addView("menu", defMenu);
-
-            // call render at the end to display the whole MSA
-            ms.render();
-
-        }
-
-
-
-        // hides tools for forwarding that are not able to process the current format
-        function hideTools(currentVal) {
-                var ddl = $('#forwardTool');
-                for (var m = 0; m < ddl.length; m++) {
-                    for (var i = 0; i < ddl[m].length; i++) {
-                         ddl[m].options[i].disabled = false;
-                    }
-                }
-
-            if (currentVal === 'Fasta' || currentVal === 'Clustal') {
-                $('#forwardTool').prop('disabled', false);
-                $('#alnvizual').show();
-                $('#aln2plot').show();
-                $('#ancescon').show();
-                $('#clans').show();
-                $('#clustalo').show();
-                $('#hhblits').show();
-                $('#hhfilter').show();
-                $('#hhpred').show();
-                $('#hhomp').show();
-                $('#hhrepid').show();
-                $('#hmmer').show();
-                $('#kalign').show();
-                $('#mafft').show();
-                $('#mmseqs2').show();
-                $('#msaprobs').show();
-                $('#muscle').show();
-                $('#pcoils').show();
-                $('#repper').show();
-                $('#quick2d').show();
-                $('#phyml').show();
-                $('#psiblast').show();
-                $('#tcoffee').show();
-                $('#retseq').hide();
-
-            } else if (currentVal === 'GetAccessions') {
-                $('#forwardTool').prop('disabled', false);
-                $('#alnvizual').hide();
-                $('#aln2plot').hide();
-                $('#ancescon').hide();
-                $('#clans').hide();
-                $('#clustalo').hide();
-                $('#hhblits').hide();
-                $('#hhfilter').hide();
-                $('#hhpred').hide();
-                $('#hhomp').hide();
-                $('#hhrepid').hide();
-                $('#hmmer').hide();
-                $('#kalign').hide();
-                $('#mafft').hide();
-                $('#mmseqs2').hide();
-                $('#msaprobs').hide();
-                $('#muscle').hide();
-                $('#pcoils').hide();
-                $('#repper').hide();
-                $('#quick2d').hide();
-                $('#phyml').hide();
-                $('#psiblast').hide();
-                $('#tcoffee').hide();
-                $('#retseq').show();
-
-            } else {
-                $('#forwardTool').prop('disabled', true);
-            }
-
-
-
-        }
-
-        function hideFormats(currentVal) {
-
-                var ddl = $('#outformat');
-                for (var m = 0; m < ddl.length; m++) {
-                    for (var i = 0; i < ddl[m].length; i++) {
-                         ddl[m].options[i].disabled = false;
-                    }
-                }
-                 switch(currentVal) {
-            case "Fasta":
-                $('#Fasta').prop('disabled', true);
-                break;
-            case "Phylip":
-                $('#Phylip').prop('disabled', true);
-                break;
-            case "Clustal":
-                $('#Clustal').prop('disabled', true);
-                break;
-            case "Nexus":
-                $('#NEXUS').prop('disabled', true);
-                break;
-            case "EMBL":
-                $('#EMBL').prop('disabled', true);
-                break;
-            case "PIR":
-                $('#PIR').prop('disabled', true);
-                break;
-            case "Stockholm":
-                $('#Stockholm').prop('disabled', true);
-                break;
-            default:
-                $('#Fasta').prop('disabled', true);
-                $('#Phylip').prop('disabled', true);
-                $('#Clustal').prop('disabled', true);
-                $('#NEXUS').prop('disabled', true);
-                $('#EMBL').prop('disabled', true);
-                $('#PIR').prop('disabled', true);
-                $('#Stockholm').prop('disabled', true);
-                break;
-        }
-
-            }
-
-
-        /* Forwarding */
-
-        function forwardTo(tool) {
-            if(myCodeMirror2.lineCount()>1) {
-               var seqs = myCodeMirror2.getValue ( ) ;
-               localStorage.setItem ( "resultcookie", seqs ) ;
-               window.location.href = "/#/tools/" + tool ;
-               } else alert("No output to forward to.");
-            }
-
-
-        /* Tool statistics */
-
-        function toolCounter() {
-
-            m.request({
-                method: "POST",
-                url: "/api/frontendSubmit/Reformat"
-            })
-
-        }
-
-        /* Fullscreen toggle */
-
-        var $expand = $("#expandTabReformat");
-        $expand.val("Expand");
-        var $tab = $("#tool-tabs");
-
-        function fullscreenReformat(){
-
-            if ($expand.val() != "Expand"){
-                $tab.removeClass("fullscreen");
-                $expand.val("Expand");
-                if (typeof onCollapse === "function") {
-                    onCollapse();
-                }
-            } else {
-
-                $tab.addClass("fullscreen");
-                $expand.val("Collapse");
-                if (typeof onExpand === "function") {
-                    onExpand();
-                }
-
-            }
-
-            if (typeof onFullscreenToggle === "function") {
-                return onFullscreenToggle();
-            }
-
-        }
-
-
-       $(document).keydown(function(e) {
-           if (e.keyCode === 27 && $tab.hasClass("fullscreen")) {
-                $expand.click();
-             }
-       });
-
-    </script>
+<textarea id="outputarea" style="height: 1px;
+    position: relative;
+    top: -10000px;
+    left: -10000px;"></textarea>
