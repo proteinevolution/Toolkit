@@ -165,7 +165,7 @@ FIELDSET {
     height: 100%;
     width: 22%;
     top: 0;
-    right: 0;
+    right: 10px;
     padding:40px 32px 35px;
     opacity: 0.55;
 }

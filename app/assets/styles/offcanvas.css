@@ -1,5 +1,5 @@
 .off-canvas {
-    z-index: 1002 !important;
+    z-index: 99;
 }
 
 .off-canvas-wrapper {
