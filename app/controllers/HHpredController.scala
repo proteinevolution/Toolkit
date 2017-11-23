@@ -60,7 +60,6 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
     implicit request =>
       if (!templateAlignmentScript.isExecutable) {
         Future.successful(BadRequest)
-        throw FileException(s"File ${templateAlignmentScript.name} is not executable.")
       } else {
         Future.successful {
           Process(templateAlignmentScript.pathAsString,
@@ -96,7 +95,6 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
     val eval     = (json \ "evalue").as[String]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
     } else {
       resultFiles.getResults(jobID).map {
         case None => BadRequest
@@ -137,7 +135,6 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
     val numList  = (json \ "checkboxes").as[List[Int]]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
     } else {
       val numListStr = numList.mkString(" ")
       Process(generateAlignmentScript.pathAsString,

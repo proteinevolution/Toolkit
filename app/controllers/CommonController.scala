@@ -12,5 +12,3 @@ private[controllers] trait CommonController extends AbstractController with Cont
   )
 
 }
-// Exceptions
-case class FileException(message: String) extends Exception(message)

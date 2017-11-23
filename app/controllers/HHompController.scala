@@ -50,7 +50,6 @@ class HHompController @Inject()(resultFiles: ResultFileAccessor,
     }
     if (!templateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${templateAlignmentScript.name} is not executable.")
     } else {
       Future.successful {
         Process(templateAlignmentScript.pathAsString,
