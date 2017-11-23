@@ -10,14 +10,15 @@ import play.api.libs.json.JsArray
 import play.api.mvc._
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
+
 
 class AlignmentController @Inject()(resultFiles: ResultFileAccessor,
                                     aln: Alignment,
                                     general: General,
                                     val reactiveMongoApi: ReactiveMongoApi,
                                     constants: Constants,
-                                    cc: ControllerComponents)
+                                    cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with CommonController
     with ReactiveMongoComponents {
