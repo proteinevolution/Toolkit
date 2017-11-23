@@ -11,6 +11,9 @@ import de.proteinevolution.tel.TEL
 @Singleton
 class ParamAccess @Inject()(tel: TEL) {
 
+
+  // TODO param intersection logic
+
   def select(name: String, label: String) = Param(name, Select(tel.generateValues(name).toSeq), 1, label)
   final val alignmentFormats = Seq(
     "fas" -> "fas",
@@ -121,4 +124,30 @@ class ParamAccess @Inject()(tel: TEL) {
     case "OUT_FORMAT"       => select("out_format", "Output format")
     case "CLUSTERING_MODE"  => select("clustering_mode", "Clustering mode")
   }
+
+  val paramGroups = Map(
+    "Input" -> Seq(
+      getParam("ALIGNMENT").name,
+      getParam("STANDARD_DB").name,
+      getParam("HHSUITEDB").name,
+      getParam("PROTBLASTPROGRAM").name,
+      getParam("HHBLITSDB").name,
+      getParam("HHOMPDB").name,
+      getParam("PROTEOMES").name,
+      getParam("HMMER_DB").name,
+      getParam("PATSEARCH_DB").name,
+      getParam("REGKEY").name,
+      getParam("GRAMMAR").name,
+      getParam("SAMCC_HELIXONE").name,
+      getParam("SAMCC_HELIXTWO").name,
+      getParam("SAMCC_HELIXTHREE").name,
+      getParam("SAMCC_HELIXFOUR").name,
+      getParam("TARGET_PSI_DB").name,
+      getParam("QUICK_ITERS").name,
+      getParam("PCOILS_INPUT_MODE").name,
+      getParam("REPPER_INPUT_MODE").name,
+      getParam("IN_FORMAT").name,
+      getParam("OUT_FORMAT").name
+    )
+  )
 }

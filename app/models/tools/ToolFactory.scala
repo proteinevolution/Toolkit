@@ -3,7 +3,7 @@ package models.tools
 import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.{ ConfigFactory, ConfigObject }
-import de.proteinevolution.models.Constants
+import de.proteinevolution.models.{ Constants, Tool }
 import de.proteinevolution.models.database.results._
 import de.proteinevolution.db.{ MongoStore, ResultFileAccessor }
 import de.proteinevolution.models.forms.ToolForm
@@ -33,16 +33,15 @@ final class ToolFactory @Inject()(
   implicit val ec: ExecutionContext) {
 
   // reads the tool specifications from tools.conf and generates tool objects accordingly
-  val values: Map[String, Tool] = {
+  lazy val values: Map[String, Tool] = {
     ConfigFactory.load.getConfig("Tools").root.map {
       case (name: String, configObject: ConfigObject) =>
         val config = configObject.toConfig
-        config.getString("name") -> tool(
+        config.getString("name") -> toTool(
           config.getString("name"),
           config.getString("longname"),
           config.getString("code"),
           config.getString("section").toLowerCase,
-          "TODO",
           config.getStringList("parameter").map { param =>
             paramAccess.getParam(param, config.getString("input_placeholder"))
           },
@@ -52,13 +51,13 @@ final class ToolFactory @Inject()(
     }
   }.toMap
 
-  
   def isTool(toolName: String): Boolean = {
     toolName.toUpperCase == "REFORMAT" || toolName.toUpperCase == "ALNVIZ" || values.exists(_._2.isToolName(toolName))
   }
 
   // Maps toolname and resultpanel name to the function which transfers jobID and jobPath to an appropriate view
-  val resultMap: Map[String, ListMap[String, (String, play.api.mvc.RequestHeader) => Future[HtmlFormat.Appendable]]] =
+  lazy val resultMap
+    : Map[String, ListMap[String, (String, play.api.mvc.RequestHeader) => Future[HtmlFormat.Appendable]]] =
     Map(
       Toolnames.PSIBLAST -> ListMap(
         Resultviews.RESULTS -> { (jobID, requestHeader) =>
@@ -775,72 +774,41 @@ final class ToolFactory @Inject()(
     )
 
   // Encompasses the names of the resultviews for each tool
-  val resultPanels: Map[String, Seq[String]] = this.resultMap.map { trp =>
+  val resultPanels: Map[String, Seq[String]] = resultMap.map { trp =>
     trp._1 -> trp._2.keys.toSeq
   }
 
   // Generates a new Tool object from the Tool specification
-  def tool(toolNameShort: String,
-           toolNameLong: String,
-           toolNameAbbrev: String,
-           category: String,
-           optional: String,
-           params: Seq[Param],
-           forwardAlignment: Seq[String],
-           forwardMultiSeq: Seq[String]): Tool = {
-
-    lazy val paramGroups = Map(
-      "Input" -> Seq(
-        paramAccess.getParam("ALIGNMENT").name,
-        paramAccess.getParam("STANDARD_DB").name,
-        paramAccess.getParam("HHSUITEDB").name,
-        paramAccess.getParam("PROTBLASTPROGRAM").name,
-        paramAccess.getParam("HHBLITSDB").name,
-        paramAccess.getParam("HHOMPDB").name,
-        paramAccess.getParam("PROTEOMES").name,
-        paramAccess.getParam("HMMER_DB").name,
-        paramAccess.getParam("PATSEARCH_DB").name,
-        paramAccess.getParam("REGKEY").name,
-        paramAccess.getParam("GRAMMAR").name,
-        paramAccess.getParam("SAMCC_HELIXONE").name,
-        paramAccess.getParam("SAMCC_HELIXTWO").name,
-        paramAccess.getParam("SAMCC_HELIXTHREE").name,
-        paramAccess.getParam("SAMCC_HELIXFOUR").name,
-        paramAccess.getParam("TARGET_PSI_DB").name,
-        paramAccess.getParam("QUICK_ITERS").name,
-        paramAccess.getParam("PCOILS_INPUT_MODE").name,
-        paramAccess.getParam("REPPER_INPUT_MODE").name,
-        paramAccess.getParam("IN_FORMAT").name,
-        paramAccess.getParam("OUT_FORMAT").name
-      )
-    )
-    // Params which are not a part of any group (given by the name)
-    lazy val remainParamName: String = "Parameters"
-    val remainParams: Seq[String]    = params.map(_.name).diff(paramGroups.values.flatten.toSeq)
-    val paramMap                     = params.map(p => p.name -> p).toMap
-
+  private def toTool(toolNameShort: String,
+                     toolNameLong: String,
+                     toolNameAbbrev: String,
+                     category: String,
+                     params: Seq[Param],
+                     forwardAlignment: Seq[String],
+                     forwardMultiSeq: Seq[String]): Tool = {
+    val paramMap = params.map(p => p.name -> p).toMap
     val toolitem = ToolForm(
       toolNameShort,
       toolNameLong,
       toolNameAbbrev,
-      optional,
       category,
       // Constructs the Parameter specification such that the View can render the input fields
-      paramGroups.keysIterator.map { group =>
-        group -> paramGroups(group).filter(params.map(_.name).contains(_)).map(paramMap(_))
+      paramAccess.paramGroups.keysIterator.map { group =>
+        group -> paramAccess.paramGroups(group).filter(params.map(_.name).contains(_)).map(paramMap(_))
       }.toSeq :+
-      remainParamName -> remainParams.map(paramMap(_))
+      "Parameters" -> params.map(_.name).diff(paramAccess.paramGroups.values.flatten.toSeq).map(paramMap(_))
     )
-    Tool(toolNameShort,
-         toolNameLong,
-         toolNameAbbrev,
-         category,
-         optional,
-         paramMap,
-         toolitem,
-         paramGroups,
-         forwardAlignment,
-         forwardMultiSeq)
+    Tool(
+      toolNameShort,
+      toolNameLong,
+      toolNameAbbrev,
+      category,
+      paramMap,
+      toolitem,
+      paramAccess.paramGroups,
+      forwardAlignment,
+      forwardMultiSeq
+    )
   }
 
 }
@@ -899,28 +867,6 @@ object ToolFactory {
     final val TREE            = "Tree"
     final val SUMMARY         = "Summary"
     final val DATA            = "Data"
-  }
-
-  // Specification of the internal representation of a Tool
-  case class Tool(toolNameShort: String,
-                  toolNameLong: String,
-                  toolNameAbbrev: String,
-                  category: String,
-                  optional: String,
-                  params: Map[String, Param], // Maps a parameter name to the respective Param instance
-                  toolitem: ToolForm,
-                  paramGroups: Map[String, Seq[String]],
-                  forwardAlignment: Seq[String],
-                  forwardMultiSeq: Seq[String]) {
-    def isToolName(toolName: String, caseSensitive: Boolean = false): Boolean = {
-      if (caseSensitive) {
-        toolNameAbbrev.contains(toolName) || toolNameShort.contains(toolName) || toolNameLong.contains(toolName)
-      } else {
-        toolNameAbbrev.toLowerCase.contains(toolName.toLowerCase) ||
-        toolNameShort.toLowerCase.contains(toolName.toLowerCase) ||
-        toolNameLong.toLowerCase.contains(toolName.toLowerCase)
-      }
-    }
   }
 
 }
