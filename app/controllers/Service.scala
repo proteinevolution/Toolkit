@@ -12,13 +12,13 @@ import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.mvc._
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import better.files._
-import models.tools.{ Param, ToolFactory, Toolitem }
+import models.tools.{ Param, ToolFactory }
 import de.proteinevolution.db.MongoStore
 import java.time.format.DateTimeFormatter
 
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.Constants
-import models.tools.JobItem.Jobitem
+import models.tools.ToolFactory.{ Jobitem, Toolitem }
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.twirl.api.Html
@@ -60,19 +60,6 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
 
     }
   }
-  /*
-  // Allows serialization of tuples
-  implicit def tuple2Reads[B, T1, T2](c : (T1, T2) => B)(implicit aReads: Reads[T1], bReads: Reads[T2]): Reads[B] = Reads[B] {
-    case JsArray(arr) if arr.size == 2 => for {
-      a <- aReads.reads(arr(0))
-      b <- bReads.reads(arr(1))
-    } yield c(a, b)
-    case _ => JsError(Seq(JsPath() -> Seq(ValidationError("Expected array of two elements"))))
-  }
-
-  implicit def tuple2Writes[T1, T2](implicit aWrites: Writes[T1], bWrites: Writes[T2]): Writes[Tuple2[T1, T2]] = new Writes[Tuple2[T1, T2]] {
-    def writes(tuple: Tuple2[T1, T2]) = JsArray(Seq(aWrites.writes(tuple._1), bWrites.writes(tuple._2)))
-  } */
 
   implicit def htmlWrites: Writes[Html] = new Writes[Html] {
 
