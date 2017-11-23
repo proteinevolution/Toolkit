@@ -7,43 +7,13 @@ import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.jobs.JobState
 import de.proteinevolution.models.database.results._
 import de.proteinevolution.db.{ MongoStore, ResultFileAccessor }
+import models.tools.ToolFactory._
 import play.api.libs.json.JsArray
 import play.twirl.api.HtmlFormat
 
 import scala.collection.JavaConversions._
 import scala.collection.immutable.ListMap
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ Future, _ }
-
-// Returned to the View if a tool is requested with the getTool route
-case class Toolitem(toolname: String,
-                    toolnameLong: String,
-                    toolnameAbbrev: String,
-                    category: String,
-                    optional: String,
-                    params: Seq[(String, Seq[Param])])
-
-// Specification of the internal representation of a Tool
-case class Tool(toolNameShort: String,
-                toolNameLong: String,
-                toolNameAbbrev: String,
-                category: String,
-                optional: String,
-                params: Map[String, Param], // Maps a parameter name to the respective Param instance
-                toolitem: Toolitem,
-                paramGroups: Map[String, Seq[String]],
-                forwardAlignment: Seq[String],
-                forwardMultiSeq: Seq[String]) {
-  def isToolName(toolName: String, caseSensitive: Boolean = false): Boolean = {
-    if (caseSensitive) {
-      toolNameAbbrev.contains(toolName) || toolNameShort.contains(toolName) || toolNameLong.contains(toolName)
-    } else {
-      toolNameAbbrev.toLowerCase.contains(toolName.toLowerCase) ||
-      toolNameShort.toLowerCase.contains(toolName.toLowerCase) ||
-      toolNameLong.toLowerCase.contains(toolName.toLowerCase)
-    }
-  }
-}
 
 // Class which provides access to all Tools
 @Singleton
@@ -56,61 +26,10 @@ final class ToolFactory @Inject()(
     quick2d: Quick2D,
     aln: de.proteinevolution.models.database.results.Alignment,
     constants: Constants
-)(paramAccess: ParamAccess, mongoStore: MongoStore, resultFiles: ResultFileAccessor) {
-
-  // Encompasses all the toolnames
-  object Toolnames {
-
-    final val ALNVIZ              = "alnviz"
-    final val REFORMAT            = "reformat"
-    final val PSIBLAST            = "psiblast"
-    final val CLANS               = "clans"
-    final val TPRPRED             = "tprpred"
-    final val HHBLITS             = "hhblits"
-    final val MARCOIL             = "marcoil"
-    final val PCOILS              = "pcoils"
-    final val REPPER              = "repper"
-    final val MODELLER            = "modeller"
-    final val HMMER               = "hmmer"
-    final val HHPRED              = "hhpred"
-    final val HHPRED_ALIGN        = "hhpred_align"
-    final val HHPRED_MANUAL       = "hhpred_manual"
-    final val HHREPID             = "hhrepid"
-    final val ALI2D               = "ali2d"
-    final val QUICK2D             = "quick2d"
-    final val CLUSTALO            = "clustalo"
-    final val KALIGN              = "kalign"
-    final val MAFFT               = "mafft"
-    final val MSAPROBS            = "msaprobs"
-    final val MUSCLE              = "muscle"
-    final val TCOFFEE             = "tcoffee"
-    final val ALN2PLOT            = "aln2plot"
-    final val ANCESCON            = "ancescon"
-    final val PHYML               = "phyml"
-    final val MMSEQS2             = "mmseqs2"
-    final val RETSEQ              = "retseq"
-    final val SEQ2ID              = "seq2id"
-    final val SAMCC               = "samcc"
-    final val SIXFRAMETRANSLATION = "sixframe"
-    final val BACKTRANS           = "backtrans"
-    final val HHFILTER            = "hhfilter"
-    final val PATSEARCH           = "patsearch"
-    final val HHOMP               = "hhomp"
-    final val FORMATSEQ           = "formatseq"
-  }
-
-  // Encompasses some shared views of the result pages
-  object Resultviews {
-
-    final val HITLIST         = "Hitlist"
-    final val RESULTS         = "Results"
-    final val ALIGNMENT       = "FASTA Alignment"
-    final val CLUSTAL         = "CLUSTAL Alignment"
-    final val ALIGNMENTVIEWER = "AlignmentViewer"
-    final val TREE            = "Tree"
-    final val SUMMARY         = "Summary"
-    final val DATA            = "Data"
-  }
+)(paramAccess: ParamAccess,
+  mongoStore: MongoStore,
+  resultFiles: ResultFileAccessor,
+  implicit val ec: ExecutionContext) {
 
   // reads the tool specifications from tools.conf and generates tool objects accordingly
   val values: Map[String, Tool] = {
@@ -130,9 +49,7 @@ final class ToolFactory @Inject()(
           config.getStringList("forwarding.alignment"),
           config.getStringList("forwarding.multi_seq")
         )
-
     }
-
   }.toMap
 
   /**
@@ -154,7 +71,7 @@ final class ToolFactory @Inject()(
               implicit val r = requestHeader
               views.html.jobs.resultpanels.psiblast.hitlist(jobID,
                                                             psi.parseResult(jsvalue),
-                                                            this.values("psiblast"),
+                                                            values("psiblast"),
                                                             s"${constants.jobPath}$jobID/results/blastviz.html")
           }
         },
@@ -186,7 +103,7 @@ final class ToolFactory @Inject()(
               s"${constants.jobPath}$jobID/results/" + jobID + ".out",
               jobID,
               "FormatSeq",
-              this.values(Toolnames.FORMATSEQ)
+              values(Toolnames.FORMATSEQ)
             )
           )
         }
@@ -216,7 +133,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.hhblits
                 .hitlist(jobID,
                          hhblits.parseResult(jsvalue),
-                         this.values(Toolnames.HHBLITS),
+                         values(Toolnames.HHBLITS),
                          s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
           }
         },
@@ -245,7 +162,7 @@ final class ToolFactory @Inject()(
                 jobID,
                 aln.parseAlignment((jsvalue \ "querytemplate").as[JsArray]),
                 "querytemplate",
-                this.values(Toolnames.HHBLITS)
+                values(Toolnames.HHBLITS)
               )
           }
         },
@@ -256,7 +173,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
                                                              aln.parseAlignment((jsvalue \ "reduced").as[JsArray]),
                                                              "reduced",
-                                                             this.values(Toolnames.HHBLITS))
+                                                             values(Toolnames.HHBLITS))
           }
         }
       ),
@@ -352,7 +269,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.hmmer
                 .hitlist(jobID,
                          hmmer.parseResult(jsvalue),
-                         this.values(Toolnames.HMMER),
+                         values(Toolnames.HMMER),
                          s"${constants.jobPath}/$jobID/results/blastviz.html")
           }
         },
@@ -372,7 +289,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.hhpred
                 .hitlist(jobID,
                          hhpred.parseResult(jsvalue),
-                         this.values(Toolnames.HHPRED),
+                         values(Toolnames.HHPRED),
                          s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
           }
         },
@@ -400,7 +317,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.alignment(jobID,
                                                      aln.parseAlignment((jsvalue \ "querytemplate").as[JsArray]),
                                                      "querytemplate",
-                                                     this.values(Toolnames.HHPRED))
+                                                     values(Toolnames.HHPRED))
           }
         },
         "Query MSA" -> { (jobID, requestHeader) =>
@@ -410,7 +327,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
                                                              aln.parseAlignment((jsvalue \ "reduced").as[JsArray]),
                                                              "reduced",
-                                                             this.values(Toolnames.HHPRED))
+                                                             values(Toolnames.HHPRED))
           }
         }
       ),
@@ -422,7 +339,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.hhomp
                 .hitlist(jobID,
                          hhomp.parseResult(jsvalue),
-                         this.values(Toolnames.HHOMP),
+                         values(Toolnames.HHOMP),
                          s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
           }
         },
@@ -445,7 +362,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.hhpred
                 .hitlist(jobID,
                          hhpred.parseResult(jsvalue),
-                         this.values(Toolnames.HHPRED_ALIGN),
+                         values(Toolnames.HHPRED_ALIGN),
                          s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
           }
         },
@@ -477,7 +394,7 @@ final class ToolFactory @Inject()(
             views.html.jobs.resultpanels.hhrepid(jobID,
                                                  s"${constants.jobPath}$jobID/results/query.hhrepid",
                                                  "querymsa",
-                                                 this.values(Toolnames.HHBLITS))
+                                                 values(Toolnames.HHBLITS))
           )
         }
       ),
@@ -521,7 +438,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.clustal(jobID,
                                                    aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
                                                    "alignment",
-                                                   this.values(Toolnames.CLUSTALO))
+                                                   values(Toolnames.CLUSTALO))
           }
         },
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
@@ -531,7 +448,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.alignment(jobID,
                                                      aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
                                                      "alignment",
-                                                     this.values(Toolnames.CLUSTALO))
+                                                     values(Toolnames.CLUSTALO))
           }
         },
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
@@ -549,7 +466,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.clustal(jobID,
                                                    aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
                                                    "alignment",
-                                                   this.values(Toolnames.KALIGN))
+                                                   values(Toolnames.KALIGN))
           }
         },
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
@@ -559,7 +476,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.alignment(jobID,
                                                      aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
                                                      "alignment",
-                                                     this.values(Toolnames.KALIGN))
+                                                     values(Toolnames.KALIGN))
           }
         },
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
@@ -577,7 +494,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.clustal(jobID,
                                                    aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
                                                    "alignment",
-                                                   this.values(Toolnames.MAFFT))
+                                                   values(Toolnames.MAFFT))
           }
         },
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
@@ -587,7 +504,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.alignment(jobID,
                                                      aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
                                                      "alignment",
-                                                     this.values(Toolnames.MAFFT))
+                                                     values(Toolnames.MAFFT))
           }
         },
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
@@ -605,7 +522,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.clustal(jobID,
                                                    aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
                                                    "alignment",
-                                                   this.values(Toolnames.MSAPROBS))
+                                                   values(Toolnames.MSAPROBS))
           }
         },
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
@@ -615,7 +532,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.alignment(jobID,
                                                      aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
                                                      "alignment",
-                                                     this.values(Toolnames.MSAPROBS))
+                                                     values(Toolnames.MSAPROBS))
           }
         },
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
@@ -633,7 +550,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.clustal(jobID,
                                                    aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
                                                    "alignment",
-                                                   this.values(Toolnames.MUSCLE))
+                                                   values(Toolnames.MUSCLE))
           }
         },
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
@@ -643,7 +560,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.alignment(jobID,
                                                      aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
                                                      "alignment",
-                                                     this.values(Toolnames.MUSCLE))
+                                                     values(Toolnames.MUSCLE))
           }
         },
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
@@ -661,7 +578,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.clustal(jobID,
                                                    aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
                                                    "alignment",
-                                                   this.values(Toolnames.TCOFFEE))
+                                                   values(Toolnames.TCOFFEE))
           }
         },
         Resultviews.ALIGNMENT -> { (jobID, requestHeader) =>
@@ -671,7 +588,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.alignment(jobID,
                                                      aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
                                                      "alignment",
-                                                     this.values(Toolnames.TCOFFEE))
+                                                     values(Toolnames.TCOFFEE))
           }
         },
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
@@ -737,7 +654,7 @@ final class ToolFactory @Inject()(
                                            s"${constants.jobPath}$jobID/results/" + jobID + ".fas",
                                            jobID,
                                            "mmseqs_reps",
-                                           this.values(Toolnames.MMSEQS2))
+                                           values(Toolnames.MMSEQS2))
           )
         },
         "Clusters" -> { (jobID, requestHeader) =>
@@ -766,7 +683,7 @@ final class ToolFactory @Inject()(
               s"${constants.jobPath}$jobID/results/sequences.fa",
               jobID,
               "retseq",
-              this.values(Toolnames.RETSEQ)
+              values(Toolnames.RETSEQ)
             )
           )
         }
@@ -776,7 +693,7 @@ final class ToolFactory @Inject()(
           implicit val r = requestHeader
           resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
-              views.html.jobs.resultpanels.unchecked_list("Seq2ID", jobID, jsvalue, this.values(Toolnames.SEQ2ID))
+              views.html.jobs.resultpanels.unchecked_list("Seq2ID", jobID, jsvalue, values(Toolnames.SEQ2ID))
           }
         }
       ),
@@ -839,7 +756,7 @@ final class ToolFactory @Inject()(
               views.html.jobs.resultpanels.alignment(jobID,
                                                      aln.parseAlignment((jsvalue \ "alignment").as[JsArray]),
                                                      "alignment",
-                                                     this.values(Toolnames.HHFILTER))
+                                                     values(Toolnames.HHFILTER))
           }
         },
         Resultviews.ALIGNMENTVIEWER -> { (jobID, requestHeader) =>
@@ -855,7 +772,7 @@ final class ToolFactory @Inject()(
           resultFiles.getResults(jobID).map {
             case Some(jsvalue) =>
               views.html.jobs.resultpanels
-                .patternSearch("PatternSearch", jobID, jsvalue, this.values(Toolnames.PATSEARCH))
+                .patternSearch("PatternSearch", jobID, jsvalue, values(Toolnames.PATSEARCH))
           }
         }
       )
@@ -932,12 +849,97 @@ final class ToolFactory @Inject()(
 
 }
 
-object JobItem {
+object ToolFactory {
+
+  // Encompasses all the toolnames
+  object Toolnames {
+
+    final val ALNVIZ              = "alnviz"
+    final val REFORMAT            = "reformat"
+    final val PSIBLAST            = "psiblast"
+    final val CLANS               = "clans"
+    final val TPRPRED             = "tprpred"
+    final val HHBLITS             = "hhblits"
+    final val MARCOIL             = "marcoil"
+    final val PCOILS              = "pcoils"
+    final val REPPER              = "repper"
+    final val MODELLER            = "modeller"
+    final val HMMER               = "hmmer"
+    final val HHPRED              = "hhpred"
+    final val HHPRED_ALIGN        = "hhpred_align"
+    final val HHPRED_MANUAL       = "hhpred_manual"
+    final val HHREPID             = "hhrepid"
+    final val ALI2D               = "ali2d"
+    final val QUICK2D             = "quick2d"
+    final val CLUSTALO            = "clustalo"
+    final val KALIGN              = "kalign"
+    final val MAFFT               = "mafft"
+    final val MSAPROBS            = "msaprobs"
+    final val MUSCLE              = "muscle"
+    final val TCOFFEE             = "tcoffee"
+    final val ALN2PLOT            = "aln2plot"
+    final val ANCESCON            = "ancescon"
+    final val PHYML               = "phyml"
+    final val MMSEQS2             = "mmseqs2"
+    final val RETSEQ              = "retseq"
+    final val SEQ2ID              = "seq2id"
+    final val SAMCC               = "samcc"
+    final val SIXFRAMETRANSLATION = "sixframe"
+    final val BACKTRANS           = "backtrans"
+    final val HHFILTER            = "hhfilter"
+    final val PATSEARCH           = "patsearch"
+    final val HHOMP               = "hhomp"
+    final val FORMATSEQ           = "formatseq"
+  }
+
+  // Encompasses some shared views of the result pages
+  object Resultviews {
+
+    final val HITLIST         = "Hitlist"
+    final val RESULTS         = "Results"
+    final val ALIGNMENT       = "FASTA Alignment"
+    final val CLUSTAL         = "CLUSTAL Alignment"
+    final val ALIGNMENTVIEWER = "AlignmentViewer"
+    final val TREE            = "Tree"
+    final val SUMMARY         = "Summary"
+    final val DATA            = "Data"
+  }
+
+  // Returned to the View if a tool is requested with the getTool route
+  case class Toolitem(toolname: String,
+                      toolnameLong: String,
+                      toolnameAbbrev: String,
+                      category: String,
+                      optional: String,
+                      params: Seq[(String, Seq[Param])])
+
+  // Specification of the internal representation of a Tool
+  case class Tool(toolNameShort: String,
+                  toolNameLong: String,
+                  toolNameAbbrev: String,
+                  category: String,
+                  optional: String,
+                  params: Map[String, Param], // Maps a parameter name to the respective Param instance
+                  toolitem: Toolitem,
+                  paramGroups: Map[String, Seq[String]],
+                  forwardAlignment: Seq[String],
+                  forwardMultiSeq: Seq[String]) {
+    def isToolName(toolName: String, caseSensitive: Boolean = false): Boolean = {
+      if (caseSensitive) {
+        toolNameAbbrev.contains(toolName) || toolNameShort.contains(toolName) || toolNameLong.contains(toolName)
+      } else {
+        toolNameAbbrev.toLowerCase.contains(toolName.toLowerCase) ||
+        toolNameShort.toLowerCase.contains(toolName.toLowerCase) ||
+        toolNameLong.toLowerCase.contains(toolName.toLowerCase)
+      }
+    }
+  }
+
   // Server returns such an object when asked for a job
   case class Jobitem(jobID: String,
-      state: JobState,
-      dateCreated: String,
-      toolitem: Toolitem,
-      views: Seq[String],
-      paramValues: Map[String, String])
+                     state: JobState,
+                     dateCreated: String,
+                     toolitem: Toolitem,
+                     views: Seq[String],
+                     paramValues: Map[String, String])
 }
