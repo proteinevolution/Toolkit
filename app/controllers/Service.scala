@@ -12,13 +12,14 @@ import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.mvc._
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import better.files._
-import models.tools.{ Param, ToolFactory }
+import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
 import java.time.format.DateTimeFormatter
 
 import de.proteinevolution.common.LocationProvider
+import de.proteinevolution.models.forms.{ JobForm, ToolForm }
+import de.proteinevolution.models.param.Param
 import de.proteinevolution.models.Constants
-import models.tools.ToolFactory.{ Jobitem, Toolitem }
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.twirl.api.Html
@@ -65,23 +66,23 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
     def writes(html: Html) = JsString(html.body)
   }
 
-  implicit val toolitemWrites: Writes[Toolitem] = (
+  implicit val toolitemWrites: Writes[ToolForm] = (
     (JsPath \ "toolname").write[String] and
     (JsPath \ "toolnameLong").write[String] and
     (JsPath \ "toolnameAbbrev").write[String] and
     (JsPath \ "category").write[String] and
     (JsPath \ "optional").write[String] and
     (JsPath \ "params").write[Seq[(String, Seq[Param])]]
-  )(unlift(Toolitem.unapply))
+  )(unlift(ToolForm.unapply))
 
-  implicit val jobitemWrites: Writes[Jobitem] = (
+  implicit val jobitemWrites: Writes[JobForm] = (
     (JsPath \ "jobID").write[String] and
     (JsPath \ "state").write[JobState] and
     (JsPath \ "dateCreated").write[String] and
-    (JsPath \ "toolitem").write[Toolitem] and
+    (JsPath \ "toolitem").write[ToolForm] and
     (JsPath \ "views").write[Seq[String]] and
     (JsPath \ "paramValues").write[Map[String, String]](play.api.libs.json.Writes.mapWrites[String])
-  )(unlift(Jobitem.unapply))
+  )(unlift(JobForm.unapply))
 
   def getTool(toolname: String) = Action {
     toolFactory.values.get(toolname) match {
@@ -126,7 +127,7 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
         jobViews.map { jobViewsN =>
           Ok(
             Json.toJson(
-              Jobitem(
+              JobForm(
                 job.jobID,
                 job.status,
                 job.dateCreated.get.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
