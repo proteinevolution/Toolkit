@@ -8,17 +8,16 @@ import de.proteinevolution.common.{ HTTPRequest, LocationProvider }
 import de.proteinevolution.db.MongoStore
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{ mvc, Logger }
+import play.api.{ Logger, mvc }
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
 import scala.util.hashing.MurmurHash3
 @Singleton
 class UserSessions @Inject()(mongoStore: MongoStore,
                              @NamedCache("userCache") val userCache: SyncCacheApi,
-                             locationProvider: LocationProvider) {
+                             locationProvider: LocationProvider)(implicit ec: ExecutionContext) {
   private val SID = "sid"
 
   /**

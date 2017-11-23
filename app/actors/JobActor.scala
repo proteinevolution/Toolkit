@@ -355,7 +355,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     }
   }
 
-  override def postStop(): Unit = Tick.cancel()
+  override def postStop(): Unit = Tick.cancel
 
   override def receive = LoggingReceive {
 

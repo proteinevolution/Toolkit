@@ -23,8 +23,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.twirl.api.Html
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
 import org.webjars.play.WebJarsUtil
 
@@ -38,7 +37,7 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
                               implicit val locationProvider: LocationProvider,
                               toolFactory: ToolFactory,
                               constants: Constants,
-                              cc: ControllerComponents)
+                              cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
     with ReactiveMongoComponents {

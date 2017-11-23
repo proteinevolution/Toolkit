@@ -16,12 +16,12 @@ import reactivemongo.api.commands.{ UpdateWriteResult, WriteResult }
 import reactivemongo.api.indexes.{ Index, IndexType }
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.language.postfixOps
 
 @Singleton
-final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends ReactiveMongoComponents {
+final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi)(implicit ec: ExecutionContext)
+    extends ReactiveMongoComponents {
   /*
    *                Article Collection
    */

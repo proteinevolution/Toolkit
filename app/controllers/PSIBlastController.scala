@@ -18,8 +18,7 @@ import play.api.libs.json.{ JsArray, JsObject, Json }
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.sys.process._
 
 class PSIBlastController @Inject()(resultFiles: ResultFileAccessor,
@@ -28,7 +27,7 @@ class PSIBlastController @Inject()(resultFiles: ResultFileAccessor,
                                    alignment: Alignment,
                                    constants: Constants,
                                    val reactiveMongoApi: ReactiveMongoApi,
-                                   cc: ControllerComponents)
+                                   cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with CommonController {
 
