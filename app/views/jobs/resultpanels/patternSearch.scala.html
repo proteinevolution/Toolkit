@@ -6,7 +6,7 @@
 @import play.api.libs.json.JsDefined
 @import de.proteinevolution.models.results.Common
 @import de.proteinevolution.tel.TEL
-@(toolName: String, jobID: String, jsValue: JsValue, tool: models.tools.Tool)(implicit request: RequestHeader)
+@(toolName: String, jobID: String, jsValue: JsValue, tool: models.tools.ToolFactory.Tool)(implicit request: RequestHeader)
 @import java.lang.String; var fileURL="/files/" + jobID + "/" + jobID + ".fas";
 
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
