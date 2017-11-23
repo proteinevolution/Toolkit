@@ -9,14 +9,12 @@ import de.proteinevolution.models.Constants
 import models.UserSessions
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.db.MongoStore
-import play.api.Logger
 import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.mvc._
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 import services.JobActorAccess
 
 import scala.io.Source
-import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * This controller is supposed to handle request coming from the Backend, such as compute

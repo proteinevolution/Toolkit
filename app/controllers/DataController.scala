@@ -10,7 +10,7 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import reactivemongo.bson.BSONObjectID
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 
 class DataController @Inject()(mongoStore: MongoStore,
                                psiblastController: PSIBlastController,
@@ -18,7 +18,7 @@ class DataController @Inject()(mongoStore: MongoStore,
                                hmmer: Hmmer,
                                psi: PSIBlast,
                                cc: ControllerComponents,
-                               resultFiles: ResultFileAccessor)
+                               resultFiles: ResultFileAccessor)(implicit ec: ExecutionContext)
     extends AbstractController(cc) {
 
   /** Check whether the user is allowed to fetch the data for the particular job and retrieves the data with

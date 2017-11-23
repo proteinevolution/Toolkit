@@ -21,12 +21,12 @@ import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.Constants
 import services.JobActorAccess
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 
 /**
-  * Actor that listens to the WebSocket and accepts messages from and passes messages to it.
-  *
-  */
+ * Actor that listens to the WebSocket and accepts messages from and passes messages to it.
+ *
+ */
 object WebSocketActor {
   case class ChangeSessionID(sessionID: BSONObjectID)
   case object LogOut
@@ -37,15 +37,17 @@ object WebSocketActor {
   }
 }
 
-final class WebSocketActor @Inject()(val locationProvider: LocationProvider,
-                                     @Named("clusterMonitor") clusterMonitor: ActorRef,
-                                     @Assisted("out") out: ActorRef,
-                                     jobActorAccess: JobActorAccess,
-                                     userSessions: UserSessions,
-                                     constants: Constants,
-                                     @NamedCache("userCache") val userCache: SyncCacheApi,
-                                     @NamedCache("wsActorCache") val wsActorCache: SyncCacheApi,
-                                     @Assisted("sessionID") private var sessionID: BSONObjectID)
+final class WebSocketActor @Inject()(
+    val locationProvider: LocationProvider,
+    @Named("clusterMonitor") clusterMonitor: ActorRef,
+    @Assisted("out") out: ActorRef,
+    jobActorAccess: JobActorAccess,
+    userSessions: UserSessions,
+    constants: Constants,
+    @NamedCache("userCache") val userCache: SyncCacheApi,
+    @NamedCache("wsActorCache") val wsActorCache: SyncCacheApi,
+    @Assisted("sessionID") private var sessionID: BSONObjectID
+)(implicit ec: ExecutionContext)
     extends Actor
     with ActorLogging {
 

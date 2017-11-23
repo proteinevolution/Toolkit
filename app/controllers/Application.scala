@@ -30,8 +30,7 @@ import org.webjars.play.WebJarsUtil
 import de.proteinevolution.models.Constants
 
 import scala.language.postfixOps
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{ Await, ExecutionContext, Future }
 
 @Singleton
 final class Application @Inject()(webJarsUtil: WebJarsUtil,
@@ -55,7 +54,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   configuration: Configuration,
                                   constants: Constants,
                                   cc: ControllerComponents,
-                                  environment: Environment)
+                                  environment: Environment)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
     with CommonController {
