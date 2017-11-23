@@ -20,15 +20,15 @@ import services.JobActorAccess
 
 import sys.process._
 import scala.collection.immutable.HashSet
+import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 final class ClusterMonitor @Inject()(cluster: Cluster,
                                      mongoStore: MongoStore,
                                      jobActorAccess: JobActorAccess,
                                      val settings: Settings,
-                                     constants: Constants)
+                                     constants: Constants)(implicit ec: ExecutionContext)
     extends Actor
     with ActorLogging {
 

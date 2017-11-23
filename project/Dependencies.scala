@@ -30,7 +30,6 @@ object Dependencies {
     "com.chuusai"          %% "shapeless"                % "2.3.2",
     "com.lihaoyi"          %% "fastparse"                % "0.4.2",
     "com.vmunier"          %% "scalajs-scripts"          % "1.1.1",
-    "org.typelevel"        %% "cats"                     % "0.9.0",
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
     "com.typesafe.play"    %% "play-json"                % "2.6.3"
   )
