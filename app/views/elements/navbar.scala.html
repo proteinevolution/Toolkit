@@ -1,4 +1,4 @@
-@import models.tools.ToolFactory.Tool
+@import de.proteinevolution.models.Tool
 @(tools: Iterable[Tool])(implicit messages: Messages, request: RequestHeader)
 
 <div class="off-canvas position-left" id="offCanvasLeft" data-off-canvas>
@@ -43,7 +43,7 @@
     </div>
 
     <div class="tabs-panel toolsection" id="panel5">
-        @for(tool <- tools.filter(tool => tool.category == "3ary" || tool.optional == "3ary")){
+        @for(tool <- tools.filter(tool => tool.category == "3ary")){
         <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a>
         }
     </div>

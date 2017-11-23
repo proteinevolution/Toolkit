@@ -56,7 +56,7 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Sy
   def autoComplete(queryString_ : String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       val queryString = queryString_.trim()
-      val tools: List[models.tools.ToolFactory.Tool] = toolFactory.values.values
+      val tools: List[de.proteinevolution.models.Tool] = toolFactory.values.values
         .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
         .filter(tool => tool.toolNameShort != "hhpred_manual")
         .toList
