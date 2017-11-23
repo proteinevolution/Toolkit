@@ -2,11 +2,12 @@ package models.tools
 
 import javax.inject.{ Inject, Singleton }
 
-import com.typesafe.config.{ Config, ConfigFactory, ConfigObject }
+import com.typesafe.config.{ ConfigFactory, ConfigObject }
 import de.proteinevolution.models.Constants
-import de.proteinevolution.models.database.jobs.JobState
 import de.proteinevolution.models.database.results._
 import de.proteinevolution.db.{ MongoStore, ResultFileAccessor }
+import de.proteinevolution.models.forms.ToolForm
+import de.proteinevolution.models.param.{ Param, ParamAccess }
 import models.tools.ToolFactory._
 import play.api.libs.json.JsArray
 import play.twirl.api.HtmlFormat
@@ -33,8 +34,7 @@ final class ToolFactory @Inject()(
 
   // reads the tool specifications from tools.conf and generates tool objects accordingly
   val values: Map[String, Tool] = {
-    val tools: Config = ConfigFactory.load.getConfig("Tools")
-    tools.root.map {
+    ConfigFactory.load.getConfig("Tools").root.map {
       case (name: String, configObject: ConfigObject) =>
         val config = configObject.toConfig
         config.getString("name") -> tool(
@@ -823,7 +823,7 @@ final class ToolFactory @Inject()(
     val remainParams: Seq[String]    = params.map(_.name).diff(paramGroups.values.flatten.toSeq)
     val paramMap                     = params.map(p => p.name -> p).toMap
 
-    val toolitem = Toolitem(
+    val toolitem = ToolForm(
       toolNameShort,
       toolNameLong,
       toolNameAbbrev,
@@ -905,14 +905,6 @@ object ToolFactory {
     final val DATA            = "Data"
   }
 
-  // Returned to the View if a tool is requested with the getTool route
-  case class Toolitem(toolname: String,
-                      toolnameLong: String,
-                      toolnameAbbrev: String,
-                      category: String,
-                      optional: String,
-                      params: Seq[(String, Seq[Param])])
-
   // Specification of the internal representation of a Tool
   case class Tool(toolNameShort: String,
                   toolNameLong: String,
@@ -920,7 +912,7 @@ object ToolFactory {
                   category: String,
                   optional: String,
                   params: Map[String, Param], // Maps a parameter name to the respective Param instance
-                  toolitem: Toolitem,
+                  toolitem: ToolForm,
                   paramGroups: Map[String, Seq[String]],
                   forwardAlignment: Seq[String],
                   forwardMultiSeq: Seq[String]) {
@@ -935,11 +927,4 @@ object ToolFactory {
     }
   }
 
-  // Server returns such an object when asked for a job
-  case class Jobitem(jobID: String,
-                     state: JobState,
-                     dateCreated: String,
-                     toolitem: Toolitem,
-                     views: Seq[String],
-                     paramValues: Map[String, String])
 }

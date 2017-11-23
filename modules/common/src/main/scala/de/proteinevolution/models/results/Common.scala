@@ -6,6 +6,8 @@ import play.api.Logger
 import de.proteinevolution.models.database.results._
 import scala.collection.mutable.ArrayBuffer
 
+// what the hack
+
 object Common {
 
   private val color_regex   = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
@@ -134,13 +136,8 @@ object Common {
   /* GENERATING LINKS FOR HHPRED */
 
   def getSingleLink(id: String): Html = {
-    val db   = identifyDatabase(id)
-    var link = ""
-    val idTrimmed = if (id.length > 4) {
-      id.slice(1, 5)
-    } else {
-      id
-    }
+    val db     = identifyDatabase(id)
+    var link   = ""
     val idPfam = id.replaceAll("am.*$||..*", "")
     val idPdb  = id.replaceAll("_.*$", "")
     if (db == "scop") {
@@ -175,8 +172,8 @@ object Common {
   def getLinks(id: String): Html = {
     val db     = identifyDatabase(id)
     var links  = new ArrayBuffer[String]()
-    var idNcbi = id.replaceAll("#", ".") + "?report=fasta"
-    var idPdb  = id.replaceAll("_.*$", "").toLowerCase
+    val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
+    val idPdb  = id.replaceAll("_.*$", "").toLowerCase
     val idTrimmed = if (id.length > 4) {
       id.slice(1, 5)
     } else {
@@ -199,12 +196,7 @@ object Common {
   }
 
   def getSingleLinkDB(db: String, id: String): Html = {
-    var link = ""
-    val idTrimmed = if (id.length > 4) {
-      id.slice(1, 5)
-    } else {
-      id
-    }
+    var link   = ""
     val idPfam = id.replaceAll("am.*$||..*", "")
     val idPdb  = id.replaceAll("_.*$", "")
     db match {
@@ -219,14 +211,9 @@ object Common {
 
   def getLinksDB(db: String, id: String): Html = {
     var links  = new ArrayBuffer[String]()
-    var idNcbi = id.replaceAll("#", ".") + "?report=fasta"
-    var idPdb  = id.replaceAll("_.*$", "").toLowerCase
-    val idTrimmed = if (id.length > 4) {
-      id.slice(1, 5)
-    } else {
-      id
-    }
-    var idCDD = id.replaceAll("PF", "pfam")
+    val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
+    val idPdb  = id.replaceAll("_.*$", "").toLowerCase
+    var idCDD  = id.replaceAll("PF", "pfam")
 
     db match {
       case envNrNameReg(_) => links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
@@ -264,7 +251,7 @@ object Common {
       id
     }
     var idCDD  = id.replaceAll("PF", "pfam")
-    var idNcbi = id.replaceAll("#", ".") + "?report=fasta"
+    val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
     links += "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
     if (db == "scop") {
       links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
@@ -337,7 +324,6 @@ object Common {
     } else {
       seqWrapped += makeRow("sequence", Array("", seq.substring(i)))
     }
-
     seqWrapped
   }
 
@@ -371,14 +357,13 @@ object Common {
 
     }
     newSeq.replaceAll("""\s""", "")
-    newSeq
   }
 
   def clustal(alignment: AlignmentResult, begin: Int, breakAfter: Int, color: Boolean): String = {
     if (begin >= alignment.alignment.head.seq.length) {
-      return ""
+      ""
     } else {
-      var string = alignment.alignment.map { elem =>
+      val string = alignment.alignment.map { elem =>
         "<tr>" +
         "<td>" +
         "<input type=\"checkbox\" value=\"" + elem.num + "\" name=\"alignment_elem\" class=\"checkbox\"><b>" +
@@ -393,15 +378,13 @@ object Common {
         "</td>" +
         "</tr>"
       }
-      return {
-        string.mkString + emptyRow + emptyRow + clustal(alignment, begin + breakAfter, breakAfter, color)
-      }
+      string.mkString + emptyRow + emptyRow + clustal(alignment, begin + breakAfter, breakAfter, color)
     }
   }
 
   def hmmerHitWrapped(hit: HmmerHSP, charCount: Int, breakAfter: Int, beginQuery: Int, beginTemplate: Int): String = {
     if (charCount >= hit.hit_len) {
-      return ""
+      ""
     } else {
       val query       = hit.query_seq.slice(charCount, Math.min(charCount + breakAfter, hit.query_seq.length))
       val midline     = hit.midline.slice(charCount, Math.min(charCount + breakAfter, hit.midline.length))
@@ -409,9 +392,9 @@ object Common {
       val queryEnd    = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
       if (beginQuery == beginQuery + queryEnd) {
-        return ""
+        ""
       } else {
-        return {
+        {
           makeRow("sequence", Array("", "Q " + (beginQuery + 1), query + "   " + (beginQuery + queryEnd))) +
           makeRow("sequence", Array("", "", midline)) +
           makeRow("sequence", Array("", "T " + (beginTemplate + 1), template + "   " + (beginTemplate + templateEnd))) +
@@ -428,7 +411,7 @@ object Common {
                          beginQuery: Int,
                          beginTemplate: Int): String = {
     if (charCount >= hit.hit_len) {
-      return ""
+      ""
     } else {
       val query       = hit.query_seq.slice(charCount, Math.min(charCount + breakAfter, hit.query_seq.length))
       val midline     = hit.midline.slice(charCount, Math.min(charCount + breakAfter, hit.midline.length))
@@ -436,9 +419,9 @@ object Common {
       val queryEnd    = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
       if (beginQuery == beginQuery + queryEnd) {
-        return ""
+        ""
       } else {
-        return {
+        {
           makeRow("sequence", Array("", "Q " + beginQuery, query + "   " + (beginQuery + queryEnd - 1))) +
           makeRow("sequence", Array("", "", midline)) +
           makeRow("sequence", Array("", "T " + beginTemplate, template + "   " + (beginTemplate + templateEnd - 1))) +
@@ -463,7 +446,7 @@ object Common {
                         beginQuery: Int,
                         beginTemplate: Int): String = {
     if (charCount >= hit.length) {
-      return ""
+      ""
     } else {
       val query = hit.query.seq.slice(charCount, Math.min(charCount + breakAfter, hit.query.seq.length))
       val queryCons =
@@ -475,22 +458,16 @@ object Common {
       val queryEnd    = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
       if (beginQuery == beginQuery + queryEnd) {
-        return ""
+        ""
       } else {
-        return {
-          makeRow("sequence",
-                  Array("",
-                        "Q " + beginQuery,
-                        query + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")")) +
-          makeRow("sequence",
-                  Array("",
-                        "",
-                        queryCons)) +
+        {
+          makeRow(
+            "sequence",
+            Array("", "Q " + beginQuery, query + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")")
+          ) +
+          makeRow("sequence", Array("", "", queryCons)) +
           makeRow("sequence", Array("", "", midline)) +
-          makeRow("sequence",
-                  Array("",
-                        "",
-                        templateCons)) +
+          makeRow("sequence", Array("", "", templateCons)) +
           makeRow("sequence",
                   Array("",
                         "T " + beginTemplate,
@@ -509,7 +486,7 @@ object Common {
                        beginTemplate: Int,
                        color: Boolean): String = {
     if (charCount >= hit.length) {
-      return ""
+      ""
     } else {
       val querySSDSSP = hit.query.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_dssp.length))
       val querySSPRED = hit.query.ss_pred.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_pred.length))
@@ -529,7 +506,7 @@ object Common {
       val templateEnd = lengthWithoutDashDots(template)
 
       if (beginQuery == beginQuery + queryEnd) {
-        return ""
+        ""
       } else {
 
         var html = ""
@@ -579,12 +556,12 @@ object Common {
 
         html += emptyRow + emptyRow
 
-        return html + hhpredHitWrapped(hit,
-                                       charCount + breakAfter,
-                                       breakAfter,
-                                       beginQuery + queryEnd,
-                                       beginTemplate + templateEnd,
-                                       color)
+        html + hhpredHitWrapped(hit,
+                                charCount + breakAfter,
+                                breakAfter,
+                                beginQuery + queryEnd,
+                                beginTemplate + templateEnd,
+                                color)
       }
     }
   }
@@ -596,7 +573,7 @@ object Common {
                       beginTemplate: Int,
                       color: Boolean): String = {
     if (charCount >= hit.length) {
-      return ""
+      ""
     } else {
       val querySSCONF = hit.query.ss_conf.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_conf.length))
       val querySSDSSP = hit.query.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_dssp.length))
@@ -623,7 +600,7 @@ object Common {
       val templateEnd = lengthWithoutDashDots(template)
 
       if (beginQuery == beginQuery + queryEnd) {
-        return ""
+        ""
       } else {
 
         var html = ""
@@ -682,12 +659,12 @@ object Common {
 
         html += emptyRow + emptyRow
 
-        return html + hhompHitWrapped(hit,
-                                      charCount + breakAfter,
-                                      breakAfter,
-                                      beginQuery + queryEnd,
-                                      beginTemplate + templateEnd,
-                                      color)
+        html + hhompHitWrapped(hit,
+                               charCount + breakAfter,
+                               breakAfter,
+                               beginQuery + queryEnd,
+                               beginTemplate + templateEnd,
+                               color)
       }
     }
   }
@@ -695,7 +672,7 @@ object Common {
   def quick2dWrapped(result: Quick2DResult, charCount: Int, breakAfter: Int): String = {
     val length = result.query.seq.length
     if (charCount >= length) {
-      return ""
+      ""
     } else {
       var htmlString = ""
       val query      = result.query.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
@@ -717,7 +694,7 @@ object Common {
       htmlString += makeRow(
         "sequenceCompact",
         Array("AA_QUERY",
-              (charCount + 1),
+              charCount + 1,
               this.Highlight(query) + "&nbsp;&nbsp;&nbsp;&nbsp;" + Math.min(length, charCount + breakAfter))
       )
 
@@ -803,7 +780,7 @@ object Common {
       }
 
       htmlString += emptyRow + emptyRow + emptyRow + emptyRow + emptyRow
-      return htmlString + quick2dWrapped(result, charCount + breakAfter, breakAfter)
+      htmlString + quick2dWrapped(result, charCount + breakAfter, breakAfter)
     }
   }
 }
