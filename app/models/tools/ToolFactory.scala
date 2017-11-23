@@ -52,11 +52,7 @@ final class ToolFactory @Inject()(
     }
   }.toMap
 
-  /**
-   * Returns true if the string is a toolname, false if it isn't
-   * @param toolName
-   * @return
-   */
+  
   def isTool(toolName: String): Boolean = {
     toolName.toUpperCase == "REFORMAT" || toolName.toUpperCase == "ALNVIZ" || values.exists(_._2.isToolName(toolName))
   }
