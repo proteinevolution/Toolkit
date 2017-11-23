@@ -59,7 +59,7 @@
         function setViewport() {
 
             if($('#tool-tabs').hasClass('fullscreen')) {
-                $('#viewport').width(1500).height(900).find('canvas').first().remove();
+                $('#viewport').width($(window).width() - 100).height(900).find('canvas').first().remove();
             } else {
                 $('#viewport').width(810).height(500).find('canvas').first().remove();
             }
