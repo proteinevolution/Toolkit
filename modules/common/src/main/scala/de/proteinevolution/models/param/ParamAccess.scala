@@ -1,134 +1,13 @@
-package models.tools
+package de.proteinevolution.models.param
 
-import de.proteinevolution.tel.TEL
 import javax.inject.{ Inject, Singleton }
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
-
-sealed trait ParamType {
-
-  /**
-    * Parses the value and return the same value as Option if valid, otherwise None
-    * @param value String value to be validated
-    * @return Some(value) if value is valid, else None
-    */
-  def validate(value: String): Option[String]
-}
-case class Sequence(formats: Seq[(String, String)], placeholder: String, allowTwoTextAreas: Boolean)
-    extends ParamType {
-
-  // Sequence currently alwasus valid
-  def validate(value: String): Option[String] = Some(value)
-}
-case class Number(min: Option[Int], max: Option[Int]) extends ParamType {
-
-  def validate(value: String): Option[String] = {
-    try {
-      val x = value.toDouble
-      if ((!(min.isDefined && x < min.get)) && (!(max.isDefined && x > max.get))) {
-        Some(x.toString)
-      } else {
-        None
-      }
-    } catch {
-      case _: NumberFormatException => None
-    }
-  }
-}
-case class Select(options: Seq[(String, String)]) extends ParamType {
-
-  def validate(value: String): Option[String] = {
-
-    Some(value).filter(this.options.map(_._1).contains)
-  }
-}
-
-case object Bool extends ParamType {
-  def validate(value: String): Option[String] = {
-    Some(value)
-  }
-}
-
-case object Radio extends ParamType {
-  def validate(value: String): Option[String] = {
-    Some(value)
-  }
-}
-case class Decimal(step: String, min: Option[Double], max: Option[Double]) extends ParamType {
-
-  def validate(value: String): Option[String] = {
-
-    try {
-      val x = value.toDouble
-      if ((!(min.isDefined && x < min.get)) && (!(max.isDefined && x > max.get))) {
-        Some(x.toString)
-      } else {
-        None
-      }
-
-    } catch {
-      case _: NumberFormatException => None
-    }
-  }
-}
-
-case class Text(placeholder: String = "") extends ParamType {
-
-  def validate(value: String): Option[String] = Some(value)
-}
-
-case object ModellerKey extends ParamType {
-  def validate(value: String): Option[String] = Some(value)
-}
-
-object ParamType {
-
-  implicit def tuple2Writes[A, B](implicit a: Writes[A], b: Writes[B]): Writes[(A, B)] = new Writes[(A, B)] {
-    def writes(tuple: (A, B)) = JsArray(Seq(a.writes(tuple._1), b.writes(tuple._2)))
-  }
-
-  final val UnconstrainedNumber = Number(None, None)
-  final val Percentage          = Number(Some(0), Some(100))
-  final val ConstrainedNumber   = Number(Some(1), Some(10000))
-
-  // JSON conversion
-  final val FIELD_TYPE = "type"
-  implicit object ParamTypeWrites extends Writes[ParamType] {
-
-    def writes(paramType: ParamType): JsObject = paramType match {
-
-      case Sequence(formats: Seq[(String, String)], placeholder: String, allowsTwoTextAreas: Boolean) =>
-        Json.obj(FIELD_TYPE           -> 1,
-                 "modes"              -> formats,
-                 "allowsTwoTextAreas" -> allowsTwoTextAreas,
-                 "placeholder"        -> placeholder)
-      case Number(minOpt, maxOpt)        => Json.obj(FIELD_TYPE -> 2, "min" -> minOpt, "max" -> maxOpt)
-      case Select(options)               => Json.obj(FIELD_TYPE -> 3, "options" -> options)
-      case Bool                          => Json.obj(FIELD_TYPE -> 4)
-      case Radio                         => Json.obj(FIELD_TYPE -> 5)
-      case Decimal(step, minVal, maxVal) => Json.obj(FIELD_TYPE -> 2, "step" -> step, "min" -> minVal, "max" -> maxVal)
-      case Text(placeholder)             => Json.obj(FIELD_TYPE -> 7, "placeholder" -> placeholder)
-      case ModellerKey                   => Json.obj(FIELD_TYPE -> 8)
-    }
-  }
-}
-
-// A simple parameter with name and a type
-case class Param(name: String, paramType: ParamType, internalOrdering: Int, label: String)
-
-object Param {
-  implicit val paramWrites: Writes[Param] = (
-    (JsPath \ "name").write[String] and
-    (JsPath \ "paramType").write[ParamType] and
-    (JsPath \ "internalOrdering").write[Int] and
-    (JsPath \ "label").write[String]
-  )(unlift(Param.unapply))
-}
+import de.proteinevolution.models.param.ParamType.{ Bool, Decimal, ModellerKey, Select, Sequence, Text }
+import de.proteinevolution.tel.TEL
 
 /**
-  * Provides the specification of the Parameters as they appear in the individual tools
-  **/
+ * Provides the specification of the Parameters as they appear in the individual tools
+ **/
 @Singleton
 class ParamAccess @Inject()(tel: TEL) {
 
@@ -143,22 +22,20 @@ class ParamAccess @Inject()(tel: TEL) {
   )
 
   def getParam(paramName: String, placeholder: String = ""): Param = paramName match {
-    case "ALIGNMENT" => Param("alignment", Sequence(alignmentFormats, placeholder, false), 1, "")
-
-    case "TWOTEXTALIGNMENT" => Param("alignment", Sequence(alignmentFormats, placeholder, true), 1, "")
-    case "HMMER_DB"         => select("hmmerdb", "Select database")
-    case "STANDARD_DB"      => select("standarddb", "Select standard database")
-    case "HHSUITEDB"        => select("hhsuitedb", "Select database (PDB_mmCIF70 for modeling)")
-    case "MATRIX"           => select("matrix", "Scoring Matrix")
-    case "NUM_ITER"         => Param("num_iter", ParamType.UnconstrainedNumber, 1, "No. of iterations")
-    case "EVALUE"           => select("evalue", "E-value")
-    case "GAP_OPEN"         => Param("gap_open", ParamType.UnconstrainedNumber, 1, "Gap open penalty")
-    case "GAP_TERM"         => Param("gap_term", Decimal("0.01", Some(0), Some(10)), 1, "Terminal gap penalty")
-    case "GAP_EXT_KALN"     => Param("gap_ext_kaln", Decimal("0.01", Some(0), Some(10)), 1, "Gap extension penalty")
-    case "BONUSSCORE"       => Param("bonusscore", Decimal("0.01", Some(0), Some(10)), 1, "Bonus Score")
-    case "DESC"             => select("desc", "No. of target sequences (up to 10000)")
-    case "CONSISTENCY" =>
-      Param("consistency", ParamType.UnconstrainedNumber, 1, "Passes of consistency transformation")
+    case "ALIGNMENT"              => Param("alignment", Sequence(alignmentFormats, placeholder, false), 1, "")
+    case "TWOTEXTALIGNMENT"       => Param("alignment", Sequence(alignmentFormats, placeholder, true), 1, "")
+    case "HMMER_DB"               => select("hmmerdb", "Select database")
+    case "STANDARD_DB"            => select("standarddb", "Select standard database")
+    case "HHSUITEDB"              => select("hhsuitedb", "Select database (PDB_mmCIF70 for modeling)")
+    case "MATRIX"                 => select("matrix", "Scoring Matrix")
+    case "NUM_ITER"               => Param("num_iter", ParamType.UnconstrainedNumber, 1, "No. of iterations")
+    case "EVALUE"                 => select("evalue", "E-value")
+    case "GAP_OPEN"               => Param("gap_open", ParamType.UnconstrainedNumber, 1, "Gap open penalty")
+    case "GAP_TERM"               => Param("gap_term", Decimal("0.01", Some(0), Some(10)), 1, "Terminal gap penalty")
+    case "GAP_EXT_KALN"           => Param("gap_ext_kaln", Decimal("0.01", Some(0), Some(10)), 1, "Gap extension penalty")
+    case "BONUSSCORE"             => Param("bonusscore", Decimal("0.01", Some(0), Some(10)), 1, "Bonus Score")
+    case "DESC"                   => select("desc", "No. of target sequences (up to 10000)")
+    case "CONSISTENCY"            => Param("consistency", ParamType.UnconstrainedNumber, 1, "Passes of consistency transformation")
     case "ITREFINE"               => Param("itrefine", ParamType.UnconstrainedNumber, 1, "Passes of iterative refinements")
     case "PRETRAIN"               => Param("pretrain", ParamType.UnconstrainedNumber, 1, "Rounds of pretraining")
     case "MAXROUNDS"              => select("maxrounds", "Max. number of iterations")
@@ -183,7 +60,8 @@ class ParamAccess @Inject()(tel: TEL) {
     case "FILTER_LOW_COMPLEXITY"  => Param("filter_low_complexity", Bool, 1, "Filter for low oltcomplexity regions")
     case "MATRIX_MARCOIL"         => select("matrix_marcoil", "Matrix")
     case "TRANSITION_PROBABILITY" => select("transition_probability", "Transition Probability")
-    case "MIN_SEQID_QUERY"        => Param("min_seqid_query", ParamType.Percentage, 1, "Min. seq. identity of MSA hits with query (%)")
+    case "MIN_SEQID_QUERY" =>
+      Param("min_seqid_query", ParamType.Percentage, 1, "Min. seq. identity of MSA hits with query (%)")
     case "NUM_SEQS_EXTRACT" =>
       Param("num_seqs_extract", ParamType.UnconstrainedNumber, 1, "No. of most dissimilar sequences to extract")
     case "SCORE_SS"                => select("score_ss", "Score secondary structure")
@@ -208,7 +86,7 @@ class ParamAccess @Inject()(tel: TEL) {
     case "EVAL_TPR"                => select("eval_tpr", "E-value inclusion TPR & SEL")
     case "CODON_TABLE_ORGANISM"    => Param("codon_table_organism", Text(""), 1, "Use codon usage table of")
     case "HHPRED_INCL_EVAL"        => select("hhpred_incl_eval", "E-value incl. threshold for MSA generation")
-    case "BLAST_INCL_EVAL"        => select("blast_incl_eval", "E-value inclusion threshold")
+    case "BLAST_INCL_EVAL"         => select("blast_incl_eval", "E-value inclusion threshold")
     case "HHBLITS_INCL_EVAL"       => select("hhblits_incl_eval", "E-value inclusion threshold")
     case "PCOILS_INPUT_MODE"       => select("pcoils_input_mode", "Input mode")
     case "REPPER_INPUT_MODE"       => select("repper_input_mode", "Input mode")
@@ -228,7 +106,6 @@ class ParamAccess @Inject()(tel: TEL) {
       Param("samcc_helixfour", Text("CC_first_position;chain;start_pos;end_pos"), 1, "Definition for helix 4")
     case "INVOKE_PSIPRED" =>
       Param("invoke_psipred", ParamType.Percentage, 1, "% identity cutoff to invoke a new PSIPRED run")
-    case "CLANS_EVAL"       => select("clans_eval", "Extract BLAST HSP's up to E-values of")
     case "CLANS_EVAL"       => select("clans_eval", "Extract BLAST HSP's up to E-values of")
     case "PATSEARCH_DB"     => select("patsearchdb", "Select database")
     case "MAFFT_GAP_OPEN"   => Param("mafft_gap_open", Decimal("0.01", Some(0), Some(10)), 1, "Gap open penalty")
