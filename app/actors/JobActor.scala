@@ -27,7 +27,6 @@ import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.postfixOps
 import scala.concurrent.Future
 import better.files._
@@ -89,18 +88,20 @@ object JobActor {
 
 }
 
-class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscripts to be executed
-                         env: Env, // To supply the runscripts with an environment
-                         implicit val mailerClient: MailerClient,
-                         val jobDao: JobDAO,
-                         mongoStore: MongoStore,
-                         userSessions: UserSessions,
-                         wrapperExecutionFactory: WrapperExecutionFactory,
-                         implicit val locationProvider: LocationProvider,
-                         @NamedCache("userCache") implicit val userCache: SyncCacheApi,
-                         @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
-                         constants: Constants,
-                         @Assisted("jobActorNumber") jobActorNumber: Int)
+class JobActor @Inject()(
+    runscriptManager: RunscriptManager, // To get runscripts to be executed
+    env: Env, // To supply the runscripts with an environment
+    implicit val mailerClient: MailerClient,
+    val jobDao: JobDAO,
+    mongoStore: MongoStore,
+    userSessions: UserSessions,
+    wrapperExecutionFactory: WrapperExecutionFactory,
+    implicit val locationProvider: LocationProvider,
+    @NamedCache("userCache") implicit val userCache: SyncCacheApi,
+    @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
+    constants: Constants,
+    @Assisted("jobActorNumber") jobActorNumber: Int
+)(implicit ec: scala.concurrent.ExecutionContext)
     extends Actor {
 
   // Attributes asssocidated with a Job
@@ -438,9 +439,9 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 )
                 .foreach { jobList =>
                   // Check if the jobs are owned by the user, unless they are public and if the job is Done
-                  jobList.find(filterJob =>
-                              (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done)
-                  match {
+                  jobList.find(
+                    filterJob => (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done
+                  ) match {
                     case Some(oldJob) =>
                       Logger.info(
                         s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID is a duplicate of ${oldJob.jobID}."
