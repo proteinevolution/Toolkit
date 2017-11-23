@@ -24,8 +24,7 @@ import reactivemongo.bson._
 import org.webjars.play.WebJarsUtil
 import services.JobActorAccess
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{ Await, ExecutionContext, Future }
 
 /**
  * Controller for Authentication interactions
@@ -44,7 +43,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                            @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                            @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi, // Mailing Controller
                            constants: Constants,
-                           cc: ControllerComponents)
+                           cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
     with JSONTemplate

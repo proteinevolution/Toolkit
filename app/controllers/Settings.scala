@@ -1,15 +1,16 @@
 package controllers
 
 import java.time.ZonedDateTime
+
 import play.api.mvc._
 import play.api.i18n.MessagesApi
-import play.modules.reactivemongo.{ MongoController, ReactiveMongoApi, ReactiveMongoComponents }
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.BSONDocument
 import javax.inject.{ Inject, Singleton }
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.{ Failure, Success }
 import scala.sys.process._
 
@@ -21,7 +22,7 @@ import scala.sys.process._
 @Singleton
 final class Settings @Inject()(messagesApi: MessagesApi,
                                val reactiveMongoApi: ReactiveMongoApi,
-                               cc: ControllerComponents)
+                               cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with ReactiveMongoComponents {
 
