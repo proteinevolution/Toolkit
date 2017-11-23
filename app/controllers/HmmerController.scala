@@ -51,7 +51,6 @@ class HmmerController @Inject()(resultFiles: ResultFileAccessor,
     val eval     = (json \ "evalue").as[String]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
       resultFiles.getResults(jobID).map {
         case None => NotFound
@@ -92,7 +91,6 @@ class HmmerController @Inject()(resultFiles: ResultFileAccessor,
     val numList  = (json \ "checkboxes").as[List[Int]]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
       resultFiles.getResults(jobID).map {
         case None => NotFound
@@ -167,7 +165,6 @@ class HmmerController @Inject()(resultFiles: ResultFileAccessor,
 
     if (!retrieveAlnEval.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${retrieveAlnEval.name} is not executable.")
     } else {
 
       resultFiles.getResults(jobID).map {
@@ -209,7 +206,6 @@ class HmmerController @Inject()(resultFiles: ResultFileAccessor,
 
     if (!retrieveAlnEval.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${retrieveAlnEval.name} is not executable.")
     } else {
 
       resultFiles.getResults(jobID).map {
