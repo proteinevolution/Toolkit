@@ -7,5 +7,4 @@ case class ToolForm(toolname: String,
                     toolnameLong: String,
                     toolnameAbbrev: String,
                     category: String,
-                    optional: String,
                     params: Seq[(String, Seq[Param])])

@@ -1,5 +1,5 @@
 @import play.api.mvc.RequestHeader
-@import models.tools.ToolFactory.Tool
+@import de.proteinevolution.models.Tool
 @import java.time.ZonedDateTime
 @import org.webjars.play.WebJarsUtil
 @(webJarsUtil: WebJarsUtil, tools: Iterable[Tool], message: String = "", view: String = "")(implicit messages: Messages, request: RequestHeader)

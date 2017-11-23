@@ -71,7 +71,6 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
     (JsPath \ "toolnameLong").write[String] and
     (JsPath \ "toolnameAbbrev").write[String] and
     (JsPath \ "category").write[String] and
-    (JsPath \ "optional").write[String] and
     (JsPath \ "params").write[Seq[(String, Seq[Param])]]
   )(unlift(ToolForm.unapply))
 
