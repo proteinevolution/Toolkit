@@ -81,7 +81,6 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
   // TODO make secure
 
   def updateDateViewed(jobID: String) = Action {
-
     mongoStore.modifyJob(
       BSONDocument(Job.JOBID -> jobID),
       BSONDocument("$set"    -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)))

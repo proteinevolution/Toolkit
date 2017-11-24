@@ -2,11 +2,11 @@ package services
 import javax.inject._
 
 import play.api.inject.ApplicationLifecycle
-import play.api.libs.ws.{ WSClient, WSResponse }
+import play.api.libs.ws.WSClient
 
 import scala.concurrent.Future
 
-trait Configuration {
+sealed trait Configuration {
 
   def hello(): Unit
   def goodbye(): Unit
