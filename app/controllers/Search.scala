@@ -171,7 +171,7 @@ final class Search @Inject()(@NamedCache("userCache") implicit val userCache: Sy
               val jobVersions = jobs.map { job =>
                 job.jobID match {
                   case constants.jobIDPattern(_, v) =>
-                    try { v.toInt } catch { case _ => 0 }
+                    v.toInt
                   case _ => 0
                 }
               }
