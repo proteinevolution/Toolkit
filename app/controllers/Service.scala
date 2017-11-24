@@ -47,22 +47,15 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
 
   def static(static: String): Action[AnyContent] = Action { implicit request =>
     static match {
-
-      case "sitemap" =>
-        Ok(views.html.general.sitemap())
-
       // Frontend tools
       case "reformat" =>
-        Ok(views.html.tools.forms.reformat("Utils"))
-
+        Ok(views.html.tools.forms.reformat())
       case _ =>
-        Ok(views.html.errors.pagenotfound()) //Bug: Mithril only accepts 200 to re-route
-
+        NotFound(views.html.errors.pagenotfound())
     }
   }
 
   implicit def htmlWrites: Writes[Html] = new Writes[Html] {
-
     def writes(html: Html) = JsString(html.body)
   }
 

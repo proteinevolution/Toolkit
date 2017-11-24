@@ -25,7 +25,7 @@ object ParamType {
     def validate(value: String): Option[String] = {
       try {
         for {
-          ⌊  ← min
+          ⌊ ← min
           ⌉ ← max
           if (⌊ to ⌉).contains(value.toDouble)
         } yield value
