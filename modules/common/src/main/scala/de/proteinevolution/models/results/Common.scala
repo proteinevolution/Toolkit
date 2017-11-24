@@ -354,9 +354,8 @@ object Common {
       val endPos = starPos + length
       newSeq += seq.slice(0, starPos) + "<span class=\"patternMatch\">" + seq.slice(starPos, endPos) + "</span>" + seq
         .substring(endPos)
-
     }
-    newSeq.replaceAll("""\s""", "")
+    newSeq
   }
 
   def clustal(alignment: AlignmentResult, begin: Int, breakAfter: Int, color: Boolean): String = {
