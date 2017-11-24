@@ -2,6 +2,7 @@ package de.proteinevolution.models.param
 
 import play.api.libs.json._
 
+
 sealed trait ParamType {
 
   /**
@@ -23,12 +24,11 @@ object ParamType {
   case class Number(min: Option[Int], max: Option[Int]) extends ParamType {
     def validate(value: String): Option[String] = {
       try {
-        val x = value.toDouble
-        if ((!(min.isDefined && x < min.get)) && (!(max.isDefined && x > max.get))) {
-          Some(x.toString)
-        } else {
-          None
-        }
+        for {
+          ⌊  ← min
+          ⌉ ← max
+          if (⌊ to ⌉).contains(value.toDouble)
+        } yield value
       } catch {
         case _: NumberFormatException => None
       }
@@ -54,12 +54,11 @@ object ParamType {
   case class Decimal(step: String, min: Option[Double], max: Option[Double]) extends ParamType {
     def validate(value: String): Option[String] = {
       try {
-        val x = value.toDouble
-        if ((!(min.isDefined && x < min.get)) && (!(max.isDefined && x > max.get))) {
-          Some(x.toString)
-        } else {
-          None
-        }
+        for {
+          ⌊ ← min
+          ⌉ ← max
+          if ⌉ - value.toDouble > ⌊
+        } yield value
       } catch {
         case _: NumberFormatException => None
       }
