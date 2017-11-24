@@ -108,7 +108,7 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
         val jobViews: Future[Seq[String]] = job.status match {
           case Done => Future.successful(toolFactory.resultPanels(toolitem.toolname))
           // All other views are currently computed on Clientside
-          case _ => Future.successful(Seq.empty[String])
+          case _ => Future.successful(Nil)
         }
         // Read parameters from serialized file
         val paramValues: Map[String, String] = {
