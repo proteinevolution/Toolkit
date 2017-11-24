@@ -10,13 +10,11 @@ import de.proteinevolution.models.forms.ToolForm
 import de.proteinevolution.models.param.{ Param, ParamAccess }
 import models.tools.ToolFactory._
 import play.api.libs.json.JsArray
-import play.twirl.api.HtmlFormat
 
 import scala.collection.JavaConversions._
 import scala.collection.immutable.ListMap
 import scala.concurrent.{ Future, _ }
 
-// Class which provides access to all Tools
 @Singleton
 final class ToolFactory @Inject()(
     psi: PSIBlast,
@@ -57,7 +55,7 @@ final class ToolFactory @Inject()(
 
   // Maps toolname and resultpanel name to the function which transfers jobID and jobPath to an appropriate view
   lazy val resultMap
-    : Map[String, ListMap[String, (String, play.api.mvc.RequestHeader) => Future[HtmlFormat.Appendable]]] =
+    : Map[String, ListMap[String, (String, play.api.mvc.RequestHeader) => Future[play.twirl.api.Html]]] =
     Map(
       Toolnames.PSIBLAST -> ListMap(
         Resultviews.RESULTS -> { (jobID, requestHeader) =>
@@ -774,7 +772,7 @@ final class ToolFactory @Inject()(
     )
 
   // Encompasses the names of the resultviews for each tool
-  val resultPanels: Map[String, Seq[String]] = resultMap.map { trp =>
+  lazy val resultPanels: Map[String, Seq[String]] = resultMap.map { trp =>
     trp._1 -> trp._2.keys.toSeq
   }
 
@@ -787,7 +785,7 @@ final class ToolFactory @Inject()(
                      forwardAlignment: Seq[String],
                      forwardMultiSeq: Seq[String]): Tool = {
     val paramMap = params.map(p => p.name -> p).toMap
-    val toolitem = ToolForm(
+    val toolForm = ToolForm(
       toolNameShort,
       toolNameLong,
       toolNameAbbrev,
@@ -804,7 +802,7 @@ final class ToolFactory @Inject()(
       toolNameAbbrev,
       category,
       paramMap,
-      toolitem,
+      toolForm,
       paramAccess.paramGroups,
       forwardAlignment,
       forwardMultiSeq
