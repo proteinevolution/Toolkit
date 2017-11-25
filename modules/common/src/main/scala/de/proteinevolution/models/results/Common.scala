@@ -6,8 +6,6 @@ import play.api.Logger
 import de.proteinevolution.models.database.results._
 import scala.collection.mutable.ArrayBuffer
 
-// what the hack
-
 object Common {
 
   private val color_regex   = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
@@ -52,11 +50,11 @@ object Common {
   private val emptyRow = "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>"
 
   def SSColorReplace(sequence: String): String =
-    this.helix_sheets.replaceAllIn(
+    helix_sheets.replaceAllIn(
       sequence, { m =>
         m.group("ss") match {
-          case this.helix_pattern(substr) => "<span class=\"ss_e\">" + substr + "</span>"
-          case this.sheet_pattern(substr) => "<span class=\"ss_h\">" + substr + "</span>"
+          case helix_pattern(substr) => "<span class=\"ss_e\">" + substr + "</span>"
+          case sheet_pattern(substr) => "<span class=\"ss_h\">" + substr + "</span>"
         }
       }
     )
@@ -64,55 +62,55 @@ object Common {
   def Q2DColorReplace(name: String, sequence: String): String =
     name match {
       case "psipred" =>
-        this.helix_sheets.replaceAllIn(
+        helix_sheets.replaceAllIn(
           sequence, { m =>
             m.group("ss") match {
-              case this.helix_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
-              case this.sheet_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
+              case helix_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
+              case sheet_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
             }
           }
         )
       case "spider2" =>
-        this.helix_sheets.replaceAllIn(
+        helix_sheets.replaceAllIn(
           sequence, { m =>
             m.group("ss") match {
-              case this.helix_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
-              case this.sheet_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
+              case helix_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
+              case sheet_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
             }
           }
         )
       case "psspred" =>
-        this.helix_sheets.replaceAllIn(
+        helix_sheets.replaceAllIn(
           sequence, { m =>
             m.group("ss") match {
-              case this.helix_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
-              case this.sheet_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
+              case helix_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
+              case sheet_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
             }
           }
         )
       case "deepcnf" =>
-        this.helix_sheets.replaceAllIn(
+        helix_sheets.replaceAllIn(
           sequence, { m =>
             m.group("ss") match {
-              case this.helix_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
-              case this.sheet_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
+              case helix_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
+              case sheet_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
             }
           }
         )
-      case "marcoil"     => this.CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
-      case "coils"       => this.CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
-      case "pcoils"      => this.CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
-      case "tmhmm"       => this.TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
-      case "phobius"     => this.TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
-      case "polyphobius" => this.TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
-      case "spotd"       => this.DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
-      case "iupred"      => this.DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
-      case "disopred3"   => this.DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
+      case "marcoil"     => CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
+      case "coils"       => CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
+      case "pcoils"      => CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
+      case "tmhmm"       => TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
+      case "phobius"     => TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
+      case "polyphobius" => TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
+      case "spotd"       => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
+      case "iupred"      => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
+      case "disopred3"   => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
 
     }
 
   def colorRegexReplacer(sequence: String): String =
-    this.color_regex.replaceAllIn(sequence, { m =>
+    color_regex.replaceAllIn(sequence, { m =>
       "<span class=\"aa_" + m.toString().charAt(0) + "\">" + m.toString() + "</span>"
     })
 
@@ -121,57 +119,37 @@ object Common {
   }
 
   def makeRow(rowClass: String, entries: Array[Any]): String = {
-    var str = ""
-    if (rowClass == null)
-      str += "<tr>"
-    else
-      str += "<tr class='" + rowClass + "'>"
-    for (entry <- entries) {
-      str += "<td>" + entry.toString + "</td>"
-    }
-    str += "</tr>"
-    str
+    val DOMElement = for (entry <- entries) yield {
+      "<td>" + entry.toString + "</td>"
+    }.mkString(" ")
+    "<tr class='" + rowClass + "'>" + DOMElement + "</tr>"
   }
 
   /* GENERATING LINKS FOR HHPRED */
 
   def getSingleLink(id: String): Html = {
     val db     = identifyDatabase(id)
-    var link   = ""
     val idPfam = id.replaceAll("am.*$||..*", "")
     val idPdb  = id.replaceAll("_.*$", "")
-    if (db == "scop") {
-      link += generateLink(scopBaseLink, id, id)
-    } else if (db == "mmcif") {
-      link += generateLink(pdbBaseLink, idPdb, id)
-    } else if (db == "prk") {
-      link += generateLink(cddBaseLink, id, id)
-    } else if (db == "ncbicd") {
-      link += generateLink(cddBaseLink, id, id)
-    } else if (db == "cogkog") {
-      link += generateLink(cddBaseLink, id, id)
-    } else if (db == "tigr") {
-      link += generateLink(cddBaseLink, id, id)
-    } else if (db == "pfam") {
-      link += generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
-    } else if (db == "ncbi") {
-      link += generateLink(ncbiProteinBaseLink, id, id)
-    } else if (db == "uniprot") {
-      link += generateLink(uniprotBaseLik, id, id)
-    } else if (db == "smart") {
-      link += generateLink(smartBaseLink, id, id)
-    } else if (db == "ecod") {
-      val idEcod = id.slice(5, 14)
-      link += generateLink(ecodBaseLink, idEcod, id)
-    } else {
-      link = id
+    val link = db match {
+      case "scop"    => generateLink(scopBaseLink, id, id)
+      case "mmcif"   => generateLink(pdbBaseLink, idPdb, id)
+      case "prk"     => generateLink(cddBaseLink, id, id)
+      case "ncbicd"  => generateLink(cddBaseLink, id, id)
+      case "cogkog"  => generateLink(cddBaseLink, id, id)
+      case "tigr"    => generateLink(cddBaseLink, id, id)
+      case "pfam"    => generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
+      case "ncbi"    => generateLink(ncbiProteinBaseLink, id, id)
+      case "uniprot" => generateLink(uniprotBaseLik, id, id)
+      case "smart"   => generateLink(smartBaseLink, id, id)
+      case "ecod"    => val idEcod = id.slice(5, 14); generateLink(ecodBaseLink, idEcod, id)
+      case _         => id
     }
     Html(link)
   }
 
   def getLinks(id: String): Html = {
     val db     = identifyDatabase(id)
-    var links  = new ArrayBuffer[String]()
     val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
     val idPdb  = id.replaceAll("_.*$", "").toLowerCase
     val idTrimmed = if (id.length > 4) {
@@ -179,59 +157,44 @@ object Common {
     } else {
       id
     }
-    var idCDD = id.replaceAll("PF", "pfam")
-    if (db == "scop") {
-      links += generateLink(scopBaseLink, id, "SCOP")
-      links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
-    } else if (db == "mmcif") {
-      links += generateLink(pdbeBaseLink, idPdb, "PDBe")
-    } else if (db == "pfam") {
-      idCDD = idCDD.replaceAll("\\..*", "")
-      links += generateLink(cddBaseLink, idCDD, "CDD")
-    } else if (db == "ncbi") {
-      links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
+    val idCDD = id.replaceAll("PF", "pfam").replaceAll("\\..*", "")
+    val links = db match {
+      case "scop"  => generateLink(scopBaseLink, id, "SCOP") + " | " + generateLink(ncbiBaseLink, idTrimmed, "NCBI")
+      case "mmcif" => generateLink(pdbeBaseLink, idPdb, "PDBe")
+      case "pfam"  => generateLink(cddBaseLink, idCDD, "CDD")
+      case "ncbi"  => generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
     }
-
-    Html(links.mkString(" | "))
+    Html(links)
   }
 
   def getSingleLinkDB(db: String, id: String): Html = {
-    var link   = ""
     val idPfam = id.replaceAll("am.*$||..*", "")
     val idPdb  = id.replaceAll("_.*$", "")
-    db match {
-      case envNrNameReg(_)   => link += generateLink(ncbiProteinBaseLink, id, id)
-      case pdbNameReg(_)     => link += generateLink(pdbBaseLink, idPdb, id)
-      case uniprotNameReg(_) => link += generateLink(uniprotBaseLik, id, id)
-      case pfamNameReg(_)    => link += generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
-      case _                 => link = id
+    val link = db match {
+      case envNrNameReg(_)   => generateLink(ncbiProteinBaseLink, id, id)
+      case pdbNameReg(_)     => generateLink(pdbBaseLink, idPdb, id)
+      case uniprotNameReg(_) => generateLink(uniprotBaseLik, id, id)
+      case pfamNameReg(_)    => generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
+      case _                 => id
     }
     Html(link)
   }
 
   def getLinksDB(db: String, id: String): Html = {
-    var links  = new ArrayBuffer[String]()
     val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
     val idPdb  = id.replaceAll("_.*$", "").toLowerCase
-    var idCDD  = id.replaceAll("PF", "pfam")
-
-    db match {
-      case envNrNameReg(_) => links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
-      case pdbNameReg(_)   => links += generateLink(pdbeBaseLink, idPdb, "PDBe")
-      case pfamNameReg(_) => {
-        idCDD = idCDD.replaceAll("\\..*", "")
-        links += generateLink(cddBaseLink, idCDD, "CDD")
-      }
+    val idCDD  = id.replaceAll("PF", "pfam").replaceAll("\\..*", "")
+    val links = db match {
+      case envNrNameReg(_)   => generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
+      case pdbNameReg(_)     => generateLink(pdbeBaseLink, idPdb, "PDBe")
+      case pfamNameReg(_)    => generateLink(cddBaseLink, idCDD, "CDD")
       case uniprotNameReg(_) => ""
     }
-    Html(links.mkString(" | "))
+    Html(links)
   }
 
   def getSingleLinkHHBlits(id: String): Html = {
-    var link  = ""
-    val idPdb = id.replaceAll("_.*$", "")
-    link += generateLink(uniprotBaseLik, id, id)
-    Html(link)
+    Html(generateLink(uniprotBaseLik, id, id))
   }
 
   def getLinksHHBlits(id: String): Html = {
@@ -242,46 +205,49 @@ object Common {
 
   def getLinksHHpred(id: String): Html = {
     val db    = identifyDatabase(id)
-    var links = new ArrayBuffer[String]()
-
-    var idPdb = id.replaceAll("_.*$", "").toLowerCase
+    val idPdb = id.replaceAll("_.*$", "").toLowerCase
     val idTrimmed = if (id.length > 4) {
       id.slice(1, 5)
     } else {
       id
     }
-    var idCDD  = id.replaceAll("PF", "pfam")
+    val idCDD  = id.replaceAll("PF", "pfam").replaceAll("\\..*", "")
     val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
-    links += "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
-    if (db == "scop") {
-      links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
-      links += generateLink(pdbBaseLink, idTrimmed, "PDB")
-      links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
-    } else if (db == "ecod") {
-      idPdb = id.slice(16, 20)
-      links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
-      links += generateLink(pdbBaseLink, idPdb, "PDB")
-    } else if (db == "mmcif") {
-      links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
-      links += generateLink(pdbeBaseLink, idPdb, "PDBe")
-    } else if (db == "pfam") {
-      idCDD = idCDD.replaceAll("\\..*", "")
-      links += generateLink(cddBaseLink, idCDD, "CDD")
-    } else if (db == "ncbi") {
-      links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
+    val l1 =
+      List(
+        "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
+      )
+    val l2 = db match {
+      case "scop" =>
+        l1 :: List(
+          "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>",
+          generateLink(pdbBaseLink, idTrimmed, "PDB"),
+          generateLink(ncbiBaseLink, idTrimmed, "NCBI")
+        )
+      case "ecod" =>
+        l1 :: List(
+          "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>",
+          generateLink(pdbBaseLink, idPdb.slice(16, 20), "PDB")
+        )
+      case "mmcif" =>
+        l1 :: List(
+          "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>",
+          generateLink(pdbeBaseLink, idPdb, "PDBe")
+        )
+      case "pfam" => l1 :: List(generateLink(cddBaseLink, idCDD, "CDD"))
+      case "ncbi" => l1 :: List(generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta"))
     }
-
-    Html(links.mkString(" | "))
+    Html(l2.mkString(" | "))
   }
 
   def getLinksHmmer(id: String): Html = {
     val db     = identifyDatabase(id)
-    var links  = new ArrayBuffer[String]()
-    var idNcbi = id.replaceAll("#", ".") + "?report=fasta"
-    if (db == "ncbi") {
-      links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
+    val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
+    val link = db match {
+      case "ncbi" => generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
+      case _      => ""
     }
-    Html(links.mkString(" | "))
+    Html(link)
   }
 
   def generateLink(baseLink: String, id: String, name: String): String =
@@ -300,31 +266,22 @@ object Common {
     case uniprotReg(_)    => "uniprot"
     case ecodReg(_)       => "ecod"
     case ncbiReg(_)       => "ncbi"
-
-    case e: String => Logger.info("Struc: (" + e + ") could not be matched against any database!"); ""
+    case e: String        => Logger.info("Struc: (" + e + ") could not be matched against any database!"); ""
   }
 
-  def percentage(str: String): String = {
-    val num     = str.toDouble
-    val percent = (num * 100).toInt.toString + "%"
-    percent
-  }
+  def percentage(str: String): String = (str.toDouble * 100).toInt.toString + "%"
 
-  def calculatePercentage(num1_ : Int, num2_ : Int): String = {
-    val num1    = num1_.toDouble
-    val num2    = num2_.toDouble
-    val percent = ((num1 / num2) * 100).toInt.toString + "%"
-    percent
-  }
+  def calculatePercentage(num1_ : Int, num2_ : Int): String =
+    ((num1_.toDouble / num2_.toDouble) * 100).toInt.toString + "%"
 
   def wrapSequence(seq: String, num: Int): String = {
-    var seqWrapped = ""
-    for { i <- 0 to seq.length if i % num == 0 } if (i + num < seq.length) {
-      seqWrapped += makeRow("sequence", Array("", seq.slice(i, (i + num))))
-    } else {
-      seqWrapped += makeRow("sequence", Array("", seq.substring(i)))
-    }
-    seqWrapped
+    (0 to seq.length)
+      .filter(_ % num == 0)
+      .map {
+        case x if x + num < seq.length => makeRow("sequence", Array("", seq.slice(x, x + num)))
+        case x                         => makeRow("sequence", Array("", seq.substring(x)))
+      }
+      .mkString("")
   }
 
   def getCheckbox(num: Int): String = {
@@ -340,22 +297,19 @@ object Common {
   }
 
   def addBreakHHpred(description: String): String = {
-    var slice = description
-    val index = slice.indexOfSlice("; Related PDB entries")
-    if (index > 1) {
-      slice = description.slice(0, index)
-    }
-    slice.replaceAll("(\\S{40})", "$1</br>")
+    val index = description.indexOfSlice("; Related PDB entries")
+    if (index > 1)
+      description.slice(0, index).replaceAll("(\\S{40})", "$1</br>")
+    else
+      description.replaceAll("(\\S{40})", "$1</br>")
   }
 
   def insertMatch(seq: String, length: Int, hitArr: List[Int]): String = {
-    var newSeq = ""
-    for (starPos <- hitArr) {
-      val endPos = starPos + length
-      newSeq += seq.slice(0, starPos) + "<span class=\"patternMatch\">" + seq.slice(starPos, endPos) + "</span>" + seq
-        .substring(endPos)
+    val inserted = for (starPos <- hitArr) yield {
+      seq.slice(0, starPos) + "<span class=\"patternMatch\">" + seq.slice(starPos, starPos + length) + "</span>" + seq
+        .substring(starPos + length)
     }
-    newSeq
+    inserted.mkString("")
   }
 
   def clustal(alignment: AlignmentResult, begin: Int, breakAfter: Int, color: Boolean): String = {
@@ -507,10 +461,8 @@ object Common {
       if (beginQuery == beginQuery + queryEnd) {
         ""
       } else {
-
         var html = ""
         if (!querySSPRED.isEmpty) {
-
           html += makeRow("sequence", Array("", "Q ss_pred", "", Common.SSColorReplace(querySSPRED)))
         }
         if (!querySSDSSP.isEmpty) {
@@ -552,9 +504,7 @@ object Common {
         if (!confidence.isEmpty) {
           html += makeRow("sequence", Array("", "Confidence", "", confidence))
         }
-
         html += emptyRow + emptyRow
-
         html + hhpredHitWrapped(hit,
                                 charCount + breakAfter,
                                 breakAfter,
@@ -601,9 +551,7 @@ object Common {
       if (beginQuery == beginQuery + queryEnd) {
         ""
       } else {
-
         var html = ""
-
         if (!querySSCONF.isEmpty) {
           html += makeRow("sequence", Array("", "Q ss_conf", "", querySSCONF))
         }
@@ -694,88 +642,87 @@ object Common {
         "sequenceCompact",
         Array("AA_QUERY",
               charCount + 1,
-              this.Highlight(query) + "&nbsp;&nbsp;&nbsp;&nbsp;" + Math.min(length, charCount + breakAfter))
+              Highlight(query) + "&nbsp;&nbsp;&nbsp;&nbsp;" + Math.min(length, charCount + breakAfter))
       )
-
       if (!psipred.isEmpty) {
         htmlString += makeRow("sequenceCompact",
                               Array("SS_" + result.psipred.name.toUpperCase(),
                                     "",
-                                    this.Q2DColorReplace(result.psipred.name, psipred.replace("C", "&nbsp;"))))
+                                    Q2DColorReplace(result.psipred.name, psipred.replace("C", "&nbsp;"))))
       }
       if (!spider2.isEmpty) {
         htmlString += makeRow("sequenceCompact",
                               Array("SS_" + result.spider2.name.toUpperCase(),
                                     "",
-                                    this.Q2DColorReplace(result.spider2.name, spider2.replace("C", "&nbsp;"))))
+                                    Q2DColorReplace(result.spider2.name, spider2.replace("C", "&nbsp;"))))
       }
       if (!psspred.isEmpty) {
         htmlString += makeRow("sequenceCompact",
                               Array("SS_" + result.psspred.name.toUpperCase(),
                                     "",
-                                    this.Q2DColorReplace(result.psspred.name, psspred.replace("C", "&nbsp;"))))
+                                    Q2DColorReplace(result.psspred.name, psspred.replace("C", "&nbsp;"))))
       }
       if (!deepcnf.isEmpty) {
         htmlString += makeRow("sequenceCompact",
                               Array("SS_" + result.deepcnf.name.toUpperCase(),
                                     "",
-                                    this.Q2DColorReplace(result.deepcnf.name, deepcnf.replace("C", "&nbsp;"))))
+                                    Q2DColorReplace(result.deepcnf.name, deepcnf.replace("C", "&nbsp;"))))
       }
       if (!marcoil.isEmpty) {
         htmlString += makeRow("sequenceCompact",
                               Array("CC_" + result.marcoil.name.toUpperCase(),
                                     "",
-                                    this.Q2DColorReplace(result.marcoil.name, marcoil.replace("x", "&nbsp;"))))
+                                    Q2DColorReplace(result.marcoil.name, marcoil.replace("x", "&nbsp;"))))
       }
       if (!coils.isEmpty) {
         htmlString += makeRow("sequenceCompact",
                               Array("CC_" + result.coils.name.toUpperCase() + "_W28",
                                     "",
-                                    this.Q2DColorReplace(result.coils.name, coils.replace("x", "&nbsp;"))))
+                                    Q2DColorReplace(result.coils.name, coils.replace("x", "&nbsp;"))))
       }
       if (!pcoils.isEmpty) {
         htmlString += makeRow("sequenceCompact",
                               Array("CC_" + result.pcoils.name.toUpperCase() + "_W28",
                                     "",
-                                    this.Q2DColorReplace(result.pcoils.name, pcoils.replace("x", "&nbsp;"))))
+                                    Q2DColorReplace(result.pcoils.name, pcoils.replace("x", "&nbsp;"))))
       }
       if (!tmhmm.isEmpty) {
         htmlString += makeRow("sequenceCompact",
                               Array("TM_" + result.tmhmm.name.toUpperCase(),
                                     "",
-                                    this.Q2DColorReplace(result.tmhmm.name, tmhmm.replace("x", "&nbsp;"))))
+                                    Q2DColorReplace(result.tmhmm.name, tmhmm.replace("x", "&nbsp;"))))
       }
       if (!phobius.isEmpty) {
         htmlString += makeRow("sequenceCompact",
                               Array("TM_" + result.phobius.name.toUpperCase(),
                                     "",
-                                    this.Q2DColorReplace(result.phobius.name, phobius.replace("x", "&nbsp;"))))
+                                    Q2DColorReplace(result.phobius.name, phobius.replace("x", "&nbsp;"))))
       }
       if (!polyphobius.isEmpty) {
         htmlString += makeRow(
           "sequenceCompact",
           Array("TM_" + result.polyphobius.name.toUpperCase(),
                 "",
-                this.Q2DColorReplace(result.polyphobius.name, polyphobius.replace("x", "&nbsp;")))
+                Q2DColorReplace(result.polyphobius.name, polyphobius.replace("x", "&nbsp;")))
         )
       }
       if (!disopred3.isEmpty) {
         htmlString += makeRow("sequenceCompact",
                               Array("DO_" + result.disopred3.name.toUpperCase(),
                                     "",
-                                    this.Q2DColorReplace(result.disopred3.name, disopred3.replace("O", "&nbsp;"))))
+                                    Q2DColorReplace(result.disopred3.name, disopred3.replace("O", "&nbsp;"))))
       }
       if (!spotd.isEmpty) {
         htmlString += makeRow("sequenceCompact",
                               Array("DO_" + result.spotd.name.toUpperCase(),
                                     "",
-                                    this.Q2DColorReplace(result.spotd.name, spotd.replace("O", "&nbsp;"))))
+                                    Q2DColorReplace(result.spotd.name, spotd.replace("O", "&nbsp;"))))
       }
       if (!iupred.isEmpty) {
         htmlString += makeRow("sequenceCompact",
                               Array("DO_" + result.iupred.name.toUpperCase(),
                                     "",
-                                    this.Q2DColorReplace(result.iupred.name, iupred.replace("O", "&nbsp;"))))
+                                    Q2DColorReplace(result.iupred.name, iupred.replace("O", "&nbsp;"))))
       }
 
       htmlString += emptyRow + emptyRow + emptyRow + emptyRow + emptyRow
