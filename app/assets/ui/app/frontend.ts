@@ -31,7 +31,7 @@ window.FrontendAlnvizComponent = {
             initMSA: function() : any {
                 let alignment, defMenu, menuOpts, opts, seqs, counter, i;
                 seqs = $('#alignment').reformat('Fasta');
-                let height = (seqs.split('>').length-1)*15;
+                let height = Math.min($(window).height()-250, (seqs.split('>').length-1)*15);
                 let split = seqs.split('\n');
                 counter = 0;
                 i = 1;
@@ -39,7 +39,7 @@ window.FrontendAlnvizComponent = {
                     counter = counter + split[i].length;
                     i++;
                 }
-                let width = counter * 15;
+                let width = $("#tabpanel-Visualization").innerWidth();
                 if (!seqs) {
                     return;
                 }
