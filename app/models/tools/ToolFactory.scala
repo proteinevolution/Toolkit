@@ -56,7 +56,7 @@ final class ToolFactory @Inject()(
 
   // Maps toolname and resultpanel name to the function which transfers jobID and jobPath to an appropriate view
 
-  def getResultMap(jid: String, τ: String)(
+  def getResultMap(τ: String)(
       implicit rh: RequestHeader
   ): ListMap[String, String => Future[play.twirl.api.Html]] = {
 

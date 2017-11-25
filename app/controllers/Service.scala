@@ -83,7 +83,7 @@ final class Service @Inject()(messagesApi: MessagesApi,
 
   def getResult(jobID: String, tool: String, resultpanel: String): Action[AnyContent] = Action.async {
     implicit request =>
-      val innerMap = toolFactory.getResultMap(jobID, tool)
+      val innerMap = toolFactory.getResultMap(tool)
       innerMap(resultpanel)(jobID).map(Ok(_))
   }
 
@@ -95,7 +95,7 @@ final class Service @Inject()(messagesApi: MessagesApi,
         // The jobState decides which views will be appended to the job
         val jobViews: Future[Seq[String]] = job.status match {
           case Done =>
-            Future.successful(toolFactory.getResultMap(jobID, toolForm.toolname).keys.toSeq)
+            Future.successful(toolFactory.getResultMap(toolForm.toolname).keys.toSeq)
           // All other views are currently computed on Clientside
           case _ => Future.successful(Nil)
         }
