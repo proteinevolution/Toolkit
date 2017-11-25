@@ -4,7 +4,7 @@ import java.io.File
 import javax.inject.Singleton
 
 import com.typesafe.config.ConfigFactory
-
+import scala.language.postfixOps
 import scala.concurrent.duration._
 import scala.util.matching.Regex
 

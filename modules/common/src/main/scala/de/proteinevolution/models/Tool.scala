@@ -9,7 +9,7 @@ case class Tool(toolNameShort: String,
     toolNameAbbrev: String,
     category: String,
     params: Map[String, Param], // Maps a parameter name to the respective Param instance
-    toolitem: ToolForm,
+    toolForm: ToolForm,
     paramGroups: Map[String, Seq[String]],
     forwardAlignment: Seq[String],
     forwardMultiSeq: Seq[String]) {
