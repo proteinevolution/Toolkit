@@ -56,738 +56,735 @@ final class ToolFactory @Inject()(
 
   // Maps toolname and resultpanel name to the function which transfers jobID and jobPath to an appropriate view
 
-  def getInnerResultMap(jid: String, τ: String)(
+  def getResultMap(jid: String, τ: String)(
       implicit rh: RequestHeader
   ): ListMap[String, String => Future[play.twirl.api.Html]] = {
 
-    val resultMap: ListMap[String, String => Future[play.twirl.api.Html]] = {
-      τ match {
-        case ToolNames.PSIBLAST.value =>
-          ListMap(
-            ResultViews.RESULTS -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.psiblast.hitlist(jobID,
-                                                                psi.parseResult(jsValue),
-                                                                values("psiblast"),
-                                                                s"${constants.jobPath}$jobID/results/blastviz.html")
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            "Raw Output" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.fileviewWithDownload(
-                  "output_psiblastp.html",
-                  s"${constants.jobPath}$jobID/results/" + "output_psiblastp.html",
+    τ match {
+      case ToolNames.PSIBLAST.value =>
+        ListMap(
+          ResultViews.RESULTS -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.psiblast.hitlist(jobID,
+                                                              psi.parseResult(jsValue),
+                                                              values("psiblast"),
+                                                              s"${constants.jobPath}$jobID/results/blastviz.html")
+              case None => views.html.errors.pagenotfound()
+            }
+          },
+          "Raw Output" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.fileviewWithDownload(
+                "output_psiblastp.html",
+                s"${constants.jobPath}$jobID/results/" + "output_psiblastp.html",
+                jobID,
+                "PSIBLAST_OUTPUT"
+              )
+            )
+          },
+          "E-Value Plot" -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.evalues(psi.parseResult(jsValue).HSPS.map(_.evalue))
+              case None => views.html.errors.pagenotfound()
+            }
+          }
+        )
+      case ToolNames.FORMATSEQ.value =>
+        ListMap(
+          ResultViews.RESULTS -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.fileviewWithDownloadForward(
+                jobID + ".out",
+                s"${constants.jobPath}$jobID/results/" + jobID + ".out",
+                jobID,
+                "FormatSeq",
+                values(ToolNames.FORMATSEQ.value)
+              )
+            )
+          }
+        )
+      case ToolNames.CLANS.value =>
+        ListMap(
+          ResultViews.RESULTS -> { jobID =>
+            Future.successful(views.html.jobs.resultpanels.clans("CLANS", jobID))
+          }
+        )
+      case ToolNames.TPRPRED.value =>
+        ListMap(
+          ResultViews.RESULTS -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.tprpred("TPRpred", jobID, jsValue)
+              case None => views.html.errors.pagenotfound()
+            }
+          }
+        )
+      case ToolNames.HHBLITS.value =>
+        ListMap(
+          ResultViews.RESULTS -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.hhblits
+                  .hitlist(jobID,
+                           hhblits.parseResult(jsValue),
+                           values(ToolNames.HHBLITS.value),
+                           s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
+              case None => views.html.errors.pagenotfound()
+            }
+          },
+          "Raw Output" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels
+                .fileviewWithDownload(jobID + ".hhr",
+                                      s"${constants.jobPath}$jobID/results/" + jobID + ".hhr",
+                                      jobID,
+                                      "hhblits_hhr")
+            )
+          },
+          "E-Value Plot" -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.evalues(hhblits.parseResult(jsValue).HSPS.map(_.info.evalue))
+              case None => views.html.errors.pagenotfound()
+            }
+          },
+          "Query Template MSA" -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.alignmentQueryMSA(
                   jobID,
-                  "PSIBLAST_OUTPUT"
+                  aln.parseAlignment((jsValue \ "querytemplate").as[JsArray]),
+                  "querytemplate",
+                  values(ToolNames.HHBLITS.value)
                 )
-              )
-            },
-            "E-Value Plot" -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.evalues(psi.parseResult(jsValue).HSPS.map(_.evalue))
-                case None => views.html.errors.pagenotfound()
-              }
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.FORMATSEQ.value =>
-          ListMap(
-            ResultViews.RESULTS -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.fileviewWithDownloadForward(
-                  jobID + ".out",
-                  s"${constants.jobPath}$jobID/results/" + jobID + ".out",
-                  jobID,
-                  "FormatSeq",
-                  values(ToolNames.FORMATSEQ.value)
-                )
-              )
+          },
+          "Query Alignment" -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
+                                                               aln.parseAlignment((jsValue \ "reduced").as[JsArray]),
+                                                               "reduced",
+                                                               values(ToolNames.HHBLITS.value))
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.CLANS.value =>
-          ListMap(
-            ResultViews.RESULTS -> { jobID =>
-              Future.successful(views.html.jobs.resultpanels.clans("CLANS", jobID))
+          }
+        )
+      case ToolNames.MARCOIL.value =>
+        ListMap(
+          "CC-Prob" -> { jobID =>
+            Future.successful(views.html.jobs.resultpanels.marcoil(s"/files/$jobID/alignment_ncoils.png"))
+          },
+          "ProbList" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.fileviewWithDownload(
+                "alignment.ProbList",
+                s"${constants.jobPath}$jobID/results/alignment.ProbList",
+                jobID,
+                "marcoil_problist"
+              )
+            )
+          },
+          "ProbState" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.fileviewWithDownload(
+                "alignment.ProbPerState",
+                s"${constants.jobPath}$jobID/results/alignment.ProbPerState",
+                jobID,
+                "marcoil_probperstate"
+              )
+            )
+          },
+          "Predicted Domains" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.fileviewWithDownload(
+                "alignment.Domains",
+                s"${constants.jobPath}$jobID/results/alignment.Domains",
+                jobID,
+                "marcoil_domains"
+              )
+            )
+          }
+        )
+      case ToolNames.PCOILS.value =>
+        ListMap(
+          "CC-Prob" -> { jobID =>
+            Future.successful(views.html.jobs.resultpanels.pcoils(s"/files/$jobID/" + jobID))
+          },
+          "ProbList" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".numerical",
+                                                    "PCOILS_PROBLIST")
+            )
+          }
+        )
+      case ToolNames.REPPER.value =>
+        ListMap(
+          ResultViews.RESULTS -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.repper(jobID, s"${constants.jobPath}$jobID/results/" + jobID)
+            )
+          }
+        )
+      case ToolNames.MODELLER.value =>
+        ListMap(
+          "3D-Structure" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.NGL3DStructure(s"/files/$jobID/$jobID.pdb",
+                                                          jobID + ".pdb",
+                                                          jobID,
+                                                          "Modeller")
+            )
+          },
+          "VERIFY3D" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.verify3d.png",
+                                                    s"${constants.jobPath}$jobID/results/verify3d/$jobID.plotdat")
+            )
+          },
+          "SOLVX" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.solvx.png",
+                                                    s"${constants.jobPath}$jobID/results/solvx/$jobID.solvx")
+            )
+          },
+          "ANOLEA" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.anolea.png",
+                                                    s"${constants.jobPath}$jobID/results/$jobID.pdb.profile")
+            )
+          }
+        )
+      case ToolNames.HMMER.value =>
+        ListMap(
+          ResultViews.RESULTS -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.hmmer
+                  .hitlist(jobID,
+                           hmmer.parseResult(jsValue),
+                           values(ToolNames.HMMER.value),
+                           s"${constants.jobPath}/$jobID/results/blastviz.html")
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.TPRPRED.value =>
-          ListMap(
-            ResultViews.RESULTS -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.tprpred("TPRpred", jobID, jsValue)
-                case None => views.html.errors.pagenotfound()
-              }
+          },
+          "E-Value Plot" -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.evalues(hmmer.parseResult(jsValue).HSPS.map(_.evalue))
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.HHBLITS.value =>
-          ListMap(
-            ResultViews.RESULTS -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.hhblits
-                    .hitlist(jobID,
-                             hhblits.parseResult(jsValue),
-                             values(ToolNames.HHBLITS.value),
-                             s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            "Raw Output" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels
-                  .fileviewWithDownload(jobID + ".hhr",
-                                        s"${constants.jobPath}$jobID/results/" + jobID + ".hhr",
-                                        jobID,
-                                        "hhblits_hhr")
-              )
-            },
-            "E-Value Plot" -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.evalues(hhblits.parseResult(jsValue).HSPS.map(_.info.evalue))
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            "Query Template MSA" -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.alignmentQueryMSA(
-                    jobID,
-                    aln.parseAlignment((jsValue \ "querytemplate").as[JsArray]),
-                    "querytemplate",
-                    values(ToolNames.HHBLITS.value)
-                  )
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            "Query Alignment" -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
-                                                                 aln.parseAlignment((jsValue \ "reduced").as[JsArray]),
-                                                                 "reduced",
-                                                                 values(ToolNames.HHBLITS.value))
-                case None => views.html.errors.pagenotfound()
-              }
+          }
+        )
+      case ToolNames.HHPRED.value =>
+        ListMap(
+          ResultViews.RESULTS -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.hhpred
+                  .hitlist(jobID,
+                           hhpred.parseResult(jsValue),
+                           values(ToolNames.HHPRED.value),
+                           s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.MARCOIL.value =>
-          ListMap(
-            "CC-Prob" -> { jobID =>
-              Future.successful(views.html.jobs.resultpanels.marcoil(s"/files/$jobID/alignment_ncoils.png"))
-            },
-            "ProbList" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.fileviewWithDownload(
-                  "alignment.ProbList",
-                  s"${constants.jobPath}$jobID/results/alignment.ProbList",
-                  jobID,
-                  "marcoil_problist"
-                )
-              )
-            },
-            "ProbState" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.fileviewWithDownload(
-                  "alignment.ProbPerState",
-                  s"${constants.jobPath}$jobID/results/alignment.ProbPerState",
-                  jobID,
-                  "marcoil_probperstate"
-                )
-              )
-            },
-            "Predicted Domains" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.fileviewWithDownload(
-                  "alignment.Domains",
-                  s"${constants.jobPath}$jobID/results/alignment.Domains",
-                  jobID,
-                  "marcoil_domains"
-                )
-              )
+          },
+          "Raw Output" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels
+                .fileviewWithDownload(jobID + ".hhr",
+                                      s"${constants.jobPath}$jobID/results/" + jobID + ".hhr",
+                                      jobID,
+                                      "hhpred")
+            )
+          },
+          "Probability  Plot" -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.probability(hhpred.parseResult(jsValue).HSPS.map(_.info.probab))
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.PCOILS.value =>
-          ListMap(
-            "CC-Prob" -> { jobID =>
-              Future.successful(views.html.jobs.resultpanels.pcoils(s"/files/$jobID/" + jobID))
-            },
-            "ProbList" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".numerical",
-                                                      "PCOILS_PROBLIST")
-              )
+          },
+          "Query Template MSA" -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.alignment(jobID,
+                                                       aln.parseAlignment((jsValue \ "querytemplate").as[JsArray]),
+                                                       "querytemplate",
+                                                       values(ToolNames.HHPRED.value))
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.REPPER.value =>
-          ListMap(
-            ResultViews.RESULTS -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.repper(jobID, s"${constants.jobPath}$jobID/results/" + jobID)
-              )
+          },
+          "Query MSA" -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
+                                                               aln.parseAlignment((jsValue \ "reduced").as[JsArray]),
+                                                               "reduced",
+                                                               values(ToolNames.HHPRED.value))
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.MODELLER.value =>
-          ListMap(
-            "3D-Structure" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.NGL3DStructure(s"/files/$jobID/$jobID.pdb",
-                                                            jobID + ".pdb",
-                                                            jobID,
-                                                            "Modeller")
-              )
-            },
-            "VERIFY3D" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.verify3d.png",
-                                                      s"${constants.jobPath}$jobID/results/verify3d/$jobID.plotdat")
-              )
-            },
-            "SOLVX" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.solvx.png",
-                                                      s"${constants.jobPath}$jobID/results/solvx/$jobID.solvx")
-              )
-            },
-            "ANOLEA" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.anolea.png",
-                                                      s"${constants.jobPath}$jobID/results/$jobID.pdb.profile")
-              )
+          }
+        )
+      case ToolNames.HHOMP.value =>
+        ListMap(
+          ResultViews.RESULTS -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.hhomp
+                  .hitlist(jobID,
+                           hhomp.parseResult(jsValue),
+                           values(ToolNames.HHOMP.value),
+                           s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.HMMER.value =>
-          ListMap(
-            ResultViews.RESULTS -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.hmmer
-                    .hitlist(jobID,
-                             hmmer.parseResult(jsValue),
-                             values(ToolNames.HMMER.value),
-                             s"${constants.jobPath}/$jobID/results/blastviz.html")
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            "E-Value Plot" -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.evalues(hmmer.parseResult(jsValue).HSPS.map(_.evalue))
-                case None => views.html.errors.pagenotfound()
-              }
+          },
+          "Raw Output" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels
+                .fileviewWithDownload(jobID + ".hhr",
+                                      s"${constants.jobPath}$jobID/results/" + jobID + ".hhr",
+                                      jobID,
+                                      "hhomp_hhr")
+            )
+          }
+        )
+      case ToolNames.HHPRED_ALIGN.value =>
+        ListMap(
+          ResultViews.HITLIST -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.hhpred
+                  .hitlist(jobID,
+                           hhpred.parseResult(jsValue),
+                           values(ToolNames.HHPRED_ALIGN.value),
+                           s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.HHPRED.value =>
-          ListMap(
-            ResultViews.RESULTS -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.hhpred
-                    .hitlist(jobID,
-                             hhpred.parseResult(jsValue),
-                             values(ToolNames.HHPRED.value),
-                             s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            "Raw Output" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels
-                  .fileviewWithDownload(jobID + ".hhr",
-                                        s"${constants.jobPath}$jobID/results/" + jobID + ".hhr",
-                                        jobID,
-                                        "hhpred")
-              )
-            },
-            "Probability  Plot" -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.probability(hhpred.parseResult(jsValue).HSPS.map(_.info.probab))
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            "Query Template MSA" -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.alignment(jobID,
-                                                         aln.parseAlignment((jsValue \ "querytemplate").as[JsArray]),
-                                                         "querytemplate",
-                                                         values(ToolNames.HHPRED.value))
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            "Query MSA" -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
-                                                                 aln.parseAlignment((jsValue \ "reduced").as[JsArray]),
-                                                                 "reduced",
-                                                                 values(ToolNames.HHPRED.value))
-                case None => views.html.errors.pagenotfound()
-              }
+          },
+          "FullAlignment" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.msaviewer(jobID,
+                                                     s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+            )
+          }
+        )
+      case ToolNames.HHPRED_MANUAL.value =>
+        ListMap(
+          ResultViews.RESULTS -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.hhpred.forward(s"${constants.jobPath}$jobID/results/tomodel.pir", jobID)
+            )
+          },
+          ResultViews.SUMMARY -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/results.out", "HHPRED_MANUAL")
+            )
+          }
+        )
+      case ToolNames.HHREPID.value =>
+        ListMap(
+          ResultViews.RESULTS -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.hhrepid(jobID,
+                                                   s"${constants.jobPath}$jobID/results/query.hhrepid",
+                                                   "querymsa",
+                                                   values(ToolNames.HHBLITS.value))
+            )
+          }
+        )
+      case ToolNames.ALI2D.value =>
+        ListMap(
+          ResultViews.RESULTS -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".results_color",
+                                                    "ALI2D_COLOR")
+            )
+          },
+          "Results With Confidence" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels
+                .fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".results_colorC", "ALI2D_COLOR_CONF")
+            )
+          },
+          "Text output" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels
+                .fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".results", "ALI2D_TEXT")
+            )
+          }
+        )
+      case ToolNames.QUICK2D.value =>
+        ListMap(
+          ResultViews.RESULTS -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.quick2d(quick2d.parseResult(jsValue))
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.HHOMP.value =>
-          ListMap(
-            ResultViews.RESULTS -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.hhomp
-                    .hitlist(jobID,
-                             hhomp.parseResult(jsValue),
-                             values(ToolNames.HHOMP.value),
-                             s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            "Raw Output" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels
-                  .fileviewWithDownload(jobID + ".hhr",
-                                        s"${constants.jobPath}$jobID/results/" + jobID + ".hhr",
-                                        jobID,
-                                        "hhomp_hhr")
-              )
+          }
+        )
+      case ToolNames.CLUSTALO.value =>
+        ListMap(
+          ResultViews.CLUSTAL -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.clustal(jobID,
+                                                     aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                     "alignment",
+                                                     values(ToolNames.CLUSTALO.value))
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.HHPRED_ALIGN.value =>
-          ListMap(
-            ResultViews.HITLIST -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.hhpred
-                    .hitlist(jobID,
-                             hhpred.parseResult(jsValue),
-                             values(ToolNames.HHPRED_ALIGN.value),
-                             s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            "FullAlignment" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.msaviewer(jobID,
-                                                       s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
-              )
-            }
-          )
-        case ToolNames.HHPRED_MANUAL.value =>
-          ListMap(
-            ResultViews.RESULTS -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.hhpred.forward(s"${constants.jobPath}$jobID/results/tomodel.pir", jobID)
-              )
-            },
-            ResultViews.SUMMARY -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/results.out",
-                                                      "HHPRED_MANUAL")
-              )
-            }
-          )
-        case ToolNames.HHREPID.value =>
-          ListMap(
-            ResultViews.RESULTS -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.hhrepid(jobID,
-                                                     s"${constants.jobPath}$jobID/results/query.hhrepid",
-                                                     "querymsa",
-                                                     values(ToolNames.HHBLITS.value))
-              )
-            }
-          )
-        case ToolNames.ALI2D.value =>
-          ListMap(
-            ResultViews.RESULTS -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".results_color",
-                                                      "ALI2D_COLOR")
-              )
-            },
-            "Results With Confidence" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels
-                  .fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".results_colorC", "ALI2D_COLOR_CONF")
-              )
-            },
-            "Text output" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels
-                  .fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".results", "ALI2D_TEXT")
-              )
-            }
-          )
-        case ToolNames.QUICK2D.value =>
-          ListMap(
-            ResultViews.RESULTS -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.quick2d(quick2d.parseResult(jsValue))
-                case None => views.html.errors.pagenotfound()
-              }
-            }
-          )
-        case ToolNames.CLUSTALO.value =>
-          ListMap(
-            ResultViews.CLUSTAL -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.clustal(jobID,
+          },
+          ResultViews.ALIGNMENT -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.alignment(jobID,
                                                        aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
                                                        values(ToolNames.CLUSTALO.value))
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            ResultViews.ALIGNMENT -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.alignment(jobID,
-                                                         aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
-                                                         "alignment",
-                                                         values(ToolNames.CLUSTALO.value))
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            ResultViews.ALIGNMENTVIEWER -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.msaviewer(jobID,
-                                                       s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
-              )
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.KALIGN.value =>
-          ListMap(
-            ResultViews.CLUSTAL -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.clustal(jobID,
+          },
+          ResultViews.ALIGNMENTVIEWER -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.msaviewer(jobID,
+                                                     s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+            )
+          }
+        )
+      case ToolNames.KALIGN.value =>
+        ListMap(
+          ResultViews.CLUSTAL -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.clustal(jobID,
+                                                     aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                     "alignment",
+                                                     values(ToolNames.KALIGN.value))
+              case None => views.html.errors.pagenotfound()
+            }
+          },
+          ResultViews.ALIGNMENT -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.alignment(jobID,
                                                        aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
                                                        values(ToolNames.KALIGN.value))
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            ResultViews.ALIGNMENT -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.alignment(jobID,
-                                                         aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
-                                                         "alignment",
-                                                         values(ToolNames.KALIGN.value))
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            ResultViews.ALIGNMENTVIEWER -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.msaviewer(jobID,
-                                                       s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
-              )
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.MAFFT.value =>
-          ListMap(
-            ResultViews.CLUSTAL -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.clustal(jobID,
+          },
+          ResultViews.ALIGNMENTVIEWER -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.msaviewer(jobID,
+                                                     s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+            )
+          }
+        )
+      case ToolNames.MAFFT.value =>
+        ListMap(
+          ResultViews.CLUSTAL -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.clustal(jobID,
+                                                     aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                     "alignment",
+                                                     values(ToolNames.MAFFT.value))
+              case None => views.html.errors.pagenotfound()
+            }
+          },
+          ResultViews.ALIGNMENT -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.alignment(jobID,
                                                        aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
                                                        values(ToolNames.MAFFT.value))
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            ResultViews.ALIGNMENT -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.alignment(jobID,
-                                                         aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
-                                                         "alignment",
-                                                         values(ToolNames.MAFFT.value))
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            ResultViews.ALIGNMENTVIEWER -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.msaviewer(jobID,
-                                                       s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
-              )
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.MSAPROBS.value =>
-          ListMap(
-            ResultViews.CLUSTAL -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.clustal(jobID,
+          },
+          ResultViews.ALIGNMENTVIEWER -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.msaviewer(jobID,
+                                                     s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+            )
+          }
+        )
+      case ToolNames.MSAPROBS.value =>
+        ListMap(
+          ResultViews.CLUSTAL -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.clustal(jobID,
+                                                     aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                     "alignment",
+                                                     values(ToolNames.MSAPROBS.value))
+              case None => views.html.errors.pagenotfound()
+            }
+          },
+          ResultViews.ALIGNMENT -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.alignment(jobID,
                                                        aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
                                                        values(ToolNames.MSAPROBS.value))
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            ResultViews.ALIGNMENT -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.alignment(jobID,
-                                                         aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
-                                                         "alignment",
-                                                         values(ToolNames.MSAPROBS.value))
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            ResultViews.ALIGNMENTVIEWER -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.msaviewer(jobID,
-                                                       s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
-              )
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.MUSCLE.value =>
-          ListMap(
-            ResultViews.CLUSTAL -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.clustal(jobID,
+          },
+          ResultViews.ALIGNMENTVIEWER -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.msaviewer(jobID,
+                                                     s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+            )
+          }
+        )
+      case ToolNames.MUSCLE.value =>
+        ListMap(
+          ResultViews.CLUSTAL -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.clustal(jobID,
+                                                     aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                     "alignment",
+                                                     values(ToolNames.MUSCLE.value))
+              case None => views.html.errors.pagenotfound()
+            }
+          },
+          ResultViews.ALIGNMENT -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.alignment(jobID,
                                                        aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
                                                        values(ToolNames.MUSCLE.value))
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            ResultViews.ALIGNMENT -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.alignment(jobID,
-                                                         aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
-                                                         "alignment",
-                                                         values(ToolNames.MUSCLE.value))
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            ResultViews.ALIGNMENTVIEWER -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.msaviewer(jobID,
-                                                       s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
-              )
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.TCOFFEE.value =>
-          ListMap(
-            ResultViews.CLUSTAL -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.clustal(jobID,
+          },
+          ResultViews.ALIGNMENTVIEWER -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.msaviewer(jobID,
+                                                     s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+            )
+          }
+        )
+      case ToolNames.TCOFFEE.value =>
+        ListMap(
+          ResultViews.CLUSTAL -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.clustal(jobID,
+                                                     aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                     "alignment",
+                                                     values(ToolNames.TCOFFEE.value))
+              case None => views.html.errors.pagenotfound()
+            }
+          },
+          ResultViews.ALIGNMENT -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.alignment(jobID,
                                                        aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
                                                        values(ToolNames.TCOFFEE.value))
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            ResultViews.ALIGNMENT -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.alignment(jobID,
-                                                         aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
-                                                         "alignment",
-                                                         values(ToolNames.TCOFFEE.value))
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            ResultViews.ALIGNMENTVIEWER -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.msaviewer(jobID,
-                                                       s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+              case None => views.html.errors.pagenotfound()
+            }
+          },
+          ResultViews.ALIGNMENTVIEWER -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.msaviewer(jobID,
+                                                     s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+            )
+          }
+        )
+      case ToolNames.ALN2PLOT.value =>
+        ListMap(
+          "Plots" -> { jobID =>
+            Future.successful(views.html.jobs.resultpanels.aln2plot(jobID))
+          }
+        )
+      case ToolNames.ANCESCON.value =>
+        ListMap(
+          ResultViews.TREE -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels
+                .tree(jobID + ".clu.tre",
+                      s"${constants.jobPath}$jobID/results/" + jobID + ".clu.tre",
+                      jobID,
+                      "ANCESCON")
+            )
+          },
+          ResultViews.DATA -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.fileviewWithDownload(
+                jobID + ".anc_out",
+                s"${constants.jobPath}$jobID/results/" + jobID + ".anc_out",
+                jobID,
+                "ancescon_output_data"
               )
+            )
+          }
+        )
+      case ToolNames.PHYML.value =>
+        ListMap(
+          ResultViews.TREE -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.tree(
+                jobID + ".phy_phyml_tree.txt",
+                s"${constants.jobPath}$jobID/results/" + jobID + ".phy_phyml_tree.txt",
+                jobID,
+                "PhyML"
+              )
+            )
+          },
+          ResultViews.DATA -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels
+                .fileviewWithDownload(jobID + ".stats",
+                                      s"${constants.jobPath}$jobID/results/" + jobID + ".stats",
+                                      jobID,
+                                      "phyml_data")
+            )
+          }
+        )
+      case ToolNames.MMSEQS2.value =>
+        ListMap(
+          "Reduced set" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels
+                .fileviewWithDownloadForward(jobID + ".fas",
+                                             s"${constants.jobPath}$jobID/results/" + jobID + ".fas",
+                                             jobID,
+                                             "mmseqs_reps",
+                                             values(ToolNames.MMSEQS2.value))
+            )
+          },
+          "Clusters" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels
+                .fileviewWithDownload(jobID + ".clu",
+                                      s"${constants.jobPath}$jobID/results/" + jobID + ".clu",
+                                      jobID,
+                                      "mmseqs_clusters")
+            )
+          }
+        )
+      case ToolNames.RETSEQ.value =>
+        ListMap(
+          ResultViews.SUMMARY -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/unretrievable", "RETSEQ")
+            )
+          },
+          ResultViews.RESULTS -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.fileviewWithDownloadForward(
+                "sequences.fa",
+                s"${constants.jobPath}$jobID/results/sequences.fa",
+                jobID,
+                "retseq",
+                values(ToolNames.RETSEQ.value)
+              )
+            )
+          }
+        )
+      case ToolNames.SEQ2ID.value =>
+        ListMap(
+          ResultViews.RESULTS -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.unchecked_list("Seq2ID", jobID, jsValue, values(ToolNames.SEQ2ID.value))
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.ALN2PLOT.value =>
-          ListMap(
-            "Plots" -> { jobID =>
-              Future.successful(views.html.jobs.resultpanels.aln2plot(jobID))
+          }
+        )
+      case ToolNames.SAMCC.value =>
+        ListMap(
+          "3D-Structure-With-Axes" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels
+                .NGL3DStructure(s"/files/$jobID/$jobID.pdb", jobID + ".pdb", jobID, "samcc_PDB_AXES")
+            )
+          },
+          "Plots" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.samcc(s"/files/$jobID/out0.png",
+                                                 s"/files/$jobID/out1.png",
+                                                 s"/files/$jobID/out2.png",
+                                                 s"/files/$jobID/out3.png")
+            )
+          },
+          "NumericalData" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels
+                .fileviewWithDownload(jobID + ".out",
+                                      s"${constants.jobPath}$jobID/results/" + jobID + ".out",
+                                      jobID,
+                                      "samcc")
+            )
+          }
+        )
+      case ToolNames.SIXFRAMETRANSLATION.value =>
+        ListMap(
+          ResultViews.RESULTS -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.fileviewWithDownload(
+                jobID + ".out",
+                s"${constants.jobPath}$jobID/results/" + jobID + ".out",
+                jobID,
+                "sixframetrans_out"
+              )
+            )
+          }
+        )
+      case ToolNames.BACKTRANS.value =>
+        ListMap(
+          ResultViews.RESULTS -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels
+                .fileviewWithDownload(jobID + ".out",
+                                      s"${constants.jobPath}$jobID/results/" + jobID + ".out",
+                                      jobID,
+                                      "backtrans")
+            )
+          }
+        )
+      case ToolNames.HHFILTER.value =>
+        ListMap(
+          ResultViews.ALIGNMENT -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
+                views.html.jobs.resultpanels.alignment(jobID,
+                                                       aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                       "alignment",
+                                                       values(ToolNames.HHFILTER.value))
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.ANCESCON.value =>
-          ListMap(
-            ResultViews.TREE -> { jobID =>
-              Future.successful(
+          },
+          ResultViews.ALIGNMENTVIEWER -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.msaviewer(jobID,
+                                                     s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+            )
+          }
+        )
+      case ToolNames.PATSEARCH.value =>
+        ListMap(
+          ResultViews.RESULTS -> { jobID =>
+            resultFiles.getResults(jobID).map {
+              case Some(jsValue) =>
                 views.html.jobs.resultpanels
-                  .tree(jobID + ".clu.tre",
-                        s"${constants.jobPath}$jobID/results/" + jobID + ".clu.tre",
-                        jobID,
-                        "ANCESCON")
-              )
-            },
-            ResultViews.DATA -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.fileviewWithDownload(
-                  jobID + ".anc_out",
-                  s"${constants.jobPath}$jobID/results/" + jobID + ".anc_out",
-                  jobID,
-                  "ancescon_output_data"
-                )
-              )
+                  .patternSearch("PatternSearch", jobID, jsValue, values(ToolNames.PATSEARCH.value))
+              case None => views.html.errors.pagenotfound()
             }
-          )
-        case ToolNames.PHYML.value =>
-          ListMap(
-            ResultViews.TREE -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.tree(
-                  jobID + ".phy_phyml_tree.txt",
-                  s"${constants.jobPath}$jobID/results/" + jobID + ".phy_phyml_tree.txt",
-                  jobID,
-                  "PhyML"
-                )
-              )
-            },
-            ResultViews.DATA -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels
-                  .fileviewWithDownload(jobID + ".stats",
-                                        s"${constants.jobPath}$jobID/results/" + jobID + ".stats",
-                                        jobID,
-                                        "phyml_data")
-              )
-            }
-          )
-        case ToolNames.MMSEQS2.value =>
-          ListMap(
-            "Reduced set" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels
-                  .fileviewWithDownloadForward(jobID + ".fas",
-                                               s"${constants.jobPath}$jobID/results/" + jobID + ".fas",
-                                               jobID,
-                                               "mmseqs_reps",
-                                               values(ToolNames.MMSEQS2.value))
-              )
-            },
-            "Clusters" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels
-                  .fileviewWithDownload(jobID + ".clu",
-                                        s"${constants.jobPath}$jobID/results/" + jobID + ".clu",
-                                        jobID,
-                                        "mmseqs_clusters")
-              )
-            }
-          )
-        case ToolNames.RETSEQ.value =>
-          ListMap(
-            ResultViews.SUMMARY -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/unretrievable", "RETSEQ")
-              )
-            },
-            ResultViews.RESULTS -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.fileviewWithDownloadForward(
-                  "sequences.fa",
-                  s"${constants.jobPath}$jobID/results/sequences.fa",
-                  jobID,
-                  "retseq",
-                  values(ToolNames.RETSEQ.value)
-                )
-              )
-            }
-          )
-        case ToolNames.SEQ2ID.value =>
-          ListMap(
-            ResultViews.RESULTS -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.unchecked_list("Seq2ID", jobID, jsValue, values(ToolNames.SEQ2ID.value))
-                case None => views.html.errors.pagenotfound()
-              }
-            }
-          )
-        case ToolNames.SAMCC.value =>
-          ListMap(
-            "3D-Structure-With-Axes" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels
-                  .NGL3DStructure(s"/files/$jobID/$jobID.pdb", jobID + ".pdb", jobID, "samcc_PDB_AXES")
-              )
-            },
-            "Plots" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.samcc(s"/files/$jobID/out0.png",
-                                                   s"/files/$jobID/out1.png",
-                                                   s"/files/$jobID/out2.png",
-                                                   s"/files/$jobID/out3.png")
-              )
-            },
-            "NumericalData" -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels
-                  .fileviewWithDownload(jobID + ".out",
-                                        s"${constants.jobPath}$jobID/results/" + jobID + ".out",
-                                        jobID,
-                                        "samcc")
-              )
-            }
-          )
-        case ToolNames.SIXFRAMETRANSLATION.value =>
-          ListMap(
-            ResultViews.RESULTS -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.fileviewWithDownload(
-                  jobID + ".out",
-                  s"${constants.jobPath}$jobID/results/" + jobID + ".out",
-                  jobID,
-                  "sixframetrans_out"
-                )
-              )
-            }
-          )
-        case ToolNames.BACKTRANS.value =>
-          ListMap(
-            ResultViews.RESULTS -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels
-                  .fileviewWithDownload(jobID + ".out",
-                                        s"${constants.jobPath}$jobID/results/" + jobID + ".out",
-                                        jobID,
-                                        "backtrans")
-              )
-            }
-          )
-        case ToolNames.HHFILTER.value =>
-          ListMap(
-            ResultViews.ALIGNMENT -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels.alignment(jobID,
-                                                         aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
-                                                         "alignment",
-                                                         values(ToolNames.HHFILTER.value))
-                case None => views.html.errors.pagenotfound()
-              }
-            },
-            ResultViews.ALIGNMENTVIEWER -> { jobID =>
-              Future.successful(
-                views.html.jobs.resultpanels.msaviewer(jobID,
-                                                       s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
-              )
-            }
-          )
-        case ToolNames.PATSEARCH.value =>
-          ListMap(
-            ResultViews.RESULTS -> { jobID =>
-              resultFiles.getResults(jobID).map {
-                case Some(jsValue) =>
-                  views.html.jobs.resultpanels
-                    .patternSearch("PatternSearch", jobID, jsValue, values(ToolNames.PATSEARCH.value))
-                case None => views.html.errors.pagenotfound()
-              }
-            }
-          )
-      }
+          }
+        )
     }
-    resultMap
+
   }
 
   // Generates a new Tool object from the Tool specification
