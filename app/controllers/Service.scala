@@ -81,14 +81,12 @@ final class Service @Inject()(messagesApi: MessagesApi,
     }
   }
 
-  // Fetches the result of a job for a particular result panel
   def getResult(jobID: String, tool: String, resultpanel: String): Action[AnyContent] = Action.async {
     implicit request =>
-      val innerMap = toolFactory.getInnerResultMap(jobID, tool)
+      val innerMap = toolFactory.getResultMap(jobID, tool)
       innerMap(resultpanel)(jobID).map(Ok(_))
   }
 
-  // TODO Change that not all jobViews but only the resultpanel titles are returned
   def getJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     mongoStore.selectJob(jobID).flatMap {
       case Some(job) =>
@@ -97,7 +95,7 @@ final class Service @Inject()(messagesApi: MessagesApi,
         // The jobState decides which views will be appended to the job
         val jobViews: Future[Seq[String]] = job.status match {
           case Done =>
-            Future.successful(toolFactory.getInnerResultMap(jobID, toolForm.toolname).keys.toSeq)
+            Future.successful(toolFactory.getResultMap(jobID, toolForm.toolname).keys.toSeq)
           // All other views are currently computed on Clientside
           case _ => Future.successful(Nil)
         }
