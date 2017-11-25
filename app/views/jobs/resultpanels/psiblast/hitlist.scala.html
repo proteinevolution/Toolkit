@@ -1,4 +1,3 @@
-@import de.proteinevolution.models.results.Common
 @import de.proteinevolution.models.database.results.PSIBlastResult
 @import better.files._
 @(jobID: String, result: PSIBlastResult, tool: de.proteinevolution.models.Tool, htmlPath: String)(implicit request: RequestHeader)
@@ -36,7 +35,7 @@
 
     @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
         <br>
-        <text class="note"> We have detected</i></text>
+        <text class="note"> We have detected</text>
 
     }
     @if(result.TMPRED == "1"){

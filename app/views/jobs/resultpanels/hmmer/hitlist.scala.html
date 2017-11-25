@@ -1,8 +1,5 @@
-@import play.api.libs.json.JsObject
-@import de.proteinevolution.models.results.Common
 @import de.proteinevolution.models.database.results.HmmerResult
 @import better.files._
-@import de.proteinevolution.models.database.results.HmmerHSP
 @(jobID: String, result: HmmerResult, tool: de.proteinevolution.models.Tool, htmlPath: String)(implicit request: RequestHeader)
 @* Load html Map used for the image representation *@
     @if(result.num_hits < 1) {
@@ -59,7 +56,6 @@
         <text class="note"> in your query protein!</text>
 
     }
-
 
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
