@@ -26,11 +26,9 @@ import play.twirl.api.Html
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
-import org.webjars.play.WebJarsUtil
 
 @Singleton
-final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
-                              messagesApi: MessagesApi,
+final class Service @Inject()(messagesApi: MessagesApi,
                               val reactiveMongoApi: ReactiveMongoApi,
                               mongoStore: MongoStore,
                               userSessions: UserSessions,
@@ -78,7 +76,7 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
 
   def getTool(toolname: String) = Action {
     toolFactory.values.get(toolname) match {
-      case Some(tool) => Ok(Json.toJson(tool.toolitem))
+      case Some(tool) => Ok(Json.toJson(tool.toolForm))
       case None       => NotFound
     }
   }
@@ -86,8 +84,8 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
   // Fetches the result of a job for a particular result panel
   def getResult(jobID: String, tool: String, resultpanel: String): Action[AnyContent] = Action.async {
     implicit request =>
-      val resultPanel = toolFactory.resultMap(tool)(resultpanel)(jobID, request)
-      resultPanel.map(Ok(_))
+      val innerMap = toolFactory.getInnerResultMap(jobID, tool)
+      innerMap(resultpanel)(jobID).map(Ok(_))
   }
 
   // TODO Change that not all jobViews but only the resultpanel titles are returned
@@ -95,11 +93,11 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
     mongoStore.selectJob(jobID).flatMap {
       case Some(job) =>
         Logger.info("Requested job has been found in MongoDB, the jobState is " + job.status)
-        val toolitem = toolFactory.values(job.tool).toolitem
-
+        val toolForm = toolFactory.values(job.tool).toolForm
         // The jobState decides which views will be appended to the job
         val jobViews: Future[Seq[String]] = job.status match {
-          case Done => Future.successful(toolFactory.resultPanels(toolitem.toolname))
+          case Done =>
+            Future.successful(toolFactory.getInnerResultMap(jobID, toolForm.toolname).keys.toSeq)
           // All other views are currently computed on Clientside
           case _ => Future.successful(Nil)
         }
@@ -123,7 +121,7 @@ final class Service @Inject()(webJarsUtil: WebJarsUtil, // TODO not used
                 job.jobID,
                 job.status,
                 job.dateCreated.get.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                toolitem,
+                toolForm,
                 jobViewsN,
                 paramValues
               )
