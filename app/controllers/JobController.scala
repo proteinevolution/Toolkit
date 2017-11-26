@@ -142,7 +142,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               val now = ZonedDateTime.now
 
               // Check the users bonus time for jobs
-              val dateDeletion = user.userData.map(_ => now.plusDays(constants.jobDeletion))
+              val dateDeletion = user.userData.map(_ => now.plusDays(constants.jobDeletion.toLong))
 
               // Create a new Job object for the job and set the initial values
               val job = Job(

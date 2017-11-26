@@ -29,7 +29,7 @@ sealed trait MailTemplate {
   val bodyHtml: String
 
   // Send the email
-  def send(implicit mailerClient: MailerClient) {
+  def send(implicit mailerClient: MailerClient): Unit = {
     val email = Email(
       subject,
       "Toolkit Team <mpi-toolkit@tuebingen.mpg.de>",

@@ -515,7 +515,7 @@ class JobActor @Inject()(
                     Job.DATECREATED ->
                     BSONDocument(
                       "$gt" -> BSONDateTime(
-                        ZonedDateTime.now.minusMinutes(constants.maxJobsWithin).toInstant.toEpochMilli
+                        ZonedDateTime.now.minusMinutes(constants.maxJobsWithin.toLong).toInstant.toEpochMilli
                       )
                     )
                   )
@@ -530,7 +530,7 @@ class JobActor @Inject()(
                     Job.DATECREATED ->
                     BSONDocument(
                       "$gt" -> BSONDateTime(
-                        ZonedDateTime.now.minusDays(constants.maxJobsWithinDay).toInstant.toEpochMilli
+                        ZonedDateTime.now.minusDays(constants.maxJobsWithinDay.toLong).toInstant.toEpochMilli
                       )
                     )
                   )
@@ -539,7 +539,7 @@ class JobActor @Inject()(
               mongoStore.countJobs(selector).map { count =>
                 mongoStore.countJobs(selectorDay).map { countDay =>
                   println(
-                    BSONDateTime(ZonedDateTime.now.minusMinutes(constants.maxJobsWithin).toInstant.toEpochMilli).toString
+                    BSONDateTime(ZonedDateTime.now.minusMinutes(constants.maxJobsWithin.toLong).toInstant.toEpochMilli).toString
                   )
                   Logger.info(
                     s"[JobActor[$jobActorNumber].StartJob] IP ${job.IPHash} has requested $count jobs within the last ${constants.maxJobsWithin} minute and $countDay within the last 24 hours."

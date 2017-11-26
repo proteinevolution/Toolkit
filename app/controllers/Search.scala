@@ -17,7 +17,6 @@ import de.proteinevolution.db.MongoStore
 import play.api.mvc._
 
 import scala.concurrent.{ ExecutionContext, Future }
-import scala.language.postfixOps
 
 @Singleton
 final class Search @Inject()(@NamedCache("userCache") implicit val userCache: SyncCacheApi,

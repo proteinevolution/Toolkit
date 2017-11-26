@@ -1,5 +1,6 @@
 @import de.proteinevolution.models.database.results.HHBlits.HHBlitsResult
 @import better.files._
+@import play.api.mvc.RequestHeader
 @(jobID: String, result: HHBlitsResult, tool: de.proteinevolution.models.Tool, htmlPath: String)(implicit request: RequestHeader)
     @if(result.num_hits < 1) {
         <div class="callout alert noHitsWide" id="noHits">

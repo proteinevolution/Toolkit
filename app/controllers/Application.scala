@@ -29,7 +29,6 @@ import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
 import de.proteinevolution.models.Constants
 
-import scala.language.postfixOps
 import scala.concurrent.{ Await, ExecutionContext, Future }
 
 @Singleton

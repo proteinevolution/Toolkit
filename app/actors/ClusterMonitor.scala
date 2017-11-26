@@ -10,7 +10,6 @@ import controllers.Settings
 import de.proteinevolution.models.database.statistics.ClusterLoadEvent
 import de.proteinevolution.models.sge.Cluster
 import de.proteinevolution.db.MongoStore
-import de.proteinevolution.tel.TEL
 import java.time.ZonedDateTime
 
 import de.proteinevolution.models.Constants

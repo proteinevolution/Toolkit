@@ -19,7 +19,6 @@ import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 import services.JobActorAccess
 
 import scala.concurrent.ExecutionContext
-import scala.language.postfixOps
 
 /**
  * Schedules deletions of old listings in the database as well as statistic entries
@@ -71,19 +70,19 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
     val now = ZonedDateTime.now
     // Date from when the regular users should have logged in last
     val regularUserDeletionDate =
-      now.minusMonths(constants.userDeleting)
+      now.minusMonths(constants.userDeleting.toLong)
     // Date from when the user registered and
     val awitingRegistrationUserDeletionDate =
-      now.minusDays(constants.userDeletingRegisterEmail)
+      now.minusDays(constants.userDeletingRegisterEmail.toLong)
     // Date the registered user was logged in last
     val registeredUserDeletionDate =
-      now.minusMonths(constants.userDeletingRegistered)
+      now.minusMonths(constants.userDeletingRegistered.toLong)
     // Date the registered user was logged in last plus the days they have to be messaged prior to actual deletion
     val registeredUserDeletionEMailDate =
-      now.minusMonths(constants.userDeletingRegistered).plusDays(constants.userDeletionWarning)
+      now.minusMonths(constants.userDeletingRegistered.toLong).plusDays(constants.userDeletionWarning.toLong)
     // Date to delete the Registered account at
     val registeredUserDeletionDateForEmail =
-      now.plusDays(constants.userDeletionWarning).toLocalDate.atStartOfDay(now.getZone)
+      now.plusDays(constants.userDeletionWarning.toLong).toLocalDate.atStartOfDay(now.getZone)
 
     if (verbose)
       Logger.info(s"""[User Deletion] Deletion Times:
@@ -201,9 +200,9 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
     // grab the current time
     val now: ZonedDateTime = ZonedDateTime.now
     // calculate the date at which the job should have been created at
-    val dateCreated: ZonedDateTime = now.minusDays(constants.jobDeletion)
+    val dateCreated: ZonedDateTime = now.minusDays(constants.jobDeletion.toLong)
     // calculate the date at which it should have been viewed last
-    val lastViewedDate: ZonedDateTime = now.minusDays(constants.jobDeletionLastViewed)
+    val lastViewedDate: ZonedDateTime = now.minusDays(constants.jobDeletionLastViewed.toLong)
     mongoStore
       .findJobs(
         BSONDocument(

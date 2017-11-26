@@ -1,11 +1,8 @@
 @import play.api.libs.json.JsObject
 @import play.api.libs.json.JsValue
-@import play.api.libs.json.JsArray
-@import play.api.Logger
-@import play.api.libs.json.JsUndefined
+@import play.api.mvc.RequestHeader
 @import play.api.libs.json.JsDefined
 @import de.proteinevolution.models.results.Common
-@import de.proteinevolution.tel.TEL
 @(toolName: String, jobID: String, jsValue: JsValue, tool: de.proteinevolution.models.Tool)(implicit request: RequestHeader)
 @import java.lang.String; var fileURL="/files/" + jobID + "/" + jobID + ".fas";
 
