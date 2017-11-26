@@ -35,6 +35,7 @@
                         <td>
                             @{ hit \ "name" match {
                                 case JsDefined(jsValue) => (hit \ "name").get.as[String]
+                                case _ => ()
                             }
                             }
                         </td>
@@ -43,6 +44,7 @@
                         <td class="sequenceAlignment">
                         @{ hit \ "seq" match {
                             case JsDefined(jsVal) => Html(Common.insertMatch((hit \ "seq").get.as[String], (jsValue \ jobID \ "len").get.as[Int],(hit \ "pats").get.as[List[Int]]))
+                            case _ => ()
                         }
                         }
                         </td>

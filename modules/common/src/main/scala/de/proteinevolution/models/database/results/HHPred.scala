@@ -8,50 +8,48 @@ import de.proteinevolution.models.database.results.General.{ DTParam, SingleSeq 
 import de.proteinevolution.models.database.results.HHPred._
 import de.proteinevolution.models.results.Common
 import play.api.libs.json._
-
-
 @Singleton
 class HHPred @Inject()(general: General, aln: Alignment) {
 
-  def parseResult(jsValue: JsValue): HHPredResult = jsValue match {
-    case obj: JsObject =>
-      val jobID      = (obj \ "jobID").as[String]
-      val alignments = (obj \ jobID \ "alignments").as[List[JsObject]]
-      val hits       = (obj \ jobID \ "hits").as[List[JsObject]]
-      val hsplist = alignments.zip(hits).map { x =>
-        val queryResult    = parseQuery((x._1 \ "query").as[JsObject])
-        val infoResult     = parseInfo((x._1 \ "info").as[JsObject])
-        val templateResult = parseTemplate((x._1 \ "template").as[JsObject], x._2)
-        val agree          = (x._1 \ "agree").as[String]
-        val description    = (x._1 \ "header").as[String]
-        val num            = (x._1 \ "no").getOrElse(Json.toJson(-1)).as[String].toInt
-        val ss_score       = (x._2 \ "ss").getOrElse(Json.toJson(-1)).as[Double]
-        val confidence     = (x._1 \ "confidence").getOrElse(Json.toJson("")).as[String]
-        HHPredHSP(queryResult, templateResult, infoResult, agree, description, num, ss_score, confidence, agree.length)
-      }
-      val db        = (obj \ jobID \ "db").as[String]
-      val proteomes = (obj \ jobID \ "proteomes").as[String]
-      val TMPRED = (obj \ jobID \ "TMPRED").asOpt[String] match {
-        case Some(data) => data
-        case None       => "0"
-      }
-      val COILPRED = (obj \ jobID \ "COILPRED").asOpt[String] match {
-        case Some(data) => data
-        case None       => "1"
-      }
+  def parseResult(jsValue: JsValue): HHPredResult = {
+    val obj        = jsValue.as[JsObject]
+    val jobID      = (obj \ "jobID").as[String]
+    val alignments = (obj \ jobID \ "alignments").as[List[JsObject]]
+    val hits       = (obj \ jobID \ "hits").as[List[JsObject]]
+    val hsplist = alignments.zip(hits).map { x =>
+      val queryResult    = parseQuery((x._1 \ "query").as[JsObject])
+      val infoResult     = parseInfo((x._1 \ "info").as[JsObject])
+      val templateResult = parseTemplate((x._1 \ "template").as[JsObject], x._2)
+      val agree          = (x._1 \ "agree").as[String]
+      val description    = (x._1 \ "header").as[String]
+      val num            = (x._1 \ "no").getOrElse(Json.toJson(-1)).as[String].toInt
+      val ss_score       = (x._2 \ "ss").getOrElse(Json.toJson(-1)).as[Double]
+      val confidence     = (x._1 \ "confidence").getOrElse(Json.toJson("")).as[String]
+      HHPredHSP(queryResult, templateResult, infoResult, agree, description, num, ss_score, confidence, agree.length)
+    }
+    val db        = (obj \ jobID \ "db").as[String]
+    val proteomes = (obj \ jobID \ "proteomes").as[String]
+    val TMPRED = (obj \ jobID \ "TMPRED").asOpt[String] match {
+      case Some(data) => data
+      case None       => "0"
+    }
+    val COILPRED = (obj \ jobID \ "COILPRED").asOpt[String] match {
+      case Some(data) => data
+      case None       => "1"
+    }
 
-      val alignment = aln.parseAlignment((obj \ "reduced").as[JsArray])
-      val query     = general.parseSingleSeq((obj \ "query").as[JsArray])
-      val num_hits  = hsplist.length
+    val alignment = aln.parseAlignment((obj \ "reduced").as[JsArray])
+    val query     = general.parseSingleSeq((obj \ "query").as[JsArray])
+    val num_hits  = hsplist.length
 
-      val MSA_GEN = (obj \ jobID \ "MSA_GEN").asOpt[String] match {
-        case Some(data) => data
-        case None       => ""
-      }
+    val MSA_GEN = (obj \ jobID \ "MSA_GEN").asOpt[String] match {
+      case Some(data) => data
+      case None       => ""
+    }
 
-      val QA3M_COUNT = (obj \ jobID \ "QA3M_COUNT").getOrElse(Json.toJson(1)).as[String].toInt
+    val QA3M_COUNT = (obj \ jobID \ "QA3M_COUNT").getOrElse(Json.toJson(1)).as[String].toInt
 
-      HHPredResult(hsplist, alignment, num_hits, query, db, proteomes, TMPRED, COILPRED, MSA_GEN, QA3M_COUNT)
+    HHPredResult(hsplist, alignment, num_hits, query, db, proteomes, TMPRED, COILPRED, MSA_GEN, QA3M_COUNT)
 
   }
 
