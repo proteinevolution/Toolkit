@@ -12,36 +12,36 @@ import play.api.libs.json._
 @Singleton
 class HHBlits @Inject()(general: General, aln: Alignment) {
 
-  def parseResult(jsValue: JsValue): HHBlitsResult = jsValue match {
-    case obj: JsObject =>
-      val jobID      = (obj \ "jobID").as[String]
-      val alignments = (obj \ jobID \ "alignments").as[List[JsObject]]
-      val hits       = (obj \ jobID \ "hits").as[List[JsObject]]
-      val hsplist = alignments.zip(hits).map { x =>
-        val queryResult = parseQuery((x._1 \ "query").as[JsObject])
-        val infoResult  = parseInfo((x._1 \ "info").as[JsObject])
+  def parseResult(jsValue: JsValue): HHBlitsResult = {
+    val obj        = jsValue.as[JsObject]
+    val jobID      = (obj \ "jobID").as[String]
+    val alignments = (obj \ jobID \ "alignments").as[List[JsObject]]
+    val hits       = (obj \ jobID \ "hits").as[List[JsObject]]
+    val hsplist = alignments.zip(hits).map { x =>
+      val queryResult = parseQuery((x._1 \ "query").as[JsObject])
+      val infoResult  = parseInfo((x._1 \ "info").as[JsObject])
 
-        val templateResult = parseTemplate((x._1 \ "template").as[JsObject], x._2)
-        val agree          = (x._1 \ "agree").as[String]
-        val description    = (x._1 \ "header").as[String]
-        val num            = (x._1 \ "no").getOrElse(Json.toJson(-1)).as[String].toInt
-        HHBlitsHSP(queryResult, templateResult, infoResult, agree, description, num, agree.length)
-      }
-      val db        = (obj \ jobID \ "db").as[String]
-      val alignment = aln.parseAlignment((obj \ "reduced").as[JsArray])
-      val query     = general.parseSingleSeq((obj \ "query").as[JsArray])
-      val num_hits  = hsplist.length
+      val templateResult = parseTemplate((x._1 \ "template").as[JsObject], x._2)
+      val agree          = (x._1 \ "agree").as[String]
+      val description    = (x._1 \ "header").as[String]
+      val num            = (x._1 \ "no").getOrElse(Json.toJson(-1)).as[String].toInt
+      HHBlitsHSP(queryResult, templateResult, infoResult, agree, description, num, agree.length)
+    }
+    val db        = (obj \ jobID \ "db").as[String]
+    val alignment = aln.parseAlignment((obj \ "reduced").as[JsArray])
+    val query     = general.parseSingleSeq((obj \ "query").as[JsArray])
+    val num_hits  = hsplist.length
 
-      val TMPRED = (obj \ jobID \ "TMPRED").asOpt[String] match {
-        case Some(data) => data
-        case None       => "0"
-      }
-      val COILPRED = (obj \ jobID \ "COILPRED").asOpt[String] match {
-        case Some(data) => data
-        case None       => "1"
-      }
+    val TMPRED = (obj \ jobID \ "TMPRED").asOpt[String] match {
+      case Some(data) => data
+      case None       => "0"
+    }
+    val COILPRED = (obj \ jobID \ "COILPRED").asOpt[String] match {
+      case Some(data) => data
+      case None       => "1"
+    }
 
-      HHBlitsResult(hsplist, alignment, num_hits, query, db, TMPRED, COILPRED)
+    HHBlitsResult(hsplist, alignment, num_hits, query, db, TMPRED, COILPRED)
 
   }
 

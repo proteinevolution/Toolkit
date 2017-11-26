@@ -10,41 +10,41 @@ import play.api.libs.json._
 @Singleton
 class Quick2D @Inject()(general: General) {
 
-  def parseResult(jsValue: JsValue): Quick2DResult = jsValue match {
-    case obj: JsObject =>
-      val jobID       = (obj \ "jobID").as[String]
-      val query       = general.parseSingleSeq((obj \ "query").as[JsArray])
-      val psipred     = parsePsipred((obj \ jobID).as[JsObject])
-      val marcoil     = parseMarcoil((obj \ jobID).as[JsObject])
-      val coils       = parseCoils((obj \ jobID).as[JsObject])
-      val pcoils      = parsePcoils((obj \ jobID).as[JsObject])
-      val tmhmm       = parseTmhmm((obj \ jobID).as[JsObject])
-      val phobius     = parsePhobius((obj \ jobID).as[JsObject])
-      val polyphobius = parsePolyphobius((obj \ jobID).as[JsObject])
-      val spider2     = parseSpider2((obj \ jobID).as[JsObject])
-      val spotd       = parseSpotd((obj \ jobID).as[JsObject])
-      val iupred      = parseIupred((obj \ jobID).as[JsObject])
-      val disopred3   = parseDisopred3((obj \ jobID).as[JsObject])
-      val signal      = parseSignal((obj \ jobID).as[JsObject])
-      val psspred     = parsePsspred((obj \ jobID).as[JsObject])
-      val deepcnf     = parseDeepcnf((obj \ jobID).as[JsObject])
+  def parseResult(jsValue: JsValue): Quick2DResult = {
+    val obj         = jsValue.as[JsObject]
+    val jobID       = (obj \ "jobID").as[String]
+    val query       = general.parseSingleSeq((obj \ "query").as[JsArray])
+    val psipred     = parsePsipred((obj \ jobID).as[JsObject])
+    val marcoil     = parseMarcoil((obj \ jobID).as[JsObject])
+    val coils       = parseCoils((obj \ jobID).as[JsObject])
+    val pcoils      = parsePcoils((obj \ jobID).as[JsObject])
+    val tmhmm       = parseTmhmm((obj \ jobID).as[JsObject])
+    val phobius     = parsePhobius((obj \ jobID).as[JsObject])
+    val polyphobius = parsePolyphobius((obj \ jobID).as[JsObject])
+    val spider2     = parseSpider2((obj \ jobID).as[JsObject])
+    val spotd       = parseSpotd((obj \ jobID).as[JsObject])
+    val iupred      = parseIupred((obj \ jobID).as[JsObject])
+    val disopred3   = parseDisopred3((obj \ jobID).as[JsObject])
+    val signal      = parseSignal((obj \ jobID).as[JsObject])
+    val psspred     = parsePsspred((obj \ jobID).as[JsObject])
+    val deepcnf     = parseDeepcnf((obj \ jobID).as[JsObject])
 
-      Quick2DResult(jobID,
-                    query,
-                    psipred,
-                    marcoil,
-                    coils,
-                    pcoils,
-                    tmhmm,
-                    phobius,
-                    polyphobius,
-                    spider2,
-                    spotd,
-                    iupred,
-                    disopred3,
-                    signal,
-                    psspred,
-                    deepcnf)
+    Quick2DResult(jobID,
+                  query,
+                  psipred,
+                  marcoil,
+                  coils,
+                  pcoils,
+                  tmhmm,
+                  phobius,
+                  polyphobius,
+                  spider2,
+                  spotd,
+                  iupred,
+                  disopred3,
+                  signal,
+                  psspred,
+                  deepcnf)
 
   }
 

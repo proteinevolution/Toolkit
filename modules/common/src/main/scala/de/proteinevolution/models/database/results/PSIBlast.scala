@@ -7,45 +7,43 @@ import de.proteinevolution.models.database.results.General.{ DTParam, SingleSeq 
 import de.proteinevolution.models.database.results.PSIBlast.{ PSIBlastHSP, PSIBlastResult }
 import de.proteinevolution.models.results.Common
 import play.api.libs.json._
-
-
 @Singleton
 class PSIBlast @Inject()(general: General) {
 
-  def parseResult(json: JsValue): PSIBlastResult = json match {
-    case obj: JsObject =>
-      var belowEvalThreshold = -1
-      val query              = general.parseSingleSeq((obj \ "query").as[JsArray])
-      val iter_num = (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations")
+  def parseResult(json: JsValue): PSIBlastResult = {
+    val obj                = json.as[JsObject]
+    var belowEvalThreshold = -1
+    val query              = general.parseSingleSeq((obj \ "query").as[JsArray])
+    val iter_num = (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations")
+      .as[List[JsObject]]
+      .size - 1
+    val db     = (obj \ "output_psiblastp" \ "db").as[String]
+    val evalue = (obj \ "output_psiblastp" \ "evalue").as[String].toDouble
+    val hits =
+      (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ iter_num \ "search" \ "hits")
         .as[List[JsObject]]
-        .size - 1
-      val db     = (obj \ "output_psiblastp" \ "db").as[String]
-      val evalue = (obj \ "output_psiblastp" \ "evalue").as[String].toDouble
-      val hits =
-        (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ iter_num \ "search" \ "hits")
-          .as[List[JsObject]]
-      val num_hits = hits.length
-      val hsplist = hits.map { hit =>
-        // get num of last checkboxes that is checked by default
-        if (belowEvalThreshold == -1 && (hit \ "hsps" \ 0 \ "evalue").as[Double] >= evalue) {
-          belowEvalThreshold = (hit \ "num").as[Int]
-        }
-        parseHSP(hit, db, evalue)
+    val num_hits = hits.length
+    val hsplist = hits.map { hit =>
+      // get num of last checkboxes that is checked by default
+      if (belowEvalThreshold == -1 && (hit \ "hsps" \ 0 \ "evalue").as[Double] >= evalue) {
+        belowEvalThreshold = (hit \ "num").as[Int]
       }
-      // if all hits are below threshold
-      // set belowEvalThreshold to total number of found hits
-      if (belowEvalThreshold == -1) {
-        belowEvalThreshold = hsplist.length + 1
-      }
-      val TMPRED = (obj \ "output_psiblastp" \ "TMPRED").asOpt[String] match {
-        case Some(data) => data
-        case None       => "0"
-      }
-      val COILPRED = (obj \ "output_psiblastp" \ "COILPRED").asOpt[String] match {
-        case Some(data) => data
-        case None       => "1"
-      }
-      PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, query, belowEvalThreshold, TMPRED, COILPRED)
+      parseHSP(hit, db, evalue)
+    }
+    // if all hits are below threshold
+    // set belowEvalThreshold to total number of found hits
+    if (belowEvalThreshold == -1) {
+      belowEvalThreshold = hsplist.length + 1
+    }
+    val TMPRED = (obj \ "output_psiblastp" \ "TMPRED").asOpt[String] match {
+      case Some(data) => data
+      case None       => "0"
+    }
+    val COILPRED = (obj \ "output_psiblastp" \ "COILPRED").asOpt[String] match {
+      case Some(data) => data
+      case None       => "1"
+    }
+    PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, query, belowEvalThreshold, TMPRED, COILPRED)
   }
 
   def parseHSP(hit: JsObject, db: String, eval_threshold: Double): PSIBlastHSP = {
