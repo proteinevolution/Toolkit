@@ -1,5 +1,6 @@
 @import de.proteinevolution.models.results.Common
 @import de.proteinevolution.models.database.results.PSIBlast.PSIBlastHSP
+@import play.api.mvc.RequestHeader
 @(jobID: String, hit: PSIBlastHSP, db: String, wrapped: Boolean)(implicit request: RequestHeader)
 @* hit number, links *@
 <tr>

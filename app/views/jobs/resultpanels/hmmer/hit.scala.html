@@ -1,6 +1,7 @@
 
 @import de.proteinevolution.models.results.Common
 @import de.proteinevolution.models.database.results.Hmmer.HmmerHSP
+@import play.api.mvc.RequestHeader
 @(jobID: String, hit: HmmerHSP, db: String, wrapped: Boolean)(implicit request: RequestHeader)
 @* Load html Map used for the image representation *@
 

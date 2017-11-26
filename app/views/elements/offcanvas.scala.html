@@ -1,4 +1,6 @@
+@import play.api.mvc.RequestHeader
 @import de.proteinevolution.models.Tool
+@import play.api.i18n.Messages
 @(tools: Iterable[Tool])(implicit messages: Messages, request: RequestHeader)
 
 <ul class="vertical menu" id="responsive-menu" data-drilldown>

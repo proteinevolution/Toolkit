@@ -1,12 +1,4 @@
-@import play.api.libs.json.JsObject
-@import play.api.libs.json.JsValue
-@import play.api.libs.json.JsArray
-@import play.api.Logger
-@import play.api.libs.json.JsUndefined
-@import play.api.libs.json.JsDefined
-@import de.proteinevolution.models.results.Common
-@import de.proteinevolution.tel.TEL
-@import play.api.libs.json.JsLookupResult
+@import play.api.mvc.RequestHeader
 @import de.proteinevolution.models.database.results.Alignment.AlignmentResult
 @(jobID: String, alignment: AlignmentResult, resultName: String,  tool : de.proteinevolution.models.Tool)(implicit request: RequestHeader)
 
