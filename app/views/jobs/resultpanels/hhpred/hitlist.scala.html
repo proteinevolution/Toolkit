@@ -1,4 +1,4 @@
-@import de.proteinevolution.models.database.results.HHPredResult
+@import de.proteinevolution.models.database.results.HHPred.HHPredResult
 @import better.files._
 @(jobID: String, result: HHPredResult, tool: de.proteinevolution.models.Tool, htmlPath: String)(implicit request: RequestHeader)
     @if(result.num_hits < 1) {

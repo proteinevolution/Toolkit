@@ -1,4 +1,4 @@
-@import de.proteinevolution.models.database.results.HHBlitsResult
+@import de.proteinevolution.models.database.results.HHBlits.HHBlitsResult
 @import better.files._
 @(jobID: String, result: HHBlitsResult, tool: de.proteinevolution.models.Tool, htmlPath: String)(implicit request: RequestHeader)
     @if(result.num_hits < 1) {
