@@ -14,7 +14,8 @@ import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.results.General.DTParam
 import de.proteinevolution.models.database.results._
 import de.proteinevolution.db.ResultFileAccessor
-import play.api.libs.json.{ JsArray, JsObject, Json }
+import de.proteinevolution.models.database.results.PSIBlast.{ PSIBlastHSP, PSIBlastResult }
+import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 

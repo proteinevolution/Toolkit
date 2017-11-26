@@ -3,39 +3,9 @@ package de.proteinevolution.models.database.results
 import javax.inject.Inject
 import javax.inject.Singleton
 
+import de.proteinevolution.models.database.results.General.SingleSeq
+import de.proteinevolution.models.database.results.Quick2D._
 import play.api.libs.json._
-
-case class Quick2DResult(jobID: String,
-                         query: SingleSeq,
-                         psipred: Psipred,
-                         marcoil: Marcoil,
-                         coils: Coils,
-                         pcoils: Pcoils,
-                         tmhmm: Tmhmm,
-                         phobius: Phobius,
-                         polyphobius: Polyphobius,
-                         spider2: Spider2,
-                         spotd: Spotd,
-                         iupred: Iupred,
-                         disopred3: Disopred3,
-                         signal: Signal,
-                         psspred: Psspred,
-                         deepcnf: Deepcnf)
-
-case class Psipred(name: String, seq: String, conf: String)
-case class Marcoil(name: String, seq: String)
-case class Coils(name: String, seq: String)
-case class Pcoils(name: String, seq: String)
-case class Tmhmm(name: String, seq: String)
-case class Phobius(name: String, seq: String)
-case class Polyphobius(name: String, seq: String)
-case class Spider2(name: String, seq: String)
-case class Spotd(name: String, seq: String)
-case class Iupred(name: String, seq: String)
-case class Disopred3(name: String, seq: String)
-case class Signal(name: String, seq: String)
-case class Psspred(name: String, seq: String)
-case class Deepcnf(name: String, seq: String)
 
 @Singleton
 class Quick2D @Inject()(general: General) {
@@ -78,74 +48,108 @@ class Quick2D @Inject()(general: General) {
 
   }
 
-  def parsePsipred(obj: JsObject): Psipred = {
+  private def parsePsipred(obj: JsObject): Psipred = {
     val conf = (obj \ "psipred_conf").getOrElse(Json.toJson("")).as[String]
     val seq  = (obj \ "psipred").getOrElse(Json.toJson("")).as[String]
     Psipred("psipred", seq, conf)
   }
 
-  def parseMarcoil(obj: JsObject): Marcoil = {
+  private def parseMarcoil(obj: JsObject): Marcoil = {
     val seq = (obj \ "marcoil").getOrElse(Json.toJson("")).as[String]
     Marcoil("marcoil", seq)
   }
 
-  def parseCoils(obj: JsObject): Coils = {
+  private def parseCoils(obj: JsObject): Coils = {
     val seq = (obj \ "coils_w28").getOrElse(Json.toJson("")).as[String]
     Coils("coils", seq)
   }
 
-  def parsePcoils(obj: JsObject): Pcoils = {
+  private def parsePcoils(obj: JsObject): Pcoils = {
     val seq = (obj \ "pcoils_w28").getOrElse(Json.toJson("")).as[String]
     Pcoils("pcoils", seq)
   }
 
-  def parseTmhmm(obj: JsObject): Tmhmm = {
+  private def parseTmhmm(obj: JsObject): Tmhmm = {
     val seq = (obj \ "tmhmm").getOrElse(Json.toJson("")).as[String]
     Tmhmm("tmhmm", seq)
   }
 
-  def parsePhobius(obj: JsObject): Phobius = {
+  private def parsePhobius(obj: JsObject): Phobius = {
     val seq = (obj \ "phobius").getOrElse(Json.toJson("")).as[String]
     Phobius("phobius", seq)
   }
 
-  def parsePolyphobius(obj: JsObject): Polyphobius = {
+  private def parsePolyphobius(obj: JsObject): Polyphobius = {
     val seq = (obj \ "polyphobius").getOrElse(Json.toJson("")).as[String]
     Polyphobius("polyphobius", seq)
   }
 
-  def parseSpider2(obj: JsObject): Spider2 = {
+  private def parseSpider2(obj: JsObject): Spider2 = {
     val seq = (obj \ "spider2").getOrElse(Json.toJson("")).as[String]
     Spider2("spider2", seq)
   }
 
-  def parseSpotd(obj: JsObject): Spotd = {
+  private def parseSpotd(obj: JsObject): Spotd = {
     val seq = (obj \ "spot-d").getOrElse(Json.toJson("")).as[String]
     Spotd("spotd", seq)
   }
 
-  def parseIupred(obj: JsObject): Iupred = {
+  private def parseIupred(obj: JsObject): Iupred = {
     val seq = (obj \ "iupred").getOrElse(Json.toJson("")).as[String]
     Iupred("iupred", seq)
   }
 
-  def parseDisopred3(obj: JsObject): Disopred3 = {
+  private def parseDisopred3(obj: JsObject): Disopred3 = {
     val seq = (obj \ "disopred3").getOrElse(Json.toJson("")).as[String]
     Disopred3("disopred3", seq)
   }
 
-  def parseSignal(obj: JsObject): Signal = {
+  private def parseSignal(obj: JsObject): Signal = {
     val seq = (obj \ "signal").getOrElse(Json.toJson("")).as[String]
     Signal("Signal", seq)
   }
 
-  def parsePsspred(obj: JsObject): Psspred = {
+  private def parsePsspred(obj: JsObject): Psspred = {
     val seq = (obj \ "psspred").getOrElse(Json.toJson("")).as[String]
     Psspred("psspred", seq)
   }
 
-  def parseDeepcnf(obj: JsObject): Deepcnf = {
+  private def parseDeepcnf(obj: JsObject): Deepcnf = {
     val seq = (obj \ "deepcnf").getOrElse(Json.toJson("")).as[String]
     Deepcnf("deepcnf", seq)
   }
+}
+
+object Quick2D {
+  case class Quick2DResult(jobID: String,
+                           query: SingleSeq,
+                           psipred: Psipred,
+                           marcoil: Marcoil,
+                           coils: Coils,
+                           pcoils: Pcoils,
+                           tmhmm: Tmhmm,
+                           phobius: Phobius,
+                           polyphobius: Polyphobius,
+                           spider2: Spider2,
+                           spotd: Spotd,
+                           iupred: Iupred,
+                           disopred3: Disopred3,
+                           signal: Signal,
+                           psspred: Psspred,
+                           deepcnf: Deepcnf)
+
+  case class Psipred(name: String, seq: String, conf: String)
+  case class Marcoil(name: String, seq: String)
+  case class Coils(name: String, seq: String)
+  case class Pcoils(name: String, seq: String)
+  case class Tmhmm(name: String, seq: String)
+  case class Phobius(name: String, seq: String)
+  case class Polyphobius(name: String, seq: String)
+  case class Spider2(name: String, seq: String)
+  case class Spotd(name: String, seq: String)
+  case class Iupred(name: String, seq: String)
+  case class Disopred3(name: String, seq: String)
+  case class Signal(name: String, seq: String)
+  case class Psspred(name: String, seq: String)
+  case class Deepcnf(name: String, seq: String)
 }

@@ -8,6 +8,7 @@ import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.results.General.DTParam
 import de.proteinevolution.models.database.results._
 import de.proteinevolution.db.ResultFileAccessor
+import de.proteinevolution.models.database.results.HHPred.{ HHPredHSP, HHPredResult }
 import org.webjars.play.WebJarsUtil
 import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc._
