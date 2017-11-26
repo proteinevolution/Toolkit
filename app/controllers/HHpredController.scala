@@ -209,6 +209,7 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
             result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(jobID, _, isColor, wrapped))
           Ok(hits.mkString)
         }
+      case None => BadRequest
     }
   }
 

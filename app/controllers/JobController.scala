@@ -261,6 +261,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                   NotFound
               }
             }
+        case None => Future.successful(NotFound)
       }
     }
   }
