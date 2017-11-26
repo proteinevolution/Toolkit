@@ -12,31 +12,27 @@ import play.api.libs.json._
 @Singleton
 class Hmmer @Inject()(general: General, aln: Alignment) {
 
-  def parseResult(jsValue: JsValue): HmmerResult = jsValue match {
-    case obj: JsObject =>
-      val jobID = (obj \ "jobID").as[String]
-      val alignment = (obj \ "alignment").as[List[JsArray]].zipWithIndex.map {
-        case (x, index) =>
-          aln.parseAlignmentItem(x, index)
-      }
-      val db       = (obj \ jobID \ "db").as[String]
-      val query    = general.parseSingleSeq((obj \ "query").as[JsArray])
-      val hsps     = (obj \ jobID \ "hsps").as[List[JsObject]]
-      val num_hits = hsps.length
-
-      val hsplist = hsps.map(parseHSP)
-
-      val TMPRED = (obj \ jobID \ "TMPRED").asOpt[String] match {
-        case Some(data) => data
-        case None       => "0"
-      }
-      val COILPRED = (obj \ jobID \ "COILPRED").asOpt[String] match {
-        case Some(data) => data
-        case None       => "1"
-      }
-
-      HmmerResult(hsplist, num_hits, alignment, query, db, TMPRED, COILPRED)
-
+  def parseResult(jsValue: JsValue): HmmerResult = {
+    val obj   = jsValue.as[JsObject]
+    val jobID = (obj \ "jobID").as[String]
+    val alignment = (obj \ "alignment").as[List[JsArray]].zipWithIndex.map {
+      case (x, index) =>
+        aln.parseAlignmentItem(x, index)
+    }
+    val db       = (obj \ jobID \ "db").as[String]
+    val query    = general.parseSingleSeq((obj \ "query").as[JsArray])
+    val hsps     = (obj \ jobID \ "hsps").as[List[JsObject]]
+    val num_hits = hsps.length
+    val hsplist  = hsps.map(parseHSP)
+    val TMPRED = (obj \ jobID \ "TMPRED").asOpt[String] match {
+      case Some(data) => data
+      case None       => "0"
+    }
+    val COILPRED = (obj \ jobID \ "COILPRED").asOpt[String] match {
+      case Some(data) => data
+      case None       => "1"
+    }
+    HmmerResult(hsplist, num_hits, alignment, query, db, TMPRED, COILPRED)
   }
 
   def parseHSP(hsp: JsObject): HmmerHSP = {
