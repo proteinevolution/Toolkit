@@ -3,66 +3,11 @@ package de.proteinevolution.models.database.results
 import javax.inject.Inject
 import javax.inject.Singleton
 
-import de.proteinevolution.models.database.results.General.DTParam
+import de.proteinevolution.models.database.results.Alignment.AlignmentResult
+import de.proteinevolution.models.database.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.models.database.results.HHBlits._
 import de.proteinevolution.models.results.Common
 import play.api.libs.json._
-
-case class HHBlitsHSP(query: HHBlitsQuery,
-                      template: HHBlitsTemplate,
-                      info: HHBlitsInfo,
-                      agree: String,
-                      description: String,
-                      num: Int,
-                      length: Int) {
-  def toDataTable(db: String): JsValue =
-    Json.toJson(
-      Map(
-        "0" -> Json.toJson(Common.getCheckbox(num)),
-        "1" -> Json.toJson(Common.getSingleLinkHHBlits(template.accession).toString),
-        "2" -> Json.toJson(Common.addBreak(description)),
-        "3" -> Json.toJson(info.probab),
-        "4" -> Json.toJson(info.evalue),
-        "5" -> Json.toJson(info.aligned_cols),
-        "6" -> Json.toJson(template.ref)
-      )
-    )
-}
-
-case class HHBlitsInfo(aligned_cols: Int,
-                       evalue: Double,
-                       identities: Double,
-                       probab: Double,
-                       score: Double,
-                       similarity: Double)
-case class HHBlitsQuery(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
-case class HHBlitsTemplate(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
-case class HHBlitsResult(HSPS: List[HHBlitsHSP],
-                         alignment: AlignmentResult,
-                         num_hits: Int,
-                         query: SingleSeq,
-                         db: String,
-                         TMPRED: String,
-                         COILPRED: String) {
-  def hitsOrderBy(params: DTParam): List[HHBlitsHSP] = {
-    (params.iSortCol, params.sSortDir) match {
-      case (1, "asc")  => HSPS.sortBy(_.template.accession)
-      case (1, "desc") => HSPS.sortWith(_.template.accession > _.template.accession)
-      case (2, "asc")  => HSPS.sortBy(_.description)
-      case (2, "desc") => HSPS.sortWith(_.description > _.description)
-      case (3, "asc")  => HSPS.sortBy(_.info.probab)
-      case (3, "desc") => HSPS.sortWith(_.info.probab > _.info.probab)
-      case (4, "asc")  => HSPS.sortBy(_.info.evalue)
-      case (4, "desc") => HSPS.sortWith(_.info.evalue > _.info.evalue)
-      case (5, "asc")  => HSPS.sortBy(_.info.aligned_cols)
-      case (5, "desc") => HSPS.sortWith(_.info.aligned_cols > _.info.aligned_cols)
-      case (6, "asc")  => HSPS.sortBy(_.template.ref)
-      case (6, "desc") => HSPS.sortWith(_.template.ref > _.template.ref)
-      case (_, "asc")  => HSPS.sortBy(_.num)
-      case (_, "desc") => HSPS.sortWith(_.num > _.num)
-      case (_, _)      => HSPS.sortBy(_.num)
-    }
-  }
-}
 
 @Singleton
 class HHBlits @Inject()(general: General, aln: Alignment) {
@@ -128,5 +73,64 @@ class HHBlits @Inject()(general: General, aln: Alignment) {
     val seq       = (obj \ "seq").getOrElse(Json.toJson("")).as[String]
     val start     = (obj \ "start").getOrElse(Json.toJson(-1)).as[Int]
     HHBlitsTemplate(consensus, end, accession, ref, seq, start)
+  }
+}
+
+object HHBlits {
+  case class HHBlitsHSP(query: HHBlitsQuery,
+                        template: HHBlitsTemplate,
+                        info: HHBlitsInfo,
+                        agree: String,
+                        description: String,
+                        num: Int,
+                        length: Int) {
+    def toDataTable(db: String): JsValue =
+      Json.toJson(
+        Map(
+          "0" -> Json.toJson(Common.getCheckbox(num)),
+          "1" -> Json.toJson(Common.getSingleLinkHHBlits(template.accession).toString),
+          "2" -> Json.toJson(Common.addBreak(description)),
+          "3" -> Json.toJson(info.probab),
+          "4" -> Json.toJson(info.evalue),
+          "5" -> Json.toJson(info.aligned_cols),
+          "6" -> Json.toJson(template.ref)
+        )
+      )
+  }
+
+  case class HHBlitsInfo(aligned_cols: Int,
+                         evalue: Double,
+                         identities: Double,
+                         probab: Double,
+                         score: Double,
+                         similarity: Double)
+  case class HHBlitsQuery(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
+  case class HHBlitsTemplate(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
+  case class HHBlitsResult(HSPS: List[HHBlitsHSP],
+                           alignment: AlignmentResult,
+                           num_hits: Int,
+                           query: SingleSeq,
+                           db: String,
+                           TMPRED: String,
+                           COILPRED: String) {
+    def hitsOrderBy(params: DTParam): List[HHBlitsHSP] = {
+      (params.iSortCol, params.sSortDir) match {
+        case (1, "asc")  => HSPS.sortBy(_.template.accession)
+        case (1, "desc") => HSPS.sortWith(_.template.accession > _.template.accession)
+        case (2, "asc")  => HSPS.sortBy(_.description)
+        case (2, "desc") => HSPS.sortWith(_.description > _.description)
+        case (3, "asc")  => HSPS.sortBy(_.info.probab)
+        case (3, "desc") => HSPS.sortWith(_.info.probab > _.info.probab)
+        case (4, "asc")  => HSPS.sortBy(_.info.evalue)
+        case (4, "desc") => HSPS.sortWith(_.info.evalue > _.info.evalue)
+        case (5, "asc")  => HSPS.sortBy(_.info.aligned_cols)
+        case (5, "desc") => HSPS.sortWith(_.info.aligned_cols > _.info.aligned_cols)
+        case (6, "asc")  => HSPS.sortBy(_.template.ref)
+        case (6, "desc") => HSPS.sortWith(_.template.ref > _.template.ref)
+        case (_, "asc")  => HSPS.sortBy(_.num)
+        case (_, "desc") => HSPS.sortWith(_.num > _.num)
+        case (_, _)      => HSPS.sortBy(_.num)
+      }
+    }
   }
 }

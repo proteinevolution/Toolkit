@@ -8,6 +8,7 @@ import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.results.General.DTParam
 import de.proteinevolution.models.database.results._
 import de.proteinevolution.db.ResultFileAccessor
+import de.proteinevolution.models.database.results.Hmmer.{ HmmerHSP, HmmerResult }
 import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi

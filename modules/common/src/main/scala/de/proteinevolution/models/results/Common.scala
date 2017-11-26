@@ -1,10 +1,16 @@
 package de.proteinevolution.models.results
 
-import de.proteinevolution.models.database.results.AlignmentResult
+import de.proteinevolution.models.database.results.Alignment.AlignmentResult
+import de.proteinevolution.models.database.results.HHBlits.HHBlitsHSP
+import de.proteinevolution.models.database.results.HHPred.HHPredHSP
+import de.proteinevolution.models.database.results.HHomp.HHompHSP
+import de.proteinevolution.models.database.results.Hmmer.HmmerHSP
+import de.proteinevolution.models.database.results.PSIBlast.PSIBlastHSP
+import de.proteinevolution.models.database.results.Quick2D.Quick2DResult
 import play.twirl.api.Html
 import play.api.Logger
 import de.proteinevolution.models.database.results._
-import scala.collection.mutable.ArrayBuffer
+
 
 object Common {
 
