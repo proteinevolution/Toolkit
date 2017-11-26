@@ -36,6 +36,7 @@
                                 <td class="tprHit">
                                         @{seq \ 0 match {
                                                 case JsDefined(jsValue) => Html(Common.colorRegexReplacer((seq \ 0).get.as[String]))
+                                                case _ => ()
                                         }
                                         }
 

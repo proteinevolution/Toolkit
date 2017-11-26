@@ -356,8 +356,9 @@ class JobActor @Inject()(
     }
   }
 
-  override def postStop(): Unit = Tick.cancel
-
+  override def postStop(): Unit = {
+    val _ = Tick.cancel()
+  }
   override def receive = LoggingReceive {
 
     case PrepareJob(job, params, startJob, isInternalJob) =>
@@ -648,7 +649,7 @@ class JobActor @Inject()(
 
     // User Starts watching job
     case AddToWatchlist(jobID, userID) =>
-      mongoStore
+      val _ = mongoStore
         .modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$addToSet" -> BSONDocument(Job.WATCHLIST -> userID)))
         .map {
           case Some(updatedJob) =>
@@ -660,7 +661,7 @@ class JobActor @Inject()(
                 val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
                 wsActors.foreach(_.foreach(_ ! PushJob(updatedJob)))
               }
-          case None =>
+          case None => ()
         }
 
     // User does no longer watch this Job (stays in JobManager)
@@ -677,7 +678,7 @@ class JobActor @Inject()(
                 val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
                 wsActors.foreach(_.foreach(_ ! ClearJob(jobID)))
               }
-          case None =>
+          case None => ()
         }
 
     // Message from outside that the jobState has changed

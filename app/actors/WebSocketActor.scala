@@ -77,9 +77,9 @@ final class WebSocketActor @Inject()(
             val actorSet: List[ActorRef] = wsActors: List[ActorRef]
             val newActorSet              = actorSet.filterNot(_ == self)
             wsActorCache.set(user.userID.stringify, newActorSet)
-          case None =>
+          case None => ()
         }
-      case None =>
+      case None => ()
     }
 
     Logger.info(s"[WSActor] Websocket closed for session ${sessionID.stringify}")

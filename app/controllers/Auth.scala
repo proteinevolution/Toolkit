@@ -311,6 +311,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                     mongoStore.findUser(selectorMail).flatMap {
                       case Some(_) =>
                         Future.successful(Ok(accountEmailUsed()))
+                      case None => Future.successful(NotFound)
                     }
                   }
                   userSessions.modifyUserWithCache(selector, modifier).map {
