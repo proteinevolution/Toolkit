@@ -235,8 +235,8 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
   }
 
   override def postStop(): Unit = {
-    userDeletionScheduler.cancel
-    jobDeletionScheduler.cancel
+    userDeletionScheduler.cancel()
+    jobDeletionScheduler.cancel()
     Logger.info("[Database Monitor] stopping DB Monitor")
   }
 

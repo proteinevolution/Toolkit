@@ -288,7 +288,7 @@ class HmmerController @Inject()(resultFiles: ResultFileAccessor,
             result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hmmer.hit(jobID, _, result.db, wrapped))
           Ok(hits.mkString)
         }
-
+      case None => BadRequest
     }
   }
 

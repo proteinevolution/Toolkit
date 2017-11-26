@@ -128,7 +128,7 @@ class UserSessions @Inject()(mongoStore: MongoStore,
       // cache related stuff should remain in the project where the cache is bound
       userCache.get(sessionID.stringify) match {
         case Some(user) =>
-          Future.successful[User](user)
+          Future.successful(user)
         case None =>
           putUser(request, sessionID)
       }

@@ -38,7 +38,7 @@ sealed trait MailTemplate {
       bodyText = Some(this.bodyText), // Text version of the E-Mail in case the User has no HTML E-Mail client
       bodyHtml = Some(this.bodyHtml) // HTML formatted E-Mail content
     )
-    mailerClient.send(email)
+    val _ = mailerClient.send(email)
   }
 
   def bodyHtmlTemplate(subject: String, content: String): String =

@@ -49,7 +49,9 @@ final class ClusterMonitor @Inject()(cluster: Cluster,
     if (settings.clusterMode == "LOCAL") context.stop(self)
   }
 
-  override def postStop(): Unit = Tick.cancel()
+  override def postStop(): Unit = {
+    val _ = Tick.cancel()
+  }
 
   override def receive = LoggingReceive {
 
@@ -71,23 +73,6 @@ final class ClusterMonitor @Inject()(cluster: Cluster,
 
       jobActorAccess.broadcast(PolledJobs(qStat))
 
-      /**
-        Logger.info(
-          s"[ClusterMonitor] Jobs currently listed in the cluster:\n${qStat.qStatJobs.map(_.sgeID).mkString(", ")}"
-        )
-        */
-
-      /**
-       * dynamically adjust the cluster resources dependent on the current cluster load
-       */
-      load match {
-        // TODO check if there is a way to do this correctly (like setting a tool minimum and then adding cores / memory)
-        // reducing the number of cores and memory is not a good idea! Some jobs need a minimum of these to run
-        case x if x > 1.2            => TEL.memFactor = 1; TEL.threadsFactor = 1
-        case x if x < 0.5 && x > 0.1 => TEL.memFactor = 1; TEL.threadsFactor = 1
-        case x if x < 0.1            => TEL.memFactor = 1; TEL.threadsFactor = 1
-        case _                       => TEL.memFactor = 1; TEL.threadsFactor = 1
-      }
       // Update the record
       record = record.::(load)
       // send load message
@@ -101,11 +86,12 @@ final class ClusterMonitor @Inject()(cluster: Cluster,
     case Recording =>
       val loadAverage      = record.sum[Double] / record.length
       val currentTimestamp = ZonedDateTime.now
-      mongoStore
+      val _ = mongoStore
         .upsertLoadStatistic(ClusterLoadEvent(BSONObjectID.generate(), record, loadAverage, Some(currentTimestamp)))
-        .map { clusterLoadEvent =>
+        .map { _ =>
           //Logger.info("Average: " + loadAverage + " - " + record.mkString(", "))
           record = List.empty[Double]
+          ()
         }
   }
 }
@@ -113,18 +99,12 @@ final class ClusterMonitor @Inject()(cluster: Cluster,
 object ClusterMonitor {
 
   case class Disconnect(actorRef: ActorRef)
-
   case class Connect(actorRef: ActorRef)
-
   case object FetchLatest
-
   case object Recording
-
   case object Multicast
-
   case class UpdateLoad(load: Double)
-
   case class ConnectedUsers(users: Int)
-
   case class PolledJobs(qStat: QStat)
+
 }

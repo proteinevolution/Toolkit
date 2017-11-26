@@ -4,7 +4,7 @@ import javax.inject._
 import play.api.inject.ApplicationLifecycle
 import play.api.libs.ws.WSClient
 
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 
 sealed trait Configuration {
 
@@ -14,12 +14,15 @@ sealed trait Configuration {
 }
 
 @Singleton
-final class ConfigurationImpl @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient) extends Configuration {
+final class ConfigurationImpl @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient)(implicit ec: ExecutionContext)
+    extends Configuration {
 
   override def hello(): Unit = {
 
     println("configuring hostname .... ")
-    ws.url("https://toolkit.tuebingen.mpg.de").get()
+    val _ = ws.url("https://toolkit.tuebingen.mpg.de").get().map { _ =>
+      ()
+    }
 
   }
 
