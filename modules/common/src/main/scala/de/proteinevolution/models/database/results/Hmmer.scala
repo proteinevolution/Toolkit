@@ -5,7 +5,6 @@ import javax.inject.Singleton
 
 import de.proteinevolution.models.database.results.General.DTParam
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import de.proteinevolution.models.results.Common
 import play.api.libs.json._
 

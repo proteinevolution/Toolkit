@@ -3,7 +3,7 @@
 @import de.proteinevolution.models.database.results.HmmerResult
 @import better.files._
 @import de.proteinevolution.models.database.results.HmmerHSP
-@(jobID: String, result: HmmerResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
+@(jobID: String, result: HmmerResult, tool: de.proteinevolution.models.Tool, htmlPath: String)(implicit request: RequestHeader)
 @* Load html Map used for the image representation *@
     @if(result.num_hits < 1) {
         <div class="callout alert noHitsWide" id="noHits">

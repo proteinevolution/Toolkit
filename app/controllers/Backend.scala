@@ -21,8 +21,7 @@ import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class Backend @Inject()(settingsController: Settings,
@@ -34,7 +33,7 @@ final class Backend @Inject()(settingsController: Settings,
                               implicit val locationProvider: LocationProvider,
                               val reactiveMongoApi: ReactiveMongoApi,
                               messagesApi: MessagesApi,
-                              cc: ControllerComponents)
+                              cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
     with CommonController {

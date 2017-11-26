@@ -8,7 +8,7 @@ import javax.inject.{ Inject, Singleton }
 import actors.JobActor._
 import better.files._
 import de.proteinevolution.common.LocationProvider
-import de.proteinevolution.models.Constants
+import de.proteinevolution.models.{ Constants, ToolNames }
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.models.search.JobDAO
@@ -25,8 +25,7 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONDocument
 import services.JobActorAccess
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class JobController @Inject()(jobActorAccess: JobActorAccess,
@@ -40,7 +39,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                     val jobDao: JobDAO,
                                     val toolFactory: ToolFactory,
                                     constants: Constants,
-                                    cc: ControllerComponents)
+                                    cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with CommonController {
 
@@ -130,7 +129,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                 }
 
               // Check if the user has the Modeller Key when the requested tool is Modeller
-              if (toolName == toolFactory.Toolnames.MODELLER && user.userConfig.hasMODELLERKey)
+              if (toolName == ToolNames.MODELLER.value && user.userConfig.hasMODELLERKey)
                 params = params.updated("regkey", constants.modellerKey)
 
               // get checkbox value for the update per mail option
@@ -246,8 +245,9 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
             )
             .map { jobList =>
               // Check if the jobs are owned by the user, unless they are public and if the job is Done
-              jobList.find(filterJob =>
-                (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done) match {
+              jobList.find(
+                filterJob => (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done
+              ) match {
                 case Some(latestOldJob) =>
                   Ok(
                     Json.toJson(

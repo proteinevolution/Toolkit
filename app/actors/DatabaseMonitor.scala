@@ -18,7 +18,7 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 import services.JobActorAccess
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 import scala.language.postfixOps
 
 /**
@@ -35,7 +35,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
                                       implicit val mailerClient: MailerClient,
                                       mongoStore: MongoStore,
                                       jobActorAccess: JobActorAccess,
-                                      constants: Constants)
+                                      constants: Constants)(implicit ec: ExecutionContext)
     extends Actor
     with ActorLogging {
 
@@ -235,8 +235,8 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
   }
 
   override def postStop(): Unit = {
-    userDeletionScheduler.cancel()
-    jobDeletionScheduler.cancel()
+    userDeletionScheduler.cancel
+    jobDeletionScheduler.cancel
     Logger.info("[Database Monitor] stopping DB Monitor")
   }
 

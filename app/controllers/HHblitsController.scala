@@ -14,8 +14,7 @@ import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.sys.process._
 
 class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
@@ -24,7 +23,7 @@ class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
                                   val reactiveMongoApi: ReactiveMongoApi,
                                   general: General,
                                   constants: Constants,
-                                  cc: ControllerComponents)
+                                  cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with CommonController {
 
@@ -62,7 +61,6 @@ class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
     }
     if (!templateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${templateAlignmentScript.name} is not executable.")
     } else {
       Future.successful {
         Process(templateAlignmentScript.pathAsString,
@@ -96,7 +94,6 @@ class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
     val eval     = (json \ "evalue").as[String]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
       resultFiles.getResults(jobID).map {
         case None => NotFound
@@ -137,7 +134,6 @@ class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
     val numList  = (json \ "checkboxes").as[List[Int]]
     if (!retrieveFullSeq.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${retrieveFullSeq.name} is not executable.")
     } else {
       resultFiles.getResults(jobID).map {
         case None => NotFound
@@ -179,7 +175,6 @@ class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
     val eval     = (json \ "evalue").as[String]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
     } else {
       resultFiles.getResults(jobID).map {
         case None => NotFound
@@ -220,7 +215,6 @@ class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
     val numList  = (json \ "checkboxes").as[List[Int]]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
     } else {
       val numListStr = numList.mkString(" ")
       Process(generateAlignmentScript.pathAsString,
@@ -320,7 +314,7 @@ class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
           BadRequest
         } else {
           val hits =
-            result.HSPS.slice(start, end).map { (views.html.jobs.resultpanels.hhblits.hit(jobID, _, wrapped)) }
+            result.HSPS.slice(start, end).map { views.html.jobs.resultpanels.hhblits.hit(jobID, _, wrapped) }
           Ok(hits.mkString)
         }
     }

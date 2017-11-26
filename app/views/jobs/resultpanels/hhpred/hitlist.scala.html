@@ -1,7 +1,7 @@
 @import de.proteinevolution.models.results.Common
 @import better.files._
 @import de.proteinevolution.models.database.results.HHPredResult
-@(jobID: String, result: HHPredResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
+@(jobID: String, result: HHPredResult, tool: de.proteinevolution.models.Tool, htmlPath: String)(implicit request: RequestHeader)
     @if(result.num_hits < 1) {
         <div class="callout alert noHitsWide" id="noHits">
             No hits found!

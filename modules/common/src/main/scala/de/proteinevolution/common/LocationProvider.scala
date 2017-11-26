@@ -8,18 +8,18 @@ import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.database.users.Location
 import play.api.mvc.RequestHeader
 
-@ImplementedBy(classOf[GeoIPLocationProvider])
-trait LocationProvider {
+@ImplementedBy(classOf[LocationProviderImpl])
+sealed trait LocationProvider {
 
   def getLocation(ipAddress: String): Location
 
   def getLocation(request: RequestHeader): Location
+
 }
 
 @Singleton
-class GeoIPLocationProvider extends LocationProvider {
+class LocationProviderImpl extends LocationProvider {
 
-  // Expensive, this is why this class is a Singleton
   private val geoIp = MaxMindIpGeo(ConfigFactory.load().getString("maxmindDB"), 1000)
 
   def getLocation(ipAddress: String): Location = {
