@@ -8,10 +8,9 @@ import de.proteinevolution.common.{ HTTPRequest, LocationProvider }
 import de.proteinevolution.db.MongoStore
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{ Logger, mvc }
+import play.api.{ mvc, Logger }
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
-import scala.annotation.tailrec
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
 import scala.util.hashing.MurmurHash3
@@ -113,8 +112,7 @@ class UserSessions @Inject()(mongoStore: MongoStore,
   /**
    * Returns a Future User
    */
-  @tailrec
-  final def getUser(implicit request: RequestHeader): Future[User] = {
+  def getUser(implicit request: RequestHeader): Future[User] = {
     // Ignore our monitoring service and don't update it in the DB
     if (request.remoteAddress.contentEquals("10.3.7.70")) { // TODO Put this in the config?
       Future.successful(User())
@@ -127,13 +125,10 @@ class UserSessions @Inject()(mongoStore: MongoStore,
           BSONObjectID.generate()
       }
       // cache related stuff should remain in the project where the cache is bound
-      val optUser = userCache.get[User](sessionID.stringify)
-
-      optUser match {
+      userCache.get[User](sessionID.stringify) match {
         case Some(user) => Future.successful(user)
         case None =>
           putUser(request, sessionID)
-          getUser(request)
       }
     }
   }
