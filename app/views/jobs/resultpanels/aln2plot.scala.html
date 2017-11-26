@@ -1,3 +1,4 @@
+@import play.api.mvc.RequestHeader
 @(jobID: String)(implicit request: RequestHeader)
 @import java.lang.String; var hydroPlot="/files/" + jobID + "/" + jobID + "_hyd.png"; var scvolPlot="/files/" + jobID + "/" + jobID + "_scvol.png";
 

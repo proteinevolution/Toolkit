@@ -11,6 +11,7 @@ import play.api.mvc.RequestHeader
 import play.api.{ Logger, mvc }
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
+import scala.annotation.tailrec
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
 import scala.util.hashing.MurmurHash3
@@ -112,7 +113,8 @@ class UserSessions @Inject()(mongoStore: MongoStore,
   /**
    * Returns a Future User
    */
-  def getUser(implicit request: RequestHeader): Future[User] = {
+  @tailrec
+  final def getUser(implicit request: RequestHeader): Future[User] = {
     // Ignore our monitoring service and don't update it in the DB
     if (request.remoteAddress.contentEquals("10.3.7.70")) { // TODO Put this in the config?
       Future.successful(User())
@@ -124,13 +126,14 @@ class UserSessions @Inject()(mongoStore: MongoStore,
         case None =>
           BSONObjectID.generate()
       }
-      // TODO: this seems not to be typesafe! user has type nothing
       // cache related stuff should remain in the project where the cache is bound
-      userCache.get(sessionID.stringify) match {
-        case Some(user) =>
-          Future.successful(user)
+      val optUser = userCache.get[User](sessionID.stringify)
+
+      optUser match {
+        case Some(user) => Future.successful(user)
         case None =>
           putUser(request, sessionID)
+          getUser(request)
       }
     }
   }
@@ -143,7 +146,7 @@ class UserSessions @Inject()(mongoStore: MongoStore,
    */
   def getUser(sessionID: BSONObjectID): Future[Option[User]] = {
     // Try the cache
-    userCache.get(sessionID.stringify) match {
+    userCache.get[User](sessionID.stringify) match {
       case Some(user) =>
         // User successfully pulled from the cache
         Future.successful(Some(user))

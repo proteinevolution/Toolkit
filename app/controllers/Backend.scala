@@ -5,7 +5,7 @@ import javax.inject.{ Inject, Named, Singleton }
 import actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import akka.actor.ActorRef
 import models.UserSessions
-import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog, StatisticsObject }
+import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
