@@ -2,6 +2,7 @@
 @import play.api.mvc.RequestHeader
 @import play.api.libs.json.JsDefined
 @import de.proteinevolution.models.results.Common
+@import play.twirl.api.Html
 
 @(toolName: String, jobID: String,jsValue: JsValue)(implicit request: RequestHeader)
 
@@ -47,8 +48,6 @@
                         }
                 </tbody>
         </table>
-
-
         </div>
         <br/><br/><hr><br/>
 }

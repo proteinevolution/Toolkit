@@ -36,7 +36,7 @@ final class Tool @Inject()(messagesApi: MessagesApi,
           Ok
         }
     } else {
-      Future.successful(NotFound)
+      Future.successful(BadRequest)
     }
   }
 }
