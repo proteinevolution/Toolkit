@@ -126,12 +126,10 @@
         var checkbox = "checkbox";
         var selectAllBool = false;
         var shownHits = 50;
-        var showMore = 50;
         var numHits = @{result.num_hits};
         var jobID = '@{jobID}';
         var loading = false;
         var wrapped = true;
-        var colorAAs = false;
         // use this array to store
         // checked checkboxes
         // due to pagination/lazyload
@@ -237,7 +235,6 @@
                 forwardPath(selectedTool, 'files/' + jobID + '/'+filename+'.fa');
             });
         }
-
 
         function getHits(start, end, isWrapped) {
             if (start <= numHits && end <= numHits && !loading) {
