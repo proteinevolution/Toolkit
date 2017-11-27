@@ -51,7 +51,6 @@ class ParamCollectorProvider @Inject()(pc: ParamCollector,
       pc.addParam(param.name, param)
 
     }
-
     pc
   }
 }

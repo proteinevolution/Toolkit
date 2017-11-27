@@ -18,12 +18,10 @@ final class ConfigurationImpl @Inject()(appLifecycle: ApplicationLifecycle, ws: 
     extends Configuration {
 
   override def hello(): Unit = {
-
     println("configuring hostname .... ")
     val _ = ws.url("https://toolkit.tuebingen.mpg.de").get().map { _ =>
       ()
     }
-
   }
 
   override def goodbye(): Unit = println("Goodbye!")
