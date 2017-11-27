@@ -3,6 +3,8 @@
 @import java.time.ZonedDateTime
 @import org.webjars.play.WebJarsUtil
 @import play.api.i18n.Messages
+@import controllers.routes
+@import play.twirl.api.Html
 @(webJarsUtil: WebJarsUtil, tools: Iterable[Tool], message: String = "", view: String = "")(implicit messages: Messages, request: RequestHeader)
 
 <!DOCTYPE html>
@@ -298,9 +300,7 @@
             </button>
         </div>
 
-        @help.modal()
-
-
+        @views.html.help.modal()
 
             <!-- Foundation 6 -->
         @Html(webJarsUtil.script("foundation.min.js"))

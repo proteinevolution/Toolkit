@@ -1,5 +1,6 @@
 @import play.api.mvc.RequestHeader
 @import de.proteinevolution.models.database.results.Alignment.AlignmentResult
+@import controllers.routes
 @(jobID: String, alignment: AlignmentResult, resultName: String,  tool : de.proteinevolution.models.Tool)(implicit request: RequestHeader)
 
 @import java.lang.String; var fileURL="/files/" + jobID + "/" + "alignment.clustalw_aln";

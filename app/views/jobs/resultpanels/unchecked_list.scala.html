@@ -1,6 +1,6 @@
 @import play.api.mvc.RequestHeader
 @import play.api.libs.json.JsValue
-
+@import controllers.routes
 @(toolName: String, jobID: String, jsValue: JsValue, tool : de.proteinevolution.models.Tool)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 <div class="colorOptsAlignment">
