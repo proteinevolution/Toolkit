@@ -1,6 +1,7 @@
 @import play.api.mvc.RequestHeader
 @import de.proteinevolution.models.database.results.Alignment.AlignmentResult
 @import controllers.routes
+@import java.lang.String
 @(jobID: String, alignment: AlignmentResult, resultName: String,  tool: de.proteinevolution.models.Tool)(implicit request: RequestHeader)
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 @fileURL = @{"/files/" + jobID + "/" + "alignment.fas"}
@@ -41,12 +42,10 @@
         var showMore = 100;
         var loading = false;
         var numHits = @alignment.alignment.length;
-         var resultName = '@resultName';
+        var resultName = '@resultName';
         var jobID = '@jobID';
         var checkboxes = [];
         var checkbox = "checkbox";
-        var colorAAs = false;
-
 
         window["@{resultName}_forward"] = function(selectedTool){
             var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
