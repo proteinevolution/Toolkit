@@ -6,13 +6,6 @@ let alignmentView : any;
 
 interface Window { FrontendAlnvizComponent: any; }
 
-window.onresize = () => {
-    alignmentView.g.zoomer.set("alignmentWidth", $("#tool-tabs").width() - 240);
-    if($('#tool-tabs').hasClass('fullscreen')) {
-        alignmentView.g.zoomer.set("alignmentHeight", Math.max(400, $(window).height() - 180));
-    }
-};
-
 window.FrontendAlnvizComponent = {
     controller: function() {
         let submitted : boolean;
@@ -23,10 +16,12 @@ window.FrontendAlnvizComponent = {
                     return $.ajax({
                         url: '/api/frontendSubmit/Alnviz',
                         type: 'POST',
-                        success: function(result) {
+                        dataType: "text",
+                        processData: false,
+                        success: function() {
                             submitted = true;
                         },
-                        error: function(result) {
+                        error: function() {
                             submitted = true;
                         }
                     });
@@ -51,7 +46,7 @@ window.FrontendAlnvizComponent = {
 
                 opts = {
                     colorscheme: {
-                        "scheme": "mae"
+                        "scheme": "clustal"
                     },
                     el: document.getElementById('bioJSContainer'),
                     vis: {
@@ -74,6 +69,7 @@ window.FrontendAlnvizComponent = {
                         labelFontsize: "13px",
                         labelIdLength: 75,
                         menuFontsize: "12px",
+                        menuPadding: "0px 10px 0px 0px",
                         menuMarginLeft: "2px",
                         menuItemFontsize: "14px",
                         menuItemLineHeight: "14px",
@@ -92,11 +88,20 @@ window.FrontendAlnvizComponent = {
 
                 alignmentView.render();
 
-                (<any>window).alignmentmsa = alignmentView;
-
                 //hide unsused options
                 $('#menuDiv').children().eq(5).hide();
                 $('#menuDiv').children().eq(6).hide();
+
+                $(window).bind("resize.MSAViewer", function(){
+                    if($("#bioJSContainer").parents("html").length === 0){
+                        $(window).unbind("resize.MSAViewer");
+                        return;
+                    }
+                    alignmentView.g.zoomer.set("alignmentWidth", $("#tool-tabs").width() - 240);
+                    if($('#tool-tabs').hasClass('fullscreen')) {
+                        alignmentView.g.zoomer.set("alignmentHeight", Math.max(400, $(window).height() - 180));
+                    }
+                });
 
                 setTimeout(function(){
                     $('#tab-Visualization').removeAttr('style');
