@@ -7,16 +7,14 @@ class Parameter(val name: String) {
   // A constraint decides for a value its validity
   type Constraint = RType => Boolean
 
-  var constraints: Map[String, Constraint] = Map.empty[String, Constraint]
+  private var constraints: Map[String, Constraint] = Map.empty[String, Constraint]
 
   def withConstraint(name: String, constraint: Constraint): Parameter = {
-
-    this.constraints = this.constraints.updated(name, constraint)
+    constraints = constraints.updated(name, constraint)
     this
   }
   def withoutConstraint(name: String): Parameter = {
-
-    this.constraints = this.constraints - name
+    constraints = constraints - name
     this
   }
 }
@@ -26,7 +24,6 @@ class Parameter(val name: String) {
  *
  */
 abstract class Representation {
-
   def represent: String
 }
 
@@ -37,11 +34,9 @@ abstract class Representation {
  * @param value
  */
 class LiteralRepresentation(value: RType) extends Representation {
-
   def represent: String = value.inner().toString
 }
 
 class FileRepresentation(file: File) extends Representation {
-
   def represent: String = file.pathAsString
 }

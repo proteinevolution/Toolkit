@@ -17,7 +17,7 @@ import com.typesafe.config.ConfigFactory
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
-import de.proteinevolution.tel.execution.{ ExecutionContext, RunningExecution, WrapperExecutionFactory }
+import de.proteinevolution.tel.execution.{ ExecutionContext, WrapperExecutionFactory }
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import java.time.ZonedDateTime
 
@@ -34,6 +34,7 @@ import com.google.inject.assistedinject.Assisted
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.Constants
 import de.proteinevolution.parsers.Ops.QStat
+import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecution
 
 import scala.concurrent.duration._
 

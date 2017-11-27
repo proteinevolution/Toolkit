@@ -31,7 +31,6 @@ class RunscriptManager @Inject()(@Named("runscriptPath") runscriptPath: String) 
       file.nameWithoutExtension -> file
     }
     .toMap
-
   // All files that will be prepended to a requested runscript
   private final val prefix: Seq[File] = {
     val x = runscriptPath.toFile / PREFIX
@@ -52,7 +51,6 @@ class RunscriptManager @Inject()(@Named("runscriptPath") runscriptPath: String) 
       Seq.empty
     }
   }
-
   def apply(runscriptName: String): Runscript = Runscript(prefix ++ Seq(runscripts(runscriptName)) ++ suffix)
 }
 
@@ -63,10 +61,8 @@ case class InvalidArgument(violatedConstraints: Seq[RType => Boolean]) extends A
 case class ValidArgument(representation: Representation)               extends Argument
 
 sealed trait RType {
-
   def inner(): String
 }
 case class RString(x: String) extends RType {
-
   def inner(): String = x
 }
