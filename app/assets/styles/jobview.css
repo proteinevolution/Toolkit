@@ -29,7 +29,7 @@ body.is-reveal-open {
     margin-bottom: 0.5em;
 }
 
-#bioJSContainer, #rootDiv {
+#rootDiv {
     overflow-x: scroll;
 }
 
