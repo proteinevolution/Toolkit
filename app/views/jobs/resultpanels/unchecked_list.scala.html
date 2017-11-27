@@ -39,7 +39,7 @@
     function download_(){
         var fileString = "";
         fileString = data.ACC_IDS;
-        var filename = "@{toolName}_jobID_@{jobID}.fasta";
+        var filename = "@{toolName}_jobID_@{jobID}" + ".fasta";
         download(filename, fileString.join("\n"));
     }
 </script>

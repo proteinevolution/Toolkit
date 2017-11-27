@@ -6,9 +6,9 @@
 <div id="hcontainer"></div>
 
 <script>
-        var bins = new Array();
+        var bins = [];
         @for(prob <- probs){
-                bins.push(Array(@(prob), bins.length));
+                bins.push(new Array(@(prob), bins.length));
         }
 
         $(function() {

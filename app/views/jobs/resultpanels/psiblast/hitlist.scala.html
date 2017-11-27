@@ -123,7 +123,6 @@
 var checkbox = "checkbox";
 var selectAllBool = false;
 var shownHits = 500;
-var showMore = 100;
 // use this array to store
 // checked checkboxes
 // due to pagination/lazyload
@@ -132,7 +131,6 @@ var numHits = @{result.num_hits};
 var jobID = '@{jobID}';
 var loading = false;
 var wrapped = true;
-var colorAAs = false;
 
 $(document).ready( function(){
     hitlistBaseFunctions();
@@ -267,7 +265,7 @@ function getHits(start, end, isWrapped){
 
 window["@{tool.toolNameShort}_download"] = function(){
     var fileUrl = "/files/@jobID/output.aln_fas";
-    var downloadFilename = "@{tool.toolNameShort}_@{jobID}.aln";
+    var downloadFilename = "@{tool.toolNameShort}_@{jobID}" + ".aln";
 
     $.LoadingOverlay("show");
     $.ajax({

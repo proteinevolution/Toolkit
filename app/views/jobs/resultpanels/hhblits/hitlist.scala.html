@@ -67,8 +67,8 @@
         <div><a class="success button tiny resubmitSection" onclick="resubmitSection('@{result.query.seq}', '>'+'@{result.query.accession}')" type="button" id="resubmitSection">Resubmit section</a></div>
             <div id='blastviz'>
                 <div class='flat-slider' id='flat-slider'></div>
-                @Html(htmlPath.toFile.contentAsString)
-                <p><img src="files/@jobID/@{jobID}.png" border="0" alt="blasthits" usemap="#blastmap"></p>
+                @{Html(htmlPath.toFile.contentAsString)}
+                <p><img src="files/@{jobID + "/" + jobID + ".png"}" border="0" alt="blasthits" usemap="#blastmap"></p>
             </div>
     </div>
     <div id="hitlist">
@@ -157,7 +157,6 @@
         var selectAllBool = false;
         var numHits = @{result.num_hits};
         var shownHits = 50;
-        var showMore = 50;
 	    var loading = false;
         var wrapped = true;
         var colorAAs = false;
@@ -217,7 +216,6 @@
                 checkboxes = [];
             }
         }
-
 
        function hhblits_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
            var data = {"checkboxes": checkboxes.removeDuplicates()};
@@ -281,7 +279,6 @@
                 forward(selectedTool, data_.toString());
             });
         }
-
 
         function templateAlignment(accession){
             $('textarea#alignmentTemplate').val(" ");
