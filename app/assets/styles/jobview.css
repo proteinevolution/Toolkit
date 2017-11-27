@@ -29,8 +29,10 @@ body.is-reveal-open {
     margin-bottom: 0.5em;
 }
 
-#rootDiv {
-    overflow-x: scroll;
+#rootDiv SPAN {
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode','Geneva','Verdana',Sans-Serif !important;
+    font-weight: normal !important;
+    font-size: 12px !important;
 }
 
 .alignment_box {

@@ -216,9 +216,6 @@ const sampleSeqConfig = function(elem: any, isInit: boolean, ctx: any) : any {
                 case "retseq":
                     $a.val(protHeaders);
                     break;
-
-                default:
-                    console.warn("implement me");
             }
 
             //localStorage.setItem('alignmentcontent', $a.val());
