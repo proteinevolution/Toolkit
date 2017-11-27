@@ -1,5 +1,5 @@
 @import play.api.mvc.RequestHeader
-
+@import java.lang.String
 @(filepath : String, filename : String, jobID : String, resultname : String)(implicit request: RequestHeader)
 
 <a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download PDB file</a>
