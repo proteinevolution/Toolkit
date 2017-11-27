@@ -419,9 +419,7 @@ class JobActor @Inject()(
           self ! JobStateChanged(job.jobID, Error)
       }
 
-    /**
-     * Checks the jobHashDB for matches and generates one for the job if there are none.
-     */
+    // Checks the jobHashDB for matches and generates one for the job if there are none.
     case CheckJobHashes(jobID) =>
       Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] Job with jobID $jobID will now be hashed.")
       this.getCurrentJob(jobID).foreach {
@@ -464,12 +462,6 @@ class JobActor @Inject()(
           )
       }
 
-    /**
-     * Checks everything and deletes the Job.
-     * Includes: Removing the job from the cluster if the job is still in the current jobs
-     * Creating the job deleted object and inserting it to the database
-     * Removing the job from ES
-     */
     case Delete(jobID, userIDOption) =>
       val verbose = true // just switch this on / off for logging
       if (verbose) Logger.info(s"[JobActor[$jobActorNumber].Delete] Received Delete for $jobID")
@@ -558,9 +550,6 @@ class JobActor @Inject()(
         case None =>
       }
 
-    /**
-     * Starts the job
-     */
     case StartJob(jobID) =>
       this.getCurrentJob(jobID).foreach {
         case Some(job) =>
