@@ -1,4 +1,5 @@
 @import play.api.mvc.RequestHeader
+@import java.lang.String
 @(jobID: String)(implicit request: RequestHeader)
 @hydroPlot = @{"/files/" + jobID + "/" + jobID + "_hyd.png"}
 @scvolPlot = @{"/files/" + jobID + "/" + jobID + "_scvol.png"}

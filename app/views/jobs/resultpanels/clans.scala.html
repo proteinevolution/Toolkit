@@ -1,5 +1,7 @@
 @import play.api.mvc.RequestHeader
+@import java.lang.String
 @(toolName: String, jobID: String)(implicit request: RequestHeader)
+
 @fileURL = @{"/files/" + jobID + "/" + jobID + ".clans.zip"}
 
 <div class="clansResults">
