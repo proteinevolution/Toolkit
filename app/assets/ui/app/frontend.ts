@@ -2,8 +2,16 @@
 const exampleSequence = ">AAN59974.1 histone H2A [Homo sapiens]\nMSG------------------RGKQGG-KARAKAKTRSSRAGLQFPVGRVHRLLRKGNYAERVGAGAPVYLAAVLEYLTAEILELAGNAARDNKKTRIIPRHLQLAIRNDEELNKLLGKVTIAQGGVLPNIQAVLLPKKTESHHKAKGK-----\n>NP_001005967.1 histone 2, H2a [Danio rerio]\nMSG------------------RGKTGG-KARAKAKSRSSRAGLQFPVGRVHRLLRKGNYAERVGAGAPVYLAAVLEYLTAEILELAGNAARDNKKTRIIPRHLQLAVRNDEELNKLLGGVTIAQGGVLPNIQAVLLPKKTEKPAKSK-------\n>NP_001027366.1 histone H2A [Drosophila melanogaster]\nMSG------------------RGK-GG-KVKGKAKSRSDRAGLQFPVGRIHRLLRKGNYAERVGAGAPVYLAAVMEYLAAEVLELAGNAARDNKKTRIIPRHLQLAIRNDEELNKLLSGVTIAQGGVLPNIQAVLLPKKTEKKA----------\n>NP_175517.1 histone H2A 10 [Arabidopsis thaliana]\nMAG------------------RGKTLGSGSAKKATTRSSKAGLQFPVGRIARFLKKGKYAERVGAGAPVYLAAVLEYLAAEVLELAGNAARDNKKTRIVPRHIQLAVRNDEELSKLLGDVTIANGGVMPNIHNLLLPKKTGASKPSAEDD----\n>NP_001263788.1 Histone H2A [Caenorhabditis elegans]\nMSG------------------RGKGGKAKTGGKAKSRSSRAGLQFPVGRLHRILRKGNYAQRVGAGAPVYLAAVLEYLAAEVLELAGNAARDNKKTRIAPRHLQLAVRNDEELNKLLAGVTIAQGGVLPNIQAVLLPKKTGGDKEIRLSNLPKQ\n>NP_009552.1 histone H2A [Saccharomyces cerevisiae S288C]\nMSG------------------GKGGKAGSAAKASQSRSAKAGLTFPVGRVHRLLRRGNYAQRIGSGAPVYLTAVLEYLAAEILELAGNAARDNKKTRIIPRHLQLAIRNDDELNKLLGNVTIAQGGVLPNIHQNLLPKKSAKTAKASQEL----\n>XP_641587.1 histone H2A [Dictyostelium discoideum AX4]\nMSETKPASSKPAAAAKPKKVIPRVSRTGEPKSKPESRSARAGITFPVSRVDRLLREGRFAPRVESTAPVYLAAVLEYLVFEILELAHNTCSISKKTRITPQHINWAVGNDLELNSLFQHVTIAYGGVLPTPQQSTGEKKKKPSKKAAEGSSQIY";
 // Update the value with the one from the local storage
 
+let alignmentView : any;
 
 interface Window { FrontendAlnvizComponent: any; }
+
+window.onresize = () => {
+    alignmentView.g.zoomer.set("alignmentWidth", $("#tool-tabs").width() - 240);
+    if($('#tool-tabs').hasClass('fullscreen')) {
+        alignmentView.g.zoomer.set("alignmentHeight", Math.max(400, $(window).height() - 180));
+    }
+};
 
 window.FrontendAlnvizComponent = {
     controller: function() {
@@ -16,11 +24,9 @@ window.FrontendAlnvizComponent = {
                         url: '/api/frontendSubmit/Alnviz',
                         type: 'POST',
                         success: function(result) {
-                            console.log('ok');
                             submitted = true;
                         },
                         error: function(result) {
-                            console.warn('error');
                             submitted = true;
                         }
                     });
@@ -29,20 +35,20 @@ window.FrontendAlnvizComponent = {
                 }
             },
             initMSA: function() : any {
-                let alignment, defMenu, menuOpts, opts, seqs, counter, i;
+                let defMenu, menuOpts, opts, height, width, seqs;
                 seqs = $('#alignment').reformat('Fasta');
-                let height = (seqs.split('>').length-1)*15;
-                let split = seqs.split('\n');
-                counter = 0;
-                i = 1;
-                while(!split[i].startsWith('>')) {
-                    counter = counter + split[i].length;
-                    i++;
+
+                if($('#tool-tabs').hasClass('fullscreen')) {
+                    height = $(window).height() - 180;
+                } else {
+                    height = $('#tool-tabs').width() - 500;
                 }
-                let width = counter * 15;
+
+                width = $('#tool-tabs').width() - 240;
                 if (!seqs) {
                     return;
                 }
+
                 opts = {
                     colorscheme: {
                         "scheme": "mae"
@@ -75,15 +81,18 @@ window.FrontendAlnvizComponent = {
                     }
                 };
 
-                alignment = new msa.msa(opts);
+                alignmentView = new msa.msa(opts);
+
                 menuOpts = {
                     el : document.getElementById('menuDiv'),
-                    msa : alignment
+                    msa : alignmentView
                 };
                 defMenu = new msa.menu.defaultmenu(menuOpts);
-                alignment.addView('menu', defMenu);
+                alignmentView.addView('menu', defMenu);
 
-                alignment.render();
+                alignmentView.render();
+
+                (<any>window).alignmentmsa = alignmentView;
 
                 //hide unsused options
                 $('#menuDiv').children().eq(5).hide();
@@ -107,15 +116,15 @@ window.FrontendAlnvizComponent = {
                 "class": "jobline"
             }, m("span", {
                 "class": "toolname"
-            }, "AlignmentViewer"), m("i", {"class": "icon-white_question helpicon", "title": "Help page", "config": tooltipsterConf})), m(GeneralTabComponent, {
+            }, m("a", { onclick: function(){m.route("/tools/" + "alnviz")}}, "AlignmentViewer")),
+            m("i", {"class": "icon-white_question helpicon", "title": "Help page", "config": tooltipsterConf})),
+            m(GeneralTabComponent, {
                 tabs: ["Alignment", "Visualization"],
                 ctrl: ctrl
             })
         ]);
     }
 };
-
-
 
 const fndt = function(elem : any, isInit : boolean) : any {
     if (!isInit) {
@@ -188,8 +197,9 @@ const GeneralTabComponent = {
                         onCollapse();
                     }
                     $("#collapseMe").addClass("fa-expand").removeClass("fa-compress");
+                    alignmentView.g.zoomer.set("alignmentHeight", $('#tool-tabs').width() - 500);
+                    alignmentView.g.zoomer.set("alignmentWidth", $("#tool-tabs").width() - 240);
                     followScroll(document);
-
                 } else {
                     job_tab_component.addClass("fullscreen");
                     this.isFullscreen = true;
@@ -197,8 +207,9 @@ const GeneralTabComponent = {
                         onExpand();
                     }
                     $("#collapseMe").addClass("fa-compress").removeClass("fa-expand");
+                    alignmentView.g.zoomer.set("alignmentHeight", $(window).height() - 180);
+                    alignmentView.g.zoomer.set("alignmentWidth",  $("#tool-tabs").width() - 240);
                     followScroll(job_tab_component);
-
                 }
                 if (typeof onFullscreenToggle === "function" && this.isFullscreen === true) {
                     return onFullscreenToggle();
@@ -208,7 +219,7 @@ const GeneralTabComponent = {
                 if (localStorage.getItem("resultcookie")) {
                     let cookieString = String(localStorage.getItem("resultcookie"));
                     localStorage.removeItem("resultcookie");
-                    $.LoadingOverlay("hide")
+                    $.LoadingOverlay("hide");
                     return cookieString;
                 } else {
                     return "";
@@ -297,4 +308,3 @@ const tabsContents : any = {
         return "Test";
     }
 };
-
