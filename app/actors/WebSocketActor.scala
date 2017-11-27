@@ -56,7 +56,7 @@ final class WebSocketActor @Inject()(
     clusterMonitor ! Connect(self)
     userSessions.getUser(sessionID).foreach {
       case Some(user) =>
-        wsActorCache.get(user.userID.stringify) match {
+        wsActorCache.get[List[ActorRef]](user.userID.stringify) match {
           case Some(wsActors) =>
             val actorSet = (wsActors: List[ActorRef]).::(self)
             wsActorCache.set(user.userID.stringify, actorSet)
@@ -72,7 +72,7 @@ final class WebSocketActor @Inject()(
     clusterMonitor ! Disconnect(self)
     userSessions.getUser(sessionID).foreach {
       case Some(user) =>
-        wsActorCache.get(user.userID.stringify) match {
+        wsActorCache.get[List[ActorRef]](user.userID.stringify) match {
           case Some(wsActors) =>
             val actorSet: List[ActorRef] = wsActors: List[ActorRef]
             val newActorSet              = actorSet.filterNot(_ == self)

@@ -89,14 +89,10 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
   }
 
   def matchUserToPW(username: String, password: String): Future[Boolean] = {
-
     mongoStore.findUser(BSONDocument("userData.nameLogin" -> username)).map {
-
       case Some(user) if user.checkPassword(password) => true
       case None                                       => false
-
     }
-
   }
 
   // add header authentication layer so that this cannot be curled easily by checking db if user matches with pw
@@ -170,7 +166,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                         userSessions.removeUserFromCache(unregisteredUser)
 
                         // Tell the job actors to copy all jobs connected to the old user to the new user
-                        wsActorCache.get(unregisteredUser.userID.stringify) match {
+                        wsActorCache.get[List[ActorRef]](unregisteredUser.userID.stringify) match {
                           case Some(wsActors) =>
                             val actorList: List[ActorRef] = wsActors: List[ActorRef]
                             wsActorCache.set(loggedInUser.userID.stringify, actorList)
