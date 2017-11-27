@@ -3,6 +3,8 @@
 @import play.api.mvc.RequestHeader
 @import play.api.libs.json.JsDefined
 @import de.proteinevolution.models.results.Common
+@import controllers.routes
+@import play.twirl.api.Html
 @(toolName: String, jobID: String, jsValue: JsValue, tool: de.proteinevolution.models.Tool)(implicit request: RequestHeader)
 @import java.lang.String; var fileURL="/files/" + jobID + "/" + jobID + ".fas";
 

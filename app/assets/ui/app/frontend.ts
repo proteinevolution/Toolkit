@@ -89,7 +89,6 @@ window.FrontendAlnvizComponent = {
                 $('#menuDiv').children().eq(5).hide();
                 $('#menuDiv').children().eq(6).hide();
 
-
                 setTimeout(function(){
                     $('#tab-Visualization').removeAttr('style');
                 }, 100);
@@ -145,10 +144,6 @@ window.FrontendReformatComponent = {
         }, m.trust(ctrl.html()));
     }
 };
-
-
-
-
 
 const renderTabs = function(tabs : any, content : any) {
     return m("div", {
