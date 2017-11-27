@@ -8,14 +8,10 @@ import de.proteinevolution.tel.TELRegex
 import java.nio.file.attribute.PosixFilePermission
 
 import de.proteinevolution.tel.env.Env
-import play.api.Logger
+import de.proteinevolution.tel.execution.WrapperExecutionFactory.{ PendingExecution, RegisteredExecution, RunningExecution }
+
 
 import scala.sys.process.Process
-
-sealed trait Execution
-case class PendingExecution(register: File => RegisteredExecution) extends Execution
-case class RegisteredExecution(run: () => RunningExecution)        extends Execution
-case class RunningExecution(terminate: () => Boolean)              extends Execution
 
 @Singleton
 class WrapperExecutionFactory @Inject()(@Named("wrapperPath") wrapperPath: String, env: Env) extends TELRegex {
@@ -67,4 +63,13 @@ class WrapperExecutionFactory @Inject()(@Named("wrapperPath") wrapperPath: Strin
     }
     PendingExecution(register)
   }
+}
+
+object WrapperExecutionFactory {
+
+  sealed trait Execution
+  case class PendingExecution(register: File => RegisteredExecution) extends Execution
+  case class RegisteredExecution(run: () => RunningExecution)        extends Execution
+  case class RunningExecution(terminate: () => Boolean)              extends Execution
+
 }
