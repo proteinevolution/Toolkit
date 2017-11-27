@@ -1,16 +1,15 @@
 @import de.proteinevolution.models.results.HHrepID
 @(jobID : String, filePath : String)
 
-@import java.lang.String; var ncoils="/files/" + jobID + "/" + jobID + "_ncoils.png";
-@import java.lang.String; var psipred="/files/" + jobID + "/" + jobID + "_psipred.png";
-@import java.lang.String; var repper="/files/" + jobID + "/" + jobID + "_repper.png";
-@import java.lang.String; var overview="/files/" + jobID + "/" + jobID + "_overview.png";
-
-@import java.lang.String; var ncoilsFile = filePath + "_ncoils.png";
-@import java.lang.String; var psipredFile = filePath + "_psipred.png";
-@import java.lang.String; var repperFile = filePath + "_repper.png";
-@import java.lang.String; var overviewFile = filePath + "_overview.png";
-
+@ncoils = @{"/files/" + jobID + "/" + jobID + "_ncoils.png"}
+@psipred = @{"/files/" + jobID + "/" + jobID + "_psipred.png"}
+@repper = @{"/files/" + jobID + "/" + jobID + "_repper.png"}
+@overview = @{"/files/" + jobID + "/" + jobID + "_overview.png"}
+    
+@ncoilsFile = @{filePath + "_ncoils.png"}
+@psipredFile = @{filePath + "_psipred.png"}
+@repperFile = @{filePath + "_repper.png"}
+@overviewFile = @{filePath + "_overview.png"}
 
 <div class="notePlain">
 <span>PSIPRED</span>
