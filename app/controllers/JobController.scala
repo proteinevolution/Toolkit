@@ -43,10 +43,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     extends AbstractController(cc)
     with CommonController {
 
-  /**
-   *  Loads one minified version of a job to the view, given the jobID
-   *
-   */
   def loadJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       // Find the Job in the database
@@ -88,7 +84,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               source.close()
             }
           }
-
           // Determine the jobID
           (formData.get("jobID") match {
             case Some(jobID) =>
@@ -119,10 +114,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               formData.get("alignment_two").foreach { alignment =>
                 if (alignment.isEmpty) params = params - "alignment_two"
               }
-
-              /**
-               * TODO Validate here!
-               */
+              // TODO Validate here!
               val validatedFormData: Map[String, Option[String]] =
                 formData.filterKeys(parameter => toolParams.contains(parameter)).map { paramWithValue =>
                   paramWithValue._1 -> toolParams(paramWithValue._1).paramType.validate(paramWithValue._2)
