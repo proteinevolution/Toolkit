@@ -79,16 +79,13 @@ final class ClusterMonitor @Inject()(cluster: Cluster,
       // if there are enough records, group them in and stick them in the DB collection
       if (record.length >= constants.loadRecordElements) self ! Recording
 
-    /**
-     * Writes the current load to the database and clears the record.
-     */
+    // Writes the current load to the database and clears the record.
     case Recording =>
       val loadAverage      = record.sum[Double] / record.length
       val currentTimestamp = ZonedDateTime.now
       val _ = mongoStore
         .upsertLoadStatistic(ClusterLoadEvent(BSONObjectID.generate(), record, loadAverage, Some(currentTimestamp)))
         .map { _ =>
-          //Logger.info("Average: " + loadAverage + " - " + record.mkString(", "))
           record = List.empty[Double]
           ()
         }
