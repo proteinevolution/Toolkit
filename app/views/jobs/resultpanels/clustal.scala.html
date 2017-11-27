@@ -3,8 +3,7 @@
 @import controllers.routes
 @(jobID: String, alignment: AlignmentResult, resultName: String,  tool : de.proteinevolution.models.Tool)(implicit request: RequestHeader)
 
-@import java.lang.String; var fileURL="/files/" + jobID + "/" + "alignment.clustalw_aln";
-
+@fileURL = @{"/files/" + jobID + "/" + "alignment.clustalw_aln"}
 
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
