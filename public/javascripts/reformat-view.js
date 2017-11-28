@@ -123,8 +123,6 @@ function initMSA() {
     var menuOpts = {};
     menuOpts.el = document.getElementById('div');
     menuOpts.msa = ms;
-    var defMenu = new msa.menu.defaultmenu(menuOpts);
-    //ms.addView("menu", defMenu);
     // call render at the end to display the whole MSA
     ms.render();
 }
@@ -138,58 +136,16 @@ function hideTools(currentVal) {
         }
     }
     if (currentVal === 'Fasta' || currentVal === 'Clustal') {
-        $('#forwardTool').prop('disabled', false);
-        $('#alnvizual').show();
-        $('#aln2plot').show();
-        $('#ancescon').show();
-        $('#clans').show();
-        $('#clustalo').show();
-        $('#hhblits').show();
-        $('#hhfilter').show();
-        $('#hhpred').show();
-        $('#hhomp').show();
-        $('#hhrepid').show();
-        $('#hmmer').show();
-        $('#kalign').show();
-        $('#mafft').show();
-        $('#mmseqs2').show();
-        $('#msaprobs').show();
-        $('#muscle').show();
-        $('#pcoils').show();
-        $('#repper').show();
-        $('#quick2d').show();
-        $('#phyml').show();
-        $('#psiblast').show();
-        $('#tcoffee').show();
+        ddl.prop('disabled', false);
+        ddl.find('> :not(#retseq)').show();
         $('#retseq').hide();
 
     } else if (currentVal === 'GetAccessions') {
-        $('#forwardTool').prop('disabled', false);
-        $('#alnvizual').hide();
-        $('#aln2plot').hide();
-        $('#ancescon').hide();
-        $('#clans').hide();
-        $('#clustalo').hide();
-        $('#hhblits').hide();
-        $('#hhfilter').hide();
-        $('#hhpred').hide();
-        $('#hhomp').hide();
-        $('#hhrepid').hide();
-        $('#hmmer').hide();
-        $('#kalign').hide();
-        $('#mafft').hide();
-        $('#mmseqs2').hide();
-        $('#msaprobs').hide();
-        $('#muscle').hide();
-        $('#pcoils').hide();
-        $('#repper').hide();
-        $('#quick2d').hide();
-        $('#phyml').hide();
-        $('#psiblast').hide();
-        $('#tcoffee').hide();
+        ddl.prop('disabled', false);
+        ddl.find('> :not(#retseq)').hide();
         $('#retseq').show();
     } else {
-        $('#forwardTool').prop('disabled', true);
+        ddl.prop('disabled', true);
     }
 }
 
@@ -223,13 +179,7 @@ function hideFormats(currentVal) {
             $('#Stockholm').prop('disabled', true);
             break;
         default:
-            $('#Fasta').prop('disabled', true);
-            $('#Phylip').prop('disabled', true);
-            $('#Clustal').prop('disabled', true);
-            $('#NEXUS').prop('disabled', true);
-            $('#EMBL').prop('disabled', true);
-            $('#PIR').prop('disabled', true);
-            $('#Stockholm').prop('disabled', true);
+            $('.biofmt').prop('disabled', true);
             break;
     }
 }
