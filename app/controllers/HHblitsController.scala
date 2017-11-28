@@ -336,13 +336,11 @@ class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
       request.getQueryString("iSortCol_0").getOrElse("1").toInt,
       request.getQueryString("sSortDir_0").getOrElse("asc")
     )
-
     resultFiles.getResults(jobID).map {
       case None => NotFound
       case Some(jsValue) =>
         val result = hhblits.parseResult(jsValue)
         val hits   = getHitsByKeyWord(result, params)
-
         Ok(
           Json
             .toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))
