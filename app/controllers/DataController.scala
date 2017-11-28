@@ -36,7 +36,7 @@ class DataController @Inject()(mongoStore: MongoStore,
    */
   def fetchArticle(articleID: String): Action[AnyContent] = Action.async {
     mongoStore.getArticle(articleID).map {
-      case Some(realArticle) => Ok
+      case Some(realArticle) => NoContent
       case None              => NotFound
     }
   }
@@ -46,8 +46,7 @@ class DataController @Inject()(mongoStore: MongoStore,
    */
   def getRecentArticles(numArticles: Int): Action[AnyContent] = Action.async {
     mongoStore.getArticles(numArticles).map { seq =>
-      val x = Json.toJson(seq)
-      Ok(x)
+      Ok(Json.toJson(seq))
     }
   }
 
@@ -61,7 +60,7 @@ class DataController @Inject()(mongoStore: MongoStore,
         FeaturedArticle(BSONObjectID.generate(), title, text, textlong, link, imagePath, Some(ZonedDateTime.now), None)
       mongoStore.writeArticleDatabase(article).map { wr =>
         if (wr.ok) {
-          Ok
+          NoContent
         } else {
           BadRequest
         }
