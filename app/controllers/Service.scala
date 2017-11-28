@@ -5,7 +5,7 @@ import javax.inject.{ Inject, Singleton }
 
 import akka.util.Timeout
 import models.UserSessions
-import de.proteinevolution.models.database.jobs.{ Done, JobState }
+import de.proteinevolution.models.database.jobs.Done
 import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{ I18nSupport, MessagesApi }
@@ -17,12 +17,9 @@ import de.proteinevolution.db.MongoStore
 import java.time.format.DateTimeFormatter
 
 import de.proteinevolution.common.LocationProvider
-import de.proteinevolution.models.forms.{ JobForm, ToolForm }
-import de.proteinevolution.models.param.Param
+import de.proteinevolution.models.forms.JobForm
 import de.proteinevolution.models.Constants
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import play.twirl.api.Html
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
@@ -53,27 +50,6 @@ final class Service @Inject()(messagesApi: MessagesApi,
     }
   }
 
-  implicit def htmlWrites: Writes[Html] = new Writes[Html] {
-    def writes(html: Html) = JsString(html.body)
-  }
-
-  implicit val toolitemWrites: Writes[ToolForm] = (
-    (JsPath \ "toolname").write[String] and
-    (JsPath \ "toolnameLong").write[String] and
-    (JsPath \ "toolnameAbbrev").write[String] and
-    (JsPath \ "category").write[String] and
-    (JsPath \ "params").write[Seq[(String, Seq[Param])]]
-  )(unlift(ToolForm.unapply))
-
-  implicit val jobitemWrites: Writes[JobForm] = (
-    (JsPath \ "jobID").write[String] and
-    (JsPath \ "state").write[JobState] and
-    (JsPath \ "dateCreated").write[String] and
-    (JsPath \ "toolitem").write[ToolForm] and
-    (JsPath \ "views").write[Seq[String]] and
-    (JsPath \ "paramValues").write[Map[String, String]](play.api.libs.json.Writes.mapWrites[String])
-  )(unlift(JobForm.unapply))
-
   def getTool(toolname: String) = Action {
     toolFactory.values.get(toolname) match {
       case Some(tool) => Ok(Json.toJson(tool.toolForm))
@@ -84,7 +60,7 @@ final class Service @Inject()(messagesApi: MessagesApi,
   def getResult(jobID: String, tool: String, resultpanel: String): Action[AnyContent] = Action.async {
     implicit request =>
       val innerMap = toolFactory.getResultMap(tool)
-      innerMap(resultpanel)(jobID).map(Ok(_))
+      innerMap(resultpanel)(jobID).map(html => Ok(JsString(html.body)))
   }
 
   def getJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
