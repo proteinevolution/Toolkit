@@ -133,7 +133,7 @@ final class Backend @Inject()(settingsController: Settings,
       Logger.info("User deletion called. Access " + (if (user.isSuperuser) "granted." else "denied."))
       if (user.isSuperuser) {
         databaseMonitor ! DeleteOldUsers
-        Ok("ok")
+        NoContent
       } else {
         NotFound
       }
@@ -145,21 +145,9 @@ final class Backend @Inject()(settingsController: Settings,
       Logger.info("User deletion called. Access " + (if (user.isSuperuser) "granted." else "denied."))
       if (user.isSuperuser) {
         databaseMonitor ! DeleteOldJobs
-        Ok("ok")
+        NoContent
       } else {
         NotFound
-      }
-    }
-  }
-
-  def cms: Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      if (user.isSuperuser) {
-        mongoStore.getArticles(-1).map { articles =>
-          NoCache(Ok(Json.toJson(articles)))
-        }
-      } else {
-        Future.successful(NotFound)
       }
     }
   }

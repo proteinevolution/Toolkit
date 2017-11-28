@@ -3,12 +3,9 @@ package de.proteinevolution.db
 import java.time.ZonedDateTime
 import javax.inject.{ Inject, Singleton }
 
-import de.proteinevolution.models.database.CMS.FeaturedArticle
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.statistics.{ ClusterLoadEvent, JobEventLog, StatisticsObject }
 import de.proteinevolution.models.database.users.User
-import play.api.Logger
-import play.api.libs.json.JsValue
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
@@ -22,33 +19,6 @@ import scala.language.postfixOps
 @Singleton
 final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi)(implicit ec: ExecutionContext)
     extends ReactiveMongoComponents {
-  /*
-   *                Article Collection
-   */
-  // articleCollection is now a value with the Index structure ensured
-  lazy val articleCollection: Future[BSONCollection] = {
-    reactiveMongoApi.database.map(_.collection[BSONCollection]("articles")).map { collection =>
-      collection.indexesManager
-        .ensure(Index(Seq("dateCreated" -> IndexType.Descending), background = true, unique = true))
-      collection
-    }
-  }
-
-  def getArticle(articleID: String): Future[Option[FeaturedArticle]] = articleCollection.flatMap {
-    val selector = BSONDocument("articleID" -> BSONDocument("$eq" -> articleID))
-    _.find(selector).one[FeaturedArticle]
-  }
-
-  def getArticles(numArticles: Int): Future[List[FeaturedArticle]] = articleCollection.flatMap {
-    val selector = BSONDocument("dateCreated" -> -1)
-    _.find(BSONDocument())
-      .sort(selector)
-      .cursor[FeaturedArticle]()
-      .collect[List](numArticles, Cursor.FailOnError[List[FeaturedArticle]]())
-  }
-
-  def writeArticleDatabase(featuredArticle: FeaturedArticle): Future[WriteResult] =
-    articleCollection.flatMap(_.insert(featuredArticle))
 
   /*
    *                Job Collection
