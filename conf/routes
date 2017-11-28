@@ -1,11 +1,6 @@
 # Routes
 # This file defines all application routes (Higher priority routes first)
 
-
-# IMPORTANT: Comments appended to a valid line are not permitted\
-# IMPORTANT: Controllers are now injected, do not forget the '@' prefix
-# ~~~~
-
 ############################################################################
 # Toolkit related routes
 ############################################################################
@@ -27,8 +22,6 @@ GET           /backend/index                          controllers.Backend.index
 GET           /backend/statistics                     controllers.Backend.statistics
 GET           /backend/runusersweep                   controllers.Backend.runUserSweep
 GET           /backend/runjobsweep                    controllers.Backend.runJobSweep
-GET           /backend/cms                            controllers.Backend.cms
-POST          /backend/cms                            controllers.Backend.cms
 GET           /backend/users                          controllers.Backend.users
 POST          /backend/users                          controllers.Backend.users
 
@@ -144,10 +137,6 @@ GET  /api/job/results/dataTablePSIBlast/:jobID        controllers.PSIBlastContro
 GET  /api/job/results/dataTableHHpred/:jobID          controllers.HHpredController.dataTable(jobID: String)
 GET  /api/job/results/dataTableHHblits/:jobID         controllers.HHblitsController.dataTable(jobID: String)
 GET  /api/job/results/dataTableHHomp/:jobID           controllers.HHompController.dataTable(jobID: String)
-
-
-# Article
-GET  /api/getRecentArticles/:numArticles              controllers.DataController.getRecentArticles(numArticles: Integer)
 
 # 3D structure
 GET         /structure3D/:accession                   controllers.HHpredController.show3DStructure(accession : String)
