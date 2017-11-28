@@ -20,7 +20,6 @@ class HHBlits @Inject()(general: General, aln: Alignment) {
     val hsplist = alignments.zip(hits).map { x =>
       val queryResult = parseQuery((x._1 \ "query").as[JsObject])
       val infoResult  = parseInfo((x._1 \ "info").as[JsObject])
-
       val templateResult = parseTemplate((x._1 \ "template").as[JsObject], x._2)
       val agree          = (x._1 \ "agree").as[String]
       val description    = (x._1 \ "header").as[String]
@@ -77,6 +76,7 @@ class HHBlits @Inject()(general: General, aln: Alignment) {
 }
 
 object HHBlits {
+
   case class HHBlitsHSP(query: HHBlitsQuery,
                         template: HHBlitsTemplate,
                         info: HHBlitsInfo,
@@ -104,8 +104,11 @@ object HHBlits {
                          probab: Double,
                          score: Double,
                          similarity: Double)
+
   case class HHBlitsQuery(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
+
   case class HHBlitsTemplate(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
+
   case class HHBlitsResult(HSPS: List[HHBlitsHSP],
                            alignment: AlignmentResult,
                            num_hits: Int,
@@ -113,6 +116,7 @@ object HHBlits {
                            db: String,
                            TMPRED: String,
                            COILPRED: String) {
+
     def hitsOrderBy(params: DTParam): List[HHBlitsHSP] = {
       (params.iSortCol, params.sSortDir) match {
         case (1, "asc")  => HSPS.sortBy(_.template.accession)
@@ -132,5 +136,7 @@ object HHBlits {
         case (_, _)      => HSPS.sortBy(_.num)
       }
     }
+
   }
+
 }

@@ -1,16 +1,11 @@
 package controllers
 
-import java.time.ZonedDateTime
 import javax.inject.Inject
 
-import de.proteinevolution.models.database.CMS.FeaturedArticle
 import de.proteinevolution.models.database.results.{ Hmmer, PSIBlast }
 import de.proteinevolution.db.{ MongoStore, ResultFileAccessor }
 import de.proteinevolution.models.ToolNames
-import play.api.libs.json.Json
 import play.api.mvc._
-import reactivemongo.bson.BSONObjectID
-
 import scala.concurrent.ExecutionContext
 
 class DataController @Inject()(mongoStore: MongoStore,
@@ -31,42 +26,6 @@ class DataController @Inject()(mongoStore: MongoStore,
       case None          => NotFound
     }
   }
-
-  /**
-   * Action to fetch article with articleID from database
-   */
-  def fetchArticle(articleID: String): Action[AnyContent] = Action.async {
-    mongoStore.getArticle(articleID).map {
-      case Some(realArticle) => NoContent
-      case None              => NotFound
-    }
-  }
-
-  /**
-   * Action to fetch the last N recent articles database
-   */
-  def getRecentArticles(numArticles: Int): Action[AnyContent] = Action.async {
-    mongoStore.getArticles(numArticles).map { seq =>
-      Ok(Json.toJson(seq))
-    }
-  }
-
-  /**
-   * Action to write an article into the database
-   */
-  def writeArticle(title: String, text: String, textlong: String, link: String, imagePath: String): Action[AnyContent] =
-    Action.async {
-      // TODO ensure that only authorized people can write a front page article
-      val article =
-        FeaturedArticle(BSONObjectID.generate(), title, text, textlong, link, imagePath, Some(ZonedDateTime.now), None)
-      mongoStore.writeArticleDatabase(article).map { wr =>
-        if (wr.ok) {
-          NoContent
-        } else {
-          BadRequest
-        }
-      }
-    }
 
   def getHelp(toolname: String) = Action {
     val help = toolname match {
