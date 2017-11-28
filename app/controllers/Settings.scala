@@ -39,32 +39,24 @@ final class Settings @Inject()(messagesApi: MessagesApi,
    * @param clusterMode
    */
   def setClusterMode(clusterMode: String) = Action {
-
     val document = BSONDocument("clusterMode" -> clusterMode,
                                 "created_on" -> ZonedDateTime.now.toInstant.toEpochMilli,
                                 "update_on"  -> ZonedDateTime.now.toInstant.toEpochMilli)
-
     val future = clusterSettings.flatMap(_.insert(document))
-
     future.onComplete {
       case Failure(e)         => throw e
       case Success(lastError) => println("successfully inserted document with lastError = " + lastError)
     }
-
     Ok("Got request")
-
   }
 
   def clusterMode: String = {
-
     val hostname_cmd = "hostname"
     val hostname     = hostname_cmd.!!.dropRight(1)
-
     if (hostname.equals("olt") || hostname.equals("rye"))
       cm = "sge"
     else
       cm = "LOCAL"
-
     cm
   }
 }

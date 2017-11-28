@@ -33,49 +33,48 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
     extends AbstractController(cc) {
 
   def jobStatusDone(jobID: String, key: String) = Action {
-
     if (checkKey(jobID, key)) {
       jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Done))
-      Ok("done")
+      NoContent
     } else BadRequest("Permission denied")
   }
 
   def jobStatusError(jobID: String, key: String) = Action {
     if (checkKey(jobID, key)) {
       jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Error))
-      Ok("error")
+      NoContent
     } else BadRequest("Permission denied")
   }
 
   def jobStatusRunning(jobID: String, key: String) = Action {
     if (checkKey(jobID, key)) {
       jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Running))
-      Ok("running")
+      NoContent
     } else BadRequest("Permission denied")
   }
 
   def jobStatusQueued(jobID: String, key: String) = Action {
     if (checkKey(jobID, key)) {
       jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Queued))
-      Ok("queued")
+      NoContent
     } else BadRequest("Permission denied")
   }
 
   def updateLog(jobID: String) = Action {
     jobActorAccess.sendToJobActor(jobID, UpdateLog(jobID)) // TODO somehow this is getting triggered too rarely
-    Ok
+    NoContent
   }
 
   def SGEID(jobID: String, sgeID: String, key : String): Action[AnyContent] = Action {
     if (checkKey(jobID, key)) {
       jobActorAccess.sendToJobActor(jobID, SetSGEID(jobID, sgeID))
-      Ok
+      NoContent
     } else BadRequest("Permission denied")
   }
 
   def pushMessage(jobID: String, message: String) = Action {
     //userManager ! RunningJobMessage(reactivemongo.bson.BSONObjectID.parse(jobID).get, message)
-    Ok
+    NoContent
   }
 
   // TODO make secure
@@ -85,7 +84,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
       BSONDocument(Job.JOBID -> jobID),
       BSONDocument("$set"    -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)))
     )
-    Ok
+    NoContent
   }
 
   /**
