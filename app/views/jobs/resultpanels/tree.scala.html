@@ -10,7 +10,7 @@
     <a type="button" onclick="@{iddiv}_download()" id="downloadAlignment" class="ancescon_download">Download Tree</a>
 <hr id="line-element" colspan="4" class="horizontal-line">
 
-<div id="@iddiv"></div>
+<div id="@iddiv" class="pending-panel"></div>
 <hr><br/>
 <div id="toolReferences">
     If you use @iddiv on our Toolkit for your research, please cite:
@@ -31,8 +31,6 @@
             <br></div>
             <hr id="line-element" colspan="4" class="horizontal-line">
         </div>
-
-
 
 <script>
     var s = $("#@{iddiv}_select");
@@ -87,7 +85,7 @@
   function onFullscreenToggle() {
 
    var layout = tree.layout();
-   layout.width($("#tool-tabs").width() - 900);
+   layout.width($("#tool-tabs").width() - ($("#tool-tabs").width()/2.5));
    document.getElementById("@iddiv").children[0].setAttribute('id', 'treeSvgContainer');
    tree.update();
   }

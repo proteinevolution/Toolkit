@@ -1,41 +1,37 @@
 @import play.api.mvc.RequestHeader
 @import scala.io.Source
 @(jobID : String, filePath: String)(implicit request: RequestHeader)
-
-<style>
-
-#rootDiv SPAN {
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,Sans-Serif !important;
-    font-weight: normal !important;
-    font-size: 12px !important;
-}
-
-</style>
-
-<div id="menuDiv"></div>
+<br/>
+<div id="menuDivItem"></div>
 <div id="rootDiv">Loading ... </div>
 
 
 <script>
-    var seqs = '';
-    @for(line <-  Source.fromFile(filePath).getLines) {
-        seqs += '@{line}\n';
-    }
+    var alignmentItem;
 
-    var width, height, defMenu,  menuOpts;
-
-    var url ='files/' + @jobID + '/alignment.json';
-    $.getJSON(url, function (data) {
-       width = data[0][1].length;
-
-    seqs = msa.io.clustal.parse(seqs);
-    msa = require("msa");
+    $(document).ready(function () {
+        var seqs = '';
+        var width, height, defMenu,  menuOpts;
         var opts = {colorscheme: {"scheme": "clustal"}};
-        var stringSeqs = $('#alignment').val();
 
-        height = (stringSeqs.split('>').length-1)*15;
+        @for(line <-  Source.fromFile(filePath).getLines) {
+        seqs += '@{line}\n';
+        }
 
-        width = width * 15.5;
+        seqs = msa.io.clustal.parse(seqs);
+        msa = require("msa");
+
+        if ($('#tool-tabs').hasClass('fullscreen')) {
+            height = $(window).height() - 180;
+        } else {
+            height = $('#tool-tabs').width() - 500;
+        }
+
+        width = $('#tool-tabs').width() - 240;
+
+        if (!seqs) {
+            return;
+        }
 
         opts.el = document.getElementById("rootDiv");
         opts.seqs = seqs;
@@ -55,22 +51,52 @@
         opts.zoomer = {
             // Alignment viewer is not scrolling with 'alignmentWidth: "auto"', use fixed numbers instead or
             // use script for handling
-            alignmentHeight: height, alignmentWidth: width, labelNameLength: 165, labelWidth: 85,labelFontsize: "13px",labelIdLength: 75,   menuFontsize: "12px",menuMarginLeft: "2px", menuPadding: "0px 10px 0px 0px", menuItemFontsize: "14px", menuItemLineHeight: "14px", autoResize: true
+            alignmentHeight: height,
+            alignmentWidth: width,
+            labelNameLength: 165,
+            labelWidth: 85,
+            labelFontsize: "13px",
+            labelIdLength: 75,
+            menuFontsize: "12px",
+            menuMarginLeft: "2px",
+            menuPadding: "0px 10px 0px 0px",
+            menuItemFontsize: "14px",
+            menuItemLineHeight: "14px",
+            autoResize: false
         };
-        alignment = new msa.msa(opts);
-        menuOpts = {};
-        menuOpts.el = document.getElementById('menuDiv');
-        menuOpts.msa = alignment;
+        alignmentItem = new msa.msa(opts);
+        menuOpts = {
+            el : document.getElementById('menuDivItem'),
+            msa : alignmentItem
+        };
         defMenu = new msa.menu.defaultmenu(menuOpts);
-        alignment.addView('menu', defMenu);
+        alignmentItem.addView('menu', defMenu);
 
-        alignment.render();
+        alignmentItem.render();
         //hide unsused options
-        $('#menuDiv').children().eq(5).hide();
-        $('#menuDiv').children().eq(6).hide();
+        $('#menuDivItem').children().eq(5).hide();
+        $('#menuDivItem').children().eq(6).hide();
 
-        //fixes option positions
-
-
+        $(window).bind("resize.MSAViewerClustal", function(){
+            if($("#rootDiv").parents("html").length === 0){
+                $(window).unbind("resize.MSAViewerClustal");
+                return;
+            }
+            alignmentItem.g.zoomer.set("alignmentWidth", $('#tool-tabs').width() - 240);
+            if($('#tool-tabs').hasClass('fullscreen')) {
+                alignmentItem.g.zoomer.set("alignmentHeight", Math.max(400, $(window).height() - 180));
+            }
+        });
     });
+
+    function onFullscreenToggle() {
+        alignmentItem.g.zoomer.set("alignmentHeight", $(window).height() - 180);
+        alignmentItem.g.zoomer.set("alignmentWidth",  $('#tool-tabs').width() - 240);
+    }
+
+    function onCollapsescreen() {
+        alignmentItem.g.zoomer.set("alignmentHeight", $('#tool-tabs').width() - 500);
+        alignmentItem.g.zoomer.set("alignmentWidth", $('#tool-tabs').width() - 240);
+    }
+
 </script>

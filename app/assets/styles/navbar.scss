@@ -36,8 +36,8 @@
 }
 
 #navbar {
-  padding: 0 15px;
-  min-width: 750px;
+  padding: 0 5px;
+  width: 750px;
 }
 
 #navbar .tabs-content {
@@ -69,6 +69,62 @@ i {
 
 .title-bar {
   background-color: transparent !important;
+  padding: 0;
+}
+
+.title-bar-title {
+  color: #0a0a0a;
+  padding: 0.5em;
+  font-size: 1em;
+  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
+}
+
+.title-bar-left {
+  color: #000;
+}
+
+.title-bar-left span {
+  margin-top: 20%;
+  margin-bottom: 20%;
+}
+
+.top-bar-left {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  height: 2.4500em;
+}
+
+.top-bar-left .button {
+  color: grey;
+  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
+  z-index: 99;
+  margin: 0;
+  background-color: transparent !important;
+  padding-top: 3%;
+}
+
+.top-bar-left .button:hover {
+  background-color: transparent !important;
+}
+
+.drops .button:focus {
+  outline: none !important;
+}
+
+
+.objects {
+  background-color: rgba(0, 0, 0, 0.0) !important;
+}
+
+.objects li:after {
+  border: 1px dotted;
+}
+
+
+.objects a {
+  color: white;
+  font-weight: bold;
+  font-size: 0.7em;
 }
 
 .textArea {
@@ -179,10 +235,11 @@ i {
   text-shadow: 0 1px 1px white;
 }
 
-#navbar .tabs-title a:link{
+#navbar .tabs-title a:link {
   color: #888;
   text-shadow: 0 1px 1px white;
 }
+
 #navbar .tabs-title a:hover{
   color: #888 !important;
 }
@@ -199,7 +256,6 @@ i {
   transform: translate3d(0,0,0);
   color: #888;
 }
-
 
 #panel1 {
   border-top: 2px solid #D0BA89;
@@ -243,12 +299,11 @@ i {
 }
 
 #logo {
-  padding: 0em;
+  padding-top: 15px;
 }
 
 #logo img {
   display: block;
-  margin: auto;
 }
 
 .toolsection a {
@@ -275,13 +330,15 @@ i {
 }
 
 #hambutton {
-  position: fixed;
-  z-index: 1001;
+  position: absolute;
+  padding-top: 0.75em;
+  padding-left: 0.75em;
 }
 
 #hambutton button {
   color: gray;
   height: 60%;
+  cursor: pointer;
 }
 
 #metauser {

@@ -1,7 +1,47 @@
 /* Jobview Tab Components*/
-.ui-widget {
-    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    font-size: 1.1em;
+body.is-reveal-open {
+    overflow: visible;
+}
+
+#jobview {
+    padding-left: 3px;
+    padding-right: 15px;
+}
+
+#tool-tabs {
+    padding: 0;
+    background: #fefefe;
+    border: 1px solid #ccc;
+}
+.parameter-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#alignmentViewerPanel {
+    height: 27em;
+}
+
+#alignmentViewerPanel textarea {
+    font-size: 0.75em;
+    font-family: "Source Code Pro", "Liberation Mono", monospace;
+    margin-bottom: 0.5em;
+}
+
+#rootDiv SPAN {
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode','Geneva','Verdana',Sans-Serif !important;
+    font-weight: normal !important;
+    font-size: 12px !important;
+}
+
+.alignment_box {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    align-content: stretch;
 }
 
 .ui-widget input, .ui-widget select, .ui-widget button {
@@ -48,16 +88,6 @@
 
 .ui-tabs-panel {
     padding: 2em !important;
-}
-
-#jobview {
-    padding-left: 3px;
-    padding-right: 15px;
-}
-
-#tool-tabs {
-    border: 1px solid #ccc;
-    padding: 0;
 }
 
 .alignment_buttons {
@@ -774,6 +804,7 @@ pre {
     margin: 1em 0;
     font-size: 1.1em;
 }
+
 .accordion-content {
     font-size: 0.9em;
 }

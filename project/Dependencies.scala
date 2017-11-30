@@ -32,8 +32,7 @@ object Dependencies {
     "com.vmunier"          %% "scalajs-scripts"          % "1.1.1",
     "org.typelevel"        %% "cats"                     % "0.9.0",
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
-    "com.typesafe.play"    %% "play-json"                % "2.6.3",
-    "com.github.dfabulich" % "sitemapgen4j"              % "1.0.6"
+    "com.typesafe.play"    %% "play-json"                % "2.6.3"
   )
 
   lazy val testDeps = Seq(

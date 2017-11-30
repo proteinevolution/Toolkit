@@ -122,6 +122,7 @@ const ParameterAlignmentComponent = {
                 m("textarea", {
                     name: ctrl.name+"_two",
                     placeholder: ctrl.getLabel(),
+                    title: "",
                     rows: 8,
                     cols: 70,
                     "class": "alignment",
@@ -140,6 +141,7 @@ const ParameterAlignmentComponent = {
                 m("textarea", {
                     name: ctrl.name,
                     placeholder: ParameterAlignmentComponent.placeholder,
+                    title: "",
                     rows: 14,
                     cols: 70,
                     id: ctrl.id,
