@@ -47,6 +47,10 @@
     padding: 1em;
 }
 
+.accordion-content {
+    font-size: 0.9em;
+}
+
 /* Help Modals for Tools */
 #help-psiblast {
     font-size: 0.85em !important;

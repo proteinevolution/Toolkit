@@ -1,130 +1,6 @@
-#main-header {
-  background-color: transparent;
-}
-
-#toolsdropdown {
-  background-color: #2E8C81;
-  font-size: 0.875em;
-  z-index: 99;
-}
-
-#section {
-  color: white;
-  padding-top: 1em;
-}
-
-#dropdowns li {
-  a {
-    &:hover {
-      color: lightslategrey;
-      z-index: 99;
-    }
-  }
-}
-
-#dropdowns a {
-  color: white;
-  font-size: 0.9em;
-  z-index: 99;
-}
-
-
-#button-up a {
-  background-color: #2E8C81;
-  width: 4em;
-  color: white;
-}
-
-#navbar {
-  padding: 0 5px;
-  width: 750px;
-}
-
-#navbar .tabs-content {
-  padding-bottom: 8px;
-}
-
-i {
-  font-size: 20px;
-}
-
-.globalsearch input {
-
-  background-color: #006F62;
-  border: 0;
-  border-bottom: solid 2px #000;
-  color: #fff;
-  font-size: 0.8em;
-  font-family: inherit;
-  font-weight: normal;
-  letter-spacing: 2px;
-  line-height: 1.42857;
-  outline: 0;
-  width: 175px;
-  height: 50%;}
-
-.globalsearch input:focus{
-  background-color: #ACCDC9;
-}
-
 .title-bar {
   background-color: transparent !important;
   padding: 0;
-}
-
-.title-bar-title {
-  color: #0a0a0a;
-  padding: 0.5em;
-  font-size: 1em;
-  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
-}
-
-.title-bar-left {
-  color: #000;
-}
-
-.title-bar-left span {
-  margin-top: 20%;
-  margin-bottom: 20%;
-}
-
-.top-bar-left {
-  padding-bottom: 0;
-  margin-bottom: 0;
-  height: 2.4500em;
-}
-
-.top-bar-left .button {
-  color: grey;
-  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
-  z-index: 99;
-  margin: 0;
-  background-color: transparent !important;
-  padding-top: 3%;
-}
-
-.top-bar-left .button:hover {
-  background-color: transparent !important;
-}
-
-.drops .button:focus {
-  outline: none !important;
-}
-
-
-.objects {
-  background-color: rgba(0, 0, 0, 0.0) !important;
-}
-
-.objects li:after {
-  border: 1px dotted;
-}
-
-
-.objects a {
-  color: white;
-  font-weight: bold;
-  font-size: 0.7em;
 }
 
 .textArea {
@@ -198,6 +74,10 @@ i {
 
 
 /* current Navbar */
+#navbar {
+  padding: 0 5px;
+  width: 750px;
+}
 
 #navbar .tabs {
   font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;

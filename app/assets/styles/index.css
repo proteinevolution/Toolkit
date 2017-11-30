@@ -78,20 +78,7 @@
     width: 100% !important;
 }
 
-FIELDSET {
-    margin-top: 14px;
-    display: inline-block;
-    line-height: 200%;
-}
-
-
-.slick-slide img {
-    height: 400px;
-}
-
-
-
-.form-group {
+.liveTableContainer .form-group {
     padding: 0.8em 3em 0.3em;
     background-color: #eee;
 }
@@ -181,57 +168,16 @@ FIELDSET {
     display: block;
 }
 
-.select-job  {
-    margin-top: 3em;
-    padding: 1em;
-    font-size: 0.75em;
-}
-
-.gradient {
-    color: black;
-}
-
-.slide-caption{
-    min-height: 80px;
-    position: absolute;
-    background: rgba(4, 4, 4, 0.9);
-    color:white;
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
-    letter-spacing:1px;
-    line-height:1.5rem;
-    height: 100%;
-    width: 22%;
-    top: 0;
-    right: 10px;
-    padding:40px 32px 35px;
-    opacity: 0.55;
-}
-
 .caption-container {
     position: relative;
-    padding-left:10px;
-    padding-right:10px;
-    padding-top:0;
-}
-
-.slide-header {
-    font-size: 1rem;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 0;
 }
 
 .slide-text {
     margin-top: 1em;
     font-size: 0.8rem;
-}
-
-.slider {
-
-    width: 100%;
-    cursor: default;
-    background-color:  rgb(238, 238, 238);
-}
-
-.slider img {
-    width: 100%;
 }
 
 .twitter-typeahead {
@@ -291,175 +237,6 @@ FIELDSET {
     padding: 5px 5px 5px 15px;
 }
 
-.jobTicker {
-    margin-top: 355px;
-    display: block;
-    margin: auto;
-    max-width: 60rem;
-}
-
-.article_container {
-    margin-top: 2em;
-    text-align: center;
-}
-
-
-/*Nasa like tile*/
-
-.tile_main_container {
-    width: 884px !important;
-    height: 300px;
-    background-color: transparent;
-    display: inline-block;
-    float: none !important;
-    padding: 0;
-    margin-top: 1.5em;
-
-}
-
-.quick_links {
-    width: 20%;
-    padding-top: 1.6em;
-    border-left: 1px dashed lightgrey;
-    text-align: left;
-    padding-left: 2.5em;
-}
-
-.quick_links i {
-    font-size: 1.65em !important;
-    padding-right: 1.5em;
-
-}
-
-.quick_links br {
-    line-height: 2.2em;
-}
-
-.quick_links a {
-    color: #626262;
-    font-size: 0.9em;
-    float: left;
-}
-
-.quick_links i {
-    color: #2E8C81;
-}
-
-.tile_container {
-    width: 100%;
-    height: 100%;
-    -webkit-transition: all 1s linear;
-    -moz-transition: all 1s linear;
-    -o-transition: all 1s linear;
-    transition: all 1s linear;
-    display: flex;
-    border-radius: 4px;
-    border: solid 1px lightgray;
-    box-shadow: 0 1px 2px 0 #ccc;
-    background-color: white;
-}
-
-.text_part {
-    width: 65%;
-    padding: 1.6em 1em 1em 2em;
-    text-align: left;
-
-}
-
-.text_part p {
-    font-size: 0.8em !important;
-    color: #626262;
-}
-
-
-.text_part h5, .quick_links h5 {
-    color: #2E8C81;
-    margin-bottom: 0.5em;
-    font-weight: bold;
-    font-size: 12pt;
-}
-
-.text_part h6 {
-    color: #2E8C81;
-    margin-bottom: 0;
-    width: 10em;
-    opacity: 0.85;
-}
-
-.text_part hr {
-    position: absolute;
-    width: 8em;
-    color: #2E8C81;
-}
-
-.text_part .read_more {
-    color: #2E8C81;
-}
-
-.rightContainer {
-    height: 7em;
-    overflow: hidden;
-    margin-top: 3em;
-    -webkit-transition: all 0.5s linear;
-    -moz-transition: all 0.5s linear;
-    -o-transition: all 0.5s linear;
-    transition: all 0.5s linear;
-}
-
-.rightContainer a, .rightContainer i {
-    cursor: pointer;
-}
-
-.rightContainer i {
-    float: right;
-    margin-top: 0.5em;
-}
-
-.tile_img {
-    width: 15%;
-    overflow: hidden;
-    position: relative;
-    opacity: 0.7;
-    border-bottom-left-radius: 4px;
-    border-top-left-radius: 4px;
-}
-
-.tile_img div {
-    background-color: rgba(4, 4, 4, 0.9);
-    position: absolute;
-    width: 100%;
-    height: 3em;
-    opacity: 0.8;
-}
-
-.tile_img a {
-    font-size: 25px;
-    font-weight: bold;
-    color: white;
-    position: absolute;
-    left: 15px;
-    top: 5px;
-}
-
-.tile_img p {
-    margin-top: 1.5em;
-    font-size: 13px;
-    vertical-align: middle;
-}
-
-.liveTableContainer {
-
-    background-clip: content-box;
-    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana, sans-serif;
-    float: none;
-    margin: 1em 1em 0 1em;
-    height: 10em;
-    box-shadow: 0 1px 2px 0 #ccc;
-    border-radius: 3px;
-    border: 1px solid #ccc;
-    background: #eeeeee;
-}
-
 .trafficbar {
     cursor: pointer;
     z-index: 99;
@@ -499,7 +276,6 @@ FIELDSET {
     padding: 0px 7px 0px 7px;
     margin-bottom: 0;
     height: 70px;
-
 }
 
 .liveTable thead, .liveTable tbody {
@@ -529,6 +305,7 @@ td#joblistIcon {
 #jobmanagerIcon{
     font-size: 1.2em;
 }
+
 td#joblistIcon i {
     opacity: 0.9;
     line-height: 1em;
@@ -606,7 +383,7 @@ td#joblistIcon i {
     height: 100%;
     width: 22%;
     top: 0;
-    right: 0;
+    right: 10px;
     padding:40px 32px 35px;
     opacity: 0.55;
 }
@@ -764,4 +541,10 @@ noscript {
     padding-top: 200px;
     display: block;
     margin: auto;
+}
+
+FIELDSET {
+    margin-top: 14px;
+    display: inline-block;
+    line-height: 200%;
 }

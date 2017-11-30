@@ -33,6 +33,7 @@
 }
 
 .job-list .openmanager .icon-list {
+    font-size: 1.5em;
     margin: unset;
     margin-right: -8px;
 }

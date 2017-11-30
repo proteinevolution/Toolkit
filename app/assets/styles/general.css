@@ -35,8 +35,12 @@ h6 {
     font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
-i {
-    font-size: 20px;
+pre {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0;
+    font-size: 1.1em;
 }
 
 div#main-container {
