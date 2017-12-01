@@ -22,7 +22,7 @@
         msa = require("msa");
 
         if ($('#tool-tabs').hasClass('fullscreen')) {
-            height = $(window).height() - 180;
+            height = $(window).height() - 320;
         } else {
             height = $('#tool-tabs').width() - 500;
         }
@@ -38,7 +38,7 @@
         opts.vis = {
             conserv: false,
             overviewbox: false,
-            seqlogo: false,
+            seqlogo: true,
             labels: true,
             labelName: true,
             labelId: false,
@@ -57,9 +57,9 @@
             labelWidth: 85,
             labelFontsize: "13px",
             labelIdLength: 75,
-            menuFontsize: "12px",
-            menuMarginLeft: "2px",
+            menuFontsize: "13px",
             menuPadding: "0px 10px 0px 0px",
+            menuMarginLeft: "-6px",
             menuItemFontsize: "14px",
             menuItemLineHeight: "14px",
             autoResize: false
@@ -84,13 +84,13 @@
             }
             alignmentItem.g.zoomer.set("alignmentWidth", $('#tool-tabs').width() - 240);
             if($('#tool-tabs').hasClass('fullscreen')) {
-                alignmentItem.g.zoomer.set("alignmentHeight", Math.max(400, $(window).height() - 180));
+                alignmentItem.g.zoomer.set("alignmentHeight", Math.max(400, $(window).height() - 320));
             }
         });
     });
 
     function onFullscreenToggle() {
-        alignmentItem.g.zoomer.set("alignmentHeight", $(window).height() - 180);
+        alignmentItem.g.zoomer.set("alignmentHeight", $(window).height() - 320);
         alignmentItem.g.zoomer.set("alignmentWidth",  $('#tool-tabs').width() - 240);
     }
 

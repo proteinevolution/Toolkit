@@ -34,7 +34,7 @@ window.FrontendAlnvizComponent = {
                 seqs = $('#alignment').reformat('Fasta');
 
                 if($('#tool-tabs').hasClass('fullscreen')) {
-                    height = $(window).height() - 180;
+                    height = $(window).height() - 320;
                 } else {
                     height = $('#tool-tabs').width() - 500;
                 }
@@ -52,7 +52,7 @@ window.FrontendAlnvizComponent = {
                     vis: {
                         conserv: false,
                         overviewbox: false,
-                        seqlogo: false,
+                        seqlogo: true,
                         labels: true,
                         labelName: true,
                         labelId: false,
@@ -68,9 +68,9 @@ window.FrontendAlnvizComponent = {
                         labelWidth: 85,
                         labelFontsize: "13px",
                         labelIdLength: 75,
-                        menuFontsize: "12px",
+                        menuFontsize: "13px",
                         menuPadding: "0px 10px 0px 0px",
-                        menuMarginLeft: "2px",
+                        menuMarginLeft: "-6px",
                         menuItemFontsize: "14px",
                         menuItemLineHeight: "14px",
                         autoResize: true
@@ -100,7 +100,7 @@ window.FrontendAlnvizComponent = {
                     }
                     alignmentView.g.zoomer.set("alignmentWidth", $("#tool-tabs").width() - 240);
                     if($('#tool-tabs').hasClass('fullscreen')) {
-                        alignmentView.g.zoomer.set("alignmentHeight", Math.max(400, $(window).height() - 180));
+                        alignmentView.g.zoomer.set("alignmentHeight", Math.max(400, $(window).height() - 320));
                     }
                 });
 
@@ -215,7 +215,7 @@ const GeneralTabComponent = {
                         onExpand();
                     }
                     $("#collapseMe").addClass("fa-compress").removeClass("fa-expand");
-                    alignmentView.g.zoomer.set("alignmentHeight", $(window).height() - 180);
+                    alignmentView.g.zoomer.set("alignmentHeight", $(window).height() - 320);
                     alignmentView.g.zoomer.set("alignmentWidth",  $("#tool-tabs").width() - 240);
                     followScroll(job_tab_component);
                 }
