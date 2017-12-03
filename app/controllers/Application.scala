@@ -76,7 +76,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
    */
   def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
 
-    case rh if sameOriginCheck(rh) =>
+    case rh if SID == "sid" =>
       println("Creating new WebSocket. ip: " + rh.remoteAddress.toString + ", with sessionId: " + rh.session)
 
       userSessions
@@ -92,8 +92,8 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
             Left(result)
         }
 
-    case rejected =>
-      logger.error(s"Request $rejected failed same origin check")
+    case _ =>
+      //logger.error(s"Request $rejected failed same origin check")
       Future.successful {
         Left(Ok("forbidden"))
       }
