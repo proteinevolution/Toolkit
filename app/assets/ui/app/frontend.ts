@@ -84,11 +84,6 @@ window.FrontendAlnvizComponent = {
 
                 alignmentView.render();
 
-                //hide unsused options
-                $('#menuDiv').children().eq(5).hide();
-                $('#menuDiv').children().eq(6).hide();
-
-
                 $(window).on("resize.MSAViewer", function(){
                     if($("#bioJSContainer").parents("html").length === 0){
                         $(window).off("resize.MSAViewer");

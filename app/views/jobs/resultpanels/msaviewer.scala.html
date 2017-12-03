@@ -3,25 +3,20 @@
 @(jobID: String, filePath: String)(implicit request: RequestHeader)
 <br/>
 <div id="menuDivItem"></div>
-<div id="rootDiv">Loading ... </div>
+<div id="rootDiv">Loading ...</div>
 
 
 <script>
         var alignmentItem;
 
         $(document).ready(function () {
-            var seqs = '';
             var toolTabs = $("#tool-tabs");
-
-            @for(line <-  Source.fromFile(filePath).getLines) {
-            seqs += '@{line}\n';
-            }
-
-            seqs = msa.io.clustal.parse(seqs);
 
             var height = toolTabs.hasClass('fullscreen') ? $(window).height() - 320 : toolTabs.width() - 500;
             var width = toolTabs.width() - 240;
 
+            var seqs = '@Html(Source.fromFile(filePath).getLines.mkString("\\n\\"))';
+            seqs = msa.io.fasta.parse(seqs);
             if (!seqs) {
                 return;
             }
@@ -70,9 +65,6 @@
             alignmentItem.addView('menu', defMenu);
 
             alignmentItem.render();
-            //hide unsused options
-            // $('#menuDivItem').children().eq(5).hide();
-            // $('#menuDivItem').children().eq(6).hide();
 
             $(window).on("resize.MSAViewerClustal", function () {
                 if ($("#rootDiv").parents("html").length === 0) {
