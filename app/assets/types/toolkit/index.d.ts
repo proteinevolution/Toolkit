@@ -82,13 +82,6 @@ declare class Index{
     public static view: any;
 }
 
-declare class News{
-
-    public static controller : any;
-    public static view: any;
-}
-
-
 declare class JobManager{
 
     public static model : any;
