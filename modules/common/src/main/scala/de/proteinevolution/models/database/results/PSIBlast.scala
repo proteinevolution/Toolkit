@@ -30,7 +30,7 @@ class PSIBlast @Inject()(general: General) {
       .filter(h => (h \ "hsps" \ 0 \ "evalue").as[Double] >= evalue)
       .sortBy(h => (h \ "hsps" \ 0 \ "evalue").as[Double])
     val upperBound = sorted match {
-      case _ :: _ => (sorted.head \ "num").as[Int] // sorted is non-empty list
+      case _ :: _ => (sorted.headOption.getOrElse(JsNull) \ "num").as[Int] // sorted is non-empty list
       case _   => hsplist.length + 1 // if empty, take the whole size of hsplist
     }
     val TMPRED = (obj \ "output_psiblastp" \ "TMPRED").asOpt[String] match {
