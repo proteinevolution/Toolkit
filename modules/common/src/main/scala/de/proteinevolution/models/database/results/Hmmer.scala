@@ -17,7 +17,7 @@ class Hmmer @Inject()(general: General, aln: Alignment) {
     val jobID = (obj \ "jobID").as[String]
     val alignment = (obj \ "alignment").as[List[JsArray]].zipWithIndex.map {
       case (x, index) =>
-        aln.parseAlignmentItem(x, index)
+        aln.parseWithIndex(x, index)
     }
     val db       = (obj \ jobID \ "db").as[String]
     val query    = general.parseSingleSeq((obj \ "query").as[JsArray])

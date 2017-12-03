@@ -51,7 +51,11 @@ final class ToolFactory @Inject()(
   }.toMap
 
   def isTool(toolName: String): Boolean = {
-    toolName.toUpperCase == "REFORMAT" || toolName.toUpperCase == "ALNVIZ" || values.exists(_._2.isToolName(toolName))
+    toolName.toUpperCase == "REFORMAT" || toolName.toUpperCase == "ALNVIZ" || values.exists {
+      case (_, tool) =>
+        tool.isToolName(toolName)
+      case _ => false
+    }
   }
 
   // Maps toolname and resultpanel name to the function which transfers jobID and jobPath to an appropriate view
@@ -155,7 +159,7 @@ final class ToolFactory @Inject()(
               case Some(jsValue) =>
                 views.html.jobs.resultpanels.alignmentQueryMSA(
                   jobID,
-                  aln.parseAlignment((jsValue \ "querytemplate").as[JsArray]),
+                  aln.parse((jsValue \ "querytemplate").as[JsArray]),
                   "querytemplate",
                   values(ToolNames.HHBLITS.value)
                 )
@@ -166,7 +170,7 @@ final class ToolFactory @Inject()(
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
-                                                               aln.parseAlignment((jsValue \ "reduced").as[JsArray]),
+                                                               aln.parse((jsValue \ "reduced").as[JsArray]),
                                                                "reduced",
                                                                values(ToolNames.HHBLITS.value))
               case None => views.html.errors.pagenotfound()
@@ -312,7 +316,7 @@ final class ToolFactory @Inject()(
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels.alignment(jobID,
-                                                       aln.parseAlignment((jsValue \ "querytemplate").as[JsArray]),
+                                                       aln.parse((jsValue \ "querytemplate").as[JsArray]),
                                                        "querytemplate",
                                                        values(ToolNames.HHPRED.value))
               case None => views.html.errors.pagenotfound()
@@ -322,7 +326,7 @@ final class ToolFactory @Inject()(
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
-                                                               aln.parseAlignment((jsValue \ "reduced").as[JsArray]),
+                                                               aln.parse((jsValue \ "reduced").as[JsArray]),
                                                                "reduced",
                                                                values(ToolNames.HHPRED.value))
               case None => views.html.errors.pagenotfound()
@@ -433,7 +437,7 @@ final class ToolFactory @Inject()(
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels.clustal(jobID,
-                                                     aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                     aln.parse((jsValue \ "alignment").as[JsArray]),
                                                      "alignment",
                                                      values(ToolNames.CLUSTALO.value))
               case None => views.html.errors.pagenotfound()
@@ -443,7 +447,7 @@ final class ToolFactory @Inject()(
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels.alignment(jobID,
-                                                       aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                       aln.parse((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
                                                        values(ToolNames.CLUSTALO.value))
               case None => views.html.errors.pagenotfound()
@@ -462,7 +466,7 @@ final class ToolFactory @Inject()(
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels.clustal(jobID,
-                                                     aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                     aln.parse((jsValue \ "alignment").as[JsArray]),
                                                      "alignment",
                                                      values(ToolNames.KALIGN.value))
               case None => views.html.errors.pagenotfound()
@@ -472,7 +476,7 @@ final class ToolFactory @Inject()(
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels.alignment(jobID,
-                                                       aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                       aln.parse((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
                                                        values(ToolNames.KALIGN.value))
               case None => views.html.errors.pagenotfound()
@@ -491,7 +495,7 @@ final class ToolFactory @Inject()(
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels.clustal(jobID,
-                                                     aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                     aln.parse((jsValue \ "alignment").as[JsArray]),
                                                      "alignment",
                                                      values(ToolNames.MAFFT.value))
               case None => views.html.errors.pagenotfound()
@@ -501,7 +505,7 @@ final class ToolFactory @Inject()(
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels.alignment(jobID,
-                                                       aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                       aln.parse((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
                                                        values(ToolNames.MAFFT.value))
               case None => views.html.errors.pagenotfound()
@@ -520,7 +524,7 @@ final class ToolFactory @Inject()(
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels.clustal(jobID,
-                                                     aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                     aln.parse((jsValue \ "alignment").as[JsArray]),
                                                      "alignment",
                                                      values(ToolNames.MSAPROBS.value))
               case None => views.html.errors.pagenotfound()
@@ -530,7 +534,7 @@ final class ToolFactory @Inject()(
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels.alignment(jobID,
-                                                       aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                       aln.parse((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
                                                        values(ToolNames.MSAPROBS.value))
               case None => views.html.errors.pagenotfound()
@@ -549,7 +553,7 @@ final class ToolFactory @Inject()(
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels.clustal(jobID,
-                                                     aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                     aln.parse((jsValue \ "alignment").as[JsArray]),
                                                      "alignment",
                                                      values(ToolNames.MUSCLE.value))
               case None => views.html.errors.pagenotfound()
@@ -559,7 +563,7 @@ final class ToolFactory @Inject()(
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels.alignment(jobID,
-                                                       aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                       aln.parse((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
                                                        values(ToolNames.MUSCLE.value))
               case None => views.html.errors.pagenotfound()
@@ -578,7 +582,7 @@ final class ToolFactory @Inject()(
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels.clustal(jobID,
-                                                     aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                     aln.parse((jsValue \ "alignment").as[JsArray]),
                                                      "alignment",
                                                      values(ToolNames.TCOFFEE.value))
               case None => views.html.errors.pagenotfound()
@@ -588,7 +592,7 @@ final class ToolFactory @Inject()(
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels.alignment(jobID,
-                                                       aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                       aln.parse((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
                                                        values(ToolNames.TCOFFEE.value))
               case None => views.html.errors.pagenotfound()
@@ -759,7 +763,7 @@ final class ToolFactory @Inject()(
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels.alignment(jobID,
-                                                       aln.parseAlignment((jsValue \ "alignment").as[JsArray]),
+                                                       aln.parse((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
                                                        values(ToolNames.HHFILTER.value))
               case None => views.html.errors.pagenotfound()
