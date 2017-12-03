@@ -127,9 +127,10 @@ object Common {
   def makeRow(rowClass: String, entries: Array[Any]): String = {
     val DOMElement = for (entry <- entries) yield {
       "<td>" + entry.toString + "</td>"
-    }.mkString(" ")
-    "<tr class='" + rowClass + "'>" + DOMElement + "</tr>"
+    }
+    "<tr class='" + rowClass + "'>" + DOMElement.mkString("") + "</tr>"
   }
+  
 
   /* GENERATING LINKS FOR HHPRED */
 
