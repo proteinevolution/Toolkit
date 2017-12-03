@@ -126,12 +126,25 @@
   left:-8px
 }
 
+.smenubar {
+  height: 40px !important;
+}
+
 .smenubar a {
-  color: black !important;
+  color: #737373 !important;
   padding: 4px 8px !important;
+  font-weight: 700 !important;
 }
 
 .smenu-dropdown {
   left: auto !important;
-  top: 3cm !important;
+  top: 2.75cm !important;
+}
+
+.biojs_msa_labelblock {
+  overflow-y: overlay !important;
+}
+
+.biojs_msa_labelrow {
+  font-weight: normal !important;
 }
