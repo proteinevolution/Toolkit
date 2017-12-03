@@ -44,7 +44,7 @@ class AlignmentController @Inject()(resultFiles: ResultFileAccessor,
     resultFiles.getResults(jobID).map {
       case None => NotFound
       case Some(jsValue) =>
-        val result = aln.parseAlignment((jsValue \ resultName).as[JsArray]).alignment
+        val result = aln.parse((jsValue \ resultName).as[JsArray]).alignment
         val fas = numList.map { num =>
           ">" + result { num - 1 }.accession + "\n" + result { num - 1 }.seq + "\n"
         }
@@ -73,7 +73,7 @@ class AlignmentController @Inject()(resultFiles: ResultFileAccessor,
     resultFiles.getResults(jobID).map {
       case None => NotFound
       case Some(jsValue) =>
-        val result = aln.parseAlignment((jsValue \ resultName).as[JsArray])
+        val result = aln.parse((jsValue \ resultName).as[JsArray])
         if (end > result.alignment.length || start > result.alignment.length) {
           BadRequest
         } else {
@@ -102,7 +102,7 @@ class AlignmentController @Inject()(resultFiles: ResultFileAccessor,
     resultFiles.getResults(jobID).map {
       case None => NotFound
       case Some(jsValue) =>
-        val result = aln.parseAlignment((jsValue \ resultName).as[JsArray])
+        val result = aln.parse((jsValue \ resultName).as[JsArray])
         val hits   = Common.clustal(result, 0, constants.breakAfterClustal, color)
         Ok(hits.mkString)
     }

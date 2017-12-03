@@ -1,8 +1,6 @@
 package de.proteinevolution.tel.execution
 
 import javax.inject.{ Inject, Named, Singleton }
-
-import better.files.File
 import better.files._
 import de.proteinevolution.tel.TELRegex
 import java.nio.file.attribute.PosixFilePermission

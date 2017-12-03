@@ -38,7 +38,7 @@ class HHPred @Inject()(general: General, aln: Alignment) {
       case None       => "1"
     }
 
-    val alignment = aln.parseAlignment((obj \ "reduced").as[JsArray])
+    val alignment = aln.parse((obj \ "reduced").as[JsArray])
     val query     = general.parseSingleSeq((obj \ "query").as[JsArray])
     val num_hits  = hsplist.length
 

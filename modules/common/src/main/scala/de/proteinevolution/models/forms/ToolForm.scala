@@ -1,7 +1,6 @@
 package de.proteinevolution.models.forms
 
 import de.proteinevolution.models.param.Param
-import play.api.libs.functional.syntax.unlift
 import play.api.libs.json.{ JsPath, Writes }
 import play.api.libs.functional.syntax._
 

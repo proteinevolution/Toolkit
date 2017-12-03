@@ -36,7 +36,9 @@ object ParamType {
   }
   case class Select(options: Seq[(String, String)]) extends ParamType {
     def validate(value: String): Option[String] = {
-      Some(value).filter(this.options.map(_._1).contains)
+      Some(value).filter(options.map {
+        case (key, _) => key
+      }.contains)
     }
   }
 

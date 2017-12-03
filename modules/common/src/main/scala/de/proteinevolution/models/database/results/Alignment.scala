@@ -8,15 +8,15 @@ import play.api.libs.json.JsArray
 @Singleton
 class Alignment {
 
-  def parseAlignment(obj: JsArray): AlignmentResult = {
+  def parse(obj: JsArray): AlignmentResult = {
     val alignment = obj.as[List[JsArray]]
     val list = alignment.zipWithIndex.map {
       case (data, index) =>
-        parseAlignmentItem(data, index.toInt + 1)
+        parseWithIndex(data, index.toInt + 1)
     }
     AlignmentResult(list)
   }
-  def parseAlignmentItem(jsArray: JsArray, index: Int): AlignmentItem = jsArray match {
+  def parseWithIndex(jsArray: JsArray, index: Int): AlignmentItem = jsArray match {
     case arr: JsArray =>
       val accession = (arr \ 0).as[String]
       val seq       = (arr \ 1).as[String]
