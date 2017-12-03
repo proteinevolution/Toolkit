@@ -11,9 +11,8 @@ import play.api.libs.json._
 class PSIBlast @Inject()(general: General) {
 
   def parseResult(json: JsValue): PSIBlastResult = {
-    val obj                = json.as[JsObject]
-    var belowEvalThreshold = -1
-    val query              = general.parseSingleSeq((obj \ "query").as[JsArray])
+    val obj   = json.as[JsObject]
+    val query = general.parseSingleSeq((obj \ "query").as[JsArray])
     val iter_num = (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations")
       .as[List[JsObject]]
       .size - 1
@@ -24,16 +23,15 @@ class PSIBlast @Inject()(general: General) {
         .as[List[JsObject]]
     val num_hits = hits.length
     val hsplist = hits.map { hit =>
-      // get num of last checkboxes that is checked by default
-      if (belowEvalThreshold == -1 && (hit \ "hsps" \ 0 \ "evalue").as[Double] >= evalue) {
-        belowEvalThreshold = (hit \ "num").as[Int]
-      }
       parseHSP(hit, db, evalue)
     }
-    // if all hits are below threshold
-    // set belowEvalThreshold to total number of found hits
-    if (belowEvalThreshold == -1) {
-      belowEvalThreshold = hsplist.length + 1
+    // take the smallest value above the threshold, right?
+    val sorted = hits
+      .filter(h => (h \ "hsps" \ 0 \ "evalue").as[Double] >= evalue)
+      .sortBy(h => (h \ "hsps" \ 0 \ "evalue").as[Double])
+    val upperBound = sorted match {
+      case _ :: _ => (sorted.head \ "num").as[Int] // sorted is non-empty list
+      case _   => hsplist.length + 1 // if empty, take the whole size of hsplist
     }
     val TMPRED = (obj \ "output_psiblastp" \ "TMPRED").asOpt[String] match {
       case Some(data) => data
@@ -43,7 +41,7 @@ class PSIBlast @Inject()(general: General) {
       case Some(data) => data
       case None       => "1"
     }
-    PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, query, belowEvalThreshold, TMPRED, COILPRED)
+    PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, query, upperBound, TMPRED, COILPRED)
   }
 
   def parseHSP(hit: JsObject, db: String, eval_threshold: Double): PSIBlastHSP = {

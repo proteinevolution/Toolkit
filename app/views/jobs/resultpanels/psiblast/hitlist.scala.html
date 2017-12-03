@@ -41,11 +41,9 @@
 
     }
     @if(result.TMPRED == "1"){
-
         <text class="note"> @result.TMPRED transmembrane helix</text>
     }
     @if(result.TMPRED.toInt > 1){
-
         <text class="note"> @result.TMPRED transmembrane helices</text>
     }
     @if((result.TMPRED == "1" || result.TMPRED.toInt > 1) && result.COILPRED == "0"){
