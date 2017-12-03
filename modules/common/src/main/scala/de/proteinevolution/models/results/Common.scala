@@ -11,6 +11,7 @@ import play.twirl.api.Html
 import play.api.Logger
 import de.proteinevolution.models.database.results._
 
+import scala.collection.mutable.ArrayBuffer
 
 object Common {
 
@@ -130,7 +131,6 @@ object Common {
     }
     "<tr class='" + rowClass + "'>" + DOMElement.mkString("") + "</tr>"
   }
-  
 
   /* GENERATING LINKS FOR HHPRED */
 
@@ -212,39 +212,35 @@ object Common {
 
   def getLinksHHpred(id: String): Html = {
     val db    = identifyDatabase(id)
+    val links = new ArrayBuffer[String]()
     val idPdb = id.replaceAll("_.*$", "").toLowerCase
     val idTrimmed = if (id.length > 4) {
       id.slice(1, 5)
     } else {
       id
     }
-    val idCDD  = id.replaceAll("PF", "pfam").replaceAll("\\..*", "")
+    val idCDD  = id.replaceAll("PF", "pfam")
     val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
-    val l1 =
-      List(
-        "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
-      )
-    val l2 = db match {
+    links += "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
+    db match {
       case "scop" =>
-        l1 :: List(
-          "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>",
-          generateLink(pdbBaseLink, idTrimmed, "PDB"),
-          generateLink(ncbiBaseLink, idTrimmed, "NCBI")
-        )
+        links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
+        links += generateLink(pdbBaseLink, idTrimmed, "PDB")
+        links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
       case "ecod" =>
-        l1 :: List(
-          "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>",
-          generateLink(pdbBaseLink, idPdb.slice(16, 20), "PDB")
-        )
+        val idPdbEcod = id.slice(16, 20)
+        links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
+        links += generateLink(pdbBaseLink, idPdbEcod, "PDB")
       case "mmcif" =>
-        l1 :: List(
-          "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>",
-          generateLink(pdbeBaseLink, idPdb, "PDBe")
-        )
-      case "pfam" => l1 :: List(generateLink(cddBaseLink, idCDD, "CDD"))
-      case "ncbi" => l1 :: List(generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta"))
+        links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
+        links += generateLink(pdbeBaseLink, idPdb, "PDBe")
+      case "pfam" =>
+        val idCDDPfam = idCDD.replaceAll("\\..*", "")
+        links += generateLink(cddBaseLink, idCDDPfam, "CDD")
+      case "ncbi" =>
+        links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
     }
-    Html(l2.mkString(" | "))
+    Html(links.mkString(" | "))
   }
 
   def getLinksHmmer(id: String): Html = {
