@@ -25,8 +25,6 @@ window.FrontendAlnvizComponent = {
                             submitted = true;
                         }
                     });
-                } else {
-
                 }
             },
             initMSA: function() : any {

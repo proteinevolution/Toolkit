@@ -114,7 +114,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               formData.get("alignment_two").foreach { alignment =>
                 if (alignment.isEmpty) params = params - "alignment_two"
               }
-              // TODO Validate here!
+              // TODO Validate here! Can this be deleted?
               val validatedFormData: Map[String, Option[String]] =
                 formData.filterKeys(parameter => toolParams.contains(parameter)).map { paramWithValue =>
                   paramWithValue._1 -> toolParams(paramWithValue._1).paramType.validate(paramWithValue._2)
