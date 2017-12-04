@@ -372,7 +372,7 @@ final class ToolFactory @Inject()(
           "FullAlignment" -> { jobID =>
             Future.successful(
               views.html.jobs.resultpanels.msaviewer(jobID,
-                                                     s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+                                                     s"${constants.jobPath}/$jobID/results/alignment.fas")
             )
           }
         )
@@ -485,7 +485,7 @@ final class ToolFactory @Inject()(
           ResultViews.ALIGNMENTVIEWER -> { jobID =>
             Future.successful(
               views.html.jobs.resultpanels.msaviewer(jobID,
-                                                     s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+                                                     s"${constants.jobPath}/$jobID/results/alignment.fas")
             )
           }
         )
@@ -514,7 +514,7 @@ final class ToolFactory @Inject()(
           ResultViews.ALIGNMENTVIEWER -> { jobID =>
             Future.successful(
               views.html.jobs.resultpanels.msaviewer(jobID,
-                                                     s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+                                                     s"${constants.jobPath}/$jobID/results/alignment.fas")
             )
           }
         )
@@ -543,7 +543,7 @@ final class ToolFactory @Inject()(
           ResultViews.ALIGNMENTVIEWER -> { jobID =>
             Future.successful(
               views.html.jobs.resultpanels.msaviewer(jobID,
-                                                     s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+                                                     s"${constants.jobPath}/$jobID/results/alignment.fas")
             )
           }
         )
@@ -572,7 +572,7 @@ final class ToolFactory @Inject()(
           ResultViews.ALIGNMENTVIEWER -> { jobID =>
             Future.successful(
               views.html.jobs.resultpanels.msaviewer(jobID,
-                                                     s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+                                                     s"${constants.jobPath}/$jobID/results/alignment.fas")
             )
           }
         )
@@ -601,7 +601,7 @@ final class ToolFactory @Inject()(
           ResultViews.ALIGNMENTVIEWER -> { jobID =>
             Future.successful(
               views.html.jobs.resultpanels.msaviewer(jobID,
-                                                     s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+                                                     s"${constants.jobPath}/$jobID/results/alignment.fas")
             )
           }
         )
@@ -772,7 +772,7 @@ final class ToolFactory @Inject()(
           ResultViews.ALIGNMENTVIEWER -> { jobID =>
             Future.successful(
               views.html.jobs.resultpanels.msaviewer(jobID,
-                                                     s"${constants.jobPath}/$jobID/results/alignment.clustalw_aln")
+                                                     s"${constants.jobPath}/$jobID/results/alignment.fas")
             )
           }
         )
