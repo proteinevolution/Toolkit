@@ -1,5 +1,3 @@
-/* Forwarding */
-
 var myCodeMirror = CodeMirror(document.getElementById("inputMirror"), {
     //value: inputClustal,
     lineNumbers: false,
@@ -156,8 +154,6 @@ function downloadResult() {
 
 /* MSA */
 function initMSA() {
-    // this is a way how you use a bundled file parser
-    msa = require("msa");
     var opts = {colorscheme: {"scheme": "clustal"}};
     opts.el = document.getElementById("yourDiv");
     opts.vis = {
