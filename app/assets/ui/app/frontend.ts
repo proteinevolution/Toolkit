@@ -30,21 +30,17 @@ window.FrontendAlnvizComponent = {
                 }
             },
             initMSA: function() : any {
-                let defMenu, menuOpts, opts, height, width, seqs;
-                seqs = $('#alignment').reformat('Fasta');
+                let toolTabs = $('#tool-tabs');
 
-                if($('#tool-tabs').hasClass('fullscreen')) {
-                    height = $(window).height() - 320;
-                } else {
-                    height = $('#tool-tabs').width() - 500;
-                }
+                let height = toolTabs.hasClass('fullscreen') ? $(window).height() - 320 : toolTabs.width() - 500;
+                let width = toolTabs.width() - 240;
 
-                width = $('#tool-tabs').width() - 240;
+                let seqs = $('#alignment').reformat('Fasta');
                 if (!seqs) {
                     return;
                 }
 
-                opts = {
+                let opts = {
                     colorscheme: {
                         "scheme": "clustal"
                     },
@@ -79,27 +75,22 @@ window.FrontendAlnvizComponent = {
 
                 alignmentView = new msa.msa(opts);
 
-                menuOpts = {
+                let menuOpts = {
                     el : document.getElementById('menuDiv'),
                     msa : alignmentView
                 };
-                defMenu = new msa.menu.defaultmenu(menuOpts);
+                let defMenu = new msa.menu.defaultmenu(menuOpts);
                 alignmentView.addView('menu', defMenu);
 
                 alignmentView.render();
 
-                //hide unsused options
-                $('#menuDiv').children().eq(5).hide();
-                $('#menuDiv').children().eq(6).hide();
-
-
-                $(window).bind("resize.MSAViewer", function(){
+                $(window).on("resize.MSAViewer", function(){
                     if($("#bioJSContainer").parents("html").length === 0){
-                        $(window).unbind("resize.MSAViewer");
+                        $(window).off("resize.MSAViewer");
                         return;
                     }
-                    alignmentView.g.zoomer.set("alignmentWidth", $("#tool-tabs").width() - 240);
-                    if($('#tool-tabs').hasClass('fullscreen')) {
+                    alignmentView.g.zoomer.set("alignmentWidth", toolTabs.width() - 240);
+                    if(toolTabs.hasClass('fullscreen')) {
                         alignmentView.g.zoomer.set("alignmentHeight", Math.max(400, $(window).height() - 320));
                     }
                 });
@@ -107,7 +98,7 @@ window.FrontendAlnvizComponent = {
                 setTimeout(function(){
                     $('#tab-Visualization').removeAttr('style');
                 }, 100);
-                return $('#tool-tabs').tabs('option', 'active', $('#tool-tabs').tabs('option', 'active') + 1);
+                return toolTabs.tabs('option', 'active', toolTabs.tabs('option', 'active') + 1);
             },
             forwardTab: function() {
                 return $('#tool-tabs').tabs('option', 'active', $('#tool-tabs').tabs('option', 'active') + 1);
