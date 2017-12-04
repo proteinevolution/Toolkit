@@ -1,10 +1,39 @@
 /* Forwarding */
+
+var myCodeMirror = CodeMirror(document.getElementById("inputMirror"), {
+    //value: inputClustal,
+    lineNumbers: false,
+    mode: "none",
+    theme: "reformat"
+});
+myCodeMirror.setSize("100%", 220);
+$("#reformatExample").click(function () {
+    myCodeMirror.setValue(inputClustal);
+});
+
+var myCodeMirror2 = CodeMirror(document.getElementById("outputMirror"), {
+    value: "",
+    lineNumbers: false,
+    readOnly: true,
+    mode: "none",
+    theme: "reformat"
+});
+
+myCodeMirror.setSize("100%", 220);
+myCodeMirror2.setSize("100%", 220);
+
+if (localStorage.getItem("resultcookie") !== null) {
+    myCodeMirror.setValue(localStorage.getItem("resultcookie"));
+    localStorage.removeItem("resultcookie");
+    $.LoadingOverlay("hide");
+}
+
 function forwardTo(tool) {
     if (myCodeMirror2.lineCount() > 1) {
         var seqs = myCodeMirror2.getValue();
         localStorage.setItem("resultcookie", seqs);
         window.location.href = "/#/tools/" + tool;
-    } else alert("No output to forward to.");
+    } else { alert("No output to forward to."); }
 }
 
 function hideFormats(currentVal) {
@@ -82,34 +111,6 @@ $("#tool-tabs").tabs();
 $("#callout").hide();
 
 var inputClustal = "CLUSTAL multiple sequence alignment\n\ngi|33300828\tPEITVDGRIVGYVMGKTG-KNVGRVVGYRVELEDGSTVAATGLSEEHIQLLTCAYLNAHI\ngi|11479639\tPSLAVEGIVVGFVMGKTG-ANVGKVVGYRVDLEDGTIVSATGLTRDRIEMLTTEAELLGG\ngi|11479645\tPGFEADGTVIDYVWGDPDKANANKIVGFRVRLEDGAEVNATGLTQDQMACYTQSYHATAY\ngi|29366706\tPDDNEDGFIQDVIWGTKGLANEGKVIGFKVLLESGHVVNACKISRALMDEFTDTETRLPG\ngi|68299729\tPEGEIDGTVVGVNWGTVGLANEGKVIGFQVLLENGVVVDANGITQEQMEEYTNLVYKTGH\ngi|77118174\tPSEEADGHVVRPVWGTEGLANEGMVIGFDVMLENGMEVSATNISRALMSEFTENVKSDP-\ngi|17570796\tPECEADGIIQGVNWGTEGLANEGKVIGFSVLLETGRLVDANNISRALMDEFTSNVKAHGE\ngi|11963775\tPECEADGIIQSVNWGTPGLSNEGLVIGFNVLLETGRHVAANNISQTLMEELTANAKEHGE\n\ngi|33300828\tD---EAMPNYGRIVEVSAMERSAN-TLRHPSFSRFR\ngi|11479639\tA-DHPGMADLGRVVEVTAMERSAN-TLRHPKFSRFR\ngi|11479645\tEVGITQTIYIGRACRVSGMERTKDGSIRHPHFDGFR\ngi|29366706\t-------YYKGHTAKVTFMERYPDGSLRHPSFDSFR\ngi|68299729\tD-----DCFNGRPVQVKYMEKTPKGSLRHPSFQRWR\ngi|77118174\t------DYYKGWACQITYMEETPDGSLRHPSFDQWR\ngi|17570796\tD------FYNGWACQVNYMEATPDGSLRHPSFEKFR\ngi|11963775\tD------YYNGWACQVAYMEETSDGSLRHPSFVMFR";
-
-var myCodeMirror = CodeMirror(document.getElementById("inputMirror"), {
-    //value: inputClustal,
-    lineNumbers: false,
-    mode: "none",
-    theme: "reformat"
-});
-myCodeMirror.setSize("100%", 220);
-$("#reformatExample").click(function () {
-    myCodeMirror.setValue(inputClustal);
-});
-
-var myCodeMirror2 = CodeMirror(document.getElementById("outputMirror"), {
-    value: "",
-    lineNumbers: false,
-    readOnly: true,
-    mode: "none",
-    theme: "reformat"
-});
-
-myCodeMirror.setSize("100%", 220);
-myCodeMirror2.setSize("100%", 220);
-
-if (localStorage.getItem("resultcookie") !== null) {
-    myCodeMirror.setValue(localStorage.getItem("resultcookie"));
-    localStorage.removeItem("resultcookie");
-    $.LoadingOverlay("hide");
-}
 
 $("#format").text(getFormat(myCodeMirror.getValue()));
 // on and off handler like in jQuery
