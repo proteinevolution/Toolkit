@@ -23,15 +23,11 @@ object ParamType {
 
   case class Number(min: Option[Int], max: Option[Int]) extends ParamType {
     def validate(value: String): Option[String] = {
-      try {
-        for {
+         for {
           ⌊ ← min
           ⌉ ← max
           if (⌊ to ⌉).contains(value.toDouble)
         } yield value
-      } catch {
-        case _: NumberFormatException => None
-      }
     }
   }
   case class Select(options: Seq[(String, String)]) extends ParamType {
@@ -55,15 +51,11 @@ object ParamType {
   }
   case class Decimal(step: String, min: Option[Double], max: Option[Double]) extends ParamType {
     def validate(value: String): Option[String] = {
-      try {
         for {
           ⌊ ← min
           ⌉ ← max
           if ⌉ - value.toDouble > ⌊
         } yield value
-      } catch {
-        case _: NumberFormatException => None
-      }
     }
   }
 
