@@ -186,7 +186,8 @@ function initMSA() {
         autoResize: true
     };
     var noSeqs = clustalParser("CLUSTAL multiple sequence alignment\n\nID|NO\tPLEASE\nID|SEQUENCES\tENTER\nID|FOUND\tSEQVENCES");
-    opts.seqs = $("#inputMirror").val(myCodeMirror.getValue()).reformat("detect") === "Clustal"
+    var inputSeqs = $("#inputMirror").val(myCodeMirror.getValue()).reformat("detect");
+    opts.seqs = ( inputSeqs === "Clustal" || inputSeqs === "Fasta")
         ? (clustalParser($("#inputMirror").val(myCodeMirror.getValue()).reformat("clustal"))) : noSeqs;
 
     // init msa
