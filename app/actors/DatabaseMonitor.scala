@@ -10,8 +10,8 @@ import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.statistics.{ StatisticsObject, UserStatistic }
 import de.proteinevolution.models.database.users.User
-import models.mailing.OldAccountEmail
 import de.proteinevolution.db.MongoStore
+import models.mailing.MailTemplate.OldAccountEmail
 import play.api.Logger
 import play.api.libs.mailer.MailerClient
 import play.modules.reactivemongo.ReactiveMongoApi

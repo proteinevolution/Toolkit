@@ -9,7 +9,6 @@ import models.UserSessions
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
-import models.mailing.JobFinishedMail
 import de.proteinevolution.models.search.JobDAO
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.runscripts._
@@ -35,6 +34,7 @@ import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.Constants
 import de.proteinevolution.parsers.Ops.QStat
 import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecution
+import models.mailing.MailTemplate.JobFinishedMail
 
 import scala.concurrent.duration._
 
