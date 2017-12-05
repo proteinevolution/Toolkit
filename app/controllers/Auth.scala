@@ -10,9 +10,9 @@ import de.proteinevolution.models.Constants
 import models.UserSessions
 import models.auth._
 import de.proteinevolution.models.database.users.{ User, UserConfig, UserToken }
-import models.mailing.{ ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail }
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
+import models.mailing.MailTemplate.{ ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail }
 import play.Logger
 import play.api.cache._
 import play.api.i18n.{ I18nSupport, MessagesApi }
