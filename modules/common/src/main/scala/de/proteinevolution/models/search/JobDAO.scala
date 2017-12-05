@@ -11,6 +11,7 @@ import de.proteinevolution.tel.env.Env
 import play.api.Logger
 import de.proteinevolution.tools.FNV
 
+import scala.util.Try
 import scala.util.hashing.MurmurHash3
 
 @Singleton
@@ -49,14 +50,8 @@ final class JobDAO @Inject()(runscriptPathProvider: RunscriptPathProvider) {
     * @param name
     * @return
     */
-  def generateToolHash(name: String): String = {
-
-    try {
-      MurmurHash3.stringHash(ConfigFactory.load().getConfig(s"Tools.$name").toString, 0).toString
-    } catch {
-      case _: Throwable => "No matching hash value found"
-    }
-
+  def generateToolHash(name: String): Try[String] = {
+      Try(MurmurHash3.stringHash(ConfigFactory.load().getConfig(s"Tools.$name").toString, 0).toString)
   }
 
   /**
@@ -101,6 +96,12 @@ final class JobDAO @Inject()(runscriptPathProvider: RunscriptPathProvider) {
       case _ => (None, None)
     }
 
-    s"$sequenceHash ${generateHash(paramsWithoutUniques).toString()} ${generateRSHash(job.tool)} ${dbParam._1.getOrElse("")} ${dbParam._2.getOrElse("")} ${job.tool} ${generateToolHash(job.tool)}"
+    s"""$sequenceHash
+       |${generateHash(paramsWithoutUniques).toString()}
+       |${generateRSHash(job.tool)}
+       |${dbParam._1.getOrElse("")}
+       |${dbParam._2.getOrElse("")}
+       |${job.tool}
+       |${generateToolHash(job.tool) recover(throw new IllegalArgumentException)}""".stripMargin
   }
 }
