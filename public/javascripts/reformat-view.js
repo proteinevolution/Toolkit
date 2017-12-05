@@ -158,7 +158,7 @@ function initMSA() {
     opts.el = document.getElementById("yourDiv");
     opts.vis = {
         conserv: false,
-        overviewbox: true,
+        overviewbox: false,
         seqlogo: true,
         labels: true,
         labelName: true,
@@ -173,7 +173,7 @@ function initMSA() {
         // Alignment viewer is not scrolling with "alignmentWidth: "auto"", use fixed numbers instead or
         // use script for handling
         alignmentHeight: 525,
-        alignmentWidth: 900,
+        alignmentWidth: 990,
         labelNameLength: 165,
         labelWidth: 85,
         labelFontsize: 10,
@@ -183,7 +183,7 @@ function initMSA() {
         menuPadding: "0px 10px 0px 0px",
         menuItemFontsize: "14px",
         menuItemLineHeight: "14px",
-        autoResize: true
+        autoResize: false
     };
     var noSeqs = clustalParser("CLUSTAL multiple sequence alignment\n\nID|NO\tPLEASE\nID|SEQUENCES\tENTER\nID|FOUND\tSEQVENCES");
     var inputSeqs = $("#inputMirror").val(myCodeMirror.getValue()).reformat("detect");
@@ -195,6 +195,8 @@ function initMSA() {
     var menuOpts = {};
     menuOpts.el = document.getElementById("div");
     menuOpts.msa = ms;
+    var defMenu = new msa.menu.defaultmenu(menuOpts);
+    ms.addView("menu", defMenu);
     // call render at the end to display the whole MSA
     ms.render();
 }
