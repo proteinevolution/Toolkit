@@ -40,6 +40,7 @@ case class JobEventLog(mainID: BSONObjectID = BSONObjectID.generate(), // ID of 
 }
 
 object JobEventLog {
+
   val ID          = "mainID"
   val IDDB        = "_id"
   val TOOLNAME    = "tool"

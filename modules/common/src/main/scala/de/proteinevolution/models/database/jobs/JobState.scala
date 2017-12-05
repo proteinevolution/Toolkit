@@ -32,6 +32,7 @@ case object LimitReached extends JobState
 case object Deleted extends JobState
 
 object JobState {
+
   implicit object JobStateReads extends Reads[JobState] {
     override def reads(json: JsValue): JsResult[JobState] = json match {
       case obj: JsObject =>
