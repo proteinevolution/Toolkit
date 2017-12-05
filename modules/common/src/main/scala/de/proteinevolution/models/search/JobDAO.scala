@@ -10,8 +10,6 @@ import de.proteinevolution.tel.RunscriptPathProvider
 import de.proteinevolution.tel.env.Env
 import play.api.Logger
 import de.proteinevolution.tools.FNV
-
-import scala.util.Try
 import scala.util.hashing.MurmurHash3
 
 @Singleton
@@ -50,8 +48,8 @@ final class JobDAO @Inject()(runscriptPathProvider: RunscriptPathProvider) {
     * @param name
     * @return
     */
-  def generateToolHash(name: String): Try[String] = {
-      Try(MurmurHash3.stringHash(ConfigFactory.load().getConfig(s"Tools.$name").toString, 0).toString)
+  def generateToolHash(name: String): String = {
+      MurmurHash3.stringHash(ConfigFactory.load().getConfig(s"Tools.$name").toString, 0).toString
   }
 
   /**
@@ -102,6 +100,6 @@ final class JobDAO @Inject()(runscriptPathProvider: RunscriptPathProvider) {
        |${dbParam._1.getOrElse("")}
        |${dbParam._2.getOrElse("")}
        |${job.tool}
-       |${generateToolHash(job.tool) recover(throw new IllegalArgumentException)}""".stripMargin
+       |${generateToolHash(job.tool)}""".stripMargin
   }
 }
