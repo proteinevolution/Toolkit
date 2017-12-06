@@ -27,7 +27,7 @@
                     tool.toolNameShort
                 }_hhsuite">Forward Query A3M</a>
                 @*only show create model when chosen db=mmcif70/pdb70*@
-                @if(result.db.matches("mmcif70/pdb70")) {
+                @if(result.db.matches("mmcif70/pdb70") || result.db.matches("mmcif30/pdb30") ) {
                     <a onclick="@{tool.toolNameShort}_manual()">Model using selection</a>
                 }
                 <a onclick="downloadHHR()" class="downloadHHR">HHR file</a>

@@ -141,14 +141,15 @@
                 <a class="accordion-title">Select database</a>
                 <div class="accordion-content" data-tab-content>
                     <p>Select domain database(s) of template HMMs against which you want to compare the query.</p>
-                    <em>PDB_mmCIF70</em>
+                    <em>PDB_mmCIF70, PDB_mmCIF30</em>
                     <p>A search against our PDB_mmCIF70 database is the first step when trying to predict a structure
                         with HHpred. It is based on the <a href = https://www.rcsb.org/pdb/home/home.do target="_blank"
                         rel="noopener">Protein Data Bank (PDB)</a> which contains all publicly available
                         3D structures of proteins. For each protein chain in the PDB, we build a multiple alignment
                         with iterated HHblits searches over Uniprot20 and transform these alignments into HMMs.
                         HHpred can compare the query HMM to the database of HMMs based on PDB chains and generate
-                        query-template alignments. We use a filtered version with a maximum sequence identity of 70%.</p>
+                        query-template alignments. We offer two filtered versions with a maximum sequence identity of
+                        70% (PDB_mmCIF70 ) and 30% (PDB_mmCIF30).</p>
 
                     <em>SCOPe95, SCOPe70</em>
                     <p>The SCOPe95 and SCOPe70 profile HMM databases are built from sequences in the
