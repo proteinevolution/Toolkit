@@ -26,32 +26,6 @@ object JobClusterData {
   val DATESTARTED  = "started"
   val DATEFINISHED = "finished"
 
-  implicit object JsonReader extends Reads[JobClusterData] {
-    // TODO this is unused at the moment, as there is no convertion of JSON -> Job needed.
-    override def reads(json: JsValue): JsResult[JobClusterData] = json match {
-      case obj: JsObject =>
-        try {
-          val sgeID        = (obj \ SGEID).asOpt[String]
-          val memory       = (obj \ MEMORY).asOpt[Int]
-          val hardruntime  = (obj \ HARDRUNTIME).asOpt[String]
-          val threads      = (obj \ THREADS).asOpt[Int]
-          val dateStarted  = (obj \ DATESTARTED).asOpt[String]
-          val dateFinished = (obj \ DATEFINISHED).asOpt[String]
-          JsSuccess(
-            JobClusterData(sgeID = "",
-                           memory = Some(0),
-                           threads = Some(0),
-                           hardruntime = Some(0),
-                           dateStarted = Some(ZonedDateTime.now),
-                           dateFinished = Some(ZonedDateTime.now))
-          )
-        } catch {
-          case cause: Throwable => JsError(cause.getMessage)
-        }
-      case _ => JsError("expected.jsobject")
-    }
-  }
-
   implicit object JobWrites extends Writes[JobClusterData] {
     def writes(job: JobClusterData): JsObject = Json.obj(
       SGEID        -> job.sgeID,

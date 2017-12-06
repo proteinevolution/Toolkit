@@ -11,14 +11,13 @@ import play.api.mvc.RequestHeader
 import play.api.{ mvc, Logger }
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
 import scala.util.hashing.MurmurHash3
 @Singleton
 class UserSessions @Inject()(mongoStore: MongoStore,
                              @NamedCache("userCache") val userCache: SyncCacheApi,
-                             locationProvider: LocationProvider) {
+                             locationProvider: LocationProvider)(implicit ec: ExecutionContext) {
   private val SID = "sid"
 
   /**
@@ -125,11 +124,9 @@ class UserSessions @Inject()(mongoStore: MongoStore,
         case None =>
           BSONObjectID.generate()
       }
-      // TODO: this seems not to be typesafe! user has type nothing
       // cache related stuff should remain in the project where the cache is bound
-      userCache.get(sessionID.stringify) match {
-        case Some(user) =>
-          Future.successful[User](user)
+      userCache.get[User](sessionID.stringify) match {
+        case Some(user) => Future.successful(user)
         case None =>
           putUser(request, sessionID)
       }
@@ -144,7 +141,7 @@ class UserSessions @Inject()(mongoStore: MongoStore,
    */
   def getUser(sessionID: BSONObjectID): Future[Option[User]] = {
     // Try the cache
-    userCache.get(sessionID.stringify) match {
+    userCache.get[User](sessionID.stringify) match {
       case Some(user) =>
         // User successfully pulled from the cache
         Future.successful(Some(user))

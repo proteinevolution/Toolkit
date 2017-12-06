@@ -29,9 +29,7 @@ import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
 import de.proteinevolution.models.Constants
 
-import scala.language.postfixOps
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{ Await, ExecutionContext, Future }
 
 @Singleton
 final class Application @Inject()(webJarsUtil: WebJarsUtil,
@@ -55,7 +53,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   configuration: Configuration,
                                   constants: Constants,
                                   cc: ControllerComponents,
-                                  environment: Environment)
+                                  environment: Environment)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
     with CommonController {
@@ -246,7 +244,6 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
         routes.javascript.JobController.loadJob,
         routes.javascript.DataController.get,
         routes.javascript.DataController.getHelp,
-        routes.javascript.DataController.getRecentArticles,
         routes.javascript.Search.autoComplete,
         routes.javascript.Search.checkJobID,
         routes.javascript.Search.existsTool,

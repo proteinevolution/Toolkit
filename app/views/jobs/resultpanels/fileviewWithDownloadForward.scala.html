@@ -1,7 +1,7 @@
 @import play.api.mvc.RequestHeader
-
-@(filename: String, filePath: String, jobID: String, resultname: String, tool: models.tools.Tool)(implicit request: RequestHeader)
-    @import java.lang.String;
+@import controllers.routes
+@import java.lang.String
+@(filename: String, filePath: String, jobID: String, resultname: String, tool: de.proteinevolution.models.Tool)(implicit request: RequestHeader)
 
     <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
     @views.html.forwardmodals.simpler(tool, tool.toolNameShort)
@@ -19,9 +19,8 @@
     <div id="toolReferences">
     If you use @{tool.toolNameLong} on our Toolkit for your research, please cite:
         <div class="citation">
-            <div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<br>
-                Alva V, Nam SZ, Söding J, Lupas AN.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank" rel="noopener"> Nucleic Acids Res. 2016 Jul 8;44(W1):W410-5.</a>
-        </div><br>
+            @views.html.help.common.toolkit_citation_results()
+            <br>
             @if(tool.toolNameShort == "mmseqs2") {
                 <div>MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets.<br>
                     Steinegger,M, Söding J.<a href="https://www.nature.com/articles/nbt.3988" target="_blank" rel="noopener"> Nat Biotechnol. 2017 Nov;35(11):1026-1028.</a></div>
