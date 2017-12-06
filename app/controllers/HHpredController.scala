@@ -8,13 +8,13 @@ import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.results.General.DTParam
 import de.proteinevolution.models.database.results._
 import de.proteinevolution.db.ResultFileAccessor
+import de.proteinevolution.models.database.results.HHPred.{ HHPredHSP, HHPredResult }
 import org.webjars.play.WebJarsUtil
 import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.sys.process._
 
 /**
@@ -27,7 +27,7 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
                                  val reactiveMongoApi: ReactiveMongoApi,
                                  constants: Constants,
                                  webJarsUtil: WebJarsUtil,
-                                 cc: ControllerComponents)
+                                 cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with CommonController {
 
@@ -61,7 +61,6 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
     implicit request =>
       if (!templateAlignmentScript.isExecutable) {
         Future.successful(BadRequest)
-        throw FileException(s"File ${templateAlignmentScript.name} is not executable.")
       } else {
         Future.successful {
           Process(templateAlignmentScript.pathAsString,
@@ -97,7 +96,6 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
     val eval     = (json \ "evalue").as[String]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
     } else {
       resultFiles.getResults(jobID).map {
         case None => BadRequest
@@ -138,7 +136,6 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
     val numList  = (json \ "checkboxes").as[List[Int]]
     if (!generateAlignmentScript.isExecutable) {
       Future.successful(BadRequest)
-      throw FileException(s"File ${generateAlignmentScript.name} is not executable.")
     } else {
       val numListStr = numList.mkString(" ")
       Process(generateAlignmentScript.pathAsString,
@@ -212,6 +209,7 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
             result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(jobID, _, isColor, wrapped))
           Ok(hits.mkString)
         }
+      case None => BadRequest
     }
   }
 

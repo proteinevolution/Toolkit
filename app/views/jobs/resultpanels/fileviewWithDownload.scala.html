@@ -1,6 +1,6 @@
 @import play.api.mvc.RequestHeader
+@import java.lang.String
 @(filename: String, filePath: String, jobID: String, resultname: String)(implicit request: RequestHeader)
-    @import java.lang.String;
 
     <div class="colorOptsAlignment">
     <a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download</a>

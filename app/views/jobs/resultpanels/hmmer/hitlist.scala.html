@@ -1,9 +1,8 @@
-@import play.api.libs.json.JsObject
-@import de.proteinevolution.models.results.Common
-@import de.proteinevolution.models.database.results.HmmerResult
+@import de.proteinevolution.models.database.results.Hmmer.HmmerResult
 @import better.files._
-@import de.proteinevolution.models.database.results.HmmerHSP
-@(jobID: String, result: HmmerResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
+@import play.api.mvc.RequestHeader
+@import play.twirl.api.Html
+@(jobID: String, result: HmmerResult, tool: de.proteinevolution.models.Tool, htmlPath: String)(implicit request: RequestHeader)
 @* Load html Map used for the image representation *@
     @if(result.num_hits < 1) {
         <div class="callout alert noHitsWide" id="noHits">
@@ -36,7 +35,7 @@
 
     @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
         <br>
-        <text class="note"> We have detected</i></text>
+        <text class="note"> We have detected</text>
 
     }
     @if(result.TMPRED == "1"){
@@ -59,7 +58,6 @@
         <text class="note"> in your query protein!</text>
 
     }
-
 
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
@@ -112,9 +110,7 @@
         <h5 id="refTitle">References</h5>
         If you use our HMMER server for your research, please cite:
         <div class="citation">
-            <div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<br>
-                Alva V, Nam SZ, Söding J, Lupas AN.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank" rel="noopener"> Nucleic Acids Res. 2016 Jul 8;44(W1):W410-5</a>.</div>
-            </div>
+            @views.html.help.common.toolkit_citation_results()
         And the HMMER paper:
         <div class="citation">
             <div>Accelerated Profile HMM Searches.<br>
@@ -128,12 +124,10 @@
         var checkbox = "checkbox";
         var selectAllBool = false;
         var shownHits = 50;
-        var showMore = 50;
         var numHits = @{result.num_hits};
         var jobID = '@{jobID}';
         var loading = false;
         var wrapped = true;
-        var colorAAs = false;
         // use this array to store
         // checked checkboxes
         // due to pagination/lazyload
@@ -239,7 +233,6 @@
                 forwardPath(selectedTool, 'files/' + jobID + '/'+filename+'.fa');
             });
         }
-
 
         function getHits(start, end, isWrapped) {
             if (start <= numHits && end <= numHits && !loading) {

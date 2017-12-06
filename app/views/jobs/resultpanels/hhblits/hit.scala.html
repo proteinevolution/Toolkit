@@ -1,11 +1,8 @@
-@import play.api.libs.json.JsObject
-@import play.api.libs.json.JsValue
-@import play.api.Logger
-@import play.api.libs.json.JsUndefined
-@import play.api.libs.json.JsDefined
+@import play.api.mvc.RequestHeader
 @import de.proteinevolution.models.results.Common
-@import de.proteinevolution.tel.TEL
-@import de.proteinevolution.models.database.results.HHBlitsHSP
+@import de.proteinevolution.models.database.results.HHBlits.HHBlitsHSP
+@import play.twirl.api.Html
+@import java.lang.String
 @(jobID: String, hit: HHBlitsHSP, wrapped: Boolean)(implicit request: RequestHeader)
 @* hit number, links *@
 <tr>
