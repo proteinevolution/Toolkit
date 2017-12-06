@@ -1,7 +1,8 @@
-@import de.proteinevolution.models.results.Common
-@import de.proteinevolution.models.database.results.PSIBlastResult
+@import de.proteinevolution.models.database.results.PSIBlast.PSIBlastResult
 @import better.files._
-@(jobID: String, result: PSIBlastResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
+@import play.api.mvc.RequestHeader
+@import play.twirl.api.Html
+@(jobID: String, result: PSIBlastResult, tool: de.proteinevolution.models.Tool, htmlPath: String)(implicit request: RequestHeader)
 @* Load html Map used for the image representation *@
 
     @if(result.num_hits < 1) {
@@ -36,15 +37,13 @@
 
     @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
         <br>
-        <text class="note"> We have detected</i></text>
+        <text class="note"> We have detected</text>
 
     }
     @if(result.TMPRED == "1"){
-
         <text class="note"> @result.TMPRED transmembrane helix</text>
     }
     @if(result.TMPRED.toInt > 1){
-
         <text class="note"> @result.TMPRED transmembrane helices</text>
     }
     @if((result.TMPRED == "1" || result.TMPRED.toInt > 1) && result.COILPRED == "0"){
@@ -105,9 +104,7 @@
         <h5 id="refTitle">References</h5>
         If you use our PSI-BLAST+ server for your research, please cite:
         <div class="citation">
-            <div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<br>
-                Alva V, Nam SZ, Söding J, Lupas AN.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank" rel="noopener"> Nucleic Acids Res. 2016 Jul 8;44(W1):W410-5</a>.</div>
-            </div>
+            @views.html.help.common.toolkit_citation_results()
         And the BLAST+ paper:
         <div class="citation">
             <div>BLAST+: architecture and applications.<br>
@@ -122,7 +119,6 @@
 var checkbox = "checkbox";
 var selectAllBool = false;
 var shownHits = 500;
-var showMore = 100;
 // use this array to store
 // checked checkboxes
 // due to pagination/lazyload
@@ -131,7 +127,6 @@ var numHits = @{result.num_hits};
 var jobID = '@{jobID}';
 var loading = false;
 var wrapped = true;
-var colorAAs = false;
 
 $(document).ready( function(){
     hitlistBaseFunctions();
@@ -266,7 +261,7 @@ function getHits(start, end, isWrapped){
 
 window["@{tool.toolNameShort}_download"] = function(){
     var fileUrl = "/files/@jobID/output.aln_fas";
-    var downloadFilename = "@{tool.toolNameShort}_@{jobID}.aln";
+    var downloadFilename = "@{tool.toolNameShort}_@{jobID}" + ".aln";
 
     $.LoadingOverlay("show");
     $.ajax({
@@ -276,8 +271,6 @@ window["@{tool.toolNameShort}_download"] = function(){
         download(downloadFilename, data.toString());
     });
 };
-
-
 
 function initiallyCheckCheckboxes(){
     _.range(1, @result.belowEvalThreshold).forEach(function (currentVal) {

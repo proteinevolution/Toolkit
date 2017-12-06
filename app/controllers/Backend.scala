@@ -5,7 +5,7 @@ import javax.inject.{ Inject, Named, Singleton }
 import actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import akka.actor.ActorRef
 import models.UserSessions
-import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog, StatisticsObject }
+import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
@@ -21,8 +21,7 @@ import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class Backend @Inject()(settingsController: Settings,
@@ -34,7 +33,7 @@ final class Backend @Inject()(settingsController: Settings,
                               implicit val locationProvider: LocationProvider,
                               val reactiveMongoApi: ReactiveMongoApi,
                               messagesApi: MessagesApi,
-                              cc: ControllerComponents)
+                              cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
     with CommonController {
@@ -134,7 +133,7 @@ final class Backend @Inject()(settingsController: Settings,
       Logger.info("User deletion called. Access " + (if (user.isSuperuser) "granted." else "denied."))
       if (user.isSuperuser) {
         databaseMonitor ! DeleteOldUsers
-        Ok("ok")
+        NoContent
       } else {
         NotFound
       }
@@ -146,21 +145,9 @@ final class Backend @Inject()(settingsController: Settings,
       Logger.info("User deletion called. Access " + (if (user.isSuperuser) "granted." else "denied."))
       if (user.isSuperuser) {
         databaseMonitor ! DeleteOldJobs
-        Ok("ok")
+        NoContent
       } else {
         NotFound
-      }
-    }
-  }
-
-  def cms: Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      if (user.isSuperuser) {
-        mongoStore.getArticles(-1).map { articles =>
-          NoCache(Ok(Json.toJson(articles)))
-        }
-      } else {
-        Future.successful(NotFound)
       }
     }
   }

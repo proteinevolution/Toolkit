@@ -218,13 +218,7 @@ const trafficBarComponent = {
 const tilescomponent = {
 
     controller: function () {
-        let getRecentArticlesRoute = jsRoutes.controllers.DataController.getRecentArticles(1);
-        return {
-            articles: m.request({
-                url: getRecentArticlesRoute.url,
-                method: getRecentArticlesRoute.method
-            })
-        };
+
     },
     view: function (ctrl : any) {
         return m("div", {
@@ -232,8 +226,7 @@ const tilescomponent = {
                 config: hideSidebar
 
             },
-            ctrl.articles().map(function (article : any) { // TODO this javascript error existed before migration "Uncaught TypeError: Cannot read property 'map' of undefined"
-                return m("div", {
+            m("div", {
                         "class": "column column-block tile_main_container"
                     },
                         m("div", {"class": "tile_container"},
@@ -376,8 +369,6 @@ const tilescomponent = {
                             )
                         )
                 )
-
-            })
         )
 
     }

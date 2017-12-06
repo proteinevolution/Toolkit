@@ -1,11 +1,13 @@
+@import play.twirl.api.Html
 @import de.proteinevolution.models.results.Common
-@import de.proteinevolution.models.database.results.PSIBlastHSP
+@import de.proteinevolution.models.database.results.PSIBlast.PSIBlastHSP
+@import play.api.mvc.RequestHeader
+@import java.lang.String
 @(jobID: String, hit: PSIBlastHSP, db: String, wrapped: Boolean)(implicit request: RequestHeader)
 @* hit number, links *@
 <tr>
     <td></td>
     <td colspan="3">
-
         @Common.getLinksDB(db, hit.accession)
     </td>
     <td></td>

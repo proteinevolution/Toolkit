@@ -1,5 +1,5 @@
 @import play.api.mvc.RequestHeader
-
+@import java.lang.String
 @(filepath : String, filename : String, jobID : String, resultname : String)(implicit request: RequestHeader)
 
 <a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download PDB file</a>
@@ -18,9 +18,7 @@
 }
     <br>
     <div class="citation">
-        <div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<br>
-            Alva V, Nam SZ, Söding J, Lupas AN.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank" rel="noopener"> Nucleic Acids Res. 2016 Jul 8;44(W1):W410-5</a>
-        </div>
+        @views.html.help.common.toolkit_citation_results()
     </div>
 
 @if(resultname == "Modeller") {
@@ -42,7 +40,7 @@
 <script>
         var downloadFilename = "@{resultname}_@{jobID}";
         window["@{resultname}_download"] = function(){
-            var downloadFilename = "@{resultname}_@{jobID}.pdb";
+            var downloadFilename = "@{resultname}_@{jobID}" + ".pdb";
             var fileURL="/files/@{jobID}/@{filename}";
             $.ajax({
                 method: "GET",

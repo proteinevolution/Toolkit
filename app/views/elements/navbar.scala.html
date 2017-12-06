@@ -1,6 +1,7 @@
-@import models.tools.Tool
+@import play.api.mvc.RequestHeader
+@import de.proteinevolution.models.Tool
+@import play.api.i18n.Messages
 @(tools: Iterable[Tool])(implicit messages: Messages, request: RequestHeader)
-
 <div class="off-canvas position-left" id="offCanvasLeft" data-off-canvas>
 
 </div>
@@ -43,7 +44,7 @@
     </div>
 
     <div class="tabs-panel toolsection" id="panel5">
-        @for(tool <- tools.filter(tool => tool.category == "3ary" || tool.optional == "3ary")){
+        @for(tool <- tools.filter(tool => tool.category == "3ary")){
         <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a>
         }
     </div>
