@@ -269,7 +269,7 @@ function scrollToElem(num){
     var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
     if (num > shownHits) {
         $.LoadingOverlay("show");
-        getHits(shownHits, num, wrapped,colorAAs).done(function(data){
+        getHits(shownHits, num, wrapped, false).done(function(data){
             var pos = $('.aln"][value=' + num + ']').offset().top;
             $(elem).animate({
                 scrollTop: pos - 100
@@ -382,7 +382,7 @@ function getsHitsManually(){
         var end = shownHits + showMore;
         end = end < numHits ? end : numHits;
         if (shownHits !== end) {
-            getHits(shownHits, end, wrapped, colorAAs);
+            getHits(shownHits, end, wrapped, false);
         }
         shownHits = end;
     }
@@ -436,7 +436,7 @@ function wrap(){
     $("#wrap").toggleClass("colorToggleBar");
     $("#wrap").toggleText("Unwrap Seqs", "Wrap Seqs");
     $("#alignmentTable").empty();
-    getHits(0, shownHits, wrapped, colorAAs).then(function(){
+    getHits(0, shownHits, wrapped, false).then(function(){
         linkCheckboxes();
         scrollToElem(num);
     });

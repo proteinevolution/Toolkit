@@ -55,7 +55,12 @@ let followScroll = function(element : any) {
         // triggers getHits on scroll
         if (top == $(this).height() - $(window).height()) {
             if (!loading) {
-                let end = parseInt(shownHits) + parseInt(showMore);
+		let limit: number = 0;
+		if($("#toolnameAccess").val() === "psiblast")
+                	limit = 100;
+		else 
+			limit = 50;
+		let end = parseInt(shownHits) + limit;
                 end = end < numHits ? end : numHits;
                 if (shownHits != end) {
                     getHits(shownHits, end,wrapped,colorAAs);
