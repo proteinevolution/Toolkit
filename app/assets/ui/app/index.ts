@@ -234,6 +234,11 @@ const tilescomponent = {
                             ),
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#mmcif30_2017_12"},
+                                    m("h6", "December 6, 2017"),
+                                    m("p", "HHpred: the PDB_mmCIF70 DB is now built using Uniclust30 instead of Uniprot20. " +
+                                        "Additionally, we now also offer PDB_mmCIF30, containing fewer representatives.")
+                                ),
                                 m("a", {"data-open": "recentUpdatesModal", href: "#arc_2017_12"},
                                     m("h6", "December 5, 2017"),
                                     m("p", "HHpred: profile HMM DBs of six archaeal proteomes ",
@@ -248,10 +253,6 @@ const tilescomponent = {
                                 m("a", {"data-open": "recentUpdatesModal", href: "#nr30_2017_11"},
                                     m("h6", "November 13, 2017"),
                                     m("p", "In addition to nr50, we now also offer nr30 for PSI-BLAST, HMMER, and PatternSearch.")
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#uniclust_2017_10"},
-                                    m("h6", "October 31, 2017"),
-                                    m("p", "HHpred: the Uniclust30 DB is now available for query A3M generation.")
                                 )
                             ),
                             m("div", {"class": "quick_links"},
