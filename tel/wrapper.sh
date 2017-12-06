@@ -31,6 +31,7 @@ if [ "$HOSTNAME" = "olt" ]
          -l h_rt=%HARDRUNTIME \
          -l s_vmem=%SOFTMEMORY \
          -l h_vmem=%MEMORY,h="node502|node503|node504|node505|node506|node507|node508|node509|node510|node511|node512|node513" \
+         -pe parallel %THREADS \
          -cwd  \
          -terse \
          %r > jobIDCluster
