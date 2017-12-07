@@ -1,7 +1,8 @@
-@import de.proteinevolution.models.results.Common
-@import de.proteinevolution.models.database.results.HHBlitsResult
+@import de.proteinevolution.models.database.results.HHBlits.HHBlitsResult
 @import better.files._
-@(jobID: String, result: HHBlitsResult, tool: models.tools.Tool, htmlPath: String)(implicit request: RequestHeader)
+@import play.api.mvc.RequestHeader
+@import play.twirl.api.Html
+@(jobID: String, result: HHBlitsResult, tool: de.proteinevolution.models.Tool, htmlPath: String)(implicit request: RequestHeader)
     @if(result.num_hits < 1) {
         <div class="callout alert noHitsWide" id="noHits">
             No hits found!
@@ -66,8 +67,8 @@
         <div><a class="success button tiny resubmitSection" onclick="resubmitSection('@{result.query.seq}', '>'+'@{result.query.accession}')" type="button" id="resubmitSection">Resubmit section</a></div>
             <div id='blastviz'>
                 <div class='flat-slider' id='flat-slider'></div>
-                @Html(htmlPath.toFile.contentAsString)
-                <p><img src="files/@jobID/@{jobID}.png" border="0" alt="blasthits" usemap="#blastmap"></p>
+                @{Html(htmlPath.toFile.contentAsString)}
+                <p><img src="files/@{jobID + "/" + jobID + ".png"}" border="0" alt="blasthits" usemap="#blastmap"></p>
             </div>
     </div>
     <div id="hitlist">
@@ -109,9 +110,7 @@
 
         If you use our HHblits server for your research, please cite:
         <div class="citation">
-            <div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<br>
-                Alva V, Nam SZ, Söding J, Lupas AN.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank" rel="noopener"> Nucleic Acids Res. 2016 Jul 8;44(W1):W410-5</a>.
-            </div>
+            @views.html.help.common.toolkit_citation_results()
         </div>
         And the HHblits paper:
         <div class="citation">
@@ -156,7 +155,6 @@
         var selectAllBool = false;
         var numHits = @{result.num_hits};
         var shownHits = 50;
-        var showMore = 50;
 	    var loading = false;
         var wrapped = true;
         var colorAAs = false;
@@ -216,7 +214,6 @@
                 checkboxes = [];
             }
         }
-
 
        function hhblits_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
            var data = {"checkboxes": checkboxes.removeDuplicates()};
@@ -280,7 +277,6 @@
                 forward(selectedTool, data_.toString());
             });
         }
-
 
         function templateAlignment(accession){
             $('textarea#alignmentTemplate').val(" ");

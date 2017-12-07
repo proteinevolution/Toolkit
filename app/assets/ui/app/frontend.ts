@@ -25,8 +25,6 @@ window.FrontendAlnvizComponent = {
                             submitted = true;
                         }
                     });
-                } else {
-
                 }
             },
             initMSA: function() : any {
@@ -81,10 +79,9 @@ window.FrontendAlnvizComponent = {
                 };
                 let defMenu = new msa.menu.defaultmenu(menuOpts);
                 alignmentView.addView('menu', defMenu);
-
                 alignmentView.render();
-
                 $(window).on("resize.MSAViewer", function(){
+
                     if($("#bioJSContainer").parents("html").length === 0){
                         $(window).off("resize.MSAViewer");
                         return;
@@ -150,8 +147,6 @@ window.FrontendReformatComponent = {
         }, m.trust(ctrl.html()));
     }
 };
-
-
 
 const renderTabs = function(tabs : any, content : any) {
     return m("div", {

@@ -1,12 +1,13 @@
+@import play.api.mvc.RequestHeader
 @(evalues: List[Double])(implicit request: RequestHeader)
 
 
 <div id="hcontainer"></div>
 
 <script>
-        var bins = new Array();
+        var bins = [];
         @for(evalue <- evalues){
-                bins.push(Array(@(-Math.log(evalue)/Math.log(10)), bins.length));
+            bins.push(new Array(@(-Math.log(evalue)/Math.log(10)), bins.length));
         }
 
         $(function() {

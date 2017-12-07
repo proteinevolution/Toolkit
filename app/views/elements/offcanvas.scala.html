@@ -1,4 +1,6 @@
-@import models.tools.Tool
+@import play.api.mvc.RequestHeader
+@import de.proteinevolution.models.Tool
+@import play.api.i18n.Messages
 @(tools: Iterable[Tool])(implicit messages: Messages, request: RequestHeader)
 
 <ul class="vertical menu" id="responsive-menu" data-drilldown>
@@ -42,7 +44,7 @@
     <li>
         <a>3ary Structure</a>
         <ul class="vertical menu">
-        @for(tool <- tools.filter(tool => tool.category == "3ary" || tool.optional == "3ary")) {
+        @for(tool <- tools.filter(tool => tool.category == "3ary")) {
             <li><a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a></li>
         }
         </ul>

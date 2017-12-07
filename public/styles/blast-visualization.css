@@ -605,7 +605,7 @@ table.dataTable.no-footer{
     color: white;
 }
 
-#loadingHits{
+#loadingHits, #loadingHitsClu{
     display: none;
     font-size: 1.3em;
     padding-left: 23em !important;

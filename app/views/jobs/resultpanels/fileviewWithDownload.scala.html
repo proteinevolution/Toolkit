@@ -1,6 +1,6 @@
 @import play.api.mvc.RequestHeader
+@import java.lang.String
 @(filename: String, filePath: String, jobID: String, resultname: String)(implicit request: RequestHeader)
-    @import java.lang.String;
 
     <div class="colorOptsAlignment">
     <a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download</a>
@@ -17,9 +17,11 @@
          });
          });
         window["@{resultname}_download"] = function(){
-            var downloadFilename = "@{resultname}_@{jobID}";
-            if(@{resultname} = "hhpred_hhr"){
+            var downloadFilename; "@{resultname}_@{jobID}";
+            if("@{resultname}" === "hhpred" || "@{resultname}" === "hhomp"){
                 downloadFilename = "@{resultname}_@{jobID}" + ".hhr";
+            } else {
+                downloadFilename = "@{resultname}_@{jobID}" + ".out";
             }
             var fileURL="/files/@{jobID}/@{filename}";
             $.ajax({

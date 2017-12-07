@@ -3,116 +3,45 @@ package de.proteinevolution.models.database.results
 import javax.inject.Inject
 import javax.inject.Singleton
 
-import de.proteinevolution.models.database.results.General.DTParam
+import de.proteinevolution.models.database.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.models.database.results.PSIBlast.{ PSIBlastHSP, PSIBlastResult }
 import de.proteinevolution.models.results.Common
 import play.api.libs.json._
-
-case class PSIBlastHSP(evalue: Double,
-                       num: Int,
-                       bitscore: Double,
-                       score: Int,
-                       hit_start: Int,
-                       hit_end: Int,
-                       hit_seq: String,
-                       query_seq: String,
-                       query_start: Int,
-                       query_end: Int,
-                       query_id: String,
-                       hit_len: Int,
-                       gaps: Int,
-                       identity: Int,
-                       positive: Int,
-                       ref_len: Int,
-                       accession: String,
-                       midline: String,
-                       description: String) {
-  def toDataTable(db: String): JsValue =
-    Json.toJson(
-      Map(
-        "0" -> Json.toJson(Common.getCheckbox(num)),
-        "1" -> Json.toJson(Common.getSingleLinkDB(db, accession).toString),
-        "2" -> Json.toJson(Common.addBreak(description.slice(0, 84))),
-        "3" -> Json.toJson("%.2e".format(evalue)),
-        "4" -> Json.toJson(bitscore),
-        "5" -> Json.toJson(ref_len),
-        "6" -> Json.toJson(hit_len)
-      )
-    )
-}
-
-case class PSIBLastInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
-
-case class PSIBlastResult(HSPS: List[PSIBlastHSP],
-                          num_hits: Int,
-                          iter_num: Int,
-                          db: String,
-                          evalue: Double,
-                          query: SingleSeq,
-                          belowEvalThreshold: Int,
-                          TMPRED: String,
-                          COILPRED: String) {
-  def hitsOrderBy(params: DTParam): List[PSIBlastHSP] = {
-    (params.iSortCol, params.sSortDir) match {
-      case (1, "asc")  => HSPS.sortBy(_.accession)
-      case (1, "desc") => HSPS.sortWith(_.accession > _.accession)
-      case (2, "asc")  => HSPS.sortBy(_.description)
-      case (2, "desc") => HSPS.sortWith(_.description > _.description)
-      case (3, "asc")  => HSPS.sortBy(_.evalue)
-      case (3, "desc") => HSPS.sortWith(_.evalue > _.evalue)
-      case (4, "asc")  => HSPS.sortBy(_.bitscore)
-      case (4, "desc") => HSPS.sortWith(_.bitscore > _.bitscore)
-      case (5, "asc")  => HSPS.sortBy(_.ref_len)
-      case (5, "desc") => HSPS.sortWith(_.ref_len > _.ref_len)
-      case (6, "asc")  => HSPS.sortBy(_.hit_len)
-      case (6, "desc") => HSPS.sortWith(_.hit_len > _.hit_len)
-      case (_, "asc")  => HSPS.sortBy(_.num)
-      case (_, "desc") => HSPS.sortWith(_.num > _.num)
-      case (_, _)      => HSPS.sortBy(_.num)
-    }
-  }
-}
-
 @Singleton
 class PSIBlast @Inject()(general: General) {
 
-  def parseResult(json: JsValue): PSIBlastResult = json match {
-    case obj: JsObject =>
-      try {
-        var belowEvalThreshold = -1;
-        val jobID              = (obj \ "jobID").as[String]
-
-        val query = general.parseSingleSeq((obj \ "query").as[JsArray])
-        val iter_num = (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations")
-          .as[List[JsObject]]
-          .size - 1
-        val db     = (obj \ "output_psiblastp" \ "db").as[String]
-        val evalue = (obj \ "output_psiblastp" \ "evalue").as[String].toDouble
-        val hits =
-          (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ iter_num \ "search" \ "hits")
-            .as[List[JsObject]]
-        val num_hits = hits.length
-        val hsplist = hits.map { hit =>
-          // get num of last checkboxes that is checked by default
-          if (belowEvalThreshold == -1 && (hit \ "hsps" \ 0 \ "evalue").as[Double] >= evalue) {
-            belowEvalThreshold = (hit \ "num").as[Int]
-          }
-          parseHSP(hit, db, evalue)
-        }
-        // if all hits are below threshold
-        // set belowEvalThreshold to total number of found hits
-        if (belowEvalThreshold == -1) {
-          belowEvalThreshold = hsplist.length + 1
-        }
-        val TMPRED = (obj \ "output_psiblastp" \ "TMPRED").asOpt[String] match {
-          case Some(data) => data
-          case None       => "0"
-        }
-        val COILPRED = (obj \ "output_psiblastp" \ "COILPRED").asOpt[String] match {
-          case Some(data) => data
-          case None       => "1"
-        }
-        PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, query, belowEvalThreshold, TMPRED, COILPRED)
-      }
+  def parseResult(json: JsValue): PSIBlastResult = {
+    val obj   = json.as[JsObject]
+    val query = general.parseSingleSeq((obj \ "query").as[JsArray])
+    val iter_num = (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations")
+      .as[List[JsObject]]
+      .size - 1
+    val db     = (obj \ "output_psiblastp" \ "db").as[String]
+    val evalue = (obj \ "output_psiblastp" \ "evalue").as[String].toDouble
+    val hits =
+      (obj \ "output_psiblastp" \ "BlastOutput2" \ 0 \ "report" \ "results" \ "iterations" \ iter_num \ "search" \ "hits")
+        .as[List[JsObject]]
+    val num_hits = hits.length
+    val hsplist = hits.map { hit =>
+      parseHSP(hit, db, evalue)
+    }
+    // take the smallest value above the threshold, right?
+    val sorted = hits
+      .filter(h => (h \ "hsps" \ 0 \ "evalue").as[Double] >= evalue)
+      .sortBy(h => (h \ "hsps" \ 0 \ "evalue").as[Double])
+    val upperBound = sorted match {
+      case _ :: _ => (sorted.headOption.getOrElse(JsNull) \ "num").as[Int] // sorted is non-empty list
+      case _   => hsplist.length + 1 // if empty, take the whole size of hsplist
+    }
+    val TMPRED = (obj \ "output_psiblastp" \ "TMPRED").asOpt[String] match {
+      case Some(data) => data
+      case None       => "0"
+    }
+    val COILPRED = (obj \ "output_psiblastp" \ "COILPRED").asOpt[String] match {
+      case Some(data) => data
+      case None       => "1"
+    }
+    PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, query, upperBound, TMPRED, COILPRED)
   }
 
   def parseHSP(hit: JsObject, db: String, eval_threshold: Double): PSIBlastHSP = {
@@ -167,5 +96,72 @@ class PSIBlast @Inject()(general: General) {
       description
     )
 
+  }
+}
+
+object PSIBlast {
+  case class PSIBlastHSP(evalue: Double,
+                         num: Int,
+                         bitscore: Double,
+                         score: Int,
+                         hit_start: Int,
+                         hit_end: Int,
+                         hit_seq: String,
+                         query_seq: String,
+                         query_start: Int,
+                         query_end: Int,
+                         query_id: String,
+                         hit_len: Int,
+                         gaps: Int,
+                         identity: Int,
+                         positive: Int,
+                         ref_len: Int,
+                         accession: String,
+                         midline: String,
+                         description: String) {
+    def toDataTable(db: String): JsValue =
+      Json.toJson(
+        Map(
+          "0" -> Json.toJson(Common.getCheckbox(num)),
+          "1" -> Json.toJson(Common.getSingleLinkDB(db, accession).toString),
+          "2" -> Json.toJson(Common.addBreak(description.slice(0, 84))),
+          "3" -> Json.toJson("%.2e".format(evalue)),
+          "4" -> Json.toJson(bitscore),
+          "5" -> Json.toJson(ref_len),
+          "6" -> Json.toJson(hit_len)
+        )
+      )
+  }
+
+  case class PSIBLastInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
+
+  case class PSIBlastResult(HSPS: List[PSIBlastHSP],
+                            num_hits: Int,
+                            iter_num: Int,
+                            db: String,
+                            evalue: Double,
+                            query: SingleSeq,
+                            belowEvalThreshold: Int,
+                            TMPRED: String,
+                            COILPRED: String) {
+    def hitsOrderBy(params: DTParam): List[PSIBlastHSP] = {
+      (params.iSortCol, params.sSortDir) match {
+        case (1, "asc")  => HSPS.sortBy(_.accession)
+        case (1, "desc") => HSPS.sortWith(_.accession > _.accession)
+        case (2, "asc")  => HSPS.sortBy(_.description)
+        case (2, "desc") => HSPS.sortWith(_.description > _.description)
+        case (3, "asc")  => HSPS.sortBy(_.evalue)
+        case (3, "desc") => HSPS.sortWith(_.evalue > _.evalue)
+        case (4, "asc")  => HSPS.sortBy(_.bitscore)
+        case (4, "desc") => HSPS.sortWith(_.bitscore > _.bitscore)
+        case (5, "asc")  => HSPS.sortBy(_.ref_len)
+        case (5, "desc") => HSPS.sortWith(_.ref_len > _.ref_len)
+        case (6, "asc")  => HSPS.sortBy(_.hit_len)
+        case (6, "desc") => HSPS.sortWith(_.hit_len > _.hit_len)
+        case (_, "asc")  => HSPS.sortBy(_.num)
+        case (_, "desc") => HSPS.sortWith(_.num > _.num)
+        case (_, _)      => HSPS.sortBy(_.num)
+      }
+    }
   }
 }
