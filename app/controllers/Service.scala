@@ -26,15 +26,17 @@ import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
 
 @Singleton
-final class Service @Inject()(messagesApi: MessagesApi,
-                              val reactiveMongoApi: ReactiveMongoApi,
-                              mongoStore: MongoStore,
-                              userSessions: UserSessions,
-                              @NamedCache("userCache") implicit val userCache: SyncCacheApi,
-                              implicit val locationProvider: LocationProvider,
-                              toolFactory: ToolFactory,
-                              constants: Constants,
-                              cc: ControllerComponents)(implicit ec: ExecutionContext)
+final class Service @Inject()(
+    messagesApi: MessagesApi,
+    val reactiveMongoApi: ReactiveMongoApi,
+    mongoStore: MongoStore,
+    userSessions: UserSessions,
+    @NamedCache("userCache") implicit val userCache: SyncCacheApi,
+    implicit val locationProvider: LocationProvider,
+    toolFactory: ToolFactory,
+    constants: Constants,
+    cc: ControllerComponents
+)(implicit ec: ExecutionContext, @NamedCache("resultCache") val resultCache: AsyncCacheApi)
     extends AbstractController(cc)
     with I18nSupport
     with ReactiveMongoComponents {
@@ -64,6 +66,7 @@ final class Service @Inject()(messagesApi: MessagesApi,
       innerMap(resultpanel)(jobID).map { html =>
         if (html == views.html.errors.resultnotfound()) {
           mongoStore.removeJob(BSONDocument(Job.JOBID -> jobID))
+          resultCache.remove(jobID)
           Logger.info(s"deleted $jobID from the database because the job result could not be loaded.")
         }
         Ok(JsString(html.body))
