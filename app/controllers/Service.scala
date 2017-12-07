@@ -5,7 +5,7 @@ import javax.inject.{ Inject, Singleton }
 
 import akka.util.Timeout
 import models.UserSessions
-import de.proteinevolution.models.database.jobs.{ Done, Job }
+import de.proteinevolution.models.database.jobs.{ Done, Job, Pending, Prepared }
 import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{ I18nSupport, MessagesApi }
@@ -70,7 +70,7 @@ final class Service @Inject()(
             .map(_.map { job =>
               mongoStore
                 .findJobs(BSONDocument(Job.HASH -> job.hash))
-                .map(_.filter(_.status == 1).map { job =>
+                .map(_.filter(x => (Prepared :: Pending :: Nil).contains(x.status)).map { job =>
                   Logger.info(s"delete all prepared jobs with same hash value as $jobID from database and cache")
                   // so that users don't see them in their joblist and try to reload them
                   mongoStore.removeJob(BSONDocument(Job.JOBID -> job.jobID))
