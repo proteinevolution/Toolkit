@@ -13,7 +13,6 @@ class ParamCollector extends Params {
   def generateValues(name: String): ListMap[String, String] = generativeParams(name).generate
 
   def addParam(name: String, param: GenerativeParam): Unit = {
-
-    this.generativeParams = this.generativeParams + (name -> param)
+    generativeParams = generativeParams + (name -> param)
   }
 }

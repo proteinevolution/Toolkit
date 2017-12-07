@@ -9,7 +9,6 @@ import models.UserSessions
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
-import models.mailing.JobFinishedMail
 import de.proteinevolution.models.search.JobDAO
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.runscripts._
@@ -17,7 +16,7 @@ import com.typesafe.config.ConfigFactory
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
-import de.proteinevolution.tel.execution.{ ExecutionContext, RunningExecution, WrapperExecutionFactory }
+import de.proteinevolution.tel.execution.{ ExecutionContext, WrapperExecutionFactory }
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import java.time.ZonedDateTime
 
@@ -27,7 +26,6 @@ import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.postfixOps
 import scala.concurrent.Future
 import better.files._
@@ -35,6 +33,8 @@ import com.google.inject.assistedinject.Assisted
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.Constants
 import de.proteinevolution.parsers.Ops.QStat
+import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecution
+import models.mailing.MailTemplate.JobFinishedMail
 
 import scala.concurrent.duration._
 
@@ -89,18 +89,20 @@ object JobActor {
 
 }
 
-class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscripts to be executed
-                         env: Env, // To supply the runscripts with an environment
-                         implicit val mailerClient: MailerClient,
-                         val jobDao: JobDAO,
-                         mongoStore: MongoStore,
-                         userSessions: UserSessions,
-                         wrapperExecutionFactory: WrapperExecutionFactory,
-                         implicit val locationProvider: LocationProvider,
-                         @NamedCache("userCache") implicit val userCache: SyncCacheApi,
-                         @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
-                         constants: Constants,
-                         @Assisted("jobActorNumber") jobActorNumber: Int)
+class JobActor @Inject()(
+    runscriptManager: RunscriptManager, // To get runscripts to be executed
+    env: Env, // To supply the runscripts with an environment
+    implicit val mailerClient: MailerClient,
+    val jobDao: JobDAO,
+    mongoStore: MongoStore,
+    userSessions: UserSessions,
+    wrapperExecutionFactory: WrapperExecutionFactory,
+    implicit val locationProvider: LocationProvider,
+    @NamedCache("userCache") implicit val userCache: SyncCacheApi,
+    @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
+    constants: Constants,
+    @Assisted("jobActorNumber") jobActorNumber: Int
+)(implicit ec: scala.concurrent.ExecutionContext)
     extends Actor {
 
   // Attributes asssocidated with a Job
@@ -355,8 +357,9 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
     }
   }
 
-  override def postStop(): Unit = Tick.cancel()
-
+  override def postStop(): Unit = {
+    val _ = Tick.cancel()
+  }
   override def receive = LoggingReceive {
 
     case PrepareJob(job, params, startJob, isInternalJob) =>
@@ -417,9 +420,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           self ! JobStateChanged(job.jobID, Error)
       }
 
-    /**
-     * Checks the jobHashDB for matches and generates one for the job if there are none.
-     */
+    // Checks the jobHashDB for matches and generates one for the job if there are none.
     case CheckJobHashes(jobID) =>
       Logger.info(s"[JobActor[$jobActorNumber].CheckJobHashes] Job with jobID $jobID will now be hashed.")
       this.getCurrentJob(jobID).foreach {
@@ -438,9 +439,9 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 )
                 .foreach { jobList =>
                   // Check if the jobs are owned by the user, unless they are public and if the job is Done
-                  jobList.find(filterJob =>
-                              (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done)
-                  match {
+                  jobList.find(
+                    filterJob => (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done
+                  ) match {
                     case Some(oldJob) =>
                       Logger.info(
                         s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID is a duplicate of ${oldJob.jobID}."
@@ -462,12 +463,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
           )
       }
 
-    /**
-     * Checks everything and deletes the Job.
-     * Includes: Removing the job from the cluster if the job is still in the current jobs
-     * Creating the job deleted object and inserting it to the database
-     * Removing the job from ES
-     */
     case Delete(jobID, userIDOption) =>
       val verbose = true // just switch this on / off for logging
       if (verbose) Logger.info(s"[JobActor[$jobActorNumber].Delete] Received Delete for $jobID")
@@ -513,7 +508,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                     Job.DATECREATED ->
                     BSONDocument(
                       "$gt" -> BSONDateTime(
-                        ZonedDateTime.now.minusMinutes(constants.maxJobsWithin).toInstant.toEpochMilli
+                        ZonedDateTime.now.minusMinutes(constants.maxJobsWithin.toLong).toInstant.toEpochMilli
                       )
                     )
                   )
@@ -528,7 +523,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                     Job.DATECREATED ->
                     BSONDocument(
                       "$gt" -> BSONDateTime(
-                        ZonedDateTime.now.minusDays(constants.maxJobsWithinDay).toInstant.toEpochMilli
+                        ZonedDateTime.now.minusDays(constants.maxJobsWithinDay.toLong).toInstant.toEpochMilli
                       )
                     )
                   )
@@ -537,7 +532,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
               mongoStore.countJobs(selector).map { count =>
                 mongoStore.countJobs(selectorDay).map { countDay =>
                   println(
-                    BSONDateTime(ZonedDateTime.now.minusMinutes(constants.maxJobsWithin).toInstant.toEpochMilli).toString
+                    BSONDateTime(ZonedDateTime.now.minusMinutes(constants.maxJobsWithin.toLong).toInstant.toEpochMilli).toString
                   )
                   Logger.info(
                     s"[JobActor[$jobActorNumber].StartJob] IP ${job.IPHash} has requested $count jobs within the last ${constants.maxJobsWithin} minute and $countDay within the last 24 hours."
@@ -556,9 +551,6 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
         case None =>
       }
 
-    /**
-     * Starts the job
-     */
     case StartJob(jobID) =>
       this.getCurrentJob(jobID).foreach {
         case Some(job) =>
@@ -647,7 +639,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
 
     // User Starts watching job
     case AddToWatchlist(jobID, userID) =>
-      mongoStore
+      val _ = mongoStore
         .modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$addToSet" -> BSONDocument(Job.WATCHLIST -> userID)))
         .map {
           case Some(updatedJob) =>
@@ -659,7 +651,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
                 wsActors.foreach(_.foreach(_ ! PushJob(updatedJob)))
               }
-          case None =>
+          case None => ()
         }
 
     // User does no longer watch this Job (stays in JobManager)
@@ -676,7 +668,7 @@ class JobActor @Inject()(runscriptManager: RunscriptManager, // To get runscript
                 val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
                 wsActors.foreach(_.foreach(_ ! ClearJob(jobID)))
               }
-          case None =>
+          case None => ()
         }
 
     // Message from outside that the jobState has changed

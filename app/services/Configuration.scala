@@ -2,11 +2,11 @@ package services
 import javax.inject._
 
 import play.api.inject.ApplicationLifecycle
-import play.api.libs.ws.{ WSClient, WSResponse }
+import play.api.libs.ws.WSClient
 
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 
-trait Configuration {
+sealed trait Configuration {
 
   def hello(): Unit
   def goodbye(): Unit
@@ -14,13 +14,14 @@ trait Configuration {
 }
 
 @Singleton
-final class ConfigurationImpl @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient) extends Configuration {
+final class ConfigurationImpl @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient)(implicit ec: ExecutionContext)
+    extends Configuration {
 
   override def hello(): Unit = {
-
     println("configuring hostname .... ")
-    ws.url("https://toolkit.tuebingen.mpg.de").get()
-
+    val _ = ws.url("https://toolkit.tuebingen.mpg.de").get().map { _ =>
+      ()
+    }
   }
 
   override def goodbye(): Unit = println("Goodbye!")

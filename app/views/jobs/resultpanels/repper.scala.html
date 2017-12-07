@@ -1,16 +1,16 @@
 @import de.proteinevolution.models.results.HHrepID
+@import java.lang.String
 @(jobID : String, filePath : String)
 
-@import java.lang.String; var ncoils="/files/" + jobID + "/" + jobID + "_ncoils.png";
-@import java.lang.String; var psipred="/files/" + jobID + "/" + jobID + "_psipred.png";
-@import java.lang.String; var repper="/files/" + jobID + "/" + jobID + "_repper.png";
-@import java.lang.String; var overview="/files/" + jobID + "/" + jobID + "_overview.png";
-
-@import java.lang.String; var ncoilsFile = filePath + "_ncoils.png";
-@import java.lang.String; var psipredFile = filePath + "_psipred.png";
-@import java.lang.String; var repperFile = filePath + "_repper.png";
-@import java.lang.String; var overviewFile = filePath + "_overview.png";
-
+@ncoils = @{"/files/" + jobID + "/" + jobID + "_ncoils.png"}
+@psipred = @{"/files/" + jobID + "/" + jobID + "_psipred.png"}
+@repper = @{"/files/" + jobID + "/" + jobID + "_repper.png"}
+@overview = @{"/files/" + jobID + "/" + jobID + "_overview.png"}
+    
+@ncoilsFile = @{filePath + "_ncoils.png"}
+@psipredFile = @{filePath + "_psipred.png"}
+@repperFile = @{filePath + "_repper.png"}
+@overviewFile = @{filePath + "_overview.png"}
 
 <div class="notePlain">
 <span>PSIPRED</span>
@@ -54,9 +54,8 @@
 <div id="toolReferences">
         If you use our REPPER server for your research, please cite:
         <div class="citation">
-            <div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<br>
-                Alva V, Nam SZ, Söding J, Lupas AN.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank" rel="noopener"> Nucleic Acids Res. 2016 Jul 8;44(W1):W410-5</a>
-            </div><br>
+            @views.html.help.common.toolkit_citation_results()
+            <br>
             <div>REPPER--repeats and their periodicities in fibrous proteins<br>
                 Gruber M, Söding J, Lupas AN.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gki405" target="_blank" rel="noopener"> Nucleic Acids Res. 2005 Jul 1;33(Web Server issue):W239-43</a>
             </div>

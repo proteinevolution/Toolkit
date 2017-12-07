@@ -107,45 +107,6 @@ object Job {
   val TOOLNAMELONG = "toolnameLong" //           long tool name
   val IPHASH       = "IPHash" //                  ip hash
 
-  implicit object JsonReader extends Reads[Job] {
-    // TODO this is unused at the moment, as there is no convertion of JSON -> Job needed.
-    override def reads(json: JsValue): JsResult[Job] = json match {
-      case obj: JsObject =>
-        try {
-          val mainID       = (obj \ ID).asOpt[String]
-          val jobID        = (obj \ JOBID).asOpt[String]
-          val ownerID      = (obj \ OWNERID).asOpt[String]
-          val project      = (obj \ PROJECT).asOpt[String]
-          val status       = (obj \ STATUS).asOpt[JobState]
-          val tool         = (obj \ TOOL).asOpt[String]
-          val label        = (obj \ LABEL).asOpt[String]
-          val watchList    = (obj \ WATCHLIST).asOpt[List[String]]
-          val commentList  = (obj \ COMMENTLIST).asOpt[List[String]]
-          val dateCreated  = (obj \ DATECREATED).asOpt[String]
-          val dateUpdated  = (obj \ DATEUPDATED).asOpt[String]
-          val dateViewed   = (obj \ DATEVIEWED).asOpt[String]
-          val toolnameLong = (obj \ TOOLNAMELONG).asOpt[String]
-          val IPHash       = (obj \ IPHASH).asOpt[String]
-          val datetimenow  = ZonedDateTime.now()
-          JsSuccess(
-            Job(
-              mainID = BSONObjectID.generate(),
-              jobID = "",
-              ownerID = Some(BSONObjectID.generate()),
-              status = status.get,
-              tool = "",
-              dateCreated = Some(datetimenow),
-              dateUpdated = Some(datetimenow),
-              dateViewed = Some(datetimenow),
-              IPHash = IPHash
-            )
-          )
-        } catch {
-          case cause: Throwable => JsError(cause.getMessage)
-        }
-      case _ => JsError("expected.jsobject")
-    }
-  }
 
   implicit object JobWrites extends Writes[Job] {
     def writes(job: Job): JsObject = Json.obj(

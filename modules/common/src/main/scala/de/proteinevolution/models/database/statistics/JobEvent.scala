@@ -10,6 +10,7 @@ import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSON
 case class JobEvent(jobState: JobState, timestamp: Option[ZonedDateTime], runtime: Long = 0L)
 
 object JobEvent {
+
   val JOBSTATE  = "jobState"
   val TIMESTAMP = "timestamp"
   val RUNTIME   = "runtime"
