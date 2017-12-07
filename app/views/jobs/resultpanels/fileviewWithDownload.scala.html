@@ -18,7 +18,7 @@
          });
         window["@{resultname}_download"] = function(){
             var downloadFilename; "@{resultname}_@{jobID}";
-            if("@{resultname}" === "hhpred_hhr"){
+            if("@{resultname}" === "hhpred" || "@{resultname}" === "hhomp"){
                 downloadFilename = "@{resultname}_@{jobID}" + ".hhr";
             } else {
                 downloadFilename = "@{resultname}_@{jobID}" + ".out";

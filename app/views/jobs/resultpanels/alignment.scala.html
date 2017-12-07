@@ -21,7 +21,6 @@
         Number of sequences: <b>@alignment.alignment.length</b>
         <br />
         <br />
-<form id="alignmentResult">
     <table class="unstriped">
         <tbody class="alignmentTBody">
         </tbody>
@@ -32,7 +31,6 @@
             <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
         </tr>
     </table>
-</form>
 </div>
 
 <script>
@@ -146,7 +144,6 @@
                             shownHits = end;
                         }
                     }
-                    $("#alignmentResult").floatingScroll('init');
                 });
                 $('input:checkbox').click(function (e) {
                     var currentVal = $(this).val();
