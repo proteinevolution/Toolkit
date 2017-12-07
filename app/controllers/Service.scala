@@ -5,7 +5,7 @@ import javax.inject.{ Inject, Singleton }
 
 import akka.util.Timeout
 import models.UserSessions
-import de.proteinevolution.models.database.jobs.Done
+import de.proteinevolution.models.database.jobs.{ Done, Job }
 import play.api.Logger
 import play.api.cache._
 import play.api.i18n.{ I18nSupport, MessagesApi }
@@ -20,6 +20,7 @@ import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.forms.JobForm
 import de.proteinevolution.models.Constants
 import play.api.libs.json._
+import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
@@ -60,7 +61,13 @@ final class Service @Inject()(messagesApi: MessagesApi,
   def getResult(jobID: String, tool: String, resultpanel: String): Action[AnyContent] = Action.async {
     implicit request =>
       val innerMap = toolFactory.getResultMap(tool)
-      innerMap(resultpanel)(jobID).map(html => Ok(JsString(html.body)))
+      innerMap(resultpanel)(jobID).map { html =>
+        if (html == views.html.errors.resultnotfound()) {
+          mongoStore.removeJob(BSONDocument(Job.JOBID -> jobID))
+          Logger.info(s"deleted $jobID from the database because the job result could not be loaded.")
+        }
+        Ok(JsString(html.body))
+      }
   }
 
   def getJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
