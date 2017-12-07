@@ -740,7 +740,7 @@ final class ToolFactory @Inject()(
                 jobID + ".out",
                 s"${constants.jobPath}$jobID/results/" + jobID + ".out",
                 jobID,
-                "sixframetrans_out"
+                "sixframetrans"
               )
             )
           }

@@ -17,9 +17,11 @@
          });
          });
         window["@{resultname}_download"] = function(){
-            var downloadFilename = "@{resultname}_@{jobID}";
-            if(@{resultname} = "hhpred_hhr"){
+            var downloadFilename; "@{resultname}_@{jobID}";
+            if("@{resultname}" === "hhpred_hhr"){
                 downloadFilename = "@{resultname}_@{jobID}" + ".hhr";
+            } else {
+                downloadFilename = "@{resultname}_@{jobID}" + ".out";
             }
             var fileURL="/files/@{jobID}/@{filename}";
             $.ajax({
