@@ -379,7 +379,7 @@ function selectAll(){
 
 function getsHitsManually(){
     if (!loading) {
-        var end = shownHits + showMore;
+        var end = shownHits + 100;
         end = end < numHits ? end : numHits;
         if (shownHits !== end) {
             getHits(shownHits, end, wrapped, false);
