@@ -1,4 +1,4 @@
-import co.technius.scalajs.mithril._
+import com.tgf.pizza.scalajs.mithril._
 import org.scalajs.dom.raw.HTMLDivElement
 import scala.scalajs.js
 import scala.scalajs.js.Dictionary

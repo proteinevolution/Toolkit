@@ -15,7 +15,7 @@ import java.time.temporal.ChronoUnit
 import de.proteinevolution.common.LocationProvider
 import play.api.Logger
 import play.api.cache._
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -24,15 +24,13 @@ import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-final class Backend @Inject()(settingsController: Settings,
-                              userSessions: UserSessions,
+final class Backend @Inject()(userSessions: UserSessions,
                               mongoStore: MongoStore,
                               @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                               toolFactory: ToolFactory,
                               @Named("DatabaseMonitor") databaseMonitor: ActorRef,
                               implicit val locationProvider: LocationProvider,
                               val reactiveMongoApi: ReactiveMongoApi,
-                              messagesApi: MessagesApi,
                               cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport

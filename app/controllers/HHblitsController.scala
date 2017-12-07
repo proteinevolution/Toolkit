@@ -6,7 +6,7 @@ import better.files._
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.results.General.DTParam
-import de.proteinevolution.models.database.results.{ General, HHBlits }
+import de.proteinevolution.models.database.results.HHBlits
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.database.results.HHBlits.{ HHBlitsHSP, HHBlitsResult }
 import org.webjars.play.WebJarsUtil
@@ -22,7 +22,6 @@ class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
                                   hhblits: HHBlits,
                                   webJarsUtil: WebJarsUtil,
                                   val reactiveMongoApi: ReactiveMongoApi,
-                                  general: General,
                                   constants: Constants,
                                   cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)

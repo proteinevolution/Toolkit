@@ -1,21 +1,14 @@
 package controllers
 
 import javax.inject.Inject
-
-import de.proteinevolution.models.database.results.{ Hmmer, PSIBlast }
-import de.proteinevolution.db.{ MongoStore, ResultFileAccessor }
+import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.ToolNames
 import play.api.mvc._
 import scala.concurrent.ExecutionContext
 
-class DataController @Inject()(mongoStore: MongoStore,
-                               psiblastController: PSIBlastController,
-                               hmmerController: HmmerController,
-                               hmmer: Hmmer,
-                               psi: PSIBlast,
-                               cc: ControllerComponents,
-                               resultFiles: ResultFileAccessor)(implicit ec: ExecutionContext)
-    extends AbstractController(cc) {
+class DataController @Inject()(cc: ControllerComponents, resultFiles: ResultFileAccessor)(
+    implicit ec: ExecutionContext
+) extends AbstractController(cc) {
 
   /** Check whether the user is allowed to fetch the data for the particular job and retrieves the data with
    * stored given a particular key

@@ -18,12 +18,12 @@ import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
 import play.api.cache._
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.I18nSupport
 import play.api.libs.json.{ JsValue, Json }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
-import play.api.{ Configuration, Environment, Logger }
+import play.api.{ Environment, Logger }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
@@ -33,7 +33,6 @@ import scala.concurrent.{ Await, ExecutionContext, Future }
 
 @Singleton
 final class Application @Inject()(webJarsUtil: WebJarsUtil,
-                                  messagesApi: MessagesApi,
                                   @Named("clusterMonitor") clusterMonitor: ActorRef,
                                   webSocketActorFactory: WebSocketActor.Factory,
                                   @NamedCache("userCache") implicit val userCache: SyncCacheApi,
@@ -50,7 +49,6 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   val cluster: Cluster,
                                   val search: Search,
                                   val settings: Settings,
-                                  configuration: Configuration,
                                   constants: Constants,
                                   cc: ControllerComponents,
                                   environment: Environment)(implicit ec: ExecutionContext)

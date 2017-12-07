@@ -3,7 +3,6 @@ package controllers
 import java.time.ZonedDateTime
 
 import play.api.mvc._
-import play.api.i18n.MessagesApi
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.api.FailoverStrategy
 import reactivemongo.api.collections.bson.BSONCollection
@@ -20,10 +19,9 @@ import scala.sys.process._
  *
  */
 @Singleton
-final class Settings @Inject()(messagesApi: MessagesApi,
-                               val reactiveMongoApi: ReactiveMongoApi,
-                               cc: ControllerComponents)(implicit ec: ExecutionContext)
-    extends AbstractController(cc)
+final class Settings @Inject()(val reactiveMongoApi: ReactiveMongoApi, cc: ControllerComponents)(
+    implicit ec: ExecutionContext
+) extends AbstractController(cc)
     with ReactiveMongoComponents {
 
   val clusterSettings: Future[BSONCollection] =
