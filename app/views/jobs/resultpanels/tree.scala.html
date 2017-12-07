@@ -1,5 +1,6 @@
-
+@import play.api.mvc.RequestHeader
 @import de.proteinevolution.models.results.Ancescon
+@import java.lang.String
 @(filename: String, treePath: String, jobID: String, iddiv: String)(implicit request: RequestHeader)
 
 
@@ -15,10 +16,8 @@
 <div id="toolReferences">
     If you use @iddiv on our Toolkit for your research, please cite:
     <div class="citation">
-        <div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<br>
-                    Alva V, Nam SZ, Söding J, Lupas AN.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank" rel="noopener"> Nucleic Acids Res. 2016 Jul 8;44(W1):W410-5.</a>
-                </div><br>
-
+        @views.html.help.common.toolkit_citation_results()
+        <br>
             @if(iddiv == "ANCESCON") {
                 <div>Reconstruction of ancestral protein sequences and its applications.<br>
                     Cai W, Pei J, Grishin NV.<a href="https://bmcevolbiol.biomedcentral.com/articles/10.1186/1471-2148-4-33" target="_blank" rel="noopener"> BMC Evol Biol. 2004 Sep 17;4:33.</a></div>
@@ -46,14 +45,10 @@
         })
     };
 
-
     function setLayout() {
-
         var v = s.val();
         if(v === "radial") {
-
             tree.layout(radial_layout);
-
         } else {
             tree.layout(vertical_layout);
         }
@@ -96,6 +91,4 @@
       layout.width($("#tool-tabs").width() - 200);
       tree.update();
   }
-
-
 </script>

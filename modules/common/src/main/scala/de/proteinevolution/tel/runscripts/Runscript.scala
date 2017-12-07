@@ -21,7 +21,6 @@ class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript] {
     .matchData
     .foldLeft(Seq.empty[(String, Evaluation)]) { (a, m) =>
       val paramName = m.group("paramName")
-
       a :+ paramName -> { (value: RType, executionContext: ExecutionContext) =>
         m.group("repr") match {
           // TODO Constraints are not yet supported, currently all arguments are valid

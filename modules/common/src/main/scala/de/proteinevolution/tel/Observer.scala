@@ -13,11 +13,10 @@ trait Observer[S] {
 trait Subject[S] { this: S =>
   private var observers: List[Observer[S]] = Nil
 
-  def addObserver(observer: Observer[S]) = {
-
+  def addObserver(observer: Observer[S]): Unit = {
     observers = observer :: observers
     observer.receiveInitial(this)
   }
 
-  def notifyObservers() = observers.foreach(_.receiveUpdate(this))
+  def notifyObservers(): Unit = observers.foreach(_.receiveUpdate(this))
 }

@@ -8,7 +8,7 @@ import javax.inject.{ Inject, Singleton }
 import actors.JobActor._
 import better.files._
 import de.proteinevolution.common.LocationProvider
-import de.proteinevolution.models.Constants
+import de.proteinevolution.models.{ Constants, ToolNames }
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.models.search.JobDAO
@@ -25,8 +25,7 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONDocument
 import services.JobActorAccess
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class JobController @Inject()(jobActorAccess: JobActorAccess,
@@ -40,14 +39,10 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                     val jobDao: JobDAO,
                                     val toolFactory: ToolFactory,
                                     constants: Constants,
-                                    cc: ControllerComponents)
+                                    cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with CommonController {
 
-  /**
-   *  Loads one minified version of a job to the view, given the jobID
-   *
-   */
   def loadJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       // Find the Job in the database
@@ -89,7 +84,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               source.close()
             }
           }
-
           // Determine the jobID
           (formData.get("jobID") match {
             case Some(jobID) =>
@@ -120,17 +114,14 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               formData.get("alignment_two").foreach { alignment =>
                 if (alignment.isEmpty) params = params - "alignment_two"
               }
-
-              /**
-               * TODO Validate here!
-               */
+              // TODO Validate here! Can this be deleted?
               val validatedFormData: Map[String, Option[String]] =
                 formData.filterKeys(parameter => toolParams.contains(parameter)).map { paramWithValue =>
                   paramWithValue._1 -> toolParams(paramWithValue._1).paramType.validate(paramWithValue._2)
                 }
 
               // Check if the user has the Modeller Key when the requested tool is Modeller
-              if (toolName == toolFactory.Toolnames.MODELLER && user.userConfig.hasMODELLERKey)
+              if (toolName == ToolNames.MODELLER.value && user.userConfig.hasMODELLERKey)
                 params = params.updated("regkey", constants.modellerKey)
 
               // get checkbox value for the update per mail option
@@ -143,7 +134,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               val now = ZonedDateTime.now
 
               // Check the users bonus time for jobs
-              val dateDeletion = user.userData.map(_ => now.plusDays(constants.jobDeletion))
+              val dateDeletion = user.userData.map(_ => now.plusDays(constants.jobDeletion.toLong))
 
               // Create a new Job object for the job and set the initial values
               val job = Job(
@@ -246,8 +237,9 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
             )
             .map { jobList =>
               // Check if the jobs are owned by the user, unless they are public and if the job is Done
-              jobList.find(filterJob =>
-                (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done) match {
+              jobList.find(
+                filterJob => (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done
+              ) match {
                 case Some(latestOldJob) =>
                   Ok(
                     Json.toJson(
@@ -261,6 +253,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                   NotFound
               }
             }
+        case None => Future.successful(NotFound)
       }
     }
   }

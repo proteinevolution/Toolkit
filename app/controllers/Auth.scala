@@ -10,9 +10,9 @@ import de.proteinevolution.models.Constants
 import models.UserSessions
 import models.auth._
 import de.proteinevolution.models.database.users.{ User, UserConfig, UserToken }
-import models.mailing.{ ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail }
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
+import models.mailing.MailTemplate.{ ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail }
 import play.Logger
 import play.api.cache._
 import play.api.i18n.{ I18nSupport, MessagesApi }
@@ -24,8 +24,7 @@ import reactivemongo.bson._
 import org.webjars.play.WebJarsUtil
 import services.JobActorAccess
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{ Await, ExecutionContext, Future }
 
 /**
  * Controller for Authentication interactions
@@ -44,7 +43,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                            @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                            @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi, // Mailing Controller
                            constants: Constants,
-                           cc: ControllerComponents)
+                           cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
     with JSONTemplate
@@ -90,14 +89,10 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
   }
 
   def matchUserToPW(username: String, password: String): Future[Boolean] = {
-
     mongoStore.findUser(BSONDocument("userData.nameLogin" -> username)).map {
-
       case Some(user) if user.checkPassword(password) => true
       case None                                       => false
-
     }
-
   }
 
   // add header authentication layer so that this cannot be curled easily by checking db if user matches with pw
@@ -171,7 +166,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                         userSessions.removeUserFromCache(unregisteredUser)
 
                         // Tell the job actors to copy all jobs connected to the old user to the new user
-                        wsActorCache.get(unregisteredUser.userID.stringify) match {
+                        wsActorCache.get[List[ActorRef]](unregisteredUser.userID.stringify) match {
                           case Some(wsActors) =>
                             val actorList: List[ActorRef] = wsActors: List[ActorRef]
                             wsActorCache.set(loggedInUser.userID.stringify, actorList)
@@ -312,6 +307,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                     mongoStore.findUser(selectorMail).flatMap {
                       case Some(_) =>
                         Future.successful(Ok(accountEmailUsed()))
+                      case None => Future.successful(NotFound)
                     }
                   }
                   userSessions.modifyUserWithCache(selector, modifier).map {

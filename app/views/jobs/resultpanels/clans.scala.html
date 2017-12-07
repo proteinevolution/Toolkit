@@ -1,15 +1,18 @@
+@import play.api.mvc.RequestHeader
+@import java.lang.String
 @(toolName: String, jobID: String)(implicit request: RequestHeader)
-@import java.lang.String; var fileURL="/files/" + jobID + "/" + jobID + ".clans.zip";
+
+@fileURL = @{"/files/" + jobID + "/" + jobID + ".clans.zip"}
 
 <div class="clansResults">
 	<br/><hr><br/><br/><br/><br/>
-	Download the zipped CLANS file (<a href="@fileURL" download>@{jobID}.clans.zip</a>) generated for your sequences and unzip it.
+	Download the zipped CLANS file (<a href="@fileURL" download>@{jobID + ".clans.zip"}</a>) generated for your sequences and unzip it.
     <br/><br/>
 	Download the CLANS application here: <a href="ftp://ftp.tuebingen.mpg.de/pub/protevo/CLANS/clans.jar">clans.jar</a>
-	and visualize your unzipped CLANS file (<b>@{jobID}.clans</b>) using the 'Load Run' option in the 'File' menu.
+	and visualize your unzipped CLANS file (<b>@{jobID + ".clans"}</b>) using the 'Load Run' option in the 'File' menu.
 	<br/><br/>Please make sure you have Java Runtime Environment (JRE) installed. <br/><br/>
 	If your input contains large number of sequences, please consider running CLANS on the command line:<br/>
-	<em>java -Xmx4G -jar clans.jar -load @{jobID}.clans</em><br/><br/>
+	<em>java -Xmx4G -jar clans.jar -load @{jobID + ".clans"}</em><br/><br/>
 	
 	If you face problems loading the CLANS file, please increase the maximum Java heap size (-Xmx).
 
@@ -18,9 +21,8 @@
 	<div id="toolReferences">
         If you use our CLANS server for your research, please cite:
 		<div class="citation">
-			<div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<br>
-				Alva V, Nam SZ, Söding J, Lupas AN.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank" rel="noopener"> Nucleic Acids Res. 2016 Jul 8;44(W1):W410-5.</a>
-            </div><br>
+			@views.html.help.common.toolkit_citation_results()
+			<br>
 			<div>CLANS: a Java application for visualizing protein families based on pairwise similarity.<br>
 				Frickey T, Lupas A.<a href="https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/bth444" target="_blank" rel="noopener"> Bioinformatics. 2004 Dec 12;20(18):3702-4.</a></div><br>
 			<div>BLAST+: architecture and applications.<br>

@@ -1,13 +1,12 @@
 @import play.api.libs.json.JsObject
 @import play.api.libs.json.JsValue
-@import play.api.libs.json.JsArray
-@import play.api.Logger
-@import play.api.libs.json.JsUndefined
+@import play.api.mvc.RequestHeader
 @import play.api.libs.json.JsDefined
 @import de.proteinevolution.models.results.Common
-@import de.proteinevolution.tel.TEL
-@(toolName: String, jobID: String, jsValue: JsValue, tool: models.tools.Tool)(implicit request: RequestHeader)
-@import java.lang.String; var fileURL="/files/" + jobID + "/" + jobID + ".fas";
+@import controllers.routes
+@import play.twirl.api.Html
+@import java.lang.String
+@(toolName: String, jobID: String, jsValue: JsValue, tool: de.proteinevolution.models.Tool)(implicit request: RequestHeader)
 
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 @views.html.forwardmodals.simpler(tool, tool.toolNameShort)
@@ -34,22 +33,22 @@
                     <tr class="header">
                         <td>
                             @{ hit \ "name" match {
-                                case JsDefined(jsValue) => (hit \ "name").get.as[String]
-                            }
+                                    case JsDefined(_) => (hit \ "name").get.as[String]
+                                    case _ => Html("")
+                                }
                             }
                         </td>
                     </tr>
                     <tr>
                         <td class="sequenceAlignment">
                         @{ hit \ "seq" match {
-                            case JsDefined(jsVal) => Html(Common.insertMatch((hit \ "seq").get.as[String], (jsValue \ jobID \ "len").get.as[Int],(hit \ "pats").get.as[List[Int]]))
-                        }
+                                case JsDefined(jsVal) => Html(Common.insertMatch((hit \ "seq").get.as[String], (jsValue \ jobID \ "len").get.as[Int],(hit \ "pats").get.as[List[Int]]))
+                                case _ => Html("")
+                            }
                         }
                         </td>
                     </tr>
                 }
-
-
                 <tr><td><br/></td></tr>
             </tbody>
         </table>
@@ -62,13 +61,10 @@
     <div id="toolReferences">
         If you use PatternSearch for your research, please cite:
         <div class="citation">
-            <div>The MPI bioinformatics Toolkit as an integrative platform for advanced protein sequence and structure analysis.<br>
-                Alva V, Nam SZ, Söding J, Lupas AN.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348" target="_blank" rel="noopener"> Nucleic Acids Res. 2016 Jul 8;44(W1):W410-5</a>.</div>
+            @views.html.help.common.toolkit_citation_results()
         </div>
     </div>
     <hr id="line-element" colspan="4" class="horizontal-line">
-
-
 
     <script>
         var data;
@@ -77,13 +73,11 @@
             wrapSequences()
         });
 
-
         // get result json
-        var fileUrl = "/files/@jobID/@{jobID}.json";
+        var fileUrl = "/files/@jobID/@{jobID}" + ".json";
         $.getJSON(fileUrl, function (data_) {
             data = data_;
         });
-
 
         function wrapSequences(){
                 $(".sequenceAlignment").addClass("wrap");
@@ -98,7 +92,7 @@
         };
 
         function download_(){
-            var downloadFilename = "@{jobID}_@{tool.toolNameShort}.fas";
+            var downloadFilename = "@{tool.toolNameShort}_@{jobID}" + ".fas";
             var fileURL="/files/@{jobID}/@{jobID}" + ".fas";
             $.ajax({
                 method: "GET",

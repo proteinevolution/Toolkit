@@ -1,4 +1,7 @@
 @import play.api.mvc.RequestHeader
+@import play.twirl.api.Html
+@import controllers.routes
+@import java.lang.String
 @(accession : String, webJarsUtil: org.webjars.play.WebJarsUtil)(implicit request: RequestHeader)
     <!-- Blast Visualizaton JS -->
 <script src="@routes.Assets.versioned("javascripts/blast-visualization.js")"></script>
