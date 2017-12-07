@@ -3,7 +3,7 @@ package controllers
 import javax.inject.Inject
 
 import de.proteinevolution.models.Constants
-import de.proteinevolution.models.database.results.{ Alignment, General }
+import de.proteinevolution.models.database.results.Alignment
 import de.proteinevolution.models.results.Common
 import de.proteinevolution.db.ResultFileAccessor
 import play.api.libs.json.JsArray
@@ -15,7 +15,6 @@ import scala.concurrent.ExecutionContext
 
 class AlignmentController @Inject()(resultFiles: ResultFileAccessor,
                                     aln: Alignment,
-                                    general: General,
                                     val reactiveMongoApi: ReactiveMongoApi,
                                     constants: Constants,
                                     cc: ControllerComponents)(implicit ec: ExecutionContext)

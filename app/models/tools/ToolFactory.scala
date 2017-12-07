@@ -5,7 +5,7 @@ import javax.inject.{ Inject, Singleton }
 import com.typesafe.config.{ ConfigFactory, ConfigObject }
 import de.proteinevolution.models.{ Constants, Tool, ToolNames }
 import de.proteinevolution.models.database.results._
-import de.proteinevolution.db.{ MongoStore, ResultFileAccessor }
+import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.forms.ToolForm
 import de.proteinevolution.models.param.{ Param, ParamAccess }
 import de.proteinevolution.models.results.ResultViews
@@ -27,7 +27,6 @@ final class ToolFactory @Inject()(
     aln: de.proteinevolution.models.database.results.Alignment,
     constants: Constants
 )(paramAccess: ParamAccess,
-  mongoStore: MongoStore,
   resultFiles: ResultFileAccessor,
   implicit val ec: ExecutionContext) {
 
@@ -47,6 +46,7 @@ final class ToolFactory @Inject()(
           config.getStringList("forwarding.alignment"),
           config.getStringList("forwarding.multi_seq")
         )
+      case (_, _) => throw new IllegalStateException("tool does not exist")
     }
   }.toMap
 

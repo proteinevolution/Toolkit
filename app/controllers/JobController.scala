@@ -104,8 +104,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               Future.successful(Some(jobIdProvider.provide))
           }).flatMap {
             case Some(jobID) =>
-              // Load the parameters for the tool
-              val toolParams = toolFactory.values(toolName).params
 
               // Filter invalid parameters
               var params: Map[String, String] = formData
@@ -114,11 +112,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               formData.get("alignment_two").foreach { alignment =>
                 if (alignment.isEmpty) params = params - "alignment_two"
               }
-              // TODO Validate here! Can this be deleted?
-              val validatedFormData: Map[String, Option[String]] =
-                formData.filterKeys(parameter => toolParams.contains(parameter)).map { paramWithValue =>
-                  paramWithValue._1 -> toolParams(paramWithValue._1).paramType.validate(paramWithValue._2)
-                }
 
               // Check if the user has the Modeller Key when the requested tool is Modeller
               if (toolName == ToolNames.MODELLER.value && user.userConfig.hasMODELLERKey)
@@ -126,7 +119,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
 
               // get checkbox value for the update per mail option
               val emailUpdate = formData.get("emailUpdate") match {
-                case Some(x) => true
+                case Some(_) => true
                 case _       => false
               }
 
