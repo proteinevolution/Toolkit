@@ -7,13 +7,13 @@ import de.proteinevolution.models.database.jobs.Done
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-final class Tool @Inject()(messagesApi: MessagesApi,
+final class Tool @Inject()(
                            mongoStore: MongoStore,
                            toolFactory: ToolFactory,
                            cc: ControllerComponents)(implicit ec: ExecutionContext)

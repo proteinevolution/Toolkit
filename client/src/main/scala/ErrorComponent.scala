@@ -1,4 +1,4 @@
-import co.technius.scalajs.mithril.{ m, Component, MithrilComponent, MithrilProp }
+import com.tgf.pizza.scalajs.mithril.{ m, Component, MithrilComponent, MithrilProp }
 
 import scala.scalajs.js
 import js.Dynamic.{ global => g }
