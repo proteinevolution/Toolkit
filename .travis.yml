@@ -20,5 +20,7 @@ before_install:
 install:
   - git submodule update --init --recursive
   - git clone https://github.com/felixgabler/maxmind-geoip2-scala.git $HOME/pizza
-  - cd $HOME/pizza; git reset --hard 0004f5b6d1472f593eb460b43f71e58845057931; sbt publishLocal; cd -
+  - cd $HOME/pizza; sbt publishLocal; cd -
+  - git clone https://github.com/zy4/scalajs-mithril.git $HOME/scalajs-mithril
+  - cd $HOME/scalajs-mithril; sbt publishLocal; cd -
 script: sbt test:compile test stage
