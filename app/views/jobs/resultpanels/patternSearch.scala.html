@@ -92,7 +92,7 @@
         };
 
         function download_(){
-            var downloadFilename = "@{jobID}_@{tool.toolNameShort}" + ".fas";
+            var downloadFilename = "@{tool.toolNameShort}_@{jobID}" + ".fas";
             var fileURL="/files/@{jobID}/@{jobID}" + ".fas";
             $.ajax({
                 method: "GET",
