@@ -33,6 +33,7 @@ Exceptions (free)
 -----------------
 
 Files | Author(s) | License
+--- | --- | ---
 public/fonts/mfglabs*, public/styles/mfglabs* | [MFGLabs](https://github.com/MfgLabs/mfglabs-iconset) | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/deed.fr)
 
 
