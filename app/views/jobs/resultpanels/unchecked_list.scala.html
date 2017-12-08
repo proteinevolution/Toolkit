@@ -1,8 +1,7 @@
-@import play.api.mvc.RequestHeader
 @import play.api.libs.json.JsValue
 @import controllers.routes
 @import java.lang.String
-@(toolName: String, jobID: String, jsValue: JsValue, tool : de.proteinevolution.models.Tool)(implicit request: RequestHeader)
+@(toolName: String, jobID: String, jsValue: JsValue, tool : de.proteinevolution.models.Tool)()
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 <div class="colorOptsAlignment">
     <a type="button" data-open="forwardModal_@toolName""><span>Forward selected</span></a>

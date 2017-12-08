@@ -206,7 +206,7 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
           BadRequest
         } else {
           val hits =
-            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(jobID, _, isColor, wrapped))
+            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(_, isColor, wrapped))
           Ok(hits.mkString)
         }
       case None => BadRequest
