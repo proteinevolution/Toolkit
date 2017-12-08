@@ -26,7 +26,7 @@
     <table id="resultTable">
     </table>
     <tr>
-        <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
+        <td colspan="4"><div id="loadingHitsClu">Loading Hits...</div></td>
     </tr>
 </table>
 </div>
@@ -69,7 +69,7 @@
 
 <script>
         var fileUrl = "/files/@jobID/alignment.clustalw_aln";
-        var downloadFilename = "@{tool.toolNameShort}_@{resultName}_jobID_@{jobID}" + ".clustal";
+        var downloadFilename = "@{tool.toolNameShort}_@{resultName}_@{jobID}" + ".clustal";
         var selectAllBoolClustal = false;
         var colorAAsClustal = false;
         var numHits = @alignment.alignment.length;
@@ -130,7 +130,7 @@
         };
 
         window["@{tool.toolNameShort}_getHits"] = function(color){
-                $('#loadingHits').show();
+                $('#loadingHitsClu').show();
                 var data = {"color": color, "resultName" : resultName};
             var route = {};
             route.url = "/AlignmentLoadHitsClustal/" + jobID;
@@ -145,7 +145,7 @@
                     loading = false;
                     linkCheckboxes();
                     selectFromArray(checkboxes);
-                    $('#loadingHits').hide();
+                    $('#loadingHitsClu').hide();
                     $.LoadingOverlay("hide");
                 });
         };
@@ -158,13 +158,7 @@
         }
 
         (function($){
-
             @{tool.toolNameShort}_getHits(false);
-
-            $(document).on('scroll', function () {
-                $("#alignmentResult").floatingScroll('init');
-            });
-
         })(jQuery);
 
 </script>

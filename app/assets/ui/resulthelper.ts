@@ -63,7 +63,7 @@ let followScroll = function(element : any) {
 		let end = parseInt(shownHits) + limit;
                 end = end < numHits ? end : numHits;
                 if (shownHits != end) {
-                    getHits(shownHits, end,wrapped,colorAAs);
+                    getHits(shownHits, end,wrapped,false);
                 }
                 shownHits = end;
             }
