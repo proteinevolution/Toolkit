@@ -2,9 +2,9 @@ package controllers
 
 import java.io.{ FileInputStream, ObjectInputStream }
 import javax.inject.{ Inject, Singleton }
-
 import akka.util.Timeout
-import de.proteinevolution.models.database.jobs.Done
+import models.UserSessions
+import de.proteinevolution.models.database.jobs.{ Done, Job, Pending, Prepared }
 import play.api.Logger
 import play.api.cache._
 import play.api.i18n.I18nSupport
@@ -19,18 +19,23 @@ import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.forms.JobForm
 import de.proteinevolution.models.Constants
 import play.api.libs.json._
+import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
 
 @Singleton
-final class Service @Inject()(val reactiveMongoApi: ReactiveMongoApi,
-                              mongoStore: MongoStore,
-                              toolFactory: ToolFactory,
-                              constants: Constants,
-                              cc: ControllerComponents)(implicit ec: ExecutionContext,
-                                                        val locationProvider: LocationProvider,
-                                                        @NamedCache("userCache") val userCache: SyncCacheApi)
+final class Service @Inject()(
+    val reactiveMongoApi: ReactiveMongoApi,
+    mongoStore: MongoStore,
+    userSessions: UserSessions,
+    toolFactory: ToolFactory,
+    constants: Constants,
+    cc: ControllerComponents
+)(implicit ec: ExecutionContext,
+  @NamedCache("resultCache") val resultCache: AsyncCacheApi,
+  @NamedCache("userCache") val userCache: SyncCacheApi,
+  val locationProvider: LocationProvider)
     extends AbstractController(cc)
     with I18nSupport
     with ReactiveMongoComponents {
@@ -57,7 +62,26 @@ final class Service @Inject()(val reactiveMongoApi: ReactiveMongoApi,
   def getResult(jobID: String, tool: String, resultpanel: String): Action[AnyContent] = Action.async {
     implicit request =>
       val innerMap = toolFactory.getResultMap(tool)
-      innerMap(resultpanel)(jobID).map(html => Ok(JsString(html.body)))
+      innerMap(resultpanel)(jobID).map { html =>
+        if (html == views.html.errors.resultnotfound()) {
+          mongoStore
+            .findJob(BSONDocument(Job.JOBID -> jobID))
+            .map(_.map { job =>
+              mongoStore
+                .findJobs(BSONDocument(Job.HASH -> job.hash))
+                .map(_.filter(x => (Prepared :: Pending :: Nil).contains(x.status)).map { job =>
+                  Logger.info(s"delete all prepared jobs with same hash value as $jobID from database and cache")
+                  // so that users don't see them in their joblist and try to reload them
+                  mongoStore.removeJob(BSONDocument(Job.JOBID -> job.jobID))
+                  resultCache.remove(job.jobID)
+                })
+            })
+          mongoStore.removeJob(BSONDocument(Job.JOBID -> jobID))
+          resultCache.remove(jobID)
+          Logger.info(s"deleted $jobID from the database and cache because the job result could not be loaded.")
+        }
+        Ok(JsString(html.body))
+      }
   }
 
   def getJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
