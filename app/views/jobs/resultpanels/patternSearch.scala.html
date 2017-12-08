@@ -1,12 +1,11 @@
 @import play.api.libs.json.JsObject
 @import play.api.libs.json.JsValue
-@import play.api.mvc.RequestHeader
 @import play.api.libs.json.JsDefined
 @import de.proteinevolution.models.results.Common
 @import controllers.routes
 @import play.twirl.api.Html
 @import java.lang.String
-@(toolName: String, jobID: String, jsValue: JsValue, tool: de.proteinevolution.models.Tool)(implicit request: RequestHeader)
+@(jobID: String, jsValue: JsValue, tool: de.proteinevolution.models.Tool)()
 
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 @views.html.forwardmodals.simpler(tool, tool.toolNameShort)
@@ -42,7 +41,7 @@
                     <tr>
                         <td class="sequenceAlignment">
                         @{ hit \ "seq" match {
-                                case JsDefined(jsVal) => Html(Common.insertMatch((hit \ "seq").get.as[String], (jsValue \ jobID \ "len").get.as[Int],(hit \ "pats").get.as[List[Int]]))
+                                case JsDefined(_) => Html(Common.insertMatch((hit \ "seq").get.as[String], (jsValue \ jobID \ "len").get.as[Int],(hit \ "pats").get.as[List[Int]]))
                                 case _ => Html("")
                             }
                         }

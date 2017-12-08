@@ -3,7 +3,6 @@ package controllers
 import java.io.{ FileInputStream, ObjectInputStream }
 import javax.inject.{ Inject, Singleton }
 import akka.util.Timeout
-import models.UserSessions
 import de.proteinevolution.models.database.jobs.{ Done, Job, Pending, Prepared }
 import play.api.Logger
 import play.api.cache._
@@ -28,7 +27,6 @@ import scala.concurrent.duration._
 final class Service @Inject()(
     val reactiveMongoApi: ReactiveMongoApi,
     mongoStore: MongoStore,
-    userSessions: UserSessions,
     toolFactory: ToolFactory,
     constants: Constants,
     cc: ControllerComponents

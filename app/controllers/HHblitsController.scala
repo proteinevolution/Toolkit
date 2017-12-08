@@ -314,7 +314,7 @@ class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
           BadRequest
         } else {
           val hits =
-            result.HSPS.slice(start, end).map { views.html.jobs.resultpanels.hhblits.hit(jobID, _, wrapped) }
+            result.HSPS.slice(start, end).map { views.html.jobs.resultpanels.hhblits.hit(_, wrapped) }
           Ok(hits.mkString)
         }
     }

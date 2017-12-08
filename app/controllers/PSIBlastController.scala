@@ -274,7 +274,7 @@ class PSIBlastController @Inject()(resultFiles: ResultFileAccessor,
           BadRequest
         } else {
           val hits =
-            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.psiblast.hit(jobID, _, result.db, wrapped))
+            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.psiblast.hit(_, result.db, wrapped))
           Ok(hits.mkString)
         }
     }

@@ -1,8 +1,7 @@
-@import play.api.mvc.RequestHeader
 @import play.twirl.api.Html
 @import controllers.routes
 @import java.lang.String
-@(accession : String, webJarsUtil: org.webjars.play.WebJarsUtil)(implicit request: RequestHeader)
+@(accession : String, webJarsUtil: org.webjars.play.WebJarsUtil)()
     <!-- Blast Visualizaton JS -->
 <script src="@routes.Assets.versioned("javascripts/blast-visualization.js")"></script>
     <!-- NGL 3D Viewer -->
@@ -23,7 +22,6 @@
     font-size: 1.9375rem;
 }
 </style>
-
 
 <script>
 var db = identifyDatabase('@accession');
@@ -51,7 +49,6 @@ $(document).ready(function(){
 });
 
 </script>
-
 
 <div id="accessionStructure"></div>
 <div id="viewport" style="width:700px; height: 500px;"></div>

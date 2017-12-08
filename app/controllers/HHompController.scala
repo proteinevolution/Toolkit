@@ -109,7 +109,7 @@ class HHompController @Inject()(resultFiles: ResultFileAccessor,
           BadRequest
         } else {
           val hits =
-            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhomp.hit(jobID, _, isColor, wrapped))
+            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhomp.hit(_, isColor, wrapped))
           Ok(hits.mkString)
         }
     }
