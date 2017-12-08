@@ -34,8 +34,10 @@ Exceptions (free)
 
 Files | Author(s) | License
 --- | --- | ---
-public/fonts/mfglabs*, public/styles/mfglabs* | [MFGLabs](https://github.com/MfgLabs/mfglabs-iconset) | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/deed.fr)
-
+public/font/mfglabs*, public/font/gibson*, public/styles/mfglabs* | [MFGLabs](https://github.com/MfgLabs/mfglabs-iconset) | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/deed.fr)
+ | [MFGLabs](https://github.com/MfgLabs/mfglabs-iconset) | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/deed.fr)
+public/javascripts/title_notifier.js | [Rafael Oshiro](https://github.com/roshiro/TitleNotifier.js) | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/deed.fr)
+ | [MFGLabs](https://github.com/MfgLabs/mfglabs-iconset) | [GPLv2+](https://www.gnu.org/licenses/gpl-2.0.txt)
 
 Exceptions (non-free)
 ---------------------
@@ -51,7 +53,7 @@ Files | Author(s) | License
 External services
 -----------------
 
-The MPI Toolkit as deployed on https://??? also uses these external services:
+The MPI Toolkit as deployed on https://toolkit.tuebingen.mpg.de also uses these external services:
 
 * [cdnjs](https://cdnjs.com/) as the primary source for widely used JavaScript libraries
 * [Google Fonts](https://fonts.google.com/)
