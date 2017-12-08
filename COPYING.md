@@ -44,6 +44,10 @@ public/javascripts/vendor/snap.svg-min.js | [Adobe Systems Incorporated](https:/
 public/javascripts/vendor/floatingscroll.min.js | [Amphiluke](https://github.com/Amphiluke/floating-scroll) |  [MIT](https://github.com/gosquared/flags/blob/master/LICENSE.txt)
 public/styles/hamburgers.min.css | [Jonathan Suh](https://github.com/jonsuh/hamburgers) |  [MIT](https://github.com/gosquared/flags/blob/master/LICENSE.txt)
 public/javascripts/vendor/jquery.nice-select.js | [Hernán Sartorio](https://github.com/hernansartorio/jquery-nice-select) |  ???
+public/javascripts/vendor/reformat | Seung-Zin Nam and [David Rau](https://github.com/davidmrau) |  [MIT](https://github.com/gosquared/flags/blob/master/LICENSE.txt)
+public/javascripts/vendor/jquery.visible.min.js | [customd](https://github.com/customd/jquery-visible) |  [MIT](https://github.com/gosquared/flags/blob/master/LICENSE.txt)
+public/javascripts/vendor/newick.js | [Jason Davies](https://github.com/jasondavies/newick.js) | ???
+
 
 Exceptions (non-free)
 ---------------------
