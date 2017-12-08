@@ -11,7 +11,7 @@ import scala.collection.immutable.ListMap
 
 /**
   Provides methods to read Generative Params from a file
-  */
+ */
 @Singleton
 class GenerativeParamFileParser @Inject()(env: Env) {
 
@@ -34,6 +34,7 @@ class GenerativeParamFileParser @Inject()(env: Env) {
         case (this.genKeyword, ".sh")   => new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
         case (this.genKeyword, ".py")   => new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
         case (this.genKeyword, ".prop") => new ListGenParamFile(spt(0), paramPath).withEnvironment(env)
+        case _                          => throw new IllegalStateException("no valid paramfile extension found. Must be .sh, .py, or .prop")
       }
     }
   }
