@@ -1,6 +1,5 @@
 @import de.proteinevolution.models.results.HHrepID
-@import play.api.mvc.RequestHeader
-@(jobID: String, filePath: String, resultName: String,  tool : de.proteinevolution.models.Tool)(implicit request: RequestHeader)
+@(jobID: String, filePath: String, resultName: String,  tool : de.proteinevolution.models.Tool)()
 @views.html.forwardmodals.simpler(tool, resultName)
 @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort + "_hhrepid")
 

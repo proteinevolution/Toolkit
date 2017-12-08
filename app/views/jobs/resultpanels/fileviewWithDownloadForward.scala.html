@@ -1,7 +1,6 @@
-@import play.api.mvc.RequestHeader
 @import controllers.routes
 @import java.lang.String
-@(filename: String, filePath: String, jobID: String, resultname: String, tool: de.proteinevolution.models.Tool)(implicit request: RequestHeader)
+@(filename: String, jobID: String, resultname: String, tool: de.proteinevolution.models.Tool)()
 
     <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
     @views.html.forwardmodals.simpler(tool, tool.toolNameShort)
