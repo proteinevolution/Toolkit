@@ -195,7 +195,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
       }
   }
 
-  private def deleteOldJobs: Unit = {
+  private def deleteOldJobs(): Unit = {
     Logger.info("[Job Deletion] finding old jobs...")
     // grab the current time
     val now: ZonedDateTime = ZonedDateTime.now

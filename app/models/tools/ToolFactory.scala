@@ -11,7 +11,7 @@ import de.proteinevolution.models.param.{ Param, ParamAccess }
 import de.proteinevolution.models.results.ResultViews
 import play.api.libs.json.JsArray
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.immutable.ListMap
 import scala.concurrent.{ Future, _ }
 
@@ -31,7 +31,7 @@ final class ToolFactory @Inject()(
 
   // reads the tool specifications from tools.conf and generates tool objects accordingly
   lazy val values: Map[String, Tool] = {
-    ConfigFactory.load.getConfig("Tools").root.map {
+    ConfigFactory.load.getConfig("Tools").root.asScala.map {
       case (_, configObject: ConfigObject) =>
         val config = configObject.toConfig
         config.getString("name") -> toTool(
@@ -39,11 +39,11 @@ final class ToolFactory @Inject()(
           config.getString("longname"),
           config.getString("code"),
           config.getString("section").toLowerCase,
-          config.getStringList("parameter").map { param =>
+          config.getStringList("parameter").asScala.map { param =>
             paramAccess.getParam(param, config.getString("input_placeholder"))
           },
-          config.getStringList("forwarding.alignment"),
-          config.getStringList("forwarding.multi_seq")
+          config.getStringList("forwarding.alignment").asScala,
+          config.getStringList("forwarding.multi_seq").asScala
         )
       case (_, _) => throw new IllegalStateException("tool does not exist")
     }
