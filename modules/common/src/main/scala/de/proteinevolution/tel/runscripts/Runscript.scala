@@ -7,6 +7,7 @@ import de.proteinevolution.tel.execution.ExecutionContext
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 
 import scala.collection.mutable
+import scala.util.matching.Regex
 
 /**
  * Represents one particular runscript, specified by the path of the corresponding file.
@@ -40,32 +41,34 @@ class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript] {
 
   private case class Replacer(arguments: Seq[(String, ValidArgument)]) {
     private var counter = -1
+    private val logger = org.slf4j.LoggerFactory.getLogger(this.getClass)
 
-    def apply(): String = {
+    def apply(m: Regex.Match): String = {
+      m.groupNames.foreach(logger.debug) // just use m because of https://stackoverflow.com/questions/43964571/scala-2-12-2-emits-a-ton-of-useless-warning-parameter-value-in-method
       counter += 1
       arguments(counter)._2.representation.represent
     }
   }
 
-  private val tranlationSteps = mutable.Queue[String => String](_ => files.map(_.contentAsString).mkString("\n"))
+  private val translationSteps = mutable.Queue[String => String](_ => files.map(_.contentAsString).mkString("\n"))
 
   // Translates A sequence of Arguments with the parameter names into a runnable runscript instance
   def apply(arguments: Seq[(String, ValidArgument)]): String = {
 
     // Dequeue all transformers
-    var init = tranlationSteps.dequeue()("")
-    while (tranlationSteps.nonEmpty) {
+    var init = translationSteps.dequeue()("")
+    while (translationSteps.nonEmpty) {
 
-      init = tranlationSteps.dequeue()(init)
+      init = translationSteps.dequeue()(init)
     }
 
     val replacer = Replacer(arguments)
-    parameterString.replaceAllIn(init, replacer.apply())
+    parameterString.replaceAllIn(init, replacer.apply _)
   }
 
   override def withEnvironment(env: Env): Runscript = {
 
-    tranlationSteps.enqueue { s =>
+    translationSteps.enqueue { s =>
       envString.replaceAllIn(s, m => env.get(m.group("constant")))
     }
     this
