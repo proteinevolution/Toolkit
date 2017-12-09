@@ -23,7 +23,7 @@ class PSIBlast @Inject()(general: General) {
         .as[List[JsObject]]
     val num_hits = hits.length
     val hsplist = hits.map { hit =>
-      parseHSP(hit, db, evalue)
+      parseHSP(hit, db)
     }
     // take the smallest value above the threshold, right?
     val sorted = hits
@@ -44,7 +44,7 @@ class PSIBlast @Inject()(general: General) {
     PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, query, upperBound, TMPRED, COILPRED)
   }
 
-  def parseHSP(hit: JsObject, db: String, eval_threshold: Double): PSIBlastHSP = {
+  def parseHSP(hit: JsObject, db: String): PSIBlastHSP = {
     val descriptionBase = hit \ "description" \ 0
     val hsps            = hit \ "hsps" \ 0
     val evalue          = (hsps \ "evalue").getOrElse(Json.toJson(-1)).as[Double]

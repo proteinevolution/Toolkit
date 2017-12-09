@@ -14,11 +14,11 @@ object HHrepID {
     val source    = Source.fromFile(filePath)
     val data = try {
       source.getLines().toList.map {
-        case wholeMatch @ headerLine(m1, m2, m3) =>
+        case wholeMatch @ headerLine(_, m, _) =>
           "<h5>" + wholeMatch + "</h5>" + "<span class='hhrepImage'>" +
-          s"<img hspace='14' src='$imagePath$m2.png'>" + "</div><br />"
-        case wholeMatch @ seqLine(m1, m2) =>
-          "<pre class='sequence hhrepidview'>" + wholeMatch.replace(m2, Common.colorRegexReplacer(m2)) + "</pre>"
+          s"<img hspace='14' src='$imagePath$m.png'>" + "</div><br />"
+        case wholeMatch @ seqLine(_, m) =>
+          "<pre class='sequence hhrepidview'>" + wholeMatch.replace(m, Common.colorRegexReplacer(m)) + "</pre>"
         case "" => "<br />"
         case m  => "<pre class='sequence hhrepidview'>" + m + "</pre>"
       }
@@ -26,8 +26,7 @@ object HHrepID {
     Html(data.mkString(""))
   }
 
-  def existsResult(jobID: String, filePath: String): Boolean = {
-
+  def existsResult(filePath: String): Boolean = {
     Files.exists(Paths.get(filePath))
   }
 

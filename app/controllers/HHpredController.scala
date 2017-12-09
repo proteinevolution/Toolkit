@@ -238,7 +238,7 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
           Json
             .toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))
             .as[JsObject]
-            .deepMerge(Json.obj("aaData" -> hits.map(_.toDataTable(result.db))))
+            .deepMerge(Json.obj("aaData" -> hits.map(_.toDataTable)))
         )
     }
   }
