@@ -3,7 +3,7 @@
 @views.html.forwardmodals.simpler(tool, resultName)
 @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort + "_hhrepid")
 
-@if(HHrepID.existsResult(jobID, filePath)) {
+@if(HHrepID.existsResult(filePath)) {
     <div class="colorOptsAlignment">
         <a id="forwardButtonHHsuite" data-open="forwardModal_@{
             tool.toolNameShort

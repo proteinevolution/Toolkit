@@ -43,13 +43,13 @@ class GenerativeParamFileParser @Inject()(env: Env) {
 /*
  * Parameters obtained from files
  */
-abstract class GenerativeParamFile(name: String, path: String) extends GenerativeParam(name) {
+abstract class GenerativeParamFile(name: String) extends GenerativeParam(name) {
 
   /* Load the parameters from the file */
   def load(): Unit
 }
 
-class ExecGenParamFile(name: String, path: String) extends GenerativeParamFile(name, path) {
+class ExecGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String]) extends GenerativeParamFile(name) {
 
   private var env: Option[Env] = None
   import scala.sys.process.Process
@@ -60,8 +60,6 @@ class ExecGenParamFile(name: String, path: String) extends GenerativeParamFile(n
     this
   }
 
-  // Remembers parameter values that are allowed to be used
-  private var allowed: Set[String]                    = _
   private var clearTextNames: ListMap[String, String] = _
 
   def load(): Unit = {
@@ -86,7 +84,7 @@ class ExecGenParamFile(name: String, path: String) extends GenerativeParamFile(n
       case None => Process(path).!!.split('\n')
     }
 
-    this.allowed = lines.map { param =>
+    allowed = lines.map { param =>
       val spt = param.split("\\s+")
       clearTextNames = clearTextNames + (spt(0) -> spt(1))
       spt(0)
@@ -95,23 +93,21 @@ class ExecGenParamFile(name: String, path: String) extends GenerativeParamFile(n
   def generate: ListMap[String, String] = this.clearTextNames
 }
 
-class ListGenParamFile(name: String, path: String) extends GenerativeParamFile(name, path) {
+class ListGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String]) extends GenerativeParamFile(name) {
 
   private val f = path.toFile
 
   override def withEnvironment(env: Env): ListGenParamFile = this
 
   // Load file upon instantiation
-  this.load()
+  load()
 
-  // Remembers parameter values that are allowed to be used
-  private var allowed: Set[String]                    = _
   private var clearTextNames: ListMap[String, String] = _
 
   def load(): Unit = {
     clearTextNames = ListMap.empty
 
-    this.allowed = f.lineIterator.map { line =>
+    allowed = f.lineIterator.map { line =>
       Logger.info("Reading line " + line)
       val spt = line.split("\\s+")
       clearTextNames = clearTextNames + (spt(0) -> spt(1))

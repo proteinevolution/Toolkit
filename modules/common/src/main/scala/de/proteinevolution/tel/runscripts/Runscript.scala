@@ -7,7 +7,6 @@ import de.proteinevolution.tel.execution.ExecutionContext
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 
 import scala.collection.mutable
-import scala.util.matching.Regex
 
 /**
  * Represents one particular runscript, specified by the path of the corresponding file.
@@ -42,7 +41,7 @@ class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript] {
   private case class Replacer(arguments: Seq[(String, ValidArgument)]) {
     private var counter = -1
 
-    def apply(m: Regex.Match): String = {
+    def apply(): String = {
       counter += 1
       arguments(counter)._2.representation.represent
     }
@@ -61,7 +60,7 @@ class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript] {
     }
 
     val replacer = Replacer(arguments)
-    parameterString.replaceAllIn(init, replacer.apply _)
+    parameterString.replaceAllIn(init, replacer.apply())
   }
 
   override def withEnvironment(env: Env): Runscript = {
