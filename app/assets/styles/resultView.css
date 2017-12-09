@@ -667,6 +667,13 @@ label.forwardLabel input[type=radio] {
     font-size: 0.75em;
 }
 
+#loadingHits, #loadingHitsClu {
+    display: none;
+    font-size: 1.3em;
+    padding-left: 23em !important;
+    padding-bottom: 2em !important;
+}
+
 .result_inputs {
     width: 7em;
     height: 2em;

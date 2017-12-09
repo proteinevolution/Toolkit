@@ -4,7 +4,7 @@ import java.io.File
 import javax.inject.Singleton
 
 import com.typesafe.config.ConfigFactory
-
+import scala.language.postfixOps
 import scala.concurrent.duration._
 import scala.util.matching.Regex
 
@@ -103,10 +103,4 @@ class Constants {
   /** The combined pattern with the version as an option */
   val jobIDVersionOptionPattern: Regex = (jobIDNoVersionPattern.regex + jobVersionPattern.regex + "?").r
 
-}
-
-trait ExitCodes {
-
-  val SUCCESS    = 0
-  val TERMINATED = 143
 }

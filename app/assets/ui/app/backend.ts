@@ -125,21 +125,6 @@ window.Backend = {
                 //console.log(tableRows);
                 return [m("table", tableRows),
                     m("button", { "class" : "button small", onclick : this.sendEdits(ctrl)}, "Save edited Users")];
-
-            case "cms" :
-                return m("table", [
-                    m("tr", {"class" :"header"},[
-                        m("th", "Title"),
-                        m("th", "Date created")
-                    ]),
-                    ctrl.data().map(function (item : any) {
-                        return m("tr", [
-                            m("th", item.title),
-                            m("th", item.dateCreated)
-                        ])
-                    })
-                ]);
-
             case "statistics" :
                 return [m("#statchart", {config : this.plotter(ctrl)}),
                     m("table", [
@@ -208,7 +193,6 @@ window.Backend = {
                     m("ul",[
                         m("li", m("a", {href:"#/backend/index"}, "Index")),
                         m("li", m("a", {href:"#/backend/statistics"}, "Statistics")),
-                        m("li", m("a", {href:"#/backend/cms"}, "CMS")),
                         m("li", m("a", {href:"#/backend/users"}, "Users"))
                     ])
                 ]

@@ -3,102 +3,36 @@ package de.proteinevolution.models.database.results
 import javax.inject.Inject
 import javax.inject.Singleton
 
-import de.proteinevolution.models.database.results.General.DTParam
-
-import scala.concurrent.ExecutionContext.Implicits.global
+import de.proteinevolution.models.database.results.Alignment.AlignmentItem
+import de.proteinevolution.models.database.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.models.database.results.Hmmer.{ HmmerHSP, HmmerResult }
 import de.proteinevolution.models.results.Common
 import play.api.libs.json._
-
-case class HmmerHSP(evalue: Double,
-                    full_evalue: Double,
-                    num: Int,
-                    bitscore: Double,
-                    hit_start: Int,
-                    hit_end: Int,
-                    hit_seq: String,
-                    query_seq: String,
-                    query_start: Int,
-                    query_end: Int,
-                    query_id: String,
-                    hit_len: Int,
-                    accession: String,
-                    midline: String,
-                    description: String,
-                    domain_obs_num: Int) {
-
-  def toDataTable(db: String): JsValue =
-    Json.toJson(
-      Map(
-        "0" -> Json.toJson(Common.getCheckbox(num)),
-        "1" -> Json.toJson(Common.getSingleLinkDB(db, accession).toString),
-        "2" -> Json.toJson(Common.addBreak(description.slice(0, 84))),
-        "3" -> Json.toJson(full_evalue),
-        "4" -> Json.toJson(evalue),
-        "5" -> Json.toJson(bitscore),
-        "6" -> Json.toJson(hit_len)
-      )
-    )
-}
-
-case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
-
-case class HmmerResult(HSPS: List[HmmerHSP],
-                       num_hits: Int,
-                       alignment: List[AlignmentItem],
-                       query: SingleSeq,
-                       db: String,
-                       TMPRED: String,
-                       COILPRED: String) {
-  def hitsOrderBy(params: DTParam): List[HmmerHSP] = {
-    (params.iSortCol, params.sSortDir) match {
-      case (1, "asc")  => HSPS.sortBy(_.accession)
-      case (1, "desc") => HSPS.sortWith(_.accession > _.accession)
-      case (2, "asc")  => HSPS.sortBy(_.description)
-      case (2, "desc") => HSPS.sortWith(_.description > _.description)
-      case (3, "asc")  => HSPS.sortBy(_.full_evalue)
-      case (3, "desc") => HSPS.sortWith(_.full_evalue > _.full_evalue)
-      case (4, "asc")  => HSPS.sortBy(_.evalue)
-      case (4, "desc") => HSPS.sortWith(_.evalue > _.evalue)
-      case (5, "asc")  => HSPS.sortBy(_.bitscore)
-      case (5, "desc") => HSPS.sortWith(_.bitscore > _.bitscore)
-      case (6, "asc")  => HSPS.sortBy(_.hit_len)
-      case (6, "desc") => HSPS.sortWith(_.hit_len > _.hit_len)
-      case (_, "asc")  => HSPS.sortBy(_.num)
-      case (_, "desc") => HSPS.sortWith(_.num > _.num)
-      case (_, _)      => HSPS.sortBy(_.num)
-    }
-  }
-}
 
 @Singleton
 class Hmmer @Inject()(general: General, aln: Alignment) {
 
-  def parseResult(jsValue: JsValue): HmmerResult = jsValue match {
-    case obj: JsObject =>
-      try {
-        val jobID = (obj \ "jobID").as[String]
-        val alignment = (obj \ "alignment").as[List[JsArray]].zipWithIndex.map {
-          case (x, index) =>
-            aln.parseAlignmentItem(x, index)
-        }
-        val db       = (obj \ jobID \ "db").as[String]
-        val query    = general.parseSingleSeq((obj \ "query").as[JsArray])
-        val hsps     = (obj \ jobID \ "hsps").as[List[JsObject]]
-        val num_hits = hsps.length
-
-        val hsplist = hsps.map(parseHSP(_))
-
-        val TMPRED = (obj \ jobID \ "TMPRED").asOpt[String] match {
-          case Some(data) => data
-          case None       => "0"
-        }
-        val COILPRED = (obj \ jobID \ "COILPRED").asOpt[String] match {
-          case Some(data) => data
-          case None       => "1"
-        }
-
-        HmmerResult(hsplist, num_hits, alignment, query, db, TMPRED, COILPRED)
-      }
+  def parseResult(jsValue: JsValue): HmmerResult = {
+    val obj   = jsValue.as[JsObject]
+    val jobID = (obj \ "jobID").as[String]
+    val alignment = (obj \ "alignment").as[List[JsArray]].zipWithIndex.map {
+      case (x, index) =>
+        aln.parseWithIndex(x, index)
+    }
+    val db       = (obj \ jobID \ "db").as[String]
+    val query    = general.parseSingleSeq((obj \ "query").as[JsArray])
+    val hsps     = (obj \ jobID \ "hsps").as[List[JsObject]]
+    val num_hits = hsps.length
+    val hsplist  = hsps.map(parseHSP)
+    val TMPRED = (obj \ jobID \ "TMPRED").asOpt[String] match {
+      case Some(data) => data
+      case None       => "0"
+    }
+    val COILPRED = (obj \ jobID \ "COILPRED").asOpt[String] match {
+      case Some(data) => data
+      case None       => "1"
+    }
+    HmmerResult(hsplist, num_hits, alignment, query, db, TMPRED, COILPRED)
   }
 
   def parseHSP(hsp: JsObject): HmmerHSP = {
@@ -136,5 +70,68 @@ class Hmmer @Inject()(general: General, aln: Alignment) {
       description,
       domain_obs_num
     )
+  }
+}
+
+object Hmmer {
+  case class HmmerHSP(evalue: Double,
+                      full_evalue: Double,
+                      num: Int,
+                      bitscore: Double,
+                      hit_start: Int,
+                      hit_end: Int,
+                      hit_seq: String,
+                      query_seq: String,
+                      query_start: Int,
+                      query_end: Int,
+                      query_id: String,
+                      hit_len: Int,
+                      accession: String,
+                      midline: String,
+                      description: String,
+                      domain_obs_num: Int) {
+
+    def toDataTable(db: String): JsValue =
+      Json.toJson(
+        Map(
+          "0" -> Json.toJson(Common.getCheckbox(num)),
+          "1" -> Json.toJson(Common.getSingleLinkDB(db, accession).toString),
+          "2" -> Json.toJson(Common.addBreak(description.slice(0, 84))),
+          "3" -> Json.toJson(full_evalue),
+          "4" -> Json.toJson(evalue),
+          "5" -> Json.toJson(bitscore),
+          "6" -> Json.toJson(hit_len)
+        )
+      )
+  }
+
+  case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
+
+  case class HmmerResult(HSPS: List[HmmerHSP],
+                         num_hits: Int,
+                         alignment: List[AlignmentItem],
+                         query: SingleSeq,
+                         db: String,
+                         TMPRED: String,
+                         COILPRED: String) {
+    def hitsOrderBy(params: DTParam): List[HmmerHSP] = {
+      (params.iSortCol, params.sSortDir) match {
+        case (1, "asc")  => HSPS.sortBy(_.accession)
+        case (1, "desc") => HSPS.sortWith(_.accession > _.accession)
+        case (2, "asc")  => HSPS.sortBy(_.description)
+        case (2, "desc") => HSPS.sortWith(_.description > _.description)
+        case (3, "asc")  => HSPS.sortBy(_.full_evalue)
+        case (3, "desc") => HSPS.sortWith(_.full_evalue > _.full_evalue)
+        case (4, "asc")  => HSPS.sortBy(_.evalue)
+        case (4, "desc") => HSPS.sortWith(_.evalue > _.evalue)
+        case (5, "asc")  => HSPS.sortBy(_.bitscore)
+        case (5, "desc") => HSPS.sortWith(_.bitscore > _.bitscore)
+        case (6, "asc")  => HSPS.sortBy(_.hit_len)
+        case (6, "desc") => HSPS.sortWith(_.hit_len > _.hit_len)
+        case (_, "asc")  => HSPS.sortBy(_.num)
+        case (_, "desc") => HSPS.sortWith(_.num > _.num)
+        case (_, _)      => HSPS.sortBy(_.num)
+      }
+    }
   }
 }

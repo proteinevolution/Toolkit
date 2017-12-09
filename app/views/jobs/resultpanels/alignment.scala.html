@@ -1,39 +1,27 @@
 @import play.api.mvc.RequestHeader
-
-@import play.api.libs.json.JsObject
-@import play.api.libs.json.JsValue
-@import play.api.libs.json.JsArray
-@import play.api.Logger
-@import play.api.libs.json.JsUndefined
-@import play.api.libs.json.JsDefined
-@import de.proteinevolution.models.results.Common
-@import de.proteinevolution.tel.TEL
-@import play.api.libs.json.JsLookupResult
-@import de.proteinevolution.models.database.results.AlignmentResult
-@(jobID: String, alignment: AlignmentResult, resultName: String,  tool : models.tools.Tool)(implicit request: RequestHeader)
-
-<link href="@routes.Assets.versioned("styles/resultView.css")" rel="stylesheet">
-@import java.lang.String; var fileURL="/files/" + jobID + "/" + "alignment.fas";
-
+@import de.proteinevolution.models.database.results.Alignment.AlignmentResult
+@import controllers.routes
+@import java.lang.String
+@import play.twirl.api.TwirlFeatureImports.defining
+@(jobID: String, alignment: AlignmentResult, resultName: String,  tool: de.proteinevolution.models.Tool)(implicit request: RequestHeader)
+<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
 
 @views.html.forwardmodals.simpler(tool, resultName)
-
-
-
 
 <div class="colorOptsAlignment">
     <a onclick="@{resultName}_selectAllAln()" class="selectAllSeq"><span class="@{resultName}_selectAllSeqSpan">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download MSA</span></a>
-    <a type="button" href="@fileURL" target="_blank" rel="noopener"><span>Export MSA</span></a>
+    @defining("/files/" + jobID + "/" + "alignment.fas") { fileURL: String =>
+        <a type="button" href="@fileURL" target="_blank" rel="noopener"><span>Export MSA</span></a>
+    }
     <hr id="line-element" colspan="4" class="horizontal-line">
 </div>
 <div id="alignmentResultView">
         Number of sequences: <b>@alignment.alignment.length</b>
         <br />
         <br />
-<form id="alignmentResult">
     <table class="unstriped">
         <tbody class="alignmentTBody">
         </tbody>
@@ -44,24 +32,21 @@
             <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
         </tr>
     </table>
-</form>
 </div>
 
 <script>
 
         var fileUrl = "/files/@jobID/alignment.fas";
-        var downloadFilename = "@{tool.toolNameShort}_@{resultName}_@{jobID}.fasta";
+        var downloadFilename = "@{tool.toolNameShort}_@{resultName}_@{jobID}" + ".fasta";
         var selectAllBoolAln = false;
         var shownHits = 20;
         var showMore = 100;
         var loading = false;
         var numHits = @alignment.alignment.length;
-         var resultName = '@resultName';
+        var resultName = '@resultName';
         var jobID = '@jobID';
         var checkboxes = [];
         var checkbox = "checkbox";
-        var colorAAs = false;
-
 
         window["@{resultName}_forward"] = function(selectedTool){
             var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
@@ -81,12 +66,9 @@
             });
         };
 
-
         window["@{resultName}_download"] = function(){
             // get result json
-
             $.LoadingOverlay("show");
-
             $.ajax({
                 type: 'GET',
                 url: fileUrl
@@ -94,7 +76,6 @@
                 download(downloadFilename, data.toString());
             });
         };
-
 
         function getHits(start, end){
             if(start <= numHits && end <= numHits && !loading){
@@ -143,9 +124,6 @@
             }
         };
 
-
-
-
         $(document).ready(function () {
 
             // trigger lazyload for loading alignment
@@ -165,11 +143,8 @@
                                 $('#loadHitsAln').hide();
                             }
                             shownHits = end;
-
-
                         }
                     }
-                    $("#alignmentResult").floatingScroll('init');
                 });
                 $('input:checkbox').click(function (e) {
                     var currentVal = $(this).val();

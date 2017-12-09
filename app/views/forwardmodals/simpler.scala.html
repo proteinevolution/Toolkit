@@ -1,4 +1,5 @@
-@(tool: models.tools.Tool, viewName: String)
+@import java.lang.String
+@(tool: de.proteinevolution.models.Tool, viewName: String)
 
 
 <div class="reveal forwardModal" id="forwardModal_@viewName" data-reveal>
@@ -9,14 +10,14 @@
         <div class="select_forward large-4 columns">
             <select class="selectedHits_@viewName" id="forwardSelect_@viewName">
                 <option value="">Select a tool</option>
-                <div>
+
                     @for(forwardTool <- {tool.forwardAlignment}) {
                         <option class="alignmentOptions_@viewName"value="@forwardTool">@forwardTool</option>
                     }
                     @for(forwardTool <- {tool.forwardMultiSeq}) {
                         <option class="multiSeqOptions_@viewName" value="@forwardTool">@forwardTool</option>
                     }
-                </div>
+
             </select>
         </div>
         <div class="large-5 columns">
@@ -37,13 +38,13 @@
 
         window["@{viewName}_forward_"] = function(){
             var selectedTool = $('#forwardSelect_@viewName').val();
-            if(selectedTool == ""){
-                alert("Please select a tool!")
+            if(selectedTool === ""){
+                alert("Please select a tool!");
                 $('#forwardModal_@{viewName}').foundation('close');
                 return;
             }
             @{viewName}_forward(selectedTool);
-            if (selectedTool != "") {
+            if (selectedTool !== "") {
                 $('#forwardModal_@{viewName}').foundation('close');
             }
         };
@@ -52,7 +53,7 @@
         $('.multiSeqOptions_@viewName').hide();
 
         $("input[name='radio2']").change(function (e) {
-            if ($(this).attr('id') == 'fullLength_@viewName') {
+            if ($(this).attr('id') === 'fullLength_@viewName') {
                 $('#forwardWarning').css({display: 'inherit'});
                 $('.alignmentOptions_@viewName').hide();
                 $('.multiSeqOptions_@viewName').show();

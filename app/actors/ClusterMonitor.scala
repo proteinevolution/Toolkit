@@ -10,26 +10,24 @@ import controllers.Settings
 import de.proteinevolution.models.database.statistics.ClusterLoadEvent
 import de.proteinevolution.models.sge.Cluster
 import de.proteinevolution.db.MongoStore
-import de.proteinevolution.tel.TEL
 import java.time.ZonedDateTime
 
 import de.proteinevolution.models.Constants
 import de.proteinevolution.parsers.Ops.QStat
-import play.api.Logger
 import reactivemongo.bson.BSONObjectID
 import services.JobActorAccess
 
 import sys.process._
 import scala.collection.immutable.HashSet
+import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 final class ClusterMonitor @Inject()(cluster: Cluster,
                                      mongoStore: MongoStore,
                                      jobActorAccess: JobActorAccess,
                                      val settings: Settings,
-                                     constants: Constants)
+                                     constants: Constants)(implicit ec: ExecutionContext)
     extends Actor
     with ActorLogging {
 
@@ -50,7 +48,9 @@ final class ClusterMonitor @Inject()(cluster: Cluster,
     if (settings.clusterMode == "LOCAL") context.stop(self)
   }
 
-  override def postStop(): Unit = Tick.cancel()
+  override def postStop(): Unit = {
+    val _ = Tick.cancel()
+  }
 
   override def receive = LoggingReceive {
 
@@ -72,23 +72,6 @@ final class ClusterMonitor @Inject()(cluster: Cluster,
 
       jobActorAccess.broadcast(PolledJobs(qStat))
 
-      /**
-        Logger.info(
-          s"[ClusterMonitor] Jobs currently listed in the cluster:\n${qStat.qStatJobs.map(_.sgeID).mkString(", ")}"
-        )
-        */
-
-      /**
-       * dynamically adjust the cluster resources dependent on the current cluster load
-       */
-      load match {
-        // TODO check if there is a way to do this correctly (like setting a tool minimum and then adding cores / memory)
-        // reducing the number of cores and memory is not a good idea! Some jobs need a minimum of these to run
-        case x if x > 1.2            => TEL.memFactor = 1; TEL.threadsFactor = 1
-        case x if x < 0.5 && x > 0.1 => TEL.memFactor = 1; TEL.threadsFactor = 1
-        case x if x < 0.1            => TEL.memFactor = 1; TEL.threadsFactor = 1
-        case _                       => TEL.memFactor = 1; TEL.threadsFactor = 1
-      }
       // Update the record
       record = record.::(load)
       // send load message
@@ -96,17 +79,15 @@ final class ClusterMonitor @Inject()(cluster: Cluster,
       // if there are enough records, group them in and stick them in the DB collection
       if (record.length >= constants.loadRecordElements) self ! Recording
 
-    /**
-     * Writes the current load to the database and clears the record.
-     */
+    // Writes the current load to the database and clears the record.
     case Recording =>
       val loadAverage      = record.sum[Double] / record.length
       val currentTimestamp = ZonedDateTime.now
-      mongoStore
+      val _ = mongoStore
         .upsertLoadStatistic(ClusterLoadEvent(BSONObjectID.generate(), record, loadAverage, Some(currentTimestamp)))
-        .map { clusterLoadEvent =>
-          //Logger.info("Average: " + loadAverage + " - " + record.mkString(", "))
+        .map { _ =>
           record = List.empty[Double]
+          ()
         }
   }
 }
@@ -114,18 +95,12 @@ final class ClusterMonitor @Inject()(cluster: Cluster,
 object ClusterMonitor {
 
   case class Disconnect(actorRef: ActorRef)
-
   case class Connect(actorRef: ActorRef)
-
   case object FetchLatest
-
   case object Recording
-
   case object Multicast
-
   case class UpdateLoad(load: Double)
-
   case class ConnectedUsers(users: Int)
-
   case class PolledJobs(qStat: QStat)
+
 }

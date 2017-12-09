@@ -24,11 +24,11 @@ object ErrorComponent extends Component {
                            "class" -> "small-10 medium-10 large-10 columns",
                            "style" -> "display: block; margin: auto; margin-top: 100px;"),
         m("div", js.Dynamic.literal("id" -> "404msa", "config" -> g.call404))
-      ),
-      m("p",
-        js.Dynamic.literal("id"    -> "subtitle404",
-                           "style" -> "position: absolute; margin-top: 400px; margin-left: 45%;"),
-        s"${ctrl.errorMessage()}")
+      )
+//      m("p",
+//        js.Dynamic.literal("id"    -> "subtitle404",
+//                           "style" -> "position: absolute; margin-top: 400px; margin-left: 45%;"),
+//        s"${ctrl.errorMessage()}")
   )
 
 }

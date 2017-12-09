@@ -217,19 +217,20 @@ const trafficBarComponent = {
 const tilescomponent = {
 
     controller: function () {
-        let getRecentArticlesRoute = jsRoutes.controllers.DataController.getRecentArticles(1);
-        return {
-            articles: m.request({
-                url: getRecentArticlesRoute.url,
-                method: getRecentArticlesRoute.method
-            })
-        };
+
     },
     view: function (ctrl : any) {
         return m("div", {
                 "class": "row article_container small-up-1 medium-up-2 large-up-3",
+<<<<<<< HEAD
                 config: hideSidebar},
                 m("div", {
+=======
+                config: hideSidebar
+
+            },
+            m("div", {
+>>>>>>> master
                         "class": "column column-block tile_main_container"
                     },
                         m("div", {"class": "tile_container"},
@@ -237,26 +238,25 @@ const tilescomponent = {
                             ),
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#mmcif30_2017_12"},
+                                    m("h6", "December 6, 2017"),
+                                    m("p", "HHpred: the PDB_mmCIF70 DB is now built using Uniclust30 instead of Uniprot20. " +
+                                        "Additionally, we now also offer PDB_mmCIF30, containing fewer representatives.")
+                                ),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#arc_2017_12"},
+                                    m("h6", "December 5, 2017"),
+                                    m("p", "HHpred: profile HMM DBs of six archaeal proteomes ",
+                                        m("em", "(Archaeoglobus fulgidus"), ", ",
+                                        m("em", "Halobacterium jilantaiense"), ", ",
+                                        m("em", "Methanocaldococcus jannaschii"), ", ",
+                                        m("em", "Methanothermus fervidus"), ", ",
+                                        m("em", "Pyrococcus horikoshii"), ", and ",
+                                        m("em", "Sulfolobus solfataricus)"), " are online."
+                                    )
+                                ),
                                 m("a", {"data-open": "recentUpdatesModal", href: "#nr30_2017_11"},
                                     m("h6", "November 13, 2017"),
                                     m("p", "In addition to nr50, we now also offer nr30 for PSI-BLAST, HMMER, and PatternSearch.")
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#uniclust_2017_10"},
-                                    m("h6", "October 31, 2017"),
-                                    m("p", "HHpred: the Uniclust30 DB is now available for query A3M generation.")
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#uniclust_2017_7"},
-                                    m("h6", "September 29, 2017"),
-                                    m("p", "HHblits: a new version of the Uniclust30 DB is online.")
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#fisc"},
-                                    m("h6", "September 24, 2017"),
-                                    m("p", "HHpred: DBs of ",
-                                        m("em", "Fischerella muscicola"), ", ",
-                                        m("em", "Frankia alni"), ", ",
-                                        m("em", "Streptomyces scabiei"), " and ",
-                                        m("em", "Thermus aquaticus"), " are online."
-                                    )
                                 )
                             ),
                             m("div", {"class": "quick_links"},
@@ -374,8 +374,11 @@ const tilescomponent = {
                             )
                         )
                 )
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> master
         )
 
     }

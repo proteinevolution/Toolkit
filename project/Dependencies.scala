@@ -3,8 +3,8 @@ import sbt._
 
 object Dependencies {
 
-  lazy val akkaVersion   = "2.5.7"
-  lazy val scalazVersion = "7.2.16"
+  lazy val akkaVersion   = "2.5.8"
+  lazy val scalazVersion = "7.2.17"
 
   lazy val commonDeps = Seq(
     ws,
@@ -18,7 +18,6 @@ object Dependencies {
     "com.typesafe.akka"    %% "akka-cluster-metrics"     % akkaVersion,
     "com.typesafe.akka"    %% "akka-slf4j"               % akkaVersion,
     "com.typesafe.akka"    %% "akka-stream"              % akkaVersion,
-    "com.typesafe.akka"    %% "akka-persistence"         % akkaVersion,
     "com.typesafe.play"    %% "play-mailer"              % "6.0.1",
     "com.typesafe.play"    %% "play-mailer-guice"        % "6.0.1",
     "com.github.pathikrit" %% "better-files"             % "2.17.1",
@@ -26,13 +25,9 @@ object Dependencies {
     "org.reactivemongo"    %% "play2-reactivemongo"      % "0.12.7-play26",
     "org.reactivemongo"    %% "reactivemongo-akkastream" % "0.12.7",
     "org.scalaz"           %% "scalaz-core"              % scalazVersion,
-    "org.scalaz"           %% "scalaz-concurrent"        % scalazVersion,
-    "com.chuusai"          %% "shapeless"                % "2.3.2",
-    "com.lihaoyi"          %% "fastparse"                % "0.4.2",
     "com.vmunier"          %% "scalajs-scripts"          % "1.1.1",
-    "org.typelevel"        %% "cats"                     % "0.9.0",
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
-    "com.typesafe.play"    %% "play-json"                % "2.6.3"
+    "com.typesafe.play"    %% "play-json"                % "2.6.7"
   )
 
   lazy val testDeps = Seq(
@@ -51,10 +46,8 @@ object Dependencies {
     "org.webjars"       % "jquery-ui"           % "1.12.1", // css included over cdn
     "org.webjars.npm"   % "foundation-sites"    % "6.4.3",
     "org.webjars.npm"   % "mithril"             % "0.2.8", // 1.1.3 available
-    "org.webjars.bower" % "d3"                  % "4.10.2",
     "org.webjars.npm"   % "slick-carousel"      % "1.6.0",
     "org.webjars.npm"   % "codemirror-minified" % "5.28.0",
-    "org.webjars.bower" % "clipboard"           % "1.7.1", // currently not in use
     "org.webjars.bower" % "datatables"          % "1.10.16",
     "org.webjars"       % "highcharts"          % "5.0.14",
     "org.webjars.bower" % "velocity"            % "1.5.0",
