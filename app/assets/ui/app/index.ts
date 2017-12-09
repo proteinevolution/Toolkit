@@ -162,33 +162,6 @@ window.Index = {
                         href: "http://www.eb.tuebingen.mpg.de/"
                     })
                 ])
-                // ]), m("div", [
-                //     m("img", {
-                //         'data-interchange': '[/assets/images/lambda0.5_crop2TwoSixth.png , small],' +
-                //         ' [/assets/images/lambda0.5_crop2FourSixth.png, medium], [/assets/images/lambda0.5_crop2.png, large]',
-                //         config: foundationConfig
-                //     }), m("a", {
-                //         href: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2817847/"
-                //     }, m("div", {
-                //             "class": "slide-caption"
-                //         },
-                //         m("div", {"class": "slide-header"}, "A galaxy of protein folds"),
-                //         m("div", {"class": "slide-text"}, "Although the diversity of proteins in nature may seem endless, it is in fact narrowly bounded. Proteins are far less polyphyletic than hitherto assumed and may have evolved from a rather small set of ancestral forms.")
-                //     ))
-                // ]), m("div", [
-                //     m("img", {
-                //         'data-interchange': '[/assets/images/protfromfragments3BackgroundTwoSixth.png , small],' +
-                //         ' [/assets/images/protfromfragments3BackgroundFourSixth.png, medium], [/assets/images/protfromfragments3Background.png, large]',
-                //         config: foundationConfig
-                //     }), m("a", {
-                //         href: "https://elifesciences.org/content/4/e09410"
-                //     }, m("div", {
-                //             "class": "slide-caption"
-                //         },
-                //         m("div", {"class": "slide-header"}, "Folded proteins from peptides."),
-                //         m("div", {"class": "slide-text"}, "The first folded proteins may have arisen by repetition, recombination, and accretion from an ancestral set of peptides active as co-factors of an RNA world.")
-                //     ))
-                // ])
             ]),
             m(trafficBarComponent), m(tilescomponent)
         ]);
