@@ -31,6 +31,7 @@ div#main-container {
     min-height: 100%;
     margin-left: 0;
     margin-right: 0;
+    position: relative;
 }
 div#main {
     margin-bottom: 55px;
