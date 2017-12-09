@@ -3,6 +3,7 @@ package controllers
 import java.time.ZonedDateTime
 import javax.inject.{ Inject, Singleton }
 
+import de.proteinevolution.models.database.jobs.JobState._
 import actors.JobActor.{ JobStateChanged, SetSGEID, UpdateLog }
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.Constants

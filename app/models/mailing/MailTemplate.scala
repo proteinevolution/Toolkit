@@ -2,12 +2,12 @@ package models.mailing
 
 import java.time.ZonedDateTime
 
+import de.proteinevolution.models.database.jobs.JobState.{ Done, Error }
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.tel.TEL
 import play.api.libs.mailer.{ Email, MailerClient }
 import de.proteinevolution.models.util.ZonedDateTimeHelper
-
 
 sealed trait MailTemplate {
 

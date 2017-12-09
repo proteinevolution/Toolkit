@@ -4,7 +4,7 @@ import java.io.{ FileInputStream, ObjectInputStream }
 import java.security.MessageDigest
 import java.time.ZonedDateTime
 import javax.inject.{ Inject, Singleton }
-
+import de.proteinevolution.models.database.jobs.JobState._
 import actors.JobActor._
 import better.files._
 import de.proteinevolution.common.LocationProvider

@@ -35,7 +35,7 @@ import de.proteinevolution.models.Constants
 import de.proteinevolution.parsers.Ops.QStat
 import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecution
 import models.mailing.MailTemplate.JobFinishedMail
-
+import de.proteinevolution.models.database.jobs.JobState._
 import scala.concurrent.duration._
 
 object JobActor {
