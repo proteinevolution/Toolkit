@@ -3,7 +3,7 @@ package controllers
 import java.time.ZonedDateTime
 import javax.inject.{ Inject, Singleton }
 
-import de.proteinevolution.models.database.jobs.Done
+import de.proteinevolution.models.database.jobs.JobState._
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore

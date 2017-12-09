@@ -4,6 +4,7 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 import com.typesafe.config.ConfigFactory
+import de.proteinevolution.models.database.jobs.JobState._
 import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._

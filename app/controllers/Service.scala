@@ -2,8 +2,9 @@ package controllers
 
 import java.io.{ FileInputStream, ObjectInputStream }
 import javax.inject.{ Inject, Singleton }
+
 import akka.util.Timeout
-import de.proteinevolution.models.database.jobs.{ Done, Job, Pending, Prepared }
+import de.proteinevolution.models.database.jobs.JobState._
 import play.api.Logger
 import play.api.cache._
 import play.api.i18n.I18nSupport
@@ -17,6 +18,7 @@ import java.time.format.DateTimeFormatter
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.forms.JobForm
 import de.proteinevolution.models.Constants
+import de.proteinevolution.models.database.jobs.Job
 import play.api.libs.json._
 import reactivemongo.bson.BSONDocument
 

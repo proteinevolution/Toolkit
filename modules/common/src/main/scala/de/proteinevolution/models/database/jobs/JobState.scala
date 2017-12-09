@@ -6,32 +6,32 @@ import reactivemongo.bson.{ BSONInteger, BSONReader, BSONWriter }
 /**
  * Object which describes the job's status
  */
-sealed trait JobState
-
-/*
- A Pending Job has parameters which have not been supplied yet. This might happen for file download
- and when a job depends on the successful execution of another job.
- */
-// Job State which is set to save a job without submitting it
-case object Prepared extends JobState
-// Job State which is set when the job is submitted to the cluster but has to wait in the queue
-case object Queued extends JobState
-// Job State which is set when the job is being executed
-case object Running extends JobState
-// Job State which is set when the job has reached an error state
-case object Error extends JobState
-// Job State which is set when the job has completed successfully
-case object Done extends JobState
-// Job State which is set when the job was successfully sent to the server
-case object Submitted extends JobState
-// Job State which is set when the job was validated by the hash search but a different job was found
-case object Pending extends JobState
-// Job State which is set when the maximal number of jobs is reached within a fixed time
-case object LimitReached extends JobState
-// Job State which is set when the maximal number of jobs is reached within a fixed time
-case object Deleted extends JobState
-
 object JobState {
+
+  sealed trait JobState
+
+  /*
+   A Pending Job has parameters which have not been supplied yet. This might happen for file download
+   and when a job depends on the successful execution of another job.
+   */
+  // Job State which is set to save a job without submitting it
+  case object Prepared extends JobState
+  // Job State which is set when the job is submitted to the cluster but has to wait in the queue
+  case object Queued extends JobState
+  // Job State which is set when the job is being executed
+  case object Running extends JobState
+  // Job State which is set when the job has reached an error state
+  case object Error extends JobState
+  // Job State which is set when the job has completed successfully
+  case object Done extends JobState
+  // Job State which is set when the job was successfully sent to the server
+  case object Submitted extends JobState
+  // Job State which is set when the job was validated by the hash search but a different job was found
+  case object Pending extends JobState
+  // Job State which is set when the maximal number of jobs is reached within a fixed time
+  case object LimitReached extends JobState
+  // Job State which is set when the maximal number of jobs is reached within a fixed time
+  case object Deleted extends JobState
 
   implicit object JobStateReads extends Reads[JobState] {
     override def reads(json: JsValue): JsResult[JobState] = json match {
