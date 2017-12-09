@@ -10,7 +10,6 @@ import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.results.Common
 import de.proteinevolution.models.search.JobDAO
-import de.proteinevolution.models.sge.Cluster
 import models.tools.ToolFactory
 import models.UserSessions
 import de.proteinevolution.common.{ HTTPRequest, LocationProvider }
@@ -46,7 +45,6 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   mat: Materializer,
                                   val tel: TEL,
                                   val env: Env,
-                                  val cluster: Cluster,
                                   val search: Search,
                                   val settings: Settings,
                                   constants: Constants,

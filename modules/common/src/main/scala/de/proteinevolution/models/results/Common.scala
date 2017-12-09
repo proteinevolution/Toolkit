@@ -9,7 +9,6 @@ import de.proteinevolution.models.database.results.PSIBlast.PSIBlastHSP
 import de.proteinevolution.models.database.results.Quick2D.Quick2DResult
 import play.twirl.api.Html
 import play.api.Logger
-import de.proteinevolution.models.database.results._
 
 import scala.collection.mutable.ArrayBuffer
 
