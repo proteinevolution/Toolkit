@@ -3,7 +3,8 @@
 @import org.webjars.play.WebJarsUtil
 @import controllers.routes
 @import play.twirl.api.Html
-@(webJarsUtil: WebJarsUtil, tools: Iterable[Tool], message: String = "", view: String = "")()
+@import play.api.Environment
+@(webJarsUtil: WebJarsUtil, tools: Iterable[Tool], message: String = "", view: String = "", environment: Environment)()
 
 <!DOCTYPE html>
 
@@ -239,7 +240,12 @@
                             <a data-open="recentUpdatesModal">Recent Updates</a>
                         </div>
                         <div id="socket">
-                            © 2008-@(ZonedDateTime.now.getYear), Dept. of Protein Evolution, Max Planck Institute for Developmental Biology, Tübingen</div>
+                            © 2008-@(ZonedDateTime.now.getYear), Dept. of Protein Evolution, Max Planck Institute for Developmental Biology, Tübingen
+                        </div>
+
+                        @if(environment.mode == play.api.Mode.Dev) {
+                            <div id="buildinfo"></div>
+                        }
                     </div>
                 </footer>
             </div>

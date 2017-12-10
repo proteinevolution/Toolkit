@@ -32,6 +32,7 @@ GET           /ws                                     controllers.Application.ws
 GET           /maintenance                            controllers.Application.maintenanceTest
 POST          /maintenance                            controllers.Application.maintenance
 GET           /uptime                                 controllers.UptimeController.uptime
+GET           /buildinfo                              controllers.UptimeController.buildInfo
 
 # Serve files
 GET           /files/:mainID/:filename                controllers.Application.file(filename: String, mainID: String)

@@ -17,3 +17,5 @@ resolvers += "Typesafe Repository" at "https://repo.typesafe.com/typesafe/maven-
 addSbtPlugin("com.typesafe.sbt" % "sbt-jshint" % "1.0.6")
 
 addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.6.8")
+
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.7.0")

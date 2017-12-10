@@ -1,12 +1,28 @@
+import build.BuildInfo
 import com.tgf.pizza.scalajs.mithril._
 import org.scalajs.dom.raw.HTMLDivElement
+
 import scala.scalajs.js
 import scala.scalajs.js.Dictionary
 
 object Router extends js.JSApp {
   import js.Dynamic.{ global => g }
 
+  private val versionString = {
+    new java.lang.StringBuilder()
+        .append("Version: ")
+        .append(BuildInfo.version)
+        .append(" on Scala ")
+        .append(BuildInfo.scalaVersion)
+        .append(" with Sbt ")
+        .append(BuildInfo.sbtVersion)
+        .append(" and Play! ")
+        .append(BuildInfo.playVersion)
+        .toString
+  }
+
   def main(): Unit = {
+
     m.route.mode = "hash"
     val mountpoint = g.document.getElementById("main-content").asInstanceOf[HTMLDivElement]
 
@@ -42,5 +58,7 @@ object Router extends js.JSApp {
 
     g.jobListOffCanvas = g.m.deps.factory(g.window)
     g.jobListOffCanvas.mount(g.document.getElementById("off-canvas-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
+
+    g.document.getElementById("buildinfo").innerHTML = versionString
   }
 }

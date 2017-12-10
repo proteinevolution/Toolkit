@@ -163,3 +163,14 @@
   font-size: 0.675em;
   padding: 0 1em 0 1em;
 }
+
+#buildinfo {
+  background: red;
+  font-size: 12px;
+  color: #fff;
+  font-weight: bold;
+  text-align: center;
+  font-family: "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+  margin: auto;
+  width: 50%;
+}
