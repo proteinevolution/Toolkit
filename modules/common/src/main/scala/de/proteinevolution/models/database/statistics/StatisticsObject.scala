@@ -57,7 +57,7 @@ case class StatisticsObject(statisticsID: BSONObjectID = BSONObjectID.generate()
 
     // Get all months in between the two dates
     val monthsInInterval = for (extraMonths <- 0 to totalMonths)
-      yield beginDate.plusMonths(extraMonths).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1)
+      yield beginDate.plusMonths(extraMonths.toLong).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1)
 
     // Group the job events by tool
     val jobEventsGroupedByTool = jobEventLogs.groupBy(_.toolName)

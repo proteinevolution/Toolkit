@@ -1,9 +1,7 @@
 package de.proteinevolution.tel.env
 
 import javax.inject.Singleton
-
 import de.proteinevolution.tel.Observer
-import play.api.Logger
 
 /**
  * Manages values of Keys from the TEL environment

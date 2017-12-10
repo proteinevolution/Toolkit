@@ -109,7 +109,7 @@ class HHompController @Inject()(resultFiles: ResultFileAccessor,
           BadRequest
         } else {
           val hits =
-            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhomp.hit(jobID, _, isColor, wrapped))
+            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhomp.hit(_, isColor, wrapped))
           Ok(hits.mkString)
         }
     }
@@ -139,7 +139,7 @@ class HHompController @Inject()(resultFiles: ResultFileAccessor,
           Json
             .toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))
             .as[JsObject]
-            .deepMerge(Json.obj("aaData" -> hits.map(_.toDataTable(result.db))))
+            .deepMerge(Json.obj("aaData" -> hits.map(_.toDataTable)))
         )
     }
   }

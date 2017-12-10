@@ -8,7 +8,7 @@ import de.proteinevolution.models.database.results.HHomp._
 import de.proteinevolution.models.results.Common
 import play.api.libs.json._
 @Singleton
-class HHomp @Inject()(general: General, aln: Alignment) {
+class HHomp @Inject()(general: General) {
 
   def parseResult(jsValue: JsValue): HHompResult = {
     val obj        = jsValue.as[JsObject]
@@ -54,7 +54,6 @@ class HHomp @Inject()(general: General, aln: Alignment) {
     val probab_hit   = (obj \ "probab_hit").getOrElse(Json.toJson(-1)).as[Double]
     val probab_omp   = (obj \ "probab_OMP").getOrElse(Json.toJson(-1)).as[Double]
     val score        = (obj \ "score").getOrElse(Json.toJson(-1)).as[Double]
-    val similarity   = (obj \ "similarity").getOrElse(Json.toJson(-1)).as[Double]
     HHompInfo(aligned_cols, eval, identities, probab_hit, probab_omp, score)
 
   }
@@ -84,7 +83,7 @@ object HHomp {
                       num: Int,
                       ss_score: Double,
                       length: Int) {
-    def toDataTable(db: String): JsValue =
+    def toDataTable: JsValue =
       Json.toJson(
         Map(
           "0" -> Json.toJson(Common.getAddScrollLink(num)),

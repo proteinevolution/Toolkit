@@ -1,8 +1,7 @@
 @import de.proteinevolution.models.database.results.Hmmer.HmmerResult
 @import better.files._
-@import play.api.mvc.RequestHeader
 @import play.twirl.api.Html
-@(jobID: String, result: HmmerResult, tool: de.proteinevolution.models.Tool, htmlPath: String)(implicit request: RequestHeader)
+@(jobID: String, result: HmmerResult, tool: de.proteinevolution.models.Tool, htmlPath: String)()
 @* Load html Map used for the image representation *@
     @if(result.num_hits < 1) {
         <div class="callout alert noHitsWide" id="noHits">
@@ -110,7 +109,8 @@
         <h5 id="refTitle">References</h5>
         If you use our HMMER server for your research, please cite:
         <div class="citation">
-            @views.html.help.common.toolkit_citation_results()
+          @views.html.help.common.toolkit_citation_results()
+	</div>
         And the HMMER paper:
         <div class="citation">
             <div>Accelerated Profile HMM Searches.<br>

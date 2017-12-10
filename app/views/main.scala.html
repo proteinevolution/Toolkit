@@ -1,11 +1,9 @@
-@import play.api.mvc.RequestHeader
 @import de.proteinevolution.models.Tool
 @import java.time.ZonedDateTime
 @import org.webjars.play.WebJarsUtil
-@import play.api.i18n.Messages
 @import controllers.routes
 @import play.twirl.api.Html
-@(webJarsUtil: WebJarsUtil, tools: Iterable[Tool], message: String = "", view: String = "")(implicit messages: Messages, request: RequestHeader)
+@(webJarsUtil: WebJarsUtil, tools: Iterable[Tool], message: String = "", view: String = "")()
 
 <!DOCTYPE html>
 

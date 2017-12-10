@@ -5,14 +5,13 @@ import javax.inject.{ Inject, Singleton }
 import com.typesafe.config.{ ConfigFactory, ConfigObject }
 import de.proteinevolution.models.{ Constants, Tool, ToolNames }
 import de.proteinevolution.models.database.results._
-import de.proteinevolution.db.{ MongoStore, ResultFileAccessor }
+import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.forms.ToolForm
 import de.proteinevolution.models.param.{ Param, ParamAccess }
 import de.proteinevolution.models.results.ResultViews
 import play.api.libs.json.JsArray
-import play.api.mvc.RequestHeader
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.immutable.ListMap
 import scala.concurrent.{ Future, _ }
 
@@ -27,13 +26,12 @@ final class ToolFactory @Inject()(
     aln: de.proteinevolution.models.database.results.Alignment,
     constants: Constants
 )(paramAccess: ParamAccess,
-  mongoStore: MongoStore,
   resultFiles: ResultFileAccessor,
   implicit val ec: ExecutionContext) {
 
   // reads the tool specifications from tools.conf and generates tool objects accordingly
   lazy val values: Map[String, Tool] = {
-    ConfigFactory.load.getConfig("Tools").root.map {
+    ConfigFactory.load.getConfig("Tools").root.asScala.map {
       case (_, configObject: ConfigObject) =>
         val config = configObject.toConfig
         config.getString("name") -> toTool(
@@ -41,12 +39,13 @@ final class ToolFactory @Inject()(
           config.getString("longname"),
           config.getString("code"),
           config.getString("section").toLowerCase,
-          config.getStringList("parameter").map { param =>
+          config.getStringList("parameter").asScala.map { param =>
             paramAccess.getParam(param, config.getString("input_placeholder"))
           },
-          config.getStringList("forwarding.alignment"),
-          config.getStringList("forwarding.multi_seq")
+          config.getStringList("forwarding.alignment").asScala,
+          config.getStringList("forwarding.multi_seq").asScala
         )
+      case (_, _) => throw new IllegalStateException("tool does not exist")
     }
   }.toMap
 
@@ -60,9 +59,7 @@ final class ToolFactory @Inject()(
 
   // Maps toolname and resultpanel name to the function which transfers jobID and jobPath to an appropriate view
 
-  def getResultMap(τ: String)(
-      implicit rh: RequestHeader
-  ): ListMap[String, String => Future[play.twirl.api.Html]] = {
+  def getResultMap(τ: String): ListMap[String, String => Future[play.twirl.api.Html]] = {
 
     τ match {
       case ToolNames.PSIBLAST.value =>
@@ -81,7 +78,6 @@ final class ToolFactory @Inject()(
             Future.successful(
               views.html.jobs.resultpanels.fileviewWithDownload(
                 "output_psiblastp.html",
-                s"${constants.jobPath}$jobID/results/" + "output_psiblastp.html",
                 jobID,
                 "PSIBLAST_OUTPUT"
               )
@@ -101,7 +97,6 @@ final class ToolFactory @Inject()(
             Future.successful(
               views.html.jobs.resultpanels.fileviewWithDownloadForward(
                 jobID + ".out",
-                s"${constants.jobPath}$jobID/results/" + jobID + ".out",
                 jobID,
                 "FormatSeq",
                 values(ToolNames.FORMATSEQ.value)
@@ -112,7 +107,7 @@ final class ToolFactory @Inject()(
       case ToolNames.CLANS.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
-            Future.successful(views.html.jobs.resultpanels.clans("CLANS", jobID))
+            Future.successful(views.html.jobs.resultpanels.clans(jobID))
           }
         )
       case ToolNames.TPRPRED.value =>
@@ -120,7 +115,7 @@ final class ToolFactory @Inject()(
           ResultViews.RESULTS -> { jobID =>
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
-                views.html.jobs.resultpanels.tprpred("TPRpred", jobID, jsValue)
+                views.html.jobs.resultpanels.tprpred(jobID, jsValue)
               case None => views.html.errors.resultnotfound()
             }
           }
@@ -142,7 +137,6 @@ final class ToolFactory @Inject()(
             Future.successful(
               views.html.jobs.resultpanels
                 .fileviewWithDownload(jobID + ".hhr",
-                                      s"${constants.jobPath}$jobID/results/" + jobID + ".hhr",
                                       jobID,
                                       "hhblits_hhr")
             )
@@ -186,7 +180,6 @@ final class ToolFactory @Inject()(
             Future.successful(
               views.html.jobs.resultpanels.fileviewWithDownload(
                 "alignment.ProbList",
-                s"${constants.jobPath}$jobID/results/alignment.ProbList",
                 jobID,
                 "marcoil_problist"
               )
@@ -196,7 +189,6 @@ final class ToolFactory @Inject()(
             Future.successful(
               views.html.jobs.resultpanels.fileviewWithDownload(
                 "alignment.ProbPerState",
-                s"${constants.jobPath}$jobID/results/alignment.ProbPerState",
                 jobID,
                 "marcoil_probperstate"
               )
@@ -206,7 +198,6 @@ final class ToolFactory @Inject()(
             Future.successful(
               views.html.jobs.resultpanels.fileviewWithDownload(
                 "alignment.Domains",
-                s"${constants.jobPath}$jobID/results/alignment.Domains",
                 jobID,
                 "marcoil_domains"
               )
@@ -300,7 +291,6 @@ final class ToolFactory @Inject()(
             Future.successful(
               views.html.jobs.resultpanels
                 .fileviewWithDownload(jobID + ".hhr",
-                                      s"${constants.jobPath}$jobID/results/" + jobID + ".hhr",
                                       jobID,
                                       "hhpred")
             )
@@ -350,7 +340,6 @@ final class ToolFactory @Inject()(
             Future.successful(
               views.html.jobs.resultpanels
                 .fileviewWithDownload(jobID + ".hhr",
-                                      s"${constants.jobPath}$jobID/results/" + jobID + ".hhr",
                                       jobID,
                                       "hhomp")
             )
@@ -371,8 +360,7 @@ final class ToolFactory @Inject()(
           },
           "FullAlignment" -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels.msaviewer(jobID,
-                                                     s"${constants.jobPath}/$jobID/results/alignment.fas")
+              views.html.jobs.resultpanels.msaviewer(s"${constants.jobPath}/$jobID/results/alignment.fas")
             )
           }
         )
@@ -380,7 +368,7 @@ final class ToolFactory @Inject()(
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels.hhpred.forward(s"${constants.jobPath}$jobID/results/tomodel.pir", jobID)
+              views.html.jobs.resultpanels.hhpred.forward(s"${constants.jobPath}$jobID/results/tomodel.pir")
             )
           },
           ResultViews.SUMMARY -> { jobID =>
@@ -455,8 +443,7 @@ final class ToolFactory @Inject()(
           },
           ResultViews.ALIGNMENTVIEWER -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels.msaviewer(jobID,
-                                                     s"${constants.jobPath}/$jobID/results/alignment.fas")
+              views.html.jobs.resultpanels.msaviewer(s"${constants.jobPath}/$jobID/results/alignment.fas")
             )
           }
         )
@@ -484,8 +471,7 @@ final class ToolFactory @Inject()(
           },
           ResultViews.ALIGNMENTVIEWER -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels.msaviewer(jobID,
-                                                     s"${constants.jobPath}/$jobID/results/alignment.fas")
+              views.html.jobs.resultpanels.msaviewer(s"${constants.jobPath}/$jobID/results/alignment.fas")
             )
           }
         )
@@ -513,8 +499,7 @@ final class ToolFactory @Inject()(
           },
           ResultViews.ALIGNMENTVIEWER -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels.msaviewer(jobID,
-                                                     s"${constants.jobPath}/$jobID/results/alignment.fas")
+              views.html.jobs.resultpanels.msaviewer(s"${constants.jobPath}/$jobID/results/alignment.fas")
             )
           }
         )
@@ -542,8 +527,7 @@ final class ToolFactory @Inject()(
           },
           ResultViews.ALIGNMENTVIEWER -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels.msaviewer(jobID,
-                                                     s"${constants.jobPath}/$jobID/results/alignment.fas")
+              views.html.jobs.resultpanels.msaviewer(s"${constants.jobPath}/$jobID/results/alignment.fas")
             )
           }
         )
@@ -571,8 +555,7 @@ final class ToolFactory @Inject()(
           },
           ResultViews.ALIGNMENTVIEWER -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels.msaviewer(jobID,
-                                                     s"${constants.jobPath}/$jobID/results/alignment.fas")
+              views.html.jobs.resultpanels.msaviewer(s"${constants.jobPath}/$jobID/results/alignment.fas")
             )
           }
         )
@@ -600,8 +583,7 @@ final class ToolFactory @Inject()(
           },
           ResultViews.ALIGNMENTVIEWER -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels.msaviewer(jobID,
-                                                     s"${constants.jobPath}/$jobID/results/alignment.fas")
+              views.html.jobs.resultpanels.msaviewer(s"${constants.jobPath}/$jobID/results/alignment.fas")
             )
           }
         )
@@ -626,7 +608,6 @@ final class ToolFactory @Inject()(
             Future.successful(
               views.html.jobs.resultpanels.fileviewWithDownload(
                 jobID + ".anc_out",
-                s"${constants.jobPath}$jobID/results/" + jobID + ".anc_out",
                 jobID,
                 "ancescon_output_data"
               )
@@ -649,7 +630,6 @@ final class ToolFactory @Inject()(
             Future.successful(
               views.html.jobs.resultpanels
                 .fileviewWithDownload(jobID + ".stats",
-                                      s"${constants.jobPath}$jobID/results/" + jobID + ".stats",
                                       jobID,
                                       "phyml_data")
             )
@@ -661,7 +641,6 @@ final class ToolFactory @Inject()(
             Future.successful(
               views.html.jobs.resultpanels
                 .fileviewWithDownloadForward(jobID + ".fas",
-                                             s"${constants.jobPath}$jobID/results/" + jobID + ".fas",
                                              jobID,
                                              "mmseqs_reps",
                                              values(ToolNames.MMSEQS2.value))
@@ -671,7 +650,6 @@ final class ToolFactory @Inject()(
             Future.successful(
               views.html.jobs.resultpanels
                 .fileviewWithDownload(jobID + ".clu",
-                                      s"${constants.jobPath}$jobID/results/" + jobID + ".clu",
                                       jobID,
                                       "mmseqs_clusters")
             )
@@ -688,7 +666,6 @@ final class ToolFactory @Inject()(
             Future.successful(
               views.html.jobs.resultpanels.fileviewWithDownloadForward(
                 "sequences.fa",
-                s"${constants.jobPath}$jobID/results/sequences.fa",
                 jobID,
                 "retseq",
                 values(ToolNames.RETSEQ.value)
@@ -726,7 +703,6 @@ final class ToolFactory @Inject()(
             Future.successful(
               views.html.jobs.resultpanels
                 .fileviewWithDownload(jobID + ".out",
-                                      s"${constants.jobPath}$jobID/results/" + jobID + ".out",
                                       jobID,
                                       "samcc")
             )
@@ -738,7 +714,6 @@ final class ToolFactory @Inject()(
             Future.successful(
               views.html.jobs.resultpanels.fileviewWithDownload(
                 jobID + ".out",
-                s"${constants.jobPath}$jobID/results/" + jobID + ".out",
                 jobID,
                 "sixframetrans"
               )
@@ -751,7 +726,6 @@ final class ToolFactory @Inject()(
             Future.successful(
               views.html.jobs.resultpanels
                 .fileviewWithDownload(jobID + ".out",
-                                      s"${constants.jobPath}$jobID/results/" + jobID + ".out",
                                       jobID,
                                       "backtrans")
             )
@@ -771,8 +745,7 @@ final class ToolFactory @Inject()(
           },
           ResultViews.ALIGNMENTVIEWER -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels.msaviewer(jobID,
-                                                     s"${constants.jobPath}/$jobID/results/alignment.fas")
+              views.html.jobs.resultpanels.msaviewer(s"${constants.jobPath}/$jobID/results/alignment.fas")
             )
           }
         )
@@ -782,7 +755,7 @@ final class ToolFactory @Inject()(
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels
-                  .patternSearch("PatternSearch", jobID, jsValue, values(ToolNames.PATSEARCH.value))
+                  .patternSearch(jobID, jsValue, values(ToolNames.PATSEARCH.value))
               case None => views.html.errors.resultnotfound()
             }
           }
