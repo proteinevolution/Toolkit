@@ -171,7 +171,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
 
     userSessions.getUser.map { user =>
       Logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
-      Ok(views.html.main(webJarsUtil, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message))
+      Ok(views.html.main(webJarsUtil, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message, "", environment))
         .withSession(userSessions.sessionCookie(request, user.sessionID.get))
     }
   }
