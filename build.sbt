@@ -16,13 +16,6 @@ lazy val disableDocs = Seq[Setting[_]](
   publishArtifact in (Compile, packageDoc) := false
 )
 
-lazy val headless = (project in file("modules/headless"))
-    .enablePlugins(PlayScala, JavaAppPackaging)
-    .dependsOn(common)
-    .settings(
-      disableDocs
-    )
-
 lazy val common = (project in file("modules/common"))
     .enablePlugins(PlayScala, JavaAppPackaging)
     .settings(
@@ -33,8 +26,8 @@ lazy val common = (project in file("modules/common"))
 
 lazy val root = (project in file("."))
     .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb)
-    .dependsOn(client, headless, common)
-    .aggregate(client, headless, common)
+    .dependsOn(client, common)
+    .aggregate(client, common)
     .settings(
       commonSettings,
       name := "mpi-toolkit",
@@ -58,9 +51,9 @@ lazy val client = (project in file("client"))
       scalaJSUseMainModuleInitializer := true,
       scalaJSUseMainModuleInitializer in Test := false,
       libraryDependencies ++= Seq(
-        "org.scala-js" %%% "scalajs-dom"     % "0.9.3",
+        "org.scala-js"  %%% "scalajs-dom"     % "0.9.3",
         "com.tgf.pizza" %%% "scalajs-mithril" % "0.1.1",
-        "be.doeraene"  %%% "scalajs-jquery"  % "0.9.2"
+        "be.doeraene"   %%% "scalajs-jquery"  % "0.9.2"
       )
     )
     .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
