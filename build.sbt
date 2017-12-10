@@ -1,6 +1,10 @@
+inThisBuild(Seq(
+  organization := "de.proteinevolution",
+  scalaVersion := "2.12.4"
+))
+
 lazy val commonSettings = Seq(
   version := "0.1.0",
-  scalaVersion := "2.12.4",
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   logLevel := Level.Warn,
@@ -51,7 +55,6 @@ resolvers += "Madoushi sbt-plugins" at "https://dl.bintray.com/madoushi/sbt-plug
 
 lazy val client = (project in file("client"))
     .settings(
-      scalaVersion := "2.12.1",
       scalaJSUseMainModuleInitializer := true,
       scalaJSUseMainModuleInitializer in Test := false,
       libraryDependencies ++= Seq(
