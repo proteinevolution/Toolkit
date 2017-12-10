@@ -1,10 +1,9 @@
 @import play.api.libs.json.JsValue
-@import play.api.mvc.RequestHeader
 @import play.api.libs.json.JsDefined
 @import de.proteinevolution.models.results.Common
 @import play.twirl.api.Html
 
-@(toolName: String, jobID: String,jsValue: JsValue)(implicit request: RequestHeader)
+@(jobID: String,jsValue: JsValue)()
 
 @if((jsValue \ jobID \ "hits").as[List[JsValue]].size < 1) {
         <div class="callout alert noHitsWide" id="noHits">
@@ -36,9 +35,9 @@
                                 <td>@{{seq \ 2 }.get.as[String]} </td>
                                 <td class="tprHit">
                                         @{seq \ 0 match {
-                                                case JsDefined(jsValue) => Html(Common.colorRegexReplacer((seq \ 0).get.as[String]))
-                                                case _ => ()
-                                        }
+                                                        case JsDefined(_) => Html(Common.colorRegexReplacer((seq \ 0).get.as[String]))
+                                                        case _ => ()
+                                                }
                                         }
 
                                 </td>

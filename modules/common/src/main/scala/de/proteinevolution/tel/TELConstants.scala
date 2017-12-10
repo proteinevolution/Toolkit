@@ -1,8 +1,5 @@
 package de.proteinevolution.tel
 
-import com.typesafe.config.ConfigFactory
-import de.proteinevolution.models.Constants
-
 trait TELConstants {
   // TODO Get this from the configuration of the toolkit
 

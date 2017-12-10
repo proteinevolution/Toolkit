@@ -35,7 +35,7 @@ import de.proteinevolution.models.Constants
 import de.proteinevolution.parsers.Ops.QStat
 import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecution
 import models.mailing.MailTemplate.JobFinishedMail
-
+import de.proteinevolution.models.database.jobs.JobState._
 import scala.concurrent.duration._
 
 object JobActor {
@@ -252,7 +252,7 @@ class JobActor @Inject()(
    * Deletes a job from all instances and tells all the watching users about it
    * @param job the job to be deleted
    */
-  private def delete(job: Job, verbose: Boolean = false): Unit = {
+  private def delete(job: Job, verbose: Boolean): Unit = {
     val now: ZonedDateTime = ZonedDateTime.now
     if (verbose) Logger.info(s"[JobActor.Delete] Deletion of job folder for jobID ${job.jobID} is done")
     s"${constants.jobPath}${job.jobID}".toFile.delete(true)
@@ -341,7 +341,7 @@ class JobActor @Inject()(
       mongoStore.findUser(BSONDocument(User.IDDB -> job.ownerID)).foreach {
         case Some(user) =>
           user.userData match {
-            case Some(userData) =>
+            case Some(_) =>
               Logger.info(
                 s"[JobActor[$jobActorNumber].sendJobUpdateMail] Sending eMail to job owner for job ${job.jobID}: Job is ${job.status.toString}"
               )
@@ -412,7 +412,7 @@ class JobActor @Inject()(
           self ! JobStateChanged(job.jobID, Error)
         }
       } catch {
-        case FileAlreadyExists(msg) =>
+        case FileAlreadyExists(_) =>
           Logger.error(
             "[JobActor.PrepareJob] The directory for job " + job.jobID + " already exists\n" +
             "[JobActor.PrepareJob] Stopping job since it can not be retrieved by user."
@@ -595,7 +595,7 @@ class JobActor @Inject()(
                   BSONDocument("$set"   -> BSONDocument(Job.CLUSTERDATA -> clusterData, Job.HASH -> jobHash))
                 )
                 .foreach {
-                  case Some(updatedJob) =>
+                  case Some(_) =>
                     // Get new runscript instance from the runscript manager
                     val runscript: Runscript = runscriptManager(job.tool).withEnvironment(env)
                     // Load the parameters from the serialized parameters file

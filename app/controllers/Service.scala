@@ -4,11 +4,10 @@ import java.io.{ FileInputStream, ObjectInputStream }
 import javax.inject.{ Inject, Singleton }
 
 import akka.util.Timeout
-import models.UserSessions
-import de.proteinevolution.models.database.jobs.{ Done, Job, Pending, Prepared }
+import de.proteinevolution.models.database.jobs.JobState._
 import play.api.Logger
 import play.api.cache._
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import better.files._
@@ -19,6 +18,7 @@ import java.time.format.DateTimeFormatter
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.forms.JobForm
 import de.proteinevolution.models.Constants
+import de.proteinevolution.models.database.jobs.Job
 import play.api.libs.json._
 import reactivemongo.bson.BSONDocument
 
@@ -27,16 +27,15 @@ import scala.concurrent.duration._
 
 @Singleton
 final class Service @Inject()(
-    messagesApi: MessagesApi,
     val reactiveMongoApi: ReactiveMongoApi,
     mongoStore: MongoStore,
-    userSessions: UserSessions,
-    @NamedCache("userCache") implicit val userCache: SyncCacheApi,
-    implicit val locationProvider: LocationProvider,
     toolFactory: ToolFactory,
     constants: Constants,
     cc: ControllerComponents
-)(implicit ec: ExecutionContext, @NamedCache("resultCache") val resultCache: AsyncCacheApi)
+)(implicit ec: ExecutionContext,
+  @NamedCache("resultCache") val resultCache: AsyncCacheApi,
+  @NamedCache("userCache") val userCache: SyncCacheApi,
+  val locationProvider: LocationProvider)
     extends AbstractController(cc)
     with I18nSupport
     with ReactiveMongoComponents {

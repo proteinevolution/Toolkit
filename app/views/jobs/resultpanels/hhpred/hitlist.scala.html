@@ -1,8 +1,7 @@
 @import de.proteinevolution.models.database.results.HHPred.HHPredResult
 @import better.files._
-@import play.api.mvc.RequestHeader
 @import play.twirl.api.Html
-@(jobID: String, result: HHPredResult, tool: de.proteinevolution.models.Tool, htmlPath: String)(implicit request: RequestHeader)
+@(jobID: String, result: HHPredResult, tool: de.proteinevolution.models.Tool, htmlPath: String)()
     @if(result.num_hits < 1) {
         <div class="callout alert noHitsWide" id="noHits">
             No hits found!

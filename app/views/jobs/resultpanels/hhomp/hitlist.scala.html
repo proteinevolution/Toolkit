@@ -1,8 +1,7 @@
 @import de.proteinevolution.models.database.results.HHomp.HHompResult
 @import better.files._
-@import play.api.mvc.RequestHeader
 @import play.twirl.api.Html
-@(jobID: String, result: HHompResult, tool: de.proteinevolution.models.Tool, htmlPath: String)(implicit request: RequestHeader)
+@(jobID: String, result: HHompResult, tool: de.proteinevolution.models.Tool, htmlPath: String)()
 @if(result.num_hits < 1) {
     <div class="callout alert noHitsWide" id="noHits">
         No hits found!
@@ -122,7 +121,6 @@
         var loading = false;
         var wrapped = true;
 
-
         $(document).ready(function () {
             hitlistBaseFunctions();
             if (numHits > 0) {
@@ -143,7 +141,6 @@
 
         });
 
-
         function drawDataTable() {
             hitlist = $('#htb').dataTable({
                 "bProcessing": true,
@@ -155,7 +152,6 @@
                 "iDisplayLength": 25
             });
         }
-
 
         function templateAlignment(accession) {
             $.LoadingOverlay("show");
@@ -219,7 +215,5 @@
                     $("#alignments").floatingScroll('init');
                 });
             }
-            // hide loadHits
-
         }
 </script>

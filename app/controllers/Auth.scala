@@ -15,14 +15,13 @@ import de.proteinevolution.db.MongoStore
 import models.mailing.MailTemplate.{ ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail }
 import play.Logger
 import play.api.cache._
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.libs.mailer._
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.bson._
 import org.webjars.play.WebJarsUtil
-import services.JobActorAccess
 
 import scala.concurrent.{ Await, ExecutionContext, Future }
 
@@ -32,8 +31,6 @@ import scala.concurrent.{ Await, ExecutionContext, Future }
  */
 @Singleton
 final class Auth @Inject()(webJarsUtil: WebJarsUtil,
-                           messagesApi: MessagesApi,
-                           jobActorAccess: JobActorAccess,
                            mongoStore: MongoStore,
                            val reactiveMongoApi: ReactiveMongoApi,
                            toolFactory: ToolFactory,
@@ -234,11 +231,11 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                 val selectorMail = BSONDocument(BSONDocument(User.EMAIL     -> signUpFormUser.getUserData.eMail))
                 val selectorName = BSONDocument(BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin))
                 mongoStore.findUser(selectorName).flatMap {
-                  case Some(x) =>
+                  case Some(_) =>
                     Future.successful(Ok(accountNameUsed()))
                   case None =>
                     mongoStore.findUser(selectorMail).flatMap {
-                      case Some(x) =>
+                      case Some(_) =>
                         Future.successful(Ok(accountEmailUsed()))
                       case None =>
                         // Create the database entry.
@@ -285,7 +282,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
             .profileEdit(user)
             .bindFromRequest
             .fold(
-              formWithErrors =>
+              _ =>
                 Future.successful {
                   Ok(formError())
               },
@@ -341,7 +338,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
   def passwordChangeSubmit(): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user: User =>
       user.userData match {
-        case Some(userData) =>
+        case Some(_) =>
           // Validate the password and return the new password Hash
           FormDefinitions
             .profilePasswordEdit(user)
@@ -396,7 +393,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
    */
   def resetPassword: Action[AnyContent] = Action.async { implicit request =>
     FormDefinitions.forgottenPasswordEdit.bindFromRequest.fold(
-      errors =>
+      _ =>
         Future.successful {
           Ok(formError())
       },
@@ -409,7 +406,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
           mongoStore.findUser(selector).flatMap {
             case Some(user) =>
               user.userData match {
-                case Some(userData) =>
+                case Some(_) =>
                   // Generate a new Token to wait for the confirmation eMail
                   val token = UserToken(tokenType = 3)
                   // create a modifier document to change the last login date in the Database
@@ -531,7 +528,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                         )
                       )
                       .map {
-                        case Some(modifiedUser) =>
+                        case Some(_) =>
                           Ok(
                             views.html.main(webJarsUtil,
                                             toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
@@ -618,7 +615,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                       )
                     )
                     userSessions.modifyUserWithCache(selector, modifier).map {
-                      case Some(changedUser) =>
+                      case Some(_) =>
                         Ok(
                           views.html.main(webJarsUtil,
                                           toolFactory.values.values.toSeq.sortBy(_.toolNameLong),

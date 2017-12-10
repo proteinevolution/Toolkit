@@ -1,6 +1,6 @@
 package de.proteinevolution.models.forms
 
-import de.proteinevolution.models.database.jobs.JobState
+import de.proteinevolution.models.database.jobs.JobState._
 import play.api.libs.json.{ JsPath, Writes }
 import play.api.libs.functional.syntax._
 

@@ -8,7 +8,6 @@ import akka.actor.{ ActorLogging, _ }
 import akka.event.LoggingReceive
 import controllers.Settings
 import de.proteinevolution.models.database.statistics.ClusterLoadEvent
-import de.proteinevolution.models.sge.Cluster
 import de.proteinevolution.db.MongoStore
 import java.time.ZonedDateTime
 
@@ -23,8 +22,7 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
 @Singleton
-final class ClusterMonitor @Inject()(cluster: Cluster,
-                                     mongoStore: MongoStore,
+final class ClusterMonitor @Inject()(mongoStore: MongoStore,
                                      jobActorAccess: JobActorAccess,
                                      val settings: Settings,
                                      constants: Constants)(implicit ec: ExecutionContext)
@@ -42,7 +40,6 @@ final class ClusterMonitor @Inject()(cluster: Cluster,
       context.system.dispatcher
     )
   }
-  private var nextStatisticsUpdateDate: ZonedDateTime = ZonedDateTime.now.plusMonths(1)
 
   override def preStart(): Unit = {
     if (settings.clusterMode == "LOCAL") context.stop(self)

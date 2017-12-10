@@ -206,7 +206,7 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
           BadRequest
         } else {
           val hits =
-            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(jobID, _, isColor, wrapped))
+            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(_, isColor, wrapped))
           Ok(hits.mkString)
         }
       case None => BadRequest
@@ -238,7 +238,7 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
           Json
             .toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))
             .as[JsObject]
-            .deepMerge(Json.obj("aaData" -> hits.map(_.toDataTable(result.db))))
+            .deepMerge(Json.obj("aaData" -> hits.map(_.toDataTable)))
         )
     }
   }
