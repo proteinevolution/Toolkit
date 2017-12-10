@@ -11,7 +11,6 @@ import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.Constants
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.bson.BSONDocument
-import de.proteinevolution.models.search.JobDAO
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
 import play.api.mvc._
@@ -19,15 +18,16 @@ import play.api.mvc._
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-final class Search @Inject()(@NamedCache("userCache") implicit val userCache: SyncCacheApi,
-                             implicit val locationProvider: LocationProvider,
-                             userSessions: UserSessions,
-                             val reactiveMongoApi: ReactiveMongoApi,
-                             mongoStore: MongoStore,
-                             toolFactory: ToolFactory,
-                             val jobDao: JobDAO,
-                             constants: Constants,
-                             cc: ControllerComponents)(implicit ec: ExecutionContext)
+final class Search @Inject()(
+    userSessions: UserSessions,
+    val reactiveMongoApi: ReactiveMongoApi,
+    mongoStore: MongoStore,
+    toolFactory: ToolFactory,
+    constants: Constants,
+    cc: ControllerComponents
+)(implicit ec: ExecutionContext,
+  val locationProvider: LocationProvider,
+  @NamedCache("userCache") val userCache: SyncCacheApi)
     extends AbstractController(cc)
     with ReactiveMongoComponents
     with CommonController {

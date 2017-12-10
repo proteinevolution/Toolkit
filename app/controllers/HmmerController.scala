@@ -6,7 +6,7 @@ import better.files._
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.results.General.DTParam
-import de.proteinevolution.models.database.results._
+import de.proteinevolution.models.database.results.Hmmer
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.database.results.Hmmer.{ HmmerHSP, HmmerResult }
 import play.api.libs.json.{ JsObject, Json }
@@ -18,9 +18,7 @@ import scala.sys.process.Process
 
 class HmmerController @Inject()(resultFiles: ResultFileAccessor,
                                 hmmer: Hmmer,
-                                general: General,
                                 cc: ControllerComponents,
-                                aln: Alignment,
                                 constants: Constants)(
     val reactiveMongoApi: ReactiveMongoApi,
     implicit val ec: ExecutionContext
@@ -171,7 +169,6 @@ class HmmerController @Inject()(resultFiles: ResultFileAccessor,
       resultFiles.getResults(jobID).map {
         case None => NotFound
         case Some(jsValue) =>
-          val result        = hmmer.parseResult(jsValue)
           val accessionsStr = getAlnEval(hmmer.parseResult(jsValue), eval.toDouble)
           // execute the script and pass parameters
           Process(retrieveAlnEval.pathAsString,
@@ -211,8 +208,7 @@ class HmmerController @Inject()(resultFiles: ResultFileAccessor,
 
       resultFiles.getResults(jobID).map {
         case None => NotFound
-        case Some(jsValue) =>
-          val result        = hmmer.parseResult(jsValue)
+        case Some(_) =>
           val accessionsStr = numList
           // execute the script and pass parameters
           Process(retrieveAlnEval.pathAsString,
@@ -285,7 +281,7 @@ class HmmerController @Inject()(resultFiles: ResultFileAccessor,
           BadRequest
         } else {
           val hits =
-            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hmmer.hit(jobID, _, result.db, wrapped))
+            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hmmer.hit(_, result.db, wrapped))
           Ok(hits.mkString)
         }
       case None => BadRequest

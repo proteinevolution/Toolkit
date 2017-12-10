@@ -15,19 +15,19 @@
 <div class="notePlain">
 <span>PSIPRED</span>
 <br/><hr><br/>
-@if(HHrepID.existsResult(jobID, psipredFile)){
+@if(HHrepID.existsResult(psipredFile)){
     <img hspace="100" src="@psipred">
 }
 <br/><br/><br/>
 <span>PCOILS</span>
 <br/><hr><br/>
-@if(HHrepID.existsResult(jobID, ncoilsFile)){
+@if(HHrepID.existsResult(ncoilsFile)){
     <img hspace="100" src="@ncoils">
 }
 <br/><br/><br/>
 <span>FTwin</span>
 <br/><hr><br/>
-@if(HHrepID.existsResult(jobID, overviewFile)){
+@if(HHrepID.existsResult(overviewFile)){
     <img hspace="100" src="@overview">
     <table class="unstriped repperTable"><tbody class="alignmentTBody"><tr>
         <td>Significance: low</td> <td><div id="repperGrad"></div></td><td>high</td>
@@ -39,7 +39,7 @@
 <br/><br/><br/>
 <span>REPwin</span>
 <br/><hr><br/>
-@if(HHrepID.existsResult(jobID, repperFile)){
+@if(HHrepID.existsResult(repperFile)){
     <img hspace="100" src="@repper">
     <table class="unstriped repperTable"><tbody class="alignmentTBody"><tr>
         <td>Significance: low</td> <td><div id="repperGrad"></div></td><td>high</td>

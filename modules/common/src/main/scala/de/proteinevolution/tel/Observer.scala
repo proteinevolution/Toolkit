@@ -5,8 +5,8 @@ package de.proteinevolution.tel
   *
   */
 trait Observer[S] {
-  def receiveUpdate(subject: S)
-  def receiveInitial(subject: S)
+  def receiveUpdate(subject: S): Unit
+  def receiveInitial(subject: S): Unit
 }
 
 // TODO Add support for deleting Observers

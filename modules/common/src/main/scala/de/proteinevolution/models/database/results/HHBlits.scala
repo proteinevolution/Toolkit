@@ -84,7 +84,7 @@ object HHBlits {
                         description: String,
                         num: Int,
                         length: Int) {
-    def toDataTable(db: String): JsValue =
+    def toDataTable: JsValue =
       Json.toJson(
         Map(
           "0" -> Json.toJson(Common.getCheckbox(num)),
