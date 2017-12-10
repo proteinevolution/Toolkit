@@ -182,6 +182,3 @@ POST        /AlignmentGetAln                          controllers.AlignmentContr
 
 #HHomp
 POST        /HHompLoadHits                            controllers.HHompController.loadHits(jobID: String)
-
-#REST API
-->          /headless                                 headless.Routes
