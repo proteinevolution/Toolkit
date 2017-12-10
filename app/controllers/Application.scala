@@ -27,7 +27,6 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
 import de.proteinevolution.models.Constants
-
 import scala.concurrent.{ Await, ExecutionContext, Future }
 
 @Singleton
