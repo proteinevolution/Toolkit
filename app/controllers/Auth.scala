@@ -22,7 +22,7 @@ import play.api.libs.mailer._
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.bson._
 import org.webjars.play.WebJarsUtil
-
+import play.api.Environment
 import scala.concurrent.{ Await, ExecutionContext, Future }
 
 /**
@@ -40,6 +40,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                            @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                            @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi, // Mailing Controller
                            constants: Constants,
+                           environment: Environment,
                            cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
@@ -532,14 +533,18 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                           Ok(
                             views.html.main(webJarsUtil,
                                             toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                            "Account verification was successful. Please log in.")
+                                            "Account verification was successful. Please log in.",
+                                            "",
+                                            environment)
                           )
                         case None => // Could not save the modified user to the DB
                           Ok(
                             views.html.main(
                               webJarsUtil,
                               toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                              "Verification was not successful due to a database error. Please try again later."
+                              "Verification was not successful due to a database error. Please try again later.",
+                              "",
+                              environment
                             )
                           )
                       }
@@ -577,7 +582,9 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                                     views.html.main(
                                       webJarsUtil,
                                       toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                      "Password change verification was successful. Please log in with Your new password."
+                                      "Password change verification was successful. Please log in with Your new password.",
+                                      "",
+                                      environment
                                     )
                                   )
                                 case None => // Could not save the modified user to the DB
@@ -585,7 +592,9 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                                     views.html.main(
                                       webJarsUtil,
                                       toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                      "Verification was not successful due to a database error. Please try again later."
+                                      "Verification was not successful due to a database error. Please try again later.",
+                                      "",
+                                      environment
                                     )
                                   )
                               }
@@ -594,9 +603,13 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                             Future.successful(
                               Ok(
                                 views.html
-                                  .main(webJarsUtil,
-                                        toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                        "The Password you had entered was insufficient, please create a new one.")
+                                  .main(
+                                    webJarsUtil,
+                                    toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                                    "The Password you had entered was insufficient, please create a new one.",
+                                    "",
+                                    environment
+                                  )
                               )
                             )
                         }
@@ -620,14 +633,17 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                           views.html.main(webJarsUtil,
                                           toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                           "",
-                                          "passwordReset")
+                                          "passwordReset",
+                                          environment)
                         )
                       case None => // Could not save the modified user to the DB
                         Ok(
                           views.html.main(
                             webJarsUtil,
                             toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                            "Verification was not successful due to a database error. Please try again later."
+                            "Verification was not successful due to a database error. Please try again later.",
+                            "",
+                            environment
                           )
                         )
                     }
@@ -636,7 +652,9 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                       Ok(
                         views.html.main(webJarsUtil,
                                         toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                        "There was an error finding your token.")
+                                        "There was an error finding your token.",
+                                        "",
+                                        environment)
                       )
                     )
                 }
@@ -647,7 +665,9 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                   Ok(
                     views.html.main(webJarsUtil,
                                     toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                    "The token you used is not valid.")
+                                    "The token you used is not valid.",
+                                    "",
+                                    environment)
                   )
                 )
               }
@@ -656,7 +676,9 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                 Ok(
                   views.html.main(webJarsUtil,
                                   toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                  "There was an error finding your token.")
+                                  "There was an error finding your token.",
+                                  "",
+                                  environment)
                 )
               )
           }
@@ -665,7 +687,9 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
             Ok(
               views.html.main(webJarsUtil,
                               toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                              "There was an error finding your account.")
+                              "There was an error finding your account.",
+                              "",
+                              environment)
             )
           )
       }

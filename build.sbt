@@ -1,10 +1,12 @@
+import sbtbuildinfo.BuildInfoPlugin.autoImport._
+
 inThisBuild(Seq(
   organization := "de.proteinevolution",
-  scalaVersion := "2.12.4"
+  scalaVersion := "2.12.4",
+  version      := "0.1.0"
 ))
 
 lazy val commonSettings = Seq(
-  version := "0.1.0",
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   logLevel := Level.Warn,
@@ -80,7 +82,7 @@ lazy val common = (project in file("modules/common"))
     .disablePlugins(PlayLayoutPlugin)
 
 lazy val root = (project in file("."))
-    .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb)
+    .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb, BuildInfoPlugin)
     .dependsOn(client, common)
     .aggregate(client, common)
     .settings(
@@ -90,7 +92,15 @@ lazy val root = (project in file("."))
       pipelineStages := Seq(digest, gzip),
       compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
       sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
-      sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache")
+      sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache"),
+      buildInfoKeys := Seq[BuildInfoKey](
+        name,
+        version,
+        scalaVersion,
+        sbtVersion,
+        "playVersion" -> play.core.PlayVersion.current
+      ),
+      buildInfoPackage := "build"
     )
 
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
@@ -102,9 +112,18 @@ resolvers ++= Seq(
 resolvers += "Madoushi sbt-plugins" at "https://dl.bintray.com/madoushi/sbt-plugins/"
 
 lazy val client = (project in file("client"))
+    .enablePlugins(BuildInfoPlugin)
     .settings(
       scalaJSUseMainModuleInitializer := true,
       scalaJSUseMainModuleInitializer in Test := false,
+      buildInfoKeys := Seq[BuildInfoKey](
+        name,
+        version,
+        scalaVersion,
+        sbtVersion,
+        "playVersion" -> play.core.PlayVersion.current
+      ),
+      buildInfoPackage := "build",
       libraryDependencies ++= Seq(
         "org.scala-js"  %%% "scalajs-dom"     % "0.9.3",
         "com.tgf.pizza" %%% "scalajs-mithril" % "0.1.1",
