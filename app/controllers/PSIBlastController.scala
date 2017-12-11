@@ -94,7 +94,6 @@ class PSIBlastController @Inject()(resultFiles: ResultFileAccessor,
    * @return Https response
    */
   def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    println("called")
     val json     = request.body.asJson.get
     val numList  = (json \ "checkboxes").as[List[Int]]
     val filename = (json \ "filename").as[String]
@@ -177,7 +176,6 @@ class PSIBlastController @Inject()(resultFiles: ResultFileAccessor,
    * @return Https response containing the aligned sequences as String
    */
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    println("called")
     val json     = request.body.asJson.get
     val numList  = (json \ "checkboxes").as[List[Int]].mkString("\n")
     val filename = (json \ "filename").as[String]
