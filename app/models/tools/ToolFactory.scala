@@ -25,9 +25,7 @@ final class ToolFactory @Inject()(
     quick2d: Quick2D,
     aln: de.proteinevolution.models.database.results.Alignment,
     constants: Constants
-)(paramAccess: ParamAccess,
-  resultFiles: ResultFileAccessor,
-  implicit val ec: ExecutionContext) {
+)(paramAccess: ParamAccess, resultFiles: ResultFileAccessor, implicit val ec: ExecutionContext) {
 
   // reads the tool specifications from tools.conf and generates tool objects accordingly
   lazy val values: Map[String, Tool] = {
@@ -43,7 +41,8 @@ final class ToolFactory @Inject()(
             paramAccess.getParam(param, config.getString("input_placeholder"))
           },
           config.getStringList("forwarding.alignment").asScala,
-          config.getStringList("forwarding.multi_seq").asScala
+          config.getStringList("forwarding.multi_seq").asScala,
+          config.getString("title")
         )
       case (_, _) => throw new IllegalStateException("tool does not exist")
     }
@@ -136,9 +135,7 @@ final class ToolFactory @Inject()(
           "Raw Output" -> { jobID =>
             Future.successful(
               views.html.jobs.resultpanels
-                .fileviewWithDownload(jobID + ".hhr",
-                                      jobID,
-                                      "hhblits_hhr")
+                .fileviewWithDownload(jobID + ".hhr", jobID, "hhblits_hhr")
             )
           },
           "E-Value Plot" -> { jobID =>
@@ -290,9 +287,7 @@ final class ToolFactory @Inject()(
           "Raw Output" -> { jobID =>
             Future.successful(
               views.html.jobs.resultpanels
-                .fileviewWithDownload(jobID + ".hhr",
-                                      jobID,
-                                      "hhpred")
+                .fileviewWithDownload(jobID + ".hhr", jobID, "hhpred")
             )
           },
           "Probability  Plot" -> { jobID =>
@@ -339,9 +334,7 @@ final class ToolFactory @Inject()(
           "Raw Output" -> { jobID =>
             Future.successful(
               views.html.jobs.resultpanels
-                .fileviewWithDownload(jobID + ".hhr",
-                                      jobID,
-                                      "hhomp")
+                .fileviewWithDownload(jobID + ".hhr", jobID, "hhomp")
             )
           }
         )
@@ -629,9 +622,7 @@ final class ToolFactory @Inject()(
           ResultViews.DATA -> { jobID =>
             Future.successful(
               views.html.jobs.resultpanels
-                .fileviewWithDownload(jobID + ".stats",
-                                      jobID,
-                                      "phyml_data")
+                .fileviewWithDownload(jobID + ".stats", jobID, "phyml_data")
             )
           }
         )
@@ -640,18 +631,13 @@ final class ToolFactory @Inject()(
           "Reduced set" -> { jobID =>
             Future.successful(
               views.html.jobs.resultpanels
-                .fileviewWithDownloadForward(jobID + ".fas",
-                                             jobID,
-                                             "mmseqs_reps",
-                                             values(ToolNames.MMSEQS2.value))
+                .fileviewWithDownloadForward(jobID + ".fas", jobID, "mmseqs_reps", values(ToolNames.MMSEQS2.value))
             )
           },
           "Clusters" -> { jobID =>
             Future.successful(
               views.html.jobs.resultpanels
-                .fileviewWithDownload(jobID + ".clu",
-                                      jobID,
-                                      "mmseqs_clusters")
+                .fileviewWithDownload(jobID + ".clu", jobID, "mmseqs_clusters")
             )
           }
         )
@@ -702,9 +688,7 @@ final class ToolFactory @Inject()(
           "NumericalData" -> { jobID =>
             Future.successful(
               views.html.jobs.resultpanels
-                .fileviewWithDownload(jobID + ".out",
-                                      jobID,
-                                      "samcc")
+                .fileviewWithDownload(jobID + ".out", jobID, "samcc")
             )
           }
         )
@@ -725,9 +709,7 @@ final class ToolFactory @Inject()(
           ResultViews.RESULTS -> { jobID =>
             Future.successful(
               views.html.jobs.resultpanels
-                .fileviewWithDownload(jobID + ".out",
-                                      jobID,
-                                      "backtrans")
+                .fileviewWithDownload(jobID + ".out", jobID, "backtrans")
             )
           }
         )
@@ -771,7 +753,8 @@ final class ToolFactory @Inject()(
                      category: String,
                      params: Seq[Param],
                      forwardAlignment: Seq[String],
-                     forwardMultiSeq: Seq[String]): Tool = {
+                     forwardMultiSeq: Seq[String],
+                     title: String): Tool = {
     val paramMap = params.map(p => p.name -> p).toMap
     val toolForm = ToolForm(
       toolNameShort,
@@ -793,7 +776,8 @@ final class ToolFactory @Inject()(
       toolForm,
       paramAccess.paramGroups,
       forwardAlignment,
-      forwardMultiSeq
+      forwardMultiSeq,
+      title
     )
   }
 
