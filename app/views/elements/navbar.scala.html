@@ -6,14 +6,14 @@
 
 <ul class="tabs" data-tabs id="navbar-tabs">
     <li class="tabs-title is-active" id="first-tab"><a href="#panel1" title="View search tools">Search</a></li>
-    <li class="tabs-title"><a href="#panel2" title="<center>View alignment tools</center>">Alignment</a></li>
+    <li class="tabs-title"><a href="#panel2" title="View alignment tools">Alignment</a></li>
         <!-- all tools for testing in this section -->
-    <li class="tabs-title"><a href="#panel3" title="<center>View sequence analysis tools</center>">
+    <li class="tabs-title"><a href="#panel3" title="View sequence analysis tools">
         Sequence Analysis</a></li>
-    <li class="tabs-title"><a href="#panel4" title="<center>View secondary structure tools</center>">
+    <li class="tabs-title"><a href="#panel4" title="View secondary structure tools">
         2ary Structure</a></li>
-    <li class="tabs-title"><a href="#panel5" title="<center>View tertiary structure tools</center>">3ary Structure</a></li>
-    <li class="tabs-title"><a href="#panel6" title="<center>View classification tools</center>">Classification</a></li>
+    <li class="tabs-title"><a href="#panel5" title="View tertiary structure tools">3ary Structure</a></li>
+    <li class="tabs-title"><a href="#panel6" title="View classification tools">Classification</a></li>
     <li class="tabs-title" id="last-tab"><a href="#panel7" title="View utility tools">Utils</a></li>
 </ul>
 
@@ -65,7 +65,7 @@
 
 <script>
         $(document).ready(function () {
-            $('#navbar-tabs a').tooltipster({
+            $('#navbar-tabs').find('a').tooltipster({
                 theme: 'tooltipster-borderless',
                 position: 'bottom',
                 animation: 'fade',
