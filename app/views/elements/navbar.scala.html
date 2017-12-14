@@ -6,57 +6,71 @@
 
 <ul class="tabs" data-tabs id="navbar-tabs">
     <li class="tabs-title is-active" id="first-tab"><a href="#panel1" title="View search tools">Search</a></li>
-    <li class="tabs-title"><a href="#panel2" title="<center>View alignment tools</center>">Alignment</a></li>
-    <!-- all tools for testing in this section -->
-    <li class="tabs-title"><a href="#panel3" title="<center>View sequence analysis tools</center>">Sequence Analysis</a></li>
-    <li class="tabs-title"><a href="#panel4" title="<center>View secondary structure tools</center>">2ary Structure</a></li>
-    <li class="tabs-title"><a href="#panel5" title="<center>View tertiary structure tools</center>">3ary Structure</a></li>
-    <li class="tabs-title"><a href="#panel6" title="<center>View classification tools</center>">Classification</a></li>
+    <li class="tabs-title"><a href="#panel2" title="View alignment tools">Alignment</a></li>
+        <!-- all tools for testing in this section -->
+    <li class="tabs-title"><a href="#panel3" title="View sequence analysis tools">
+        Sequence Analysis</a></li>
+    <li class="tabs-title"><a href="#panel4" title="View secondary structure tools">
+        2ary Structure</a></li>
+    <li class="tabs-title"><a href="#panel5" title="View tertiary structure tools">3ary Structure</a></li>
+    <li class="tabs-title"><a href="#panel6" title="View classification tools">Classification</a></li>
     <li class="tabs-title" id="last-tab"><a href="#panel7" title="View utility tools">Utils</a></li>
 </ul>
 
 <div class="navbar-tabs-content" data-tabs-content="navbar-tabs">
     <div class="tabs-panel toolsection active is-active" id="panel1">
-        @for(tool <- tools.filter(_.category == "search")){
-        <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a>
+        @for(tool <- tools.filter(_.category == "search")) {
+            <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort" title="@tool.title">@tool.toolNameLong</a>
         }
     </div>
 
     <div class="tabs-panel toolsection" id="panel2">
-        <a id="alnviz" href="/#/tools/alnviz">AlignmentViewer</a>
-        @for(tool <- tools.filter(_.category == "alignment")){
-        <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a>
+        <a id="alnviz" href="/#/tools/alnviz" title="BioJS multiple sequence alignment viewer">AlignmentViewer</a>
+        @for(tool <- tools.filter(_.category == "alignment")) {
+            <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort" title="@tool.title">@tool.toolNameLong</a>
         }
     </div>
 
     <div class="tabs-panel toolsection" id="panel3">
-        @for(tool <- tools.filter(_.category == "seqanal")){
-        <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a>
-        }
+    @for(tool <- tools.filter(_.category == "seqanal")) {
+        <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort" title="@tool.title">@tool.toolNameLong</a>
+    }
     </div>
 
     <div class="tabs-panel toolsection" id="panel4">
-        @for(tool <- tools.filter(_.category == "2ary")){
-        <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a>
-        }
+    @for(tool <- tools.filter(_.category == "2ary")) {
+        <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort" title="@tool.title">@tool.toolNameLong</a>
+    }
     </div>
 
     <div class="tabs-panel toolsection" id="panel5">
-        @for(tool <- tools.filter(tool => tool.category == "3ary")){
-        <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a>
-        }
+    @for(tool <- tools.filter(tool => tool.category == "3ary")) {
+        <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort" title="@tool.title">@tool.toolNameLong</a>
+    }
     </div>
 
     <div class="tabs-panel toolsection" id="panel6">
-        @for(tool <- tools.filter(_.category == "classification")){
-        <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a>
-        }
+    @for(tool <- tools.filter(_.category == "classification")) {
+        <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort" title="@tool.title">@tool.toolNameLong</a>
+    }
     </div>
 
     <div class="tabs-panel toolsection" id="panel7">
-        @for(tool <- tools.filter(_.category == "utils")){
-        <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort">@tool.toolNameLong</a>
+        @for(tool <- tools.filter(_.category == "utils")) {
+            <a id="@tool.toolNameAbbrev" href="/#/tools/@tool.toolNameShort" title="@tool.title">@tool.toolNameLong</a>
         }
-        <a id="reformat" href="/#/tools/reformat">Reformat</a>
+        <a id="reformat" href="/#/tools/reformat" title="Sequence reformatting utility">Reformat</a>
     </div>
 </div>
+
+<script>
+        $(document).ready(function () {
+            $('#navbar-tabs').find('a').tooltipster({
+                theme: 'tooltipster-borderless',
+                position: 'bottom',
+                animation: 'fade',
+                contentAsHTML: true,
+                debug: false
+            });
+        });
+</script>
