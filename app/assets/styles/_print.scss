@@ -29,4 +29,8 @@
   #alignmentTable tr:not(.breakable) {
     page-break-after: avoid;
   }
+  #toolReferences {
+    page-break-before: always;
+    margin-top: 2em;
+  }
 }
