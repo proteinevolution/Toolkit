@@ -14,7 +14,6 @@ import better.files._
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
 import java.time.format.DateTimeFormatter
-
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.forms.JobForm
 import de.proteinevolution.models.Constants
