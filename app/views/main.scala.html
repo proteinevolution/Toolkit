@@ -164,7 +164,7 @@
                             </div>
 
                             <!---Hamburger Navbar --->
-                            <div id="myNav" class="overlay">
+                            <div id="myNav" class="overlay print-hide">
                                 <button id="hamburgerInside" class="hamburger hamburger--elastic is-active" type="button" onclick="closeNav()">
                                     <span class="hamburger-box">
                                         <span class="hamburger-inner overlayed"></span>
@@ -178,7 +178,7 @@
 
 
                                 <!---Navigation Bar --->
-                            <div class="row" id="metanav">
+                            <div class="row print-hide" id="metanav">
                                 <div id="metauser"></div> <!-- TODO: ugly construction -->
                                 <div id="social">
                                     <a href="https://www.facebook.com/mpitoolkit" target="_blank" rel="noopener"><i class="icon-facebook"></i></a>
@@ -205,7 +205,7 @@
                                 </div>
 
                                     <!--navbar-->
-                                <div class="columns large-8 show-for-medium" id="navbar">
+                                <div class="columns large-8 show-for-medium print-hide" id="navbar">
                                     @elements.navbar(tools)
                                 </div>
                                 <div class="columns large-2 show-for-large">
@@ -216,7 +216,7 @@
 
                         <!--- Mount points for Mithril Application -->
                     <div class="row" id="main-window">
-                        <div class="large-2 padded-column columns show-for-large" id="sidebar">
+                        <div class="large-2 padded-column columns show-for-large print-hide" id="sidebar">
                             <div id="sidebar-search"></div>
                             <div id="sidebar-joblist"></div>
                         </div>
@@ -230,7 +230,7 @@
                 </div>
                 <footer class="row" id="app">
                     <div class="columns large-12">
-                        <div id="sub-nav">
+                        <div id="sub-nav" class="print-hide">
                             <a data-open="subnavHelpModal">Help</a>
                             <a data-open="subnavFAQModal">FAQ</a>
                             <a data-open="privacyPolicyModal">Privacy Policy</a>
