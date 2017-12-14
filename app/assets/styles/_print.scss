@@ -21,16 +21,41 @@
     float: none;
     margin: 0 auto;
   }
+  .result-panel {
+    padding: 0 !important; 
+    border: none;
+    .note-plain {
+      float: right;
+    }
+  }
+  #tool-tabs {
+    border: none; 
+    & > ul.ui-tabs {
+      display: none; 
+    }
+  }
+  #visualizationTitle {
+    padding-top: 0 !important; 
+    & + div {
+      display: none; // hide resubmit section button 
+    }
+  }
+  #blastviz {
+    margin-top: 3.5em;
+  }
   
   /* Page breakes before */
   .page-break-before {
     page-break-before:always;
+  }
+  #hitlist {
+    page-break-before: always; 
   }
   #alignmentTable tr:not(.breakable) {
     page-break-after: avoid;
   }
   #toolReferences {
     page-break-before: always;
-    margin-top: 2em;
+    padding-top: 2em;
   }
 }
