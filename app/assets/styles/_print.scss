@@ -1,0 +1,32 @@
+/* these styles determine how the toolkit is displayed when printed */
+@media print {
+  .print-hide {
+    display: none !important;
+  }
+  a[href]::after {
+    content: "";
+  }
+  a.showlink[href]::after {
+    content: " <"attr(href)">";
+    color: #888;
+    background-color: inherit;
+    font-style: italic;
+    size: 80%;
+  } 
+  #main-window {
+    width: 100%;
+  }
+  #logo {
+    width: 300px;
+    float: none;
+    margin: 0 auto;
+  }
+  
+  /* Page breakes before */
+  .page-break-before {
+    page-break-before:always;
+  }
+  #alignmentTable tr:not(.breakable) {
+    page-break-after: avoid;
+  }
+}
