@@ -59,6 +59,7 @@ object Router extends js.JSApp {
     g.jobListOffCanvas = g.m.deps.factory(g.window)
     g.jobListOffCanvas.mount(g.document.getElementById("off-canvas-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
 
-    g.document.getElementById("buildinfo").innerHTML = versionString
+    if(!g.window.location.href.asInstanceOf[String].contains("tuebingen.mpg.de"))
+      g.document.getElementById("buildinfo").innerHTML = versionString
   }
 }

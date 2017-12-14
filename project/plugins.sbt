@@ -12,8 +12,6 @@ addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.19")
 
 addSbtPlugin("com.arpnetworking" % "sbt-typescript" % "0.3.4")
 
-resolvers += "Typesafe Repository" at "https://repo.typesafe.com/typesafe/maven-releases"
-
 addSbtPlugin("com.typesafe.sbt" % "sbt-jshint" % "1.0.6")
 
 addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.6.8")
