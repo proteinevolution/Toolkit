@@ -96,7 +96,7 @@ $global-menu-padding: 0.7rem 1rem;
 $global-menu-nested-margin: 1rem;
 $global-prototype-breakpoints: false;
 $global-color-pick-contrast-tolerance: 0;
-$print-transparent-backgrounds: true; // not in new settings
+$print-transparent-backgrounds: false;
 
 @include add-foundation-colors;
 
