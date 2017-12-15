@@ -1,18 +1,26 @@
 package de.proteinevolution.models.database.users
 
 import java.time.ZonedDateTime
-import scala.util.Random
+import java.security.SecureRandom
+import java.math.BigInteger
 import reactivemongo.bson._
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 
 case class UserToken(tokenType: Int,
-                     token: String = Random.alphanumeric.take(15).mkString,
+                     token: String = UserToken.nextToken(15),
                      passwordHash: Option[String] = None,
                      eMail: Option[String] = None,
                      userID: Option[BSONObjectID] = None,
                      changeDate: Option[ZonedDateTime] = Some(ZonedDateTime.now))
 
 object UserToken {
+
+  private val random = new SecureRandom()
+
+  def nextToken(nrChars: Int = 24): String = {
+    new BigInteger(nrChars * 5, random).toString(32)
+  }
+
   lazy val TYPE            = "type"
   lazy val TOKEN           = "token"
   lazy val NEWPASSWORDHASH = "nPWH"
