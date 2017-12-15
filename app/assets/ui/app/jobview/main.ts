@@ -44,7 +44,7 @@ const JobLineComponent = {
                             $("#tabs").tabs();
                         });
                     } },
-                        m("i", { "class": "icon-white_question helpicon", "title": "Help page", "config": tooltipsterConf})
+                        m("i", { "class": "icon-white_question helpicon", "title": "Help page", "config": tooltipConf})
                 )
             ]),
             m("span", { "class": "jobdate" }, isJob ? "Created: " + dateCreated.format("lll") : ""),
