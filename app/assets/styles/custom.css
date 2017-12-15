@@ -1,3 +1,11 @@
+
+/* Remove this as soon as foundation settings work */
+.has-tip {
+    cursor: pointer;
+    font-weight: normal;
+}
+
+/* End remove this */
 body {
     font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     color: #707070;
