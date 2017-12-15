@@ -15,12 +15,12 @@
 
         <title>Bioinformatics Toolkit</title>
 
-        <!-- SEO -->
+            <!-- SEO -->
         <meta name="description" content="The MPI Bioinformatics Toolkit is an interactive web service 
                                           which offers access to a great variety of public and in-house bioinformatics tools. 
                                           They are grouped into different sections that support sequence searches, 
                                           multiple alignment, secondary and tertiary structure prediction and classification." />
-        
+
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
@@ -44,7 +44,7 @@
         @Html(webJarsUtil.css("slick.css"))
         @Html(webJarsUtil.css("slick-theme.css"))
 
-        <!-- JQuery -->
+            <!-- JQuery -->
         @Html(webJarsUtil.script("3.2.1/jquery.min.js"))
         @Html(webJarsUtil.script("jquery.lazyload.js"))
         @Html(webJarsUtil.script("1.12.1/jquery-ui.js"))
@@ -158,24 +158,32 @@
                 <button type="button" data-open="offCanvas"><i class="icon-reorder icon2x"></i></button>
             </div>
 
-            <div id="main" class="row" style="max-width: 75rem; margin: 0 auto" data-off-canvas-content>
-                <div id="browser-not-supported" class="row" style="display:none" onload="if(detectIE()) { this.style.display = 'block'; }">
+            <div id="main" class="row" style="max-width: 75rem;
+                margin: 0 auto" data-off-canvas-content>
+                <div id="browser-not-supported" class="row" style="display: none" onload="if (detectIE()) {
+                    this.style.display = 'block'
+                }">
                     <div class="column small-12 padded-column text-center">
-                        Warning! This browser is not fully supported. 
+                        <button class="close-button" aria-label="Close alert" type="button" onclick="this.parentNode.parentNode.style.display = 'none'">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <b>Warning!</b> This browser is not fully supported.
                         Please consider using this site with Mozilla Firefox or Google Chrome.
                     </div>
+                    <hr>
                 </div>
                 <div class="small-12 padded-column columns">
-                    <div class="row" style="height:135px; min-height:135px;">
+                    <div class="row" style="height: 135px;
+                        min-height: 135px;">
                         <div class="small-12 padded-column columns">
-                            <!---All purpose Modal --->
+                                <!---All purpose Modal --->
                             <div id="modal" class="reveal large" data-reveal>
                                 <button class="close-button" data-close aria-label="Close modal" type="button">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
 
-                            <!---Hamburger Navbar --->
+                                <!---Hamburger Navbar --->
                             <div id="myNav" class="overlay print-hide">
                                 <button id="hamburgerInside" class="hamburger hamburger--elastic is-active" type="button" onclick="closeNav()">
                                     <span class="hamburger-box">
@@ -218,7 +226,7 @@
 
                                     <!--navbar-->
                                 <div class="columns large-8 show-for-medium print-hide" id="navbar">
-                                    @elements.navbar(tools)
+                                @elements.navbar(tools)
                                 </div>
                                 <div class="columns large-2 show-for-large">
                                 </div>

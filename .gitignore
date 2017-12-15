@@ -27,6 +27,8 @@ project/.sbtserver
 project/.sbtserver.lock
 development   
 target
+node_modules
+package-lock.json
 mvc/conf/application.conf
 mvc/logs
 mvc/mvc.iml
