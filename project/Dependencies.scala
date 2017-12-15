@@ -53,7 +53,6 @@ object Dependencies {
     "org.webjars.bower" % "velocity"            % "1.5.0",
     "org.webjars"       % "font-awesome"        % "4.7.0",
     "org.webjars"       % "select2"             % "4.0.3",
-    "org.webjars.npm"   % "tooltipster"         % "4.2.5",
     "org.webjars"       % "momentjs"            % "2.18.1",
     "org.webjars.bower" % "typeahead.js"        % "0.11.1"
   )
