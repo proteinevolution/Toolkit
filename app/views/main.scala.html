@@ -114,7 +114,7 @@
         @Html(webJarsUtil.script("javascript.js"))
 
         <link href="@routes.Assets.versioned("styles/custom.css")" rel="stylesheet">
-
+        <link href="@routes.Assets.versioned("styles/print.css")" rel="stylesheet">
 
             <!-- Datatables -->
         @Html(webJarsUtil.css("dataTables.foundation.min.css"))
@@ -159,6 +159,12 @@
             </div>
 
             <div id="main" class="row" style="max-width: 75rem; margin: 0 auto" data-off-canvas-content>
+                <div id="browser-not-supported" class="row" style="display:none" onload="if(detectIE()) { this.style.display = 'block'; }">
+                    <div class="column small-12 padded-column text-center">
+                        Warning! This browser is not fully supported. 
+                        Please consider using this site with Mozilla Firefox or Google Chrome.
+                    </div>
+                </div>
                 <div class="small-12 padded-column columns">
                     <div class="row" style="height:135px; min-height:135px;">
                         <div class="small-12 padded-column columns">
@@ -170,7 +176,7 @@
                             </div>
 
                             <!---Hamburger Navbar --->
-                            <div id="myNav" class="overlay">
+                            <div id="myNav" class="overlay print-hide">
                                 <button id="hamburgerInside" class="hamburger hamburger--elastic is-active" type="button" onclick="closeNav()">
                                     <span class="hamburger-box">
                                         <span class="hamburger-inner overlayed"></span>
@@ -184,7 +190,7 @@
 
 
                                 <!---Navigation Bar --->
-                            <div class="row" id="metanav">
+                            <div class="row print-hide" id="metanav">
                                 <div id="metauser"></div> <!-- TODO: ugly construction -->
                                 <div id="social">
                                     <a href="https://www.facebook.com/mpitoolkit" target="_blank" rel="noopener"><i class="icon-facebook"></i></a>
@@ -211,7 +217,7 @@
                                 </div>
 
                                     <!--navbar-->
-                                <div class="columns large-8 show-for-medium" id="navbar">
+                                <div class="columns large-8 show-for-medium print-hide" id="navbar">
                                     @elements.navbar(tools)
                                 </div>
                                 <div class="columns large-2 show-for-large">
@@ -222,7 +228,7 @@
 
                         <!--- Mount points for Mithril Application -->
                     <div class="row" id="main-window">
-                        <div class="large-2 padded-column columns show-for-large" id="sidebar">
+                        <div class="large-2 padded-column columns show-for-large print-hide" id="sidebar">
                             <div id="sidebar-search"></div>
                             <div id="sidebar-joblist"></div>
                         </div>
@@ -236,7 +242,7 @@
                 </div>
                 <footer class="row" id="app">
                     <div class="columns large-12">
-                        <div id="sub-nav">
+                        <div id="sub-nav" class="print-hide">
                             <a data-open="subnavHelpModal">Help</a>
                             <a data-open="subnavFAQModal">FAQ</a>
                             <a data-open="privacyPolicyModal">Privacy Policy</a>
