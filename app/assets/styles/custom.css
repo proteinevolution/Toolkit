@@ -4,6 +4,10 @@
     cursor: pointer;
     font-weight: normal;
 }
+.tooltip {
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.8);
+}
 
 /* End remove this */
 body {
