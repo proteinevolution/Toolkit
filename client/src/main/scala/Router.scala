@@ -1,5 +1,6 @@
 import build.BuildInfo
 import com.tgf.pizza.scalajs.mithril._
+import org.scalajs.dom
 import org.scalajs.dom.raw.HTMLDivElement
 
 import scala.scalajs.js
@@ -10,15 +11,15 @@ object Router extends js.JSApp {
 
   private val versionString = {
     new java.lang.StringBuilder()
-        .append("Version: ")
-        .append(BuildInfo.version)
-        .append(" on Scala ")
-        .append(BuildInfo.scalaVersion)
-        .append(" with Sbt ")
-        .append(BuildInfo.sbtVersion)
-        .append(" and Play! ")
-        .append(BuildInfo.playVersion)
-        .toString
+      .append("Version: ")
+      .append(BuildInfo.version)
+      .append(" on Scala ")
+      .append(BuildInfo.scalaVersion)
+      .append(" with Sbt ")
+      .append(BuildInfo.sbtVersion)
+      .append(" and Play! ")
+      .append(BuildInfo.playVersion)
+      .toString
   }
 
   def main(): Unit = {
@@ -54,12 +55,18 @@ object Router extends js.JSApp {
     g.jobList.mount(g.document.getElementById("sidebar-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
 
     g.search = g.m.deps.factory(g.window)
-    g.search.mount(g.document.getElementById("sidebar-search").asInstanceOf[HTMLDivElement], m.component(SearchComponent, js.Dynamic.literal("id" -> "side-search", "placeholder" -> " ")))
+    g.search.mount(
+      g.document.getElementById("sidebar-search").asInstanceOf[HTMLDivElement],
+      m.component(SearchComponent, js.Dynamic.literal("id" -> "side-search", "placeholder" -> " "))
+    )
 
     g.jobListOffCanvas = g.m.deps.factory(g.window)
-    g.jobListOffCanvas.mount(g.document.getElementById("off-canvas-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
+    g.jobListOffCanvas
+      .mount(g.document.getElementById("off-canvas-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
 
-    if(!g.window.location.href.asInstanceOf[String].contains("tuebingen.mpg.de"))
-      g.document.getElementById("buildinfo").innerHTML = versionString
+    val buildInfoElem = dom.document.getElementById("buildinfo")
+    if (!js.isUndefined(buildInfoElem) && buildInfoElem != null)
+      buildInfoElem.innerHTML = versionString
+
   }
 }
