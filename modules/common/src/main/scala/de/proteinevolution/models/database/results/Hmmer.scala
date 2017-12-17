@@ -10,7 +10,7 @@ import de.proteinevolution.models.results.Common
 import play.api.libs.json._
 
 @Singleton
-class Hmmer @Inject()(general: General, aln: Alignment) {
+class Hmmer @Inject()(general: General, aln: Alignment) extends SearchTool {
 
   def parseResult(jsValue: JsValue): HmmerResult = {
     val obj   = jsValue.as[JsObject]
@@ -113,7 +113,7 @@ object Hmmer {
                          query: SingleSeq,
                          db: String,
                          TMPRED: String,
-                         COILPRED: String) {
+                         COILPRED: String) extends SearchResult {
     def hitsOrderBy(params: DTParam): List[HmmerHSP] = {
       (params.iSortCol, params.sSortDir) match {
         case (1, "asc")  => HSPS.sortBy(_.accession)

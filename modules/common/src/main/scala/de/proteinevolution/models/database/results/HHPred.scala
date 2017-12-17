@@ -9,7 +9,7 @@ import de.proteinevolution.models.database.results.HHPred._
 import de.proteinevolution.models.results.Common
 import play.api.libs.json._
 @Singleton
-class HHPred @Inject()(general: General, aln: Alignment) {
+class HHPred @Inject()(general: General, aln: Alignment) extends SearchTool {
 
   def parseResult(jsValue: JsValue): HHPredResult = {
     val obj        = jsValue.as[JsObject]
@@ -145,7 +145,7 @@ object HHPred {
                           TMPRED: String,
                           COILPRED: String,
                           MSA_GEN: String,
-                          QA3M_COUNT: Int) {
+                          QA3M_COUNT: Int) extends SearchResult {
 
     def hitsOrderBy(params: DTParam): List[HHPredHSP] = {
       (params.iSortCol, params.sSortDir) match {

@@ -9,7 +9,6 @@ import play.api.Logger
 import play.api.cache._
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import better.files._
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
@@ -26,7 +25,6 @@ import scala.concurrent.duration._
 
 @Singleton
 final class Service @Inject()(
-    val reactiveMongoApi: ReactiveMongoApi,
     mongoStore: MongoStore,
     toolFactory: ToolFactory,
     constants: Constants,
@@ -36,8 +34,7 @@ final class Service @Inject()(
   @NamedCache("userCache") val userCache: SyncCacheApi,
   val locationProvider: LocationProvider)
     extends AbstractController(cc)
-    with I18nSupport
-    with ReactiveMongoComponents {
+    with I18nSupport {
 
   implicit val timeout: Timeout = Timeout(1.seconds)
 

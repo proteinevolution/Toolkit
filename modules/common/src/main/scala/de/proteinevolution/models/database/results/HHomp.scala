@@ -8,7 +8,7 @@ import de.proteinevolution.models.database.results.HHomp._
 import de.proteinevolution.models.results.Common
 import play.api.libs.json._
 @Singleton
-class HHomp @Inject()(general: General) {
+class HHomp @Inject()(general: General) extends SearchTool {
 
   def parseResult(jsValue: JsValue): HHompResult = {
     val obj        = jsValue.as[JsObject]
@@ -124,7 +124,8 @@ object HHomp {
                            bb_pred: String,
                            bb_conf: String,
                            start: Int)
-  case class HHompResult(HSPS: List[HHompHSP], num_hits: Int, query: SingleSeq, db: String, overall_prob: Double) {
+  case class HHompResult(HSPS: List[HHompHSP], num_hits: Int, query: SingleSeq, db: String, overall_prob: Double)
+      extends SearchResult {
     def hitsOrderBy(params: DTParam): List[HHompHSP] = {
       (params.iSortCol, params.sSortDir) match {
         case (1, "asc")  => HSPS.sortBy(_.template.accession)

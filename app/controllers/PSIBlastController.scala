@@ -17,7 +17,6 @@ import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.database.results.PSIBlast.{ PSIBlastHSP, PSIBlastResult }
 import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc._
-import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.sys.process._
@@ -25,7 +24,6 @@ import scala.sys.process._
 class PSIBlastController @Inject()(resultFiles: ResultFileAccessor,
                                    psiblast: PSIBlast,
                                    constants: Constants,
-                                   val reactiveMongoApi: ReactiveMongoApi,
                                    cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with CommonController {

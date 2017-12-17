@@ -4,6 +4,7 @@ import java.io.{ FileInputStream, ObjectInputStream }
 import java.security.MessageDigest
 import java.time.ZonedDateTime
 import javax.inject.{ Inject, Singleton }
+
 import de.proteinevolution.models.database.jobs.JobState._
 import actors.JobActor._
 import better.files._
@@ -21,7 +22,6 @@ import play.api.Logger
 import play.api.cache._
 import play.api.libs.json.Json
 import play.api.mvc._
-import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONDocument
 import services.JobActorAccess
 
@@ -29,7 +29,6 @@ import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class JobController @Inject()(jobActorAccess: JobActorAccess,
-                                    val reactiveMongoApi: ReactiveMongoApi,
                                     jobIdProvider: JobIdProvider,
                                     userSessions: UserSessions,
                                     mongoStore: MongoStore,
@@ -104,7 +103,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               Future.successful(Some(jobIdProvider.provide))
           }).flatMap {
             case Some(jobID) =>
-
               // Filter invalid parameters
               var params: Map[String, String] = formData
 
