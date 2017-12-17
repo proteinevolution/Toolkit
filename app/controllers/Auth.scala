@@ -19,7 +19,6 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.libs.mailer._
-import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.bson._
 import org.webjars.play.WebJarsUtil
 import play.api.Environment
@@ -32,7 +31,6 @@ import scala.concurrent.{ Await, ExecutionContext, Future }
 @Singleton
 final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                            mongoStore: MongoStore,
-                           val reactiveMongoApi: ReactiveMongoApi,
                            toolFactory: ToolFactory,
                            userSessions: UserSessions,
                            implicit val mailerClient: MailerClient,
@@ -45,8 +43,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
     extends AbstractController(cc)
     with I18nSupport
     with JSONTemplate
-    with CommonController
-    with ReactiveMongoComponents {
+    with CommonController {
 
   /**
    * User wants to sign out

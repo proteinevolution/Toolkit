@@ -10,7 +10,7 @@ import de.proteinevolution.models.results.Common
 import play.api.libs.json._
 
 @Singleton
-class HHBlits @Inject()(general: General, aln: Alignment) {
+class HHBlits @Inject()(general: General, aln: Alignment) extends SearchTool {
 
   def parseResult(jsValue: JsValue): HHBlitsResult = {
     val obj        = jsValue.as[JsObject]
@@ -18,8 +18,8 @@ class HHBlits @Inject()(general: General, aln: Alignment) {
     val alignments = (obj \ jobID \ "alignments").as[List[JsObject]]
     val hits       = (obj \ jobID \ "hits").as[List[JsObject]]
     val hsplist = alignments.zip(hits).map { x =>
-      val queryResult = parseQuery((x._1 \ "query").as[JsObject])
-      val infoResult  = parseInfo((x._1 \ "info").as[JsObject])
+      val queryResult    = parseQuery((x._1 \ "query").as[JsObject])
+      val infoResult     = parseInfo((x._1 \ "info").as[JsObject])
       val templateResult = parseTemplate((x._1 \ "template").as[JsObject], x._2)
       val agree          = (x._1 \ "agree").as[String]
       val description    = (x._1 \ "header").as[String]
@@ -115,7 +115,8 @@ object HHBlits {
                            query: SingleSeq,
                            db: String,
                            TMPRED: String,
-                           COILPRED: String) {
+                           COILPRED: String)
+      extends SearchResult {
 
     def hitsOrderBy(params: DTParam): List[HHBlitsHSP] = {
       (params.iSortCol, params.sSortDir) match {
