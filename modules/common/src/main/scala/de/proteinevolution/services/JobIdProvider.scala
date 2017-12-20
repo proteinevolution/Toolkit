@@ -27,7 +27,7 @@ class JobIdProvider @Inject()(mongoStore: MongoStore,
   }
 
   def trash(id: String): Unit = {
-    val _ = usedIds -= id
+    usedIds = usedIds - id
   }
 
 }
