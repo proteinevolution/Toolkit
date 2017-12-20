@@ -27,7 +27,7 @@ object Dependencies {
     "org.scalaz"           %% "scalaz-core"              % scalazVersion,
     "com.vmunier"          %% "scalajs-scripts"          % "1.1.1",
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
-    "com.typesafe.play"    %% "play-json"                % "2.6.7"
+    "com.typesafe.play"    %% "play-json"                % "2.6.8"
   )
 
   lazy val testDeps = Seq(
