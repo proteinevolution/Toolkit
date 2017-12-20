@@ -15,8 +15,6 @@ cache:
   directories:
   - "$HOME/.ivy2/cache"
   - $HOME/.sbt
-before_install:
-  - gem install compass
 install:
   - git submodule update --init --recursive
   - git clone https://github.com/felixgabler/maxmind-geoip2-scala.git $HOME/pizza

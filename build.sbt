@@ -52,8 +52,6 @@ lazy val root = (project in file("."))
       libraryDependencies ++= (Dependencies.commonDeps ++ Dependencies.testDeps ++ Dependencies.frontendDeps),
       pipelineStages := Seq(digest, gzip),
       compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
-      sassOptions in Assets ++= Seq("--compass", "-r", "compass"),
-      sassOptions in Assets ++= Seq("--cache-location", "target/web/sass/.sass-cache"),
       buildInfoSettings
     )
 
@@ -63,7 +61,6 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots")
 )
-resolvers += "Madoushi sbt-plugins" at "https://dl.bintray.com/madoushi/sbt-plugins/"
 
 lazy val client = (project in file("client"))
     .enablePlugins(ScalaJSPlugin, ScalaJSWeb, BuildInfoPlugin)
