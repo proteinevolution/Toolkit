@@ -319,7 +319,7 @@ function getCheckedCheckboxes(){
 function hitlistBaseFunctions(){
     $(document).ready(function() {
         // add tooltipser to visualization
-        $('#blastviz').find('area').data("tooltip", "").data("position", "bottom").foundation();
+        $('#blastviz').find('area').attr("data-tooltip", "").foundation();
         $.LoadingOverlay("hide");
         followScroll(document);
 
