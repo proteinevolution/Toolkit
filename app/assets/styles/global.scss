@@ -1,8 +1,9 @@
+@import 'settings';
+
 @import 'lib/foundation-sites/scss/foundation';
 
 @import 'footer';
 @import 'sidebar';
-@import 'settings';
 @import 'navbar';
 @import 'tools';
 @import 'errors';
@@ -43,7 +44,6 @@
 @include foundation-top-bar;
 
 @import 'auth';
-
 
 @include foundation-accordion;
 @include foundation-accordion-menu;

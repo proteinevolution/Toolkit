@@ -142,6 +142,6 @@ const fadesIn = function(element : any, isInitialized : boolean, context : any) 
 
 const tooltipConf = function(elem: any, isInit: boolean) {
     if(!isInit){
-        $('.job-button div, #jobID, .helpicon, .fa-trash-o').attr({ "data-tooltip": "", "data-position": "bottom" }).foundation();
+        $('.job-button div:not(.has-tip), #jobID:not(.has-tip), .helpicon:not(.has-tip), .fa-trash-o:not(.has-tip)').attr("data-tooltip", "").foundation();
     }
 };

@@ -1,15 +1,7 @@
-
-/* Remove this as soon as foundation settings work */
-.has-tip {
-    cursor: pointer;
-    font-weight: normal;
-}
 .tooltip {
     text-align: center;
-    background-color: rgba(0, 0, 0, 0.7);
 }
 
-/* End remove this */
 body {
     font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     color: #707070;
