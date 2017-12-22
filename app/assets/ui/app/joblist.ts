@@ -1,6 +1,6 @@
 const tooltipSearch = function(elem : any, isInit : boolean) {
     if (!isInit) {
-        $(elem).attr({ "data-tooltip": "", "data-position": "bottom", "data-diable-hover": false, "aria-has-popup": true }).foundation();
+        $(elem).attr({ "data-tooltip": "","aria-has-popup": true }).foundation();
         return elem.setAttribute("title", "Search for job");
     }
 };
