@@ -238,6 +238,7 @@ object Common {
         links += generateLink(cddBaseLink, idCDDPfam, "CDD")
       case "ncbi" =>
         links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
+      case _ => ()
     }
     Html(links.mkString(" | "))
   }
