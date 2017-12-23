@@ -33,12 +33,6 @@ const tabulated = function(element : any, isInit : boolean) : any {
 
 $('.toolsection').on('click', 'a', function() { /*m.route(this.href)*/ });
 
-// checl if browser is IE
-const detectIE = function(): boolean {
-    const ua = window.navigator.userAgent;
-    return ua.indexOf('MSIE ') > 0 || ua.indexOf('Trident/') > 0 || ua.indexOf('Edge/') > 0;
-}
-
 const select2Config = function(elem : any, isInit : boolean) : any {
 
     if(!isInit) {
