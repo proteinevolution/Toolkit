@@ -296,7 +296,7 @@ class SignIn {
                     m("span", {"class":"form-error"}, "Must be at least 6 characters long!")
                 )),
                 m("div", m("label",
-                    m("input", { id:         'password',
+                    m("input", { id:         'signInPasswordInput',
                                  name:       'password',
                                  pattern:    '.{8,40}',
                                  placeholder:'Password',
@@ -427,7 +427,7 @@ class SignUp {
                     m("span", {"class":"form-error"}, "Passwords must be at least 8 characters long!")
                 ])),
                 m("div", m("label", [
-                    m("input", { id:             'password',
+                    m("input", { id:             'signUpPasswordInput',
                                  name:           'password',
                                  pattern:        '.{8,128}',
                                  placeholder:    'Confirm password',
