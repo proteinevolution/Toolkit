@@ -23,15 +23,21 @@ var ncbiReg = "^([A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9])$";
 
 
 function download(filename, text){
-    var a = document.createElement("a");
-    document.body.appendChild(a);
-    a.style = "display: none";
-    blob = new Blob([text], {type: "octet/stream"}),
-        url = window.URL.createObjectURL(blob);
-    a.href = url;
-    a.download = filename;
-    a.click();
-    window.URL.revokeObjectURL(url);
+    var blob = new Blob([text], {type: "octet/stream"});
+    if(window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveBlob(blob, filename);
+    } else {
+        var a = document.createElement("a");
+        a.style = "display: none";
+        a.href = window.URL.createObjectURL(blob);
+        a.download = filename;
+        // Append anchor to body.
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(a.href);
+        // Remove anchor from body
+        a.remove();
+    }
     $.LoadingOverlay("hide");
 }
 
