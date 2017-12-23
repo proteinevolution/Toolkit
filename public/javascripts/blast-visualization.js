@@ -318,21 +318,26 @@ function getCheckedCheckboxes(){
 
 function hitlistBaseFunctions(){
     $(document).ready(function() {
-        // add tooltipser to visualization
-        $('#blastviz').find('area').attr("data-tooltip", "").foundation();
+        // add tooltipster to visualization
+        $('#blastviz').find('area').tooltipster({
+            theme: ['tooltipster-borderless', 'tooltipster-borderless-customized'],
+            position: 'bottom',
+            animation: 'fade',
+            contentAsHTML: true,
+            debug: false,
+            maxWidth: $(this).innerWidth() * 0.6
+        });
         $.LoadingOverlay("hide");
         followScroll(document);
 
         // add slider val
         $('.slider').on('moved.zf.slider', function () {
-            $('#lefthandle').html($('#hidden1').val());
-            $('#lefthandle').css({
+            $('#lefthandle').html($('#hidden1').val()).css({
                 'color': 'white',
                 'font-weight': 'bold',
                 'padding-left': '2px'
             });
-            $('#righthandle').html($('#hidden2').val());
-            $('#righthandle').css({
+            $('#righthandle').html($('#hidden2').val()).css({
                 'color': 'white',
                 'font-weight': 'bold',
                 'padding-left': '2px'
@@ -353,8 +358,7 @@ function selectAll(){
     selectAllBool = !selectAllBool;
     if(selectAllBool) {
         selectAllHelper(checkbox);
-        $(".selectAllSeqBar").text("Deselect all");
-        $(".selectAllSeqBar").addClass("colorToggleBar");
+        $(".selectAllSeqBar").text("Deselect all").addClass("colorToggleBar");
 
         // first empty array
         checkboxes = [];
@@ -363,8 +367,7 @@ function selectAll(){
     }
     else {
         deselectAll(checkbox);
-        $(".selectAllSeqBar").text("Select all");
-        $(".selectAllSeqBar").removeClass("colorToggleBar");
+        $(".selectAllSeqBar").text("Select all").removeClass("colorToggleBar");
         // delete all checkboxes from array
         checkboxes = [];
     }
