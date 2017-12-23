@@ -311,7 +311,7 @@ class SignIn {
                     m("span", {"class":"form-error"}, "Password must be at least 8 characters long!")
                 )),
                 m("input", { "class": "input small expanded secondary button",
-                             id:    'signin-submit',
+                             id:    'signInSubmit',
                              type:  'submit',
                              value: 'Sign In'
                 }),
@@ -505,7 +505,7 @@ class ForgotPassword {
                     })
                 )),
                 m("input", { "class": "input small expanded secondary button",
-                             id:    'signin-submit',
+                             id:    'forgotPasswordSubmit',
                              type:  'submit',
                              value: 'Send'
                 })
