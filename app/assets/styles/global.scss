@@ -49,4 +49,17 @@
 @include foundation-accordion-menu;
 
 @import 'print';
+@import 'sequence_coloring';
+@import 'index';
 
+@import '../../../public/styles/reformat.css';
+@import '../../../public/styles/reformat-common.css';
+
+@import 'reformat-jobview';
+@import 'jobview';
+@import 'joblist';
+@import 'news';
+@import 'offcanvas';
+@import 'help';
+@import 'resultView';
+@import 'general';
