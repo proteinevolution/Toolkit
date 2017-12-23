@@ -92,7 +92,7 @@ table.dataTable thead th {
   padding-left: 0.75em;
 }
 table.dataTable.no-footer{
-  border-bottom: 1px solid #1111114d !important;
+  border-bottom: 1px solid rgba(16,16,16,0.3) !important;
 }
 
 #jobManagerTable thead, #jobManagerTable thead:hover, #jobManagerTable thead tr, #jobManagerTable thead tr:hover  {
