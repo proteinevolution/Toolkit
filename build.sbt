@@ -2,8 +2,7 @@ import sbtbuildinfo.BuildInfoPlugin.autoImport._
 
 inThisBuild(Seq(
   organization := "de.proteinevolution",
-  scalaVersion := "2.12.4",
-  version      := "0.1.0"
+  scalaVersion := "2.12.4"
 ))
 
 lazy val commonSettings = Seq(
