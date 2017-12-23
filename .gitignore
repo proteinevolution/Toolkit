@@ -15,3 +15,5 @@ public/javascripts/typescriptc.js.map
 native
 *.swp
 .ensime
+node_modules
+package-lock.json
