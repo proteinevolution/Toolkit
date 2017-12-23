@@ -6,37 +6,6 @@ const foundationConfig = function(elem : any, isInit : boolean) : any {
     }
 };
 
-/** Slick slider in frontend not in use
-const slickSlider = function (elem : any, isInit : boolean) {
-    if (!isInit) {
-        return ($(elem).on("init", function () {
-            return $(this).fadeIn(3000);
-        })).slick({
-            autoplay: false,
-            autoplayspeed: 5000,
-            speed: 2500,
-            dots: false,
-            arrows: false,
-            fade: true,
-            lazyLoad: "ondemand",
-            cssEase: "ease-out",
-            zIndex: "1",
-            responsive: [
-                {
-                    breakpoint: 500,
-                    settings: {
-                        dots: false,
-                        arrows: false,
-                        infinite: false,
-                        slidesToShow: 2,
-                        slidesToScroll: 2
-                    }
-                }
-            ]
-        });
-    }
-}; */
-
 let bloodHoundConfig = {
     engine : new Bloodhound({
         remote: {

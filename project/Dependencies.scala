@@ -46,7 +46,6 @@ object Dependencies {
     "org.webjars"       % "jquery-ui"           % "1.12.1", // css included over cdn
     "org.webjars.npm"   % "foundation-sites"    % "6.4.3",
     "org.webjars.npm"   % "mithril"             % "0.2.8", // 1.1.3 available
-    "org.webjars.npm"   % "slick-carousel"      % "1.6.0",
     "org.webjars.npm"   % "codemirror-minified" % "5.28.0",
     "org.webjars.bower" % "datatables"          % "1.10.16",
     "org.webjars"       % "highcharts"          % "5.0.14",
