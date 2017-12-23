@@ -24,7 +24,7 @@ lazy val buildInfoSettings = Seq(
   buildInfoPackage := "build"
 )
 
-lazy val coreSettings = commonSettings ++ Settings.compileSettings
+lazy val coreSettings = commonSettings ++ Settings.compileSettings ++ Release.settings
 
 lazy val disableDocs = Seq[Setting[_]](
   sources in (Compile, doc) := Seq.empty,
