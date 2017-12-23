@@ -11,7 +11,7 @@ import scala.collection.immutable.ListMap
 
 /**
   Provides methods to read Generative Params from a file
-  */
+ */
 @Singleton
 class GenerativeParamFileParser @Inject()(env: Env) {
 
@@ -34,6 +34,7 @@ class GenerativeParamFileParser @Inject()(env: Env) {
         case (this.genKeyword, ".sh")   => new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
         case (this.genKeyword, ".py")   => new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
         case (this.genKeyword, ".prop") => new ListGenParamFile(spt(0), paramPath).withEnvironment(env)
+        case _                          => throw new IllegalStateException("no valid paramfile extension found. Must be .sh, .py, or .prop")
       }
     }
   }
@@ -42,13 +43,13 @@ class GenerativeParamFileParser @Inject()(env: Env) {
 /*
  * Parameters obtained from files
  */
-abstract class GenerativeParamFile(name: String, path: String) extends GenerativeParam(name) {
+abstract class GenerativeParamFile(name: String) extends GenerativeParam(name) {
 
   /* Load the parameters from the file */
   def load(): Unit
 }
 
-class ExecGenParamFile(name: String, path: String) extends GenerativeParamFile(name, path) {
+class ExecGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String]) extends GenerativeParamFile(name) {
 
   private var env: Option[Env] = None
   import scala.sys.process.Process
@@ -59,8 +60,6 @@ class ExecGenParamFile(name: String, path: String) extends GenerativeParamFile(n
     this
   }
 
-  // Remembers parameter values that are allowed to be used
-  private var allowed: Set[String]                    = _
   private var clearTextNames: ListMap[String, String] = _
 
   def load(): Unit = {
@@ -85,7 +84,7 @@ class ExecGenParamFile(name: String, path: String) extends GenerativeParamFile(n
       case None => Process(path).!!.split('\n')
     }
 
-    this.allowed = lines.map { param =>
+    allowed = lines.map { param =>
       val spt = param.split("\\s+")
       clearTextNames = clearTextNames + (spt(0) -> spt(1))
       spt(0)
@@ -94,23 +93,21 @@ class ExecGenParamFile(name: String, path: String) extends GenerativeParamFile(n
   def generate: ListMap[String, String] = this.clearTextNames
 }
 
-class ListGenParamFile(name: String, path: String) extends GenerativeParamFile(name, path) {
+class ListGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String]) extends GenerativeParamFile(name) {
 
   private val f = path.toFile
 
   override def withEnvironment(env: Env): ListGenParamFile = this
 
   // Load file upon instantiation
-  this.load()
+  load()
 
-  // Remembers parameter values that are allowed to be used
-  private var allowed: Set[String]                    = _
   private var clearTextNames: ListMap[String, String] = _
 
   def load(): Unit = {
     clearTextNames = ListMap.empty
 
-    this.allowed = f.lineIterator.map { line =>
+    allowed = f.lineIterator.map { line =>
       Logger.info("Reading line " + line)
       val spt = line.split("\\s+")
       clearTextNames = clearTextNames + (spt(0) -> spt(1))

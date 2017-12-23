@@ -33,7 +33,11 @@ const tabulated = function(element : any, isInit : boolean) : any {
 
 $('.toolsection').on('click', 'a', function() { /*m.route(this.href)*/ });
 
-
+// checl if browser is IE
+const detectIE = function(): boolean {
+    const ua = window.navigator.userAgent;
+    return ua.indexOf('MSIE ') > 0 || ua.indexOf('Trident/') > 0 || ua.indexOf('Edge/') > 0;
+}
 
 const select2Config = function(elem : any, isInit : boolean) : any {
 
@@ -136,13 +140,8 @@ const fadesIn = function(element : any, isInitialized : boolean, context : any) 
     }
 };
 
-const tooltipsterConf = function(elem: any, isInit: boolean) {
+const tooltipConf = function(elem: any, isInit: boolean) {
     if(!isInit){
-        $('.job-button div, .submitbuttons input, .helpicon, .fa-trash-o').tooltipster({
-            theme: 'tooltipster-borderless',
-            position: 'bottom',
-            animation: 'fade',
-            debug: false
-        });
+        $('.job-button div:not(.has-tip), #jobID:not(.has-tip), .helpicon:not(.has-tip), .fa-trash-o:not(.has-tip)').attr("data-tooltip", "").foundation();
     }
 };

@@ -12,7 +12,7 @@ import better.files._
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.results.General.DTParam
-import de.proteinevolution.models.database.results._
+import de.proteinevolution.models.database.results.PSIBlast
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.database.results.PSIBlast.{ PSIBlastHSP, PSIBlastResult }
 import play.api.libs.json.{ JsObject, Json }
@@ -24,8 +24,6 @@ import scala.sys.process._
 
 class PSIBlastController @Inject()(resultFiles: ResultFileAccessor,
                                    psiblast: PSIBlast,
-                                   general: General,
-                                   alignment: Alignment,
                                    constants: Constants,
                                    val reactiveMongoApi: ReactiveMongoApi,
                                    cc: ControllerComponents)(implicit ec: ExecutionContext)
@@ -96,7 +94,6 @@ class PSIBlastController @Inject()(resultFiles: ResultFileAccessor,
    * @return Https response
    */
   def full(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    println("called")
     val json     = request.body.asJson.get
     val numList  = (json \ "checkboxes").as[List[Int]]
     val filename = (json \ "filename").as[String]
@@ -149,10 +146,8 @@ class PSIBlastController @Inject()(resultFiles: ResultFileAccessor,
     } else {
       resultFiles.getResults(jobID).map {
         case None => NotFound
-        case Some(jsValue) =>
-          val result        = psiblast.parseResult(jsValue)
+        case Some(_) =>
           val accessionsStr = eval
-          val db            = result.db
           // execute the script and pass parameters
           Process(retrieveAlnEval.pathAsString,
                   (constants.jobPath + jobID).toFile.toJava,
@@ -181,7 +176,6 @@ class PSIBlastController @Inject()(resultFiles: ResultFileAccessor,
    * @return Https response containing the aligned sequences as String
    */
   def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    println("called")
     val json     = request.body.asJson.get
     val numList  = (json \ "checkboxes").as[List[Int]].mkString("\n")
     val filename = (json \ "filename").as[String]
@@ -190,10 +184,8 @@ class PSIBlastController @Inject()(resultFiles: ResultFileAccessor,
     } else {
       resultFiles.getResults(jobID).map {
         case None => NotFound
-        case Some(jsValue) =>
-          val result        = psiblast.parseResult(jsValue)
+        case Some(_) =>
           val accessionsStr = numList
-          val db            = result.db
           Process(retrieveAlnEval.pathAsString,
                   (constants.jobPath + jobID).toFile.toJava,
                   "accessionsStr" -> accessionsStr,
@@ -280,7 +272,7 @@ class PSIBlastController @Inject()(resultFiles: ResultFileAccessor,
           BadRequest
         } else {
           val hits =
-            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.psiblast.hit(jobID, _, result.db, wrapped))
+            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.psiblast.hit(_, result.db, wrapped))
           Ok(hits.mkString)
         }
     }

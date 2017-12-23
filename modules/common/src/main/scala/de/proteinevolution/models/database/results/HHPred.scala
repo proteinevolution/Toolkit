@@ -99,7 +99,7 @@ object HHPred {
                        ss_score: Double,
                        confidence: String,
                        length: Int) {
-    def toDataTable(db: String): JsValue =
+    def toDataTable: JsValue =
       Json.toJson(
         Map(
           "0" -> Json.toJson(Common.getCheckbox(num)),

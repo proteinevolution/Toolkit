@@ -3,10 +3,10 @@ package controllers
 import java.time.ZonedDateTime
 import javax.inject.{ Inject, Singleton }
 
+import de.proteinevolution.models.database.jobs.JobState._
 import actors.JobActor.{ JobStateChanged, SetSGEID, UpdateLog }
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.Constants
-import models.UserSessions
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.db.MongoStore
 import play.api.cache.{ NamedCache, SyncCacheApi }
@@ -24,7 +24,6 @@ import scala.io.Source
   */
 @Singleton
 final class Jobs @Inject()(jobActorAccess: JobActorAccess,
-                           userSessions: UserSessions,
                            @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                            implicit val locationProvider: LocationProvider,
                            mongoStore: MongoStore,
@@ -71,13 +70,6 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
       NoContent
     } else BadRequest("Permission denied")
   }
-
-  def pushMessage(jobID: String, message: String) = Action {
-    //userManager ! RunningJobMessage(reactivemongo.bson.BSONObjectID.parse(jobID).get, message)
-    NoContent
-  }
-
-  // TODO make secure
 
   def updateDateViewed(jobID: String) = Action {
     mongoStore.modifyJob(

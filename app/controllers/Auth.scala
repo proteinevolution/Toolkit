@@ -15,15 +15,14 @@ import de.proteinevolution.db.MongoStore
 import models.mailing.MailTemplate.{ ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail }
 import play.Logger
 import play.api.cache._
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.libs.mailer._
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.bson._
 import org.webjars.play.WebJarsUtil
-import services.JobActorAccess
-
+import play.api.Environment
 import scala.concurrent.{ Await, ExecutionContext, Future }
 
 /**
@@ -32,8 +31,6 @@ import scala.concurrent.{ Await, ExecutionContext, Future }
  */
 @Singleton
 final class Auth @Inject()(webJarsUtil: WebJarsUtil,
-                           messagesApi: MessagesApi,
-                           jobActorAccess: JobActorAccess,
                            mongoStore: MongoStore,
                            val reactiveMongoApi: ReactiveMongoApi,
                            toolFactory: ToolFactory,
@@ -43,6 +40,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                            @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                            @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi, // Mailing Controller
                            constants: Constants,
+                           environment: Environment,
                            cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
@@ -234,11 +232,11 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                 val selectorMail = BSONDocument(BSONDocument(User.EMAIL     -> signUpFormUser.getUserData.eMail))
                 val selectorName = BSONDocument(BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin))
                 mongoStore.findUser(selectorName).flatMap {
-                  case Some(x) =>
+                  case Some(_) =>
                     Future.successful(Ok(accountNameUsed()))
                   case None =>
                     mongoStore.findUser(selectorMail).flatMap {
-                      case Some(x) =>
+                      case Some(_) =>
                         Future.successful(Ok(accountEmailUsed()))
                       case None =>
                         // Create the database entry.
@@ -285,7 +283,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
             .profileEdit(user)
             .bindFromRequest
             .fold(
-              formWithErrors =>
+              _ =>
                 Future.successful {
                   Ok(formError())
               },
@@ -341,7 +339,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
   def passwordChangeSubmit(): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user: User =>
       user.userData match {
-        case Some(userData) =>
+        case Some(_) =>
           // Validate the password and return the new password Hash
           FormDefinitions
             .profilePasswordEdit(user)
@@ -396,7 +394,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
    */
   def resetPassword: Action[AnyContent] = Action.async { implicit request =>
     FormDefinitions.forgottenPasswordEdit.bindFromRequest.fold(
-      errors =>
+      _ =>
         Future.successful {
           Ok(formError())
       },
@@ -409,7 +407,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
           mongoStore.findUser(selector).flatMap {
             case Some(user) =>
               user.userData match {
-                case Some(userData) =>
+                case Some(_) =>
                   // Generate a new Token to wait for the confirmation eMail
                   val token = UserToken(tokenType = 3)
                   // create a modifier document to change the last login date in the Database
@@ -531,18 +529,22 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                         )
                       )
                       .map {
-                        case Some(modifiedUser) =>
+                        case Some(_) =>
                           Ok(
                             views.html.main(webJarsUtil,
                                             toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                            "Account verification was successful. Please log in.")
+                                            "Account verification was successful. Please log in.",
+                                            "",
+                                            environment)
                           )
                         case None => // Could not save the modified user to the DB
                           Ok(
                             views.html.main(
                               webJarsUtil,
                               toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                              "Verification was not successful due to a database error. Please try again later."
+                              "Verification was not successful due to a database error. Please try again later.",
+                              "",
+                              environment
                             )
                           )
                       }
@@ -580,7 +582,9 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                                     views.html.main(
                                       webJarsUtil,
                                       toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                      "Password change verification was successful. Please log in with Your new password."
+                                      "Password change verification was successful. Please log in with Your new password.",
+                                      "",
+                                      environment
                                     )
                                   )
                                 case None => // Could not save the modified user to the DB
@@ -588,7 +592,9 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                                     views.html.main(
                                       webJarsUtil,
                                       toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                      "Verification was not successful due to a database error. Please try again later."
+                                      "Verification was not successful due to a database error. Please try again later.",
+                                      "",
+                                      environment
                                     )
                                   )
                               }
@@ -597,9 +603,13 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                             Future.successful(
                               Ok(
                                 views.html
-                                  .main(webJarsUtil,
-                                        toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                        "The Password you had entered was insufficient, please create a new one.")
+                                  .main(
+                                    webJarsUtil,
+                                    toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                                    "The Password you had entered was insufficient, please create a new one.",
+                                    "",
+                                    environment
+                                  )
                               )
                             )
                         }
@@ -618,19 +628,22 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                       )
                     )
                     userSessions.modifyUserWithCache(selector, modifier).map {
-                      case Some(changedUser) =>
+                      case Some(_) =>
                         Ok(
                           views.html.main(webJarsUtil,
                                           toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                           "",
-                                          "passwordReset")
+                                          "passwordReset",
+                                          environment)
                         )
                       case None => // Could not save the modified user to the DB
                         Ok(
                           views.html.main(
                             webJarsUtil,
                             toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                            "Verification was not successful due to a database error. Please try again later."
+                            "Verification was not successful due to a database error. Please try again later.",
+                            "",
+                            environment
                           )
                         )
                     }
@@ -639,7 +652,9 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                       Ok(
                         views.html.main(webJarsUtil,
                                         toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                        "There was an error finding your token.")
+                                        "There was an error finding your token.",
+                                        "",
+                                        environment)
                       )
                     )
                 }
@@ -650,7 +665,9 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                   Ok(
                     views.html.main(webJarsUtil,
                                     toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                    "The token you used is not valid.")
+                                    "The token you used is not valid.",
+                                    "",
+                                    environment)
                   )
                 )
               }
@@ -659,7 +676,9 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                 Ok(
                   views.html.main(webJarsUtil,
                                   toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                  "There was an error finding your token.")
+                                  "There was an error finding your token.",
+                                  "",
+                                  environment)
                 )
               )
           }
@@ -668,7 +687,9 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
             Ok(
               views.html.main(webJarsUtil,
                               toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                              "There was an error finding your account.")
+                              "There was an error finding your account.",
+                              "",
+                              environment)
             )
           )
       }

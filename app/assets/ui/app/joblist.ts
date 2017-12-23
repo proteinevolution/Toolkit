@@ -1,8 +1,6 @@
 const tooltipSearch = function(elem : any, isInit : boolean) {
     if (!isInit) {
-        elem.setAttribute("data-tooltip", "data-tooltip");
-        elem.setAttribute("aria-haspopup", "true");
-        elem.setAttribute("data-disable-hover", "false");
+        $(elem).attr({ "data-tooltip": "","aria-has-popup": true }).foundation();
         return elem.setAttribute("title", "Search for job");
     }
 };
@@ -251,7 +249,7 @@ window.JobListComponent = {
         //             "on Top"                  : onTopOfList,
         //             "on Bottom"               : onBottomOfList});
         numScrollItems = JobListComponent.numVisibleItems; // How many items to scroll per click
-        return m("div", { "class": "job-list", config: tooltipsterConf }, [
+        return m("div", { "class": "job-list", config: tooltipConf }, [
             m("div", { "class": "job-button" }, [
                 m("div", { "class": "sort id textcenter" + (JobListComponent.sort.mode == "jobID" ? " selected" : ""),
                            title: "Sort by job ID", onclick: JobListComponent.sortList.bind(ctrl, "jobID", true) }, "ID"),

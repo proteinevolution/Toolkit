@@ -10,7 +10,6 @@ import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.results.Common
 import de.proteinevolution.models.search.JobDAO
-import de.proteinevolution.models.sge.Cluster
 import models.tools.ToolFactory
 import models.UserSessions
 import de.proteinevolution.common.{ HTTPRequest, LocationProvider }
@@ -18,22 +17,20 @@ import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
 import play.api.cache._
-import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.i18n.I18nSupport
 import play.api.libs.json.{ JsValue, Json }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
-import play.api.{ Configuration, Environment, Logger }
+import play.api.{ Environment, Logger }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
 import de.proteinevolution.models.Constants
-
 import scala.concurrent.{ Await, ExecutionContext, Future }
 
 @Singleton
 final class Application @Inject()(webJarsUtil: WebJarsUtil,
-                                  messagesApi: MessagesApi,
                                   @Named("clusterMonitor") clusterMonitor: ActorRef,
                                   webSocketActorFactory: WebSocketActor.Factory,
                                   @NamedCache("userCache") implicit val userCache: SyncCacheApi,
@@ -47,10 +44,8 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   mat: Materializer,
                                   val tel: TEL,
                                   val env: Env,
-                                  val cluster: Cluster,
                                   val search: Search,
                                   val settings: Settings,
-                                  configuration: Configuration,
                                   constants: Constants,
                                   cc: ControllerComponents,
                                   environment: Environment)(implicit ec: ExecutionContext)
@@ -176,7 +171,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
 
     userSessions.getUser.map { user =>
       Logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
-      Ok(views.html.main(webJarsUtil, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message))
+      Ok(views.html.main(webJarsUtil, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message, "", environment))
         .withSession(userSessions.sessionCookie(request, user.sessionID.get))
     }
   }

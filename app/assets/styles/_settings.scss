@@ -96,7 +96,7 @@ $global-menu-padding: 0.7rem 1rem;
 $global-menu-nested-margin: 1rem;
 $global-prototype-breakpoints: false;
 $global-color-pick-contrast-tolerance: 0;
-$print-transparent-backgrounds: true; // not in new settings
+$print-transparent-backgrounds: false;
 
 @include add-foundation-colors;
 
@@ -832,10 +832,10 @@ $titlebar-icon-spacing: 0.25rem;
 // 54. Tooltip
 // -----------
 
-$has-tip-cursor: help;
-$has-tip-font-weight: $global-weight-bold;
+$has-tip-cursor: pointer;
+$has-tip-font-weight: $global-weight-normal;
 $has-tip-border-bottom: dotted 1px $dark-gray;
-$tooltip-background-color: $black;
+$tooltip-background-color: rgba(0, 0, 0, 0.8);;
 $tooltip-color: $white;
 $tooltip-padding: 0.75rem;
 $tooltip-max-width: 10rem;

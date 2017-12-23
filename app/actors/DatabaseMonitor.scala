@@ -61,7 +61,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
    * Function removes old users and eMails registered users who may be deleted soon
    * @param verbose when true, the logger will show the current action
    */
-  private def deleteOldUsers(verbose: Boolean = false): Unit = {
+  private def deleteOldUsers(verbose: Boolean): Unit = {
     if (verbose)
       Logger.info("[User Deletion] Cleaning up old user data")
 
@@ -195,7 +195,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
       }
   }
 
-  private def deleteOldJobs(verbose: Boolean = false): Unit = {
+  private def deleteOldJobs(): Unit = {
     Logger.info("[Job Deletion] finding old jobs...")
     // grab the current time
     val now: ZonedDateTime = ZonedDateTime.now
@@ -244,7 +244,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
     case DeleteOldUsers => deleteOldUsers(true)
 
     // Remove old jobs
-    case DeleteOldJobs => deleteOldJobs(true)
+    case DeleteOldJobs => deleteOldJobs
 
     case _ =>
     // Not implemented

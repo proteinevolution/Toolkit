@@ -9,7 +9,8 @@ import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
 import models.UserSessions
-import de.proteinevolution.models.database.jobs.{ Job, Running }
+import de.proteinevolution.models.database.jobs.JobState._
+import de.proteinevolution.models.database.jobs.Job
 import play.api.Logger
 import play.api.cache._
 import play.api.libs.json.{ JsValue, Json }

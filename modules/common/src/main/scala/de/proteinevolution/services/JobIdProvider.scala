@@ -7,12 +7,10 @@ import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.util.Random
 
 @Singleton
-class JobIdProvider @Inject()(mongoStore: MongoStore)(
+class JobIdProvider @Inject()(mongoStore: MongoStore,
+                              private var usedIds: ListBuffer[String] = new ListBuffer[String]())(
     implicit ec: ExecutionContext
 ) {
-
-  // don't use ids which are provided but not in the database yet
-  private var usedIds = new ListBuffer[String]()
 
   private def isValid(id: String): Future[Boolean] = {
     mongoStore.selectJob(id).map(_.isEmpty)
@@ -29,9 +27,7 @@ class JobIdProvider @Inject()(mongoStore: MongoStore)(
   }
 
   def trash(id: String): Unit = {
-    this.usedIds -= id
+    usedIds = usedIds - id
   }
-
-  // TODO add mongodb constraint that jobIds is a unique field
 
 }

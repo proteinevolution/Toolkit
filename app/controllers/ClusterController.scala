@@ -1,11 +1,7 @@
 package controllers
 
 import javax.inject._
-
-import de.proteinevolution.models.sge.Cluster
-import play.api.Configuration
 import play.api.libs.json.Json
-import play.api.libs.ws.WSClient
 import play.api.mvc._
 import sys.process._
 
@@ -14,10 +10,7 @@ import sys.process._
  *
  */
 @Singleton
-final class ClusterController @Inject()(ws: WSClient,
-                                        configuration: Configuration,
-                                        cluster: Cluster,
-                                        cc: ControllerComponents)
+final class ClusterController @Inject()(cc: ControllerComponents)
     extends AbstractController(cc) {
 
   def getLoad: Action[AnyContent] = Action { implicit request =>

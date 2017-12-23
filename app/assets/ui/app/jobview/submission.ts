@@ -64,24 +64,32 @@
         }
     },
     jobIDComponent : function (ctrl : any) {
+        // hide old tooltip
+        $('#' + $("#jobID").data('toggle')).remove();
+
         let style: string = "jobID";
-        let toolTitle = "";
+
         style += JobSubmissionComponent.currentJobID === "" ? " white" :
             (JobSubmissionComponent.jobIDValid ? " green" : " red");
 
+        let options: any = {
+            type:        "text",
+            id:          "jobID",
+            "class":     style,
+            placeholder: "Custom JobID",
+            onkeyup:     m.withAttr("value", JobSubmissionComponent.checkJobIDTimed(800)),
+            onchange:    m.withAttr("value", JobSubmissionComponent.checkJobID),
+            value:       JobSubmissionComponent.currentJobID
+        };
+
         if (JobSubmissionComponent.currentJobID === "") {
-            toolTitle = "Alphanumeric IDs are permitted (e.g. HISA, HISA1, HISA_HHPRED). Border turns green when a valid ID is entered.";
+            options.title = "Alphanumeric IDs are permitted (e.g. HISA, HISA1, HISA_HHPRED). Border turns green when a valid ID is entered.";
+            setTimeout(function() {
+                $("#jobID").attr("data-tooltip","").foundation();
+            }, 300);
         }
 
-        return m("input", { type:        "text",
-                            id:          "jobID",
-                            "class":     style,
-                            title: toolTitle,
-                            placeholder: "Custom JobID",
-                            onkeyup:     m.withAttr("value", JobSubmissionComponent.checkJobIDTimed(800)),
-                            onchange:    m.withAttr("value", JobSubmissionComponent.checkJobID),
-                            value:       JobSubmissionComponent.currentJobID
-        });
+        return m("input", options);
     },
     controller: function(args : any) {
         console.log("[submission.ts] controller startup: ", args.isJob, args.job());

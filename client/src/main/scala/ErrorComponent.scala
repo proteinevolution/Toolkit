@@ -1,4 +1,4 @@
-import co.technius.scalajs.mithril.{ m, Component, MithrilComponent, MithrilProp }
+import com.tgf.pizza.scalajs.mithril.{ m, Component, MithrilComponent, MithrilProp }
 
 import scala.scalajs.js
 import js.Dynamic.{ global => g }
@@ -13,22 +13,22 @@ object ErrorComponent extends Component {
       m("input", js.Dynamic.literal("id" -> "hidden404", "type" -> "hidden", "value" -> ctrl.notFoundRandomized)),
       m(
         "div",
-        js.Dynamic.literal("class"  -> "small-2 medium-2 large-2 columns",
+        js.Dynamic.literal("class"  -> "show-for-large large-2 columns",
                            "style"  -> "display: block; margin: auto; margin-top: 100px;",
                            "config" -> g.hideSidebar),
         ""
       ),
-      m(
-        "div",
-        js.Dynamic.literal("id"    -> "404wrapper",
-                           "class" -> "small-10 medium-10 large-10 columns",
-                           "style" -> "display: block; margin: auto; margin-top: 100px;"),
-        m("div", js.Dynamic.literal("id" -> "404msa", "config" -> g.call404))
-      )
-//      m("p",
-//        js.Dynamic.literal("id"    -> "subtitle404",
-//                           "style" -> "position: absolute; margin-top: 400px; margin-left: 45%;"),
-//        s"${ctrl.errorMessage()}")
+      m("div", {js.Dynamic.literal("id"    -> "404wrapper",
+                           "class" -> "large-10 columns",
+                           "style" -> "display: block; margin: auto; margin-top: 100px;")},
+        m("div", {js.Dynamic.literal("id" -> "404msa",
+                                    "style" -> "margin-left: 25px;",
+                                    "config" -> g.call404)})
+      ),
+      m("div",
+        js.Dynamic.literal("id"    -> "subtitle404",
+                           "style" -> "position: absolute; margin-top: 400px; width: 100%; text-align: center;"),
+        s"${ctrl.errorMessage()}")
   )
 
 }

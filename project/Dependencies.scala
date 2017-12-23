@@ -12,7 +12,7 @@ object Dependencies {
     ehcache,
     guice,
     "com.typesafe.akka"    %% "akka-actor"               % akkaVersion,
-    "com.tgf.pizza"        %% "maxmind-geoip2-scala"     % "1.5.5",
+    "com.tgf.pizza"        %% "maxmind-geoip2-scala"     % "1.5.6",
     "com.typesafe.akka"    %% "akka-cluster"             % akkaVersion,
     "com.typesafe.akka"    %% "akka-cluster-tools"       % akkaVersion,
     "com.typesafe.akka"    %% "akka-cluster-metrics"     % akkaVersion,
@@ -20,14 +20,14 @@ object Dependencies {
     "com.typesafe.akka"    %% "akka-stream"              % akkaVersion,
     "com.typesafe.play"    %% "play-mailer"              % "6.0.1",
     "com.typesafe.play"    %% "play-mailer-guice"        % "6.0.1",
-    "com.github.pathikrit" %% "better-files"             % "2.17.1",
+    "com.github.pathikrit" %% "better-files"             % "3.4.0",
     "org.mindrot"          % "jbcrypt"                   % "0.3m",
     "org.reactivemongo"    %% "play2-reactivemongo"      % "0.12.7-play26",
     "org.reactivemongo"    %% "reactivemongo-akkastream" % "0.12.7",
     "org.scalaz"           %% "scalaz-core"              % scalazVersion,
     "com.vmunier"          %% "scalajs-scripts"          % "1.1.1",
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
-    "com.typesafe.play"    %% "play-json"                % "2.6.7"
+    "com.typesafe.play"    %% "play-json"                % "2.6.8"
   )
 
   lazy val testDeps = Seq(
@@ -46,7 +46,6 @@ object Dependencies {
     "org.webjars"       % "jquery-ui"           % "1.12.1", // css included over cdn
     "org.webjars.npm"   % "foundation-sites"    % "6.4.3",
     "org.webjars.npm"   % "mithril"             % "0.2.8", // 1.1.3 available
-    "org.webjars.npm"   % "slick-carousel"      % "1.6.0",
     "org.webjars.npm"   % "codemirror-minified" % "5.28.0",
     "org.webjars.bower" % "datatables"          % "1.10.16",
     "org.webjars"       % "highcharts"          % "5.0.14",
