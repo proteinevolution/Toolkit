@@ -40,9 +40,8 @@ class JobRunningComponent {
             m('h5', "Your submission is being processed!"),
             m("div", {"class": "processCiteContainer"},
                 m("span", "If you use the Toolkit for your research, please cite: "),
-                m("a", {href: "https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw348", target: "_blank"},
-                m("a", "Alva et al. NAR (2016).")),
-                m("p"," ")
+                m("a", {href: "https://www.sciencedirect.com/science/article/pii/S0022283617305879", target: "_blank"},
+                    m("p", "A Completely Reimplemented MPI Bioinformatics Toolkit with a New HHpred Server at its Core. J Mol Biol. 2017 Dec 16."))
             ),
             m("div", {"class": "processJobIdContainer"},
                 m('p', "Job ID:"),
