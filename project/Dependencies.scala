@@ -4,7 +4,7 @@ import sbt._
 object Dependencies {
 
   lazy val akkaVersion   = "2.5.8"
-  lazy val scalazVersion = "7.2.17"
+  lazy val scalazVersion = "7.2.18"
 
   lazy val commonDeps = Seq(
     ws,
