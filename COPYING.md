@@ -39,7 +39,6 @@ public/javascripts/title_notifier.js | [Rafael Oshiro](https://github.com/roshir
 public/javascripts/vendor/msa.min.js | [Sebastian Wilzbach](https://github.com/wilzbach/msa) | [BSL-1.0](http://www.boost.org/LICENSE_1_0.txt)
 public/javascripts/vendor/biojs-vis-tree | [Miguel Pignatelli](https://github.com/emepyc/biojs-vis-tree) | [Apache 2.0](https://github.com/LexLuengas/chessnut-pieces/blob/master/LICENSE.txt)
 public/javascripts/vendor/loadingoverlay.js | [Gaspare Sganga](http://gasparesganga.com/labs/jquery-loading-overlay/) |  [MIT](https://github.com/gosquared/flags/blob/master/LICENSE.txt)
-public/styles/hamburgers.min.css | [Jonathan Suh](https://github.com/jonsuh/hamburgers) |  [MIT](https://github.com/gosquared/flags/blob/master/LICENSE.txt)
 public/javascripts/vendor/reformat | Seung-Zin Nam and [David Rau](https://github.com/davidmrau) |  [MIT](https://github.com/gosquared/flags/blob/master/LICENSE.txt)
 public/javascripts/vendor/newick.js | [Jason Davies](https://github.com/jasondavies/newick.js) | ???
 modules/common/src/main/scala/de/proteinevolution/common/HTTPRequest.scala | [Thibault Duplessis](https://github.com/ornicar/lila) | AGPLv3+

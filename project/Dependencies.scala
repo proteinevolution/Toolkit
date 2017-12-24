@@ -60,7 +60,8 @@ object Dependencies {
     "org.webjars.npm"   % "floating-scroll"     % "2.3.3",
     "org.webjars.npm"   % "biojs-io-newick"     % "1.5.0",
     "org.webjars.bower" % "df-visible"          % "1.3.0-rc.1",
-    "org.webjars.npm"   % "ngl"                 % "0.10.4"
+    "org.webjars.npm"   % "ngl"                 % "0.10.4",
+    "org.webjars.npm"   % "hamburgers"          % "0.9.1"
   )
 
 }
