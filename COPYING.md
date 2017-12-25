@@ -40,7 +40,6 @@ public/javascripts/vendor/msa.min.js | [Sebastian Wilzbach](https://github.com/w
 public/javascripts/vendor/biojs-vis-tree | [Miguel Pignatelli](https://github.com/emepyc/biojs-vis-tree) | [Apache 2.0](https://github.com/LexLuengas/chessnut-pieces/blob/master/LICENSE.txt)
 public/javascripts/vendor/loadingoverlay.js | [Gaspare Sganga](http://gasparesganga.com/labs/jquery-loading-overlay/) |  [MIT](https://github.com/gosquared/flags/blob/master/LICENSE.txt)
 public/javascripts/vendor/reformat | Seung-Zin Nam and [David Rau](https://github.com/davidmrau) |  [MIT](https://github.com/gosquared/flags/blob/master/LICENSE.txt)
-public/javascripts/vendor/newick.js | [Jason Davies](https://github.com/jasondavies/newick.js) | ???
 modules/common/src/main/scala/de/proteinevolution/common/HTTPRequest.scala | [Thibault Duplessis](https://github.com/ornicar/lila) | AGPLv3+
 modules/common/src/main/scala/de/proteinevolution/tools/FNV.scala | [Philip Southam](https://github.com/philipsoutham/scala-fnv) | [Apache 2.0](https://github.com/LexLuengas/chessnut-pieces/blob/master/LICENSE.txt)
 
