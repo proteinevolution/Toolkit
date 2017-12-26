@@ -69,7 +69,6 @@ class LiveTable {
 
     static pushJob(job: Job): void {
         LiveTable.lastJob = job;
-        //console.log("Last job:", job);
         // only redraw when on index page since a m.redraw would affect the inputs
         if (m.route() == "/") {
             m.redraw.strategy("diff");
