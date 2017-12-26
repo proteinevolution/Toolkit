@@ -37,7 +37,6 @@ const validation = function(elem : any, isInit : boolean, ctx : any) : any {
         validationProcess($(elem), toolname);
         return $(elem).on("input", function (e) {
             //localStorage.setItem('alignmentcontent', $(elem).val());
-            //console.log(localStorage.getItem('alignmentcontent'));
             validationProcess($(elem), toolname);
         });
     }
@@ -646,7 +645,6 @@ function feedback(valid : boolean, msg : string = "unknown validation error", ty
         $v.css("display", "block").html(msg).addClass(type);
     }
     else {
-        console.log(msg);
         $(".submitJob").prop("disabled", false);
         $v.hide();
     }
@@ -848,8 +846,6 @@ class alignmentVal implements ToolkitValidator {
 
 
     DNAvalidation(): any {
-
-        console.log(this.elem.reformat('DNA'));
         if($("#fileUpload").val() !== "") {
             feedback(true, "Uploaded file", "success");
             return true;
