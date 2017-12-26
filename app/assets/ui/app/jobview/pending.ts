@@ -11,7 +11,6 @@ const JobPendingComponent = {
                     let route = jsRoutes.controllers.JobController.checkHash(args.job().jobID);
                     m.request({method:route.method, url:route.url, extract: nonJsonErrors}).then(function(data : any){
                         if (data != null && data.jobID != null) {
-                            //console.log(JSON.stringify(data));
                             $("#copyID").val(data.jobID.toString());
                             $("#copyDate").val(data.dateCreated);
                         }

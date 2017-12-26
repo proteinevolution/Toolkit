@@ -305,7 +305,6 @@
                     return submissionReturnData;
                 }
             }).then(function(submissionReturnData){
-                console.log("Data(then):", submissionReturnData);
                 if (submissionReturnData.successful) {
                     console.log("Job Submission was successful.");
                     jobID = submissionReturnData.jobID;
@@ -315,8 +314,6 @@
                     if (!JobListComponent.contains(jobID)) {
                         JobListComponent.pushJob(jobListComp, true);
                     }
-                } else {
-                    console.log("Error while submitting:", submissionReturnData.message)
                 }
                 $(".submitJob").prop("disabled", false);
                 JobSubmissionComponent.submitting = false;

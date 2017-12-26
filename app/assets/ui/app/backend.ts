@@ -55,14 +55,12 @@ window.Backend = {
                 ])
             }
         };
-        //console.log(user.data());
     },
 
     plotter : function (ctrl : any) {
         return function (elem : any, isin : boolean, context : any) {
             if (!isin) {
                 const chartElements = ctrl.data();//.map(function (item) {
-                //console.log(item);
                 //return item
                 //});
                 let xAxisElements = chartElements[0].datePushed.map(function(date : any){
@@ -93,7 +91,6 @@ window.Backend = {
                         series: chartElements.map(function (item : any) {
                             const monthlyElements = [item.current];
                             item.monthly.forEach(function(element : any){monthlyElements.push(element)});
-                            //console.log(monthlyElements);
                             return {
                                 name : item.toolName,
                                 data : monthlyElements
@@ -122,7 +119,6 @@ window.Backend = {
                         m("th", "eMail Address"),
                         m("th", "Date created")
                     ]));
-                //console.log(tableRows);
                 return [m("table", tableRows),
                     m("button", { "class" : "button small", onclick : this.sendEdits(ctrl)}, "Save edited Users")];
             case "statistics" :

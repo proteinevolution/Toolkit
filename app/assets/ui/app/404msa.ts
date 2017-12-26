@@ -37,7 +37,6 @@ window.call404 = function(elem : any, isInit: boolean) : any {
 
         };
 
-        //console.log($('#hidden404').val());
         const a = new msa.msa(ErrorOpts);
         a.render();
 
