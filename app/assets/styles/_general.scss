@@ -40,6 +40,11 @@ div#main-container {
   }
 }
 
+// fix to enable tooltips on input
+input.has-tip {
+  border: $input-border;
+}
+
 #main-window {
   padding-top: 20px;
 }
