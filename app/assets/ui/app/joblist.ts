@@ -234,12 +234,7 @@ window.JobListComponent = {
         onTopOfList = (JobListComponent.index <= 0);                 // is the list at the top?
         onBottomOfList = ((JobListComponent.index + JobListComponent.numVisibleItems) >= listLength);   // is the list at the bottom?
         if (onBottomOfList && (JobListComponent.index >= listLength)) JobListComponent.scrollToJobListItem(-JobListComponent.numVisibleItems); // ensures view when elements are cleared
-        // show the status of the job list in the log
-        //             "Page Index"              : Math.floor(JobListComponent.index / JobListComponent.numVisibleItems),
-        //             "Number of visible Items" : JobListComponent.numVisibleItems,
-        //             "Length of the List"      : listLength,
-        //             "on Top"                  : onTopOfList,
-        //             "on Bottom"               : onBottomOfList});
+
         numScrollItems = JobListComponent.numVisibleItems; // How many items to scroll per click
         return m("div", { "class": "job-list", config: tooltipConf }, [
             m("div", { "class": "job-button" }, [
