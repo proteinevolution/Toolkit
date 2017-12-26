@@ -23,7 +23,6 @@
                                        JobSubmissionComponent.oldJobID);
                 m.request({ method: checkJobIDroute.method, url: checkJobIDroute.url}).then(
                     function (data : any) {
-                        console.log(data);
                         JobSubmissionComponent.jobIDValid = !data.exists;
                         if (data.exists && data.suggested != null) {
                             JobSubmissionComponent.currentJobID = data.suggested;
@@ -35,7 +34,6 @@
                                     "Current jobID Valid?", JobSubmissionComponent.jobIDValid);
                     },
                     function(data : any) {
-                        console.log(data);
                     }
                 );
             }
@@ -156,7 +154,6 @@
                         return submissionReturnData;
                     }
                 }).then(function(submissionReturnData : any){
-                    console.log("Data(then):", submissionReturnData);
                     if (submissionReturnData.successful) {
                         console.log("Job Submission was successful.");
                         jobID = submissionReturnData.jobID;
@@ -194,7 +191,6 @@
     hide : function(ctrl : any, args: any) {
         return function (elem : any, isInit : any) {
             if (!isInit) {
-                //console.log(args.job().jobstate);
                 $("#uploadBoxClose").hide();
                 $(".uploadFileName").hide();
                 // hide submitbuttons
