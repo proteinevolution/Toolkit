@@ -2,8 +2,7 @@ import sbtbuildinfo.BuildInfoPlugin.autoImport._
 
 inThisBuild(Seq(
   organization := "de.proteinevolution",
-  scalaVersion := "2.12.4",
-  version      := "0.1.0"
+  scalaVersion := "2.12.4"
 ))
 
 lazy val commonSettings = Seq(
@@ -24,7 +23,7 @@ lazy val buildInfoSettings = Seq(
   buildInfoPackage := "build"
 )
 
-lazy val coreSettings = commonSettings ++ Settings.compileSettings
+lazy val coreSettings = commonSettings ++ Settings.compileSettings ++ Release.settings
 
 lazy val disableDocs = Seq[Setting[_]](
   sources in (Compile, doc) := Seq.empty,
@@ -82,4 +81,5 @@ logLevel in Test := Level.Info
 
 scalacOptions in Test ++= Seq("-Yrangepos")
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
+PlayKeys.devSettings := Seq("play.server.akka.requestTimeout" -> "infinite")
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node

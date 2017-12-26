@@ -50,7 +50,6 @@
 @include foundation-accordion;
 @include foundation-accordion-menu;
 
-@import '../../../public/styles/nice-select';
 
 @import 'print';
 @import 'sequence_coloring';
@@ -69,4 +68,5 @@
 @import 'general';
 
 @import '../../../public/styles/mfglabs_iconset';
-@import '../../../public/styles/motion-ui';
+
+@import 'compatibility';

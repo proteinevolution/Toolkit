@@ -4,7 +4,7 @@ import sbt._
 object Dependencies {
 
   lazy val akkaVersion   = "2.5.8"
-  lazy val scalazVersion = "7.2.17"
+  lazy val scalazVersion = "7.2.18"
 
   lazy val commonDeps = Seq(
     ws,
@@ -54,7 +54,14 @@ object Dependencies {
     "org.webjars"       % "select2"             % "4.0.3",
     "org.webjars.npm"   % "tooltipster"         % "4.2.5",
     "org.webjars"       % "momentjs"            % "2.18.1",
-    "org.webjars.bower" % "typeahead.js"        % "0.11.1"
+    "org.webjars.bower" % "typeahead.js"        % "0.11.1",
+    "org.webjars.npm"   % "snapsvg"             % "0.5.1",
+    "org.webjars.npm"   % "jquery-nice-select"  % "1.1.0",
+    "org.webjars.npm"   % "floating-scroll"     % "2.3.3",
+    "org.webjars.npm"   % "biojs-io-newick"     % "1.5.0",
+    "org.webjars.bower" % "df-visible"          % "1.3.0-rc.1",
+    "org.webjars.npm"   % "ngl"                 % "0.10.4",
+    "org.webjars.npm"   % "hamburgers"          % "0.9.1"
   )
 
 }

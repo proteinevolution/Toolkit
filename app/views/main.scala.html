@@ -16,9 +16,9 @@
         <title>Bioinformatics Toolkit</title>
 
             <!-- SEO -->
-        <meta name="description" content="The MPI Bioinformatics Toolkit is an interactive web service 
-                                          which offers access to a great variety of public and in-house bioinformatics tools. 
-                                          They are grouped into different sections that support sequence searches, 
+        <meta name="description" content="The MPI Bioinformatics Toolkit is an interactive web service
+                                          which offers access to a great variety of public and in-house bioinformatics tools.
+                                          They are grouped into different sections that support sequence searches,
                                           multiple alignment, secondary and tertiary structure prediction and classification." />
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -29,8 +29,13 @@
 
         <link rel="stylesheet" type="text/css" charset="utf-8" href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 
-        @Html(webJarsUtil.css("font-awesome.min.css"))
+        @Html(webJarsUtil.css("hamburgers.min.css"))
         <link href="@routes.Assets.versioned("styles/global.css")" rel="stylesheet">
+        @Html(webJarsUtil.css("nice-select.css"))
+        <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
+        @Html(webJarsUtil.css("font-awesome.min.css"))
+        <link href="@routes.Assets.versioned("styles/sequence_coloring.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 
             <!-- JQuery -->
         @Html(webJarsUtil.script("3.2.1/jquery.min.js"))
@@ -38,7 +43,7 @@
         @Html(webJarsUtil.script("1.12.1/jquery-ui.js"))
 
         <script src="@routes.Assets.versioned("javascripts/vendor/newick.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.versioned("javascripts/vendor/jquery.nice-select.js")" type="text/javascript"></script>
+        @Html(webJarsUtil.script("jquery.nice-select.js"))
 
 
             <!-- Mithril -->
@@ -57,7 +62,7 @@
 
 
             <!-- NGL 3D Viewer -->
-        <script src="@routes.Assets.versioned("javascripts/vendor/ngl.js")" type="text/javascript"></script>
+        @Html(webJarsUtil.script("ngl.js"))
 
             <!-- Typeahead.js -->
 
@@ -65,7 +70,7 @@
         @Html(webJarsUtil.script("typeahead.jquery.js"))
 
             <!-- VISIBLE -->
-        <script src="@routes.Assets.versioned("javascripts/vendor/jquery.visible.min.js")" type="text/javascript"></script>
+        @Html(webJarsUtil.script("jquery.visible.min.js"))
 
             <!-- Loadingoverlay -->
         <script src="@routes.Assets.versioned("javascripts/vendor/loadingoverlay.js")" type="text/javascript"></script>
@@ -82,8 +87,8 @@
         @Html(webJarsUtil.script("moment.min.js"))
 
             <!-- FloatingScroll -->
-        <script src="@routes.Assets.versioned("javascripts/vendor/floatingscroll.min.js")" type="text/javascript"></script>
-        <link href="@routes.Assets.versioned("styles/floatingscroll.css")" rel="stylesheet">
+        @Html(webJarsUtil.script("jquery.floatingscroll.min.js"))
+        @Html(webJarsUtil.css("jquery.floatingscroll.css"))
 
             <!-- Codemirror -->
         @Html(webJarsUtil.script("codemirror.js"))
@@ -126,7 +131,6 @@
             <div class="off-canvas-content hide-for-large" id="hambutton">
                 <button type="button" data-open="offCanvas"><i class="icon-reorder icon2x"></i></button>
             </div>
-
 
             <div id="main" class="row" data-off-canvas-content>
                 <div class="small-12 padded-column columns">
@@ -294,9 +298,9 @@
 
         <script src="@routes.Assets.versioned("javascripts/blast-visualization.js")"></script>
         <script src="@routes.Assets.versioned("javascripts/vendor/msa.min.js")" type="text/javascript"></script>
-        <script src='@routes.Assets.versioned("javascripts/vendor/biojs-io-newick.min.js")'></script>
+        @Html(webJarsUtil.script("biojs-io-newick.min.js"))
         <script src='@routes.Assets.versioned("javascripts/vendor/biojs-vis-tree.min.js")'></script>
-        <script src='@routes.Assets.versioned("javascripts/vendor/snap.svg-min.js")'></script>
+        @Html(webJarsUtil.script("snapsvg", "dist/snap.svg-min.js"))
         <link rel="stylesheet" type="text/css" charset="utf-8" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
         <script src="@routes.Assets.versioned("javascripts/typescriptc.js")"></script>

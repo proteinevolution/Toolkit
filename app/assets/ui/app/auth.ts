@@ -296,7 +296,7 @@ class SignIn {
                     m("span", {"class":"form-error"}, "Must be at least 6 characters long!")
                 )),
                 m("div", m("label",
-                    m("input", { id:         'password',
+                    m("input", { id:         'signInPasswordInput',
                                  name:       'password',
                                  pattern:    '.{8,40}',
                                  placeholder:'Password',
@@ -311,7 +311,7 @@ class SignIn {
                     m("span", {"class":"form-error"}, "Password must be at least 8 characters long!")
                 )),
                 m("input", { "class": "input small expanded secondary button",
-                             id:    'signin-submit',
+                             id:    'signInSubmit',
                              type:  'submit',
                              value: 'Sign In'
                 }),
@@ -427,7 +427,7 @@ class SignUp {
                     m("span", {"class":"form-error"}, "Passwords must be at least 8 characters long!")
                 ])),
                 m("div", m("label", [
-                    m("input", { id:             'password',
+                    m("input", { id:             'signUpPasswordInput',
                                  name:           'password',
                                  pattern:        '.{8,128}',
                                  placeholder:    'Confirm password',
@@ -491,7 +491,7 @@ class ForgotPassword {
                 m("label","Provide your account email address or username to receive an email to reset your password."),
                 m("br"),
                 m("div", m("label",
-                    m("input", { id:          'eMail',
+                    m("input", { id:          'forgotPasswortMail',
                                  name:        'eMail',
                                  placeholder: 'email or username',
                                  pattern:    '[a-zA-Z0-9_]{6,40}',
@@ -505,7 +505,7 @@ class ForgotPassword {
                     })
                 )),
                 m("input", { "class": "input small expanded secondary button",
-                             id:    'signin-submit',
+                             id:    'forgotPasswordSubmit',
                              type:  'submit',
                              value: 'Send'
                 })
@@ -584,7 +584,7 @@ class Profile {
                         m("span", { "class":"form-error"}, "Last name can be only 25 characters long!")
                     ])),
                     m("div", m("label", [
-                        m("input", { id:          'eMail',
+                        m("input", { id:          'profileEMail',
                                      name:        'eMail',
                                      pattern:     'email',
                                      placeholder:  Auth.user.eMail,

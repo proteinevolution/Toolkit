@@ -180,6 +180,13 @@ const tilescomponent = {
                             ),
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
+                                m("a", {href: "https://www.sciencedirect.com/science/article/pii/S0022283617305879", target: "_blank"},
+                                    m("h6", "December 24, 2017"),
+                                    m("p", "Our paper on the new Toolkit is out: ",
+                                    m("em", "A Completely Reimplemented MPI Bioinformatics Toolkit with a New HHpred Server at its Core. "),                       
+                                    m("span", {style: "color:#2E8C81;"},
+                                    m("em", "J Mol Biol. 2017 Dec 16.")))
+                                ),
                                 m("a", {"data-open": "recentUpdatesModal", href: "#mmcif30_2017_12"},
                                     m("h6", "December 6, 2017"),
                                     m("p", "HHpred: the PDB_mmCIF70 DB is now built using Uniclust30 instead of Uniprot20. " +
@@ -195,10 +202,6 @@ const tilescomponent = {
                                         m("em", "Pyrococcus horikoshii"), ", and ",
                                         m("em", "Sulfolobus solfataricus)"), " are online."
                                     )
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#nr30_2017_11"},
-                                    m("h6", "November 13, 2017"),
-                                    m("p", "In addition to nr50, we now also offer nr30 for PSI-BLAST, HMMER, and PatternSearch.")
                                 )
                             ),
                             m("div", {"class": "quick_links"},

@@ -1,0 +1,9 @@
+// Styles for internet-explorer
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+   .job-list .openmanager .icon-list {
+      margin: 0
+   }
+   #logo img {
+      height: 100%  
+   }
+}
