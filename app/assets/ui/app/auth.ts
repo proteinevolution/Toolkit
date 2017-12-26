@@ -491,7 +491,7 @@ class ForgotPassword {
                 m("label","Provide your account email address or username to receive an email to reset your password."),
                 m("br"),
                 m("div", m("label",
-                    m("input", { id:          'eMail',
+                    m("input", { id:          'forgotPasswortMail',
                                  name:        'eMail',
                                  placeholder: 'email or username',
                                  pattern:    '[a-zA-Z0-9_]{6,40}',
@@ -584,7 +584,7 @@ class Profile {
                         m("span", { "class":"form-error"}, "Last name can be only 25 characters long!")
                     ])),
                     m("div", m("label", [
-                        m("input", { id:          'eMail',
+                        m("input", { id:          'profileEMail',
                                      name:        'eMail',
                                      pattern:     'email',
                                      placeholder:  Auth.user.eMail,
