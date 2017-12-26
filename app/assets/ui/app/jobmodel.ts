@@ -134,7 +134,6 @@ window.JobModel = {
         }
     },
     setParamValue: function(param : string, value : any) : void {
-        console.log("[JobModel.setParamValue]", param, value);
         window.JobModel.paramValues[param] = value;
         m.redraw(true);
     }
