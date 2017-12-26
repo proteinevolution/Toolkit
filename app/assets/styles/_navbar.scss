@@ -91,10 +91,7 @@
   font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
   color: red !important;
   overflow-x: hidden;
-  background-color: rgb(238, 238, 238);
-  background-repeat: repeat;
-  background-attachment: scroll;
-  background-position: 0 0;
+  background: rgb(238, 238, 238) repeat scroll 0 0;
   background-clip: border-box;
   background-origin: padding-box;
   background-size: auto auto;
@@ -105,10 +102,7 @@
 #navbar .tabs-title{
   font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
   overflow-x: hidden;
-  background-color: rgb(238, 238, 238);
-  background-repeat: repeat;
-  background-attachment: scroll;
-  background-position: 0 0;
+  background: rgb(238, 238, 238) repeat scroll 0 0;
   background-clip: border-box;
   background-origin: padding-box;
   background-size: auto auto;

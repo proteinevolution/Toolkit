@@ -19,15 +19,13 @@ object ErrorComponent extends Component {
         ""
       ),
       m("div", {js.Dynamic.literal("id"    -> "404wrapper",
-                           "class" -> "large-10 columns",
-                           "style" -> "display: block; margin: auto; margin-top: 100px;")},
+                           "class" -> "large-10 columns")},
         m("div", {js.Dynamic.literal("id" -> "404msa",
                                     "style" -> "margin-left: 25px;",
                                     "config" -> g.call404)})
       ),
       m("div",
-        js.Dynamic.literal("id"    -> "subtitle404",
-                           "style" -> "position: absolute; margin-top: 400px; width: 100%; text-align: center;"),
+        js.Dynamic.literal("id"    -> "subtitle404"),
         s"${ctrl.errorMessage()}")
   )
 
