@@ -12,7 +12,7 @@ import de.proteinevolution.models.results.Common
 import de.proteinevolution.models.search.JobDAO
 import models.tools.ToolFactory
 import models.UserSessions
-import de.proteinevolution.common.{ HTTPRequest, LocationProvider }
+import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
@@ -108,7 +108,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     else {
       rh.headers.get("Origin") match {
         case Some(originValue)
-            if originMatches(originValue) && !HTTPRequest(rh).isBot(rh) && !blacklist.contains(rh.remoteAddress) =>
+            if originMatches(originValue) && !blacklist.contains(rh.remoteAddress) =>
           logger.debug(s"originCheck: originValue = $originValue")
           true
 
