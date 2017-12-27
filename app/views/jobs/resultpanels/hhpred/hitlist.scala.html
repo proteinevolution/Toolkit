@@ -154,7 +154,7 @@
                 Meier A, Söding J.<a href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004343" target="_blank" rel="noopener"> PLoS Comput Biol. 2015 Oct 23;11(10):e1004343</a>.</div><br>
         </div>
         </div>
-    <hr id="line-element" colspan="4" class="horizontal-line">
+    <hr id="line-element" class="horizontal-line">
 
 
     @*MODALS*@
@@ -305,7 +305,6 @@
                     return submissionReturnData;
                 }
             }).then(function(submissionReturnData){
-                console.log("Data(then):", submissionReturnData);
                 if (submissionReturnData.successful) {
                     console.log("Job Submission was successful.");
                     jobID = submissionReturnData.jobID;
@@ -315,8 +314,6 @@
                     if (!JobListComponent.contains(jobID)) {
                         JobListComponent.pushJob(jobListComp, true);
                     }
-                } else {
-                    console.log("Error while submitting:", submissionReturnData.message)
                 }
                 $(".submitJob").prop("disabled", false);
                 JobSubmissionComponent.submitting = false;

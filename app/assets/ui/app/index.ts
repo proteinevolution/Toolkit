@@ -38,7 +38,6 @@ const typeAhead = function (elem : any, isInit : boolean) : any {
                 templates: {
                     suggestion: function (data: any) {
                         if(data !=null) {
-                            //console.log(data.long);
                             return '<div class="list-group-item"><a class="search-results" href="#/tools/' + data.short + '" name="' + data.long + '">' + data.long + '</a></div>';
                         }else {
                             return '<div style="display: none"></div>';

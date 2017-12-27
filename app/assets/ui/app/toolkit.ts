@@ -71,7 +71,6 @@ window.Toolkit = {
                     m.route("/404");
                     console.log("Tool not found", e);
                 }).then(function(data) {
-                    //console.log(data);
                 });
             }
 

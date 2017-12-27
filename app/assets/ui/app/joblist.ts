@@ -93,21 +93,16 @@ window.JobListComponent = {
     },
     emptyList       : function () { JobListComponent.list = [] },   // empties the job list
     reloadList      : function () {         // reloads the job list from the server
-        //console.log("Reload Job List called.");
         let request = m.request({
             url: "/api/jobs",
             method: "GET",
             type: JobListComponent.Job
         });
         request.then(function(data : any) {
-            //console.log("Received list.", data, "Saving it.");
             JobListComponent.list = data;   // put the jobs in the list
-            //console.log("Sorting List.");
             JobListComponent.sortList();    // sort the list with the current sorting mode
-            //console.log("Registering Jobs.");
             JobListComponent.register();    // send the server a message that these items are being watched
             // TODO Something will hinder the execution of any code after JobListComponent.register()
-            //console.log("Done with Reloading Job List.");
         });
         return JobListComponent.list
     },
@@ -142,7 +137,6 @@ window.JobListComponent = {
             // If the mode has changed adjust the order (ascending - true / descending - false)
             JobListComponent.sort = { mode : sortMode, asc : ((sameMode && reverse) ? !oldSort.asc : true) }
         }
-        //console.log("Sorting: ", sortMode, reverse, oldSort, JobListComponent.sort);
         // inv gets multiplied to invert the sorting order
         inv = JobListComponent.sort.asc ? 1 : -1;
         // Check if the selected jobID is in the view to get the new index to scroll to
@@ -218,8 +212,7 @@ window.JobListComponent = {
         let scrollIndex = Math.floor(index / JobListComponent.numVisibleItems);
         scrollIndex *= JobListComponent.numVisibleItems;
         JobListComponent.index = scrollIndex < 0 ? 0 : scrollIndex;
-        //console.log("scrolling to " + index + " scroll index is " + scrollIndex + ", current scroll index is " + JobListComponent.index);
-    },
+       },
     model: function() {},
     controller: function(args : any) {
         //console.log(args.activejobID + " : " + m.route.param("jobID"));
@@ -241,13 +234,7 @@ window.JobListComponent = {
         onTopOfList = (JobListComponent.index <= 0);                 // is the list at the top?
         onBottomOfList = ((JobListComponent.index + JobListComponent.numVisibleItems) >= listLength);   // is the list at the bottom?
         if (onBottomOfList && (JobListComponent.index >= listLength)) JobListComponent.scrollToJobListItem(-JobListComponent.numVisibleItems); // ensures view when elements are cleared
-        // show the status of the job list in the log
-        //console.log({"Scroll Index"            : JobListComponent.index,
-        //             "Page Index"              : Math.floor(JobListComponent.index / JobListComponent.numVisibleItems),
-        //             "Number of visible Items" : JobListComponent.numVisibleItems,
-        //             "Length of the List"      : listLength,
-        //             "on Top"                  : onTopOfList,
-        //             "on Bottom"               : onBottomOfList});
+
         numScrollItems = JobListComponent.numVisibleItems; // How many items to scroll per click
         return m("div", { "class": "job-list", config: tooltipConf }, [
             m("div", { "class": "job-button" }, [

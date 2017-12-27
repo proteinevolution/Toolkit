@@ -6,7 +6,7 @@
 <div class="colorOptsAlignment">
     <a type="button" data-open="forwardModal_@toolName""><span>Forward selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="download_()"><span>Download File</span></a>
-    <hr id="line-element" colspan="4" class="horizontal-line">
+    <hr id="line-element" class="horizontal-line">
 </div>
 <br/><br/>
 <div class="h1">Retrieved @{{jsValue \ "ids" \ "ACC_IDS"}.as[List[JsValue]].size} IDs<br/><br/></div>
@@ -31,7 +31,6 @@
 
     window["@{toolName}_forward"] = function(tool) {
         forwardData = data.ACC_IDS;
-        console.log(JSON.stringify(data));
         forward(tool, forwardData.join("\n"));
     };
 
