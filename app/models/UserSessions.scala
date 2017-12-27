@@ -4,13 +4,13 @@ import java.time.ZonedDateTime
 import javax.inject.{ Inject, Singleton }
 
 import de.proteinevolution.models.database.users.{ SessionData, User }
-import de.proteinevolution.common.{ HTTPRequest, LocationProvider }
+import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.db.MongoStore
 import play.api.cache._
 import play.api.mvc.RequestHeader
 import play.api.{ mvc, Logger }
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
-
+import play.mvc.Http
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
 import scala.util.hashing.MurmurHash3
@@ -70,10 +70,9 @@ class UserSessions @Inject()(mongoStore: MongoStore,
    *
    */
   def putUser(implicit request: RequestHeader, sessionID: BSONObjectID): Future[User] = {
-    val httpRequest = HTTPRequest(request)
     val newSessionData = SessionData(
       ip = MurmurHash3.stringHash(request.remoteAddress).toString,
-      userAgent = httpRequest.userAgent.getOrElse("Not Specified"),
+      userAgent = request.headers.get(Http.HeaderNames.USER_AGENT).getOrElse("Not specified"),
       location = locationProvider.getLocation(request)
     )
 
