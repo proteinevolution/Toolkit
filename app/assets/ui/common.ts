@@ -61,8 +61,9 @@ $(window).scroll(function() {
     }
 });
 
-window.onfocus = function(){notifications = 0; titlenotifier.reset()};
-window.onclick = function(){notifications = 0; titlenotifier.reset()};
+window.onfocus = function(){notifications = 0; TitleNotification.reset()};
+window.onclick = function(){notifications = 0; TitleNotification.reset()};
+
 
 $('#scrollTop').click(function() {
     $("html, body").animate({ scrollTop: 0 }, 200);
