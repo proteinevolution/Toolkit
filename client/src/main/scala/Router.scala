@@ -6,7 +6,7 @@ import org.scalajs.dom.raw.HTMLDivElement
 import scala.scalajs.js
 import scala.scalajs.js.Dictionary
 
-object Router extends js.JSApp {
+object Router {
   import js.Dynamic.{ global => g }
 
   private val versionString = {
@@ -22,7 +22,7 @@ object Router extends js.JSApp {
       .toString
   }
 
-  def main(): Unit = {
+  def main(args: Array[String]): Unit = {
 
     m.route.mode = "hash"
     val mountpoint = g.document.getElementById("main-content").asInstanceOf[HTMLDivElement]
