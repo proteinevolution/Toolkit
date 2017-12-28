@@ -10,15 +10,15 @@ class UptimeController @Inject()(cc: ControllerComponents) extends AbstractContr
 
   private val versionString = {
     new java.lang.StringBuilder()
-        .append("Version: ")
-        .append(BuildInfo.version)
-        .append(" on Scala ")
-        .append(BuildInfo.scalaVersion)
-        .append(" with Sbt ")
-        .append(BuildInfo.sbtVersion)
-        .append(" and Play! ")
-        .append(BuildInfo.playVersion)
-        .toString
+      .append("Version: ")
+      .append(BuildInfo.version)
+      .append(" on Scala ")
+      .append(BuildInfo.scalaVersion)
+      .append(" with Sbt ")
+      .append(BuildInfo.sbtVersion)
+      .append(" and Play! ")
+      .append(BuildInfo.playVersion)
+      .toString
   }
 
   def uptime = Action {

@@ -4,7 +4,7 @@ import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.{ ConfigFactory, ConfigObject }
 import de.proteinevolution.models.{ Constants, Tool, ToolNames }
-import de.proteinevolution.models.database.results._
+import de.proteinevolution.tools.results._
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.forms.ToolForm
 import de.proteinevolution.models.param.{ Param, ParamAccess }
@@ -23,7 +23,7 @@ final class ToolFactory @Inject()(
     hhblits: HHBlits,
     hhomp: HHomp,
     quick2d: Quick2D,
-    aln: de.proteinevolution.models.database.results.Alignment,
+    aln: de.proteinevolution.tools.results.Alignment,
     constants: Constants
 )(paramAccess: ParamAccess, resultFiles: ResultFileAccessor, implicit val ec: ExecutionContext) {
 
