@@ -1,10 +1,11 @@
 @import play.api.libs.json.JsObject
 @import play.api.libs.json.JsValue
 @import play.api.libs.json.JsDefined
-@import de.proteinevolution.models.results.Common
 @import controllers.routes
 @import play.twirl.api.Html
 @import java.lang.String
+
+@import de.proteinevolution.tools.results.Common
 @(jobID: String, jsValue: JsValue, tool: de.proteinevolution.models.Tool)()
 
 <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
