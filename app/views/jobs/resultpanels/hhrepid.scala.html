@@ -1,5 +1,5 @@
-@import de.proteinevolution.models.results.HHrepID
-@(jobID: String, filePath: String, resultName: String,  tool : de.proteinevolution.models.Tool)()
+@import de.proteinevolution.tools.results.HHrepID
+@(jobID: String, filePath: String, resultName: String, tool: de.proteinevolution.models.Tool)()
 @views.html.forwardmodals.simpler(tool, resultName)
 @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort + "_hhrepid")
 
