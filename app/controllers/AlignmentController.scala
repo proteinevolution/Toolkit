@@ -3,8 +3,7 @@ package controllers
 import javax.inject.Inject
 
 import de.proteinevolution.models.Constants
-import de.proteinevolution.models.database.results.Alignment
-import de.proteinevolution.models.results.Common
+import de.proteinevolution.tools.results.{ Alignment, Common }
 import de.proteinevolution.db.ResultFileAccessor
 import play.api.libs.json.JsArray
 import play.api.mvc._

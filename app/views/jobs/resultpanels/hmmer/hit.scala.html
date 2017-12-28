@@ -1,7 +1,8 @@
 @import play.twirl.api.Html
-@import de.proteinevolution.models.results.Common
-@import de.proteinevolution.models.database.results.Hmmer.HmmerHSP
+@import de.proteinevolution.tools.results.Hmmer.HmmerHSP
 @import java.lang.String
+
+@import de.proteinevolution.tools.results.Common
 @(hit: HmmerHSP, db: String, wrapped: Boolean)()
 @* Load html Map used for the image representation *@
 
