@@ -73,7 +73,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 
-lazy val client = (project in file("client"))
+lazy val client = (project in file("modules/client"))
     .enablePlugins(ScalaJSPlugin, ScalaJSWeb, BuildInfoPlugin)
     .settings(
       scalaJSUseMainModuleInitializer := true,
