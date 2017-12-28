@@ -2,8 +2,8 @@ package controllers
 
 import javax.inject.Inject
 
-import de.proteinevolution.models.database.results.HHBlits.HHBlitsResult
-import de.proteinevolution.models.database.results.SearchTool
+import de.proteinevolution.tools.results.HHBlits.HHBlitsResult
+import de.proteinevolution.tools.results.SearchTool
 import play.api.mvc.{ AbstractController, Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
