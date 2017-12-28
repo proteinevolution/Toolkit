@@ -66,6 +66,7 @@ lazy val client = (project in file("client"))
     .settings(
       scalaJSUseMainModuleInitializer := true,
       scalaJSUseMainModuleInitializer in Test := false,
+      jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv,
       buildInfoSettings,
       libraryDependencies ++= Seq(
         "org.scala-js"  %%% "scalajs-dom"     % "0.9.3",
