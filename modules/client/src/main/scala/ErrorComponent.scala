@@ -11,8 +11,7 @@ object ErrorComponent extends Component {
   val view: js.Function = (ctrl: ErrorComponentCtrl) =>
     js.Array(
       m("input", js.Dynamic.literal("id" -> "hidden404", "type" -> "hidden", "value" -> ctrl.notFoundRandomized)),
-      m(
-        "div",
+      m("div",
         js.Dynamic.literal("class"  -> "show-for-large large-2 columns",
                            "style"  -> "display: block; margin: auto; margin-top: 100px;",
                            "config" -> g.hideSidebar),
@@ -21,7 +20,6 @@ object ErrorComponent extends Component {
       m("div", {js.Dynamic.literal("id"    -> "404wrapper",
                            "class" -> "large-10 columns")},
         m("div", {js.Dynamic.literal("id" -> "404msa",
-                                    "style" -> "margin-left: 25px;",
                                     "config" -> g.call404)})
       ),
       m("div",
