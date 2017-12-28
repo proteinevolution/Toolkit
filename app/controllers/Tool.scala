@@ -13,11 +13,9 @@ import play.api.mvc._
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-final class Tool @Inject()(
-                           mongoStore: MongoStore,
-                           toolFactory: ToolFactory,
-                           cc: ControllerComponents)(implicit ec: ExecutionContext)
-    extends AbstractController(cc)
+final class Tool @Inject()(mongoStore: MongoStore, toolFactory: ToolFactory, cc: ControllerComponents)(
+    implicit ec: ExecutionContext
+) extends AbstractController(cc)
     with I18nSupport {
 
   /**
