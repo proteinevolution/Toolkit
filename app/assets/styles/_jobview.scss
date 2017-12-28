@@ -1,44 +1,43 @@
 /* Jobview Tab Components*/
 .ui-widget {
-  font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-family: $body-font-family;
   font-size: 1.1em;
-}
 
-.ui-widget input, .ui-widget select, .ui-widget button {
-  font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-  font-size: 0.9em;
+  input, select, button {
+    font-family: $body-font-family;
+    font-size: 0.9em;
+  }
+
+  .ui-widget-header {
+    background: #eee;
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-size: auto auto;
+    border: none;
+    height: 2.5em;
+  }
 }
 
 .ui-tabs .ui-tabs-nav {
   padding: 0;
-}
-
-.ui-tabs .ui-tabs-nav li {
-  margin: 0;
-}
-
-.ui-widget-header {
-  background: #eee;
-  background-clip: border-box;
-  background-origin: padding-box;
-  background-size: auto auto;
-  border: none;
-  height: 2.5em;
+  li {
+    margin: 0;
+  }
 }
 
 .ui-state-default {
   background: inherit !important;
   border: none !important;
+
+  a {
+    font-size: small;
+    margin-top: 0.5em;
+  }
 }
 
 .ui-state-active {
   background: #fefefe !important;
   height: 100%;
-}
-
-.ui-state-default a {
-  font-size: small;
-  margin-top: 0.5em;
 }
 
 .ui-corner-top {
@@ -129,16 +128,16 @@
   padding-left: 0;
   padding-right: 0;
   margin-left: 0 !important;
-}
 
-.alignmentParameter input:hover {
-  background-color: transparent;
-  color: black;
-}
+  &:hover {
+    background-color: transparent;
+    color: black;
+  }
 
-.alignmentParameter input:focus {
-  background-color: transparent;
-  color: black;
+  &:focus {
+    background-color: transparent;
+    color: black;
+  }
 }
 
 .submitJob {
@@ -147,10 +146,9 @@
   margin-right: 2em !important;
   color: white !important;
   margin-left: 2em;
-}
-
-.submitJob:hover {
-  background-color: gray !important;
+  &:hover {
+    background-color: gray !important;
+  }
 }
 
 .submitbuttons {
@@ -161,29 +159,26 @@
   padding-left: 1.9375em;
   padding-bottom: 0.3em;
   padding-right: 0.5em;
-}
 
-.submitbuttons .jobID {
-  color: #000;
-  text-shadow: 0 0 0 #878787;
-  height: 2.6em;
-  width: 9.5em;
-  float: right;
-  border-radius: 3px;
-  font-size: 0.75em;
-  padding-left: 1.3em;
-}
-
-.submitbuttons .jobid.white {
-  border: 1px solid #cacaca;
-}
-
-.submitbuttons .jobid.green {
-  border: 1px solid green;
-}
-
-.submitbuttons .jobid.red {
-  border: 1px solid #da4453;
+  .jobID {
+    color: #000;
+    text-shadow: 0 0 0 #878787;
+    height: 2.6em;
+    width: 9.5em;
+    float: right;
+    border-radius: 3px;
+    font-size: 0.75em;
+    padding-left: 1.3em;
+  }
+  .jobid.white {
+    border: 1px solid #cacaca;
+  }
+  .jobid.green {
+    border: 1px solid green;
+  }
+  .jobid.red {
+    border: 1px solid #da4453;
+  }
 }
 
 /*Parameter Tab */
@@ -195,33 +190,27 @@
 
 .parameter {
   font-size: small;
+  label {
+    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 0.9em;
+  }
+  input {
+    float: right;
+    font-size: 0.9em;
+  }
+  span {
+    float: left;
+  }
+  #alignment,
+  #alignment_two {
+    font-family: Consolas, "SFMono-Regular", "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+    margin: 0 0 0;
+  }
+  .nice-select {
+    width: 20em !important;
+  }
 }
 
-.parameter label {
-  font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-  font-size: 0.9em;
-}
-
-.parameter input {
-  float: right;
-  font-size: 0.9em;
-}
-
-.parameter span {
-  float: left;
-}
-
-.parameter #alignment,
-#alignment_two {
-  font-family: Consolas, "SFMono-Regular", "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
-  margin: 0 0 0;
-}
-
-.parameter .nice-select {
-  width: 20em !important;
-}
-
-.parameters input,
 #alignmentViewerPanel .alignmentExample {
   text-shadow: 0 0 0 #878787;
   height: 3em;
@@ -231,20 +220,25 @@
   padding-bottom: 0;
 }
 
-.parameters input:focus {
-  text-shadow: 0 0 0 #000;
-  /*width: 15em; */
-  border: solid rgb(113, 113, 113);
-  border-width: 0 0 2px 0;
+.parameters input {
+  text-shadow: 0 0 0 #878787;
+  height: 3em;
+  border-width: 0 0 1px 0;
   box-shadow: none;
-  -webkit-transition: border 100ms ease-out;
-  -moz-transition: border 100ms ease-out;
-  -o-transition: border 100ms ease-out;
   background-color: transparent;
-}
+  padding-bottom: 0;
 
-.parameters input:invalid {
-  border-color: red;
+  &:focus {
+    text-shadow: 0 0 0 #000;
+    border: solid rgb(113, 113, 113);
+    border-width: 0 0 2px 0;
+    -webkit-transition: border 100ms ease-out;
+    -moz-transition: border 100ms ease-out;
+    -o-transition: border 100ms ease-out;
+  }
+  &:invalid {
+    border-color: red;
+  }
 }
 
 #select2-patsearchdb-container {
@@ -259,19 +253,18 @@
 /* Alignment Viewer */
 #alignmentViewerPanel {
   height: 27em;
-}
 
-#alignmentViewerPanel textarea {
-  font-size: 0.75em;
-  font-family: "Source Code Pro", "Liberation Mono", monospace;
-  margin-bottom: 0.5em;
-}
-
-#alignmentViewerPanel .alignmentExample {
-  padding-left: 0;
-  padding-right: 0;
-  width: 7em;
-  text-align: left;
+  textarea {
+    font-size: 0.75em;
+    font-family: "Source Code Pro", "Liberation Mono", monospace;
+    margin-bottom: 0.5em;
+  }
+  .alignmentExample {
+    padding-left: 0;
+    padding-right: 0;
+    width: 7em;
+    text-align: left;
+  }
 }
 
 #bioJSContainer,
@@ -302,38 +295,38 @@
 .jobline {
   padding-top: 5px;
   height: 50px;
-}
 
-.jobline .toolname {
-  font-size: large;
-  font-weight: bold;
-  color: #2E8C81;
-  @include breakpoint(small down) {
-    padding-left: 0.5em;
+  .toolname {
+    font-size: large;
+    font-weight: bold;
+    color: #2E8C81;
+    @include breakpoint(small down) {
+      padding-left: 0.5em;
+    }
   }
-}
 
-.jobline .jobinfo {
-  padding-right: 1em;
-  float: right;
-  font-size: small;
-}
+  .jobinfo {
+    padding-right: 1em;
+    float: right;
+    font-size: small;
+  }
 
-.jobline .jobdate {
-  float: right;
-  font-size: small;
-}
+  .jobdate {
+    float: right;
+    font-size: small;
+  }
 
-.jobline .jobid {
-  padding-right: 1em;
-}
+  .jobid {
+    padding-right: 1em;
+  }
 
-.jobline i {
-  margin-left: 0.5em;
-}
+  i {
+    margin-left: 0.5em;
+  }
 
-.jobline .helpicon {
-  color: grey;
+  .helpicon {
+    color: grey;
+  }
 }
 
 /* File Upload */
@@ -348,11 +341,11 @@
 .uploadFileName {
   display: flex;
   padding-left: 1.5em;
-  padding-top: 0.3em
-}
+  padding-top: 0.3em;
 
-.uploadFileName p {
-  width: 30%;
+  p {
+    width: 30%;
+  }
 }
 
 #submit_modal {
@@ -365,6 +358,20 @@
   color: black;
   margin-top: 5em;
   text-align: center;
+  p {
+    width: 50%;
+    margin: auto;
+    font-weight: bold;
+  }
+  input {
+    margin: 4em 1em 0 1em;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    background-color: #a6a6a6;
+    &:hover {
+      background-color: #a1a1a1;
+    }
+  }
 }
 
 #projectReveal {
@@ -376,24 +383,11 @@
   color: black;
   margin-top: 5em;
   text-align: center;
-
-}
-
-#submit_modal p, #projectReveal p {
-  width: 50%;
-  margin: auto;
-  font-weight: bold;
-}
-
-#submit_modal input {
-  margin: 4em 1em 0 1em;
-  border-radius: 3px;
-  font-size: 0.75rem;
-  background-color: #a6a6a6;
-}
-
-#submit_modal input:hover {
-  background-color: #a1a1a1;
+  p {
+    width: 50%;
+    margin: auto;
+    font-weight: bold;
+  }
 }
 
 #projectInput {
@@ -415,25 +409,25 @@ i.delete {
   background-color: inherit;
   font-size: 1.25em;
   margin-top: 0.1em;
-}
 
-i.delete:hover {
-  background-color: inherit;
-  font-size: 1.25em;
-  cursor: pointer;
-  margin-top: 0.1em;
-}
+  &:hover {
+    background-color: inherit;
+    font-size: 1.25em;
+    cursor: pointer;
+    margin-top: 0.1em;
+  }
 
-i.delete:active {
-  background-color: inherit;
-  font-size: 1.25em;
-  margin-top: 0.1em;
-}
+  &:active {
+    background-color: inherit;
+    font-size: 1.25em;
+    margin-top: 0.1em;
+  }
 
-i.delete:focus {
-  background-color: inherit;
-  font-size: 1.25em;
-  margin-top: 0.1em;
+  &:focus {
+    background-color: inherit;
+    font-size: 1.25em;
+    margin-top: 0.1em;
+  }
 }
 
 i.button_fullscreen {
@@ -443,28 +437,28 @@ i.button_fullscreen {
   margin-top: 0.3em;
   margin-right: 0.5em;
   font-size: 1.5em;
-}
 
-i.button_fullscreen:hover {
-  background-color: inherit;
-  margin-top: 0.3em;
-  margin-right: 0.5em;
-  font-size: 1.5em;
-  cursor: pointer;
-}
+  &:hover {
+    background-color: inherit;
+    margin-top: 0.3em;
+    margin-right: 0.5em;
+    font-size: 1.5em;
+    cursor: pointer;
+  }
 
-i.button_fullscreen:active {
-  background-color: inherit;
-  margin-top: 0.3em;
-  margin-right: 0.5em;
-  font-size: 1.5em;
-}
+  &:active {
+    background-color: inherit;
+    margin-top: 0.3em;
+    margin-right: 0.5em;
+    font-size: 1.5em;
+  }
 
-i.button_fullscreen:focus {
-  background-color: inherit;
-  margin-top: 0.3em;
-  margin-right: 0.5em;
-  font-size: 1.5em;
+  &:focus {
+    background-color: inherit;
+    margin-top: 0.3em;
+    margin-right: 0.5em;
+    font-size: 1.5em;
+  }
 }
 
 /* Nice select */
@@ -475,30 +469,30 @@ i.button_fullscreen:focus {
   height: 2.5em;
   border: 1px solid rgba(127, 127, 127, 0.5);
   color: #000;
-}
 
-.nice-select .list {
-  margin-left: 0;
-  border: 1px solid grey;
-  overflow-y: auto;
-  margin-top: 3px;
-  border-radius: 5px;
-}
+  .list {
+    margin-left: 0;
+    border: 1px solid grey;
+    overflow-y: auto;
+    margin-top: 3px;
+    border-radius: 5px;
 
-.nice-select .list li {
-  line-height: 2.3em;
-  min-height: 0;
-}
+    li {
+      line-height: 2.3em;
+      min-height: 0;
+    }
+  }
 
-.nice-select.wide {
-  width: 100%;
-  line-height: 30px;
-}
+  &.wide {
+    width: 100%;
+    line-height: 30px;
+  }
 
-.nice-select:active,
-.nice-select.open,
-.nice-select:focus {
-  border-color: darkgray;
+  &:active,
+  &.open,
+  &:focus {
+    border-color: darkgray;
+  }
 }
 
 .result-panel .nice-select,
@@ -532,40 +526,40 @@ i.button_fullscreen:focus {
   background-color: #ccc;
   -webkit-transition: .4s;
   transition: .4s;
-}
 
-.sliderSwitch:before {
-  position: absolute;
-  content: "";
-  height: 17px;
-  width: 20px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
+  &:before {
+    position: absolute;
+    content: "";
+    height: 17px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
 }
 
 input:checked + .sliderSwitch {
   background-color: rgba(0, 110, 98, 166);
+
+  &:before {
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
+  }
 }
 
 input:focus + .sliderSwitch {
   box-shadow: 0 0 1px rgba(0, 110, 98, 166);
 }
 
-input:checked + .sliderSwitch:before {
-  -webkit-transform: translateX(20px);
-  -ms-transform: translateX(20px);
-  transform: translateX(20px);
-}
-
 .sliderSwitch.round {
   border-radius: 34px;
-}
 
-.sliderSwitch.round:before {
-  border-radius: 50%;
+  &:before {
+    border-radius: 50%;
+  }
 }
 
 .switchContainer {
@@ -618,18 +612,18 @@ a.hasNotes:active {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
   border-radius: 2px;
-}
 
-.callout.alert {
-  color: red;
-}
+  &.alert {
+    color: red;
+  }
 
-.callout.success {
-  background-color: #DBFFDB;
-}
+  &.success {
+    background-color: #DBFFDB;
+  }
 
-.callout.warning {
-  background-color: #FFF666;
+  &.warning {
+    background-color: #FFF666;
+  }
 }
 
 .invalid {
@@ -738,12 +732,14 @@ a.hasNotes:active {
 }
 
 /* Modeller */
-.modellerKey .valid {
-  color: rgb(219, 255, 219);
-}
+.modellerKey {
+  .valid {
+    color: rgb(219, 255, 219);
+  }
 
-.modellerKey .invalid {
-  background-color: rgb(255, 221, 221);
+  .invalid {
+    background-color: rgb(255, 221, 221);
+  }
 }
 
 /* To make elements on the website full screen */
@@ -757,20 +753,16 @@ a.hasNotes:active {
   z-index: 1000;
 }
 
-tr.job a:link {
-  color: #000;
-}
-
-tr.job a:visited {
+tr.job a:link, tr.job a:visited {
   color: #000;
 }
 
 .jobid a {
   color: #666;
-}
 
-.jobid a:visited {
-  color: #666;
+  &:visited {
+    color: #666;
+  }
 }
 
 .hhrepidview {
