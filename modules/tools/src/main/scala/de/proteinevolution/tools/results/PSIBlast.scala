@@ -1,11 +1,10 @@
-package de.proteinevolution.models.database.results
+package de.proteinevolution.tools.results
 
 import javax.inject.Inject
 import javax.inject.Singleton
 
-import de.proteinevolution.models.database.results.General.{ DTParam, SingleSeq }
-import de.proteinevolution.models.database.results.PSIBlast.{ PSIBlastHSP, PSIBlastResult }
-import de.proteinevolution.models.results.Common
+import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.tools.results.PSIBlast.{ PSIBlastHSP, PSIBlastResult }
 import play.api.libs.json._
 @Singleton
 class PSIBlast @Inject()(general: General) extends SearchTool {

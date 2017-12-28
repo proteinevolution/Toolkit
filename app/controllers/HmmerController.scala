@@ -5,10 +5,10 @@ import javax.inject.Inject
 import better.files._
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.Constants
-import de.proteinevolution.models.database.results.General.DTParam
-import de.proteinevolution.models.database.results.Hmmer
+import de.proteinevolution.tools.results.General.DTParam
+import de.proteinevolution.tools.results.Hmmer
 import de.proteinevolution.db.ResultFileAccessor
-import de.proteinevolution.models.database.results.Hmmer.{ HmmerHSP, HmmerResult }
+import de.proteinevolution.tools.results.Hmmer.{ HmmerHSP, HmmerResult }
 import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc._
 

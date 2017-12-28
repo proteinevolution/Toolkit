@@ -1,12 +1,11 @@
-package de.proteinevolution.models.database.results
+package de.proteinevolution.tools.results
 
 import javax.inject.Inject
 import javax.inject.Singleton
 
-import de.proteinevolution.models.database.results.Alignment.AlignmentResult
-import de.proteinevolution.models.database.results.General.{ DTParam, SingleSeq }
-import de.proteinevolution.models.database.results.HHBlits._
-import de.proteinevolution.models.results.Common
+import de.proteinevolution.tools.results.Alignment.AlignmentResult
+import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.tools.results.HHBlits._
 import play.api.libs.json._
 
 @Singleton

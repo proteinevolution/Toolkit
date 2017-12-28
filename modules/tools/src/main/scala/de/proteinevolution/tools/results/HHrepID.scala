@@ -1,9 +1,8 @@
-package de.proteinevolution.models.results
+package de.proteinevolution.tools.results
 
-import play.twirl.api.Html
-
-import scala.io.Source
 import java.nio.file.{ Files, Paths }
+import play.twirl.api.Html
+import scala.io.Source
 
 object HHrepID {
   def getResult(jobID: String, filePath: String): Html = {
