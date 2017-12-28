@@ -129,12 +129,7 @@
   padding-right: 0;
   margin-left: 0 !important;
 
-  &:hover {
-    background-color: transparent;
-    color: black;
-  }
-
-  &:focus {
+  &:hover, &:focus {
     background-color: transparent;
     color: black;
   }
