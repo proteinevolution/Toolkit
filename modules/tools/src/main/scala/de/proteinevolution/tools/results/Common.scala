@@ -1,15 +1,14 @@
-package de.proteinevolution.models.results
+package de.proteinevolution.tools.results
 
-import de.proteinevolution.models.database.results.Alignment.AlignmentResult
-import de.proteinevolution.models.database.results.HHBlits.HHBlitsHSP
-import de.proteinevolution.models.database.results.HHPred.HHPredHSP
-import de.proteinevolution.models.database.results.HHomp.HHompHSP
-import de.proteinevolution.models.database.results.Hmmer.HmmerHSP
-import de.proteinevolution.models.database.results.PSIBlast.PSIBlastHSP
-import de.proteinevolution.models.database.results.Quick2D.Quick2DResult
-import play.twirl.api.Html
 import play.api.Logger
-
+import play.twirl.api.Html
+import Alignment._
+import HHBlits._
+import HHomp._
+import HHPred._
+import Hmmer._
+import PSIBlast._
+import Quick2D._
 import scala.collection.mutable.ArrayBuffer
 
 object Common {

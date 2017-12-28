@@ -162,7 +162,7 @@ class WebsocketWrapper {
                 JobManager.pushToTable(message.job);
                 if(message.job.status == 4 || message.job.status == 5) {
                     notifications += 1;
-                    titlenotifier.set(notifications);
+                    TitleNotification.set(notifications);
                     JobRunningComponent.terminate(message.jobID);
                     if (WebsocketWrapper.showConsoleMessages)
                         console.log("[Websocket] " + message.job.jobID + " has finished with status: " + message.job.status);
@@ -276,4 +276,5 @@ class WebsocketWrapper {
 const ws : WebsocketWrapper = new WebsocketWrapper();
 
 let notifications = 0;
-declare var titlenotifier: any;
+declare var TitleNotification: any;
+

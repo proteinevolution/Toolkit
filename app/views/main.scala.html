@@ -70,9 +70,7 @@
             <!-- Loadingoverlay -->
         <script src="@routes.Assets.versioned("javascripts/vendor/loadingoverlay.js")" type="text/javascript"></script>
 
-            <!-- Title notifier -->
-        <script src="@routes.Assets.versioned("javascripts/vendor/title_notifier.js")" type="text/javascript"></script>
-
+    
             <!-- Tooltipster -->
         @Html(webJarsUtil.css("tooltipster.bundle.min.css"))
         @Html(webJarsUtil.css("tooltipster-sideTip-borderless.min.css"))
@@ -303,7 +301,6 @@
             <!-- ScalaJS assets -->
 
         @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
-        <script>Router().main();</script>
     </body>
 </html>
 
