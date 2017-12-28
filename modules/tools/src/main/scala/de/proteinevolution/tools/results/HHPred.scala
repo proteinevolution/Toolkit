@@ -1,15 +1,14 @@
-package de.proteinevolution.models.database.results
+package de.proteinevolution.tools.results
 
 import javax.inject.Inject
 import javax.inject.Singleton
 
-import de.proteinevolution.models.database.results.Alignment.AlignmentResult
-import de.proteinevolution.models.database.results.General.{ DTParam, SingleSeq }
-import de.proteinevolution.models.database.results.HHPred._
-import de.proteinevolution.models.results.Common
+import de.proteinevolution.tools.results.Alignment.AlignmentResult
+import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.tools.results.HHPred._
 import play.api.libs.json._
 @Singleton
-class HHPred @Inject()(general: General, aln: Alignment) {
+class HHPred @Inject()(general: General, aln: Alignment) extends SearchTool {
 
   def parseResult(jsValue: JsValue): HHPredResult = {
     val obj        = jsValue.as[JsObject]
@@ -145,7 +144,7 @@ object HHPred {
                           TMPRED: String,
                           COILPRED: String,
                           MSA_GEN: String,
-                          QA3M_COUNT: Int) {
+                          QA3M_COUNT: Int) extends SearchResult {
 
     def hitsOrderBy(params: DTParam): List[HHPredHSP] = {
       (params.iSortCol, params.sSortDir) match {

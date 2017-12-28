@@ -1,8 +1,8 @@
-package de.proteinevolution.models.database.results
+package de.proteinevolution.tools.results
 
 import javax.inject.Singleton
 
-import de.proteinevolution.models.database.results.Alignment.{ AlignmentItem, AlignmentResult }
+import de.proteinevolution.tools.results.Alignment.{ AlignmentItem, AlignmentResult }
 import play.api.libs.json.JsArray
 
 @Singleton

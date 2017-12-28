@@ -1,14 +1,13 @@
-package de.proteinevolution.models.database.results
+package de.proteinevolution.tools.results
 
 import javax.inject.Inject
 import javax.inject.Singleton
 
-import de.proteinevolution.models.database.results.General.{ DTParam, SingleSeq }
-import de.proteinevolution.models.database.results.HHomp._
-import de.proteinevolution.models.results.Common
+import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.tools.results.HHomp._
 import play.api.libs.json._
 @Singleton
-class HHomp @Inject()(general: General) {
+class HHomp @Inject()(general: General) extends SearchTool {
 
   def parseResult(jsValue: JsValue): HHompResult = {
     val obj        = jsValue.as[JsObject]
@@ -124,7 +123,8 @@ object HHomp {
                            bb_pred: String,
                            bb_conf: String,
                            start: Int)
-  case class HHompResult(HSPS: List[HHompHSP], num_hits: Int, query: SingleSeq, db: String, overall_prob: Double) {
+  case class HHompResult(HSPS: List[HHompHSP], num_hits: Int, query: SingleSeq, db: String, overall_prob: Double)
+      extends SearchResult {
     def hitsOrderBy(params: DTParam): List[HHompHSP] = {
       (params.iSortCol, params.sSortDir) match {
         case (1, "asc")  => HSPS.sortBy(_.template.accession)

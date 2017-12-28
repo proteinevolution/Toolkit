@@ -8,11 +8,10 @@ import actors.WebSocketActor
 import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
-import de.proteinevolution.models.results.Common
 import de.proteinevolution.models.search.JobDAO
 import models.tools.ToolFactory
 import models.UserSessions
-import de.proteinevolution.common.{ HTTPRequest, LocationProvider }
+import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
@@ -23,10 +22,11 @@ import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
 import play.api.{ Environment, Logger }
-import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
 import de.proteinevolution.models.Constants
+import de.proteinevolution.tools.results.Common
+
 import scala.concurrent.{ Await, ExecutionContext, Future }
 
 @Singleton
@@ -35,7 +35,6 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   webSocketActorFactory: WebSocketActor.Factory,
                                   @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                                   implicit val locationProvider: LocationProvider,
-                                  val reactiveMongoApi: ReactiveMongoApi,
                                   toolFactory: ToolFactory,
                                   val jobDao: JobDAO,
                                   mongoStore: MongoStore,
@@ -108,7 +107,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     else {
       rh.headers.get("Origin") match {
         case Some(originValue)
-            if originMatches(originValue) && !HTTPRequest(rh).isBot(rh) && !blacklist.contains(rh.remoteAddress) =>
+            if originMatches(originValue) && !blacklist.contains(rh.remoteAddress) =>
           logger.debug(s"originCheck: originValue = $originValue")
           true
 
@@ -327,7 +326,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     )
   }
 
-  def maintenanceTest : Action[AnyContent] = Action.async { implicit request =>
+  def maintenanceTest: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
       if (user.isSuperuser) {
         clusterMonitor ! Multicast
