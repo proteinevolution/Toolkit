@@ -5,10 +5,10 @@ import javax.inject.Inject
 import better.files._
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.Constants
-import de.proteinevolution.models.database.results.General.DTParam
-import de.proteinevolution.models.database.results.HHBlits
+import de.proteinevolution.tools.results.General.DTParam
+import de.proteinevolution.tools.results.HHBlits
 import de.proteinevolution.db.ResultFileAccessor
-import de.proteinevolution.models.database.results.HHBlits.{ HHBlitsHSP, HHBlitsResult }
+import de.proteinevolution.tools.results.HHBlits.{ HHBlitsHSP, HHBlitsResult }
 import org.webjars.play.WebJarsUtil
 import play.api.Logger
 import play.api.libs.json.{ JsObject, Json }

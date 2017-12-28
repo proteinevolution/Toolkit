@@ -1,11 +1,10 @@
-package de.proteinevolution.models.database.results
+package de.proteinevolution.tools.results
 
 import javax.inject.Inject
 import javax.inject.Singleton
 
-import de.proteinevolution.models.database.results.General.{ DTParam, SingleSeq }
-import de.proteinevolution.models.database.results.HHomp._
-import de.proteinevolution.models.results.Common
+import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.tools.results.HHomp._
 import play.api.libs.json._
 @Singleton
 class HHomp @Inject()(general: General) extends SearchTool {

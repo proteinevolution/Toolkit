@@ -1,4 +1,4 @@
-package de.proteinevolution.models.database.results
+package de.proteinevolution.tools.results
 
 import play.api.libs.json.JsValue
 

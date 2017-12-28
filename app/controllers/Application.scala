@@ -8,7 +8,6 @@ import actors.WebSocketActor
 import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
-import de.proteinevolution.models.results.Common
 import de.proteinevolution.models.search.JobDAO
 import models.tools.ToolFactory
 import models.UserSessions
@@ -26,6 +25,7 @@ import play.api.{ Environment, Logger }
 import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
 import de.proteinevolution.models.Constants
+import de.proteinevolution.tools.results.Common
 
 import scala.concurrent.{ Await, ExecutionContext, Future }
 
