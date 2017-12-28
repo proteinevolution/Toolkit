@@ -18,7 +18,7 @@ import play.api.cache._
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc._
-import play.modules.reactivemongo.ReactiveMongoApi
+import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
 import scala.concurrent.{ ExecutionContext, Future }
@@ -34,7 +34,8 @@ final class Backend @Inject()(userSessions: UserSessions,
                               cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
-    with CommonController {
+    with CommonController
+    with ReactiveMongoComponents {
 
   //TODO currently working mithril routes for the backend
   def index: Action[AnyContent] = Action.async { implicit request =>

@@ -1,16 +1,15 @@
-package de.proteinevolution.models.database.results
+package de.proteinevolution.tools.results
 
 import javax.inject.Inject
 import javax.inject.Singleton
 
-import de.proteinevolution.models.database.results.Alignment.AlignmentItem
-import de.proteinevolution.models.database.results.General.{ DTParam, SingleSeq }
-import de.proteinevolution.models.database.results.Hmmer.{ HmmerHSP, HmmerResult }
-import de.proteinevolution.models.results.Common
+import de.proteinevolution.tools.results.Alignment.AlignmentItem
+import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.tools.results.Hmmer.{ HmmerHSP, HmmerResult }
 import play.api.libs.json._
 
 @Singleton
-class Hmmer @Inject()(general: General, aln: Alignment) {
+class Hmmer @Inject()(general: General, aln: Alignment) extends SearchTool {
 
   def parseResult(jsValue: JsValue): HmmerResult = {
     val obj   = jsValue.as[JsObject]
@@ -113,7 +112,7 @@ object Hmmer {
                          query: SingleSeq,
                          db: String,
                          TMPRED: String,
-                         COILPRED: String) {
+                         COILPRED: String) extends SearchResult {
     def hitsOrderBy(params: DTParam): List[HmmerHSP] = {
       (params.iSortCol, params.sSortDir) match {
         case (1, "asc")  => HSPS.sortBy(_.accession)
