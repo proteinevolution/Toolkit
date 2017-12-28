@@ -308,6 +308,9 @@
   font-size: large;
   font-weight: bold;
   color: #2E8C81;
+  @include breakpoint(small) {
+    padding-left: 0.5em;
+  }
 }
 
 .jobline .jobinfo {
