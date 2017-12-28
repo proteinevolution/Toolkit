@@ -1,10 +1,10 @@
-package de.proteinevolution.models.database.results
+package de.proteinevolution.tools.results
 
 import javax.inject.Inject
 import javax.inject.Singleton
 
-import de.proteinevolution.models.database.results.General.SingleSeq
-import de.proteinevolution.models.database.results.Quick2D._
+import de.proteinevolution.tools.results.General.SingleSeq
+import de.proteinevolution.tools.results.Quick2D._
 import play.api.libs.json.{ JsValue, JsObject, JsArray, Json }
 
 @Singleton

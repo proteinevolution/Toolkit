@@ -3,24 +3,19 @@ package controllers
 import javax.inject.Inject
 
 import de.proteinevolution.models.Constants
-import de.proteinevolution.models.database.results.Alignment
-import de.proteinevolution.models.results.Common
+import de.proteinevolution.tools.results.{ Alignment, Common }
 import de.proteinevolution.db.ResultFileAccessor
 import play.api.libs.json.JsArray
 import play.api.mvc._
-import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 
 import scala.concurrent.ExecutionContext
 
-
 class AlignmentController @Inject()(resultFiles: ResultFileAccessor,
                                     aln: Alignment,
-                                    val reactiveMongoApi: ReactiveMongoApi,
                                     constants: Constants,
                                     cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
-    with CommonController
-    with ReactiveMongoComponents {
+    with CommonController {
 
   /**
    * Retrieves an alignment from a file
