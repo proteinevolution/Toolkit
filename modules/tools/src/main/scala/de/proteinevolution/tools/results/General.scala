@@ -1,6 +1,6 @@
-package de.proteinevolution.models.database.results
+package de.proteinevolution.tools.results
 
-import de.proteinevolution.models.database.results.General.SingleSeq
+import de.proteinevolution.tools.results.General.SingleSeq
 import play.api.libs.json._
 
 class General() {

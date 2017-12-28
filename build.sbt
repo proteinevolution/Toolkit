@@ -41,10 +41,22 @@ lazy val common = (project in file("modules/common"))
     )
     .disablePlugins(PlayLayoutPlugin)
 
+lazy val tools = (project in file("modules/tools"))
+    .enablePlugins(PlayScala, JavaAppPackaging)
+    .dependsOn(common)
+    .settings(
+      name := "tools",
+      libraryDependencies ++= Dependencies.commonDeps,
+      Settings.compileSettings,
+      TwirlKeys.templateImports := Seq.empty,
+      disableDocs
+    )
+    .disablePlugins(PlayLayoutPlugin)
+
 lazy val root = (project in file("."))
     .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb, BuildInfoPlugin)
-    .dependsOn(client, common)
-    .aggregate(client, common)
+    .dependsOn(client, common, tools)
+    .aggregate(client, common, tools)
     .settings(
       coreSettings,
       name := "mpi-toolkit",
@@ -61,7 +73,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 
-lazy val client = (project in file("client"))
+lazy val client = (project in file("modules/client"))
     .enablePlugins(ScalaJSPlugin, ScalaJSWeb, BuildInfoPlugin)
     .settings(
       scalaJSUseMainModuleInitializer := true,
