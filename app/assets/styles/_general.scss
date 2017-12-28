@@ -77,6 +77,10 @@ div#main {
   & > .columns > .row {
     height: 135px;
     min-height: 135px;
+    @include breakpoint(medium down) {
+      height: auto;
+      min-height: auto;
+    }
   }
 }
 
