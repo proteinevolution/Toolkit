@@ -1,10 +1,11 @@
 import org.scalajs.dom.raw.Node
 import scala.scalajs.js.annotation._
+import org.scalajs.dom
 
 @JSExportTopLevel("TitleNotification")
 object TitleNotification {
 
-  private val title: Node = org.scalajs.dom.document.getElementsByTagName("title").item(0)
+  private val title: Node = dom.document.getElementsByTagName("title").item(0)
   private val normalTitle = title.textContent
   private var titleCounter = 0
 
