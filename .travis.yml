@@ -3,8 +3,6 @@ dist: trusty
 sudo: required
 scala:
   - 2.12.4
-rvm:
-  - 2.4.2
 jdk:
   - openjdk8
 before_cache:
