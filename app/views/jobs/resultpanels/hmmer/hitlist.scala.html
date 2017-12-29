@@ -29,32 +29,32 @@
         </div>
     </div>
     <br>
-    <text class="notePlain">Number of hits: <b>@result.num_hits</b></text>
+    <span class="notePlain">Number of hits: <b>@result.num_hits</b></span>
     <br>
 
     @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
         <br>
-        <text class="note"> We have detected</text>
+        <span class="note"> We have detected</span>
 
     }
     @if(result.TMPRED == "1"){
 
-        <text class="note"> @result.TMPRED transmembrane helix</text>
+        <span class="note"> @result.TMPRED transmembrane helix</span>
     }
     @if(result.TMPRED.toInt > 1){
 
-        <text class="note"> @result.TMPRED transmembrane helices</text>
+        <span class="note"> @result.TMPRED transmembrane helices</span>
     }
     @if((result.TMPRED == "1" || result.TMPRED.toInt > 1) && result.COILPRED == "0"){
-        <text class="note"> and </text>
+        <span class="note"> and </span>
 
     }
     @if(result.COILPRED == "0"){
-        <text class="note">coiled-coil segments </text>
+        <span class="note">coiled-coil segments </span>
     }
 
     @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
-        <text class="note"> in your query protein!</text>
+        <span class="note"> in your query protein!</span>
 
     }
 
