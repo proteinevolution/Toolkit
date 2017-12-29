@@ -182,8 +182,7 @@ const GeneralTabComponent = {
                 return this.label;
             }).bind(mo),
             fullscreen: (function() {
-                let job_tab_component;
-                job_tab_component = $("#tool-tabs");
+                let job_tab_component = $("#tool-tabs");
                 if (this.isFullscreen) {
                     job_tab_component.removeClass("fullscreen");
                     this.isFullscreen = false;
@@ -191,8 +190,8 @@ const GeneralTabComponent = {
                         onCollapse();
                     }
                     $("#collapseMe").addClass("fa-expand").removeClass("fa-compress");
-                    alignmentView.g.zoomer.set("alignmentHeight", $('#tool-tabs').width() - 500);
-                    alignmentView.g.zoomer.set("alignmentWidth", $("#tool-tabs").width() - 240);
+                    alignmentView.g.zoomer.set("alignmentHeight", job_tab_component.width() - 500);
+                    alignmentView.g.zoomer.set("alignmentWidth", job_tab_component.width() - 240);
                     followScroll(document);
                 } else {
                     job_tab_component.addClass("fullscreen");
@@ -202,7 +201,7 @@ const GeneralTabComponent = {
                     }
                     $("#collapseMe").addClass("fa-compress").removeClass("fa-expand");
                     alignmentView.g.zoomer.set("alignmentHeight", $(window).height() - 320);
-                    alignmentView.g.zoomer.set("alignmentWidth",  $("#tool-tabs").width() - 240);
+                    alignmentView.g.zoomer.set("alignmentWidth", job_tab_component.width() - 240);
                     followScroll(job_tab_component);
                 }
                 if (typeof onFullscreenToggle === "function" && this.isFullscreen === true) {
