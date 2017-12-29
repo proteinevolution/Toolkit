@@ -9,7 +9,7 @@ import de.proteinevolution.tools.results.HHBlits._
 import play.api.libs.json._
 
 @Singleton
-class HHBlits @Inject()(general: General, aln: Alignment) extends SearchTool {
+class HHBlits @Inject()(general: General, aln: Alignment) extends SearchTool[HHBlitsHSP] {
 
   def parseResult(jsValue: JsValue): HHBlitsResult = {
     val obj        = jsValue.as[JsObject]
@@ -82,7 +82,7 @@ object HHBlits {
                         agree: String,
                         description: String,
                         num: Int,
-                        length: Int) {
+                        length: Int) extends HSP {
     def toDataTable: JsValue =
       Json.toJson(
         Map(
@@ -115,7 +115,7 @@ object HHBlits {
                            db: String,
                            TMPRED: String,
                            COILPRED: String)
-      extends SearchResult {
+      extends SearchResult[HHBlitsHSP] {
 
     def hitsOrderBy(params: DTParam): List[HHBlitsHSP] = {
       (params.iSortCol, params.sSortDir) match {
