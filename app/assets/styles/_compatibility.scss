@@ -6,4 +6,10 @@
    #logo img {
       height: 100%  
    }
+  #alignmentResultView table {
+    border-collapse: separate;
+    .alignmentTBody td {
+      padding: 0;
+    }
+  }
 }
