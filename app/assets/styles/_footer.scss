@@ -18,12 +18,11 @@
   height: 20px;
   bottom: 0;
   width: 100%;
-}
-
-#sub-nav a {
-  color: gray;
-  font-size: 0.675em;
-  padding: 0 1em 0 1em;
+  a {
+    color: gray;
+    font-size: 0.675em;
+    padding: 0 1em 0 1em;
+  }
 }
 
 #socket {
@@ -35,6 +34,7 @@
   bottom: 0;
   width: 100%;
 }
+
 #buildinfo {
   background: red;
   font-size: 12px;

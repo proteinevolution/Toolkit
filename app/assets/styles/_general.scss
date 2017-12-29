@@ -10,25 +10,9 @@ body {
   &.is-reveal-open {
     overflow: visible;
   }
-}
-
-@media (max-width: 930px) {
-  body {
+  @include breakpoint(920) {
     overflow-x: auto;
   }
-}
-
-hr {
-  padding: 0;
-  max-width: none;
-}
-
-pre {
-  display: block;
-  font-family: monospace;
-  white-space: pre;
-  margin: 1em 0;
-  font-size: 1.1em;
 }
 
 div#main-container {
@@ -106,10 +90,6 @@ div#main {
 
 .padded-column {
   padding: 0.625em;
-}
-
-.accordion a {
-  color: #000;
 }
 
 :focus {

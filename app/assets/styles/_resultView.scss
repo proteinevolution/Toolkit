@@ -13,8 +13,6 @@
     background-color: #eee;
 }
 
-
-
 /* Blast Visualization Section */
 #visualizationTitle{
     padding-top: 2em;
@@ -701,12 +699,10 @@ label.forwardLabel input[type=radio] {
     margin-left: 1em;
 }
 
-#line-element{
+.horizontal-line {
     margin-top: 0.5rem !important;
     margin-bottom: 1rem !important;
 }
-
-
 
 /* Result View PSI blast */
 #psiblast_templates {

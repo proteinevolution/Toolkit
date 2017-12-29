@@ -10,83 +10,74 @@
   overflow: hidden;
   display: block;
   margin: auto;
-}
 
-.auth-tabs .ui-widget-header {
-  background: #eeeeee;
-  border: none;
-  width: 100%;
-}
-.auth-tabs .ui-tabs-nav .ui-state-default {
-  background: #eeeeee;
-  border: none;
-  height: 2.5em;
-}
-.auth-tabs .ui-tabs-nav .ui-state-active {
-  border: 1px solid grey;
-}
-.auth-tabs .ui-tabs-nav .ui-state-default a {
-  margin-top: 0.5em;
-  color: grey;
-}
-.auth-tabs .ui-tabs-nav .ui-state-active a {
-  margin-top: 0.5em;
-  color: grey;
-}
+  .ui-widget-header {
+    background: #eeeeee;
+    border: none;
+    width: 100%;
+  }
+  .ui-tabs-nav {
+    .ui-state-default {
+      background: #eeeeee;
+      border: none;
+      height: 2.5em;
+    }
+    .ui-state-active {
+      border: 1px solid grey;
+    }
+    .ui-state-default a, .ui-state-active a {
+      margin-top: 0.5em;
+      color: grey;
+    }
+  }
 
-.auth-tabs .ui-tabs-tab:nth-child(n+2) {
-  width: 33%;
-}
+  .ui-tabs-tab:nth-child(n+2) {
+    width: 33%;
+  }
 
-.auth-tabs .ui-tabs-tab:nth-child(1) {
-  width: 34%;
-}
+  .ui-tabs-tab:nth-child(1) {
+    width: 34%;
+  }
 
-.auth-tabs .ui-tabs-panel  {
-  background: white;
+  .ui-tabs-panel {
+    background: white;
+  }
 }
 
 .auth-form {
   margin: 2em auto;
+
+  div {
+    width: 13em;
+    margin: 0 auto;
+  }
+
+  label {
+    font-size: 0.8em;
+  }
+
+  a {
+    font-size: 0.6em;
+    padding: unset;
+  }
+
+  input {
+    background-color: transparent;
+    &:focus {
+      outline: none !important;
+      border: 1px solid #2E8C81;
+      box-shadow: 0 0 10px #2E8C81;
+    }
+    &[type=submit] {
+      width: 40%;
+      background-color: #2E8C81;
+      font-size-adjust: none;
+      margin: 3em auto;
+    }
+  }
 }
 
-.auth-form div {
-  width: 13em;
-  margin: 0 auto;
-}
-
-.auth-form label {
-  font-size: 0.8em;
-}
-
-.auth-form a {
-  font-size: 0.6em;
-  padding: unset;
-}
-
-.auth-form input {
-  background-color: transparent;
-}
-
-.auth-form input:focus {
-  outline: none !important;
-  border:1px solid #2E8C81;
-  box-shadow: 0 0 10px #2E8C81;
-}
-
-.auth-form input[type=submit] {
-  width: 40%;
-  background-color: #2E8C81;
-  font-size-adjust: none;
-  margin: 3em auto;
-}
-
-#profile-edit-form select {
-  font-size: 0.85em;
-  height: 2.5em;
-}
-
-#profile-edit-form select option {
+#profile-edit-form select, #profile-edit-form select option {
   font-size: 0.85em;
   height: 2.5em;
 }
@@ -106,12 +97,10 @@
   color: #2E8C81;
   cursor: pointer;
   margin-left: 0.25em;
+  &:hover {
+    background-color: #d1d1d1;
+  }
 }
-
-#auth-link:hover {
-  background-color: #d1d1d1;
-}
-
 
 #auth-link-text:hover {
   color: #2E8C81;
@@ -152,24 +141,24 @@ button.loggedIn {
   margin-top: 0.85em;
   border: none;
   position: absolute;
-  box-shadow: 2px 5px 6px rgba(0,0,0,0.3);
+  box-shadow: 2px 5px 6px rgba(0, 0, 0, 0.3);
   right: 0;
   left: auto;
   top: 100%;
-}
 
-.userMenu a {
-  padding: 0.75em 0.75em 0.75em 0.75em !important;
-}
+  a {
+    padding: 0.75em 0.75em 0.75em 0.75em !important;
+  }
 
-.userMenu i {
-  margin-right: 0.7em !important;
-  margin-bottom: 0.2em;
-  color: #666;
-  opacity: 0.6;
-  font-size: 1em;
+  i {
+    margin-right: 0.7em !important;
+    margin-bottom: 0.2em;
+    color: #666;
+    opacity: 0.6;
+    font-size: 1em;
+  }
 }
 
 .menu.vertical > li a:not(.button):hover {
-  background: rgba(211,211,211, 0.5);
+  background: rgba(211, 211, 211, 0.5);
 }
