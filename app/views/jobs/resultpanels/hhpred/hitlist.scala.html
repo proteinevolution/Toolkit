@@ -37,54 +37,57 @@
         </div>
     </div>
     <br>
-    <text class="notePlain">Number of hits: <b>@result.num_hits</b></text>
+    <span class="notePlain">Number of hits: <b>@result.num_hits</b></span>
     <br>
     @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
         <br>
-        <text class="note"><b> We have detected</b></text>
+        <span class="note"><b> We have detected</b></span>
 
     }
     @if(result.TMPRED == "1"){
 
-        <text class="note"><b> @result.TMPRED transmembrane helix</b></text>
+        <span class="note"><b> @result.TMPRED transmembrane helix</b></span>
     }
     @if(result.TMPRED.toInt > 1){
 
-        <text class="note"><b> @result.TMPRED transmembrane helices</b></text>
+        <span class="note"><b> @result.TMPRED transmembrane helices</b></span>
     }
     @if((result.TMPRED == "1" || result.TMPRED.toInt > 1) && result.COILPRED == "0"){
-        <text class="note"><b> and </b></text>
+        <span class="note"><b> and </b></span>
 
     }
     @if(result.COILPRED == "0"){
-        <text class="note"><b>coiled-coil segments </b></text>
+        <span class="note"><b>coiled-coil segments </b></span>
     }
 
     @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
-        <text class="note"><b> in your query protein!</b></text> <br>
+        <span class="note"><b> in your query protein!</b></span>
+        <br>
 
     }
 
     @if(result.QA3M_COUNT < 20){
-        <br><text class="note">Note: your query alignment consists of only @result.QA3M_COUNT sequence(s).</text>
+        <br>
+        <span class="note">Note: your query alignment consists of only @result.QA3M_COUNT sequence(s).</span>
         @if(result.MSA_GEN == "uniprot20"){
 
-            <text class="note">You could improve the sensitivity of your search vastly by building a larger query
+            <span class="note">You could improve the sensitivity of your search vastly by building a larger query
                 alignment either with HHblits over Uniclust30 or with PSI-BLAST over nre70. You could also consider
-                increasing the number of MSA generation iterations and/or relaxing the inclusion threshold.</text>
+                increasing the number of MSA generation iterations and/or relaxing the inclusion threshold.</span>
         }
         @if(result.MSA_GEN == "uniclust30"){
-            <text class="note">You could improve the sensitivity of your search vastly by building a larger
+            <span class="note">You could improve the sensitivity of your search vastly by building a larger
                 query alignment with PSI-BLAST over nre70. You could also consider increasing the number of MSA
-                generation iterations and/or relaxing the inclusion threshold.</text>
+                generation iterations and/or relaxing the inclusion threshold.</span>
         }
         @if(result.MSA_GEN == "psiblast"){
-            <text class="note">You could improve the sensitivity of your search vastly by building a larger
+            <span class="note">You could improve the sensitivity of your search vastly by building a larger
                 query alignment; for instance, by increasing the number of MSA generation iterations and/or relaxing the
-            inclusion threshold. Alternatively, you could input your own alignment.</text>
+                inclusion threshold. Alternatively, you could input your own alignment.</span>
         }
         @if(result.MSA_GEN == "custom"){
-            <text class="note">You could improve the sensitivity of your search vastly by providing a larger query alignment.</text>
+            <span class="note">
+                You could improve the sensitivity of your search vastly by providing a larger query alignment.</span>
         }
 
     }
