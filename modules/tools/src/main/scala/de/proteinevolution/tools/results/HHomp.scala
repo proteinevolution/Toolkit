@@ -82,7 +82,8 @@ object HHomp {
                       num: Int,
                       ss_score: Double,
                       length: Int) extends HSP {
-    def toDataTable: JsValue =
+    def toDataTable(db: String = ""): JsValue = {
+      val _ = db
       Json.toJson(
         Map(
           "0" -> Json.toJson(Common.getAddScrollLink(num)),
@@ -96,6 +97,7 @@ object HHomp {
           "8" -> Json.toJson(template.ref)
         )
       )
+    }
   }
   case class HHompInfo(aligned_cols: Int,
                        evalue: Double,

@@ -5,5 +5,5 @@ import javax.inject.Inject
 import de.proteinevolution.tools.results._
 
 case class ResultContext @Inject()(
-  hhblits: HHBlits, hmmer: Hmmer, psiBlast: PSIBlast, hhomp: HHomp, hhpred: HHPred
+  hhblits: HHBlits, hmmer: Hmmer, psiblast: PSIBlast, hhomp: HHomp, hhpred: HHPred
 )

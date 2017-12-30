@@ -98,7 +98,8 @@ object HHPred {
                        ss_score: Double,
                        confidence: String,
                        length: Int) extends HSP {
-    def toDataTable: JsValue =
+    def toDataTable(db: String = ""): JsValue = {
+      val _ = db 
       Json.toJson(
         Map(
           "0" -> Json.toJson(Common.getCheckbox(num)),
@@ -111,6 +112,7 @@ object HHPred {
           "7" -> Json.toJson(template.ref)
         )
       )
+    }
   }
 
   case class HHPredInfo(aligned_cols: Int,

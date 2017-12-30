@@ -83,7 +83,8 @@ object HHBlits {
                         description: String,
                         num: Int,
                         length: Int) extends HSP {
-    def toDataTable: JsValue =
+    def toDataTable(db: String = ""): JsValue = {
+      val _ = db
       Json.toJson(
         Map(
           "0" -> Json.toJson(Common.getCheckbox(num)),
@@ -95,6 +96,7 @@ object HHBlits {
           "6" -> Json.toJson(template.ref)
         )
       )
+    }
   }
 
   case class HHBlitsInfo(aligned_cols: Int,

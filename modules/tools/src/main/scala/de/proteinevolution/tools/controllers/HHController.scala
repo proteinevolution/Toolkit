@@ -11,10 +11,12 @@ import de.proteinevolution.tools.results.HHPred.HHPredHSP
 import de.proteinevolution.tools.results.HHomp.HHompHSP
 import de.proteinevolution.tools.results.Hmmer.HmmerHSP
 import de.proteinevolution.tools.results.PSIBlast.PSIBlastHSP
+import de.proteinevolution.tools.results.{ SearchResult, HSP }
 import de.proteinevolution.tools.services.{ DTService, ToolNameGetService }
 import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc.{ AbstractController, Action, AnyContent }
 import scala.concurrent.ExecutionContext
+
 
 class HHController @Inject()(ctx: HHContext,
                              resultCtx: ResultContext,
@@ -37,24 +39,32 @@ class HHController @Inject()(ctx: HHContext,
     resultFiles.getResults(jobID).map {
       case None => NotFound
       case Some(jsValue) =>
-        val result = resultCtx.hhpred.parseResult(jsValue)
-        val h = toolFinder.getTool(jobID).map {
+        val tuple = toolFinder.getTool(jobID).map {
           case x if x == ToolNames.HHBLITS =>
-            dtService.getHitsByKeyWord[HHBlitsHSP](resultCtx.hhblits.parseResult(jsValue), params)
+            (resultCtx.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+              dtService.getHitsByKeyWord[HHBlitsHSP](resultCtx.hhblits.parseResult(jsValue), params))
           case x if x == ToolNames.HHOMP =>
-            dtService.getHitsByKeyWord[HHompHSP](resultCtx.hhomp.parseResult(jsValue), params)
+            (resultCtx.hhomp.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+              dtService.getHitsByKeyWord[HHompHSP](resultCtx.hhomp.parseResult(jsValue), params))
           case x if x == ToolNames.HHPRED =>
-            dtService.getHitsByKeyWord[HHPredHSP](resultCtx.hhpred.parseResult(jsValue), params)
+            (resultCtx.hhpred.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+              dtService.getHitsByKeyWord[HHPredHSP](resultCtx.hhpred.parseResult(jsValue), params))
           case x if x == ToolNames.HMMER =>
-            dtService.getHitsByKeyWord[HmmerHSP](resultCtx.hmmer.parseResult(jsValue), params)
+            (resultCtx.hmmer.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+              dtService.getHitsByKeyWord[HmmerHSP](resultCtx.hmmer.parseResult(jsValue), params))
           case x if x == ToolNames.PSIBLAST =>
-            dtService.getHitsByKeyWord[PSIBlastHSP](resultCtx.psiBlast.parseResult(jsValue), params)
+            (resultCtx.psiblast.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+              dtService.getHitsByKeyWord[PSIBlastHSP](resultCtx.psiblast.parseResult(jsValue), params))
           case _ => throw new IllegalArgumentException("datatables not implemented for this tool")
         }
 
-        println(h)
+        import scala.concurrent.Await
+        import scala.concurrent.duration._
 
-        val hits = dtService.getHitsByKeyWord[HHPredHSP](result, params)
+        val h = Await.result(tuple, Duration.Inf) // cannot use for comprehension here because of scalameta bug fix in scala 2.12.5
+
+        val hits = h._2
+        val result = h._1
 
         Ok(
           Json
@@ -65,7 +75,16 @@ class HHController @Inject()(ctx: HHContext,
     }
   }
 
-  def eval = ???
+  def eval(jobID: String) = Action.async { implicit request =>
+
+    toolFinder.getTool(jobID).map{x =>
+      Ok(x + jobID)
+
+    }
+
+    //Future.successful(Ok("TEST" + jobID))
+
+  }
 
   def aln = ???
 
