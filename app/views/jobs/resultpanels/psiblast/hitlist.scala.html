@@ -139,7 +139,7 @@ $(document).ready( function(){
         var firstQueryEnd = @{if(result.num_hits > 0){ result.HSPS.head.query_end}};
         slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
         shownHits = shownHits > numHits ? numHits : shownHits;
-        getHits(0, shownHits, wrapped);
+        new ResultViewHelper().showHits(0, shownHits, wrapped, false, numHits, jobID);
         $("#wrap").hide();
     }
 });
@@ -214,34 +214,6 @@ function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, bo
     })
 }
 
-function getHits(start, end, isWrapped){
-    if(start <= numHits && end <= numHits && !loading){
-	    loading = true;
-        $('#loadingHits').show();
-        $('#loadHits').hide();
-        var data = {};
-        data.start = start;
-        data.end = end;
-        data.wrapped = isWrapped;
-        return $.ajax({
-            contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify(data),
-            type: "POST",
-            url: "/results/loadHits/" + jobID,
-        }).done(function (data_) {
-            $("#alignmentTable").append(data_);
-	    loading = false;
-            $('#loadingHits').hide();
-            if (shownHits !== numHits) {
-                $('#loadHits').show();
-            }
-            getCheckedCheckboxes();
-            selectFromArray(checkboxes);
-            linkCheckboxes();
-            $("#alignments").floatingScroll('init');
-        });
-    }
-}
 
 window["@{tool.toolNameShort}_download"] = function(){
     var fileUrl = "/files/@jobID/output.aln_fas";

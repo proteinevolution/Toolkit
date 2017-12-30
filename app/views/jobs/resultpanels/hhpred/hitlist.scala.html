@@ -232,7 +232,7 @@
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
-                getHits(0, shownHits, wrapped, colorAAs);
+                new ResultViewHelper().showHits(0, shownHits, wrapped, colorAAs, numHits, jobID);
                 $('#templateAlignmentModal').foundation();
                 $('#structureModal').foundation();
                 $(".colorAA").addClass("colorToggleBar");
@@ -425,33 +425,6 @@
             }).done(function (data_) {
                 forward(selectedTool, data_.toString());
             });
-        }
-
-        function getHits(start, end, isWrapped, isColor) {
-            if (start <= numHits && end <= numHits && !loading) {
-                var data = { "start": start, "end": end, "isColor": isColor, "wrapped": isWrapped };
-                loading = true;
-                $('#loadingHits').show();
-                $('#loadHits').hide();
-                return $.ajax({
-                    type: "POST",
-                    url: "/results/loadHits/" + jobID,
-                    contentType: "application/json",
-                    data: JSON.stringify(data)
-                }).done(function (data_) {
-                    $("#alignmentTable").append(data_);
-                    loading = false;
-                    $('#loadingHits').hide();
-                    if (shownHits !== numHits) {
-                        $('#loadHits').show();
-                    }
-                    linkCheckboxes();
-                    selectFromArray(checkboxes);
-                    $("#alignments").floatingScroll('init');
-                });
-            }
-            // hide loadHits
-
         }
 
 

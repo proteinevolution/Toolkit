@@ -1,8 +1,6 @@
 package exports.results
 
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
-import org.scalajs.dom
-import org.scalajs.dom.raw.Element
 import scala.scalajs.js
 import js.Dynamic.{ global => g }
 

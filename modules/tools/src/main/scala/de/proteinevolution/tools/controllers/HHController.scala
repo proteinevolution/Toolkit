@@ -1,6 +1,6 @@
 package de.proteinevolution.tools.controllers
 
-import javax.inject.Inject
+import javax.inject.{ Inject, Singleton }
 
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.ToolNames
@@ -15,10 +15,12 @@ import de.proteinevolution.tools.results.{ HSP, SearchResult }
 import de.proteinevolution.tools.services.{ DTService, ToolNameGetService }
 import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc.{ AbstractController, Action, AnyContent }
+
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
+@Singleton
 class HHController @Inject()(ctx: HHContext,
                              resultCtx: ResultContext,
                              toolFinder: ToolNameGetService,
