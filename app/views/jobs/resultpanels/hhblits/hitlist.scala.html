@@ -154,7 +154,7 @@
         var selectAllBool = false;
         var numHits = @{result.num_hits};
         var shownHits = 50;
-	    var loading = false;
+	var loading = false;
         var wrapped = true;
         var colorAAs = false;
         // use this array to store
@@ -167,7 +167,7 @@
             if(numHits > 0 ){
                 $("#wrap").text("Unwrap Seqs");
                 $("#wrap").addClass("colorToggleBar");
-                DataTables.config(jobID, numHits);
+                new DataTables("hhblits").config(jobID, numHits);
                 var firstQueryStart = @{if(result.num_hits > 0){ result.HSPS.head.query.start}};
                 var firstQueryEnd = @{if(result.num_hits > 0){ result.HSPS.head.query.end}};
                 /* without timeout SLIDER is displayed */

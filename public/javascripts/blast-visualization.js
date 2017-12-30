@@ -1,16 +1,5 @@
 /* Data table helpers */
 
-/* BASELINKS */
-
-var pdbBaseLink = "http://www.rcsb.org/pdb/explore/explore.do?structureId=";
-var pdbeBaseLink = "http://www.ebi.ac.uk/pdbe/entry/pdb/";
-var ncbiBaseLink = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?SUBMIT=y&db=structure&orig_db=structure&term=";
-var ncbiProteinBaseLink = "https://www.ncbi.nlm.nih.gov/protein/";
-var scopBaseLink = "http://scop.berkeley.edu/sid=";
-var pfamBaseLink = "http://pfam.xfam.org/family/";
-var cddBaseLink = "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=";
-var uniprotBaseLik = "http://www.uniprot.org/uniprot/";
-
 
 /* REGEX FOR DB IDENTIFICATION*/
 var uniprotReg = "^([A-Z0-9]{10}|[A-Z0-9]{6})$";

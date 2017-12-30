@@ -3,8 +3,8 @@ package exports.results
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 import org.scalajs.dom
 import org.scalajs.dom.raw.Element
-
 import scala.scalajs.js
+import js.Dynamic.{ global => g }
 
 
 @JSExportTopLevel("DataTables")
@@ -16,10 +16,12 @@ class DataTables(toolName: String) {
   )
 
   private def callbacks = {
-    if (toolName == "hhpred")
-      null
-    else
-      dom.console.log("TEST")
+    if (toolName == "hhomp")
+      js.undefined
+    else {
+      g.linkCheckboxes()
+      g.selectFromArray(g.checkboxes) // remove me from existence
+    }
   }
 
   @JSExport
