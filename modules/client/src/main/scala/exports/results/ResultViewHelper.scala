@@ -4,6 +4,7 @@ import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 import org.scalajs.jquery._
 import scala.scalajs.js
 import org.scalajs.dom
+import scala.scalajs.js.JSON
 
 @JSExportTopLevel("ResultViewHelper")
 class ResultViewHelper() {
@@ -17,7 +18,7 @@ class ResultViewHelper() {
         js.Dynamic
           .literal(
             url = s"/results/loadHits/$jobID",
-            data = js.Dynamic.literal("start" -> start, "end" -> end, "wrapped" -> isWrapped, "isColor" -> isColored),
+            data = JSON.stringify(js.Dynamic.literal("start" -> start, "end" -> end, "wrapped" -> isWrapped, "isColor" -> isColored)),
             contentType = "application/json",
             success = { (data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) =>
               jQuery("#alignmentTable").append(data)

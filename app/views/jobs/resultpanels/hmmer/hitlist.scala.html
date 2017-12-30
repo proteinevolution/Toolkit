@@ -144,7 +144,7 @@
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
-                new ResultViewHelper().showHits(0, shownHits, wrapped, colorAAs, numHits, jobID);
+                new ResultViewHelper().showHits(0, shownHits, wrapped, false, numHits, jobID);
                 $("#wrap").hide();
             }
         });
