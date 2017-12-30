@@ -223,12 +223,11 @@ function getHits(start, end, isWrapped){
         data.start = start;
         data.end = end;
         data.wrapped = isWrapped;
-        var route = jsRoutes.controllers.PSIBlastController.loadHits(jobID);
         return $.ajax({
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(data),
-            method: route.method,
-            url: route.url
+            type: "POST",
+            url: "/results/loadHits" + jobID,
         }).done(function (data_) {
             $("#alignmentTable").append(data_);
 	    loading = false;

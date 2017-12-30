@@ -5,10 +5,9 @@ import javax.inject.Inject
 import better.files._
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.Constants
-import de.proteinevolution.tools.results.General.DTParam
 import de.proteinevolution.tools.results._
 import de.proteinevolution.db.ResultFileAccessor
-import de.proteinevolution.tools.results.HHPred.{ HHPredHSP, HHPredResult }
+import de.proteinevolution.tools.results.HHPred.HHPredResult
 import org.webjars.play.WebJarsUtil
 import play.api.mvc._
 
@@ -28,7 +27,21 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
     extends AbstractController(cc)
     with CommonController {
 
-  /* gets the path to all scripts that are executed
+  /* gets the path to all scripts/**
+   * given dataTable specific paramters, this function
+   * filters for eg. a specific column and returns the data
+   * @param hits
+   * @param params
+   * @return
+   */
+  def getHitsByKeyWord(hits: HmmerResult, params: DTParam): List[HmmerHSP] = {
+    if (params.sSearch.isEmpty) {
+      hits.hitsOrderBy(params).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
+    } else {
+      hits.hitsOrderBy(params).filter(_.description.contains(params.sSearch))
+    }
+  }
+ that are executed
      on the server (not executed on the grid eninge) */
   private val serverScripts           = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignment.sh").toFile
@@ -159,55 +172,5 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
     numList.mkString(" ")
   }
 
-  /**
-   * given dataTable specific paramters, this function
-   * filters for eg. a specific column and returns the data
-   * @param hits
-   * @param params
-   * @return
-   */
-  def getHitsByKeyWord(hits: HHPredResult, params: DTParam): List[HHPredHSP] = {
-    if (params.sSearch.isEmpty) {
-      hits.hitsOrderBy(params).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
-    } else {
-      hits.hitsOrderBy(params).filter(_.description.contains(params.sSearch))
-    }
-  }
-
-  /**
-   * Retrieves hit rows (String containing Html)
-   * for the alignment section in the result view
-   * for a given range (start, end). Those can be either
-   * wrapped or unwrapped, colored or uncolored
-   *
-   * Expects json sent by POST including:
-   *
-   * start: index of first HSP that is retrieved
-   * end: index of last HSP that is retrieved
-   * wrapped: Boolean true = wrapped, false = unwrapped
-   * isColored: Boolean true = colored, false = uncolored
-   *
-   * @param jobID
-   * @return Https response: HSP row(s) as String
-   */
-  def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val start   = (json \ "start").as[Int]
-    val end     = (json \ "end").as[Int]
-    val isColor = (json \ "isColor").as[Boolean]
-    val wrapped = (json \ "wrapped").as[Boolean]
-    resultFiles.getResults(jobID).map {
-      case Some(jsValue) =>
-        val result = hhpred.parseResult(jsValue)
-        if (end > result.num_hits || start > result.num_hits) {
-          BadRequest
-        } else {
-          val hits =
-            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhpred.hit(_, isColor, wrapped))
-          Ok(hits.mkString)
-        }
-      case None => BadRequest
-    }
-  }
 
 }

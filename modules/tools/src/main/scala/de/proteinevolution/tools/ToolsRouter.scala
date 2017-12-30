@@ -13,14 +13,12 @@ class ToolsRouter @Inject()(
 ) extends SimpleRouter {
 
   def routes: Routes = {
-
-    case POST(p"/loadHits")        => hhController.loadHits
+    case POST(p"/loadHits/$jobID") => hhController.loadHits(jobID)
     case GET(p"/dataTable/$jobID") => hhController.dataTable(jobID)
-    case POST(p"/eval")            => hhController.loadHits
+    case POST(p"/eval")            => hhController.eval
     case POST(p"/evalFull")        => hhController.evalFull
     case POST(p"/full")            => hhController.full
     case POST(p"/aln")             => hhController.aln
-
   }
 
 }

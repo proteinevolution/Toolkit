@@ -134,7 +134,7 @@
             <option value="hhblits" >HHblits</option>
             <option value="hhomp" >HHomp</option>
             <option value="hhpred" >HHpred</option>
-            <option value="hhrepid" >HHrepID</option>
+            <option value="hhrepid" >HHrepID</option>f
         </select>
     </div>
     <textarea rows="35" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
@@ -301,10 +301,9 @@
                 loading = true;
                 $('#loadingHits').show();
                 $('#loadHits').hide();
-                var route = jsRoutes.controllers.HHblitsController.loadHits(jobID);
                 return $.ajax({
-                    method: route.method,
-                    url: route.url,
+                    type: "POST",
+                    url: "/results/loadHits/" + jobID,
                     contentType: "application/json",
                     data: JSON.stringify(data)
                 }).done(function (data_) {

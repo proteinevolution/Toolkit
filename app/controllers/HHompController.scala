@@ -5,14 +5,10 @@ import javax.inject.Inject
 import better.files._
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.Constants
-import de.proteinevolution.tools.results.General.DTParam
-import de.proteinevolution.tools.results.HHomp
-import de.proteinevolution.db.ResultFileAccessor
-import de.proteinevolution.tools.results.HHomp.{ HHompHSP, HHompResult }
 import play.api.Logger
 import play.api.mvc._
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.Future
 import scala.sys.process._
 
 /**
@@ -20,10 +16,8 @@ import scala.sys.process._
  * HHpred Controller process all requests
  * made from the HHpred result view
  */
-class HHompController @Inject()(resultFiles: ResultFileAccessor,
-                                hhomp: HHomp,
-                                constants: Constants,
-                                cc: ControllerComponents)(implicit ec: ExecutionContext)
+class HHompController @Inject()(constants: Constants,
+                                cc: ControllerComponents)
     extends AbstractController(cc)
     with CommonController {
 
@@ -61,55 +55,5 @@ class HHompController @Inject()(resultFiles: ResultFileAccessor,
     }
   }
 
-  /**
-   * given dataTable specific paramters, this function
-   * filters for eg. a specific column and returns the data
-   * @param hits
-   * @param params
-   * @return
-   */
-  def getHitsByKeyWord(hits: HHompResult, params: DTParam): List[HHompHSP] = {
-    if (params.sSearch.isEmpty) {
-      hits.hitsOrderBy(params).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
-    } else {
-      hits.hitsOrderBy(params).filter(_.description.contains(params.sSearch))
-    }
-  }
-
-  /**
-   * Retrieves hit rows (String containing Html)
-   * for the alignment section in the result view
-   * for a given range (start, end). Those can be either
-   * wrapped or unwrapped, colored or uncolored
-   *
-   * Expects json sent by POST including:
-   *
-   * start: index of first HSP that is retrieved
-   * end: index of last HSP that is retrieved
-   * wrapped: Boolean true = wrapped, false = unwrapped
-   * isColored: Boolean true = colored, false = uncolored
-   *
-   * @param jobID
-   * @return Https response: HSP row(s) as String
-   */
-  def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val start   = (json \ "start").as[Int]
-    val end     = (json \ "end").as[Int]
-    val isColor = (json \ "isColor").as[Boolean]
-    val wrapped = (json \ "wrapped").as[Boolean]
-    resultFiles.getResults(jobID).map {
-      case None => NotFound
-      case Some(jsValue) =>
-        val result = hhomp.parseResult(jsValue)
-        if (end > result.num_hits || start > result.num_hits) {
-          BadRequest
-        } else {
-          val hits =
-            result.HSPS.slice(start, end).map(views.html.jobs.resultpanels.hhomp.hit(_, isColor, wrapped))
-          Ok(hits.mkString)
-        }
-    }
-  }
 
 }

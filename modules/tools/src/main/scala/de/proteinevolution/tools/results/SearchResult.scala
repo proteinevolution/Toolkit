@@ -10,4 +10,6 @@ trait SearchResult[+T] {
 
   def db: String
 
+  def HSPS: List[T]
+
 }

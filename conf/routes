@@ -137,7 +137,6 @@ GET  /templateAlignmentHHomp/:jobID/:accession        controllers.HHompControlle
 
 
 # Hmmer
-POST        /HmmerLoadHits                            controllers.HmmerController.loadHits(jobID: String)
 POST        /alnEvalHmmer                             controllers.HmmerController.alnEval(jobID: String)
 POST        /alnHmmer                                 controllers.HmmerController.aln(jobID: String)
 POST        /evalHmmerFull                            controllers.HmmerController.evalFull(jobID: String)
@@ -149,7 +148,6 @@ POST        /evalPSIBlast                             controllers.PSIBlastContro
 POST        /alnPSIBlast                              controllers.PSIBlastController.aln(jobID: String)
 POST        /evalPSIBlastFull                         controllers.PSIBlastController.evalFull(jobID: String)
 POST        /PSIBlastFull                             controllers.PSIBlastController.full(jobID: String)
-POST        /PSIBlastLoadHits                         controllers.PSIBlastController.loadHits(jobID: String)
 
 
 # HHblits
@@ -157,21 +155,15 @@ POST        /evalHHBlits                              controllers.HHblitsControl
 POST        /alnHHBlits                               controllers.HHblitsController.aln(jobID:String)
 POST        /evalHHBlitsFull                          controllers.HHblitsController.evalFull(jobID : String)
 POST        /HHBlitsFull                              controllers.HHblitsController.full(jobID : String)
-POST        /HHblitsLoadHits                          controllers.HHblitsController.loadHits(jobID: String)
 
 # HHPred
 POST        /evalHHpred                               controllers.HHpredController.alnEval(jobID: String)
 POST        /alnHHpred                                controllers.HHpredController.aln(jobID:String)
-POST        /HHpredLoadHits                           controllers.HHpredController.loadHits(jobID: String)
 
 # Alignment
 POST        /AlignmentLoadHits/:jobID                 controllers.AlignmentController.loadHits(jobID: String)
 POST        /AlignmentLoadHitsClustal/:jobID          controllers.AlignmentController.loadHitsClustal(jobID: String)
 POST        /AlignmentGetAln                          controllers.AlignmentController.getAln(jobID: String)
-
-
-#HHomp
-POST        /HHompLoadHits                            controllers.HHompController.loadHits(jobID: String)
 
 
 # Tool Module

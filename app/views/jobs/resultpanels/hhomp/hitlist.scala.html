@@ -188,10 +188,9 @@
                 loading = true;
                 $('#loadingHits').show();
                 $('#loadHits').hide();
-                var route = jsRoutes.controllers.HHompController.loadHits(jobID);
                 return $.ajax({
-                    method: route.method,
-                    url: route.url,
+                    type: "POST",
+                    url: "/results/loadHits" + jobID,
                     contentType: "application/json",
                     data: JSON.stringify(data)
                 }).done(function (data_) {
