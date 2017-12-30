@@ -7,7 +7,7 @@ import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
 import de.proteinevolution.tools.results.PSIBlast.{ PSIBlastHSP, PSIBlastResult }
 import play.api.libs.json._
 @Singleton
-class PSIBlast @Inject()(general: General) extends SearchTool {
+class PSIBlast @Inject()(general: General) extends SearchTool[PSIBlastHSP] {
 
   def parseResult(json: JsValue): PSIBlastResult = {
     val obj   = json.as[JsObject]
@@ -117,7 +117,7 @@ object PSIBlast {
                          ref_len: Int,
                          accession: String,
                          midline: String,
-                         description: String) {
+                         description: String) extends HSP {
     def toDataTable(db: String): JsValue =
       Json.toJson(
         Map(
@@ -142,8 +142,8 @@ object PSIBlast {
                             query: SingleSeq,
                             belowEvalThreshold: Int,
                             TMPRED: String,
-                            COILPRED: String) extends SearchResult {
-    def hitsOrderBy(params: DTParam): List[PSIBlastHSP] = {
+                            COILPRED: String) extends SearchResult[PSIBlastHSP] {
+    override def hitsOrderBy(params: DTParam): List[PSIBlastHSP] = {
       (params.iSortCol, params.sSortDir) match {
         case (1, "asc")  => HSPS.sortBy(_.accession)
         case (1, "desc") => HSPS.sortWith(_.accession > _.accession)

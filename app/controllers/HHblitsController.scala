@@ -11,7 +11,6 @@ import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.tools.results.HHBlits.{ HHBlitsHSP, HHBlitsResult }
 import org.webjars.play.WebJarsUtil
 import play.api.Logger
-import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc._
 
 import scala.concurrent.{ ExecutionContext, Future }
@@ -318,32 +317,4 @@ class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
     }
   }
 
-  /**
-   * this method fetches the data for the PSIblast hitlist
-   * datatable
-   *
-   * @param jobID
-   * @return
-   */
-  def dataTable(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val params = DTParam(
-      request.getQueryString("sSearch").getOrElse(""),
-      request.getQueryString("iDisplayStart").getOrElse("0").toInt,
-      request.getQueryString("iDisplayLength").getOrElse("100").toInt,
-      request.getQueryString("iSortCol_0").getOrElse("1").toInt,
-      request.getQueryString("sSortDir_0").getOrElse("asc")
-    )
-    resultFiles.getResults(jobID).map {
-      case None => NotFound
-      case Some(jsValue) =>
-        val result = hhblits.parseResult(jsValue)
-        val hits   = getHitsByKeyWord(result, params)
-        Ok(
-          Json
-            .toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))
-            .as[JsObject]
-            .deepMerge(Json.obj("aaData" -> hits.map(_.toDataTable)))
-        )
-    }
-  }
 }

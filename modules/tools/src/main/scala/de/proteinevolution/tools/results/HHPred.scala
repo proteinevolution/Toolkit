@@ -8,7 +8,7 @@ import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
 import de.proteinevolution.tools.results.HHPred._
 import play.api.libs.json._
 @Singleton
-class HHPred @Inject()(general: General, aln: Alignment) extends SearchTool {
+class HHPred @Inject()(general: General, aln: Alignment) extends SearchTool[HHPredHSP] {
 
   def parseResult(jsValue: JsValue): HHPredResult = {
     val obj        = jsValue.as[JsObject]
@@ -97,7 +97,7 @@ object HHPred {
                        num: Int,
                        ss_score: Double,
                        confidence: String,
-                       length: Int) {
+                       length: Int) extends HSP {
     def toDataTable: JsValue =
       Json.toJson(
         Map(
@@ -144,7 +144,7 @@ object HHPred {
                           TMPRED: String,
                           COILPRED: String,
                           MSA_GEN: String,
-                          QA3M_COUNT: Int) extends SearchResult {
+                          QA3M_COUNT: Int) extends SearchResult[HHPredHSP] {
 
     def hitsOrderBy(params: DTParam): List[HHPredHSP] = {
       (params.iSortCol, params.sSortDir) match {

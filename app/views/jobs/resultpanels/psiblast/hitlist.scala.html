@@ -134,7 +134,7 @@ $(document).ready( function(){
         $("#wrap").text("Unwrap Seqs");
         $("#wrap").addClass("colorToggleBar");
         initiallyCheckCheckboxes();
-        drawDataTable();
+        DataTables.config(jobID, numHits);
         var firstQueryStart = @{if(result.num_hits > 0){ result.HSPS.head.query_start}};
         var firstQueryEnd = @{if(result.num_hits > 0){ result.HSPS.head.query_end}};
         slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
@@ -160,21 +160,6 @@ function selectAll(){
         // delete all checkboxes from array
         checkboxes = [];
     }
-}
-
-function drawDataTable(){
-    hitlist = $('#htb').dataTable({
-        "bProcessing" : true,
-        "bServerSide" : true,
-        "sAjaxSource" : "/api/job/results/dataTablePSIBlast/"+jobID,
-        "lengthMenu": [[10, 25, 50, 100, numHits], [10, 25, 50, 100, "All"]],
-        "searching": false,
-        "iDisplayLength": 25,
-        "drawCallback": function() {
-            linkCheckboxes();
-            selectFromArray(checkboxes);
-        }
-    });
 }
 
 

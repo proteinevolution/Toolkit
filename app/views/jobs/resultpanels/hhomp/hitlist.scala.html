@@ -127,7 +127,7 @@
             if (numHits > 0) {
                 $("#wrap").text("Unwrap Seqs");
                 $("#wrap").addClass("colorToggleBar");
-                drawDataTable();
+                DataTables.config(jobID, numHits);
                 var firstQueryStart = @{if(result.num_hits > 0){ result.HSPS.head.query.start}};
                 var firstQueryEnd = @{if(result.num_hits > 0){ result.HSPS.head.query.end}};
                 /* without timeout SLIDER is displayed */
@@ -141,18 +141,6 @@
             }
 
         });
-
-        function drawDataTable() {
-            hitlist = $('#htb').dataTable({
-                "bProcessing": true,
-                "bServerSide": true,
-                "sAjaxSource": "/api/job/results/dataTableHHomp/" + jobID,
-                "autoWidth": false,
-                "lengthMenu": [[10, 25, 50, 100, numHits], [10, 25, 50, 100, "All"]],
-                "searching": false,
-                "iDisplayLength": 25
-            });
-        }
 
         function templateAlignment(accession) {
             $.LoadingOverlay("show");

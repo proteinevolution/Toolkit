@@ -7,7 +7,7 @@ import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
 import de.proteinevolution.tools.results.HHomp._
 import play.api.libs.json._
 @Singleton
-class HHomp @Inject()(general: General) extends SearchTool {
+class HHomp @Inject()(general: General) extends SearchTool[HHompHSP] {
 
   def parseResult(jsValue: JsValue): HHompResult = {
     val obj        = jsValue.as[JsObject]
@@ -81,7 +81,7 @@ object HHomp {
                       description: String,
                       num: Int,
                       ss_score: Double,
-                      length: Int) {
+                      length: Int) extends HSP {
     def toDataTable: JsValue =
       Json.toJson(
         Map(
@@ -124,7 +124,7 @@ object HHomp {
                            bb_conf: String,
                            start: Int)
   case class HHompResult(HSPS: List[HHompHSP], num_hits: Int, query: SingleSeq, db: String, overall_prob: Double)
-      extends SearchResult {
+      extends SearchResult[HHompHSP] {
     def hitsOrderBy(params: DTParam): List[HHompHSP] = {
       (params.iSortCol, params.sSortDir) match {
         case (1, "asc")  => HSPS.sortBy(_.template.accession)

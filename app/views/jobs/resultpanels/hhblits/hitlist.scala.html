@@ -167,34 +167,18 @@
             if(numHits > 0 ){
                 $("#wrap").text("Unwrap Seqs");
                 $("#wrap").addClass("colorToggleBar");
-
-                drawDataTable();
+                DataTables.config(jobID, numHits);
                 var firstQueryStart = @{if(result.num_hits > 0){ result.HSPS.head.query.start}};
                 var firstQueryEnd = @{if(result.num_hits > 0){ result.HSPS.head.query.end}};
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
 		        shownHits = shownHits > numHits ? numHits : shownHits;
                 getHits(0, shownHits, wrapped);
-                $('#templateAlignmentModal').foundation()
+                $('#templateAlignmentModal').foundation();
                 $("#wrap").hide();
             }
 
         });
-
-        function drawDataTable(){
-            hitlist = $('#htb').dataTable({
-                "bProcessing" : true,
-                "bServerSide" : true,
-                "sAjaxSource" : "/api/job/results/dataTableHHblits/@jobID",
-                "lengthMenu": [[10, 25, 50, 100, numHits], [10, 25, 50, 100, "All"]],
-                "searching": false,
-                "iDisplayLength": 25,
-                "drawCallback": function() {
-                    linkCheckboxes();
-                    selectFromArray(checkboxes);
-                }
-            });
-        }
 
         function selectAll(){
             selectAllBool = !selectAllBool;
@@ -264,8 +248,6 @@
                    forwardPath(selectedTool, 'files/@jobID/'+filename+'.fa');
            });
         }
-
-
 
         function hhblits_forwardQueryMSA(selectedTool){
             $.LoadingOverlay("show");

@@ -42,7 +42,7 @@ lazy val common = (project in file("modules/common"))
     .disablePlugins(PlayLayoutPlugin)
 
 lazy val tools = (project in file("modules/tools"))
-    .enablePlugins(PlayScala, JavaAppPackaging)
+    .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl)
     .dependsOn(common)
     .settings(
       name := "tools",
