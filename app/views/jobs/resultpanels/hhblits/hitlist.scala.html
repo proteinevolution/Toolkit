@@ -32,32 +32,32 @@
         </div>
     </div>
     <br>
-    <text class="notePlain">Number of hits: <b>@result.num_hits</b></text>
+    <span class="notePlain">Number of hits: <b>@result.num_hits</b></span>
     <br>
 
     @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
         <br>
-        <text class="note"><b> We have detected</b></text>
+        <span class="note"><b> We have detected</b></span>
 
     }
     @if(result.TMPRED == "1"){
 
-        <text class="note"><b> @result.TMPRED transmembrane helix</b></text>
+        <span class="note"><b> @result.TMPRED transmembrane helix</b></span>
     }
     @if(result.TMPRED.toInt > 1){
 
-        <text class="note"><b> @result.TMPRED transmembrane helices</b></text>
+        <span class="note"><b> @result.TMPRED transmembrane helices</b></span>
     }
     @if((result.TMPRED == "1" || result.TMPRED.toInt > 1) && result.COILPRED == "0"){
-        <text class="note"><b> and </b></text>
+        <span class="note"><b> and </b></span>
 
     }
     @if(result.COILPRED == "0"){
-        <text class="note"><b>coiled-coil segments </b></text>
+        <span class="note"><b>coiled-coil segments </b></span>
     }
 
     @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
-        <text class="note"><b> in your query protein!</b></text>
+        <span class="note"><b> in your query protein!</b></span>
 
     }
 
