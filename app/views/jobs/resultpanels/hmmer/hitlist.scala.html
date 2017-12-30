@@ -226,7 +226,7 @@
                 $('#loadHits').hide();
                 return $.ajax({
                     type: "POST",
-                    url: "/results/loadHits" + jobID,
+                    url: "/results/loadHits/" + jobID,
                     contentType: "application/json",
                     data: JSON.stringify(data)
                 }).done(function (data_) {

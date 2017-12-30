@@ -27,23 +27,15 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
     extends AbstractController(cc)
     with CommonController {
 
-  /* gets the path to all scripts/**
+  /* gets the path to all scripts
    * given dataTable specific paramters, this function
    * filters for eg. a specific column and returns the data
    * @param hits
    * @param params
    * @return
    */
-  def getHitsByKeyWord(hits: HmmerResult, params: DTParam): List[HmmerHSP] = {
-    if (params.sSearch.isEmpty) {
-      hits.hitsOrderBy(params).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
-    } else {
-      hits.hitsOrderBy(params).filter(_.description.contains(params.sSearch))
-    }
-  }
- that are executed
-     on the server (not executed on the grid eninge) */
-  private val serverScripts           = ConfigFactory.load().getString("serverScripts")
+  
+private val serverScripts           = ConfigFactory.load().getString("serverScripts")
   private val templateAlignmentScript = (serverScripts + "/templateAlignment.sh").toFile
   private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile
 

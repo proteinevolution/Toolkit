@@ -20,7 +20,7 @@ class DataTables(toolName: String) {
       js.undefined
     else {
       g.linkCheckboxes()
-      g.selectFromArray(g.checkboxes) // remove me from existence
+      //g.selectFromArray(g.checkboxes) // remove me from existence
     }
   }
 

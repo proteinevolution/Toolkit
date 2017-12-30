@@ -227,7 +227,7 @@ function getHits(start, end, isWrapped){
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(data),
             type: "POST",
-            url: "/results/loadHits" + jobID,
+            url: "/results/loadHits/" + jobID,
         }).done(function (data_) {
             $("#alignmentTable").append(data_);
 	    loading = false;
