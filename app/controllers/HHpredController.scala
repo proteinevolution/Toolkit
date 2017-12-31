@@ -8,7 +8,6 @@ import de.proteinevolution.models.Constants
 import de.proteinevolution.tools.results._
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.tools.results.HHPred.HHPredResult
-import org.webjars.play.WebJarsUtil
 import play.api.mvc._
 
 import scala.concurrent.{ ExecutionContext, Future }
@@ -22,7 +21,6 @@ import scala.sys.process._
 class HHpredController @Inject()(resultFiles: ResultFileAccessor,
                                  hhpred: HHPred,
                                  constants: Constants,
-                                 webJarsUtil: WebJarsUtil,
                                  cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with CommonController {
@@ -39,15 +37,6 @@ private val serverScripts           = ConfigFactory.load().getString("serverScri
   private val templateAlignmentScript = (serverScripts + "/templateAlignment.sh").toFile
   private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile
 
-  /**
-   * returns 3D structure view for a given accession
-   * in scop or mmcif
-   * @param accession
-   * @return 3D structure view
-   */
-  def show3DStructure(accession: String): Action[AnyContent] = Action { implicit request =>
-    Ok(views.html.jobs.resultpanels.structure(accession, webJarsUtil))
-  }
 
   /**
    * Retrieves the template alignment for a given

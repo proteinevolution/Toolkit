@@ -62,7 +62,7 @@ object ResultViewHelper {
       )
     } else {
       deselectAll()
-     }
+    }
   }
 
   @JSExport

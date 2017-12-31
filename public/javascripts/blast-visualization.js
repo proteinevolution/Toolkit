@@ -73,14 +73,10 @@ function slider_show(sequence_length, start, end) {
 
 }
 
-
-
 function getSliderRange() {
 
     return $('#flat-slider').slider("option", "values");
 }
-
-
 
 function resubmitSection(sequence, name) {
     var sliderRange = getSliderRange();
@@ -295,11 +291,6 @@ function selectFromArray(checkboxes){
         $('input:checkbox[value='+currentVal+'][name="alignment_elem"]').prop('checked', checkboxes.indexOf(currentVal) !== -1 ? true : false);
     })
 }
-
-function getCheckedCheckboxes(){
-    $('input:checkbox:checked[name="alignment_elem"]').each(function(){var num = parseInt($(this).val()); if(checkboxes.indexOf(num) === -1){checkboxes.push(num)}});
-}
-
 
 function hitlistBaseFunctions(){
     $(document).ready(function() {

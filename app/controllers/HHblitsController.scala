@@ -8,7 +8,6 @@ import de.proteinevolution.models.Constants
 import de.proteinevolution.tools.results.HHBlits
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.tools.results.HHBlits.HHBlitsResult
-import org.webjars.play.WebJarsUtil
 import play.api.Logger
 import play.api.mvc._
 
@@ -17,7 +16,6 @@ import scala.sys.process._
 
 class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
                                   hhblits: HHBlits,
-                                  webJarsUtil: WebJarsUtil,
                                   constants: Constants,
                                   cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
@@ -30,16 +28,6 @@ class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
   private val templateAlignmentScript = (serverScripts + "/templateAlignmentHHblits.sh").toFile
   private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile
   private val retrieveFullSeq         = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
-
-  /**
-   * returns 3D structure view for a given accession
-   * in scop or mmcif
-   * @param accession
-   * @return 3D structure view
-   */
-  def show3DStructure(accession: String): Action[AnyContent] = Action { implicit request =>
-    Ok(views.html.jobs.resultpanels.structure(accession, webJarsUtil))
-  }
 
   /**
    * Retrieves the template alignment for a given
