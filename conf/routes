@@ -128,7 +128,6 @@ GET           /api/job/results/:jobID                 controllers.DataController
 GET           /getHelp/:tool                          controllers.DataController.getHelp(tool: String)
 
 # 3D structure
-GET         /structure3D/:accession                   controllers.HHpredController.show3DStructure(accession : String)
 GET         /getStructure/:filename                   controllers.Application.getStructureFile(filename : String)
 # template alignment
 GET  /templateAlignment/:jobID/:accession             controllers.HHpredController.retrieveTemplateAlignment(jobID : String, accession: String)

@@ -39,15 +39,6 @@ private val serverScripts           = ConfigFactory.load().getString("serverScri
   private val templateAlignmentScript = (serverScripts + "/templateAlignment.sh").toFile
   private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile
 
-  /**
-   * returns 3D structure view for a given accession
-   * in scop or mmcif
-   * @param accession
-   * @return 3D structure view
-   */
-  def show3DStructure(accession: String): Action[AnyContent] = Action { implicit request =>
-    Ok(views.html.jobs.resultpanels.structure(accession, webJarsUtil))
-  }
 
   /**
    * Retrieves the template alignment for a given

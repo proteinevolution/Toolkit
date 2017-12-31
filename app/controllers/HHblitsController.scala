@@ -32,16 +32,6 @@ class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
   private val retrieveFullSeq         = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
 
   /**
-   * returns 3D structure view for a given accession
-   * in scop or mmcif
-   * @param accession
-   * @return 3D structure view
-   */
-  def show3DStructure(accession: String): Action[AnyContent] = Action { implicit request =>
-    Ok(views.html.jobs.resultpanels.structure(accession, webJarsUtil))
-  }
-
-  /**
    * Retrieves the template alignment for a given
    * accession, therefore it runs a script on the server
    * (now grid engine) and writes it to the current job folder
