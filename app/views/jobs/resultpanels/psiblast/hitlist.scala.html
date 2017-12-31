@@ -26,7 +26,7 @@
                 }">Forward</a>
                 <a type="button" id="downloadAlignment"  onclick="@{tool.toolNameShort}_download()"><span>Download Alignment</span></a>
 
-                <a onclick="wrap()" id="wrap">Wrap Seqs</a>
+                <a onclick="ResultViewHelper.toggleIsWrapped(jobID, shownHits, numHits, wrapped, colorAAs); wrapped = !wrapped;" id="wrap">Wrap Seqs</a>
             </div>
         </div>
     </div>

@@ -303,30 +303,6 @@ function generateFilename(){
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-/**
- * wraps sequences for search tools
- * for this it empties the table "#alignmentTable"
- * and calls get Hits taking the boolean wrapped as a parameter
- */
-function wrap(){
-    wrapped = !wrapped;
-    var elemArr =  $(".aln").toArray();
-    var num = 1;
-    for(var i =0 ; i < elemArr.length; i++){
-        if($(elemArr[i]).isOnScreen()){
-            num  = $(elemArr[i]).attr("value");
-            break;
-        }
-    }
-    $("#wrap").toggleClass("colorToggleBar");
-    $("#wrap").toggleText("Unwrap Seqs", "Wrap Seqs");
-    $("#alignmentTable").empty();
-    getHits(0, shownHits, wrapped, false).then(function(){
-        linkCheckboxes();
-        scrollToElem(num);
-    });
-
-}
 
 $.fn.isOnScreen = function(){
     var viewport = {};

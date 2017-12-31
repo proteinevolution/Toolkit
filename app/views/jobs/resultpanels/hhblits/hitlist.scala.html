@@ -27,7 +27,7 @@
                 <a id="forwardButtonHHsuite" data-open="forwardModal_@{
                     tool.toolNameShort
                 }_hhsuite">Forward Query A3M</a>
-                <a onclick="wrap()" id="wrap">Wrap Seqs</a>
+                <a onclick="ResultViewHelper.toggleIsWrapped(jobID, shownHits, numHits, wrapped, colorAAs); wrapped = !wrapped;" id="wrap">Wrap Seqs</a>
             </div>
         </div>
     </div>

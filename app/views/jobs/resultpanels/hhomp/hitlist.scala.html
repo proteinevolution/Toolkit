@@ -21,8 +21,8 @@
                 <a id="forwardButtonHHsuite" data-open="forwardModal_@{
                     tool.toolNameShort
                 }_hhomp">Forward Query A3M</a>
-                <a onclick="ResultViewHelper.toggleAlignmentColoring(jobID, shownHits, wrapped, colorAAs, numHits); colorAAs = !colorAAs" class="colorAA">Color Seqs</a>
-                <a onclick="wrap()" id="wrap">Wrap Seqs</a>
+                <a onclick="ResultViewHelper.toggleAlignmentColoring(jobID, shownHits, wrapped, colorAAs, numHits); colorAAs = !colorAAs;" class="colorAA">Color Seqs</a>
+                <a onclick="ResultViewHelper.toggleIsWrapped(jobID, shownHits, numHits, wrapped, colorAAs); wrapped = !wrapped;" id="wrap">Wrap Seqs</a>
                 </div>
         </div>
     </div>

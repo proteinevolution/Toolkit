@@ -85,7 +85,14 @@ object ResultViewHelper {
     // TODO scrollTOElem
     $("#alignmentTable").empty()
     showHits(0, shownHits, isWrapped, !isColored, numHits, jobID)
-    // TODO set global isColored to new value
+  }
+
+  @JSExport
+  def toggleIsWrapped(jobID: String, shownHits: Int, numHits: Int, isWrapped: Boolean, isColored: Boolean): Unit = {
+    $("#wrap").toggleClass("colorToggleBar")
+    jQuery("#wrap").toggleText("Unwrap Seqs", "Wrap Seqs")
+    $("#alignmentTable").empty()
+    showHits(0, shownHits, !isWrapped, isColored, numHits, jobID)
   }
 
 }

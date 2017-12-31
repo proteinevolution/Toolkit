@@ -24,7 +24,7 @@
                 <a type="button" id="forwardButtonNormal" data-open="forwardModal_@{
                     tool.toolNameShort
                 }">Forward</a>
-                <a onclick="wrap()" id="wrap">Wrap Seqs</a>
+                <a onclick="ResultViewHelper.toggleIsWrapped(jobID, shownHits, numHits, wrapped, colorAAs); wrapped = !wrapped;" id="wrap">Wrap Seqs</a>
             </div>
         </div>
     </div>
