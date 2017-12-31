@@ -2,11 +2,10 @@ package exports.results
 
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 import org.scalajs.jquery._
-
 import scala.scalajs.js
 import org.scalajs.dom
 import org.scalajs.dom.Element
-
+import org.querki.jquery.$
 import scala.scalajs.js.JSON
 
 @JSExportTopLevel("ResultViewHelper")
@@ -55,26 +54,22 @@ object ResultViewHelper {
 
   @JSExport
   def toggleAllCheckboxes(): Unit = {
-
-    var selected = false
     jQuery(".selectAllSeqBar").toggleClass("colorToggleBar")
     jQuery(".selectAllSeqBar").toggleText("Select all", "Deselect all")
-
-    import org.querki.jquery._
-    if (!selected) {
-      $("input:checkbox.checkbox[name='alignment_elem']").each(
+    if ($("input:checkbox[name='alignment_elem']:checked").length != $("input:checkbox[name='alignment_elem']").length) {
+      $("input:checkbox[name='alignment_elem']").each(
         (el: Element, i: Int) => jQuery(el).prop("checked", true)
       )
-      selected = true
     } else {
       deselectAll()
-      selected = false
-    }
+     }
   }
 
   @JSExport
   def deselectAll(): Unit = {
-    jQuery("input:checkbox.checkbox").prop("checked", false)
+    $("input:checkbox[name='alignment_elem']").each(
+      (el: Element, i: Int) => jQuery(el).prop("checked", false)
+    )
   }
 
 }
