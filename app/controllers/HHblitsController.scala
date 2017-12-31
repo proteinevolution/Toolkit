@@ -8,7 +8,6 @@ import de.proteinevolution.models.Constants
 import de.proteinevolution.tools.results.HHBlits
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.tools.results.HHBlits.HHBlitsResult
-import org.webjars.play.WebJarsUtil
 import play.api.Logger
 import play.api.mvc._
 
@@ -17,7 +16,6 @@ import scala.sys.process._
 
 class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
                                   hhblits: HHBlits,
-                                  webJarsUtil: WebJarsUtil,
                                   constants: Constants,
                                   cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)

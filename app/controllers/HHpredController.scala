@@ -8,7 +8,6 @@ import de.proteinevolution.models.Constants
 import de.proteinevolution.tools.results._
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.tools.results.HHPred.HHPredResult
-import org.webjars.play.WebJarsUtil
 import play.api.mvc._
 
 import scala.concurrent.{ ExecutionContext, Future }
@@ -22,7 +21,6 @@ import scala.sys.process._
 class HHpredController @Inject()(resultFiles: ResultFileAccessor,
                                  hhpred: HHPred,
                                  constants: Constants,
-                                 webJarsUtil: WebJarsUtil,
                                  cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with CommonController {
