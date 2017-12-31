@@ -20,7 +20,7 @@
             </div>
             <span class="headerDivider"></span>
             <div id="controlls">
-                <a onclick="selectAll()" class="selectAllSeqBar" id="extraWide">Select all</a>
+                <a onclick="ResultViewHelper.toggleAllCheckboxes();" class="selectAllSeqBar" id="extraWide">Select all</a>
                 <a id="forwardButtonNormal" data-open="forwardModal_@{
                     tool.toolNameShort
                 }">Forward</a>
@@ -134,7 +134,7 @@
             <option value="hhblits" >HHblits</option>
             <option value="hhomp" >HHomp</option>
             <option value="hhpred" >HHpred</option>
-            <option value="hhrepid" >HHrepID</option>f
+            <option value="hhrepid" >HHrepID</option>
         </select>
     </div>
     <textarea rows="35" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
@@ -150,11 +150,9 @@
         }));
         var jobID = '@{jobID}';
         var fileUrlQueryMSAFas = "/files/"+jobID+"/reduced.a3m";
-        var checkbox = "checkbox";
-        var selectAllBool = false;
         var numHits = @{result.num_hits};
         var shownHits = 50;
-	var loading = false;
+	    var loading = false;
         var wrapped = true;
         var colorAAs = false;
         // use this array to store
@@ -173,30 +171,13 @@
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
 		        shownHits = shownHits > numHits ? numHits : shownHits;
-                new ResultViewHelper().showHits(0, shownHits, wrapped, false, numHits, jobID);
+                ResultViewHelper.showHits(0, shownHits, wrapped, false, numHits, jobID);
                 $('#templateAlignmentModal').foundation();
                 $("#wrap").hide();
             }
 
         });
 
-        function selectAll(){
-            selectAllBool = !selectAllBool;
-            $(".selectAllSeqBar").toggleClass("colorToggleBar");
-            $(".selectAllSeqBar").toggleText("Select all","Deselect all");
-            if(selectAllBool) {
-                selectAllHelper(checkbox);
-                // first empty array
-                checkboxes = [];
-                // push all checkboxes (1 to num_hits) into array
-                _.range(1, numHits+1).forEach(function(num){return checkboxes.push(num)});
-            }
-            else {
-                deselectAll(checkbox);
-                // delete all checkboxes from array
-                checkboxes = [];
-            }
-        }
 
        function hhblits_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
            var data = {"checkboxes": checkboxes.removeDuplicates()};

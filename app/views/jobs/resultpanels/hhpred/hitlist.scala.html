@@ -19,7 +19,7 @@
             </div>
             <span class="headerDivider"></span>
             <div id="controlls">
-                <a onclick="selectAll()" class="selectAllSeqBar" id="extraWide">Select all</a>
+                <a onclick="ResultViewHelper.toggleAllCheckboxes();" class="selectAllSeqBar" id="extraWide">Select all</a>
                 <a id="forwardButtonSimple" data-open="forwardModal_@{
                     tool.toolNameShort
                 }">Forward</a>
@@ -205,9 +205,7 @@
             $.LoadingOverlay("hide");
         }));
 
-        var checkbox = "checkbox";
         var currentStructureAccession = "";
-        var selectAllBool = false;
         var colorAAs = true;
         var shownHits = 100;
         var showMore = 100;
@@ -232,7 +230,7 @@
                 /* without timeout SLIDER is displayed */
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
-                new ResultViewHelper().showHits(0, shownHits, wrapped, colorAAs, numHits, jobID);
+                ResultViewHelper.showHits(0, shownHits, wrapped, colorAAs, numHits, jobID);
                 $('#templateAlignmentModal').foundation();
                 $('#structureModal').foundation();
                 $(".colorAA").addClass("colorToggleBar");
@@ -252,24 +250,6 @@
                 download(downloadFilename, data);
             })
         };
-
-        function selectAll(){
-            selectAllBool = !selectAllBool;
-            $(".selectAllSeqBar").toggleClass("colorToggleBar");
-            $(".selectAllSeqBar").toggleText("Select all","Deselect all");
-            if(selectAllBool) {
-                selectAllHelper(checkbox);
-                // first empty array
-                checkboxes = [];
-                // push all checkboxes (1 to num_hits) into array
-                _.range(1, numHits+1).forEach(function(num){return checkboxes.push(num)});
-            }
-            else {
-                deselectAll(checkbox);
-                // delete all checkboxes from array
-                checkboxes = [];
-            }
-	}
 
 
         function @{tool.toolNameShort}_manual() {

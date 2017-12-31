@@ -289,17 +289,7 @@ function scrollToSection(name) {
     }, 'fast');
 
 }
-// select all checkboxes
-function selectAllHelper(name) {
-    $('input:checkbox.'+name+'[name="alignment_elem"]').each(function () {
-        $(this).prop('checked', true);
-    });
 
-}
-function deselectAll(name){
-    $('input:checkbox.'+name+'').prop('checked', false);
-    checkboxes = [];
-}
 function selectFromArray(checkboxes){
     _.range(1, numHits+1).forEach(function (currentVal) {
         $('input:checkbox[value='+currentVal+'][name="alignment_elem"]').prop('checked', checkboxes.indexOf(currentVal) !== -1 ? true : false);
@@ -347,26 +337,6 @@ Array.prototype.removeDuplicates = function () {
         return self.indexOf(item) === index;
     });
 };
-
-
-function selectAll(){
-    selectAllBool = !selectAllBool;
-    if(selectAllBool) {
-        selectAllHelper(checkbox);
-        $(".selectAllSeqBar").text("Deselect all").addClass("colorToggleBar");
-
-        // first empty array
-        checkboxes = [];
-        // push all checkboxes (1 to num_hits) into array
-        _.range(1, numHits+1).forEach(function(num){return checkboxes.push(num)});
-    }
-    else {
-        deselectAll(checkbox);
-        $(".selectAllSeqBar").text("Select all").removeClass("colorToggleBar");
-        // delete all checkboxes from array
-        checkboxes = [];
-    }
-}
 
 
 function getsHitsManually(){
@@ -435,8 +405,6 @@ function wrap(){
 
 }
 
-
-
 function colorAA(){
     colorAAs = !colorAAs;
     $.LoadingOverlay("show");
@@ -456,13 +424,6 @@ function colorAA(){
         scrollToElem(num);
     });
 }
-
-
-$.fn.extend({
-    toggleText: function(a, b){
-        return this.text(this.text() === b ? a : b);
-    }
-});
 
 $.fn.isOnScreen = function(){
     var viewport = {};

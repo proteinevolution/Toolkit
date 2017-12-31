@@ -122,7 +122,7 @@
                 _.range(1, numHits+1).forEach(function(x){checkboxes.push(x)});
             }
             else {
-                deselectAll(checkbox);
+                ResultViewHelper.deselectAll();
                 // delete all checkboxes from array
                 checkboxes = [];
             }

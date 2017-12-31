@@ -20,7 +20,7 @@
             </div>
             <span class="headerDivider"></span>
             <div id="controlls">
-                <a onclick="selectAll()" class="selectAllSeqBar" id="extraWide">Select all</a>
+                <a onclick="ResultViewHelper.toggleAllCheckboxes();" class="selectAllSeqBar" id="extraWide">Select all</a>
                 <a type="button" id="forwardButtonNormal" data-open="forwardModal_@{
                     tool.toolNameShort
                 }">Forward</a>
@@ -116,8 +116,7 @@
 }
 <script>
 
-var checkbox = "checkbox";
-var selectAllBool = false;
+
 var shownHits = 500;
 // use this array to store
 // checked checkboxes
@@ -139,28 +138,10 @@ $(document).ready( function(){
         var firstQueryEnd = @{if(result.num_hits > 0){ result.HSPS.head.query_end}};
         slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
         shownHits = shownHits > numHits ? numHits : shownHits;
-        new ResultViewHelper().showHits(0, shownHits, wrapped, false, numHits, jobID);
+        ResultViewHelper.showHits(0, shownHits, wrapped, false, numHits, jobID);
         $("#wrap").hide();
     }
 });
-
-function selectAll(){
-    selectAllBool = !selectAllBool;
-    $(".selectAllSeqBar").toggleClass("colorToggleBar");
-    $(".selectAllSeqBar").toggleText("Select all","Deselect all");
-    if(selectAllBool) {
-        selectAllHelper(checkbox);
-        // first empty array
-        checkboxes = [];
-        // push all checkboxes (1 to num_hits) into array
-        _.range(1, numHits+1).forEach(function(num){return checkboxes.push(num)});
-    }
-    else {
-        deselectAll(checkbox);
-        // delete all checkboxes from array
-        checkboxes = [];
-    }
-}
 
 
 function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
