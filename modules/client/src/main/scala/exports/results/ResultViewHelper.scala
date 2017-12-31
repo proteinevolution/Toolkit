@@ -31,6 +31,7 @@ object ResultViewHelper {
                 jQuery("#loadHits").show()
               js.Dynamic.global.linkCheckboxes()
               js.Dynamic.global.$("#alignments").floatingScroll("init")
+              js.Dynamic.global.$LoadingOverlay("hide")
             },
             error = { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
               dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
@@ -70,6 +71,21 @@ object ResultViewHelper {
     $("input:checkbox[name='alignment_elem']").each(
       (el: Element, i: Int) => jQuery(el).prop("checked", false)
     )
+  }
+
+  @JSExport
+  def toggleAlignmentColoring(jobID: String,
+                              shownHits: Int,
+                              isWrapped: Boolean,
+                              isColored: Boolean,
+                              numHits: Int): Unit = {
+
+    js.Dynamic.global.$LoadingOverlay("show")
+    $(".colorAA").toggleClass("colorToggleBar")
+    // TODO scrollTOElem
+    $("#alignmentTable").empty()
+    showHits(0, shownHits, isWrapped, !isColored, numHits, jobID)
+    // TODO set global isColored to new value
   }
 
 }

@@ -31,7 +31,7 @@
                     <a onclick="@{tool.toolNameShort}_manual()">Model using selection</a>
                 }
                 <a onclick="downloadHHR()" class="downloadHHR">HHR file</a>
-                <a onclick="colorAA()" class="colorAA">Color Seqs</a>
+                <a onclick="ResultViewHelper.toggleAlignmentColoring(jobID, shownHits, wrapped, colorAAs, numHits); colorAAs = !colorAAs" class="colorAA">Color Seqs</a>
                 <a onclick="wrap()" id="wrap">Wrap Seqs</a>
                 </div>
         </div>

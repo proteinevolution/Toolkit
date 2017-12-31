@@ -328,26 +328,6 @@ function wrap(){
 
 }
 
-function colorAA(){
-    colorAAs = !colorAAs;
-    $.LoadingOverlay("show");
-    $(".colorAA").toggleClass("colorToggleBar");
-    var elemArr =  $(".aln").toArray();
-    var num = 1;
-    for(var i =0 ; i < elemArr.length; i++){
-        if($(elemArr[i]).isOnScreen()){
-            num  = $(elemArr[i]).attr("value");
-            break;
-        }
-    }
-    $("#alignmentTable").empty();
-    getHits(0, shownHits, wrapped, colorAAs).then(function(){
-        $.LoadingOverlay("hide");
-        linkCheckboxes();
-        scrollToElem(num);
-    });
-}
-
 $.fn.isOnScreen = function(){
     var viewport = {};
     viewport.top = $(window).scrollTop();
