@@ -129,10 +129,6 @@ GET           /getHelp/:tool                          controllers.DataController
 
 # 3D structure
 GET         /getStructure/:filename                   controllers.Application.getStructureFile(filename : String)
-# template alignment
-GET  /templateAlignment/:jobID/:accession             controllers.HHpredController.retrieveTemplateAlignment(jobID : String, accession: String)
-GET  /templateAlignmentHHblits/:jobID/:accession      controllers.HHblitsController.retrieveTemplateAlignment(jobID : String, accession: String)
-GET  /templateAlignmentHHomp/:jobID/:accession        controllers.HHompController.retrieveTemplateAlignment(jobID : String, accession: String)
 
 
 # Hmmer

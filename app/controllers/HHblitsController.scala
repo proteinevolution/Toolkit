@@ -8,7 +8,6 @@ import de.proteinevolution.models.Constants
 import de.proteinevolution.tools.results.HHBlits
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.tools.results.HHBlits.HHBlitsResult
-import play.api.Logger
 import play.api.mvc._
 
 import scala.concurrent.{ ExecutionContext, Future }

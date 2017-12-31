@@ -10,9 +10,10 @@ import de.proteinevolution.models.{ Constants, ToolNames }
 import scala.sys.process.Process
 import cats.implicits._
 import cats.data.OptionT
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class ProcessController @Inject()(ctx: HHContext, toolFinder: ToolNameGetService, constants: Constants)
+class ProcessController @Inject()(ctx: HHContext, toolFinder: ToolNameGetService, constants: Constants)(implicit ec: ExecutionContext)
     extends AbstractController(ctx.controllerComponents) {
 
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
@@ -20,8 +21,8 @@ class ProcessController @Inject()(ctx: HHContext, toolFinder: ToolNameGetService
   def templateAlignment(jobID: String, accession: String): Action[AnyContent] = Action.async { implicit request =>
     val futureScript = toolFinder.getTool(jobID).map {
       case x if x == ToolNames.HHOMP   => (serverScripts + "/templateAlignmentHHomp.sh").toFile
-      case x if x == ToolNames.HHPRED  => (serverScripts + "/templateAlignmentHHblits.sh").toFile
-      case x if x == ToolNames.HHBLITS => (serverScripts + "/templateAlignment.sh").toFile
+      case x if x == ToolNames.HHBLITS => (serverScripts + "/templateAlignmentHHblits.sh").toFile
+      case x if x == ToolNames.HHPRED  => (serverScripts + "/templateAlignment.sh").toFile
       case _                           => throw new IllegalStateException("tool either not found nor not supported")
     }
     (for {
