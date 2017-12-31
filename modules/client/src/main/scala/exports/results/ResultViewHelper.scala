@@ -31,7 +31,7 @@ object ResultViewHelper {
                 jQuery("#loadHits").show()
               js.Dynamic.global.linkCheckboxes()
               js.Dynamic.global.$("#alignments").floatingScroll("init")
-              js.Dynamic.global.$LoadingOverlay("hide")
+              js.Dynamic.global.$.LoadingOverlay("hide")
             },
             error = { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
               dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
@@ -80,7 +80,7 @@ object ResultViewHelper {
                               isColored: Boolean,
                               numHits: Int): Unit = {
 
-    js.Dynamic.global.$LoadingOverlay("show")
+    js.Dynamic.global.$.LoadingOverlay("show")
     $(".colorAA").toggleClass("colorToggleBar")
     // TODO scrollTOElem
     $("#alignmentTable").empty()
