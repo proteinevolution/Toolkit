@@ -95,4 +95,36 @@ object ResultViewHelper {
     showHits(0, shownHits, !isWrapped, isColored, numHits, jobID)
   }
 
+  @JSExport
+  def scrollToHit(id: Int): Unit = {
+
+    ??? // TODO
+
+  }
+
 }
+
+/*
+function scrollToElem(num){
+    num = parseInt(num);
+    var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
+    if (num > shownHits) {
+        $.LoadingOverlay("show");
+        getHits(shownHits, num, wrapped, false).done(function(data){
+            var pos = $('.aln"][value=' + num + ']').offset().top;
+            $(elem).animate({
+                scrollTop: pos - 100
+            }, 1)
+        }).then(function(){
+            $.LoadingOverlay("hide");
+        });
+        shownHits = num;
+    }else{
+        var pos = $('.aln[value=' + num + ']').offset().top;
+        $(elem).animate({
+            scrollTop: pos - 100
+        }, 1)
+    }
+}
+
+ */

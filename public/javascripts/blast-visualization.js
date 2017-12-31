@@ -187,28 +187,6 @@ function identifyDatabase(id){
         return null;
 }
 
-function scrollToElem(num){
-    num = parseInt(num);
-    var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
-    if (num > shownHits) {
-        $.LoadingOverlay("show");
-        getHits(shownHits, num, wrapped, false).done(function(data){
-            var pos = $('.aln"][value=' + num + ']').offset().top;
-            $(elem).animate({
-                scrollTop: pos - 100
-            }, 1)
-        }).then(function(){
-            $.LoadingOverlay("hide");
-        });
-        shownHits = num;
-    }else{
-        var pos = $('.aln[value=' + num + ']').offset().top;
-        $(elem).animate({
-            scrollTop: pos - 100
-        }, 1)
-    }
-}
-
 function scrollToSection(name) {
     var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
     var pos = $('#tool-tabs').hasClass("fullscreen") ? $('#' + name).offset().top + $(elem).scrollTop() : $('#' + name).offset().top + 25;
@@ -302,14 +280,3 @@ function linkCheckboxes(){
 function generateFilename(){
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
-
-
-$.fn.isOnScreen = function(){
-    var viewport = {};
-    viewport.top = $(window).scrollTop();
-    viewport.bottom = viewport.top + $(window).height();
-    var bounds = {};
-    bounds.top = this.offset().top;
-    bounds.bottom = bounds.top + this.outerHeight();
-    return ((bounds.top <= viewport.bottom) && (bounds.bottom >= viewport.top));
-};

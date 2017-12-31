@@ -291,7 +291,6 @@
             });
         }
 
-
         function templateAlignment(accession) {
             $.LoadingOverlay("show");
             $('textarea#alignmentTemplate').val(" ");
@@ -300,7 +299,7 @@
 
             $.ajax({
                 type: 'GET',
-                url: '/templateAlignment/' + jobID + '/' + accession,
+                url: '/results/templateAlignment/' + jobID + '/' + accession,
                 error: function(){
                     $.LoadingOverlay("hide")
                 }
@@ -335,7 +334,6 @@
                     break;
                 case "mmcif":
                     fileEnding = ".cif";
-                    accession = accession;
                     break;
             }
             var url = '/getStructure/' + accession + fileEnding;

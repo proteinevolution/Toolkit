@@ -247,7 +247,7 @@
             $.LoadingOverlay("show");
             $.ajax({
                 type: 'GET',
-                url: '/templateAlignmentHHblits/@jobID/' + accession
+                url: '/results/templateAlignment/@jobID/' + accession
             }).done(function () {
                 $.ajax({
                     type: 'GET',

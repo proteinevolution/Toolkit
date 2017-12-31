@@ -21,42 +21,9 @@ class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
     extends AbstractController(cc)
     with CommonController {
 
-  /* gets the path to all scripts that are executed
-   on the server (not executed on the grid engine) */
-
   private val serverScripts           = ConfigFactory.load().getString("serverScripts")
-  private val templateAlignmentScript = (serverScripts + "/templateAlignmentHHblits.sh").toFile
   private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile
   private val retrieveFullSeq         = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
-
-  /**
-   * Retrieves the template alignment for a given
-   * accession, therefore it runs a script on the server
-   * (now grid engine) and writes it to the current job folder
-   * to 'accession'.fas
-   *
-   * @param jobID
-   * @param accession
-   * @return Http response
-   */
-  def retrieveTemplateAlignment(jobID: String, accession: String): Action[AnyContent] = Action.async {
-    if (jobID.isEmpty || accession.isEmpty) {
-      Logger.info("either job or accession is empty")
-    }
-    if (!templateAlignmentScript.isExecutable) {
-      Future.successful(BadRequest)
-    } else {
-      Future.successful {
-        Process(templateAlignmentScript.pathAsString,
-                (constants.jobPath + jobID).toFile.toJava,
-                "jobID"     -> jobID,
-                "accession" -> accession).run().exitValue() match {
-          case 0 => Ok
-          case _ => BadRequest
-        }
-      }
-    }
-  }
 
   /**
    * Retrieves the full sequences of all hits with

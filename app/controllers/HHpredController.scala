@@ -25,46 +25,10 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
     extends AbstractController(cc)
     with CommonController {
 
-  /* gets the path to all scripts
-   * given dataTable specific paramters, this function
-   * filters for eg. a specific column and returns the data
-   * @param hits
-   * @param params
-   * @return
-   */
-  
-private val serverScripts           = ConfigFactory.load().getString("serverScripts")
-  private val templateAlignmentScript = (serverScripts + "/templateAlignment.sh").toFile
+
+  private val serverScripts           = ConfigFactory.load().getString("serverScripts")
   private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile
 
-
-  /**
-   * Retrieves the template alignment for a given
-   * accession, for this it runs a script on the server
-   * (now grid engine) and writes it to the current job folder
-   * to 'accession'.fas
-   *
-   * @param jobID
-   * @param accession
-   * @return Http response
-   */
-  def retrieveTemplateAlignment(jobID: String, accession: String): Action[AnyContent] = Action.async {
-    implicit request =>
-      if (!templateAlignmentScript.isExecutable) {
-        Future.successful(BadRequest)
-      } else {
-        Future.successful {
-          Process(templateAlignmentScript.pathAsString,
-                  (constants.jobPath + jobID).toFile.toJava,
-                  "jobID"     -> jobID,
-                  "accession" -> accession).run().exitValue() match {
-
-            case 0 => Ok
-            case _ => BadRequest
-          }
-        }
-      }
-  }
 
   /**
    * Retrieves the aligned sequences
