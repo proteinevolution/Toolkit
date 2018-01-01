@@ -99,9 +99,9 @@
 
 
     @*MODALS*@
-    <div class="reveal" id="templateAlignmentModalhhomp" data-reveal>
+    <div class="reveal" id="templateAlignmentModal" data-reveal>
         <p>Template Alignment (~100 most distinct sequences)</p><br>
-        <textarea rows="35" id="alignmentTemplatehhomp" placeholder="Loading..." spellcheck="false"></textarea>
+        <textarea rows="35" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
         <button class="close-button" id="alignmentTemplateClose" data-close aria-label="Close modal" type="button">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -110,7 +110,7 @@
 }
 <script>
 
-        $("#templateAlignmentModalhhomp").bind('closed.zf.reveal', (function () {
+        $("#templateAlignmentModal").bind('closed.zf.reveal', (function () {
             $.LoadingOverlay("hide");
         }));
 
@@ -134,43 +134,13 @@
                 slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
                 ResultViewHelper.showHits(0, shownHits, wrapped, colorAAs, numHits, jobID);
-                $('#templateAlignmentModalhhomp').foundation();
+                $('#templateAlignmentModal').foundation();
                 $(".colorAA").addClass("colorToggleBar");
                 $("#wrap").hide();
                 $(".colorAA").hide();
             }
 
         });
-
-        function templateAlignment(accession) {
-            $.LoadingOverlay("show");
-            $('textarea#alignmentTemplatehhomp').val(" ");
-            // replace '#' for url
-            accession = accession.replace("#", "%23");
-
-            $.ajax({
-                type: 'GET',
-                url: '/results/templateAlignment/' + jobID + '/' + accession,
-                error: function(){
-                    $.LoadingOverlay("hide");
-                }
-            }).done(function () {
-                $.ajax({
-                    type: 'GET',
-                    url: 'files/' + jobID + '/' + accession + '.fas',
-                    error: function(){
-                        $.LoadingOverlay("hide");
-                    }
-                }).done(function (data) {
-                    $("#alignmentTemplatehhomp").val(data.toString());
-                    $.LoadingOverlay("hide");
-                });
-            }).fail(function () {
-                $("#alignmentTemplatehhomp").val("Sorry, failed to fetch Template Alignment.");
-                $.LoadingOverlay("hide");
-            });
-
-        }
 
         function @{tool.toolNameShort}_forwardQueryMSA(selectedTool) {
             $.LoadingOverlay("show");

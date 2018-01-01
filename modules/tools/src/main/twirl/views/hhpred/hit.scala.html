@@ -1,12 +1,13 @@
 @import de.proteinevolution.tools.results.Common
 @import de.proteinevolution.tools.results.HHPred.HHPredHSP
 @import play.twirl.api.Html
-@(hit: HHPredHSP, isColor: Boolean, wrapped: Boolean)()
+@import java.lang.String
+@(hit: HHPredHSP, isColor: Boolean, wrapped: Boolean, jobID: String)()
 @* hit number, links *@
 <tr>
     <td></td>
     <td id="hhpredlinks" colspan="3">
-        @Common.getLinksHHpred(hit.template.accession)
+        @Common.getLinksHHpred(jobID, hit.template.accession)
     </td>
     <td></td>
 </tr>

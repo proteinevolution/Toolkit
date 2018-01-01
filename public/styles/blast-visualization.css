@@ -97,7 +97,7 @@
     height: 18.5em;
 }
 
-.forwardModal p, #templateAlignmentModal p, #templateAlignmentModalhhomp p, #structureModal p {
+.forwardModal p, #templateAlignmentModal p, #structureModal p {
     font-size: 1em;
     font-weight: bold;
     color: rgba(0, 110, 98, 166);
@@ -564,14 +564,14 @@ table.dataTable.no-footer{
     margin-top: 1.5em;
 }
 
-#templateAlignmentModal, #templateAlignmentModalhhomp, #structureModal {
+#templateAlignmentModal, #structureModal {
     width:  60em;
     max-width: 60em;
     background-color: #eee;
     overflow-y: initial;
 }
 
-#templateAlignmentModal select, #templateAlignmentModalhhomp select {
+#templateAlignmentModal select {
     font-size: 0.80em !important;
     -moz-appearance: none !important;
     -webkit-appearance: none !important;

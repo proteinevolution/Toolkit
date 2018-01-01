@@ -291,36 +291,6 @@
             });
         }
 
-        function templateAlignment(accession) {
-            $.LoadingOverlay("show");
-            $('textarea#alignmentTemplate').val(" ");
-            // replace '#' for url
-            accession = accession.replace("#", "%23");
-
-            $.ajax({
-                type: 'GET',
-                url: '/results/templateAlignment/' + jobID + '/' + accession,
-                error: function(){
-                    $.LoadingOverlay("hide")
-                }
-            }).done(function () {
-                $.ajax({
-                    type: 'GET',
-                    url: 'files/' + jobID + '/' + accession + '.a3m',
-                    error: function(){
-                        $.LoadingOverlay("hide")
-                    }
-                }).done(function (data) {
-                    $("#alignmentTemplate").val(data.toString());
-                    $.LoadingOverlay("hide")
-                });
-            }).fail(function () {
-                $("#alignmentTemplate").val("Sorry, failed to fetch Template Alignment.");
-                $.LoadingOverlay("hide")
-            });
-
-        }
-
         function showStructure(accession) {
             currentStructureAccession = accession;
             var db = identifyDatabase(accession);

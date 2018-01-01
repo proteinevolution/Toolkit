@@ -1,12 +1,13 @@
 @import de.proteinevolution.tools.results.Common
 @import de.proteinevolution.tools.results.HHomp.HHompHSP
 @import play.twirl.api.Html
-@(hit: HHompHSP, isColor: Boolean, wrapped: Boolean)()
+@import java.lang.String
+@(hit: HHompHSP, isColor: Boolean, wrapped: Boolean, jobID: String)()
 @* hit number, links *@
 <tr>
     <td></td>
     <td colspan="3">
-                <a data-open="templateAlignmentModalhhomp" onclick="templateAlignment('@hit.template.accession')">Template alignment</a>
+                <a data-open="templateAlignmentModalhhomp" onclick="TemplateAlignment.get(@jobID, '@hit.template.accession')">Template alignment</a>
     </td>
     <td></td>
 </tr>

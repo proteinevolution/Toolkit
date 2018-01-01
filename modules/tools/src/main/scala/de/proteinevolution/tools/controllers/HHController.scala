@@ -39,15 +39,15 @@ class HHController @Inject()(ctx: HHContext,
         val tuple = toolFinder.getTool(jobID).map {
           case x if x == ToolNames.HHBLITS =>
             (resultCtx.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-                (hsp: HSP) => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped))
+                (hsp: HSP) => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped, jobID))
           case x if x == ToolNames.HHPRED =>
             val isColor = (json \ "isColor").as[Boolean]
             (resultCtx.hhpred.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-                (hsp: HSP) => views.html.hhpred.hit(hsp.asInstanceOf[HHPredHSP], isColor, wrapped))
+                (hsp: HSP) => views.html.hhpred.hit(hsp.asInstanceOf[HHPredHSP], isColor, wrapped, jobID))
           case x if x == ToolNames.HHOMP =>
             val isColor = (json \ "isColor").as[Boolean]
             (resultCtx.hhomp.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-                (hsp: HSP) => views.html.hhomp.hit(hsp.asInstanceOf[HHompHSP], isColor, wrapped))
+                (hsp: HSP) => views.html.hhomp.hit(hsp.asInstanceOf[HHompHSP], isColor, wrapped, jobID))
           case x if x == ToolNames.HMMER =>
             val result = resultCtx.hmmer.parseResult(jsValue).asInstanceOf[SearchResult[HSP]]
             (result, (hsp: HSP) => views.html.hmmer.hit(hsp.asInstanceOf[HmmerHSP], result.db, wrapped))
