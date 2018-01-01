@@ -61,6 +61,9 @@ object ResultViewHelper {
       $("input:checkbox[name='alignment_elem']").each(
         (el: Element, i: Int) => jQuery(el).prop("checked", true)
       )
+      js.Dynamic.global.checkboxes = js.Array()
+      val numHits = js.Dynamic.global.numHits.asInstanceOf[Int]
+      js.Dynamic.global.checkboxes = 1 to numHits +1
     } else {
       deselectAll()
     }
@@ -71,6 +74,7 @@ object ResultViewHelper {
     $("input:checkbox[name='alignment_elem']").each(
       (el: Element, i: Int) => jQuery(el).prop("checked", false)
     )
+    js.Dynamic.global.checkboxes = js.Array()
   }
 
   @JSExport
