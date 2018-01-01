@@ -12,7 +12,7 @@
             <label class="forwardLabel"> <input type="radio" class="selectedHits" id="selectedHits_@viewName" name="radio1">Selected</label>
             <div class="two_input">
                 <label class="forwardLabel"><input type="radio" class="selectedHits" id="accordingEvalue_@viewName" name="radio1">E-value better than</label>
-                <input class="result_inputs" type="text" class="selectedHits" id="forwardEvalue_@viewName" value="0.001" >
+                <input class="result_inputs selectedHits" type="text" id="forwardEvalueNormal_@viewName" value="0.001" >
             </div>
         </div>
         <div class="forwardFormDiv">
@@ -59,7 +59,7 @@
         boolEvalue = $('#accordingEvalue_@viewName').is(':checked');
         boolSelectedHits = $('#selectedHits_@viewName').is(':checked');
         selectedTool = $('#forwardSelect_@viewName').val();
-        evalue = $("#forwardEvalue_@viewName").val();
+        evalue = $("#forwardEvalueNormal_@viewName").val();
         sliderRegion = $('#sliderRegion_@viewName').is(':checked');
         if(selectedTool === ""){
             alert("Please select a tool!")
@@ -101,7 +101,7 @@
     $("#forwardModal_@viewName").bind('closed.zf.reveal', (function () {
         $('#forwardSelect_@viewName').val("@defaultTool");
         $('#forwardWarning').css({display: 'none'});
-        $('#forwardEvalue_@viewName').val('0.001');
+        $('#forwardEvalueNormal_@viewName').val('0.001');
         $('#selectedHits_@viewName').prop("checked", true);
         $('#sliderRegion_@viewName').prop("checked", true);
         $('.alignmentOptions_@viewName').show();
