@@ -5,12 +5,9 @@ import javax.inject.Inject
 import better.files._
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.Constants
-import de.proteinevolution.tools.results._
-import de.proteinevolution.db.ResultFileAccessor
-import de.proteinevolution.tools.results.HHPred.HHPredResult
 import play.api.mvc._
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.Future
 import scala.sys.process._
 
 /**
@@ -18,10 +15,8 @@ import scala.sys.process._
  * HHpred Controller process all requests
  * made from the HHpred result view
  */
-class HHpredController @Inject()(resultFiles: ResultFileAccessor,
-                                 hhpred: HHPred,
-                                 constants: Constants,
-                                 cc: ControllerComponents)(implicit ec: ExecutionContext)
+class HHpredController @Inject()(constants: Constants,
+                                 cc: ControllerComponents)
     extends AbstractController(cc)
     with CommonController {
 
