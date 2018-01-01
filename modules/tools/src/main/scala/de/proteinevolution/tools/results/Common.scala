@@ -204,7 +204,7 @@ object Common {
 
   def getLinksHHBlits(jobID: String, id: String): Html = {
     Html(
-      s"<a data-open=\"templateAlignmentModal\" onclick=\"TemplateAlignment.get($jobID, $id)\">Template alignment</a>"
+      s"<a data-open='templateAlignmentModal' onclick='new TemplateAlignment(${'"'}hhblits${'"'}).get(${'"'}$jobID${'"'},${'"'}$id${'"'})'>Template alignment</a>"
     )
   }
 
@@ -219,7 +219,7 @@ object Common {
     }
     val idCDD  = id.replaceAll("PF", "pfam")
     val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
-    links += s"<a data-open=\"templateAlignmentModal\" onclick=\"TemplateAlignment.get($jobID, $id)\">Template alignment</a>"
+    links +=  s"<a data-open='templateAlignmentModal' onclick='new TemplateAlignment(${'"'}hhpred${'"'}).get(${'"'}$jobID${'"'},${'"'}$id${'"'})'>Template alignment</a>"
     db match {
       case "scop" =>
         links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
