@@ -204,7 +204,7 @@
                 if(boolEvalue) {
                     data.evalue = evalue;
                     data.fileName = filename;
-                    route = jsRoutes.controllers.HHblitsController.alnEval(jobID);
+                    route = "/results/forwardAlignment/" + jobID + "/hhblits";
                 }else{
                     if(data.checkboxes.length === 0){
                         $('#forwardModal_@{tool.toolNameShort}').foundation('close');

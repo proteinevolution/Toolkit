@@ -88,7 +88,9 @@ object Hmmer {
                       accession: String,
                       midline: String,
                       description: String,
-                      domain_obs_num: Int) extends HSP {
+                      domain_obs_num: Int,
+                      info: HmmerInfo = HmmerInfo(-1, -1, -1, -1))
+      extends HSP {
 
     def toDataTable(db: String): JsValue =
       Json.toJson(
@@ -104,7 +106,8 @@ object Hmmer {
       )
   }
 
-  case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
+  case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int, evalue: Double = -1)
+      extends SearchToolInfo
 
   case class HmmerResult(HSPS: List[HmmerHSP],
                          num_hits: Int,
@@ -112,7 +115,8 @@ object Hmmer {
                          query: SingleSeq,
                          db: String,
                          TMPRED: String,
-                         COILPRED: String) extends SearchResult[HmmerHSP] {
+                         COILPRED: String)
+      extends SearchResult[HmmerHSP] {
     def hitsOrderBy(params: DTParam): List[HmmerHSP] = {
       (params.iSortCol, params.sSortDir) match {
         case (1, "asc")  => HSPS.sortBy(_.accession)

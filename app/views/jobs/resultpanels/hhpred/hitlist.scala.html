@@ -332,7 +332,7 @@
             if (boolEvalue) {
                 data.evalue = evalue;
                 data.fileName = filename;
-                route = jsRoutes.controllers.HHpredController.alnEval(jobID);
+                route = "/results/forwardAlignment/" + jobID + "/hhpred";
             } else {
                 if(data.checkboxes.length === 0){
                     $('#forwardModal_@{tool.toolNameShort}').foundation('close');

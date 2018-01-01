@@ -104,7 +104,7 @@ object HHomp {
                        identities: Double,
                        probab_hit: Double,
                        probab_omp: Double,
-                       score: Double)
+                       score: Double) extends SearchToolInfo
   case class HHompQuery(consensus: String,
                         end: Int,
                         accession: String,

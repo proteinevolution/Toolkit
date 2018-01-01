@@ -16,10 +16,7 @@ class ToolsRouter @Inject()(
   def routes: Routes = {
     case POST(p"/loadHits/$jobID")                    => hhController.loadHits(jobID)
     case GET(p"/dataTable/$jobID")                    => hhController.dataTable(jobID)
-    case POST(p"/eval")                               => hhController.eval
-    case POST(p"/evalFull")                           => hhController.evalFull
-    case POST(p"/full")                               => hhController.full
-    case POST(p"/aln")                                => hhController.aln
+    case POST(p"/forwardAlignment/$jobID/$mode")      => processController.forwardAlignment(jobID, mode)
     case GET(p"/templateAlignment/$jobID/$accession") => processController.templateAlignment(jobID, accession)
   }
 

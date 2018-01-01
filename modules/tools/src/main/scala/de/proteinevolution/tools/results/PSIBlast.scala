@@ -30,7 +30,7 @@ class PSIBlast @Inject()(general: General) extends SearchTool[PSIBlastHSP] {
       .sortBy(h => (h \ "hsps" \ 0 \ "evalue").as[Double])
     val upperBound = sorted match {
       case _ :: _ => (sorted.headOption.getOrElse(JsNull) \ "num").as[Int] // sorted is non-empty list
-      case _   => hsplist.length + 1 // if empty, take the whole size of hsplist
+      case _      => hsplist.length + 1 // if empty, take the whole size of hsplist
     }
     val TMPRED = (obj \ "output_psiblastp" \ "TMPRED").asOpt[String] match {
       case Some(data) => data
@@ -117,7 +117,9 @@ object PSIBlast {
                          ref_len: Int,
                          accession: String,
                          midline: String,
-                         description: String) extends HSP {
+                         description: String,
+                         info: PSIBLastInfo = PSIBLastInfo(-1, -1, -1, -1))
+      extends HSP {
     def toDataTable(db: String): JsValue =
       Json.toJson(
         Map(
@@ -132,7 +134,8 @@ object PSIBlast {
       )
   }
 
-  case class PSIBLastInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
+  case class PSIBLastInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int, evalue: Double = -1)
+      extends SearchToolInfo
 
   case class PSIBlastResult(HSPS: List[PSIBlastHSP],
                             num_hits: Int,
@@ -142,7 +145,8 @@ object PSIBlast {
                             query: SingleSeq,
                             belowEvalThreshold: Int,
                             TMPRED: String,
-                            COILPRED: String) extends SearchResult[PSIBlastHSP] {
+                            COILPRED: String)
+      extends SearchResult[PSIBlastHSP] {
     override def hitsOrderBy(params: DTParam): List[PSIBlastHSP] = {
       (params.iSortCol, params.sSortDir) match {
         case (1, "asc")  => HSPS.sortBy(_.accession)

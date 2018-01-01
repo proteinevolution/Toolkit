@@ -120,7 +120,7 @@ object HHPred {
                         identities: Double,
                         probab: Double,
                         score: Double,
-                        similarity: Double)
+                        similarity: Double) extends SearchToolInfo
   case class HHPredQuery(consensus: String,
                          end: Int,
                          accession: String,

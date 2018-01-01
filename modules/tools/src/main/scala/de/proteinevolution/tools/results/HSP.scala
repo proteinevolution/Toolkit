@@ -7,6 +7,11 @@ trait HSP {
   def description: String
 
   def toDataTable(db: String): JsValue
+
+  def info: SearchToolInfo
+
+  def num: Int
+
 }
 
 

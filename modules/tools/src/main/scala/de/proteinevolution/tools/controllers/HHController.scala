@@ -99,7 +99,7 @@ class HHController @Inject()(ctx: HHContext,
           case _ => throw new IllegalArgumentException("datatables not implemented for this tool")
         }
 
-        val (result, hits) = Await.result(tuple, Duration.Inf) // cannot use for comprehension here because of scalameta bug fix in scala 2.12.5
+        val (result, hits) = Await.result(tuple, Duration.Inf)
 
         Ok(
           Json
@@ -109,13 +109,5 @@ class HHController @Inject()(ctx: HHContext,
         )
     }
   }
-
-  def eval = ???
-
-  def aln = ???
-
-  def evalFull = ???
-
-  def full = ???
 
 }

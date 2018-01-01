@@ -131,30 +131,6 @@ GET           /getHelp/:tool                          controllers.DataController
 GET         /getStructure/:filename                   controllers.Application.getStructureFile(filename : String)
 
 
-# Hmmer
-POST        /alnEvalHmmer                             controllers.HmmerController.alnEval(jobID: String)
-POST        /alnHmmer                                 controllers.HmmerController.aln(jobID: String)
-POST        /evalHmmerFull                            controllers.HmmerController.evalFull(jobID: String)
-POST        /HmmerFull                                controllers.HmmerController.full(jobID: String)
-
-# PSIblast
-
-POST        /evalPSIBlast                             controllers.PSIBlastController.alnEval(jobID: String)
-POST        /alnPSIBlast                              controllers.PSIBlastController.aln(jobID: String)
-POST        /evalPSIBlastFull                         controllers.PSIBlastController.evalFull(jobID: String)
-POST        /PSIBlastFull                             controllers.PSIBlastController.full(jobID: String)
-
-
-# HHblits
-POST        /evalHHBlits                              controllers.HHblitsController.alnEval(jobID: String)
-POST        /alnHHBlits                               controllers.HHblitsController.aln(jobID:String)
-POST        /evalHHBlitsFull                          controllers.HHblitsController.evalFull(jobID : String)
-POST        /HHBlitsFull                              controllers.HHblitsController.full(jobID : String)
-
-# HHPred
-POST        /evalHHpred                               controllers.HHpredController.alnEval(jobID: String)
-POST        /alnHHpred                                controllers.HHpredController.aln(jobID:String)
-
 # Alignment
 POST        /AlignmentLoadHits/:jobID                 controllers.AlignmentController.loadHits(jobID: String)
 POST        /AlignmentLoadHitsClustal/:jobID          controllers.AlignmentController.loadHitsClustal(jobID: String)

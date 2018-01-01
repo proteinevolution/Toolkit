@@ -104,7 +104,7 @@ object HHBlits {
                          identities: Double,
                          probab: Double,
                          score: Double,
-                         similarity: Double)
+                         similarity: Double) extends SearchToolInfo
 
   case class HHBlitsQuery(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
 
