@@ -2,6 +2,8 @@ package de.proteinevolution.tools.controllers
 
 import javax.inject.{ Inject, Singleton }
 
+import cats.data.OptionT
+import cats.implicits._
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.ToolNames
 import de.proteinevolution.tools.models.{ HHContext, ResultContext }
@@ -17,8 +19,6 @@ import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc.{ AbstractController, Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
-import scala.concurrent.Await
-import scala.concurrent.duration._
 
 @Singleton
 class HHController @Inject()(ctx: HHContext,
@@ -33,38 +33,53 @@ class HHController @Inject()(ctx: HHContext,
     val start   = (json \ "start").as[Int]
     val end     = (json \ "end").as[Int]
     val wrapped = (json \ "wrapped").as[Boolean]
-    resultFiles.getResults(jobID).map {
-      case None => NotFound
-      case Some(jsValue) =>
-        val tuple = toolFinder.getTool(jobID).map {
-          case x if x == ToolNames.HHBLITS =>
-            (resultCtx.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-                (hsp: HSP) => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped, jobID))
-          case x if x == ToolNames.HHPRED =>
-            val isColor = (json \ "isColor").as[Boolean]
-            (resultCtx.hhpred.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-                (hsp: HSP) => views.html.hhpred.hit(hsp.asInstanceOf[HHPredHSP], isColor, wrapped, jobID))
-          case x if x == ToolNames.HHOMP =>
-            val isColor = (json \ "isColor").as[Boolean]
-            (resultCtx.hhomp.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-                (hsp: HSP) => views.html.hhomp.hit(hsp.asInstanceOf[HHompHSP], isColor, wrapped, jobID))
-          case x if x == ToolNames.HMMER =>
-            val result = resultCtx.hmmer.parseResult(jsValue).asInstanceOf[SearchResult[HSP]]
-            (result, (hsp: HSP) => views.html.hmmer.hit(hsp.asInstanceOf[HmmerHSP], result.db, wrapped))
-          case x if x == ToolNames.PSIBLAST =>
-            val result = resultCtx.psiblast.parseResult(jsValue).asInstanceOf[SearchResult[HSP]]
-            (result, (hsp: HSP) => views.html.psiblast.hit(hsp.asInstanceOf[PSIBlastHSP], result.db, wrapped))
-          case _ => throw new IllegalArgumentException("tool has no hitlist") // TODO integrate Alignmnent Ctrl
-        }
+    val res = resultFiles
+      .getResults(jobID)
+      .map {
+        case None => throw new IllegalStateException("no results found")
+        case Some(jsValue) =>
+          val tuple = toolFinder.getTool(jobID).map {
+            case x if x == ToolNames.HHBLITS =>
+              (resultCtx.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+               (hsp: HSP) => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped, jobID))
+            case x if x == ToolNames.HHPRED =>
+              val isColor = (json \ "isColor").as[Boolean]
+              (resultCtx.hhpred.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+               (hsp: HSP) => views.html.hhpred.hit(hsp.asInstanceOf[HHPredHSP], isColor, wrapped, jobID))
+            case x if x == ToolNames.HHOMP =>
+              val isColor = (json \ "isColor").as[Boolean]
+              (resultCtx.hhomp.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+               (hsp: HSP) => views.html.hhomp.hit(hsp.asInstanceOf[HHompHSP], isColor, wrapped, jobID))
+            case x if x == ToolNames.HMMER =>
+              val result = resultCtx.hmmer.parseResult(jsValue).asInstanceOf[SearchResult[HSP]]
+              (result, (hsp: HSP) => views.html.hmmer.hit(hsp.asInstanceOf[HmmerHSP], result.db, wrapped))
+            case x if x == ToolNames.PSIBLAST =>
+              val result = resultCtx.psiblast.parseResult(jsValue).asInstanceOf[SearchResult[HSP]]
+              (result, (hsp: HSP) => views.html.psiblast.hit(hsp.asInstanceOf[PSIBlastHSP], result.db, wrapped))
+            case _ => throw new IllegalArgumentException("tool has no hitlist") // TODO integrate Alignmnent Ctrl
+          }
 
-        val (result, view) = Await.result(tuple, Duration.Inf) // TODO Monad Transformer
+          (for {
+            t <- OptionT.liftF(tuple)
+          } yield t).value.map {
+            case Some(t) => t
+            case None    => throw new IllegalStateException("parsing error")
+          }
 
+      }
+      .flatten
+
+    (for {
+      r <- OptionT.liftF(res)
+    } yield r).value.map {
+      case Some((result, view)) =>
         if (end > result.num_hits || start > result.num_hits) {
           BadRequest
         } else {
           val hits = result.HSPS.slice(start, end).map(view)
           Ok(hits.mkString)
         }
+      case None => BadRequest
     }
   }
 
@@ -77,30 +92,35 @@ class HHController @Inject()(ctx: HHContext,
       request.getQueryString("sSortDir_0").getOrElse("asc")
     )
 
-    resultFiles.getResults(jobID).map {
-      case None => NotFound
-      case Some(jsValue) =>
-        val tuple = toolFinder.getTool(jobID).map {
-          case x if x == ToolNames.HHBLITS =>
-            (resultCtx.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-             dtService.getHitsByKeyWord[HHBlitsHSP](resultCtx.hhblits.parseResult(jsValue), params))
-          case x if x == ToolNames.HHOMP =>
-            (resultCtx.hhomp.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-             dtService.getHitsByKeyWord[HHompHSP](resultCtx.hhomp.parseResult(jsValue), params))
-          case x if x == ToolNames.HHPRED =>
-            (resultCtx.hhpred.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-             dtService.getHitsByKeyWord[HHPredHSP](resultCtx.hhpred.parseResult(jsValue), params))
-          case x if x == ToolNames.HMMER =>
-            (resultCtx.hmmer.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-             dtService.getHitsByKeyWord[HmmerHSP](resultCtx.hmmer.parseResult(jsValue), params))
-          case x if x == ToolNames.PSIBLAST =>
-            (resultCtx.psiblast.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-             dtService.getHitsByKeyWord[PSIBlastHSP](resultCtx.psiblast.parseResult(jsValue), params))
-          case _ => throw new IllegalArgumentException("datatables not implemented for this tool")
-        }
+    val res = resultFiles
+      .getResults(jobID)
+      .map {
+        case None => throw new IllegalStateException("no results found")
+        case Some(jsValue) =>
+          toolFinder.getTool(jobID).map {
+            case x if x == ToolNames.HHBLITS =>
+              (resultCtx.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+               dtService.getHitsByKeyWord[HHBlitsHSP](resultCtx.hhblits.parseResult(jsValue), params))
+            case x if x == ToolNames.HHOMP =>
+              (resultCtx.hhomp.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+               dtService.getHitsByKeyWord[HHompHSP](resultCtx.hhomp.parseResult(jsValue), params))
+            case x if x == ToolNames.HHPRED =>
+              (resultCtx.hhpred.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+               dtService.getHitsByKeyWord[HHPredHSP](resultCtx.hhpred.parseResult(jsValue), params))
+            case x if x == ToolNames.HMMER =>
+              (resultCtx.hmmer.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+               dtService.getHitsByKeyWord[HmmerHSP](resultCtx.hmmer.parseResult(jsValue), params))
+            case x if x == ToolNames.PSIBLAST =>
+              (resultCtx.psiblast.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+               dtService.getHitsByKeyWord[PSIBlastHSP](resultCtx.psiblast.parseResult(jsValue), params))
+            case _ => throw new IllegalArgumentException("datatables not implemented for this tool")
+          }
 
-        val (result, hits) = Await.result(tuple, Duration.Inf)
+      }
+      .flatten
 
+    (for { r <- res } yield r).map {
+      case ((result, hits)) =>
         Ok(
           Json
             .toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))
