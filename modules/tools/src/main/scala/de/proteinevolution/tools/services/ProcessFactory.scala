@@ -18,8 +18,8 @@ private[tools] object ProcessFactory {
   def apply(resultFile: File,
             jobID: String,
             toolName: String,
-            mode: String,
             tempFileName: String,
+            mode: String,
             evalString: String): process.ProcessBuilder = {
 
     val (script, params) = (toolName, mode) match {
