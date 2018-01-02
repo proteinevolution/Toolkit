@@ -13,22 +13,27 @@ private[tools] object ProcessFactory {
 
   private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile // HHPRED, HHBLITS alnEval
   //private val retrieveFullSeq         = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
-  private val retrieveAlnEval         = (serverScripts + "/retrieveAlnEval.sh").toFile // Hmmer & PSIBLAST alnEval
+  private val retrieveAlnEval = (serverScripts + "/retrieveAlnEval.sh").toFile // Hmmer & PSIBLAST alnEval
 
   def apply(resultFile: File,
             jobID: String,
             toolName: String,
             tempFileName: String,
             mode: String,
-            evalString: String): process.ProcessBuilder = {
+            accString: String): process.ProcessBuilder = {
 
     val (script, params) = (toolName, mode) match {
       case (ToolNames.HHBLITS.value, "alnEval") | (ToolNames.HHPRED.value, "alnEval") =>
-        (generateAlignmentScript, List("jobID" -> jobID, "filename" -> tempFileName, "numList" -> evalString))
+        (generateAlignmentScript, List("jobID" -> jobID, "filename" -> tempFileName, "numList" -> accString))
       case (ToolNames.HMMER.value, "alnEval") =>
-        (retrieveAlnEval, List("accessionsStr" -> evalString, "filename" -> tempFileName, "mode" -> "count"))
+        (retrieveAlnEval, List("accessionsStr" -> accString, "filename" -> tempFileName, "mode" -> "count"))
       case (ToolNames.PSIBLAST.value, "alnEval") =>
-        (retrieveAlnEval, List("accessionsStr" -> evalString, "filename" -> tempFileName, "mode" -> "eval"))
+        (retrieveAlnEval, List("accessionsStr" -> accString, "filename" -> tempFileName, "mode" -> "eval"))
+      case (ToolNames.HMMER.value, "aln") | (ToolNames.PSIBLAST.value, "aln") =>
+        (retrieveAlnEval, List("accessionsStr" -> accString, "filename" -> tempFileName, "mode" -> "sel"))
+      case (ToolNames.HHPRED.value, "aln") | (ToolNames.HHBLITS.value, "aln") =>
+        (generateAlignmentScript, List("jobID" -> jobID, "filename" -> tempFileName, "numList" -> accString))
+
       case _ => throw new IllegalArgumentException("no valid parameters for processing a forwarding job")
     }
 

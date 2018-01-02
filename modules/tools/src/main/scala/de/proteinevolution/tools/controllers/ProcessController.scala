@@ -51,11 +51,13 @@ class ProcessController @Inject()(ctx: HHContext,
     }
   }
 
-
   def forwardAlignment(jobID: String, mode: String): Action[AnyContent] = Action.async { implicit request =>
     val json     = request.body.asJson.get
     val filename = (json \ "fileName").as[String]
-    val eval     = (json \ "evalue").as[String]
+    val accStr = mode match {
+      case "alnEval" => (json \ "evalue").as[String]
+      case "aln"     => (json \ "checkboxes").as[List[Int]].mkString("\n")
+    }
 
     val res = resultFiles
       .getResults(jobID)
@@ -80,7 +82,7 @@ class ProcessController @Inject()(ctx: HHContext,
             res <- OptionT.liftF(resultFuture)
           } yield res).value.map {
             case Some((toolName, r)) =>
-              val numListStr = getEvalString(toolName, r, eval.toDouble)
+              val numListStr = getAccString(toolName, r, accStr, mode)
               ProcessFactory((constants.jobPath + jobID).toFile, jobID, toolName.value, filename, mode, numListStr)
                 .run()
                 .exitValue() match {
@@ -105,19 +107,28 @@ class ProcessController @Inject()(ctx: HHContext,
   }
 
   // Only first draft of an abstraction but this can be smoothened
-  private[this] def getEvalString(toolName: ToolNames.ToolName, result: SearchResult[HSP], eval: Double): String = {
-    val evalString = toolName match {
-      case ToolNames.HHBLITS | ToolNames.HHPRED => result.HSPS.filter(_.info.evalue < eval).map { _.num }.mkString(" ")
-      case ToolNames.HMMER =>
+  private[this] def getAccString(toolName: ToolNames.ToolName,
+                                 result: SearchResult[HSP],
+                                 accStr: String,
+                                 mode: String): String = {
+    val evalString = (toolName, mode) match {
+      case (ToolNames.HHBLITS, "alnEval") | (ToolNames.HHPRED, "alnEval") =>
+        result.HSPS.filter(_.info.evalue < accStr.toDouble).map { _.num }.mkString(" ")
+      case (ToolNames.HMMER, "alnEval") =>
         result.HSPS
-          .filter(_.evalue < eval)
+          .filter(_.evalue < accStr.toDouble)
           .map { hit =>
             result.alignment.alignment(hit.num - 1).accession + "\n"
           }
           .size
           .toString
-      case ToolNames.PSIBLAST => eval.toString //result.HSPS.filter(_.evalue < eval).map { _.accession + " " }.mkString
-      case _ => throw new IllegalStateException("tool has no evalue")
+      case (ToolNames.PSIBLAST, "alnEval") =>
+        accStr //result.HSPS.filter(_.evalue < eval).map { _.accession + " " }.mkString
+      case (ToolNames.HMMER, "aln")    => accStr
+      case (ToolNames.PSIBLAST, "aln") => accStr
+      case (ToolNames.HHBLITS, "aln")  => accStr
+      case (ToolNames.HHPRED, "aln")   => accStr
+      case _                           => throw new IllegalStateException("tool has no evalue")
     }
     evalString
   }

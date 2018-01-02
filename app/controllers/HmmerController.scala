@@ -24,7 +24,6 @@ class HmmerController @Inject()(resultFiles: ResultFileAccessor,
      on the server (not executed on the grid engine) */
   private val serverScripts   = ConfigFactory.load().getString("serverScripts")
   private val retrieveFullSeq = (serverScripts + "/retrieveFullSeq.sh").toFile
-  private val retrieveAlnEval = (serverScripts + "/retrieveAlnEval.sh").toFile
 
   /**
    * Retrieves the full sequences of all hits with
@@ -138,45 +137,6 @@ class HmmerController @Inject()(resultFiles: ResultFileAccessor,
   }
 
 
-  /**
-   * Retrieves the aligned sequences (parsable alignment
-   * must be provided in the result folder as JSON)
-   * of all selected hits in the result view and
-   * saves returns the sequences as a String
-   *
-   * Expects json sent by POST including:
-   *
-   * checkboxes: an array which contains the numbers (in the HSP list)
-   * of all hits that will be retrieved
-   *
-   * @param jobID
-   * @return Https response containing the aligned sequences as String
-   */
-  def aln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json     = request.body.asJson.get
-    val numList  = (json \ "checkboxes").as[List[Int]].mkString("\n")
-    val filename = (json \ "filename").as[String]
-
-    if (!retrieveAlnEval.isExecutable) {
-      Future.successful(BadRequest)
-    } else {
-
-      resultFiles.getResults(jobID).map {
-        case None => NotFound
-        case Some(_) =>
-          val accessionsStr = numList
-          // execute the script and pass parameters
-          Process(retrieveAlnEval.pathAsString,
-                  (constants.jobPath + jobID).toFile.toJava,
-                  "accessionsStr" -> accessionsStr,
-                  "filename"      -> filename,
-                  "mode"          -> "sel").run().exitValue() match {
-            case 0 => Ok
-            case _ => BadRequest
-          }
-      }
-    }
-  }
 
   /**
    * filters all HSPS that are below
