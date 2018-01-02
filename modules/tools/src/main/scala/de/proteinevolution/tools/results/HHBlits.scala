@@ -82,7 +82,10 @@ object HHBlits {
                         agree: String,
                         description: String,
                         num: Int,
-                        length: Int) extends HSP {
+                        length: Int,
+                        evalue: Double = -1,
+                        accession: String = "")
+      extends HSP {
     def toDataTable(db: String = ""): JsValue = {
       val _ = db
       Json.toJson(
@@ -104,7 +107,8 @@ object HHBlits {
                          identities: Double,
                          probab: Double,
                          score: Double,
-                         similarity: Double) extends SearchToolInfo
+                         similarity: Double)
+      extends SearchToolInfo
 
   case class HHBlitsQuery(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
 

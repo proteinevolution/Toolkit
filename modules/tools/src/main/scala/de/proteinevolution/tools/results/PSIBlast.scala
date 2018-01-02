@@ -3,6 +3,7 @@ package de.proteinevolution.tools.results
 import javax.inject.Inject
 import javax.inject.Singleton
 
+import de.proteinevolution.tools.results.Alignment.AlignmentResult
 import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
 import de.proteinevolution.tools.results.PSIBlast.{ PSIBlastHSP, PSIBlastResult }
 import play.api.libs.json._
@@ -145,7 +146,8 @@ object PSIBlast {
                             query: SingleSeq,
                             belowEvalThreshold: Int,
                             TMPRED: String,
-                            COILPRED: String)
+                            COILPRED: String,
+                            alignment: AlignmentResult = AlignmentResult(Nil))
       extends SearchResult[PSIBlastHSP] {
     override def hitsOrderBy(params: DTParam): List[PSIBlastHSP] = {
       (params.iSortCol, params.sSortDir) match {

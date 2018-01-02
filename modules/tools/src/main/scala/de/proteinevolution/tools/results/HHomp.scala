@@ -3,6 +3,7 @@ package de.proteinevolution.tools.results
 import javax.inject.Inject
 import javax.inject.Singleton
 
+import de.proteinevolution.tools.results.Alignment.AlignmentResult
 import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
 import de.proteinevolution.tools.results.HHomp._
 import play.api.libs.json._
@@ -81,7 +82,10 @@ object HHomp {
                       description: String,
                       num: Int,
                       ss_score: Double,
-                      length: Int) extends HSP {
+                      length: Int,
+                      evalue: Double = -1,
+                      accession: String = "")
+      extends HSP {
     def toDataTable(db: String = ""): JsValue = {
       val _ = db
       Json.toJson(
@@ -104,7 +108,8 @@ object HHomp {
                        identities: Double,
                        probab_hit: Double,
                        probab_omp: Double,
-                       score: Double) extends SearchToolInfo
+                       score: Double)
+      extends SearchToolInfo
   case class HHompQuery(consensus: String,
                         end: Int,
                         accession: String,
@@ -125,7 +130,12 @@ object HHomp {
                            bb_pred: String,
                            bb_conf: String,
                            start: Int)
-  case class HHompResult(HSPS: List[HHompHSP], num_hits: Int, query: SingleSeq, db: String, overall_prob: Double)
+  case class HHompResult(HSPS: List[HHompHSP],
+                         num_hits: Int,
+                         query: SingleSeq,
+                         db: String,
+                         overall_prob: Double,
+                         alignment: AlignmentResult = AlignmentResult(Nil))
       extends SearchResult[HHompHSP] {
     def hitsOrderBy(params: DTParam): List[HHompHSP] = {
       (params.iSortCol, params.sSortDir) match {

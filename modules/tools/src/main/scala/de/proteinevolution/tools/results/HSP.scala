@@ -12,6 +12,10 @@ trait HSP {
 
   def num: Int
 
+  def evalue: Double
+
+  def accession: String
+
 }
 
 

@@ -3,7 +3,7 @@ package de.proteinevolution.tools.results
 import javax.inject.Inject
 import javax.inject.Singleton
 
-import de.proteinevolution.tools.results.Alignment.AlignmentItem
+import de.proteinevolution.tools.results.Alignment.AlignmentResult
 import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
 import de.proteinevolution.tools.results.Hmmer.{ HmmerHSP, HmmerResult }
 import play.api.libs.json._
@@ -31,7 +31,7 @@ class Hmmer @Inject()(general: General, aln: Alignment) extends SearchTool[Hmmer
       case Some(data) => data
       case None       => "1"
     }
-    HmmerResult(hsplist, num_hits, alignment, query, db, TMPRED, COILPRED)
+    HmmerResult(hsplist, num_hits, AlignmentResult(alignment), query, db, TMPRED, COILPRED)
   }
 
   def parseHSP(hsp: JsObject): HmmerHSP = {
@@ -111,7 +111,7 @@ object Hmmer {
 
   case class HmmerResult(HSPS: List[HmmerHSP],
                          num_hits: Int,
-                         alignment: List[AlignmentItem],
+                         alignment: AlignmentResult,
                          query: SingleSeq,
                          db: String,
                          TMPRED: String,

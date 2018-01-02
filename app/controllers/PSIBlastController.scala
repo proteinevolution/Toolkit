@@ -115,47 +115,6 @@ class PSIBlastController @Inject()(resultFiles: ResultFileAccessor,
     }
   }
 
-  /**
-   * Retrieves the aligned sequences
-   * (parsable alignment must be
-   * provided in the result folder as JSON) of all hits with
-   * an evalue below a threshold and returns the
-   * sequences as a String
-   *
-   * Expects json sent by POST including:
-   *
-   * evalue: seqs of all hits below this threshold
-   * are retrieved from the alignment
-   *
-   * @param jobID
-   * @return aligned sequences as a String
-   *         encapsulated in the response
-   */
-  def alnEval(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    // retrieve parameters from the request
-    val json     = request.body.asJson.get
-    val filename = (json \ "filename").as[String]
-    val eval     = (json \ "evalue").as[String]
-    // check if the retrieve script is executable
-    if (!retrieveAlnEval.isExecutable) {
-      Future.successful(BadRequest)
-    } else {
-      resultFiles.getResults(jobID).map {
-        case None => NotFound
-        case Some(_) =>
-          val accessionsStr = eval
-          // execute the script and pass parameters
-          Process(retrieveAlnEval.pathAsString,
-                  (constants.jobPath + jobID).toFile.toJava,
-                  "accessionsStr" -> accessionsStr,
-                  "filename"      -> filename,
-                  "mode"          -> "eval").run().exitValue() match {
-            case 0 => Ok
-            case _ => BadRequest
-          }
-      }
-    }
-  }
 
   /**
    * Retrieves the aligned sequences (parsable alignment

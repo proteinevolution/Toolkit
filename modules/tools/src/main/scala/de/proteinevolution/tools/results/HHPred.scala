@@ -97,9 +97,12 @@ object HHPred {
                        num: Int,
                        ss_score: Double,
                        confidence: String,
-                       length: Int) extends HSP {
+                       length: Int,
+                       evalue: Double = -1,
+                       accession: String = "")
+      extends HSP {
     def toDataTable(db: String = ""): JsValue = {
-      val _ = db 
+      val _ = db
       Json.toJson(
         Map(
           "0" -> Json.toJson(Common.getCheckbox(num)),
@@ -120,7 +123,8 @@ object HHPred {
                         identities: Double,
                         probab: Double,
                         score: Double,
-                        similarity: Double) extends SearchToolInfo
+                        similarity: Double)
+      extends SearchToolInfo
   case class HHPredQuery(consensus: String,
                          end: Int,
                          accession: String,
@@ -146,7 +150,8 @@ object HHPred {
                           TMPRED: String,
                           COILPRED: String,
                           MSA_GEN: String,
-                          QA3M_COUNT: Int) extends SearchResult[HHPredHSP] {
+                          QA3M_COUNT: Int)
+      extends SearchResult[HHPredHSP] {
 
     def hitsOrderBy(params: DTParam): List[HHPredHSP] = {
       (params.iSortCol, params.sSortDir) match {

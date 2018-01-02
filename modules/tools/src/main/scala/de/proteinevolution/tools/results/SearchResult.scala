@@ -1,5 +1,6 @@
 package de.proteinevolution.tools.results
 
+import de.proteinevolution.tools.results.Alignment.AlignmentResult
 import de.proteinevolution.tools.results.General.DTParam
 
 trait SearchResult[+T] {
@@ -11,5 +12,7 @@ trait SearchResult[+T] {
   def db: String
 
   def HSPS: List[T]
+
+  def alignment: AlignmentResult
 
 }
