@@ -56,6 +56,8 @@ class ProcessController @Inject()(ctx: HHContext,
   // dynamic: tool, method - first dynamic : tool alnEval
 
   def forwardAlignment(jobID: String, mode: String): Action[AnyContent] = Action.async { implicit request =>
+
+    println("CALLEDFORWARDALIGNMENT")
     val json     = request.body.asJson.get
     val filename = (json \ "fileName").as[String]
     val eval     = (json \ "evalue").as[String]

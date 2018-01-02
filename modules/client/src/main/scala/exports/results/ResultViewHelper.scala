@@ -7,6 +7,7 @@ import org.scalajs.dom
 import org.scalajs.dom.Element
 import org.querki.jquery.$
 import scala.scalajs.js.JSON
+import scala.scalajs.js.JSConverters._
 
 @JSExportTopLevel("ResultViewHelper")
 object ResultViewHelper {
@@ -61,9 +62,11 @@ object ResultViewHelper {
       $("input:checkbox[name='alignment_elem']").each(
         (el: Element, i: Int) => jQuery(el).prop("checked", true)
       )
-      js.Dynamic.global.checkboxes = js.Array()
+      js.Dynamic.global.checkboxes = Seq.empty
       val numHits = js.Dynamic.global.numHits.asInstanceOf[Int]
-      js.Dynamic.global.checkboxes = 1 to numHits +1
+      val range = 1 to numHits + 1
+      js.Dynamic.global.checkboxes = range.toJSArray
+      dom.console.log(js.Dynamic.global.checkboxes)
     } else {
       deselectAll()
     }
@@ -74,7 +77,7 @@ object ResultViewHelper {
     $("input:checkbox[name='alignment_elem']").each(
       (el: Element, i: Int) => jQuery(el).prop("checked", false)
     )
-    js.Dynamic.global.checkboxes = js.Array()
+    js.Dynamic.global.checkboxes = Seq.empty
   }
 
   @JSExport

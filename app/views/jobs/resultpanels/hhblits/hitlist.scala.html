@@ -201,7 +201,10 @@
                 }
             } else{
 
-                if(boolEvalue) {
+               if(boolEvalue) {
+	            console.log("here" + evalue + filename);
+	            console.log(data);
+	            console.log(generateFilename());
                     data.evalue = evalue;
                     data.fileName = filename;
                     route = "/results/forwardAlignment/" + jobID + "/hhblits";
@@ -218,14 +221,15 @@
             }
 
            $.ajax({
-               url: route.url,
-               method: route.method,
+               url: "/results/forwardAlignment/" + jobID + "/asdasd",
+               method: "POST",
                contentType: "application/json",
                data: JSON.stringify(data),
                error: function(){
                    $.LoadingOverlay("hide")
                }
-           }).done(function (data_) {
+        }).done(function (data_) {
+	           console.log(data_);
                    forwardPath(selectedTool, 'files/@jobID/'+filename+'.fa');
            });
         }
