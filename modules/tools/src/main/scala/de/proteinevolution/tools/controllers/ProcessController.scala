@@ -82,8 +82,12 @@ class ProcessController @Inject()(ctx: HHContext,
             res <- OptionT.liftF(resultFuture)
           } yield res).value.map {
             case Some((toolName, r)) =>
-              val numListStr = getAccString(toolName, r, accStr, mode)
-              val db         = r.db
+              val numListStr =
+                if (mode != "full")
+                  getAccString(toolName, r, accStr, mode)
+                else
+                  numericAccString(toolName, r, accStr)
+              val db = r.db
               ProcessFactory((constants.jobPath + jobID).toFile,
                              jobID,
                              toolName.value,
@@ -130,7 +134,7 @@ class ProcessController @Inject()(ctx: HHContext,
           .size
           .toString
       case (ToolNames.PSIBLAST, "alnEval") =>
-        accStr //result.HSPS.filter(_.evalue < eval).map { _.accession + " " }.mkString
+        accStr
       case (_, "aln") => accStr
       case (ToolNames.HMMER, "evalFull") | (ToolNames.PSIBLAST, "evalFull") =>
         result.HSPS.filter(_.evalue < accStr.toDouble).map { _.accession + " " }.mkString
@@ -139,6 +143,30 @@ class ProcessController @Inject()(ctx: HHContext,
       case _ => throw new IllegalStateException("tool has no evalue")
     }
     evalString
+  }
+
+  private[this] def numericAccString(toolName: ToolNames.ToolName,
+                                     result: SearchResult[HSP],
+                                     accStr: String): String = {
+
+    val numList = accStr.split("\n").map(_.toInt)
+
+    toolName match {
+      case ToolNames.HMMER =>
+        numList.map { num =>
+          result.HSPS(num - 1).accession + " "
+        }.mkString
+      case ToolNames.PSIBLAST =>
+        numList.map { num =>
+          result.HSPS(num - 1).accession + " "
+        }.mkString
+      case ToolNames.HHBLITS =>
+        numList.map { num =>
+          result.HSPS(num - 1).template.accession + " "
+        }.mkString
+      case _ => throw new IllegalStateException("tool does not support forwarding in full mode")
+
+    }
   }
 
 }

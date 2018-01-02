@@ -37,14 +37,14 @@ private[tools] object ProcessFactory {
         (generateAlignmentScript, List("jobID" -> jobID, "filename" -> tempFileName, "numList" -> accString))
       case (ToolNames.PSIBLAST.value, "evalFull") | (ToolNames.HMMER.value, "evalFull") =>
         (retrieveFullSeq, List("jobID" -> jobID, "accessionsStr" -> accString, "filename" -> tempFileName, "db" -> db))
-      case (ToolNames.HHBLITS.value, "evalFull") =>
+      case (ToolNames.HHBLITS.value, "evalFull") | (ToolNames.HHBLITS.value, "full") =>
         (retrieveFullSeqHHblits,
          List("jobID" -> jobID, "accessionsStr" -> accString, "filename" -> tempFileName, "db" -> db))
+      case (ToolNames.PSIBLAST.value, "full") | (ToolNames.HMMER.value, "full") =>
+        (retrieveFullSeq, List("jobID" -> jobID, "accessionsStr" -> accString, "filename" -> tempFileName, "db" -> db))
       case _ => throw new IllegalArgumentException("no valid parameters for processing a forwarding job")
     }
-
     Process(script.pathAsString, resultFile.toJava, params: _*)
-
   }
 
 }
