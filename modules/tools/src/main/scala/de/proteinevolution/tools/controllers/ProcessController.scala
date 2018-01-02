@@ -55,8 +55,8 @@ class ProcessController @Inject()(ctx: HHContext,
     val json     = request.body.asJson.get
     val filename = (json \ "fileName").as[String]
     val accStr = mode match {
-      case "alnEval" => (json \ "evalue").as[String]
-      case "aln"     => (json \ "checkboxes").as[List[Int]].mkString("\n")
+      case "alnEval" | "evalFull" => (json \ "evalue").as[String]
+      case "aln"                  => (json \ "checkboxes").as[List[Int]].mkString("\n")
     }
 
     val res = resultFiles
@@ -83,7 +83,14 @@ class ProcessController @Inject()(ctx: HHContext,
           } yield res).value.map {
             case Some((toolName, r)) =>
               val numListStr = getAccString(toolName, r, accStr, mode)
-              ProcessFactory((constants.jobPath + jobID).toFile, jobID, toolName.value, filename, mode, numListStr)
+              val db         = r.db
+              ProcessFactory((constants.jobPath + jobID).toFile,
+                             jobID,
+                             toolName.value,
+                             filename,
+                             mode,
+                             numListStr,
+                             db: String)
                 .run()
                 .exitValue() match {
                 case 0 => 0
@@ -124,11 +131,12 @@ class ProcessController @Inject()(ctx: HHContext,
           .toString
       case (ToolNames.PSIBLAST, "alnEval") =>
         accStr //result.HSPS.filter(_.evalue < eval).map { _.accession + " " }.mkString
-      case (ToolNames.HMMER, "aln")    => accStr
-      case (ToolNames.PSIBLAST, "aln") => accStr
-      case (ToolNames.HHBLITS, "aln")  => accStr
-      case (ToolNames.HHPRED, "aln")   => accStr
-      case _                           => throw new IllegalStateException("tool has no evalue")
+      case (_, "aln") => accStr
+      case (ToolNames.HMMER, "evalFull") | (ToolNames.PSIBLAST, "evalFull") =>
+        result.HSPS.filter(_.evalue < accStr.toDouble).map { _.accession + " " }.mkString
+      case (ToolNames.HHBLITS, "evalFull") =>
+        result.HSPS.filter(_.info.evalue < accStr.toDouble).map { _.template.accession + " " }.mkString
+      case _ => throw new IllegalStateException("tool has no evalue")
     }
     evalString
   }

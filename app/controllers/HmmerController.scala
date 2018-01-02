@@ -25,45 +25,7 @@ class HmmerController @Inject()(resultFiles: ResultFileAccessor,
   private val serverScripts   = ConfigFactory.load().getString("serverScripts")
   private val retrieveFullSeq = (serverScripts + "/retrieveFullSeq.sh").toFile
 
-  /**
-   * Retrieves the full sequences of all hits with
-   * an evalue below a threshold and writes the sequences
-   * to a given filename within the current job folder
-   * to '@fileName'.fa
-   *
-   * Expects json sent by POST including:
-   *
-   * filename: to which the full length sequences are written
-   * evalue: seqs of all hits below this threshold
-   * are retrieved from the DB
-   * @param jobID
-   * @return Https response
-   */
-  def evalFull(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json     = request.body.asJson.get
-    val filename = (json \ "filename").as[String]
-    val eval     = (json \ "evalue").as[String]
-    if (!retrieveFullSeq.isExecutable) {
-      Future.successful(BadRequest)
-    } else {
-      resultFiles.getResults(jobID).map {
-        case None => NotFound
-        case Some(jsValue) =>
-          val result        = hmmer.parseResult(jsValue)
-          val accessionsStr = getAccessionsEval(result, eval.toDouble)
-          val db            = result.db
-          Process(retrieveFullSeq.pathAsString,
-                  (constants.jobPath + jobID).toFile.toJava,
-                  "jobID"         -> jobID,
-                  "accessionsStr" -> accessionsStr,
-                  "filename"      -> filename,
-                  "db"            -> db).run().exitValue() match {
-            case 0 => Ok
-            case _ => BadRequest
-          }
-      }
-    }
-  }
+
 
   /**
    * Retrieves the full sequences of all selected hits
@@ -119,20 +81,6 @@ class HmmerController @Inject()(resultFiles: ResultFileAccessor,
     val fas = numList.map { num =>
       result.HSPS(num - 1).accession + " "
     }
-    fas.mkString
-  }
-
-  /**
-   * given an evalue threshold this method
-   * returns the corresponding accessions whitespace
-   * separated
-   * @param eval
-   * @param result
-   * @return string containing whitespace
-   *         separated accessions
-   */
-  def getAccessionsEval(result: HmmerResult, eval: Double): String = {
-    val fas = result.HSPS.filter(_.evalue < eval).map { _.accession + " " }
     fas.mkString
   }
 

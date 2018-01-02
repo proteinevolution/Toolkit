@@ -16,6 +16,8 @@ trait HSP {
 
   def accession: String
 
+  def template: HHTemplate
+
 }
 
 

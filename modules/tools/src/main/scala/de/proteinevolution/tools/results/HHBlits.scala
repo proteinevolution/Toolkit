@@ -113,6 +113,7 @@ object HHBlits {
   case class HHBlitsQuery(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
 
   case class HHBlitsTemplate(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
+      extends HHTemplate
 
   case class HHBlitsResult(HSPS: List[HHBlitsHSP],
                            alignment: AlignmentResult,

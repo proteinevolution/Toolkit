@@ -12,15 +12,17 @@ private[tools] object ProcessFactory {
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
 
   private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile // HHPRED, HHBLITS alnEval
-  //private val retrieveFullSeq         = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
-  private val retrieveAlnEval = (serverScripts + "/retrieveAlnEval.sh").toFile // Hmmer & PSIBLAST alnEval
+  private val retrieveFullSeq         = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
+  private val retrieveAlnEval         = (serverScripts + "/retrieveAlnEval.sh").toFile // Hmmer & PSIBLAST alnEval
+  private val retrieveFullSeqHHblits  = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile // why so little abstractions ???
 
   def apply(resultFile: File,
             jobID: String,
             toolName: String,
             tempFileName: String,
             mode: String,
-            accString: String): process.ProcessBuilder = {
+            accString: String,
+            db: String): process.ProcessBuilder = {
 
     val (script, params) = (toolName, mode) match {
       case (ToolNames.HHBLITS.value, "alnEval") | (ToolNames.HHPRED.value, "alnEval") =>
@@ -33,7 +35,11 @@ private[tools] object ProcessFactory {
         (retrieveAlnEval, List("accessionsStr" -> accString, "filename" -> tempFileName, "mode" -> "sel"))
       case (ToolNames.HHPRED.value, "aln") | (ToolNames.HHBLITS.value, "aln") =>
         (generateAlignmentScript, List("jobID" -> jobID, "filename" -> tempFileName, "numList" -> accString))
-
+      case (ToolNames.PSIBLAST.value, "evalFull") | (ToolNames.HMMER.value, "evalFull") =>
+        (retrieveFullSeq, List("jobID" -> jobID, "accessionsStr" -> accString, "filename" -> tempFileName, "db" -> db))
+      case (ToolNames.HHBLITS.value, "evalFull") =>
+        (retrieveFullSeqHHblits,
+         List("jobID" -> jobID, "accessionsStr" -> accString, "filename" -> tempFileName, "db" -> db))
       case _ => throw new IllegalArgumentException("no valid parameters for processing a forwarding job")
     }
 

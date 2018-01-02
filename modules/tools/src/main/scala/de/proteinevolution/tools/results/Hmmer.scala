@@ -5,6 +5,7 @@ import javax.inject.Singleton
 
 import de.proteinevolution.tools.results.Alignment.AlignmentResult
 import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.tools.results.HHTemplate.DummyTemplate
 import de.proteinevolution.tools.results.Hmmer.{ HmmerHSP, HmmerResult }
 import play.api.libs.json._
 
@@ -89,7 +90,8 @@ object Hmmer {
                       midline: String,
                       description: String,
                       domain_obs_num: Int,
-                      info: HmmerInfo = HmmerInfo(-1, -1, -1, -1))
+                      info: HmmerInfo = HmmerInfo(-1, -1, -1, -1),
+                      template: HHTemplate = DummyTemplate())
       extends HSP {
 
     def toDataTable(db: String): JsValue =

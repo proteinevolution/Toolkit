@@ -140,7 +140,7 @@ object HHPred {
                             seq: String,
                             ss_dssp: String,
                             ss_pred: String,
-                            start: Int)
+                            start: Int) extends HHTemplate
   case class HHPredResult(HSPS: List[HHPredHSP],
                           alignment: AlignmentResult,
                           num_hits: Int,

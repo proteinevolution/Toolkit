@@ -24,46 +24,6 @@ class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
   private val retrieveFullSeq         = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
 
   /**
-   * Retrieves the full sequences of all hits with
-   * an evalue below a threshold and writes the sequences
-   * to a given filename within the current job folder
-   * tp '@fileName'.fa
-   *
-   * Expects json sent by POST including:
-   *
-   * fileName: to which the full length sequences are written
-   * evalue: seqs of all hits below this threshold
-   * are retrieved from the DB
-   * @param jobID
-   * @return Https response
-   */
-  def evalFull(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json     = request.body.asJson.get
-    val filename = (json \ "fileName").as[String]
-    val eval     = (json \ "evalue").as[String]
-    if (!retrieveFullSeq.isExecutable) {
-      Future.successful(BadRequest)
-    } else {
-      resultFiles.getResults(jobID).map {
-        case None => NotFound
-        case Some(jsValue) =>
-          val result        = hhblits.parseResult(jsValue)
-          val accessionsStr = getAccessionsEval(result, eval.toDouble)
-          val db            = result.db
-          Process(retrieveFullSeq.pathAsString,
-                  (constants.jobPath + jobID).toFile.toJava,
-                  "jobID"         -> jobID,
-                  "accessionsStr" -> accessionsStr,
-                  "filename"      -> filename,
-                  "db"            -> db).run().exitValue() match {
-            case 0 => Ok
-            case _ => BadRequest
-          }
-      }
-    }
-  }
-
-  /**
    * Retrieves the full sequences of all selected hits
    * in the result view and writes the sequences
    * to a given filename within the current job folder
@@ -120,18 +80,5 @@ class HHblitsController @Inject()(resultFiles: ResultFileAccessor,
     fas.mkString
   }
 
-  /**
-   * given an evalue threshold this method
-   * returns the corresponding accessions whitespace
-   * separated
-   * @param eval
-   * @param result
-   * @return string containing whitespace
-   *         separated accessions
-   */
-  def getAccessionsEval(result: HHBlitsResult, eval: Double): String = {
-    val fas = result.HSPS.filter(_.info.evalue < eval).map { _.template.accession + " " }
-    fas.mkString
-  }
 
 }

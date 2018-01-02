@@ -5,6 +5,7 @@ import javax.inject.Singleton
 
 import de.proteinevolution.tools.results.Alignment.AlignmentResult
 import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.tools.results.HHTemplate.DummyTemplate
 import de.proteinevolution.tools.results.PSIBlast.{ PSIBlastHSP, PSIBlastResult }
 import play.api.libs.json._
 @Singleton
@@ -119,7 +120,8 @@ object PSIBlast {
                          accession: String,
                          midline: String,
                          description: String,
-                         info: PSIBLastInfo = PSIBLastInfo(-1, -1, -1, -1))
+                         info: PSIBLastInfo = PSIBLastInfo(-1, -1, -1, -1),
+                         template: HHTemplate = DummyTemplate())
       extends HSP {
     def toDataTable(db: String): JsValue =
       Json.toJson(
