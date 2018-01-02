@@ -210,6 +210,8 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     }
   }
 
+  // TODO move out of the application controller .> tool module
+
   def getStructureFile(filename: String): Action[AnyContent] = Action.async { implicit request =>
     {
 

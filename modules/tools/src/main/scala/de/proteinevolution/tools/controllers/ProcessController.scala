@@ -87,14 +87,13 @@ class ProcessController @Inject()(ctx: HHContext,
                   getAccString(toolName, r, accStr, mode)
                 else
                   numericAccString(toolName, r, accStr)
-              val db = r.db
               ProcessFactory((constants.jobPath + jobID).toFile,
                              jobID,
                              toolName.value,
                              filename,
                              mode,
                              numListStr,
-                             db: String)
+                             r.db)
                 .run()
                 .exitValue() match {
                 case 0 => 0
@@ -117,6 +116,10 @@ class ProcessController @Inject()(ctx: HHContext,
     }
   }
 
+  /**
+   * TODO
+   * all the code below looks quite messy but this depends on the scripts in lib/
+   */
   // Only first draft of an abstraction but this can be smoothened
   private[this] def getAccString(toolName: ToolNames.ToolName,
                                  result: SearchResult[HSP],
@@ -145,6 +148,7 @@ class ProcessController @Inject()(ctx: HHContext,
     evalString
   }
 
+  // find better name for this function later and merge it with the one above (all depends on the non-uniform input json)
   private[this] def numericAccString(toolName: ToolNames.ToolName,
                                      result: SearchResult[HSP],
                                      accStr: String): String = {

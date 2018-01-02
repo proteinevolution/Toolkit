@@ -17,6 +17,10 @@ class AlignmentController @Inject()(resultFiles: ResultFileAccessor,
     extends AbstractController(cc)
     with CommonController {
 
+  /*
+  TODO : THIS CONTROLLER MUST GO AS WELL
+   */
+
   /**
    * Retrieves an alignment from a file
    * within the result folder with the filename '@resultName'.json

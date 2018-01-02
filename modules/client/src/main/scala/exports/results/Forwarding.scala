@@ -6,7 +6,9 @@ import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 class Forwarding {
 
   @JSExport
-  def process(toolName: String, mode: String, evalue: Double) = ???
+  def process(toolName: String, mode: String, evalue: Double): Unit = {
+
+  }
 
 }
 
