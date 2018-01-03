@@ -27,14 +27,14 @@ class HHController @Inject()(ctx: HHContext,
                              resultFiles: ResultFileAccessor)(implicit ec: ExecutionContext)
     extends AbstractController(ctx.controllerComponents) {
 
+  private val resK  = Kleisli(resultFiles.getResults)
+  private val toolK = Kleisli(toolFinder.getTool)
+
   def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
     val start   = (json \ "start").as[Int]
     val end     = (json \ "end").as[Int]
     val wrapped = (json \ "wrapped").as[Boolean]
-
-    val resK  = Kleisli(resultFiles.getResults)
-    val toolK = Kleisli(toolFinder.getTool)
 
     resK(jobID)
       .flatMap {
@@ -81,42 +81,39 @@ class HHController @Inject()(ctx: HHContext,
       request.getQueryString("sSortDir_0").getOrElse("asc")
     )
 
-    val res = resultFiles
-      .getResults(jobID)
-      .map {
-        case None => throw new IllegalStateException("no results found")
+    resK(jobID)
+      .flatMap {
         case Some(jsValue) =>
-          toolFinder.getTool(jobID).map {
-            case x if x == ToolNames.HHBLITS =>
-              (resultCtx.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-               dtService.getHitsByKeyWord[HHBlitsHSP](resultCtx.hhblits.parseResult(jsValue), params))
-            case x if x == ToolNames.HHOMP =>
-              (resultCtx.hhomp.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-               dtService.getHitsByKeyWord[HHompHSP](resultCtx.hhomp.parseResult(jsValue), params))
-            case x if x == ToolNames.HHPRED =>
-              (resultCtx.hhpred.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-               dtService.getHitsByKeyWord[HHPredHSP](resultCtx.hhpred.parseResult(jsValue), params))
-            case x if x == ToolNames.HMMER =>
-              (resultCtx.hmmer.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-               dtService.getHitsByKeyWord[HmmerHSP](resultCtx.hmmer.parseResult(jsValue), params))
-            case x if x == ToolNames.PSIBLAST =>
-              (resultCtx.psiblast.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-               dtService.getHitsByKeyWord[PSIBlastHSP](resultCtx.psiblast.parseResult(jsValue), params))
-            case _ => throw new IllegalArgumentException("datatables not implemented for this tool")
-          }
-
+          toolK(jobID)
+            .map {
+              case x if x == ToolNames.HHBLITS =>
+                (resultCtx.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+                 dtService.getHitsByKeyWord[HHBlitsHSP](resultCtx.hhblits.parseResult(jsValue), params))
+              case x if x == ToolNames.HHOMP =>
+                (resultCtx.hhomp.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+                 dtService.getHitsByKeyWord[HHompHSP](resultCtx.hhomp.parseResult(jsValue), params))
+              case x if x == ToolNames.HHPRED =>
+                (resultCtx.hhpred.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+                 dtService.getHitsByKeyWord[HHPredHSP](resultCtx.hhpred.parseResult(jsValue), params))
+              case x if x == ToolNames.HMMER =>
+                (resultCtx.hmmer.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+                 dtService.getHitsByKeyWord[HmmerHSP](resultCtx.hmmer.parseResult(jsValue), params))
+              case x if x == ToolNames.PSIBLAST =>
+                (resultCtx.psiblast.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+                 dtService.getHitsByKeyWord[PSIBlastHSP](resultCtx.psiblast.parseResult(jsValue), params))
+              case _ => throw new IllegalArgumentException("datatables not implemented for this tool")
+            }
+        case None => throw new IllegalStateException("no result found")
       }
-      .flatten
-
-    (for { r <- res } yield r).map {
-      case ((result, hits)) =>
-        Ok(
-          Json
-            .toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))
-            .as[JsObject]
-            .deepMerge(Json.obj("aaData" -> hits.map(_.toDataTable(result.db))))
-        )
-    }
+      .map {
+        case ((result, hits)) =>
+          Ok(
+            Json
+              .toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))
+              .as[JsObject]
+              .deepMerge(Json.obj("aaData" -> hits.map(_.toDataTable(result.db))))
+          )
+      }
   }
 
 }
