@@ -193,15 +193,6 @@ const GeneralTabComponent = {
                 let job_tab_component = $("#tool-tabs");
                 if (this.isFullscreen) {
                     job_tab_component.removeClass("fullscreen");
-                    // hacky fix for internet explorer
-                    if (window.navigator.userAgent.indexOf("MSIE ") > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
-                        setTimeout(function() {
-                            job_tab_component.hasClass("ui-tabs") || job_tab_component.addClass("ui-tabs");
-                            job_tab_component.hasClass("ui-widget") || job_tab_component.addClass("ui-widget");
-                            job_tab_component.hasClass("ui-widget-content") || job_tab_component.addClass("ui-widget-content");
-                            job_tab_component.hasClass("ui-corner-all") || job_tab_component.addClass("ui-corner-all");
-                        }, 80);
-                    }
                     this.isFullscreen = false;
                     if (typeof onCollapse === "function") {
                         onCollapse();
