@@ -254,9 +254,6 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
         routes.javascript.Auth.passwordChangeSubmit,
         routes.javascript.Auth.resetPassword,
         routes.javascript.Auth.resetPasswordChange,
-        routes.javascript.AlignmentController.loadHits,
-        routes.javascript.AlignmentController.getAln,
-        routes.javascript.AlignmentController.loadHitsClustal,
         routes.javascript.Application.ws
       )
     ).as("text/javascript").withHeaders(CACHE_CONTROL -> "max-age=31536000")

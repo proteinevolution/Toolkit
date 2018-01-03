@@ -2,7 +2,7 @@ package de.proteinevolution.tools
 
 import javax.inject.{ Inject, Singleton }
 
-import de.proteinevolution.tools.controllers.{ HHController, ProcessController }
+import de.proteinevolution.tools.controllers.{ AlignmentController, HHController, ProcessController }
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
 import play.api.routing.sird._
@@ -10,7 +10,8 @@ import play.api.routing.sird._
 @Singleton
 class ToolsRouter @Inject()(
     hhController: HHController,
-    processController: ProcessController
+    processController: ProcessController,
+    alignmentController: AlignmentController
 ) extends SimpleRouter {
 
   def routes: Routes = {
@@ -18,6 +19,9 @@ class ToolsRouter @Inject()(
     case GET(p"/dataTable/$jobID")                    => hhController.dataTable(jobID)
     case POST(p"/forwardAlignment/$jobID/$mode")      => processController.forwardAlignment(jobID, mode)
     case GET(p"/templateAlignment/$jobID/$accession") => processController.templateAlignment(jobID, accession)
+    case POST(p"/alignment/getAln/$jobID")            => alignmentController.getAln(jobID)
+    case POST(p"/alignment/loadHits/$jobID")          => alignmentController.loadHits(jobID)
+    case POST(p"/alignment/clustal/$jobID")           => alignmentController.loadHitsClustal(jobID)
   }
 
 }

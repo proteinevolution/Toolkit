@@ -131,12 +131,6 @@ GET           /getHelp/:tool                          controllers.DataController
 GET         /getStructure/:filename                   controllers.Application.getStructureFile(filename : String)
 
 
-# Alignment
-POST        /AlignmentLoadHits/:jobID                 controllers.AlignmentController.loadHits(jobID: String)
-POST        /AlignmentLoadHitsClustal/:jobID          controllers.AlignmentController.loadHitsClustal(jobID: String)
-POST        /AlignmentGetAln                          controllers.AlignmentController.getAln(jobID: String)
-
-
 # Tool Module
 
 ->          /results                                 de.proteinevolution.tools.ToolsRouter

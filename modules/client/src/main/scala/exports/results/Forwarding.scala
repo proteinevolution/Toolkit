@@ -1,5 +1,9 @@
 package exports.results
 
+import org.querki.jquery.{ $, JQueryAjaxSettings, JQueryXHR }
+import org.scalajs.dom
+
+import scala.scalajs.js
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 
 @JSExportTopLevel("Forwarding")
@@ -7,6 +11,24 @@ class Forwarding {
 
   @JSExport
   def process(toolName: String, mode: String, evalue: Double): Unit = {
+
+    js.Dynamic.global.$.LoadingOverlay("show")
+
+    $.ajax(
+      js.Dynamic
+          .literal(
+            url = s"/results/forwardAlignment",
+            success = { (data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) =>
+              // TODO
+            },
+            error = { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
+              dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
+              js.Dynamic.global.$.LoadingOverlay("hide")
+            },
+            `type` = "POST"
+          )
+          .asInstanceOf[JQueryAjaxSettings]
+    )
 
   }
 

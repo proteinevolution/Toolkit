@@ -1,4 +1,4 @@
-package controllers
+package de.proteinevolution.tools.controllers
 
 import javax.inject.Inject
 
@@ -14,27 +14,8 @@ class AlignmentController @Inject()(resultFiles: ResultFileAccessor,
                                     aln: Alignment,
                                     constants: Constants,
                                     cc: ControllerComponents)(implicit ec: ExecutionContext)
-    extends AbstractController(cc)
-    with CommonController {
+    extends AbstractController(cc) {
 
-  /*
-  TODO : THIS CONTROLLER MUST GO AS WELL
-   */
-
-  /**
-   * Retrieves an alignment from a file
-   * within the result folder with the filename '@resultName'.json
-   * for an given array containing the numbers of the alignments
-   *
-   * Expects json sent by POST including:
-   *
-   * resultName: alignment within the result folder with the filename '@resultName'.json
-   * checkboxes: an array which contains the numbers (in the Alignment list)
-   * of all alignments that will be retrieved
-   *
-   * @param jobID
-   * @return alignment as fasta
-   */
   def getAln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json       = request.body.asJson.get
     val resultName = (json \ "resultName").as[String]
@@ -50,19 +31,6 @@ class AlignmentController @Inject()(resultFiles: ResultFileAccessor,
     }
   }
 
-  /**
-   * Retrieves alignment rows (String containing Html)
-   * for the alignment section in the result view
-   * for a given range (start, end).
-   *
-   * Expects json sent by POST including:
-   *
-   * start: index of first HSP that is retrieved
-   * end: index of last HSP that is retrieved
-   *
-   * @param jobID
-   * @return HSP row(s) as String
-   */
   def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json       = request.body.asJson.get
     val start      = (json \ "start").as[Int]
@@ -75,24 +43,12 @@ class AlignmentController @Inject()(resultFiles: ResultFileAccessor,
         if (end > result.alignment.length || start > result.alignment.length) {
           BadRequest
         } else {
-          val hits = result.alignment.slice(start, end).map(views.html.jobs.resultpanels.alignmentRow(_))
+          val hits = result.alignment.slice(start, end).map(views.html.alignment.alignmentrow(_))
           Ok(hits.mkString)
         }
     }
   }
 
-  /**
-   * Retrieves an alignment in clustal format
-   * for a given range (start, end).
-   *
-   * Expects json sent by POST including:
-   *
-   * start: index of first HSP that is retrieved
-   * end: index of last HSP that is retrieved
-   *
-   * @param jobID
-   * @return the whole alignment containing Html as a String
-   */
   def loadHitsClustal(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json       = request.body.asJson.get
     val resultName = (json \ "resultName").as[String]

@@ -1,10 +1,8 @@
 @import java.lang.String
 @(tool: de.proteinevolution.models.Tool, viewName: String)
 
-
 <div class="reveal forwardModal" id="forwardModal_@{viewName}" data-reveal>
     <p>Forward Job</p>
-
 
     <div class="forward_form">
         <div class="forwardFormDiv">
@@ -29,7 +27,7 @@
                         <option id="multiSeqOptions_@viewName" value="@forwardTool">@forwardTool</option>
                     }
 
-            <select>
+            </select>
         </div>
         <div class="large-5 columns">
             <div class="callout alert" id="forwardWarning" style="display: none;" >

@@ -81,13 +81,12 @@
 
         window["@{resultName}_forward"] = function(selectedTool){
             var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
-            var route = jsRoutes.controllers.AlignmentController.getAln(jobID);
 
             $.LoadingOverlay("show");
             // get result json
             $.ajax({
-                type: route.method,
-                url: route.url,
+                type: "POST",
+                url: "/results/alignment/getAln/" + jobID,
                 contentType: "application/json",
                 data: JSON.stringify(data),
                 error: function(){
@@ -132,7 +131,7 @@
                 $('#loadingHitsClu').show();
                 var data = {"color": color, "resultName" : resultName};
             var route = {};
-            route.url = "/AlignmentLoadHitsClustal/" + jobID;
+            route.url = "/results/alignment/clustal/" + jobID;
             route.method = "POST";
                 return $.ajax({
                     method: route.method,
