@@ -2,7 +2,7 @@ package de.proteinevolution.tools.controllers
 
 import javax.inject.{ Inject, Singleton }
 
-import cats.data.OptionT
+import cats.data.{ Kleisli, OptionT }
 import cats.implicits._
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.ToolNames
@@ -33,12 +33,14 @@ class HHController @Inject()(ctx: HHContext,
     val start   = (json \ "start").as[Int]
     val end     = (json \ "end").as[Int]
     val wrapped = (json \ "wrapped").as[Boolean]
-    val res = resultFiles
-      .getResults(jobID)
-      .map {
-        case None => throw new IllegalStateException("no results found")
-        case Some(jsValue) =>
-          val tuple = toolFinder.getTool(jobID).map {
+
+    val resK  = Kleisli(resultFiles.getResults)
+    val toolK = Kleisli(toolFinder.getTool)
+
+    val res = resK(jobID).flatMap {
+      case Some(jsValue) =>
+        toolK(jobID)
+          .map {
             case x if x == ToolNames.HHBLITS =>
               (resultCtx.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
                (hsp: HSP) => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped, jobID))
@@ -58,16 +60,8 @@ class HHController @Inject()(ctx: HHContext,
               (result, (hsp: HSP) => views.html.psiblast.hit(hsp.asInstanceOf[PSIBlastHSP], result.db, wrapped))
             case _ => throw new IllegalArgumentException("tool has no hitlist") // TODO integrate Alignmnent Ctrl
           }
-
-          (for {
-            t <- OptionT.liftF(tuple)
-          } yield t).value.map {
-            case Some(t) => t
-            case None    => throw new IllegalStateException("parsing error")
-          }
-
-      }
-      .flatten
+      case None => throw new IllegalStateException("no result found")
+    }
 
     (for {
       r <- OptionT.liftF(res)

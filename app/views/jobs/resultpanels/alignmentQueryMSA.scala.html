@@ -131,7 +131,7 @@
                     loading = false;
                     $('#loadingHits').hide();
                     // hide loadHitsQaln
-                    if (shownHits != numHits) {
+                    if (shownHits !== numHits) {
                         $('#loadHitsQaln').show();
                     }
                 });
@@ -169,7 +169,7 @@
                         if (!loading) {
                             var end = shownHits + showMore;
                             end = end < numHits ? end : numHits;
-                            if (shownHits != end) {
+                            if (shownHits !== end) {
                                 getHits(shownHits, end);
                             }else{
                                 $('#loadHitsQaln').hide();
@@ -194,7 +194,7 @@
                     } else {
                         // delete num of unchecked checkbox from array
                         checkboxes = checkboxes.filter(function (x) {
-                            return x != currentVal
+                            return x !== currentVal
                         });
                     }
                 });
