@@ -2,8 +2,7 @@ package de.proteinevolution.tools.controllers
 
 import javax.inject.{ Inject, Singleton }
 
-import cats.data.{ Kleisli, OptionT }
-import cats.implicits._
+import cats.data.Kleisli
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.ToolNames
 import de.proteinevolution.tools.models.{ HHContext, ResultContext }
@@ -37,44 +36,40 @@ class HHController @Inject()(ctx: HHContext,
     val resK  = Kleisli(resultFiles.getResults)
     val toolK = Kleisli(toolFinder.getTool)
 
-    val res = resK(jobID).flatMap {
-      case Some(jsValue) =>
-        toolK(jobID)
-          .map {
-            case x if x == ToolNames.HHBLITS =>
-              (resultCtx.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-               (hsp: HSP) => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped, jobID))
-            case x if x == ToolNames.HHPRED =>
-              val isColor = (json \ "isColor").as[Boolean]
-              (resultCtx.hhpred.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-               (hsp: HSP) => views.html.hhpred.hit(hsp.asInstanceOf[HHPredHSP], isColor, wrapped, jobID))
-            case x if x == ToolNames.HHOMP =>
-              val isColor = (json \ "isColor").as[Boolean]
-              (resultCtx.hhomp.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
-               (hsp: HSP) => views.html.hhomp.hit(hsp.asInstanceOf[HHompHSP], isColor, wrapped, jobID))
-            case x if x == ToolNames.HMMER =>
-              val result = resultCtx.hmmer.parseResult(jsValue).asInstanceOf[SearchResult[HSP]]
-              (result, (hsp: HSP) => views.html.hmmer.hit(hsp.asInstanceOf[HmmerHSP], result.db, wrapped))
-            case x if x == ToolNames.PSIBLAST =>
-              val result = resultCtx.psiblast.parseResult(jsValue).asInstanceOf[SearchResult[HSP]]
-              (result, (hsp: HSP) => views.html.psiblast.hit(hsp.asInstanceOf[PSIBlastHSP], result.db, wrapped))
-            case _ => throw new IllegalArgumentException("tool has no hitlist") // TODO integrate Alignmnent Ctrl
-          }
-      case None => throw new IllegalStateException("no result found")
-    }
-
-    (for {
-      r <- OptionT.liftF(res)
-    } yield r).value.map {
-      case Some((result, view)) =>
-        if (end > result.num_hits || start > result.num_hits) {
+    resK(jobID)
+      .flatMap {
+        case Some(jsValue) =>
+          toolK(jobID)
+            .map {
+              case x if x == ToolNames.HHBLITS =>
+                (resultCtx.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+                 (hsp: HSP) => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped, jobID))
+              case x if x == ToolNames.HHPRED =>
+                val isColor = (json \ "isColor").as[Boolean]
+                (resultCtx.hhpred.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+                 (hsp: HSP) => views.html.hhpred.hit(hsp.asInstanceOf[HHPredHSP], isColor, wrapped, jobID))
+              case x if x == ToolNames.HHOMP =>
+                val isColor = (json \ "isColor").as[Boolean]
+                (resultCtx.hhomp.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
+                 (hsp: HSP) => views.html.hhomp.hit(hsp.asInstanceOf[HHompHSP], isColor, wrapped, jobID))
+              case x if x == ToolNames.HMMER =>
+                val result = resultCtx.hmmer.parseResult(jsValue).asInstanceOf[SearchResult[HSP]]
+                (result, (hsp: HSP) => views.html.hmmer.hit(hsp.asInstanceOf[HmmerHSP], result.db, wrapped))
+              case x if x == ToolNames.PSIBLAST =>
+                val result = resultCtx.psiblast.parseResult(jsValue).asInstanceOf[SearchResult[HSP]]
+                (result, (hsp: HSP) => views.html.psiblast.hit(hsp.asInstanceOf[PSIBlastHSP], result.db, wrapped))
+              case _ => throw new IllegalArgumentException("tool has no hitlist") // TODO integrate Alignmnent Ctrl
+            }
+        case None => throw new IllegalStateException("no result found")
+      }
+      .map { tuple =>
+        if (end > tuple._1.num_hits || start > tuple._1.num_hits) {
           BadRequest
         } else {
-          val hits = result.HSPS.slice(start, end).map(view)
+          val hits = tuple._1.HSPS.slice(start, end).map(tuple._2)
           Ok(hits.mkString)
         }
-      case None => BadRequest
-    }
+      }
   }
 
   def dataTable(jobID: String): Action[AnyContent] = Action.async { implicit request =>
