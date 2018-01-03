@@ -200,7 +200,7 @@ const GeneralTabComponent = {
                             job_tab_component.hasClass("ui-widget") || job_tab_component.addClass("ui-widget");
                             job_tab_component.hasClass("ui-widget-content") || job_tab_component.addClass("ui-widget-content");
                             job_tab_component.hasClass("ui-corner-all") || job_tab_component.addClass("ui-corner-all");
-                        }, 40);
+                        }, 80);
                     }
                     this.isFullscreen = false;
                     if (typeof onCollapse === "function") {
