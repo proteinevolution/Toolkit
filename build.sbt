@@ -43,7 +43,7 @@ lazy val common = (project in file("modules/common"))
 
 lazy val tools = (project in file("modules/tools"))
     .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl)
-    .dependsOn(common)
+    .dependsOn(common, sys)
     .settings(
       name := "tools",
       libraryDependencies ++= Dependencies.commonDeps,
@@ -53,10 +53,22 @@ lazy val tools = (project in file("modules/tools"))
     )
     .disablePlugins(PlayLayoutPlugin)
 
+lazy val sys = (project in file("modules/sys"))
+    .enablePlugins(PlayScala, JavaAppPackaging)
+    .dependsOn(common)
+    .settings(
+      name := "sys",
+      libraryDependencies ++= Dependencies.commonDeps,
+      Settings.compileSettings,
+      TwirlKeys.templateImports := Seq.empty,
+      disableDocs
+    )
+    .disablePlugins(PlayLayoutPlugin)
+
 lazy val root = (project in file("."))
     .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb, BuildInfoPlugin)
-    .dependsOn(client, common, tools)
-    .aggregate(client, common, tools)
+    .dependsOn(client, common, tools, sys)
+    .aggregate(client, common, tools, sys)
     .settings(
       coreSettings,
       name := "mpi-toolkit",
