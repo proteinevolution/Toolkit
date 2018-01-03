@@ -25,7 +25,6 @@ import play.api.{ Environment, Logger }
 import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
 import de.proteinevolution.models.Constants
-import de.proteinevolution.tools.results.Common
 
 import scala.concurrent.{ Await, ExecutionContext, Future }
 
@@ -190,6 +189,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
 
   /**
    * Allows to access resultpanel files by the filename and a given jobID
+   * TODO move to tools module
    */
   def file(filename: String, mainID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
@@ -207,24 +207,6 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
       else
         Ok // TODO This needs more case validations
 
-    }
-  }
-
-  // TODO move out of the application controller .> tool module
-
-  def getStructureFile(filename: String): Action[AnyContent] = Action.async { implicit request =>
-    {
-
-      val db = Common.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
-      val filepath = db match {
-        case "scop" =>
-          env.get("SCOPE")
-        case "ecod" =>
-          env.get("ECOD")
-        case "mmcif" =>
-          env.get("CIF")
-      }
-      Future.successful(Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$filename")).as("text/plain"))
     }
   }
 
@@ -260,14 +242,10 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
   }
 
   def matchSuperUserToPW(username: String, password: String): Future[Boolean] = {
-
     mongoStore.findUser(BSONDocument("userData.nameLogin" -> username)).map {
-
       case Some(user) if user.checkPassword(password) && user.isSuperuser => true
       case None                                                           => false
-
     }
-
   }
 
   def MaintenanceSecured[A]()(action: Action[A]): Action[A] = Action.async(action.parser) { request =>
@@ -290,14 +268,10 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
   }
 
   def maintenance: Action[AnyContent] = MaintenanceSecured() {
-
     Action { implicit ctx =>
       clusterMonitor ! Multicast
-
       Ok("Maintenance screen active...")
-
     }
-
   }
 
   val robots = Action { _ =>

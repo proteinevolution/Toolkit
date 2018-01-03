@@ -30,8 +30,6 @@ function download(filename, text){
     $.LoadingOverlay("hide");
 }
 
-
-
 /* Slider */
 function slider_show(sequence_length, start, end) {
 
@@ -45,8 +43,6 @@ function slider_show(sequence_length, start, end) {
         top: -20
 
     }).show();
-
-
 
     $("#flat-slider").slider({
         range: true,
@@ -110,7 +106,6 @@ function forward(tool, forwardData){
             $.LoadingOverlay("hide");
             alert("File is too big to be forwarded!" )
         }
-
     }
 }
 
@@ -275,7 +270,6 @@ function linkCheckboxes(){
 
     });
 }
-
 
 function generateFilename(){
     return Math.floor(100000 + Math.random() * 900000).toString();

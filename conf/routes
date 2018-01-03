@@ -2,16 +2,13 @@
 # This file defines all application routes (Higher priority routes first)
 
 ############################################################################
-# Toolkit related routes
+# Toolkit routes
 ############################################################################
 
-# Index Page requested by user. Note that the controller is injected
+# Index Page
 GET           /                                       controllers.Application.index()
-
 GET           /javascriptRoutes                       controllers.Application.javascriptRoutes
-
 GET           /sitemap.xml                            controllers.Assets.at(path="/public", file = "sitemap.xml")
-GET           /sitemap.xml.gz                         controllers.Assets.at(path="/public", file = "sitemap.xml.gz")
 
 # integrated mithril route backend routes
 GET           /backend/index                          controllers.Backend.index
@@ -33,23 +30,16 @@ GET           /buildinfo                              controllers.UptimeControll
 # Serve files
 GET           /files/:mainID/:filename                controllers.Application.file(filename: String, mainID: String)
 
-
-
 # WebJars
 ->            /webjars                                webjars.Routes
 
 # Assets
 GET           /assets/*file                           controllers.Assets.versioned(path="/public", file: Asset)
 
-
-
 # Route for direct get requests
 GET           /tools/:toolname                        controllers.Application.showTool(toolname : String)
 # Redirects to a job with the jobID // mainID
 GET           /jobs/:idString                         controllers.Application.showJob(idString: String)
-
-
-# Contact
 
 # Routes for Auth Service
 GET           /userData                               controllers.Auth.getUserData
@@ -72,16 +62,14 @@ POST          /jobs/running/:jobID/:key               controllers.Jobs.jobStatus
 POST          /jobs/queued/:jobID/:key                controllers.Jobs.jobStatusQueued(jobID : String, key: String)
 POST          /jobs/sge/:jobID/:sgeID/:key            controllers.Jobs.SGEID(jobID: String, sgeID: String, key: String)
 POST          /jobs/dateviewed/:mainID                controllers.Jobs.updateDateViewed(mainID)
+
 # update process log
 POST          /jobs/updateLog/:jobID                  controllers.Jobs.updateLog(jobID : String)
 
-
 # Validation Controller
-
 POST          /validate/modeller                      controllers.Auth.validateModellerKey(input: String)
 
 # Cluster
-
 GET           /load                                   controllers.ClusterController.getLoad
 
 # Static route
@@ -95,20 +83,16 @@ GET           /getToolList                            controllers.Search.getTool
 GET           /suggest/:jobID                         controllers.Search.autoComplete(jobID: String)
 GET           /checktool/:tool                        controllers.Search.existsTool(tool: String)
 
-
-
-# Sitemap
 # Routes for static assets
 GET           /robots.txt                             controllers.Application.robots
 GET           /:static                                controllers.Application.static(static : String)
 
-
 # GetTool
 GET           /api/tools/:toolname                    controllers.Service.getTool(toolname)
 
-
 # Get list of userjobs
 GET           /api/jobs                               controllers.JobController.listJobs
+
 # Submit a job directly
 POST          /api/job                                controllers.JobController.submitJob(toolName: String)
 GET           /api/job/:jobID/start                   controllers.JobController.startJob(jobID: String)
@@ -127,10 +111,5 @@ GET           /api/job/results/:jobID                 controllers.DataController
 #Help
 GET           /getHelp/:tool                          controllers.DataController.getHelp(tool: String)
 
-# 3D structure
-GET         /getStructure/:filename                   controllers.Application.getStructureFile(filename : String)
-
-
 # Tool Module
-
-->          /results                                 de.proteinevolution.tools.ToolsRouter
+->            /results                                 de.proteinevolution.tools.ToolsRouter

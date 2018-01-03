@@ -34,7 +34,7 @@ switch(db){
         fileEnding = ".cif";
         break;
 }
-var url = '/getStructure/@accession' + fileEnding;
+var url = '/results/getStructure/@accession' + fileEnding;
 $(document).ready(function(){
     $.get(url).done(function () {
         $('#accessionStructure').append("<div class='structureAccession'>3D Structure: '@accession'</div>");
