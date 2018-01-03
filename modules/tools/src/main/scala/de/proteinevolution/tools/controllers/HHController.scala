@@ -2,8 +2,6 @@ package de.proteinevolution.tools.controllers
 
 import javax.inject.{ Inject, Singleton }
 
-import cats.data.Kleisli
-import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.ToolNames
 import de.proteinevolution.tools.models.{ HHContext, ResultContext }
 import de.proteinevolution.tools.results.General.DTParam
@@ -13,7 +11,7 @@ import de.proteinevolution.tools.results.HHomp.HHompHSP
 import de.proteinevolution.tools.results.Hmmer.HmmerHSP
 import de.proteinevolution.tools.results.PSIBlast.PSIBlastHSP
 import de.proteinevolution.tools.results.{ HSP, SearchResult }
-import de.proteinevolution.tools.services.{ DTService, ToolNameGetService }
+import de.proteinevolution.tools.services.{ DTService, KleisliProvider }
 import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc.{ AbstractController, Action, AnyContent }
 
@@ -22,13 +20,10 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class HHController @Inject()(ctx: HHContext,
                              resultCtx: ResultContext,
-                             toolFinder: ToolNameGetService,
-                             dtService: DTService,
-                             resultFiles: ResultFileAccessor)(implicit ec: ExecutionContext)
-    extends AbstractController(ctx.controllerComponents) {
-
-  private val resK  = Kleisli(resultFiles.getResults)
-  private val toolK = Kleisli(toolFinder.getTool)
+                             kleisliProvider: KleisliProvider,
+                             dtService: DTService)(
+    implicit ec: ExecutionContext
+) extends AbstractController(ctx.controllerComponents) {
 
   def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
@@ -36,10 +31,12 @@ class HHController @Inject()(ctx: HHContext,
     val end     = (json \ "end").as[Int]
     val wrapped = (json \ "wrapped").as[Boolean]
 
-    resK(jobID)
+    kleisliProvider
+      .resK(jobID)
       .flatMap {
         case Some(jsValue) =>
-          toolK(jobID)
+          kleisliProvider
+            .toolK(jobID)
             .map {
               case x if x == ToolNames.HHBLITS =>
                 (resultCtx.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
@@ -81,10 +78,12 @@ class HHController @Inject()(ctx: HHContext,
       request.getQueryString("sSortDir_0").getOrElse("asc")
     )
 
-    resK(jobID)
+    kleisliProvider
+      .resK(jobID)
       .flatMap {
         case Some(jsValue) =>
-          toolK(jobID)
+          kleisliProvider
+            .toolK(jobID)
             .map {
               case x if x == ToolNames.HHBLITS =>
                 (resultCtx.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],

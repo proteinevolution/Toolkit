@@ -3,7 +3,7 @@ import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.tools.models.{ HHContext, ResultContext }
-import de.proteinevolution.tools.services.{ ProcessFactory, ToolNameGetService }
+import de.proteinevolution.tools.services.{ KleisliProvider, ProcessFactory, ToolNameGetService }
 import play.api.mvc.{ AbstractController, Action, AnyContent }
 import better.files._
 import de.proteinevolution.models.{ Constants, ToolNames }
@@ -11,7 +11,6 @@ import de.proteinevolution.models.{ Constants, ToolNames }
 import scala.sys.process.Process
 import cats.implicits._
 import cats.data.OptionT
-import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.tools.results.{ HSP, SearchResult }
 
 import scala.concurrent.ExecutionContext
@@ -20,8 +19,8 @@ import scala.concurrent.ExecutionContext
 class ProcessController @Inject()(ctx: HHContext,
                                   toolFinder: ToolNameGetService,
                                   constants: Constants,
-                                  resultContext: ResultContext,
-                                  resultFiles: ResultFileAccessor)(implicit ec: ExecutionContext)
+                                  kleisliProvider: KleisliProvider,
+                                  resultContext: ResultContext)(implicit ec: ExecutionContext)
     extends AbstractController(ctx.controllerComponents) {
 
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
@@ -59,12 +58,11 @@ class ProcessController @Inject()(ctx: HHContext,
       case "aln"                  => (json \ "checkboxes").as[List[Int]].mkString("\n")
     }
 
-    val res = resultFiles
-      .getResults(jobID)
-      .map {
-        case None => throw new IllegalArgumentException("no result found")
+    kleisliProvider
+      .resK(jobID)
+      .flatMap {
         case Some(jsValue) =>
-          val resultFuture = toolFinder.getTool(jobID).map {
+          kleisliProvider.toolK(jobID).map {
             case toolName if toolName == ToolNames.HHBLITS =>
               (toolName, resultContext.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
             case toolName if toolName == ToolNames.HHPRED =>
@@ -77,43 +75,28 @@ class ProcessController @Inject()(ctx: HHContext,
               (toolName, resultContext.psiblast.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
             case _ => throw new IllegalArgumentException("tool has no hitlist")
           }
-
-          (for {
-            res <- OptionT.liftF(resultFuture)
-          } yield res).value.map {
-            case Some((toolName, r)) =>
-              val numListStr =
-                if (mode != "full")
-                  getAccString(toolName, r, accStr, mode)
-                else
-                  numericAccString(toolName, r, accStr)
-              ProcessFactory((constants.jobPath + jobID).toFile,
-                             jobID,
-                             toolName.value,
-                             filename,
-                             mode,
-                             numListStr,
-                             r.db)
-                .run()
-                .exitValue() match {
-                case 0 => 0
-                case _ => 1
-              }
-            case None => throw new IllegalStateException
-          }
+        case None => throw new IllegalStateException
       }
-      .flatten
-
-    (for {
-      i <- OptionT.liftF(res)
-    } yield i).value.map {
-      case Some(exitCode) =>
-        if (exitCode == 0)
+      .map { tuple =>
+        val numListStr =
+          if (mode != "full")
+            getAccString(tuple._1, tuple._2, accStr, mode)
+          else
+            numericAccString(tuple._1, tuple._2, accStr)
+        ProcessFactory((constants.jobPath + jobID).toFile,
+                       jobID,
+                       tuple._1.value,
+                       filename,
+                       mode,
+                       numListStr,
+                       tuple._2.db).run().exitValue()
+      }
+      .map {
+        case 0 =>
           Ok
-        else
+        case _ =>
           BadRequest
-      case None => BadRequest
-    }
+      }
   }
 
   /**
