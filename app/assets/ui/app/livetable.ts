@@ -130,14 +130,14 @@ class LiveTable {
                     ])]
                 )
             ]),
-            m("div", {
+            m("a", {
                 id: "trafficbar",
                 "class": ("trafficbar " + trafficBarStatus),
                 config: trafficBarConfig(LiveTable.lastJob),
+                href: LiveTable.lastJob !== null ? "#/jobs/" + LiveTable.lastJob.jobID : "#",
                 onclick: function() {
                     // hide old tooltip
                     $('#' + $("#trafficbar").data('toggle')).remove();
-                    m.route("/jobs/" + LiveTable.lastJob.jobID);
                 }
             })
         ]);
