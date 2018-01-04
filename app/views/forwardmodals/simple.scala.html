@@ -56,7 +56,7 @@
                 $('#forwardModal_@{viewName}').foundation('close');
                 return;
             }
-            @{viewName}_forward(selectedTool, boolSelectedHits,boolEvalue, evalue, false, false);
+            Forwarding.process(selectedTool, boolSelectedHits, boolEvalue, evalue, false, false);
             if (selectedTool !== "") {
                 $('#forwardModal_@{viewName}').foundation('close');
             }

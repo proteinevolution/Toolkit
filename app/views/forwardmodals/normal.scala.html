@@ -63,7 +63,7 @@
             $('#forwardModal_@{viewName}').foundation('close');
             return;
         }
-        @{viewName}_forward(selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength, sliderRegion);
+        Forwarding.process(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength, sliderRegion);
         if (selectedTool !== "") {
             $('#forwardModal_@{viewName}').foundation('close');
         }

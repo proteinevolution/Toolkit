@@ -1,89 +1,64 @@
 package exports.results
 
+import java.util.UUID
+
 import org.querki.jquery.{ $, JQueryAjaxSettings, JQueryXHR }
 import org.scalajs.dom
 
 import scala.scalajs.js
+import scala.scalajs.js.JSON
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 
 @JSExportTopLevel("Forwarding")
-class Forwarding {
+object Forwarding {
+
+  import js.Dynamic.{ global => g }
 
   @JSExport
-  def process(toolName: String, mode: String, evalue: Double): Unit = {
+  def process(selectedTool: String,
+              boolSelectedHits: Boolean, // what is this for?
+              boolEvalue: Boolean,
+              evalue: String,
+              boolFullLength: Boolean): Unit = {
 
-    js.Dynamic.global.$.LoadingOverlay("show")
+    g.$.LoadingOverlay("show")
+    val checkboxes = g.checkboxes.removeDuplicates().asInstanceOf[js.Array[Int]]
+
+    if (checkboxes.length < 1) {
+      g.$(".forwardModal").foundation("close")
+      g.$.LoadingOverlay("hide")
+      g.alert("No sequence(s) selected!")
+      return
+    }
+
+    val filename = UUID.randomUUID().toString.toUpperCase
+    val route = (boolSelectedHits, boolEvalue, boolFullLength) match {
+
+      case (_, true, true)   => "/results/forwardAlignment/" + g.jobID + "/evalFull"
+      case (_, false, true)  => "/results/forwardAlignment/" + g.jobID + "/evalFull"
+      case (_, true, false)  => "/results/forwardAlignment/" + g.jobID + "/alnEval"
+      case (_, false, false) => "/results/forwardAlignment/" + g.jobID + "/aln"
+    }
 
     $.ajax(
       js.Dynamic
-          .literal(
-            url = s"/results/forwardAlignment",
-            success = { (data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) =>
-              // TODO
-            },
-            error = { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
-              dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
-              js.Dynamic.global.$.LoadingOverlay("hide")
-            },
-            `type` = "POST"
-          )
-          .asInstanceOf[JQueryAjaxSettings]
+        .literal(
+          url = route,
+          data = JSON.stringify(
+            js.Dynamic.literal("filename" -> filename, "evalue" -> evalue, "checkboxes" -> checkboxes)
+          ),
+          contentType = "application/json",
+          success = { (data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) =>
+            g.forwardPath(selectedTool, s"files${g.jobID}/$filename.fa")
+          },
+          error = { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
+            dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
+            g.$.LoadingOverlay("hide")
+          },
+          `type` = "POST"
+        )
+        .asInstanceOf[JQueryAjaxSettings]
     )
-
   }
 
 }
-
-/*
-function psiblast_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
-    // full seq is retrieved
-    var data = {};
-    data.checkboxes = checkboxes.removeDuplicates();
-    var route = null;
-    var filename = generateFilename();
-    $.LoadingOverlay("show");
-    if(boolFullLength) {
-        if(boolEvalue) {
-            data.filename = filename;
-            data.evalue = evalue;
-            route = jsRoutes.controllers.PSIBlastController.evalFull(jobID);
-        }else{
-            if(data.checkboxes.length === 0){
-                $('#forwardModal_@{tool.toolNameShort}').foundation('close');
-                $.LoadingOverlay("hide");
-                alert("No sequence(s) selected!");
-                return false;
-            }
-            data.filename = filename;
-            route = jsRoutes.controllers.PSIBlastController.full(jobID);
-        }
-    }else{
-        if(boolEvalue) {
-            data.filename = filename;
-            data.evalue = evalue;
-            route = jsRoutes.controllers.PSIBlastController.alnEval(jobID);
-        }else{
-            if(data.checkboxes.length === 0){
-                $('#forwardModal_@{tool.toolNameShort}').foundation('close');
-                $.LoadingOverlay("hide");
-                alert("No sequence(s) selected!");
-                return false;
-            }
-            data.filename = filename;
-            route = jsRoutes.controllers.PSIBlastController.aln(jobID);
-        }
-    }
-    $.ajax({
-        url: route.url,
-        contentType: 'application/json',
-        data: JSON.stringify(data),
-        method: route.method,
-        error: function(){
-            $.LoadingOverlay("hide");
-        }
-    }).done(function (data_) {
-        forwardPath(selectedTool, 'files/'+jobID+'/'+filename+'.fa');
-    })
-}
-
- */

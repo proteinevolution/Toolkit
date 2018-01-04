@@ -62,9 +62,7 @@ function slider_show(sequence_length, start, end) {
 
     tooltip.text(start);
     tooltip2.text(end);
-
     $("#flat-slider").slider({}).find(".ui-slider-handle:first").append(tooltip);
-
     $("#flat-slider").slider({}).find(".ui-slider-handle:last").append(tooltip2);
 
 }
@@ -269,8 +267,4 @@ function linkCheckboxes(){
         }
 
     });
-}
-
-function generateFilename(){
-    return Math.floor(100000 + Math.random() * 900000).toString();
 }

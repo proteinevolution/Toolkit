@@ -324,38 +324,6 @@
 
         }
 
-        function @{tool.toolNameShort}_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength) {
-            var data = {"checkboxes": checkboxes.removeDuplicates()};
-            $.LoadingOverlay("show");
-            var route = null;
-            var filename = generateFilename();
-            if (boolEvalue) {
-                data.evalue = evalue;
-                data.fileName = filename;
-                route = "/results/forwardAlignment/" + jobID + "/hhpred";
-            } else {
-                if(data.checkboxes.length === 0){
-                    $('#forwardModal_@{tool.toolNameShort}').foundation('close');
-                    $.LoadingOverlay("hide");
-                    alert("No sequence(s) selected!");
-                    return false;
-                }
-                data.fileName = filename;
-                route = jsRoutes.controllers.HHpredController.aln(jobID);
-            }
-            $.ajax({
-                url: route.url,
-                method: route.method,
-                contentType: "application/json",
-                data: JSON.stringify(data),
-                error: function(){
-                    $.LoadingOverlay("hide")
-                }
-            }).done(function (data_) {
-                    forwardPath(selectedTool, 'files/' + jobID + '/'+filename+'.fa');
-                });
-        }
-
         function forwardTemplateAlignment_(tool, forwardData) {
             if (tool === "") {
                 return;

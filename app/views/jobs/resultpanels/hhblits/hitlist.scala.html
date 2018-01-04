@@ -124,7 +124,6 @@
 
 @*MODALS*@
 
-
 <div class="reveal" id="templateAlignmentModal" data-reveal>
     <p>Template Alignment (~100 most distinct sequences)</p>
     <div>
@@ -175,64 +174,7 @@
                 $('#templateAlignmentModal').foundation();
                 $("#wrap").hide();
             }
-
         });
-
-
-       function hhblits_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength){
-           var data = {"checkboxes": checkboxes.removeDuplicates()};
-           var route = null;
-           var filename = generateFilename();
-           $.LoadingOverlay("show");
-            if(boolFullLength) {
-                if(boolEvalue) {
-                    data.evalue = evalue;
-                    data.fileName = filename;
-                    route = jsRoutes.controllers.HHblitsController.evalFull(jobID);
-                }else{
-                    data.fileName = filename;
-                    route = jsRoutes.controllers.HHblitsController.full(jobID);
-                    if(data.checkboxes.length === 0){
-                        $('#forwardModal_@{tool.toolNameShort}').foundation('close');
-                        $.LoadingOverlay("hide");
-                        alert("No sequences selected!");
-                        return false;
-                    }
-                }
-            } else{
-
-               if(boolEvalue) {
-	            console.log("here" + evalue + filename);
-	            console.log(data);
-	            console.log(generateFilename());
-                    data.evalue = evalue;
-                    data.fileName = filename;
-                    route = "/results/forwardAlignment/" + jobID + "/hhblits";
-                }else{
-                    if(data.checkboxes.length === 0){
-                        $('#forwardModal_@{tool.toolNameShort}').foundation('close');
-                        $.LoadingOverlay("hide");
-                        alert("No sequences selected!");
-                        return false;
-                    }
-                    data.fileName = filename;
-                    route = jsRoutes.controllers.HHblitsController.aln(jobID);
-                }
-            }
-
-           $.ajax({
-               url: "/results/forwardAlignment/" + jobID + "/alnEval",
-               method: "POST",
-               contentType: "application/json",
-               data: JSON.stringify(data),
-               error: function(){
-                   $.LoadingOverlay("hide")
-               }
-        }).done(function (data_) {
-	           console.log(data_);
-                   forwardPath(selectedTool, 'files/@jobID/'+filename+'.fa');
-           });
-        }
 
         function hhblits_forwardQueryMSA(selectedTool){
             $.LoadingOverlay("show");
