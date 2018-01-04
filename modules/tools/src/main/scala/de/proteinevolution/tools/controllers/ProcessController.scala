@@ -12,7 +12,7 @@ import scala.sys.process.Process
 import cats.implicits._
 import cats.data.OptionT
 import de.proteinevolution.tools.results.{ HSP, SearchResult }
-
+import ToolNames._
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -27,9 +27,9 @@ class ProcessController @Inject()(ctx: HHContext,
 
   def templateAlignment(jobID: String, accession: String): Action[AnyContent] = Action.async { implicit request =>
     val futureScript = toolFinder.getTool(jobID).map {
-      case x if x == ToolNames.HHOMP   => (serverScripts + "/templateAlignmentHHomp.sh").toFile
-      case x if x == ToolNames.HHBLITS => (serverScripts + "/templateAlignmentHHblits.sh").toFile
-      case x if x == ToolNames.HHPRED  => (serverScripts + "/templateAlignment.sh").toFile
+      case HHOMP   => (serverScripts + "/templateAlignmentHHomp.sh").toFile
+      case HHBLITS => (serverScripts + "/templateAlignmentHHblits.sh").toFile
+      case HHPRED  => (serverScripts + "/templateAlignment.sh").toFile
       case _                           => throw new IllegalStateException("tool either not found nor not supported")
     }
     (for {
@@ -62,17 +62,17 @@ class ProcessController @Inject()(ctx: HHContext,
       .resK(jobID)
       .flatMap {
         case Some(jsValue) =>
-          kleisliProvider.toolK(jobID).map {
-            case toolName if toolName == ToolNames.HHBLITS =>
-              (toolName, resultContext.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
-            case toolName if toolName == ToolNames.HHPRED =>
-              (toolName, resultContext.hhpred.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
-            case toolName if toolName == ToolNames.HHOMP =>
-              (toolName, resultContext.hhomp.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
-            case toolName if toolName == ToolNames.HMMER =>
-              (toolName, resultContext.hmmer.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
-            case toolName if toolName == ToolNames.PSIBLAST =>
-              (toolName, resultContext.psiblast.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
+          kleisliProvider.toolK(jobID).map { // TODO composition instead of mapping
+            case HHBLITS =>
+              (HHBLITS, resultContext.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
+            case HHPRED =>
+              (HHPRED, resultContext.hhpred.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
+            case HHOMP =>
+              (HHOMP, resultContext.hhomp.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
+            case HMMER =>
+              (HMMER, resultContext.hmmer.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
+            case PSIBLAST =>
+              (PSIBLAST, resultContext.psiblast.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
             case _ => throw new IllegalArgumentException("tool has no hitlist")
           }
         case None => throw new IllegalStateException
@@ -109,9 +109,9 @@ class ProcessController @Inject()(ctx: HHContext,
                                  accStr: String,
                                  mode: String): String = {
     val evalString = (toolName, mode) match {
-      case (ToolNames.HHBLITS, "alnEval") | (ToolNames.HHPRED, "alnEval") =>
+      case (HHBLITS, "alnEval") | (ToolNames.HHPRED, "alnEval") =>
         result.HSPS.filter(_.info.evalue < accStr.toDouble).map { _.num }.mkString(" ")
-      case (ToolNames.HMMER, "alnEval") =>
+      case (HMMER, "alnEval") =>
         result.HSPS
           .filter(_.evalue < accStr.toDouble)
           .map { hit =>
@@ -119,12 +119,12 @@ class ProcessController @Inject()(ctx: HHContext,
           }
           .size
           .toString
-      case (ToolNames.PSIBLAST, "alnEval") =>
+      case (PSIBLAST, "alnEval") =>
         accStr
       case (_, "aln") => accStr
-      case (ToolNames.HMMER, "evalFull") | (ToolNames.PSIBLAST, "evalFull") =>
+      case (HMMER, "evalFull") | (PSIBLAST, "evalFull") =>
         result.HSPS.filter(_.evalue < accStr.toDouble).map { _.accession + " " }.mkString
-      case (ToolNames.HHBLITS, "evalFull") =>
+      case (HHBLITS, "evalFull") =>
         result.HSPS.filter(_.info.evalue < accStr.toDouble).map { _.template.accession + " " }.mkString
       case _ => throw new IllegalStateException("tool has no evalue")
     }
@@ -139,15 +139,15 @@ class ProcessController @Inject()(ctx: HHContext,
     val numList = accStr.split("\n").map(_.toInt)
 
     toolName match {
-      case ToolNames.HMMER =>
+      case HMMER =>
         numList.map { num =>
           result.HSPS(num - 1).accession + " "
         }.mkString
-      case ToolNames.PSIBLAST =>
+      case PSIBLAST =>
         numList.map { num =>
           result.HSPS(num - 1).accession + " "
         }.mkString
-      case ToolNames.HHBLITS =>
+      case HHBLITS =>
         numList.map { num =>
           result.HSPS(num - 1).template.accession + " "
         }.mkString

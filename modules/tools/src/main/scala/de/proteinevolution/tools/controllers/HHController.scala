@@ -14,7 +14,7 @@ import de.proteinevolution.tools.results.{ HSP, SearchResult }
 import de.proteinevolution.tools.services.{ DTService, KleisliProvider }
 import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc.{ AbstractController, Action, AnyContent }
-
+import ToolNames._
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -38,21 +38,21 @@ class HHController @Inject()(ctx: HHContext,
           kleisliProvider
             .toolK(jobID)
             .map {
-              case x if x == ToolNames.HHBLITS =>
+              case HHBLITS =>
                 (resultCtx.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
                  (hsp: HSP) => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped, jobID))
-              case x if x == ToolNames.HHPRED =>
+              case HHPRED =>
                 val isColor = (json \ "isColor").as[Boolean]
                 (resultCtx.hhpred.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
                  (hsp: HSP) => views.html.hhpred.hit(hsp.asInstanceOf[HHPredHSP], isColor, wrapped, jobID))
-              case x if x == ToolNames.HHOMP =>
+              case HHOMP =>
                 val isColor = (json \ "isColor").as[Boolean]
                 (resultCtx.hhomp.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
                  (hsp: HSP) => views.html.hhomp.hit(hsp.asInstanceOf[HHompHSP], isColor, wrapped, jobID))
-              case x if x == ToolNames.HMMER =>
+              case HMMER =>
                 val result = resultCtx.hmmer.parseResult(jsValue).asInstanceOf[SearchResult[HSP]]
                 (result, (hsp: HSP) => views.html.hmmer.hit(hsp.asInstanceOf[HmmerHSP], result.db, wrapped))
-              case x if x == ToolNames.PSIBLAST =>
+              case PSIBLAST =>
                 val result = resultCtx.psiblast.parseResult(jsValue).asInstanceOf[SearchResult[HSP]]
                 (result, (hsp: HSP) => views.html.psiblast.hit(hsp.asInstanceOf[PSIBlastHSP], result.db, wrapped))
               case _ => throw new IllegalArgumentException("tool has no hitlist") // TODO integrate Alignmnent Ctrl
@@ -85,19 +85,19 @@ class HHController @Inject()(ctx: HHContext,
           kleisliProvider
             .toolK(jobID)
             .map {
-              case x if x == ToolNames.HHBLITS =>
+              case HHBLITS =>
                 (resultCtx.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
                  dtService.getHitsByKeyWord[HHBlitsHSP](resultCtx.hhblits.parseResult(jsValue), params))
-              case x if x == ToolNames.HHOMP =>
+              case HHOMP =>
                 (resultCtx.hhomp.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
                  dtService.getHitsByKeyWord[HHompHSP](resultCtx.hhomp.parseResult(jsValue), params))
-              case x if x == ToolNames.HHPRED =>
+              case HHPRED =>
                 (resultCtx.hhpred.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
                  dtService.getHitsByKeyWord[HHPredHSP](resultCtx.hhpred.parseResult(jsValue), params))
-              case x if x == ToolNames.HMMER =>
+              case HMMER =>
                 (resultCtx.hmmer.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
                  dtService.getHitsByKeyWord[HmmerHSP](resultCtx.hmmer.parseResult(jsValue), params))
-              case x if x == ToolNames.PSIBLAST =>
+              case PSIBLAST =>
                 (resultCtx.psiblast.parseResult(jsValue).asInstanceOf[SearchResult[HSP]],
                  dtService.getHitsByKeyWord[PSIBlastHSP](resultCtx.psiblast.parseResult(jsValue), params))
               case _ => throw new IllegalArgumentException("datatables not implemented for this tool")

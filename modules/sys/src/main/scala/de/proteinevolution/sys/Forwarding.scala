@@ -7,7 +7,7 @@ import de.proteinevolution.sys.ConstructR.Script.ForwardingScript
 
 class Forwarding @Inject()() {
 
-  val envMode = ConfigFactory.load().getString("toolkit_mode")
+  private val envMode: String = ConfigFactory.load().getString("toolkit_mode")
 
   val _ = envMode
 

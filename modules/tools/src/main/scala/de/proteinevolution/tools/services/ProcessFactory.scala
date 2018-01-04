@@ -3,7 +3,7 @@ package de.proteinevolution.tools.services
 import better.files._
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.ToolNames
-
+import ToolNames._
 import scala.sys.process
 import scala.sys.process.Process
 
@@ -25,22 +25,22 @@ private[tools] object ProcessFactory {
             db: String): process.ProcessBuilder = {
 
     val (script, params) = (toolName, mode) match {
-      case (ToolNames.HHBLITS.value, "alnEval") | (ToolNames.HHPRED.value, "alnEval") =>
+      case (HHBLITS.value, "alnEval") | (HHPRED.value, "alnEval") =>
         (generateAlignmentScript, List("jobID" -> jobID, "filename" -> tempFileName, "numList" -> accString))
-      case (ToolNames.HMMER.value, "alnEval") =>
+      case (HMMER.value, "alnEval") =>
         (retrieveAlnEval, List("accessionsStr" -> accString, "filename" -> tempFileName, "mode" -> "count"))
-      case (ToolNames.PSIBLAST.value, "alnEval") =>
+      case (PSIBLAST.value, "alnEval") =>
         (retrieveAlnEval, List("accessionsStr" -> accString, "filename" -> tempFileName, "mode" -> "eval"))
-      case (ToolNames.HMMER.value, "aln") | (ToolNames.PSIBLAST.value, "aln") =>
+      case (HMMER.value, "aln") | (PSIBLAST.value, "aln") =>
         (retrieveAlnEval, List("accessionsStr" -> accString, "filename" -> tempFileName, "mode" -> "sel"))
-      case (ToolNames.HHPRED.value, "aln") | (ToolNames.HHBLITS.value, "aln") =>
+      case (HHPRED.value, "aln") | (HHBLITS.value, "aln") =>
         (generateAlignmentScript, List("jobID" -> jobID, "filename" -> tempFileName, "numList" -> accString))
-      case (ToolNames.PSIBLAST.value, "evalFull") | (ToolNames.HMMER.value, "evalFull") =>
+      case (PSIBLAST.value, "evalFull") | (HMMER.value, "evalFull") =>
         (retrieveFullSeq, List("jobID" -> jobID, "accessionsStr" -> accString, "filename" -> tempFileName, "db" -> db))
-      case (ToolNames.HHBLITS.value, "evalFull") | (ToolNames.HHBLITS.value, "full") =>
+      case (HHBLITS.value, "evalFull") | (HHBLITS.value, "full") =>
         (retrieveFullSeqHHblits,
          List("jobID" -> jobID, "accessionsStr" -> accString, "filename" -> tempFileName, "db" -> db))
-      case (ToolNames.PSIBLAST.value, "full") | (ToolNames.HMMER.value, "full") =>
+      case (PSIBLAST.value, "full") | (HMMER.value, "full") =>
         (retrieveFullSeq, List("jobID" -> jobID, "accessionsStr" -> accString, "filename" -> tempFileName, "db" -> db))
       case _ => throw new IllegalArgumentException("no valid parameters for processing a forwarding job")
     }
