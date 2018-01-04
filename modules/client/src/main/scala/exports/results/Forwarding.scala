@@ -16,7 +16,7 @@ object Forwarding {
 
   @JSExport
   def process(selectedTool: String,
-              boolSelectedHits: Boolean, // what is this for?
+              boolSelectedHits: Boolean, // what is this for? globally not used
               boolEvalue: Boolean,
               evalue: String,
               boolFullLength: Boolean): Unit = {
@@ -45,11 +45,11 @@ object Forwarding {
         .literal(
           url = route,
           data = JSON.stringify(
-            js.Dynamic.literal("filename" -> filename, "evalue" -> evalue, "checkboxes" -> checkboxes)
+            js.Dynamic.literal("fileName" -> filename, "evalue" -> evalue, "checkboxes" -> checkboxes)
           ),
           contentType = "application/json",
           success = { (data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) =>
-            g.forwardPath(selectedTool, s"files${g.jobID}/$filename.fa")
+            g.forwardPath(selectedTool, s"files/${g.jobID}/$filename.fa")
           },
           error = { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
             dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
