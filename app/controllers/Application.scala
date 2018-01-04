@@ -177,15 +177,15 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
 
   // Routes are handled by Mithril, redirect.
   def showTool(toolName: String): Action[AnyContent] = Action { implicit request =>
-    Redirect(s"/#/tools/$toolName", Map.empty, status = 301)
+    PermanentRedirect(s"/#/tools/$toolName")
   }
 
   def showJob(idString: String): Action[AnyContent] = Action { implicit request =>
-    Redirect(s"/#/jobs/$idString")
+    PermanentRedirect(s"/#/jobs/$idString")
   }
 
   def static(static: String): Action[AnyContent] = Action { implicit request =>
-    Redirect(s"/#/$static")
+    PermanentRedirect(s"/#/$static")
   }
 
   /**
