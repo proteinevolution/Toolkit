@@ -44,7 +44,9 @@ GET           /assets/*file                           controllers.Assets.version
 
 
 # Route for direct get requests
-GET           /tools/:toolname                        controllers.Application.showTool(toolname : String)
+GET           /hhpred                                 controllers.Application.showTool(toolname = "hhpred")
+GET           /tools/:toolname                        controllers.Application.showTool(toolname: String)
+
 # Redirects to a job with the jobID // mainID
 GET           /jobs/:idString                         controllers.Application.showJob(idString: String)
 
