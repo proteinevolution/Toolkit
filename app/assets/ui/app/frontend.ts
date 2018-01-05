@@ -104,9 +104,8 @@ window.FrontendAlnvizComponent = {
             }
         };
     },
-
     view: function(ctrl: any) {
-        document.title = "AlignmentViewer - Bioinformatics Toolkit";
+        siteTitle = document.title = "AlignmentViewer - Bioinformatics Toolkit";
         return m("div", {
             id: "jobview"
         }, [
@@ -150,12 +149,9 @@ window.FrontendReformatComponent = {
             })
         };
     },
-<<<<<<< HEAD
     view: function(ctrl: any) {
-=======
-    view: function(ctrl : any) {
-        document.title = "Reformat - Bioinformatics Toolkit";
->>>>>>> 6aded13... Tools/Jobs have their toolname in title
+
+        siteTitle = document.title = "Reformat - Bioinformatics Toolkit";
         return m("div", {
             id: "jobview",
             config: fndt
