@@ -7,6 +7,7 @@ interface Window {
 
 window.call404 = function(elem : any, isInit: boolean) : any {
 
+    siteTitle = document.title = "404 - Bioinformatics Toolkit";
     // msa viewer for 404 page
     if(!isInit) {
         const ErrorOpts = {
