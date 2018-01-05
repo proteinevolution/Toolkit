@@ -93,7 +93,7 @@ lazy val client = (project in file("modules/client"))
       jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv,
       buildInfoSettings,
       libraryDependencies ++= Seq(
-        "org.scala-js"  %%% "scalajs-dom"     % "0.9.3",
+        "org.scala-js"  %%% "scalajs-dom"     % "0.9.4",
         "com.tgf.pizza" %%% "scalajs-mithril" % "0.1.1",
         "be.doeraene"   %%% "scalajs-jquery"  % "0.9.2",
         "org.querki"    %%% "jquery-facade"   % "1.2"

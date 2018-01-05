@@ -182,7 +182,7 @@
                 type: 'GET',
                 url: fileUrlQueryMSAFas
             }).done(function (data_) {
-                forward(selectedTool, data_.toString());
+                Forwarding.simple(selectedTool, data_.toString());
             });
         }
 
@@ -192,7 +192,7 @@
             }
             $.LoadingOverlay("show");
             $('#templateAlignmentModal').foundation('close');
-            forward(tool, forwardData);
+            Forwarding.simple(tool, forwardData);
         }
 
 </script>

@@ -1,6 +1,5 @@
 /* Data table helpers */
 
-
 /* REGEX FOR DB IDENTIFICATION*/
 var uniprotReg = "^([A-Z0-9]{10}|[A-Z0-9]{6})$";
 var scopReg = "^([defgh][0-9a-zA-Z\.\_]+)$";
@@ -83,73 +82,6 @@ function resubmitSection(sequence, name) {
     $('#alignment').val(resubmitSeqs.join(''));
 }
 
-
-/**
- * forward the given forwardData to the given tool
- * @param tool
- * @param forwardData
- */
-function forward(tool, forwardData){
-    if(forwardData === ""){
-        alert("No sequence(s) selected!");
-        $.LoadingOverlay("hide");
-        return;
-    }
-    try {
-        localStorage.setItem("resultcookie", forwardData);
-        window.location.href = "/#/tools/" + tool;
-    } catch(e) {
-        if (isQuotaExceeded(e)) {
-            // Storage full, maybe notify user or do some clean-up
-            $.LoadingOverlay("hide");
-            alert("File is too big to be forwarded!" )
-        }
-    }
-}
-
-function forwardPath(tool, forwardPath){
-    m.route("/tools/" + tool);
-    $.ajax({
-        type: 'GET',
-        contentType: "charset=utf-8",
-        url: forwardPath,
-        error: function(){
-            $.LoadingOverlay("hide");
-        }
-    }).done(function (data) {
-    if(tool === "reformat"){
-            setInterval(function(){ myCodeMirror.setValue(data); $.LoadingOverlay("hide"); }, 100);
-        }
-    else {
-            $('#alignment').val(data);
-        }
-        validationProcess($('#alignment'),$("#toolnameAccess").val());
-        $.LoadingOverlay("hide");
-    })
-}
-
-function isQuotaExceeded(e) {
-    var quotaExceeded = false;
-    if (e) {
-        if (e.code) {
-            switch (e.code) {
-                case 22:
-                    quotaExceeded = true;
-                    break;
-                case 1014:
-                    // Firefox
-                    if (e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
-                        quotaExceeded = true;
-                    }
-                    break;
-            }
-        } else if (e.number === -2147024882) {
-            // Internet Explorer 8
-            quotaExceeded = true;
-        }
-    }
-    return quotaExceeded;
-}
 // load forwarded data into alignment field
 $(document).ready(function() {
     var resultcookie = localStorage.getItem("resultcookie");
@@ -191,7 +123,7 @@ function scrollToSection(name) {
 
 function selectFromArray(checkboxes){
     _.range(1, numHits+1).forEach(function (currentVal) {
-        $('input:checkbox[value='+currentVal+'][name="alignment_elem"]').prop('checked', checkboxes.indexOf(currentVal) !== -1 ? true : false);
+        $('input:checkbox[value='+currentVal+'][name="alignment_elem"]').prop('checked', checkboxes.indexOf(currentVal) !== -1);
     })
 }
 
@@ -225,20 +157,18 @@ function hitlistBaseFunctions(){
     });
 }
 
-
 Array.prototype.removeDuplicates = function () {
     return this.filter(function (item, index, self) {
         return self.indexOf(item) === index;
     });
 };
 
-
 function getsHitsManually(){
     if (!loading) {
         var end = shownHits + 100;
         end = end < numHits ? end : numHits;
         if (shownHits !== end) {
-            getHits(shownHits, end, wrapped, false);
+            ResultViewHelper.showHits(shownHits, end, wrapped, false, jobID);
         }
         shownHits = end;
     }

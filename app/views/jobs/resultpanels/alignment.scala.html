@@ -33,7 +33,6 @@
 </div>
 
 <script>
-
         var fileUrl = "/files/@jobID/alignment.fas";
         var downloadFilename = "@{tool.toolNameShort}_@{resultName}_@{jobID}" + ".fasta";
         var selectAllBoolAln = false;
@@ -60,7 +59,7 @@
                     $.LoadingOverlay("hide")
                 }
             }).done(function (data) {
-                    forward(selectedTool, data);
+                Forwarding.simple(selectedTool, data);
             });
         };
 

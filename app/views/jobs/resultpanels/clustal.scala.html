@@ -77,11 +77,8 @@
         var checkboxes = [];
         var checkbox = "checkbox";
 
-
-
         window["@{resultName}_forward"] = function(selectedTool){
             var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
-
             $.LoadingOverlay("show");
             // get result json
             $.ajax({
@@ -93,7 +90,7 @@
                     $.LoadingOverlay("hide")
                 }
             }).done(function (data) {
-                    forward(selectedTool, data);
+                Forwarding.simple(selectedTool, data);
             });
         };
 

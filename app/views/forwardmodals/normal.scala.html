@@ -51,10 +51,9 @@
     $('#forwardSelect_@viewName').val("@defaultTool");
 
     window["@{viewName}_forward_"] = function(){
-        var selectedTool, boolSelectedHits,boolEvalue, evalue, boolFullLength, sliderRegion;
+        var selectedTool, boolEvalue, evalue, boolFullLength, sliderRegion;
         boolFullLength = $('#fullLength_@viewName').is(':checked');
         boolEvalue = $('#accordingEvalue_@viewName').is(':checked');
-        boolSelectedHits = $('#selectedHits_@viewName').is(':checked');
         selectedTool = $('#forwardSelect_@viewName').val();
         evalue = $("#forwardEvalueNormal_@viewName").val();
         sliderRegion = $('#sliderRegion_@viewName').is(':checked');
@@ -63,7 +62,7 @@
             $('#forwardModal_@{viewName}').foundation('close');
             return;
         }
-        Forwarding.process(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength, sliderRegion);
+        Forwarding.process(selectedTool, boolEvalue, evalue, boolFullLength, sliderRegion);
         if (selectedTool !== "") {
             $('#forwardModal_@{viewName}').foundation('close');
         }

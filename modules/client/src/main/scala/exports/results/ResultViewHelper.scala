@@ -63,7 +63,7 @@ object ResultViewHelper {
         (el: Element, i: Int) => jQuery(el).prop("checked", true)
       )
       val numHits = js.Dynamic.global.numHits.asInstanceOf[Int]
-      val range = 1 to numHits + 1
+      val range   = 1 to numHits + 1
       js.Dynamic.global.checkboxes = range.toJSArray
       dom.console.log(js.Dynamic.global.checkboxes)
     } else {

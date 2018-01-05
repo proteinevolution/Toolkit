@@ -87,7 +87,7 @@
         window["@{tool.toolNameShort}_forward"] = function(selectedTool){
             $.LoadingOverlay("show");
             var fileURL="/files/@{jobID}/@{jobID}" + ".fas";
-            forwardPath(selectedTool, fileURL);
+            Forwarding.redirect(selectedTool, fileURL);
 
         };
 

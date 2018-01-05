@@ -8,6 +8,9 @@ import org.scalajs.dom
 import scala.scalajs.js
 import scala.scalajs.js.JSON
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
+import scala.scalajs.js.timers._
+
+import com.tgf.pizza.scalajs.mithril._
 
 @JSExportTopLevel("Forwarding")
 object Forwarding {
@@ -15,31 +18,22 @@ object Forwarding {
   import js.Dynamic.{ global => g }
 
   @JSExport
-  def process(selectedTool: String,
-              boolSelectedHits: Boolean, // what is this for? globally not used
-              boolEvalue: Boolean,
-              evalue: String,
-              boolFullLength: Boolean): Unit = {
-
+  def process(selectedTool: String, hasEvalue: Boolean, evalue: String, isFullLength: Boolean): Unit = {
     g.$.LoadingOverlay("show")
     val checkboxes = g.checkboxes.removeDuplicates().asInstanceOf[js.Array[Int]]
-
     if (checkboxes.length < 1) {
       g.$(".forwardModal").foundation("close")
       g.$.LoadingOverlay("hide")
       g.alert("No sequence(s) selected!")
       return
     }
-
     val filename = UUID.randomUUID().toString.toUpperCase
-    val route = (boolSelectedHits, boolEvalue, boolFullLength) match {
-
-      case (_, true, true)   => "/results/forwardAlignment/" + g.jobID + "/evalFull"
-      case (_, false, true)  => "/results/forwardAlignment/" + g.jobID + "/evalFull"
-      case (_, true, false)  => "/results/forwardAlignment/" + g.jobID + "/alnEval"
-      case (_, false, false) => "/results/forwardAlignment/" + g.jobID + "/aln"
+    val route = (hasEvalue, isFullLength) match {
+      case (true, true)   => "/results/forwardAlignment/" + g.jobID + "/evalFull"
+      case (false, true)  => "/results/forwardAlignment/" + g.jobID + "/evalFull"
+      case (true, false)  => "/results/forwardAlignment/" + g.jobID + "/alnEval"
+      case (false, false) => "/results/forwardAlignment/" + g.jobID + "/aln"
     }
-
     $.ajax(
       js.Dynamic
         .literal(
@@ -49,7 +43,7 @@ object Forwarding {
           ),
           contentType = "application/json",
           success = { (data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) =>
-            g.forwardPath(selectedTool, s"files/${g.jobID}/$filename.fa")
+            redirect(selectedTool, s"files/${g.jobID}/$filename.fa")
           },
           error = { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
             dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
@@ -59,6 +53,53 @@ object Forwarding {
         )
         .asInstanceOf[JQueryAjaxSettings]
     )
+  }
+
+  @JSExport
+  def redirect(tool: String, forwardPath: String): Unit = {
+    m.route(s"/tools/$tool")
+    $.ajax(
+      js.Dynamic
+        .literal(
+          url = forwardPath,
+          success = { (data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) =>
+            if (tool == "reformat") {
+              setTimeout(100) { () =>
+                g.myCodeMirror.setValue(data.asInstanceOf[js.Array[String]])
+                g.$.LoadingOverlay("hide")
+              }
+            } else {
+              $("#alignment").value(data.asInstanceOf[js.Array[String]])
+              g.$.LoadingOverlay("hide")
+              g.validationProcess($("#alignment"), $("#toolnameAccess").value())
+            }
+          },
+          error = { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
+            dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
+            g.$.LoadingOverlay("hide")
+          },
+          `type` = "GET"
+        )
+        .asInstanceOf[JQueryAjaxSettings]
+    )
+  }
+
+  @JSExport
+  def simple(tool: String, forwardData: String): Unit = {
+    if (forwardData.isEmpty) {
+      g.alert("No sequence(s) selected!")
+      g.$.LoadingOverlay("hide")
+      return
+    }
+    try {
+      dom.window.localStorage.setItem("resultcookie", forwardData)
+    } catch {
+      case e: Throwable =>
+        g.alert(e.getLocalizedMessage)
+        e.printStackTrace()
+        throw e
+    }
+    m.route(s"#/tools/$tool")
   }
 
 }
