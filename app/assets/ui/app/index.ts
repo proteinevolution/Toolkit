@@ -103,7 +103,7 @@ interface Window { Index: any; }
 
 window.Index = {
     controller: function () : any {
-        document.title = "Bioinformatics Toolkit";
+        siteTitle = document.title = "Bioinformatics Toolkit";
         return JobListComponent.selectedJobID = null;
     },
     view: function () {
