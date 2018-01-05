@@ -35,7 +35,6 @@ window.Toolkit = {
 
 
         currentRoute = args.isJob ? "jobs" : "tools";
-        document.title = "Bioinformatics Toolkit";
         let job : any, jobID : string, toolname : string, viewComponent : any;
         if (args.isJob) {
             jobID = m.route.param("jobID");
@@ -57,7 +56,6 @@ window.Toolkit = {
             JobSubmissionComponent.currentJobID = null;
         }
         toolname = m.route.param("toolname");
-
 
         if (FrontendTools[toolname]) {
             viewComponent = function() { return FrontendTools[toolname]; };
