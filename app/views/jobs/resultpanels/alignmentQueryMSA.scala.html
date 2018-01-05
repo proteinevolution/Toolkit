@@ -7,7 +7,7 @@
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="@{resultName}_selectAllAlnq()" class="selectAllSeq"><span class="@{resultName}_selectAllSeqSpanAlnq">Select all</span></a>
+    <a onclick="ResultViewHelper.toggleAllCheckboxes();" class="selectAllSeq"><span class="@{resultName}_selectAllSeqBar">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Reduced A3M</span></a>
     <a type="button" id="downloadAlignmentFull"  onclick="@{resultName}_downloadFull()"><span>Download Full A3M</span></a>
@@ -45,7 +45,6 @@
         var resultName = '@resultName';
         var checkboxes = [];
         var checkbox = "checkbox";
-
 
         window["@{resultName}_forward"] = function(selectedTool){
             var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
@@ -137,24 +136,6 @@
                 });
             }
         }
-
-        window["@{resultName}_selectAllAlnq"] = function(){
-            selectAllBoolAlnq = !selectAllBoolAlnq;
-            $(".@{resultName}_selectAllSeqSpanAlnq").toggleText("Select all","Deselect all");
-            $(".@{resultName}_selectAllSeqSpanAlnq").toggleClass("colorToggle");
-            if(selectAllBoolAlnq) {
-                selectAllHelper(checkbox);
-                // first empty array
-                checkboxes = [];
-                // push all checkboxes (1 to num_hits) into array
-                _.range(1, numHits+1).forEach(function(x){checkboxes.push(x)});
-            }
-            else {
-                ResultViewHelper.deselectAll();
-                // delete all checkboxes from array
-                checkboxes = [];
-            }
-        };
 
         $(document).ready(function () {
 

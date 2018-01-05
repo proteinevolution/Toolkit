@@ -8,7 +8,7 @@
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="@{resultName}_selectAllAln()" class="selectAllSeq"><span class="@{resultName}_selectAllSeqSpan">Select all</span></a>
+    <a onclick="ResultViewHelper.toggleAllCheckBoxes();" class="selectAllSeq"><span class="selectAllSeqBar">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download MSA</span></a>
     @defining("/files/" + jobID + "/" + "alignment.fas") { fileURL: String =>
@@ -102,24 +102,6 @@
                 });
             }
         }
-
-        window["@{resultName}_selectAllAln"] = function(){
-            selectAllBoolAln = !selectAllBoolAln;
-            $(".@{resultName}_selectAllSeqSpan").toggleText("Select all","Deselect all");
-            $(".@{resultName}_selectAllSeqSpan").toggleClass("colorToggle");
-            if(selectAllBoolAln) {
-                selectAllHelper(checkbox);
-                // first empty array
-                checkboxes = [];
-                // push all checkboxes (1 to num_hits) into array
-                _.range(1, numHits+1).forEach(function(x){checkboxes.push(x)});
-            }
-            else {
-                deselectAll(checkbox);
-                // delete all checkboxes from array
-                checkboxes = [];
-            }
-        };
 
         $(document).ready(function () {
 

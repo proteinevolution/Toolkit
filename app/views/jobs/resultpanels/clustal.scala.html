@@ -10,7 +10,7 @@
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="@{tool.toolNameShort}_selectAllClustal()" class="selectAllSeq"><span class="selectAllSeqSpanClustal">Select all</span></a>
+    <a onclick="ResultViewHelper.toggleAllCheckboxes();" class="selectAllSeq"><span class="selectAllSeqBar">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download MSA</span></a>
     <a type="button" href="@fileURL" target="_blank" rel="noopener"><span>Export MSA</span></a>
@@ -104,24 +104,6 @@
             }).done(function (data) {
                 download(downloadFilename, data.toString());
             });
-        };
-
-        window["@{tool.toolNameShort}_selectAllClustal"] = function(){
-            selectAllBoolClustal = !selectAllBoolClustal;
-            $(".selectAllSeqSpanClustal").toggleClass("colorToggle");
-            $(".selectAllSeqSpanClustal").toggleText("Select all", "Deselect all");
-            if(selectAllBoolClustal) {
-                selectAllHelper(checkbox);
-                // first empty array
-                checkboxes = [];
-                // push all checkboxes (1 to num_hits) into array
-                _.range(1, numHits+1).forEach(function(x){checkboxes.push(x)});
-            }
-            else {
-                ResultViewHelper.deselectAll();
-                // delete all checkboxes from array
-                checkboxes = [];
-            }
         };
 
         window["@{tool.toolNameShort}_getHits"] = function(color){
