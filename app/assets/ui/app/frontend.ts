@@ -103,6 +103,7 @@ window.FrontendAlnvizComponent = {
         };
     },
     view: function(ctrl : any) {
+        document.title = "AlignmentViewer - Bioinformatics Toolkit";
         return m("div", {
             id: "jobview"
         }, [
@@ -141,6 +142,7 @@ window.FrontendReformatComponent = {
         };
     },
     view: function(ctrl : any) {
+        document.title = "Reformat - Bioinformatics Toolkit";
         return m("div", {
             id: "jobview",
             config: fndt
