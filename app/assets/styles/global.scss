@@ -2,11 +2,12 @@
 
 @import 'lib/foundation-sites/scss/foundation';
 
+@import '../../../public/styles/hamburgers.min.css';
+
 @import 'footer';
 @import 'sidebar';
 @import 'navbar';
-@import 'tools';
-@import 'errors';
+@import 'tooltips';
 @import 'jobmanager';
 @import 'tooltips';
 
@@ -44,6 +45,23 @@
 @include foundation-accordion;
 @include foundation-accordion-menu;
 
+
+@import 'print';
+@import 'sequence_coloring';
+@import 'index';
+
+@import '../../../public/styles/reformat';
+@import '../../../public/styles/reformat-common';
+
+@import 'reformat-jobview';
+@import 'jobview';
+@import 'joblist';
+@import 'news';
+@import 'offcanvas';
+@import 'help';
+@import 'resultView';
+@import 'general';
+
+@import '../../../public/styles/mfglabs_iconset';
+
 @import 'compatibility';
-
-
