@@ -1,29 +1,19 @@
 div#content {
-
-    
     background-color: rgb(238, 238, 238) !important;
 }
 
-
 .CodeMirror pre {
-
     font-family: Monaco, Consolas, "Lucida Console", monospace;
     font-size: 12px;
-
 }
 
-.code { color: #ffae00; }
-
-.has-tip {
-    border-bottom: dotted 0px;
-
+.code {
+    color: #ffae00;
 }
 
-.dropzone{
-
+.dropzone {
     border: dashed 1px darkblue;
-    background-color: #c6d6e5 ;
-
+    background-color: #c6d6e5;
 }
 
 #progress_bar {
@@ -37,9 +27,11 @@ div#content {
     -o-transition: opacity 1s linear;
     -webkit-transition: opacity 1s linear;
 }
+
 #progress_bar.loading {
     opacity: 1.0;
 }
+
 #progress_bar .percent {
     background-color: #99ccff;
     height: auto;

@@ -2,11 +2,11 @@
 @(filepath : String, filename : String, jobID : String, resultname : String)()
 
 <a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download PDB file</a>
-<hr id="line-element" class="horizontal-line"><br><br>
+<hr class="horizontal-line"> <br> <br>
 
 <div id="viewport"></div><br><br><br>
 
-<hr id="line-element" class="horizontal-line">
+<hr class="horizontal-line">
 <div id="toolReferences">
 
 @if(resultname == "Modeller") {
@@ -34,7 +34,7 @@
 }
 </div>
 
-<hr id="line-element" class="horizontal-line">
+<hr class="horizontal-line">
 
 <script>
         var downloadFilename = "@{resultname}_@{jobID}";
