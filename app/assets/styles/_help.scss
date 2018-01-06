@@ -1,0 +1,61 @@
+/* Helpmodal in Subnavigation */
+#helpModal {
+    width: 80%;
+    margin-left: auto;
+    height: inherit;
+    min-height: inherit;
+    top: 209px !important;
+    font-size: 0.85em;
+}
+
+.helpModals .section {
+    margin-top: 1em;
+}
+
+.helpModals p {
+    font-weight: normal;
+}
+
+.helpModals h5 {
+    color: #2E8C81;
+}
+
+.helpModals h6 {
+    font-weight: bold;
+    font-size: 1em;
+    margin-bottom:0;
+}
+
+#imprintModal,
+#subnavHelpModal,
+#subnavFAQModal,
+#privacyPolicyModal,
+#contactModal,
+#citeModal,
+#recentUpdatesModal {
+    font-size: 0.85em;
+    width: 55%;
+}
+
+#imprintContent,
+#helpModalContent,
+#FAQModalContent,
+#privacyPolicyContent,
+#contactModelContent,
+#citeModalContent,
+#recentUpdatesContent {
+    padding: 1em;
+}
+
+.accordion-content {
+    font-size: 0.9em;
+}
+
+/* Help Modals for Tools */
+#help-psiblast {
+    font-size: 0.85em !important;
+}
+
+.helpicon:hover {
+    color: #008979;
+}
