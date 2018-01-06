@@ -406,7 +406,7 @@ table.dataTable.no-footer{
 }
 
 .alignmentTBody td{
-    padding: unset;
+    padding: 0;
 }
 
 #alignmentResultView{
@@ -416,7 +416,7 @@ table.dataTable.no-footer{
 }
 
 .alignmentCheckbox{
-  margin: unset;
+    margin: 0;
 }
 
 
@@ -510,7 +510,7 @@ table.dataTable.no-footer{
 }
 
 .scrollContainerDivWhite {
-    margin: unset;
+    margin: 0;
 }
 
 #controlls {
