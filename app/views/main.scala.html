@@ -29,15 +29,10 @@
 
         <link rel="stylesheet" type="text/css" charset="utf-8" href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 
-
         @Html(webJarsUtil.css("hamburgers.min.css"))
-        <link href="@routes.Assets.versioned("styles/global.css")" rel="stylesheet">
         @Html(webJarsUtil.css("nice-select.css"))
-        <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/mfglabs_iconset.css")" rel="stylesheet">
         @Html(webJarsUtil.css("font-awesome.min.css"))
-        <link href="@routes.Assets.versioned("styles/sequence_coloring.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("styles/global.css")" rel="stylesheet">
 
             <!-- JQuery -->
         @Html(webJarsUtil.script("3.2.1/jquery.min.js"))
@@ -45,14 +40,6 @@
         @Html(webJarsUtil.script("1.12.1/jquery-ui.min.js"))
         @Html(webJarsUtil.script("jquery.nice-select.js"))
 
-        <link href="@routes.Assets.versioned("styles/index.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/reformat.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/reformat-common.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/reformat-jobview.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/jobview.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/joblist.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/news.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/offcanvas.css")" rel="stylesheet">
 
             <!-- Mithril -->
 
@@ -101,9 +88,6 @@
         @Html(webJarsUtil.css("codemirror.css"))
         @Html(webJarsUtil.script("javascript.js"))
 
-        <link href="@routes.Assets.versioned("styles/custom.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/print.css")" rel="stylesheet">
-
             <!-- Datatables -->
         @Html(webJarsUtil.css("dataTables.foundation.min.css"))
         @Html(webJarsUtil.script("jquery.dataTables.min.js"))
@@ -116,12 +100,7 @@
     <body onload="reloadJobList();">
         <input type="hidden" id="authView" value="@view">
 
-        <div id="message-float" style="position: fixed;
-            top: 0px;
-            left: 0px;
-            width: 100%;
-            text-align: center;
-            z-index: 1000;">
+        <div id="message-float">
             <div id="message-container" data-closable data-close class="callout" @if(message == "") {
                 hidden="hidden"
             } style="text-align: center;
@@ -146,11 +125,9 @@
                 <button type="button" data-open="offCanvas"><i class="icon-reorder icon2x"></i></button>
             </div>
 
-            <div id="main" class="row" style="max-width: 75rem;
-                margin: 0 auto" data-off-canvas-content>
+            <div id="main" class="row" data-off-canvas-content>
                 <div class="small-12 padded-column columns">
-                    <div class="row" style="height: 135px;
-                        min-height: 135px;">
+                    <div class="row">
                         <div class="small-12 padded-column columns">
                                 <!---All purpose Modal --->
                             <div id="modal" class="reveal large" data-reveal>
@@ -192,7 +169,7 @@
                             </div>
 
 
-                            <div class="row" id="navcontainer">
+                            <div class="row show-for-large" id="navcontainer">
                                     <!--logo-->
                                 <div class="columns large-2 show-for-large" id="logo">
                                     <a href="/#/">
