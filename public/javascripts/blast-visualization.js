@@ -22,9 +22,9 @@ var pfamReg = "^(pfam[0-9]+&|^PF[0-9]+(\.[0-9]+)?)$";
 var ncbiReg = "^([A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9])$";
 
 
-function download(filename, text){
+function download(filename, text) {
     var blob = new Blob([text], {type: "octet/stream"});
-    if(window.navigator.msSaveOrOpenBlob) {
+    if (window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveBlob(blob, filename);
     } else {
         var a = document.createElement("a");
@@ -42,7 +42,6 @@ function download(filename, text){
 }
 
 
-
 /* Slider */
 function slider_show(sequence_length, start, end) {
 
@@ -58,7 +57,6 @@ function slider_show(sequence_length, start, end) {
     }).show();
 
 
-
     $("#flat-slider").slider({
         range: true,
         orientation: 'horizontal',
@@ -66,12 +64,12 @@ function slider_show(sequence_length, start, end) {
         max: sequence_length,
         step: 1,
         values: [start, end],
-        slide: function(event, ui) {
+        slide: function (event, ui) {
             tooltip.text(ui.values[0]);
             tooltip2.text(ui.values[1]);
         },
-        change: function(event, ui) {
-            var sliderCoords =  $('#flat-slider').slider("option", "values");
+        change: function (event, ui) {
+            var sliderCoords = $('#flat-slider').slider("option", "values");
         }
     });
 
@@ -85,12 +83,10 @@ function slider_show(sequence_length, start, end) {
 }
 
 
-
 function getSliderRange() {
 
     return $('#flat-slider').slider("option", "values");
 }
-
 
 
 function resubmitSection(sequence, name) {
@@ -110,8 +106,8 @@ function resubmitSection(sequence, name) {
  * @param tool
  * @param forwardData
  */
-function forward(tool, forwardData){
-    if(forwardData === ""){
+function forward(tool, forwardData) {
+    if (forwardData === "") {
         alert("No sequence(s) selected!");
         $.LoadingOverlay("hide");
         return;
@@ -119,33 +115,36 @@ function forward(tool, forwardData){
     try {
         localStorage.setItem("resultcookie", forwardData);
         window.location.href = "/#/tools/" + tool;
-    } catch(e) {
+    } catch (e) {
         if (isQuotaExceeded(e)) {
             // Storage full, maybe notify user or do some clean-up
             $.LoadingOverlay("hide");
-            alert("File is too big to be forwarded!" )
+            alert("File is too big to be forwarded!")
         }
 
     }
 }
 
-function forwardPath(tool, forwardPath){
+function forwardPath(tool, forwardPath) {
     m.route("/tools/" + tool);
     $.ajax({
         type: 'GET',
         contentType: "charset=utf-8",
         url: forwardPath,
-        error: function(){
+        error: function () {
             $.LoadingOverlay("hide");
         }
     }).done(function (data) {
-    if(tool === "reformat"){
-            setInterval(function(){ myCodeMirror.setValue(data); $.LoadingOverlay("hide"); }, 100);
+        if (tool === "reformat") {
+            setInterval(function () {
+                myCodeMirror.setValue(data);
+                $.LoadingOverlay("hide");
+            }, 100);
         }
-    else {
+        else {
             $('#alignment').val(data);
         }
-        validationProcess($('#alignment'),$("#toolnameAccess").val());
+        validationProcess($('#alignment'), $("#toolnameAccess").val());
         $.LoadingOverlay("hide");
     })
 }
@@ -172,8 +171,9 @@ function isQuotaExceeded(e) {
     }
     return quotaExceeded;
 }
+
 // load forwarded data into alignment field
-$(document).ready(function() {
+$(document).ready(function () {
     var resultcookie = localStorage.getItem("resultcookie");
     $('#alignment').val(resultcookie);
     localStorage.removeItem("resultcookie");
@@ -181,28 +181,26 @@ $(document).ready(function() {
 });
 
 
-function identifyDatabase(id){
+function identifyDatabase(id) {
     if (id === null)
         return null;
-    if(id.match(scopReg))
+    if (id.match(scopReg))
         return "scop";
-    else if(id.match(ecodReg))
+    else if (id.match(ecodReg))
         return "ecod";
-    else if(id.match(mmcifShortReg))
+    else if (id.match(mmcifShortReg))
         return "mmcif";
-    else if(id.match(mmcifReg))
+    else if (id.match(mmcifReg))
         return "mmcif";
-    else if(id.match(pfamReg))
+    else if (id.match(pfamReg))
         return "pfam";
-    else if(id.match(ncbiReg))
+    else if (id.match(ncbiReg))
         return "ncbi";
-    else if(id.match(uniprotReg))
+    else if (id.match(uniprotReg))
         return "uniprot";
     else
         return null;
 }
-
-
 
 
 /* draw hits */
@@ -210,11 +208,11 @@ function drawHits(id, hits) {
     var s = Snap("#" + id);
     // Get maximum of query_end with map and reduce
     document.getElementById(id).setAttribute("viewBox", "0 0 " + hits.map(function (hit) {
-            return hit.query_end;
-        })
-            .reduce(function (a, b) {
-                return Math.max(a, b);
-            }) + " " + hits.length);
+        return hit.query_end;
+    })
+        .reduce(function (a, b) {
+            return Math.max(a, b);
+        }) + " " + hits.length);
     for (var i = 0; i < hits.length; ++i) {
         var hit = hits[i];
         var diff = hit.query_end - hit.query_begin;
@@ -270,21 +268,21 @@ function calcColor(prob) {
 }
 
 
-function scrollToElem(num){
+function scrollToElem(num) {
     num = parseInt(num);
     var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
     if (num > shownHits) {
         $.LoadingOverlay("show");
-        getHits(shownHits, num, wrapped, false).done(function(data){
+        getHits(shownHits, num, wrapped, false).done(function (data) {
             var pos = $('.aln"][value=' + num + ']').offset().top;
             $(elem).animate({
                 scrollTop: pos - 100
             }, 1)
-        }).then(function(){
+        }).then(function () {
             $.LoadingOverlay("hide");
         });
         shownHits = num;
-    }else{
+    } else {
         var pos = $('.aln[value=' + num + ']').offset().top;
         $(elem).animate({
             scrollTop: pos - 100
@@ -294,36 +292,44 @@ function scrollToElem(num){
 
 function scrollToSection(name) {
     var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
-    var pos = $('#tool-tabs').hasClass("fullscreen") ? $('#' + name).offset().top + $(elem).scrollTop() : $('#' + name).offset().top + 25;
+    var pos = $('#' + name).offset().top + ($('#tool-tabs').hasClass("fullscreen") ? $(elem).scrollTop() : 25);
     $(elem).animate({
         scrollTop: pos
     }, 'fast');
 
 }
+
 // select all checkboxes
 function selectAllHelper(name) {
-    $('input:checkbox.'+name+'[name="alignment_elem"]').each(function () {
+    $('input:checkbox.' + name + '[name="alignment_elem"]').each(function () {
         $(this).prop('checked', true);
     });
 
 }
-function deselectAll(name){
-    $('input:checkbox.'+name+'').prop('checked', false);
+
+function deselectAll(name) {
+    $('input:checkbox.' + name + '').prop('checked', false);
     checkboxes = [];
 }
-function selectFromArray(checkboxes){
-    _.range(1, numHits+1).forEach(function (currentVal) {
-        $('input:checkbox[value='+currentVal+'][name="alignment_elem"]').prop('checked', checkboxes.indexOf(currentVal) !== -1 ? true : false);
+
+function selectFromArray(checkboxes) {
+    _.range(1, numHits + 1).forEach(function (currentVal) {
+        $('input:checkbox[value=' + currentVal + '][name="alignment_elem"]').prop('checked', checkboxes.indexOf(currentVal) !== -1);
     })
 }
 
-function getCheckedCheckboxes(){
-    $('input:checkbox:checked[name="alignment_elem"]').each(function(){var num = parseInt($(this).val()); if(checkboxes.indexOf(num) === -1){checkboxes.push(num)}});
+function getCheckedCheckboxes() {
+    $('input:checkbox:checked[name="alignment_elem"]').each(function () {
+        var num = parseInt($(this).val());
+        if (checkboxes.indexOf(num) === -1) {
+            checkboxes.push(num)
+        }
+    });
 }
 
 
-function hitlistBaseFunctions(){
-    $(document).ready(function() {
+function hitlistBaseFunctions() {
+    $(document).ready(function () {
         // add tooltipster to visualization
         $('#blastviz').find('area').tooltipster({
             theme: ['tooltipster-borderless', 'tooltipster-borderless-customized'],
@@ -360,16 +366,18 @@ Array.prototype.removeDuplicates = function () {
 };
 
 
-function selectAll(){
+function selectAll() {
     selectAllBool = !selectAllBool;
-    if(selectAllBool) {
+    if (selectAllBool) {
         selectAllHelper(checkbox);
         $(".selectAllSeqBar").text("Deselect all").addClass("colorToggleBar");
 
         // first empty array
         checkboxes = [];
         // push all checkboxes (1 to num_hits) into array
-        _.range(1, numHits+1).forEach(function(num){return checkboxes.push(num)});
+        _.range(1, numHits + 1).forEach(function (num) {
+            return checkboxes.push(num)
+        });
     }
     else {
         deselectAll(checkbox);
@@ -380,7 +388,7 @@ function selectAll(){
 }
 
 
-function getsHitsManually(){
+function getsHitsManually() {
     if (!loading) {
         var end = shownHits + 100;
         end = end < numHits ? end : numHits;
@@ -391,8 +399,8 @@ function getsHitsManually(){
     }
 }
 
-function linkCheckboxes(){
-    $('input:checkbox').on('change',function (e) {
+function linkCheckboxes() {
+    $('input:checkbox').on('change', function (e) {
         var currentVal = $(this).val();
         var currentState = $(this).prop('checked');
 
@@ -410,14 +418,16 @@ function linkCheckboxes(){
             });
         } else {
             // delete num of unchecked checkbox from array
-            checkboxes = checkboxes.filter(function(x){return x !== currentVal});
+            checkboxes = checkboxes.filter(function (x) {
+                return x !== currentVal
+            });
         }
 
     });
 }
 
 
-function generateFilename(){
+function generateFilename() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
@@ -426,20 +436,20 @@ function generateFilename(){
  * for this it empties the table "#alignmentTable"
  * and calls get Hits taking the boolean wrapped as a parameter
  */
-function wrap(){
+function wrap() {
     wrapped = !wrapped;
-    var elemArr =  $(".aln").toArray();
+    var elemArr = $(".aln").toArray();
     var num = 1;
-    for(var i =0 ; i < elemArr.length; i++){
-        if($(elemArr[i]).isOnScreen()){
-            num  = $(elemArr[i]).attr("value");
+    for (var i = 0; i < elemArr.length; i++) {
+        if ($(elemArr[i]).isOnScreen()) {
+            num = $(elemArr[i]).attr("value");
             break;
         }
     }
     $("#wrap").toggleClass("colorToggleBar");
     $("#wrap").toggleText("Unwrap Seqs", "Wrap Seqs");
     $("#alignmentTable").empty();
-    getHits(0, shownHits, wrapped, false).then(function(){
+    getHits(0, shownHits, wrapped, false).then(function () {
         linkCheckboxes();
         scrollToElem(num);
     });
@@ -447,21 +457,20 @@ function wrap(){
 }
 
 
-
-function colorAA(){
+function colorAA() {
     colorAAs = !colorAAs;
     $.LoadingOverlay("show");
     $(".colorAA").toggleClass("colorToggleBar");
-    var elemArr =  $(".aln").toArray();
+    var elemArr = $(".aln").toArray();
     var num = 1;
-    for(var i =0 ; i < elemArr.length; i++){
-        if($(elemArr[i]).isOnScreen()){
-            num  = $(elemArr[i]).attr("value");
+    for (var i = 0; i < elemArr.length; i++) {
+        if ($(elemArr[i]).isOnScreen()) {
+            num = $(elemArr[i]).attr("value");
             break;
         }
     }
     $("#alignmentTable").empty();
-    getHits(0, shownHits, wrapped, colorAAs).then(function(){
+    getHits(0, shownHits, wrapped, colorAAs).then(function () {
         $.LoadingOverlay("hide");
         linkCheckboxes();
         scrollToElem(num);
@@ -470,12 +479,12 @@ function colorAA(){
 
 
 $.fn.extend({
-    toggleText: function(a, b){
+    toggleText: function (a, b) {
         return this.text(this.text() === b ? a : b);
     }
 });
 
-$.fn.isOnScreen = function(){
+$.fn.isOnScreen = function () {
     var viewport = {};
     viewport.top = $(window).scrollTop();
     viewport.bottom = viewport.top + $(window).height();

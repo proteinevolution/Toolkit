@@ -53,8 +53,7 @@
 }
 
 .job-list .openmanager .icon-list {
-    margin:unset;
-    margin-right:-8px;
+    margin: 0 -8px 0 0;
 }
 
 .job-list .boxclose {
@@ -182,7 +181,7 @@
 }
 .job-list .arrow.bottom {
     height: 1.7em;
-    border-top: unset;
+    border-top: 0;
     -moz-border-radius-bottomleft: 4px;
     -moz-border-radius-bottomright: 4px;
     border-bottom-left-radius: 4px ;
