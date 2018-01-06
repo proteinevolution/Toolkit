@@ -80,7 +80,6 @@
         window["@{resultName}_forward"] = function(selectedTool){
             var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
             $.LoadingOverlay("show");
-            // get result json
             $.ajax({
                 type: "POST",
                 url: "/results/alignment/getAln/" + jobID,
