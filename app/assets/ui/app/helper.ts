@@ -13,8 +13,15 @@ const nonJsonErrors = function(xhr : XMLHttpRequest) {
 };
 
 const tabulated = function(element : any, isInit : boolean) : any {
-    if (!isInit) {
+    if (!isInit || !$(element).hasClass("ui-tabs")) {
+        if (isInit) {
+            $(element).tabs("destroy"); // tabs should be initialized but arent -> refresh
+        }
         return $(element).tabs({
+            classes: {
+                "ui-tabs": "ui-corner-top",
+                "ui-tabs-nav": "ui-corner-top",
+            },
             active: this.active,
             beforeLoad:
             function(event, ui){
