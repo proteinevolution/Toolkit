@@ -1,18 +1,13 @@
 @import controllers.routes
 @import java.lang.String
 @(filename: String, jobID: String, resultname: String, tool: de.proteinevolution.models.Tool)()
-
-    <link href="@routes.Assets.versioned("styles/resultView.css")" rel="stylesheet">
     @views.html.forwardmodals.simpler(tool, tool.toolNameShort)
-
     <div class="colorOptsAlignment">
     <a type="button" onclick="@{resultname}_download()"> <span id="downloadAlignment">Download</span></a>
     <a data-open="forwardModal_@{tool.toolNameShort}" type="buttom"><span id="downloadAlignment">Forward All</span></a>
         <hr class="horizontal-line">
     </div>
-
     <pre class="fileview" id="fileviewerDownloadForward_@{resultname}"></pre>
-
     <br/>
     <br/><hr><br/>
     <div id="toolReferences">
