@@ -1,0 +1,825 @@
+/* General Result Panel */
+.result-panel {
+    font-size: 0.65em;
+    min-height: 30em;
+    padding-bottom: 50px !important;
+}
+
+.result-panel a {
+    -webkit-appearance: none;
+}
+
+.result-panel button {
+    background-color: #eee;
+}
+
+/* Blast Visualization Section */
+#visualizationTitle{
+    padding-top: 2em;
+}
+
+#blastviz{
+    margin-top: 7.5em;
+    width: 100%;
+}
+
+#blastviz p {
+   text-align: center;
+}
+
+map[name="blastmap"] area {
+    cursor: pointer;
+}
+
+
+
+/* Hitlist Section */
+#hitlistTitle{
+    padding-top: 2em;
+    padding-bottom: 1em;
+}
+
+.result-panel .dataTables_wrapper {
+    border: none;
+    padding: 0;
+    font-size: 1.25em;
+}
+
+.result-panel .dataTable {
+    width: 100%;
+}
+
+.dataTable {
+    font-size: 0.9em;
+}
+
+.dataTables_scrollHeadInner {
+    width: unset !important;
+}
+
+#htb_wrapper {
+    overflow-x: auto;
+}
+
+#htb_length {
+    margin-bottom: 1em;
+}
+
+
+#htb_wrapper .sorting_1 {
+    width: 5em;
+}
+
+
+#htb_wrapper .sorting_1 input {
+    margin-right: 1.25em;
+    vertical-align: text-top;
+}
+
+.noHits{
+    width: 5em;
+    margin-top: 3em;
+    margin: 0 auto;
+    margin-bottom: 1em;
+}
+
+.noHitsWide{
+    width: 15em;
+    margin-top: 3em !important;
+    margin: 0 auto;
+    margin-bottom: 1em;
+    font-size: 1.3em;
+}
+
+#loadingHits{
+    display: none;
+    font-size: 1.3em;
+    padding-left: 23em !important;
+    padding-bottom: 2em !important;
+}
+
+#loadHits{
+    font-size: 1.3em;
+    margin-left: 24em !important;
+    margin-bottom: 2em !important;
+    margin-top: 2em !important;
+}
+
+#loadHitsAln{
+    font-size: 1.3em;
+    margin-left: 24em !important;
+    margin-bottom: 2em !important;
+    margin-top: 2em !important;
+}
+
+#loadHitsQaln{
+    font-size: 1.3em;
+    margin-left: 24em !important;
+    margin-bottom: 2em !important;
+    margin-top: 2em !important;
+}
+
+
+.checkbox {
+    position: relative;
+    margin: 0 1rem 0 0;
+    cursor: pointer;
+    vertical-align: text-top;
+}
+
+.checkbox:before {
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    content: "";
+    position: absolute;
+    left: 0;
+    top: -1px;
+    z-index: 1;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #f2f2f2;
+}
+
+.checkbox:checked:before {
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    height: .5rem;
+    border-color: #009688;
+    border-top-style: none;
+    border-right-style: none;
+}
+
+.checkbox:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 1rem;
+    top: -1px;
+    height: 1rem;
+    background: #fff;
+    cursor: pointer;
+}
+
+
+
+/* Alignments section */
+.header {
+    font-weight: bold;
+}
+
+.header :hover {
+    background-color: #eee;
+}
+
+#alignmentTemplate, #alignmentTemplatehhomp {
+    font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+    font-size: 0.7rem !important;
+    margin: 0 auto;
+}
+
+.indexCheckbox {
+    display: flex;
+    margin: 0;
+    height: 1.5em;
+    margin-right: 0.3em !important;
+}
+
+.indexCheckbox input {
+    margin-right: 1.5em;
+    top: 0;
+}
+
+#viewport{
+    border: 1px solid lightgray;
+    margin: 0 auto;
+}
+
+#viewport canvas {
+    background-color: transparent !important;
+}
+
+.fetchError{
+    padding: 10em !important;
+}
+
+.alignmentTBody td{
+    padding: unset;
+}
+
+#alignmentResultView{
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+.alignmentCheckbox{
+    margin: unset;
+}
+
+.hitInfo {
+    font-size: 1em;
+}
+
+.colorOptsAlignment {
+    padding-top: 1em;
+    margin: 0 auto;
+}
+.colorOptsAlignment a {
+    float: left;
+    width: 20%;
+    margin-bottom: 0.5em;
+}
+
+#alignments {
+    overflow: auto;
+}
+
+#alignments td {
+    padding: 0 1rem 0 0 !important;
+}
+
+#alignmentsTitle{
+    padding-top: 2em;
+    padding-bottom: 1em;
+}
+
+#alignmentsTitleHHpred{
+    padding-top: 2em;
+    padding-bottom: 1em;
+    display: inline-flex;
+}
+
+#templateAlignmentModal,
+#templateAlignmentModalhhomp,
+#structureModal {
+    width:  60em;
+    max-width: 60em;
+    background-color: #eee;
+    overflow-y: initial;
+}
+
+#templateAlignmentModal select,
+#templateAlignmentModalhhomp select {
+    font-size: 0.80em !important;
+    -moz-appearance: none !important;
+    -webkit-appearance: none !important;
+    border-radius: 4px;
+    margin-top: 1.5em;
+    padding-bottom: 0.5em;
+    padding-top: 0.5em;
+    height: 2.75em;
+    color: #000;
+    text-shadow: 0 0 0 #000;
+    width: 12em;
+}
+
+#accessionStructure {
+    height: 2em;
+    margin-bottom: 1em;
+}
+
+.structureAccession {
+    float: left;
+}
+
+.blank_row {
+    height: 1em;
+}
+
+.unstriped {
+    border-collapse: unset !important;
+    margin: 0 ;
+    width: auto;
+}
+
+.unstriped a {
+    color:#27776e !important;
+}
+
+.sequence {
+    font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+    letter-spacing: 0.025em;
+    font-size: 0.75rem;
+    white-space: pre;
+}
+
+.sequence :hover {
+    background-color: #eee;
+}
+
+.sequenceCompact {
+    font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 1em;
+    white-space: pre;
+}
+
+.sequenceCompact span {
+    display: inline-block;
+}
+
+.sequenceBold {
+    font-weight:600;
+    border-bottom: 0.2em solid rgba(128, 128, 128, 0.37);
+
+}
+
+.sequenceAlignment {
+    font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+}
+
+.h1 {
+    font-weight: bold;
+    font-size: 12px;
+    font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+}
+
+.wrap {
+    word-break: break-all;
+    white-space: unset;
+}
+
+.tprHit {
+    width: 27em;
+    text-align: left;
+}
+
+.tprResults table {
+    width: 80%;
+}
+
+.tprInfo {
+    font-size: 1.1em !important;
+}
+
+.tprInfo span {
+    font-weight: bold;
+}
+
+.uncheckedListWrap {
+    font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+
+
+/* Classification Tools Result View */
+#treeSvgContainer {
+    text-align: center;
+}
+
+#treeSvgContainer svg {
+    width: 60%;
+}
+
+#ancescon_output_tree div {
+    text-align: center;
+}
+
+.ancescon_download {
+    float: right;
+    margin-top: 1.5em;
+}
+
+.clansResults {
+    font-size:1.2em;
+}
+
+.clansResults a {
+    color: #27776e;
+    font-weight: bold;
+}
+
+
+
+/* Structure Tools Result View */
+#resultTable, #resultTableQ2D {
+    width: auto;
+    border-spacing: 0;
+}
+
+#resultTable td,  #resultTableQ2D td {
+    padding-right: 2em !important;
+    border-spacing: 0;
+}
+
+#resultTableQ2D {
+    margin-left: 1.2em;
+}
+
+.clustalAcc {
+    margin-right:2em;
+}
+
+
+
+/* Scrollcontainer (Navigation) */
+.scrollContainer {
+    width: 100%;
+    right: 0;
+    top: 0;
+    font-size: 1.2em;
+    padding: 1em 1em 1em 0;
+    opacity: 0.96;
+    background: #f5f5f5;
+    z-index: 99;
+    display: flex;
+    height: auto;
+}
+
+#scrollLinks a{
+    margin-right: 1em;
+    margin-bottom: 1.5em;
+}
+#controlls a{
+    margin-right: 1.85em;
+    display: block;
+}
+
+.scrollContainerDiv {
+    display: flex;
+    margin: 0 auto;
+}
+
+
+.scrollContainerWhite {
+    background-color: #FEFEFE;
+    box-shadow: none;
+}
+
+.scrollContainerDivWhite {
+    margin: unset;
+}
+
+#controlls {
+    display: flex;
+}
+
+#extraWide {
+    width: 5.7em;
+    margin-right: 0.9em !important;
+    height: 1.7em;
+}
+
+.fixed {
+    position: fixed !important;
+}
+
+.headerDivider {
+    margin-right: 2em;
+    border-right: 1px solid #666;
+    opacity: 0.4;
+}
+
+.colorToggle {
+    color: #006F62 !important;
+    border-bottom: solid 1px rgba(0, 110, 98, 0.3) !important;
+    padding-bottom: 6px;
+}
+
+.colorToggleBar {
+    color: #006F62 !important;
+    border-bottom: solid 1px rgba(0, 110, 98, 0.3) !important;
+    padding-bottom: 2px;
+}
+
+#scrollTop {
+    width: 40px;
+    height: 40px;
+    position: fixed;
+    cursor: pointer;
+    bottom: 20px;
+    right: 20px;
+    display: none;
+    background: url('/assets/images/arrow-top.svg') no-repeat;
+    background-size: 40px 40px;
+    outline: 0;
+}
+
+/* Result View Slider */
+.flat-slider.ui-slider {
+    border: 0;
+    background: #c2c2c2;
+}
+
+.flat-slider.ui-slider-horizontal {
+    height: 6px;
+}
+
+.flat-slider.ui-slider-vertical {
+    height: 15em;
+    width: 4px;
+}
+
+.flat-slider .ui-slider-handle {
+    width: 20px;
+    height: 20px;
+    background: #d1d1d1 !important;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.flat-slider.ui-slider-horizontal .ui-slider-handle {
+    top: 50%;
+    margin-top: -10px;
+}
+
+.flat-slider.ui-slider-vertical .ui-slider-handle {
+    left: 50%;
+    margin-left: -10px;
+}
+
+.flat-slider .ui-slider-handle:hover {
+    opacity: .8;
+}
+
+.flat-slider .ui-slider-range {
+    border: 0;
+    height: 6px;
+    border-radius: 7px;
+    background: #58a5e9;
+}
+
+.flat-slider.ui-slider-vertical .ui-slider-range {
+    left: 0;
+    width: 4px;
+}
+
+.flat-slider{
+    width: 89%;
+    margin: 0 auto;
+    max-width: 774px;
+    margin-bottom: 1em;
+}
+
+/* Result View Forward Modals */
+.forwardModal {
+    width: 38em;
+    height: 18.5em;
+}
+
+.forwardModal p, #templateAlignmentModal p, #templateAlignmentModalhhomp p, #structureModal p {
+    font-size: 1em;
+    font-weight: bold;
+    color: rgba(0, 110, 98, 166);
+    margin-bottom: 0.5em;
+}
+
+.forwardModal .forward_form {
+    font-size: 0.8em;
+}
+
+.forwardModal .result_inputs {
+    font-size: 0.9em;
+}
+
+#forwardModal_alignment {
+    height: 10em;
+}
+
+.forward_form {
+    width: 99%;
+    display: flex;
+    margin-top: 1em;
+    margin-left: 0.25em;
+    font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
+    overflow: auto;
+    background-color: #eee;
+    border-radius: 4px;
+}
+
+#forward {
+    float: right;
+    margin-top: 0.5em;
+    -webkit-appearance: none;
+    background-color: rgba(0, 110, 98, 166) !important;
+    border-radius: 3px !important;
+    color: white !important;
+    margin-left: 2em;
+}
+
+<<<<<<< HEAD:public/styles/blast-visualization.css
+#templateAlignmentModal, #structureModal {
+    width:  60em;
+    max-width: 60em;
+    background-color: #eee;
+    overflow-y: initial;
+}
+
+#templateAlignmentModal select {
+=======
+#forward:hover {
+    background-color: gray !important;
+}
+
+.forwardFormLast #forward {
+    margin-top: 2em;
+}
+
+.select_forward select {
+>>>>>>> e2a5999231f6ecfd4185f70eda521d97cc5132c2:app/assets/styles/_resultView.scss
+    font-size: 0.80em !important;
+    -moz-appearance: none !important;
+    -webkit-appearance: none !important;
+    border-radius: 4px;
+    margin-top: 1.5em;
+    margin-left: 0.25em;
+    padding-bottom: 0.5em;
+    padding-top: 0.5em;
+    height: 2.75em;
+    color: #000;
+    text-shadow: 0 0 0 #000;
+    width: 12em;
+}
+
+.select_forward ul {
+    top: auto !important;
+    bottom: 100%;
+    margin-bottom: 1px;
+}
+
+label.forwardLabel input[type=radio] {
+    position: relative;
+    vertical-align: middle;
+    bottom: -6px;
+    left: 3px;
+}
+
+.forward_form label {
+    margin-bottom: 1em;
+    font-size: 1em;
+}
+
+.forwardFormDiv {
+    width: 60%;
+    margin: 1em;
+}
+
+#forwardWarning {
+    width: 100%;
+    color: black;
+    margin-bottom: 0;
+    margin-top: 1.9em;
+    font-size: 0.75em;
+}
+
+#loadingHits, #loadingHitsClu {
+    display: none;
+    font-size: 1.3em;
+    padding-left: 23em !important;
+    padding-bottom: 2em !important;
+}
+
+.result_inputs {
+    width: 7em;
+    height: 2em;
+    margin-left: 0.5em;
+    margin-bottom: 0;
+    padding: 0 0 0 0.25em;
+}
+
+.two_input {
+    display: flex;
+}
+
+
+/* References Section */
+#toolReferences a {
+    color: rgba(0, 110, 98, 166);
+}
+
+.citation{
+    border-left: 2px solid rgba(0, 110, 98, 0.75);
+    margin: 0.5em !important;
+    margin-bottom: 1em !important;
+}
+
+#toolReferences {
+    font-size: 1.15em;
+}
+
+#toolReferences div {
+    margin-left: 1em;
+}
+
+.horizontal-line {
+    margin-top: 0.5rem !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Result View PSI blast */
+#psiblast_templates {
+    margin-top: 1em;
+}
+
+
+
+/* Result View hhrep */
+.hhrepImage {
+    margin: 1em;
+}
+
+#repperGrad {
+    height: 3px;
+    width: 250px;
+    background: -webkit-linear-gradient(left, yellow, blue); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, yellow, blue); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, yellow, blue); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(to right, yellow, blue); /* Standard syntax (must be last) */
+}
+
+.clustalAcc {
+    margin-right:1em;
+}
+
+.repperTable {
+    padding-left: 19em;
+}
+
+/* Result View Repper */
+.notePlain {
+    font-size: 1.2em;
+}
+
+.notePlain p {
+    padding-left: 20em;
+}
+
+
+
+/* Result View Resubmit Button */
+#resubmitSection {
+    margin-top: 1.5em;
+    background-color: #eee;
+    float: right;
+}
+#resubmitSection:hover,
+#forward:hover,
+#structureModal .button {
+    background-color: #d1d1d1
+}
+
+
+/* Rest */
+#hcontainer {
+    overflow-x: auto;
+    overflow-y: hidden;
+    min-width: 610px;
+    height: 400px;
+    margin: 0 auto;
+    padding-left: 50px;
+}
+
+.fileview {
+    width: 100%;
+    font-size: 12px;
+    height: 30pc;
+}
+
+/* CSS Media Queries */
+@media screen and (max-width: 1200px) {
+    #hcontainer {
+        padding-left: 0;
+    }
+}
+
+@media screen and (max-width: 930px) {
+    #extraWide {
+        width: 4.5em;
+    }
+}
+
+@media screen and (max-width: 930px) {
+     #controlls a {
+        margin-right: 1em;
+    }
+}
+
+@media screen and (max-width: 930px) {
+    [class*="scrollContainer"] {
+        font-size: 1.1em;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    [class*="scrollContainer"] {
+        font-size: 1.05em;
+    }
+}
+
+@media only screen and (max-width: 720px) {
+    .forward_form {
+        display: block;
+    }
+
+    #forward {
+        float: left;
+    }
+}
+
