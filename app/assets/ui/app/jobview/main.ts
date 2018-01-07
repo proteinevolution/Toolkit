@@ -26,7 +26,6 @@ const JobLineComponent = {
         const dateCreated = moment(args.job().dateCreated).utcOffset(1, true).local();
 
         isJob = args.job().isJob;
-        siteTitle = document.title = args.job().tool.toolnameLong + " - Bioinformatics Toolkit";
         return m("div", {
             "class": "jobline"
         }, [
