@@ -38,7 +38,7 @@
                 type: 'GET',
                 url: 'files/@jobID/reduced.a3m'
             }).done(function (data_) {
-                forward(selectedTool, data_.toString());
+                Forwarding.simple(selectedTool, data_.toString());
             });
         }
 
