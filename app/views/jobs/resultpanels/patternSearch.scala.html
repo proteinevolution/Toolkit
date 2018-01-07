@@ -1,10 +1,8 @@
 @import play.api.libs.json.JsObject
 @import play.api.libs.json.JsValue
 @import play.api.libs.json.JsDefined
-@import controllers.routes
 @import play.twirl.api.Html
 @import java.lang.String
-
 @import de.proteinevolution.tools.results.Common
 @(jobID: String, jsValue: JsValue, tool: de.proteinevolution.models.Tool)()
 @views.html.forwardmodals.simpler(tool, tool.toolNameShort)
@@ -12,7 +10,6 @@
     <div class="callout alert noHitsWide" id="noHits">
         No hits found!
     </div>
-
 }else{
 <div class="colorOptsAlignment">
     <a onclick="download_()" type="button"><span id="downloadAlignment">Download Hits</span></a>
