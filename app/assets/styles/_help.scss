@@ -1,29 +1,39 @@
 /* Helpmodal in Subnavigation */
 #helpModal {
-    width: 80%;
-    margin-left: auto;
-    height: inherit;
-    min-height: inherit;
-    top: 209px !important;
-    font-size: 0.85em;
+  width: 80%;
+  margin-left: auto;
+  height: inherit;
+  min-height: inherit;
+  top: 209px !important;
+  font-size: 0.85em;
+  padding: 0;
+  .modal-content #tabs {
+    border: none;
+    padding: 0;
+  }
+  .close-button {
+    top: 0.2rem;
+  }
 }
 
-.helpModals .section {
+.helpModals {
+  .section {
     margin-top: 1em;
-}
+  }
 
-.helpModals p {
+  p {
     font-weight: normal;
-}
+  }
 
-.helpModals h5 {
+  h5 {
     color: #2E8C81;
-}
+  }
 
-.helpModals h6 {
+  h6 {
     font-weight: bold;
     font-size: 1em;
-    margin-bottom:0;
+    margin-bottom: 0;
+  }
 }
 
 #imprintModal,
@@ -33,8 +43,8 @@
 #contactModal,
 #citeModal,
 #recentUpdatesModal {
-    font-size: 0.85em;
-    width: 55%;
+  font-size: 0.85em;
+  width: 55%;
 }
 
 #imprintContent,
@@ -44,18 +54,18 @@
 #contactModelContent,
 #citeModalContent,
 #recentUpdatesContent {
-    padding: 1em;
+  padding: 1em;
 }
 
 .accordion-content {
-    font-size: 0.9em;
+  font-size: 0.9em;
 }
 
 /* Help Modals for Tools */
 #help-psiblast {
-    font-size: 0.85em !important;
+  font-size: 0.85em !important;
 }
 
 .helpicon:hover {
-    color: #008979;
+  color: #008979;
 }
