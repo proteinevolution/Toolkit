@@ -40,9 +40,11 @@ const JobLineComponent = {
                             url: route.url,
                             method: route.method
                         }).done(function (help) {
-
-                            $("#helpModal").html(help).foundation('open');
-                            $("#tabs").tabs();
+                            const helpModal = $("#helpModal");
+                            helpModal.find(".modal-content").html(help);
+                            helpModal.find(".accordion").foundation();
+                            helpModal.foundation("open");
+                            helpModal.find("#tabs").tabs();
                         });
                     } },
                         m("i", { "class": "icon-white_question helpicon", "title": "Help page", "config": tooltipConf})
