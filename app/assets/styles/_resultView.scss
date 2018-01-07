@@ -175,7 +175,7 @@ map[name="blastmap"] area {
     background-color: #eee;
 }
 
-#alignmentTemplate, #alignmentTemplatehhomp {
+#alignmentTemplate {
     font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
     font-size: 0.7rem !important;
     margin: 0 auto;
@@ -254,7 +254,6 @@ map[name="blastmap"] area {
 }
 
 #templateAlignmentModal,
-#templateAlignmentModalhhomp,
 #structureModal {
     width:  60em;
     max-width: 60em;
@@ -262,8 +261,7 @@ map[name="blastmap"] area {
     overflow-y: initial;
 }
 
-#templateAlignmentModal select,
-#templateAlignmentModalhhomp select {
+#templateAlignmentModal select {
     font-size: 0.80em !important;
     -moz-appearance: none !important;
     -webkit-appearance: none !important;
@@ -564,7 +562,7 @@ map[name="blastmap"] area {
     height: 18.5em;
 }
 
-.forwardModal p, #templateAlignmentModal p, #templateAlignmentModalhhomp p, #structureModal p {
+.forwardModal p, #templateAlignmentModal p, #structureModal p {
     font-size: 1em;
     font-weight: bold;
     color: rgba(0, 110, 98, 166);
@@ -604,16 +602,6 @@ map[name="blastmap"] area {
     margin-left: 2em;
 }
 
-<<<<<<< HEAD:public/styles/blast-visualization.css
-#templateAlignmentModal, #structureModal {
-    width:  60em;
-    max-width: 60em;
-    background-color: #eee;
-    overflow-y: initial;
-}
-
-#templateAlignmentModal select {
-=======
 #forward:hover {
     background-color: gray !important;
 }
@@ -623,7 +611,6 @@ map[name="blastmap"] area {
 }
 
 .select_forward select {
->>>>>>> e2a5999231f6ecfd4185f70eda521d97cc5132c2:app/assets/styles/_resultView.scss
     font-size: 0.80em !important;
     -moz-appearance: none !important;
     -webkit-appearance: none !important;
