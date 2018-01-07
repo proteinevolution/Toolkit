@@ -116,8 +116,7 @@ window.FrontendAlnvizComponent = {
                     onclick: function() {
                         m.route("/tools/" + "alnviz");
                     }
-                }, "AlignmentViewer")),
-                m("i", {"class": "icon-white_question helpicon", "title": "Help page", "config": tooltipConf})),
+            }, "AlignmentViewer"))),
             m(GeneralTabComponent, {
                 tabs: ["Alignment", "Visualization"],
                 ctrl: ctrl
