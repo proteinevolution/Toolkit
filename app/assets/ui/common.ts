@@ -61,8 +61,14 @@ $(window).scroll(function() {
     }
 });
 
-window.onfocus = function(){notifications = 0; TitleNotification.reset()};
-window.onclick = function(){notifications = 0; TitleNotification.reset()};
+window.onfocus = function() {
+    notifications = 0;
+    TitleManager.resetCounter();
+};
+window.onclick = function() {
+    notifications = 0;
+    TitleManager.resetCounter();
+};
 
 
 $('#scrollTop').click(function() {
