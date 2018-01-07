@@ -5,12 +5,9 @@ let FrontendTools : any = {
     "reformat": FrontendReformatComponent
 };
 
-let siteTitle = document.title;
-
 const a = ['0', 'p', 'q', 'r', 'e', 'd', 'i', 'w']; // TODO rename this to something like "JobStateMap"
 
 let jobs = {};
-
 
 interface Window { Toolkit: any; }
 
