@@ -2,16 +2,18 @@
 const exampleSequence = ">AAN59974.1 histone H2A [Homo sapiens]\nMSG------------------RGKQGG-KARAKAKTRSSRAGLQFPVGRVHRLLRKGNYAERVGAGAPVYLAAVLEYLTAEILELAGNAARDNKKTRIIPRHLQLAIRNDEELNKLLGKVTIAQGGVLPNIQAVLLPKKTESHHKAKGK-----\n>NP_001005967.1 histone 2, H2a [Danio rerio]\nMSG------------------RGKTGG-KARAKAKSRSSRAGLQFPVGRVHRLLRKGNYAERVGAGAPVYLAAVLEYLTAEILELAGNAARDNKKTRIIPRHLQLAVRNDEELNKLLGGVTIAQGGVLPNIQAVLLPKKTEKPAKSK-------\n>NP_001027366.1 histone H2A [Drosophila melanogaster]\nMSG------------------RGK-GG-KVKGKAKSRSDRAGLQFPVGRIHRLLRKGNYAERVGAGAPVYLAAVMEYLAAEVLELAGNAARDNKKTRIIPRHLQLAIRNDEELNKLLSGVTIAQGGVLPNIQAVLLPKKTEKKA----------\n>NP_175517.1 histone H2A 10 [Arabidopsis thaliana]\nMAG------------------RGKTLGSGSAKKATTRSSKAGLQFPVGRIARFLKKGKYAERVGAGAPVYLAAVLEYLAAEVLELAGNAARDNKKTRIVPRHIQLAVRNDEELSKLLGDVTIANGGVMPNIHNLLLPKKTGASKPSAEDD----\n>NP_001263788.1 Histone H2A [Caenorhabditis elegans]\nMSG------------------RGKGGKAKTGGKAKSRSSRAGLQFPVGRLHRILRKGNYAQRVGAGAPVYLAAVLEYLAAEVLELAGNAARDNKKTRIAPRHLQLAVRNDEELNKLLAGVTIAQGGVLPNIQAVLLPKKTGGDKEIRLSNLPKQ\n>NP_009552.1 histone H2A [Saccharomyces cerevisiae S288C]\nMSG------------------GKGGKAGSAAKASQSRSAKAGLTFPVGRVHRLLRRGNYAQRIGSGAPVYLTAVLEYLAAEILELAGNAARDNKKTRIIPRHLQLAIRNDDELNKLLGNVTIAQGGVLPNIHQNLLPKKSAKTAKASQEL----\n>XP_641587.1 histone H2A [Dictyostelium discoideum AX4]\nMSETKPASSKPAAAAKPKKVIPRVSRTGEPKSKPESRSARAGITFPVSRVDRLLREGRFAPRVESTAPVYLAAVLEYLVFEILELAHNTCSISKKTRITPQHINWAVGNDLELNSLFQHVTIAYGGVLPTPQQSTGEKKKKPSKKAAEGSSQIY";
 // Update the value with the one from the local storage
 
-let alignmentView : any;
+let alignmentView: any;
 
-interface Window { FrontendAlnvizComponent: any; }
+interface Window {
+    FrontendAlnvizComponent: any;
+}
 
 window.FrontendAlnvizComponent = {
     controller: function() {
-        let submitted : boolean;
+        let submitted: boolean;
         submitted = false;
         return {
-            frontendSubmit: function() : any {
+            frontendSubmit: function(): any {
                 if (!submitted) {
                     return $.ajax({
                         url: '/api/frontendSubmit/Alnviz',
@@ -27,7 +29,7 @@ window.FrontendAlnvizComponent = {
                     });
                 }
             },
-            initMSA: function() : any {
+            initMSA: function(): any {
                 let toolTabs = $('#tool-tabs');
 
                 let height = toolTabs.hasClass('fullscreen') ? $(window).height() - 320 : toolTabs.width() - 500;
@@ -54,8 +56,8 @@ window.FrontendAlnvizComponent = {
                         labelCheckbox: false
                     },
                     menu: 'small',
-                    seqs : fasta2json(seqs),
-                    zoomer : {
+                    seqs: fasta2json(seqs),
+                    zoomer: {
                         alignmentHeight: height,
                         alignmentWidth: width,
                         labelNameLength: 165,
@@ -74,25 +76,25 @@ window.FrontendAlnvizComponent = {
                 alignmentView = new msa.msa(opts);
 
                 let menuOpts = {
-                    el : document.getElementById('menuDiv'),
-                    msa : alignmentView
+                    el: document.getElementById("menuDiv"),
+                    msa: alignmentView
                 };
                 let defMenu = new msa.menu.defaultmenu(menuOpts);
                 alignmentView.addView('menu', defMenu);
                 alignmentView.render();
-                $(window).on("resize.MSAViewer", function(){
+                $(window).on("resize.MSAViewer", function() {
 
-                    if($("#bioJSContainer").parents("html").length === 0){
+                    if ($("#bioJSContainer").parents("html").length === 0) {
                         $(window).off("resize.MSAViewer");
                         return;
                     }
                     alignmentView.g.zoomer.set("alignmentWidth", toolTabs.width() - 240);
-                    if(toolTabs.hasClass('fullscreen')) {
+                    if (toolTabs.hasClass("fullscreen")) {
                         alignmentView.g.zoomer.set("alignmentHeight", Math.max(400, $(window).height() - 320));
                     }
                 });
 
-                setTimeout(function(){
+                setTimeout(function() {
                     $('#tab-Visualization').removeAttr('style');
                 }, 100);
                 return toolTabs.tabs('option', 'active', toolTabs.tabs('option', 'active') + 1);
@@ -102,17 +104,20 @@ window.FrontendAlnvizComponent = {
             }
         };
     },
-    view: function(ctrl : any) {
+    view: function(ctrl: any) {
         siteTitle = document.title = "AlignmentViewer - Bioinformatics Toolkit";
         return m("div", {
             id: "jobview"
         }, [
             m("div", {
-                "class": "jobline"
-            }, m("span", {
-                "class": "toolname"
-            }, m("a", { onclick: function(){m.route("/tools/" + "alnviz")}}, "AlignmentViewer")),
-            m("i", {"class": "icon-white_question helpicon", "title": "Help page", "config": tooltipConf})),
+                    "class": "jobline"
+                }, m("span", {
+                    "class": "toolname"
+                }, m("a", {
+                    onclick: function() {
+                        m.route("/tools/" + "alnviz");
+                    }
+            }, "AlignmentViewer"))),
             m(GeneralTabComponent, {
                 tabs: ["Alignment", "Visualization"],
                 ctrl: ctrl
@@ -121,13 +126,15 @@ window.FrontendAlnvizComponent = {
     }
 };
 
-const fndt = function(elem : any, isInit : boolean) : any {
+const fndt = function(elem: any, isInit: boolean): any {
     if (!isInit) {
         return $(elem).foundation();
     }
 };
 
-interface Window { FrontendReformatComponent: any; }
+interface Window {
+    FrontendReformatComponent: any;
+}
 
 window.FrontendReformatComponent = {
     controller: function() {
@@ -141,7 +148,7 @@ window.FrontendReformatComponent = {
             })
         };
     },
-    view: function(ctrl : any) {
+    view: function(ctrl: any) {
         siteTitle = document.title = "Reformat - Bioinformatics Toolkit";
         return m("div", {
             id: "jobview",
@@ -150,19 +157,19 @@ window.FrontendReformatComponent = {
     }
 };
 
-const renderTabs = function(tabs : any, content : any) {
+const renderTabs = function(tabs: any, content: any) {
     return m("div", {
         "class": "tool-tabs",
         id: "tool-tabs",
         config: tabulated
     }, [
-        m("ul", tabs.map(function(tab : any) {
+        m("ul", tabs.map(function(tab: any) {
             return m("li", {
                 id: "tab-" + tab
             }, m("a", {
                 href: "#tabpanel-" + tab
             }, tab));
-        })), tabs.map(function(tab : any, idx : number) {
+        })), tabs.map(function(tab: any, idx: number) {
             return m("div", {
                 "class": "tabs-panel",
                 id: "tabpanel-" + tab
@@ -175,17 +182,16 @@ const GeneralTabComponent = {
 
     controller: function() {
         let mo = {
-            isFullScreen : false,
+            isFullscreen : false,
             label: "Expand"
         };
-        let onCollapse : any, onExpand : any, onFullscreenToggle : any;
+        let onCollapse: any, onExpand: any, onFullscreenToggle: any;
         return {
             getLabel: (function() {
                 return this.label;
             }).bind(mo),
             fullscreen: (function() {
-                let job_tab_component;
-                job_tab_component = $("#tool-tabs");
+                let job_tab_component = $("#tool-tabs");
                 if (this.isFullscreen) {
                     job_tab_component.removeClass("fullscreen");
                     this.isFullscreen = false;
@@ -193,9 +199,12 @@ const GeneralTabComponent = {
                         onCollapse();
                     }
                     $("#collapseMe").addClass("fa-expand").removeClass("fa-compress");
-                    alignmentView.g.zoomer.set("alignmentHeight", $('#tool-tabs').width() - 500);
-                    alignmentView.g.zoomer.set("alignmentWidth", $("#tool-tabs").width() - 240);
+                    if (typeof alignmentView !== "undefined") {
+                        alignmentView.g.zoomer.set("alignmentHeight", job_tab_component.width() - 500);
+                        alignmentView.g.zoomer.set("alignmentWidth", job_tab_component.width() - 240);
+                    }
                     followScroll(document);
+                    return;
                 } else {
                     job_tab_component.addClass("fullscreen");
                     this.isFullscreen = true;
@@ -203,8 +212,10 @@ const GeneralTabComponent = {
                         onExpand();
                     }
                     $("#collapseMe").addClass("fa-compress").removeClass("fa-expand");
-                    alignmentView.g.zoomer.set("alignmentHeight", $(window).height() - 320);
-                    alignmentView.g.zoomer.set("alignmentWidth",  $("#tool-tabs").width() - 240);
+                    if (typeof alignmentView !== "undefined") {
+                        alignmentView.g.zoomer.set("alignmentHeight", $(window).height() - 320);
+                        alignmentView.g.zoomer.set("alignmentWidth", job_tab_component.width() - 240);
+                    }
                     followScroll(job_tab_component);
                 }
                 if (typeof onFullscreenToggle === "function" && this.isFullscreen === true) {
@@ -223,13 +234,13 @@ const GeneralTabComponent = {
             }).bind(mo)
         };
     },
-    view: function(ctrl : any, args : any) {
+    view: function(ctrl: any, args: any) {
         return m("div", {
             "class": "tool-tabs",
             id: "tool-tabs",
             config: tabulated
         }, [
-            m("ul", args.tabs.map(function(tab : any) {
+            m("ul", args.tabs.map(function(tab: any) {
                 return m("li", {
                     id: "tab-" + tab,
                     style: (tab == "Visualization" ? "display: none;" : "display: block;")
@@ -245,7 +256,7 @@ const GeneralTabComponent = {
                 value: ctrl.getLabel(),
                 onclick: ctrl.fullscreen,
                 config: closeShortcut
-            }))), args.tabs.map(function(tab : any) {
+            }))), args.tabs.map(function(tab: any) {
                 return m("div", {
                     "class": "tabs-panel",
                     id: "tabpanel-" + tab
@@ -256,8 +267,8 @@ const GeneralTabComponent = {
 };
 
 
-const tabsContents : any = {
-    "Alignment": function(ctrl : any) {
+const tabsContents: any = {
+    "Alignment": function(ctrl: any) {
         return m("div", {
             "class": "parameter-panel", "id": "alignmentViewerPanel"
         }, [
@@ -291,7 +302,7 @@ const tabsContents : any = {
             }))
         ]);
     },
-    "Visualization": function(ctrl : any) {
+    "Visualization": function(ctrl: any) {
         return m("div", [
             m("div", {
                 id: "menuDiv"
@@ -300,7 +311,7 @@ const tabsContents : any = {
             })
         ]);
     },
-    "Freqs": function(ctrl : any) {
+    "Freqs": function(ctrl: any) {
         return "Test";
     }
 };

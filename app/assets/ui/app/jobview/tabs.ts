@@ -69,8 +69,7 @@ const JobTabsComponent = {
                 return this.label;
             }).bind(mo),
             fullscreen: (function() {
-                let job_tab_component;
-                job_tab_component = $("#tool-tabs");
+                let job_tab_component = $("#tool-tabs");
                 if (this.isFullscreen) {
                     job_tab_component.removeClass("fullscreen");
                     this.isFullscreen = false;

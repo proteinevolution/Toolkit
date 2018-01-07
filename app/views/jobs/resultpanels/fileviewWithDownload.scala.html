@@ -3,17 +3,17 @@
 
     <div class="colorOptsAlignment">
     <a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download</a>
-    <hr id="line-element" class="horizontal-line">
+        <hr class="horizontal-line">
     <pre class="fileview" id="fileviewerDownload_@{resultname}" ></pre>
     </div>
     <script>
          $(document).ready( function() {
              $.ajax({
-             type: 'GET',
-             url: 'files/@jobID/@{filename}',
-         }).done(function (data_) {
-             $('#fileviewerDownload_@{resultname}').append(data_)
-         });
+                 type: 'GET',
+                 url: 'files/@jobID/@{filename}',
+             }).done(function (data_) {
+                 $('#fileviewerDownload_@{resultname}').append(data_)
+             });
          });
         window["@{resultname}_download"] = function(){
             var downloadFilename; "@{resultname}_@{jobID}";
@@ -34,16 +34,14 @@
         //using both functions is not pretty and somewhat redundant but gets the job done
         $( "#fileviewerDownload_@{resultname}" ).ready(function() {
             if ($('#tool-tabs').hasClass('fullscreen')) {
-                $(".fileview").css("overflow-y", "visible");
-                $(".fileview").css("height", "100pc");
+                $(".fileview").css({"overflow-y": "visible", "height": "100pc"});
             } else {
                 $(".fileview").css("height", "30pc");
             }
         });
 
         function onExpand() {
-            $(".fileview").css("overflow-y", "visible");
-            $(".fileview").css("height", "100pc");
+            $(".fileview").css({"overflow-y": "visible", "height": "100pc"});
         }
         function onCollapse() {
             $(".fileview").css("height", "30pc");
