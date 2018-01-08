@@ -1,12 +1,6 @@
 @import play.twirl.api.Html
-@import controllers.routes
 @import java.lang.String
 @(accession : String, webJarsUtil: org.webjars.play.WebJarsUtil)()
-    <!-- Blast Visualizaton JS -->
-<script src="@routes.Assets.versioned("javascripts/blast-visualization.js")"></script>
-    <!-- NGL 3D Viewer -->
-<script src="@routes.Assets.versioned("javascripts/vendor/ngl.js")"></script>
-    <!-- JQuery -->
 @Html(webJarsUtil.script("3.2.1/jquery.min.js"))
 
 <style>

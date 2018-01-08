@@ -1,11 +1,8 @@
 @import de.proteinevolution.tools.results.Alignment.AlignmentResult
-@import controllers.routes
 @import java.lang.String
 @(jobID: String, alignment: AlignmentResult, resultName: String,  tool : de.proteinevolution.models.Tool)()
 
 @fileURL = @{"/files/" + jobID + "/" + "alignment.clustalw_aln"}
-
-<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
 @views.html.forwardmodals.simpler(tool, resultName)
 
@@ -70,15 +67,15 @@
         var fileUrl = "/files/@jobID/alignment.clustalw_aln";
         var downloadFilename = "@{tool.toolNameShort}_@{resultName}_@{jobID}" + ".clustal";
         var colorAAsClustal = false;
-        var numHits = @alignment.alignment.length;
+        var numHits = @alignment.alignment.length - 1;
         var resultName = '@resultName';
         var jobID = '@jobID';
         var checkboxes = [];
         var checkbox = "checkbox";
 
-        window["@{resultName}_forward"] = function(selectedTool){
-            var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
-            $.LoadingOverlay("show");
+        window["@{resultName}_forward"] = function(selectedTool){  
+	    var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
+	    $.LoadingOverlay("show");
             $.ajax({
                 type: "POST",
                 url: "/results/alignment/getAln/" + jobID,

@@ -198,5 +198,5 @@ function linkCheckboxes() {
             });
         }
 
-    });
+    }); 
 }

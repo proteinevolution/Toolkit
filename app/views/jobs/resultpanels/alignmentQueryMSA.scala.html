@@ -1,8 +1,6 @@
 @import de.proteinevolution.tools.results.Alignment.AlignmentResult
-@import controllers.routes
 @import java.lang.String
 @(jobID: String, alignment: AlignmentResult, resultName: String, tool: de.proteinevolution.models.Tool)()
-<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
 @views.html.forwardmodals.simpler(tool, resultName)
 
