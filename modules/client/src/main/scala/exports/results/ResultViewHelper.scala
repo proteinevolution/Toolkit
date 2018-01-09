@@ -79,6 +79,29 @@ object ResultViewHelper {
     }
   }
 
+  // TODO think about how to get twirl templates immutable
+  @JSExport
+  def showHitsManually(): Unit = {
+    if (!js.Dynamic.global.loading.asInstanceOf[Boolean]) {
+      js.Dynamic.global.end = js.Dynamic.global.shownHits.asInstanceOf[Int] + 100
+      if (js.Dynamic.global.end.asInstanceOf[Int] < js.Dynamic.global.numHits.asInstanceOf[Int])
+        js.Dynamic.global.end = js.Dynamic.global.end
+      else
+        js.Dynamic.global.end = js.Dynamic.global.numHits
+      if (js.Dynamic.global.shownHits.asInstanceOf[Int] != js.Dynamic.global.end.asInstanceOf[Int]) {
+        showHits(
+          js.Dynamic.global.shownHits.asInstanceOf[Int],
+          js.Dynamic.global.end.asInstanceOf[Int],
+          js.Dynamic.global.wrapped.asInstanceOf[Boolean],
+          isColored = false,
+          js.Dynamic.global.numHits.asInstanceOf[Int],
+          js.Dynamic.global.jobID.asInstanceOf[String]
+        )
+      }
+      js.Dynamic.global.shownHits = js.Dynamic.global.end
+    }
+  }
+
   implicit class JQueryToggleText(val self: JQuery) extends AnyVal {
     def toggleText(a: String, b: String): self.type = {
       if (self.text() == b)
@@ -122,7 +145,6 @@ object ResultViewHelper {
 
     js.Dynamic.global.$.LoadingOverlay("show")
     $(".colorAA").toggleClass("colorToggleBar")
-    // TODO scrollTOElem
     $("#alignmentTable").empty()
     showHits(0, shownHits, isWrapped, !isColored, numHits, jobID)
   }
@@ -137,34 +159,31 @@ object ResultViewHelper {
 
   @JSExport
   def scrollToHit(id: Int): Unit = {
-
-    ??? // TODO
-
+    val elem =
+      if ($("#tool-tabs").hasClass("fullscreen"))
+        "#tool-tabs"
+      else
+        "html, body"
+    if (id > js.Dynamic.global.shownHits.asInstanceOf[Int]) {
+      js.Dynamic.global.$.LoadingOverlay.show()
+      showHits(
+        js.Dynamic.global.shownHits.asInstanceOf[Int],
+        id,
+        js.Dynamic.global.wrapped.asInstanceOf[Boolean],
+        isColored = false,
+        js.Dynamic.global.numHits.asInstanceOf[Int],
+        js.Dynamic.global.jobID.asInstanceOf[String]
+      )
+      js.Dynamic.global
+        .$(elem)
+        .animate(js.Dynamic.literal("scrollTop" -> ($(s".aln][value=' $id ']").offset().top - 100.toDouble)), 1)
+      js.Dynamic.global.$.LoadingOverlay("hide")
+      js.Dynamic.global.shownHits = id
+    } else {
+      js.Dynamic.global
+        .$(elem)
+        .animate(js.Dynamic.literal("scrollTop" -> ($(s".aln][value=' $id ']").offset().top - 100.toDouble)), 1)
+    }
   }
 
 }
-
-/*
-function scrollToElem(num){
-    num = parseInt(num);
-    var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
-    if (num > shownHits) {
-        $.LoadingOverlay("show");
-        getHits(shownHits, num, wrapped, false).done(function(data){
-            var pos = $('.aln"][value=' + num + ']').offset().top;
-            $(elem).animate({
-                scrollTop: pos - 100
-            }, 1)
-        }).then(function(){
-            $.LoadingOverlay("hide");
-        });
-        shownHits = num;
-    }else{
-        var pos = $('.aln[value=' + num + ']').offset().top;
-        $(elem).animate({
-            scrollTop: pos - 100
-        }, 1)
-    }
-}
-
- */

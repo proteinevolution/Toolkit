@@ -29,42 +29,6 @@ function download(filename, text) {
     $.LoadingOverlay("hide");
 }
 
-/* Slider */
-function slider_show(sequence_length, start, end) {
-
-    var tooltip = $('<div id="tooltip" />').css({
-        position: 'absolute',
-        top: -20
-    }).show();
-
-    var tooltip2 = $('<div id="tooltip2" />').css({
-        position: 'absolute',
-        top: -20
-
-    }).show();
-
-    $("#flat-slider").slider({
-        range: true,
-        orientation: 'horizontal',
-        min: 1,
-        max: sequence_length,
-        step: 1,
-        values: [start, end],
-        slide: function (event, ui) {
-            tooltip.text(ui.values[0]);
-            tooltip2.text(ui.values[1]);
-        },
-        change: function (event, ui) {
-            var sliderCoords = $('#flat-slider').slider("option", "values");
-        }
-    });
-
-    tooltip.text(start);
-    tooltip2.text(end);
-    $("#flat-slider").slider({}).find(".ui-slider-handle:first").append(tooltip);
-    $("#flat-slider").slider({}).find(".ui-slider-handle:last").append(tooltip2);
-
-}
 
 function getSliderRange() {
 
@@ -162,17 +126,6 @@ Array.prototype.removeDuplicates = function () {
         return self.indexOf(item) === index;
     });
 };
-
-function getsHitsManually(){
-    if (!loading) {
-        var end = shownHits + 100;
-        end = end < numHits ? end : numHits;
-        if (shownHits !== end) {
-            ResultViewHelper.showHits(shownHits, end, wrapped, false, jobID);
-        }
-        shownHits = end;
-    }
-}
 
 function linkCheckboxes() {
     $('input:checkbox').on('change', function (e) {

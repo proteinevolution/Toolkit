@@ -228,7 +228,7 @@
                 var firstQueryStart = @{if(result.num_hits > 0){ result.HSPS.head.query.start}};
                 var firstQueryEnd = @{if(result.num_hits > 0){ result.HSPS.head.query.end}};
                 /* without timeout SLIDER is displayed */
-                slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
+                HitsSlider.show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
                 ResultViewHelper.showHits(0, shownHits, wrapped, colorAAs, numHits, jobID);
                 $('#templateAlignmentModal').foundation();
