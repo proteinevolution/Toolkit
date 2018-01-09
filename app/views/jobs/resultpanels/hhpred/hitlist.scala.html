@@ -293,7 +293,7 @@
 
         function showStructure(accession) {
             currentStructureAccession = accession;
-            var db = identifyDatabase(accession);
+            var db = BioDB.identify(accession);
             var fileEnding = "";
             switch (db) {
                 case "scop":

@@ -1,15 +1,3 @@
-/* Data table helpers */
-
-/* REGEX FOR DB IDENTIFICATION*/
-var uniprotReg = "^([A-Z0-9]{10}|[A-Z0-9]{6})$";
-var scopReg = "^([defgh][0-9a-zA-Z\.\_]+)$";
-var ecodReg = "^(ECOD_)";
-var mmcifReg = "^(...._[a-zA-Z])$";
-var mmcifShortReg = "^([0-9]+)$";
-var pfamReg = "^(pfam[0-9]+&|^PF[0-9]+(\.[0-9]+)?)$";
-var ncbiReg = "^([A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9])$";
-
-
 function download(filename, text) {
     var blob = new Blob([text], {type: "octet/stream"});
     if (window.navigator.msSaveOrOpenBlob) {
@@ -37,28 +25,6 @@ $(document).ready(function () {
     localStorage.removeItem("resultcookie");
     $.LoadingOverlay("hide");
 });
-
-
-function identifyDatabase(id) {
-    if (id === null)
-        return null;
-    if (id.match(scopReg))
-        return "scop";
-    else if (id.match(ecodReg))
-        return "ecod";
-    else if (id.match(mmcifShortReg))
-        return "mmcif";
-    else if (id.match(mmcifReg))
-        return "mmcif";
-    else if (id.match(pfamReg))
-        return "pfam";
-    else if (id.match(ncbiReg))
-        return "ncbi";
-    else if (id.match(uniprotReg))
-        return "uniprot";
-    else
-        return null;
-}
 
 
 function selectFromArray(checkboxes){
