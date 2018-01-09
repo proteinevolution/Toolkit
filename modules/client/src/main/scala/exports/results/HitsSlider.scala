@@ -9,7 +9,7 @@ object HitsSlider {
 
   @JSExport
   def show(seqLength: Int, start: Int, end: Int): Unit = {
-    val tooltip = $("<div id='tooltip' />")
+    val tooltip = $("<div id='tooltip'/>")
       .css(
         js.Dictionary[js.Any](
           "position" -> "absolute",
@@ -17,7 +17,7 @@ object HitsSlider {
         )
       )
       .show()
-    val tooltip2 = $("<div id='tooltip2' />")
+    val tooltip2 = $("<div id='tooltip2'/>")
       .css(
         js.Dictionary[js.Any](
           "position" -> "absolute",
@@ -48,6 +48,14 @@ object HitsSlider {
           }
         )
       )
+  }
+
+  @JSExport
+  def resubmit(sequence: String, name: String): Unit = {
+    val sliderRange  = js.Dynamic.global.$("#flat-slider").slider("option", "values").asInstanceOf[js.Array[Int]]
+    val resubmitSeqs = name + "\n" + sequence.substring(sliderRange(0), sliderRange(1)) + "\n"
+    $("a[href='#tabpanel-Input']").click()
+    $("#alignment").value(resubmitSeqs)
   }
 
 }

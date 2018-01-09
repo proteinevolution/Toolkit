@@ -30,22 +30,6 @@ function download(filename, text) {
 }
 
 
-function getSliderRange() {
-
-    return $('#flat-slider').slider("option", "values");
-}
-
-function resubmitSection(sequence, name) {
-    var sliderRange = getSliderRange();
-    var resubmitSeqs = [];
-
-    resubmitSeqs.push(name + '\n');
-    resubmitSeqs.push(sequence.substr(sliderRange[0], sliderRange[1]) + '\n');
-
-    $('a[href="#tabpanel-Input"]').click();
-    $('#alignment').val(resubmitSeqs.join(''));
-}
-
 // load forwarded data into alignment field
 $(document).ready(function () {
     var resultcookie = localStorage.getItem("resultcookie");
