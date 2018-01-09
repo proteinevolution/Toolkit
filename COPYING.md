@@ -2,7 +2,7 @@ Copying the MPI Toolkit
 =======================
 
 Any file in this project that does not state otherwise and is not listed as an
-exception below is part of MPI-Toolkit and copyright (c) 2014-2017 the MPI-Toolkit authors.
+exception below is part of MPI-Toolkit and copyright (c) 2014-2018 the MPI-Toolkit authors.
 
 For a list of the authors see the commit log.
 
