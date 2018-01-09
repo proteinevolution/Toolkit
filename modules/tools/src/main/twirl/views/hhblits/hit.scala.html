@@ -1,12 +1,12 @@
 @import de.proteinevolution.tools.results.Common
 @import de.proteinevolution.tools.results.HHBlits.HHBlitsHSP
 @import play.twirl.api.Html
-@(hit: HHBlitsHSP, wrapped: Boolean)()
+@(hit: HHBlitsHSP, wrapped: Boolean, jobID: String)()
 @* hit number, links *@
 <tr>
     <td></td>
     <td colspan="3">
-    @Common.getLinksHHBlits(hit.template.accession)
+    @Common.getLinksHHBlits(jobID, hit.template.accession)
     </td>
     <td></td>
 </tr>

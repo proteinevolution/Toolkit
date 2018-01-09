@@ -61,6 +61,8 @@ $(window).scroll(function() {
     }
 });
 
+declare var TitleNotification: any;
+
 window.onfocus = function(){notifications = 0; TitleNotification.reset()};
 window.onclick = function(){notifications = 0; TitleNotification.reset()};
 

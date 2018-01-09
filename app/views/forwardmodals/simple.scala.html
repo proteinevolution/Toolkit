@@ -1,10 +1,8 @@
 @import java.lang.String
 @(tool: de.proteinevolution.models.Tool, viewName: String)
 
-
 <div class="reveal forwardModal" id="forwardModal_@{viewName}" data-reveal>
     <p>Forward Job</p>
-
 
     <div class="forward_form">
         <div class="forwardFormDiv">
@@ -29,7 +27,7 @@
                         <option id="multiSeqOptions_@viewName" value="@forwardTool">@forwardTool</option>
                     }
 
-            <select>
+            </select>
         </div>
         <div class="large-5 columns">
             <div class="callout alert" id="forwardWarning" style="display: none;" >
@@ -42,15 +40,12 @@
         </div>
     </div>
 
-
 </div>
 
 <script>
-
         window["@{viewName}_forward_"] = function(){
-            var selectedTool, boolSelectedHits,boolEvalue, evalue;
+            var selectedTool, boolEvalue, evalue;
             boolEvalue = $('#accordingEvalue_@viewName').is(':checked');
-            boolSelectedHits = $('#selectedHits_@viewName').is(':checked');
             selectedTool = $('#forwardSelect_@viewName').val();
             evalue = $("#forwardEvalue_@viewName").val();
             if(selectedTool === ""){
@@ -58,7 +53,7 @@
                 $('#forwardModal_@{viewName}').foundation('close');
                 return;
             }
-            @{viewName}_forward(selectedTool, boolSelectedHits,boolEvalue, evalue, false, false);
+            Forwarding.process(selectedTool, boolEvalue, evalue, false, false);
             if (selectedTool !== "") {
                 $('#forwardModal_@{viewName}').foundation('close');
             }
@@ -66,15 +61,11 @@
                 alert("no evalue!")
             }
         };
-
         $("#forwardModal_@viewName").foundation();
-
         $('#alignmentOptions_@viewName').show();
         $('#multiSeqOptions_@viewName').hide();
-
         //default check radio buttons
         $('#selectedHits_@viewName').prop("checked", true);
-
         $("#forwardModal_@viewName").bind('closed.zf.reveal', (function () {
             $('#forwardSelect_@viewName').val('');
             $('#forwardEvalue_@viewName').val('0.001');

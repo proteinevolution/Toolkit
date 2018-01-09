@@ -1,13 +1,11 @@
 @import de.proteinevolution.tools.results.Alignment.AlignmentResult
-@import controllers.routes
 @import java.lang.String
 @(jobID: String, alignment: AlignmentResult, resultName: String, tool: de.proteinevolution.models.Tool)()
-<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
 
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="@{resultName}_selectAllAlnq()" class="selectAllSeq"><span class="@{resultName}_selectAllSeqSpanAlnq">Select all</span></a>
+    <a onclick="ResultViewHelper.toggleAllCheckboxes();" class="selectAllSeq"><span class="@{resultName}_selectAllSeqBar">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Reduced A3M</span></a>
     <a type="button" id="downloadAlignmentFull"  onclick="@{resultName}_downloadFull()"><span>Download Full A3M</span></a>
@@ -26,7 +24,7 @@
         <tbody class="alignmentTBody">
         </tbody>
         <tr>
-            <td colspan="4" ><a onclick="getsHitsManually()" id="loadHitsQaln">Load Hits</a></td>
+            <td colspan="4" ><span id="loadHitsAln">Load Hits</span></td>
         </tr>
         <tr>
             <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
@@ -37,35 +35,30 @@
 
 <script>
         var jobID = '@jobID';
-        var selectAllBoolAlnq = false;
         var shownHits = 20;
         var showMore = 100;
         var loading = false;
-        var numHits = @alignment.alignment.length;
+        var numHits = @alignment.alignment.length - 1;
         var resultName = '@resultName';
         var checkboxes = [];
-        var checkbox = "checkbox";
-
 
         window["@{resultName}_forward"] = function(selectedTool){
             var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
-            var route = jsRoutes.controllers.AlignmentController.getAln(jobID);
 
             $.LoadingOverlay("show");
             // get result json
             $.ajax({
-                type: route.method,
-                url: route.url,
+                type: "POST",
+                url: "/results/alignment/getAln/" + jobID,
                 contentType: "application/json",
                 data: JSON.stringify(data),
                 error: function(){
                     $.LoadingOverlay("hide")
                 }
             }).done(function (data) {
-                    forward(selectedTool, data);
+                Forwarding.simple(selectedTool, data);
             });
         };
-
 
         window["@{resultName}_download"] = function(){
             // get result json
@@ -78,9 +71,7 @@
             if("@{resultName}" === "querytemplate"){
                 fileUrl = "/files/@jobID/reducedQT.a3m";
                 downloadFilename = "@{tool.toolNameShort}_reducedQT_@{jobID}.a3m";
-
             }
-
             $.ajax({
                 type: 'GET',
                 url: fileUrl
@@ -110,99 +101,10 @@
             });
         };
 
-        function getHits(start, end){
-            if(start <= numHits && end <= numHits && !loading){
-                var data = {"start": start, "end": end, "resultName": resultName};
-                loading = true;
-                $('#loadHitsQaln').hide();
-                $('#loadingHits').show();
-                var route = {};
-                route.url = "/AlignmentLoadHits/" + jobID;
-                route.method = "POST";
-                return $.ajax({
-                    method: route.method,
-                    url: route.url,
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    error: function(){
-                        $(".alignmentTBody").append("Error loading Data.");
-                    }
-                }).done(function (data_) {
-                    $(".alignmentTBody").append(data_);
-                    loading = false;
-                    $('#loadingHits').hide();
-                    // hide loadHitsQaln
-                    if (shownHits != numHits) {
-                        $('#loadHitsQaln').show();
-                    }
-                });
-            }
-        }
-
-        window["@{resultName}_selectAllAlnq"] = function(){
-            selectAllBoolAlnq = !selectAllBoolAlnq;
-            $(".@{resultName}_selectAllSeqSpanAlnq").toggleText("Select all","Deselect all");
-            $(".@{resultName}_selectAllSeqSpanAlnq").toggleClass("colorToggle");
-            if(selectAllBoolAlnq) {
-                selectAllHelper(checkbox);
-                // first empty array
-                checkboxes = [];
-                // push all checkboxes (1 to num_hits) into array
-                _.range(1, numHits+1).forEach(function(x){checkboxes.push(x)});
-            }
-            else {
-                deselectAll(checkbox);
-                // delete all checkboxes from array
-                checkboxes = [];
-            }
-        };
-
         $(document).ready(function () {
 
             // trigger lazyload for loading alignment
             shownHits = shownHits > numHits ? numHits : shownHits;
-            getHits(0, shownHits).then(function(){
-                // check checkboxes that are stored in array
-                // in order to make it work with pagination/lazyload
-                selectFromArray(checkboxes);
-                $(document).on('scroll', function () {
-                    if ($(this).scrollTop() === $(this).height() - $(window).height()) {
-                        if (!loading) {
-                            var end = shownHits + showMore;
-                            end = end < numHits ? end : numHits;
-                            if (shownHits != end) {
-                                getHits(shownHits, end);
-                            }else{
-                                $('#loadHitsQaln').hide();
-                            }
-                            shownHits = end;
-
-
-                        }
-                    }
-                    $("#alignmentResult").floatingScroll('init');
-                });
-                $('input:checkbox').click(function (e) {
-                    var currentVal = $(this).val();
-                    var currentState = $(this).prop('checked');
-                    if (currentState) {
-                        // push num of checked checkbox into array
-                        checkboxes.push(parseInt(currentVal));
-                        // make sure array contains no duplicates
-                        checkboxes = checkboxes.filter(function (value, index, array) {
-                            return array.indexOf(value) === index;
-                        });
-                    } else {
-                        // delete num of unchecked checkbox from array
-                        checkboxes = checkboxes.filter(function (x) {
-                            return x != currentVal
-                        });
-                    }
-                });
-                // hide loadHitsQaln
-                if(shownHits === numHits){
-                    $('#loadHitsQaln').hide();
-                }
-            });
+            ResultViewHelper.showHitsAln(0, shownHits, numHits, jobID, resultName, "fas");
         });
 </script>
