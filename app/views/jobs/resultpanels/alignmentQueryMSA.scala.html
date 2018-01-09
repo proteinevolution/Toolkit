@@ -24,7 +24,7 @@
         <tbody class="alignmentTBody">
         </tbody>
         <tr>
-            <td colspan="4" ><span id="loadHitsQaln">Load Hits</span></td>
+            <td colspan="4" ><span id="loadHitsAln">Load Hits</span></td>
         </tr>
         <tr>
             <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
@@ -105,7 +105,7 @@
 
             // trigger lazyload for loading alignment
             shownHits = shownHits > numHits ? numHits : shownHits;
-            ResultViewHelper.showHitsAln(shownHits, end, numHits, jobID, resultName, "fas").then(function(){
+            ResultViewHelper.showHitsAln(0, shownHits, numHits, jobID, resultName, "fas").then(function(){
                 // check checkboxes that are stored in array
                 // in order to make it work with pagination/lazyload
                 selectFromArray(checkboxes);
@@ -117,7 +117,7 @@
                             if (shownHits !== end) {
                                 ResultViewHelper.showHitsAln(shownHits, end, numHits, jobID, resultName, "fas");
                             }else{
-                                $('#loadHitsQaln').hide();
+                                $('#loadHitsAln').hide();
                             }
                             shownHits = end;
                         }
@@ -141,9 +141,9 @@
                         });
                     }
                 });
-                // hide loadHitsQaln
+                // hide loadHitsAln
                 if(shownHits === numHits){
-                    $('#loadHitsQaln').hide();
+                    $('#loadHitsAln').hide();
                 }
             });
         });

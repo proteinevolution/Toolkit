@@ -63,6 +63,7 @@ object ResultViewHelper {
             contentType = "application/json",
             success = { (data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) =>
               $(".alignmentTBody").append(data.asInstanceOf[String])
+              $("#loadingHits").hide()
               if (js.Dynamic.global.shownHits.asInstanceOf[Int] != numHits)
                 $("#loadHitsAln").show()
             },

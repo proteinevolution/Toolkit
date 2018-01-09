@@ -74,7 +74,7 @@
 
             // trigger lazyload for loading alignment
             shownHits = shownHits > numHits ? numHits : shownHits;
-            ResultViewHelper.showHitsAln(shownHits, end, numHits, jobID, resultName, "fas").then(function(){
+            ResultViewHelper.showHitsAln(0, shownHits, numHits, jobID, resultName, "fas").then(function(){
                 // check checkboxes that are stored in array
                 // in order to make it work with pagination/lazyload
                 selectFromArray(checkboxes);
