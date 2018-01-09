@@ -176,13 +176,13 @@ object ResultViewHelper {
       )
       js.Dynamic.global
         .$(elem)
-        .animate(js.Dynamic.literal("scrollTop" -> ($(s".aln][value=' $id ']").offset().top - 100.toDouble)), 1)
+        .animate(js.Dynamic.literal("scrollTop" -> ($(".aln[value='" + id + "']").offset().top - 100.toDouble)), 1)
       js.Dynamic.global.$.LoadingOverlay("hide")
       js.Dynamic.global.shownHits = id
     } else {
       js.Dynamic.global
         .$(elem)
-        .animate(js.Dynamic.literal("scrollTop" -> ($(s".aln][value=' $id ']").offset().top - 100.toDouble)), 1)
+        .animate(js.Dynamic.literal("scrollTop" -> ($(".aln[value='" + id + "']").offset().top - 100.toDouble)), 1)
     }
   }
 

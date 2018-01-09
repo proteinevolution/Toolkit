@@ -34,14 +34,14 @@ object HitsSlider {
           "min"         -> 1,
           "max"         -> seqLength,
           "step"        -> 1,
-          "values"      -> js.Array(start, end),
-          "slide" -> { (_: js.Any, ui: js.Array[String]) =>
+          "values"      -> js.Array[Int](start, end),
+          "slide" -> { (_: js.Any, ui: js.Dynamic) =>
             {
-              tooltip.text(ui(0))
-              tooltip2.text(ui(1))
+              tooltip.text(ui.values.asInstanceOf[js.Array[Int]](0).toString)
+              tooltip2.text(ui.values.asInstanceOf[js.Array[Int]](1).toString)
             }
           },
-          "change" -> { (_: js.Any, ui: js.Array[String]) =>
+          "change" -> { (_: js.Any, ui: js.Dynamic) =>
             {
               js.Dynamic.global.sliderCoords = js.Dynamic.global.$("#flat-slider").slider("option", "values")
             }
