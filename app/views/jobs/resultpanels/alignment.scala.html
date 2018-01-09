@@ -6,7 +6,7 @@
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="ResultViewHelper.toggleAllCheckBoxes();" class="selectAllSeq"><span class="selectAllSeqBar">Select all</span></a>
+    <a onclick="ResultViewHelper.toggleAllCheckboxes();" class="selectAllSeq"><span class="selectAllSeqBar">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download MSA</span></a>
     @defining("/files/" + jobID + "/" + "alignment.fas") { fileURL: String =>
@@ -36,7 +36,7 @@
         var shownHits = 20;
         var showMore = 100;
         var loading = false;
-        var numHits = @alignment.alignment.length;
+        var numHits = @alignment.alignment.length - 1;
         var resultName = '@resultName';
         var jobID = '@jobID';
         var checkboxes = [];
