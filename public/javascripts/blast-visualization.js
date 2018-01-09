@@ -60,14 +60,6 @@ function identifyDatabase(id) {
         return null;
 }
 
-function scrollToSection(name) {
-    var elem = $('#tool-tabs').hasClass("fullscreen") ? '#tool-tabs' : 'html, body';
-    var pos = $('#' + name).offset().top + ($('#tool-tabs').hasClass("fullscreen") ? $(elem).scrollTop() : 25);
-    $(elem).animate({
-        scrollTop: pos
-    }, 'fast');
-
-}
 
 function selectFromArray(checkboxes){
     _.range(1, numHits+1).forEach(function (currentVal) {

@@ -186,4 +186,22 @@ object ResultViewHelper {
     }
   }
 
+  @JSExport
+  def scrollToSection(name: String): Unit = {
+    val elem =
+      if ($("#tool-tabs").hasClass("fullscreen"))
+        "#tool-tabs"
+      else
+        "html, body"
+    val _pos = $("#" + name).offset().top
+    val pos =
+      if ($("#tool-tabs").hasClass("fullscreen"))
+        $(elem).scrollTop()
+      else
+        25.toDouble
+    js.Dynamic.global
+      .$(elem)
+      .animate(js.Dynamic.literal("scrollTop" -> (_pos + pos)), "fast")
+  }
+
 }
