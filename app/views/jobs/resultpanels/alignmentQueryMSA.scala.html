@@ -105,46 +105,6 @@
 
             // trigger lazyload for loading alignment
             shownHits = shownHits > numHits ? numHits : shownHits;
-            ResultViewHelper.showHitsAln(0, shownHits, numHits, jobID, resultName, "fas").then(function(){
-                // check checkboxes that are stored in array
-                // in order to make it work with pagination/lazyload
-                selectFromArray(checkboxes);
-                $(document).on('scroll', function () {
-                    if ($(this).scrollTop() === $(this).height() - $(window).height()) {
-                        if (!loading) {
-                            var end = shownHits + showMore;
-                            end = end < numHits ? end : numHits;
-                            if (shownHits !== end) {
-                                ResultViewHelper.showHitsAln(shownHits, end, numHits, jobID, resultName, "fas");
-                            }else{
-                                $('#loadHitsAln').hide();
-                            }
-                            shownHits = end;
-                        }
-                    }
-                    $("#alignmentResult").floatingScroll('init');
-                });
-                $('input:checkbox').click(function (e) {
-                    var currentVal = $(this).val();
-                    var currentState = $(this).prop('checked');
-                    if (currentState) {
-                        // push num of checked checkbox into array
-                        checkboxes.push(parseInt(currentVal));
-                        // make sure array contains no duplicates
-                        checkboxes = checkboxes.filter(function (value, index, array) {
-                            return array.indexOf(value) === index;
-                        });
-                    } else {
-                        // delete num of unchecked checkbox from array
-                        checkboxes = checkboxes.filter(function (x) {
-                            return x !== currentVal
-                        });
-                    }
-                });
-                // hide loadHitsAln
-                if(shownHits === numHits){
-                    $('#loadHitsAln').hide();
-                }
-            });
+            ResultViewHelper.showHitsAln(0, shownHits, numHits, jobID, resultName, "fas");
         });
 </script>
