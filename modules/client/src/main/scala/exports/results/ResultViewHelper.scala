@@ -44,6 +44,40 @@ object ResultViewHelper {
     }
   }
 
+  @JSExport
+  def showHitsAln(start: Int, end: Int, numHits: Int, jobID: String, resultName: String, format: String): Unit = {
+    if (start <= numHits && end <= numHits) {
+      $("#loadHitsAln").hide()
+      $("#loadingHits").show()
+      val route = format match {
+        case "clu" => s"/results/alignment/clustal/$jobID"
+        case _     => s"/results/alignment/loadHits/$jobID"
+      }
+      jQuery.ajax(
+        js.Dynamic
+          .literal(
+            url = route,
+            data = JSON.stringify(
+              js.Dynamic.literal("start" -> start, "end" -> end, "resultName" -> resultName)
+            ),
+            contentType = "application/json",
+            success = { (data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) =>
+              $(".alignmentTBody").append(data.asInstanceOf[String])
+              if (js.Dynamic.global.shownHits.asInstanceOf[Int] != numHits)
+                $("#loadHitsAln").show()
+            },
+            error = { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
+              dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
+              $(".alignmentTBody").append("Error loading Data.")
+              $("#loadingHits").hide()
+            },
+            `type` = "POST"
+          )
+          .asInstanceOf[JQueryAjaxSettings]
+      )
+    }
+  }
+
   implicit class JQueryToggleText(val self: JQuery) extends AnyVal {
     def toggleText(a: String, b: String): self.type = {
       if (self.text() == b)

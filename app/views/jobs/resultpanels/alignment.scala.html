@@ -22,7 +22,7 @@
         <tbody class="alignmentTBody">
         </tbody>
         <tr>
-            <td colspan="4" ><a onclick="getsHitsManually()" id="loadHitsAln">Load Hits</a></td>
+            <td colspan="4" ><span id="loadHitsAln">Load Hits</span></td>
         </tr>
         <tr>
             <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
@@ -40,7 +40,6 @@
         var resultName = '@resultName';
         var jobID = '@jobID';
         var checkboxes = [];
-        var checkbox = "checkbox";
 
         window["@{resultName}_forward"] = function(selectedTool){
             var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
@@ -71,40 +70,11 @@
             });
         };
 
-        function getHits(start, end){
-            if(start <= numHits && end <= numHits && !loading){
-                var data = { "start": start, "end": end, "resultName": resultName };
-                loading = true;
-                $('#loadHitsAln').hide();
-                $('#loadingHits').show();
-                var route = {};
-                route.url = "/results/alignment/loadHits/" + jobID;
-                route.method = "POST";
-                return $.ajax({
-                    method: route.method,
-                    url: route.url,
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    error: function(){
-                        $(".alignmentTBody").append("Error loading Data.");
-                    }
-                }).done(function (data_) {
-                    $(".alignmentTBody").append(data_);
-                    loading = false;
-                    $('#loadingHits').hide();
-                    // hide loadHitsAln
-                    if (shownHits !== numHits) {
-                        $('#loadHitsAln').show();
-                    }
-                });
-            }
-        }
-
         $(document).ready(function () {
 
             // trigger lazyload for loading alignment
             shownHits = shownHits > numHits ? numHits : shownHits;
-            getHits(0, shownHits).then(function(){
+            ResultViewHelper.showHitsAln(shownHits, end, numHits, jobID, resultName, "fas").then(function(){
                 // check checkboxes that are stored in array
                 // in order to make it work with pagination/lazyload
                 selectFromArray(checkboxes);
@@ -114,7 +84,7 @@
                             var end = shownHits + showMore;
                             end = end < numHits ? end : numHits;
                             if (shownHits !== end) {
-                                getHits(shownHits, end);
+                                ResultViewHelper.showHitsAln(shownHits, end, numHits, jobID, resultName, "fas");
                             }else{
                                 $('#loadHitsAln').hide();
                             }

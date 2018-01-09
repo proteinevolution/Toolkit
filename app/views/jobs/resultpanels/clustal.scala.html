@@ -1,6 +1,6 @@
 @import de.proteinevolution.tools.results.Alignment.AlignmentResult
 @import java.lang.String
-@(jobID: String, alignment: AlignmentResult, resultName: String,  tool : de.proteinevolution.models.Tool)()
+@(jobID: String, alignment: AlignmentResult, resultName: String,  tool: de.proteinevolution.models.Tool)()
 
 @fileURL = @{"/files/" + jobID + "/" + "alignment.clustalw_aln"}
 
@@ -69,7 +69,6 @@
         var resultName = '@resultName';
         var jobID = '@jobID';
         var checkboxes = [];
-        var checkbox = "checkbox";
 
         window["@{resultName}_forward"] = function(selectedTool){  
 	    var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
@@ -89,7 +88,6 @@
 
         window["@{resultName}_download"] = function(){
             // get result json
-
             $.LoadingOverlay("show");
             $.ajax({
                 type: 'GET',
