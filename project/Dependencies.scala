@@ -4,7 +4,7 @@ import sbt._
 object Dependencies {
 
   lazy val akkaVersion   = "2.5.8"
-  lazy val scalazVersion = "7.2.18"
+  lazy val catsV = "1.0.1"
 
   lazy val commonDeps = Seq(
     ws,
@@ -24,10 +24,12 @@ object Dependencies {
     "org.mindrot"          % "jbcrypt"                   % "0.3m",
     "org.reactivemongo"    %% "play2-reactivemongo"      % "0.12.7-play26",
     "org.reactivemongo"    %% "reactivemongo-akkastream" % "0.12.7",
-    "org.scalaz"           %% "scalaz-core"              % scalazVersion,
+    "org.typelevel"        %% "cats-core"                % catsV,
+    "org.tpolecat"         %% "atto-core"                % "0.6.1",
     "com.vmunier"          %% "scalajs-scripts"          % "1.1.1",
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
-    "com.typesafe.play"    %% "play-json"                % "2.6.8"
+    "com.typesafe.play"    %% "play-json"                % "2.6.8",
+    "org.webjars"          %% "webjars-play"             % "2.6.2"
   )
 
   lazy val testDeps = Seq(
@@ -40,7 +42,6 @@ object Dependencies {
   )
 
   lazy val frontendDeps = Seq(
-    "org.webjars"       %% "webjars-play"       % "2.6.1",
     "org.webjars"       % "jquery"              % "3.2.1",
     "org.webjars.bower" % "jquery.lazyload"     % "1.9.7",
     "org.webjars" % "jquery-ui" % "1.12.1",

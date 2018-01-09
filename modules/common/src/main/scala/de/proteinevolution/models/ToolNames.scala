@@ -2,7 +2,7 @@ package de.proteinevolution.models
 
 object ToolNames {
 
-  case class ToolName(value: String) extends AnyVal  // http://docs.scala-lang.org/overviews/core/value-classes.html
+  case class ToolName(value: String) extends AnyVal
 
   final val ALNVIZ              = ToolName("alnviz")
   final val REFORMAT            = ToolName("reformat")

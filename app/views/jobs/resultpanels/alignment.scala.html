@@ -1,15 +1,12 @@
 @import de.proteinevolution.tools.results.Alignment.AlignmentResult
-@import controllers.routes
 @import java.lang.String
 @import play.twirl.api.TwirlFeatureImports.defining
 @(jobID: String, alignment: AlignmentResult, resultName: String,  tool: de.proteinevolution.models.Tool)()
-<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
-
 
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="@{resultName}_selectAllAln()" class="selectAllSeq"><span class="@{resultName}_selectAllSeqSpan">Select all</span></a>
+    <a onclick="ResultViewHelper.toggleAllCheckboxes();" class="selectAllSeq"><span class="selectAllSeqBar">Select all</span></a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download MSA</span></a>
     @defining("/files/" + jobID + "/" + "alignment.fas") { fileURL: String =>
@@ -25,7 +22,7 @@
         <tbody class="alignmentTBody">
         </tbody>
         <tr>
-            <td colspan="4" ><a onclick="getsHitsManually()" id="loadHitsAln">Load Hits</a></td>
+            <td colspan="4" ><span id="loadHitsAln">Load Hits</span></td>
         </tr>
         <tr>
             <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
@@ -34,34 +31,31 @@
 </div>
 
 <script>
-
         var fileUrl = "/files/@jobID/alignment.fas";
         var downloadFilename = "@{tool.toolNameShort}_@{resultName}_@{jobID}" + ".fasta";
-        var selectAllBoolAln = false;
         var shownHits = 20;
         var showMore = 100;
         var loading = false;
-        var numHits = @alignment.alignment.length;
+        var numHits = @alignment.alignment.length - 1;
         var resultName = '@resultName';
         var jobID = '@jobID';
         var checkboxes = [];
-        var checkbox = "checkbox";
 
         window["@{resultName}_forward"] = function(selectedTool){
             var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
-            var route = jsRoutes.controllers.AlignmentController.getAln(jobID);
+
             $.LoadingOverlay("show");
             // get result json
             $.ajax({
-                type: route.method,
-                url: route.url,
+                type: "POST",
+                url: "/results/alignment/getAln/" + jobID,
                 contentType: "application/json",
                 data: JSON.stringify(data),
                 error: function(){
                     $.LoadingOverlay("hide")
                 }
             }).done(function (data) {
-                    forward(selectedTool, data);
+                Forwarding.simple(selectedTool, data);
             });
         };
 
@@ -75,97 +69,9 @@
                 download(downloadFilename, data.toString());
             });
         };
-
-        function getHits(start, end){
-            if(start <= numHits && end <= numHits && !loading){
-                var data = { "start": start, "end": end, "resultName": resultName };
-                loading = true;
-                $('#loadHitsAln').hide();
-                $('#loadingHits').show();
-                var route = {};
-                route.url = "/AlignmentLoadHits/" + jobID;
-                route.method = "POST";
-                return $.ajax({
-                    method: route.method,
-                    url: route.url,
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    error: function(){
-                        $(".alignmentTBody").append("Error loading Data.");
-                    }
-                }).done(function (data_) {
-                    $(".alignmentTBody").append(data_);
-                    loading = false;
-                    $('#loadingHits').hide();
-                    // hide loadHitsAln
-                    if (shownHits !== numHits) {
-                        $('#loadHitsAln').show();
-                    }
-                });
-            }
-        }
-
-        window["@{resultName}_selectAllAln"] = function(){
-            selectAllBoolAln = !selectAllBoolAln;
-            $(".@{resultName}_selectAllSeqSpan").toggleText("Select all","Deselect all");
-            $(".@{resultName}_selectAllSeqSpan").toggleClass("colorToggle");
-            if(selectAllBoolAln) {
-                selectAllHelper(checkbox);
-                // first empty array
-                checkboxes = [];
-                // push all checkboxes (1 to num_hits) into array
-                _.range(1, numHits+1).forEach(function(x){checkboxes.push(x)});
-            }
-            else {
-                deselectAll(checkbox);
-                // delete all checkboxes from array
-                checkboxes = [];
-            }
-        };
-
         $(document).ready(function () {
-
             // trigger lazyload for loading alignment
             shownHits = shownHits > numHits ? numHits : shownHits;
-            getHits(0, shownHits).then(function(){
-                // check checkboxes that are stored in array
-                // in order to make it work with pagination/lazyload
-                selectFromArray(checkboxes);
-                $(document).on('scroll', function () {
-                    if ($(this).scrollTop() === $(this).height() - $(window).height()) {
-                        if (!loading) {
-                            var end = shownHits + showMore;
-                            end = end < numHits ? end : numHits;
-                            if (shownHits !== end) {
-                                getHits(shownHits, end);
-                            }else{
-                                $('#loadHitsAln').hide();
-                            }
-                            shownHits = end;
-                        }
-                    }
-                });
-                $('input:checkbox').click(function (e) {
-                    var currentVal = $(this).val();
-                    var currentState = $(this).prop('checked');
-                    if (currentState) {
-                        // push num of checked checkbox into array
-                        checkboxes.push(parseInt(currentVal));
-                        // make sure array contains no duplicates
-                        checkboxes = checkboxes.filter(function (value, index, array) {
-                            return array.indexOf(value) === index;
-                        });
-                    } else {
-                        // delete num of unchecked checkbox from array
-                        checkboxes = checkboxes.filter(function (x) {
-                            return x !== currentVal
-                        });
-                    }
-                });
-                // hide loadHitsAln
-                if(shownHits === numHits){
-                    $('#loadHitsAln').hide();
-                }
-            });
+            ResultViewHelper.showHitsAln(0, shownHits, numHits, jobID, resultName, "fas");
         });
 </script>

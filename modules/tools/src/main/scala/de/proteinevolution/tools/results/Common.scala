@@ -202,13 +202,13 @@ object Common {
     Html(generateLink(uniprotBaseLik, id, id))
   }
 
-  def getLinksHHBlits(id: String): Html = {
+  def getLinksHHBlits(jobID: String, id: String): Html = {
     Html(
-      "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
+      s"<a data-open='templateAlignmentModal' onclick='new TemplateAlignment(${'"'}hhblits${'"'}).get(${'"'}$jobID${'"'},${'"'}$id${'"'})'>Template alignment</a>"
     )
   }
 
-  def getLinksHHpred(id: String): Html = {
+  def getLinksHHpred(jobID: String, id: String): Html = {
     val db    = identifyDatabase(id)
     val links = new ArrayBuffer[String]()
     val idPdb = id.replaceAll("_.*$", "").toLowerCase
@@ -219,7 +219,7 @@ object Common {
     }
     val idCDD  = id.replaceAll("PF", "pfam")
     val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
-    links += "<a data-open=\"templateAlignmentModal\" onclick=\"templateAlignment(\'" + id + "\')\">Template alignment</a>"
+    links +=  s"<a data-open='templateAlignmentModal' onclick='new TemplateAlignment(${'"'}hhpred${'"'}).get(${'"'}$jobID${'"'},${'"'}$id${'"'})'>Template alignment</a>"
     db match {
       case "scop" =>
         links += "<a data-open=\"structureModal\" onclick=\"showStructure(\'" + id + "\')\";\">Template 3D structure</a>"
@@ -287,11 +287,11 @@ object Common {
   }
 
   def getCheckbox(num: Int): String = {
-    "<input type=\"checkbox\" value=\"" + num + "\" name=\"alignment_elem\" class=\"checkbox\"><a onclick=\"scrollToElem(" + num + ")\">" + num + "</a>"
+    "<input type=\"checkbox\" value=\"" + num + "\" name=\"alignment_elem\" class=\"checkbox\"><a onclick=\"ResultViewHelper.scrollToHit(" + num + ")\">" + num + "</a>"
   }
 
   def getAddScrollLink(num: Int): String = {
-    "<a onclick=\"scrollToElem(" + num + ")\">" + num + "</a>"
+    "<a onclick=\"ResultViewHelper.scrollToHit(" + num + ")\">" + num + "</a>"
   }
 
   def addBreak(description: String): String = {
