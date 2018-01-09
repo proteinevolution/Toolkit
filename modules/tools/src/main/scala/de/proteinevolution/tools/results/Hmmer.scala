@@ -3,13 +3,14 @@ package de.proteinevolution.tools.results
 import javax.inject.Inject
 import javax.inject.Singleton
 
-import de.proteinevolution.tools.results.Alignment.AlignmentItem
+import de.proteinevolution.tools.results.Alignment.AlignmentResult
 import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.tools.results.HHTemplate.DummyTemplate
 import de.proteinevolution.tools.results.Hmmer.{ HmmerHSP, HmmerResult }
 import play.api.libs.json._
 
 @Singleton
-class Hmmer @Inject()(general: General, aln: Alignment) extends SearchTool {
+class Hmmer @Inject()(general: General, aln: Alignment) extends SearchTool[HmmerHSP] {
 
   def parseResult(jsValue: JsValue): HmmerResult = {
     val obj   = jsValue.as[JsObject]
@@ -31,7 +32,7 @@ class Hmmer @Inject()(general: General, aln: Alignment) extends SearchTool {
       case Some(data) => data
       case None       => "1"
     }
-    HmmerResult(hsplist, num_hits, alignment, query, db, TMPRED, COILPRED)
+    HmmerResult(hsplist, num_hits, AlignmentResult(alignment), query, db, TMPRED, COILPRED)
   }
 
   def parseHSP(hsp: JsObject): HmmerHSP = {
@@ -88,7 +89,10 @@ object Hmmer {
                       accession: String,
                       midline: String,
                       description: String,
-                      domain_obs_num: Int) {
+                      domain_obs_num: Int,
+                      info: HmmerInfo = HmmerInfo(-1, -1, -1, -1),
+                      template: HHTemplate = DummyTemplate())
+      extends HSP {
 
     def toDataTable(db: String): JsValue =
       Json.toJson(
@@ -104,15 +108,17 @@ object Hmmer {
       )
   }
 
-  case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
+  case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int, evalue: Double = -1)
+      extends SearchToolInfo
 
   case class HmmerResult(HSPS: List[HmmerHSP],
                          num_hits: Int,
-                         alignment: List[AlignmentItem],
+                         alignment: AlignmentResult,
                          query: SingleSeq,
                          db: String,
                          TMPRED: String,
-                         COILPRED: String) extends SearchResult {
+                         COILPRED: String)
+      extends SearchResult[HmmerHSP] {
     def hitsOrderBy(params: DTParam): List[HmmerHSP] = {
       (params.iSortCol, params.sSortDir) match {
         case (1, "asc")  => HSPS.sortBy(_.accession)

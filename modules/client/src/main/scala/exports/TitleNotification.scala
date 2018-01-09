@@ -1,6 +1,9 @@
-import org.scalajs.dom.raw.Node
-import scala.scalajs.js.annotation._
+package exports
+
 import org.scalajs.dom
+import org.scalajs.dom.raw.Node
+
+import scala.scalajs.js.annotation._
 
 @JSExportTopLevel("TitleNotification")
 object TitleNotification {

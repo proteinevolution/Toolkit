@@ -1,20 +1,15 @@
 @import play.api.libs.json.JsObject
 @import play.api.libs.json.JsValue
 @import play.api.libs.json.JsDefined
-@import controllers.routes
 @import play.twirl.api.Html
 @import java.lang.String
-
 @import de.proteinevolution.tools.results.Common
 @(jobID: String, jsValue: JsValue, tool: de.proteinevolution.models.Tool)()
-
-<link href="@routes.Assets.versioned("styles/resultView.css")" rel="stylesheet">
 @views.html.forwardmodals.simpler(tool, tool.toolNameShort)
 @if((jsValue \ jobID \ "hits").as[List[JsObject]].size < 1) {
     <div class="callout alert noHitsWide" id="noHits">
         No hits found!
     </div>
-
 }else{
 <div class="colorOptsAlignment">
     <a onclick="download_()" type="button"><span id="downloadAlignment">Download Hits</span></a>
@@ -87,7 +82,7 @@
         window["@{tool.toolNameShort}_forward"] = function(selectedTool){
             $.LoadingOverlay("show");
             var fileURL="/files/@{jobID}/@{jobID}" + ".fas";
-            forwardPath(selectedTool, fileURL);
+            Forwarding.redirect(selectedTool, fileURL);
 
         };
 

@@ -3,7 +3,8 @@ declare var loading : boolean;
 declare var shownHits : any;
 declare var showMore : any;
 declare var numHits : any;
-declare var getHits: any;
+declare var jobID: any;
+declare var ResultViewHelper: any;
 declare var colorAAs: boolean;
 declare var wrapped: boolean;
 declare var JobModel: any;
@@ -63,7 +64,7 @@ let followScroll = function(element : any) {
 		let end = parseInt(shownHits) + limit;
                 end = end < numHits ? end : numHits;
                 if (shownHits != end) {
-                    getHits(shownHits, end,wrapped,false);
+                ResultViewHelper.showHits(shownHits, end, wrapped, false, numHits, jobID);
                 }
                 shownHits = end;
             }

@@ -22,4 +22,4 @@ addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.7")
 
 addSbtPlugin("ch.epfl.scala" % "sbt-scalajs-bundler" % "0.9.0")
 
-resolvers += Resolver.typesafeRepo("releases")
+resolvers += "Typesafe Repository" at "https://repo.typesafe.com/typesafe/maven-releases"

@@ -13,18 +13,18 @@
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
             <div id="scrollLinks">
-                <a id="visualizationScroll" name="#visualization" onclick="scrollToSection('visualization')">Vis</a>
-                <a id="hitlistScroll" name="#hitlist" onclick="scrollToSection('hitlist')">Hits</a>
-                <a id="alignmentsScroll" name="#alignments" onclick="scrollToSection('alignments')">Aln</a>
+                <a id="visualizationScroll" name="#visualization" onclick="ResultViewHelper.scrollToSection('visualization')">Vis</a>
+                <a id="hitlistScroll" name="#hitlist" onclick="ResultViewHelper.scrollToSection('hitlist')">Hits</a>
+                <a id="alignmentsScroll" name="#alignments" onclick="ResultViewHelper.scrollToSection('alignments')">Aln</a>
             </div>
             <span class="headerDivider"></span>
             <div id="controlls">
 
-                <a onclick="selectAll()" class="selectAllSeqBar" id="extraWide">Select all</a>
+                <a onclick="ResultViewHelper.toggleAllCheckboxes();" class="selectAllSeqBar" id="extraWide">Select all</a>
                 <a type="button" id="forwardButtonNormal" data-open="forwardModal_@{
                     tool.toolNameShort
                 }">Forward</a>
-                <a onclick="wrap()" id="wrap">Wrap Seqs</a>
+                <a onclick="ResultViewHelper.toggleIsWrapped(jobID, shownHits, numHits, wrapped, colorAAs); wrapped = !wrapped;" id="wrap">Wrap Seqs</a>
             </div>
         </div>
     </div>
@@ -61,7 +61,7 @@
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
         <div>
-            <a class="success button tiny resubmitSection" onclick="resubmitSection('@{result.query.seq}', '>' + '@{result.query.accession}')" type="button" id="resubmitSection">Resubmit section</a>
+            <a class="success button tiny resubmitSection" onclick="HitsSlider.resubmit('@{result.query.seq}', '>' + '@{result.query.accession}')" type="button" id="resubmitSection">Resubmit section</a>
         </div>
 
         <div id='blastviz'>
@@ -122,7 +122,6 @@
 }
 <script>
         var checkbox = "checkbox";
-        var selectAllBool = false;
         var shownHits = 50;
         var numHits = @{result.num_hits};
         var jobID = '@{jobID}';
@@ -138,126 +137,15 @@
             if (numHits > 0) {
                 $("#wrap").text("Unwrap Seqs");
                 $("#wrap").addClass("colorToggleBar");
-                drawDataTable();
+                new DataTables("hmmer").config(jobID, numHits);
                 var firstQueryStart = @{if(result.num_hits > 0){ result.HSPS.head.query_start}};
                 var firstQueryEnd = @{if(result.num_hits > 0){ result.HSPS.head.query_end}};
                 /* without timeout SLIDER is displayed */
-                slider_show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
+                HitsSlider.show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
                 shownHits = shownHits > numHits ? numHits : shownHits;
-                getHits(0, shownHits, wrapped);
+                ResultViewHelper.showHits(0, shownHits, wrapped, false, numHits, jobID);
                 $("#wrap").hide();
             }
         });
-
-        function drawDataTable() {
-            hitlist = $('#htb').dataTable({
-                "bProcessing": true,
-                "bServerSide": true,
-                "sAjaxSource": "/api/job/results/dataTableHmmer/" + jobID,
-                "autoWidth": false,
-                "lengthMenu": [[10, 25, 50, 100, numHits], [10, 25, 50, 100, "All"]],
-                "searching": false,
-                "iDisplayLength": 25,
-                "drawCallback": function() {
-                    linkCheckboxes();
-                    selectFromArray(checkboxes);
-                }
-            });
-        }
-
-        function selectAll(){
-            selectAllBool = !selectAllBool;
-            $(".selectAllSeqBar").toggleClass("colorToggleBar");
-            $(".selectAllSeqBar").toggleText("Select all","Deselect all");
-            if(selectAllBool) {
-                selectAllHelper(checkbox);
-                // first empty array
-                checkboxes = [];
-                // push all checkboxes (1 to num_hits) into array
-                _.range(1, numHits+1).forEach(function(num){return checkboxes.push(num)});
-            }
-            else {
-                deselectAll(checkbox);
-                // delete all checkboxes from array
-                checkboxes = [];
-            }
-        }
-
-        function hmmer_forward(selectedTool, boolSelectedHits, boolEvalue, evalue, boolFullLength) {
-            var data = {"checkboxes": checkboxes.removeDuplicates()};
-            $.LoadingOverlay("show");
-            var route = null;
-            var filename = generateFilename();
-            if (boolFullLength) {
-                if (boolEvalue) {
-                    data.evalue = evalue;
-                    data.filename = filename;
-                    route = jsRoutes.controllers.HmmerController.evalFull(jobID);
-                } else {
-                    data.filename = filename;
-                    if(data.checkboxes.length === 0){
-                        $('#forwardModal_@{tool.toolNameShort}').foundation('close');
-                        $.LoadingOverlay("hide");
-                        alert("No sequence(s) selected!");
-                        return false;
-                    }
-                    route = jsRoutes.controllers.HmmerController.full(jobID);
-                }
-
-            } else {
-                if (boolEvalue) {
-                    data.evalue = evalue;
-                    data.filename = filename;
-                    route = jsRoutes.controllers.HmmerController.alnEval(jobID);
-                } else {
-                    data.filename = filename;
-                    if(data.checkboxes.length === 0){
-                        $('#forwardModal_@{tool.toolNameShort}').foundation('close');
-                        $.LoadingOverlay("hide");
-                        alert("No sequence(s) selected!");
-                        return false;
-                    }
-                    route = jsRoutes.controllers.HmmerController.aln(jobID);
-
-                }
-            }
-            $.ajax({
-                url: route.url,
-                method: route.method,
-                contentType: "application/json",
-                data: JSON.stringify(data),
-                error: function(){
-                    $.LoadingOverlay("hide");
-                }
-            }).done(function (data_) {
-                forwardPath(selectedTool, 'files/' + jobID + '/'+filename+'.fa');
-            });
-        }
-
-        function getHits(start, end, isWrapped) {
-            if (start <= numHits && end <= numHits && !loading) {
-                var data = {"start": start, "end": end, "wrapped": wrapped};
-                loading = true;
-                $('#loadingHits').show();
-                $('#loadHits').hide();
-                var route = jsRoutes.controllers.HmmerController.loadHits(jobID);
-                return $.ajax({
-                    method: route.method,
-                    url: route.url,
-                    contentType: "application/json",
-                    data: JSON.stringify(data)
-                }).done(function (data_) {
-                    $("#alignmentTable").append(data_);
-                    loading = false;
-                    $('#loadingHits').hide();
-                    if (shownHits !== numHits) {
-                        $('#loadHits').show();
-                    }
-                    linkCheckboxes();
-                    selectFromArray(checkboxes);
-                    $("#alignments").floatingScroll('init');
-                });
-            }
-        }
 
 </script>
