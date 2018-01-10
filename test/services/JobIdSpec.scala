@@ -9,14 +9,11 @@ import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-
 class JobIdSpec extends FlatSpec with MockitoSugar {
 
   lazy val mongoStore: MongoStore             = wire[MongoStore]
   lazy val reactiveMongoApi: ReactiveMongoApi = mock[ReactiveMongoApi]
   lazy val jobIdProvider                      = new JobIdProvider(mongoStore)
-
-
 
   "A jobId" should "be unique" in {
 

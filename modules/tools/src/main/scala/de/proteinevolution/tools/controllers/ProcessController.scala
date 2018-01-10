@@ -30,7 +30,7 @@ class ProcessController @Inject()(ctx: HHContext,
       case HHOMP   => (serverScripts + "/templateAlignmentHHomp.sh").toFile
       case HHBLITS => (serverScripts + "/templateAlignmentHHblits.sh").toFile
       case HHPRED  => (serverScripts + "/templateAlignment.sh").toFile
-      case _                           => throw new IllegalStateException("tool either not found nor not supported")
+      case _       => throw new IllegalStateException("tool either not found nor not supported")
     }
     (for {
       file <- OptionT.liftF(futureScript)
@@ -39,7 +39,10 @@ class ProcessController @Inject()(ctx: HHContext,
         if (!f.isExecutable)
           BadRequest
         else {
-          Process(f.pathAsString, (constants.jobPath + jobID).toFile.toJava, "jobID" -> jobID, "accession" -> accession)
+          Process(f.pathAsString,
+                  (constants.jobPath + jobID).toFile.toJava,
+                  "jobID"     -> jobID,
+                  "accession" -> accession)
             .run()
             .exitValue() match {
             case 0 => Ok
@@ -132,9 +135,7 @@ class ProcessController @Inject()(ctx: HHContext,
   }
 
   // find better name for this function later and merge it with the one above (all depends on the non-uniform input json)
-  private[this] def numericAccString(toolName: ToolNames.ToolName,
-                                     result: SearchResult[HSP],
-                                     accStr: String): String = {
+  private[this] def numericAccString(toolName: ToolNames.ToolName, result: SearchResult[HSP], accStr: String): String = {
 
     val numList = accStr.split("\n").map(_.toInt)
 

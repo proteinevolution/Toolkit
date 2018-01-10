@@ -5,7 +5,7 @@ import javax.inject.{ Inject, Provider }
 import de.proteinevolution.tel.param.{ GenerativeParamFileParser, ParamCollector }
 import play.api.{ Configuration, Logger }
 
-sealed trait TELProvider extends Provider[String]
+sealed trait TELProvider      extends Provider[String]
 sealed trait TELParamProvider extends Provider[ParamCollector]
 
 class WrapperPathProvider @Inject()(configuration: Configuration) extends TELProvider {
@@ -34,8 +34,8 @@ class RunscriptPathProvider @Inject()(configuration: Configuration) extends TELP
 }
 
 class ParamCollectorProvider @Inject()(pc: ParamCollector,
-    configuration: Configuration,
-    generativeParamFileParser: GenerativeParamFileParser)
+                                       configuration: Configuration,
+                                       generativeParamFileParser: GenerativeParamFileParser)
     extends TELParamProvider {
 
   override def get(): ParamCollector = {

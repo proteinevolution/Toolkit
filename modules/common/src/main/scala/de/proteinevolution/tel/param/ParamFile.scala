@@ -49,7 +49,8 @@ abstract class GenerativeParamFile(name: String) extends GenerativeParam(name) {
   def load(): Unit
 }
 
-class ExecGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String]) extends GenerativeParamFile(name) {
+class ExecGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String])
+    extends GenerativeParamFile(name) {
 
   private var env: Option[Env] = None
   import scala.sys.process.Process
@@ -93,7 +94,8 @@ class ExecGenParamFile(name: String, path: String, private var allowed: Set[Stri
   def generate: ListMap[String, String] = this.clearTextNames
 }
 
-class ListGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String]) extends GenerativeParamFile(name) {
+class ListGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String])
+    extends GenerativeParamFile(name) {
 
   private val f = path.toFile
 

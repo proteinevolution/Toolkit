@@ -41,7 +41,7 @@ class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript] {
 
   private case class Replacer(arguments: Seq[(String, ValidArgument)]) {
     private var counter = -1
-    private val logger = org.slf4j.LoggerFactory.getLogger(this.getClass)
+    private val logger  = org.slf4j.LoggerFactory.getLogger(this.getClass)
 
     def apply(m: Regex.Match): String = {
       m.groupNames.foreach(logger.debug) // just use m because of https://stackoverflow.com/questions/43964571/scala-2-12-2-emits-a-ton-of-useless-warning-parameter-value-in-method

@@ -14,8 +14,7 @@ sealed trait Configuration {
 }
 
 @Singleton
-final class ConfigurationImpl @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient)()
-    extends Configuration {
+final class ConfigurationImpl @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient)() extends Configuration {
 
   override def hello(): Unit = {
     println("configuring hostname .... ")

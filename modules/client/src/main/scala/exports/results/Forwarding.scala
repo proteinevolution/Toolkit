@@ -99,7 +99,7 @@ object Forwarding {
         e.printStackTrace()
         throw e
     }
-   m.route(s"/tools/$tool")
+    m.route(s"/tools/$tool")
   }
 
 }

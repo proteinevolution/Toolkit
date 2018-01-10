@@ -32,8 +32,8 @@ object UserData {
   }
 
   /**
-    * Object containing the reader for the Class
-    */
+   * Object containing the reader for the Class
+   */
   implicit object Reader extends BSONDocumentReader[UserData] {
     def read(bson: BSONDocument): UserData = UserData(
       nameLogin = bson.getAs[String](NAMELOGIN).getOrElse(""),
@@ -46,8 +46,8 @@ object UserData {
   }
 
   /**
-    * Object containing the writer for the Class
-    */
+   * Object containing the writer for the Class
+   */
   implicit object Writer extends BSONDocumentWriter[UserData] {
     def write(userData: UserData): BSONDocument = BSONDocument(
       NAMELOGIN -> userData.nameLogin,
