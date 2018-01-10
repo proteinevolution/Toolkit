@@ -19,6 +19,3 @@ trait HSP {
   def template: HHTemplate
 
 }
-
-
-

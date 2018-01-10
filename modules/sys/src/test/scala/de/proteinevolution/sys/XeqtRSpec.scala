@@ -1,5 +1,3 @@
 package de.proteinevolution.sys
 
-class XeqtRSpec {
-
-}
+class XeqtRSpec {}

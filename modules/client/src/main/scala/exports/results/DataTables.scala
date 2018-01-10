@@ -4,7 +4,6 @@ import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 import scala.scalajs.js
 import js.Dynamic.{ global => g }
 
-
 @JSExportTopLevel("DataTables")
 class DataTables(toolName: String) {
 
@@ -22,16 +21,22 @@ class DataTables(toolName: String) {
 
   @JSExport
   def config(jobID: String, numHits: Int): Unit = {
-    js.Dynamic.global.$("#htb").dataTable(js.Dynamic.literal(
-      "bProcessing" -> true,
-      "bServerSide" -> true,
-      "sAjaxSource" -> s"/results/dataTable/$jobID",
-      "autoWidth" -> false,
-      "lengthMenu" ->  lengthMenu(numHits),
-      "searching" -> false,
-      "iDisplayLength" -> 25,
-      "drawCallback" -> callbacks.asInstanceOf[js.Any]
-    ).asInstanceOf[js.Object])
+    js.Dynamic.global
+      .$("#htb")
+      .dataTable(
+        js.Dynamic
+          .literal(
+            "bProcessing"    -> true,
+            "bServerSide"    -> true,
+            "sAjaxSource"    -> s"/results/dataTable/$jobID",
+            "autoWidth"      -> false,
+            "lengthMenu"     -> lengthMenu(numHits),
+            "searching"      -> false,
+            "iDisplayLength" -> 25,
+            "drawCallback"   -> callbacks.asInstanceOf[js.Any]
+          )
+          .asInstanceOf[js.Object]
+      )
   }
 
 }

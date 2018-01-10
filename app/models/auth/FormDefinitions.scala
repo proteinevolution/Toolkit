@@ -36,7 +36,9 @@ object FormDefinitions {
         connected = user.connected,
         accountType = if (acceptToS) 0 else -1,
         userData = Some(
-          UserData(nameLogin = nameLogin, password = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)), eMail = eMail)
+          UserData(nameLogin = nameLogin,
+                   password = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)),
+                   eMail = eMail)
         ),
         jobs = user.jobs,
         dateLastLogin = Some(ZonedDateTime.now),

@@ -7,9 +7,7 @@ import akka.actor.{ ActorRef, ActorSystem, Props }
 import de.proteinevolution.models.Constants
 
 @Singleton
-final class JobActorAccess @Inject()(actorSystem: ActorSystem,
-                                     jobActorFactory: JobActor.Factory,
-                                     constants: Constants) {
+final class JobActorAccess @Inject()(actorSystem: ActorSystem, jobActorFactory: JobActor.Factory, constants: Constants) {
 
   // Just spawn all the JobActors
   private val jobActors: Seq[ActorRef] =

@@ -105,8 +105,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
       true
     else {
       rh.headers.get("Origin") match {
-        case Some(originValue)
-            if originMatches(originValue) && !blacklist.contains(rh.remoteAddress) =>
+        case Some(originValue) if originMatches(originValue) && !blacklist.contains(rh.remoteAddress) =>
           logger.debug(s"originCheck: originValue = $originValue")
           true
 
@@ -169,8 +168,9 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
 
     userSessions.getUser.map { user =>
       Logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
-      Ok(views.html.main(webJarsUtil, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message, "", environment))
-        .withSession(userSessions.sessionCookie(request, user.sessionID.get))
+      Ok(
+        views.html.main(webJarsUtil, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message, "", environment)
+      ).withSession(userSessions.sessionCookie(request, user.sessionID.get))
     }
   }
 

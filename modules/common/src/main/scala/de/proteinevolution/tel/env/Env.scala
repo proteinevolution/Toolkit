@@ -1,8 +1,8 @@
 package de.proteinevolution.tel.env
 
 /**
-  * An Env is anything that provides key/value pairs
-  */
+ * An Env is anything that provides key/value pairs
+ */
 trait Env {
 
   def get(key: String): String
@@ -14,9 +14,9 @@ trait Env {
 }
 
 /**
-  * Something being EnvAware changes its behavior depending on the attached environment
-  *
-  */
+ * Something being EnvAware changes its behavior depending on the attached environment
+ *
+ */
 trait EnvAware[A] {
 
   def withEnvironment(env: Env): A

@@ -8,9 +8,9 @@ class General() {
   private val accessionMalFormat = """.*\|(.*)\|.*""".r
 
   def parseSingleSeq(arr: JsArray): SingleSeq = {
-      val accession = (arr \ 0 \ 0).as[String]
-      val seq       = (arr \ 0 \ 1).as[String]
-      SingleSeq(accession, seq)
+    val accession = (arr \ 0 \ 0).as[String]
+    val seq       = (arr \ 0 \ 1).as[String]
+    SingleSeq(accession, seq)
   }
 
   def refineAccession(seq: String): String = seq match {
