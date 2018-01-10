@@ -8,11 +8,11 @@ import de.proteinevolution.tel.execution.WrapperExecutionFactory.{ PendingExecut
 import scala.collection.mutable
 
 /**
-  * An Execution Context represent the environment in which a runscript can be executed. Only TEL
-  * can produce ExecutionContexts, as TEL knows about the current set context of the Execution
-  *
-  * @param root
-  */
+ * An Execution Context represent the environment in which a runscript can be executed. Only TEL
+ * can produce ExecutionContexts, as TEL knows about the current set context of the Execution
+ *
+ * @param root
+ */
 class ExecutionContext(val root: File, reOpen: Boolean = false) {
   // Root directory of the Execution Context
   private val repFileBase = root./("params")
@@ -27,9 +27,9 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
   private val execNumbers    = Iterator.from(0, 1)
 
   /**
-    * Registers a new file in this ExecutionContext with a certain name and content.
-    * A preexisting file with the same name will be overridden
-    */
+   * Registers a new file in this ExecutionContext with a certain name and content.
+   * A preexisting file with the same name will be overridden
+   */
   def getFile(name: String, content: String): File = {
     val x = repFileBase./(name)
     x.delete(swallowIOExceptions = true)
@@ -38,10 +38,10 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
   }
 
   /**
-    * Writes the parameters to the ExecutionContext folder
-    *
-    * @param params
-    */
+   * Writes the parameters to the ExecutionContext folder
+   *
+   * @param params
+   */
   // TODO Why is this a member of Execution Context?
   def writeParams(params: Map[String, String]): Unit = {
 
@@ -51,10 +51,10 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
   }
 
   /**
-    * Reload the parameters for a job when the EC is gone
-    *
-    * @return
-    */
+   * Reload the parameters for a job when the EC is gone
+   *
+   * @return
+   */
   // TODO Why is this a member of Execution context?
   def reloadParams: Map[String, String] = {
     val ois = new ObjectInputStream(new FileInputStream(serializedParameters.pathAsString))
@@ -64,11 +64,11 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
   }
 
   /** Accepts an execution which is subsequently registered in this Execution Context
-    * The working directory is created within the executionContext. Currently, the names
-    * of the working directories of subsequent executions are just incremented.
-    *
-    * @param execution
-    */
+   * The working directory is created within the executionContext. Currently, the names
+   * of the working directories of subsequent executions are just incremented.
+   *
+   * @param execution
+   */
   def accept(execution: PendingExecution): Unit = {
 
     if (!this.blocked) {

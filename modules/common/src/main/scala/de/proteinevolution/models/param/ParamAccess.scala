@@ -11,7 +11,6 @@ import de.proteinevolution.tel.TEL
 @Singleton
 class ParamAccess @Inject()(tel: TEL) {
 
-
   // TODO param intersection logic
 
   def select(name: String, label: String) = Param(name, Select(tel.generateValues(name).toSeq), 1, label)
@@ -25,20 +24,21 @@ class ParamAccess @Inject()(tel: TEL) {
   )
 
   def getParam(paramName: String, placeholder: String = ""): Param = paramName match {
-    case "ALIGNMENT"              => Param("alignment", Sequence(alignmentFormats, placeholder, false), 1, "")
-    case "TWOTEXTALIGNMENT"       => Param("alignment", Sequence(alignmentFormats, placeholder, true), 1, "")
-    case "HMMER_DB"               => select("hmmerdb", "Select database")
-    case "STANDARD_DB"            => select("standarddb", "Select standard database")
-    case "HHSUITEDB"              => select("hhsuitedb", "Select database (PDB_mmCIF70 for modeling)")
-    case "MATRIX"                 => select("matrix", "Scoring Matrix")
-    case "NUM_ITER"               => Param("num_iter", ParamType.UnconstrainedNumber, 1, "No. of iterations")
-    case "EVALUE"                 => select("evalue", "E-value")
-    case "GAP_OPEN"               => Param("gap_open", ParamType.UnconstrainedNumber, 1, "Gap open penalty")
-    case "GAP_TERM"               => Param("gap_term", Decimal("0.01", Some(0), Some(10)), 1, "Terminal gap penalty")
-    case "GAP_EXT_KALN"           => Param("gap_ext_kaln", Decimal("0.01", Some(0), Some(10)), 1, "Gap extension penalty")
-    case "BONUSSCORE"             => Param("bonusscore", Decimal("0.01", Some(0), Some(10)), 1, "Bonus Score")
-    case "DESC"                   => select("desc", "No. of target sequences (up to 10000)")
-    case "CONSISTENCY"            => Param("consistency", ParamType.UnconstrainedNumber, 1, "Passes of consistency transformation")
+    case "ALIGNMENT"        => Param("alignment", Sequence(alignmentFormats, placeholder, false), 1, "")
+    case "TWOTEXTALIGNMENT" => Param("alignment", Sequence(alignmentFormats, placeholder, true), 1, "")
+    case "HMMER_DB"         => select("hmmerdb", "Select database")
+    case "STANDARD_DB"      => select("standarddb", "Select standard database")
+    case "HHSUITEDB"        => select("hhsuitedb", "Select database (PDB_mmCIF70 for modeling)")
+    case "MATRIX"           => select("matrix", "Scoring Matrix")
+    case "NUM_ITER"         => Param("num_iter", ParamType.UnconstrainedNumber, 1, "No. of iterations")
+    case "EVALUE"           => select("evalue", "E-value")
+    case "GAP_OPEN"         => Param("gap_open", ParamType.UnconstrainedNumber, 1, "Gap open penalty")
+    case "GAP_TERM"         => Param("gap_term", Decimal("0.01", Some(0), Some(10)), 1, "Terminal gap penalty")
+    case "GAP_EXT_KALN"     => Param("gap_ext_kaln", Decimal("0.01", Some(0), Some(10)), 1, "Gap extension penalty")
+    case "BONUSSCORE"       => Param("bonusscore", Decimal("0.01", Some(0), Some(10)), 1, "Bonus Score")
+    case "DESC"             => select("desc", "No. of target sequences (up to 10000)")
+    case "CONSISTENCY" =>
+      Param("consistency", ParamType.UnconstrainedNumber, 1, "Passes of consistency transformation")
     case "ITREFINE"               => Param("itrefine", ParamType.UnconstrainedNumber, 1, "Passes of iterative refinements")
     case "PRETRAIN"               => Param("pretrain", ParamType.UnconstrainedNumber, 1, "Rounds of pretraining")
     case "MAXROUNDS"              => select("maxrounds", "Max. number of iterations")

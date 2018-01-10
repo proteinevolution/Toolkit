@@ -9,8 +9,8 @@ class XeqtR(script: Script) {
 
   // TODO logging, validation, error handling
   def run(): List[Future[Int]] = {
-    script.params.toList.map {
-      cmd => Future(blocking(cmd.run().exitValue()))
+    script.params.toList.map { cmd =>
+      Future(blocking(cmd.run().exitValue()))
     }
   }
 

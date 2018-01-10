@@ -137,9 +137,10 @@ final class Search @Inject()(
         case constants.jobIDPattern(mainJobID, _) =>
           // Check if the main part of the new jobID matches with the (main part) of the oldJobID
           resubmitForJobID match {
-            case Some(constants.jobIDPattern(oldJobID, _))       => if (mainJobID == oldJobID) Some(mainJobID) else None
-            case Some(constants.jobIDNoVersionPattern(oldJobID)) => if (mainJobID == oldJobID) Some(mainJobID) else None
-            case _                                               => None
+            case Some(constants.jobIDPattern(oldJobID, _)) => if (mainJobID == oldJobID) Some(mainJobID) else None
+            case Some(constants.jobIDNoVersionPattern(oldJobID)) =>
+              if (mainJobID == oldJobID) Some(mainJobID) else None
+            case _ => None
           }
         case constants.jobIDNoVersionPattern(mainJobID) => Some(mainJobID)
         case _                                          => None

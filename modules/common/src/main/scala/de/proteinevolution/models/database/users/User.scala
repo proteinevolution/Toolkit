@@ -90,8 +90,8 @@ object User {
   final val NORMALUSER: Int                     = -1
 
   /**
-    * Define how the User object is formatted when turned into a json object
-    */
+   * Define how the User object is formatted when turned into a json object
+   */
   implicit object UserWrites extends Writes[User] {
     val dtf = "dd.MM.yyyy HH:mm:ss"
     def writes(user: User): JsObject = Json.obj(
@@ -112,8 +112,8 @@ object User {
   }
 
   /**
-    * Define how the User object is formatted as a BSON Document
-    */
+   * Define how the User object is formatted as a BSON Document
+   */
   implicit object Reader extends BSONDocumentReader[User] {
     override def read(bson: BSONDocument): User =
       User(
@@ -153,10 +153,10 @@ object User {
   }
 
   /**
-    * Helper class for a login Form Object
-    *
-    * @param nameLogin
-    * @param password
-    */
+   * Helper class for a login Form Object
+   *
+   * @param nameLogin
+   * @param password
+   */
   case class Login(nameLogin: String, password: String)
 }

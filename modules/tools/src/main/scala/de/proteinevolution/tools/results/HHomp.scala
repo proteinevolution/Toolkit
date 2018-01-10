@@ -129,7 +129,8 @@ object HHomp {
                            ss_pred: String,
                            bb_pred: String,
                            bb_conf: String,
-                           start: Int) extends HHTemplate
+                           start: Int)
+      extends HHTemplate
   case class HHompResult(HSPS: List[HHompHSP],
                          num_hits: Int,
                          query: SingleSeq,

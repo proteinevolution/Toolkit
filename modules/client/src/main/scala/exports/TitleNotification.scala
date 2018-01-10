@@ -8,8 +8,8 @@ import scala.scalajs.js.annotation._
 @JSExportTopLevel("TitleNotification")
 object TitleNotification {
 
-  private val title: Node = dom.document.getElementsByTagName("title").item(0)
-  private val normalTitle = title.textContent
+  private val title: Node  = dom.document.getElementsByTagName("title").item(0)
+  private val normalTitle  = title.textContent
   private var titleCounter = 0
 
   @JSExport
@@ -17,8 +17,7 @@ object TitleNotification {
     if (titleCounter < Int.MaxValue) {
       titleCounter += n
       title.textContent = s"($titleCounter) " + normalTitle
-    }
-    else
+    } else
       title.textContent = s"($titleCounter +) " + normalTitle
   }
 
@@ -28,4 +27,4 @@ object TitleNotification {
     title.textContent = normalTitle
   }
 
-} 
+}
