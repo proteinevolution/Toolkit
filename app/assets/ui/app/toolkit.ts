@@ -9,7 +9,6 @@ const a = ['0', 'p', 'q', 'r', 'e', 'd', 'i', 'w']; // TODO rename this to somet
 
 let jobs = {};
 
-
 interface Window { Toolkit: any; }
 
 window.Toolkit = {
@@ -35,7 +34,6 @@ window.Toolkit = {
     controller: function(args : any) {
 
         currentRoute = args.isJob ? "jobs" : "tools";
-        document.title = "Bioinformatics Toolkit";
         let job : any, jobID : string, toolname : string, viewComponent : any;
         if (args.isJob) {
             jobID = m.route.param("jobID");
@@ -65,7 +63,6 @@ window.Toolkit = {
             JobSubmissionComponent.currentJobID = null;
         }
         toolname = m.route.param("toolname");
-
 
         if (FrontendTools[toolname]) {
             viewComponent = function() { return FrontendTools[toolname]; };

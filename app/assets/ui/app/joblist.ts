@@ -55,6 +55,7 @@ window.JobListComponent = {
     index: 0,    // Index of the first shown item in the job list
     numVisibleItems: 12,   // Number of shown jobs
     selectedJobID: null, // JobID of the selected job
+    currentTool: "", // current toolname for selected job
     lastUpdatedJob: null, // Job which has been updated last
     // object holding the current sorting mode
     sort: {mode: "dateCreated", asc: false},
@@ -193,6 +194,9 @@ window.JobListComponent = {
         JobListComponent.lastUpdatedJob = newJob;                        // change the "last updated" job to this one
         if (setActive) {
             JobListComponent.selectedJobID = newJob.jobID;
+            JobListComponent.currentTool = newJob.tool;
+            console.log(["jobs", newJob.jobID.toString()]);
+            TitleManager.updateTitle(["jobs", newJob.jobID.toString()]); // hacky solution to show toolname instantly because mitrhil doesn't change route quickly enough
         } // change the selectedJobID to this job when setActive is on
         let index = JobListComponent.getJobIndex(newJob.jobID);          // check if the job is in the list already
         if (index != null) {

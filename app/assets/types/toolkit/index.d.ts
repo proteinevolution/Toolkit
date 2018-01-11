@@ -12,6 +12,7 @@ declare class JobListComponent {
     public static pushJob(newJob : any, setActive? : boolean) : any;
     public static Job(param : any) : any;
     public static selectedJobID : string;
+    public static currentTool: string;
     public static getJobIndex(jobID : string) : number;
     public static contains(jobID : string) : any;
     public static list: any;

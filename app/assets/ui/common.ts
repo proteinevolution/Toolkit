@@ -61,11 +61,14 @@ $(window).scroll(function() {
     }
 });
 
-declare var TitleNotification: any;
-
-window.onfocus = function(){notifications = 0; TitleNotification.reset()};
-window.onclick = function(){notifications = 0; TitleNotification.reset()};
-
+window.onfocus = function() {
+    notifications = 0;
+    TitleManager.resetCounter();
+};
+window.onclick = function() {
+    notifications = 0;
+    TitleManager.resetCounter();
+};
 
 $('#scrollTop').click(function() {
     $("html, body").animate({ scrollTop: 0 }, 200);
