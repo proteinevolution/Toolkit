@@ -109,5 +109,4 @@ logLevel in Test := Level.Info
 
 scalacOptions in Test ++= Seq("-Yrangepos")
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
-PlayKeys.devSettings := Seq("play.server.akka.requestTimeout" -> "infinite")
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
