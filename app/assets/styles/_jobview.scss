@@ -264,7 +264,7 @@
 
 #bioJSContainer,
 #rootDiv {
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 .biojs_msa_labels {
@@ -279,11 +279,6 @@
 .smenubar a {
   color: black !important;
   padding: 4px 8px !important;
-}
-
-.smenu-dropdown {
-  left: auto !important;
-  top: 3cm !important;
 }
 
 /* Jobline */
