@@ -2,13 +2,13 @@
 
 
 interface Window {
-    call404 : any;
+    call404: any;
 }
 
-window.call404 = function(elem : any, isInit: boolean) : any {
+window.call404 = function(elem: any, isInit: boolean): any {
 
     // msa viewer for 404 page
-    if(!isInit) {
+    if (!isInit) {
         const ErrorOpts = {
             colorscheme: {
                 "scheme": "taylor"
@@ -33,13 +33,13 @@ window.call404 = function(elem : any, isInit: boolean) : any {
             },
 
             //seqs: fasta2json(multiProtSeq)
-            seqs : fasta2json($('#hidden404').val())
+            seqs: fasta2json($("#hidden404").val())
 
         };
 
         const a = new msa.msa(ErrorOpts);
         a.render();
-
+        TitleManager.updateTitle(["404"]);
     }
 
 };
