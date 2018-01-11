@@ -1,24 +1,4 @@
-#tool-tabs {
 
-  background: white;
-}
-
-.jobline .toolname {
-
-  font-size: large;
-  font-weight: bold;
-  color: #2E8C81;
-}
-
-
-.jobline .jobinfo {
-  float: right;
-  font-size: small;
-}
-.jobline .jobid {
-
-  padding-right: 1cm;
-}
 
 .not-active {
   pointer-events: none;
@@ -73,5 +53,18 @@
   width: 10em;
   float: right;
   margin-right: 0.5em;
+}
+
+
+.exampleReformat {
+  margin-top: 0 !important;
+  height: 2.7em;
+  padding-left: 0;
+  border-width: 0 0 1px 0;
+  background-color: transparent;
+}
+
+.exampleReformat:hover, .exampleReformat:focus {
+  background-color: transparent;
 }
 

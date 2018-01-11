@@ -1,14 +1,28 @@
 /*
-
     Forked from Reformat Theme
-
 */
 
-.cm-s-reformat.CodeMirror {background: white; color: grey;}
-.cm-s-reformat div.CodeMirror-selected {background: #a8d1ff !important;}
-.cm-s-reformat .CodeMirror-gutters {rgba(0, 0, 0, 0.25); border-right: 0px;}
-.cm-s-reformat .CodeMirror-linenumber {color: #666666;}
-.cm-s-reformat .CodeMirror-cursor {border-left: 1px solid #797977 !important;}
+.cm-s-reformat.CodeMirror {
+    background: white;
+    color: grey;
+}
+
+.cm-s-reformat div.CodeMirror-selected {
+    background: #a8d1ff !important;
+}
+
+.cm-s-reformat .CodeMirror-gutters {
+    background: rgba(0, 0, 0, 0.25);
+    border-right: 0;
+}
+
+.cm-s-reformat .CodeMirror-linenumber {
+    color: #666666;
+}
+
+.cm-s-reformat .CodeMirror-cursor {
+    border-left: 1px solid #797977 !important;
+}
 
 /*
 .cm-s-reformat span.cm-comment {color: #937121;}
@@ -31,4 +45,7 @@
 .cm-s-reformat .CodeMirror-activeline-background { background: #404040; }
 */
 
-.cm-s-reformat span.cm-string { font-weight: bold; color: red; }
+.cm-s-reformat span.cm-string {
+    font-weight: bold;
+    color: red;
+}

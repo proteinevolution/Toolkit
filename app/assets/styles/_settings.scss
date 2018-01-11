@@ -81,8 +81,8 @@ $dark-gray: #8a8a8a;
 $black: #0a0a0a;
 $white: #fefefe;
 $body-background: $white;
-$body-font-color: $black;
-$body-font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;
+$body-font-color: #707070;
+$body-font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 $body-antialiased: true;
 $global-margin: 1rem;
 $global-padding: 1rem;
@@ -143,7 +143,7 @@ $header-styles: (
                 'h3': ('font-size': 19),
                 'h4': ('font-size': 18),
                 'h5': ('font-size': 17),
-                'h6': ('font-size': 16),
+                'h6': ('font-size': 13.6),
         ),
         medium: (
                 'h1': ('font-size': 48),
@@ -151,7 +151,7 @@ $header-styles: (
                 'h3': ('font-size': 31),
                 'h4': ('font-size': 25),
                 'h5': ('font-size': 20),
-                'h6': ('font-size': 16),
+                'h6': ('font-size': 13.6),
         ),
 );
 $header-text-rendering: optimizeLegibility;
@@ -170,9 +170,9 @@ $anchor-color: $primary-color;
 $anchor-color-hover: scale-color($anchor-color, $lightness: -14%);
 $anchor-text-decoration: none;
 $anchor-text-decoration-hover: none;
-$hr-width: $global-width;
-$hr-border: 1px solid $medium-gray;
-$hr-margin: rem-calc(20) auto;
+$hr-width: 100%;
+$hr-border: 1px solid rgba(180, 180, 180, 0.3);
+$hr-margin: 0 auto;
 $list-lineheight: $paragraph-lineheight;
 $list-margin-bottom: $paragraph-margin-bottom;
 $list-style-type: disc;
@@ -834,7 +834,7 @@ $titlebar-icon-spacing: 0.25rem;
 
 $has-tip-cursor: pointer;
 $has-tip-font-weight: $global-weight-normal;
-$has-tip-border-bottom: dotted 1px $dark-gray;
+$has-tip-border-bottom: none;
 $tooltip-background-color: rgba(0, 0, 0, 0.8);;
 $tooltip-color: $white;
 $tooltip-padding: 0.75rem;

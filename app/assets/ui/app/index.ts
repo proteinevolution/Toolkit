@@ -154,7 +154,6 @@ const trafficBarComponent = {
     }
 };
 
-// TODO add different type of tile (bigger one?)
 const tilescomponent = {
 
     controller: function () {
@@ -163,10 +162,9 @@ const tilescomponent = {
     view: function (ctrl : any) {
         return m("div", {
                 "class": "row article_container small-up-1 medium-up-2 large-up-3",
-                config: hideSidebar
+                config: hideSidebar},
+                m("div", {
 
-            },
-            m("div", {
                         "class": "column column-block tile_main_container"
                     },
                         m("div", {"class": "tile_container"},
@@ -314,7 +312,6 @@ const tilescomponent = {
                         )
                 )
         )
-
     }
 };
 

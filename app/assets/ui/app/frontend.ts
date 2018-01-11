@@ -180,7 +180,7 @@ const GeneralTabComponent = {
 
     controller: function() {
         let mo = {
-            isFullscreen: false,
+            isFullscreen : false,
             label: "Expand"
         };
         let onCollapse: any, onExpand: any, onFullscreenToggle: any;
