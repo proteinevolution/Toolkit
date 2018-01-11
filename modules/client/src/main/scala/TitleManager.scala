@@ -54,7 +54,6 @@ object TitleManager {
   ).withDefaultValue("")
   private var titlePrefix = ""
 
-  // Bind hashchange
   jQuery(dom.window).on("hashchange", () => {
     updateTitle()
   })
@@ -84,14 +83,11 @@ object TitleManager {
       newTitle = s"$titlePrefix | $newTitle"
     }
     // set counter
-    if (titleCounter == 0) {}
-    else if (titleCounter < Int.MaxValue) {
-      newTitle = s"($titleCounter) $newTitle"
+    title.textContent = titleCounter match {
+      case 0 => newTitle
+      case x if x < Int.MaxValue => s"($titleCounter) $newTitle"
+      case _ => s"($titleCounter +) $newTitle"
     }
-    else {
-      newTitle = s"($titleCounter +) $newTitle"
-    }
-    title.textContent = newTitle
   }
 
   @JSExport
