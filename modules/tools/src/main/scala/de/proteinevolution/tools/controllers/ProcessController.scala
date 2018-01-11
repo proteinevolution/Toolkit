@@ -9,8 +9,6 @@ import better.files._
 import de.proteinevolution.models.{ Constants, ToolNames }
 
 import scala.sys.process.Process
-import cats.implicits._
-import cats.data.OptionT
 import de.proteinevolution.tools.results.{ HSP, SearchResult }
 import ToolNames._
 import scala.concurrent.ExecutionContext
@@ -26,20 +24,19 @@ class ProcessController @Inject()(ctx: HHContext,
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
 
   def templateAlignment(jobID: String, accession: String): Action[AnyContent] = Action.async { implicit request =>
-    val futureScript = toolFinder.getTool(jobID).map {
-      case HHOMP   => (serverScripts + "/templateAlignmentHHomp.sh").toFile
-      case HHBLITS => (serverScripts + "/templateAlignmentHHblits.sh").toFile
-      case HHPRED  => (serverScripts + "/templateAlignment.sh").toFile
-      case _       => throw new IllegalStateException("tool either not found nor not supported")
-    }
-    (for {
-      file <- OptionT.liftF(futureScript)
-    } yield file).value.map {
-      case Some(f) =>
-        if (!f.isExecutable)
+    toolFinder
+      .getTool(jobID)
+      .map {
+        case HHOMP   => (serverScripts + "/templateAlignmentHHomp.sh").toFile
+        case HHBLITS => (serverScripts + "/templateAlignmentHHblits.sh").toFile
+        case HHPRED  => (serverScripts + "/templateAlignment.sh").toFile
+        case _       => throw new IllegalStateException("tool either not found nor not supported")
+      }
+      .map { file =>
+        if (!file.isExecutable)
           BadRequest
         else {
-          Process(f.pathAsString,
+          Process(file.pathAsString,
                   (constants.jobPath + jobID).toFile.toJava,
                   "jobID"     -> jobID,
                   "accession" -> accession)
@@ -49,8 +46,7 @@ class ProcessController @Inject()(ctx: HHContext,
             case _ => BadRequest
           }
         }
-      case None => BadRequest
-    }
+      }
   }
 
   def forwardAlignment(jobID: String, mode: String): Action[AnyContent] = Action.async { implicit request =>
@@ -135,7 +131,9 @@ class ProcessController @Inject()(ctx: HHContext,
   }
 
   // find better name for this function later and merge it with the one above (all depends on the non-uniform input json)
-  private[this] def numericAccString(toolName: ToolNames.ToolName, result: SearchResult[HSP], accStr: String): String = {
+  private[this] def numericAccString(toolName: ToolNames.ToolName,
+                                     result: SearchResult[HSP],
+                                     accStr: String): String = {
 
     val numList = accStr.split("\n").map(_.toInt)
 
