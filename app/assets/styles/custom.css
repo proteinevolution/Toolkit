@@ -129,6 +129,7 @@ tr.job a:visited {
     min-height: inherit;
     top: 209px !important;
     font-size: 0.85em;
+    padding: 0;
 }
 #helpModal h4 {
     padding-left: 0.10em;
@@ -136,6 +137,15 @@ tr.job a:visited {
 #helpModal h6 {
     font-weight: bold;
 }
+
+#helpModal .modal-content #tabs {
+    border: none;
+    padding: 0;
+}
+#helpModal .close-button {
+    top: 0.2rem;
+}
+
 .helpModals .section {
     margin-top: 1em;
 }
