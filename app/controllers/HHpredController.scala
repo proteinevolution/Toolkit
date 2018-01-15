@@ -171,7 +171,7 @@ class HHpredController @Inject()(resultFiles: ResultFileAccessor,
     if (params.sSearch.isEmpty) {
       hits.hitsOrderBy(params).slice(params.iDisplayStart, params.iDisplayStart + params.iDisplayLength)
     } else {
-      hits.hitsOrderBy(params).filter(_.description.contains(params.sSearch))
+      hits.hitsOrderBy(params).filter(_.description.toUpperCase.contains(params.sSearch.toUpperCase))
     }
   }
 
