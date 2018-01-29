@@ -31,7 +31,7 @@ class DataTables(toolName: String) {
             "sAjaxSource"    -> s"/results/dataTable/$jobID",
             "autoWidth"      -> false,
             "lengthMenu"     -> lengthMenu(numHits),
-            "searching"      -> false,
+            "searching"      -> true,
             "iDisplayLength" -> 25,
             "drawCallback"   -> callbacks.asInstanceOf[js.Any]
           )

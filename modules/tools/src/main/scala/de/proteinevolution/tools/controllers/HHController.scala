@@ -30,7 +30,6 @@ class HHController @Inject()(ctx: HHContext,
     val start   = (json \ "start").as[Int]
     val end     = (json \ "end").as[Int]
     val wrapped = (json \ "wrapped").as[Boolean]
-
     kleisliProvider
       .resK(jobID)
       .flatMap {
@@ -77,7 +76,6 @@ class HHController @Inject()(ctx: HHContext,
       request.getQueryString("iSortCol_0").getOrElse("1").toInt,
       request.getQueryString("sSortDir_0").getOrElse("asc")
     )
-
     kleisliProvider
       .resK(jobID)
       .flatMap {
