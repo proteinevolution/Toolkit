@@ -76,29 +76,6 @@ object ResultViewHelper {
     }
   }
 
-  // TODO think about how to get twirl templates immutable
-  @JSExport
-  def showHitsManually(): Unit = {
-    if (!js.Dynamic.global.loading.asInstanceOf[Boolean]) {
-      js.Dynamic.global.end = js.Dynamic.global.shownHits.asInstanceOf[Int] + 100
-      if (js.Dynamic.global.end.asInstanceOf[Int] < js.Dynamic.global.numHits.asInstanceOf[Int])
-        js.Dynamic.global.end = js.Dynamic.global.end
-      else
-        js.Dynamic.global.end = js.Dynamic.global.numHits
-      if (js.Dynamic.global.shownHits.asInstanceOf[Int] != js.Dynamic.global.end.asInstanceOf[Int]) {
-        showHits(
-          js.Dynamic.global.shownHits.asInstanceOf[Int],
-          js.Dynamic.global.end.asInstanceOf[Int],
-          js.Dynamic.global.wrapped.asInstanceOf[Boolean],
-          isColored = false,
-          js.Dynamic.global.numHits.asInstanceOf[Int],
-          js.Dynamic.global.jobID.asInstanceOf[String]
-        )
-      }
-      js.Dynamic.global.shownHits = js.Dynamic.global.end
-    }
-  }
-
   implicit class JQueryToggleText(val self: JQuery) extends AnyVal {
     def toggleText(a: String, b: String): self.type = {
       if (self.text() == b)
