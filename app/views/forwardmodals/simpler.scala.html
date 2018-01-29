@@ -1,23 +1,19 @@
 @import java.lang.String
 @(tool: de.proteinevolution.models.Tool, viewName: String)
 
-
 <div class="reveal forwardModal" id="forwardModal_@viewName" data-reveal>
     <p>Forward Job</p>
-
 
     <div class="row">
         <div class="select_forward large-4 columns">
             <select class="selectedHits_@viewName" id="forwardSelect_@viewName">
                 <option value="">Select a tool</option>
-
                     @for(forwardTool <- {tool.forwardAlignment}) {
                         <option class="alignmentOptions_@viewName"value="@forwardTool">@forwardTool</option>
                     }
                     @for(forwardTool <- {tool.forwardMultiSeq}) {
                         <option class="multiSeqOptions_@viewName" value="@forwardTool">@forwardTool</option>
                     }
-
             </select>
         </div>
         <div class="large-5 columns">
@@ -31,11 +27,9 @@
         </div>
     </div>
 
-
 </div>
 
 <script>
-
         window["@{viewName}_forward_"] = function(){
             var selectedTool = $('#forwardSelect_@viewName').val();
             if(selectedTool === ""){
@@ -61,9 +55,7 @@
                 $('#forwardWarning').css({display: 'none'});
                 $('.alignmentOptions_@viewName').show();
                 $('.multiSeqOptions_@viewName').hide();
-
             }
-
         });
 
         $("#forwardModal_@viewName").bind('closed.zf.reveal', (function () {
