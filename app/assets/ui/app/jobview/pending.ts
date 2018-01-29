@@ -34,7 +34,7 @@ const JobPendingComponent = {
                         e.preventDefault();
                         const route = jsRoutes.controllers.JobController.startJob(args.job().jobID);
                         m.request({method:route.method, url:route.url}).then(function(data : any){
-                            console.log("requested:",data);
+                            //console.log("requested:",data);
                         });
                     }
                 }, "Start job anyway"),
