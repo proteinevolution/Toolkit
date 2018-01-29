@@ -195,7 +195,6 @@ window.JobListComponent = {
         if (setActive) {
             JobListComponent.selectedJobID = newJob.jobID;
             JobListComponent.currentTool = newJob.tool;
-            console.log(["jobs", newJob.jobID.toString()]);
             TitleManager.updateTitle(["jobs", newJob.jobID.toString()]); // hacky solution to show toolname instantly because mitrhil doesn't change route quickly enough
         } // change the selectedJobID to this job when setActive is on
         let index = JobListComponent.getJobIndex(newJob.jobID);          // check if the job is in the list already
