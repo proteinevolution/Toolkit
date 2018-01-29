@@ -47,7 +47,6 @@ object ResultViewHelper {
   @JSExport
   def showHitsAln(start: Int, end: Int, numHits: Int, jobID: String, resultName: String, format: String): Unit = {
     if (start <= numHits && end <= numHits) {
-      $("#loadHitsAln").hide()
       $("#loadingHits").show()
       val route = format match {
         case "clu" => s"/results/alignment/clustal/$jobID"
@@ -64,8 +63,6 @@ object ResultViewHelper {
             success = { (data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) =>
               $(".alignmentTBody").append(data.asInstanceOf[String])
               $("#loadingHits").hide()
-              if (js.Dynamic.global.shownHits.asInstanceOf[Int] != numHits)
-                $("#loadHitsAln").show()
             },
             error = { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
               dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
