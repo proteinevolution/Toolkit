@@ -40,7 +40,6 @@
         @Html(webJarsUtil.script("1.12.1/jquery-ui.min.js"))
         @Html(webJarsUtil.script("jquery.nice-select.js"))
 
-
             <!-- Mithril -->
 
         @Html(webJarsUtil.script("mithril.min.js"))
@@ -49,12 +48,11 @@
         @Html(webJarsUtil.script("velocity.min.js"))
 
             <!-- Highcharts -->
-        @Html(webJarsUtil.script("5.0.14/highcharts.js"))
+        @Html(webJarsUtil.script("6.0.4/highcharts.js"))
 
             <!-- Select2 -->
         @Html(webJarsUtil.css("select2.min.css"))
         @Html(webJarsUtil.script("select2.min.js"))
-
 
             <!-- NGL 3D Viewer -->
         @Html(webJarsUtil.script("ngl.js"))
@@ -70,7 +68,6 @@
             <!-- Loadingoverlay -->
         <script src="@routes.Assets.versioned("javascripts/vendor/loadingoverlay.js")" type="text/javascript"></script>
 
-    
             <!-- Tooltipster -->
         @Html(webJarsUtil.css("tooltipster.bundle.min.css"))
         @Html(webJarsUtil.css("tooltipster-sideTip-borderless.min.css"))
@@ -143,16 +140,14 @@
                                         <span class="hamburger-inner overlayed"></span>
                                     </span>
                                 </button>
-                                    <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
                                 <div class="overlay-content" id="overlay-content">
                                     <div class="mithril-overlay-content" id="mithril-overlay-content"></div>
                                 </div>
                             </div>
 
-
                                 <!---Navigation Bar --->
                             <div class="row hide-for-print" id="metanav">
-                                <div id="metauser"></div> <!-- TODO: ugly construction -->
+                                <div id="metauser"></div>
                                 <div id="social">
                                     <a href="https://www.facebook.com/mpitoolkit" target="_blank" rel="noopener"><i class="icon-facebook"></i></a>
                                     <a href="https://twitter.com/mpitoolkit" target="_blank" rel="noopener"><i class="icon-twitter"></i></a>
@@ -167,7 +162,6 @@
                                     <b>Maintenance in a few seconds!</b>
                                 </div>
                             </div>
-
 
                             <div class="row show-for-large" id="navcontainer">
                                     <!--logo-->
@@ -226,7 +220,6 @@
 
             <!-- scroll-top arrow -->
         <div id="scrollTop"></div>
-
 
         <div class="small reveal helpModals" id="imprintModal" data-reveal>
             @helpmodals.imprintmodal()
@@ -303,9 +296,3 @@
         @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
     </body>
 </html>
-
-
-
-
-
-
