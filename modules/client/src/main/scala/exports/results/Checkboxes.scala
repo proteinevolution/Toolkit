@@ -5,6 +5,8 @@ import org.scalajs.dom
 import org.scalajs.dom.html
 import org.scalajs.dom.raw.NodeListOf
 
+import scala.scalajs.js
+import scala.scalajs.js.JSConverters._
 
 /**
  * Checkbox handler for result pages
@@ -14,19 +16,11 @@ import org.scalajs.dom.raw.NodeListOf
 object Checkboxes {
 
   @JSExport
-  def link() = {
-
-    ???
-  }
-
-  @JSExport
-  def check(): Unit = {
+  def getChecked: js.Array[String] = {
     val checkboxes = dom.document.querySelectorAll("input[type=checkbox]:checked").asInstanceOf[NodeListOf[html.Input]]
-
-    (0 to checkboxes.length).foreach { i =>
-      dom.console.log(checkboxes(i).value)
-    }
-
+    (0 to checkboxes.length).map { i =>
+      checkboxes(i).value
+    }.distinct.toJSArray
   }
 
 }

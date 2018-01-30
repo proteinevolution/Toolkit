@@ -36,9 +36,8 @@
         var numHits = @alignment.alignment.length - 1;
         var resultName = '@resultName';
         var jobID = '@jobID';
-        var checkboxes = [];
         window["@{resultName}_forward"] = function(selectedTool){
-            var data = {"checkboxes": checkboxes, "resultName": resultName};
+            var data = {"checkboxes": Checkboxes.getChecked(), "resultName": resultName};
             $.LoadingOverlay("show");
             // get result json
             $.ajax({
@@ -50,8 +49,7 @@
                     $.LoadingOverlay("hide")
                 }
             }).done(function (data) {
-                Checkboxes.check();
-                //Forwarding.simple(selectedTool, data);
+                Forwarding.simple(selectedTool, data);
             });
         };
         window["@{resultName}_download"] = function(){
