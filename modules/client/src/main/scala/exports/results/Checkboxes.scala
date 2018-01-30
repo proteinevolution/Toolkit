@@ -23,10 +23,10 @@ object Checkboxes {
   def check(): Unit = {
     val checkboxes = dom.document.querySelectorAll("input[type=checkbox]:checked").asInstanceOf[NodeListOf[html.Input]]
 
-    for (i <- checkboxes.length) {
+    (0 to checkboxes.length).foreach { i =>
       dom.console.log(checkboxes(i).value)
     }
-    
+
   }
 
 }
