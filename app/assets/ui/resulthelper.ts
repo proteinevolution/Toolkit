@@ -89,7 +89,7 @@ let followScroll = function(element : any) {
     } catch(e) { console.warn(e); }
 };
 
-function download(filename, text) {
+function download(filename: string, text: string) {
     const blob = new Blob([text], {type: "octet/stream"});
     if (window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveBlob(blob, filename);
