@@ -88,3 +88,61 @@ let followScroll = function(element : any) {
     });
     } catch(e) { console.warn(e); }
 };
+
+function download(filename, text) {
+    const blob = new Blob([text], {type: "octet/stream"});
+    if (window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveBlob(blob, filename);
+    } else {
+        const a = document.createElement("a");
+        a.href = window.URL.createObjectURL(blob);
+        a.download = filename;
+        // Append anchor to body.
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(a.href);
+        // Remove anchor from body
+        a.remove();
+    }
+    $.LoadingOverlay("hide");
+}
+
+// load forwarded data into alignment field
+$(document).ready(function () {
+    const resultcookie = localStorage.getItem("resultcookie");
+    $('#alignment').val(resultcookie);
+    localStorage.removeItem("resultcookie");
+    $.LoadingOverlay("hide");
+});
+
+function hitlistBaseFunctions(){
+    $(document).ready(function() {
+        // add tooltipster to visualization
+        $('#blastviz').find('area').tooltipster({
+            theme: ['tooltipster-borderless', 'tooltipster-borderless-customized'],
+            position: 'bottom',
+            animation: 'fade',
+            contentAsHTML: true,
+            debug: false,
+            maxWidth: $(this).innerWidth() * 0.6
+        });
+        $.LoadingOverlay("hide");
+        followScroll(document);
+
+        // add slider val
+        $('.slider').on('moved.zf.slider', function () {
+            $('#lefthandle').html($('#hidden1').val()).css({
+                'color': 'white',
+                'font-weight': 'bold',
+                'padding-left': '2px'
+            });
+            $('#righthandle').html($('#hidden2').val()).css({
+                'color': 'white',
+                'font-weight': 'bold',
+                'padding-left': '2px'
+            });
+        });
+    });
+}
+
+
