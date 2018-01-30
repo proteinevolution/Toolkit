@@ -40,8 +40,7 @@
         var checkboxes = [];
 
         window["@{resultName}_forward"] = function(selectedTool){
-            var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
-
+            var data = {"checkboxes": checkboxes, "resultName": resultName};
             $.LoadingOverlay("show");
             // get result json
             $.ajax({
@@ -59,9 +58,7 @@
 
         window["@{resultName}_download"] = function(){
             // get result json
-
             $.LoadingOverlay("show");
-
             var fileUrl = "/files/@jobID/reduced.a3m";
             var downloadFilename = "@{tool.toolNameShort}_@{resultName}Q_@{jobID}.a3m";
 
@@ -79,7 +76,6 @@
 
         window["@{resultName}_downloadFull"] = function(){
             // get result json
-
             var fileUrlFull = "/files/@jobID/full.a3m";
             var downloadFilenameFull = "@{tool.toolNameShort}_fullQ_@{jobID}.a3m";
 
@@ -87,9 +83,7 @@
                 fileUrlFull = "/files/@jobID/fullQT.a3m";
                 downloadFilenameFull = "@{tool.toolNameShort}_fullQT_@{jobID}.a3m";
             }
-
             $.LoadingOverlay("show");
-
             $.ajax({
                 type: 'GET',
                 url: fileUrlFull
@@ -97,9 +91,7 @@
                 download(downloadFilenameFull, data.toString());
             });
         };
-
         $(document).ready(function () {
-
             // trigger lazyload for loading alignment
             shownHits = shownHits > numHits ? numHits : shownHits;
             ResultViewHelper.showHitsAln(0, shownHits, numHits, jobID, resultName, "fas");

@@ -70,7 +70,7 @@
         var checkboxes = [];
 
         window["@{resultName}_forward"] = function(selectedTool){  
-	    var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
+	    var data = {"checkboxes": checkboxes, "resultName": resultName};
 	    $.LoadingOverlay("show");
             $.ajax({
                 type: "POST",
