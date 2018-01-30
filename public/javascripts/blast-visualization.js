@@ -4,12 +4,6 @@ function selectFromArray(checkboxes){
     })
 }
 
-Array.prototype.removeDuplicates = function () {
-    return this.filter(function (item, index, self) {
-        return self.indexOf(item) === index;
-    });
-};
-
 function linkCheckboxes() {
     $('input:checkbox').on('change', function (e) {
         var currentVal = $(this).val();

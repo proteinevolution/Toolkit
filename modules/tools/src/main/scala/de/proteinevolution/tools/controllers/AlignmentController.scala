@@ -24,7 +24,7 @@ class AlignmentController @Inject()(resultFiles: ResultFileAccessor,
       case None => NotFound
       case Some(jsValue) =>
         val result = aln.parse((jsValue \ resultName).as[JsArray]).alignment
-        val fas = numList.map { num =>
+        val fas = numList.distinct.map { num =>
           ">" + result { num - 1 }.accession + "\n" + result { num - 1 }.seq + "\n"
         }
         Ok(fas.mkString)

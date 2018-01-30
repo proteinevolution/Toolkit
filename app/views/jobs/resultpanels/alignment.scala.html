@@ -39,8 +39,7 @@
         var checkboxes = [];
 
         window["@{resultName}_forward"] = function(selectedTool){
-            var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
-
+            var data = {"checkboxes": checkboxes, "resultName": resultName};
             $.LoadingOverlay("show");
             // get result json
             $.ajax({
@@ -55,7 +54,6 @@
                 Forwarding.simple(selectedTool, data);
             });
         };
-
         window["@{resultName}_download"] = function(){
             // get result json
             $.LoadingOverlay("show");
