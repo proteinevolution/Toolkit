@@ -4,6 +4,7 @@
 @import controllers.routes
 @import play.twirl.api.Html
 @import play.api.Environment
+@import build.BuildInfo
 @(webJarsUtil: WebJarsUtil, tools: Iterable[Tool], message: String = "", view: String = "", environment: Environment)()
 
 <!DOCTYPE html>
@@ -211,7 +212,18 @@
                         </div>
 
                         @if(environment.mode == play.api.Mode.Dev) {
-                            <div id="buildinfo"></div>
+                            <div id="buildinfo">
+                                @(new java.lang.StringBuilder()
+                                    .append("Version: ")
+                                    .append(BuildInfo.version)
+                                    .append(" on Scala ")
+                                    .append(BuildInfo.scalaVersion)
+                                    .append(" with Sbt ")
+                                    .append(BuildInfo.sbtVersion)
+                                    .append(" and Play! ")
+                                    .append(BuildInfo.playVersion)
+                                    .toString)
+                            </div>
                         }
                     </div>
                 </footer>
