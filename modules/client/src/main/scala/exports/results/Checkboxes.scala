@@ -2,6 +2,7 @@ package exports.results
 
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 import org.scalajs.dom
+import org.scalajs.dom.raw.{ HTMLInputElement, NodeListOf }
 
 
 /**
@@ -19,14 +20,8 @@ object Checkboxes {
 
   @JSExport
   def check(): Unit = {
-    val checkboxes = dom.document.querySelector("input:checkbox")
-    checkboxes.addEventListener(
-      "change", { (event: dom.Event) =>
-        event.preventDefault()
-        dom.console.log("clicked")
-      },
-      false
-    )
+    val checkboxes = dom.document.querySelectorAll("input[type=checkbox]:checked").asInstanceOf[NodeListOf[HTMLInputElement]]
+    dom.console.log(checkboxes.length)
   }
 
 }

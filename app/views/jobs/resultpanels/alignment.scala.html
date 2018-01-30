@@ -50,7 +50,8 @@
                     $.LoadingOverlay("hide")
                 }
             }).done(function (data) {
-                Forwarding.simple(selectedTool, data);
+                Checkboxes.check();
+                //Forwarding.simple(selectedTool, data);
             });
         };
         window["@{resultName}_download"] = function(){
@@ -67,6 +68,5 @@
             // trigger lazyload for loading alignment
             shownHits = shownHits > numHits ? numHits : shownHits;
             ResultViewHelper.showHitsAln(0, shownHits, numHits, jobID, resultName, "fas");
-            Checkboxes.check();
         });
 </script>
