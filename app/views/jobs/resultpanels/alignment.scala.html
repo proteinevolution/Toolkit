@@ -37,7 +37,6 @@
         var resultName = '@resultName';
         var jobID = '@jobID';
         var checkboxes = [];
-
         window["@{resultName}_forward"] = function(selectedTool){
             var data = {"checkboxes": checkboxes, "resultName": resultName};
             $.LoadingOverlay("show");
@@ -68,5 +67,6 @@
             // trigger lazyload for loading alignment
             shownHits = shownHits > numHits ? numHits : shownHits;
             ResultViewHelper.showHitsAln(0, shownHits, numHits, jobID, resultName, "fas");
+            Checkboxes.check();
         });
 </script>
