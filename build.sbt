@@ -88,12 +88,11 @@ resolvers ++= Seq(
 )
 
 lazy val client = (project in file("modules/client"))
-  .enablePlugins(ScalaJSPlugin, ScalaJSWeb, BuildInfoPlugin)
+  .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
   .settings(
     scalaJSUseMainModuleInitializer := true,
     scalaJSUseMainModuleInitializer in Test := false,
     jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv,
-    buildInfoSettings,
     libraryDependencies ++= Seq(
       "org.scala-js"  %%% "scalajs-dom"     % "0.9.4",
       "com.tgf.pizza" %%% "scalajs-mithril" % "0.1.1",
