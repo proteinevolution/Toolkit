@@ -226,35 +226,35 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                 }
               } else {
                 // Check database for existing users with the same email
-                val selectorMail = BSONDocument(BSONDocument(User.EMAIL     -> signUpFormUser.getUserData.eMail))
-                val selectorName = BSONDocument(BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin))
-                mongoStore.findUser(selectorName).flatMap {
-                  case Some(_) =>
-                    Future.successful(Ok(accountNameUsed()))
+                val selector = BSONDocument("$or" -> List(
+                  BSONDocument(User.EMAIL     -> signUpFormUser.getUserData.eMail),
+                  BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin)))
+                mongoStore.findUser(selector).flatMap {
+                  case Some(otherUser) =>
+                    if (signUpFormUser.getUserData.eMail == otherUser.getUserData.eMail) {
+                      Future.successful(Ok(accountEmailUsed()))
+                    } else {
+                      Future.successful(Ok(accountNameUsed()))
+                    }
                   case None =>
-                    mongoStore.findUser(selectorMail).flatMap {
-                      case Some(_) =>
-                        Future.successful(Ok(accountEmailUsed()))
-                      case None =>
-                        // Create the database entry.
-                        val newUser = signUpFormUser.copy(
-                          userID = BSONObjectID.generate(),
-                          sessionID = None,
-                          userToken = Some(UserToken(tokenType = 1, eMail = Some(signUpFormUser.getUserData.eMail)))
-                        )
-                        mongoStore.upsertUser(newUser).map {
-                          case Some(registeredUser) =>
-                            // All done. User is registered, now send the welcome eMail
-                            registeredUser.userToken match {
-                              case Some(token) =>
-                                val eMail = NewUserWelcomeMail(registeredUser, token.token)
-                                eMail.send
-                                Ok(signedUp)
-                              case None => Ok(tokenMismatch())
-                            }
-                          case None =>
-                            Ok(formError())
+                    // Create the database entry.
+                    val newUser = signUpFormUser.copy(
+                      userID = BSONObjectID.generate(),
+                      sessionID = None,
+                      userToken = Some(UserToken(tokenType = 1, eMail = Some(signUpFormUser.getUserData.eMail)))
+                    )
+                    mongoStore.upsertUser(newUser).map {
+                      case Some(registeredUser) =>
+                        // All done. User is registered, now send the welcome eMail
+                        registeredUser.userToken match {
+                          case Some(token) =>
+                            val eMail = NewUserWelcomeMail(registeredUser, token.token)
+                            eMail.send
+                            Ok(signedUp)
+                          case None => Ok(tokenMismatch())
                         }
+                      case None =>
+                        Ok(formError())
                     }
                 }
               }
