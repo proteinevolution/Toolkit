@@ -16,11 +16,10 @@ import scala.scalajs.js.JSConverters._
 object Checkboxes {
 
   @JSExport
-  def getChecked(): js.Array[Int] = {
+  def getChecked: js.Array[Int] = {
     val checkboxes = dom.document.querySelectorAll("input[type=checkbox]:checked").asInstanceOf[NodeListOf[html.Input]]
-    val x = for {i <- (0 to checkboxes.length - 1)}
-    yield checkboxes(i).value.toInt
-    x.distinct.toJSArray
+    val values     = for { i <- 0 until checkboxes.length } yield checkboxes(i).value.toInt
+    values.distinct.toJSArray
   }
 
 }
