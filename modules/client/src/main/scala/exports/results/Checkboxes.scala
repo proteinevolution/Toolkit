@@ -20,6 +20,7 @@ object Checkboxes {
     val checkboxes = dom.document.querySelectorAll("input[type=checkbox]:checked").asInstanceOf[NodeListOf[html.Input]]
     val x = (0 to checkboxes.length).map { i =>
       dom.console.log(i)
+      dom.console.log(checkboxes(i).value)
       checkboxes(i).value
     }.distinct.toJSArray
     dom.console.log(x)
