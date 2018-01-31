@@ -20,8 +20,8 @@ object Forwarding {
   @JSExport
   def process(selectedTool: String, hasEvalue: Boolean, evalue: String, isFullLength: Boolean): Unit = {
     g.$.LoadingOverlay("show")
-    val checkboxes = g.checkboxes.asInstanceOf[js.Array[Int]]
-    if (checkboxes.distinct.length < 1) {
+    val checkboxes = g.checkboxes.asInstanceOf[js.Array[Int]].distinct
+    if (checkboxes.length < 1) {
       g.$(".forwardModal").foundation("close")
       g.$.LoadingOverlay("hide")
       g.alert("No sequence(s) selected!")
@@ -39,7 +39,7 @@ object Forwarding {
         .literal(
           url = route,
           data = JSON.stringify(
-            js.Dynamic.literal("fileName" -> filename, "evalue" -> evalue, "checkboxes" -> checkboxes.distinct)
+            js.Dynamic.literal("fileName" -> filename, "evalue" -> evalue, "checkboxes" -> checkboxes)
           ),
           contentType = "application/json",
           success = { (data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) =>

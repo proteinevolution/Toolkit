@@ -98,7 +98,7 @@
 
         window["@{tool.toolNameShort}_getHits"] = function(color){
                 $('#loadingHitsClu').show();
-                var data = {"color": color, "resultName" : resultName};
+            var data = {"color": color, "resultName" : resultName};
             var route = {};
             route.url = "/results/alignment/clustal/" + jobID;
             route.method = "POST";
