@@ -49,7 +49,7 @@
                     $.LoadingOverlay("hide")
                 }
             }).done(function (data) {
-                //Forwarding.simple(selectedTool, data);
+                Forwarding.simple(selectedTool, data);
             });
         };
         window["@{resultName}_download"] = function(){
