@@ -37,7 +37,7 @@
         var resultName = '@resultName';
         var jobID = '@jobID';
         window["@{resultName}_forward"] = function(selectedTool){
-            var data = {"checkboxes": Checkboxes.getChecked(), "resultName": resultName};
+            var data = {"checkboxes": Checkboxes.getChecked, "resultName": resultName};
             $.LoadingOverlay("show");
             // get result json
             $.ajax({
