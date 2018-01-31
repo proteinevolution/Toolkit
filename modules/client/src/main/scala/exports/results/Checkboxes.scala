@@ -18,11 +18,14 @@ object Checkboxes {
   @JSExport
   def getChecked(): js.Array[String] = {
     val checkboxes = dom.document.querySelectorAll("input[type=checkbox]:checked").asInstanceOf[NodeListOf[html.Input]]
-    val x = (1 until checkboxes.length-1).map { i =>
-      dom.console.log(i)
-      dom.console.log(checkboxes(i).value)
-      checkboxes(i).value
-    }.distinct.toJSArray
+    val x = (1 to checkboxes.length - 1)
+      .map { i =>
+        dom.console.log(i)
+        dom.console.log(checkboxes(i).value)
+        checkboxes(i).value
+      }
+      .distinct
+      .toJSArray
     dom.console.log(x)
     x
   }
