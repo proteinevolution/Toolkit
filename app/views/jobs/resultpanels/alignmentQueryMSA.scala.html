@@ -37,10 +37,8 @@
         var loading = false;
         var numHits = @alignment.alignment.length - 1;
         var resultName = '@resultName';
-        var checkboxes = [];
-
         window["@{resultName}_forward"] = function(selectedTool){
-            var data = {"checkboxes": checkboxes, "resultName": resultName};
+            var data = {"checkboxes": Checkboxes.getChecked, "resultName": resultName};
             $.LoadingOverlay("show");
             // get result json
             $.ajax({
