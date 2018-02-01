@@ -31,7 +31,7 @@ input.has-tip {
 
 #main-window {
   @include breakpoint(large) {
-    padding-top: 0;
+    padding-top: 20px;
   }
   #main-content {
     @include breakpoint(medium down) {
