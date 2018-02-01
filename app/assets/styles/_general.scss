@@ -10,7 +10,7 @@ body {
   &.is-reveal-open {
     overflow: visible;
   }
-  @include breakpoint(920) {
+  @include breakpoint(medium down) {
     overflow-x: auto;
   }
 }
@@ -30,7 +30,14 @@ input.has-tip {
 }
 
 #main-window {
-  padding-top: 20px;
+  @include breakpoint(large) {
+    padding-top: 0;
+  }
+  #main-content {
+    @include breakpoint(medium down) {
+      padding: 0;
+    }
+  }
 }
 
 #main-content {
