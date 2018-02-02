@@ -79,8 +79,9 @@ if [ "%matrix.content" = "BLOSUM45" ] ; then
     GAPEXT=2
 fi
 
-
-head -n 2 ../results/${JOBID}.fas > ../results/firstSeq0.fas
+#Shorten the header of the query sequence to 25 characters; ffindex_from_fasta cannot handle long headers without spaces
+sed -n '1p' ../results/${JOBID}.fas | cut -c -25 > ../results/firstSeq0.fas
+sed -n '2p' ../results/${JOBID}.fas >> ../results/firstSeq0.fas
 sed 's/[\.\-]//g' ../results/firstSeq0.fas > ../results/firstSeq.fas
 
 TMPRED=`tmhmm ../results/firstSeq.fas -short`
