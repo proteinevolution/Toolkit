@@ -65,12 +65,12 @@
     background-color: transparent;
     &:focus {
       outline: none !important;
-      border: 1px solid #2E8C81;
-      box-shadow: 0 0 10px #2E8C81;
+      border: 1px solid $primary-color;
+      box-shadow: 0 0 10px $primary-color;
     }
     &[type=submit] {
       width: 40%;
-      background-color: #2E8C81;
+      background-color: $primary-color;
       font-size-adjust: none;
       margin: 3em auto;
     }
@@ -94,7 +94,7 @@
   text-shadow: 0 1px 0 #FFF;
   width: 5em;
   padding: 0.5em;
-  color: #2E8C81;
+  color: $primary-color;
   cursor: pointer;
   margin-left: 0.25em;
   &:hover {
@@ -103,7 +103,7 @@
 }
 
 #auth-link-text:hover {
-  color: #2E8C81;
+  color: $primary-color;
 }
 
 #auth-overlay {
@@ -147,7 +147,7 @@ button.loggedIn {
   top: 100%;
 
   a {
-    padding: 0.75em 0.75em 0.75em 0.75em !important;
+    padding: 0.75em !important;
   }
 
   i {

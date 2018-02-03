@@ -78,10 +78,11 @@ $foundation-palette: (
 $light-gray: #e6e6e6;
 $medium-gray: #cacaca;
 $dark-gray: #8a8a8a;
+$darker-gray: #707070;
 $black: #0a0a0a;
 $white: #fefefe;
 $body-background: $white;
-$body-font-color: $black;
+$body-font-color: $darker-gray;
 $body-font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 $body-antialiased: true;
 $global-margin: 1rem;
@@ -316,7 +317,7 @@ $callout-background-fade: 85%;
 $callout-border: 1px solid rgba($black, 0.25);
 $callout-margin: 0 0 1rem 0;
 $callout-padding: 1rem;
-$callout-font-color: $body-font-color;
+$callout-font-color: $black;
 $callout-font-color-alt: $body-background;
 $callout-radius: $global-radius;
 $callout-link-tint: 30%;
@@ -325,7 +326,7 @@ $callout-link-tint: 30%;
 // --------
 
 $card-background: $white;
-$card-font-color: $body-font-color;
+$card-font-color: $black;
 $card-divider-background: $light-gray;
 $card-border: 1px solid $light-gray;
 $card-shadow: none;
@@ -786,8 +787,8 @@ $table-head-background: smart-scale($table-background, $table-color-scale / 2);
 $table-head-row-hover: darken($table-head-background, $table-hover-scale);
 $table-foot-background: smart-scale($table-background, $table-color-scale);
 $table-foot-row-hover: darken($table-foot-background, $table-hover-scale);
-$table-head-font-color: $body-font-color;
-$table-foot-font-color: $body-font-color;
+$table-head-font-color: $black;
+$table-foot-font-color: $black;
 $show-header-for-stacked: false;
 $table-stack-breakpoint: medium;
 
@@ -805,7 +806,7 @@ $tab-item-padding: 1rem 1rem;
 $tab-expand-max: 6;
 $tab-content-background: transparent;
 $tab-content-border: transparent;
-$tab-content-color: $body-font-color;
+$tab-content-color: $black;
 $tab-content-padding: 1rem;
 
 // 52. Thumbnail
