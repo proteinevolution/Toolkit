@@ -13,7 +13,6 @@ object TitleManager {
 
   private val title: Node = dom.document.getElementsByTagName("title").item(0)
   private val basicTitle: String = title.textContent
-  private var titleCounter = 0
   private val toolTitlesDictionary = js.Dictionary(
     "hhblits" -> "HHblits",
     "hhpred" -> "HHpred",
@@ -64,19 +63,6 @@ object TitleManager {
   updateTitle()
 
   @JSExport
-  def resetCounter(): Unit = {
-    setCounter(0)
-  }
-
-  @JSExport
-  def setCounter(n: Int): Unit = {
-    if (titleCounter < Int.MaxValue) {
-      titleCounter = n
-    }
-    updateTitle()
-  }
-
-  @JSExport
   def updateTitle(overrideHash: js.Array[String] = new js.Array()): Unit = {
     var newTitle: String = basicTitle
     hashToPrefix(overrideHash)
@@ -84,12 +70,7 @@ object TitleManager {
     if (titlePrefix != "") {
       newTitle = s"$titlePrefix | $newTitle"
     }
-    // set counter
-    title.textContent = titleCounter match {
-      case 0 => newTitle
-      case x if x < Int.MaxValue => s"($titleCounter) $newTitle"
-      case _ => s"($titleCounter +) $newTitle"
-    }
+    title.textContent = newTitle;
   }
 
   @JSExport
