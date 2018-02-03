@@ -9,7 +9,7 @@
     border: 1px solid #ccc;
     .dataTables_length select {
       height: 2.8em;
-      padding: 0;
+      padding: 0 .5em;
       border-radius: 5px;
       font-size: 0.7em;
       -moz-appearance: none;
@@ -19,6 +19,7 @@
     .dataTables_filter input {
       height: 2em;
       border-radius: 5px;
+      padding: 0 .5em;
     }
 
     .dataTables_paginate {
