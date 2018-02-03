@@ -186,7 +186,7 @@
 .parameter {
   font-size: small;
   label {
-    font-family: 'Noto Sans', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: $body-font-family;
     font-size: 0.9em;
   }
   input {
@@ -251,7 +251,7 @@
 
   textarea {
     font-size: 0.75em;
-    font-family: "Source Code Pro", "Liberation Mono", monospace;
+    font-family: $font-family-monospace;
     margin-bottom: 0.5em;
   }
   .alignmentExample {
@@ -289,7 +289,7 @@
   .toolname {
     font-size: large;
     font-weight: bold;
-    color: #2E8C81;
+    color: $primary-color;
     @include breakpoint(small down) {
       padding-left: 0.5em;
     }

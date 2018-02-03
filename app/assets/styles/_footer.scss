@@ -38,10 +38,10 @@
 #buildinfo {
   background: red;
   font-size: 12px;
-  color: #000;
+  color: $body-font-color;
   font-weight: bold;
   text-align: center;
-  font-family: "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+  font-family: $font-family-monospace;
   margin: auto;
   width: 50%;
 }
