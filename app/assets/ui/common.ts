@@ -61,15 +61,6 @@ $(window).scroll(function() {
     }
 });
 
-window.onfocus = function() {
-    notifications = 0;
-    TitleManager.resetCounter();
-};
-window.onclick = function() {
-    notifications = 0;
-    TitleManager.resetCounter();
-};
-
 $('#scrollTop').click(function() {
     $("html, body").animate({ scrollTop: 0 }, 200);
     return false;
