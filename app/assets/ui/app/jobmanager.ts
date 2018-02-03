@@ -144,7 +144,7 @@ window.JobManager = {
             //m("div", { "class": "large-2 padded-column columns show-for-large", id: "sidebar" }, [
             //    m(JobListComponent, { activejobID : m.route.param("jobID") })
             //]),
-            m("div", {"class": "jobManagerContainer large-12", config: showSidebar},
+            m("div", {"class": "jobManagerContainer", config: showSidebar},
                 m("div", {"class": "jobline"}, [
                     m("span", {"class": "toolname"}, [
                         m("a", "Job Manager")
