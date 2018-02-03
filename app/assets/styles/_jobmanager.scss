@@ -1,99 +1,75 @@
-
-.job-manager .d {
-  background-color: #DBFFDB;
-}
-
-.job-manager .e {
-  background-color: #FFDDDD;
-}
-
-.job-manager .r{
-  background-color: #FFFF94;
-}
-
-.job-manager .q {
-  background-color: #c0b5bf;
-}
-
-.job-manager .w {
-  background-color: #dbdbff;
-}
-
-.job-manager .i {
-  background-color: #f2f2f2;
-}
-
-.job-manager .p {
-  background-color: #f2f2f2;
-}
-
-
-.job-manager .add{
-  color: #007927;
-  font-size: 1.3em;
-  opacity: 0.66;
-}
-
-.job-manager .remove{
-  color: #ff1a15;
-  font-size: 1.3em;
-  opacity: 0.66;
-}
-
-.job-manager i{
-  cursor:pointer;
-}
-
-#jobManagerTable {
-  width: 100% !important;
-}
-
-#job-manager-button {
-  background-color: rgba(46, 140, 129, 0.88) !important;
-  border: solid 1px lightgray !important;
-}
-
-#job-manager-button:hover {
-  background-color: rgba(46, 140, 129, 0.96) !important;
-  border: solid 1px lightgray !important;
-}
-
-/* DataTable in JobManager */
-.dataTables_length select {
-  height: 2.8em;
-  border-radius: 5px;
-  font-size: 0.7em;
-  -moz-appearance: none !important;
-  -webkit-appearance: none !important;
-}
-
-.dataTables_filter input {
-  height: 2em;
-  border-radius: 5px;
-}
-
-.dataTables_paginate {
-  font-size: 0.9em;
-}
-
-.dataTables_wrapper {
-  background-color: white;
-  padding: 1.75em;
-  border: 1px solid #ccc;
-}
-
-table.dataTable thead th {
-  border-bottom: 1px solid #b4b4b4 !important;
-}
-
 .jobManagerContainer {
   width: 95%;
   padding-left: 0.75em;
-}
-table.dataTable.no-footer{
-  border-bottom: 1px solid rgba(16,16,16,0.3) !important;
-}
 
-#jobManagerTable thead, #jobManagerTable thead:hover, #jobManagerTable thead tr, #jobManagerTable thead tr:hover  {
-  color: grey;
+  /* DataTable in JobManager */
+  .dataTables_wrapper {
+    background-color: white;
+    padding: 1.75em;
+    border: 1px solid #ccc;
+    .dataTables_length select {
+      height: 2.8em;
+      padding: 0;
+      border-radius: 5px;
+      font-size: 0.7em;
+      -moz-appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .dataTables_filter input {
+      height: 2em;
+      border-radius: 5px;
+    }
+
+    .dataTables_paginate {
+      font-size: 0.9em;
+    }
+  }
+
+  .job-manager.dataTable {
+    width: 100% !important;
+
+    thead th {
+      border-bottom: 1px solid #b4b4b4;
+      color: $darker-gray;
+    }
+    &.no-footer {
+      border-bottom: 1px solid rgba(16, 16, 16, 0.3);
+    }
+    .add {
+      color: #007927;
+      font-size: 1.3em;
+      opacity: 0.66;
+    }
+    .remove {
+      color: #ff1a15;
+      font-size: 1.3em;
+      opacity: 0.66;
+    }
+    i {
+      cursor: pointer;
+    }
+    /* colors */
+    .d {
+      background-color: #DBFFDB;
+    }
+    .e {
+      background-color: #FFDDDD;
+    }
+    .r {
+      background-color: #FFFF94;
+    }
+    .q {
+      background-color: #c0b5bf;
+    }
+    .w {
+      background-color: #dbdbff;
+    }
+    .i {
+      background-color: #f2f2f2;
+    }
+    .p {
+      background-color: #f2f2f2;
+    }
+  }
 }
