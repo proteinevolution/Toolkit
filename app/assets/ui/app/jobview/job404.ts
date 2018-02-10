@@ -4,9 +4,9 @@
         return {};
     },
     view: function(ctrl: any, args: any) {
-        return m("div", {"class": "callout"}, [
-            m("h5", "Job not found."),
-            m("a[href=/jobs/" + args.jobID + "]", "Try again!")
+        return m("div", {"class": "column error404-container"}, [
+            m("div", {class: "subtitle404"}, "Job not found."),
+            m("div", {id: "404msa", config: window.call404})
         ]);
     }
 };
