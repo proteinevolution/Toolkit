@@ -18,7 +18,7 @@ runSbtNoisy() {
 
 printMessage "VALIDATE CODE FORMATTING"
 
-runSbtNoisy scalafmt
+sbt scalafmt
 git diff --exit-code || (
   echo "ERROR: Scalafmt check failed, see differences above."
   echo "To fix, format your sources using sbt scalafmt before submitting a pull request."
