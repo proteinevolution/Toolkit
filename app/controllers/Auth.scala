@@ -226,9 +226,10 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                 }
               } else {
                 // Check database for existing users with the same email
-                val selector = BSONDocument("$or" -> List(
-                  BSONDocument(User.EMAIL     -> signUpFormUser.getUserData.eMail),
-                  BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin)))
+                val selector = BSONDocument(
+                  "$or" -> List(BSONDocument(User.EMAIL -> signUpFormUser.getUserData.eMail),
+                                BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin))
+                )
                 mongoStore.findUser(selector).flatMap {
                   case Some(otherUser) =>
                     if (signUpFormUser.getUserData.eMail == otherUser.getUserData.eMail) {
