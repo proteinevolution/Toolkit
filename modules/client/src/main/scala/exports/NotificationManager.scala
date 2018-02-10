@@ -11,12 +11,11 @@ import scala.scalajs.js.timers._
 @JSExportTopLevel("NotificationManager")
 object NotificationManager {
 
-  var notifications: js.Dictionary[Notification] = js.Dictionary()
+  private var notifications: js.Dictionary[Notification] = js.Dictionary()
 
   // init on start
   init()
 
-  @JSExport
   def init(): Unit = {
     if (!js.isUndefined(Notification)) {
       if (Notification.permission != "granted") {
@@ -33,13 +32,11 @@ object NotificationManager {
 
   @JSExport
   def showJobNotification(tag: String, title: String, body: String): Unit = {
-    dom.console.log("show job cons")
     showNotification(
       tag,
       title,
       body,
       () => {
-        dom.console.log("jobtag: " + tag)
         js.Dynamic.global.m.route("/jobs/" + tag)
         dom.window.parent.focus()
         dom.window.focus()
