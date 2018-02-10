@@ -56,7 +56,6 @@ class ProcessController @Inject()(ctx: HHContext,
       case "alnEval" | "evalFull" => (json \ "evalue").as[String]
       case "aln"                  => (json \ "checkboxes").as[List[Int]].mkString("\n")
     }
-
     kleisliProvider
       .resK(jobID)
       .flatMap {
@@ -98,11 +97,6 @@ class ProcessController @Inject()(ctx: HHContext,
       }
   }
 
-  /**
-   * TODO
-   * all the code below looks quite messy but this depends on the scripts in lib/
-   */
-  // Only first draft of an abstraction but this can be smoothened
   private[this] def getAccString(toolName: ToolNames.ToolName,
                                  result: SearchResult[HSP],
                                  accStr: String,
