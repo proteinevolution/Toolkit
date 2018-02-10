@@ -1,13 +1,13 @@
 package actors
 
-import java.nio.file.{Files, Paths}
+import java.nio.file.{ Files, Paths }
 import java.time.ZonedDateTime
-import javax.inject.{Inject, Named}
+import javax.inject.{ Inject, Named }
 
 import actors.ClusterMonitor._
 import actors.JobActor._
-import actors.WebSocketActor.{ChangeSessionID, LogOut, MaintenanceAlert}
-import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
+import actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
+import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
 import de.proteinevolution.common.LocationProvider
@@ -17,7 +17,7 @@ import de.proteinevolution.models.database.jobs.JobState._
 import models.UserSessions
 import play.api.Logger
 import play.api.cache._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{ JsValue, Json }
 import reactivemongo.bson.BSONObjectID
 import services.JobActorAccess
 
@@ -148,7 +148,11 @@ final class WebSocketActor @Inject()(
       out ! Json.obj("type" -> "PushJob", "job" -> job.cleaned())
 
     case ShowNotification(notificationType: String, tag: String, title: String, body: String) =>
-      out ! Json.obj("type" -> "ShowNotification", "tag" -> tag, "title" -> title, "body" -> body, "notificationType" -> notificationType)
+      out ! Json.obj("type"             -> "ShowNotification",
+                     "tag"              -> tag,
+                     "title"            -> title,
+                     "body"             -> body,
+                     "notificationType" -> notificationType)
 
     case UpdateLog(jobID: String) =>
       out ! Json.obj("type" -> "UpdateLog", "jobID" -> jobID)

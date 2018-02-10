@@ -11,7 +11,6 @@ import scala.scalajs.js.JSConverters._
 /**
  * Checkbox handler for result pages
  */
-
 @JSExportTopLevel("Checkboxes")
 object Checkboxes {
 

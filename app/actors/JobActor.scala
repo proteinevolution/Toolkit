@@ -15,7 +15,7 @@ import de.proteinevolution.db.MongoStore
 import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.jobs.JobState._
 import de.proteinevolution.models.database.jobs._
-import de.proteinevolution.models.database.statistics.{JobEvent, JobEventLog}
+import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.models.search.JobDAO
 import de.proteinevolution.parsers.Ops.QStat
@@ -23,15 +23,15 @@ import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
 import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecution
-import de.proteinevolution.tel.execution.{ExecutionContext, WrapperExecutionFactory}
+import de.proteinevolution.tel.execution.{ ExecutionContext, WrapperExecutionFactory }
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
 import models.UserSessions
 import models.mailing.MailTemplate.JobFinishedMail
 import play.api.Logger
-import play.api.cache.{NamedCache, SyncCacheApi}
+import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -317,7 +317,14 @@ class JobActor @Inject()(
         val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
         foundWatchers.flatten.foreach(_ ! PushJob(job))
         if (job.status == Done) {
-          foundWatchers.flatten.foreach(_ ! ShowNotification("job_update", job.jobID, "Job Update", "Your " + ConfigFactory.load().getString(s"Tools.${job.tool}.longname") + " job has finished!"))
+          foundWatchers.flatten.foreach(
+            _ ! ShowNotification(
+              "job_update",
+              job.jobID,
+              "Job Update",
+              "Your " + ConfigFactory.load().getString(s"Tools.${job.tool}.longname") + " job has finished!"
+            )
+          )
         }
         job
       }
