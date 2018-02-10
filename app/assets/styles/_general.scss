@@ -45,11 +45,9 @@ input.has-tip {
   margin-left: 0;
   margin-right: 0;
   position: relative;
-  #subtitle404 {
-    position: absolute;
-    margin-top: 400px;
-    width: 100%;
+  .error404-container {
     text-align: center;
+    padding-top: 0.4rem;
   }
   #404wrapper {
     display: block;
