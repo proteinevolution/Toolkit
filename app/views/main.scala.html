@@ -1,15 +1,11 @@
 @import java.time.ZonedDateTime
 
-@
-import build.BuildInfo
+@import build.BuildInfo
 @import controllers.routes
-@
-import de.proteinevolution.models.Tool
-@
-import org.webjars.play.WebJarsUtil
+@import de.proteinevolution.models.Tool
+@import org.webjars.play.WebJarsUtil
 @import play.api.Environment
-@
-import play.twirl.api.Html
+@import play.twirl.api.Html
 @(webJarsUtil: WebJarsUtil, tools: Iterable[Tool], message: String = "", view: String = "", environment: Environment)()
 
 <!DOCTYPE html>
