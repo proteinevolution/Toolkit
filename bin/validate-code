@@ -12,13 +12,10 @@ printMessage() {
   echo "[info]"
 }
 
-runSbtNoisy() {
-  sbt -jvm-opts ${BASEDIR}/.travis-jvmopts 'set concurrentRestrictions in Global += Tags.limitAll(1)' "$@" | grep --line-buffered -v 'Resolving \|Generating '
-}
-
 printMessage "VALIDATE CODE FORMATTING"
 
 sbt scalafmt
+
 git diff --exit-code || (
   echo "ERROR: Scalafmt check failed, see differences above."
   echo "To fix, format your sources using sbt scalafmt before submitting a pull request."
