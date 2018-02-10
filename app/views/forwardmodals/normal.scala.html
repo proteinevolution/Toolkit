@@ -45,12 +45,11 @@
 <script>
         $('#forwardSelect_@viewName').val("@defaultTool");
         window["@{viewName}_forward_"] = function () {
-            var selectedTool, boolEvalue, evalue, boolFullLength, sliderRegion;
+            var selectedTool, boolEvalue, evalue, boolFullLength;
             boolFullLength = $('#fullLength_@viewName').is(':checked');
             boolEvalue = $('#accordingEvalue_@viewName').is(':checked');
             selectedTool = $('#forwardSelect_@viewName').val();
             evalue = $("#forwardEvalueNormal_@viewName").val();
-            sliderRegion = $('#sliderRegion_@viewName').is(':checked');
             if (selectedTool === "") {
                 alert("Please select a tool!");
                 $('#forwardModal_@{viewName}').foundation('close');
