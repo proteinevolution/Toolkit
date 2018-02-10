@@ -29,8 +29,7 @@ object Forwarding {
     }
     val filename = UUID.randomUUID().toString.toUpperCase
     val route = (hasEvalue, isFullLength) match {
-      case (true, true)   => "/results/forwardAlignment/" + g.jobID + "/evalFull"
-      case (false, true)  => "/results/forwardAlignment/" + g.jobID + "/evalFull"
+      case (_, true)      => "/results/forwardAlignment/" + g.jobID + "/evalFull"
       case (true, false)  => "/results/forwardAlignment/" + g.jobID + "/alnEval"
       case (false, false) => "/results/forwardAlignment/" + g.jobID + "/aln"
     }
