@@ -13,7 +13,7 @@ object TitleManager {
 
   private val title: Node        = dom.document.getElementsByTagName("title").item(0)
   private val basicTitle: String = title.textContent
-  private var alert: Boolean     = false
+  private var hasAlert: Boolean     = false
   private val toolTitlesDictionary = js
     .Dictionary(
       "hhblits"   -> "HHblits",
@@ -75,7 +75,7 @@ object TitleManager {
     if (titlePrefix != "") {
       newTitle = s"$titlePrefix | $newTitle"
     }
-    if (alert) {
+    if (hasAlert) {
       newTitle = s"(!) $newTitle"
     }
     title.textContent = newTitle
@@ -96,13 +96,13 @@ object TitleManager {
 
   @JSExport
   def setAlert(): Unit = {
-    alert = true
+    hasAlert = true
     updateTitle()
   }
 
   @JSExport
   def clearAlert(): Unit = {
-    alert = false
+    hasAlert = false
     updateTitle()
   }
 
