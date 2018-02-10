@@ -12,7 +12,7 @@ private[tools] object ProcessFactory {
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
 
   private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile // HHPRED, HHBLITS alnEval
-  private val retrieveFullSeq         = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile
+  private val retrieveFullSeq         = (serverScripts + "/retrieveFullSeq.sh").toFile
   private val retrieveAlnEval         = (serverScripts + "/retrieveAlnEval.sh").toFile // Hmmer & PSIBLAST alnEval
   private val retrieveFullSeqHHblits  = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile // why so little abstractions ???
 
