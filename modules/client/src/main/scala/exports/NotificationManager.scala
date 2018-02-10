@@ -16,7 +16,7 @@ object NotificationManager {
   // init on start
   init()
 
-  def init(): Unit = {
+  private def init(): Unit = {
     if (!js.isUndefined(Notification)) {
       if (Notification.permission != "granted") {
         Notification.requestPermission((permission: String) => {
