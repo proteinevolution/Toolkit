@@ -5,6 +5,8 @@ scala:
   - 2.12.4
 jdk:
   - openjdk8
+env:
+  matrix: SBT_BIN=sbt -Dsbt.override.build.repos=true -Dsbt.repository.config=/$HOME/.sbt/repositories -Dsbt.boot.directory=sbt-cache/boot -Dsbt.ivy.home=sbt-cache/ivy2
 before_cache:
   - find $HOME/.ivy2/cache -name 'ivydata-*.properties' -delete
   - find $HOME/.sbt -name '*.lock' -delete
@@ -13,6 +15,8 @@ cache:
   directories:
   - "$HOME/.ivy2/cache"
   - $HOME/.sbt
+before_install:
+  - chmod +x bin/validate-code
 install:
   - git submodule update --init --recursive
   - git clone https://github.com/felixgabler/maxmind-geoip2-scala.git $HOME/pizza
