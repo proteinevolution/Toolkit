@@ -24,4 +24,6 @@ install:
   - nvm use stable
   - npm install
   - npm install jsdom
-script: sbt test:compile test stage
+script:
+ - bin/validate-code
+ - sbt test:compile test stage
