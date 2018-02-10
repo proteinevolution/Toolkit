@@ -10,7 +10,7 @@ object Router {
 
   def main(args: Array[String]): Unit = {
     m.route.mode = "hash"
-    val mountpoint = g.document.getElementById("main-content").asInstanceOf[HTMLDivElement]
+    val mountpoint       = g.document.getElementById("main-content").asInstanceOf[HTMLDivElement]
     val Index            = g.Index.asInstanceOf[MithrilComponent]
     val News             = g.News.asInstanceOf[MithrilComponent]
     val Backend          = g.Backend.asInstanceOf[MithrilComponent]
