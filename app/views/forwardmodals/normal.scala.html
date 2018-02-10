@@ -3,7 +3,6 @@
 
 <div class="reveal forwardModal" id="forwardModal_@viewName" data-reveal>
     <p>Forward Job</p>
-
     <div class="forward_form">
         <div class="forwardFormDiv">
             <label>Forward hits</label>
@@ -20,7 +19,6 @@
                 Full length sequences</label>
         </div>
     </div>
-
     <div class="row">
         <div class="select_forward large-4 columns">
             <select class="selectedHits_@viewName" id="forwardSelect_@viewName">
@@ -38,48 +36,40 @@
                 <span>Only some tools accept full-length sequences as input!</span>
             </div>
         </div>
-
         <div class="forwardFormLast large-3 columns"><a class="success button small" id="forward" onclick="@{viewName}_forward_();" type="button">
             Forward Job</a>
         </div>
     </div>
-
 </div>
 
 <script>
-
-    $('#forwardSelect_@viewName').val("@defaultTool");
-
-    window["@{viewName}_forward_"] = function(){
-        var selectedTool, boolEvalue, evalue, boolFullLength, sliderRegion;
-        boolFullLength = $('#fullLength_@viewName').is(':checked');
-        boolEvalue = $('#accordingEvalue_@viewName').is(':checked');
-        selectedTool = $('#forwardSelect_@viewName').val();
-        evalue = $("#forwardEvalueNormal_@viewName").val();
-        sliderRegion = $('#sliderRegion_@viewName').is(':checked');
-        if(selectedTool === ""){
-            alert("Please select a tool!");
-            $('#forwardModal_@{viewName}').foundation('close');
-            return;
-        }
-        Forwarding.process(selectedTool, boolEvalue, evalue, boolFullLength, sliderRegion);
-        if (selectedTool !== "") {
-            $('#forwardModal_@{viewName}').foundation('close');
-        }
-        if(evalue === "") {
-            alert("no evalue!")
-        }
-    };
-
+        $('#forwardSelect_@viewName').val("@defaultTool");
+        window["@{viewName}_forward_"] = function () {
+            var selectedTool, boolEvalue, evalue, boolFullLength, sliderRegion;
+            boolFullLength = $('#fullLength_@viewName').is(':checked');
+            boolEvalue = $('#accordingEvalue_@viewName').is(':checked');
+            selectedTool = $('#forwardSelect_@viewName').val();
+            evalue = $("#forwardEvalueNormal_@viewName").val();
+            sliderRegion = $('#sliderRegion_@viewName').is(':checked');
+            if (selectedTool === "") {
+                alert("Please select a tool!");
+                $('#forwardModal_@{viewName}').foundation('close');
+                return;
+            }
+            Forwarding.process(selectedTool, boolEvalue, evalue, boolFullLength, sliderRegion);
+            if (selectedTool !== "") {
+                $('#forwardModal_@{viewName}').foundation('close');
+            }
+            if (evalue === "") {
+                alert("no evalue!");
+            }
+        };
         $("#forwardModal_@viewName").foundation();
-
         $('.alignmentOptions_@viewName').show();
         $('.multiSeqOptions_@viewName').hide();
-
         //default check radio buttons
         $('#selectedHits_@viewName').prop("checked", true);
         $('#sliderRegion_@viewName').prop("checked", true);
-
         $("input[name='radio2']").change(function (e) {
             if ($(this).attr('id') === 'fullLength_@viewName') {
                 $('#forwardWarning').css({display: 'inherit'});
@@ -93,14 +83,13 @@
                 $('#forwardSelect_@viewName').val("@defaultTool");
             }
         });
-
-    $("#forwardModal_@viewName").bind('closed.zf.reveal', (function () {
-        $('#forwardSelect_@viewName').val("@defaultTool");
-        $('#forwardWarning').css({display: 'none'});
-        $('#forwardEvalueNormal_@viewName').val('0.001');
-        $('#selectedHits_@viewName').prop("checked", true);
-        $('#sliderRegion_@viewName').prop("checked", true);
-        $('.alignmentOptions_@viewName').show();
-        $('.multiSeqOptions_@viewName').hide();
-    }));
+        $("#forwardModal_@viewName").bind('closed.zf.reveal', (function () {
+            $('#forwardSelect_@viewName').val("@defaultTool");
+            $('#forwardWarning').css({display: 'none'});
+            $('#forwardEvalueNormal_@viewName').val('0.001');
+            $('#selectedHits_@viewName').prop("checked", true);
+            $('#sliderRegion_@viewName').prop("checked", true);
+            $('.alignmentOptions_@viewName').show();
+            $('.multiSeqOptions_@viewName').hide();
+        }));
 </script>
