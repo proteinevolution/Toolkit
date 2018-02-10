@@ -1,42 +1,41 @@
 package actors
 
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
+import actors.ClusterMonitor.PolledJobs
 import actors.JobActor._
 import akka.actor._
 import akka.event.LoggingReceive
-import models.UserSessions
-import de.proteinevolution.models.database.jobs._
-import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
-import de.proteinevolution.models.database.users.User
-import de.proteinevolution.models.search.JobDAO
-import de.proteinevolution.tel.TEL
-import de.proteinevolution.tel.runscripts._
-import com.typesafe.config.ConfigFactory
-import de.proteinevolution.db.MongoStore
-import de.proteinevolution.tel.env.Env
-import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
-import de.proteinevolution.tel.execution.{ ExecutionContext, WrapperExecutionFactory }
-import de.proteinevolution.tel.runscripts.Runscript.Evaluation
-import java.time.ZonedDateTime
-
-import actors.ClusterMonitor.PolledJobs
-import play.api.Logger
-import play.api.cache.{ NamedCache, SyncCacheApi }
-import play.api.libs.mailer.MailerClient
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
-
-import scala.language.postfixOps
-import scala.concurrent.Future
 import better.files._
 import com.google.inject.assistedinject.Assisted
+import com.typesafe.config.ConfigFactory
 import de.proteinevolution.common.LocationProvider
+import de.proteinevolution.db.MongoStore
 import de.proteinevolution.models.Constants
-import de.proteinevolution.parsers.Ops.QStat
-import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecution
-import models.mailing.MailTemplate.JobFinishedMail
 import de.proteinevolution.models.database.jobs.JobState._
+import de.proteinevolution.models.database.jobs._
+import de.proteinevolution.models.database.statistics.{JobEvent, JobEventLog}
+import de.proteinevolution.models.database.users.User
+import de.proteinevolution.models.search.JobDAO
+import de.proteinevolution.parsers.Ops.QStat
+import de.proteinevolution.tel.TEL
+import de.proteinevolution.tel.env.Env
+import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
+import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecution
+import de.proteinevolution.tel.execution.{ExecutionContext, WrapperExecutionFactory}
+import de.proteinevolution.tel.runscripts.Runscript.Evaluation
+import de.proteinevolution.tel.runscripts._
+import models.UserSessions
+import models.mailing.MailTemplate.JobFinishedMail
+import play.api.Logger
+import play.api.cache.{NamedCache, SyncCacheApi}
+import play.api.libs.mailer.MailerClient
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+
+import scala.concurrent.Future
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 object JobActor {
 
@@ -77,6 +76,9 @@ object JobActor {
   case class JobStateChanged(jobID: String, jobState: JobState)
 
   case class SetSGEID(jobID: String, sgeID: String)
+
+  // show browser notification
+  case class ShowNotification(notificationType: String, tag: String, title: String, body: String)
 
   // Job Controller receives push message to update the log
   case class UpdateLog(jobID: String)
@@ -314,6 +316,9 @@ class JobActor @Inject()(
         this.currentJobLogs = this.currentJobLogs.updated(job.jobID, jobLog)
         val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
         foundWatchers.flatten.foreach(_ ! PushJob(job))
+        if (job.status == Done) {
+          foundWatchers.flatten.foreach(_ ! ShowNotification("job_update", job.jobID, "Job Update", "Your " + ConfigFactory.load().getString(s"Tools.${job.tool}.longname") + " job has finished!"))
+        }
         job
       }
 

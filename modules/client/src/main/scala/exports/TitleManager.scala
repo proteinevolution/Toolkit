@@ -13,6 +13,7 @@ object TitleManager {
 
   private val title: Node = dom.document.getElementsByTagName("title").item(0)
   private val basicTitle: String = title.textContent
+  private var alert: Boolean = false
   private val toolTitlesDictionary = js.Dictionary(
     "hhblits" -> "HHblits",
     "hhpred" -> "HHpred",
@@ -70,7 +71,10 @@ object TitleManager {
     if (titlePrefix != "") {
       newTitle = s"$titlePrefix | $newTitle"
     }
-    title.textContent = newTitle;
+    if (alert) {
+      newTitle = s"(!) $newTitle"
+    }
+    title.textContent = newTitle
   }
 
   @JSExport
@@ -83,6 +87,18 @@ object TitleManager {
       case "jobs" => toolTitlesDictionary(js.Dynamic.global.JobListComponent.currentTool.asInstanceOf[String])
       case _ => moreTitlesDictionary(hashFragments(0))
     }
+  }
+
+  @JSExport
+  def setAlert(): Unit = {
+    alert = true
+    updateTitle()
+  }
+
+  @JSExport
+  def clearAlert(): Unit = {
+    alert = false
+    updateTitle()
   }
 
 } 

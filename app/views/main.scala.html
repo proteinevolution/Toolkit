@@ -1,10 +1,15 @@
-@import de.proteinevolution.models.Tool
 @import java.time.ZonedDateTime
-@import org.webjars.play.WebJarsUtil
+
+@
+import build.BuildInfo
 @import controllers.routes
-@import play.twirl.api.Html
+@
+import de.proteinevolution.models.Tool
+@
+import org.webjars.play.WebJarsUtil
 @import play.api.Environment
-@import build.BuildInfo
+@
+import play.twirl.api.Html
 @(webJarsUtil: WebJarsUtil, tools: Iterable[Tool], message: String = "", view: String = "", environment: Environment)()
 
 <!DOCTYPE html>
@@ -26,7 +31,7 @@
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
 
-        <link rel="shortcut icon" href="@routes.Assets.versioned("images/favicons/favicon-32x32.png")">
+        <link id="favicon_link" rel="shortcut icon" href="@routes.Assets.versioned("images/favicons/favicon-32x32.png")">
 
         <link rel="stylesheet" type="text/css" charset="utf-8" href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 

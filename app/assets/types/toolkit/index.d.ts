@@ -1,4 +1,4 @@
-import ControllerFunction = Mithril.ControllerFunction;
+
 
 declare class jsRoutes {
     public static controllers : any;
@@ -79,6 +79,7 @@ declare class Backend{
 
 declare class Toolkit{
     public static currentJobID : string;
+    public static trackedJobIDs: Array;
     public static notFoundJobID: string;
     public static controller : any;
     public static view: any;
