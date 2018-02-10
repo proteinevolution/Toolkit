@@ -1,7 +1,7 @@
-import com.tgf.pizza.scalajs.mithril.{Component, MithrilProp, VirtualDom, m}
+import com.tgf.pizza.scalajs.mithril.{ m, Component, MithrilProp, VirtualDom }
 
 import scala.scalajs.js
-import scala.scalajs.js.Dynamic.{global => g}
+import scala.scalajs.js.Dynamic.{ global => g }
 import scala.util.Random
 
 object ErrorComponent extends Component {
@@ -10,23 +10,27 @@ object ErrorComponent extends Component {
 
   val view: js.Function = (ctrl: ErrorComponentCtrl) =>
     js.Array(
-      m("div", js.Dynamic.literal("class" -> "column error404-container"), js.Array(
-        m("input", js.Dynamic.literal("id" -> "hidden404", "type" -> "hidden", "value" -> ctrl.notFoundRandomized)),
-        m(
-          "div",
-          js.Dynamic.literal("style" -> "display: none;",
-            "config" -> g.hideSidebar),
-          ""
-        ),
-        m("div", js.Dynamic.literal("class" -> "subtitle404"), s"${ctrl.errorMessage()}"),
-        m("div", {
-          js.Dynamic.literal("id" -> "404wrapper", "class" -> "columns")
-        }, m("div", {
-          js.Dynamic.literal("id" -> "404msa", "config" -> g.call404)
-        }))
-      ).asInstanceOf[VirtualDom.Child]
+      m(
+        "div",
+        js.Dynamic.literal("class" -> "column error404-container"),
+        js.Array(
+            m("input",
+              js.Dynamic.literal("id" -> "hidden404", "type" -> "hidden", "value" -> ctrl.notFoundRandomized)),
+            m(
+              "div",
+              js.Dynamic.literal("style" -> "display: none;", "config" -> g.hideSidebar),
+              ""
+            ),
+            m("div", js.Dynamic.literal("class" -> "subtitle404"), s"${ctrl.errorMessage()}"),
+            m("div", {
+              js.Dynamic.literal("id" -> "404wrapper", "class" -> "columns")
+            }, m("div", {
+              js.Dynamic.literal("id" -> "404msa", "config" -> g.call404)
+            }))
+          )
+          .asInstanceOf[VirtualDom.Child]
       )
-    )
+  )
 
 }
 
