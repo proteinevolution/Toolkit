@@ -179,12 +179,12 @@ const tilescomponent = {
                                     m("span", {style: "color:#2E8C81;"},
                                     m("em", "J Mol Biol. 2017 Dec 16.")))
                                 ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#mmcif30_2017_12"},
+                                m("a", {"data-open": "footerRecentUpdatesModal", href: "#mmcif30_2017_12"},
                                     m("h6", "December 6, 2017"),
                                     m("p", "HHpred: the PDB_mmCIF70 DB is now built using Uniclust30 instead of Uniprot20. " +
                                         "Additionally, we now also offer PDB_mmCIF30, containing fewer representatives.")
                                 ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#arc_2017_12"},
+                                m("a", {"data-open": "footerRecentUpdatesModal", href: "#arc_2017_12"},
                                     m("h6", "December 5, 2017"),
                                     m("p", "HHpred: profile HMM DBs of six archaeal proteomes ",
                                         m("em", "(Archaeoglobus fulgidus"), ", ",

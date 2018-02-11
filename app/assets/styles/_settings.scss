@@ -798,7 +798,7 @@ $table-stack-breakpoint: medium;
 $tab-margin: 0;
 $tab-background: transparent;
 $tab-color: $primary-color;
-$tab-background-active: transparent;
+$tab-background-active: rgba(220, 220, 220, 0.5);
 $tab-active-color: $primary-color;
 $tab-item-font-size: rem-calc(12);
 $tab-item-background-hover: transparent;
@@ -807,7 +807,7 @@ $tab-expand-max: 6;
 $tab-content-background: transparent;
 $tab-content-border: transparent;
 $tab-content-color: $black;
-$tab-content-padding: 1rem;
+$tab-content-padding: 0.4rem 0.5rem;
 
 // 52. Thumbnail
 // -------------

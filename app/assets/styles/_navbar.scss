@@ -1,35 +1,4 @@
-.title-bar {
-  background-color: transparent !important;
-  padding: 0;
-}
-
-.textArea {
-  background-color: rgba(0, 0, 0, 0.0) !important;
-  font-size: 0.625em;
-  color: white;
-}
-
-.textArea li {
-  padding-top: 1.7em;
-  padding-bottom: 1em;
-}
-
-.dropdowns {
-  background-color: rgba(0, 0, 0, 0.9) !important;
-  display: block !important;
-  visibility: hidden;
-  border: none !important;
-  width: 100% !important;
-}
-
-.sectionintro{
-
-  color: #d317ff;
-  font-weight: bolder;
-  padding-top: 2.3em;
-  background-color: rgba(0, 0, 0, 0.0) !important;
-}
-
+/* overlay */
 .overlay {
   height: 0;
   width: 100%;
@@ -41,150 +10,35 @@
   overflow-y: hidden;
   transition: 0.5s;
   opacity: 0.98;
-}
 
-.overlay-content {
-  position: relative;
-  top: 15%;
-  width: 100%;
-  text-align: center;
-  margin-top: 30px;
-}
+  @include breakpoint(small down) {
+    overflow-y: auto;
+  }
 
-.overlay a {
-  padding: 8px;
-  text-decoration: none;
-  font-size: 36px;
-  color: #818181;
-  display: block;
-  transition: 0.3s;
-}
-
-.overlay .closebtn {
-  position: absolute;
-  top: 20px;
-  right: 45px;
-  font-size: 60px;
-}
-
-@media screen and (max-height: 450px) {
-  .overlay {overflow-y: auto;}
-  .overlay a {font-size: 20px}
-  .overlay .closebtn {
-    font-size: 40px;
-    top: 15px;
-    right: 35px;
+  .overlay-content {
+    position: relative;
+    top: 15%;
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
+  }
+  a {
+    padding: 8px;
+    text-decoration: none;
+    font-size: 36px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+    @include breakpoint(small down) {
+      font-size: 20px
+    }
+  }
+  .hamburger-inner, .hamburger-inner:after, .hamburger-inner:before {
+    background-color: #eee;
   }
 }
 
-.overlayed:after {background-color: #eee;}
-.overlayed:before {background-color: #eee;}
-.hamburger-inner, .hamburger-inner:after, .hamburger-inner:before {
-  position: absolute;
-  width: 40px;
-  height: 4px;
-  transition-timing-function: ease;
-  transition-duration: .15s;
-  transition-property: transform;
-  border-radius: 4px;
-  background-color: #eee;
-}
-
-
-/* current Navbar */
-#navbar {
-  padding: 0 5px;
-  width: 750px;
-}
-
-#navbar .tabs {
-  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
-  color: red !important;
-  overflow-x: hidden;
-  background: rgb(238, 238, 238) repeat scroll 0 0;
-  background-clip: border-box;
-  background-origin: padding-box;
-  background-size: auto auto;
-  text-shadow: 0 1px 1px #fff;
-}
-
-
-#navbar .tabs-title{
-  font-family: 'Noto Sans','Lucida Grande','Lucida Sans Unicode',Geneva,Verdana,sans-serif;
-  overflow-x: hidden;
-  background: rgb(238, 238, 238) repeat scroll 0 0;
-  background-clip: border-box;
-  background-origin: padding-box;
-  background-size: auto auto;
-  text-shadow: 0 1px 1px white;
-  border-radius: 5px;
-}
-
-#navbar .tabs-title.is-active a:link{
-  color: #888;
-  margin-top:-1px;
-  background: rgba(220,220,220,0.5);
-  text-shadow: 0 1px 1px white;
-}
-
-#navbar .tabs-title a:link {
-  color: #888;
-  text-shadow: 0 1px 1px white;
-}
-
-#navbar .tabs-title a:hover{
-  color: #888 !important;
-}
-
-#navbar .tabs-title > a {
-  overflow: hidden;
-  color: #888 !important;
-  position:relative;
-  text-shadow: 0 1px 1px white;
-  font-weight: bold;
-}
-
-#navbar .tabs-title > a:focus, #navbar .tabs-title > a[aria-selected='true']::after {
-  transform: translate3d(0,0,0);
-  color: #888;
-}
-
-#panel1 {
-  border-top: 2px solid #D0BA89;
-  padding: 0.4rem 0.5rem;
-  margin: 0 0 -1.5rem 0;
-}
-#panel2 {
-  padding: 0.4rem 0.5rem;
-  margin: 0 0 -1.5rem 0;
-  border-top: 2px solid #FFCC66;
-}
-#panel3 {
-  padding: 0.4rem 0.5rem;
-  margin: 0 0 -1.5rem 0;
-  border-top: 2px solid #669933;
-}
-#panel4 {
-  padding: 0.4rem 0.5rem;
-  margin: 0 0 -1.5rem 0;
-  border-top: 2px solid #79A4C4;
-}
-#panel5 {
-  padding: 0.4rem 0.5rem;
-  margin: 0 0 -1.5rem 0;
-  border-top: 2px solid #666699;
-}
-#panel6 {
-  padding: 0.4rem 0.5rem;
-  margin: 0 0 -1.5rem 0;
-  border-top: 2px solid #D6ABAB;
-}
-#panel7 {
-  padding: 0.4rem 0.5rem;
-  margin: 0 0 -1.5rem 0;
-  border-top: 2px solid #CC3333;
-}
-
+/* Navigation bar on top of page */
 #metanav {
   margin-top: -5px;
   min-height: 39px;
@@ -192,51 +46,74 @@
 
 #logo {
   padding-top: 15px;
+  img {
+    display: block;
+  }
 }
 
-#logo img {
-  display: block;
+/* Navbar */
+#navbar {
+  padding: 0 5px;
+  width: 750px;
+  .tabs {
+    overflow-x: hidden;
+    .tabs-title a {
+      border-radius: 5px;
+      color: #888 !important;
+      font-weight: bold;
+      text-shadow: 0 1px 1px $white;
+    }
+  }
+  .tabs-panel.toolsection {
+    margin: 0 0 -1.5rem 0;
+    a {
+      color: grey;
+      display: table-cell;
+      font-size: 0.75em;
+      text-shadow: 0 1px 1px white;
+      padding: 1rem 1rem 1rem 1rem;
+      line-height: 1;
+      border-radius: 5px;
+      &:hover, &:active, &:focus {
+        background: rgba(220, 220, 220, 0.5);
+      }
+    }
+  }
+  #panel1 {
+    border-top: 2px solid #D0BA89;
+  }
+  #panel2 {
+    border-top: 2px solid #FFCC66;
+  }
+  #panel3 {
+    border-top: 2px solid #669933;
+  }
+  #panel4 {
+    border-top: 2px solid #79A4C4;
+  }
+  #panel5 {
+    border-top: 2px solid #666699;
+  }
+  #panel6 {
+    border-top: 2px solid #D6ABAB;
+  }
+  #panel7 {
+    border-top: 2px solid #CC3333;
+  }
 }
 
-.toolsection a {
-  border-right: none;
-  color: grey;
-  text-align: center;
-  text-decoration: none;
-  display: table-cell;
-  font-size: 0.75em;
-  margin-top: -1px;
-  text-shadow: 0 1px 1px white;
-  padding: 1rem 1rem 1rem 1rem;
-  line-height: 1;
-  border-radius: 5px;
-}
-
-.toolsection a:active, .toolsection a:hover, .toolsection a:focus {
-  color: grey;
-  background: rgba(220,220,220,0.5);
-}
-
-.toolsection a:visited {
-  color: grey;
-}
-
+/* small devices menu toggler */
 #hambutton {
   position: absolute;
-  padding-top: 0.75em;
-  padding-left: 0.75em;
+  margin: 0.75em;
+  button {
+    color: gray;
+    height: 60%;
+    cursor: pointer;
+  }
 }
 
-#hambutton button {
-  color: gray;
-  height: 60%;
-  cursor: pointer;
-}
-
-#metauser {
-  float: right;
-}
-
-#rcnbtn {
+/* Reconnect text*/
+#offline-alert i {
   font-size: 1.2em !important;
 }
