@@ -30,7 +30,7 @@ const typeAhead = function(elem: any, isInit: boolean): any {
         return $("#" + elem.id + " .search-input").typeahead({
             highlight: true,
             minLength: 1,
-            hint: true
+            autoselect: "first"
         }, [
             {
                 displayKey: "long",
@@ -168,13 +168,12 @@ const tilescomponent = {
         return m("div", {
                 "class": "row article_container small-up-1 medium-up-2 large-up-3",
                 config: hideSidebar
-
             },
             m("div", {
                     "class": "column column-block tile-main-container"
                 },
                 m("div", {"class": "tile_container"},
-                    m("div", {"class": "tile-img", 'style': {"background-image": "url(/assets/images/fold_galaxy.png)"}}
+                    m("div", {"class": "tile-img", "style": {"background-image": "url(/assets/images/fold_galaxy.png)"}}
                     ),
                     m("div", {"class": "text_part"},
                         m("h5", "Recent Updates"),
@@ -202,9 +201,7 @@ const tilescomponent = {
                         m("table",
                             m("tr",
                                 m("td",
-                                    m("a", {href: "/#/tools/hhpred"},
-                                        m("a", "HHpred")
-                                    )
+                                    m("a", {href: "/#/tools/hhpred"}, "HHpred")
                                 ),
                                 m("td",
                                     m("a", {href: "/#/tools/hhpred"},
@@ -214,9 +211,7 @@ const tilescomponent = {
                             ),
                             m("tr",
                                 m("td",
-                                    m("a", {href: "/#/tools/hhblits"},
-                                        m("a", "HHblits")
-                                    )
+                                    m("a", {href: "/#/tools/hhblits"}, "HHblits")
                                 ),
                                 m("td",
                                     m("a", {href: "/#/tools/hhblits"},
@@ -226,9 +221,7 @@ const tilescomponent = {
                             ),
                             m("tr",
                                 m("td",
-                                    m("a", {href: "/#/tools/hhrepid"},
-                                        m("a", "HHrepID")
-                                    )
+                                    m("a", {href: "/#/tools/hhrepid"}, "HHrepID")
                                 ),
                                 m("td",
                                     m("a", {href: "/#/tools/hhprepid"},
@@ -238,9 +231,7 @@ const tilescomponent = {
                             ),
                             m("tr",
                                 m("td",
-                                    m("a", {href: "/#/tools/psiblast"},
-                                        m("a", "BLAST")
-                                    )
+                                    m("a", {href: "/#/tools/psiblast"}, "BLAST")
                                 ),
                                 m("td",
                                     m("a", {href: "/#/tools/psiblast"},
@@ -250,9 +241,7 @@ const tilescomponent = {
                             ),
                             m("tr",
                                 m("td",
-                                    m("a", {href: "/#/tools/pcoils"},
-                                        m("a", "PCOILS")
-                                    )
+                                    m("a", {href: "/#/tools/pcoils"}, "PCOILS")
                                 ),
                                 m("td",
                                     m("a", {href: "/#/tools/pcoils"},
@@ -262,9 +251,7 @@ const tilescomponent = {
                             ),
                             m("tr",
                                 m("td",
-                                    m("a", {href: "/#/tools/clans"},
-                                        m("a", "CLANS")
-                                    )
+                                    m("a", {href: "/#/tools/clans"}, "CLANS")
                                 ),
                                 m("td",
                                     m("a", {href: "/#/tools/clans"},
@@ -274,9 +261,7 @@ const tilescomponent = {
                             ),
                             m("tr",
                                 m("td",
-                                    m("a", {href: "/#/tools/mafft"},
-                                        m("a", "MAFFT")
-                                    )
+                                    m("a", {href: "/#/tools/mafft"}, "MAFFT")
                                 ),
                                 m("td",
                                     m("a", {href: "/#/tools/mafft"},
@@ -286,9 +271,7 @@ const tilescomponent = {
                             ),
                             m("tr",
                                 m("td",
-                                    m("a", {href: "/#/tools/quick2d"},
-                                        m("a", "Quick2D")
-                                    )
+                                    m("a", {href: "/#/tools/quick2d"}, "Quick2D")
                                 ),
                                 m("td",
                                     m("a", {href: "/#/tools/quick2d"},
@@ -298,9 +281,7 @@ const tilescomponent = {
                             ),
                             m("tr",
                                 m("td",
-                                    m("a", {href: "/#/tools/mmseqs2"},
-                                        m("a", "MMseqs2")
-                                    )
+                                    m("a", {href: "/#/tools/mmseqs2"}, "MMseqs2")
                                 ),
                                 m("td",
                                     m("a", {href: "/#/tools/mmseqs2"},

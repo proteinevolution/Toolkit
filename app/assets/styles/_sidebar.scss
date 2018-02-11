@@ -7,11 +7,10 @@
       height:1.9rem;
       font-size: 0.8rem;
       margin-top: 6px;
-      padding: 0 .5rem;
       &.search-input {
         color:black;
         background-color:transparent;
-        &.white {
+        &:focus, &:active {
           background-color: $white !important;
         }
       }
