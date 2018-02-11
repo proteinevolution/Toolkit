@@ -224,7 +224,7 @@
             if (numHits > 0) {
                 $("#wrap").text("Unwrap Seqs");
                 $("#wrap").addClass("colorToggleBar");
-	        new DataTables("hhpred").config(jobID, numHits);               
+	        new DataTables("hhpred").config(jobID, numHits);
                 var firstQueryStart = @{if(result.num_hits > 0){ result.HSPS.head.query.start}};
                 var firstQueryEnd = @{if(result.num_hits > 0){ result.HSPS.head.query.end}};
                 /* without timeout SLIDER is displayed */
@@ -329,7 +329,7 @@
                 return;
             }
             $('#templateAlignmentModal').foundation('close');
-            forward(tool, forwardData);
+            Forwarding.simple(tool, forwardData);
         }
 
 
@@ -339,7 +339,7 @@
                 type: 'GET',
                 url: "files/" + jobID + "/reduced.a3m"
             }).done(function (data_) {
-                forward(selectedTool, data_.toString());
+                Forwarding.simple(selectedTool, data_.toString());
             });
         }
 
