@@ -377,7 +377,7 @@ td#joblistIcon {
   text-align: center;
 }
 
-.tile_main_container {
+.tile-main-container {
   width: 884px !important;
   height: 300px;
   background-color: transparent;
@@ -401,7 +401,7 @@ td#joblistIcon {
   background-color: white;
 }
 
-.quick_links {
+.quick-links {
   width: 20%;
   padding-top: 1.6em;
   border-left: 1px dashed lightgrey;
@@ -441,14 +441,14 @@ td#joblistIcon {
 }
 
 .text_part h5,
-.quick_links h5 {
+.quick-links h5 {
   color: $primary-color;
   margin-bottom: 0.5em;
   font-weight: bold;
   font-size: 12pt;
 }
 
-.tile_img {
+.tile-img {
   width: 15%;
   overflow: hidden;
   position: relative;
@@ -472,10 +472,10 @@ td#joblistIcon {
 }
 
 @media screen and (max-width: 900px) {
-  [class*="tile_img"] {
+  [class*="tile-img"] {
     display: none;
   }
-  [class*="tile_main_container"] {
+  [class*="tile-main-container"] {
     width: 760px !important;
   }
   [class*="text_part"] {

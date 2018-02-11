@@ -102,7 +102,7 @@
   }
 }
 
-/* small devices menu toggler */
+/* small devices menu */
 #hambutton {
   position: absolute;
   margin: 0.75em;
@@ -110,6 +110,16 @@
     color: gray;
     height: 60%;
     cursor: pointer;
+  }
+}
+
+.off-canvas .drilldown {
+  font-size: 0.8em;
+  li a {
+    color: black;
+    &:hover {
+      background: #F2F2F2 !important;
+    }
   }
 }
 

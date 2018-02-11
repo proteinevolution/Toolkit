@@ -190,29 +190,35 @@
                         <div id="main-content">
                             <noscript><div class="noscript">
                                 This website relies on JavaScript to work properly.<br />
-                                Please activate JavaScript in Your browser to see everything we offer.
+                                Please activate JavaScript in your browser to see everything we offer.
                             </div></noscript>
                         </div>
                     </div>
                 </div>
-                <footer class="row" id="app">
-                    <div class="columns large-12">
-                        <div id="sub-nav" class="hide-for-print">
-                            <a data-open="footerHelpModal">Help</a>
-                            <a data-open="footerFAQModal">FAQ</a>
-                            <a data-open="footerPrivacyModal">Privacy Policy</a>
-                            <a data-open="footerImprintModal">Imprint</a>
-                            <a data-open="footerContactModal">Contact Us</a>
-                            <a data-open="footerCiteModal">Cite Us</a>
-                            <a data-open="footerRecentUpdatesModal">Recent Updates</a>
+                <footer>
+                    <div class="row">
+                        <div class="columns large-12">
+                            <ul class="menu align-center hide-for-print text-small">
+                                <li><a data-open="footerHelpModal">Help</a></li>
+                                <li><a data-open="footerFAQModal">FAQ</a></li>
+                                <li><a data-open="footerPrivacyModal">Privacy Policy</a></li>
+                                <li><a data-open="footerImprintModal">Imprint</a></li>
+                                <li><a data-open="footerContactModal">Contact Us</a></li>
+                                <li><a data-open="footerCiteModal">Cite Us</a></li>
+                                <li><a data-open="footerRecentUpdatesModal">Recent Updates</a></li>
+                            </ul>
                         </div>
-                        <div id="socket">
+                    </div>
+                    <div class="row">
+                        <p class="column small-12 text-center text-small">
                             © 2008-@(ZonedDateTime.now.getYear), Dept. of Protein Evolution, Max Planck Institute for Developmental Biology, Tübingen
-                        </div>
+                        </p>
+                    </div>
 
-                        @if(environment.mode == play.api.Mode.Dev) {
-                            <div id="buildinfo">
-                                @(new java.lang.StringBuilder()
+                    @if(environment.mode == play.api.Mode.Dev) {
+                        <div class="row">
+                            <div id="buildinfo" class="column small-6 small-centered text-center text-small">
+                            @(new java.lang.StringBuilder()
                                     .append("Version: ")
                                     .append(BuildInfo.version)
                                     .append(" on Scala ")
@@ -223,8 +229,8 @@
                                     .append(BuildInfo.playVersion)
                                     .toString)
                             </div>
-                        }
-                    </div>
+                        </div>
+                    }
                 </footer>
             </div>
         </div>
