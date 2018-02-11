@@ -29,8 +29,7 @@ const typeAhead = function(elem: any, isInit: boolean): any {
     if (!isInit) {
         return $("#" + elem.id + " .search-input").typeahead({
             highlight: true,
-            minLength: 1,
-            autoselect: "first"
+            minLength: 1
         }, [
             {
                 displayKey: "long",
@@ -38,7 +37,7 @@ const typeAhead = function(elem: any, isInit: boolean): any {
                 templates: {
                     suggestion: function(data: any) {
                         if (data != null) {
-                            return "<div class=\"list-group-item\"><a class=\"search-results\" href=\"#/tools/" + data.short + "\" name=\"" + data.long + "\">" + data.long + "</a></div>";
+                            return "<div class=\"list-group-item\"><a class=\"search-results\" data-link=\"/tools/" + data.short + "\" name=\"" + data.long + "\">" + data.long + "</a></div>";
                         } else {
                             return "<div style=\"display: none\"></div>";
                         }
@@ -55,7 +54,7 @@ const typeAhead = function(elem: any, isInit: boolean): any {
                     //empty: '<div class="list-group search-results-dropdown"><div class="list-group-item-notfound">Nothing found.</div></div>',
                     suggestion: function(data: any) {
                         if (data != null) {
-                            return "<div class=\"list-group-item\"><a class=\"search-results\" href=\"#/jobs/" + data.jobID + "\" name=\"" + data.jobID + " - " + data.toolnameLong + "\">" +
+                            return "<div class=\"list-group-item\"><a class=\"search-results\" data-link=\"/jobs/" + data.jobID + "\" name=\"" + data.jobID + " - " + data.toolnameLong + "\">" +
                                 "<span class=\"search-result-jobid\">" + data.jobID + "</span> <span class=\"search-result-tool\"> " +
                                 "(" + data.toolnameLong + ")</span> <span class=\"search-result-tool-short\"> (" + data.tool.substr(0, 4).toUpperCase() + ")</span></a></div>";
                         } else {
@@ -65,16 +64,15 @@ const typeAhead = function(elem: any, isInit: boolean): any {
                     header: "<h6 class=\"header-name\">Jobs</h6>",
                 }
             }
-        ]).on("keyup", function(e: any): any {
-            let selectables = $("#" + elem.id + " .search-input").siblings(".tt-menu").find(".tt-selectable").find(".search-results");
-            if (e.which == 13) {
-                e.preventDefault();
-                //find the selectable item under the input, if any:
-                if (selectables.length > 0) {
-                    selectables[0].click();
-                    return false;
+        ]).on("typeahead:select", function(e: any, option: any): any {
+            e.preventDefault();
+            let selectables = $(this).siblings(".tt-menu").find(".tt-selectable").find(".search-results");
+            selectables.each(function() {
+                if ($(this).attr("name") === option.long) {
+                    console.log(this);
+                    m.route($(this).data("link"));
                 }
-            }
+            })
         }).on("blur", function(e: any): any {
             $(this).val("");
         });
