@@ -86,7 +86,7 @@ class ProcessController @Inject()(ctx: HHContext,
                        jobID,
                        tuple._1.value,
                        filename,
-                       mode.value,
+                       mode.toString,
                        numListStr,
                        tuple._2.db).run().exitValue()
       }
