@@ -11,7 +11,7 @@ import scala.scalajs.js.timers._
 @JSExportTopLevel("NotificationManager")
 object NotificationManager {
 
-  private var notifications: js.Dictionary[Notification] = js.Dictionary()
+  private val notifications: js.Dictionary[Notification] = js.Dictionary()
 
   // init on start
   init()
@@ -71,9 +71,11 @@ object NotificationManager {
 
   @JSExport
   def clearNotifications(): Unit = {
-    notifications.foreach[Unit]((item) => {
-      item._2.close()
-    })
+    notifications.foreach {
+      case (_, notification: Notification) => {
+        notification.close()
+      }
+    }
     notifications.clear()
   }
 
