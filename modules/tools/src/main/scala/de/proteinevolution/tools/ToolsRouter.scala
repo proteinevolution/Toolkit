@@ -3,6 +3,7 @@ package de.proteinevolution.tools
 import javax.inject.{ Inject, Singleton }
 
 import de.proteinevolution.tools.controllers.{ AlignmentController, FileController, HHController, ProcessController }
+import de.proteinevolution.tools.services.ForwardModeExtractor
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
 import play.api.routing.sird._
@@ -13,13 +14,15 @@ class ToolsRouter @Inject()(
     processController: ProcessController,
     alignmentController: AlignmentController,
     fileController: FileController
-) extends SimpleRouter {
+) extends SimpleRouter
+    with ForwardModeExtractor {
 
   def routes: Routes = {
-    case POST(p"/loadHits/$jobID")                    => hhController.loadHits(jobID)
-    case GET(p"/dataTable/$jobID")                    => hhController.dataTable(jobID)
-    case GET(p"/getStructure/$filename")              => fileController.getStructureFile(filename)
-    case POST(p"/forwardAlignment/$jobID/$mode")      => processController.forwardAlignment(jobID, mode)
+    case POST(p"/loadHits/$jobID")       => hhController.loadHits(jobID)
+    case GET(p"/dataTable/$jobID")       => hhController.dataTable(jobID)
+    case GET(p"/getStructure/$filename") => fileController.getStructureFile(filename)
+    case POST(p"/forwardAlignment/$jobID/${forwardModeExtractor(mode) }") =>
+      processController.forwardAlignment(jobID, mode)
     case GET(p"/templateAlignment/$jobID/$accession") => processController.templateAlignment(jobID, accession)
     case POST(p"/alignment/getAln/$jobID")            => alignmentController.getAln(jobID)
     case POST(p"/alignment/loadHits/$jobID")          => alignmentController.loadHits(jobID)
