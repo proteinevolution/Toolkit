@@ -75,11 +75,8 @@ const typeAhead = function(elem: any, isInit: boolean): any {
                     return false;
                 }
             }
-        }).on("focus", function(e: any): any {
-            $("#" + elem.id + " .search-input.tt-hint").addClass("white");
         }).on("blur", function(e: any): any {
-            $("#" + elem.id + " .search-input.tt-hint").removeClass("white");
-            $("#sidebar-search input").val("");
+            $(this).val("");
         });
     }
 };
