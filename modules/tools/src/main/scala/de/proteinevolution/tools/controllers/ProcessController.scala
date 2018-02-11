@@ -127,7 +127,6 @@ class ProcessController @Inject()(ctx: HHContext,
         }.mkString
       case _ => throw new IllegalStateException("parsing accession identifiers failed")
     }
-    evalString
   }
 
 }
