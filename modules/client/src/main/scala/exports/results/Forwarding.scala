@@ -27,11 +27,13 @@ object Forwarding {
       g.alert("No sequence(s) selected!")
       return
     }
-    val filename = UUID.randomUUID().toString.toUpperCase
+    val filename  = UUID.randomUUID().toString.toUpperCase
+    val baseRoute = "/results/forwardAlignment/" + g.jobID
     val route = (hasEvalue, isFullLength) match {
-      case (_, true)      => "/results/forwardAlignment/" + g.jobID + "/evalFull"
-      case (true, false)  => "/results/forwardAlignment/" + g.jobID + "/alnEval"
-      case (false, false) => "/results/forwardAlignment/" + g.jobID + "/aln"
+      case (true, true)   => s"$baseRoute/evalFull"
+      case (false, true)  => s"$baseRoute/full"
+      case (true, false)  => s"$baseRoute/alnEval"
+      case (false, false) => s"$baseRoute/aln"
     }
     $.ajax(
       js.Dynamic

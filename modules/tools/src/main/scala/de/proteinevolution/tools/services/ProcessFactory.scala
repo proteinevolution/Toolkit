@@ -4,6 +4,8 @@ import better.files._
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.ToolNames
 import ToolNames._
+import de.proteinevolution.tools.models.ForwardMode
+
 import scala.sys.process
 import scala.sys.process.Process
 
@@ -20,11 +22,11 @@ private[tools] object ProcessFactory {
             jobID: String,
             toolName: String,
             tempFileName: String,
-            mode: String,
+            mode: ForwardMode,
             accString: String,
             db: String): process.ProcessBuilder = {
 
-    val (script, params) = (toolName, mode) match {
+    val (script, params) = (toolName, mode.toString) match {
       case (HHBLITS.value, "alnEval") | (HHPRED.value, "alnEval") =>
         (generateAlignmentScript, List("jobID" -> jobID, "filename" -> tempFileName, "numList" -> accString))
       case (HMMER.value, "alnEval") =>
