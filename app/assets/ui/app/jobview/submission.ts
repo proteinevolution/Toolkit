@@ -149,6 +149,8 @@
                 }).then(function(submissionReturnData : any){
                     if (submissionReturnData.successful) {
                         jobID = submissionReturnData.jobID;
+                        // listen for this job
+                        Toolkit.trackedJobIDs.push(jobID);
                         let jobListComp = JobListComponent.Job(
                             { jobID: jobID, state: 0, dateCreated: Date.now().valueOf(), tool: tool }
                         );
