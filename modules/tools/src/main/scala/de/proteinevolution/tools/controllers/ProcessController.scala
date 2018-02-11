@@ -2,7 +2,7 @@ package de.proteinevolution.tools.controllers
 import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.ConfigFactory
-import de.proteinevolution.tools.models.{ HHContext, ResultContext }
+import de.proteinevolution.tools.models.{ ForwardMode, HHContext, ResultContext }
 import de.proteinevolution.tools.services.{ KleisliProvider, ProcessFactory, ToolNameGetService }
 import play.api.mvc.{ AbstractController, Action, AnyContent }
 import better.files._
@@ -11,6 +11,7 @@ import de.proteinevolution.models.{ Constants, ToolNames }
 import scala.sys.process.Process
 import de.proteinevolution.tools.results.{ HSP, SearchResult }
 import ToolNames._
+
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -49,18 +50,18 @@ class ProcessController @Inject()(ctx: HHContext,
       }
   }
 
-  def forwardAlignment(jobID: String, mode: String): Action[AnyContent] = Action.async { implicit request =>
+  def forwardAlignment(jobID: String, mode: ForwardMode): Action[AnyContent] = Action.async { implicit request =>
     val json     = request.body.asJson.get
     val filename = (json \ "fileName").as[String]
-    val accStr = mode match {
+    val accStr = mode.toString match {
       case "alnEval" | "evalFull" => (json \ "evalue").as[String]
-      case "aln"                  => (json \ "checkboxes").as[List[Int]].mkString("\n")
+      case "aln" | "full"         => (json \ "checkboxes").as[List[Int]].mkString("\n")
     }
     kleisliProvider
       .resK(jobID)
       .flatMap {
         case Some(jsValue) =>
-          kleisliProvider.toolK(jobID).map { // TODO composition instead of mapping
+          kleisliProvider.toolK(jobID).map {
             case HHBLITS =>
               (HHBLITS, resultContext.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
             case HHPRED =>
@@ -75,19 +76,20 @@ class ProcessController @Inject()(ctx: HHContext,
           }
         case None => throw new IllegalStateException
       }
-      .map { tuple =>
-        val numListStr =
-          if (mode != "full")
-            getAccString(tuple._1, tuple._2, accStr, mode)
-          else
-            numericAccString(tuple._1, tuple._2, accStr)
-        ProcessFactory((constants.jobPath + jobID).toFile,
-                       jobID,
-                       tuple._1.value,
-                       filename,
-                       mode,
-                       numListStr,
-                       tuple._2.db).run().exitValue()
+      .map {
+        case (toolName, result) =>
+          val numListStr =
+            if (mode.toString != "full")
+              getAccString(toolName, result, accStr, mode)
+            else
+              numericAccString(toolName, result, accStr)
+          ProcessFactory((constants.jobPath + jobID).toFile,
+                         jobID,
+                         toolName.value,
+                         filename,
+                         mode,
+                         numListStr,
+                         result.db).run().exitValue()
       }
       .map {
         case 0 =>
@@ -100,9 +102,9 @@ class ProcessController @Inject()(ctx: HHContext,
   private[this] def getAccString(toolName: ToolNames.ToolName,
                                  result: SearchResult[HSP],
                                  accStr: String,
-                                 mode: String): String = {
-    val evalString = (toolName, mode) match {
-      case (HHBLITS, "alnEval") | (ToolNames.HHPRED, "alnEval") =>
+                                 mode: ForwardMode): String = {
+    val evalString = (toolName, mode.toString) match {
+      case (HHBLITS, "alnEval") | (HHPRED, "alnEval") =>
         result.HSPS.filter(_.info.evalue < accStr.toDouble).map { _.num }.mkString(" ")
       case (HMMER, "alnEval") =>
         result.HSPS
@@ -126,9 +128,7 @@ class ProcessController @Inject()(ctx: HHContext,
 
   // find better name for this function later and merge it with the one above (all depends on the non-uniform input json)
   private[this] def numericAccString(toolName: ToolNames.ToolName, result: SearchResult[HSP], accStr: String): String = {
-
     val numList = accStr.split("\n").map(_.toInt)
-
     toolName match {
       case HMMER =>
         numList.map { num =>
@@ -143,7 +143,6 @@ class ProcessController @Inject()(ctx: HHContext,
           result.HSPS(num - 1).template.accession + " "
         }.mkString
       case _ => throw new IllegalStateException("tool does not support forwarding in full mode")
-
     }
   }
 
