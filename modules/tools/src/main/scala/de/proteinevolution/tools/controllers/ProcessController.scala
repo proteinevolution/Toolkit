@@ -61,7 +61,7 @@ class ProcessController @Inject()(ctx: HHContext,
       .resK(jobID)
       .flatMap {
         case Some(jsValue) =>
-          kleisliProvider.toolK(jobID).map { // TODO composition instead of mapping
+          kleisliProvider.toolK(jobID).map {
             case HHBLITS =>
               (HHBLITS, resultContext.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
             case HHPRED =>
@@ -127,9 +127,7 @@ class ProcessController @Inject()(ctx: HHContext,
   }
 
   // find better name for this function later and merge it with the one above (all depends on the non-uniform input json)
-  private[this] def numericAccString(toolName: ToolNames.ToolName,
-                                     result: SearchResult[HSP],
-                                     accStr: String): String = {
+  private[this] def numericAccString(toolName: ToolNames.ToolName, result: SearchResult[HSP], accStr: String): String = {
     val numList = accStr.split("\n").map(_.toInt)
     toolName match {
       case HMMER =>
