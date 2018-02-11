@@ -136,7 +136,7 @@
                             </div>
 
                                 <!-- Hamburger Navbar -->
-                            <div id="myNav" class="overlay hide-for-print">
+                            <div id="signInOverlay" class="overlay hide-for-print">
                                 <button id="hamburgerInside" class="hamburger hamburger--elastic is-active" type="button" onclick="closeNav()">
                                     <span class="hamburger-box">
                                         <span class="hamburger-inner overlayed"></span>
@@ -149,14 +149,14 @@
 
                                 <!-- Navigation Bar -->
                             <div class="row hide-for-print" id="metanav">
-                                <div id="metauser"></div>
+                                <div id="meta-user" class="float-right"></div>
                                 <div id="social">
                                     <a href="https://www.facebook.com/mpitoolkit" target="_blank" rel="noopener"><i class="icon-facebook"></i></a>
                                     <a href="https://twitter.com/mpitoolkit" target="_blank" rel="noopener"><i class="icon-twitter"></i></a>
                                 </div>
 
                                 <div id="offline-alert" aria-hidden="true" onclick="window.location.reload()">
-                                    <i class="icon-retweet" id="rcnbtn"></i>
+                                    <i class="icon-retweet"></i>
                                     <b>Reconnecting...</b>
                                 </div>
                                 <div class="maintenance-alert">
@@ -174,10 +174,8 @@
                                 </div>
 
                                     <!--navbar-->
-                                <div class="columns large-8 show-for-medium hide-for-print" id="navbar">
+                                <div class="columns show-for-medium hide-for-print end" id="navbar">
                                 @elements.navbar(tools)
-                                </div>
-                                <div class="columns large-2 show-for-large">
                                 </div>
                             </div>
                         </div>
@@ -192,29 +190,35 @@
                         <div id="main-content">
                             <noscript><div class="noscript">
                                 This website relies on JavaScript to work properly.<br />
-                                Please activate JavaScript in Your browser to see everything we offer.
+                                Please activate JavaScript in your browser to see everything we offer.
                             </div></noscript>
                         </div>
                     </div>
                 </div>
-                <footer class="row" id="app">
-                    <div class="columns large-12">
-                        <div id="sub-nav" class="hide-for-print">
-                            <a data-open="subnavHelpModal">Help</a>
-                            <a data-open="subnavFAQModal">FAQ</a>
-                            <a data-open="privacyPolicyModal">Privacy Policy</a>
-                            <a data-open="imprintModal">Imprint</a>
-                            <a data-open="contactModal">Contact Us</a>
-                            <a data-open="citeModal">Cite Us</a>
-                            <a data-open="recentUpdatesModal">Recent Updates</a>
+                <footer>
+                    <div class="row">
+                        <div class="columns large-12">
+                            <ul class="menu align-center hide-for-print text-small">
+                                <li><a data-open="footerHelpModal">Help</a></li>
+                                <li><a data-open="footerFAQModal">FAQ</a></li>
+                                <li><a data-open="footerPrivacyModal">Privacy Policy</a></li>
+                                <li><a data-open="footerImprintModal">Imprint</a></li>
+                                <li><a data-open="footerContactModal">Contact Us</a></li>
+                                <li><a data-open="footerCiteModal">Cite Us</a></li>
+                                <li><a data-open="footerRecentUpdatesModal">Recent Updates</a></li>
+                            </ul>
                         </div>
-                        <div id="socket">
+                    </div>
+                    <div class="row">
+                        <p class="column small-12 text-center text-small">
                             © 2008-@(ZonedDateTime.now.getYear), Dept. of Protein Evolution, Max Planck Institute for Developmental Biology, Tübingen
-                        </div>
+                        </p>
+                    </div>
 
-                        @if(environment.mode == play.api.Mode.Dev) {
-                            <div id="buildinfo">
-                                @(new java.lang.StringBuilder()
+                    @if(environment.mode == play.api.Mode.Dev) {
+                        <div class="row">
+                            <div id="buildinfo" class="column small-6 small-centered text-center text-small">
+                            @(new java.lang.StringBuilder()
                                     .append("Version: ")
                                     .append(BuildInfo.version)
                                     .append(" on Scala ")
@@ -225,8 +229,8 @@
                                     .append(BuildInfo.playVersion)
                                     .toString)
                             </div>
-                        }
-                    </div>
+                        </div>
+                    }
                 </footer>
             </div>
         </div>
@@ -234,49 +238,49 @@
             <!-- scroll-top arrow -->
         <div id="scrollTop"></div>
 
-        <div class="small reveal helpModals" id="imprintModal" data-reveal>
+        <div class="small reveal help-modal" id="footerImprintModal" data-reveal>
             @helpmodals.imprintmodal()
             <button class="close-button" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
 
-        <div class="small reveal helpModals" id="subnavHelpModal" data-reveal>
+        <div class="small reveal help-modal" id="footerHelpModal" data-reveal>
             @helpmodals.helpmodal()
             <button class="close-button" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
 
-        <div class="small reveal helpModals" id="subnavFAQModal" data-reveal>
+        <div class="small reveal help-modal" id="footerFAQModal" data-reveal>
             @helpmodals.faqmodal()
             <button class="close-button" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
 
-        <div class="small reveal helpModals" id="privacyPolicyModal" data-reveal>
+        <div class="small reveal help-modal" id="footerPrivacyModal" data-reveal>
             @helpmodals.privacypolicymodal()
             <button class="close-button" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
 
-        <div class="small reveal helpModals" id="contactModal" data-reveal>
+        <div class="small reveal help-modal" id="footerContactModal" data-reveal>
             @helpmodals.contactmodal()
             <button class="close-button" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
 
-        <div class="small reveal helpModals" id="citeModal" data-reveal>
+        <div class="small reveal help-modal" id="footerCiteModal" data-reveal>
             @helpmodals.citemodal()
             <button class="close-button" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
 
-        <div class="small reveal helpModals" id="recentUpdatesModal" data-reveal>
+        <div class="small reveal help-modal" id="footerRecentUpdatesModal" data-reveal>
             @helpmodals.recentupdatesmodal()
             <button class="close-button" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
