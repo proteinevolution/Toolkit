@@ -9,10 +9,9 @@ trait ForwardModeExtractor {
   implicit object forwardModeBindable
       extends Parsing[ForwardMode](
         _.trim match {
-          case "alnEval"  => ForwardMode("alnEval")
-          case "evalFull" => ForwardMode("evalFull")
-          case "aln"      => ForwardMode("aln")
-          case "full"     => ForwardMode("full")
+          case validString if ("alnEval" :: "evalFull" :: "aln" :: "full" :: Nil).contains(validString) =>
+            ForwardMode(validString)
+          case _ => throw new IllegalArgumentException
         },
         _.toString,
         (_: String, _: Exception) => "string not a valid forwarding mode"

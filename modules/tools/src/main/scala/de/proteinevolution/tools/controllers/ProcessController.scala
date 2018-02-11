@@ -53,7 +53,7 @@ class ProcessController @Inject()(ctx: HHContext,
   def forwardAlignment(jobID: String, mode: ForwardMode): Action[AnyContent] = Action.async { implicit request =>
     val json     = request.body.asJson.get
     val filename = (json \ "fileName").as[String]
-    val accStr = mode.value match {
+    val accStr = mode.toString match {
       case "alnEval" | "evalFull" => (json \ "evalue").as[String]
       case "aln" | "full"         => (json \ "checkboxes").as[List[Int]].mkString("\n")
     }
@@ -78,8 +78,8 @@ class ProcessController @Inject()(ctx: HHContext,
       }
       .map { tuple =>
         val numListStr =
-          if (mode.value != "full")
-            getAccString(tuple._1, tuple._2, accStr, mode.value)
+          if (mode.toString != "full")
+            getAccString(tuple._1, tuple._2, accStr, mode.toString)
           else
             numericAccString(tuple._1, tuple._2, accStr)
         ProcessFactory((constants.jobPath + jobID).toFile,
