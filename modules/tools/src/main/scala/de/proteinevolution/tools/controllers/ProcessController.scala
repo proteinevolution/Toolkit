@@ -78,13 +78,13 @@ class ProcessController @Inject()(ctx: HHContext,
       }
       .map {
         case (toolName, result) =>
-          val numListStr = getAccString(toolName, result, accStr, mode)
+          val accStrParsed = parseAccString(toolName, result, accStr, mode)
           ProcessFactory((constants.jobPath + jobID).toFile,
                          jobID,
                          toolName.value,
                          filename,
                          mode,
-                         numListStr,
+                         accStrParsed,
                          result.db).run().exitValue()
       }
       .map {
@@ -95,11 +95,11 @@ class ProcessController @Inject()(ctx: HHContext,
       }
   }
 
-  private[this] def getAccString(toolName: ToolNames.ToolName,
-                                 result: SearchResult[HSP],
-                                 accStr: String,
-                                 mode: ForwardMode): String = {
-    val evalString = (toolName, mode.toString) match {
+  private[this] def parseAccString(toolName: ToolNames.ToolName,
+                                   result: SearchResult[HSP],
+                                   accStr: String,
+                                   mode: ForwardMode): String = {
+    (toolName, mode.toString) match {
       case (HHBLITS, "alnEval") | (HHPRED, "alnEval") =>
         result.HSPS.filter(_.info.evalue < accStr.toDouble).map { _.num }.mkString(" ")
       case (HMMER, "alnEval") =>
@@ -125,9 +125,8 @@ class ProcessController @Inject()(ctx: HHContext,
           else
             result.HSPS(num - 1).accession + " "
         }.mkString
-      case _ => throw new IllegalStateException("tool has no evalue")
+      case _ => throw new IllegalStateException("parsing accession identifiers failed")
     }
-    evalString
   }
 
 }
