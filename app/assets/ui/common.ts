@@ -66,6 +66,13 @@ $('#scrollTop').click(function() {
     return false;
 });
 
+declare var TitleManager: any;
+declare var NotificationManager: any;
+
+$(window).on("focus click", function() {
+    TitleManager.clearAlert();
+});
+
 const aa_color_font : Map<string, string> = new Map<string, string>();
     aa_color_font.set("aa_W", "#808080");
     aa_color_font.set("aa_Y", "#808080");
@@ -165,4 +172,4 @@ const aa_color_background : Map<string, string> = new Map<string, string>();
 
 const scrollToElem = function(num: string) {
     ResultViewHelper.scrollToHit(Number(num));
-}
+};
