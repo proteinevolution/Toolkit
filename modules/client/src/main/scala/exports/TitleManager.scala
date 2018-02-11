@@ -76,7 +76,7 @@ object TitleManager {
       newTitle = s"$titlePrefix | $newTitle"
     }
     if (hasAlert) {
-      newTitle = s"(!) $newTitle"
+      newTitle = s"(*) $newTitle"
     }
     title.textContent = newTitle
   }
