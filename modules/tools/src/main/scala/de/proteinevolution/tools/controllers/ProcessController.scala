@@ -78,17 +78,13 @@ class ProcessController @Inject()(ctx: HHContext,
       }
       .map {
         case (toolName, result) =>
-          val numListStr =
-            if (mode.toString != "full")
-              getAccString(toolName, result, accStr, mode)
-            else
-              numericAccString(toolName, result, accStr)
+          val accStrParsed = parseAccString(toolName, result, accStr, mode)
           ProcessFactory((constants.jobPath + jobID).toFile,
                          jobID,
                          toolName.value,
                          filename,
                          mode,
-                         numListStr,
+                         accStrParsed,
                          result.db).run().exitValue()
       }
       .map {
@@ -99,11 +95,11 @@ class ProcessController @Inject()(ctx: HHContext,
       }
   }
 
-  private[this] def getAccString(toolName: ToolNames.ToolName,
-                                 result: SearchResult[HSP],
-                                 accStr: String,
-                                 mode: ForwardMode): String = {
-    val evalString = (toolName, mode.toString) match {
+  private[this] def parseAccString(toolName: ToolNames.ToolName,
+                                   result: SearchResult[HSP],
+                                   accStr: String,
+                                   mode: ForwardMode): String = {
+    (toolName, mode.toString) match {
       case (HHBLITS, "alnEval") | (HHPRED, "alnEval") =>
         result.HSPS.filter(_.info.evalue < accStr.toDouble).map { _.num }.mkString(" ")
       case (HMMER, "alnEval") =>
@@ -121,28 +117,15 @@ class ProcessController @Inject()(ctx: HHContext,
         result.HSPS.filter(_.evalue < accStr.toDouble).map { _.accession + " " }.mkString
       case (HHBLITS, "evalFull") =>
         result.HSPS.filter(_.info.evalue < accStr.toDouble).map { _.template.accession + " " }.mkString
-      case _ => throw new IllegalStateException("tool has no evalue")
-    }
-    evalString
-  }
-
-  // find better name for this function later and merge it with the one above (all depends on the non-uniform input json)
-  private[this] def numericAccString(toolName: ToolNames.ToolName, result: SearchResult[HSP], accStr: String): String = {
-    val numList = accStr.split("\n").map(_.toInt)
-    toolName match {
-      case HMMER =>
+      case (_, "full") =>
+        val numList = accStr.split("\n").map(_.toInt)
         numList.map { num =>
-          result.HSPS(num - 1).accession + " "
+          if (toolName == HHBLITS)
+            result.HSPS(num - 1).template.accession + " "
+          else
+            result.HSPS(num - 1).accession + " "
         }.mkString
-      case PSIBLAST =>
-        numList.map { num =>
-          result.HSPS(num - 1).accession + " "
-        }.mkString
-      case HHBLITS =>
-        numList.map { num =>
-          result.HSPS(num - 1).template.accession + " "
-        }.mkString
-      case _ => throw new IllegalStateException("tool does not support forwarding in full mode")
+      case _ => throw new IllegalStateException("parsing accession identifiers failed")
     }
   }
 
