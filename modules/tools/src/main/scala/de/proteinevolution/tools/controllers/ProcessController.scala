@@ -55,7 +55,7 @@ class ProcessController @Inject()(ctx: HHContext,
     val filename = (json \ "fileName").as[String]
     val accStr = mode.value match {
       case "alnEval" | "evalFull" => (json \ "evalue").as[String]
-      case "aln"                  => (json \ "checkboxes").as[List[Int]].mkString("\n")
+      case "aln" | "full"         => (json \ "checkboxes").as[List[Int]].mkString("\n")
     }
     kleisliProvider
       .resK(jobID)
