@@ -13,7 +13,7 @@ object TitleManager {
 
   private val title: Node        = dom.document.getElementsByTagName("title").item(0)
   private val basicTitle: String = title.textContent
-  private var hasAlert: Boolean     = false
+  private var hasAlert: Boolean  = false
   private val toolTitlesDictionary = js
     .Dictionary(
       "hhblits"   -> "HHblits",
