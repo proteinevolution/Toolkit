@@ -76,19 +76,20 @@ class ProcessController @Inject()(ctx: HHContext,
           }
         case None => throw new IllegalStateException
       }
-      .map { tuple =>
-        val numListStr =
-          if (mode.toString != "full")
-            getAccString(tuple._1, tuple._2, accStr, mode.toString)
-          else
-            numericAccString(tuple._1, tuple._2, accStr)
-        ProcessFactory((constants.jobPath + jobID).toFile,
-                       jobID,
-                       tuple._1.value,
-                       filename,
-                       mode.toString,
-                       numListStr,
-                       tuple._2.db).run().exitValue()
+      .map {
+        case (toolName, result) =>
+          val numListStr =
+            if (mode.toString != "full")
+              getAccString(toolName, result, accStr, mode.toString)
+            else
+              numericAccString(toolName, result, accStr)
+          ProcessFactory((constants.jobPath + jobID).toFile,
+                         jobID,
+                         toolName.value,
+                         filename,
+                         mode.toString,
+                         numListStr,
+                         result.db).run().exitValue()
       }
       .map {
         case 0 =>
@@ -129,9 +130,7 @@ class ProcessController @Inject()(ctx: HHContext,
   private[this] def numericAccString(toolName: ToolNames.ToolName,
                                      result: SearchResult[HSP],
                                      accStr: String): String = {
-
     val numList = accStr.split("\n").map(_.toInt)
-
     toolName match {
       case HMMER =>
         numList.map { num =>
@@ -146,7 +145,6 @@ class ProcessController @Inject()(ctx: HHContext,
           result.HSPS(num - 1).template.accession + " "
         }.mkString
       case _ => throw new IllegalStateException("tool does not support forwarding in full mode")
-
     }
   }
 
