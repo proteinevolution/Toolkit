@@ -10,62 +10,38 @@
   .modal-content #tabs {
     border: none;
     padding: 0;
+    .accordion-content {
+      font-size: 0.9em;
+    }
   }
   .close-button {
     top: 0.2rem;
   }
 }
 
-.helpModals {
-  .section {
-    margin-top: 1em;
-  }
-
-  p {
-    font-weight: normal;
-  }
-
-  h5 {
-    color: $primary-color;
-  }
-
-  h6 {
-    font-weight: bold;
-    font-size: 1em;
-    margin-bottom: 0;
-  }
-}
-
-#imprintModal,
-#subnavHelpModal,
-#subnavFAQModal,
-#privacyPolicyModal,
-#contactModal,
-#citeModal,
-#recentUpdatesModal {
-  font-size: 0.85em;
-  width: 55%;
-}
-
-#imprintContent,
-#helpModalContent,
-#FAQModalContent,
-#privacyPolicyContent,
-#contactModelContent,
-#citeModalContent,
-#recentUpdatesContent {
-  padding: 1em;
-}
-
-.accordion-content {
-  font-size: 0.9em;
-}
-
-/* Help Modals for Tools */
-#help-psiblast {
-  font-size: 0.85em !important;
-}
-
 .helpicon:hover {
   color: $primary-color;
+}
+
+/* help modals in footer*/
+.help-modal {
+  font-size: 0.85em;
+  width: 55%;
+  .help-modal-content {
+    padding: 1em;
+    h5 {
+      color: $primary-color;
+    }
+    .section {
+      margin-top: 1em;
+      h6 {
+        font-weight: bold;
+        font-size: 1em;
+        margin-bottom: 0;
+      }
+      p {
+        font-weight: normal;
+      }
+    }
+  }
 }
