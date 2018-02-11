@@ -16,7 +16,7 @@
 
         <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header" role="tablist">
             <li id="tab-Alignment" class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="tabpanel-Alignment" aria-labelledby="ui-id-4" aria-selected="true" aria-expanded="true">
-                <a href="#tabpanel-Alignment" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-4">
+                <a href="#tabpanel-Alignment" class="ui-tabs-anchor" tabindex="-1" id="ui-id-4">
                     Reformat View</a>
             </li>
             <li style="float: right;">
@@ -26,10 +26,9 @@
 
         <div class="tabs-panel ui-tabs-panel ui-widget-content ui-corner-bottom" id="tabpanel-Alignment" aria-labelledby="ui-id-4" role="tabpanel" aria-hidden="false">
 
-            <div id="reformatcontainer" style="min-height: 650px;
-                margin: 0 auto">
+            <div id="reformat-container">
 
-                <ul class="show-for-medium menu horizontal nested" style="font-size: 12px;" id="reformatTopbar">
+                <ul class="show-for-medium menu text-small">
                     <li><a download="reformat_download.txt" class="download" onclick="downloadResult()">Download</a></li>
                     <li><a data-open="alnvizmodal" onclick="initMSA()">AlignmentViewer</a></li>
                 </ul>
@@ -38,14 +37,10 @@
                     <input type="file" id="files" name="file" />
                     <output id="list"></output>
                 </div>
-                <div style="width: 95%;
-                    display: block;
-                    margin: auto;
-                    padding-top: 15px;">
+                <div class="row">
 
-                    <div class="large-12 columns">
-                        <div id="inputMirror" style="width: 99%;
-                            border: 1px solid lightgray ;"></div>
+                    <div class="small-12 columns">
+                        <div id="inputMirror"></div>
                         <input type="button" id="reformatExample" class="button small alignmentExample exampleReformat" value="Paste Example">
                     </div>
 
@@ -64,7 +59,7 @@
                             <option id="Alphabet" value="Alphabet">Alphabet</option>
                         </select>
 
-                        <select id="forwardTool" style="font-size: 12px;" onchange="forwardChanged()">
+                        <select id="forwardTool" onchange="forwardChanged()">
                             <option selected>Forward To</option>
                             <option id="alnvizual" value="alnviz">AlignmentViewer</option>
                             <option id="aln2plot" value="aln2plot">Aln2Plot</option>
@@ -104,10 +99,6 @@
                             border: 1px solid lightgray ;"></div>
                     </div>
                 </div>
-
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
 
                 <div class="large reveal" id="alnvizmodal" data-reveal>
                     <h3>AlignmentViewer</h3>
