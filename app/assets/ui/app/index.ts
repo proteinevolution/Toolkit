@@ -78,7 +78,6 @@ const typeAhead = function(elem: any, isInit: boolean): any {
             $(this).siblings(".search-input.tt-hint").addClass("white");
         }).on("blur", function(): any {
             $(this).val("").siblings(".search-input.tt-hint").removeClass("white");
-
         });
     }
 };
@@ -314,7 +313,5 @@ const tilescomponent = {
                 )
             )
         )
-
     }
 };
-
