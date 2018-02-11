@@ -21,7 +21,7 @@ object Forwarding {
   def process(selectedTool: String, hasEvalue: Boolean, evalue: String, isFullLength: Boolean): Unit = {
     g.$.LoadingOverlay("show")
     val checkboxes = g.checkboxes.asInstanceOf[js.Array[Int]].distinct
-    if (checkboxes.length < 1) {
+    if (checkboxes.length < 1 && !hasEvalue) {
       g.$(".forwardModal").foundation("close")
       g.$.LoadingOverlay("hide")
       g.alert("No sequence(s) selected!")
