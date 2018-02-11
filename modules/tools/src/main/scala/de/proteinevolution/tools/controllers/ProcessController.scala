@@ -80,14 +80,14 @@ class ProcessController @Inject()(ctx: HHContext,
         case (toolName, result) =>
           val numListStr =
             if (mode.toString != "full")
-              getAccString(toolName, result, accStr, mode.toString)
+              getAccString(toolName, result, accStr, mode)
             else
               numericAccString(toolName, result, accStr)
           ProcessFactory((constants.jobPath + jobID).toFile,
                          jobID,
                          toolName.value,
                          filename,
-                         mode.toString,
+                         mode,
                          numListStr,
                          result.db).run().exitValue()
       }
@@ -102,9 +102,9 @@ class ProcessController @Inject()(ctx: HHContext,
   private[this] def getAccString(toolName: ToolNames.ToolName,
                                  result: SearchResult[HSP],
                                  accStr: String,
-                                 mode: String): String = {
-    val evalString = (toolName, mode) match {
-      case (HHBLITS, "alnEval") | (ToolNames.HHPRED, "alnEval") =>
+                                 mode: ForwardMode): String = {
+    val evalString = (toolName, mode.toString) match {
+      case (HHBLITS, "alnEval") | (HHPRED, "alnEval") =>
         result.HSPS.filter(_.info.evalue < accStr.toDouble).map { _.num }.mkString(" ")
       case (HMMER, "alnEval") =>
         result.HSPS
