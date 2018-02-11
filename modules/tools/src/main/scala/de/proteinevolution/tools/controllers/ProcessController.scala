@@ -11,7 +11,6 @@ import de.proteinevolution.models.{ Constants, ToolNames }
 import scala.sys.process.Process
 import de.proteinevolution.tools.results.{ HSP, SearchResult }
 import ToolNames._
-import de.proteinevolution.tools.models.ForwardMode.{ Alignment, AlignmentEvalue, FullLength }
 
 import scala.concurrent.ExecutionContext
 
