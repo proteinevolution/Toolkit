@@ -58,13 +58,14 @@ class HHController @Inject()(ctx: HHContext,
             }
         case None => throw new IllegalStateException("no result found")
       }
-      .map { tuple =>
-        if (end > tuple._1.num_hits || start > tuple._1.num_hits) {
-          BadRequest
-        } else {
-          val hits = tuple._1.HSPS.slice(start, end).map(tuple._2)
-          Ok(hits.mkString)
-        }
+      .map {
+        case (result, view) =>
+          if (end > result.num_hits || start > result.num_hits) {
+            BadRequest
+          } else {
+            val hits = result.HSPS.slice(start, end).map(view)
+            Ok(hits.mkString)
+          }
       }
   }
 
