@@ -132,7 +132,7 @@ reformat_hhsuite.pl a3m a3m \
 sed -i "1 i\#A3M#" ../results/reduced.a3m
 
 
-hhrepid -qsc 0.$i \
+hhrepid -qsc 0.2 \
         -i ../results/query.a3m \
         -o ../results/query.hhrepid \
         -d ${HHREPIDPATH}/cal_small.hhm \
