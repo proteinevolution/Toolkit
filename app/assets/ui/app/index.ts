@@ -174,6 +174,10 @@ const tilescomponent = {
                             ),
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
+                                m("a", {"data-open": "recentUpdatesModal", href: "#ecod70_2018_03"},
+                                    m("h6", "March 4, 2018"),
+                                    m("p", "HHpred: a new version of the ECOD database, version 20180219 (develop204), is now online.")
+                                ),
                                 m("a", {href: "https://www.sciencedirect.com/science/article/pii/S0022283617305879", target: "_blank"},
                                     m("h6", "December 24, 2017"),
                                     m("p", "Our paper on the new Toolkit is out: ",
@@ -185,17 +189,6 @@ const tilescomponent = {
                                     m("h6", "December 6, 2017"),
                                     m("p", "HHpred: the PDB_mmCIF70 DB is now built using Uniclust30 instead of Uniprot20. " +
                                         "Additionally, we now also offer PDB_mmCIF30, containing fewer representatives.")
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#arc_2017_12"},
-                                    m("h6", "December 5, 2017"),
-                                    m("p", "HHpred: profile HMM DBs of six archaeal proteomes ",
-                                        m("em", "(Archaeoglobus fulgidus"), ", ",
-                                        m("em", "Halobacterium jilantaiense"), ", ",
-                                        m("em", "Methanocaldococcus jannaschii"), ", ",
-                                        m("em", "Methanothermus fervidus"), ", ",
-                                        m("em", "Pyrococcus horikoshii"), ", and ",
-                                        m("em", "Sulfolobus solfataricus)"), " are online."
-                                    )
                                 )
                             ),
                             m("div", {"class": "quick_links"},
