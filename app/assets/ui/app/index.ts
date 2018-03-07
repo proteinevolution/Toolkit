@@ -174,6 +174,13 @@ const tilescomponent = {
                             ),
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
+                                m("a", {href: "http://scop.berkeley.edu/statistics/ver=2.07", target: "_blank"},
+                                    m("h6", "March 7, 2018"),
+                                    m("p", "HHpred: a new version of the SCOPe database,",
+                                    m("span", {style: "color:#2E8C81;"},
+                                    m("em", " version 2.07")),
+                                    m("span", ", is now online."))
+                                ),
                                 m("a", {"data-open": "recentUpdatesModal", href: "#ecod70_2018_03"},
                                     m("h6", "March 4, 2018"),
                                     m("p", "HHpred: a new version of the ECOD database, version 20180219 (develop204), is now online.")
@@ -184,11 +191,6 @@ const tilescomponent = {
                                     m("em", "A Completely Reimplemented MPI Bioinformatics Toolkit with a New HHpred Server at its Core. "),                       
                                     m("span", {style: "color:#2E8C81;"},
                                     m("em", "J Mol Biol. 2017 Dec 16.")))
-                                ),
-                                m("a", {"data-open": "recentUpdatesModal", href: "#mmcif30_2017_12"},
-                                    m("h6", "December 6, 2017"),
-                                    m("p", "HHpred: the PDB_mmCIF70 DB is now built using Uniclust30 instead of Uniprot20. " +
-                                        "Additionally, we now also offer PDB_mmCIF30, containing fewer representatives.")
                                 )
                             ),
                             m("div", {"class": "quick_links"},
