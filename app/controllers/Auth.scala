@@ -400,10 +400,12 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
       {
         case Some(userNameOrEmail: (String)) =>
           val selector =
-            BSONDocument("$or" -> List(
-              BSONDocument(User.EMAIL -> userNameOrEmail),
-              BSONDocument(User.NAMELOGIN -> userNameOrEmail)
-            ))
+            BSONDocument(
+              "$or" -> List(
+                BSONDocument(User.EMAIL     -> userNameOrEmail),
+                BSONDocument(User.NAMELOGIN -> userNameOrEmail)
+              )
+            )
 
           mongoStore.findUser(selector).flatMap {
             case Some(user) =>
@@ -557,12 +559,12 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                             BSONDocument(User.IDDB -> userToVerify.userID),
                             BSONDocument(
                               "$set" ->
-                                BSONDocument(
-                                  User.PASSWORD    -> newPassword,
-                                  User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-                                ),
+                              BSONDocument(
+                                User.PASSWORD    -> newPassword,
+                                User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
+                              ),
                               "$unset" ->
-                                BSONDocument(User.SESSIONID -> "", User.CONNECTED -> "", User.USERTOKEN -> "")
+                              BSONDocument(User.SESSIONID -> "", User.CONNECTED -> "", User.USERTOKEN -> "")
                             )
                           )
                           .map {
