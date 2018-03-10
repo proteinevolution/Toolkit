@@ -4,13 +4,6 @@ const renderParameter = function(content : any, moreClasses? : any) : any {
     return m("div", { "class": moreClasses ? "parameter " + moreClasses : "parameter" }, content);
 };
 
-let mapParam = function(param : any, ctrl : any) {
-    return m(formComponents[param.paramType.type], {
-        param: param,
-        value: ctrl.getParamValue(param.name)
-    });
-};
-
 const selectBoxAccess = function(elem : any, isInit : boolean) {
     if (!isInit) {
 

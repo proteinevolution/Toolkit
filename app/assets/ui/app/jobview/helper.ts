@@ -1,4 +1,4 @@
-mapParam = function(param : any, ctrl : any) {
+const mapParam = function(param : any, ctrl : any) {
 
     let comp = formComponents[param.paramType.type];
     return m(comp, {
@@ -8,7 +8,7 @@ mapParam = function(param : any, ctrl : any) {
 };
 
 
-let enabled = function (elem : any, isInit : boolean) : any {
+const enabled = function (elem : any, isInit : boolean) : any {
     if (!isInit) {
         return $(elem).removeAttr('disabled');
     }
