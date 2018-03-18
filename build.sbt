@@ -94,9 +94,9 @@ lazy val client = (project in file("modules/client"))
     scalaJSUseMainModuleInitializer in Test := false,
     jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv,
     libraryDependencies ++= Seq(
-      "org.scala-js"  %%% "scalajs-dom"     % "0.9.4",
+      "org.scala-js"  %%% "scalajs-dom"     % "0.9.5",
       "com.tgf.pizza" %%% "scalajs-mithril" % "0.1.1",
-      "be.doeraene"   %%% "scalajs-jquery"  % "0.9.2",
+      "be.doeraene"   %%% "scalajs-jquery"  % "0.9.3",
       "org.querki"    %%% "jquery-facade"   % "1.2"
     )
   )
