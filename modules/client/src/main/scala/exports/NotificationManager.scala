@@ -3,6 +3,7 @@ package exports
 import org.scalajs.dom
 import org.scalajs.dom.experimental.{ Notification, NotificationOptions }
 
+import scala.collection.mutable
 import scala.language.postfixOps
 import scala.scalajs.js
 import scala.scalajs.js.annotation._
@@ -11,7 +12,7 @@ import scala.scalajs.js.timers._
 @JSExportTopLevel("NotificationManager")
 object NotificationManager {
 
-  private val notifications: js.Dictionary[Notification] = js.Dictionary()
+  private val notifications: mutable.Map[String, Notification] = mutable.Map()
 
   // init on start
   init()
@@ -53,15 +54,13 @@ object NotificationManager {
   }): Unit = {
     if (!js.isUndefined(Notification)) {
       if (Notification.permission == "granted" && !notifications.contains(tag)) {
-        val options = js.Dynamic
-          .literal(
-            body = body,
-            icon = dom.document.getElementById("favicon_link").getAttribute("href")
-          )
-          .asInstanceOf[NotificationOptions]
+        val options = Map(
+          "body" -> body,
+          "icon" -> dom.document.getElementById("favicon_link").getAttribute("href")
+        ).asInstanceOf[NotificationOptions]
         val n = new Notification(title, options)
         n.onclick = onclick
-        notifications.update(tag, n)
+        notifications(tag) = n
         setTimeout(5000) {
           n.close()
         }
@@ -72,9 +71,8 @@ object NotificationManager {
   @JSExport
   def clearNotifications(): Unit = {
     notifications.foreach {
-      case (_, notification: Notification) => {
+      case (_, notification: Notification) =>
         notification.close()
-      }
     }
     notifications.clear()
   }
