@@ -92,7 +92,7 @@ object ResultViewHelper {
     jQuery(".selectAllSeqBar").toggleText("Select all", "Deselect all")
     if ($("input:checkbox[name='alignment_elem']:checked").length != $("input:checkbox[name='alignment_elem']").length) {
       $("input:checkbox[name='alignment_elem']").each(
-        (el: Element, i: Int) => jQuery(el).prop("checked", true)
+        (el: Element, _: Int) => jQuery(el).prop("checked", true)
       )
       val numHits = js.Dynamic.global.numHits.asInstanceOf[Int]
       val range   = 1 to numHits + 1
@@ -105,7 +105,7 @@ object ResultViewHelper {
   @JSExport
   def deselectAll(): Unit = {
     $("input:checkbox[name='alignment_elem']").each(
-      (el: Element, i: Int) => jQuery(el).prop("checked", false)
+      (el: Element, _: Int) => jQuery(el).prop("checked", false)
     )
     js.Dynamic.global.checkboxes = Seq.empty.toJSArray
   }

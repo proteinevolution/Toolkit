@@ -29,7 +29,8 @@ const typeAhead = function(elem: any, isInit: boolean): any {
     if (!isInit) {
         return $("#" + elem.id + " .search-input").typeahead({
             highlight: true,
-            minLength: 1
+            minLength: 1,
+            hint: true
         }, [
             {
                 displayKey: "long",
@@ -73,8 +74,10 @@ const typeAhead = function(elem: any, isInit: boolean): any {
                     m.route($(this).data("link"));
                 }
             })
-        }).on("blur", function(e: any): any {
-            $(this).val("");
+        }).on('focus', function(e : any) : any {
+            $(this).siblings(".search-input.tt-hint").addClass("white");
+        }).on("blur", function(): any {
+            $(this).val("").siblings(".search-input.tt-hint").removeClass("white");
         });
     }
 };
