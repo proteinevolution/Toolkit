@@ -3,8 +3,8 @@ import sbt._
 
 object Dependencies {
 
-  lazy val akkaVersion = "2.5.9"
-  lazy val catsV       = "1.0.1"
+  lazy val akkaVersion = "2.5.11"
+  lazy val catsV       = "1.1.0"
 
   lazy val commonDeps = Seq(
     ws,
@@ -22,13 +22,13 @@ object Dependencies {
     "com.typesafe.play"    %% "play-mailer-guice"        % "6.0.1",
     "com.github.pathikrit" %% "better-files"             % "3.4.0",
     "org.mindrot"          % "jbcrypt"                   % "0.3m",
-    "org.reactivemongo"    %% "play2-reactivemongo"      % "0.12.7-play26",
-    "org.reactivemongo"    %% "reactivemongo-akkastream" % "0.12.7",
+    "org.reactivemongo"    %% "play2-reactivemongo"      % "0.13.0-play26",
+    "org.reactivemongo"    %% "reactivemongo-akkastream" % "0.13.0",
     "org.typelevel"        %% "cats-core"                % catsV,
     "org.tpolecat"         %% "atto-core"                % "0.6.1",
     "com.vmunier"          %% "scalajs-scripts"          % "1.1.1",
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
-    "com.typesafe.play"    %% "play-json"                % "2.6.8",
+    "com.typesafe.play"    %% "play-json"                % "2.6.9",
     "org.webjars"          %% "webjars-play"             % "2.6.2"
   )
 

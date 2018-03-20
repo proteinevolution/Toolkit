@@ -398,9 +398,14 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
       },
       // when there are no errors, then insert the user to the collection
       {
-        case Some(user: (String)) =>
+        case Some(userNameOrEmail: (String)) =>
           val selector =
-            BSONDocument("$or" -> List(BSONDocument(User.EMAIL -> user), BSONDocument(User.NAMELOGIN -> user)))
+            BSONDocument(
+              "$or" -> List(
+                BSONDocument(User.EMAIL     -> userNameOrEmail),
+                BSONDocument(User.NAMELOGIN -> userNameOrEmail)
+              )
+            )
 
           mongoStore.findUser(selector).flatMap {
             case Some(user) =>
@@ -547,71 +552,67 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                           )
                       }
                   case 2 => // Token for password change validation
-                    userToVerify.userToken match {
-                      case Some(token) =>
-                        token.passwordHash match {
-                          case Some(newPassword) =>
-                            mongoStore
-                              .modifyUser(
-                                BSONDocument(User.IDDB -> userToVerify.userID),
-                                BSONDocument(
-                                  "$set" ->
-                                  BSONDocument(
-                                    User.PASSWORD    -> newPassword,
-                                    User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-                                  ),
-                                  "$unset" ->
-                                  BSONDocument(User.SESSIONID -> "", User.CONNECTED -> "", User.USERTOKEN -> "")
+                    userToken.passwordHash match {
+                      case Some(newPassword) =>
+                        mongoStore
+                          .modifyUser(
+                            BSONDocument(User.IDDB -> userToVerify.userID),
+                            BSONDocument(
+                              "$set" ->
+                              BSONDocument(
+                                User.PASSWORD    -> newPassword,
+                                User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
+                              ),
+                              "$unset" ->
+                              BSONDocument(User.SESSIONID -> "", User.CONNECTED -> "", User.USERTOKEN -> "")
+                            )
+                          )
+                          .map {
+                            case Some(modifiedUser) =>
+                              userSessions.removeUserFromCache(user)
+                              val eMail = PasswordChangedMail(modifiedUser)
+                              eMail.send
+                              // Force Log Out on all connected users.
+                              (wsActorCache.get(modifiedUser.userID.stringify): Option[List[ActorRef]]) match {
+                                case Some(webSocketActors) =>
+                                  webSocketActors.foreach(_ ! LogOut)
+                                case None =>
+                              }
+                              // User modified properly
+                              Ok(
+                                views.html.main(
+                                  webJarsUtil,
+                                  toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                                  "Password change verification was successful. Please log in with Your new password.",
+                                  "",
+                                  environment
                                 )
                               )
-                              .map {
-                                case Some(modifiedUser) =>
-                                  userSessions.removeUserFromCache(user)
-                                  val eMail = PasswordChangedMail(modifiedUser)
-                                  eMail.send
-                                  // Force Log Out on all connected users.
-                                  (wsActorCache.get(modifiedUser.userID.stringify): Option[List[ActorRef]]) match {
-                                    case Some(webSocketActors) =>
-                                      webSocketActors.foreach(_ ! LogOut)
-                                    case None =>
-                                  }
-                                  // User modified properly
-                                  Ok(
-                                    views.html.main(
-                                      webJarsUtil,
-                                      toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                      "Password change verification was successful. Please log in with Your new password.",
-                                      "",
-                                      environment
-                                    )
-                                  )
-                                case None => // Could not save the modified user to the DB
-                                  Ok(
-                                    views.html.main(
-                                      webJarsUtil,
-                                      toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                      "Verification was not successful due to a database error. Please try again later.",
-                                      "",
-                                      environment
-                                    )
-                                  )
-                              }
-                          case None =>
-                            // This should not happen - Failsafe
-                            Future.successful(
+                            case None => // Could not save the modified user to the DB - failsave in case the DB is down
                               Ok(
-                                views.html
-                                  .main(
-                                    webJarsUtil,
-                                    toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                    "The Password you had entered was insufficient, please create a new one.",
-                                    "",
-                                    environment
-                                  )
+                                views.html.main(
+                                  webJarsUtil,
+                                  toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                                  "Verification was not successful due to a database error. Please try again later.",
+                                  "",
+                                  environment
+                                )
                               )
-                            )
-                        }
-                      case None => Future.successful(NotFound)
+                          }
+                      case None =>
+                        // This should not happen - Failsafe when the password hash got overwritten somehow
+                        Future.successful(
+                          Ok(
+                            views.html
+                              .main(
+                                webJarsUtil,
+                                toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                                "The Password you have entered was insufficient, please create a new one.",
+                                "",
+                                environment
+                              )
+                          )
+                        )
                     }
 
                   case 3 =>
