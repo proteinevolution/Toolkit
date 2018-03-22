@@ -83,7 +83,7 @@ echo "done" >> ../results/process.log
 updateProcessLog
 
 #CHECK IF MSA generation is required or not
-if [ %msa_gen_max_iter.content == "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
+if [ %msa_gen_max_iter_hhrepid.content == "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
         echo "#No MSA generation required." >> ../results/process.log
         updateProcessLog
 
@@ -91,23 +91,23 @@ if [ %msa_gen_max_iter.content == "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
 else
     #MSA generation required
     #MSA generation by HHblits
-    if [ %msa_gen_max_iter.content -lt "2" ] ; then
+    if [ %msa_gen_max_iter_hhrepid.content -lt "2" ] ; then
         echo "#MSA generation required. Running 1 iteration of HHblits." >> ../results/process.log
         ITERS=1
     else
-        echo "#MSA generation required. Running %msa_gen_max_iter.content iterations of HHblits." >> ../results/process.log
-        ITERS=%msa_gen_max_iter.content
+        echo "#MSA generation required. Running %msa_gen_max_iter_hhrepid.content iterations of HHblits." >> ../results/process.log
+        ITERS=%msa_gen_max_iter_hhrepid.content
     fi
 
     updateProcessLog
     hhblits -cpu  %THREADS \
             -v 2 \
             -i  ../results/${JOBID}.a3m \
-            -d %UNIPROT  \
+            -d %UNICLUST  \
             -o /dev/null \
             -oa3m ../results/query.a3m \
-            -n ${ITERS} \
-            -mact 0.35
+            -e 1 \
+            -n ${ITERS}
 fi
 
 echo "done" >> ../results/process.log
@@ -116,23 +116,9 @@ updateProcessLog
 echo "#Running HHrepID." >> ../results/process.log
 updateProcessLog
 
-
 addss.pl ../results/query.a3m
 
-#100 maximally diverse sequences
-hhfilter -i ../results/query.a3m \
-         -o ../results/query.reduced.a3m \
-         -diff 100
-cp ../results/query.reduced.a3m ../results/query.a3m
-
-reformat_hhsuite.pl a3m a3m \
-         $(readlink -f ../results/query.reduced.a3m) \
-         $(readlink -f ../results/reduced.a3m) \
-         -d 160 -noss
-sed -i "1 i\#A3M#" ../results/reduced.a3m
-
-
-hhrepid -qsc 0.2 \
+hhrepid  -qsc 0.1 \
         -i ../results/query.a3m \
         -o ../results/query.hhrepid \
         -d ${HHREPIDPATH}/cal_small.hhm \
@@ -143,13 +129,23 @@ hhrepid -qsc 0.2 \
         -T %rep_pval_threshold.content \
         -mrgr %merge_iters.content \
         -ssm %score_ss.content \
-        -mapt1 %mac_cutoff.content \
-        -mapt2 %mac_cutoff.content \
-        -mapt3 %mac_cutoff.content \
         -domm %domain_bound_detection.content
+
+#100 maximally diverse sequences
+hhfilter -i ../results/query.a3m \
+         -o ../results/query.reduced.a3m \
+         -diff 200
+cp ../results/query.reduced.a3m ../results/query.a3m
+
+reformat_hhsuite.pl a3m a3m \
+         $(readlink -f ../results/query.reduced.a3m) \
+         $(readlink -f ../results/reduced.a3m) \
+         -d 160 -noss
+sed -i "1 i\#A3M#" ../results/reduced.a3m
+rm ../results/query.reduced.a3m ../results/query.a3m
 
 echo "done" >> ../results/process.log
 updateProcessLog
 
 
-rm ../results/query.reduced.a3m ../results/query.a3m
+
