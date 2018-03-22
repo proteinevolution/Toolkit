@@ -77,7 +77,9 @@
             "class":     style,
             placeholder: "Custom JobID",
             onkeyup:     m.withAttr("value", JobSubmissionComponent.checkJobIDTimed(800)),
-            value:       JobSubmissionComponent.currentJobID
+            value:       JobSubmissionComponent.currentJobID,
+            title: "Alphanumeric IDs are permitted (e.g. HISA, HISA1, HISA_HHPRED). Border turns green when a valid ID is entered.",
+            "data-position": "left"
         };
 
         return m("input", options);
@@ -232,12 +234,7 @@
                 style: "float: right;",
                 onclick: ctrl.submit.bind(ctrl, true)
             }),
-            m("div", {
-                "class": "float-right",
-                "data-tooltip": "",
-                "data-position": "left",
-                title: "Alphanumeric IDs are permitted (e.g. HISA, HISA1, HISA_HHPRED). Border turns green when a valid ID is entered."
-            }, JobSubmissionComponent.jobIDComponent(ctrl))
+            JobSubmissionComponent.jobIDComponent(ctrl)
         ])
     }
 };
