@@ -18,53 +18,54 @@
             // set the jobID to the new jobID
             JobSubmissionComponent.currentJobID = jobID;
             if (JobSubmissionComponent.jobIDRegExp.test(jobID)) {   // Check if the JobID is passing the Regex
-                const checkJobIDroute = jsRoutes.controllers.Search.checkJobID(
-                                       JobSubmissionComponent.currentJobID,
-                                       JobSubmissionComponent.oldJobID);
-                m.request({ method: checkJobIDroute.method, url: checkJobIDroute.url}).then(
-                    function (data : any) {
-                        JobSubmissionComponent.jobIDValid = !data.exists;
-                        if (data.exists && data.suggested != null) {
-                            JobSubmissionComponent.currentJobID = data.suggested;
-                            JobSubmissionComponent.jobIDValid = true;
-                        }
-                        console.log("Current JobID is:",    JobSubmissionComponent.currentJobID,
-                                    "Old jobID is:",        JobSubmissionComponent.oldJobID,
-                                    "Suggested version:",   data.version,
-                                    "Current jobID Valid?", JobSubmissionComponent.jobIDValid);
-                    },
-                    function(data : any) {
-                    }
-                );
+                JobSubmissionComponent.checkJobIDWithRequest();
             }
         }
         return JobSubmissionComponent.currentJobID;
     },
     checkJobIDTimed : function (timeout : number) : Function {
         return function(jobID : string) : string {
-            // clear all previous timeouts
-            clearTimeout(JobSubmissionComponent.jobIDValidationTimeout);
             // ensure that the user can not send the job form
             JobSubmissionComponent.jobIDValid = false;
-            // set the jobID to the new jobID
-            if (jobID != null) JobSubmissionComponent.currentJobID = jobID;
-            // ignore checking if the field is empty as the server will generate a jobID in that case.
-            if (jobID !== "") {
+            // clear all previous timeouts
+            clearTimeout(JobSubmissionComponent.jobIDValidationTimeout);
+            if (jobID === "" || jobID == null) {
+                JobSubmissionComponent.currentJobID = "";
+                JobSubmissionComponent.jobIDValid   = true;
+            } else {
+                // set the jobID to the new jobID
+                JobSubmissionComponent.currentJobID = jobID;
+                // ignore checking if the field is empty as the server will generate a jobID in that case.
                 if (JobSubmissionComponent.jobIDRegExp.test(jobID)) {   // Check if the JobID is passing the Regex
                     JobSubmissionComponent.jobIDValidationTimeout = setTimeout(function (a) {   // create the timeout
-                        JobSubmissionComponent.checkJobID(jobID);
+                        JobSubmissionComponent.checkJobIDWithRequest();
                     }, timeout);
                 }
-            } else {
-                JobSubmissionComponent.jobIDValid = true;
             }
             return JobSubmissionComponent.currentJobID;
         }
     },
+    checkJobIDWithRequest : function () {
+        const checkJobIDroute = jsRoutes.controllers.Search.checkJobID(
+            JobSubmissionComponent.currentJobID,
+            JobSubmissionComponent.oldJobID);
+        m.request({ method: checkJobIDroute.method, url: checkJobIDroute.url}).then(
+            function (data : any) {
+                JobSubmissionComponent.jobIDValid = !data.exists;
+                if (data.exists && data.suggested != null) {
+                    JobSubmissionComponent.currentJobID = data.suggested;
+                    JobSubmissionComponent.jobIDValid = true;
+                }
+                console.log("Current JobID is:",    JobSubmissionComponent.currentJobID,
+                    "Old jobID is:",        JobSubmissionComponent.oldJobID,
+                    "Suggested version:",   data.version,
+                    "Current jobID Valid?", JobSubmissionComponent.jobIDValid);
+            },
+            function(data : any) {
+            }
+        );
+    },
     jobIDComponent : function (ctrl : any) {
-        // hide old tooltip
-        $('#' + $("#jobID").data('toggle')).remove();
-
         let style: string = "jobID";
 
         style += JobSubmissionComponent.currentJobID === "" ? " white" :
@@ -76,16 +77,10 @@
             "class":     style,
             placeholder: "Custom JobID",
             onkeyup:     m.withAttr("value", JobSubmissionComponent.checkJobIDTimed(800)),
-            onchange:    m.withAttr("value", JobSubmissionComponent.checkJobID),
-            value:       JobSubmissionComponent.currentJobID
+            value:       JobSubmissionComponent.currentJobID,
+            title: "Alphanumeric IDs are permitted (e.g. HISA, HISA1, HISA_HHPRED). Border turns green when a valid ID is entered.",
+            "data-position": "left"
         };
-
-        if (JobSubmissionComponent.currentJobID === "") {
-            options.title = "Alphanumeric IDs are permitted (e.g. HISA, HISA1, HISA_HHPRED). Border turns green when a valid ID is entered.";
-            setTimeout(function() {
-                $("#jobID").attr("data-tooltip","").foundation();
-            }, 300);
-        }
 
         return m("input", options);
     },
