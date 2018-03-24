@@ -139,7 +139,7 @@ const JobTabsComponent = {
                 ctrl.isJob ? m("li", { style: "float: right; margin-right: 24px; margin-top: 7px" },
                     m("i", {
                         type: "button",
-                        "class": "delete fa fa-trash-o",
+                        "class": "delete far fa-trash-alt",
                         title :"Delete job",
                         onclick: ctrl["delete"].bind(ctrl)
                     })
