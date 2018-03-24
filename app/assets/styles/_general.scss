@@ -22,57 +22,55 @@ div#main-container {
     margin-left: 0;
     margin-right: 0;
   }
+
+  div#main {
+    max-width: 75rem;
+    margin: 0 auto 55px !important;
+    background-color: rgb(238, 238, 238);
+    -webkit-box-shadow: 1px 3px 7px 4px rgba(200, 200, 200, 0.75);
+    -moz-box-shadow: 1px 3px 7px 4px rgba(200, 200, 200, 0.75);
+    box-shadow: 1px 3px 7px 4px rgba(200, 200, 200, 0.75);
+
+    #main-window {
+      @include breakpoint(large) {
+        padding-top: 20px;
+      }
+      #main-content {
+        min-height: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        position: relative;
+        @include breakpoint(medium down) {
+          padding: 0;
+        }
+        .error404-container {
+          text-align: center;
+          padding-top: 0.4rem;
+        }
+        #404wrapper {
+          display: block;
+          margin: 100px auto auto;
+          #404msa {
+            margin-left: 25px;
+          }
+        }
+      }
+    }
+
+    & > .columns > .row {
+      height: 135px;
+      min-height: 135px;
+      @include breakpoint(medium down) {
+        height: auto;
+        min-height: auto;
+      }
+    }
+  }
 }
 
 // fix to enable tooltips on input
 input.has-tip {
   border: $input-border;
-}
-
-#main-window {
-  @include breakpoint(large) {
-    padding-top: 20px;
-  }
-  #main-content {
-    @include breakpoint(medium down) {
-      padding: 0;
-    }
-  }
-}
-
-#main-content {
-  min-height: 100%;
-  margin-left: 0;
-  margin-right: 0;
-  position: relative;
-  .error404-container {
-    text-align: center;
-    padding-top: 0.4rem;
-  }
-  #404wrapper {
-    display: block;
-    margin: 100px auto auto;
-    #404msa {
-      margin-left: 25px;
-    }
-  }
-}
-
-div#main {
-  max-width: 75rem;
-  margin: 0 auto 55px !important;
-  background-color: rgb(238, 238, 238);
-  -webkit-box-shadow: 1px 3px 7px 4px rgba(200, 200, 200, 0.75);
-  -moz-box-shadow: 1px 3px 7px 4px rgba(200, 200, 200, 0.75);
-  box-shadow: 1px 3px 7px 4px rgba(200, 200, 200, 0.75);
-  & > .columns > .row {
-    height: 135px;
-    min-height: 135px;
-    @include breakpoint(medium down) {
-      height: auto;
-      min-height: auto;
-    }
-  }
 }
 
 #message-float {
@@ -82,11 +80,6 @@ div#main {
   width: 100%;
   text-align: center;
   z-index: 1000;
-}
-
-.columns {
-  padding-left: 0;
-  padding-right: 0;
 }
 
 .clear {
@@ -153,10 +146,6 @@ tr.spaceUnder > td {
   font-weight: bold;
 }
 
-.pagination .current {
-  background: #ccc;
-}
-
 .select2-results__option {
   font-size: 12px;
 }
@@ -193,73 +182,4 @@ tr.spaceUnder > td {
     padding: 0 5px;
     min-width: 300px;
   }
-}
-
-.ui-state-default {
-  background: inherit !important;
-  border: none !important;
-  height: 100%;
-  a {
-    font-size: small;
-  }
-}
-
-.ui-state-active {
-  background: #fefefe !important;
-  height: 100%;
-}
-
-.ui-tabs-anchor {
-  margin-top: 0.5em;
-}
-
-.ui-tabs .ui-tabs-nav {
-  padding: 0;
-}
-
-.ui-tabs .ui-tabs-nav li {
-  margin: 0;
-}
-
-.ui-tabs-panel {
-  padding: 2em !important;
-}
-
-.smenubar {
-  height: 40px !important;
-  a.smenubar_alink {
-    color: #737373 !important;
-    padding: 4px 12px 4px 0 !important;
-    font-weight: 700 !important;
-    background: none !important;
-  }
-  .smenu-dropdown {
-    left: auto !important;
-    margin-top: 1.8em !important;
-  }
-}
-
-.biojs_msa_searchresult_row > button {
-  margin-right: 0.65rem;
-  margin-left: 0.1rem;
-  font-size: 0.7em !important;
-  background-color: #7b7b7b; /* Green */
-  border: none;
-  color: white;
-  padding: 5px 18px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.biojs_msa_searchresult_ovbox {
-  display: none
-}
-
-.biojs_msa_labelblock {
-  overflow-y: overlay !important;
-}
-
-.biojs_msa_labelrow {
-  font-weight: normal !important;
 }

@@ -46,6 +46,37 @@
       color: grey;
     }
   }
+
+  .biojs_msa_div {
+    .smenubar {
+      height: 40px;
+      a.smenubar_alink {
+        color: #737373;
+        padding: 4px 12px 4px 0 !important;
+        font-weight: 700;
+        background: none;
+      }
+    }
+    .biojs_msa_labelblock .biojs_msa_labelrow {
+      font-weight: normal !important;
+    }
+    .biojs_msa_searchresult_row > button {
+      margin-right: 0.65rem;
+      margin-left: 0.1rem;
+      font-size: 0.7em !important;
+      background-color: #7b7b7b; /* Green */
+      border: none;
+      color: white;
+      padding: 5px 18px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .biojs_msa_searchresult_ovbox {
+      display: none
+    }
+  }
+
 }
 
 .ui-widget {
@@ -67,35 +98,37 @@
   }
 }
 
-.ui-tabs .ui-tabs-nav {
-  padding: 0;
-  li {
-    margin: 0;
+.ui-tabs {
+  .ui-tabs-nav {
+    padding: 0;
+    .ui-tabs-tab {
+      margin: 0;
+      .ui-tabs-anchor {
+        margin-top: 0.5em;
+      }
+      &.ui-state-default {
+        background: inherit;
+        border: none;
+        height: 100%;
+        &.ui-state-active {
+          background: #fefefe;
+          height: 100%;
+        }
+        a {
+          font-size: small;
+          margin-top: 0.5em;
+        }
+      }
+    }
   }
-}
-
-.ui-state-default {
-  background: inherit !important;
-  border: none !important;
-
-  a {
-    font-size: small;
-    margin-top: 0.5em;
+  .ui-tabs-panel {
+    padding: 2em;
   }
-}
-
-.ui-state-active {
-  background: #fefefe !important;
-  height: 100%;
 }
 
 .ui-corner-top {
   border-top-right-radius: 0;
   border-top-left-radius: 0;
-}
-
-.ui-tabs-panel {
-  padding: 2em !important;
 }
 
 .alignment_buttons {
@@ -202,16 +235,14 @@
       border: 1px solid #da4453;
     }
   }
+}
 
-  .submitJob {
-    background-color: rgba(0, 110, 98, 166) !important;
-    border-radius: 3px !important;
-    margin-right: 2em !important;
-    color: white !important;
-    margin-left: 2em;
-    &:hover {
-      background-color: gray !important;
-    }
+.submitJob {
+  border-radius: 3px;
+  margin-right: 2em;
+  margin-left: 2em;
+  &:hover {
+    background-color: gray;
   }
 }
 
@@ -310,11 +341,6 @@
 #viewAlignment {
   float: right;
   margin-right: 0 !important;
-}
-
-.smenubar a {
-  color: black !important;
-  padding: 4px 8px !important;
 }
 
 /* File Upload */
