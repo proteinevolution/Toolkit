@@ -274,19 +274,25 @@ window.JobListComponent = {
             m("div", {"class": "job-button"}, [
                 m("div", {
                     "class": "sort id textcenter" + (JobListComponent.sort.mode == "jobID" ? " selected" : ""),
+                    "data-tooltip": "",
                     title: "Sort by job ID", onclick: JobListComponent.sortList.bind(ctrl, "jobID", true)
                 }, "ID"),
                 m("div", {
                     "class": "sort date textcenter" + (JobListComponent.sort.mode == "dateCreated" ? " selected" : ""),
-                    title: "Sort by date created", onclick: JobListComponent.sortList.bind(ctrl, "dateCreated", true)
+                    title: "Sort by date created",
+                    "data-tooltip": "",
+                    onclick: JobListComponent.sortList.bind(ctrl, "dateCreated", true)
                 }, "Date"),
                 m("div", {
                     "class": "sort tool textcenter" + (JobListComponent.sort.mode == "tool" ? " selected" : ""),
-                    title: "Sort by tool name", onclick: JobListComponent.sortList.bind(ctrl, "tool", true)
+                    title: "Sort by tool name",
+                    "data-tooltip": "",
+                    onclick: JobListComponent.sortList.bind(ctrl, "tool", true)
                 }, "Tool"),
                 m("div", {
                     "class": "openmanager textcenter",
-                    title: "Open job manager"
+                    title: "Open job manager",
+                    "data-tooltip": ""
                 }, m("a", {href: "/#/jobmanager"}, m("i", {"class": "icon-list"})))
             ]),
             m("div", {"class": "elements noselect"}, [
