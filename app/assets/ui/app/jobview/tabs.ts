@@ -141,6 +141,7 @@ const JobTabsComponent = {
                         type: "button",
                         "class": "delete fa fa-trash-o",
                         title :"Delete job",
+                        "data-tooltip": "",
                         onclick: ctrl["delete"].bind(ctrl)
                     })
                 ) : void 0

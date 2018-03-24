@@ -233,7 +233,7 @@
                 onclick: ctrl.submit.bind(ctrl, true)
             }),
             m("div", {
-                "class": "float-right",
+                "class": "float-right custom-job-id-wrapper",
                 "data-tooltip": "",
                 "data-position": "left",
                 title: "Alphanumeric IDs are permitted (e.g. HISA, HISA1, HISA_HHPRED). Border turns green when a valid ID is entered."
