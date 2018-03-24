@@ -90,39 +90,8 @@
 
   .ui-widget-header {
     background: #eee;
-    background-clip: border-box;
-    background-origin: padding-box;
-    background-size: auto auto;
     border: none;
     height: 2.5em;
-  }
-}
-
-.ui-tabs {
-  .ui-tabs-nav {
-    padding: 0;
-    .ui-tabs-tab {
-      margin: 0;
-      .ui-tabs-anchor {
-        margin-top: 0.5em;
-      }
-      &.ui-state-default {
-        background: inherit;
-        border: none;
-        height: 100%;
-        &.ui-state-active {
-          background: #fefefe;
-          height: 100%;
-        }
-        a {
-          font-size: small;
-          margin-top: 0.5em;
-        }
-      }
-    }
-  }
-  .ui-tabs-panel {
-    padding: 2em;
   }
 }
 
