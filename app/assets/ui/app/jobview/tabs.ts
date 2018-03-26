@@ -142,7 +142,8 @@ const JobTabsComponent = {
                         "class": "delete fa fa-trash-o",
                         title :"Delete job",
                         "data-tooltip": "",
-                        onclick: ctrl["delete"].bind(ctrl)
+                        onclick: ctrl["delete"].bind(ctrl),
+                        config: tooltipConf
                     })
                 ) : void 0
             ]), // Actual Tab Divs start here
