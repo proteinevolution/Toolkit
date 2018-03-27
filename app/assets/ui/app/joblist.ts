@@ -195,7 +195,6 @@ window.JobListComponent = {
         if (setActive) {
             JobListComponent.selectedJobID = newJob.jobID;
             JobListComponent.currentTool = newJob.tool;
-            console.log(["jobs", newJob.jobID.toString()]);
             TitleManager.updateTitle(["jobs", newJob.jobID.toString()]); // hacky solution to show toolname instantly because mitrhil doesn't change route quickly enough
         } // change the selectedJobID to this job when setActive is on
         let index = JobListComponent.getJobIndex(newJob.jobID);          // check if the job is in the list already
@@ -270,23 +269,33 @@ window.JobListComponent = {
         if (onBottomOfList && (JobListComponent.index >= listLength)) JobListComponent.scrollToJobListItem(-JobListComponent.numVisibleItems); // ensures view when elements are cleared
 
         numScrollItems = JobListComponent.numVisibleItems; // How many items to scroll per click
-        return m("div", {"class": "job-list", config: tooltipConf}, [
-            m("div", {"class": "job-button"}, [
+        return m("div", {"class": "job-list" }, [
+            m("div", {"class": "job-button" }, [
                 m("div", {
                     "class": "sort id textcenter" + (JobListComponent.sort.mode == "jobID" ? " selected" : ""),
-                    title: "Sort by job ID", onclick: JobListComponent.sortList.bind(ctrl, "jobID", true)
+                    "data-tooltip": "",
+                    title: "Sort by job ID", onclick: JobListComponent.sortList.bind(ctrl, "jobID", true),
+                    config: tooltipConf
                 }, "ID"),
                 m("div", {
                     "class": "sort date textcenter" + (JobListComponent.sort.mode == "dateCreated" ? " selected" : ""),
-                    title: "Sort by date created", onclick: JobListComponent.sortList.bind(ctrl, "dateCreated", true)
+                    title: "Sort by date created",
+                    "data-tooltip": "",
+                    onclick: JobListComponent.sortList.bind(ctrl, "dateCreated", true),
+                    config: tooltipConf
                 }, "Date"),
                 m("div", {
                     "class": "sort tool textcenter" + (JobListComponent.sort.mode == "tool" ? " selected" : ""),
-                    title: "Sort by tool name", onclick: JobListComponent.sortList.bind(ctrl, "tool", true)
+                    title: "Sort by tool name",
+                    "data-tooltip": "",
+                    onclick: JobListComponent.sortList.bind(ctrl, "tool", true),
+                    config: tooltipConf
                 }, "Tool"),
                 m("div", {
                     "class": "openmanager textcenter",
-                    title: "Open job manager"
+                    title: "Open job manager",
+                    "data-tooltip": "",
+                    config: tooltipConf
                 }, m("a", {href: "/#/jobmanager"}, m("i", {"class": "icon-list"})))
             ]),
             m("div", {"class": "elements noselect"}, [

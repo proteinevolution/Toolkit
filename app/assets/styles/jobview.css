@@ -399,13 +399,12 @@ hr {
     background-color: gray !important;
 }
 
-
 .submitbuttons .jobID {
     color: #000;
     text-shadow: 0 0 0 #878787;
     height: 2.6em;
     width: 9.5em;
-    float: right;
+    margin-bottom: 0;
     border-radius: 3px;
     font-size: 0.75em;
     padding-left: 1.3em;
