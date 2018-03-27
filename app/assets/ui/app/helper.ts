@@ -142,7 +142,8 @@ const fadesIn = function(element : any, isInitialized : boolean, context : any) 
 };
 
 const tooltipConf = function(elem: any, isInit: boolean) {
-    if(!isInit){
-        $('.job-button div:not(.has-tip), #jobID:not(.has-tip), .helpicon:not(.has-tip), .fa-trash-o:not(.has-tip)').attr("data-tooltip", "").foundation();
+    if(!isInit && !$(elem).hasClass(".has-tip")){
+        $(elem).foundation();
+        //$('.fa-trash-o:not(.has-tip), .helpicon:not(.has-tip), .job-button > div:not(.has-tip)').foundation(); // now it is only called for the element when it gets rendered
     }
 };
