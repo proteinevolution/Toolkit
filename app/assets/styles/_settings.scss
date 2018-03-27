@@ -120,8 +120,7 @@ $breakpoint-classes: (small medium large xlarge);
 $grid-row-width: $global-width;
 $grid-column-count: 12;
 $grid-column-gutter: (
-        small: 20px,
-        medium: 30px,
+        small: 0,
 );
 $grid-column-align-edge: true;
 $grid-column-alias: 'columns';
@@ -541,7 +540,7 @@ $pagination-item-padding: rem-calc(3 10);
 $pagination-item-spacing: rem-calc(1);
 $pagination-radius: $global-radius;
 $pagination-item-background-hover: $light-gray;
-$pagination-item-background-current: $primary-color;
+$pagination-item-background-current: $medium-gray;
 $pagination-item-color-current: $white;
 $pagination-item-color-disabled: $medium-gray;
 $pagination-ellipsis-color: $black;
@@ -835,7 +834,7 @@ $titlebar-icon-spacing: 0.25rem;
 
 $has-tip-cursor: pointer;
 $has-tip-font-weight: $global-weight-normal;
-$has-tip-border-bottom: none;
+$has-tip-border-bottom: none; // except for on inputs -> see _general.scss
 $tooltip-background-color: rgba(0, 0, 0, 0.8);;
 $tooltip-color: $white;
 $tooltip-padding: 0.75rem;

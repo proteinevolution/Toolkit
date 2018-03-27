@@ -1,5 +1,5 @@
 //SignIn/SignUp/Edit profile styling
-.auth-tabs {
+.auth-tabs.ui-tabs {
   border: none;
   border-radius: 4px;
   width: 25%;
@@ -8,28 +8,7 @@
   min-height: 20em;
   padding: 0;
   overflow: hidden;
-  display: block;
   margin: auto;
-
-  .ui-widget-header {
-    background: #eeeeee;
-    border: none;
-    width: 100%;
-  }
-  .ui-tabs-nav {
-    .ui-state-default {
-      background: #eeeeee;
-      border: none;
-      height: 2.5em;
-    }
-    .ui-state-active {
-      border: 1px solid grey;
-    }
-    .ui-state-default a, .ui-state-active a {
-      margin-top: 0.5em;
-      color: grey;
-    }
-  }
 
   .ui-tabs-tab:nth-child(n+2) {
     width: 33%;
@@ -37,10 +16,6 @@
 
   .ui-tabs-tab:nth-child(1) {
     width: 34%;
-  }
-
-  .ui-tabs-panel {
-    background: white;
   }
 }
 
