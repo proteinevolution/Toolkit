@@ -195,7 +195,7 @@ const ParameterAlignmentComponent = {
                                     validationProcess($('#alignment'),$("#toolnameAccess").val());
 			            return $("#" + ctrl.id).prop("disabled", false);
                                 }
-                            }, m("i", {"class": "fa fa-trash-o"})))),
+                            }, m("i", {"class": "far fa-trash-alt"})))),
                     m(JobValidationComponent, {})
                     , m("select", {"id": "alignment_format", "class": "alignment_format", config: alignment_format.bind(ctrl.getFormats())}, ctrl.getFormats().map(function(format : any){
                             return m("option", {value: format[0]}, format[1])}
