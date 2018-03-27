@@ -46,7 +46,7 @@ const JobLineComponent = {
                             helpModal.find("#tabs").tabs();
                         });
                     } },
-                        m("i", { "class": "icon-white_question helpicon", "title": "Help page", "config": tooltipConf})
+                        m("i", { "class": "icon-white_question helpicon", "title": "Help page", "data-tooltip": "", "config": tooltipConf})
                 )
             ]),
             m("span", { "class": "jobdate" }, isJob ? "Created: " + dateCreated.format("lll") : ""),
