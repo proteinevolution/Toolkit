@@ -32,7 +32,7 @@ window.JobManager = {
                                     'searchable': false,
                                     'orderable': false,
                                     'render': function (jobID: any) {
-                                        return '<i class="delete fa fa-trash-o" onclick="JobManager.deleteJob(\'' + jobID + '\')"></i>';
+                                        return '<i class="delete far fa-trash-alt" onclick="JobManager.deleteJob(\'' + jobID + '\')"></i>';
                                     }
                                 },
                                 {
