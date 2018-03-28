@@ -450,7 +450,7 @@ class SignUp {
                     m("label", "I Accept the "), m("a", {"data-open": "footerPrivacyModal"}, "Privacy Policy"),
                     m("span", {"class":"form-error", id:'acceptToSText'}, "You must accept the ToS!")
                 ])),
-                m("input", { "class": "input small expanded secondary button" + (SignUp.formValid? "" : " disabled"),
+                m("input", { "class": "input small expanded success button" + (SignUp.formValid? "" : " disabled"),
                              id:    'signup-submit',
                              type:  'submit',
                              value: 'Register'

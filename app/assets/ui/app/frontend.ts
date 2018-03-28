@@ -281,7 +281,7 @@ const tabsContents: any = {
             }),
             m("input", {
                 id: "pasteButton",
-                "class": "button small alignmentExample",
+                "class": "button clear success small alignmentExample",
                 value: "Paste Example",
                 config: sampleSeqConfig,
                 onclick: function() {
