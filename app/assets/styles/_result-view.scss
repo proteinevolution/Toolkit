@@ -563,7 +563,7 @@ select:-moz-focusring {
 .forwardModal p, #templateAlignmentModal p, #structureModal p {
   font-size: 1em;
   font-weight: bold;
-  color: rgba(0, 110, 98, 166);
+  color: get-color(success);
   margin-bottom: 0.5em;
 }
 
@@ -594,9 +594,7 @@ select:-moz-focusring {
   float: right;
   margin-top: 0.5em;
   -webkit-appearance: none;
-  background-color: rgba(0, 110, 98, 166) !important;
   border-radius: 3px !important;
-  color: white !important;
   margin-left: 2em;
 }
 
@@ -675,7 +673,7 @@ label.forwardLabel input[type=radio] {
 
 /* References Section */
 #toolReferences a {
-  color: rgba(0, 110, 98, 166);
+  color: get-color(success);
 }
 
 .citation {
