@@ -154,7 +154,7 @@ const ParameterAlignmentComponent = {
                     m("input", {
                         type: "button",
                         id: "pasteButton",
-                        "class": "button small alignmentExample",
+                        "class": "button clear success small alignmentExample",
                         value: "Paste Example",
                         config: sampleSeqConfig,
                         onclick: function() {
@@ -168,7 +168,7 @@ const ParameterAlignmentComponent = {
                     m("div", {"class": "uploadContainer"},
                         m("label",{
                             "for": "fileUpload",
-                            "class" : "button small fileUpload"
+                            "class" : "button clear success small fileUpload"
                         },"Upload File"),
                         m("input", {
                             type: "file",
