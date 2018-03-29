@@ -174,16 +174,16 @@ const tilescomponent = {
                             ),
                             m("div", {"class": "text_part"},
                                 m("h5", "Recent Updates"),
-                                m("a", {href: "http://scop.berkeley.edu/statistics/ver=2.07", target: "_blank"},
-                                    m("h6", "March 7, 2018"),
-                                    m("p", "HHpred: a new version of the SCOPe database,",
-                                    m("span", {style: "color:#2E8C81;"},
-                                    m("em", " version 2.07")),
-                                    m("span", ", is now online."))
+                                m("a", {"data-open": "recentUpdatesModal", href: "#Abaumannii_2018_03"},
+                                    m("h6", "March 29, 2018"),
+                                    m("p", "HHpred: profile HMM database of ",
+                                        m("em", "Acinetobacter baumannii"),
+                                        m("span", " is online."))
                                 ),
                                 m("a", {"data-open": "recentUpdatesModal", href: "#ecod70_2018_03"},
-                                    m("h6", "March 4, 2018"),
-                                    m("p", "HHpred: a new version of the ECOD database, version 20180219 (develop204), is now online.")
+                                    m("h6", "March 4 & 7, 2018"),
+                                    m("p", "HHpred: new versions of the SCOPe (ver 2.07) and ECOD databases " +
+                                        "(ver 20180219; develop204) are now online.")
                                 ),
                                 m("a", {href: "https://www.sciencedirect.com/science/article/pii/S0022283617305879", target: "_blank"},
                                     m("h6", "December 24, 2017"),
