@@ -22,7 +22,12 @@ class General() {
 
 object General {
 
-  case class DTParam(draw: Int, searchValue: String, displayStart: Int, pageLength: Int, orderCol: Int, orderDir: String)
+  case class DTParam(draw: Int,
+                     searchValue: String,
+                     displayStart: Int,
+                     pageLength: Int,
+                     orderCol: Int,
+                     orderDir: String)
   case class SingleSeq(accession: String, seq: String)
 
 }

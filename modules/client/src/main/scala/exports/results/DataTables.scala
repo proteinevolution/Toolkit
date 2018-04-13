@@ -26,14 +26,14 @@ class DataTables(toolName: String) {
       .dataTable(
         js.Dynamic
           .literal(
-            "processing"    -> true,
-            "serverSide"    -> true,
-            "ajax"    ->  s"/results/dataTable/$jobID",
-            "autoWidth"      -> false,
-            "lengthMenu"     -> lengthMenu(numHits),
-            "searching"      -> true,
-            "pageLength" -> 25,
-            "drawCallback"   -> callbacks.asInstanceOf[js.Any]
+            "processing"   -> true,
+            "serverSide"   -> true,
+            "ajax"         -> s"/results/dataTable/$jobID",
+            "autoWidth"    -> false,
+            "lengthMenu"   -> lengthMenu(numHits),
+            "searching"    -> true,
+            "pageLength"   -> 25,
+            "drawCallback" -> callbacks.asInstanceOf[js.Any]
           )
           .asInstanceOf[js.Object]
       )

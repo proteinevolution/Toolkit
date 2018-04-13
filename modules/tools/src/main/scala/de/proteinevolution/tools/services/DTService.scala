@@ -11,7 +11,9 @@ class DTService {
   def getHitsByKeyWord[T <: HSP](hits: SearchResult[T], params: DTParam): List[T] = {
     val hitList = hits.hitsOrderBy(params)
     if (params.searchValue.length > 0) {
-      hitList.filter(hit => (hit.description + hit.template.accession).toUpperCase.contains(params.searchValue.toUpperCase))
+      hitList.filter(
+        hit => (hit.description + hit.template.accession).toUpperCase.contains(params.searchValue.toUpperCase)
+      )
     } else {
       hitList
     }

@@ -108,9 +108,15 @@ class HHController @Inject()(ctx: HHContext,
         case ((result, hits)) =>
           Ok(
             Json
-              .toJson(Map("draw" -> params.draw,"recordsTotal" -> result.num_hits, "recordsFiltered" -> hits.length))
+              .toJson(Map("draw" -> params.draw, "recordsTotal" -> result.num_hits, "recordsFiltered" -> hits.length))
               .as[JsObject]
-              .deepMerge(Json.obj("data" -> hits.slice(params.displayStart, params.displayStart + params.pageLength).map(_.toDataTable(result.db))))
+              .deepMerge(
+                Json.obj(
+                  "data" -> hits
+                    .slice(params.displayStart, params.displayStart + params.pageLength)
+                    .map(_.toDataTable(result.db))
+                )
+              )
           )
       }
   }
