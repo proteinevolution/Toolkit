@@ -287,7 +287,7 @@ object Common {
   }
 
   def getCheckbox(num: Int): String = {
-    "<input type=\"checkbox\" value=\"" + num + "\" name=\"alignment_elem\" class=\"checkbox\"><a onclick=\"ResultViewHelper.scrollToHit(" + num + ")\">" + num + "</a>"
+    "<div class=\"nowrap\"><input type=\"checkbox\" value=\"" + num + "\" name=\"alignment_elem\" class=\"checkbox\"><a onclick=\"ResultViewHelper.scrollToHit(" + num + ")\">" + num + "</a></div>"
   }
 
   def getAddScrollLink(num: Int): String = {
