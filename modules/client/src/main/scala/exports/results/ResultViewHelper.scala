@@ -1,19 +1,20 @@
 package exports.results
 
-import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
-import org.scalajs.jquery._
-import scala.scalajs.js
+import org.querki.jquery.$
 import org.scalajs.dom
 import org.scalajs.dom.Element
-import org.querki.jquery.$
-import scala.scalajs.js.JSON
+import org.scalajs.jquery._
+
+import scala.scalajs.js
 import scala.scalajs.js.JSConverters._
+import scala.scalajs.js.JSON
+import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 
 @JSExportTopLevel("ResultViewHelper")
 object ResultViewHelper {
 
   @JSExport
-  def showHits(start: Int, end: Int, isWrapped: Boolean, isColored: Boolean, numHits: Int, jobID: String): Unit = {
+  def showHits(start: Int, end: Int, isWrapped: Boolean, isColored: Boolean, numHits: Int, jobID: String, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit = {
     if (start <= numHits && end <= numHits) {
       jQuery("#loadingHits").show()
       jQuery("#loadHits").hide()
@@ -33,6 +34,7 @@ object ResultViewHelper {
               js.Dynamic.global.linkCheckboxes()
               js.Dynamic.global.$("#alignments").floatingScroll("init")
               js.Dynamic.global.$.LoadingOverlay("hide")
+              if(successCallback != null) successCallback(data, textStatus, jqXHR)
             },
             error = { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
               dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
@@ -50,7 +52,7 @@ object ResultViewHelper {
       $("#loadingHits").show()
       val route = format match {
         case "clu" => s"/results/alignment/clustal/$jobID"
-        case _     => s"/results/alignment/loadHits/$jobID"
+        case _ => s"/results/alignment/loadHits/$jobID"
       }
       jQuery.ajax(
         js.Dynamic
@@ -95,7 +97,7 @@ object ResultViewHelper {
         (el: Element, _: Int) => jQuery(el).prop("checked", true)
       )
       val numHits = js.Dynamic.global.numHits.asInstanceOf[Int]
-      val range   = 1 to numHits + 1
+      val range = 1 to numHits + 1
       js.Dynamic.global.checkboxes = range.toJSArray
     } else {
       deselectAll()
@@ -139,25 +141,23 @@ object ResultViewHelper {
       else
         "html, body"
     if (id > js.Dynamic.global.shownHits.asInstanceOf[Int]) {
-      js.Dynamic.global.$.LoadingOverlay.show()
+      js.Dynamic.global.$.LoadingOverlay("show")
       showHits(
         js.Dynamic.global.shownHits.asInstanceOf[Int],
         id,
         js.Dynamic.global.wrapped.asInstanceOf[Boolean],
         isColored = false,
         js.Dynamic.global.numHits.asInstanceOf[Int],
-        js.Dynamic.global.jobID.asInstanceOf[String]
+        js.Dynamic.global.jobID.asInstanceOf[String],
+        (data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) => {
+          js.Dynamic.global.shownHits = id
+          $(elem).animate(js.Dictionary("scrollTop" -> ($(".aln[value='" + id + "']").offset().top.asInstanceOf[Double] - 100)), 1, "swing", null)
+        }
       )
-      js.Dynamic.global
-        .$(elem)
-        .animate(js.Dynamic.literal("scrollTop" -> ($(".aln[value='" + id + "']").offset().top - 100.toDouble)), 1)
-      js.Dynamic.global.$.LoadingOverlay("hide")
-      js.Dynamic.global.shownHits = id
     } else {
-      js.Dynamic.global
-        .$(elem)
-        .animate(js.Dynamic.literal("scrollTop" -> ($(".aln[value='" + id + "']").offset().top - 100.toDouble)), 1)
+      $(elem).animate(js.Dictionary("scrollTop" -> ($(".aln[value='" + id + "']").offset().top.asInstanceOf[Double] - 100)), 1, "swing", null)
     }
+
   }
 
   @JSExport
@@ -173,9 +173,7 @@ object ResultViewHelper {
         $(elem).scrollTop()
       else
         25.toDouble
-    js.Dynamic.global
-      .$(elem)
-      .animate(js.Dynamic.literal("scrollTop" -> (_pos + pos)), "fast")
+    $(elem).animate(js.Dictionary("scrollTop" -> (_pos + pos)), "fast", "swing", null)
   }
 
 }
