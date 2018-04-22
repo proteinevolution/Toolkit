@@ -152,7 +152,7 @@ object PSIBlast {
                             alignment: AlignmentResult = AlignmentResult(Nil))
       extends SearchResult[PSIBlastHSP] {
     override def hitsOrderBy(params: DTParam): List[PSIBlastHSP] = {
-      (params.iSortCol, params.sSortDir) match {
+      (params.orderCol, params.orderDir) match {
         case (1, "asc")  => HSPS.sortBy(_.accession)
         case (1, "desc") => HSPS.sortWith(_.accession > _.accession)
         case (2, "asc")  => HSPS.sortBy(_.description)
