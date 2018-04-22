@@ -4,17 +4,17 @@ import java.util.UUID
 
 import com.tgf.pizza.scalajs.mithril._
 import org.scalajs.dom
-import org.scalajs.jquery.{JQueryAjaxSettings, JQueryXHR, jQuery}
+import org.scalajs.jquery.{ jQuery, JQueryAjaxSettings, JQueryXHR }
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
-import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
+import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 import scala.scalajs.js.timers._
 
 @JSExportTopLevel("Forwarding")
 object Forwarding {
 
-  import js.Dynamic.{global => g}
+  import js.Dynamic.{ global => g }
 
   @JSExport
   def process(selectedTool: String, hasEvalue: Boolean, evalue: String, isFullLength: Boolean): Unit = {
@@ -26,12 +26,12 @@ object Forwarding {
       g.alert("No sequence(s) selected!")
       return
     }
-    val filename = UUID.randomUUID().toString.toUpperCase
+    val filename  = UUID.randomUUID().toString.toUpperCase
     val baseRoute = "/results/forwardAlignment/" + g.jobID
     val route = (hasEvalue, isFullLength) match {
-      case (true, true) => s"$baseRoute/evalFull"
-      case (false, true) => s"$baseRoute/full"
-      case (true, false) => s"$baseRoute/alnEval"
+      case (true, true)   => s"$baseRoute/evalFull"
+      case (false, true)  => s"$baseRoute/full"
+      case (true, false)  => s"$baseRoute/alnEval"
       case (false, false) => s"$baseRoute/aln"
     }
     jQuery.ajax(

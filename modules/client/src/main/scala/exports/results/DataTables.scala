@@ -1,7 +1,7 @@
 package exports.results
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
+import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 
 @JSExportTopLevel("DataTables")
 class DataTables(toolName: String) {
@@ -13,16 +13,17 @@ class DataTables(toolName: String) {
 
   @JSExport
   def config(jobID: String, numHits: Int, callbacks: () => js.Any): Unit = {
-    js.Dynamic.global.$("#htb")
+    js.Dynamic.global
+      .$("#htb")
       .DataTable(
         js.Dynamic
           .literal(
             "processing" -> true,
             "serverSide" -> true,
-            "ajax" -> s"/results/dataTable/$jobID",
-            "autoWidth" -> false,
+            "ajax"       -> s"/results/dataTable/$jobID",
+            "autoWidth"  -> false,
             "lengthMenu" -> lengthMenu(numHits),
-            "searching" -> true,
+            "searching"  -> true,
             "pageLength" -> 25,
             "drawCallback" -> (() => {
               callbacks()

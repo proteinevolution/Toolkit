@@ -1,14 +1,14 @@
 package exports.results
 
 import exports.extensions.JQueryExtensions
-import exports.facades.{JQueryPosition, ResultContext}
+import exports.facades.{ JQueryPosition, ResultContext }
 import org.scalajs.dom
 import org.scalajs.dom.raw.HTMLInputElement
 import org.scalajs.jquery._
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
-import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
+import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 
 @JSExportTopLevel("ResultViewHelper")
 object ResultViewHelper {
@@ -31,7 +31,12 @@ object ResultViewHelper {
   private var hitsSlider: HitsSlider = _
 
   @JSExport
-  def init(container: JQuery, jobID: String, wrapped: Boolean, shownHits: Int, colorAAs: Boolean, resultContext: ResultContext): Unit = {
+  def init(container: JQuery,
+           jobID: String,
+           wrapped: Boolean,
+           shownHits: Int,
+           colorAAs: Boolean,
+           resultContext: ResultContext): Unit = {
     this.jobID = jobID
     this.shownHits = if (shownHits > resultContext.numHits) resultContext.numHits else shownHits
     this.wrapped = wrapped
@@ -46,25 +51,40 @@ object ResultViewHelper {
     js.Dynamic.global.followScroll(dom.document)
 
     // add slider val
-    container.find(".slider").on("moved.zf.slider", () => {
-      container.find("#lefthandle").html(dom.document.getElementById("hidden1").asInstanceOf[HTMLInputElement].value).css(js.Dictionary(
-        "color" -> "white",
-        "font-weight" -> "bold",
-        "padding-left" -> "2px"
-      ))
-      container.find("#righthandle").html(dom.document.getElementById("hidden2").asInstanceOf[HTMLInputElement].value).css(js.Dictionary(
-        "color" -> "white",
-        "font-weight" -> "bold",
-        "padding-left" -> "2px"
-      ))
-    })
+    container
+      .find(".slider")
+      .on(
+        "moved.zf.slider",
+        () => {
+          container
+            .find("#lefthandle")
+            .html(dom.document.getElementById("hidden1").asInstanceOf[HTMLInputElement].value)
+            .css(
+              js.Dictionary(
+                "color"        -> "white",
+                "font-weight"  -> "bold",
+                "padding-left" -> "2px"
+              )
+            )
+          container
+            .find("#righthandle")
+            .html(dom.document.getElementById("hidden2").asInstanceOf[HTMLInputElement].value)
+            .css(
+              js.Dictionary(
+                "color"        -> "white",
+                "font-weight"  -> "bold",
+                "padding-left" -> "2px"
+              )
+            )
+        }
+      )
 
     if (resultContext.numHits > 0) {
       val wrap = container.find("#wrap")
       if (wrapped) {
         wrap.text("Unwrap Seqs").addClass("colorToggleBar")
       }
-      if(colorAAs) {
+      if (colorAAs) {
         container.find(".colorAA").addClass("colorToggleBar")
       }
       bindEvents()
@@ -87,7 +107,12 @@ object ResultViewHelper {
   }
 
   @JSExport
-  def initAln(container: JQuery, jobID: String, resultName: String, shownHits: Int, format: String, resultContext: ResultContext): Unit = {
+  def initAln(container: JQuery,
+              jobID: String,
+              resultName: String,
+              shownHits: Int,
+              format: String,
+              resultContext: ResultContext): Unit = {
     this.jobID = jobID
     this.shownHits = if (shownHits > resultContext.numHits) resultContext.numHits else shownHits
     this.container = container
@@ -102,7 +127,11 @@ object ResultViewHelper {
   }
 
   @JSExport
-  def initClustal(container: JQuery, jobID: String, resultName: String, colorAAs: Boolean, resultContext: ResultContext): Unit = {
+  def initClustal(container: JQuery,
+                  jobID: String,
+                  resultName: String,
+                  colorAAs: Boolean,
+                  resultContext: ResultContext): Unit = {
     this.jobID = jobID
     this.container = container
     this.shownHits = if (shownHits > resultContext.numHits) resultContext.numHits else shownHits
@@ -111,17 +140,27 @@ object ResultViewHelper {
     this.checkboxes = new Checkboxes(container)
 
     if (resultContext.numHits > 0) {
-      container.find(".colorAA").on("click", () => {
-        this.colorAAs = !this.colorAAs
-        container.find(".colorAA").toggleClass("colorToggleBar")
-        container.find("#resultTable").empty()
-        showHitsClustal(0, this.shownHits, resultName)
-      })
-      container.find(".selectAllSeqBar").on("click", () => {
-        container.find(".selectAllSeqBar").toggleClass("colorToggleBar")
-        JQueryExtensions.toggleText(container.find(".selectAllSeqBar"), "Select all", "Deselect all")
-        checkboxes.toggleAll(resultContext.numHits)
-      })
+      container
+        .find(".colorAA")
+        .on(
+          "click",
+          () => {
+            this.colorAAs = !this.colorAAs
+            container.find(".colorAA").toggleClass("colorToggleBar")
+            container.find("#resultTable").empty()
+            showHitsClustal(0, this.shownHits, resultName)
+          }
+        )
+      container
+        .find(".selectAllSeqBar")
+        .on(
+          "click",
+          () => {
+            container.find(".selectAllSeqBar").toggleClass("colorToggleBar")
+            JQueryExtensions.toggleText(container.find(".selectAllSeqBar"), "Select all", "Deselect all")
+            checkboxes.toggleAll(resultContext.numHits)
+          }
+        )
       showHitsClustal(0, this.shownHits, resultName)
     }
   }
@@ -129,48 +168,65 @@ object ResultViewHelper {
   def setupBlastVizTooltipster(): Unit = {
     // add tooltipster to visualization
     val blastVizArea = container.find("#blastviz").find("area")
-    blastVizArea.asInstanceOf[exports.facades.JQuery].tooltipster(
-      js.Dictionary(
-        "theme" -> js.Array("tooltipster-borderless",
-          "tooltipster-borderless-customized"),
-        "position" -> "bottom",
-        "animation" -> "fade",
-        "contentAsHTML" -> true,
-        "debug" -> false,
-        "maxWidth" -> blastVizArea.innerWidth() * 0.6
-      ))
+    blastVizArea
+      .asInstanceOf[exports.facades.JQuery]
+      .tooltipster(
+        js.Dictionary(
+          "theme"         -> js.Array("tooltipster-borderless", "tooltipster-borderless-customized"),
+          "position"      -> "bottom",
+          "animation"     -> "fade",
+          "contentAsHTML" -> true,
+          "debug"         -> false,
+          "maxWidth"      -> blastVizArea.innerWidth() * 0.6
+        )
+      )
   }
 
   def bindEvents(): Unit = {
-    container.find("#wrap").on("click", () => {
-      toggleIsWrapped()
-    })
-    container.find("#resubmitSection").on("click", () => {
-      hitsSlider.resubmit(resultContext.query.seq, '>' + resultContext.query.accession)
-    })
-    container.find(".selectAllSeqBar").on("click", () => {
-      container.find(".selectAllSeqBar").toggleClass("colorToggleBar")
-      JQueryExtensions.toggleText(container.find(".selectAllSeqBar"), "Select all", "Deselect all")
-      checkboxes.toggleAll(resultContext.numHits)
-    })
-    container.find(".colorAA").on("click", () => {
-      toggleAlignmentColoring()
-    })
-    container.find("#visualizationScroll").on("click", () => {
-      scrollToSection("visualization")
-    })
-    container.find("#hitlistScroll").on("click", () => {
-      scrollToSection("hitlist")
-    })
-    container.find("#alignmentsScroll").on("click", () => {
-      scrollToSection("alignments")
-    })
+    container
+      .find("#wrap")
+      .on("click", () => {
+        toggleIsWrapped()
+      })
+    container
+      .find("#resubmitSection")
+      .on("click", () => {
+        hitsSlider.resubmit(resultContext.query.seq, '>' + resultContext.query.accession)
+      })
+    container
+      .find(".selectAllSeqBar")
+      .on(
+        "click",
+        () => {
+          container.find(".selectAllSeqBar").toggleClass("colorToggleBar")
+          JQueryExtensions.toggleText(container.find(".selectAllSeqBar"), "Select all", "Deselect all")
+          checkboxes.toggleAll(resultContext.numHits)
+        }
+      )
+    container
+      .find(".colorAA")
+      .on("click", () => {
+        toggleAlignmentColoring()
+      })
+    container
+      .find("#visualizationScroll")
+      .on("click", () => {
+        scrollToSection("visualization")
+      })
+    container
+      .find("#hitlistScroll")
+      .on("click", () => {
+        scrollToSection("hitlist")
+      })
+    container
+      .find("#alignmentsScroll")
+      .on("click", () => {
+        scrollToSection("alignments")
+      })
   }
 
   @JSExport
-  def showHits(start: Int,
-               end: Int,
-               successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit = {
+  def showHits(start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit = {
     if (start <= resultContext.numHits && end <= resultContext.numHits) {
       container.find("#loadingHits").show()
       container.find("#loadHits").hide()
@@ -200,7 +256,8 @@ object ResultViewHelper {
               loading = false
             },
             `type` = "POST"
-          ).asInstanceOf[JQueryAjaxSettings]
+          )
+          .asInstanceOf[JQueryAjaxSettings]
       )
     }
   }
@@ -212,7 +269,7 @@ object ResultViewHelper {
       loading = true
       val route = format match {
         case "clu" => s"/results/alignment/clustal/$jobID"
-        case _ => s"/results/alignment/loadHits/$jobID"
+        case _     => s"/results/alignment/loadHits/$jobID"
       }
       jQuery.ajax(
         js.Dynamic
@@ -238,7 +295,8 @@ object ResultViewHelper {
               loading = false
             },
             `type` = "POST"
-          ).asInstanceOf[JQueryAjaxSettings]
+          )
+          .asInstanceOf[JQueryAjaxSettings]
       )
     }
   }
@@ -270,7 +328,8 @@ object ResultViewHelper {
             container.find("#loadingHits").hide()
             loading = false
           }
-        ).asInstanceOf[JQueryAjaxSettings]
+        )
+        .asInstanceOf[JQueryAjaxSettings]
     )
   }
 
@@ -310,7 +369,14 @@ object ResultViewHelper {
         (_: js.Any, _: js.Any, _: JQueryXHR) => {
           js.Dynamic.global.shownHits = id
           jQuery(elem).animate(
-            js.Dictionary("scrollTop" -> (container.find(".aln[value='" + id + "']").offset().asInstanceOf[JQueryPosition].top.asInstanceOf[Double] - 100)),
+            js.Dictionary(
+              "scrollTop" -> (container
+                .find(".aln[value='" + id + "']")
+                .offset()
+                .asInstanceOf[JQueryPosition]
+                .top
+                .asInstanceOf[Double] - 100)
+            ),
             1,
             "swing",
             null
@@ -318,12 +384,26 @@ object ResultViewHelper {
         }
       )
       jQuery(elem)
-        .animate(js.Dynamic.literal("scrollTop" -> (container.find(".aln[value='" + id + "']").offset().asInstanceOf[JQueryPosition].top - 100.toDouble)), 1)
+        .animate(js.Dynamic.literal(
+                   "scrollTop" -> (container
+                     .find(".aln[value='" + id + "']")
+                     .offset()
+                     .asInstanceOf[JQueryPosition]
+                     .top - 100.toDouble)
+                 ),
+                 1)
       js.Dynamic.global.$.LoadingOverlay("hide")
       js.Dynamic.global.shownHits = id
     } else {
       jQuery(elem)
-        .animate(js.Dynamic.literal("scrollTop" -> (container.find(".aln[value='" + id + "']").offset().asInstanceOf[JQueryPosition].top - 100.toDouble)), 1)
+        .animate(js.Dynamic.literal(
+                   "scrollTop" -> (container
+                     .find(".aln[value='" + id + "']")
+                     .offset()
+                     .asInstanceOf[JQueryPosition]
+                     .top - 100.toDouble)
+                 ),
+                 1)
     }
   }
 
