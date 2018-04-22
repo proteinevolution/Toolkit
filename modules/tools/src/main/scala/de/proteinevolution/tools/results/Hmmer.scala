@@ -120,7 +120,7 @@ object Hmmer {
                          COILPRED: String)
       extends SearchResult[HmmerHSP] {
     def hitsOrderBy(params: DTParam): List[HmmerHSP] = {
-      (params.iSortCol, params.sSortDir) match {
+      (params.orderCol, params.orderDir) match {
         case (1, "asc")  => HSPS.sortBy(_.accession)
         case (1, "desc") => HSPS.sortWith(_.accession > _.accession)
         case (2, "asc")  => HSPS.sortBy(_.description)

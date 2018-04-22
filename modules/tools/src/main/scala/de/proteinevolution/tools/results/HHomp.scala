@@ -139,7 +139,7 @@ object HHomp {
                          alignment: AlignmentResult = AlignmentResult(Nil))
       extends SearchResult[HHompHSP] {
     def hitsOrderBy(params: DTParam): List[HHompHSP] = {
-      (params.iSortCol, params.sSortDir) match {
+      (params.orderCol, params.orderDir) match {
         case (1, "asc")  => HSPS.sortBy(_.template.accession)
         case (1, "desc") => HSPS.sortWith(_.template.accession > _.template.accession)
         case (2, "asc")  => HSPS.sortBy(_.description)

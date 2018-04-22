@@ -71,11 +71,12 @@ class HHController @Inject()(ctx: HHContext,
 
   def dataTable(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val params = DTParam(
-      request.getQueryString("sSearch").getOrElse(""),
-      request.getQueryString("iDisplayStart").getOrElse("0").toInt,
-      request.getQueryString("iDisplayLength").getOrElse("100").toInt,
-      request.getQueryString("iSortCol_0").getOrElse("1").toInt,
-      request.getQueryString("sSortDir_0").getOrElse("asc")
+      request.getQueryString("draw").getOrElse("1").toInt,
+      request.getQueryString("search[value]").getOrElse(""),
+      request.getQueryString("start").getOrElse("0").toInt,
+      request.getQueryString("length").getOrElse("100").toInt,
+      request.getQueryString("order[0][column]").getOrElse("1").toInt,
+      request.getQueryString("order[0][dir]").getOrElse("asc")
     )
     kleisliProvider
       .resK(jobID)
@@ -107,9 +108,15 @@ class HHController @Inject()(ctx: HHContext,
         case ((result, hits)) =>
           Ok(
             Json
-              .toJson(Map("iTotalRecords" -> result.num_hits, "iTotalDisplayRecords" -> result.num_hits))
+              .toJson(Map("draw" -> params.draw, "recordsTotal" -> result.num_hits, "recordsFiltered" -> hits.length))
               .as[JsObject]
-              .deepMerge(Json.obj("aaData" -> hits.map(_.toDataTable(result.db))))
+              .deepMerge(
+                Json.obj(
+                  "data" -> hits
+                    .slice(params.displayStart, params.displayStart + params.pageLength)
+                    .map(_.toDataTable(result.db))
+                )
+              )
           )
       }
   }
