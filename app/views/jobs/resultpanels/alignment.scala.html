@@ -6,7 +6,7 @@
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="ResultViewHelper.toggleAllCheckboxes();" class="selectAllSeq"><span class="selectAllSeqBar">Select all</span></a>
+    <a class="selectAllSeqBar">Select all</a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download MSA</span></a>
     @defining("/files/" + jobID + "/" + "alignment.fas") { fileURL: String =>
@@ -31,13 +31,19 @@
         var fileUrl = "/files/@jobID/alignment.fas";
         var downloadFilename = "@{tool.toolNameShort}_@{resultName}_@{jobID}" + ".fasta";
         var shownHits = 20;
-        var showMore = 100;
-        var loading = false;
-        var numHits = @alignment.alignment.length;
         var resultName = '@resultName';
-        var jobID = '@jobID';
-        window["@{resultName}_forward"] = function(selectedTool){
-            var data = {"checkboxes": Checkboxes.getChecked, "resultName": resultName};
+
+        $(document).ready(function () {
+            var context = {
+                numHits: @alignment.alignment.length,
+                toolName: "@tool.toolNameShort"
+            };
+            var jobID = "@{jobID}";
+            ResultViewHelper.initAln($("#jobview"), jobID, resultName, shownHits, "fas", context)
+        });
+
+        window[resultName + "_forward"] = function(selectedTool){
+            var data = {"checkboxes": ResultViewHelper.getSelectedValues, "resultName": resultName};
             $.LoadingOverlay("show");
             // get result json
             $.ajax({
@@ -52,7 +58,7 @@
                 Forwarding.simple(selectedTool, data);
             });
         };
-        window["@{resultName}_download"] = function(){
+        window[resultName + "_download"] = function(){
             // get result json
             $.LoadingOverlay("show");
             $.ajax({
@@ -62,9 +68,5 @@
                 download(downloadFilename, data.toString());
             });
         };
-        $(document).ready(function () {
-            // trigger lazyload for loading alignment
-            shownHits = shownHits > numHits ? numHits : shownHits;
-            ResultViewHelper.showHitsAln(0, shownHits, numHits, jobID, resultName, "fas");
-        });
+
 </script>

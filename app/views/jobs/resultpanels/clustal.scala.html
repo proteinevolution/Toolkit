@@ -7,11 +7,11 @@
 @views.html.forwardmodals.simpler(tool, resultName)
 
 <div class="colorOptsAlignment">
-    <a onclick="ResultViewHelper.toggleAllCheckboxes();" class="selectAllSeq"><span class="selectAllSeqBar">Select all</span></a>
+    <a class="selectAllSeqBar">Select all</a>
     <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download MSA</span></a>
     <a type="button" href="@fileURL" target="_blank" rel="noopener"><span>Export MSA</span></a>
-    <a type="button" onclick="@{tool.toolNameShort}_colorAA()"><span id="colorAA">Color MSA</span></a>
+    <a type="button" class="colorAA">Color MSA</a>
     <hr class="horizontal-line">
 </div>
 <div id="alignmentResultView">
@@ -21,7 +21,7 @@
 <div class="unstriped">
     <table id="resultTable">
     </table>
-    <div id="loadingHitsClu">Loading Hits...</div>
+    <div id="loadingHits">Loading Hits...</div>
 </div>
 </div>
 <br/><br/>
@@ -63,15 +63,20 @@
 <script>
         var fileUrl = "/files/@jobID/alignment.clustalw_aln";
         var downloadFilename = "@{tool.toolNameShort}_@{resultName}_@{jobID}" + ".clustal";
-        var colorAAsClustal = false;
-        var numHits = @alignment.alignment.length - 1;
         var resultName = '@resultName';
         var jobID = '@jobID';
-        var checkboxes = [];
 
-        window["@{resultName}_forward"] = function(selectedTool){  
-	    var data = {"checkboxes": checkboxes, "resultName": resultName};
-	    $.LoadingOverlay("show");
+        $(function() {
+            var context = {
+                numHits: @alignment.alignment.length - 1,
+                toolName: "@tool.toolNameShort"
+            };
+            ResultViewHelper.initClustal($("#jobview"), jobID, resultName, false, context);
+        });
+
+        window[resultName + "_forward"] = function(selectedTool){
+            var data = {"checkboxes": ResultViewHelper.getSelectedValues, "resultName": resultName};
+            $.LoadingOverlay("show");
             $.ajax({
                 type: "POST",
                 url: "/results/alignment/getAln/" + jobID,
@@ -85,7 +90,7 @@
             });
         };
 
-        window["@{resultName}_download"] = function(){
+        window[resultName + "_download"] = function(){
             // get result json
             $.LoadingOverlay("show");
             $.ajax({
@@ -95,35 +100,4 @@
                 download(downloadFilename, data.toString());
             });
         };
-
-        window["@{tool.toolNameShort}_getHits"] = function(color){
-                $('#loadingHitsClu').show();
-            var data = {"color": color, "resultName" : resultName};
-            var route = {};
-            route.url = "/results/alignment/clustal/" + jobID;
-            route.method = "POST";
-                return $.ajax({
-                    method: route.method,
-                    url: route.url,
-                    contentType: "application/json",
-                    data: JSON.stringify(data)
-                }).done(function (data_) {
-                    $("#resultTable").append(data_);
-                    loading = false;
-                    linkCheckboxes();
-                    $('#loadingHitsClu').hide();
-                    $.LoadingOverlay("hide");
-                });
-        };
-
-        function @{tool.toolNameShort}_colorAA(){
-            colorAAsClustal = !colorAAsClustal;
-            $("#resultTable").empty();
-            $("#colorAA").toggleClass("colorToggle");
-            @{tool.toolNameShort}_getHits(colorAAsClustal);
-        }
-
-        (function($){
-            @{tool.toolNameShort}_getHits(false);
-        })(jQuery);
 </script>

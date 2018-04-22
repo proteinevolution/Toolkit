@@ -9,44 +9,6 @@
     border: 1px solid #ccc;
   }
 
-  /* Jobline */
-  .jobline {
-    padding-top: 5px;
-    height: 50px;
-
-    .toolname {
-      font-size: large;
-      font-weight: bold;
-      color: $primary-color;
-      @include breakpoint(small down) {
-        padding-left: 0.5em;
-      }
-    }
-
-    .jobinfo {
-      padding-right: 1em;
-      float: right;
-      font-size: small;
-    }
-
-    .jobdate {
-      float: right;
-      font-size: small;
-    }
-
-    .jobid {
-      padding-right: 1em;
-    }
-
-    i {
-      margin-left: 0.5em;
-    }
-
-    .helpicon {
-      color: grey;
-    }
-  }
-
   .biojs_msa_div {
     .smenubar {
       height: 40px;
@@ -77,6 +39,44 @@
     }
   }
 
+}
+
+/* Jobline */
+.jobline {
+  padding-top: 5px;
+  height: 50px;
+
+  .toolname {
+    font-size: large;
+    font-weight: bold;
+    color: $primary-color;
+    @include breakpoint(small down) {
+      padding-left: 0.5em;
+    }
+  }
+
+  .jobinfo {
+    padding-right: 1em;
+    float: right;
+    font-size: small;
+  }
+
+  .jobdate {
+    float: right;
+    font-size: small;
+  }
+
+  .jobid {
+    padding-right: 1em;
+  }
+
+  i {
+    margin-left: 0.5em;
+  }
+
+  .helpicon {
+    color: grey;
+  }
 }
 
 .ui-widget {

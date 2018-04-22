@@ -2,40 +2,39 @@ package exports.results
 
 import java.util.UUID
 
-import org.querki.jquery.{ $, JQueryAjaxSettings, JQueryXHR }
+import com.tgf.pizza.scalajs.mithril._
 import org.scalajs.dom
+import org.scalajs.jquery.{JQueryAjaxSettings, JQueryXHR, jQuery}
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
-import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
+import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 import scala.scalajs.js.timers._
-
-import com.tgf.pizza.scalajs.mithril._
 
 @JSExportTopLevel("Forwarding")
 object Forwarding {
 
-  import js.Dynamic.{ global => g }
+  import js.Dynamic.{global => g}
 
   @JSExport
   def process(selectedTool: String, hasEvalue: Boolean, evalue: String, isFullLength: Boolean): Unit = {
     g.$.LoadingOverlay("show")
-    val checkboxes = g.checkboxes.asInstanceOf[js.Array[Int]].distinct
+    val checkboxes = ResultViewHelper.getSelectedValues
     if (checkboxes.length < 1 && !hasEvalue) {
       g.$(".forwardModal").foundation("close")
       g.$.LoadingOverlay("hide")
       g.alert("No sequence(s) selected!")
       return
     }
-    val filename  = UUID.randomUUID().toString.toUpperCase
+    val filename = UUID.randomUUID().toString.toUpperCase
     val baseRoute = "/results/forwardAlignment/" + g.jobID
     val route = (hasEvalue, isFullLength) match {
-      case (true, true)   => s"$baseRoute/evalFull"
-      case (false, true)  => s"$baseRoute/full"
-      case (true, false)  => s"$baseRoute/alnEval"
+      case (true, true) => s"$baseRoute/evalFull"
+      case (false, true) => s"$baseRoute/full"
+      case (true, false) => s"$baseRoute/alnEval"
       case (false, false) => s"$baseRoute/aln"
     }
-    $.ajax(
+    jQuery.ajax(
       js.Dynamic
         .literal(
           url = route,
@@ -59,7 +58,7 @@ object Forwarding {
   @JSExport
   def redirect(tool: String, forwardPath: String): Unit = {
     m.route(s"/tools/$tool")
-    $.ajax(
+    jQuery.ajax(
       js.Dynamic
         .literal(
           url = forwardPath,
@@ -70,9 +69,9 @@ object Forwarding {
                 g.$.LoadingOverlay("hide")
               }
             } else {
-              $("#alignment").value(data.asInstanceOf[js.Array[String]])
+              jQuery("#alignment").value(data.asInstanceOf[js.Array[String]])
               g.$.LoadingOverlay("hide")
-              g.validationProcess($("#alignment"), $("#toolnameAccess").value())
+              g.validationProcess(jQuery("#alignment"), jQuery("#toolnameAccess").value())
             }
           },
           error = { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
