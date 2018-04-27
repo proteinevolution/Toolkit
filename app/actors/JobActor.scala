@@ -652,8 +652,7 @@ class JobActor @Inject()(
     // User Starts watching job
     case AddToWatchlist(jobID, userID) =>
       val _ = mongoStore
-        .modifyJob(BSONDocument(Job.JOBID   -> jobID),
-                   BSONDocument("$addToSet" -> BSONDocument(Job.WATCHLIST -> userID)))
+        .modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$addToSet" -> BSONDocument(Job.WATCHLIST -> userID)))
         .map {
           case Some(updatedJob) =>
             userSessions
