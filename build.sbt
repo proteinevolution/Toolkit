@@ -80,7 +80,6 @@ lazy val root = (project in file("."))
     buildInfoSettings
   )
 
-ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
