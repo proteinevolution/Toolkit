@@ -428,11 +428,7 @@ object Common {
                         "T " + beginTemplate,
                         template + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")")) +
           emptyRow + emptyRow +
-          hhblitsHitWrapped(hit,
-                            charCount + breakAfter,
-                            breakAfter,
-                            beginQuery + queryEnd,
-                            beginTemplate + templateEnd)
+          hhblitsHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
         }
       }
     }

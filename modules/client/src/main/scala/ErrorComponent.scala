@@ -14,8 +14,7 @@ object ErrorComponent extends Component {
         "div",
         js.Dynamic.literal("class" -> "column error404-container"),
         js.Array(
-            m("input",
-              js.Dynamic.literal("id" -> "hidden404", "type" -> "hidden", "value" -> ctrl.notFoundRandomized)),
+            m("input", js.Dynamic.literal("id" -> "hidden404", "type" -> "hidden", "value" -> ctrl.notFoundRandomized)),
             m(
               "div",
               js.Dynamic.literal("style" -> "display: none;", "config" -> g.hideSidebar),
