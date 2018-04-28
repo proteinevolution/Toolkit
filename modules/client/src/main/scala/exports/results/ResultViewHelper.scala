@@ -1,14 +1,16 @@
 package exports.results
 
 import exports.extensions.JQueryExtensions
-import exports.facades.{ JQueryPosition, ResultContext }
+import exports.facades.{JQueryPosition, ResultContext}
 import org.scalajs.dom
 import org.scalajs.dom.raw.HTMLInputElement
 import org.scalajs.jquery._
 
 import scala.scalajs.js
+
+import scala.scalajs.js.JSConverters._
 import scala.scalajs.js.JSON
-import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
+import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 
 @JSExportTopLevel("ResultViewHelper")
 object ResultViewHelper {
@@ -61,8 +63,8 @@ object ResultViewHelper {
             .html(dom.document.getElementById("hidden1").asInstanceOf[HTMLInputElement].value)
             .css(
               js.Dictionary(
-                "color"        -> "white",
-                "font-weight"  -> "bold",
+                "color" -> "white",
+                "font-weight" -> "bold",
                 "padding-left" -> "2px"
               )
             )
@@ -71,8 +73,8 @@ object ResultViewHelper {
             .html(dom.document.getElementById("hidden2").asInstanceOf[HTMLInputElement].value)
             .css(
               js.Dictionary(
-                "color"        -> "white",
-                "font-weight"  -> "bold",
+                "color" -> "white",
+                "font-weight" -> "bold",
                 "padding-left" -> "2px"
               )
             )
@@ -172,12 +174,12 @@ object ResultViewHelper {
       .asInstanceOf[exports.facades.JQuery]
       .tooltipster(
         js.Dictionary(
-          "theme"         -> js.Array("tooltipster-borderless", "tooltipster-borderless-customized"),
-          "position"      -> "bottom",
-          "animation"     -> "fade",
+          "theme" -> js.Array("tooltipster-borderless", "tooltipster-borderless-customized"),
+          "position" -> "bottom",
+          "animation" -> "fade",
           "contentAsHTML" -> true,
-          "debug"         -> false,
-          "maxWidth"      -> blastVizArea.innerWidth() * 0.6
+          "debug" -> false,
+          "maxWidth" -> blastVizArea.innerWidth() * 0.6
         )
       )
   }
@@ -269,7 +271,7 @@ object ResultViewHelper {
       loading = true
       val route = format match {
         case "clu" => s"/results/alignment/clustal/$jobID"
-        case _     => s"/results/alignment/loadHits/$jobID"
+        case _ => s"/results/alignment/loadHits/$jobID"
       }
       jQuery.ajax(
         js.Dynamic
@@ -385,26 +387,27 @@ object ResultViewHelper {
       )
       jQuery(elem)
         .animate(js.Dynamic.literal(
-                   "scrollTop" -> (container
-                     .find(".aln[value='" + id + "']")
-                     .offset()
-                     .asInstanceOf[JQueryPosition]
-                     .top - 100.toDouble)
-                 ),
-                 1)
+          "scrollTop" -> (container
+            .find(".aln[value='" + id + "']")
+            .offset()
+            .asInstanceOf[JQueryPosition]
+            .top - 100.toDouble)
+        ),
+          1)
       js.Dynamic.global.$.LoadingOverlay("hide")
       js.Dynamic.global.shownHits = id
     } else {
       jQuery(elem)
         .animate(js.Dynamic.literal(
-                   "scrollTop" -> (container
-                     .find(".aln[value='" + id + "']")
-                     .offset()
-                     .asInstanceOf[JQueryPosition]
-                     .top - 100.toDouble)
-                 ),
-                 1)
+          "scrollTop" -> (container
+            .find(".aln[value='" + id + "']")
+            .offset()
+            .asInstanceOf[JQueryPosition]
+            .top - 100.toDouble)
+        ),
+          1)
     }
+
   }
 
   def scrollToSection(name: String): Unit = {
