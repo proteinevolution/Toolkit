@@ -19,9 +19,7 @@ class Checkboxes(private val outerContainer: JQuery) {
   }
 
   def getChecked: js.Array[Int] = {
-    val res: js.Array[Int] = js.Array()
-    for ((value, checked) <- checkedValues if checked) res.push(value.toInt) // get only checked values
-    res
+    checkedValues.filter(_._2).map(_._1.toInt).toSeq.toJSArray
   }
 
   def populateCheckboxes(container: JQuery): Unit = {

@@ -1,11 +1,11 @@
 package exports.results.resultviews
 
-import exports.facades.{JQueryPosition, ResultContext}
-import exports.results.{Checkboxes, HitsSlider, ScrollUtil}
+import exports.facades.{ JQueryPosition, ResultContext }
+import exports.results.{ Checkboxes, HitsSlider, ScrollUtil }
 import org.scalajs.jquery._
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
+import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 
 abstract class ResultView(container: JQuery, jobID: String, sh: Int, val resultContext: ResultContext) {
 
@@ -63,25 +63,25 @@ abstract class ResultView(container: JQuery, jobID: String, sh: Int, val resultC
       )
       jQuery(elem)
         .animate(js.Dynamic.literal(
-          "scrollTop" -> (container
-            .find(".aln[value='" + id + "']")
-            .offset()
-            .asInstanceOf[JQueryPosition]
-            .top - 100.toDouble)
-        ),
-          1)
+                   "scrollTop" -> (container
+                     .find(".aln[value='" + id + "']")
+                     .offset()
+                     .asInstanceOf[JQueryPosition]
+                     .top - 100.toDouble)
+                 ),
+                 1)
       js.Dynamic.global.$.LoadingOverlay("hide")
       js.Dynamic.global.shownHits = id
     } else {
       jQuery(elem)
         .animate(js.Dynamic.literal(
-          "scrollTop" -> (container
-            .find(".aln[value='" + id + "']")
-            .offset()
-            .asInstanceOf[JQueryPosition]
-            .top - 100.toDouble)
-        ),
-          1)
+                   "scrollTop" -> (container
+                     .find(".aln[value='" + id + "']")
+                     .offset()
+                     .asInstanceOf[JQueryPosition]
+                     .top - 100.toDouble)
+                 ),
+                 1)
     }
 
   }

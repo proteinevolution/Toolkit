@@ -1,8 +1,8 @@
 package exports.results
 
-import exports.extensions.{ExtendedLink, ExtendedWindow}
+import exports.extensions.{ ExtendedLink, ExtendedWindow }
 import org.scalajs.dom
-import org.scalajs.dom.raw.{Blob, BlobPropertyBag}
+import org.scalajs.dom.raw.{ Blob, BlobPropertyBag }
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExportTopLevel
@@ -11,7 +11,7 @@ import scala.scalajs.js.annotation.JSExportTopLevel
 object DownloadHelper {
 
   def download(filename: String, text: String) {
-    val blob = new Blob(js.Array(text), BlobPropertyBag("application/octet-stream"))
+    val blob      = new Blob(js.Array(text), BlobPropertyBag("application/octet-stream"))
     val extWindow = dom.window.asInstanceOf[ExtendedWindow]
     if (extWindow.navigator.msSaveOrOpenBlob) {
       extWindow.navigator.msSaveBlob(blob, filename)

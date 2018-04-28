@@ -5,15 +5,20 @@ import exports.facades.ResultContext
 import exports.results.DataTables
 import org.scalajs.dom
 import org.scalajs.dom.raw.HTMLInputElement
-import org.scalajs.jquery.{JQuery, JQueryAjaxSettings, JQueryXHR, jQuery}
+import org.scalajs.jquery.{ jQuery, JQuery, JQueryAjaxSettings, JQueryXHR }
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
 import scala.scalajs.js.annotation.JSExportTopLevel
 
 @JSExportTopLevel("NormalResultView")
-class NormalResultView(container: JQuery, jobID: String, sh: Int, var wrapped: Boolean, var colorAAs: Boolean, resultContext: ResultContext)
-  extends ResultView(container, jobID, sh, resultContext) {
+class NormalResultView(container: JQuery,
+                       jobID: String,
+                       sh: Int,
+                       var wrapped: Boolean,
+                       var colorAAs: Boolean,
+                       resultContext: ResultContext)
+    extends ResultView(container, jobID, sh, resultContext) {
 
   override def init(): Unit = {
 
@@ -31,8 +36,8 @@ class NormalResultView(container: JQuery, jobID: String, sh: Int, var wrapped: B
             .html(dom.document.getElementById("hidden1").asInstanceOf[HTMLInputElement].value)
             .css(
               js.Dictionary(
-                "color" -> "white",
-                "font-weight" -> "bold",
+                "color"        -> "white",
+                "font-weight"  -> "bold",
                 "padding-left" -> "2px"
               )
             )
@@ -41,8 +46,8 @@ class NormalResultView(container: JQuery, jobID: String, sh: Int, var wrapped: B
             .html(dom.document.getElementById("hidden2").asInstanceOf[HTMLInputElement].value)
             .css(
               js.Dictionary(
-                "color" -> "white",
-                "font-weight" -> "bold",
+                "color"        -> "white",
+                "font-weight"  -> "bold",
                 "padding-left" -> "2px"
               )
             )
@@ -83,12 +88,12 @@ class NormalResultView(container: JQuery, jobID: String, sh: Int, var wrapped: B
       .asInstanceOf[exports.facades.JQuery]
       .tooltipster(
         js.Dictionary(
-          "theme" -> js.Array("tooltipster-borderless", "tooltipster-borderless-customized"),
-          "position" -> "bottom",
-          "animation" -> "fade",
+          "theme"         -> js.Array("tooltipster-borderless", "tooltipster-borderless-customized"),
+          "position"      -> "bottom",
+          "animation"     -> "fade",
           "contentAsHTML" -> true,
-          "debug" -> false,
-          "maxWidth" -> blastVizArea.innerWidth() * 0.6
+          "debug"         -> false,
+          "maxWidth"      -> blastVizArea.innerWidth() * 0.6
         )
       )
   }

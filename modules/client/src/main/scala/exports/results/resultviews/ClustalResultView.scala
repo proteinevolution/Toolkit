@@ -3,15 +3,20 @@ package exports.results.resultviews
 import exports.extensions.JQueryExtensions
 import exports.facades.ResultContext
 import org.scalajs.dom
-import org.scalajs.jquery.{JQuery, JQueryAjaxSettings, JQueryXHR, jQuery}
+import org.scalajs.jquery.{ jQuery, JQuery, JQueryAjaxSettings, JQueryXHR }
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
 import scala.scalajs.js.annotation.JSExportTopLevel
 
 @JSExportTopLevel("ClustalResultView")
-class ClustalResultView(container: JQuery, jobID: String, resultName: String, var colorAAs: Boolean, sh: Int, resultContext: ResultContext)
-  extends ResultView(container, jobID, sh, resultContext) {
+class ClustalResultView(container: JQuery,
+                        jobID: String,
+                        resultName: String,
+                        var colorAAs: Boolean,
+                        sh: Int,
+                        resultContext: ResultContext)
+    extends ResultView(container, jobID, sh, resultContext) {
 
   override def init(): Unit = {
     if (resultContext.numHits > 0) {

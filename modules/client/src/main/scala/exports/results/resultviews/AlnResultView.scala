@@ -2,15 +2,20 @@ package exports.results.resultviews
 
 import exports.facades.ResultContext
 import org.scalajs.dom
-import org.scalajs.jquery.{JQuery, JQueryAjaxSettings, JQueryXHR, jQuery}
+import org.scalajs.jquery.{ jQuery, JQuery, JQueryAjaxSettings, JQueryXHR }
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
 import scala.scalajs.js.annotation.JSExportTopLevel
 
 @JSExportTopLevel("AlnResultView")
-class AlnResultView(container: JQuery, jobID: String, resultName: String, sh: Int, format: String, resultContext: ResultContext)
-  extends ResultView(container, jobID, sh, resultContext) {
+class AlnResultView(container: JQuery,
+                    jobID: String,
+                    resultName: String,
+                    sh: Int,
+                    format: String,
+                    resultContext: ResultContext)
+    extends ResultView(container, jobID, sh, resultContext) {
 
   override def init(): Unit = {
 
@@ -27,7 +32,7 @@ class AlnResultView(container: JQuery, jobID: String, resultName: String, sh: In
       loading = true
       val route = format match {
         case "clu" => s"/results/alignment/clustal/$jobID"
-        case _ => s"/results/alignment/loadHits/$jobID"
+        case _     => s"/results/alignment/loadHits/$jobID"
       }
       jQuery.ajax(
         js.Dynamic
@@ -59,7 +64,5 @@ class AlnResultView(container: JQuery, jobID: String, resultName: String, sh: In
     }
   }
 
-  override def bindEvents(): Unit = {
-
-  }
+  override def bindEvents(): Unit = {}
 }
