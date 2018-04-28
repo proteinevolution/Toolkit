@@ -116,7 +116,7 @@
 
         var shownHits = 100;
 
-        $(document).ready(function () {
+        $(function () {
 
             var context = {
                 numHits: @result.num_hits,
@@ -128,7 +128,7 @@
                     accession: "@result.query.accession"
                 }
             };
-            ResultViewHelper.init($("#jobview"), "@{jobID}", true, shownHits, true, context);
+            Toolkit.resultView = new NormalResultView($("#jobview"), "@{jobID}", shownHits, true, true, context);
         });
 
         function @{tool.toolNameShort}_forwardQueryMSA(selectedTool) {

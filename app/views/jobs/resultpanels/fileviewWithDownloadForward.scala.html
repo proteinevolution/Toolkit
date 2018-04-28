@@ -40,7 +40,7 @@
                 method: "GET",
                 url: fileURL
             }).done(function(data){
-                download(downloadFilename, data);
+                DownloadHelper.download(downloadFilename, data);
             })
         };
 

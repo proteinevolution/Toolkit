@@ -130,7 +130,7 @@ $(function(){
             accession: "@result.query.accession"
         }
     };
-    ResultViewHelper.init($("#jobview"), "@{jobID}", true, shownHits, false, context);
+    Toolkit.resultView = new NormalResultView($("#jobview"), "@{jobID}", shownHits, true, false, context);
 });
 
 // TODO: move download into own scalajs
@@ -143,7 +143,7 @@ window["@{tool.toolNameShort}_download"] = function(){
         type: 'GET',
         url: fileUrl
     }).done(function (data) {
-        download(downloadFilename, data.toString());
+        DownloadHelper.download(downloadFilename, data.toString());
     });
 };
 

@@ -218,7 +218,7 @@
                     accession: "@result.query.accession"
                 }
             };
-            ResultViewHelper.init($("#jobview"), jobID, true, shownHits, true, context);
+            Toolkit.resultView = new NormalResultView($("#jobview"), jobID, shownHits, true, true, context);
             if (@result.num_hits > 0) {
                 $('#templateAlignmentModal').foundation();
                 $('#structureModal').foundation();
@@ -232,7 +232,7 @@
                 method: "GET",
                 url: fileURL
             }).done(function(data){
-                download(downloadFilename, data);
+                DownloadHelper.download(downloadFilename, data);
             })
         };
 
@@ -244,7 +244,7 @@
                 $("input:checkbox[name=alignment_elem][value=1]").prop("checked", true);
                 alert("No templates selected. Using first template for modelling.");
             }
-            formData.append("templates", ResultViewHelper.getSelectedValues.join(" "));
+            formData.append("templates", Toolkit.resultView.getSelectedValues.join(" "));
             formData.append("parentid", jobID);
 
 
@@ -327,7 +327,5 @@
                 Forwarding.simple(selectedTool, data_.toString());
             });
         }
-
-
 
 </script>

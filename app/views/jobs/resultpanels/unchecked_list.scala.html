@@ -36,6 +36,6 @@
         var fileString = "";
         fileString = data.ACC_IDS;
         var filename = "@{toolName}_jobID_@{jobID}" + ".fasta";
-        download(filename, fileString.join("\n"));
+        DownloadHelper.download(filename, fileString.join("\n"));
     }
 </script>

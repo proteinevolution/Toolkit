@@ -163,7 +163,7 @@
                     accession: "@result.query.accession"
                 }
             };
-            ResultViewHelper.init($("#jobview"), "@{jobID}", true, shownHits, false, context);
+            Toolkit.resultView = new NormalResultView($("#jobview"), "@{jobID}", shownHits, true, false, context);
             if(context.numHits > 0 ){
                 $('#templateAlignmentModal').foundation();
             }

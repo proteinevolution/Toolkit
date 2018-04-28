@@ -3,7 +3,6 @@ package exports.results
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 
-@JSExportTopLevel("DataTables")
 class DataTables(toolName: String) {
 
   private def lengthMenu(numHits: Int) = js.Array(
@@ -25,9 +24,7 @@ class DataTables(toolName: String) {
             "lengthMenu" -> lengthMenu(numHits),
             "searching"  -> true,
             "pageLength" -> 25,
-            "drawCallback" -> (() => {
-              callbacks()
-            })
+            "drawCallback" -> callbacks
           )
           .asInstanceOf[js.Object]
       )

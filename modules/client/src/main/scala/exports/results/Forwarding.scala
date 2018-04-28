@@ -19,7 +19,7 @@ object Forwarding {
   @JSExport
   def process(selectedTool: String, hasEvalue: Boolean, evalue: String, isFullLength: Boolean): Unit = {
     g.$.LoadingOverlay("show")
-    val checkboxes = ResultViewHelper.getSelectedValues
+    val checkboxes = js.Dynamic.global.Toolkit.resultView.getSelectedValues.asInstanceOf[js.Array[Int]]
     if (checkboxes.length < 1 && !hasEvalue) {
       g.$(".forwardModal").foundation("close")
       g.$.LoadingOverlay("hide")
