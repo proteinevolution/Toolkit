@@ -10,7 +10,7 @@
         </div>
     } else{
     @* Loads ForwardModal *@
-    @views.html.forwardmodals.normal(tool, tool.toolNameShort, "psiblast")
+    @views.html.forwardmodals.normal(tool, jobID, "psiblast")
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
             <div id="scrollLinks">
@@ -21,9 +21,7 @@
             <span class="headerDivider"></span>
             <div id="controlls">
                 <a class="selectAllSeqBar extraWide">Select all</a>
-                <a type="button" id="forwardButtonNormal" data-open="forwardModal_@{
-                    tool.toolNameShort
-                }">Forward</a>
+                <a type="button" id="forwardButtonNormal" data-open="forwardModalNormal">Forward</a>
                 <a type="button" id="downloadAlignment"  onclick="@{tool.toolNameShort}_download()"><span>Download Alignment</span></a> <!-- todo pull onclick out of here -->
 
                 <a id="wrap">Wrap Seqs</a>

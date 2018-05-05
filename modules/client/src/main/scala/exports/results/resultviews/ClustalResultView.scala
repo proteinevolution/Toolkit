@@ -14,9 +14,9 @@ class ClustalResultView(container: JQuery,
                         jobID: String,
                         resultName: String,
                         var colorAAs: Boolean,
-                        sh: Int,
+                        tempShownHits: Int,
                         resultContext: ResultContext)
-    extends ResultView(container, jobID, sh, resultContext) {
+    extends ResultView(container, jobID, tempShownHits, resultContext) {
 
   override def init(): Unit = {
     if (resultContext.numHits > 0) {
@@ -30,13 +30,12 @@ class ClustalResultView(container: JQuery,
     container.find("#loadingHits").show()
     container.find("#loadHits").hide()
     jQuery.ajax(
-      js.Dynamic
-        .literal(
-          url = "/results/alignment/clustal/" + jobID,
-          method = "POST",
-          contentType = "application/json",
-          data = JSON.stringify(js.Dictionary("color" -> colorAAs, "resultName" -> resultName)),
-          success = { (data: js.Any, _: js.Any, _: JQueryXHR) =>
+      js.Dictionary(
+          "url"         -> s"/results/alignment/clustal/$jobID",
+          "method"      -> "POST",
+          "contentType" -> "application/json",
+          "data"        -> JSON.stringify(js.Dictionary("color" -> colorAAs, "resultName" -> resultName)),
+          "success" -> { (data: js.Any, _: js.Any, _: JQueryXHR) =>
             container.find("#resultTable").append(data)
             shownHits = end
             if (shownHits != resultContext.numHits)
@@ -46,7 +45,7 @@ class ClustalResultView(container: JQuery,
             js.Dynamic.global.$.LoadingOverlay("hide")
             loading = false
           },
-          error = { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
+          "error" -> { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
             dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
             container.find("#resultTable").append("Error loading Data.")
             container.find("#loadingHits").hide()

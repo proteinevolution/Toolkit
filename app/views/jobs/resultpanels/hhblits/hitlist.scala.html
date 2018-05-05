@@ -6,10 +6,7 @@
         <div class="callout alert noHitsWide" id="noHits">
             No hits found!
         </div>
-    } else{
-    @* Loads ForwardModal *@
-    @views.html.forwardmodals.normal(tool, tool.toolNameShort, "")
-    @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort+"_hhsuite")
+    } else {
     @* Load html Map used for the image representation *@
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
@@ -21,12 +18,8 @@
             <span class="headerDivider"></span>
             <div id="controlls">
                 <a class="selectAllSeqBar extraWide">Select all</a>
-                <a id="forwardButtonNormal" data-open="forwardModal_@{
-                    tool.toolNameShort
-                }">Forward</a>
-                <a id="forwardButtonHHsuite" data-open="forwardModal_@{
-                    tool.toolNameShort
-                }_hhsuite">Forward Query A3M</a>
+                <a id="forwardButtonNormal" data-open="forwardModalNormal">Forward</a>
+                <a id="forwardButtonHHsuite" data-open="forwardModalHHSuite">Forward Query A3M</a>
                 <a id="wrap">Wrap Seqs</a>
             </div>
         </div>
@@ -120,36 +113,15 @@
     </div>
     <hr class="horizontal-line">
 
+    @* Loads ForwardModal *@
+    @views.html.forwardmodals.normal(tool, jobID, "")
+    @views.html.forwardmodals.hhsuite(jobID)
+    @*MODALS*@
+    @views.html.jobs.resultpanels.templateAlignmentModal()
 }
 
-@*MODALS*@
-
-<div class="reveal" id="templateAlignmentModal" data-reveal>
-    <p>Template Alignment (~100 most distinct sequences)</p>
-    <div>
-        <select onclick="forwardTemplateAlignment_(this.value, $('#alignmentTemplate').val())" id="alignmentTemplate_tool">
-            <option value="" selected>Forward To</option>
-            <option value="formatseq" >FormatSeq</option>
-            <option value="hhblits" >HHblits</option>
-            <option value="hhomp" >HHomp</option>
-            <option value="hhpred" >HHpred</option>
-            <option value="hhrepid" >HHrepID</option>
-        </select>
-    </div>
-    <textarea rows="35" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
-    <button class="close-button" id="alignmentTemplateClose" data-close aria-label="Close modal" type="button">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-
 <script>
-        $("#templateAlignmentModal").bind('closed.zf.reveal', (function () {
-            $('#alignmentTemplate_tool').val('');
-            $.LoadingOverlay("hide");
-        }));
 
-        var jobID = '@{jobID}';
-        var fileUrlQueryMSAFas = "/files/"+jobID+"/reduced.a3m";
         var shownHits = 50;
 
         $(function(){
@@ -164,29 +136,7 @@
                 }
             };
             Toolkit.resultView = new NormalResultView($("#jobview"), "@{jobID}", shownHits, true, false, context);
-            if(context.numHits > 0 ){
-                $('#templateAlignmentModal').foundation();
-            }
         });
-
-        function hhblits_forwardQueryMSA(selectedTool){
-            $.LoadingOverlay("show");
-            $.ajax({
-                type: 'GET',
-                url: fileUrlQueryMSAFas
-            }).done(function (data_) {
-                Forwarding.simple(selectedTool, data_.toString());
-            });
-        }
-
-        function forwardTemplateAlignment_(tool, forwardData){
-            if(tool === ""){
-                return;
-            }
-            $.LoadingOverlay("show");
-            $('#templateAlignmentModal').foundation('close');
-            Forwarding.simple(tool, forwardData);
-        }
 
 </script>
 

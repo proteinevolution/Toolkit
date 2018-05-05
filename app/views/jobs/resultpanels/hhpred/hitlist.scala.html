@@ -7,25 +7,18 @@
             No hits found!
         </div>
     } else {
-    @* Loads ForwardModals *@
-    @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort + "_hhsuite")
-    @views.html.forwardmodals.simple(tool, tool.toolNameShort)
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
             <div id="scrollLinks">
-                <a id="visualizationScroll">Vis</a>
-                <a id="hitlistScroll">Hits</a>
-                <a id="alignmentsScroll">Aln</a>
+                <a id="visualizationScroll" name="#visualization">Vis</a>
+                <a id="hitlistScroll" name="#hitlist">Hits</a>
+                <a id="alignmentsScroll" name="#alignments">Aln</a>
             </div>
             <span class="headerDivider"></span>
             <div id="controlls">
                 <a class="selectAllSeqBar extraWide">Select all</a>
-                <a id="forwardButtonSimple" data-open="forwardModal_@{
-                    tool.toolNameShort
-                }">Forward</a>
-                <a id="forwardButtonHHsuite" data-open="forwardModal_@{
-                    tool.toolNameShort
-                }_hhsuite">Forward Query A3M</a>
+                <a id="forwardButtonSimple" data-open="forwardModalSimple">Forward</a>
+                <a id="forwardButtonHHsuite" data-open="forwardModalHHSuite">Forward Query A3M</a>
                 @*only show create model when chosen db=mmcif70/pdb70*@
                 @if(result.db.matches("mmcif70/pdb70") || result.db.matches("mmcif30/pdb30") ) {
                     <a onclick="@{tool.toolNameShort}_manual()">Model using selection</a>
@@ -161,24 +154,6 @@
 
 
     @*MODALS*@
-    <div class="reveal" id="templateAlignmentModal" data-reveal>
-        <p>Template Alignment (~100 most distinct sequences)</p>
-        <div>
-            <select onclick="forwardTemplateAlignment_(this.value, $('#alignmentTemplate').val())" id="alignmentTemplate_tool">
-                <option value="" selected>Forward to</option>
-                <option value="formatseq" >FormatSeq</option>
-                <option value="hhblits" >HHblits</option>
-                <option value="hhomp" >HHomp</option>
-                <option value="hhpred" >HHpred</option>
-                <option value="hhrepid" >HHrepID</option>
-            </select>
-        </div>
-        <textarea rows="35" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
-        <button class="close-button" id="alignmentTemplateClose" data-close aria-label="Close modal" type="button">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-
     <div class="reveal" id="structureModal" data-reveal>
         <p>Template 3D structure</p>
         <div id="accessionStructure"> </div>
@@ -188,6 +163,11 @@
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
+
+    @views.html.jobs.resultpanels.templateAlignmentModal()
+    @* Loads ForwardModals *@
+    @views.html.forwardmodals.hhsuite(jobID)
+    @views.html.forwardmodals.simple(tool, jobID)
 }
 <script>
 
@@ -195,11 +175,6 @@
             //clear 3D structure modal
             $('#accessionStructure').html("");
             $('#viewport canvas').remove();
-            $.LoadingOverlay("hide");
-        }));
-
-        $("#templateAlignmentModal").bind('closed.zf.reveal', (function () {
-            $('#alignmentTemplate_tool').val('');
             $.LoadingOverlay("hide");
         }));
 
@@ -220,7 +195,6 @@
             };
             Toolkit.resultView = new NormalResultView($("#jobview"), jobID, shownHits, true, true, context);
             if (@result.num_hits > 0) {
-                $('#templateAlignmentModal').foundation();
                 $('#structureModal').foundation();
             }
         });
@@ -307,25 +281,6 @@
                 });
             });
 
-        }
-
-        function forwardTemplateAlignment_(tool, forwardData) {
-            if (tool === "") {
-                return;
-            }
-            $('#templateAlignmentModal').foundation('close');
-            Forwarding.simple(tool, forwardData);
-        }
-
-
-        function @{tool.toolNameShort}_forwardQueryMSA(selectedTool) {
-            $.LoadingOverlay("show");
-            $.ajax({
-                type: 'GET',
-                url: "files/" + jobID + "/reduced.a3m"
-            }).done(function (data_) {
-                Forwarding.simple(selectedTool, data_.toString());
-            });
         }
 
 </script>

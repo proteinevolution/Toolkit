@@ -6,16 +6,16 @@ import org.scalajs.jquery.{ jQuery, JQuery, JQueryAjaxSettings, JQueryXHR }
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
-import scala.scalajs.js.annotation.JSExportTopLevel
+import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 
 @JSExportTopLevel("AlnResultView")
 class AlnResultView(container: JQuery,
                     jobID: String,
                     resultName: String,
-                    sh: Int,
+                    tempShownHits: Int,
                     format: String,
                     resultContext: ResultContext)
-    extends ResultView(container, jobID, sh, resultContext) {
+    extends ResultView(container, jobID, tempShownHits, resultContext) {
 
   override def init(): Unit = {
 

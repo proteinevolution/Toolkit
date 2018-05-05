@@ -8,19 +8,17 @@
     </div>
 } else {
     @* Loads ForwardModals *@
-    @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort + "_hhomp")
+    @views.html.forwardmodals.hhsuite(jobID)
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
             <div id="scrollLinks">
-                <a id="visualizationScroll">Vis</a>
-                <a id="hitlistScroll">Hits</a>
-                <a id="alignmentsScroll">Aln</a>
+                "<a id="visualizationScroll" name="#visualization">Vis</a>
+                    <a id="hitlistScroll" name="#hitlist">Hits</a>
+                    <a id="alignmentsScroll" name="#alignments">Aln</a>
             </div>
             <span class="headerDivider"></span>
             <div id="controlls">
-                <a id="forwardButtonHHsuite" data-open="forwardModal_@{
-                    tool.toolNameShort
-                }_hhomp">Forward Query A3M</a>
+                <a id="forwardButtonHHsuite" data-open="forwardModalHHSuite">Forward Query A3M</a>
                 <a class="colorAA">Color Seqs</a>
                 <a id="wrap">Wrap Seqs</a>
                 </div>
@@ -117,7 +115,6 @@
         var shownHits = 100;
 
         $(function () {
-
             var context = {
                 numHits: @result.num_hits,
                 toolName: "@tool.toolNameShort",
@@ -130,15 +127,5 @@
             };
             Toolkit.resultView = new NormalResultView($("#jobview"), "@{jobID}", shownHits, true, true, context);
         });
-
-        function @{tool.toolNameShort}_forwardQueryMSA(selectedTool) {
-            $.LoadingOverlay("show");
-            $.ajax({
-                type: 'GET',
-                url: "files/" + jobID + "/reduced.a3m"
-            }).done(function (data_) {
-                forward(selectedTool, data_.toString());
-            });
-        }
 
   </script>

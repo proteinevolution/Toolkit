@@ -1,9 +1,9 @@
 @import java.lang.String
 @(filename: String, jobID: String, resultname: String, tool: de.proteinevolution.models.Tool)()
-    @views.html.forwardmodals.simpler(tool, tool.toolNameShort)
+    @views.html.forwardmodals.simpler(tool, jobID, filename, "FILEVIEW")
     <div class="colorOptsAlignment">
     <a type="button" onclick="@{resultname}_download()"> <span id="downloadAlignment">Download</span></a>
-    <a data-open="forwardModal_@{tool.toolNameShort}" type="buttom"><span id="downloadAlignment">Forward All</span></a>
+    <a data-open="forwardModalSimpler" type="buttom"><span id="downloadAlignment">Forward All</span></a>
         <hr class="horizontal-line">
     </div>
     <pre class="fileview" id="fileviewerDownloadForward_@{resultname}"></pre>
@@ -23,7 +23,7 @@
     </div>
 
     <script>
-        $(document).ready( function() {
+        $(function() {
             $.ajax({
                 type: 'GET',
                 url: 'files/@jobID/@{filename}',
@@ -32,8 +32,8 @@
             });
         });
 
-        var downloadFilename = "@{resultname}_@{jobID}";
         var fileURL="/files/@{jobID}/@{filename}";
+
         window["@{resultname}_download"] = function(){
             var downloadFilename = "@{resultname}_@{jobID}"  + ".out";
             $.ajax({
@@ -44,30 +44,17 @@
             })
         };
 
-        window["@{tool.toolNameShort}_forward"] = function(selectedTool){
-            var forwardData = [];
-            //fill array with headers and sequences
-            $.ajax({
-                method: "GET",
-                url: fileURL
-            }).done(function(data) {
-                Forwarding.simple(selectedTool, data);
-            });
-        };
-
         //using both functions is not pretty and somewhat redundant but gets the job done
         $( "#fileviewerDownloadForward_@{resultname}" ).ready(function() {
             if ($('#tool-tabs').hasClass('fullscreen')) {
-                $(".fileview").css("overflow-y", "visible");
-                $(".fileview").css("height", "100pc");
+                onExpand()
             } else {
-                $(".fileview").css("height", "30pc");
+                onCollapse()
             }
         });
 
         function onExpand() {
-            $(".fileview").css("overflow-y", "visible");
-            $(".fileview").css("height", "100pc");
+            $(".fileview").css("overflow-y", "visible").css("height", "100pc");
         }
         function onCollapse() {
             $(".fileview").css("height", "30pc");

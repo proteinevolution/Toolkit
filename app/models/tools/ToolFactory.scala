@@ -376,7 +376,6 @@ final class ToolFactory @Inject()(
             Future.successful(
               views.html.jobs.resultpanels.hhrepid(jobID,
                                                    s"${constants.jobPath}$jobID/results/query.hhrepid",
-                                                   "querymsa",
                                                    values(ToolNames.HHBLITS.value))
             )
           }

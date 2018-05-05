@@ -5,12 +5,13 @@ import exports.results.{ Checkboxes, HitsSlider, ScrollUtil }
 import org.scalajs.jquery._
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
+import scala.scalajs.js.annotation.JSExport
 
-abstract class ResultView(container: JQuery, jobID: String, sh: Int, val resultContext: ResultContext) {
+abstract class ResultView(container: JQuery, jobID: String, tempShownHits: Int, val resultContext: ResultContext) {
 
   @JSExport
-  var shownHits: Int = if (sh > resultContext.numHits) resultContext.numHits else sh
+  var shownHits: Int = if (tempShownHits > resultContext.numHits) resultContext.numHits else tempShownHits
+
   @JSExport
   var loading: Boolean = false
 

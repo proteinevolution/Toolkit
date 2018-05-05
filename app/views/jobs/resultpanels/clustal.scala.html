@@ -4,11 +4,11 @@
 
 @fileURL = @{"/files/" + jobID + "/" + "alignment.clustalw_aln"}
 
-@views.html.forwardmodals.simpler(tool, resultName)
+@views.html.forwardmodals.simpler(tool, jobID, resultName, "NORMAL")
 
 <div class="colorOptsAlignment">
     <a class="selectAllSeqBar">Select all</a>
-    <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
+    <a type="button" id="forwardButtonSimpler" data-open="forwardModalSimpler"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download MSA</span></a>
     <a type="button" href="@fileURL" target="_blank" rel="noopener"><span>Export MSA</span></a>
     <a type="button" class="colorAA">Color MSA</a>
@@ -73,22 +73,6 @@
             };
             Toolkit.resultView = new ClustalResultView($("#jobview"), jobID, resultName, false, shownHits, context);
         });
-
-        window[resultName + "_forward"] = function(selectedTool){
-            var data = {"checkboxes": Toolkit.resultView.getSelectedValues, "resultName": resultName};
-            $.LoadingOverlay("show");
-            $.ajax({
-                type: "POST",
-                url: "/results/alignment/getAln/" + jobID,
-                contentType: "application/json",
-                data: JSON.stringify(data),
-                error: function(){
-                    $.LoadingOverlay("hide")
-                }
-            }).done(function (data) {
-                Forwarding.simple(selectedTool, data);
-            });
-        };
 
         window[resultName + "_download"] = function(){
             // get result json

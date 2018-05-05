@@ -9,16 +9,16 @@ import org.scalajs.jquery.{ jQuery, JQuery, JQueryAjaxSettings, JQueryXHR }
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
-import scala.scalajs.js.annotation.JSExportTopLevel
+import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 
 @JSExportTopLevel("NormalResultView")
 class NormalResultView(container: JQuery,
                        jobID: String,
-                       sh: Int,
+                       tempShownHits: Int,
                        var wrapped: Boolean,
                        var colorAAs: Boolean,
                        resultContext: ResultContext)
-    extends ResultView(container, jobID, sh, resultContext) {
+    extends ResultView(container, jobID, tempShownHits, resultContext) {
 
   override def init(): Unit = {
 
