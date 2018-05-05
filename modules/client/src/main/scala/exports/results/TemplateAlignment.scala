@@ -24,16 +24,16 @@ class TemplateAlignment(tool: String) {
     jQuery.ajax(
       js.Dictionary(
           "url" -> s"/results/templateAlignment/$jobID/$acc",
-          "success" -> { (data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) =>
+          "success" -> { (_: js.Any, _: js.Any, _: JQueryXHR) =>
             jQuery.ajax(
               js.Dictionary(
                   "url" -> s"/files/$jobID/$acc.$extension",
-                  "success" -> { (data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) =>
+                  "success" -> { (data: js.Any, _: js.Any, _: JQueryXHR) =>
                     jQuery("#alignmentTemplate").value(data.toString)
                     jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
                   },
                   "error" -> { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
-                    dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
+                    println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
                     jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
                   }
                 )
@@ -41,7 +41,7 @@ class TemplateAlignment(tool: String) {
             )
           },
           "error" -> { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
-            dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
+            println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
             jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
             jQuery("#alignmentTemplate").value("Sorry, failed to fetch Template Alignment.")
           }
