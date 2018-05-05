@@ -90,6 +90,7 @@ lazy val client = (project in file("modules/client"))
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
   .settings(
     scalaJSUseMainModuleInitializer := true,
+    scalacOptions += "-P:scalajs:sjsDefinedByDefault",
     scalaJSUseMainModuleInitializer in Test := false,
     jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv,
     libraryDependencies ++= Seq(
@@ -99,6 +100,7 @@ lazy val client = (project in file("modules/client"))
       "org.querki"    %%% "jquery-facade"   % "1.2"
     )
   )
+
 
 fork := true // required for "sbt run" to pick up javaOptions
 javaOptions += "-Dplay.editor=http://localhost:63342/api/file/?file=%s&line=%s"

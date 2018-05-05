@@ -1,13 +1,10 @@
 @import de.proteinevolution.tools.results.HHrepID
-@(jobID: String, filePath: String, resultName: String, tool: de.proteinevolution.models.Tool)()
-@views.html.forwardmodals.simpler(tool, resultName)
-@views.html.forwardmodals.hhsuite(tool, tool.toolNameShort + "_hhrepid")
+@(jobID: String, filePath: String, tool: de.proteinevolution.models.Tool)()
+@views.html.forwardmodals.hhsuite(jobID)
 
 @if(HHrepID.existsResult(filePath)) {
     <div class="colorOptsAlignment">
-        <a id="forwardButtonHHsuite" data-open="forwardModal_@{
-            tool.toolNameShort
-        }_hhrepid">Forward Query A3M</a>
+        <a id="forwardButtonHHsuite" data-open="forwardModalHHSuite">Forward Query A3M</a>
         <hr class="horizontal-line">
     </div>
     <div class="note">
@@ -33,9 +30,7 @@
     </div>
 }else{
     <div class="colorOptsAlignment">
-        <a id="forwardButtonHHsuite" data-open="forwardModal_@{
-            tool.toolNameShort
-        }_hhrepid">Forward Query A3M</a>
+        <a id="forwardButtonHHsuite" data-open="forwardModalHHSuite">Forward Query A3M</a>
         <hr id="line-element" class="horizontal-line">
     </div>
 
@@ -55,17 +50,3 @@
         <hr id="line-element" class="horizontal-line">
     </div>
 }
-
-<script>
-
-        function @{tool.toolNameShort}_forwardQueryMSA(selectedTool) {
-            $.LoadingOverlay("show");
-            $.ajax({
-                type: 'GET',
-                url: 'files/@jobID/reduced.a3m'
-            }).done(function (data_) {
-                Forwarding.simple(selectedTool, data_.toString());
-            });
-        }
-
-</script>

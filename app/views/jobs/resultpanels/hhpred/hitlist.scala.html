@@ -7,32 +7,25 @@
             No hits found!
         </div>
     } else {
-    @* Loads ForwardModals *@
-    @views.html.forwardmodals.hhsuite(tool, tool.toolNameShort + "_hhsuite")
-    @views.html.forwardmodals.simple(tool, tool.toolNameShort)
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
             <div id="scrollLinks">
-                <a id="visualizationScroll" onclick="ResultViewHelper.scrollToSection('visualization')">Vis</a>
-                <a id="hitlistScroll" onclick="ResultViewHelper.scrollToSection('hitlist')">Hits</a>
-                <a id="alignmentsScroll" onclick="ResultViewHelper.scrollToSection('alignments')">Aln</a>
+                <a id="visualizationScroll" name="#visualization">Vis</a>
+                <a id="hitlistScroll" name="#hitlist">Hits</a>
+                <a id="alignmentsScroll" name="#alignments">Aln</a>
             </div>
             <span class="headerDivider"></span>
             <div id="controlls">
-                <a onclick="ResultViewHelper.toggleAllCheckboxes();" class="selectAllSeqBar" id="extraWide">Select all</a>
-                <a id="forwardButtonSimple" data-open="forwardModal_@{
-                    tool.toolNameShort
-                }">Forward</a>
-                <a id="forwardButtonHHsuite" data-open="forwardModal_@{
-                    tool.toolNameShort
-                }_hhsuite">Forward Query A3M</a>
+                <a class="selectAllSeqBar extraWide">Select all</a>
+                <a id="forwardButtonSimple" data-open="forwardModalSimple">Forward</a>
+                <a id="forwardButtonHHsuite" data-open="forwardModalHHSuite">Forward Query A3M</a>
                 @*only show create model when chosen db=mmcif70/pdb70*@
                 @if(result.db.matches("mmcif70/pdb70") || result.db.matches("mmcif30/pdb30") ) {
                     <a onclick="@{tool.toolNameShort}_manual()">Model using selection</a>
                 }
                 <a onclick="downloadHHR()" class="downloadHHR">HHR file</a>
-                <a onclick="ResultViewHelper.toggleAlignmentColoring(jobID, shownHits, wrapped, colorAAs, numHits); colorAAs = !colorAAs;" class="colorAA">Color Seqs</a>
-                <a onclick="ResultViewHelper.toggleIsWrapped(jobID, shownHits, numHits, wrapped, colorAAs); wrapped = !wrapped;" id="wrap">Wrap Seqs</a>
+                <a class="colorAA">Color Seqs</a>
+                <a id="wrap">Wrap Seqs</a>
                 </div>
         </div>
     </div>
@@ -96,7 +89,7 @@
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
         <div>
-            <a class="button tiny resubmitSection" onclick="HitsSlider.resubmit('@{result.query.seq}', '>' + '@{result.query.accession}')" type="button" id="resubmitSection">
+            <a class="button tiny resubmitSection" type="button" id="resubmitSection">
                 Resubmit section
             </a>
         </div>
@@ -161,24 +154,6 @@
 
 
     @*MODALS*@
-    <div class="reveal" id="templateAlignmentModal" data-reveal>
-        <p>Template Alignment (~100 most distinct sequences)</p>
-        <div>
-            <select onclick="forwardTemplateAlignment_(this.value, $('#alignmentTemplate').val())" id="alignmentTemplate_tool">
-                <option value="" selected>Forward to</option>
-                <option value="formatseq" >FormatSeq</option>
-                <option value="hhblits" >HHblits</option>
-                <option value="hhomp" >HHomp</option>
-                <option value="hhpred" >HHpred</option>
-                <option value="hhrepid" >HHrepID</option>
-            </select>
-        </div>
-        <textarea rows="35" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
-        <button class="close-button" id="alignmentTemplateClose" data-close aria-label="Close modal" type="button">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-
     <div class="reveal" id="structureModal" data-reveal>
         <p>Template 3D structure</p>
         <div id="accessionStructure"> </div>
@@ -188,9 +163,13 @@
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
+
+    @views.html.jobs.resultpanels.templateAlignmentModal()
+    @* Loads ForwardModals *@
+    @views.html.forwardmodals.hhsuite(jobID)
+    @views.html.forwardmodals.simple(tool, jobID)
 }
 <script>
-
 
         $("#structureModal").bind('closed.zf.reveal', (function () {
             //clear 3D structure modal
@@ -199,45 +178,25 @@
             $.LoadingOverlay("hide");
         }));
 
-
-        $("#templateAlignmentModal").bind('closed.zf.reveal', (function () {
-            $('#alignmentTemplate_tool').val('');
-            $.LoadingOverlay("hide");
-        }));
-
         var currentStructureAccession = "";
-        var colorAAs = true;
         var shownHits = 100;
-        var showMore = 100;
-        var numHits = @{result.num_hits};
-        var jobID = '@{jobID}';
-        var loading = false;
-        var wrapped = true;
+        var jobID = "@{jobID}";
 
-        // use this array to store
-        // checked checkboxes
-        // due to pagination/lazyload
-        var checkboxes = [];
-
-        $(document).ready(function () {
-            hitlistBaseFunctions();
-            if (numHits > 0) {
-                $("#wrap").text("Unwrap Seqs");
-                $("#wrap").addClass("colorToggleBar");
-	        new DataTables("hhpred").config(jobID, numHits);
-                var firstQueryStart = @{if(result.num_hits > 0){ result.HSPS.head.query.start}};
-                var firstQueryEnd = @{if(result.num_hits > 0){ result.HSPS.head.query.end}};
-                /* without timeout SLIDER is displayed */
-                HitsSlider.show(@{result.query.seq.length}, firstQueryStart, firstQueryEnd);
-                shownHits = shownHits > numHits ? numHits : shownHits;
-                ResultViewHelper.showHits(0, shownHits, wrapped, colorAAs, numHits, jobID);
-                $('#templateAlignmentModal').foundation();
+        $(function () {
+            var context = {
+                numHits: @result.num_hits,
+                toolName: "@tool.toolNameShort",
+                firstQueryStart: @result.HSPS.head.query.start,
+                firstQueryEnd: @result.HSPS.head.query.end,
+                query: {
+                    seq: "@result.query.seq",
+                    accession: "@result.query.accession"
+                }
+            };
+            Toolkit.resultView = new NormalResultView($("#jobview"), jobID, shownHits, true, true, context);
+            if (@result.num_hits > 0) {
                 $('#structureModal').foundation();
-                $(".colorAA").addClass("colorToggleBar");
-                $("#wrap").hide();
-                $(".colorAA").hide();
             }
-
         });
 
         window["downloadHHR"] = function(){
@@ -247,7 +206,7 @@
                 method: "GET",
                 url: fileURL
             }).done(function(data){
-                download(downloadFilename, data);
+                DownloadHelper.download(downloadFilename, data);
             })
         };
 
@@ -259,7 +218,7 @@
                 $("input:checkbox[name=alignment_elem][value=1]").prop("checked", true);
                 alert("No templates selected. Using first template for modelling.");
             }
-            formData.append("templates", checkboxes.join(" "));
+            formData.append("templates", Toolkit.resultView.getSelectedValues.join(" "));
             formData.append("parentid", jobID);
 
 
@@ -308,7 +267,7 @@
             }
             var url = '/results/getStructure/' + accession + fileEnding;
 
-            $(document).ready(function () {
+            $(function () {
                 $('#accessionStructure').append("<h6 class='structureAccession'>3D Structure: " + accession + "</h6>");
                 $('#viewport').width(800).height(700).find('canvas').first().remove();
                 stage = new NGL.Stage("viewport");
@@ -323,26 +282,5 @@
             });
 
         }
-
-        function forwardTemplateAlignment_(tool, forwardData) {
-            if (tool === "") {
-                return;
-            }
-            $('#templateAlignmentModal').foundation('close');
-            Forwarding.simple(tool, forwardData);
-        }
-
-
-        function @{tool.toolNameShort}_forwardQueryMSA(selectedTool) {
-            $.LoadingOverlay("show");
-            $.ajax({
-                type: 'GET',
-                url: "files/" + jobID + "/reduced.a3m"
-            }).done(function (data_) {
-                Forwarding.simple(selectedTool, data_.toString());
-            });
-        }
-
-
 
 </script>
