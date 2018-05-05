@@ -374,9 +374,7 @@ final class ToolFactory @Inject()(
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels.hhrepid(jobID,
-                                                   s"${constants.jobPath}$jobID/results/query.hhrepid",
-                                                   values(ToolNames.HHBLITS.value))
+              views.html.jobs.resultpanels.hhrepid(jobID, s"${constants.jobPath}$jobID/results/query.hhrepid")
             )
           }
         )
