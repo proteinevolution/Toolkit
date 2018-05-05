@@ -15,6 +15,7 @@ window.Toolkit = {
     currentJobID : -1,
     trackedJobIDs: [],
     notFoundJobID: "", // keep track of which job was not found last
+    resultView: null,
     getSuggestion : function (ctrl : any) {
         return function (e : any) {}
     },

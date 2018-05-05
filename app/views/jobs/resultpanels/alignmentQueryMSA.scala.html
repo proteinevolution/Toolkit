@@ -2,11 +2,11 @@
 @import java.lang.String
 @(jobID: String, alignment: AlignmentResult, resultName: String, tool: de.proteinevolution.models.Tool)()
 
-@views.html.forwardmodals.simpler(tool, resultName)
+@views.html.forwardmodals.simpler(tool, jobID, resultName, "NORMAL")
 
 <div class="colorOptsAlignment">
-    <a onclick="ResultViewHelper.toggleAllCheckboxes();" class="selectAllSeq"><span class="@{resultName}_selectAllSeqBar">Select all</span></a>
-    <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
+    <a class="selectAllSeqBar">Select all</a>
+    <a type="button" id="forwardButtonSimpler" data-open="forwardModalSimpler"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download Reduced A3M</span></a>
     <a type="button" id="downloadAlignmentFull"  onclick="@{resultName}_downloadFull()"><span>Download Full A3M</span></a>
     <hr class="horizontal-line">
@@ -31,28 +31,17 @@
 </div>
 
 <script>
-        var jobID = '@jobID';
         var shownHits = 20;
-        var showMore = 100;
-        var loading = false;
-        var numHits = @alignment.alignment.length;
         var resultName = '@resultName';
-        window["@{resultName}_forward"] = function(selectedTool){
-            var data = {"checkboxes": Checkboxes.getChecked, "resultName": resultName};
-            $.LoadingOverlay("show");
-            // get result json
-            $.ajax({
-                type: "POST",
-                url: "/results/alignment/getAln/" + jobID,
-                contentType: "application/json",
-                data: JSON.stringify(data),
-                error: function(){
-                    $.LoadingOverlay("hide")
-                }
-            }).done(function (data) {
-                Forwarding.simple(selectedTool, data);
-            });
-        };
+
+        $(function () {
+            var context = {
+                numHits: @alignment.alignment.length,
+                toolName: "@tool.toolNameShort"
+            };
+            var jobID = "@{jobID}";
+            Toolkit.resultView = new AlnResultView($("#jobview"), jobID, resultName, shownHits, "fas", context);
+        });
 
         window["@{resultName}_download"] = function(){
             // get result json
@@ -68,7 +57,7 @@
                 type: 'GET',
                 url: fileUrl
             }).done(function (data) {
-                download(downloadFilename, data.toString());
+                DownloadHelper.download(downloadFilename, data.toString());
             });
         };
 
@@ -86,12 +75,8 @@
                 type: 'GET',
                 url: fileUrlFull
             }).done(function (data) {
-                download(downloadFilenameFull, data.toString());
+                DownloadHelper.download(downloadFilenameFull, data.toString());
             });
         };
-        $(document).ready(function () {
-            // trigger lazyload for loading alignment
-            shownHits = shownHits > numHits ? numHits : shownHits;
-            ResultViewHelper.showHitsAln(0, shownHits, numHits, jobID, resultName, "fas");
-        });
+
 </script>
