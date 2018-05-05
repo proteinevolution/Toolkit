@@ -22,7 +22,7 @@ object BioDB {
     case x if pfamReg.test(x)                          => "pfam"
     case x if ncbiReg.test(x)                          => "ncbi"
     case x if uniprotReg.test(x)                       => "uniprot"
-    case _                                             => null
+    case _                                             => throw new IllegalArgumentException("not a valid database name")
   }
 
 }
