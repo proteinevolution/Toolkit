@@ -1,5 +1,5 @@
 @import de.proteinevolution.tools.results.HHrepID
-@(jobID: String, filePath: String, tool: de.proteinevolution.models.Tool)()
+@(jobID: String, filePath: String)()
 @views.html.forwardmodals.hhsuite(jobID)
 
 @if(HHrepID.existsResult(filePath)) {
