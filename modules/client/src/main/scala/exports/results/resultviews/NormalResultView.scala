@@ -167,7 +167,7 @@ class NormalResultView(container: JQuery,
               loading = false
             },
             error = { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
-              dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
+              println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
               loading = false
             },
             `type` = "POST"
