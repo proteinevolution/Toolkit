@@ -174,7 +174,7 @@ const tilescomponent = {
                     "class": "column column-block tile_main_container"
                 },
                 m("div", {"class": "tile_container"},
-                    m("div", {"class": "tile_img", 'style': {'background-image': 'url(/assets/images/fold_galaxy.png)'}}
+                    m("div", {"class": "tile-img", 'style': {'background-image': 'url(/assets/images/fold_galaxy.png)'}}
                     ),
                     m("div", {"class": "text_part"},
                         m("h5", "Recent Updates"),
@@ -197,7 +197,7 @@ const tilescomponent = {
                                     m("em", "J Mol Biol. 2017 Dec 16.")))
                         )
                     ),
-                    m("div", {"class": "quick_links"},
+                    m("div", {"class": "quick-links"},
                         m("h5", "Quick Links"),
                         m("table",
                             m("tr",
