@@ -5,7 +5,6 @@ import javax.inject.{ Inject, Singleton }
 
 import better.files._
 import de.proteinevolution.tel.env.Env
-import play.api.Logger
 import de.proteinevolution.tel.param.Implicits._
 import scala.collection.immutable.ListMap
 
@@ -110,7 +109,6 @@ class ListGenParamFile(name: String, path: String, private var allowed: Set[Stri
     clearTextNames = ListMap.empty
 
     allowed = f.lineIterator.map { line =>
-      Logger.info("Reading line " + line)
       val spt = line.split("\\s+")
       clearTextNames = clearTextNames + (spt(0) -> spt(1))
       spt(0)
