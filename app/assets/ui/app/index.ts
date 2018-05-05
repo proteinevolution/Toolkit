@@ -171,7 +171,7 @@ const tilescomponent = {
 
             },
             m("div", {
-                    "class": "column column-block tile_main_container"
+                    "class": "column column-block tile-main-container"
                 },
                 m("div", {"class": "tile_container"},
                     m("div", {"class": "tile-img", 'style': {'background-image': 'url(/assets/images/fold_galaxy.png)'}}
