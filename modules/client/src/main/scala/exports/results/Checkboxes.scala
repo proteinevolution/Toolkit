@@ -13,7 +13,7 @@ import scala.scalajs.js
  */
 class Checkboxes(private val outerContainer: JQuery) {
 
-  var checkedValues: mutable.Map[String, Boolean] = mutable.Map()
+  val checkedValues: mutable.Map[String, Boolean] = mutable.Map()
 
   def initForContainer(container: JQuery): Unit = {
     populateCheckboxes(container)
