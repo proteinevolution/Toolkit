@@ -457,7 +457,7 @@ select:-moz-focusring {
   display: flex;
 }
 
-#extraWide {
+.extraWide {
   width: 5.7em;
   margin-right: 0.9em !important;
   height: 1.7em;
@@ -471,12 +471,6 @@ select:-moz-focusring {
   margin-right: 2em;
   border-right: 1px solid #666;
   opacity: 0.4;
-}
-
-.colorToggle {
-  color: #006F62 !important;
-  border-bottom: solid 1px rgba(0, 110, 98, 0.3) !important;
-  padding-bottom: 6px;
 }
 
 .colorToggleBar {
@@ -575,10 +569,6 @@ select:-moz-focusring {
   font-size: 0.9em;
 }
 
-#forwardModal_alignment {
-  height: 10em;
-}
-
 .forward_form {
   width: 99%;
   display: flex;
@@ -590,41 +580,46 @@ select:-moz-focusring {
   border-radius: 4px;
 }
 
-#forward {
+.forwardBtn {
   float: right;
   margin-top: 0.5em;
   -webkit-appearance: none;
   border-radius: 3px !important;
   margin-left: 2em;
+  &:hover {
+    background-color: gray !important;
+  }
 }
 
-#forward:hover {
-  background-color: gray !important;
+.forwardFormLast {
+  padding-right: 0;
+  .forwardBtn {
+    margin-top: 2em;
+  }
 }
 
-.forwardFormLast #forward {
-  margin-top: 2em;
-}
+.select_forward {
+  padding-left: 0;
+  select {
+    font-size: 0.80em !important;
+    -moz-appearance: none !important;
+    -webkit-appearance: none !important;
+    border-radius: 4px;
+    margin-top: 1.5em;
+    margin-left: 0.25em;
+    padding-bottom: 0.5em;
+    padding-top: 0.5em;
+    height: 2.75em;
+    color: #000;
+    text-shadow: 0 0 0 #000;
+    width: 12em;
+  }
 
-.select_forward select {
-  font-size: 0.80em !important;
-  -moz-appearance: none !important;
-  -webkit-appearance: none !important;
-  border-radius: 4px;
-  margin-top: 1.5em;
-  margin-left: 0.25em;
-  padding-bottom: 0.5em;
-  padding-top: 0.5em;
-  height: 2.75em;
-  color: #000;
-  text-shadow: 0 0 0 #000;
-  width: 12em;
-}
-
-.select_forward ul {
-  top: auto !important;
-  bottom: 100%;
-  margin-bottom: 1px;
+  ul {
+    top: auto !important;
+    bottom: 100%;
+    margin-bottom: 1px;
+  }
 }
 
 label.forwardLabel input[type=radio] {
@@ -769,7 +764,7 @@ label.forwardLabel input[type=radio] {
 }
 
 @media screen and (max-width: 930px) {
-  #extraWide {
+  .extraWide {
     width: 4.5em;
   }
 }
@@ -801,4 +796,3 @@ label.forwardLabel input[type=radio] {
     float: left;
   }
 }
-

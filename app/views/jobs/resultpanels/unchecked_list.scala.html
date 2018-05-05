@@ -1,15 +1,14 @@
 @import play.api.libs.json.JsValue
-@import java.lang.String
-@(toolName: String, jobID: String, jsValue: JsValue, tool : de.proteinevolution.models.Tool)()
+@(toolName: String, jobID: String, jsValue: JsValue, tool: de.proteinevolution.models.Tool)()
 <div class="colorOptsAlignment">
-    <a type="button" data-open="forwardModal_@toolName""><span>Forward selected</span></a>
-    <a type="button" id="downloadAlignment"  onclick="download_()"><span>Download File</span></a>
+    <a type="button" data-open="forwardModalSimpler"><span>Forward selected</span></a>
+    <a type="button" id="downloadAlignment" onclick="download_()"><span>Download File</span></a>
     <hr class="horizontal-line">
 </div>
 <br/><br/>
 <div class="h1">Retrieved @{{jsValue \ "ids" \ "ACC_IDS"}.as[List[JsValue]].size} IDs<br/><br/></div>
 
-    @views.html.forwardmodals.simpler(tool, toolName)
+    @views.html.forwardmodals.simpler(tool, jobID, toolName, "UNCHECKED_LIST")
 
  <div class="uncheckedListWrap">
     @for((id) <- (jsValue \ "ids" \ "ACC_IDS").as[List[JsValue]]){
@@ -20,22 +19,11 @@
  </div>
 
 <script>
-    var data=null;
-    // get result json
-    var fileUrl = "/files/@jobID/ids.json";
-    $.getJSON(fileUrl, function (data_) {
-    data = data_;
-    });
-
-    window["@{toolName}_forward"] = function(tool) {
-        forwardData = data.ACC_IDS;
-        Forwarding.simple(tool, forwardData.join("\n"));
-    };
-
     function download_(){
-        var fileString = "";
-        fileString = data.ACC_IDS;
-        var filename = "@{toolName}_jobID_@{jobID}" + ".fasta";
-        download(filename, fileString.join("\n"));
+        $.getJSON("/files/@jobID/ids.json", function (data) {
+            var fileString = data.ACC_IDS;
+            var filename = "@{toolName}_jobID_@{jobID}" + ".fasta";
+            DownloadHelper.download(filename, fileString.join("\n"));
+        });
     }
 </script>

@@ -82,6 +82,7 @@ declare class Toolkit{
     public static currentJobID : string;
     public static trackedJobIDs: Array<string>;
     public static notFoundJobID: string;
+    public static resultView: any;
     public static controller : any;
     public static view: any;
     public static isJob : boolean;

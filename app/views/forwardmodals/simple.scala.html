@@ -1,76 +1,49 @@
-@import java.lang.String
-@(tool: de.proteinevolution.models.Tool, viewName: String)
+@(tool: de.proteinevolution.models.Tool, jobID: String)
 
-<div class="reveal forwardModal" id="forwardModal_@{viewName}" data-reveal>
+<div class="reveal forwardModal forwardModalSimple" id="forwardModalSimple" data-reveal>
     <p>Forward Job</p>
 
     <div class="forward_form">
         <div class="forwardFormDiv">
-            <label style="font-weight: bold">Forward hits</label>
-            <label class="forwardLabel"> <input type="radio" class="selectedHits" id="selectedHits_@viewName" name="radio1">Selected</label>
+            <label><b>Forward hits</b></label>
+            <label class="forwardLabel">
+                <input type="radio" class="selectedHits selectedHitsRadioBtn" name="radio1" checked>
+                Selected
+            </label>
             <div class="two_input">
-                <label class="forwardLabel"><input type="radio" class="selectedHits" id="accordingEvalue_@viewName" name="radio1">E-value better than</label>
-                <input class="result_inputs selectedHits" type="text" id="forwardEvalue_@viewName" value="0.001">
+                <label class="forwardLabel">
+                    <input type="radio" class="selectedHits accordingEvalueRadioBtn" name="radio1">
+                    E-value better than
+                </label>
+                <input class="result_inputs selectedHits forwardEvalueNormalInput" type="text" value="0.001" >
             </div>
         </div>
     </div>
 
     <div class="row">
         <div class="select_forward large-4 columns">
-            <select class="selectedHits_@viewName" id="forwardSelect_@viewName">
+            <select class="selectedHits forwardSelect">
                 <option value="">Select a tool</option>
-
-                    @for(forwardTool <- {tool.forwardAlignment}) {
-                        <option id="alignmentOptions_@viewName"value="@forwardTool">@forwardTool</option>
-                    }
-                    @for(forwardTool <- {tool.forwardMultiSeq}) {
-                        <option id="multiSeqOptions_@viewName" value="@forwardTool">@forwardTool</option>
-                    }
-
+                @for(forwardTool <- {tool.forwardAlignment}) {
+                    <option id="alignmentOptions" value="@forwardTool">@forwardTool</option>
+                }
+                @for(forwardTool <- {tool.forwardMultiSeq}) {
+                    <option id="multiSeqOptions" value="@forwardTool">@forwardTool</option>
+                }
             </select>
         </div>
-        <div class="large-5 columns">
-            <div class="callout alert" id="forwardWarning" style="display: none;" >
-                <span>Only some tools accept full-length sequences as input!</span>
-            </div>
-        </div>
 
-        <div class="forwardFormLast large-3 columns"><a class="success button small" id="forward" onclick="@{viewName}_forward_();" type="button">
-            Forward Job</a>
+        <div class="forwardFormLast large-3 columns">
+            <button class="success button small forwardBtn" type="button">
+                Forward Job
+            </button>
         </div>
     </div>
 
 </div>
 
 <script>
-        window["@{viewName}_forward_"] = function(){
-            var selectedTool, boolEvalue, evalue;
-            boolEvalue = $('#accordingEvalue_@viewName').is(':checked');
-            selectedTool = $('#forwardSelect_@viewName').val();
-            evalue = $("#forwardEvalue_@viewName").val();
-            if(selectedTool === ""){
-                alert("Please select a tool!");
-                $('#forwardModal_@{viewName}').foundation('close');
-                return;
-            }
-            Forwarding.process(selectedTool, boolEvalue, evalue, false, false);
-            if (selectedTool !== "") {
-                $('#forwardModal_@{viewName}').foundation('close');
-            }
-            if(evalue === "") {
-                alert("no evalue!")
-            }
-        };
-        $("#forwardModal_@viewName").foundation();
-        $('#alignmentOptions_@viewName').show();
-        $('#multiSeqOptions_@viewName').hide();
-        //default check radio buttons
-        $('#selectedHits_@viewName').prop("checked", true);
-        $("#forwardModal_@viewName").bind('closed.zf.reveal', (function () {
-            $('#forwardSelect_@viewName').val('');
-            $('#forwardEvalue_@viewName').val('0.001');
-            $('#selectedHits_@viewName').prop("checked", true);
-        }));
+    ForwardingModalHelper.bindSimple($("#jobview").find(".forwardModalSimple"), "@jobID")
 </script>
 
 

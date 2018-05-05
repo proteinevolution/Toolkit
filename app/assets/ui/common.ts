@@ -171,5 +171,5 @@ const aa_color_background : Map<string, string> = new Map<string, string>();
 // decorating fix for hhviz, only temporary:
 
 const scrollToElem = function(num: string) {
-    ResultViewHelper.scrollToHit(Number(num));
+    Toolkit.resultView.scrollToHit(Number(num));
 };

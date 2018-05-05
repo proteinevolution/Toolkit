@@ -1,29 +1,20 @@
 package exports.results
 
-import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 import scala.scalajs.js
-import js.Dynamic.{ global => g }
+import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 
-@JSExportTopLevel("DataTables")
 class DataTables(toolName: String) {
 
   private def lengthMenu(numHits: Int) = js.Array(
     js.Array(10, 25, 50, 100, numHits),
     js.Array("10", "25", "50", "100", "All")
   )
-  private def callbacks = {
-    if (toolName == "hhomp")
-      js.undefined
-    else {
-      g.linkCheckboxes()
-    }
-  }
 
   @JSExport
-  def config(jobID: String, numHits: Int): Unit = {
+  def config(jobID: String, numHits: Int, callbacks: () => js.Any): Unit = {
     js.Dynamic.global
       .$("#htb")
-      .dataTable(
+      .DataTable(
         js.Dynamic
           .literal(
             "processing"   -> true,
@@ -33,7 +24,7 @@ class DataTables(toolName: String) {
             "lengthMenu"   -> lengthMenu(numHits),
             "searching"    -> true,
             "pageLength"   -> 25,
-            "drawCallback" -> callbacks.asInstanceOf[js.Any]
+            "drawCallback" -> callbacks
           )
           .asInstanceOf[js.Object]
       )

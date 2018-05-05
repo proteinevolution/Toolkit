@@ -2,10 +2,9 @@
 @import play.api.libs.json.JsValue
 @import play.api.libs.json.JsDefined
 @import play.twirl.api.Html
-@import java.lang.String
 @import de.proteinevolution.tools.results.Common
 @(jobID: String, jsValue: JsValue, tool: de.proteinevolution.models.Tool)()
-@views.html.forwardmodals.simpler(tool, tool.toolNameShort)
+@views.html.forwardmodals.simpler(tool, jobID, tool.toolNameShort, "PATTERN_SEARCH")
 @if((jsValue \ jobID \ "hits").as[List[JsObject]].size < 1) {
     <div class="callout alert noHitsWide" id="noHits">
         No hits found!
@@ -13,7 +12,7 @@
 }else{
 <div class="colorOptsAlignment">
     <a onclick="download_()" type="button"><span id="downloadAlignment">Download Hits</span></a>
-    <a data-open="forwardModal_@{tool.toolNameShort}" type="button"><span id="downloadAlignment">Forward All</span></a>
+    <a data-open="forwardModalSimpler" type="button"><span id="downloadAlignment">Forward All</span></a>
     <hr class="horizontal-line">
 </div>
 <div id="alignmentResultView">
@@ -61,40 +60,27 @@
     </div>
 <hr class="horizontal-line">
 
-    <script>
-        var data;
-       // wrap seqs by default
-        $(document).ready(function () {
-            wrapSequences()
-        });
+<script>
 
-        // get result json
-        var fileUrl = "/files/@jobID/@{jobID}" + ".json";
-        $.getJSON(fileUrl, function (data_) {
-            data = data_;
-        });
+   // wrap seqs by default
+    $(function () {
+        wrapSequences()
+    });
 
-        function wrapSequences(){
-                $(".sequenceAlignment").addClass("wrap");
-                $("#wrapSequences").addClass("colorToggle");
-        }
+    function wrapSequences(){
+            $(".sequenceAlignment").addClass("wrap");
+            $("#wrapSequences").addClass("colorToggleBar");
+    }
 
-        window["@{tool.toolNameShort}_forward"] = function(selectedTool){
-            $.LoadingOverlay("show");
-            var fileURL="/files/@{jobID}/@{jobID}" + ".fas";
-            Forwarding.redirect(selectedTool, fileURL);
-
-        };
-
-        function download_(){
-            var downloadFilename = "@{tool.toolNameShort}_@{jobID}" + ".fas";
-            var fileURL="/files/@{jobID}/@{jobID}" + ".fas";
-            $.ajax({
-                method: "GET",
-                url: fileURL
-            }).done(function(data){
-                download(downloadFilename, data);
-            })
-        }
+    function download_(){
+        var downloadFilename = "@{tool.toolNameShort}_@{jobID}" + ".fas";
+        var fileURL="/files/@{jobID}/@{jobID}" + ".fas";
+        $.ajax({
+            method: "GET",
+            url: fileURL
+        }).done(function(data){
+            DownloadHelper.download(downloadFilename, data);
+        })
+    }
 
 </script>
