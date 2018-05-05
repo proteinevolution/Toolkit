@@ -1,3 +1,5 @@
+package components.error
+
 import com.tgf.pizza.scalajs.mithril.{ m, Component, MithrilProp, VirtualDom }
 
 import scala.scalajs.js

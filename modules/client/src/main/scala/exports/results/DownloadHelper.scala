@@ -1,6 +1,6 @@
 package exports.results
 
-import exports.extensions.{ ExtendedLink, ExtendedWindow }
+import exports.extensions.Vanilla.{ ExtendedLink, ExtendedWindow }
 import org.scalajs.dom
 import org.scalajs.dom.raw.{ Blob, BlobPropertyBag }
 
