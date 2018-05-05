@@ -54,7 +54,7 @@ object Forwarding {
         redirect(selectedTool, s"files/$jobID/$filename.fa")
       })
       .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
-        dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
+        println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
         jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
       })
   }
@@ -86,7 +86,7 @@ object Forwarding {
         simple(selectedTool, data.toString)
       })
       .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
-        dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
+        println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
       })
       .always(() => {
         jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
@@ -134,7 +134,7 @@ object Forwarding {
         }
       })
       .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
-        dom.console.log(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
+        println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
       })
       .always(() => {
         jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
