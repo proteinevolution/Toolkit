@@ -29,7 +29,7 @@ class AlnResultView(container: JQuery,
       container.find("#loadingHits").show()
       container.find("#loadHits").hide()
       loading = true
-      val route = s"/results/alignment/getAln/$jobID"
+      val route = s"/results/alignment/loadHits/$jobID"
       jQuery.ajax(
         js.Dynamic
           .literal(
