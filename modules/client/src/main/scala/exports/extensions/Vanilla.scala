@@ -9,7 +9,7 @@ object Vanilla {
   @js.native
   sealed trait Navigator extends js.Object {
     def msSaveBlob(blob: js.Any, filename: String): Unit = js.native
-    def msSaveOrOpenBlob: Boolean                        = js.native
+    def msSaveOrOpenBlob: js.UndefOr[Boolean]            = js.undefined
   }
 
   @js.native

@@ -97,10 +97,10 @@ lazy val client = (project in file("modules/client"))
       "org.scala-js"  %%% "scalajs-dom"     % "0.9.5",
       "com.tgf.pizza" %%% "scalajs-mithril" % "0.1.1",
       "be.doeraene"   %%% "scalajs-jquery"  % "0.9.3",
-      "org.querki"    %%% "jquery-facade"   % "1.2"
+      "org.querki"    %%% "jquery-facade"   % "1.2",
+      "org.typelevel" %%% "cats-core"       % "1.1.0"
     )
   )
-
 
 fork := true // required for "sbt run" to pick up javaOptions
 javaOptions += "-Dplay.editor=http://localhost:63342/api/file/?file=%s&line=%s"
