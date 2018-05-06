@@ -2,20 +2,19 @@ package exports.results.resultviews
 
 import exports.extensions.JQueryExtensions
 import exports.facades.ResultContext
-import org.scalajs.dom
 import org.scalajs.jquery.{ jQuery, JQuery, JQueryAjaxSettings, JQueryXHR }
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
-import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
+import scala.scalajs.js.annotation.JSExportTopLevel
 
 @JSExportTopLevel("AlnResultView")
 class AlnResultView(container: JQuery,
                     jobID: String,
                     resultName: String,
-                    tempShownHits: Int,
-                    resultContext: ResultContext)
-    extends ResultView(container, jobID, tempShownHits, resultContext) {
+                    val tempShownHits: Int,
+                    val resultContext: ResultContext)
+    extends ResultView(container, jobID) {
 
   override def init(): Unit = {
 

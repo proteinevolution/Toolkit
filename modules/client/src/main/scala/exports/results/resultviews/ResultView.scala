@@ -7,7 +7,11 @@ import org.scalajs.jquery._
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
 
-abstract class ResultView(container: JQuery, jobID: String, tempShownHits: Int, val resultContext: ResultContext) {
+abstract class ResultView(container: JQuery, jobID: String) {
+
+  def tempShownHits: Int
+
+  def resultContext: ResultContext
 
   @JSExport
   var shownHits: Int = if (tempShownHits > resultContext.numHits) resultContext.numHits else tempShownHits
