@@ -1,5 +1,6 @@
 package exports.results.resultviews
 
+import exports.extensions.JQueryExtensions
 import exports.facades.ResultContext
 import org.scalajs.dom
 import org.scalajs.jquery.{ jQuery, JQuery, JQueryAjaxSettings, JQueryXHR }
@@ -60,5 +61,16 @@ class AlnResultView(container: JQuery,
     }
   }
 
-  override def bindEvents(): Unit = {}
+  override def bindEvents(): Unit = {
+    container
+      .find(".selectAllSeqBar")
+      .on(
+        "click",
+        () => {
+          container.find(".selectAllSeqBar").toggleClass("colorToggleBar")
+          JQueryExtensions.toggleText(container.find(".selectAllSeqBar"), "Select all", "Deselect all")
+          checkboxes.toggleAll(resultContext.numHits)
+        }
+      )
+  }
 }
