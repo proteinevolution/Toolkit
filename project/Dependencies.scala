@@ -1,5 +1,6 @@
 import play.sbt.PlayImport._
 import sbt._
+import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 
 object Dependencies {
 
@@ -30,6 +31,16 @@ object Dependencies {
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
     "com.typesafe.play"    %% "play-json"                % "2.6.9",
     "org.webjars"          %% "webjars-play"             % "2.6.2"
+  )
+
+  lazy val clientDeps: Def.Initialize[Seq[sbt.ModuleID]] = Def.setting(
+    Seq(
+      "org.scala-js"  %%% "scalajs-dom"     % "0.9.5",
+      "com.tgf.pizza" %%% "scalajs-mithril" % "0.1.1",
+      "be.doeraene"   %%% "scalajs-jquery"  % "0.9.3",
+      "org.querki"    %%% "jquery-facade"   % "1.2",
+      "org.typelevel" %%% "cats-core"       % "1.1.0"
+    )
   )
 
   lazy val testDeps = Seq(
