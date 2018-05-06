@@ -29,28 +29,31 @@ class ClustalResultView(container: JQuery,
     loading = true
     container.find("#loadingHits").show()
     container.find("#loadHits").hide()
+    val route = s"/results/alignment/clustal/$jobID"
     jQuery.ajax(
-      js.Dictionary(
-          "url"         -> s"/results/alignment/clustal/$jobID",
-          "method"      -> "POST",
-          "contentType" -> "application/json",
-          "data"        -> JSON.stringify(js.Dictionary("color" -> colorAAs, "resultName" -> resultName)),
-          "success" -> { (data: js.Any, _: js.Any, _: JQueryXHR) =>
-            container.find("#resultTable").append(data)
+      js.Dynamic
+        .literal(
+          url = route,
+          data = JSON.stringify(
+            js.Dynamic.literal("color" -> colorAAs, "resultName" -> resultName)
+          ),
+          contentType = "application/json",
+          success = { (data: js.Any, _: js.Any, _: JQueryXHR) =>
+            container.find("#resultTable").append(data.asInstanceOf[String])
             shownHits = end
             if (shownHits != resultContext.numHits)
               container.find("#loadHits").show()
             checkboxes.initForContainer(container.find("#resultTable"))
             container.find("#loadingHits").hide()
-            js.Dynamic.global.$.LoadingOverlay("hide")
             loading = false
           },
-          "error" -> { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
+          error = { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
             println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
             container.find("#resultTable").append("Error loading Data.")
             container.find("#loadingHits").hide()
             loading = false
-          }
+          },
+          `type` = "POST"
         )
         .asInstanceOf[JQueryAjaxSettings]
     )
