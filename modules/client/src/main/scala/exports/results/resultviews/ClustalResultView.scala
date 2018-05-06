@@ -13,7 +13,7 @@ import scala.scalajs.js.annotation.JSExportTopLevel
 class ClustalResultView(container: JQuery,
                         jobID: String,
                         resultName: String,
-                        var colorAAs: Boolean,
+                        var colorAAs: Boolean = false,
                         tempShownHits: Int,
                         resultContext: ResultContext)
     extends ResultView(container, jobID, tempShownHits, resultContext) {

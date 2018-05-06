@@ -13,7 +13,6 @@ class AlnResultView(container: JQuery,
                     jobID: String,
                     resultName: String,
                     tempShownHits: Int,
-                    format: String,
                     resultContext: ResultContext)
     extends ResultView(container, jobID, tempShownHits, resultContext) {
 
@@ -30,10 +29,7 @@ class AlnResultView(container: JQuery,
       container.find("#loadingHits").show()
       container.find("#loadHits").hide()
       loading = true
-      val route = format match {
-        case "clu" => s"/results/alignment/clustal/$jobID"
-        case _     => s"/results/alignment/loadHits/$jobID"
-      }
+      val route = s"/results/alignment/getAln/$jobID"
       jQuery.ajax(
         js.Dynamic
           .literal(

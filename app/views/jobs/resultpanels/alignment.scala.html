@@ -37,7 +37,7 @@
             toolName: "@tool.toolNameShort"
         };
         var jobID = "@{jobID}";
-        Toolkit.resultView = new AlnResultView($("#jobview"), jobID, resultName, shownHits, "fas", context);
+        Toolkit.resultView = new AlnResultView($("#jobview"), jobID, resultName, shownHits, context);
     });
 
     window[resultName + "_download"] = function(){
