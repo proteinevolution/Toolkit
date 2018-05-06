@@ -5,15 +5,16 @@ import org.scalajs.dom
 import org.scalajs.dom.raw.{ Blob, BlobPropertyBag }
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.JSExportTopLevel
+import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 
 @JSExportTopLevel("DownloadHelper")
 object DownloadHelper {
 
+  @JSExport
   def download(filename: String, text: String) {
     val blob      = new Blob(js.Array(text), BlobPropertyBag("application/octet-stream"))
     val extWindow = dom.window.asInstanceOf[ExtendedWindow]
-    if (extWindow.navigator.msSaveOrOpenBlob) {
+    if (extWindow.navigator.msSaveOrOpenBlob.toOption.getOrElse(false)) {
       extWindow.navigator.msSaveBlob(blob, filename)
     } else {
       val a = dom.document.createElement("a").asInstanceOf[ExtendedLink]
@@ -28,4 +29,5 @@ object DownloadHelper {
     }
     js.Dynamic.global.$.LoadingOverlay("hide")
   }
+
 }
