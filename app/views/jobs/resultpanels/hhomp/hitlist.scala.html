@@ -99,7 +99,7 @@
     @*MODALS*@
     <div class="reveal" id="templateAlignmentModal" data-reveal>
         <p>Template Alignment (~100 most distinct sequences)</p><br>
-        <textarea rows="35" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
+        <textarea rows="35" id="alignmentTemplateTextArea" placeholder="Loading..." spellcheck="false"></textarea>
         <button class="close-button" id="alignmentTemplateClose" data-close aria-label="Close modal" type="button">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -107,10 +107,6 @@
 
 }
 <script>
-
-        $("#templateAlignmentModal").bind('closed.zf.reveal', (function () {
-            $.LoadingOverlay("hide");
-        }));
 
         var shownHits = 100;
 

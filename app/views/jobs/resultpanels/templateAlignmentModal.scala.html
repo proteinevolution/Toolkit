@@ -10,7 +10,7 @@
             <option value="hhrepid" >HHrepID</option>
         </select>
     </div>
-    <textarea rows="35" class="aligmentTemplateTextArea" placeholder="Loading..." spellcheck="false"></textarea>
+    <textarea rows="35" class="alignmentTemplateTextArea" placeholder="Loading..." spellcheck="false"></textarea>
     <button class="close-button" id="alignmentTemplateClose" data-close aria-label="Close modal" type="button">
         <span aria-hidden="true">&times;</span>
     </button>
@@ -20,7 +20,7 @@
     var templateAlignmentModal = $("#jobview").find('#templateAlignmentModal');
     templateAlignmentModal.foundation();
     templateAlignmentModal.find(".alignmentTemplateToolSelect").on("click", function () {
-        var forwardData = templateAlignmentModal.find('.aligmentTemplateTextArea').val();
+        var forwardData = templateAlignmentModal.find('.alignmentTemplateTextArea').val();
         var tool = this.value;
         if (tool === "") {
             return;
