@@ -73,8 +73,8 @@ const typeAhead = function(elem: any, isInit: boolean): any {
                     console.log(this);
                     m.route($(this).data("link"));
                 }
-            })
-        }).on('focus', function(e : any) : any {
+            });
+        }).on("focus", function(e: any): any {
             $(this).siblings(".search-input.tt-hint").addClass("white");
         }).on("blur", function(): any {
             $(this).val("").siblings(".search-input.tt-hint").removeClass("white");
@@ -161,10 +161,10 @@ const trafficBarComponent = {
 // TODO add different type of tile (bigger one?)
 const tilescomponent = {
 
-    controller: function () {
+    controller: function() {
 
     },
-    view: function (ctrl : any) {
+    view: function(ctrl: any) {
         return m("div", {
                 "class": "row article_container small-up-1 medium-up-2 large-up-3",
                 config: hideSidebar
@@ -174,7 +174,7 @@ const tilescomponent = {
                     "class": "column column-block tile-main-container"
                 },
                 m("div", {"class": "tile_container"},
-                    m("div", {"class": "tile-img", 'style': {'background-image': 'url(/assets/images/fold_galaxy.png)'}}
+                    m("div", {"class": "tile-img", "style": {"background-image": "url(/assets/images/fold_galaxy.png)"}}
                     ),
                     m("div", {"class": "text_part"},
                         m("h5", "Recent Updates"),
@@ -189,7 +189,10 @@ const tilescomponent = {
                             m("p", "HHpred: new versions of the SCOPe (ver 2.07) and ECOD databases " +
                                 "(ver 20180219; develop204) are now online.")
                         ),
-                        m("a", {href: "https://www.sciencedirect.com/science/article/pii/S0022283617305879", target: "_blank"},
+                        m("a", {
+                                href: "https://www.sciencedirect.com/science/article/pii/S0022283617305879",
+                                target: "_blank"
+                            },
                             m("h6", "December 24, 2017"),
                             m("p", "Our paper on the new Toolkit is out: ",
                                 m("em", "A Completely Reimplemented MPI Bioinformatics Toolkit with a New HHpred Server at its Core. "),
@@ -203,7 +206,7 @@ const tilescomponent = {
                             m("tr",
                                 m("td",
                                     m("a", {href: "/#/tools/hhpred"},
-                                        m("a", "HHpred")
+                                        "HHpred"
                                     )
                                 ),
                                 m("td",
@@ -215,7 +218,7 @@ const tilescomponent = {
                             m("tr",
                                 m("td",
                                     m("a", {href: "/#/tools/hhblits"},
-                                        m("a", "HHblits")
+                                        "HHblits"
                                     )
                                 ),
                                 m("td",
@@ -227,7 +230,7 @@ const tilescomponent = {
                             m("tr",
                                 m("td",
                                     m("a", {href: "/#/tools/hhrepid"},
-                                        m("a", "HHrepID")
+                                        "HHrepID"
                                     )
                                 ),
                                 m("td",
@@ -239,7 +242,7 @@ const tilescomponent = {
                             m("tr",
                                 m("td",
                                     m("a", {href: "/#/tools/psiblast"},
-                                        m("a", "BLAST")
+                                        "BLAST"
                                     )
                                 ),
                                 m("td",
@@ -251,7 +254,7 @@ const tilescomponent = {
                             m("tr",
                                 m("td",
                                     m("a", {href: "/#/tools/pcoils"},
-                                        m("a", "PCOILS")
+                                        "PCOILS"
                                     )
                                 ),
                                 m("td",
@@ -263,7 +266,7 @@ const tilescomponent = {
                             m("tr",
                                 m("td",
                                     m("a", {href: "/#/tools/clans"},
-                                        m("a", "CLANS")
+                                        "CLANS"
                                     )
                                 ),
                                 m("td",
@@ -275,7 +278,7 @@ const tilescomponent = {
                             m("tr",
                                 m("td",
                                     m("a", {href: "/#/tools/mafft"},
-                                        m("a", "MAFFT")
+                                        "MAFFT"
                                     )
                                 ),
                                 m("td",
@@ -287,7 +290,7 @@ const tilescomponent = {
                             m("tr",
                                 m("td",
                                     m("a", {href: "/#/tools/quick2d"},
-                                        m("a", "Quick2D")
+                                        "Quick2D"
                                     )
                                 ),
                                 m("td",
@@ -299,7 +302,7 @@ const tilescomponent = {
                             m("tr",
                                 m("td",
                                     m("a", {href: "/#/tools/mmseqs2"},
-                                        m("a", "MMseqs2")
+                                        "MMseqs2"
                                     )
                                 ),
                                 m("td",
@@ -312,7 +315,7 @@ const tilescomponent = {
                     )
                 )
             )
-        )
+        );
 
     }
 };
