@@ -75,7 +75,7 @@ class NormalResultView(container: JQuery,
 
       if (resultContext.toolName.equals("psiblast")) {
         container.find(".selectAllSeqBar").addClass("colorToggleBar").text("Deselect all")
-        checkboxes.selectAll(resultContext.belowEvalThreshold)
+        checkboxes.selectAll(resultContext.belowEvalThreshold - 1)
       }
       showHits(0, this.shownHits)
       setupBlastVizTooltipster()
