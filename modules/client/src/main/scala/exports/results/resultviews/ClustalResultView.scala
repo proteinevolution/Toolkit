@@ -21,7 +21,7 @@ class ClustalResultView(container: JQuery,
   override def init(): Unit = {
     if (resultContext.numHits > 0) {
       bindEvents()
-      showHits(0, super.shownHits)
+      showHits(0, this.shownHits)
     }
   }
 
