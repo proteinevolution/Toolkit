@@ -3,7 +3,7 @@ package exports.results
 import exports.facades.JQueryPosition
 import exports.results.resultviews.ResultView
 import org.scalajs.dom
-import org.scalajs.dom.raw.{HTMLElement, HTMLInputElement}
+import org.scalajs.dom.raw.{ HTMLElement, HTMLInputElement }
 import org.scalajs.jquery._
 
 import scala.scalajs.js
@@ -35,7 +35,8 @@ class ScrollUtil(resultView: ResultView) {
       })
 
       //  Fixes/Unfixes the control bar at the top
-      $elem.on("scroll",
+      $elem.on(
+        "scroll",
         () => {
           val top = jQuery(dom.document).scrollTop()
           if (!js.isUndefined($visualization.position())) {
