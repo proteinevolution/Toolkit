@@ -8,5 +8,5 @@ trait JQuery extends js.Object {
   def foundation(action: String = null): js.Dynamic            = js.native
   def LoadingOverlay(action: String): js.Dynamic               = js.native
   def slider(options: js.Dictionary[Any]): js.Dynamic          = js.native
-  def slider(action: String, target: String): js.Dynamic          = js.native
+  def slider(action: String, target: String): js.Dynamic       = js.native
 }
