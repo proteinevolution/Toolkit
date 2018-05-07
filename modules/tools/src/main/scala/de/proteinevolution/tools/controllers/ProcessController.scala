@@ -43,7 +43,7 @@ class ProcessController @Inject()(ctx: HHContext,
                   "accession" -> accession)
             .run()
             .exitValue() match {
-            case 0 => Ok
+            case 0 => Ok("ok")
             case _ => BadRequest
           }
         }
