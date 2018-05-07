@@ -1,7 +1,7 @@
 package exports.results.resultviews
 
-import exports.facades.{ JQueryPosition, ResultContext }
-import exports.results.{ Checkboxes, HitsSlider, ScrollUtil }
+import exports.facades.{JQueryPosition, ResultContext}
+import exports.results.{Checkboxes, HitsSlider, ScrollUtil}
 import org.scalajs.jquery._
 
 import scala.scalajs.js
@@ -28,6 +28,39 @@ abstract class ResultView(container: JQuery, jobID: String) {
   def bindEvents(): Unit
 
   def showHits(start: Int, End: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit
+
+  protected def internalShowHits(route: String, data: String, resultContainer: JQuery, start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit): Unit = {
+    if (start <= resultContext.numHits && end <= resultContext.numHits) {
+
+      loading = true
+      container.find("#loadingHits").show()
+      container.find("#loadHits").hide()
+      jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("show")
+
+      jQuery.ajax(js.Dictionary(
+        "url" -> route,
+        "data" -> data,
+        "contentType" -> "application/json",
+        "type" -> "POST"
+      ).asInstanceOf[JQueryAjaxSettings]
+      ).done((data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) => {
+        resultContainer.append(data)
+        shownHits = end
+        if (shownHits != resultContext.numHits)
+          container.find("#loadHits").show()
+        checkboxes.initForContainer(resultContainer)
+        js.Dynamic.global.$("#alignments").floatingScroll("init")
+        if (successCallback != null) successCallback(data, textStatus, jqXHR)
+      }).fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
+        println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
+        resultContainer.append("Error loading Data.")
+      }).always(() => {
+        loading = false
+        container.find("#loadingHits").hide()
+        jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
+      })
+    }
+  }
 
   // run init
   init()
