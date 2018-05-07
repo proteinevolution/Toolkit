@@ -1,6 +1,6 @@
 <div class="reveal" id="templateAlignmentModal" data-reveal>
     <p>Template Alignment (~100 most distinct sequences)</p>
-    <div>
+    <div class="hide-for-forwarding-disabled">
         <select class="alignmentTemplateToolSelect">
             <option value="" selected>Forward To</option>
             <option value="formatseq" >FormatSeq</option>
@@ -15,21 +15,3 @@
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
-
-<script>
-    var templateAlignmentModal = $("#jobview").find('#templateAlignmentModal');
-    templateAlignmentModal.foundation();
-    templateAlignmentModal.find(".alignmentTemplateToolSelect").on("click", function () {
-        var forwardData = templateAlignmentModal.find('.alignmentTemplateTextArea').val();
-        var tool = this.value;
-        if (tool === "") {
-            return;
-        }
-        $('#templateAlignmentModal').foundation('close');
-        Forwarding.simple(tool, forwardData);
-    });
-    templateAlignmentModal.on("closed.zf.reveal", function () {
-        templateAlignmentModal.find(".alignmentTemplateToolSelect").val("");
-        $.LoadingOverlay("hide");
-    })
-</script>
