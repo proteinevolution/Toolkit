@@ -2,7 +2,7 @@ package exports.results.resultviews
 
 import exports.extensions.JQueryExtensions
 import exports.facades.ResultContext
-import org.scalajs.jquery.{JQuery, JQueryXHR}
+import org.scalajs.jquery.{ JQuery, JQueryXHR }
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
@@ -15,7 +15,7 @@ class ClustalResultView(container: JQuery,
                         var colorAAs: Boolean,
                         val tempShownHits: Int,
                         val resultContext: ResultContext)
-  extends ResultView(container, jobID) {
+    extends ResultView(container, jobID) {
 
   override def init(): Unit = {
     if (resultContext.numHits > 0) {
@@ -25,9 +25,16 @@ class ClustalResultView(container: JQuery,
   }
 
   override def showHits(start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit = {
-    internalShowHits(s"/results/alignment/clustal/$jobID", JSON.stringify(
-      js.Dictionary("color" -> colorAAs, "resultName" -> resultName)
-    ), container.find("#resultTable"), start, end, successCallback)
+    internalShowHits(
+      s"/results/alignment/clustal/$jobID",
+      JSON.stringify(
+        js.Dictionary("color" -> colorAAs, "resultName" -> resultName)
+      ),
+      container.find("#resultTable"),
+      start,
+      end,
+      successCallback
+    )
   }
 
   def toggleAlignmentColoring(): Unit = {
