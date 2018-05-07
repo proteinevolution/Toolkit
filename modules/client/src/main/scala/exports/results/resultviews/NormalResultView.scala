@@ -14,11 +14,11 @@ import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 @JSExportTopLevel("NormalResultView")
 class NormalResultView(container: JQuery,
                        jobID: String,
-                       tempShownHits: Int,
+                       val tempShownHits: Int,
                        var wrapped: Boolean,
                        var colorAAs: Boolean,
-                       resultContext: ResultContext)
-    extends ResultView(container, jobID, tempShownHits, resultContext) {
+                       val resultContext: ResultContext)
+    extends ResultView(container, jobID) {
 
   override def init(): Unit = {
 
