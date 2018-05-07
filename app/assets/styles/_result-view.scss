@@ -559,14 +559,23 @@ select:-moz-focusring {
   margin-bottom: 0.5em;
 }
 
-.forwardModal .forward_form {
-  font-size: 0.8em;
-}
+.forwardModal {
+  .forward_form {
+    font-size: 0.8em;
+  }
 
-.forwardModal .result_inputs {
-  font-size: 0.9em;
-}
+  .result_inputs {
+    font-size: 0.9em;
+  }
 
+  .forwardWarning {
+    width: 100%;
+    color: black;
+    margin-bottom: 0;
+    margin-top: 1.9em;
+    font-size: 0.75em;
+  }
+}
 .forward_form {
   width: 99%;
   display: flex;
@@ -635,14 +644,6 @@ label.forwardLabel input[type=radio] {
 .forwardFormDiv {
   width: 60%;
   margin: 1em;
-}
-
-#forwardWarning {
-  width: 100%;
-  color: black;
-  margin-bottom: 0;
-  margin-top: 1.9em;
-  font-size: 0.75em;
 }
 
 #loadingHits, #loadingHitsClu {
@@ -728,7 +729,7 @@ label.forwardLabel input[type=radio] {
 #resubmitSection {
   margin-top: 1.5em;
   background-color: #eee;
-  color: $body-font-color;
+  color: $black;
   float: right;
 }
 

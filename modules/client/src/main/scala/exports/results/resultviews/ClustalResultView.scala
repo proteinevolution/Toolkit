@@ -2,8 +2,7 @@ package exports.results.resultviews
 
 import exports.extensions.JQueryExtensions
 import exports.facades.ResultContext
-import org.scalajs.dom
-import org.scalajs.jquery.{JQuery, JQueryXHR, jQuery}
+import org.scalajs.jquery.{JQuery, JQueryXHR}
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
@@ -19,7 +18,6 @@ class ClustalResultView(container: JQuery,
   extends ResultView(container, jobID) {
 
   override def init(): Unit = {
-    scrollUtil.followScroll(jQuery(dom.document))
     if (resultContext.numHits > 0) {
       bindEvents()
       showHits(0, this.shownHits)
