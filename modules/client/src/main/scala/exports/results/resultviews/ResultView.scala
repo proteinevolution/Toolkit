@@ -21,6 +21,7 @@ abstract class ResultView(container: JQuery, jobID: String) {
 
   protected val checkboxes: Checkboxes = new Checkboxes(container)
   protected val hitsSlider: HitsSlider = new HitsSlider(container)
+  @JSExport
   protected val scrollUtil: ScrollUtil = new ScrollUtil(this)
 
   def init(): Unit
