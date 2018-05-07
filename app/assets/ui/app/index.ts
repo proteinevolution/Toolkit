@@ -38,7 +38,7 @@ const typeAhead = function(elem: any, isInit: boolean): any {
                 templates: {
                     suggestion: function(data: any) {
                         if (data != null) {
-                            return "<div class=\"list-group-item\"><a class=\"search-results\" data-link=\"/tools/" + data.short + "\" name=\"" + data.long + "\">" + data.long + "</a></div>";
+                            return "<div class=\"list-group-item\"><a class=\"search-results\" data-typeahead-id='"+ data.long +"' data-link=\"/tools/" + data.short + "\" name=\"" + data.long + "\">" + data.long + "</a></div>";
                         } else {
                             return "<div style=\"display: none\"></div>";
                         }
@@ -55,7 +55,7 @@ const typeAhead = function(elem: any, isInit: boolean): any {
                     //empty: '<div class="list-group search-results-dropdown"><div class="list-group-item-notfound">Nothing found.</div></div>',
                     suggestion: function(data: any) {
                         if (data != null) {
-                            return "<div class=\"list-group-item\"><a class=\"search-results\" data-link=\"/jobs/" + data.jobID + "\" name=\"" + data.jobID + " - " + data.toolnameLong + "\">" +
+                            return "<div class=\"list-group-item\"><a class=\"search-results\" data-typeahead-id='"+ data.jobID +"' data-link=\"/jobs/" + data.jobID + "\" name=\"" + data.jobID + " - " + data.toolnameLong + "\">" +
                                 "<span class=\"search-result-jobid\">" + data.jobID + "</span> <span class=\"search-result-tool\"> " +
                                 "(" + data.toolnameLong + ")</span> <span class=\"search-result-tool-short\"> (" + data.tool.substr(0, 4).toUpperCase() + ")</span></a></div>";
                         } else {
@@ -69,11 +69,13 @@ const typeAhead = function(elem: any, isInit: boolean): any {
             e.preventDefault();
             let selectables = $(this).siblings(".tt-menu").find(".tt-selectable").find(".search-results");
             selectables.each(function() {
-                if ($(this).attr("name") === option.long) {
-                    console.log(this);
+                let typeAheadId = $(this).data("typeahead-id");
+                if (typeAheadId == option.long || typeAheadId == option.jobID) {
                     m.route($(this).data("link"));
                 }
             });
+        }).on('typeahead:render', function(e) {
+            $(this).parent().find('.tt-selectable:first').addClass('tt-cursor');
         }).on("focus", function(e: any): any {
             $(this).siblings(".search-input.tt-hint").addClass("white");
         }).on("blur", function(): any {
