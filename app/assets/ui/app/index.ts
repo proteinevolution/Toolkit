@@ -111,7 +111,7 @@ window.Index = {
     },
     view: function() {
         return m("div", {
-            "class": "small-12 large-12 columns",
+            "class": "small-12 large-12 columns index-container",
             config: fadesIn
         }, [
             m("section", {}, [
