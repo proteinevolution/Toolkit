@@ -13,7 +13,7 @@ class HitsSlider(private val container: JQuery) {
       .css(
         js.Dictionary(
           "position" -> "absolute",
-          "top" -> -20.toDouble
+          "top"      -> -20.toDouble
         )
       )
       .text(start.toString)
@@ -22,36 +22,45 @@ class HitsSlider(private val container: JQuery) {
       .css(
         js.Dictionary(
           "position" -> "absolute",
-          "top" -> -20.toDouble
+          "top"      -> -20.toDouble
         )
       )
       .text(end.toString)
 
     flatSlider
       .asInstanceOf[exports.facades.JQuery]
-      .slider(        js.Dictionary(
-          "range" -> true,
+      .slider(
+        js.Dictionary(
+          "range"       -> true,
           "orientation" -> "horizontal",
-          "min" -> 1,
-          "max" -> seqLength,
-          "step" -> 1,
-          "values" -> js.Array(start, end)
-        )).on("slide", (_: js.Any, ui: js.Dynamic) => {
-      tooltipLeft.text(ui.values.asInstanceOf[js.Array[Int]](0).toString)
-      tooltipRight.text(ui.values.asInstanceOf[js.Array[Int]](1).toString)
-    }).on("slidechange", (_: js.Any, ui: js.Dynamic) => {
-      js.Dynamic.global.sliderCoords = flatSlider.asInstanceOf[exports.facades.JQuery].slider("option", "values")
-    })
+          "min"         -> 1,
+          "max"         -> seqLength,
+          "step"        -> 1,
+          "values"      -> js.Array(start, end)
+        )
+      )
+      .on(
+        "slide",
+        (_: js.Any, ui: js.Dynamic) => {
+          tooltipLeft.text(ui.values.asInstanceOf[js.Array[Int]](0).toString)
+          tooltipRight.text(ui.values.asInstanceOf[js.Array[Int]](1).toString)
+        }
+      )
+      .on("slidechange", (_: js.Any, ui: js.Dynamic) => {
+        js.Dynamic.global.sliderCoords = flatSlider.asInstanceOf[exports.facades.JQuery].slider("option", "values")
+      })
 
-    tooltipLeft.appendTo(flatSlider.find(".ui-slider-handle:first"))
+    tooltipLeft
+      .appendTo(flatSlider.find(".ui-slider-handle:first"))
       .show()
 
-    tooltipRight.appendTo(flatSlider.find(".ui-slider-handle:last"))
+    tooltipRight
+      .appendTo(flatSlider.find(".ui-slider-handle:last"))
       .show()
   }
 
   def resubmit(sequence: String, name: String): Unit = {
-    val sliderRange = js.Dynamic.global.$("#flat-slider").slider("option", "values").asInstanceOf[js.Array[Int]]
+    val sliderRange  = js.Dynamic.global.$("#flat-slider").slider("option", "values").asInstanceOf[js.Array[Int]]
     val resubmitSeqs = name + "\n" + sequence.substring(sliderRange(0), sliderRange(1)) + "\n"
     container.find("a[href='#tabpanel-Input']").click()
     container.find("#alignment").value(resubmitSeqs)
