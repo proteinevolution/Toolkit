@@ -5,7 +5,7 @@ import exports.facades.ResultContext
 import exports.results.DataTables
 import org.scalajs.dom
 import org.scalajs.dom.raw.HTMLInputElement
-import org.scalajs.jquery.{JQuery, JQueryXHR, jQuery}
+import org.scalajs.jquery.{ jQuery, JQuery, JQueryXHR }
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
@@ -18,7 +18,7 @@ class NormalResultView(container: JQuery,
                        var wrapped: Boolean,
                        var colorAAs: Boolean,
                        val resultContext: ResultContext)
-  extends ResultView(container, jobID) {
+    extends ResultView(container, jobID) {
 
   override def init(): Unit = {
 
@@ -35,8 +35,8 @@ class NormalResultView(container: JQuery,
             .html(dom.document.getElementById("hidden1").asInstanceOf[HTMLInputElement].value)
             .css(
               js.Dictionary(
-                "color" -> "white",
-                "font-weight" -> "bold",
+                "color"        -> "white",
+                "font-weight"  -> "bold",
                 "padding-left" -> "2px"
               )
             )
@@ -45,8 +45,8 @@ class NormalResultView(container: JQuery,
             .html(dom.document.getElementById("hidden2").asInstanceOf[HTMLInputElement].value)
             .css(
               js.Dictionary(
-                "color" -> "white",
-                "font-weight" -> "bold",
+                "color"        -> "white",
+                "font-weight"  -> "bold",
                 "padding-left" -> "2px"
               )
             )
@@ -85,14 +85,16 @@ class NormalResultView(container: JQuery,
     val blastVizArea = container.find("#blastviz").find("area")
     blastVizArea
       .asInstanceOf[exports.facades.JQuery]
-      .tooltipster(js.Dictionary(
-        "theme" -> js.Array("tooltipster-borderless", "tooltipster-borderless-customized"),
-        "position" -> "bottom",
-        "animation" -> "fade",
-        "contentAsHTML" -> true,
-        "debug" -> false,
-        "maxWidth" -> blastVizArea.innerWidth() * 0.6
-      ))
+      .tooltipster(
+        js.Dictionary(
+          "theme"         -> js.Array("tooltipster-borderless", "tooltipster-borderless-customized"),
+          "position"      -> "bottom",
+          "animation"     -> "fade",
+          "contentAsHTML" -> true,
+          "debug"         -> false,
+          "maxWidth"      -> blastVizArea.innerWidth() * 0.6
+        )
+      )
     hitsSlider.show(resultContext.query.seq.length, resultContext.firstQueryStart, resultContext.firstQueryEnd)
   }
 
@@ -140,9 +142,16 @@ class NormalResultView(container: JQuery,
   }
 
   override def showHits(start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit = {
-    internalShowHits(s"/results/loadHits/$jobID", JSON.stringify(
-      js.Dictionary("start" -> start, "end" -> end, "wrapped" -> wrapped, "isColor" -> colorAAs)
-    ), container.find("#alignmentTable"), start, end, successCallback)
+    internalShowHits(
+      s"/results/loadHits/$jobID",
+      JSON.stringify(
+        js.Dictionary("start" -> start, "end" -> end, "wrapped" -> wrapped, "isColor" -> colorAAs)
+      ),
+      container.find("#alignmentTable"),
+      start,
+      end,
+      successCallback
+    )
   }
 
   def toggleAlignmentColoring(): Unit = {
