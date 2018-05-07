@@ -31,7 +31,16 @@ div#main-container {
     -moz-box-shadow: 1px 3px 7px 4px rgba(200, 200, 200, 0.75);
     box-shadow: 1px 3px 7px 4px rgba(200, 200, 200, 0.75);
 
+    .upper-parts {
+      @include breakpoint(medium down) {
+        padding: 1rem 0 0 0;
+      }
+    }
+
     #main-window {
+      @include breakpoint(medium) {
+        padding-top: 30px;
+      }
       @include breakpoint(large) {
         padding-top: 20px;
       }
