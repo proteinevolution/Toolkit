@@ -35,8 +35,7 @@ class ScrollUtil(resultView: ResultView) {
       })
 
       //  Fixes/Unfixes the control bar at the top
-      $elem.on(
-        "scroll",
+      $elem.on("scroll",
         () => {
           val top = jQuery(dom.document).scrollTop()
           if (!js.isUndefined($visualization.position())) {
