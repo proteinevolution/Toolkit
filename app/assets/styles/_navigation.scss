@@ -53,7 +53,10 @@
 
 /* Navbar */
 #navbar {
-  padding: 0 5px;
+  padding: 0 3px;
+  @include breakpoint(large) {
+    padding: 0 5px;
+  }
   width: 750px;
   .tabs {
     overflow-x: hidden;
