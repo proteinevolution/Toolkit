@@ -70,6 +70,9 @@ class NormalResultView(container: JQuery,
         }
       })
 
+      // hide colorAAs button initially
+      container.find(".colorAA").hide()
+
       if (resultContext.toolName.equals("psiblast")) {
         container.find(".selectAllSeqBar").addClass("colorToggleBar").text("Deselect all")
         checkboxes.selectAll(resultContext.belowEvalThreshold)
