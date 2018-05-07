@@ -77,8 +77,7 @@ abstract class ResultView(container: JQuery, jobID: String) {
         "#tool-tabs"
       else
         "html, body"
-    if (id > js.Dynamic.global.shownHits.asInstanceOf[Int]) {
-      js.Dynamic.global.$.LoadingOverlay("show")
+    if (id > shownHits) {
       showHits(
         shownHits,
         id,
@@ -108,8 +107,6 @@ abstract class ResultView(container: JQuery, jobID: String) {
                      .top - 100.toDouble)
                  ),
                  1)
-      js.Dynamic.global.$.LoadingOverlay("hide")
-      js.Dynamic.global.shownHits = id
     } else {
       jQuery(elem)
         .animate(js.Dynamic.literal(
