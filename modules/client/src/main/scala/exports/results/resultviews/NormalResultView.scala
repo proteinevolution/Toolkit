@@ -22,7 +22,6 @@ class NormalResultView(container: JQuery,
 
   override def init(): Unit = {
 
-    setupBlastVizTooltipster()
     scrollUtil.followScroll(jQuery(dom.document))
 
     // add slider val
@@ -75,9 +74,9 @@ class NormalResultView(container: JQuery,
         container.find(".selectAllSeqBar").addClass("colorToggleBar").text("Deselect all")
         checkboxes.selectAll(resultContext.belowEvalThreshold)
       }
-      hitsSlider.show(resultContext.query.seq.length, resultContext.firstQueryStart, resultContext.firstQueryEnd)
       showHits(0, this.shownHits)
       wrap.hide()
+      setupBlastVizTooltipster()
     }
   }
 
@@ -94,6 +93,7 @@ class NormalResultView(container: JQuery,
         "debug" -> false,
         "maxWidth" -> blastVizArea.innerWidth() * 0.6
       ))
+    hitsSlider.show(resultContext.query.seq.length, resultContext.firstQueryStart, resultContext.firstQueryEnd)
   }
 
   override def bindEvents(): Unit = {
