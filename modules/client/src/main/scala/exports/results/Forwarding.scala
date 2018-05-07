@@ -100,7 +100,8 @@ object Forwarding {
       .ajax(
         js.Dictionary(
             "method" -> "GET",
-            "url"    -> fileUrl
+            "url"    -> fileUrl,
+            "dataType" -> "text"
           )
           .asInstanceOf[JQueryAjaxSettings]
       )
