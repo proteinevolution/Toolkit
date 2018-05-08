@@ -12,9 +12,9 @@
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
             <div id="scrollLinks">
-                "<a id="visualizationScroll" name="#visualization">Vis</a>
-                    <a id="hitlistScroll" name="#hitlist">Hits</a>
-                    <a id="alignmentsScroll" name="#alignments">Aln</a>
+                <a id="visualizationScroll" name="#visualization">Vis</a>
+                <a id="hitlistScroll" name="#hitlist">Hits</a>
+                <a id="alignmentsScroll" name="#alignments">Aln</a>
             </div>
             <span class="headerDivider"></span>
             <div id="controlls">
@@ -95,23 +95,8 @@
         </div>
     <hr class="horizontal-line">
 
-
-    @*MODALS*@
-    <div class="reveal" id="templateAlignmentModal" data-reveal>
-        <p>Template Alignment (~100 most distinct sequences)</p><br>
-        <textarea rows="35" id="alignmentTemplate" placeholder="Loading..." spellcheck="false"></textarea>
-        <button class="close-button" id="alignmentTemplateClose" data-close aria-label="Close modal" type="button">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-
 }
 <script>
-
-        $("#templateAlignmentModal").bind('closed.zf.reveal', (function () {
-            $.LoadingOverlay("hide");
-        }));
-
         var shownHits = 100;
 
         $(function () {
