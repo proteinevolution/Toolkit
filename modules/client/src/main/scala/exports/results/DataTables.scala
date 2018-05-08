@@ -1,6 +1,9 @@
 package exports.results
 
+import org.scalajs.jquery.jQuery
+import org.scalajs.dom.document
 import scala.scalajs.js
+import exports.facades.JQueryPlugin._
 
 class DataTables(toolName: String) {
 
@@ -10,21 +13,18 @@ class DataTables(toolName: String) {
   )
 
   def config(jobID: String, numHits: Int, callbacks: () => js.Any): Unit = {
-    js.Dynamic.global
-      .$("#htb")
+    jQuery(document.getElementById("htb"))
       .DataTable(
-        js.Dynamic
-          .literal(
-            "processing"   -> true,
-            "serverSide"   -> true,
-            "ajax"         -> s"/results/dataTable/$jobID",
-            "autoWidth"    -> false,
-            "lengthMenu"   -> lengthMenu(numHits),
-            "searching"    -> true,
-            "pageLength"   -> 25,
-            "drawCallback" -> callbacks
-          )
-          .asInstanceOf[js.Object]
+        js.Dictionary(
+          "processing"   -> true,
+          "serverSide"   -> true,
+          "ajax"         -> s"/results/dataTable/$jobID",
+          "autoWidth"    -> false,
+          "lengthMenu"   -> lengthMenu(numHits),
+          "searching"    -> true,
+          "pageLength"   -> 25,
+          "drawCallback" -> callbacks
+        )
       )
   }
 
