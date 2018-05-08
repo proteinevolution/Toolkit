@@ -11,6 +11,9 @@ import scala.scalajs.js.JSON
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 import scala.scalajs.js.timers._
 
+import exports.facades.JQueryPlugin.jqStaticPlugin
+import exports.facades.JQueryPlugin.jqPlugin
+
 @JSExportTopLevel("Forwarding")
 object Forwarding {
 
@@ -22,11 +25,11 @@ object Forwarding {
                      hasEvalue: Boolean,
                      evalue: String,
                      isFullLength: Boolean): Unit = {
-    jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("show")
+    jQuery.LoadingOverlay("show")
     val checkboxes = js.Dynamic.global.Toolkit.resultView.getSelectedValues.asInstanceOf[js.Array[Int]]
     if (checkboxes.length < 1 && !hasEvalue) {
-      jQuery(".forwardModal").asInstanceOf[exports.facades.JQuery].foundation("close")
-      jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
+      jQuery(".forwardModal").foundation("close")
+      jQuery.LoadingOverlay("hide")
       dom.window.alert("No sequence(s) selected!")
       return
     }
@@ -57,18 +60,18 @@ object Forwarding {
       })
       .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
         println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
-        jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
+        jQuery.LoadingOverlay("hide")
       })
   }
 
   @JSExport
   def processAlnResults(jobID: String, selectedTool: String, resultName: String): Unit = {
-    jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("show")
+    jQuery.LoadingOverlay("show")
 
     val checkboxes = js.Dynamic.global.Toolkit.resultView.getSelectedValues.asInstanceOf[js.Array[Int]]
     if (checkboxes.length < 1) {
-      jQuery(".forwardModal").asInstanceOf[exports.facades.JQuery].foundation("close")
-      jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
+      jQuery(".forwardModal").foundation("close")
+      jQuery.LoadingOverlay("hide")
       dom.window.alert("No sequence(s) selected!")
       return
     }
@@ -91,13 +94,13 @@ object Forwarding {
         println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
       })
       .always(() => {
-        jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
+        jQuery.LoadingOverlay("hide")
       })
   }
 
   @JSExport
   def processFiles(selectedTool: String, fileUrl: String): Unit = {
-    jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("show")
+    jQuery.LoadingOverlay("show")
     jQuery
       .ajax(
         js.Dictionary(
@@ -111,7 +114,7 @@ object Forwarding {
         simple(selectedTool, data.toString)
       })
       .always(() => {
-        jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
+        jQuery.LoadingOverlay("hide")
       })
   }
 
@@ -140,7 +143,7 @@ object Forwarding {
         println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
       })
       .always(() => {
-        jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
+        jQuery.LoadingOverlay("hide")
       })
   }
 

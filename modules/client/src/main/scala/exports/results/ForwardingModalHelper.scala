@@ -7,13 +7,16 @@ import org.scalajs.jquery._
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 
+import exports.facades.JQueryPlugin.jqStaticPlugin
+import exports.facades.JQueryPlugin.jqPlugin
+
 @JSExportTopLevel("ForwardingModalHelper")
 object ForwardingModalHelper {
 
   @JSExport
   def bindNormal($modal: JQuery, jobID: String, defaultTool: String): Unit = {
     val $forwardSelect: JQuery = $modal.find(".forwardSelect")
-    $modal.asInstanceOf[exports.facades.JQuery].foundation()
+    $modal.foundation()
 
     $modal.on(
       "open.zf.reveal",
@@ -42,7 +45,7 @@ object ForwardingModalHelper {
           if (evalue == "") {
             dom.window.alert("no evalue!")
           } else {
-            $modal.asInstanceOf[exports.facades.JQuery].foundation("close")
+            $modal.foundation("close")
           }
         }
       }
@@ -71,7 +74,7 @@ object ForwardingModalHelper {
   def bindSimple($modal: JQuery, jobID: String): Unit = {
     val $forwardSelect: JQuery = $modal.find(".forwardSelect")
 
-    $modal.asInstanceOf[exports.facades.JQuery].foundation()
+    $modal.foundation()
 
     $modal.on(
       "open.zf.reveal",
@@ -98,7 +101,7 @@ object ForwardingModalHelper {
             dom.window.alert("no evalue!")
           }
         }
-        $modal.asInstanceOf[exports.facades.JQuery].foundation("close")
+        $modal.foundation("close")
       }
     )
   }
@@ -106,7 +109,7 @@ object ForwardingModalHelper {
   @JSExport
   def bindSimpler($modal: JQuery, jobID: String, resultName: String, forwardIssuer: String): Unit = {
     val $forwardSelect: JQuery = $modal.find(".forwardSelect")
-    $modal.asInstanceOf[exports.facades.JQuery].foundation()
+    $modal.foundation()
 
     $modal.on("open.zf.reveal", () => {
       $forwardSelect.value("")
@@ -124,12 +127,12 @@ object ForwardingModalHelper {
           forwardIssuer match {
             case "NORMAL" => Forwarding.processAlnResults(jobID, selectedTool, resultName)
             case "UNCHECKED_LIST" =>
-              jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("show")
+              jQuery.LoadingOverlay("show")
               jQuery.getJSON(
                 s"/files/$jobID/ids.json",
                 (data: js.Dynamic) => {
                   Forwarding.simple(selectedTool, data.ACC_IDS.join("\n").toString)
-                  jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
+                  jQuery.LoadingOverlay("hide")
                 }
               )
             case "PATTERN_SEARCH" =>
@@ -140,7 +143,7 @@ object ForwardingModalHelper {
                 .processFiles(selectedTool, s"/files/$jobID/$resultName") // resultName is actually the filename in this case
           }
         }
-        $modal.asInstanceOf[exports.facades.JQuery].foundation("close")
+        $modal.foundation("close")
       }
     )
 
@@ -165,7 +168,7 @@ object ForwardingModalHelper {
   def bindHHSuite($modal: JQuery, jobID: String): Unit = {
     val $forwardSelect: JQuery = $modal.find(".forwardSelect")
 
-    $modal.asInstanceOf[exports.facades.JQuery].foundation()
+    $modal.foundation()
 
     $modal.bind("open.zf.reveal", () => {
       $forwardSelect.value("")
@@ -179,7 +182,7 @@ object ForwardingModalHelper {
           dom.window.alert("Please select a tool!")
         } else {
           Forwarding.processFiles(selectedTool, s"/files/$jobID/reduced.a3m")
-          $modal.asInstanceOf[exports.facades.JQuery].foundation("close")
+          $modal.foundation("close")
         }
       }
     )
