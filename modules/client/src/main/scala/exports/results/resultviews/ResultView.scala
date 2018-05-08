@@ -21,6 +21,7 @@ abstract class ResultView(container: JQuery, jobID: String) {
 
   protected val checkboxes: Checkboxes = new Checkboxes(container)
   protected val hitsSlider: HitsSlider = new HitsSlider(container)
+  @JSExport
   protected val scrollUtil: ScrollUtil = new ScrollUtil(this)
 
   def init(): Unit
@@ -28,6 +29,50 @@ abstract class ResultView(container: JQuery, jobID: String) {
   def bindEvents(): Unit
 
   def showHits(start: Int, End: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit
+
+  protected def internalShowHits(route: String,
+                                 data: String,
+                                 resultContainer: JQuery,
+                                 start: Int,
+                                 end: Int,
+                                 successCallback: (js.Any, js.Any, JQueryXHR) => Unit): Unit = {
+    if (start <= resultContext.numHits && end <= resultContext.numHits) {
+
+      loading = true
+      container.find("#loadingHits").show()
+      container.find("#loadHits").hide()
+      jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("show")
+
+      jQuery
+        .ajax(
+          js.Dictionary(
+              "url"         -> route,
+              "data"        -> data,
+              "contentType" -> "application/json",
+              "type"        -> "POST"
+            )
+            .asInstanceOf[JQueryAjaxSettings]
+        )
+        .done((data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) => {
+          resultContainer.append(data)
+          shownHits = end
+          if (shownHits != resultContext.numHits)
+            container.find("#loadHits").show()
+          checkboxes.initForContainer(resultContainer)
+          js.Dynamic.global.$("#alignments").floatingScroll("init")
+          if (successCallback != null) successCallback(data, textStatus, jqXHR)
+        })
+        .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
+          println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
+          resultContainer.append("Error loading Data.")
+        })
+        .always(() => {
+          loading = false
+          container.find("#loadingHits").hide()
+          jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
+        })
+    }
+  }
 
   // run init
   init()
@@ -44,8 +89,7 @@ abstract class ResultView(container: JQuery, jobID: String) {
         "#tool-tabs"
       else
         "html, body"
-    if (id > js.Dynamic.global.shownHits.asInstanceOf[Int]) {
-      js.Dynamic.global.$.LoadingOverlay("show")
+    if (id > shownHits) {
       showHits(
         shownHits,
         id,
@@ -75,8 +119,6 @@ abstract class ResultView(container: JQuery, jobID: String) {
                      .top - 100.toDouble)
                  ),
                  1)
-      js.Dynamic.global.$.LoadingOverlay("hide")
-      js.Dynamic.global.shownHits = id
     } else {
       jQuery(elem)
         .animate(js.Dynamic.literal(

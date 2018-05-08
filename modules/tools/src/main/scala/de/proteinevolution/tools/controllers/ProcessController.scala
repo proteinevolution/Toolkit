@@ -43,7 +43,7 @@ class ProcessController @Inject()(ctx: HHContext,
                   "accession" -> accession)
             .run()
             .exitValue() match {
-            case 0 => Ok
+            case 0 => Ok.as("text/plain")
             case _ => BadRequest
           }
         }
@@ -89,7 +89,7 @@ class ProcessController @Inject()(ctx: HHContext,
       }
       .map {
         case 0 =>
-          Ok
+          Ok.as("text/plain")
         case _ =>
           BadRequest
       }

@@ -68,7 +68,7 @@
         @Html(webJarsUtil.script("jquery.visible.min.js"))
 
             <!-- Loadingoverlay -->
-        <script src="@routes.Assets.versioned("javascripts/vendor/loadingoverlay.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.versioned("javascripts/vendor/loadingoverlay.min.js")" type="text/javascript"></script>
 
             <!-- Tooltipster -->
         @Html(webJarsUtil.css("tooltipster.bundle.min.css"))
@@ -127,7 +127,7 @@
             <div id="main" class="row" data-off-canvas-content>
                 <div class="small-12 padded-column columns">
                     <div class="row">
-                        <div class="small-12 padded-column columns">
+                        <div class="small-12 padded-column columns upper-parts">
                                 <!-- All purpose Modal -->
                             <div id="modal" class="reveal large" data-reveal>
                                 <button class="close-button" data-close aria-label="Close modal" type="button">
@@ -167,7 +167,7 @@
 
                             <div class="row" id="navcontainer">
                                     <!--logo-->
-                                <div class="columns large-2 show-for-large" id="logo">
+                                <div class="columns large-2 show-for-large no-padded-column" id="logo">
                                     <a href="/#/">
                                         <img src="@routes.Assets.versioned("images/minlogo.svg")">
                                     </a>
@@ -287,6 +287,7 @@
             </button>
         </div>
 
+        @views.html.jobs.resultpanels.templateAlignmentModal()
         @views.html.help.modal()
 
             <!-- Foundation 6 -->

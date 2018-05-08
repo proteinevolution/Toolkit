@@ -2,8 +2,7 @@ package exports.results.resultviews
 
 import exports.extensions.JQueryExtensions
 import exports.facades.ResultContext
-import org.scalajs.dom
-import org.scalajs.jquery.{ jQuery, JQuery, JQueryAjaxSettings, JQueryXHR }
+import org.scalajs.jquery.{ JQuery, JQueryXHR }
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
@@ -26,42 +25,20 @@ class ClustalResultView(container: JQuery,
   }
 
   override def showHits(start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit = {
-    loading = true
-    container.find("#loadingHits").show()
-    container.find("#loadHits").hide()
-    val route = s"/results/alignment/clustal/$jobID"
-    jQuery.ajax(
-      js.Dynamic
-        .literal(
-          url = route,
-          data = JSON.stringify(
-            js.Dynamic.literal("color" -> colorAAs, "resultName" -> resultName)
-          ),
-          contentType = "application/json",
-          success = { (data: js.Any, _: js.Any, _: JQueryXHR) =>
-            container.find("#resultTable").append(data.asInstanceOf[String])
-            shownHits = end
-            if (shownHits != resultContext.numHits)
-              container.find("#loadHits").show()
-            checkboxes.initForContainer(container.find("#resultTable"))
-            container.find("#loadingHits").hide()
-            loading = false
-          },
-          error = { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
-            println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
-            container.find("#resultTable").append("Error loading Data.")
-            container.find("#loadingHits").hide()
-            loading = false
-          },
-          `type` = "POST"
-        )
-        .asInstanceOf[JQueryAjaxSettings]
+    internalShowHits(
+      s"/results/alignment/clustal/$jobID",
+      JSON.stringify(
+        js.Dictionary("color" -> colorAAs, "resultName" -> resultName)
+      ),
+      container.find("#resultTable"),
+      start,
+      end,
+      successCallback
     )
   }
 
   def toggleAlignmentColoring(): Unit = {
     this.colorAAs = !this.colorAAs
-    js.Dynamic.global.$.LoadingOverlay("show")
     container.find(".colorAA").toggleClass("colorToggleBar")
     container.find("#resultTable").empty()
     showHits(0, this.shownHits)
