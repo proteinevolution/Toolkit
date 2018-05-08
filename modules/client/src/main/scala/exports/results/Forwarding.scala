@@ -11,8 +11,7 @@ import scala.scalajs.js.JSON
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 import scala.scalajs.js.timers._
 
-import exports.facades.JQueryPlugin.jqStaticPlugin
-import exports.facades.JQueryPlugin.jqPlugin
+import exports.facades.JQueryPlugin._
 
 @JSExportTopLevel("Forwarding")
 object Forwarding {
