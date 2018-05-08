@@ -53,9 +53,9 @@ object Settings {
 
   private val additionalFlags = Seq("-Ywarn-dead-code", "-Ywarn-unused:params", "-Ywarn-value-discard")
 
-  private val rootFlags: Seq[String] = coreFlags ++ additionalFlags
+  private val allFlags: Seq[String] = coreFlags ++ additionalFlags
 
-  lazy val compileSettings = Seq(scalacOptions ++= rootFlags)
+  lazy val compileSettings = Seq(scalacOptions ++= allFlags)
 
   lazy val sjsCompileSettings = Seq(scalacOptions ++= coreFlags)
 
