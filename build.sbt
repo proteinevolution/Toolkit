@@ -35,6 +35,7 @@ lazy val disableDocs = Seq[Setting[_]](
 lazy val common = (project in file("modules/common"))
   .enablePlugins(PlayScala, JavaAppPackaging)
   .settings(
+    Settings.compileSettings,
     name := "common",
     libraryDependencies ++= Dependencies.commonDeps,
     Settings.compileSettings,
@@ -47,6 +48,7 @@ lazy val tools = (project in file("modules/tools"))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl)
   .dependsOn(common, sys)
   .settings(
+    Settings.compileSettings,
     name := "tools",
     libraryDependencies ++= Dependencies.commonDeps,
     Settings.compileSettings,
@@ -89,6 +91,7 @@ resolvers ++= Seq(
 lazy val client = (project in file("modules/client"))
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
   .settings(
+    Settings.sjsCompileSettings,
     scalaJSUseMainModuleInitializer := true,
     scalacOptions += "-P:scalajs:sjsDefinedByDefault",
     scalaJSUseMainModuleInitializer in Test := false,

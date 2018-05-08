@@ -9,7 +9,7 @@ import scala.scalajs.js.annotation.JSExport
 
 import exports.facades.JQueryPlugin.jqStaticPlugin
 
-abstract class ResultView(container: JQuery, jobID: String) {
+abstract class ResultView(container: JQuery) {
 
   def tempShownHits: Int
 
@@ -144,7 +144,7 @@ abstract class ResultView(container: JQuery, jobID: String) {
     val _pos = container.find("#" + name).offset().asInstanceOf[JQueryPosition].top
     val pos =
       if (container.find("#tool-tabs").hasClass("fullscreen"))
-        jQuery(elem).scrollTop()
+        jQuery(elem).scrollTop().toDouble
       else
         25.toDouble
     jQuery(elem)
