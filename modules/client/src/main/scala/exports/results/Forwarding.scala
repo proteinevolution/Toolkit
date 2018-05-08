@@ -50,8 +50,10 @@ object Forwarding {
           )
           .asInstanceOf[JQueryAjaxSettings]
       )
-      .done((_: js.Any, _: js.Any, _: JQueryXHR) => {
-        redirect(selectedTool, s"files/$jobID/$filename.fa")
+      .done((_: js.Any, _: js.Any, jqXHR: JQueryXHR) => {
+        if (jqXHR.status == 204) {
+          redirect(selectedTool, s"files/$jobID/$filename.fa")
+        }
       })
       .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
         println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")

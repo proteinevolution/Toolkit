@@ -53,7 +53,7 @@ object Dependencies {
   )
 
   lazy val frontendDeps = Seq(
-    "org.webjars"       % "jquery"                                % "3.3.1",
+    "org.webjars"       % "jquery"              % "3.3.1",
     "org.webjars.bower" % "jquery.lazyload"     % "1.9.7",
     "org.webjars"       % "jquery-ui"           % "1.12.1",
     "org.webjars.npm"   % "foundation-sites"    % "6.4.3",
