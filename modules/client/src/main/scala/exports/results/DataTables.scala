@@ -1,7 +1,6 @@
 package exports.results
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 
 class DataTables(toolName: String) {
 
@@ -10,7 +9,6 @@ class DataTables(toolName: String) {
     js.Array("10", "25", "50", "100", "All")
   )
 
-  @JSExport
   def config(jobID: String, numHits: Int, callbacks: () => js.Any): Unit = {
     js.Dynamic.global
       .$("#htb")

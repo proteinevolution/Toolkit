@@ -20,7 +20,7 @@ class NormalResultView(container: JQuery,
                        var wrapped: Boolean,
                        var colorAAs: Boolean,
                        val resultContext: ResultContext)
-    extends ResultView(container, jobID) {
+    extends ResultView(container) {
 
   override def init(): Unit = {
 

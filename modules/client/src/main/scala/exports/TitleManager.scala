@@ -4,7 +4,6 @@ import org.scalajs.dom
 import org.scalajs.dom.raw.Node
 import org.scalajs.jquery.jQuery
 
-import scala.language.postfixOps
 import scala.scalajs.js
 import scala.scalajs.js.annotation._
 
