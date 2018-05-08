@@ -7,11 +7,9 @@ import org.scalajs.dom.raw.{ HTMLElement, HTMLInputElement }
 import org.scalajs.jquery._
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.JSExport
 
 class ScrollUtil(resultView: ResultView) {
 
-  @JSExport
   def followScroll($elem: JQuery): Unit = {
     try {
       val $scrollLinks        = $elem.find("#scrollLinks a")
