@@ -11,6 +11,8 @@ import scala.scalajs.js
 import scala.scalajs.js.JSON
 import scala.scalajs.js.annotation.JSExportTopLevel
 
+import exports.facades.JQueryPlugin.jqPlugin
+
 @JSExportTopLevel("NormalResultView")
 class NormalResultView(container: JQuery,
                        jobID: String,
@@ -87,7 +89,6 @@ class NormalResultView(container: JQuery,
     // add tooltipster to visualization
     val blastVizArea = container.find("#blastviz").find("area")
     blastVizArea
-      .asInstanceOf[exports.facades.JQuery]
       .tooltipster(
         js.Dictionary(
           "theme"         -> js.Array("tooltipster-borderless", "tooltipster-borderless-customized"),

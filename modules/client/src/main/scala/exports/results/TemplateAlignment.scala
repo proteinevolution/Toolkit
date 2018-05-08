@@ -6,6 +6,8 @@ import org.scalajs.jquery._
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 
+import exports.facades.JQueryPlugin.jqPlugin
+
 @JSExportTopLevel("TemplateAlignment")
 class TemplateAlignment(tool: String, forwardingEnabled: Boolean = true) {
 
@@ -21,7 +23,7 @@ class TemplateAlignment(tool: String, forwardingEnabled: Boolean = true) {
           val forwardData = textArea.value().toString
           val tool        = selectElement.value
           if (tool != "") {
-            templateAlignmentModal.asInstanceOf[exports.facades.JQuery].foundation("close")
+            templateAlignmentModal.foundation("close")
             Forwarding.simple(tool, forwardData)
           }
         }
@@ -38,7 +40,7 @@ class TemplateAlignment(tool: String, forwardingEnabled: Boolean = true) {
 
   @JSExport
   def get(jobID: String, accession: String): Unit = {
-    textArea.asInstanceOf[exports.facades.JQuery].LoadingOverlay("show")
+    textArea.LoadingOverlay("show")
     val acc = accession.replace("#", "%23")
     val extension = tool match {
       case "hhpred"  => "a3m"
@@ -70,7 +72,7 @@ class TemplateAlignment(tool: String, forwardingEnabled: Boolean = true) {
               textArea.value("Sorry, failed to fetch Template Alignment.")
             })
             .always(() => {
-              textArea.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
+              textArea.LoadingOverlay("hide")
             })
         }
       })
@@ -79,7 +81,7 @@ class TemplateAlignment(tool: String, forwardingEnabled: Boolean = true) {
         textArea.value("Sorry, failed to fetch Template Alignment.")
       })
       .always(() => {
-        textArea.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
+        textArea.LoadingOverlay("hide")
       })
   }
 }

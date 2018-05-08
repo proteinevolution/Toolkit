@@ -4,6 +4,8 @@ import org.scalajs.jquery._
 
 import scala.scalajs.js
 
+import exports.facades.JQueryPlugin.jqPlugin
+
 class HitsSlider(private val container: JQuery) {
 
   def show(seqLength: Int, start: Int, end: Int): Unit = {
@@ -28,7 +30,6 @@ class HitsSlider(private val container: JQuery) {
       .text(end.toString)
 
     flatSlider
-      .asInstanceOf[exports.facades.JQuery]
       .slider(
         js.Dictionary(
           "range"       -> true,
@@ -47,7 +48,7 @@ class HitsSlider(private val container: JQuery) {
         }
       )
       .on("slidechange", (_: js.Any, ui: js.Dynamic) => {
-        js.Dynamic.global.sliderCoords = flatSlider.asInstanceOf[exports.facades.JQuery].slider("option", "values")
+        js.Dynamic.global.sliderCoords = flatSlider.slider("option", "values")
       })
 
     tooltipLeft

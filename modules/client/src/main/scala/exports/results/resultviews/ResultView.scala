@@ -7,6 +7,8 @@ import org.scalajs.jquery._
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
 
+import exports.facades.JQueryPlugin.jqStaticPlugin
+
 abstract class ResultView(container: JQuery, jobID: String) {
 
   def tempShownHits: Int
@@ -41,7 +43,7 @@ abstract class ResultView(container: JQuery, jobID: String) {
       loading = true
       container.find("#loadingHits").show()
       container.find("#loadHits").hide()
-      jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("show")
+      jQuery.LoadingOverlay("show")
 
       jQuery
         .ajax(
@@ -69,7 +71,7 @@ abstract class ResultView(container: JQuery, jobID: String) {
         .always(() => {
           loading = false
           container.find("#loadingHits").hide()
-          jQuery.asInstanceOf[exports.facades.JQuery].LoadingOverlay("hide")
+          jQuery.LoadingOverlay("hide")
         })
     }
   }
