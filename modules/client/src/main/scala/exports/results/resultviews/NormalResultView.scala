@@ -5,11 +5,11 @@ import exports.facades.ResultContext
 import exports.results.DataTables
 import org.scalajs.dom
 import org.scalajs.dom.raw.HTMLInputElement
-import org.scalajs.jquery.{ jQuery, JQuery, JQueryAjaxSettings, JQueryXHR }
+import org.scalajs.jquery.{ jQuery, JQuery, JQueryXHR }
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
-import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
+import scala.scalajs.js.annotation.JSExportTopLevel
 
 @JSExportTopLevel("NormalResultView")
 class NormalResultView(container: JQuery,
@@ -22,7 +22,6 @@ class NormalResultView(container: JQuery,
 
   override def init(): Unit = {
 
-    setupBlastVizTooltipster()
     scrollUtil.followScroll(jQuery(dom.document))
 
     // add slider val
@@ -71,12 +70,15 @@ class NormalResultView(container: JQuery,
         }
       })
 
+      // hide colorAAs button initially
+      container.find(".colorAA").hide()
+
       if (resultContext.toolName.equals("psiblast")) {
         container.find(".selectAllSeqBar").addClass("colorToggleBar").text("Deselect all")
-        checkboxes.selectAll(resultContext.belowEvalThreshold)
+        checkboxes.selectAll(resultContext.belowEvalThreshold - 1)
       }
-      hitsSlider.show(resultContext.query.seq.length, resultContext.firstQueryStart, resultContext.firstQueryEnd)
       showHits(0, this.shownHits)
+      setupBlastVizTooltipster()
       wrap.hide()
     }
   }
@@ -96,6 +98,7 @@ class NormalResultView(container: JQuery,
           "maxWidth"      -> blastVizArea.innerWidth() * 0.6
         )
       )
+    hitsSlider.show(resultContext.query.seq.length, resultContext.firstQueryStart, resultContext.firstQueryEnd)
   }
 
   override def bindEvents(): Unit = {
@@ -142,44 +145,20 @@ class NormalResultView(container: JQuery,
   }
 
   override def showHits(start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit = {
-    if (start <= resultContext.numHits && end <= resultContext.numHits) {
-      container.find("#loadingHits").show()
-      container.find("#loadHits").hide()
-      loading = true
-      jQuery.ajax(
-        js.Dynamic
-          .literal(
-            url = s"/results/loadHits/$jobID",
-            data = JSON.stringify(
-              js.Dynamic.literal("start" -> start, "end" -> end, "wrapped" -> wrapped, "isColor" -> colorAAs)
-            ),
-            contentType = "application/json",
-            success = { (data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) =>
-              container.find("#alignmentTable").append(data)
-              container.find("#loadingHits").hide()
-              shownHits = end
-              if (shownHits != resultContext.numHits)
-                container.find("#loadHits").show()
-              checkboxes.initForContainer(container.find(".result-panel"))
-              js.Dynamic.global.$("#alignments").floatingScroll("init")
-              js.Dynamic.global.$.LoadingOverlay("hide")
-              if (successCallback != null) successCallback(data, textStatus, jqXHR)
-              loading = false
-            },
-            error = { (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) =>
-              println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
-              loading = false
-            },
-            `type` = "POST"
-          )
-          .asInstanceOf[JQueryAjaxSettings]
-      )
-    }
+    internalShowHits(
+      s"/results/loadHits/$jobID",
+      JSON.stringify(
+        js.Dictionary("start" -> start, "end" -> end, "wrapped" -> wrapped, "isColor" -> colorAAs)
+      ),
+      container.find("#alignmentTable"),
+      start,
+      end,
+      successCallback
+    )
   }
 
   def toggleAlignmentColoring(): Unit = {
     this.colorAAs = !this.colorAAs
-    js.Dynamic.global.$.LoadingOverlay("show")
     container.find(".colorAA").toggleClass("colorToggleBar")
     container.find("#alignmentTable").empty()
     showHits(0, shownHits)
