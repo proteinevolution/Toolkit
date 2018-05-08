@@ -8,13 +8,13 @@ import scala.scalajs.js
 object JQueryPlugin {
 
   @js.native
-  trait JQueryStaticPlugin extends JQueryStatic {
+  sealed trait JQueryStaticPlugin extends JQueryStatic {
     def LoadingOverlay(action: String): JQueryStaticPlugin = js.native
   }
 
   @js.native
-  trait JQueryPlugin extends JQuery {
-    def LoadingOverlay(action: String): JQueryStaticPlugin         = js.native
+  sealed trait JQueryPlugin extends JQuery {
+    def LoadingOverlay(action: String): JQueryPlugin               = js.native
     def tooltipster(settings: js.Dictionary[js.Any]): JQueryPlugin = js.native
     def foundation(action: String = null): JQueryPlugin            = js.native
     def slider(options: js.Dictionary[Any]): JQueryPlugin          = js.native

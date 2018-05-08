@@ -7,8 +7,7 @@ import org.scalajs.jquery._
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 
-import exports.facades.JQueryPlugin.jqStaticPlugin
-import exports.facades.JQueryPlugin.jqPlugin
+import exports.facades.JQueryPlugin._
 
 @JSExportTopLevel("ForwardingModalHelper")
 object ForwardingModalHelper {
