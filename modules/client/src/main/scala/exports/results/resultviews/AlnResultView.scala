@@ -15,7 +15,7 @@ class AlnResultView(container: JQuery,
                     resultName: String,
                     val tempShownHits: Int,
                     val resultContext: ResultContext)
-    extends ResultView(container, jobID) {
+    extends ResultView(container) {
 
   override def init(): Unit = {
     scrollUtil.followScroll(jQuery(dom.document))

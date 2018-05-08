@@ -1,7 +1,6 @@
 package exports.facades
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.ScalaJSDefined
 
 trait HSP extends js.Object {
 
