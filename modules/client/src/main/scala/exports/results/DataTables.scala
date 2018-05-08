@@ -2,6 +2,7 @@ package exports.results
 
 import org.scalajs.jquery.jQuery
 import org.scalajs.dom.document
+
 import scala.scalajs.js
 import exports.facades.JQueryPlugin._
 
@@ -12,7 +13,7 @@ class DataTables(toolName: String) {
     js.Array("10", "25", "50", "100", "All")
   )
 
-  def config(jobID: String, numHits: Int, callbacks: () => js.Any): Unit = {
+  def config(jobID: String, numHits: Int, callbacks: js.Function0[Unit]): Unit = {
     jQuery(document.getElementById("htb"))
       .DataTable(
         js.Dictionary(
