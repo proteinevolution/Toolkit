@@ -15,7 +15,7 @@ class ClustalResultView(container: JQuery,
                         var colorAAs: Boolean,
                         val tempShownHits: Int,
                         val resultContext: ResultContext)
-    extends ResultView(container, jobID) {
+    extends ResultView(container) {
 
   override def init(): Unit = {
     if (resultContext.numHits > 0) {
