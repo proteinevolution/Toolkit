@@ -9,7 +9,7 @@ import de.proteinevolution.models.database.jobs.JobState._
 import actors.JobActor._
 import better.files._
 import de.proteinevolution.common.LocationProvider
-import de.proteinevolution.models.{ Constants, ToolNames }
+import de.proteinevolution.models.{ Constants, ToolName }
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.models.search.JobDAO
@@ -112,7 +112,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               }
 
               // Check if the user has the Modeller Key when the requested tool is Modeller
-              if (toolName == ToolNames.MODELLER.value && user.userConfig.hasMODELLERKey)
+              if (toolName == ToolName.MODELLER.value && user.userConfig.hasMODELLERKey)
                 params = params.updated("regkey", constants.modellerKey)
 
               // get checkbox value for the update per mail option
