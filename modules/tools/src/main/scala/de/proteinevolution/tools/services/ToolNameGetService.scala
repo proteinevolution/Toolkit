@@ -1,11 +1,11 @@
 package de.proteinevolution.tools.services
 
 import javax.inject.{ Inject, Singleton }
-
 import de.proteinevolution.db.MongoStore
-import de.proteinevolution.models.ToolNames.ToolName
+import de.proteinevolution.models.ToolName
 import reactivemongo.bson.BSONDocument
 import de.proteinevolution.models.database.jobs.Job
+
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton

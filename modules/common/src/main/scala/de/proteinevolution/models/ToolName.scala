@@ -1,8 +1,54 @@
 package de.proteinevolution.models
 
-object ToolNames {
+import de.proteinevolution.models.ToolName.toolTitlesDictionary
 
-  case class ToolName(value: String) extends AnyVal
+import scala.collection.immutable
+
+case class ToolName(value: String) extends AnyVal {
+  override def toString = toolTitlesDictionary(value)
+}
+
+object ToolName {
+
+  // case sensitive tool names used for title notifications
+  private val toolTitlesDictionary: Map[String, String] = immutable
+    .Map[String, String](
+      "hhblits"   -> "HHblits",
+      "hhpred"    -> "HHpred",
+      "hmmer"     -> "HMMER",
+      "patsearch" -> "PatternSearch",
+      "psiblast"  -> "PSI-BLAST",
+      "alnviz"    -> "AlignmentViewer",
+      "clustalo"  -> "ClustalΩ",
+      "kalign"    -> "Kalign",
+      "mafft"     -> "MAFFT",
+      "msaprobs"  -> "MSAProbs",
+      "muscle"    -> "MUSCLE",
+      "tcoffee"   -> "T-Coffee",
+      "aln2plot"  -> "Aln2Plot",
+      "hhrepid"   -> "HHrepID",
+      "marcoil"   -> "MARCOIL",
+      "pcoils"    -> "PCOILS",
+      "repper"    -> "REPPER",
+      "tprpred"   -> "TPRpred",
+      "ali2d"     -> "Ali2D",
+      "hhomp"     -> "HHomp",
+      "quick2d"   -> "Quick2D",
+      "modeller"  -> "MODELLER",
+      "samcc"     -> "SamCC",
+      "ancescon"  -> "ANCESCON",
+      "clans"     -> "CLANS",
+      "mmseqs2"   -> "MMseqs2",
+      "phyml"     -> "PhyML",
+      "sixframe"  -> "6Frame",
+      "backtrans" -> "BackTranslator",
+      "formatseq" -> "FormatSeq",
+      "hhfilter"  -> "HHfilter",
+      "retseq"    -> "RetrieveSeq",
+      "seq2id"    -> "Seq2ID",
+      "reformat"  -> "Reformat"
+    )
+    .withDefaultValue("")
 
   final val ALNVIZ              = ToolName("alnviz")
   final val REFORMAT            = ToolName("reformat")

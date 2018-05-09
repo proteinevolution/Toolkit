@@ -2,7 +2,7 @@ package de.proteinevolution.tools.controllers
 
 import javax.inject.{ Inject, Singleton }
 
-import de.proteinevolution.models.ToolNames
+import de.proteinevolution.models.ToolName
 import de.proteinevolution.tools.models.{ HHContext, ResultContext }
 import de.proteinevolution.tools.results.General.DTParam
 import de.proteinevolution.tools.results.HHBlits.HHBlitsHSP
@@ -14,7 +14,7 @@ import de.proteinevolution.tools.results.{ HSP, SearchResult }
 import de.proteinevolution.tools.services.{ DTService, KleisliProvider }
 import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc.{ AbstractController, Action, AnyContent }
-import ToolNames._
+import ToolName._
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -105,7 +105,7 @@ class HHController @Inject()(ctx: HHContext,
         case None => throw new IllegalStateException("no result found")
       }
       .map {
-        case ((result, hits)) =>
+        case (result, hits) =>
           Ok(
             Json
               .toJson(Map("draw" -> params.draw, "recordsTotal" -> result.num_hits, "recordsFiltered" -> hits.length))
