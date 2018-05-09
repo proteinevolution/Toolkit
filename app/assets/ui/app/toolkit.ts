@@ -34,7 +34,6 @@ window.Toolkit = {
         }
     },
     controller: function(args : any) {
-
         currentRoute = args.isJob ? "jobs" : "tools";
         let job : any, jobID : string, toolname : string, viewComponent : any;
         if (args.isJob) {
@@ -70,7 +69,6 @@ window.Toolkit = {
             viewComponent = function() { return FrontendTools[toolname]; };
         }
         else {
-
             // checks whether toolname is valid
             if (!args.isJob) {
                 let route = jsRoutes.controllers.Search.existsTool(toolname);
@@ -80,7 +78,6 @@ window.Toolkit = {
                 }).then(function(data) {
                 });
             }
-
             if(Toolkit.notFoundJobID === jobID) {
                 viewComponent = function() {
                     return m(Job404Component, { jobID: jobID });
@@ -88,13 +85,10 @@ window.Toolkit = {
             } else {
                 job = window.JobModel.update(args, args.isJob ? jobID : toolname); // job variable is a toolname ?? TODO refactor this
                 viewComponent = function() {
-
                     return m(JobViewComponent, { job: job });
-
                 };
             }
         }
-
         return {
             viewComponent: viewComponent
         };
