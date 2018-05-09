@@ -3,7 +3,7 @@ package models.tools
 import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.{ ConfigFactory, ConfigObject }
-import de.proteinevolution.models.{ Constants, Tool, ToolNames }
+import de.proteinevolution.models.{ Constants, Tool, ToolName }
 import de.proteinevolution.tools.results._
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.forms.ToolForm
@@ -61,7 +61,7 @@ final class ToolFactory @Inject()(
   def getResultMap(τ: String): ListMap[String, String => Future[play.twirl.api.Html]] = {
 
     τ match {
-      case ToolNames.PSIBLAST.value =>
+      case ToolName.PSIBLAST.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             resultFiles.getResults(jobID).map {
@@ -90,7 +90,7 @@ final class ToolFactory @Inject()(
             }
           }
         )
-      case ToolNames.FORMATSEQ.value =>
+      case ToolName.FORMATSEQ.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             Future.successful(
@@ -98,18 +98,18 @@ final class ToolFactory @Inject()(
                 jobID + ".out",
                 jobID,
                 "FormatSeq",
-                values(ToolNames.FORMATSEQ.value)
+                values(ToolName.FORMATSEQ.value)
               )
             )
           }
         )
-      case ToolNames.CLANS.value =>
+      case ToolName.CLANS.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             Future.successful(views.html.jobs.resultpanels.clans(jobID))
           }
         )
-      case ToolNames.TPRPRED.value =>
+      case ToolName.TPRPRED.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             resultFiles.getResults(jobID).map {
@@ -119,7 +119,7 @@ final class ToolFactory @Inject()(
             }
           }
         )
-      case ToolNames.HHBLITS.value =>
+      case ToolName.HHBLITS.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             resultFiles.getResults(jobID).map {
@@ -127,7 +127,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.hhblits
                   .hitlist(jobID,
                            hhblits.parseResult(jsValue),
-                           values(ToolNames.HHBLITS.value),
+                           values(ToolName.HHBLITS.value),
                            s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
               case None => views.html.errors.resultnotfound()
             }
@@ -152,7 +152,7 @@ final class ToolFactory @Inject()(
                   jobID,
                   aln.parse((jsValue \ "querytemplate").as[JsArray]),
                   "querytemplate",
-                  values(ToolNames.HHBLITS.value)
+                  values(ToolName.HHBLITS.value)
                 )
               case None => views.html.errors.resultnotfound()
             }
@@ -163,12 +163,12 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
                                                                aln.parse((jsValue \ "reduced").as[JsArray]),
                                                                "reduced",
-                                                               values(ToolNames.HHBLITS.value))
+                                                               values(ToolName.HHBLITS.value))
               case None => views.html.errors.resultnotfound()
             }
           }
         )
-      case ToolNames.MARCOIL.value =>
+      case ToolName.MARCOIL.value =>
         ListMap(
           "CC-Prob" -> { jobID =>
             Future.successful(views.html.jobs.resultpanels.marcoil(s"/files/$jobID/alignment_ncoils.png"))
@@ -201,7 +201,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.PCOILS.value =>
+      case ToolName.PCOILS.value =>
         ListMap(
           "CC-Prob" -> { jobID =>
             Future.successful(views.html.jobs.resultpanels.pcoils(s"/files/$jobID/" + jobID))
@@ -213,7 +213,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.REPPER.value =>
+      case ToolName.REPPER.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             Future.successful(
@@ -221,7 +221,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.MODELLER.value =>
+      case ToolName.MODELLER.value =>
         ListMap(
           "3D-Structure" -> { jobID =>
             Future.successful(
@@ -250,7 +250,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.HMMER.value =>
+      case ToolName.HMMER.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             resultFiles.getResults(jobID).map {
@@ -258,7 +258,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.hmmer
                   .hitlist(jobID,
                            hmmer.parseResult(jsValue),
-                           values(ToolNames.HMMER.value),
+                           values(ToolName.HMMER.value),
                            s"${constants.jobPath}/$jobID/results/blastviz.html")
               case None => views.html.errors.resultnotfound()
             }
@@ -271,7 +271,7 @@ final class ToolFactory @Inject()(
             }
           }
         )
-      case ToolNames.HHPRED.value =>
+      case ToolName.HHPRED.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             resultFiles.getResults(jobID).map {
@@ -279,7 +279,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.hhpred
                   .hitlist(jobID,
                            hhpred.parseResult(jsValue),
-                           values(ToolNames.HHPRED.value),
+                           values(ToolName.HHPRED.value),
                            s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
               case None => views.html.errors.resultnotfound()
             }
@@ -303,7 +303,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.alignment(jobID,
                                                        aln.parse((jsValue \ "querytemplate").as[JsArray]),
                                                        "querytemplate",
-                                                       values(ToolNames.HHPRED.value))
+                                                       values(ToolName.HHPRED.value))
               case None => views.html.errors.resultnotfound()
             }
           },
@@ -313,12 +313,12 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.alignmentQueryMSA(jobID,
                                                                aln.parse((jsValue \ "reduced").as[JsArray]),
                                                                "reduced",
-                                                               values(ToolNames.HHPRED.value))
+                                                               values(ToolName.HHPRED.value))
               case None => views.html.errors.resultnotfound()
             }
           }
         )
-      case ToolNames.HHOMP.value =>
+      case ToolName.HHOMP.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             resultFiles.getResults(jobID).map {
@@ -326,7 +326,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.hhomp
                   .hitlist(jobID,
                            hhomp.parseResult(jsValue),
-                           values(ToolNames.HHOMP.value),
+                           values(ToolName.HHOMP.value),
                            s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
               case None => views.html.errors.resultnotfound()
             }
@@ -338,7 +338,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.HHPRED_ALIGN.value =>
+      case ToolName.HHPRED_ALIGN.value =>
         ListMap(
           ResultViews.HITLIST -> { jobID =>
             resultFiles.getResults(jobID).map {
@@ -346,7 +346,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.hhpred
                   .hitlist(jobID,
                            hhpred.parseResult(jsValue),
-                           values(ToolNames.HHPRED_ALIGN.value),
+                           values(ToolName.HHPRED_ALIGN.value),
                            s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
               case None => views.html.errors.resultnotfound()
             }
@@ -357,7 +357,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.HHPRED_MANUAL.value =>
+      case ToolName.HHPRED_MANUAL.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             Future.successful(
@@ -370,7 +370,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.HHREPID.value =>
+      case ToolName.HHREPID.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             Future.successful(
@@ -378,7 +378,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.ALI2D.value =>
+      case ToolName.ALI2D.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             Future.successful(
@@ -399,7 +399,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.QUICK2D.value =>
+      case ToolName.QUICK2D.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             resultFiles.getResults(jobID).map {
@@ -409,7 +409,7 @@ final class ToolFactory @Inject()(
             }
           }
         )
-      case ToolNames.CLUSTALO.value =>
+      case ToolName.CLUSTALO.value =>
         ListMap(
           ResultViews.CLUSTAL -> { jobID =>
             resultFiles.getResults(jobID).map {
@@ -417,7 +417,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.clustal(jobID,
                                                      aln.parse((jsValue \ "alignment").as[JsArray]),
                                                      "alignment",
-                                                     values(ToolNames.CLUSTALO.value))
+                                                     values(ToolName.CLUSTALO.value))
               case None => views.html.errors.resultnotfound()
             }
           },
@@ -427,7 +427,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.alignment(jobID,
                                                        aln.parse((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
-                                                       values(ToolNames.CLUSTALO.value))
+                                                       values(ToolName.CLUSTALO.value))
               case None => views.html.errors.resultnotfound()
             }
           },
@@ -437,7 +437,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.KALIGN.value =>
+      case ToolName.KALIGN.value =>
         ListMap(
           ResultViews.CLUSTAL -> { jobID =>
             resultFiles.getResults(jobID).map {
@@ -445,7 +445,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.clustal(jobID,
                                                      aln.parse((jsValue \ "alignment").as[JsArray]),
                                                      "alignment",
-                                                     values(ToolNames.KALIGN.value))
+                                                     values(ToolName.KALIGN.value))
               case None => views.html.errors.resultnotfound()
             }
           },
@@ -455,7 +455,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.alignment(jobID,
                                                        aln.parse((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
-                                                       values(ToolNames.KALIGN.value))
+                                                       values(ToolName.KALIGN.value))
               case None => views.html.errors.resultnotfound()
             }
           },
@@ -465,7 +465,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.MAFFT.value =>
+      case ToolName.MAFFT.value =>
         ListMap(
           ResultViews.CLUSTAL -> { jobID =>
             resultFiles.getResults(jobID).map {
@@ -473,7 +473,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.clustal(jobID,
                                                      aln.parse((jsValue \ "alignment").as[JsArray]),
                                                      "alignment",
-                                                     values(ToolNames.MAFFT.value))
+                                                     values(ToolName.MAFFT.value))
               case None => views.html.errors.resultnotfound()
             }
           },
@@ -483,7 +483,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.alignment(jobID,
                                                        aln.parse((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
-                                                       values(ToolNames.MAFFT.value))
+                                                       values(ToolName.MAFFT.value))
               case None => views.html.errors.resultnotfound()
             }
           },
@@ -493,7 +493,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.MSAPROBS.value =>
+      case ToolName.MSAPROBS.value =>
         ListMap(
           ResultViews.CLUSTAL -> { jobID =>
             resultFiles.getResults(jobID).map {
@@ -501,7 +501,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.clustal(jobID,
                                                      aln.parse((jsValue \ "alignment").as[JsArray]),
                                                      "alignment",
-                                                     values(ToolNames.MSAPROBS.value))
+                                                     values(ToolName.MSAPROBS.value))
               case None => views.html.errors.resultnotfound()
             }
           },
@@ -511,7 +511,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.alignment(jobID,
                                                        aln.parse((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
-                                                       values(ToolNames.MSAPROBS.value))
+                                                       values(ToolName.MSAPROBS.value))
               case None => views.html.errors.resultnotfound()
             }
           },
@@ -521,7 +521,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.MUSCLE.value =>
+      case ToolName.MUSCLE.value =>
         ListMap(
           ResultViews.CLUSTAL -> { jobID =>
             resultFiles.getResults(jobID).map {
@@ -529,7 +529,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.clustal(jobID,
                                                      aln.parse((jsValue \ "alignment").as[JsArray]),
                                                      "alignment",
-                                                     values(ToolNames.MUSCLE.value))
+                                                     values(ToolName.MUSCLE.value))
               case None => views.html.errors.resultnotfound()
             }
           },
@@ -539,7 +539,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.alignment(jobID,
                                                        aln.parse((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
-                                                       values(ToolNames.MUSCLE.value))
+                                                       values(ToolName.MUSCLE.value))
               case None => views.html.errors.resultnotfound()
             }
           },
@@ -549,7 +549,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.TCOFFEE.value =>
+      case ToolName.TCOFFEE.value =>
         ListMap(
           ResultViews.CLUSTAL -> { jobID =>
             resultFiles.getResults(jobID).map {
@@ -557,7 +557,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.clustal(jobID,
                                                      aln.parse((jsValue \ "alignment").as[JsArray]),
                                                      "alignment",
-                                                     values(ToolNames.TCOFFEE.value))
+                                                     values(ToolName.TCOFFEE.value))
               case None => views.html.errors.resultnotfound()
             }
           },
@@ -567,7 +567,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.alignment(jobID,
                                                        aln.parse((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
-                                                       values(ToolNames.TCOFFEE.value))
+                                                       values(ToolName.TCOFFEE.value))
               case None => views.html.errors.resultnotfound()
             }
           },
@@ -577,13 +577,13 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.ALN2PLOT.value =>
+      case ToolName.ALN2PLOT.value =>
         ListMap(
           "Plots" -> { jobID =>
             Future.successful(views.html.jobs.resultpanels.aln2plot(jobID))
           }
         )
-      case ToolNames.ANCESCON.value =>
+      case ToolName.ANCESCON.value =>
         ListMap(
           ResultViews.TREE -> { jobID =>
             Future.successful(
@@ -604,7 +604,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.PHYML.value =>
+      case ToolName.PHYML.value =>
         ListMap(
           ResultViews.TREE -> { jobID =>
             Future.successful(
@@ -623,12 +623,12 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.MMSEQS2.value =>
+      case ToolName.MMSEQS2.value =>
         ListMap(
           "Reduced set" -> { jobID =>
             Future.successful(
               views.html.jobs.resultpanels
-                .fileviewWithDownloadForward(jobID + ".fas", jobID, "mmseqs_reps", values(ToolNames.MMSEQS2.value))
+                .fileviewWithDownloadForward(jobID + ".fas", jobID, "mmseqs_reps", values(ToolName.MMSEQS2.value))
             )
           },
           "Clusters" -> { jobID =>
@@ -638,7 +638,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.RETSEQ.value =>
+      case ToolName.RETSEQ.value =>
         ListMap(
           ResultViews.SUMMARY -> { jobID =>
             Future.successful(
@@ -651,22 +651,22 @@ final class ToolFactory @Inject()(
                 "sequences.fa",
                 jobID,
                 "retseq",
-                values(ToolNames.RETSEQ.value)
+                values(ToolName.RETSEQ.value)
               )
             )
           }
         )
-      case ToolNames.SEQ2ID.value =>
+      case ToolName.SEQ2ID.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
-                views.html.jobs.resultpanels.unchecked_list("Seq2ID", jobID, jsValue, values(ToolNames.SEQ2ID.value))
+                views.html.jobs.resultpanels.unchecked_list("Seq2ID", jobID, jsValue, values(ToolName.SEQ2ID.value))
               case None => views.html.errors.resultnotfound()
             }
           }
         )
-      case ToolNames.SAMCC.value =>
+      case ToolName.SAMCC.value =>
         ListMap(
           "3D-Structure-With-Axes" -> { jobID =>
             Future.successful(
@@ -689,7 +689,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.SIXFRAMETRANSLATION.value =>
+      case ToolName.SIXFRAMETRANSLATION.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             Future.successful(
@@ -701,7 +701,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.BACKTRANS.value =>
+      case ToolName.BACKTRANS.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             Future.successful(
@@ -710,7 +710,7 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.HHFILTER.value =>
+      case ToolName.HHFILTER.value =>
         ListMap(
           ResultViews.ALIGNMENT -> { jobID =>
             resultFiles.getResults(jobID).map {
@@ -718,7 +718,7 @@ final class ToolFactory @Inject()(
                 views.html.jobs.resultpanels.alignment(jobID,
                                                        aln.parse((jsValue \ "alignment").as[JsArray]),
                                                        "alignment",
-                                                       values(ToolNames.HHFILTER.value))
+                                                       values(ToolName.HHFILTER.value))
               case None => views.html.errors.resultnotfound()
             }
           },
@@ -728,13 +728,13 @@ final class ToolFactory @Inject()(
             )
           }
         )
-      case ToolNames.PATSEARCH.value =>
+      case ToolName.PATSEARCH.value =>
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
                 views.html.jobs.resultpanels
-                  .patternSearch(jobID, jsValue, values(ToolNames.PATSEARCH.value))
+                  .patternSearch(jobID, jsValue, values(ToolName.PATSEARCH.value))
               case None => views.html.errors.resultnotfound()
             }
           }

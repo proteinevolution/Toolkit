@@ -1,9 +1,11 @@
 package exports
 
+import de.proteinevolution.models.ToolName
 import org.scalajs.dom
 import org.scalajs.dom.raw.Node
 import org.scalajs.jquery.jQuery
 
+import scala.collection.mutable
 import scala.scalajs.js
 import scala.scalajs.js.annotation._
 
@@ -13,45 +15,7 @@ object TitleManager {
   private val title: Node        = dom.document.getElementsByTagName("title").item(0)
   private val basicTitle: String = title.textContent
   private var hasAlert: Boolean  = false
-  private val toolTitlesDictionary = js
-    .Dictionary(
-      "hhblits"   -> "HHblits",
-      "hhpred"    -> "HHpred",
-      "hmmer"     -> "HMMER",
-      "patsearch" -> "PatternSearch",
-      "psiblast"  -> "PSI-BLAST",
-      "alnviz"    -> "AlignmentViewer",
-      "clustalo"  -> "ClustalΩ",
-      "kalign"    -> "Kalign",
-      "mafft"     -> "MAFFT",
-      "msaprobs"  -> "MSAProbs",
-      "muscle"    -> "MUSCLE",
-      "tcoffee"   -> "T-Coffee",
-      "aln2plot"  -> "Aln2Plot",
-      "hhrepid"   -> "HHrepID",
-      "marcoil"   -> "MARCOIL",
-      "pcoils"    -> "PCOILS",
-      "repper"    -> "REPPER",
-      "tprpred"   -> "TPRpred",
-      "ali2d"     -> "Ali2D",
-      "hhomp"     -> "HHomp",
-      "quick2d"   -> "Quick2D",
-      "modeller"  -> "MODELLER",
-      "samcc"     -> "SamCC",
-      "ancescon"  -> "ANCESCON",
-      "clans"     -> "CLANS",
-      "mmseqs2"   -> "MMseqs2",
-      "phyml"     -> "PhyML",
-      "sixframe"  -> "6Frame",
-      "backtrans" -> "BackTranslator",
-      "formatseq" -> "FormatSeq",
-      "hhfilter"  -> "HHfilter",
-      "retseq"    -> "RetrieveSeq",
-      "seq2id"    -> "Seq2ID",
-      "reformat"  -> "Reformat"
-    )
-    .withDefaultValue("")
-  private val moreTitlesDictionary = js
+  private val moreTitlesDictionary: mutable.Map[String, String] = js
     .Dictionary(
       "jobmanager" -> "Jobmanager",
       "404"        -> "404"
@@ -87,8 +51,8 @@ object TitleManager {
       hashFragments = dom.document.location.hash.replace("#", "").replaceFirst("/", "").split("/")
     // find prefix
     titlePrefix = hashFragments(0) match {
-      case "tools" => toolTitlesDictionary(hashFragments(1))
-      case "jobs"  => toolTitlesDictionary(js.Dynamic.global.JobListComponent.currentTool.asInstanceOf[String])
+      case "tools" => ToolName(hashFragments(1)).toString
+      case "jobs"  => ToolName(js.Dynamic.global.JobListComponent.currentTool.asInstanceOf[String]).toString
       case _       => moreTitlesDictionary(hashFragments(0))
     }
   }

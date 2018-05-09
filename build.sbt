@@ -32,23 +32,21 @@ lazy val disableDocs = Seq[Setting[_]](
   publishArtifact in (Compile, packageDoc) := false
 )
 
-lazy val common = (project in file("modules/common"))
-  .enablePlugins(PlayScala, JavaAppPackaging)
+lazy val common = (crossProject.crossType(CrossType.Pure) in file("modules/common"))
   .settings(
-    Settings.compileSettings,
     name := "common",
     libraryDependencies ++= Dependencies.commonDeps,
     Settings.compileSettings,
-    TwirlKeys.templateImports := Seq.empty,
     disableDocs
   )
-  .disablePlugins(PlayLayoutPlugin)
+
+lazy val commonJs = common.js
+lazy val commonJVM = common.jvm
 
 lazy val tools = (project in file("modules/tools"))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl)
-  .dependsOn(common, sys)
+  .dependsOn(commonJVM, sys)
   .settings(
-    Settings.compileSettings,
     name := "tools",
     libraryDependencies ++= Dependencies.commonDeps,
     Settings.compileSettings,
@@ -59,7 +57,7 @@ lazy val tools = (project in file("modules/tools"))
 
 lazy val sys = (project in file("modules/sys"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(common)
+  .dependsOn(commonJVM)
   .settings(
     name := "sys",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -71,8 +69,8 @@ lazy val sys = (project in file("modules/sys"))
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb, BuildInfoPlugin)
-  .dependsOn(client, common, tools, sys)
-  .aggregate(client, common, tools, sys)
+  .dependsOn(client, commonJVM, tools, sys)
+  .aggregate(client, commonJVM, tools, sys)
   .settings(
     coreSettings,
     name := "mpi-toolkit",
@@ -90,6 +88,7 @@ resolvers ++= Seq(
 
 lazy val client = (project in file("modules/client"))
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
+  .dependsOn(commonJs)
   .settings(
     Settings.sjsCompileSettings,
     scalaJSUseMainModuleInitializer := true,
