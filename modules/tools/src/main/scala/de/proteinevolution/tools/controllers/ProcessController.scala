@@ -6,11 +6,11 @@ import de.proteinevolution.tools.models.{ ForwardMode, HHContext, ResultContext 
 import de.proteinevolution.tools.services.{ KleisliProvider, ProcessFactory, ToolNameGetService }
 import play.api.mvc.{ AbstractController, Action, AnyContent }
 import better.files._
-import de.proteinevolution.models.{ Constants, ToolNames }
+import de.proteinevolution.models.{ Constants, ToolName }
 
 import scala.sys.process.Process
 import de.proteinevolution.tools.results.{ HSP, SearchResult }
-import ToolNames._
+import ToolName._
 
 import scala.concurrent.ExecutionContext
 
@@ -95,7 +95,7 @@ class ProcessController @Inject()(ctx: HHContext,
       }
   }
 
-  private[this] def parseAccString(toolName: ToolNames.ToolName,
+  private[this] def parseAccString(toolName: ToolName,
                                    result: SearchResult[HSP],
                                    accStr: String,
                                    mode: ForwardMode): String = {

@@ -2,8 +2,8 @@ package de.proteinevolution.tools.services
 
 import better.files._
 import com.typesafe.config.ConfigFactory
-import de.proteinevolution.models.ToolNames
-import ToolNames._
+import de.proteinevolution.models.ToolName
+import ToolName._
 import de.proteinevolution.tools.models.ForwardMode
 
 import scala.sys.process

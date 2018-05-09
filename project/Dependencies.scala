@@ -30,7 +30,8 @@ object Dependencies {
     "com.vmunier"          %% "scalajs-scripts"          % "1.1.1",
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
     "com.typesafe.play"    %% "play-json"                % "2.6.9",
-    "org.webjars"          %% "webjars-play"             % "2.6.2"
+    "org.webjars"          %% "webjars-play"             % "2.6.2",
+    "org.scala-js"         %% "scalajs-stubs"            % scalaJSVersion % "provided"
   )
 
   lazy val clientDeps: Def.Initialize[Seq[sbt.ModuleID]] = Def.setting(
