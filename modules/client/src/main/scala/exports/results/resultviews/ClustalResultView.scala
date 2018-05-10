@@ -9,13 +9,13 @@ import scala.scalajs.js.JSON
 import scala.scalajs.js.annotation.JSExportTopLevel
 
 @JSExportTopLevel("ClustalResultView")
-class ClustalResultView(container: JQuery,
+class ClustalResultView(val container: JQuery,
                         jobID: String,
                         resultName: String,
                         var colorAAs: Boolean,
                         val tempShownHits: Int,
                         val resultContext: ResultContext)
-    extends ResultView(container) {
+    extends ResultView {
 
   override def init(): Unit = {
     if (resultContext.numHits > 0) {

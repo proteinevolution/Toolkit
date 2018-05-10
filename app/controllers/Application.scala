@@ -75,7 +75,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
       userSessions
         .getUser(rh)
         .map { user =>
-          Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.sessionID.get, out))))
+          Right(ActorFlow.actorRef(out => Props(webSocketActorFactory(user.sessionID.get, out))))
         }
         .recover {
           case e: Exception =>
