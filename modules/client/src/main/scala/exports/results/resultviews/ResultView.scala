@@ -6,8 +6,9 @@ import org.scalajs.jquery._
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
-
 import exports.facades.JQueryPlugin._
+import exports.results.models.ResultForm
+import upickle.default.write
 
 trait ResultView {
 
@@ -34,8 +35,9 @@ trait ResultView {
 
   def showHits(start: Int, End: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit
 
-  protected def internalShowHits(route: String,
-                                 data: String,
+  protected def internalShowHits(jobID: String,
+                                 route: String,
+                                 data: ResultForm,
                                  resultContainer: JQuery,
                                  start: Int,
                                  end: Int,
@@ -45,13 +47,13 @@ trait ResultView {
       loading = true
       container.find("#loadingHits").show()
       container.find("#loadHits").hide()
-      jQuery.LoadingOverlay("show")
 
+      jQuery.LoadingOverlay("show")
       jQuery
         .ajax(
           js.Dictionary(
               "url"         -> route,
-              "data"        -> data,
+              "data"        -> write(data),
               "contentType" -> "application/json",
               "type"        -> "POST"
             )
@@ -64,7 +66,12 @@ trait ResultView {
             container.find("#loadHits").show()
           checkboxes.initForContainer(resultContainer)
           jQuery("#alignments").floatingScroll("init")
-          if (successCallback != null) successCallback(data, textStatus, jqXHR)
+          if (successCallback != null) {
+            import scala.scalajs.js.timers._
+            setTimeout(300) {
+              successCallback(data, textStatus, jqXHR)
+            }
+          }
         })
         .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
           println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
@@ -87,26 +94,27 @@ trait ResultView {
   }
 
   @JSExport
-  def scrollToHit(id: Int): Unit = {
+  def scrollToHit(id: Int, reload: Boolean = false): Unit = {
     val elem =
       if (container.find("#tool-tabs").hasClass("fullscreen"))
         "#tool-tabs"
       else
         "html, body"
-    if (id > shownHits) {
+    if (reload) {
+      if (id > shownHits) shownHits = id
+      container.find("#alignmentTable").empty()
       showHits(
+        0,
         shownHits,
-        id,
         (_: js.Any, _: js.Any, _: JQueryXHR) => {
-          js.Dynamic.global.shownHits = id
           jQuery(elem).animate(
             js.Dictionary(
               "scrollTop" -> (container
-                .find(".aln[value='" + id + "']")
+                .find("input.aln[value=" + id + "]")
                 .offset()
                 .asInstanceOf[JQueryPosition]
                 .top
-                .asInstanceOf[Double] - 100)
+                .asInstanceOf[Double] - 100.toDouble)
             ),
             1,
             "swing",
@@ -114,25 +122,19 @@ trait ResultView {
           )
         }
       )
-      jQuery(elem)
-        .animate(js.Dynamic.literal(
-                   "scrollTop" -> (container
-                     .find(".aln[value='" + id + "']")
-                     .offset()
-                     .asInstanceOf[JQueryPosition]
-                     .top - 100.toDouble)
-                 ),
-                 1)
     } else {
       jQuery(elem)
-        .animate(js.Dynamic.literal(
-                   "scrollTop" -> (container
-                     .find(".aln[value='" + id + "']")
-                     .offset()
-                     .asInstanceOf[JQueryPosition]
-                     .top - 100.toDouble)
-                 ),
-                 1)
+        .animate(
+          js.Dynamic.literal(
+            "scrollTop" -> (container
+              .find(".aln[value='" + id + "']")
+              .offset()
+              .asInstanceOf[JQueryPosition]
+              .top
+              .asInstanceOf[Double] - 100.toDouble)
+          ),
+          1
+        )
     }
 
   }

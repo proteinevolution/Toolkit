@@ -2,11 +2,11 @@ package exports.results.resultviews
 
 import exports.extensions.JQueryExtensions
 import exports.facades.ResultContext
+import exports.results.models.ResultForm.MsaResultForm
 import org.scalajs.dom
 import org.scalajs.jquery.{ jQuery, JQuery, JQueryXHR }
 
 import scala.scalajs.js
-import scala.scalajs.js.JSON
 import scala.scalajs.js.annotation.JSExportTopLevel
 
 @JSExportTopLevel("AlnResultView")
@@ -27,10 +27,9 @@ class AlnResultView(val container: JQuery,
 
   override def showHits(start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit = {
     internalShowHits(
+      jobID,
       s"/results/alignment/loadHits/$jobID",
-      JSON.stringify(
-        js.Dictionary("start" -> start, "end" -> end, "resultName" -> resultName)
-      ),
+      MsaResultForm(start, end, resultName),
       container.find(".alignmentTBody"),
       start,
       end,

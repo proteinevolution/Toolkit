@@ -2,10 +2,10 @@ package exports.results.resultviews
 
 import exports.extensions.JQueryExtensions
 import exports.facades.ResultContext
+import exports.results.models.ResultForm.ClustalResultForm
 import org.scalajs.jquery.{ JQuery, JQueryXHR }
 
 import scala.scalajs.js
-import scala.scalajs.js.JSON
 import scala.scalajs.js.annotation.JSExportTopLevel
 
 @JSExportTopLevel("ClustalResultView")
@@ -26,10 +26,9 @@ class ClustalResultView(val container: JQuery,
 
   override def showHits(start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit = {
     internalShowHits(
+      jobID,
       s"/results/alignment/clustal/$jobID",
-      JSON.stringify(
-        js.Dictionary("color" -> colorAAs, "resultName" -> resultName)
-      ),
+      ClustalResultForm(colorAAs, resultName),
       container.find("#resultTable"),
       start,
       end,

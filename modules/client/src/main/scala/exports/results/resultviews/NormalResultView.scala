@@ -6,12 +6,12 @@ import exports.results.DataTables
 import org.scalajs.dom
 import org.scalajs.dom.raw.HTMLInputElement
 import org.scalajs.jquery.{ jQuery, JQuery, JQueryXHR }
+import org.scalajs.dom.ext._
 
 import scala.scalajs.js
-import scala.scalajs.js.JSON
 import scala.scalajs.js.annotation.JSExportTopLevel
-
 import exports.facades.JQueryPlugin.jqPlugin
+import exports.results.models.ResultForm.ShowHitsForm
 
 @JSExportTopLevel("NormalResultView")
 class NormalResultView(val container: JQuery,
@@ -147,10 +147,9 @@ class NormalResultView(val container: JQuery,
 
   override def showHits(start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit = {
     internalShowHits(
+      jobID,
       s"/results/loadHits/$jobID",
-      JSON.stringify(
-        js.Dictionary("start" -> start, "end" -> end, "wrapped" -> wrapped, "isColor" -> colorAAs)
-      ),
+      ShowHitsForm(start, end, wrapped, colorAAs),
       container.find("#alignmentTable"),
       start,
       end,
@@ -161,16 +160,26 @@ class NormalResultView(val container: JQuery,
   def toggleAlignmentColoring(): Unit = {
     this.colorAAs = !this.colorAAs
     container.find(".colorAA").toggleClass("colorToggleBar")
-    container.find("#alignmentTable").empty()
-    showHits(0, shownHits)
+    val current = currentIndex()
+    scrollToHit(current, reload = true)
   }
 
   def toggleIsWrapped(): Unit = {
     wrapped = !wrapped
     container.find("#wrap").toggleClass("colorToggleBar")
     JQueryExtensions.toggleText(container.find("#wrap"), "Unwrap Seqs", "Wrap Seqs")
-    container.find("#alignmentTable").empty()
-    showHits(0, shownHits)
+    val current = currentIndex()
+    scrollToHit(current, reload = true)
+  }
+
+  def currentIndex(): Int = {
+    dom.document
+      .querySelectorAll(".aln")
+      .iterator
+      .toList
+      .filter(jQuery(_).isOnScreen())
+      .map(_.asInstanceOf[HTMLInputElement].value.toInt)
+      .min
   }
 
 }
