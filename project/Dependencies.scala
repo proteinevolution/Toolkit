@@ -30,7 +30,7 @@ object Dependencies {
     "com.vmunier"          %% "scalajs-scripts"          % "1.1.1",
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
     "com.typesafe.play"    %% "play-json"                % "2.6.9",
-    "org.webjars"          %% "webjars-play"             % "2.6.2",
+    "org.webjars"          %% "webjars-play"             % "2.6.3",
     "org.scala-js"         %% "scalajs-stubs"            % scalaJSVersion % "provided"
   )
 
@@ -40,7 +40,8 @@ object Dependencies {
       "com.tgf.pizza" %%% "scalajs-mithril" % "0.1.1",
       "be.doeraene"   %%% "scalajs-jquery"  % "0.9.3",
       "org.querki"    %%% "jquery-facade"   % "1.2",
-      "org.typelevel" %%% "cats-core"       % "1.1.0"
+      "org.typelevel" %%% "cats-core"       % "1.1.0",
+      "com.lihaoyi"   %%% "upickle"         % "0.6.5"
     )
   )
 

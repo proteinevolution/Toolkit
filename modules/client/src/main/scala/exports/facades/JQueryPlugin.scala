@@ -20,6 +20,7 @@ object JQueryPlugin {
     def slider(options: js.Dictionary[Any]): JQueryPlugin          = js.native
     def slider(action: String, target: String): JQueryPlugin       = js.native
     def DataTable(config: js.Dictionary[Any]): JQueryPlugin        = js.native
+    def floatingScroll(config: String): JQueryPlugin               = js.native
   }
 
   implicit def jqPlugin(jq: JQuery): JQueryPlugin = jq.asInstanceOf[JQueryPlugin]
