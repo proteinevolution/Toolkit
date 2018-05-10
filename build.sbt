@@ -19,6 +19,7 @@ lazy val buildInfoSettings = Seq(
     name,
     version,
     scalaVersion,
+    "scalaJSVersion" -> scalaJSVersion,
     sbtVersion,
     "playVersion" -> play.core.PlayVersion.current
   ),
@@ -40,7 +41,7 @@ lazy val common = (crossProject.crossType(CrossType.Pure) in file("modules/commo
     disableDocs
   )
 
-lazy val commonJs = common.js
+lazy val commonJS  = common.js
 lazy val commonJVM = common.jvm
 
 lazy val tools = (project in file("modules/tools"))
@@ -88,7 +89,7 @@ resolvers ++= Seq(
 
 lazy val client = (project in file("modules/client"))
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
-  .dependsOn(commonJs)
+  .dependsOn(commonJS)
   .settings(
     Settings.sjsCompileSettings,
     scalaJSUseMainModuleInitializer := true,

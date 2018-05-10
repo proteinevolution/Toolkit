@@ -7,7 +7,7 @@ import org.scalajs.jquery._
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
 
-import exports.facades.JQueryPlugin.jqStaticPlugin
+import exports.facades.JQueryPlugin._
 
 abstract class ResultView(container: JQuery) {
 
@@ -61,7 +61,7 @@ abstract class ResultView(container: JQuery) {
           if (shownHits != resultContext.numHits)
             container.find("#loadHits").show()
           checkboxes.initForContainer(resultContainer)
-          js.Dynamic.global.$("#alignments").floatingScroll("init")
+          jQuery("#alignments").floatingScroll("init")
           if (successCallback != null) successCallback(data, textStatus, jqXHR)
         })
         .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {

@@ -5,7 +5,6 @@
 @import de.proteinevolution.models.Tool
 @import org.webjars.play.WebJarsUtil
 @import play.api.Environment
-@import play.twirl.api.Html
 @(webJarsUtil: WebJarsUtil, tools: Iterable[Tool], message: String = "", view: String = "", environment: Environment)()
 
 <!DOCTYPE html>
@@ -31,66 +30,66 @@
 
         <link rel="stylesheet" type="text/css" charset="utf-8" href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 
-        @Html(webJarsUtil.css("hamburgers.min.css"))
-        @Html(webJarsUtil.css("nice-select.css"))
-        @Html(webJarsUtil.css("web-fonts-with-css/css/fontawesome-all.min.css"))
+        @webJarsUtil.locate("hamburgers.min.css").css()
+        @webJarsUtil.locate("nice-select.css").css()
+        @webJarsUtil.locate("web-fonts-with-css/css/fontawesome-all.min.css").css()
         <link href="@routes.Assets.versioned("styles/global.css")" rel="stylesheet">
 
             <!-- JQuery -->
-        @Html(webJarsUtil.script("3.3.1/jquery.min.js"))
-        @Html(webJarsUtil.script("jquery.lazyload.js"))
-        @Html(webJarsUtil.script("1.12.1/jquery-ui.min.js"))
-        @Html(webJarsUtil.script("jquery.nice-select.js"))
+        @webJarsUtil.locate("3.3.1/jquery.min.js").script()
+        @webJarsUtil.locate("jquery.lazyload.js").script()
+        @webJarsUtil.locate("1.12.1/jquery-ui.min.js").script()
+        @webJarsUtil.locate("jquery.nice-select.js").script()
 
             <!-- Mithril -->
 
-        @Html(webJarsUtil.script("mithril.min.js"))
+        @webJarsUtil.locate("mithril.min.js").script()
 
             <!-- Velocity -->
-        @Html(webJarsUtil.script("velocity.min.js"))
+        @webJarsUtil.locate("velocity.min.js").script()
 
             <!-- Highcharts -->
-        @Html(webJarsUtil.script("6.0.7/highcharts.js"))
+        @webJarsUtil.locate("6.0.7/highcharts.js").script()
 
             <!-- Select2 -->
-        @Html(webJarsUtil.css("select2.min.css"))
-        @Html(webJarsUtil.script("select2.min.js"))
+        @webJarsUtil.locate("select2.min.css").css()
+        @webJarsUtil.locate("select2.min.js").script()
 
             <!-- NGL 3D Viewer -->
-        @Html(webJarsUtil.script("ngl.js"))
+        @webJarsUtil.locate("ngl.js").script()
 
             <!-- Typeahead.js -->
 
-        @Html(webJarsUtil.script("bloodhound.min.js"))
-        @Html(webJarsUtil.script("typeahead.jquery.js"))
+        @webJarsUtil.locate("bloodhound.min.js").script()
+        @webJarsUtil.locate("typeahead.jquery.js").script()
 
             <!-- VISIBLE -->
-        @Html(webJarsUtil.script("jquery.visible.min.js"))
+        @webJarsUtil.locate("jquery.visible.min.js").script()
 
             <!-- Loadingoverlay -->
         <script src="@routes.Assets.versioned("javascripts/vendor/loadingoverlay.min.js")" type="text/javascript"></script>
 
             <!-- Tooltipster -->
-        @Html(webJarsUtil.css("tooltipster.bundle.min.css"))
-        @Html(webJarsUtil.css("tooltipster-sideTip-borderless.min.css"))
-        @Html(webJarsUtil.script("tooltipster.bundle.min.js"))
+        @webJarsUtil.locate("tooltipster.bundle.min.css").css()
+        @webJarsUtil.locate("tooltipster-sideTip-borderless.min.css").css()
+        @webJarsUtil.locate("tooltipster.bundle.min.js").script()
 
             <!-- MOMENT.JS -->
-        @Html(webJarsUtil.script("moment.min.js"))
+        @webJarsUtil.locate("moment.min.js").script()
 
             <!-- FloatingScroll -->
-        @Html(webJarsUtil.script("jquery.floatingscroll.min.js"))
-        @Html(webJarsUtil.css("jquery.floatingscroll.css"))
+        @webJarsUtil.locate("jquery.floatingscroll.min.js").script()
+        @webJarsUtil.locate("jquery.floatingscroll.css").css()
 
             <!-- Codemirror -->
-        @Html(webJarsUtil.script("codemirror.js"))
-        @Html(webJarsUtil.css("codemirror.css"))
-        @Html(webJarsUtil.script("javascript.js"))
+        @webJarsUtil.locate("codemirror.js").script()
+        @webJarsUtil.locate("codemirror.css").css()
+        @webJarsUtil.locate("javascript.js").script()
 
             <!-- Datatables -->
-        @Html(webJarsUtil.css("dataTables.foundation.min.css"))
-        @Html(webJarsUtil.script("jquery.dataTables.min.js"))
-        @Html(webJarsUtil.script("dataTables.foundation.min.js"))
+        @webJarsUtil.locate("dataTables.foundation.min.css").css()
+        @webJarsUtil.locate("jquery.dataTables.min.js").script()
+        @webJarsUtil.locate("dataTables.foundation.min.js").script()
 
             <!-- Javascript Router -->
         <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
@@ -217,12 +216,14 @@
 
                     @if(environment.mode == play.api.Mode.Dev) {
                         <div class="row">
-                            <div id="buildinfo" class="column small-6 small-centered text-center text-small">
+                            <div id="buildinfo" class="column small-7 small-centered text-center text-small">
                             @(new java.lang.StringBuilder()
                                     .append("Version: ")
                                     .append(BuildInfo.version)
                                     .append(" on Scala ")
                                     .append(BuildInfo.scalaVersion)
+                                    .append(" with ScalaJS ")
+                                    .append(BuildInfo.scalaJSVersion)
                                     .append(" with Sbt ")
                                     .append(BuildInfo.sbtVersion)
                                     .append(" and Play! ")
@@ -291,7 +292,7 @@
         @views.html.help.modal()
 
             <!-- Foundation 6 -->
-        @Html(webJarsUtil.script("foundation.min.js"))
+        @webJarsUtil.locate("foundation.min.js").script()
 
 
             <!-- Reformat Javascript Library -->
@@ -301,9 +302,9 @@
             <!-- TypeScript && Mithril Assets -->
 
         <script src="@routes.Assets.versioned("javascripts/vendor/msa.min.js")" type="text/javascript"></script>
-        @Html(webJarsUtil.script("biojs-io-newick.min.js"))
+        @webJarsUtil.locate("biojs-io-newick.min.js").script()
         <script src='@routes.Assets.versioned("javascripts/vendor/biojs-vis-tree.min.js")'></script>
-        @Html(webJarsUtil.script("snapsvg", "dist/snap.svg-min.js"))
+        @webJarsUtil.locate("snapsvg", "dist/snap.svg-min.js").script()
         <link rel="stylesheet" type="text/css" charset="utf-8" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
         <script src="@routes.Assets.versioned("javascripts/typescriptc.js")"></script>
