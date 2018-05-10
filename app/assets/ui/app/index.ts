@@ -89,6 +89,9 @@ interface Window {
 
 window.SearchBarComponent = {
     controller: function(args: any): any {
+        return {
+            placeholder: args.placeholder? args.placeholder: 'enter a job ID or a tool name'
+        }
     },
     view: function(ctrl: any, args: any) {
         return m("div", {id: args.id, "class": "search-container", config: typeAhead}, [
@@ -96,7 +99,7 @@ window.SearchBarComponent = {
                 "class": "search-input",
                 type: "text",
                 name: "q",
-                placeholder: 'enter a job ID or a tool name'
+                placeholder: ctrl.placeholder
             })
         ]);
     }
