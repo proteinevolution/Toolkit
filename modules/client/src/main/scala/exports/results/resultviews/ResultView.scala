@@ -9,7 +9,9 @@ import scala.scalajs.js.annotation.JSExport
 
 import exports.facades.JQueryPlugin._
 
-abstract class ResultView(container: JQuery) {
+trait ResultView {
+
+  def container: JQuery
 
   def tempShownHits: Int
 
