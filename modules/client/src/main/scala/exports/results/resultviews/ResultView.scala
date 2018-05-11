@@ -42,6 +42,7 @@ trait ResultView {
                                  start: Int,
                                  end: Int,
                                  successCallback: (js.Any, js.Any, JQueryXHR) => Unit): Unit = {
+
     if (start <= resultContext.numHits && end <= resultContext.numHits) {
 
       loading = true
@@ -110,7 +111,7 @@ trait ResultView {
           jQuery(elem).animate(
             js.Dictionary(
               "scrollTop" -> (container
-                .find("input.aln[value=" + id + "]")
+                .find(".aln[value=" + id + "]")
                 .offset()
                 .asInstanceOf[JQueryPosition]
                 .top
@@ -127,7 +128,7 @@ trait ResultView {
         .animate(
           js.Dynamic.literal(
             "scrollTop" -> (container
-              .find("input.aln[value=" + id + "]")
+              .find(".aln[value=" + id + "]")
               .offset()
               .asInstanceOf[JQueryPosition]
               .top
