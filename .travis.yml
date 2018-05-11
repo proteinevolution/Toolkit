@@ -17,6 +17,7 @@ cache:
   - $HOME/.sbt
 before_install:
   - chmod +x bin/validate-code
+  - git clone https://github.com/AlDanial/cloc.git $HOME/cloc
 install:
   - git submodule update --init --recursive
   - git clone https://github.com/felixgabler/maxmind-geoip2-scala.git $HOME/pizza
@@ -31,3 +32,4 @@ install:
 script:
  - bin/validate-code
  - sbt test:compile test stage
+ - $HOME/cloc/cloc $(git ls-files)
