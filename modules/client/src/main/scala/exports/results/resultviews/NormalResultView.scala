@@ -172,7 +172,7 @@ class NormalResultView(val container: JQuery,
     scrollToHit(current, reload = true)
   }
 
-  def currentIndex(): Int = {
+  private def currentIndex(): Int = {
     dom.document
       .querySelectorAll(".aln")
       .iterator
