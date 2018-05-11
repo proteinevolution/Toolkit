@@ -127,7 +127,7 @@ trait ResultView {
         .animate(
           js.Dynamic.literal(
             "scrollTop" -> (container
-              .find(".aln[value='" + id + "']")
+              .find("input.aln[value=" + id + "]")
               .offset()
               .asInstanceOf[JQueryPosition]
               .top
