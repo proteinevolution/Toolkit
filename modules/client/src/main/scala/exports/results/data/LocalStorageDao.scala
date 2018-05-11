@@ -7,7 +7,6 @@ import scala.scalajs.js
 class LocalStorageDao(id: String) {
 
   val LocalStorageName = s"showHits-$id"
-  clear()
 
   def hasContent: Boolean = load().isDefined
 
