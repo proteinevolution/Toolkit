@@ -18,7 +18,7 @@ class LocalStorageDao(id: String) {
     LocalStorage(LocalStorageName)
   }
 
-  def clear() = {
+  def clear(): Unit = {
     LocalStorage.remove(LocalStorageName)
   }
 
