@@ -217,9 +217,8 @@
                 $("input:checkbox[name=alignment_elem][value=1]").prop("checked", true);
                 alert("No templates selected. Using first template for modelling.");
             }
-            formData.append("templates", Toolkit.resultView.getSelectedValues.join(" "));
+            formData.append("templates", Toolkit.resultView.getSelectedValues.join(" ")); // TODO move checkbox handling
             formData.append("parentid", jobID);
-
 
             var submitRoute = jsRoutes.controllers.JobController.submitJob("hhpred_manual");
             m.request({
@@ -231,7 +230,6 @@
                 }
             }).then(function(submissionReturnData){
                 if (submissionReturnData.successful) {
-                    console.log("Job Submission was successful.");
                     jobID = submissionReturnData.jobID;
                     var jobListComp = JobListComponent.Job(
                             { jobID: jobID, state: 0, dateCreated: Date.now().valueOf(), tool: "hhpred_manual" }
