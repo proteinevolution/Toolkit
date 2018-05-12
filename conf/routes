@@ -58,15 +58,15 @@ GET           /verification/:userName/:token          controllers.Auth.verificat
 GET           /getCurrentUser                         controllers.Auth.profile2json()
 
 # Update Job status (should be server internal access only)
-PUT          /jobs/done/:jobID/:key                  controllers.Jobs.jobStatusDone(jobID : String, key: String)
-PUT          /jobs/error/:jobID/:key                 controllers.Jobs.jobStatusError(jobID : String, key: String)
-PUT          /jobs/running/:jobID/:key               controllers.Jobs.jobStatusRunning(jobID : String, key: String)
-PUT          /jobs/queued/:jobID/:key                controllers.Jobs.jobStatusQueued(jobID : String, key: String)
-PUT          /jobs/sge/:jobID/:sgeID/:key            controllers.Jobs.SGEID(jobID: String, sgeID: String, key: String)
-PUT          /jobs/dateviewed/:mainID                controllers.Jobs.updateDateViewed(mainID)
+PUT          /jobs/done/:jobID/:key                   controllers.Jobs.jobStatusDone(jobID : String, key: String)
+PUT          /jobs/error/:jobID/:key                  controllers.Jobs.jobStatusError(jobID : String, key: String)
+PUT          /jobs/running/:jobID/:key                controllers.Jobs.jobStatusRunning(jobID : String, key: String)
+PUT          /jobs/queued/:jobID/:key                 controllers.Jobs.jobStatusQueued(jobID : String, key: String)
+PUT          /jobs/sge/:jobID/:sgeID/:key             controllers.Jobs.SGEID(jobID: String, sgeID: String, key: String)
+PUT          /jobs/dateviewed/:mainID                 controllers.Jobs.updateDateViewed(mainID)
 
 # update process log
-PUT          /jobs/updateLog/:jobID                  controllers.Jobs.updateLog(jobID : String)
+PUT          /jobs/updateLog/:jobID                   controllers.Jobs.updateLog(jobID : String)
 
 # Validation Controller
 POST          /validate/modeller                      controllers.Auth.validateModellerKey(input: String)
@@ -111,9 +111,9 @@ POST          /api/frontendSubmit/:toolname           controllers.Tool.frontendC
 GET           /api/job/results/:jobID                 controllers.DataController.get(jobID: String)
 
 # ForwardModal
-GET           /forwardModal/:toolName/:modalType         controllers.ModalController.getForwardModalOptions(modalType: String, toolName: String)
+GET           /forwardModal/:toolName/:modalType      controllers.ForwardModalController.getForwardModalOptions(modalType: String, toolName: String)
 #Help
 GET           /getHelp/:tool                          controllers.DataController.getHelp(tool: String)
 
 # Tool Module
-->            /results                                 de.proteinevolution.tools.ToolsRouter
+->            /results                                de.proteinevolution.tools.ToolsRouter
