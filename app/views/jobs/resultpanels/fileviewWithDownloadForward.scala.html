@@ -1,9 +1,8 @@
-@import java.lang.String
 @(filename: String, jobID: String, resultname: String, tool: de.proteinevolution.models.Tool)()
-    @views.html.forwardmodals.simpler(tool, jobID, filename, "FILEVIEW")
+
     <div class="colorOptsAlignment">
     <a type="button" onclick="@{resultname}_download()"> <span id="downloadAlignment">Download</span></a>
-    <a data-open="forwardModalSimpler" type="buttom"><span id="downloadAlignment">Forward All</span></a>
+    <a class="forwardModalOpenBtn" data-modal-type="simpler" data-result-name="@{filename}" data-forward-issuer="FILEVIEW" type="buttom"><span id="downloadAlignment">Forward All</span></a>
         <hr class="horizontal-line">
     </div>
     <pre class="fileview" id="fileviewerDownloadForward_@{resultname}"></pre>

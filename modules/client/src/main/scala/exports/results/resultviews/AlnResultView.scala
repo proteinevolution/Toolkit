@@ -11,7 +11,7 @@ import scala.scalajs.js.annotation.JSExportTopLevel
 
 @JSExportTopLevel("AlnResultView")
 class AlnResultView(val container: JQuery,
-                    jobID: String,
+                    val jobID: String,
                     resultName: String,
                     val tempShownHits: Int,
                     val resultContext: ResultContext)

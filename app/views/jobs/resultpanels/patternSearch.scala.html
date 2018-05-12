@@ -4,7 +4,6 @@
 @import play.twirl.api.Html
 @import de.proteinevolution.tools.results.Common
 @(jobID: String, jsValue: JsValue, tool: de.proteinevolution.models.Tool)()
-@views.html.forwardmodals.simpler(tool, jobID, tool.toolNameShort, "PATTERN_SEARCH")
 @if((jsValue \ jobID \ "hits").as[List[JsObject]].size < 1) {
     <div class="callout alert noHitsWide" id="noHits">
         No hits found!
@@ -12,7 +11,7 @@
 }else{
 <div class="colorOptsAlignment">
     <a onclick="download_()" type="button"><span id="downloadAlignment">Download Hits</span></a>
-    <a data-open="forwardModalSimpler" type="button"><span id="downloadAlignment">Forward All</span></a>
+    <a class="forwardModalOpenBtn" data-modal-type="simpler" data-result-name="@{tool.toolNameShort}" data-forward-issuer="PATTERN_SEARCH" type="button"><span id="downloadAlignment">Forward All</span></a>
     <hr class="horizontal-line">
 </div>
 <div id="alignmentResultView">

@@ -4,11 +4,9 @@
 
 @fileURL = @{"/files/" + jobID + "/" + "alignment.clustalw_aln"}
 
-@views.html.forwardmodals.simpler(tool, jobID, resultName, "NORMAL")
-
 <div class="colorOptsAlignment">
     <a class="selectAllSeqBar">Select all</a>
-    <a type="button" id="forwardButtonSimpler" data-open="forwardModalSimpler"><span>Forward Selected</span></a>
+    <a type="button" class="forwardModalOpenBtn" data-modal-type="simpler" data-result-name="@{resultName}" data-forward-issuer="NORMAL"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download MSA</span></a>
     <a type="button" href="@fileURL" target="_blank" rel="noopener"><span>Export MSA</span></a>
     <a type="button" class="colorAA">Color MSA</a>

@@ -110,6 +110,8 @@ POST          /api/frontendSubmit/:toolname           controllers.Tool.frontendC
 # Results
 GET           /api/job/results/:jobID                 controllers.DataController.get(jobID: String)
 
+# ForwardModal
+GET           /forwardModal/:toolName/:modalType         controllers.ModalController.getForwardModalOptions(modalType: String, toolName: String)
 #Help
 GET           /getHelp/:tool                          controllers.DataController.getHelp(tool: String)
 
