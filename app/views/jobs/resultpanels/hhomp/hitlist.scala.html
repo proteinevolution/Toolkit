@@ -7,8 +7,6 @@
         No hits found!
     </div>
 } else {
-    @* Loads ForwardModals *@
-    @views.html.forwardmodals.hhsuite(jobID)
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
             <div id="scrollLinks">
@@ -18,7 +16,7 @@
             </div>
             <span class="headerDivider"></span>
             <div id="controlls">
-                <a id="forwardButtonHHsuite" data-open="forwardModalHHSuite">Forward Query A3M</a>
+                <a id="forwardButtonHHsuite" class="forwardModalOpenBtn" data-modal-type="hhsuite">Forward Query A3M</a>
                 <a class="colorAA">Color Seqs</a>
                 <a id="wrap">Wrap Seqs</a>
                 </div>

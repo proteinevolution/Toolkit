@@ -17,8 +17,8 @@
             <span class="headerDivider"></span>
             <div id="controlls">
                 <a class="selectAllSeqBar extraWide">Select all</a>
-                <a id="forwardButtonSimple" data-open="forwardModalSimple">Forward</a>
-                <a id="forwardButtonHHsuite" data-open="forwardModalHHSuite">Forward Query A3M</a>
+                <a class="forwardModalOpenBtn" data-modal-type="simple">Forward</a>
+                <a class="forwardModalOpenBtn" data-modal-type="hhsuite">Forward Query A3M</a>
                 @*only show create model when chosen db=mmcif70/pdb70*@
                 @if(result.db.matches("mmcif70/pdb70") || result.db.matches("mmcif30/pdb30") ) {
                     <a onclick="@{tool.toolNameShort}_manual()">Model using selection</a>
@@ -164,9 +164,6 @@
         </button>
     </div>
 
-    @* Loads ForwardModals *@
-    @views.html.forwardmodals.hhsuite(jobID)
-    @views.html.forwardmodals.simple(tool, jobID)
 }
 <script>
 

@@ -8,8 +8,6 @@
             No hits found!
         </div>
     } else {
-    @* Loads ForwardModal *@
-    @views.html.forwardmodals.normal(tool, jobID, "")
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
             <div id="scrollLinks">
@@ -21,7 +19,7 @@
             <div id="controlls">
 
                 <a class="selectAllSeqBar extraWide">Select all</a>
-                <a type="button" id="forwardButtonNormal" data-open="forwardModalNormal">Forward</a>
+                <a type="button" class="forwardModalOpenBtn" data-modal-type="normal">Forward</a>
                 <a id="wrap">Wrap Seqs</a>
             </div>
         </div>

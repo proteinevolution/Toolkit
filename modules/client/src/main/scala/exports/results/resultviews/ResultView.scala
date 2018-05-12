@@ -1,7 +1,7 @@
 package exports.results.resultviews
 
 import exports.facades.{ JQueryPosition, ResultContext }
-import exports.results.{ Checkboxes, HitsSlider, ScrollUtil }
+import exports.results.{ Checkboxes, ForwardingModal, HitsSlider, ScrollUtil }
 import org.scalajs.jquery._
 
 import scala.scalajs.js
@@ -13,6 +13,8 @@ import upickle.default.write
 trait ResultView {
 
   def container: JQuery
+
+  def jobID: String
 
   def tempShownHits: Int
 
@@ -27,7 +29,8 @@ trait ResultView {
   protected val checkboxes: Checkboxes = new Checkboxes(container)
   protected val hitsSlider: HitsSlider = new HitsSlider(container)
   @JSExport
-  protected val scrollUtil: ScrollUtil = new ScrollUtil(this)
+  protected val scrollUtil: ScrollUtil           = new ScrollUtil(this)
+  protected val forwardingModal: ForwardingModal = new ForwardingModal(container, resultContext.toolName, jobID)
 
   def init(): Unit
 
