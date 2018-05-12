@@ -4,7 +4,7 @@
 @(alignment: AlignmentItem)()
 
 <tr class="header">
-    <td class="indexCheckbox" ><input type="checkbox" name="alignment_elem" class="checkbox" value='@{alignment.num}'> @{alignment.num}. </td>
+    <td class="indexCheckbox" ><input type="checkbox" name="alignment_elem" class="checkbox" data-id='@{alignment.num}' value='@{alignment.num}'> @{alignment.num}. </td>
     <td> @{alignment.accession}</td>
 </tr>
 <tr class="sequenceAlignment">
