@@ -199,6 +199,8 @@ select:-moz-focusring {
 #viewport {
   border: 1px solid lightgray;
   margin: 0 auto;
+  background: $white;
+  min-height: 700px;
 }
 
 #viewport canvas {
@@ -547,11 +549,6 @@ select:-moz-focusring {
 }
 
 /* Result View Forward Modals */
-.forwardModal {
-  width: 38em;
-  height: 18.5em;
-}
-
 .forwardModal p, #templateAlignmentModal p, #structureModal p {
   font-size: 1em;
   font-weight: bold;
@@ -659,10 +656,6 @@ label.forwardLabel input[type=radio] {
   margin-left: 0.5em;
   margin-bottom: 0;
   padding: 0 0 0 0.25em;
-}
-
-.two_input {
-  display: flex;
 }
 
 /* References Section */

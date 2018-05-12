@@ -1,7 +1,7 @@
 package exports.results.resultviews
 
 import exports.facades.{ JQueryPosition, ResultContext }
-import exports.results.{ Checkboxes, HitsSlider, ScrollUtil }
+import exports.results.{ Checkboxes, ForwardingModal, HitsSlider, ScrollUtil }
 import org.scalajs.jquery._
 
 import scala.scalajs.js
@@ -13,6 +13,8 @@ import upickle.default.write
 trait ResultView {
 
   def container: JQuery
+
+  def jobID: String
 
   def tempShownHits: Int
 
@@ -28,7 +30,8 @@ trait ResultView {
   protected val hitsSlider: HitsSlider = new HitsSlider(container)
 
   @JSExport
-  protected val scrollUtil: ScrollUtil = new ScrollUtil(this)
+  protected val scrollUtil: ScrollUtil           = new ScrollUtil(this)
+  protected val forwardingModal: ForwardingModal = new ForwardingModal(container, resultContext.toolName, jobID)
 
   def init(): Unit
 
@@ -50,7 +53,6 @@ trait ResultView {
       container.find("#loadingHits").show()
       container.find("#loadHits").hide()
 
-      jQuery.LoadingOverlay("show")
       jQuery
         .ajax(
           js.Dictionary(
@@ -82,7 +84,6 @@ trait ResultView {
         .always(() => {
           loading = false
           container.find("#loadingHits").hide()
-          jQuery.LoadingOverlay("hide")
         })
     }
   }

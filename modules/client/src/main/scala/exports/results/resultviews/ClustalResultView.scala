@@ -10,7 +10,7 @@ import scala.scalajs.js.annotation.JSExportTopLevel
 
 @JSExportTopLevel("ClustalResultView")
 class ClustalResultView(val container: JQuery,
-                        jobID: String,
+                        val jobID: String,
                         resultName: String,
                         var colorAAs: Boolean,
                         val tempShownHits: Int,
