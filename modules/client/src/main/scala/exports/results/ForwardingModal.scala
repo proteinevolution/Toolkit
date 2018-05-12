@@ -3,7 +3,7 @@ package exports.results
 import exports.facades.ForwardModalOptions
 import exports.facades.JQueryPlugin._
 import org.scalajs.dom
-import org.scalajs.dom.raw.{HTMLElement, HTMLInputElement}
+import org.scalajs.dom.raw.{ HTMLElement, HTMLInputElement }
 import org.scalajs.jquery._
 
 import scala.scalajs.js
@@ -31,7 +31,8 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
   container
     .find(".forwardModalOpenBtn")
     .off("click")
-    .on("click", { btn: HTMLElement =>
+    .on(
+      "click", { btn: HTMLElement =>
         {
           val $btn = jQuery(btn)
           // read values from button
@@ -104,109 +105,113 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
     )
 
     // register on forward
-    $modal.find(".forwardBtn").off("click").on(
-      "click",
-      modalType match {
-        case "normal" =>
-          () =>
-            {
-              val boolFullLength: Boolean = $seqLengthRadioBtnArea.find(".fullLengthRadioBtn").is(":checked")
-              val boolEvalue: Boolean     = $selectionRadioBtnArea.find(".accordingEvalueRadioBtn").is(":checked")
-              val selectedTool: String    = $forwardSelect.value().toString
-              val evalue: String          = $selectionRadioBtnArea.find(".forwardEvalueNormalInput").value().toString
-              if (selectedTool == "") {
-                dom.window.alert("Please select a tool!")
-              } else {
-                if (boolEvalue && evalue == "") {
-                  dom.window.alert("no evalue!")
+    $modal.find(".forwardBtn")
+      .off("click")
+      .on(
+        "click",
+        modalType match {
+          case "normal" =>
+            () =>
+              {
+                val boolFullLength: Boolean = $seqLengthRadioBtnArea.find(".fullLengthRadioBtn").is(":checked")
+                val boolEvalue: Boolean     = $selectionRadioBtnArea.find(".accordingEvalueRadioBtn").is(":checked")
+                val selectedTool: String    = $forwardSelect.value().toString
+                val evalue: String          = $selectionRadioBtnArea.find(".forwardEvalueNormalInput").value().toString
+                if (selectedTool == "") {
+                  dom.window.alert("Please select a tool!")
                 } else {
-                  Forwarding.processResults(jobID, selectedTool, boolEvalue, evalue, boolFullLength)
+                  if (boolEvalue && evalue == "") {
+                    dom.window.alert("no evalue!")
+                  } else {
+                    Forwarding.processResults(jobID, selectedTool, boolEvalue, evalue, boolFullLength)
+                    $modal.foundation("close")
+                  }
+                }
+              }
+          case "hhsuite" =>
+            () =>
+              {
+                val selectedTool: String = $forwardSelect.value().toString
+                if (selectedTool == "") {
+                  dom.window.alert("Please select a tool!")
+                } else {
+                  Forwarding.processFiles(selectedTool, s"/files/$jobID/reduced.a3m")
                   $modal.foundation("close")
                 }
               }
-            }
-        case "hhsuite" =>
-          () =>
-            {
-              val selectedTool: String = $forwardSelect.value().toString
-              if (selectedTool == "") {
-                dom.window.alert("Please select a tool!")
-              } else {
-                Forwarding.processFiles(selectedTool, s"/files/$jobID/reduced.a3m")
+          case "simple" =>
+            () =>
+              {
+                val boolEvalue: Boolean  = $modal.find(".accordingEvalueRadioBtn").is(":checked")
+                val selectedTool: String = $forwardSelect.value().toString
+                val evalue: String       = $modal.find(".forwardEvalueNormalInput").value().toString
+                if (selectedTool == "") {
+                  dom.window.alert("Please select a tool!")
+                } else {
+                  if (evalue == "" && boolEvalue) {
+                    dom.window.alert("no evalue!")
+                  } else {
+                    Forwarding.processResults(jobID, selectedTool, boolEvalue, evalue, isFullLength = false)
+                  }
+                }
                 $modal.foundation("close")
               }
-            }
-        case "simple" =>
-          () =>
-            {
-              val boolEvalue: Boolean  = $modal.find(".accordingEvalueRadioBtn").is(":checked")
-              val selectedTool: String = $forwardSelect.value().toString
-              val evalue: String       = $modal.find(".forwardEvalueNormalInput").value().toString
-              if (selectedTool == "") {
-                dom.window.alert("Please select a tool!")
-              } else {
-                if (evalue == "" && boolEvalue) {
-                  dom.window.alert("no evalue!")
+          case "simpler" =>
+            () =>
+              {
+                val selectedTool: String = $forwardSelect.value().toString
+                if (selectedTool == "") {
+                  dom.window.alert("Please select a tool!")
                 } else {
-                  Forwarding.processResults(jobID, selectedTool, boolEvalue, evalue, isFullLength = false)
+                  forwardIssuer.toUpperCase() match {
+                    case "NORMAL" => Forwarding.processAlnResults(jobID, selectedTool, resultName)
+                    case "UNCHECKED_LIST" =>
+                      jQuery.LoadingOverlay("show")
+                      jQuery.getJSON(
+                        s"/files/$jobID/ids.json",
+                        (data: js.Dynamic) => {
+                          Forwarding.simple(selectedTool, data.ACC_IDS.join("\n").toString)
+                          jQuery.LoadingOverlay("hide")
+                        }
+                      )
+                    case "PATTERN_SEARCH" =>
+                      val fileURL = s"/files/$jobID/$jobID.fas"
+                      Forwarding.redirect(selectedTool, fileURL)
+                    case "FILEVIEW" =>
+                      Forwarding
+                        .processFiles(selectedTool, s"/files/$jobID/$resultName") // resultName is actually the filename in this case
+                  }
                 }
+                $modal.foundation("close")
               }
-              $modal.foundation("close")
-            }
-        case "simpler" =>
-          () =>
-            {
-              val selectedTool: String = $forwardSelect.value().toString
-              if (selectedTool == "") {
-                dom.window.alert("Please select a tool!")
-              } else {
-                forwardIssuer.toUpperCase() match {
-                  case "NORMAL" => Forwarding.processAlnResults(jobID, selectedTool, resultName)
-                  case "UNCHECKED_LIST" =>
-                    jQuery.LoadingOverlay("show")
-                    jQuery.getJSON(
-                      s"/files/$jobID/ids.json",
-                      (data: js.Dynamic) => {
-                        Forwarding.simple(selectedTool, data.ACC_IDS.join("\n").toString)
-                        jQuery.LoadingOverlay("hide")
-                      }
-                    )
-                  case "PATTERN_SEARCH" =>
-                    val fileURL = s"/files/$jobID/$jobID.fas"
-                    Forwarding.redirect(selectedTool, fileURL)
-                  case "FILEVIEW" =>
-                    Forwarding
-                      .processFiles(selectedTool, s"/files/$jobID/$resultName") // resultName is actually the filename in this case
-                }
+          case _ =>
+            () =>
+              {
+                dom.window.alert("Error! Forwarding does not work. Please refresh the page.")
               }
-              $modal.foundation("close")
-            }
-        case _ =>
-          () =>
-            {
-              dom.window.alert("Error! Forwarding does not work. Please refresh the page.")
-            }
-      }
-    )
+        }
+      )
   }
 
   def setupRadioBtnSeqLength(): Unit = {
-    $seqLengthRadioBtnArea.find("input[name='radio2']").off("change").on(
-      "change", { radioBtn: HTMLInputElement =>
-        {
-          if (jQuery(radioBtn).hasClass("fullLengthRadioBtn")) {
-            $warning.show()
-            $forwardSelect.find(".alignmentOptions").hide()
-            $forwardSelect.find(".multiSeqOptions").show()
-          } else {
-            $warning.hide()
-            $forwardSelect.find(".alignmentOptions").show()
-            $forwardSelect.find(".multiSeqOptions").hide()
+    $seqLengthRadioBtnArea.find("input[name='radio2']")
+      .off("change")
+      .on(
+        "change", { radioBtn: HTMLInputElement =>
+          {
+            if (jQuery(radioBtn).hasClass("fullLengthRadioBtn")) {
+              $warning.show()
+              $forwardSelect.find(".alignmentOptions").hide()
+              $forwardSelect.find(".multiSeqOptions").show()
+            } else {
+              $warning.hide()
+              $forwardSelect.find(".alignmentOptions").show()
+              $forwardSelect.find(".multiSeqOptions").hide()
+            }
           }
-        }
-        $forwardSelect.value("")
-      }: js.ThisFunction
-    )
+          $forwardSelect.value("")
+        }: js.ThisFunction
+      )
   }
 
 }
