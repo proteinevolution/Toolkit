@@ -287,7 +287,7 @@ object Common {
   }
 
   def getCheckbox(num: Int): String = {
-    "<div class=\"nowrap\"><input type=\"checkbox\" value=\"" + num + "\" name=\"alignment_elem\" class=\"checkbox\"><a onclick=\"Toolkit.resultView.scrollToHit(" + num + ")\">" + num + "</a></div>"
+    "<div class=\"nowrap\"><input type=\"checkbox\" data-id=\"" + num + "\" value=\"" + num + "\" name=\"alignment_elem\" class=\"checkbox\"><a onclick=\"Toolkit.resultView.scrollToHit(" + num + ")\">" + num + "</a></div>"
   }
 
   def getAddScrollLink(num: Int): String = {
@@ -321,7 +321,7 @@ object Common {
       val string = alignment.alignment.map { elem =>
         "<tr>" +
         "<td>" +
-        "<input type=\"checkbox\" value=\"" + elem.num + "\" name=\"alignment_elem\" class=\"checkbox\"><b>" +
+        "<input type=\"checkbox\" data-id=\"" + elem.num + "\" value=\"" + elem.num + "\" name=\"alignment_elem\" class=\"checkbox\"><b>" +
         "</b><td>" +
         "<b><span class='clustalAcc'>" + elem.accession.take(20) + "</span></b><br />" +
         "</td>" +
