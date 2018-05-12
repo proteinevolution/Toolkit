@@ -160,7 +160,7 @@ class NormalResultView(val container: JQuery,
     colorAAs = !colorAAs
     container.find(".colorAA").toggleClass("colorToggleBar")
     val current = currentIndex()
-    scrollToHit(current, reload = true)
+    scrollToHit(current, forceReload = true)
   }
 
   def toggleIsWrapped(): Unit = {
@@ -168,7 +168,7 @@ class NormalResultView(val container: JQuery,
     container.find("#wrap").toggleClass("colorToggleBar")
     JQueryExtensions.toggleText(container.find("#wrap"), "Unwrap Seqs", "Wrap Seqs")
     val current = currentIndex()
-    scrollToHit(current, reload = true)
+    scrollToHit(current, forceReload = true)
   }
 
   private def currentIndex(): Int = {
