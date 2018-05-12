@@ -29,7 +29,7 @@
     </div>
 }else{
     <div class="colorOptsAlignment">
-        <a id="forwardButtonHHsuite" data-open="forwardModalHHSuite">Forward Query A3M</a>
+        <a class="forwardModalOpenBtn" data-modal-type="hhsuite">Forward Query A3M</a>
         <hr id="line-element" class="horizontal-line">
     </div>
 
@@ -49,3 +49,7 @@
         <hr id="line-element" class="horizontal-line">
     </div>
 }
+
+<script>
+    new ForwardingModal($("#jobview"), "hhrepid", "@{jobID}");
+</script>
