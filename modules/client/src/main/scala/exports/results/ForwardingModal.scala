@@ -166,7 +166,7 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
                 if (selectedTool == "") {
                   dom.window.alert("Please select a tool!")
                 } else {
-                  forwardIssuer.toUpperCase() match {
+                  forwardIssuer.toUpperCase match {
                     case "NORMAL" => Forwarding.processAlnResults(jobID, selectedTool, resultName)
                     case "UNCHECKED_LIST" =>
                       jQuery.LoadingOverlay("show")
