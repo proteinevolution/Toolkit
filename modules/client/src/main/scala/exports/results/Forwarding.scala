@@ -3,55 +3,50 @@ package exports.results
 import java.util.UUID
 
 import com.tgf.pizza.scalajs.mithril._
+import exports.facades.JQueryPlugin._
 import org.scalajs.dom
-import org.scalajs.jquery.{ jQuery, JQueryAjaxSettings, JQueryXHR }
+import org.scalajs.jquery.{JQueryAjaxSettings, JQueryXHR, jQuery}
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
-import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 import scala.scalajs.js.timers._
 
-import exports.facades.JQueryPlugin._
-
-@JSExportTopLevel("Forwarding")
 object Forwarding {
 
-  import js.Dynamic.{ global => g }
+  import js.Dynamic.{global => g}
 
-  @JSExport
   def processResults(jobID: String,
                      selectedTool: String,
                      hasEvalue: Boolean,
                      evalue: String,
                      isFullLength: Boolean): Unit = {
-    jQuery.LoadingOverlay("show")
-
-    val checkboxes = js.Dynamic.global.Toolkit.resultView.getSelectedValues.asInstanceOf[js.Array[Int]]
+    val checkboxes = g.Toolkit.resultView.getSelectedValues.asInstanceOf[js.Array[Int]]
 
     if (checkboxes.length < 1 && !hasEvalue) {
       jQuery(".forwardModal").foundation("close")
-      jQuery.LoadingOverlay("hide")
       dom.window.alert("No sequence(s) selected!")
       return
     }
-    val filename  = UUID.randomUUID().toString.toUpperCase
+
+    val filename = UUID.randomUUID().toString.toUpperCase
     val baseRoute = "/results/forwardAlignment/" + jobID
     val route = (hasEvalue, isFullLength) match {
-      case (true, true)   => s"$baseRoute/evalFull"
-      case (false, true)  => s"$baseRoute/full"
-      case (true, false)  => s"$baseRoute/alnEval"
+      case (true, true) => s"$baseRoute/evalFull"
+      case (false, true) => s"$baseRoute/full"
+      case (true, false) => s"$baseRoute/alnEval"
       case (false, false) => s"$baseRoute/aln"
     }
+    jQuery.LoadingOverlay("show")
     jQuery
       .ajax(
         js.Dictionary(
-            "url" -> route,
-            "data" -> JSON.stringify(
-              js.Dictionary("fileName" -> filename, "evalue" -> evalue, "checkboxes" -> checkboxes)
-            ),
-            "contentType" -> "application/json",
-            "method"      -> "POST"
-          )
+          "url" -> route,
+          "data" -> JSON.stringify(
+            js.Dictionary("fileName" -> filename, "evalue" -> evalue, "checkboxes" -> checkboxes)
+          ),
+          "contentType" -> "application/json",
+          "method" -> "POST"
+        )
           .asInstanceOf[JQueryAjaxSettings]
       )
       .done((_: js.Any, _: js.Any, jqXHR: JQueryXHR) => {
@@ -65,10 +60,7 @@ object Forwarding {
       })
   }
 
-  @JSExport
   def processAlnResults(jobID: String, selectedTool: String, resultName: String): Unit = {
-    jQuery.LoadingOverlay("show")
-
     val checkboxes = js.Dynamic.global.Toolkit.resultView.getSelectedValues.asInstanceOf[js.Array[Int]]
     if (checkboxes.length < 1) {
       jQuery(".forwardModal").foundation("close")
@@ -76,16 +68,17 @@ object Forwarding {
       dom.window.alert("No sequence(s) selected!")
       return
     }
+    jQuery.LoadingOverlay("show")
     jQuery
       .ajax(
         js.Dictionary(
-            "url" -> s"/results/alignment/getAln/$jobID",
-            "data" -> JSON.stringify(
-              js.Dictionary("resultName" -> resultName, "checkboxes" -> checkboxes)
-            ),
-            "contentType" -> "application/json",
-            "method"      -> "POST"
-          )
+          "url" -> s"/results/alignment/getAln/$jobID",
+          "data" -> JSON.stringify(
+            js.Dictionary("resultName" -> resultName, "checkboxes" -> checkboxes)
+          ),
+          "contentType" -> "application/json",
+          "method" -> "POST"
+        )
           .asInstanceOf[JQueryAjaxSettings]
       )
       .done((data: js.Any, _: js.Any, _: JQueryXHR) => {
@@ -99,16 +92,15 @@ object Forwarding {
       })
   }
 
-  @JSExport
   def processFiles(selectedTool: String, fileUrl: String): Unit = {
     jQuery.LoadingOverlay("show")
     jQuery
       .ajax(
         js.Dictionary(
-            "method"   -> "GET",
-            "url"      -> fileUrl,
-            "dataType" -> "text"
-          )
+          "method" -> "GET",
+          "url" -> fileUrl,
+          "dataType" -> "text"
+        )
           .asInstanceOf[JQueryAjaxSettings]
       )
       .done((data: js.Object) => {
@@ -119,15 +111,14 @@ object Forwarding {
       })
   }
 
-  @JSExport
   def redirect(tool: String, forwardPath: String): Unit = {
     m.route(s"/tools/$tool")
     jQuery
       .ajax(
         js.Dictionary(
-            "url"    -> forwardPath,
-            "method" -> "GET"
-          )
+          "url" -> forwardPath,
+          "method" -> "GET"
+        )
           .asInstanceOf[JQueryAjaxSettings]
       )
       .done((data: js.Any, _: js.Any, _: JQueryXHR) => {
@@ -143,15 +134,11 @@ object Forwarding {
       .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
         println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
       })
-      .always(() => {
-        jQuery.LoadingOverlay("hide")
-      })
   }
 
-  @JSExport
   def simple(tool: String, forwardData: String): Unit = {
-    if (forwardData.isEmpty) {
-      dom.window.alert("No sequence(s) selected!")
+    if (forwardData == "") {
+      dom.window.alert("File is empty!")
       return
     }
     try {

@@ -3,18 +3,19 @@ package exports.results
 import exports.facades.ForwardModalOptions
 import exports.facades.JQueryPlugin._
 import org.scalajs.dom
-import org.scalajs.dom.raw.{ HTMLElement, HTMLInputElement }
+import org.scalajs.dom.raw.{HTMLElement, HTMLInputElement}
 import org.scalajs.jquery._
 
 import scala.scalajs.js
+import scala.scalajs.js.annotation.JSExportTopLevel
 
+@JSExportTopLevel("ForwardingModal")
 class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
 
   val $modal: JQuery = jQuery("#forwardModal")
 
-  // get elements to remove them from form
+  // find elements only once
   val $forwardSelect: JQuery         = $modal.find(".forwardSelect")
-  val $controlArea: JQuery           = $modal.find(".forward-control-area")
   val $selectionRadioBtnArea: JQuery = $modal.find(".radio-btn-selection-container")
   val $seqLengthRadioBtnArea: JQuery = $modal.find(".radio-btn-sequence-length-container")
   val $warning: JQuery               = $modal.find(".forwardWarning")
@@ -29,8 +30,8 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
   // register open links
   container
     .find(".forwardModalOpenBtn")
-    .on(
-      "click", { btn: HTMLElement =>
+    .off("click")
+    .on("click", { btn: HTMLElement =>
         {
           val $btn = jQuery(btn)
           // read values from button
@@ -48,7 +49,7 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
     )
 
   // register open event to initialize the modal
-  $modal.on(
+  $modal.off("open.zf.reveal").on(
     "open.zf.reveal",
     () => {
       $forwardSelect.value(defaultTool)
@@ -81,22 +82,18 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
 
   def setupModalWithOptions(options: ForwardModalOptions): Unit = {
     // detach children first to not lose reference
-    $selectionRadioBtnArea.detach()
-    $seqLengthRadioBtnArea.detach()
-    $controlArea.detach()
-    if (options.showControlArea) {
-      $modal.find(".forward-control-area-container").append($controlArea)
-      // show radio btns
-      if (options.showRadioBtnSelection) {
-        $controlArea.append($selectionRadioBtnArea)
-        // set heading
-        $selectionRadioBtnArea.find(".forward-modal-heading").text(options.heading)
-      }
-      if (options.showRadioBtnSequenceLength) {
-        $controlArea.append($seqLengthRadioBtnArea)
-        setupRadioBtnSeqLength()
-      }
+    $selectionRadioBtnArea.hide()
+    $seqLengthRadioBtnArea.hide()
+    // show radio btns
+    if (options.showRadioBtnSelection) {
+      // show and set heading
+      $selectionRadioBtnArea.show().find(".forward-modal-heading").text(options.heading)
     }
+    if (options.showRadioBtnSequenceLength) {
+      $seqLengthRadioBtnArea.show()
+      setupRadioBtnSeqLength()
+    }
+
     // populate select
     $forwardSelect.empty().append("<option value=\"\">Select a tool</option>")
     options.alignmentOptions.map(
@@ -107,7 +104,7 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
     )
 
     // register on forward
-    $modal.find(".forwardBtn").on(
+    $modal.find(".forwardBtn").off("click").on(
       "click",
       modalType match {
         case "normal" =>
@@ -120,10 +117,10 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
               if (selectedTool == "") {
                 dom.window.alert("Please select a tool!")
               } else {
-                Forwarding.processResults(jobID, selectedTool, boolEvalue, evalue, boolFullLength)
-                if (evalue == "") {
+                if (boolEvalue && evalue == "") {
                   dom.window.alert("no evalue!")
                 } else {
+                  Forwarding.processResults(jobID, selectedTool, boolEvalue, evalue, boolFullLength)
                   $modal.foundation("close")
                 }
               }
@@ -148,9 +145,10 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
               if (selectedTool == "") {
                 dom.window.alert("Please select a tool!")
               } else {
-                Forwarding.processResults(jobID, selectedTool, boolEvalue, evalue, isFullLength = false)
-                if (evalue == "") {
+                if (evalue == "" && boolEvalue) {
                   dom.window.alert("no evalue!")
+                } else {
+                  Forwarding.processResults(jobID, selectedTool, boolEvalue, evalue, isFullLength = false)
                 }
               }
               $modal.foundation("close")
@@ -193,7 +191,7 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
   }
 
   def setupRadioBtnSeqLength(): Unit = {
-    $seqLengthRadioBtnArea.find("input[name='radio2']").on(
+    $seqLengthRadioBtnArea.find("input[name='radio2']").off("change").on(
       "change", { radioBtn: HTMLInputElement =>
         {
           if (jQuery(radioBtn).hasClass("fullLengthRadioBtn")) {

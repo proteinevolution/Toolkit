@@ -46,11 +46,13 @@ class ClustalResultView(val container: JQuery,
   override def bindEvents(): Unit = {
     container
       .find(".colorAA")
+      .off("click")
       .on("click", () => {
         toggleAlignmentColoring()
       })
     container
       .find(".selectAllSeqBar")
+      .off("click")
       .on(
         "click",
         () => {
