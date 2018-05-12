@@ -40,6 +40,7 @@ class AlnResultView(val container: JQuery,
   override def bindEvents(): Unit = {
     container
       .find(".selectAllSeqBar")
+      .off("click")
       .on(
         "click",
         () => {
