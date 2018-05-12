@@ -95,14 +95,18 @@ trait ResultView {
   }
 
   @JSExport
-  def scrollToHit(id: Int, reload: Boolean = false): Unit = {
+  def scrollToHit(id: Int, forceReload: Boolean = false): Unit = {
     val elem =
       if (container.find("#tool-tabs").hasClass("fullscreen"))
         "#tool-tabs"
       else
         "html, body"
-    if (reload) {
-      if (id > shownHits) shownHits = id
+    var reload = forceReload
+    if (id > shownHits) {
+      shownHits = id
+      reload = true
+    }
+    if (reload) { // reload hits if forced or requested hit not loaded
       container.find("#alignmentTable").empty()
       showHits(
         0,
@@ -111,11 +115,10 @@ trait ResultView {
           jQuery(elem).animate(
             js.Dictionary(
               "scrollTop" -> (container
-                .find(".aln[value=" + id + "]")
+                .find(".aln[data-id=" + id + "]")
                 .offset()
                 .asInstanceOf[JQueryPosition]
-                .top
-                .asInstanceOf[Double] - 100.toDouble)
+                .top - 100.0)
             ),
             1,
             "swing",
@@ -128,11 +131,10 @@ trait ResultView {
         .animate(
           js.Dynamic.literal(
             "scrollTop" -> (container
-              .find(".aln[value=" + id + "]")
+              .find(".aln[data-id=" + id + "]")
               .offset()
               .asInstanceOf[JQueryPosition]
-              .top
-              .asInstanceOf[Double] - 100.toDouble)
+              .top - 100.0)
           ),
           1
         )
