@@ -16,7 +16,6 @@ class ModalController @Inject()(cc: ControllerComponents, toolFactory: ToolFacto
       case "normal" =>
         ForwardModalOptions(
           "Forward hits",
-          showControlArea = true,
           showRadioBtnSelection = true,
           showRadioBtnSequenceLength = true,
           alignmentOptions,
@@ -25,7 +24,6 @@ class ModalController @Inject()(cc: ControllerComponents, toolFactory: ToolFacto
       case "hhsuite" =>
         ForwardModalOptions(
           "Forward MSA (~100 most distinct sequences) to:",
-          showControlArea = true,
           showRadioBtnSelection = false,
           showRadioBtnSequenceLength = false,
           Array("formatseq", "hhblits", "hhpred", "hhomp", "hhrepid"),
@@ -34,7 +32,6 @@ class ModalController @Inject()(cc: ControllerComponents, toolFactory: ToolFacto
       case "simple" =>
         ForwardModalOptions(
           "Forward hits",
-          showControlArea = true,
           showRadioBtnSelection = true,
           showRadioBtnSequenceLength = false,
           alignmentOptions,
@@ -43,7 +40,6 @@ class ModalController @Inject()(cc: ControllerComponents, toolFactory: ToolFacto
       case "simpler" =>
         ForwardModalOptions(
           "Forward hits",
-          showControlArea = false,
           showRadioBtnSelection = false,
           showRadioBtnSequenceLength = false,
           alignmentOptions,

@@ -6,8 +6,6 @@ trait ForwardModalOptions extends js.Object {
 
   def heading: String
 
-  def showControlArea: Boolean
-
   def showRadioBtnSelection: Boolean
 
   def showRadioBtnSequenceLength: Boolean
