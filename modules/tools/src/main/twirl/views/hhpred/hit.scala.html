@@ -12,7 +12,7 @@
 </tr>
 @* checkboxes, accession, name of hit*@
 <tr class="header">
-    <td class="indexCheckbox"><input type="checkbox" name="alignment_elem" class="checkbox aln" value='@{hit.num}'> @{hit.num}.</td>
+    <td class="indexCheckbox"><input type="checkbox" name="alignment_elem" class="checkbox aln" value='@{hit.num}' data-id='@{hit.num}'> @{hit.num}.</td>
 <td class="hitInfo"  colspan="4">
     @Common.getSingleLink(hit.template.accession)
     @{"  "+ hit.description}

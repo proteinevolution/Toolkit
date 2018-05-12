@@ -25,7 +25,9 @@ object Forwarding {
                      evalue: String,
                      isFullLength: Boolean): Unit = {
     jQuery.LoadingOverlay("show")
+
     val checkboxes = js.Dynamic.global.Toolkit.resultView.getSelectedValues.asInstanceOf[js.Array[Int]]
+
     if (checkboxes.length < 1 && !hasEvalue) {
       jQuery(".forwardModal").foundation("close")
       jQuery.LoadingOverlay("hide")

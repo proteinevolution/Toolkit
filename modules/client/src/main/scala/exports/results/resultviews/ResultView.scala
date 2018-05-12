@@ -28,6 +28,7 @@ trait ResultView {
 
   protected val checkboxes: Checkboxes = new Checkboxes(container)
   protected val hitsSlider: HitsSlider = new HitsSlider(container)
+
   @JSExport
   protected val scrollUtil: ScrollUtil           = new ScrollUtil(this)
   protected val forwardingModal: ForwardingModal = new ForwardingModal(container, resultContext.toolName, jobID)
@@ -45,6 +46,7 @@ trait ResultView {
                                  start: Int,
                                  end: Int,
                                  successCallback: (js.Any, js.Any, JQueryXHR) => Unit): Unit = {
+
     if (start <= resultContext.numHits && end <= resultContext.numHits) {
 
       loading = true
@@ -67,11 +69,11 @@ trait ResultView {
           shownHits = end
           if (shownHits != resultContext.numHits)
             container.find("#loadHits").show()
-          checkboxes.initForContainer(resultContainer)
+          checkboxes.initForContainer(jQuery("#jobview"))
           jQuery("#alignments").floatingScroll("init")
           if (successCallback != null) {
             import scala.scalajs.js.timers._
-            setTimeout(300) {
+            setTimeout(200) {
               successCallback(data, textStatus, jqXHR)
             }
           }
@@ -97,14 +99,18 @@ trait ResultView {
   }
 
   @JSExport
-  def scrollToHit(id: Int, reload: Boolean = false): Unit = {
+  def scrollToHit(id: Int, forceReload: Boolean = false): Unit = {
     val elem =
       if (container.find("#tool-tabs").hasClass("fullscreen"))
         "#tool-tabs"
       else
         "html, body"
-    if (reload) {
-      if (id > shownHits) shownHits = id
+    var reload = forceReload
+    if (id > shownHits) {
+      shownHits = id
+      reload = true
+    }
+    if (reload) { // reload hits if forced or requested hit not loaded
       container.find("#alignmentTable").empty()
       showHits(
         0,
@@ -113,11 +119,10 @@ trait ResultView {
           jQuery(elem).animate(
             js.Dictionary(
               "scrollTop" -> (container
-                .find("input.aln[value=" + id + "]")
+                .find(".aln[data-id=" + id + "]")
                 .offset()
                 .asInstanceOf[JQueryPosition]
-                .top
-                .asInstanceOf[Double] - 100.toDouble)
+                .top - 100D)
             ),
             1,
             "swing",
@@ -130,11 +135,10 @@ trait ResultView {
         .animate(
           js.Dynamic.literal(
             "scrollTop" -> (container
-              .find("input.aln[value=" + id + "]")
+              .find(".aln[data-id=" + id + "]")
               .offset()
               .asInstanceOf[JQueryPosition]
-              .top
-              .asInstanceOf[Double] - 100.toDouble)
+              .top - 100D)
           ),
           1
         )
@@ -153,7 +157,7 @@ trait ResultView {
       if (container.find("#tool-tabs").hasClass("fullscreen"))
         jQuery(elem).scrollTop().toDouble
       else
-        25.toDouble
+        25D
     jQuery(elem)
       .animate(js.Dynamic.literal("scrollTop" -> (_pos + pos)), "fast")
   }
