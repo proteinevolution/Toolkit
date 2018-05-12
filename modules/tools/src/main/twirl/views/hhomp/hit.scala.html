@@ -12,11 +12,13 @@
 </tr>
 @* checkboxes, accession, name of hit*@
 <tr class="header">
-    <td><div class="aln" value='@{hit.num}'> @{hit.num}.</td>
-<td class="hitInfo"  colspan="4">
-    @hit.template.accession
-    @{"  "+ hit.description}
-</td>
+    <td>
+        <div class="aln" data-id="@{hit.num}"> @{hit.num}. </div>
+    </td>
+    <td class="hitInfo" colspan="4">
+        @hit.template.accession
+        @{"  "+ hit.description}
+    </td>
 </tr>
 @* Alignment Details*@
 <tr>

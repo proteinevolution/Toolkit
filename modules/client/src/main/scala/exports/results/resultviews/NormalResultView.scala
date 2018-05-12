@@ -4,7 +4,7 @@ import exports.extensions.JQueryExtensions
 import exports.facades.ResultContext
 import exports.results.DataTables
 import org.scalajs.dom
-import org.scalajs.dom.raw.HTMLInputElement
+import org.scalajs.dom.raw.{ HTMLDivElement, HTMLInputElement }
 import org.scalajs.jquery.{ jQuery, JQuery, JQueryXHR }
 import org.scalajs.dom.ext._
 
@@ -12,7 +12,6 @@ import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExportTopLevel
 import exports.facades.JQueryPlugin.jqPlugin
 import exports.results.models.ResultForm.ShowHitsForm
-
 @JSExportTopLevel("NormalResultView")
 class NormalResultView(val container: JQuery,
                        val jobID: String,
@@ -79,7 +78,7 @@ class NormalResultView(val container: JQuery,
         container.find(".selectAllSeqBar").addClass("colorToggleBar").text("Deselect all")
         checkboxes.selectAll(resultContext.belowEvalThreshold - 1)
       }
-      showHits(0, this.shownHits)
+      showHits(0, shownHits)
       setupBlastVizTooltipster()
       wrap.hide()
     }
@@ -158,10 +157,10 @@ class NormalResultView(val container: JQuery,
   }
 
   def toggleAlignmentColoring(): Unit = {
-    this.colorAAs = !this.colorAAs
+    colorAAs = !colorAAs
     container.find(".colorAA").toggleClass("colorToggleBar")
     val current = currentIndex()
-    scrollToHit(current, reload = true)
+    scrollToHit(current, forceReload = true)
   }
 
   def toggleIsWrapped(): Unit = {
@@ -169,16 +168,23 @@ class NormalResultView(val container: JQuery,
     container.find("#wrap").toggleClass("colorToggleBar")
     JQueryExtensions.toggleText(container.find("#wrap"), "Unwrap Seqs", "Wrap Seqs")
     val current = currentIndex()
-    scrollToHit(current, reload = true)
+    scrollToHit(current, forceReload = true)
   }
 
   private def currentIndex(): Int = {
+    def splitFn: PartialFunction[dom.Node, Int] = {
+      case el: dom.Node =>
+        if (resultContext.toolName == "hhomp")
+          el.asInstanceOf[HTMLDivElement].getAttribute("data-id").toInt
+        else
+          el.asInstanceOf[HTMLInputElement].value.toInt
+    }
     dom.document
       .querySelectorAll(".aln")
       .iterator
       .toList
       .filter(jQuery(_).isOnScreen())
-      .map(_.asInstanceOf[HTMLInputElement].value.toInt)
+      .collect(splitFn)
       .min
   }
 
