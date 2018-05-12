@@ -1,6 +1,6 @@
 package exports.results
 
-import exports.facades.ForwardModalOptions
+import de.proteinevolution.models.forwarding.ForwardModalOptions
 import exports.facades.JQueryPlugin._
 import org.scalajs.dom
 import org.scalajs.dom.raw.{ HTMLElement, HTMLInputElement }
