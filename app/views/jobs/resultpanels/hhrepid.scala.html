@@ -1,10 +1,9 @@
 @import de.proteinevolution.tools.results.HHrepID
 @(jobID: String, filePath: String)()
-@views.html.forwardmodals.hhsuite(jobID)
 
 @if(HHrepID.existsResult(filePath)) {
     <div class="colorOptsAlignment">
-        <a id="forwardButtonHHsuite" data-open="forwardModalHHSuite">Forward Query A3M</a>
+        <a class="forwardModalOpenBtn" data-modal-type="hhsuite">Forward Query A3M</a>
         <hr class="horizontal-line">
     </div>
     <div class="note">

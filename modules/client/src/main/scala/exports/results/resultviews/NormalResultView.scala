@@ -15,7 +15,7 @@ import exports.results.models.ResultForm.ShowHitsForm
 
 @JSExportTopLevel("NormalResultView")
 class NormalResultView(val container: JQuery,
-                       jobID: String,
+                       val jobID: String,
                        val tempShownHits: Int,
                        var wrapped: Boolean,
                        var colorAAs: Boolean,
