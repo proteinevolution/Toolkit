@@ -3,37 +3,31 @@ package exports.results
 import java.util.UUID
 
 import com.tgf.pizza.scalajs.mithril._
+import exports.facades.JQueryPlugin._
 import org.scalajs.dom
 import org.scalajs.jquery.{ jQuery, JQueryAjaxSettings, JQueryXHR }
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
-import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 import scala.scalajs.js.timers._
 
-import exports.facades.JQueryPlugin._
-
-@JSExportTopLevel("Forwarding")
 object Forwarding {
 
   import js.Dynamic.{ global => g }
 
-  @JSExport
   def processResults(jobID: String,
                      selectedTool: String,
                      hasEvalue: Boolean,
                      evalue: String,
                      isFullLength: Boolean): Unit = {
-    jQuery.LoadingOverlay("show")
-
-    val checkboxes = js.Dynamic.global.Toolkit.resultView.getSelectedValues.asInstanceOf[js.Array[Int]]
+    val checkboxes = g.Toolkit.resultView.getSelectedValues.asInstanceOf[js.Array[Int]]
 
     if (checkboxes.length < 1 && !hasEvalue) {
       jQuery(".forwardModal").foundation("close")
-      jQuery.LoadingOverlay("hide")
       dom.window.alert("No sequence(s) selected!")
       return
     }
+
     val filename  = UUID.randomUUID().toString.toUpperCase
     val baseRoute = "/results/forwardAlignment/" + jobID
     val route = (hasEvalue, isFullLength) match {
@@ -42,6 +36,7 @@ object Forwarding {
       case (true, false)  => s"$baseRoute/alnEval"
       case (false, false) => s"$baseRoute/aln"
     }
+    jQuery.LoadingOverlay("show")
     jQuery
       .ajax(
         js.Dictionary(
@@ -65,17 +60,14 @@ object Forwarding {
       })
   }
 
-  @JSExport
   def processAlnResults(jobID: String, selectedTool: String, resultName: String): Unit = {
-    jQuery.LoadingOverlay("show")
-
     val checkboxes = js.Dynamic.global.Toolkit.resultView.getSelectedValues.asInstanceOf[js.Array[Int]]
     if (checkboxes.length < 1) {
       jQuery(".forwardModal").foundation("close")
-      jQuery.LoadingOverlay("hide")
       dom.window.alert("No sequence(s) selected!")
       return
     }
+    jQuery.LoadingOverlay("show")
     jQuery
       .ajax(
         js.Dictionary(
@@ -99,7 +91,6 @@ object Forwarding {
       })
   }
 
-  @JSExport
   def processFiles(selectedTool: String, fileUrl: String): Unit = {
     jQuery.LoadingOverlay("show")
     jQuery
@@ -119,7 +110,6 @@ object Forwarding {
       })
   }
 
-  @JSExport
   def redirect(tool: String, forwardPath: String): Unit = {
     m.route(s"/tools/$tool")
     jQuery
@@ -148,10 +138,9 @@ object Forwarding {
       })
   }
 
-  @JSExport
   def simple(tool: String, forwardData: String): Unit = {
-    if (forwardData.isEmpty) {
-      dom.window.alert("No sequence(s) selected!")
+    if (forwardData == "") {
+      dom.window.alert("File is empty!")
       return
     }
     try {
