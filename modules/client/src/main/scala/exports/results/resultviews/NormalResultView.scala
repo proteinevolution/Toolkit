@@ -175,7 +175,7 @@ class NormalResultView(val container: JQuery,
     def splitFn: PartialFunction[dom.Node, Int] = {
       case el: dom.Node =>
         if (resultContext.toolName == "hhomp")
-          el.asInstanceOf[HTMLDivElement].id.toInt
+          el.asInstanceOf[HTMLDivElement].getAttribute("data-id").toInt
         else
           el.asInstanceOf[HTMLInputElement].value.toInt
     }
