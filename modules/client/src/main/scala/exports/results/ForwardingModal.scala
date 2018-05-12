@@ -2,6 +2,7 @@ package exports.results
 
 import de.proteinevolution.models.forwarding.ForwardModalOptions
 import exports.facades.JQueryPlugin._
+import helpers.SnakePickle
 import org.scalajs.dom
 import org.scalajs.dom.raw.{ HTMLElement, HTMLInputElement }
 import org.scalajs.jquery._
@@ -63,6 +64,8 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
     }
   )
 
+  implicit def forwardModalOptRW: SnakePickle.ReadWriter[ForwardModalOptions] = SnakePickle.macroRW
+
   def requestModalOptions(newModalType: String): Unit = {
     jQuery
       .ajax(
@@ -73,7 +76,7 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
       )
       .done((data: js.Dictionary[Any]) => {
         modalType = newModalType
-        setupModalWithOptions(data.asInstanceOf[ForwardModalOptions])
+        setupModalWithOptions(SnakePickle.read[ForwardModalOptions](js.JSON.stringify(data)))
         $modal.foundation("open")
       })
       .fail((jqXHR: JQueryXHR, textStatus: String, errorThrown: js.Any) => {
