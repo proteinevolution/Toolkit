@@ -1,6 +1,6 @@
-package de.proteinevolution.models.util
+package de.proteinevolution.models.forwarding
 
-import play.api.libs.json.{ Json, Writes }
+import play.api.libs.json.{ Json, OFormat }
 
 case class ForwardModalOptions(heading: String,
                                showRadioBtnSelection: Boolean,
@@ -9,5 +9,7 @@ case class ForwardModalOptions(heading: String,
                                multiSeqOptions: Array[String])
 
 object ForwardModalOptions {
-  implicit val forwardModalOptionsWrites: Writes[ForwardModalOptions] = Json.writes[ForwardModalOptions]
+
+  implicit val forwardModalOptionsWrites: OFormat[ForwardModalOptions] = Json.format[ForwardModalOptions]
+
 }
