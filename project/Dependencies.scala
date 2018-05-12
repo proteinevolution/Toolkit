@@ -36,12 +36,12 @@ object Dependencies {
 
   lazy val clientDeps: Def.Initialize[Seq[sbt.ModuleID]] = Def.setting(
     Seq(
-      "org.scala-js"  %%% "scalajs-dom"     % "0.9.5",
-      "com.tgf.pizza" %%% "scalajs-mithril" % "0.1.1",
-      "be.doeraene"   %%% "scalajs-jquery"  % "0.9.3",
-      "org.querki"    %%% "jquery-facade"   % "1.2",
-      "org.typelevel" %%% "cats-core"       % "1.1.0",
-      "com.lihaoyi"   %%% "upickle"         % "0.6.5"
+      "org.scala-js"      %%% "scalajs-dom"     % "0.9.5",
+      "com.tgf.pizza"     %%% "scalajs-mithril" % "0.1.1",
+      "be.doeraene"       %%% "scalajs-jquery"  % "0.9.3",
+      "org.querki"        %%% "jquery-facade"   % "1.2",
+      "org.typelevel"     %%% "cats-core"       % "1.1.0",
+      "com.lihaoyi"       %%% "upickle"         % "0.6.5"
     )
   )
 
