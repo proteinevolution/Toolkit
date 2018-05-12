@@ -1,12 +1,14 @@
-@import de.proteinevolution.tools.results.HHPred.HHPredResult
 @import better.files._
+@import de.proteinevolution.tools.results.HHPred.HHPredResult
 @import play.twirl.api.Html
+
 @(jobID: String, result: HHPredResult, tool: de.proteinevolution.models.Tool, htmlPath: String)()
-    @if(result.num_hits < 1) {
-        <div class="callout alert noHitsWide" id="noHits">
-            No hits found!
-        </div>
-    } else {
+
+@if(result.num_hits < 1) {
+    <div class="callout alert noHitsWide" id="noHits">
+        No hits found!
+    </div>
+} else {
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
             <div id="scrollLinks">
@@ -20,71 +22,70 @@
                 <a class="forwardModalOpenBtn" data-modal-type="simple">Forward</a>
                 <a class="forwardModalOpenBtn" data-modal-type="hhsuite">Forward Query A3M</a>
                 @*only show create model when chosen db=mmcif70/pdb70*@
-                @if(result.db.matches("mmcif70/pdb70") || result.db.matches("mmcif30/pdb30") ) {
+                @if(result.db.matches("mmcif70/pdb70") || result.db.matches("mmcif30/pdb30")) {
                     <a onclick="@{tool.toolNameShort}_manual()">Model using selection</a>
                 }
                 <a onclick="downloadHHR()" class="downloadHHR">HHR file</a>
                 <a class="colorAA">Color Seqs</a>
                 <a id="wrap">Wrap Seqs</a>
-                </div>
+            </div>
         </div>
     </div>
     <br>
     <span class="notePlain">Number of hits: <b>@result.num_hits</b></span>
     <br>
-    @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
+    @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0") {
         <br>
         <span class="note"><b> We have detected</b></span>
 
     }
-    @if(result.TMPRED == "1"){
+    @if(result.TMPRED == "1") {
 
         <span class="note"><b> @result.TMPRED transmembrane helix</b></span>
     }
-    @if(result.TMPRED.toInt > 1){
+    @if(result.TMPRED.toInt > 1) {
 
         <span class="note"><b> @result.TMPRED transmembrane helices</b></span>
     }
-    @if((result.TMPRED == "1" || result.TMPRED.toInt > 1) && result.COILPRED == "0"){
+    @if((result.TMPRED == "1" || result.TMPRED.toInt > 1) && result.COILPRED == "0") {
         <span class="note"><b> and </b></span>
 
     }
-    @if(result.COILPRED == "0"){
+    @if(result.COILPRED == "0") {
         <span class="note"><b>coiled-coil segments </b></span>
     }
 
-    @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0"){
+    @if(result.TMPRED == "1" || result.TMPRED.toInt > 1 || result.COILPRED == "0") {
         <span class="note"><b> in your query protein!</b></span>
         <br>
 
     }
 
-    @if(result.QA3M_COUNT < 20){
+    @if(result.QA3M_COUNT < 20) {
         <br>
         <span class="note">Note: your query alignment consists of only @result.QA3M_COUNT sequence(s).</span>
-        @if(result.MSA_GEN == "uniprot20"){
+        @if(result.MSA_GEN == "uniprot20") {
 
             <span class="note">You could improve the sensitivity of your search vastly by building a larger query
                 alignment either with HHblits over Uniclust30 or with PSI-BLAST over nre70. You could also consider
                 increasing the number of MSA generation iterations and/or relaxing the inclusion threshold.</span>
         }
-        @if(result.MSA_GEN == "uniclust30"){
+        @if(result.MSA_GEN == "uniclust30") {
             <span class="note">You could improve the sensitivity of your search vastly by building a larger
                 query alignment with PSI-BLAST over nre70. You could also consider increasing the number of MSA
                 generation iterations and/or relaxing the inclusion threshold.</span>
         }
-        @if(result.MSA_GEN == "psiblast"){
+        @if(result.MSA_GEN == "psiblast") {
             <span class="note">You could improve the sensitivity of your search vastly by building a larger
                 query alignment; for instance, by increasing the number of MSA generation iterations and/or relaxing the
                 inclusion threshold. Alternatively, you could input your own alignment.</span>
         }
-        @if(result.MSA_GEN == "custom"){
+        @if(result.MSA_GEN == "custom") {
             <span class="note">
                 You could improve the sensitivity of your search vastly by providing a larger query alignment.</span>
         }
 
     }
-
     @* Load html Map used for the image representation *@
     <div id="visualization">
         <h5 id="visualizationTitle">Visualization</h5>
@@ -96,7 +97,9 @@
         <div id='blastviz'>
             <div class='flat-slider' id='flat-slider'></div>
             @Html(htmlPath.toFile.contentAsString)
-            <p><img src="files/@{jobID + "/" + jobID + ".png"}" border="0" alt="blasthits" usemap="#blastmap"></p>
+            <p><img src="files/@{
+                jobID + "/" + jobID + ".png"
+            }" border="0" alt="blasthits" usemap="#blastmap"></p>
         </div>
     </div>
     <div id="hitlist">
@@ -138,21 +141,22 @@
         <h5 id="refTitle">References</h5>
         If you use our HHpred server for your research, please cite:
         <div class="citation">
-            @views.html.help.common.toolkit_citation_results()
+        @views.html.help.common.toolkit_citation_results()
         </div>
-            And one or more of the following:
+        And one or more of the following:
         <div class="citation">
             <div>Protein homology detection by HMM-HMM comparison.<br>
-                Söding J.<a href="https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/bti125" target="_blank" rel="noopener"> Bioinformatics. 2005 Apr 1;21(7):951-60</a>,</div><br>
+                Söding J.<a href="https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/bti125" target="_blank" rel="noopener">
+                    Bioinformatics. 2005 Apr 1;21(7):951-60</a>,</div><br>
             <div>Fast and accurate automatic structure prediction with HHpred.<br>
-                Hildebrand A, Remmert M, Biegert A, Söding J.<a href="http://onlinelibrary.wiley.com/doi/10.1002/prot.22499/abstract;jsessionid=6FF63B8F61E35391B79F4681BB12DB2C.f02t04" target="_blank" rel="noopener"> Proteins. 2009;77 Suppl 9:128-32</a>,</div><br>
+                Hildebrand A, Remmert M, Biegert A, Söding J.<a href="http://onlinelibrary.wiley.com/doi/10.1002/prot.22499/abstract;jsessionid=6FF63B8F61E35391B79F4681BB12DB2C.f02t04" target="_blank" rel="noopener">
+                    Proteins. 2009;77 Suppl 9:128-32</a>,</div><br>
             <div>Automatic Prediction of Protein 3D Structures by Probabilistic Multi-template Homology Modeling.<br>
-                Meier A, Söding J.<a href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004343" target="_blank" rel="noopener"> PLoS Comput Biol. 2015 Oct 23;11(10):e1004343</a>.</div><br>
+                Meier A, Söding J.<a href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004343" target="_blank" rel="noopener">
+                    PLoS Comput Biol. 2015 Oct 23;11(10):e1004343</a>.</div><br>
         </div>
-        </div>
+    </div>
     <hr class="horizontal-line">
-
-
     @*MODALS*@
     <div class="reveal" id="structureModal" data-reveal>
         <p>Template 3D structure</p>
@@ -166,15 +170,6 @@
 
 }
 <script>
-
-        $("#structureModal").bind('closed.zf.reveal', (function () {
-            //clear 3D structure modal
-            $('#accessionStructure').html("");
-            $('#viewport canvas').remove();
-            $.LoadingOverlay("hide");
-        }));
-
-        var currentStructureAccession = "";
         var shownHits = 100;
         var jobID = "@{jobID}";
 
@@ -190,18 +185,19 @@
                 }
             };
             Toolkit.resultView = new NormalResultView($("#jobview"), jobID, shownHits, true, true, context);
-            if (@result.num_hits > 0) {
-                $('#structureModal').foundation();
-            }
         });
 
-        window["downloadHHR"] = function(){
+        @if(result.num_hits > 0) {
+            new StructureModal($("#jobview"), $("#structureModal"));
+        }
+
+        window["downloadHHR"] = function () {
             var downloadFilename = "hhpred_" + jobID + ".hhr";
-            var fileURL="/files/" + jobID + "/" + jobID + ".hhr";
+            var fileURL = "/files/" + jobID + "/" + jobID + ".hhr";
             $.ajax({
                 method: "GET",
                 url: fileURL
-            }).done(function(data){
+            }).done(function (data) {
                 DownloadHelper.download(downloadFilename, data);
             })
         };
@@ -222,14 +218,14 @@
                 method: submitRoute.method,
                 url: submitRoute.url,
                 data: formData,
-                serialize: function(submissionReturnData) {
+                serialize: function (submissionReturnData) {
                     return submissionReturnData;
                 }
-            }).then(function(submissionReturnData){
+            }).then(function (submissionReturnData) {
                 if (submissionReturnData.successful) {
                     jobID = submissionReturnData.jobID;
                     var jobListComp = JobListComponent.Job(
-                            { jobID: jobID, state: 0, dateCreated: Date.now().valueOf(), tool: "hhpred_manual" }
+                            {jobID: jobID, state: 0, dateCreated: Date.now().valueOf(), tool: "hhpred_manual"}
                     );
                     if (!JobListComponent.contains(jobID)) {
                         JobListComponent.pushJob(jobListComp, true);
@@ -237,44 +233,11 @@
                 }
                 $(".submitJob").prop("disabled", false);
                 JobSubmissionComponent.submitting = false;
-            }).catch(function(error){
+            }).catch(function (error) {
                 console.log("Error while submitting:", error);
                 $(".submitJob").prop("disabled", false);
                 JobSubmissionComponent.submitting = false;
             });
-        }
-
-        function showStructure(accession) {
-            currentStructureAccession = accession;
-            var db = BioDB.identify(accession);
-            var fileEnding = "";
-            switch (db) {
-                case "scop":
-                    fileEnding = ".pdb";
-                    break;
-                case "ecod":
-                    fileEnding = ".pdb";
-                    break;
-                case "mmcif":
-                    fileEnding = ".cif";
-                    break;
-            }
-            var url = '/results/getStructure/' + accession + fileEnding;
-
-            $(function () {
-                $('#accessionStructure').append("<h6 class='structureAccession'>3D Structure: " + accession + "</h6>");
-                $('#viewport').width(800).height(700).find('canvas').first().remove();
-                stage = new NGL.Stage("viewport");
-                $.get(url).done(function () {
-                    $(document).ready(function () {
-                        stage.loadFile(url, {defaultRepresentation: true, sele: ":A or :B or DPPC"});
-                    });
-                }).fail(function () {
-                    $('#accessionStructure').append("<div class='fetchError'>Sorry, failed to fetch structure.</div>");
-                    $.LoadingOverlay("hide")
-                });
-            });
-
         }
 
 </script>

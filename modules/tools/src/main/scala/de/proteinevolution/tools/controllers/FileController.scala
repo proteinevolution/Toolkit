@@ -23,7 +23,7 @@ class FileController @Inject()(ctx: HHContext, env: Env, constants: Constants)(i
       case "mmcif" =>
         env.get("CIF")
     }
-    Future.successful(Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$filename")).as("text/plain"))
+    Future.successful(Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$filename")).as("application/octet-stream"))
   }
 
 }
