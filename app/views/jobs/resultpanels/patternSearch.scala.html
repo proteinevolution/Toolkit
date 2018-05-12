@@ -66,6 +66,8 @@
         wrapSequences()
     });
 
+    new ForwardingModal($("#jobview"), "@{tool.toolNameShort}", "@{jobID}");
+
     function wrapSequences(){
             $(".sequenceAlignment").addClass("wrap");
             $("#wrapSequences").addClass("colorToggleBar");

@@ -17,6 +17,8 @@
  </div>
 
 <script>
+    new ForwardingModal($("#jobview"), "@{toolName}", "@{jobID}");
+
     function download_(){
         $.getJSON("/files/@jobID/ids.json", function (data) {
             var fileString = data.ACC_IDS;
