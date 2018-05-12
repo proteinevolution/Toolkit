@@ -5,7 +5,7 @@ import java.util.UUID
 import com.tgf.pizza.scalajs.mithril._
 import exports.facades.JQueryPlugin._
 import org.scalajs.dom
-import org.scalajs.jquery.{JQueryAjaxSettings, JQueryXHR, jQuery}
+import org.scalajs.jquery.{ jQuery, JQueryAjaxSettings, JQueryXHR }
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
@@ -13,7 +13,7 @@ import scala.scalajs.js.timers._
 
 object Forwarding {
 
-  import js.Dynamic.{global => g}
+  import js.Dynamic.{ global => g }
 
   def processResults(jobID: String,
                      selectedTool: String,
@@ -28,25 +28,25 @@ object Forwarding {
       return
     }
 
-    val filename = UUID.randomUUID().toString.toUpperCase
+    val filename  = UUID.randomUUID().toString.toUpperCase
     val baseRoute = "/results/forwardAlignment/" + jobID
     val route = (hasEvalue, isFullLength) match {
-      case (true, true) => s"$baseRoute/evalFull"
-      case (false, true) => s"$baseRoute/full"
-      case (true, false) => s"$baseRoute/alnEval"
+      case (true, true)   => s"$baseRoute/evalFull"
+      case (false, true)  => s"$baseRoute/full"
+      case (true, false)  => s"$baseRoute/alnEval"
       case (false, false) => s"$baseRoute/aln"
     }
     jQuery.LoadingOverlay("show")
     jQuery
       .ajax(
         js.Dictionary(
-          "url" -> route,
-          "data" -> JSON.stringify(
-            js.Dictionary("fileName" -> filename, "evalue" -> evalue, "checkboxes" -> checkboxes)
-          ),
-          "contentType" -> "application/json",
-          "method" -> "POST"
-        )
+            "url" -> route,
+            "data" -> JSON.stringify(
+              js.Dictionary("fileName" -> filename, "evalue" -> evalue, "checkboxes" -> checkboxes)
+            ),
+            "contentType" -> "application/json",
+            "method"      -> "POST"
+          )
           .asInstanceOf[JQueryAjaxSettings]
       )
       .done((_: js.Any, _: js.Any, jqXHR: JQueryXHR) => {
@@ -71,13 +71,13 @@ object Forwarding {
     jQuery
       .ajax(
         js.Dictionary(
-          "url" -> s"/results/alignment/getAln/$jobID",
-          "data" -> JSON.stringify(
-            js.Dictionary("resultName" -> resultName, "checkboxes" -> checkboxes)
-          ),
-          "contentType" -> "application/json",
-          "method" -> "POST"
-        )
+            "url" -> s"/results/alignment/getAln/$jobID",
+            "data" -> JSON.stringify(
+              js.Dictionary("resultName" -> resultName, "checkboxes" -> checkboxes)
+            ),
+            "contentType" -> "application/json",
+            "method"      -> "POST"
+          )
           .asInstanceOf[JQueryAjaxSettings]
       )
       .done((data: js.Any, _: js.Any, _: JQueryXHR) => {
@@ -96,10 +96,10 @@ object Forwarding {
     jQuery
       .ajax(
         js.Dictionary(
-          "method" -> "GET",
-          "url" -> fileUrl,
-          "dataType" -> "text"
-        )
+            "method"   -> "GET",
+            "url"      -> fileUrl,
+            "dataType" -> "text"
+          )
           .asInstanceOf[JQueryAjaxSettings]
       )
       .done((data: js.Object) => {
@@ -115,9 +115,9 @@ object Forwarding {
     jQuery
       .ajax(
         js.Dictionary(
-          "url" -> forwardPath,
-          "method" -> "GET"
-        )
+            "url"    -> forwardPath,
+            "method" -> "GET"
+          )
           .asInstanceOf[JQueryAjaxSettings]
       )
       .done((data: js.Any, _: js.Any, _: JQueryXHR) => {
