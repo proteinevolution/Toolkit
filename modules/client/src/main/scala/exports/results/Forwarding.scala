@@ -64,7 +64,6 @@ object Forwarding {
     val checkboxes = js.Dynamic.global.Toolkit.resultView.getSelectedValues.asInstanceOf[js.Array[Int]]
     if (checkboxes.length < 1) {
       jQuery(".forwardModal").foundation("close")
-      jQuery.LoadingOverlay("hide")
       dom.window.alert("No sequence(s) selected!")
       return
     }
@@ -133,6 +132,9 @@ object Forwarding {
       })
       .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
         println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
+      })
+      .always(() => {
+        jQuery.LoadingOverlay("hide")
       })
   }
 
