@@ -26,6 +26,7 @@ trait ResultView {
 
   protected val checkboxes: Checkboxes = new Checkboxes(container)
   protected val hitsSlider: HitsSlider = new HitsSlider(container)
+
   @JSExport
   protected val scrollUtil: ScrollUtil = new ScrollUtil(this)
 
@@ -65,11 +66,11 @@ trait ResultView {
           shownHits = end
           if (shownHits != resultContext.numHits)
             container.find("#loadHits").show()
-          checkboxes.initForContainer(resultContainer)
+          checkboxes.initForContainer(jQuery("#jobview"))
           jQuery("#alignments").floatingScroll("init")
           if (successCallback != null) {
             import scala.scalajs.js.timers._
-            setTimeout(300) {
+            setTimeout(200) {
               successCallback(data, textStatus, jqXHR)
             }
           }
@@ -118,7 +119,7 @@ trait ResultView {
                 .find(".aln[data-id=" + id + "]")
                 .offset()
                 .asInstanceOf[JQueryPosition]
-                .top - 100.0)
+                .top - 100D)
             ),
             1,
             "swing",
@@ -134,7 +135,7 @@ trait ResultView {
               .find(".aln[data-id=" + id + "]")
               .offset()
               .asInstanceOf[JQueryPosition]
-              .top - 100.0)
+              .top - 100D)
           ),
           1
         )
@@ -153,7 +154,7 @@ trait ResultView {
       if (container.find("#tool-tabs").hasClass("fullscreen"))
         jQuery(elem).scrollTop().toDouble
       else
-        25.toDouble
+        25D
     jQuery(elem)
       .animate(js.Dynamic.literal("scrollTop" -> (_pos + pos)), "fast")
   }
