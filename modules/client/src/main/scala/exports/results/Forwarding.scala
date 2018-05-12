@@ -4,11 +4,12 @@ import java.util.UUID
 
 import com.tgf.pizza.scalajs.mithril._
 import exports.facades.JQueryPlugin._
+import exports.results.models.ForwardingForm.{ ForwardingFormAln, ForwardingFormNormal }
 import org.scalajs.dom
 import org.scalajs.jquery.{ jQuery, JQueryAjaxSettings, JQueryXHR }
+import upickle.default.write
 
 import scala.scalajs.js
-import scala.scalajs.js.JSON
 import scala.scalajs.js.timers._
 
 object Forwarding {
@@ -40,10 +41,8 @@ object Forwarding {
     jQuery
       .ajax(
         js.Dictionary(
-            "url" -> route,
-            "data" -> JSON.stringify(
-              js.Dictionary("fileName" -> filename, "evalue" -> evalue, "checkboxes" -> checkboxes)
-            ),
+            "url"         -> route,
+            "data"        -> write(ForwardingFormNormal(filename, evalue, checkboxes.toArray)),
             "contentType" -> "application/json",
             "method"      -> "POST"
           )
@@ -71,10 +70,8 @@ object Forwarding {
     jQuery
       .ajax(
         js.Dictionary(
-            "url" -> s"/results/alignment/getAln/$jobID",
-            "data" -> JSON.stringify(
-              js.Dictionary("resultName" -> resultName, "checkboxes" -> checkboxes)
-            ),
+            "url"         -> s"/results/alignment/getAln/$jobID",
+            "data"        -> write(ForwardingFormAln(resultName, checkboxes.toArray)),
             "contentType" -> "application/json",
             "method"      -> "POST"
           )
@@ -139,8 +136,8 @@ object Forwarding {
   }
 
   def simple(tool: String, forwardData: String): Unit = {
-    if (forwardData == "") {
-      dom.window.alert("File is empty!")
+    if (forwardData.isEmpty) {
+      dom.window.alert("No sequence(s) selected!")
       return
     }
     try {
