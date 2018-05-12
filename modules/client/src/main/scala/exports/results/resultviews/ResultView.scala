@@ -53,7 +53,6 @@ trait ResultView {
       container.find("#loadingHits").show()
       container.find("#loadHits").hide()
 
-      jQuery.LoadingOverlay("show")
       jQuery
         .ajax(
           js.Dictionary(
@@ -85,7 +84,6 @@ trait ResultView {
         .always(() => {
           loading = false
           container.find("#loadingHits").hide()
-          jQuery.LoadingOverlay("hide")
         })
     }
   }

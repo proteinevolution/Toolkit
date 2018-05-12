@@ -1,6 +1,6 @@
 package de.proteinevolution.models.util
 
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{ Json, Writes }
 
 case class ForwardModalOptions(heading: String,
                                showControlArea: Boolean,
