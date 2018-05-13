@@ -171,8 +171,10 @@ trait ResultView {
     val pos =
       if (container.find("#tool-tabs").hasClass("fullscreen"))
         jQuery(elem).scrollTop().toDouble
+      else if (container.find(".scrollContainer").hasClass("fixed"))
+        -25D
       else
-        25D
+        -75D
     jQuery(elem)
       .animate(js.Dynamic.literal("scrollTop" -> (_pos + pos)), "fast")
   }
