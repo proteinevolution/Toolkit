@@ -19,7 +19,7 @@ class AlnResultView(val container: JQuery,
   override def init(): Unit = {
     scrollUtil.followScroll(jQuery(dom.document))
     if (resultContext.numHits > 0) {
-      bindEvents()
+      bindInit()
       showHits(0, this.shownHits)
     }
   }
