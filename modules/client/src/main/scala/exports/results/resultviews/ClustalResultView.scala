@@ -19,7 +19,7 @@ class ClustalResultView(val container: JQuery,
   override def init(): Unit = {
     if (resultContext.numHits > 0) {
       bindEvents()
-      showHits(0, this.shownHits)
+      showHits(0, shownHits)
     }
   }
 
@@ -39,7 +39,7 @@ class ClustalResultView(val container: JQuery,
     colorAAs = !colorAAs
     container.find(".colorAA").toggleClass("colorToggleBar")
     container.find("#resultTable").empty()
-    showHits(0, this.shownHits)
+    showHits(0, shownHits)
   }
 
   override def bindEvents(): Unit = {
