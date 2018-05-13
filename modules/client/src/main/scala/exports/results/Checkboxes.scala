@@ -28,21 +28,23 @@ class Checkboxes(private val outerContainer: JQuery) {
   }
 
   def linkSynchronize(container: JQuery): Unit = {
-    container.off("change", "input[type=checkbox][name=alignment_elem]").on(
-      "change",
-      "input[type=checkbox][name=alignment_elem]",
-      (e: Event) => {
-        val currentVal   = e.currentTarget.asInstanceOf[HTMLInputElement].value
-        val currentState = e.currentTarget.asInstanceOf[HTMLInputElement].checked
-        checkedValues(currentVal.toString) = currentState // force string value
-        // link checkboxes with same value
-        container
-          .find(s"input[type=checkbox][name=alignment_elem][value=$currentVal]")
-          .each((_: Int, checkbox: Element) => {
-            jQuery(checkbox).prop("checked", currentState)
-          })
-      }
-    )
+    container
+      .off("change", "input[type=checkbox][name=alignment_elem]")
+      .on(
+        "change",
+        "input[type=checkbox][name=alignment_elem]",
+        (e: Event) => {
+          val currentVal   = e.currentTarget.asInstanceOf[HTMLInputElement].value
+          val currentState = e.currentTarget.asInstanceOf[HTMLInputElement].checked
+          checkedValues(currentVal.toString) = currentState // force string value
+          // link checkboxes with same value
+          container
+            .find(s"input[type=checkbox][name=alignment_elem][value=$currentVal]")
+            .each((_: Int, checkbox: Element) => {
+              jQuery(checkbox).prop("checked", currentState)
+            })
+        }
+      )
   }
 
   def toggleAll(max: Int): Unit = {
