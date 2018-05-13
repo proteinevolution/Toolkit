@@ -33,7 +33,9 @@ private[tools] object ProcessFactory {
         (retrieveAlnEval, List("accessionsStr" -> accString, "filename" -> tempFileName, "mode" -> "count"))
       case (PSIBLAST.value, "alnEval") =>
         (retrieveAlnEval, List("accessionsStr" -> accString, "filename" -> tempFileName, "mode" -> "eval"))
-      case (HMMER.value, "aln") | (PSIBLAST.value, "aln") =>
+      case (HMMER.value, "aln") =>
+        (retrieveAlnEval, List("accessionsStr" -> accString, "filename" -> tempFileName, "mode" -> "selHmmer")) // todo refactor! index issue because of no query in file
+      case (PSIBLAST.value, "aln") =>
         (retrieveAlnEval, List("accessionsStr" -> accString, "filename" -> tempFileName, "mode" -> "sel"))
       case (HHPRED.value, "aln") | (HHBLITS.value, "aln") =>
         (generateAlignmentScript, List("jobID" -> jobID, "filename" -> tempFileName, "numList" -> accString))
