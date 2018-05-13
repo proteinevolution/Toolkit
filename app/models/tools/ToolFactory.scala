@@ -661,7 +661,7 @@ final class ToolFactory @Inject()(
           ResultViews.RESULTS -> { jobID =>
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
-                views.html.jobs.resultpanels.unchecked_list("Seq2ID", jobID, jsValue, values(ToolName.SEQ2ID.value))
+                views.html.jobs.resultpanels.unchecked_list("seq2id", jobID, jsValue)
               case None => views.html.errors.resultnotfound()
             }
           }

@@ -1,14 +1,12 @@
 @import play.api.libs.json.JsValue
-@(toolName: String, jobID: String, jsValue: JsValue, tool: de.proteinevolution.models.Tool)()
+@(toolName: String, jobID: String, jsValue: JsValue)()
 <div class="colorOptsAlignment">
-    <a type="button" data-open="forwardModalSimpler"><span>Forward selected</span></a>
+    <a class="forwardModalOpenBtn" type="button" data-modal-type="simpler" data-result-name="@{toolName}" data-forward-issuer="UNCHECKED_LIST"><span>Forward selected</span></a>
     <a type="button" id="downloadAlignment" onclick="download_()"><span>Download File</span></a>
     <hr class="horizontal-line">
 </div>
 <br/><br/>
 <div class="h1">Retrieved @{{jsValue \ "ids" \ "ACC_IDS"}.as[List[JsValue]].size} IDs<br/><br/></div>
-
-    @views.html.forwardmodals.simpler(tool, jobID, toolName, "UNCHECKED_LIST")
 
  <div class="uncheckedListWrap">
     @for((id) <- (jsValue \ "ids" \ "ACC_IDS").as[List[JsValue]]){
@@ -19,6 +17,8 @@
  </div>
 
 <script>
+    new ForwardingModal($("#jobview"), "@{toolName}", "@{jobID}");
+
     function download_(){
         $.getJSON("/files/@jobID/ids.json", function (data) {
             var fileString = data.ACC_IDS;
