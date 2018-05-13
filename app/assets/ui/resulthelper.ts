@@ -1,10 +1,12 @@
 // load forwarded data into alignment field
 $(function() {
-    const resultcookie = localStorage.getItem("resultcookie");
-    if (resultcookie.length < 1) console.log("WARNING: localStorage is empty.");
-    $("#alignment").val(resultcookie);
-    localStorage.removeItem("resultcookie");
-    $.LoadingOverlay("hide");
+    setTimeout(function() {
+        const resultcookie = localStorage.getItem("resultcookie");
+        if (resultcookie.length < 1) console.log("WARNING: localStorage is empty.");
+        $("#alignment").val(resultcookie);
+        localStorage.removeItem("resultcookie");
+        $.LoadingOverlay("hide");
+    }, 200); // todo clean this up and make it more robust
 });
 
 $.fn.isOnScreen = function () {
