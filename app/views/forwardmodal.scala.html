@@ -1,0 +1,47 @@
+<div class="reveal forwardModal" id="forwardModal" data-reveal>
+    <p>Forward Job</p>
+
+    <div class="forward_form row forward-control-area">
+        <div class="column small-12 medium-6 forwardFormDiv radio-btn-selection-container">
+            <label><b class="forward-modal-heading">Forward hits</b></label>
+            <label class="forwardLabel">
+                <input type="radio" class="selectedHits selectedHitsRadioBtn" name="radio1" checked>
+                Selected
+            </label>
+            <label class="forwardLabel">
+                <input type="radio" class="selectedHits accordingEvalueRadioBtn" name="radio1">
+                E-value better than
+                <input class="result_inputs selectedHits forwardEvalueNormalInput" type="text" value="0.001" >
+            </label>
+        </div>
+        <div class="column small-12 medium-6 forwardFormDiv radio-btn-sequence-length-container">
+            <label><b>Select sequence length</b></label>
+            <label class="forwardLabel">
+                <input type="radio" name="radio2" class="sliderRegionRadioBtn" checked>
+                Aligned region
+            </label>
+            <label class="forwardLabel">
+                <input type="radio" class="fullLengthRadioBtn" name="radio2">
+                Full length sequences
+            </label>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="select_forward large-4 columns">
+            <select class="selectedHits forwardSelect">
+
+            </select>
+        </div>
+        <div class="large-5 columns">
+            <div class="callout alert forwardWarning" style="display: none;">
+                <span>Only some tools accept full-length sequences as input!</span>
+            </div>
+        </div>
+        <div class="forwardFormLast large-3 columns">
+            <button class="success button small forwardBtn" type="button">
+                Forward Job
+            </button>
+        </div>
+    </div>
+</div>
