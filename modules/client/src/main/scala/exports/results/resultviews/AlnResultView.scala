@@ -3,7 +3,7 @@ package exports.results.resultviews
 import exports.facades.ResultContext
 import exports.results.models.ResultForm.MsaResultForm
 import org.scalajs.dom
-import org.scalajs.jquery.{JQuery, JQueryXHR, jQuery}
+import org.scalajs.jquery.{ jQuery, JQuery, JQueryXHR }
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExportTopLevel
@@ -14,7 +14,7 @@ class AlnResultView(val container: JQuery,
                     resultName: String,
                     val tempShownHits: Int,
                     val resultContext: ResultContext)
-  extends ResultView {
+    extends ResultView {
 
   override def init(): Unit = {
     scrollUtil.followScroll(jQuery(dom.document))

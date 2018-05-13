@@ -96,8 +96,8 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
       $selectionRadioBtnArea.find(".forwardEvalueNormalInput")
         .off("focus")
         .on("focus", () => {
-        $selectionRadioBtnArea.find(".accordingEvalueRadioBtn").prop("checked", true)
-      })
+          $selectionRadioBtnArea.find(".accordingEvalueRadioBtn").prop("checked", true)
+        })
     }
     if (options.showRadioBtnSequenceLength) {
       $seqLengthRadioBtnArea.show()
