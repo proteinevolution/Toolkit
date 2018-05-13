@@ -1,10 +1,9 @@
 package exports.results.resultviews
 
-import exports.extensions.JQueryExtensions
 import exports.facades.ResultContext
 import exports.results.models.ResultForm.MsaResultForm
 import org.scalajs.dom
-import org.scalajs.jquery.{ jQuery, JQuery, JQueryXHR }
+import org.scalajs.jquery.{JQuery, JQueryXHR, jQuery}
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExportTopLevel
@@ -15,7 +14,7 @@ class AlnResultView(val container: JQuery,
                     resultName: String,
                     val tempShownHits: Int,
                     val resultContext: ResultContext)
-    extends ResultView {
+  extends ResultView {
 
   override def init(): Unit = {
     scrollUtil.followScroll(jQuery(dom.document))
@@ -35,19 +34,5 @@ class AlnResultView(val container: JQuery,
       end,
       successCallback
     )
-  }
-
-  override def bindEvents(): Unit = {
-    container
-      .find(".selectAllSeqBar")
-      .off("click")
-      .on(
-        "click",
-        () => {
-          container.find(".selectAllSeqBar").toggleClass("colorToggleBar")
-          JQueryExtensions.toggleText(container.find(".selectAllSeqBar"), "Select all", "Deselect all")
-          checkboxes.toggleAll(resultContext.numHits)
-        }
-      )
   }
 }

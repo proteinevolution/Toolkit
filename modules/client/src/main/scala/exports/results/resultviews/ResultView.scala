@@ -1,14 +1,16 @@
 package exports.results.resultviews
 
-import exports.facades.{ JQueryPosition, ResultContext }
-import exports.results.{ Checkboxes, ForwardingModal, HitsSlider, ScrollUtil }
+import exports.extensions.JQueryExtensions
+import exports.facades.JQueryPlugin._
+import exports.facades.{JQueryPosition, ResultContext}
+import exports.results.models.ResultForm
+import exports.results.{Checkboxes, ForwardingModal, HitsSlider, ScrollUtil}
+import org.scalajs.dom.raw.HTMLLinkElement
 import org.scalajs.jquery._
+import upickle.default.write
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
-import exports.facades.JQueryPlugin._
-import exports.results.models.ResultForm
-import upickle.default.write
 
 trait ResultView {
 
@@ -30,12 +32,25 @@ trait ResultView {
   protected val hitsSlider: HitsSlider = new HitsSlider(container)
 
   @JSExport
-  protected val scrollUtil: ScrollUtil           = new ScrollUtil(this)
+  protected val scrollUtil: ScrollUtil = new ScrollUtil(this)
   protected val forwardingModal: ForwardingModal = new ForwardingModal(container, resultContext.toolName, jobID)
 
   def init(): Unit
 
-  def bindEvents(): Unit
+  def bindEvents(): Unit = {
+    // common events
+    container
+      .find(".selectAllSeqBar")
+      .off("click")
+      .on("click", { link: HTMLLinkElement => {
+          val $link = jQuery(link)
+          $link.toggleClass("colorToggleBar")
+          JQueryExtensions.toggleText($link, "Select all", "Deselect all")
+          checkboxes.toggleAll(resultContext.numHits)
+        }
+        }: js.ThisFunction
+      )
+  }
 
   def showHits(start: Int, End: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit
 
@@ -56,11 +71,11 @@ trait ResultView {
       jQuery
         .ajax(
           js.Dictionary(
-              "url"         -> route,
-              "data"        -> write(data),
-              "contentType" -> "application/json",
-              "type"        -> "POST"
-            )
+            "url" -> route,
+            "data" -> write(data),
+            "contentType" -> "application/json",
+            "type" -> "POST"
+          )
             .asInstanceOf[JQueryAjaxSettings]
         )
         .done((data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) => {
