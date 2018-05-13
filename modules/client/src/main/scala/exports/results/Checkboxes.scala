@@ -28,7 +28,7 @@ class Checkboxes(private val outerContainer: JQuery) {
   }
 
   def linkSynchronize(container: JQuery): Unit = {
-    container.on(
+    container.off("change", "input[type=checkbox][name=alignment_elem]").on(
       "change",
       "input[type=checkbox][name=alignment_elem]",
       (e: Event) => {
