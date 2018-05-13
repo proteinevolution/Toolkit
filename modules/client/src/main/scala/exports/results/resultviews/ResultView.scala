@@ -37,7 +37,7 @@ trait ResultView {
 
   def init(): Unit
 
-  def bindEvents(): Unit = {
+  def bindInit(): Unit = {
     // common events
     container
       .find(".selectAllSeqBar")

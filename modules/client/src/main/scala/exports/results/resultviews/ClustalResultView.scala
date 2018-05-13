@@ -42,8 +42,8 @@ class ClustalResultView(val container: JQuery,
     showHits(0, shownHits)
   }
 
-  override def bindEvents(): Unit = {
-    super.bindEvents()
+  def bindEvents(): Unit = {
+    bindInit()
     container
       .find(".colorAA")
       .off("click")
