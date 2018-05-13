@@ -1,9 +1,8 @@
 package exports.results.resultviews
 
-import exports.extensions.JQueryExtensions
 import exports.facades.ResultContext
 import exports.results.models.ResultForm.ClustalResultForm
-import org.scalajs.jquery.{ JQuery, JQueryXHR }
+import org.scalajs.jquery.{JQuery, JQueryXHR}
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExportTopLevel
@@ -15,7 +14,7 @@ class ClustalResultView(val container: JQuery,
                         var colorAAs: Boolean,
                         val tempShownHits: Int,
                         val resultContext: ResultContext)
-    extends ResultView {
+  extends ResultView {
 
   override def init(): Unit = {
     if (resultContext.numHits > 0) {
@@ -37,29 +36,19 @@ class ClustalResultView(val container: JQuery,
   }
 
   def toggleAlignmentColoring(): Unit = {
-    this.colorAAs = !this.colorAAs
+    colorAAs = !colorAAs
     container.find(".colorAA").toggleClass("colorToggleBar")
     container.find("#resultTable").empty()
     showHits(0, this.shownHits)
   }
 
   override def bindEvents(): Unit = {
+    super.bindEvents()
     container
       .find(".colorAA")
       .off("click")
       .on("click", () => {
         toggleAlignmentColoring()
       })
-    container
-      .find(".selectAllSeqBar")
-      .off("click")
-      .on(
-        "click",
-        () => {
-          container.find(".selectAllSeqBar").toggleClass("colorToggleBar")
-          JQueryExtensions.toggleText(container.find(".selectAllSeqBar"), "Select all", "Deselect all")
-          checkboxes.toggleAll(resultContext.numHits)
-        }
-      )
   }
 }

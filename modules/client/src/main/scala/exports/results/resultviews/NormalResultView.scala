@@ -1,17 +1,18 @@
 package exports.results.resultviews
 
 import exports.extensions.JQueryExtensions
+import exports.facades.JQueryPlugin.jqPlugin
 import exports.facades.ResultContext
 import exports.results.DataTables
+import exports.results.models.ResultForm.ShowHitsForm
 import org.scalajs.dom
-import org.scalajs.dom.raw.{ HTMLDivElement, HTMLInputElement }
-import org.scalajs.jquery.{ jQuery, JQuery, JQueryXHR }
 import org.scalajs.dom.ext._
+import org.scalajs.dom.raw.{HTMLDivElement, HTMLInputElement}
+import org.scalajs.jquery.{JQuery, JQueryXHR, jQuery}
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExportTopLevel
-import exports.facades.JQueryPlugin.jqPlugin
-import exports.results.models.ResultForm.ShowHitsForm
+
 @JSExportTopLevel("NormalResultView")
 class NormalResultView(val container: JQuery,
                        val jobID: String,
@@ -19,7 +20,7 @@ class NormalResultView(val container: JQuery,
                        var wrapped: Boolean,
                        var colorAAs: Boolean,
                        val resultContext: ResultContext)
-    extends ResultView {
+  extends ResultView {
 
   override def init(): Unit = {
 
@@ -37,8 +38,8 @@ class NormalResultView(val container: JQuery,
             .html(dom.document.getElementById("hidden1").asInstanceOf[HTMLInputElement].value)
             .css(
               js.Dictionary(
-                "color"        -> "white",
-                "font-weight"  -> "bold",
+                "color" -> "white",
+                "font-weight" -> "bold",
                 "padding-left" -> "2px"
               )
             )
@@ -47,8 +48,8 @@ class NormalResultView(val container: JQuery,
             .html(dom.document.getElementById("hidden2").asInstanceOf[HTMLInputElement].value)
             .css(
               js.Dictionary(
-                "color"        -> "white",
-                "font-weight"  -> "bold",
+                "color" -> "white",
+                "font-weight" -> "bold",
                 "padding-left" -> "2px"
               )
             )
@@ -91,18 +92,19 @@ class NormalResultView(val container: JQuery,
     blastVizArea
       .tooltipster(
         js.Dictionary(
-          "theme"         -> js.Array("tooltipster-borderless", "tooltipster-borderless-customized"),
-          "position"      -> "bottom",
-          "animation"     -> "fade",
+          "theme" -> js.Array("tooltipster-borderless", "tooltipster-borderless-customized"),
+          "position" -> "bottom",
+          "animation" -> "fade",
           "contentAsHTML" -> true,
-          "debug"         -> false,
-          "maxWidth"      -> blastVizArea.innerWidth() * 0.6
+          "debug" -> false,
+          "maxWidth" -> blastVizArea.innerWidth() * 0.6
         )
       )
     hitsSlider.show(resultContext.query.seq.length, resultContext.firstQueryStart, resultContext.firstQueryEnd)
   }
 
   override def bindEvents(): Unit = {
+    super.bindEvents()
     container
       .find("#wrap")
       .off("click")
@@ -115,17 +117,6 @@ class NormalResultView(val container: JQuery,
       .on("click", () => {
         hitsSlider.resubmit(resultContext.query.seq, '>' + resultContext.query.accession)
       })
-    container
-      .find(".selectAllSeqBar")
-      .off("click")
-      .on(
-        "click",
-        () => {
-          container.find(".selectAllSeqBar").toggleClass("colorToggleBar")
-          JQueryExtensions.toggleText(container.find(".selectAllSeqBar"), "Select all", "Deselect all")
-          checkboxes.toggleAll(resultContext.numHits)
-        }
-      )
     container
       .find(".colorAA")
       .off("click")
@@ -187,6 +178,7 @@ class NormalResultView(val container: JQuery,
         else
           el.asInstanceOf[HTMLInputElement].value.toInt
     }
+
     dom.document
       .querySelectorAll(".aln")
       .iterator
