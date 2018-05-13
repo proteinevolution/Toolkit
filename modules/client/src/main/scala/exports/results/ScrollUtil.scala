@@ -27,7 +27,7 @@ class ScrollUtil(resultView: ResultView) {
         // Highlights the position in the control bar on click
         js.Dynamic.global.$("#alignments").floatingScroll("init")
         //smoothscroll
-        $scrollLinks.on("click", { link: HTMLElement =>
+        $scrollLinks.off("click").on("click", { link: HTMLElement =>
           {
             $scrollLinks.removeClass("colorToggleBar")
             jQuery(link).addClass("colorToggleBar")
@@ -36,7 +36,7 @@ class ScrollUtil(resultView: ResultView) {
       })
 
       //  Fixes/Unfixes the control bar at the top
-      $elem.on(
+      $elem.off("scroll").on(
         "scroll",
         () => {
           val top = jQuery(dom.document).scrollTop()

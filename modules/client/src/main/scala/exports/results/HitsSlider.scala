@@ -40,6 +40,7 @@ class HitsSlider(private val container: JQuery) {
           "values"      -> js.Array(start, end)
         )
       )
+      .off("slide")
       .on(
         "slide",
         (_: js.Any, ui: js.Dynamic) => {
@@ -47,6 +48,7 @@ class HitsSlider(private val container: JQuery) {
           tooltipRight.text(ui.values.asInstanceOf[js.Array[Int]](1).toString)
         }
       )
+      .off("slidechange")
       .on("slidechange", (_: js.Any, ui: js.Dynamic) => {
         js.Dynamic.global.sliderCoords = flatSlider.slider("option", "values")
       })
