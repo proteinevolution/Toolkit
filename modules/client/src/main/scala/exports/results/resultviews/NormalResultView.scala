@@ -103,8 +103,8 @@ class NormalResultView(val container: JQuery,
     hitsSlider.show(resultContext.query.seq.length, resultContext.firstQueryStart, resultContext.firstQueryEnd)
   }
 
-  override def bindEvents(): Unit = {
-    super.bindEvents()
+  def bindEvents(): Unit = {
+    bindInit()
     container
       .find("#wrap")
       .off("click")
@@ -155,7 +155,7 @@ class NormalResultView(val container: JQuery,
     wrapped = !wrapped
     container.find("#wrap").toggleClass("colorToggleBar")
     import JQueryExtensions._
-    container.find("#wrap").toggleText("Select all", "Deselect all")
+    container.find("#wrap").toggleText("Unwrap Seqs", "Wrap Seqs")
     val current = currentIndex()
     scrollToHit(current, forceReload = true)
   }
