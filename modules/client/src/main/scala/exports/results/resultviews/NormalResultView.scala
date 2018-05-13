@@ -14,7 +14,7 @@ import exports.facades.JQueryPlugin.jqPlugin
 import exports.results.models.ResultForm.ShowHitsForm
 @JSExportTopLevel("NormalResultView")
 class NormalResultView(val container: JQuery,
-                       jobID: String,
+                       val jobID: String,
                        val tempShownHits: Int,
                        var wrapped: Boolean,
                        var colorAAs: Boolean,
@@ -28,6 +28,7 @@ class NormalResultView(val container: JQuery,
     // add slider val
     container
       .find(".slider")
+      .off("moved.zf.slider")
       .on(
         "moved.zf.slider",
         () => {
@@ -104,16 +105,19 @@ class NormalResultView(val container: JQuery,
   override def bindEvents(): Unit = {
     container
       .find("#wrap")
+      .off("click")
       .on("click", () => {
         toggleIsWrapped()
       })
     container
       .find("#resubmitSection")
+      .off("click")
       .on("click", () => {
         hitsSlider.resubmit(resultContext.query.seq, '>' + resultContext.query.accession)
       })
     container
       .find(".selectAllSeqBar")
+      .off("click")
       .on(
         "click",
         () => {
@@ -124,21 +128,25 @@ class NormalResultView(val container: JQuery,
       )
     container
       .find(".colorAA")
+      .off("click")
       .on("click", () => {
         toggleAlignmentColoring()
       })
     container
       .find("#visualizationScroll")
+      .off("click")
       .on("click", () => {
         scrollToSection("visualization")
       })
     container
       .find("#hitlistScroll")
+      .off("click")
       .on("click", () => {
         scrollToSection("hitlist")
       })
     container
       .find("#alignmentsScroll")
+      .off("click")
       .on("click", () => {
         scrollToSection("alignments")
       })

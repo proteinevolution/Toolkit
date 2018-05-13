@@ -11,7 +11,7 @@ import scala.scalajs.js.annotation.JSExportTopLevel
 
 @JSExportTopLevel("AlnResultView")
 class AlnResultView(val container: JQuery,
-                    jobID: String,
+                    val jobID: String,
                     resultName: String,
                     val tempShownHits: Int,
                     val resultContext: ResultContext)
@@ -40,6 +40,7 @@ class AlnResultView(val container: JQuery,
   override def bindEvents(): Unit = {
     container
       .find(".selectAllSeqBar")
+      .off("click")
       .on(
         "click",
         () => {

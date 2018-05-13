@@ -18,8 +18,8 @@
             <span class="headerDivider"></span>
             <div id="controlls">
                 <a class="selectAllSeqBar extraWide">Select all</a>
-                <a id="forwardButtonNormal" data-open="forwardModalNormal">Forward</a>
-                <a id="forwardButtonHHsuite" data-open="forwardModalHHSuite">Forward Query A3M</a>
+                <a class="forwardModalOpenBtn" data-modal-type="normal">Forward</a>
+                <a class="forwardModalOpenBtn" data-modal-type="hhsuite">Forward Query A3M</a>
                 <a id="wrap">Wrap Seqs</a>
             </div>
         </div>
@@ -112,10 +112,6 @@
         </div>
     </div>
     <hr class="horizontal-line">
-
-    @* Loads ForwardModal *@
-    @views.html.forwardmodals.normal(tool, jobID, "")
-    @views.html.forwardmodals.hhsuite(jobID)
 }
 
 <script>
