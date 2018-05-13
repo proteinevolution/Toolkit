@@ -92,6 +92,12 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
     if (options.showRadioBtnSelection) {
       // show and set heading
       $selectionRadioBtnArea.show().find(".forward-modal-heading").text(options.heading)
+      // bind focus handler to autoselect
+      $selectionRadioBtnArea.find(".forwardEvalueNormalInput")
+        .off("focus")
+        .on("focus", () => {
+        $selectionRadioBtnArea.find(".accordingEvalueRadioBtn").prop("checked", true)
+      })
     }
     if (options.showRadioBtnSequenceLength) {
       $seqLengthRadioBtnArea.show()
