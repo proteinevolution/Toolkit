@@ -119,7 +119,7 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
                 val boolFullLength: Boolean = $seqLengthRadioBtnArea.find(".fullLengthRadioBtn").is(":checked")
                 val boolEvalue: Boolean     = $selectionRadioBtnArea.find(".accordingEvalueRadioBtn").is(":checked")
                 val selectedTool: String    = $forwardSelect.value().toString
-                val evalue: String          = $selectionRadioBtnArea.find(".forwardEvalueNormalInput").value().toString
+                val evalue: String          = $selectionRadioBtnArea.find(".forwardEvalueNormalInput").value().toString.trim
                 if (selectedTool == "") {
                   dom.window.alert("Please select a tool!")
                 } else {
@@ -147,7 +147,7 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
               {
                 val boolEvalue: Boolean  = $modal.find(".accordingEvalueRadioBtn").is(":checked")
                 val selectedTool: String = $forwardSelect.value().toString
-                val evalue: String       = $modal.find(".forwardEvalueNormalInput").value().toString
+                val evalue: String       = $modal.find(".forwardEvalueNormalInput").value().toString.trim
                 if (selectedTool == "") {
                   dom.window.alert("Please select a tool!")
                 } else {
