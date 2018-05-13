@@ -7,7 +7,7 @@ import exports.results.DataTables
 import exports.results.models.ResultForm.ShowHitsForm
 import org.scalajs.dom
 import org.scalajs.dom.ext._
-import org.scalajs.dom.raw.{HTMLDivElement, HTMLInputElement}
+import org.scalajs.dom.raw.{HTMLDivElement, HTMLInputElement, HTMLLinkElement}
 import org.scalajs.jquery.{JQuery, JQueryXHR, jQuery}
 
 import scala.scalajs.js
@@ -124,23 +124,10 @@ class NormalResultView(val container: JQuery,
         toggleAlignmentColoring()
       })
     container
-      .find("#visualizationScroll")
-      .off("click")
-      .on("click", () => {
-        scrollToSection("visualization")
-      })
-    container
-      .find("#hitlistScroll")
-      .off("click")
-      .on("click", () => {
-        scrollToSection("hitlist")
-      })
-    container
-      .find("#alignmentsScroll")
-      .off("click")
-      .on("click", () => {
-        scrollToSection("alignments")
-      })
+      .off("click", "#scrollLinks a")
+      .on("click", "#scrollLinks a", {link: HTMLLinkElement => {
+        scrollToSection(link.getAttribute("name"))
+      }}:js.ThisFunction)
   }
 
   override def showHits(start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit = {

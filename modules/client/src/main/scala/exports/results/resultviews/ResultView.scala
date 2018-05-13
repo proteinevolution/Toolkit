@@ -165,7 +165,7 @@ trait ResultView {
         "#tool-tabs"
       else
         "html, body"
-    val _pos = container.find("#" + name).offset().asInstanceOf[JQueryPosition].top
+    val _pos = container.find(name).offset().asInstanceOf[JQueryPosition].top
     val pos =
       if (container.find("#tool-tabs").hasClass("fullscreen"))
         jQuery(elem).scrollTop().toDouble
