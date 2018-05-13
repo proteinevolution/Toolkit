@@ -154,7 +154,8 @@ class NormalResultView(val container: JQuery,
   def toggleIsWrapped(): Unit = {
     wrapped = !wrapped
     container.find("#wrap").toggleClass("colorToggleBar")
-    JQueryExtensions.toggleText(container.find("#wrap"), "Unwrap Seqs", "Wrap Seqs")
+    import JQueryExtensions._
+    container.find("#wrap").toggleText("Select all", "Deselect all")
     val current = currentIndex()
     scrollToHit(current, forceReload = true)
   }
