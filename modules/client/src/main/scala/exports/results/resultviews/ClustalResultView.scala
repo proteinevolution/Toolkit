@@ -2,7 +2,7 @@ package exports.results.resultviews
 
 import exports.facades.ResultContext
 import exports.results.models.ResultForm.ClustalResultForm
-import org.scalajs.jquery.{JQuery, JQueryXHR}
+import org.scalajs.jquery.{ JQuery, JQueryXHR }
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExportTopLevel
@@ -14,7 +14,7 @@ class ClustalResultView(val container: JQuery,
                         var colorAAs: Boolean,
                         val tempShownHits: Int,
                         val resultContext: ResultContext)
-  extends ResultView {
+    extends ResultView {
 
   override def init(): Unit = {
     if (resultContext.numHits > 0) {

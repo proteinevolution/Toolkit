@@ -7,8 +7,8 @@ import exports.results.DataTables
 import exports.results.models.ResultForm.ShowHitsForm
 import org.scalajs.dom
 import org.scalajs.dom.ext._
-import org.scalajs.dom.raw.{HTMLDivElement, HTMLInputElement, HTMLLinkElement}
-import org.scalajs.jquery.{JQuery, JQueryXHR, jQuery}
+import org.scalajs.dom.raw.{ HTMLDivElement, HTMLInputElement, HTMLLinkElement }
+import org.scalajs.jquery.{ jQuery, JQuery, JQueryXHR }
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExportTopLevel
@@ -20,7 +20,7 @@ class NormalResultView(val container: JQuery,
                        var wrapped: Boolean,
                        var colorAAs: Boolean,
                        val resultContext: ResultContext)
-  extends ResultView {
+    extends ResultView {
 
   override def init(): Unit = {
 
@@ -38,8 +38,8 @@ class NormalResultView(val container: JQuery,
             .html(dom.document.getElementById("hidden1").asInstanceOf[HTMLInputElement].value)
             .css(
               js.Dictionary(
-                "color" -> "white",
-                "font-weight" -> "bold",
+                "color"        -> "white",
+                "font-weight"  -> "bold",
                 "padding-left" -> "2px"
               )
             )
@@ -48,8 +48,8 @@ class NormalResultView(val container: JQuery,
             .html(dom.document.getElementById("hidden2").asInstanceOf[HTMLInputElement].value)
             .css(
               js.Dictionary(
-                "color" -> "white",
-                "font-weight" -> "bold",
+                "color"        -> "white",
+                "font-weight"  -> "bold",
                 "padding-left" -> "2px"
               )
             )
@@ -92,12 +92,12 @@ class NormalResultView(val container: JQuery,
     blastVizArea
       .tooltipster(
         js.Dictionary(
-          "theme" -> js.Array("tooltipster-borderless", "tooltipster-borderless-customized"),
-          "position" -> "bottom",
-          "animation" -> "fade",
+          "theme"         -> js.Array("tooltipster-borderless", "tooltipster-borderless-customized"),
+          "position"      -> "bottom",
+          "animation"     -> "fade",
           "contentAsHTML" -> true,
-          "debug" -> false,
-          "maxWidth" -> blastVizArea.innerWidth() * 0.6
+          "debug"         -> false,
+          "maxWidth"      -> blastVizArea.innerWidth() * 0.6
         )
       )
     hitsSlider.show(resultContext.query.seq.length, resultContext.firstQueryStart, resultContext.firstQueryEnd)
@@ -125,9 +125,11 @@ class NormalResultView(val container: JQuery,
       })
     container
       .off("click", "#scrollLinks a")
-      .on("click", "#scrollLinks a", {link: HTMLLinkElement => {
-        scrollToSection(link.getAttribute("name"))
-      }}:js.ThisFunction)
+      .on("click", "#scrollLinks a", { link: HTMLLinkElement =>
+        {
+          scrollToSection(link.getAttribute("name"))
+        }
+      }: js.ThisFunction)
   }
 
   override def showHits(start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit = {
