@@ -47,7 +47,8 @@ trait ResultView {
           {
             val $link = jQuery(link)
             $link.toggleClass("colorToggleBar")
-            JQueryExtensions.toggleText($link, "Select all", "Deselect all")
+            import JQueryExtensions._
+            $link.toggleText("Select all", "Deselect all")
             checkboxes.toggleAll(resultContext.numHits)
           }
         }: js.ThisFunction
