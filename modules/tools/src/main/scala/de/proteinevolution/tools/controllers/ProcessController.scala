@@ -101,10 +101,10 @@ class ProcessController @Inject()(ctx: HHContext,
                                    mode: ForwardMode): String = {
     (toolName, mode.toString) match {
       case (HHBLITS, "alnEval") | (HHPRED, "alnEval") =>
-        result.HSPS.filter(_.info.evalue < accStr.toDouble).map { _.num }.mkString(" ")
+        result.HSPS.filter(_.info.evalue <= accStr.toDouble).map { _.num }.mkString(" ")
       case (HMMER, "alnEval") =>
         result.HSPS
-          .filter(_.evalue < accStr.toDouble)
+          .filter(_.evalue <= accStr.toDouble)
           .map { hit =>
             result.alignment.alignment(hit.num - 1).accession + "\n"
           }
@@ -114,9 +114,9 @@ class ProcessController @Inject()(ctx: HHContext,
         accStr
       case (_, "aln") => accStr
       case (HMMER, "evalFull") | (PSIBLAST, "evalFull") =>
-        result.HSPS.filter(_.evalue < accStr.toDouble).map { _.accession + " " }.mkString
+        result.HSPS.filter(_.evalue <= accStr.toDouble).map { _.accession + " " }.mkString
       case (HHBLITS, "evalFull") =>
-        result.HSPS.filter(_.info.evalue < accStr.toDouble).map { _.template.accession + " " }.mkString
+        result.HSPS.filter(_.info.evalue <= accStr.toDouble).map { _.template.accession + " " }.mkString
       case (_, "full") =>
         val numList = accStr.split("\n").map(_.toInt)
         numList.map { num =>
