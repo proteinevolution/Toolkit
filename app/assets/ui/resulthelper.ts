@@ -1,6 +1,7 @@
 // load forwarded data into alignment field
 $(function() {
     const resultcookie = localStorage.getItem("resultcookie");
+    if (resultcookie.length < 1) console.log("WARNING: localStorage is empty.");
     $("#alignment").val(resultcookie);
     localStorage.removeItem("resultcookie");
     $.LoadingOverlay("hide");
