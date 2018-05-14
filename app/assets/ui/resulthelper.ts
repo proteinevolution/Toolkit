@@ -2,7 +2,9 @@
 $(function() {
     setTimeout(function() {
         const resultcookie = localStorage.getItem("resultcookie");
-        if (resultcookie.length < 1) console.log("WARNING: localStorage is empty.");
+        if (resultcookie !== null && resultcookie.length < 1) {
+            console.warn("WARNING: no forwarding data in storage.");
+        }
         $("#alignment").val(resultcookie);
         localStorage.removeItem("resultcookie");
         $.LoadingOverlay("hide");
@@ -10,11 +12,12 @@ $(function() {
 });
 
 $.fn.isOnScreen = function () {
-  let viewport: any = {};
-  viewport.top = $(window).scrollTop();
-  viewport.bottom = viewport.top + $(window).height();
-  let bounds: any = {};
-  bounds.top = this.offset().top;
-  bounds.bottom = bounds.top + this.outerHeight();
-  return ((bounds.top <= viewport.bottom) && (bounds.bottom >= viewport.top));
+    let viewport: any = {};
+    viewport.top = $(window).scrollTop();
+    viewport.bottom = viewport.top + $(window).height();
+    let bounds: any = {};
+    bounds.top = this.offset().top;
+    bounds.bottom = bounds.top + this.outerHeight();
+    return ((bounds.top <= viewport.bottom) && (bounds.bottom >= viewport.top));
 };
+
