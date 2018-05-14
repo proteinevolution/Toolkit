@@ -20,7 +20,7 @@ class DataTables(toolName: String) {
           "processing"   -> true,
           "serverSide"   -> true,
           "ajax"         -> s"/results/dataTable/$jobID",
-          "autoWidth"    -> false,
+          "autoWidth"    -> true,
           "lengthMenu"   -> lengthMenu(numHits),
           "searching"    -> true,
           "pageLength"   -> 25,
