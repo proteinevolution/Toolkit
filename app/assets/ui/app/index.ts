@@ -182,19 +182,19 @@ const tilescomponent = {
                     ),
                     m("div", {"class": "text_part"},
                         m("h5", "Recent Updates"),
-                        m("a", {"data-open": "recentUpdatesModal", href: "#Tgondii_2018_05"},
+                        m("a", {"data-open": "footerRecentUpdatesModal", href: "#Tgondii_2018_05"},
                             m("h6", "May 10, 2018"),
                             m("p", "HHpred: profile HMM database of ",
                                 m("em", "Toxoplasma gondii"),
                                 m("span", " is online."))
                         ),
-                        m("a", {"data-open": "recentUpdatesModal", href: "#Abaumannii_2018_03"},
+                        m("a", {"data-open": "footerRecentUpdatesModal", href: "#Abaumannii_2018_03"},
                             m("h6", "March 29, 2018"),
                             m("p", "HHpred: profile HMM database of ",
                                 m("em", "Acinetobacter baumannii"),
                                 m("span", " is online."))
                         ),
-                        m("a", {"data-open": "recentUpdatesModal", href: "#ecod70_2018_03"},
+                        m("a", {"data-open": "footerRecentUpdatesModal", href: "#ecod70_2018_03"},
                             m("h6", "March 4 & 7, 2018"),
                             m("p", "HHpred: new versions of the SCOPe (ver 2.07) and ECOD databases " +
                                 "are now online.")
