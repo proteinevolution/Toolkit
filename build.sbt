@@ -33,9 +33,7 @@ lazy val disableDocs = Seq[Setting[_]](
   publishArtifact in (Compile, packageDoc) := false
 )
 
-import sbtcrossproject.{crossProject, CrossType}
-
-lazy val common = (crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure) in file("modules/common"))
+lazy val common = (crossProject.crossType(CrossType.Pure) in file("modules/common"))
   .settings(
     name := "common",
     libraryDependencies ++= Dependencies.commonDeps,
