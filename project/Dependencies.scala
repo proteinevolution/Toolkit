@@ -1,7 +1,6 @@
 import play.sbt.PlayImport._
 import sbt._
 import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
-import org.portablescala.sbtplatformdeps.PlatformDepsPlugin.autoImport._
 
 object Dependencies {
 
