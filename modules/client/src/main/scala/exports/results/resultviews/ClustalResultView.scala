@@ -12,7 +12,7 @@ class ClustalResultView(val container: JQuery,
                         val jobID: String,
                         resultName: String,
                         var colorAAs: Boolean,
-                        val tempShownHits: Int,
+                        val hitsToLoad: Int,
                         val resultContext: ResultContext)
     extends ResultView {
 
@@ -27,10 +27,8 @@ class ClustalResultView(val container: JQuery,
     internalShowHits(
       jobID,
       s"/results/alignment/clustal/$jobID",
-      ClustalResultForm(colorAAs, resultName),
+      ClustalResultForm(start, end, colorAAs, resultName),
       container.find("#resultTable"),
-      start,
-      end,
       successCallback
     )
   }
@@ -43,7 +41,7 @@ class ClustalResultView(val container: JQuery,
   }
 
   def bindEvents(): Unit = {
-    bindInit()
+    commonBindEvents()
     container
       .find(".colorAA")
       .off("click")

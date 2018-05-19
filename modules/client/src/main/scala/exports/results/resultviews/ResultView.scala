@@ -18,12 +18,12 @@ trait ResultView {
 
   def jobID: String
 
-  def tempShownHits: Int
+  def hitsToLoad: Int
 
   def resultContext: ResultContext
 
   @JSExport
-  var shownHits: Int = if (tempShownHits > resultContext.numHits) resultContext.numHits else tempShownHits
+  var shownHits: Int = 0
 
   @JSExport
   var loading: Boolean = false
@@ -37,7 +37,7 @@ trait ResultView {
 
   def init(): Unit
 
-  def bindInit(): Unit = {
+  def commonBindEvents(): Unit = {
     // common events
     container
       .find(".selectAllSeqBar")
@@ -55,17 +55,17 @@ trait ResultView {
       )
   }
 
-  def showHits(start: Int, End: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit
+  def showHits(start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit
 
   protected def internalShowHits(jobID: String,
                                  route: String,
                                  data: ResultForm,
                                  resultContainer: JQuery,
-                                 start: Int,
-                                 end: Int,
                                  successCallback: (js.Any, js.Any, JQueryXHR) => Unit): Unit = {
+    if (data.start <= resultContext.numHits) {
 
-    if (start <= resultContext.numHits && end <= resultContext.numHits) {
+      val end = if (data.end > resultContext.numHits) resultContext.numHits else data.end
+      data.end = end
 
       loading = true
       container.find("#loadingHits").show()
@@ -81,8 +81,8 @@ trait ResultView {
             )
             .asInstanceOf[JQueryAjaxSettings]
         )
-        .done((data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) => {
-          resultContainer.append(data)
+        .done((resData: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) => {
+          resultContainer.append(resData)
           shownHits = end
           if (shownHits != resultContext.numHits)
             container.find("#loadHits").show()
@@ -91,7 +91,7 @@ trait ResultView {
           if (successCallback != null) {
             import scala.scalajs.js.timers._
             setTimeout(200) {
-              successCallback(data, textStatus, jqXHR)
+              successCallback(resData, textStatus, jqXHR)
             }
           }
         })
@@ -121,16 +121,13 @@ trait ResultView {
         "#tool-tabs"
       else
         "html, body"
-    var reload = forceReload
-    if (id > shownHits) {
-      shownHits = id
-      reload = true
-    }
-    if (reload) { // reload hits if forced or requested hit not loaded
+    val begin = if (forceReload) 0 else shownHits
+    val end   = if (forceReload) shownHits else id
+    if (id > shownHits || forceReload) { // reload hits if forced or requested hit not loaded
       container.find("#alignmentTable").empty()
       showHits(
-        0,
-        shownHits,
+        begin,
+        end,
         (_: js.Any, _: js.Any, _: JQueryXHR) => {
           jQuery(elem).animate(
             js.Dictionary(

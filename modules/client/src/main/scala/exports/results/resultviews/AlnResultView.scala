@@ -12,14 +12,14 @@ import scala.scalajs.js.annotation.JSExportTopLevel
 class AlnResultView(val container: JQuery,
                     val jobID: String,
                     resultName: String,
-                    val tempShownHits: Int,
+                    val hitsToLoad: Int,
                     val resultContext: ResultContext)
     extends ResultView {
 
   override def init(): Unit = {
     scrollUtil.followScroll(jQuery(dom.document))
     if (resultContext.numHits > 0) {
-      bindInit()
+      commonBindEvents()
       showHits(0, this.shownHits)
     }
   }
@@ -30,8 +30,6 @@ class AlnResultView(val container: JQuery,
       s"/results/alignment/loadHits/$jobID",
       MsaResultForm(start, end, resultName),
       container.find(".alignmentTBody"),
-      start,
-      end,
       successCallback
     )
   }
