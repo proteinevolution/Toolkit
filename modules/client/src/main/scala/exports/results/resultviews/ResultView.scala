@@ -62,10 +62,10 @@ trait ResultView {
                                  data: ResultForm,
                                  resultContainer: JQuery,
                                  successCallback: (js.Any, js.Any, JQueryXHR) => Unit): Unit = {
+
     if (data.start <= resultContext.numHits) {
 
-      val end = if (data.end > resultContext.numHits) resultContext.numHits else data.end
-      data.end = end
+      val newEnd = if (data.end > resultContext.numHits) resultContext.numHits else data.end
 
       loading = true
       container.find("#loadingHits").show()
@@ -75,7 +75,7 @@ trait ResultView {
         .ajax(
           js.Dictionary(
               "url"         -> route,
-              "data"        -> write(data),
+              "data"        -> write(data.copy(end = newEnd)),
               "contentType" -> "application/json",
               "type"        -> "POST"
             )
@@ -83,7 +83,7 @@ trait ResultView {
         )
         .done((resData: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) => {
           resultContainer.append(resData)
-          shownHits = end
+          shownHits = newEnd
           if (shownHits != resultContext.numHits)
             container.find("#loadHits").show()
           checkboxes.initForContainer(jQuery("#jobview"))
@@ -104,6 +104,7 @@ trait ResultView {
           container.find("#loadingHits").hide()
         })
     }
+
   }
 
   // run init
