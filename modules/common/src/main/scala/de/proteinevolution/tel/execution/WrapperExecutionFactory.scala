@@ -6,8 +6,11 @@ import de.proteinevolution.tel.TELRegex
 import java.nio.file.attribute.PosixFilePermission
 
 import de.proteinevolution.tel.env.Env
-import de.proteinevolution.tel.execution.WrapperExecutionFactory.{ PendingExecution, RegisteredExecution, RunningExecution }
-
+import de.proteinevolution.tel.execution.WrapperExecutionFactory.{
+  PendingExecution,
+  RegisteredExecution,
+  RunningExecution
+}
 
 import scala.sys.process.Process
 

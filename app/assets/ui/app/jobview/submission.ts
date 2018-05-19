@@ -83,7 +83,6 @@
         return m("input", options);
     },
     controller: function(args : any) {
-        console.log("[submission.ts] controller startup: ", args.isJob, args.job());
         if (args.isJob) {
             if (JobSubmissionComponent.oldJobID !== args.job().jobID) {
                 JobSubmissionComponent.currentJobID = null;
@@ -126,8 +125,6 @@
                 submitButton.prop("disabled", true);
                 tool = args.job().tool.toolname;
                 jobID = JobSubmissionComponent.currentJobID;
-                console.log("Current JobID is: ", jobID, JobSubmissionComponent.currentJobID, "valid:", JobSubmissionComponent.jobIDValid);
-
                 // collect form data
                 formData = new FormData(form);
                 formData.append("tool", tool);
@@ -148,8 +145,9 @@
                     }
                 }).then(function(submissionReturnData : any){
                     if (submissionReturnData.successful) {
-                        console.log("Job Submission was successful.");
                         jobID = submissionReturnData.jobID;
+                        // listen for this job
+                        Toolkit.trackedJobIDs.push(jobID);
                         let jobListComp = JobListComponent.Job(
                             { jobID: jobID, state: 0, dateCreated: Date.now().valueOf(), tool: tool }
                         );

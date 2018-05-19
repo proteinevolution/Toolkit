@@ -38,11 +38,11 @@ const openNav = function(view : string = "") : void {
             break;
         default:
     }
-    document.getElementById("myNav").style.height = "100%";
+    document.getElementById("signInOverlay").style.height = "100%";
 };
 
 const closeNav = function() : void {
-    document.getElementById("myNav").style.height = "0%";
+    document.getElementById("signInOverlay").style.height = "0%";
 };
 
 const color_regex = /(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)/g;
@@ -61,10 +61,16 @@ $(window).scroll(function() {
     }
 });
 
-
 $('#scrollTop').click(function() {
     $("html, body").animate({ scrollTop: 0 }, 200);
     return false;
+});
+
+declare var TitleManager: any;
+declare var NotificationManager: any;
+
+$(window).on("focus click", function() {
+    TitleManager.clearAlert();
 });
 
 const aa_color_font : Map<string, string> = new Map<string, string>();
@@ -126,7 +132,7 @@ const aa_color_background : Map<string, string> = new Map<string, string>();
                             }
                         },
                         "content": {
-                            "link": '<a data-open="privacyPolicyModal" style="color:#15423b; text-decoration: underline;">Learn More</a>',
+                            "link": "<a data-open=\"footerPrivacyModal\" style=\"color:#15423b; text-decoration: underline;\">Learn More</a>",
                             "message": "We use cookies to ensure you get the best experience on our website. By using our services you agree to our privacy policies.",
                         },
                     })});
@@ -162,3 +168,8 @@ const aa_color_background : Map<string, string> = new Map<string, string>();
         $('.off-canvas').foundation('close');
     });
 
+// decorating fix for hhviz, only temporary:
+
+const scrollToElem = function(num: string) {
+    Toolkit.resultView.scrollToHit(Number(num));
+};

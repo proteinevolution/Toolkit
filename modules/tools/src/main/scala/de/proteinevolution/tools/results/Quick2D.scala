@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 import de.proteinevolution.tools.results.General.SingleSeq
 import de.proteinevolution.tools.results.Quick2D._
-import play.api.libs.json.{ JsValue, JsObject, JsArray, Json }
+import play.api.libs.json.{ JsArray, JsObject, JsValue, Json }
 
 @Singleton
 class Quick2D @Inject()(general: General) {

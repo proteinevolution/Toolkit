@@ -1,14 +1,10 @@
 @import de.proteinevolution.tools.results.HHrepID
-@(jobID: String, filePath: String, resultName: String, tool: de.proteinevolution.models.Tool)()
-@views.html.forwardmodals.simpler(tool, resultName)
-@views.html.forwardmodals.hhsuite(tool, tool.toolNameShort + "_hhrepid")
+@(jobID: String, filePath: String)()
 
 @if(HHrepID.existsResult(filePath)) {
     <div class="colorOptsAlignment">
-        <a id="forwardButtonHHsuite" data-open="forwardModal_@{
-            tool.toolNameShort
-        }_hhrepid">Forward Query A3M</a>
-        <hr id="line-element" class="horizontal-line">
+        <a class="forwardModalOpenBtn" data-modal-type="hhsuite">Forward Query A3M</a>
+        <hr class="horizontal-line">
     </div>
     <div class="note">
     Your protein may contain additional repeats. To detect them, please re-run HHrepID with an increased number of MSA
@@ -29,13 +25,11 @@
             <div>De novo identification of highly diverged protein repeats by probabilistic consistency.<br>
                 Biegert A, Söding J.<a href="https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/btn039" target="_blank" rel="noopener"> Bioinformatics. 2008 Mar 15;24(6):807-14.</a></div>
         </div>
-        <hr id="line-element" class="horizontal-line">
+        <hr class="horizontal-line">
     </div>
 }else{
     <div class="colorOptsAlignment">
-        <a id="forwardButtonHHsuite" data-open="forwardModal_@{
-            tool.toolNameShort
-        }_hhrepid">Forward Query A3M</a>
+        <a class="forwardModalOpenBtn" data-modal-type="hhsuite">Forward Query A3M</a>
         <hr id="line-element" class="horizontal-line">
     </div>
 
@@ -57,15 +51,5 @@
 }
 
 <script>
-
-        function @{tool.toolNameShort}_forwardQueryMSA(selectedTool) {
-            $.LoadingOverlay("show");
-            $.ajax({
-                type: 'GET',
-                url: 'files/@jobID/reduced.a3m'
-            }).done(function (data_) {
-                forward(selectedTool, data_.toString());
-            });
-        }
-
+    new ForwardingModal($("#jobview"), "hhrepid", "@{jobID}");
 </script>

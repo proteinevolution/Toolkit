@@ -9,7 +9,7 @@
         <option value="vertical">Vertical</option>
     </select>
     <a type="button" onclick="@{iddiv}_download()" id="downloadAlignment" class="ancescon_download">Download Tree</a>
-<hr id="line-element" class="horizontal-line">
+<hr class="horizontal-line">
 
 <div id="@iddiv" class="pending-panel"></div>
 <hr><br/>
@@ -28,7 +28,7 @@
                     Guindon S, Dufayard JF, Lefort V, Anisimova M, Hordijk W, Gascuel O.<a href="https://academic.oup.com/sysbio/article-lookup/doi/10.1093/sysbio/syq010" target="_blank" rel="noopener"> Syst Biol. 2010 May;59(3):307-21.</a></div>
             }
             <br></div>
-            <hr id="line-element" class="horizontal-line">
+    <hr class="horizontal-line">
         </div>
 
 <script>
@@ -41,7 +41,7 @@
             method: "GET",
             url: fileURL
         }).done(function(data){
-            download(downloadFilename, data);
+            DownloadHelper.download(downloadFilename, data);
         })
     };
 

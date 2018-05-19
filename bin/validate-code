@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+# Copyright (C) 2009-2017 Lightbend Inc. <https://www.lightbend.com>
+# https://github.com/playframework/playframework/blob/master/framework/bin/validate-code
+
+set -e
+set -o pipefail
+
+printMessage() {
+  echo "[info]"
+  echo "[info] ---- $1"
+  echo "[info]"
+}
+
+printMessage "VALIDATE CODE FORMATTING"
+
+sbt scalafmt
+
+git diff --exit-code || (
+  echo "ERROR: Scalafmt check failed, see differences above."
+  echo "To fix, format your sources using sbt scalafmt before submitting a pull request."
+  echo "Additionally, please squash your commits (eg, use git commit --amend) if you're going to update this pull request."
+  false
+)

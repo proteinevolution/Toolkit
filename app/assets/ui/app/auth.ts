@@ -447,10 +447,10 @@ class SignUp {
                                  onchange: m.withAttr("checked", SignUp.acceptToSSetter),
                                  value:    SignUp.acceptToS
                     }),
-                    m("label", "I Accept the "), m("a", {"data-open": "privacyPolicyModal"}, "Privacy Policy") ,
+                    m("label", "I Accept the "), m("a", {"data-open": "footerPrivacyModal"}, "Privacy Policy"),
                     m("span", {"class":"form-error", id:'acceptToSText'}, "You must accept the ToS!")
                 ])),
-                m("input", { "class": "input small expanded secondary button" + (SignUp.formValid? "" : " disabled"),
+                m("input", { "class": "input small expanded success button" + (SignUp.formValid? "" : " disabled"),
                              id:    'signup-submit',
                              type:  'submit',
                              value: 'Register'
@@ -921,7 +921,7 @@ class Auth {
                 SignIn.password = null;
                 Auth.user       = user.nameLogin != null ? user : null;
             }
-            m.mount(document.getElementById('metauser'), AuthDropdown);
+            m.mount(document.getElementById("meta-user"), AuthDropdown);
             m.mount(document.getElementById('mithril-overlay-content'), AuthOverlay);
         }).catch(function(error) {
             console.log(error);

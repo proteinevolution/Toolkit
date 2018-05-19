@@ -16,11 +16,11 @@ import scala.util.hashing.MurmurHash3
 final class JobDAO @Inject()(runscriptPathProvider: RunscriptPathProvider) {
 
   /**
-    * generates Param hash for matching already existing jobs
-    *
-    * @param params
-    * @return
-    */
+   * generates Param hash for matching already existing jobs
+   *
+   * @param params
+   * @return
+   */
   def generateHash(params: Map[String, String]): BigInt = {
 
     FNV.hash64(params.toString.getBytes())
@@ -28,11 +28,11 @@ final class JobDAO @Inject()(runscriptPathProvider: RunscriptPathProvider) {
   }
 
   /**
-    * hashes the runscripts which is used for a job
-    *
-    * @param toolname
-    * @return
-    */
+   * hashes the runscripts which is used for a job
+   *
+   * @param toolname
+   * @return
+   */
   def generateRSHash(toolname: String): String = {
     val runscript = runscriptPathProvider.get() + s"$toolname.sh"
     val source    = scala.io.Source.fromFile(runscript)
@@ -43,27 +43,29 @@ final class JobDAO @Inject()(runscriptPathProvider: RunscriptPathProvider) {
   }
 
   /**
-    * hashes the tool version and version of helper scripts specified in the tools.conf config
-    *
-    * @param name
-    * @return
-    */
+   * hashes the tool version and version of helper scripts specified in the tools.conf config
+   *
+   * @param name
+   * @return
+   */
   def generateToolHash(name: String): String = {
-      MurmurHash3.stringHash(ConfigFactory.load().getConfig(s"Tools.$name").toString, 0).toString
+    MurmurHash3.stringHash(ConfigFactory.load().getConfig(s"Tools.$name").toString, 0).toString
   }
 
   /**
-    * Generates a JobHash for the job from the supplied parameters
-    * @param job
-    * @param params
-    * @return
-    */
-  def generateJobHash(job: Job, params: Map[String, String], env: Env) : String = {
+   * Generates a JobHash for the job from the supplied parameters
+   * @param job
+   * @param params
+   * @return
+   */
+  def generateJobHash(job: Job, params: Map[String, String], env: Env): String = {
     // filter unique parameters
-    val paramsWithoutUniques : Map[String,String] =
-      params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid" - Job.IPHASH - "parentID" - "htb_length" - "alignment" - "file"
+    val paramsWithoutUniques: Map[String, String] =
+    params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid" - Job.IPHASH - "parentID" - "htb_length" - "alignment" - "file"
 
-    Logger.info(s"[JobDAO.enerateJobHash] Hashing values: ${paramsWithoutUniques.map(kv => s"${kv._1} ${kv._2}").mkString(", ")}")
+    Logger.info(
+      s"[JobDAO.enerateJobHash] Hashing values: ${paramsWithoutUniques.map(kv => s"${kv._1} ${kv._2}").mkString(", ")}"
+    )
 
     val sequenceHash = params.get("alignment") match {
       case Some(alignment) =>

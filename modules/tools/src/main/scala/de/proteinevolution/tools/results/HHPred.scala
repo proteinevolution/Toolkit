@@ -8,7 +8,7 @@ import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
 import de.proteinevolution.tools.results.HHPred._
 import play.api.libs.json._
 @Singleton
-class HHPred @Inject()(general: General, aln: Alignment) extends SearchTool {
+class HHPred @Inject()(general: General, aln: Alignment) extends SearchTool[HHPredHSP] {
 
   def parseResult(jsValue: JsValue): HHPredResult = {
     val obj        = jsValue.as[JsObject]
@@ -97,8 +97,12 @@ object HHPred {
                        num: Int,
                        ss_score: Double,
                        confidence: String,
-                       length: Int) {
-    def toDataTable: JsValue =
+                       length: Int,
+                       evalue: Double = -1,
+                       accession: String = "")
+      extends HSP {
+    def toDataTable(db: String = ""): JsValue = {
+      val _ = db
       Json.toJson(
         Map(
           "0" -> Json.toJson(Common.getCheckbox(num)),
@@ -111,6 +115,7 @@ object HHPred {
           "7" -> Json.toJson(template.ref)
         )
       )
+    }
   }
 
   case class HHPredInfo(aligned_cols: Int,
@@ -119,6 +124,7 @@ object HHPred {
                         probab: Double,
                         score: Double,
                         similarity: Double)
+      extends SearchToolInfo
   case class HHPredQuery(consensus: String,
                          end: Int,
                          accession: String,
@@ -135,6 +141,7 @@ object HHPred {
                             ss_dssp: String,
                             ss_pred: String,
                             start: Int)
+      extends HHTemplate
   case class HHPredResult(HSPS: List[HHPredHSP],
                           alignment: AlignmentResult,
                           num_hits: Int,
@@ -144,10 +151,11 @@ object HHPred {
                           TMPRED: String,
                           COILPRED: String,
                           MSA_GEN: String,
-                          QA3M_COUNT: Int) extends SearchResult {
+                          QA3M_COUNT: Int)
+      extends SearchResult[HHPredHSP] {
 
     def hitsOrderBy(params: DTParam): List[HHPredHSP] = {
-      (params.iSortCol, params.sSortDir) match {
+      (params.orderCol, params.orderDir) match {
         case (1, "asc")  => HSPS.sortBy(_.template.accession)
         case (1, "desc") => HSPS.sortWith(_.template.accession > _.template.accession)
         case (2, "asc")  => HSPS.sortBy(_.description)

@@ -32,7 +32,7 @@ window.JobManager = {
                                     'searchable': false,
                                     'orderable': false,
                                     'render': function (jobID: any) {
-                                        return '<i class="delete fa fa-trash-o" onclick="JobManager.deleteJob(\'' + jobID + '\')"></i>';
+                                        return '<i class="delete far fa-trash-alt" onclick="JobManager.deleteJob(\'' + jobID + '\')"></i>';
                                     }
                                 },
                                 {
@@ -144,7 +144,7 @@ window.JobManager = {
             //m("div", { "class": "large-2 padded-column columns show-for-large", id: "sidebar" }, [
             //    m(JobListComponent, { activejobID : m.route.param("jobID") })
             //]),
-            m("div", {"class": "jobManagerContainer large-12", config: showSidebar},
+            m("div", {"class": "jobManagerContainer", config: showSidebar},
                 m("div", {"class": "jobline"}, [
                     m("span", {"class": "toolname"}, [
                         m("a", "Job Manager")

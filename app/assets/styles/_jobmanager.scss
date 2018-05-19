@@ -1,0 +1,75 @@
+.jobManagerContainer {
+  width: 95%;
+  padding-left: 0.75em;
+
+  /* DataTable in JobManager */
+  .dataTables_wrapper {
+    background-color: white;
+    padding: 1.75em;
+    border: 1px solid #ccc;
+    .dataTables_length select {
+      padding: 0 1.5rem 0 0.3rem;
+      border-radius: 3px;
+      font-size: 1em;
+      -moz-appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .dataTables_filter input {
+      height: 2em;
+      border-radius: 5px;
+      padding: 0 .5em;
+    }
+
+    .dataTables_paginate {
+      font-size: 0.9em;
+    }
+  }
+
+  .job-manager.dataTable {
+    width: 100% !important;
+
+    thead th {
+      border-bottom: 1px solid #b4b4b4;
+      color: $darker-gray;
+    }
+    &.no-footer {
+      border-bottom: 1px solid rgba(16, 16, 16, 0.3);
+    }
+    .add {
+      color: #007927;
+      font-size: 1.3em;
+      opacity: 0.66;
+    }
+    .remove {
+      color: #ff1a15;
+      font-size: 1.3em;
+      opacity: 0.66;
+    }
+    i {
+      cursor: pointer;
+    }
+    /* colors */
+    .d {
+      background-color: #DBFFDB;
+    }
+    .e {
+      background-color: #FFDDDD;
+    }
+    .r {
+      background-color: #FFFF94;
+    }
+    .q {
+      background-color: #c0b5bf;
+    }
+    .w {
+      background-color: #dbdbff;
+    }
+    .i {
+      background-color: #f2f2f2;
+    }
+    .p {
+      background-color: #f2f2f2;
+    }
+  }
+}

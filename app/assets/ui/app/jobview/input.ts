@@ -51,18 +51,15 @@ const ParameterAlignmentComponent = {
             toggleTwoTextAreas: (function() {
                 this.twoTextAreas = !this.twoTextAreas;
                 if (this.twoTextAreas) {
-                    $(".inputDBs").prop('disabled', true);
-                    $(".inputDBs").val(null).trigger("change");
+                    $(".inputDBs").prop("disabled", true).val(null).trigger("change");
                     $(".inputDBs option:selected").prop("selected", false);
                     $("#alignment").attr("rows", "8");
-                    $('#alignment_two').show();
-                    $("#alignment_two").prop("required", true);
+                    $("#alignment_two").show().prop("required", true);
                     $("#hhpred_align").prop('checked', true);
                 } else {
                     $(".inputDBs").prop('disabled', false);
                     $("#alignment").attr("rows", "14");
-                    $("#alignment_two").hide();
-                    $("#alignment_two").removeAttr("required", false);
+                    $("#alignment_two").hide().removeAttr("required", false);
                     $("#hhpred_align").prop('checked', false);
 
                 }
@@ -87,14 +84,12 @@ const ParameterAlignmentComponent = {
                         $(".inputDBs option:selected").prop("selected", false);
                         $("#hhpred_align").prop('checked', true);
                         $("#alignment").attr("rows", "8");
-                        $('#alignment_two').show();
-                        $("#alignment_two").prop("required", true);
+                        $("#alignment_two").show().prop("required", true);
                     } else {
                         $(".inputDBs").prop('disabled', false);
                         $("#hhpred_align").prop('checked', false);
                         $("#alignment").attr("rows", "14");
-                        $("#alignment_two").hide();
-                        $("#alignment_two").removeAttr("required", false);
+                        $("#alignment_two").hide().removeAttr("required", false);
 
                     }
                 }
@@ -159,7 +154,7 @@ const ParameterAlignmentComponent = {
                     m("input", {
                         type: "button",
                         id: "pasteButton",
-                        "class": "button small alignmentExample",
+                        "class": "button clear success small alignmentExample",
                         value: "Paste Example",
                         config: sampleSeqConfig,
                         onclick: function() {
@@ -173,7 +168,7 @@ const ParameterAlignmentComponent = {
                     m("div", {"class": "uploadContainer"},
                         m("label",{
                             "for": "fileUpload",
-                            "class" : "button small fileUpload"
+                            "class" : "button clear success small fileUpload"
                         },"Upload File"),
                         m("input", {
                             type: "file",
@@ -200,7 +195,7 @@ const ParameterAlignmentComponent = {
                                     validationProcess($('#alignment'),$("#toolnameAccess").val());
 			            return $("#" + ctrl.id).prop("disabled", false);
                                 }
-                            }, m("i", {"class": "fa fa-trash-o"})))),
+                            }, m("i", {"class": "far fa-trash-alt"})))),
                     m(JobValidationComponent, {})
                     , m("select", {"id": "alignment_format", "class": "alignment_format", config: alignment_format.bind(ctrl.getFormats())}, ctrl.getFormats().map(function(format : any){
                             return m("option", {value: format[0]}, format[1])}
