@@ -71,7 +71,7 @@
 
         $(function() {
             var context = {
-                numHits: @alignment.alignment.length - 1,
+                numHits: @alignment.alignment.length,
                 toolName: "@tool.toolNameShort"
             };
             Toolkit.resultView = new ClustalResultView($("#jobview"), jobID, resultName, false, shownHits, context);
