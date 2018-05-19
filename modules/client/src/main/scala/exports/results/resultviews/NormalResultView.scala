@@ -16,7 +16,7 @@ import scala.scalajs.js.annotation.JSExportTopLevel
 @JSExportTopLevel("NormalResultView")
 class NormalResultView(val container: JQuery,
                        val jobID: String,
-                       val tempShownHits: Int,
+                       val hitsToLoad: Int,
                        var wrapped: Boolean,
                        var colorAAs: Boolean,
                        val resultContext: ResultContext)
@@ -80,7 +80,7 @@ class NormalResultView(val container: JQuery,
         container.find(".selectAllSeqBar").addClass("colorToggleBar").text("Deselect all")
         checkboxes.selectAll(resultContext.belowEvalThreshold - 1)
       }
-      showHits(0, shownHits)
+      showHits(0, hitsToLoad)
       setupBlastVizTooltipster()
       wrap.hide()
     }
@@ -104,7 +104,7 @@ class NormalResultView(val container: JQuery,
   }
 
   def bindEvents(): Unit = {
-    bindInit()
+    commonBindEvents()
     container
       .find("#wrap")
       .off("click")
@@ -130,6 +130,12 @@ class NormalResultView(val container: JQuery,
           scrollToSection(link.getAttribute("name"))
         }
       }: js.ThisFunction)
+    container
+      .find("#loadHits")
+      .off("click")
+      .on("click", () => {
+        showHits(shownHits, shownHits + hitsToLoad)
+      })
   }
 
   override def showHits(start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit = {
@@ -138,8 +144,6 @@ class NormalResultView(val container: JQuery,
       s"/results/loadHits/$jobID",
       ShowHitsForm(start, end, wrapped, colorAAs),
       container.find("#alignmentTable"),
-      start,
-      end,
       successCallback
     )
   }
