@@ -20,7 +20,7 @@ class AlnResultView(val container: JQuery,
     scrollUtil.followScroll(jQuery(dom.document))
     if (resultContext.numHits > 0) {
       commonBindEvents()
-      showHits(0, this.shownHits)
+      showHits(0, hitsToLoad)
     }
   }
 
