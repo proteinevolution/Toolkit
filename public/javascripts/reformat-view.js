@@ -20,10 +20,9 @@ var myCodeMirror2 = CodeMirror(document.getElementById("outputMirror"), {
 myCodeMirror.setSize("100%", 220);
 myCodeMirror2.setSize("100%", 220);
 
-if (localStorage.getItem("resultcookie") !== null) {
-    myCodeMirror.setValue(localStorage.getItem("resultcookie"));
-    localStorage.removeItem("resultcookie");
-    $.LoadingOverlay("hide");
+var resultCookie = GeneralTabComponent.controller().forwardString();
+if (resultCookie) {
+    myCodeMirror.setValue(resultCookie);
 }
 
 function forwardTo(tool) {
