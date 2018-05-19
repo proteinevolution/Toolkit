@@ -119,7 +119,7 @@ object Forwarding {
       )
       .done((data: js.Any, _: js.Any, _: JQueryXHR) => {
         if (tool == "reformat") {
-          setTimeout(100) { () =>
+          setTimeout(100) {
             g.myCodeMirror.setValue(data.asInstanceOf[js.Array[String]])
           }
         } else {
