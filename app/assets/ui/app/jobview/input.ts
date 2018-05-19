@@ -79,9 +79,11 @@ const ParameterAlignmentComponent = {
             oninit: function (elem : any, isInit : boolean) {
                 if (!isInit) {
                     if (ctrl.getTwoTextAreas()) {
-                        $(".inputDBs").val(null).trigger("change");
-                        $(".inputDBs").prop('disabled', true);
-                        $(".inputDBs option:selected").prop("selected", false);
+                        $(".inputDBs")
+                            .val(null)
+                            .trigger("change")
+                            .prop('disabled', true)
+                            .find("option:selected").prop("selected", false);
                         $("#hhpred_align").prop('checked', true);
                         $("#alignment").attr("rows", "8");
                         $("#alignment_two").show().prop("required", true);
@@ -141,7 +143,7 @@ const ParameterAlignmentComponent = {
                     cols: 70,
                     id: ctrl.id,
                     "class": "alignment",
-                    value: args.value,
+                    value: args.value || GeneralTabComponent.controller().forwardString(),
                     required: "required",
                     spellcheck: false,
                     config: validation
