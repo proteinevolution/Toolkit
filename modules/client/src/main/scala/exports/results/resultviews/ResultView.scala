@@ -122,7 +122,7 @@ trait ResultView {
       else
         "html, body"
     val begin = if (forceReload) 0 else shownHits
-    val end = if (forceReload) shownHits else id
+    val end   = if (forceReload) shownHits else id
     if (id > shownHits || forceReload) { // reload hits if forced or requested hit not loaded
       container.find("#alignmentTable").empty()
       showHits(
