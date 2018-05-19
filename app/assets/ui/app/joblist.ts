@@ -188,7 +188,6 @@ window.JobListComponent = {
     },
     pushJob: function(newJob: any, setActive?: boolean) {
         if (newJob == null || newJob.jobID == null) {
-            console.log(newJob);
             return;
         }  // ensure that there are no empty jobs pushed
         JobListComponent.lastUpdatedJob = newJob;                        // change the "last updated" job to this one
