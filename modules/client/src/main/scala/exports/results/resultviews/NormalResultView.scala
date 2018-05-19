@@ -172,12 +172,12 @@ class NormalResultView(val container: JQuery,
         else
           el.asInstanceOf[HTMLInputElement].value.toInt
     }
-
+    import exports.extensions.JQueryExtensions._
     dom.document
       .querySelectorAll(".aln")
       .iterator
       .toList
-      .filter(jQuery(_).isOnScreen())
+      .filter(jQuery(_).isOnScreen)
       .collect(splitFn)
       .min
   }
