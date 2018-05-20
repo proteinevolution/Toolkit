@@ -28,7 +28,7 @@ final class ClusterMonitor @Inject()(mongoStore: MongoStore,
     extends Actor
     with ActorLogging {
 
-  def active(watchers: HashSet[ActorRef], record: List[Double]): Receive = {
+  private def active(watchers: HashSet[ActorRef], record: List[Double]): Receive = {
 
     case Connect(actorRef) =>
       context become active(watchers + actorRef, record)
@@ -60,7 +60,7 @@ final class ClusterMonitor @Inject()(mongoStore: MongoStore,
       val _ = mongoStore
         .upsertLoadStatistic(ClusterLoadEvent(BSONObjectID.generate(), record, loadAverage, Some(currentTimestamp)))
         .map { _ =>
-          context.become(active(watchers, Nil))
+          context become active(watchers, Nil)
           ()
         }
   }
