@@ -85,7 +85,7 @@ final class WebSocketActor @Inject()(
     Logger.info(s"[WSActor] Websocket closed for session ${sessionID.stringify}")
   }
 
-  def active(sid: BSONObjectID): Receive = {
+  private def active(sid: BSONObjectID): Receive = {
 
     case js: JsValue =>
       userSessions.getUser(sid).foreach {
@@ -187,7 +187,7 @@ final class WebSocketActor @Inject()(
       out ! Json.obj("type" -> "MaintenanceAlert")
   }
 
-  def receive = LoggingReceive {
+  override def receive = LoggingReceive {
     active(sessionID)
   }
 }
