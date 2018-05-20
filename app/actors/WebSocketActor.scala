@@ -46,7 +46,7 @@ final class WebSocketActor @Inject()(
     constants: Constants,
     @NamedCache("userCache") val userCache: SyncCacheApi,
     @NamedCache("wsActorCache") val wsActorCache: SyncCacheApi,
-    @Assisted("sessionID") private var sessionID: BSONObjectID
+    @Assisted("sessionID") sessionID: BSONObjectID
 )(implicit ec: ExecutionContext)
     extends Actor
     with ActorLogging {
@@ -85,10 +85,10 @@ final class WebSocketActor @Inject()(
     Logger.info(s"[WSActor] Websocket closed for session ${sessionID.stringify}")
   }
 
-  def receive = LoggingReceive {
+  def active(sid: BSONObjectID): Receive = {
 
     case js: JsValue =>
-      userSessions.getUser(sessionID).foreach {
+      userSessions.getUser(sid).foreach {
         case Some(user) =>
           (js \ "type").validate[String].foreach {
 
@@ -126,7 +126,7 @@ final class WebSocketActor @Inject()(
             case "Ping" =>
               (js \ "date").validate[Long].asOpt match {
                 case Some(msTime) =>
-                  //Logger.info(s"[WSActor] Ping from session ${sessionID.stringify} with msTime $msTime")
+                  //Logger.info(s"[WSActor] Ping from session ${sid.stringify} with msTime $msTime")
                   out ! Json.obj("type" -> "Pong", "date" -> msTime)
                 case None =>
               }
@@ -136,7 +136,7 @@ final class WebSocketActor @Inject()(
               (js \ "date").validate[Long].asOpt match {
                 case Some(msTime) =>
                   val ping = ZonedDateTime.now.toInstant.toEpochMilli - msTime
-                  Logger.info(s"[WSActor] Ping of session ${sessionID.stringify} is ${ping}ms.")
+                  Logger.info(s"[WSActor] Ping of session ${sid.stringify} is ${ping}ms.")
                 case None =>
               }
           }
@@ -177,14 +177,17 @@ final class WebSocketActor @Inject()(
     case ClearJob(jobID: String, deleted: Boolean) =>
       out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID, "deleted" -> deleted)
 
-    case ChangeSessionID(sessionID: BSONObjectID) =>
-      this.sessionID = sessionID
+    case ChangeSessionID(newSid: BSONObjectID) =>
+      context become active(newSid)
 
     case LogOut =>
       out ! Json.obj("type" -> "LogOut")
 
     case MaintenanceAlert =>
       out ! Json.obj("type" -> "MaintenanceAlert")
+  }
 
+  def receive = LoggingReceive {
+    active(sessionID)
   }
 }
