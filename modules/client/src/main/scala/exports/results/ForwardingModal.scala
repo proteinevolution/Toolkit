@@ -144,8 +144,10 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
                 if (selectedTool == "") {
                   dom.window.alert("Please select a tool!")
                 } else {
-                  Forwarding.processFiles(selectedTool, s"/files/$jobID/reduced.a3m")
+                  jQuery.LoadingOverlay("show")
+                  Forwarding.redirect(selectedTool, s"/files/$jobID/reduced.a3m")
                   $modal.foundation("close")
+                  jQuery.LoadingOverlay("hide")
                 }
               }
           case "simple" =>
@@ -184,11 +186,14 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
                         }
                       )
                     case "PATTERN_SEARCH" =>
-                      val fileURL = s"/files/$jobID/$jobID.fas"
-                      Forwarding.redirect(selectedTool, fileURL)
+                      jQuery.LoadingOverlay("show")
+                      Forwarding.redirect(selectedTool, s"/files/$jobID/$jobID.fas")
+                      jQuery.LoadingOverlay("hide")
                     case "FILEVIEW" =>
-                      Forwarding
-                        .processFiles(selectedTool, s"/files/$jobID/$resultName") // resultName is actually the filename in this case
+                      jQuery.LoadingOverlay("show")
+                      // resultName is actually the filename in this case
+                      Forwarding.redirect(selectedTool, s"/files/$jobID/$resultName")
+                      jQuery.LoadingOverlay("hide")
                   }
                 }
                 $modal.foundation("close")
