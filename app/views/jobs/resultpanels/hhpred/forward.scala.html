@@ -8,7 +8,6 @@
 </div>
 <script>
     function tomodeller() {
-        localStorage.setItem('resultcookie', $("#pir").text());
-        m.route("/tools/modeller");
+        Forwarding.simple("modeller", $("#pir").text())
     }
 </script>

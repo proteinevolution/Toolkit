@@ -143,7 +143,7 @@ const ParameterAlignmentComponent = {
                     cols: 70,
                     id: ctrl.id,
                     "class": "alignment",
-                    value: args.value || GeneralTabComponent.controller().forwardString(),
+                    value: args.value,
                     required: "required",
                     spellcheck: false,
                     config: validation
