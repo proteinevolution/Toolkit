@@ -5,7 +5,7 @@ var myCodeMirror = CodeMirror(document.getElementById("inputMirror"), {
     theme: "reformat"
 });
 myCodeMirror.setSize("100%", 220);
-$("#reformatExample").click(function () {
+$("#reformatExample").on("click", function () {
     myCodeMirror.setValue(inputClustal);
 });
 
@@ -20,16 +20,9 @@ var myCodeMirror2 = CodeMirror(document.getElementById("outputMirror"), {
 myCodeMirror.setSize("100%", 220);
 myCodeMirror2.setSize("100%", 220);
 
-var resultCookie = GeneralTabComponent.controller().forwardString();
-if (resultCookie) {
-    myCodeMirror.setValue(resultCookie);
-}
-
 function forwardTo(tool) {
     if (myCodeMirror2.lineCount() > 1) {
-        var seqs = myCodeMirror2.getValue();
-        localStorage.setItem("resultcookie", seqs);
-        window.location.href = "/#/tools/" + tool;
+        Forwarding.simple(tool, myCodeMirror2.getValue());
     } else { alert("No output to forward to."); }
 }
 
@@ -115,23 +108,23 @@ myCodeMirror.on("change", function (cMirror) {
     hideFormats(getFormat(myCodeMirror.getValue()));
     // get value right from instance
     if (validateFasta(myCodeMirror.getValue())) {
-        document.getElementById("callout").style.display = "block";
+        $("#callout").show();
 
         if (validateAlignment(fasta2json(myCodeMirror.getValue()))) {
             $(".clustaloption").show();
-            document.getElementById("nonalignedwarning").style.display = "none";
+            $("#nonalignedwarning").hide();
         }
         else {
             $(".clustaloption").hide();
-            document.getElementById("nonalignedwarning").style.display = "inline";
+            $("#nonalignedwarning").css({style: "inline"});
         }
     }
     if (getFormat(myCodeMirror.getValue()) !== "") {
-        document.getElementById("callout").style.display = "block";
+        $("#callout").show();
         $("#format").text(getFormat(myCodeMirror.getValue()));
     }
     if (getFormat(myCodeMirror.getValue()) === "") {
-        document.getElementById("callout").style.display = "none";
+        $("#callout").hide();
     }
 });
 
@@ -141,7 +134,7 @@ document.getElementById("outformat").onchange = function () {
     myCodeMirror2.setValue(($("#inputMirror").val(myCodeMirror.getValue())).reformat(currentVal));
     tempCode = myCodeMirror.getValue();
     myCodeMirror.setValue(tempCode);
-    document.getElementById("outputarea").value = myCodeMirror2.getValue();
+    $("#outputarea").val(myCodeMirror2.getValue());
     toolCounter(); // write usage into the database for tool stats
 };
 
@@ -224,7 +217,7 @@ function fullscreenReformat() {
     }
 }
 
-$(document).keydown(function (e) {
+$(document).on("keydown", function (e) {
     if (e.keyCode === 27 && $tab.hasClass("fullscreen")) {
         $expand.click();
     }

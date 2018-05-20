@@ -219,16 +219,6 @@ const GeneralTabComponent = {
                 if (typeof onFullscreenToggle === "function" && this.isFullscreen === true) {
                     return onFullscreenToggle();
                 }
-            }).bind(mo),
-            forwardString: (function () {
-                if (localStorage.getItem("resultcookie")) {
-                    let cookieString = String(localStorage.getItem("resultcookie"));
-                    localStorage.removeItem("resultcookie");
-                    $.LoadingOverlay("hide");
-                    return cookieString;
-                } else {
-                    return "";
-                }
             }).bind(mo)
         };
     },
@@ -276,7 +266,6 @@ const tabsContents: any = {
                 options: [["fas", "FASTA"]],
                 id: "alignment",
                 rows: 25,
-                value: GeneralTabComponent.controller().forwardString(),
                 spellcheck: false
             }),
             m("input", {
