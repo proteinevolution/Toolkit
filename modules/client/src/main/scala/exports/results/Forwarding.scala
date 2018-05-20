@@ -88,25 +88,6 @@ object Forwarding {
       })
   }
 
-  def processFiles(selectedTool: String, fileUrl: String): Unit = {
-    jQuery.LoadingOverlay("show")
-    jQuery
-      .ajax(
-        js.Dictionary(
-            "method"   -> "GET",
-            "url"      -> fileUrl,
-            "dataType" -> "text"
-          )
-          .asInstanceOf[JQueryAjaxSettings]
-      )
-      .done((data: js.Object) => {
-        simple(selectedTool, data.toString)
-      })
-      .always(() => {
-        jQuery.LoadingOverlay("hide")
-      })
-  }
-
   def redirect(tool: String, forwardPath: String): Unit = {
     m.route(s"/tools/$tool")
     jQuery
@@ -140,15 +121,16 @@ object Forwarding {
       dom.window.alert("No sequence(s) selected!")
       return
     }
-    try {
-      dom.window.localStorage.setItem("resultcookie", forwardData)
-    } catch {
-      case e: Throwable =>
-        dom.window.alert(e.getLocalizedMessage)
-        e.printStackTrace()
-        throw e
-    }
+
     m.route(s"/tools/$tool")
+    setInterval(10) {
+      if(jQuery("#alignment").length > 0) {
+        jQuery("#alignment").value(forwardData)
+        g.validationProcess(jQuery("#alignment"), jQuery("#toolnameAccess").value())
+        clearInterval(this)
+      }
+    }
+
   }
 
 }
