@@ -3,7 +3,7 @@ package models.tools
 import javax.inject.{ Inject, Singleton }
 
 import com.typesafe.config.{ ConfigFactory, ConfigObject }
-import de.proteinevolution.models.{ Constants, Tool, ToolName }
+import de.proteinevolution.models.{ ConstantsV2, Tool, ToolName }
 import de.proteinevolution.tools.results._
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.forms.ToolForm
@@ -24,7 +24,7 @@ final class ToolFactory @Inject()(
     hhomp: HHomp,
     quick2d: Quick2D,
     aln: de.proteinevolution.tools.results.Alignment,
-    constants: Constants
+    constants: ConstantsV2
 )(paramAccess: ParamAccess, resultFiles: ResultFileAccessor, implicit val ec: ExecutionContext) {
 
   // reads the tool specifications from tools.conf and generates tool objects accordingly

@@ -9,7 +9,7 @@ import de.proteinevolution.models.database.jobs.JobState._
 import actors.JobActor._
 import better.files._
 import de.proteinevolution.common.LocationProvider
-import de.proteinevolution.models.{ Constants, ToolName }
+import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.models.search.JobDAO
@@ -37,7 +37,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                     implicit val locationProvider: LocationProvider,
                                     val jobDao: JobDAO,
                                     val toolFactory: ToolFactory,
-                                    constants: Constants,
+                                    constants: ConstantsV2,
                                     cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with CommonController {

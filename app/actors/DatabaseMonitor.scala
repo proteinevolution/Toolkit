@@ -6,7 +6,7 @@ import javax.inject.{ Inject, Singleton }
 import actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import actors.JobActor.Delete
 import akka.actor.{ Actor, ActorLogging, Cancellable }
-import de.proteinevolution.models.Constants
+import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.statistics.{ StatisticsObject, UserStatistic }
 import de.proteinevolution.models.database.users.User
@@ -34,7 +34,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
                                       implicit val mailerClient: MailerClient,
                                       mongoStore: MongoStore,
                                       jobActorAccess: JobActorAccess,
-                                      constants: Constants)(implicit ec: ExecutionContext)
+                                      constants: ConstantsV2)(implicit ec: ExecutionContext)
     extends Actor
     with ActorLogging {
 

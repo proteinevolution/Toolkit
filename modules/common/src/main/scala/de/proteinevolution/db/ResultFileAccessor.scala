@@ -5,7 +5,7 @@ import javax.inject.{ Inject, Singleton }
 import play.api.cache.{ AsyncCacheApi, NamedCache }
 import play.api.libs.json.JsValue
 import better.files._
-import de.proteinevolution.models.Constants
+import de.proteinevolution.models.ConstantsV2
 import play.api.Logger
 import play.api.libs.json._
 
@@ -14,7 +14,7 @@ import scala.concurrent.duration._
 
 @Singleton
 final class ResultFileAccessor @Inject()(
-    constants: Constants,
+    constants: ConstantsV2,
     @NamedCache("resultCache") implicit val resultCache: AsyncCacheApi
 )(implicit ec: ExecutionContext) {
   def getResults(jobID: String): Future[Option[JsValue]] = {

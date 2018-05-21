@@ -4,12 +4,12 @@ import javax.inject.{ Inject, Singleton }
 
 import actors.JobActor
 import akka.actor.{ ActorRef, ActorSystem, Props }
-import de.proteinevolution.models.Constants
+import de.proteinevolution.models.ConstantsV2
 
 @Singleton
 final class JobActorAccess @Inject()(actorSystem: ActorSystem,
                                      jobActorFactory: JobActor.Factory,
-                                     constants: Constants) {
+                                     constants: ConstantsV2) {
 
   // Just spawn all the JobActors
   private val jobActors: Seq[ActorRef] =

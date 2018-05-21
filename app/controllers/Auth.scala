@@ -6,7 +6,7 @@ import javax.inject.{ Inject, Singleton }
 import actors.WebSocketActor.{ ChangeSessionID, LogOut }
 import akka.actor.ActorRef
 import de.proteinevolution.common.LocationProvider
-import de.proteinevolution.models.Constants
+import de.proteinevolution.models.ConstantsV2
 import models.UserSessions
 import models.auth._
 import de.proteinevolution.models.database.users.{ User, UserConfig, UserToken }
@@ -37,7 +37,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                            implicit val locationProvider: LocationProvider,
                            @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                            @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi, // Mailing Controller
-                           constants: Constants,
+                           constants: ConstantsV2,
                            environment: Environment,
                            cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)

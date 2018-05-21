@@ -12,7 +12,7 @@ import com.google.inject.assistedinject.Assisted
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.db.MongoStore
-import de.proteinevolution.models.Constants
+import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.JobState._
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
@@ -102,7 +102,7 @@ class JobActor @Inject()(
     implicit val locationProvider: LocationProvider,
     @NamedCache("userCache") implicit val userCache: SyncCacheApi,
     @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
-    constants: Constants,
+    constants: ConstantsV2,
     @Assisted("jobActorNumber") jobActorNumber: Int
 )(implicit ec: scala.concurrent.ExecutionContext)
     extends Actor {
