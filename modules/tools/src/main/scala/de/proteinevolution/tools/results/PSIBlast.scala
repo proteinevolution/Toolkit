@@ -3,11 +3,13 @@ package de.proteinevolution.tools.results
 import javax.inject.Inject
 import javax.inject.Singleton
 
+import de.proteinevolution.tools.results.Alignment.AlignmentResult
 import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.tools.results.HHTemplate.DummyTemplate
 import de.proteinevolution.tools.results.PSIBlast.{ PSIBlastHSP, PSIBlastResult }
 import play.api.libs.json._
 @Singleton
-class PSIBlast @Inject()(general: General) extends SearchTool {
+class PSIBlast @Inject()(general: General) extends SearchTool[PSIBlastHSP] {
 
   def parseResult(json: JsValue): PSIBlastResult = {
     val obj   = json.as[JsObject]
@@ -30,7 +32,7 @@ class PSIBlast @Inject()(general: General) extends SearchTool {
       .sortBy(h => (h \ "hsps" \ 0 \ "evalue").as[Double])
     val upperBound = sorted match {
       case _ :: _ => (sorted.headOption.getOrElse(JsNull) \ "num").as[Int] // sorted is non-empty list
-      case _   => hsplist.length + 1 // if empty, take the whole size of hsplist
+      case _      => hsplist.length + 1 // if empty, take the whole size of hsplist
     }
     val TMPRED = (obj \ "output_psiblastp" \ "TMPRED").asOpt[String] match {
       case Some(data) => data
@@ -117,7 +119,10 @@ object PSIBlast {
                          ref_len: Int,
                          accession: String,
                          midline: String,
-                         description: String) {
+                         description: String,
+                         info: PSIBLastInfo = PSIBLastInfo(-1, -1, -1, -1),
+                         template: HHTemplate = DummyTemplate())
+      extends HSP {
     def toDataTable(db: String): JsValue =
       Json.toJson(
         Map(
@@ -132,7 +137,8 @@ object PSIBlast {
       )
   }
 
-  case class PSIBLastInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int)
+  case class PSIBLastInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int, evalue: Double = -1)
+      extends SearchToolInfo
 
   case class PSIBlastResult(HSPS: List[PSIBlastHSP],
                             num_hits: Int,
@@ -142,9 +148,11 @@ object PSIBlast {
                             query: SingleSeq,
                             belowEvalThreshold: Int,
                             TMPRED: String,
-                            COILPRED: String) extends SearchResult {
-    def hitsOrderBy(params: DTParam): List[PSIBlastHSP] = {
-      (params.iSortCol, params.sSortDir) match {
+                            COILPRED: String,
+                            alignment: AlignmentResult = AlignmentResult(Nil))
+      extends SearchResult[PSIBlastHSP] {
+    override def hitsOrderBy(params: DTParam): List[PSIBlastHSP] = {
+      (params.orderCol, params.orderDir) match {
         case (1, "asc")  => HSPS.sortBy(_.accession)
         case (1, "desc") => HSPS.sortWith(_.accession > _.accession)
         case (2, "asc")  => HSPS.sortBy(_.description)

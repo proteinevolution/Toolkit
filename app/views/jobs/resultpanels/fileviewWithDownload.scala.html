@@ -1,9 +1,8 @@
-@import java.lang.String
 @(filename: String, jobID: String, resultname: String)()
 
     <div class="colorOptsAlignment">
     <a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download</a>
-    <hr id="line-element" class="horizontal-line">
+        <hr class="horizontal-line">
     <pre class="fileview" id="fileviewerDownload_@{resultname}" ></pre>
     </div>
     <script>
@@ -27,7 +26,7 @@
                 method: "GET",
                 url: fileURL
             }).done(function(data){
-                download(downloadFilename, data);
+                DownloadHelper.download(downloadFilename, data);
             })
         };
 

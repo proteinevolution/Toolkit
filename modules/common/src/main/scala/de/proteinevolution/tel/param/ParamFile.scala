@@ -5,7 +5,6 @@ import javax.inject.{ Inject, Singleton }
 
 import better.files._
 import de.proteinevolution.tel.env.Env
-import play.api.Logger
 import de.proteinevolution.tel.param.Implicits._
 import scala.collection.immutable.ListMap
 
@@ -49,7 +48,8 @@ abstract class GenerativeParamFile(name: String) extends GenerativeParam(name) {
   def load(): Unit
 }
 
-class ExecGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String]) extends GenerativeParamFile(name) {
+class ExecGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String])
+    extends GenerativeParamFile(name) {
 
   private var env: Option[Env] = None
   import scala.sys.process.Process
@@ -93,7 +93,8 @@ class ExecGenParamFile(name: String, path: String, private var allowed: Set[Stri
   def generate: ListMap[String, String] = this.clearTextNames
 }
 
-class ListGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String]) extends GenerativeParamFile(name) {
+class ListGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String])
+    extends GenerativeParamFile(name) {
 
   private val f = path.toFile
 
@@ -108,7 +109,6 @@ class ListGenParamFile(name: String, path: String, private var allowed: Set[Stri
     clearTextNames = ListMap.empty
 
     allowed = f.lineIterator.map { line =>
-      Logger.info("Reading line " + line)
       val spt = line.split("\\s+")
       clearTextNames = clearTextNames + (spt(0) -> spt(1))
       spt(0)

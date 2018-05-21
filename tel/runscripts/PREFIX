@@ -29,7 +29,7 @@ function sig_handler () {
         fi
     fi
 
-    until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/error/%jobid.content/$key); do
+    until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/error/%jobid.content/$key); do
     printf 'host unreachable\n...waiting to set job status to error\n'
     sleep 5
     done
@@ -53,13 +53,13 @@ function sig_handler () {
 
 # update process log
 updateProcessLog () {
-    until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content); do
+    until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content); do
         printf 'host unreachable\n...waiting to update process log\n'
         sleep 5
     done
 }
 
-until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/running/%jobid.content/$key); do
+until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/running/%jobid.content/$key); do
     printf 'host unreachable\n...waiting to set job status to running\n'
     sleep 5
 done

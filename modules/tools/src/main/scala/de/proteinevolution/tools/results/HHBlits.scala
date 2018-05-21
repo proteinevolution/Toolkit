@@ -9,7 +9,7 @@ import de.proteinevolution.tools.results.HHBlits._
 import play.api.libs.json._
 
 @Singleton
-class HHBlits @Inject()(general: General, aln: Alignment) extends SearchTool {
+class HHBlits @Inject()(general: General, aln: Alignment) extends SearchTool[HHBlitsHSP] {
 
   def parseResult(jsValue: JsValue): HHBlitsResult = {
     val obj        = jsValue.as[JsObject]
@@ -82,8 +82,12 @@ object HHBlits {
                         agree: String,
                         description: String,
                         num: Int,
-                        length: Int) {
-    def toDataTable: JsValue =
+                        length: Int,
+                        evalue: Double = -1,
+                        accession: String = "")
+      extends HSP {
+    def toDataTable(db: String = ""): JsValue = {
+      val _ = db
       Json.toJson(
         Map(
           "0" -> Json.toJson(Common.getCheckbox(num)),
@@ -95,6 +99,7 @@ object HHBlits {
           "6" -> Json.toJson(template.ref)
         )
       )
+    }
   }
 
   case class HHBlitsInfo(aligned_cols: Int,
@@ -103,10 +108,12 @@ object HHBlits {
                          probab: Double,
                          score: Double,
                          similarity: Double)
+      extends SearchToolInfo
 
   case class HHBlitsQuery(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
 
   case class HHBlitsTemplate(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
+      extends HHTemplate
 
   case class HHBlitsResult(HSPS: List[HHBlitsHSP],
                            alignment: AlignmentResult,
@@ -115,10 +122,10 @@ object HHBlits {
                            db: String,
                            TMPRED: String,
                            COILPRED: String)
-      extends SearchResult {
+      extends SearchResult[HHBlitsHSP] {
 
     def hitsOrderBy(params: DTParam): List[HHBlitsHSP] = {
-      (params.iSortCol, params.sSortDir) match {
+      (params.orderCol, params.orderDir) match {
         case (1, "asc")  => HSPS.sortBy(_.template.accession)
         case (1, "desc") => HSPS.sortWith(_.template.accession > _.template.accession)
         case (2, "asc")  => HSPS.sortBy(_.description)

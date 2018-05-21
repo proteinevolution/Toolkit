@@ -201,7 +201,7 @@ const GeneralTabComponent = {
                         alignmentView.g.zoomer.set("alignmentHeight", job_tab_component.width() - 500);
                         alignmentView.g.zoomer.set("alignmentWidth", job_tab_component.width() - 240);
                     }
-                    followScroll(document);
+                    Toolkit.resultView.scrollUtil.followScroll($(document));
                     return;
                 } else {
                     job_tab_component.addClass("fullscreen");
@@ -214,20 +214,10 @@ const GeneralTabComponent = {
                         alignmentView.g.zoomer.set("alignmentHeight", $(window).height() - 320);
                         alignmentView.g.zoomer.set("alignmentWidth", job_tab_component.width() - 240);
                     }
-                    followScroll(job_tab_component);
+                    Toolkit.resultView.scrollUtil.followScroll($(job_tab_component));
                 }
                 if (typeof onFullscreenToggle === "function" && this.isFullscreen === true) {
                     return onFullscreenToggle();
-                }
-            }).bind(mo),
-            forwardString: (function () {
-                if (localStorage.getItem("resultcookie")) {
-                    let cookieString = String(localStorage.getItem("resultcookie"));
-                    localStorage.removeItem("resultcookie");
-                    $.LoadingOverlay("hide");
-                    return cookieString;
-                } else {
-                    return "";
                 }
             }).bind(mo)
         };
@@ -276,12 +266,11 @@ const tabsContents: any = {
                 options: [["fas", "FASTA"]],
                 id: "alignment",
                 rows: 25,
-                value: GeneralTabComponent.controller().forwardString(),
                 spellcheck: false
             }),
             m("input", {
                 id: "pasteButton",
-                "class": "button small alignmentExample",
+                "class": "button clear success small alignmentExample",
                 value: "Paste Example",
                 config: sampleSeqConfig,
                 onclick: function() {

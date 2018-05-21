@@ -1,32 +1,16 @@
-import build.BuildInfo
 import com.tgf.pizza.scalajs.mithril._
-import org.scalajs.dom
-import org.scalajs.dom.raw.HTMLDivElement
-
+import components.error.ErrorComponent
+import org.scalajs.dom.document
 import scala.scalajs.js
 import scala.scalajs.js.Dictionary
 
 object Router {
+
   import js.Dynamic.{ global => g }
 
-  private val versionString = {
-    new java.lang.StringBuilder()
-      .append("Version: ")
-      .append(BuildInfo.version)
-      .append(" on Scala ")
-      .append(BuildInfo.scalaVersion)
-      .append(" with Sbt ")
-      .append(BuildInfo.sbtVersion)
-      .append(" and Play! ")
-      .append(BuildInfo.playVersion)
-      .toString
-  }
-
   def main(args: Array[String]): Unit = {
-
     m.route.mode = "hash"
-    val mountpoint = g.document.getElementById("main-content").asInstanceOf[HTMLDivElement]
-
+    val mountpoint       = document.getElementById("main-content")
     val Index            = g.Index.asInstanceOf[MithrilComponent]
     val News             = g.News.asInstanceOf[MithrilComponent]
     val Backend          = g.Backend.asInstanceOf[MithrilComponent]
@@ -34,9 +18,6 @@ object Router {
     val Toolkit          = g.Toolkit.asInstanceOf[MithrilComponent]
     val JobListComponent = g.JobListComponent.asInstanceOf[MithrilComponent]
     val SearchComponent  = g.SearchBarComponent.asInstanceOf[MithrilComponent]
-
-    //g.console.log("Router initialized")
-
     val routes: Dictionary[MithrilComponent] = js.Dictionary(
       "/"                 -> Index,
       "/tools/:toolname"  -> m.component(Toolkit, js.Dynamic.literal("isJob" -> false)).asInstanceOf[MithrilComponent],
@@ -46,27 +27,18 @@ object Router {
       "/jobmanager"       -> JobManager,
       "/:path..."         -> ErrorComponent
     )
-
     m.route(mountpoint, "/", routes)
-
     // in absence of multi-tenancy support: mount the joblist, which gets redrawn independently from other view changes, in a separate mithril instance
-
     g.jobList = g.m.deps.factory(g.window)
-    g.jobList.mount(g.document.getElementById("sidebar-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
-
+    g.jobList.mount(document.getElementById("sidebar-joblist"), JobListComponent)
     g.search = g.m.deps.factory(g.window)
     g.search.mount(
-      g.document.getElementById("sidebar-search").asInstanceOf[HTMLDivElement],
+      document.getElementById("sidebar-search"),
       m.component(SearchComponent, js.Dynamic.literal("id" -> "side-search", "placeholder" -> " "))
     )
-
     g.jobListOffCanvas = g.m.deps.factory(g.window)
     g.jobListOffCanvas
-      .mount(g.document.getElementById("off-canvas-joblist").asInstanceOf[HTMLDivElement], JobListComponent)
-
-    val buildInfoElem = dom.document.getElementById("buildinfo")
-    if (!js.isUndefined(buildInfoElem) && buildInfoElem != null)
-      buildInfoElem.innerHTML = versionString
-
+      .mount(document.getElementById("off-canvas-joblist"), JobListComponent)
   }
+
 }

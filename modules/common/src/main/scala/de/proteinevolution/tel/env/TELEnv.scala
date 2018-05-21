@@ -7,7 +7,6 @@ import de.proteinevolution.tel.Observer
  * Manages values of Keys from the TEL environment
  *
  */
-
 @Singleton
 class TELEnv extends Env with Observer[EnvFile] {
 

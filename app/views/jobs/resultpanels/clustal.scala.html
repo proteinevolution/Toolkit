@@ -1,33 +1,29 @@
 @import de.proteinevolution.tools.results.Alignment.AlignmentResult
-@import controllers.routes
-@import java.lang.String
-@(jobID: String, alignment: AlignmentResult, resultName: String,  tool : de.proteinevolution.models.Tool)()
+@(jobID: String, alignment: AlignmentResult, resultName: String,  tool: de.proteinevolution.models.Tool)()
 
 @fileURL = @{"/files/" + jobID + "/" + "alignment.clustalw_aln"}
 
-<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
-
-@views.html.forwardmodals.simpler(tool, resultName)
-
 <div class="colorOptsAlignment">
-    <a onclick="@{tool.toolNameShort}_selectAllClustal()" class="selectAllSeq"><span class="selectAllSeqSpanClustal">Select all</span></a>
-    <a type="button" id="forwardButtonSimpler" data-open="forwardModal_@resultName"><span>Forward Selected</span></a>
+    <a class="selectAllSeqBar">Select all</a>
+    <a type="button" class="forwardModalOpenBtn" data-modal-type="simpler" data-result-name="@{resultName}" data-forward-issuer="NORMAL"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download MSA</span></a>
     <a type="button" href="@fileURL" target="_blank" rel="noopener"><span>Export MSA</span></a>
-    <a type="button" onclick="@{tool.toolNameShort}_colorAA()"><span id="colorAA">Color MSA</span></a>
-    <hr id="line-element" colspan="5" class="horizontal-line">
+    <a type="button" class="colorAA">Color MSA</a>
+    <hr class="horizontal-line">
 </div>
 <div id="alignmentResultView">
     Number of sequences: <b>@alignment.alignment.length</b>
         <br />
         <br />
-<table class="unstriped">
-    <table id="resultTable">
+<div class="unstriped">
+    <table class="unstriped">
+        <tbody id="resultTable">
+        </tbody>
+        <tr>
+            <td colspan="4"><div id="loadingHits">Loading Hits...</div></td>
+        </tr>
     </table>
-    <tr>
-        <td colspan="4"><div id="loadingHitsClu">Loading Hits...</div></td>
-    </tr>
-</table>
+</div>
 </div>
 <br/><br/>
 <br/><hr><br/>
@@ -62,102 +58,32 @@
                 Notredame C, Higgins DG, Heringa J.<a href="https://www.ncbi.nlm.nih.gov/pubmed/10964570" target="_blank" rel="noopener"> J Mol Biol. 2000 Sep 8;302(1):205-17.</a></div>
         }
     </div>
-        <hr id="line-element" class="horizontal-line">
+    <hr class="horizontal-line">
 </div>
-
 
 <script>
         var fileUrl = "/files/@jobID/alignment.clustalw_aln";
         var downloadFilename = "@{tool.toolNameShort}_@{resultName}_@{jobID}" + ".clustal";
-        var selectAllBoolClustal = false;
-        var colorAAsClustal = false;
-        var numHits = @alignment.alignment.length;
         var resultName = '@resultName';
         var jobID = '@jobID';
-        var checkboxes = [];
-        var checkbox = "checkbox";
+        var shownHits = 20;
 
+        $(function() {
+            var context = {
+                numHits: @alignment.alignment.length,
+                toolName: "@tool.toolNameShort"
+            };
+            Toolkit.resultView = new ClustalResultView($("#jobview"), jobID, resultName, false, shownHits, context);
+        });
 
-
-        window["@{resultName}_forward"] = function(selectedTool){
-            var data = {"checkboxes": checkboxes.removeDuplicates(), "resultName": resultName};
-            var route = jsRoutes.controllers.AlignmentController.getAln(jobID);
-
-            $.LoadingOverlay("show");
+        window[resultName + "_download"] = function(){
             // get result json
-            $.ajax({
-                type: route.method,
-                url: route.url,
-                contentType: "application/json",
-                data: JSON.stringify(data),
-                error: function(){
-                    $.LoadingOverlay("hide")
-                }
-            }).done(function (data) {
-                    forward(selectedTool, data);
-            });
-        };
-
-        window["@{resultName}_download"] = function(){
-            // get result json
-
             $.LoadingOverlay("show");
             $.ajax({
                 type: 'GET',
                 url: fileUrl
             }).done(function (data) {
-                download(downloadFilename, data.toString());
+                DownloadHelper.download(downloadFilename, data.toString());
             });
         };
-
-        window["@{tool.toolNameShort}_selectAllClustal"] = function(){
-            selectAllBoolClustal = !selectAllBoolClustal;
-            $(".selectAllSeqSpanClustal").toggleClass("colorToggle");
-            $(".selectAllSeqSpanClustal").toggleText("Select all", "Deselect all");
-            if(selectAllBoolClustal) {
-                selectAllHelper(checkbox);
-                // first empty array
-                checkboxes = [];
-                // push all checkboxes (1 to num_hits) into array
-                _.range(1, numHits+1).forEach(function(x){checkboxes.push(x)});
-            }
-            else {
-                deselectAll(checkbox);
-                // delete all checkboxes from array
-                checkboxes = [];
-            }
-        };
-
-        window["@{tool.toolNameShort}_getHits"] = function(color){
-                $('#loadingHitsClu').show();
-                var data = {"color": color, "resultName" : resultName};
-            var route = {};
-            route.url = "/AlignmentLoadHitsClustal/" + jobID;
-            route.method = "POST";
-                return $.ajax({
-                    method: route.method,
-                    url: route.url,
-                    contentType: "application/json",
-                    data: JSON.stringify(data)
-                }).done(function (data_) {
-                    $("#resultTable").append(data_);
-                    loading = false;
-                    linkCheckboxes();
-                    selectFromArray(checkboxes);
-                    $('#loadingHitsClu').hide();
-                    $.LoadingOverlay("hide");
-                });
-        };
-
-        function @{tool.toolNameShort}_colorAA(){
-            colorAAsClustal = !colorAAsClustal;
-            $("#resultTable").empty();
-            $("#colorAA").toggleClass("colorToggle");
-            @{tool.toolNameShort}_getHits(colorAAsClustal);
-        }
-
-        (function($){
-            @{tool.toolNameShort}_getHits(false);
-        })(jQuery);
-
 </script>

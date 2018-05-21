@@ -1,18 +1,11 @@
-@import controllers.routes
-@import java.lang.String
 @(filename: String, jobID: String, resultname: String, tool: de.proteinevolution.models.Tool)()
-
-    <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
-    @views.html.forwardmodals.simpler(tool, tool.toolNameShort)
 
     <div class="colorOptsAlignment">
     <a type="button" onclick="@{resultname}_download()"> <span id="downloadAlignment">Download</span></a>
-    <a data-open="forwardModal_@{tool.toolNameShort}" type="buttom"><span id="downloadAlignment">Forward All</span></a>
-    <hr id="line-element" class="horizontal-line">
+    <a class="forwardModalOpenBtn" data-modal-type="simpler" data-result-name="@{filename}" data-forward-issuer="FILEVIEW" type="button"><span id="downloadAlignment">Forward All</span></a>
+        <hr class="horizontal-line">
     </div>
-
     <pre class="fileview" id="fileviewerDownloadForward_@{resultname}"></pre>
-
     <br/>
     <br/><hr><br/>
     <div id="toolReferences">
@@ -25,57 +18,44 @@
                     Steinegger,M, Söding J.<a href="https://www.nature.com/articles/nbt.3988" target="_blank" rel="noopener"> Nat Biotechnol. 2017 Nov;35(11):1026-1028.</a></div>
             }
         </div>
-        <hr id="line-element" class="horizontal-line">
+        <hr class="horizontal-line">
     </div>
 
-
     <script>
-        $(document).ready( function() {
+        $(function() {
             $.ajax({
                 type: 'GET',
-                url: 'files/@jobID/@{filename}',
+                url: 'files/@{jobID}/@{filename}'
             }).done(function (data_) {
                 $('#fileviewerDownloadForward_@{resultname}').append(data_)
             });
         });
 
-        var downloadFilename = "@{resultname}_@{jobID}";
+        new ForwardingModal($("#jobview"), "@{tool.toolNameShort}", "@{jobID}");
+
         var fileURL="/files/@{jobID}/@{filename}";
+
         window["@{resultname}_download"] = function(){
             var downloadFilename = "@{resultname}_@{jobID}"  + ".out";
             $.ajax({
                 method: "GET",
                 url: fileURL
             }).done(function(data){
-                download(downloadFilename, data);
+                DownloadHelper.download(downloadFilename, data);
             })
         };
-
-        window["@{tool.toolNameShort}_forward"] = function(selectedTool){
-            var forwardData = [];
-            //fill array with headers and sequences
-            $.ajax({
-                method: "GET",
-                url: fileURL
-            }).done(function(data) {
-                forward(selectedTool, data);
-            });
-        };
-
 
         //using both functions is not pretty and somewhat redundant but gets the job done
         $( "#fileviewerDownloadForward_@{resultname}" ).ready(function() {
             if ($('#tool-tabs').hasClass('fullscreen')) {
-                $(".fileview").css("overflow-y", "visible");
-                $(".fileview").css("height", "100pc");
+                onExpand()
             } else {
-                $(".fileview").css("height", "30pc");
+                onCollapse()
             }
         });
 
         function onExpand() {
-            $(".fileview").css("overflow-y", "visible");
-            $(".fileview").css("height", "100pc");
+            $(".fileview").css("overflow-y", "visible").css("height", "100pc");
         }
         function onCollapse() {
             $(".fileview").css("height", "30pc");

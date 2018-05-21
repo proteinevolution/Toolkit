@@ -1,0 +1,49 @@
+#sidebar {
+  display: none;
+  #sidebar-search {
+    height:50px;
+
+    input {
+      height:1.9rem;
+      font-size: 0.8rem;
+      margin-top: 6px;
+      padding: 0 .5rem;
+      &.search-input {
+        color:black;
+        background-color:transparent;
+        &:focus, &:active {
+          background-color: $white !important;
+        }
+      }
+    }
+
+    .search-results {
+      font-size: 0.7em;
+    }
+
+    .twitter-typeahead::before{
+      top: 8px;
+    }
+
+    .tt-menu {
+      min-width: 150px;
+      overflow: auto;
+    }
+
+    .search-result-jobid {
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 7.5em;
+      vertical-align: middle;
+    }
+
+    .search-result-tool{
+      display:none;
+    }
+
+  }
+}
+
+
+

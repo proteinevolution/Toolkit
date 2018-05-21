@@ -83,8 +83,8 @@ window.JobModel = {
                 url: "/api/job/" + value
             }).then(function(data) {
                 window.JobModel.paramValues = data.paramValues;
-                if(JobModel.paramValues.proteomes && !JobModel.paramValues.hhsuitedb){
-                    JobModel.paramValues["hhsuitedb"]= "";
+                if(window.JobModel.paramValues.proteomes && !window.JobModel.paramValues.hhsuitedb){
+                    window.JobModel.paramValues["hhsuitedb"]= "";
                 }
                 return {
                     tool: data.toolitem,
@@ -112,16 +112,6 @@ window.JobModel = {
         }
     },
     getParamValue: function(param : any) : any {
-        // Update the value with the one from the local storage
-        const resultcookie = localStorage.getItem("resultcookie");
-        if (resultcookie) {
-            setTimeout(function(){
-                validationProcess($('#alignment'),$("#toolnameAccess").val());
-            }, 100);
-            window.JobModel.paramValues["alignment"] = resultcookie;
-            localStorage.removeItem("resultcookie");
-            $.LoadingOverlay("hide");
-        }
         const val = window.JobModel.paramValues[param];
         const defVal = window.JobModel.defaultValues[param];
 

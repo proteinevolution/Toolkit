@@ -1,16 +1,18 @@
 @(evalues: List[Double])()
 
-
 <div id="hcontainer"></div>
 
 <script>
         var bins = [];
         @for(evalue <- evalues){
-            bins.push(new Array(@(-Math.log(evalue)/Math.log(10)), bins.length));
+        bins.unshift(new Array(@(-Math.log(evalue)/Math.log(10)), bins.length));
         }
+        bins.sort(function(point1, point2) {
+            return point1[0]-point2[0];
+        });
 
-        $(function() {
-            var width= $("#tool-tabs").width() - 140;
+        $(function () {
+            var width = $("#tool-tabs").width() - 140;
             var chart = new Highcharts.Chart({
                 title: {
                     text: 'E-Value Distribution',
@@ -21,7 +23,6 @@
                         text: '-log10(E-Value)'
                     }
                 },
-
                 yAxis: {
                     title: {
                         text: 'No. of matches'
@@ -32,8 +33,7 @@
                         color: '#808080'
                     }]
                 },
-                              tooltip: {
-                },
+                tooltip: {},
                 legend: {
                     layout: 'vertical',
                     align: 'right',
@@ -41,15 +41,15 @@
                     borderWidth: 0
                 },
                 chart: {
-                renderTo: 'hcontainer',
-                width: width
+                    renderTo: 'hcontainer',
+                    width: width
                 },
                 series: [{
                     name: 'No. HSPs',
                     data: bins
                 }],
                 credits: {
-                enabled: false
+                    enabled: false
                 }
             });
         });

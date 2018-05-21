@@ -167,6 +167,25 @@ class WebsocketWrapper {
                 }
                 break;
 
+            // Show browser notification
+            case "ShowNotification":
+                switch (message.notificationType) {
+                    case "job_update": // means that tag = jobid -> show job update if page open
+                        if (Toolkit.trackedJobIDs.indexOf(message.tag) !== -1 || Toolkit.currentJobID === message.tag) { // s this tab tracking the job or is the job visible
+                            if (WebsocketWrapper.showConsoleMessages) {
+                                console.log("[Websocket] Notification about tracked job", message.tag);
+                            }
+                            TitleManager.setAlert();
+                            NotificationManager.showJobNotification(message.tag, message.title, message.body);
+                        }
+                        break;
+                    default:
+                        TitleManager.setAlert();
+                        NotificationManager.showNotification(message.tag, message.title, message.body);
+                        break;
+                }
+                break;
+
             // The message is a update to the current load display
             case "UpdateLoad":
                 // Tried to limit redraw reqyests by this by saving the "currentRoute",
@@ -195,6 +214,8 @@ class WebsocketWrapper {
             // Maintenance is going on
             case "MaintenanceAlert":
                 $('.maintenance-alert').show();
+                TitleManager.setAlert();
+                NotificationManager.showNotification("maintenance", "Maintenance", "The Toolkit is going down for maintenance. Thank you for understanding!");
                 break;
 
             // The message was not what we expected
@@ -272,6 +293,3 @@ class WebsocketWrapper {
  * @type {WebsocketWrapper}
  */
 const ws : WebsocketWrapper = new WebsocketWrapper();
-
-declare var TitleManager: any;
-
