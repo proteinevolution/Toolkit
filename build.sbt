@@ -95,3 +95,5 @@ logLevel in Test := Level.Info
 scalacOptions in Test ++= Seq("-Yrangepos")
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
+
+PlayKeys.devSettings := Seq("play.server.http.idleTimeout" -> "220s")
