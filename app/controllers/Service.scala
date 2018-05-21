@@ -15,7 +15,7 @@ import de.proteinevolution.db.MongoStore
 import java.time.format.DateTimeFormatter
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.forms.JobForm
-import de.proteinevolution.models.Constants
+import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import play.api.libs.json._
 import reactivemongo.bson.BSONDocument
@@ -27,7 +27,7 @@ import scala.concurrent.duration._
 final class Service @Inject()(
     mongoStore: MongoStore,
     toolFactory: ToolFactory,
-    constants: Constants,
+    constants: ConstantsV2,
     cc: ControllerComponents
 )(implicit ec: ExecutionContext,
   @NamedCache("resultCache") val resultCache: AsyncCacheApi,

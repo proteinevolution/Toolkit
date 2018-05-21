@@ -24,7 +24,7 @@ import play.api.routing.JavaScriptReverseRouter
 import play.api.{ Environment, Logger }
 import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
-import de.proteinevolution.models.Constants
+import de.proteinevolution.models.ConstantsV2
 
 import scala.concurrent.{ Await, ExecutionContext, Future }
 
@@ -44,7 +44,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   val env: Env,
                                   val search: Search,
                                   val settings: Settings,
-                                  constants: Constants,
+                                  constants: ConstantsV2,
                                   cc: ControllerComponents,
                                   environment: Environment)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
