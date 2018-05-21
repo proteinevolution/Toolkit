@@ -39,7 +39,7 @@ class StructureModal($container: JQuery, $modal: JQuery) {
     accessionStructure.html(s"<h6 class='structureAccession'>3D Structure: $accession</h6>")
     viewport.width(800).height(700).find("canvas").remove()
     if (stage != null) stage.dispose()
-    stage = new NGL.Stage("viewport")
+    stage = new NGL.Stage(viewport.get(0))
     viewport.LoadingOverlay("show")
     // get blob with ajax
     val xhr = new XMLHttpRequest()
