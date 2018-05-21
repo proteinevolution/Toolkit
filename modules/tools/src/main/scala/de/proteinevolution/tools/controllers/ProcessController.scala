@@ -1,6 +1,5 @@
 package de.proteinevolution.tools.controllers
 import javax.inject.{ Inject, Singleton }
-
 import com.typesafe.config.ConfigFactory
 import de.proteinevolution.tools.models.{ ForwardMode, HHContext, ResultContext }
 import de.proteinevolution.tools.services.{ KleisliProvider, ProcessFactory, ToolNameGetService }
@@ -11,6 +10,10 @@ import de.proteinevolution.models.{ Constants, ToolName }
 import scala.sys.process.Process
 import de.proteinevolution.tools.results.{ HSP, SearchResult }
 import ToolName._
+import play.api.libs.concurrent.Futures
+import scala.concurrent.duration._
+import play.api.libs.concurrent.Futures._
+import play.api.libs.json.JsValue
 
 import scala.concurrent.ExecutionContext
 
@@ -19,7 +22,7 @@ class ProcessController @Inject()(ctx: HHContext,
                                   toolFinder: ToolNameGetService,
                                   constants: Constants,
                                   kleisliProvider: KleisliProvider,
-                                  resultContext: ResultContext)(implicit ec: ExecutionContext)
+                                  resultContext: ResultContext)(implicit ec: ExecutionContext, futures: Futures)
     extends AbstractController(ctx.controllerComponents) {
 
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
@@ -50,49 +53,55 @@ class ProcessController @Inject()(ctx: HHContext,
       }
   }
 
-  def forwardAlignment(jobID: String, mode: ForwardMode): Action[AnyContent] = Action.async { implicit request =>
-    val json     = request.body.asJson.get
-    val filename = (json \ "fileName").as[String]
-    val accStr = mode.toString match {
-      case "alnEval" | "evalFull" => (json \ "evalue").as[String]
-      case "aln" | "full"         => (json \ "checkboxes").as[List[Int]].mkString("\n")
-    }
-    kleisliProvider
-      .resK(jobID)
-      .flatMap {
-        case Some(jsValue) =>
-          kleisliProvider.toolK(jobID).map {
-            case HHBLITS =>
-              (HHBLITS, resultContext.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
-            case HHPRED =>
-              (HHPRED, resultContext.hhpred.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
-            case HHOMP =>
-              (HHOMP, resultContext.hhomp.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
-            case HMMER =>
-              (HMMER, resultContext.hmmer.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
-            case PSIBLAST =>
-              (PSIBLAST, resultContext.psiblast.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
-            case _ => throw new IllegalArgumentException("tool has no hitlist")
-          }
-        case None => throw new IllegalStateException
+  def forwardAlignment(jobID: String, mode: ForwardMode): Action[JsValue] = Action(parse.json).async {
+    implicit request =>
+      val json     = request.body
+      val filename = (json \ "fileName").as[String]
+      val accStr = mode.toString match {
+        case "alnEval" | "evalFull" => (json \ "evalue").as[String]
+        case "aln" | "full"         => (json \ "checkboxes").as[List[Int]].mkString("\n")
       }
-      .map {
-        case (toolName, result) =>
-          val accStrParsed = parseAccString(toolName, result, accStr, mode)
-          ProcessFactory((constants.jobPath + jobID).toFile,
-                         jobID,
-                         toolName.value,
-                         filename,
-                         mode,
-                         accStrParsed,
-                         result.db).run().exitValue()
-      }
-      .map {
-        case 0 =>
-          NoContent
-        case _ =>
-          BadRequest
-      }
+      kleisliProvider
+        .resK(jobID)
+        .flatMap {
+          case Some(jsValue) =>
+            kleisliProvider.toolK(jobID).map {
+              case HHBLITS =>
+                (HHBLITS, resultContext.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
+              case HHPRED =>
+                (HHPRED, resultContext.hhpred.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
+              case HHOMP =>
+                (HHOMP, resultContext.hhomp.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
+              case HMMER =>
+                (HMMER, resultContext.hmmer.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
+              case PSIBLAST =>
+                (PSIBLAST, resultContext.psiblast.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
+              case _ => throw new IllegalArgumentException("tool has no hitlist")
+            }
+          case None => throw new IllegalStateException
+        }
+        .map {
+          case (toolName, result) =>
+            val accStrParsed = parseAccString(toolName, result, accStr, mode)
+            ProcessFactory((constants.jobPath + jobID).toFile,
+                           jobID,
+                           toolName.value,
+                           filename,
+                           mode,
+                           accStrParsed,
+                           result.db).run().exitValue()
+        }
+        .withTimeout(220.seconds)
+        .map {
+          case 0 =>
+            NoContent
+          case _ =>
+            BadRequest
+        }
+        .recover {
+          case _: scala.concurrent.TimeoutException =>
+            InternalServerError("timeout")
+        }
   }
 
   private[this] def parseAccString(toolName: ToolName,
