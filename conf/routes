@@ -2,16 +2,13 @@
 # This file defines all application routes (Higher priority routes first)
 
 ############################################################################
-# Toolkit related routes
+# Toolkit routes
 ############################################################################
 
-# Index Page requested by user. Note that the controller is injected
+# Index Page
 GET           /                                       controllers.Application.index()
-
 GET           /javascriptRoutes                       controllers.Application.javascriptRoutes
-
 GET           /sitemap.xml                            controllers.Assets.at(path="/public", file = "sitemap.xml")
-GET           /sitemap.xml.gz                         controllers.Assets.at(path="/public", file = "sitemap.xml.gz")
 
 # integrated mithril route backend routes
 GET           /backend/index                          controllers.Backend.index
@@ -33,15 +30,11 @@ GET           /buildinfo                              controllers.UptimeControll
 # Serve files
 GET           /files/:mainID/:filename                controllers.Application.file(filename: String, mainID: String)
 
-
-
 # WebJars
 ->            /webjars                                webjars.Routes
 
 # Assets
 GET           /assets/*file                           controllers.Assets.versioned(path="/public", file: Asset)
-
-
 
 # Route for direct get requests
 GET           /hhpred                                 controllers.Application.showTool(toolname = "hhpred")
@@ -49,9 +42,6 @@ GET           /tools/:toolname                        controllers.Application.sh
 
 # Redirects to a job with the jobID // mainID
 GET           /jobs/:idString                         controllers.Application.showJob(idString: String)
-
-
-# Contact
 
 # Routes for Auth Service
 GET           /userData                               controllers.Auth.getUserData
@@ -68,22 +58,20 @@ GET           /verification/:userName/:token          controllers.Auth.verificat
 GET           /getCurrentUser                         controllers.Auth.profile2json()
 
 # Update Job status (should be server internal access only)
-POST          /jobs/done/:jobID/:key                  controllers.Jobs.jobStatusDone(jobID : String, key: String)
-POST          /jobs/error/:jobID/:key                 controllers.Jobs.jobStatusError(jobID : String, key: String)
-POST          /jobs/running/:jobID/:key               controllers.Jobs.jobStatusRunning(jobID : String, key: String)
-POST          /jobs/queued/:jobID/:key                controllers.Jobs.jobStatusQueued(jobID : String, key: String)
-POST          /jobs/sge/:jobID/:sgeID/:key            controllers.Jobs.SGEID(jobID: String, sgeID: String, key: String)
-POST          /jobs/dateviewed/:mainID                controllers.Jobs.updateDateViewed(mainID)
-# update process log
-POST          /jobs/updateLog/:jobID                  controllers.Jobs.updateLog(jobID : String)
+PUT          /jobs/done/:jobID/:key                   controllers.Jobs.jobStatusDone(jobID : String, key: String)
+PUT          /jobs/error/:jobID/:key                  controllers.Jobs.jobStatusError(jobID : String, key: String)
+PUT          /jobs/running/:jobID/:key                controllers.Jobs.jobStatusRunning(jobID : String, key: String)
+PUT          /jobs/queued/:jobID/:key                 controllers.Jobs.jobStatusQueued(jobID : String, key: String)
+PUT          /jobs/sge/:jobID/:sgeID/:key             controllers.Jobs.SGEID(jobID: String, sgeID: String, key: String)
+PUT          /jobs/dateviewed/:mainID                 controllers.Jobs.updateDateViewed(mainID)
 
+# update process log
+PUT          /jobs/updateLog/:jobID                   controllers.Jobs.updateLog(jobID : String)
 
 # Validation Controller
-
 POST          /validate/modeller                      controllers.Auth.validateModellerKey(input: String)
 
 # Cluster
-
 GET           /load                                   controllers.ClusterController.getLoad
 
 # Static route
@@ -97,20 +85,16 @@ GET           /getToolList                            controllers.Search.getTool
 GET           /suggest/:jobID                         controllers.Search.autoComplete(jobID: String)
 GET           /checktool/:tool                        controllers.Search.existsTool(tool: String)
 
-
-
-# Sitemap
 # Routes for static assets
 GET           /robots.txt                             controllers.Application.robots
 GET           /:static                                controllers.Application.static(static : String)
 
-
 # GetTool
 GET           /api/tools/:toolname                    controllers.Service.getTool(toolname)
 
-
 # Get list of userjobs
 GET           /api/jobs                               controllers.JobController.listJobs
+
 # Submit a job directly
 POST          /api/job                                controllers.JobController.submitJob(toolName: String)
 GET           /api/job/:jobID/start                   controllers.JobController.startJob(jobID: String)
@@ -126,58 +110,10 @@ POST          /api/frontendSubmit/:toolname           controllers.Tool.frontendC
 # Results
 GET           /api/job/results/:jobID                 controllers.DataController.get(jobID: String)
 
+# ForwardModal
+GET           /forwardModal/:toolName/:modalType      controllers.ForwardModalController.getForwardModalOptions(modalType: String, toolName: String)
 #Help
 GET           /getHelp/:tool                          controllers.DataController.getHelp(tool: String)
 
-# DataTables
-GET  /api/job/results/dataTableHmmer/:jobID           controllers.HmmerController.dataTable(jobID: String)
-GET  /api/job/results/dataTablePSIBlast/:jobID        controllers.PSIBlastController.dataTable(jobID: String)
-GET  /api/job/results/dataTableHHpred/:jobID          controllers.HHpredController.dataTable(jobID: String)
-GET  /api/job/results/dataTableHHblits/:jobID         controllers.HHblitsController.dataTable(jobID: String)
-GET  /api/job/results/dataTableHHomp/:jobID           controllers.HHompController.dataTable(jobID: String)
-
-# 3D structure
-GET         /structure3D/:accession                   controllers.HHpredController.show3DStructure(accession : String)
-GET         /getStructure/:filename                   controllers.Application.getStructureFile(filename : String)
-# template alignment
-GET  /templateAlignment/:jobID/:accession             controllers.HHpredController.retrieveTemplateAlignment(jobID : String, accession: String)
-GET  /templateAlignmentHHblits/:jobID/:accession      controllers.HHblitsController.retrieveTemplateAlignment(jobID : String, accession: String)
-GET  /templateAlignmentHHomp/:jobID/:accession        controllers.HHompController.retrieveTemplateAlignment(jobID : String, accession: String)
-
-
-# Hmmer
-POST        /HmmerLoadHits                            controllers.HmmerController.loadHits(jobID: String)
-POST        /alnEvalHmmer                             controllers.HmmerController.alnEval(jobID: String)
-POST        /alnHmmer                                 controllers.HmmerController.aln(jobID: String)
-POST        /evalHmmerFull                            controllers.HmmerController.evalFull(jobID: String)
-POST        /HmmerFull                                controllers.HmmerController.full(jobID: String)
-
-# PSIblast
-
-POST        /evalPSIBlast                             controllers.PSIBlastController.alnEval(jobID: String)
-POST        /alnPSIBlast                              controllers.PSIBlastController.aln(jobID: String)
-POST        /evalPSIBlastFull                         controllers.PSIBlastController.evalFull(jobID: String)
-POST        /PSIBlastFull                             controllers.PSIBlastController.full(jobID: String)
-POST        /PSIBlastLoadHits                         controllers.PSIBlastController.loadHits(jobID: String)
-
-
-# HHblits
-POST        /evalHHBlits                              controllers.HHblitsController.alnEval(jobID: String)
-POST        /alnHHBlits                               controllers.HHblitsController.aln(jobID:String)
-POST        /evalHHBlitsFull                          controllers.HHblitsController.evalFull(jobID : String)
-POST        /HHBlitsFull                              controllers.HHblitsController.full(jobID : String)
-POST        /HHblitsLoadHits                          controllers.HHblitsController.loadHits(jobID: String)
-
-# HHPred
-POST        /evalHHpred                               controllers.HHpredController.alnEval(jobID: String)
-POST        /alnHHpred                                controllers.HHpredController.aln(jobID:String)
-POST        /HHpredLoadHits                           controllers.HHpredController.loadHits(jobID: String)
-
-# Alignment
-POST        /AlignmentLoadHits/:jobID                 controllers.AlignmentController.loadHits(jobID: String)
-POST        /AlignmentLoadHitsClustal/:jobID          controllers.AlignmentController.loadHitsClustal(jobID: String)
-POST        /AlignmentGetAln                          controllers.AlignmentController.getAln(jobID: String)
-
-
-#HHomp
-POST        /HHompLoadHits                            controllers.HHompController.loadHits(jobID: String)
+# Tool Module
+->            /results                                de.proteinevolution.tools.ToolsRouter

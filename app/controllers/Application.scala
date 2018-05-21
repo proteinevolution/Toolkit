@@ -25,7 +25,6 @@ import play.api.{ Environment, Logger }
 import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
 import de.proteinevolution.models.Constants
-import de.proteinevolution.tools.results.Common
 
 import scala.concurrent.{ Await, ExecutionContext, Future }
 
@@ -76,7 +75,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
       userSessions
         .getUser(rh)
         .map { user =>
-          Right(ActorFlow.actorRef((out) => Props(webSocketActorFactory(user.sessionID.get, out))))
+          Right(ActorFlow.actorRef(out => Props(webSocketActorFactory(user.sessionID.get, out))))
         }
         .recover {
           case e: Exception =>
@@ -106,8 +105,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
       true
     else {
       rh.headers.get("Origin") match {
-        case Some(originValue)
-            if originMatches(originValue) && !blacklist.contains(rh.remoteAddress) =>
+        case Some(originValue) if originMatches(originValue) && !blacklist.contains(rh.remoteAddress) =>
           logger.debug(s"originCheck: originValue = $originValue")
           true
 
@@ -170,8 +168,9 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
 
     userSessions.getUser.map { user =>
       Logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
-      Ok(views.html.main(webJarsUtil, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message, "", environment))
-        .withSession(userSessions.sessionCookie(request, user.sessionID.get))
+      Ok(
+        views.html.main(webJarsUtil, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message, "", environment)
+      ).withSession(userSessions.sessionCookie(request, user.sessionID.get))
     }
   }
 
@@ -190,6 +189,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
 
   /**
    * Allows to access resultpanel files by the filename and a given jobID
+   * TODO move to tools module
    */
   def file(filename: String, mainID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
@@ -207,22 +207,6 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
       else
         Ok // TODO This needs more case validations
 
-    }
-  }
-
-  def getStructureFile(filename: String): Action[AnyContent] = Action.async { implicit request =>
-    {
-
-      val db = Common.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
-      val filepath = db match {
-        case "scop" =>
-          env.get("SCOPE")
-        case "ecod" =>
-          env.get("ECOD")
-        case "mmcif" =>
-          env.get("CIF")
-      }
-      Future.successful(Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$filename")).as("text/plain"))
     }
   }
 
@@ -252,42 +236,16 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
         routes.javascript.Auth.passwordChangeSubmit,
         routes.javascript.Auth.resetPassword,
         routes.javascript.Auth.resetPasswordChange,
-        routes.javascript.HmmerController.aln,
-        routes.javascript.HmmerController.alnEval,
-        routes.javascript.HmmerController.full,
-        routes.javascript.HmmerController.evalFull,
-        routes.javascript.PSIBlastController.aln,
-        routes.javascript.PSIBlastController.alnEval,
-        routes.javascript.PSIBlastController.full,
-        routes.javascript.PSIBlastController.evalFull,
-        routes.javascript.HHblitsController.aln,
-        routes.javascript.HHblitsController.alnEval,
-        routes.javascript.HHblitsController.full,
-        routes.javascript.HHblitsController.evalFull,
-        routes.javascript.HHpredController.aln,
-        routes.javascript.HHpredController.alnEval,
-        routes.javascript.PSIBlastController.loadHits,
-        routes.javascript.HmmerController.loadHits,
-        routes.javascript.HHblitsController.loadHits,
-        routes.javascript.HHpredController.loadHits,
-        routes.javascript.HHompController.loadHits,
-        routes.javascript.AlignmentController.loadHits,
-        routes.javascript.AlignmentController.getAln,
-        routes.javascript.AlignmentController.loadHitsClustal,
         routes.javascript.Application.ws
       )
     ).as("text/javascript").withHeaders(CACHE_CONTROL -> "max-age=31536000")
   }
 
   def matchSuperUserToPW(username: String, password: String): Future[Boolean] = {
-
     mongoStore.findUser(BSONDocument("userData.nameLogin" -> username)).map {
-
       case Some(user) if user.checkPassword(password) && user.isSuperuser => true
       case None                                                           => false
-
     }
-
   }
 
   def MaintenanceSecured[A]()(action: Action[A]): Action[A] = Action.async(action.parser) { request =>
@@ -310,14 +268,10 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
   }
 
   def maintenance: Action[AnyContent] = MaintenanceSecured() {
-
     Action { implicit ctx =>
       clusterMonitor ! Multicast
-
       Ok("Maintenance screen active...")
-
     }
-
   }
 
   val robots = Action { _ =>

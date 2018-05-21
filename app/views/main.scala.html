@@ -1,8 +1,9 @@
-@import de.proteinevolution.models.Tool
 @import java.time.ZonedDateTime
-@import org.webjars.play.WebJarsUtil
+
+@import build.BuildInfo
 @import controllers.routes
-@import play.twirl.api.Html
+@import de.proteinevolution.models.Tool
+@import org.webjars.play.WebJarsUtil
 @import play.api.Environment
 @(webJarsUtil: WebJarsUtil, tools: Iterable[Tool], message: String = "", view: String = "", environment: Environment)()
 
@@ -25,89 +26,70 @@
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
 
-        <link rel="shortcut icon" href="@routes.Assets.versioned("images/favicons/favicon-32x32.png")">
+        <link id="favicon_link" rel="shortcut icon" href="@routes.Assets.versioned("images/favicons/favicon-32x32.png")">
 
         <link rel="stylesheet" type="text/css" charset="utf-8" href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 
-
-        @Html(webJarsUtil.css("hamburgers.min.css"))
+        @webJarsUtil.locate("hamburgers.min.css").css()
+        @webJarsUtil.locate("nice-select.css").css()
+        @webJarsUtil.locate("web-fonts-with-css/css/fontawesome-all.min.css").css()
         <link href="@routes.Assets.versioned("styles/global.css")" rel="stylesheet">
-        @Html(webJarsUtil.css("nice-select.css"))
-        <link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/mfglabs_iconset.css")" rel="stylesheet">
-        @Html(webJarsUtil.css("font-awesome.min.css"))
-        <link href="@routes.Assets.versioned("styles/sequence_coloring.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/hhpred_slider.css")" rel="stylesheet">
 
             <!-- JQuery -->
-        @Html(webJarsUtil.script("3.2.1/jquery.min.js"))
-        @Html(webJarsUtil.script("jquery.lazyload.js"))
-        @Html(webJarsUtil.script("1.12.1/jquery-ui.min.js"))
-        @Html(webJarsUtil.script("jquery.nice-select.js"))
-
-        <link href="@routes.Assets.versioned("styles/index.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/reformat.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/reformat-common.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/reformat-jobview.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/jobview.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/joblist.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/news.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/offcanvas.css")" rel="stylesheet">
+        @webJarsUtil.locate("3.3.1/jquery.min.js").script()
+        @webJarsUtil.locate("jquery.lazyload.js").script()
+        @webJarsUtil.locate("1.12.1/jquery-ui.min.js").script()
+        @webJarsUtil.locate("jquery.nice-select.js").script()
 
             <!-- Mithril -->
 
-        @Html(webJarsUtil.script("mithril.min.js"))
+        @webJarsUtil.locate("mithril.min.js").script()
 
             <!-- Velocity -->
-        @Html(webJarsUtil.script("velocity.min.js"))
+        @webJarsUtil.locate("velocity.min.js").script()
 
             <!-- Highcharts -->
-        @Html(webJarsUtil.script("5.0.14/highcharts.js"))
+        @webJarsUtil.locate("6.0.7/highcharts.js").script()
 
             <!-- Select2 -->
-        @Html(webJarsUtil.css("select2.min.css"))
-        @Html(webJarsUtil.script("select2.min.js"))
-
+        @webJarsUtil.locate("select2.min.css").css()
+        @webJarsUtil.locate("select2.min.js").script()
 
             <!-- NGL 3D Viewer -->
-        @Html(webJarsUtil.script("ngl.js"))
+        @webJarsUtil.locate("ngl.js").script()
 
             <!-- Typeahead.js -->
 
-        @Html(webJarsUtil.script("bloodhound.min.js"))
-        @Html(webJarsUtil.script("typeahead.jquery.js"))
+        @webJarsUtil.locate("bloodhound.min.js").script()
+        @webJarsUtil.locate("typeahead.jquery.js").script()
 
             <!-- VISIBLE -->
-        @Html(webJarsUtil.script("jquery.visible.min.js"))
+        @webJarsUtil.locate("jquery.visible.min.js").script()
 
             <!-- Loadingoverlay -->
-        <script src="@routes.Assets.versioned("javascripts/vendor/loadingoverlay.js")" type="text/javascript"></script>
+        @webJarsUtil.locate("loadingoverlay.min.js").script()
 
-    
             <!-- Tooltipster -->
-        @Html(webJarsUtil.css("tooltipster.bundle.min.css"))
-        @Html(webJarsUtil.css("tooltipster-sideTip-borderless.min.css"))
-        @Html(webJarsUtil.script("tooltipster.bundle.min.js"))
+        @webJarsUtil.locate("tooltipster.bundle.min.css").css()
+        @webJarsUtil.locate("tooltipster-sideTip-borderless.min.css").css()
+        @webJarsUtil.locate("tooltipster.bundle.min.js").script()
 
             <!-- MOMENT.JS -->
-        @Html(webJarsUtil.script("moment.min.js"))
+        @webJarsUtil.locate("moment.min.js").script()
 
             <!-- FloatingScroll -->
-        @Html(webJarsUtil.script("jquery.floatingscroll.min.js"))
-        @Html(webJarsUtil.css("jquery.floatingscroll.css"))
+        @webJarsUtil.locate("jquery.floatingscroll.min.js").script()
+        @webJarsUtil.locate("jquery.floatingscroll.css").css()
 
             <!-- Codemirror -->
-        @Html(webJarsUtil.script("codemirror.js"))
-        @Html(webJarsUtil.css("codemirror.css"))
-        @Html(webJarsUtil.script("javascript.js"))
-
-        <link href="@routes.Assets.versioned("styles/custom.css")" rel="stylesheet">
-        <link href="@routes.Assets.versioned("styles/print.css")" rel="stylesheet">
+        @webJarsUtil.locate("codemirror.js").script()
+        @webJarsUtil.locate("codemirror.css").css()
+        @webJarsUtil.locate("javascript.js").script()
 
             <!-- Datatables -->
-        @Html(webJarsUtil.css("dataTables.foundation.min.css"))
-        @Html(webJarsUtil.script("jquery.dataTables.min.js"))
-        @Html(webJarsUtil.script("dataTables.foundation.min.js"))
+        @webJarsUtil.locate("dataTables.foundation.min.css").css()
+        @webJarsUtil.locate("jquery.dataTables.min.js").script()
+        @webJarsUtil.locate("dataTables.foundation.min.js").script()
 
             <!-- Javascript Router -->
         <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
@@ -116,12 +98,7 @@
     <body onload="reloadJobList();">
         <input type="hidden" id="authView" value="@view">
 
-        <div id="message-float" style="position: fixed;
-            top: 0px;
-            left: 0px;
-            width: 100%;
-            text-align: center;
-            z-index: 1000;">
+        <div id="message-float">
             <div id="message-container" data-closable data-close class="callout" @if(message == "") {
                 hidden="hidden"
             } style="text-align: center;
@@ -141,48 +118,44 @@
                 <div id="off-canvas-joblist"></div>
             </div>
 
-                <!---Off Canvas Content includes main content--->
+                <!-- Off Canvas Content includes main content -->
             <div class="off-canvas-content hide-for-large" id="hambutton">
                 <button type="button" data-open="offCanvas"><i class="icon-reorder icon2x"></i></button>
             </div>
 
-            <div id="main" class="row" style="max-width: 75rem;
-                margin: 0 auto" data-off-canvas-content>
+            <div id="main" class="row" data-off-canvas-content>
                 <div class="small-12 padded-column columns">
-                    <div class="row" style="height: 135px;
-                        min-height: 135px;">
-                        <div class="small-12 padded-column columns">
-                                <!---All purpose Modal --->
+                    <div class="row">
+                        <div class="small-12 padded-column columns upper-parts">
+                                <!-- All purpose Modal -->
                             <div id="modal" class="reveal large" data-reveal>
                                 <button class="close-button" data-close aria-label="Close modal" type="button">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
 
-                                <!---Hamburger Navbar --->
-                            <div id="myNav" class="overlay hide-for-print">
+                                <!-- Hamburger Navbar -->
+                            <div id="signInOverlay" class="overlay hide-for-print">
                                 <button id="hamburgerInside" class="hamburger hamburger--elastic is-active" type="button" onclick="closeNav()">
                                     <span class="hamburger-box">
                                         <span class="hamburger-inner overlayed"></span>
                                     </span>
                                 </button>
-                                    <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
                                 <div class="overlay-content" id="overlay-content">
                                     <div class="mithril-overlay-content" id="mithril-overlay-content"></div>
                                 </div>
                             </div>
 
-
-                                <!---Navigation Bar --->
+                                <!-- Navigation Bar -->
                             <div class="row hide-for-print" id="metanav">
-                                <div id="metauser"></div> <!-- TODO: ugly construction -->
+                                <div id="meta-user" class="float-right"></div>
                                 <div id="social">
                                     <a href="https://www.facebook.com/mpitoolkit" target="_blank" rel="noopener"><i class="icon-facebook"></i></a>
                                     <a href="https://twitter.com/mpitoolkit" target="_blank" rel="noopener"><i class="icon-twitter"></i></a>
                                 </div>
 
                                 <div id="offline-alert" aria-hidden="true" onclick="window.location.reload()">
-                                    <i class="icon-retweet" id="rcnbtn"></i>
+                                    <i class="icon-retweet"></i>
                                     <b>Reconnecting...</b>
                                 </div>
                                 <div class="maintenance-alert">
@@ -191,26 +164,23 @@
                                 </div>
                             </div>
 
-
                             <div class="row" id="navcontainer">
                                     <!--logo-->
-                                <div class="columns large-2 show-for-large" id="logo">
+                                <div class="columns large-2 show-for-large no-padded-column" id="logo">
                                     <a href="/#/">
                                         <img src="@routes.Assets.versioned("images/minlogo.svg")">
                                     </a>
                                 </div>
 
                                     <!--navbar-->
-                                <div class="columns large-8 show-for-medium hide-for-print" id="navbar">
+                                <div class="columns show-for-medium hide-for-print end" id="navbar">
                                 @elements.navbar(tools)
-                                </div>
-                                <div class="columns large-2 show-for-large">
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                        <!--- Mount points for Mithril Application -->
+                        <!-- Mount points for Mithril Application -->
                     <div class="row" id="main-window">
                         <div class="large-2 padded-column columns show-for-large hide-for-print" id="sidebar">
                             <div id="sidebar-search"></div>
@@ -219,30 +189,49 @@
                         <div id="main-content">
                             <noscript><div class="noscript">
                                 This website relies on JavaScript to work properly.<br />
-                                Please activate JavaScript in Your browser to see everything we offer.
+                                Please activate JavaScript in your browser to see everything we offer.
                             </div></noscript>
                         </div>
                     </div>
                 </div>
-                <footer class="row" id="app">
-                    <div class="columns large-12">
-                        <div id="sub-nav" class="hide-for-print">
-                            <a data-open="subnavHelpModal">Help</a>
-                            <a data-open="subnavFAQModal">FAQ</a>
-                            <a data-open="privacyPolicyModal">Privacy Policy</a>
-                            <a data-open="imprintModal">Imprint</a>
-                            <a data-open="contactModal">Contact Us</a>
-                            <a data-open="citeModal">Cite Us</a>
-                            <a data-open="recentUpdatesModal">Recent Updates</a>
+                <footer>
+                    <div class="row">
+                        <div class="columns large-12">
+                            <ul class="menu align-center hide-for-print text-small">
+                                <li><a data-open="footerHelpModal">Help</a></li>
+                                <li><a data-open="footerFAQModal">FAQ</a></li>
+                                <li><a data-open="footerPrivacyModal">Privacy Policy</a></li>
+                                <li><a data-open="footerImprintModal">Imprint</a></li>
+                                <li><a data-open="footerContactModal">Contact Us</a></li>
+                                <li><a data-open="footerCiteModal">Cite Us</a></li>
+                                <li><a data-open="footerRecentUpdatesModal">Recent Updates</a></li>
+                            </ul>
                         </div>
-                        <div id="socket">
-                            © 2008-@(ZonedDateTime.now.getYear), Dept. of Protein Evolution, Max Planck Institute for Developmental Biology, Tübingen
-                        </div>
-
-                        @if(environment.mode == play.api.Mode.Dev) {
-                            <div id="buildinfo"></div>
-                        }
                     </div>
+                    <div class="row">
+                        <p class="column small-12 text-center text-small">
+                            © 2008-@(ZonedDateTime.now.getYear), Dept. of Protein Evolution, Max Planck Institute for Developmental Biology, Tübingen
+                        </p>
+                    </div>
+
+                    @if(environment.mode == play.api.Mode.Dev) {
+                        <div class="row">
+                            <div id="buildinfo" class="column small-7 small-centered text-center text-small">
+                            @(new java.lang.StringBuilder()
+                                    .append("Version: ")
+                                    .append(BuildInfo.version)
+                                    .append(" on Scala ")
+                                    .append(BuildInfo.scalaVersion)
+                                    .append(" with ScalaJS ")
+                                    .append(BuildInfo.scalaJSVersion)
+                                    .append(" with Sbt ")
+                                    .append(BuildInfo.sbtVersion)
+                                    .append(" and Play! ")
+                                    .append(BuildInfo.playVersion)
+                                    .toString)
+                            </div>
+                        </div>
+                    }
                 </footer>
             </div>
         </div>
@@ -250,60 +239,61 @@
             <!-- scroll-top arrow -->
         <div id="scrollTop"></div>
 
-
-        <div class="small reveal helpModals" id="imprintModal" data-reveal>
+        <div class="small reveal help-modal" id="footerImprintModal" data-reveal>
             @helpmodals.imprintmodal()
             <button class="close-button" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
 
-        <div class="small reveal helpModals" id="subnavHelpModal" data-reveal>
+        <div class="small reveal help-modal" id="footerHelpModal" data-reveal>
             @helpmodals.helpmodal()
             <button class="close-button" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
 
-        <div class="small reveal helpModals" id="subnavFAQModal" data-reveal>
+        <div class="small reveal help-modal" id="footerFAQModal" data-reveal>
             @helpmodals.faqmodal()
             <button class="close-button" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
 
-        <div class="small reveal helpModals" id="privacyPolicyModal" data-reveal>
+        <div class="small reveal help-modal" id="footerPrivacyModal" data-reveal>
             @helpmodals.privacypolicymodal()
             <button class="close-button" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
 
-        <div class="small reveal helpModals" id="contactModal" data-reveal>
+        <div class="small reveal help-modal" id="footerContactModal" data-reveal>
             @helpmodals.contactmodal()
             <button class="close-button" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
 
-        <div class="small reveal helpModals" id="citeModal" data-reveal>
+        <div class="small reveal help-modal" id="footerCiteModal" data-reveal>
             @helpmodals.citemodal()
             <button class="close-button" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
 
-        <div class="small reveal helpModals" id="recentUpdatesModal" data-reveal>
+        <div class="small reveal help-modal" id="footerRecentUpdatesModal" data-reveal>
             @helpmodals.recentupdatesmodal()
             <button class="close-button" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
 
+        @views.html.jobs.resultpanels.templateAlignmentModal()
         @views.html.help.modal()
+        @views.html.forwardmodal()
 
             <!-- Foundation 6 -->
-        @Html(webJarsUtil.script("foundation.min.js"))
+        @webJarsUtil.locate("foundation.min.js").script()
 
 
             <!-- Reformat Javascript Library -->
@@ -312,11 +302,10 @@
 
             <!-- TypeScript && Mithril Assets -->
 
-        <script src="@routes.Assets.versioned("javascripts/blast-visualization.js")"></script>
         <script src="@routes.Assets.versioned("javascripts/vendor/msa.min.js")" type="text/javascript"></script>
-        @Html(webJarsUtil.script("biojs-io-newick.min.js"))
+        @webJarsUtil.locate("biojs-io-newick.min.js").script()
         <script src='@routes.Assets.versioned("javascripts/vendor/biojs-vis-tree.min.js")'></script>
-        @Html(webJarsUtil.script("snapsvg", "dist/snap.svg-min.js"))
+        @webJarsUtil.locate("snapsvg", "dist/snap.svg-min.js").script()
         <link rel="stylesheet" type="text/css" charset="utf-8" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
         <script src="@routes.Assets.versioned("javascripts/typescriptc.js")"></script>
@@ -326,9 +315,3 @@
         @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
     </body>
 </html>
-
-
-
-
-
-

@@ -1,5 +1,7 @@
 package actors
 
+import java.nio.file.{ Files, Paths }
+import java.time.ZonedDateTime
 import javax.inject.{ Inject, Named }
 
 import actors.ClusterMonitor._
@@ -8,18 +10,15 @@ import actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
 import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
-import models.UserSessions
-import de.proteinevolution.models.database.jobs.JobState._
+import de.proteinevolution.common.LocationProvider
+import de.proteinevolution.models.Constants
 import de.proteinevolution.models.database.jobs.Job
+import de.proteinevolution.models.database.jobs.JobState._
+import models.UserSessions
 import play.api.Logger
 import play.api.cache._
 import play.api.libs.json.{ JsValue, Json }
 import reactivemongo.bson.BSONObjectID
-import java.nio.file.{ Files, Paths }
-import java.time.ZonedDateTime
-
-import de.proteinevolution.common.LocationProvider
-import de.proteinevolution.models.Constants
 import services.JobActorAccess
 
 import scala.concurrent.ExecutionContext
@@ -47,7 +46,7 @@ final class WebSocketActor @Inject()(
     constants: Constants,
     @NamedCache("userCache") val userCache: SyncCacheApi,
     @NamedCache("wsActorCache") val wsActorCache: SyncCacheApi,
-    @Assisted("sessionID") private var sessionID: BSONObjectID
+    @Assisted("sessionID") sessionID: BSONObjectID
 )(implicit ec: ExecutionContext)
     extends Actor
     with ActorLogging {
@@ -86,10 +85,10 @@ final class WebSocketActor @Inject()(
     Logger.info(s"[WSActor] Websocket closed for session ${sessionID.stringify}")
   }
 
-  def receive = LoggingReceive {
+  private def active(sid: BSONObjectID): Receive = {
 
     case js: JsValue =>
-      userSessions.getUser(sessionID).foreach {
+      userSessions.getUser(sid).foreach {
         case Some(user) =>
           (js \ "type").validate[String].foreach {
 
@@ -127,7 +126,7 @@ final class WebSocketActor @Inject()(
             case "Ping" =>
               (js \ "date").validate[Long].asOpt match {
                 case Some(msTime) =>
-                  //Logger.info(s"[WSActor] Ping from session ${sessionID.stringify} with msTime $msTime")
+                  //Logger.info(s"[WSActor] Ping from session ${sid.stringify} with msTime $msTime")
                   out ! Json.obj("type" -> "Pong", "date" -> msTime)
                 case None =>
               }
@@ -137,7 +136,7 @@ final class WebSocketActor @Inject()(
               (js \ "date").validate[Long].asOpt match {
                 case Some(msTime) =>
                   val ping = ZonedDateTime.now.toInstant.toEpochMilli - msTime
-                  Logger.info(s"[WSActor] Ping of session ${sessionID.stringify} is ${ping}ms.")
+                  Logger.info(s"[WSActor] Ping of session ${sid.stringify} is ${ping}ms.")
                 case None =>
               }
           }
@@ -147,6 +146,13 @@ final class WebSocketActor @Inject()(
 
     case PushJob(job: Job) =>
       out ! Json.obj("type" -> "PushJob", "job" -> job.cleaned())
+
+    case ShowNotification(notificationType: String, tag: String, title: String, body: String) =>
+      out ! Json.obj("type"             -> "ShowNotification",
+                     "tag"              -> tag,
+                     "title"            -> title,
+                     "body"             -> body,
+                     "notificationType" -> notificationType)
 
     case UpdateLog(jobID: String) =>
       out ! Json.obj("type" -> "UpdateLog", "jobID" -> jobID)
@@ -171,14 +177,17 @@ final class WebSocketActor @Inject()(
     case ClearJob(jobID: String, deleted: Boolean) =>
       out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID, "deleted" -> deleted)
 
-    case ChangeSessionID(sessionID: BSONObjectID) =>
-      this.sessionID = sessionID
+    case ChangeSessionID(newSid: BSONObjectID) =>
+      context become active(newSid)
 
     case LogOut =>
       out ! Json.obj("type" -> "LogOut")
 
     case MaintenanceAlert =>
       out ! Json.obj("type" -> "MaintenanceAlert")
+  }
 
+  override def receive = LoggingReceive {
+    active(sessionID)
   }
 }

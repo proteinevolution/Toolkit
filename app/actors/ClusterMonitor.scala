@@ -1,7 +1,6 @@
 package actors
 
 import javax.inject.{ Inject, Singleton }
-
 import actors.ClusterMonitor._
 import actors.WebSocketActor.MaintenanceAlert
 import akka.actor.{ ActorLogging, _ }
@@ -29,11 +28,43 @@ final class ClusterMonitor @Inject()(mongoStore: MongoStore,
     extends Actor
     with ActorLogging {
 
-  case class RecordedTick(load: Double, timestamp: ZonedDateTime)
+  private def active(watchers: HashSet[ActorRef], record: List[Double]): Receive = {
 
-  private var record: List[Double]                = List.empty[Double]
-  protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
-  // Fetch the latest qhost status every 375ms
+    case Connect(actorRef) =>
+      context become active(watchers + actorRef, record)
+
+    case Disconnect(actorRef) =>
+      context become active(watchers - actorRef, record)
+
+    case Multicast => watchers.foreach { _ ! MaintenanceAlert }
+
+    case FetchLatest =>
+      //val load = cluster.getLoad.loadEst
+      val qStat = QStat("qstat -xml".!!)
+
+      // 32 Tasks are 100% - calculate the load from this.
+      val load: Double = qStat.totalJobs().toDouble / constants.loadPercentageMarker
+
+      jobActorAccess.broadcast(PolledJobs(qStat))
+
+      // Update the record
+      context become active(watchers, record.::(load))
+      // send load message
+      watchers.foreach(_ ! UpdateLoad(load))
+      // if there are enough records, group them in and stick them in the DB collection
+      if (record.length >= constants.loadRecordElements) self ! Recording
+
+    case Recording =>
+      val loadAverage      = record.sum[Double] / record.length
+      val currentTimestamp = ZonedDateTime.now
+      val _ = mongoStore
+        .upsertLoadStatistic(ClusterLoadEvent(BSONObjectID.generate(), record, loadAverage, Some(currentTimestamp)))
+        .map { _ =>
+          context become active(watchers, Nil)
+          ()
+        }
+  }
+
   private val Tick: Cancellable = {
     // scheduler should use the system dispatcher
     context.system.scheduler.schedule(Duration.Zero, constants.pollingInterval, self, FetchLatest)(
@@ -50,47 +81,12 @@ final class ClusterMonitor @Inject()(mongoStore: MongoStore,
   }
 
   override def receive = LoggingReceive {
-
-    case Connect(actorRef) =>
-      watchers = watchers + actorRef
-
-    case Disconnect(actorRef) =>
-      watchers = watchers - actorRef
-
-    case Multicast =>
-      watchers.foreach { _ ! MaintenanceAlert }
-
-    case FetchLatest =>
-      //val load = cluster.getLoad.loadEst
-      val qStat = QStat("qstat -xml".!!)
-
-      // 32 Tasks are 100% - calculate the load from this.
-      val load: Double = qStat.totalJobs().toDouble / constants.loadPercentageMarker
-
-      jobActorAccess.broadcast(PolledJobs(qStat))
-
-      // Update the record
-      record = record.::(load)
-      // send load message
-      watchers.foreach(_ ! UpdateLoad(load))
-      // if there are enough records, group them in and stick them in the DB collection
-      if (record.length >= constants.loadRecordElements) self ! Recording
-
-    // Writes the current load to the database and clears the record.
-    case Recording =>
-      val loadAverage      = record.sum[Double] / record.length
-      val currentTimestamp = ZonedDateTime.now
-      val _ = mongoStore
-        .upsertLoadStatistic(ClusterLoadEvent(BSONObjectID.generate(), record, loadAverage, Some(currentTimestamp)))
-        .map { _ =>
-          record = List.empty[Double]
-          ()
-        }
+    active(HashSet.empty, List.empty[Double])
   }
 }
 
 object ClusterMonitor {
-
+  case class RecordedTick(load: Double, timestamp: ZonedDateTime)
   case class Disconnect(actorRef: ActorRef)
   case class Connect(actorRef: ActorRef)
   case object FetchLatest

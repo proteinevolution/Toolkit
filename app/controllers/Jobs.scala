@@ -17,11 +17,11 @@ import services.JobActorAccess
 import scala.io.Source
 
 /**
-  * This controller is supposed to handle request coming from the Backend, such as compute
-  * nodes from a gridengine. It checks if the posted key matches up with the key that is stored in
-  * each job folder in order to prevent unauthorized status changes.
-  *
-  */
+ * This controller is supposed to handle request coming from the Backend, such as compute
+ * nodes from a gridengine. It checks if the posted key matches up with the key that is stored in
+ * each job folder in order to prevent unauthorized status changes.
+ *
+ */
 @Singleton
 final class Jobs @Inject()(jobActorAccess: JobActorAccess,
                            @NamedCache("userCache") implicit val userCache: SyncCacheApi,
@@ -64,7 +64,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
     NoContent
   }
 
-  def SGEID(jobID: String, sgeID: String, key : String): Action[AnyContent] = Action {
+  def SGEID(jobID: String, sgeID: String, key: String): Action[AnyContent] = Action {
     if (checkKey(jobID, key)) {
       jobActorAccess.sendToJobActor(jobID, SetSGEID(jobID, sgeID))
       NoContent
@@ -80,13 +80,13 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
   }
 
   /**
-    * checks given key against the key that is
-    * located in the folder jobPath/jobID/key
-    *
-    * @param jobID
-    * @param key
-    * @return
-    */
+   * checks given key against the key that is
+   * located in the folder jobPath/jobID/key
+   *
+   * @param jobID
+   * @param key
+   * @return
+   */
   def checkKey(jobID: String, key: String): Boolean = {
     val source = Source.fromFile(constants.jobPath + "/" + jobID + "/key")
     val refKey = try { source.mkString.replaceAll("\n", "") } finally { source.close() }

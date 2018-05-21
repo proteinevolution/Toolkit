@@ -8,9 +8,9 @@ case class Param(name: String, paramType: ParamType, internalOrdering: Int, labe
 
 object Param {
   implicit val paramWrites: Writes[Param] = (
-      (JsPath \ "name").write[String] and
-          (JsPath \ "paramType").write[ParamType] and
-          (JsPath \ "internalOrdering").write[Int] and
-          (JsPath \ "label").write[String]
-      )(unlift(Param.unapply))
+    (JsPath \ "name").write[String] and
+    (JsPath \ "paramType").write[ParamType] and
+    (JsPath \ "internalOrdering").write[Int] and
+    (JsPath \ "label").write[String]
+  )(unlift(Param.unapply))
 }

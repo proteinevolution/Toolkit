@@ -77,7 +77,7 @@ const JobTabsComponent = {
                         onCollapse();
                     }
                     $("#collapseMe").addClass("fa-expand").removeClass("fa-compress");
-                    followScroll(document);
+                    Toolkit.resultView.scrollUtil.followScroll($(document));
                     if (typeof setViewport === "function") {
                         setViewport();
                     }
@@ -89,7 +89,7 @@ const JobTabsComponent = {
                         onExpand();
                     }
                     $("#collapseMe").addClass("fa-compress").removeClass("fa-expand");
-                    followScroll(job_tab_component);
+                    Toolkit.resultView.scrollUtil.followScroll($(job_tab_component));
                     if (typeof setViewport === "function") {
                         setViewport();
                     }
@@ -139,7 +139,7 @@ const JobTabsComponent = {
                 ctrl.isJob ? m("li", { style: "float: right; margin-right: 24px; margin-top: 7px" },
                     m("i", {
                         type: "button",
-                        "class": "delete fa fa-trash-o",
+                        "class": "delete far fa-trash-alt",
                         title :"Delete job",
                         "data-tooltip": "",
                         onclick: ctrl["delete"].bind(ctrl),

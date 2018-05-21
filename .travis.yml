@@ -2,17 +2,21 @@ language: scala
 dist: trusty
 sudo: required
 scala:
-  - 2.12.4
+  - 2.12.6
 jdk:
   - openjdk8
+env:
+  matrix: SBT_BIN=sbt -Dsbt.override.build.repos=true -Dsbt.repository.config=/$HOME/.sbt/repositories -Dsbt.boot.directory=sbt-cache/boot -Dsbt.ivy.home=sbt-cache/ivy2
 before_cache:
   - find $HOME/.ivy2/cache -name 'ivydata-*.properties' -delete
   - find $HOME/.sbt -name '*.lock' -delete
-  - rm -rf $HOME/.sbt/0.13/dependency/module/dynamic
 cache:
   directories:
   - "$HOME/.ivy2/cache"
   - $HOME/.sbt
+before_install:
+  - chmod +x bin/validate-code
+  - git clone https://github.com/AlDanial/cloc.git $HOME/cloc
 install:
   - git submodule update --init --recursive
   - git clone https://github.com/felixgabler/maxmind-geoip2-scala.git $HOME/pizza
@@ -24,4 +28,7 @@ install:
   - nvm use stable
   - npm install
   - npm install jsdom
-script: sbt test:compile test stage
+script:
+ - bin/validate-code
+ - sbt test:compile test stage
+ - $HOME/cloc/cloc $(git ls-files)

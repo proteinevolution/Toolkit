@@ -1,12 +1,11 @@
-@import java.lang.String
 @(filepath : String, filename : String, jobID : String, resultname : String)()
 
 <a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download PDB file</a>
-<hr id="line-element" class="horizontal-line"><br><br>
+<hr class="horizontal-line"> <br> <br>
 
-<div id="viewport"></div><br><br><br>
+<div id="viewport" class="job@jobID"></div><br><br><br>
 
-<hr id="line-element" class="horizontal-line">
+<hr class="horizontal-line">
 <div id="toolReferences">
 
 @if(resultname == "Modeller") {
@@ -34,10 +33,9 @@
 }
 </div>
 
-<hr id="line-element" class="horizontal-line">
+<hr class="horizontal-line">
 
 <script>
-        var downloadFilename = "@{resultname}_@{jobID}";
         window["@{resultname}_download"] = function(){
             var downloadFilename = "@{resultname}_@{jobID}" + ".pdb";
             var fileURL="/files/@{jobID}/@{filename}";
@@ -45,27 +43,35 @@
                 method: "GET",
                 url: fileURL
             }).done(function(data){
-                download(downloadFilename, data);
+                DownloadHelper.download(downloadFilename, data);
             })
         };
 
-        $(document).ready(function () {
+        $(function () {
             setViewport();
         });
 
         function setViewport() {
+            var $viewport = $("#viewport.job@jobID"); // get specific element for this job (prevent interference with structure modal)
 
             if($('#tool-tabs').hasClass('fullscreen')) {
-                $('#viewport').width($(window).width() - 100).height(900).find('canvas').first().remove();
+                $viewport.width($(window).width() - 100)
+                        .height(900)
+                        .find('canvas')
+                        .first()
+                        .remove();
             } else {
-                $('#viewport').width(810).height(500).find('canvas').first().remove();
+                $viewport.width(810)
+                        .height(500)
+                        .find('canvas')
+                        .first()
+                        .remove();
             }
 
-            $("#viewport").ready(function(){
+            $viewport.ready(function(){
                 setTimeout(function() {
-                    stage = new NGL.Stage( "viewport" );
+                    var stage = new NGL.Stage( $viewport.get(0) );
                     stage.loadFile('@filepath', {defaultRepresentation: true});
-                    stage.set
                 }, 100);
             });
 

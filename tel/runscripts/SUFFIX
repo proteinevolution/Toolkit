@@ -1,4 +1,4 @@
-until $(curl -X POST --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/done/%jobid.content/$key); do
+until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/done/%jobid.content/$key); do
     printf 'host unreachable\n...waiting to set job status to done\n'
     sleep 5
 done

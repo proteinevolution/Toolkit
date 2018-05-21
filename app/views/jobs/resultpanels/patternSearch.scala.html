@@ -1,25 +1,18 @@
 @import play.api.libs.json.JsObject
 @import play.api.libs.json.JsValue
 @import play.api.libs.json.JsDefined
-@import controllers.routes
 @import play.twirl.api.Html
-@import java.lang.String
-
 @import de.proteinevolution.tools.results.Common
 @(jobID: String, jsValue: JsValue, tool: de.proteinevolution.models.Tool)()
-
-<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
-@views.html.forwardmodals.simpler(tool, tool.toolNameShort)
 @if((jsValue \ jobID \ "hits").as[List[JsObject]].size < 1) {
     <div class="callout alert noHitsWide" id="noHits">
         No hits found!
     </div>
-
 }else{
 <div class="colorOptsAlignment">
     <a onclick="download_()" type="button"><span id="downloadAlignment">Download Hits</span></a>
-    <a data-open="forwardModal_@{tool.toolNameShort}" type="button"><span id="downloadAlignment">Forward All</span></a>
-    <hr id="line-element" class="horizontal-line">
+    <a class="forwardModalOpenBtn" data-modal-type="simpler" data-result-name="@{tool.toolNameShort}" data-forward-issuer="PATTERN_SEARCH" type="button"><span id="downloadAlignment">Forward All</span></a>
+    <hr class="horizontal-line">
 </div>
 <div id="alignmentResultView">
     <br/>
@@ -57,49 +50,38 @@
     }
 </div>
     <br>
-    <hr id="line-element" class="horizontal-line">
+<hr class="horizontal-line">
     <div id="toolReferences">
         If you use PatternSearch for your research, please cite:
         <div class="citation">
             @views.html.help.common.toolkit_citation_results()
         </div>
     </div>
-    <hr id="line-element" class="horizontal-line">
+<hr class="horizontal-line">
 
-    <script>
-        var data;
-       // wrap seqs by default
-        $(document).ready(function () {
-            wrapSequences()
-        });
+<script>
 
-        // get result json
-        var fileUrl = "/files/@jobID/@{jobID}" + ".json";
-        $.getJSON(fileUrl, function (data_) {
-            data = data_;
-        });
+   // wrap seqs by default
+    $(function () {
+        wrapSequences()
+    });
 
-        function wrapSequences(){
-                $(".sequenceAlignment").addClass("wrap");
-                $("#wrapSequences").addClass("colorToggle");
-        }
+    new ForwardingModal($("#jobview"), "@{tool.toolNameShort}", "@{jobID}");
 
-        window["@{tool.toolNameShort}_forward"] = function(selectedTool){
-            $.LoadingOverlay("show");
-            var fileURL="/files/@{jobID}/@{jobID}" + ".fas";
-            forwardPath(selectedTool, fileURL);
+    function wrapSequences(){
+            $(".sequenceAlignment").addClass("wrap");
+            $("#wrapSequences").addClass("colorToggleBar");
+    }
 
-        };
-
-        function download_(){
-            var downloadFilename = "@{tool.toolNameShort}_@{jobID}" + ".fas";
-            var fileURL="/files/@{jobID}/@{jobID}" + ".fas";
-            $.ajax({
-                method: "GET",
-                url: fileURL
-            }).done(function(data){
-                download(downloadFilename, data);
-            })
-        }
+    function download_(){
+        var downloadFilename = "@{tool.toolNameShort}_@{jobID}" + ".fas";
+        var fileURL="/files/@{jobID}/@{jobID}" + ".fas";
+        $.ajax({
+            method: "GET",
+            url: fileURL
+        }).done(function(data){
+            DownloadHelper.download(downloadFilename, data);
+        })
+    }
 
 </script>

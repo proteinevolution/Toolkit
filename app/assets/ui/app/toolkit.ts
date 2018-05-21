@@ -13,6 +13,9 @@ interface Window { Toolkit: any; }
 
 window.Toolkit = {
     currentJobID : -1,
+    trackedJobIDs: [],
+    notFoundJobID: "", // keep track of which job was not found last
+    resultView: null,
     getSuggestion : function (ctrl : any) {
         return function (e : any) {}
     },
@@ -31,21 +34,27 @@ window.Toolkit = {
         }
     },
     controller: function(args : any) {
-
-
         currentRoute = args.isJob ? "jobs" : "tools";
         let job : any, jobID : string, toolname : string, viewComponent : any;
         if (args.isJob) {
             jobID = m.route.param("jobID");
             Toolkit.currentJobID = jobID;
-            if (!JobListComponent.contains(jobID) || !(Toolkit.currentJobID === jobID)) {
+            // check if job was not found. Try again but display 404 first
+            if(Toolkit.notFoundJobID === jobID) {
+                let route = jsRoutes.controllers.JobController.loadJob(jobID);
+                m.request({method: route.method, url: route.url}).then(function (data) {
+                    Toolkit.notFoundJobID = ""; // reset not found job
+                    JobListComponent.pushJob(JobListComponent.Job(data), true);
+                });
+            } else if (!JobListComponent.contains(jobID) || !(Toolkit.currentJobID === jobID)) {
                 // ensure addition to the job list
                 //ws.send({ type: "RegisterJobs", "jobIDs": [jobID] });
                 // request job
                 let route = jsRoutes.controllers.JobController.loadJob(jobID);
                 m.request({method: route.method, url: route.url}).catch(function (e) {
-                    m.route("/404");
                     console.log("Job Not found", e);
+                    Toolkit.notFoundJobID = jobID;
+                    m.route("/jobs/" + jobID); // reload and show not found
                 }).then(function (data) {
                     JobListComponent.pushJob(JobListComponent.Job(data), true);
                 });
@@ -60,7 +69,6 @@ window.Toolkit = {
             viewComponent = function() { return FrontendTools[toolname]; };
         }
         else {
-
             // checks whether toolname is valid
             if (!args.isJob) {
                 let route = jsRoutes.controllers.Search.existsTool(toolname);
@@ -70,16 +78,17 @@ window.Toolkit = {
                 }).then(function(data) {
                 });
             }
-
-            job = window.JobModel.update(args, args.isJob ? jobID : toolname); // job variable is a toolname ?? TODO refactor this
-            viewComponent = function() {
-
-                return m(JobViewComponent, { job: job });
-
-            };
-
+            if(Toolkit.notFoundJobID === jobID) {
+                viewComponent = function() {
+                    return m(Job404Component, { jobID: jobID });
+                }
+            } else {
+                job = window.JobModel.update(args, args.isJob ? jobID : toolname); // job variable is a toolname ?? TODO refactor this
+                viewComponent = function() {
+                    return m(JobViewComponent, { job: job });
+                };
+            }
         }
-
         return {
             viewComponent: viewComponent
         };

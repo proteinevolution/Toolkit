@@ -1,17 +1,12 @@
 @import play.api.libs.json.JsValue
-@import controllers.routes
-@import java.lang.String
-@(toolName: String, jobID: String, jsValue: JsValue, tool : de.proteinevolution.models.Tool)()
-<link href="@routes.Assets.versioned("styles/blast-visualization.css")" rel="stylesheet">
+@(toolName: String, jobID: String, jsValue: JsValue)()
 <div class="colorOptsAlignment">
-    <a type="button" data-open="forwardModal_@toolName""><span>Forward selected</span></a>
-    <a type="button" id="downloadAlignment"  onclick="download_()"><span>Download File</span></a>
-    <hr id="line-element" class="horizontal-line">
+    <a class="forwardModalOpenBtn" type="button" data-modal-type="simpler" data-result-name="@{toolName}" data-forward-issuer="UNCHECKED_LIST"><span>Forward selected</span></a>
+    <a type="button" id="downloadAlignment" onclick="download_()"><span>Download File</span></a>
+    <hr class="horizontal-line">
 </div>
 <br/><br/>
 <div class="h1">Retrieved @{{jsValue \ "ids" \ "ACC_IDS"}.as[List[JsValue]].size} IDs<br/><br/></div>
-
-    @views.html.forwardmodals.simpler(tool, toolName)
 
  <div class="uncheckedListWrap">
     @for((id) <- (jsValue \ "ids" \ "ACC_IDS").as[List[JsValue]]){
@@ -22,22 +17,13 @@
  </div>
 
 <script>
-    var data=null;
-    // get result json
-    var fileUrl = "/files/@jobID/ids.json";
-    $.getJSON(fileUrl, function (data_) {
-    data = data_;
-    });
-
-    window["@{toolName}_forward"] = function(tool) {
-        forwardData = data.ACC_IDS;
-        forward(tool, forwardData.join("\n"));
-    };
+    new ForwardingModal($("#jobview"), "@{toolName}", "@{jobID}");
 
     function download_(){
-        var fileString = "";
-        fileString = data.ACC_IDS;
-        var filename = "@{toolName}_jobID_@{jobID}" + ".fasta";
-        download(filename, fileString.join("\n"));
+        $.getJSON("/files/@jobID/ids.json", function (data) {
+            var fileString = data.ACC_IDS;
+            var filename = "@{toolName}_jobID_@{jobID}" + ".fasta";
+            DownloadHelper.download(filename, fileString.join("\n"));
+        });
     }
 </script>

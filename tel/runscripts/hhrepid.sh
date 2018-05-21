@@ -146,6 +146,3 @@ rm ../results/query.reduced.a3m ../results/query.a3m
 
 echo "done" >> ../results/process.log
 updateProcessLog
-
-
-
