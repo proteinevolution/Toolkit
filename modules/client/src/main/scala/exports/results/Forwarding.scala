@@ -12,6 +12,7 @@ import upickle.default.write
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 import scala.scalajs.js.timers._
+import scala.scalajs.js.JSON
 
 @JSExportTopLevel("Forwarding")
 object Forwarding {
@@ -39,26 +40,32 @@ object Forwarding {
       case (true, false)  => s"$baseRoute/alnEval"
       case (false, false) => s"$baseRoute/aln"
     }
+
     jQuery.LoadingOverlay("show")
-    jQuery
-      .ajax(
-        js.Dictionary(
-            "url"         -> route,
-            "data"        -> write(ForwardingFormNormal(filename, evalue, checkboxes.toArray)),
-            "contentType" -> "application/json",
-            "method"      -> "POST"
-          )
-          .asInstanceOf[JQueryAjaxSettings]
+    val opts =
+      new XHROptions[js.Object](
+        method = "POST",
+        url = route,
+        data = JSON
+          .parse(write(ForwardingFormNormal(filename, evalue, checkboxes.toArray)))
+          .asInstanceOf[js.UndefOr[js.Object]],
+        background = true
       )
-      .done((_: js.Any, _: js.Any, jqXHR: JQueryXHR) => {
-        if (jqXHR.status == 204) {
-          redirect(selectedTool, s"files/$jobID/$filename.fa")
-        }
-      })
-      .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
-        println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
+    val reqPromise = m.request(opts)
+    reqPromise.onSuccess {
+      case _ => redirect(selectedTool, s"files/$jobID/$filename.fa")
+    }
+    reqPromise.onFailure[Throwable] {
+      case e =>
+        if (e.getMessage contains "timeout")
+          dom.window.alert("Request timeout: your query might be too large.")
+        else
+          println(s"Exception: ${e.getMessage}")
+    }
+    reqPromise.recover {
+      case _ =>
         jQuery.LoadingOverlay("hide")
-      })
+    }
   }
 
   def processAlnResults(jobID: String, selectedTool: String, resultName: String): Unit = {
