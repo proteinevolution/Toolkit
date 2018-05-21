@@ -58,7 +58,7 @@ object Forwarding {
     reqPromise.onFailure[Throwable] {
       case e =>
         if (e.getMessage contains "timeout")
-          dom.window.alert("Request timeout: your query might be too large.")
+          dom.window.alert("Request timeout: the forwarded data might be too large.")
         else
           println(s"Exception: ${e.getMessage}")
     }
