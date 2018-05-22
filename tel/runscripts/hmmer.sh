@@ -133,38 +133,39 @@ updateProcessLog
 echo "done" >> ../results/process.log
 updateProcessLog
 
-
 echo "#Preparing output." >> ../results/process.log
 updateProcessLog
 
-#Convert to fasta format
-reformat_hhsuite.pl sto a3m ../results/${JOBID}.msa_sto $(readlink -f ../results/${JOBID}.msa_a3m)
+if [ -s "../results/${JOBID}.msa_sto" ]; then
 
-prepareForHMMER.py ../results/${JOBID}.outfile ../results/${JOBID}.outfilefl
+    #Convert to fasta format
+    reformat_hhsuite.pl sto a3m ../results/${JOBID}.msa_sto $(readlink -f ../results/${JOBID}.msa_a3m)
 
-hmmer2json.py -i ../results/${JOBID}.outfilefl \
+    prepareForHMMER.py ../results/${JOBID}.outfile ../results/${JOBID}.outfilefl
+
+    hmmer2json.py -i ../results/${JOBID}.outfilefl \
                   -o ../results/${JOBID}.json \
                   -m %desc.content \
                   -e %evalue.content > ../results/${JOBID}.list
 
-extractFasta.py ../results/${JOBID}.msa_a3m ../results/${JOBID}.list
+    extractFasta.py ../results/${JOBID}.msa_a3m ../results/${JOBID}.list
 
-reformat_hhsuite.pl a3m fas ../results/${JOBID}.msa_a3m.subset $(readlink -f ../results/output.aln_fas) -uc -l 32000
+    reformat_hhsuite.pl a3m fas ../results/${JOBID}.msa_a3m.subset $(readlink -f ../results/output.aln_fas) -uc -l 32000
 
-manipulate_json.py -k 'db' -v '%hmmerdb.content' ../results/${JOBID}.json
-#create tab separated file to feed into blastviz
-hmmerJson2tab.py ../results/${JOBID}.json ../results/query.json ../results/${JOBID}.tab
-blastviz_json.pl ../results/${JOBID}.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
+    manipulate_json.py -k 'db' -v '%hmmerdb.content' ../results/${JOBID}.json
+    #create tab separated file to feed into blastviz
+    hmmerJson2tab.py ../results/${JOBID}.json ../results/query.json ../results/${JOBID}.tab
+    blastviz_json.pl ../results/${JOBID}.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
 
-# add transmembrane prediction info to json
-manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/${JOBID}.json
+    # add transmembrane prediction info to json
+    manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/${JOBID}.json
 
-# add coiled coil prediction info to json
-manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/${JOBID}.json
+    # add coiled coil prediction info to json
+    manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/${JOBID}.json
 
-# Generate MSA in JSON
-fasta2json.py ../results/output.aln_fas ../results/alignment.json
-
+    # Generate MSA in JSON
+    fasta2json.py ../results/output.aln_fas ../results/alignment.json
+fi
 cd ../results
 rm -f *.hmm *.outfile* *.list *.msa_* ${JOBID}.fas firstSeq.fas
 
