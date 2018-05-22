@@ -111,23 +111,24 @@
 
 }
 <script>
-// config
-var shownHits = 500;
-
-$(function(){
-    var context = {
-        numHits: @result.num_hits,
-        toolName: "@tool.toolNameShort",
-        firstQueryStart: @result.HSPS.head.query_start,
-        firstQueryEnd: @result.HSPS.head.query_end,
-        belowEvalThreshold: @result.belowEvalThreshold,
-        query: {
-            seq: "@result.query.seq",
-            accession: "@result.query.accession"
-        }
-    };
-    Toolkit.resultView = new NormalResultView($("#jobview"), "@{jobID}", shownHits, true, false, context);
-});
+    // config
+    var shownHits = 500;
+    @if(result.num_hits > 0){
+        $(function(){
+            var context = {
+                numHits: @result.num_hits,
+                toolName: "@tool.toolNameShort",
+                firstQueryStart: @result.HSPS.head.query_start,
+                firstQueryEnd: @result.HSPS.head.query_end,
+                belowEvalThreshold: @result.belowEvalThreshold,
+                query: {
+                    seq: "@result.query.seq",
+                    accession: "@result.query.accession"
+                }
+        };
+            Toolkit.resultView = new NormalResultView($("#jobview"), "@{jobID}", shownHits, true, false, context);
+            });
+    }
 
 // TODO: move download into own scalajs
 window["@{tool.toolNameShort}_download"] = function(){

@@ -173,21 +173,20 @@
         var shownHits = 100;
         var jobID = "@{jobID}";
 
-        $(function () {
-            var context = {
-                numHits: @result.num_hits,
-                toolName: "@tool.toolNameShort",
-                firstQueryStart: @result.HSPS.head.query.start,
-                firstQueryEnd: @result.HSPS.head.query.end,
-                query: {
-                    seq: "@result.query.seq",
-                    accession: "@result.query.accession"
-                }
-            };
-            Toolkit.resultView = new NormalResultView($("#jobview"), jobID, shownHits, true, true, context);
-        });
-
-        @if(result.num_hits > 0) {
+        @if(result.num_hits > 0){
+            $(function () {
+                var context = {
+                    numHits: @result.num_hits,
+                    toolName: "@tool.toolNameShort",
+                    firstQueryStart: @result.HSPS.head.query.start,
+                    firstQueryEnd: @result.HSPS.head.query.end,
+                    query: {
+                        seq: "@result.query.seq",
+                        accession: "@result.query.accession"
+                    }
+                };
+                Toolkit.resultView = new NormalResultView($("#jobview"), jobID, shownHits, true, true, context);
+            });
             new StructureModal($("#jobview"), $("#structureModal"));
         }
 
