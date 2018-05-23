@@ -3,9 +3,13 @@
 @import play.twirl.api.Html
 @(jobID: String, result: HHompResult, tool: de.proteinevolution.models.Tool, htmlPath: String)()
 @if(result.num_hits < 1) {
-    <div class="callout alert noHitsWide" id="noHits">
-        No hits found!
+    <div class="note">
+        No hits found! Please re-run HHomp with an increased number of MSA generation steps or with a custom-built
+        multiple sequence alignment as input (set 'Maximal no. of MSA generation steps' to 0). You could also
+    consider picking a different target database and/or using different parameters.
     </div>
+    <br><br><br><br>
+    <hr class="horizontal-line">
 } else {
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
@@ -79,7 +83,8 @@
         </div>
     </div>
     <br>
-    <div id="toolReferences">
+}
+<div id="toolReferences">
         <h5 id="refTitle">References</h5>
         If you use our HHomp server for your research, please cite:
         <div class="citation">
@@ -90,10 +95,10 @@
             <div>HHomp--prediction and classification of outer membrane proteins.<br>
                 Remmert M, Linke D, Lupas AN, Söding J.<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkp325" target="_blank" rel="noopener"> Nucleic Acids Res. 2009 Jul;37:W446-51</a>.</div>
                     </div>
-        </div>
-    <hr class="horizontal-line">
+</div>
+<hr class="horizontal-line">
 
-}
+
 <script>
         var shownHits = 100;
 
