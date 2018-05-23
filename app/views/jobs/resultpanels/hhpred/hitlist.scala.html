@@ -5,8 +5,10 @@
 @(jobID: String, result: HHPredResult, tool: de.proteinevolution.models.Tool, htmlPath: String)()
 
 @if(result.num_hits < 1) {
-    <div class="callout alert noHitsWide" id="noHits">
-        No hits found!
+    <div class="note">
+        No hits found! Please re-run HHpred with an increased number of MSA generation steps or with a custom-built
+        multiple sequence alignment as input (set 'Maximal no. of MSA generation steps' to 0). You could also
+        consider picking a different target database and/or using different parameters.
     </div>
 } else {
     <div class="scrollContainer scrollContainerWhite">

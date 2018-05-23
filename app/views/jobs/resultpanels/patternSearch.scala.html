@@ -5,8 +5,8 @@
 @import de.proteinevolution.tools.results.Common
 @(jobID: String, jsValue: JsValue, tool: de.proteinevolution.models.Tool)()
 @if((jsValue \ jobID \ "hits").as[List[JsObject]].size < 1) {
-    <div class="callout alert noHitsWide" id="noHits">
-        No hits found!
+    <div class="note">
+        No hits found! You could consider picking a different target database.<br><br><br><br>
     </div>
 }else{
 <div class="colorOptsAlignment">
