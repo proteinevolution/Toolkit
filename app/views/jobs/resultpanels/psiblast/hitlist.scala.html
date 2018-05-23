@@ -5,9 +5,12 @@
 @* Load html Map used for the image representation *@
 
     @if(result.num_hits < 1) {
-        <div class="callout alert noHitsWide" id="noHits">
-            No hits found!
-        </div>
+    <div class="note">
+        No hits found! Please re-run ProtBLAST/PSI-BLAST with a custom-built multiple sequence alignment. You could also
+        consider picking a different target database and/or using different parameters.
+    </div>
+    <br><br><br><br>
+    <hr class="horizontal-line">
     } else{
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
@@ -95,6 +98,7 @@
                   </table>
             </form>
     </div>
+}
     <div id="toolReferences">
         <h5 id="refTitle">References</h5>
         If you use our PSI-BLAST+ server for your research, please cite:
@@ -109,7 +113,7 @@
     </div>
     <hr class="horizontal-line">
 
-}
+
 <script>
     // config
     var shownHits = 500;

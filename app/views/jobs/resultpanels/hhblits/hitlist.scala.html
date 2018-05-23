@@ -3,9 +3,12 @@
 @import play.twirl.api.Html
 @(jobID: String, result: HHBlitsResult, tool: de.proteinevolution.models.Tool, htmlPath: String)()
     @if(result.num_hits < 1) {
-        <div class="callout alert noHitsWide" id="noHits">
-            No hits found!
+        <div class="note">
+            No hits found! Please re-run HHblits with a custom-built multiple sequence alignment as input. You could also
+            consider using different parameters.
         </div>
+        <br><br><br><br>
+        <hr class="horizontal-line">
     } else {
     @* Load html Map used for the image representation *@
     <div class="scrollContainer scrollContainerWhite">
@@ -97,12 +100,13 @@
         </div>
     </div>
     <br>
-    <div id="toolReferences">
+}
+<div id="toolReferences">
         <h5 id="refTitle">References</h5>
 
         If you use our HHblits server for your research, please cite:
         <div class="citation">
-            @views.html.help.common.toolkit_citation_results()
+        @views.html.help.common.toolkit_citation_results()
         </div>
         And the HHblits paper:
         <div class="citation">
@@ -110,9 +114,8 @@
                 Remmert M, Biegert A, Hauser A, Söding J.<a href="https://www.nature.com/nmeth/journal/v9/n2/full/nmeth.1818.html" target="_blank" rel="noopener"> Nat Methods. 2011 Dec 25;9(2):173-5</a>.
             </div>
         </div>
-    </div>
-    <hr class="horizontal-line">
-}
+</div>
+<hr class="horizontal-line">
 
 <script>
 

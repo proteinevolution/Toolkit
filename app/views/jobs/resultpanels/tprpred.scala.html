@@ -6,8 +6,8 @@
 @(jobID: String,jsValue: JsValue)()
 
 @if((jsValue \ jobID \ "hits").as[List[JsValue]].size < 1) {
-        <div class="callout alert noHitsWide" id="noHits">
-                No hits found!
+        <div class="note">
+                No repeats found! You could consider picking a less stringent E-value inclusion cut-off.<br><br><br><br>
         </div>
 } else {
         <br/><hr><br/><br/>
@@ -48,19 +48,20 @@
                 </tbody>
         </table>
         </div>
-        <br/><br/><hr><br/>
-        
-	<div id="toolReferences">
-        If you use TPRpred for your research, please cite:
-		<div class="citation">
-			@views.html.help.common.toolkit_citation_results()
-			<br/>
-			<div>TPRpred: a tool for prediction of TPR-, PPR- and SEL1-like repeats from protein sequences.<br>
-				Karpenahalli MR, Lupas AN, Söding J.<a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-8-2" target="_blank" rel="noopener"> BMC Bioinformatics. 2007 Jan 3;8:2.</a></div>
-	   </div>
-	</div>
-        <hr class="horizontal-line">
+        <br/><br/>
 }
+<hr><br/>
+<div id="toolReferences">
+        If you use TPRpred for your research, please cite:
+        <div class="citation">
+                @views.html.help.common.toolkit_citation_results()
+                <br/>
+                <div>TPRpred: a tool for prediction of TPR-, PPR- and SEL1-like repeats from protein sequences.<br>
+                        Karpenahalli MR, Lupas AN, Söding J.<a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-8-2" target="_blank" rel="noopener"> BMC Bioinformatics. 2007 Jan 3;8:2.</a></div>
+        </div>
+</div>
+<hr class="horizontal-line">
+
 
 <script>
         var data = null;

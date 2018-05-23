@@ -4,9 +4,13 @@
 @(jobID: String, result: HmmerResult, tool: de.proteinevolution.models.Tool, htmlPath: String)()
 @* Load html Map used for the image representation *@
     @if(result.num_hits < 1) {
-        <div class="callout alert noHitsWide" id="noHits">
-            No hits found!
-        </div>
+    <div class="note">
+        No hits found! Please re-run HMMER with a custom-built multiple sequence alignment as input
+        (set 'MSA enrichment iterations using HHblits' to 0). You could also
+        consider picking a different target database and/or using different parameters.
+    </div>
+    <br><br><br><br>
+    <hr class="horizontal-line">
     } else {
     <div class="scrollContainer scrollContainerWhite">
         <div class="scrollContainerDiv scrollContainerDivWhite">
@@ -101,6 +105,7 @@
         </div>
     </div>
     <br>
+}
     <div id="toolReferences">
         <h5 id="refTitle">References</h5>
         If you use our HMMER server for your research, please cite:
@@ -115,7 +120,7 @@
     </div>
     <hr class="horizontal-line">
 
-}
+
 <script>
         var shownHits = 50;
 
