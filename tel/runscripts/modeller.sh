@@ -1,18 +1,8 @@
 # TODO: parse SEQNAME and KNOWNS in a proper way
 # NGL: http://arose.github.io/ngl/api/Stage.html#event:fullscreenChanged
 
-#Check if MODELLER license key is correct
-
-if [ "%regkey.content" = "MODELIRANJE" ] ; then
-      echo "#Executing MODELLER." >> ../results/process.log
-      updateProcessLog
-else
-      echo "#Incorrect registration key. Please register here: https://salilab.org/modeller/registration.html." >> ../results/process.log
-      echo "error" >> ../results/process.log
-      updateProcessLog
-      false
-fi
-
+echo "#Executing MODELLER." >> ../results/process.log
+updateProcessLog
 
 #convert alignment file to PIR, if it is not already PIR
 
