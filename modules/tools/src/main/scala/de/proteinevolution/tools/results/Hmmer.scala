@@ -3,36 +3,45 @@ package de.proteinevolution.tools.results
 import javax.inject.Inject
 import javax.inject.Singleton
 import de.proteinevolution.tools.results.Alignment.AlignmentResult
-import de.proteinevolution.tools.results.General.{DTParam, SingleSeq}
+import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
 import de.proteinevolution.tools.results.HHTemplate.DummyTemplate
-import de.proteinevolution.tools.results.Hmmer.{HmmerHSP, HmmerResult}
+import de.proteinevolution.tools.results.Hmmer.{ HmmerHSP, HmmerResult }
 import play.api.libs.json._
 
 @Singleton
 class Hmmer @Inject()(general: General, aln: Alignment) extends SearchTool[HmmerHSP] {
 
   def parseResult(jsValue: JsValue): HmmerResult = {
-    val obj   = jsValue.as[JsObject]
-    val jobID = (obj \ "jobID").as[String]
+    val obj           = jsValue.as[JsObject]
+    val jobID         = (obj \ "jobID").as[String]
     val jsonAlignment = obj \ "alignment"
-    val alignment = if (jsonAlignment.isInstanceOf[JsUndefined]) List() else jsonAlignment.as[List[JsArray]].zipWithIndex.map {
-      case (x, index) =>
-        aln.parseWithIndex(x, index)
-    }
+    val alignment =
+      if (jsonAlignment.isInstanceOf[JsUndefined]) List()
+      else
+        jsonAlignment.as[List[JsArray]].zipWithIndex.map {
+          case (x, index) =>
+            aln.parseWithIndex(x, index)
+        }
     val jobDetails = obj \ jobID
-    val db       = if(jobDetails.isInstanceOf[JsUndefined]) null else (jobDetails \ "db").as[String]
-    val query    = general.parseSingleSeq((obj \ "query").as[JsArray])
-    val hsps     = if(jobDetails.isInstanceOf[JsUndefined]) List() else (jobDetails \ "hsps").as[List[JsObject]]
-    val num_hits = hsps.length
-    val hsplist  = hsps.map(parseHSP)
-    val TMPRED = if(jobDetails.isInstanceOf[JsUndefined]) "0" else (jobDetails \ "TMPRED").asOpt[String] match {
-      case Some(data) => data
-      case None       => "0"
-    }
-    val COILPRED = if(jobDetails.isInstanceOf[JsUndefined]) "1" else (jobDetails \ "COILPRED").asOpt[String] match {
-      case Some(data) => data
-      case None       => "1"
-    }
+    val db         = if (jobDetails.isInstanceOf[JsUndefined]) null else (jobDetails \ "db").as[String]
+    val query      = general.parseSingleSeq((obj \ "query").as[JsArray])
+    val hsps       = if (jobDetails.isInstanceOf[JsUndefined]) List() else (jobDetails \ "hsps").as[List[JsObject]]
+    val num_hits   = hsps.length
+    val hsplist    = hsps.map(parseHSP)
+    val TMPRED =
+      if (jobDetails.isInstanceOf[JsUndefined]) "0"
+      else
+        (jobDetails \ "TMPRED").asOpt[String] match {
+          case Some(data) => data
+          case None       => "0"
+        }
+    val COILPRED =
+      if (jobDetails.isInstanceOf[JsUndefined]) "1"
+      else
+        (jobDetails \ "COILPRED").asOpt[String] match {
+          case Some(data) => data
+          case None       => "1"
+        }
     HmmerResult(hsplist, num_hits, AlignmentResult(alignment), query, db, TMPRED, COILPRED)
   }
 
