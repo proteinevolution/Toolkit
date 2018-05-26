@@ -558,11 +558,17 @@ select:-moz-focusring {
     font-size: 0.9em;
   }
 
-  .forwardWarning {
+  .full-length-warning{
     width: 100%;
     color: black;
     margin-bottom: 0;
     margin-top: 1.9em;
+    font-size: 0.75em;
+  }
+
+  .forward-warning {
+    color: black;
+    margin-bottom: 0;
     font-size: 0.75em;
   }
 }
