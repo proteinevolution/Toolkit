@@ -232,10 +232,8 @@ tr.spaceUnder > td {
 }
 
 .headalert {
-  background-color: #f8d7da;
   border: 1px solid rgba(10, 10, 10, 0.25);
   border-radius: 4px;
-  color: #721c24;
   font-weight: 300;
   font-size: 20px;
   position: fixed;
@@ -247,4 +245,9 @@ tr.spaceUnder > td {
   z-index: 1001;
   white-space: pre;
   display: none;
+}
+
+.alert-danger {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
 }
