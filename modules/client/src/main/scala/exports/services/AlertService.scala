@@ -4,9 +4,6 @@ import org.scalajs.jquery.jQuery
 
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 
-/**
- * show alert like popup but uniform in style for all browsers
- */
 @JSExportTopLevel("AlertService")
 object AlertService {
 
