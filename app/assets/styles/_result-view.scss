@@ -753,6 +753,12 @@ label.forwardLabel input[type=radio] {
   height: 30pc;
 }
 
+pre.modeller-results {
+    font-size: 12px;
+    height: 30pc;
+    overflow-y: auto;
+}
+
 /* CSS Media Queries */
 @media screen and (max-width: 1200px) {
   #hcontainer {
@@ -793,3 +799,5 @@ label.forwardLabel input[type=radio] {
     float: left;
   }
 }
+
+
