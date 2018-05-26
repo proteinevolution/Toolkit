@@ -196,17 +196,6 @@ select:-moz-focusring {
   top: 0;
 }
 
-#viewport {
-  border: 1px solid lightgray;
-  margin: 0 auto;
-  background: $white;
-  min-height: 700px;
-}
-
-#viewport canvas {
-  background-color: transparent !important;
-}
-
 .fetchError {
   padding: 10em !important;
 }
@@ -261,24 +250,46 @@ select:-moz-focusring {
 
 #templateAlignmentModal,
 #structureModal {
-  width: 60em;
-  max-width: 60em;
+  @include breakpoint(medium) {
+    width: 60em;
+    max-width: 60em;
+  }
   background-color: #eee;
-  overflow-y: initial;
 }
 
-#templateAlignmentModal select {
-  font-size: 0.80em !important;
-  -moz-appearance: none !important;
-  -webkit-appearance: none !important;
-  border-radius: 4px;
-  margin-top: 1.5em;
-  padding-bottom: 0.5em;
-  padding-top: 0.5em;
-  height: 2.75em;
-  color: #000;
-  text-shadow: 0 0 0 #000;
-  width: 12em;
+#templateAlignmentModal {
+  select {
+    font-size: 0.80em !important;
+    -moz-appearance: none !important;
+    -webkit-appearance: none !important;
+    border-radius: 4px;
+    margin-top: 1.5em;
+    padding-bottom: 0.5em;
+    padding-top: 0.5em;
+    height: 2.75em;
+    color: #000;
+    text-shadow: 0 0 0 #000;
+    width: 12em;
+  }
+  .alignmentTemplateTextArea {
+    max-height: 100%;
+    @include breakpoint(small only) {
+      margin-bottom: 10px;
+    }
+  }
+}
+
+#viewport {
+  border: 1px solid lightgray;
+  margin: 0 auto;
+  background: $white;
+  @include breakpoint(medium) {
+    min-height: 700px;
+    max-height: 100%;
+  }
+  canvas {
+    background-color: transparent !important;
+  }
 }
 
 #accessionStructure {
@@ -558,7 +569,7 @@ select:-moz-focusring {
     font-size: 0.9em;
   }
 
-  .full-length-warning{
+  .full-length-warning {
     width: 100%;
     color: black;
     margin-bottom: 0;
@@ -572,6 +583,7 @@ select:-moz-focusring {
     font-size: 0.75em;
   }
 }
+
 .forward_form {
   width: 99%;
   display: flex;
@@ -753,9 +765,9 @@ label.forwardLabel input[type=radio] {
 }
 
 pre.modeller-results {
-    font-size: 12px;
-    height: 30pc;
-    overflow-y: auto;
+  font-size: 12px;
+  height: 30pc;
+  overflow-y: auto;
 }
 
 /* CSS Media Queries */
