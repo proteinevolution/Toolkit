@@ -2,11 +2,10 @@ package de.proteinevolution.tools.results
 
 import javax.inject.Inject
 import javax.inject.Singleton
-
 import de.proteinevolution.tools.results.Alignment.AlignmentResult
-import de.proteinevolution.tools.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.tools.results.General.{DTParam, SingleSeq}
 import de.proteinevolution.tools.results.HHTemplate.DummyTemplate
-import de.proteinevolution.tools.results.Hmmer.{ HmmerHSP, HmmerResult }
+import de.proteinevolution.tools.results.Hmmer.{HmmerHSP, HmmerResult}
 import play.api.libs.json._
 
 @Singleton
@@ -15,20 +14,22 @@ class Hmmer @Inject()(general: General, aln: Alignment) extends SearchTool[Hmmer
   def parseResult(jsValue: JsValue): HmmerResult = {
     val obj   = jsValue.as[JsObject]
     val jobID = (obj \ "jobID").as[String]
-    val alignment = (obj \ "alignment").as[List[JsArray]].zipWithIndex.map {
+    val jsonAlignment = obj \ "alignment"
+    val alignment = if (jsonAlignment.isInstanceOf[JsUndefined]) List() else jsonAlignment.as[List[JsArray]].zipWithIndex.map {
       case (x, index) =>
         aln.parseWithIndex(x, index)
     }
-    val db       = (obj \ jobID \ "db").as[String]
+    val jobDetails = obj \ jobID
+    val db       = if(jobDetails.isInstanceOf[JsUndefined]) null else (jobDetails \ "db").as[String]
     val query    = general.parseSingleSeq((obj \ "query").as[JsArray])
-    val hsps     = (obj \ jobID \ "hsps").as[List[JsObject]]
+    val hsps     = if(jobDetails.isInstanceOf[JsUndefined]) List() else (jobDetails \ "hsps").as[List[JsObject]]
     val num_hits = hsps.length
     val hsplist  = hsps.map(parseHSP)
-    val TMPRED = (obj \ jobID \ "TMPRED").asOpt[String] match {
+    val TMPRED = if(jobDetails.isInstanceOf[JsUndefined]) "0" else (jobDetails \ "TMPRED").asOpt[String] match {
       case Some(data) => data
       case None       => "0"
     }
-    val COILPRED = (obj \ jobID \ "COILPRED").asOpt[String] match {
+    val COILPRED = if(jobDetails.isInstanceOf[JsUndefined]) "1" else (jobDetails \ "COILPRED").asOpt[String] match {
       case Some(data) => data
       case None       => "1"
     }
