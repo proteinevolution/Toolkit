@@ -1,8 +1,6 @@
 package exports.services
 
-import org.scalajs.jquery.{ jQuery, JQuery }
-import exports.facades.JQueryPlugin._
-import org.scalajs.dom
+import org.scalajs.jquery.jQuery
 
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 
@@ -12,17 +10,14 @@ import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 @JSExportTopLevel("AlertService")
 object AlertService {
 
-  val $modal: JQuery         = jQuery("#alertModal")
-  val $textContainer: JQuery = $modal.find(".alert-modal-text")
-
   @JSExport
-  def alert(text: String): Unit = {
-    if ($modal.length > 0 && $textContainer.length > 0) {
-      $textContainer.text(text)
-      $modal.foundation("open")
-    } else { // fallback to js alert
-      dom.window.alert(text)
-    }
+  def alert(text: String, mode: String = ""): Unit = {
+    jQuery("#alert-service-msg")
+        .text(text)
+        .addClass(mode)
+        .fadeIn("fast")
+        .delay(4000)
+        .fadeOut("slow")
   }
 
 }

@@ -96,6 +96,7 @@
 
     </head>
     <body onload="reloadJobList();">
+        <div id="alert-service-msg" class="headalert"></div>
         <input type="hidden" id="authView" value="@view">
 
         <div id="message-float">
@@ -291,7 +292,6 @@
         @views.html.jobs.resultpanels.templateAlignmentModal()
         @views.html.help.modal()
         @helpmodals.forwardmodal()
-        @helpmodals.alertmodal()
 
             <!-- Foundation 6 -->
         @webJarsUtil.locate("foundation.min.js").script()
