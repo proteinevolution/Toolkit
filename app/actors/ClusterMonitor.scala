@@ -10,7 +10,7 @@ import de.proteinevolution.models.database.statistics.ClusterLoadEvent
 import de.proteinevolution.db.MongoStore
 import java.time.ZonedDateTime
 
-import de.proteinevolution.models.Constants
+import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.parsers.Ops.QStat
 import reactivemongo.bson.BSONObjectID
 import services.JobActorAccess
@@ -24,7 +24,7 @@ import scala.concurrent.duration._
 final class ClusterMonitor @Inject()(mongoStore: MongoStore,
                                      jobActorAccess: JobActorAccess,
                                      val settings: Settings,
-                                     constants: Constants)(implicit ec: ExecutionContext)
+                                     constants: ConstantsV2)(implicit ec: ExecutionContext)
     extends Actor
     with ActorLogging {
 

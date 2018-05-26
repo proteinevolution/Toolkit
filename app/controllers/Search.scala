@@ -8,7 +8,7 @@ import play.api.libs.json.Json
 import javax.inject.{ Inject, Singleton }
 
 import de.proteinevolution.common.LocationProvider
-import de.proteinevolution.models.Constants
+import de.proteinevolution.models.ConstantsV2
 import reactivemongo.bson.BSONDocument
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
@@ -21,7 +21,7 @@ final class Search @Inject()(
     userSessions: UserSessions,
     mongoStore: MongoStore,
     toolFactory: ToolFactory,
-    constants: Constants,
+    constants: ConstantsV2,
     cc: ControllerComponents
 )(implicit ec: ExecutionContext,
   val locationProvider: LocationProvider,

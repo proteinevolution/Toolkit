@@ -5,7 +5,7 @@ import de.proteinevolution.tools.models.{ ForwardMode, HHContext, ResultContext 
 import de.proteinevolution.tools.services.{ KleisliProvider, ProcessFactory, ToolNameGetService }
 import play.api.mvc.{ AbstractController, Action, AnyContent }
 import better.files._
-import de.proteinevolution.models.{ Constants, ToolName }
+import de.proteinevolution.models.{ ConstantsV2, ToolName }
 
 import scala.sys.process.Process
 import de.proteinevolution.tools.results.{ HSP, SearchResult }
@@ -20,7 +20,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class ProcessController @Inject()(ctx: HHContext,
                                   toolFinder: ToolNameGetService,
-                                  constants: Constants,
+                                  constants: ConstantsV2,
                                   kleisliProvider: KleisliProvider,
                                   resultContext: ResultContext)(implicit ec: ExecutionContext, futures: Futures)
     extends AbstractController(ctx.controllerComponents) {
