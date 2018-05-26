@@ -18,6 +18,7 @@ object AlertService {
         .fadeIn("fast")
         .delay(4000)
         .fadeOut("slow")
+        .removeClass(mode)
   }
 
 }
