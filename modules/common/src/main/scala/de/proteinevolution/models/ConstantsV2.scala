@@ -9,13 +9,13 @@ import scala.concurrent.duration._
 import scala.util.matching.Regex
 
 @Singleton
-class Constants {
+class ConstantsV2 {
 
   /** Number of jobActors */
   val nJobActors: Int = 100
 
   /** Key for the Modeller tool */
-  val modellerKey: String = "MODELIRANJE"
+  val modellerKey: String = ConfigFactory.load().getString("modeller_key")
 
   // File Settings
   /** File Seperator */

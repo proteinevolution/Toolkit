@@ -2,7 +2,7 @@ package de.proteinevolution.tools.controllers
 
 import javax.inject.Inject
 
-import de.proteinevolution.models.Constants
+import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tools.models.HHContext
 import de.proteinevolution.tools.results.Common
@@ -10,7 +10,7 @@ import play.api.mvc.{ AbstractController, Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
 
-class FileController @Inject()(ctx: HHContext, env: Env, constants: Constants)(implicit ec: ExecutionContext)
+class FileController @Inject()(ctx: HHContext, env: Env, constants: ConstantsV2)(implicit ec: ExecutionContext)
     extends AbstractController(ctx.controllerComponents) {
 
   def getStructureFile(filename: String): Action[AnyContent] = Action { implicit request =>

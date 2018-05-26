@@ -6,7 +6,7 @@ import javax.inject.{ Inject, Singleton }
 import de.proteinevolution.models.database.jobs.JobState._
 import actors.JobActor.{ JobStateChanged, SetSGEID, UpdateLog }
 import de.proteinevolution.common.LocationProvider
-import de.proteinevolution.models.Constants
+import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.db.MongoStore
 import play.api.cache.{ NamedCache, SyncCacheApi }
@@ -27,7 +27,7 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
                            @NamedCache("userCache") implicit val userCache: SyncCacheApi,
                            implicit val locationProvider: LocationProvider,
                            mongoStore: MongoStore,
-                           constants: Constants,
+                           constants: ConstantsV2,
                            cc: ControllerComponents)
     extends AbstractController(cc) {
 

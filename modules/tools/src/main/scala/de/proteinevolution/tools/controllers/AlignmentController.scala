@@ -2,7 +2,7 @@ package de.proteinevolution.tools.controllers
 
 import javax.inject.Inject
 
-import de.proteinevolution.models.Constants
+import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.tools.results.{ Alignment, Common }
 import de.proteinevolution.db.ResultFileAccessor
 import play.api.libs.json.JsArray
@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext
 
 class AlignmentController @Inject()(resultFiles: ResultFileAccessor,
                                     aln: Alignment,
-                                    constants: Constants,
+                                    constants: ConstantsV2,
                                     cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc) {
 
