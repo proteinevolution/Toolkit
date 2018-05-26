@@ -549,13 +549,6 @@ select:-moz-focusring {
 }
 
 /* Result View Forward Modals */
-.forwardModal p, #templateAlignmentModal p, #structureModal p {
-  font-size: 1em;
-  font-weight: bold;
-  color: get-color(success);
-  margin-bottom: 0.5em;
-}
-
 .forwardModal {
   .forward_form {
     font-size: 0.8em;

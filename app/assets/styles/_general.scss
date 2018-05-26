@@ -128,6 +128,16 @@ textarea {
   }
 }
 
+.custom-modal-header {
+  font-weight: bold;
+  color: get-color(success);
+  margin-bottom: 0.5em;
+}
+
+h5.custom-modal-header {
+  margin-bottom: 0.8rem;
+}
+
 .noFouc {
   display: none;
 }

@@ -2,8 +2,8 @@ package exports.results
 
 import de.proteinevolution.models.forwarding.ForwardModalOptions
 import exports.facades.JQueryPlugin._
+import exports.services.AlertService
 import helpers.SnakePickle
-import org.scalajs.dom
 import org.scalajs.dom.raw.{ HTMLElement, HTMLInputElement }
 import org.scalajs.jquery._
 
@@ -127,10 +127,10 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
                 val selectedTool: String    = $forwardSelect.value().toString
                 val evalue: String          = $selectionRadioBtnArea.find(".forwardEvalueNormalInput").value().toString.trim
                 if (selectedTool == "") {
-                  dom.window.alert("Please select a tool!")
+                  AlertService.alert("Please select a tool!")
                 } else {
                   if (boolEvalue && evalue == "") {
-                    dom.window.alert("no evalue!")
+                    AlertService.alert("no evalue!")
                   } else {
                     Forwarding.processResults(jobID, selectedTool, boolEvalue, evalue, boolFullLength)
                     $modal.foundation("close")
@@ -142,7 +142,7 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
               {
                 val selectedTool: String = $forwardSelect.value().toString
                 if (selectedTool == "") {
-                  dom.window.alert("Please select a tool!")
+                  AlertService.alert("Please select a tool!")
                 } else {
                   jQuery.LoadingOverlay("show")
                   Forwarding.redirect(selectedTool, s"/files/$jobID/reduced.a3m")
@@ -157,10 +157,10 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
                 val selectedTool: String = $forwardSelect.value().toString
                 val evalue: String       = $modal.find(".forwardEvalueNormalInput").value().toString.trim
                 if (selectedTool == "") {
-                  dom.window.alert("Please select a tool!")
+                  AlertService.alert("Please select a tool!")
                 } else {
                   if (evalue == "" && boolEvalue) {
-                    dom.window.alert("no evalue!")
+                    AlertService.alert("no evalue!")
                   } else {
                     Forwarding.processResults(jobID, selectedTool, boolEvalue, evalue, isFullLength = false)
                   }
@@ -172,7 +172,7 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
               {
                 val selectedTool: String = $forwardSelect.value().toString
                 if (selectedTool == "") {
-                  dom.window.alert("Please select a tool!")
+                  AlertService.alert("Please select a tool!")
                 } else {
                   forwardIssuer.toUpperCase match {
                     case "NORMAL" => Forwarding.processAlnResults(jobID, selectedTool, resultName)
@@ -201,7 +201,7 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
           case _ =>
             () =>
               {
-                dom.window.alert("Error! Forwarding does not work. Please refresh the page.")
+                AlertService.alert("Error! Forwarding does not work. Please refresh the page.")
               }
         }
       )

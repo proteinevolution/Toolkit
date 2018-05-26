@@ -161,7 +161,7 @@
     <hr class="horizontal-line">
     @*MODALS*@
     <div class="reveal" id="structureModal" data-reveal>
-        <p>Template 3D structure</p>
+        <p class="custom-modal-header">Template 3D structure</p>
         <div id="accessionStructure"> </div>
 
         <div id="viewport"></div>
@@ -209,7 +209,7 @@
             var formData = new FormData(document.getElementById("hhpred_templates"));
             if ($('input:checkbox[name=alignment_elem]:checked').length === 0) {
                 $("input:checkbox[name=alignment_elem][value=1]").prop("checked", true);
-                alert("No templates selected. Using first template for modelling.");
+                AlertService.alert("No templates selected. Using first template for modelling.");
             }
             formData.append("templates", Toolkit.resultView.getSelectedValues.join(" ")); // TODO move checkbox handling
             formData.append("parentid", jobID);
