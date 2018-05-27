@@ -8,15 +8,15 @@ import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 object AlertService {
 
   @JSExport
-  def alert(text: String, mode: String = "alert-success"): Unit = {
+  def alert(text: String, mode: String = "alert-success", timeout: Int = 4000): Unit = {
     jQuery("#alert-service-msg")
       .addClass(mode)
       .text(text)
       .fadeIn("fast")
-      .delay(4000)
+      .delay(timeout)
       .fadeOut("slow")
     import scala.scalajs.js.timers._
-    setTimeout(4500) {
+    setTimeout(timeout.toDouble + 500) {
       jQuery("#alert-service-msg")
         .removeClass(mode)
     }
