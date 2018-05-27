@@ -1,14 +1,17 @@
 package exports.results.resultviews
 
-import org.scalajs.jquery.{ jQuery, JQueryAjaxSettings, JQueryXHR }
+import org.scalajs.jquery.jQuery
 
 import scala.scalajs.js
 import org.scalajs.dom
 import org.scalajs.dom.document
+import com.tgf.pizza.scalajs.mithril._
 
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 import exports.facades.JQueryPlugin._
 import exports.results.DownloadHelper
+
+import scala.scalajs.js.UndefOr
 
 @JSExportTopLevel("FileView")
 class FileView() {
@@ -30,26 +33,32 @@ class FileView() {
         useCapture = false
       )
     jQuery.LoadingOverlay("show")
-    jQuery
-      .ajax(
-        js.Dictionary(
-            "url"      -> s"files/$jobID/$fileName",
-            "dataType" -> "text",
-            "type"     -> "GET"
-          )
-          .asInstanceOf[JQueryAjaxSettings]
+    val opts =
+      new XHROptions[String](
+        method = "GET",
+        url = s"files/$jobID/$fileName",
+        background = true,
+        deserialize = deserializer
       )
-      .done((data: js.Any, _: js.Any, _: JQueryXHR) => {
+    val reqPromise = m.request(opts)
+    reqPromise.onSuccess {
+      case data =>
         fullScreenHandler()
         jQuery(s"#fileview_$resultName").append(data.asInstanceOf[String])
-      })
-      .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
-        println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
-      })
-      .always(() => {
         jQuery.LoadingOverlay("hide")
-      })
+    }
+    reqPromise.onFailure[Throwable] {
+      case e =>
+        jQuery.LoadingOverlay("hide")
+        println(s"Exception: ${e.getMessage}")
+    }
+    reqPromise.recover {
+      case _ =>
+        jQuery.LoadingOverlay("hide")
+    }
   }
+
+  lazy val deserializer: UndefOr[js.Function1[String, String]] = js.defined((response: String) => response)
 
   private def fullScreenHandler(): Unit = {
     if (jQuery("#tool-tabs").hasClass("fullscreen")) {
@@ -64,25 +73,28 @@ class FileView() {
       case "hhpred" | "hhomp" => ".hhr"
       case _                  => ".out"
     }
-    jQuery
-      .ajax(
-        js.Dictionary(
-            "url"      -> s"files/$jobID/$fileName",
-            "dataType" -> "text",
-            "type"     -> "GET"
-          )
-          .asInstanceOf[JQueryAjaxSettings]
+    val opts =
+      new XHROptions[String](
+        method = "GET",
+        url = s"files/$jobID/$fileName",
+        background = true,
+        deserialize = deserializer
       )
-      .done((data: js.Any, _: js.Any, _: JQueryXHR) => {
-        DownloadHelper.download(filename + ending, data.asInstanceOf[String])
-      })
-      .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
-        println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
-
-      })
-      .always(() => {
+    val reqPromise = m.request(opts)
+    reqPromise.onSuccess {
+      case data => DownloadHelper.download(filename + ending, data.asInstanceOf[String])
+    }
+    reqPromise.onFailure[Throwable] {
+      case e =>
+        if (e.getMessage contains "timeout")
+          dom.window.alert("Request timeout: data might be too large.")
+        else
+          println(s"Exception: ${e.getMessage}")
+    }
+    reqPromise.recover {
+      case _ =>
         jQuery.LoadingOverlay("hide")
-      })
+    }
   }
 
 }
