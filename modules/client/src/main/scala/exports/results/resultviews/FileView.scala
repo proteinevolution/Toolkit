@@ -20,6 +20,15 @@ class FileView() {
       .addEventListener("click", (_: dom.Event) => {
         downloadFile(jobID, fileName, resultName)
       }, useCapture = false)
+    document
+      .getElementById("collapseMe")
+      .addEventListener(
+        "click",
+        (_: dom.Event) => {
+          fullScreenHandler()
+        },
+        useCapture = false
+      )
     jQuery.LoadingOverlay("show")
     jQuery
       .ajax(
@@ -31,6 +40,7 @@ class FileView() {
           .asInstanceOf[JQueryAjaxSettings]
       )
       .done((data: js.Any, _: js.Any, _: JQueryXHR) => {
+        fullScreenHandler()
         jQuery(s"#fileview_$resultName").append(data.asInstanceOf[String])
       })
       .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
@@ -39,6 +49,13 @@ class FileView() {
       .always(() => {
         jQuery.LoadingOverlay("hide")
       })
+  }
+
+  private def fullScreenHandler(): Unit = {
+    if (jQuery("#tool-tabs").hasClass("fullscreen")) {
+      jQuery(".fileview").css("overflow-y", "auto")
+      jQuery(".fileview").css("height", "100pc")
+    } else { jQuery(".fileview").css("height", "30pc") }
   }
 
   private def downloadFile(jobID: String, fileName: String, resultName: String): Unit = {
