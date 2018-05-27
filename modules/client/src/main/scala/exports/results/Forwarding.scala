@@ -29,7 +29,7 @@ object Forwarding {
 
     if (checkboxes.length < 1 && !hasEvalue) {
       jQuery(".forwardModal").foundation("close")
-      AlertService.alert("No sequence(s) selected!")
+      AlertService.alert("No sequences selected!", "alert-danger")
       return
     }
 
@@ -59,7 +59,7 @@ object Forwarding {
     reqPromise.onFailure[Throwable] {
       case e =>
         if (e.getMessage contains "timeout")
-          AlertService.alert("Request timeout: the forwarded data might be too large.")
+          AlertService.alert("Request timeout: the forwarded data might be too large.", "alert-danger")
         else
           println(s"Exception: ${e.getMessage}")
     }
@@ -73,7 +73,7 @@ object Forwarding {
     val checkboxes = js.Dynamic.global.Toolkit.resultView.getSelectedValues.asInstanceOf[js.Array[Int]]
     if (checkboxes.length < 1) {
       jQuery(".forwardModal").foundation("close")
-      AlertService.alert("No sequence(s) selected!")
+      AlertService.alert("No sequences selected!", "alert-danger")
       return
     }
     jQuery.LoadingOverlay("show")
@@ -121,7 +121,7 @@ object Forwarding {
   @JSExport
   def simple(tool: String, forwardData: String): Unit = {
     if (forwardData.isEmpty) {
-      AlertService.alert("No sequence(s) selected!")
+      AlertService.alert("No sequences selected!", "alert-danger")
       return
     }
     m.route(s"/tools/$tool")
