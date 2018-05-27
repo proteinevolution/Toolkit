@@ -44,7 +44,7 @@ class FileView() {
     reqPromise.onSuccess {
       case data =>
         fullScreenHandler()
-        jQuery(s"#fileview_$resultName").append(data.asInstanceOf[String])
+        m.render(document.getElementById(s"fileview_$resultName"), m.trust(data).asInstanceOf[VirtualDom.Child])
         jQuery.LoadingOverlay("hide")
     }
     reqPromise.onFailure[Throwable] {
