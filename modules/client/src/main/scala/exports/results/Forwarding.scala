@@ -5,6 +5,7 @@ import java.util.UUID
 import com.tgf.pizza.scalajs.mithril._
 import exports.facades.JQueryPlugin._
 import exports.results.models.ForwardingForm.{ ForwardingFormAln, ForwardingFormNormal }
+import exports.services.AlertService
 import org.scalajs.dom
 import org.scalajs.jquery.{ jQuery, JQueryAjaxSettings, JQueryXHR }
 import upickle.default.write
@@ -28,7 +29,7 @@ object Forwarding {
 
     if (checkboxes.length < 1 && !hasEvalue) {
       jQuery(".forwardModal").foundation("close")
-      dom.window.alert("No sequence(s) selected!")
+      AlertService.alert("No sequences selected!", "alert-danger")
       return
     }
 
@@ -58,7 +59,7 @@ object Forwarding {
     reqPromise.onFailure[Throwable] {
       case e =>
         if (e.getMessage contains "timeout")
-          dom.window.alert("Request timeout: the forwarded data might be too large.")
+          AlertService.alert("Request timeout: the forwarded data might be too large.", "alert-danger")
         else
           println(s"Exception: ${e.getMessage}")
     }
@@ -72,7 +73,7 @@ object Forwarding {
     val checkboxes = js.Dynamic.global.Toolkit.resultView.getSelectedValues.asInstanceOf[js.Array[Int]]
     if (checkboxes.length < 1) {
       jQuery(".forwardModal").foundation("close")
-      dom.window.alert("No sequence(s) selected!")
+      AlertService.alert("No sequences selected!", "alert-danger")
       return
     }
     jQuery.LoadingOverlay("show")
@@ -120,7 +121,7 @@ object Forwarding {
   @JSExport
   def simple(tool: String, forwardData: String): Unit = {
     if (forwardData.isEmpty) {
-      dom.window.alert("No sequence(s) selected!")
+      AlertService.alert("No sequences selected!", "alert-danger")
       return
     }
     m.route(s"/tools/$tool")
