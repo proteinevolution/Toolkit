@@ -13,20 +13,4 @@
     $(function () {
        new FileView().apply("@{jobID}", "@{filename}", "@{resultname}");
     });
-
-     //using both functions is not pretty and somewhat redundant but gets the job done
-     $( "#fileviewerDownload_@{resultname}" ).ready(function() {
-         if ($('#tool-tabs').hasClass('fullscreen')) {
-             $(".fileview").css({"overflow-y": "visible", "height": "100pc"});
-         } else {
-             $(".fileview").css("height", "30pc");
-         }
-     });
-
-     function onExpand() {
-         $(".fileview").css({"overflow-y": "visible", "height": "100pc"});
-     }
-     function onCollapse() {
-         $(".fileview").css("height", "30pc");
-     }
 </script>

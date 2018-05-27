@@ -35,7 +35,6 @@ class FileView() {
       })
       .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
         println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
-
       })
       .always(() => {
         jQuery.LoadingOverlay("hide")
