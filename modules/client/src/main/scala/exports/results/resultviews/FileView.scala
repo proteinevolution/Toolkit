@@ -30,7 +30,7 @@ class FileView() {
           )
           .asInstanceOf[JQueryAjaxSettings]
       )
-      .done((data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) => {
+      .done((data: js.Any, _: js.Any, _: JQueryXHR) => {
         jQuery(s"#fileview_$resultName").append(data.asInstanceOf[String])
       })
       .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
@@ -57,7 +57,7 @@ class FileView() {
           )
           .asInstanceOf[JQueryAjaxSettings]
       )
-      .done((data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) => {
+      .done((data: js.Any, _: js.Any, _: JQueryXHR) => {
         DownloadHelper.download(filename + ending, data.asInstanceOf[String])
       })
       .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
