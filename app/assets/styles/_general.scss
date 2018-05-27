@@ -235,7 +235,7 @@ tr.spaceUnder > td {
   border: 1px solid rgba(10, 10, 10, 0.25);
   border-radius: 4px;
   font-weight: 300;
-  font-size: 20px;
+  font-size: 16px;
   position: fixed;
   padding: 5px 15px;
   top: -2px;
@@ -248,6 +248,6 @@ tr.spaceUnder > td {
 }
 
 .alert-danger {
-  background-color: #f8d7da !important;
+  background-color: rgba(248, 215, 218, 0.5) !important;
   color: #721c24 !important;
 }
