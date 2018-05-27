@@ -58,7 +58,7 @@ class FileView() {
     }
   }
 
-  lazy val deserializer: UndefOr[js.Function1[String, String]] = js.defined((response: String) => response)
+  private lazy val deserializer: UndefOr[js.Function1[String, String]] = js.defined((response: String) => response)
 
   private def fullScreenHandler(): Unit = {
     if (jQuery("#tool-tabs").hasClass("fullscreen")) {
