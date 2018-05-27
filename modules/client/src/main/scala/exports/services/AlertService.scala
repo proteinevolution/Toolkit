@@ -8,7 +8,7 @@ import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 object AlertService {
 
   @JSExport
-  def alert(text: String, mode: String = "alert-danger"): Unit = {
+  def alert(text: String, mode: String = "alert-success"): Unit = {
     jQuery("#alert-service-msg")
       .addClass(mode)
       .text(text)
