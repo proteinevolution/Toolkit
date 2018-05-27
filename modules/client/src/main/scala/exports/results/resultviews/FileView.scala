@@ -1,7 +1,6 @@
 package exports.results.resultviews
 
-import org.scalajs.jquery.jQuery
-import com.tgf.pizza.scalajs.mithril._
+import org.scalajs.jquery.{ jQuery, JQueryAjaxSettings, JQueryXHR }
 
 import scala.scalajs.js
 import org.scalajs.dom
@@ -22,27 +21,25 @@ class FileView() {
         downloadFile(jobID, fileName, resultName)
       }, useCapture = false)
     jQuery.LoadingOverlay("show")
-    val opts =
-      new XHROptions[String](
-        method = "GET",
-        dataType = "text",
-        url = s"files/$jobID/$fileName",
-        background = true
+    jQuery
+      .ajax(
+        js.Dictionary(
+            "url"      -> s"files/$jobID/$fileName",
+            "dataType" -> "text",
+            "type"     -> "GET"
+          )
+          .asInstanceOf[JQueryAjaxSettings]
       )
-    val reqPromise = m.request(opts)
-    reqPromise.onSuccess {
-      case data =>
-        println(data.asInstanceOf[String]) //jQuery(s"#fileview_$resultName").append(data.asInstanceOf[String])
-    }
-    reqPromise.onFailure[Throwable] {
-      case e =>
+      .done((data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) => {
+        jQuery(s"#fileview_$resultName").append(data.asInstanceOf[String])
+      })
+      .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
+        println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
+
+      })
+      .always(() => {
         jQuery.LoadingOverlay("hide")
-        println(s"Exception: ${e.getMessage}")
-    }
-    reqPromise.recover {
-      case _ =>
-        jQuery.LoadingOverlay("hide")
-    }
+      })
   }
 
   private def downloadFile(jobID: String, fileName: String, resultName: String): Unit = {
@@ -51,28 +48,25 @@ class FileView() {
       case "hhpred" | "hhomp" => ".hhr"
       case _                  => ".out"
     }
-    val opts =
-      new XHROptions[js.Object](
-        method = "GET",
-        dataType = "text",
-        url = s"files/$jobID/$fileName",
-        background = true
+    jQuery
+      .ajax(
+        js.Dictionary(
+            "url"      -> s"files/$jobID/$fileName",
+            "dataType" -> "text",
+            "type"     -> "GET"
+          )
+          .asInstanceOf[JQueryAjaxSettings]
       )
-    val reqPromise = m.request(opts)
-    reqPromise.onSuccess {
-      case data => DownloadHelper.download(filename + ending, data.asInstanceOf[String])
-    }
-    reqPromise.onFailure[Throwable] {
-      case e =>
-        if (e.getMessage contains "timeout")
-          dom.window.alert("Request timeout: data might be too large.")
-        else
-          println(s"Exception: ${e.getMessage}")
-    }
-    reqPromise.recover {
-      case _ =>
+      .done((data: js.Any, textStatus: js.Any, jqXHR: JQueryXHR) => {
+        DownloadHelper.download(filename + ending, data.asInstanceOf[String])
+      })
+      .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
+        println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
+
+      })
+      .always(() => {
         jQuery.LoadingOverlay("hide")
-    }
+      })
   }
 
 }
