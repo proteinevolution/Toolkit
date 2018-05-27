@@ -116,7 +116,7 @@
                 form = document.getElementById("jobform");
                 if(!form.checkValidity()) {
                     JobSubmissionComponent.submitting = false;
-                    alert("Parameters are invalid");
+                    (<any>window).AlertService.alert("Parameters are invalid", "alert-danger");
                     return;
                 }
 

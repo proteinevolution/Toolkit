@@ -23,7 +23,7 @@ myCodeMirror2.setSize("100%", 220);
 function forwardTo(tool) {
     if (myCodeMirror2.lineCount() > 1) {
         Forwarding.simple(tool, myCodeMirror2.getValue());
-    } else { alert("No output to forward to."); }
+    } else { AlertService.alert("No output to forward to."); }
 }
 
 function hideFormats(currentVal) {
