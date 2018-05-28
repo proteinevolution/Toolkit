@@ -6,7 +6,7 @@ import scala.scalajs.js
 import org.scalajs.dom
 import org.scalajs.dom.document
 import com.tgf.pizza.scalajs.mithril._
-
+import org.scalajs.dom.ext._
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 import exports.facades.JQueryPlugin._
 import exports.results.DownloadHelper
@@ -19,10 +19,13 @@ class FileView() {
   @JSExport("apply")
   def apply(jobID: String, fileName: String, resultName: String): Unit = {
     document
-      .getElementById("download_alignment")
-      .addEventListener("click", (_: dom.Event) => {
-        downloadFile(jobID, fileName, resultName)
-      }, useCapture = false)
+      .querySelectorAll(".download_alignment")
+      .iterator
+      .foreach {
+        _.addEventListener("click", (_: dom.Event) => {
+          downloadFile(jobID, fileName, resultName)
+        }, useCapture = false)
+      }
     document
       .getElementById("collapseMe")
       .addEventListener(
