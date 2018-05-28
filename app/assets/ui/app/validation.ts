@@ -736,7 +736,7 @@ class alignmentVal implements ToolkitValidator {
 	    else if (this.elem.val() !== "" && !this.elem.validate('fasta') && this.elem.reformat('detect') !== '') {
             originIsFasta = false;
             const t = this.elem.reformat('detect');
-            feedback(true, t.toUpperCase() + " format found:  <b>Auto-transformed to FASTA</b>", "success");
+            feedback(true, t.toUpperCase() + " format found: Auto-transformed to FASTA", "success");
             $("#alignment").val(this.elem.reformat('fasta'));
             return true;
         }
@@ -789,7 +789,7 @@ class alignmentVal implements ToolkitValidator {
             valReset();
         } 
 
-        else feedback(true, "<b>Protein FASTA</b>", "success");
+        else feedback(true, "Protein FASTA", "success");
 
         return true;
 
@@ -880,7 +880,7 @@ class alignmentVal implements ToolkitValidator {
             valReset();
         }
 
-        else feedback(true, "<b>Nucleotide FASTA</b>", "success");
+        else feedback(true, "Nucleotide FASTA", "success");
         return true;
     }
 
@@ -891,7 +891,7 @@ class alignmentVal implements ToolkitValidator {
         else if (!this.elem.validate('fasta') && this.elem.reformat('detect') != '') {
             originIsFasta = false;
             const t = this.elem.reformat('detect');
-            feedback(false, t + " format found:  <b>Auto-transformed to Fasta</b>", "success", t);
+            feedback(false, t + " format found: Auto-transformed to Fasta", "success", t);
             $("#alignment").val(this.elem.reformat('fasta'));
         }
 

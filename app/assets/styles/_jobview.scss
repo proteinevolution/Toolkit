@@ -595,15 +595,18 @@ a.hasNotes:active {
   border-radius: 2px;
 
   &.alert {
-    color: red;
+    background-color: rgba(248, 215, 218, 0.5);
+    color: #721c24;
   }
 
   &.success {
-    background-color: #DBFFDB;
+    background-color: #d4edda;
+    color: #155724;
   }
 
   &.warning {
-    background-color: #FFF666;
+    background-color: #fff3cd;
+    color: #856404;
   }
 }
 
