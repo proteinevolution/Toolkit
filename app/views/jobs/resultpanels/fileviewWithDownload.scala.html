@@ -1,48 +1,16 @@
+@import play.twirl.api.TwirlFeatureImports.defining
 @(filename: String, jobID: String, resultname: String)()
 
+@defining(s"fileview_$resultname") { id: String =>
     <div class="colorOptsAlignment">
-    <a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download</a>
+        <a type="button" class="download_alignment">Download</a>
         <hr class="horizontal-line">
-    <pre class="fileview" id="fileviewerDownload_@{resultname}" ></pre>
+        <pre class="fileview" id="@id"></pre>
     </div>
-    <script>
-         $(document).ready( function() {
-             $.ajax({
-                 type: 'GET',
-                 url: 'files/@jobID/@{filename}',
-             }).done(function (data_) {
-                 $('#fileviewerDownload_@{resultname}').append(data_)
-             });
-         });
-        window["@{resultname}_download"] = function(){
-            var downloadFilename; "@{resultname}_@{jobID}";
-            if("@{resultname}" === "hhpred" || "@{resultname}" === "hhomp"){
-                downloadFilename = "@{resultname}_@{jobID}" + ".hhr";
-            } else {
-                downloadFilename = "@{resultname}_@{jobID}" + ".out";
-            }
-            var fileURL="/files/@{jobID}/@{filename}";
-            $.ajax({
-                method: "GET",
-                url: fileURL
-            }).done(function(data){
-                DownloadHelper.download(downloadFilename, data);
-            })
-        };
+}
 
-        //using both functions is not pretty and somewhat redundant but gets the job done
-        $( "#fileviewerDownload_@{resultname}" ).ready(function() {
-            if ($('#tool-tabs').hasClass('fullscreen')) {
-                $(".fileview").css({"overflow-y": "visible", "height": "100pc"});
-            } else {
-                $(".fileview").css("height", "30pc");
-            }
-        });
-
-        function onExpand() {
-            $(".fileview").css({"overflow-y": "visible", "height": "100pc"});
-        }
-        function onCollapse() {
-            $(".fileview").css("height", "30pc");
-        }
+<script>
+    $(function () {
+       new FileView().apply("@{jobID}", "@{filename}", "@{resultname}");
+    });
 </script>
