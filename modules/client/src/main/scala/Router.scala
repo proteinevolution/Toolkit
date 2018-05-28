@@ -1,6 +1,7 @@
 import com.tgf.pizza.scalajs.mithril._
 import components.error.ErrorComponent
 import org.scalajs.dom.document
+import org.scalajs.dom.window
 import scala.scalajs.js
 import scala.scalajs.js.Dictionary
 
@@ -29,14 +30,14 @@ object Router {
     )
     m.route(mountpoint, "/", routes)
     // in absence of multi-tenancy support: mount the joblist, which gets redrawn independently from other view changes, in a separate mithril instance
-    g.jobList = g.m.deps.factory(g.window)
+    g.jobList = m.deps.factory(window)
     g.jobList.mount(document.getElementById("sidebar-joblist"), JobListComponent)
-    g.search = g.m.deps.factory(g.window)
+    g.search = m.deps.factory(window)
     g.search.mount(
       document.getElementById("sidebar-search"),
       m.component(SearchComponent, js.Dynamic.literal("id" -> "side-search", "placeholder" -> " "))
     )
-    g.jobListOffCanvas = g.m.deps.factory(g.window)
+    g.jobListOffCanvas = m.deps.factory(window)
     g.jobListOffCanvas
       .mount(document.getElementById("off-canvas-joblist"), JobListComponent)
   }
