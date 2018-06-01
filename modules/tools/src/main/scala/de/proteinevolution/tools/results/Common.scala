@@ -13,13 +13,14 @@ import scala.collection.mutable.ArrayBuffer
 
 object Common {
 
-  private val color_regex   = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
-  private val CC_pattern    = """(C+)""".r("C")
-  private val TM_pattern    = """(M+)""".r("M")
-  private val DO_pattern    = """(D+)""".r("D")
-  private val helix_pattern = """([Hh]+)""".r
-  private val sheet_pattern = """([Ee]+)""".r
-  private val helix_sheets  = """([Hh]+|[Ee]+)""".r("ss")
+  private val color_regex     = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
+  private val CC_pattern      = """(C+)""".r("C")
+  private val TM_pattern      = """(M+)""".r("M")
+  private val DO_pattern      = """(D+)""".r("D")
+  private val PIHELIX_pattern = """(I+)""".r("I")
+  private val helix_pattern   = """([Hh]+)""".r
+  private val sheet_pattern   = """([Ee]+)""".r
+  private val helix_sheets    = """([Hh]+|[Ee]+)""".r("ss")
 
   private val uniprotReg    = """([A-Z0-9]{10}|[A-Z0-9]{6})""".r
   private val scopReg       = """([defgh][0-9a-zA-Z\.\_]+)""".r
@@ -111,6 +112,7 @@ object Common {
       case "spotd"       => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
       case "iupred"      => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
       case "disopred3"   => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
+      case "pipred"      => PIHELIX_pattern.replaceAllIn(sequence, "<span class=\"ss_pihelix\">" + "$1" + "</span>")
 
     }
 
@@ -626,6 +628,7 @@ object Common {
       var htmlString = ""
       val query      = result.query.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val psipred    = result.psipred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val pipred     = result.pipred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val marcoil    = result.marcoil.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val coils      = result.coils.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val pcoils     = result.pcoils.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
@@ -650,7 +653,7 @@ object Common {
         htmlString += makeRow("sequenceCompact",
                               Array("SS_" + result.psipred.name.toUpperCase(),
                                     "",
-                                    Q2DColorReplace(result.psipred.name, psipred.replace("C", "&nbsp;"))))
+                                    Q2DColorReplace(result.psipred.name, psipred.replaceAll("C|T|S|B|G", "&nbsp;"))))
       }
       if (!spider2.isEmpty) {
         htmlString += makeRow("sequenceCompact",
@@ -669,6 +672,12 @@ object Common {
                               Array("SS_" + result.deepcnf.name.toUpperCase(),
                                     "",
                                     Q2DColorReplace(result.deepcnf.name, deepcnf.replace("C", "&nbsp;"))))
+      }
+      if (!pipred.isEmpty) {
+        htmlString += makeRow("sequenceCompact",
+                              Array("SS_" + result.pipred.name.toUpperCase(),
+                                    "",
+                                    Q2DColorReplace(result.pipred.name, pipred.replace("x", "&nbsp;"))))
       }
       if (!marcoil.isEmpty) {
         htmlString += makeRow("sequenceCompact",

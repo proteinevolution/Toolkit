@@ -15,6 +15,7 @@ class Quick2D @Inject()(general: General) {
     val jobID       = (obj \ "jobID").as[String]
     val query       = general.parseSingleSeq((obj \ "query").as[JsArray])
     val psipred     = parsePsipred((obj \ jobID).as[JsObject])
+    val pipred      = parsePipred((obj \ jobID).as[JsObject])
     val marcoil     = parseMarcoil((obj \ jobID).as[JsObject])
     val coils       = parseCoils((obj \ jobID).as[JsObject])
     val pcoils      = parsePcoils((obj \ jobID).as[JsObject])
@@ -32,6 +33,7 @@ class Quick2D @Inject()(general: General) {
     Quick2DResult(jobID,
                   query,
                   psipred,
+                  pipred,
                   marcoil,
                   coils,
                   pcoils,
@@ -52,6 +54,12 @@ class Quick2D @Inject()(general: General) {
     val conf = (obj \ "psipred_conf").getOrElse(Json.toJson("")).as[String]
     val seq  = (obj \ "psipred").getOrElse(Json.toJson("")).as[String]
     Psipred("psipred", seq, conf)
+  }
+
+  private def parsePipred(obj: JsObject): Pipred = {
+    val conf = (obj \ "pipred_conf").getOrElse(Json.toJson("")).as[String]
+    val seq  = (obj \ "pipred").getOrElse(Json.toJson("")).as[String]
+    Pipred("pipred", seq, conf)
   }
 
   private def parseMarcoil(obj: JsObject): Marcoil = {
@@ -124,6 +132,7 @@ object Quick2D {
   case class Quick2DResult(jobID: String,
                            query: SingleSeq,
                            psipred: Psipred,
+                           pipred: Pipred,
                            marcoil: Marcoil,
                            coils: Coils,
                            pcoils: Pcoils,
@@ -139,6 +148,7 @@ object Quick2D {
                            deepcnf: Deepcnf)
 
   case class Psipred(name: String, seq: String, conf: String)
+  case class Pipred(name: String, seq: String, conf: String)
   case class Marcoil(name: String, seq: String)
   case class Coils(name: String, seq: String)
   case class Pcoils(name: String, seq: String)
