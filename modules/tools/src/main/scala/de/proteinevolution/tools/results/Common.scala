@@ -13,14 +13,14 @@ import scala.collection.mutable.ArrayBuffer
 
 object Common {
 
-  private val color_regex   = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
-  private val CC_pattern    = """(C+)""".r("C")
-  private val TM_pattern    = """(M+)""".r("M")
-  private val DO_pattern    = """(D+)""".r("D")
-  private val PIHELIX_pattern    = """(I+)""".r("I")
-  private val helix_pattern = """([Hh]+)""".r
-  private val sheet_pattern = """([Ee]+)""".r
-  private val helix_sheets  = """([Hh]+|[Ee]+)""".r("ss")
+  private val color_regex     = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
+  private val CC_pattern      = """(C+)""".r("C")
+  private val TM_pattern      = """(M+)""".r("M")
+  private val DO_pattern      = """(D+)""".r("D")
+  private val PIHELIX_pattern = """(I+)""".r("I")
+  private val helix_pattern   = """([Hh]+)""".r
+  private val sheet_pattern   = """([Ee]+)""".r
+  private val helix_sheets    = """([Hh]+|[Ee]+)""".r("ss")
 
   private val uniprotReg    = """([A-Z0-9]{10}|[A-Z0-9]{6})""".r
   private val scopReg       = """([defgh][0-9a-zA-Z\.\_]+)""".r
@@ -628,7 +628,7 @@ object Common {
       var htmlString = ""
       val query      = result.query.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val psipred    = result.psipred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val pipred    = result.pipred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val pipred     = result.pipred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val marcoil    = result.marcoil.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val coils      = result.coils.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val pcoils     = result.pcoils.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
@@ -675,9 +675,9 @@ object Common {
       }
       if (!pipred.isEmpty) {
         htmlString += makeRow("sequenceCompact",
-          Array("SS_" + result.pipred.name.toUpperCase(),
-            "",
-            Q2DColorReplace(result.pipred.name, pipred.replace("x", "&nbsp;"))))
+                              Array("SS_" + result.pipred.name.toUpperCase(),
+                                    "",
+                                    Q2DColorReplace(result.pipred.name, pipred.replace("x", "&nbsp;"))))
       }
       if (!marcoil.isEmpty) {
         htmlString += makeRow("sequenceCompact",
