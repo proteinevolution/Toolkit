@@ -182,6 +182,14 @@ const tilescomponent = {
                     ),
                     m("div", {"class": "text_part"},
                         m("h5", "Recent Updates"),
+                        m("a", {"data-open": "footerRecentUpdatesModal", href: "#nineproteomes_2018_06"},
+                            m("h6", "June 1, 2018"),
+                            m("p", "HHpred: profile HMM DBs of ",
+                                m("em", "Bacteriovorax sp., Bdellovibrio bacteriovorus, Enterococcus faecalis, " +
+                                    "Helicobacter pylori, Leptospira interrogans, Neisseria gonorrhoeae, " +
+                                    "Phycisphaerae bacterium, Plesiocystis pacifica, and Waddlia chondrophila"),
+                                m("span", " are online."))
+                        ),
                         m("a", {"data-open": "footerRecentUpdatesModal", href: "#Tgondii_2018_05"},
                             m("h6", "May 10, 2018"),
                             m("p", "HHpred: profile HMM database of ",
@@ -193,21 +201,6 @@ const tilescomponent = {
                             m("p", "HHpred: profile HMM database of ",
                                 m("em", "Acinetobacter baumannii"),
                                 m("span", " is online."))
-                        ),
-                        m("a", {"data-open": "footerRecentUpdatesModal", href: "#ecod70_2018_03"},
-                            m("h6", "March 4 & 7, 2018"),
-                            m("p", "HHpred: new versions of the SCOPe (ver 2.07) and ECOD databases " +
-                                "are now online.")
-                        ),
-                        m("a", {
-                                href: "https://www.sciencedirect.com/science/article/pii/S0022283617305879",
-                                target: "_blank"
-                            },
-                            m("h6", "December 24, 2017"),
-                            m("p", "Our paper on the new Toolkit is out: ",
-                                m("em", "A Completely Reimplemented MPI Bioinformatics Toolkit with a New HHpred Server at its Core. "),
-                                m("span", {style: "color:#2E8C81;"},
-                                    m("em", "J Mol Biol. 2017 Dec 16.")))
                         )
                     ),
                     m("div", {"class": "quick-links"},
