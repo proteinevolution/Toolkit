@@ -480,6 +480,6 @@ else
 fi
 
 cd ../results/
-#find . -type f -not -name '*.json' -a -not -name '*.log' -print0 | xargs -0 rm --
+find . -type f -not -name '*.json' -a -not -name '*.log' -print0 | xargs -0 rm --
 echo "done" >> ../results/process.log
 updateProcessLog
