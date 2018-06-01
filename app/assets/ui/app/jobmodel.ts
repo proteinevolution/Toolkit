@@ -61,7 +61,7 @@ window.JobModel = {
         "seqcount":"500",
         "invoke_psipred":"30",
         "clans_eval":"1e-4",
-        "target_psi_db":"UniRef90",
+        "target_psi_db":"nr90",
         "transition_probability":"1",
         "matrix_marcoil":"mtk",
         "window_size":"100",

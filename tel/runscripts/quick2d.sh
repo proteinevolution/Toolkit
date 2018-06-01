@@ -60,6 +60,11 @@ updateProcessLog
 
 head -n 2 ../results/${JOBID}.fas > ../results/tmp
 sed 's/[\.\-]//g' ../results/tmp > ../results/${JOBID}.seq
+
+sed -n '2p' ../results/${JOBID}.fas > ../results/tmp
+sed 's/[\.\-]//g' ../results/tmp > ../results/${JOBID}.fseq
+CHAR_COUNT=$(wc -m < ../results/${JOBID}.fseq)
+sed -i "1 i\>${JOBID}" ../results/${JOBID}.fseq
 rm ../results/tmp
 
 
@@ -104,7 +109,8 @@ else
             INPUT="in_msa"
         fi
 
-        psiblast -db ${STANDARD}/%target_psi_db.content \
+            psiblast -db ${STANDARD}/%target_psi_db.content \
+                 -evalue %evalue.content \
                  -num_iterations %quick_iters.content \
                  -num_threads %THREADS \
                  -${INPUT} ../results/${JOBID}.fas \
@@ -138,6 +144,19 @@ else
 
         echo "done" >> ../results/process.log
         updateProcessLog
+
+        if [ ${CHAR_COUNT} -gt "30" ] && [ ${CHAR_COUNT} -lt "700" ] ; then
+
+            echo "#Executing PiPred." >> ../results/process.log
+            updateProcessLog
+
+            ${PIPRED}/pipred -i ../results/${JOBID}.fseq \
+                 -pssm_path ../results/ \
+                 -out_path ../results/
+
+            echo "done" >> ../results/process.log
+            updateProcessLog
+        fi
 fi
 
 echo "#Executing PSIPRED." >> ../results/process.log
@@ -211,15 +230,13 @@ updateProcessLog
 # Switch on correct Matrix
 matrix_copy.sh "${MARCOILMTK}" ../0/R5.MTK
 matrix_copy.sh "${MARCOILMTIDK}" ../0/R5.MTIDK
-PARAMMATRIX="-C"
-TRANSPROB="${MARCOILINPUT}/R3.transProbHigh"
-
-marcoil  ${PARAMMATRIX} \
+cp ../results/${JOBID}.seq .
+                marcoil  -C \
                       +dssSl \
-                      -T ${TRANSPROB} \
+                      -T ${MARCOILINPUT}/R3.transProbHigh \
                       -E ${MARCOILINPUT}/R2.emissProb \
-                      -P "$(readlink -f ../results/${JOBID}.seq)" \
-                      "$(readlink -f ../results/${JOBID}.seq)"
+                      -P ${JOBID}.seq \
+                      ${JOBID}.seq
 
 echo "done" >> ../results/process.log
 updateProcessLog
@@ -313,6 +330,16 @@ if [ ${ALPHA} -gt "0" ] || [ ${BETA} -gt "0" ] ; then
     manipulate_json.py -k 'psspred' -v "$SS" ../results/${JOBID}.json
 else
     manipulate_json.py -k 'psspred' -v "" ../results/${JOBID}.json
+fi
+
+#Write PiPred results into JSON
+PI=$(tr -cd "I" <  ../results/${JOBID}.pipred | wc -c)
+
+if [ ${PI} -gt "0" ] ; then
+    SS="$(sed -n '1{p;q;}' ../results/${JOBID}.pipred)"
+    manipulate_json.py -k 'pipred' -v "$SS" ../results/${JOBID}.json
+else
+    manipulate_json.py -k 'pipred' -v "" ../results/${JOBID}.json
 fi
 
 #Write DeepCNF results into JSON
@@ -453,6 +480,6 @@ else
 fi
 
 cd ../results/
-find . -type f -not -name '*.json' -a -not -name '*.log' -print0 | xargs -0 rm --
+#find . -type f -not -name '*.json' -a -not -name '*.log' -print0 | xargs -0 rm --
 echo "done" >> ../results/process.log
 updateProcessLog
