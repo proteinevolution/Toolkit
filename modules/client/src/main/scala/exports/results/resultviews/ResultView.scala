@@ -101,6 +101,7 @@ trait ResultView {
         })
         .always(() => {
           loading = false
+          jQuery.LoadingOverlay("hide")
           container.find("#loadingHits").hide()
         })
     }
