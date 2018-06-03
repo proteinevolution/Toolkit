@@ -1,7 +1,7 @@
 package de.proteinevolution.tools.controllers
 import javax.inject.{ Inject, Singleton }
 import com.typesafe.config.ConfigFactory
-import de.proteinevolution.tools.models.{ ForwardMode, HHContext, ResultContext }
+import de.proteinevolution.tools.models.{ ForwardMode, ForwardingData, HHContext, ResultContext }
 import de.proteinevolution.tools.services.{ KleisliProvider, ProcessFactory, ToolNameGetService }
 import play.api.mvc.{ AbstractController, Action, AnyContent }
 import better.files._
@@ -10,10 +10,11 @@ import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import scala.sys.process.Process
 import de.proteinevolution.tools.results.{ HSP, SearchResult }
 import ToolName._
+import play.api.libs.circe.Circe
 import play.api.libs.concurrent.Futures
+
 import scala.concurrent.duration._
 import play.api.libs.concurrent.Futures._
-import play.api.libs.json.JsValue
 
 import scala.concurrent.ExecutionContext
 
@@ -23,7 +24,8 @@ class ProcessController @Inject()(ctx: HHContext,
                                   constants: ConstantsV2,
                                   kleisliProvider: KleisliProvider,
                                   resultContext: ResultContext)(implicit ec: ExecutionContext, futures: Futures)
-    extends AbstractController(ctx.controllerComponents) {
+    extends AbstractController(ctx.controllerComponents)
+    with Circe {
 
   private val serverScripts = ConfigFactory.load().getString("serverScripts")
 
@@ -53,13 +55,13 @@ class ProcessController @Inject()(ctx: HHContext,
       }
   }
 
-  def forwardAlignment(jobID: String, mode: ForwardMode): Action[JsValue] = Action(parse.json).async {
-    implicit request =>
-      val json     = request.body
-      val filename = (json \ "fileName").as[String]
+  def forwardAlignment(jobID: String, mode: ForwardMode): Action[ForwardingData] =
+    Action(circe.json[ForwardingData]).async { implicit request =>
+      val data     = request.body
+      val filename = data.fileName
       val accStr = mode.toString match {
-        case "alnEval" | "evalFull" => (json \ "evalue").as[String]
-        case "aln" | "full"         => (json \ "checkboxes").as[List[Int]].mkString("\n")
+        case "alnEval" | "evalFull" => data.evalue.getOrElse("")
+        case "aln" | "full"         => data.checkboxes.toSeq.mkString("\n")
       }
       kleisliProvider
         .resK(jobID)
@@ -86,7 +88,7 @@ class ProcessController @Inject()(ctx: HHContext,
             ProcessFactory((constants.jobPath + jobID).toFile,
                            jobID,
                            toolName.value,
-                           filename,
+                           filename.getOrElse(""),
                            mode,
                            accStrParsed,
                            result.db).run().exitValue()
@@ -102,7 +104,7 @@ class ProcessController @Inject()(ctx: HHContext,
           case _: scala.concurrent.TimeoutException =>
             InternalServerError("timeout")
         }
-  }
+    }
 
   private[this] def parseAccString(toolName: ToolName,
                                    result: SearchResult[HSP],
