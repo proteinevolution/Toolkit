@@ -9,7 +9,8 @@ import org.scalajs.dom
 import org.scalajs.dom.ext._
 import org.scalajs.dom.raw.{ HTMLDivElement, HTMLInputElement, HTMLLinkElement }
 import org.scalajs.jquery.{ jQuery, JQuery, JQueryXHR }
-
+import exports.extensions.JQueryExtensions._
+import exports.facades.JQueryPlugin._
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExportTopLevel
 
@@ -152,6 +153,7 @@ class NormalResultView(val container: JQuery,
     colorAAs = !colorAAs
     container.find(".colorAA").toggleClass("colorToggleBar")
     val current = currentIndex()
+    jQuery.LoadingOverlay("show")
     scrollToHit(current, forceReload = true)
   }
 
@@ -161,6 +163,7 @@ class NormalResultView(val container: JQuery,
     import JQueryExtensions._
     container.find("#wrap").toggleText("Unwrap Seqs", "Wrap Seqs")
     val current = currentIndex()
+    jQuery.LoadingOverlay("show")
     scrollToHit(current, forceReload = true)
   }
 
@@ -172,7 +175,6 @@ class NormalResultView(val container: JQuery,
         else
           el.asInstanceOf[HTMLInputElement].value.toInt
     }
-    import exports.extensions.JQueryExtensions._
     dom.document
       .querySelectorAll(".aln")
       .iterator

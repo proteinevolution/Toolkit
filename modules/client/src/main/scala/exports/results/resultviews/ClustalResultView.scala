@@ -2,8 +2,8 @@ package exports.results.resultviews
 
 import exports.facades.ResultContext
 import exports.results.models.ResultForm.ClustalResultForm
-import org.scalajs.jquery.{ JQuery, JQueryXHR }
-
+import org.scalajs.jquery.{ jQuery, JQuery, JQueryXHR }
+import exports.facades.JQueryPlugin._
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExportTopLevel
 
@@ -37,6 +37,7 @@ class ClustalResultView(val container: JQuery,
     colorAAs = !colorAAs
     container.find(".colorAA").toggleClass("colorToggleBar")
     container.find("#resultTable").empty()
+    jQuery.LoadingOverlay("show")
     showHits(0, shownHits)
   }
 
