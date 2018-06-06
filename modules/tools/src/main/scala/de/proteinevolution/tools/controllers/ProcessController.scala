@@ -1,6 +1,5 @@
 package de.proteinevolution.tools.controllers
 import javax.inject.{ Inject, Singleton }
-import com.typesafe.config.ConfigFactory
 import de.proteinevolution.tools.models.{ ForwardMode, HHContext, ResultContext }
 import de.proteinevolution.tools.services.{ KleisliProvider, ProcessFactory, ToolNameGetService }
 import play.api.mvc.{ AbstractController, Action, AnyContent }
@@ -10,7 +9,9 @@ import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import scala.sys.process.Process
 import de.proteinevolution.tools.results.{ HSP, SearchResult }
 import ToolName._
+import play.api.Configuration
 import play.api.libs.concurrent.Futures
+
 import scala.concurrent.duration._
 import play.api.libs.concurrent.Futures._
 import play.api.libs.json.JsValue
@@ -22,18 +23,19 @@ class ProcessController @Inject()(ctx: HHContext,
                                   toolFinder: ToolNameGetService,
                                   constants: ConstantsV2,
                                   kleisliProvider: KleisliProvider,
-                                  resultContext: ResultContext)(implicit ec: ExecutionContext, futures: Futures)
+                                  resultContext: ResultContext,
+                                  config: Configuration)(implicit ec: ExecutionContext, futures: Futures)
     extends AbstractController(ctx.controllerComponents) {
 
-  private val serverScripts = ConfigFactory.load().getString("serverScripts")
+  private val scriptPath = config.get[String]("serverScripts")
 
   def templateAlignment(jobID: String, accession: String): Action[AnyContent] = Action.async { implicit request =>
     toolFinder
       .getTool(jobID)
       .map {
-        case HHOMP   => (serverScripts + "/templateAlignmentHHomp.sh").toFile
-        case HHBLITS => (serverScripts + "/templateAlignmentHHblits.sh").toFile
-        case HHPRED  => (serverScripts + "/templateAlignment.sh").toFile
+        case HHOMP   => (scriptPath + "/templateAlignmentHHomp.sh").toFile
+        case HHBLITS => (scriptPath + "/templateAlignmentHHblits.sh").toFile
+        case HHPRED  => (scriptPath + "/templateAlignment.sh").toFile
         case _       => throw new IllegalStateException("tool either not found nor not supported")
       }
       .map { file =>
@@ -89,7 +91,8 @@ class ProcessController @Inject()(ctx: HHContext,
                            filename,
                            mode,
                            accStrParsed,
-                           result.db).run().exitValue()
+                           result.db,
+                           scriptPath).run().exitValue()
         }
         .withTimeout(220.seconds)
         .map {

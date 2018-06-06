@@ -1,9 +1,8 @@
 package de.proteinevolution.tel.env
 
 import better.files._
-import com.typesafe.config.ConfigFactory
 import de.proteinevolution.tel.Subject
-import play.api.Logger
+import play.api.{ Configuration, Logger }
 
 import scala.sys.process.Process
 import scala.util.matching.Regex
@@ -44,7 +43,7 @@ class ExecFile(path: String) extends EnvFile(path) {
  * its content
  *
  */
-class PropFile(path: String) extends EnvFile(path) {
+class PropFile(path: String, config: Configuration) extends EnvFile(path) {
 
   def load: Map[String, String] = {
 
@@ -59,15 +58,15 @@ class PropFile(path: String) extends EnvFile(path) {
 
         updated match {
 
-          case x if x.startsWith("foo") => updated = updated.replace("foo", ConfigFactory.load().getString("DBROOT"))
+          case x if x.startsWith("foo") => updated = updated.replace("foo", config.get[String]("DBROOT"))
           case x if x.startsWith("env_foo") =>
-            updated = updated.replace("env_foo", ConfigFactory.load().getString("ENVIRONMENT"))
+            updated = updated.replace("env_foo", config.get[String]("ENVIRONMENT"))
           case x if x.startsWith("helper_foo") =>
-            updated = updated.replace("helper_foo", ConfigFactory.load().getString("HELPER"))
+            updated = updated.replace("helper_foo", config.get[String]("HELPER"))
           case x if x.startsWith("perllib_foo") =>
-            updated = updated.replace("perllib_foo", ConfigFactory.load().getString("PERLLIB"))
+            updated = updated.replace("perllib_foo", config.get[String]("PERLLIB"))
           case x if x.startsWith("standarddb_bar") =>
-            updated = updated.replace("standarddb_bar", ConfigFactory.load().getString("STANDARDDB"))
+            updated = updated.replace("standarddb_bar", config.get[String]("STANDARDDB"))
           case _ => Logger.info("Env file has no preconfigured key in the configs")
 
         }

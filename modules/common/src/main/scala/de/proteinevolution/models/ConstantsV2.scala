@@ -1,28 +1,29 @@
 package de.proteinevolution.models
 
 import java.io.File
-import javax.inject.Singleton
 
-import com.typesafe.config.ConfigFactory
+import javax.inject.{ Inject, Singleton }
+import play.api.Configuration
+
 import scala.language.postfixOps
 import scala.concurrent.duration._
 import scala.util.matching.Regex
 
 @Singleton
-class ConstantsV2 {
+class ConstantsV2 @Inject()(config: Configuration) {
 
   /** Number of jobActors */
   val nJobActors: Int = 100
 
   /** Key for the Modeller tool */
-  val modellerKey: String = ConfigFactory.load().getString("modeller_key")
+  val modellerKey: String = config.get[String]("modeller_key")
 
   // File Settings
   /** File Seperator */
   val SEPARATOR: String = File.separator
 
   /** Path to the jobs folder */
-  val jobPath: String = s"${ConfigFactory.load().getString("job_path")}$SEPARATOR"
+  val jobPath: String = s"${config.get[String]("job_path")}$SEPARATOR"
 
   /** results folder name */
   val resultFolderName: String = "results"
