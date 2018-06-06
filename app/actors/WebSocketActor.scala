@@ -2,8 +2,8 @@ package actors
 
 import java.nio.file.{ Files, Paths }
 import java.time.ZonedDateTime
-import javax.inject.{ Inject, Named }
 
+import javax.inject.{ Inject, Named }
 import actors.ClusterMonitor._
 import actors.JobActor._
 import actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
@@ -15,7 +15,7 @@ import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.jobs.JobState._
 import models.UserSessions
-import play.api.Logger
+import play.api.{ Configuration, Logger }
 import play.api.cache._
 import play.api.libs.json.{ JsValue, Json }
 import reactivemongo.bson.BSONObjectID
@@ -46,7 +46,8 @@ final class WebSocketActor @Inject()(
     constants: ConstantsV2,
     @NamedCache("userCache") val userCache: SyncCacheApi,
     @NamedCache("wsActorCache") val wsActorCache: SyncCacheApi,
-    @Assisted("sessionID") sessionID: BSONObjectID
+    @Assisted("sessionID") sessionID: BSONObjectID,
+    implicit val config: Configuration
 )(implicit ec: ExecutionContext)
     extends Actor
     with ActorLogging {

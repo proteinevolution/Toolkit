@@ -1,15 +1,14 @@
 package actors
 
 import java.time.ZonedDateTime
-import javax.inject.Inject
 
+import javax.inject.Inject
 import actors.ClusterMonitor.PolledJobs
 import actors.JobActor._
 import akka.actor._
 import akka.event.LoggingReceive
 import better.files._
 import com.google.inject.assistedinject.Assisted
-import com.typesafe.config.ConfigFactory
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.models.ConstantsV2
@@ -28,7 +27,7 @@ import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
 import models.UserSessions
 import models.mailing.MailTemplate.JobFinishedMail
-import play.api.Logger
+import play.api.{ Configuration, Logger }
 import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
@@ -103,7 +102,8 @@ class JobActor @Inject()(
     @NamedCache("userCache") implicit val userCache: SyncCacheApi,
     @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
     constants: ConstantsV2,
-    @Assisted("jobActorNumber") jobActorNumber: Int
+    @Assisted("jobActorNumber") jobActorNumber: Int,
+    config: Configuration
 )(implicit ec: scala.concurrent.ExecutionContext)
     extends Actor {
 
@@ -322,7 +322,7 @@ class JobActor @Inject()(
               "job_update",
               job.jobID,
               "Job Update",
-              "Your " + ConfigFactory.load().getString(s"Tools.${job.tool}.longname") + " job has finished!"
+              "Your " + config.get[String](s"Tools.${job.tool}.longname") + " job has finished!"
             )
           )
         }
@@ -579,15 +579,14 @@ class JobActor @Inject()(
               // To receive a catchable signal in an SGE job, one must set soft limits
               // in addition to hard limits; by definition "hard" means SIGKILL.
 
-              val h_rt = ConfigFactory.load().getInt(s"Tools.${job.tool}.hardruntime")
+              val h_rt = config.get[Int](s"Tools.${job.tool}.hardruntime")
 
               //Set soft runtime to 30s less than hard runtime
               val s_rt   = h_rt - 30
-              val h_vmem = (ConfigFactory.load().getInt(s"Tools.${job.tool}.memory") * TEL.memFactor).toInt
+              val h_vmem = (config.get[Int](s"Tools.${job.tool}.memory") * TEL.memFactor).toInt
               //Set soft memory limit to 95% of hard memory limit
-              val s_vmem = h_vmem * 0.95
-              val threads =
-                math.ceil(ConfigFactory.load().getInt(s"Tools.${job.tool}.threads") * TEL.threadsFactor).toInt
+              val s_vmem  = h_vmem * 0.95
+              val threads = math.ceil(config.get[Int](s"Tools.${job.tool}.threads") * TEL.threadsFactor).toInt
 
               env.configure(s"MEMORY", h_vmem.toString + "G")
               env.configure(s"SOFTMEMORY", s_vmem.toString + "G")

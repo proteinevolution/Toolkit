@@ -1,7 +1,6 @@
 package de.proteinevolution.tools.services
 
 import better.files._
-import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.ToolName
 import ToolName._
 import de.proteinevolution.tools.models.ForwardMode
@@ -11,20 +10,19 @@ import scala.sys.process.Process
 
 private[tools] object ProcessFactory {
 
-  private val serverScripts = ConfigFactory.load().getString("serverScripts")
-
-  private val generateAlignmentScript = (serverScripts + "/generateAlignment.sh").toFile // HHPRED, HHBLITS alnEval
-  private val retrieveFullSeq         = (serverScripts + "/retrieveFullSeq.sh").toFile
-  private val retrieveAlnEval         = (serverScripts + "/retrieveAlnEval.sh").toFile // Hmmer & PSIBLAST alnEval
-  private val retrieveFullSeqHHblits  = (serverScripts + "/retrieveFullSeqHHblits.sh").toFile // why so little abstractions ???
-
   def apply(resultFile: File,
             jobID: String,
             toolName: String,
             tempFileName: String,
             mode: ForwardMode,
             accString: String,
-            db: String): process.ProcessBuilder = {
+            db: String,
+            basePath: String): process.ProcessBuilder = {
+
+    val generateAlignmentScript = (basePath + "/generateAlignment.sh").toFile // HHPRED, HHBLITS alnEval
+    val retrieveFullSeq         = (basePath + "/retrieveFullSeq.sh").toFile
+    val retrieveAlnEval         = (basePath + "/retrieveAlnEval.sh").toFile // Hmmer & PSIBLAST alnEval
+    val retrieveFullSeqHHblits  = (basePath + "/retrieveFullSeqHHblits.sh").toFile // why so little abstractions ???
 
     val (script, params) = (toolName, mode.toString) match {
       case (HHBLITS.value, "alnEval") | (HHPRED.value, "alnEval") =>

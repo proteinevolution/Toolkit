@@ -1,13 +1,12 @@
 package controllers
 
 import java.net.InetAddress
-import javax.inject.{ Inject, Named, Singleton }
 
+import javax.inject.{ Inject, Named, Singleton }
 import actors.ClusterMonitor.Multicast
 import actors.WebSocketActor
 import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.stream.Materializer
-import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.search.JobDAO
 import models.tools.ToolFactory
 import models.UserSessions
@@ -21,7 +20,7 @@ import play.api.libs.json.{ JsValue, Json }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
-import play.api.{ Environment, Logger }
+import play.api.{ Configuration, Environment, Logger }
 import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
 import de.proteinevolution.models.ConstantsV2
@@ -46,12 +45,13 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   val settings: Settings,
                                   constants: ConstantsV2,
                                   cc: ControllerComponents,
+                                  config: Configuration,
                                   environment: Environment)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
     with CommonController {
 
-  private val toolkitMode = ConfigFactory.load().getString(s"toolkit_mode")
+  private val toolkitMode = config.get[String](s"toolkit_mode")
 
   implicit val implicitMaterializer: Materializer = mat
   implicit val implicitActorSystem: ActorSystem   = system
@@ -59,7 +59,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
   private val logger = org.slf4j.LoggerFactory.getLogger("controllers.Application")
   val SID            = "sid"
 
-  private[this] val blacklist = ConfigFactory.load().getStringList("banned.ip")
+  private[this] val blacklist = config.get[Seq[String]]("banned.ip")
 
   /**
    * Creates a websocket.  `acceptOrResult` is preferable here because it returns a

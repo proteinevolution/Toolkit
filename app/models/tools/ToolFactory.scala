@@ -1,14 +1,14 @@
 package models.tools
 
 import javax.inject.{ Inject, Singleton }
-
-import com.typesafe.config.{ ConfigFactory, ConfigObject }
+import com.typesafe.config.{ Config, ConfigObject }
 import de.proteinevolution.models.{ ConstantsV2, Tool, ToolName }
 import de.proteinevolution.tools.results._
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.forms.ToolForm
 import de.proteinevolution.models.param.{ Param, ParamAccess }
 import de.proteinevolution.models.results.ResultViews
+import play.api.Configuration
 import play.api.libs.json.JsArray
 
 import scala.collection.JavaConverters._
@@ -24,12 +24,13 @@ final class ToolFactory @Inject()(
     hhomp: HHomp,
     quick2d: Quick2D,
     aln: de.proteinevolution.tools.results.Alignment,
-    constants: ConstantsV2
+    constants: ConstantsV2,
+    config: Configuration
 )(paramAccess: ParamAccess, resultFiles: ResultFileAccessor, implicit val ec: ExecutionContext) {
 
   // reads the tool specifications from tools.conf and generates tool objects accordingly
   lazy val values: Map[String, Tool] = {
-    ConfigFactory.load.getConfig("Tools").root.asScala.map {
+    config.get[Config]("Tools").root.asScala.map {
       case (_, configObject: ConfigObject) =>
         val config = configObject.toConfig
         config.getString("name") -> toTool(
