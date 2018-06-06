@@ -3,8 +3,8 @@ package controllers
 import java.io.{ FileInputStream, ObjectInputStream }
 import java.security.MessageDigest
 import java.time.ZonedDateTime
-import javax.inject.{ Inject, Singleton }
 
+import javax.inject.{ Inject, Singleton }
 import de.proteinevolution.models.database.jobs.JobState._
 import actors.JobActor._
 import better.files._
@@ -18,7 +18,7 @@ import models.UserSessions
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.services.JobIdProvider
 import de.proteinevolution.tel.env.Env
-import play.api.Logger
+import play.api.{ Configuration, Logger }
 import play.api.cache._
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -38,12 +38,13 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
                                     val jobDao: JobDAO,
                                     val toolFactory: ToolFactory,
                                     constants: ConstantsV2,
-                                    cc: ControllerComponents)(implicit ec: ExecutionContext)
+                                    cc: ControllerComponents,
+                                    implicit val config: Configuration)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with CommonController {
 
   def loadJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
+    userSessions.getUser.flatMap { _ =>
       // Find the Job in the database
       mongoStore.selectJob(jobID).map {
         case Some(job) => Ok(job.cleaned())
@@ -60,7 +61,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
   }
 
   def startJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.map { user =>
+    userSessions.getUser.map { _ =>
       jobActorAccess.sendToJobActor(jobID, CheckIPHash(jobID))
       Ok(Json.toJson(Json.obj("message" -> "Starting Job...")))
     }
@@ -208,7 +209,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
    * @return
    */
   def checkHash(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
+    userSessions.getUser.flatMap { _ =>
       mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).flatMap {
         case Some(job) =>
           // Reload the paramaters of the file

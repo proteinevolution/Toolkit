@@ -1,11 +1,10 @@
 package de.proteinevolution.common
 
-import javax.inject.Singleton
-
+import javax.inject.{ Inject, Singleton }
 import com.google.inject.ImplementedBy
 import com.tgf.pizza.geoip.MaxMindIpGeo
-import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.database.users.Location
+import play.api.Configuration
 import play.api.mvc.RequestHeader
 
 @ImplementedBy(classOf[LocationProviderImpl])
@@ -18,9 +17,9 @@ sealed trait LocationProvider {
 }
 
 @Singleton
-class LocationProviderImpl extends LocationProvider {
+class LocationProviderImpl @Inject()(config: Configuration) extends LocationProvider {
 
-  private val geoIp = MaxMindIpGeo(ConfigFactory.load().getString("maxmindDB"), 1000)
+  private val geoIp = MaxMindIpGeo(config.get[String]("maxmindDB"), 1000)
 
   def getLocation(ipAddress: String): Location = {
     geoIp.getLocation(ipAddress) match {

@@ -3,8 +3,8 @@ package de.proteinevolution.models.database.jobs
 import java.time.ZonedDateTime
 
 import de.proteinevolution.models.util.ZonedDateTimeHelper
-import com.typesafe.config.ConfigFactory
 import de.proteinevolution.models.database.jobs.JobState._
+import play.api.Configuration
 import play.api.libs.json._
 import reactivemongo.bson._
 import reactivemongo.play.json._
@@ -37,13 +37,13 @@ case class Job(mainID: BSONObjectID = BSONObjectID.generate, // ID of the Job in
    *
    * @return
    */
-  def cleaned(): JsObject = {
+  def cleaned()(implicit config: Configuration): JsObject = {
     Json.obj(
       Job.JOBID        -> jobID,
       Job.STATUS       -> status,
       Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli),
       Job.TOOL         -> tool,
-      Job.TOOLNAMELONG -> ConfigFactory.load().getString(s"Tools.$tool.longname")
+      Job.TOOLNAMELONG -> config.get[String](s"Tools.$tool.longname")
     )
   }
 
@@ -52,7 +52,7 @@ case class Job(mainID: BSONObjectID = BSONObjectID.generate, // ID of the Job in
    *
    * @return
    */
-  def jobManagerJob(): JsObject = {
+  def jobManagerJob()(implicit config: Configuration): JsObject = {
     Json.obj(
       Job.JOBID        -> jobID,
       Job.STATUS       -> status,
@@ -61,7 +61,7 @@ case class Job(mainID: BSONObjectID = BSONObjectID.generate, // ID of the Job in
       Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli),
       Job.DATEUPDATED  -> dateUpdated.map(_.toInstant.toEpochMilli),
       Job.DATEVIEWED   -> dateViewed.map(_.toInstant.toEpochMilli),
-      Job.TOOLNAMELONG -> ConfigFactory.load().getString(s"Tools.$tool.longname")
+      Job.TOOLNAMELONG -> config.get[String](s"Tools.$tool.longname")
     )
   }
   override def toString: String = {

@@ -6,12 +6,12 @@ import models.UserSessions
 import play.api.cache._
 import play.api.libs.json.Json
 import javax.inject.{ Inject, Singleton }
-
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.ConstantsV2
 import reactivemongo.bson.BSONDocument
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
+import play.api.Configuration
 import play.api.mvc._
 
 import scala.concurrent.{ ExecutionContext, Future }
@@ -22,7 +22,8 @@ final class Search @Inject()(
     mongoStore: MongoStore,
     toolFactory: ToolFactory,
     constants: ConstantsV2,
-    cc: ControllerComponents
+    cc: ControllerComponents,
+    implicit val config: Configuration
 )(implicit ec: ExecutionContext,
   val locationProvider: LocationProvider,
   @NamedCache("userCache") val userCache: SyncCacheApi)
