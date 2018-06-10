@@ -85,6 +85,13 @@ GET           /getToolList                            controllers.Search.getTool
 GET           /suggest/:jobID                         controllers.Search.autoComplete(jobID: String)
 GET           /checktool/:tool                        controllers.Search.existsTool(tool: String)
 
+# ForwardModal
+GET           /forwardModal/:toolName/:modalType      controllers.ForwardModalController.getForwardModalOptions(modalType: String, toolName: String)
+# Help
+GET           /getHelp/:tool                          controllers.DataController.getHelp(tool: String)
+# static index bottom section
+GET           /getIndexBottomSection                  controllers.DataController.getIndexBottomSection
+
 # Routes for static assets
 GET           /robots.txt                             controllers.Application.robots
 GET           /:static                                controllers.Application.static(static : String)
@@ -109,11 +116,6 @@ POST          /api/frontendSubmit/:toolname           controllers.Tool.frontendC
 
 # Results
 GET           /api/job/results/:jobID                 controllers.DataController.get(jobID: String)
-
-# ForwardModal
-GET           /forwardModal/:toolName/:modalType      controllers.ForwardModalController.getForwardModalOptions(modalType: String, toolName: String)
-#Help
-GET           /getHelp/:tool                          controllers.DataController.getHelp(tool: String)
 
 # Tool Module
 ->            /results                                de.proteinevolution.tools.ToolsRouter
