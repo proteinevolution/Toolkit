@@ -173,7 +173,7 @@ declare namespace Mithril {
          */
         render(
             rootElement: Element,
-            children: VirtualElement|VirtualElement[],
+            children: VirtualElement|VirtualElement[]|string,
             forceRecreation?: boolean
         ): void;
 

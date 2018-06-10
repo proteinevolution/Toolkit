@@ -177,9 +177,9 @@ const tilescomponent = {
                         m.request({
                             url: route.url,
                             method: route.method,
-                            deserialize: function(value) {return value;}
-                        }).then(function (data) {
-                            $(elem).html(data);
+                            deserialize: value => {return value;}
+                        }).then(html => {
+                           m.render(elem, m.trust(html))
                         });
                     }
                 }
