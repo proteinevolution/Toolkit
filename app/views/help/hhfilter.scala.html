@@ -1,9 +1,10 @@
-@()
+@(version: String)
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
         <li><a href="#tabs-2">Input & Parameters</a></li>
         <li><a href="#tabs-3">References</a></li>
+        <li><a href="#tabs-4">Version</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
         Extract a representative set of sequences from an alignment, based of pairwise sequence identity and minimum coverage.
@@ -48,5 +49,8 @@
     <div id="tabs-3" class="greenlink">
         @views.html.help.common.toolkit_citation()
         <p>Remmert M., Biegert A., Hauser A., Söding J. (2011) <b>HHblits: Lightning-fast iterative protein sequence searching by HMM-HMM alignment. </b>Nat Methods. 9(2):173-5. doi: 10.1038/nmeth.1818. <a href = https://www.ncbi.nlm.nih.gov/pubmed/22198341 target="_blank" rel="noopener">PMID: 22198341</a></p>
+    </div>
+    <div id="tabs-4" class="greenlink">
+        <strong>Version:</strong> @version
     </div>
 </div>

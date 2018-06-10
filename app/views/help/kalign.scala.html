@@ -1,9 +1,10 @@
-@()
+@(version: String)
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
         <li><a href="#tabs-2">Input & Parameters</a></li>
         <li><a href="#tabs-3">References</a></li>
+        <li><a href="#tabs-4">Version</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
         <p>Kalign - an accurate and fast multiple sequence alignment algorithm.</p>
@@ -52,5 +53,8 @@
     <div id="tabs-3" class="greenlink">
         @views.html.help.common.toolkit_citation()
         <p>Lassmann T., Sonnhammer EL. (2005) <b>Kalign--an accurate and fast multiple sequence alignment algorithm.</b> BMC Bioinformatics. 6:298.<a href = https://www.ncbi.nlm.nih.gov/pubmed/16343337 target="_blank" rel="noopener">PMID: 16343337</a></p>
+    </div>
+    <div id="tabs-4" class="greenlink">
+        <strong>Version:</strong> @version
     </div>
 </div>

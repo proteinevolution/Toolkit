@@ -1,9 +1,10 @@
-@()
+@(version: String)
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
         <li><a href="#tabs-2">Input & Parameters</a></li>
         <li><a href="#tabs-3">References</a></li>
+        <li><a href="#tabs-4">Version</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
         <p>Modeller is one of the most popular programs for homology modelling. The goal of homology modelling (also called comparative modelling) is to obtain a 3D structure for a protein sequence of interest (the target). One starts from a sequence alignment of the target sequence with one or more template sequences for which the structures are known. Sequences with recognizable sequence similarity (e.g. above 30%) will in general have quite similar 3D structures. Therefore, an alignment with a homologous template of known structure can, in principle, be used to directly predict the main chain coordinates by simply mapping the target sequence into the template main chain structure. Modeller goes a step further in deriving constraints from the multiple alignment of the target with the templates. In addition to a-priori constraints like bond lengths et cetera, these constraints may refer to Calpha-Calpha distances, main-chain dihedral angles, or side-chain dihedral angles. The constraints are formulated probabilistically in terms of probability density functions, that are derived from a statistical analysis of a great number of pairwise structural alignments. Modeller then tries find the parameters (i.e. the model structure) that maximizes the total probability density obtained by combining all constraints. Modeller, as most (if not all) other available programs, has a few important limitations:</p>
@@ -34,5 +35,8 @@
     <div id="tabs-3" class="greenlink">
         @views.html.help.common.toolkit_citation()
         <p>Sali A., Potterton L., Yuan F., van Vlijmen H., Karplus M. (1995) <b>Evaluation of comparative protein modeling by MODELLER. </b>Proteins 23(3):318-26. <a href = "https://www.ncbi.nlm.nih.gov/pubmed/8710825" target="_blank" rel="noopener">PMID: 8710825</a></p>
+    </div>
+    <div id="tabs-4" class="greenlink">
+        <strong>Version:</strong> @version
     </div>
 </div>
