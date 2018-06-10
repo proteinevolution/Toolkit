@@ -90,7 +90,7 @@ GET           /forwardModal/:toolName/:modalType      controllers.ForwardModalCo
 # Help
 GET           /getHelp/:tool                          controllers.DataController.getHelp(tool: String)
 # static index bottom section
-GET           /getIndexBottomSection                  controllers.DataController.getIndexBottomSection
+GET           /recent-updates                         controllers.DataController.recentUpdates
 
 # Routes for static assets
 GET           /robots.txt                             controllers.Application.robots

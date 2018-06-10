@@ -162,7 +162,6 @@ const trafficBarComponent = {
     }
 };
 
-// TODO add different type of tile (bigger one?)
 const tilescomponent = {
     controller: function() {
 
@@ -173,10 +172,9 @@ const tilescomponent = {
                 config: function(elem, isInit) {
                     hideSidebar(elem, isInit);
                     if(!isInit) {
-                        const route = jsRoutes.controllers.DataController.getIndexBottomSection();
                         m.request({
-                            url: route.url,
-                            method: route.method,
+                            url: "/recent-updates",
+                            method: "GET",
                             deserialize: value => {return value;}
                         }).then(html => {
                            m.render(elem, m.trust(html))
