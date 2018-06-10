@@ -172,14 +172,14 @@ const tilescomponent = {
                 "class": "row article_container small-up-1 medium-up-2 large-up-3",
                 config: function(elem, isInit) {
                     hideSidebar(elem, isInit);
-                    const $elem = $(elem);
-                    if($elem.children().length === 0) {
+                    if(!isInit) {
                         const route = jsRoutes.controllers.DataController.getIndexBottomSection();
-                        $.ajax({
+                        m.request({
                             url: route.url,
-                            method: route.method
-                        }).done(function (data) {
-                            $elem.html(data);
+                            method: route.method,
+                            deserialize: function(value) {return value;}
+                        }).then(function (data) {
+                            $(elem).html(data);
                         });
                     }
                 }
