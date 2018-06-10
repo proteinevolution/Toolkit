@@ -1,9 +1,10 @@
-@()
+@(version: String)
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
         <li><a href="#tabs-2">Input & Parameters</a></li>
         <li><a href="#tabs-3">References</a></li>
+        <li><a href="#tabs-4">Version</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
         The Backtranslator translates an amino acid sequence back into a possible DNA sequence.
@@ -46,5 +47,8 @@
     <div id="tabs-3" class="greenlink">
         @views.html.help.common.toolkit_citation()
         <p>Nakamura Y., Gojobori T., Ikemura T. (2000) <b>Codon usage tabulated from international DNA sequence databases: status for the year 2000. </b>Nucleic Acids Res 28(1):292. <a href = https://www.ncbi.nlm.nih.gov/pubmed/10592250 target="_blank" rel="noopener">PMID: 10592250</a></p>
+    </div>
+    <div id="tabs-4" class="greenlink">
+        <strong>Version:</strong> @version
     </div>
 </div>
