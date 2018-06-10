@@ -56,4 +56,8 @@ class DataController @Inject()(cc: ControllerComponents, resultFiles: ResultFile
     Ok(help)
   }
 
+  def getIndexBottomSection = Action {
+    Ok(views.html.indexbottomsection())
+  }
+
 }
