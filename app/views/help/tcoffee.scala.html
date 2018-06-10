@@ -1,9 +1,10 @@
-@()
+@(version: String)
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
         <li><a href="#tabs-2">Input & Parameters</a></li>
         <li><a href="#tabs-3">References</a></li>
+        <li><a href="#tabs-4">Version</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
         T-Coffee (Tree-based Consistency Objective Function for alignment Evaluation) is one of the most accurate multiple sequence alignment methods for protein and nucleotide sequences.<p>[T-Coffee 11.0; <a href = "http://www.tcoffee.org/" target="_blank" rel="noopener">http://www.tcoffee.org/</a>]</p>
@@ -27,5 +28,8 @@
     <div id="tabs-3" class="greenlink">
         @views.html.help.common.toolkit_citation()
         <p>Magis C., Taly JF., Bussotti G., Chang JM., Di Tommaso P., Erb I., Espinosa-Carrasco J., Notredame C. (2014) <b>T-Coffee: Tree-based consistency objective function for alignment evaluation. </b>Methods Mol Biol 1079:117-129. <a href = https://www.ncbi.nlm.nih.gov/pubmed/24170398 target="_blank" rel="noopener">PMID: 24170398</a></p>
+    </div>
+    <div id="tabs-4" class="greenlink">
+        <strong>Version:</strong> @version
     </div>
 </div>

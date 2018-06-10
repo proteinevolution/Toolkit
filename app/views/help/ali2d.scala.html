@@ -1,8 +1,10 @@
+@(version: String)
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
         <li><a href="#tabs-2">Input & Parameters</a></li>
         <li><a href="#tabs-3">References</a></li>
+        <li><a href="#tabs-4">Version</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
         Ali2D which takes a sequence alignment as input, performs PSIPRED and MEMSAT2 on each of the sequences and
@@ -28,5 +30,8 @@
     </div>
     <div id="tabs-3" class="greenlink">
         @views.html.help.common.toolkit_citation()
+    </div>
+    <div id="tabs-4" class="greenlink">
+        <strong>Version:</strong> @version
     </div>
 </div>

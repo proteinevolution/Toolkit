@@ -1,9 +1,10 @@
-@()
+@(version: String)
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
         <li><a href="#tabs-2">Input & Parameters</a></li>
-        <li><a href="#tabs-4">References</a></li>
+        <li><a href="#tabs-3">References</a></li>
+        <li><a href="#tabs-4">Version</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
         <p>This tools offers the BLAST+ and PSI-BLAST+ methods of NCBI for searching locally similar sequences in a chosen
@@ -79,7 +80,7 @@
         </ul>
     </div>
 
-    <div id="tabs-4" class="greenlink">
+    <div id="tabs-3" class="greenlink">
         @views.html.help.common.toolkit_citation()
         <p>Altschul S., Madden T., Schaffer A., Zhang J., Miller W., Lipman D. (1997) Gapped BLAST and PSI-BLAST: a new
             generation of protein database search programs. Nucl Acids Res 25(17):3389-3402.
@@ -89,5 +90,8 @@
         <p>Camacho C., Coulouris G., Avagyan V., Ma N., Papadopoulos J., Bealer K., Madden TL. (2008) BLAST+:
             architecture and applications. BMC Bioinformatics 10:421. <a href = https://www.ncbi.nlm.nih.gov/pubmed/20003500
         target="_blank" rel="noopener">PMID: 20003500</a></p>
+    </div>
+    <div id="tabs-4" class="greenlink">
+        <strong>Version:</strong> @version
     </div>
 </div>

@@ -1,9 +1,10 @@
-@()
+@(version: String)
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
         <li><a href="#tabs-2">Input & Parameters</a></li>
         <li><a href="#tabs-3">References</a></li>
+        <li><a href="#tabs-4">Version</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
         <b>Background</b>
@@ -82,5 +83,8 @@
         @views.html.help.common.toolkit_citation()
         <p>HHblits: lightning-fast iterative protein sequence searching by HMM-HMM alignment.
             Remmert M, Biegert A, Hauser A, Söding J. <a href = https://www.nature.com/articles/nmeth.1818 target="_blank" rel="noopener">Nat Methods. 2011 Dec 25;9(2):173-5</a>.</p>
+    </div>
+    <div id="tabs-4" class="greenlink">
+        <strong>Version:</strong> @version
     </div>
 </div>

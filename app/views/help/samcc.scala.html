@@ -1,9 +1,10 @@
-@()
+@(version: String)
 <div id="tabs">
     <ul>
         <li><a href="#tabs-1">Overview</a></li>
         <li><a href="#tabs-2">Input & Parameters</a></li>
         <li><a href="#tabs-3">References</a></li>
+        <li><a href="#tabs-4">Version</a></li>
     </ul>
     <div id="tabs-1" class="greenlink">
         SamCC measures local parameters of (a)symmetric, parallel, and antiparallel four-helical bundles. Briefly, SamCC divides bundle into layers (slices), brings each layer into an idealized state (expected from equations), then performing final calculations on the resulting idealized structure.
@@ -35,5 +36,8 @@
     <div id="tabs-3" class="greenlink">
         @views.html.help.common.toolkit_citation()
         <p>Dunin-Horkawicz S., Lupas AN. (2010) <b>Measuring the conformational space of square four-helical bundles with the program samCC. </b>170(2):226-35. doi: 10.1016/j.jsb.2010.01.023. <a href = https://www.ncbi.nlm.nih.gov/pubmed/20139000 target="_blank" rel="noopener">PMID: 20139000</a></p>
+    </div>
+    <div id="tabs-4" class="greenlink">
+        <strong>Version:</strong> @version
     </div>
 </div>
