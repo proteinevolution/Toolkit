@@ -412,26 +412,27 @@ td#joblistIcon {
 
 .quick-links {
   width: 20%;
-  padding-top: 1.6em;
+  padding: 1.6rem 2rem;
   border-left: 1px dashed lightgrey;
   text-align: left;
-  padding-left: 2.5em;
-  i {
-    font-size: 1.65em !important;
-    padding-right: 1.5em;
-    color: $primary-color;
-    line-height: 1.2;
-  }
   a {
     color: #626262;
     font-size: 0.8em;
-    float: left;
+    display: flex;
+    justify-content: space-between;
+    line-height: 2;
+
+    i {
+      font-size: 1.65em !important;
+      color: $primary-color;
+      line-height: 1.2;
+    }
   }
 }
 
 .text_part {
   width: 65%;
-  padding: 1.6em 1em 1em 2em;
+  padding: 1.6em 2em;
   text-align: left;
   p {
     font-size: 0.8em !important;

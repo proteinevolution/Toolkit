@@ -164,160 +164,26 @@ const trafficBarComponent = {
 
 // TODO add different type of tile (bigger one?)
 const tilescomponent = {
-
     controller: function() {
 
     },
     view: function(ctrl: any) {
         return m("div", {
                 "class": "row article_container small-up-1 medium-up-2 large-up-3",
-                config: hideSidebar
-
+                config: function(elem, isInit) {
+                    hideSidebar(elem, isInit);
+                    const $elem = $(elem);
+                    if($elem.children().length === 0) {
+                        const route = jsRoutes.controllers.DataController.getIndexBottomSection();
+                        $.ajax({
+                            url: route.url,
+                            method: route.method
+                        }).done(function (data) {
+                            $elem.html(data);
+                        });
+                    }
+                }
             },
-            m("div", {
-                    "class": "column column-block tile-main-container"
-                },
-                m("div", {"class": "tile_container"},
-                    m("div", {"class": "tile-img", "style": {"background-image": "url(/assets/images/fold_galaxy.png)"}}
-                    ),
-                    m("div", {"class": "text_part"},
-                        m("h5", "Recent Updates"),
-                        m("a", {"data-open": "footerRecentUpdatesModal", href: "#nineproteomes_2018_06"},
-                            m("h6", "June 1, 2018"),
-                            m("p", "HHpred: profile HMM DBs of ",
-                                m("em", "Bacteriovorax sp., Bdellovibrio bacteriovorus, Enterococcus faecalis, " +
-                                    "Helicobacter pylori, Leptospira interrogans, Neisseria gonorrhoeae, " +
-                                    "Phycisphaerae bacterium, Plesiocystis pacifica, and Waddlia chondrophila"),
-                                m("span", " are online."))
-                        ),
-                        m("a", {"data-open": "footerRecentUpdatesModal", href: "#Tgondii_2018_05"},
-                            m("h6", "May 10, 2018"),
-                            m("p", "HHpred: profile HMM database of ",
-                                m("em", "Toxoplasma gondii"),
-                                m("span", " is online."))
-                        ),
-                        m("a", {"data-open": "footerRecentUpdatesModal", href: "#Abaumannii_2018_03"},
-                            m("h6", "March 29, 2018"),
-                            m("p", "HHpred: profile HMM database of ",
-                                m("em", "Acinetobacter baumannii"),
-                                m("span", " is online."))
-                        )
-                    ),
-                    m("div", {"class": "quick-links"},
-                        m("h5", "Quick Links"),
-                        m("table",
-                            m("tr",
-                                m("td",
-                                    m("a", {href: "/#/tools/hhpred"},
-                                        "HHpred"
-                                    )
-                                ),
-                                m("td",
-                                    m("a", {href: "/#/tools/hhpred"},
-                                        m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
-                                    )
-                                )
-                            ),
-                            m("tr",
-                                m("td",
-                                    m("a", {href: "/#/tools/hhblits"},
-                                        "HHblits"
-                                    )
-                                ),
-                                m("td",
-                                    m("a", {href: "/#/tools/hhblits"},
-                                        m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
-                                    )
-                                )
-                            ),
-                            m("tr",
-                                m("td",
-                                    m("a", {href: "/#/tools/hhrepid"},
-                                        "HHrepID"
-                                    )
-                                ),
-                                m("td",
-                                    m("a", {href: "/#/tools/hhprepid"},
-                                        m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
-                                    )
-                                )
-                            ),
-                            m("tr",
-                                m("td",
-                                    m("a", {href: "/#/tools/psiblast"},
-                                        "BLAST"
-                                    )
-                                ),
-                                m("td",
-                                    m("a", {href: "/#/tools/psiblast"},
-                                        m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
-                                    )
-                                )
-                            ),
-                            m("tr",
-                                m("td",
-                                    m("a", {href: "/#/tools/pcoils"},
-                                        "PCOILS"
-                                    )
-                                ),
-                                m("td",
-                                    m("a", {href: "/#/tools/pcoils"},
-                                        m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
-                                    )
-                                )
-                            ),
-                            m("tr",
-                                m("td",
-                                    m("a", {href: "/#/tools/clans"},
-                                        "CLANS"
-                                    )
-                                ),
-                                m("td",
-                                    m("a", {href: "/#/tools/clans"},
-                                        m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
-                                    )
-                                )
-                            ),
-                            m("tr",
-                                m("td",
-                                    m("a", {href: "/#/tools/mafft"},
-                                        "MAFFT"
-                                    )
-                                ),
-                                m("td",
-                                    m("a", {href: "/#/tools/mafft"},
-                                        m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
-                                    )
-                                )
-                            ),
-                            m("tr",
-                                m("td",
-                                    m("a", {href: "/#/tools/quick2d"},
-                                        "Quick2D"
-                                    )
-                                ),
-                                m("td",
-                                    m("a", {href: "/#/tools/quick2d"},
-                                        m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
-                                    )
-                                )
-                            ),
-                            m("tr",
-                                m("td",
-                                    m("a", {href: "/#/tools/mmseqs2"},
-                                        "MMseqs2"
-                                    )
-                                ),
-                                m("td",
-                                    m("a", {href: "/#/tools/mmseqs2"},
-                                        m("i", {"class": "fa fa-angle-right fa-2x", "id": "arrow-right"})
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-            )
         );
 
     }
