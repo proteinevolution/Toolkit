@@ -36,13 +36,13 @@ window.Toolkit = {
     controller: function(args : any) {
         currentRoute = args.isJob ? "jobs" : "tools";
         let job : any, jobID : string, toolname : string, viewComponent : any;
+        const loadJobRoute = "/api/job/load/";
         if (args.isJob) {
             jobID = m.route.param("jobID");
             Toolkit.currentJobID = jobID;
             // check if job was not found. Try again but display 404 first
             if(Toolkit.notFoundJobID === jobID) {
-                let route = jsRoutes.controllers.JobController.loadJob(jobID);
-                m.request({method: route.method, url: route.url}).then(function (data) {
+                m.request({method: "GET", url: loadJobRoute + jobID}).then(function (data) {
                     Toolkit.notFoundJobID = ""; // reset not found job
                     JobListComponent.pushJob(JobListComponent.Job(data), true);
                 });
@@ -50,8 +50,7 @@ window.Toolkit = {
                 // ensure addition to the job list
                 //ws.send({ type: "RegisterJobs", "jobIDs": [jobID] });
                 // request job
-                let route = jsRoutes.controllers.JobController.loadJob(jobID);
-                m.request({method: route.method, url: route.url}).catch(function (e) {
+                m.request({method: "GET", url: loadJobRoute + jobID}).catch(function (e) {
                     console.log("Job Not found", e);
                     Toolkit.notFoundJobID = jobID;
                     m.route("/jobs/" + jobID); // reload and show not found
@@ -71,12 +70,10 @@ window.Toolkit = {
         else {
             // checks whether toolname is valid
             if (!args.isJob) {
-                let route = jsRoutes.controllers.Search.existsTool(toolname);
-                m.request({method: route.method, url: route.url}).catch(function (e) {
+                m.request({method: "GET", url: "/check/tool/" + toolname}).catch(function (e) {
                     m.route("/404");
                     console.log("Tool not found", e);
-                }).then(function(data) {
-                });
+                }).then(() => {});
             }
             if(Toolkit.notFoundJobID === jobID) {
                 viewComponent = function() {

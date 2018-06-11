@@ -1,10 +1,11 @@
-@import controllers.routes
+@import controllers.AssetsFinder
+@(assets: AssetsFinder)
 <!DOCTYPE html>
 <html>
     <head>
         <title>Bioinformatics Toolkit</title>
-        <link rel="shortcut icon" href="@routes.Assets.versioned("/images/favicon.png")">
-        <link href="@routes.Assets.versioned("styles/global.min.css")" rel="stylesheet">
+        <link rel="shortcut icon" href="@assets.path("/images/favicon.png")">
+        <link href="@assets.path("styles/global.min.css")" rel="stylesheet">
             <!-- Google Fonts -->
         <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700|Roboto:300' rel='stylesheet' type='text/css'>
@@ -16,7 +17,7 @@
             <h1>404</h1>
             <p>Congratulations!</p>
             <p>You just entered a Domain of Unknown Function!</p>
-            <br><img src="@routes.Assets.versioned("/images/404.png")" style="height: 100%; width: auto;">
+            <br><img src="@assets.path("/images/404.png")" style="height: 100%; width: auto;">
         </div>
         </div>
 
