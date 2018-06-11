@@ -19,11 +19,11 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.{ JsValue, Json }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
-import play.api.routing.JavaScriptReverseRouter
 import play.api.{ Configuration, Environment, Logger }
 import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
 import de.proteinevolution.models.ConstantsV2
+import play.api.routing.{ JavaScriptReverseRoute, JavaScriptReverseRouter }
 
 import scala.concurrent.{ Await, ExecutionContext, Future }
 
@@ -46,7 +46,8 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   constants: ConstantsV2,
                                   cc: ControllerComponents,
                                   config: Configuration,
-                                  environment: Environment)(implicit ec: ExecutionContext)
+                                  environment: Environment,
+                                  assetsFinder: AssetsFinder)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
     with CommonController {
@@ -169,7 +170,12 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     userSessions.getUser.map { user =>
       Logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
       Ok(
-        views.html.main(webJarsUtil, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message, "", environment)
+        views.html.main(assetsFinder,
+                        webJarsUtil,
+                        toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                        message,
+                        "",
+                        environment)
       ).withSession(userSessions.sessionCookie(request, user.sessionID.get))
     }
   }
@@ -206,42 +212,10 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
           .as("text/plain") //TODO Only text/plain for files currently supported
       else
         Ok // TODO This needs more case validations
-
     }
   }
 
-  def javascriptRoutes: Action[AnyContent] = Action { implicit request =>
-    Ok(
-      JavaScriptReverseRouter("jsRoutes")(
-        routes.javascript.Jobs.updateDateViewed,
-        routes.javascript.Tool.frontendCount,
-        routes.javascript.JobController.submitJob,
-        routes.javascript.JobController.startJob,
-        routes.javascript.JobController.checkHash,
-        routes.javascript.JobController.delete,
-        routes.javascript.JobController.loadJob,
-        routes.javascript.DataController.get,
-        routes.javascript.DataController.getHelp,
-        routes.javascript.Search.autoComplete,
-        routes.javascript.Search.checkJobID,
-        routes.javascript.Search.existsTool,
-        routes.javascript.Search.get,
-        routes.javascript.Search.getIndexPageInfo,
-        routes.javascript.Search.getToolList,
-        routes.javascript.Auth.getUserData,
-        routes.javascript.Auth.signInSubmit,
-        routes.javascript.Auth.signUpSubmit,
-        routes.javascript.Auth.verification,
-        routes.javascript.Auth.profileSubmit,
-        routes.javascript.Auth.passwordChangeSubmit,
-        routes.javascript.Auth.resetPassword,
-        routes.javascript.Auth.resetPasswordChange,
-        routes.javascript.Application.ws
-      )
-    ).as("text/javascript").withHeaders(CACHE_CONTROL -> "max-age=31536000")
-  }
-
-  def matchSuperUserToPW(username: String, password: String): Future[Boolean] = {
+  private def matchSuperUserToPW(username: String, password: String): Future[Boolean] = {
     mongoStore.findUser(BSONDocument("userData.nameLogin" -> username)).map {
       case Some(user) if user.checkPassword(password) && user.isSuperuser => true
       case None                                                           => false
@@ -280,15 +254,14 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     )
   }
 
-  def maintenanceTest: Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.map { user =>
-      if (user.isSuperuser) {
-        clusterMonitor ! Multicast
-        Ok
-      } else {
-        NotFound
-      }
-    }
+  /** Exposes callback function in order to configure the websocket connection dependent on the protocol */
+  def wsConfig: Action[AnyContent] = Action { implicit request =>
+    val callBack = """function() {
+                       |          return _wA({method:"GET", url:"/" + "ws"})
+                       |        }""".stripMargin.trim
+    Ok(JavaScriptReverseRouter("jsRoutes")(JavaScriptReverseRoute("controllers.Application.ws", callBack)))
+      .as("text/javascript")
+      .withHeaders(CACHE_CONTROL -> "max-age=31536000")
   }
 
 }

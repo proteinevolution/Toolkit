@@ -22,9 +22,9 @@ class DataController @Inject()(cc: ControllerComponents, resultFiles: ResultFile
     }
   }
 
-  def getHelp(toolname: String) = Action {
-    val version = getVersion(toolname)
-    val help = toolname match {
+  def getHelp(toolName: String) = Action {
+    val version = getVersion(toolName)
+    val help = toolName match {
       case ToolName.PSIBLAST.value            => views.html.help.psiblast(version)
       case ToolName.HHBLITS.value             => views.html.help.hhblits(version)
       case ToolName.HHPRED.value              => views.html.help.hhpred(version)
@@ -63,8 +63,8 @@ class DataController @Inject()(cc: ControllerComponents, resultFiles: ResultFile
     Ok(views.html.elements.recentupdates())
   }
 
-  private def getVersion(toolname: String): String = {
-    config.get[String](s"Tools.$toolname.version")
+  private def getVersion(toolName: String): String = {
+    config.get[String](s"Tools.$toolName.version")
   }
 
 }

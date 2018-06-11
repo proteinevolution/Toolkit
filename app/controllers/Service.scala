@@ -28,7 +28,8 @@ final class Service @Inject()(
     mongoStore: MongoStore,
     toolFactory: ToolFactory,
     constants: ConstantsV2,
-    cc: ControllerComponents
+    cc: ControllerComponents,
+    assets: AssetsFinder
 )(implicit ec: ExecutionContext,
   @NamedCache("resultCache") val resultCache: AsyncCacheApi,
   @NamedCache("userCache") val userCache: SyncCacheApi,
@@ -42,9 +43,9 @@ final class Service @Inject()(
     static match {
       // Frontend tools
       case "reformat" =>
-        Ok(views.html.tools.forms.reformat())
+        Ok(views.html.tools.forms.reformat(assets))
       case _ =>
-        NotFound(views.html.errors.pagenotfound())
+        NotFound(views.html.errors.pagenotfound(assets))
     }
   }
 

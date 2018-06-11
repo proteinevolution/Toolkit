@@ -1,15 +1,17 @@
+import controllers.AssetsFinder
 import play.api.http.HttpErrorHandler
 import play.api.mvc._
 import play.api.mvc.Results._
+
 import scala.concurrent._
-import javax.inject.Singleton
+import javax.inject.{ Inject, Singleton }
 
 @Singleton
-final class ErrorHandler extends HttpErrorHandler {
+final class ErrorHandler @Inject()(assets: AssetsFinder) extends HttpErrorHandler {
 
   def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     Future.successful(
-      Status(statusCode)(views.html.errors.pagenotfound())
+      Status(statusCode)(views.html.errors.pagenotfound(assets))
     )
   }
 
