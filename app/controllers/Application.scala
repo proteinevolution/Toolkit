@@ -47,7 +47,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   cc: ControllerComponents,
                                   config: Configuration,
                                   environment: Environment,
-                                  assets: Assets)(implicit ec: ExecutionContext)
+                                  assetsFinder: AssetsFinder)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
     with CommonController {
@@ -170,7 +170,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     userSessions.getUser.map { user =>
       Logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
       Ok(
-        views.html.main(assets,
+        views.html.main(assetsFinder,
                         webJarsUtil,
                         toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                         message,

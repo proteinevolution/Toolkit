@@ -29,7 +29,7 @@ final class Service @Inject()(
     toolFactory: ToolFactory,
     constants: ConstantsV2,
     cc: ControllerComponents,
-    assets: Assets
+    assets: AssetsFinder
 )(implicit ec: ExecutionContext,
   @NamedCache("resultCache") val resultCache: AsyncCacheApi,
   @NamedCache("userCache") val userCache: SyncCacheApi,

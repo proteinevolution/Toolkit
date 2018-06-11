@@ -39,7 +39,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                            @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi, // Mailing Controller
                            constants: ConstantsV2,
                            environment: Environment,
-                           assets: Assets,
+                           assets: AssetsFinder,
                            cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
