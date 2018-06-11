@@ -5,12 +5,12 @@ const JobPendingComponent = {
             checkHashRoute: "/api/job/" + args.job().jobID + "/checkHash",
             copyConfig : function(elem: any, isInit : boolean) {
                 if (!isInit) {
-                    m.request({method:"GET", url: this.checkHashRoute, extract: nonJsonErrors}).then(function(data : any){
+                    m.request({method:"GET", url: "/api/job/" + args.job().jobID + "/checkHash", extract: nonJsonErrors}).then(function(data : any){
                         if (data != null && data.jobID != null) {
                             $("#copyID").val(data.jobID.toString());
                             $("#copyDate").val(data.dateCreated);
                         }
-                    }, function(error) {console.log(error)}).catch(function(e) {});
+                    }, function(error) {console.log(error)}).catch(() => {});
                 }
             },
         }

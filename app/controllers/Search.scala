@@ -85,7 +85,7 @@ final class Search @Inject()(
   }
 
   def existsTool(queryString: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.map { user =>
+    userSessions.getUser.map { _ =>
       if (toolFactory.isTool(queryString)) {
         Ok(Json.toJson(true))
       } else {
