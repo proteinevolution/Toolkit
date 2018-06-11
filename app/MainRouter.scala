@@ -25,26 +25,24 @@ class MainRouter @Inject()(
 ) extends SimpleRouter {
 
   private lazy val mainRoutes: Routes = {
-    case GET(p"/")                                                             => controller.index()
-    case GET(p"/sitemap.xml")                                                  => assets.versioned(path = "/public", file = "sitemap.xml")
-    case GET(p"/ws")                                                           => controller.ws
-    case GET(p"/ws-config")                                                    => controller.wsConfig
-    case POST(p"/maintenance")                                                 => controller.maintenance
-    case GET(p"/uptime")                                                       => uptime.uptime
-    case GET(p"/buildinfo")                                                    => uptime.buildInfo
-    case GET(p"/files/$mainID/$filename")                                      => controller.file(filename = filename, mainID = mainID)
-    case GET(p"/assets/$file*")                                                => assets.versioned(path = "/public", file = file)
-    case GET(p"/load")                                                         => cluster.getLoad
-    case GET(p"/static/get/$static")                                           => service.static(static)
-    case GET(p"/jobs")                                                         => search.get // TODO in use?
-    case GET(p"/index/page/info")                                              => search.getIndexPageInfo
-    case GET(p"/search/check-job-id/$jobID/" ? q_o"resubmitJobID=$resubmitID") => search.checkJobID(jobID, resubmitID)
-    case GET(p"/tool/list")                                                    => search.getToolList
-    case GET(p"/suggest/$jobID")                                               => search.autoComplete(jobID)
-    case GET(p"/check/tool/$tool")                                             => search.existsTool(tool)
-    case GET(p"/robots.txt")                                                   => controller.robots
-    case GET(p"/$static")                                                      => controller.static(static)
-    case GET(p"/api/tools/$toolName")                                          => service.getTool(toolName)
+    case GET(p"/")                        => controller.index()
+    case GET(p"/sitemap.xml")             => assets.versioned(path = "/public", file = "sitemap.xml")
+    case GET(p"/ws")                      => controller.ws
+    case GET(p"/ws/config")               => controller.wsConfig
+    case POST(p"/maintenance")            => controller.maintenance
+    case GET(p"/uptime")                  => uptime.uptime
+    case GET(p"/buildinfo")               => uptime.buildInfo
+    case GET(p"/files/$mainID/$filename") => controller.file(filename = filename, mainID = mainID)
+    case GET(p"/assets/$file*")           => assets.versioned(path = "/public", file = file)
+    case GET(p"/static/get/$static")      => service.static(static)
+    case GET(p"/jobs")                    => search.get // TODO in use?
+    case GET(p"/index/page/info")         => search.getIndexPageInfo
+    case GET(p"/tool/list")               => search.getToolList
+    case GET(p"/suggest/$jobID")          => search.autoComplete(jobID)
+    case GET(p"/check/tool/$tool")        => search.existsTool(tool)
+    case GET(p"/robots.txt")              => controller.robots
+    case GET(p"/$static")                 => controller.static(static)
+    case GET(p"/api/tools/$toolName")     => service.getTool(toolName)
   }
 
   private lazy val uiRoutes: Routes = {
@@ -54,6 +52,7 @@ class MainRouter @Inject()(
     case GET(p"/get/help/$tool")                     => data.getHelp(tool)
     case GET(p"/recent/updates")                     => data.recentUpdates
     case GET(p"/forward/modal/$toolName/$modalType") => forwardModal.getForwardModalOptions(modalType, toolName)
+    case GET(p"/load")                               => cluster.getLoad
   }
 
   private lazy val backendRoutes: Routes = {
@@ -66,20 +65,21 @@ class MainRouter @Inject()(
   }
 
   private lazy val jobRoutes: Routes = {
-    case GET(p"/api/jobs")                           => job.listJobs
-    case POST(p"/api/job/" ? q"toolName=$toolName")  => job.submitJob(toolName)
-    case POST(p"/api/job/$jobID/start")              => job.startJob(jobID)
-    case GET(p"/api/job/$jobID/checkHash")           => job.checkHash(jobID)
-    case GET(p"/api/job/$jobID")                     => service.getJob(jobID)
-    case GET(p"/api/job/result/$jobID/$tool/$panel") => service.getResult(jobID, tool, panel)
-    case DELETE(p"/api/job/$jobID")                  => job.delete(jobID)
-    case GET(p"/api/job/load/$jobID")                => job.loadJob(jobID)
-    case POST(p"/api/frontendSubmit/$toolName")      => tool.frontendCount(toolName)
-    case GET(p"/api/job/results/$jobID")             => data.get(jobID) // TODO NOT IN USE?
-    case PUT(p"/jobs/$status/$jobID/$key")           => jobs.setJobStatus(status, jobID, key)
-    case PUT(p"/jobs/sge/$jobID/$sgeID/$key")        => jobs.SGEID(jobID, sgeID, key)
-    case PUT(p"/jobs/dateviewed/$mainID")            => jobs.updateDateViewed(mainID)
-    case PUT(p"/jobs/updateLog/$jobID")              => jobs.updateLog(jobID)
+    case GET(p"/api/jobs")                                                    => job.listJobs
+    case POST(p"/api/job/" ? q"toolName=$toolName")                           => job.submitJob(toolName)
+    case POST(p"/api/job/$jobID/start")                                       => job.startJob(jobID)
+    case GET(p"/api/job/$jobID/checkHash")                                    => job.checkHash(jobID)
+    case GET(p"/api/job/$jobID")                                              => service.getJob(jobID)
+    case GET(p"/api/job/result/$jobID/$tool/$panel")                          => service.getResult(jobID, tool, panel)
+    case DELETE(p"/api/job/$jobID")                                           => job.delete(jobID)
+    case GET(p"/api/job/load/$jobID")                                         => job.loadJob(jobID)
+    case POST(p"/api/frontendSubmit/$toolName")                               => tool.frontendCount(toolName)
+    case GET(p"/api/job/results/$jobID")                                      => data.get(jobID) // TODO NOT IN USE?
+    case PUT(p"/jobs/$status/$jobID/$key")                                    => jobs.setJobStatus(status, jobID, key)
+    case PUT(p"/jobs/sge/$jobID/$sgeID/$key")                                 => jobs.SGEID(jobID, sgeID, key)
+    case PUT(p"/jobs/dateviewed/$mainID")                                     => jobs.updateDateViewed(mainID)
+    case PUT(p"/jobs/updateLog/$jobID")                                       => jobs.updateLog(jobID)
+    case GET(p"/search/check/jobid/$jobID/" ? q_o"resubmitJobID=$resubmitID") => search.checkJobID(jobID, resubmitID)
   }
 
   private lazy val authRoutes: Routes = {
