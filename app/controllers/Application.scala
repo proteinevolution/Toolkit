@@ -212,7 +212,6 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
           .as("text/plain") //TODO Only text/plain for files currently supported
       else
         Ok // TODO This needs more case validations
-
     }
   }
 
@@ -255,7 +254,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     )
   }
 
-  /** Hack since ws configuration is only provided via javascriptReverseRoute */
+  /** Exposes callback function in order to configure the websocket connection dependent on the protocol */
   def wsConfig: Action[AnyContent] = Action { implicit request =>
     val callBack = """function() {
                        |          return _wA({method:"GET", url:"/" + "ws"})
