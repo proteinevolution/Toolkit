@@ -1,9 +1,8 @@
 (<any>window).JobViewComponent = {
-
-    controller: function(args : any) {
+    controller: (args : any) => {
        return {}
     },
-    view: function(ctrl : any, args : any) {
+    view: (ctrl : any, args : any) => {
         if (!args.job()) {
             return m("div", {"class" : "still_waiting", config: initLoader}, "");
         } else {
@@ -17,14 +16,11 @@
     }
 };
 
-
 const JobLineComponent = {
-    controller : function() {},
-    view: function(ctrl : any, args : any) {
+    controller : () => {},
+    view: (ctrl : any, args : any) => {
         let isJob: boolean;
-
         const dateCreated = moment(args.job().dateCreated).utcOffset(2, true).local();
-
         isJob = args.job().isJob;
         return m("div", {
             "class": "jobline"
@@ -32,11 +28,13 @@ const JobLineComponent = {
             m((<any>window).HelpModalComponent, { toolname: args.job().tool.toolname, toolnameLong: args.job().tool.toolnameLong }),
             m("span", { "class": "toolname" }, [
                 m("input", { id: "toolnameAccess", "style": "display: none;", type: "text", value: args.job().tool.toolname}),
-                m("a", { onclick: function(){m.route("/tools/" + args.job().tool.toolname)}}, args.job().tool.toolnameLong),
-                m("a", { onclick: function(){
+                m("a", { onclick: () => {m.route("/tools/" + args.job().tool.toolname)}}, args.job().tool.toolnameLong),
+                m("a", { onclick: () => {
                         m.request({
                             url: "/get/help/" + args.job().tool.toolname,
-                            method: "GET"
+                            method: "GET",
+                            background: true,
+                            deserialize: string => { return string; }
                         }).then( help => {
                             const helpModal = $("#helpModal");
                             helpModal.find(".modal-content").html(help);
@@ -44,7 +42,7 @@ const JobLineComponent = {
                             helpModal.foundation("open");
                             helpModal.find("#tabs").tabs();
                         });
-                    } },
+                    }},
                         m("i", { "class": "icon-white_question helpicon", "title": "Help page", "data-tooltip": "", "config": tooltipConf})
                 )
             ]),
@@ -54,8 +52,8 @@ const JobLineComponent = {
     }
 };
 
-const initLoader = function(elem: any, isInit: boolean) : any {
+const initLoader = (elem: any, isInit: boolean) : any => {
     if(!isInit) {
-        return setTimeout(function(){ $(elem).show(); }, 1000); // css loading animation to be shown only when the transition to job state tabs takes too long
+        return setTimeout(() => { $(elem).show(); }, 1000); // css loading animation to be shown only when the transition to job state tabs takes too long
     }
 };

@@ -52,7 +52,7 @@ class MainRouter @Inject()(
     case GET(p"/tools/$toolName")                    => controller.showTool(toolName)
     case GET(p"/jobs/$idString")                     => controller.showJob(idString)
     case GET(p"/get/help/$tool")                     => data.getHelp(tool)
-    case GET(p"/recent/updates/")                    => data.recentUpdates
+    case GET(p"/recent/updates")                     => data.recentUpdates
     case GET(p"/forward/modal/$toolName/$modalType") => forwardModal.getForwardModalOptions(modalType, toolName)
   }
 

@@ -93,7 +93,6 @@ const JobTabsComponent = {
                     if (typeof setViewport === "function") {
                         setViewport();
                     }
-
                 }
                 if (typeof onFullscreenToggle === "function" && this.isFullscreen === true) {
                     return onFullscreenToggle();

@@ -171,7 +171,7 @@ const tilescomponent = {
                     if(!isInit) {
                         hideSidebar(elem, isInit);
                         m.request({
-                            url: "/recent/updates/",
+                            url: "/recent/updates",
                             method: "GET",
                             background: true,
                             deserialize: value => {return value;}
