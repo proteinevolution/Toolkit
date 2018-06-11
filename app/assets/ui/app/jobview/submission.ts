@@ -46,10 +46,13 @@
         }
     },
     checkJobIDWithRequest : function () {
-        const checkJobIDroute = jsRoutes.controllers.Search.checkJobID(
-            JobSubmissionComponent.currentJobID,
-            JobSubmissionComponent.oldJobID);
-        m.request({ method: checkJobIDroute.method, url: checkJobIDroute.url}).then(
+        m.request({
+            method: "GET",
+            url: "/search/check-job-id/"
+                + JobSubmissionComponent.currentJobID
+                + "/?resubmitJobID="
+                + JobSubmissionComponent.oldJobID
+        }).then(
             function (data : any) {
                 JobSubmissionComponent.jobIDValid = !data.exists;
                 if (data.exists && data.suggested != null) {
@@ -134,11 +137,9 @@
                 // Append file to upload
                 let file = ((<any>$("input[type=file]"))[0].files[0]);
                 if (file) formData.append("file", file);
-
-                submitRoute = jsRoutes.controllers.JobController.submitJob(tool);
                 m.request({
-                    method: submitRoute.method,
-                    url: submitRoute.url,
+                    method: "POST",
+                    url: "/api/job/?toolName=" + tool,
                     data: formData,
                     serialize: function(submissionReturnData) {
                         return submissionReturnData;

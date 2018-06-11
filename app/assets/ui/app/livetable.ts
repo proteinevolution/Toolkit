@@ -58,8 +58,7 @@ class LiveTable {
     static totalJobs: number = 0;
 
     static updateJobInfo(): void {
-        const route = jsRoutes.controllers.Search.getIndexPageInfo();
-        m.request({method: route.method, url: route.url})
+        m.request({method: "GET", url: "/index-page-info/"})
             .then(function(pageInfo) {
                 LiveTable.lastJob = pageInfo.lastJob;
             }).catch(function(error) {

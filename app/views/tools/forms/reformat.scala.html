@@ -1,10 +1,12 @@
-@import controllers.routes
-@()()
-<link href="@routes.Assets.versioned("styles/reformat.css")" rel="stylesheet">
-<link href="@routes.Assets.versioned("styles/reformat-common.css")" rel="stylesheet">
-<link href="@routes.Assets.versioned("styles/reformat-jobview.css")" rel="stylesheet">
-<script src="@routes.Assets.versioned("javascripts/reformat-view.js")" type="text/javascript"></script>
-
+@import controllers.Assets
+@import play.twirl.api.TwirlFeatureImports.defining
+@(assets: Assets)
+@defining(assets){ assets =>
+    <link href="@assets.versioned("styles/reformat.css")" rel="stylesheet">
+    <link href="@assets.versioned("styles/reformat-common.css")" rel="stylesheet">
+    <link href="@assets.versioned("styles/reformat-jobview.css")" rel="stylesheet">
+    <script src="@assets.versioned("javascripts/reformat-view.js")" type="text/javascript"></script>
+}
 <div class="jobline">
     <span class="toolname"><a onclick="myCodeMirror.setValue('');
     myCodeMirror2.setValue('')">Reformat</a></span>

@@ -18,7 +18,7 @@ let bloodHoundConfig = {
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace("long"),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         prefetch: {
-            url: "/getToolList"
+            url: "/tool-list/"
         }
     })
 };

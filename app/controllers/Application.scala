@@ -19,7 +19,6 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.{ JsValue, Json }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
-import play.api.routing.JavaScriptReverseRouter
 import play.api.{ Configuration, Environment, Logger }
 import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
@@ -46,7 +45,8 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   constants: ConstantsV2,
                                   cc: ControllerComponents,
                                   config: Configuration,
-                                  environment: Environment)(implicit ec: ExecutionContext)
+                                  environment: Environment,
+                                  assets: Assets)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
     with CommonController {
@@ -169,7 +169,12 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     userSessions.getUser.map { user =>
       Logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
       Ok(
-        views.html.main(webJarsUtil, toolFactory.values.values.toSeq.sortBy(_.toolNameLong), message, "", environment)
+        views.html.main(assets,
+                        webJarsUtil,
+                        toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                        message,
+                        "",
+                        environment)
       ).withSession(userSessions.sessionCookie(request, user.sessionID.get))
     }
   }
@@ -210,37 +215,6 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     }
   }
 
-  def javascriptRoutes: Action[AnyContent] = Action { implicit request =>
-    Ok(
-      JavaScriptReverseRouter("jsRoutes")(
-        routes.javascript.Jobs.updateDateViewed,
-        routes.javascript.Tool.frontendCount,
-        routes.javascript.JobController.submitJob,
-        routes.javascript.JobController.startJob,
-        routes.javascript.JobController.checkHash,
-        routes.javascript.JobController.delete,
-        routes.javascript.JobController.loadJob,
-        routes.javascript.DataController.get,
-        routes.javascript.DataController.getHelp,
-        routes.javascript.Search.autoComplete,
-        routes.javascript.Search.checkJobID,
-        routes.javascript.Search.existsTool,
-        routes.javascript.Search.get,
-        routes.javascript.Search.getIndexPageInfo,
-        routes.javascript.Search.getToolList,
-        routes.javascript.Auth.getUserData,
-        routes.javascript.Auth.signInSubmit,
-        routes.javascript.Auth.signUpSubmit,
-        routes.javascript.Auth.verification,
-        routes.javascript.Auth.profileSubmit,
-        routes.javascript.Auth.passwordChangeSubmit,
-        routes.javascript.Auth.resetPassword,
-        routes.javascript.Auth.resetPasswordChange,
-        routes.javascript.Application.ws
-      )
-    ).as("text/javascript").withHeaders(CACHE_CONTROL -> "max-age=31536000")
-  }
-
   def matchSuperUserToPW(username: String, password: String): Future[Boolean] = {
     mongoStore.findUser(BSONDocument("userData.nameLogin" -> username)).map {
       case Some(user) if user.checkPassword(password) && user.isSuperuser => true
@@ -278,17 +252,6 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     Ok(
       "User-agent: *\nAllow: /\nDisallow: /#/jobmanager/\nDisallow: /#/jobs/\nSitemap: https://toolkit.tuebingen.mpg.de/sitemap.xml"
     )
-  }
-
-  def maintenanceTest: Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.map { user =>
-      if (user.isSuperuser) {
-        clusterMonitor ! Multicast
-        Ok
-      } else {
-        NotFound
-      }
-    }
   }
 
 }

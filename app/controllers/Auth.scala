@@ -39,6 +39,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                            @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi, // Mailing Controller
                            constants: ConstantsV2,
                            environment: Environment,
+                           assets: Assets,
                            cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
@@ -55,7 +56,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
     userSessions.getUser.map { user =>
       userSessions.removeUserFromCache(user)
 
-      Redirect(routes.Application.index()).withNewSession.flashing(
+      Redirect("/").withNewSession.flashing(
         "success" -> "You've been logged out"
       )
     }
@@ -116,7 +117,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
    *
    * @return
    */
-  def signInSubmit(): Action[AnyContent] =
+  def signInSubmit: Action[AnyContent] =
     Action.async { implicit request =>
       userSessions.getUser.flatMap { unregisteredUser =>
         if (unregisteredUser.accountType < 0) {
@@ -204,7 +205,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
    *
    * @return
    */
-  def signUpSubmit(): Action[AnyContent] = Action.async { implicit request =>
+  def signUpSubmit: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       if (user.accountType < 0) {
         // Create a new user from the information given in the form
@@ -534,7 +535,8 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                       .map {
                         case Some(_) =>
                           Ok(
-                            views.html.main(webJarsUtil,
+                            views.html.main(assets,
+                                            webJarsUtil,
                                             toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                             "Account verification was successful. Please log in.",
                                             "",
@@ -543,6 +545,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                         case None => // Could not save the modified user to the DB
                           Ok(
                             views.html.main(
+                              assets,
                               webJarsUtil,
                               toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                               "Verification was not successful due to a database error. Please try again later.",
@@ -581,6 +584,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                               // User modified properly
                               Ok(
                                 views.html.main(
+                                  assets,
                                   webJarsUtil,
                                   toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                   "Password change verification was successful. Please log in with Your new password.",
@@ -591,6 +595,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                             case None => // Could not save the modified user to the DB - failsave in case the DB is down
                               Ok(
                                 views.html.main(
+                                  assets,
                                   webJarsUtil,
                                   toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                   "Verification was not successful due to a database error. Please try again later.",
@@ -605,6 +610,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                           Ok(
                             views.html
                               .main(
+                                assets,
                                 webJarsUtil,
                                 toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                 "The Password you have entered was insufficient, please create a new one.",
@@ -629,7 +635,8 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                     userSessions.modifyUserWithCache(selector, modifier).map {
                       case Some(_) =>
                         Ok(
-                          views.html.main(webJarsUtil,
+                          views.html.main(assets,
+                                          webJarsUtil,
                                           toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                           "",
                                           "passwordReset",
@@ -638,6 +645,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                       case None => // Could not save the modified user to the DB
                         Ok(
                           views.html.main(
+                            assets,
                             webJarsUtil,
                             toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                             "Verification was not successful due to a database error. Please try again later.",
@@ -649,7 +657,8 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                   case _ =>
                     Future.successful(
                       Ok(
-                        views.html.main(webJarsUtil,
+                        views.html.main(assets,
+                                        webJarsUtil,
                                         toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                         "There was an error finding your token.",
                                         "",
@@ -662,7 +671,8 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                 // No Token in DB
                 Future.successful(
                   Ok(
-                    views.html.main(webJarsUtil,
+                    views.html.main(assets,
+                                    webJarsUtil,
                                     toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                     "The token you used is not valid.",
                                     "",
@@ -673,7 +683,8 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
             case None =>
               Future.successful(
                 Ok(
-                  views.html.main(webJarsUtil,
+                  views.html.main(assets,
+                                  webJarsUtil,
                                   toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                                   "There was an error finding your token.",
                                   "",
@@ -684,7 +695,8 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
         case None =>
           Future.successful(
             Ok(
-              views.html.main(webJarsUtil,
+              views.html.main(assets,
+                              webJarsUtil,
                               toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
                               "There was an error finding your account.",
                               "",
@@ -695,29 +707,36 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
     }
   }
 
-  def validateModellerKey(input: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      if (user.userConfig.hasMODELLERKey) {
-        Future.successful(Ok(Json.obj("isValid" -> true)))
-      } else if (input == constants.modellerKey) {
-        userSessions
-          .modifyUserWithCache(BSONDocument(User.IDDB -> user.userID),
-                               BSONDocument(
-                                 "$set" ->
-                                 BSONDocument(
-                                   s"${User.USERCONFIG}.${UserConfig.HASMODELLERKEY}" ->
-                                   true
-                                 )
-                               ))
-          .map {
-            case Some(_) =>
-              Ok(Json.obj("isValid" -> true))
-            case None =>
-              BadRequest
+  def validateModellerKey(inputOpt: Option[String]): Action[AnyContent] = Action.async { implicit request =>
+    inputOpt match {
+      case Some(input) =>
+        userSessions.getUser.flatMap { user =>
+          if (user.userConfig.hasMODELLERKey) {
+            Future.successful(Ok(Json.obj("isValid" -> true)))
+          } else if (input == constants.modellerKey) {
+            userSessions
+              .modifyUserWithCache(
+                BSONDocument(User.IDDB -> user.userID),
+                BSONDocument(
+                  "$set" ->
+                  BSONDocument(
+                    s"${User.USERCONFIG}.${UserConfig.HASMODELLERKEY}" ->
+                    true
+                  )
+                )
+              )
+              .map {
+                case Some(_) =>
+                  Ok(Json.obj("isValid" -> true))
+                case None =>
+                  BadRequest
+              }
+          } else {
+            Future.successful(Ok(Json.obj("isValid" -> false)))
           }
-      } else {
-        Future.successful(Ok(Json.obj("isValid" -> false)))
-      }
+        }
+      case None =>
+        Future.successful(BadRequest)
     }
   }
 }

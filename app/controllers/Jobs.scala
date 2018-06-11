@@ -31,30 +31,15 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
                            cc: ControllerComponents)
     extends AbstractController(cc) {
 
-  def jobStatusDone(jobID: String, key: String) = Action {
+  def setJobStatus(status: String, jobID: String, key: String) = Action {
     if (checkKey(jobID, key)) {
-      jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Done))
-      NoContent
-    } else BadRequest("Permission denied")
-  }
-
-  def jobStatusError(jobID: String, key: String) = Action {
-    if (checkKey(jobID, key)) {
-      jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Error))
-      NoContent
-    } else BadRequest("Permission denied")
-  }
-
-  def jobStatusRunning(jobID: String, key: String) = Action {
-    if (checkKey(jobID, key)) {
-      jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Running))
-      NoContent
-    } else BadRequest("Permission denied")
-  }
-
-  def jobStatusQueued(jobID: String, key: String) = Action {
-    if (checkKey(jobID, key)) {
-      jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, Queued))
+      val jobStatus = status match {
+        case "done"    => Done
+        case "error"   => Error
+        case "queued"  => Queued
+        case "running" => Running
+      }
+      jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, jobStatus))
       NoContent
     } else BadRequest("Permission denied")
   }

@@ -34,11 +34,10 @@ const JobLineComponent = {
                 m("input", { id: "toolnameAccess", "style": "display: none;", type: "text", value: args.job().tool.toolname}),
                 m("a", { onclick: function(){m.route("/tools/" + args.job().tool.toolname)}}, args.job().tool.toolnameLong),
                 m("a", { onclick: function(){
-                        const route = jsRoutes.controllers.DataController.getHelp(args.job().tool.toolname);
-                        $.ajax({
-                            url: route.url,
-                            method: route.method
-                        }).done(function (help) {
+                        m.request({
+                            url: "/get-help/" + args.job().tool.toolname,
+                            method: "GET"
+                        }).then( help => {
                             const helpModal = $("#helpModal");
                             helpModal.find(".modal-content").html(help);
                             helpModal.find(".accordion").foundation();

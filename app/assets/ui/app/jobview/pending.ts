@@ -1,15 +1,11 @@
 /// <reference path="helper.ts"/>
 const JobPendingComponent = {
-
     controller : function(args : any){
-
-
         return {
-
+            checkHashRoute: "/api/job/" + args.job().jobID + "/checkHash",
             copyConfig : function(elem: any, isInit : boolean) {
                 if (!isInit) {
-                    let route = jsRoutes.controllers.JobController.checkHash(args.job().jobID);
-                    m.request({method:route.method, url:route.url, extract: nonJsonErrors}).then(function(data : any){
+                    m.request({method:"GET", url: this.checkHashRoute, extract: nonJsonErrors}).then(function(data : any){
                         if (data != null && data.jobID != null) {
                             $("#copyID").val(data.jobID.toString());
                             $("#copyDate").val(data.dateCreated);
@@ -17,7 +13,6 @@ const JobPendingComponent = {
                     }, function(error) {console.log(error)}).catch(function(e) {});
                 }
             },
-
         }
     },
     view: function(ctrl : any, args : any) {
@@ -32,18 +27,14 @@ const JobPendingComponent = {
                     config : enabled,
                     onclick : function(e : any){
                         e.preventDefault();
-                        const route = jsRoutes.controllers.JobController.startJob(args.job().jobID);
-                        m.request({method:route.method, url:route.url}).then(function(data : any){
-                            //console.log("requested:",data);
-                        });
+                        m.request({method: "POST", url: "/api/job/" + args.job().jobID + "/start" })
                     }
                 }, "Start job anyway"),
                 m("button",{ "class" : "hashPrompt button submitJob",
                     config: enabled,
                     onclick : function(e : any){
                         e.preventDefault();
-                        let route = jsRoutes.controllers.JobController.checkHash(args.job().jobID);
-                        m.request({method:route.method, url:route.url, extract: nonJsonErrors}).then(function(data : any){
+                        m.request({method:"GET", url:ctrl.checkHashRoute, extract: nonJsonErrors}).then(function(data : any){
                             if (data != null && data.jobID != null) {
                                 m.route("/jobs/"+data.jobID);
                                 JobListComponent.reloadJob(data.jobID);
@@ -56,8 +47,7 @@ const JobPendingComponent = {
                     config: enabled,
                     onclick : function(e : any){
                         e.preventDefault();
-                        const route = jsRoutes.controllers.JobController.checkHash(args.job().jobID);
-                        m.request({method:route.method, url:route.url, extract: nonJsonErrors}).then(function(data : any){
+                        m.request({method:"GET", url:ctrl.checkHashRoute, extract: nonJsonErrors}).then(function(data : any){
                             if (data != null && data.jobID != null) {
                                 JobListComponent.removeJob(args.job().jobID, true, true);
                                 m.route("/jobs/"+data.jobID);
