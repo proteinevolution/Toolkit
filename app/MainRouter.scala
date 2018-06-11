@@ -56,7 +56,7 @@ class MainRouter @Inject()(
     case GET(p"/tools/$toolName")                   => controller.showTool(toolName)
     case GET(p"/jobs/$idString")                    => controller.showJob(idString)
     case GET(p"/get-help/$tool")                    => data.getHelp(tool)
-    case GET(p"/recent-updates")                    => data.recentUpdates
+    case GET(p"/recent-updates/")                    => data.recentUpdates
     case GET(p"/forwardModal/$toolName/$modalType") => forwardModal.getForwardModalOptions(modalType, toolName)
   }
 
@@ -108,7 +108,6 @@ class MainRouter @Inject()(
       .orElse(uiRoutes)
       .orElse(webjarsRouter.withPrefix("/webjars").routes)
       .orElse(toolsRouter.withPrefix("/results").routes)
-
   }
 
 }
