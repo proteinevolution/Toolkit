@@ -23,6 +23,7 @@ import play.api.{ Configuration, Environment, Logger }
 import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
 import de.proteinevolution.models.ConstantsV2
+import play.api.routing.{ JavaScriptReverseRoute, JavaScriptReverseRouter }
 
 import scala.concurrent.{ Await, ExecutionContext, Future }
 
@@ -215,7 +216,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     }
   }
 
-  def matchSuperUserToPW(username: String, password: String): Future[Boolean] = {
+  private def matchSuperUserToPW(username: String, password: String): Future[Boolean] = {
     mongoStore.findUser(BSONDocument("userData.nameLogin" -> username)).map {
       case Some(user) if user.checkPassword(password) && user.isSuperuser => true
       case None                                                           => false
@@ -252,6 +253,16 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     Ok(
       "User-agent: *\nAllow: /\nDisallow: /#/jobmanager/\nDisallow: /#/jobs/\nSitemap: https://toolkit.tuebingen.mpg.de/sitemap.xml"
     )
+  }
+
+  /** Hack since ws configuration is only provided via javascriptReverseRoute */
+  def wsConfig: Action[AnyContent] = Action { implicit request =>
+    val callBack = """function() {
+                       |          return _wA({method:"GET", url:"/" + "ws"})
+                       |        }""".stripMargin.trim
+    Ok(JavaScriptReverseRouter("jsRoutes")(JavaScriptReverseRoute("controllers.Application.ws", callBack)))
+      .as("text/javascript")
+      .withHeaders(CACHE_CONTROL -> "max-age=31536000")
   }
 
 }

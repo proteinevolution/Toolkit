@@ -38,6 +38,7 @@ class MainRouter @Inject()(
     case GET(p"/backend/users")                                                => backend.users
     case POST(p"/backend/users")                                               => backend.users
     case GET(p"/ws")                                                           => controller.ws
+    case GET(p"/ws-config/")                                                   => controller.wsConfig
     case POST(p"/maintenance")                                                 => controller.maintenance
     case GET(p"/uptime")                                                       => uptime.uptime
     case GET(p"/buildinfo")                                                    => uptime.buildInfo
