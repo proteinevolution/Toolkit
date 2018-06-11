@@ -264,7 +264,7 @@ class SignIn {
     static submit(event : Event) : void {
         event.preventDefault();
         let dataS = {nameLogin:SignIn.email, password:SignIn.password};
-        m.request({method: "POST", url: "/signin/", data: dataS }).then(function(authMessage) {
+        m.request({method: "POST", url: "/signin", data: dataS }).then(function(authMessage) {
             dataS = null;
             if (authMessage.successful) {
                 SignIn.password = null;
@@ -366,7 +366,7 @@ class SignUp {
                          eMail     : SignUp.eMail,
                          acceptToS : SignUp.acceptToS };
             const route = jsRoutes.controllers.Auth.signUpSubmit();
-            m.request({method: "POST", url: "/signup/", data: dataS }).then(function(authMessage) {
+            m.request({method: "POST", url: "/signup", data: dataS }).then(function(authMessage) {
                 dataS = null;
                 Auth.updateStatus(authMessage);
             });
@@ -469,7 +469,7 @@ class ForgotPassword {
         event.preventDefault();
         let dataS = {eMail:ForgotPassword.eMail};
         console.log(dataS);
-        m.request({method: "POST", url: "/reset-password/", data: dataS }).then(function(authMessage) {
+        m.request({method: "POST", url: "/reset/password", data: dataS }).then(function(authMessage) {
             dataS = null;
             if (authMessage.successful) { SignIn.password = null; SignIn.email = null; }
             Auth.updateStatus(authMessage);
@@ -527,7 +527,7 @@ class Profile {
         event.preventDefault();
         let userwithpw : any = { password:Profile.password };
         for (let prop in Profile.user){ if (!prop.split("_")[1]){ userwithpw[prop] = Profile.user[prop]; } }
-        m.request({method: "POST", url: "/profile/", data: userwithpw }).then(function(authMessage) {
+        m.request({method: "POST", url: "/profile", data: userwithpw }).then(function(authMessage) {
             userwithpw = null;
             Profile.password = "";
             Auth.updateStatus(authMessage);
@@ -643,7 +643,7 @@ class PasswordChange {
     static submit(event : Event) : void {
         event.preventDefault();
         let password : any = { passwordOld : PasswordChange.passwordOld, passwordNew : PasswordChange.passwordNew };
-        m.request({method: "POST", url: "/password/", data: password }).then(function(authMessage) {
+        m.request({method: "POST", url: "/password", data: password }).then(function(authMessage) {
             password = null;
             if (authMessage.success) {
                 PasswordChange.passwordOld     = "";
@@ -734,7 +734,7 @@ class PasswordReset {
     static submit(event : Event) : void {
         event.preventDefault();
         let password : any = { passwordNew : PasswordReset.passwordNew };
-        m.request({method: "POST", url: "/reset-password-change/", data: password }).then(function(authMessage) {
+        m.request({method: "POST", url: "/reset/password/change", data: password }).then(function(authMessage) {
             password = null;
             if (authMessage.success) {
                 PasswordReset.passwordNew     = "";
@@ -912,7 +912,7 @@ class Auth {
         return Auth.user
     }
     static loadUser () : any {
-        return m.request({method: "GET", url: "/user-data/", type : User }).then(function(user) {
+        return m.request({method: "GET", url: "/user/data", type : User }).then(function(user) {
             if (user) {
                 SignIn.password = null;
                 Auth.user       = user.nameLogin != null ? user : null;

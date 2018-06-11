@@ -35,7 +35,7 @@ const JobLineComponent = {
                 m("a", { onclick: function(){m.route("/tools/" + args.job().tool.toolname)}}, args.job().tool.toolnameLong),
                 m("a", { onclick: function(){
                         m.request({
-                            url: "/get-help/" + args.job().tool.toolname,
+                            url: "/get/help/" + args.job().tool.toolname,
                             method: "GET"
                         }).then( help => {
                             const helpModal = $("#helpModal");

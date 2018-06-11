@@ -24,15 +24,11 @@ class MainRouter @Inject()(
     webjarsRouter: webjars.Routes
 ) extends SimpleRouter {
 
-  /*
-    TODO refactor from camelCase to kebap-case
-   */
-
   private lazy val mainRoutes: Routes = {
     case GET(p"/")                                                             => controller.index()
     case GET(p"/sitemap.xml")                                                  => assets.versioned(path = "/public", file = "sitemap.xml")
     case GET(p"/ws")                                                           => controller.ws
-    case GET(p"/ws-config/")                                                   => controller.wsConfig
+    case GET(p"/ws-config")                                                    => controller.wsConfig
     case POST(p"/maintenance")                                                 => controller.maintenance
     case GET(p"/uptime")                                                       => uptime.uptime
     case GET(p"/buildinfo")                                                    => uptime.buildInfo
@@ -41,23 +37,23 @@ class MainRouter @Inject()(
     case GET(p"/load")                                                         => cluster.getLoad
     case GET(p"/static/get/$static")                                           => service.static(static)
     case GET(p"/jobs")                                                         => search.get // TODO in use?
-    case GET(p"/index-page-info/")                                             => search.getIndexPageInfo
+    case GET(p"/index/page/info")                                              => search.getIndexPageInfo
     case GET(p"/search/check-job-id/$jobID/" ? q_o"resubmitJobID=$resubmitID") => search.checkJobID(jobID, resubmitID)
-    case GET(p"/tool-list/")                                                   => search.getToolList
+    case GET(p"/tool/list")                                                    => search.getToolList
     case GET(p"/suggest/$jobID")                                               => search.autoComplete(jobID)
-    case GET(p"/check-tool/$tool")                                             => search.existsTool(tool)
+    case GET(p"/check/tool/$tool")                                             => search.existsTool(tool)
     case GET(p"/robots.txt")                                                   => controller.robots
     case GET(p"/$static")                                                      => controller.static(static)
     case GET(p"/api/tools/$toolName")                                          => service.getTool(toolName)
   }
 
   private lazy val uiRoutes: Routes = {
-    case GET(p"/hhpred")                            => controller.showTool(toolName = "hhpred")
-    case GET(p"/tools/$toolName")                   => controller.showTool(toolName)
-    case GET(p"/jobs/$idString")                    => controller.showJob(idString)
-    case GET(p"/get-help/$tool")                    => data.getHelp(tool)
-    case GET(p"/recent-updates/")                    => data.recentUpdates
-    case GET(p"/forwardModal/$toolName/$modalType") => forwardModal.getForwardModalOptions(modalType, toolName)
+    case GET(p"/hhpred")                             => controller.showTool(toolName = "hhpred")
+    case GET(p"/tools/$toolName")                    => controller.showTool(toolName)
+    case GET(p"/jobs/$idString")                     => controller.showJob(idString)
+    case GET(p"/get/help/$tool")                     => data.getHelp(tool)
+    case GET(p"/recent/updates/")                    => data.recentUpdates
+    case GET(p"/forward/modal/$toolName/$modalType") => forwardModal.getForwardModalOptions(modalType, toolName)
   }
 
   private lazy val backendRoutes: Routes = {
@@ -87,16 +83,16 @@ class MainRouter @Inject()(
   }
 
   private lazy val authRoutes: Routes = {
-    case GET(p"/user-data/")                             => auth.getUserData
-    case POST(p"/signin/")                               => auth.signInSubmit
-    case POST(p"/signup/")                               => auth.signUpSubmit
-    case GET(p"/signout")                                => auth.signOut() // TODO should be PUT
-    case POST(p"/reset-password/")                       => auth.resetPassword
-    case POST(p"/reset-password-change/")                => auth.resetPasswordChange
-    case POST(p"/profile/")                              => auth.profileSubmit()
-    case POST(p"/password/")                             => auth.passwordChangeSubmit()
+    case GET(p"/user/data")                              => auth.getUserData
+    case POST(p"/signin")                                => auth.signInSubmit
+    case POST(p"/signup")                                => auth.signUpSubmit
+    case GET(p"/signout")                                => auth.signOut()
+    case POST(p"/reset/password")                        => auth.resetPassword
+    case POST(p"/reset/password/change")                 => auth.resetPasswordChange
+    case POST(p"/profile")                               => auth.profileSubmit()
+    case POST(p"/password")                              => auth.passwordChangeSubmit()
     case GET(p"/verification/$userName/$token")          => auth.verification(userName, token) // extern
-    case GET(p"/getCurrentUser")                         => auth.profile2json()
+    case GET(p"/getCurrentUser")                         => auth.profile2json() // TODO in use?
     case POST(p"/validate/modeller" ? q_o"input=$input") => auth.validateModellerKey(input)
   }
 

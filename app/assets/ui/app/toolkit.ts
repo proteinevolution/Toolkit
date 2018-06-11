@@ -70,7 +70,7 @@ window.Toolkit = {
         else {
             // checks whether toolname is valid
             if (!args.isJob) {
-                m.request({method: "GET", url: "/check-tool/" + toolname}).catch(function (e) {
+                m.request({method: "GET", url: "/check/tool/" + toolname}).catch(function (e) {
                     m.route("/404");
                     console.log("Tool not found", e);
                 }).then(() => {});

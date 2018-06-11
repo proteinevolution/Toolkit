@@ -18,7 +18,7 @@ let bloodHoundConfig = {
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace("long"),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         prefetch: {
-            url: "/tool-list/"
+            url: "/tool/list"
         }
     })
 };
@@ -168,10 +168,10 @@ const tilescomponent = {
         return m("div", {
                 "class": "row article_container small-up-1 medium-up-2 large-up-3",
                 config: (elem, isInit) => {
-                    hideSidebar(elem, isInit);
                     if(!isInit) {
+                        hideSidebar(elem, isInit);
                         m.request({
-                            url: "/recent-updates/",
+                            url: "/recent/updates/",
                             method: "GET",
                             background: true,
                             deserialize: value => {return value;}

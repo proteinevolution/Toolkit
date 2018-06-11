@@ -55,7 +55,6 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
   def signOut(): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
       userSessions.removeUserFromCache(user)
-
       Redirect("/").withNewSession.flashing(
         "success" -> "You've been logged out"
       )
