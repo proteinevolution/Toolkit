@@ -10,11 +10,13 @@ sealed trait TELParamProvider extends Provider[ParamCollector]
 
 class WrapperPathProvider @Inject()(configuration: Configuration) extends TELProvider {
 
+  private val logger = Logger(this.getClass)
+
   override def get(): String = {
 
     configuration.get[Option[String]]("tel.wrapper").getOrElse {
       val fallBackFile = "tel/wrapper.sh"
-      Logger.warn(s"Key 'tel.wrapper' was not found in configuration. Fall back to '$fallBackFile'")
+      logger.warn(s"Key 'tel.wrapper' was not found in configuration. Fall back to '$fallBackFile'")
       fallBackFile
     }
   }
@@ -22,12 +24,14 @@ class WrapperPathProvider @Inject()(configuration: Configuration) extends TELPro
 
 class RunscriptPathProvider @Inject()(configuration: Configuration) extends TELProvider {
 
+  private val logger = Logger(this.getClass)
+
   override def get(): String = {
 
     configuration.get[Option[String]]("tel.runscripts").getOrElse {
       val fallBackFile = "tel/runscripts"
 
-      Logger.warn(s"Key 'tel.runscripts' was not found in configuration. Fall back to '$fallBackFile'")
+      logger.warn(s"Key 'tel.runscripts' was not found in configuration. Fall back to '$fallBackFile'")
       fallBackFile
     }
   }
@@ -38,12 +42,14 @@ class ParamCollectorProvider @Inject()(pc: ParamCollector,
                                        generativeParamFileParser: GenerativeParamFileParser)
     extends TELParamProvider {
 
+  private val logger = Logger(this.getClass)
+
   override def get(): ParamCollector = {
 
     lazy val paramFilePath = configuration.get[Option[String]]("tel.params").getOrElse {
 
       val fallBackFile = "tel/paramspec/PARAMS"
-      Logger.warn(s"Key 'tel.params' was not found in configuration. Fall back to '$fallBackFile'")
+      logger.warn(s"Key 'tel.params' was not found in configuration. Fall back to '$fallBackFile'")
       fallBackFile
     }
 

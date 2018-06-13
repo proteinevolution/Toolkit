@@ -13,6 +13,8 @@ import scala.collection.mutable.ArrayBuffer
 
 object Common {
 
+  private val logger = Logger(this.getClass)
+
   private val color_regex     = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
   private val CC_pattern      = """(C+)""".r("C")
   private val TM_pattern      = """(M+)""".r("M")
@@ -270,7 +272,9 @@ object Common {
     case uniprotReg(_)    => "uniprot"
     case ecodReg(_)       => "ecod"
     case ncbiReg(_)       => "ncbi"
-    case e: String        => Logger.info("Struc: (" + e + ") could not be matched against any database!"); ""
+    case e: String =>
+      logger.info("Struc: (" + e + ") could not be matched against any database!")
+      ""
   }
 
   def percentage(str: String): String = (str.toDouble * 100).toInt.toString + "%"

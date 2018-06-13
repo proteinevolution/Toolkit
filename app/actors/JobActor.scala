@@ -105,7 +105,8 @@ class JobActor @Inject()(
     @Assisted("jobActorNumber") jobActorNumber: Int,
     config: Configuration
 )(implicit ec: scala.concurrent.ExecutionContext)
-    extends Actor with ActorLogging {
+    extends Actor
+    with ActorLogging {
 
   // Attributes asssocidated with a Job
   @volatile private var currentJobs: Map[String, Job]                           = Map.empty[String, Job]
@@ -278,9 +279,9 @@ class JobActor @Inject()(
       )
       .foreach { jobEventLogOpt =>
         if (verbose) log.info(s"""[JobActor.Delete] Event Log: ${jobEventLogOpt match {
-                                      case Some(x) => x.toString
-                                      case None    => ""
-                                    }}""".stripMargin)
+                                   case Some(x) => x.toString
+                                   case None    => ""
+                                 }}""".stripMargin)
       }
 
     // Remove the job from mongoDB collection
@@ -543,9 +544,12 @@ class JobActor @Inject()(
               )
               mongoStore.countJobs(selector).map { count =>
                 mongoStore.countJobs(selectorDay).map { countDay =>
-                  log.info(
-                    BSONDateTime(ZonedDateTime.now.minusMinutes(constants.maxJobsWithin.toLong).toInstant.toEpochMilli).toString
-                  )
+                  log
+                    .info(
+                      BSONDateTime(
+                        ZonedDateTime.now.minusMinutes(constants.maxJobsWithin.toLong).toInstant.toEpochMilli
+                      ).toString
+                    )
                   log.info(
                     s"[JobActor[$jobActorNumber].StartJob] IP ${job.IPHash} has requested $count jobs within the last ${constants.maxJobsWithin} minute and $countDay within the last 24 hours."
                   )

@@ -1,8 +1,8 @@
 package controllers
 
 import java.time.ZonedDateTime
-import javax.inject.{ Inject, Singleton }
 
+import javax.inject.{ Inject, Singleton }
 import actors.WebSocketActor.{ ChangeSessionID, LogOut }
 import akka.actor.ActorRef
 import de.proteinevolution.common.LocationProvider
@@ -13,7 +13,6 @@ import de.proteinevolution.models.database.users.{ User, UserConfig, UserToken }
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
 import models.mailing.MailTemplate.{ ChangePasswordMail, NewUserWelcomeMail, PasswordChangedMail, ResetPasswordMail }
-import play.Logger
 import play.api.cache._
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -21,7 +20,8 @@ import play.api.mvc._
 import play.api.libs.mailer._
 import reactivemongo.bson._
 import org.webjars.play.WebJarsUtil
-import play.api.Environment
+import play.api.{ Environment, Logger }
+
 import scala.concurrent.{ Await, ExecutionContext, Future }
 
 /**
@@ -45,6 +45,8 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
     with I18nSupport
     with JSONTemplate
     with CommonController {
+
+  private val logger = Logger(this.getClass)
 
   /**
    * User wants to sign out
@@ -78,7 +80,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
 
   def getUserData: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
-      Logger.info("Sending user data.")
+      logger.info("Sending user data.")
       Ok(Json.toJson(user.userData))
     }
   }
@@ -150,7 +152,7 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
                     // Finally add the edits to the collection
                     userSessions.modifyUserWithCache(selector, modifier).map {
                       case Some(loggedInUser) =>
-                        Logger.info(
+                        logger.info(
                           "\n-[old user]-\n"
                           + unregisteredUser.toString
                           + "\n-[new user]-\n"

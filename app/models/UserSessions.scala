@@ -18,7 +18,8 @@ import scala.util.hashing.MurmurHash3
 class UserSessions @Inject()(mongoStore: MongoStore,
                              @NamedCache("userCache") val userCache: SyncCacheApi,
                              locationProvider: LocationProvider)(implicit ec: ExecutionContext) {
-  private val SID = "sid"
+  private val SID    = "sid"
+  private val logger = Logger(this.getClass)
 
   /**
    * Creates a update modifier for the user according to the
@@ -78,7 +79,7 @@ class UserSessions @Inject()(mongoStore: MongoStore,
 
     mongoStore.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
       case Some(user) =>
-        Logger.info(s"User found by SessionID:\n${user.toString}")
+        logger.info(s"User found by SessionID:\n${user.toString}")
         val selector = BSONDocument(User.IDDB -> user.userID)
 
         // This resets the user's deletion date in case they have been eMailed for inactivity already
@@ -102,7 +103,7 @@ class UserSessions @Inject()(mongoStore: MongoStore,
           dateUpdated = Some(ZonedDateTime.now)
         )
         mongoStore.addUser(user).map { _ =>
-          Logger.info(s"User is new:\n${user.toString}\nIP: ${request.remoteAddress.toString}")
+          logger.info(s"User is new:\n${user.toString}\nIP: ${request.remoteAddress.toString}")
           user
         }
     }
@@ -168,7 +169,7 @@ class UserSessions @Inject()(mongoStore: MongoStore,
    * updates a user in the cache
    */
   def updateUserCache(user: User): Unit = {
-    //Logger.info("User WatchList is now: " + user.jobs.mkString(", "))
+    //logger.info("User WatchList is now: " + user.jobs.mkString(", "))
     user.sessionID match {
       case Some(sessionID) =>
         userCache.set(sessionID.stringify, user, 10.minutes)
@@ -195,7 +196,7 @@ class UserSessions @Inject()(mongoStore: MongoStore,
    * removes a user from the sessions and the database
    */
   def removeUserFromCache(user: User, withDB: Boolean = true): Any = {
-    Logger.info("Removing User: \n" + user.toString)
+    logger.info("Removing User: \n" + user.toString)
     // Remove user from the cache
     user.sessionID.foreach(sessionID => userCache.remove(sessionID.stringify))
 
