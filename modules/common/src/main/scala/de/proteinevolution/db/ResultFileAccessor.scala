@@ -17,6 +17,9 @@ final class ResultFileAccessor @Inject()(
     constants: ConstantsV2,
     @NamedCache("resultCache") implicit val resultCache: AsyncCacheApi
 )(implicit ec: ExecutionContext) {
+
+  private val logger = Logger(this.getClass)
+
   def getResults(jobID: String): Future[Option[JsValue]] = {
     resultCache.get[JsValue](jobID).map {
       case Some(resultMap) =>
@@ -28,7 +31,7 @@ final class ResultFileAccessor @Inject()(
           // Gather the files
           val files: List[File] =
             (constants.jobPath / jobID / "results").list.withFilter(_.extension.contains(".json")).toList
-          Logger.info(s"[ResultFileAccessor] Loading files for $jobID: ${files.map(_.name).mkString(",")}")
+          logger.info(s"Loading files for $jobID: ${files.map(_.name).mkString(",")}")
 
           // Merge the results from the files
           val results: JsValue =
@@ -50,4 +53,5 @@ final class ResultFileAccessor @Inject()(
         }
     }
   }
+
 }

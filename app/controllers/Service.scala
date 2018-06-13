@@ -39,6 +39,8 @@ final class Service @Inject()(
 
   implicit val timeout: Timeout = Timeout(1.seconds)
 
+  private val logger = Logger(this.getClass)
+
   def static(static: String): Action[AnyContent] = Action { implicit request =>
     static match {
       // Frontend tools
@@ -67,7 +69,7 @@ final class Service @Inject()(
               mongoStore
                 .findJobs(BSONDocument(Job.HASH -> job.hash))
                 .map(_.filter(x => (Prepared :: Pending :: Nil).contains(x.status)).map { job =>
-                  Logger.info(s"delete all prepared jobs with same hash value as $jobID from database and cache")
+                  logger.info(s"delete all prepared jobs with same hash value as $jobID from database and cache")
                   // so that users don't see them in their joblist and try to reload them
                   mongoStore.removeJob(BSONDocument(Job.JOBID -> job.jobID))
                   resultCache.remove(job.jobID)
@@ -75,7 +77,7 @@ final class Service @Inject()(
             })
           mongoStore.removeJob(BSONDocument(Job.JOBID -> jobID))
           resultCache.remove(jobID)
-          Logger.info(s"deleted $jobID from the database and cache because the job result could not be loaded.")
+          logger.info(s"deleted $jobID from the database and cache because the job result could not be loaded.")
         }
         Ok(JsString(html.body))
       }
@@ -84,7 +86,7 @@ final class Service @Inject()(
   def getJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     mongoStore.selectJob(jobID).flatMap {
       case Some(job) =>
-        Logger.info("Requested job has been found in MongoDB, the jobState is " + job.status)
+        logger.info("Requested job has been found in MongoDB, the jobState is " + job.status)
         val toolForm = toolFactory.values(job.tool).toolForm
         // The jobState decides which views will be appended to the job
         val jobViews: Future[Seq[String]] = job.status match {
@@ -122,7 +124,7 @@ final class Service @Inject()(
 
         }
       case _ =>
-        Logger.info("Job could not be found")
+        logger.info("Job could not be found")
         Future.successful(NotFound)
     }
   }

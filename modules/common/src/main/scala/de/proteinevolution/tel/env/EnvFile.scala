@@ -7,14 +7,12 @@ import play.api.{ Configuration, Logger }
 import scala.sys.process.Process
 import scala.util.matching.Regex
 
-/**
- * Abstract class representing environment files for TEL
- *
- */
 object EnvFile {
 
   final val placeholder: Regex = "%([A-Z]+)".r("expression")
+
 }
+
 abstract class EnvFile(path: String) extends Subject[EnvFile] {
 
   final val f: File = path.toFile
@@ -45,19 +43,17 @@ class ExecFile(path: String) extends EnvFile(path) {
  */
 class PropFile(path: String, config: Configuration) extends EnvFile(path) {
 
-  def load: Map[String, String] = {
+  private val logger = Logger(this.getClass)
 
+  def load: Map[String, String] = {
     // Remove comment lines and lines containing only whitespace
     this.f.lineIterator
       .map(_.split('#')(0))
       .withFilter(!_.trim().isEmpty)
       .foldLeft(Map.empty[String, String]) { (a, b) =>
-        val spt = b.split('=')
-
+        val spt     = b.split('=')
         var updated = EnvFile.placeholder.replaceAllIn(spt(1), matcher => a(matcher.group("expression"))).trim()
-
         updated match {
-
           case x if x.startsWith("foo") => updated = updated.replace("foo", config.get[String]("DBROOT"))
           case x if x.startsWith("env_foo") =>
             updated = updated.replace("env_foo", config.get[String]("ENVIRONMENT"))
@@ -67,12 +63,9 @@ class PropFile(path: String, config: Configuration) extends EnvFile(path) {
             updated = updated.replace("perllib_foo", config.get[String]("PERLLIB"))
           case x if x.startsWith("standarddb_bar") =>
             updated = updated.replace("standarddb_bar", config.get[String]("STANDARDDB"))
-          case _ => Logger.info("Env file has no preconfigured key in the configs")
-
+          case _ => logger.warn("Env file has no preconfigured key in the configs")
         }
-
         a.updated(spt(0).trim(), updated)
-
       }
   }
 }

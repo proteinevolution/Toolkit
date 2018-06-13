@@ -1,0 +1,45 @@
+<configuration>
+
+    <conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel"/>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>main.log</file>
+        <encoder>
+            <pattern>[%level] %date{HH:mm:ss}: - %message%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNCFILE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="FILE" />
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%coloredLevel %logger{15} - %message%n%xException{10}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNCSTDOUT" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="STDOUT"/>
+    </appender>
+
+    <logger name="play" level="INFO"/>
+    <logger name="play.core.server.netty" level="WARN"/>
+    <logger name="application" level="DEBUG"/>
+
+    <logger name="controllers" level="INFO"/>
+    <logger name="actors" level="INFO"/>
+
+    <logger name="http.filters" level="INFO"/>
+
+    <!-- Database Statement Logs and results -->
+    <logger name="org.jdbcdslog.ConnectionLogger" level="OFF"/> <!-- Won't log connections -->
+    <logger name="org.jdbcdslog.StatementLogger" level="INFO"/> <!-- Will log all statements -->
+    <logger name="org.jdbcdslog.ResultSetLogger" level="OFF"/> <!-- Won't log result sets -->
+
+
+    <root level="WARN">
+        <appender-ref ref="ASYNCSTDOUT"/>
+    </root>
+
+</configuration>

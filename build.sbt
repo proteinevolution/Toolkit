@@ -10,7 +10,6 @@ inThisBuild(
 lazy val commonSettings = Seq(
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
-  logLevel := Level.Warn,
   TwirlKeys.templateImports := Nil
 )
 

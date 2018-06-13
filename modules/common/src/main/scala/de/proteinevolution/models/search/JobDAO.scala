@@ -15,6 +15,8 @@ import scala.util.hashing.MurmurHash3
 @Singleton
 final class JobDAO @Inject()(runscriptPathProvider: RunscriptPathProvider, config: Configuration) {
 
+  val logger = Logger(this.getClass)
+
   /**
    * generates Param hash for matching already existing jobs
    */
@@ -47,8 +49,8 @@ final class JobDAO @Inject()(runscriptPathProvider: RunscriptPathProvider, confi
     // filter unique parameters
     val paramsWithoutUniques: Map[String, String] =
     params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid" - Job.IPHASH - "parentID" - "htb_length" - "alignment" - "file"
-    Logger.info(
-      s"[JobDAO.enerateJobHash] Hashing values: ${paramsWithoutUniques.map(kv => s"${kv._1} ${kv._2}").mkString(", ")}"
+    logger.info(
+      s"[JobDAO.generateJobHash] Hashing values: ${paramsWithoutUniques.map(kv => s"${kv._1} ${kv._2}").mkString(", ")}"
     )
     val sequenceHash = params.get("alignment") match {
       case Some(alignment) =>

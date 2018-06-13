@@ -1,7 +1,6 @@
 package controllers
 
 import de.proteinevolution.models.database.jobs.Job
-import play.Logger
 import models.UserSessions
 import play.api.cache._
 import play.api.libs.json.Json
@@ -11,7 +10,7 @@ import de.proteinevolution.models.ConstantsV2
 import reactivemongo.bson.BSONDocument
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
-import play.api.Configuration
+import play.api.{ Configuration, Logger }
 import play.api.mvc._
 
 import scala.concurrent.{ ExecutionContext, Future }
@@ -29,6 +28,8 @@ final class Search @Inject()(
   @NamedCache("userCache") val userCache: SyncCacheApi)
     extends AbstractController(cc)
     with CommonController {
+
+  private val logger = Logger(this.getClass)
 
   def getToolList: Action[AnyContent] = Action {
     Ok(
@@ -149,23 +150,23 @@ final class Search @Inject()(
 
     parentJobID match {
       case None =>
-        Logger.info(
+        logger.info(
           s"[Search.checkJobID] invalid jobID: ${newJobID.trim}${resubmitForJobID.map(a => s" Resubmit jobID: $a").getOrElse("")}"
         )
         Future.successful(Ok(Json.obj("exists" -> true)))
       case Some(mainJobID) =>
         val jobIDSearch = s"$mainJobID(${constants.jobIDVersioningCharacter}[0-9]{1,3})?"
-        Logger.info(
+        logger.info(
           s"[Search.checkJobID] JobID suggestions:${resubmitForJobID.map(a => s"\nOld jobID: $a").getOrElse("")} \nMain part of the jobID: $mainJobID \nCurrent job ID: $newJobID \nSearching for: $jobIDSearch"
         )
         mongoStore.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> jobIDSearch))).map { jobs =>
           if (!jobs.map(_.jobID).contains(newJobID)) {
-            Logger.info(s"[Search.checkJobID] Found no jobs for the jobID $newJobID.")
+            logger.info(s"[Search.checkJobID] Found no jobs for the jobID $newJobID.")
             Ok(Json.obj("exists" -> false))
           } else {
             if (resubmitForJobID.nonEmpty) {
               // Check if there is a versioned job already - if so, take the highest version and add one
-              Logger.info(s"[Search.checkJobID] Found ${jobs.length} Jobs: ${jobs.map(_.jobID).mkString(",")}")
+              logger.info(s"[Search.checkJobID] Found ${jobs.length} Jobs: ${jobs.map(_.jobID).mkString(",")}")
               val jobVersions = jobs.map { job =>
                 job.jobID match {
                   case constants.jobIDPattern(_, v) =>
@@ -178,7 +179,7 @@ final class Search @Inject()(
                   if (versionBeforeGap + 1 >= biggerVersion) biggerVersion
                   else versionBeforeGap
               )
-              Logger.info(s"[Search.checkJobID] Resubmitting jobID version: $version for $mainJobID")
+              logger.info(s"[Search.checkJobID] Resubmitting jobID version: $version for $mainJobID")
               Ok(
                 Json.obj(
                   "exists"    -> true,
@@ -188,7 +189,7 @@ final class Search @Inject()(
               )
             } else {
               // Just check if the jobID is taken, it is a regular job
-              Logger.info(s"[Search.checkJobID] Found a similiar job for $mainJobID")
+              logger.info(s"[Search.checkJobID] Found a similiar job for $mainJobID")
               Ok(Json.obj("exists" -> true))
             }
           }

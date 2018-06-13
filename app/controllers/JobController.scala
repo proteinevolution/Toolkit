@@ -43,6 +43,8 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     extends AbstractController(cc)
     with CommonController {
 
+  private val logger = Logger(this.getClass)
+
   def loadJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { _ =>
       // Find the Job in the database
@@ -90,7 +92,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
               // Match the pattern of the jobID to check if there are no illegal characters
               jobID match {
                 case constants.jobIDVersionOptionPattern(mainJobID, version) =>
-                  Logger.info(s"[JobController.submitJob] main jobID: $mainJobID version: $version")
+                  logger.info(s"[JobController.submitJob] main jobID: $mainJobID version: $version")
                   // Check if the jobID is already used by a different job
                   mongoStore.selectJob(jobID).map { job =>
                     if (job.isDefined) None else Some(jobID)
@@ -196,7 +198,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
    * @return
    */
   def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    Logger.info("Delete Action in JobController reached")
+    logger.info("Delete Action in JobController reached")
     userSessions.getUser.map { user =>
       jobActorAccess.sendToJobActor(jobID, Delete(jobID, Some(user.userID)))
       Ok
