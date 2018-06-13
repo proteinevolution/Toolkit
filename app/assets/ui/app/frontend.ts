@@ -16,7 +16,7 @@ window.FrontendAlnvizComponent = {
             frontendSubmit: function(): any {
                 if (!submitted) {
                     return $.ajax({
-                        url: '/api/frontendSubmit/Alnviz',
+                        url: '/api/frontend/submit/Alnviz',
                         type: 'POST',
                         dataType: "text",
                         processData: false,

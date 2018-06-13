@@ -10,7 +10,6 @@ import actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
 import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
-import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.jobs.JobState._
@@ -38,13 +37,11 @@ object WebSocketActor {
 }
 
 final class WebSocketActor @Inject()(
-    val locationProvider: LocationProvider,
     @Named("clusterMonitor") clusterMonitor: ActorRef,
     @Assisted("out") out: ActorRef,
     jobActorAccess: JobActorAccess,
     userSessions: UserSessions,
     constants: ConstantsV2,
-    @NamedCache("userCache") val userCache: SyncCacheApi,
     @NamedCache("wsActorCache") val wsActorCache: SyncCacheApi,
     @Assisted("sessionID") sessionID: BSONObjectID,
     implicit val config: Configuration

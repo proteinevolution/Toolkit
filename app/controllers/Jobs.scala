@@ -5,7 +5,6 @@ import javax.inject.{ Inject, Singleton }
 
 import de.proteinevolution.models.database.jobs.JobState._
 import actors.JobActor.{ JobStateChanged, SetSGEID, UpdateLog }
-import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.db.MongoStore
@@ -16,20 +15,14 @@ import services.JobActorAccess
 
 import scala.io.Source
 
-/**
- * This controller is supposed to handle request coming from the Backend, such as compute
- * nodes from a gridengine. It checks if the posted key matches up with the key that is stored in
- * each job folder in order to prevent unauthorized status changes.
- *
- */
 @Singleton
-final class Jobs @Inject()(jobActorAccess: JobActorAccess,
-                           @NamedCache("userCache") implicit val userCache: SyncCacheApi,
-                           implicit val locationProvider: LocationProvider,
-                           mongoStore: MongoStore,
-                           constants: ConstantsV2,
-                           cc: ControllerComponents)
-    extends AbstractController(cc) {
+final class Jobs @Inject()(
+    jobActorAccess: JobActorAccess,
+    @NamedCache("userCache") implicit val userCache: SyncCacheApi,
+    mongoStore: MongoStore,
+    constants: ConstantsV2,
+    cc: ControllerComponents
+) extends AbstractController(cc) {
 
   def setJobStatus(status: String, jobID: String, key: String) = Action {
     if (checkKey(jobID, key)) {
@@ -64,14 +57,6 @@ final class Jobs @Inject()(jobActorAccess: JobActorAccess,
     NoContent
   }
 
-  /**
-   * checks given key against the key that is
-   * located in the folder jobPath/jobID/key
-   *
-   * @param jobID
-   * @param key
-   * @return
-   */
   def checkKey(jobID: String, key: String): Boolean = {
     val source = Source.fromFile(constants.jobPath + "/" + jobID + "/key")
     val refKey = try { source.mkString.replaceAll("\n", "") } finally { source.close() }

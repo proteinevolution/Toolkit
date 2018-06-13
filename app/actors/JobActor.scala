@@ -9,7 +9,6 @@ import akka.actor._
 import akka.event.LoggingReceive
 import better.files._
 import com.google.inject.assistedinject.Assisted
-import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.JobState._
@@ -91,20 +90,17 @@ object JobActor {
 }
 
 class JobActor @Inject()(
-    runscriptManager: RunscriptManager, // To get runscripts to be executed
-    env: Env, // To supply the runscripts with an environment
-    implicit val mailerClient: MailerClient,
+    runscriptManager: RunscriptManager,
+    env: Env,
     val jobDao: JobDAO,
     mongoStore: MongoStore,
     userSessions: UserSessions,
     wrapperExecutionFactory: WrapperExecutionFactory,
-    implicit val locationProvider: LocationProvider,
-    @NamedCache("userCache") implicit val userCache: SyncCacheApi,
     @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
     constants: ConstantsV2,
     @Assisted("jobActorNumber") jobActorNumber: Int,
     config: Configuration
-)(implicit ec: scala.concurrent.ExecutionContext)
+)(implicit ec: scala.concurrent.ExecutionContext, mailerClient: MailerClient)
     extends Actor
     with ActorLogging {
 
@@ -126,12 +122,6 @@ class JobActor @Inject()(
   // Running executions
   @volatile private var runningExecutions: Map[String, RunningExecution] = Map.empty
 
-  /**
-   * Get the job from the current jobs. If it is not there, get it from the DB.
-   *
-   * @param jobID
-   * @return
-   */
   private def getCurrentJob(jobID: String): Future[Option[Job]] = {
     // Check if the job is still in the current jobs.
     this.currentJobs.get(jobID) match {
@@ -152,12 +142,6 @@ class JobActor @Inject()(
     }
   }
 
-  /**
-   * Gets the execution context for a given jobID, even if it has been removed.
-   *
-   * @param jobID
-   * @return
-   */
   private def getCurrentExecutionContext(jobID: String): Option[ExecutionContext] = {
     this.currentExecutionContexts.get(jobID) match {
       case Some(executionContext) => Some(executionContext)
@@ -172,14 +156,6 @@ class JobActor @Inject()(
     }
   }
 
-  /**
-   * Return the validated parameters
-   *
-   * @param job
-   * @param runscript
-   * @param params
-   * @return
-   */
   private def validatedParameters(job: Job,
                                   runscript: Runscript,
                                   params: Map[String, String]): Seq[(String, (Evaluation, Option[Argument]))] = {
@@ -197,13 +173,6 @@ class JobActor @Inject()(
     validParameters
   }
 
-  /** Supplies a value for a particular Parameter. Returns params again if the parameter
-   * is not present
-   *
-   * @param name
-   * @param value
-   * @param params
-   */
   private def supply(
       jobID: String,
       name: String,
@@ -218,10 +187,6 @@ class JobActor @Inject()(
     }
   }
 
-  /**
-   * JobActor removes the Job with the matching jobID from its maps
-   * @param jobID
-   */
   private def removeJob(jobID: String): Boolean = {
     var wasActive = this.currentJobs.contains(jobID)
     // If the job is in the current jobs remove it
@@ -251,10 +216,6 @@ class JobActor @Inject()(
     wasActive
   }
 
-  /**
-   * Deletes a job from all instances and tells all the watching users about it
-   * @param job the job to be deleted
-   */
   private def delete(job: Job, verbose: Boolean): Unit = {
     val now: ZonedDateTime = ZonedDateTime.now
     if (verbose) log.info(s"[JobActor.Delete] Deletion of job folder for jobID ${job.jobID} is done")
@@ -296,9 +257,6 @@ class JobActor @Inject()(
     if (verbose) log.info(s"[JobActor.Delete] Deletion of job with jobID ${job.jobID} Complete.")
   }
 
-  /**
-   * Updates Jobstate in Model, in database, and notifies user watchlist
-   */
   private def updateJobState(job: Job): Future[Job] = {
     // Push the updated job into the current jobs
     this.currentJobs = this.currentJobs.updated(job.jobID, job)
@@ -332,23 +290,11 @@ class JobActor @Inject()(
 
   }
 
-  /**
-   * Determines whether the parameter list is completely supplied
-   *
-   * @param params
-   * @return
-   */
   private def isComplete(params: Seq[(String, (Runscript.Evaluation, Option[Argument]))]): Boolean = {
     // If we have an argument for all parameters, we are done
     params.forall(item => item._2._2.isDefined)
   }
 
-  /**
-   * Sends an eMail to the owner of the job
-   *
-   * @param job
-   * @return
-   */
   private def sendJobUpdateMail(job: Job): Boolean = {
     if (job.emailUpdate && job.ownerID.isDefined) {
       mongoStore.findUser(BSONDocument(User.IDDB -> job.ownerID)).foreach {

@@ -11,31 +11,25 @@ import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
-
-import de.proteinevolution.common.LocationProvider
 import play.api.Logger
-import play.api.cache._
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc._
-import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-final class Backend @Inject()(userSessions: UserSessions,
-                              mongoStore: MongoStore,
-                              @NamedCache("userCache") implicit val userCache: SyncCacheApi,
-                              toolFactory: ToolFactory,
-                              @Named("DatabaseMonitor") databaseMonitor: ActorRef,
-                              implicit val locationProvider: LocationProvider,
-                              val reactiveMongoApi: ReactiveMongoApi,
-                              cc: ControllerComponents)(implicit ec: ExecutionContext)
+final class Backend @Inject()(
+    userSessions: UserSessions,
+    mongoStore: MongoStore,
+    toolFactory: ToolFactory,
+    @Named("DatabaseMonitor") databaseMonitor: ActorRef,
+    cc: ControllerComponents
+)(implicit ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
-    with CommonController
-    with ReactiveMongoComponents {
+    with CommonController {
 
   private val logger = Logger(this.getClass)
 

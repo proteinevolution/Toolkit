@@ -8,18 +8,15 @@ import javax.inject.{ Inject, Singleton }
 import de.proteinevolution.models.database.jobs.JobState._
 import actors.JobActor._
 import better.files._
-import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.models.search.JobDAO
-import models.tools.ToolFactory
 import models.UserSessions
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.services.JobIdProvider
 import de.proteinevolution.tel.env.Env
 import play.api.{ Configuration, Logger }
-import play.api.cache._
 import play.api.libs.json.Json
 import play.api.mvc._
 import reactivemongo.bson.BSONDocument
@@ -28,18 +25,16 @@ import services.JobActorAccess
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-final class JobController @Inject()(jobActorAccess: JobActorAccess,
-                                    jobIdProvider: JobIdProvider,
-                                    userSessions: UserSessions,
-                                    mongoStore: MongoStore,
-                                    env: Env,
-                                    @NamedCache("userCache") implicit val userCache: SyncCacheApi,
-                                    implicit val locationProvider: LocationProvider,
-                                    val jobDao: JobDAO,
-                                    val toolFactory: ToolFactory,
-                                    constants: ConstantsV2,
-                                    cc: ControllerComponents,
-                                    implicit val config: Configuration)(implicit ec: ExecutionContext)
+final class JobController @Inject()(
+    jobActorAccess: JobActorAccess,
+    jobIdProvider: JobIdProvider,
+    userSessions: UserSessions,
+    mongoStore: MongoStore,
+    env: Env,
+    jobDao: JobDAO,
+    constants: ConstantsV2,
+    cc: ControllerComponents
+)(implicit ec: ExecutionContext, config: Configuration)
     extends AbstractController(cc)
     with CommonController {
 
@@ -54,6 +49,7 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
       }
     }
   }
+
   def listJobs: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       mongoStore.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>
@@ -192,11 +188,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     }
   }
 
-  /**
-   * Sends a deletion request to the job actor.
-   *
-   * @return
-   */
   def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     logger.info("Delete Action in JobController reached")
     userSessions.getUser.map { user =>
@@ -205,11 +196,6 @@ final class JobController @Inject()(jobActorAccess: JobActorAccess,
     }
   }
 
-  /**
-   * Generates the job hash for the given jobID and looks it up in the DB.
-   * @param jobID
-   * @return
-   */
   def checkHash(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { _ =>
       mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).flatMap {
