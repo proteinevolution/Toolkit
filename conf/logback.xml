@@ -24,6 +24,7 @@
     </appender>
 
     <logger name="play" level="INFO"/>
+    <logger name="play.core.server.akkahttp" level="WARN"/>
     <logger name="application" level="DEBUG"/>
 
     <logger name="controllers" level="INFO"/>
