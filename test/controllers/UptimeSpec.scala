@@ -6,8 +6,7 @@ import play.api.test.FakeRequest
 
 class UptimeSpec extends PlaySpec {
 
-  "UptimeController" should {
-
+  "UptimeController#uptime" should {
     "return a valid result with action" in {
       val controller = new UptimeController(stubControllerComponents())
       val result     = controller.uptime(FakeRequest())

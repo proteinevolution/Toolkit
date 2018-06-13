@@ -12,7 +12,6 @@ import models.UserSessions
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
-import play.api.cache._
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{ JsValue, Json }
 import play.api.libs.streams.ActorFlow
@@ -30,7 +29,6 @@ final class Application @Inject()(
     webJarsUtil: WebJarsUtil,
     @Named("clusterMonitor") clusterMonitor: ActorRef,
     webSocketActorFactory: WebSocketActor.Factory,
-    @NamedCache("userCache") implicit val userCache: SyncCacheApi,
     toolFactory: ToolFactory,
     mongoStore: MongoStore,
     userSessions: UserSessions,

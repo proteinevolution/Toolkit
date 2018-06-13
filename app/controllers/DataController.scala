@@ -1,26 +1,11 @@
 package controllers
 
 import javax.inject.Inject
-import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.ToolName
 import play.api.Configuration
 import play.api.mvc._
 
-import scala.concurrent.ExecutionContext
-
-class DataController @Inject()(cc: ControllerComponents, resultFiles: ResultFileAccessor, config: Configuration)(
-    implicit ec: ExecutionContext
-) extends AbstractController(cc) {
-
-  /** Check whether the user is allowed to fetch the data for the particular job and retrieves the data with
-   * stored given a particular key
-   */
-  def get(jobID: String): Action[AnyContent] = Action.async {
-    resultFiles.getResults(jobID).map {
-      case Some(jsValue) => Ok(jsValue)
-      case None          => NotFound
-    }
-  }
+class DataController @Inject()(cc: ControllerComponents, config: Configuration) extends AbstractController(cc) {
 
   def getHelp(toolName: String) = Action {
     val version = getVersion(toolName)

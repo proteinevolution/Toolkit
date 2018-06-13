@@ -2,10 +2,8 @@ package controllers
 
 import de.proteinevolution.models.database.jobs.Job
 import models.UserSessions
-import play.api.cache._
 import play.api.libs.json.Json
 import javax.inject.{ Inject, Singleton }
-import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.ConstantsV2
 import reactivemongo.bson.BSONDocument
 import models.tools.ToolFactory
@@ -21,11 +19,8 @@ final class Search @Inject()(
     mongoStore: MongoStore,
     toolFactory: ToolFactory,
     constants: ConstantsV2,
-    cc: ControllerComponents,
-    implicit val config: Configuration
-)(implicit ec: ExecutionContext,
-  val locationProvider: LocationProvider,
-  @NamedCache("userCache") val userCache: SyncCacheApi)
+    cc: ControllerComponents
+)(implicit ec: ExecutionContext, config: Configuration)
     extends AbstractController(cc)
     with CommonController {
 
@@ -47,9 +42,6 @@ final class Search @Inject()(
    * if no tool is found for a given query,
    * it looks for jobs which belong to the current user.
    * only jobIDs that belong to the user are autocompleted
-   *
-   * @param queryString_
-   * @return
    */
   def autoComplete(queryString_ : String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
@@ -108,8 +100,6 @@ final class Search @Inject()(
 
   /**
    * Returns a json object containing both the last updated job and the most recent total number of jobs.
-   *
-   * @return
    */
   def getIndexPageInfo: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
@@ -128,9 +118,6 @@ final class Search @Inject()(
   /**
    * Looks for a jobID in the DB and checks if it is in use
    * if resubmit is true, the return object will also include the highest version jobID
-   * @param newJobID
-   * @param resubmitForJobID
-   * @return
    */
   def checkJobID(newJobID: String, resubmitForJobID: Option[String]): Action[AnyContent] = Action.async {
     // Parse the jobID of the job (it can look like this: 1234XYtz, 1263412, 1252rttr_1, 1244124_12)

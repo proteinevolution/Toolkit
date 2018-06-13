@@ -13,7 +13,6 @@ import better.files._
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
 import java.time.format.DateTimeFormatter
-import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.forms.JobForm
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
@@ -30,10 +29,7 @@ final class Service @Inject()(
     constants: ConstantsV2,
     cc: ControllerComponents,
     assets: AssetsFinder
-)(implicit ec: ExecutionContext,
-  @NamedCache("resultCache") val resultCache: AsyncCacheApi,
-  @NamedCache("userCache") val userCache: SyncCacheApi,
-  val locationProvider: LocationProvider)
+)(implicit ec: ExecutionContext, @NamedCache("resultCache") val resultCache: AsyncCacheApi)
     extends AbstractController(cc)
     with I18nSupport {
 

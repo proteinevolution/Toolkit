@@ -17,7 +17,7 @@ class MainRouter @Inject()(
     jobs: Jobs,
     search: Search,
     service: Service,
-    tool: Tool,
+    stats: Stats,
     uptime: UptimeController,
     toolsRouter: ToolsRouter,
     assets: Assets,
@@ -73,8 +73,7 @@ class MainRouter @Inject()(
     case GET(p"/api/job/result/$jobID/$tool/$panel")                          => service.getResult(jobID, tool, panel)
     case DELETE(p"/api/job/$jobID")                                           => job.delete(jobID)
     case GET(p"/api/job/load/$jobID")                                         => job.loadJob(jobID)
-    case POST(p"/api/frontendSubmit/$toolName")                               => tool.frontendCount(toolName)
-    case GET(p"/api/job/results/$jobID")                                      => data.get(jobID) // TODO NOT IN USE?
+    case POST(p"/api/frontend/submit/$toolName")                              => stats.frontendCount(toolName)
     case PUT(p"/jobs/$status/$jobID/$key")                                    => jobs.setJobStatus(status, jobID, key)
     case PUT(p"/jobs/sge/$jobID/$sgeID/$key")                                 => jobs.SGEID(jobID, sgeID, key)
     case PUT(p"/jobs/dateviewed/$mainID")                                     => jobs.updateDateViewed(mainID)
@@ -92,7 +91,6 @@ class MainRouter @Inject()(
     case POST(p"/profile")                               => auth.profileSubmit()
     case POST(p"/password")                              => auth.passwordChangeSubmit()
     case GET(p"/verification/$userName/$token")          => auth.verification(userName, token) // extern
-    case GET(p"/getCurrentUser")                         => auth.profile2json() // TODO in use?
     case POST(p"/validate/modeller" ? q_o"input=$input") => auth.validateModellerKey(input)
   }
 

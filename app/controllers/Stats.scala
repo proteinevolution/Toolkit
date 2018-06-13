@@ -13,16 +13,11 @@ import play.api.mvc._
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-final class Tool @Inject()(mongoStore: MongoStore, toolFactory: ToolFactory, cc: ControllerComponents)(
+final class Stats @Inject()(mongoStore: MongoStore, toolFactory: ToolFactory, cc: ControllerComponents)(
     implicit ec: ExecutionContext
 ) extends AbstractController(cc)
     with I18nSupport {
 
-  /**
-   * counts usage of frontend tools in order to keep track for our stats
-   * @param toolName name of the Frontend Tool
-   * @return
-   */
   def frontendCount(toolName: String): Action[AnyContent] = Action.async { implicit request =>
     if (toolFactory.isTool(toolName)) {
       // Add Frontend Job to Database
