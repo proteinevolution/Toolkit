@@ -45,7 +45,7 @@ lazy val common = (crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pur
 lazy val commonJS  = common.js
 lazy val commonJVM = common.jvm
 
-lazy val tools = (project in file("modules/tools"))
+lazy val results = (project in file("modules/results"))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl)
   .dependsOn(commonJVM)
   .settings(
@@ -59,8 +59,8 @@ lazy val tools = (project in file("modules/tools"))
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb, BuildInfoPlugin)
-  .dependsOn(client, commonJVM, tools)
-  .aggregate(client, commonJVM, tools)
+  .dependsOn(client, commonJVM, results)
+  .aggregate(client, commonJVM, results)
   .settings(
     coreSettings,
     name := "mpi-toolkit",
