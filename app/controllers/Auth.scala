@@ -5,7 +5,6 @@ import java.time.ZonedDateTime
 import javax.inject.{ Inject, Singleton }
 import actors.WebSocketActor.{ ChangeSessionID, LogOut }
 import akka.actor.ActorRef
-import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.ConstantsV2
 import models.UserSessions
 import models.auth._
@@ -22,25 +21,20 @@ import reactivemongo.bson._
 import org.webjars.play.WebJarsUtil
 import play.api.{ Environment, Logger }
 
-import scala.concurrent.{ Await, ExecutionContext, Future }
+import scala.concurrent.{ ExecutionContext, Future }
 
-/**
- * Controller for Authentication interactions
- *
- */
 @Singleton
-final class Auth @Inject()(webJarsUtil: WebJarsUtil,
-                           mongoStore: MongoStore,
-                           toolFactory: ToolFactory,
-                           userSessions: UserSessions,
-                           implicit val mailerClient: MailerClient,
-                           implicit val locationProvider: LocationProvider,
-                           @NamedCache("userCache") implicit val userCache: SyncCacheApi,
-                           @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi, // Mailing Controller
-                           constants: ConstantsV2,
-                           environment: Environment,
-                           assets: AssetsFinder,
-                           cc: ControllerComponents)(implicit ec: ExecutionContext)
+final class Auth @Inject()(
+    webJarsUtil: WebJarsUtil,
+    mongoStore: MongoStore,
+    toolFactory: ToolFactory,
+    userSessions: UserSessions,
+    @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
+    constants: ConstantsV2,
+    environment: Environment,
+    assets: AssetsFinder,
+    cc: ControllerComponents
+)(implicit ec: ExecutionContext, mailerClient: MailerClient)
     extends AbstractController(cc)
     with I18nSupport
     with JSONTemplate
@@ -63,53 +57,11 @@ final class Auth @Inject()(webJarsUtil: WebJarsUtil,
     }
   }
 
-  /**
-   * Sending user name as JSON to the mithril model in joblist
-   *
-   * @return
-   */
-  def profile2json(): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.map { user =>
-      user.userData match {
-        case Some(userData) => Ok(Json.obj("user" -> userData.nameLogin))
-        case _              => NotFound
-      }
-    }
-
-  }
-
   def getUserData: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
       logger.info("Sending user data.")
       Ok(Json.toJson(user.userData))
     }
-  }
-
-  def matchUserToPW(username: String, password: String): Future[Boolean] = {
-    mongoStore.findUser(BSONDocument("userData.nameLogin" -> username)).map {
-      case Some(user) if user.checkPassword(password) => true
-      case None                                       => false
-    }
-  }
-
-  // add header authentication layer so that this cannot be curled easily by checking db if user matches with pw
-
-  def BasicSecured[A]()(action: Action[A]): Action[A] = Action.async(action.parser) { request =>
-    request.headers
-      .get("Authorization")
-      .flatMap { authorization =>
-        authorization.split(" ").drop(1).headOption.filter { encoded =>
-          new String(org.apache.commons.codec.binary.Base64.decodeBase64(encoded.getBytes)).split(":").toList match {
-            case u :: p :: Nil if Await.result(matchUserToPW(u, p), scala.concurrent.duration.Duration.Inf) => true
-            case _                                                                                          => false
-          }
-        }
-      }
-      .map(_ => action(request))
-      .getOrElse {
-        //Future.successful(Unauthorized.withHeaders("WWW-Authenticate" -> """Basic realm="Secured Area""""))
-        Future.successful(Ok(loginIncorrect()))
-      }
   }
 
   /**

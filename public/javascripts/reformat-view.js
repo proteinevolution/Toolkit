@@ -87,7 +87,7 @@ function hideTools(currentVal) {
 function toolCounter() {
     m.request({
         method: "POST",
-        url: "/api/frontendSubmit/Reformat"
+        url: "/api/frontend/submit/Reformat"
     });
 }
 

@@ -5,6 +5,8 @@ scala:
   - 2.12.6
 jdk:
   - openjdk8
+services:
+  - mongodb
 env:
   matrix: SBT_BIN=sbt -Dsbt.override.build.repos=true -Dsbt.repository.config=/$HOME/.sbt/repositories -Dsbt.boot.directory=sbt-cache/boot -Dsbt.ivy.home=sbt-cache/ivy2
 before_cache:
