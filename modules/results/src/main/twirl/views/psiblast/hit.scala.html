@@ -1,0 +1,60 @@
+@import de.proteinevolution.results.results.Common
+@import play.twirl.api.Html
+@import de.proteinevolution.results.results.PSIBlast.PSIBlastHSP
+@(hit: PSIBlastHSP, db: String, wrapped: Boolean)()
+@* hit number, links *@
+<tr>
+    <td></td>
+    <td colspan="3">
+        @Common.getLinksDB(db, hit.accession)
+    </td>
+    <td></td>
+</tr>
+@* checkboxes, accession, name of hit*@
+<tr class="header">
+    <td class="indexCheckbox">
+        <input type="checkbox" name="alignment_elem" class="checkbox aln" value='@{hit.num}' data-id='@{hit.num}'>
+            @{hit.num}.
+    </td>
+<td class="hitInfo" colspan="4">
+    @{Common.getSingleLinkDB(db , hit.accession)}
+    @{"  "+hit.description}
+</td>
+</tr>
+@* Alignment Details*@
+<tr>
+    <td></td>
+    <td class="hitInfo" colspan="5">
+        E-value: @{hit.evalue},&emsp;
+        Length: @{hit.ref_len},&emsp;
+        Score: @{hit.bitscore}bits (@{hit.score}),&emsp;
+        Identities: @{hit.identity}/@{hit.hit_len}
+        (@{Common.calculatePercentage(hit.identity, hit.hit_len)}),&emsp;
+        Positives: @{hit.positive}/@{hit.hit_len}
+        (@{Common.calculatePercentage(hit.positive, hit.hit_len)}),&emsp;
+        Gaps: @{hit.gaps}/@{hit.hit_len}
+        (@{Common.calculatePercentage(hit.gaps, hit.hit_len)})
+        <br><br>
+    </td>
+</tr>
+    @* Query *@
+
+@if(wrapped) {
+
+    @Html(Common.psiblastHitWrapped(hit, 0, 85, hit.query_start, hit.hit_start))
+} else {
+    @{
+        Html(Common.makeRow("sequence", Array("", "Q " + hit.query_start.toString, hit.query_seq+ "   " + hit.query_end.toString)))
+    }
+    @* Midline *@
+    @{
+        Html(Common.makeRow("sequence", Array("", "", hit.midline)))
+    }
+    @* Hit *@
+    @{
+        Html(Common.makeRow("sequence", Array("", "T " + hit.hit_start.toString, hit.hit_seq + "   " + hit.hit_end.toString)))
+    }
+}
+<tr>
+    <td colspan="5"><hr class="horizontal-line"></td>
+</tr>

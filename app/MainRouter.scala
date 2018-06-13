@@ -1,6 +1,6 @@
 import controllers._
+import de.proteinevolution.results.ResultsRouter
 import javax.inject.{ Inject, Singleton }
-import de.proteinevolution.tools.ToolsRouter
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
 import play.api.routing.sird._
@@ -19,7 +19,7 @@ class MainRouter @Inject()(
     service: Service,
     stats: Stats,
     uptime: UptimeController,
-    toolsRouter: ToolsRouter,
+    resultsRouter: ResultsRouter,
     assets: Assets,
     webjarsRouter: webjars.Routes
 ) extends SimpleRouter {
@@ -101,7 +101,7 @@ class MainRouter @Inject()(
       .orElse(backendRoutes)
       .orElse(uiRoutes)
       .orElse(webjarsRouter.withPrefix("/webjars").routes)
-      .orElse(toolsRouter.withPrefix("/results").routes)
+      .orElse(resultsRouter.withPrefix("/results").routes)
   }
 
 }
