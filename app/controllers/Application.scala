@@ -7,10 +7,8 @@ import actors.ClusterMonitor.Multicast
 import actors.WebSocketActor
 import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.stream.Materializer
-import de.proteinevolution.models.search.JobDAO
 import models.tools.ToolFactory
 import models.UserSessions
-import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
@@ -33,14 +31,10 @@ final class Application @Inject()(
     @Named("clusterMonitor") clusterMonitor: ActorRef,
     webSocketActorFactory: WebSocketActor.Factory,
     @NamedCache("userCache") implicit val userCache: SyncCacheApi,
-    implicit val locationProvider: LocationProvider,
     toolFactory: ToolFactory,
-    val jobDao: JobDAO,
     mongoStore: MongoStore,
     userSessions: UserSessions,
-    val tel: TEL,
-    val env: Env,
-    val search: Search,
+    env: Env,
     constants: ConstantsV2,
     cc: ControllerComponents,
     config: Configuration,
