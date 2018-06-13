@@ -15,8 +15,10 @@ final class ConfigurationImpl @Inject()(
 )(implicit ec: ExecutionContext)
     extends Configuration {
 
+  private val logger = Logger(this.getClass)
+
   appLifecycle.addStopHook { () =>
-    Logger.info("configuring hostname .... ")
+    logger.info("configuring hostname .... ")
     ws.url("https://toolkit.tuebingen.mpg.de").get().map(_ => ())
   }
 
