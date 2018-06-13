@@ -11,7 +11,7 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.parsers.Ops.QStat
-import play.api.Configuration
+import play.api.{ Configuration, Environment }
 import reactivemongo.bson.BSONObjectID
 import services.JobActorAccess
 
@@ -25,7 +25,7 @@ final class ClusterMonitor @Inject()(
     mongoStore: MongoStore,
     jobActorAccess: JobActorAccess,
     constants: ConstantsV2,
-    config: Configuration
+    environment: Environment
 )(implicit ec: ExecutionContext)
     extends Actor
     with ActorLogging {
@@ -75,7 +75,7 @@ final class ClusterMonitor @Inject()(
   }
 
   override def preStart(): Unit = {
-    if (config.get[String](s"toolkit_mode") == "dev") context.stop(self)
+    if (environment.mode != play.api.Mode.Prod) context.stop(self)
   }
 
   override def postStop(): Unit = {

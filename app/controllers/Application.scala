@@ -51,13 +51,10 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     with I18nSupport
     with CommonController {
 
-  private val toolkitMode = config.get[String](s"toolkit_mode")
-
   implicit val implicitMaterializer: Materializer = mat
   implicit val implicitActorSystem: ActorSystem   = system
-  // Use a direct reference to SLF4J
-  private val logger = org.slf4j.LoggerFactory.getLogger("controllers.Application")
-  val SID            = "sid"
+  private val logger                              = Logger(this.getClass)
+  val SID                                         = "sid"
 
   private[this] val blacklist = config.get[Seq[String]]("banned.ip")
 
@@ -70,7 +67,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
   def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
 
     case rh if sameOriginCheck(rh) =>
-      println("Creating new WebSocket. ip: " + rh.remoteAddress.toString + ", with sessionId: " + rh.session)
+      logger.info("Creating new WebSocket. ip: " + rh.remoteAddress.toString + ", with sessionId: " + rh.session)
 
       userSessions
         .getUser(rh)
@@ -139,16 +136,16 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
   def index(message: String = ""): Action[AnyContent] = Action.async { implicit request =>
     //generateStatisticsDB
 
-    toolkitMode match {
+    environment.mode match {
 
-      case "prod" =>
+      case play.api.Mode.Prod =>
         val port     = "9000"
         val hostname = "rye"
         env.configure("PORT", port)
         env.configure("HOSTNAME", hostname)
         TEL.port = port
         TEL.hostname = hostname
-        println("[CONFIG:] running on port " + TEL.port)
+        logger.info(s"[CONFIG:] running on port ${TEL.port} in mode: play.api.Mode.Prod")
 
       case _ =>
         val port     = request.host.slice(request.host.indexOf(":") + 1, request.host.length)
@@ -160,7 +157,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
         env.configure("HOSTNAME", "olt")
         TEL.port = port
         TEL.hostname = hostname
-        println("[CONFIG:] running on port " + TEL.port)
+        logger.info(s"[CONFIG:] running on port ${TEL.port} in mode: play.api.Mode.Dev")
 
     }
 
