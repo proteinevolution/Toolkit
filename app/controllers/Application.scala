@@ -28,33 +28,31 @@ import play.api.routing.{ JavaScriptReverseRoute, JavaScriptReverseRouter }
 import scala.concurrent.{ Await, ExecutionContext, Future }
 
 @Singleton
-final class Application @Inject()(webJarsUtil: WebJarsUtil,
-                                  @Named("clusterMonitor") clusterMonitor: ActorRef,
-                                  webSocketActorFactory: WebSocketActor.Factory,
-                                  @NamedCache("userCache") implicit val userCache: SyncCacheApi,
-                                  implicit val locationProvider: LocationProvider,
-                                  toolFactory: ToolFactory,
-                                  val jobDao: JobDAO,
-                                  mongoStore: MongoStore,
-                                  system: ActorSystem,
-                                  userSessions: UserSessions,
-                                  mat: Materializer,
-                                  val tel: TEL,
-                                  val env: Env,
-                                  val search: Search,
-                                  constants: ConstantsV2,
-                                  cc: ControllerComponents,
-                                  config: Configuration,
-                                  environment: Environment,
-                                  assetsFinder: AssetsFinder)(implicit ec: ExecutionContext)
+final class Application @Inject()(
+    webJarsUtil: WebJarsUtil,
+    @Named("clusterMonitor") clusterMonitor: ActorRef,
+    webSocketActorFactory: WebSocketActor.Factory,
+    @NamedCache("userCache") implicit val userCache: SyncCacheApi,
+    implicit val locationProvider: LocationProvider,
+    toolFactory: ToolFactory,
+    val jobDao: JobDAO,
+    mongoStore: MongoStore,
+    userSessions: UserSessions,
+    val tel: TEL,
+    val env: Env,
+    val search: Search,
+    constants: ConstantsV2,
+    cc: ControllerComponents,
+    config: Configuration,
+    environment: Environment,
+    assetsFinder: AssetsFinder
+)(implicit actorSystem: ActorSystem, mat: Materializer, ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
     with CommonController {
 
-  implicit val implicitMaterializer: Materializer = mat
-  implicit val implicitActorSystem: ActorSystem   = system
-  private val logger                              = Logger(this.getClass)
-  val SID                                         = "sid"
+  private val logger = Logger(this.getClass)
+  val SID            = "sid"
 
   private[this] val blacklist = config.get[Seq[String]]("banned.ip")
 
