@@ -154,7 +154,7 @@ final class Application @Inject()(
     }
 
     userSessions.getUser.map { user =>
-      Logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
+      logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
       Ok(
         views.html.main(assetsFinder,
                         webJarsUtil,
