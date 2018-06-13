@@ -42,7 +42,6 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
                                   val tel: TEL,
                                   val env: Env,
                                   val search: Search,
-                                  val settings: Settings,
                                   constants: ConstantsV2,
                                   cc: ControllerComponents,
                                   config: Configuration,
@@ -150,7 +149,6 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
         TEL.port = port
         TEL.hostname = hostname
         println("[CONFIG:] running on port " + TEL.port)
-        println("[CONFIG:] execution mode: " + settings.clusterMode)
 
       case _ =>
         val port     = request.host.slice(request.host.indexOf(":") + 1, request.host.length)
@@ -163,7 +161,6 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
         TEL.port = port
         TEL.hostname = hostname
         println("[CONFIG:] running on port " + TEL.port)
-        println("[CONFIG:] execution mode: " + settings.clusterMode)
 
     }
 
