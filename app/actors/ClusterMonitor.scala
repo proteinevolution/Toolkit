@@ -5,13 +5,13 @@ import actors.ClusterMonitor._
 import actors.WebSocketActor.MaintenanceAlert
 import akka.actor.{ ActorLogging, _ }
 import akka.event.LoggingReceive
-import controllers.Settings
 import de.proteinevolution.models.database.statistics.ClusterLoadEvent
 import de.proteinevolution.db.MongoStore
 import java.time.ZonedDateTime
 
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.parsers.Ops.QStat
+import play.api.Environment
 import reactivemongo.bson.BSONObjectID
 import services.JobActorAccess
 
@@ -21,10 +21,12 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
 @Singleton
-final class ClusterMonitor @Inject()(mongoStore: MongoStore,
-                                     jobActorAccess: JobActorAccess,
-                                     val settings: Settings,
-                                     constants: ConstantsV2)(implicit ec: ExecutionContext)
+final class ClusterMonitor @Inject()(
+    mongoStore: MongoStore,
+    jobActorAccess: JobActorAccess,
+    constants: ConstantsV2,
+    environment: Environment
+)(implicit ec: ExecutionContext)
     extends Actor
     with ActorLogging {
 
@@ -73,7 +75,7 @@ final class ClusterMonitor @Inject()(mongoStore: MongoStore,
   }
 
   override def preStart(): Unit = {
-    if (settings.clusterMode == "LOCAL") context.stop(self)
+    if (environment.mode != play.api.Mode.Prod) context.stop(self)
   }
 
   override def postStop(): Unit = {
