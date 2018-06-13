@@ -4,10 +4,16 @@ import play.api.Logger
 import play.api.inject.ApplicationLifecycle
 import play.api.libs.ws.WSClient
 
+import scala.concurrent.ExecutionContext
+
 sealed trait Configuration
 
 @Singleton
-final class ConfigurationImpl @Inject()(appLifecycle: ApplicationLifecycle, ws: WSClient)() extends Configuration {
+final class ConfigurationImpl @Inject()(
+    appLifecycle: ApplicationLifecycle,
+    ws: WSClient
+)(implicit ec: ExecutionContext)
+    extends Configuration {
 
   appLifecycle.addStopHook { () =>
     Logger.info("configuring hostname .... ")
