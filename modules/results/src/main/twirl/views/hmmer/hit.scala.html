@@ -1,0 +1,53 @@
+@import de.proteinevolution.results.results.Common
+@import play.twirl.api.Html
+@import de.proteinevolution.results.results.Hmmer.HmmerHSP
+@(hit: HmmerHSP, db: String, wrapped: Boolean)()
+@* Load html Map used for the image representation *@
+
+@* hit number, links *@
+<tr>
+    <td></td>
+    <td colspan="3">
+        @Common.getLinksHmmer(hit.accession)
+    </td>
+    <td></td>
+</tr>
+@* checkboxes, accession, name of hit*@
+<tr class="header">
+    <td class="indexCheckbox" ><input type="checkbox" name="alignment_elem" class="checkbox aln" value='@{hit.num}' data-id='@{hit.num}'> @{hit.num}</td>
+    <td  class="hitInfo"  colspan="4">
+        @Common.getSingleLinkDB(db,hit.accession)
+        @{"  "+hit.description}
+    </td>
+</tr>
+@* Alignment Details*@
+<tr>
+    <td></td>
+    <td class="hitInfo" colspan="4">E-value: @{hit.full_evalue}&emsp;&emsp; Ind. E-value: @{hit.evalue}&emsp;&emsp;
+        Score: @{hit.bitscore}&emsp;&emsp;Aligned positions: @{hit.hit_len}&emsp;&emsp;
+        Observed domains: @{hit.domain_obs_num}
+    </td>
+</tr> 
+<tr>
+    <td><br /></td>
+</tr>
+@if(wrapped) {
+    @Html(Common.hmmerHitWrapped(hit, 0, 80, hit.query_start, hit.hit_start))
+}else{
+    @* seq of query, if present *@
+    @{
+        Html(Common.makeRow("sequence", Array("", "Q " + (hit.query_start + 1).toString, hit.query_seq + "    " + hit.query_end.toString)))
+    }
+    @* agree of query, if present *@
+    @{
+        Html(Common.makeRow("sequence", Array("", "", hit.midline)))
+    }
+    @* seq of hit, if present *@
+    @{
+        Html(Common.makeRow("sequence", Array("", "T " + (hit.hit_start + 1).toString, hit.hit_seq + "    " + hit.hit_end.toString)))
+    }
+    <tr class="blank_row"><td colspan="5"></td></tr>
+}
+<tr>
+    <td colspan="5"><hr class="horizontal-line"></td>
+</tr>

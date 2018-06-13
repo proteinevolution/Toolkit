@@ -1,8 +1,8 @@
+@import de.proteinevolution.results.results.Common
 @import play.api.libs.json.JsObject
 @import play.api.libs.json.JsValue
 @import play.api.libs.json.JsDefined
 @import play.twirl.api.Html
-@import de.proteinevolution.tools.results.Common
 @(jobID: String, jsValue: JsValue, tool: de.proteinevolution.models.Tool)()
 @if((jsValue \ jobID \ "hits").as[List[JsObject]].size < 1) {
     <div class="note">
