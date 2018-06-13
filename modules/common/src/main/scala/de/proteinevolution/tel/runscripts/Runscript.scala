@@ -5,6 +5,7 @@ import de.proteinevolution.tel.TELRegex
 import de.proteinevolution.tel.env.{ Env, EnvAware }
 import de.proteinevolution.tel.execution.ExecutionContext
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
+import play.api.Logger
 
 import scala.collection.mutable
 import scala.util.matching.Regex
@@ -41,10 +42,10 @@ class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript] {
 
   private case class Replacer(arguments: Seq[(String, ValidArgument)]) {
     private var counter = -1
-    private val logger  = org.slf4j.LoggerFactory.getLogger(this.getClass)
+    private val logger  = Logger(this.getClass)
 
     def apply(m: Regex.Match): String = {
-      m.groupNames.foreach(logger.debug) // just use m because of https://stackoverflow.com/questions/43964571/scala-2-12-2-emits-a-ton-of-useless-warning-parameter-value-in-method
+      m.groupNames.foreach(s => logger.debug(s)) // just use m because of https://stackoverflow.com/questions/43964571/scala-2-12-2-emits-a-ton-of-useless-warning-parameter-value-in-method
       counter += 1
       arguments(counter)._2.representation.represent
     }

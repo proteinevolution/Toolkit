@@ -12,7 +12,6 @@ import de.proteinevolution.models.database.statistics.{ StatisticsObject, UserSt
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.db.MongoStore
 import models.mailing.MailTemplate.OldAccountEmail
-import play.api.Logger
 import play.api.libs.mailer.MailerClient
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
@@ -59,11 +58,11 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
 
   /**
    * Function removes old users and eMails registered users who may be deleted soon
-   * @param verbose when true, the logger will show the current action
+   * @param verbose when true, the log will show the current action
    */
   private def deleteOldUsers(verbose: Boolean): Unit = {
     if (verbose)
-      Logger.info("[User Deletion] Cleaning up old user data")
+      log.info("[User Deletion] Cleaning up old user data")
 
     // Generate the dates for user deletion
     // Date at the moment
@@ -85,7 +84,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
       now.plusDays(constants.userDeletionWarning.toLong).toLocalDate.atStartOfDay(now.getZone)
 
     if (verbose)
-      Logger.info(s"""[User Deletion] Deletion Times:
+      log.info(s"""[User Deletion] Deletion Times:
                                      regular Users:               $regularUserDeletionDate
                                      awaiting registration Users: $awitingRegistrationUserDeletionDate
                                      registered Users:            $registeredUserDeletionDate
@@ -136,14 +135,14 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
         // Finally remove the users with their userID
         mongoStore.removeUsers(BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs))).foreach { writeResult =>
           if (verbose)
-            Logger.info(
+            log.info(
               s"[User Deletion] Deleting of ${users.length} old users ${if (writeResult.ok) "successful" else "failed"}"
             )
         }
       }
 
     if (verbose)
-      Logger.info("[User Deletion] Checking if there are any old accounts to send the owner an eMail")
+      log.info("[User Deletion] Checking if there are any old accounts to send the owner an eMail")
 
     // Find registered user accounts which are close to their deletion time
     mongoStore
@@ -157,7 +156,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
       )
       .foreach { users =>
         if (verbose)
-          Logger.info(
+          log.info(
             s"[User Deletion] ${users.length} registered users with old accounts found.\nSending eMails to users"
           )
 
@@ -165,7 +164,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
           val mail = OldAccountEmail(user, registeredUserDeletionDateForEmail)
           mail.send
           if (verbose)
-            Logger.info(
+            log.info(
               "[User Deletion] eMail sent to user: " + user.getUserData.nameLogin + " Last login: " + user.dateLastLogin
                 .map(_.toString())
                 .getOrElse("[no Date]")
@@ -174,7 +173,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
         }
 
         if (verbose)
-          Logger.info(s"[User Deletion] All ${userIDs.length} users eMailed.")
+          log.info(s"[User Deletion] All ${userIDs.length} users eMailed.")
 
         // Set all the eMailed users to "User.CLOSETODELETIONUSER", so that they do not receive another eMail for the same reason
         mongoStore
@@ -190,13 +189,13 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
           )
           .foreach { writeResult =>
             if (verbose)
-              Logger.info(s"[User Deletion] Writing ${if (writeResult.ok) { "successful" } else { "failed" }}")
+              log.info(s"[User Deletion] Writing ${if (writeResult.ok) { "successful" } else { "failed" }}")
           }
       }
   }
 
   private def deleteOldJobs(): Unit = {
-    Logger.info("[Job Deletion] finding old jobs...")
+    log.info("[Job Deletion] finding old jobs...")
     // grab the current time
     val now: ZonedDateTime = ZonedDateTime.now
     // calculate the date at which the job should have been created at
@@ -221,7 +220,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
         )
       )
       .foreach { jobList =>
-        Logger.info(s"[Job Deletion] found ${jobList.length} jobs for deletion. Sending to job actors.")
+        log.info(s"[Job Deletion] found ${jobList.length} jobs for deletion. Sending to job actors.")
         jobList.foreach { job =>
           // Just send a deletion request to the job actor responsible for the job
           jobActorAccess.sendToJobActor(job.jobID, Delete(job.jobID))
@@ -230,13 +229,13 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
   }
 
   override def preStart(): Unit = {
-    Logger.info("[Database Monitor] starting DB Monitor")
+    log.info("[Database Monitor] starting DB Monitor")
   }
 
   override def postStop(): Unit = {
     userDeletionScheduler.cancel()
     jobDeletionScheduler.cancel()
-    Logger.info("[Database Monitor] stopping DB Monitor")
+    log.info("[Database Monitor] stopping DB Monitor")
   }
 
   override def receive: Receive = {

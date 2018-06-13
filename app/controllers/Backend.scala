@@ -37,6 +37,8 @@ final class Backend @Inject()(userSessions: UserSessions,
     with CommonController
     with ReactiveMongoComponents {
 
+  private val logger = Logger(this.getClass)
+
   //TODO currently working mithril routes for the backend
   def index: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
@@ -50,18 +52,18 @@ final class Backend @Inject()(userSessions: UserSessions,
 
   def statistics: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
-      Logger.info("Statistics called. Access " + (if (user.isSuperuser) "granted." else "denied."))
+      logger.info("Statistics called. Access " + (if (user.isSuperuser) "granted." else "denied."))
       if (user.isSuperuser) {
         // Get the first moment of the last month as a DateTime object
         val firstOfLastMonth: ZonedDateTime =
           ZonedDateTime.now.minusMonths(1).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1)
 
         // Grab the current statistics
-        Logger.info("Loading Statistics...")
+        logger.info("Loading Statistics...")
         val stats = mongoStore.getStats
 
         // Ensure all tools are in the statistics, even if they have not been used yet
-        Logger.info("Statistics loaded.... checking for new tools")
+        logger.info("Statistics loaded.... checking for new tools")
         val statsUpdated = stats.map(_.updateTools(toolFactory.values.values.map(_.toolNameShort).toList))
 
         // Collect the job events up until the first of the last month
@@ -81,7 +83,7 @@ final class Backend @Inject()(userSessions: UserSessions,
                 )
               )
               .map { jobEventLogs =>
-                Logger.info(
+                logger.info(
                   "Collected " + jobEventLogs.length + " elements from the job event logs. Last Push: " + statistics.lastPushed
                 )
                 statistics.addMonthsToTools(
@@ -93,7 +95,7 @@ final class Backend @Inject()(userSessions: UserSessions,
               .flatMap { statisticsObject =>
                 mongoStore.updateStats(statisticsObject).map {
                   case Some(statisticsObjectUpdated) =>
-                    Logger.info(
+                    logger.info(
                       "Successfully pushed statistics for Months: " + statisticsObjectUpdated.datePushed
                         .filterNot(a => statistics.datePushed.contains(a))
                         .mkString(", ")
@@ -115,7 +117,7 @@ final class Backend @Inject()(userSessions: UserSessions,
                 }
               }
           } else {
-            Logger.info("No need to push statistics. Last Push: " + statistics.lastPushed)
+            logger.info("No need to push statistics. Last Push: " + statistics.lastPushed)
             Future.successful(
               NoCache(Ok(Json.toJson(Json.obj("success" -> "old statistics used", "stat" -> statistics))))
             )
@@ -129,7 +131,7 @@ final class Backend @Inject()(userSessions: UserSessions,
 
   def runUserSweep: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
-      Logger.info("User deletion called. Access " + (if (user.isSuperuser) "granted." else "denied."))
+      logger.info("User deletion called. Access " + (if (user.isSuperuser) "granted." else "denied."))
       if (user.isSuperuser) {
         databaseMonitor ! DeleteOldUsers
         NoContent
@@ -141,7 +143,7 @@ final class Backend @Inject()(userSessions: UserSessions,
 
   def runJobSweep: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
-      Logger.info("User deletion called. Access " + (if (user.isSuperuser) "granted." else "denied."))
+      logger.info("User deletion called. Access " + (if (user.isSuperuser) "granted." else "denied."))
       if (user.isSuperuser) {
         databaseMonitor ! DeleteOldJobs
         NoContent

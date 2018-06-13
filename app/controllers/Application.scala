@@ -7,10 +7,8 @@ import actors.ClusterMonitor.Multicast
 import actors.WebSocketActor
 import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.stream.Materializer
-import de.proteinevolution.models.search.JobDAO
 import models.tools.ToolFactory
 import models.UserSessions
-import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
@@ -28,33 +26,27 @@ import play.api.routing.{ JavaScriptReverseRoute, JavaScriptReverseRouter }
 import scala.concurrent.{ Await, ExecutionContext, Future }
 
 @Singleton
-final class Application @Inject()(webJarsUtil: WebJarsUtil,
-                                  @Named("clusterMonitor") clusterMonitor: ActorRef,
-                                  webSocketActorFactory: WebSocketActor.Factory,
-                                  @NamedCache("userCache") implicit val userCache: SyncCacheApi,
-                                  implicit val locationProvider: LocationProvider,
-                                  toolFactory: ToolFactory,
-                                  val jobDao: JobDAO,
-                                  mongoStore: MongoStore,
-                                  system: ActorSystem,
-                                  userSessions: UserSessions,
-                                  mat: Materializer,
-                                  val tel: TEL,
-                                  val env: Env,
-                                  val search: Search,
-                                  constants: ConstantsV2,
-                                  cc: ControllerComponents,
-                                  config: Configuration,
-                                  environment: Environment,
-                                  assetsFinder: AssetsFinder)(implicit ec: ExecutionContext)
+final class Application @Inject()(
+    webJarsUtil: WebJarsUtil,
+    @Named("clusterMonitor") clusterMonitor: ActorRef,
+    webSocketActorFactory: WebSocketActor.Factory,
+    @NamedCache("userCache") implicit val userCache: SyncCacheApi,
+    toolFactory: ToolFactory,
+    mongoStore: MongoStore,
+    userSessions: UserSessions,
+    env: Env,
+    constants: ConstantsV2,
+    cc: ControllerComponents,
+    config: Configuration,
+    environment: Environment,
+    assetsFinder: AssetsFinder
+)(implicit actorSystem: ActorSystem, mat: Materializer, ec: ExecutionContext)
     extends AbstractController(cc)
     with I18nSupport
     with CommonController {
 
-  implicit val implicitMaterializer: Materializer = mat
-  implicit val implicitActorSystem: ActorSystem   = system
-  private val logger                              = Logger(this.getClass)
-  val SID                                         = "sid"
+  private val logger = Logger(this.getClass)
+  val SID            = "sid"
 
   private[this] val blacklist = config.get[Seq[String]]("banned.ip")
 
@@ -162,7 +154,7 @@ final class Application @Inject()(webJarsUtil: WebJarsUtil,
     }
 
     userSessions.getUser.map { user =>
-      Logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
+      logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
       Ok(
         views.html.main(assetsFinder,
                         webJarsUtil,

@@ -15,7 +15,7 @@ import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.jobs.JobState._
 import models.UserSessions
-import play.api.{ Configuration, Logger }
+import play.api.Configuration
 import play.api.cache._
 import play.api.libs.json.{ JsValue, Json }
 import reactivemongo.bson.BSONObjectID
@@ -83,7 +83,7 @@ final class WebSocketActor @Inject()(
       case None => ()
     }
 
-    Logger.info(s"[WSActor] Websocket closed for session ${sessionID.stringify}")
+    log.info(s"[WSActor] Websocket closed for session ${sessionID.stringify}")
   }
 
   private def active(sid: BSONObjectID): Receive = {
@@ -116,7 +116,7 @@ final class WebSocketActor @Inject()(
 
             // Request to receive load messages
             case "RegisterLoad" =>
-              Logger.info("Received RegisterLoad message.")
+              log.info("Received RegisterLoad message.")
               clusterMonitor ! Connect(self)
 
             //// Request to no longer receive load messages
@@ -127,7 +127,7 @@ final class WebSocketActor @Inject()(
             case "Ping" =>
               (js \ "date").validate[Long].asOpt match {
                 case Some(msTime) =>
-                  //Logger.info(s"[WSActor] Ping from session ${sid.stringify} with msTime $msTime")
+                  //log.info(s"[WSActor] Ping from session ${sid.stringify} with msTime $msTime")
                   out ! Json.obj("type" -> "Pong", "date" -> msTime)
                 case None =>
               }
@@ -137,7 +137,7 @@ final class WebSocketActor @Inject()(
               (js \ "date").validate[Long].asOpt match {
                 case Some(msTime) =>
                   val ping = ZonedDateTime.now.toInstant.toEpochMilli - msTime
-                  Logger.info(s"[WSActor] Ping of session ${sid.stringify} is ${ping}ms.")
+                  log.info(s"[WSActor] Ping of session ${sid.stringify} is ${ping}ms.")
                 case None =>
               }
           }
@@ -161,13 +161,11 @@ final class WebSocketActor @Inject()(
     case WatchLogFile(job: Job) =>
       // Do filewatching here
       val file = s"${constants.jobPath}${job.jobID}${constants.SEPARATOR}results${constants.SEPARATOR}process.log"
-      //Logger.info("Watching: " + file)
       if (job.status.equals(Running)) {
         if (Files.exists(Paths.get(file))) {
           val source = scala.io.Source.fromFile(file)
           val lines = try source.mkString
           finally source.close()
-          //println(lines)
           out ! Json.obj("type" -> "WatchLogFile", "jobID" -> job.jobID, "lines" -> lines)
         }
       }

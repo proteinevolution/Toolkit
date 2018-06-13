@@ -7,12 +7,14 @@ import play.api.{ Configuration, Logger }
 
 class TELEnvProvider @Inject()(tv: TELEnv, configuration: Configuration) extends Provider[TELEnv] {
 
+  private val logger = Logger(this.getClass)
+
   override def get(): TELEnv = {
     configuration
       .get[Option[String]]("tel.env")
       .getOrElse {
         val fallBackFile = "tel/env"
-        Logger.warn(s"Key 'tel.env' was not found in configuration. Fall back to '$fallBackFile'");
+        logger.warn(s"Key 'tel.env' was not found in configuration. Fall back to '$fallBackFile'");
         fallBackFile
       }
       .toFile
