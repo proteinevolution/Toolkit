@@ -68,15 +68,15 @@ class ProcessController @Inject()(ctx: HHContext,
           case Some(jsValue) =>
             kleisliProvider.toolK(jobID).map {
               case HHBLITS =>
-                (HHBLITS, resultContext.hhblits.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
+                (HHBLITS, resultContext.hhblits.parseResult(jsValue))
               case HHPRED =>
-                (HHPRED, resultContext.hhpred.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
+                (HHPRED, resultContext.hhpred.parseResult(jsValue))
               case HHOMP =>
-                (HHOMP, resultContext.hhomp.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
+                (HHOMP, resultContext.hhomp.parseResult(jsValue))
               case HMMER =>
-                (HMMER, resultContext.hmmer.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
+                (HMMER, resultContext.hmmer.parseResult(jsValue))
               case PSIBLAST =>
-                (PSIBLAST, resultContext.psiblast.parseResult(jsValue).asInstanceOf[SearchResult[HSP]])
+                (PSIBLAST, resultContext.psiblast.parseResult(jsValue))
               case _ => throw new IllegalArgumentException("tool has no hitlist")
             }
           case None => throw new IllegalStateException
