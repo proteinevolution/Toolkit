@@ -213,11 +213,9 @@
             }
             formData.append("templates", Toolkit.resultView.getSelectedValues.join(" ")); // TODO move checkbox handling
             formData.append("parentid", jobID);
-
-            var submitRoute = jsRoutes.controllers.JobController.submitJob("hhpred_manual");
             m.request({
-                method: submitRoute.method,
-                url: submitRoute.url,
+                method: "POST",
+                url: "/api/job/?toolName=hhpred_manual",
                 data: formData,
                 serialize: function (submissionReturnData) {
                     return submissionReturnData;
