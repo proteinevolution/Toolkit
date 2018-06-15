@@ -365,7 +365,6 @@ class SignUp {
                          password  : SignUp.password,
                          eMail     : SignUp.eMail,
                          acceptToS : SignUp.acceptToS };
-            const route = jsRoutes.controllers.Auth.signUpSubmit();
             m.request({method: "POST", url: "/signup", data: dataS }).then(function(authMessage) {
                 dataS = null;
                 Auth.updateStatus(authMessage);
