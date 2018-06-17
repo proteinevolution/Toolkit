@@ -25,7 +25,7 @@
         $(function() {
             $.ajax({
                 type: 'GET',
-                url: 'files/@{jobID}/@{filename}'
+                url: 'results/files/@{jobID}/@{filename}'
             }).done(function (data_) {
                 $('#fileviewerDownloadForward_@{resultname}').append(data_)
             });
@@ -33,7 +33,7 @@
 
         new ForwardingModal($("#jobview"), "@{tool.toolNameShort}", "@{jobID}");
 
-        var fileURL="/files/@{jobID}/@{filename}";
+        var fileURL="/results/files/@{jobID}/@{filename}";
 
         window["@{resultname}_download"] = function(){
             var downloadFilename = "@{resultname}_@{jobID}"  + ".out";

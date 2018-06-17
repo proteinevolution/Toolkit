@@ -1,10 +1,10 @@
 @import de.proteinevolution.results.results.HHrepID
 @(jobID : String, filePath : String)
 
-@ncoils = @{"/files/" + jobID + "/" + jobID + "_ncoils.png"}
-@psipred = @{"/files/" + jobID + "/" + jobID + "_psipred.png"}
-@repper = @{"/files/" + jobID + "/" + jobID + "_repper.png"}
-@overview = @{"/files/" + jobID + "/" + jobID + "_overview.png"}
+@ncoils = @{"/results/files/" + jobID + "/" + jobID + "_ncoils.png"}
+@psipred = @{"/results/files/" + jobID + "/" + jobID + "_psipred.png"}
+@repper = @{"/results/files/" + jobID + "/" + jobID + "_repper.png"}
+@overview = @{"/results/files/" + jobID + "/" + jobID + "_overview.png"}
     
 @ncoilsFile = @{filePath + "_ncoils.png"}
 @psipredFile = @{filePath + "_psipred.png"}

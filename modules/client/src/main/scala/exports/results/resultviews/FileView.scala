@@ -36,7 +36,7 @@ class FileView() {
     val opts =
       new XHROptions[String](
         method = "GET",
-        url = s"files/$jobID/$fileName",
+        url = s"results/files/$jobID/$fileName",
         background = true,
         deserialize = deserializer
       )
@@ -76,7 +76,7 @@ class FileView() {
     val opts =
       new XHROptions[String](
         method = "GET",
-        url = s"files/$jobID/$fileName",
+        url = s"results/files/$jobID/$fileName",
         background = true,
         deserialize = deserializer
       )

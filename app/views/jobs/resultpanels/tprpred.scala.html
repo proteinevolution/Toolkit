@@ -66,7 +66,7 @@
 <script>
         var data = null;
         // get result json 
-        var fileUrl = "/files/" + @jobID + "/" + @jobID + ".json";
+        var fileUrl = "/results/files/" + @jobID + "/" + @jobID + ".json";
         $.getJSON(fileUrl, function (data_) {
             data = data_;
         });

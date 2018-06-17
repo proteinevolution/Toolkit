@@ -38,7 +38,7 @@
 <script>
         window["@{resultname}_download"] = function(){
             var downloadFilename = "@{resultname}_@{jobID}" + ".pdb";
-            var fileURL="/files/@{jobID}/@{filename}";
+            var fileURL="/results/files/@{jobID}/@{filename}";
             $.ajax({
                 method: "GET",
                 url: fileURL

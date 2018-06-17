@@ -165,7 +165,7 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
                   warn("No tool selected!")
                 } else {
                   jQuery.LoadingOverlay("show")
-                  Forwarding.redirect(selectedTool, s"/files/$jobID/reduced.a3m")
+                  Forwarding.redirect(selectedTool, s"/results/files/$jobID/reduced.a3m")
                   $modal.foundation("close")
                   jQuery.LoadingOverlay("hide")
                 }
@@ -202,7 +202,7 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
                     case "UNCHECKED_LIST" =>
                       jQuery.LoadingOverlay("show")
                       jQuery.getJSON(
-                        s"/files/$jobID/ids.json",
+                        s"/results/files/$jobID/ids.json",
                         (data: js.Dynamic) => {
                           Forwarding.simple(selectedTool, data.ACC_IDS.join("\n").toString)
                           jQuery.LoadingOverlay("hide")
@@ -210,12 +210,12 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
                       )
                     case "PATTERN_SEARCH" =>
                       jQuery.LoadingOverlay("show")
-                      Forwarding.redirect(selectedTool, s"/files/$jobID/$jobID.fas")
+                      Forwarding.redirect(selectedTool, s"/results/files/$jobID/$jobID.fas")
                       jQuery.LoadingOverlay("hide")
                     case "FILEVIEW" =>
                       jQuery.LoadingOverlay("show")
                       // resultName is actually the filename in this case
-                      Forwarding.redirect(selectedTool, s"/files/$jobID/$resultName")
+                      Forwarding.redirect(selectedTool, s"/results/files/$jobID/$resultName")
                       jQuery.LoadingOverlay("hide")
                   }
                   $modal.foundation("close")

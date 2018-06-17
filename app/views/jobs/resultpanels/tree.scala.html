@@ -34,7 +34,7 @@
     s.niceSelect();
     window["@{iddiv}_download"] = function(){
         var downloadFilename = "@{iddiv}_@{jobID}" + ".tree";
-        var fileURL="/files/@{jobID}/@{filename}";
+        var fileURL="/results/files/@{jobID}/@{filename}";
         $.ajax({
             method: "GET",
             url: fileURL

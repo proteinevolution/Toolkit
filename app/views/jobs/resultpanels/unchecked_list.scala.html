@@ -20,7 +20,7 @@
     new ForwardingModal($("#jobview"), "@{toolName}", "@{jobID}");
 
     function download_(){
-        $.getJSON("/files/@jobID/ids.json", function (data) {
+        $.getJSON("/results/files/@jobID/ids.json", function (data) {
             var fileString = data.ACC_IDS;
             var filename = "@{toolName}_jobID_@{jobID}" + ".fasta";
             DownloadHelper.download(filename, fileString.join("\n"));
