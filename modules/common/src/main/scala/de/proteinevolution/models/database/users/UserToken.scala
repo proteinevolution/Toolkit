@@ -6,12 +6,14 @@ import java.math.BigInteger
 import reactivemongo.bson._
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 
-case class UserToken(tokenType: Int,
-                     token: String = UserToken.nextToken(15),
-                     passwordHash: Option[String] = None,
-                     eMail: Option[String] = None,
-                     userID: Option[BSONObjectID] = None,
-                     changeDate: Option[ZonedDateTime] = Some(ZonedDateTime.now))
+case class UserToken(
+    tokenType: Int,
+    token: String = UserToken.nextToken(15),
+    passwordHash: Option[String] = None,
+    eMail: Option[String] = None,
+    userID: Option[BSONObjectID] = None,
+    changeDate: Option[ZonedDateTime] = Some(ZonedDateTime.now)
+)
 
 object UserToken {
 
