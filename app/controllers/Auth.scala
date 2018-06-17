@@ -11,8 +11,8 @@ import de.proteinevolution.models.database.users.{ User, UserToken }
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.auth.models.MailTemplate._
+import de.proteinevolution.base.ToolkitController
 import play.api.cache._
-import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.api.libs.mailer._
 import reactivemongo.bson._
@@ -32,10 +32,8 @@ final class Auth @Inject()(
     assets: AssetsFinder,
     cc: ControllerComponents
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
-    extends AbstractController(cc)
-    with I18nSupport
-    with JSONTemplate
-    with CommonController {
+    extends ToolkitController(cc)
+    with JSONTemplate {
 
   private val logger = Logger(this.getClass)
 
