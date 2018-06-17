@@ -44,9 +44,7 @@ class ProcessController @Inject()(ctx: HHContext,
           Process(file.pathAsString,
                   (constants.jobPath + jobID).toFile.toJava,
                   "jobID"     -> jobID,
-                  "accession" -> accession)
-            .run()
-            .exitValue() match {
+                  "accession" -> accession).run().exitValue() match {
             case 0 => NoContent
             case _ => BadRequest
           }

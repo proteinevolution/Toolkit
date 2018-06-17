@@ -18,14 +18,11 @@ class FileView() {
 
   @JSExport("apply")
   def apply(jobID: String, fileName: String, resultName: String): Unit = {
-    document
-      .querySelectorAll(".download_alignment")
-      .iterator
-      .foreach {
-        _.addEventListener("click", (_: dom.Event) => {
-          downloadFile(jobID, fileName, resultName)
-        }, useCapture = false)
-      }
+    document.querySelectorAll(".download_alignment").iterator.foreach {
+      _.addEventListener("click", (_: dom.Event) => {
+        downloadFile(jobID, fileName, resultName)
+      }, useCapture = false)
+    }
     document
       .getElementById("collapseMe")
       .addEventListener(

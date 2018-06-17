@@ -76,16 +76,10 @@ private[this] class ErrorComponentCtrl(args: Any) {
       |>AAN59974.1 histQne H2A [HQmQ sapiens]
       |--------AAAAAAAAAA-----QQQQQQQQQ-------------AAAAAAAAAA""".stripMargin
 
-  val notFoundRandomized: String = notFound
-    .map { c =>
-      if (c == 'G' || c == 'Q' || c == 'A')
-        Stream
-          .continually(Random.alphanumeric)
-          .flatten
-          .take(100)
-          .filter(x => aminoAcids.contains(x))
-          .head
-      else c
-    }
+  val notFoundRandomized: String = notFound.map { c =>
+    if (c == 'G' || c == 'Q' || c == 'A')
+      Stream.continually(Random.alphanumeric).flatten.take(100).filter(x => aminoAcids.contains(x)).head
+    else c
+  }
 
 }

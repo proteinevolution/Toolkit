@@ -98,10 +98,9 @@ final class Auth @Inject()(
                         }
 
                         // Everything is ok, let the user know that they are logged in now
-                        Ok(loggedIn(loggedInUser))
-                          .withSession(
-                            userSessions.sessionCookie(request, loggedInUser.sessionID.get)
-                          )
+                        Ok(loggedIn(loggedInUser)).withSession(
+                          userSessions.sessionCookie(request, loggedInUser.sessionID.get)
+                        )
                       case None =>
                         Ok(loginIncorrect())
                     }
@@ -236,15 +235,14 @@ final class Auth @Inject()(
                         // This should not happen - Failsafe when the password hash got overwritten somehow
                         Future.successful(
                           Ok(
-                            views.html
-                              .main(
-                                assets,
-                                webJarsUtil,
-                                toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
-                                "The Password you have entered was insufficient, please create a new one.",
-                                "",
-                                environment
-                              )
+                            views.html.main(
+                              assets,
+                              webJarsUtil,
+                              toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                              "The Password you have entered was insufficient, please create a new one.",
+                              "",
+                              environment
+                            )
                           )
                         )
                     }

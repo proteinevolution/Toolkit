@@ -64,9 +64,7 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi)(implici
   def findAndSortJobs(selector: BSONDocument, sort: BSONDocument): Future[scala.List[Job]] = {
     jobCollection
       .map(
-        _.find(selector)
-          .sort(sort)
-          .cursor[Job]()
+        _.find(selector).sort(sort).cursor[Job]()
       )
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
   }

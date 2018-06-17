@@ -14,19 +14,18 @@ class DataTables(toolName: String) {
   )
 
   def config(jobID: String, numHits: Int, callbacks: js.Function0[Unit]): Unit = {
-    jQuery(document.getElementById("htb"))
-      .DataTable(
-        js.Dictionary(
-          "processing"   -> true,
-          "serverSide"   -> true,
-          "ajax"         -> s"/results/dataTable/$jobID",
-          "autoWidth"    -> true,
-          "lengthMenu"   -> lengthMenu(numHits),
-          "searching"    -> true,
-          "pageLength"   -> 25,
-          "drawCallback" -> callbacks
-        )
+    jQuery(document.getElementById("htb")).DataTable(
+      js.Dictionary(
+        "processing"   -> true,
+        "serverSide"   -> true,
+        "ajax"         -> s"/results/dataTable/$jobID",
+        "autoWidth"    -> true,
+        "lengthMenu"   -> lengthMenu(numHits),
+        "searching"    -> true,
+        "pageLength"   -> 25,
+        "drawCallback" -> callbacks
       )
+    )
   }
 
 }
