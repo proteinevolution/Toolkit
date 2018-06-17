@@ -29,14 +29,12 @@ if [  "%hhpred_align.content" != "true" ] ; then
 
     if [ ${DBCOUNT} -gt "8" ] ; then
         echo "#Only 4 databases may be selected at a time!" >> ../results/process.log
-        updateProcessLog
         false
     fi
 fi
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -52,14 +50,11 @@ if [ ${A3M_INPUT} = "1" ] ; then
 
      if [ ! -f ../params/alignment.tmp ]; then
             echo "#Input is not in valid A3M format." >> ../results/process.log
-            updateProcessLog
             false
      else
             echo "#Query is in A3M format." >> ../results/process.log
-            updateProcessLog
             mv ../params/alignment.tmp ../params/alignment
             echo "done" >> ../results/process.log
-            updateProcessLog
      fi
 fi
 
@@ -70,7 +65,6 @@ if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
 
       if [ ${CHAR_COUNT} -gt "10000" ] ; then
             echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
-            updateProcessLog
             false
       else
             sed -i "1 i\>Q_${JOBID}" ../params/alignment1
@@ -92,7 +86,6 @@ fi
 
 if [ ! -f ../results/${JOBID}.fas ]; then
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-    updateProcessLog
     false
 fi
 
@@ -100,28 +93,22 @@ SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
 
 if [ ${SEQ_COUNT} -gt "10000" ] ; then
       echo "#Input contains more than 10000 sequences." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} -gt "1" ] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-       updateProcessLog
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
-       updateProcessLog
 fi
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 
 if [ "%hhpred_align.content" = "true" ] ; then
         echo "#Pairwise comparison mode." >> ../results/process.log
-        updateProcessLog
 
         echo "done" >> ../results/process.log
-        updateProcessLog
         #remove empty lines
         sed -i '/^\s*$/d' ../params/alignment_two
         SEQ_COUNT2=$(egrep '^>' ../params/alignment_two | wc -l)
@@ -132,7 +119,6 @@ if [ "%hhpred_align.content" = "true" ] ; then
 
         if [ ${CHAR_COUNT2} -gt "10000000" ] ; then
             echo "#Template sequence/MSA may not contain more than 10000000 characters." >> ../results/process.log
-            updateProcessLog
             false
         fi
 
@@ -148,14 +134,11 @@ if [ "%hhpred_align.content" = "true" ] ; then
 
             if [ ! -f ../params/alignment_two.tmp ]; then
                 echo "#Template is not in valid A3M format." >> ../results/process.log
-                updateProcessLog
                 false
             else
                 echo "#Template is in A3M format." >> ../results/process.log
-                updateProcessLog
                 mv ../params/alignment_two.tmp ../params/alignment_two
                 echo "done" >> ../results/process.log
-                updateProcessLog
             fi
         fi
 
@@ -165,7 +148,6 @@ if [ "%hhpred_align.content" = "true" ] ; then
 
             if [ ${CHAR_COUNT2} -gt "10000" ] ; then
                 echo "#Template protein sequence contains more than 10000 characters." >> ../results/process.log
-                updateProcessLog
                 false
             else
                 sed -i "1 i\>T_${JOBID}" ../params/alignment2
@@ -189,7 +171,6 @@ if [ "%hhpred_align.content" = "true" ] ; then
 
         if [ ! -f ../results/${JOBID}.2.fas ]; then
             echo "#Template MSA is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-            updateProcessLog
             false
         fi
 
@@ -197,22 +178,18 @@ if [ "%hhpred_align.content" = "true" ] ; then
 
         if [ ${SEQ_COUNT2} -gt "10000" ] ; then
             echo "#Template MSA contains more than 10000 sequences." >> ../results/process.log
-            updateProcessLog
             false
         fi
 
         if [ ${SEQ_COUNT2} -gt "1" ] ; then
             echo "#Template is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-            updateProcessLog
         else
             echo "#Template is a single protein sequence." >> ../results/process.log
-            updateProcessLog
          fi
 
         mv ../results/${JOBID}.2.fas ../params/alignment_two
 
         echo "done" >> ../results/process.log
-        updateProcessLog
 fi
 
 head -n 2 ../results/${JOBID}.fas > ../results/firstSeq0.fas
@@ -230,7 +207,6 @@ ITERS=%msa_gen_max_iter.content
 #CHECK IF MSA generation is required or not
 if [ ${ITERS} = "0" ] ; then
         echo "#No MSA generation required for building A3M." >> ../results/process.log
-        updateProcessLog
         reformat_hhsuite.pl fas a3m ../results/${JOBID}.fas ${JOBID}.a3m -M first
         mv ${JOBID}.a3m ../results/${JOBID}.a3m
         hhfilter -i ../results/${JOBID}.a3m \
@@ -239,20 +215,16 @@ if [ ${ITERS} = "0" ] ; then
                  -qid %min_seqid_query.content
 
         echo "done" >> ../results/process.log
-        updateProcessLog
 else
     #MSA generation required
     #Check what method to use (PSI-BLAST? HHblits?)
 
         echo "#Query MSA generation required." >> ../results/process.log
-        updateProcessLog
         echo "done" >> ../results/process.log
-        updateProcessLog
 
     #MSA generation by HHblits
     if [ "%msa_gen_method.content" = "uniprot20" ] || [ "%msa_gen_method.content" = "uniclust30" ] ; then
         echo "#Running ${ITERS} iteration(s) of HHblits against %msa_gen_method.content for query MSA generation." >> ../results/process.log
-        updateProcessLog
 
         reformat_hhsuite.pl fas a3m \
                             $(readlink -f ../results/${JOBID}.fas) \
@@ -271,14 +243,12 @@ else
         rm ../results/${JOBID}.in.a3m
 
         echo "done" >> ../results/process.log
-        updateProcessLog
 
     fi
     #MSA generation by PSI-BLAST
     if [ "%msa_gen_method.content" = "psiblast" ] ; then
 
         echo "#Running ${ITERS} iteration(s) of PSI-BLAST for query MSA generation." >> ../results/process.log
-        updateProcessLog
         #Check if input is a single sequence or an MSA
         INPUT="query"
         if [ ${SEQ_COUNT} -gt 1 ] ; then
@@ -307,13 +277,11 @@ else
                     -no_link \
                     -blastplus
         echo "done" >> ../results/process.log
-        updateProcessLog
 
     fi
 fi
 
 echo "#Generating query A3M." >> ../results/process.log
-updateProcessLog
 
 QA3M_COUNT=$(egrep '^>' ../results/${JOBID}.a3m | wc -l)
 
@@ -350,7 +318,6 @@ mv ../results/${JOBID}.a3m ../results/full.a3m
 addss.pl ../results/full.a3m
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 
 # creating alignment of query and subject input
@@ -361,11 +328,9 @@ then
 
     if [ ${ITERS} = "0" ] && [ ${SEQ_COUNT2} -gt "1" ] ; then
             echo "#No MSA generation required for building template A3M." >> ../results/process.log
-            updateProcessLog
             reformat_hhsuite.pl fas a3m %alignment_two.path db.a3m -M first
     else
             echo "#Running 3 iterations of HHblits for template MSA and A3M generation." >> ../results/process.log
-            updateProcessLog
             reformat_hhsuite.pl fas a3m \
                   $(readlink -f %alignment_two.path) \
                   $(readlink -f ../results/${JOBID}.in2.a3m)
@@ -382,16 +347,13 @@ then
     DBJOINED+="-d ../results/db"
     cd ../0
     echo "done" >> ../results/process.log
-    updateProcessLog
 fi
 
 
 if [  "%hhpred_align.content" = "true" ] ; then
       echo "#Comparing query profile HMM with template profile HMM." >> ../results/process.log
-      updateProcessLog
 else
       echo "#Searching profile HMM database(s)." >> ../results/process.log
-      updateProcessLog
 fi
 
 if [ "%alignmode.content" = "loc" ] ; then
@@ -430,10 +392,8 @@ hhsearch -cpu %THREADS \
 
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Preparing output." >> ../results/process.log
-updateProcessLog
 
 #create full alignment json; use for forwarding
 fasta2json.py ../results/reduced.fas ../results/reduced.json
@@ -465,7 +425,6 @@ manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/${JOBID}.json
 # add coiled coil prediction info to json
 manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/${JOBID}.json
 
-
 # For alerting user if too few homologs are found for building A3M
 
 if [ ${ITERS} = "0" ] ; then
@@ -477,9 +436,5 @@ fi
 # Number of sequences in the query A3M
 manipulate_json.py -k 'QA3M_COUNT' -v "${QA3M_COUNT}" ../results/${JOBID}.json
 
-
-
-
-
 echo "done" >> ../results/process.log
-updateProcessLog
+

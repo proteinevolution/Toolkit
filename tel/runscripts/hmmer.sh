@@ -3,7 +3,6 @@ CHAR_COUNT=$(wc -m < ../params/alignment)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -13,7 +12,6 @@ if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
 
       if [ ${CHAR_COUNT} -gt "10000" ] ; then
             echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
-            updateProcessLog
             false
       else
             sed -i "1 i\>${JOBID}" ../params/alignment1
@@ -35,7 +33,6 @@ fi
 
 if [ ! -f ../results/${JOBID}.fas ]; then
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-    updateProcessLog
     false
 fi
 
@@ -43,20 +40,15 @@ SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
 
 if [ ${SEQ_COUNT} -gt "10000" ] ; then
       echo "#Input contains more than 10000 sequences." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} -gt "1" ] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-       updateProcessLog
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
-       updateProcessLog
 fi
 echo "done" >> ../results/process.log
-updateProcessLog
-
 
 head -n 2 ../results/${JOBID}.fas > ../results/firstSeq0.fas
 sed 's/[\.\-]//g' ../results/firstSeq0.fas > ../results/firstSeq.fas
@@ -74,19 +66,14 @@ fasta2json.py ../results/firstSeq.fas ../results/query.json
 if [ "%max_hhblits_iter.content" = "0" ] && [ $SEQ_COUNT -gt "1" ] ; then
     #Use user MSA to build HMM
     echo "#MSA generation not required." >> ../results/process.log
-    updateProcessLog
     ${HMMERPATH}/hmmbuild --cpu %THREADS \
              -n "${JOBID}" \
              ../results/${JOBID}.hmm \
              ../results/${JOBID}.fas
 else
     echo "#MSA generation required." >> ../results/process.log
-    updateProcessLog
     echo "done" >> ../results/process.log
-    updateProcessLog
     echo "#Running HHblits for query MSA generation." >> ../results/process.log
-    updateProcessLog
-
 
     reformat_hhsuite.pl fas a3m \
                         $(readlink -f ../results/${JOBID}.fas) \
@@ -115,11 +102,8 @@ else
 fi
 
 echo "done" >> ../results/process.log
-updateProcessLog
-
 
 echo "#Running hmmsearch against the %hmmerdb.content DB." >> ../results/process.log
-updateProcessLog
 
     ${HMMERPATH}/hmmsearch --cpu %THREADS \
           -E %evalue.content \
@@ -131,10 +115,8 @@ updateProcessLog
 
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Preparing output." >> ../results/process.log
-updateProcessLog
 
 if [ -s "../results/${JOBID}.msa_sto" ]; then
 
@@ -169,6 +151,4 @@ fi
 cd ../results
 rm -f *.hmm *.outfile* *.list *.msa_* ${JOBID}.fas firstSeq.fas
 
-
 echo "done" >> ../results/process.log
-updateProcessLog
