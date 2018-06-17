@@ -106,12 +106,9 @@ class JobActor @Inject()(
   @volatile private var currentJobs: Map[String, Job]                           = Map.empty[String, Job]
   @volatile private var currentJobLogs: Map[String, JobEventLog]                = Map.empty[String, JobEventLog]
   @volatile private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty[String, ExecutionContext]
+  @volatile private var currentJobStrikes: Map[String, Int]                     = Map.empty[String, Int]
 
-  @volatile private var currentJobStrikes: Map[String, Int] = Map.empty[String, Int]
-
-  // long polling stuff
-
-  private val fetchLatestInterval = 1 seconds
+  private val fetchLatestInterval = 500 millis
   private val Tick: Cancellable = {
     // scheduler should use the system dispatcher
     context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, UpdateLog)(context.system.dispatcher)
