@@ -365,7 +365,7 @@ class SignUp {
                          password  : SignUp.password,
                          eMail     : SignUp.eMail,
                          acceptToS : SignUp.acceptToS };
-            m.request({method: "POST", url: "/signup", data: dataS }).then(function(authMessage) {
+            m.request({method: "POST", url: "/auth/signup", data: dataS }).then(function(authMessage) {
                 dataS = null;
                 Auth.updateStatus(authMessage);
             });
@@ -468,7 +468,7 @@ class ForgotPassword {
         event.preventDefault();
         let dataS = {eMail:ForgotPassword.eMail};
         console.log(dataS);
-        m.request({method: "POST", url: "/reset/password", data: dataS }).then(function(authMessage) {
+        m.request({method: "POST", url: "/auth/reset/password", data: dataS }).then(function(authMessage) {
             dataS = null;
             if (authMessage.successful) { SignIn.password = null; SignIn.email = null; }
             Auth.updateStatus(authMessage);
@@ -526,7 +526,7 @@ class Profile {
         event.preventDefault();
         let userwithpw : any = { password:Profile.password };
         for (let prop in Profile.user){ if (!prop.split("_")[1]){ userwithpw[prop] = Profile.user[prop]; } }
-        m.request({method: "POST", url: "/profile", data: userwithpw }).then(function(authMessage) {
+        m.request({method: "POST", url: "/auth/profile", data: userwithpw }).then(function(authMessage) {
             userwithpw = null;
             Profile.password = "";
             Auth.updateStatus(authMessage);
@@ -642,7 +642,7 @@ class PasswordChange {
     static submit(event : Event) : void {
         event.preventDefault();
         let password : any = { passwordOld : PasswordChange.passwordOld, passwordNew : PasswordChange.passwordNew };
-        m.request({method: "POST", url: "/password", data: password }).then(function(authMessage) {
+        m.request({method: "POST", url: "/auth/password", data: password }).then(function(authMessage) {
             password = null;
             if (authMessage.success) {
                 PasswordChange.passwordOld     = "";
@@ -733,7 +733,7 @@ class PasswordReset {
     static submit(event : Event) : void {
         event.preventDefault();
         let password : any = { passwordNew : PasswordReset.passwordNew };
-        m.request({method: "POST", url: "/reset/password/change", data: password }).then(function(authMessage) {
+        m.request({method: "POST", url: "/auth/reset/password/change", data: password }).then(function(authMessage) {
             password = null;
             if (authMessage.success) {
                 PasswordReset.passwordNew     = "";
@@ -822,7 +822,7 @@ class AuthDropdown {
                             m("li", m("a", { onclick:function(e : Event) { return openNav("profile")} }, m("i", {"class": "icon-user"}),"Profile")),
                            // Auth.user.institute === "MPG" ? m("li", m("a", { href:"/#/backend/index" }, m("i", {"class": "icon-display_graph"}), "Backend")) : null,
                             m("li", m("a", {
-                                onclick: function(e : Event) { window.location.replace("/signout") }
+                                onclick: function(e : Event) { window.location.replace("/auth/signout") }
                             },  m("i", {"class": "icon-signout"}), "Sign Out"))
                         ])
                     ])
@@ -878,7 +878,7 @@ class ProfileTabs {
                 m("p", {id:"eMailDisplay"}, Auth.user.eMail),
                 m("input", { type:  "button",
                              "class": "small expanded secondary button",
-                             onclick: function(e : Event) { window.location.replace("/signout") },
+                             onclick: function(e : Event) { window.location.replace("/auth/signout") },
                              value: "Sign Out" })
             ])),
             m("div", {"class":"tabs-panel", id:"auth-tab-edit"},     m.component(Profile, {})),
@@ -911,7 +911,7 @@ class Auth {
         return Auth.user
     }
     static loadUser () : any {
-        return m.request({method: "GET", url: "/user/data", type : User }).then(function(user) {
+        return m.request({method: "GET", url: "/auth/user/data", type : User }).then(function(user) {
             if (user) {
                 SignIn.password = null;
                 Auth.user       = user.nameLogin != null ? user : null;

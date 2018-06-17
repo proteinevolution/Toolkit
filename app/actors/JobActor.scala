@@ -9,6 +9,7 @@ import akka.actor._
 import akka.event.LoggingReceive
 import better.files._
 import com.google.inject.assistedinject.Assisted
+import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.JobState._
@@ -24,8 +25,7 @@ import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecutio
 import de.proteinevolution.tel.execution.{ ExecutionContext, WrapperExecutionFactory }
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
-import models.UserSessions
-import models.mailing.MailTemplate.JobFinishedMail
+import de.proteinevolution.auth.models.MailTemplate.JobFinishedMail
 import play.api.Configuration
 import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
