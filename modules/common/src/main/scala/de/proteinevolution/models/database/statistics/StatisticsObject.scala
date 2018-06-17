@@ -7,10 +7,12 @@ import de.proteinevolution.models.util.ZonedDateTimeHelper
 import play.api.libs.json._
 import reactivemongo.bson._
 
-case class StatisticsObject(statisticsID: BSONObjectID = BSONObjectID.generate(),
-                            userStatistics: UserStatistic = UserStatistic(),
-                            toolStatistics: List[ToolStatistic] = List.empty[ToolStatistic],
-                            datePushed: List[ZonedDateTime] = List.empty[ZonedDateTime]) {
+case class StatisticsObject(
+    statisticsID: BSONObjectID = BSONObjectID.generate(),
+    userStatistics: UserStatistic = UserStatistic(),
+    toolStatistics: List[ToolStatistic] = List.empty[ToolStatistic],
+    datePushed: List[ZonedDateTime] = List.empty[ZonedDateTime]
+) {
 
   /**
    * Returns the tool Statistic elements as a map

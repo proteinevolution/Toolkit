@@ -1,7 +1,7 @@
 package de.proteinevolution.models.database.users
 
-import play.api.libs.json.{ JsObject, Json, Writes }
-import reactivemongo.bson.{ BSONDocument, BSONDocumentReader, BSONDocumentWriter }
+import play.api.libs.json._
+import reactivemongo.bson._
 
 case class UserData(nameLogin: String, // User Login Name
                     password: String, // Password of the User (Hashed)
@@ -21,41 +21,8 @@ object UserData {
   final val NAMELAST    = "nameLast"
   final val COUNTRY     = "country"
 
-  implicit object JobWrites extends Writes[UserData] {
-    def writes(userData: UserData): JsObject = Json.obj(
-      NAMELOGIN -> userData.nameLogin,
-      EMAIL     -> userData.eMail,
-      NAMEFIRST -> userData.nameFirst,
-      NAMELAST  -> userData.nameLast,
-      COUNTRY   -> userData.country
-    )
-  }
+  implicit val userDataWrites: OWrites[UserData] = Json.writes[UserData]
 
-  /**
-   * Object containing the reader for the Class
-   */
-  implicit object Reader extends BSONDocumentReader[UserData] {
-    def read(bson: BSONDocument): UserData = UserData(
-      nameLogin = bson.getAs[String](NAMELOGIN).getOrElse(""),
-      password = bson.getAs[String](PASSWORD).getOrElse(""),
-      eMail = bson.getAs[String](EMAIL).getOrElse(""),
-      nameFirst = bson.getAs[String](NAMEFIRST),
-      nameLast = bson.getAs[String](NAMELAST),
-      country = bson.getAs[String](COUNTRY)
-    )
-  }
+  implicit val userDataBSONHandler: BSONHandler[BSONDocument, UserData] = Macros.handler[UserData]
 
-  /**
-   * Object containing the writer for the Class
-   */
-  implicit object Writer extends BSONDocumentWriter[UserData] {
-    def write(userData: UserData): BSONDocument = BSONDocument(
-      NAMELOGIN -> userData.nameLogin,
-      PASSWORD  -> userData.password,
-      EMAIL     -> userData.eMail,
-      NAMEFIRST -> userData.nameFirst,
-      NAMELAST  -> userData.nameLast,
-      COUNTRY   -> userData.country
-    )
-  }
 }
