@@ -8,11 +8,11 @@ import actors.WebSocketActor
 import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.stream.Materializer
 import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.base.ToolkitController
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
-import play.api.i18n.I18nSupport
 import play.api.libs.json.{ JsValue, Json }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
@@ -39,9 +39,7 @@ final class Application @Inject()(
     environment: Environment,
     assetsFinder: AssetsFinder
 )(implicit actorSystem: ActorSystem, mat: Materializer, ec: ExecutionContext)
-    extends AbstractController(cc)
-    with I18nSupport
-    with CommonController {
+    extends ToolkitController(cc) {
 
   private val logger = Logger(this.getClass)
   val SID            = "sid"
