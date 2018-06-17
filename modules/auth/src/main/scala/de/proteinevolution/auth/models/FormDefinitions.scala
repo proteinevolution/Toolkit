@@ -76,17 +76,18 @@ object FormDefinitions {
       ) { (eMail, nameFirst, nameLast, country, password) =>
         if (user.checkPassword(password)) {
           Some(
-            user.getUserData.copy(eMail = eMail.getOrElse(user.getUserData.eMail),
-                                  nameFirst = nameFirst,
-                                  nameLast = nameLast,
-                                  country = country)
+            user.getUserData.copy(
+              eMail = eMail.getOrElse(user.getUserData.eMail),
+              nameFirst = nameFirst,
+              nameLast = nameLast,
+              country = country
+            )
           )
         } else {
           None
         }
-      } {
-        case _ =>
-          None
+      } { _ =>
+        None
       }
     )
 
@@ -118,7 +119,7 @@ object FormDefinitions {
 
   def forgottenPasswordChange = Form(
     mapping(UserData.PASSWORDNEW -> (text(8, 128) verifying pattern(textRegex, error = "error.NewPassword"))) {
-      (passwordNew) =>
+      passwordNew =>
         BCrypt.hashpw(passwordNew, BCrypt.gensalt(LOG_ROUNDS))
     } { _ =>
       None

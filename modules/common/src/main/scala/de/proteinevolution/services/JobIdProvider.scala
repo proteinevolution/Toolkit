@@ -7,10 +7,10 @@ import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.util.Random
 
 @Singleton
-class JobIdProvider @Inject()(mongoStore: MongoStore,
-                              private var usedIds: ListBuffer[String] = new ListBuffer[String]())(
-    implicit ec: ExecutionContext
-) {
+class JobIdProvider @Inject()(
+    mongoStore: MongoStore,
+    private var usedIds: ListBuffer[String] = new ListBuffer[String]()
+)(implicit ec: ExecutionContext) {
 
   private def isValid(id: String): Future[Boolean] = {
     mongoStore.selectJob(id).map(_.isEmpty)

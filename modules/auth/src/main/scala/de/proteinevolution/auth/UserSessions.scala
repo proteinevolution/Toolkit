@@ -16,9 +16,11 @@ import scala.concurrent.duration._
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.hashing.MurmurHash3
 @Singleton
-class UserSessions @Inject()(mongoStore: MongoStore,
-                             @NamedCache("userCache") val userCache: SyncCacheApi,
-                             locationProvider: LocationProvider)(implicit ec: ExecutionContext) {
+class UserSessions @Inject()(
+    mongoStore: MongoStore,
+    @NamedCache("userCache") val userCache: SyncCacheApi,
+    locationProvider: LocationProvider
+)(implicit ec: ExecutionContext) {
   private val SID    = "sid"
   private val logger = Logger(this.getClass)
 
