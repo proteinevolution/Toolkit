@@ -1,18 +1,19 @@
 package controllers
 
 import java.io.{ FileInputStream, ObjectInputStream }
-import javax.inject.{ Inject, Singleton }
 
+import javax.inject.{ Inject, Singleton }
 import akka.util.Timeout
 import de.proteinevolution.models.database.jobs.JobState._
 import play.api.Logger
 import play.api.cache._
-import play.api.i18n.I18nSupport
 import play.api.mvc._
 import better.files._
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
 import java.time.format.DateTimeFormatter
+
+import de.proteinevolution.base.ToolkitController
 import de.proteinevolution.models.forms.JobForm
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
@@ -30,8 +31,7 @@ final class Service @Inject()(
     cc: ControllerComponents,
     assets: AssetsFinder
 )(implicit ec: ExecutionContext, @NamedCache("resultCache") val resultCache: AsyncCacheApi)
-    extends AbstractController(cc)
-    with I18nSupport {
+    extends ToolkitController(cc) {
 
   implicit val timeout: Timeout = Timeout(1.seconds)
 

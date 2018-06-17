@@ -4,19 +4,15 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
-import de.proteinevolution.auth.models.MailTemplate.{
-  ChangePasswordMail,
-  NewUserWelcomeMail,
-  PasswordChangedMail,
-  ResetPasswordMail
-}
+import de.proteinevolution.auth.models.MailTemplate._
+import de.proteinevolution.base.ToolkitController
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.models.database.users.{ User, UserToken }
 import javax.inject.{ Inject, Singleton }
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.libs.mailer.MailerClient
-import play.api.mvc.{ AbstractController, Action, AnyContent, ControllerComponents }
+import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.{ ExecutionContext, Future }
@@ -25,7 +21,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 class AuthController @Inject()(userSessions: UserSessions, mongoStore: MongoStore, cc: ControllerComponents)(
     implicit ec: ExecutionContext,
     mailerClient: MailerClient
-) extends AbstractController(cc)
+) extends ToolkitController(cc)
     with JSONTemplate {
 
   private val logger = Logger(this.getClass)
