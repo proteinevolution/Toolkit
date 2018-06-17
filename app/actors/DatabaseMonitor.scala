@@ -13,7 +13,6 @@ import de.proteinevolution.models.database.users.User
 import de.proteinevolution.db.MongoStore
 import models.mailing.MailTemplate.OldAccountEmail
 import play.api.libs.mailer.MailerClient
-import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 import services.JobActorAccess
 
@@ -29,23 +28,23 @@ object DatabaseMonitor {
 }
 
 @Singleton
-final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
-                                      implicit val mailerClient: MailerClient,
-                                      mongoStore: MongoStore,
-                                      jobActorAccess: JobActorAccess,
-                                      constants: ConstantsV2)(implicit ec: ExecutionContext)
+final class DatabaseMonitor @Inject()(
+    mongoStore: MongoStore,
+    jobActorAccess: JobActorAccess,
+    constants: ConstantsV2
+)(implicit ec: ExecutionContext, mailerClient: MailerClient)
     extends Actor
     with ActorLogging {
 
   // interval calling the user deletion method automatically
   private val userDeletionScheduler: Cancellable = {
     // scheduler should use the system dispatcher
-    context.system.scheduler.schedule(constants.userDeletionDelay,
-                                      constants.userDeletionInterval,
-                                      self,
-                                      DeleteOldUsers)(
-      context.system.dispatcher
-    )
+    context.system.scheduler.schedule(
+      constants.userDeletionDelay,
+      constants.userDeletionInterval,
+      self,
+      DeleteOldUsers
+    )(context.system.dispatcher)
   }
 
   // interval calling the user deletion method automatically
@@ -71,7 +70,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
     val regularUserDeletionDate =
       now.minusMonths(constants.userDeleting.toLong)
     // Date from when the user registered and
-    val awitingRegistrationUserDeletionDate =
+    val awaitingRegistrationUserDeletionDate =
       now.minusDays(constants.userDeletingRegisterEmail.toLong)
     // Date the registered user was logged in last
     val registeredUserDeletionDate =
@@ -86,7 +85,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
     if (verbose)
       log.info(s"""[User Deletion] Deletion Times:
                                      regular Users:               $regularUserDeletionDate
-                                     awaiting registration Users: $awitingRegistrationUserDeletionDate
+                                     awaiting registration Users: $awaitingRegistrationUserDeletionDate
                                      registered Users:            $registeredUserDeletionDate
                                      registered Users eMail Date: $registeredUserDeletionEMailDate
                                      date found in eMail:         $registeredUserDeletionDateForEmail""")
@@ -107,7 +106,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
               User.ACCOUNTTYPE ->
               User.NORMALUSERAWAITINGREGISTRATION,
               User.DATELASTLOGIN ->
-              BSONDocument("$lt" -> BSONDateTime(awitingRegistrationUserDeletionDate.toInstant.toEpochMilli))
+              BSONDocument("$lt" -> BSONDateTime(awaitingRegistrationUserDeletionDate.toInstant.toEpochMilli))
             ),
             BSONDocument( // Removing registered users with no privileges
               User.ACCOUNTTYPE ->
@@ -243,7 +242,7 @@ final class DatabaseMonitor @Inject()(val reactiveMongoApi: ReactiveMongoApi,
     case DeleteOldUsers => deleteOldUsers(true)
 
     // Remove old jobs
-    case DeleteOldJobs => deleteOldJobs
+    case DeleteOldJobs => deleteOldJobs()
 
     case _ =>
     // Not implemented
