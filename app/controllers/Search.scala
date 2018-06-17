@@ -1,7 +1,7 @@
 package controllers
 
+import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.models.database.jobs.Job
-import models.UserSessions
 import play.api.libs.json.Json
 import javax.inject.{ Inject, Singleton }
 import de.proteinevolution.models.ConstantsV2

@@ -1,4 +1,4 @@
-package models.auth
+package de.proteinevolution.auth.models
 
 import java.time.ZonedDateTime
 

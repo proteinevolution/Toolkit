@@ -10,10 +10,10 @@ import actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
 import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
+import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.jobs.JobState._
-import models.UserSessions
 import play.api.Configuration
 import play.api.cache._
 import play.api.libs.json.{ JsValue, Json }
