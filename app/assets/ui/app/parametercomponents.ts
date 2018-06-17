@@ -215,7 +215,7 @@ const ParameterModellerKeyComponent = {
     validate: function(val: string, checkLen?: boolean){
         ParameterModellerKeyComponent.value = val;
         if(checkLen || val.length >= 11) {
-            m.request({method: "POST", url: "/validate/modeller?input="+val}).then(function (response) {
+            m.request({method: "POST", url: "/auth/validate/modeller?input="+val}).then(function (response) {
                 ParameterModellerKeyComponent.keyStored = response.isValid;
                 if(ParameterModellerKeyComponent.keyStored){
                     validationProcess($('#alignment'),"modeller");

@@ -11,7 +11,7 @@ import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.statistics.{ StatisticsObject, UserStatistic }
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.db.MongoStore
-import models.mailing.MailTemplate.OldAccountEmail
+import de.proteinevolution.auth.models.MailTemplate.OldAccountEmail
 import play.api.libs.mailer.MailerClient
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 import services.JobActorAccess

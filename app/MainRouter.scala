@@ -1,4 +1,5 @@
 import controllers._
+import de.proteinevolution.auth.AuthRouter
 import de.proteinevolution.results.ResultsRouter
 import javax.inject.{ Inject, Singleton }
 import play.api.routing.Router.Routes
@@ -21,7 +22,8 @@ class MainRouter @Inject()(
     uptime: UptimeController,
     resultsRouter: ResultsRouter,
     assets: Assets,
-    webjarsRouter: webjars.Routes
+    webjarsRouter: webjars.Routes,
+    authRouter: AuthRouter
 ) extends SimpleRouter {
 
   private lazy val mainRoutes: Routes = {
@@ -82,16 +84,8 @@ class MainRouter @Inject()(
   }
 
   private lazy val authRoutes: Routes = {
-    case GET(p"/user/data")                              => auth.getUserData
-    case POST(p"/signin")                                => auth.signInSubmit
-    case POST(p"/signup")                                => auth.signUpSubmit
-    case GET(p"/signout")                                => auth.signOut()
-    case POST(p"/reset/password")                        => auth.resetPassword
-    case POST(p"/reset/password/change")                 => auth.resetPasswordChange
-    case POST(p"/profile")                               => auth.profileSubmit()
-    case POST(p"/password")                              => auth.passwordChangeSubmit()
-    case GET(p"/verification/$userName/$token")          => auth.verification(userName, token) // extern
-    case POST(p"/validate/modeller" ? q_o"input=$input") => auth.validateModellerKey(input)
+    case POST(p"/signin")                       => auth.signInSubmit
+    case GET(p"/verification/$userName/$token") => auth.verification(userName, token) // extern
   }
 
   override lazy val routes: Routes = {
@@ -100,6 +94,7 @@ class MainRouter @Inject()(
       .orElse(jobRoutes)
       .orElse(backendRoutes)
       .orElse(uiRoutes)
+      .orElse(authRouter.withPrefix("/auth").routes)
       .orElse(webjarsRouter.withPrefix("/webjars").routes)
       .orElse(resultsRouter.withPrefix("/results").routes)
   }

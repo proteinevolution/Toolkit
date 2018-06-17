@@ -7,8 +7,8 @@ import actors.ClusterMonitor.Multicast
 import actors.WebSocketActor
 import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.stream.Materializer
+import de.proteinevolution.auth.UserSessions
 import models.tools.ToolFactory
-import models.UserSessions
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env

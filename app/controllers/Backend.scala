@@ -1,16 +1,16 @@
 package controllers
 
 import javax.inject.{ Inject, Named, Singleton }
-
 import actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import akka.actor.ActorRef
-import models.UserSessions
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
+
+import de.proteinevolution.auth.UserSessions
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
