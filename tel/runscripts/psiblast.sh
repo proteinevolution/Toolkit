@@ -8,7 +8,6 @@ CHAR_COUNT=$(wc -m < ../params/alignment)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -18,7 +17,6 @@ if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
 
       if [ ${CHAR_COUNT} -gt "10000" ] ; then
             echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
-            updateProcessLog
             false
       else
             sed -i "1 i\>${JOBID}" ../params/alignment1
@@ -40,7 +38,6 @@ fi
 
 if [ ! -f ../results/${JOBID}.fas ]; then
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-    updateProcessLog
     false
 fi
 
@@ -48,21 +45,15 @@ SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
 
 if [ ${SEQ_COUNT} -gt "5000" ] ; then
       echo "#Input contains more than 5000 sequences." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} -gt "1" ] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-       updateProcessLog
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
-       updateProcessLog
 fi
 echo "done" >> ../results/process.log
-updateProcessLog
-
-
 
 if [ ${SEQ_COUNT} -gt 1 ] ; then
     INPUT="in_msa"
@@ -92,8 +83,6 @@ COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
 rm ../results/firstSeq.cc
 
 echo "#Running PSI-BLAST against the %standarddb.content DB." >> ../results/process.log
-updateProcessLog
-
 
 psiblast -db %STANDARD/%standarddb.content \
          -matrix %matrix.content \
@@ -110,11 +99,8 @@ psiblast -db %STANDARD/%standarddb.content \
          -max_hsps 1
 
 echo "done" >> ../results/process.log
-updateProcessLog
-
 
 echo "#Preparing output." >> ../results/process.log
-updateProcessLog
 
 #converst ASN.1 output to JSON
 blast_formatter -archive ../results/output_psiblastp.asn \
@@ -162,11 +148,8 @@ manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/output_psiblastp.json
 # add coiled coil prediction info to json
 manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/output_psiblastp.json
 
-
 cd ../results
 
 rm output_psiblastp.asn output_psiblastp.tab
 
-
 echo "done" >> ../results/process.log
-updateProcessLog

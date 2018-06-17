@@ -5,7 +5,6 @@ mkdir -p ../results/cif
 
 
 echo "#Converting selected template alignments into PIR format." >> ../results/process.log
-updateProcessLog
 
 checkTemplates.pl -i   ../params/%parentid.content.hhr \
                   -pir ../results/tomodel.pir \
@@ -14,7 +13,6 @@ checkTemplates.pl -i   ../params/%parentid.content.hhr \
                   -m   %templates.content  >   ../results/results.out
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 # Remove line which reveals a path from the result
 sed -i '/create/d' $(readlink -f ../results/results.out)

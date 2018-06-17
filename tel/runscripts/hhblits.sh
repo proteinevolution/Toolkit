@@ -5,7 +5,6 @@ CHAR_COUNT=$(wc -m < ../params/alignment)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -20,14 +19,11 @@ if [ ${A3M_INPUT} = "1" ] ; then
 
      if [ ! -f ../results/${JOBID}.in.fas ]; then
             echo "#Input is not in valid A3M format." >> ../results/process.log
-            updateProcessLog
             false
      else
             echo "#Query is in A3M format." >> ../results/process.log
-            updateProcessLog
             rm ../results/${JOBID}.in.fas
             echo "done" >> ../results/process.log
-            updateProcessLog
      fi
 
 else
@@ -38,7 +34,6 @@ else
 
           if [ ${CHAR_COUNT} -gt "10000" ] ; then
                 echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
-                updateProcessLog
                 false
           else
                 sed -i "1 i\>${JOBID}" ../params/alignment1
@@ -60,7 +55,6 @@ else
 
     if [ ! -f ../results/${JOBID}.in.a3m ]; then
         echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-        updateProcessLog
         false
     fi
 fi
@@ -69,23 +63,18 @@ SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.in.a3m | wc -l)
 
 if [ ${SEQ_COUNT} -gt "10000" ] ; then
     echo "#Input contains more than 10000 sequences." >> ../results/process.log
-    updateProcessLog
     false
 fi
 
 if [ ${SEQ_COUNT} -gt "1" ] ; then
     echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-    updateProcessLog
 else
     echo "#Query is a single protein sequence." >> ../results/process.log
-    updateProcessLog
 fi
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Searching %hhblitsdb.content." >> ../results/process.log
-updateProcessLog
 
 reformatValidator.pl a3m fas \
        $(readlink -f ../results/${JOBID}.in.a3m) \
@@ -117,12 +106,10 @@ hhblits -cpu %THREADS \
         -B %desc.content
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 rm ../results/${JOBID}.in.*
 
 echo "#Generating output" >> ../results/process.log
-updateProcessLog
 
 #Generate query template alignment
 hhmakemodel.pl -i ../results/${JOBID}.hhr -a3m ../results/querytemplateMSA.a3m -p %pmin.content -v 0
@@ -200,4 +187,3 @@ manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/${JOBID}.json
 fasta2json.py ../results/firstSeq.fas ../results/query.json
 
 echo "done" >> ../results/process.log
-updateProcessLog

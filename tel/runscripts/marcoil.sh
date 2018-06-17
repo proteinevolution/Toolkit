@@ -3,13 +3,11 @@ CHAR_COUNT=$(wc -m < ../params/alignment)
 
 if [ ${CHAR_COUNT} -gt "10000" ] ; then
       echo "#Input may not contain more than 10000 characters." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
 if [ ${FORMAT} = "1" ] || [ ${SEQ_COUNT} -gt "1" ] ; then
       echo "#Input is a multiple sequence alignment; expecting a single protein sequence." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -20,7 +18,6 @@ if [ ${SEQ_COUNT} = "0" ] ; then
 
       if [ ${CHAR_COUNT} -gt "10000" ] ; then
             echo "#Input may not contain more than 10000 characters." >> ../results/process.log
-            updateProcessLog
             false
       else
             sed -i "1 i\>${JOBID}" ../params/alignment
@@ -28,14 +25,10 @@ if [ ${SEQ_COUNT} = "0" ] ; then
 fi
 
 echo "#Query is a protein sequence with ${CHAR_COUNT} residues." >> ../results/process.log
-updateProcessLog
 
 echo "done" >> ../results/process.log
-updateProcessLog
-
 
 echo "#Executing MARCOIL." >> ../results/process.log
-updateProcessLog
 
 # Switch on correct Matrix
 if [ "mtk" = "%matrix_marcoil.content" ] ; then
@@ -70,10 +63,8 @@ marcoil  ${PARAMMATRIX} \
                       "$(readlink -f ../params/alignment.in)"
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Preparting OUTPUT." >> ../results/process.log
-updateProcessLog
 
 # Prepare MARCOIL GNUPLOT
 if [ "${PARAMMATRIX}" = "-C -i" ] || [ "${PARAMMATRIX}" = "-C" ] ;then
@@ -93,4 +84,3 @@ create_numerical_marcoil.rb "$(readlink -f ../params/)/"
 cp ../params/* ../results/
 
 echo "done" >> ../results/process.log
-updateProcessLog

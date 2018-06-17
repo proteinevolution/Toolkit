@@ -3,7 +3,6 @@ CHAR_COUNT=$(wc -m < ../params/alignment)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -13,7 +12,6 @@ if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
 
       if [ ${CHAR_COUNT} -gt "10000" ] ; then
             echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
-            updateProcessLog
             false
       else
             sed -i "1 i\>${JOBID}" ../params/alignment1
@@ -35,7 +33,6 @@ fi
 
 if [ ! -f ../results/${JOBID}.fas ]; then
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-    updateProcessLog
     false
 fi
 
@@ -43,19 +40,15 @@ SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
 
 if [ ${SEQ_COUNT} -gt "2000" ] ; then
       echo "#Input contains more than 2000 sequences." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} -gt "1" ] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-       updateProcessLog
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
-       updateProcessLog
 fi
 echo "done" >> ../results/process.log
-updateProcessLog
 
 mv ../results/${JOBID}.fas ../params/alignment
 
@@ -72,7 +65,6 @@ fi
 if [ "%pcoils_input_mode.content" = "2" ]; then
 
         echo "#MSA generation required. Running 1 iteration of PSI-BLAST against nr70." >> ../results/process.log
-        updateProcessLog
 
         INPUT="query"
         if [ ${SEQ_COUNT} -gt 1 ] ; then
@@ -107,7 +99,6 @@ if [ "%pcoils_input_mode.content" = "2" ]; then
                  -uc -num -r
 
         echo "done" >> ../results/process.log
-        updateProcessLog
 
 else
         cp ../params/alignment ../params/${JOBID}.in
@@ -127,7 +118,6 @@ ${REPPERDIR}/addss.pl -i ../results/${JOBID}.alignment.a3m \
 
 
 echo "#Predicting coiled coils using PCOILS." >> ../results/process.log
-updateProcessLog
 
 if [ "%pcoils_input_mode.content" = "0" ]; then
         ${COMMAND_TO_RUN_SINGLE[%pcoils_matrix.content]} ${WEIGHTING_MODE} -win 14 < ../results/${JOBID}.buffer > ../results/${JOBID}.coils_n14
@@ -135,10 +125,8 @@ if [ "%pcoils_input_mode.content" = "0" ]; then
         ${COMMAND_TO_RUN_SINGLE[%pcoils_matrix.content]} ${WEIGHTING_MODE} -win 28 < ../results/${JOBID}.buffer > ../results/${JOBID}.coils_n28
 
         echo "done" >> ../results/process.log
-        updateProcessLog
 
         echo "#Generating output." >> ../results/process.log
-        updateProcessLog
 
         prepare_coils_gnuplot.pl ../results/${JOBID} ../results/${JOBID}.coils_n14 \
                                  ../results/${JOBID}.coils_n21 ../results/${JOBID}.coils_n28 \
@@ -147,8 +135,6 @@ if [ "%pcoils_input_mode.content" = "0" ]; then
         create_numerical.rb -i ../results/${JOBID} -m %pcoils_matrix.content -s ../params/${JOBID}.in -w %pcoils_weighting.content
 
         echo "done" >> ../results/process.log
-        updateProcessLog
-
 fi
 
 if [ "%pcoils_input_mode.content" = "1" ] || [ "%pcoils_input_mode.content" = "2" ]; then
@@ -166,14 +152,9 @@ if [ "%pcoils_input_mode.content" = "1" ] || [ "%pcoils_input_mode.content" = "2
          ${COMMAND_TO_RUN_MSA[%pcoils_matrix.content]} ${WEIGHTING_MODE} -win 28 -prof ../results/${JOBID}.myhmmmake.out < ../results/${JOBID}.buffer > ../results/${JOBID}.coils_n28
 
          echo "done" >> ../results/process.log
-         updateProcessLog
-
          echo "#Generating output." >> ../results/process.log
-         updateProcessLog
-
          prepare_for_gnuplot.pl ../results/${JOBID} T 2 ../results/${JOBID}.coils_n14 ../results/${JOBID}.coils_n21 ../results/${JOBID}.coils_n28 ../results/${JOBID}.horiz
          create_numerical.rb -i ../results/${JOBID} -m %pcoils_matrix.content -a ../params/${JOBID}.in -w %pcoils_weighting.content
 
          echo "done" >> ../results/process.log
-         updateProcessLog
 fi

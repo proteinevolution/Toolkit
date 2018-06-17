@@ -3,13 +3,11 @@ CHAR_COUNT=$(wc -m < ../params/alignment)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may no contain more than 10000000 characters." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
       echo "#Invalid input format. Input should be in aligned FASTA/CLUSTAL format." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -30,19 +28,15 @@ if [ "${OUTFORMAT}" = "fas" ] ; then
 
     SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
     echo "#Read MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-    updateProcessLog
 
 else
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-    updateProcessLog
     false
 fi
 echo "done" >> ../results/process.log
-updateProcessLog
 
 if [ ${SEQ_COUNT} -gt "100" ] ; then
       echo "#Input contains more than 100 sequences." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -52,13 +46,10 @@ reformat_phylip.pl -i=fas \
                    -a=$(readlink -f ../results/${JOBID}.phy)
 
 echo "#Running PhyML." >> ../results/process.log
-updateProcessLog
 
 if [ "%no_replicates.content" -gt 0 ] ; then
     echo "done" >> ../results/process.log
-    updateProcessLog
     echo "#Performing %no_replicates.content bootstrap iterations." >> ../results/process.log
-    updateProcessLog
 fi
 
 PhyML-3.1_linux64 -i ../results/${JOBID}.phy \
@@ -78,4 +69,3 @@ else
 fi
 
 echo "done" >> ../results/process.log
-updateProcessLog

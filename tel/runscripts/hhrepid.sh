@@ -4,7 +4,6 @@ A3M_INPUT=$(head -1 ../params/alignment | egrep "^#A3M#" | wc -l)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -20,14 +19,11 @@ if [ ${A3M_INPUT} = "1" ] ; then
 
      if [ ! -f ../params/alignment.tmp ]; then
             echo "#Input is not in valid A3M format." >> ../results/process.log
-            updateProcessLog
             false
      else
             echo "#Query is in A3M format." >> ../results/process.log
-            updateProcessLog
             rm ../params/alignment.tmp
             echo "done" >> ../results/process.log
-            updateProcessLog
      fi
 else
 
@@ -37,7 +33,6 @@ else
 
           if [ ${CHAR_COUNT} -gt "10000" ] ; then
                 echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
-                updateProcessLog
                 false
           else
                 sed -i "1 i\>${JOBID}" ../params/alignment1
@@ -59,7 +54,6 @@ else
 
     if [ ! -f ../results/${JOBID}.a3m ]; then
         echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-        updateProcessLog
         false
     fi
 fi
@@ -68,24 +62,19 @@ SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.a3m | wc -l)
 
 if [ ${SEQ_COUNT} -gt "10000" ] ; then
       echo "#Input contains more than 10000 sequences." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} -gt "1" ] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-       updateProcessLog
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
-       updateProcessLog
 fi
 echo "done" >> ../results/process.log
-updateProcessLog
 
 #CHECK IF MSA generation is required or not
 if [ %msa_gen_max_iter_hhrepid.content == "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
         echo "#No MSA generation required." >> ../results/process.log
-        updateProcessLog
 
         mv ../results/${JOBID}.a3m ../results/query.a3m
 else
@@ -99,7 +88,6 @@ else
         ITERS=%msa_gen_max_iter_hhrepid.content
     fi
 
-    updateProcessLog
     hhblits -cpu  %THREADS \
             -v 2 \
             -i  ../results/${JOBID}.a3m \
@@ -111,10 +99,8 @@ else
 fi
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Running HHrepID." >> ../results/process.log
-updateProcessLog
 
 addss.pl ../results/query.a3m
 
@@ -145,4 +131,3 @@ sed -i "1 i\#A3M#" ../results/reduced.a3m
 rm ../results/query.reduced.a3m ../results/query.a3m
 
 echo "done" >> ../results/process.log
-updateProcessLog

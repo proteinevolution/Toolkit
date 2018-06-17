@@ -2,7 +2,6 @@
 # NGL: http://arose.github.io/ngl/api/Stage.html#event:fullscreenChanged
 
 echo "#Executing MODELLER." >> ../results/process.log
-updateProcessLog
 
 #convert alignment file to PIR, if it is not already PIR
 
@@ -53,20 +52,16 @@ mv modeller.log ../logs/
 mv ${FILENAME}* ../results/
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Running quality checks on the model." >> ../results/process.log
-updateProcessLog
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 #quality check
 cd ../results
 mv `echo *[0-9].pdb` ${FILENAME}.pdb
 
 echo "#Running VERIFY3D." >> ../results/process.log
-updateProcessLog
 
 #VERIFY3D
 mkdir verify3d
@@ -91,10 +86,8 @@ mv ${FILENAME}.verify3d.png ../
 cd ../
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Running ANOLEA." >> ../results/process.log
-updateProcessLog
 
 #ANOLEA
 mkdir anolea
@@ -108,10 +101,8 @@ mv anolea/${FILENAME}.anolea.png .
 
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Running Solvx." >> ../results/process.log
-updateProcessLog
 
 #Solvx
 mkdir solvx
@@ -124,4 +115,3 @@ perl ${BIOPROGS}/helpers/Solvx/solvx_graphics.pl "${FILENAME}" . > ${FILENAME}.l
 mv ${FILENAME}.solvx.png ../
 cd ../
 echo "done" >> ../results/process.log
-updateProcessLog

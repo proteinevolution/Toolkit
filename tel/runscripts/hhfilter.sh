@@ -5,7 +5,6 @@ A3M_INPUT=$(head -1 ../params/alignment | egrep "^#A3M#" | wc -l)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -20,20 +19,16 @@ if [ ${A3M_INPUT} = "1" ] ; then
 
      if [ ! -f ../params/alignment.tmp ]; then
             echo "#Input is not in valid A3M format." >> ../results/process.log
-            updateProcessLog
             false
      else
             echo "#Query is in A3M format." >> ../results/process.log
-            updateProcessLog
             mv ../params/alignment.tmp ../params/alignment
             echo "done" >> ../results/process.log
-            updateProcessLog
      fi
 fi
 
 if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
       echo "#Invalid input format. Input should be in aligned FASTA/CLUSTAL format." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -54,24 +49,19 @@ if [ "${OUTFORMAT}" = "fas" ] ; then
 
     SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
     echo "#Read ${SEQ_COUNT} sequences." >> ../results/process.log
-    updateProcessLog
 
 else
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-    updateProcessLog
     false
 fi
 echo "done" >> ../results/process.log
-updateProcessLog
 
 if [ ${SEQ_COUNT} -gt "10000" ] ; then
       echo "#Input contains more than 10000 sequences." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
 echo "#Starting HHfilter." >> ../results/process.log
-updateProcessLog
 
 hhfilter        -i %alignment.path \
                 -o ../results/alignment.a3m \
@@ -82,7 +72,6 @@ hhfilter        -i %alignment.path \
                 -M 30
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 reformat_hhsuite.pl a3m fas ../results/alignment.a3m ../results/alignment.fas
 

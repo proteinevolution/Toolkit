@@ -3,19 +3,16 @@ CHAR_COUNT=$(wc -m < ../params/alignment)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} = "0" ] ; then
       echo "#Invalid input format. Input should be in FASTA format." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} -lt "2" ] ; then
       echo "#Input should contain at least 2 sequences." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -27,18 +24,14 @@ OUTFORMAT=$(reformatValidator.pl fas ufas \
 if [ "${OUTFORMAT}" = "ufas" ] ; then
     SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
     echo "#Read ${SEQ_COUNT} sequences." >> ../results/process.log
-    updateProcessLog
 else
     echo "#Input is not in FASTA format." >> ../results/process.log
-    updateProcessLog
     false
 fi
 echo "done"  >> ../results/process.log
-updateProcessLog
 
 if [ ${SEQ_COUNT} -gt "20000" ] ; then
       echo "#Input contains more than 20000 sequences." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -49,7 +42,6 @@ if [ ${SEQ_COUNT} -lt "100" ] ; then
 fi
 
 echo "#Clustering down input set." >> ../results/process.log
-updateProcessLog
 
 #convert input sequences into the MMseqs database format
 mmseqs createdb %alignment.path \
@@ -72,10 +64,8 @@ mmseqs %clustering_mode.content  ../results/${JOBID}_seqDB \
                 --threads ${THREADS_TO_USE}
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Generating output." >> ../results/process.log
-updateProcessLog
 
 #Generate FASTA-style output
 mmseqs result2repseq ../results/${JOBID}_seqDB \
@@ -118,4 +108,3 @@ rm -r ../results/tmp
 rm ../results/${JOBID}_*
 
 echo "done" >> ../results/process.log
-updateProcessLog
