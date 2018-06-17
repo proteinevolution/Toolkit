@@ -6,10 +6,12 @@ import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 
-case class ClusterLoadEvent(id: BSONObjectID,
-                            listLoad: List[Double],
-                            averageLoad: Double,
-                            timestamp: Option[ZonedDateTime] = Some(ZonedDateTime.now))
+case class ClusterLoadEvent(
+    id: BSONObjectID,
+    listLoad: List[Double],
+    averageLoad: Double,
+    timestamp: Option[ZonedDateTime] = Some(ZonedDateTime.now)
+)
 
 object ClusterLoadEvent {
   val IDDB      = "_id"

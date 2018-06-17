@@ -9,31 +9,15 @@ import reactivemongo.bson._
 case class SessionData(ip: String, userAgent: String, location: Location)
 
 object SessionData {
-  final val IP        = "ip"
-  final val USERAGENT = "userAgent"
-  final val LOCATION  = "location"
 
   implicit object JobWrites extends Writes[SessionData] {
     def writes(sessionData: SessionData): JsObject = Json.obj(
-      IP        -> sessionData.ip,
-      USERAGENT -> sessionData.userAgent,
-      LOCATION  -> s"${sessionData.location.country} - ${sessionData.location.city.getOrElse("/")}"
+      "ip"        -> sessionData.ip,
+      "userAgent" -> sessionData.userAgent,
+      "location"  -> s"${sessionData.location.country} - ${sessionData.location.city.getOrElse("/")}"
     )
   }
 
-  implicit object Reader extends BSONDocumentReader[SessionData] {
-    override def read(bson: BSONDocument): SessionData = SessionData(
-      ip = bson.getAs[String](IP).getOrElse("none"),
-      userAgent = bson.getAs[String](USERAGENT).getOrElse("none"),
-      location = bson.getAs[Location](LOCATION).getOrElse(Location("none", None, None, None))
-    )
-  }
+  implicit val sessionDataHandler: BSONHandler[BSONDocument, SessionData] = Macros.handler[SessionData]
 
-  implicit object Writer extends BSONDocumentWriter[SessionData] {
-    override def write(sessionData: SessionData): BSONDocument = BSONDocument(
-      IP        -> sessionData.ip,
-      USERAGENT -> sessionData.userAgent,
-      LOCATION  -> sessionData.location
-    )
-  }
 }

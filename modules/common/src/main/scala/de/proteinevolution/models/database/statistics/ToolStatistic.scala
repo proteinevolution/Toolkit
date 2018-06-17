@@ -3,11 +3,13 @@ package de.proteinevolution.models.database.statistics
 import play.api.libs.json._
 import reactivemongo.bson._
 
-case class ToolStatistic(toolName: String,
-                         monthly: List[Int] = List.empty[Int],
-                         monthlyFailed: List[Int] = List.empty[Int],
-                         monthlyDeleted: List[Int] = List.empty[Int],
-                         monthlyInternal: List[Int] = List.empty[Int]) {
+case class ToolStatistic(
+    toolName: String,
+    monthly: List[Int] = List.empty[Int],
+    monthlyFailed: List[Int] = List.empty[Int],
+    monthlyDeleted: List[Int] = List.empty[Int],
+    monthlyInternal: List[Int] = List.empty[Int]
+) {
 
   /**
    * Returns the total amount of jobs used with the tool

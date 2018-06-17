@@ -5,11 +5,13 @@ import de.proteinevolution.models.database.jobs.JobState._
 import play.api.libs.json._
 import reactivemongo.bson._
 
-case class JobEventLog(mainID: BSONObjectID = BSONObjectID.generate(), // ID of the Job in the System
-                       toolName: String,
-                       internalJob: Boolean = false,
-                       events: List[JobEvent] = List.empty[JobEvent],
-                       runtime: Long = 0L) {
+case class JobEventLog(
+    mainID: BSONObjectID = BSONObjectID.generate(), // ID of the Job in the System
+    toolName: String,
+    internalJob: Boolean = false,
+    events: List[JobEvent] = List.empty[JobEvent],
+    runtime: Long = 0L
+) {
 
   def addJobStateEvent(jobState: JobState): JobEventLog = {
     val runtimeDiff: Long =
