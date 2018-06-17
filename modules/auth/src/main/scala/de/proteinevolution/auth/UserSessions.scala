@@ -30,9 +30,11 @@ class UserSessions @Inject()(
    * @param sessionDataOption
    * @return
    */
-  def getUserModifier(user: User,
-                      sessionDataOption: Option[SessionData] = None,
-                      forceSessionID: Boolean = false): BSONDocument = {
+  def getUserModifier(
+      user: User,
+      sessionDataOption: Option[SessionData] = None,
+      forceSessionID: Boolean = false
+  ): BSONDocument = {
     // Build the modifier - first the last login date
     BSONDocument("$set" -> BSONDocument(User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)))
       .merge(
