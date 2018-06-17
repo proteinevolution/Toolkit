@@ -25,7 +25,6 @@ function sig_handler () {
 
         if [ ${STATUS} = "#" ] ; then
             echo "error" >> ../results/process.log
-            updateProcessLog
         fi
     fi
 
@@ -47,16 +46,7 @@ function sig_handler () {
             ;;
     esac
     echo "error" >> ../results/process.log
-    updateProcessLog
     exit 0
-}
-
-# update process log
-updateProcessLog () {
-    until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/updateLog/%jobid.content); do
-        printf 'host unreachable\n...waiting to update process log\n'
-        sleep 5
-    done
 }
 
 until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/running/%jobid.content/$key); do

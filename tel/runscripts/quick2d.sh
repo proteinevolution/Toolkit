@@ -3,7 +3,6 @@ CHAR_COUNT=$(wc -m < ../params/alignment)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -13,7 +12,6 @@ if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
 
       if [ ${CHAR_COUNT} -gt "10000" ] ; then
             echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
-            updateProcessLog
             false
       else
             sed -i "1 i\>Q_${JOBID}" ../params/alignment1
@@ -35,7 +33,6 @@ fi
 
 if [ ! -f ../results/${JOBID}.fas ]; then
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-    updateProcessLog
     false
 fi
 
@@ -43,20 +40,16 @@ SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
 
 if [ ${SEQ_COUNT} -gt "10000" ] ; then
       echo "#Input contains more than 10000 sequences." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} -gt "1" ] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-       updateProcessLog
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
-       updateProcessLog
 fi
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 head -n 2 ../results/${JOBID}.fas > ../results/tmp
 sed 's/[\.\-]//g' ../results/tmp > ../results/${JOBID}.seq
@@ -71,7 +64,6 @@ rm ../results/tmp
 #CHECK IF MSA generation is required or not
 if [ "%quick_iters.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
         echo "#No MSA generation required for building A3M." >> ../results/process.log
-        updateProcessLog
 
         cp ../results/${JOBID}.fas ../results/${JOBID}.aln
 
@@ -88,27 +80,19 @@ if [ "%quick_iters.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
 
         formatdb -p T -i ../results/sequencedb
 
-
-
         echo "done" >> ../results/process.log
-        updateProcessLog
 else
     #MSA generation required
     #Check what method to use (PSI-BLAST? HHblits?)
 
         echo "#Query MSA generation required." >> ../results/process.log
-        updateProcessLog
         echo "done" >> ../results/process.log
-        updateProcessLog
-
         echo "#Running PSI-BLAST for query MSA and A3M generation." >> ../results/process.log
-        updateProcessLog
         #Check if input is a single sequence or an MSA
         INPUT="query"
         if [ ${SEQ_COUNT} -gt 1 ] ; then
             INPUT="in_msa"
         fi
-
             psiblast -db ${STANDARD}/%target_psi_db.content \
                  -evalue %evalue.content \
                  -num_iterations %quick_iters.content \
@@ -141,46 +125,35 @@ else
 
         formatdb -p T -i ../results/sequencedb
 
-
         echo "done" >> ../results/process.log
-        updateProcessLog
 
         if [ ${CHAR_COUNT} -gt "30" ] && [ ${CHAR_COUNT} -lt "700" ] ; then
 
             echo "#Executing PiPred." >> ../results/process.log
-            updateProcessLog
 
             ${PIPRED}/pipred -i ../results/${JOBID}.fseq \
                  -pssm_path ../results/ \
                  -out_path ../results/
 
             echo "done" >> ../results/process.log
-            updateProcessLog
         fi
 fi
 
 echo "#Executing PSIPRED." >> ../results/process.log
-updateProcessLog
 
 addss.pl ../results/${JOBID}.a3m
 
 echo "done" >> ../results/process.log
-updateProcessLog
-
 
 echo "#Executing PSSpred." >> ../results/process.log
-updateProcessLog
 
 cd ../results/
 ${PSSPRED}/PSSpred.pl ../results/${JOBID}.seq ../results/sequencedb
 cd ../0/
 
 echo "done" >> ../results/process.log
-updateProcessLog
-
 
 echo "#Executing DeepCNF-SS." >> ../results/process.log
-updateProcessLog
 
 cd ../results/
 hhmake -i ${JOBID}.a3m -o ${JOBID}.feat
@@ -192,10 +165,8 @@ ${DEEPCNF}/DeepCNF_SS.sh -i ${JOBID}.seq \
 cd ../0/
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Executing SPIDER2 and SPOT-Disorder." >> ../results/process.log
-updateProcessLog
 
 #RUN SPOT-D and SPIDER2
 
@@ -204,27 +175,21 @@ ${SPOTD}/run_local.sh ${JOBID}.pssm
 cd ../0/
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Executing IUpred." >> ../results/process.log
-updateProcessLog
 
 #RUN IUPred
 iupred ../results/${JOBID}.seq long > ../results/${JOBID}.iupred_dat
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Executing DISOPRED3." >> ../results/process.log
-updateProcessLog
 
 run_disopred.pl ../results/${JOBID}.seq ../results/sequencedb
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Executing MARCOIL." >> ../results/process.log
-updateProcessLog
 
 #Running MARCOIL for coiled coil prediction
 # Switch on correct Matrix
@@ -239,20 +204,16 @@ cp ../results/${JOBID}.seq .
                       ${JOBID}.seq
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Executing COILS." >> ../results/process.log
-updateProcessLog
 
 #Run COILS
 deal_with_sequence.pl ../results/${JOBID} ../results/${JOBID}.seq  ../results/${JOBID}.buffer
 run_Coils -win 28 < ../results/${JOBID}.buffer > ../results/${JOBID}.coils_n21
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Executing PCOILS." >> ../results/process.log
-updateProcessLog
 
 #Run PCOILS
 ${COILSDIR}/hhmake -i ../results/${JOBID}.a3m \
@@ -262,38 +223,29 @@ deal_with_profile.pl ../results/${JOBID}.hhmake.out ../results/${JOBID}.myhmmmak
 run_PCoils -win 28 -prof ../results/${JOBID}.myhmmmake.out < ../results/${JOBID}.buffer > ../results/${JOBID}.pcoils_n21
 
 echo "done" >> ../results/process.log
-updateProcessLog
-
 
 echo "#Executing TMHMM." >> ../results/process.log
-updateProcessLog
 
 #Run TMHMM
 tmhmm ../results/${JOBID}.seq > ../results/${JOBID}.tmhmm_dat
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Executing Phobius." >> ../results/process.log
-updateProcessLog
 
 #Run PHOBIUS
 phobius.pl ../results/${JOBID}.seq > ../results/${JOBID}.phobius_dat
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Executing PolyPhobius." >> ../results/process.log
-updateProcessLog
 
 #Run POLYPHOBIUS
 perl ${POLYPHOBIUS}/jphobius.pl -poly ../results/${JOBID}.aln > ../results/${JOBID}.jphobius_dat
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Generating output" >> ../results/process.log
-updateProcessLog
 
 parseQ2D.pl ${JOBID}
 
@@ -379,7 +331,6 @@ else
 fi
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 
 #Write IUPred results into JSON
@@ -482,4 +433,3 @@ fi
 cd ../results/
 find . -type f -not -name '*.json' -a -not -name '*.log' -print0 | xargs -0 rm --
 echo "done" >> ../results/process.log
-updateProcessLog

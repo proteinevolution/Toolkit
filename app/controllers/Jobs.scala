@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 import javax.inject.{ Inject, Singleton }
 
 import de.proteinevolution.models.database.jobs.JobState._
-import actors.JobActor.{ JobStateChanged, SetSGEID, UpdateLog }
+import actors.JobActor.{ JobStateChanged, SetSGEID }
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.db.MongoStore
@@ -33,11 +33,6 @@ final class Jobs @Inject()(
       jobActorAccess.sendToJobActor(jobID, JobStateChanged(jobID, jobStatus))
       NoContent
     } else BadRequest("Permission denied")
-  }
-
-  def updateLog(jobID: String) = Action {
-    jobActorAccess.sendToJobActor(jobID, UpdateLog(jobID)) // TODO somehow this is getting triggered too rarely
-    NoContent
   }
 
   def SGEID(jobID: String, sgeID: String, key: String): Action[AnyContent] = Action {

@@ -85,8 +85,6 @@ object JobActor {
 
   case class WatchLogFile(job: Job)
 
-  case object UpdateLog2
-
 }
 
 class JobActor @Inject()(
@@ -116,7 +114,7 @@ class JobActor @Inject()(
   private val fetchLatestInterval = 1 seconds
   private val Tick: Cancellable = {
     // scheduler should use the system dispatcher
-    context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, UpdateLog2)(context.system.dispatcher)
+    context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, UpdateLog)(context.system.dispatcher)
   }
 
   // Running executions
@@ -693,25 +691,7 @@ class JobActor @Inject()(
           case None =>
         }
 
-    // gets updatelog notifications via curl
-    case UpdateLog(jobID: String) =>
-      currentJobs.get(jobID) match {
-        case Some(job) =>
-          val foundWatchers =
-            job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
-          job.status match {
-            case Running => foundWatchers.flatten.foreach(_ ! WatchLogFile(job))
-            case _ =>
-              foundWatchers.flatten.foreach(_ ! WatchLogFile(job))
-              foundWatchers.flatten.foreach(_ ! PushJob(job))
-          }
-
-        case None =>
-      }
-
-    // does longpolling
-
-    case UpdateLog2 =>
+    case UpdateLog =>
       currentJobs.foreach { job =>
         val foundWatchers =
           job._2.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])

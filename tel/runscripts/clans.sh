@@ -3,19 +3,16 @@ CHAR_COUNT=$(wc -m < ../params/alignment)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} = "0" ] ; then
       echo "#Invalid input format. Input should be in FASTA format." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} -lt "2" ] ; then
       echo "#Input should contain at least 2 sequences." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -27,18 +24,14 @@ OUTFORMAT=$(reformatValidator.pl fas ufas \
 if [ "${OUTFORMAT}" = "ufas" ] ; then
     SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
     echo "#Read ${SEQ_COUNT} sequences." >> ../results/process.log
-    updateProcessLog
 else
     echo "#Input is not in FASTA format." >> ../results/process.log
-    updateProcessLog
     false
 fi
 echo "done"  >> ../results/process.log
-updateProcessLog
 
 if [ ${SEQ_COUNT} -gt "10000" ] ; then
       echo "#Input contains more than 10000 sequences." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -62,7 +55,6 @@ fi
 prepareForClans.pl %alignment.path ../results/${JOBID}.0.fas ../results/${JOBID}.1.fas
 
 echo "#Performing ${SEQ_COUNT} X ${SEQ_COUNT} pairwise BLAST+ comparisons." >> ../results/process.log
-updateProcessLog
 
 #BLAST formatted database
 makeblastdb -in ../results/${JOBID}.1.fas -dbtype prot
@@ -82,10 +74,8 @@ blastp -query ../results/${JOBID}.1.fas \
        -num_threads %THREADS
        
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Generating CLANS file." >> ../results/process.log
-updateProcessLog       
 
 blast2clans.pl ../results/${JOBID} ../results/${JOBID}.0.fas ${SEQ_COUNT}
 
@@ -97,4 +87,3 @@ rm ${JOBID}.nxnblast
 rm ${JOBID}*fas*
 
 echo "done" >> ../results/process.log
-updateProcessLog

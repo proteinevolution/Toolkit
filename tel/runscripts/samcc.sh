@@ -1,7 +1,6 @@
 cp %alignment.path ../results/${JOBID}.pdb
 
 echo "#Initializing SamCC." >> ../results/process.log
-updateProcessLog
 
 IFS=';' read -a valshelix1 <<< "%samcc_helixone.content"
 IFS=';' read -a valshelix2 <<< "%samcc_helixtwo.content"
@@ -41,19 +40,15 @@ echo "4:4:1-1" >> ../results/${JOBID}.params
 echo "!:end" >> ../results/${JOBID}.params
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Running SamCC." >> ../results/process.log
-updateProcessLog
 
 
 /usr/bin/python ${SAMCCPATH}/samcc.py ../results/${JOBID}.params ../results/${JOBID}.out
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Preparing output." >> ../results/process.log
-updateProcessLog
 
 /usr/bin/gnuplot temp0.run
 /usr/bin/gnuplot temp1.run
@@ -64,7 +59,6 @@ cat out_axes.pdb out.pdb > ../results/${JOBID}.pdb
 mv out* ../results/
 rm temp*
 echo "done" >> ../results/process.log
-updateProcessLog
 
 
 

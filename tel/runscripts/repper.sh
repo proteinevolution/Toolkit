@@ -3,7 +3,6 @@ CHAR_COUNT=$(wc -m < ../params/alignment)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -13,7 +12,6 @@ if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
 
       if [ ${CHAR_COUNT} -gt "10000" ] ; then
             echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
-            updateProcessLog
             false
       else
             sed -i "1 i\>${JOBID}" ../params/alignment1
@@ -35,7 +33,6 @@ fi
 
 if [ ! -f ../results/${JOBID}.fas ]; then
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-    updateProcessLog
     false
 fi
 
@@ -43,26 +40,21 @@ SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
 
 if [ ${SEQ_COUNT} -gt "2000" ] ; then
       echo "#Input contains more than 2000 sequences." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} -gt "1" ] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-       updateProcessLog
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
-       updateProcessLog
 fi
 echo "done" >> ../results/process.log
-updateProcessLog
 
 mv ../results/${JOBID}.fas ../params/alignment
 
 if [ "%repper_input_mode.content" = "1" ]; then
 
         echo "#MSA generation required. Running 1 iteration of PSI-BLAST against nr70." >> ../results/process.log
-        updateProcessLog
 
         INPUT="query"
         if [ ${SEQ_COUNT} -gt 1 ] ; then
@@ -99,7 +91,6 @@ if [ "%repper_input_mode.content" = "1" ]; then
         rm ../results/*.html
 
         echo "done" >> ../results/process.log
-        updateProcessLog
 
 else
         cp ../params/alignment ../results/${JOBID}.in
@@ -113,12 +104,10 @@ ${REPPERDIR}/deal_with_sequence.pl ../results/${JOBID} %window_size.content %per
                                    ../results/${JOBID}.ftwin_par ../results/${JOBID}.in ../results/${JOBID}.buffer
 
 echo "#Excecuting FTwin." >> ../results/process.log
-updateProcessLog
 
 ${REPPERDIR}/complete_profile ../results/${JOBID}.in ../results/${JOBID}.ftwin_par \
                               ../results/${JOBID}.ftwin_plot ${REPPERDIR}/hydro.dat
 echo "done" >> ../results/process.log
-updateProcessLog
 
 
 ${REPPERDIR}/sort_by_intensity.pl %window_size.content ../results/${JOBID}
@@ -131,15 +120,12 @@ reformat.pl fas a3m \
 
 
 echo "#Excecuting PSIPRED." >> ../results/process.log
-updateProcessLog
 
 ${REPPERDIR}/addss.pl -i ../results/${JOBID}.alignment.a3m -o ../results/${JOBID}.alignment.ss -t ../results/${JOBID}.horiz
 INPUT_MODE=1
 FLAG=0
 
 echo "done" >> ../results/process.log
-updateProcessLog
-
 
 hhmake -i ../results/${JOBID}.alignment.a3m \
        -o ../results/${JOBID}.hhmake.out \
@@ -148,7 +134,6 @@ hhmake -i ../results/${JOBID}.alignment.a3m \
 ${REPPERDIR}/deal_with_profile.pl ../results/${JOBID}.hhmake.out ../results/${JOBID}.myhmmmake.out
 
 echo "#Excecuting PCOILS." >> ../results/process.log
-updateProcessLog
 cd ../results
 
 run_PCoils -win 14 -prof ${JOBID}.myhmmmake.out < ${JOBID}.buffer > ${JOBID}.ftwin_n14
@@ -157,10 +142,8 @@ run_PCoils -win 28 -prof ${JOBID}.myhmmmake.out < ${JOBID}.buffer > ${JOBID}.ftw
 
 cd ../0
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Excecuting REPwin." >> ../results/process.log
-updateProcessLog
 
 ${REPPERDIR}/repper64 -i ../results/${JOBID}.buffer \
                       -w %window_size.content \
@@ -168,11 +151,9 @@ ${REPPERDIR}/repper64 -i ../results/${JOBID}.buffer \
                       -dat ../results/${JOBID}_repper.dat -v 0
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 
 echo "#Generating output." >> ../results/process.log
-updateProcessLog
 ${REPPERDIR}/prepare_for_gnuplot.pl ../results/${JOBID} ../results/${JOBID}.ftwin_ov \
                                     ../results/${JOBID}_repper.dat ${INPUT_MODE} ${FLAG} %periodicity_min.content %periodicity_max.content \
                                     ../results/${JOBID}.ftwin_n14 \
@@ -182,4 +163,3 @@ ${REPPERDIR}/prepare_for_gnuplot.pl ../results/${JOBID} ../results/${JOBID}.ftwi
 
 rm ../results/*.a3m ../results/*.out ../results/*.ss ../results/*.ftwin* ../results/*.dat
 echo "done" >> ../results/process.log
-updateProcessLog

@@ -79,7 +79,6 @@ class MainRouter @Inject()(
     case PUT(p"/jobs/$status/$jobID/$key")                                    => jobs.setJobStatus(status, jobID, key)
     case PUT(p"/jobs/sge/$jobID/$sgeID/$key")                                 => jobs.SGEID(jobID, sgeID, key)
     case PUT(p"/jobs/dateviewed/$mainID")                                     => jobs.updateDateViewed(mainID)
-    case PUT(p"/jobs/updateLog/$jobID")                                       => jobs.updateLog(jobID)
     case GET(p"/search/check/jobid/$jobID/" ? q_o"resubmitJobID=$resubmitID") => search.checkJobID(jobID, resubmitID)
   }
 

@@ -5,13 +5,11 @@ CHAR_COUNT=$(wc -m < ../results/${JOBID}.in)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} -lt "2" ] && [ ${FORMAT} = "0" ] ; then
       echo "#Invalid input format. Input should be in aligned FASTA/CLUSTAL/A3M format." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -23,7 +21,6 @@ if [ ${FORMAT} = "1" ] ; then
     if [ ! -f ../results/${JOBID}.tmp ]; then
         IN_FORMAT=%in_format.content
         echo "#Input is not in valid CLUSTAL format." >> ../results/process.log
-        updateProcessLog
         false
     else
 
@@ -48,7 +45,6 @@ if [ ${OUT_FORMAT} = "clu" ] ; then
 fi
 
 echo "#Converting input from ${IN_FORMAT^^} to ${OUT_FORMAT^^} format." >> ../results/process.log
-updateProcessLog
 
 CASE="-uc"
 if [ ${OUT_FORMAT} = "a3m" ] ; then
@@ -68,6 +64,5 @@ fi
 if [ ! -f ../results/${JOBID}.out ]; then
     IN_FORMAT=%in_format.content
     echo "#Input is not in valid ${IN_FORMAT^^} format." >> ../results/process.log
-    updateProcessLog
     false
 fi

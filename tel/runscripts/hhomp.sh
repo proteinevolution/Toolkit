@@ -4,7 +4,6 @@ CHAR_COUNT=$(wc -m < ../params/alignment)
 
 if [ ${CHAR_COUNT} -gt "10000000" ] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
@@ -19,15 +18,12 @@ if [ ${A3M_INPUT} = "1" ] ; then
 
      if [ ! -f ../params/alignment.tmp ]; then
             echo "#Input is not in valid A3M format." >> ../results/process.log
-            updateProcessLog
             false
      else
             echo "#Query is in A3M format." >> ../results/process.log
-            updateProcessLog
             cp ../params/alignment ../results/${JOBID}.in.a3m
             rm ../params/alignment.tmp
             echo "done" >> ../results/process.log
-            updateProcessLog
      fi
 else
 
@@ -37,7 +33,6 @@ else
 
           if [ ${CHAR_COUNT} -gt "10000" ] ; then
                 echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
-                updateProcessLog
                 false
           else
                 sed -i "1 i\>Q_${JOBID}" ../params/alignment1
@@ -59,7 +54,6 @@ else
 
     if [ ! -f ../results/${JOBID}.in.a3m ]; then
         echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
-        updateProcessLog
         false
     fi
 fi
@@ -68,20 +62,16 @@ SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.in.a3m | wc -l)
 
 if [ ${SEQ_COUNT} -gt "10000" ] ; then
       echo "#Input contains more than 10000 sequences." >> ../results/process.log
-      updateProcessLog
       false
 fi
 
 if [ ${SEQ_COUNT} -gt "1" ] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
-       updateProcessLog
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
-       updateProcessLog
 fi
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 reformatValidator.pl a3m fas \
        $(readlink -f ../results/${JOBID}.in.a3m) \
@@ -97,20 +87,16 @@ rm ../results/firstSeq0.fas ../results/${JOBID}.fas
 #CHECK IF MSA generation is required or not
 if [ "%msa_gen_max_iter.content" = "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
         echo "#No MSA generation required for building A3M." >> ../results/process.log
-        updateProcessLog
         hhfilter -i ../results/${JOBID}.in.a3m \
                  -o ../results/${JOBID}.a3m \
                  -cov %min_cov.content\
                  -qid %min_seqid_query.content
 
         echo "done" >> ../results/process.log
-        updateProcessLog
 else
     #MSA generation required
     echo "#Query MSA generation required." >> ../results/process.log
-    updateProcessLog
     echo "done" >> ../results/process.log
-    updateProcessLog
 
     if [ %msa_gen_max_iter.content -lt "2" ] ; then
         ITERS=1
@@ -120,7 +106,6 @@ else
 
     #MSA generation by HHblits
         echo "#Running ${ITERS} iteration(s) of HHblits for query MSA and A3M generation." >> ../results/process.log
-        updateProcessLog
 
         hhblits -cpu %THREADS \
                 -v 2 \
@@ -135,7 +120,6 @@ else
                 -mact 0.35
 
         echo "done" >> ../results/process.log
-        updateProcessLog
 
 fi
 
@@ -151,7 +135,6 @@ addss.pl ../results/${JOBID}.a3m
 
 
 echo "#Searching profile HMM database(s)." >> ../results/process.log
-updateProcessLog
 
 ${HHOMPPATH}/hhmake -v 1 -cov 20 -qid 0 -diff 100 \
                     -i ../results/${JOBID}.a3m \
@@ -175,10 +158,8 @@ ${HHOMPPATH}/hhomp -cpu %THREADS \
                    -b 1
 
 echo "done" >> ../results/process.log
-updateProcessLog
 
 echo "#Preparing output." >> ../results/process.log
-updateProcessLog
 
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
@@ -193,4 +174,3 @@ manipulate_json.py -k 'db' -v '%hhompdb.content' ../results/${JOBID}.json
 fasta2json.py ../results/firstSeq.fas ../results/query.json
 
 echo "done" >> ../results/process.log
-updateProcessLog
