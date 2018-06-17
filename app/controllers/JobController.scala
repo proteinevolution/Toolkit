@@ -170,10 +170,9 @@ final class JobController @Inject()(
                     }
                 case None =>
                   // Something went wrong when pushing to the DB
-                  Future
-                    .successful(
-                      Ok(Json.obj("successful" -> false, "code" -> 3, "message" -> "Could not write to DB."))
-                    )
+                  Future.successful(
+                    Ok(Json.obj("successful" -> false, "code" -> 3, "message" -> "Could not write to DB."))
+                  )
               }
             case None =>
               // The job ID is already taken

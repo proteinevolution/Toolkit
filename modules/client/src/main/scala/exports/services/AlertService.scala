@@ -9,16 +9,10 @@ object AlertService {
 
   @JSExport
   def alert(text: String, mode: String = "alert-success", timeout: Int = 4000): Unit = {
-    jQuery("#alert-service-msg")
-      .addClass(mode)
-      .text(text)
-      .fadeIn("fast")
-      .delay(timeout)
-      .fadeOut("slow")
+    jQuery("#alert-service-msg").addClass(mode).text(text).fadeIn("fast").delay(timeout).fadeOut("slow")
     import scala.scalajs.js.timers._
     setTimeout(timeout.toDouble + 500) {
-      jQuery("#alert-service-msg")
-        .removeClass(mode)
+      jQuery("#alert-service-msg").removeClass(mode)
     }
   }
 

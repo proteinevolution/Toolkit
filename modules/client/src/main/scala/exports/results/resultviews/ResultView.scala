@@ -146,17 +146,12 @@ trait ResultView {
         }
       )
     } else {
-      jQuery(elem)
-        .animate(
-          js.Dynamic.literal(
-            "scrollTop" -> (container
-              .find(".aln[data-id=" + id + "]")
-              .offset()
-              .asInstanceOf[JQueryPosition]
-              .top - 100D)
-          ),
-          1
-        )
+      jQuery(elem).animate(
+        js.Dynamic.literal(
+          "scrollTop" -> (container.find(".aln[data-id=" + id + "]").offset().asInstanceOf[JQueryPosition].top - 100D)
+        ),
+        1
+      )
     }
 
   }
@@ -175,8 +170,7 @@ trait ResultView {
         -25D
       else
         -75D
-    jQuery(elem)
-      .animate(js.Dynamic.literal("scrollTop" -> (_pos + pos)), "fast")
+    jQuery(elem).animate(js.Dynamic.literal("scrollTop" -> (_pos + pos)), "fast")
   }
 
 }

@@ -47,10 +47,8 @@ class PropFile(path: String, config: Configuration) extends EnvFile(path) {
 
   def load: Map[String, String] = {
     // Remove comment lines and lines containing only whitespace
-    this.f.lineIterator
-      .map(_.split('#')(0))
-      .withFilter(!_.trim().isEmpty)
-      .foldLeft(Map.empty[String, String]) { (a, b) =>
+    this.f.lineIterator.map(_.split('#')(0)).withFilter(!_.trim().isEmpty).foldLeft(Map.empty[String, String]) {
+      (a, b) =>
         val spt     = b.split('=')
         var updated = EnvFile.placeholder.replaceAllIn(spt(1), matcher => a(matcher.group("expression"))).trim()
         updated match {
@@ -66,6 +64,6 @@ class PropFile(path: String, config: Configuration) extends EnvFile(path) {
           case _ => logger.warn("Env file has no preconfigured key in the configs")
         }
         a.updated(spt(0).trim(), updated)
-      }
+    }
   }
 }

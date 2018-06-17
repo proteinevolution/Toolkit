@@ -490,12 +490,11 @@ class JobActor @Inject()(
               )
               mongoStore.countJobs(selector).map { count =>
                 mongoStore.countJobs(selectorDay).map { countDay =>
-                  log
-                    .info(
-                      BSONDateTime(
-                        ZonedDateTime.now.minusMinutes(constants.maxJobsWithin.toLong).toInstant.toEpochMilli
-                      ).toString
-                    )
+                  log.info(
+                    BSONDateTime(
+                      ZonedDateTime.now.minusMinutes(constants.maxJobsWithin.toLong).toInstant.toEpochMilli
+                    ).toString
+                  )
                   log.info(
                     s"[JobActor[$jobActorNumber].StartJob] IP ${job.IPHash} has requested $count jobs within the last ${constants.maxJobsWithin} minute and $countDay within the last 24 hours."
                   )

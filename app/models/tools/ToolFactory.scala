@@ -126,18 +126,16 @@ final class ToolFactory @Inject()(
           ResultViews.RESULTS -> { jobID =>
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
-                views.html.jobs.resultpanels.hhblits
-                  .hitlist(jobID,
-                           hhblits.parseResult(jsValue),
-                           values(ToolName.HHBLITS.value),
-                           s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
+                views.html.jobs.resultpanels.hhblits.hitlist(jobID,
+                                                             hhblits.parseResult(jsValue),
+                                                             values(ToolName.HHBLITS.value),
+                                                             s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
               case None => views.html.errors.resultnotfound()
             }
           },
           "Raw Output" -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels
-                .fileviewWithDownload(jobID + ".hhr", jobID, "hhblits_hhr")
+              views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".hhr", jobID, "hhblits_hhr")
             )
           },
           "E-Value Plot" -> { jobID =>
@@ -257,11 +255,10 @@ final class ToolFactory @Inject()(
           ResultViews.RESULTS -> { jobID =>
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
-                views.html.jobs.resultpanels.hmmer
-                  .hitlist(jobID,
-                           hmmer.parseResult(jsValue),
-                           values(ToolName.HMMER.value),
-                           s"${constants.jobPath}/$jobID/results/blastviz.html")
+                views.html.jobs.resultpanels.hmmer.hitlist(jobID,
+                                                           hmmer.parseResult(jsValue),
+                                                           values(ToolName.HMMER.value),
+                                                           s"${constants.jobPath}/$jobID/results/blastviz.html")
               case None => views.html.errors.resultnotfound()
             }
           },
@@ -278,18 +275,16 @@ final class ToolFactory @Inject()(
           ResultViews.RESULTS -> { jobID =>
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
-                views.html.jobs.resultpanels.hhpred
-                  .hitlist(jobID,
-                           hhpred.parseResult(jsValue),
-                           values(ToolName.HHPRED.value),
-                           s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
+                views.html.jobs.resultpanels.hhpred.hitlist(jobID,
+                                                            hhpred.parseResult(jsValue),
+                                                            values(ToolName.HHPRED.value),
+                                                            s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
               case None => views.html.errors.resultnotfound()
             }
           },
           "Raw Output" -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels
-                .fileviewWithDownload(jobID + ".hhr", jobID, "hhpred")
+              views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".hhr", jobID, "hhpred")
             )
           },
           "Probability  Plot" -> { jobID =>
@@ -325,18 +320,16 @@ final class ToolFactory @Inject()(
           ResultViews.RESULTS -> { jobID =>
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
-                views.html.jobs.resultpanels.hhomp
-                  .hitlist(jobID,
-                           hhomp.parseResult(jsValue),
-                           values(ToolName.HHOMP.value),
-                           s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
+                views.html.jobs.resultpanels.hhomp.hitlist(jobID,
+                                                           hhomp.parseResult(jsValue),
+                                                           values(ToolName.HHOMP.value),
+                                                           s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
               case None => views.html.errors.resultnotfound()
             }
           },
           "Raw Output" -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels
-                .fileviewWithDownload(jobID + ".hhr", jobID, "hhomp")
+              views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".hhr", jobID, "hhomp")
             )
           }
         )
@@ -345,11 +338,10 @@ final class ToolFactory @Inject()(
           ResultViews.HITLIST -> { jobID =>
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
-                views.html.jobs.resultpanels.hhpred
-                  .hitlist(jobID,
-                           hhpred.parseResult(jsValue),
-                           values(ToolName.HHPRED_ALIGN.value),
-                           s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
+                views.html.jobs.resultpanels.hhpred.hitlist(jobID,
+                                                            hhpred.parseResult(jsValue),
+                                                            values(ToolName.HHPRED_ALIGN.value),
+                                                            s"${constants.jobPath}/$jobID/results/$jobID.html_NOIMG")
               case None => views.html.errors.resultnotfound()
             }
           },
@@ -390,14 +382,14 @@ final class ToolFactory @Inject()(
           },
           "Results With Confidence" -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels
-                .fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".results_colorC", "ALI2D_COLOR_CONF")
+              views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".results_colorC",
+                                                    "ALI2D_COLOR_CONF")
             )
           },
           "Text output" -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels
-                .fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".results", "ALI2D_TEXT")
+              views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".results",
+                                                    "ALI2D_TEXT")
             )
           }
         )
@@ -589,11 +581,10 @@ final class ToolFactory @Inject()(
         ListMap(
           ResultViews.TREE -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels
-                .tree(jobID + ".clu.tre",
-                      s"${constants.jobPath}$jobID/results/" + jobID + ".clu.tre",
-                      jobID,
-                      "ANCESCON")
+              views.html.jobs.resultpanels.tree(jobID + ".clu.tre",
+                                                s"${constants.jobPath}$jobID/results/" + jobID + ".clu.tre",
+                                                jobID,
+                                                "ANCESCON")
             )
           },
           ResultViews.DATA -> { jobID =>
@@ -620,8 +611,7 @@ final class ToolFactory @Inject()(
           },
           ResultViews.DATA -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels
-                .fileviewWithDownload(jobID + ".stats", jobID, "phyml_data")
+              views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".stats", jobID, "phyml_data")
             )
           }
         )
@@ -629,14 +619,15 @@ final class ToolFactory @Inject()(
         ListMap(
           "Reduced set" -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels
-                .fileviewWithDownloadForward(jobID + ".fas", jobID, "mmseqs_reps", values(ToolName.MMSEQS2.value))
+              views.html.jobs.resultpanels.fileviewWithDownloadForward(jobID + ".fas",
+                                                                       jobID,
+                                                                       "mmseqs_reps",
+                                                                       values(ToolName.MMSEQS2.value))
             )
           },
           "Clusters" -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels
-                .fileviewWithDownload(jobID + ".clu", jobID, "mmseqs_clusters")
+              views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".clu", jobID, "mmseqs_clusters")
             )
           }
         )
@@ -672,8 +663,10 @@ final class ToolFactory @Inject()(
         ListMap(
           "3D-Structure-With-Axes" -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels
-                .NGL3DStructure(s"/files/$jobID/$jobID.pdb", jobID + ".pdb", jobID, "samcc_PDB_AXES")
+              views.html.jobs.resultpanels.NGL3DStructure(s"/files/$jobID/$jobID.pdb",
+                                                          jobID + ".pdb",
+                                                          jobID,
+                                                          "samcc_PDB_AXES")
             )
           },
           "Plots" -> { jobID =>
@@ -686,8 +679,7 @@ final class ToolFactory @Inject()(
           },
           "NumericalData" -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels
-                .fileviewWithDownload(jobID + ".out", jobID, "samcc")
+              views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".out", jobID, "samcc")
             )
           }
         )
@@ -707,8 +699,7 @@ final class ToolFactory @Inject()(
         ListMap(
           ResultViews.RESULTS -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels
-                .fileviewWithDownload(jobID + ".out", jobID, "backtrans")
+              views.html.jobs.resultpanels.fileviewWithDownload(jobID + ".out", jobID, "backtrans")
             )
           }
         )
@@ -735,8 +726,7 @@ final class ToolFactory @Inject()(
           ResultViews.RESULTS -> { jobID =>
             resultFiles.getResults(jobID).map {
               case Some(jsValue) =>
-                views.html.jobs.resultpanels
-                  .patternSearch(jobID, jsValue, values(ToolName.PATSEARCH.value))
+                views.html.jobs.resultpanels.patternSearch(jobID, jsValue, values(ToolName.PATSEARCH.value))
               case None => views.html.errors.resultnotfound()
             }
           }

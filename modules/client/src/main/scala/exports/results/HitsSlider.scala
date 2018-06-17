@@ -9,8 +9,7 @@ import exports.facades.JQueryPlugin.jqPlugin
 class HitsSlider(private val container: JQuery) {
 
   def show(seqLength: Int, start: Int, end: Int): Unit = {
-    val flatSlider: JQuery = container
-      .find("#flat-slider")
+    val flatSlider: JQuery = container.find("#flat-slider")
     val tooltipLeft = jQuery("<div id='tooltipLeft'/>")
       .css(
         js.Dictionary(
@@ -53,13 +52,9 @@ class HitsSlider(private val container: JQuery) {
         js.Dynamic.global.sliderCoords = flatSlider.slider("option", "values")
       })
 
-    tooltipLeft
-      .appendTo(flatSlider.find(".ui-slider-handle:first"))
-      .show()
+    tooltipLeft.appendTo(flatSlider.find(".ui-slider-handle:first")).show()
 
-    tooltipRight
-      .appendTo(flatSlider.find(".ui-slider-handle:last"))
-      .show()
+    tooltipRight.appendTo(flatSlider.find(".ui-slider-handle:last")).show()
   }
 
   def resubmit(sequence: String, name: String): Unit = {

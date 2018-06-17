@@ -9,12 +9,8 @@ import de.proteinevolution.tel.{ ParamCollectorProvider, RunscriptPathProvider, 
 class TELModule extends AbstractModule {
 
   override def configure(): Unit = {
-    bind(classOf[Env])
-      .toProvider(classOf[TELEnvProvider])
-      .asEagerSingleton()
-    bind(classOf[Params])
-      .toProvider(classOf[ParamCollectorProvider])
-      .asEagerSingleton()
+    bind(classOf[Env]).toProvider(classOf[TELEnvProvider]).asEagerSingleton()
+    bind(classOf[Params]).toProvider(classOf[ParamCollectorProvider]).asEagerSingleton()
     bind(classOf[String])
       .annotatedWith(Names.named("runscriptPath"))
       .toProvider(classOf[RunscriptPathProvider])

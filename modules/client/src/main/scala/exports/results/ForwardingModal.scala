@@ -95,10 +95,9 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
       // show and set heading
       $selectionRadioBtnArea.show().find(".forward-modal-heading").text(options.heading)
       // bind focus handler to autoselect
-      $evalueInput.off("focus")
-        .on("focus", () => {
-          $selectionRadioBtnArea.find(".accordingEvalueRadioBtn").prop("checked", true)
-        })
+      $evalueInput.off("focus").on("focus", () => {
+        $selectionRadioBtnArea.find(".accordingEvalueRadioBtn").prop("checked", true)
+      })
     }
     if (options.showRadioBtnSequenceLength) {
       $seqLengthRadioBtnArea.show()
@@ -115,23 +114,21 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
     )
 
     // remove invalid classes on edit
-    $forwardSelect.off("change")
-      .on("change", () => {
-        if ($forwardSelect.value().toString.length > 0) {
-          $forwardSelect.removeClass("invalid")
-        } else {
-          $forwardSelect.addClass("invalid")
-        }
-      })
+    $forwardSelect.off("change").on("change", () => {
+      if ($forwardSelect.value().toString.length > 0) {
+        $forwardSelect.removeClass("invalid")
+      } else {
+        $forwardSelect.addClass("invalid")
+      }
+    })
 
-    $evalueInput.off("keyup")
-      .on("keyup", () => {
-        if ($evalueInput.value().toString.length > 0) {
-          $evalueInput.removeClass("invalid")
-        } else {
-          $evalueInput.addClass("invalid")
-        }
-      })
+    $evalueInput.off("keyup").on("keyup", () => {
+      if ($evalueInput.value().toString.length > 0) {
+        $evalueInput.removeClass("invalid")
+      } else {
+        $evalueInput.addClass("invalid")
+      }
+    })
 
     // register on forward
     $modal.find(".forwardBtn")

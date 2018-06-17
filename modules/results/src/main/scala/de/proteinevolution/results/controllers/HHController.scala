@@ -33,28 +33,26 @@ class HHController @Inject()(ctx: HHContext,
       .resK(jobID)
       .flatMap {
         case Some(jsValue) =>
-          kleisliProvider
-            .toolK(jobID)
-            .map {
-              case HHBLITS =>
-                (resultCtx.hhblits.parseResult(jsValue),
-                 (hsp: HSP) => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped, jobID))
-              case HHPRED =>
-                val isColor = (json \ "isColor").as[Boolean]
-                (resultCtx.hhpred.parseResult(jsValue),
-                 (hsp: HSP) => views.html.hhpred.hit(hsp.asInstanceOf[HHPredHSP], isColor, wrapped, jobID))
-              case HHOMP =>
-                val isColor = (json \ "isColor").as[Boolean]
-                (resultCtx.hhomp.parseResult(jsValue),
-                 (hsp: HSP) => views.html.hhomp.hit(hsp.asInstanceOf[HHompHSP], isColor, wrapped, jobID))
-              case HMMER =>
-                val result = resultCtx.hmmer.parseResult(jsValue)
-                (result, (hsp: HSP) => views.html.hmmer.hit(hsp.asInstanceOf[HmmerHSP], result.db, wrapped))
-              case PSIBLAST =>
-                val result = resultCtx.psiblast.parseResult(jsValue)
-                (result, (hsp: HSP) => views.html.psiblast.hit(hsp.asInstanceOf[PSIBlastHSP], result.db, wrapped))
-              case _ => throw new IllegalArgumentException("tool has no hitlist") // TODO integrate Alignmnent Ctrl
-            }
+          kleisliProvider.toolK(jobID).map {
+            case HHBLITS =>
+              (resultCtx.hhblits.parseResult(jsValue),
+               (hsp: HSP) => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped, jobID))
+            case HHPRED =>
+              val isColor = (json \ "isColor").as[Boolean]
+              (resultCtx.hhpred.parseResult(jsValue),
+               (hsp: HSP) => views.html.hhpred.hit(hsp.asInstanceOf[HHPredHSP], isColor, wrapped, jobID))
+            case HHOMP =>
+              val isColor = (json \ "isColor").as[Boolean]
+              (resultCtx.hhomp.parseResult(jsValue),
+               (hsp: HSP) => views.html.hhomp.hit(hsp.asInstanceOf[HHompHSP], isColor, wrapped, jobID))
+            case HMMER =>
+              val result = resultCtx.hmmer.parseResult(jsValue)
+              (result, (hsp: HSP) => views.html.hmmer.hit(hsp.asInstanceOf[HmmerHSP], result.db, wrapped))
+            case PSIBLAST =>
+              val result = resultCtx.psiblast.parseResult(jsValue)
+              (result, (hsp: HSP) => views.html.psiblast.hit(hsp.asInstanceOf[PSIBlastHSP], result.db, wrapped))
+            case _ => throw new IllegalArgumentException("tool has no hitlist") // TODO integrate Alignmnent Ctrl
+          }
         case None => throw new IllegalStateException("no result found")
       }
       .map {
@@ -81,26 +79,24 @@ class HHController @Inject()(ctx: HHContext,
       .resK(jobID)
       .flatMap {
         case Some(jsValue) =>
-          kleisliProvider
-            .toolK(jobID)
-            .map {
-              case HHBLITS =>
-                (resultCtx.hhblits.parseResult(jsValue),
-                 dtService.getHitsByKeyWord[HHBlitsHSP](resultCtx.hhblits.parseResult(jsValue), params))
-              case HHOMP =>
-                (resultCtx.hhomp.parseResult(jsValue),
-                 dtService.getHitsByKeyWord[HHompHSP](resultCtx.hhomp.parseResult(jsValue), params))
-              case HHPRED =>
-                (resultCtx.hhpred.parseResult(jsValue),
-                 dtService.getHitsByKeyWord[HHPredHSP](resultCtx.hhpred.parseResult(jsValue), params))
-              case HMMER =>
-                (resultCtx.hmmer.parseResult(jsValue),
-                 dtService.getHitsByKeyWord[HmmerHSP](resultCtx.hmmer.parseResult(jsValue), params))
-              case PSIBLAST =>
-                (resultCtx.psiblast.parseResult(jsValue),
-                 dtService.getHitsByKeyWord[PSIBlastHSP](resultCtx.psiblast.parseResult(jsValue), params))
-              case _ => throw new IllegalArgumentException("datatables not implemented for this tool")
-            }
+          kleisliProvider.toolK(jobID).map {
+            case HHBLITS =>
+              (resultCtx.hhblits.parseResult(jsValue),
+               dtService.getHitsByKeyWord[HHBlitsHSP](resultCtx.hhblits.parseResult(jsValue), params))
+            case HHOMP =>
+              (resultCtx.hhomp.parseResult(jsValue),
+               dtService.getHitsByKeyWord[HHompHSP](resultCtx.hhomp.parseResult(jsValue), params))
+            case HHPRED =>
+              (resultCtx.hhpred.parseResult(jsValue),
+               dtService.getHitsByKeyWord[HHPredHSP](resultCtx.hhpred.parseResult(jsValue), params))
+            case HMMER =>
+              (resultCtx.hmmer.parseResult(jsValue),
+               dtService.getHitsByKeyWord[HmmerHSP](resultCtx.hmmer.parseResult(jsValue), params))
+            case PSIBLAST =>
+              (resultCtx.psiblast.parseResult(jsValue),
+               dtService.getHitsByKeyWord[PSIBlastHSP](resultCtx.psiblast.parseResult(jsValue), params))
+            case _ => throw new IllegalArgumentException("datatables not implemented for this tool")
+          }
         case None => throw new IllegalStateException("no result found")
       }
       .map {

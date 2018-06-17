@@ -38,8 +38,7 @@ object Router {
       m.component(SearchComponent, js.Dynamic.literal("id" -> "side-search", "placeholder" -> " "))
     )
     g.jobListOffCanvas = m.deps.factory(window)
-    g.jobListOffCanvas
-      .mount(document.getElementById("off-canvas-joblist"), JobListComponent)
+    g.jobListOffCanvas.mount(document.getElementById("off-canvas-joblist"), JobListComponent)
   }
 
 }

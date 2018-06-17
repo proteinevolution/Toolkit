@@ -23,8 +23,7 @@ class FileController @Inject()(ctx: HHContext, env: Env, constants: ConstantsV2)
         env.get("CIF")
     }
 
-    Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$filename"))
-      .as("application/octet-stream")
+    Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$filename")).as("application/octet-stream")
 
   }
 

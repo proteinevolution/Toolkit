@@ -90,17 +90,16 @@ class NormalResultView(val container: JQuery,
   def setupBlastVizTooltipster(): Unit = {
     // add tooltipster to visualization
     val blastVizArea = container.find("#blastviz").find("area")
-    blastVizArea
-      .tooltipster(
-        js.Dictionary(
-          "theme"         -> js.Array("tooltipster-borderless", "tooltipster-borderless-customized"),
-          "position"      -> "bottom",
-          "animation"     -> "fade",
-          "contentAsHTML" -> true,
-          "debug"         -> false,
-          "maxWidth"      -> blastVizArea.innerWidth() * 0.6
-        )
+    blastVizArea.tooltipster(
+      js.Dictionary(
+        "theme"         -> js.Array("tooltipster-borderless", "tooltipster-borderless-customized"),
+        "position"      -> "bottom",
+        "animation"     -> "fade",
+        "contentAsHTML" -> true,
+        "debug"         -> false,
+        "maxWidth"      -> blastVizArea.innerWidth() * 0.6
       )
+    )
     hitsSlider.show(resultContext.query.seq.length, resultContext.firstQueryStart, resultContext.firstQueryEnd)
   }
 
@@ -175,13 +174,7 @@ class NormalResultView(val container: JQuery,
         else
           el.asInstanceOf[HTMLInputElement].value.toInt
     }
-    dom.document
-      .querySelectorAll(".aln")
-      .iterator
-      .toList
-      .filter(jQuery(_).isOnScreen)
-      .collect(splitFn)
-      .min
+    dom.document.querySelectorAll(".aln").iterator.toList.filter(jQuery(_).isOnScreen).collect(splitFn).min
   }
 
 }

@@ -47,12 +47,8 @@ object JobClusterData {
         memory = bson.getAs[Int](MEMORY),
         threads = bson.getAs[Int](THREADS),
         hardruntime = bson.getAs[Int](HARDRUNTIME),
-        dateStarted = bson
-          .getAs[BSONDateTime](DATESTARTED)
-          .map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateFinished = bson
-          .getAs[BSONDateTime](DATESTARTED)
-          .map(dt => ZonedDateTimeHelper.getZDT(dt))
+        dateStarted = bson.getAs[BSONDateTime](DATESTARTED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateFinished = bson.getAs[BSONDateTime](DATESTARTED).map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
     }
   }
