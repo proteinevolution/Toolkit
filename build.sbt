@@ -49,7 +49,7 @@ lazy val results = (project in file("modules/results"))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl)
   .dependsOn(commonJVM)
   .settings(
-    name := "tools",
+    name := "results",
     libraryDependencies ++= Dependencies.commonDeps,
     Settings.compileSettings,
     TwirlKeys.templateImports := Seq.empty,
@@ -57,10 +57,45 @@ lazy val results = (project in file("modules/results"))
   )
   .disablePlugins(PlayLayoutPlugin)
 
+lazy val jobs = (project in file("modules/jobs"))
+    .enablePlugins(PlayScala, JavaAppPackaging)
+    .dependsOn(commonJVM, auth)
+    .settings(
+      name := "jobs",
+      libraryDependencies ++= Dependencies.commonDeps,
+      Settings.compileSettings,
+      TwirlKeys.templateImports := Seq.empty,
+      disableDocs
+    )
+    .disablePlugins(PlayLayoutPlugin)
+
+lazy val auth = (project in file("modules/auth"))
+    .enablePlugins(PlayScala, JavaAppPackaging)
+    .dependsOn(commonJVM, base)
+    .settings(
+      name := "de.proteinevolution.auth",
+      libraryDependencies ++= Dependencies.commonDeps,
+      Settings.compileSettings,
+      TwirlKeys.templateImports := Seq.empty,
+      disableDocs
+    )
+    .disablePlugins(PlayLayoutPlugin)
+
+lazy val base = (project in file("modules/base"))
+    .enablePlugins(PlayScala, JavaAppPackaging)
+    .settings(
+      name := "de.proteinevolution.base",
+      libraryDependencies ++= Dependencies.commonDeps,
+      Settings.compileSettings,
+      TwirlKeys.templateImports := Seq.empty,
+      disableDocs
+    )
+    .disablePlugins(PlayLayoutPlugin)
+
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb, BuildInfoPlugin)
-  .dependsOn(client, commonJVM, results)
-  .aggregate(client, commonJVM, results)
+  .dependsOn(client, commonJVM, results, jobs, auth, base)
+  .aggregate(client, commonJVM, results, jobs, auth, base)
   .settings(
     coreSettings,
     name := "mpi-toolkit",

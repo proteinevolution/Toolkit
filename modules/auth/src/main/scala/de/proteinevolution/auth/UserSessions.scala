@@ -1,18 +1,19 @@
-package models
+package de.proteinevolution.auth
 
 import java.time.ZonedDateTime
-import javax.inject.{ Inject, Singleton }
 
-import de.proteinevolution.models.database.users.{ SessionData, User }
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.db.MongoStore
+import de.proteinevolution.models.database.users.{ SessionData, User }
+import javax.inject.{ Inject, Singleton }
 import play.api.cache._
 import play.api.mvc.RequestHeader
 import play.api.{ mvc, Logger }
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 import play.mvc.Http
-import scala.concurrent.{ ExecutionContext, Future }
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+
 import scala.concurrent.duration._
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.hashing.MurmurHash3
 @Singleton
 class UserSessions @Inject()(mongoStore: MongoStore,

@@ -8,7 +8,6 @@ import actors.JobActor.{ JobStateChanged, SetSGEID, UpdateLog }
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.db.MongoStore
-import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.mvc._
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 import services.JobActorAccess
@@ -18,7 +17,6 @@ import scala.io.Source
 @Singleton
 final class Jobs @Inject()(
     jobActorAccess: JobActorAccess,
-    @NamedCache("userCache") implicit val userCache: SyncCacheApi,
     mongoStore: MongoStore,
     constants: ConstantsV2,
     cc: ControllerComponents

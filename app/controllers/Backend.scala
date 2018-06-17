@@ -1,18 +1,18 @@
 package controllers
 
 import javax.inject.{ Inject, Named, Singleton }
-
 import actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import akka.actor.ActorRef
-import models.UserSessions
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
+
+import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.base.ToolkitController
 import play.api.Logger
-import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc._
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
@@ -27,9 +27,7 @@ final class Backend @Inject()(
     @Named("DatabaseMonitor") databaseMonitor: ActorRef,
     cc: ControllerComponents
 )(implicit ec: ExecutionContext)
-    extends AbstractController(cc)
-    with I18nSupport
-    with CommonController {
+    extends ToolkitController(cc) {
 
   private val logger = Logger(this.getClass)
 
