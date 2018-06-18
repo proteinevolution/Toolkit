@@ -60,7 +60,7 @@ class TemplateAlignment(tool: String, forwardingEnabled: Boolean = true) {
           jQuery
             .ajax(
               js.Dictionary(
-                  "url" -> s"/files/$jobID/$acc.$extension"
+                  "url" -> s"/results/files/$jobID/$acc.$extension"
                 )
                 .asInstanceOf[JQueryAjaxSettings]
             )

@@ -75,7 +75,7 @@
 
     function download_(){
         var downloadFilename = "@{tool.toolNameShort}_@{jobID}" + ".fas";
-        var fileURL="/files/@{jobID}/@{jobID}" + ".fas";
+        var fileURL="/results/files/@{jobID}/@{jobID}" + ".fas";
         $.ajax({
             method: "GET",
             url: fileURL

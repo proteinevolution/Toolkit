@@ -6,7 +6,7 @@
     <a class="selectAllSeqBar">Select all</a>
     <a type="button" class="forwardModalOpenBtn" data-modal-type="simpler" data-result-name="@{resultName}" data-forward-issuer="NORMAL"><span>Forward Selected</span></a>
     <a type="button" id="downloadAlignment"  onclick="@{resultName}_download()"><span>Download MSA</span></a>
-    @defining("/files/" + jobID + "/" + "alignment.fas") { fileURL: String =>
+    @defining("/results/files/" + jobID + "/" + "alignment.fas") { fileURL: String =>
         <a type="button" href="@fileURL" target="_blank" rel="noopener"><span>Export MSA</span></a>
     }
     <hr class="horizontal-line">
@@ -39,7 +39,7 @@
     });
 
     window[resultName + "_download"] = function(){
-        var fileUrl = "/files/@jobID/alignment.fas";
+        var fileUrl = "/results/files/@jobID/alignment.fas";
         var downloadFilename = "@{tool.toolNameShort}_@{resultName}_@{jobID}" + ".fasta";
         // get result json
         $.LoadingOverlay("show");

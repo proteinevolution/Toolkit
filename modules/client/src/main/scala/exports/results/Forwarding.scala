@@ -54,7 +54,7 @@ object Forwarding {
       )
     val reqPromise = m.request(opts)
     reqPromise.onSuccess {
-      case _ => redirect(selectedTool, s"files/$jobID/$filename.fa")
+      case _ => redirect(selectedTool, s"results/files/$jobID/$filename.fa")
     }
     reqPromise.onFailure[Throwable] {
       case e =>
