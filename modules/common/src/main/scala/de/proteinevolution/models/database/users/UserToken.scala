@@ -23,12 +23,12 @@ object UserToken {
     new BigInteger(nrChars * 5, random).toString(32)
   }
 
-  lazy val TYPE            = "type"
-  lazy val TOKEN           = "token"
-  lazy val NEWPASSWORDHASH = "nPWH"
-  lazy val NEWEMAIL        = "newEMail"
-  lazy val USERID          = "userID"
-  lazy val CHANGEDATE      = "changeDate"
+  val TYPE            = "type"
+  val TOKEN           = "token"
+  val NEWPASSWORDHASH = "nPWH"
+  val NEWEMAIL        = "newEMail"
+  val USERID          = "userID"
+  val CHANGEDATE      = "changeDate"
 
   /**
    * Object containing the reader for the job state
