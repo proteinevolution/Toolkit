@@ -1,5 +1,6 @@
 package de.proteinevolution.results.controllers
 
+import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.results.models.HHContext
 import de.proteinevolution.results.results.Common
@@ -9,8 +10,9 @@ import play.api.mvc.{ AbstractController, Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
 
-class FileController @Inject()(ctx: HHContext, env: Env, constants: ConstantsV2)(implicit ec: ExecutionContext)
-    extends AbstractController(ctx.controllerComponents) {
+class FileController @Inject()(ctx: HHContext, env: Env, constants: ConstantsV2, userSessions: UserSessions)(
+    implicit ec: ExecutionContext
+) extends AbstractController(ctx.controllerComponents) {
 
   def getStructureFile(filename: String): Action[AnyContent] = Action { implicit request =>
     val db = Common.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
@@ -22,9 +24,22 @@ class FileController @Inject()(ctx: HHContext, env: Env, constants: ConstantsV2)
       case "mmcif" =>
         env.get("CIF")
     }
-
     Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$filename")).as("application/octet-stream")
+  }
 
+  def file(filename: String, mainID: String): Action[AnyContent] = Action.async { implicit request =>
+    userSessions.getUser.map { user =>
+      val file = new java.io.File(
+        s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"
+      )
+      if (file.exists) {
+        Ok.sendFile(file)
+          .withSession(userSessions.sessionCookie(request, user.sessionID.get))
+          .as("application/octet-stream")
+      } else {
+        NoContent
+      }
+    }
   }
 
 }

@@ -11,7 +11,7 @@ object HHrepID {
     val headerLine = """(Results for repeats type )([A-Z])(:)""".r
     val seqLine    = """([\S]+\s+[\S]+\s+[\S]+\s+[\S]+\s)([\S]+)""".r
 
-    val imagePath = s"/files/$jobID/query_"
+    val imagePath = s"/results/files/$jobID/query_"
     val source    = Source.fromFile(filePath)
     val data = try {
       source.getLines().toList.map {

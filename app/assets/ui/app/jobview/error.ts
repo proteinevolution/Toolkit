@@ -5,7 +5,7 @@ const JobErrorComponent = {
         m.redraw(true);
     },
     controller: function (args: any) {
-        m.request({ method: "GET", url: "files/"+args.job().jobID+"/process.log", contentType: "charset=utf-8",
+        m.request({ method: "GET", url: "results/files/"+args.job().jobID+"/process.log", contentType: "charset=utf-8",
             deserialize: function (data) {ErrorLog = data.split('#')}});
 
         return {}

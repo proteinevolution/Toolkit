@@ -26,6 +26,7 @@ class ResultsRouter @Inject()(
     case POST(p"/alignment/getAln/$jobID")            => alignmentController.getAln(jobID)
     case POST(p"/alignment/loadHits/$jobID")          => alignmentController.loadHits(jobID)
     case POST(p"/alignment/clustal/$jobID")           => alignmentController.loadHitsClustal(jobID)
+    case GET(p"/files/$mainID/$filename")             => fileController.file(filename = filename, mainID = mainID)
   }
 
 }

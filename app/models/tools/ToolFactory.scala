@@ -171,7 +171,7 @@ final class ToolFactory @Inject()(
       case ToolName.MARCOIL.value =>
         ListMap(
           "CC-Prob" -> { jobID =>
-            Future.successful(views.html.jobs.resultpanels.marcoil(s"/files/$jobID/alignment_ncoils.png"))
+            Future.successful(views.html.jobs.resultpanels.marcoil(s"/results/files/$jobID/alignment_ncoils.png"))
           },
           "ProbList" -> { jobID =>
             Future.successful(
@@ -204,7 +204,7 @@ final class ToolFactory @Inject()(
       case ToolName.PCOILS.value =>
         ListMap(
           "CC-Prob" -> { jobID =>
-            Future.successful(views.html.jobs.resultpanels.pcoils(s"/files/$jobID/" + jobID))
+            Future.successful(views.html.jobs.resultpanels.pcoils(s"/results/files/$jobID/" + jobID))
           },
           "ProbList" -> { jobID =>
             Future.successful(
@@ -225,7 +225,7 @@ final class ToolFactory @Inject()(
         ListMap(
           "3D-Structure" -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels.NGL3DStructure(s"/files/$jobID/$jobID.pdb",
+              views.html.jobs.resultpanels.NGL3DStructure(s"/results/files/$jobID/$jobID.pdb",
                                                           jobID + ".pdb",
                                                           jobID,
                                                           "Modeller")
@@ -233,19 +233,19 @@ final class ToolFactory @Inject()(
           },
           "VERIFY3D" -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.verify3d.png",
+              views.html.jobs.resultpanels.modeller(s"/results/files/$jobID/$jobID.verify3d.png",
                                                     s"${constants.jobPath}$jobID/results/verify3d/$jobID.plotdat")
             )
           },
           "SOLVX" -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.solvx.png",
+              views.html.jobs.resultpanels.modeller(s"/results/files/$jobID/$jobID.solvx.png",
                                                     s"${constants.jobPath}$jobID/results/solvx/$jobID.solvx")
             )
           },
           "ANOLEA" -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels.modeller(s"/files/$jobID/$jobID.anolea.png",
+              views.html.jobs.resultpanels.modeller(s"/results/files/$jobID/$jobID.anolea.png",
                                                     s"${constants.jobPath}$jobID/results/$jobID.pdb.profile")
             )
           }
@@ -663,7 +663,7 @@ final class ToolFactory @Inject()(
         ListMap(
           "3D-Structure-With-Axes" -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels.NGL3DStructure(s"/files/$jobID/$jobID.pdb",
+              views.html.jobs.resultpanels.NGL3DStructure(s"/results/files/$jobID/$jobID.pdb",
                                                           jobID + ".pdb",
                                                           jobID,
                                                           "samcc_PDB_AXES")
@@ -671,10 +671,10 @@ final class ToolFactory @Inject()(
           },
           "Plots" -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels.samcc(s"/files/$jobID/out0.png",
-                                                 s"/files/$jobID/out1.png",
-                                                 s"/files/$jobID/out2.png",
-                                                 s"/files/$jobID/out3.png")
+              views.html.jobs.resultpanels.samcc(s"/results/files/$jobID/out0.png",
+                                                 s"/results/files/$jobID/out1.png",
+                                                 s"/results/files/$jobID/out2.png",
+                                                 s"/results/files/$jobID/out3.png")
             )
           },
           "NumericalData" -> { jobID =>

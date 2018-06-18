@@ -47,7 +47,7 @@ lazy val commonJVM = common.jvm
 
 lazy val results = (project in file("modules/results"))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl)
-  .dependsOn(commonJVM)
+  .dependsOn(commonJVM, auth)
   .settings(
     name := "results",
     libraryDependencies ++= Dependencies.commonDeps,

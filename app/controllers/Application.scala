@@ -10,19 +10,16 @@ import akka.stream.Materializer
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.ToolkitController
 import models.tools.ToolFactory
-import de.proteinevolution.db.MongoStore
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
 import play.api.libs.json.{ JsValue, Json }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.api.{ Configuration, Environment, Logger }
-import reactivemongo.bson.BSONDocument
 import org.webjars.play.WebJarsUtil
-import de.proteinevolution.models.ConstantsV2
 import play.api.routing.{ JavaScriptReverseRoute, JavaScriptReverseRouter }
 
-import scala.concurrent.{ Await, ExecutionContext, Future }
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class Application @Inject()(
@@ -30,10 +27,8 @@ final class Application @Inject()(
     @Named("clusterMonitor") clusterMonitor: ActorRef,
     webSocketActorFactory: WebSocketActor.Factory,
     toolFactory: ToolFactory,
-    mongoStore: MongoStore,
     userSessions: UserSessions,
     env: Env,
-    constants: ConstantsV2,
     cc: ControllerComponents,
     config: Configuration,
     environment: Environment,
@@ -53,10 +48,8 @@ final class Application @Inject()(
    * @return a fully realized websocket.
    */
   def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
-
     case rh if sameOriginCheck(rh) =>
       logger.info("Creating new WebSocket. ip: " + rh.remoteAddress.toString + ", with sessionId: " + rh.session)
-
       userSessions
         .getUser(rh)
         .map { user =>
@@ -69,7 +62,6 @@ final class Application @Inject()(
             val result  = InternalServerError(jsError)
             Left(result)
         }
-
     case rejected =>
       logger.error(s"Request $rejected failed same origin check")
       Future.successful {
@@ -85,7 +77,6 @@ final class Application @Inject()(
    * http://blog.dewhurstsecurity.com/2013/08/30/security-testing-html5-websockets.html
    */
   def sameOriginCheck(rh: RequestHeader): Boolean = {
-
     if (environment.mode == play.api.Mode.Test)
       true
     else {
@@ -93,13 +84,11 @@ final class Application @Inject()(
         case Some(originValue) if originMatches(originValue) && !blacklist.contains(rh.remoteAddress) =>
           logger.debug(s"originCheck: originValue = $originValue")
           true
-
         case Some(badOrigin) =>
           logger.error(
             s"originCheck: rejecting request because Origin header value $badOrigin is not in the same origin"
           )
           false
-
         case None =>
           logger.error("originCheck: rejecting request because no Origin header found")
           false
@@ -123,9 +112,7 @@ final class Application @Inject()(
    */
   def index(message: String = ""): Action[AnyContent] = Action.async { implicit request =>
     //generateStatisticsDB
-
     environment.mode match {
-
       case play.api.Mode.Prod =>
         val port     = "9000"
         val hostname = "rye"
@@ -134,7 +121,6 @@ final class Application @Inject()(
         TEL.port = port
         TEL.hostname = hostname
         logger.info(s"[CONFIG:] running on port ${TEL.port} in mode: play.api.Mode.Prod")
-
       case _ =>
         val port     = request.host.slice(request.host.indexOf(":") + 1, request.host.length)
         val hostname = request.host.slice(0, request.host.indexOf(":"))
@@ -146,9 +132,7 @@ final class Application @Inject()(
         TEL.port = port
         TEL.hostname = hostname
         logger.info(s"[CONFIG:] running on port ${TEL.port} in mode: play.api.Mode.Dev")
-
     }
-
     userSessions.getUser.map { user =>
       logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
       Ok(
@@ -175,58 +159,14 @@ final class Application @Inject()(
     PermanentRedirect(s"/#/$static")
   }
 
-  /**
-   * Allows to access resultpanel files by the filename and a given jobID
-   * TODO move to tools module
-   */
-  def file(filename: String, mainID: String): Action[AnyContent] = Action.async { implicit request =>
+  def maintenance: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
-      // mainID exists, allow send File
-      if (new java.io.File(
-            s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"
-          ).exists)
-        Ok.sendFile(
-            new java.io.File(
-              s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"
-            )
-          )
-          .withSession(userSessions.sessionCookie(request, user.sessionID.get))
-          .as("text/plain") //TODO Only text/plain for files currently supported
-      else
-        Ok // TODO This needs more case validations
-    }
-  }
-
-  private def matchSuperUserToPW(username: String, password: String): Future[Boolean] = {
-    mongoStore.findUser(BSONDocument("userData.nameLogin" -> username)).map {
-      case Some(user) if user.checkPassword(password) && user.isSuperuser => true
-      case None                                                           => false
-    }
-  }
-
-  def MaintenanceSecured[A]()(action: Action[A]): Action[A] = Action.async(action.parser) { request =>
-    request.headers
-      .get("Authorization")
-      .flatMap { authorization =>
-        authorization.split(" ").drop(1).headOption.filter { encoded =>
-          new String(org.apache.commons.codec.binary.Base64.decodeBase64(encoded.getBytes)).split(":").toList match {
-            case u :: p :: Nil if Await.result(matchSuperUserToPW(u, p), scala.concurrent.duration.Duration.Inf) =>
-              true
-            case _ => false
-          }
-        }
+      if (user.isSuperuser) {
+        clusterMonitor ! Multicast
+        Ok
+      } else {
+        NotFound
       }
-      .map(_ => action(request))
-      .getOrElse {
-        Future.successful(Unauthorized.withHeaders("WWW-Authenticate" -> """Basic realm="Secured Area""""))
-        //Future.successful(BadRequest())
-      }
-  }
-
-  def maintenance: Action[AnyContent] = MaintenanceSecured() {
-    Action { implicit ctx =>
-      clusterMonitor ! Multicast
-      Ok("Maintenance screen active...")
     }
   }
 
