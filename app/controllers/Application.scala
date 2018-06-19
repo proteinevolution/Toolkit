@@ -38,8 +38,6 @@ final class Application @Inject()(
 
   private val logger = Logger(this.getClass)
 
-  private[this] val blacklist = config.get[Seq[String]]("banned.ip")
-
   /**
    * Creates a websocket.  `acceptOrResult` is preferable here because it returns a
    * Future[Flow], which is required internally.
@@ -80,7 +78,8 @@ final class Application @Inject()(
       true
     else {
       rh.headers.get("Origin") match {
-        case Some(originValue) if originMatches(originValue) && !blacklist.contains(rh.remoteAddress) =>
+        case Some(originValue)
+            if originMatches(originValue) && !config.get[Seq[String]]("banned.ip").contains(rh.remoteAddress) =>
           logger.debug(s"originCheck: originValue = $originValue")
           true
         case Some(badOrigin) =>
