@@ -18,12 +18,14 @@ import scala.concurrent.duration._
 import scala.sys.process.Process
 
 @Singleton
-class ProcessController @Inject()(ctx: HHContext,
-                                  toolFinder: ToolNameGetService,
-                                  constants: ConstantsV2,
-                                  kleisliProvider: KleisliProvider,
-                                  resultContext: ResultContext,
-                                  config: Configuration)(implicit ec: ExecutionContext, futures: Futures)
+class ProcessController @Inject()(
+    ctx: HHContext,
+    toolFinder: ToolNameGetService,
+    constants: ConstantsV2,
+    kleisliProvider: KleisliProvider,
+    resultContext: ResultContext,
+    config: Configuration
+)(implicit ec: ExecutionContext, futures: Futures)
     extends AbstractController(ctx.controllerComponents) {
 
   private val scriptPath = config.get[String]("serverScripts")

@@ -9,10 +9,12 @@ import play.api.mvc._
 
 import scala.concurrent.ExecutionContext
 
-class AlignmentController @Inject()(resultFiles: ResultFileAccessor,
-                                    aln: Alignment,
-                                    constants: ConstantsV2,
-                                    cc: ControllerComponents)(implicit ec: ExecutionContext)
+class AlignmentController @Inject()(
+    resultFiles: ResultFileAccessor,
+    aln: Alignment,
+    constants: ConstantsV2,
+    cc: ControllerComponents
+)(implicit ec: ExecutionContext)
     extends AbstractController(cc) {
 
   def getAln(jobID: String): Action[AnyContent] = Action.async { implicit request =>

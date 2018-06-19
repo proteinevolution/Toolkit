@@ -17,12 +17,13 @@ import play.api.mvc.{ AbstractController, Action, AnyContent }
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class HHController @Inject()(ctx: HHContext,
-                             resultCtx: ResultContext,
-                             kleisliProvider: KleisliProvider,
-                             dtService: DTService)(
-    implicit ec: ExecutionContext
-) extends AbstractController(ctx.controllerComponents) {
+class HHController @Inject()(
+    ctx: HHContext,
+    resultCtx: ResultContext,
+    kleisliProvider: KleisliProvider,
+    dtService: DTService
+)(implicit ec: ExecutionContext)
+    extends AbstractController(ctx.controllerComponents) {
 
   def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
