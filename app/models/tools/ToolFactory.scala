@@ -736,14 +736,16 @@ final class ToolFactory @Inject()(
   }
 
   // Generates a new Tool object from the Tool specification
-  private def toTool(toolNameShort: String,
-                     toolNameLong: String,
-                     toolNameAbbrev: String,
-                     category: String,
-                     params: Seq[Param],
-                     forwardAlignment: Seq[String],
-                     forwardMultiSeq: Seq[String],
-                     title: String): Tool = {
+  private def toTool(
+      toolNameShort: String,
+      toolNameLong: String,
+      toolNameAbbrev: String,
+      category: String,
+      params: Seq[Param],
+      forwardAlignment: Seq[String],
+      forwardMultiSeq: Seq[String],
+      title: String
+  ): Tool = {
     val paramMap = params.map(p => p.name -> p).toMap
     val toolForm = ToolForm(
       toolNameShort,

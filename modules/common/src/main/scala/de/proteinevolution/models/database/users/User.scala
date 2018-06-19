@@ -7,19 +7,21 @@ import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 
-case class User(userID: BSONObjectID = BSONObjectID.generate(), // ID of the User
-                sessionID: Option[BSONObjectID] = None, // Session ID
-                sessionData: List[SessionData] = List.empty, // Session data separately from sid
-                connected: Boolean = true,
-                accountType: Int = User.NORMALUSER, // User Access level
-                userData: Option[UserData] = None, // Personal Data of the User //TODO possibly encrypt?
-                userConfig: UserConfig = UserConfig(), // Configurable parts for the user
-                userToken: Option[UserToken] = None,
-                jobs: List[String] = List.empty, // List of Jobs the User has
-                dateDeletedOn: Option[ZonedDateTime] = None, // Date at which the account will be deleted on
-                dateLastLogin: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Last seen on
-                dateCreated: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Account creation date
-                dateUpdated: Option[ZonedDateTime] = Some(ZonedDateTime.now)) { // Account updated on
+case class User(
+    userID: BSONObjectID = BSONObjectID.generate(), // ID of the User
+    sessionID: Option[BSONObjectID] = None, // Session ID
+    sessionData: List[SessionData] = List.empty, // Session data separately from sid
+    connected: Boolean = true,
+    accountType: Int = User.NORMALUSER, // User Access level
+    userData: Option[UserData] = None, // Personal Data of the User //TODO possibly encrypt?
+    userConfig: UserConfig = UserConfig(), // Configurable parts for the user
+    userToken: Option[UserToken] = None,
+    jobs: List[String] = List.empty, // List of Jobs the User has
+    dateDeletedOn: Option[ZonedDateTime] = None, // Date at which the account will be deleted on
+    dateLastLogin: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Last seen on
+    dateCreated: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Account creation date
+    dateUpdated: Option[ZonedDateTime] = Some(ZonedDateTime.now)
+) { // Account updated on
 
   def checkPassword(plainPassword: String): Boolean = {
     BCrypt.checkpw(plainPassword, getUserData.password)

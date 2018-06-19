@@ -20,11 +20,13 @@ object Forwarding {
 
   import js.Dynamic.{ global => g }
 
-  def processResults(jobID: String,
-                     selectedTool: String,
-                     hasEvalue: Boolean,
-                     evalue: String,
-                     isFullLength: Boolean): Unit = {
+  def processResults(
+      jobID: String,
+      selectedTool: String,
+      hasEvalue: Boolean,
+      evalue: String,
+      isFullLength: Boolean
+  ): Unit = {
     val checkboxes = g.Toolkit.resultView.getSelectedValues.asInstanceOf[js.Array[Int]]
 
     if (checkboxes.length < 1 && !hasEvalue) {

@@ -367,11 +367,13 @@ object Common {
     }
   }
 
-  def psiblastHitWrapped(hit: PSIBlastHSP,
-                         charCount: Int,
-                         breakAfter: Int,
-                         beginQuery: Int,
-                         beginTemplate: Int): String = {
+  def psiblastHitWrapped(
+      hit: PSIBlastHSP,
+      charCount: Int,
+      breakAfter: Int,
+      beginQuery: Int,
+      beginTemplate: Int
+  ): String = {
     if (charCount >= hit.hit_len) {
       ""
     } else {
@@ -402,11 +404,13 @@ object Common {
     str.length - str.count(char => char == '-') - str.count(char => char == '.')
   }
 
-  def hhblitsHitWrapped(hit: HHBlitsHSP,
-                        charCount: Int,
-                        breakAfter: Int,
-                        beginQuery: Int,
-                        beginTemplate: Int): String = {
+  def hhblitsHitWrapped(
+      hit: HHBlitsHSP,
+      charCount: Int,
+      breakAfter: Int,
+      beginQuery: Int,
+      beginTemplate: Int
+  ): String = {
     if (charCount >= hit.length) {
       ""
     } else {
@@ -441,12 +445,14 @@ object Common {
     }
   }
 
-  def hhpredHitWrapped(hit: HHPredHSP,
-                       charCount: Int,
-                       breakAfter: Int,
-                       beginQuery: Int,
-                       beginTemplate: Int,
-                       color: Boolean): String = {
+  def hhpredHitWrapped(
+      hit: HHPredHSP,
+      charCount: Int,
+      breakAfter: Int,
+      beginQuery: Int,
+      beginTemplate: Int,
+      color: Boolean
+  ): String = {
     if (charCount >= hit.length) {
       ""
     } else {
@@ -524,12 +530,14 @@ object Common {
     }
   }
 
-  def hhompHitWrapped(hit: HHompHSP,
-                      charCount: Int,
-                      breakAfter: Int,
-                      beginQuery: Int,
-                      beginTemplate: Int,
-                      color: Boolean): String = {
+  def hhompHitWrapped(
+      hit: HHompHSP,
+      charCount: Int,
+      breakAfter: Int,
+      beginQuery: Int,
+      beginTemplate: Int,
+      color: Boolean
+  ): String = {
     if (charCount >= hit.length) {
       ""
     } else {

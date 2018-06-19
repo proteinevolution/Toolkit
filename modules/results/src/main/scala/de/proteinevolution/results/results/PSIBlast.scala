@@ -100,28 +100,29 @@ class PSIBlast @Inject()(general: General) extends SearchTool[PSIBlastHSP] {
 }
 
 object PSIBlast {
-  case class PSIBlastHSP(evalue: Double,
-                         num: Int,
-                         bitscore: Double,
-                         score: Int,
-                         hit_start: Int,
-                         hit_end: Int,
-                         hit_seq: String,
-                         query_seq: String,
-                         query_start: Int,
-                         query_end: Int,
-                         query_id: String,
-                         hit_len: Int,
-                         gaps: Int,
-                         identity: Int,
-                         positive: Int,
-                         ref_len: Int,
-                         accession: String,
-                         midline: String,
-                         description: String,
-                         info: PSIBLastInfo = PSIBLastInfo(-1, -1, -1, -1),
-                         template: HHTemplate = DummyTemplate())
-      extends HSP {
+  case class PSIBlastHSP(
+      evalue: Double,
+      num: Int,
+      bitscore: Double,
+      score: Int,
+      hit_start: Int,
+      hit_end: Int,
+      hit_seq: String,
+      query_seq: String,
+      query_start: Int,
+      query_end: Int,
+      query_id: String,
+      hit_len: Int,
+      gaps: Int,
+      identity: Int,
+      positive: Int,
+      ref_len: Int,
+      accession: String,
+      midline: String,
+      description: String,
+      info: PSIBLastInfo = PSIBLastInfo(-1, -1, -1, -1),
+      template: HHTemplate = DummyTemplate()
+  ) extends HSP {
     def toDataTable(db: String): JsValue =
       Json.toJson(
         Map(
@@ -139,17 +140,18 @@ object PSIBlast {
   case class PSIBLastInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int, evalue: Double = -1)
       extends SearchToolInfo
 
-  case class PSIBlastResult(HSPS: List[PSIBlastHSP],
-                            num_hits: Int,
-                            iter_num: Int,
-                            db: String,
-                            evalue: Double,
-                            query: SingleSeq,
-                            belowEvalThreshold: Int,
-                            TMPRED: String,
-                            COILPRED: String,
-                            alignment: AlignmentResult = AlignmentResult(Nil))
-      extends SearchResult[PSIBlastHSP] {
+  case class PSIBlastResult(
+      HSPS: List[PSIBlastHSP],
+      num_hits: Int,
+      iter_num: Int,
+      db: String,
+      evalue: Double,
+      query: SingleSeq,
+      belowEvalThreshold: Int,
+      TMPRED: String,
+      COILPRED: String,
+      alignment: AlignmentResult = AlignmentResult(Nil)
+  ) extends SearchResult[PSIBlastHSP] {
     override def hitsOrderBy(params: DTParam): List[PSIBlastHSP] = {
       (params.orderCol, params.orderDir) match {
         case (1, "asc")  => HSPS.sortBy(_.accession)

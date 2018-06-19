@@ -8,13 +8,14 @@ import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExportTopLevel
 
 @JSExportTopLevel("ClustalResultView")
-class ClustalResultView(val container: JQuery,
-                        val jobID: String,
-                        resultName: String,
-                        var colorAAs: Boolean,
-                        val hitsToLoad: Int,
-                        val resultContext: ResultContext)
-    extends ResultView {
+class ClustalResultView(
+    val container: JQuery,
+    val jobID: String,
+    resultName: String,
+    var colorAAs: Boolean,
+    val hitsToLoad: Int,
+    val resultContext: ResultContext
+) extends ResultView {
 
   override def init(): Unit = {
     if (resultContext.numHits > 0) {

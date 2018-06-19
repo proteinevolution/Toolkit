@@ -106,10 +106,12 @@ class ProcessController @Inject()(
         }
   }
 
-  private[this] def parseAccString(toolName: ToolName,
-                                   result: SearchResult[HSP],
-                                   accStr: String,
-                                   mode: ForwardMode): String = {
+  private[this] def parseAccString(
+      toolName: ToolName,
+      result: SearchResult[HSP],
+      accStr: String,
+      mode: ForwardMode
+  ): String = {
     (toolName, mode.toString) match {
       case (HHBLITS, "alnEval") | (HHPRED, "alnEval") =>
         result.HSPS.filter(_.info.evalue <= accStr.toDouble).map { _.num }.mkString(" ")
