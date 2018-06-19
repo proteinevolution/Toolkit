@@ -6,12 +6,14 @@ import de.proteinevolution.models.util.ZonedDateTimeHelper
 import play.api.libs.json._
 import reactivemongo.bson._
 
-case class JobClusterData(sgeID: String, // sun grid engine job id
-                          memory: Option[Int],
-                          threads: Option[Int],
-                          hardruntime: Option[Int],
-                          dateStarted: Option[ZonedDateTime] = Some(ZonedDateTime.now),
-                          dateFinished: Option[ZonedDateTime] = None) {
+case class JobClusterData(
+    sgeID: String, // sun grid engine job id
+    memory: Option[Int],
+    threads: Option[Int],
+    hardruntime: Option[Int],
+    dateStarted: Option[ZonedDateTime] = Some(ZonedDateTime.now),
+    dateFinished: Option[ZonedDateTime] = None
+) {
 
   def runtime: Long = {
     val now = ZonedDateTime.now

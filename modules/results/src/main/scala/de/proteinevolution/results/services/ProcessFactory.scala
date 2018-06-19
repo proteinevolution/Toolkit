@@ -9,14 +9,16 @@ import scala.sys.process.Process
 
 private[results] object ProcessFactory {
 
-  def apply(resultFile: File,
-            jobID: String,
-            toolName: String,
-            tempFileName: String,
-            mode: ForwardMode,
-            accString: String,
-            db: String,
-            basePath: String): process.ProcessBuilder = {
+  def apply(
+      resultFile: File,
+      jobID: String,
+      toolName: String,
+      tempFileName: String,
+      mode: ForwardMode,
+      accString: String,
+      db: String,
+      basePath: String
+  ): process.ProcessBuilder = {
 
     val generateAlignmentScript = (basePath + "/generateAlignment.sh").toFile // HHPRED, HHBLITS alnEval
     val retrieveFullSeq         = (basePath + "/retrieveFullSeq.sh").toFile

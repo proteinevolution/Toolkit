@@ -87,18 +87,19 @@ class HHPred @Inject()(general: General, aln: Alignment) extends SearchTool[HHPr
 }
 
 object HHPred {
-  case class HHPredHSP(query: HHPredQuery,
-                       template: HHPredTemplate,
-                       info: HHPredInfo,
-                       agree: String,
-                       description: String,
-                       num: Int,
-                       ss_score: Double,
-                       confidence: String,
-                       length: Int,
-                       evalue: Double = -1,
-                       accession: String = "")
-      extends HSP {
+  case class HHPredHSP(
+      query: HHPredQuery,
+      template: HHPredTemplate,
+      info: HHPredInfo,
+      agree: String,
+      description: String,
+      num: Int,
+      ss_score: Double,
+      confidence: String,
+      length: Int,
+      evalue: Double = -1,
+      accession: String = ""
+  ) extends HSP {
     def toDataTable(db: String = ""): JsValue = {
       val _ = db
       Json.toJson(
@@ -116,41 +117,46 @@ object HHPred {
     }
   }
 
-  case class HHPredInfo(aligned_cols: Int,
-                        evalue: Double,
-                        identities: Double,
-                        probab: Double,
-                        score: Double,
-                        similarity: Double)
-      extends SearchToolInfo
-  case class HHPredQuery(consensus: String,
-                         end: Int,
-                         accession: String,
-                         ref: Int,
-                         seq: String,
-                         ss_dssp: String,
-                         ss_pred: String,
-                         start: Int)
-  case class HHPredTemplate(consensus: String,
-                            end: Int,
-                            accession: String,
-                            ref: Int,
-                            seq: String,
-                            ss_dssp: String,
-                            ss_pred: String,
-                            start: Int)
-      extends HHTemplate
-  case class HHPredResult(HSPS: List[HHPredHSP],
-                          alignment: AlignmentResult,
-                          num_hits: Int,
-                          query: SingleSeq,
-                          db: String,
-                          proteomes: String,
-                          TMPRED: String,
-                          COILPRED: String,
-                          MSA_GEN: String,
-                          QA3M_COUNT: Int)
-      extends SearchResult[HHPredHSP] {
+  case class HHPredInfo(
+      aligned_cols: Int,
+      evalue: Double,
+      identities: Double,
+      probab: Double,
+      score: Double,
+      similarity: Double
+  ) extends SearchToolInfo
+  case class HHPredQuery(
+      consensus: String,
+      end: Int,
+      accession: String,
+      ref: Int,
+      seq: String,
+      ss_dssp: String,
+      ss_pred: String,
+      start: Int
+  )
+  case class HHPredTemplate(
+      consensus: String,
+      end: Int,
+      accession: String,
+      ref: Int,
+      seq: String,
+      ss_dssp: String,
+      ss_pred: String,
+      start: Int
+  ) extends HHTemplate
+  case class HHPredResult(
+      HSPS: List[HHPredHSP],
+      alignment: AlignmentResult,
+      num_hits: Int,
+      query: SingleSeq,
+      db: String,
+      proteomes: String,
+      TMPRED: String,
+      COILPRED: String,
+      MSA_GEN: String,
+      QA3M_COUNT: Int
+  ) extends SearchResult[HHPredHSP] {
 
     def hitsOrderBy(params: DTParam): List[HHPredHSP] = {
       (params.orderCol, params.orderDir) match {

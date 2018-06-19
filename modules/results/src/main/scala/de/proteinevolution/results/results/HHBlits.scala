@@ -74,16 +74,17 @@ class HHBlits @Inject()(general: General, aln: Alignment) extends SearchTool[HHB
 
 object HHBlits {
 
-  case class HHBlitsHSP(query: HHBlitsQuery,
-                        template: HHBlitsTemplate,
-                        info: HHBlitsInfo,
-                        agree: String,
-                        description: String,
-                        num: Int,
-                        length: Int,
-                        evalue: Double = -1,
-                        accession: String = "")
-      extends HSP {
+  case class HHBlitsHSP(
+      query: HHBlitsQuery,
+      template: HHBlitsTemplate,
+      info: HHBlitsInfo,
+      agree: String,
+      description: String,
+      num: Int,
+      length: Int,
+      evalue: Double = -1,
+      accession: String = ""
+  ) extends HSP {
     def toDataTable(db: String = ""): JsValue = {
       val _ = db
       Json.toJson(
@@ -100,27 +101,29 @@ object HHBlits {
     }
   }
 
-  case class HHBlitsInfo(aligned_cols: Int,
-                         evalue: Double,
-                         identities: Double,
-                         probab: Double,
-                         score: Double,
-                         similarity: Double)
-      extends SearchToolInfo
+  case class HHBlitsInfo(
+      aligned_cols: Int,
+      evalue: Double,
+      identities: Double,
+      probab: Double,
+      score: Double,
+      similarity: Double
+  ) extends SearchToolInfo
 
   case class HHBlitsQuery(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
 
   case class HHBlitsTemplate(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
       extends HHTemplate
 
-  case class HHBlitsResult(HSPS: List[HHBlitsHSP],
-                           alignment: AlignmentResult,
-                           num_hits: Int,
-                           query: SingleSeq,
-                           db: String,
-                           TMPRED: String,
-                           COILPRED: String)
-      extends SearchResult[HHBlitsHSP] {
+  case class HHBlitsResult(
+      HSPS: List[HHBlitsHSP],
+      alignment: AlignmentResult,
+      num_hits: Int,
+      query: SingleSeq,
+      db: String,
+      TMPRED: String,
+      COILPRED: String
+  ) extends SearchResult[HHBlitsHSP] {
 
     def hitsOrderBy(params: DTParam): List[HHBlitsHSP] = {
       (params.orderCol, params.orderDir) match {

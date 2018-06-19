@@ -57,11 +57,13 @@ trait ResultView {
 
   def showHits(start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit
 
-  protected def internalShowHits(jobID: String,
-                                 route: String,
-                                 data: ResultForm,
-                                 resultContainer: JQuery,
-                                 successCallback: (js.Any, js.Any, JQueryXHR) => Unit): Unit = {
+  protected def internalShowHits(
+      jobID: String,
+      route: String,
+      data: ResultForm,
+      resultContainer: JQuery,
+      successCallback: (js.Any, js.Any, JQueryXHR) => Unit
+  ): Unit = {
 
     if (data.start <= resultContext.numHits) {
 

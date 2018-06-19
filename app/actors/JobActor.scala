@@ -37,10 +37,12 @@ import scala.language.postfixOps
 
 object JobActor {
 
-  case class PrepareJob(job: Job,
-                        params: Map[String, String],
-                        startJob: Boolean = false,
-                        isInternalJob: Boolean = false)
+  case class PrepareJob(
+      job: Job,
+      params: Map[String, String],
+      startJob: Boolean = false,
+      isInternalJob: Boolean = false
+  )
 
   case class CheckJobHashes(jobID: String)
 
@@ -151,9 +153,11 @@ class JobActor @Inject()(
     }
   }
 
-  private def validatedParameters(job: Job,
-                                  runscript: Runscript,
-                                  params: Map[String, String]): Seq[(String, (Evaluation, Option[Argument]))] = {
+  private def validatedParameters(
+      job: Job,
+      runscript: Runscript,
+      params: Map[String, String]
+  ): Seq[(String, (Evaluation, Option[Argument]))] = {
     // Representation of the current State of the job submission
 
     // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO

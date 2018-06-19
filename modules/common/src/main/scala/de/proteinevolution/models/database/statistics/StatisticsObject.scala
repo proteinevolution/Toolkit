@@ -51,9 +51,11 @@ case class StatisticsObject(
    * @param jobEventLogs
    * @return
    */
-  def addMonthsToTools(jobEventLogs: List[JobEventLog],
-                       beginDate: ZonedDateTime,
-                       endDate: ZonedDateTime): StatisticsObject = {
+  def addMonthsToTools(
+      jobEventLogs: List[JobEventLog],
+      beginDate: ZonedDateTime,
+      endDate: ZonedDateTime
+  ): StatisticsObject = {
     // Get the total amount of months in between the two given dates (expecting the first moment of the months here)
     val totalMonths: Int = beginDate.until(endDate, ChronoUnit.MONTHS).toInt
 

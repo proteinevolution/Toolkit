@@ -6,13 +6,15 @@ import de.proteinevolution.models.util.ZonedDateTimeHelper
 import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
 
-case class IPConfig(id: BSONObjectID = BSONObjectID.generate(), // ID in MongoDB
-                    ipHash: String,
-                    openSessions: Int = 0,
-                    score: Int = 0,
-                    scoreMax: Int = IPConfig.scoreMaxDefault,
-                    dateCreated: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Creation date
-                    dateUpdated: Option[ZonedDateTime] = Some(ZonedDateTime.now)) { // Last used on
+case class IPConfig(
+    id: BSONObjectID = BSONObjectID.generate(), // ID in MongoDB
+    ipHash: String,
+    openSessions: Int = 0,
+    score: Int = 0,
+    scoreMax: Int = IPConfig.scoreMaxDefault,
+    dateCreated: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Creation date
+    dateUpdated: Option[ZonedDateTime] = Some(ZonedDateTime.now)
+) { // Last used on
   def isInLimits: Boolean = {
     score <= scoreMax &&
     openSessions <= IPConfig.sessionsMax
