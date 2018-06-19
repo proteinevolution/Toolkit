@@ -14,6 +14,7 @@ case class Tool(toolNameShort: String,
                 forwardAlignment: Seq[String],
                 forwardMultiSeq: Seq[String],
                 title: String) {
+
   def isToolName(toolName: String, caseSensitive: Boolean = false): Boolean = {
     if (caseSensitive) {
       toolNameAbbrev.contains(toolName) || toolNameShort.contains(toolName) || toolNameLong.contains(toolName)
@@ -23,4 +24,5 @@ case class Tool(toolNameShort: String,
       toolNameLong.toLowerCase.contains(toolName.toLowerCase)
     }
   }
+
 }

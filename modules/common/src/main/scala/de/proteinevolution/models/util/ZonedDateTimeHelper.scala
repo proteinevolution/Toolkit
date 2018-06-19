@@ -12,4 +12,5 @@ object ZonedDateTimeHelper {
   def getZDT(bsonDateTime: BSONDateTime): ZonedDateTime = {
     Instant.ofEpochMilli(bsonDateTime.value).atZone(defaultZoneID)
   }
+
 }
