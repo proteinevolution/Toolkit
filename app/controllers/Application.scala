@@ -37,7 +37,6 @@ final class Application @Inject()(
     extends ToolkitController(cc) {
 
   private val logger = Logger(this.getClass)
-  val SID            = "sid"
 
   private[this] val blacklist = config.get[Seq[String]]("banned.ip")
 
