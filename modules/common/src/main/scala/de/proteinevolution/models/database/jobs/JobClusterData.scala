@@ -12,10 +12,12 @@ case class JobClusterData(sgeID: String, // sun grid engine job id
                           hardruntime: Option[Int],
                           dateStarted: Option[ZonedDateTime] = Some(ZonedDateTime.now),
                           dateFinished: Option[ZonedDateTime] = None) {
+
   def runtime: Long = {
     val now = ZonedDateTime.now
     dateFinished.getOrElse(now).toInstant.toEpochMilli - dateStarted.getOrElse(now).toInstant.toEpochMilli
   }
+
 }
 
 object JobClusterData {
