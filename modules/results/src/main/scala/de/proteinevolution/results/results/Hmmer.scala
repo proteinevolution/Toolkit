@@ -93,25 +93,26 @@ class Hmmer @Inject()(general: General, aln: Alignment) extends SearchTool[Hmmer
 }
 
 object Hmmer {
-  case class HmmerHSP(evalue: Double,
-                      full_evalue: Double,
-                      num: Int,
-                      bitscore: Double,
-                      hit_start: Int,
-                      hit_end: Int,
-                      hit_seq: String,
-                      query_seq: String,
-                      query_start: Int,
-                      query_end: Int,
-                      query_id: String,
-                      hit_len: Int,
-                      accession: String,
-                      midline: String,
-                      description: String,
-                      domain_obs_num: Int,
-                      info: HmmerInfo = HmmerInfo(-1, -1, -1, -1),
-                      template: HHTemplate = DummyTemplate())
-      extends HSP {
+  case class HmmerHSP(
+      evalue: Double,
+      full_evalue: Double,
+      num: Int,
+      bitscore: Double,
+      hit_start: Int,
+      hit_end: Int,
+      hit_seq: String,
+      query_seq: String,
+      query_start: Int,
+      query_end: Int,
+      query_id: String,
+      hit_len: Int,
+      accession: String,
+      midline: String,
+      description: String,
+      domain_obs_num: Int,
+      info: HmmerInfo = HmmerInfo(-1, -1, -1, -1),
+      template: HHTemplate = DummyTemplate()
+  ) extends HSP {
 
     def toDataTable(db: String): JsValue =
       Json.toJson(
@@ -130,14 +131,15 @@ object Hmmer {
   case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int, evalue: Double = -1)
       extends SearchToolInfo
 
-  case class HmmerResult(HSPS: List[HmmerHSP],
-                         num_hits: Int,
-                         alignment: AlignmentResult,
-                         query: SingleSeq,
-                         db: String,
-                         TMPRED: String,
-                         COILPRED: String)
-      extends SearchResult[HmmerHSP] {
+  case class HmmerResult(
+      HSPS: List[HmmerHSP],
+      num_hits: Int,
+      alignment: AlignmentResult,
+      query: SingleSeq,
+      db: String,
+      TMPRED: String,
+      COILPRED: String
+  ) extends SearchResult[HmmerHSP] {
     def hitsOrderBy(params: DTParam): List[HmmerHSP] = {
       (params.orderCol, params.orderDir) match {
         case (1, "asc")  => HSPS.sortBy(_.accession)

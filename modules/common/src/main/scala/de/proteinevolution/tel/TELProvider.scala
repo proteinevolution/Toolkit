@@ -37,10 +37,11 @@ class RunscriptPathProvider @Inject()(configuration: Configuration) extends TELP
   }
 }
 
-class ParamCollectorProvider @Inject()(pc: ParamCollector,
-                                       configuration: Configuration,
-                                       generativeParamFileParser: GenerativeParamFileParser)
-    extends TELParamProvider {
+class ParamCollectorProvider @Inject()(
+    pc: ParamCollector,
+    configuration: Configuration,
+    generativeParamFileParser: GenerativeParamFileParser
+) extends TELParamProvider {
 
   private val logger = Logger(this.getClass)
 

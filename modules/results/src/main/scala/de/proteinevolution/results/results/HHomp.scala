@@ -73,17 +73,18 @@ class HHomp @Inject()(general: General) extends SearchTool[HHompHSP] {
 }
 
 object HHomp {
-  case class HHompHSP(query: HHompQuery,
-                      template: HHompTemplate,
-                      info: HHompInfo,
-                      agree: String,
-                      description: String,
-                      num: Int,
-                      ss_score: Double,
-                      length: Int,
-                      evalue: Double = -1,
-                      accession: String = "")
-      extends HSP {
+  case class HHompHSP(
+      query: HHompQuery,
+      template: HHompTemplate,
+      info: HHompInfo,
+      agree: String,
+      description: String,
+      num: Int,
+      ss_score: Double,
+      length: Int,
+      evalue: Double = -1,
+      accession: String = ""
+  ) extends HSP {
     def toDataTable(db: String = ""): JsValue = {
       val _ = db
       Json.toJson(
@@ -101,41 +102,46 @@ object HHomp {
       )
     }
   }
-  case class HHompInfo(aligned_cols: Int,
-                       evalue: Double,
-                       identities: Double,
-                       probab_hit: Double,
-                       probab_omp: Double,
-                       score: Double)
-      extends SearchToolInfo
-  case class HHompQuery(consensus: String,
-                        end: Int,
-                        accession: String,
-                        ref: Int,
-                        seq: String,
-                        ss_conf: String,
-                        ss_dssp: String,
-                        ss_pred: String,
-                        start: Int)
-  case class HHompTemplate(consensus: String,
-                           end: Int,
-                           accession: String,
-                           ref: Int,
-                           seq: String,
-                           ss_conf: String,
-                           ss_dssp: String,
-                           ss_pred: String,
-                           bb_pred: String,
-                           bb_conf: String,
-                           start: Int)
-      extends HHTemplate
-  case class HHompResult(HSPS: List[HHompHSP],
-                         num_hits: Int,
-                         query: SingleSeq,
-                         db: String,
-                         overall_prob: Double,
-                         alignment: AlignmentResult = AlignmentResult(Nil))
-      extends SearchResult[HHompHSP] {
+  case class HHompInfo(
+      aligned_cols: Int,
+      evalue: Double,
+      identities: Double,
+      probab_hit: Double,
+      probab_omp: Double,
+      score: Double
+  ) extends SearchToolInfo
+  case class HHompQuery(
+      consensus: String,
+      end: Int,
+      accession: String,
+      ref: Int,
+      seq: String,
+      ss_conf: String,
+      ss_dssp: String,
+      ss_pred: String,
+      start: Int
+  )
+  case class HHompTemplate(
+      consensus: String,
+      end: Int,
+      accession: String,
+      ref: Int,
+      seq: String,
+      ss_conf: String,
+      ss_dssp: String,
+      ss_pred: String,
+      bb_pred: String,
+      bb_conf: String,
+      start: Int
+  ) extends HHTemplate
+  case class HHompResult(
+      HSPS: List[HHompHSP],
+      num_hits: Int,
+      query: SingleSeq,
+      db: String,
+      overall_prob: Double,
+      alignment: AlignmentResult = AlignmentResult(Nil)
+  ) extends SearchResult[HHompHSP] {
     def hitsOrderBy(params: DTParam): List[HHompHSP] = {
       (params.orderCol, params.orderDir) match {
         case (1, "asc")  => HSPS.sortBy(_.template.accession)

@@ -58,10 +58,12 @@ case class ToolStatistic(
    * @param currentsDeleted
    * @return
    */
-  def addMonths(currents: List[Int],
-                currentsFailed: List[Int],
-                currentsDeleted: List[Int],
-                currentsInternal: List[Int]): ToolStatistic = {
+  def addMonths(
+      currents: List[Int],
+      currentsFailed: List[Int],
+      currentsDeleted: List[Int],
+      currentsInternal: List[Int]
+  ): ToolStatistic = {
     this.copy(
       monthly = monthly ::: currents,
       monthlyFailed = monthlyFailed ::: currentsFailed,

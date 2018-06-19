@@ -128,23 +128,25 @@ class Quick2D @Inject()(general: General) {
 }
 
 object Quick2D {
-  case class Quick2DResult(jobID: String,
-                           query: SingleSeq,
-                           psipred: Psipred,
-                           pipred: Pipred,
-                           marcoil: Marcoil,
-                           coils: Coils,
-                           pcoils: Pcoils,
-                           tmhmm: Tmhmm,
-                           phobius: Phobius,
-                           polyphobius: Polyphobius,
-                           spider2: Spider2,
-                           spotd: Spotd,
-                           iupred: Iupred,
-                           disopred3: Disopred3,
-                           signal: Signal,
-                           psspred: Psspred,
-                           deepcnf: Deepcnf)
+  case class Quick2DResult(
+      jobID: String,
+      query: SingleSeq,
+      psipred: Psipred,
+      pipred: Pipred,
+      marcoil: Marcoil,
+      coils: Coils,
+      pcoils: Pcoils,
+      tmhmm: Tmhmm,
+      phobius: Phobius,
+      polyphobius: Polyphobius,
+      spider2: Spider2,
+      spotd: Spotd,
+      iupred: Iupred,
+      disopred3: Disopred3,
+      signal: Signal,
+      psspred: Psspred,
+      deepcnf: Deepcnf
+  )
 
   case class Psipred(name: String, seq: String, conf: String)
   case class Pipred(name: String, seq: String, conf: String)

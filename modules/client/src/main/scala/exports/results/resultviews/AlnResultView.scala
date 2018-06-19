@@ -9,12 +9,13 @@ import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExportTopLevel
 
 @JSExportTopLevel("AlnResultView")
-class AlnResultView(val container: JQuery,
-                    val jobID: String,
-                    resultName: String,
-                    val hitsToLoad: Int,
-                    val resultContext: ResultContext)
-    extends ResultView {
+class AlnResultView(
+    val container: JQuery,
+    val jobID: String,
+    resultName: String,
+    val hitsToLoad: Int,
+    val resultContext: ResultContext
+) extends ResultView {
 
   override def init(): Unit = {
     scrollUtil.followScroll(jQuery(dom.document))
