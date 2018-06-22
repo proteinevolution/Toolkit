@@ -127,16 +127,6 @@ else
 
         echo "done" >> ../results/process.log
 
-        if [ ${CHAR_COUNT} -gt "30" ] && [ ${CHAR_COUNT} -lt "700" ] ; then
-
-            echo "#Executing PiPred." >> ../results/process.log
-
-            ${PIPRED}/pipred -i ../results/${JOBID}.fseq \
-                 -pssm_path ../results/ \
-                 -out_path ../results/
-
-            echo "done" >> ../results/process.log
-        fi
 fi
 
 echo "#Executing PSIPRED." >> ../results/process.log
@@ -166,13 +156,24 @@ cd ../0/
 
 echo "done" >> ../results/process.log
 
-echo "#Executing SPIDER2 and SPOT-Disorder." >> ../results/process.log
+
+#RUN PiPred
+
+if [ ${CHAR_COUNT} -gt "30" ] && [ ${CHAR_COUNT} -lt "700" ] ; then
+    echo "#Executing PiPred." >> ../results/process.log
+    ${PIPRED}/pipred -i ../results/${JOBID}.fseq \
+        -pssm_path ../results/ \
+        -out_path ../results/
+    echo "done" >> ../results/process.log
+fi
 
 #RUN SPOT-D and SPIDER2
 
+echo "#Executing SPIDER2 and SPOT-Disorder." >> ../results/process.log
+
 cd ../results/
 ${SPOTD}/run_local.sh ${JOBID}.pssm
-cd ../0/
+cd ../0/    1443070_4
 
 echo "done" >> ../results/process.log
 
