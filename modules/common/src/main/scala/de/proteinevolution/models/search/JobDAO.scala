@@ -66,13 +66,13 @@ final class JobDAO @Inject()(runscriptPathProvider: RunscriptPathProvider, confi
 
     // Create the job Hash depending on what db is used
     val dbParam = params match {
-      case x if x isDefinedAt "standarddb" =>
+      case x if x.isDefinedAt("standarddb") =>
         val STANDARDDB = (env.get("STANDARD") + "/" + params.getOrElse("standarddb", "")).toFile
         (Some("standarddb"), Some(STANDARDDB.lastModifiedTime.toString))
-      case x if x isDefinedAt "hhsuitedb" =>
+      case x if x.isDefinedAt("hhsuitedb") =>
         val HHSUITEDB = env.get("HHSUITE").toFile
         (Some("hhsuitedb"), Some(HHSUITEDB.lastModifiedTime.toString))
-      case x if x isDefinedAt "hhblitsdb" =>
+      case x if x.isDefinedAt("hhblitsdb") =>
         val HHBLITSDB = env.get("HHBLITS").toFile
         (Some("hhblitsdb"), Some(HHBLITSDB.lastModifiedTime.toString))
       case _ => (None, None)

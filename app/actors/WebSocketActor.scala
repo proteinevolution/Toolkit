@@ -174,7 +174,7 @@ final class WebSocketActor @Inject()(
       out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID, "deleted" -> deleted)
 
     case ChangeSessionID(newSid: BSONObjectID) =>
-      context become active(newSid)
+      context.become(active(newSid))
 
     case LogOut =>
       out ! Json.obj("type" -> "LogOut")
