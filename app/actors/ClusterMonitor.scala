@@ -33,10 +33,10 @@ final class ClusterMonitor @Inject()(
   private def active(watchers: HashSet[ActorRef], record: List[Double]): Receive = {
 
     case Connect(actorRef) =>
-      context become active(watchers + actorRef, record)
+      context.become(active(watchers + actorRef, record))
 
     case Disconnect(actorRef) =>
-      context become active(watchers - actorRef, record)
+      context.become(active(watchers - actorRef, record))
 
     case Multicast => watchers.foreach { _ ! MaintenanceAlert }
 
@@ -50,7 +50,7 @@ final class ClusterMonitor @Inject()(
       jobActorAccess.broadcast(PolledJobs(qStat))
 
       // Update the record
-      context become active(watchers, record.::(load))
+      context.become(active(watchers, record.::(load)))
       // send load message
       watchers.foreach(_ ! UpdateLoad(load))
       // if there are enough records, group them in and stick them in the DB collection
@@ -62,7 +62,7 @@ final class ClusterMonitor @Inject()(
       val _ = mongoStore
         .upsertLoadStatistic(ClusterLoadEvent(BSONObjectID.generate(), record, loadAverage, Some(currentTimestamp)))
         .map { _ =>
-          context become active(watchers, Nil)
+          context.become(active(watchers, Nil))
           ()
         }
   }
