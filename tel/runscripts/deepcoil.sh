@@ -50,111 +50,59 @@ else
 fi
 echo "done" >> ../results/process.log
 
-mv ../results/${JOBID}.fas ../params/alignment
 
-WEIGHTING_MODE=""
-declare -a COMMAND_TO_RUN_SINGLE=(run_Coils_iterated run_Coils_pdb run_Coils run_Coils_old)
-declare -a COMMAND_TO_RUN_MSA=(run_PCoils_iterated run_PCoils_pdb run_PCoils run_PCoils_old)
+sed -n '2p' ../results/${JOBID}.fas > ../results/tmp
+sed 's/[\.\-]//g' ../results/tmp > ../results/${JOBID}.fseq
+CHAR_COUNT=$(wc -m < ../results/${JOBID}.fseq)
+sed -i "1 i\>${JOBID}" ../results/${JOBID}.fseq
+rm ../results/tmp
 
-reformat_hhsuite.pl fas fas %alignment.path %alignment.path -uc -r -M first -l 32000
 
-if [ "%pcoils_weighting.content" = "0" ]; then
-    WEIGHTING_MODE="-nw"
-fi
+if [ ${SEQ_COUNT} = 1 ] ; then
 
-if [ "%pcoils_input_mode.content" = "2" ]; then
+    if [ "%pcoils_input_mode.content" = "0"  ] || [ "%pcoils_input_mode.content" = "1"  ]; then
 
-        echo "#MSA generation required. Running 1 iteration of PSI-BLAST against nr70." >> ../results/process.log
+        echo "#Running DeepCoil." >> ../results/process.log
 
-        INPUT="query"
-        if [ ${SEQ_COUNT} -gt 1 ] ; then
-            INPUT="in_msa"
-        fi
-
-        psiblast -db %STANDARD/nr70 \
-                 -num_iterations 1 \
-                 -evalue 0.0001 \
-                 -inclusion_ethresh 0.0001 \
-                 -num_threads %THREADS \
-                 -${INPUT} %alignment.path \
-                 -out ../results/output_psiblastp.html
-
-        #extract MSA in a3m format
-        alignhits_html.pl   ../results/output_psiblastp.html ../params/${JOBID}.in \
-                    -Q %alignment.path \
-                    -e 0.0001\
-                    -b 1.0 \
-                    -a3m \
-                    -no_link \
-                    -blastplus
-
-        hhfilter -i ../params/${JOBID}.in \
-                 -o ../params/${JOBID}.in \
-                 -cov 20 \
-                 -qid 40
-
-        reformat_hhsuite.pl a3m fas \
-                 $(readlink -f ../params/${JOBID}.in) \
-                 $(readlink -f ../params/${JOBID}.in) \
-                 -uc -num -r
+        ${DEEPCOIL}/deepcoil -i ../results/${JOBID}.fseq \
+                     -out_path ../results/
 
         echo "done" >> ../results/process.log
+
+    else
+
+        echo "#Running 3 iterations of PSI-BLAST against nr90 for PSSM generation." >> ../results/process.log
+
+        psiblast -db ${STANDARD}/nr90 \
+                 -evalue 0.001 \
+                 -num_iterations 3 \
+                 -num_threads %THREADS \
+                 -query ../results/${JOBID}.fseq \
+                 -out_ascii_pssm ../results/${JOBID}.pssm
+        echo "done" >> ../results/process.log
+
+        echo "#Running DeepCoil." >> ../results/process.log
+
+        ${DEEPCOIL}/deepcoil -i ../results/${JOBID}.fseq \
+                  -out_path ../results/ \
+                  -pssm \
+                  -pssm_path ../results/
+        echo "done" >> ../results/process.log
+
+    fi
 
 else
-        cp ../params/alignment ../params/${JOBID}.in
-fi
+        echo "#Running DeepCoil." >> ../results/process.log
+        psiblast -subject ../results/${JOBID}.fseq \
+             -in_msa ../results/${JOBID}.fas \
+             -out_ascii_pssm ../results/${JOBID}.pssm
 
-deal_with_sequence.pl ../params/${JOBID} ../params/${JOBID}.in  ../results/${JOBID}.buffer
-cp ../params/${JOBID}.deal_with_sequence ../results
-
-reformat_hhsuite.pl fas a3m \
-         $(readlink -f ../params/${JOBID}.in) \
-         $(readlink -f ../results/${JOBID}.alignment.a3m) \
-         -uc -num -r -M first
-
-${REPPERDIR}/addss.pl -i ../results/${JOBID}.alignment.a3m \
-                      -o ../results/${JOBID}.alignment.ss \
-                      -t ../results/${JOBID}.horiz
-
-
-echo "#Predicting coiled coils using PCOILS." >> ../results/process.log
-
-if [ "%pcoils_input_mode.content" = "0" ]; then
-        ${COMMAND_TO_RUN_SINGLE[%pcoils_matrix.content]} ${WEIGHTING_MODE} -win 14 < ../results/${JOBID}.buffer > ../results/${JOBID}.coils_n14
-        ${COMMAND_TO_RUN_SINGLE[%pcoils_matrix.content]} ${WEIGHTING_MODE} -win 21 < ../results/${JOBID}.buffer > ../results/${JOBID}.coils_n21
-        ${COMMAND_TO_RUN_SINGLE[%pcoils_matrix.content]} ${WEIGHTING_MODE} -win 28 < ../results/${JOBID}.buffer > ../results/${JOBID}.coils_n28
-
-        echo "done" >> ../results/process.log
-
-        echo "#Generating output." >> ../results/process.log
-
-        prepare_coils_gnuplot.pl ../results/${JOBID} ../results/${JOBID}.coils_n14 \
-                                 ../results/${JOBID}.coils_n21 ../results/${JOBID}.coils_n28 \
-                                 ../results/${JOBID}.horiz
-
-        create_numerical.rb -i ../results/${JOBID} -m %pcoils_matrix.content -s ../params/${JOBID}.in -w %pcoils_weighting.content
-
+        ${DEEPCOIL}/deepcoil -i ../results/${JOBID}.fseq \
+                     -out_path ../results/ \
+                     -pssm \
+                     -pssm_path ../results/
         echo "done" >> ../results/process.log
 fi
 
-if [ "%pcoils_input_mode.content" = "1" ] || [ "%pcoils_input_mode.content" = "2" ]; then
-         reformat_hhsuite.pl fas a3m \
-         $(readlink -f ../params/${JOBID}.in) \
-         $(readlink -f ../results/${JOBID}.alignment.a3m) \
-         -uc -num -r -M first
-         ${COILSDIR}/hhmake -i ../results/${JOBID}.alignment.a3m \
-                -o ../results/${JOBID}.hhmake.out \
-                -pcm 2 -pca 0.5 -pcb 2.5 -cov 20
-         deal_with_profile.pl ../results/${JOBID}.hhmake.out ../results/${JOBID}.myhmmmake.out
 
-         ${COMMAND_TO_RUN_MSA[%pcoils_matrix.content]} ${WEIGHTING_MODE} -win 14 -prof ../results/${JOBID}.myhmmmake.out < ../results/${JOBID}.buffer > ../results/${JOBID}.coils_n14
-         ${COMMAND_TO_RUN_MSA[%pcoils_matrix.content]} ${WEIGHTING_MODE} -win 21 -prof ../results/${JOBID}.myhmmmake.out < ../results/${JOBID}.buffer > ../results/${JOBID}.coils_n21
-         ${COMMAND_TO_RUN_MSA[%pcoils_matrix.content]} ${WEIGHTING_MODE} -win 28 -prof ../results/${JOBID}.myhmmmake.out < ../results/${JOBID}.buffer > ../results/${JOBID}.coils_n28
-
-         echo "done" >> ../results/process.log
-         echo "#Generating output." >> ../results/process.log
-         prepare_for_gnuplot.pl ../results/${JOBID} T 2 ../results/${JOBID}.coils_n14 ../results/${JOBID}.coils_n21 ../results/${JOBID}.coils_n28 ../results/${JOBID}.horiz
-         create_numerical.rb -i ../results/${JOBID} -m %pcoils_matrix.content -a ../params/${JOBID}.in -w %pcoils_weighting.content
-
-         echo "done" >> ../results/process.log
-fi
+${DEEPCOIL}/prepare_deepcoil_gnuplot.pl ../results/${JOBID} ../results/${JOBID}.out
