@@ -75,7 +75,8 @@ final class ClusterMonitor @Inject()(
   }
 
   override def preStart(): Unit = {
-    if (environment.mode != play.api.Mode.Prod) context.stop(self)
+    val _ = environment
+    //if (environment.mode != play.api.Mode.Prod) context.stop(self)
   }
 
   override def postStop(): Unit = {
