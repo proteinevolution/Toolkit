@@ -113,7 +113,7 @@ case class StatisticsObject(
    */
   def lastPushed: ZonedDateTime = {
     datePushed.headOption match {
-      case Some(_) => datePushed.max[ZonedDateTime](Ordering.fromLessThan(_ isBefore _)).truncatedTo(ChronoUnit.DAYS)
+      case Some(_) => datePushed.max[ZonedDateTime](Ordering.fromLessThan(_.isBefore(_))).truncatedTo(ChronoUnit.DAYS)
       case None    => ZonedDateTime.parse("2017-02-01T00:00:00.000+02:00")
     }
   }
