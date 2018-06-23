@@ -172,13 +172,15 @@ final class ToolFactory @Inject()(
       case ToolName.DEEPCOIL.value =>
         ListMap(
           "CC-Prob" -> { jobID =>
-            Future.successful(views.html.jobs.resultpanels.marcoil(s"/results/files/$jobID/" + jobID + "_deepcoil.png",
-              values(ToolName.DEEPCOIL.value)))
+            Future.successful(
+              views.html.jobs.resultpanels.marcoil(s"/results/files/$jobID/" + jobID + "_deepcoil.png",
+                                                   values(ToolName.DEEPCOIL.value))
+            )
           },
           "ProbList" -> { jobID =>
             Future.successful(
               views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + "_deepcoil",
-                "PCOILS_PROBLIST")
+                                                    "PCOILS_PROBLIST")
             )
           }
         )
@@ -186,8 +188,10 @@ final class ToolFactory @Inject()(
       case ToolName.MARCOIL.value =>
         ListMap(
           "CC-Prob" -> { jobID =>
-            Future.successful(views.html.jobs.resultpanels.marcoil(s"/results/files/$jobID/alignment_ncoils.png",
-              values(ToolName.MARCOIL.value)))
+            Future.successful(
+              views.html.jobs.resultpanels.marcoil(s"/results/files/$jobID/alignment_ncoils.png",
+                                                   values(ToolName.MARCOIL.value))
+            )
           },
           "ProbList" -> { jobID =>
             Future.successful(

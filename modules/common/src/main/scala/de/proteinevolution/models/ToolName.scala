@@ -57,7 +57,7 @@ object ToolName {
   final val CLANS               = ToolName("clans")
   final val TPRPRED             = ToolName("tprpred")
   final val HHBLITS             = ToolName("hhblits")
-  final val DEEPCOIL             = ToolName("deepcoil")
+  final val DEEPCOIL            = ToolName("deepcoil")
   final val MARCOIL             = ToolName("marcoil")
   final val PCOILS              = ToolName("pcoils")
   final val REPPER              = ToolName("repper")
