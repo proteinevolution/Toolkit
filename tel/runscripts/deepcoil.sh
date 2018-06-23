@@ -58,6 +58,11 @@ sed -i "1 i\>${JOBID}" ../results/${JOBID}.fseq
 rm ../results/tmp
 
 
+if [ ${CHAR_COUNT} -lt "30" ] || [ ${CHAR_COUNT} -gt "500" ] ; then
+    echo "#Input sequence should be between 30 and 500." >> ../results/process.log
+    false
+fi
+
 if [ ${SEQ_COUNT} = 1 ] ; then
 
     if [ "%pcoils_input_mode.content" = "0"  ] || [ "%pcoils_input_mode.content" = "1"  ]; then

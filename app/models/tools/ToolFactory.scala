@@ -172,12 +172,12 @@ final class ToolFactory @Inject()(
       case ToolName.DEEPCOIL.value =>
         ListMap(
           "CC-Prob" -> { jobID =>
-            Future.successful(views.html.jobs.resultpanels.marcoil(s"/results/files/$jobID/" + jobID + "_ncoils.png",
+            Future.successful(views.html.jobs.resultpanels.marcoil(s"/results/files/$jobID/" + jobID + "_deepcoil.png",
               values(ToolName.DEEPCOIL.value)))
           },
           "ProbList" -> { jobID =>
             Future.successful(
-              views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + ".out",
+              views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + "_deepcoil",
                 "PCOILS_PROBLIST")
             )
           }

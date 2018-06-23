@@ -20,6 +20,7 @@ object ToolName {
       "psiblast"  -> "PSI-BLAST",
       "alnviz"    -> "AlignmentViewer",
       "clustalo"  -> "ClustalΩ",
+      "deepcoil"  -> "DeepCoil",
       "kalign"    -> "Kalign",
       "mafft"     -> "MAFFT",
       "msaprobs"  -> "MSAProbs",
