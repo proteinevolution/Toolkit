@@ -427,6 +427,7 @@ const validationProcess = function(elem: any,toolname: string) {
 
             charLimitPerSeq = 500;
             charMinPerSeq = 30;
+            seqLimit = 2000;
 
             const deepcoilTarget = new alignmentVal($(elem));
 
