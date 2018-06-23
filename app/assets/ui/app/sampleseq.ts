@@ -133,6 +133,10 @@ const sampleSeqConfig = function(elem: any, isInit: boolean, ctx: any) : any {
                     $a.val(ompSeq);
                     break;
 
+                case "deepcoil":
+                    $a.val(coiledcoilSeq);
+                    break;
+
                 case "marcoil":
                     $a.val(coiledcoilSeq);
                     break;

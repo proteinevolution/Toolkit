@@ -40,6 +40,7 @@ class DataController @Inject()(cc: ControllerComponents, config: Configuration) 
       case ToolName.HHFILTER.value            => views.html.help.hhfilter(version)
       case ToolName.RETSEQ.value              => views.html.help.retseq(version)
       case ToolName.SEQ2ID.value              => views.html.help.seq2id(version)
+      case ToolName.DEEPCOIL.value            => views.html.help.deepcoil(version)
     }
     Ok(help)
   }
