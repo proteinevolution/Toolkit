@@ -168,10 +168,30 @@ final class ToolFactory @Inject()(
             }
           }
         )
+
+      case ToolName.DEEPCOIL.value =>
+        ListMap(
+          "CC-Prob" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.marcoil(s"/results/files/$jobID/" + jobID + "_deepcoil.png",
+                                                   values(ToolName.DEEPCOIL.value))
+            )
+          },
+          "ProbList" -> { jobID =>
+            Future.successful(
+              views.html.jobs.resultpanels.fileview(s"${constants.jobPath}$jobID/results/" + jobID + "_deepcoil",
+                                                    "PCOILS_PROBLIST")
+            )
+          }
+        )
+
       case ToolName.MARCOIL.value =>
         ListMap(
           "CC-Prob" -> { jobID =>
-            Future.successful(views.html.jobs.resultpanels.marcoil(s"/results/files/$jobID/alignment_ncoils.png"))
+            Future.successful(
+              views.html.jobs.resultpanels.marcoil(s"/results/files/$jobID/alignment_ncoils.png",
+                                                   values(ToolName.MARCOIL.value))
+            )
           },
           "ProbList" -> { jobID =>
             Future.successful(
@@ -229,12 +249,6 @@ final class ToolFactory @Inject()(
                                                           jobID + ".pdb",
                                                           jobID,
                                                           "Modeller")
-            )
-          },
-          "VERIFY3D" -> { jobID =>
-            Future.successful(
-              views.html.jobs.resultpanels.modeller(s"/results/files/$jobID/$jobID.verify3d.png",
-                                                    s"${constants.jobPath}$jobID/results/verify3d/$jobID.plotdat")
             )
           },
           "SOLVX" -> { jobID =>

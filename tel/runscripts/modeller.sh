@@ -61,32 +61,6 @@ echo "done" >> ../results/process.log
 cd ../results
 mv `echo *[0-9].pdb` ${FILENAME}.pdb
 
-echo "#Running VERIFY3D." >> ../results/process.log
-
-#VERIFY3D
-mkdir verify3d
-cd verify3d
-${BIOPROGS}/helpers/verify3d/environments > ${FILENAME}.log_verify3d << EOIN
-../${FILENAME}.pdb
-
-${FILENAME}.env
-A
-EOIN
-
-ln -sf ${BIOPROGS}/helpers/verify3d/3d_1d.tab verify3d_1d.tab
-$BIOPROGS/helpers/verify3d/verify_3d >> ${FILENAME}.log_verify3d << EOIN
-$FILENAME.env
-verify3d_1d.tab
-${FILENAME}.plotdat
-21
-0
-EOIN
-perl ${BIOPROGS}/helpers/verify3d/verify3d_graphics.pl ${FILENAME} . > ${FILENAME}.log_verify3d_graphic
-mv ${FILENAME}.verify3d.png ../
-cd ../
-
-echo "done" >> ../results/process.log
-
 echo "#Running ANOLEA." >> ../results/process.log
 
 #ANOLEA

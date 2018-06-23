@@ -2,6 +2,7 @@
 
 let seqLimit : any;
 let charLimitPerSeq : any;
+let charMinPerSeq : any;
 let modellerIsValid : boolean = false;
 let samccIsValid : boolean = false;
 
@@ -54,8 +55,7 @@ const validationProcess = function(elem: any,toolname: string) {
      alignmentVal.fastaStep2 = mustHave2($(elem));
      }
      };*/
-
-
+    charMinPerSeq = 0;
     //---------------------------------------------------------------------------------------------//
     switch (toolname) {
 
@@ -423,6 +423,20 @@ const validationProcess = function(elem: any,toolname: string) {
 
             break;
 
+        case "deepcoil":
+
+            charLimitPerSeq = 500;
+            charMinPerSeq = 30;
+
+            const deepcoilTarget = new alignmentVal($(elem));
+
+            if (deepcoilTarget.basicValidation("yes")) {
+                deepcoilTarget.sameLengthValidation()
+            }
+
+            break;
+
+
         case "tprpred":
 
             charLimitPerSeq = 10000;
@@ -770,6 +784,11 @@ class alignmentVal implements ToolkitValidator {
             return false;
         }
 
+        else if (!this.elem.reformat('minseqlength', charMinPerSeq)) {
+            feedback(false, "Input should have a minimum length of " + charMinPerSeq + "!", "error");
+            return false;
+        }
+
         else if (!this.elem.reformat('maxlength', 20000000)) {
             feedback(false, "Input contains over twenty million characters!", "error");
             return false;
@@ -792,7 +811,6 @@ class alignmentVal implements ToolkitValidator {
         else feedback(true, "Protein FASTA", "success");
 
         return true;
-
     }
 
     sameLengthValidation(): boolean {
