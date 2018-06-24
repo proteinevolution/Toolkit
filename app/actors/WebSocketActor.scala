@@ -4,13 +4,13 @@ import java.nio.file.{ Files, Paths }
 import java.time.ZonedDateTime
 
 import javax.inject.{ Inject, Named }
-import actors.ClusterMonitor._
 import actors.JobActor._
 import actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
 import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
 import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.cluster.actors.ClusterMonitor.{ Connect, Disconnect, UpdateLoad }
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.jobs.JobState._

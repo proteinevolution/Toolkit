@@ -1,7 +1,7 @@
 package de.proteinevolution.auth.controllers
 
 import de.proteinevolution.auth.UserSessions
-import de.proteinevolution.base.ToolkitController
+import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.users.{ User, UserConfig }
 import javax.inject.{ Inject, Singleton }

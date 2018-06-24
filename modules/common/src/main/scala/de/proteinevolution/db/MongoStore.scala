@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 import javax.inject.{ Inject, Singleton }
 
 import de.proteinevolution.models.database.jobs.Job
-import de.proteinevolution.models.database.statistics.{ ClusterLoadEvent, JobEventLog, StatisticsObject }
+import de.proteinevolution.models.database.statistics.{ JobEventLog, StatisticsObject }
 import de.proteinevolution.models.database.users.User
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
 import reactivemongo.api.Cursor
@@ -209,19 +209,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi)(implici
   lazy val loadStatisticsCollection: Future[BSONCollection] = {
     reactiveMongoApi.database.map(_.collection[BSONCollection]("loadStatistics"))
   }
-
-  /**
-   * upserts a load statistic event
-   * @param clusterLoadEvent
-   * @return
-   */
-  def upsertLoadStatistic(clusterLoadEvent: ClusterLoadEvent): Future[Option[ClusterLoadEvent]] =
-    loadStatisticsCollection.flatMap(
-      _.findAndUpdate(selector = BSONDocument(ClusterLoadEvent.IDDB -> clusterLoadEvent.id),
-                      update = clusterLoadEvent,
-                      upsert = true,
-                      fetchNewObject = true).map(_.result[ClusterLoadEvent])
-    )
 
   /*
    *                User collection access

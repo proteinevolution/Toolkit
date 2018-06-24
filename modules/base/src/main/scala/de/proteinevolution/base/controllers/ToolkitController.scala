@@ -1,4 +1,4 @@
-package de.proteinevolution.base
+package de.proteinevolution.base.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{ AbstractController, ControllerComponents, Result }
