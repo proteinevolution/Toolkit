@@ -38,12 +38,6 @@ final class Application @Inject()(
 
   private val logger = Logger(this.getClass)
 
-  /**
-   * Creates a websocket.  `acceptOrResult` is preferable here because it returns a
-   * Future[Flow], which is required internally.
-   *
-   * @return a fully realized websocket.
-   */
   def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
     case rh if sameOriginCheck(rh) =>
       logger.info("Creating new WebSocket. ip: " + rh.remoteAddress.toString + ", with sessionId: " + rh.session)
@@ -54,26 +48,18 @@ final class Application @Inject()(
         }
         .recover {
           case e: Exception =>
-            logger.error("Cannot create websocket", e)
+            logger.warn("Cannot create websocket", e)
             val jsError = Json.obj("error" -> "Cannot create websocket")
-            val result  = InternalServerError(jsError)
-            Left(result)
+            Left(BadRequest(jsError))
         }
     case rejected =>
-      logger.error(s"Request $rejected failed same origin check")
+      logger.warn(s"Request $rejected failed same origin check")
       Future.successful {
-        Left(Ok("forbidden"))
+        Left(Forbidden)
       }
   }
 
-  /**
-   * Checks that the WebSocket comes from the same origin.  This is necessary to protect
-   * against Cross-Site WebSocket Hijacking as WebSocket does not implement Same Origin Policy.
-   *
-   * See https://tools.ietf.org/html/rfc6455#section-1.3 and
-   * http://blog.dewhurstsecurity.com/2013/08/30/security-testing-html5-websockets.html
-   */
-  def sameOriginCheck(rh: RequestHeader): Boolean = {
+  private def sameOriginCheck(rh: RequestHeader): Boolean = {
     if (environment.mode == play.api.Mode.Test)
       true
     else {
@@ -83,31 +69,23 @@ final class Application @Inject()(
           logger.debug(s"originCheck: originValue = $originValue")
           true
         case Some(badOrigin) =>
-          logger.error(
+          logger.warn(
             s"originCheck: rejecting request because Origin header value $badOrigin is not in the same origin"
           )
           false
         case None =>
-          logger.error("originCheck: rejecting request because no Origin header found")
+          logger.warn("originCheck: rejecting request because no Origin header found")
           false
       }
     }
   }
 
-  /**
-   * Returns true if the value of the Origin header contains an acceptable value.
-   */
-  def originMatches(origin: String): Boolean = {
+  private def originMatches(origin: String): Boolean = {
     origin.contains(TEL.hostname + ":" + TEL.port) || origin.contains("tuebingen.mpg.de") || origin.contains(
       "tue.mpg.de"
     )
   }
 
-  /**
-   * Handles the request of the index page of the toolkit. This will assign a session to the User if
-   * not already present.
-   * Currently the index controller will assign a session id to the user for identification purpose.
-   */
   def index(message: String = ""): Action[AnyContent] = Action.async { implicit request =>
     //generateStatisticsDB
     environment.mode match {
