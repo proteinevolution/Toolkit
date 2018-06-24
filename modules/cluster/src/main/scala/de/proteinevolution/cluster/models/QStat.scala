@@ -1,9 +1,10 @@
-package de.proteinevolution.parsers.Ops
+package de.proteinevolution.cluster.models
 
+import scala.xml.{ Elem, XML }
 import java.time.{ ZoneId, ZonedDateTime }
 import java.time.format.DateTimeFormatter
 
-import de.proteinevolution.parsers.Ops.QStat.QStatJob
+import de.proteinevolution.cluster.models.QStat.QStatJob
 
 import scala.xml._
 
@@ -44,10 +45,6 @@ object QStat {
   }
 }
 
-/**
- * QStat object contains a list of QStat jobs which
- * @param xml
- */
 case class QStat(private val xml: String) {
   // Parse the xml first
   private val parsed: Elem = XML.loadString(xml)
@@ -57,14 +54,10 @@ case class QStat(private val xml: String) {
     (parsed \ "_" \ "job_list").map(n => QStatJob.parse(n)).toList
   }
 
-  /**
-   * Returns the total job count or the count for a specific type of job
-   * @param status
-   * @return
-   */
   def totalJobs(status: String = ""): Int = status match {
     case "running" => qStatJobs.count(_.state.contains("r"))
     case "queued"  => qStatJobs.count(_.state.contains("q"))
     case _         => qStatJobs.length
   }
+
 }

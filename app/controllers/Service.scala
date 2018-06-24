@@ -13,7 +13,7 @@ import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
 import java.time.format.DateTimeFormatter
 
-import de.proteinevolution.base.ToolkitController
+import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.models.forms.JobForm
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job

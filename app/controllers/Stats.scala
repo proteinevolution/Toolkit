@@ -2,7 +2,7 @@ package controllers
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.base.ToolkitController
+import de.proteinevolution.base.controllers.ToolkitController
 import javax.inject.{ Inject, Singleton }
 import de.proteinevolution.models.database.jobs.JobState._
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
