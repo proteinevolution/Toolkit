@@ -31,7 +31,7 @@ const JobLineComponent = {
                 m("a", { onclick: () => {m.route("/tools/" + args.job().tool.toolname)}}, args.job().tool.toolnameLong),
                 m("a", { onclick: () => {
                         m.request({
-                            url: "/get/help/" + args.job().tool.toolname,
+                            url: "/help/" + args.job().tool.toolname,
                             method: "GET",
                             background: true,
                             deserialize: string => { return string; }

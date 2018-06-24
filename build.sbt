@@ -57,6 +57,18 @@ lazy val results = (project in file("modules/results"))
   )
   .disablePlugins(PlayLayoutPlugin)
 
+lazy val help = (project in file("modules/help"))
+    .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl)
+    .dependsOn(commonJVM, base)
+    .settings(
+      name := "de.proteinevolution.help",
+      libraryDependencies ++= Dependencies.commonDeps,
+      Settings.compileSettings,
+      TwirlKeys.templateImports := Seq.empty,
+      disableDocs
+    )
+    .disablePlugins(PlayLayoutPlugin)
+
 lazy val jobs = (project in file("modules/jobs"))
     .enablePlugins(PlayScala, JavaAppPackaging)
     .dependsOn(commonJVM, auth)
@@ -106,8 +118,8 @@ lazy val cluster = (project in file("modules/cluster"))
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb, BuildInfoPlugin)
-  .dependsOn(client, commonJVM, results, jobs, auth, base, cluster)
-  .aggregate(client, commonJVM, results, jobs, auth, base, cluster)
+  .dependsOn(client, commonJVM, results, jobs, auth, base, cluster, help)
+  .aggregate(client, commonJVM, results, jobs, auth, base, cluster, help)
   .settings(
     coreSettings,
     name := "mpi-toolkit",
