@@ -76,14 +76,8 @@ class ConstantsV2 @Inject()(config: Configuration) {
   /** Interval of the qstat requests */
   val pollingInterval: FiniteDuration = 5 seconds
 
-  /** Maximum amount of strikes a job may have before it is set to the Error state */
-  val pollingMaximumStrikes: Int = 10 // strikes
-
   /** The marker for 100% load capacity */
   val loadPercentageMarker: Int = 32 // Jobs
-
-  /** Amount of elements stored in a load log record */
-  val loadRecordElements: Int = 20 // elements
 
   // jobID pattern settings
   /** allowed elements in the jobID */

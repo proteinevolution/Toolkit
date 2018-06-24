@@ -11,7 +11,7 @@ import de.proteinevolution.models.database.users.{ User, UserToken }
 import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.auth.models.MailTemplate._
-import de.proteinevolution.base.ToolkitController
+import de.proteinevolution.base.controllers.ToolkitController
 import play.api.cache._
 import play.api.mvc._
 import play.api.libs.mailer._

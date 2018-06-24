@@ -11,7 +11,7 @@ import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
 import de.proteinevolution.auth.UserSessions
-import de.proteinevolution.base.ToolkitController
+import de.proteinevolution.base.controllers.ToolkitController
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc._

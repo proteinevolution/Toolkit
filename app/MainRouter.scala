@@ -1,5 +1,6 @@
 import controllers._
 import de.proteinevolution.auth.AuthRouter
+import de.proteinevolution.cluster.ClusterRouter
 import de.proteinevolution.results.ResultsRouter
 import javax.inject.{ Inject, Singleton }
 import play.api.routing.Router.Routes
@@ -11,7 +12,6 @@ class MainRouter @Inject()(
     controller: Application,
     auth: Auth,
     backend: Backend,
-    cluster: ClusterController,
     data: DataController,
     forwardModal: ForwardModalController,
     job: JobController,
@@ -23,7 +23,8 @@ class MainRouter @Inject()(
     resultsRouter: ResultsRouter,
     assets: Assets,
     webjarsRouter: webjars.Routes,
-    authRouter: AuthRouter
+    authRouter: AuthRouter,
+    clusterRouter: ClusterRouter
 ) extends SimpleRouter {
 
   private lazy val mainRoutes: Routes = {
@@ -53,7 +54,6 @@ class MainRouter @Inject()(
     case GET(p"/get/help/$tool")                     => data.getHelp(tool)
     case GET(p"/recent/updates")                     => data.recentUpdates
     case GET(p"/forward/modal/$toolName/$modalType") => forwardModal.getForwardModalOptions(modalType, toolName)
-    case GET(p"/load")                               => cluster.getLoad
   }
 
   private lazy val backendRoutes: Routes = {
@@ -92,6 +92,7 @@ class MainRouter @Inject()(
       .orElse(jobRoutes)
       .orElse(backendRoutes)
       .orElse(uiRoutes)
+      .orElse(clusterRouter.withPrefix("/cluster").routes)
       .orElse(authRouter.withPrefix("/auth").routes)
       .orElse(webjarsRouter.withPrefix("/webjars").routes)
       .orElse(resultsRouter.withPrefix("/results").routes)

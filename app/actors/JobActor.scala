@@ -2,9 +2,9 @@ package actors
 
 import java.time.ZonedDateTime
 
-import javax.inject.Inject
-import actors.ClusterMonitor.PolledJobs
+import javax.inject.{ Inject, Named }
 import actors.JobActor._
+import akka.NotUsed
 import akka.actor._
 import akka.event.LoggingReceive
 import better.files._
@@ -17,7 +17,6 @@ import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.models.search.JobDAO
-import de.proteinevolution.parsers.Ops.QStat
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
@@ -26,6 +25,7 @@ import de.proteinevolution.tel.execution.{ ExecutionContext, WrapperExecutionFac
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
 import de.proteinevolution.auth.models.MailTemplate.JobFinishedMail
+import de.proteinevolution.cluster.actors.ClusterMonitor.{ RegisterJob, UnregisterJob }
 import play.api.Configuration
 import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
@@ -99,7 +99,8 @@ class JobActor @Inject()(
     @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
     constants: ConstantsV2,
     @Assisted("jobActorNumber") jobActorNumber: Int,
-    config: Configuration
+    config: Configuration,
+    @Named("clusterMonitor") clusterMonitor: ActorRef
 )(implicit ec: scala.concurrent.ExecutionContext, mailerClient: MailerClient)
     extends Actor
     with ActorLogging {
@@ -108,7 +109,6 @@ class JobActor @Inject()(
   @volatile private var currentJobs: Map[String, Job]                           = Map.empty[String, Job]
   @volatile private var currentJobLogs: Map[String, JobEventLog]                = Map.empty[String, JobEventLog]
   @volatile private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty[String, ExecutionContext]
-  @volatile private var currentJobStrikes: Map[String, Int]                     = Map.empty[String, Int]
 
   private val fetchLatestInterval = 500 millis
   private val Tick: Cancellable = {
@@ -191,6 +191,7 @@ class JobActor @Inject()(
     // If the job is in the current jobs remove it
     if (wasActive) {
       this.currentJobs = this.currentJobs.filter(_._1 != jobID)
+      clusterMonitor ! UnregisterJob(jobID)
     }
 
     // Save Job Event Log to the collection and remove it from the map afterwards
@@ -263,7 +264,7 @@ class JobActor @Inject()(
     // Update job in the database and notify watcher upon completion
     mongoStore
       .modifyJob(BSONDocument(Job.IDDB -> job.mainID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
-      .map { modifiedJob =>
+      .map { _ =>
         val jobLog = this.currentJobLogs.get(job.jobID) match {
           case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
           case None =>
@@ -305,9 +306,9 @@ class JobActor @Inject()(
               )
               val eMail = JobFinishedMail(user, job)
               eMail.send
-            case None =>
+            case None => NotUsed
           }
-        case None =>
+        case None => NotUsed
       }
       true
     } else {
@@ -410,15 +411,9 @@ class JobActor @Inject()(
                       self ! CheckIPHash(job.jobID)
                   }
                 }
-            case None =>
-              log.error(
-                s"[JobActor[$jobActorNumber].CheckJobHashes] Could not recreate execution context for jobID " + jobID
-              )
+            case None => NotUsed
           }
-        case None =>
-          log.error(
-            s"[JobActor[$jobActorNumber].CheckJobHashes] Could not find the jobID " + jobID + " in the Cache or DB."
-          )
+        case None => NotUsed
       }
 
     case Delete(jobID, userIDOption) =>
@@ -446,11 +441,10 @@ class JobActor @Inject()(
               userIDOption match {
                 case Some(userID) =>
                   self ! RemoveFromWatchlist(jobID, userID)
-                case None =>
+                case None => NotUsed
               }
             }
-          case None =>
-            log.error(s"[JobActor[$jobActorNumber].Delete] Could not find job with JobID $jobID.")
+          case None => NotUsed
         }
 
     case CheckIPHash(jobID) =>
@@ -508,7 +502,7 @@ class JobActor @Inject()(
               // TODO: remove this as soon as possible, because soon all jobs should hold the hashed IP
               self ! StartJob(job.jobID)
           }
-        case None =>
+        case None => NotUsed
       }
 
     case StartJob(jobID) =>
@@ -585,15 +579,11 @@ class JobActor @Inject()(
                     }
 
                     self ! JobStateChanged(job.jobID, Prepared)
-                  case None =>
-                    log.error(s"[JobActor[$jobActorNumber].StartJob] Job could not be written to DB: " + jobID)
+                  case None => NotUsed
                 }
-            //env.remove(s"MEMORY")
-            //env.remove(s"THREADS")
-            case None =>
+            case None => NotUsed
           }
-        case None =>
-          log.error(s"[JobActor[$jobActorNumber].StartJob] Job not found in DB: " + jobID)
+        case None => NotUsed
       }
 
     // User Starts watching job
@@ -610,7 +600,7 @@ class JobActor @Inject()(
                 val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
                 wsActors.foreach(_.foreach(_ ! PushJob(updatedJob)))
               }
-          case None => ()
+          case None => NotUsed
         }
 
     // User does no longer watch this Job (stays in JobManager)
@@ -627,7 +617,7 @@ class JobActor @Inject()(
                 val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
                 wsActors.foreach(_.foreach(_ ! ClearJob(jobID)))
               }
-          case None => ()
+          case None => NotUsed
         }
 
     // Message from outside that the jobState has changed
@@ -653,33 +643,7 @@ class JobActor @Inject()(
           } else {
             this.updateJobState(job)
           }
-        case None =>
-          log.info(s"[JobActor[$jobActorNumber].JobStateChanged] Job not found: " + jobID)
-      }
-
-    // Checks the current jobs against the currently running cluster jobs to see if there are any dead jobs
-    case PolledJobs(qStat: QStat) =>
-      val clusterJobIDs = qStat.qStatJobs.map(_.sgeID)
-      //if(this.currentJobs.nonEmpty)
-      //log.info(s"[JobActor[$jobActorNumber].PolledJobs] sge Jobs to check: ${clusterJobIDs.mkString(", ")}\nactor Jobs to check:${this.currentJobs.values.flatMap(_.clusterData.map(_.sgeID)).mkString(", ")}")
-      this.currentJobs.values.foreach { job =>
-        job.clusterData match {
-          case Some(clusterData) =>
-            val jobInCluster = clusterJobIDs.contains(clusterData.sgeID)
-            //log.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} with sgeID ${clusterData.sgeID}: ${if(jobInCluster) "active" else "inactive"}")
-            if (!job.isFinished && !jobInCluster) {
-              val strikes = this.currentJobStrikes.getOrElse(job.jobID, 0) + 1
-              if (strikes >= constants.pollingMaximumStrikes) {
-                this.currentJobStrikes = this.currentJobStrikes.filter(_._1 != job.jobID)
-                self ! JobStateChanged(job.jobID, Error)
-              } else {
-                this.currentJobStrikes = this.currentJobStrikes.updated(job.jobID, strikes)
-                log.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} strikes: $strikes.")
-              }
-            }
-          case None =>
-          //log.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} has no SGE data yet.")
-        }
+        case None => NotUsed
       }
 
     // Sets the cluster job ID for a job
@@ -689,7 +653,8 @@ class JobActor @Inject()(
         .foreach {
           case Some(job) =>
             this.currentJobs = this.currentJobs.updated(job.jobID, job)
-          case None =>
+            clusterMonitor ! RegisterJob(job)
+          case None => NotUsed
         }
 
     case UpdateLog =>
@@ -698,7 +663,7 @@ class JobActor @Inject()(
           job._2.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
         job._2.status match {
           case Running => foundWatchers.flatten.foreach(_ ! WatchLogFile(job._2))
-          case _       =>
+          case _       => NotUsed
         }
 
       }

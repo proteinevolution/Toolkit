@@ -2,6 +2,7 @@ package modules
 
 import actors._
 import com.google.inject.AbstractModule
+import de.proteinevolution.cluster.actors.ClusterMonitor
 import play.api.libs.concurrent.AkkaGuiceSupport
 
 class ActorModule extends AbstractModule with AkkaGuiceSupport {
@@ -12,4 +13,5 @@ class ActorModule extends AbstractModule with AkkaGuiceSupport {
     bindActorFactory[JobActor, JobActor.Factory]
     bindActorFactory[WebSocketActor, WebSocketActor.Factory]
   }
+
 }

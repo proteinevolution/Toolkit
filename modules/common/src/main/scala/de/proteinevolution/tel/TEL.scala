@@ -37,4 +37,7 @@ object TEL {
 
   var threadsFactor: Double = 1
 
+  // only use this for development mode
+  lazy val isSubmitHost: Boolean = hostname.contains("olt") || hostname.contains("rye")
+
 }

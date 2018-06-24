@@ -2,13 +2,12 @@ package controllers
 
 import java.net.InetAddress
 
-import javax.inject.{ Inject, Named, Singleton }
-import actors.ClusterMonitor.Multicast
+import javax.inject.{ Inject, Singleton }
 import actors.WebSocketActor
-import akka.actor.{ ActorRef, ActorSystem, Props }
+import akka.actor.{ ActorSystem, Props }
 import akka.stream.Materializer
 import de.proteinevolution.auth.UserSessions
-import de.proteinevolution.base.ToolkitController
+import de.proteinevolution.base.controllers.ToolkitController
 import models.tools.ToolFactory
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
@@ -24,7 +23,6 @@ import scala.concurrent.{ ExecutionContext, Future }
 @Singleton
 final class Application @Inject()(
     webJarsUtil: WebJarsUtil,
-    @Named("clusterMonitor") clusterMonitor: ActorRef,
     webSocketActorFactory: WebSocketActor.Factory,
     toolFactory: ToolFactory,
     userSessions: UserSessions,
@@ -101,9 +99,6 @@ final class Application @Inject()(
         val port     = request.host.slice(request.host.indexOf(":") + 1, request.host.length)
         val hostname = request.host.slice(0, request.host.indexOf(":"))
         env.configure("PORT", port)
-        if (!hostname.startsWith("olt")) {
-          env.configure("headLessMode", "true")
-        }
         env.configure("HOSTNAME", "olt")
         TEL.port = port
         TEL.hostname = hostname
@@ -138,7 +133,7 @@ final class Application @Inject()(
   def maintenance: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
       if (user.isSuperuser) {
-        clusterMonitor ! Multicast
+        //clusterMonitor ! Multicast TODO put somewhere else
         Ok
       } else {
         NotFound

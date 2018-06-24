@@ -5,7 +5,7 @@ import java.time.ZonedDateTime
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
 import de.proteinevolution.auth.models.MailTemplate._
-import de.proteinevolution.base.ToolkitController
+import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.models.database.users.{ User, UserToken }
 import javax.inject.{ Inject, Singleton }

@@ -9,7 +9,7 @@ import de.proteinevolution.models.database.jobs.JobState._
 import actors.JobActor._
 import better.files._
 import de.proteinevolution.auth.UserSessions
-import de.proteinevolution.base.ToolkitController
+import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.users.User
