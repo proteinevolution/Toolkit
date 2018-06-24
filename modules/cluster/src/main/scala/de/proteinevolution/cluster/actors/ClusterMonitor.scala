@@ -56,7 +56,7 @@ final class ClusterMonitor @Inject()(
             } else if (currentJobs.isDefinedAt(job.jobID) && jobInCluster) {
               // save jobs which are alive again from deletion
               context.become(active(watchers, currentJobs, toDelete.filter(_._1 != job.jobID)))
-            } else if (currentJobs.isDefinedAt(job.jobID) && !jobInCluster && !toDelete.isDefinedAt(job.jobID)) {
+            } else if (currentJobs.isDefinedAt(job.jobID) && !jobInCluster && toDelete.isDefinedAt(job.jobID)) {
               // kill jobs which are obviously dead
               val source = Source.fromFile(constants.jobPath + "/" + job.jobID + "/key")
               val key    = try { source.mkString.replaceAll("\n", "") } finally { source.close() }
