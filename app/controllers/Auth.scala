@@ -8,10 +8,10 @@ import akka.actor.ActorRef
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
 import de.proteinevolution.models.database.users.{ User, UserToken }
-import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.base.controllers.ToolkitController
+import de.proteinevolution.services.ToolConfig
 import play.api.cache._
 import play.api.mvc._
 import play.api.libs.mailer._
@@ -25,9 +25,9 @@ import scala.concurrent.{ ExecutionContext, Future }
 final class Auth @Inject()(
     webJarsUtil: WebJarsUtil,
     mongoStore: MongoStore,
-    toolFactory: ToolFactory,
+    toolConfig: ToolConfig,
     userSessions: UserSessions,
-    @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
+    @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
     environment: Environment,
     assets: AssetsFinder,
     cc: ControllerComponents
@@ -164,7 +164,7 @@ final class Auth @Inject()(
                           Ok(
                             views.html.main(assets,
                                             webJarsUtil,
-                                            toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                                            toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                                             "Account verification was successful. Please log in.",
                                             "",
                                             environment)
@@ -174,7 +174,7 @@ final class Auth @Inject()(
                             views.html.main(
                               assets,
                               webJarsUtil,
-                              toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                              toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                               "Verification was not successful due to a database error. Please try again later.",
                               "",
                               environment
@@ -213,7 +213,7 @@ final class Auth @Inject()(
                                 views.html.main(
                                   assets,
                                   webJarsUtil,
-                                  toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                                  toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                                   "Password change verification was successful. Please log in with Your new password.",
                                   "",
                                   environment
@@ -224,7 +224,7 @@ final class Auth @Inject()(
                                 views.html.main(
                                   assets,
                                   webJarsUtil,
-                                  toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                                  toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                                   "Verification was not successful due to a database error. Please try again later.",
                                   "",
                                   environment
@@ -238,7 +238,7 @@ final class Auth @Inject()(
                             views.html.main(
                               assets,
                               webJarsUtil,
-                              toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                              toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                               "The Password you have entered was insufficient, please create a new one.",
                               "",
                               environment
@@ -263,7 +263,7 @@ final class Auth @Inject()(
                         Ok(
                           views.html.main(assets,
                                           webJarsUtil,
-                                          toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                                          toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                                           "",
                                           "passwordReset",
                                           environment)
@@ -273,7 +273,7 @@ final class Auth @Inject()(
                           views.html.main(
                             assets,
                             webJarsUtil,
-                            toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                            toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                             "Verification was not successful due to a database error. Please try again later.",
                             "",
                             environment
@@ -285,7 +285,7 @@ final class Auth @Inject()(
                       Ok(
                         views.html.main(assets,
                                         webJarsUtil,
-                                        toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                                        toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                                         "There was an error finding your token.",
                                         "",
                                         environment)
@@ -299,7 +299,7 @@ final class Auth @Inject()(
                   Ok(
                     views.html.main(assets,
                                     webJarsUtil,
-                                    toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                                    toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                                     "The token you used is not valid.",
                                     "",
                                     environment)
@@ -311,7 +311,7 @@ final class Auth @Inject()(
                 Ok(
                   views.html.main(assets,
                                   webJarsUtil,
-                                  toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                                  toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                                   "There was an error finding your token.",
                                   "",
                                   environment)
@@ -323,7 +323,7 @@ final class Auth @Inject()(
             Ok(
               views.html.main(assets,
                               webJarsUtil,
-                              toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                              toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                               "There was an error finding your account.",
                               "",
                               environment)

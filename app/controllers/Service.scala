@@ -17,6 +17,7 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.models.forms.JobForm
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
+import de.proteinevolution.services.ToolConfig
 import play.api.libs.json._
 import reactivemongo.bson.BSONDocument
 
@@ -26,6 +27,7 @@ import scala.concurrent.duration._
 @Singleton
 final class Service @Inject()(
     mongoStore: MongoStore,
+    toolConfig: ToolConfig,
     toolFactory: ToolFactory,
     constants: ConstantsV2,
     cc: ControllerComponents,
@@ -48,7 +50,7 @@ final class Service @Inject()(
   }
 
   def getTool(toolname: String) = Action {
-    toolFactory.values.get(toolname) match {
+    toolConfig.values.get(toolname) match {
       case Some(tool) => Ok(Json.toJson(tool.toolForm))
       case None       => NotFound
     }
@@ -83,7 +85,7 @@ final class Service @Inject()(
     mongoStore.selectJob(jobID).flatMap {
       case Some(job) =>
         logger.info("Requested job has been found in MongoDB, the jobState is " + job.status)
-        val toolForm = toolFactory.values(job.tool).toolForm
+        val toolForm = toolConfig.values(job.tool).toolForm
         // The jobState decides which views will be appended to the job
         val jobViews: Future[Seq[String]] = job.status match {
           case Done =>

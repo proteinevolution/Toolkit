@@ -1,20 +1,36 @@
 package de.proteinevolution.jobs
 
-import de.proteinevolution.jobs.controllers.SubmissionController
+import de.proteinevolution.jobs.controllers.{ ClusterApiController, JobGetController, SubmissionController }
 import javax.inject.{ Inject, Singleton }
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
 import play.api.routing.sird._
 
 @Singleton
-class JobsRouter @Inject()(submissionController: SubmissionController) extends SimpleRouter {
+class JobsRouter @Inject()(
+    submissionController: SubmissionController,
+    clusterApiController: ClusterApiController,
+    jobGetController: JobGetController
+) extends SimpleRouter {
+
+  private lazy val getRoutes: Routes = {
+    case GET(p"/")            => jobGetController.listJobs
+    case GET(p"/load/$jobID") => jobGetController.loadJob(jobID)
+  }
 
   private lazy val submissionRoutes: Routes = {
-    case GET(p"/test") => submissionController.test()
+    case DELETE(p"/$jobID")                  => submissionController.delete(jobID)
+    case POST(p"/start/$jobID")              => submissionController.startJob(jobID)
+    case POST(p"/frontend/submit/$toolName") => submissionController.frontend(toolName)
+  }
+
+  private lazy val clusterApiRoutes: Routes = {
+    case PUT(p"/status/$status/$jobID/$key") => clusterApiController.setJobStatus(status, jobID, key)
+    case PUT(p"/sge/$jobID/$sgeID/$key")     => clusterApiController.setSgeId(jobID, sgeID, key)
   }
 
   override def routes: Routes = {
-    submissionRoutes
+    submissionRoutes.orElse(clusterApiRoutes).orElse(getRoutes)
   }
 
 }

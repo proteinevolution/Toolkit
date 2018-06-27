@@ -4,13 +4,14 @@ import java.nio.file.{ Files, Paths }
 import java.time.ZonedDateTime
 
 import javax.inject.{ Inject, Named }
-import actors.JobActor._
 import actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
 import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.cluster.actors.ClusterMonitor.{ Connect, Disconnect, UpdateLoad }
+import de.proteinevolution.jobs.actors.JobActor._
+import de.proteinevolution.jobs.services.JobActorAccess
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.jobs.JobState._
@@ -18,7 +19,6 @@ import play.api.Configuration
 import play.api.cache._
 import play.api.libs.json.{ JsValue, Json }
 import reactivemongo.bson.BSONObjectID
-import services.JobActorAccess
 
 import scala.concurrent.ExecutionContext
 
@@ -42,7 +42,7 @@ final class WebSocketActor @Inject()(
     jobActorAccess: JobActorAccess,
     userSessions: UserSessions,
     constants: ConstantsV2,
-    @NamedCache("wsActorCache") val wsActorCache: SyncCacheApi,
+    @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
     @Assisted("sessionID") sessionID: BSONObjectID,
     implicit val config: Configuration
 )(implicit ec: ExecutionContext)

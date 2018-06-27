@@ -110,7 +110,7 @@ window.JobManager = {
 
     /** called by clicking on delete Job*/
     deleteJob: function(jobID : string): any{
-        m.request({ url: "/api/job/" + jobID, method: "DELETE" }).then(function(){
+        m.request({ url: "/api/jobs/" + jobID, method: "DELETE" }).then(function(){
             JobManager.removeFromTable(jobID);
         });
         jobList.redraw();

@@ -7,8 +7,8 @@ import play.api.libs.json.Json
 import javax.inject.{ Inject, Singleton }
 import de.proteinevolution.models.ConstantsV2
 import reactivemongo.bson.BSONDocument
-import models.tools.ToolFactory
 import de.proteinevolution.db.MongoStore
+import de.proteinevolution.services.ToolConfig
 import play.api.{ Configuration, Logger }
 import play.api.mvc._
 
@@ -18,7 +18,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 final class Search @Inject()(
     userSessions: UserSessions,
     mongoStore: MongoStore,
-    toolFactory: ToolFactory,
+    toolConfig: ToolConfig,
     constants: ConstantsV2,
     cc: ControllerComponents
 )(implicit ec: ExecutionContext, config: Configuration)
@@ -29,7 +29,7 @@ final class Search @Inject()(
   def getToolList: Action[AnyContent] = Action {
     Ok(
       Json.toJson(
-        toolFactory.values.values
+        toolConfig.values.values
           .filterNot(_.toolNameShort == "hhpred_manual")
           .map(a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort))
       )
@@ -46,7 +46,7 @@ final class Search @Inject()(
   def autoComplete(queryString_ : String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       val queryString = queryString_.trim()
-      val tools: List[de.proteinevolution.models.Tool] = toolFactory.values.values
+      val tools: List[de.proteinevolution.models.Tool] = toolConfig.values.values
         .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
         .filter(tool => tool.toolNameShort != "hhpred_manual")
         .toList
@@ -79,7 +79,7 @@ final class Search @Inject()(
 
   def existsTool(queryString: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { _ =>
-      if (toolFactory.isTool(queryString)) {
+      if (toolConfig.isTool(queryString)) {
         Ok(Json.toJson(true))
       } else {
         NotFound

@@ -1,18 +1,18 @@
-package controllers
+package de.proteinevolution.results.controllers
 
 import de.proteinevolution.models.forwarding.ForwardingError.InvalidModal
 import de.proteinevolution.models.forwarding.{ ForwardModalOptions, ForwardingError }
+import de.proteinevolution.services.ToolConfig
 import javax.inject.{ Inject, Singleton }
-import models.tools.ToolFactory
 import play.api.libs.json.Json
 import play.api.mvc.{ AbstractController, Action, AnyContent, ControllerComponents }
 
 @Singleton
-class ForwardModalController @Inject()(cc: ControllerComponents, toolFactory: ToolFactory)
+class ForwardModalController @Inject()(cc: ControllerComponents, toolConfig: ToolConfig)
     extends AbstractController(cc) {
 
   def getForwardModalOptions(modalType: String, toolName: String): Action[AnyContent] = Action { implicit request =>
-    val tool             = toolFactory.values(toolName)
+    val tool             = toolConfig.values(toolName)
     val alignmentOptions = tool.forwardAlignment.toArray
     val multiSeqOptions  = tool.forwardMultiSeq.toArray
 

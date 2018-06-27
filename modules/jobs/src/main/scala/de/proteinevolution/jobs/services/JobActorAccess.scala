@@ -1,10 +1,9 @@
-package services
+package de.proteinevolution.jobs.services
 
-import javax.inject.{ Inject, Singleton }
-
-import actors.JobActor
 import akka.actor.{ ActorRef, ActorSystem, Props }
+import de.proteinevolution.jobs.actors.JobActor
 import de.proteinevolution.models.ConstantsV2
+import javax.inject.{ Inject, Singleton }
 
 @Singleton
 final class JobActorAccess @Inject()(
