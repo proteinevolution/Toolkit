@@ -1,22 +1,16 @@
 package controllers
 
-import java.io.{ FileInputStream, ObjectInputStream }
 import java.security.MessageDigest
 import java.time.ZonedDateTime
-
 import javax.inject.{ Inject, Singleton }
-import de.proteinevolution.models.database.jobs.JobState._
-import better.files._
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.users.User
-import de.proteinevolution.models.search.JobDAO
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.jobs.actors.JobActor.PrepareJob
 import de.proteinevolution.jobs.services.{ JobActorAccess, JobIdProvider }
-import de.proteinevolution.tel.env.Env
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -30,8 +24,6 @@ final class JobController @Inject()(
     jobIdProvider: JobIdProvider,
     userSessions: UserSessions,
     mongoStore: MongoStore,
-    env: Env,
-    jobDao: JobDAO,
     constants: ConstantsV2,
     cc: ControllerComponents
 )(implicit ec: ExecutionContext)
@@ -161,47 +153,4 @@ final class JobController @Inject()(
     }
   }
 
-  def checkHash(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { _ =>
-      mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).flatMap {
-        case Some(job) =>
-          // Reload the paramaters of the file
-          val params: Map[String, String] = {
-            val ois = new ObjectInputStream(
-              new FileInputStream((constants.jobPath / jobID / constants.serializedParam).pathAsString)
-            )
-            val x = ois.readObject().asInstanceOf[Map[String, String]]
-            ois.close()
-            x
-          }
-          // Generate the job hash
-          val jobHash = jobDao.generateJobHash(job, params, env)
-          // Match the hash
-          mongoStore
-            .findAndSortJobs(
-              BSONDocument(Job.HASH        -> jobHash),
-              BSONDocument(Job.DATECREATED -> -1)
-            )
-            .map { jobList =>
-              // Check if the jobs are owned by the user, unless they are public and if the job is Done
-              jobList.find(
-                filterJob => (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done
-              ) match {
-                case Some(latestOldJob) =>
-                  Ok(
-                    Json.toJson(
-                      Json.obj(
-                        "jobID"       -> latestOldJob.jobID,
-                        "dateCreated" -> latestOldJob.dateCreated.get.toInstant.toEpochMilli
-                      )
-                    )
-                  )
-                case None =>
-                  NotFound
-              }
-            }
-        case None => Future.successful(NotFound)
-      }
-    }
-  }
 }

@@ -14,8 +14,9 @@ class JobsRouter @Inject()(
 ) extends SimpleRouter {
 
   private lazy val getRoutes: Routes = {
-    case GET(p"/")            => jobGetController.listJobs
-    case GET(p"/load/$jobID") => jobGetController.loadJob(jobID)
+    case GET(p"/")                  => jobGetController.listJobs
+    case GET(p"/load/$jobID")       => jobGetController.loadJob(jobID)
+    case GET(p"/check/hash/$jobID") => jobGetController.checkHash(jobID)
   }
 
   private lazy val submissionRoutes: Routes = {

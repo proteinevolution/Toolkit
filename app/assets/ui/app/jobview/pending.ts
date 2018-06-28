@@ -2,10 +2,10 @@
 const JobPendingComponent = {
     controller : function(args : any){
         return {
-            checkHashRoute: "/api/job/" + args.job().jobID + "/checkHash",
+            checkHashRoute: "/api/jobs/check/hash/" + args.job().jobID,
             copyConfig : function(elem: any, isInit : boolean) {
                 if (!isInit) {
-                    m.request({method:"GET", url: "/api/job/" + args.job().jobID + "/checkHash", extract: nonJsonErrors}).then(function(data : any){
+                    m.request({method:"GET", url: "/api/jobs/check/hash/" + args.job().jobID, extract: nonJsonErrors}).then(function(data : any){
                         if (data != null && data.jobID != null) {
                             $("#copyID").val(data.jobID.toString());
                             $("#copyDate").val(data.dateCreated);
