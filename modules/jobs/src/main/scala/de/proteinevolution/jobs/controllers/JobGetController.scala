@@ -45,16 +45,12 @@ class JobGetController @Inject()(
     (for {
       _   <- OptionT.liftF(userSessions.getUser)
       job <- jobHashService.checkHash(jobID)
+      if job.dateCreated.isDefined
     } yield {
-      job
+      (job.jobID, job.dateCreated.get.toInstant.toEpochMilli)
     }).value.map {
-      case Some(latestOldJob) =>
-        Ok(
-          Json.obj(
-            "jobID"       -> latestOldJob.jobID,
-            "dateCreated" -> latestOldJob.dateCreated.get.toInstant.toEpochMilli
-          )
-        )
+      case Some((latestJobId, dateCreated)) =>
+        Ok(Json.obj("jobID" -> latestJobId, "dateCreated" -> dateCreated))
       case None => NotFound(JobHashError.JobNotFound.msg)
     }
   }
