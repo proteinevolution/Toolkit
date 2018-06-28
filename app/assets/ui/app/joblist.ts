@@ -108,7 +108,7 @@ window.JobListComponent = {
     },   // empties the job list
     reloadList: function() {         // reloads the job list from the server
         let request = m.request({
-            url: "/api/jobs",
+            url: "/api/jobs/",
             method: "GET",
             type: JobListComponent.Job
         });
@@ -139,7 +139,7 @@ window.JobListComponent = {
 
                     if (deleteJob) {
                         //ws.send({ "type" : "DeleteJob", "jobID" : job.jobID }) TODO reimplement the deletion over WS
-                        m.request({url: "/api/job/" + job.jobID, method: "DELETE"});
+                        m.request({url: "/api/jobs/" + job.jobID, method: "DELETE"});
                     }
                     else {
                         ws.send({"type": "ClearJob", "jobIDs": [job.jobID]});

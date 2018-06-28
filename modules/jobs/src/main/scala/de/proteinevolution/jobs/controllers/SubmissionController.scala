@@ -1,12 +1,61 @@
 package de.proteinevolution.jobs.controllers
 
+import java.time.ZonedDateTime
+
+import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.base.controllers.ToolkitController
+import de.proteinevolution.db.MongoStore
+import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete }
+import de.proteinevolution.jobs.services.JobActorAccess
+import de.proteinevolution.models.database.jobs.JobState.Done
+import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
+import de.proteinevolution.services.ToolConfig
 import javax.inject.Inject
-import play.api.mvc.{ AbstractController, ControllerComponents }
+import play.api.Logger
+import play.api.libs.json.Json
+import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 
-class SubmissionController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+import scala.concurrent.{ ExecutionContext, Future }
 
-  def test() = Action {
-    Ok
+class SubmissionController @Inject()(
+    jobActorAccess: JobActorAccess,
+    userSessions: UserSessions,
+    cc: ControllerComponents,
+    mongoStore: MongoStore,
+    toolConfig: ToolConfig
+)(implicit ec: ExecutionContext)
+    extends ToolkitController(cc) {
+
+  private val logger = Logger(this.getClass)
+
+  def startJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    userSessions.getUser.map { _ =>
+      jobActorAccess.sendToJobActor(jobID, CheckIPHash(jobID))
+      Ok(Json.toJson(Json.obj("message" -> "Starting Job...")))
+    }
+  }
+
+  def frontend(toolName: String): Action[AnyContent] = Action.async { implicit request =>
+    if (toolConfig.isTool(toolName)) {
+      // Add Frontend Job to Database
+      mongoStore
+        .addJobLog(
+          JobEventLog(toolName = toolName.trim.toLowerCase, events = JobEvent(Done, Some(ZonedDateTime.now)) :: Nil)
+        )
+        .map { _ =>
+          NoContent
+        }
+    } else {
+      Future.successful(BadRequest)
+    }
+  }
+
+  def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+    logger.info("Delete Action in JobController reached")
+    userSessions.getUser.map { user =>
+      jobActorAccess.sendToJobActor(jobID, Delete(jobID, Some(user.userID)))
+      Ok
+    }
   }
 
 }

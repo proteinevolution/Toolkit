@@ -1,6 +1,6 @@
 package de.proteinevolution.results
 
-import de.proteinevolution.results.controllers.{ AlignmentController, FileController, HHController, ProcessController }
+import de.proteinevolution.results.controllers._
 import de.proteinevolution.results.services.ForwardModeExtractor
 import javax.inject.{ Inject, Singleton }
 import play.api.routing.Router.Routes
@@ -12,7 +12,8 @@ class ResultsRouter @Inject()(
     hhController: HHController,
     processController: ProcessController,
     alignmentController: AlignmentController,
-    fileController: FileController
+    fileController: FileController,
+    forwardModalController: ForwardModalController
 ) extends SimpleRouter
     with ForwardModeExtractor {
 
@@ -27,6 +28,8 @@ class ResultsRouter @Inject()(
     case POST(p"/alignment/loadHits/$jobID")          => alignmentController.loadHits(jobID)
     case POST(p"/alignment/clustal/$jobID")           => alignmentController.loadHitsClustal(jobID)
     case GET(p"/files/$mainID/$filename")             => fileController.file(filename = filename, mainID = mainID)
+    case GET(p"/forward/modal/$toolName/$modalType") =>
+      forwardModalController.getForwardModalOptions(modalType, toolName)
   }
 
 }

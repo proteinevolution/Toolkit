@@ -14,7 +14,7 @@ class TELEnvProvider @Inject()(tv: TELEnv, configuration: Configuration) extends
       .get[Option[String]]("tel.env")
       .getOrElse {
         val fallBackFile = "tel/env"
-        logger.warn(s"Key 'tel.env' was not found in configuration. Fall back to '$fallBackFile'");
+        logger.warn(s"Key 'tel.env' was not found in configuration. Fall back to '$fallBackFile'")
         fallBackFile
       }
       .toFile

@@ -1,9 +1,9 @@
-package actors
+package de.proteinevolution.jobs.actors
 
 import java.time.ZonedDateTime
 
-import javax.inject.{ Inject, Named }
-import actors.JobActor._
+import javax.inject.Inject
+import de.proteinevolution.jobs.actors.JobActor._
 import akka.NotUsed
 import akka.actor._
 import akka.event.LoggingReceive
@@ -25,7 +25,8 @@ import de.proteinevolution.tel.execution.{ ExecutionContext, WrapperExecutionFac
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
 import de.proteinevolution.auth.models.MailTemplate.JobFinishedMail
-import de.proteinevolution.cluster.actors.ClusterMonitor.{ RegisterJob, UnregisterJob }
+import de.proteinevolution.models.cluster.Polling.PolledJobs
+import de.proteinevolution.models.cluster.QStat
 import play.api.Configuration
 import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
@@ -35,60 +36,6 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-object JobActor {
-
-  case class PrepareJob(
-      job: Job,
-      params: Map[String, String],
-      startJob: Boolean = false,
-      isInternalJob: Boolean = false
-  )
-
-  case class CheckJobHashes(jobID: String)
-
-  // Messages the Job Actor to start a job
-  case class StartJob(jobID: String)
-
-  trait Factory {
-    def apply(@Assisted("jobActorNumber") jobActorNumber: Int): Actor
-  }
-
-  // Messages the jobActor accepts from outside
-  case class PushJob(job: Job)
-
-  // Message for the Websocket Actor to send a ClearJob Message
-  case class ClearJob(jobID: String, deleted: Boolean = false)
-
-  // User Actor starts watching
-  case class AddToWatchlist(jobID: String, userID: BSONObjectID)
-
-  // checks if user has submitted max number of jobs
-  // of jobs within a given time
-  case class CheckIPHash(jobID: String)
-
-  // UserActor Stops Watching this Job
-  case class RemoveFromWatchlist(jobID: String, userID: BSONObjectID)
-
-  // JobActor is requested to Delete the job
-  case class Delete(jobID: String, userID: Option[BSONObjectID] = None)
-
-  // Job Controller receives a job state change from the SGE or from any other valid source
-  case class JobStateChanged(jobID: String, jobState: JobState)
-
-  case class SetSGEID(jobID: String, sgeID: String)
-
-  // show browser notification
-  case class ShowNotification(notificationType: String, tag: String, title: String, body: String)
-
-  // Job Controller receives push message to update the log
-  case class UpdateLog(jobID: String)
-
-  // forward filewatching task to ws actor
-
-  case class WatchLogFile(job: Job)
-
-}
-
 class JobActor @Inject()(
     runscriptManager: RunscriptManager,
     env: Env,
@@ -96,11 +43,10 @@ class JobActor @Inject()(
     mongoStore: MongoStore,
     userSessions: UserSessions,
     wrapperExecutionFactory: WrapperExecutionFactory,
-    @NamedCache("wsActorCache") implicit val wsActorCache: SyncCacheApi,
+    @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
     constants: ConstantsV2,
     @Assisted("jobActorNumber") jobActorNumber: Int,
-    config: Configuration,
-    @Named("clusterMonitor") clusterMonitor: ActorRef
+    config: Configuration
 )(implicit ec: scala.concurrent.ExecutionContext, mailerClient: MailerClient)
     extends Actor
     with ActorLogging {
@@ -191,7 +137,6 @@ class JobActor @Inject()(
     // If the job is in the current jobs remove it
     if (wasActive) {
       this.currentJobs = this.currentJobs.filter(_._1 != jobID)
-      clusterMonitor ! UnregisterJob(jobID)
     }
 
     // Save Job Event Log to the collection and remove it from the map afterwards
@@ -646,6 +591,23 @@ class JobActor @Inject()(
         case None => NotUsed
       }
 
+    // Checks the current jobs against the currently running cluster jobs to see if there are any dead jobs
+    case PolledJobs(qStat: QStat) =>
+      val clusterJobIDs = qStat.qStatJobs.map(_.sgeID)
+      //if(this.currentJobs.nonEmpty)
+      //log.info(s"[JobActor[$jobActorNumber].PolledJobs] sge Jobs to check: ${clusterJobIDs.mkString(", ")}\nactor Jobs to check:${this.currentJobs.values.flatMap(_.clusterData.map(_.sgeID)).mkString(", ")}")
+      this.currentJobs.values.foreach { job =>
+        job.clusterData match {
+          case Some(clusterData) =>
+            val jobInCluster = clusterJobIDs.contains(clusterData.sgeID)
+            //log.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} with sgeID ${clusterData.sgeID}: ${if(jobInCluster) "active" else "inactive"}")
+            if (!job.isFinished && !jobInCluster) {
+              self ! JobStateChanged(job.jobID, Error)
+            }
+          case None => NotUsed
+        }
+      }
+
     // Sets the cluster job ID for a job
     case SetSGEID(jobID: String, sgeID: String) =>
       mongoStore
@@ -653,7 +615,6 @@ class JobActor @Inject()(
         .foreach {
           case Some(job) =>
             this.currentJobs = this.currentJobs.updated(job.jobID, job)
-            clusterMonitor ! RegisterJob(job)
           case None => NotUsed
         }
 
@@ -668,4 +629,58 @@ class JobActor @Inject()(
 
       }
   }
+}
+
+object JobActor {
+
+  case class PrepareJob(
+      job: Job,
+      params: Map[String, String],
+      startJob: Boolean = false,
+      isInternalJob: Boolean = false
+  )
+
+  case class CheckJobHashes(jobID: String)
+
+  // Messages the Job Actor to start a job
+  case class StartJob(jobID: String)
+
+  trait Factory {
+    def apply(@Assisted("jobActorNumber") jobActorNumber: Int): Actor
+  }
+
+  // Messages the jobActor accepts from outside
+  case class PushJob(job: Job)
+
+  // Message for the Websocket Actor to send a ClearJob Message
+  case class ClearJob(jobID: String, deleted: Boolean = false)
+
+  // User Actor starts watching
+  case class AddToWatchlist(jobID: String, userID: BSONObjectID)
+
+  // checks if user has submitted max number of jobs
+  // of jobs within a given time
+  case class CheckIPHash(jobID: String)
+
+  // UserActor Stops Watching this Job
+  case class RemoveFromWatchlist(jobID: String, userID: BSONObjectID)
+
+  // JobActor is requested to Delete the job
+  case class Delete(jobID: String, userID: Option[BSONObjectID] = None)
+
+  // Job Controller receives a job state change from the SGE or from any other valid source
+  case class JobStateChanged(jobID: String, jobState: JobState)
+
+  case class SetSGEID(jobID: String, sgeID: String)
+
+  // show browser notification
+  case class ShowNotification(notificationType: String, tag: String, title: String, body: String)
+
+  // Job Controller receives push message to update the log
+  case class UpdateLog(jobID: String)
+
+  // forward filewatching task to ws actor
+
+  case class WatchLogFile(job: Job)
+
 }

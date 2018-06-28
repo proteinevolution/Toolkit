@@ -1,31 +1,22 @@
-package actors
+package de.proteinevolution.backend.actors
 
 import java.time.ZonedDateTime
-import javax.inject.{ Inject, Singleton }
 
-import actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
-import actors.JobActor.Delete
 import akka.actor.{ Actor, ActorLogging, Cancellable }
+import de.proteinevolution.auth.models.MailTemplate.OldAccountEmail
+import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
+import de.proteinevolution.db.MongoStore
+import de.proteinevolution.jobs.actors.JobActor.Delete
+import de.proteinevolution.jobs.services.JobActorAccess
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.statistics.{ StatisticsObject, UserStatistic }
 import de.proteinevolution.models.database.users.User
-import de.proteinevolution.db.MongoStore
-import de.proteinevolution.auth.models.MailTemplate.OldAccountEmail
+import javax.inject.{ Inject, Singleton }
 import play.api.libs.mailer.MailerClient
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
-import services.JobActorAccess
 
 import scala.concurrent.ExecutionContext
-
-/**
- * Schedules deletions of old listings in the database as well as statistic entries
- *
- */
-object DatabaseMonitor {
-  object DeleteOldUsers
-  object DeleteOldJobs
-}
 
 @Singleton
 final class DatabaseMonitor @Inject()(
@@ -247,4 +238,12 @@ final class DatabaseMonitor @Inject()(
     case _ =>
     // Not implemented
   }
+}
+
+object DatabaseMonitor {
+
+  case object DeleteOldUsers
+
+  case object DeleteOldJobs
+
 }

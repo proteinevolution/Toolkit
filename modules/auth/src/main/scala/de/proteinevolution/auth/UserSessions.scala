@@ -18,7 +18,7 @@ import scala.util.hashing.MurmurHash3
 @Singleton
 class UserSessions @Inject()(
     mongoStore: MongoStore,
-    @NamedCache("userCache") val userCache: SyncCacheApi,
+    @NamedCache("userCache") userCache: SyncCacheApi,
     locationProvider: LocationProvider
 )(implicit ec: ExecutionContext) {
   private val SID    = "sid"

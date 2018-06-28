@@ -6,7 +6,6 @@ import java.time.ZonedDateTime
 
 import javax.inject.{ Inject, Singleton }
 import de.proteinevolution.models.database.jobs.JobState._
-import actors.JobActor._
 import better.files._
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
@@ -15,13 +14,13 @@ import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.models.search.JobDAO
 import de.proteinevolution.db.MongoStore
-import de.proteinevolution.services.JobIdProvider
+import de.proteinevolution.jobs.actors.JobActor.PrepareJob
+import de.proteinevolution.jobs.services.{ JobActorAccess, JobIdProvider }
 import de.proteinevolution.tel.env.Env
-import play.api.{ Configuration, Logger }
+import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc._
 import reactivemongo.bson.BSONDocument
-import services.JobActorAccess
 
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -35,35 +34,10 @@ final class JobController @Inject()(
     jobDao: JobDAO,
     constants: ConstantsV2,
     cc: ControllerComponents
-)(implicit ec: ExecutionContext, config: Configuration)
+)(implicit ec: ExecutionContext)
     extends ToolkitController(cc) {
 
   private val logger = Logger(this.getClass)
-
-  def loadJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { _ =>
-      // Find the Job in the database
-      mongoStore.selectJob(jobID).map {
-        case Some(job) => Ok(job.cleaned())
-        case None      => NotFound
-      }
-    }
-  }
-
-  def listJobs: Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      mongoStore.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>
-        Ok(Json.toJson(jobs.map(_.cleaned())))
-      }
-    }
-  }
-
-  def startJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.map { _ =>
-      jobActorAccess.sendToJobActor(jobID, CheckIPHash(jobID))
-      Ok(Json.toJson(Json.obj("message" -> "Starting Job...")))
-    }
-  }
 
   def submitJob(toolName: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
@@ -184,14 +158,6 @@ final class JobController @Inject()(
           // No form data - something went wrong.
           Future.successful(Ok(Json.obj("successful" -> false, "code" -> 1, "message" -> "The form was invalid.")))
       }
-    }
-  }
-
-  def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    logger.info("Delete Action in JobController reached")
-    userSessions.getUser.map { user =>
-      jobActorAccess.sendToJobActor(jobID, Delete(jobID, Some(user.userID)))
-      Ok
     }
   }
 

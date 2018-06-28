@@ -11,15 +11,7 @@ key=`date | md5sum | awk '{print $1}'`
 echo $key > ../key
 if [ "$HOSTNAME" = "olt" ] || [ "$HOSTNAME" = "rye" ]; then
 
-# update process log
-updateProcessLog () {
-    until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/updateLog/$JOBID); do
-        printf 'host unreachable\n...waiting to update process log\n'
-        sleep 5
-    done
-}
-
-until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/queued/$JOBID/$key); do
+until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/api/jobs/status/queued/$JOBID/$key); do
     printf 'host unreachable\n...waiting to set job status to queued\n'
     sleep 5
 done
@@ -57,7 +49,7 @@ then
 fi
 
 # Set sge id in the Toolkit
-until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/sge/$JOBID/$SGEID/$key); do
+until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/api/jobs/sge/$JOBID/$SGEID/$key); do
     printf 'host unreachable\n...waiting to retrieve sge id\n'
     sleep 5
 done
