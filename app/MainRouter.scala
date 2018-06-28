@@ -57,7 +57,6 @@ class MainRouter @Inject()(
 
   private lazy val jobRoutes: Routes = {
     case POST(p"/api/job/" ? q"toolName=$toolName")                           => job.submitJob(toolName)
-    case GET(p"/api/job/$jobID/checkHash")                                    => job.checkHash(jobID)
     case GET(p"/api/job/$jobID")                                              => service.getJob(jobID)
     case GET(p"/api/job/result/$jobID/$tool/$panel")                          => service.getResult(jobID, tool, panel)
     case GET(p"/search/check/jobid/$jobID/" ? q_o"resubmitJobID=$resubmitID") => search.checkJobID(jobID, resubmitID)
