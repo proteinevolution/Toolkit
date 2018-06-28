@@ -5,11 +5,10 @@ import java.io.{ FileInputStream, ObjectInputStream }
 import better.files._
 import cats.data.OptionT
 import cats.implicits._
-import de.proteinevolution.db.MongoStore
+import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.jobs.JobState.Done
-import de.proteinevolution.models.search.JobDAO
 import de.proteinevolution.tel.env.Env
 import javax.inject.{ Inject, Singleton }
 import reactivemongo.bson.BSONDocument
@@ -19,17 +18,17 @@ import scala.concurrent.{ ExecutionContext, Future }
 @Singleton
 class JobHashService @Inject()(
     env: Env,
-    mongoStore: MongoStore,
+    jobDao: JobDao,
     constants: ConstantsV2,
-    jobDao: JobDAO
+    hashService: GeneralHashService
 )(implicit ec: ExecutionContext) {
 
   def checkHash(jobID: String): OptionT[Future, Job] = {
     for {
-      job <- OptionT(mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)))
+      job <- OptionT(jobDao.findJob(BSONDocument(Job.JOBID -> jobID)))
       list <- OptionT.liftF(
-        mongoStore.findAndSortJobs(
-          BSONDocument(Job.HASH        -> jobDao.generateJobHash(job, params(jobID), env)),
+        jobDao.findAndSortJobs(
+          BSONDocument(Job.HASH        -> hashService.generateJobHash(job, params(jobID), env)),
           BSONDocument(Job.DATECREATED -> -1)
         )
       )

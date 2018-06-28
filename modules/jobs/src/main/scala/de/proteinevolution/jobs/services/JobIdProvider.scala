@@ -1,6 +1,6 @@
 package de.proteinevolution.jobs.services
 
-import de.proteinevolution.db.MongoStore
+import de.proteinevolution.jobs.dao.JobDao
 import javax.inject.{ Inject, Singleton }
 
 import scala.collection.mutable.ListBuffer
@@ -9,12 +9,12 @@ import scala.util.Random
 
 @Singleton
 class JobIdProvider @Inject()(
-    mongoStore: MongoStore,
+    jobDao: JobDao,
     private var usedIds: ListBuffer[String] = new ListBuffer[String]()
 )(implicit ec: ExecutionContext) {
 
   private def isValid(id: String): Future[Boolean] = {
-    mongoStore.selectJob(id).map(_.isEmpty)
+    jobDao.selectJob(id).map(_.isEmpty)
   }
 
   def provide: String = {

@@ -4,7 +4,7 @@ import cats.data.OptionT
 import cats.implicits._
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.db.MongoStore
+import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.JobHashError
 import de.proteinevolution.jobs.services.JobHashService
 import de.proteinevolution.models.database.jobs.Job
@@ -19,14 +19,14 @@ import scala.concurrent.ExecutionContext
 class JobGetController @Inject()(
     jobHashService: JobHashService,
     userSessions: UserSessions,
-    mongoStore: MongoStore,
+    jobDao: JobDao,
     cc: ControllerComponents
 )(implicit ec: ExecutionContext, config: Configuration)
     extends ToolkitController(cc) {
 
   def listJobs: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
-      mongoStore.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>
+      jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>
         Ok(Json.toJson(jobs.map(_.cleaned())))
       }
     }
@@ -34,7 +34,7 @@ class JobGetController @Inject()(
 
   def loadJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { _ =>
-      mongoStore.selectJob(jobID).map {
+      jobDao.selectJob(jobID).map {
         case Some(job) => Ok(job.cleaned())
         case None      => NotFound
       }

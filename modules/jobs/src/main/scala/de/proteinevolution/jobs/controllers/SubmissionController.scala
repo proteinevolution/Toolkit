@@ -4,8 +4,8 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.db.MongoStore
 import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete }
+import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services.JobActorAccess
 import de.proteinevolution.models.database.jobs.JobState.Done
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
@@ -21,7 +21,7 @@ class SubmissionController @Inject()(
     jobActorAccess: JobActorAccess,
     userSessions: UserSessions,
     cc: ControllerComponents,
-    mongoStore: MongoStore,
+    jobDao: JobDao,
     toolConfig: ToolConfig
 )(implicit ec: ExecutionContext)
     extends ToolkitController(cc) {
@@ -38,13 +38,11 @@ class SubmissionController @Inject()(
   def frontend(toolName: String): Action[AnyContent] = Action.async { implicit request =>
     if (toolConfig.isTool(toolName)) {
       // Add Frontend Job to Database
-      mongoStore
-        .addJobLog(
-          JobEventLog(toolName = toolName.trim.toLowerCase, events = JobEvent(Done, Some(ZonedDateTime.now)) :: Nil)
-        )
-        .map { _ =>
-          NoContent
-        }
+      val jobLog =
+        JobEventLog(toolName = toolName.trim.toLowerCase, events = JobEvent(Done, Some(ZonedDateTime.now)) :: Nil)
+      jobDao.addJobLog(jobLog).map { _ =>
+        NoContent
+      }
     } else {
       Future.successful(BadRequest)
     }
