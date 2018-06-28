@@ -139,7 +139,7 @@
                 if (file) formData.append("file", file);
                 m.request({
                     method: "POST",
-                    url: "/api/job/?toolName=" + tool,
+                    url: "/api/jobs/?toolName=" + tool,
                     data: formData,
                     serialize: function(submissionReturnData) {
                         return submissionReturnData;
@@ -156,6 +156,7 @@
                             JobListComponent.pushJob(jobListComp, true);
                         }
                     } else {
+                        /* TODO handling needs to be reworked since the old controller is gone */
                         console.log("Error while submitting:", submissionReturnData.message);
                         switch(submissionReturnData.code) {
                             case 2:

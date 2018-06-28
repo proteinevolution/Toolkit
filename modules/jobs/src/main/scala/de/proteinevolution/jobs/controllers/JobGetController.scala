@@ -51,7 +51,7 @@ class JobGetController @Inject()(
     }).value.map {
       case Some((latestJobId, dateCreated)) =>
         Ok(Json.obj("jobID" -> latestJobId, "dateCreated" -> dateCreated))
-      case None => NotFound(JobHashError.JobNotFound.msg)
+      case None => NotFound(errors(JobHashError.JobNotFound.msg))
     }
   }
 

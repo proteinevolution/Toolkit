@@ -20,6 +20,7 @@ class JobsRouter @Inject()(
   }
 
   private lazy val submissionRoutes: Routes = {
+    case POST(p"/" ? q"toolName=$toolName")  => submissionController.submitJob(toolName)
     case DELETE(p"/$jobID")                  => submissionController.delete(jobID)
     case POST(p"/start/$jobID")              => submissionController.startJob(jobID)
     case POST(p"/frontend/submit/$toolName") => submissionController.frontend(toolName)
