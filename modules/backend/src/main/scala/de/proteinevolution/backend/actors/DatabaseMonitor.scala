@@ -7,6 +7,7 @@ import de.proteinevolution.auth.models.MailTemplate.OldAccountEmail
 import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.jobs.actors.JobActor.Delete
+import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services.JobActorAccess
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
@@ -21,6 +22,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 final class DatabaseMonitor @Inject()(
     mongoStore: MongoStore,
+    jobDao: JobDao,
     jobActorAccess: JobActorAccess,
     constants: ConstantsV2
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
@@ -192,7 +194,7 @@ final class DatabaseMonitor @Inject()(
     val dateCreated: ZonedDateTime = now.minusDays(constants.jobDeletion.toLong)
     // calculate the date at which it should have been viewed last
     val lastViewedDate: ZonedDateTime = now.minusDays(constants.jobDeletionLastViewed.toLong)
-    mongoStore
+    jobDao
       .findJobs(
         BSONDocument(
           Job.DATEVIEWED -> BSONDocument("$lt" -> BSONDateTime(lastViewedDate.toInstant.toEpochMilli)),

@@ -2,14 +2,15 @@ package controllers
 
 import java.security.MessageDigest
 import java.time.ZonedDateTime
+
 import javax.inject.{ Inject, Singleton }
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.users.User
-import de.proteinevolution.db.MongoStore
 import de.proteinevolution.jobs.actors.JobActor.PrepareJob
+import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services.{ JobActorAccess, JobIdProvider }
 import play.api.Logger
 import play.api.libs.json.Json
@@ -23,7 +24,7 @@ final class JobController @Inject()(
     jobActorAccess: JobActorAccess,
     jobIdProvider: JobIdProvider,
     userSessions: UserSessions,
-    mongoStore: MongoStore,
+    jobDao: JobDao,
     constants: ConstantsV2,
     cc: ControllerComponents
 )(implicit ec: ExecutionContext)
@@ -56,7 +57,7 @@ final class JobController @Inject()(
                 case constants.jobIDVersionOptionPattern(mainJobID, version) =>
                   logger.info(s"[JobController.submitJob] main jobID: $mainJobID version: $version")
                   // Check if the jobID is already used by a different job
-                  mongoStore.selectJob(jobID).map { job =>
+                  jobDao.selectJob(jobID).map { job =>
                     if (job.isDefined) None else Some(jobID)
                   }
                 case _ =>
@@ -111,7 +112,7 @@ final class JobController @Inject()(
               val isFromInstitute = user.getUserData.eMail.matches(".+@tuebingen.mpg.de")
 
               // Add job to database
-              mongoStore.insertJob(job).flatMap {
+              jobDao.insertJob(job).flatMap {
                 case Some(_) =>
                   // Send the job to the jobActor for preparation
                   jobActorAccess.sendToJobActor(jobID, PrepareJob(job, params, startJob = false, isFromInstitute))

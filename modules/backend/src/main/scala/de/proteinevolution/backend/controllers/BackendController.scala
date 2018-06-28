@@ -8,6 +8,7 @@ import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.db.MongoStore
+import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.services.ToolConfig
@@ -23,6 +24,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 final class BackendController @Inject()(
     userSessions: UserSessions,
     mongoStore: MongoStore,
+    jobDao: JobDao,
     toolConfig: ToolConfig,
     @Named("databaseMonitor") databaseMonitor: ActorRef,
     cc: ControllerComponents
@@ -61,7 +63,7 @@ final class BackendController @Inject()(
         // Collect the job events up until the first of the last month
         statsUpdated.flatMap { statistics =>
           if (statistics.lastPushed.compareTo(firstOfLastMonth) < 0) {
-            mongoStore
+            jobDao
               .findJobEventLogs(
                 BSONDocument(
                   JobEventLog.EVENTS ->

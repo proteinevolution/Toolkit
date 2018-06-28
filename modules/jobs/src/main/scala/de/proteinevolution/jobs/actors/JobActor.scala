@@ -10,13 +10,11 @@ import akka.event.LoggingReceive
 import better.files._
 import com.google.inject.assistedinject.Assisted
 import de.proteinevolution.auth.UserSessions
-import de.proteinevolution.db.MongoStore
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.JobState._
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
-import de.proteinevolution.models.search.JobDAO
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
@@ -25,6 +23,9 @@ import de.proteinevolution.tel.execution.{ ExecutionContext, WrapperExecutionFac
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
 import de.proteinevolution.auth.models.MailTemplate.JobFinishedMail
+import de.proteinevolution.db.MongoStore
+import de.proteinevolution.jobs.dao.JobDao
+import de.proteinevolution.jobs.services.GeneralHashService
 import de.proteinevolution.models.cluster.Polling.PolledJobs
 import de.proteinevolution.models.cluster.QStat
 import play.api.Configuration
@@ -39,7 +40,8 @@ import scala.language.postfixOps
 class JobActor @Inject()(
     runscriptManager: RunscriptManager,
     env: Env,
-    val jobDao: JobDAO,
+    hashService: GeneralHashService,
+    jobDao: JobDao,
     mongoStore: MongoStore,
     userSessions: UserSessions,
     wrapperExecutionFactory: WrapperExecutionFactory,
@@ -71,7 +73,7 @@ class JobActor @Inject()(
       case Some(job) => // Everything is fine. Return the job.
         Future.successful(Some(job))
       case None => // Job is not in the current jobs.. try to get it back.
-        mongoStore.findJob(BSONDocument(Job.JOBID -> jobID)).map {
+        jobDao.findJob(BSONDocument(Job.JOBID -> jobID)).map {
           case Some(job) =>
             // Get the job back into the current jobs
             this.currentJobs = this.currentJobs.updated(job.jobID, job)
@@ -141,7 +143,7 @@ class JobActor @Inject()(
 
     // Save Job Event Log to the collection and remove it from the map afterwards
     if (this.currentJobLogs.contains(jobID)) {
-      mongoStore.addJobLog(this.currentJobLogs(jobID))
+      jobDao.addJobLog(this.currentJobLogs(jobID))
       this.currentJobLogs = this.currentJobLogs.filter(_._1 != jobID)
       wasActive = true
     }
@@ -172,7 +174,7 @@ class JobActor @Inject()(
     val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
     foundWatchers.flatten.foreach(_ ! ClearJob(job.jobID))
 
-    mongoStore.eventLogCollection
+    jobDao.eventLogCollection
       .flatMap(
         _.findAndUpdate(
           BSONDocument(JobEventLog.IDDB -> job.mainID),
@@ -191,7 +193,7 @@ class JobActor @Inject()(
       }
 
     // Remove the job from mongoDB collection
-    mongoStore.removeJob(BSONDocument(Job.IDDB -> job.mainID)).foreach { writeResult =>
+    jobDao.removeJob(BSONDocument(Job.IDDB -> job.mainID)).foreach { writeResult =>
       if (writeResult.ok) {
         if (verbose) log.info(s"[JobActor.Delete] Deletion of Job was successful:\n${job.toString()}")
       } else {
@@ -207,7 +209,7 @@ class JobActor @Inject()(
     this.currentJobs = this.currentJobs.updated(job.jobID, job)
 
     // Update job in the database and notify watcher upon completion
-    mongoStore
+    jobDao
       .modifyJob(BSONDocument(Job.IDDB -> job.mainID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
       .map { _ =>
         val jobLog = this.currentJobLogs.get(job.jobID) match {
@@ -333,10 +335,10 @@ class JobActor @Inject()(
             case Some(executionContext) =>
               // Ensure that the jobID is not being hashed
               val params  = executionContext.reloadParams
-              val jobHash = jobDao.generateJobHash(job, params, env)
+              val jobHash = hashService.generateJobHash(job, params, env)
               log.info(s"[JobActor[$jobActorNumber].CheckJobHashes] Job hash: " + jobHash)
               // Find the Jobs in the Database
-              mongoStore
+              jobDao
                 .findAndSortJobs(
                   BSONDocument(Job.HASH        -> jobHash),
                   BSONDocument(Job.DATECREATED -> -1)
@@ -373,7 +375,7 @@ class JobActor @Inject()(
               log.info(
                 s"[JobActor[$jobActorNumber].Delete] jobID $jobID not found in current jobs. Loading job from DB."
               )
-            mongoStore.findJob(BSONDocument(Job.JOBID -> jobID))
+            jobDao.findJob(BSONDocument(Job.JOBID -> jobID))
         }
         .foreach {
           case Some(job) =>
@@ -426,8 +428,8 @@ class JobActor @Inject()(
                   )
                 )
               )
-              mongoStore.countJobs(selector).map { count =>
-                mongoStore.countJobs(selectorDay).map { countDay =>
+              jobDao.countJobs(selector).map { count =>
+                jobDao.countJobs(selectorDay).map { countDay =>
                   log.info(
                     BSONDateTime(
                       ZonedDateTime.now.minusMinutes(constants.maxJobsWithin.toLong).toInstant.toEpochMilli
@@ -460,7 +462,7 @@ class JobActor @Inject()(
               // get the params
               val params = executionContext.reloadParams
               // generate job hash
-              val jobHash = Some(jobDao.generateJobHash(job, params, env))
+              val jobHash = Some(hashService.generateJobHash(job, params, env))
 
               // Set memory allocation on the cluster and let the clusterMonitor define the multiplier.
               // To receive a catchable signal in an SGE job, one must set soft limits
@@ -487,7 +489,7 @@ class JobActor @Inject()(
 
               val clusterData = JobClusterData("", Some(h_vmem), Some(threads), Some(h_rt))
 
-              mongoStore
+              jobDao
                 .modifyJob(
                   BSONDocument(Job.IDDB -> job.mainID),
                   BSONDocument("$set"   -> BSONDocument(Job.CLUSTERDATA -> clusterData, Job.HASH -> jobHash))
@@ -533,7 +535,7 @@ class JobActor @Inject()(
 
     // User Starts watching job
     case AddToWatchlist(jobID, userID) =>
-      val _ = mongoStore
+      val _ = jobDao
         .modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$addToSet" -> BSONDocument(Job.WATCHLIST -> userID)))
         .map {
           case Some(updatedJob) =>
@@ -550,7 +552,7 @@ class JobActor @Inject()(
 
     // User does no longer watch this Job (stays in JobManager)
     case RemoveFromWatchlist(jobID, userID) =>
-      mongoStore
+      jobDao
         .modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
         .foreach {
           case Some(updatedJob) =>
@@ -610,7 +612,7 @@ class JobActor @Inject()(
 
     // Sets the cluster job ID for a job
     case SetSGEID(jobID: String, sgeID: String) =>
-      mongoStore
+      jobDao
         .modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$set" -> BSONDocument(Job.SGEID -> sgeID)))
         .foreach {
           case Some(job) =>

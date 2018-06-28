@@ -7,7 +7,7 @@ import play.api.libs.json.Json
 import javax.inject.{ Inject, Singleton }
 import de.proteinevolution.models.ConstantsV2
 import reactivemongo.bson.BSONDocument
-import de.proteinevolution.db.MongoStore
+import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.services.ToolConfig
 import play.api.{ Configuration, Logger }
 import play.api.mvc._
@@ -17,7 +17,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 @Singleton
 final class Search @Inject()(
     userSessions: UserSessions,
-    mongoStore: MongoStore,
+    jobDao: JobDao,
     toolConfig: ToolConfig,
     constants: ConstantsV2,
     cc: ControllerComponents
@@ -53,19 +53,17 @@ final class Search @Inject()(
       // Find out if the user looks for a certain tool or for a jobID
       if (tools.isEmpty) {
         // Grab Job ID auto completions, as the user is not looking for a tool
-        mongoStore.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))).flatMap { jobs =>
+        jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))).flatMap { jobs =>
           val jobsFiltered = jobs.filter(job => job.ownerID.contains(user.userID))
           if (jobsFiltered.isEmpty) {
-            mongoStore
-              .findJob(BSONDocument(Job.JOBID -> queryString))
-              .map(x => Ok(Json.toJson(List(x.map(_.cleaned())))))
+            jobDao.findJob(BSONDocument(Job.JOBID -> queryString)).map(x => Ok(Json.toJson(List(x.map(_.cleaned())))))
           } else {
             Future.successful(Ok(Json.toJson(jobsFiltered.map(_.cleaned()))))
           }
         }
       } else {
         // Find the Jobs with the matching tool
-        mongoStore
+        jobDao
           .findJobs(
             BSONDocument(Job.OWNERID -> user.userID, Job.TOOL -> BSONDocument("$in" -> tools.map(_.toolNameShort)))
           )
@@ -90,11 +88,10 @@ final class Search @Inject()(
   def get: Action[AnyContent] = Action.async { implicit request =>
     // Retrieve the jobs from the DB
     userSessions.getUser.flatMap { user =>
-      mongoStore
-        .findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false)))
-        .map { jobs =>
+      jobDao.findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false))).map {
+        jobs =>
           NoCache(Ok(Json.toJson(jobs.map(_.jobManagerJob()))))
-        }
+      }
     }
   }
 
@@ -103,7 +100,7 @@ final class Search @Inject()(
    */
   def getIndexPageInfo: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
-      mongoStore
+      jobDao
         .findSortedJob(
           BSONDocument(BSONDocument(Job.DELETION -> BSONDocument("$exists" -> false)),
                        BSONDocument(Job.OWNERID  -> user.userID)),
@@ -146,7 +143,7 @@ final class Search @Inject()(
         logger.info(
           s"[Search.checkJobID] JobID suggestions:${resubmitForJobID.map(a => s"\nOld jobID: $a").getOrElse("")} \nMain part of the jobID: $mainJobID \nCurrent job ID: $newJobID \nSearching for: $jobIDSearch"
         )
-        mongoStore.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> jobIDSearch))).map { jobs =>
+        jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> jobIDSearch))).map { jobs =>
           if (!jobs.map(_.jobID).contains(newJobID)) {
             logger.info(s"[Search.checkJobID] Found no jobs for the jobID $newJobID.")
             Ok(Json.obj("exists" -> false))
