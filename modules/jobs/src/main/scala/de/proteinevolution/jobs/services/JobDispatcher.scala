@@ -12,6 +12,7 @@ import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.users.User
 import javax.inject.{ Inject, Singleton }
+import play.api.Logger
 import play.api.mvc.MultipartFormData
 import play.api.libs.Files
 import reactivemongo.bson.BSONDocument
@@ -26,6 +27,8 @@ class JobDispatcher @Inject()(
     jobActorAccess: JobActorAccess,
     userSessions: UserSessions
 )(implicit ec: ExecutionContext) {
+
+  private val logger = Logger(this.getClass)
 
   def submitJob(
       toolName: String,
@@ -49,6 +52,7 @@ class JobDispatcher @Inject()(
     if (toolName == ToolName.MODELLER.value && user.userConfig.hasMODELLERKey) {
       parts + ("regkey" -> constants.modellerKey)
     }
+    println(parts)
     for {
       jobId <- OptionT.liftF(generateJobId(parts.get("jobID")))
       job   <- generateJob(toolName, jobId, parts, user)
@@ -85,8 +89,10 @@ class JobDispatcher @Inject()(
       }
       .value
       .map {
-        case Some(_) => jobIdProvider.provide
-        case None    => jobIdOpt.getOrElse(jobIdProvider.provide)
+        case Some(_) =>
+          logger.info("job id found")
+          jobIdProvider.provide
+        case None => jobIdOpt.getOrElse(jobIdProvider.provide)
       }
   }
 
