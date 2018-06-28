@@ -3,11 +3,12 @@ package de.proteinevolution.jobs.services
 import java.security.MessageDigest
 import java.time.ZonedDateTime
 
-import cats.data.OptionT
+import cats.data.EitherT
 import cats.implicits._
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.jobs.actors.JobActor.PrepareJob
 import de.proteinevolution.jobs.dao.JobDao
+import de.proteinevolution.jobs.models.JobSubmitError
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.users.User
@@ -34,7 +35,7 @@ class JobDispatcher @Inject()(
       toolName: String,
       form: MultipartFormData[Files.TemporaryFile],
       user: User
-  ): OptionT[Future, Job] = {
+  ): EitherT[Future, JobSubmitError, Job] = {
     val parts = form.dataParts.mapValues(_.mkString(constants.formMultiValueSeparator)) - "file"
     form.file("file").foreach { file =>
       val source = scala.io.Source.fromFile(file.ref.path.toFile)
@@ -52,12 +53,12 @@ class JobDispatcher @Inject()(
     if (toolName == ToolName.MODELLER.value && user.userConfig.hasMODELLERKey) {
       parts + ("regkey" -> constants.modellerKey)
     }
-    println(parts)
     for {
-      jobId <- OptionT.liftF(generateJobId(parts.get("jobID")))
-      job   <- generateJob(toolName, jobId, parts, user)
-      _     <- OptionT(jobDao.insertJob(job))
-      _     <- OptionT(assignJob(user, job))
+      jobId     <- EitherT.fromOption[Future](parts.get("jobID"), JobSubmitError.Undefined)
+      checkedId <- EitherT(generateJobId(jobId))
+      job       <- EitherT.fromOption[Future](generateJob(toolName, checkedId, parts, user), JobSubmitError.Undefined)
+      _         <- EitherT.liftF(jobDao.insertJob(job))
+      _         <- EitherT.liftF(assignJob(user, job))
     } yield {
       val isFromInstitute = user.getUserData.eMail.matches(".+@tuebingen.mpg.de")
       jobActorAccess.sendToJobActor(jobId, PrepareJob(job, parts, startJob = false, isFromInstitute))
@@ -78,22 +79,16 @@ class JobDispatcher @Inject()(
     }
   }
 
-  private def generateJobId(jobIdOpt: Option[String]): Future[String] = {
-    (for {
-      jobId <- OptionT.fromOption[Future](jobIdOpt)
-      if isJobId(jobId)
-    } yield {
-      jobId
-    }).flatMapF { jobId =>
-        jobDao.selectJob(jobId)
+  private def generateJobId(jobId: String): Future[Either[JobSubmitError, String]] = {
+    if (!isJobId(jobId)) {
+      logger.warn("job id is invalid")
+      Future.successful(Left(JobSubmitError.InvalidJobID))
+    } else {
+      jobDao.selectJob(jobId).map {
+        case Some(_) => Right(jobIdProvider.provide)
+        case None    => Right(jobId)
       }
-      .value
-      .map {
-        case Some(_) =>
-          logger.info("job id found")
-          jobIdProvider.provide
-        case None => jobIdOpt.getOrElse(jobIdProvider.provide)
-      }
+    }
   }
 
   private def generateJob(
@@ -101,9 +96,9 @@ class JobDispatcher @Inject()(
       jobID: String,
       form: Map[String, String],
       user: User
-  ): OptionT[Future, Job] = {
+  ): Option[Job] = {
     val now = ZonedDateTime.now
-    OptionT.fromOption[Future](user.userData.map(_ => now.plusDays(constants.jobDeletion.toLong))).map { dateDeletion =>
+    user.userData.map(_ => now.plusDays(constants.jobDeletion.toLong)).map { dateDeletion =>
       new Job(
         jobID = jobID,
         ownerID = Some(user.userID),

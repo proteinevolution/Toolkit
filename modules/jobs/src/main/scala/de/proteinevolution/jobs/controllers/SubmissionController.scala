@@ -10,7 +10,7 @@ import de.proteinevolution.jobs.services.{ JobActorAccess, JobDispatcher }
 import de.proteinevolution.models.database.jobs.JobState.Done
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.services.ToolConfig
-import javax.inject.Inject
+import javax.inject.{ Inject, Singleton }
 import play.api.Logger
 import play.api.libs.Files
 import play.api.libs.json.Json
@@ -18,6 +18,7 @@ import play.api.mvc.{ Action, AnyContent, ControllerComponents, MultipartFormDat
 
 import scala.concurrent.{ ExecutionContext, Future }
 
+@Singleton
 class SubmissionController @Inject()(
     jobActorAccess: JobActorAccess,
     userSessions: UserSessions,
@@ -63,10 +64,10 @@ class SubmissionController @Inject()(
       userSessions.getUser.flatMap { user =>
         val form = request.body
         jobDispatcher.submitJob(toolName, form, user).value.map {
-          case Some(job) =>
+          case Right(job) =>
             Ok(Json.obj("successful" -> true, "code" -> 0, "message" -> "Submission successful.", "jobID" -> job.jobID))
               .withSession(userSessions.sessionCookie(request, user.sessionID.get))
-          case None => BadRequest
+          case Left(error) => BadRequest(errors(error.msg))
         }
       }
     }
