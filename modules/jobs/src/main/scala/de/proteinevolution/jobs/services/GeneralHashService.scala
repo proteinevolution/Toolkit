@@ -1,19 +1,19 @@
-package de.proteinevolution.models.search
+package de.proteinevolution.jobs.services
 
-import javax.inject.{ Inject, Singleton }
 import better.files._
 import com.typesafe.config.Config
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.parsers.FASTA
 import de.proteinevolution.tel.RunscriptPathProvider
 import de.proteinevolution.tel.env.Env
-import play.api.{ Configuration, Logger }
 import de.proteinevolution.tools.FNV
+import javax.inject.{ Inject, Singleton }
+import play.api.{ Configuration, Logger }
 
 import scala.util.hashing.MurmurHash3
 
 @Singleton
-final class JobDAO @Inject()(runscriptPathProvider: RunscriptPathProvider, config: Configuration) {
+final class GeneralHashService @Inject()(runscriptPathProvider: RunscriptPathProvider, config: Configuration) {
 
   val logger = Logger(this.getClass)
 
