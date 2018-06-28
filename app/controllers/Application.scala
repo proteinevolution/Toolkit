@@ -8,7 +8,7 @@ import akka.actor.{ ActorSystem, Props }
 import akka.stream.Materializer
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
-import models.tools.ToolFactory
+import de.proteinevolution.services.ToolConfig
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
 import play.api.libs.json.{ JsValue, Json }
@@ -24,7 +24,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 final class Application @Inject()(
     webJarsUtil: WebJarsUtil,
     webSocketActorFactory: WebSocketActor.Factory,
-    toolFactory: ToolFactory,
+    toolConfig: ToolConfig,
     userSessions: UserSessions,
     env: Env,
     cc: ControllerComponents,
@@ -109,7 +109,7 @@ final class Application @Inject()(
       Ok(
         views.html.main(assetsFinder,
                         webJarsUtil,
-                        toolFactory.values.values.toSeq.sortBy(_.toolNameLong),
+                        toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                         message,
                         "",
                         environment)
@@ -155,6 +155,10 @@ final class Application @Inject()(
     Ok(JavaScriptReverseRouter("jsRoutes")(JavaScriptReverseRoute("controllers.Application.ws", callBack)))
       .as("text/javascript")
       .withHeaders(CACHE_CONTROL -> "max-age=31536000")
+  }
+
+  def recentUpdates = Action {
+    Ok(views.html.elements.recentupdates())
   }
 
 }

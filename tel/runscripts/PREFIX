@@ -28,7 +28,7 @@ function sig_handler () {
         fi
     fi
 
-    until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/error/%jobid.content/$key); do
+    until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/api/jobs/status/error/%jobid.content/$key); do
     printf 'host unreachable\n...waiting to set job status to error\n'
     sleep 5
     done
@@ -49,7 +49,7 @@ function sig_handler () {
     exit 0
 }
 
-until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/jobs/running/%jobid.content/$key); do
+until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/api/jobs/status/running/%jobid.content/$key); do
     printf 'host unreachable\n...waiting to set job status to running\n'
     sleep 5
 done

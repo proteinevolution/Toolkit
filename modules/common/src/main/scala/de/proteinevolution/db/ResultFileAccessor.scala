@@ -15,7 +15,7 @@ import scala.concurrent.duration._
 @Singleton
 final class ResultFileAccessor @Inject()(
     constants: ConstantsV2,
-    @NamedCache("resultCache") implicit val resultCache: AsyncCacheApi
+    @NamedCache("resultCache") resultCache: AsyncCacheApi
 )(implicit ec: ExecutionContext) {
 
   private val logger = Logger(this.getClass)

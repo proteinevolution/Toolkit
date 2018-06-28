@@ -36,7 +36,7 @@ window.Toolkit = {
     controller: function(args : any) {
         currentRoute = args.isJob ? "jobs" : "tools";
         let job : any, jobID : string, toolname : string, viewComponent : any;
-        const loadJobRoute = "/api/job/load/";
+        const loadJobRoute = "/api/jobs/load/";
         if (args.isJob) {
             jobID = m.route.param("jobID");
             Toolkit.currentJobID = jobID;

@@ -72,7 +72,7 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
     jQuery
       .ajax(
         js.Dictionary(
-            "url" -> s"/forward/modal/$toolName/$newModalType"
+            "url" -> s"/results/forward/modal/$toolName/$newModalType"
           )
           .asInstanceOf[JQueryAjaxSettings]
       )

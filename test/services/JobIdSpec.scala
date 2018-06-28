@@ -1,10 +1,10 @@
 package services
 
 import de.proteinevolution.db.MongoStore
-import de.proteinevolution.services.JobIdProvider
 import org.scalatest._
 import org.scalatest.mockito.MockitoSugar
 import com.softwaremill.macwire._
+import de.proteinevolution.jobs.services.JobIdProvider
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import scala.concurrent.ExecutionContext.Implicits.global

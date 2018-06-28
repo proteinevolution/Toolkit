@@ -27,7 +27,7 @@ const JobPendingComponent = {
                     config : enabled,
                     onclick : function(e : any){
                         e.preventDefault();
-                        m.request({method: "POST", url: "/api/job/" + args.job().jobID + "/start" })
+                        m.request({method: "POST", url: "/api/jobs/start/" + args.job().jobID })
                     }
                 }, "Start job anyway"),
                 m("button",{ "class" : "hashPrompt button submitJob",

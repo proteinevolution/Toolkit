@@ -1,7 +1,8 @@
-package de.proteinevolution.services
+package de.proteinevolution.jobs.services
 
-import javax.inject.{ Inject, Singleton }
 import de.proteinevolution.db.MongoStore
+import javax.inject.{ Inject, Singleton }
+
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.util.Random
