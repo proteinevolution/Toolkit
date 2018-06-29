@@ -54,22 +54,25 @@ class JobDispatcher @Inject()(
       parts + ("regkey" -> constants.modellerKey)
     }
     for {
-      jobId     <- EitherT.fromOption[Future](parts.get("jobID"), JobSubmitError.Undefined)
-      checkedId <- EitherT(generateJobId(jobId))
-      job       <- EitherT.fromOption[Future](generateJob(toolName, checkedId, parts, user), JobSubmitError.Undefined)
-      _         <- EitherT.liftF(jobDao.insertJob(job))
-      _         <- EitherT.liftF(assignJob(user, job))
+      generatedId <- generateJobId(parts)
+      _           <- validateJobId(generatedId)
+      _           <- EitherT(checkNotAlreadyTaken(generatedId))
     } yield {
+      val job             = generateJob(toolName, generatedId, parts, user)
       val isFromInstitute = user.getUserData.eMail.matches(".+@tuebingen.mpg.de")
-      jobActorAccess.sendToJobActor(jobId, PrepareJob(job, parts, startJob = false, isFromInstitute))
-      jobIdProvider.trash(jobId)
+      jobActorAccess.sendToJobActor(generatedId, PrepareJob(job, parts, startJob = false, isFromInstitute))
+      jobIdProvider.trash(generatedId)
+      jobDao.insertJob(job)
+      assignJob(user, job)
       job
     }
   }
 
   private def assignJob(user: User, job: Job): Future[Option[User]] = {
-    userSessions.modifyUserWithCache(BSONDocument(User.IDDB   -> user.userID),
-                                     BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> job.jobID)))
+    userSessions.modifyUserWithCache(
+      BSONDocument(User.IDDB   -> user.userID),
+      BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> job.jobID))
+    )
   }
 
   private def isJobId(id: String): Boolean = {
@@ -79,15 +82,27 @@ class JobDispatcher @Inject()(
     }
   }
 
-  private def generateJobId(jobId: String): Future[Either[JobSubmitError, String]] = {
+  private def generateJobId(parts: Map[String, String]): EitherT[Future, JobSubmitError, String] = {
+    if (parts.get("jobID").isEmpty) {
+      EitherT.rightT[Future, JobSubmitError](jobIdProvider.provide)
+    } else {
+      EitherT.rightT[Future, JobSubmitError](parts("jobID"))
+    }
+  }
+
+  private def validateJobId(jobId: String): EitherT[Future, JobSubmitError, Boolean] = {
     if (!isJobId(jobId)) {
       logger.warn("job id is invalid")
-      Future.successful(Left(JobSubmitError.InvalidJobID))
+      EitherT.leftT[Future, Boolean](JobSubmitError.InvalidJobID)
     } else {
-      jobDao.selectJob(jobId).map {
-        case Some(_) => Right(jobIdProvider.provide)
-        case None    => Right(jobId)
-      }
+      EitherT.rightT[Future, JobSubmitError](true)
+    }
+  }
+
+  private def checkNotAlreadyTaken(jobId: String): Future[Either[JobSubmitError, Boolean]] = {
+    jobDao.selectJob(jobId).map {
+      case Some(_) => Left(JobSubmitError.AlreadyTaken)
+      case None    => Right(true)
     }
   }
 
@@ -96,23 +111,22 @@ class JobDispatcher @Inject()(
       jobID: String,
       form: Map[String, String],
       user: User
-  ): Option[Job] = {
-    val now = ZonedDateTime.now
-    user.userData.map(_ => now.plusDays(constants.jobDeletion.toLong)).map { dateDeletion =>
-      new Job(
-        jobID = jobID,
-        ownerID = Some(user.userID),
-        isPublic = form.get("public").isDefined || user.accountType == User.NORMALUSER,
-        emailUpdate = toBoolean(form.get("emailUpdate")),
-        tool = toolName,
-        watchList = List(user.userID),
-        dateCreated = Some(now),
-        dateUpdated = Some(now),
-        dateViewed = Some(now),
-        dateDeletion = Some(dateDeletion),
-        IPHash = Some(MessageDigest.getInstance("MD5").digest(user.sessionData.head.ip.getBytes).mkString)
-      )
-    }
+  ): Job = {
+    val now          = ZonedDateTime.now
+    val dateDeletion = user.userData.map(_ => now.plusDays(constants.jobDeletion.toLong))
+    new Job(
+      jobID = jobID,
+      ownerID = Some(user.userID),
+      isPublic = form.get("public").isDefined || user.accountType == User.NORMALUSER,
+      emailUpdate = toBoolean(form.get("emailUpdate")),
+      tool = toolName,
+      watchList = List(user.userID),
+      dateCreated = Some(now),
+      dateUpdated = Some(now),
+      dateViewed = Some(now),
+      dateDeletion = dateDeletion,
+      IPHash = Some(MessageDigest.getInstance("MD5").digest(user.sessionData.head.ip.getBytes).mkString)
+    )
   }
 
   private def toBoolean(s: Option[String]): Boolean = {
