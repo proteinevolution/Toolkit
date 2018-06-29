@@ -6,7 +6,7 @@ window.JobManager = {
     dataTableLoader: function () {
         return function (elem: any, isInit: boolean) {
             if (!isInit) {
-                m.request({"url": "jobs", "method": "GET", background: true})
+                m.request({"url": "/api/jobs/manager/jobs", "method": "GET", background: true})
                     .then(function(response){
                         JobManager.data = response;
                         JobManager.table = $('#jobManagerTable').dataTable({
@@ -48,8 +48,6 @@ window.JobManager = {
                                         }
                                         let status = a[job[0].status];
                                         $(td).addClass(status);
-
-
                                     },
                                 },
                                 {
