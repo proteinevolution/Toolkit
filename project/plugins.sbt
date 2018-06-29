@@ -8,7 +8,7 @@ addSbtPlugin("org.irundaia.sbt" % "sbt-sassify" % "1.4.11")
 
 addSbtPlugin("com.vmunier" % "sbt-web-scalajs" % "1.0.7")
 
-addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.23")
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.24")
 
 addSbtPlugin("com.arpnetworking" % "sbt-typescript" % "0.4.2")
 
