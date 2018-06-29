@@ -38,7 +38,7 @@ class JobDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit 
   }
 
   def removeJob(selector: BSONDocument): Future[WriteResult] = {
-    jobCollection.flatMap(_.remove(selector))
+    jobCollection.flatMap(_.delete().one(selector))
   }
 
   def findAndSortJobs(selector: BSONDocument, sort: BSONDocument): Future[List[Job]] = {
