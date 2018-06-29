@@ -25,6 +25,16 @@ class JobGetController @Inject()(
 )(implicit ec: ExecutionContext, config: Configuration)
     extends ToolkitController(cc) {
 
+  def jobManagerListJobs: Action[AnyContent] = Action.async { implicit request =>
+    // Retrieve the jobs from the DB
+    userSessions.getUser.flatMap { user =>
+      jobDao.findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false))).map {
+        jobs =>
+          NoCache(Ok(Json.toJson(jobs.map(_.jobManagerJob()))))
+      }
+    }
+  }
+
   def listJobs: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>

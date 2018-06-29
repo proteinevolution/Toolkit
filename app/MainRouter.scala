@@ -5,6 +5,7 @@ import de.proteinevolution.cluster.ClusterRouter
 import de.proteinevolution.help.HelpRouter
 import de.proteinevolution.jobs.JobsRouter
 import de.proteinevolution.results.ResultsRouter
+import de.proteinevolution.search.SearchRouter
 import javax.inject.{ Inject, Singleton }
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
@@ -24,7 +25,8 @@ class MainRouter @Inject()(
     clusterRouter: ClusterRouter,
     helpRouter: HelpRouter,
     backendRouter: BackendRouter,
-    jobsRouter: JobsRouter
+    jobsRouter: JobsRouter,
+    searchRouter: SearchRouter
 ) extends SimpleRouter {
 
   private lazy val mainRoutes: Routes = {
@@ -37,11 +39,6 @@ class MainRouter @Inject()(
     case GET(p"/buildinfo")           => uptime.buildInfo
     case GET(p"/assets/$file*")       => assets.versioned(path = "/public", file = file)
     case GET(p"/static/get/$static")  => service.static(static)
-    case GET(p"/jobs")                => search.get // TODO in use?
-    case GET(p"/index/page/info")     => search.getIndexPageInfo
-    case GET(p"/tool/list")           => search.getToolList
-    case GET(p"/suggest/$jobID")      => search.autoComplete(jobID)
-    case GET(p"/check/tool/$tool")    => search.existsTool(tool)
     case GET(p"/robots.txt")          => controller.robots
     case GET(p"/$static")             => controller.static(static)
     case GET(p"/api/tools/$toolName") => service.getTool(toolName)
@@ -70,6 +67,7 @@ class MainRouter @Inject()(
       .orElse(authRoutes)
       .orElse(jobRoutes)
       .orElse(uiRoutes)
+      .orElse(searchRouter.withPrefix("/search").routes)
       .orElse(jobsRouter.withPrefix("/api/jobs").routes)
       .orElse(backendRouter.withPrefix("/backend").routes)
       .orElse(helpRouter.withPrefix("/help").routes)
