@@ -8,7 +8,7 @@ const foundationConfig = function(elem: any, isInit: boolean): any {
 let bloodHoundConfig = {
     engine: new Bloodhound({
         remote: {
-            url: "/suggest/%QUERY%",
+            url: "/search/suggest/%QUERY%",
             wildcard: "%QUERY%"
         },
         datumTokenizer: Bloodhound.tokenizers.whitespace("q"),
@@ -18,7 +18,7 @@ let bloodHoundConfig = {
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace("long"),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         prefetch: {
-            url: "/tool/list"
+            url: "/search/tool/list"
         }
     })
 };

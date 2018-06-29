@@ -1,6 +1,5 @@
 package controllers
 
-import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.models.database.jobs.Job
 import play.api.libs.json.Json
@@ -8,109 +7,20 @@ import javax.inject.{ Inject, Singleton }
 import de.proteinevolution.models.ConstantsV2
 import reactivemongo.bson.BSONDocument
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.services.ToolConfig
-import play.api.{ Configuration, Logger }
+import play.api.Logger
 import play.api.mvc._
 
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class Search @Inject()(
-    userSessions: UserSessions,
     jobDao: JobDao,
-    toolConfig: ToolConfig,
     constants: ConstantsV2,
     cc: ControllerComponents
-)(implicit ec: ExecutionContext, config: Configuration)
+)(implicit ec: ExecutionContext)
     extends ToolkitController(cc) {
 
   private val logger = Logger(this.getClass)
-
-  def getToolList: Action[AnyContent] = Action {
-    Ok(
-      Json.toJson(
-        toolConfig.values.values
-          .filterNot(_.toolNameShort == "hhpred_manual")
-          .map(a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort))
-      )
-    )
-  }
-
-  /**
-   * fetches data for a given query
-   *
-   * if no tool is found for a given query,
-   * it looks for jobs which belong to the current user.
-   * only jobIDs that belong to the user are autocompleted
-   */
-  def autoComplete(queryString_ : String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      val queryString = queryString_.trim()
-      val tools: List[de.proteinevolution.models.Tool] = toolConfig.values.values
-        .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
-        .filter(tool => tool.toolNameShort != "hhpred_manual")
-        .toList
-      // Find out if the user looks for a certain tool or for a jobID
-      if (tools.isEmpty) {
-        // Grab Job ID auto completions, as the user is not looking for a tool
-        jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))).flatMap { jobs =>
-          val jobsFiltered = jobs.filter(job => job.ownerID.contains(user.userID))
-          if (jobsFiltered.isEmpty) {
-            jobDao.findJob(BSONDocument(Job.JOBID -> queryString)).map(x => Ok(Json.toJson(List(x.map(_.cleaned())))))
-          } else {
-            Future.successful(Ok(Json.toJson(jobsFiltered.map(_.cleaned()))))
-          }
-        }
-      } else {
-        // Find the Jobs with the matching tool
-        jobDao
-          .findJobs(
-            BSONDocument(Job.OWNERID -> user.userID, Job.TOOL -> BSONDocument("$in" -> tools.map(_.toolNameShort)))
-          )
-          .map { jobs =>
-            jobs.map(_.cleaned())
-          }
-          .map(jobJs => Ok(Json.toJson(jobJs)))
-      }
-    }
-  }
-
-  def existsTool(queryString: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.map { _ =>
-      if (toolConfig.isTool(queryString)) {
-        Ok(Json.toJson(true))
-      } else {
-        NotFound
-      }
-    }
-  }
-
-  def get: Action[AnyContent] = Action.async { implicit request =>
-    // Retrieve the jobs from the DB
-    userSessions.getUser.flatMap { user =>
-      jobDao.findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false))).map {
-        jobs =>
-          NoCache(Ok(Json.toJson(jobs.map(_.jobManagerJob()))))
-      }
-    }
-  }
-
-  /**
-   * Returns a json object containing both the last updated job and the most recent total number of jobs.
-   */
-  def getIndexPageInfo: Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      jobDao
-        .findSortedJob(
-          BSONDocument(BSONDocument(Job.DELETION -> BSONDocument("$exists" -> false)),
-                       BSONDocument(Job.OWNERID  -> user.userID)),
-          BSONDocument(Job.DATEUPDATED -> -1)
-        )
-        .map { lastJob =>
-          Ok(Json.obj("lastJob" -> lastJob.map(_.cleaned())))
-        }
-    }
-  }
 
   /**
    * Looks for a jobID in the DB and checks if it is in use
