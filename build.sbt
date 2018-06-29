@@ -163,6 +163,7 @@ lazy val client = (project in file("modules/client"))
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
   .dependsOn(commonJS)
   .settings(
+    name := "de.proteinevolution.client",
     Settings.sjsCompileSettings,
     scalaJSUseMainModuleInitializer := true,
     scalacOptions += "-P:scalajs:sjsDefinedByDefault",
