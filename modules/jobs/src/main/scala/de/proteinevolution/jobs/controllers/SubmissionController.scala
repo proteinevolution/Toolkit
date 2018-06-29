@@ -6,20 +6,23 @@ import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete }
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.services.JobActorAccess
+import de.proteinevolution.jobs.services.{ JobActorAccess, JobDispatcher }
 import de.proteinevolution.models.database.jobs.JobState.Done
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.services.ToolConfig
-import javax.inject.Inject
+import javax.inject.{ Inject, Singleton }
 import play.api.Logger
+import play.api.libs.Files
 import play.api.libs.json.Json
-import play.api.mvc.{ Action, AnyContent, ControllerComponents }
+import play.api.mvc.{ Action, AnyContent, ControllerComponents, MultipartFormData }
 
 import scala.concurrent.{ ExecutionContext, Future }
 
+@Singleton
 class SubmissionController @Inject()(
     jobActorAccess: JobActorAccess,
     userSessions: UserSessions,
+    jobDispatcher: JobDispatcher,
     cc: ControllerComponents,
     jobDao: JobDao,
     toolConfig: ToolConfig
@@ -52,8 +55,21 @@ class SubmissionController @Inject()(
     logger.info("Delete Action in JobController reached")
     userSessions.getUser.map { user =>
       jobActorAccess.sendToJobActor(jobID, Delete(jobID, Some(user.userID)))
-      Ok
+      NoContent
     }
   }
+
+  def submitJob(toolName: String): Action[MultipartFormData[Files.TemporaryFile]] =
+    Action(parse.multipartFormData).async { implicit request =>
+      userSessions.getUser.flatMap { user =>
+        val form = request.body
+        jobDispatcher.submitJob(toolName, form, user).value.map {
+          case Right(job) =>
+            Ok(Json.obj("successful" -> true, "code" -> 0, "message" -> "Submission successful.", "jobID" -> job.jobID))
+              .withSession(userSessions.sessionCookie(request, user.sessionID.get))
+          case Left(error) => BadRequest(errors(error.msg))
+        }
+      }
+    }
 
 }

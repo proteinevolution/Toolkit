@@ -8,7 +8,7 @@ import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.JobHashError
 import de.proteinevolution.jobs.services.JobHashService
 import de.proteinevolution.models.database.jobs.Job
-import javax.inject.Inject
+import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
@@ -16,6 +16,7 @@ import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext
 
+@Singleton
 class JobGetController @Inject()(
     jobHashService: JobHashService,
     userSessions: UserSessions,
@@ -51,7 +52,7 @@ class JobGetController @Inject()(
     }).value.map {
       case Some((latestJobId, dateCreated)) =>
         Ok(Json.obj("jobID" -> latestJobId, "dateCreated" -> dateCreated))
-      case None => NotFound(JobHashError.JobNotFound.msg)
+      case None => NotFound(errors(JobHashError.JobNotFound.msg))
     }
   }
 

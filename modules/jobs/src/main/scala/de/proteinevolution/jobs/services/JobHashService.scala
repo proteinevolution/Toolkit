@@ -24,7 +24,7 @@ class JobHashService @Inject()(
 )(implicit ec: ExecutionContext) {
 
   def checkHash(jobID: String): OptionT[Future, Job] = {
-    for {
+    (for {
       job <- OptionT(jobDao.findJob(BSONDocument(Job.JOBID -> jobID)))
       list <- OptionT.liftF(
         jobDao.findAndSortJobs(
@@ -34,8 +34,8 @@ class JobHashService @Inject()(
       )
     } yield {
       list.find(j => (j.isPublic || j.ownerID == job.ownerID) && j.status == Done)
-    }
-  }.flatMap(OptionT.fromOption(_))
+    }).flatMap(OptionT.fromOption(_))
+  }
 
   private def params(jobID: String): Map[String, String] = {
     val ois = new ObjectInputStream(
