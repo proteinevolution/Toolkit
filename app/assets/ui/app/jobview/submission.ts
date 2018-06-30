@@ -48,7 +48,7 @@
     checkJobIDWithRequest : function () {
         m.request({
             method: "GET",
-            url: "/search/check/jobid/"
+            url: "/api/jobs/check/jobid/"
                 + JobSubmissionComponent.currentJobID
                 + "/?resubmitJobID="
                 + JobSubmissionComponent.oldJobID

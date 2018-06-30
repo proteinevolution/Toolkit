@@ -62,11 +62,11 @@ class ProcessController @Inject()(
         case "alnEval" | "evalFull" => (json \ "evalue").as[String]
         case "aln" | "full"         => (json \ "checkboxes").as[List[Int]].mkString("\n")
       }
-      kleisliProvider
-        .resK(jobID)
+      kleisliProvider.resK
+        .run(jobID)
         .flatMap {
           case Some(jsValue) =>
-            kleisliProvider.toolK(jobID).map {
+            kleisliProvider.toolK.run(jobID).map {
               case HHBLITS =>
                 (HHBLITS, resultContext.hhblits.parseResult(jsValue))
               case HHPRED =>
