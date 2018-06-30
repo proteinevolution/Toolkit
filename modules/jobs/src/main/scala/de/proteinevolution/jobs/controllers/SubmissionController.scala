@@ -6,7 +6,7 @@ import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete }
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.services.{ JobActorAccess, JobDispatcher }
+import de.proteinevolution.jobs.services.{ JobActorAccess, JobDispatcher, JobResubmitService }
 import de.proteinevolution.models.database.jobs.JobState.Done
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.services.ToolConfig
@@ -25,7 +25,8 @@ class SubmissionController @Inject()(
     jobDispatcher: JobDispatcher,
     cc: ControllerComponents,
     jobDao: JobDao,
-    toolConfig: ToolConfig
+    toolConfig: ToolConfig,
+    jobResubmitService: JobResubmitService
 )(implicit ec: ExecutionContext)
     extends ToolkitController(cc) {
 
@@ -71,5 +72,10 @@ class SubmissionController @Inject()(
         }
       }
     }
+
+  def resubmitJob(newJobID: String, resubmitForJobID: Option[String]): Action[AnyContent] = Action.async {
+    implicit request =>
+      jobResubmitService.resubmit(newJobID, resubmitForJobID).map(resubmitData => Ok(Json.toJson(resubmitData)))
+  }
 
 }
