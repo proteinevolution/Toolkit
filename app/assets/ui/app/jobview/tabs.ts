@@ -1,4 +1,4 @@
-declare var onCollapse : any, onFullscreenToggle : any, onExpand : any, setViewport : any, onCollapsescreen : any;
+declare var onCollapse : any, onFullscreenToggle : any, onExpand : any, setViewport : any, onCollapsescreen : any, ConfirmService: any;
 
 const JobTabsComponent = {
     model: function() {
@@ -101,13 +101,12 @@ const JobTabsComponent = {
                 }
             }).bind(mo),
             "delete": function() {
-                let jobID;
-                jobID = this.job().jobID;
-                if (confirm("Do you really want to delete this Job (ID: " + jobID + ")")) {
+                let jobID = this.job().jobID;
+                ConfirmService.confirm("Do you really want to delete this Job (ID: " + jobID + ")?", function() {
                     console.log("Delete for job " + jobID + " clicked");
                     LiveTable.updateJobInfo();
-                    return JobListComponent.removeJob(jobID, true, true);
-                }
+                    JobListComponent.removeJob(jobID, true, true);
+                })
             }
         };
     },
