@@ -129,10 +129,6 @@ window.JobListComponent = {
         }
         JobListComponent.list.map(function(job: any, idx: number) {
             if (job.jobID === jobID) {
-                if (jobID === JobListComponent.selectedJobID) {
-                    JobListComponent.selectedJobID = null;
-                    m.route("/jobmanager");
-                }
                 JobListComponent.list[idx] = null;
                 JobListComponent.list.splice(idx, 1);
                 if (messageServer) {
@@ -144,6 +140,10 @@ window.JobListComponent = {
                     else {
                         ws.send({"type": "ClearJob", "jobIDs": [job.jobID]});
                     }
+                }
+                if (jobID === JobListComponent.selectedJobID) {
+                    JobListComponent.selectedJobID = null;
+                    m.route("/jobmanager");
                 }
             }
         });
