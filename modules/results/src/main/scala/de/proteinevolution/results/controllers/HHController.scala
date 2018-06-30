@@ -30,11 +30,11 @@ class HHController @Inject()(
     val start   = (json \ "start").as[Int]
     val end     = (json \ "end").as[Int]
     val wrapped = (json \ "wrapped").as[Boolean]
-    kleisliProvider
-      .resK(jobID)
+    kleisliProvider.resK
+      .run(jobID)
       .flatMap {
         case Some(jsValue) =>
-          kleisliProvider.toolK(jobID).map {
+          kleisliProvider.toolK.run(jobID).map {
             case HHBLITS =>
               (resultCtx.hhblits.parseResult(jsValue),
                (hsp: HSP) => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped, jobID))
@@ -76,11 +76,11 @@ class HHController @Inject()(
       request.getQueryString("order[0][column]").getOrElse("1").toInt,
       request.getQueryString("order[0][dir]").getOrElse("asc")
     )
-    kleisliProvider
-      .resK(jobID)
+    kleisliProvider.resK
+      .run(jobID)
       .flatMap {
         case Some(jsValue) =>
-          kleisliProvider.toolK(jobID).map {
+          kleisliProvider.toolK.run(jobID).map {
             case HHBLITS =>
               (resultCtx.hhblits.parseResult(jsValue),
                dtService.getHitsByKeyWord[HHBlitsHSP](resultCtx.hhblits.parseResult(jsValue), params))
