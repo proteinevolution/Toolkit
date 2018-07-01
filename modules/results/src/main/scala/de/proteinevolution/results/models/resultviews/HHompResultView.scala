@@ -6,6 +6,8 @@ import de.proteinevolution.results.results.HHomp
 import de.proteinevolution.services.ToolConfig
 import play.api.libs.json.JsValue
 
+import scala.collection.immutable.ListMap
+
 case class HHompResultView(
     jobId: String,
     result: JsValue,
@@ -14,7 +16,7 @@ case class HHompResultView(
     toolConfig: ToolConfig
 ) extends ResultView {
 
-  override lazy val tabs = Map(
+  override lazy val tabs = ListMap(
     ResultViews.RESULTS ->
     views.html.resultpanels.hhomp.hitlist(
       jobId,

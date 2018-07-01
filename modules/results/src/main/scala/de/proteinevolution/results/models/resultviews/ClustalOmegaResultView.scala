@@ -6,6 +6,8 @@ import de.proteinevolution.results.results.Alignment
 import de.proteinevolution.services.ToolConfig
 import play.api.libs.json.{ JsArray, JsValue }
 
+import scala.collection.immutable.ListMap
+
 case class ClustalOmegaResultView(
     jobId: String,
     result: JsValue,
@@ -14,7 +16,7 @@ case class ClustalOmegaResultView(
     aln: Alignment
 ) extends ResultView {
 
-  override lazy val tabs = Map(
+  override lazy val tabs = ListMap(
     ResultViews.CLUSTAL -> views.html.resultpanels.clustal(
       jobId,
       aln.parse((result \ "alignment").as[JsArray]),

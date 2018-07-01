@@ -6,6 +6,8 @@ import de.proteinevolution.results.results.PSIBlast
 import de.proteinevolution.services.ToolConfig
 import play.api.libs.json.JsValue
 
+import scala.collection.immutable.ListMap
+
 case class PsiBlastResultView(
     jobId: String,
     result: JsValue,
@@ -14,7 +16,7 @@ case class PsiBlastResultView(
     constants: ConstantsV2
 ) extends ResultView {
 
-  override lazy val tabs = Map(
+  override lazy val tabs = ListMap(
     ResultViews.RESULTS -> views.html.resultpanels.psiblast.hitlist(
       jobId,
       psi.parseResult(result),
