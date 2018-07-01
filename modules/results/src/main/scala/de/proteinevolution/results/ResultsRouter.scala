@@ -13,7 +13,8 @@ class ResultsRouter @Inject()(
     processController: ProcessController,
     alignmentController: AlignmentController,
     fileController: FileController,
-    forwardModalController: ForwardModalController
+    forwardModalController: ForwardModalController,
+    resultGetController: ResultGetController
 ) extends SimpleRouter
     with ForwardModeExtractor {
 
@@ -30,6 +31,8 @@ class ResultsRouter @Inject()(
     case GET(p"/files/$mainID/$filename")             => fileController.file(filename = filename, mainID = mainID)
     case GET(p"/forward/modal/$toolName/$modalType") =>
       forwardModalController.getForwardModalOptions(modalType, toolName)
+    case GET(p"/$jobID/$tool/$view") => resultGetController.get(jobID, tool, view)
+    case GET(p"/job/$jobID")         => resultGetController.getJob(jobID)
   }
 
 }

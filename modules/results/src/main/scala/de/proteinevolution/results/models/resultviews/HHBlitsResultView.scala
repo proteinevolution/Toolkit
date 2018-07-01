@@ -1,0 +1,41 @@
+package de.proteinevolution.results.models.resultviews
+
+import de.proteinevolution.models.{ ConstantsV2, ToolName }
+import de.proteinevolution.models.results.ResultViews
+import de.proteinevolution.results.results.{ Alignment, HHBlits }
+import de.proteinevolution.services.ToolConfig
+import play.api.libs.json.{ JsArray, JsValue }
+
+case class HHBlitsResultView(
+    jobId: String,
+    result: JsValue,
+    hhblits: HHBlits,
+    aln: Alignment,
+    toolConfig: ToolConfig,
+    constants: ConstantsV2
+) extends ResultView {
+
+  override lazy val tabs = Map(
+    ResultViews.RESULTS -> views.html.resultpanels.hhblits.hitlist(
+      jobId,
+      hhblits.parseResult(result),
+      toolConfig.values(ToolName.HHBLITS.value),
+      s"${constants.jobPath}/$jobId/results/$jobId.html_NOIMG"
+    ),
+    "Raw Output"   -> views.html.resultpanels.fileviewWithDownload(jobId + ".hhr", jobId, "hhblits_hhr"),
+    "E-Value Plot" -> views.html.resultpanels.evalues(hhblits.parseResult(result).HSPS.map(_.info.evalue)),
+    "Query Template MSA" -> views.html.resultpanels.alignmentQueryMSA(
+      jobId,
+      aln.parse((result \ "querytemplate").as[JsArray]),
+      "querytemplate",
+      toolConfig.values(ToolName.HHBLITS.value)
+    ),
+    "Query Alignment" -> views.html.resultpanels.alignmentQueryMSA(
+      jobId,
+      aln.parse((result \ "reduced").as[JsArray]),
+      "reduced",
+      toolConfig.values(ToolName.HHBLITS.value)
+    )
+  )
+
+}

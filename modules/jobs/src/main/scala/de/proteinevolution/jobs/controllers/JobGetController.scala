@@ -26,7 +26,6 @@ class JobGetController @Inject()(
     extends ToolkitController(cc) {
 
   def jobManagerListJobs: Action[AnyContent] = Action.async { implicit request =>
-    // Retrieve the jobs from the DB
     userSessions.getUser.flatMap { user =>
       jobDao.findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false))).map {
         jobs =>
