@@ -10,7 +10,7 @@ import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.jobs.JobState.{ Done, Pending, Prepared }
-import de.proteinevolution.models.forms.JobForm
+import de.proteinevolution.models.forms.{ JobForm, ToolForm }
 import de.proteinevolution.services.ToolConfig
 import javax.inject.{ Inject, Singleton }
 import play.api.cache.{ AsyncCacheApi, NamedCache }
@@ -38,40 +38,43 @@ class ResultGetService @Inject()(
   }
 
   def getJob(jobId: String): OptionT[Future, JobForm] = {
+    val paramValues: Map[String, String] = {
+      if ((constants.jobPath / jobId / "sparam").exists) {
+        val ois =
+          new ObjectInputStream(new FileInputStream((constants.jobPath / jobId / "sparam").pathAsString))
+        val x = ois.readObject().asInstanceOf[Map[String, String]]
+        ois.close()
+        x
+      } else {
+        Map.empty[String, String]
+      }
+    }
     (for {
-      job <- OptionT(jobDao.selectJob(jobId))
+      job      <- OptionT(jobDao.selectJob(jobId))
+      toolForm <- OptionT.pure[Future](toolConfig.values(job.tool).toolForm)
+      jobViews <- OptionT.liftF(jobViews(job, toolForm))
     } yield {
-      val toolForm = toolConfig.values(job.tool).toolForm
-      val jobViews: Future[Seq[String]] = job.status match {
-        case Done =>
-          resultViewFactory(toolForm.toolname, jobId).value.map {
-            case Some(r) => r.tabs.keys.toSeq
-            case None    => Nil // TODO throw some exception or something
-          }
-        case _ => Future.successful(Nil)
-      }
-      val paramValues: Map[String, String] = {
-        if ((constants.jobPath / jobId / "sparam").exists) {
-          val ois =
-            new ObjectInputStream(new FileInputStream((constants.jobPath / jobId / "sparam").pathAsString))
-          val x = ois.readObject().asInstanceOf[Map[String, String]]
-          ois.close()
-          x
-        } else {
-          Map.empty[String, String]
-        }
-      }
-      jobViews.map { jobViewsN =>
+      (job, toolForm, jobViews)
+    }).map {
+      case (job, toolForm, jobViews) =>
         JobForm(
           job.jobID,
           job.status,
           job.dateCreated.get.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
           toolForm,
-          jobViewsN,
+          jobViews,
           paramValues
         )
+    }
+  }
+
+  private def jobViews(job: Job, toolForm: ToolForm): Future[Seq[String]] = job.status match {
+    case Done =>
+      resultViewFactory(toolForm.toolname, job.jobID).value.map {
+        case Some(r) => r.tabs.keys.toSeq
+        case None    => Nil // TODO throw some exception or something
       }
-    }).flatMap(OptionT.liftF(_))
+    case _ => Future.successful(Nil)
   }
 
   private def cleanLostJobs(jobId: String): OptionT[Future, Unit] = {
