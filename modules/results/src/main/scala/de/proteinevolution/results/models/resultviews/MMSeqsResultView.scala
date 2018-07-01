@@ -3,9 +3,11 @@ package de.proteinevolution.results.models.resultviews
 import de.proteinevolution.models.ToolName
 import de.proteinevolution.services.ToolConfig
 
+import scala.collection.immutable.ListMap
+
 case class MMSeqsResultView(jobId: String, toolConfig: ToolConfig) extends ResultView {
 
-  override lazy val tabs = Map(
+  override lazy val tabs = ListMap(
     "Reduced set" ->
     views.html.resultpanels.fileviewWithDownloadForward(
       jobId + ".fas",

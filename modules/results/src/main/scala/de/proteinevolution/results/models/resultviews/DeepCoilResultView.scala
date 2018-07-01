@@ -4,10 +4,12 @@ import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.services.ToolConfig
 import play.api.libs.json.JsValue
 
+import scala.collection.immutable.ListMap
+
 case class DeepCoilResultView(jobId: String, result: JsValue, toolConfig: ToolConfig, constants: ConstantsV2)
     extends ResultView {
 
-  override lazy val tabs = Map(
+  override lazy val tabs = ListMap(
     "CC-Prob" -> views.html.resultpanels.marcoil(
       s"/results/files/$jobId/" + jobId + "_deepcoil.png",
       toolConfig.values(ToolName.DEEPCOIL.value)

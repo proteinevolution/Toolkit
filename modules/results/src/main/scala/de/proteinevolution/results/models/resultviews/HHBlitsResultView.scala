@@ -6,6 +6,8 @@ import de.proteinevolution.results.results.{ Alignment, HHBlits }
 import de.proteinevolution.services.ToolConfig
 import play.api.libs.json.{ JsArray, JsValue }
 
+import scala.collection.immutable.ListMap
+
 case class HHBlitsResultView(
     jobId: String,
     result: JsValue,
@@ -15,7 +17,7 @@ case class HHBlitsResultView(
     constants: ConstantsV2
 ) extends ResultView {
 
-  override lazy val tabs = Map(
+  override lazy val tabs = ListMap(
     ResultViews.RESULTS -> views.html.resultpanels.hhblits.hitlist(
       jobId,
       hhblits.parseResult(result),

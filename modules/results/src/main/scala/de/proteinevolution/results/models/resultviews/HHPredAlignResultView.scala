@@ -6,6 +6,8 @@ import de.proteinevolution.results.results.HHPred
 import de.proteinevolution.services.ToolConfig
 import play.api.libs.json.JsValue
 
+import scala.collection.immutable.ListMap
+
 case class HHPredAlignResultView(
     jobId: String,
     result: JsValue,
@@ -14,7 +16,7 @@ case class HHPredAlignResultView(
     constants: ConstantsV2
 ) extends ResultView {
 
-  override lazy val tabs = Map(
+  override lazy val tabs = ListMap(
     ResultViews.HITLIST ->
     views.html.resultpanels.hhpred.hitlist(
       jobId,
