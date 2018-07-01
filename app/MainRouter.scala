@@ -50,11 +50,6 @@ class MainRouter @Inject()(
     case GET(p"/recent/updates")  => controller.recentUpdates
   }
 
-  private lazy val jobRoutes: Routes = {
-    case GET(p"/api/job/$jobID")                     => service.getJob(jobID)
-    case GET(p"/api/job/result/$jobID/$tool/$panel") => service.getResult(jobID, tool, panel)
-  }
-
   private lazy val authRoutes: Routes = {
     case POST(p"/signin")                       => auth.signInSubmit
     case GET(p"/verification/$userName/$token") => auth.verification(userName, token) // extern
@@ -63,7 +58,6 @@ class MainRouter @Inject()(
   override lazy val routes: Routes = {
     mainRoutes
       .orElse(authRoutes)
-      .orElse(jobRoutes)
       .orElse(uiRoutes)
       .orElse(searchRouter.withPrefix("/search").routes)
       .orElse(jobsRouter.withPrefix("/api/jobs").routes)

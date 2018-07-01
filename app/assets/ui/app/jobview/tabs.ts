@@ -121,7 +121,7 @@ const JobTabsComponent = {
                     }else{
                         return m("li", { id: "tab-" + item },
 
-                            m("a", { href: "/api/job/result/"+args.job().jobID+"/"+args.job().tool.toolname+"/"+item, config: hideSubmitButtons }, item)
+                            m("a", { href: "/results/"+args.job().jobID+"/"+args.job().tool.toolname+"/"+item, config: hideSubmitButtons }, item)
                         );
                     }
                 }),

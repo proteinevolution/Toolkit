@@ -80,7 +80,7 @@ window.JobModel = {
         if (args.isJob) {
             return m.request({
                 method: 'GET',
-                url: "/api/job/" + value
+                url: "/results/job/" + value
             }).then(function(data) {
                 window.JobModel.paramValues = data.paramValues;
                 if(window.JobModel.paramValues.proteomes && !window.JobModel.paramValues.hhsuitedb){
