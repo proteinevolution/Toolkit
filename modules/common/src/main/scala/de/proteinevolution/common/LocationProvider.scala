@@ -36,4 +36,5 @@ class LocationProviderImpl @Inject()(config: Configuration) extends LocationProv
   def getLocation(request: RequestHeader): Location = {
     getLocation(request.remoteAddress)
   }
+
 }
