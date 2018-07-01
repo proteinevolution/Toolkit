@@ -140,7 +140,7 @@ window.FrontendReformatComponent = {
         return {
             html: m.request({
                 method: "GET",
-                url: "/static/get/reformat",
+                url: "/ui/static/reformat",
                 deserialize: function(data) {
                     return data;
                 }
