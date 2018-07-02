@@ -3,7 +3,6 @@ package controllers
 import java.time.ZonedDateTime
 
 import javax.inject.{ Inject, Singleton }
-import actors.WebSocketActor.{ ChangeSessionID, LogOut }
 import akka.actor.ActorRef
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
@@ -11,6 +10,7 @@ import de.proteinevolution.models.database.users.{ User, UserToken }
 import de.proteinevolution.db.MongoStore
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.base.controllers.ToolkitController
+import de.proteinevolution.message.actors.WebSocketActor.{ ChangeSessionID, LogOut }
 import de.proteinevolution.services.ToolConfig
 import play.api.cache._
 import play.api.mvc._
