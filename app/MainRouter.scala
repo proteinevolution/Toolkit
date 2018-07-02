@@ -4,6 +4,7 @@ import de.proteinevolution.backend.BackendRouter
 import de.proteinevolution.cluster.ClusterRouter
 import de.proteinevolution.help.HelpRouter
 import de.proteinevolution.jobs.JobsRouter
+import de.proteinevolution.message.MessageRouter
 import de.proteinevolution.results.ResultsRouter
 import de.proteinevolution.search.SearchRouter
 import de.proteinevolution.ui.UiRouter
@@ -26,23 +27,22 @@ class MainRouter @Inject()(
     backendRouter: BackendRouter,
     jobsRouter: JobsRouter,
     searchRouter: SearchRouter,
-    uiRouter: UiRouter
+    uiRouter: UiRouter,
+    messageRouter: MessageRouter
 ) extends SimpleRouter {
 
   private lazy val mainRoutes: Routes = {
     case GET(p"/")              => controller.index()
     case GET(p"/sitemap.xml")   => assets.versioned(path = "/public", file = "sitemap.xml")
-    case GET(p"/ws")            => controller.ws
-    case GET(p"/ws/config")     => controller.wsConfig
     case POST(p"/maintenance")  => controller.maintenance
     case GET(p"/uptime")        => uptime.uptime
     case GET(p"/buildinfo")     => uptime.buildInfo
     case GET(p"/assets/$file*") => assets.versioned(path = "/public", file = file)
     case GET(p"/robots.txt")    => controller.robots
-    case GET(p"/$static")       => controller.static(static)
   }
 
   private lazy val uiRoutes: Routes = {
+    case GET(p"/$static")         => controller.static(static)
     case GET(p"/hhpred")          => controller.showTool(toolName = "hhpred")
     case GET(p"/tools/$toolName") => controller.showTool(toolName)
     case GET(p"/jobs/$idString")  => controller.showJob(idString)
@@ -56,6 +56,7 @@ class MainRouter @Inject()(
 
   override lazy val routes: Routes = {
     mainRoutes
+      .orElse(messageRouter.withPrefix("/ws").routes)
       .orElse(authRoutes)
       .orElse(uiRoutes)
       .orElse(uiRouter.withPrefix("/ui").routes)
