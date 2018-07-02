@@ -1,6 +1,7 @@
 package de.proteinevolution.results.services
 
 import java.io.{ FileInputStream, ObjectInputStream }
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 import better.files._
@@ -53,7 +54,6 @@ class ResultGetService @Inject()(
       job      <- OptionT(jobDao.selectJob(jobId))
       toolForm <- OptionT.pure[Future](toolConfig.values(job.tool).toolForm)
       jobViews <- OptionT.liftF(jobViews(job, toolForm))
-      if job.dateCreated.isDefined
     } yield {
       (job, toolForm, jobViews)
     }).map {
@@ -61,7 +61,7 @@ class ResultGetService @Inject()(
         JobForm(
           job.jobID,
           job.status,
-          job.dateCreated.get.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+          job.dateCreated.getOrElse(ZonedDateTime.now).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
           toolForm,
           jobViews,
           paramValues
