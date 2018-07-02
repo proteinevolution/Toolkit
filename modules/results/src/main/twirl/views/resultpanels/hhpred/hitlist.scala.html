@@ -215,7 +215,7 @@
             formData.append("parentid", jobID);
             m.request({
                 method: "POST",
-                url: "/api/job/?toolName=hhpred_manual",
+                url: "/api/jobs/?toolName=hhpred_manual",
                 data: formData,
                 serialize: function (submissionReturnData) {
                     return submissionReturnData;
