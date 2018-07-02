@@ -36,22 +36,22 @@ class JobDispatcher @Inject()(
       form: MultipartFormData[Files.TemporaryFile],
       user: User
   ): EitherT[Future, JobSubmitError, Job] = {
-    val parts = form.dataParts.mapValues(_.mkString(constants.formMultiValueSeparator)) - "file"
+    var parts = form.dataParts.mapValues(_.mkString(constants.formMultiValueSeparator)) - "file"
     form.file("file").foreach { file =>
       val source = scala.io.Source.fromFile(file.ref.path.toFile)
       try {
-        parts + ("alignment" -> source.getLines().mkString("\n"))
+        parts = parts.updated("alignment", source.getLines().mkString("\n"))
       } finally {
         source.close()
       }
     }
     // remove empty parameter
     parts.get("alignment_two").foreach { alignment =>
-      if (alignment.isEmpty) parts - "alignment_two"
+      if (alignment.isEmpty) parts = parts - "alignment_two"
     }
     // Check if the user has the Modeller Key when the requested tool is Modeller
     if (toolName == ToolName.MODELLER.value && user.userConfig.hasMODELLERKey) {
-      parts + ("regkey" -> constants.modellerKey)
+      parts = parts.updated("regkey", constants.modellerKey)
     }
     for {
       generatedId <- generateJobId(parts)
