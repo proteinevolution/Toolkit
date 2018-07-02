@@ -1,5 +1,7 @@
 package de.proteinevolution.jobs.controllers
 
+import java.time.ZonedDateTime
+
 import cats.data.OptionT
 import cats.implicits._
 import de.proteinevolution.auth.UserSessions
@@ -55,9 +57,8 @@ class JobGetController @Inject()(
     (for {
       _   <- OptionT.liftF(userSessions.getUser)
       job <- jobHashService.checkHash(jobID)
-      if job.dateCreated.isDefined
     } yield {
-      (job.jobID, job.dateCreated.get.toInstant.toEpochMilli)
+      (job.jobID, job.dateCreated.getOrElse(ZonedDateTime.now).toInstant.toEpochMilli)
     }).value.map {
       case Some((latestJobId, dateCreated)) =>
         Ok(Json.obj("jobID" -> latestJobId, "dateCreated" -> dateCreated))
