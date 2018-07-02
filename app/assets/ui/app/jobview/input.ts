@@ -56,12 +56,13 @@ const ParameterAlignmentComponent = {
                     $("#alignment").attr("rows", "8");
                     $("#alignment_two").show().prop("required", true);
                     $("#hhpred_align").prop('checked', true);
+                    $(".uploadContainer").hide();
                 } else {
                     $(".inputDBs").prop('disabled', false);
                     $("#alignment").attr("rows", "14");
                     $("#alignment_two").hide().removeAttr("required", false);
                     $("#hhpred_align").prop('checked', false);
-
+                    $(".uploadContainer").show();
                 }
             }).bind(this.mo),
             setTwoTextAreas: (function(bool : boolean) {
@@ -70,7 +71,6 @@ const ParameterAlignmentComponent = {
             getTwoTextAreas: (function(){
                 return this.twoTextAreas;
             }).bind(this.mo)
-
         };
     },
     view: function(ctrl : any, args : any) {
@@ -92,14 +92,12 @@ const ParameterAlignmentComponent = {
                         $("#hhpred_align").prop('checked', false);
                         $("#alignment").attr("rows", "14");
                         $("#alignment_two").hide().removeAttr("required", false);
-
                     }
                 }
             }
         };
         let alignmentSwitch, textArea2;
         if(ctrl.getAllowsTwoTextAreas()) {
-
             alignmentSwitch = m("div", {"class": "switchContainer"},
                 m("label", {"class": "switch tiny"},
                     m("input", {
@@ -130,7 +128,6 @@ const ParameterAlignmentComponent = {
                     config: validation
                 });
         }
-
         return renderParameter([
             m("div", {
                     "class": "alignment_textarea"
