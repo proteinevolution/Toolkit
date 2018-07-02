@@ -1,5 +1,3 @@
-const wsRoute = jsRoutes.controllers.Application.ws;
-
 class WebsocketWrapper {
     attempts  : number        = 0;      // current number of attempts for the reconnect
     webSocket : WebSocket     = null;   // current websocket
@@ -34,9 +32,10 @@ class WebsocketWrapper {
             // Add one to the attempts
             this.attempts++;
             // check if the protocol is https / wss
-            let isSecure: boolean = location.protocol === "https:";
+            const isSecure: boolean = location.protocol === "https:";
+            const route = isSecure ? "wss://"+ location.host + "/ws/" : "ws://" + location.host + "/ws/";
             // create the new websocket
-            this.webSocket = new WebSocket(wsRoute().webSocketURL(isSecure));
+            this.webSocket = new WebSocket(route);
             // remember self for later
             let self = this;
             this.webSocket.onopen    = function (evt: Event)       : any { return self.eventOpen(evt);    };
