@@ -152,10 +152,22 @@ lazy val ui = (project in file("modules/ui"))
     )
     .disablePlugins(PlayLayoutPlugin)
 
+lazy val message = (project in file("modules/message"))
+    .enablePlugins(PlayScala, JavaAppPackaging)
+    .dependsOn(commonJVM, base, auth, cluster, jobs)
+    .settings(
+      name := "de.proteinevolution.message",
+      libraryDependencies ++= Dependencies.commonDeps,
+      Settings.compileSettings,
+      TwirlKeys.templateImports := Seq.empty,
+      disableDocs
+    )
+    .disablePlugins(PlayLayoutPlugin)
+
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb, BuildInfoPlugin)
-  .dependsOn(client, commonJVM, results, jobs, auth, base, cluster, help, backend, search, ui)
-  .aggregate(client, commonJVM, results, jobs, auth, base, cluster, help, backend, search, ui)
+  .dependsOn(client, commonJVM, results, jobs, auth, base, cluster, help, backend, search, ui, message)
+  .aggregate(client, commonJVM, results, jobs, auth, base, cluster, help, backend, search, ui, message)
   .settings(
     coreSettings,
     name := "mpi-toolkit",
