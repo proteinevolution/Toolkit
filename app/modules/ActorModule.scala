@@ -1,10 +1,10 @@
 package modules
 
-import actors._
 import com.google.inject.AbstractModule
 import de.proteinevolution.backend.actors.DatabaseMonitor
 import de.proteinevolution.cluster.actors.ClusterMonitor
 import de.proteinevolution.jobs.actors.JobActor
+import de.proteinevolution.message.actors.WebSocketActor
 import play.api.libs.concurrent.AkkaGuiceSupport
 
 class ActorModule extends AbstractModule with AkkaGuiceSupport {

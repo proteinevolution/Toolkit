@@ -1,10 +1,8 @@
-package actors
+package de.proteinevolution.message.actors
 
 import java.nio.file.{ Files, Paths }
 import java.time.ZonedDateTime
 
-import javax.inject.{ Inject, Named }
-import actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
 import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
@@ -12,29 +10,17 @@ import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.cluster.actors.ClusterMonitor.{ Connect, Disconnect, UpdateLoad }
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.services.JobActorAccess
+import de.proteinevolution.message.actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
-import de.proteinevolution.models.database.jobs.JobState._
+import de.proteinevolution.models.database.jobs.JobState.Running
+import javax.inject.{ Inject, Named }
 import play.api.Configuration
-import play.api.cache._
+import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.json.{ JsValue, Json }
 import reactivemongo.bson.BSONObjectID
 
 import scala.concurrent.ExecutionContext
-
-/**
- * Actor that listens to the WebSocket and accepts messages from and passes messages to it.
- *
- */
-object WebSocketActor {
-  case class ChangeSessionID(sessionID: BSONObjectID)
-  case object LogOut
-  case object MaintenanceAlert
-
-  trait Factory {
-    def apply(@Assisted("sessionID") sessionID: BSONObjectID, @Assisted("out") out: ActorRef): Actor
-  }
-}
 
 final class WebSocketActor @Inject()(
     @Named("clusterMonitor") clusterMonitor: ActorRef,
@@ -186,4 +172,16 @@ final class WebSocketActor @Inject()(
   override def receive = LoggingReceive {
     active(sessionID)
   }
+}
+
+object WebSocketActor {
+
+  case class ChangeSessionID(sessionID: BSONObjectID)
+  case object LogOut
+  case object MaintenanceAlert
+
+  trait Factory {
+    def apply(@Assisted("sessionID") sessionID: BSONObjectID, @Assisted("out") out: ActorRef): Actor
+  }
+
 }

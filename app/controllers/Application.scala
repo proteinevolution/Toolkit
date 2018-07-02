@@ -3,11 +3,11 @@ package controllers
 import java.net.InetAddress
 
 import javax.inject.{ Inject, Singleton }
-import actors.WebSocketActor
 import akka.actor.{ ActorSystem, Props }
 import akka.stream.Materializer
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
+import de.proteinevolution.message.actors.WebSocketActor
 import de.proteinevolution.services.ToolConfig
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
