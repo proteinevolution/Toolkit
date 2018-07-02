@@ -1,16 +1,16 @@
-package controllers
+package de.proteinevolution.ui.controllers
 
-import javax.inject.{ Inject, Singleton }
-import play.api.mvc._
-
+import controllers.AssetsFinder
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.services.ToolConfig
-import play.api.libs.json._
+import javax.inject.{ Inject, Singleton }
+import play.api.libs.json.Json
+import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 
 @Singleton
-final class Service @Inject()(
-    toolConfig: ToolConfig,
+class UiController @Inject()(
     cc: ControllerComponents,
+    toolConfig: ToolConfig,
     assets: AssetsFinder
 ) extends ToolkitController(cc) {
 
@@ -30,4 +30,5 @@ final class Service @Inject()(
       case None       => NotFound
     }
   }
+
 }

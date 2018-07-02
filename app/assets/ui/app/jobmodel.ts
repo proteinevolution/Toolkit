@@ -99,7 +99,7 @@ window.JobModel = {
         } else {
             return m.request({
                 method: 'GET',
-                url: "/api/tools/" + value
+                url: "/ui/tool/" + value
             }).then(function(toolitem) {
                 window.JobModel.paramValues = {};
                 return {
