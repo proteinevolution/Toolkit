@@ -36,7 +36,7 @@ final class ResultViewFactory @Inject()(
         getResultViewsWithJson(toolName, jobId, result)
       }
     } else {
-      OptionT.liftF(Future.successful(getResultViewsWithoutJson(toolName, jobId)))
+      OptionT.pure[Future](getResultViewsWithoutJson(toolName, jobId))
     }
   }
 
