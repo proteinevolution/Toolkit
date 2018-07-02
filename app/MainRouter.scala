@@ -6,6 +6,7 @@ import de.proteinevolution.help.HelpRouter
 import de.proteinevolution.jobs.JobsRouter
 import de.proteinevolution.results.ResultsRouter
 import de.proteinevolution.search.SearchRouter
+import de.proteinevolution.ui.UiRouter
 import javax.inject.{ Inject, Singleton }
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
@@ -15,7 +16,6 @@ import play.api.routing.sird._
 class MainRouter @Inject()(
     controller: Application,
     auth: Auth,
-    service: Service,
     uptime: UptimeController,
     resultsRouter: ResultsRouter,
     assets: Assets,
@@ -25,22 +25,21 @@ class MainRouter @Inject()(
     helpRouter: HelpRouter,
     backendRouter: BackendRouter,
     jobsRouter: JobsRouter,
-    searchRouter: SearchRouter
+    searchRouter: SearchRouter,
+    uiRouter: UiRouter
 ) extends SimpleRouter {
 
   private lazy val mainRoutes: Routes = {
-    case GET(p"/")                    => controller.index()
-    case GET(p"/sitemap.xml")         => assets.versioned(path = "/public", file = "sitemap.xml")
-    case GET(p"/ws")                  => controller.ws
-    case GET(p"/ws/config")           => controller.wsConfig
-    case POST(p"/maintenance")        => controller.maintenance
-    case GET(p"/uptime")              => uptime.uptime
-    case GET(p"/buildinfo")           => uptime.buildInfo
-    case GET(p"/assets/$file*")       => assets.versioned(path = "/public", file = file)
-    case GET(p"/static/get/$static")  => service.static(static)
-    case GET(p"/robots.txt")          => controller.robots
-    case GET(p"/$static")             => controller.static(static)
-    case GET(p"/api/tools/$toolName") => service.getTool(toolName)
+    case GET(p"/")              => controller.index()
+    case GET(p"/sitemap.xml")   => assets.versioned(path = "/public", file = "sitemap.xml")
+    case GET(p"/ws")            => controller.ws
+    case GET(p"/ws/config")     => controller.wsConfig
+    case POST(p"/maintenance")  => controller.maintenance
+    case GET(p"/uptime")        => uptime.uptime
+    case GET(p"/buildinfo")     => uptime.buildInfo
+    case GET(p"/assets/$file*") => assets.versioned(path = "/public", file = file)
+    case GET(p"/robots.txt")    => controller.robots
+    case GET(p"/$static")       => controller.static(static)
   }
 
   private lazy val uiRoutes: Routes = {
@@ -59,6 +58,7 @@ class MainRouter @Inject()(
     mainRoutes
       .orElse(authRoutes)
       .orElse(uiRoutes)
+      .orElse(uiRouter.withPrefix("/ui").routes)
       .orElse(searchRouter.withPrefix("/search").routes)
       .orElse(jobsRouter.withPrefix("/api/jobs").routes)
       .orElse(backendRouter.withPrefix("/backend").routes)

@@ -53,6 +53,7 @@ class ResultGetService @Inject()(
       job      <- OptionT(jobDao.selectJob(jobId))
       toolForm <- OptionT.pure[Future](toolConfig.values(job.tool).toolForm)
       jobViews <- OptionT.liftF(jobViews(job, toolForm))
+      if job.dateCreated.isDefined
     } yield {
       (job, toolForm, jobViews)
     }).map {
