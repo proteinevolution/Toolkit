@@ -1,5 +1,6 @@
 package de.proteinevolution.results.controllers
 
+import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.ToolName._
 import de.proteinevolution.results.models.{ HHContext, ResultContext }
 import de.proteinevolution.results.results.General.DTParam
@@ -9,7 +10,8 @@ import de.proteinevolution.results.results.HHomp.HHompHSP
 import de.proteinevolution.results.results.Hmmer.HmmerHSP
 import de.proteinevolution.results.results.PSIBlast.PSIBlastHSP
 import de.proteinevolution.results.results.HSP
-import de.proteinevolution.results.services.{ DTService, KleisliProvider }
+import de.proteinevolution.results.services.ResultsRepository.ResultsService
+import de.proteinevolution.results.services.{ DTService, ResultsRepository, ToolNameGetService }
 import javax.inject.{ Inject, Singleton }
 import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc.{ AbstractController, Action, AnyContent }
@@ -20,32 +22,36 @@ import scala.concurrent.ExecutionContext
 class HHController @Inject()(
     ctx: HHContext,
     resultCtx: ResultContext,
-    kleisliProvider: KleisliProvider,
+    toolFinder: ToolNameGetService,
+    resultFiles: ResultFileAccessor,
     dtService: DTService
 )(implicit ec: ExecutionContext)
-    extends AbstractController(ctx.controllerComponents) {
+    extends AbstractController(ctx.controllerComponents)
+    with ResultsRepository {
 
-  def loadHits(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+  private val resultsService = ResultsService(toolFinder, resultFiles)
+
+  def loadHits(jobId: String): Action[AnyContent] = Action.async { implicit request =>
     val json    = request.body.asJson.get
     val start   = (json \ "start").as[Int]
     val end     = (json \ "end").as[Int]
     val wrapped = (json \ "wrapped").as[Boolean]
-    kleisliProvider.resK
-      .run(jobID)
+    getResults(jobId)
+      .run(resultsService)
       .flatMap {
         case Some(jsValue) =>
-          kleisliProvider.toolK.run(jobID).map {
+          getTool(jobId).run(resultsService).map {
             case HHBLITS =>
               (resultCtx.hhblits.parseResult(jsValue),
-               (hsp: HSP) => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped, jobID))
+               (hsp: HSP) => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped, jobId))
             case HHPRED =>
               val isColor = (json \ "isColor").as[Boolean]
               (resultCtx.hhpred.parseResult(jsValue),
-               (hsp: HSP) => views.html.hhpred.hit(hsp.asInstanceOf[HHPredHSP], isColor, wrapped, jobID))
+               (hsp: HSP) => views.html.hhpred.hit(hsp.asInstanceOf[HHPredHSP], isColor, wrapped, jobId))
             case HHOMP =>
               val isColor = (json \ "isColor").as[Boolean]
               (resultCtx.hhomp.parseResult(jsValue),
-               (hsp: HSP) => views.html.hhomp.hit(hsp.asInstanceOf[HHompHSP], isColor, wrapped, jobID))
+               (hsp: HSP) => views.html.hhomp.hit(hsp.asInstanceOf[HHompHSP], isColor, wrapped, jobId))
             case HMMER =>
               val result = resultCtx.hmmer.parseResult(jsValue)
               (result, (hsp: HSP) => views.html.hmmer.hit(hsp.asInstanceOf[HmmerHSP], result.db, wrapped))
@@ -67,7 +73,7 @@ class HHController @Inject()(
       }
   }
 
-  def dataTable(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+  def dataTable(jobId: String): Action[AnyContent] = Action.async { implicit request =>
     val params = DTParam(
       request.getQueryString("draw").getOrElse("1").toInt,
       request.getQueryString("search[value]").getOrElse(""),
@@ -76,11 +82,11 @@ class HHController @Inject()(
       request.getQueryString("order[0][column]").getOrElse("1").toInt,
       request.getQueryString("order[0][dir]").getOrElse("asc")
     )
-    kleisliProvider.resK
-      .run(jobID)
+    getResults(jobId)
+      .run(resultsService)
       .flatMap {
         case Some(jsValue) =>
-          kleisliProvider.toolK.run(jobID).map {
+          getTool(jobId).run(resultsService).map {
             case HHBLITS =>
               (resultCtx.hhblits.parseResult(jsValue),
                dtService.getHitsByKeyWord[HHBlitsHSP](resultCtx.hhblits.parseResult(jsValue), params))
