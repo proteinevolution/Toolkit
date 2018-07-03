@@ -1,11 +1,13 @@
 package de.proteinevolution.results.controllers
 
 import better.files._
+import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.ToolName._
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.results.models.{ ForwardMode, HHContext, ResultContext }
 import de.proteinevolution.results.results.{ HSP, SearchResult }
-import de.proteinevolution.results.services.{ KleisliProvider, ProcessFactory, ToolNameGetService }
+import de.proteinevolution.results.services.ResultsRepository.ResultsService
+import de.proteinevolution.results.services.{ ProcessFactory, ResultsRepository, ToolNameGetService }
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 import play.api.libs.concurrent.Futures
@@ -21,18 +23,21 @@ import scala.sys.process.Process
 class ProcessController @Inject()(
     ctx: HHContext,
     toolFinder: ToolNameGetService,
+    resultFiles: ResultFileAccessor,
     constants: ConstantsV2,
-    kleisliProvider: KleisliProvider,
     resultContext: ResultContext,
     config: Configuration
 )(implicit ec: ExecutionContext, futures: Futures)
-    extends AbstractController(ctx.controllerComponents) {
+    extends AbstractController(ctx.controllerComponents)
+    with ResultsRepository {
 
-  private val scriptPath = config.get[String]("serverScripts")
+  private val scriptPath: String = config.get[String]("serverScripts")
 
-  def templateAlignment(jobID: String, accession: String): Action[AnyContent] = Action.async { implicit request =>
+  private val resultsService = ResultsService(toolFinder, resultFiles)
+
+  def templateAlignment(jobId: String, accession: String): Action[AnyContent] = Action.async { implicit request =>
     toolFinder
-      .getTool(jobID)
+      .getTool(jobId)
       .map {
         case HHOMP   => (scriptPath + "/templateAlignmentHHomp.sh").toFile
         case HHBLITS => (scriptPath + "/templateAlignmentHHblits.sh").toFile
@@ -44,8 +49,8 @@ class ProcessController @Inject()(
           BadRequest
         else {
           Process(file.pathAsString,
-                  (constants.jobPath + jobID).toFile.toJava,
-                  "jobID"     -> jobID,
+                  (constants.jobPath + jobId).toFile.toJava,
+                  "jobID"     -> jobId,
                   "accession" -> accession).run().exitValue() match {
             case 0 => NoContent
             case _ => BadRequest
@@ -54,7 +59,7 @@ class ProcessController @Inject()(
       }
   }
 
-  def forwardAlignment(jobID: String, mode: ForwardMode): Action[JsValue] = Action(parse.json).async {
+  def forwardAlignment(jobId: String, mode: ForwardMode): Action[JsValue] = Action(parse.json).async {
     implicit request =>
       val json     = request.body
       val filename = (json \ "fileName").as[String]
@@ -62,11 +67,11 @@ class ProcessController @Inject()(
         case "alnEval" | "evalFull" => (json \ "evalue").as[String]
         case "aln" | "full"         => (json \ "checkboxes").as[List[Int]].mkString("\n")
       }
-      kleisliProvider.resK
-        .run(jobID)
+      getResults(jobId)
+        .run(resultsService)
         .flatMap {
           case Some(jsValue) =>
-            kleisliProvider.toolK.run(jobID).map {
+            getTool(jobId).run(resultsService).map {
               case HHBLITS =>
                 (HHBLITS, resultContext.hhblits.parseResult(jsValue))
               case HHPRED =>
@@ -84,8 +89,8 @@ class ProcessController @Inject()(
         .map {
           case (toolName, result) =>
             val accStrParsed = parseAccString(toolName, result, accStr, mode)
-            ProcessFactory((constants.jobPath + jobID).toFile,
-                           jobID,
+            ProcessFactory((constants.jobPath + jobId).toFile,
+                           jobId,
                            toolName.value,
                            filename,
                            mode,
