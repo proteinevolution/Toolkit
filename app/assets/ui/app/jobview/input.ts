@@ -56,13 +56,15 @@ const ParameterAlignmentComponent = {
                     $("#alignment").attr("rows", "8");
                     $("#alignment_two").show().prop("required", true);
                     $("#hhpred_align").prop('checked', true);
-                    $(".uploadContainer").hide();
+                    $(".fileUpload").hide();
+                    $("#fileUpload").hide();
                 } else {
                     $(".inputDBs").prop('disabled', false);
                     $("#alignment").attr("rows", "14");
                     $("#alignment_two").hide().removeAttr("required", false);
                     $("#hhpred_align").prop('checked', false);
-                    $(".uploadContainer").show();
+                    $(".fileUpload").show();
+                    $("#fileUpload").show();
                 }
             }).bind(this.mo),
             setTwoTextAreas: (function(bool : boolean) {
@@ -87,11 +89,15 @@ const ParameterAlignmentComponent = {
                         $("#hhpred_align").prop('checked', true);
                         $("#alignment").attr("rows", "8");
                         $("#alignment_two").show().prop("required", true);
+                        $(".fileUpload").hide();
+                        $("#fileUpload").hide();
                     } else {
                         $(".inputDBs").prop('disabled', false);
                         $("#hhpred_align").prop('checked', false);
                         $("#alignment").attr("rows", "14");
                         $("#alignment_two").hide().removeAttr("required", false);
+                        $(".fileUpload").show();
+                        $("#fileUpload").show();
                     }
                 }
             }
@@ -194,8 +200,7 @@ const ParameterAlignmentComponent = {
                                     validationProcess($('#alignment'),$("#toolnameAccess").val());
 			            return $("#" + ctrl.id).prop("disabled", false);
                                 }
-                            }, m("i", {"class": "far fa-trash-alt"})))),
-                    m(JobValidationComponent, {})
+                            }, m("i", {"class": "far fa-trash-alt"}))), m(JobValidationComponent, {}))
                     , m("select", {"id": "alignment_format", "class": "alignment_format", config: alignment_format.bind(ctrl.getFormats())}, ctrl.getFormats().map(function(format : any){
                             return m("option", {value: format[0]}, format[1])}
                         )
