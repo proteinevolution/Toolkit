@@ -32,15 +32,14 @@ lazy val disableDocs = Seq[Setting[_]](
   publishArtifact in (Compile, packageDoc) := false
 )
 
-import sbtcrossproject.{crossProject, CrossType}
+import sbtcrossproject.{ crossProject, CrossType }
 
-lazy val common = (crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure) in file("modules/common"))
-  .settings(
-    name := "common",
-    libraryDependencies ++= Dependencies.commonDeps,
-    Settings.compileSettings,
-    disableDocs
-  )
+lazy val common = (crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure) in file("modules/common")).settings(
+  name := "common",
+  libraryDependencies ++= Dependencies.commonDeps,
+  Settings.compileSettings,
+  disableDocs
+)
 
 lazy val commonJS  = common.js
 lazy val commonJVM = common.jvm
@@ -58,114 +57,115 @@ lazy val results = (project in file("modules/results"))
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val help = (project in file("modules/help"))
-    .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl)
-    .dependsOn(commonJVM, base)
-    .settings(
-      name := "de.proteinevolution.help",
-      libraryDependencies ++= Dependencies.commonDeps,
-      Settings.compileSettings,
-      TwirlKeys.templateImports := Seq.empty,
-      disableDocs
-    )
-    .disablePlugins(PlayLayoutPlugin)
+  .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl)
+  .dependsOn(commonJVM, base)
+  .settings(
+    name := "de.proteinevolution.help",
+    libraryDependencies ++= Dependencies.commonDeps,
+    Settings.compileSettings,
+    TwirlKeys.templateImports := Seq.empty,
+    disableDocs
+  )
+  .disablePlugins(PlayLayoutPlugin)
 
 lazy val jobs = (project in file("modules/jobs"))
-    .enablePlugins(PlayScala, JavaAppPackaging)
-    .dependsOn(commonJVM, auth, base)
-    .settings(
-      name := "de.proteinevolution.jobs",
-      libraryDependencies ++= Dependencies.commonDeps,
-      Settings.compileSettings,
-      TwirlKeys.templateImports := Seq.empty,
-      disableDocs
-    )
-    .disablePlugins(PlayLayoutPlugin)
+  .enablePlugins(PlayScala, JavaAppPackaging)
+  .dependsOn(commonJVM, auth, base)
+  .settings(
+    name := "de.proteinevolution.jobs",
+    libraryDependencies ++= Dependencies.commonDeps,
+    Settings.compileSettings,
+    TwirlKeys.templateImports := Seq.empty,
+    disableDocs
+  )
+  .disablePlugins(PlayLayoutPlugin)
 
 lazy val auth = (project in file("modules/auth"))
-    .enablePlugins(PlayScala, JavaAppPackaging)
-    .dependsOn(commonJVM, base)
-    .settings(
-      name := "de.proteinevolution.auth",
-      libraryDependencies ++= Dependencies.commonDeps,
-      Settings.compileSettings,
-      TwirlKeys.templateImports := Seq.empty,
-      disableDocs
-    )
-    .disablePlugins(PlayLayoutPlugin)
+  .enablePlugins(PlayScala, JavaAppPackaging)
+  .dependsOn(commonJVM, base)
+  .settings(
+    name := "de.proteinevolution.auth",
+    libraryDependencies ++= Dependencies.commonDeps,
+    Settings.compileSettings,
+    TwirlKeys.templateImports := Seq.empty,
+    disableDocs
+  )
+  .disablePlugins(PlayLayoutPlugin)
 
 lazy val base = (project in file("modules/base"))
-    .enablePlugins(PlayScala, JavaAppPackaging)
-    .settings(
-      name := "de.proteinevolution.base",
-      libraryDependencies ++= Dependencies.commonDeps,
-      Settings.compileSettings,
-      TwirlKeys.templateImports := Seq.empty,
-      disableDocs
-    )
-    .disablePlugins(PlayLayoutPlugin)
+  .enablePlugins(PlayScala, JavaAppPackaging)
+  .settings(
+    name := "de.proteinevolution.base",
+    libraryDependencies ++= Dependencies.commonDeps,
+    Settings.compileSettings,
+    TwirlKeys.templateImports := Seq.empty,
+    disableDocs
+  )
+  .disablePlugins(PlayLayoutPlugin)
 
 lazy val cluster = (project in file("modules/cluster"))
-    .enablePlugins(PlayScala, JavaAppPackaging)
-    .dependsOn(commonJVM, base, jobs)
-    .settings(
-      name := "de.proteinevolution.cluster",
-      libraryDependencies ++= Dependencies.commonDeps,
-      Settings.compileSettings,
-      TwirlKeys.templateImports := Seq.empty,
-      disableDocs
-    )
-    .disablePlugins(PlayLayoutPlugin)
+  .enablePlugins(PlayScala, JavaAppPackaging)
+  .dependsOn(commonJVM, base, jobs)
+  .settings(
+    name := "de.proteinevolution.cluster",
+    libraryDependencies ++= Dependencies.commonDeps,
+    Settings.compileSettings,
+    TwirlKeys.templateImports := Seq.empty,
+    disableDocs
+  )
+  .disablePlugins(PlayLayoutPlugin)
 
 lazy val backend = (project in file("modules/backend"))
-    .enablePlugins(PlayScala, JavaAppPackaging)
-    .dependsOn(commonJVM, base, auth, jobs)
-    .settings(
-      name := "de.proteinevolution.backend",
-      libraryDependencies ++= Dependencies.commonDeps,
-      Settings.compileSettings,
-      TwirlKeys.templateImports := Seq.empty,
-      disableDocs
-    )
-    .disablePlugins(PlayLayoutPlugin)
+  .enablePlugins(PlayScala, JavaAppPackaging)
+  .dependsOn(commonJVM, base, auth, jobs)
+  .settings(
+    name := "de.proteinevolution.backend",
+    libraryDependencies ++= Dependencies.commonDeps,
+    Settings.compileSettings,
+    TwirlKeys.templateImports := Seq.empty,
+    disableDocs
+  )
+  .disablePlugins(PlayLayoutPlugin)
 
 lazy val search = (project in file("modules/search"))
-    .enablePlugins(PlayScala, JavaAppPackaging)
-    .dependsOn(commonJVM, base, auth, jobs)
-    .settings(
-      name := "de.proteinevolution.search",
-      libraryDependencies ++= Dependencies.commonDeps,
-      Settings.compileSettings,
-      TwirlKeys.templateImports := Seq.empty,
-      disableDocs
-    )
-    .disablePlugins(PlayLayoutPlugin)
+  .enablePlugins(PlayScala, JavaAppPackaging)
+  .dependsOn(commonJVM, base, auth, jobs)
+  .settings(
+    name := "de.proteinevolution.search",
+    libraryDependencies ++= Dependencies.commonDeps,
+    Settings.compileSettings,
+    TwirlKeys.templateImports := Seq.empty,
+    disableDocs
+  )
+  .disablePlugins(PlayLayoutPlugin)
 
 lazy val ui = (project in file("modules/ui"))
-    .enablePlugins(PlayScala, JavaAppPackaging)
-    .dependsOn(commonJVM, base, auth, results)
-    .settings(
-      name := "de.proteinevolution.ui",
-      libraryDependencies ++= Dependencies.commonDeps,
-      Settings.compileSettings,
-      TwirlKeys.templateImports := Seq.empty,
-      disableDocs
-    )
-    .disablePlugins(PlayLayoutPlugin)
+  .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl, BuildInfoPlugin)
+  .dependsOn(commonJVM, base, auth, results, help)
+  .settings(
+    name := "de.proteinevolution.ui",
+    libraryDependencies ++= Dependencies.commonDeps,
+    Settings.compileSettings,
+    TwirlKeys.templateImports := Seq.empty,
+    disableDocs,
+    buildInfoSettings
+  )
+  .disablePlugins(PlayLayoutPlugin)
 
 lazy val message = (project in file("modules/message"))
-    .enablePlugins(PlayScala, JavaAppPackaging)
-    .dependsOn(commonJVM, base, auth, cluster, jobs)
-    .settings(
-      name := "de.proteinevolution.message",
-      libraryDependencies ++= Dependencies.commonDeps,
-      Settings.compileSettings,
-      TwirlKeys.templateImports := Seq.empty,
-      disableDocs
-    )
-    .disablePlugins(PlayLayoutPlugin)
+  .enablePlugins(PlayScala, JavaAppPackaging)
+  .dependsOn(commonJVM, base, auth, cluster, jobs)
+  .settings(
+    name := "de.proteinevolution.message",
+    libraryDependencies ++= Dependencies.commonDeps,
+    Settings.compileSettings,
+    TwirlKeys.templateImports := Seq.empty,
+    disableDocs
+  )
+  .disablePlugins(PlayLayoutPlugin)
 
 lazy val root = (project in file("."))
-  .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb, BuildInfoPlugin)
+  .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb)
   .dependsOn(client, commonJVM, results, jobs, auth, base, cluster, help, backend, search, ui, message)
   .aggregate(client, commonJVM, results, jobs, auth, base, cluster, help, backend, search, ui, message)
   .settings(
@@ -173,11 +173,10 @@ lazy val root = (project in file("."))
     name := "mpi-toolkit",
     libraryDependencies ++= (Dependencies.commonDeps ++ Dependencies.testDeps ++ Dependencies.frontendDeps),
     pipelineStages := Seq(digest, gzip),
-    compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
-    buildInfoSettings
+    compile in Compile := (compile in Compile).dependsOn(scalaJSPipeline).value,
   )
 
-resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
+resolvers += "scalaz-bintray".at("http://dl.bintray.com/scalaz/releases")
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots")
