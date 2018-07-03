@@ -141,7 +141,7 @@ lazy val search = (project in file("modules/search"))
 
 lazy val ui = (project in file("modules/ui"))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl, BuildInfoPlugin)
-  .dependsOn(commonJVM, base, auth, results, help)
+  .dependsOn(commonJVM, base, results, help)
   .settings(
     name := "de.proteinevolution.ui",
     libraryDependencies ++= Dependencies.commonDeps,
