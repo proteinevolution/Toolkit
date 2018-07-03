@@ -182,16 +182,16 @@ const JobTabsComponent = {
                             )
                         ])
                     }}),
-                ctrl.isJob && ctrl.state === 2 ? m("div", { "class": "tabs-panel", id: "tabpanel-Queued"  },
+                ctrl.isJob && ctrl.state === 2 ? m("div", {"class": "tabs-panel", id: "tabpanel-Queued"},
                     m(JobQueuedComponent, { job: ctrl.job })) : void 0,
-                ctrl.isJob && ctrl.state === 3 ? m("div", { "class": "tabs-panel", id: "tabpanel-Running" },
+                ctrl.isJob && ctrl.state === 3 ? m("div", {"class": "tabs-panel", id: "tabpanel-Running"},
                     // m.component is needed when component is a typescript class
                     m.component(JobRunningComponent, { job: ctrl.job })) : void 0,
-                ctrl.isJob && ctrl.state === 4 ? m("div", { "class": "tabs-panel", id: "tabpanel-Error"   },
+                ctrl.isJob && ctrl.state === 4 ? m("div", {"class": "tabs-panel", id: "tabpanel-Error"},
                     m(JobErrorComponent, {job: ctrl.job})) : void 0,
-                ctrl.isJob && ctrl.state === 7 ? m("div", { "class": "tabs-panel", id: "tabpanel-Pending" },
+                ctrl.isJob && ctrl.state === 7 ? m("div", {"class": "tabs-panel", id: "tabpanel-Pending"},
                     m(JobPendingComponent, {job: ctrl.job})) : void 0,
-                ctrl.isJob && ctrl.state === 8 ? m("div", { "class": "tabs-panel", id: "tabpanel-Warning" },
+                ctrl.isJob && ctrl.state === 8 ? m("div", {"class": "tabs-panel", id: "tabpanel-Warning"},
                     m(JobLimitReachedComponent, {job: ctrl.job})) : void 0,
                 m(JobSubmissionComponent, { job: ctrl.job, isJob: ctrl.isJob })
             ),
