@@ -35,7 +35,7 @@ class FileController @Inject()(ctx: HHContext, env: Env, constants: ConstantsV2,
       if (file.exists) {
         Ok.sendFile(file)
           .withSession(userSessions.sessionCookie(request, user.sessionID.get))
-          .as("application/octet-stream")
+          .as("text/plain") // text/plain in order to open the file in a new browser tab
       } else {
         NoContent
       }
