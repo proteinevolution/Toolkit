@@ -6,13 +6,15 @@ import de.proteinevolution.results.models.HHContext
 import de.proteinevolution.results.results.Common
 import de.proteinevolution.tel.env.Env
 import javax.inject.Inject
+import play.api.http.ContentTypes
 import play.api.mvc.{ AbstractController, Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
 
 class FileController @Inject()(ctx: HHContext, env: Env, constants: ConstantsV2, userSessions: UserSessions)(
     implicit ec: ExecutionContext
-) extends AbstractController(ctx.controllerComponents) {
+) extends AbstractController(ctx.controllerComponents)
+    with ContentTypes {
 
   def getStructureFile(filename: String): Action[AnyContent] = Action { implicit request =>
     val db = Common.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
@@ -24,7 +26,7 @@ class FileController @Inject()(ctx: HHContext, env: Env, constants: ConstantsV2,
       case "mmcif" =>
         env.get("CIF")
     }
-    Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$filename")).as("application/octet-stream")
+    Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$filename")).as(BINARY)
   }
 
   def file(filename: String, mainID: String): Action[AnyContent] = Action.async { implicit request =>
@@ -35,7 +37,7 @@ class FileController @Inject()(ctx: HHContext, env: Env, constants: ConstantsV2,
       if (file.exists) {
         Ok.sendFile(file)
           .withSession(userSessions.sessionCookie(request, user.sessionID.get))
-          .as("text/plain") // text/plain in order to open the file in a new browser tab
+          .as(TEXT) // text/plain in order to open the file in a new browser tab
       } else {
         NoContent
       }
