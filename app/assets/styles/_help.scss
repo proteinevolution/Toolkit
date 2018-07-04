@@ -29,7 +29,7 @@
 .help-modal {
   font-size: 0.85em;
   @include breakpoint(medium) {
-    width: 55%;
+    width: 80% !important;
   }
   .help-modal-content {
     padding: 1em;
