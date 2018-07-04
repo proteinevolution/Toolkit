@@ -14,13 +14,14 @@
     margin-left: 10em;
   }
   .callout {
-    width: 10em;
+    min-width: 11em;
     float: right;
     margin-right: 0.5em;
+    margin-top: -5.6em;
     p {
       margin-bottom: 0;
       font-size: 0.7em;
-      width: 100%;
+      width: 90%;
     }
   }
 }
