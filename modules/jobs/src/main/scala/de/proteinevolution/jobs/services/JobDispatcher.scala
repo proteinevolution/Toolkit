@@ -54,16 +54,18 @@ class JobDispatcher @Inject()(
       parts = parts.updated("regkey", constants.modellerKey)
     }
     for {
-      generatedId <- generateJobId(parts)
-      _           <- validateJobId(generatedId)
-      _           <- EitherT(checkNotAlreadyTaken(generatedId))
+      generatedId     <- generateJobId(parts)
+      _               <- validateJobId(generatedId)
+      _               <- EitherT(checkNotAlreadyTaken(generatedId))
+      job             <- EitherT.pure[Future, JobSubmitError](generateJob(toolName, generatedId, parts, user))
+      isFromInstitute <- EitherT.pure[Future, JobSubmitError](user.getUserData.eMail.matches(".+@tuebingen.mpg.de"))
+      _               <- EitherT.liftF(jobDao.insertJob(job))
+      _               <- EitherT.liftF(assignJob(user, job))
+      _               <- EitherT.pure[Future, JobSubmitError](jobIdProvider.trash(generatedId))
+      _ <- EitherT.pure[Future, JobSubmitError](
+        jobActorAccess.sendToJobActor(generatedId, PrepareJob(job, parts, startJob = false, isFromInstitute))
+      )
     } yield {
-      val job             = generateJob(toolName, generatedId, parts, user)
-      val isFromInstitute = user.getUserData.eMail.matches(".+@tuebingen.mpg.de")
-      jobActorAccess.sendToJobActor(generatedId, PrepareJob(job, parts, startJob = false, isFromInstitute))
-      jobIdProvider.trash(generatedId)
-      jobDao.insertJob(job)
-      assignJob(user, job)
       job
     }
   }
