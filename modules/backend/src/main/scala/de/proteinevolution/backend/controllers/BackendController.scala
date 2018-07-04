@@ -158,4 +158,16 @@ final class BackendController @Inject()(
       }
     }
   }
+
+  def maintenance: Action[AnyContent] = Action.async { implicit request =>
+    userSessions.getUser.map { user =>
+      if (user.isSuperuser) {
+        //clusterMonitor ! Multicast TODO put somewhere else
+        Ok
+      } else {
+        NotFound
+      }
+    }
+  }
+
 }

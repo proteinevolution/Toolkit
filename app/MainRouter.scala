@@ -34,7 +34,6 @@ class MainRouter @Inject()(
   private lazy val mainRoutes: Routes = {
     case GET(p"/")              => controller.index()
     case GET(p"/sitemap.xml")   => assets.versioned(path = "/public", file = "sitemap.xml")
-    case POST(p"/maintenance")  => controller.maintenance
     case GET(p"/uptime")        => uptime.uptime
     case GET(p"/buildinfo")     => uptime.buildInfo
     case GET(p"/assets/$file*") => assets.versioned(path = "/public", file = file)
@@ -46,7 +45,6 @@ class MainRouter @Inject()(
     case GET(p"/hhpred")          => controller.showTool(toolName = "hhpred")
     case GET(p"/tools/$toolName") => controller.showTool(toolName)
     case GET(p"/jobs/$idString")  => controller.showJob(idString)
-    case GET(p"/recent/updates")  => controller.recentUpdates
   }
 
   private lazy val authRoutes: Routes = {

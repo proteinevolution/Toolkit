@@ -74,25 +74,10 @@ final class Application @Inject()(
     PermanentRedirect(s"/#/$static")
   }
 
-  def maintenance: Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.map { user =>
-      if (user.isSuperuser) {
-        //clusterMonitor ! Multicast TODO put somewhere else
-        Ok
-      } else {
-        NotFound
-      }
-    }
-  }
-
   val robots = Action { _ =>
     Ok(
       "User-agent: *\nAllow: /\nDisallow: /#/jobmanager/\nDisallow: /#/jobs/\nSitemap: https://toolkit.tuebingen.mpg.de/sitemap.xml"
     )
-  }
-
-  def recentUpdates = Action {
-    Ok(views.html.elements.recentupdates())
   }
 
 }
