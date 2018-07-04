@@ -48,12 +48,11 @@ class Checkboxes(private val outerContainer: JQuery) {
   }
 
   def toggleAll(max: Int): Unit = {
-    if (outerContainer
-          .find("input[type=checkbox][name=alignment_elem]:checked")
-          .length != outerContainer.find("input[type=checkbox][name=alignment_elem]").length) {
-      selectAll(max)
-    } else {
+    val $button = outerContainer.find(".selectAllSeqBar")
+    if ($button.text().trim == "Select all".trim) {
       deselectAll(max)
+    } else {
+      selectAll(max)
     }
   }
 
