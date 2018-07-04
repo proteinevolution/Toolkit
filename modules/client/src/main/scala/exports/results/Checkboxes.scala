@@ -43,14 +43,18 @@ class Checkboxes(private val outerContainer: JQuery) {
             .each((_: Int, checkbox: Element) => {
               jQuery(checkbox).prop("checked", currentState)
             })
+          // set label correctly dependent on checkbox states
+          if (container.find("input[type=checkbox][name=alignment_elem]:checked").length > 0) {
+            container.find(".selectAllSeqBar").text("Deselect all")
+          } else {
+            container.find(".selectAllSeqBar").text("Select all")
+          }
         }
       )
   }
 
-  def toggleAll(max: Int): Unit = {
-    if (outerContainer
-          .find("input[type=checkbox][name=alignment_elem]:checked")
-          .length != outerContainer.find("input[type=checkbox][name=alignment_elem]").length) {
+  def toggleAll(max: Int, $button: JQuery): Unit = {
+    if ($button.text().trim == "Select all".trim) {
       selectAll(max)
     } else {
       deselectAll(max)

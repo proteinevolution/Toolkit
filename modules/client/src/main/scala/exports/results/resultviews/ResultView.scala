@@ -49,7 +49,7 @@ trait ResultView {
             $link.toggleClass("colorToggleBar")
             import JQueryExtensions._
             $link.toggleText("Select all", "Deselect all")
-            checkboxes.toggleAll(resultContext.numHits)
+            checkboxes.toggleAll(resultContext.numHits, $link)
           }
         }: js.ThisFunction
       )
