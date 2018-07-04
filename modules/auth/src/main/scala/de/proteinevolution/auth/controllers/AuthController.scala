@@ -3,10 +3,10 @@ package de.proteinevolution.auth.controllers
 import java.time.ZonedDateTime
 
 import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.db.MongoStore
 import de.proteinevolution.models.database.users.{ User, UserToken }
 import javax.inject.{ Inject, Singleton }
 import play.api.Logger
@@ -18,7 +18,7 @@ import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class AuthController @Inject()(userSessions: UserSessions, mongoStore: MongoStore, cc: ControllerComponents)(
+class AuthController @Inject()(userSessions: UserSessions, userDao: UserDao, cc: ControllerComponents)(
     implicit ec: ExecutionContext,
     mailerClient: MailerClient
 ) extends ToolkitController(cc)
@@ -40,6 +40,18 @@ class AuthController @Inject()(userSessions: UserSessions, mongoStore: MongoStor
       logger.info("Sending user data.")
       Ok(Json.toJson(user.userData))
     }
+  }
+
+  def signInSubmit = Action.async { implicit request =>
+
+    /*userSessions.getUser.flatMap { unregisteredUser =>
+      if (unregisteredUser.accountType < 0) {
+    FormDefinitions.signIn.bindFromRequest.fold(
+      _ =>
+        Future.successful {
+          Ok(loginError())
+        }, */
+    Future.successful(Ok)
   }
 
   def signUpSubmit: Action[AnyContent] = Action.async { implicit request =>
@@ -68,7 +80,7 @@ class AuthController @Inject()(userSessions: UserSessions, mongoStore: MongoStor
                   "$or" -> List(BSONDocument(User.EMAIL -> signUpFormUser.getUserData.eMail),
                                 BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin))
                 )
-                mongoStore.findUser(selector).flatMap {
+                userDao.findUser(selector).flatMap {
                   case Some(otherUser) =>
                     if (signUpFormUser.getUserData.eMail == otherUser.getUserData.eMail) {
                       Future.successful(Ok(accountEmailUsed()))
@@ -83,7 +95,7 @@ class AuthController @Inject()(userSessions: UserSessions, mongoStore: MongoStor
                       userToken =
                         Some(UserToken(tokenType = User.REGISTEREDUSER, eMail = Some(signUpFormUser.getUserData.eMail)))
                     )
-                    mongoStore.upsertUser(newUser).map {
+                    userDao.upsertUser(newUser).map {
                       case Some(registeredUser) =>
                         // All done. User is registered, now send the welcome eMail
                         registeredUser.userToken match {
@@ -123,7 +135,7 @@ class AuthController @Inject()(userSessions: UserSessions, mongoStore: MongoStor
               )
             )
 
-          mongoStore.findUser(selector).flatMap {
+          userDao.findUser(selector).flatMap {
             case Some(user) =>
               user.userData match {
                 case Some(_) =>
@@ -291,7 +303,7 @@ class AuthController @Inject()(userSessions: UserSessions, mongoStore: MongoStor
 
                   if (editedProfileUserData.eMail != user.getUserData.eMail) {
                     val selectorMail = BSONDocument(BSONDocument(User.EMAIL -> editedProfileUserData.eMail))
-                    mongoStore.findUser(selectorMail).flatMap {
+                    userDao.findUser(selectorMail).flatMap {
                       case Some(_) =>
                         Future.successful(Ok(accountEmailUsed()))
                       case None => Future.successful(NotFound)

@@ -5,6 +5,7 @@ import java.time.ZonedDateTime
 import javax.inject.{ Inject, Singleton }
 import akka.actor.ActorRef
 import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
 import de.proteinevolution.models.database.users.{ User, UserToken }
 import de.proteinevolution.db.MongoStore
@@ -24,7 +25,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 @Singleton
 final class Auth @Inject()(
     webJarsUtil: WebJarsUtil,
-    mongoStore: MongoStore,
+    userDao: UserDao,
     toolConfig: ToolConfig,
     userSessions: UserSessions,
     @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
@@ -55,7 +56,7 @@ final class Auth @Inject()(
             },
             // if no error, then insert the user to the collection
             signInFormUser => {
-              val futureUser = mongoStore.findUser(
+              val futureUser = userDao.findUser(
                 BSONDocument(
                   "$or" -> List(BSONDocument(User.EMAIL -> signInFormUser.nameLogin),
                                 BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin))
@@ -139,14 +140,14 @@ final class Auth @Inject()(
     userSessions.getUser.flatMap { user: User =>
       // Grab the user from the database in case that the logged in user is not the user to verify
       // TODO check for both name or email
-      mongoStore.findUser(BSONDocument(User.NAMELOGIN -> nameLogin)).flatMap {
+      userDao.findUser(BSONDocument(User.NAMELOGIN -> nameLogin)).flatMap {
         case Some(userToVerify) =>
           userToVerify.userToken match {
             case Some(userToken) =>
               if (userToken.token == token) {
                 userToken.tokenType match {
                   case 1 => // Token for eMail verification
-                    mongoStore
+                    userDao
                       .modifyUser(
                         BSONDocument(User.IDDB -> userToVerify.userID),
                         BSONDocument(
@@ -184,7 +185,7 @@ final class Auth @Inject()(
                   case 2 => // Token for password change validation
                     userToken.passwordHash match {
                       case Some(newPassword) =>
-                        mongoStore
+                        userDao
                           .modifyUser(
                             BSONDocument(User.IDDB -> userToVerify.userID),
                             BSONDocument(

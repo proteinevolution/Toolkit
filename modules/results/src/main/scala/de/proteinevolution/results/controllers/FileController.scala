@@ -11,9 +11,13 @@ import play.api.mvc.{ AbstractController, Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
 
-class FileController @Inject()(ctx: HHContext, env: Env, constants: ConstantsV2, userSessions: UserSessions)(
-    implicit ec: ExecutionContext
-) extends AbstractController(ctx.controllerComponents)
+class FileController @Inject()(
+    ctx: HHContext,
+    env: Env,
+    constants: ConstantsV2,
+    userSessions: UserSessions
+)(implicit ec: ExecutionContext)
+    extends AbstractController(ctx.controllerComponents)
     with ContentTypes {
 
   def getStructureFile(filename: String): Action[AnyContent] = Action { implicit request =>

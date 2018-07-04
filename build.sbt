@@ -204,3 +204,5 @@ testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
 
 PlayKeys.devSettings := Seq("play.server.http.idleTimeout" -> "220s")
+
+addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3")
