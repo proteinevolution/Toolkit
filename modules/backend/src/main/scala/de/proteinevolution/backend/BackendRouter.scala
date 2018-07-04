@@ -16,6 +16,7 @@ class BackendRouter @Inject()(ctrl: BackendController) extends SimpleRouter {
     case GET(p"/runjobsweep")  => ctrl.runJobSweep
     case GET(p"/users")        => ctrl.users
     case POST(p"/users")       => ctrl.users
+    case POST(p"/maintenance") => ctrl.maintenance
   }
 
   override lazy val routes: Routes = {
