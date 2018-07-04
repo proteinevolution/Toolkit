@@ -31,4 +31,8 @@ class UiController @Inject()(
     }
   }
 
+  def recentUpdates = Action {
+    Ok(views.html.elements.recentupdates())
+  }
+
 }
