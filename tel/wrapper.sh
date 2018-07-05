@@ -9,6 +9,12 @@ HOSTNAME=$(hostname)
 key=`date | md5sum | awk '{print $1}'`
 # return the current key
 echo $key > ../key
+
+# Decide whether to submit jobs to the cluster system (SGE) or to run them locally on Olt (LOCAL).
+# When the cluster system is busy, the LOCAL mode could be used to have jobs run through immediately.
+# However, qstat-related functions (e.g. cluster load calculation) will not work in this mode.
+MODE="SGE"
+
 if [ "$HOSTNAME" = "olt" ] || [ "$HOSTNAME" = "rye" ]; then
 
 until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%PORT/api/jobs/status/queued/$JOBID/$key); do
@@ -16,18 +22,20 @@ until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%
     sleep 5
 done
 
-if [ "$HOSTNAME" = "olt" ]
-  then
-    qsub -sync n \
-         -l s_rt=%SOFTRUNTIME \
-         -l h_rt=%HARDRUNTIME \
-         -l s_vmem=%SOFTMEMORY \
-         -l h_vmem=%MEMORY,h="node502|node503|node504|node505|node506|node507|node508|node509|node510|node511|node512|node513" \
-         -pe parallel %THREADS \
-         -cwd  \
-         -terse \
-         %r > jobIDCluster
-
+if [ "$HOSTNAME" = "olt" ]; then
+    if [ "$MODE" = "SGE" ]; then
+            qsub -sync n \
+                -l s_rt=%SOFTRUNTIME \
+                -l h_rt=%HARDRUNTIME \
+                -l s_vmem=%SOFTMEMORY \
+                -l h_vmem=%MEMORY,h="node502|node503|node504|node505|node506|node507|node508|node509|node510|node511|node512|node513" \
+                -pe parallel %THREADS \
+                -cwd  \
+                -terse \
+                %r > jobIDCluster
+    elif [ "$MODE" = "LOCAL" ]; then
+                %r > jobIDCluster
+    fi
 elif [ "$HOSTNAME" = "rye" ]
   then
       HOSTNAME="rye"
