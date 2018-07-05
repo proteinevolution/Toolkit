@@ -25,7 +25,6 @@ const validation = function(elem : any, isInit : boolean, ctx : any) : any {
             if (url[url.length - 2] != 'jobs') {
 
                 $('#pasteButton').on('click', function () {
-                    m.redraw(true);
                     setTimeout(function () {
                         validationProcess($(elem), toolname)
                     }, 200);
