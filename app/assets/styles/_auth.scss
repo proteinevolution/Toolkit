@@ -137,3 +137,12 @@ button.loggedIn {
 .menu.vertical > li a:not(.button):hover {
   background: rgba(211, 211, 211, 0.5);
 }
+
+.password-edit-form {
+  width: 380px;
+  background: white;
+  padding: 40px;
+  display: block;
+  margin: auto;
+  border-radius: 4px;
+}
