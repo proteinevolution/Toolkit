@@ -35,10 +35,10 @@ class SearchService @Inject()(
       .toList
     if (tools.isEmpty) {
       (for {
-        jobs <- OptionT.liftF(jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))))
+        jobs     <- OptionT.liftF(jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))))
+        filtered <- OptionT.pure[Future](jobs.filter(job => job.ownerID.contains(user.userID)))
       } yield {
-        val jobsFiltered = jobs.filter(job => job.ownerID.contains(user.userID))
-        jobsFiltered
+        filtered
       }).flatMapF { jobs =>
         if (jobs.isEmpty) {
           OptionT(jobDao.findJob(BSONDocument(Job.JOBID -> queryString))).map(_ :: Nil).value
