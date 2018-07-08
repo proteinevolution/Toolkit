@@ -77,7 +77,7 @@ const JobTabsComponent = {
                         onCollapse();
                     }
                     $("#collapseMe").addClass("fa-expand").removeClass("fa-compress");
-                    Toolkit.resultView.scrollUtil.followScroll($(document));
+                    Toolkit.resultView.initScrollWatch();
                     if (typeof setViewport === "function") {
                         setViewport();
                     }
@@ -89,7 +89,7 @@ const JobTabsComponent = {
                         onExpand();
                     }
                     $("#collapseMe").addClass("fa-compress").removeClass("fa-expand");
-                    Toolkit.resultView.scrollUtil.followScroll($(job_tab_component));
+                    Toolkit.resultView.initScrollWatch();
                     if (typeof setViewport === "function") {
                         setViewport();
                     }

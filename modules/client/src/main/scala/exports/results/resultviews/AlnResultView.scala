@@ -2,8 +2,7 @@ package exports.results.resultviews
 
 import exports.facades.ResultContext
 import exports.results.models.ResultForm.MsaResultForm
-import org.scalajs.dom
-import org.scalajs.jquery.{ jQuery, JQuery, JQueryXHR }
+import org.scalajs.jquery.{ JQuery, JQueryXHR }
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExportTopLevel
@@ -18,7 +17,7 @@ class AlnResultView(
 ) extends ResultView {
 
   override def init(): Unit = {
-    scrollUtil.followScroll(jQuery(dom.document))
+    initScrollWatch()
     if (resultContext.numHits > 0) {
       commonBindEvents()
       showHits(0, hitsToLoad)
