@@ -24,10 +24,10 @@ class HHController @Inject()(
     resultCtx: ResultContext,
     toolFinder: ToolNameGetService,
     resultFiles: ResultFileAccessor,
-    dtService: DTService
 )(implicit ec: ExecutionContext)
     extends AbstractController(ctx.controllerComponents)
-    with ResultsRepository {
+    with ResultsRepository
+    with DTService {
 
   private val resultsService = ResultsService(toolFinder, resultFiles)
 
@@ -89,19 +89,19 @@ class HHController @Inject()(
           getTool(jobId).run(resultsService).map {
             case HHBLITS =>
               (resultCtx.hhblits.parseResult(jsValue),
-               dtService.getHitsByKeyWord[HHBlitsHSP](resultCtx.hhblits.parseResult(jsValue), params))
+               getHitsByKeyWord[HHBlitsHSP](resultCtx.hhblits.parseResult(jsValue), params))
             case HHOMP =>
               (resultCtx.hhomp.parseResult(jsValue),
-               dtService.getHitsByKeyWord[HHompHSP](resultCtx.hhomp.parseResult(jsValue), params))
+               getHitsByKeyWord[HHompHSP](resultCtx.hhomp.parseResult(jsValue), params))
             case HHPRED =>
               (resultCtx.hhpred.parseResult(jsValue),
-               dtService.getHitsByKeyWord[HHPredHSP](resultCtx.hhpred.parseResult(jsValue), params))
+               getHitsByKeyWord[HHPredHSP](resultCtx.hhpred.parseResult(jsValue), params))
             case HMMER =>
               (resultCtx.hmmer.parseResult(jsValue),
-               dtService.getHitsByKeyWord[HmmerHSP](resultCtx.hmmer.parseResult(jsValue), params))
+               getHitsByKeyWord[HmmerHSP](resultCtx.hmmer.parseResult(jsValue), params))
             case PSIBLAST =>
               (resultCtx.psiblast.parseResult(jsValue),
-               dtService.getHitsByKeyWord[PSIBlastHSP](resultCtx.psiblast.parseResult(jsValue), params))
+               getHitsByKeyWord[PSIBlastHSP](resultCtx.psiblast.parseResult(jsValue), params))
             case _ => throw new IllegalArgumentException("datatables not implemented for this tool")
           }
         case None => throw new IllegalStateException("no result found")
