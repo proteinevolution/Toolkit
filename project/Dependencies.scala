@@ -22,7 +22,7 @@ object Dependencies {
     "com.typesafe.akka"    %% "akka-stream"              % akkaVersion,
     "com.typesafe.play"    %% "play-mailer"              % "6.0.1",
     "com.typesafe.play"    %% "play-mailer-guice"        % "6.0.1",
-    "com.github.pathikrit" %% "better-files"             % "3.4.0",
+    "com.github.pathikrit" %% "better-files"             % "3.5.0",
     "org.mindrot"          % "jbcrypt"                   % "0.3m",
     "org.reactivemongo"    %% "play2-reactivemongo"      % "0.14.0-play26",
     "org.reactivemongo"    %% "reactivemongo-akkastream" % "0.14.0",
