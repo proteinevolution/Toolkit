@@ -26,7 +26,7 @@ class NormalResultView(
 
   override def init(): Unit = {
 
-    scrollUtil.followScroll(jQuery(dom.document))
+    initScrollWatch()
 
     // add slider val
     container

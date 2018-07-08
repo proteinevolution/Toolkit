@@ -201,7 +201,7 @@ const GeneralTabComponent = {
                         alignmentView.g.zoomer.set("alignmentHeight", job_tab_component.width() - 500);
                         alignmentView.g.zoomer.set("alignmentWidth", job_tab_component.width() - 240);
                     }
-                    Toolkit.resultView.scrollUtil.followScroll($(document));
+                    Toolkit.resultView.initScrollWatch();
                     return;
                 } else {
                     job_tab_component.addClass("fullscreen");
@@ -214,7 +214,7 @@ const GeneralTabComponent = {
                         alignmentView.g.zoomer.set("alignmentHeight", $(window).height() - 320);
                         alignmentView.g.zoomer.set("alignmentWidth", job_tab_component.width() - 240);
                     }
-                    Toolkit.resultView.scrollUtil.followScroll($(job_tab_component));
+                    Toolkit.resultView.initScrollWatch();
                 }
                 if (typeof onFullscreenToggle === "function" && this.isFullscreen === true) {
                     return onFullscreenToggle();
