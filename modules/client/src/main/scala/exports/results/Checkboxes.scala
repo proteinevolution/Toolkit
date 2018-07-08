@@ -1,6 +1,6 @@
 package exports.results
 
-import org.scalajs.dom.raw.{Event, HTMLInputElement}
+import org.scalajs.dom.raw.{ Event, HTMLInputElement }
 import org.scalajs.jquery.JQuery
 
 import scala.collection.mutable
@@ -8,8 +8,8 @@ import scala.scalajs.js
 import scala.scalajs.js.JSConverters._
 
 /**
-  * Checkbox handler for result pages
-  */
+ * Checkbox handler for result pages
+ */
 class Checkboxes(private val outerContainer: JQuery) {
 
   val checkedValues: mutable.Map[String, Boolean] = mutable.Map[String, Boolean]()
@@ -33,13 +33,11 @@ class Checkboxes(private val outerContainer: JQuery) {
         "change",
         "input[type=checkbox][name=alignment_elem]",
         (e: Event) => {
-          val currentVal = e.currentTarget.asInstanceOf[HTMLInputElement].value
+          val currentVal   = e.currentTarget.asInstanceOf[HTMLInputElement].value
           val currentState = e.currentTarget.asInstanceOf[HTMLInputElement].checked
           checkedValues(currentVal.toString) = currentState // force string value
           // link checkboxes with same value
-          container
-            .find(s"input[type=checkbox][name=alignment_elem][value=$currentVal]")
-            .prop("checked", currentState)
+          container.find(s"input[type=checkbox][name=alignment_elem][value=$currentVal]").prop("checked", currentState)
         }
       )
   }
@@ -53,16 +51,12 @@ class Checkboxes(private val outerContainer: JQuery) {
   }
 
   def deselectAll(max: Int): Unit = {
-    outerContainer
-      .find("input[type=checkbox][name=alignment_elem]")
-      .prop("checked", false)
+    outerContainer.find("input[type=checkbox][name=alignment_elem]").prop("checked", false)
     (1 to max).foreach(i => checkedValues.update(i.toString, false))
   }
 
   def selectAll(max: Int): Unit = {
-    outerContainer
-      .find("input[type=checkbox][name=alignment_elem]")
-      .prop("checked", true)
+    outerContainer.find("input[type=checkbox][name=alignment_elem]").prop("checked", true)
     (1 to max).foreach(i => checkedValues.update(i.toString, true))
   }
 
