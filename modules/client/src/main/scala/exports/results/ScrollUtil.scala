@@ -13,7 +13,7 @@ import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 class ScrollUtil(resultView: ResultView) {
 
   @JSExport
-  def followScroll($elem: JQuery): Unit = {
+  def followScroll($elem: JQuery = jQuery(dom.document), $container: JQuery = jQuery(dom.document)): Unit = {
     try {
       val $scrollLinks        = $elem.find("#scrollLinks a")
       val $visualization      = $elem.find("#visualization")
@@ -36,10 +36,10 @@ class ScrollUtil(resultView: ResultView) {
       })
 
       //  Fixes/Unfixes the control bar at the top
-      $elem.off("scroll").on(
+      $container.off("scroll").on(
         "scroll",
         () => {
-          val top = jQuery(dom.document).scrollTop()
+          val top = $container.scrollTop()
           if (!js.isUndefined($visualization.position())) {
             if (top >= $visualization.position().asInstanceOf[JQueryPosition].top + 75) {
               $scrollContainer.addClass("fixed").removeClass("scrollContainerWhite")
@@ -56,7 +56,7 @@ class ScrollUtil(resultView: ResultView) {
             }
           }
           // triggers getHits on scroll
-          if (top == $elem.height() - jQuery(dom.window).height()) {
+          if (top >= $elem.height() - jQuery(dom.window).height()) {
             if (!resultView.loading) {
               val limit: Int =
                 if (dom.document.getElementById("toolnameAccess").asInstanceOf[HTMLInputElement].value == "psiblast")

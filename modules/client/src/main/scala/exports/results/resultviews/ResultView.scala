@@ -31,7 +31,6 @@ trait ResultView {
   protected val checkboxes: Checkboxes = new Checkboxes(container)
   protected val hitsSlider: HitsSlider = new HitsSlider(container)
 
-  @JSExport
   protected val scrollUtil: ScrollUtil           = new ScrollUtil(this)
   protected val forwardingModal: ForwardingModal = new ForwardingModal(container, resultContext.toolName, jobID)
 
@@ -53,6 +52,16 @@ trait ResultView {
           }
         }: js.ThisFunction
       )
+  }
+
+  @JSExport
+  def initScrollWatch(): Unit = {
+    val toolTabs = container.find("#tool-tabs")
+    if (toolTabs.hasClass("fullscreen")) {
+      scrollUtil.followScroll(toolTabs.find(".result-panel:visible"), toolTabs)
+    } else {
+      scrollUtil.followScroll()
+    }
   }
 
   def showHits(start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit
