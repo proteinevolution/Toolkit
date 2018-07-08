@@ -2,10 +2,8 @@ package de.proteinevolution.results.services
 
 import de.proteinevolution.results.results.General.DTParam
 import de.proteinevolution.results.results.{ HSP, SearchResult }
-import javax.inject.Singleton
 
-@Singleton
-class DTService {
+trait DTService {
 
   def getHitsByKeyWord[T <: HSP](hits: SearchResult[T], params: DTParam): List[T] = {
     val hitList = hits.hitsOrderBy(params)
