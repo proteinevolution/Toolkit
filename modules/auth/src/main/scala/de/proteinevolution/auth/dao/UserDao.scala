@@ -13,7 +13,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 @Singleton
 class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit ec: ExecutionContext) {
 
-  private lazy val userCollection: Future[BSONCollection] = {
+  private[auth] lazy val userCollection: Future[BSONCollection] = {
     reactiveMongoApi.database.map(_.collection[BSONCollection]("users"))
   }
 

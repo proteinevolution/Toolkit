@@ -2,14 +2,17 @@ package de.proteinevolution.auth.controllers
 
 import java.time.ZonedDateTime
 
+import akka.actor.ActorRef
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.models.database.users.{ User, UserToken }
+import de.proteinevolution.models.message.Session.ChangeSessionID
 import javax.inject.{ Inject, Singleton }
 import play.api.Logger
+import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.json.Json
 import play.api.libs.mailer.MailerClient
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
@@ -18,10 +21,13 @@ import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class AuthController @Inject()(userSessions: UserSessions, userDao: UserDao, cc: ControllerComponents)(
-    implicit ec: ExecutionContext,
-    mailerClient: MailerClient
-) extends ToolkitController(cc)
+class AuthController @Inject()(
+    userSessions: UserSessions,
+    userDao: UserDao,
+    cc: ControllerComponents,
+    @NamedCache("wsActorCache") wsActorCache: SyncCacheApi
+)(implicit ec: ExecutionContext, mailerClient: MailerClient)
+    extends ToolkitController(cc)
     with JSONTemplate {
 
   private val logger = Logger(this.getClass)
@@ -42,17 +48,86 @@ class AuthController @Inject()(userSessions: UserSessions, userDao: UserDao, cc:
     }
   }
 
-  def signInSubmit = Action.async { implicit request =>
+  def signInSubmit: Action[AnyContent] =
+    Action.async { implicit request =>
+      userSessions.getUser.flatMap { unregisteredUser =>
+        if (unregisteredUser.accountType < 0) {
+          // Evaluate the Form
+          FormDefinitions.signIn.bindFromRequest.fold(
+            _ =>
+              Future.successful {
+                Ok(loginError())
+            },
+            // if no error, then insert the user to the collection
+            signInFormUser => {
+              val futureUser = userDao.findUser(
+                BSONDocument(
+                  "$or" -> List(BSONDocument(User.EMAIL -> signInFormUser.nameLogin),
+                                BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin))
+                )
+              )
+              futureUser.flatMap {
+                case Some(databaseUser) =>
+                  // Check the password
+                  if (databaseUser.checkPassword(signInFormUser.password) && databaseUser.accountType > 0) {
+                    // create a modifier document to change the last login date in the Database
+                    val selector = BSONDocument(User.IDDB -> databaseUser.userID)
+                    // Change the login time and give the new Session ID to the user.
+                    // Additionally add the watched jobs to the users watchlist.
+                    val modifier = userSessions.getUserModifier(databaseUser, forceSessionID = true)
+                    // TODO this adds the non logged in user's jobs to the now logged in user's job list
+                    //                            "$addToSet"        ->
+                    //               BSONDocument(User.JOBS          ->
+                    //               BSONDocument("$each"            -> unregisteredUser.jobs)))
+                    // Finally add the edits to the collection
+                    userSessions.modifyUserWithCache(selector, modifier).map {
+                      case Some(loggedInUser) =>
+                        logger.info(
+                          "\n-[old user]-\n"
+                          + unregisteredUser.toString
+                          + "\n-[new user]-\n"
+                          + loggedInUser.toString
+                        )
+                        // Remove the old, not logged in user
+                        //removeUser(BSONDocument(User.IDDB -> unregisteredUser.userID))
+                        userSessions.removeUserFromCache(unregisteredUser)
 
-    /*userSessions.getUser.flatMap { unregisteredUser =>
-      if (unregisteredUser.accountType < 0) {
-    FormDefinitions.signIn.bindFromRequest.fold(
-      _ =>
-        Future.successful {
-          Ok(loginError())
-        }, */
-    Future.successful(Ok)
-  }
+                        // Tell the job actors to copy all jobs connected to the old user to the new user
+                        wsActorCache.get[List[ActorRef]](unregisteredUser.userID.stringify) match {
+                          case Some(wsActors) =>
+                            val actorList: List[ActorRef] = wsActors: List[ActorRef]
+                            wsActorCache.set(loggedInUser.userID.stringify, actorList)
+                            actorList.foreach(_ ! ChangeSessionID(loggedInUser.sessionID.get))
+                            wsActorCache.remove(unregisteredUser.userID.stringify)
+                          case None =>
+                        }
+
+                        // Everything is ok, let the user know that they are logged in now
+                        Ok(loggedIn(loggedInUser)).withSession(
+                          userSessions.sessionCookie(request, loggedInUser.sessionID.get)
+                        )
+                      case None =>
+                        Ok(loginIncorrect())
+                    }
+                  } else if (databaseUser.accountType < 1) {
+                    // User needs to Verify first
+                    Future.successful(Ok(mustVerify()))
+                  } else {
+                    // Wrong Password, show the error message
+                    Future.successful(Ok(loginIncorrect()))
+                  }
+                case None =>
+                  Future.successful {
+                    Ok(loginIncorrect())
+                  }
+              }
+            }
+          )
+        } else {
+          Future.successful(Ok(alreadyLoggedIn()))
+        }
+      }
+    }
 
   def signUpSubmit: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>

@@ -2,8 +2,8 @@ package de.proteinevolution.auth
 
 import java.time.ZonedDateTime
 
+import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.common.LocationProvider
-import de.proteinevolution.db.MongoStore
 import de.proteinevolution.models.database.users.{ SessionData, User }
 import javax.inject.{ Inject, Singleton }
 import play.api.cache._
@@ -17,7 +17,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.hashing.MurmurHash3
 @Singleton
 class UserSessions @Inject()(
-    mongoStore: MongoStore,
+    userDao: UserDao,
     @NamedCache("userCache") userCache: SyncCacheApi,
     locationProvider: LocationProvider
 )(implicit ec: ExecutionContext) {
@@ -82,7 +82,7 @@ class UserSessions @Inject()(
       location = locationProvider.getLocation(request)
     )
 
-    mongoStore.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
+    userDao.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
       case Some(user) =>
         logger.info(s"User found by SessionID:\n${user.toString}")
         val selector = BSONDocument(User.IDDB -> user.userID)
@@ -107,7 +107,7 @@ class UserSessions @Inject()(
           dateLastLogin = Some(ZonedDateTime.now),
           dateUpdated = Some(ZonedDateTime.now)
         )
-        mongoStore.addUser(user).map { _ =>
+        userDao.addUser(user).map { _ =>
           logger.info(s"User is new:\n${user.toString}\nIP: ${request.remoteAddress.toString}")
           user
         }
@@ -152,7 +152,7 @@ class UserSessions @Inject()(
         Future.successful(Some(user))
       case None =>
         // Pull it from the DB, as it is not in the cache
-        mongoStore.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
+        userDao.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
           case Some(user) =>
             // Update the last login time
             val selector = BSONDocument(User.IDDB -> user.userID)
@@ -189,7 +189,7 @@ class UserSessions @Inject()(
    * @return
    */
   def modifyUserWithCache(selector: BSONDocument, modifier: BSONDocument): Future[Option[User]] = {
-    mongoStore
+    userDao
       .modifyUser(selector, modifier)
       .map(_.map { user =>
         updateUserCache(user)
@@ -206,7 +206,7 @@ class UserSessions @Inject()(
     user.sessionID.foreach(sessionID => userCache.remove(sessionID.stringify))
 
     if (withDB) {
-      mongoStore.userCollection.flatMap(
+      userDao.userCollection.flatMap(
         _.update(
           BSONDocument(User.IDDB -> user.userID),
           BSONDocument(

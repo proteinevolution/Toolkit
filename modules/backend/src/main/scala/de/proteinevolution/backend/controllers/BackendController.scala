@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit
 
 import akka.actor.ActorRef
 import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.db.MongoStore
@@ -24,6 +25,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 final class BackendController @Inject()(
     userSessions: UserSessions,
     mongoStore: MongoStore,
+    userDao: UserDao,
     jobDao: JobDao,
     toolConfig: ToolConfig,
     @Named("databaseMonitor") databaseMonitor: ActorRef,
@@ -150,7 +152,7 @@ final class BackendController @Inject()(
   def users: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       if (user.isSuperuser) {
-        mongoStore.findUsers(BSONDocument(User.USERDATA -> BSONDocument("$exists" -> true))).map { users =>
+        userDao.findUsers(BSONDocument(User.USERDATA -> BSONDocument("$exists" -> true))).map { users =>
           NoCache(Ok(Json.toJson(users)))
         }
       } else {

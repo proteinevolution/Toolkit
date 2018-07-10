@@ -3,11 +3,8 @@ package de.proteinevolution.db
 import javax.inject.{ Inject, Singleton }
 
 import de.proteinevolution.models.database.statistics.StatisticsObject
-import de.proteinevolution.models.database.users.User
 import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
-import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.api.commands.WriteResult
 import reactivemongo.bson.BSONDocument
 import scala.concurrent.{ ExecutionContext, Future }
 
