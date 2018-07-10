@@ -48,7 +48,6 @@ class MainRouter @Inject()(
   }
 
   private lazy val authRoutes: Routes = {
-    case POST(p"/signin")                       => auth.signInSubmit
     case GET(p"/verification/$userName/$token") => auth.verification(userName, token) // extern
   }
 

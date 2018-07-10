@@ -10,10 +10,11 @@ import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.cluster.actors.ClusterMonitor.{ Connect, Disconnect, UpdateLoad }
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.services.JobActorAccess
-import de.proteinevolution.message.actors.WebSocketActor.{ ChangeSessionID, LogOut, MaintenanceAlert }
+import de.proteinevolution.message.actors.WebSocketActor.{ LogOut, MaintenanceAlert }
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.jobs.JobState.Running
+import de.proteinevolution.models.message.Session.ChangeSessionID
 import javax.inject.{ Inject, Named }
 import play.api.Configuration
 import play.api.cache.{ NamedCache, SyncCacheApi }
@@ -176,7 +177,6 @@ final class WebSocketActor @Inject()(
 
 object WebSocketActor {
 
-  case class ChangeSessionID(sessionID: BSONObjectID)
   case object LogOut
   case object MaintenanceAlert
 

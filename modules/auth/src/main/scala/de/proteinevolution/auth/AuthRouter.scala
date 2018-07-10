@@ -18,6 +18,7 @@ class AuthRouter @Inject()(authController: AuthController, validationController:
     case POST(p"/reset/password/change") => authController.resetPasswordChange
     case POST(p"/password")              => authController.passwordChangeSubmit()
     case POST(p"/profile")               => authController.profileSubmit()
+    case POST(p"/signin")                => authController.signInSubmit
   }
 
   private lazy val validationRoutes: Routes = {

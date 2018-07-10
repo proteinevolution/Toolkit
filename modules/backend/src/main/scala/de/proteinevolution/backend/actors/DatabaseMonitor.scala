@@ -3,6 +3,7 @@ package de.proteinevolution.backend.actors
 import java.time.ZonedDateTime
 
 import akka.actor.{ Actor, ActorLogging, Cancellable }
+import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate.OldAccountEmail
 import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import de.proteinevolution.db.MongoStore
@@ -22,6 +23,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 final class DatabaseMonitor @Inject()(
     mongoStore: MongoStore,
+    userDao: UserDao,
     jobDao: JobDao,
     jobActorAccess: JobActorAccess,
     constants: ConstantsV2
@@ -84,7 +86,7 @@ final class DatabaseMonitor @Inject()(
                                      date found in eMail:         $registeredUserDeletionDateForEmail""")
 
     // Collect all the accounts which should be deleted
-    mongoStore
+    userDao
       .findUsers(
         BSONDocument(
           "$or" ->
@@ -125,7 +127,7 @@ final class DatabaseMonitor @Inject()(
         }
 
         // Finally remove the users with their userID
-        mongoStore.removeUsers(BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs))).foreach { writeResult =>
+        userDao.removeUsers(BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs))).foreach { writeResult =>
           if (verbose)
             log.info(
               s"[User Deletion] Deleting of ${users.length} old users ${if (writeResult.ok) "successful" else "failed"}"
@@ -137,7 +139,7 @@ final class DatabaseMonitor @Inject()(
       log.info("[User Deletion] Checking if there are any old accounts to send the owner an eMail")
 
     // Find registered user accounts which are close to their deletion time
-    mongoStore
+    userDao
       .findUsers(
         BSONDocument(
           User.DATELASTLOGIN -> BSONDocument(
@@ -168,7 +170,7 @@ final class DatabaseMonitor @Inject()(
           log.info(s"[User Deletion] All ${userIDs.length} users eMailed.")
 
         // Set all the eMailed users to "User.CLOSETODELETIONUSER", so that they do not receive another eMail for the same reason
-        mongoStore
+        userDao
           .modifyUsers(
             BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs)),
             BSONDocument(

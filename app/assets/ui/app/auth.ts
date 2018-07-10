@@ -264,7 +264,7 @@ class SignIn {
     static submit(event : Event) : void {
         event.preventDefault();
         let dataS = {nameLogin:SignIn.email, password:SignIn.password};
-        m.request({method: "POST", url: "/signin", data: dataS }).then(function(authMessage) {
+        m.request({method: "POST", url: "/auth/signin", data: dataS }).then(function(authMessage) {
             dataS = null;
             if (authMessage.successful) {
                 SignIn.password = null;
