@@ -10,6 +10,7 @@ import akka.event.LoggingReceive
 import better.files._
 import com.google.inject.assistedinject.Assisted
 import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.JobState._
 import de.proteinevolution.models.database.jobs._
@@ -23,7 +24,6 @@ import de.proteinevolution.tel.execution.{ ExecutionContext, WrapperExecutionFac
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
 import de.proteinevolution.auth.models.MailTemplate.JobFinishedMail
-import de.proteinevolution.db.MongoStore
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services.GeneralHashService
 import de.proteinevolution.models.cluster.Polling.PolledJobs
@@ -42,7 +42,7 @@ class JobActor @Inject()(
     env: Env,
     hashService: GeneralHashService,
     jobDao: JobDao,
-    mongoStore: MongoStore,
+    userDao: UserDao,
     userSessions: UserSessions,
     wrapperExecutionFactory: WrapperExecutionFactory,
     @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
@@ -244,7 +244,7 @@ class JobActor @Inject()(
 
   private def sendJobUpdateMail(job: Job): Boolean = {
     if (job.emailUpdate && job.ownerID.isDefined) {
-      mongoStore.findUser(BSONDocument(User.IDDB -> job.ownerID)).foreach {
+      userDao.findUser(BSONDocument(User.IDDB -> job.ownerID)).foreach {
         case Some(user) =>
           user.userData match {
             case Some(_) =>

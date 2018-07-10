@@ -28,6 +28,7 @@ object Dependencies {
     "org.reactivemongo"    %% "reactivemongo-akkastream" % "0.14.0",
     "org.typelevel"        %% "cats-core"                % catsV,
     "com.chuusai"          %% "shapeless"                % "2.3.3",
+    "org.atnos"            %% "eff"                      % "5.3.0",
     "org.tpolecat"         %% "atto-core"                % "0.6.1",
     "com.vmunier"          %% "scalajs-scripts"          % "1.1.1",
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
