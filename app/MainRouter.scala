@@ -7,6 +7,7 @@ import de.proteinevolution.jobs.JobsRouter
 import de.proteinevolution.message.MessageRouter
 import de.proteinevolution.results.ResultsRouter
 import de.proteinevolution.search.SearchRouter
+import de.proteinevolution.verification.VerificationRouter
 import de.proteinevolution.ui.UiRouter
 import javax.inject.{ Inject, Singleton }
 import play.api.routing.Router.Routes
@@ -16,7 +17,6 @@ import play.api.routing.sird._
 @Singleton
 class MainRouter @Inject()(
     controller: Application,
-    auth: Auth,
     uptime: UptimeController,
     resultsRouter: ResultsRouter,
     assets: Assets,
@@ -28,7 +28,8 @@ class MainRouter @Inject()(
     jobsRouter: JobsRouter,
     searchRouter: SearchRouter,
     uiRouter: UiRouter,
-    messageRouter: MessageRouter
+    messageRouter: MessageRouter,
+    verificationRouter: VerificationRouter
 ) extends SimpleRouter {
 
   private lazy val mainRoutes: Routes = {
@@ -47,14 +48,9 @@ class MainRouter @Inject()(
     case GET(p"/jobs/$idString")  => controller.showJob(idString)
   }
 
-  private lazy val authRoutes: Routes = {
-    case GET(p"/verification/$userName/$token") => auth.verification(userName, token) // extern
-  }
-
   override lazy val routes: Routes = {
     mainRoutes
       .orElse(messageRouter.withPrefix("/ws").routes)
-      .orElse(authRoutes)
       .orElse(uiRoutes)
       .orElse(uiRouter.withPrefix("/ui").routes)
       .orElse(searchRouter.withPrefix("/search").routes)
@@ -63,6 +59,7 @@ class MainRouter @Inject()(
       .orElse(helpRouter.withPrefix("/help").routes)
       .orElse(clusterRouter.withPrefix("/cluster").routes)
       .orElse(authRouter.withPrefix("/auth").routes)
+      .orElse(verificationRouter.withPrefix("/verification").routes)
       .orElse(webjarsRouter.withPrefix("/webjars").routes)
       .orElse(resultsRouter.withPrefix("/results").routes)
   }

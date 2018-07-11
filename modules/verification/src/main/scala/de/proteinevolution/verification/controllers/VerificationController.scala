@@ -1,9 +1,10 @@
-package controllers
+package de.proteinevolution.verification.controllers
 
 import java.time.ZonedDateTime
 
 import javax.inject.{ Inject, Singleton }
 import akka.actor.ActorRef
+import controllers.AssetsFinder
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.JSONTemplate
@@ -22,7 +23,7 @@ import play.api.Environment
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-final class Auth @Inject()(
+final class VerificationController @Inject()(
     webJarsUtil: WebJarsUtil,
     userDao: UserDao,
     toolConfig: ToolConfig,
