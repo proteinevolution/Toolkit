@@ -164,10 +164,22 @@ lazy val message = (project in file("modules/message"))
   )
   .disablePlugins(PlayLayoutPlugin)
 
+lazy val verification = (project in file("modules/verification"))
+  .enablePlugins(PlayScala, JavaAppPackaging)
+  .dependsOn(commonJVM, base, auth, ui, message)
+  .settings(
+    name := "de.proteinevolution.verification",
+    libraryDependencies ++= Dependencies.commonDeps,
+    Settings.compileSettings,
+    TwirlKeys.templateImports := Seq.empty,
+    disableDocs
+  )
+  .disablePlugins(PlayLayoutPlugin)
+
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb)
-  .dependsOn(client, commonJVM, results, jobs, auth, base, cluster, help, backend, search, ui, message)
-  .aggregate(client, commonJVM, results, jobs, auth, base, cluster, help, backend, search, ui, message)
+  .dependsOn(client, commonJVM, results, jobs, auth, base, cluster, help, backend, search, ui, message, verification)
+  .aggregate(client, commonJVM, results, jobs, auth, base, cluster, help, backend, search, ui, message, verification)
   .settings(
     coreSettings,
     name := "mpi-toolkit",
@@ -177,10 +189,7 @@ lazy val root = (project in file("."))
   )
 
 resolvers += "scalaz-bintray".at("http://dl.bintray.com/scalaz/releases")
-resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases"),
-  Resolver.sonatypeRepo("snapshots")
-)
+resolvers ++= Resolver.sonatypeRepo("releases") :: Resolver.sonatypeRepo("snapshots") :: Nil
 
 lazy val client = (project in file("modules/client"))
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
