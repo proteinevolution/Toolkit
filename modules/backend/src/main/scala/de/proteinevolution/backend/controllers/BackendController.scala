@@ -7,8 +7,8 @@ import akka.actor.ActorRef
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
+import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.db.MongoStore
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
@@ -24,7 +24,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 @Singleton
 final class BackendController @Inject()(
     userSessions: UserSessions,
-    mongoStore: MongoStore,
+    backendDao: BackendDao,
     userDao: UserDao,
     jobDao: JobDao,
     toolConfig: ToolConfig,
@@ -56,7 +56,7 @@ final class BackendController @Inject()(
 
         // Grab the current statistics
         logger.info("Loading Statistics...")
-        val stats = mongoStore.getStats
+        val stats = backendDao.getStats
 
         // Ensure all tools are in the statistics, even if they have not been used yet
         logger.info("Statistics loaded.... checking for new tools")
@@ -89,7 +89,7 @@ final class BackendController @Inject()(
                 )
               }
               .flatMap { statisticsObject =>
-                mongoStore.updateStats(statisticsObject).map {
+                backendDao.updateStats(statisticsObject).map {
                   case Some(statisticsObjectUpdated) =>
                     logger.info(
                       "Successfully pushed statistics for Months: " + statisticsObjectUpdated.datePushed
