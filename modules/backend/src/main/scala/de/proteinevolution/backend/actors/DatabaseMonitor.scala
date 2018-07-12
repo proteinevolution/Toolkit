@@ -6,7 +6,7 @@ import akka.actor.{ Actor, ActorLogging, Cancellable }
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate.OldAccountEmail
 import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
-import de.proteinevolution.db.MongoStore
+import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.jobs.actors.JobActor.Delete
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services.JobActorAccess
@@ -22,7 +22,7 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 final class DatabaseMonitor @Inject()(
-    mongoStore: MongoStore,
+    backendDao: BackendDao,
     userDao: UserDao,
     jobDao: JobDao,
     jobActorAccess: JobActorAccess,
@@ -116,14 +116,14 @@ final class DatabaseMonitor @Inject()(
         // Get the userIDs for all found users
         val userIDs = users.map(_.userID)
         // Store the deleted users in the user statistics
-        mongoStore.getStats.foreach { statisticsObject =>
+        backendDao.getStats.foreach { statisticsObject =>
           val currentDeleted: Int = statisticsObject.userStatistics.currentDeleted + users.count(_.userData.nonEmpty)
           val modifier: BSONDocument =
             BSONDocument(
               "$set" ->
               BSONDocument(s"${StatisticsObject.USERSTATISTICS}.${UserStatistic.CURRENTDELETED}" -> currentDeleted)
             )
-          mongoStore.modifyStats(statisticsObject, modifier)
+          backendDao.modifyStats(statisticsObject, modifier)
         }
 
         // Finally remove the users with their userID

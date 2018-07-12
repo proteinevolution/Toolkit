@@ -1,39 +1,23 @@
-package de.proteinevolution.db
-
-import javax.inject.{ Inject, Singleton }
+package de.proteinevolution.backend.dao
 
 import de.proteinevolution.models.database.statistics.StatisticsObject
-import play.modules.reactivemongo.{ ReactiveMongoApi, ReactiveMongoComponents }
+import javax.inject.{ Inject, Singleton }
+import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson.BSONDocument
+
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi)(implicit ec: ExecutionContext)
-    extends ReactiveMongoComponents {
+class BackendDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit ec: ExecutionContext) {
 
-  /*
-   *                Complete Statistics collection
-   */
-  /**
-   * Basic access to the statistics collection
-   */
-  lazy val statisticsCol: Future[BSONCollection] =
+  private[backend] lazy val statisticsCol: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection[BSONCollection]("statistics"))
 
-  /**
-   * Returns the (only) statistic object in the database
-   * @return
-   */
   def getStats: Future[StatisticsObject] = {
     statisticsCol.map(_.find(BSONDocument())).flatMap(_.one[StatisticsObject]).map(_.getOrElse(StatisticsObject()))
   }
 
-  /**
-   * Updates / inserts and returns the statistic object
-   * @param statisticsObject statistic object to update
-   * @return
-   */
   def updateStats(statisticsObject: StatisticsObject): Future[Option[StatisticsObject]] = {
     statisticsCol.flatMap(
       _.findAndUpdate(selector = BSONDocument(StatisticsObject.IDDB -> statisticsObject.statisticsID),
@@ -43,12 +27,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi)(implici
     )
   }
 
-  /**
-   * Modifies the statistics object
-   * @param statisticsObject
-   * @param modifier
-   * @return
-   */
   def modifyStats(statisticsObject: StatisticsObject, modifier: BSONDocument): Future[Option[StatisticsObject]] = {
     statisticsCol.flatMap(
       _.findAndUpdate(selector = BSONDocument(StatisticsObject.IDDB -> statisticsObject.statisticsID),
@@ -57,14 +35,6 @@ final class MongoStore @Inject()(val reactiveMongoApi: ReactiveMongoApi)(implici
     )
   }
 
-  /*
-   *                Cluster load statistics
-   */
-
-  /**
-   * Basic access to the load statistics collection
-   * @return
-   */
   lazy val loadStatisticsCollection: Future[BSONCollection] = {
     reactiveMongoApi.database.map(_.collection[BSONCollection]("loadStatistics"))
   }
