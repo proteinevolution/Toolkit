@@ -6,6 +6,7 @@ import de.proteinevolution.models.database.jobs.JobState.{ Done, Error }
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.models.util.ZonedDateTimeHelper
+import de.proteinevolution.tel.env.Env
 import play.api.libs.mailer.{ Email, MailerClient }
 
 sealed trait MailTemplate {
@@ -37,7 +38,13 @@ sealed trait MailTemplate {
          |</html>
     """.stripMargin
 
-  val origin: String = s"https://toolkit.tuebingen.mpg.de"
+  def environment: play.Environment
+
+  def env: Env
+
+  val origin: String =
+    if (environment.isProd) s"https://toolkit.tuebingen.mpg.de"
+    else s"http://${env.get("HOSTNAME")}:${env.get("PORT")}"
 
 }
 
@@ -46,7 +53,8 @@ object MailTemplate {
   // Date time format for the "deleting your account on" mail
   val dtf = "EEEE, dd.MM.yyyy"
 
-  case class NewUserWelcomeMail(userParam: User, token: String) extends MailTemplate {
+  case class NewUserWelcomeMail(userParam: User, token: String, environment: play.Environment, env: Env)
+      extends MailTemplate {
     override def subject = "Account Verification - Bioinformatics Toolkit"
 
     val user: User = userParam
@@ -73,7 +81,8 @@ object MailTemplate {
     }
   }
 
-  case class ChangePasswordMail(userParam: User, token: String) extends MailTemplate {
+  case class ChangePasswordMail(userParam: User, token: String, environment: play.Environment, env: Env)
+      extends MailTemplate {
     override def subject = "Password Verification - Bioinformatics Toolkit"
 
     val user: User = userParam
@@ -104,7 +113,8 @@ object MailTemplate {
     }
   }
 
-  case class ResetPasswordMail(userParam: User, token: String) extends MailTemplate {
+  case class ResetPasswordMail(userParam: User, token: String, environment: play.Environment, env: Env)
+      extends MailTemplate {
     override def subject = "Password Verification - Bioinformatics Toolkit"
 
     val user: User = userParam
@@ -134,7 +144,7 @@ object MailTemplate {
     }
   }
 
-  case class PasswordChangedMail(userParam: User) extends MailTemplate {
+  case class PasswordChangedMail(userParam: User, environment: play.Environment, env: Env) extends MailTemplate {
     override def subject = "Password Changed - Bioinformatics Toolkit"
 
     val user: User = userParam
@@ -159,7 +169,7 @@ object MailTemplate {
     }
   }
 
-  case class JobFinishedMail(userParam: User, job: Job) extends MailTemplate {
+  case class JobFinishedMail(userParam: User, job: Job, environment: play.Environment, env: Env) extends MailTemplate {
     override def subject: String = s"""Job ${job.jobID} finished running - Bioinformatics Toolkit""".stripMargin
 
     val user: User = userParam
@@ -192,7 +202,8 @@ object MailTemplate {
     }
   }
 
-  case class OldAccountEmail(userParam: User, deletionDate: ZonedDateTime) extends MailTemplate {
+  case class OldAccountEmail(userParam: User, deletionDate: ZonedDateTime, environment: play.Environment, env: Env)
+      extends MailTemplate {
     override def subject = "Old Account - Bioinformatics Toolkit"
 
     val user: User = userParam

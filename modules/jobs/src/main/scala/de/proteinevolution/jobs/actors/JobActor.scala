@@ -39,6 +39,7 @@ import scala.language.postfixOps
 
 class JobActor @Inject()(
     runscriptManager: RunscriptManager,
+    environment: play.Environment,
     env: Env,
     hashService: GeneralHashService,
     jobDao: JobDao,
@@ -251,7 +252,7 @@ class JobActor @Inject()(
               log.info(
                 s"[JobActor[$jobActorNumber].sendJobUpdateMail] Sending eMail to job owner for job ${job.jobID}: Job is ${job.status.toString}"
               )
-              val eMail = JobFinishedMail(user, job)
+              val eMail = JobFinishedMail(user, job, environment, env)
               eMail.send
             case None => NotUsed
           }
