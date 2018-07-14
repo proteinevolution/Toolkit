@@ -2,7 +2,7 @@ package de.proteinevolution.results.controllers
 
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.ToolName._
-import de.proteinevolution.results.models.{ HHContext, ResultContext }
+import de.proteinevolution.results.models.{ HHContext, ResultContext, ResultsForm }
 import de.proteinevolution.results.results.General.DTParam
 import de.proteinevolution.results.results.HHBlits.HHBlitsHSP
 import de.proteinevolution.results.results.HHPred.HHPredHSP
@@ -13,6 +13,7 @@ import de.proteinevolution.results.results.HSP
 import de.proteinevolution.results.services.ResultsRepository.ResultsService
 import de.proteinevolution.results.services.{ DTService, ResultsRepository, ToolNameGetService }
 import javax.inject.{ Inject, Singleton }
+import play.api.libs.circe.Circe
 import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc.{ AbstractController, Action, AnyContent }
 
@@ -27,15 +28,15 @@ class HHController @Inject()(
 )(implicit ec: ExecutionContext)
     extends AbstractController(ctx.controllerComponents)
     with ResultsRepository
-    with DTService {
+    with DTService
+    with Circe {
 
   private val resultsService = ResultsService(toolFinder, resultFiles)
 
-  def loadHits(jobId: String): Action[AnyContent] = Action.async { implicit request =>
-    val json    = request.body.asJson.get
-    val start   = (json \ "start").as[Int]
-    val end     = (json \ "end").as[Int]
-    val wrapped = (json \ "wrapped").as[Boolean]
+  def loadHits(jobId: String): Action[ResultsForm] = Action(circe.json[ResultsForm]).async { implicit request =>
+    val data    = request.body
+    val wrapped = data.wrapped.getOrElse(false)
+    val isColor = data.isColor.getOrElse(false)
     getResults(jobId)
       .run(resultsService)
       .flatMap {
@@ -45,11 +46,9 @@ class HHController @Inject()(
               (resultCtx.hhblits.parseResult(jsValue),
                (hsp: HSP) => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped, jobId))
             case HHPRED =>
-              val isColor = (json \ "isColor").as[Boolean]
               (resultCtx.hhpred.parseResult(jsValue),
                (hsp: HSP) => views.html.hhpred.hit(hsp.asInstanceOf[HHPredHSP], isColor, wrapped, jobId))
             case HHOMP =>
-              val isColor = (json \ "isColor").as[Boolean]
               (resultCtx.hhomp.parseResult(jsValue),
                (hsp: HSP) => views.html.hhomp.hit(hsp.asInstanceOf[HHompHSP], isColor, wrapped, jobId))
             case HMMER =>
@@ -64,10 +63,10 @@ class HHController @Inject()(
       }
       .map {
         case (result, view) =>
-          if (end > result.num_hits || start > result.num_hits) {
+          if (data.end > result.num_hits || data.start > result.num_hits) {
             BadRequest
           } else {
-            val hits = result.HSPS.slice(start, end).map(view)
+            val hits = result.HSPS.slice(data.start, data.end).map(view)
             Ok(hits.mkString)
           }
       }
