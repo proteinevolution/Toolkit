@@ -33,6 +33,7 @@ object Dependencies {
     "com.vmunier"          %% "scalajs-scripts"          % "1.1.1",
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
     "com.typesafe.play"    %% "play-json"                % "2.6.9",
+    "com.dripower"         %% "play-circe"               % "2609.1",
     "org.webjars"          %% "webjars-play"             % "2.6.3",
     "org.scala-js"         %% "scalajs-stubs"            % scalaJSVersion % "provided"
   )
