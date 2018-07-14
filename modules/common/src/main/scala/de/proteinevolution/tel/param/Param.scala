@@ -21,5 +21,7 @@ abstract class GenerativeParam(name: String) extends PredicativeParam(name) {
 
   // Sequence of allowed values with respective clear text name
   def validate(value: String): Boolean = this.generate.contains(value)
+
   def generate: ListMap[String, String]
+
 }

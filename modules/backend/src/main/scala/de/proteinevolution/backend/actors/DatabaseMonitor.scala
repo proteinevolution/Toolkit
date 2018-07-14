@@ -14,6 +14,7 @@ import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.statistics.{ StatisticsObject, UserStatistic }
 import de.proteinevolution.models.database.users.User
+import de.proteinevolution.tel.env.Env
 import javax.inject.{ Inject, Singleton }
 import play.api.libs.mailer.MailerClient
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
@@ -26,7 +27,9 @@ final class DatabaseMonitor @Inject()(
     userDao: UserDao,
     jobDao: JobDao,
     jobActorAccess: JobActorAccess,
-    constants: ConstantsV2
+    constants: ConstantsV2,
+    environment: play.Environment,
+    env: Env
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
     extends Actor
     with ActorLogging {
@@ -155,7 +158,7 @@ final class DatabaseMonitor @Inject()(
           )
 
         val userIDs = users.map { user =>
-          val mail = OldAccountEmail(user, registeredUserDeletionDateForEmail)
+          val mail = OldAccountEmail(user, registeredUserDeletionDateForEmail, environment, env)
           mail.send
           if (verbose)
             log.info(

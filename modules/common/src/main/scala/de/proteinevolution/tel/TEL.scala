@@ -29,15 +29,8 @@ class TEL @Inject()(env: Env, params: Params) extends TELRegex with TELConstants
 
 object TEL {
 
-  var port = ""
-
-  var hostname = ""
-
   var memFactor: Double = 1
 
   var threadsFactor: Double = 1
-
-  // only use this for development mode
-  lazy val isSubmitHost: Boolean = hostname.contains("olt") || hostname.contains("rye")
 
 }
