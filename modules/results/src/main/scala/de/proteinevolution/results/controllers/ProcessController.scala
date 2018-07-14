@@ -4,15 +4,15 @@ import better.files._
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.ToolName._
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
-import de.proteinevolution.results.models.{ ForwardMode, HHContext, ResultContext }
+import de.proteinevolution.results.models.{ ForwardMode, ForwardingData, HHContext, ResultContext }
 import de.proteinevolution.results.results.{ HSP, SearchResult }
 import de.proteinevolution.results.services.ResultsRepository.ResultsService
 import de.proteinevolution.results.services.{ ProcessFactory, ResultsRepository, ToolNameGetService }
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
+import play.api.libs.circe.Circe
 import play.api.libs.concurrent.Futures
 import play.api.libs.concurrent.Futures._
-import play.api.libs.json.JsValue
 import play.api.mvc.{ AbstractController, Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
@@ -29,7 +29,8 @@ class ProcessController @Inject()(
     config: Configuration
 )(implicit ec: ExecutionContext, futures: Futures)
     extends AbstractController(ctx.controllerComponents)
-    with ResultsRepository {
+    with ResultsRepository
+    with Circe {
 
   private val scriptPath: String = config.get[String]("serverScripts")
 
@@ -59,13 +60,13 @@ class ProcessController @Inject()(
       }
   }
 
-  def forwardAlignment(jobId: String, mode: ForwardMode): Action[JsValue] = Action(parse.json).async {
-    implicit request =>
-      val json     = request.body
-      val filename = (json \ "fileName").as[String]
+  def forwardAlignment(jobId: String, mode: ForwardMode): Action[ForwardingData] =
+    Action(circe.json[ForwardingData]).async { implicit request =>
+      val data     = request.body
+      val filename = data.fileName
       val accStr = mode.toString match {
-        case "alnEval" | "evalFull" => (json \ "evalue").as[String]
-        case "aln" | "full"         => (json \ "checkboxes").as[List[Int]].mkString("\n")
+        case "alnEval" | "evalFull" => data.evalue.getOrElse("")
+        case "aln" | "full"         => data.checkboxes.toSeq.mkString("\n")
       }
       getResults(jobId)
         .run(resultsService)
@@ -92,7 +93,7 @@ class ProcessController @Inject()(
             ProcessFactory((constants.jobPath + jobId).toFile,
                            jobId,
                            toolName.value,
-                           filename,
+                           filename.getOrElse(""),
                            mode,
                            accStrParsed,
                            result.db,
@@ -109,7 +110,7 @@ class ProcessController @Inject()(
           case _: scala.concurrent.TimeoutException =>
             InternalServerError("timeout")
         }
-  }
+    }
 
   private[this] def parseAccString(
       toolName: ToolName,
