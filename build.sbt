@@ -46,7 +46,7 @@ lazy val commonJVM = common.jvm
 
 lazy val results = (project in file("modules/results"))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl)
-  .dependsOn(commonJVM, auth, jobs, help, ui)
+  .dependsOn(commonJVM, auth, jobs, help, ui, base)
   .settings(
     name := "de.proteinevolution.results",
     libraryDependencies ++= Dependencies.commonDeps,
