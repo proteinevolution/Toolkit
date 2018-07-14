@@ -86,4 +86,5 @@ object Runscript extends TELRegex {
    *
    */
   def apply(files: Seq[File]): Runscript = new Runscript(files)
+
 }

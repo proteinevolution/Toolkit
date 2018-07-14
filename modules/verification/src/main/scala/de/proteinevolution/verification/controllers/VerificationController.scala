@@ -13,6 +13,7 @@ import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.message.actors.WebSocketActor.LogOut
 import de.proteinevolution.services.ToolConfig
+import de.proteinevolution.tel.env.Env
 import play.api.cache._
 import play.api.mvc._
 import play.api.libs.mailer._
@@ -30,8 +31,10 @@ final class VerificationController @Inject()(
     userSessions: UserSessions,
     @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
     environment: Environment,
+    environment2: play.Environment,
     assets: AssetsFinder,
-    cc: ControllerComponents
+    cc: ControllerComponents,
+    env: Env
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
     extends ToolkitController(cc)
     with JSONTemplate {
@@ -112,7 +115,7 @@ final class VerificationController @Inject()(
                           .map {
                             case Some(modifiedUser) =>
                               userSessions.removeUserFromCache(user)
-                              val eMail = PasswordChangedMail(modifiedUser)
+                              val eMail = PasswordChangedMail(modifiedUser, environment2, env)
                               eMail.send
                               // Force Log Out on all connected users.
                               (wsActorCache.get(modifiedUser.userID.stringify): Option[List[ActorRef]]) match {

@@ -11,6 +11,7 @@ trait Env {
   def configure(key: String, value: String): Unit
 
   def remove(key: String): Unit
+
 }
 
 /**
@@ -20,4 +21,5 @@ trait Env {
 trait EnvAware[A] {
 
   def withEnvironment(env: Env): A
+
 }
