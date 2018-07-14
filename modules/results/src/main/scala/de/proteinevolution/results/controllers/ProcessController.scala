@@ -1,6 +1,7 @@
 package de.proteinevolution.results.controllers
 
 import better.files._
+import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.ToolName._
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
@@ -10,10 +11,9 @@ import de.proteinevolution.results.services.ResultsRepository.ResultsService
 import de.proteinevolution.results.services.{ ProcessFactory, ResultsRepository, ToolNameGetService }
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
-import play.api.libs.circe.Circe
 import play.api.libs.concurrent.Futures
 import play.api.libs.concurrent.Futures._
-import play.api.mvc.{ AbstractController, Action, AnyContent }
+import play.api.mvc.{ Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
@@ -28,9 +28,8 @@ class ProcessController @Inject()(
     resultContext: ResultContext,
     config: Configuration
 )(implicit ec: ExecutionContext, futures: Futures)
-    extends AbstractController(ctx.controllerComponents)
-    with ResultsRepository
-    with Circe {
+    extends ToolkitController(ctx.controllerComponents)
+    with ResultsRepository {
 
   private val scriptPath: String = config.get[String]("serverScripts")
 

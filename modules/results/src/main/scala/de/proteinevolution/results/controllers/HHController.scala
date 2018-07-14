@@ -1,5 +1,6 @@
 package de.proteinevolution.results.controllers
 
+import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.db.ResultFileAccessor
 import de.proteinevolution.models.ToolName._
 import de.proteinevolution.results.models.{ HHContext, ResultContext, ResultsForm }
@@ -13,9 +14,8 @@ import de.proteinevolution.results.results.HSP
 import de.proteinevolution.results.services.ResultsRepository.ResultsService
 import de.proteinevolution.results.services.{ DTService, ResultsRepository, ToolNameGetService }
 import javax.inject.{ Inject, Singleton }
-import play.api.libs.circe.Circe
 import play.api.libs.json.{ JsObject, Json }
-import play.api.mvc.{ AbstractController, Action, AnyContent }
+import play.api.mvc.{ Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
 
@@ -26,10 +26,9 @@ class HHController @Inject()(
     toolFinder: ToolNameGetService,
     resultFiles: ResultFileAccessor,
 )(implicit ec: ExecutionContext)
-    extends AbstractController(ctx.controllerComponents)
+    extends ToolkitController(ctx.controllerComponents)
     with ResultsRepository
-    with DTService
-    with Circe {
+    with DTService {
 
   private val resultsService = ResultsService(toolFinder, resultFiles)
 
