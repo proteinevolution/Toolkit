@@ -5,7 +5,6 @@ import akka.stream.Materializer
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.message.actors.WebSocketActor
-import de.proteinevolution.tel.TEL
 import javax.inject.Inject
 import play.api.{ Configuration, Environment, Logger }
 import play.api.libs.json.{ JsValue, Json }
@@ -68,9 +67,10 @@ class MessageController @Inject()(
   }
 
   private def originMatches(origin: String): Boolean = {
-    origin.contains(TEL.hostname + ":" + TEL.port) || origin.contains("tuebingen.mpg.de") || origin.contains(
-      "tue.mpg.de"
-    )
+    origin.contains("http://localhost") || origin.contains("http://olt") || origin.contains("tuebingen.mpg.de") || origin
+      .contains(
+        "tue.mpg.de"
+      )
   }
 
 }

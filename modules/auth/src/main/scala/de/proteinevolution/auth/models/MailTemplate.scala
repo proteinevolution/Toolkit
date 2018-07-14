@@ -6,7 +6,6 @@ import de.proteinevolution.models.database.jobs.JobState.{ Done, Error }
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.models.util.ZonedDateTimeHelper
-import de.proteinevolution.tel.TEL
 import play.api.libs.mailer.{ Email, MailerClient }
 
 sealed trait MailTemplate {
@@ -38,12 +37,7 @@ sealed trait MailTemplate {
          |</html>
     """.stripMargin
 
-  val origin: String = TEL.hostname match {
-
-    case "olt" => s"http://${TEL.hostname}:${TEL.port}"
-    case _     => s"https://toolkit.tuebingen.mpg.de"
-
-  }
+  val origin: String = s"https://toolkit.tuebingen.mpg.de"
 
 }
 
