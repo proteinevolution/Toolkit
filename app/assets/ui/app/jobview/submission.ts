@@ -135,8 +135,12 @@
                 if ((jobID != null) && (jobID !== "")) { formData.append("jobID", jobID); }
 
                 // Append file to upload
-                let file = ((<any>$("input[type=file]"))[0].files[0]);
-                if (file) formData.append("file", file);
+                const fileInputs: JQuery = $("input[type=file]");
+                for (let i = 0; i < fileInputs.length; i++) {
+                    const fileInput: HTMLInputElement = (<HTMLInputElement>fileInputs[i]);
+                    formData.append(fileInput.name, fileInput.files[0]);
+                }
+                console.log(fileInputs);
                 m.request({
                     method: "POST",
                     url: "/api/jobs/?toolName=" + tool,
