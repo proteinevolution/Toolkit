@@ -9,13 +9,13 @@ import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.jobs.actors.JobActor.PrepareJob
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.JobSubmitError
-import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.users.User
+import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import javax.inject.{ Inject, Singleton }
 import play.api.Logger
-import play.api.mvc.MultipartFormData
 import play.api.libs.Files
+import play.api.mvc.MultipartFormData
 import reactivemongo.bson.BSONDocument
 import better.files._
 import scala.concurrent.{ ExecutionContext, Future }
@@ -36,11 +36,16 @@ class JobDispatcher @Inject()(
       form: MultipartFormData[Files.TemporaryFile],
       user: User
   ): EitherT[Future, JobSubmitError, Job] = {
-    var parts = form.dataParts.mapValues(_.mkString(constants.formMultiValueSeparator)) - "file"
+    var parts        = form.dataParts.mapValues(_.mkString(constants.formMultiValueSeparator)) - "file"
+    val allowedFiles = List("alignment", "alignment_two")
     for {
-      filePart <- form.file("file")
-      in       <- File(filePart.ref.path).newInputStream.autoClosed
-    } parts = parts.updated("alignment", in.lines.mkString("\n"))
+      file <- form.files.filter(file => allowedFiles.contains(file.key))
+      in   <- File(file.ref.path).newInputStream.autoClosed
+    } {
+      val value = in.lines.mkString("\n")
+      if (value.nonEmpty) parts = parts.updated(file.key, value)
+    }
+
     // remove empty parameter
     parts.get("alignment_two").foreach { alignment =>
       if (alignment.isEmpty) parts = parts - "alignment_two"
