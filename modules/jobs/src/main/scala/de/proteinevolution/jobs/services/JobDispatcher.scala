@@ -41,7 +41,8 @@ class JobDispatcher @Inject()(
     form.files.filter(file => allowedFiles.contains(file.key)).foreach { file =>
       val source = scala.io.Source.fromFile(file.ref.path.toFile)
       try {
-        parts = parts.updated(file.key, source.getLines().mkString("\n"))
+        val value = source.getLines().mkString("\n")
+        if(!value.isEmpty) parts = parts.updated(file.key, value)
       } finally {
         source.close()
       }
