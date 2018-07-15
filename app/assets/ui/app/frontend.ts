@@ -272,7 +272,7 @@ const tabsContents: any = {
                 id: "pasteButton",
                 "class": "button clear success small alignmentExample",
                 value: "Paste Example",
-                config: sampleSeqConfig,
+                config: sampleSeqConfig("#alignment"),
                 onclick: function() {
                     $('#alignment').val(exampleSequence);
                 }
