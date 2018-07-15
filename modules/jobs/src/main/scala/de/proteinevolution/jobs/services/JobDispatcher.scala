@@ -42,7 +42,7 @@ class JobDispatcher @Inject()(
       val source = scala.io.Source.fromFile(file.ref.path.toFile)
       try {
         val value = source.getLines().mkString("\n")
-        if(!value.isEmpty) parts = parts.updated(file.key, value)
+        if (!value.isEmpty) parts = parts.updated(file.key, value)
       } finally {
         source.close()
       }
