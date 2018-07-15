@@ -1,6 +1,5 @@
 package de.proteinevolution.results.services
 
-import java.io.{ FileInputStream, ObjectInputStream }
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -41,11 +40,7 @@ class ResultGetService @Inject()(
   def getJob(jobId: String): OptionT[Future, JobForm] = {
     val paramValues: Map[String, String] = {
       if ((constants.jobPath / jobId / "sparam").exists) {
-        val ois =
-          new ObjectInputStream(new FileInputStream((constants.jobPath / jobId / "sparam").pathAsString))
-        val x = ois.readObject().asInstanceOf[Map[String, String]]
-        ois.close()
-        x
+        (constants.jobPath / jobId / "sparam").readDeserialized[Map[String, String]]
       } else {
         Map.empty[String, String]
       }

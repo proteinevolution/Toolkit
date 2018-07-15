@@ -45,7 +45,6 @@ class JobDispatcher @Inject()(
       val value = in.lines.mkString("\n")
       if (value.nonEmpty) parts = parts.updated(file.key, value)
     }
-
     // remove empty parameter
     parts.get("alignment_two").foreach { alignment =>
       if (alignment.isEmpty) parts = parts - "alignment_two"
