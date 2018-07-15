@@ -8,3 +8,10 @@ The MPI Bioinformatics Toolkit
 <img src="https://raw.githubusercontent.com/proteinevolution/Toolkit/master/public/images/toolkitscreenshot.png" alt="MPI Bioinformatics Toolkit" />
 
 
+## Code of Conduct
+
+Coming soon.
+
+## License
+
+The code is available under the [Apache 2.0 license](LICENSE).
