@@ -1,7 +1,5 @@
 package de.proteinevolution.jobs.services
 
-import java.io.{ FileInputStream, ObjectInputStream }
-
 import better.files._
 import cats.data.OptionT
 import cats.implicits._
@@ -41,12 +39,11 @@ class JobHashService @Inject()(
   }
 
   private def params(jobID: String): Map[String, String] = {
-    val ois = new ObjectInputStream(
-      new FileInputStream((constants.jobPath / jobID / constants.serializedParam).pathAsString)
-    )
-    val x = ois.readObject().asInstanceOf[Map[String, String]]
-    ois.close()
-    x
+    for {
+      in <- (constants.jobPath / jobID / constants.serializedParam).readDeserialized[Map[String, String]]
+    } yield {
+      in
+    }
   }
 
 }
