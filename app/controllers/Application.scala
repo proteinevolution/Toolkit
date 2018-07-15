@@ -6,7 +6,6 @@ import javax.inject.{ Inject, Singleton }
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.services.ToolConfig
-import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
 import play.api.mvc._
 import play.api.{ Environment, Logger }
@@ -19,8 +18,8 @@ final class Application @Inject()(
     webJarsUtil: WebJarsUtil,
     toolConfig: ToolConfig,
     userSessions: UserSessions,
-    env: Env,
     cc: ControllerComponents,
+    env: Env,
     environment: Environment,
     assetsFinder: AssetsFinder
 )(implicit ec: ExecutionContext)
@@ -29,25 +28,7 @@ final class Application @Inject()(
   private val logger = Logger(this.getClass)
 
   def index(message: String = ""): Action[AnyContent] = Action.async { implicit request =>
-    //generateStatisticsDB
-    environment.mode match {
-      case play.api.Mode.Prod =>
-        val port     = "9000"
-        val hostname = "rye"
-        env.configure("PORT", port)
-        env.configure("HOSTNAME", hostname)
-        TEL.port = port
-        TEL.hostname = hostname
-        logger.info(s"[CONFIG:] running on port ${TEL.port} in mode: play.api.Mode.Prod")
-      case _ =>
-        val port     = request.host.slice(request.host.indexOf(":") + 1, request.host.length)
-        val hostname = request.host.slice(0, request.host.indexOf(":"))
-        env.configure("PORT", port)
-        env.configure("HOSTNAME", "olt")
-        TEL.port = port
-        TEL.hostname = hostname
-        logger.info(s"[CONFIG:] running on port ${TEL.port} in mode: play.api.Mode.Dev")
-    }
+    configEnv(request)
     userSessions.getUser.map { user =>
       logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
       Ok(
@@ -78,6 +59,21 @@ final class Application @Inject()(
     Ok(
       "User-agent: *\nAllow: /\nDisallow: /#/jobmanager/\nDisallow: /#/jobs/\nSitemap: https://toolkit.tuebingen.mpg.de/sitemap.xml"
     )
+  }
+
+  private def configEnv(request: Request[AnyContent]): Unit = {
+    environment.mode match {
+      case play.api.Mode.Prod =>
+        val port     = "9000"
+        val hostname = "rye"
+        env.configure("PORT", port)
+        env.configure("HOSTNAME", hostname)
+      case _ =>
+        val port = request.host.slice(request.host.indexOf(":") + 1, request.host.length)
+        //val hostname = request.host.slice(0, request.host.indexOf(":"))
+        env.configure("PORT", port)
+        env.configure("HOSTNAME", "olt")
+    }
   }
 
 }
