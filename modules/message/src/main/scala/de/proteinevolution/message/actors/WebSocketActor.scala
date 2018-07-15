@@ -20,7 +20,7 @@ import play.api.Configuration
 import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.json.{ JsValue, Json }
 import reactivemongo.bson.BSONObjectID
-import better.files._
+// import better.files._
 import scala.concurrent.ExecutionContext
 
 final class WebSocketActor @Inject()(
@@ -147,8 +147,11 @@ final class WebSocketActor @Inject()(
       val file = s"${constants.jobPath}${job.jobID}${constants.SEPARATOR}results${constants.SEPARATOR}process.log"
       if (job.status.equals(Running)) {
         if (Files.exists(Paths.get(file))) {
-          val bufferedLines = File(file).newBufferedReader.lines().iterator().next()
-          out ! Json.obj("type" -> "WatchLogFile", "jobID" -> job.jobID, "lines" -> bufferedLines)
+          val source = scala.io.Source.fromFile(file)
+          val lines  = source.mkString
+          // val lines = File(file).lineIterator.mkString // use buffered source since it behaves differently
+          out ! Json.obj("type" -> "WatchLogFile", "jobID" -> job.jobID, "lines" -> lines)
+          source.close()
         }
       }
 

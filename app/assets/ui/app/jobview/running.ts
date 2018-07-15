@@ -5,10 +5,8 @@ class JobRunningComponent {
     public static RunningLog : Array<string> = [];
 
     public static updateLog(jobID : string, lines : any){
-
         const path = window.location.href;
         const url = path.split("/");
-
         if(url[url.length - 1] == jobID && $('#tab-Input').attr('aria-expanded') != "true" && $('#tab-Parameters').attr('aria-expanded') != "true") {
             this.lines = lines;
             this.RunningLog = lines.split("#");
@@ -18,15 +16,11 @@ class JobRunningComponent {
     }
 
     // ensure that the running tab gets terminated
-
     public static terminate(jobID: string){
-
         if(jobID == JobRunningComponent.jobID){
             m.redraw(true);
         }
-
     }
-
 
     public static controller(args : any) : any {
         //m.request({ method: "GET", url: "files/"+args.job().jobID+"/process.log", contentType: "charset=utf-8",
