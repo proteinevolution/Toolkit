@@ -147,9 +147,8 @@ final class WebSocketActor @Inject()(
       val file = s"${constants.jobPath}${job.jobID}${constants.SEPARATOR}results${constants.SEPARATOR}process.log"
       if (job.status.equals(Running)) {
         if (Files.exists(Paths.get(file))) {
-          for {
-            in <- File(file).newInputStream.autoClosed
-          } out ! Json.obj("type" -> "WatchLogFile", "jobID" -> job.jobID, "lines" -> in.lines.mkString)
+          val bufferedLines = File(file).newBufferedReader.lines().iterator().next()
+          out ! Json.obj("type" -> "WatchLogFile", "jobID" -> job.jobID, "lines" -> bufferedLines)
         }
       }
 
