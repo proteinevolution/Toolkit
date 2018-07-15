@@ -23,9 +23,9 @@ final class GeneralHashService @Inject()(runscriptPathProvider: RunscriptPathPro
 
   def generateRSHash(toolname: String): String = {
     val runscript = runscriptPathProvider.get() + s"$toolname.sh"
-    val source    = scala.io.Source.fromFile(runscript)
-    val content   = try { source.getLines().mkString } finally { source.close() }
-    MurmurHash3.stringHash(content, 0).toString
+    (for {
+      in <- File(runscript).newInputStream.autoClosed
+    } yield MurmurHash3.stringHash(in.lines.mkString, 0).toString).get()
   }
 
   def generateToolHash(name: String): String = {
