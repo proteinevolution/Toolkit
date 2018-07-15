@@ -23,11 +23,9 @@ final class GeneralHashService @Inject()(runscriptPathProvider: RunscriptPathPro
 
   def generateRSHash(toolname: String): String = {
     val runscript = runscriptPathProvider.get() + s"$toolname.sh"
-    var rs        = ""
-    for {
+    (for {
       in <- File(runscript).newInputStream.autoClosed
-    } yield rs = MurmurHash3.stringHash(in.lines.mkString, 0).toString
-    rs
+    } yield MurmurHash3.stringHash(in.lines.mkString, 0).toString).get()
   }
 
   def generateToolHash(name: String): String = {
