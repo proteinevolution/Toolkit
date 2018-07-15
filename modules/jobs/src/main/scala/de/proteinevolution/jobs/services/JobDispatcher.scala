@@ -17,7 +17,7 @@ import play.api.Logger
 import play.api.libs.Files
 import play.api.mvc.MultipartFormData
 import reactivemongo.bson.BSONDocument
-
+import better.files._
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
@@ -38,15 +38,14 @@ class JobDispatcher @Inject()(
   ): EitherT[Future, JobSubmitError, Job] = {
     var parts        = form.dataParts.mapValues(_.mkString(constants.formMultiValueSeparator)) - "file"
     val allowedFiles = List("alignment", "alignment_two")
-    form.files.filter(file => allowedFiles.contains(file.key)).foreach { file =>
-      val source = scala.io.Source.fromFile(file.ref.path.toFile)
-      try {
-        val value = source.getLines().mkString("\n")
-        if (!value.isEmpty) parts = parts.updated(file.key, value)
-      } finally {
-        source.close()
-      }
+    for {
+      file <- form.files.filter(file => allowedFiles.contains(file.key))
+      in   <- File(file.ref.path).newInputStream.autoClosed
+    } {
+      val value = in.lines.mkString("\n")
+      if (value.nonEmpty) parts = parts.updated(file.key, value)
     }
+
     // remove empty parameter
     parts.get("alignment_two").foreach { alignment =>
       if (alignment.isEmpty) parts = parts - "alignment_two"
