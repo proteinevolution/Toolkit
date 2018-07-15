@@ -39,11 +39,7 @@ class JobHashService @Inject()(
   }
 
   private def params(jobID: String): Map[String, String] = {
-    for {
-      in <- (constants.jobPath / jobID / constants.serializedParam).readDeserialized[Map[String, String]]
-    } yield {
-      in
-    }
+    (constants.jobPath / jobID / constants.serializedParam).readDeserialized[Map[String, String]]
   }
 
 }
