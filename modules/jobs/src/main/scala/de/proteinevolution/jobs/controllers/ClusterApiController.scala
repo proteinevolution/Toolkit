@@ -7,8 +7,7 @@ import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.JobState.{ Done, Error, Queued, Running }
 import javax.inject.{ Inject, Singleton }
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
-
-import scala.io.Source
+import better.files._
 
 @Singleton
 class ClusterApiController @Inject()(constants: ConstantsV2, jobActorAccess: JobActorAccess, cc: ControllerComponents)
@@ -35,9 +34,11 @@ class ClusterApiController @Inject()(constants: ConstantsV2, jobActorAccess: Job
   }
 
   private def checkKey(jobID: String, key: String): Boolean = {
-    val source = Source.fromFile(constants.jobPath + "/" + jobID + "/key")
-    val refKey = try { source.mkString.replaceAll("\n", "") } finally { source.close() }
-    key == refKey
+    (for {
+      in <- File(constants.jobPath + "/" + jobID + "/key").newInputStream.autoClosed
+    } yield {
+      in.lines.mkString.replaceAll("\n", "") == key
+    }).get()
   }
 
 }
