@@ -5,6 +5,6 @@ MPI Bioinformatics Toolkit 2
 
 [Join us on discord](https://discord.gg/u4GdvTW)
 
-<img src="https://raw.githubusercontent.com/zy4/Toolkit/master/public/images/toolkitscreenshot.png" alt="MPI Bioinformatics Toolkit" />
+<img src="https://raw.githubusercontent.com/proteinevolution/Toolkit/master/public/images/toolkitscreenshot.png" alt="MPI Bioinformatics Toolkit" />
 
 
