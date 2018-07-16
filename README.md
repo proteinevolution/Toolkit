@@ -12,7 +12,7 @@ The toolkit includes, among others: PSI-BLAST+, HHblits, HMMER; MUSCLE, MAFFT, P
 
 ## Code of Conduct
 
-Coming soon.
+We are committed to providing a welcoming and inspiring community for all and expect our [Code of Conduct](CODE_OF_CONDUCT.md) to be honored. Anyone who violates this code of conduct may be banned from the community.
 
 ## License
 
