@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/proteinevolution/Toolkit.svg?branch=master)](https://travis-ci.com/proteinevolution/Toolkit)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/582fb3f9002a48cfa001bc5b9b8aee45)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=zy4/Toolkit&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/4213b23fbf83450ba6ba091f2ded2c8c)](https://www.codacy.com/app/zy4/Toolkit_2?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=proteinevolution/Toolkit&amp;utm_campaign=Badge_Grade)
 # Toolkit
 The MPI Bioinformatics Toolkit
 
