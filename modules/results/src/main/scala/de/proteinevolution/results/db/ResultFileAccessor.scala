@@ -1,10 +1,10 @@
-package de.proteinevolution.db
+package de.proteinevolution.results.db
 
 import javax.inject.{ Inject, Singleton }
-
 import play.api.cache.{ AsyncCacheApi, NamedCache }
 import play.api.libs.json.JsValue
 import better.files._
+import de.proteinevolution.jobs.services.JobFolderValidation
 import de.proteinevolution.models.ConstantsV2
 import play.api.Logger
 import play.api.libs.json._
@@ -16,7 +16,8 @@ import scala.concurrent.duration._
 final class ResultFileAccessor @Inject()(
     constants: ConstantsV2,
     @NamedCache("resultCache") resultCache: AsyncCacheApi
-)(implicit ec: ExecutionContext) {
+)(implicit ec: ExecutionContext)
+    extends JobFolderValidation {
 
   private val logger = Logger(this.getClass)
 
@@ -27,7 +28,7 @@ final class ResultFileAccessor @Inject()(
         Some(resultMap)
       case None =>
         // check if the directories exist
-        if ((constants.jobPath / jobID).exists && (constants.jobPath / jobID / "results").exists) {
+        if (resultsExist(jobID, constants)) {
           // Gather the files
           val files: List[File] =
             (constants.jobPath / jobID / "results").list.withFilter(_.extension.contains(".json")).toList

@@ -19,7 +19,8 @@ class JobHashService @Inject()(
     jobDao: JobDao,
     constants: ConstantsV2,
     hashService: GeneralHashService
-)(implicit ec: ExecutionContext) {
+)(implicit ec: ExecutionContext)
+    extends JobFolderValidation {
 
   def checkHash(jobID: String): OptionT[Future, Job] = {
     for {
@@ -30,9 +31,11 @@ class JobHashService @Inject()(
           BSONDocument(Job.DATECREATED -> -1)
         )
       )
-      filtered <- OptionT.fromOption[Future](
-        list.find(j => (j.isPublic || j.ownerID == job.ownerID) && j.status == Done)
-      )
+      filtered <- OptionT.fromOption[Future] {
+        list
+          .find(j => (j.isPublic || j.ownerID == job.ownerID) && j.status == Done)
+          .filter(job => jobFolderIsValid(job.jobID, constants))
+      }
     } yield {
       filtered
     }

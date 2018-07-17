@@ -7,6 +7,7 @@ import better.files._
 import cats.data.OptionT
 import cats.implicits._
 import de.proteinevolution.jobs.dao.JobDao
+import de.proteinevolution.jobs.services.JobFolderValidation
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.jobs.JobState.{ Done, Pending, Prepared }
@@ -26,7 +27,8 @@ class ResultGetService @Inject()(
     toolConfig: ToolConfig,
     constants: ConstantsV2,
     @NamedCache("resultCache") resultCache: AsyncCacheApi
-)(implicit ec: ExecutionContext) {
+)(implicit ec: ExecutionContext)
+    extends JobFolderValidation {
 
   def get(jobId: String, tool: String, resultView: String): Future[HtmlFormat.Appendable] = {
     resultViewFactory.apply(tool, jobId).value.map {
@@ -39,7 +41,7 @@ class ResultGetService @Inject()(
 
   def getJob(jobId: String): OptionT[Future, JobForm] = {
     val paramValues: Map[String, String] = {
-      if ((constants.jobPath / jobId / "sparam").exists) {
+      if (paramsExist(jobId, constants)) {
         (constants.jobPath / jobId / "sparam").readDeserialized[Map[String, String]]
       } else {
         Map.empty[String, String]

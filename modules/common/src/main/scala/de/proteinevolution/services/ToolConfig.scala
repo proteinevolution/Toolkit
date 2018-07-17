@@ -12,7 +12,6 @@ import play.api.Configuration
 @Singleton
 class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
 
-  // reads the tool specifications from tools.conf and generates tool objects accordingly
   lazy val values: Map[String, Tool] = {
     config.get[Config]("Tools").root.asScala.map {
       case (_, configObject: ConfigObject) =>
@@ -41,7 +40,6 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
     }
   }
 
-  // Generates a new Tool object from the Tool specification
   private def toTool(
       toolNameShort: String,
       toolNameLong: String,
@@ -58,7 +56,6 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       toolNameLong,
       code,
       category,
-      // Constructs the Parameter specification such that the View can render the input fields
       paramAccess.paramGroups.keysIterator.map { group =>
         group -> paramAccess.paramGroups(group).filter(params.map(_.name).contains(_)).map(paramMap(_))
       }.toSeq :+

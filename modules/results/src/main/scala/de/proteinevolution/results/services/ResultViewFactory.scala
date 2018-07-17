@@ -6,7 +6,7 @@ import javax.inject.{ Inject, Singleton }
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.ToolName._
 import de.proteinevolution.results.results._
-import de.proteinevolution.db.ResultFileAccessor
+import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.results.models.resultviews._
 import de.proteinevolution.results.results.{ Alignment, HHBlits, HHPred, HHomp }
 import de.proteinevolution.services.ToolConfig

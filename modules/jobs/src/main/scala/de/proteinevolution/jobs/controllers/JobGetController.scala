@@ -8,7 +8,8 @@ import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.JobHashError
-import de.proteinevolution.jobs.services.JobHashService
+import de.proteinevolution.jobs.services.{ JobFolderValidation, JobHashService }
+import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.services.ToolConfig
 import javax.inject.{ Inject, Singleton }
@@ -25,15 +26,17 @@ class JobGetController @Inject()(
     userSessions: UserSessions,
     jobDao: JobDao,
     cc: ControllerComponents,
-    toolConfig: ToolConfig
+    toolConfig: ToolConfig,
+    constants: ConstantsV2
 )(implicit ec: ExecutionContext, config: Configuration)
-    extends ToolkitController(cc) {
+    extends ToolkitController(cc)
+    with JobFolderValidation {
 
   def jobManagerListJobs: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       jobDao.findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false))).map {
         jobs =>
-          NoCache(Ok(Json.toJson(jobs.map(_.jobManagerJob()))))
+          NoCache(Ok(Json.toJson(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.jobManagerJob()))))
       }
     }
   }
@@ -41,7 +44,7 @@ class JobGetController @Inject()(
   def listJobs: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>
-        Ok(Json.toJson(jobs.map(_.cleaned(toolConfig))))
+        Ok(Json.toJson(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.cleaned(toolConfig))))
       }
     }
   }
@@ -49,8 +52,8 @@ class JobGetController @Inject()(
   def loadJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { _ =>
       jobDao.selectJob(jobID).map {
-        case Some(job) => Ok(job.cleaned(toolConfig))
-        case None      => NotFound
+        case Some(job) if jobFolderIsValid(job.jobID, constants) => Ok(job.cleaned(toolConfig))
+        case _                                                   => NotFound
       }
     }
   }
