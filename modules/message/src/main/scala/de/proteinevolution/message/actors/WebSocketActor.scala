@@ -15,6 +15,7 @@ import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.jobs.JobState.Running
 import de.proteinevolution.models.message.Session.ChangeSessionID
+import de.proteinevolution.services.ToolConfig
 import javax.inject.{ Inject, Named }
 import play.api.Configuration
 import play.api.cache.{ NamedCache, SyncCacheApi }
@@ -31,6 +32,7 @@ final class WebSocketActor @Inject()(
     constants: ConstantsV2,
     @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
     @Assisted("sessionID") sessionID: BSONObjectID,
+    toolConfig: ToolConfig,
     implicit val config: Configuration
 )(implicit ec: ExecutionContext)
     extends Actor
@@ -130,7 +132,7 @@ final class WebSocketActor @Inject()(
       }
 
     case PushJob(job: Job) =>
-      out ! Json.obj("type" -> "PushJob", "job" -> job.cleaned())
+      out ! Json.obj("type" -> "PushJob", "job" -> job.cleaned(toolConfig))
 
     case ShowNotification(notificationType: String, tag: String, title: String, body: String) =>
       out ! Json.obj("type"             -> "ShowNotification",

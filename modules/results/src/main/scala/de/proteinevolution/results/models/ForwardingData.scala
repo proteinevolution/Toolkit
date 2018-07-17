@@ -1,6 +1,7 @@
 package de.proteinevolution.results.models
 
-import io.circe._, io.circe.generic.semiauto._
+import io.circe.Decoder
+import io.circe.generic.semiauto.deriveDecoder
 
 case class ForwardingData(
     fileName: Option[String],

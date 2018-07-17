@@ -1,10 +1,3 @@
-const tooltipSearch = function(elem: any, isInit: boolean) {
-    if (!isInit) {
-        $(elem).attr({"data-tooltip": "", "aria-has-popup": true}).foundation();
-        return elem.setAttribute("title", "Search for job");
-    }
-};
-
 interface Window {
     JobListComponent: any;
 }
@@ -12,15 +5,25 @@ interface Window {
 declare var jobList: any;
 declare var jobListOffCanvas: any;
 
+interface JobData {
+    jobID?: string;
+    status?: string;
+    dateCreated?: string;
+    tool?: string;
+    code?: string;
+    toolnameLong?: string;
+}
+
 window.JobListComponent = {
     // Generates a job object
-    Job: function(data: any) {
+    Job: function(data: JobData) {
         return {
-            jobID: ((data && data.jobID != null) ? data.jobID : null),
-            status: ((data && data.status != null) ? data.status : null),
-            dateCreated: ((data && data.dateCreated != null) ? data.dateCreated : null),
-            tool: ((data && data.tool != null) ? data.tool : null),
-            toolnameLong: ((data && data.toolnameLong != null) ? data.toolnameLong : null),
+            jobID: data.jobID,
+            status: data.status,
+            dateCreated: data.dateCreated,
+            tool: data.tool,
+            code: data.code !== undefined ? data.code : "",
+            toolnameLong: data.toolnameLong,
             // Functions
             select: function(job: any) {     // marks a job as selected and changes the route
                 return function(e: any) {        // ensure that the event bubble is not triggering when the clear button is hit
@@ -41,7 +44,7 @@ window.JobListComponent = {
                     onclick: this.select(this)
                 }, [
                     m("div", {"class": "jobid"}, this.jobID),
-                    m("div", {"class": "toolname"}, this.tool.substr(0, 4).toUpperCase()),
+                    m("div", {"class": "toolname"}, this.code.toUpperCase()),
                     m("div", {
                         id: "boxclose",
                         "class": "boxclose",
