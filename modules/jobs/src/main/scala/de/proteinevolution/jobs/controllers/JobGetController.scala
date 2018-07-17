@@ -10,6 +10,7 @@ import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.JobHashError
 import de.proteinevolution.jobs.services.JobHashService
 import de.proteinevolution.models.database.jobs.Job
+import de.proteinevolution.services.ToolConfig
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 import play.api.libs.json.Json
@@ -23,7 +24,8 @@ class JobGetController @Inject()(
     jobHashService: JobHashService,
     userSessions: UserSessions,
     jobDao: JobDao,
-    cc: ControllerComponents
+    cc: ControllerComponents,
+    toolConfig: ToolConfig
 )(implicit ec: ExecutionContext, config: Configuration)
     extends ToolkitController(cc) {
 
@@ -39,7 +41,7 @@ class JobGetController @Inject()(
   def listJobs: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>
-        Ok(Json.toJson(jobs.map(_.cleaned())))
+        Ok(Json.toJson(jobs.map(_.cleaned(toolConfig))))
       }
     }
   }
@@ -47,7 +49,7 @@ class JobGetController @Inject()(
   def loadJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { _ =>
       jobDao.selectJob(jobID).map {
-        case Some(job) => Ok(job.cleaned())
+        case Some(job) => Ok(job.cleaned(toolConfig))
         case None      => NotFound
       }
     }

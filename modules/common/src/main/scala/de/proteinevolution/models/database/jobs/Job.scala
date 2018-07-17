@@ -4,6 +4,7 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 import de.proteinevolution.models.database.jobs.JobState._
+import de.proteinevolution.services.ToolConfig
 import play.api.Configuration
 import play.api.libs.json._
 import reactivemongo.bson._
@@ -39,12 +40,13 @@ case class Job(
    *
    * @return
    */
-  def cleaned()(implicit config: Configuration): JsObject = {
+  def cleaned(toolConfig: ToolConfig)(implicit config: Configuration): JsObject = {
     Json.obj(
       Job.JOBID        -> jobID,
       Job.STATUS       -> status,
       Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli),
       Job.TOOL         -> tool,
+      "code"           -> toolConfig.values(tool).code,
       Job.TOOLNAMELONG -> config.get[String](s"Tools.$tool.longname")
     )
   }

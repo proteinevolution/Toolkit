@@ -45,7 +45,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
   private def toTool(
       toolNameShort: String,
       toolNameLong: String,
-      toolNameAbbrev: String,
+      code: String,
       category: String,
       params: Seq[Param],
       forwardAlignment: Seq[String],
@@ -56,7 +56,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
     val toolForm = ToolForm(
       toolNameShort,
       toolNameLong,
-      toolNameAbbrev,
+      code,
       category,
       // Constructs the Parameter specification such that the View can render the input fields
       paramAccess.paramGroups.keysIterator.map { group =>
@@ -67,7 +67,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
     Tool(
       toolNameShort,
       toolNameLong,
-      toolNameAbbrev,
+      code,
       category,
       paramMap,
       toolForm,

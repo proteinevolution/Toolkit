@@ -26,7 +26,7 @@ class SearchController @Inject()(
   def recentJobInfo: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       searchService.recentJob(user).map { lastJob =>
-        Ok(Json.obj("lastJob" -> lastJob.map(_.cleaned())))
+        Ok(Json.obj("lastJob" -> lastJob.map(_.cleaned(toolConfig))))
       }
     }
   }
@@ -59,7 +59,7 @@ class SearchController @Inject()(
   def autoComplete(queryString_ : String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       searchService.autoComplete(user, queryString_).value.map {
-        case Some(jobs) => Ok(Json.toJson(jobs.map(_.cleaned())))
+        case Some(jobs) => Ok(Json.toJson(jobs.map(_.cleaned(toolConfig))))
         case None       => NoContent
       }
     }
