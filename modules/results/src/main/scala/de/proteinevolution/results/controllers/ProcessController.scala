@@ -2,7 +2,7 @@ package de.proteinevolution.results.controllers
 
 import better.files._
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.db.ResultFileAccessor
+import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.models.ToolName._
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.results.models.{ ForwardMode, ForwardingData, HHContext, ResultContext }

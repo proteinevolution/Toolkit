@@ -1,7 +1,7 @@
 package de.proteinevolution.results.controllers
 
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.db.ResultFileAccessor
+import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.models.ToolName._
 import de.proteinevolution.results.models.{ HHContext, ResultContext, ResultsForm }
 import de.proteinevolution.results.results.General.DTParam

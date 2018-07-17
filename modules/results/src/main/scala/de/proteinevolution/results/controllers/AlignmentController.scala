@@ -1,6 +1,6 @@
 package de.proteinevolution.results.controllers
 
-import de.proteinevolution.db.ResultFileAccessor
+import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.results.results.{ Alignment, Common }
 import javax.inject.Inject
