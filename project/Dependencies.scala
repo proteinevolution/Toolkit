@@ -35,7 +35,8 @@ object Dependencies {
     "com.typesafe.play"    %% "play-json"                % "2.6.9",
     "com.dripower"         %% "play-circe"               % "2609.1",
     "org.webjars"          %% "webjars-play"             % "2.6.3",
-    "org.scala-js"         %% "scalajs-stubs"            % scalaJSVersion % "provided"
+    "org.scala-js"         %% "scalajs-stubs"            % scalaJSVersion % "provided",
+    "com.github.mpilquist" %% "simulacrum"               % "0.12.0"
   )
 
   lazy val clientDeps: Def.Initialize[Seq[sbt.ModuleID]] = Def.setting(

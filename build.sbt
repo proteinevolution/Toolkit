@@ -54,6 +54,8 @@ lazy val results = (project in file("modules/results"))
     TwirlKeys.templateImports := Seq.empty,
     disableDocs
   )
+  .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
+  .settings(addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3"))
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val help = (project in file("modules/help"))
@@ -213,5 +215,3 @@ testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
 
 PlayKeys.devSettings := Seq("play.server.http.idleTimeout" -> "220s")
-
-addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3")

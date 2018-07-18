@@ -1,10 +1,8 @@
 package de.proteinevolution.results.results
 
 import de.proteinevolution.results.results.Alignment.{ AlignmentItem, AlignmentResult }
-import javax.inject.Singleton
 import play.api.libs.json.JsArray
 
-@Singleton
 class Alignment {
 
   def parse(obj: JsArray): AlignmentResult = {
