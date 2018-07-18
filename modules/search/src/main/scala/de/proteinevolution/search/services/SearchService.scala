@@ -3,6 +3,8 @@ package de.proteinevolution.search.services
 import cats.data.OptionT
 import cats.implicits._
 import de.proteinevolution.jobs.dao.JobDao
+import de.proteinevolution.jobs.services.JobFolderValidation
+import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.services.ToolConfig
@@ -14,8 +16,10 @@ import scala.concurrent.{ ExecutionContext, Future }
 @Singleton
 class SearchService @Inject()(
     jobDao: JobDao,
+    constants: ConstantsV2,
     toolConfig: ToolConfig
-)(implicit ec: ExecutionContext) {
+)(implicit ec: ExecutionContext)
+    extends JobFolderValidation {
 
   def recentJob(user: User): Future[Option[Job]] = {
     jobDao.findSortedJob(
@@ -41,9 +45,12 @@ class SearchService @Inject()(
         filtered
       }).flatMapF { jobs =>
         if (jobs.isEmpty) {
-          OptionT(jobDao.findJob(BSONDocument(Job.JOBID -> queryString))).map(_ :: Nil).value
+          OptionT(jobDao.findJob(BSONDocument(Job.JOBID -> queryString)))
+            .filter(job => resultsExist(job.jobID, constants))
+            .map(_ :: Nil)
+            .value
         } else {
-          Future.successful(Some(jobs))
+          Future.successful(Some(jobs.filter(job => resultsExist(job.jobID, constants))))
         }
       }
     } else {
