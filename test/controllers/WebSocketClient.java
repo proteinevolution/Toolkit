@@ -6,7 +6,6 @@ import play.shaded.ahc.org.asynchttpclient.ListenableFuture;
 import play.shaded.ahc.org.asynchttpclient.ws.WebSocket;
 import play.shaded.ahc.org.asynchttpclient.ws.WebSocketTextListener;
 import play.shaded.ahc.org.asynchttpclient.ws.WebSocketUpgradeHandler;
-import org.slf4j.Logger;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
