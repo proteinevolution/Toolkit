@@ -86,7 +86,7 @@ class JobDispatcher @Inject()(
 
   private def generateJobId(parts: Map[String, String]): EitherT[Future, JobSubmitError, String] = {
     if (parts.get("jobID").isEmpty) {
-      EitherT.rightT[Future, JobSubmitError](jobIdProvider.provide)
+      EitherT.liftF(jobIdProvider.provide)
     } else {
       EitherT.rightT[Future, JobSubmitError](parts("jobID"))
     }
