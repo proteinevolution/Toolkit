@@ -27,6 +27,7 @@ object Dependencies {
     "org.reactivemongo"    %% "play2-reactivemongo"      % "0.15.0-play26",
     "org.reactivemongo"    %% "reactivemongo-akkastream" % "0.15.0",
     "org.typelevel"        %% "cats-core"                % catsV,
+    "org.typelevel"        %% "cats-effect"              % "1.0.0-RC2",
     "com.chuusai"          %% "shapeless"                % "2.3.3",
     "org.atnos"            %% "eff"                      % "5.3.0",
     "org.tpolecat"         %% "atto-core"                % "0.6.1",
