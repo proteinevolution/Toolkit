@@ -16,6 +16,7 @@ object ForwardModalOptions {
 
   implicit val config: Aux[Json.MacroOptions] = JsonConfiguration(SnakeCase)
 
-  implicit val forwardModalOptionsWrites: OFormat[ForwardModalOptions] = Json.format[ForwardModalOptions]
+  implicit val forwardModalOptionsWrites: OFormat[ForwardModalOptions] =
+    Json.format[ForwardModalOptions]
 
 }

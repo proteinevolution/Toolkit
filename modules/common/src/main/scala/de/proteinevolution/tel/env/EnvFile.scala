@@ -47,23 +47,33 @@ class PropFile(path: String, config: Configuration) extends EnvFile(path) {
 
   def load: Map[String, String] = {
     // Remove comment lines and lines containing only whitespace
-    this.f.lineIterator.map(_.split('#')(0)).withFilter(!_.trim().isEmpty).foldLeft(Map.empty[String, String]) {
-      (a, b) =>
-        val spt     = b.split('=')
-        var updated = EnvFile.placeholder.replaceAllIn(spt(1), matcher => a(matcher.group("expression"))).trim()
+    this.f.lineIterator
+      .map(_.split('#')(0))
+      .withFilter(!_.trim().isEmpty)
+      .foldLeft(Map.empty[String, String]) { (a, b) =>
+        val spt = b.split('=')
+        var updated = EnvFile.placeholder
+          .replaceAllIn(spt(1), matcher => a(matcher.group("expression")))
+          .trim()
         updated match {
-          case x if x.startsWith("foo") => updated = updated.replace("foo", config.get[String]("DBROOT"))
+          case x if x.startsWith("foo") =>
+            updated = updated.replace("foo", config.get[String]("DBROOT"))
           case x if x.startsWith("env_foo") =>
-            updated = updated.replace("env_foo", config.get[String]("ENVIRONMENT"))
+            updated =
+              updated.replace("env_foo", config.get[String]("ENVIRONMENT"))
           case x if x.startsWith("helper_foo") =>
-            updated = updated.replace("helper_foo", config.get[String]("HELPER"))
+            updated =
+              updated.replace("helper_foo", config.get[String]("HELPER"))
           case x if x.startsWith("perllib_foo") =>
-            updated = updated.replace("perllib_foo", config.get[String]("PERLLIB"))
+            updated =
+              updated.replace("perllib_foo", config.get[String]("PERLLIB"))
           case x if x.startsWith("standarddb_bar") =>
-            updated = updated.replace("standarddb_bar", config.get[String]("STANDARDDB"))
-          case _ => logger.warn("Env file has no preconfigured key in the configs")
+            updated = updated.replace("standarddb_bar",
+                                      config.get[String]("STANDARDDB"))
+          case _ =>
+            logger.warn("Env file has no preconfigured key in the configs")
         }
         a.updated(spt(0).trim(), updated)
-    }
+      }
   }
 }

@@ -11,11 +11,16 @@ import reactivemongo.bson.BSONDocument
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class JobResubmitService @Inject()(constants: ConstantsV2, jobDao: JobDao)(implicit ec: ExecutionContext) {
+class JobResubmitService @Inject()(constants: ConstantsV2, jobDao: JobDao)(
+    implicit ec: ExecutionContext
+) {
 
   private val logger = Logger(this.getClass)
 
-  def resubmit(newJobId: String, resubmitForJobId: Option[String]): Future[ResubmitData] = {
+  def resubmit(
+      newJobId: String,
+      resubmitForJobId: Option[String]
+  ): Future[ResubmitData] = {
     generateParentJobId((newJobId, resubmitForJobId)) match {
       case Some(parentJobId) =>
         findJobs(parentJobId).map { jobs =>
@@ -29,7 +34,9 @@ class JobResubmitService @Inject()(constants: ConstantsV2, jobDao: JobDao)(impli
     }
   }
 
-  private def generateParentJobId(ids: (String, Option[String])): Option[String] = {
+  private def generateParentJobId(
+      ids: (String, Option[String])
+  ): Option[String] = {
     // Parse the jobID of the job (it can look like this: 1234XYtz, 1263412, 1252rttr_1, 1244124_12)
     ids match {
       case (newJobID, resubmitForJobID) =>
@@ -37,7 +44,8 @@ class JobResubmitService @Inject()(constants: ConstantsV2, jobDao: JobDao)(impli
           case constants.jobIDPattern(mainJobID, _) =>
             // Check if the main part of the new jobID matches with the (main part) of the oldJobID
             resubmitForJobID match {
-              case Some(constants.jobIDPattern(oldJobID, _)) => if (mainJobID == oldJobID) Some(mainJobID) else None
+              case Some(constants.jobIDPattern(oldJobID, _)) =>
+                if (mainJobID == oldJobID) Some(mainJobID) else None
               case Some(constants.jobIDNoVersionPattern(oldJobID)) =>
                 if (mainJobID == oldJobID) Some(mainJobID) else None
               case _ => None
@@ -51,7 +59,9 @@ class JobResubmitService @Inject()(constants: ConstantsV2, jobDao: JobDao)(impli
   private def findJobs(parentJobId: String): Future[List[Job]] = {
     jobDao.findJobs(
       BSONDocument(
-        Job.JOBID -> BSONDocument("$regex" -> s"$parentJobId(${constants.jobIDVersioningCharacter}[0-9]{1,3})?")
+        Job.JOBID -> BSONDocument(
+          "$regex" -> s"$parentJobId(${constants.jobIDVersioningCharacter}[0-9]{1,3})?"
+        )
       )
     )
   }
@@ -70,7 +80,8 @@ class JobResubmitService @Inject()(constants: ConstantsV2, jobDao: JobDao)(impli
         ResubmitData(
           exists = true,
           version = Some(version),
-          suggested = Some(s"$parentJobId${constants.jobIDVersioningCharacter}$version")
+          suggested =
+            Some(s"$parentJobId${constants.jobIDVersioningCharacter}$version")
         )
       } else {
         ResubmitData(exists = true, None, None)
@@ -87,7 +98,8 @@ class JobResubmitService @Inject()(constants: ConstantsV2, jobDao: JobDao)(impli
     }
     val version: Int = 1 + jobVersions.sorted.fold(1)(
       (versionBeforeGap, biggerVersion) =>
-        if (versionBeforeGap + 1 >= biggerVersion) biggerVersion else versionBeforeGap
+        if (versionBeforeGap + 1 >= biggerVersion) biggerVersion
+        else versionBeforeGap
     )
     version
   }

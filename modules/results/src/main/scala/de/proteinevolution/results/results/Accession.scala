@@ -24,7 +24,8 @@ object Accession {
   implicit val hhompValue: Accession[HHompHSP] = new Accession[HHompHSP] {
     def value(a: HHompHSP): String = a.template.accession
   }
-  implicit val psiBlastValue: Accession[PSIBlastHSP] = new Accession[PSIBlastHSP] {
-    def value(a: PSIBlastHSP): String = a.template.accession
-  }
+  implicit val psiBlastValue: Accession[PSIBlastHSP] =
+    new Accession[PSIBlastHSP] {
+      def value(a: PSIBlastHSP): String = a.template.accession
+    }
 }

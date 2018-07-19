@@ -49,7 +49,10 @@ final class ResultViewFactory @Inject()(
     toolsWithResultJson.contains(toolName)
   }
 
-  private def getResultViewsWithoutJson(toolName: String, jobId: String): ResultView = {
+  private def getResultViewsWithoutJson(
+      toolName: String,
+      jobId: String
+  ): ResultView = {
     toolName match {
       case FORMATSEQ.value           => FormatSeqResultView(jobId, toolConfig)
       case CLANS.value               => ClansResultView(jobId)
@@ -71,26 +74,44 @@ final class ResultViewFactory @Inject()(
     }
   }
 
-  private def getResultViewsWithJson(toolName: String, jobId: String, result: JsValue): ResultView = {
+  private def getResultViewsWithJson(
+      toolName: String,
+      jobId: String,
+      result: JsValue
+  ): ResultView = {
     toolName match {
-      case PSIBLAST.value     => PsiBlastResultView(jobId, result, psi, toolConfig, constants)
-      case TPRPRED.value      => TprPredResultView(jobId, result)
-      case HHBLITS.value      => HHBlitsResultView(jobId, result, hhblits, aln, toolConfig, constants)
-      case DEEPCOIL.value     => DeepCoilResultView(jobId, result, toolConfig, constants)
-      case HMMER.value        => HmmerResultView(jobId, result, hmmer, toolConfig, constants)
-      case HHPRED.value       => HHPredResultView(jobId, result, hhpred, toolConfig, aln, constants)
-      case HHOMP.value        => HHompResultView(jobId, result, constants, hhomp, toolConfig)
-      case HHPRED_ALIGN.value => HHPredAlignResultView(jobId, result, hhpred, toolConfig, constants)
-      case QUICK2D.value      => Quick2DResultView(result, quick2d)
-      case CLUSTALO.value     => ClustalOmegaResultView(jobId, result, constants, toolConfig, aln)
-      case KALIGN.value       => KalignResultView(jobId, result, constants, toolConfig, aln)
-      case MAFFT.value        => MafftResultView(jobId, result, constants, toolConfig, aln)
-      case MSAPROBS.value     => MsaProbsResultView(jobId, result, constants, toolConfig, aln)
-      case MUSCLE.value       => MuscleResultView(jobId, result, constants, toolConfig, aln)
-      case TCOFFEE.value      => TcoffeeResultView(jobId, result, constants, toolConfig, aln)
-      case SEQ2ID.value       => Seq2IdResultView(jobId, result)
-      case HHFILTER.value     => HHFilterResultView(jobId, result, constants, toolConfig, aln)
-      case PATSEARCH.value    => PatSearchResultView(jobId, result, toolConfig)
+      case PSIBLAST.value =>
+        PsiBlastResultView(jobId, result, psi, toolConfig, constants)
+      case TPRPRED.value => TprPredResultView(jobId, result)
+      case HHBLITS.value =>
+        HHBlitsResultView(jobId, result, hhblits, aln, toolConfig, constants)
+      case DEEPCOIL.value =>
+        DeepCoilResultView(jobId, result, toolConfig, constants)
+      case HMMER.value =>
+        HmmerResultView(jobId, result, hmmer, toolConfig, constants)
+      case HHPRED.value =>
+        HHPredResultView(jobId, result, hhpred, toolConfig, aln, constants)
+      case HHOMP.value =>
+        HHompResultView(jobId, result, constants, hhomp, toolConfig)
+      case HHPRED_ALIGN.value =>
+        HHPredAlignResultView(jobId, result, hhpred, toolConfig, constants)
+      case QUICK2D.value => Quick2DResultView(result, quick2d)
+      case CLUSTALO.value =>
+        ClustalOmegaResultView(jobId, result, constants, toolConfig, aln)
+      case KALIGN.value =>
+        KalignResultView(jobId, result, constants, toolConfig, aln)
+      case MAFFT.value =>
+        MafftResultView(jobId, result, constants, toolConfig, aln)
+      case MSAPROBS.value =>
+        MsaProbsResultView(jobId, result, constants, toolConfig, aln)
+      case MUSCLE.value =>
+        MuscleResultView(jobId, result, constants, toolConfig, aln)
+      case TCOFFEE.value =>
+        TcoffeeResultView(jobId, result, constants, toolConfig, aln)
+      case SEQ2ID.value => Seq2IdResultView(jobId, result)
+      case HHFILTER.value =>
+        HHFilterResultView(jobId, result, constants, toolConfig, aln)
+      case PATSEARCH.value => PatSearchResultView(jobId, result, toolConfig)
     }
   }
 

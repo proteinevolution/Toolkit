@@ -48,8 +48,11 @@ object IPConfig {
       OPENSESSIONS -> ipConfig.openSessions,
       SCORE        -> ipConfig.score,
       SCOREMAX     -> ipConfig.scoreMax,
-      DATECREATED  -> ipConfig.dateCreated.map(_.format(ZonedDateTimeHelper.dateTimeFormatter)),
-      DATEUPDATED  -> ipConfig.dateUpdated.map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
+      DATECREATED -> ipConfig.dateCreated
+        .map(_.format(ZonedDateTimeHelper.dateTimeFormatter)),
+      DATEUPDATED -> ipConfig.dateUpdated.map(
+        _.format(ZonedDateTimeHelper.dateTimeFormatter)
+      )
     )
   }
 
@@ -64,8 +67,12 @@ object IPConfig {
         openSessions = bson.getAs[Int](OPENSESSIONS).getOrElse(0),
         score = bson.getAs[Int](SCORE).getOrElse(0),
         scoreMax = bson.getAs[Int](SCOREMAX).getOrElse(IPConfig.scoreMaxDefault),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt))
+        dateCreated = bson
+          .getAs[BSONDateTime](DATECREATED)
+          .map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateUpdated = bson
+          .getAs[BSONDateTime](DATEUPDATED)
+          .map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
   }
 
@@ -77,8 +84,12 @@ object IPConfig {
         OPENSESSIONS -> ipConfig.openSessions,
         SCORE        -> ipConfig.score,
         SCOREMAX     -> ipConfig.scoreMax,
-        DATECREATED  -> BSONDateTime(ipConfig.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
-        DATEUPDATED  -> BSONDateTime(ipConfig.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli))
+        DATECREATED -> BSONDateTime(
+          ipConfig.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)
+        ),
+        DATEUPDATED -> BSONDateTime(
+          ipConfig.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli)
+        )
       )
   }
 }

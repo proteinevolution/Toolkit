@@ -23,8 +23,10 @@ object JQueryPlugin {
     def floatingScroll(config: String): JQueryPlugin               = js.native
   }
 
-  implicit def jqPlugin(jq: JQuery): JQueryPlugin = jq.asInstanceOf[JQueryPlugin]
+  implicit def jqPlugin(jq: JQuery): JQueryPlugin =
+    jq.asInstanceOf[JQueryPlugin]
 
-  implicit def jqStaticPlugin(jq: JQueryStatic): JQueryStaticPlugin = jq.asInstanceOf[JQueryStaticPlugin]
+  implicit def jqStaticPlugin(jq: JQueryStatic): JQueryStaticPlugin =
+    jq.asInstanceOf[JQueryStaticPlugin]
 
 }

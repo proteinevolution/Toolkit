@@ -8,7 +8,8 @@ import scala.util.Random
 
 object ErrorComponent extends Component {
 
-  override val controller: js.Function = (args: Any) => new ErrorComponentCtrl(args)
+  override val controller: js.Function = (args: Any) =>
+    new ErrorComponentCtrl(args)
 
   val view: js.Function = (ctrl: ErrorComponentCtrl) =>
     js.Array(
@@ -16,13 +17,19 @@ object ErrorComponent extends Component {
         "div",
         js.Dynamic.literal("class" -> "column error404-container"),
         js.Array(
-            m("input", js.Dynamic.literal("id" -> "hidden404", "type" -> "hidden", "value" -> ctrl.notFoundRandomized)),
+            m("input",
+              js.Dynamic.literal("id"    -> "hidden404",
+                                 "type"  -> "hidden",
+                                 "value" -> ctrl.notFoundRandomized)),
             m(
               "div",
-              js.Dynamic.literal("style" -> "display: none;", "config" -> g.hideSidebar),
+              js.Dynamic.literal("style"  -> "display: none;",
+                                 "config" -> g.hideSidebar),
               ""
             ),
-            m("div", js.Dynamic.literal("class" -> "subtitle404"), s"${ctrl.errorMessage()}"),
+            m("div",
+              js.Dynamic.literal("class" -> "subtitle404"),
+              s"${ctrl.errorMessage()}"),
             m("div", {
               js.Dynamic.literal("id" -> "404wrapper", "class" -> "columns")
             }, m("div", {
@@ -40,7 +47,26 @@ private[this] class ErrorComponentCtrl(args: Any) {
   val errorMessage: MithrilProp[String] = m.prop("Page not found.")
 
   val aminoAcids: List[Char] =
-    List('A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y')
+    List('A',
+         'C',
+         'D',
+         'E',
+         'F',
+         'G',
+         'H',
+         'I',
+         'K',
+         'L',
+         'M',
+         'N',
+         'P',
+         'Q',
+         'R',
+         'S',
+         'T',
+         'V',
+         'W',
+         'Y')
 
   val notFound: String =
     """>AAN59974.1 histQne H2A [HQmQ sapiens]
@@ -78,7 +104,12 @@ private[this] class ErrorComponentCtrl(args: Any) {
 
   val notFoundRandomized: String = notFound.map { c =>
     if (c == 'G' || c == 'Q' || c == 'A')
-      Stream.continually(Random.alphanumeric).flatten.take(100).filter(x => aminoAcids.contains(x)).head
+      Stream
+        .continually(Random.alphanumeric)
+        .flatten
+        .take(100)
+        .filter(x => aminoAcids.contains(x))
+        .head
     else c
   }
 

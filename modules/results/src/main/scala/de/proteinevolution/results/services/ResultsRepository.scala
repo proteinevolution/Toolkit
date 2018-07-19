@@ -10,20 +10,25 @@ import scala.concurrent.Future
 
 trait ResultsRepository {
 
-  def getResults(jobId: String): Reader[ResultsService, Future[Option[JsValue]]] =
+  def getResults(
+      jobId: String
+  ): Reader[ResultsService, Future[Option[JsValue]]] =
     Reader[ResultsService, Future[Option[JsValue]]] { rs =>
       rs.resultFiles.getResults(jobId)
     }
 
-  def getTool(jobId: String): Reader[ResultsService, Future[ToolName]] = Reader[ResultsService, Future[ToolName]] {
-    rs =>
+  def getTool(jobId: String): Reader[ResultsService, Future[ToolName]] =
+    Reader[ResultsService, Future[ToolName]] { rs =>
       rs.toolFinder.getTool(jobId)
-  }
+    }
 
 }
 
 object ResultsRepository {
 
-  case class ResultsService(toolFinder: ToolNameGetService, resultFiles: ResultFileAccessor)
+  case class ResultsService(
+      toolFinder: ToolNameGetService,
+      resultFiles: ResultFileAccessor
+  )
 
 }

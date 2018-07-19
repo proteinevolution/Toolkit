@@ -12,8 +12,10 @@ import exports.facades.JQueryPlugin.jqPlugin
 class TemplateAlignment(tool: String, forwardingEnabled: Boolean = true) {
 
   private val templateAlignmentModal = jQuery("#templateAlignmentModal")
-  private val textArea               = templateAlignmentModal.find("textarea.alignmentTemplateTextArea")
-  private val toolSelect             = templateAlignmentModal.find(".alignmentTemplateToolSelect")
+  private val textArea =
+    templateAlignmentModal.find("textarea.alignmentTemplateTextArea")
+  private val toolSelect =
+    templateAlignmentModal.find(".alignmentTemplateToolSelect")
 
   if (forwardingEnabled) {
     templateAlignmentModal.find(".hide-for-forwarding-disabled").show()
@@ -67,10 +69,12 @@ class TemplateAlignment(tool: String, forwardingEnabled: Boolean = true) {
             .done((data: js.Any, _: js.Any, _: JQueryXHR) => {
               textArea.value(data.toString)
             })
-            .fail((jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
-              println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
-              textArea.value("Sorry, failed to fetch Template Alignment.")
-            })
+            .fail(
+              (jqXHR: JQueryXHR, textStatus: js.Any, errorThrow: js.Any) => {
+                println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
+                textArea.value("Sorry, failed to fetch Template Alignment.")
+              }
+            )
             .always(() => {
               textArea.LoadingOverlay("hide")
             })

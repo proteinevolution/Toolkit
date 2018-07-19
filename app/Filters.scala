@@ -9,6 +9,7 @@ final class Filters @Inject()(
     xmlCompressorFilter: XMLCompressorFilter
 ) extends HttpFilters {
 
-  override def filters: Seq[EssentialFilter] = htmlCompressorFilter :: xmlCompressorFilter :: Nil
+  override def filters: Seq[EssentialFilter] =
+    htmlCompressorFilter :: xmlCompressorFilter :: Nil
 
 }

@@ -10,7 +10,11 @@ import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services.JobFolderValidation
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
-import de.proteinevolution.models.database.jobs.JobState.{ Done, Pending, Prepared }
+import de.proteinevolution.models.database.jobs.JobState.{
+  Done,
+  Pending,
+  Prepared
+}
 import de.proteinevolution.models.forms.{ JobForm, ToolForm }
 import de.proteinevolution.services.ToolConfig
 import javax.inject.{ Inject, Singleton }
@@ -30,7 +34,11 @@ class ResultGetService @Inject()(
 )(implicit ec: ExecutionContext)
     extends JobFolderValidation {
 
-  def get(jobId: String, tool: String, resultView: String): Future[HtmlFormat.Appendable] = {
+  def get(
+      jobId: String,
+      tool: String,
+      resultView: String
+  ): Future[HtmlFormat.Appendable] = {
     resultViewFactory.apply(tool, jobId).value.map {
       case Some(view) => view.tabs(resultView)
       case None =>
@@ -42,7 +50,8 @@ class ResultGetService @Inject()(
   def getJob(jobId: String): OptionT[Future, JobForm] = {
     val paramValues: Map[String, String] = {
       if (paramsExist(jobId, constants)) {
-        (constants.jobPath / jobId / "sparam").readDeserialized[Map[String, String]]
+        (constants.jobPath / jobId / "sparam")
+          .readDeserialized[Map[String, String]]
       } else {
         Map.empty[String, String]
       }
@@ -58,7 +67,9 @@ class ResultGetService @Inject()(
         JobForm(
           job.jobID,
           job.status,
-          job.dateCreated.getOrElse(ZonedDateTime.now).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+          job.dateCreated
+            .getOrElse(ZonedDateTime.now)
+            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
           toolForm,
           jobViews,
           paramValues
@@ -66,14 +77,15 @@ class ResultGetService @Inject()(
     }
   }
 
-  private def jobViews(job: Job, toolForm: ToolForm): Future[Seq[String]] = job.status match {
-    case Done =>
-      resultViewFactory(toolForm.toolname, job.jobID).value.map {
-        case Some(r) => r.tabs.keys.toSeq
-        case None    => Nil // TODO throw some exception or something
-      }
-    case _ => Future.successful(Nil)
-  }
+  private def jobViews(job: Job, toolForm: ToolForm): Future[Seq[String]] =
+    job.status match {
+      case Done =>
+        resultViewFactory(toolForm.toolname, job.jobID).value.map {
+          case Some(r) => r.tabs.keys.toSeq
+          case None    => Nil // TODO throw some exception or something
+        }
+      case _ => Future.successful(Nil)
+    }
 
   private def cleanLostJobs(jobId: String): OptionT[Future, Unit] = {
     for {

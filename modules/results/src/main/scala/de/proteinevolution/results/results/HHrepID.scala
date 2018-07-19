@@ -18,7 +18,10 @@ object HHrepID {
           "<h5>" + wholeMatch + "</h5>" + "<span class='hhrepImage'>" +
           s"<img hspace='14' src='$imagePath$m.png'>" + "</div><br />"
         case wholeMatch @ seqLine(_, m) =>
-          "<pre class='sequence hhrepidview'>" + wholeMatch.replace(m, Common.colorRegexReplacer(m)) + "</pre>"
+          "<pre class='sequence hhrepidview'>" + wholeMatch.replace(
+            m,
+            Common.colorRegexReplacer(m)
+          ) + "</pre>"
         case "" => "<br />"
         case m  => "<pre class='sequence hhrepidview'>" + m + "</pre>"
       }).get()

@@ -3,7 +3,10 @@ package de.proteinevolution.results.results
 import de.proteinevolution.results.results.Alignment.AlignmentResult
 import de.proteinevolution.results.results.General.{ DTParam, SingleSeq }
 import de.proteinevolution.results.results.HHTemplate.DummyTemplate
-import de.proteinevolution.results.results.PSIBlast.{ PSIBlastHSP, PSIBlastResult }
+import de.proteinevolution.results.results.PSIBlast.{
+  PSIBlastHSP,
+  PSIBlastResult
+}
 import javax.inject.Inject
 import javax.inject.Singleton
 import play.api.libs.json._
@@ -30,8 +33,10 @@ class PSIBlast @Inject()(general: General) extends SearchTool[PSIBlastHSP] {
       .filter(h => (h \ "hsps" \ 0 \ "evalue").as[Double] >= evalue)
       .sortBy(h => (h \ "hsps" \ 0 \ "evalue").as[Double])
     val upperBound = sorted match {
-      case _ :: _ => (sorted.headOption.getOrElse(JsNull) \ "num").as[Int] // sorted is non-empty list
-      case _      => hsplist.length + 1 // if empty, take the whole size of hsplist
+      case _ :: _ =>
+        (sorted.headOption.getOrElse(JsNull) \ "num")
+          .as[Int] // sorted is non-empty list
+      case _ => hsplist.length + 1 // if empty, take the whole size of hsplist
     }
     val TMPRED = (obj \ "output_psiblastp" \ "TMPRED").asOpt[String] match {
       case Some(data) => data
@@ -41,7 +46,15 @@ class PSIBlast @Inject()(general: General) extends SearchTool[PSIBlastHSP] {
       case Some(data) => data
       case None       => "1"
     }
-    PSIBlastResult(hsplist, num_hits, iter_num, db, evalue, query, upperBound, TMPRED, COILPRED)
+    PSIBlastResult(hsplist,
+                   num_hits,
+                   iter_num,
+                   db,
+                   evalue,
+                   query,
+                   upperBound,
+                   TMPRED,
+                   COILPRED)
   }
 
   def parseHSP(hit: JsObject, db: String): PSIBlastHSP = {
@@ -56,23 +69,33 @@ class PSIBlast @Inject()(general: General) extends SearchTool[PSIBlastHSP] {
     val gaps            = (hsps \ "gaps").getOrElse(Json.toJson(-1)).as[Int]
     val hit_start       = (hsps \ "hit_from").getOrElse(Json.toJson(-1)).as[Int]
     val hit_end         = (hsps \ "hit_to").getOrElse(Json.toJson(-1)).as[Int]
-    val hit_seq         = (hsps \ "hseq").getOrElse(Json.toJson("")).as[String].toUpperCase
-    val query_seq       = (hsps \ "qseq").getOrElse(Json.toJson("")).as[String].toUpperCase
-    val query_start     = (hsps \ "query_from").getOrElse(Json.toJson(-1)).as[Int]
-    val query_end       = (hsps \ "query_to").getOrElse(Json.toJson(-1)).as[Int]
-    val query_id        = (hsps \ "query_id").getOrElse(Json.toJson("")).as[String]
-    val ref_len         = (hit \ "len").getOrElse(Json.toJson(-1)).as[Int]
-    val hit_len         = (hsps \ "align_len").getOrElse(Json.toJson(-1)).as[Int]
-    var accession       = ""
+    val hit_seq =
+      (hsps \ "hseq").getOrElse(Json.toJson("")).as[String].toUpperCase
+    val query_seq =
+      (hsps \ "qseq").getOrElse(Json.toJson("")).as[String].toUpperCase
+    val query_start = (hsps \ "query_from").getOrElse(Json.toJson(-1)).as[Int]
+    val query_end   = (hsps \ "query_to").getOrElse(Json.toJson(-1)).as[Int]
+    val query_id    = (hsps \ "query_id").getOrElse(Json.toJson("")).as[String]
+    val ref_len     = (hit \ "len").getOrElse(Json.toJson(-1)).as[Int]
+    val hit_len     = (hsps \ "align_len").getOrElse(Json.toJson(-1)).as[Int]
+    var accession   = ""
     // workaround: bug of psiblast output when searching pdb_nr
     if (db == "pdb_nr") {
-      accession = (descriptionBase \ "title").getOrElse(Json.toJson("")).as[String].split("\\s+").head
+      accession = (descriptionBase \ "title")
+        .getOrElse(Json.toJson(""))
+        .as[String]
+        .split("\\s+")
+        .head
     } else {
       //accession = (descriptionBase \ "title").getOrElse(Json.toJson("")).as[String]
-      accession = general.refineAccession((descriptionBase \ "accession").getOrElse(Json.toJson("")).as[String])
+      accession = general.refineAccession(
+        (descriptionBase \ "accession").getOrElse(Json.toJson("")).as[String]
+      )
     }
-    val midline     = (hsps \ "midline").getOrElse(Json.toJson("")).as[String].toUpperCase
-    val description = (descriptionBase \ "title").getOrElse(Json.toJson("")).as[String]
+    val midline =
+      (hsps \ "midline").getOrElse(Json.toJson("")).as[String].toUpperCase
+    val description =
+      (descriptionBase \ "title").getOrElse(Json.toJson("")).as[String]
 
     PSIBlastHSP(
       evalue,
@@ -137,8 +160,13 @@ object PSIBlast {
       )
   }
 
-  case class PSIBLastInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int, evalue: Double = -1)
-      extends SearchToolInfo
+  case class PSIBLastInfo(
+      db_num: Int,
+      db_len: Int,
+      hsp_len: Int,
+      iter_num: Int,
+      evalue: Double = -1
+  ) extends SearchToolInfo
 
   case class PSIBlastResult(
       HSPS: List[PSIBlastHSP],

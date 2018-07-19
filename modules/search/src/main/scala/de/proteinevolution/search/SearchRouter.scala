@@ -7,7 +7,8 @@ import play.api.routing.Router.Routes
 import play.api.routing.sird._
 
 @Singleton
-class SearchRouter @Inject()(searchController: SearchController) extends SimpleRouter {
+class SearchRouter @Inject()(searchController: SearchController)
+    extends SimpleRouter {
 
   override lazy val routes: Routes = {
     case GET(p"/index/page/info")  => searchController.recentJobInfo

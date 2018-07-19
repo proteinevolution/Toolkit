@@ -31,7 +31,8 @@ case class ClustalOmegaResultView(
       toolConfig.values(ToolName.CLUSTALO.value)
     ),
     ResultViews.ALIGNMENTVIEWER ->
-    views.html.resultpanels.msaviewer(s"${constants.jobPath}/$jobId/results/alignment.fas")
+    views.html.resultpanels
+      .msaviewer(s"${constants.jobPath}/$jobId/results/alignment.fas")
   )
 
 }

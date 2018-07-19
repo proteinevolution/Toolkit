@@ -5,8 +5,11 @@ import play.api.libs.json.JsValue
 
 import scala.collection.immutable.ListMap
 
-case class TprPredResultView(jobId: String, result: JsValue) extends ResultView {
+case class TprPredResultView(jobId: String, result: JsValue)
+    extends ResultView {
 
-  override lazy val tabs = ListMap(ResultViews.RESULTS -> views.html.resultpanels.tprpred(jobId, result))
+  override lazy val tabs = ListMap(
+    ResultViews.RESULTS -> views.html.resultpanels.tprpred(jobId, result)
+  )
 
 }

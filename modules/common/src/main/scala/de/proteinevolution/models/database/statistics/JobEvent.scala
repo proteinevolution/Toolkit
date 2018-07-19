@@ -5,9 +5,18 @@ import java.time.ZonedDateTime
 import de.proteinevolution.models.database.jobs.JobState._
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 import play.api.libs.json._
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter }
+import reactivemongo.bson.{
+  BSONDateTime,
+  BSONDocument,
+  BSONDocumentReader,
+  BSONDocumentWriter
+}
 
-case class JobEvent(jobState: JobState, timestamp: Option[ZonedDateTime], runtime: Long = 0L)
+case class JobEvent(
+    jobState: JobState,
+    timestamp: Option[ZonedDateTime],
+    runtime: Long = 0L
+)
 
 object JobEvent {
 
@@ -42,7 +51,9 @@ object JobEvent {
     def read(bson: BSONDocument): JobEvent = {
       JobEvent(
         bson.getAs[JobState](JOBSTATE).getOrElse(Error),
-        bson.getAs[BSONDateTime](TIMESTAMP).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        bson
+          .getAs[BSONDateTime](TIMESTAMP)
+          .map(dt => ZonedDateTimeHelper.getZDT(dt)),
         bson.getAs[Long](RUNTIME).getOrElse(0L)
       )
     }
@@ -50,9 +61,11 @@ object JobEvent {
 
   implicit object Writer extends BSONDocumentWriter[JobEvent] {
     def write(jobEvent: JobEvent): BSONDocument = BSONDocument(
-      JOBSTATE  -> jobEvent.jobState,
-      TIMESTAMP -> BSONDateTime(jobEvent.timestamp.fold(-1L)(_.toInstant.toEpochMilli)),
-      RUNTIME   -> jobEvent.runtime
+      JOBSTATE -> jobEvent.jobState,
+      TIMESTAMP -> BSONDateTime(
+        jobEvent.timestamp.fold(-1L)(_.toInstant.toEpochMilli)
+      ),
+      RUNTIME -> jobEvent.runtime
     )
   }
 }

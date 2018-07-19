@@ -7,7 +7,8 @@ import javax.inject.{ Inject, Singleton }
 import play.api.libs.json._
 
 @Singleton
-class HHBlits @Inject()(general: General, aln: Alignment) extends SearchTool[HHBlitsHSP] {
+class HHBlits @Inject()(general: General, aln: Alignment)
+    extends SearchTool[HHBlitsHSP] {
 
   def parseResult(jsValue: JsValue): HHBlitsResult = {
     val obj        = jsValue.as[JsObject]
@@ -21,7 +22,13 @@ class HHBlits @Inject()(general: General, aln: Alignment) extends SearchTool[HHB
       val agree          = (x._1 \ "agree").as[String]
       val description    = (x._1 \ "header").as[String]
       val num            = (x._1 \ "no").getOrElse(Json.toJson(-1)).as[String].toInt
-      HHBlitsHSP(queryResult, templateResult, infoResult, agree, description, num, agree.length)
+      HHBlitsHSP(queryResult,
+                 templateResult,
+                 infoResult,
+                 agree,
+                 description,
+                 num,
+                 agree.length)
     }
     val db        = (obj \ jobID \ "db").as[String]
     val alignment = aln.parse((obj \ "reduced").as[JsArray])
@@ -64,10 +71,12 @@ class HHBlits @Inject()(general: General, aln: Alignment) extends SearchTool[HHB
   def parseTemplate(obj: JsObject, hit: JsObject): HHBlitsTemplate = {
     val consensus = (obj \ "consensus").getOrElse(Json.toJson("")).as[String]
     val end       = (obj \ "end").getOrElse(Json.toJson(-1)).as[Int]
-    val accession = general.refineAccession((hit \ "struc").getOrElse(Json.toJson("")).as[String])
-    val ref       = (obj \ "ref").getOrElse(Json.toJson(-1)).as[Int]
-    val seq       = (obj \ "seq").getOrElse(Json.toJson("")).as[String]
-    val start     = (obj \ "start").getOrElse(Json.toJson(-1)).as[Int]
+    val accession = general.refineAccession(
+      (hit \ "struc").getOrElse(Json.toJson("")).as[String]
+    )
+    val ref   = (obj \ "ref").getOrElse(Json.toJson(-1)).as[Int]
+    val seq   = (obj \ "seq").getOrElse(Json.toJson("")).as[String]
+    val start = (obj \ "start").getOrElse(Json.toJson(-1)).as[Int]
     HHBlitsTemplate(consensus, end, accession, ref, seq, start)
   }
 }
@@ -90,7 +99,9 @@ object HHBlits {
       Json.toJson(
         Map(
           "0" -> Json.toJson(Common.getCheckbox(num)),
-          "1" -> Json.toJson(Common.getSingleLinkHHBlits(template.accession).toString),
+          "1" -> Json.toJson(
+            Common.getSingleLinkHHBlits(template.accession).toString
+          ),
           "2" -> Json.toJson(Common.addBreak(description)),
           "3" -> Json.toJson(info.probab),
           "4" -> Json.toJson(info.evalue),
@@ -110,10 +121,23 @@ object HHBlits {
       similarity: Double
   ) extends SearchToolInfo
 
-  case class HHBlitsQuery(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
+  case class HHBlitsQuery(
+      consensus: String,
+      end: Int,
+      accession: String,
+      ref: Int,
+      seq: String,
+      start: Int
+  )
 
-  case class HHBlitsTemplate(consensus: String, end: Int, accession: String, ref: Int, seq: String, start: Int)
-      extends HHTemplate
+  case class HHBlitsTemplate(
+      consensus: String,
+      end: Int,
+      accession: String,
+      ref: Int,
+      seq: String,
+      start: Int
+  ) extends HHTemplate
 
   case class HHBlitsResult(
       HSPS: List[HHBlitsHSP],
@@ -127,8 +151,9 @@ object HHBlits {
 
     def hitsOrderBy(params: DTParam): List[HHBlitsHSP] = {
       (params.orderCol, params.orderDir) match {
-        case (1, "asc")  => HSPS.sortBy(_.template.accession)
-        case (1, "desc") => HSPS.sortWith(_.template.accession > _.template.accession)
+        case (1, "asc") => HSPS.sortBy(_.template.accession)
+        case (1, "desc") =>
+          HSPS.sortWith(_.template.accession > _.template.accession)
         case (2, "asc")  => HSPS.sortBy(_.description)
         case (2, "desc") => HSPS.sortWith(_.description > _.description)
         case (3, "asc")  => HSPS.sortBy(_.info.probab)
@@ -136,7 +161,8 @@ object HHBlits {
         case (4, "asc")  => HSPS.sortBy(_.info.evalue)
         case (4, "desc") => HSPS.sortWith(_.info.evalue > _.info.evalue)
         case (5, "asc")  => HSPS.sortBy(_.info.aligned_cols)
-        case (5, "desc") => HSPS.sortWith(_.info.aligned_cols > _.info.aligned_cols)
+        case (5, "desc") =>
+          HSPS.sortWith(_.info.aligned_cols > _.info.aligned_cols)
         case (6, "asc")  => HSPS.sortBy(_.template.ref)
         case (6, "desc") => HSPS.sortWith(_.template.ref > _.template.ref)
         case (_, "asc")  => HSPS.sortBy(_.num)

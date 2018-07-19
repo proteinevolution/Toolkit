@@ -13,6 +13,7 @@ case class ResultsForm(
 
 object ResultsForm {
 
-  implicit val resultsFormDecoder: Decoder[ResultsForm] = deriveDecoder[ResultsForm]
+  implicit val resultsFormDecoder: Decoder[ResultsForm] =
+    deriveDecoder[ResultsForm]
 
 }

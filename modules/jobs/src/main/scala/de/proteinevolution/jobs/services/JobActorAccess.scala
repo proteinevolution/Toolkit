@@ -14,7 +14,9 @@ final class JobActorAccess @Inject()(
 
   // Just spawn all the JobActors
   private val jobActors: Seq[ActorRef] =
-    Seq.tabulate(constants.nJobActors)(i => actorSystem.actorOf(Props(jobActorFactory.apply(i))))
+    Seq.tabulate(constants.nJobActors)(
+      i => actorSystem.actorOf(Props(jobActorFactory.apply(i)))
+    )
 
   /**
    * Generates the corresponding hash value for a given jobID

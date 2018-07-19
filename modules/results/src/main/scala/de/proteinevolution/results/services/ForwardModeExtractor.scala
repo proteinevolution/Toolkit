@@ -9,7 +9,9 @@ trait ForwardModeExtractor {
   implicit object forwardModeBindable
       extends Parsing[ForwardMode](
         _.trim match {
-          case validString if ("alnEval" :: "evalFull" :: "aln" :: "full" :: Nil).contains(validString) =>
+          case validString
+              if ("alnEval" :: "evalFull" :: "aln" :: "full" :: Nil)
+                .contains(validString) =>
             ForwardMode(validString)
           case _ => throw new IllegalArgumentException
         },

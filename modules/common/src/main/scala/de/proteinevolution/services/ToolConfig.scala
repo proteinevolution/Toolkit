@@ -33,11 +33,12 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
   }.toMap
 
   def isTool(toolName: String): Boolean = {
-    toolName.toUpperCase == "REFORMAT" || toolName.toUpperCase == "ALNVIZ" || values.exists {
-      case (_, tool) =>
-        tool.isToolName(toolName)
-      case _ => false
-    }
+    toolName.toUpperCase == "REFORMAT" || toolName.toUpperCase == "ALNVIZ" || values
+      .exists {
+        case (_, tool) =>
+          tool.isToolName(toolName)
+        case _ => false
+      }
   }
 
   private def toTool(
@@ -57,9 +58,15 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       code,
       category,
       paramAccess.paramGroups.keysIterator.map { group =>
-        group -> paramAccess.paramGroups(group).filter(params.map(_.name).contains(_)).map(paramMap(_))
+        group -> paramAccess
+          .paramGroups(group)
+          .filter(params.map(_.name).contains(_))
+          .map(paramMap(_))
       }.toSeq :+
-      "Parameters" -> params.map(_.name).diff(paramAccess.paramGroups.values.flatten.toSeq).map(paramMap(_))
+      "Parameters" -> params
+        .map(_.name)
+        .diff(paramAccess.paramGroups.values.flatten.toSeq)
+        .map(paramMap(_))
     )
     Tool(
       toolNameShort,

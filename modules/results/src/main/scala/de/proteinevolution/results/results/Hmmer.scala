@@ -9,7 +9,8 @@ import javax.inject.Singleton
 import play.api.libs.json._
 
 @Singleton
-class Hmmer @Inject()(general: General, aln: Alignment) extends SearchTool[HmmerHSP] {
+class Hmmer @Inject()(general: General, aln: Alignment)
+    extends SearchTool[HmmerHSP] {
 
   def parseResult(jsValue: JsValue): HmmerResult = {
     val obj           = jsValue.as[JsObject]
@@ -25,9 +26,13 @@ class Hmmer @Inject()(general: General, aln: Alignment) extends SearchTool[Hmmer
         }
       }
     val jobDetails = obj \ jobID
-    val db         = if (jobDetails.isInstanceOf[JsUndefined]) null else (jobDetails \ "db").as[String]
-    val query      = general.parseSingleSeq((obj \ "query").as[JsArray])
-    val hsps       = if (jobDetails.isInstanceOf[JsUndefined]) List() else (jobDetails \ "hsps").as[List[JsObject]]
+    val db =
+      if (jobDetails.isInstanceOf[JsUndefined]) null
+      else (jobDetails \ "db").as[String]
+    val query = general.parseSingleSeq((obj \ "query").as[JsArray])
+    val hsps =
+      if (jobDetails.isInstanceOf[JsUndefined]) List()
+      else (jobDetails \ "hsps").as[List[JsObject]]
 
     val num_hits = hsps.length
     val hsplist  = hsps.map(parseHSP)
@@ -51,26 +56,40 @@ class Hmmer @Inject()(general: General, aln: Alignment) extends SearchTool[Hmmer
         }
       }
 
-    HmmerResult(hsplist, num_hits, AlignmentResult(alignment), query, db, TMPRED, COILPRED)
+    HmmerResult(hsplist,
+                num_hits,
+                AlignmentResult(alignment),
+                query,
+                db,
+                TMPRED,
+                COILPRED)
   }
 
   def parseHSP(hsp: JsObject): HmmerHSP = {
-    val evalue         = (hsp \ "evalue").getOrElse(Json.toJson(-1)).as[Double]
-    val full_evalue    = (hsp \ "full_evalue").getOrElse(Json.toJson(-1)).as[Double]
-    val num            = (hsp \ "num").getOrElse(Json.toJson(-1)).as[Int]
-    val bitscore       = (hsp \ "bitscore").getOrElse(Json.toJson(-1)).as[Double]
-    val hit_start      = (hsp \ "hit_start").getOrElse(Json.toJson(-1)).as[Int]
-    val hit_end        = (hsp \ "hit_end").getOrElse(Json.toJson(-1)).as[Int]
-    val hit_seq        = (hsp \ "hit_seq").getOrElse(Json.toJson("")).as[String].toUpperCase
-    val query_seq      = (hsp \ "query_seq").getOrElse(Json.toJson("")).as[String].toUpperCase
-    val query_start    = (hsp \ "query_start").getOrElse(Json.toJson(-1)).as[Int]
-    val query_end      = (hsp \ "query_end").getOrElse(Json.toJson(-1)).as[Int]
-    val query_id       = (hsp \ "query_id").getOrElse(Json.toJson("")).as[String]
-    val hit_len        = (hsp \ "hit_len").getOrElse(Json.toJson(-1)).as[Int]
-    val accession      = general.refineAccession((hsp \ "hit_id").getOrElse(Json.toJson("")).as[String])
-    val midline        = (hsp \ "aln_ann" \ "PP").getOrElse(Json.toJson("")).as[String].toUpperCase
-    val description    = (hsp \ "hit_description").getOrElse(Json.toJson("")).as[String]
-    val domain_obs_num = (hsp \ "domain_obs_num").getOrElse(Json.toJson(-1)).as[Int]
+    val evalue = (hsp \ "evalue").getOrElse(Json.toJson(-1)).as[Double]
+    val full_evalue =
+      (hsp \ "full_evalue").getOrElse(Json.toJson(-1)).as[Double]
+    val num       = (hsp \ "num").getOrElse(Json.toJson(-1)).as[Int]
+    val bitscore  = (hsp \ "bitscore").getOrElse(Json.toJson(-1)).as[Double]
+    val hit_start = (hsp \ "hit_start").getOrElse(Json.toJson(-1)).as[Int]
+    val hit_end   = (hsp \ "hit_end").getOrElse(Json.toJson(-1)).as[Int]
+    val hit_seq =
+      (hsp \ "hit_seq").getOrElse(Json.toJson("")).as[String].toUpperCase
+    val query_seq =
+      (hsp \ "query_seq").getOrElse(Json.toJson("")).as[String].toUpperCase
+    val query_start = (hsp \ "query_start").getOrElse(Json.toJson(-1)).as[Int]
+    val query_end   = (hsp \ "query_end").getOrElse(Json.toJson(-1)).as[Int]
+    val query_id    = (hsp \ "query_id").getOrElse(Json.toJson("")).as[String]
+    val hit_len     = (hsp \ "hit_len").getOrElse(Json.toJson(-1)).as[Int]
+    val accession = general.refineAccession(
+      (hsp \ "hit_id").getOrElse(Json.toJson("")).as[String]
+    )
+    val midline =
+      (hsp \ "aln_ann" \ "PP").getOrElse(Json.toJson("")).as[String].toUpperCase
+    val description =
+      (hsp \ "hit_description").getOrElse(Json.toJson("")).as[String]
+    val domain_obs_num =
+      (hsp \ "domain_obs_num").getOrElse(Json.toJson(-1)).as[Int]
     HmmerHSP(
       evalue,
       full_evalue,
@@ -128,8 +147,13 @@ object Hmmer {
       )
   }
 
-  case class HmmerInfo(db_num: Int, db_len: Int, hsp_len: Int, iter_num: Int, evalue: Double = -1)
-      extends SearchToolInfo
+  case class HmmerInfo(
+      db_num: Int,
+      db_len: Int,
+      hsp_len: Int,
+      iter_num: Int,
+      evalue: Double = -1
+  ) extends SearchToolInfo
 
   case class HmmerResult(
       HSPS: List[HmmerHSP],

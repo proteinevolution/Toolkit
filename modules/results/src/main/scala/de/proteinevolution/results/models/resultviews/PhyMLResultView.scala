@@ -5,7 +5,8 @@ import de.proteinevolution.models.results.ResultViews
 
 import scala.collection.immutable.ListMap
 
-case class PhyMLResultView(jobId: String, constants: ConstantsV2) extends ResultView {
+case class PhyMLResultView(jobId: String, constants: ConstantsV2)
+    extends ResultView {
 
   override lazy val tabs = ListMap(
     ResultViews.TREE -> views.html.resultpanels.tree(
@@ -14,7 +15,8 @@ case class PhyMLResultView(jobId: String, constants: ConstantsV2) extends Result
       jobId,
       "PhyML"
     ),
-    ResultViews.DATA -> views.html.resultpanels.fileviewWithDownload(jobId + ".stats", jobId, "phyml_data")
+    ResultViews.DATA -> views.html.resultpanels
+      .fileviewWithDownload(jobId + ".stats", jobId, "phyml_data")
   )
 
 }

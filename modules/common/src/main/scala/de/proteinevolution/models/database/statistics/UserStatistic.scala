@@ -39,10 +39,14 @@ object UserStatistic {
       UserStatistic(
         currentDeleted = bson.getAs[Int](CURRENTDELETED).getOrElse(0),
         monthly = bson.getAs[List[Int]](MONTHLY).getOrElse(List.empty),
-        monthlyLoggedIn = bson.getAs[List[Int]](MONTHLYLOGGEDIN).getOrElse(List.empty),
-        monthlyInternal = bson.getAs[List[Int]](MONTHLYINTERNAL).getOrElse(List.empty),
-        monthlyUniqueIP = bson.getAs[List[Int]](MONTHLYUNIQUEIP).getOrElse(List.empty),
-        monthlyDeleted = bson.getAs[List[Int]](MONTHLYDELETED).getOrElse(List.empty)
+        monthlyLoggedIn =
+          bson.getAs[List[Int]](MONTHLYLOGGEDIN).getOrElse(List.empty),
+        monthlyInternal =
+          bson.getAs[List[Int]](MONTHLYINTERNAL).getOrElse(List.empty),
+        monthlyUniqueIP =
+          bson.getAs[List[Int]](MONTHLYUNIQUEIP).getOrElse(List.empty),
+        monthlyDeleted =
+          bson.getAs[List[Int]](MONTHLYDELETED).getOrElse(List.empty)
       )
     }
   }

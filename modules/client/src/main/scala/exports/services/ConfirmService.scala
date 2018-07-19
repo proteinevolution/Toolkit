@@ -12,7 +12,11 @@ object ConfirmService {
   val $modal: JQuery = jQuery("#confirmModal")
 
   @JSExport
-  def confirm(text: String, onSuccess: js.Function0[Unit], onError: js.Function0[Unit] = () => {}): Unit = {
+  def confirm(
+      text: String,
+      onSuccess: js.Function0[Unit],
+      onError: js.Function0[Unit] = () => {}
+  ): Unit = {
     $modal.find(".modal-text").text(text)
     $modal.foundation("open")
     $modal.find(".confirm-btn")

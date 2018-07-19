@@ -18,7 +18,8 @@ case class Tool(
 
   def isToolName(toolName: String, caseSensitive: Boolean = false): Boolean = {
     if (caseSensitive) {
-      code.contains(toolName) || toolNameShort.contains(toolName) || toolNameLong.contains(toolName)
+      code.contains(toolName) || toolNameShort.contains(toolName) || toolNameLong
+        .contains(toolName)
     } else {
       code.toLowerCase.contains(toolName.toLowerCase) ||
       toolNameShort.toLowerCase.contains(toolName.toLowerCase) ||

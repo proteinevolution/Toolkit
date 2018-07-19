@@ -25,6 +25,7 @@ object UserData {
 
   implicit val userDataWrites: OWrites[UserData] = Json.writes[UserData]
 
-  implicit val userDataBSONHandler: BSONHandler[BSONDocument, UserData] = Macros.handler[UserData]
+  implicit val userDataBSONHandler: BSONHandler[BSONDocument, UserData] =
+    Macros.handler[UserData]
 
 }

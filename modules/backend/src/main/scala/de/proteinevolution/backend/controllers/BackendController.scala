@@ -6,7 +6,10 @@ import java.time.temporal.ChronoUnit
 import akka.actor.ActorRef
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.dao.UserDao
-import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
+import de.proteinevolution.backend.actors.DatabaseMonitor.{
+  DeleteOldJobs,
+  DeleteOldUsers
+}
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
@@ -48,11 +51,17 @@ final class BackendController @Inject()(
 
   def statistics: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
-      logger.info("Statistics called. Access " + (if (user.isSuperuser) "granted." else "denied."))
+      logger.info(
+        "Statistics called. Access " + (if (user.isSuperuser) "granted."
+                                        else "denied.")
+      )
       if (user.isSuperuser) {
         // Get the first moment of the last month as a DateTime object
         val firstOfLastMonth: ZonedDateTime =
-          ZonedDateTime.now.minusMonths(1).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1)
+          ZonedDateTime.now
+            .minusMonths(1)
+            .truncatedTo(ChronoUnit.DAYS)
+            .withDayOfMonth(1)
 
         // Grab the current statistics
         logger.info("Loading Statistics...")
@@ -60,7 +69,9 @@ final class BackendController @Inject()(
 
         // Ensure all tools are in the statistics, even if they have not been used yet
         logger.info("Statistics loaded.... checking for new tools")
-        val statsUpdated = stats.map(_.updateTools(toolConfig.values.values.map(_.toolNameShort).toList))
+        val statsUpdated = stats.map(
+          _.updateTools(toolConfig.values.values.map(_.toolNameShort).toList)
+        )
 
         // Collect the job events up until the first of the last month
         statsUpdated.flatMap { statistics =>
@@ -73,7 +84,11 @@ final class BackendController @Inject()(
                     "$elemMatch" ->
                     BSONDocument(
                       JobEvent.TIMESTAMP ->
-                      BSONDocument("$lt" -> BSONDateTime(firstOfLastMonth.toInstant.toEpochMilli))
+                      BSONDocument(
+                        "$lt" -> BSONDateTime(
+                          firstOfLastMonth.toInstant.toEpochMilli
+                        )
+                      )
                     )
                   )
                 )
@@ -84,7 +99,10 @@ final class BackendController @Inject()(
                 )
                 statistics.addMonthsToTools(
                   jobEventLogs,
-                  statistics.lastPushed.plusMonths(1).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1),
+                  statistics.lastPushed
+                    .plusMonths(1)
+                    .truncatedTo(ChronoUnit.DAYS)
+                    .withDayOfMonth(1),
                   firstOfLastMonth
                 )
               }
@@ -98,24 +116,42 @@ final class BackendController @Inject()(
                     )
                     // TODO add a way to remove the now collected elements from the JobEventLogs
                     NoCache(
-                      Ok(Json.toJson(Json.obj("success" -> "new statistics added", "stat" -> statisticsObjectUpdated)))
+                      Ok(
+                        Json.toJson(
+                          Json.obj("success" -> "new statistics added",
+                                   "stat"    -> statisticsObjectUpdated)
+                        )
+                      )
                     )
                   case None =>
-                    Logger
-                      .info("Statistics generated, but it seems like the statistics could not be reloaded from the db")
+                    Logger.info(
+                      "Statistics generated, but it seems like the statistics could not be reloaded from the db"
+                    )
                     NoCache(
                       Ok(
                         Json.toJson(
-                          Json.obj("error" -> "could not reload new stats from DB", "stat" -> statisticsObject)
+                          Json.obj(
+                            "error" -> "could not reload new stats from DB",
+                            "stat"  -> statisticsObject
+                          )
                         )
                       )
                     )
                 }
               }
           } else {
-            logger.info("No need to push statistics. Last Push: " + statistics.lastPushed)
+            logger.info(
+              "No need to push statistics. Last Push: " + statistics.lastPushed
+            )
             Future.successful(
-              NoCache(Ok(Json.toJson(Json.obj("success" -> "old statistics used", "stat" -> statistics))))
+              NoCache(
+                Ok(
+                  Json.toJson(
+                    Json.obj("success" -> "old statistics used",
+                             "stat"    -> statistics)
+                  )
+                )
+              )
             )
           }
         }
@@ -127,7 +163,10 @@ final class BackendController @Inject()(
 
   def runUserSweep: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
-      logger.info("User deletion called. Access " + (if (user.isSuperuser) "granted." else "denied."))
+      logger.info(
+        "User deletion called. Access " + (if (user.isSuperuser) "granted."
+                                           else "denied.")
+      )
       if (user.isSuperuser) {
         databaseMonitor ! DeleteOldUsers
         NoContent
@@ -139,7 +178,10 @@ final class BackendController @Inject()(
 
   def runJobSweep: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
-      logger.info("User deletion called. Access " + (if (user.isSuperuser) "granted." else "denied."))
+      logger.info(
+        "User deletion called. Access " + (if (user.isSuperuser) "granted."
+                                           else "denied.")
+      )
       if (user.isSuperuser) {
         databaseMonitor ! DeleteOldJobs
         NoContent
@@ -152,9 +194,13 @@ final class BackendController @Inject()(
   def users: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       if (user.isSuperuser) {
-        userDao.findUsers(BSONDocument(User.USERDATA -> BSONDocument("$exists" -> true))).map { users =>
-          NoCache(Ok(Json.toJson(users)))
-        }
+        userDao
+          .findUsers(
+            BSONDocument(User.USERDATA -> BSONDocument("$exists" -> true))
+          )
+          .map { users =>
+            NoCache(Ok(Json.toJson(users)))
+          }
       } else {
         Future.successful(NotFound)
       }

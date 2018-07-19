@@ -6,7 +6,8 @@ import de.proteinevolution.results.results.HHPred._
 import javax.inject.{ Inject, Singleton }
 import play.api.libs.json._
 @Singleton
-class HHPred @Inject()(general: General, aln: Alignment) extends SearchTool[HHPredHSP] {
+class HHPred @Inject()(general: General, aln: Alignment)
+    extends SearchTool[HHPredHSP] {
 
   def parseResult(jsValue: JsValue): HHPredResult = {
     val obj        = jsValue.as[JsObject]
@@ -21,8 +22,17 @@ class HHPred @Inject()(general: General, aln: Alignment) extends SearchTool[HHPr
       val description    = (x._1 \ "header").as[String]
       val num            = (x._1 \ "no").getOrElse(Json.toJson(-1)).as[String].toInt
       val ss_score       = (x._2 \ "ss").getOrElse(Json.toJson(-1)).as[Double]
-      val confidence     = (x._1 \ "confidence").getOrElse(Json.toJson("")).as[String]
-      HHPredHSP(queryResult, templateResult, infoResult, agree, description, num, ss_score, confidence, agree.length)
+      val confidence =
+        (x._1 \ "confidence").getOrElse(Json.toJson("")).as[String]
+      HHPredHSP(queryResult,
+                templateResult,
+                infoResult,
+                agree,
+                description,
+                num,
+                ss_score,
+                confidence,
+                agree.length)
     }
     val db        = (obj \ jobID \ "db").as[String]
     val proteomes = (obj \ jobID \ "proteomes").as[String]
@@ -44,9 +54,19 @@ class HHPred @Inject()(general: General, aln: Alignment) extends SearchTool[HHPr
       case None       => ""
     }
 
-    val QA3M_COUNT = (obj \ jobID \ "QA3M_COUNT").getOrElse(Json.toJson(1)).as[String].toInt
+    val QA3M_COUNT =
+      (obj \ jobID \ "QA3M_COUNT").getOrElse(Json.toJson(1)).as[String].toInt
 
-    HHPredResult(hsplist, alignment, num_hits, query, db, proteomes, TMPRED, COILPRED, MSA_GEN, QA3M_COUNT)
+    HHPredResult(hsplist,
+                 alignment,
+                 num_hits,
+                 query,
+                 db,
+                 proteomes,
+                 TMPRED,
+                 COILPRED,
+                 MSA_GEN,
+                 QA3M_COUNT)
 
   }
 
@@ -76,12 +96,14 @@ class HHPred @Inject()(general: General, aln: Alignment) extends SearchTool[HHPr
   def parseTemplate(obj: JsObject, hits: JsObject): HHPredTemplate = {
     val consensus = (obj \ "consensus").getOrElse(Json.toJson("")).as[String]
     val end       = (obj \ "end").getOrElse(Json.toJson(-1)).as[Int]
-    val accession = general.refineAccession((hits \ "struc").getOrElse(Json.toJson("")).as[String])
-    val ref       = (obj \ "ref").getOrElse(Json.toJson(-1)).as[Int]
-    val seq       = (obj \ "seq").getOrElse(Json.toJson("")).as[String]
-    val ss_dssp   = (obj \ "ss_dssp").getOrElse(Json.toJson("")).as[String]
-    val ss_pred   = (obj \ "ss_pred").getOrElse(Json.toJson("")).as[String]
-    val start     = (obj \ "start").getOrElse(Json.toJson(-1)).as[Int]
+    val accession = general.refineAccession(
+      (hits \ "struc").getOrElse(Json.toJson("")).as[String]
+    )
+    val ref     = (obj \ "ref").getOrElse(Json.toJson(-1)).as[Int]
+    val seq     = (obj \ "seq").getOrElse(Json.toJson("")).as[String]
+    val ss_dssp = (obj \ "ss_dssp").getOrElse(Json.toJson("")).as[String]
+    val ss_pred = (obj \ "ss_pred").getOrElse(Json.toJson("")).as[String]
+    val start   = (obj \ "start").getOrElse(Json.toJson(-1)).as[Int]
     HHPredTemplate(consensus, end, accession, ref, seq, ss_dssp, ss_pred, start)
   }
 }
@@ -160,8 +182,9 @@ object HHPred {
 
     def hitsOrderBy(params: DTParam): List[HHPredHSP] = {
       (params.orderCol, params.orderDir) match {
-        case (1, "asc")  => HSPS.sortBy(_.template.accession)
-        case (1, "desc") => HSPS.sortWith(_.template.accession > _.template.accession)
+        case (1, "asc") => HSPS.sortBy(_.template.accession)
+        case (1, "desc") =>
+          HSPS.sortWith(_.template.accession > _.template.accession)
         case (2, "asc")  => HSPS.sortBy(_.description)
         case (2, "desc") => HSPS.sortWith(_.description > _.description)
         case (3, "asc")  => HSPS.sortBy(_.info.probab)
@@ -171,7 +194,8 @@ object HHPred {
         case (5, "asc")  => HSPS.sortBy(_.ss_score)
         case (5, "desc") => HSPS.sortWith(_.ss_score > _.ss_score)
         case (6, "asc")  => HSPS.sortBy(_.info.aligned_cols)
-        case (6, "desc") => HSPS.sortWith(_.info.aligned_cols > _.info.aligned_cols)
+        case (6, "desc") =>
+          HSPS.sortWith(_.info.aligned_cols > _.info.aligned_cols)
         case (7, "asc")  => HSPS.sortBy(_.template.ref)
         case (7, "desc") => HSPS.sortWith(_.template.ref > _.template.ref)
         case (_, "asc")  => HSPS.sortBy(_.num)

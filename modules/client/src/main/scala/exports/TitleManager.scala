@@ -48,12 +48,18 @@ object TitleManager {
   def hashToPrefix(overrideHash: js.Array[String]): Unit = {
     var hashFragments: Array[String] = overrideHash.toArray
     if (hashFragments.isEmpty)
-      hashFragments = dom.document.location.hash.replace("#", "").replaceFirst("/", "").split("/")
+      hashFragments = dom.document.location.hash
+        .replace("#", "")
+        .replaceFirst("/", "")
+        .split("/")
     // find prefix
     titlePrefix = hashFragments(0) match {
       case "tools" => ToolName(hashFragments(1)).toString
-      case "jobs"  => ToolName(js.Dynamic.global.JobListComponent.currentTool.asInstanceOf[String]).toString
-      case _       => moreTitlesDictionary(hashFragments(0))
+      case "jobs" =>
+        ToolName(
+          js.Dynamic.global.JobListComponent.currentTool.asInstanceOf[String]
+        ).toString
+      case _ => moreTitlesDictionary(hashFragments(0))
     }
   }
 

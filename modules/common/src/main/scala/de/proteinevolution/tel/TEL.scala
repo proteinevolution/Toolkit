@@ -9,7 +9,9 @@ import de.proteinevolution.tel.param.Params
  *
  */
 @Singleton
-class TEL @Inject()(env: Env, params: Params) extends TELRegex with TELConstants {
+class TEL @Inject()(env: Env, params: Params)
+    extends TELRegex
+    with TELConstants {
 
   // Ignore the following keys when writing parameters // TODO This is a hack and must be changed
   val ignore: Seq[String] = Array("jobid", "newSubmission", "start", "edit")
@@ -24,7 +26,8 @@ class TEL @Inject()(env: Env, params: Params) extends TELRegex with TELConstants
    *
    * @param param
    */
-  def generateValues(param: String): Map[String, String] = params.generateValues(param)
+  def generateValues(param: String): Map[String, String] =
+    params.generateValues(param)
 }
 
 object TEL {

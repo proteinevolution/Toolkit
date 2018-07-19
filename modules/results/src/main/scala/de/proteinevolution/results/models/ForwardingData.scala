@@ -12,6 +12,7 @@ case class ForwardingData(
 
 object ForwardingData {
 
-  implicit val forwardingDataDecoder: Decoder[ForwardingData] = deriveDecoder[ForwardingData]
+  implicit val forwardingDataDecoder: Decoder[ForwardingData] =
+    deriveDecoder[ForwardingData]
 
 }

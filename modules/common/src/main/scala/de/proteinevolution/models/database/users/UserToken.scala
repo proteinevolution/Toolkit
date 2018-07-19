@@ -41,7 +41,9 @@ object UserToken {
         passwordHash = doc.getAs[String](NEWPASSWORDHASH),
         eMail = doc.getAs[String](NEWEMAIL),
         userID = doc.getAs[BSONObjectID](USERID),
-        changeDate = doc.getAs[BSONDateTime](CHANGEDATE).map(dt => ZonedDateTimeHelper.getZDT(dt))
+        changeDate = doc
+          .getAs[BSONDateTime](CHANGEDATE)
+          .map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
   }
 
@@ -56,7 +58,9 @@ object UserToken {
         NEWPASSWORDHASH -> userToken.passwordHash,
         NEWEMAIL        -> userToken.eMail,
         USERID          -> userToken.userID,
-        CHANGEDATE      -> BSONDateTime(userToken.changeDate.fold(-1L)(_.toInstant.toEpochMilli))
+        CHANGEDATE -> BSONDateTime(
+          userToken.changeDate.fold(-1L)(_.toInstant.toEpochMilli)
+        )
       )
   }
 }

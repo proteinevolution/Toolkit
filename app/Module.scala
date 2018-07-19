@@ -3,6 +3,8 @@ import services.{ Configuration, ConfigurationImpl }
 
 class Module extends AbstractModule {
   override def configure(): Unit = {
-    bind(classOf[Configuration]).to(classOf[ConfigurationImpl]).asEagerSingleton()
+    bind(classOf[Configuration])
+      .to(classOf[ConfigurationImpl])
+      .asEagerSingleton()
   }
 }

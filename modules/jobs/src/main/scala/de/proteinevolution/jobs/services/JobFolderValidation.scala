@@ -5,7 +5,10 @@ import de.proteinevolution.models.ConstantsV2
 
 trait JobFolderValidation {
 
-  protected def jobFolderIsValid(jobId: String, constants: ConstantsV2): Boolean = {
+  protected def jobFolderIsValid(
+      jobId: String,
+      constants: ConstantsV2
+  ): Boolean = {
     (constants.jobPath / jobId).exists
   }
 

@@ -35,10 +35,14 @@ class ConstantsV2 @Inject()(config: Configuration) {
   val breakAfterClustal: Int          = 85 // clustal format breaks after n chars
 
   // Job limitation settings
-  val maxJobNum: Int        = 100  // max number of jobs that can be submitted from one ip within maxJobsWithin
-  val maxJobsWithin: Int    = 1    // time in minutes within the max number of jobs is applied
-  val maxJobNumDay: Int     = 4000 // max number of jobs that can be submitted from one ip within maxJobsWithinDay
-  val maxJobsWithinDay: Int = 1    // time in days within the max number of jobs is applied for a day
+  val maxJobNum
+    : Int = 100 // max number of jobs that can be submitted from one ip within maxJobsWithin
+  val maxJobsWithin
+    : Int = 1 // time in minutes within the max number of jobs is applied
+  val maxJobNumDay
+    : Int = 4000 // max number of jobs that can be submitted from one ip within maxJobsWithinDay
+  val maxJobsWithinDay
+    : Int = 1 // time in days within the max number of jobs is applied for a day
 
   // Job deletion settings
   /** Sweeps at this time after server start */
@@ -93,9 +97,11 @@ class ConstantsV2 @Inject()(config: Configuration) {
   val jobVersionPattern: Regex = s"(?:$jobIDVersioningCharacter([0-9]{1,3}))".r
 
   /** The combined pattern */
-  val jobIDPattern: Regex = (jobIDNoVersionPattern.regex + jobVersionPattern.regex).r
+  val jobIDPattern: Regex =
+    (jobIDNoVersionPattern.regex + jobVersionPattern.regex).r
 
   /** The combined pattern with the version as an option */
-  val jobIDVersionOptionPattern: Regex = (jobIDNoVersionPattern.regex + jobVersionPattern.regex + "?").r
+  val jobIDVersionOptionPattern: Regex =
+    (jobIDNoVersionPattern.regex + jobVersionPattern.regex + "?").r
 
 }

@@ -36,8 +36,13 @@ class UserSessions @Inject()(
       forceSessionID: Boolean = false
   ): BSONDocument = {
     // Build the modifier - first the last login date
-    BSONDocument("$set" -> BSONDocument(User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)))
-      .merge(
+    BSONDocument(
+      "$set" -> BSONDocument(
+        User.DATELASTLOGIN -> BSONDateTime(
+          ZonedDateTime.now.toInstant.toEpochMilli
+        )
+      )
+    ).merge(
         // In the case that the user has been emailed about their inactivity, reset that status to a regular user status
         if (user.accountType == User.CLOSETODELETIONUSER) {
           BSONDocument(
@@ -53,7 +58,9 @@ class UserSessions @Inject()(
           .map(
             sessionData =>
               // Add the session Data to the set
-              BSONDocument("$addToSet" -> BSONDocument(User.SESSIONDATA -> sessionData))
+              BSONDocument(
+                "$addToSet" -> BSONDocument(User.SESSIONDATA -> sessionData)
+            )
           )
           .getOrElse(BSONDocument.empty)
       )
@@ -62,7 +69,11 @@ class UserSessions @Inject()(
         if (forceSessionID) {
           BSONDocument(
             "$set" ->
-            BSONDocument(User.SESSIONID -> Some(user.sessionID.getOrElse(BSONObjectID.generate())))
+            BSONDocument(
+              User.SESSIONID -> Some(
+                user.sessionID.getOrElse(BSONObjectID.generate())
+              )
+            )
           )
         } else {
           BSONDocument.empty
@@ -75,10 +86,15 @@ class UserSessions @Inject()(
    * Associates a user with the provided sessionID
    *
    */
-  def putUser(implicit request: RequestHeader, sessionID: BSONObjectID): Future[User] = {
+  def putUser(
+      implicit request: RequestHeader,
+      sessionID: BSONObjectID
+  ): Future[User] = {
     val newSessionData = SessionData(
       ip = MurmurHash3.stringHash(request.remoteAddress).toString,
-      userAgent = request.headers.get(Http.HeaderNames.USER_AGENT).getOrElse("Not specified"),
+      userAgent = request.headers
+        .get(Http.HeaderNames.USER_AGENT)
+        .getOrElse("Not specified"),
       location = locationProvider.getLocation(request)
     )
 
@@ -108,7 +124,9 @@ class UserSessions @Inject()(
           dateUpdated = Some(ZonedDateTime.now)
         )
         userDao.addUser(user).map { _ =>
-          logger.info(s"User is new:\n${user.toString}\nIP: ${request.remoteAddress.toString}")
+          logger.info(
+            s"User is new:\n${user.toString}\nIP: ${request.remoteAddress.toString}"
+          )
           user
         }
     }
@@ -188,7 +206,10 @@ class UserSessions @Inject()(
    * @param modifier
    * @return
    */
-  def modifyUserWithCache(selector: BSONDocument, modifier: BSONDocument): Future[Option[User]] = {
+  def modifyUserWithCache(
+      selector: BSONDocument,
+      modifier: BSONDocument
+  ): Future[Option[User]] = {
     userDao
       .modifyUser(selector, modifier)
       .map(_.map { user =>
@@ -212,7 +233,9 @@ class UserSessions @Inject()(
           BSONDocument(
             "$set" ->
             BSONDocument(
-              User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
+              User.DATELASTLOGIN -> BSONDateTime(
+                ZonedDateTime.now.toInstant.toEpochMilli
+              )
             ),
             "$unset" ->
             BSONDocument(
@@ -228,7 +251,10 @@ class UserSessions @Inject()(
   /**
    * Handles cookie creation
    */
-  def sessionCookie(implicit request: RequestHeader, sessionID: BSONObjectID): mvc.Session = {
+  def sessionCookie(
+      implicit request: RequestHeader,
+      sessionID: BSONObjectID
+  ): mvc.Session = {
     request.session + (SID -> sessionID.stringify)
   }
 }

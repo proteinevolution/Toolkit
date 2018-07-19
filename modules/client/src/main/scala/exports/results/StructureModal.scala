@@ -35,7 +35,9 @@ class StructureModal($container: JQuery, $modal: JQuery) {
       case "mmcif" => "cif"
     }
     val url = s"/results/getStructure/$accession.$fileEnding"
-    accessionStructure.html(s"<h6 class='structureAccession'>3D Structure: $accession</h6>")
+    accessionStructure.html(
+      s"<h6 class='structureAccession'>3D Structure: $accession</h6>"
+    )
     viewport.width(800).height(700).find("canvas").remove()
     val stage = new NGL.Stage(viewport.get(0))
     viewport.LoadingOverlay("show")
@@ -52,7 +54,9 @@ class StructureModal($container: JQuery, $modal: JQuery) {
                                          "ext"                   -> fileEnding))
           case status =>
             println(s"jqXHR=$xhr,text=${xhr.response},status=$status")
-            accessionStructure.append("<div class='fetchError'>Sorry, failed to fetch structure.</div>")
+            accessionStructure.append(
+              "<div class='fetchError'>Sorry, failed to fetch structure.</div>"
+            )
         }
         viewport.LoadingOverlay("hide")
       }

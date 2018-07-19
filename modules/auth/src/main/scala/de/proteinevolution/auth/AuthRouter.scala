@@ -1,14 +1,19 @@
 package de.proteinevolution.auth
 
-import de.proteinevolution.auth.controllers.{ AuthController, ValidationController }
+import de.proteinevolution.auth.controllers.{
+  AuthController,
+  ValidationController
+}
 import javax.inject.{ Inject, Singleton }
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
 import play.api.routing.sird._
 
 @Singleton
-class AuthRouter @Inject()(authController: AuthController, validationController: ValidationController)
-    extends SimpleRouter {
+class AuthRouter @Inject()(
+    authController: AuthController,
+    validationController: ValidationController
+) extends SimpleRouter {
 
   private lazy val authRoutes: Routes = {
     case GET(p"/signout")                => authController.signOut
@@ -22,7 +27,8 @@ class AuthRouter @Inject()(authController: AuthController, validationController:
   }
 
   private lazy val validationRoutes: Routes = {
-    case POST(p"/validate/modeller" ? q_o"input=$input") => validationController.validateModellerKey(input)
+    case POST(p"/validate/modeller" ? q_o"input=$input") =>
+      validationController.validateModellerKey(input)
   }
 
   override def routes: Routes = {

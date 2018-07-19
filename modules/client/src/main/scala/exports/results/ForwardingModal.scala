@@ -15,12 +15,15 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
   val $modal: JQuery = jQuery("#forwardModal")
 
   // find elements only once
-  val $forwardSelect: JQuery         = $modal.find(".forwardSelect")
-  val $selectionRadioBtnArea: JQuery = $modal.find(".radio-btn-selection-container")
-  val $seqLengthRadioBtnArea: JQuery = $modal.find(".radio-btn-sequence-length-container")
-  val $evalueInput: JQuery           = $selectionRadioBtnArea.find(".forwardEvalueNormalInput")
-  val $fullLengthWarning: JQuery     = $modal.find(".full-length-warning")
-  val $warning: JQuery               = $modal.find(".forward-warning")
+  val $forwardSelect: JQuery = $modal.find(".forwardSelect")
+  val $selectionRadioBtnArea: JQuery =
+    $modal.find(".radio-btn-selection-container")
+  val $seqLengthRadioBtnArea: JQuery =
+    $modal.find(".radio-btn-sequence-length-container")
+  val $evalueInput: JQuery =
+    $selectionRadioBtnArea.find(".forwardEvalueNormalInput")
+  val $fullLengthWarning: JQuery = $modal.find(".full-length-warning")
+  val $warning: JQuery           = $modal.find(".forward-warning")
 
   var modalType: String = ""
 
@@ -38,9 +41,18 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
         {
           val $btn = jQuery(btn)
           // read values from button
-          defaultTool = if (!js.isUndefined($btn.data("default-tool"))) $btn.data("default-tool").toString else ""
-          resultName = if (!js.isUndefined($btn.data("result-name"))) $btn.data("result-name").toString else ""
-          forwardIssuer = if (!js.isUndefined($btn.data("forward-issuer"))) $btn.data("forward-issuer").toString else ""
+          defaultTool =
+            if (!js.isUndefined($btn.data("default-tool")))
+              $btn.data("default-tool").toString
+            else ""
+          resultName =
+            if (!js.isUndefined($btn.data("result-name")))
+              $btn.data("result-name").toString
+            else ""
+          forwardIssuer =
+            if (!js.isUndefined($btn.data("forward-issuer")))
+              $btn.data("forward-issuer").toString
+            else ""
           val newModalType: String = $btn.data("modal-type").toString
           if (newModalType != modalType) {
             requestModalOptions(newModalType)
@@ -66,7 +78,8 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
     }
   )
 
-  implicit def forwardModalOptRW: SnakePickle.ReadWriter[ForwardModalOptions] = SnakePickle.macroRW
+  implicit def forwardModalOptRW: SnakePickle.ReadWriter[ForwardModalOptions] =
+    SnakePickle.macroRW
 
   def requestModalOptions(newModalType: String): Unit = {
     jQuery
@@ -78,7 +91,9 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
       )
       .done((data: js.Dictionary[Any]) => {
         modalType = newModalType
-        setupModalWithOptions(SnakePickle.read[ForwardModalOptions](js.JSON.stringify(data)))
+        setupModalWithOptions(
+          SnakePickle.read[ForwardModalOptions](js.JSON.stringify(data))
+        )
         $modal.foundation("open")
       })
       .fail((jqXHR: JQueryXHR, textStatus: String, errorThrown: js.Any) => {
@@ -93,10 +108,13 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
     // show radio btns
     if (options.showRadioBtnSelection) {
       // show and set heading
-      $selectionRadioBtnArea.show().find(".forward-modal-heading").text(options.heading)
+      $selectionRadioBtnArea.show()
+        .find(".forward-modal-heading")
+        .text(options.heading)
       // bind focus handler to autoselect
       $evalueInput.off("focus").on("focus", () => {
-        $selectionRadioBtnArea.find(".accordingEvalueRadioBtn").prop("checked", true)
+        $selectionRadioBtnArea.find(".accordingEvalueRadioBtn")
+          .prop("checked", true)
       })
     }
     if (options.showRadioBtnSequenceLength) {
@@ -107,10 +125,16 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
     // populate select
     $forwardSelect.empty().append("<option value=\"\">Select a tool</option>")
     options.alignmentOptions.map(
-      tool => $forwardSelect.append(s"<option class='alignmentOptions' value='$tool'>$tool</option>")
+      tool =>
+        $forwardSelect.append(
+          s"<option class='alignmentOptions' value='$tool'>$tool</option>"
+      )
     )
     options.multiSeqOptions.map(
-      tool => $forwardSelect.append(s"<option class='multiSeqOptions' value='$tool'>$tool</option>")
+      tool =>
+        $forwardSelect.append(
+          s"<option class='multiSeqOptions' value='$tool'>$tool</option>"
+      )
     )
 
     // remove invalid classes on edit
@@ -139,10 +163,14 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
           case "normal" =>
             () =>
               {
-                val boolFullLength: Boolean = $seqLengthRadioBtnArea.find(".fullLengthRadioBtn").is(":checked")
-                val boolEvalue: Boolean     = $selectionRadioBtnArea.find(".accordingEvalueRadioBtn").is(":checked")
-                val selectedTool: String    = $forwardSelect.value().toString
-                val evalue: String          = $evalueInput.value().toString.trim
+                val boolFullLength: Boolean = $seqLengthRadioBtnArea.find(
+                  ".fullLengthRadioBtn"
+                ).is(":checked")
+                val boolEvalue: Boolean = $selectionRadioBtnArea.find(
+                  ".accordingEvalueRadioBtn"
+                ).is(":checked")
+                val selectedTool: String = $forwardSelect.value().toString
+                val evalue: String       = $evalueInput.value().toString.trim
                 if (selectedTool == "") {
                   $forwardSelect.addClass("invalid")
                   warn("No tool selected!")
@@ -151,7 +179,11 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
                     $evalueInput.addClass("invalid")
                     warn("No evalue!")
                   } else {
-                    Forwarding.processResults(jobID, selectedTool, boolEvalue, evalue, boolFullLength)
+                    Forwarding.processResults(jobID,
+                                              selectedTool,
+                                              boolEvalue,
+                                              evalue,
+                                              boolFullLength)
                     $modal.foundation("close")
                   }
                 }
@@ -165,7 +197,8 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
                   warn("No tool selected!")
                 } else {
                   jQuery.LoadingOverlay("show")
-                  Forwarding.redirect(selectedTool, s"/results/files/$jobID/reduced.a3m")
+                  Forwarding.redirect(selectedTool,
+                                      s"/results/files/$jobID/reduced.a3m")
                   $modal.foundation("close")
                   jQuery.LoadingOverlay("hide")
                 }
@@ -173,7 +206,8 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
           case "simple" =>
             () =>
               {
-                val boolEvalue: Boolean  = $modal.find(".accordingEvalueRadioBtn").is(":checked")
+                val boolEvalue: Boolean =
+                  $modal.find(".accordingEvalueRadioBtn").is(":checked")
                 val selectedTool: String = $forwardSelect.value().toString
                 val evalue: String       = $evalueInput.value().toString.trim
                 if (selectedTool == "") {
@@ -184,7 +218,11 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
                     $evalueInput.addClass("invalid")
                     warn("No evalue!")
                   } else {
-                    Forwarding.processResults(jobID, selectedTool, boolEvalue, evalue, isFullLength = false)
+                    Forwarding.processResults(jobID,
+                                              selectedTool,
+                                              boolEvalue,
+                                              evalue,
+                                              isFullLength = false)
                     $modal.foundation("close")
                   }
                 }
@@ -198,24 +236,29 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
                   warn("No tool selected!")
                 } else {
                   forwardIssuer.toUpperCase match {
-                    case "NORMAL" => Forwarding.processAlnResults(jobID, selectedTool, resultName)
+                    case "NORMAL" =>
+                      Forwarding
+                        .processAlnResults(jobID, selectedTool, resultName)
                     case "UNCHECKED_LIST" =>
                       jQuery.LoadingOverlay("show")
                       jQuery.getJSON(
                         s"/results/files/$jobID/ids.json",
                         (data: js.Dynamic) => {
-                          Forwarding.simple(selectedTool, data.ACC_IDS.join("\n").toString)
+                          Forwarding.simple(selectedTool,
+                                            data.ACC_IDS.join("\n").toString)
                           jQuery.LoadingOverlay("hide")
                         }
                       )
                     case "PATTERN_SEARCH" =>
                       jQuery.LoadingOverlay("show")
-                      Forwarding.redirect(selectedTool, s"/results/files/$jobID/$jobID.fas")
+                      Forwarding.redirect(selectedTool,
+                                          s"/results/files/$jobID/$jobID.fas")
                       jQuery.LoadingOverlay("hide")
                     case "FILEVIEW" =>
                       jQuery.LoadingOverlay("show")
                       // resultName is actually the filename in this case
-                      Forwarding.redirect(selectedTool, s"/results/files/$jobID/$resultName")
+                      Forwarding.redirect(selectedTool,
+                                          s"/results/files/$jobID/$resultName")
                       jQuery.LoadingOverlay("hide")
                   }
                   $modal.foundation("close")
@@ -224,7 +267,9 @@ class ForwardingModal(container: JQuery, toolName: String, jobID: String) {
           case _ =>
             () =>
               {
-                warn("Error! Forwarding does not work. Please refresh the page.")
+                warn(
+                  "Error! Forwarding does not work. Please refresh the page."
+                )
               }
         }
       )

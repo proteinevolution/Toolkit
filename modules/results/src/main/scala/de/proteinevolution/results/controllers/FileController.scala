@@ -20,32 +20,37 @@ class FileController @Inject()(
     extends AbstractController(ctx.controllerComponents)
     with ContentTypes {
 
-  def getStructureFile(filename: String): Action[AnyContent] = Action { implicit request =>
-    val db = Common.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
-    val filepath = db match {
-      case "scop" =>
-        env.get("SCOPE")
-      case "ecod" =>
-        env.get("ECOD")
-      case "mmcif" =>
-        env.get("CIF")
-    }
-    Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$filename")).as(BINARY)
+  def getStructureFile(filename: String): Action[AnyContent] = Action {
+    implicit request =>
+      val db = Common.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
+      val filepath = db match {
+        case "scop" =>
+          env.get("SCOPE")
+        case "ecod" =>
+          env.get("ECOD")
+        case "mmcif" =>
+          env.get("CIF")
+      }
+      Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$filename"))
+        .as(BINARY)
   }
 
-  def file(filename: String, mainID: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.map { user =>
-      val file = new java.io.File(
-        s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"
-      )
-      if (file.exists) {
-        Ok.sendFile(file)
-          .withSession(userSessions.sessionCookie(request, user.sessionID.get))
-          .as(TEXT) // text/plain in order to open the file in a new browser tab
-      } else {
-        NoContent
+  def file(filename: String, mainID: String): Action[AnyContent] =
+    Action.async { implicit request =>
+      userSessions.getUser.map { user =>
+        val file = new java.io.File(
+          s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"
+        )
+        if (file.exists) {
+          Ok.sendFile(file)
+            .withSession(
+              userSessions.sessionCookie(request, user.sessionID.get)
+            )
+            .as(TEXT) // text/plain in order to open the file in a new browser tab
+        } else {
+          NoContent
+        }
       }
     }
-  }
 
 }

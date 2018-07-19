@@ -5,7 +5,10 @@ import play.api.libs.circe.Circe
 import play.api.libs.json._
 import play.api.mvc.{ AbstractController, ControllerComponents, Result }
 
-abstract class ToolkitController(cc: ControllerComponents) extends AbstractController(cc) with I18nSupport with Circe {
+abstract class ToolkitController(cc: ControllerComponents)
+    extends AbstractController(cc)
+    with I18nSupport
+    with Circe {
 
   protected def NoCache(res: Result): Result = res.withHeaders(
     CACHE_CONTROL -> "no-cache, no-store, must-revalidate",

@@ -12,41 +12,46 @@ import reactivemongo.bson.BSONDocument
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class ValidationController @Inject()(userSessions: UserSessions, constants: ConstantsV2, cc: ControllerComponents)(
+class ValidationController @Inject()(
+    userSessions: UserSessions,
+    constants: ConstantsV2,
+    cc: ControllerComponents
+)(
     implicit ec: ExecutionContext
 ) extends ToolkitController(cc) {
 
-  def validateModellerKey(inputOpt: Option[String]): Action[AnyContent] = Action.async { implicit request =>
-    inputOpt match {
-      case Some(input) =>
-        userSessions.getUser.flatMap { user =>
-          if (user.userConfig.hasMODELLERKey) {
-            Future.successful(Ok(Json.obj("isValid" -> true)))
-          } else if (input == constants.modellerKey) {
-            userSessions
-              .modifyUserWithCache(
-                BSONDocument(User.IDDB -> user.userID),
-                BSONDocument(
-                  "$set" ->
+  def validateModellerKey(inputOpt: Option[String]): Action[AnyContent] =
+    Action.async { implicit request =>
+      inputOpt match {
+        case Some(input) =>
+          userSessions.getUser.flatMap { user =>
+            if (user.userConfig.hasMODELLERKey) {
+              Future.successful(Ok(Json.obj("isValid" -> true)))
+            } else if (input == constants.modellerKey) {
+              userSessions
+                .modifyUserWithCache(
+                  BSONDocument(User.IDDB -> user.userID),
                   BSONDocument(
-                    s"${User.USERCONFIG}.${UserConfig.HASMODELLERKEY}" ->
-                    true
+                    "$set" ->
+                    BSONDocument(
+                      s"${User.USERCONFIG}.${UserConfig.HASMODELLERKEY}" ->
+                      true
+                    )
                   )
                 )
-              )
-              .map {
-                case Some(_) =>
-                  Ok(Json.obj("isValid" -> true))
-                case None =>
-                  BadRequest
-              }
-          } else {
-            Future.successful(Ok(Json.obj("isValid" -> false)))
+                .map {
+                  case Some(_) =>
+                    Ok(Json.obj("isValid" -> true))
+                  case None =>
+                    BadRequest
+                }
+            } else {
+              Future.successful(Ok(Json.obj("isValid" -> false)))
+            }
           }
-        }
-      case None =>
-        Future.successful(BadRequest)
+        case None =>
+          Future.successful(BadRequest)
+      }
     }
-  }
 
 }

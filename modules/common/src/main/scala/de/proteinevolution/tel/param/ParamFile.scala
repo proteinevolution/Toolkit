@@ -30,10 +30,16 @@ class GenerativeParamFileParser @Inject()(env: Env) {
         s"${f.parent.pathAsString}/${spt(2)}"
       }
       (spt(1), spt(2).substring(spt(2).lastIndexOf('.'))) match {
-        case (this.genKeyword, ".sh")   => new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
-        case (this.genKeyword, ".py")   => new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
-        case (this.genKeyword, ".prop") => new ListGenParamFile(spt(0), paramPath).withEnvironment(env)
-        case _                          => throw new IllegalStateException("no valid paramfile extension found. Must be .sh, .py, or .prop")
+        case (this.genKeyword, ".sh") =>
+          new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
+        case (this.genKeyword, ".py") =>
+          new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
+        case (this.genKeyword, ".prop") =>
+          new ListGenParamFile(spt(0), paramPath).withEnvironment(env)
+        case _ =>
+          throw new IllegalStateException(
+            "no valid paramfile extension found. Must be .sh, .py, or .prop"
+          )
       }
     }
   }
@@ -48,8 +54,11 @@ abstract class GenerativeParamFile(name: String) extends GenerativeParam(name) {
   def load(): Unit
 }
 
-class ExecGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String])
-    extends GenerativeParamFile(name) {
+class ExecGenParamFile(
+    name: String,
+    path: String,
+    private var allowed: Set[String] = Set.empty[String]
+) extends GenerativeParamFile(name) {
 
   private var env: Option[Env] = None
   import scala.sys.process.Process
@@ -77,7 +86,10 @@ class ExecGenParamFile(name: String, path: String, private var allowed: Set[Stri
             PosixFilePermission.GROUP_WRITE
           )
         )
-        tempFile.write(envString.replaceAllIn(path.toFile.contentAsString, m => e.get(m.group("constant"))))
+        tempFile.write(
+          envString.replaceAllIn(path.toFile.contentAsString,
+                                 m => e.get(m.group("constant")))
+        )
         val x = Process(tempFile.pathAsString).!!.split('\n')
         tempFile.delete(swallowIOExceptions = true)
         x
@@ -93,8 +105,11 @@ class ExecGenParamFile(name: String, path: String, private var allowed: Set[Stri
   def generate: ListMap[String, String] = this.clearTextNames
 }
 
-class ListGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String])
-    extends GenerativeParamFile(name) {
+class ListGenParamFile(
+    name: String,
+    path: String,
+    private var allowed: Set[String] = Set.empty[String]
+) extends GenerativeParamFile(name) {
 
   private val f = path.toFile
 

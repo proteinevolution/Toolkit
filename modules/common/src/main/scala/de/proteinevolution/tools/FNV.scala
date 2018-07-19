@@ -14,9 +14,15 @@ object FNV {
   private val MOD64   = BigInt("2").pow(64)
   private val MASK    = 0xff
 
-  @inline private final def calc(prime: BigInt, mod: BigInt)(hash: BigInt, b: Byte): BigInt =
+  @inline private final def calc(
+      prime: BigInt,
+      mod: BigInt
+  )(hash: BigInt, b: Byte): BigInt =
     ((hash * prime) % mod) ^ (b & MASK)
-  @inline private final def calcA(prime: BigInt, mod: BigInt)(hash: BigInt, b: Byte): BigInt =
+  @inline private final def calcA(
+      prime: BigInt,
+      mod: BigInt
+  )(hash: BigInt, b: Byte): BigInt =
     ((hash ^ (b & MASK)) * prime) % mod
 
   /**
@@ -24,26 +30,30 @@ object FNV {
    * @param data the data to be hashed
    * @return a 32bit hash value
    */
-  @inline final def hash32(data: Array[Byte]): BigInt = data.foldLeft(INIT32)(calc(PRIME32, MOD32))
+  @inline final def hash32(data: Array[Byte]): BigInt =
+    data.foldLeft(INIT32)(calc(PRIME32, MOD32))
 
   /**
    * Calculates 32bit FNV-1a hash
    * @param data the data to be hashed
    * @return a 32bit hash value
    */
-  @inline final def hash32a(data: Array[Byte]): BigInt = data.foldLeft(INIT32)(calcA(PRIME32, MOD32))
+  @inline final def hash32a(data: Array[Byte]): BigInt =
+    data.foldLeft(INIT32)(calcA(PRIME32, MOD32))
 
   /**
    * Calculates 64bit FNV-1 hash
    * @param data the data to be hashed
    * @return a 64bit hash value
    */
-  @inline final def hash64(data: Array[Byte]): BigInt = data.foldLeft(INIT64)(calc(PRIME64, MOD64))
+  @inline final def hash64(data: Array[Byte]): BigInt =
+    data.foldLeft(INIT64)(calc(PRIME64, MOD64))
 
   /**
    * Calculates 64bit FNV-1a hash
    * @param data the data to be hashed
    * @return a 64bit hash value
    */
-  @inline final def hash64a(data: Array[Byte]): BigInt = data.foldLeft(INIT64)(calcA(PRIME64, MOD64))
+  @inline final def hash64a(data: Array[Byte]): BigInt =
+    data.foldLeft(INIT64)(calcA(PRIME64, MOD64))
 }

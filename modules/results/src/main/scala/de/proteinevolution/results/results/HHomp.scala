@@ -21,7 +21,14 @@ class HHomp @Inject()(general: General) extends SearchTool[HHompHSP] {
       val description    = (x._1 \ "header").as[String]
       val num            = (x._1 \ "no").getOrElse(Json.toJson(-1)).as[String].toInt
       val ss_score       = (x._2 \ "ss").getOrElse(Json.toJson(-1)).as[Double]
-      HHompHSP(queryResult, templateResult, infoResult, agree, description, num, ss_score, agree.length)
+      HHompHSP(queryResult,
+               templateResult,
+               infoResult,
+               agree,
+               description,
+               num,
+               ss_score,
+               agree.length)
     }
     val db           = (obj \ jobID \ "db").as[String]
     val overall_prob = (obj \ jobID \ "overallprob").as[Double]
@@ -42,7 +49,15 @@ class HHomp @Inject()(general: General) extends SearchTool[HHompHSP] {
     val ss_dssp   = (obj \ "ss_dssp").getOrElse(Json.toJson("")).as[String]
     val ss_pred   = (obj \ "ss_pred").getOrElse(Json.toJson("")).as[String]
     val start     = (obj \ "start").getOrElse(Json.toJson(-1)).as[Int]
-    HHompQuery(consensus, end, accession, ref, seq, ss_conf, ss_dssp, ss_pred, start)
+    HHompQuery(consensus,
+               end,
+               accession,
+               ref,
+               seq,
+               ss_conf,
+               ss_dssp,
+               ss_pred,
+               start)
   }
 
   def parseInfo(obj: JsObject): HHompInfo = {
@@ -59,16 +74,28 @@ class HHomp @Inject()(general: General) extends SearchTool[HHompHSP] {
   def parseTemplate(obj: JsObject, hits: JsObject): HHompTemplate = {
     val consensus = (obj \ "consensus").getOrElse(Json.toJson("")).as[String]
     val end       = (obj \ "end").getOrElse(Json.toJson(-1)).as[Int]
-    val accession = general.refineAccession((hits \ "struc").getOrElse(Json.toJson("")).as[String])
-    val ref       = (obj \ "ref").getOrElse(Json.toJson(-1)).as[Int]
-    val seq       = (obj \ "seq").getOrElse(Json.toJson("")).as[String]
-    val ss_dssp   = (obj \ "ss_dssp").getOrElse(Json.toJson("")).as[String]
-    val ss_pred   = (obj \ "ss_pred").getOrElse(Json.toJson("")).as[String]
-    val start     = (obj \ "start").getOrElse(Json.toJson(-1)).as[Int]
-    val ss_conf   = (obj \ "ss_conf").getOrElse(Json.toJson("")).as[String]
-    val bb_pred   = (obj \ "bb_pred").getOrElse(Json.toJson("")).as[String]
-    val bb_conf   = (obj \ "bb_conf").getOrElse(Json.toJson("")).as[String]
-    HHompTemplate(consensus, end, accession, ref, seq, ss_conf, ss_dssp, ss_pred, bb_pred, bb_conf, start)
+    val accession = general.refineAccession(
+      (hits \ "struc").getOrElse(Json.toJson("")).as[String]
+    )
+    val ref     = (obj \ "ref").getOrElse(Json.toJson(-1)).as[Int]
+    val seq     = (obj \ "seq").getOrElse(Json.toJson("")).as[String]
+    val ss_dssp = (obj \ "ss_dssp").getOrElse(Json.toJson("")).as[String]
+    val ss_pred = (obj \ "ss_pred").getOrElse(Json.toJson("")).as[String]
+    val start   = (obj \ "start").getOrElse(Json.toJson(-1)).as[Int]
+    val ss_conf = (obj \ "ss_conf").getOrElse(Json.toJson("")).as[String]
+    val bb_pred = (obj \ "bb_pred").getOrElse(Json.toJson("")).as[String]
+    val bb_conf = (obj \ "bb_conf").getOrElse(Json.toJson("")).as[String]
+    HHompTemplate(consensus,
+                  end,
+                  accession,
+                  ref,
+                  seq,
+                  ss_conf,
+                  ss_dssp,
+                  ss_pred,
+                  bb_pred,
+                  bb_conf,
+                  start)
   }
 }
 
@@ -144,8 +171,9 @@ object HHomp {
   ) extends SearchResult[HHompHSP] {
     def hitsOrderBy(params: DTParam): List[HHompHSP] = {
       (params.orderCol, params.orderDir) match {
-        case (1, "asc")  => HSPS.sortBy(_.template.accession)
-        case (1, "desc") => HSPS.sortWith(_.template.accession > _.template.accession)
+        case (1, "asc") => HSPS.sortBy(_.template.accession)
+        case (1, "desc") =>
+          HSPS.sortWith(_.template.accession > _.template.accession)
         case (2, "asc")  => HSPS.sortBy(_.description)
         case (2, "desc") => HSPS.sortWith(_.description > _.description)
         case (3, "asc")  => HSPS.sortBy(_.info.probab_hit)
@@ -157,7 +185,8 @@ object HHomp {
         case (6, "asc")  => HSPS.sortBy(_.ss_score)
         case (6, "desc") => HSPS.sortWith(_.ss_score > _.ss_score)
         case (7, "asc")  => HSPS.sortBy(_.info.aligned_cols)
-        case (7, "desc") => HSPS.sortWith(_.info.aligned_cols > _.info.aligned_cols)
+        case (7, "desc") =>
+          HSPS.sortWith(_.info.aligned_cols > _.info.aligned_cols)
         case (8, "asc")  => HSPS.sortBy(_.template.ref)
         case (8, "desc") => HSPS.sortWith(_.template.ref > _.template.ref)
         case (_, "asc")  => HSPS.sortBy(_.num)

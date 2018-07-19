@@ -4,6 +4,7 @@ import better.files._
 
 object Ancescon {
 
-  def readTree(pathToTree: String): String = pathToTree.toFile.lines.mkString("")
+  def readTree(pathToTree: String): String =
+    pathToTree.toFile.lines.mkString("")
 
 }

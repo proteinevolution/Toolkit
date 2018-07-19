@@ -21,7 +21,11 @@ trait JSONTemplate {
    * @param userOption
    * @return
    */
-  def authMessage(message: String, success: Boolean = false, userOption: Option[User] = None): JsValue = {
+  def authMessage(
+      message: String,
+      success: Boolean = false,
+      userOption: Option[User] = None
+  ): JsValue = {
     Json.obj("message"    -> message,
              "successful" -> success,
              "user"       -> userOption.map(user => Json.toJson(user.userData)))
@@ -29,25 +33,34 @@ trait JSONTemplate {
 
   def loggedIn(user: User): JsValue = {
 
-    authMessage(s"Welcome, ${user.getUserData.nameLogin}. \n You are now logged in.",
-                success = true,
-                userOption = Some(user))
+    authMessage(
+      s"Welcome, ${user.getUserData.nameLogin}. \n You are now logged in.",
+      success = true,
+      userOption = Some(user)
+    )
   }
 
   def signedUp: JsValue = {
-    authMessage(s"Your Account has been created.\n Please Check your emails to Verify your Account.", success = true)
+    authMessage(
+      s"Your Account has been created.\n Please Check your emails to Verify your Account.",
+      success = true
+    )
   }
 
   def loggedOut(): JsValue = {
-    authMessage("You have been logged out successfully. See you soon!", success = true)
+    authMessage("You have been logged out successfully. See you soon!",
+                success = true)
   }
 
   def loginError(): JsValue = {
-    authMessage("There was an error while trying to sign you in. Try again!", success = false)
+    authMessage("There was an error while trying to sign you in. Try again!",
+                success = false)
   }
 
   def accountNameUsed(): JsValue = {
-    authMessage("There already is an Account using this username, please use a different one.")
+    authMessage(
+      "There already is an Account using this username, please use a different one."
+    )
   }
 
   def accountEmailUsed(): JsValue = {
@@ -55,7 +68,9 @@ trait JSONTemplate {
   }
 
   def loginIncorrect(): JsValue = {
-    authMessage("There was an error logging you in. Please check your account name and password.")
+    authMessage(
+      "There was an error logging you in. Please check your account name and password."
+    )
   }
 
   def mustAcceptToS(): JsValue = {
@@ -63,7 +78,9 @@ trait JSONTemplate {
   }
 
   def mustVerify(): JsValue = {
-    authMessage("Please verify your account.\nCheck Your emails for the verification link.")
+    authMessage(
+      "Please verify your account.\nCheck Your emails for the verification link."
+    )
   }
 
   def alreadyLoggedIn(): JsValue = {
@@ -87,9 +104,11 @@ trait JSONTemplate {
   }
 
   def verificationSuccessful(user: User): JsValue = {
-    authMessage(s"Your E-Mail Account has been Verified, ${user.getUserData.nameLogin}.",
-                success = true,
-                userOption = Some(user))
+    authMessage(
+      s"Your E-Mail Account has been Verified, ${user.getUserData.nameLogin}.",
+      success = true,
+      userOption = Some(user)
+    )
   }
 
   def notLoggedIn(): JsValue = {
@@ -101,27 +120,39 @@ trait JSONTemplate {
   }
 
   def editSuccessful(user: User): JsValue = {
-    authMessage("Changes have been saved.", success = true, userOption = Some(user))
+    authMessage("Changes have been saved.",
+                success = true,
+                userOption = Some(user))
   }
 
   def passwordChanged(user: User): JsValue = {
-    authMessage("Password has been accepted.\nPlease check your emails in order to verify the password change.",
-                success = true,
-                userOption = Some(user))
+    authMessage(
+      "Password has been accepted.\nPlease check your emails in order to verify the password change.",
+      success = true,
+      userOption = Some(user)
+    )
   }
 
   def passwordRequestSent: JsValue = {
-    authMessage("We have sent You a link for resetting Your password.\nPlease check your emails.", success = true)
+    authMessage(
+      "We have sent You a link for resetting Your password.\nPlease check your emails.",
+      success = true
+    )
   }
 
   def passwordResetChanged(user: User): JsValue = {
-    authMessage("Password has been accepted.\nPlease sign in with your new Password.",
-                success = true,
-                userOption = Some(user))
+    authMessage(
+      "Password has been accepted.\nPlease sign in with your new Password.",
+      success = true,
+      userOption = Some(user)
+    )
   }
 
   def noSuchUser: JsValue = {
-    authMessage("Could not find any Users with the matching user name or email address.", success = false)
+    authMessage(
+      "Could not find any Users with the matching user name or email address.",
+      success = false
+    )
   }
 
   def oneParameterNeeded: JsValue = {
@@ -129,6 +160,7 @@ trait JSONTemplate {
   }
 
   def databaseError: JsValue = {
-    authMessage("The Database could not be reached. Try again later.", success = false)
+    authMessage("The Database could not be reached. Try again later.",
+                success = false)
   }
 }

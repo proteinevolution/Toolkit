@@ -24,8 +24,11 @@ case class HHPredResultView(
       toolConfig.values(ToolName.HHPRED.value),
       s"${constants.jobPath}/$jobId/results/$jobId.html_NOIMG"
     ),
-    "Raw Output"        -> views.html.resultpanels.fileviewWithDownload(jobId + ".hhr", jobId, "hhpred"),
-    "Probability  Plot" -> views.html.resultpanels.probability(hhpred.parseResult(result).HSPS.map(_.info.probab)),
+    "Raw Output" -> views.html.resultpanels.fileviewWithDownload(jobId + ".hhr",
+                                                                 jobId,
+                                                                 "hhpred"),
+    "Probability  Plot" -> views.html.resultpanels
+      .probability(hhpred.parseResult(result).HSPS.map(_.info.probab)),
     "Query Template MSA" -> views.html.resultpanels.alignment(
       jobId,
       aln.parse((result \ "querytemplate").as[JsArray]),

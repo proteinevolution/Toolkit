@@ -13,7 +13,11 @@ class DataTables(toolName: String) {
     js.Array("10", "25", "50", "100", "All")
   )
 
-  def config(jobID: String, numHits: Int, callbacks: js.Function0[Unit]): Unit = {
+  def config(
+      jobID: String,
+      numHits: Int,
+      callbacks: js.Function0[Unit]
+  ): Unit = {
     jQuery(document.getElementById("htb")).DataTable(
       js.Dictionary(
         "processing"   -> true,

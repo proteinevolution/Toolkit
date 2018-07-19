@@ -34,7 +34,9 @@ final class ClusterMonitor @Inject()(
     case FetchLatest =>
       val qStat = QStat("qstat -xml".!!)
       // 32 Tasks are 100% - calculate the load from this.
-      val load: Double = qStat.totalJobs().toDouble / constants.loadPercentageMarker
+      val load: Double = qStat
+        .totalJobs()
+        .toDouble / constants.loadPercentageMarker
       jobActorAccess.broadcast(PolledJobs(qStat))
       context.become(active(watchers, currentJobs, toDelete))
       watchers.foreach(_ ! UpdateLoad(load))
@@ -43,7 +45,10 @@ final class ClusterMonitor @Inject()(
 
   private val Tick: Cancellable = {
     // scheduler should use the system dispatcher
-    context.system.scheduler.schedule(Duration.Zero, constants.pollingInterval, self, FetchLatest)(
+    context.system.scheduler.schedule(Duration.Zero,
+                                      constants.pollingInterval,
+                                      self,
+                                      FetchLatest)(
       context.system.dispatcher
     )
   }
