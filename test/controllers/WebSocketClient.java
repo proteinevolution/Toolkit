@@ -4,7 +4,6 @@ import play.shaded.ahc.org.asynchttpclient.AsyncHttpClient;
 import play.shaded.ahc.org.asynchttpclient.BoundRequestBuilder;
 import play.shaded.ahc.org.asynchttpclient.ListenableFuture;
 import play.shaded.ahc.org.asynchttpclient.ws.WebSocket;
-import play.shaded.ahc.org.asynchttpclient.ws.WebSocketListener;
 import play.shaded.ahc.org.asynchttpclient.ws.WebSocketTextListener;
 import play.shaded.ahc.org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.slf4j.Logger;
@@ -41,7 +40,7 @@ public class WebSocketClient {
             this.onMessageCallback = onMessageCallback;
         }
 
-        private Logger logger = org.slf4j.LoggerFactory.getLogger(LoggingListener.class);
+        //private Logger logger = org.slf4j.LoggerFactory.getLogger(LoggingListener.class);
 
         private Throwable throwableFound = null;
 
