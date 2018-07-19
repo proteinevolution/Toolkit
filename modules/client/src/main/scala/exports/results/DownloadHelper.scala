@@ -12,7 +12,8 @@ object DownloadHelper {
 
   @JSExport
   def download(filename: String, text: String): Unit = {
-    val blob      = new Blob(js.Array(text), BlobPropertyBag("application/octet-stream"))
+    val blob =
+      new Blob(js.Array(text), BlobPropertyBag("application/octet-stream"))
     val extWindow = dom.window.asInstanceOf[ExtendedWindow]
     if (extWindow.navigator.msSaveOrOpenBlob.toOption.getOrElse(false)) {
       extWindow.navigator.msSaveBlob(blob, filename)

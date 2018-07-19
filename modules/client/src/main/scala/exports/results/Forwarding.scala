@@ -4,7 +4,10 @@ import java.util.UUID
 
 import com.tgf.pizza.scalajs.mithril._
 import exports.facades.JQueryPlugin._
-import exports.results.models.ForwardingForm.{ ForwardingFormAln, ForwardingFormNormal }
+import exports.results.models.ForwardingForm.{
+  ForwardingFormAln,
+  ForwardingFormNormal
+}
 import exports.services.AlertService
 import org.scalajs.dom
 import org.scalajs.jquery.{ jQuery, JQueryAjaxSettings, JQueryXHR }
@@ -27,7 +30,8 @@ object Forwarding {
       evalue: String,
       isFullLength: Boolean
   ): Unit = {
-    val checkboxes = g.Toolkit.resultView.getSelectedValues.asInstanceOf[js.Array[Int]]
+    val checkboxes =
+      g.Toolkit.resultView.getSelectedValues.asInstanceOf[js.Array[Int]]
 
     if (checkboxes.length < 1 && !hasEvalue) {
       jQuery(".forwardModal").foundation("close")
@@ -50,7 +54,9 @@ object Forwarding {
         method = "POST",
         url = route,
         data = JSON
-          .parse(write(ForwardingFormNormal(filename, evalue, checkboxes.toArray)))
+          .parse(
+            write(ForwardingFormNormal(filename, evalue, checkboxes.toArray))
+          )
           .asInstanceOf[js.UndefOr[js.Object]],
         background = true
       )
@@ -61,7 +67,10 @@ object Forwarding {
     reqPromise.onFailure[Throwable] {
       case e =>
         if (e.getMessage contains "timeout")
-          AlertService.alert("Request timeout: the forwarded data might be too large.", "alert-danger")
+          AlertService.alert(
+            "Request timeout: the forwarded data might be too large.",
+            "alert-danger"
+          )
         else
           println(s"Exception: ${e.getMessage}")
     }
@@ -71,8 +80,13 @@ object Forwarding {
     }
   }
 
-  def processAlnResults(jobID: String, selectedTool: String, resultName: String): Unit = {
-    val checkboxes = js.Dynamic.global.Toolkit.resultView.getSelectedValues.asInstanceOf[js.Array[Int]]
+  def processAlnResults(
+      jobID: String,
+      selectedTool: String,
+      resultName: String
+  ): Unit = {
+    val checkboxes = js.Dynamic.global.Toolkit.resultView.getSelectedValues
+      .asInstanceOf[js.Array[Int]]
     if (checkboxes.length < 1) {
       jQuery(".forwardModal").foundation("close")
       AlertService.alert("No sequences selected!", "alert-danger")
@@ -141,7 +155,8 @@ object Forwarding {
       }
     } else {
       jQuery("#alignment").value(forwardData)
-      g.validationProcess(jQuery("#alignment"), jQuery("#toolnameAccess").value())
+      g.validationProcess(jQuery("#alignment"),
+                          jQuery("#toolnameAccess").value())
     }
   }
 

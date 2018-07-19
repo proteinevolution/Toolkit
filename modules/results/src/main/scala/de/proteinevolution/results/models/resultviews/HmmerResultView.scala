@@ -23,7 +23,8 @@ case class HmmerResultView(
       toolConfig.values(ToolName.HMMER.value),
       s"${constants.jobPath}/$jobId/results/blastviz.html"
     ),
-    "E-Value Plot" -> views.html.resultpanels.evalues(hmmer.parseResult(result).HSPS.map(_.evalue))
+    "E-Value Plot" -> views.html.resultpanels
+      .evalues(hmmer.parseResult(result).HSPS.map(_.evalue))
   )
 
 }

@@ -5,7 +5,8 @@ import de.proteinevolution.services.ToolConfig
 
 import scala.collection.immutable.ListMap
 
-case class MarcoilResultView(jobId: String, toolConfig: ToolConfig) extends ResultView {
+case class MarcoilResultView(jobId: String, toolConfig: ToolConfig)
+    extends ResultView {
 
   override lazy val tabs = ListMap(
     "CC-Prob" -> views.html.resultpanels.marcoil(

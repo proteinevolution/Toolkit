@@ -24,7 +24,11 @@ class ClustalResultView(
     }
   }
 
-  override def showHits(start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit = {
+  override def showHits(
+      start: Int,
+      end: Int,
+      successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null
+  ): Unit = {
     internalShowHits(
       jobID,
       s"/results/alignment/clustal/$jobID",

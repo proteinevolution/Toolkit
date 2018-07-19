@@ -10,7 +10,9 @@ import scala.xml._
 object QStat {
   // The QStat dates are formatted in the Default ISO format but without a Zone
   val qstatDateTimePattern: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").withZone(ZoneId.systemDefault())
+    DateTimeFormatter
+      .ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+      .withZone(ZoneId.systemDefault())
 
   // Predefined XML Tags for parsing
   val JOBID          = "JB_job_number"
@@ -31,8 +33,10 @@ object QStat {
     def parse(node: Node): QStatJob = {
       val date: String = {
         if (node.contains(QStat.STARTDATE)) (node \ QStat.STARTDATE).text
-        else if (node.contains(QStat.SUBMISSIONDATE)) (node \ QStat.SUBMISSIONDATE).text
-        else if (node.contains(QStat.EXECUTIONDATE)) (node \ QStat.EXECUTIONDATE).text
+        else if (node.contains(QStat.SUBMISSIONDATE))
+          (node \ QStat.SUBMISSIONDATE).text
+        else if (node.contains(QStat.EXECUTIONDATE))
+          (node \ QStat.EXECUTIONDATE).text
         else "2017-01-01T00:00:00"
       }
       QStatJob(

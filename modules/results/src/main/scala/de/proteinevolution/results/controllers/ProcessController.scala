@@ -5,10 +5,19 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.models.ToolName._
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
-import de.proteinevolution.results.models.{ ForwardMode, ForwardingData, HHContext, ResultContext }
+import de.proteinevolution.results.models.{
+  ForwardMode,
+  ForwardingData,
+  HHContext,
+  ResultContext
+}
 import de.proteinevolution.results.results.{ HSP, SearchResult }
 import de.proteinevolution.results.services.ResultsRepository.ResultsService
-import de.proteinevolution.results.services.{ ProcessFactory, ResultsRepository, ToolNameGetService }
+import de.proteinevolution.results.services.{
+  ProcessFactory,
+  ResultsRepository,
+  ToolNameGetService
+}
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 import play.api.libs.concurrent.Futures
@@ -35,31 +44,38 @@ class ProcessController @Inject()(
 
   private val resultsService = ResultsService(toolFinder, resultFiles)
 
-  def templateAlignment(jobId: String, accession: String): Action[AnyContent] = Action.async { implicit request =>
-    toolFinder
-      .getTool(jobId)
-      .map {
-        case HHOMP   => (scriptPath + "/templateAlignmentHHomp.sh").toFile
-        case HHBLITS => (scriptPath + "/templateAlignmentHHblits.sh").toFile
-        case HHPRED  => (scriptPath + "/templateAlignment.sh").toFile
-        case _       => throw new IllegalStateException("tool either not found nor not supported")
-      }
-      .map { file =>
-        if (!file.isExecutable)
-          BadRequest
-        else {
-          Process(file.pathAsString,
-                  (constants.jobPath + jobId).toFile.toJava,
-                  "jobID"     -> jobId,
-                  "accession" -> accession).run().exitValue() match {
-            case 0 => NoContent
-            case _ => BadRequest
+  def templateAlignment(jobId: String, accession: String): Action[AnyContent] =
+    Action.async { implicit request =>
+      toolFinder
+        .getTool(jobId)
+        .map {
+          case HHOMP   => (scriptPath + "/templateAlignmentHHomp.sh").toFile
+          case HHBLITS => (scriptPath + "/templateAlignmentHHblits.sh").toFile
+          case HHPRED  => (scriptPath + "/templateAlignment.sh").toFile
+          case _ =>
+            throw new IllegalStateException(
+              "tool either not found nor not supported"
+            )
+        }
+        .map { file =>
+          if (!file.isExecutable)
+            BadRequest
+          else {
+            Process(file.pathAsString,
+                    (constants.jobPath + jobId).toFile.toJava,
+                    "jobID"     -> jobId,
+                    "accession" -> accession).run().exitValue() match {
+              case 0 => NoContent
+              case _ => BadRequest
+            }
           }
         }
-      }
-  }
+    }
 
-  def forwardAlignment(jobId: String, mode: ForwardMode): Action[ForwardingData] =
+  def forwardAlignment(
+      jobId: String,
+      mode: ForwardMode
+  ): Action[ForwardingData] =
     Action(circe.json[ForwardingData]).async { implicit request =>
       val data     = request.body
       val filename = data.fileName
@@ -82,7 +98,8 @@ class ProcessController @Inject()(
                 (HMMER, resultContext.hmmer.parseResult(jsValue))
               case PSIBLAST =>
                 (PSIBLAST, resultContext.psiblast.parseResult(jsValue))
-              case _ => throw new IllegalArgumentException("tool has no hitlist")
+              case _ =>
+                throw new IllegalArgumentException("tool has no hitlist")
             }
           case None => throw new IllegalStateException
         }
@@ -119,7 +136,10 @@ class ProcessController @Inject()(
   ): String = {
     (toolName, mode.toString) match {
       case (HHBLITS, "alnEval") | (HHPRED, "alnEval") =>
-        result.HSPS.filter(_.info.evalue <= accStr.toDouble).map { _.num }.mkString(" ")
+        result.HSPS
+          .filter(_.info.evalue <= accStr.toDouble)
+          .map { _.num }
+          .mkString(" ")
       case (HMMER, "alnEval") =>
         result.HSPS
           .filter(_.evalue <= accStr.toDouble)
@@ -132,9 +152,15 @@ class ProcessController @Inject()(
         accStr
       case (_, "aln") => accStr
       case (HMMER, "evalFull") | (PSIBLAST, "evalFull") =>
-        result.HSPS.filter(_.evalue <= accStr.toDouble).map { _.accession + " " }.mkString
+        result.HSPS
+          .filter(_.evalue <= accStr.toDouble)
+          .map { _.accession + " " }
+          .mkString
       case (HHBLITS, "evalFull") =>
-        result.HSPS.filter(_.info.evalue <= accStr.toDouble).map { _.template.accession + " " }.mkString
+        result.HSPS
+          .filter(_.info.evalue <= accStr.toDouble)
+          .map { _.template.accession + " " }
+          .mkString
       case (_, "full") =>
         val numList = accStr.split("\n").map(_.toInt)
         numList.map { num =>
@@ -143,7 +169,8 @@ class ProcessController @Inject()(
           else
             result.HSPS(num - 1).accession + " "
         }.mkString
-      case _ => throw new IllegalStateException("parsing accession identifiers failed")
+      case _ =>
+        throw new IllegalStateException("parsing accession identifiers failed")
     }
   }
 

@@ -31,14 +31,15 @@ class SearchController @Inject()(
     }
   }
 
-  def existsTool(queryString: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.map { _ =>
-      if (toolConfig.isTool(queryString)) {
-        Ok(Json.toJson(true))
-      } else {
-        NotFound
+  def existsTool(queryString: String): Action[AnyContent] = Action.async {
+    implicit request =>
+      userSessions.getUser.map { _ =>
+        if (toolConfig.isTool(queryString)) {
+          Ok(Json.toJson(true))
+        } else {
+          NotFound
+        }
       }
-    }
   }
 
   def getToolList: Action[AnyContent] = Action {
@@ -46,7 +47,9 @@ class SearchController @Inject()(
       Json.toJson(
         toolConfig.values.values
           .filterNot(_.toolNameShort == "hhpred_manual")
-          .map(a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort))
+          .map(
+            a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort)
+          )
       )
     )
   }
@@ -56,13 +59,14 @@ class SearchController @Inject()(
    * it looks for jobs which belong to the current user.
    * only jobIDs that belong to the user are autocompleted
    */
-  def autoComplete(queryString_ : String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      searchService.autoComplete(user, queryString_).value.map {
-        case Some(jobs) => Ok(Json.toJson(jobs.map(_.cleaned(toolConfig))))
-        case None       => NoContent
+  def autoComplete(queryString_ : String): Action[AnyContent] = Action.async {
+    implicit request =>
+      userSessions.getUser.flatMap { user =>
+        searchService.autoComplete(user, queryString_).value.map {
+          case Some(jobs) => Ok(Json.toJson(jobs.map(_.cleaned(toolConfig))))
+          case None       => NoContent
+        }
       }
-    }
   }
 
 }

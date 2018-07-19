@@ -28,7 +28,8 @@ case class PsiBlastResultView(
       jobId,
       "PSIBLAST_OUTPUT"
     ),
-    "E-Value Plot" -> views.html.resultpanels.evalues(psi.parseResult(result).HSPS.map(_.evalue))
+    "E-Value Plot" -> views.html.resultpanels
+      .evalues(psi.parseResult(result).HSPS.map(_.evalue))
   )
 
 }

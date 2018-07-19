@@ -19,7 +19,9 @@ case class StatisticsObject(
    * @return
    */
   def getToolStatisticMap: Map[String, ToolStatistic] = {
-    toolStatistics.map(toolStatistic => (toolStatistic.toolName, toolStatistic)).toMap
+    toolStatistics
+      .map(toolStatistic => (toolStatistic.toolName, toolStatistic))
+      .toMap
   }
 
   /**
@@ -61,7 +63,11 @@ case class StatisticsObject(
 
     // Get all months in between the two dates
     val monthsInInterval = for (extraMonths <- 0 to totalMonths)
-      yield beginDate.plusMonths(extraMonths.toLong).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1)
+      yield
+        beginDate
+          .plusMonths(extraMonths.toLong)
+          .truncatedTo(ChronoUnit.DAYS)
+          .withDayOfMonth(1)
 
     // Group the job events by tool
     val jobEventsGroupedByTool = jobEventLogs.groupBy(_.toolName)
@@ -77,7 +83,9 @@ case class StatisticsObject(
               case Some(jobEventLogsForMonths) =>
                 // since there are elements from this tool, group them by month
                 val jobEventsInMonths =
-                  jobEventLogsForMonths.groupBy(_.dateCreated.truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1))
+                  jobEventLogsForMonths.groupBy(
+                    _.dateCreated.truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1)
+                  )
                 // iterate over all months
                 val counts = monthsInInterval.map {
                   startOfMonth =>
@@ -95,7 +103,10 @@ case class StatisticsObject(
                     }
                 }.toList
                 // add the months to the old tool statistics
-                toolStatistic.addMonths(counts.map(_._1), counts.map(_._2), counts.map(_._3), counts.map(_._4))
+                toolStatistic.addMonths(counts.map(_._1),
+                                        counts.map(_._2),
+                                        counts.map(_._3),
+                                        counts.map(_._4))
               case None =>
                 // add the empty months to the old tool statistics
                 toolStatistic.addEmptyMonths(totalMonths)
@@ -113,8 +124,11 @@ case class StatisticsObject(
    */
   def lastPushed: ZonedDateTime = {
     datePushed.headOption match {
-      case Some(_) => datePushed.max[ZonedDateTime](Ordering.fromLessThan(_.isBefore(_))).truncatedTo(ChronoUnit.DAYS)
-      case None    => ZonedDateTime.parse("2017-02-01T00:00:00.000+02:00")
+      case Some(_) =>
+        datePushed
+          .max[ZonedDateTime](Ordering.fromLessThan(_.isBefore(_)))
+          .truncatedTo(ChronoUnit.DAYS)
+      case None => ZonedDateTime.parse("2017-02-01T00:00:00.000+02:00")
     }
   }
 }
@@ -138,9 +152,12 @@ object StatisticsObject {
   implicit object Reader extends BSONDocumentReader[StatisticsObject] {
     def read(bson: BSONDocument): StatisticsObject = {
       StatisticsObject(
-        statisticsID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
-        userStatistics = bson.getAs[UserStatistic](USERSTATISTICS).getOrElse(UserStatistic()),
-        toolStatistics = bson.getAs[List[ToolStatistic]](TOOLSTATISTICS).getOrElse(List.empty),
+        statisticsID =
+          bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
+        userStatistics =
+          bson.getAs[UserStatistic](USERSTATISTICS).getOrElse(UserStatistic()),
+        toolStatistics =
+          bson.getAs[List[ToolStatistic]](TOOLSTATISTICS).getOrElse(List.empty),
         datePushed = bson
           .getAs[List[BSONDateTime]](DATEPUSHED)
           .getOrElse(List.empty[BSONDateTime])
@@ -154,7 +171,9 @@ object StatisticsObject {
       IDDB           -> statisticObject.statisticsID,
       USERSTATISTICS -> statisticObject.userStatistics,
       TOOLSTATISTICS -> statisticObject.toolStatistics,
-      DATEPUSHED     -> statisticObject.datePushed.map(a => BSONDateTime(a.toInstant.toEpochMilli))
+      DATEPUSHED -> statisticObject.datePushed.map(
+        a => BSONDateTime(a.toInstant.toEpochMilli)
+      )
     )
   }
 }

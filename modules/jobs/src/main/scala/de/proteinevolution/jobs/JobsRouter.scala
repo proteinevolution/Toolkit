@@ -1,6 +1,10 @@
 package de.proteinevolution.jobs
 
-import de.proteinevolution.jobs.controllers.{ ClusterApiController, JobGetController, SubmissionController }
+import de.proteinevolution.jobs.controllers.{
+  ClusterApiController,
+  JobGetController,
+  SubmissionController
+}
 import javax.inject.{ Inject, Singleton }
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
@@ -21,17 +25,21 @@ class JobsRouter @Inject()(
   }
 
   private lazy val submissionRoutes: Routes = {
-    case POST(p"/" ? q"toolName=$toolName") => submissionController.submitJob(toolName)
+    case POST(p"/" ? q"toolName=$toolName") =>
+      submissionController.submitJob(toolName)
     case GET(p"/check/jobid/$jobID/" ? q_o"resubmitJobID=$resubmitID") =>
       submissionController.resubmitJob(jobID, resubmitID)
-    case DELETE(p"/$jobID")                  => submissionController.delete(jobID)
-    case POST(p"/start/$jobID")              => submissionController.startJob(jobID)
-    case POST(p"/frontend/submit/$toolName") => submissionController.frontend(toolName)
+    case DELETE(p"/$jobID")     => submissionController.delete(jobID)
+    case POST(p"/start/$jobID") => submissionController.startJob(jobID)
+    case POST(p"/frontend/submit/$toolName") =>
+      submissionController.frontend(toolName)
   }
 
   private lazy val clusterApiRoutes: Routes = {
-    case PUT(p"/status/$status/$jobID/$key") => clusterApiController.setJobStatus(status, jobID, key)
-    case PUT(p"/sge/$jobID/$sgeID/$key")     => clusterApiController.setSgeId(jobID, sgeID, key)
+    case PUT(p"/status/$status/$jobID/$key") =>
+      clusterApiController.setJobStatus(status, jobID, key)
+    case PUT(p"/sge/$jobID/$sgeID/$key") =>
+      clusterApiController.setSgeId(jobID, sgeID, key)
   }
 
   override def routes: Routes = {

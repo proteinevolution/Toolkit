@@ -5,7 +5,8 @@ import de.proteinevolution.services.ToolConfig
 
 import scala.collection.immutable.ListMap
 
-case class MMSeqsResultView(jobId: String, toolConfig: ToolConfig) extends ResultView {
+case class MMSeqsResultView(jobId: String, toolConfig: ToolConfig)
+    extends ResultView {
 
   override lazy val tabs = ListMap(
     "Reduced set" ->
@@ -15,7 +16,8 @@ case class MMSeqsResultView(jobId: String, toolConfig: ToolConfig) extends Resul
       "mmseqs_reps",
       toolConfig.values(ToolName.MMSEQS2.value)
     ),
-    "Clusters" -> views.html.resultpanels.fileviewWithDownload(jobId + ".clu", jobId, "mmseqs_clusters")
+    "Clusters" -> views.html.resultpanels
+      .fileviewWithDownload(jobId + ".clu", jobId, "mmseqs_clusters")
   )
 
 }

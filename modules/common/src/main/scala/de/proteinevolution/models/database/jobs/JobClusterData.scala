@@ -17,7 +17,10 @@ case class JobClusterData(
 
   def runtime: Long = {
     val now = ZonedDateTime.now
-    dateFinished.getOrElse(now).toInstant.toEpochMilli - dateStarted.getOrElse(now).toInstant.toEpochMilli
+    dateFinished.getOrElse(now).toInstant.toEpochMilli - dateStarted
+      .getOrElse(now)
+      .toInstant
+      .toEpochMilli
   }
 
 }
@@ -51,8 +54,12 @@ object JobClusterData {
         memory = bson.getAs[Int](MEMORY),
         threads = bson.getAs[Int](THREADS),
         hardruntime = bson.getAs[Int](HARDRUNTIME),
-        dateStarted = bson.getAs[BSONDateTime](DATESTARTED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateFinished = bson.getAs[BSONDateTime](DATESTARTED).map(dt => ZonedDateTimeHelper.getZDT(dt))
+        dateStarted = bson
+          .getAs[BSONDateTime](DATESTARTED)
+          .map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateFinished = bson
+          .getAs[BSONDateTime](DATESTARTED)
+          .map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
     }
   }
@@ -62,12 +69,16 @@ object JobClusterData {
    */
   implicit object Writer extends BSONDocumentWriter[JobClusterData] {
     def write(clusterData: JobClusterData): BSONDocument = BSONDocument(
-      SGEID        -> clusterData.sgeID,
-      MEMORY       -> clusterData.memory,
-      THREADS      -> clusterData.threads,
-      HARDRUNTIME  -> clusterData.hardruntime,
-      DATESTARTED  -> BSONDateTime(clusterData.dateStarted.fold(-1L)(_.toInstant.toEpochMilli)),
-      DATEFINISHED -> BSONDateTime(clusterData.dateStarted.fold(-1L)(_.toInstant.toEpochMilli))
+      SGEID       -> clusterData.sgeID,
+      MEMORY      -> clusterData.memory,
+      THREADS     -> clusterData.threads,
+      HARDRUNTIME -> clusterData.hardruntime,
+      DATESTARTED -> BSONDateTime(
+        clusterData.dateStarted.fold(-1L)(_.toInstant.toEpochMilli)
+      ),
+      DATEFINISHED -> BSONDateTime(
+        clusterData.dateStarted.fold(-1L)(_.toInstant.toEpochMilli)
+      )
     )
   }
 }

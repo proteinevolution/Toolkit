@@ -9,11 +9,14 @@ import reactivemongo.bson.BSONDocument
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-private[results] class ToolNameGetService @Inject()(jobDao: JobDao)(implicit ec: ExecutionContext) {
+private[results] class ToolNameGetService @Inject()(jobDao: JobDao)(
+    implicit ec: ExecutionContext
+) {
 
-  def getTool(jobID: String): Future[ToolName] = jobDao.findJob(BSONDocument(Job.JOBID -> jobID)).map {
-    case Some(x) => ToolName(x.tool)
-    case None    => throw new IllegalArgumentException("job not found")
-  }
+  def getTool(jobID: String): Future[ToolName] =
+    jobDao.findJob(BSONDocument(Job.JOBID -> jobID)).map {
+      case Some(x) => ToolName(x.tool)
+      case None    => throw new IllegalArgumentException("job not found")
+    }
 
 }

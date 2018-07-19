@@ -15,22 +15,32 @@ import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class JobDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit ec: ExecutionContext) {
+class JobDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(
+    implicit ec: ExecutionContext
+) {
 
   private lazy val jobCollection: Future[BSONCollection] = {
-    reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs")).map { collection =>
-      collection.indexesManager.ensure(Index(Seq("jobID" -> IndexType.Text), background = true, unique = true))
-      collection
+    reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs")).map {
+      collection =>
+        collection.indexesManager.ensure(
+          Index(Seq("jobID" -> IndexType.Text),
+                background = true,
+                unique = true)
+        )
+        collection
     }
   }
 
   private[jobs] lazy val eventLogCollection: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection[BSONCollection]("jobevents"))
 
-  def findJob(selector: BSONDocument): Future[Option[Job]] = jobCollection.flatMap(_.find(selector).one[Job])
+  def findJob(selector: BSONDocument): Future[Option[Job]] =
+    jobCollection.flatMap(_.find(selector).one[Job])
 
   def findJobs(selector: BSONDocument): Future[List[Job]] = {
-    jobCollection.map(_.find(selector).cursor[Job]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
+    jobCollection
+      .map(_.find(selector).cursor[Job]())
+      .flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
   }
 
   def selectJob(jobID: String): Future[Option[Job]] = {
@@ -41,13 +51,19 @@ class JobDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit 
     jobCollection.flatMap(_.delete().one(selector))
   }
 
-  def findAndSortJobs(selector: BSONDocument, sort: BSONDocument): Future[List[Job]] = {
+  def findAndSortJobs(
+      selector: BSONDocument,
+      sort: BSONDocument
+  ): Future[List[Job]] = {
     jobCollection
       .map(_.find(selector).sort(sort).cursor[Job]())
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
   }
 
-  def findSortedJob(selector: BSONDocument, sort: BSONDocument): Future[Option[Job]] = {
+  def findSortedJob(
+      selector: BSONDocument,
+      sort: BSONDocument
+  ): Future[Option[Job]] = {
     jobCollection.flatMap(_.find(selector).sort(sort).one[Job])
   }
 
@@ -57,13 +73,20 @@ class JobDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit 
     }
   }
 
-  def modifyJob(selector: BSONDocument, modifier: BSONDocument): Future[Option[Job]] = {
+  def modifyJob(
+      selector: BSONDocument,
+      modifier: BSONDocument
+  ): Future[Option[Job]] = {
     jobCollection.flatMap(
       _.findAndUpdate(
         selector,
         modifier.merge(
           BSONDocument(
-            "$set" -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli))
+            "$set" -> BSONDocument(
+              Job.DATEVIEWED -> BSONDateTime(
+                ZonedDateTime.now.toInstant.toEpochMilli
+              )
+            )
           )
         ),
         fetchNewObject = true
@@ -78,7 +101,9 @@ class JobDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit 
   def addJobLog(jobEventLog: JobEventLog): Future[WriteResult] =
     eventLogCollection.flatMap(_.insert(jobEventLog))
 
-  def findJobEventLogs(selector: BSONDocument): Future[scala.List[JobEventLog]] = {
+  def findJobEventLogs(
+      selector: BSONDocument
+  ): Future[scala.List[JobEventLog]] = {
     eventLogCollection
       .map(_.find(selector).cursor[JobEventLog]())
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[JobEventLog]]()))

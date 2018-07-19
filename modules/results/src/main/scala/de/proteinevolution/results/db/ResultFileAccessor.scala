@@ -31,8 +31,12 @@ final class ResultFileAccessor @Inject()(
         if (resultsExist(jobID, constants)) {
           // Gather the files
           val files: List[File] =
-            (constants.jobPath / jobID / "results").list.withFilter(_.extension.contains(".json")).toList
-          logger.info(s"Loading files for $jobID: ${files.map(_.name).mkString(",")}")
+            (constants.jobPath / jobID / "results").list
+              .withFilter(_.extension.contains(".json"))
+              .toList
+          logger.info(
+            s"Loading files for $jobID: ${files.map(_.name).mkString(",")}"
+          )
 
           // Merge the results from the files
           val results: JsValue =

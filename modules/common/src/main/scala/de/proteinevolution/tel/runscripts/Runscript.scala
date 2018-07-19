@@ -26,7 +26,11 @@ class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript] {
         m.group("repr") match {
           // TODO Constraints are not yet supported, currently all arguments are valid
           case "path" =>
-            ValidArgument(new FileRepresentation(executionContext.getFile(paramName, value.inner().toString)))
+            ValidArgument(
+              new FileRepresentation(
+                executionContext.getFile(paramName, value.inner().toString)
+              )
+            )
           case "content" => ValidArgument(new LiteralRepresentation(value))
         }
       }
@@ -51,7 +55,9 @@ class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript] {
     }
   }
 
-  private val translationSteps = mutable.Queue[String => String](_ => files.map(_.contentAsString).mkString("\n"))
+  private val translationSteps = mutable.Queue[String => String](
+    _ => files.map(_.contentAsString).mkString("\n")
+  )
 
   // Translates A sequence of Arguments with the parameter names into a runnable runscript instance
   def apply(arguments: Seq[(String, ValidArgument)]): String = {

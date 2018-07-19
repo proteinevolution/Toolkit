@@ -7,7 +7,8 @@ class Parameter(val name: String) {
   // A constraint decides for a value its validity
   type Constraint = RType => Boolean
 
-  private var constraints: Map[String, Constraint] = Map.empty[String, Constraint]
+  private var constraints: Map[String, Constraint] =
+    Map.empty[String, Constraint]
 
   def withConstraint(name: String, constraint: Constraint): Parameter = {
     constraints = constraints.updated(name, constraint)

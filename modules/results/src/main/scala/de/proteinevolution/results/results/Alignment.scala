@@ -1,6 +1,9 @@
 package de.proteinevolution.results.results
 
-import de.proteinevolution.results.results.Alignment.{ AlignmentItem, AlignmentResult }
+import de.proteinevolution.results.results.Alignment.{
+  AlignmentItem,
+  AlignmentResult
+}
 import play.api.libs.json.JsArray
 
 class Alignment {
@@ -13,12 +16,13 @@ class Alignment {
     }
     AlignmentResult(list)
   }
-  def parseWithIndex(jsArray: JsArray, index: Int): AlignmentItem = jsArray match {
-    case arr: JsArray =>
-      val accession = (arr \ 0).as[String]
-      val seq       = (arr \ 1).as[String]
-      AlignmentItem(accession, seq, index)
-  }
+  def parseWithIndex(jsArray: JsArray, index: Int): AlignmentItem =
+    jsArray match {
+      case arr: JsArray =>
+        val accession = (arr \ 0).as[String]
+        val seq       = (arr \ 1).as[String]
+        AlignmentItem(accession, seq, index)
+    }
 }
 
 object Alignment {

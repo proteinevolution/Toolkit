@@ -14,8 +14,11 @@ sealed trait ParamType {
 
 object ParamType {
 
-  case class Sequence(formats: Seq[(String, String)], placeholder: String, allowTwoTextAreas: Boolean)
-      extends ParamType {
+  case class Sequence(
+      formats: Seq[(String, String)],
+      placeholder: String,
+      allowTwoTextAreas: Boolean
+  ) extends ParamType {
     // Sequence currently alwasus valid
     def validate(value: String): Option[String] = Some(value)
   }
@@ -48,7 +51,8 @@ object ParamType {
       Some(value)
     }
   }
-  case class Decimal(step: String, min: Option[Double], max: Option[Double]) extends ParamType {
+  case class Decimal(step: String, min: Option[Double], max: Option[Double])
+      extends ParamType {
     def validate(value: String): Option[String] = {
       for {
         ⌊ ← min
@@ -66,8 +70,12 @@ object ParamType {
     def validate(value: String): Option[String] = Some(value)
   }
 
-  implicit def tuple2Writes[A, B](implicit a: Writes[A], b: Writes[B]): Writes[(A, B)] = new Writes[(A, B)] {
-    def writes(tuple: (A, B)) = JsArray(Seq(a.writes(tuple._1), b.writes(tuple._2)))
+  implicit def tuple2Writes[A, B](
+      implicit a: Writes[A],
+      b: Writes[B]
+  ): Writes[(A, B)] = new Writes[(A, B)] {
+    def writes(tuple: (A, B)) =
+      JsArray(Seq(a.writes(tuple._1), b.writes(tuple._2)))
   }
 
   final val UnconstrainedNumber = Number(None, None)
@@ -77,18 +85,26 @@ object ParamType {
 
   implicit object ParamTypeWrites extends Writes[ParamType] {
     def writes(paramType: ParamType): JsObject = paramType match {
-      case Sequence(formats: Seq[(String, String)], placeholder: String, allowsTwoTextAreas: Boolean) =>
+      case Sequence(formats: Seq[(String, String)],
+                    placeholder: String,
+                    allowsTwoTextAreas: Boolean) =>
         Json.obj(FIELD_TYPE           -> 1,
                  "modes"              -> formats,
                  "allowsTwoTextAreas" -> allowsTwoTextAreas,
                  "placeholder"        -> placeholder)
-      case Number(minOpt, maxOpt)        => Json.obj(FIELD_TYPE -> 2, "min" -> minOpt, "max" -> maxOpt)
-      case Select(options)               => Json.obj(FIELD_TYPE -> 3, "options" -> options)
-      case Bool                          => Json.obj(FIELD_TYPE -> 4)
-      case Radio                         => Json.obj(FIELD_TYPE -> 5)
-      case Decimal(step, minVal, maxVal) => Json.obj(FIELD_TYPE -> 2, "step" -> step, "min" -> minVal, "max" -> maxVal)
-      case Text(placeholder)             => Json.obj(FIELD_TYPE -> 7, "placeholder" -> placeholder)
-      case ModellerKey                   => Json.obj(FIELD_TYPE -> 8)
+      case Number(minOpt, maxOpt) =>
+        Json.obj(FIELD_TYPE -> 2, "min" -> minOpt, "max" -> maxOpt)
+      case Select(options) => Json.obj(FIELD_TYPE -> 3, "options" -> options)
+      case Bool            => Json.obj(FIELD_TYPE -> 4)
+      case Radio           => Json.obj(FIELD_TYPE -> 5)
+      case Decimal(step, minVal, maxVal) =>
+        Json.obj(FIELD_TYPE -> 2,
+                 "step"     -> step,
+                 "min"      -> minVal,
+                 "max"      -> maxVal)
+      case Text(placeholder) =>
+        Json.obj(FIELD_TYPE -> 7, "placeholder" -> placeholder)
+      case ModellerKey => Json.obj(FIELD_TYPE -> 8)
     }
   }
 }

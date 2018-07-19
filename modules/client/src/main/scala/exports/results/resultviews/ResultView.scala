@@ -31,8 +31,9 @@ trait ResultView {
   protected val checkboxes: Checkboxes = new Checkboxes(container)
   protected val hitsSlider: HitsSlider = new HitsSlider(container)
 
-  protected val scrollUtil: ScrollUtil           = new ScrollUtil(this)
-  protected val forwardingModal: ForwardingModal = new ForwardingModal(container, resultContext.toolName, jobID)
+  protected val scrollUtil: ScrollUtil = new ScrollUtil(this)
+  protected val forwardingModal: ForwardingModal =
+    new ForwardingModal(container, resultContext.toolName, jobID)
 
   def init(): Unit
 
@@ -64,7 +65,11 @@ trait ResultView {
     }
   }
 
-  def showHits(start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit
+  def showHits(
+      start: Int,
+      end: Int,
+      successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null
+  ): Unit
 
   protected def internalShowHits(
       jobID: String,
@@ -76,7 +81,9 @@ trait ResultView {
 
     if (data.start <= resultContext.numHits) {
 
-      val newEnd = if (data.end > resultContext.numHits) resultContext.numHits else data.end
+      val newEnd =
+        if (data.end > resultContext.numHits) resultContext.numHits
+        else data.end
 
       loading = true
       container.find("#loadingHits").show()
@@ -159,7 +166,11 @@ trait ResultView {
     } else {
       jQuery(elem).animate(
         js.Dynamic.literal(
-          "scrollTop" -> (container.find(".aln[data-id=" + id + "]").offset().asInstanceOf[JQueryPosition].top - 100D)
+          "scrollTop" -> (container
+            .find(".aln[data-id=" + id + "]")
+            .offset()
+            .asInstanceOf[JQueryPosition]
+            .top - 100D)
         ),
         1
       )
@@ -181,7 +192,8 @@ trait ResultView {
         -25D
       else
         -75D
-    jQuery(elem).animate(js.Dynamic.literal("scrollTop" -> (_pos + pos)), "fast")
+    jQuery(elem)
+      .animate(js.Dynamic.literal("scrollTop" -> (_pos + pos)), "fast")
   }
 
 }

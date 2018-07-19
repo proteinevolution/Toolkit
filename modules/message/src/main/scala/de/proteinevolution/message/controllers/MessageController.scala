@@ -26,11 +26,17 @@ class MessageController @Inject()(
 
   def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
     case rh if sameOriginCheck(rh) =>
-      logger.info("Creating new WebSocket. ip: " + rh.remoteAddress.toString + ", with sessionId: " + rh.session)
+      logger.info(
+        "Creating new WebSocket. ip: " + rh.remoteAddress.toString + ", with sessionId: " + rh.session
+      )
       userSessions
         .getUser(rh)
         .map { user =>
-          Right(ActorFlow.actorRef(out => Props(webSocketActorFactory(user.sessionID.get, out))))
+          Right(
+            ActorFlow.actorRef(
+              out => Props(webSocketActorFactory(user.sessionID.get, out))
+            )
+          )
         }
         .recover {
           case e: Exception =>
@@ -51,7 +57,9 @@ class MessageController @Inject()(
     else {
       rh.headers.get("Origin") match {
         case Some(originValue)
-            if originMatches(originValue) && !config.get[Seq[String]]("banned.ip").contains(rh.remoteAddress) =>
+            if originMatches(originValue) && !config
+              .get[Seq[String]]("banned.ip")
+              .contains(rh.remoteAddress) =>
           logger.debug(s"originCheck: originValue = $originValue")
           true
         case Some(badOrigin) =>
@@ -60,17 +68,19 @@ class MessageController @Inject()(
           )
           false
         case None =>
-          logger.warn("originCheck: rejecting request because no Origin header found")
+          logger.warn(
+            "originCheck: rejecting request because no Origin header found"
+          )
           false
       }
     }
   }
 
   private def originMatches(origin: String): Boolean = {
-    origin.contains("http://localhost") || origin.contains("http://olt") || origin.contains("tuebingen.mpg.de") || origin
-      .contains(
-        "tue.mpg.de"
-      )
+    origin.contains("http://localhost") || origin.contains("http://olt") || origin
+      .contains("tuebingen.mpg.de") || origin.contains(
+      "tue.mpg.de"
+    )
   }
 
 }

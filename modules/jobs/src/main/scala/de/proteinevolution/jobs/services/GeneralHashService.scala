@@ -13,7 +13,10 @@ import play.api.{ Configuration, Logger }
 import scala.util.hashing.MurmurHash3
 
 @Singleton
-final class GeneralHashService @Inject()(runscriptPathProvider: RunscriptPathProvider, config: Configuration) {
+final class GeneralHashService @Inject()(
+    runscriptPathProvider: RunscriptPathProvider,
+    config: Configuration
+) {
 
   private val logger = Logger(this.getClass)
 
@@ -29,15 +32,23 @@ final class GeneralHashService @Inject()(runscriptPathProvider: RunscriptPathPro
   }
 
   def generateToolHash(name: String): String = {
-    MurmurHash3.stringHash(config.get[Config](s"Tools.$name").toString, 0).toString
+    MurmurHash3
+      .stringHash(config.get[Config](s"Tools.$name").toString, 0)
+      .toString
   }
 
-  def generateJobHash(job: Job, params: Map[String, String], env: Env): String = {
+  def generateJobHash(
+      job: Job,
+      params: Map[String, String],
+      env: Env
+  ): String = {
     // filter unique parameters
     val paramsWithoutUniques: Map[String, String] =
     params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid" - Job.IPHASH - "parentID" - "htb_length" - "alignment" - "file"
     logger.info(
-      s"[JobDAO.generateJobHash] Hashing values: ${paramsWithoutUniques.map(kv => s"${kv._1} ${kv._2}").mkString(", ")}"
+      s"[JobDAO.generateJobHash] Hashing values: ${paramsWithoutUniques
+        .map(kv => s"${kv._1} ${kv._2}")
+        .mkString(", ")}"
     )
     val sequenceHash = params.get("alignment") match {
       case Some(alignment) =>
@@ -53,7 +64,9 @@ final class GeneralHashService @Inject()(runscriptPathProvider: RunscriptPathPro
 
     val dbParam = params match {
       case x if x.isDefinedAt("standarddb") =>
-        val STANDARDDB = (env.get("STANDARD") + "/" + params.getOrElse("standarddb", "")).toFile
+        val STANDARDDB =
+          (env.get("STANDARD") + "/" + params.getOrElse("standarddb", ""))
+            .toFile
         (Some("standarddb"), Some(STANDARDDB.lastModifiedTime.toString))
       case x if x.isDefinedAt("hhsuitedb") =>
         val HHSUITEDB = env.get("HHSUITE").toFile

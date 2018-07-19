@@ -58,8 +58,12 @@ class HitsSlider(private val container: JQuery) {
   }
 
   def resubmit(sequence: String, name: String): Unit = {
-    val sliderRange  = js.Dynamic.global.$("#flat-slider").slider("option", "values").asInstanceOf[js.Array[Int]]
-    val resubmitSeqs = name + "\n" + sequence.substring(sliderRange(0), sliderRange(1)) + "\n"
+    val sliderRange = js.Dynamic.global
+      .$("#flat-slider")
+      .slider("option", "values")
+      .asInstanceOf[js.Array[Int]]
+    val resubmitSeqs = name + "\n" + sequence.substring(sliderRange(0),
+                                                        sliderRange(1)) + "\n"
     container.find("a[href='#tabpanel-Input']").click()
     container.find("#alignment").value(resubmitSeqs)
   }

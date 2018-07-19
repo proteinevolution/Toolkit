@@ -32,43 +32,68 @@ class JobGetController @Inject()(
     extends ToolkitController(cc)
     with JobFolderValidation {
 
-  def jobManagerListJobs: Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      jobDao.findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false))).map {
-        jobs =>
-          NoCache(Ok(Json.toJson(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.jobManagerJob()))))
+  def jobManagerListJobs: Action[AnyContent] = Action.async {
+    implicit request =>
+      userSessions.getUser.flatMap { user =>
+        jobDao
+          .findJobs(
+            BSONDocument(Job.OWNERID  -> user.userID,
+                         Job.DELETION -> BSONDocument("$exists" -> false))
+          )
+          .map { jobs =>
+            NoCache(
+              Ok(
+                Json.toJson(
+                  jobs
+                    .filter(job => jobFolderIsValid(job.jobID, constants))
+                    .map(_.jobManagerJob())
+                )
+              )
+            )
+          }
       }
-    }
   }
 
   def listJobs: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
-      jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>
-        Ok(Json.toJson(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.cleaned(toolConfig))))
-      }
+      jobDao
+        .findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs)))
+        .map { jobs =>
+          Ok(
+            Json.toJson(
+              jobs
+                .filter(job => jobFolderIsValid(job.jobID, constants))
+                .map(_.cleaned(toolConfig))
+            )
+          )
+        }
     }
   }
 
-  def loadJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { _ =>
-      jobDao.selectJob(jobID).map {
-        case Some(job) if jobFolderIsValid(job.jobID, constants) => Ok(job.cleaned(toolConfig))
-        case _                                                   => NotFound
+  def loadJob(jobID: String): Action[AnyContent] = Action.async {
+    implicit request =>
+      userSessions.getUser.flatMap { _ =>
+        jobDao.selectJob(jobID).map {
+          case Some(job) if jobFolderIsValid(job.jobID, constants) =>
+            Ok(job.cleaned(toolConfig))
+          case _ => NotFound
+        }
       }
-    }
   }
 
-  def checkHash(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    (for {
-      _   <- OptionT.liftF(userSessions.getUser)
-      job <- jobHashService.checkHash(jobID)
-    } yield {
-      (job.jobID, job.dateCreated.getOrElse(ZonedDateTime.now).toInstant.toEpochMilli)
-    }).value.map {
-      case Some((latestJobId, dateCreated)) =>
-        Ok(Json.obj("jobID" -> latestJobId, "dateCreated" -> dateCreated))
-      case None => NotFound(errors(JobHashError.JobNotFound.msg))
-    }
+  def checkHash(jobID: String): Action[AnyContent] = Action.async {
+    implicit request =>
+      (for {
+        _   <- OptionT.liftF(userSessions.getUser)
+        job <- jobHashService.checkHash(jobID)
+      } yield {
+        (job.jobID,
+         job.dateCreated.getOrElse(ZonedDateTime.now).toInstant.toEpochMilli)
+      }).value.map {
+        case Some((latestJobId, dateCreated)) =>
+          Ok(Json.obj("jobID" -> latestJobId, "dateCreated" -> dateCreated))
+        case None => NotFound(errors(JobHashError.JobNotFound.msg))
+      }
   }
 
 }

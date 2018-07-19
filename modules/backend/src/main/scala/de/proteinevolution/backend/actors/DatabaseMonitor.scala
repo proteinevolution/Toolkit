@@ -5,14 +5,20 @@ import java.time.ZonedDateTime
 import akka.actor.{ Actor, ActorLogging, Cancellable }
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate.OldAccountEmail
-import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
+import de.proteinevolution.backend.actors.DatabaseMonitor.{
+  DeleteOldJobs,
+  DeleteOldUsers
+}
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.jobs.actors.JobActor.Delete
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services.JobActorAccess
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
-import de.proteinevolution.models.database.statistics.{ StatisticsObject, UserStatistic }
+import de.proteinevolution.models.database.statistics.{
+  StatisticsObject,
+  UserStatistic
+}
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.tel.env.Env
 import javax.inject.{ Inject, Singleton }
@@ -48,7 +54,10 @@ final class DatabaseMonitor @Inject()(
   // interval calling the user deletion method automatically
   private val jobDeletionScheduler: Cancellable = {
     // scheduler should use the system dispatcher
-    context.system.scheduler.schedule(constants.jobDeletionDelay, constants.userDeletionInterval, self, DeleteOldJobs)(
+    context.system.scheduler.schedule(constants.jobDeletionDelay,
+                                      constants.userDeletionInterval,
+                                      self,
+                                      DeleteOldJobs)(
       context.system.dispatcher
     )
   }
@@ -75,18 +84,25 @@ final class DatabaseMonitor @Inject()(
       now.minusMonths(constants.userDeletingRegistered.toLong)
     // Date the registered user was logged in last plus the days they have to be messaged prior to actual deletion
     val registeredUserDeletionEMailDate =
-      now.minusMonths(constants.userDeletingRegistered.toLong).plusDays(constants.userDeletionWarning.toLong)
+      now
+        .minusMonths(constants.userDeletingRegistered.toLong)
+        .plusDays(constants.userDeletionWarning.toLong)
     // Date to delete the Registered account at
     val registeredUserDeletionDateForEmail =
-      now.plusDays(constants.userDeletionWarning.toLong).toLocalDate.atStartOfDay(now.getZone)
+      now
+        .plusDays(constants.userDeletionWarning.toLong)
+        .toLocalDate
+        .atStartOfDay(now.getZone)
 
     if (verbose)
-      log.info(s"""[User Deletion] Deletion Times:
+      log.info(
+        s"""[User Deletion] Deletion Times:
                                      regular Users:               $regularUserDeletionDate
                                      awaiting registration Users: $awaitingRegistrationUserDeletionDate
                                      registered Users:            $registeredUserDeletionDate
                                      registered Users eMail Date: $registeredUserDeletionEMailDate
-                                     date found in eMail:         $registeredUserDeletionDateForEmail""")
+                                     date found in eMail:         $registeredUserDeletionDateForEmail"""
+      )
 
     // Collect all the accounts which should be deleted
     userDao
@@ -98,13 +114,21 @@ final class DatabaseMonitor @Inject()(
               User.ACCOUNTTYPE ->
               User.NORMALUSER,
               User.DATELASTLOGIN ->
-              BSONDocument("$lt" -> BSONDateTime(regularUserDeletionDate.toInstant.toEpochMilli))
+              BSONDocument(
+                "$lt" -> BSONDateTime(
+                  regularUserDeletionDate.toInstant.toEpochMilli
+                )
+              )
             ),
             BSONDocument( // Removing regular users who await registration
               User.ACCOUNTTYPE ->
               User.NORMALUSERAWAITINGREGISTRATION,
               User.DATELASTLOGIN ->
-              BSONDocument("$lt" -> BSONDateTime(awaitingRegistrationUserDeletionDate.toInstant.toEpochMilli))
+              BSONDocument(
+                "$lt" -> BSONDateTime(
+                  awaitingRegistrationUserDeletionDate.toInstant.toEpochMilli
+                )
+              )
             ),
             BSONDocument( // Removing registered users with no privileges
               User.ACCOUNTTYPE ->
@@ -120,33 +144,46 @@ final class DatabaseMonitor @Inject()(
         val userIDs = users.map(_.userID)
         // Store the deleted users in the user statistics
         backendDao.getStats.foreach { statisticsObject =>
-          val currentDeleted: Int = statisticsObject.userStatistics.currentDeleted + users.count(_.userData.nonEmpty)
+          val currentDeleted
+            : Int = statisticsObject.userStatistics.currentDeleted + users
+            .count(_.userData.nonEmpty)
           val modifier: BSONDocument =
             BSONDocument(
               "$set" ->
-              BSONDocument(s"${StatisticsObject.USERSTATISTICS}.${UserStatistic.CURRENTDELETED}" -> currentDeleted)
+              BSONDocument(
+                s"${StatisticsObject.USERSTATISTICS}.${UserStatistic.CURRENTDELETED}" -> currentDeleted
+              )
             )
           backendDao.modifyStats(statisticsObject, modifier)
         }
 
         // Finally remove the users with their userID
-        userDao.removeUsers(BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs))).foreach { writeResult =>
-          if (verbose)
-            log.info(
-              s"[User Deletion] Deleting of ${users.length} old users ${if (writeResult.ok) "successful" else "failed"}"
-            )
-        }
+        userDao
+          .removeUsers(
+            BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs))
+          )
+          .foreach { writeResult =>
+            if (verbose)
+              log.info(
+                s"[User Deletion] Deleting of ${users.length} old users ${if (writeResult.ok) "successful"
+                else "failed"}"
+              )
+          }
       }
 
     if (verbose)
-      log.info("[User Deletion] Checking if there are any old accounts to send the owner an eMail")
+      log.info(
+        "[User Deletion] Checking if there are any old accounts to send the owner an eMail"
+      )
 
     // Find registered user accounts which are close to their deletion time
     userDao
       .findUsers(
         BSONDocument(
           User.DATELASTLOGIN -> BSONDocument(
-            "$lt" -> BSONDateTime(registeredUserDeletionEMailDate.toInstant.toEpochMilli)
+            "$lt" -> BSONDateTime(
+              registeredUserDeletionEMailDate.toInstant.toEpochMilli
+            )
           ),
           User.ACCOUNTTYPE -> User.REGISTEREDUSER
         )
@@ -158,7 +195,10 @@ final class DatabaseMonitor @Inject()(
           )
 
         val userIDs = users.map { user =>
-          val mail = OldAccountEmail(user, registeredUserDeletionDateForEmail, environment, env)
+          val mail = OldAccountEmail(user,
+                                     registeredUserDeletionDateForEmail,
+                                     environment,
+                                     env)
           mail.send
           if (verbose)
             log.info(
@@ -179,14 +219,18 @@ final class DatabaseMonitor @Inject()(
             BSONDocument(
               "$set" ->
               BSONDocument(
-                User.ACCOUNTTYPE   -> User.CLOSETODELETIONUSER,
-                User.DATEDELETEDON -> BSONDateTime(registeredUserDeletionDateForEmail.toInstant.toEpochMilli)
+                User.ACCOUNTTYPE -> User.CLOSETODELETIONUSER,
+                User.DATEDELETEDON -> BSONDateTime(
+                  registeredUserDeletionDateForEmail.toInstant.toEpochMilli
+                )
               )
             )
           )
           .foreach { writeResult =>
             if (verbose)
-              log.info(s"[User Deletion] Writing ${if (writeResult.ok) { "successful" } else { "failed" }}")
+              log.info(
+                s"[User Deletion] Writing ${if (writeResult.ok) { "successful" } else { "failed" }}"
+              )
           }
       }
   }
@@ -198,26 +242,35 @@ final class DatabaseMonitor @Inject()(
     // calculate the date at which the job should have been created at
     val dateCreated: ZonedDateTime = now.minusDays(constants.jobDeletion.toLong)
     // calculate the date at which it should have been viewed last
-    val lastViewedDate: ZonedDateTime = now.minusDays(constants.jobDeletionLastViewed.toLong)
+    val lastViewedDate: ZonedDateTime =
+      now.minusDays(constants.jobDeletionLastViewed.toLong)
     jobDao
       .findJobs(
         BSONDocument(
-          Job.DATEVIEWED -> BSONDocument("$lt" -> BSONDateTime(lastViewedDate.toInstant.toEpochMilli)),
+          Job.DATEVIEWED -> BSONDocument(
+            "$lt" -> BSONDateTime(lastViewedDate.toInstant.toEpochMilli)
+          ),
           BSONDocument(
             "$or" -> List(
               BSONDocument(
-                Job.DATEDELETION -> BSONDocument("$lt" -> BSONDateTime(now.toInstant.toEpochMilli))
+                Job.DATEDELETION -> BSONDocument(
+                  "$lt" -> BSONDateTime(now.toInstant.toEpochMilli)
+                )
               ),
               BSONDocument(
                 Job.DATEDELETION -> BSONDocument("$exists" -> false),
-                Job.DATECREATED  -> BSONDocument("$lt"     -> BSONDateTime(dateCreated.toInstant.toEpochMilli))
+                Job.DATECREATED -> BSONDocument(
+                  "$lt" -> BSONDateTime(dateCreated.toInstant.toEpochMilli)
+                )
               )
             )
           )
         )
       )
       .foreach { jobList =>
-        log.info(s"[Job Deletion] found ${jobList.length} jobs for deletion. Sending to job actors.")
+        log.info(
+          s"[Job Deletion] found ${jobList.length} jobs for deletion. Sending to job actors."
+        )
         jobList.foreach { job =>
           // Just send a deletion request to the job actor responsible for the job
           jobActorAccess.sendToJobActor(job.jobID, Delete(job.jobID))

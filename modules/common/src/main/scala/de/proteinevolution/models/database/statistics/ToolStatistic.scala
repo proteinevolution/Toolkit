@@ -42,7 +42,12 @@ case class ToolStatistic(
    * @param currentDeleted
    * @return
    */
-  def addMonth(current: Int, currentFailed: Int, currentDeleted: Int, currentInternal: Int): ToolStatistic = {
+  def addMonth(
+      current: Int,
+      currentFailed: Int,
+      currentDeleted: Int,
+      currentInternal: Int
+  ): ToolStatistic = {
     this.copy(
       monthly = monthly.::(current),
       monthlyFailed = monthlyFailed.::(currentFailed),
@@ -104,9 +109,12 @@ object ToolStatistic {
       ToolStatistic(
         toolName = bson.getAs[String](TOOLNAME).getOrElse("invalid"),
         monthly = bson.getAs[List[Int]](MONTHLY).getOrElse(List.empty),
-        monthlyFailed = bson.getAs[List[Int]](MONTHLYFAILED).getOrElse(List.empty),
-        monthlyDeleted = bson.getAs[List[Int]](MONTHLYDELETED).getOrElse(List.empty),
-        monthlyInternal = bson.getAs[List[Int]](MONTHLYINTERNAL).getOrElse(List.empty)
+        monthlyFailed =
+          bson.getAs[List[Int]](MONTHLYFAILED).getOrElse(List.empty),
+        monthlyDeleted =
+          bson.getAs[List[Int]](MONTHLYDELETED).getOrElse(List.empty),
+        monthlyInternal =
+          bson.getAs[List[Int]](MONTHLYINTERNAL).getOrElse(List.empty)
       )
     }
   }

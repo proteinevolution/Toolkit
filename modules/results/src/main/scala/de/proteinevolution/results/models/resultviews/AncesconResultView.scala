@@ -5,7 +5,8 @@ import de.proteinevolution.models.results.ResultViews
 
 import scala.collection.immutable.ListMap
 
-case class AncesconResultView(jobId: String, constants: ConstantsV2) extends ResultView {
+case class AncesconResultView(jobId: String, constants: ConstantsV2)
+    extends ResultView {
 
   override lazy val tabs = ListMap(
     ResultViews.TREE ->

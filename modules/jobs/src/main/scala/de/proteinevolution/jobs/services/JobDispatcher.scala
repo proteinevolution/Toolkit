@@ -36,7 +36,9 @@ class JobDispatcher @Inject()(
       form: MultipartFormData[Files.TemporaryFile],
       user: User
   ): EitherT[Future, JobSubmitError, Job] = {
-    var parts        = form.dataParts.mapValues(_.mkString(constants.formMultiValueSeparator)) - "file"
+    var parts = form.dataParts.mapValues(
+      _.mkString(constants.formMultiValueSeparator)
+    ) - "file"
     val allowedFiles = List("alignment", "alignment_two")
     for {
       file <- form.files.filter(file => allowedFiles.contains(file.key))
@@ -54,16 +56,25 @@ class JobDispatcher @Inject()(
       parts = parts.updated("regkey", constants.modellerKey)
     }
     for {
-      generatedId     <- generateJobId(parts)
-      _               <- validateJobId(generatedId)
-      _               <- EitherT(checkNotAlreadyTaken(generatedId))
-      job             <- EitherT.pure[Future, JobSubmitError](generateJob(toolName, generatedId, parts, user))
-      isFromInstitute <- EitherT.pure[Future, JobSubmitError](user.getUserData.eMail.matches(".+@tuebingen.mpg.de"))
-      _               <- EitherT.liftF(jobDao.insertJob(job))
-      _               <- EitherT.liftF(assignJob(user, job))
-      _               <- EitherT.pure[Future, JobSubmitError](jobIdProvider.trash(generatedId))
+      generatedId <- generateJobId(parts)
+      _           <- validateJobId(generatedId)
+      _           <- EitherT(checkNotAlreadyTaken(generatedId))
+      job <- EitherT.pure[Future, JobSubmitError](
+        generateJob(toolName, generatedId, parts, user)
+      )
+      isFromInstitute <- EitherT.pure[Future, JobSubmitError](
+        user.getUserData.eMail.matches(".+@tuebingen.mpg.de")
+      )
+      _ <- EitherT.liftF(jobDao.insertJob(job))
+      _ <- EitherT.liftF(assignJob(user, job))
       _ <- EitherT.pure[Future, JobSubmitError](
-        jobActorAccess.sendToJobActor(generatedId, PrepareJob(job, parts, startJob = false, isFromInstitute))
+        jobIdProvider.trash(generatedId)
+      )
+      _ <- EitherT.pure[Future, JobSubmitError](
+        jobActorAccess.sendToJobActor(
+          generatedId,
+          PrepareJob(job, parts, startJob = false, isFromInstitute)
+        )
       )
     } yield {
       job
@@ -84,7 +95,9 @@ class JobDispatcher @Inject()(
     }
   }
 
-  private def generateJobId(parts: Map[String, String]): EitherT[Future, JobSubmitError, String] = {
+  private def generateJobId(
+      parts: Map[String, String]
+  ): EitherT[Future, JobSubmitError, String] = {
     if (parts.get("jobID").isEmpty) {
       EitherT.liftF(jobIdProvider.provide)
     } else {
@@ -92,7 +105,9 @@ class JobDispatcher @Inject()(
     }
   }
 
-  private def validateJobId(jobId: String): EitherT[Future, JobSubmitError, Boolean] = {
+  private def validateJobId(
+      jobId: String
+  ): EitherT[Future, JobSubmitError, Boolean] = {
     if (!isJobId(jobId)) {
       logger.warn("job id is invalid")
       EitherT.leftT[Future, Boolean](JobSubmitError.InvalidJobID)
@@ -101,7 +116,9 @@ class JobDispatcher @Inject()(
     }
   }
 
-  private def checkNotAlreadyTaken(jobId: String): Future[Either[JobSubmitError, Boolean]] = {
+  private def checkNotAlreadyTaken(
+      jobId: String
+  ): Future[Either[JobSubmitError, Boolean]] = {
     jobDao.selectJob(jobId).map {
       case Some(_) => Left(JobSubmitError.AlreadyTaken)
       case None    => Right(true)
@@ -114,12 +131,15 @@ class JobDispatcher @Inject()(
       form: Map[String, String],
       user: User
   ): Job = {
-    val now          = ZonedDateTime.now
-    val dateDeletion = user.userData.map(_ => now.plusDays(constants.jobDeletion.toLong))
+    val now = ZonedDateTime.now
+    val dateDeletion =
+      user.userData.map(_ => now.plusDays(constants.jobDeletion.toLong))
     new Job(
       jobID = jobID,
       ownerID = Some(user.userID),
-      isPublic = form.get("public").isDefined || user.accountType == User.NORMALUSER,
+      isPublic = form
+        .get("public")
+        .isDefined || user.accountType == User.NORMALUSER,
       emailUpdate = toBoolean(form.get("emailUpdate")),
       tool = toolName,
       watchList = List(user.userID),
@@ -127,7 +147,12 @@ class JobDispatcher @Inject()(
       dateUpdated = Some(now),
       dateViewed = Some(now),
       dateDeletion = dateDeletion,
-      IPHash = Some(MessageDigest.getInstance("MD5").digest(user.sessionData.head.ip.getBytes).mkString)
+      IPHash = Some(
+        MessageDigest
+          .getInstance("MD5")
+          .digest(user.sessionData.head.ip.getBytes)
+          .mkString
+      )
     )
   }
 

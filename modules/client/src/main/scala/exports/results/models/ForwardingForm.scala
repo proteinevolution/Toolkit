@@ -6,9 +6,14 @@ sealed trait ForwardingForm
 
 object ForwardingForm {
 
-  implicit def rw: RW[ForwardingForm] = RW.merge(ForwardingFormNormal.rw, ForwardingFormAln.rw)
+  implicit def rw: RW[ForwardingForm] =
+    RW.merge(ForwardingFormNormal.rw, ForwardingFormAln.rw)
 
-  case class ForwardingFormNormal(fileName: String, evalue: String, checkboxes: Array[Int]) extends ForwardingForm
+  case class ForwardingFormNormal(
+      fileName: String,
+      evalue: String,
+      checkboxes: Array[Int]
+  ) extends ForwardingForm
 
   object ForwardingFormNormal {
 
@@ -16,7 +21,8 @@ object ForwardingForm {
 
   }
 
-  case class ForwardingFormAln(resultName: String, checkboxes: Array[Int]) extends ForwardingForm
+  case class ForwardingFormAln(resultName: String, checkboxes: Array[Int])
+      extends ForwardingForm
 
   object ForwardingFormAln {
 

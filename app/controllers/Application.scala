@@ -27,28 +27,31 @@ final class Application @Inject()(
 
   private val logger = Logger(this.getClass)
 
-  def index(message: String = ""): Action[AnyContent] = Action.async { implicit request =>
-    configEnv(request)
-    userSessions.getUser.map { user =>
-      logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
-      Ok(
-        views.html.main(assetsFinder,
-                        webJarsUtil,
-                        toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
-                        message,
-                        "",
-                        environment)
-      ).withSession(userSessions.sessionCookie(request, user.sessionID.get))
-    }
+  def index(message: String = ""): Action[AnyContent] = Action.async {
+    implicit request =>
+      configEnv(request)
+      userSessions.getUser.map { user =>
+        logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
+        Ok(
+          views.html.main(assetsFinder,
+                          webJarsUtil,
+                          toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
+                          message,
+                          "",
+                          environment)
+        ).withSession(userSessions.sessionCookie(request, user.sessionID.get))
+      }
   }
 
   // Routes are handled by Mithril, redirect.
-  def showTool(toolName: String): Action[AnyContent] = Action { implicit request =>
-    PermanentRedirect(s"/#/tools/$toolName")
+  def showTool(toolName: String): Action[AnyContent] = Action {
+    implicit request =>
+      PermanentRedirect(s"/#/tools/$toolName")
   }
 
-  def showJob(idString: String): Action[AnyContent] = Action { implicit request =>
-    PermanentRedirect(s"/#/jobs/$idString")
+  def showJob(idString: String): Action[AnyContent] = Action {
+    implicit request =>
+      PermanentRedirect(s"/#/jobs/$idString")
   }
 
   def static(static: String): Action[AnyContent] = Action { implicit request =>
@@ -69,7 +72,8 @@ final class Application @Inject()(
         env.configure("PORT", port)
         env.configure("HOSTNAME", hostname)
       case _ =>
-        val port = request.host.slice(request.host.indexOf(":") + 1, request.host.length)
+        val port =
+          request.host.slice(request.host.indexOf(":") + 1, request.host.length)
         //val hostname = request.host.slice(0, request.host.indexOf(":"))
         env.configure("PORT", port)
         env.configure("HOSTNAME", "olt")

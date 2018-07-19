@@ -1,9 +1,17 @@
 package de.proteinevolution.tel.execution
 
-import java.io.{ FileInputStream, FileOutputStream, ObjectInputStream, ObjectOutputStream }
+import java.io.{
+  FileInputStream,
+  FileOutputStream,
+  ObjectInputStream,
+  ObjectOutputStream
+}
 
 import better.files.File
-import de.proteinevolution.tel.execution.WrapperExecutionFactory.{ PendingExecution, RegisteredExecution }
+import de.proteinevolution.tel.execution.WrapperExecutionFactory.{
+  PendingExecution,
+  RegisteredExecution
+}
 
 import scala.collection.mutable
 
@@ -45,7 +53,9 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
   // TODO Why is this a member of Execution Context?
   def writeParams(params: Map[String, String]): Unit = {
 
-    val oos = new ObjectOutputStream(new FileOutputStream(serializedParameters.pathAsString))
+    val oos = new ObjectOutputStream(
+      new FileOutputStream(serializedParameters.pathAsString)
+    )
     oos.writeObject(params)
     oos.close()
   }
@@ -57,8 +67,10 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
    */
   // TODO Why is this a member of Execution context?
   def reloadParams: Map[String, String] = {
-    val ois = new ObjectInputStream(new FileInputStream(serializedParameters.pathAsString))
-    val x   = ois.readObject().asInstanceOf[Map[String, String]]
+    val ois = new ObjectInputStream(
+      new FileInputStream(serializedParameters.pathAsString)
+    )
+    val x = ois.readObject().asInstanceOf[Map[String, String]]
     ois.close()
     x
   }
@@ -72,7 +84,10 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
   def accept(execution: PendingExecution): Unit = {
 
     if (!this.blocked) {
-      executionQueue.enqueue(execution.register(root./(execNumbers.next().toString).createDirectories()))
+      executionQueue.enqueue(
+        execution
+          .register(root./(execNumbers.next().toString).createDirectories())
+      )
       this.blocked = true
     }
   }
@@ -86,11 +101,14 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
 
 object ExecutionContext {
 
-  case class FileAlreadyExists(msg: String) extends IllegalArgumentException(msg)
+  case class FileAlreadyExists(msg: String)
+      extends IllegalArgumentException(msg)
 
   def apply(root: File, reOpen: Boolean = false): ExecutionContext = {
     if (root.exists && !reOpen) {
-      throw FileAlreadyExists("ExecutionContext cannot be created because the root File already exists")
+      throw FileAlreadyExists(
+        "ExecutionContext cannot be created because the root File already exists"
+      )
     } else {
       new ExecutionContext(root, reOpen)
     }

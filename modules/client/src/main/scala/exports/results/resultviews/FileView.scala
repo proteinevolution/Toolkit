@@ -44,7 +44,8 @@ class FileView() {
     reqPromise.onSuccess {
       case data =>
         fullScreenHandler()
-        m.render(document.getElementById(s"fileview_$resultName"), m.trust(data).asInstanceOf[VirtualDom.Child])
+        m.render(document.getElementById(s"fileview_$resultName"),
+                 m.trust(data).asInstanceOf[VirtualDom.Child])
         jQuery.LoadingOverlay("hide")
     }
     reqPromise.onFailure[Throwable] {
@@ -58,7 +59,8 @@ class FileView() {
     }
   }
 
-  private lazy val deserializer: UndefOr[js.Function1[String, String]] = js.defined((response: String) => response)
+  private lazy val deserializer: UndefOr[js.Function1[String, String]] =
+    js.defined((response: String) => response)
 
   private def fullScreenHandler(): Unit = {
     if (jQuery("#tool-tabs").hasClass("fullscreen")) {
@@ -67,7 +69,11 @@ class FileView() {
     } else { jQuery(".fileview").css("height", "30pc") }
   }
 
-  private def downloadFile(jobID: String, fileName: String, resultName: String): Unit = {
+  private def downloadFile(
+      jobID: String,
+      fileName: String,
+      resultName: String
+  ): Unit = {
     val filename = s"${resultName}_$jobID"
     val ending = resultName match {
       case "hhpred" | "hhomp" => ".hhr"
@@ -82,7 +88,8 @@ class FileView() {
       )
     val reqPromise = m.request(opts)
     reqPromise.onSuccess {
-      case data => DownloadHelper.download(filename + ending, data.asInstanceOf[String])
+      case data =>
+        DownloadHelper.download(filename + ending, data.asInstanceOf[String])
     }
     reqPromise.onFailure[Throwable] {
       case e =>

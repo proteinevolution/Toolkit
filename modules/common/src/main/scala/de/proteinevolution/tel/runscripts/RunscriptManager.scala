@@ -16,7 +16,9 @@ import play.api.Logger
  *
  */
 @Singleton
-class RunscriptManager @Inject()(@Named("runscriptPath") runscriptPath: String) {
+class RunscriptManager @Inject()(
+    @Named("runscriptPath") runscriptPath: String
+) {
 
   private val logger = Logger(this.getClass)
 
@@ -53,14 +55,16 @@ class RunscriptManager @Inject()(@Named("runscriptPath") runscriptPath: String) 
       Seq.empty
     }
   }
-  def apply(runscriptName: String): Runscript = Runscript(prefix ++ Seq(runscripts(runscriptName)) ++ suffix)
+  def apply(runscriptName: String): Runscript =
+    Runscript(prefix ++ Seq(runscripts(runscriptName)) ++ suffix)
 }
 
 // An argument is either valid or invalid. If it is invalid, it can be represented, otherwise it has
 // a collection of violated Constraints
 sealed trait Argument
-case class InvalidArgument(violatedConstraints: Seq[RType => Boolean]) extends Argument
-case class ValidArgument(representation: Representation)               extends Argument
+case class InvalidArgument(violatedConstraints: Seq[RType => Boolean])
+    extends Argument
+case class ValidArgument(representation: Representation) extends Argument
 
 sealed trait RType {
   def inner(): String

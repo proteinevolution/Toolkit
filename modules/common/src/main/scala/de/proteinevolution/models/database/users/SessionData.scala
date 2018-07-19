@@ -18,6 +18,7 @@ object SessionData {
     )
   }
 
-  implicit val sessionDataHandler: BSONHandler[BSONDocument, SessionData] = Macros.handler[SessionData]
+  implicit val sessionDataHandler: BSONHandler[BSONDocument, SessionData] =
+    Macros.handler[SessionData]
 
 }

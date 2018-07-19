@@ -13,7 +13,10 @@ import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 class ScrollUtil(resultView: ResultView) {
 
   @JSExport
-  def followScroll($elem: JQuery = jQuery(dom.document), $container: JQuery = jQuery(dom.document)): Unit = {
+  def followScroll(
+      $elem: JQuery = jQuery(dom.document),
+      $container: JQuery = jQuery(dom.document)
+  ): Unit = {
     try {
       val $scrollLinks        = $elem.find("#scrollLinks a")
       val $visualization      = $elem.find("#visualization")
@@ -41,14 +44,18 @@ class ScrollUtil(resultView: ResultView) {
         () => {
           val top = $container.scrollTop()
           if (!js.isUndefined($visualization.position())) {
-            if (top >= $visualization.position().asInstanceOf[JQueryPosition].top + 75) {
-              $scrollContainer.addClass("fixed").removeClass("scrollContainerWhite")
+            if (top >= $visualization.position()
+                  .asInstanceOf[JQueryPosition]
+                  .top + 75) {
+              $scrollContainer.addClass("fixed")
+                .removeClass("scrollContainerWhite")
               $scrollContainerDiv.removeClass("scrollContainerDivWhite")
               $wrap.show()
               $colorAA.show()
               $downloadHHR.hide()
             } else {
-              $scrollContainer.removeClass("fixed").addClass("scrollContainerWhite")
+              $scrollContainer.removeClass("fixed")
+                .addClass("scrollContainerWhite")
               $scrollContainerDiv.addClass("scrollContainerDivWhite")
               $wrap.hide()
               $colorAA.hide()
@@ -59,12 +66,17 @@ class ScrollUtil(resultView: ResultView) {
           if (top >= $elem.height() - jQuery(dom.window).height()) {
             if (!resultView.loading) {
               val limit: Int =
-                if (dom.document.getElementById("toolnameAccess").asInstanceOf[HTMLInputElement].value == "psiblast")
+                if (dom.document
+                      .getElementById("toolnameAccess")
+                      .asInstanceOf[HTMLInputElement]
+                      .value == "psiblast")
                   100
                 else
                   50
               var end = resultView.shownHits + limit
-              end = if (end < resultView.resultContext.numHits) end else resultView.resultContext.numHits
+              end =
+                if (end < resultView.resultContext.numHits) end
+                else resultView.resultContext.numHits
               if (resultView.shownHits != end) {
                 resultView.showHits(resultView.shownHits, end)
               }

@@ -15,9 +15,17 @@ case class JobEventLog(
 
   def addJobStateEvent(jobState: JobState): JobEventLog = {
     val runtimeDiff: Long =
-      events.head.timestamp.map(d => ZonedDateTime.now.toInstant.toEpochMilli - d.toInstant.toEpochMilli).getOrElse(0L)
-    this.copy(events = events.::(JobEvent(jobState, Some(ZonedDateTime.now), runtimeDiff)),
-              runtime = runtime + runtimeDiff)
+      events.head.timestamp
+        .map(
+          d =>
+            ZonedDateTime.now.toInstant.toEpochMilli - d.toInstant.toEpochMilli
+        )
+        .getOrElse(0L)
+    this.copy(
+      events =
+        events.::(JobEvent(jobState, Some(ZonedDateTime.now), runtimeDiff)),
+      runtime = runtime + runtimeDiff
+    )
   }
 
   def isDeleted: Boolean = {
@@ -29,7 +37,10 @@ case class JobEventLog(
   }
 
   def dateCreated: ZonedDateTime = {
-    events.find(_.jobState == Submitted).flatMap(_.timestamp).getOrElse(ZonedDateTime.now)
+    events
+      .find(_.jobState == Submitted)
+      .flatMap(_.timestamp)
+      .getOrElse(ZonedDateTime.now)
   }
 
   override def toString: String = {
@@ -54,8 +65,11 @@ object JobEventLog {
     override def reads(json: JsValue): JsResult[JobEventLog] = json match {
       case obj: JsObject =>
         try {
-          val mainID      = BSONObjectID.parse((obj \ ID).as[String]).getOrElse(BSONObjectID.generate())
-          val events      = (obj \ EVENTS).asOpt[List[JobEvent]].getOrElse(List.empty)
+          val mainID = BSONObjectID
+            .parse((obj \ ID).as[String])
+            .getOrElse(BSONObjectID.generate())
+          val events =
+            (obj \ EVENTS).asOpt[List[JobEvent]].getOrElse(List.empty)
           val runtime     = (obj \ RUNTIME).as[Long]
           val toolName    = (obj \ TOOLNAME).as[String]
           val internalJob = (obj \ INTERNALJOB).as[Boolean]
@@ -80,7 +94,8 @@ object JobEventLog {
   implicit object Reader extends BSONDocumentReader[JobEventLog] {
     def read(bson: BSONDocument): JobEventLog = {
       JobEventLog(
-        mainID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
+        mainID =
+          bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         toolName = bson.getAs[String](TOOLNAME).getOrElse(""),
         internalJob = bson.getAs[Boolean](INTERNALJOB).getOrElse(false),
         events = bson.getAs[List[JobEvent]](EVENTS).getOrElse(List.empty),
@@ -104,11 +119,17 @@ object JobEventLog {
    * @param jobEventList
    * @return
    */
-  def toSortedMap(jobEventList: List[JobEventLog]): Map[String, List[JobEventLog]] = {
+  def toSortedMap(
+      jobEventList: List[JobEventLog]
+  ): Map[String, List[JobEventLog]] = {
     var jobEventMap = Map.empty[String, List[JobEventLog]]
     jobEventList.foreach { jobEvent =>
-      jobEventMap = jobEventMap.updated(jobEvent.toolName,
-                                        jobEventMap.getOrElse(jobEvent.toolName, List.empty[JobEventLog]).::(jobEvent))
+      jobEventMap = jobEventMap.updated(
+        jobEvent.toolName,
+        jobEventMap
+          .getOrElse(jobEvent.toolName, List.empty[JobEventLog])
+          .::(jobEvent)
+      )
     }
 
     jobEventMap

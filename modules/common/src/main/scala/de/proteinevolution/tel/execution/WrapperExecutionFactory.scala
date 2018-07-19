@@ -15,7 +15,10 @@ import de.proteinevolution.tel.execution.WrapperExecutionFactory.{
 import scala.sys.process.Process
 
 @Singleton
-class WrapperExecutionFactory @Inject()(@Named("wrapperPath") wrapperPath: String, env: Env) extends TELRegex {
+class WrapperExecutionFactory @Inject()(
+    @Named("wrapperPath") wrapperPath: String,
+    env: Env
+) extends TELRegex {
 
   private final val filePermissions = Set(
     PosixFilePermission.OWNER_EXECUTE,
@@ -41,7 +44,8 @@ class WrapperExecutionFactory @Inject()(@Named("wrapperPath") wrapperPath: Strin
 
         wrapper.write(
           envString.replaceAllIn(
-            runscriptString.replaceAllIn(wrapperPath.toFile.contentAsString, runscript.pathAsString),
+            runscriptString.replaceAllIn(wrapperPath.toFile.contentAsString,
+                                         runscript.pathAsString),
             m => env.get(m.group("constant"))
           )
         )
@@ -69,8 +73,9 @@ class WrapperExecutionFactory @Inject()(@Named("wrapperPath") wrapperPath: Strin
 object WrapperExecutionFactory {
 
   sealed trait Execution
-  case class PendingExecution(register: File => RegisteredExecution) extends Execution
-  case class RegisteredExecution(run: () => RunningExecution)        extends Execution
-  case class RunningExecution(terminate: () => Boolean)              extends Execution
+  case class PendingExecution(register: File => RegisteredExecution)
+      extends Execution
+  case class RegisteredExecution(run: () => RunningExecution) extends Execution
+  case class RunningExecution(terminate: () => Boolean)       extends Execution
 
 }

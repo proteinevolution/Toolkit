@@ -106,10 +106,14 @@ object User {
       UserData.EMAIL     -> user.getUserData.eMail,
       //USERCONFIG    -> user.userConfig,
       //USERTOKENS    -> user.userTokens,
-      JOBS          -> user.jobs,
-      DATELASTLOGIN -> user.dateLastLogin.map(_.format(ZonedDateTimeHelper.dateTimeFormatter)),
-      DATECREATED   -> user.dateCreated.map(_.format(ZonedDateTimeHelper.dateTimeFormatter)),
-      DATEUPDATED   -> user.dateUpdated.map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
+      JOBS -> user.jobs,
+      DATELASTLOGIN -> user.dateLastLogin
+        .map(_.format(ZonedDateTimeHelper.dateTimeFormatter)),
+      DATECREATED -> user.dateCreated
+        .map(_.format(ZonedDateTimeHelper.dateTimeFormatter)),
+      DATEUPDATED -> user.dateUpdated.map(
+        _.format(ZonedDateTimeHelper.dateTimeFormatter)
+      )
     )
   }
 
@@ -121,36 +125,52 @@ object User {
       User(
         userID = bson.getAs[BSONObjectID](IDDB).get,
         sessionID = bson.getAs[BSONObjectID](SESSIONID),
-        sessionData = bson.getAs[List[SessionData]](SESSIONDATA).getOrElse(List.empty),
+        sessionData =
+          bson.getAs[List[SessionData]](SESSIONDATA).getOrElse(List.empty),
         connected = bson.getAs[Boolean](CONNECTED).getOrElse(false),
         accountType = bson.getAs[BSONNumberLike](ACCOUNTTYPE).get.toInt,
         userData = bson.getAs[UserData](USERDATA),
         userConfig = bson.getAs[UserConfig](USERCONFIG).getOrElse(UserConfig()),
         userToken = bson.getAs[UserToken](USERTOKEN),
         jobs = bson.getAs[List[String]](JOBS).getOrElse(List.empty),
-        dateDeletedOn = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateLastLogin = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt))
+        dateDeletedOn = bson
+          .getAs[BSONDateTime](DATELASTLOGIN)
+          .map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateLastLogin = bson
+          .getAs[BSONDateTime](DATELASTLOGIN)
+          .map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateCreated = bson
+          .getAs[BSONDateTime](DATECREATED)
+          .map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateUpdated = bson
+          .getAs[BSONDateTime](DATEUPDATED)
+          .map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
   }
 
   implicit object Writer extends BSONDocumentWriter[User] {
     override def write(user: User): BSONDocument =
       BSONDocument(
-        IDDB          -> user.userID,
-        SESSIONID     -> user.sessionID,
-        SESSIONDATA   -> user.sessionData,
-        CONNECTED     -> user.connected,
-        ACCOUNTTYPE   -> user.accountType,
-        USERDATA      -> user.userData,
-        USERCONFIG    -> user.userConfig,
-        USERTOKEN     -> user.userToken,
-        JOBS          -> user.jobs,
-        DATEDELETEDON -> user.dateDeletedOn.map(dt => BSONDateTime(dt.toInstant.toEpochMilli)),
-        DATELASTLOGIN -> BSONDateTime(user.dateLastLogin.fold(-1L)(_.toInstant.toEpochMilli)),
-        DATECREATED   -> BSONDateTime(user.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
-        DATEUPDATED   -> BSONDateTime(user.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli))
+        IDDB        -> user.userID,
+        SESSIONID   -> user.sessionID,
+        SESSIONDATA -> user.sessionData,
+        CONNECTED   -> user.connected,
+        ACCOUNTTYPE -> user.accountType,
+        USERDATA    -> user.userData,
+        USERCONFIG  -> user.userConfig,
+        USERTOKEN   -> user.userToken,
+        JOBS        -> user.jobs,
+        DATEDELETEDON -> user.dateDeletedOn
+          .map(dt => BSONDateTime(dt.toInstant.toEpochMilli)),
+        DATELASTLOGIN -> BSONDateTime(
+          user.dateLastLogin.fold(-1L)(_.toInstant.toEpochMilli)
+        ),
+        DATECREATED -> BSONDateTime(
+          user.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)
+        ),
+        DATEUPDATED -> BSONDateTime(
+          user.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli)
+        )
       )
   }
 

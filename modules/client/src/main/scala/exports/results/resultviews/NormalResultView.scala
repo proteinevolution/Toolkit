@@ -37,7 +37,12 @@ class NormalResultView(
         () => {
           container
             .find("#lefthandle")
-            .html(dom.document.getElementById("hidden1").asInstanceOf[HTMLInputElement].value)
+            .html(
+              dom.document
+                .getElementById("hidden1")
+                .asInstanceOf[HTMLInputElement]
+                .value
+            )
             .css(
               js.Dictionary(
                 "color"        -> "white",
@@ -47,7 +52,12 @@ class NormalResultView(
             )
           container
             .find("#righthandle")
-            .html(dom.document.getElementById("hidden2").asInstanceOf[HTMLInputElement].value)
+            .html(
+              dom.document
+                .getElementById("hidden2")
+                .asInstanceOf[HTMLInputElement]
+                .value
+            )
             .css(
               js.Dictionary(
                 "color"        -> "white",
@@ -67,19 +77,23 @@ class NormalResultView(
         container.find(".colorAA").addClass("colorToggleBar")
       }
       bindEvents()
-      new DataTables(resultContext.toolName).config(jobID, resultContext.numHits, () => {
-        if (resultContext.toolName.equals("hhomp"))
-          js.undefined
-        else {
-          checkboxes.initForContainer(jQuery("#htb"))
-        }
-      })
+      new DataTables(resultContext.toolName)
+        .config(jobID, resultContext.numHits, () => {
+          if (resultContext.toolName.equals("hhomp"))
+            js.undefined
+          else {
+            checkboxes.initForContainer(jQuery("#htb"))
+          }
+        })
 
       // hide colorAAs button initially
       container.find(".colorAA").hide()
 
       if (resultContext.toolName.equals("psiblast")) {
-        container.find(".selectAllSeqBar").addClass("colorToggleBar").text("Deselect all")
+        container
+          .find(".selectAllSeqBar")
+          .addClass("colorToggleBar")
+          .text("Deselect all")
         checkboxes.selectAll(resultContext.belowEvalThreshold - 1)
       }
       showHits(0, hitsToLoad)
@@ -93,7 +107,8 @@ class NormalResultView(
     val blastVizArea = container.find("#blastviz").find("area")
     blastVizArea.tooltipster(
       js.Dictionary(
-        "theme"         -> js.Array("tooltipster-borderless", "tooltipster-borderless-customized"),
+        "theme" -> js.Array("tooltipster-borderless",
+                            "tooltipster-borderless-customized"),
         "position"      -> "bottom",
         "animation"     -> "fade",
         "contentAsHTML" -> true,
@@ -101,7 +116,9 @@ class NormalResultView(
         "maxWidth"      -> blastVizArea.innerWidth() * 0.6
       )
     )
-    hitsSlider.show(resultContext.query.seq.length, resultContext.firstQueryStart, resultContext.firstQueryEnd)
+    hitsSlider.show(resultContext.query.seq.length,
+                    resultContext.firstQueryStart,
+                    resultContext.firstQueryEnd)
   }
 
   def bindEvents(): Unit = {
@@ -116,7 +133,8 @@ class NormalResultView(
       .find("#resubmitSection")
       .off("click")
       .on("click", () => {
-        hitsSlider.resubmit(resultContext.query.seq, '>' + resultContext.query.accession)
+        hitsSlider.resubmit(resultContext.query.seq,
+                            '>' + resultContext.query.accession)
       })
     container
       .find(".colorAA")
@@ -139,7 +157,11 @@ class NormalResultView(
       })
   }
 
-  override def showHits(start: Int, end: Int, successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null): Unit = {
+  override def showHits(
+      start: Int,
+      end: Int,
+      successCallback: (js.Any, js.Any, JQueryXHR) => Unit = null
+  ): Unit = {
     internalShowHits(
       jobID,
       s"/results/loadHits/$jobID",
@@ -175,7 +197,13 @@ class NormalResultView(
         else
           el.asInstanceOf[HTMLInputElement].value.toInt
     }
-    dom.document.querySelectorAll(".aln").iterator.toList.filter(jQuery(_).isOnScreen).collect(splitFn).min
+    dom.document
+      .querySelectorAll(".aln")
+      .iterator
+      .toList
+      .filter(jQuery(_).isOnScreen)
+      .collect(splitFn)
+      .min
   }
 
 }

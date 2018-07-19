@@ -24,8 +24,11 @@ case class HHBlitsResultView(
       toolConfig.values(ToolName.HHBLITS.value),
       s"${constants.jobPath}/$jobId/results/$jobId.html_NOIMG"
     ),
-    "Raw Output"   -> views.html.resultpanels.fileviewWithDownload(jobId + ".hhr", jobId, "hhblits_hhr"),
-    "E-Value Plot" -> views.html.resultpanels.evalues(hhblits.parseResult(result).HSPS.map(_.info.evalue)),
+    "Raw Output" -> views.html.resultpanels.fileviewWithDownload(jobId + ".hhr",
+                                                                 jobId,
+                                                                 "hhblits_hhr"),
+    "E-Value Plot" -> views.html.resultpanels
+      .evalues(hhblits.parseResult(result).HSPS.map(_.info.evalue)),
     "Query Template MSA" -> views.html.resultpanels.alignmentQueryMSA(
       jobId,
       aln.parse((result \ "querytemplate").as[JsArray]),

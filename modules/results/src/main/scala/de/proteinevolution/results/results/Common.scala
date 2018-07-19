@@ -16,7 +16,8 @@ object Common {
 
   private val logger = Logger(this.getClass)
 
-  private val color_regex     = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
+  private val color_regex =
+    """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
   private val CC_pattern      = """(C+)""".r("C")
   private val TM_pattern      = """(M+)""".r("M")
   private val DO_pattern      = """(D+)""".r("D")
@@ -25,25 +26,28 @@ object Common {
   private val sheet_pattern   = """([Ee]+)""".r
   private val helix_sheets    = """([Hh]+|[Ee]+)""".r("ss")
 
-  private val uniprotReg    = """([A-Z0-9]{10}|[A-Z0-9]{6})""".r
-  private val scopReg       = """([defgh][0-9a-zA-Z\.\_]+)""".r
-  private val smartReg      = """(^SM0[0-9]{4})""".r
-  private val ncbiCDReg     = """(^[cs]d[0-9]{5})""".r
-  private val cogkogReg     = """(^[CK]OG[0-9]{4})""".r
-  private val tigrReg       = """(^TIGR[0-9]{5})""".r
-  private val prkReg        = """(CHL|MTH|PHA|PLN|PTZ|PRK)[0-9]{5}""".r
-  private val mmcifReg      = """(...._[0-9a-zA-Z][0-9a-zA-Z]?[0-9a-zA-Z]?[0-9a-zA-Z]?)""".r
+  private val uniprotReg = """([A-Z0-9]{10}|[A-Z0-9]{6})""".r
+  private val scopReg    = """([defgh][0-9a-zA-Z\.\_]+)""".r
+  private val smartReg   = """(^SM0[0-9]{4})""".r
+  private val ncbiCDReg  = """(^[cs]d[0-9]{5})""".r
+  private val cogkogReg  = """(^[CK]OG[0-9]{4})""".r
+  private val tigrReg    = """(^TIGR[0-9]{5})""".r
+  private val prkReg     = """(CHL|MTH|PHA|PLN|PTZ|PRK)[0-9]{5}""".r
+  private val mmcifReg =
+    """(...._[0-9a-zA-Z][0-9a-zA-Z]?[0-9a-zA-Z]?[0-9a-zA-Z]?)""".r
   private val mmcifShortReg = """([0-9]+)""".r
   private val pfamReg       = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
-  private val ncbiReg       = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
-  private val ecodReg       = """(ECOD_[0-9]+)_.*""".r
+  private val ncbiReg =
+    """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
+  private val ecodReg = """(ECOD_[0-9]+)_.*""".r
 
   private val envNrNameReg   = """(env.*|nr.*)""".r
   private val pdbNameReg     = """(pdb.*)""".r
   private val uniprotNameReg = """(uniprot.*)""".r
   private val pfamNameReg    = """(Pfam.*)""".r
 
-  private val pdbBaseLink = "http://www.rcsb.org/pdb/explore/explore.do?structureId="
+  private val pdbBaseLink =
+    "http://www.rcsb.org/pdb/explore/explore.do?structureId="
 
   private val pdbeBaseLink = "http://www.ebi.ac.uk/pdbe/entry/pdb/"
   private val ncbiBaseLink =
@@ -51,10 +55,12 @@ object Common {
   private val ncbiProteinBaseLink = "https://www.ncbi.nlm.nih.gov/protein/"
   private val scopBaseLink        = "http://scop.berkeley.edu/sid="
   private val pfamBaseLink        = "http://pfam.xfam.org/family/"
-  private val cddBaseLink         = "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid="
-  private val uniprotBaseLik      = "http://www.uniprot.org/uniprot/"
-  private val smartBaseLink       = "http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN="
-  private val ecodBaseLink        = "http://prodata.swmed.edu/ecod/complete/domain/"
+  private val cddBaseLink =
+    "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid="
+  private val uniprotBaseLik = "http://www.uniprot.org/uniprot/"
+  private val smartBaseLink =
+    "http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN="
+  private val ecodBaseLink = "http://prodata.swmed.edu/ecod/complete/domain/"
 
   private val emptyRow = "<tr class=\"blank_row\"><td colspan=\"3\"></td></tr>"
 
@@ -62,8 +68,10 @@ object Common {
     helix_sheets.replaceAllIn(
       sequence, { m =>
         m.group("ss") match {
-          case helix_pattern(substr) => "<span class=\"ss_e\">" + substr + "</span>"
-          case sheet_pattern(substr) => "<span class=\"ss_h\">" + substr + "</span>"
+          case helix_pattern(substr) =>
+            "<span class=\"ss_e\">" + substr + "</span>"
+          case sheet_pattern(substr) =>
+            "<span class=\"ss_h\">" + substr + "</span>"
         }
       }
     )
@@ -74,8 +82,10 @@ object Common {
         helix_sheets.replaceAllIn(
           sequence, { m =>
             m.group("ss") match {
-              case helix_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
-              case sheet_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
+              case helix_pattern(substr) =>
+                "<span class=\"ss_h_b\">" + substr + "</span>"
+              case sheet_pattern(substr) =>
+                "<span class=\"ss_e_b\">" + substr + "</span>"
             }
           }
         )
@@ -83,8 +93,10 @@ object Common {
         helix_sheets.replaceAllIn(
           sequence, { m =>
             m.group("ss") match {
-              case helix_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
-              case sheet_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
+              case helix_pattern(substr) =>
+                "<span class=\"ss_h_b\">" + substr + "</span>"
+              case sheet_pattern(substr) =>
+                "<span class=\"ss_e_b\">" + substr + "</span>"
             }
           }
         )
@@ -92,8 +104,10 @@ object Common {
         helix_sheets.replaceAllIn(
           sequence, { m =>
             m.group("ss") match {
-              case helix_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
-              case sheet_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
+              case helix_pattern(substr) =>
+                "<span class=\"ss_h_b\">" + substr + "</span>"
+              case sheet_pattern(substr) =>
+                "<span class=\"ss_e_b\">" + substr + "</span>"
             }
           }
         )
@@ -101,27 +115,52 @@ object Common {
         helix_sheets.replaceAllIn(
           sequence, { m =>
             m.group("ss") match {
-              case helix_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
-              case sheet_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
+              case helix_pattern(substr) =>
+                "<span class=\"ss_h_b\">" + substr + "</span>"
+              case sheet_pattern(substr) =>
+                "<span class=\"ss_e_b\">" + substr + "</span>"
             }
           }
         )
-      case "marcoil"     => CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
-      case "coils"       => CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
-      case "pcoils"      => CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
-      case "tmhmm"       => TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
-      case "phobius"     => TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
-      case "polyphobius" => TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
-      case "spotd"       => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
-      case "iupred"      => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
-      case "disopred3"   => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
-      case "pipred"      => PIHELIX_pattern.replaceAllIn(sequence, "<span class=\"ss_pihelix\">" + "$1" + "</span>")
+      case "marcoil" =>
+        CC_pattern.replaceAllIn(sequence,
+                                "<span class=\"CC_b\">" + "$1" + "</span>")
+      case "coils" =>
+        CC_pattern.replaceAllIn(sequence,
+                                "<span class=\"CC_b\">" + "$1" + "</span>")
+      case "pcoils" =>
+        CC_pattern.replaceAllIn(sequence,
+                                "<span class=\"CC_b\">" + "$1" + "</span>")
+      case "tmhmm" =>
+        TM_pattern.replaceAllIn(sequence,
+                                "<span class=\"CC_m\">" + "$1" + "</span>")
+      case "phobius" =>
+        TM_pattern.replaceAllIn(sequence,
+                                "<span class=\"CC_m\">" + "$1" + "</span>")
+      case "polyphobius" =>
+        TM_pattern.replaceAllIn(sequence,
+                                "<span class=\"CC_m\">" + "$1" + "</span>")
+      case "spotd" =>
+        DO_pattern.replaceAllIn(sequence,
+                                "<span class=\"CC_do\">" + "$1" + "</span>")
+      case "iupred" =>
+        DO_pattern.replaceAllIn(sequence,
+                                "<span class=\"CC_do\">" + "$1" + "</span>")
+      case "disopred3" =>
+        DO_pattern.replaceAllIn(sequence,
+                                "<span class=\"CC_do\">" + "$1" + "</span>")
+      case "pipred" =>
+        PIHELIX_pattern.replaceAllIn(
+          sequence,
+          "<span class=\"ss_pihelix\">" + "$1" + "</span>"
+        )
 
     }
 
   def colorRegexReplacer(sequence: String): String =
     color_regex.replaceAllIn(sequence, { m =>
-      "<span class=\"aa_" + m.toString().charAt(0) + "\">" + m.toString() + "</span>"
+      "<span class=\"aa_" + m.toString().charAt(0) + "\">" + m
+        .toString() + "</span>"
     })
 
   def Highlight(sequence: String): String = {
@@ -152,8 +191,9 @@ object Common {
       case "ncbi"    => generateLink(ncbiProteinBaseLink, id, id)
       case "uniprot" => generateLink(uniprotBaseLik, id, id)
       case "smart"   => generateLink(smartBaseLink, id, id)
-      case "ecod"    => val idEcod = id.slice(5, 14); generateLink(ecodBaseLink, idEcod, id)
-      case _         => id
+      case "ecod" =>
+        val idEcod = id.slice(5, 14); generateLink(ecodBaseLink, idEcod, id)
+      case _ => id
     }
     Html(link)
   }
@@ -169,7 +209,12 @@ object Common {
     }
     val idCDD = id.replaceAll("PF", "pfam").replaceAll("\\..*", "")
     val links = db match {
-      case "scop"  => generateLink(scopBaseLink, id, "SCOP") + " | " + generateLink(ncbiBaseLink, idTrimmed, "NCBI")
+      case "scop" =>
+        generateLink(scopBaseLink, id, "SCOP") + " | " + generateLink(
+          ncbiBaseLink,
+          idTrimmed,
+          "NCBI"
+        )
       case "mmcif" => generateLink(pdbeBaseLink, idPdb, "PDBe")
       case "pfam"  => generateLink(cddBaseLink, idCDD, "CDD")
       case "ncbi"  => generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
@@ -184,8 +229,9 @@ object Common {
       case envNrNameReg(_)   => generateLink(ncbiProteinBaseLink, id, id)
       case pdbNameReg(_)     => generateLink(pdbBaseLink, idPdb, id)
       case uniprotNameReg(_) => generateLink(uniprotBaseLik, id, id)
-      case pfamNameReg(_)    => generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
-      case _                 => id
+      case pfamNameReg(_) =>
+        generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
+      case _ => id
     }
     Html(link)
   }
@@ -195,7 +241,8 @@ object Common {
     val idPdb  = id.replaceAll("_.*$", "").toLowerCase
     val idCDD  = id.replaceAll("PF", "pfam").replaceAll("\\..*", "")
     val links = db match {
-      case envNrNameReg(_)   => generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
+      case envNrNameReg(_) =>
+        generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
       case pdbNameReg(_)     => generateLink(pdbeBaseLink, idPdb, "PDBe")
       case pfamNameReg(_)    => generateLink(cddBaseLink, idCDD, "CDD")
       case uniprotNameReg(_) => ""
@@ -274,11 +321,14 @@ object Common {
     case ecodReg(_)       => "ecod"
     case ncbiReg(_)       => "ncbi"
     case e: String =>
-      logger.info("Struc: (" + e + ") could not be matched against any database!")
+      logger.info(
+        "Struc: (" + e + ") could not be matched against any database!"
+      )
       ""
   }
 
-  def percentage(str: String): String = (str.toDouble * 100).toInt.toString + "%"
+  def percentage(str: String): String =
+    (str.toDouble * 100).toInt.toString + "%"
 
   def calculatePercentage(num1_ : Int, num2_ : Int): String =
     ((num1_.toDouble / num2_.toDouble) * 100).toInt.toString + "%"
@@ -287,8 +337,9 @@ object Common {
     (0 to seq.length)
       .filter(_ % num == 0)
       .map {
-        case x if x + num < seq.length => makeRow("sequence", Array("", seq.slice(x, x + num)))
-        case x                         => makeRow("sequence", Array("", seq.substring(x)))
+        case x if x + num < seq.length =>
+          makeRow("sequence", Array("", seq.slice(x, x + num)))
+        case x => makeRow("sequence", Array("", seq.substring(x)))
       }
       .mkString("")
   }
@@ -315,13 +366,20 @@ object Common {
 
   def insertMatch(seq: String, length: Int, hitArr: List[Int]): String = {
     val inserted = for (starPos <- hitArr) yield {
-      seq.slice(0, starPos) + "<span class=\"patternMatch\">" + seq.slice(starPos, starPos + length) + "</span>" + seq
-        .substring(starPos + length)
+      seq.slice(0, starPos) + "<span class=\"patternMatch\">" + seq.slice(
+        starPos,
+        starPos + length
+      ) + "</span>" + seq.substring(starPos + length)
     }
     inserted.mkString("")
   }
 
-  def clustal(alignment: AlignmentResult, begin: Int, breakAfter: Int, color: Boolean): String = {
+  def clustal(
+      alignment: AlignmentResult,
+      begin: Int,
+      breakAfter: Int,
+      color: Boolean
+  ): String = {
     if (begin >= alignment.alignment.head.seq.length) {
       ""
     } else {
@@ -334,34 +392,63 @@ object Common {
         "</td>" +
         "</td>" +
         "<td class=\"sequence\">" + {
-          if (color) colorRegexReplacer(elem.seq.slice(begin, Math.min(begin + breakAfter, elem.seq.length)))
-          else elem.seq.slice(begin, Math.min(begin + breakAfter, elem.seq.length))
+          if (color)
+            colorRegexReplacer(
+              elem.seq.slice(begin,
+                             Math.min(begin + breakAfter, elem.seq.length))
+            )
+          else
+            elem.seq.slice(begin, Math.min(begin + breakAfter, elem.seq.length))
         } +
         "</td>" +
         "</tr>"
       }
-      string.mkString + emptyRow + emptyRow + clustal(alignment, begin + breakAfter, breakAfter, color)
+      string.mkString + emptyRow + emptyRow + clustal(alignment,
+                                                      begin + breakAfter,
+                                                      breakAfter,
+                                                      color)
     }
   }
 
-  def hmmerHitWrapped(hit: HmmerHSP, charCount: Int, breakAfter: Int, beginQuery: Int, beginTemplate: Int): String = {
+  def hmmerHitWrapped(
+      hit: HmmerHSP,
+      charCount: Int,
+      breakAfter: Int,
+      beginQuery: Int,
+      beginTemplate: Int
+  ): String = {
     if (charCount >= hit.hit_len) {
       ""
     } else {
-      val query       = hit.query_seq.slice(charCount, Math.min(charCount + breakAfter, hit.query_seq.length))
-      val midline     = hit.midline.slice(charCount, Math.min(charCount + breakAfter, hit.midline.length))
-      val template    = hit.hit_seq.slice(charCount, Math.min(charCount + breakAfter, hit.hit_seq.length))
+      val query = hit.query_seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, hit.query_seq.length)
+      )
+      val midline = hit.midline
+        .slice(charCount, Math.min(charCount + breakAfter, hit.midline.length))
+      val template = hit.hit_seq
+        .slice(charCount, Math.min(charCount + breakAfter, hit.hit_seq.length))
       val queryEnd    = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
       if (beginQuery == beginQuery + queryEnd) {
         ""
       } else {
         {
-          makeRow("sequence", Array("", "Q " + (beginQuery + 1), query + "   " + (beginQuery + queryEnd))) +
+          makeRow("sequence",
+                  Array("",
+                        "Q " + (beginQuery + 1),
+                        query + "   " + (beginQuery + queryEnd))) +
           makeRow("sequence", Array("", "", midline)) +
-          makeRow("sequence", Array("", "T " + (beginTemplate + 1), template + "   " + (beginTemplate + templateEnd))) +
+          makeRow("sequence",
+                  Array("",
+                        "T " + (beginTemplate + 1),
+                        template + "   " + (beginTemplate + templateEnd))) +
           emptyRow + emptyRow +
-          hmmerHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
+          hmmerHitWrapped(hit,
+                          charCount + breakAfter,
+                          breakAfter,
+                          beginQuery + queryEnd,
+                          beginTemplate + templateEnd)
         }
       }
     }
@@ -377,18 +464,29 @@ object Common {
     if (charCount >= hit.hit_len) {
       ""
     } else {
-      val query       = hit.query_seq.slice(charCount, Math.min(charCount + breakAfter, hit.query_seq.length))
-      val midline     = hit.midline.slice(charCount, Math.min(charCount + breakAfter, hit.midline.length))
-      val template    = hit.hit_seq.slice(charCount, Math.min(charCount + breakAfter, hit.hit_seq.length))
+      val query = hit.query_seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, hit.query_seq.length)
+      )
+      val midline = hit.midline
+        .slice(charCount, Math.min(charCount + breakAfter, hit.midline.length))
+      val template = hit.hit_seq
+        .slice(charCount, Math.min(charCount + breakAfter, hit.hit_seq.length))
       val queryEnd    = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
       if (beginQuery == beginQuery + queryEnd) {
         ""
       } else {
         {
-          makeRow("sequence", Array("", "Q " + beginQuery, query + "   " + (beginQuery + queryEnd - 1))) +
+          makeRow("sequence",
+                  Array("",
+                        "Q " + beginQuery,
+                        query + "   " + (beginQuery + queryEnd - 1))) +
           makeRow("sequence", Array("", "", midline)) +
-          makeRow("sequence", Array("", "T " + beginTemplate, template + "   " + (beginTemplate + templateEnd - 1))) +
+          makeRow("sequence",
+                  Array("",
+                        "T " + beginTemplate,
+                        template + "   " + (beginTemplate + templateEnd - 1))) +
           emptyRow + emptyRow +
           psiblastHitWrapped(hit,
                              charCount + breakAfter,
@@ -414,13 +512,26 @@ object Common {
     if (charCount >= hit.length) {
       ""
     } else {
-      val query = hit.query.seq.slice(charCount, Math.min(charCount + breakAfter, hit.query.seq.length))
+      val query = hit.query.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, hit.query.seq.length)
+      )
       val queryCons =
-        hit.query.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
-      val midline = hit.agree.slice(charCount, Math.min(charCount + breakAfter, hit.agree.length))
+        hit.query.consensus.slice(
+          charCount,
+          Math.min(charCount + breakAfter, hit.query.consensus.length)
+        )
+      val midline = hit.agree
+        .slice(charCount, Math.min(charCount + breakAfter, hit.agree.length))
       val templateCons =
-        hit.template.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
-      val template    = hit.template.seq.slice(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
+        hit.template.consensus.slice(
+          charCount,
+          Math.min(charCount + breakAfter, hit.template.consensus.length)
+        )
+      val template = hit.template.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, hit.template.seq.length)
+      )
       val queryEnd    = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
       if (beginQuery == beginQuery + queryEnd) {
@@ -429,17 +540,29 @@ object Common {
         {
           makeRow(
             "sequence",
-            Array("", "Q " + beginQuery, query + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")")
+            Array(
+              "",
+              "Q " + beginQuery,
+              query + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"
+            )
           ) +
           makeRow("sequence", Array("", "", queryCons)) +
           makeRow("sequence", Array("", "", midline)) +
           makeRow("sequence", Array("", "", templateCons)) +
-          makeRow("sequence",
-                  Array("",
-                        "T " + beginTemplate,
-                        template + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")")) +
+          makeRow(
+            "sequence",
+            Array(
+              "",
+              "T " + beginTemplate,
+              template + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"
+            )
+          ) +
           emptyRow + emptyRow +
-          hhblitsHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
+          hhblitsHitWrapped(hit,
+                            charCount + breakAfter,
+                            breakAfter,
+                            beginQuery + queryEnd,
+                            beginTemplate + templateEnd)
         }
       }
     }
@@ -456,20 +579,48 @@ object Common {
     if (charCount >= hit.length) {
       ""
     } else {
-      val querySSDSSP = hit.query.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_dssp.length))
-      val querySSPRED = hit.query.ss_pred.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_pred.length))
-      val query       = hit.query.seq.slice(charCount, Math.min(charCount + breakAfter, hit.query.seq.length))
+      val querySSDSSP = hit.query.ss_dssp.slice(
+        charCount,
+        Math.min(charCount + breakAfter, hit.query.ss_dssp.length)
+      )
+      val querySSPRED = hit.query.ss_pred.slice(
+        charCount,
+        Math.min(charCount + breakAfter, hit.query.ss_pred.length)
+      )
+      val query = hit.query.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, hit.query.seq.length)
+      )
       val queryCons =
-        hit.query.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
-      val midline = hit.agree.slice(charCount, Math.min(charCount + breakAfter, hit.agree.length))
+        hit.query.consensus.slice(
+          charCount,
+          Math.min(charCount + breakAfter, hit.query.consensus.length)
+        )
+      val midline = hit.agree
+        .slice(charCount, Math.min(charCount + breakAfter, hit.agree.length))
       val templateCons =
-        hit.template.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
-      val template = hit.template.seq.slice(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
+        hit.template.consensus.slice(
+          charCount,
+          Math.min(charCount + breakAfter, hit.template.consensus.length)
+        )
+      val template = hit.template.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, hit.template.seq.length)
+      )
       val templateSSDSSP =
-        hit.template.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_dssp.length))
+        hit.template.ss_dssp.slice(
+          charCount,
+          Math.min(charCount + breakAfter, hit.template.ss_dssp.length)
+        )
       val templateSSPRED =
-        hit.template.ss_pred.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_pred.length))
-      val confidence  = hit.confidence.slice(charCount, Math.min(charCount + breakAfter, hit.confidence.length))
+        hit.template.ss_pred.slice(
+          charCount,
+          Math.min(charCount + breakAfter, hit.template.ss_pred.length)
+        )
+      val confidence = hit.confidence.slice(
+        charCount,
+        Math.min(charCount + breakAfter, hit.confidence.length)
+      )
       val queryEnd    = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
 
@@ -478,10 +629,16 @@ object Common {
       } else {
         var html = ""
         if (!querySSPRED.isEmpty) {
-          html += makeRow("sequence", Array("", "Q ss_pred", "", Common.SSColorReplace(querySSPRED)))
+          html += makeRow(
+            "sequence",
+            Array("", "Q ss_pred", "", Common.SSColorReplace(querySSPRED))
+          )
         }
         if (!querySSDSSP.isEmpty) {
-          html += makeRow("sequence", Array("", "Q ss_dssp", "", Common.SSColorReplace(querySSDSSP)))
+          html += makeRow(
+            "sequence",
+            Array("", "Q ss_dssp", "", Common.SSColorReplace(querySSDSSP))
+          )
         }
         html += makeRow(
           "sequence",
@@ -491,30 +648,46 @@ object Common {
             beginQuery, { if (color) colorRegexReplacer(query) else query } + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"
           )
         )
-        html += makeRow("sequence",
-                        Array("",
-                              "Q Consensus ",
-                              beginQuery,
-                              queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"))
+        html += makeRow(
+          "sequence",
+          Array(
+            "",
+            "Q Consensus ",
+            beginQuery,
+            queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"
+          )
+        )
         html += makeRow("sequence", Array("", "", "", midline))
-        html += makeRow("sequence",
-                        Array("",
-                              "T Consensus ",
-                              beginTemplate,
-                              templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"))
+        html += makeRow(
+          "sequence",
+          Array(
+            "",
+            "T Consensus ",
+            beginTemplate,
+            templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"
+          )
+        )
         html += makeRow(
           "sequence",
           Array(
             "",
             "T " + hit.template.accession,
-            beginTemplate, { if (color) colorRegexReplacer(template) else template } + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"
+            beginTemplate, {
+              if (color) colorRegexReplacer(template) else template
+            } + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"
           )
         )
         if (!templateSSDSSP.isEmpty) {
-          html += makeRow("sequence", Array("", "T ss_dssp", "", Common.SSColorReplace(templateSSDSSP)))
+          html += makeRow(
+            "sequence",
+            Array("", "T ss_dssp", "", Common.SSColorReplace(templateSSDSSP))
+          )
         }
         if (!templateSSPRED.isEmpty) {
-          html += makeRow("sequence", Array("", "T ss_pred", "", Common.SSColorReplace(templateSSPRED)))
+          html += makeRow(
+            "sequence",
+            Array("", "T ss_pred", "", Common.SSColorReplace(templateSSPRED))
+          )
         }
         if (!confidence.isEmpty) {
           html += makeRow("sequence", Array("", "Confidence", "", confidence))
@@ -541,26 +714,63 @@ object Common {
     if (charCount >= hit.length) {
       ""
     } else {
-      val querySSCONF = hit.query.ss_conf.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_conf.length))
-      val querySSDSSP = hit.query.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_dssp.length))
-      val querySSPRED = hit.query.ss_pred.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_pred.length))
-      val query       = hit.query.seq.slice(charCount, Math.min(charCount + breakAfter, hit.query.seq.length))
+      val querySSCONF = hit.query.ss_conf.slice(
+        charCount,
+        Math.min(charCount + breakAfter, hit.query.ss_conf.length)
+      )
+      val querySSDSSP = hit.query.ss_dssp.slice(
+        charCount,
+        Math.min(charCount + breakAfter, hit.query.ss_dssp.length)
+      )
+      val querySSPRED = hit.query.ss_pred.slice(
+        charCount,
+        Math.min(charCount + breakAfter, hit.query.ss_pred.length)
+      )
+      val query = hit.query.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, hit.query.seq.length)
+      )
       val queryCons =
-        hit.query.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
-      val midline = hit.agree.slice(charCount, Math.min(charCount + breakAfter, hit.agree.length))
+        hit.query.consensus.slice(
+          charCount,
+          Math.min(charCount + breakAfter, hit.query.consensus.length)
+        )
+      val midline = hit.agree
+        .slice(charCount, Math.min(charCount + breakAfter, hit.agree.length))
       val templateCons =
-        hit.template.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
-      val template = hit.template.seq.slice(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
+        hit.template.consensus.slice(
+          charCount,
+          Math.min(charCount + breakAfter, hit.template.consensus.length)
+        )
+      val template = hit.template.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, hit.template.seq.length)
+      )
       val templateSSDSSP =
-        hit.template.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_dssp.length))
+        hit.template.ss_dssp.slice(
+          charCount,
+          Math.min(charCount + breakAfter, hit.template.ss_dssp.length)
+        )
       val templateSSPRED =
-        hit.template.ss_pred.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_pred.length))
+        hit.template.ss_pred.slice(
+          charCount,
+          Math.min(charCount + breakAfter, hit.template.ss_pred.length)
+        )
       val templateSSCONF =
-        hit.template.ss_conf.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_conf.length))
+        hit.template.ss_conf.slice(
+          charCount,
+          Math.min(charCount + breakAfter, hit.template.ss_conf.length)
+        )
       val templateBBPRED =
-        hit.template.bb_pred.slice(charCount, Math.min(charCount + breakAfter, hit.template.bb_pred.length))
+        hit.template.bb_pred.slice(
+          charCount,
+          Math.min(charCount + breakAfter, hit.template.bb_pred.length)
+        )
       val templateBBCONF =
-        hit.template.bb_conf.slice(charCount, Math.min(charCount + breakAfter, hit.template.bb_conf.length))
+        hit.template.bb_conf.slice(
+          charCount,
+          Math.min(charCount + breakAfter, hit.template.bb_conf.length)
+        )
 
       val queryEnd    = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
@@ -573,10 +783,16 @@ object Common {
           html += makeRow("sequence", Array("", "Q ss_conf", "", querySSCONF))
         }
         if (!querySSPRED.isEmpty) {
-          html += makeRow("sequence", Array("", "Q ss_pred", "", Common.SSColorReplace(querySSPRED)))
+          html += makeRow(
+            "sequence",
+            Array("", "Q ss_pred", "", Common.SSColorReplace(querySSPRED))
+          )
         }
         if (!querySSDSSP.isEmpty) {
-          html += makeRow("sequence", Array("", "Q ss_dssp", "", Common.SSColorReplace(querySSDSSP)))
+          html += makeRow(
+            "sequence",
+            Array("", "Q ss_dssp", "", Common.SSColorReplace(querySSDSSP))
+          )
         }
         html += makeRow(
           "sequence",
@@ -586,39 +802,58 @@ object Common {
             beginQuery, { if (color) colorRegexReplacer(query) else query } + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"
           )
         )
-        html += makeRow("sequence",
-                        Array("",
-                              "Q Consensus ",
-                              beginQuery,
-                              queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"))
+        html += makeRow(
+          "sequence",
+          Array(
+            "",
+            "Q Consensus ",
+            beginQuery,
+            queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"
+          )
+        )
         html += makeRow("sequence", Array("", "", "", midline))
-        html += makeRow("sequence",
-                        Array("",
-                              "T Consensus ",
-                              beginTemplate,
-                              templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"))
+        html += makeRow(
+          "sequence",
+          Array(
+            "",
+            "T Consensus ",
+            beginTemplate,
+            templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"
+          )
+        )
         html += makeRow(
           "sequence",
           Array(
             "",
             "T " + hit.template.accession,
-            beginTemplate, { if (color) colorRegexReplacer(template) else template } + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"
+            beginTemplate, {
+              if (color) colorRegexReplacer(template) else template
+            } + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"
           )
         )
         if (!templateSSDSSP.isEmpty) {
-          html += makeRow("sequence", Array("", "T ss_dssp", "", Common.SSColorReplace(templateSSDSSP)))
+          html += makeRow(
+            "sequence",
+            Array("", "T ss_dssp", "", Common.SSColorReplace(templateSSDSSP))
+          )
         }
         if (!templateSSPRED.isEmpty) {
-          html += makeRow("sequence", Array("", "T ss_pred", "", Common.SSColorReplace(templateSSPRED)))
+          html += makeRow(
+            "sequence",
+            Array("", "T ss_pred", "", Common.SSColorReplace(templateSSPRED))
+          )
         }
         if (!templateSSCONF.isEmpty) {
-          html += makeRow("sequence", Array("", "T ss_conf", "", templateSSCONF))
+          html += makeRow("sequence",
+                          Array("", "T ss_conf", "", templateSSCONF))
         }
         if (!templateBBPRED.isEmpty) {
-          html += makeRow("sequence", Array("", "T bb_pred", "", templateBBPRED))
+          html += makeRow("sequence",
+                          Array("", "T bb_pred", "", templateBBPRED))
         }
         if (!templateBBCONF.isEmpty) {
-          html += makeRow("sequence", Array("", "T bb_conf", "", templateBBCONF))
+          html += makeRow("sequence",
+                          Array("", "T bb_conf", "", templateBBCONF))
         }
 
         html += emptyRow + emptyRow
@@ -633,120 +868,210 @@ object Common {
     }
   }
 
-  def quick2dWrapped(result: Quick2DResult, charCount: Int, breakAfter: Int): String = {
+  def quick2dWrapped(
+      result: Quick2DResult,
+      charCount: Int,
+      breakAfter: Int
+  ): String = {
     val length = result.query.seq.length
     if (charCount >= length) {
       ""
     } else {
       var htmlString = ""
-      val query      = result.query.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val psipred    = result.psipred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val pipred     = result.pipred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val marcoil    = result.marcoil.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val coils      = result.coils.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val pcoils     = result.pcoils.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val tmhmm      = result.tmhmm.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val phobius    = result.phobius.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val query = result.query.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, result.query.seq.length)
+      )
+      val psipred = result.psipred.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, result.query.seq.length)
+      )
+      val pipred = result.pipred.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, result.query.seq.length)
+      )
+      val marcoil = result.marcoil.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, result.query.seq.length)
+      )
+      val coils = result.coils.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, result.query.seq.length)
+      )
+      val pcoils = result.pcoils.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, result.query.seq.length)
+      )
+      val tmhmm = result.tmhmm.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, result.query.seq.length)
+      )
+      val phobius = result.phobius.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, result.query.seq.length)
+      )
       val polyphobius =
-        result.polyphobius.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val spider2   = result.spider2.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val spotd     = result.spotd.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val iupred    = result.iupred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val disopred3 = result.disopred3.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val psspred   = result.psspred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val deepcnf   = result.deepcnf.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+        result.polyphobius.seq.slice(
+          charCount,
+          Math.min(charCount + breakAfter, result.query.seq.length)
+        )
+      val spider2 = result.spider2.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, result.query.seq.length)
+      )
+      val spotd = result.spotd.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, result.query.seq.length)
+      )
+      val iupred = result.iupred.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, result.query.seq.length)
+      )
+      val disopred3 = result.disopred3.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, result.query.seq.length)
+      )
+      val psspred = result.psspred.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, result.query.seq.length)
+      )
+      val deepcnf = result.deepcnf.seq.slice(
+        charCount,
+        Math.min(charCount + breakAfter, result.query.seq.length)
+      )
 
       htmlString += makeRow(
         "sequenceCompact",
         Array("AA_QUERY",
               charCount + 1,
-              Highlight(query) + "&nbsp;&nbsp;&nbsp;&nbsp;" + Math.min(length, charCount + breakAfter))
+              Highlight(query) + "&nbsp;&nbsp;&nbsp;&nbsp;" + Math
+                .min(length, charCount + breakAfter))
       )
       if (!psipred.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("SS_" + result.psipred.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.psipred.name, psipred.replaceAll("C|T|S|B|G", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array("SS_" + result.psipred.name.toUpperCase(),
+                "",
+                Q2DColorReplace(result.psipred.name,
+                                psipred.replaceAll("C|T|S|B|G", "&nbsp;")))
+        )
       }
       if (!spider2.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("SS_" + result.spider2.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.spider2.name, spider2.replace("C", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array("SS_" + result.spider2.name.toUpperCase(),
+                "",
+                Q2DColorReplace(result.spider2.name,
+                                spider2.replace("C", "&nbsp;")))
+        )
       }
       if (!psspred.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("SS_" + result.psspred.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.psspred.name, psspred.replace("C", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array("SS_" + result.psspred.name.toUpperCase(),
+                "",
+                Q2DColorReplace(result.psspred.name,
+                                psspred.replace("C", "&nbsp;")))
+        )
       }
       if (!deepcnf.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("SS_" + result.deepcnf.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.deepcnf.name, deepcnf.replace("C", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array("SS_" + result.deepcnf.name.toUpperCase(),
+                "",
+                Q2DColorReplace(result.deepcnf.name,
+                                deepcnf.replace("C", "&nbsp;")))
+        )
       }
       if (!pipred.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("SS_" + result.pipred.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.pipred.name, pipred.replace("x", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array("SS_" + result.pipred.name.toUpperCase(),
+                "",
+                Q2DColorReplace(result.pipred.name,
+                                pipred.replace("x", "&nbsp;")))
+        )
       }
       if (!marcoil.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("CC_" + result.marcoil.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.marcoil.name, marcoil.replace("x", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array("CC_" + result.marcoil.name.toUpperCase(),
+                "",
+                Q2DColorReplace(result.marcoil.name,
+                                marcoil.replace("x", "&nbsp;")))
+        )
       }
       if (!coils.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("CC_" + result.coils.name.toUpperCase() + "_W28",
-                                    "",
-                                    Q2DColorReplace(result.coils.name, coils.replace("x", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array("CC_" + result.coils.name.toUpperCase() + "_W28",
+                "",
+                Q2DColorReplace(result.coils.name,
+                                coils.replace("x", "&nbsp;")))
+        )
       }
       if (!pcoils.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("CC_" + result.pcoils.name.toUpperCase() + "_W28",
-                                    "",
-                                    Q2DColorReplace(result.pcoils.name, pcoils.replace("x", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array("CC_" + result.pcoils.name.toUpperCase() + "_W28",
+                "",
+                Q2DColorReplace(result.pcoils.name,
+                                pcoils.replace("x", "&nbsp;")))
+        )
       }
       if (!tmhmm.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("TM_" + result.tmhmm.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.tmhmm.name, tmhmm.replace("x", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array("TM_" + result.tmhmm.name.toUpperCase(),
+                "",
+                Q2DColorReplace(result.tmhmm.name,
+                                tmhmm.replace("x", "&nbsp;")))
+        )
       }
       if (!phobius.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("TM_" + result.phobius.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.phobius.name, phobius.replace("x", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array("TM_" + result.phobius.name.toUpperCase(),
+                "",
+                Q2DColorReplace(result.phobius.name,
+                                phobius.replace("x", "&nbsp;")))
+        )
       }
       if (!polyphobius.isEmpty) {
         htmlString += makeRow(
           "sequenceCompact",
           Array("TM_" + result.polyphobius.name.toUpperCase(),
                 "",
-                Q2DColorReplace(result.polyphobius.name, polyphobius.replace("x", "&nbsp;")))
+                Q2DColorReplace(result.polyphobius.name,
+                                polyphobius.replace("x", "&nbsp;")))
         )
       }
       if (!disopred3.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("DO_" + result.disopred3.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.disopred3.name, disopred3.replace("O", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array("DO_" + result.disopred3.name.toUpperCase(),
+                "",
+                Q2DColorReplace(result.disopred3.name,
+                                disopred3.replace("O", "&nbsp;")))
+        )
       }
       if (!spotd.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("DO_" + result.spotd.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.spotd.name, spotd.replace("O", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array("DO_" + result.spotd.name.toUpperCase(),
+                "",
+                Q2DColorReplace(result.spotd.name,
+                                spotd.replace("O", "&nbsp;")))
+        )
       }
       if (!iupred.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("DO_" + result.iupred.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.iupred.name, iupred.replace("O", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array("DO_" + result.iupred.name.toUpperCase(),
+                "",
+                Q2DColorReplace(result.iupred.name,
+                                iupred.replace("O", "&nbsp;")))
+        )
       }
 
       htmlString += emptyRow + emptyRow + emptyRow + emptyRow + emptyRow

@@ -7,7 +7,8 @@ import play.api.routing.SimpleRouter
 import play.api.routing.sird._
 
 @Singleton
-class MessageRouter @Inject()(messageController: MessageController) extends SimpleRouter {
+class MessageRouter @Inject()(messageController: MessageController)
+    extends SimpleRouter {
 
   override lazy val routes: Routes = {
     case GET(p"/") => messageController.ws

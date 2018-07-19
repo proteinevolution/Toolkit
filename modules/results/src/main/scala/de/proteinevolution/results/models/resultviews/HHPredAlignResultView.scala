@@ -24,7 +24,8 @@ case class HHPredAlignResultView(
       toolConfig.values(ToolName.HHPRED_ALIGN.value),
       s"${constants.jobPath}/$jobId/results/$jobId.html_NOIMG"
     ),
-    "FullAlignment" -> views.html.resultpanels.msaviewer(s"${constants.jobPath}/$jobId/results/alignment.fas")
+    "FullAlignment" -> views.html.resultpanels
+      .msaviewer(s"${constants.jobPath}/$jobId/results/alignment.fas")
   )
 
 }

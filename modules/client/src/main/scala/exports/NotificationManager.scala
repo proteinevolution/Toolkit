@@ -26,16 +26,23 @@ object NotificationManager {
   }
 
   @JSExport
-  def showNotification(tag: String, title: String, body: String, onclick: js.Function0[Any] = () => {
-    dom.window.parent.focus()
-    dom.window.focus()
-    TitleManager.clearAlert()
-  }): Unit = {
+  def showNotification(
+      tag: String,
+      title: String,
+      body: String,
+      onclick: js.Function0[Any] = () => {
+        dom.window.parent.focus()
+        dom.window.focus()
+        TitleManager.clearAlert()
+      }
+  ): Unit = {
     if (!js.isUndefined(Notification)) {
       if (Notification.permission == "granted") {
         val options = Map(
           "body" -> body,
-          "icon" -> dom.document.getElementById("favicon_link").getAttribute("href")
+          "icon" -> dom.document
+            .getElementById("favicon_link")
+            .getAttribute("href")
         ).asInstanceOf[NotificationOptions]
         val n = new Notification(title, options)
         n.onclick = onclick
@@ -45,9 +52,11 @@ object NotificationManager {
       } else if (Notification.permission != "denied") {
         Notification.requestPermission((permission: String) => {
           if (permission == "granted") {
-            showNotification("perm_granted",
-                             "Thank you!",
-                             "You will now receive updates on your jobs over notifications.")
+            showNotification(
+              "perm_granted",
+              "Thank you!",
+              "You will now receive updates on your jobs over notifications."
+            )
           }
         })
       }

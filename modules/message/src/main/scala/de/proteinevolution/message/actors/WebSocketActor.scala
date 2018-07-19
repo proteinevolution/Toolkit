@@ -7,10 +7,17 @@ import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
 import de.proteinevolution.auth.UserSessions
-import de.proteinevolution.cluster.actors.ClusterMonitor.{ Connect, Disconnect, UpdateLoad }
+import de.proteinevolution.cluster.actors.ClusterMonitor.{
+  Connect,
+  Disconnect,
+  UpdateLoad
+}
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.services.JobActorAccess
-import de.proteinevolution.message.actors.WebSocketActor.{ LogOut, MaintenanceAlert }
+import de.proteinevolution.message.actors.WebSocketActor.{
+  LogOut,
+  MaintenanceAlert
+}
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.jobs.JobState.Running
@@ -85,7 +92,8 @@ final class WebSocketActor @Inject()(
 
                 case Some(jobIDs) =>
                   jobIDs.foreach { jobID =>
-                    jobActorAccess.sendToJobActor(jobID, AddToWatchlist(jobID, user.userID))
+                    jobActorAccess
+                      .sendToJobActor(jobID, AddToWatchlist(jobID, user.userID))
                   }
                 case None => // Client has sent strange message over the Websocket
               }
@@ -95,7 +103,9 @@ final class WebSocketActor @Inject()(
               (js \ "jobIDs").validate[Seq[String]].asOpt match {
                 case Some(jobIDs) =>
                   jobIDs.foreach { jobID =>
-                    jobActorAccess.sendToJobActor(jobID, RemoveFromWatchlist(jobID, user.userID))
+                    jobActorAccess
+                      .sendToJobActor(jobID,
+                                      RemoveFromWatchlist(jobID, user.userID))
                   }
                 case None => //
               }
@@ -123,7 +133,9 @@ final class WebSocketActor @Inject()(
               (js \ "date").validate[Long].asOpt match {
                 case Some(msTime) =>
                   val ping = ZonedDateTime.now.toInstant.toEpochMilli - msTime
-                  log.info(s"[WSActor] Ping of session ${sid.stringify} is ${ping}ms.")
+                  log.info(
+                    s"[WSActor] Ping of session ${sid.stringify} is ${ping}ms."
+                  )
                 case None =>
               }
           }
@@ -134,7 +146,10 @@ final class WebSocketActor @Inject()(
     case PushJob(job: Job) =>
       out ! Json.obj("type" -> "PushJob", "job" -> job.cleaned(toolConfig))
 
-    case ShowNotification(notificationType: String, tag: String, title: String, body: String) =>
+    case ShowNotification(notificationType: String,
+                          tag: String,
+                          title: String,
+                          body: String) =>
       out ! Json.obj("type"             -> "ShowNotification",
                      "tag"              -> tag,
                      "title"            -> title,
@@ -146,13 +161,16 @@ final class WebSocketActor @Inject()(
 
     case WatchLogFile(job: Job) =>
       // Do filewatching here
-      val file = s"${constants.jobPath}${job.jobID}${constants.SEPARATOR}results${constants.SEPARATOR}process.log"
+      val file =
+        s"${constants.jobPath}${job.jobID}${constants.SEPARATOR}results${constants.SEPARATOR}process.log"
       if (job.status.equals(Running)) {
         if (Files.exists(Paths.get(file))) {
           val source = scala.io.Source.fromFile(file)
           val lines  = source.mkString
           // val lines = File(file).lineIterator.mkString // use buffered source since it behaves differently
-          out ! Json.obj("type" -> "WatchLogFile", "jobID" -> job.jobID, "lines" -> lines)
+          out ! Json.obj("type"  -> "WatchLogFile",
+                         "jobID" -> job.jobID,
+                         "lines" -> lines)
           source.close()
         }
       }
@@ -161,7 +179,9 @@ final class WebSocketActor @Inject()(
       out ! Json.obj("type" -> "UpdateLoad", "load" -> load)
 
     case ClearJob(jobID: String, deleted: Boolean) =>
-      out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID, "deleted" -> deleted)
+      out ! Json.obj("type"    -> "ClearJob",
+                     "jobID"   -> jobID,
+                     "deleted" -> deleted)
 
     case ChangeSessionID(newSid: BSONObjectID) =>
       context.become(active(newSid))
@@ -184,7 +204,10 @@ object WebSocketActor {
   case object MaintenanceAlert
 
   trait Factory {
-    def apply(@Assisted("sessionID") sessionID: BSONObjectID, @Assisted("out") out: ActorRef): Actor
+    def apply(
+        @Assisted("sessionID") sessionID: BSONObjectID,
+        @Assisted("out") out: ActorRef
+    ): Actor
   }
 
 }

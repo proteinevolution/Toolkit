@@ -6,6 +6,8 @@ import scala.collection.immutable.ListMap
 
 case class ClansResultView(jobId: String) extends ResultView {
 
-  override lazy val tabs = ListMap(ResultViews.RESULTS -> views.html.resultpanels.clans(jobId))
+  override lazy val tabs = ListMap(
+    ResultViews.RESULTS -> views.html.resultpanels.clans(jobId)
+  )
 
 }

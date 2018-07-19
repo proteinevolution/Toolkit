@@ -31,16 +31,30 @@ class SearchService @Inject()(
     )
   }
 
-  def autoComplete(user: User, queryString_ : String): OptionT[Future, List[Job]] = {
+  def autoComplete(
+      user: User,
+      queryString_ : String
+  ): OptionT[Future, List[Job]] = {
     val queryString = queryString_.trim()
     val tools: List[de.proteinevolution.models.Tool] = toolConfig.values.values
-      .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
+      .filter(
+        t =>
+          queryString.toLowerCase.r
+            .findFirstIn(t.toolNameLong.toLowerCase())
+            .isDefined
+      )
       .filterNot(_.toolNameShort == "hhpred_manual")
       .toList
     if (tools.isEmpty) {
       (for {
-        jobs     <- OptionT.liftF(jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))))
-        filtered <- OptionT.pure[Future](jobs.filter(job => job.ownerID.contains(user.userID)))
+        jobs <- OptionT.liftF(
+          jobDao.findJobs(
+            BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))
+          )
+        )
+        filtered <- OptionT.pure[Future](
+          jobs.filter(job => job.ownerID.contains(user.userID))
+        )
       } yield {
         filtered
       }).flatMapF { jobs =>
@@ -50,13 +64,18 @@ class SearchService @Inject()(
             .map(_ :: Nil)
             .value
         } else {
-          Future.successful(Some(jobs.filter(job => resultsExist(job.jobID, constants))))
+          Future.successful(
+            Some(jobs.filter(job => resultsExist(job.jobID, constants)))
+          )
         }
       }
     } else {
       OptionT.liftF(
         jobDao.findJobs(
-          BSONDocument(Job.OWNERID -> user.userID, Job.TOOL -> BSONDocument("$in" -> tools.map(_.toolNameShort)))
+          BSONDocument(
+            Job.OWNERID -> user.userID,
+            Job.TOOL    -> BSONDocument("$in" -> tools.map(_.toolNameShort))
+          )
         )
       )
     }

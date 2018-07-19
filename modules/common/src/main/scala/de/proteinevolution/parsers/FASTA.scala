@@ -7,7 +7,8 @@ case class FASTA(sequences: List[FASTA.Entry]) {
   /**
    * Is true when the sequence can be interpreted as a valid amino acid sequence
    */
-  lazy val hasValidAminoAcidSeqs: Boolean = sequences.forall(_.isValidAminoAcidSeq)
+  lazy val hasValidAminoAcidSeqs: Boolean =
+    sequences.forall(_.isValidAminoAcidSeq)
 
   /**
    * Is true when the sequence can be interpreted as a valid DNA sequence
@@ -23,7 +24,9 @@ case class FASTA(sequences: List[FASTA.Entry]) {
    * Calculates the hash code from the xor of all FASTA sequences
    */
   def generateHashCode(function: String => Int): Int = {
-    sequences.map(_.generateHashCode(function)).fold(0: Int)((hashCode, hashCodeSeq) => hashCode ^ hashCodeSeq)
+    sequences
+      .map(_.generateHashCode(function))
+      .fold(0: Int)((hashCode, hashCodeSeq) => hashCode ^ hashCodeSeq)
   }
 }
 
@@ -70,16 +73,20 @@ object FASTA {
 
   case class Entry(description: String, sequence: String) {
     lazy val isValidAminoAcidSeq: Boolean = {
-      sequence.trim.toUpperCase.toCharArray.forall(Entry.AMINOACID.validChars.contains)
+      sequence.trim.toUpperCase.toCharArray
+        .forall(Entry.AMINOACID.validChars.contains)
     }
     lazy val isValidDNASeq: Boolean = {
-      sequence.trim.toUpperCase.toCharArray.forall(Entry.DNA.validChars.contains)
+      sequence.trim.toUpperCase.toCharArray
+        .forall(Entry.DNA.validChars.contains)
     }
     lazy val isValidRNASeq: Boolean = {
-      sequence.trim.toUpperCase.toCharArray.forall(Entry.RNA.validChars.contains)
+      sequence.trim.toUpperCase.toCharArray
+        .forall(Entry.RNA.validChars.contains)
     }
 
-    def generateHashCode(function: String => Int): Int = function(sequence.trim.toUpperCase)
+    def generateHashCode(function: String => Int): Int =
+      function(sequence.trim.toUpperCase)
   }
 
   /**
@@ -106,10 +113,14 @@ object FASTA {
 
   private object Parser extends RegexParsers {
 
-    lazy val header: FASTA.Parser.Parser[String]  = """>.*""".r ^^ { _.tail.trim }
+    lazy val header: FASTA.Parser.Parser[String] = """>.*""".r ^^ {
+      _.tail.trim
+    }
     lazy val seqLine: FASTA.Parser.Parser[String] = """[^>].*""".r ^^ { _.trim }
 
-    lazy val sequence: FASTA.Parser.Parser[String] = rep1(seqLine) ^^ { _.mkString }
+    lazy val sequence: FASTA.Parser.Parser[String] = rep1(seqLine) ^^ {
+      _.mkString
+    }
 
     lazy val entry: FASTA.Parser.Parser[FASTA.Entry] = header ~ sequence ^^ {
       case h ~ s => Entry(h, s)

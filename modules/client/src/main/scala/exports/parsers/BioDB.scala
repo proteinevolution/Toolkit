@@ -12,7 +12,8 @@ object BioDB {
   private val mmcifReg      = new js.RegExp("^(...._[a-zA-Z])$")
   private val mmcifShortReg = new js.RegExp("^([0-9]+)$")
   private val pfamReg       = new js.RegExp("^(pfam[0-9]+&|^PF[0-9]+(.[0-9]+)?)$")
-  private val ncbiReg       = new js.RegExp("^([A-Z]{2}_?[0-9]+.?#?([0-9]+)?|[A-Z]{3}[0-9]{5}?.[0-9])$")
+  private val ncbiReg =
+    new js.RegExp("^([A-Z]{2}_?[0-9]+.?#?([0-9]+)?|[A-Z]{3}[0-9]{5}?.[0-9])$")
 
   @JSExport
   def identify(id: String): String = id match {

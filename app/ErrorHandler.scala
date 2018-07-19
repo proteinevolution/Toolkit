@@ -7,15 +7,23 @@ import scala.concurrent._
 import javax.inject.{ Inject, Singleton }
 
 @Singleton
-final class ErrorHandler @Inject()(assets: AssetsFinder) extends HttpErrorHandler {
+final class ErrorHandler @Inject()(assets: AssetsFinder)
+    extends HttpErrorHandler {
 
-  def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
+  def onClientError(
+      request: RequestHeader,
+      statusCode: Int,
+      message: String
+  ): Future[Result] = {
     Future.successful(
       Status(statusCode)(views.html.errors.pagenotfound(assets))
     )
   }
 
-  def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
+  def onServerError(
+      request: RequestHeader,
+      exception: Throwable
+  ): Future[Result] = {
     Future.successful(
       InternalServerError(exception.toString)
     )

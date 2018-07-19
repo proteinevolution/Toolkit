@@ -27,13 +27,17 @@ class JobHashService @Inject()(
       job <- OptionT(jobDao.findJob(BSONDocument(Job.JOBID -> jobID)))
       list <- OptionT.liftF(
         jobDao.findAndSortJobs(
-          BSONDocument(Job.HASH        -> hashService.generateJobHash(job, params(jobID), env)),
+          BSONDocument(
+            Job.HASH -> hashService.generateJobHash(job, params(jobID), env)
+          ),
           BSONDocument(Job.DATECREATED -> -1)
         )
       )
       filtered <- OptionT.fromOption[Future] {
         list
-          .find(j => (j.isPublic || j.ownerID == job.ownerID) && j.status == Done)
+          .find(
+            j => (j.isPublic || j.ownerID == job.ownerID) && j.status == Done
+          )
           .filter(job => jobFolderIsValid(job.jobID, constants))
       }
     } yield {
@@ -42,7 +46,8 @@ class JobHashService @Inject()(
   }
 
   private def params(jobID: String): Map[String, String] = {
-    (constants.jobPath / jobID / constants.serializedParam).readDeserialized[Map[String, String]]
+    (constants.jobPath / jobID / constants.serializedParam)
+      .readDeserialized[Map[String, String]]
   }
 
 }
