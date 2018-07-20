@@ -32,9 +32,9 @@ class JobHashService @Inject()(
         )
       )
       filtered <- OptionT.fromOption[Future] {
-        list
-          .find(j => (j.isPublic || j.ownerID == job.ownerID) && j.status == Done)
-          .filter(job => jobFolderIsValid(job.jobID, constants))
+        list.find(
+          j => (j.isPublic || j.ownerID == job.ownerID) && j.status == Done && resultsExist(j.jobID, constants)
+        )
       }
     } yield {
       filtered
