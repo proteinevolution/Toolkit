@@ -9,7 +9,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 import reactivemongo.bson.BSONDocument
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class ValidationController @Inject()(userSessions: UserSessions, constants: ConstantsV2, cc: ControllerComponents)(
@@ -21,7 +21,7 @@ class ValidationController @Inject()(userSessions: UserSessions, constants: Cons
       case Some(input) =>
         userSessions.getUser.flatMap { user =>
           if (user.userConfig.hasMODELLERKey) {
-            Future.successful(Ok(Json.obj("isValid" -> true)))
+            fuccess(Ok(Json.obj("isValid" -> true)))
           } else if (input == constants.modellerKey) {
             userSessions
               .modifyUserWithCache(
@@ -41,11 +41,11 @@ class ValidationController @Inject()(userSessions: UserSessions, constants: Cons
                   BadRequest
               }
           } else {
-            Future.successful(Ok(Json.obj("isValid" -> false)))
+            fuccess(Ok(Json.obj("isValid" -> false)))
           }
         }
       case None =>
-        Future.successful(BadRequest)
+        fuccess(BadRequest)
     }
   }
 

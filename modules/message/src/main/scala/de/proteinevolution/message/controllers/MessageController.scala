@@ -11,7 +11,7 @@ import play.api.libs.json.{ JsValue, Json }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.ExecutionContext
 
 class MessageController @Inject()(
     cc: ControllerComponents,
@@ -40,7 +40,7 @@ class MessageController @Inject()(
         }
     case rejected =>
       logger.warn(s"Request $rejected failed same origin check")
-      Future.successful {
+      fuccess {
         Left(Forbidden)
       }
   }
