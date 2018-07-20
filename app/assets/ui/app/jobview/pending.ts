@@ -1,21 +1,21 @@
 /// <reference path="helper.ts"/>
 const JobPendingComponent = {
-    controller : function(args : any){
+    controller : (args : any) => {
         return {
             checkHashRoute: "/api/jobs/check/hash/" + args.job().jobID,
-            copyConfig : function(elem: any, isInit : boolean) {
+            copyConfig : (elem: any, isInit : boolean) => {
                 if (!isInit) {
-                    m.request({method:"GET", url: "/api/jobs/check/hash/" + args.job().jobID, extract: nonJsonErrors}).then(function(data : any){
-                        if (data != null && data.jobID != null) {
+                    m.request({method:"GET", url: "/api/jobs/check/hash/" + args.job().jobID, extract: nonJsonErrors}).then((data : any) => {
+                        if (data.jobID) {
                             $("#copyID").val(data.jobID.toString());
                             $("#copyDate").val(data.dateCreated);
                         }
-                    }, function(error) {console.log(error)}).catch(() => {});
+                    }, error => {console.log(error)}).catch(() => {});
                 }
             },
         }
     },
-    view: function(ctrl : any, args : any) {
+    view: (ctrl : any, args : any) => {
         return m("div", { "class": "pending-panel", config: foundationConfig }, [
             m('input', {id: "copyID", "type" : "hidden"}),
             m('input', {id: "copyDate", "type" : "hidden"}),
@@ -25,36 +25,36 @@ const JobPendingComponent = {
             m('div', {"class": "openSimilarJob"}, [
                 m("button",{ "class"   : "button submitJob",
                     config : enabled,
-                    onclick : function(e : any){
+                    onclick : (e : any) => {
                         e.preventDefault();
                         m.request({method: "POST", url: "/api/jobs/start/" + args.job().jobID })
                     }
                 }, "Start job anyway"),
                 m("button",{ "class" : "hashPrompt button submitJob",
                     config: enabled,
-                    onclick : function(e : any){
+                    onclick : (e : any) => {
                         e.preventDefault();
-                        m.request({method:"GET", url:ctrl.checkHashRoute, extract: nonJsonErrors}).then(function(data : any){
-                            if (data != null && data.jobID != null) {
+                        m.request({method:"GET", url:ctrl.checkHashRoute, extract: nonJsonErrors}).then((data : any) => {
+                            if (data.jobID) {
                                 m.route("/jobs/"+data.jobID);
                                 JobListComponent.reloadJob(data.jobID);
                             }
                             console.log("requested:",data);
-                        }, function(error) {console.log(error)}).catch(function(e) {});
+                        }, error => {console.log(error)}).catch(e => {});
                     }
                 }, "Load existing job"),
                 m("button",{ "class" : "hashPrompt button submitJob",
                     config: enabled,
-                    onclick : function(e : any){
+                    onclick : (e : any) => {
                         e.preventDefault();
-                        m.request({method:"GET", url:ctrl.checkHashRoute, extract: nonJsonErrors}).then(function(data : any){
-                            if (data != null && data.jobID != null) {
+                        m.request({method:"GET", url:ctrl.checkHashRoute, extract: nonJsonErrors}).then((data : any) => {
+                            if (data.jobID) {
                                 JobListComponent.removeJob(args.job().jobID, true, true);
                                 m.route("/jobs/"+data.jobID);
                                 JobListComponent.reloadJob(data.jobID);
                             }
                             console.log("requested:",data);
-                        }, function(error) {console.log(error)}).catch(function(e) {});
+                        }, error => {console.log(error)}).catch(e => {});
                     }
                 }, "Load existing job and delete this one")
             ]),
