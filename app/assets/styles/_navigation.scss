@@ -6,10 +6,9 @@
   z-index: 999;
   top: 0;
   left: 0;
-  background-color: #ccc;
+  background-color: #ccce;
   overflow-y: hidden;
   transition: 0.5s;
-  opacity: 0.98;
 
   @include breakpoint(small down) {
     overflow-y: auto;
