@@ -3,6 +3,7 @@ package de.proteinevolution.auth
 import java.time.ZonedDateTime
 
 import de.proteinevolution.auth.dao.UserDao
+import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.database.users.{ SessionData, User }
 import javax.inject.{ Inject, Singleton }
@@ -15,12 +16,14 @@ import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 import scala.concurrent.duration._
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.hashing.MurmurHash3
+
 @Singleton
 class UserSessions @Inject()(
     userDao: UserDao,
     @NamedCache("userCache") userCache: SyncCacheApi,
     locationProvider: LocationProvider
-)(implicit ec: ExecutionContext) {
+)(implicit ec: ExecutionContext)
+    extends ToolkitTypes {
   private val SID    = "sid"
   private val logger = Logger(this.getClass)
 
@@ -120,7 +123,7 @@ class UserSessions @Inject()(
   def getUser(implicit request: RequestHeader): Future[User] = {
     // Ignore our monitoring service and don't update it in the DB
     if (request.remoteAddress.contentEquals("10.3.7.70")) { // TODO Put this in the config?
-      Future.successful(User())
+      fuccess(User())
     } else {
       val sessionID = request.session.get(SID) match {
         case Some(sid) =>
@@ -131,7 +134,7 @@ class UserSessions @Inject()(
       }
       // cache related stuff should remain in the project where the cache is bound
       userCache.get[User](sessionID.stringify) match {
-        case Some(user) => Future.successful(user)
+        case Some(user) => fuccess(user)
         case None =>
           putUser(request, sessionID)
       }
@@ -149,7 +152,7 @@ class UserSessions @Inject()(
     userCache.get[User](sessionID.stringify) match {
       case Some(user) =>
         // User successfully pulled from the cache
-        Future.successful(Some(user))
+        fuccess(Some(user))
       case None =>
         // Pull it from the DB, as it is not in the cache
         userDao.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
@@ -165,7 +168,7 @@ class UserSessions @Inject()(
                 Some(user)
             }
           case None =>
-            Future.successful(None)
+            fuccess(None)
         }
     }
   }

@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter
 import better.files._
 import cats.data.OptionT
 import cats.implicits._
+import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services.JobFolderValidation
 import de.proteinevolution.models.ConstantsV2
@@ -28,7 +29,8 @@ class ResultGetService @Inject()(
     constants: ConstantsV2,
     @NamedCache("resultCache") resultCache: AsyncCacheApi
 )(implicit ec: ExecutionContext)
-    extends JobFolderValidation {
+    extends JobFolderValidation
+    with ToolkitTypes {
 
   def get(jobId: String, tool: String, resultView: String): Future[HtmlFormat.Appendable] = {
     resultViewFactory.apply(tool, jobId).value.map {
@@ -72,7 +74,7 @@ class ResultGetService @Inject()(
         case Some(r) => r.tabs.keys.toSeq
         case None    => Nil // TODO throw some exception or something
       }
-    case _ => Future.successful(Nil)
+    case _ => fuccess(Nil)
   }
 
   private def cleanLostJobs(jobId: String): OptionT[Future, Unit] = {

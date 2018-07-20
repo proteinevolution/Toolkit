@@ -16,7 +16,7 @@ import play.api.libs.Files
 import play.api.libs.json.Json
 import play.api.mvc.{ Action, AnyContent, ControllerComponents, MultipartFormData }
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class SubmissionController @Inject()(
@@ -48,7 +48,7 @@ class SubmissionController @Inject()(
         NoContent
       }
     } else {
-      Future.successful(BadRequest)
+      fuccess(BadRequest)
     }
   }
 

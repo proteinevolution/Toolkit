@@ -12,6 +12,7 @@ import javax.inject.{ Inject, Singleton }
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.{ ExecutionContext, Future }
+import de.proteinevolution.base.helpers.ToolkitTypes._
 
 @Singleton
 class SearchService @Inject()(
@@ -50,7 +51,7 @@ class SearchService @Inject()(
             .map(_ :: Nil)
             .value
         } else {
-          Future.successful(Some(jobs.filter(job => resultsExist(job.jobID, constants))))
+          fuccess(Some(jobs.filter(job => resultsExist(job.jobID, constants))))
         }
       }
     } else {

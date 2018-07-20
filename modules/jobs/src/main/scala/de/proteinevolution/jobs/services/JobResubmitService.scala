@@ -1,5 +1,6 @@
 package de.proteinevolution.jobs.services
 
+import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.ResubmitData
 import de.proteinevolution.models.ConstantsV2
@@ -11,7 +12,8 @@ import reactivemongo.bson.BSONDocument
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class JobResubmitService @Inject()(constants: ConstantsV2, jobDao: JobDao)(implicit ec: ExecutionContext) {
+class JobResubmitService @Inject()(constants: ConstantsV2, jobDao: JobDao)(implicit ec: ExecutionContext)
+    extends ToolkitTypes {
 
   private val logger = Logger(this.getClass)
 
@@ -25,7 +27,7 @@ class JobResubmitService @Inject()(constants: ConstantsV2, jobDao: JobDao)(impli
         logger.info(
           s"invalid jobID: ${newJobId.trim}${resubmitForJobId.map(a => s" Resubmit jobID: $a").getOrElse("")}"
         )
-        Future.successful(ResubmitData(exists = true, None, None))
+        fuccess(ResubmitData(exists = true, None, None))
     }
   }
 

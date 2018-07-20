@@ -114,13 +114,13 @@ final class BackendController @Inject()(
               }
           } else {
             logger.info("No need to push statistics. Last Push: " + statistics.lastPushed)
-            Future.successful(
+            fuccess(
               NoCache(Ok(Json.toJson(Json.obj("success" -> "old statistics used", "stat" -> statistics))))
             )
           }
         }
       } else {
-        Future.successful(NotFound)
+        fuccess(NotFound)
       }
     }
   }
