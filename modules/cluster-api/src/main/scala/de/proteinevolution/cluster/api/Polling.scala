@@ -1,4 +1,4 @@
-package de.proteinevolution.models.cluster
+package de.proteinevolution.cluster.api
 
 object Polling {
 

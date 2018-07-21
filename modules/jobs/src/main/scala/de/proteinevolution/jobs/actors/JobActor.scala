@@ -24,10 +24,11 @@ import de.proteinevolution.tel.execution.{ ExecutionContext, WrapperExecutionFac
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
 import de.proteinevolution.auth.models.MailTemplate.JobFinishedMail
+import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services.GeneralHashService
-import de.proteinevolution.models.cluster.Polling.PolledJobs
-import de.proteinevolution.models.cluster.QStat
+import de.proteinevolution.cluster.api.Polling.PolledJobs
+import de.proteinevolution.cluster.api.{ QStat, Qdel }
 import play.api.Configuration
 import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
@@ -52,7 +53,8 @@ class JobActor @Inject()(
     config: Configuration
 )(implicit ec: scala.concurrent.ExecutionContext, mailerClient: MailerClient)
     extends Actor
-    with ActorLogging {
+    with ActorLogging
+    with ToolkitTypes {
 
   // Attributes asssocidated with a Job
   @volatile private var currentJobs: Map[String, Job]                           = Map.empty[String, Job]
@@ -72,7 +74,7 @@ class JobActor @Inject()(
     // Check if the job is still in the current jobs.
     this.currentJobs.get(jobID) match {
       case Some(job) => // Everything is fine. Return the job.
-        Future.successful(Some(job))
+        fuccess(Some(job))
       case None => // Job is not in the current jobs.. try to get it back.
         jobDao.findJob(BSONDocument(Job.JOBID -> jobID)).map {
           case Some(job) =>
@@ -174,7 +176,8 @@ class JobActor @Inject()(
     if (verbose) log.info(s"[JobActor.Delete] Informing Users of deletion of Job with JobID ${job.jobID}.")
     val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
     foundWatchers.flatten.foreach(_ ! ClearJob(job.jobID))
-
+    // execute Qdel in case the job is still queued or running
+    job.clusterData.foreach(clusterData => Qdel.run(clusterData.sgeID))
     jobDao.eventLogCollection
       .flatMap(
         _.findAndUpdate(
@@ -370,7 +373,7 @@ class JobActor @Inject()(
       this
         .getCurrentJob(jobID)
         .flatMap {
-          case Some(job) => Future.successful(Some(job))
+          case Some(job) => fuccess(Some(job))
           case None =>
             if (verbose)
               log.info(
