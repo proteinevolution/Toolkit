@@ -1,9 +1,10 @@
-package de.proteinevolution.models.cluster
+package de.proteinevolution.cluster.api
 
 import scala.xml.{ Elem, XML }
 import java.time.{ ZoneId, ZonedDateTime }
 import java.time.format.DateTimeFormatter
-import de.proteinevolution.models.cluster.QStat.QStatJob
+
+import de.proteinevolution.cluster.api.QStat.QStatJob
 
 import scala.xml._
 

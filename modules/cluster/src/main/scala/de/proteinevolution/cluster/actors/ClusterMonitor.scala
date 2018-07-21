@@ -5,8 +5,8 @@ import akka.event.LoggingReceive
 import de.proteinevolution.cluster.actors.ClusterMonitor._
 import de.proteinevolution.jobs.services.JobActorAccess
 import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.models.cluster.Polling.PolledJobs
-import de.proteinevolution.models.cluster.QStat
+import de.proteinevolution.cluster.api.Polling.PolledJobs
+import de.proteinevolution.cluster.api.QStat
 import de.proteinevolution.models.database.jobs.Job
 import javax.inject.{ Inject, Singleton }
 

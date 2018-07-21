@@ -7,8 +7,9 @@ jdk:
   - openjdk8
 services:
   - mongodb
+  - docker
 env:
-  matrix: SBT_BIN=sbt -Dsbt.override.build.repos=true -Dsbt.repository.config=/$HOME/.sbt/repositories -Dsbt.boot.directory=sbt-cache/boot -Dsbt.ivy.home=sbt-cache/ivy2
+  matrix: SBT_BIN=sbt -Dsbt.override.build.repos=true
 before_cache:
   - find $HOME/.ivy2/cache -name 'ivydata-*.properties' -delete
   - find $HOME/.sbt -name '*.lock' -delete
@@ -19,6 +20,7 @@ cache:
 before_install:
   - chmod +x bin/validate-code
   - git clone https://github.com/AlDanial/cloc.git $HOME/cloc
+  - docker pull gawbul/docker-sge
 install:
   - git submodule update --init --recursive
   - git clone https://github.com/felixgabler/maxmind-geoip2-scala.git $HOME/pizza
@@ -32,5 +34,5 @@ install:
   - npm install jsdom
 script:
  - bin/validate-code
- - sbt test:compile test stage
+ - $SBT_BIN test:compile test stage
  - $HOME/cloc/cloc $(git ls-files)

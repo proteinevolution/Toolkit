@@ -72,7 +72,7 @@ lazy val help = (project in file("modules/help"))
 
 lazy val jobs = (project in file("modules/jobs"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, auth, base)
+  .dependsOn(commonJVM, auth, base, clusterApi)
   .settings(
     name := "de.proteinevolution.jobs",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -107,9 +107,21 @@ lazy val base = (project in file("modules/base"))
 
 lazy val cluster = (project in file("modules/cluster"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, base, jobs)
+  .dependsOn(commonJVM, base, jobs, clusterApi)
   .settings(
     name := "de.proteinevolution.cluster",
+    libraryDependencies ++= Dependencies.commonDeps,
+    Settings.compileSettings,
+    TwirlKeys.templateImports := Seq.empty,
+    disableDocs
+  )
+  .disablePlugins(PlayLayoutPlugin)
+
+lazy val clusterApi = (project in file("modules/cluster-api"))
+  .enablePlugins(PlayScala, JavaAppPackaging)
+  .dependsOn(commonJVM, base)
+  .settings(
+    name := "de.proteinevolution.cluster.api",
     libraryDependencies ++= Dependencies.commonDeps,
     Settings.compileSettings,
     TwirlKeys.templateImports := Seq.empty,
@@ -181,7 +193,22 @@ lazy val verification = (project in file("modules/verification"))
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb)
   .dependsOn(client, commonJVM, results, jobs, auth, base, cluster, help, backend, search, ui, message, verification)
-  .aggregate(client, commonJVM, results, jobs, auth, base, cluster, help, backend, search, ui, message, verification)
+  .aggregate(
+    client,
+    commonJVM,
+    results,
+    jobs,
+    auth,
+    base,
+    cluster,
+    help,
+    backend,
+    search,
+    ui,
+    message,
+    verification,
+    clusterApi
+  )
   .settings(
     coreSettings,
     name := "mpi-toolkit",

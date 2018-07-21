@@ -135,9 +135,7 @@ window.JobListComponent = {
                 JobListComponent.list[idx] = null;
                 JobListComponent.list.splice(idx, 1);
                 if (messageServer) {
-
                     if (deleteJob) {
-                        //ws.send({ "type" : "DeleteJob", "jobID" : job.jobID }) TODO reimplement the deletion over WS
                         m.request({url: "/api/jobs/" + job.jobID, method: "DELETE"});
                     }
                     else {
