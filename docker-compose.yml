@@ -1,1 +1,35 @@
-version: '3'
+
+version: '3.7'
+# Here we configure the Containers to run.
+services:
+
+  toolkit:
+        build: ./project
+        container_name: "toolkit"
+        image: debian/latest # ???
+        environment:
+            - NODE_ENV=development
+        ports:
+            - 3000:3000
+            - 9000:9000
+        links:
+            - mongodb
+        depends_on:
+            - mongodb
+
+  # The container for the MongoDB Database
+  mongodb:
+        image: mongo:latest
+        container_name: "mongodb"
+        environment:
+          - MONGO_DATA_DIR=???
+          - MONGO_LOG_DIR=???
+          - MONGODB_USER=???
+          - MONGODB_PASS=???
+        volumes:
+          - ./data/db:/data/db
+        ports:
+            - 27017:27017
+        command: mongod --smallfiles
+        
+# maybe we could also use a docker network if necessary
