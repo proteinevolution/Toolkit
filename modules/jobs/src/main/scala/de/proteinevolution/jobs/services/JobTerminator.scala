@@ -2,6 +2,7 @@ package de.proteinevolution.jobs.services
 
 import java.time.{ Duration, ZonedDateTime }
 
+import de.proteinevolution.cluster.api.QStat
 import de.proteinevolution.models.database.jobs.{ Job, JobState }
 
 trait JobTerminator {
@@ -16,6 +17,10 @@ trait JobTerminator {
       duration > runtime && isRunning
     }
     jobIsDead.getOrElse(false)
+  }
+
+  def sgeFailed(sgeId: String, qStat: QStat): Boolean = {
+    qStat.qStatJobs.find(sgeJob => sgeJob.sgeID == sgeId).exists(qStat => qStat.hasFailed || qStat.badRunscript)
   }
 
 }

@@ -22,9 +22,10 @@ object QStat {
 
   // QStat Job objects contain the sge job ID, the state of the job and the time of the last event
   case class QStatJob(sgeID: String, state: String, date: ZonedDateTime) {
-    val isQueued: Boolean  = state.contains("qw")
-    val isStarted: Boolean = state.contains("r")
-    val hasFailed: Boolean = state.contains("E")
+    val isQueued: Boolean     = state.trim == "qw"
+    val isStarted: Boolean    = state.trim == "r"
+    val hasFailed: Boolean    = state.trim == "E"
+    val badRunscript: Boolean = state.trim == "Eqw"
   }
 
   // Parser for QStatJobs
@@ -55,8 +56,8 @@ case class QStat(private val xml: String) {
   }
 
   def totalJobs(status: String = ""): Int = status match {
-    case "running" => qStatJobs.count(_.state.contains("r"))
-    case "queued"  => qStatJobs.count(_.state.contains("q"))
+    case "running" => qStatJobs.count(_.state.trim == "r")
+    case "queued"  => qStatJobs.count(_.state.trim == "qw")
     case _         => qStatJobs.length
   }
 
