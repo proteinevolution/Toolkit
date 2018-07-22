@@ -74,7 +74,7 @@ class ConstantsV2 @Inject()(config: Configuration) {
 
   // Polling and cluster load checking settings
   /** Interval of the qstat requests */
-  val pollingInterval: FiniteDuration = 5 seconds
+  val pollingInterval: FiniteDuration = 1 second
 
   /** The marker for 100% load capacity */
   val loadPercentageMarker: Int = 32 // Jobs

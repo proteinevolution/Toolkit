@@ -26,7 +26,7 @@ import de.proteinevolution.tel.runscripts._
 import de.proteinevolution.auth.models.MailTemplate.JobFinishedMail
 import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.services.GeneralHashService
+import de.proteinevolution.jobs.services.{ GeneralHashService, JobTerminator }
 import de.proteinevolution.cluster.api.Polling.PolledJobs
 import de.proteinevolution.cluster.api.{ QStat, Qdel }
 import play.api.Configuration
@@ -54,7 +54,8 @@ class JobActor @Inject()(
 )(implicit ec: scala.concurrent.ExecutionContext, mailerClient: MailerClient)
     extends Actor
     with ActorLogging
-    with ToolkitTypes {
+    with ToolkitTypes
+    with JobTerminator {
 
   // Attributes asssocidated with a Job
   @volatile private var currentJobs: Map[String, Job]                           = Map.empty[String, Job]
@@ -600,17 +601,23 @@ class JobActor @Inject()(
     // Checks the current jobs against the currently running cluster jobs to see if there are any dead jobs
     case PolledJobs(qStat: QStat) =>
       val clusterJobIDs = qStat.qStatJobs.map(_.sgeID)
-      //if(this.currentJobs.nonEmpty)
-      //log.info(s"[JobActor[$jobActorNumber].PolledJobs] sge Jobs to check: ${clusterJobIDs.mkString(", ")}\nactor Jobs to check:${this.currentJobs.values.flatMap(_.clusterData.map(_.sgeID)).mkString(", ")}")
+      log.info(
+        s"[JobActor[$jobActorNumber].PolledJobs] sge Jobs to check: ${clusterJobIDs
+          .mkString(", ")}\nactor Jobs to check:${this.currentJobs.values.flatMap(_.clusterData.map(_.sgeID)).mkString(", ")}"
+      )
       this.currentJobs.values.foreach { job =>
         job.clusterData match {
           case Some(clusterData) =>
             val jobInCluster = clusterJobIDs.contains(clusterData.sgeID)
-            //log.info(s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} with sgeID ${clusterData.sgeID}: ${if(jobInCluster) "active" else "inactive"}")
-            if (!job.isFinished && !jobInCluster) {
+            log.info(
+              s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} with sgeID ${clusterData.sgeID}: ${if (jobInCluster) "active"
+              else "inactive"}"
+            )
+            if ((!job.isFinished && !jobInCluster) || isOverDue(job)) {
               self ! JobStateChanged(job.jobID, Error)
             }
           case None => NotUsed
+          // also delete
         }
       }
 
@@ -632,7 +639,6 @@ class JobActor @Inject()(
           case Running => foundWatchers.flatten.foreach(_ ! WatchLogFile(job._2))
           case _       => NotUsed
         }
-
       }
   }
 }
