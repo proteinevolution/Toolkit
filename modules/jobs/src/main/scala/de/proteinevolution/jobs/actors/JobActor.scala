@@ -565,7 +565,7 @@ class JobActor @Inject()(
               .modifyUserWithCache(BSONDocument(User.IDDB -> userID),
                                    BSONDocument("$pull"   -> BSONDocument(User.JOBS -> jobID)))
               .foreach { _ =>
-                this.currentJobs = this.currentJobs.updated(jobID, updatedJob)
+                currentJobs = currentJobs.updated(jobID, updatedJob)
                 val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
                 wsActors.foreach(_.foreach(_ ! ClearJob(jobID)))
               }
@@ -603,9 +603,9 @@ class JobActor @Inject()(
       val clusterJobIDs = qStat.qStatJobs.map(_.sgeID)
       log.info(
         s"[JobActor[$jobActorNumber].PolledJobs] sge Jobs to check: ${clusterJobIDs
-          .mkString(", ")}\nactor Jobs to check:${this.currentJobs.values.flatMap(_.clusterData.map(_.sgeID)).mkString(", ")}"
+          .mkString(", ")}\nactor Jobs to check:${currentJobs.values.flatMap(_.clusterData.map(_.sgeID)).mkString(", ")}"
       )
-      this.currentJobs.values.foreach { job =>
+      currentJobs.values.foreach { job =>
         job.clusterData match {
           case Some(clusterData) =>
             val jobInCluster = clusterJobIDs.contains(clusterData.sgeID)
@@ -613,7 +613,7 @@ class JobActor @Inject()(
               s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} with sgeID ${clusterData.sgeID}: ${if (jobInCluster) "active"
               else "inactive"}"
             )
-            if ((!job.isFinished && !jobInCluster) || isOverDue(job)) {
+            if ((!job.isFinished && !jobInCluster) || isOverDue(job) || sgeFailed(clusterData.sgeID, qStat)) {
               self ! JobStateChanged(job.jobID, Error)
             }
           case None => NotUsed
@@ -627,7 +627,7 @@ class JobActor @Inject()(
         .modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$set" -> BSONDocument(Job.SGEID -> sgeID)))
         .foreach {
           case Some(job) =>
-            this.currentJobs = this.currentJobs.updated(job.jobID, job)
+            currentJobs = currentJobs.updated(job.jobID, job)
           case None => NotUsed
         }
 
