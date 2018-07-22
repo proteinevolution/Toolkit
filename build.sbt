@@ -107,7 +107,7 @@ lazy val base = (project in file("modules/base"))
 
 lazy val cluster = (project in file("modules/cluster"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, base, jobs, clusterApi)
+  .dependsOn(commonJVM, base, clusterApi)
   .settings(
     name := "de.proteinevolution.cluster",
     libraryDependencies ++= Dependencies.commonDeps,

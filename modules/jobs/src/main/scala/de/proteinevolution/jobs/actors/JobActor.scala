@@ -33,7 +33,7 @@ import play.api.Configuration
 import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
-
+import scala.sys.process._
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -600,7 +600,6 @@ class JobActor @Inject()(
     // Checks the current jobs against the currently running cluster jobs to see if there are any dead jobs
     case PolledJobs(qStat: QStat) =>
       val clusterJobIDs = qStat.qStatJobs.map(_.sgeID)
-      //if(this.currentJobs.nonEmpty)
       //log.info(s"[JobActor[$jobActorNumber].PolledJobs] sge Jobs to check: ${clusterJobIDs.mkString(", ")}\nactor Jobs to check:${this.currentJobs.values.flatMap(_.clusterData.map(_.sgeID)).mkString(", ")}")
       this.currentJobs.values.foreach { job =>
         job.clusterData match {
@@ -625,6 +624,8 @@ class JobActor @Inject()(
         }
 
     case UpdateLog =>
+      val qStat = QStat("qstat -xml".!!)
+      self ! PolledJobs(qStat)
       currentJobs.foreach { job =>
         val foundWatchers =
           job._2.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
@@ -632,7 +633,6 @@ class JobActor @Inject()(
           case Running => foundWatchers.flatten.foreach(_ ! WatchLogFile(job._2))
           case _       => NotUsed
         }
-
       }
   }
 }
