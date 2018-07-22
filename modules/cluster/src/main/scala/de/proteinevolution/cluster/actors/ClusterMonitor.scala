@@ -21,6 +21,13 @@ final class ClusterMonitor @Inject()(
 ) extends Actor
     with ActorLogging {
 
+  private val Tick: Cancellable = {
+    // scheduler should use the system dispatcher
+    context.system.scheduler.schedule(Duration.Zero, constants.pollingInterval, self, FetchLatest)(
+      context.system.dispatcher
+    )
+  }
+
   private def active(
       watchers: HashSet[ActorRef],
       currentJobs: Map[String, Job],
@@ -41,13 +48,6 @@ final class ClusterMonitor @Inject()(
       self ! PolledJobs(qStat)
   }
 
-  private val Tick: Cancellable = {
-    // scheduler should use the system dispatcher
-    context.system.scheduler.schedule(Duration.Zero, constants.pollingInterval, self, FetchLatest)(
-      context.system.dispatcher
-    )
-  }
-
   override def preStart(): Unit = {
     //if (environment.mode == play.api.Mode.Dev && !TEL.isSubmitHost) context.stop(self)
   }
@@ -63,19 +63,11 @@ final class ClusterMonitor @Inject()(
 }
 
 object ClusterMonitor {
-
   case class Disconnect(actorRef: ActorRef)
-
   case class Connect(actorRef: ActorRef)
-
   case object FetchLatest
-
   case object Recording
-
   case object Multicast
-
   case class UpdateLoad(load: Double)
-
   case class ConnectedUsers(users: Int)
-
 }
