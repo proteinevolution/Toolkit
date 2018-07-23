@@ -21,6 +21,9 @@ services:
     environment:
       - MONGO_DATA_DIR=/data/db
       - MONGO_LOG_DIR=/data/log
+      # uncomment the following lines to setup auth for mongo
+      # - MONGO_INITDB_ROOT_USERNAME=root
+      # - MONGO_INITDB_ROOT_PASSWORD=rootPassXXX
     volumes:
       - mongodb:/data/db
     ports:
