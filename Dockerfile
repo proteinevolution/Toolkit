@@ -23,8 +23,8 @@ RUN \
   apt-get install sbt && \
   sbt sbtVersion
 
-# Define working directory
-WORKDIR /root
+VOLUME /app
+WORKDIR /app
 
 EXPOSE 1234
 CMD sbt "run 1234"

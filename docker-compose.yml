@@ -3,10 +3,12 @@ version: '3.5'
 services:
 
   toolkit:
-    build: ./project
+    build: .
     container_name: toolkit
     ports:
       - 1234:1234
+    volumes:
+      - .:/app
     links:
       - mongodb
     depends_on:
@@ -17,19 +19,15 @@ services:
     image: mongo:4.0.0
     container_name: tk-mongodb
     environment:
-      - MONGO_DATA_DIR=???
-      - MONGO_LOG_DIR=???
-      - MONGODB_USER=???
-      - MONGODB_PASS=???
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/data/log
     volumes:
       - mongodb:/data/db
-      - mongodb_config:/data/configdb
     ports:
       - 27017:27017
     command: mongod
 
 volumes:
   mongodb:
-  mongodb_config:
 
 # maybe we could also use a docker network if necessary
