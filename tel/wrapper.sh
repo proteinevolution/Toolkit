@@ -13,7 +13,8 @@ echo $key > ../key
 # Decide whether to submit jobs to the cluster system (SGE) or to run them locally on Olt (LOCAL).
 # When the cluster system is busy, the LOCAL mode could be used to have jobs run through immediately.
 # However, qstat-related functions (e.g. cluster load calculation) will not work in this mode.
-MODE="SGE"
+# Can be overriden by setting the SUBMIT_MODE environment variable (used by docker)
+MODE=${SUBMIT_MODE:-"SGE"}
 
 if [ "$HOSTNAME" = "olt" ] || [ "$HOSTNAME" = "rye" ]; then
 
@@ -69,8 +70,8 @@ chmod u+x delete.sh
 
 else
     touch "delete.sh"
-    
-    chmod +x "delete.sh" 
+
+    chmod +x "delete.sh"
     exec %r
 fi
 

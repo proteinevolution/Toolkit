@@ -4,6 +4,7 @@ FROM openjdk:8u171
 ENV SCALA_VERSION 2.12.6
 ENV SBT_VERSION 1.1.6
 # Override toolkit variables
+ENV SUBMIT_MODE "LOCAL"
 ENV MAXMIND_DB "/root/GeoLite2-City.mmdb"
 ENV MONGODB_URI "mongodb://localhost:27017/tkplay_dev"
 
