@@ -26,4 +26,8 @@ object JobSubmitError {
     override val msg = "job id is already taken"
   }
 
+  case object ModellerKeyInvalid extends JobSubmitError {
+    override val msg = "modeller key is missing or incorrect"
+  }
+
 }
