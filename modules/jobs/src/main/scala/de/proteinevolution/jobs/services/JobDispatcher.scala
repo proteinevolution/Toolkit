@@ -49,25 +49,29 @@ class JobDispatcher @Inject()(
     parts.get("alignment_two").foreach { alignment =>
       if (alignment.isEmpty) parts = parts - "alignment_two"
     }
-    // Check if the user has the Modeller Key when the requested tool is Modeller
-    if (toolName == ToolName.MODELLER.value && user.userConfig.hasMODELLERKey) {
-      parts = parts.updated("regkey", constants.modellerKey)
+    if (!modellerKeyIsValid(toolName, user)) {
+      EitherT.leftT(JobSubmitError.ModellerKeyInvalid)
+    } else {
+      for {
+        generatedId     <- generateJobId(parts)
+        _               <- validateJobId(generatedId)
+        _               <- EitherT(checkNotAlreadyTaken(generatedId))
+        job             <- EitherT.pure[Future, JobSubmitError](generateJob(toolName, generatedId, parts, user))
+        isFromInstitute <- EitherT.pure[Future, JobSubmitError](user.getUserData.eMail.matches(".+@tuebingen.mpg.de"))
+        _               <- EitherT.liftF(jobDao.insertJob(job))
+        _               <- EitherT.liftF(assignJob(user, job))
+        _               <- EitherT.pure[Future, JobSubmitError](jobIdProvider.trash(generatedId))
+        _ <- EitherT.pure[Future, JobSubmitError](
+          jobActorAccess.sendToJobActor(generatedId, PrepareJob(job, parts, startJob = false, isFromInstitute))
+        )
+      } yield {
+        job
+      }
     }
-    for {
-      generatedId     <- generateJobId(parts)
-      _               <- validateJobId(generatedId)
-      _               <- EitherT(checkNotAlreadyTaken(generatedId))
-      job             <- EitherT.pure[Future, JobSubmitError](generateJob(toolName, generatedId, parts, user))
-      isFromInstitute <- EitherT.pure[Future, JobSubmitError](user.getUserData.eMail.matches(".+@tuebingen.mpg.de"))
-      _               <- EitherT.liftF(jobDao.insertJob(job))
-      _               <- EitherT.liftF(assignJob(user, job))
-      _               <- EitherT.pure[Future, JobSubmitError](jobIdProvider.trash(generatedId))
-      _ <- EitherT.pure[Future, JobSubmitError](
-        jobActorAccess.sendToJobActor(generatedId, PrepareJob(job, parts, startJob = false, isFromInstitute))
-      )
-    } yield {
-      job
-    }
+  }
+
+  private def modellerKeyIsValid(toolName: String, user: User): Boolean = {
+    !(toolName == ToolName.MODELLER.value && !user.userConfig.hasMODELLERKey)
   }
 
   private def assignJob(user: User, job: Job): Future[Option[User]] = {
