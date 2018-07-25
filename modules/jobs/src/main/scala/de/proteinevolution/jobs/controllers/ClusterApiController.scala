@@ -8,16 +8,19 @@ import de.proteinevolution.models.database.jobs.JobState.{ Done, Error, Queued, 
 import javax.inject.{ Inject, Singleton }
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 import better.files._
+import play.api.Logger
 
 @Singleton
 class ClusterApiController @Inject()(constants: ConstantsV2, jobActorAccess: JobActorAccess, cc: ControllerComponents)
     extends ToolkitController(cc) {
 
+  private val logger = Logger("job.states")
+
   def setJobStatus(status: String, jobID: String, key: String) = Action {
     if (checkKey(jobID, key)) {
       val jobStatus = status match {
         case "done"    => Done
-        case "error"   => Error
+        case "error"   => logger.warn(s"$jobID reached error state."); Error
         case "queued"  => Queued
         case "running" => Running
       }
