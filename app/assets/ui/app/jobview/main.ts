@@ -29,7 +29,13 @@ const JobLineComponent = {
             m("span", { "class": "toolname" }, [
                 m("input", { id: "toolnameAccess", "style": "display: none;", type: "text", value: args.job().tool.toolname}),
                 m("a", { onclick: () => {m.route("/tools/" + args.job().tool.toolname)}}, args.job().tool.toolnameLong),
-                m("a", { onclick: () => {
+                m("a", {
+                    config: (el: any, isInit: boolean) => {
+                        if (!isInit) {
+                            if (args.job().tool.toolname === 'hhpred_manual') $(el).hide();
+                            } else return;
+                        },
+                        onclick: () => {
                         m.request({
                             url: "/help/" + args.job().tool.toolname,
                             method: "GET",
