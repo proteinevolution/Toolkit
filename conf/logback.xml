@@ -23,13 +23,6 @@
         <appender-ref ref="STDOUT"/>
     </appender>
 
-    <!-- Configure the Sentry appender, overriding the logging threshold to the WARN level -->
-    <appender name="Sentry" class="io.sentry.logback.SentryAppender">
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>WARN</level>
-        </filter>
-    </appender>
-
     <logger name="play" level="INFO"/>
     <logger name="play.core.server.akkahttp" level="WARN"/>
     <logger name="application" level="DEBUG"/>
@@ -38,10 +31,9 @@
     <logger name="actors" level="INFO"/>
 
     <logger name="http.filters" level="INFO"/>
-    
+
     <root level="WARN">
         <appender-ref ref="ASYNCSTDOUT"/>
-        <appender-ref ref="Sentry" />
     </root>
 
 </configuration>
