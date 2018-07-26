@@ -1,12 +1,11 @@
 FROM hseeberger/scala-sbt:8u171_2.12.6_1.1.6
 
-# Override toolkit variables
-ENV SUBMIT_MODE "LOCAL"
-ENV MAXMIND_DB "/root/GeoLite2-City.mmdb"
-ENV MONGODB_URI "mongodb://localhost:27017/tkplay_dev"
+WORKDIR /root
+RUN mkdir -p Toolkit/development
+RUN mkdir -p Toolkit/bioprogs
+RUN mkdir -p Toolkit/databases
 
 # Install custom maxmind geoip
-WORKDIR /root
 RUN \
     git clone https://github.com/felixgabler/maxmind-geoip2-scala.git && \
     cd maxmind-geoip2-scala && \
