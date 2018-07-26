@@ -211,20 +211,20 @@ class JobActor @Inject()(
 
   private def updateJobState(job: Job): Future[Job] = {
     // Push the updated job into the current jobs
-    this.currentJobs = this.currentJobs.updated(job.jobID, job)
+    currentJobs = currentJobs.updated(job.jobID, job)
 
     // Update job in the database and notify watcher upon completion
     jobDao
       .modifyJob(BSONDocument(Job.IDDB -> job.mainID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
       .map { _ =>
-        val jobLog = this.currentJobLogs.get(job.jobID) match {
+        val jobLog = currentJobLogs.get(job.jobID) match {
           case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
           case None =>
             JobEventLog(mainID = job.mainID,
                         toolName = job.tool,
                         events = List(JobEvent(job.status, Some(ZonedDateTime.now))))
         }
-        this.currentJobLogs = this.currentJobLogs.updated(job.jobID, jobLog)
+        currentJobLogs = currentJobLogs.updated(job.jobID, jobLog)
         val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
         foundWatchers.flatten.foreach(_ ! PushJob(job))
         if (job.status == Done) {
@@ -574,6 +574,9 @@ class JobActor @Inject()(
 
     // Message from outside that the jobState has changed
     case JobStateChanged(jobID: String, jobState: JobState) =>
+      if (jobState == Error) {
+        log.error(s"job $jobID reached error state.")
+      }
       this.getCurrentJob(jobID).foreach {
         case Some(oldJob) =>
           // Update the job object
