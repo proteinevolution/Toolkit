@@ -92,7 +92,7 @@ object Job {
   val ID           = "id" // name for the ID in scala
   val IDDB         = "_id" //              ID in MongoDB
   val JOBID        = "jobID" //              ID for the job
-  val PARENTID        = "parent_id" //              ID for the jobs parent
+  val PARENTID     = "parent_id" //              ID for the jobs parent
   val HASH         = "hash"
   val PROJECT      = "project" //              project id
   val OWNERID      = "ownerID" //              ID of the job owner
@@ -118,7 +118,7 @@ object Job {
     def writes(job: Job): JsObject = Json.obj(
       IDDB         -> job.mainID,
       JOBID        -> job.jobID,
-      PARENTID        -> job.parentID,
+      PARENTID     -> job.parentID,
       HASH         -> job.hash,
       OWNERID      -> job.ownerID,
       ISPUBLIC     -> job.isPublic,
@@ -171,7 +171,7 @@ object Job {
       BSONDocument(
         IDDB         -> job.mainID,
         JOBID        -> job.jobID,
-        PARENTID        -> job.parentID,
+        PARENTID     -> job.parentID,
         HASH         -> job.hash,
         OWNERID      -> job.ownerID,
         ISPUBLIC     -> job.isPublic,
