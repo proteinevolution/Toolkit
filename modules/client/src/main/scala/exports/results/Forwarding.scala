@@ -11,14 +11,13 @@ import org.scalajs.jquery.{ jQuery, JQueryAjaxSettings, JQueryXHR }
 import upickle.default.write
 
 import scala.scalajs.js
+import scala.scalajs.js.Dynamic.{ global => g }
+import scala.scalajs.js.JSON
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 import scala.scalajs.js.timers._
-import scala.scalajs.js.JSON
 
 @JSExportTopLevel("Forwarding")
 object Forwarding {
-
-  import js.Dynamic.{ global => g }
 
   def processResults(
       jobID: String,
