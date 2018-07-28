@@ -211,7 +211,8 @@
                 AlertService.alert("No templates selected! Using the first template for modelling.", "alert-warning");
             }
             formData.append("templates", Toolkit.resultView.getSelectedValues.join(" ")); // TODO move checkbox handling
-            formData.append("parentid", jobID);
+            formData.append("parent_id", jobID);
+
             m.request({
                 method: "POST",
                 url: "/api/jobs/?toolName=hhpred_manual",
