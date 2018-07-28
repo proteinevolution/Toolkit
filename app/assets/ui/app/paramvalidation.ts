@@ -1,68 +1,55 @@
 /// <reference path="validation.ts"/>
 
+const paramValidation = function(elem: any, isInit: boolean, ctx: any): any {
 
+    const helixInputIds = ["#samcc_helixone", "#samcc_helixtwo", "#samcc_helixthree", "#samcc_helixfour"];
 
-
-const paramValidation = function(elem : any, isInit : boolean, ctx : any) : any {
-
-    function helixValid(helix:string) : boolean{
-        return (/^[a-r];[a-zA-Z0-9];\d+;\d+$/g.test(helix))
+    function validateHelix(helix: string): boolean {
+        return (/^[a-r];[a-zA-Z0-9];\d+;\d+$/g.test(helix));
     }
 
-    if(!isInit) {
+    function validateHelixInput(helixInput: JQuery): boolean {
+        const helixValid: boolean = validateHelix(helixInput.val());
+        helixInput.css("background-color", helixValid ? "rgb(219, 255, 219)" : "rgb(255, 221, 221)");
+        manageSubmitBtnDisabled(helixInput, helixValid);
+        return helixValid;
+    }
 
-        let toolname : string;
-        try { toolname = $("#toolnameAccess").val(); }
-        catch(err) {
+    const validate = function(debounceTime: number, toolname: string) {
+        return debounce(function(e: Event) {
+            e.preventDefault();
+            if (toolname === "samcc") {
+                let counter = 0;
+                if ($("#fileUpload").val() !== "" && samccIsValid) {
+                    $(".submitJob").prop("disabled", false);
+                }
+
+                for (let helixInputId of helixInputIds) {
+                    if (validateHelixInput($(helixInputId))) {
+                        counter++;
+                    }
+                }
+
+                if (counter == 4 && samccIsValid) {
+                    $(".submitJob").prop("disabled", false);
+                } else {
+                    $(".submitJob").prop("disabled", true);
+                }
+            }
+        }, debounceTime);
+    };
+
+    if (!isInit) {
+
+        let toolname: string;
+        try {
+            toolname = $("#toolnameAccess").val();
+        }
+        catch (err) {
             toolname = "unknown";
             console.warn("toolname unspecified");
         }
 
-
-        return $(elem).on("input click", function (e) {
-            setTimeout(function () {
-                e.preventDefault();
-                switch (toolname) {
-                    case "samcc":
-                            let counter = 0;
-                            if($("#fileUpload").val() !== "" && samccIsValid) {
-                                $(".submitJob").prop("disabled", false);
-                            }
-                            if (helixValid($("#samcc_helixone").val())) {
-                                $("#samcc_helixone").css("background-color", "rgb(219, 255, 219)");
-                                counter++;
-                            }
-                            else $( "#samcc_helixone" ).css("background-color", "rgb(255, 221, 221)");
-
-
-                            if (helixValid($("#samcc_helixtwo").val())) {
-                                $("#samcc_helixtwo").css("background-color", "rgb(219, 255, 219)");
-                                counter++;
-                            }
-                            else $( "#samcc_helixtwo" ).css("background-color", "rgb(255, 221, 221)");
-
-                            if (helixValid($("#samcc_helixthree").val())) {
-                                $("#samcc_helixthree").css("background-color", "rgb(219, 255, 219)");
-                                counter++;
-                                }
-                            else $( "#samcc_helixthree" ).css("background-color", "rgb(255, 221, 221)");
-
-                            if (helixValid($("#samcc_helixfour").val())) {
-                                $("#samcc_helixfour").css("background-color", "rgb(219, 255, 219)");
-                                counter++;
-                            }
-                             else $( "#samcc_helixfour" ).css("background-color", "rgb(255, 221, 221)");
-
-
-                            if (counter == 4 && samccIsValid)
-                                $(".submitJob").prop("disabled", false);
-                            else $(".submitJob").prop("disabled", true);
-                        break;
-                    default:
-                        break;
-                }
-            }, 500)
-
-            })
+        return $(elem).on("input click", validate(300, toolname));
     }
 };
