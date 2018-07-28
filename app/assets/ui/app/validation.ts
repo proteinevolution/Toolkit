@@ -660,6 +660,22 @@ interface Visitor {
     visit(validator: ToolkitValidator): any;
 }
 
+const manageSubmitBtnDisabled = function(elem: JQuery, valid: boolean) {
+    const $submitBtn = $(".submitJob");
+    let errorFields: Array<string> = $submitBtn.data("error-fields");
+    if (errorFields == null) {
+        errorFields = [];
+    }
+    // remove error from restricting
+    const index = errorFields.indexOf(elem.prop("id"));
+    if (index > -1) {
+        errorFields.splice(index, 1);
+    }
+    if (!valid && elem.prop("required")) { // add error again if still invalid
+        errorFields.push(elem.prop("id"));
+    }
+    $submitBtn.data("error-fields", errorFields).prop("disabled", errorFields.length > 0);
+};
 
 class alignmentVal implements ToolkitValidator {
 
@@ -687,23 +703,6 @@ class alignmentVal implements ToolkitValidator {
         }
     }
 
-    manageSubmitBtnDisabled(valid: boolean) {
-        const $submitBtn = $(".submitJob");
-        let errorFields: Array<string> = $submitBtn.data("error-fields");
-        if (errorFields == null) {
-            errorFields = [];
-        }
-        // remove error from restricting
-        const index = errorFields.indexOf(this.elem.prop("id"));
-        if (index > -1) {
-            errorFields.splice(index, 1);
-        }
-        if (!valid && this.elem.prop("required")) { // add error again if still invalid
-            errorFields.push(this.elem.prop("id"));
-        }
-        $submitBtn.data("error-fields", errorFields).prop("disabled", errorFields.length > 0);
-    }
-
     feedback(valid: boolean, msg: string = "unknown validation error", type: string = "error"): void {
 
         type = type || "success";
@@ -714,7 +713,7 @@ class alignmentVal implements ToolkitValidator {
         //remove trailing foundation classes
         this.$feedbackElem.removeClass("alert warning secondary primary success");
 
-        this.manageSubmitBtnDisabled(valid);
+        manageSubmitBtnDisabled(this.elem, valid);
 
         if (this.elem.val().length > 0) {
             this.$feedbackElem.show().html(msg).addClass(type);
