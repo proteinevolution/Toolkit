@@ -162,27 +162,6 @@ sealed trait MailTemplate {
          |              <div class="mj-column-per-100 outlook-group-fix" style="font-size:13px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
          |
          |                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
-         |
-         |                  <tr>
-         |                    <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-         |
-         |                      <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;border-spacing:0px;">
-         |                        <tbody>
-         |                          <tr>
-         |                            <td style="width:150px;">
-         |
-         |                              <a href="$origin" target="_blank">
-         |                                <img height="auto" src="$origin/assets/images/minlogo.svg" style="border:0;display:block;outline:none;text-decoration:none;width:100%;" width="150" />
-         |                              </a>
-         |
-         |                            </td>
-         |                          </tr>
-         |                        </tbody>
-         |                      </table>
-         |
-         |                    </td>
-         |                  </tr>
-         |
          |                  <tr>
          |                    <td style="font-size:0px;padding:10px 25px;word-break:break-word;">
          |
@@ -342,7 +321,7 @@ object MailTemplate {
 
   case class NewUserWelcomeMail(userParam: User, token: String, environment: play.Environment, env: Env)
       extends MailTemplate {
-    override def subject = "Account Verification - Bioinformatics Toolkit"
+    override def subject = "Account Verification - The MPI Bioinformatics Toolkit"
 
     val user: User = userParam
 
@@ -395,7 +374,7 @@ object MailTemplate {
 
   case class ChangePasswordMail(userParam: User, token: String, environment: play.Environment, env: Env)
       extends MailTemplate {
-    override def subject = "Password Verification - Bioinformatics Toolkit"
+    override def subject = "Password Verification - The MPI Bioinformatics Toolkit"
 
     val user: User = userParam
 
@@ -459,7 +438,7 @@ object MailTemplate {
 
   case class ResetPasswordMail(userParam: User, token: String, environment: play.Environment, env: Env)
       extends MailTemplate {
-    override def subject = "Password Verification - Bioinformatics Toolkit"
+    override def subject = "Password Verification - The MPI Bioinformatics Toolkit"
 
     val user: User = userParam
 
@@ -521,7 +500,7 @@ object MailTemplate {
   }
 
   case class PasswordChangedMail(userParam: User, environment: play.Environment, env: Env) extends MailTemplate {
-    override def subject = "Password Changed - Bioinformatics Toolkit"
+    override def subject = "Password Changed - The MPI Bioinformatics Toolkit"
 
     val user: User = userParam
 
@@ -552,7 +531,7 @@ object MailTemplate {
   }
 
   case class JobFinishedMail(userParam: User, job: Job, environment: play.Environment, env: Env) extends MailTemplate {
-    override def subject: String = s"""Job ${job.jobID} finished running - Bioinformatics Toolkit""".stripMargin
+    override def subject: String = s"""Job ${job.jobID} finished running - The MPI Bioinformatics Toolkit""".stripMargin
 
     val user: User = userParam
 
@@ -612,7 +591,7 @@ object MailTemplate {
 
   case class OldAccountEmail(userParam: User, deletionDate: ZonedDateTime, environment: play.Environment, env: Env)
       extends MailTemplate {
-    override def subject = "Old Account - Bioinformatics Toolkit"
+    override def subject = "Old Account - The MPI Bioinformatics Toolkit"
 
     val user: User = userParam
 
