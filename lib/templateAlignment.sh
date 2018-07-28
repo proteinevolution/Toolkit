@@ -10,7 +10,7 @@ fi
 
 HHSUITE=${DATABASES}/hh-suite/
 PFAMREGEX="(pfam[0-9]+)|(^PF[0-9]+ ?(.[0-9]+))"
-FILESTRING=$(cat  params/dbs|tr "\n" " ")
+FILESTRING=$(tr "\n" " " < params/dbs)
 DBS=(${FILESTRING})
 
 if [ ! -e "results/${accession}.a3m" ]

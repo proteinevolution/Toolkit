@@ -13,8 +13,8 @@ else
 fi
 
 #extract templates and sequence
-KNOWNS=`cat alignment.pir | grep 'structure' | cut -d':' -f 2 | sed "s/\(.*\)/'\1'/"  | paste -sd',' -`
-SEQNAME=`cat alignment.pir | grep sequence | cut -d':' -f 2`
+KNOWNS=`grep 'structure' < alignment.pir | cut -d':' -f 2 | sed "s/\(.*\)/'\1'/"  | paste -sd',' -`
+SEQNAME=`grep 'sequence' < alignment.pir | cut -d':' -f 2`
 FILENAME=%jobid.content
 # replace filename with jobID
 sed -i -- "s/${SEQNAME}/${FILENAME}/g" alignment.pir
