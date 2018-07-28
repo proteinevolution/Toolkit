@@ -1,0 +1,41 @@
+<!-- eventually we want to use this to compile mails -->
+<mjml>
+    <mj-head>
+        <mj-font name="Noto Sans" href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700" />
+        <mj-title>Job Status Update</mj-title>
+    </mj-head>
+    <mj-body>
+        <mj-section>
+            <mj-column>
+
+                <mj-image width="150" href="testde" src="https://toolkit.tuebingen.mpg.de/assets/images/minlogo.svg"></mj-image>
+
+                <mj-divider border-color="#3c8e85"></mj-divider>
+
+                <mj-text font-size="20px" align="center" color="#3c8e85" font-family="Noto Sans">Job Status Update</mj-text>
+
+                <mj-spacer height="10px" />
+
+                <mj-text font-size="14px" align="center" color="grey" font-family="Noto Sans">
+                    Dear Felix Gabler,<br/><br/> your job has finished successfully. You can now look at the results.<br/>
+                </mj-text>
+
+                <mj-button font-family="Noto Sans" background-color="#3c8e85" href="https://www.google.de" color="white">
+                    View job
+                </mj-button>
+
+                <mj-text font-size="10px" align="center" color="grey" font-family="Noto Sans">
+                    Or copy this URL and visit the page in your browser:<br/><br/> https://www.google.de
+                </mj-text>
+
+                <mj-text font-size="14px" href="https://www.google.de" align="center" color="grey" font-family="Noto Sans">
+                    Your Toolkit Team
+                </mj-text>
+
+                <mj-spacer height="10px" />
+                <mj-divider border-color="#3c8e85"></mj-divider>
+
+            </mj-column>
+        </mj-section>
+    </mj-body>
+</mjml>
