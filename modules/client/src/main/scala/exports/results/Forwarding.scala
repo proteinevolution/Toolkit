@@ -120,19 +120,19 @@ object Forwarding {
   }
 
   @JSExport
-  def simple(tool: String, forwardData: String): Unit = {
+  def simple(tool: String, forwardData: String, jobID: String = ""): Unit = {
     if (forwardData.isEmpty) {
       AlertService.alert("No sequences selected!", "alert-danger")
       return
     }
     m.route(s"/tools/$tool")
-    tryPasting(tool, forwardData)
+    tryPasting(tool, forwardData, jobID)
   }
 
-  def tryPasting(tool: String, forwardData: String): Unit = {
+  def tryPasting(tool: String, forwardData: String, jobID: String): Unit = {
     if (dom.window.location.hash != s"#/tools/$tool") {
       setTimeout(10) {
-        tryPasting(tool, forwardData)
+        tryPasting(tool, forwardData, jobID)
       }
     } else if (tool == "reformat") {
       setTimeout(500) { // there is no way to determine whether reformat is loaded. Because it is not used a lot, we just use a bigger timeout to make sure.
@@ -140,6 +140,7 @@ object Forwarding {
       }
     } else {
       jQuery("#alignment").value(forwardData)
+      jQuery("#parent_id").value(jobID)
       g.validationProcess(jQuery("#alignment"), jQuery("#toolnameAccess").value())
     }
   }
