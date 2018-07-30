@@ -12,7 +12,7 @@ else
     pir_converter.pl -i %alignment.path -o alignment.pir -fas -tmp .
 fi
 
-OFFSET=`sed -n 3p alignment.pir | grep -Eo '^(-){1,}' | wc -c`
+OFFSET=$(sed -n 3p alignment.pir | grep -Eo '^(-){1,}' | wc -c)
 if [ ${OFFSET} = "0" ] ; then
     OFFSET=1
 fi
