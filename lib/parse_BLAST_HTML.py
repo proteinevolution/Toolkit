@@ -9,7 +9,6 @@ def main(argv):
 
         state = -1
         for line in f:
-            
             # Need to change to overview
             if line.startswith("Sequences producing"):
                 sys.stdout.write(next(f))

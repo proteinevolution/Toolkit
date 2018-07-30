@@ -13,6 +13,7 @@ import reactivemongo.play.json._
 case class Job(
     mainID: BSONObjectID = BSONObjectID.generate, // ID of the Job in the System
     jobID: String, // User visible ID of the Job
+    parentID: Option[String] = None, // Id of the parent (forwarding)
     hash: Option[String] = None, // Non unique ID to identify duplicate jobs
     ownerID: Option[BSONObjectID] = None, // User to whom the Job belongs
     isPublic: Boolean = false, // User wants this job to be public
@@ -72,6 +73,7 @@ case class Job(
     s"""--[Job Object]--
         |mainID: ${this.mainID}
         |jobID: ${this.jobID}
+        |parentID: ${this.parentID}
         |tool: ${this.tool}
         |state: ${this.status}
         |ownerID: ${this.ownerID.map(_.stringify).getOrElse("no Owner")}
@@ -90,6 +92,7 @@ object Job {
   val ID           = "id" // name for the ID in scala
   val IDDB         = "_id" //              ID in MongoDB
   val JOBID        = "jobID" //              ID for the job
+  val PARENTID     = "parent_id" //              ID for the jobs parent
   val HASH         = "hash"
   val PROJECT      = "project" //              project id
   val OWNERID      = "ownerID" //              ID of the job owner
@@ -115,6 +118,7 @@ object Job {
     def writes(job: Job): JsObject = Json.obj(
       IDDB         -> job.mainID,
       JOBID        -> job.jobID,
+      PARENTID     -> job.parentID,
       HASH         -> job.hash,
       OWNERID      -> job.ownerID,
       ISPUBLIC     -> job.isPublic,
@@ -140,6 +144,7 @@ object Job {
       Job(
         mainID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         jobID = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
+        parentID = bson.getAs[String](PARENTID),
         hash = bson.getAs[String](HASH),
         ownerID = bson.getAs[BSONObjectID](OWNERID),
         isPublic = bson.getAs[Boolean](ISPUBLIC).getOrElse(false),
@@ -166,6 +171,7 @@ object Job {
       BSONDocument(
         IDDB         -> job.mainID,
         JOBID        -> job.jobID,
+        PARENTID     -> job.parentID,
         HASH         -> job.hash,
         OWNERID      -> job.ownerID,
         ISPUBLIC     -> job.isPublic,

@@ -132,6 +132,11 @@
                 formData = new FormData(form);
                 formData.append("tool", tool);
 
+                const parentID: string = $("#parent_id").val();
+                if(parentID) {
+                    formData.append("parent_id", parentID);
+                }
+
                 if ((jobID != null) && (jobID !== "")) {
                     formData.append("jobID", jobID);
                 }
