@@ -12,6 +12,11 @@ else
     pir_converter.pl -i %alignment.path -o alignment.pir -fas -tmp .
 fi
 
+OFFSET=$(sed -n 3p alignment.pir | grep -Eo '^(-){1,}' | wc -c)
+if [ ${OFFSET} = "0" ] ; then
+    OFFSET=1
+fi
+
 #extract templates and sequence
 KNOWNS=`grep 'structure' < alignment.pir | cut -d':' -f 2 | sed "s/\(.*\)/'\1'/"  | paste -sd',' -`
 SEQNAME=`grep 'sequence' < alignment.pir | cut -d':' -f 2`
@@ -24,6 +29,13 @@ echo "# Homology modeling by the automodel class" >> modeller.py
 echo "from modeller import *               # Load standard Modeller classes" >> modeller.py
 echo "from modeller.automodel import *     # Load the automodel class" >> modeller.py
 echo "log.verbose()" >> modeller.py
+
+echo "class MyModel(automodel):" >> modeller.py
+echo "      def special_patches(self, aln):" >> modeller.py
+echo "          # Rename both chains and renumber the residues in each" >> modeller.py
+echo "          self.rename_segments(segment_ids=('X')," >> modeller.py
+echo "                          renumber_residues=(${OFFSET}))" >> modeller.py
+
 echo "env = environ()                      # create a new MODELLER environment to build this model" >> modeller.py
 echo "# directories for input atom files" >> modeller.py
 
@@ -34,7 +46,7 @@ if [ "${PARENTID}" ]; then
 else
     echo "env.io.atom_files_directory = '%CIFALL'" >> modeller.py
 fi
-echo "a = automodel(env," >> modeller.py
+echo "a = MyModel(env," >> modeller.py
 echo "             alnfile  = 'alignment.pir',    # alignment filename" >> modeller.py
 echo "             knowns   = (${KNOWNS}),     #codes of the templates" >> modeller.py
 echo "             sequence = '${FILENAME}') #code of the target" >> modeller.py
@@ -48,44 +60,14 @@ chmod 0777 modeller_script.py
 chmod 0777 alignment.pir
 # run modeller
 mod modeller_script.py >> modeller.log
-mv modeller.log ../logs/
-mv ${FILENAME}* ../results/
 
+mv `echo *[0-9].pdb` ${FILENAME}.pdb
+mv modeller.log ../logs/
 echo "done" >> ../results/process.log
 
 echo "#Running quality checks on the model." >> ../results/process.log
 
 echo "done" >> ../results/process.log
 
-#quality check
+mv ${FILENAME}* ../results/
 cd ../results
-mv `echo *[0-9].pdb` ${FILENAME}.pdb
-
-echo "#Running ANOLEA." >> ../results/process.log
-
-#ANOLEA
-mkdir anolea
-cd anolea
-anolea ${BIOPROGS}/helpers/anolea_bin/surf.de ${BIOPROGS}/helpers/anolea_bin/pair.de ../${FILENAME}.pdb
-perl ${BIOPROGS}/helpers/anolea_bin/anolea_graphics.pl ${FILENAME} ../ > ${FILENAME}.log_anolea
-cd ../
-mv *.gnuplot* anolea/
-mv *.anolea* anolea/
-mv anolea/${FILENAME}.anolea.png .
-
-
-echo "done" >> ../results/process.log
-
-echo "#Running Solvx." >> ../results/process.log
-
-#Solvx
-mkdir solvx
-cd solvx
-ln -sf solvx solvx
-ln -sf ${BIOPROGS}/helpers/Solvx/torso.reslib torso.reslib
-echo "../${FILENAME}.pdb" | solvx
-mv fort.29 ${FILENAME}.solvx
-perl ${BIOPROGS}/helpers/Solvx/solvx_graphics.pl "${FILENAME}" . > ${FILENAME}.log_solvx
-mv ${FILENAME}.solvx.png ../
-cd ../
-echo "done" >> ../results/process.log

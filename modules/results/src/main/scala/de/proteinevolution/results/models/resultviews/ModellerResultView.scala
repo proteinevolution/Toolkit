@@ -12,17 +12,6 @@ case class ModellerResultView(jobId: String, constants: ConstantsV2) extends Res
       jobId + ".pdb",
       jobId,
       "Modeller"
-    ),
-    "SOLVX" ->
-    views.html.resultpanels.modeller(
-      s"/results/files/$jobId/$jobId.solvx.png",
-      s"${constants.jobPath}$jobId/results/solvx/$jobId.solvx"
-    ),
-    "ANOLEA" ->
-    views.html.resultpanels.modeller(
-      s"/results/files/$jobId/$jobId.anolea.png",
-      s"${constants.jobPath}$jobId/results/$jobId.pdb.profile"
     )
   )
-
 }
