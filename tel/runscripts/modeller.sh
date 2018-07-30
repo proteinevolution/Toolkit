@@ -18,8 +18,8 @@ if [ ${OFFSET} = "0" ] ; then
 fi
 
 #extract templates and sequence
-KNOWNS=`grep 'structure' < alignment.pir | cut -d':' -f 2 | sed "s/\(.*\)/'\1'/"  | paste -sd',' -`
-SEQNAME=`grep 'sequence' < alignment.pir | cut -d':' -f 2`
+KNOWNS=$(grep 'structure' < alignment.pir | cut -d':' -f 2 | sed "s/\(.*\)/'\1'/"  | paste -sd',' -)
+SEQNAME=$(grep 'sequence' < alignment.pir | cut -d':' -f 2)
 FILENAME=%jobid.content
 # replace filename with jobID
 sed -i -- "s/${SEQNAME}/${FILENAME}/g" alignment.pir
