@@ -33,12 +33,8 @@ class JobIdProvider @Inject()(
     }
   }
 
-  private def isValid(id: String): Future[Boolean] = {
-    jobDao.selectJob(id).map(_.isEmpty)
-  }
-
   private def validate(id: String): IO[Boolean] = {
-    IO.fromFuture(IO.pure(isValid(id)))
+    IO.fromFuture(IO.pure(jobDao.selectJob(id).map(_.isEmpty)))
   }
 
 }
