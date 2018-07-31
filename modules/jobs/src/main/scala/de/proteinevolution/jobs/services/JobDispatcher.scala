@@ -128,7 +128,7 @@ class JobDispatcher @Inject()(
       ownerID = Some(user.userID),
       parentID = parentID,
       isPublic = form.get("public").isDefined || user.accountType == User.NORMALUSER,
-      emailUpdate = toBoolean(form.get("emailUpdate")),
+      emailUpdate = form.get("emailUpdate").isDefined,
       tool = toolName,
       watchList = List(user.userID),
       dateCreated = Some(now),
@@ -138,7 +138,5 @@ class JobDispatcher @Inject()(
       IPHash = Some(MessageDigest.getInstance("MD5").digest(user.sessionData.head.ip.getBytes).mkString)
     )
   }
-
-  private def toBoolean(s: Option[String]): Boolean = s.isDefined
 
 }
