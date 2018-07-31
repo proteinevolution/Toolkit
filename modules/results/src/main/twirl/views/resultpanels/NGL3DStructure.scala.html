@@ -1,6 +1,9 @@
 @(filepath : String, filename : String, jobID : String, resultname : String)()
 
-<a type="button" onclick="@{resultname}_download()" id="downloadAlignment">Download PDB file</a>
+<div class="colorOptsAlignment">
+    <a type="button" onclick="@{resultname}_download()" id="downloadAlignment"><span>Download PDB file</span></a>
+    <a type="button" class="goToParentJob" style="display: none;">Go to Parent Job</a>
+</div>
 <hr class="horizontal-line"> <br> <br>
 
 <div id="viewport" class="job@jobID"></div><br><br><br>
@@ -49,6 +52,14 @@
 
         $(function () {
             setViewport();
+
+            var parentId = JobModel.getParamValue("parent_id");
+            if (parentId) {
+                $(".goToParentJob").show().off()
+                        .on("click", function () {
+                            m.route("/jobs/" + parentId)
+                        });
+            }
         });
 
         function setViewport() {
