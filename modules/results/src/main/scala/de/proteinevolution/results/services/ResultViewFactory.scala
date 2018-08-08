@@ -30,9 +30,7 @@ final class ResultViewFactory @Inject()(
 
   def apply(toolName: String, jobId: String): OptionT[Future, ResultView] = {
     if (hasResultsJson(toolName)) {
-      for {
-        result <- OptionT(resultFiles.getResults(jobId))
-      } yield {
+      OptionT(resultFiles.getResults(jobId)).map { result =>
         getResultViewsWithJson(toolName, jobId, result)
       }
     } else {
