@@ -15,7 +15,10 @@ class BackendDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(impli
     reactiveMongoApi.database.map(_.collection[BSONCollection]("statistics"))
 
   def getStats: Future[StatisticsObject] = {
-    statisticsCol.map(_.find(BSONDocument())).flatMap(_.one[StatisticsObject]).map(_.getOrElse(StatisticsObject()))
+    statisticsCol
+      .map(_.find(BSONDocument(), None))
+      .flatMap(_.one[StatisticsObject])
+      .map(_.getOrElse(StatisticsObject()))
   }
 
   def updateStats(statisticsObject: StatisticsObject): Future[Option[StatisticsObject]] = {
