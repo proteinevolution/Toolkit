@@ -4,6 +4,8 @@ services:
 
   toolkit:
     build: .
+    env_file:
+      - conf/.env
     container_name: toolkit
     ports:
     - 1234:1234
