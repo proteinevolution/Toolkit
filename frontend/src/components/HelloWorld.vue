@@ -1,7 +1,7 @@
 <template>
     <div class="hello">
         <h1>{{ msg }}</h1>
-        <b-button variant="primary">I am a button</b-button>
+        <b-button variant="primary">{{ $t("buttonTest") }}</b-button>
         <b-btn v-b-modal.modal1>Launch demo modal</b-btn>
 
         <!-- Modal Component -->
@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
+    import Vue from "vue";
 
     export default Vue.extend({
         name: 'HelloWorld',
