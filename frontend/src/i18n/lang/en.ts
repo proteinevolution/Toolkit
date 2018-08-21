@@ -1,5 +1,5 @@
 export default {
     en: {
-        buttonTest: 'I am a button',
+        welcome: 'Welcome in english',
     },
 };

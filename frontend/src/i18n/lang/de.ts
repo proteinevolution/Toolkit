@@ -1,5 +1,5 @@
 export default {
     de: {
-        buttonTest: 'Ich bin ein Knöpfle',
+        welcome: 'Willkommen auf Deutsch',
     },
 };
