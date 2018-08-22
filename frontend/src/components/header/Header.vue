@@ -4,13 +4,9 @@
             <TopNavBar></TopNavBar>
         </b-row>
         <b-row>
-            <b-col cols="3">MPI Bioinformatics Toolkit (Logo)</b-col>
+            <b-col cols="3"><router-link to="/">MPI Bioinformatics Toolkit (Logo)</router-link></b-col>
             <b-col>
-                <div id="nav">
-                    <router-link to="/">Home</router-link>
-                    -
-                    <router-link to="/tools/test">Tool Test</router-link>
-                </div>
+                <NavBar></NavBar>
             </b-col>
         </b-row>
     </b-container>
@@ -18,11 +14,13 @@
 
 <script lang="ts">
     import Vue from 'vue';
+    import NavBar from '@/components/header/NavBar.vue';
     import TopNavBar from '@/components/header/TopNavBar.vue';
 
     export default Vue.extend({
         name: 'Header',
         components: {
+            NavBar,
             TopNavBar,
         },
     });

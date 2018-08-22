@@ -1,6 +1,7 @@
 <template>
     <div class="home">
-        {{ $t("welcome") }}
+        <h1>{{ $t("welcome") }}</h1>
+        <router-link to="/jobmanager">Job Manager</router-link>
     </div>
 </template>
 

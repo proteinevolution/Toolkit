@@ -1,17 +1,22 @@
-import Home from '../views/Home.vue';
+import HomeView from '../views/HomeView.vue';
 
 // route level code-splitting
 // this generates a separate chunk (about.[hash].js) for this route
 // which is lazy-loaded when the route is visited.
-const Tool = () => import(/* webpackChunkName: "about" */ '../views/Tool.vue');
+const ToolView = () => import(/* webpackChunkName: "about" */ '../views/ToolView.vue');
+const JobManagerView = () => import(/* webpackChunkName: "about" */ '../views/JobManagerView.vue');
 
 export default [
     {
         path: '/',
-        component: Home,
+        component: HomeView,
     },
     {
         path: '/tools/:id',
-        component: Tool,
+        component: ToolView,
+    },
+    {
+        path: '/jobmanager',
+        component: JobManagerView,
     },
 ];
