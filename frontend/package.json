@@ -30,7 +30,8 @@
     "node-sass": "^4.9.0",
     "sass-loader": "^7.0.1",
     "typescript": "^3.0.0",
-    "vue-template-compiler": "^2.5.17"
+    "vue-template-compiler": "^2.5.17",
+    "yarn": "^1.9.4"
   },
   "browserslist": [
     "> 1%",
