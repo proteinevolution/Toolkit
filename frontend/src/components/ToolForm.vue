@@ -1,5 +1,5 @@
 <template>
-    <div id="Tool Form">
+    <div class="tool-form">
         Tool Form view for {{ id }}
     </div>
 </template>
@@ -8,7 +8,7 @@
     import Vue from 'vue';
 
     export default Vue.extend({
-        name: 'toolform',
+        name: 'ToolForm',
         props: {
             id: String,
         },

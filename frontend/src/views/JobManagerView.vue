@@ -1,13 +1,13 @@
 <template>
-    <div class="jobmanagerview">
+    <div class="jobmanager-view">
         Job Manager
     </div>
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
+    import Vue from "vue";
 
     export default Vue.extend({
-        name: 'jobmanagerview',
+        name: "JobManagerView",
     });
 </script>

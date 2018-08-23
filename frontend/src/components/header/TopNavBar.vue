@@ -1,7 +1,7 @@
 <template>
-    <div id="topnavbar" class="float-right">
-        <div id="meta-user" class="float-right"></div>
-        <div id="social" class="float-right">
+    <div class="float-right top-navbar">
+        <div class="float-right meta-user"></div>
+        <div class="float-right social-nav">
             <b-button variant="href" href="https://github.com/proteinevolution/Toolkit" target="_blank" rel="noopener">
                 <i class="fab fa-github"></i></b-button>
             <b-button variant="href" href="https://www.facebook.com/mpitoolkit" target="_blank" rel="noopener"><i
@@ -23,7 +23,7 @@
 
 
 <style>
-    #topnavbar {
+    .top-navbar {
         background-color: #cccccc;
         width: 100%;
     }

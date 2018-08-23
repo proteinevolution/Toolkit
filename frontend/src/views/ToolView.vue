@@ -12,12 +12,12 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import Jobs from '@/components/Jobs.vue';
-    import ToolForm from '@/components/ToolForm.vue';
+    import Vue from "vue";
+    import Jobs from "@/components/Jobs.vue";
+    import ToolForm from "@/components/ToolForm.vue";
 
     export default Vue.extend({
-        name: 'home',
+        name: "ToolView",
         components: {
             Jobs,
             ToolForm,
