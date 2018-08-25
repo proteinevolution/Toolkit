@@ -1,10 +1,6 @@
 <template>
     <b-container class="footer">
-        <b-btn variant="link" size="sm" v-b-modal="'helpModal'">{{ $t('helpTitle') }}</b-btn>
-
-        <InfoModal id="helpModal" v-bind:title="$t('helpTitle')">
-            <Help></Help>
-        </InfoModal>
+        <b-btn variant="link" size="sm" @click="launchHelpModal">{{ $t('helpTitle') }}</b-btn>
     </b-container>
 </template>
 
@@ -17,7 +13,13 @@
         name: 'Footer',
         components: {
             InfoModal,
-            Help,
+        },
+        methods: {
+            launchHelpModal() {
+                this.$modal.show(Help, {}, {
+                    draggable: true,
+                });
+            },
         },
     });
 </script>
