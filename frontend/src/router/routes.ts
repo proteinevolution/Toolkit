@@ -12,7 +12,7 @@ export default [
         component: HomeView,
     },
     {
-        path: '/tools/:id',
+        path: '/tools/:toolName',
         component: ToolView,
     },
     {

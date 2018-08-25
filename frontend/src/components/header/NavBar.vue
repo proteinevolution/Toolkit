@@ -5,10 +5,11 @@
 
             <b-collapse is-nav id="nav_collapse">
                 <b-navbar-nav>
-                    <b-nav-item v-for="(tool, group) in groups"
-                                :key="group"
-                                v-on:click="selectGroup(group)">
-                        {{ group }}
+                    <b-nav-item v-for="section in sections"
+                                :key="section"
+                                :class="[section === selectedSection ? 'active' : '']"
+                                @click="selectSection(section)">
+                        {{ $t('tools.sections.' + section) }}
                     </b-nav-item>
                 </b-navbar-nav>
             </b-collapse>
@@ -19,9 +20,11 @@
 
             <b-collapse is-nav id="nav_collapse">
                 <b-navbar-nav>
-                    <b-nav-item v-for="tool in groups[selectedGroup]"
+                    <b-nav-item v-for="tool in tools"
                                 :key="tool.name"
-                                v-bind:to="'/tools/' + tool.name">{{tool.nameLong}}
+                                :to="'/tools/' + tool.name"
+                                v-show="tool.section === selectedSection">
+                        {{tool.longname}}
                     </b-nav-item>
                 </b-navbar-nav>
             </b-collapse>
@@ -29,42 +32,44 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
     import Vue from 'vue';
+    import {Tool} from '../../types/toolkit';
 
     export default Vue.extend({
         name: 'NavBar',
         data() {
-            // @TODO: Extract tools into tool definition file (similar to /conf/tools.conf). Needs further planning.
             return {
-                groups: {
-                    Search: [
-                        {
-                            name: 'searchtool1',
-                            nameLong: 'Search Tool 1',
-                        },
-                        {
-                            name: 'searchtool2',
-                            nameLong: 'Search Tool 2',
-                        },
-                    ],
-                    Alignment: [
-                        {
-                            name: 'alignmenttool1',
-                            nameLong: 'Alignment Tool 1',
-                        },
-                        {
-                            name: 'alignmenttool2',
-                            nameLong: 'Alignment Tool 2',
-                        },
-                    ],
-                },
-                selectedGroup: 'Search',
+                selectedSection: '',
             };
         },
+        computed: {
+            tools(): Tool[] {
+                return this.$store.getters['tools/tools'];
+            },
+            sections(): string[] {
+                return this.$store.getters['tools/sections'];
+            },
+        },
+        watch: {
+            'sections'() {
+                this.updateSelection();
+            },
+            '$route.params.toolName'() {
+                this.updateSelection();
+            },
+        },
         methods: {
-            selectGroup(group) {
-                this.selectedGroup = group;
+            selectSection(section: string): void {
+                this.selectedSection = section;
+            },
+            updateSelection(): void {
+                const matchingTools = this.tools.filter((tool: Tool) => tool.name === this.$route.params.toolName);
+                if (matchingTools.length > 0) {
+                    this.selectedSection = matchingTools[0].section;
+                } else if (!this.selectedSection) {
+                    this.selectedSection = this.tools[0].section;
+                }
             },
         },
     });

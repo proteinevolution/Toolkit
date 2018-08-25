@@ -27,6 +27,9 @@
             Header,
             Footer,
         },
+        created() {
+            this.$store.dispatch('tools/fetchAllTools');
+        },
     });
 </script>
 

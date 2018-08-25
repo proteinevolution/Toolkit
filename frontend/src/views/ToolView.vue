@@ -5,7 +5,7 @@
                 <Jobs></Jobs>
             </b-col>
             <b-col>
-                <ToolForm v-bind:id="$route.params.id"></ToolForm>
+                <ToolForm v-bind:id="$route.params.toolName"></ToolForm>
             </b-col>
         </b-row>
     </b-container>

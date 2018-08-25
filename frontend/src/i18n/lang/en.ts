@@ -5,5 +5,12 @@ export default {
         helpTitle: 'Help',
         helpHeadline: 'Some Topic',
         helpContents: 'Some help text',
+
+        tools: {
+            sections: {
+                Search: 'Search',
+                Alignment: 'Alignment',
+            },
+        },
     },
 };
