@@ -1,7 +1,8 @@
 import {Tool} from '@/types/toolkit';
 
 export interface RootState {
-    loggedIn: boolean;
+    maintenanceMode: boolean;
+    reconnecting: boolean;
 }
 
 export interface ToolState {

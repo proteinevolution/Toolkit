@@ -7,7 +7,8 @@ Vue.use(Vuex);
 
 const store: StoreOptions<RootState> = {
     state: {
-        loggedIn: false,
+        maintenanceMode: false,
+        reconnecting: false,
     },
     modules: {
         tools,
