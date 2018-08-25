@@ -6,6 +6,7 @@ import {RootState} from './types';
 Vue.use(Vuex);
 
 const store: StoreOptions<RootState> = {
+    strict: process.env.NODE_ENV !== 'production',
     state: {
         maintenanceMode: false,
         reconnecting: false,
