@@ -1,11 +1,32 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import routes from './routes';
+import {loadLanguageAsync, possibleLanguages} from '@/i18n';
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
     mode: 'history',
     base: process.env.BASE_URL,
     routes,
 });
+
+// soon to be removed/refactored
+router.beforeEach((to, from, next) => {
+    const lang = to.query.lang;
+    if (lang !== undefined && lang !== from.query.lang) {
+        if (possibleLanguages.includes(lang)) {
+            // logger.debug('switching to language: ' + lang);
+            loadLanguageAsync(lang)
+                .then(() => next())
+                .catch();
+        } else {
+            // logger.error('Trying to switch to unrecognized language: ' + lang);
+            next();
+        }
+    } else {
+        next();
+    }
+});
+
+export default router;

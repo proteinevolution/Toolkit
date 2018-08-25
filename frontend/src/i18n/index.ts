@@ -5,7 +5,7 @@ import messages from './lang/en';
 export const defaultLanguage = 'en';
 Vue.use(VueI18n);
 
-export const i18n = new VueI18n({
+const i18n = new VueI18n({
     locale: defaultLanguage, // set locale
     fallbackLocale: defaultLanguage,
     messages, // set locale messages
@@ -39,3 +39,4 @@ export function loadLanguageAsync(lang: string) {
     return Promise.resolve(lang);
 }
 
+export default i18n;

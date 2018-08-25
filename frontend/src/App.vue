@@ -1,15 +1,19 @@
 <template>
-    <b-container>
-        <b-row>
-            <Header></Header>
-        </b-row>
-        <b-row>
-            <router-view/>
-        </b-row>
-        <b-row>
-            <Footer></Footer>
-        </b-row>
-    </b-container>
+    <div>
+        <b-container>
+            <b-row>
+                <Header></Header>
+            </b-row>
+            <b-row>
+                <router-view/>
+            </b-row>
+            <b-row>
+                <Footer></Footer>
+            </b-row>
+        </b-container>
+
+        <modals-container/>
+    </div>
 </template>
 
 <script lang="ts">
@@ -18,7 +22,7 @@
     import Footer from '@/components/footer/Footer.vue';
 
     export default Vue.extend({
-        name: ' ',
+        name: 'App',
         components: {
             Header,
             Footer,

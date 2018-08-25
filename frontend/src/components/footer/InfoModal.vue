@@ -13,6 +13,6 @@
         props: {
             id: String,
             title: String,
-        }
+        },
     });
 </script>
