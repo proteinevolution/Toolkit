@@ -1,35 +1,43 @@
 <template>
     <b-container>
-        <b-row>
-            <b-col>
-                <Jobs></Jobs>
-            </b-col>
-            <b-col>
-                <ToolForm v-bind:id="$route.params.toolName"></ToolForm>
-            </b-col>
-        </b-row>
+        {{ tool }}
     </b-container>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
-    import Jobs from '@/components/Jobs.vue';
-    import ToolForm from '@/components/ToolForm.vue';
+    import {Tool} from '../types/toolkit';
 
     export default Vue.extend({
         name: 'ToolView',
-        components: {
-            Jobs,
-            ToolForm,
+        computed: {
+            toolName() {
+                return this.$route.params.toolName;
+            },
+            tool() {
+                return this.$store.getters['tools/tool'](this.toolName);
+            },
+        },
+        created() {
+            this.loadToolParameters();
         },
         beforeRouteEnter(to, from, next) {
             next(vm => {
-                if (!vm.$store.getters['tools/tools'].some(tool => tool.name === to.params.toolName)) {
-                    next({path: '/404',})
+                if (!vm.$store.getters['tools/tool'](to.params.toolName)) {
+                    next({path: '/404',});
                 } else {
-                    next()
+                    next();
                 }
-            })
+            });
+        },
+        beforeRouteUpdate(to, from, next) {
+            this.loadToolParameters();
+            next();
+        },
+        methods: {
+            loadToolParameters() {
+                this.$store.dispatch('tools/fetchToolParametersIfNotPresent', this.toolName)
+            }
         }
     });
 </script>

@@ -11,21 +11,33 @@ export default [
     {
         path: '/',
         component: HomeView,
+        meta: {
+            showJobList: false,
+        },
     },
     {
         path: '/tools/:toolName',
         component: ToolView,
+        meta: {
+            showJobList: true,
+        },
     },
     {
         path: '/jobmanager',
         component: JobManagerView,
+        meta: {
+            showJobList: true,
+        },
     },
     {
         path: '/404',
         component: NotFoundView,
+        meta: {
+            showJobList: true,
+        },
     },
     {
         path: '/**',
         redirect: '/404',
-    }
+    },
 ];
