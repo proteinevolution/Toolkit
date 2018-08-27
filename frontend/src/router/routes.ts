@@ -5,6 +5,7 @@ import HomeView from '../views/HomeView.vue';
 // which is lazy-loaded when the route is visited.
 const ToolView = () => import(/* webpackChunkName: "about" */ '../views/ToolView.vue');
 const JobManagerView = () => import(/* webpackChunkName: "about" */ '../views/JobManagerView.vue');
+const NotFoundView = () => import(/* webpackChunkName: "about" */ '../views/NotFoundView.vue');
 
 export default [
     {
@@ -19,4 +20,12 @@ export default [
         path: '/jobmanager',
         component: JobManagerView,
     },
+    {
+        path: '/404',
+        component: NotFoundView,
+    },
+    {
+        path: '/**',
+        redirect: '/404',
+    }
 ];
