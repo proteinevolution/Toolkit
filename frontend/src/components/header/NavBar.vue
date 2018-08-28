@@ -17,7 +17,7 @@
                         </b-navbar-nav>
 
                         <b-navbar-nav class="lower-nav"
-                                      :style="'border-top-color: ' + sectionColor">
+                                      :style="{borderTopColor: sectionColor}">
                             <b-nav-item v-for="tool in tools"
                                         :key="tool.name"
                                         :to="'/tools/' + tool.name"
@@ -43,7 +43,12 @@
                 selectedSection: '',
                 sectionColors: [
                     '#D0BA89',
-                    '#FFCC66',
+                    '#ffbb55',
+                    '#669933',
+                    '#79A4C4',
+                    '#666699',
+                    '#D6ABAB',
+                    '#CC3333',
                 ],
             };
         },
@@ -108,6 +113,8 @@
             &.lower-nav {
                 border-top: 2px solid #D0BA89;
                 padding-top: 4px;
+                min-height: 44px;
+
                 a {
                     color: $tk-gray;
                 }

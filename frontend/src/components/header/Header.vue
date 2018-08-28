@@ -4,14 +4,16 @@
             <TopNavBar></TopNavBar>
         </b-row>
         <b-row>
-            <b-col md="2"
-                   class="logo-container">
+            <b-col md="12"
+                   lg="2"
+                   class="logo-container d-flex">
                 <router-link to="/"
                              class="logo-link">
                     <img :src="require('../../assets/images/minlogo.svg')" alt="MPI Bioinformatics Toolkit"/>
                 </router-link>
             </b-col>
-            <b-col md="10">
+            <b-col md="12"
+                   lg="10">
                 <NavBar></NavBar>
             </b-col>
         </b-row>
@@ -34,7 +36,6 @@
 
 <style lang="scss" scoped>
     .logo-container {
-        display: flex;
         align-items: center;
     }
 
