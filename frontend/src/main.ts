@@ -8,7 +8,7 @@ import './bootstrap.ts';
 
 Vue.config.productionTip = false;
 
-(<any>window).vm = new Vue({
+(window as any).vm = new Vue({
     router,
     store,
     i18n,

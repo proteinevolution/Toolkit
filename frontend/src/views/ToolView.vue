@@ -11,10 +11,10 @@
     export default Vue.extend({
         name: 'ToolView',
         computed: {
-            toolName() {
+            toolName(): string {
                 return this.$route.params.toolName;
             },
-            tool() {
+            tool(): Tool {
                 return this.$store.getters['tools/tools'].filter((tool: Tool) => tool.name === this.toolName);
             },
         },
@@ -22,7 +22,7 @@
             this.loadToolParameters();
         },
         beforeRouteEnter(to, from, next) {
-            next(vm => {
+            next((vm) => {
                 if (!vm.$store.getters['tools/tools'].some((tool: Tool) => tool.name === to.params.toolName)) {
                     next({path: '/404',});
                 } else {
@@ -36,9 +36,8 @@
         },
         methods: {
             loadToolParameters() {
-                console.log(this.toolName);
-                this.$store.dispatch('tools/fetchToolParametersIfNotPresent', this.toolName)
-            }
-        }
+                this.$store.dispatch('tools/fetchToolParametersIfNotPresent', this.toolName);
+            },
+        },
     });
 </script>

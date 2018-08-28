@@ -1,8 +1,24 @@
-import {Tool, Parameter, TextAreaParameter} from '@/types/toolkit';
+import {Parameter, TextAreaParameter, Tool} from '@/types/toolkit';
 
 // Temporary mock, replace with API calls later
 
 export default class ToolService {
+
+    public static fetchTools(): Promise<Tool[]> {
+        return new Promise<Tool[]>((resolve, reject) => {
+            setTimeout(() => {
+                resolve(this.tools);
+            }, 0);
+        });
+    }
+
+    public static fetchToolParameters(toolName: string): Promise<Parameter[]> {
+        return new Promise<Parameter[]>((resolve, reject) => {
+            setTimeout(() => {
+                resolve(this.parameters.filter((tuple: [string, Parameter[]]) => tuple[0] === toolName)[0][1]);
+            }, 0);
+        });
+    }
 
     private static tools: Tool[] = [
         {
@@ -33,19 +49,4 @@ export default class ToolService {
         ],
     ];
 
-    public static fetchTools(): Promise<Tool[]> {
-        return new Promise<Tool[]>((resolve, reject) => {
-            setTimeout(() => {
-                resolve(this.tools);
-            }, 0);
-        });
-    }
-
-    public static fetchToolParameters(toolName: string): Promise<Parameter[]> {
-        return new Promise<Parameter[]>((resolve, reject) => {
-            setTimeout(() => {
-                resolve(this.parameters.filter((tuple: [string, Parameter[]]) => tuple[0] === toolName)[0][1]);
-            }, 0);
-        });
-    }
 }
