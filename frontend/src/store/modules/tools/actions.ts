@@ -9,7 +9,7 @@ const actions: ActionTree<ToolState, RootState> = {
         context.commit('setTools', tools);
     },
     async fetchToolParametersIfNotPresent(context, toolName: string) {
-        if (!context.getters['tools/tools'].filter((tool: Tool) => tool.name === toolName).parameters) {
+        if (!context.state.tools.filter((tool: Tool) => tool.name === toolName)[0].parameters) {
             const parameters = await ToolService.fetchToolParameters(toolName);
             context.commit('setToolParameters', {toolName, parameters});
         }
