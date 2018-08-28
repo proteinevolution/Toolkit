@@ -1,34 +1,32 @@
 <template>
-    <div id="navbar">
+    <div class="navbar-container">
         <b-navbar toggleable="md"
                   type="light">
             <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
             <b-collapse is-nav id="nav_collapse">
-                <b-navbar-nav>
-                    <b-nav-item v-for="section in sections"
-                                :key="section"
-                                :class="[section === selectedSection ? 'active' : '']"
-                                @click="selectSection(section)">
-                        {{ $t('tools.sections.' + section) }}
-                    </b-nav-item>
-                </b-navbar-nav>
-            </b-collapse>
-        </b-navbar>
+                <b-row>
+                    <b-col>
+                        <b-navbar-nav class="upper-nav">
+                            <b-nav-item v-for="section in sections"
+                                        :key="section"
+                                        :class="[section === selectedSection ? 'active' : '']"
+                                        @click="selectSection(section)">
+                                {{ $t('tools.sections.' + section) }}
+                            </b-nav-item>
+                        </b-navbar-nav>
 
-        <b-navbar toggleable="md"
-                  type="light">
-            <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
-
-            <b-collapse is-nav id="nav_collapse">
-                <b-navbar-nav>
-                    <b-nav-item v-for="tool in tools"
-                                :key="tool.name"
-                                :to="'/tools/' + tool.name"
-                                v-show="tool.section === selectedSection">
-                        {{tool.longname}}
-                    </b-nav-item>
-                </b-navbar-nav>
+                        <b-navbar-nav class="lower-nav"
+                                      :style="'border-top-color: ' + sectionColor">
+                            <b-nav-item v-for="tool in tools"
+                                        :key="tool.name"
+                                        :to="'/tools/' + tool.name"
+                                        v-show="tool.section === selectedSection">
+                                {{tool.longname}}
+                            </b-nav-item>
+                        </b-navbar-nav>
+                    </b-col>
+                </b-row>
             </b-collapse>
         </b-navbar>
     </div>
@@ -43,6 +41,9 @@
         data() {
             return {
                 selectedSection: '',
+                sectionColors: {
+                    Search: '#D0BA89'
+                },
             };
         },
         computed: {
@@ -51,6 +52,12 @@
             },
             sections(): string[] {
                 return this.$store.getters['tools/sections'];
+            },
+            sectionColor() {
+                if (!this.selectedSection) {
+                    return 'rgba(0,0,0,0)';
+                }
+                return this.sectionColors[this.selectecSection];
             },
         },
         watch: {
@@ -77,5 +84,35 @@
     });
 </script>
 
-<style>
+<style lang="scss" scoped>
+    .navbar-container .navbar {
+        padding-left: 0;
+        max-width: 750px;
+
+        .navbar-nav {
+            .nav-item a {
+                border-radius: 5px;
+                text-shadow: 0 1px 1px #fefefe;
+                padding: 1rem 1rem;
+                font-size: .75em;
+            }
+
+            .nav-item.active a, .nav-item:hover a, .nav-item .nav-link.active {
+                background: rgba(220, 220, 220, 0.5);
+            }
+
+            &.upper-nav a {
+                color: #888;
+                font-weight: bold;
+            }
+
+            &.lower-nav {
+                border-top: 2px solid #D0BA89;
+                padding-top: 4px;
+                a {
+                    color: $tk-gray;
+                }
+            }
+        }
+    }
 </style>

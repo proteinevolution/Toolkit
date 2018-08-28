@@ -6,10 +6,10 @@
             </b-row>
             <b-row>
                 <b-col v-if="showJobList"
-                       cols="3">
+                       md="2">
                     <JobList/>
                 </b-col>
-                <b-col :cols="showJobList ? 9 : 12">
+                <b-col :md="showJobList ? 10 : 12">
                     <router-view/>
                 </b-col>
             </b-row>
@@ -51,5 +51,6 @@
         background-color: $bg-gray;
         box-shadow: 1px 2px 4px 3px rgba(200, 200, 200, 0.75);
         padding-top: 10px;
+        margin-bottom: 3rem;
     }
 </style>
