@@ -6,12 +6,17 @@ export interface Tool {
     section: string;
     forwarding: ForwardingMode;
 
-    parameters?: Parameter[];
+    parameters?: ParameterSection[];
 }
 
 export interface ForwardingMode {
     alignment: string[];
     multi_seq: string[];
+}
+
+export interface ParameterSection {
+    name: string;
+    parameters: Parameter[];
 }
 
 export interface Parameter {

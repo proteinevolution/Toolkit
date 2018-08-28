@@ -1,4 +1,5 @@
 import {Parameter, TextAreaParameter, Tool} from '@/types/toolkit';
+import {ParameterSection} from '../types/toolkit';
 
 // Temporary mock, replace with API calls later
 
@@ -12,10 +13,11 @@ export default class ToolService {
         });
     }
 
-    public static fetchToolParameters(toolName: string): Promise<Parameter[]> {
-        return new Promise<Parameter[]>((resolve, reject) => {
+    public static fetchToolParameters(toolName: string): Promise<ParameterSection[]> {
+        return new Promise<ParameterSection[]>((resolve, reject) => {
             setTimeout(() => {
-                resolve(this.parameters.filter((tuple: [string, Parameter[]]) => tuple[0] === toolName)[0][1]);
+                resolve(this.parameters
+                    .filter((tuple: [string, ParameterSection[]]) => tuple[0] === toolName)[0][1]);
             }, 0);
         });
     }
@@ -34,17 +36,28 @@ export default class ToolService {
         },
     ];
 
-    private static parameters: [string, Parameter[]][] = [
+    private static parameters: Array<[string, ParameterSection[]]> = [
         ['searchtool1',
             [
-                ({
-                    type: 'alignment',
-                    name: 'alignment',
-                    label: '',
-                    section: 'input',
-                    allowsTwoTextAreas: true,
-                    input_placeholder: ';asdlfkjds',
-                } as TextAreaParameter),
+                {
+                    name: 'Input',
+                    parameters: [
+                        ({
+                            type: 'TextArea',
+                            name: 'alignment',
+                            label: '',
+                            section: 'input',
+                            allowsTwoTextAreas: true,
+                            input_placeholder: ';asdlfkjds',
+                        } as TextAreaParameter),
+                    ],
+                },
+                {
+                    name: 'Parameters',
+                    parameters: [
+
+                    ],
+                },
             ],
         ],
     ];
