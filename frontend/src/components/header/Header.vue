@@ -5,7 +5,9 @@
         </b-row>
         <b-row>
             <b-col cols="3">
-                <router-link to="/">MPI Bioinformatics Toolkit (Logo)</router-link>
+                <router-link to="/">
+                    <img :src="require('../../assets/images/minlogo.svg')" alt="MPI Bioinformatics Toolkit"/>
+                </router-link>
             </b-col>
             <b-col>
                 <NavBar></NavBar>
