@@ -19,7 +19,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import Help from '@/components/footer/Help.vue';
+    import Help from './modals/Help.vue';
 
     export default Vue.extend({
         name: 'Footer',
