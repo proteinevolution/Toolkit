@@ -20,6 +20,7 @@ export default {
                 updates: 'Recent Updates',
             },
         },
-        copyright: '© 2008-{currentYear}, Dept. of Protein Evolution, Max Planck Institute for Developmental Biology, Tübingen',
+        copyright: '© 2008-{currentYear}, Dept. of Protein Evolution, ' +
+            'Max Planck Institute for Developmental Biology, Tübingen',
     },
 };

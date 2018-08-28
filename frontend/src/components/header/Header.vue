@@ -42,7 +42,7 @@
         width: 100%;
         img {
             height: auto;
-            width: 100%;
+            width: 180px;
         }
     }
 </style>

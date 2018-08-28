@@ -33,6 +33,17 @@ export default class ToolService {
             },
             parameters: undefined,
         },
+        {
+            name: 'alignmenttool1',
+            longname: 'Alignment Tool 1',
+            title: 'Great tool 1',
+            section: 'Alignment',
+            forwarding: {
+                alignment: [],
+                multi_seq: [],
+            },
+            parameters: undefined,
+        },
     ];
 
     private static parameters: Array<[string, ParameterSection[]]> = [

@@ -41,9 +41,10 @@
         data() {
             return {
                 selectedSection: '',
-                sectionColors: {
-                    Search: '#D0BA89'
-                },
+                sectionColors: [
+                    '#D0BA89',
+                    '#FFCC66',
+                ],
             };
         },
         computed: {
@@ -53,11 +54,9 @@
             sections(): string[] {
                 return this.$store.getters['tools/sections'];
             },
-            sectionColor() {
-                if (!this.selectedSection) {
-                    return 'rgba(0,0,0,0)';
-                }
-                return this.sectionColors[this.selectecSection];
+            sectionColor(): string {
+                const index = this.sections.indexOf(this.selectedSection) % this.sections.length;
+                return this.sectionColors[index];
             },
         },
         watch: {
