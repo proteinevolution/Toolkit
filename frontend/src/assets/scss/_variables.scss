@@ -1,4 +1,26 @@
+// SIZES
+$container-max-widths: (
+        sm: 540px,
+        md: 720px,
+        lg: 960px,
+        xl: 1200px
+);
+
+// COLORS
+$black: #0a0a0a;
+$red: #ec5840;
+$yellow: #ffae00;
+
 $tk-green: #2E8C81;
+$tk-dark-green: rgba(0, 110, 98, 166);
+$tk-light-gray: #eee;
+$tk-gray: #707070;
+$tk-dark-gray: #666;
 
+$bg-gray: $tk-light-gray;
 $primary: $tk-green;
+$secondary: $tk-dark-green;
 
+// TYPOGRAPHY
+$font-family-sans-serif: "Noto Sans", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+$font-family-monospace: Consolas, 'Liberation Mono', Courier, monospace;

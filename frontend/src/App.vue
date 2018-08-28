@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-container>
+        <b-container class="main-container">
             <b-row>
                 <Header></Header>
             </b-row>
@@ -46,6 +46,10 @@
     });
 </script>
 
-<style lang="scss">
-
+<style lang="scss" scoped>
+    .main-container {
+        background-color: $bg-gray;
+        box-shadow: 1px 2px 4px 3px rgba(200, 200, 200, 0.75);
+        padding-top: 10px;
+    }
 </style>

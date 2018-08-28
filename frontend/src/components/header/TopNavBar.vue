@@ -1,13 +1,34 @@
 <template>
-    <div class="float-right top-navbar">
+    <b-col cols="12"
+           class="top-navbar">
         <div class="float-right meta-user"></div>
         <div class="float-right social-nav">
-            <b-button variant="href" href="https://github.com/proteinevolution/Toolkit" target="_blank" rel="noopener">
-                <i class="fab fa-github"></i></b-button>
-            <b-button variant="href" href="https://www.facebook.com/mpitoolkit" target="_blank" rel="noopener"><i
-                    class="fab fa-facebook-f"></i></b-button>
-            <b-button variant="href" href="https://twitter.com/mpitoolkit" target="_blank" rel="noopener"><i
-                    class="fab fa-twitter"></i></b-button>
+            <b-button variant="href"
+                      href="https://github.com/proteinevolution/Toolkit"
+                      target="_blank"
+                      rel="noopener"
+                      class="dark-link">
+                <i class="fab fa-github"></i>
+            </b-button>
+            <b-button variant="href"
+                      href="https://www.facebook.com/mpitoolkit"
+                      target="_blank"
+                      rel="noopener"
+                      class="dark-link">
+                <i class="fab fa-facebook-f"></i>
+            </b-button>
+            <b-button variant="href"
+                      href="https://twitter.com/mpitoolkit"
+                      target="_blank"
+                      rel="noopener"
+                      class="dark-link">
+                <i class="fab fa-twitter"></i>
+            </b-button>
+            <b-button variant="href"
+                      href="#"
+                      class="sign-in-link">
+                Sign In
+            </b-button>
         </div>
 
         <div class="maintenance-alert float-right"
@@ -22,7 +43,7 @@
             <i class="fas fa-retweet"></i>
             <b>Reconnecting...</b>
         </div>
-    </div>
+    </b-col>
 </template>
 
 <script lang="ts">
@@ -41,9 +62,18 @@
     });
 </script>
 
-<style>
+<style lang="scss" scoped>
+    .social-nav {
+        .dark-link i {
+            color: $tk-dark-gray;
+        }
+
+        .sign-in-link {
+            font-size: 0.8em;
+        }
+    }
+
     .top-navbar {
-        background-color: #cccccc;
-        width: 100%;
+        width: 100%
     }
 </style>

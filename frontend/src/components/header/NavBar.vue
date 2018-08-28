@@ -1,6 +1,7 @@
 <template>
     <div id="navbar">
-        <b-navbar toggleable="md" type="dark" variant="primary">
+        <b-navbar toggleable="md"
+                  type="light">
             <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
             <b-collapse is-nav id="nav_collapse">
@@ -15,7 +16,8 @@
             </b-collapse>
         </b-navbar>
 
-        <b-navbar toggleable="md" type="dark" variant="primary">
+        <b-navbar toggleable="md"
+                  type="light">
             <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
             <b-collapse is-nav id="nav_collapse">

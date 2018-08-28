@@ -1,5 +1,4 @@
-import {Parameter, TextAreaParameter, Tool} from '@/types/toolkit';
-import {ParameterSection} from '../types/toolkit';
+import {Parameter, TextAreaParameter, Tool, ParameterSection} from '@/types/toolkit';
 
 // Temporary mock, replace with API calls later
 
