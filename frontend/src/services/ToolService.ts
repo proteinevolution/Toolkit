@@ -1,4 +1,5 @@
 import {Parameter, TextAreaParameter, Tool, ParameterSection} from '@/types/toolkit';
+import {BooleanParamter, NumberParameter, SelectParameter} from '../types/toolkit';
 
 // Temporary mock, replace with API calls later
 
@@ -51,12 +52,12 @@ export default class ToolService {
             [
                 {
                     name: 'Input',
+                    multiColumnLayout: false,
                     parameters: [
                         ({
                             type: 'TextArea',
                             name: 'alignment',
                             label: '',
-                            section: 'input',
                             allowsTwoTextAreas: true,
                             input_placeholder: 'Enter a protein sequence/multiple sequence alignment in ' +
                                 'FASTA/CLUSTAL/A3M format',
@@ -65,8 +66,45 @@ export default class ToolService {
                 },
                 {
                     name: 'Parameters',
+                    multiColumnLayout: true,
                     parameters: [
+                        ({
+                            type: 'Select',
+                            name: 'msa_gen_method',
+                            label: 'MSA generation method',
+                            options: [
+                                { value: 'option1', text: 'Option 1' },
+                                { value: 'option2', text: 'Option 2' },
+                                { value: 'option3', text: 'Option 3' },
+                            ],
+                        } as SelectParameter),
 
+                        ({
+                            type: 'Number',
+                            name: 'number_parameter',
+                            label: 'Some Number Parameter',
+                            min: 0,
+                            max: 100,
+                            default: 20,
+                        } as NumberParameter),
+
+                        ({
+                            type: 'Boolean',
+                            name: 'boolean_paramter',
+                            label: 'Some Boolean Parameter',
+                            default: false,
+                        } as BooleanParamter),
+
+                        ({
+                            type: 'Select',
+                            name: 'msa_gen_method',
+                            label: 'MSA generation method',
+                            options: [
+                                { value: 'option1', text: 'Option 1' },
+                                { value: 'option2', text: 'Option 2' },
+                                { value: 'option3', text: 'Option 3' },
+                            ],
+                        } as SelectParameter),
                     ],
                 },
             ],

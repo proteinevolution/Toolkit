@@ -16,6 +16,7 @@ export interface ForwardingMode {
 
 export interface ParameterSection {
     name: string;
+    multiColumnLayout: boolean;
     parameters: Parameter[];
 }
 
@@ -23,7 +24,6 @@ export interface Parameter {
     type: string;
     name: string;
     label: string;
-    section: string;
 }
 
 export interface TextAreaParameter extends Parameter {
@@ -32,5 +32,20 @@ export interface TextAreaParameter extends Parameter {
 }
 
 export interface SelectParameter extends Parameter {
-    options: string[];
+    options: SelectOption[];
+}
+
+export interface SelectOption {
+    value: string;
+    text: string;
+}
+
+export interface NumberParameter extends Parameter {
+    min: number;
+    max: number;
+    default: number;
+}
+
+export interface BooleanParamter extends Parameter {
+    default: boolean;
 }
