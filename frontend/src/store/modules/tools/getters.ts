@@ -1,6 +1,6 @@
 import {GetterTree} from 'vuex';
 import {RootState, ToolState} from '../../types';
-import {Tool, Parameter} from '@/types/toolkit';
+import {Parameter, Tool} from '@/types/toolkit';
 
 const getters: GetterTree<ToolState, RootState> = {
     tools(state): Tool[] {

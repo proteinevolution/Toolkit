@@ -5,10 +5,9 @@
 </template>
 
 <script>
-    export default {
-        name: "Alignment",
-
-    }
+    export default Vue.extend({
+        name: 'Alignment',
+    });
 </script>
 
 <style scoped>

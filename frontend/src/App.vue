@@ -38,7 +38,7 @@
         computed: {
             showJobList(): boolean {
                 return this.$route.meta.showJobList;
-            }
+            },
         },
         created() {
             this.$store.dispatch('tools/fetchAllTools');
