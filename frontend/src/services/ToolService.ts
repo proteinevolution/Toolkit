@@ -47,7 +47,8 @@ export default class ToolService {
                             label: '',
                             section: 'input',
                             allowsTwoTextAreas: true,
-                            input_placeholder: ';asdlfkjds',
+                            input_placeholder: 'Enter a protein sequence/multiple sequence alignment in ' +
+                                'FASTA/CLUSTAL/A3M format',
                         } as TextAreaParameter),
                     ],
                 },

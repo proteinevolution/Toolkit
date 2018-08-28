@@ -2,15 +2,24 @@
     <b-container>
         <b-row><h3>{{ tool.longname }}</h3></b-row>
         <b-row>
-            <b-tabs>
-                <b-tab v-for="section in parameterSections" :title="section.name">
-                    <b-container>
-                        <b-row v-for="parameter in section.parameters">
-                            <component :is="parameter.type" :parameter="parameter.parameters"></component>
-                        </b-row>
-                    </b-container>
-                </b-tab>
-            </b-tabs>
+            <b-col>
+                <b-form id="jobform">
+                    <b-tabs class="parameter-tabs" nav-class="tabs-nav">
+                        <b-tab v-for="section in parameterSections"
+                               :key="section.name"
+                               :title="section.name">
+                            <div class="tabs-panel">
+                                <b-row v-for="parameter in section.parameters"
+                                       :key="parameter.name">
+                                    <component :is="parameter.type"
+                                               :parameter="parameter">
+                                    </component>
+                                </b-row>
+                            </div>
+                        </b-tab>
+                    </b-tabs>
+                </b-form>
+            </b-col>
         </b-row>
     </b-container>
 </template>
@@ -59,3 +68,21 @@
         },
     });
 </script>
+
+<style>
+    .parameter-tabs .tabs-nav {
+        background: #eee;
+    }
+</style>
+
+<style scoped>
+    .parameter-tabs {
+        background: #FEFEFE;
+        width: 100%;
+    }
+
+    .tabs-panel {
+        padding: 2em;
+        background: none;
+    }
+</style>
