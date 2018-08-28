@@ -15,7 +15,7 @@
                 return this.$route.params.toolName;
             },
             tool() {
-                return this.$store.getters['tools/tool'](this.toolName);
+                return this.$store.getters['tools/tools'].filter((tool: Tool) => tool.name === this.toolName);
             },
         },
         created() {
@@ -23,7 +23,7 @@
         },
         beforeRouteEnter(to, from, next) {
             next(vm => {
-                if (!vm.$store.getters['tools/tool'](to.params.toolName)) {
+                if (!vm.$store.getters['tools/tools'].some((tool: Tool) => tool.name === to.params.toolName)) {
                     next({path: '/404',});
                 } else {
                     next();
@@ -36,6 +36,7 @@
         },
         methods: {
             loadToolParameters() {
+                console.log(this.toolName);
                 this.$store.dispatch('tools/fetchToolParametersIfNotPresent', this.toolName)
             }
         }
