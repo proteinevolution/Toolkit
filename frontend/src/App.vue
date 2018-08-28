@@ -50,5 +50,6 @@
     .main-container {
         background-color: $bg-gray;
         box-shadow: 1px 2px 4px 3px rgba(200, 200, 200, 0.75);
+        padding-top: 10px;
     }
 </style>

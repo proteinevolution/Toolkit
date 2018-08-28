@@ -3,14 +3,32 @@
            class="top-navbar">
         <div class="float-right meta-user"></div>
         <div class="float-right social-nav">
-            <b-button variant="href" href="https://github.com/proteinevolution/Toolkit" target="_blank" rel="noopener"
-                      class="">
-                <i class="fab fa-github"></i></b-button>
-            <b-button variant="href" href="https://www.facebook.com/mpitoolkit" target="_blank" rel="noopener"><i
-                    class="fab fa-facebook-f"></i></b-button>
-            <b-button variant="href" href="https://twitter.com/mpitoolkit" target="_blank" rel="noopener"><i
-                    class="fab fa-twitter"></i></b-button>
-            <b-button variant="href" href="#">Sign In</b-button>
+            <b-button variant="href"
+                      href="https://github.com/proteinevolution/Toolkit"
+                      target="_blank"
+                      rel="noopener"
+                      class="dark-link">
+                <i class="fab fa-github"></i>
+            </b-button>
+            <b-button variant="href"
+                      href="https://www.facebook.com/mpitoolkit"
+                      target="_blank"
+                      rel="noopener"
+                      class="dark-link">
+                <i class="fab fa-facebook-f"></i>
+            </b-button>
+            <b-button variant="href"
+                      href="https://twitter.com/mpitoolkit"
+                      target="_blank"
+                      rel="noopener"
+                      class="dark-link">
+                <i class="fab fa-twitter"></i>
+            </b-button>
+            <b-button variant="href"
+                      href="#"
+                      class="sign-in-link">
+                Sign In
+            </b-button>
         </div>
 
         <div class="maintenance-alert float-right"
@@ -46,7 +64,13 @@
 
 <style lang="scss" scoped>
     .social-nav {
+        .dark-link i {
+            color: $tk-dark-gray;
+        }
 
+        .sign-in-link {
+            font-size: 0.8em;
+        }
     }
 
     .top-navbar {
