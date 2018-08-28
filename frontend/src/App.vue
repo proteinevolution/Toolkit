@@ -25,7 +25,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import Header from '@/components/header/Header.vue';
-    import Footer from '@/components/footer/Footer.vue';
+    import Footer from '@/components/Footer.vue';
     import JobList from '@/components/JobList.vue';
 
     export default Vue.extend({
