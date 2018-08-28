@@ -3,6 +3,10 @@ export default {
         helpHeadline: 'Some Topic',
         helpContents: 'Some help text',
 
+        index: {
+            welcomeTitle: 'Welcome to the Bioinformatics Toolkit',
+            welcomeBody: 'of the Max Planck Institute for Developmental Biology, Tübingen, Germany.',
+        },
         tools: {
             sections: {
                 Search: 'Search',

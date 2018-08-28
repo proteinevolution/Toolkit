@@ -1,16 +1,16 @@
-import HomeView from '../views/HomeView.vue';
+import IndexView from '../components/index/IndexView.vue';
 
 // route level code-splitting
 // this generates a separate chunk (about.[hash].js) for this route
 // which is lazy-loaded when the route is visited.
 const ToolView = () => import(/* webpackChunkName: "about" */ '../views/ToolView.vue');
-const JobManagerView = () => import(/* webpackChunkName: "about" */ '../views/JobManagerView.vue');
-const NotFoundView = () => import(/* webpackChunkName: "about" */ '../views/NotFoundView.vue');
+const JobManagerView = () => import(/* webpackChunkName: "about" */ '../components/jobmanager/JobManagerView.vue');
+const NotFoundView = () => import(/* webpackChunkName: "about" */ '../components/NotFoundView.vue');
 
 export default [
     {
         path: '/',
-        component: HomeView,
+        component: IndexView,
         meta: {
             showJobList: false,
         },
