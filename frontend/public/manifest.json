@@ -1,0 +1,20 @@
+{
+	"name": "MPI Bioinformatics Toolkit",
+	"short_name": "Toolkit",
+	"start_url": ".",
+	"description": "The MPI Bioinformatics Toolkit is an interactive web service which offers access to a great variety of public and in-house bioinformatics tools. They are grouped into different sections that support sequence searches, multiple alignment, secondary and tertiary structure prediction and classification.",
+	"theme_color": "#2e8c81",
+	"display": "standalone",
+	"icons": [
+		{
+			"src": "\/favicon-green.svg",
+			"sizes": "192x192",
+			"type": "image\/svg"
+		},
+		{
+			"src": "\/favicon-32x32.png",
+			"sizes": "32x32",
+			"type": "image\/png"
+		}
+	]
+}
