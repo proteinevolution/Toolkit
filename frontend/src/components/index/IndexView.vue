@@ -8,15 +8,17 @@
                 <div class="caption-body">{{ $t('index.welcomeBody') }}</div>
             </div>
         </div>
-        <router-link to="/jobmanager">Job Manager</router-link>
+        <ToolFinder></ToolFinder>
     </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
+    import ToolFinder from './ToolFinder.vue';
 
     export default Vue.extend({
         name: 'IndexView',
+        components: {ToolFinder}
     });
 </script>
 

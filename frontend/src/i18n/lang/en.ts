@@ -6,6 +6,8 @@ export default {
         index: {
             welcomeTitle: 'Welcome to the Bioinformatics Toolkit',
             welcomeBody: 'of the Max Planck Institute for Developmental Biology, Tübingen, Germany.',
+            loadBarLabel: 'Cluster workload: {load}%',
+            searchPlaceholder: 'Enter a job ID or a tool name',
         },
         tools: {
             sections: {
