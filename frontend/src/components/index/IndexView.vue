@@ -18,7 +18,9 @@
 
     export default Vue.extend({
         name: 'IndexView',
-        components: {ToolFinder}
+        components: {
+            ToolFinder,
+        },
     });
 </script>
 

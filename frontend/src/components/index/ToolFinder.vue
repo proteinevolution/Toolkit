@@ -44,16 +44,35 @@
 
     export default Vue.extend({
         name: 'ToolFinder',
+        data() {
+            return {
+                clusterWorkload: 0,
+            };
+        },
+        created() {
+            this.animateClusterload(70);
+        },
         components: {
             SearchField,
         },
         computed: {
-            clusterWorkload(): number {
-                return 8;
-            },
             currentJobStatus(): string {
                 return 'done';
-            }
+            },
+        },
+        methods: {
+            animateClusterload(end: number, duration: number = 1000): void {
+                const start: number = this.clusterWorkload;
+                const range: number = end - start;
+                const increment: number = end > start ? 1 : -1;
+                const stepTime: number = Math.abs(Math.floor(duration / range));
+                const timer = setInterval(() => {
+                    this.clusterWorkload += increment;
+                    if (this.clusterWorkload === end) {
+                        clearInterval(timer);
+                    }
+                }, stepTime);
+            },
         },
     });
 </script>
@@ -116,10 +135,11 @@
                                 width: 2rem;
                                 height: 0.6rem;
                                 box-shadow: inset 0 0 10px 2px rgba(117, 182, 255, 0.4), 0 0 4px rgba(117, 182, 255, 0.1);
+                                transition: background-color 2s linear;
 
                                 &.green {
                                     animation: pulse 1s alternate infinite;
-                                    background: rgba(255, 255, 255, 0.9);
+                                    background-color: rgba(255, 255, 255, 0.9);
                                     box-shadow: inset 0 0 10px 2px rgba(0, 180, 40, 0.83), 0 0 4px rgba(143, 243, 0, 0.49);
                                 }
                             }
