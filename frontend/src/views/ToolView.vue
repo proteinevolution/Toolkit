@@ -24,7 +24,7 @@
         beforeRouteEnter(to, from, next) {
             next((vm) => {
                 if (!vm.$store.getters['tools/tools'].some((tool: Tool) => tool.name === to.params.toolName)) {
-                    next({path: '/404',});
+                    next({path: '/404'});
                 } else {
                     next();
                 }

@@ -34,7 +34,7 @@ export default class ToolService {
         },
     ];
 
-    private static parameters: [string, Parameter[]][] = [
+    private static parameters: Array<[string, Parameter[]]> = [
         ['searchtool1',
             [
                 ({
