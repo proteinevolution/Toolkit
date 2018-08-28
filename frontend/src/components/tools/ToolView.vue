@@ -27,8 +27,8 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import TextArea from '@/components/parameters/TextArea.vue';
-    import {Parameter, ParameterSection, Tool} from '../types/toolkit';
+    import TextArea from './parameters/TextArea.vue';
+    import {Parameter, ParameterSection, Tool} from '@/types/toolkit/index';
 
     export default Vue.extend({
         name: 'ToolView',

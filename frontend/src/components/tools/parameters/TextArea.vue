@@ -18,8 +18,8 @@
 <script lang="ts">
     import Vue from 'vue';
     import Switches from 'vue-switches';
-    import TextAreaSubComponent from '@/components/parameters/TextAreaSubComponent.vue';
-    import {TextAreaParameter} from '@/types/toolkit';
+    import TextAreaSubComponent from './TextAreaSubComponent.vue';
+    import {TextAreaParameter} from '@/types/toolkit/index';
 
     export default Vue.extend({
         name: 'TextArea',
