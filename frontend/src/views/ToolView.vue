@@ -9,12 +9,13 @@
                                :key="section.name"
                                :title="section.name">
                             <div class="tabs-panel">
-                                <b-row v-for="parameter in section.parameters"
+                                <div v-for="parameter in section.parameters"
                                        :key="parameter.name">
                                     <component :is="parameter.type"
-                                               :parameter="parameter">
+                                               :parameter="parameter"
+                                                class="parameter-component">
                                     </component>
-                                </b-row>
+                                </div>
                             </div>
                         </b-tab>
                     </b-tabs>
@@ -84,5 +85,9 @@
     .tabs-panel {
         padding: 2em;
         background: none;
+    }
+
+    .parameter-component {
+        width: 100%;
     }
 </style>
