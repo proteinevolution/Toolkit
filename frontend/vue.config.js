@@ -29,5 +29,17 @@ module.exports = {
                     // }
                 };
             });
+
+        // use sass-resources-loader to supply global variables
+        const scssRule = config.module.rule('scss');
+        scssRule.oneOf('vue').use('sass-resources-loader')
+            .loader('sass-resources-loader')
+            .tap(args => {
+               return {
+                   resources: [
+                       './src/assets/scss/_variables.scss'
+                   ],
+               };
+            });
     },
 };

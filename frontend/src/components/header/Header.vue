@@ -9,7 +9,7 @@
                     <img :src="require('../../assets/images/minlogo.svg')" alt="MPI Bioinformatics Toolkit"/>
                 </router-link>
             </b-col>
-            <b-col>
+            <b-col cols="9">
                 <NavBar></NavBar>
             </b-col>
         </b-row>
@@ -31,7 +31,5 @@
 </script>
 
 <style scoped lang="scss">
-    .header {
-        background-color: #dddddd;
-    }
+
 </style>
