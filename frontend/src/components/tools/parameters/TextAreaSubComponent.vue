@@ -1,17 +1,23 @@
 <template>
     <b-form-group class="textarea-group">
-        <b-form-textarea :id="id"
-                         class="textarea-alignment"
+        <b-form-textarea class="textarea-alignment"
                          :placeholder="input_placeholder"
                          v-model="text"
-                         rows="14"
-                         max-rows="14"
+                         :rows="shrink ? 8 : 14"
                          cols="70"
                          required
                          spellcheck="false">
         </b-form-textarea>
-        <b-btn variant="link">Paste Example</b-btn>
-        <b-btn variant="link">Upload File</b-btn>
+        <b-btn variant="link"
+               size="sm"
+               class="mt-1">
+            Paste Example
+        </b-btn>
+        <b-btn variant="link"
+               size="sm"
+               class="mt-1">
+            Upload File
+        </b-btn>
     </b-form-group>
 </template>
 
@@ -23,6 +29,7 @@
         props: {
             id: String,
             input_placeholder: String,
+            shrink: Boolean,
         },
         data() {
             return {
@@ -32,7 +39,7 @@
     });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
     .textarea-group {
         width: 100%;
     }

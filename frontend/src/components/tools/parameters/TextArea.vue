@@ -1,17 +1,16 @@
 <template>
     <div>
-        <TextAreaSubComponent :id="parameter.name"
-                              :input_placeholder="parameter.input_placeholder">
+        <TextAreaSubComponent :input_placeholder="parameter.input_placeholder"
+                              :shrink="secondTextAreaEnabled">
         </TextAreaSubComponent>
         <TextAreaSubComponent v-if="secondTextAreaEnabled"
-                              :id="parameter.name + '_two'"
-                              :input_placeholder="parameter.input_placeholder">
+                              :input_placeholder="parameter.input_placeholder"
+                              :shrink="secondTextAreaEnabled">
         </TextAreaSubComponent>
-        <div class="switch-container">
-                <switches v-model="secondTextAreaEnabled">
-                </switches>
-            <span class="switch-label">Align two sequences or MSAs</span>
-        </div>
+        <b-form-group :label="$t('tools.parameters.alignTwoSeqToggle')">
+            <switches v-model="secondTextAreaEnabled">
+            </switches>
+        </b-form-group>
     </div>
 </template>
 
@@ -46,19 +45,12 @@
     .vue-switcher-theme--default.vue-switcher-color--default div {
         background-color: lighten($primary, 15%);
     }
+
     .vue-switcher-theme--default.vue-switcher-color--default div:after {
         background-color: $primary;
     }
 </style>
 
-<style scoped>
-    .switch-container {
-    }
-
-    .switch-switch {
-    }
-    .switch-label {
-        margin-left: 1em;
-    }
+<style lang="scss" scoped>
 
 </style>

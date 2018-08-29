@@ -7,9 +7,10 @@ $container-max-widths: (
 );
 
 // COLORS
+$white: #fefefe;
 $black: #0a0a0a;
-$red: #ec5840;
-$yellow: #ffae00;
+$red: #ec442a;
+$yellow: #ff8c00;
 
 $tk-green: #2E8C81;
 $tk-dark-green: rgba(0, 110, 98, 166);
@@ -17,10 +18,13 @@ $tk-lighter-gray: #eee;
 $tk-light-gray: #ccc;
 $tk-gray: #707070;
 $tk-dark-gray: #666;
+$tk-darker-gray: #444;
 
 $bg-gray: $tk-lighter-gray;
 $primary: $tk-green;
 $secondary: $tk-dark-green;
+$warning: $yellow;
+$danger: $red;
 
 // TYPOGRAPHY
 $font-family-sans-serif: "Noto Sans", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;

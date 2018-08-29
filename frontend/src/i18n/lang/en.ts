@@ -14,6 +14,9 @@ export default {
                 Search: 'Search',
                 Alignment: 'Alignment',
             },
+            parameters: {
+                alignTwoSeqToggle: 'Align two sequences or MSAs',
+            },
         },
         helpModals: {
             titles: {

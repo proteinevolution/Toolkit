@@ -1,26 +1,47 @@
 <template>
-    <b-container>
-        <b-row><h3>{{ tool.longname }}</h3></b-row>
+    <div class="tool-view">
+        <div class="tool-header">
+            <h1>{{ tool.longname }}</h1>
+        </div>
+
         <b-row>
             <b-col>
-                <b-form class="job-form">
-                    <b-tabs class="parameter-tabs" nav-class="tabs-nav">
-                        <b-tab v-for="section in parameterSections"
-                               :key="section.name"
-                               :title="section.name">
-                            <div class="tabs-panel">
-                                <Section :section="section"></Section>
-                            </div>
-                        </b-tab>
-                    </b-tabs>
-                    <b-form-group class="submit-buttons">
-                        <b-btn class="submit-button" variant="primary">Submit Job</b-btn>
-                        <b-form-input class="custom-job-id" placeholder="Custom Job ID"></b-form-input>
-                    </b-form-group>
+                <b-form class="tool-form">
+                    <b-card no-body>
+                        <b-tabs class="parameter-tabs"
+                                card
+                                nav-class="tabs-nav">
+                            <b-tab v-for="section in parameterSections"
+                                   :key="section.name"
+                                   :title="section.name">
+                                <div class="tabs-panel">
+                                    <Section :section="section"></Section>
+                                </div>
+                            </b-tab>
+
+                            <template slot="tabs">
+                                <i class="fullscreen-toggler fa ml-auto mr-1"
+                                   @click="toggleFullScreen"
+                                   :class="[fullScreen ? 'fa-compress' : 'fa-expand']"></i>
+                            </template>
+                        </b-tabs>
+                        <b-form-group class="submit-buttons">
+                            <b-btn class="submit-button"
+                                   variant="primary"
+                            size="sm">
+                                Submit Job
+                            </b-btn>
+                            <b-form-input class="custom-job-id"
+                                          placeholder="Custom Job ID"
+                                          size="sm">
+
+                            </b-form-input>
+                        </b-form-group>
+                    </b-card>
                 </b-form>
             </b-col>
         </b-row>
-    </b-container>
+    </div>
 </template>
 
 <script lang="ts">
@@ -32,6 +53,11 @@
         name: 'ToolView',
         components: {
             Section,
+        },
+        data() {
+            return {
+                fullScreen: false,
+            };
         },
         computed: {
             toolName(): string {
@@ -64,42 +90,55 @@
             loadToolParameters() {
                 this.$store.dispatch('tools/fetchToolParametersIfNotPresent', this.toolName);
             },
+            toggleFullScreen() {
+                this.fullScreen = !this.fullScreen;
+            },
         },
     });
 </script>
 
-<style>
-    .parameter-tabs .tabs-nav {
-        background: #eee;
-    }
-</style>
+<style lang="scss">
+    .tool-header {
+        height: 2.75rem;
 
-<style scoped>
+        h1 {
+            color: $primary;
+            font-weight: bold;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+    }
+
     .submit-buttons {
         padding: 0 2em 2em 2em;
+
+        .submit-button {
+            margin-left: 1em;
+            float: right;
+        }
+        .custom-job-id {
+            float: right;
+            width: 10em;
+        }
     }
 
-    .submit-button {
-        margin-left: 1em;
-        float: right;
-    }
+    .tool-form {
+        .fullscreen-toggler {
+            font-size: 1.5rem;
+            color: $tk-dark-gray;
+            cursor: pointer;
+        }
 
-    .custom-job-id {
-        float: right;
-        width: 10em;
-    }
+        .parameter-tabs {
+            .nav-link {
+                font-size: 0.8em;
+                color: $tk-dark-gray;
 
-    .job-form {
-        background: #FEFEFE;
-    }
+                &.active {
+                    border-right: 1px solid #ddd;
+                }
+            }
 
-    .parameter-tabs {
-        background: none;
-        width: 100%;
-    }
-
-    .tabs-panel {
-        padding: 2em;
-        background: none;
+        }
     }
 </style>
