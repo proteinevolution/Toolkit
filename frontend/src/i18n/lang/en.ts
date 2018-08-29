@@ -1,6 +1,5 @@
 export default {
     en: {
-        helpHeadline: 'Some Topic',
         helpContents: 'Some help text',
 
         index: {
@@ -19,8 +18,17 @@ export default {
             },
         },
         helpModals: {
-            titles: {
+            names: {
                 help: 'Help',
+                faq: 'FAQ',
+                privacy: 'Privacy Policy',
+                imprint: 'Imprint',
+                contact: 'Contact Us',
+                cite: 'Cite Us',
+                updates: 'Recent Updates',
+            },
+            titles: {
+                help: 'Welcome to the MPI Bioinformatics Toolkit',
                 faq: 'FAQ',
                 privacy: 'Privacy Policy',
                 imprint: 'Imprint',
