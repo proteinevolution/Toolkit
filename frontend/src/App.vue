@@ -4,7 +4,7 @@
             <b-row>
                 <Header></Header>
             </b-row>
-            <b-row>
+            <b-row class="pt-3 mb-2">
                 <b-col v-if="showJobList"
                        md="2">
                     <JobList/>
@@ -50,7 +50,7 @@
     .main-container {
         background-color: $bg-gray;
         box-shadow: 1px 2px 4px 3px rgba(200, 200, 200, 0.75);
-        padding: 10px 25px 0 25px;
+        padding: 10px 1.8rem 0 25px;
         margin-bottom: 3rem;
     }
 </style>

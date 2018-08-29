@@ -1,8 +1,9 @@
 <template>
     <b-col cols="12"
            class="top-navbar">
-        <div class="float-right meta-user"></div>
-        <div class="float-right social-nav">
+
+        <div class="meta-user"></div>
+        <div class="social-nav">
             <b-button variant="href"
                       href="https://github.com/proteinevolution/Toolkit"
                       target="_blank"
@@ -26,23 +27,28 @@
             </b-button>
             <b-button variant="href"
                       href="#"
+                      size="sm"
                       class="sign-in-link">
                 Sign In
             </b-button>
         </div>
 
-        <div class="maintenance-alert float-right"
-             v-if="maintenanceMode">
-            <i class="fa fa-wrench"></i>
-            <b>Maintenance in a few seconds!</b>
+        <div class="warnings-container">
+            <b-alert variant="warning"
+                     class="maintenance-alert"
+                     fade
+                     :show="maintenanceMode">
+                <i class="fa fa-wrench"></i>
+                <b>Maintenance in a few seconds!</b>
+            </b-alert>
+            <div class="offline-alert"
+                 @click="reload"
+                 v-if="reconnecting">
+                <i class="fas fa-retweet"></i>
+                <b>Reconnecting...</b>
+            </div>
         </div>
-        <div id="offline-alert"
-             class="float-right"
-             onclick="window.location.reload()"
-             v-if="reconnecting">
-            <i class="fas fa-retweet"></i>
-            <b>Reconnecting...</b>
-        </div>
+
     </b-col>
 </template>
 
@@ -59,21 +65,44 @@
                 return this.$store.state.reconnecting;
             },
         },
+        methods: {
+            reloadApp(): void {
+                window.location.reload();
+            },
+        },
     });
 </script>
 
 <style lang="scss" scoped>
+    .top-navbar {
+        width: 100%;
+        display: flex;
+        flex-direction: row-reverse;
+    }
+
     .social-nav {
         .dark-link i {
             color: $tk-dark-gray;
         }
+    }
 
-        .sign-in-link {
-            font-size: 0.8em;
+    .warnings-container {
+        margin-right: 0.5rem;
+        display: flex;
+
+        .maintenance-alert, .offline-alert {
+            font-size: 0.75em;
+            padding: 0.5rem 1rem;
+
+            i {
+                margin-right: 0.4rem;
+            }
+        }
+
+        .offline-alert {
+            color: $danger;
+            cursor: pointer;
         }
     }
 
-    .top-navbar {
-        width: 100%
-    }
 </style>
