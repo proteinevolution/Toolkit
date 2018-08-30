@@ -28,7 +28,7 @@
                         <b-form-group class="submit-buttons">
                             <b-btn class="submit-button"
                                    variant="primary"
-                            size="sm">
+                                   size="sm">
                                 Submit Job
                             </b-btn>
                             <b-form-input class="custom-job-id"
@@ -97,7 +97,7 @@
     });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .tool-header {
         height: 2.75rem;
 

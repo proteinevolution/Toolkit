@@ -1,7 +1,16 @@
-import {Parameter, TextAreaParameter, Tool, ParameterSection} from '@/types/toolkit';
-import {BooleanParamter, NumberParameter, SelectParameter} from '../types/toolkit';
-
 // Temporary mock, replace with API calls later
+
+
+import {
+    BooleanParameter,
+    NumberParameter,
+    ParameterSection,
+    ParameterType,
+    SelectParameter,
+    TextAreaInputType,
+    TextAreaParameter,
+    Tool,
+} from '../types/toolkit';
 
 export default class ToolService {
 
@@ -30,7 +39,7 @@ export default class ToolService {
             section: 'Search',
             forwarding: {
                 alignment: [],
-                multi_seq: [],
+                multiSeq: [],
             },
             parameters: undefined,
         },
@@ -41,11 +50,32 @@ export default class ToolService {
             section: 'Alignment',
             forwarding: {
                 alignment: [],
-                multi_seq: [],
+                multiSeq: [],
             },
             parameters: undefined,
         },
     ];
+
+    private static numberParameter1: NumberParameter = {
+        type: ParameterType.Number,
+        name: 'number_parameter',
+        label: 'Some Number Parameter',
+        min: 0,
+        max: 100,
+        default: 20,
+    };
+
+    private static selectParameter1: SelectParameter = {
+        type: ParameterType.Select,
+        name: 'msa_gen_method',
+        label: 'MSA generation method',
+        options: [
+            {value: 'option1', text: 'Option 1'},
+            {value: 'option2', text: 'Option 2'},
+            {value: 'option3', text: 'Option 3'},
+        ],
+        maxSelectedOptions: 1,
+    };
 
     private static parameters: Array<[string, ParameterSection[]]> = [
         ['searchtool1',
@@ -55,11 +85,12 @@ export default class ToolService {
                     multiColumnLayout: false,
                     parameters: [
                         ({
-                            type: 'TextArea',
+                            type: ParameterType.TextArea,
                             name: 'alignment',
                             label: '',
+                            inputType: TextAreaInputType.Protein,
                             allowsTwoTextAreas: true,
-                            input_placeholder: 'Enter a protein sequence/multiple sequence alignment in ' +
+                            inputPlaceholder: 'Enter a protein sequence/multiple sequence alignment in ' +
                                 'FASTA/CLUSTAL/A3M format',
                         } as TextAreaParameter),
                     ],
@@ -68,41 +99,23 @@ export default class ToolService {
                     name: 'Parameters',
                     multiColumnLayout: true,
                     parameters: [
+                        ToolService.selectParameter1,
+                        ToolService.numberParameter1,
                         ({
-                            type: 'Select',
-                            name: 'msa_gen_method',
-                            label: 'MSA generation method',
-                            options: [
-                                { value: 'option1', text: 'Option 1' },
-                                { value: 'option2', text: 'Option 2' },
-                                { value: 'option3', text: 'Option 3' },
-                            ],
-                        } as SelectParameter),
-
-                        ({
-                            type: 'Number',
-                            name: 'number_parameter',
-                            label: 'Some Number Parameter',
-                            min: 0,
-                            max: 100,
-                            default: 20,
-                        } as NumberParameter),
-
-                        ({
-                            type: 'Boolean',
+                            type: ParameterType.Boolean,
                             name: 'boolean_paramter',
                             label: 'Some Boolean Parameter',
                             default: false,
-                        } as BooleanParamter),
+                        } as BooleanParameter),
 
                         ({
-                            type: 'Select',
+                            type: ParameterType.Select,
                             name: 'msa_gen_method',
                             label: 'MSA generation method',
                             options: [
-                                { value: 'option1', text: 'Option 1' },
-                                { value: 'option2', text: 'Option 2' },
-                                { value: 'option3', text: 'Option 3' },
+                                {value: 'option1', text: 'Option 1'},
+                                {value: 'option2', text: 'Option 2'},
+                                {value: 'option3', text: 'Option 3'},
                             ],
                         } as SelectParameter),
                     ],
