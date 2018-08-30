@@ -8,21 +8,27 @@
                          required
                          spellcheck="false">
         </b-form-textarea>
-        <b-btn variant="link"
-               size="sm"
-               class="mt-1">
-            Paste Example
-        </b-btn>
-        <b-btn variant="link"
-               size="sm"
-               class="mt-1">
-            Upload File
-        </b-btn>
+        <b-button-group size="sm"
+                        class="mt-1">
+            <b-btn variant="link">
+                Paste Example
+            </b-btn>
+            <b-btn variant="link">
+                Upload File
+            </b-btn>
+        </b-button-group>
+        <b-alert show
+                 :variant="validInput ? 'success' : 'danger'"
+                 :style="{opacity: text.length > 0 ? 1 : 0}"
+                 class="validation-alert">
+            @TODO display validation message
+        </b-alert>
     </b-form-group>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
+    import * as Reformat from '@/modules/reformat';
 
     export default Vue.extend({
         name: 'TextAreaSubComponent',
@@ -36,6 +42,11 @@
                 text: '',
             };
         },
+        computed: {
+            validInput() { // TODO get and display messages instead of boolean
+                return Reformat.validate(this.text, 'FASTA');
+            },
+        },
     });
 </script>
 
@@ -47,5 +58,11 @@
     .textarea-alignment {
         font-family: $font-family-monospace;
         width: 100%;
+    }
+
+    .validation-alert {
+        margin-top: 0.5rem;
+        float: right;
+        padding: 0.4rem 0.5rem;
     }
 </style>
