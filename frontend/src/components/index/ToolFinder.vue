@@ -1,36 +1,40 @@
 <template>
     <div class="tool-finder-container">
-        <div class="tool-finder">
-            <div class="live-table">
-                <div class="live-table-child">
-                    <div class="load-bar">
-                        <div class="load-bar-label">
-                            {{ $t('index.loadBarLabel', {load: clusterWorkload}) }}
-                        </div>
-                        <div class="load-bar-graph">
-                            <div class="load-bar-segment"
-                                 :class="[clusterWorkload > 0 ? 'green' : '']"></div>
-                            <div class="load-bar-segment"
-                                 :class="[clusterWorkload > 25 ? 'green' : '']"></div>
-                            <div class="load-bar-segment"
-                                 :class="[clusterWorkload > 50 ? 'green' : '']"></div>
-                            <div class="load-bar-segment"
-                                 :class="[clusterWorkload > 75 ? 'green' : '']"></div>
+        <div class="tool-finder container">
+            <div class="live-table row">
+                <div class="col-md-6">
+                    <div class="live-table-child">
+                        <div class="load-bar">
+                            <div class="load-bar-label">
+                                {{ $t('index.loadBarLabel', {load: clusterWorkload}) }}
+                            </div>
+                            <div class="load-bar-graph">
+                                <div class="load-bar-segment"
+                                     :class="[clusterWorkload > 0 ? 'green' : '']"></div>
+                                <div class="load-bar-segment"
+                                     :class="[clusterWorkload > 25 ? 'green' : '']"></div>
+                                <div class="load-bar-segment"
+                                     :class="[clusterWorkload > 50 ? 'green' : '']"></div>
+                                <div class="load-bar-segment"
+                                     :class="[clusterWorkload > 75 ? 'green' : '']"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="live-table-child">
-                    <router-link to="/jobmanager"
-                                 class="job-manager-link">
-                        Job Manager
-                        <i class="fas fa-list-ul"></i>
-                    </router-link>
+                <div class="col-md-6">
+                    <div class="live-table-child">
+                        <router-link to="/jobmanager"
+                                     class="job-manager-link">
+                            Job Manager
+                            <i class="fas fa-list-ul"></i>
+                        </router-link>
+                    </div>
                 </div>
             </div>
-            <div class="search-container">
-                <div class="traffic-bar"
+            <div class="search-container row">
+                <div class="traffic-bar col-12"
                      :class="currentJobStatus"></div>
-                <div class="search-field-container">
+                <div class="search-field-container col-12">
                     <SearchField :placeholder="$t('index.searchPlaceholder')"></SearchField>
                 </div>
             </div>
@@ -89,8 +93,7 @@
 
     .tool-finder-container {
         width: 50%;
-        transform: translateY(-50%);
-        margin: 0 auto -50px;
+        margin: -83px auto 0 auto;
 
         .tool-finder {
             position: relative;
@@ -110,7 +113,6 @@
                     display: flex;
                     align-items: center;
                     height: 100%;
-                    width: 50%;
 
                     .load-bar {
                         display: flex;
@@ -164,16 +166,12 @@
             }
 
             .search-container {
-                display: flex;
-                flex-direction: column;
                 height: 50%;
-                flex-grow: 1;
 
                 .traffic-bar {
                     cursor: pointer;
                     z-index: 99;
                     height: 0.2em;
-                    width: 100%;
                     border-radius: 3px;
                     animation: background 10s cubic-bezier(1, 0, 0, 1) infinite;
                     box-shadow: -2px 0 4px $tk-lighter-gray;
@@ -200,7 +198,7 @@
                     display: flex;
                     align-items: center;
                     height: 100%;
-                    padding: 0 2.5rem;
+                    padding: 0 1.1rem;
                 }
             }
         }
