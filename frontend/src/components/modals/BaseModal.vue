@@ -40,12 +40,12 @@
 
             .tk-modal-title {
                 color: $primary;
-                font-size: 1.5em;
+                font-size: 1.625em;
             }
 
             .tk-modal-close {
                 padding-right: 5px;
-                font-size: 1.5rem;
+                font-size: 1.625rem;
                 margin-left: auto;
                 line-height: 1;
                 color: $tk-gray;

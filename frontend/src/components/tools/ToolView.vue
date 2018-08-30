@@ -104,7 +104,7 @@
         h1 {
             color: $primary;
             font-weight: bold;
-            font-size: 1.1em;
+            font-size: 1.25em;
             line-height: 1.6;
         }
     }
@@ -124,14 +124,14 @@
 
     .tool-form {
         .fullscreen-toggler {
-            font-size: 1.5rem;
+            font-size: 1.625rem;
             color: $tk-dark-gray;
             cursor: pointer;
         }
 
         .parameter-tabs {
             .nav-link {
-                font-size: 0.8em;
+                font-size: 0.9em;
                 color: $tk-dark-gray;
 
                 &.active {

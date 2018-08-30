@@ -98,7 +98,7 @@
                 border-radius: 5px;
                 text-shadow: 0 1px 1px #fefefe;
                 padding: 1rem 1rem;
-                font-size: .75em;
+                font-size: 0.8em;
             }
 
             .nav-item.active a, .nav-item:hover a, .nav-item .nav-link.active {

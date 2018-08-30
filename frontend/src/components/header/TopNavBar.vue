@@ -91,7 +91,7 @@
         display: flex;
 
         .maintenance-alert, .offline-alert {
-            font-size: 0.75em;
+            font-size: 0.8em;
             padding: 0.5rem 1rem;
 
             i {

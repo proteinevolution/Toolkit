@@ -45,7 +45,7 @@
     }
 
     .textarea-alignment {
-        font-family: Consolas, "SFMono-Regular", "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+        font-family: $font-family-monospace;
         width: 100%;
     }
 </style>

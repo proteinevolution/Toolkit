@@ -12,6 +12,6 @@
 
 <style lang="scss" scoped>
     .search-field {
-        font-size: 0.8em;
+        font-size: 0.9em;
     }
 </style>

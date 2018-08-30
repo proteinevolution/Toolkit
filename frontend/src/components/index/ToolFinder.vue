@@ -119,7 +119,7 @@
                         width: 100%;
 
                         .load-bar-label {
-                            font-size: 0.7em;
+                            font-size: 0.75em;
                             color: $tk-gray;
                             margin-bottom: 4px;
                         }
@@ -148,7 +148,7 @@
 
                     .job-manager-link {
                         font-weight: bold;
-                        font-size: 0.8em;
+                        font-size: 0.9em;
                         width: 100%;
                         text-align: center;
 

@@ -42,10 +42,11 @@
 
             .caption-header {
                 margin-bottom: 1rem;
+                font-size: 1.1em;
             }
 
             .caption-body {
-                font-size: 0.8em;
+                font-size: 0.9em;
                 line-height: 1.5rem;
             }
         }

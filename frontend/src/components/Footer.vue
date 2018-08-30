@@ -42,7 +42,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        font-size: 0.7em;
+        font-size: 0.75em;
         padding: 1rem;
         color: $tk-gray;
 

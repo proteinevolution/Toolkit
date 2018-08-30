@@ -39,7 +39,7 @@
     });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
     .parameter-component {
         width: 100%;
     }
