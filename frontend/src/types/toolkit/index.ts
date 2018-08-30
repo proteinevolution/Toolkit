@@ -1,3 +1,4 @@
+
 export interface Tool {
     name: string;
     longname: string;
@@ -13,6 +14,7 @@ export interface ForwardingMode {
     alignment: string[];
     multiSeq: string[];
 }
+
 
 export interface ParameterSection {
     name: string;
@@ -83,9 +85,3 @@ export interface NumberParameter extends Parameter {
 export interface BooleanParameter extends Parameter {
     default: boolean;
 }
-
-/*
-export interface ModellerKeyParameter extends Parameter {
-    TODO
-}
-*/
