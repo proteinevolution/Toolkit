@@ -1,7 +1,7 @@
 <template>
     <b-form-group class="textarea-group">
         <b-form-textarea class="textarea-alignment"
-                         :placeholder="input_placeholder"
+                         :placeholder="inputPlaceholder"
                          v-model="text"
                          :rows="shrink ? 8 : 14"
                          cols="70"
@@ -28,7 +28,7 @@
         name: 'TextAreaSubComponent',
         props: {
             id: String,
-            input_placeholder: String,
+            inputPlaceholder: String,
             shrink: Boolean,
         },
         data() {

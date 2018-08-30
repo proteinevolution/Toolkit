@@ -5,12 +5,11 @@ import {
     BooleanParameter,
     NumberParameter,
     ParameterSection,
-    ParameterType,
     SelectParameter,
-    TextAreaInputType,
     TextAreaParameter,
     Tool,
 } from '../types/toolkit';
+import {ParameterType, TextAreaInputType} from '../types/toolkit/enums';
 
 export default class ToolService {
 
@@ -74,7 +73,7 @@ export default class ToolService {
             {value: 'option2', text: 'Option 2'},
             {value: 'option3', text: 'Option 3'},
         ],
-        maxSelectedOptions: 1,
+        maxSelectedOptions: 2,
     };
 
     private static parameters: Array<[string, ParameterSection[]]> = [
@@ -110,13 +109,14 @@ export default class ToolService {
 
                         ({
                             type: ParameterType.Select,
-                            name: 'msa_gen_method',
+                            name: 'msa_gen_method2',
                             label: 'MSA generation method',
                             options: [
                                 {value: 'option1', text: 'Option 1'},
                                 {value: 'option2', text: 'Option 2'},
                                 {value: 'option3', text: 'Option 3'},
                             ],
+                            maxSelectedOptions: 1,
                         } as SelectParameter),
                     ],
                 },

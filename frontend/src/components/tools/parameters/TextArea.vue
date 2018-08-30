@@ -1,13 +1,14 @@
 <template>
     <div>
-        <TextAreaSubComponent :input_placeholder="parameter.input_placeholder"
+        <TextAreaSubComponent :inputPlaceholder="parameter.inputPlaceholder"
                               :shrink="secondTextAreaEnabled">
         </TextAreaSubComponent>
         <TextAreaSubComponent v-if="secondTextAreaEnabled"
-                              :input_placeholder="parameter.input_placeholder"
+                              :inputPlaceholder="parameter.inputPlaceholder"
                               :shrink="secondTextAreaEnabled">
         </TextAreaSubComponent>
-        <b-form-group :label="$t('tools.parameters.alignTwoSeqToggle')">
+        <b-form-group v-if="parameter.allowsTwoTextAreas"
+                      :label="$t('tools.parameters.alignTwoSeqToggle')">
             <switches v-model="secondTextAreaEnabled">
             </switches>
         </b-form-group>

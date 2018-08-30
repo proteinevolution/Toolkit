@@ -15,6 +15,7 @@ export default {
             },
             parameters: {
                 alignTwoSeqToggle: 'Align two sequences or MSAs',
+                multipleSelectPlaceholder: 'Select options',
             },
         },
         helpModals: {
