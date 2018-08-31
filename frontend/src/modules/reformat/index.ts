@@ -8,13 +8,19 @@
  */
 import {Format, Operation, Sequence} from '@/modules/reformat/types';
 import {FASTA} from '@/modules/reformat/formats/FASTA';
-import {numbers} from '@/modules/reformat/operations';
+import {detect, numbers} from '@/modules/reformat/operations';
+import {CLUSTAL} from '@/modules/reformat/formats/CLUSTAL';
+import {A3M} from '@/modules/reformat/formats/A3M';
+import {STOCKHOLM} from '@/modules/reformat/formats/STOCKHOLM';
 
 /**
  * Register possible formats here.
  */
 const supportedFormats: Format[] = [
     FASTA,
+    CLUSTAL,
+    A3M,
+    STOCKHOLM,
 ];
 
 /**
@@ -22,6 +28,7 @@ const supportedFormats: Format[] = [
  */
 const supportedOperations: Operation[] = [
     numbers,
+    detect,
 ];
 
 /**

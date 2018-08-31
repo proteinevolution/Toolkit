@@ -46,8 +46,8 @@ export const FASTA: Format = {
         }
     },
 
-    read(fasta: string): Sequence[] {
-        const newlines = fasta.split('\n')
+    read(value: string): Sequence[] {
+        const newlines = value.split('\n')
         // remove empty lines
             .filter((line: string) => line === '');
 
