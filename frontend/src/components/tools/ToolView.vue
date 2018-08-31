@@ -25,15 +25,13 @@
                                    :class="[fullScreen ? 'fa-compress' : 'fa-expand']"></i>
                             </template>
                         </b-tabs>
-                        <b-form-group class="submit-buttons">
+                        <b-form-group class="submit-buttons card-body">
                             <b-btn class="submit-button"
-                                   variant="primary"
-                                   size="sm">
+                                   variant="primary">
                                 Submit Job
                             </b-btn>
                             <b-form-input class="custom-job-id"
-                                          placeholder="Custom Job ID"
-                                          size="sm">
+                                          placeholder="Custom Job ID">
 
                             </b-form-input>
                         </b-form-group>
@@ -97,7 +95,7 @@
     });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     .tool-header {
         height: 2.75rem;
 
@@ -106,19 +104,6 @@
             font-weight: bold;
             font-size: 1.25em;
             line-height: 1.6;
-        }
-    }
-
-    .submit-buttons {
-        padding: 0 2em 2em 2em;
-
-        .submit-button {
-            margin-left: 1em;
-            float: right;
-        }
-        .custom-job-id {
-            float: right;
-            width: 10em;
         }
     }
 
@@ -133,12 +118,20 @@
             .nav-link {
                 font-size: 0.9em;
                 color: $tk-dark-gray;
-
-                &.active {
-                    border-right: 1px solid #ddd;
-                }
             }
+        }
 
+        .submit-buttons {
+            margin-bottom: 0;
+
+            .submit-button {
+                margin-left: 1em;
+                float: right;
+            }
+            .custom-job-id {
+                float: right;
+                width: 10em;
+            }
         }
     }
 </style>

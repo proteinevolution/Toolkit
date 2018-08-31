@@ -52,19 +52,6 @@
     });
 </script>
 
-<style lang="scss">
-    .multiselect__tag {
-        background: $primary;
-    }
-    .multiselect, .multiselect__input, .multiselect__single {
-        font-size: $font-size-base;
-    }
-    .multiselect__option--selected.multiselect__option--highlight {
-        background: $primary;
-        color: #fff;
-    }
-</style>
-
 <style lang="scss" scoped>
 
 </style>
