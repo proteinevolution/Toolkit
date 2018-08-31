@@ -1,8 +1,7 @@
-import {Format} from '@/modules/reformat/formats/Format';
+import {Format, Sequence} from '@/modules/reformat/types';
 
 export const FASTA: Format = {
     name: 'FASTA',
-    translatableFormats: ['A3M'],
 
     // TODO refactor most of the functionality (is just copied from reformat.js and minorly revisited.)
     validate(value: string): boolean {
@@ -61,10 +60,47 @@ export const FASTA: Format = {
         return !(/[^-.*A-Z\s]/i.test(value));
     },
 
-    translate: {
-        A3M: (value: string) => {
-            // Just remove the '#A3M#' at the top.
-            return value.replace(/^#A3M#/, '');
-        },
+    read(fasta: string): Sequence[] {
+        const newlines = fasta.split('\n')
+        // remove empty lines
+            .filter((line: string) => line === '');
+
+        const result: Sequence[] = [];
+
+        for (let i = 0; i < newlines.length;) {
+            const element: Sequence = {
+                name: '',
+                seq: '',
+            };
+            if (newlines[i].startsWith('>')) {
+                element.name = newlines[i].substring(1);
+                i++;
+            }
+            while (i < newlines.length && !newlines[i].startsWith('>')) {
+                if (!newlines[i].startsWith(';')) {
+                    element.seq += newlines[i];
+                }
+                i++;
+            }
+            result.push(element);
+        }
+        return result;
+    },
+
+    write(sequences: Sequence[]): string {
+        let result = '';
+        for (const sequence of sequences) {
+            result += '>';
+            result += sequence.name;
+            result += '\n';
+            // result += formatLongSeq(sequence.seq, 60); TODO write formatLongSeq
+            // removes stars from the end of sequences, as they are specific to the pir format
+            if (/\*$/.test(sequence.seq)) {
+                result = result.replace(/\*$/, '');
+            }
+            result += '\n';
+        }
+
+        return result;
     },
 };

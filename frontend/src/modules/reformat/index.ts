@@ -6,7 +6,7 @@
  * REFORMAT.JS
  * Authors: Seung-Zin Nam, David Rau
  */
-import {Format} from '@/modules/reformat/formats/Format';
+import {Format} from '@/modules/reformat/types';
 import {FASTA} from '@/modules/reformat/formats/FASTA';
 
 /**
