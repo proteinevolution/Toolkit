@@ -4,59 +4,46 @@ export const FASTA: Format = {
     name: 'FASTA',
 
     validate(value: string): boolean {
-        // checks double occurrences of ">" in the header
-        // Ignore #A3M# to allow A3M format input, and ignore line breaks at the beginning as well.
-        value = value.replace(/^#A3M#/, '')
-            .replace(/^\n+/, '');
 
-        if (value.startsWith('>')) {
+        // remove preceding spaces and newlines
+        value = value.trimLeft();
 
-            // if there are no '>'s at all, it is not FASTA.
-            if (!value.includes('>')) {
+        if (value.includes('>')) { // could be one or more sequences and will have a header
+
+            // the first real character needs to be a '>'
+            if (!value.trimLeft().startsWith('>')) {
                 return false;
             }
 
-            const sequences = value.split('\n>');
+            const sequences = value.substr(1)
+                .split('\n>');
 
             for (let sequence of sequences) {
 
-                // immediately remove trailing spaces
-                sequence = sequence.trim();
+                // remove all spaces
+                sequence = sequence.replace(/ /g, '');
 
-                // check if header contains at least one char
-                if (sequence.length < 1) {
+                // validate header
+                const headerEnd: number = sequence.indexOf('\n');
+                const header: string = sequence.substring(0, headerEnd);
+
+                sequence = sequence.substr(headerEnd).replace(/\s/g, '');
+
+                // it must start with a alphanumerical character
+                if (header.length < 1 || !(/[A-Z0-9]/i).test(header[0].toUpperCase())) {
                     return false;
                 }
-
-                // insert separator at the beginning again
-                sequence = '>' + sequence;
-
-                // split on newlines
-                const lines = sequence.split('\n');
-
-                // remove one line, starting at the first position
-                lines.splice(0, 1);
-
-                // join the array back into a single string without newlines
-                sequence = lines.join('').trim();
 
                 // if no sequence is found for header, it can't be FASTA.
-                if (sequence === '') {
+                if (sequence.length < 1 || !(/[-.*A-Z]/i).test(sequence.toUpperCase())) {
                     return false;
                 }
-
-                if (/[^-.*A-Z\s]/i.test(sequence.toUpperCase())) {
-                    return false;
-                }
-
             }
-
             return true;
-        }
 
-        // check if there are any headers or illegal characters at all
-        // (if not it might be intended as a single-line sequence)
-        return !(/[^-.*A-Z\s]/i.test(value));
+        } else { // can only be one sequence without a header
+            return !(/[^-.*A-Z\n\s]/i.test(value.toUpperCase()));
+        }
     },
 
     read(fasta: string): Sequence[] {

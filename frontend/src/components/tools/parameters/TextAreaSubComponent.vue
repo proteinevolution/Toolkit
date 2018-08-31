@@ -5,7 +5,6 @@
                          v-model="text"
                          :rows="shrink ? 8 : 14"
                          cols="70"
-                         required
                          spellcheck="false">
         </b-form-textarea>
         <b-button-group size="sm"
