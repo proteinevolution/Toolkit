@@ -3,7 +3,6 @@ import {Format, Sequence} from '@/modules/reformat/types';
 export const FASTA: Format = {
     name: 'FASTA',
 
-    // TODO refactor most of the functionality (is just copied from reformat.js and minorly revisited.)
     validate(value: string): boolean {
         // checks double occurrences of ">" in the header
         // Ignore #A3M# to allow A3M format input, and ignore line breaks at the beginning as well.
@@ -69,11 +68,11 @@ export const FASTA: Format = {
 
         for (let i = 0; i < newlines.length;) {
             const element: Sequence = {
-                name: '',
+                identifier: '',
                 seq: '',
             };
             if (newlines[i].startsWith('>')) {
-                element.name = newlines[i].substring(1);
+                element.identifier = newlines[i].substring(1);
                 i++;
             }
             while (i < newlines.length && !newlines[i].startsWith('>')) {
@@ -91,7 +90,7 @@ export const FASTA: Format = {
         let result = '';
         for (const sequence of sequences) {
             result += '>';
-            result += sequence.name;
+            result += sequence.identifier;
             result += '\n';
             // result += formatLongSeq(sequence.seq, 60); TODO write formatLongSeq
             // removes stars from the end of sequences, as they are specific to the pir format

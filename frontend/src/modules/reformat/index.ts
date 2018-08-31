@@ -8,16 +8,21 @@
  */
 import {Format, Operation, Sequence} from '@/modules/reformat/types';
 import {FASTA} from '@/modules/reformat/formats/FASTA';
+import {numbers} from '@/modules/reformat/operations';
 
 /**
  * Register possible formats here.
  */
-const supportedFormats: Format[] = [FASTA];
+const supportedFormats: Format[] = [
+    FASTA,
+];
 
 /**
  * Register possible operations here.
  */
-const supportedOperations: Operation[] = [];
+const supportedOperations: Operation[] = [
+    numbers,
+];
 
 /**
  * Validate sequences and check if they have the expected format.
@@ -31,6 +36,7 @@ export function validate(seqs: string, expectedFormat: string): boolean {
 
 export function reformat(seqs: string, operation: string, ...params: any[]): string | boolean | number {
     const format: Format | null = getFormat(seqs);
+    // format will also be null if seqs are empty string
     if (format === null) {
         return false;
     }
@@ -47,7 +53,7 @@ export function reformat(seqs: string, operation: string, ...params: any[]): str
     // check if operation is any of the supported operations
     for (const op of supportedOperations) {
         if (op.name === operation) {
-            return op.execute(params);
+            return op.execute(sequences, seqs, format, params);
         }
     }
 

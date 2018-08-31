@@ -27,8 +27,20 @@ export interface Format {
  * Internal sequence object
  */
 export interface Sequence {
-    name: string;
+    /**
+     * Unique identifier of the sequence. Usually the first word following the '>' symbol in the header.
+     */
+    identifier: string;
+
+    /**
+     * Amino acid or nucleotide sequence.
+     */
     seq: string;
+
+    /**
+     * Rest of the header. Can be empty.
+     */
+    description?: string;
 }
 
 export interface Operation {
@@ -40,5 +52,6 @@ export interface Operation {
     /**
      * Defining function of this operation to execute.
      */
-    execute(...params: any[]): string | boolean | number;
+    execute(sequences: Sequence[], seqs: string, format: Format, ...params: any[])
+        : string | boolean | number;
 }
