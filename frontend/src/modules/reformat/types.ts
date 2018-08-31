@@ -30,3 +30,15 @@ export interface Sequence {
     name: string;
     seq: string;
 }
+
+export interface Operation {
+    /**
+     * Name of the operation.
+     */
+    name: string;
+
+    /**
+     * Defining function of this operation to execute.
+     */
+    execute(...params: any[]): string | boolean | number;
+}
