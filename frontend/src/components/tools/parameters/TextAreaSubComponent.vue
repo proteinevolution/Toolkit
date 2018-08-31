@@ -42,7 +42,7 @@
             };
         },
         computed: {
-            validInput() { // TODO get and display messages instead of boolean
+            validInput(): boolean { // TODO get and display messages instead of boolean
                 return Reformat.validate(this.text, 'FASTA');
             },
         },
