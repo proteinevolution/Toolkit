@@ -1,9 +1,10 @@
+/* Selects */
 .multiselect {
   font-size: $font-size-base;
   min-height: 0;
 
   .multiselect__select {
-    height: 30px;
+    height: 28px;
     padding: 0;
   }
 
@@ -22,7 +23,7 @@
 
     .multiselect__tags-wrap {
       display: block;
-      margin-bottom: -1px;
+      margin-bottom: -2px;
     }
 
     .multiselect__tag {
@@ -38,6 +39,10 @@
           background: $tk-dark-green;
         }
       }
+    }
+
+    .multiselect__single {
+      margin-bottom: 3px;
     }
   }
 
@@ -58,4 +63,9 @@
       box-shadow: 0 0 0 0.2rem rgba(46, 140, 129, 0.25);
     }
   }
+}
+
+/* Switches */
+.vue-switcher {
+  margin: 0.35rem 0 0 0.23rem;
 }

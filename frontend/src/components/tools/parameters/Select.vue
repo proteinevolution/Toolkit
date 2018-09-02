@@ -1,26 +1,19 @@
 <template>
     <b-form-group :label="parameter.label">
-        <b-form-select v-model="selectedSingle"
-                       v-if="parameter.maxSelectedOptions === 1"
-                       :options="parameter.options"
-                       class="mb-3"
-                       size="sm">
-        </b-form-select>
 
-        <multiselect v-if="parameter.maxSelectedOptions > 1"
-                     v-model="selectedMultiple"
-                     :multiple="true"
-                     :max="parameter.maxSelectedOptions"
-                   :options="parameter.options"
-                    track-by="value"
-                    label="text"
-                    preselectFirst
-                     :placeholder="$t('tools.parameters.multipleSelectPlaceholder')"
+        <multiselect v-model="selected"
+                     :multiple="isMulti"
+                     :max="isMulti ? parameter.maxSelectedOptions : null"
+                     :options="parameter.options"
+                     track-by="value"
+                     label="text"
+                     preselectFirst
+                     :placeholder="$t(isMulti ? 'tools.parameters.select.multiplePlaceholder' : 'tools.parameters.select.singlePlaceholder')"
                      :searchable="false"
-                    selectLabel=""
-                    deselectLabel=""
-                    selectedLabel="">
-            <template slot="maxElements">Max Elements selected!</template>
+                     selectLabel=""
+                     deselectLabel=""
+                     selectedLabel="">
+            <template slot="maxElements">$t('tools.parameters.select.maxElementsSelected')</template>
         </multiselect>
 
     </b-form-group>
@@ -45,9 +38,13 @@
         },
         data() {
             return {
-                selectedSingle: this.parameter.options[0] || null,
-                selectedMultiple: [],
+                selected: [],
             };
+        },
+        computed: {
+            isMulti(): boolean {
+                return this.parameter.maxSelectedOptions > 1;
+            },
         },
     });
 </script>

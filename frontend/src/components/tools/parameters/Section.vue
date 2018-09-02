@@ -2,7 +2,8 @@
     <div>
         <b-row>
             <b-col v-for="parameter in section.parameters"
-                   :sm="section.multiColumnLayout ? 4 : 12"
+                   :sm="section.multiColumnLayout ? 6 : 12"
+                   :md="section.multiColumnLayout ? 4 : 12"
                    :key="parameter.name">
                 <component :is="parameter.type"
                            :parameter="parameter"

@@ -15,7 +15,11 @@ export default {
             },
             parameters: {
                 alignTwoSeqToggle: 'Align two sequences or MSAs',
-                multipleSelectPlaceholder: 'Select options',
+                select: {
+                    singlePlaceholder: 'Select one',
+                    multiplePlaceholder: 'Select options',
+                    maxElementsSelected: 'Max. elements selected',
+                },
             },
         },
         helpModals: {
