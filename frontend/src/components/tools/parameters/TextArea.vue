@@ -3,10 +3,12 @@
         <TextAreaSubComponent :inputPlaceholder="parameter.inputPlaceholder"
                               :shrink="secondTextAreaEnabled">
         </TextAreaSubComponent>
-        <TextAreaSubComponent v-if="secondTextAreaEnabled"
-                              :inputPlaceholder="parameter.inputPlaceholder"
-                              :shrink="secondTextAreaEnabled">
-        </TextAreaSubComponent>
+        <ExpandHeight>
+            <TextAreaSubComponent v-if="secondTextAreaEnabled"
+                                  :inputPlaceholder="parameter.inputPlaceholder"
+                                  :shrink="secondTextAreaEnabled">
+            </TextAreaSubComponent>
+        </ExpandHeight>
         <b-form-group v-if="parameter.allowsTwoTextAreas"
                       :label="$t('tools.parameters.alignTwoSeqToggle')">
             <switches v-model="secondTextAreaEnabled">
@@ -20,12 +22,14 @@
     import Switches from 'vue-switches';
     import TextAreaSubComponent from './TextAreaSubComponent.vue';
     import {TextAreaParameter} from '@/types/toolkit/index';
+    import ExpandHeight from '@/transitions/ExpandHeight.vue';
 
     export default Vue.extend({
         name: 'TextArea',
         components: {
             Switches,
             TextAreaSubComponent,
+            ExpandHeight,
         },
         props: {
             /*
