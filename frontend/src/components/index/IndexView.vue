@@ -28,7 +28,12 @@
     .caption-container {
         position: relative;
 
+        .img-fluid {
+            border-radius: $global-radius;
+        }
         .caption {
+            border-top-right-radius: $global-radius;
+            border-bottom-right-radius: $global-radius;
             position: absolute;
             height: 100%;
             width: 23%;
