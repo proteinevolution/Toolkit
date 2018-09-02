@@ -37,7 +37,7 @@ module.exports = {
             .tap(args => {
                return {
                    resources: [
-                       './src/assets/scss/_variables.scss'
+                       './src/assets/scss/_variables.scss',
                    ],
                };
             });

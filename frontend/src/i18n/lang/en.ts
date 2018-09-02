@@ -8,6 +8,13 @@ export default {
             loadBarLabel: 'Cluster workload: {load}%',
             searchPlaceholder: 'Enter a job ID or a tool name',
         },
+        jobList: {
+            sortColumns: {
+                id: 'ID',
+                date: 'Date',
+                tool: 'Tool',
+            },
+        },
         tools: {
             sections: {
                 Search: 'Search',

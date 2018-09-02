@@ -1,17 +1,20 @@
 <template>
-    <div id="jobs">
+    <div class="side-bar">
         <SearchField class="form-control-sm form-control-gray"></SearchField>
+        <JobList/>
     </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
-    import SearchField from '@/components/index/SearchField.vue';
+    import SearchField from '../index/SearchField.vue';
+    import JobList from './JobList.vue';
 
     export default Vue.extend({
-        name: 'JobList',
+        name: 'SideBar',
         components: {
             SearchField,
+            JobList,
         },
     });
 </script>

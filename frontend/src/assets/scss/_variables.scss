@@ -1,3 +1,5 @@
+// Override bootstrap variables here
+
 // SIZES
 $container-max-widths: (
         sm: 540px,
@@ -16,6 +18,7 @@ $tk-green: #2E8C81;
 $tk-dark-green: rgba(0, 110, 98, 166);
 $tk-lighter-gray: #eee;
 $tk-light-gray: #ccc;
+$tk-medium-gray: #aaa;
 $tk-gray: #707070;
 $tk-dark-gray: #666;
 $tk-darker-gray: #444;
@@ -32,3 +35,6 @@ $input-border-color: #ddd;
 $font-size-base: 0.9rem;
 $font-family-sans-serif: "Noto Sans", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 $font-family-monospace: Consolas, "SFMono-Regular", "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+
+// MISC
+$global-radius: 3px;
