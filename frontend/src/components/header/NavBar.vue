@@ -40,7 +40,7 @@
         name: 'NavBar',
         data() {
             return {
-                selectedSection: '',
+                userSelectedSection: '',
                 sectionColors: [
                     '#D0BA89',
                     '#ffbb55',
@@ -63,26 +63,21 @@
                 const index = this.sections.indexOf(this.selectedSection) % this.sections.length;
                 return this.sectionColors[index];
             },
-        },
-        watch: {
-            'sections'() {
-                this.updateSelection();
+            defaultSelectedSection(): string {
+                const matchingTools = this.tools.filter((tool: Tool) => tool.name === this.$route.params.toolName);
+                if (matchingTools.length > 0) {
+                    return matchingTools[0].section;
+                } else {
+                    return this.tools[0] ? this.tools[0].section : '';
+                }
             },
-            '$route.params.toolName'() {
-                this.updateSelection();
+            selectedSection(): string {
+                return this.userSelectedSection ? this.userSelectedSection : this.defaultSelectedSection;
             },
         },
         methods: {
             selectSection(section: string): void {
-                this.selectedSection = section;
-            },
-            updateSelection(): void {
-                const matchingTools = this.tools.filter((tool: Tool) => tool.name === this.$route.params.toolName);
-                if (matchingTools.length > 0) {
-                    this.selectedSection = matchingTools[0].section;
-                } else if (!this.selectedSection) {
-                    this.selectedSection = this.tools[0].section;
-                }
+                this.userSelectedSection = section;
             },
         },
     });
