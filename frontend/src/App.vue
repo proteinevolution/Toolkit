@@ -56,5 +56,7 @@
         box-shadow: 1px 2px 4px 3px rgba(200, 200, 200, 0.75);
         padding: 10px 1.8rem 0 25px;
         margin-bottom: 3rem;
+        border-bottom-left-radius: $global-radius;
+        border-bottom-right-radius: $global-radius;
     }
 </style>
