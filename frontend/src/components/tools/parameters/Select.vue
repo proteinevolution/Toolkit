@@ -13,7 +13,7 @@
                      selectLabel=""
                      deselectLabel=""
                      selectedLabel="">
-            <template slot="maxElements">$t('tools.parameters.select.maxElementsSelected')</template>
+            <template slot="maxElements">{{ $t('tools.parameters.select.maxElementsSelected') }}</template>
         </multiselect>
 
     </b-form-group>
