@@ -4,6 +4,7 @@ export enum ParameterType {
     Select = 'Select',
     Number = 'Number',
     Boolean = 'Boolean',
+    AlignmentMode = 'AlignmentMode',
     ModellerKey = 'ModellerKey',
 }
 
