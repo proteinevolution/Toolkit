@@ -17,7 +17,7 @@ import {
     minSeqNumber,
     numbers,
     sameLength,
-    uniqueIDs
+    uniqueIDs,
 } from '@/modules/reformat/operations';
 import {CLUSTAL} from '@/modules/reformat/formats/CLUSTAL';
 import {A3M} from '@/modules/reformat/formats/A3M';
@@ -58,6 +58,7 @@ export function validate(seqs: string, expectedFormat: string): boolean {
     return format !== null && format.name.toUpperCase() === expectedFormat.toUpperCase();
 }
 
+// TODO find better return type for linting
 export function reformat(seqs: string, operation: string, ...params: any[]): string | boolean | number {
     const format: Format | null = getFormat(seqs);
     // format will also be null if seqs are empty string
