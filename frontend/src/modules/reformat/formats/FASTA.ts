@@ -35,7 +35,7 @@ export const FASTA: Format = {
                 }
 
                 // if no sequence is found for header, it can't be FASTA.
-                if (sequence.length < 1 || !(/[-.*A-Z]/i).test(sequence.toUpperCase())) {
+                if (sequence.length < 1 || (/[^-.*A-Z]/i.test(sequence.toUpperCase()))) {
                     return false;
                 }
             }
