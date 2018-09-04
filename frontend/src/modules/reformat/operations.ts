@@ -23,6 +23,13 @@ export const sameLength: Operation = {
     },
 };
 
+export const maxLength: Operation = {
+    name: 'maxLength',
+    execute(sequences: Sequence[], seq, format, charLimit: number): boolean {
+        return seq.length < charLimit;
+    },
+};
+
 export const minSeqNumber: Operation = {
     name: 'minSeqNumber',
     execute(sequences: Sequence[], seq, format, minSeqLimit: number): boolean {

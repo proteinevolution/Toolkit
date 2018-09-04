@@ -8,10 +8,12 @@
  */
 import {Format, Operation, Sequence} from '@/modules/reformat/types';
 import {FASTA} from '@/modules/reformat/formats/FASTA';
-import {detect, numbers, uniqueIDs, sameLength} from '@/modules/reformat/operations';
+import {detect, numbers, uniqueIDs, sameLength, maxLength,
+    maxSeqLength, maxSeqNumber, minSeqLength, minSeqNumber} from '@/modules/reformat/operations';
 import {CLUSTAL} from '@/modules/reformat/formats/CLUSTAL';
 import {A3M} from '@/modules/reformat/formats/A3M';
 import {STOCKHOLM} from '@/modules/reformat/formats/STOCKHOLM';
+import {} from './operations';
 
 /**
  * Register possible formats here.
@@ -29,6 +31,11 @@ const supportedFormats: Format[] = [
 const supportedOperations: Operation[] = [
     numbers,
     detect,
+    maxLength,
+    minSeqNumber,
+    maxSeqNumber,
+    minSeqLength,
+    maxSeqLength,
     sameLength,
     uniqueIDs,
 ];
