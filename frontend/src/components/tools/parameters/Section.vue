@@ -20,6 +20,7 @@
     import Select from './Select.vue';
     import Number from './Number.vue';
     import Boolean from './Boolean.vue';
+    import AlignmentMode from './AlignmentMode.vue';
     import {ParameterSection} from '@/types/toolkit/index';
 
     export default Vue.extend({
@@ -29,6 +30,7 @@
             Select,
             Number,
             Boolean,
+            AlignmentMode,
         },
         props: {
             /*
