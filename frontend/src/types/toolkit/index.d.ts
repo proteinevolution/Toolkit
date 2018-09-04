@@ -1,3 +1,4 @@
+// TODO: move content into different files
 import {AlignmentSeqFormat, ParameterType, TextAreaInputType} from './enums';
 
 export interface Tool {
@@ -43,6 +44,7 @@ export interface AlignmentValidation {
     minNumSeq: number;
     maxNumSeq: number;
     requiresSameLengthSeq: boolean;
+    checkNucleotide: boolean;
 }
 
 export interface SelectParameter extends Parameter {

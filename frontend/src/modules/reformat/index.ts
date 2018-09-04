@@ -59,7 +59,7 @@ export function reformat(seqs: string, operation: string, ...params: any[]): str
 
     // check if operation is any of the supported operations
     for (const op of supportedOperations) {
-        if (op.name === operation) {
+        if (op.name.toUpperCase() === operation) {
             return op.execute(sequences, seqs, format, params);
         }
     }

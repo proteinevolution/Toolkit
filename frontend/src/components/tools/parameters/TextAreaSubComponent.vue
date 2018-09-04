@@ -1,14 +1,14 @@
 <template>
     <b-form-group class="textarea-group">
         <b-form-textarea class="textarea-alignment"
-                         :placeholder="inputPlaceholder"
+                         :placeholder="parameter.inputPlaceholder"
                          v-model="text"
                          :rows="shrink ? 8 : 14"
                          cols="70"
                          spellcheck="false">
         </b-form-textarea>
         <b-button-group size="sm"
-                        class="mt-1">
+                        class="mt-1 mb-3">
             <b-btn variant="link">
                 Paste Example
             </b-btn>
@@ -17,33 +17,73 @@
             </b-btn>
         </b-button-group>
         <b-alert show
-                 :variant="validInput ? 'success' : 'danger'"
-                 :style="{opacity: text.length > 0 ? 1 : 0}"
-                 class="validation-alert">
-            @TODO display validation message
+                 v-if="validation.cssClass"
+                 :variant="validation.cssClass"
+                 class="validation-alert mb-0">
+            {{ validation.text }}
         </b-alert>
     </b-form-group>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
+    import {AlignmentValidationResult} from '../../../types/toolkit/validation';
     import * as Reformat from '@/modules/reformat';
+    import {TextAreaParameter} from '../../../types/toolkit';
 
     export default Vue.extend({
         name: 'TextAreaSubComponent',
         props: {
             id: String,
-            inputPlaceholder: String,
             shrink: Boolean,
+            /*
+             Simply stating the interface type doesn't work, this is a workaround. See
+             https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
+             */
+            parameter: Object as () => TextAreaParameter,
         },
         data() {
             return {
                 text: '',
+                validation: {
+                    failed: false,
+                    text: '',
+                    cssClass: '',
+                },
             };
         },
-        computed: {
-            validInput(): boolean { // TODO get and display messages instead of boolean
-                return Reformat.validate(this.text, 'FASTA');
+        methods: {
+            validate(val: string) {
+                // TODO use more validation types depending on tool (or find dynamic solution)
+                return this.basicValidation(val);
+            },
+            basicValidation(val: string): AlignmentValidationResult {
+                let text: string = '';
+                let cssClass: string = '';
+                let failed: boolean = false;
+
+                if (val.length > 0) {
+                    const detectedFormat: string = Reformat.reformat(val, 'detect');
+                    const isFasta: boolean = Reformat.validate(val, 'Fasta');
+
+                    if (detectedFormat === '') {
+                        failed = true;
+                        cssClass = 'danger';
+                        text = 'Invalid characters. Could not detect format.';
+                    } else if (!isFasta) {
+                        failed = false;
+                        cssClass = 'success';
+                        text = `${detectedFormat} format found: Auto-transformed to FASTA`;
+                        // TODO: break up strict two way binding to prevent double check after new setting of text
+                        this.text = Reformat.reformat(val, 'Fasta');
+                    }
+                }
+
+                return {
+                    failed,
+                    text,
+                    cssClass,
+                };
             },
         },
     });

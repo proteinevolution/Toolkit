@@ -1,11 +1,11 @@
 <template>
     <div>
-        <TextAreaSubComponent :inputPlaceholder="parameter.inputPlaceholder"
+        <TextAreaSubComponent :parameter="parameter"
                               :shrink="secondTextAreaEnabled">
         </TextAreaSubComponent>
         <ExpandHeight>
             <TextAreaSubComponent v-if="secondTextAreaEnabled"
-                                  :inputPlaceholder="parameter.inputPlaceholder"
+                                  :parameter="parameter"
                                   :shrink="secondTextAreaEnabled">
             </TextAreaSubComponent>
         </ExpandHeight>
