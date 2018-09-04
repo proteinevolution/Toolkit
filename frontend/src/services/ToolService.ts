@@ -4,6 +4,7 @@
 import {
     BooleanParameter,
     NumberParameter,
+    Parameter,
     ParameterSection,
     SelectParameter,
     TextAreaParameter,
@@ -76,6 +77,12 @@ export default class ToolService {
         maxSelectedOptions: 2,
     };
 
+    private static alignmentModeParameter: Parameter = {
+        type: ParameterType.AlignmentMode,
+        name: 'alignmentmode',
+        label: '',
+    };
+
     private static parameters: Array<[string, ParameterSection[]]> = [
         ['searchtool1',
             [
@@ -100,6 +107,7 @@ export default class ToolService {
                     parameters: [
                         ToolService.selectParameter1,
                         ToolService.numberParameter1,
+                        ToolService.alignmentModeParameter,
                         ({
                             type: ParameterType.Boolean,
                             name: 'boolean_paramter',

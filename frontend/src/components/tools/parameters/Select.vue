@@ -4,6 +4,7 @@
         <multiselect v-model="selected"
                      :multiple="isMulti"
                      :max="isMulti ? parameter.maxSelectedOptions : null"
+                     :allowEmpty="false"
                      :options="parameter.options"
                      track-by="value"
                      label="text"

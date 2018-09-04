@@ -35,7 +35,7 @@ export const FASTA: Format = {
                 }
 
                 // if no sequence is found for header, it can't be FASTA.
-                if (sequence.length < 1 || !(/[-.*A-Z]/i).test(sequence.toUpperCase())) {
+                if (sequence.length < 1 || (/[^-.*A-Z]/i.test(sequence.toUpperCase()))) {
                     return false;
                 }
             }
@@ -49,7 +49,7 @@ export const FASTA: Format = {
     read(value: string): Sequence[] {
         const newlines = value.split('\n')
         // remove empty lines
-            .filter((line: string) => line === '');
+            .filter((line: string) => line !== '');
 
         const result: Sequence[] = [];
 
