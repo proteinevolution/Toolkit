@@ -8,7 +8,7 @@
  */
 import {Format, Operation, Sequence} from '@/modules/reformat/types';
 import {FASTA} from '@/modules/reformat/formats/FASTA';
-import {detect, numbers} from '@/modules/reformat/operations';
+import {detect, numbers, uniqueIDs, sameLength} from '@/modules/reformat/operations';
 import {CLUSTAL} from '@/modules/reformat/formats/CLUSTAL';
 import {A3M} from '@/modules/reformat/formats/A3M';
 import {STOCKHOLM} from '@/modules/reformat/formats/STOCKHOLM';
@@ -29,6 +29,8 @@ const supportedFormats: Format[] = [
 const supportedOperations: Operation[] = [
     numbers,
     detect,
+    sameLength,
+    uniqueIDs,
 ];
 
 /**
@@ -47,6 +49,7 @@ export function reformat(seqs: string, operation: string, ...params: any[]): str
     if (format === null) {
         return false;
     }
+
     operation = operation.toUpperCase();
     const sequences: Sequence[] = format.read(seqs);
 
@@ -59,7 +62,7 @@ export function reformat(seqs: string, operation: string, ...params: any[]): str
 
     // check if operation is any of the supported operations
     for (const op of supportedOperations) {
-        if (op.name === operation) {
+        if (op.name.toUpperCase() === operation) {
             return op.execute(sequences, seqs, format, params);
         }
     }

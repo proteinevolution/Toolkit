@@ -28,6 +28,12 @@ export default {
                     maxElementsSelected: 'Max. elements selected',
                 },
             },
+            validation: {
+                proteinFasta: 'Protein FASTA',
+                invalidCharacters: 'Invalid Characters!',
+                sameLength: 'Invalid MSA! Sequences should have the same length.',
+                uniqueIDs: 'Identifiers are not unique!',
+            },
         },
         helpModals: {
             names: {

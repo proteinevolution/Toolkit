@@ -17,10 +17,10 @@
             </b-btn>
         </b-button-group>
         <b-alert show
-                 :variant="validInput ? 'success' : 'danger'"
+                 :variant="validationState[0]"
                  :style="{opacity: text.length > 0 ? 1 : 0}"
                  class="validation-alert">
-            @TODO display validation message
+            {{ $t('tools.validation.' + validationState[1]) }}
         </b-alert>
     </b-form-group>
 </template>
@@ -42,8 +42,20 @@
             };
         },
         computed: {
-            validInput(): boolean { // TODO get and display messages instead of boolean
-                return Reformat.validate(this.text, 'FASTA');
+            validationState(): [string, string] {
+                // this is just for demonstration
+                // TODO put this somewhere else and get information from alignmentValidation model object
+                // maybe change interface of reformat.js library? (include basic validation, sameLength, etc)
+                if (Reformat.validate(this.text, 'FASTA')) {
+                    if (!Reformat.reformat(this.text, 'sameLength')) {
+                        return ['danger', 'sameLength'];
+                    } else if (!Reformat.reformat(this.text, 'uniqueIDs')) {
+                        return ['warning', 'uniqueIDs'];
+                    } else {
+                        return ['success', 'proteinFasta'];
+                    }
+                }
+                return ['danger', 'invalidCharacters'];
             },
         },
     });
