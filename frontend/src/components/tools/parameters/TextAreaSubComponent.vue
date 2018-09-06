@@ -27,9 +27,9 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {AlignmentValidationResult} from '../../../types/toolkit/validation';
-    import {Reformat} from '@/modules/reformat';
     import {TextAreaParameter} from '../../../types/toolkit';
+    import {validation} from '@/util/validation';
+    import {AlignmentValidationResult} from '../../../types/toolkit/validation';
 
     export default Vue.extend({
         name: 'TextAreaSubComponent',
@@ -45,57 +45,11 @@
         data() {
             return {
                 text: '',
-                validation: {
-                    failed: false,
-                    text: '',
-                    cssClass: '',
-                },
             };
         },
-        watch: {
-            text(newVal: string) {
-                this.validation = this.validate(newVal);
-            },
-        },
-        methods: {
-            validate(val: string): AlignmentValidationResult {
-                // TODO use more validation types depending on tool (or find dynamic solution)
-                return this.basicValidation(val);
-            },
-            basicValidation(val: string): AlignmentValidationResult {
-                let text: string = '';
-                let cssClass: string = '';
-                let failed: boolean = false;
-
-                const elem: Reformat = new Reformat(val);
-                (window as any).test = elem;
-
-                if (val.length > 0) {
-                    const detectedFormat: string = elem.getFormat();
-                    const isFasta: boolean = elem.validate('Fasta');
-
-                    if (detectedFormat === '') {
-                        failed = true;
-                        cssClass = 'danger';
-                        text = 'Invalid characters. Could not detect format.';
-                    } else if (!isFasta) {
-                        failed = false;
-                        cssClass = 'success';
-                        text = `${detectedFormat} format found: Auto-transformed to FASTA`;
-                        console.log(`Autotransform from ${detectedFormat}`);
-                        // TODO: break up strict two way binding to prevent double check after new setting of text
-                        this.text = elem.reformat('Fasta');
-                    } else {
-                        cssClass = 'success';
-                        text = 'Protein FASTA';
-                    }
-                }
-
-                return {
-                    failed,
-                    text,
-                    cssClass,
-                };
+        computed: {
+            validation(): AlignmentValidationResult {
+                return validation(this.text, this.parameter.alignmentValidation);
             },
         },
     });
