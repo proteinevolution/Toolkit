@@ -42,16 +42,3 @@ export interface Sequence {
      */
     description?: string;
 }
-
-export interface Operation {
-    /**
-     * Name of the operation.
-     */
-    name: string;
-
-    /**
-     * Defining function of this operation to execute.
-     */
-    execute(sequences: Sequence[], seqs: string, format: Format, ...params: any[])
-        : string | boolean | number;
-}

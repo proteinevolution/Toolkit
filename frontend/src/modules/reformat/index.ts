@@ -1,24 +1,13 @@
 /**
  * REFORMAT.TS
- * Author: Felix Gabler
+ * Author: Felix Gabler, Sebastian Till
  *
  * Based upon:
  * REFORMAT.JS
  * Authors: Seung-Zin Nam, David Rau
  */
-import {Format, Operation, Sequence} from '@/modules/reformat/types';
+import {Format, Sequence} from '@/modules/reformat/types';
 import {FASTA} from '@/modules/reformat/formats/FASTA';
-import {
-    detect,
-    maxLength,
-    maxSeqLength,
-    maxSeqNumber,
-    minSeqLength,
-    minSeqNumber,
-    numbers,
-    sameLength,
-    uniqueIDs,
-} from '@/modules/reformat/operations';
 import {CLUSTAL} from '@/modules/reformat/formats/CLUSTAL';
 import {A3M} from '@/modules/reformat/formats/A3M';
 import {STOCKHOLM} from '@/modules/reformat/formats/STOCKHOLM';
@@ -33,68 +22,115 @@ const supportedFormats: Format[] = [
     STOCKHOLM,
 ];
 
-/**
- * Register possible operations here.
- */
-const supportedOperations: Operation[] = [
-    numbers,
-    detect,
-    maxLength,
-    minSeqNumber,
-    maxSeqNumber,
-    minSeqLength,
-    maxSeqLength,
-    sameLength,
-    uniqueIDs,
-];
+export class Reformat {
+    private readonly seqs: string;
+    private readonly sequences?: Sequence[];
+    private readonly format?: Format;
 
-/**
- * Validate sequences and check if they have the expected format.
- * @param seqs
- * @param expectedFormat
- */
-export function validate(seqs: string, expectedFormat: string): boolean {
-    const format: Format | null = getFormat(seqs);
-    return format !== null && format.name.toUpperCase() === expectedFormat.toUpperCase();
-}
+    constructor(seqs: string) {
+        this.seqs = seqs;
+        this.format = getFormat(seqs);
+        if (this.format != null) {
+            this.sequences = this.format.read(seqs);
+        }
+    }
 
-// TODO find better return type for linting
-export function reformat(seqs: string, operation: string, ...params: any[]): string | boolean | number {
-    const format: Format | null = getFormat(seqs);
-    // format will also be null if seqs are empty string
-    if (format === null) {
+    public getFormat(): string {
+        if (this.format) {
+            return this.format.name;
+        }
+        return '';
+    }
+
+    /**
+     * Validate this.sequences and check if they have the expected format.
+     * @param expectedFormat
+     */
+    public validate(expectedFormat: string): boolean {
+        return this.format != null && this.format.name.toUpperCase() === expectedFormat.toUpperCase();
+    }
+
+    /**
+     * Reformat seqs to another format.
+     * @param targetFormat
+     */
+    public reformat(targetFormat: string): string {
+        // format will also be null if seqs are empty string
+        if (!this.format) {
+            return '';
+        }
+
+        targetFormat = targetFormat.toUpperCase();
+        const sequences: Sequence[] = this.format.read(this.seqs);
+
+        for (const format of supportedFormats) {
+            if (format.name.toUpperCase() === targetFormat) {
+                return format.write(sequences);
+            }
+        }
+
+        return '';
+    }
+
+
+    // Operations
+
+    public getNumbers(): number {
+        return this.sequences ? this.sequences.length : 0;
+    }
+
+    public sameLength(): boolean {
+        if (this.sequences) {
+            const firstLength = this.sequences[0].seq.length;
+            return this.sequences.every((val: Sequence) => val.seq.length === firstLength);
+        }
         return false;
     }
 
-    operation = operation.toUpperCase();
-    const sequences: Sequence[] = format.read(seqs);
-
-    // check if operation is reformatting to another format
-    for (const targetFormat of supportedFormats) {
-        if (targetFormat.name.toUpperCase() === operation) {
-            return targetFormat.write(sequences);
-        }
+    public maxLength(charLimit: number) {
+        return this.seqs.length < charLimit;
     }
 
-    // check if operation is any of the supported operations
-    for (const op of supportedOperations) {
-        if (op.name.toUpperCase() === operation) {
-            return op.execute(sequences, seqs, format, params);
-        }
+    public minSeqNumber(minSeqLimit: number): boolean {
+        return this.sequences ? this.sequences.length >= minSeqLimit : false;
     }
 
-    return false;
+    public maxSeqNumber(maxSeqLimit: number): boolean {
+        return this.sequences ? this.sequences.length <= maxSeqLimit : false;
+    }
+
+
+    public minSeqLength(minCharPerSeq: number): boolean {
+        return this.sequences ? this.sequences.every((val: Sequence) => val.seq.length >= minCharPerSeq) : false;
+    }
+
+    public maxSeqLength(maxCharPerSeq: number): boolean {
+        return this.sequences ? this.sequences.every((val: Sequence) => val.seq.length <= maxCharPerSeq) : false;
+    }
+
+    public uniqueIDs(): boolean {
+        if (this.sequences) {
+            const uniqueIdentifiers = new Set(this.sequences.map((val: Sequence) => val.identifier));
+            return uniqueIdentifiers.size === this.sequences.length;
+        }
+        return false;
+    }
+
+    public onlyDashes(): boolean {
+        // TODO
+        return false;
+    }
 }
 
-function getFormat(seqs: string): Format | null {
+
+function getFormat(seqs: string): Format | undefined {
     if (seqs === '') {
-        return null;
+        return undefined;
     }
     for (const format of supportedFormats) {
         if (format.validate(seqs)) {
             return format;
         }
     }
-    return null;
+    return undefined;
 }
-

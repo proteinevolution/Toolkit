@@ -28,7 +28,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import {AlignmentValidationResult} from '../../../types/toolkit/validation';
-    import * as Reformat from '@/modules/reformat';
+    import {Reformat} from '@/modules/reformat';
     import {TextAreaParameter} from '../../../types/toolkit';
 
     export default Vue.extend({
@@ -52,8 +52,13 @@
                 },
             };
         },
+        watch: {
+            text(newVal: string) {
+                this.validation = this.validate(newVal);
+            },
+        },
         methods: {
-            validate(val: string) {
+            validate(val: string): AlignmentValidationResult {
                 // TODO use more validation types depending on tool (or find dynamic solution)
                 return this.basicValidation(val);
             },
@@ -62,9 +67,12 @@
                 let cssClass: string = '';
                 let failed: boolean = false;
 
+                const elem: Reformat = new Reformat(val);
+                (window as any).test = elem;
+
                 if (val.length > 0) {
-                    const detectedFormat: string = Reformat.reformat(val, 'detect');
-                    const isFasta: boolean = Reformat.validate(val, 'Fasta');
+                    const detectedFormat: string = elem.getFormat();
+                    const isFasta: boolean = elem.validate('Fasta');
 
                     if (detectedFormat === '') {
                         failed = true;
@@ -74,8 +82,12 @@
                         failed = false;
                         cssClass = 'success';
                         text = `${detectedFormat} format found: Auto-transformed to FASTA`;
+                        console.log(`Autotransform from ${detectedFormat}`);
                         // TODO: break up strict two way binding to prevent double check after new setting of text
-                        this.text = Reformat.reformat(val, 'Fasta');
+                        this.text = elem.reformat('Fasta');
+                    } else {
+                        cssClass = 'success';
+                        text = 'Protein FASTA';
                     }
                 }
 
