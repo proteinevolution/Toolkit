@@ -1,12 +1,12 @@
 <template>
     <div>
-        <TextAreaSubComponent :parameter="parameter"
-                              :shrink="secondTextAreaEnabled">
-        </TextAreaSubComponent>
+        <ExpandHeight>
+            <TextAreaSubComponent :parameter="parameter">
+            </TextAreaSubComponent>
+        </ExpandHeight>
         <ExpandHeight>
             <TextAreaSubComponent v-if="secondTextAreaEnabled"
-                                  :parameter="parameter"
-                                  :shrink="secondTextAreaEnabled">
+                                  :parameter="parameter">
             </TextAreaSubComponent>
         </ExpandHeight>
         <b-form-group v-if="parameter.allowsTwoTextAreas"

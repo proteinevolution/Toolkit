@@ -3,7 +3,6 @@
         <b-form-textarea class="textarea-alignment"
                          :placeholder="parameter.inputPlaceholder"
                          v-model="text"
-                         :rows="shrink ? 8 : 14"
                          cols="70"
                          spellcheck="false">
         </b-form-textarea>
@@ -35,7 +34,6 @@
         name: 'TextAreaSubComponent',
         props: {
             id: String,
-            shrink: Boolean,
             /*
              Simply stating the interface type doesn't work, this is a workaround. See
              https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
@@ -63,6 +61,11 @@
     .textarea-alignment {
         font-family: $font-family-monospace;
         width: 100%;
+        height: 20em;
+
+        &.shrink {
+            height: 14em;
+        }
     }
 
     .validation-alert {
