@@ -3,10 +3,6 @@ import {Reformat} from '@/modules/reformat';
 import {AlignmentValidation} from '@/types/toolkit';
 
 export function validation(val: string, params?: AlignmentValidation): AlignmentValidationResult {
-    let text: string = '';
-    let cssClass: string = '';
-    let failed: boolean = false;
-
     const elem: Reformat = new Reformat(val);
     (window as any).test = elem;
 
@@ -15,24 +11,25 @@ export function validation(val: string, params?: AlignmentValidation): Alignment
         const isFasta: boolean = elem.validate('Fasta');
 
         if (detectedFormat === '') {
-            failed = true;
-            cssClass = 'danger';
-            text = 'Invalid characters. Could not detect format.';
+            return result(true, 'danger', 'invalidCharacters');
         } else if (!isFasta) {
-            failed = false;
-            cssClass = 'success';
-            text = `${detectedFormat} format found: Auto-transformed to FASTA`;
-            // TODO: Auto-transform
-            // this.text = elem.reformat('Fasta');
+            return result(false, 'success', 'shouldAutoTransform');
         } else {
-            cssClass = 'success';
-            text = 'Protein FASTA';
+            return result(false, 'success', 'proteinFasta');
         }
     }
 
+    return result(false, '', '');
+}
+
+export function transformToFasta(val: string): string {
+    return new Reformat(val).reformat('FASTA');
+}
+
+function result(failed: boolean, cssClass: string, textKey: string): AlignmentValidationResult {
     return {
         failed,
-        text,
+        textKey,
         cssClass,
     };
 }

@@ -19,7 +19,7 @@
                  v-if="validation.cssClass"
                  :variant="validation.cssClass"
                  class="validation-alert mb-0">
-            {{ validation.text }}
+            {{ $t('tools.validation.' + validation.textKey) }}
         </b-alert>
     </b-form-group>
 </template>
@@ -27,7 +27,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import {TextAreaParameter} from '../../../types/toolkit';
-    import {validation} from '@/util/validation';
+    import {validation, transformToFasta} from '@/util/validation';
     import {AlignmentValidationResult} from '../../../types/toolkit/validation';
 
     export default Vue.extend({
@@ -47,7 +47,12 @@
         },
         computed: {
             validation(): AlignmentValidationResult {
-                return validation(this.text, this.parameter.alignmentValidation);
+                let val = validation(this.text, this.parameter.alignmentValidation);
+                if(val.textKey === 'shouldAutoTransform') {
+                    this.text = transformToFasta(this.text);
+                    val.textKey = 'autoTransformedToFasta';
+                }
+                return val;
             },
         },
     });

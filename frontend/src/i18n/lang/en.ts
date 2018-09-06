@@ -31,6 +31,7 @@ export default {
             validation: {
                 proteinFasta: 'Protein FASTA',
                 invalidCharacters: 'Invalid Characters!',
+                autoTransformedToFasta: 'Auto-transformed to FASTA',
                 sameLength: 'Invalid MSA! Sequences should have the same length.',
                 uniqueIDs: 'Identifiers are not unique!',
             },
