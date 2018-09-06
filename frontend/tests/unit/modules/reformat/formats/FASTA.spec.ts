@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {FASTA} from '../../../../../src/modules/reformat/formats/FASTA';
+import {FASTA} from '@/modules/reformat/formats/FASTA';
 
 describe('FASTA validation', () => {
     it('should detect any invalid characters', () => {
