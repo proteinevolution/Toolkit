@@ -23,6 +23,16 @@ export interface Format {
     validate(value: string): boolean;
 }
 
+export interface SequenceType {
+    name: string;
+
+    /**
+     * Check whether the contents of the internal sequences are of this type
+     * @param sequences
+     */
+    validate(sequences: Sequence[]): boolean;
+}
+
 /**
  * Internal sequence object
  */
