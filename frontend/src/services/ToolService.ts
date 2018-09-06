@@ -130,6 +130,25 @@ export default class ToolService {
                 },
             ],
         ],
+        ['alignmenttool1',
+            [
+                {
+                    name: 'Input',
+                    multiColumnLayout: false,
+                    parameters: [
+                        ({
+                            type: ParameterType.TextArea,
+                            name: 'alignment',
+                            label: '',
+                            inputType: TextAreaInputType.Protein,
+                            allowsTwoTextAreas: false,
+                            inputPlaceholder: 'Enter a protein sequence/multiple sequence alignment in ' +
+                                'FASTA/CLUSTAL/A3M format',
+                        } as TextAreaParameter),
+                    ],
+                },
+            ],
+        ],
     ];
 
 }

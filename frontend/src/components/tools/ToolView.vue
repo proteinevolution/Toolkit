@@ -69,7 +69,7 @@
             },
         },
         created() {
-            this.loadToolParameters();
+            this.loadToolParameters(this.toolName);
         },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
@@ -81,12 +81,12 @@
             });
         },
         beforeRouteUpdate(to, from, next) {
-            this.loadToolParameters();
+            this.loadToolParameters(to.params.toolName);
             next();
         },
         methods: {
-            loadToolParameters() {
-                this.$store.dispatch('tools/fetchToolParametersIfNotPresent', this.toolName);
+            loadToolParameters(toolName: string) {
+                this.$store.dispatch('tools/fetchToolParametersIfNotPresent', toolName);
             },
             toggleFullScreen() {
                 this.fullScreen = !this.fullScreen;
