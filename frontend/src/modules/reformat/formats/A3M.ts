@@ -4,7 +4,7 @@ export const A3M: Format = {
     name: 'A3M',
 
     validate(value: string): boolean {
-        return true;
+        return false;
     },
 
     read(a3m: string): Sequence[] {

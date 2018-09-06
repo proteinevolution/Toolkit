@@ -4,7 +4,7 @@ export const CLUSTAL: Format = {
     name: 'Clustal',
 
     validate(value: string): boolean {
-        return true;
+        return false;
     },
 
     read(value: string): Sequence[] {

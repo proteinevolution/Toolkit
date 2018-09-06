@@ -19,6 +19,7 @@
                  v-if="validation.cssClass"
                  :variant="validation.cssClass"
                  class="validation-alert mb-0">
+            <!-- TODO include limits in the validation messages -->
             {{ $t('tools.validation.' + validation.textKey) }}
         </b-alert>
     </b-form-group>
@@ -27,7 +28,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import {TextAreaParameter} from '../../../types/toolkit';
-    import {validation, transformToFasta} from '@/util/validation';
+    import {transformToFasta, validation} from '@/util/validation';
     import {AlignmentValidationResult} from '../../../types/toolkit/validation';
 
     export default Vue.extend({
@@ -47,8 +48,8 @@
         },
         computed: {
             validation(): AlignmentValidationResult {
-                let val = validation(this.text, this.parameter.alignmentValidation);
-                if(val.textKey === 'shouldAutoTransform') {
+                const val: AlignmentValidationResult = validation(this.text, this.parameter.alignmentValidation);
+                if (val.textKey === 'shouldAutoTransform') {
                     this.text = transformToFasta(this.text);
                     val.textKey = 'autoTransformedToFasta';
                 }

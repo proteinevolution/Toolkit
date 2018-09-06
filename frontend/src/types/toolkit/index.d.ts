@@ -39,11 +39,11 @@ export interface TextAreaParameter extends Parameter {
 
 export interface AlignmentValidation {
     allowedSeqFormats: AlignmentSeqFormat[];
-    minCharPerSeq: number;
-    maxCharPerSeq: number;
-    minNumSeq: number;
-    maxNumSeq: number;
-    requiresSameLengthSeq: boolean;
+    minCharPerSeq?: number;
+    maxCharPerSeq?: number;
+    minNumSeq?: number;
+    maxNumSeq?: number;
+    requiresSameLengthSeq?: boolean;
     checkNucleotide: boolean;
 }
 

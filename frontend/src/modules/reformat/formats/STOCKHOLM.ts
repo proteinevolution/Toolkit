@@ -4,7 +4,7 @@ export const STOCKHOLM: Format = {
     name: 'Stockholm',
 
     validate(value: string): boolean {
-        return true;
+        return false;
     },
 
     read(value: string): Sequence[] {
