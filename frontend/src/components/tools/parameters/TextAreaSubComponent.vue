@@ -1,19 +1,26 @@
 <template>
-    <b-form-group class="textarea-group">
+    <b-form-group class="textarea-group"
+                  :class="[uploadingFile ? 'uploading-file' : '']">
         <b-form-textarea class="textarea-alignment"
                          :placeholder="parameter.inputPlaceholder"
                          v-model="text"
                          cols="70"
                          spellcheck="false">
         </b-form-textarea>
+        <b-progress :value="fileUploadProgress"
+                    class="file-upload-progress"
+                    :max="100"/>
         <b-button-group size="sm"
                         class="mt-1 mb-3">
             <b-btn variant="link">
                 Paste Example
             </b-btn>
-            <b-btn variant="link">
+            <label class="btn btn-link mb-0">
                 Upload File
-            </b-btn>
+                <input type="file"
+                       class="d-none"
+                       @change="handleFileUpload"/>
+            </label>
         </b-button-group>
         <b-alert show
                  v-if="validation.cssClass"
@@ -43,6 +50,8 @@
         data() {
             return {
                 text: '',
+                fileUploadProgress: 0,
+                uploadingFile: false,
             };
         },
         computed: {
@@ -56,12 +65,77 @@
                 return val;
             },
         },
+        methods: {
+            handleFileUpload($event: Event) {
+                const fileUpload: HTMLInputElement = $event.target as HTMLInputElement;
+                if (fileUpload.files.length > 0) {
+                    this.fileUploadProgress = 0;
+                    this.uploadingFile = true;
+                    const file = fileUpload.files[0];
+                    fileUpload.value = ''; // reset file upload
+                    // TODO validate MIME type
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        this.text = reader.result;
+                    };
+                    reader.onerror = this.errorHandler;
+                    reader.onprogress = (evt: ProgressEvent) => {
+                        if (evt.lengthComputable) {
+                            this.fileUploadProgress = Math.round((evt.loaded / evt.total) * 100);
+                        }
+                    };
+                    reader.onloadend = () => {
+                        setTimeout(() => {
+                            this.uploadingFile = false;
+                        }, 500);
+                    };
+                    reader.readAsText(file);
+                }
+            },
+            errorHandler(evt) {
+                this.uploadingFile = false;
+                switch (evt.target.error.code) {
+                    case evt.target.error.NOT_FOUND_ERR:
+                        alert('File Not Found!');
+                        break;
+                    case evt.target.error.NOT_READABLE_ERR:
+                        alert('File is not readable');
+                        break;
+                    case evt.target.error.ABORT_ERR:
+                        break; // noop
+                    default:
+                        alert('An error occurred reading this file.');
+                }
+            }
+        },
     });
 </script>
 
 <style lang="scss" scoped>
     .textarea-group {
         width: 100%;
+
+        .btn-link:hover, .btn-link:active, .btn-link:focus {
+            text-decoration: none;
+        }
+
+        .file-upload-progress {
+            height: 0;
+            transition: height 1s;
+        }
+
+        &.uploading-file {
+            .textarea-alignment {
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+            .file-upload-progress {
+                height: 1rem;
+                transition: height 0s;
+                border-top-left-radius: 0;
+                border-top-right-radius: 0;
+            }
+        }
     }
 
     .textarea-alignment {
