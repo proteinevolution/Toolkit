@@ -8,16 +8,23 @@ export enum ParameterType {
     ModellerKey = 'ModellerKey',
 }
 
+// TODO does it make sense to have these types ?
 export enum TextAreaInputType {
-    Protein = 'protein',
-    DNA = 'dna',
+    Sequence = 'sequence',
     Regex = 'regex',
-    PBD = 'pbd',
-    PIR = 'pir',
 }
 
 export enum AlignmentSeqFormat {
     FASTA = 'FASTA',
     CLUSTAL = 'CLUSTAL',
     A3M = 'A3M',
+    STOCKHOM = 'STOCKHOLM',
+    // PBD = 'pbd',
+    // PIR = 'pir',
+}
+
+export enum AlignmentSeqType {
+    PROTEIN = 'PROTEIN',
+    DNA = 'DNA',
+    RNA = 'RNA',
 }

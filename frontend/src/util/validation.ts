@@ -15,8 +15,11 @@ export function validation(val: string, params: AlignmentValidation): AlignmentV
         } else if (!isFasta) {
             return result(false, 'success', 'shouldAutoTransform');
         } else {
-            // valid fasta
-
+            // TODO order of validation checks
+            // TODO auto transform or refuse disallowed formats?
+            if (!elem.isOfType(params.allowedSeqType)) {
+                return result(true, 'danger', 'invalidSequenceType', {expected: params.allowedSeqType});
+            }
             if (params.maxNumSeq && !elem.maxSeqNumber(params.maxNumSeq)) {
                 return result(true, 'danger', 'maxSeqNumber', {limit: params.maxNumSeq});
             }
@@ -41,8 +44,13 @@ export function validation(val: string, params: AlignmentValidation): AlignmentV
             if (!elem.uniqueIDs()) {
                 return result(false, 'warning', 'uniqueIDs');
             }
+            if (params.allowedSeqType === AlignmentSeqType.PROTEIN && elem.isNucleotide()) {
+                return result(false, 'warning', 'nucleotideError');
+            }
 
-            return result(false, 'success', 'proteinFasta');
+            const typeName: string = elem.getTypes().filter((type: string) =>
+                type.toUpperCase() === params.allowedSeqType.toUpperCase())[0];
+            return result(false, 'success', 'valid', {type: typeName, format: detectedFormat});
         }
     }
 

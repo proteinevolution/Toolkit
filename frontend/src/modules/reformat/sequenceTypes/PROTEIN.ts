@@ -1,7 +1,7 @@
 import {Sequence, SequenceType} from '../types';
 
 export const PROTEIN: SequenceType = {
-    name: 'PROTEIN',
+    name: 'Protein',
 
     validate(sequences: Sequence[]): boolean {
         return sequences.every((val: Sequence) => isProteinSequence(val.seq));

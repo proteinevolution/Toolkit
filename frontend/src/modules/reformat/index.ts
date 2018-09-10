@@ -59,9 +59,13 @@ export class Reformat {
         return '';
     }
 
-    // TODO we could also return just one type here
     public getTypes(): string[] {
         return this.types ? this.types.map((val: SequenceType) => val.name) : [];
+    }
+
+    public isOfType(type: string): boolean {
+        return this.types ? this.types.some((val: SequenceType) =>
+            val.name.toUpperCase() === type.toUpperCase()) : false;
     }
 
     public isNucleotide(): boolean {

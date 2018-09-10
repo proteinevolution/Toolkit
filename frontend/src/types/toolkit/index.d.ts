@@ -1,5 +1,5 @@
 // TODO: move content into different files
-import {AlignmentSeqFormat, ParameterType, TextAreaInputType} from './enums';
+import {AlignmentSeqFormat, AlignmentSeqType, ParameterType, TextAreaInputType} from './enums';
 
 export interface Tool {
     name: string;
@@ -39,6 +39,7 @@ export interface TextAreaParameter extends Parameter {
 
 export interface AlignmentValidation {
     allowedSeqFormats: AlignmentSeqFormat[];
+    allowedSeqType: AlignmentSeqType;
     minCharPerSeq?: number;
     maxCharPerSeq?: number;
     minNumSeq?: number;

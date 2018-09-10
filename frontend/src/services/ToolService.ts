@@ -10,7 +10,7 @@ import {
     TextAreaParameter,
     Tool,
 } from '../types/toolkit';
-import {AlignmentSeqFormat, ParameterType, TextAreaInputType} from '../types/toolkit/enums';
+import {AlignmentSeqFormat, AlignmentSeqType, ParameterType, TextAreaInputType} from '../types/toolkit/enums';
 
 export default class ToolService {
 
@@ -94,18 +94,18 @@ export default class ToolService {
                             type: ParameterType.TextArea,
                             name: 'alignment',
                             label: '',
-                            inputType: TextAreaInputType.Protein,
+                            inputType: TextAreaInputType.Sequence,
                             allowsTwoTextAreas: true,
                             inputPlaceholder: 'Enter a protein sequence/multiple sequence alignment in ' +
                                 'FASTA/CLUSTAL/A3M format',
                             alignmentValidation: {
                                 allowedSeqFormats: [AlignmentSeqFormat.FASTA, AlignmentSeqFormat.CLUSTAL],
+                                allowedSeqType: AlignmentSeqType.PROTEIN,
                                 minCharPerSeq: 5,
                                 maxCharPerSeq: 10,
                                 minNumSeq: 1,
                                 maxNumSeq: 2,
                                 requiresSameLengthSeq: true,
-                                checkNucleotide: true,
                             },
                         } as TextAreaParameter),
                     ],
@@ -149,10 +149,14 @@ export default class ToolService {
                             type: ParameterType.TextArea,
                             name: 'alignment',
                             label: '',
-                            inputType: TextAreaInputType.Protein,
+                            inputType: TextAreaInputType.Sequence,
                             allowsTwoTextAreas: false,
                             inputPlaceholder: 'Enter a protein sequence/multiple sequence alignment in ' +
                                 'FASTA/CLUSTAL/A3M format',
+                            alignmentValidation: {
+                                allowedSeqFormats: [AlignmentSeqFormat.FASTA],
+                                allowedSeqType: AlignmentSeqType.DNA,
+                            },
                         } as TextAreaParameter),
                     ],
                 },
