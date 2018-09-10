@@ -19,8 +19,7 @@
                  v-if="validation.cssClass"
                  :variant="validation.cssClass"
                  class="validation-alert mb-0">
-            <!-- TODO include limits in the validation messages -->
-            {{ $t('tools.validation.' + validation.textKey) }}
+            {{ $t('tools.validation.' + validation.textKey, validation.textKeyParams) }}
         </b-alert>
     </b-form-group>
 </template>

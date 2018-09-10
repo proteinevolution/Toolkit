@@ -34,7 +34,7 @@ export interface TextAreaParameter extends Parameter {
     inputType: TextAreaInputType;
     inputPlaceholder: string;
     allowsTwoTextAreas: boolean;
-    alignmentValidation?: AlignmentValidation;
+    alignmentValidation: AlignmentValidation;
 }
 
 export interface AlignmentValidation {
@@ -44,7 +44,6 @@ export interface AlignmentValidation {
     minNumSeq?: number;
     maxNumSeq?: number;
     requiresSameLengthSeq?: boolean;
-    checkNucleotide: boolean;
 }
 
 export interface SelectParameter extends Parameter {
