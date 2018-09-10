@@ -1,4 +1,5 @@
 import {Format, Sequence} from '@/modules/reformat/types';
+import {formatLongSeq} from '@/modules/reformat';
 
 export const FASTA: Format = {
     name: 'FASTA',
@@ -79,7 +80,7 @@ export const FASTA: Format = {
             result += '>';
             result += sequence.identifier;
             result += '\n';
-            // result += formatLongSeq(sequence.seq, 60); TODO write formatLongSeq
+            result += formatLongSeq(sequence.seq, 60);
             // removes stars from the end of sequences, as they are specific to the pir format
             if (/\*$/.test(sequence.seq)) {
                 result = result.replace(/\*$/, '');

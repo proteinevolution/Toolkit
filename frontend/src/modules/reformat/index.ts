@@ -153,7 +153,6 @@ export class Reformat {
     }
 }
 
-
 function getFormat(seqs: string): Format | undefined {
     if (seqs === '') {
         return undefined;
@@ -168,4 +167,13 @@ function getFormat(seqs: string): Format | undefined {
 
 function getAllTypes(sequences: Sequence[]): SequenceType[] | undefined {
     return supportedTypes.filter((val: SequenceType) => val.validate(sequences));
+}
+
+export function formatLongSeq(seq: string, n: number): string {
+    const split = seq.match(/.{1,60}/g);
+    if (split === null) {
+        return '';
+    }
+    return split.reduce((prev: string, currentValue: string, currentIndex: number) =>
+        prev + currentValue + (currentIndex < split.length - 1 ? '\n' : ''), '');
 }
