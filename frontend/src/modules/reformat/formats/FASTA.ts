@@ -80,7 +80,7 @@ export const FASTA: Format = {
             result += '>';
             result += sequence.identifier;
             result += '\n';
-            result += formatLongSeq(sequence.seq, 60);
+            result += formatLongSeq(sequence.seq);
             // removes stars from the end of sequences, as they are specific to the pir format
             if (/\*$/.test(sequence.seq)) {
                 result = result.replace(/\*$/, '');
