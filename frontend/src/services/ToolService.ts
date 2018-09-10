@@ -54,6 +54,17 @@ export default class ToolService {
             },
             parameters: undefined,
         },
+        {
+            name: 'patternsearchtool1',
+            longname: 'PatternSearch',
+            title: 'Great tool 1',
+            section: 'Search',
+            forwarding: {
+                alignment: [],
+                multiSeq: [],
+            },
+            parameters: undefined,
+        },
     ];
 
     private static numberParameter1: NumberParameter = {
@@ -98,7 +109,7 @@ export default class ToolService {
                             allowsTwoTextAreas: true,
                             inputPlaceholder: 'Enter a protein sequence/multiple sequence alignment in ' +
                                 'FASTA/CLUSTAL/A3M format',
-                            alignmentValidation: {
+                            validationParams: {
                                 allowedSeqFormats: [AlignmentSeqFormat.FASTA, AlignmentSeqFormat.CLUSTAL],
                                 allowedSeqType: AlignmentSeqType.PROTEIN,
                                 minCharPerSeq: 5,
@@ -153,10 +164,29 @@ export default class ToolService {
                             allowsTwoTextAreas: false,
                             inputPlaceholder: 'Enter a protein sequence/multiple sequence alignment in ' +
                                 'FASTA/CLUSTAL/A3M format',
-                            alignmentValidation: {
+                            validationParams: {
                                 allowedSeqFormats: [AlignmentSeqFormat.FASTA],
                                 allowedSeqType: AlignmentSeqType.DNA,
                             },
+                        } as TextAreaParameter),
+                    ],
+                },
+            ],
+        ],
+        ['patternsearchtool1',
+            [
+                {
+                    name: 'Input',
+                    multiColumnLayout: false,
+                    parameters: [
+                        ({
+                            type: ParameterType.TextArea,
+                            name: 'regex',
+                            label: '',
+                            inputType: TextAreaInputType.Regex,
+                            allowsTwoTextAreas: false,
+                            inputPlaceholder: 'Enter a PROSITE grammar/regular expression.',
+                            validationParams: {},
                         } as TextAreaParameter),
                     ],
                 },

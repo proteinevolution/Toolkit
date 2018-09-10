@@ -34,10 +34,14 @@ export interface TextAreaParameter extends Parameter {
     inputType: TextAreaInputType;
     inputPlaceholder: string;
     allowsTwoTextAreas: boolean;
-    alignmentValidation: AlignmentValidation;
+    validationParams: ValidationParams;
 }
 
-export interface AlignmentValidation {
+export interface ValidationParams {
+
+}
+
+export interface AlignmentValidationParams extends ValidationParams {
     allowedSeqFormats: AlignmentSeqFormat[];
     allowedSeqType: AlignmentSeqType;
     minCharPerSeq?: number;

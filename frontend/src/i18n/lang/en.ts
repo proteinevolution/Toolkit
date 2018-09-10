@@ -43,6 +43,7 @@ export default {
                 uniqueIDs: 'Identifiers are not unique.',
                 invalidSequenceType: 'Invalid sequence type. Expected {expected}.',
                 valid: '{type} {format}',
+                validRegex: 'Valid input.',
             },
         },
         helpModals: {

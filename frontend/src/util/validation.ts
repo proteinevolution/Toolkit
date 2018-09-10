@@ -1,9 +1,18 @@
-import {AlignmentValidationResult} from '@/types/toolkit/validation';
+import {ValidationResult} from '@/types/toolkit/validation';
 import {Reformat} from '@/modules/reformat';
-import {AlignmentValidation} from '@/types/toolkit';
-import {AlignmentSeqType} from '@/types/toolkit/enums';
+import {AlignmentSeqType, TextAreaInputType} from '@/types/toolkit/enums';
+import {AlignmentValidationParams, ValidationParams} from '@/types/toolkit';
 
-export function validation(val: string, params: AlignmentValidation): AlignmentValidationResult {
+export function validation(val: string, inputType: TextAreaInputType, params: ValidationParams): ValidationResult {
+    switch (inputType) {
+        case TextAreaInputType.Sequence:
+            return validateSequence(val, params as AlignmentValidationParams);
+        case TextAreaInputType.Regex:
+            return validateRegex(val);
+    }
+}
+
+function validateSequence(val: string, params: AlignmentValidationParams): ValidationResult {
     const elem: Reformat = new Reformat(val);
 
     if (val.length > 0) {
@@ -61,11 +70,16 @@ export function transformToFasta(val: string): string {
     return new Reformat(val).reformat('FASTA');
 }
 
-function result(failed: boolean, cssClass: string, textKey: string, textKeyParams?: any): AlignmentValidationResult {
+export function validateRegex(val: string): ValidationResult {
+    // TODO regex validation
+    return result(false, 'success', 'validRegex');
+}
+
+function result(failed: boolean, cssClass: string, textKey: string, textKeyParams?: any): ValidationResult {
     return {
         failed,
-        textKey,
         cssClass,
+        textKey,
         textKeyParams,
     };
 }

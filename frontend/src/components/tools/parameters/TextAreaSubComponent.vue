@@ -28,7 +28,7 @@
     import Vue from 'vue';
     import {TextAreaParameter} from '../../../types/toolkit';
     import {transformToFasta, validation} from '@/util/validation';
-    import {AlignmentValidationResult} from '../../../types/toolkit/validation';
+    import {ValidationResult} from '../../../types/toolkit/validation';
 
     export default Vue.extend({
         name: 'TextAreaSubComponent',
@@ -46,8 +46,9 @@
             };
         },
         computed: {
-            validation(): AlignmentValidationResult {
-                const val: AlignmentValidationResult = validation(this.text, this.parameter.alignmentValidation);
+            validation(): ValidationResult {
+                const val: ValidationResult = validation(this.text,
+                    this.parameter.inputType, this.parameter.validationParams);
                 if (val.textKey === 'shouldAutoTransform') {
                     this.text = transformToFasta(this.text);
                     val.textKey = 'autoTransformedToFasta';
