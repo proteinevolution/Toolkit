@@ -8,24 +8,23 @@ Vue.use(VueNotifications, {velocity});
 
 const Notifications = {
     install(vconst: VueConstructor, args: any = {}) {
-        // override notify method to allow browser notifications
-        if (args.allowBrowserNotification) {
-            vconst.prototype.$notify = (params: TKNotificationOptions | string, type?: string) => {
-                const newParams: TKNotificationOptions = (typeof params === 'string') ?
-                    {
-                        title: '',
-                        text: params,
-                        useBrowserNotifications: false,
-                    } : params;
+        vconst.prototype.$alert = (params: TKNotificationOptions | string, type?: string) => {
+            const newParams: TKNotificationOptions = (typeof params === 'string') ?
+                {
+                    title: '',
+                    text: params,
+                    useBrowserNotifications: false,
+                } : params;
 
-                if (type) {
-                    newParams.type = type;
-                }
-                Vue.notify(newParams);
+            if (type) {
+                newParams.type = type;
+            }
+            Vue.notify(newParams);
 
-                // TODO show browser notification if necessary
-            };
-        }
+            if (args.allowBrowserNotification) {
+                // TODO
+            }
+        };
     },
 };
 

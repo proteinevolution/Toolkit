@@ -89,7 +89,7 @@
                     };
                     reader.onloadend = () => {
                         setTimeout(() => {
-                            this.$notify(this.$t('tools.parameters.textArea.uploadedFile'));
+                            this.$alert(this.$t('tools.parameters.textArea.uploadedFile'));
                             this.uploadingFile = false;
                         }, 500);
                     };
@@ -105,12 +105,12 @@
                 if (error) {
                     switch (error.code) {
                         case error.NOT_FOUND_ERR:
-                            this.$notify(this.$t('errors.fileNotFound'), 'danger');
+                            this.$alert(this.$t('errors.fileNotFound'), 'danger');
                             break;
                         case error.ABORT_ERR:
                             break; // noop
                         default:
-                            this.$notify(this.$t('errors.fileUnreadable'), 'danger');
+                            this.$alert(this.$t('errors.fileUnreadable'), 'danger');
                     }
                 }
             },
