@@ -26,7 +26,7 @@ function validateSequence(val: string, params: AlignmentValidationParams): Valid
         if (detectedFormat === '') {
             return result(true, 'danger', 'invalidCharacters');
         } else if (!isFasta) {
-            return result(false, 'success', 'shouldAutoTransform');
+            return result(false, 'success', 'shouldAutoTransform', {detected: detectedFormat});
         } else {
             // TODO order of validation checks
             // TODO auto transform or refuse disallowed formats?

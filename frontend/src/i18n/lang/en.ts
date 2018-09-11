@@ -32,7 +32,7 @@ export default {
             },
             validation: {
                 invalidCharacters: 'Invalid Characters.',
-                autoTransformedToFasta: 'Auto-transformed to FASTA.',
+                autoTransformedToFasta: '{detected} detected. Auto-transformed to FASTA.',
                 nucleotideError: 'Input contains nucleotide sequence(s). Expecting protein sequence(s).',
                 emptyHeader: 'Empty header.',
                 maxSeqNumber: 'Input contains more than {limit} sequences.',
