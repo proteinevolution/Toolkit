@@ -8,12 +8,13 @@ Vue.use(VueNotifications, {velocity});
 
 const Notifications = {
     install(vconst: VueConstructor, args: any = {}) {
-        vconst.prototype.$alert = (params: TKNotificationOptions | string, type?: string) => {
+        vconst.prototype.$alert = (params: TKNotificationOptions | string, body?: string, type?: string) => {
             const newParams: TKNotificationOptions = (typeof params === 'string') ?
                 {
                     title: '',
                     text: params,
-                    useBrowserNotifications: false,
+                    body,
+                    useBrowserNotifications: true, // TODO
                 } : params;
 
             if (type) {
@@ -21,8 +22,35 @@ const Notifications = {
             }
             Vue.notify(newParams);
 
-            if (args.allowBrowserNotification) {
-                // TODO
+            if (args.browserNotifications.enabled) {
+                const notifOptions = {
+                    body,
+                    icon: '',
+                };
+                const favicon: HTMLElement | null = document.getElementById('tk-favicon');
+                if (favicon) {
+                    notifOptions.icon = (favicon as HTMLLinkElement).href;
+                }
+                console.log(notifOptions.icon);
+                if ('Notification' in window && newParams.useBrowserNotifications) {
+                    const browserNotification = (window as any).Notification;
+                    if (browserNotification.permission === 'granted') {
+                        const n = new Notification(newParams.text, notifOptions);
+                        if (newParams.onClick) {
+                            n.onclick = newParams.onClick;
+                        }
+                        setTimeout(() => {
+                            n.close();
+                        }, args.browserNotifications.timeout || 5000);
+                    } else if (browserNotification.permission !== 'denied') {
+                        browserNotification.requestPermission((permission: string) => {
+                            if (permission === 'granted') {
+                                notifOptions.body = 'You will now receive updates on your jobs over notifications.';
+                                new Notification('Thank You!', notifOptions);
+                            }
+                        });
+                    }
+                }
             }
         };
     },

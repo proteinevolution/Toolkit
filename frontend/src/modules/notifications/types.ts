@@ -10,10 +10,13 @@ declare module 'vue/types/vue' {
 
 declare module 'vue/types/vue' {
     interface Vue {
-        $alert: (options: NotificationOptions | string, type?: string) => void;
+        $alert: (options: NotificationOptions | string, body?: string, type?: string) => void;
     }
 }
 
 export interface TKNotificationOptions extends NotificationOptions {
+    text: string;
+    body?: string;
     useBrowserNotifications?: boolean;
+    onClick?: () => void;
 }

@@ -9,5 +9,8 @@ Vue.use(VueJsModal, {
     dynamic: true,
 });
 Vue.use(Notifications, {
-    allowBrowserNotification: true,
+    browserNotifications: {
+        enabled: true,
+        timeout: 5000,
+    },
 });
