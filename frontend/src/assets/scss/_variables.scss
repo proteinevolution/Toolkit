@@ -29,6 +29,10 @@ $secondary: $tk-dark-green;
 $warning: $yellow;
 $danger: $red;
 
+$primary-light: lighten($primary, 15%);
+$warning-light: lighten($warning, 15%);
+$danger-light: lighten($danger, 15%);
+
 $input-border-color: #ddd;
 
 // TYPOGRAPHY

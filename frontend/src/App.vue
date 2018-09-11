@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="toolkit">
         <b-container class="main-container">
             <b-row>
                 <Header></Header>
@@ -21,6 +21,7 @@
         </b-container>
 
         <modals-container/>
+        <notifications animation-type="velocity"/>
     </div>
 </template>
 
@@ -58,5 +59,29 @@
         margin-bottom: 3rem;
         border-bottom-left-radius: $global-radius;
         border-bottom-right-radius: $global-radius;
+    }
+</style>
+
+<style lang="scss">
+    .toolkit .vue-notification {
+        padding: 10px;
+        margin: 5px 10px 0;
+        border-radius: $global-radius;
+
+        font-size: 12px;
+
+        color: #ffffff;
+        background: $primary-light;
+        border-left: 5px solid $primary;
+
+        &.warning, &.warn {
+            background: $warning-light;
+            border-left-color: $warning;
+        }
+
+        &.danger, &.error {
+            background: $danger-light;
+            border-left-color: $danger;
+        }
     }
 </style>
