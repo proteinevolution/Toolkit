@@ -26,7 +26,6 @@
   "devDependencies": {
     "@types/chai": "^4.1.4",
     "@types/mocha": "^5.2.5",
-    "@types/velocity-animate": "^1.2.33",
     "@vue/cli-plugin-babel": "^3.0.1",
     "@vue/cli-plugin-e2e-nightwatch": "^3.0.1",
     "@vue/cli-plugin-typescript": "^3.0.1",
