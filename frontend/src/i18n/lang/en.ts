@@ -19,6 +19,8 @@ export default {
             sections: {
                 Search: 'Search',
                 Alignment: 'Alignment',
+                ThreeAryStructure: '3ary Structure',
+                Utils: 'Utils',
             },
             parameters: {
                 alignTwoSeqToggle: 'Align two sequences or MSAs',
@@ -44,6 +46,8 @@ export default {
                 invalidSequenceType: 'Invalid sequence type. Expected {expected}.',
                 valid: '{type} {format}',
                 validRegex: 'Valid input.',
+                validPDB: 'Valid input.',
+                validAccessionID: 'Valid input.',
             },
         },
         helpModals: {

@@ -9,6 +9,10 @@ export function validation(val: string, inputType: TextAreaInputType, params: Va
             return validateSequence(val, params as AlignmentValidationParams);
         case TextAreaInputType.Regex:
             return validateRegex(val);
+        case TextAreaInputType.PDB:
+            return validatePDB(val);
+        case TextAreaInputType.AccessionID:
+            return validateAccessionID(val);
     }
 }
 
@@ -76,6 +80,16 @@ export function transformToFasta(val: string): string {
 export function validateRegex(val: string): ValidationResult {
     // TODO regex validation
     return result(false, 'success', 'validRegex');
+}
+
+export function validatePDB(val: string): ValidationResult {
+    // TODO pdb validation
+    return result(false, 'success', 'validPDB');
+}
+
+export function validateAccessionID(val: string): ValidationResult {
+    // TODO accession id validation
+    return result(false, 'success', 'validAccessionID');
 }
 
 function result(failed: boolean, cssClass: string, textKey: string, textKeyParams?: any): ValidationResult {
