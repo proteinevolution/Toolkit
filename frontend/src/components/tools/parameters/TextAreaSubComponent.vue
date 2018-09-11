@@ -69,7 +69,7 @@
         methods: {
             handleFileUpload($event: Event) {
                 const fileUpload: HTMLInputElement = $event.target as HTMLInputElement;
-                if (fileUpload.files.length > 0) {
+                if (fileUpload.files && fileUpload.files.length > 0) {
                     this.fileUploadProgress = 0;
                     this.uploadingFile = true;
                     const file = fileUpload.files[0];
@@ -77,7 +77,9 @@
                     // TODO validate MIME type
                     const reader = new FileReader();
                     reader.onload = () => {
-                        this.text = reader.result;
+                        if (reader.result) {
+                            this.text = reader.result.toString();
+                        }
                     };
                     reader.onerror = this.errorHandler;
                     reader.onprogress = (evt: ProgressEvent) => {
@@ -91,21 +93,24 @@
                         }, 500);
                     };
                     reader.readAsText(file);
+                    setTimeout(() => {
+                        reader.abort();
+                    }, 1);
                 }
             },
-            errorHandler(evt) {
+            errorHandler(evt: Event) {
+                const error = (evt.target as FileReader).error;
                 this.uploadingFile = false;
-                switch (evt.target.error.code) {
-                    case evt.target.error.NOT_FOUND_ERR:
-                        alert('File Not Found!');
-                        break;
-                    case evt.target.error.NOT_READABLE_ERR:
-                        alert('File is not readable');
-                        break;
-                    case evt.target.error.ABORT_ERR:
-                        break; // noop
-                    default:
-                        alert('An error occurred reading this file.');
+                if (error) {
+                    switch (error.code) {
+                        case error.NOT_FOUND_ERR:
+                            alert('File Not Found!');
+                            break;
+                        case error.ABORT_ERR:
+                            break; // noop
+                        default:
+                            alert('An error occurred reading this file.');
+                    }
                 }
             },
             handlePasteExample() {
