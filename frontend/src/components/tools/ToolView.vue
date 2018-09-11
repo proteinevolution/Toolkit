@@ -12,7 +12,7 @@
                                 card
                                 nav-class="tabs-nav">
                             <b-tab v-for="section in parameterSections"
-                                   :key="section.name"
+                                   :key="toolName + section.name"
                                    :title="section.name">
                                 <div class="tabs-panel">
                                     <Section :section="section"></Section>
