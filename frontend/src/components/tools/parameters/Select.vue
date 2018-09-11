@@ -13,7 +13,8 @@
                      :searchable="false"
                      selectLabel=""
                      deselectLabel=""
-                     selectedLabel="">
+                     selectedLabel=""
+                     @input="$emit('selectionChanged', selected)">
             <template slot="maxElements">{{ $t('tools.parameters.select.maxElementsSelected') }}</template>
         </multiselect>
 

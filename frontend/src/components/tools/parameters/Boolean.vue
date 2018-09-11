@@ -21,11 +21,18 @@
              https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
              */
             parameter: Object as () => BooleanParameter,
+            // this prop can be used by parent components to override the selection, but is not required
+            enabledOverride: Boolean,
         },
         data() {
             return {
-                enabled: this.parameter.default,
+                enabled: this.enabledOverride || this.parameter.default,
             };
+        },
+        watch: {
+            enabledOverride() {
+                this.enabled = this.enabledOverride || this.enabled;
+            },
         },
     });
 </script>

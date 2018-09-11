@@ -1,11 +1,13 @@
 <template>
     <b-form-group :label="parameter.label">
         <Select :parameter="alignmodeParameter"
-                ref="alignmode">
+                class="alignmentMode"
+                @selectionChanged="onSelectionChanged">
         </Select>
-        <div :class="disabled ? 'disabled' : ''">
+        <div class="realignWithMacWrapper">
             <Boolean :parameter="macmodeParameter"
-                     ref="macmode">
+                     :class="disableMacMode ? 'disabled' : ''"
+                     :enabledOverride="disableMacMode">
             </Boolean>
         </div>
     </b-form-group>
@@ -15,7 +17,7 @@
     import Vue from 'vue';
     import Select from './Select.vue';
     import Boolean from './Boolean.vue';
-    import {Parameter} from '../../../types/toolkit';
+    import {Parameter, SelectOption} from '../../../types/toolkit';
 
     export default Vue.extend({
         name: 'AlignmentMode',
@@ -45,17 +47,30 @@
                     label: 'Realign with MAC',
                     default: false,
                 },
+                disableMacMode: false,
             };
         },
-        computed: {
-            disabled() {
-                return true;
+        methods: {
+            onSelectionChanged(selected: SelectOption) {
+                this.disableMacMode = selected && selected.value === 'global';
             },
         },
     });
 </script>
 
 <style lang="scss" scoped>
+    .alignmentMode {
+        float: left;
+        width: 50%;
+        padding: 0 1em 0 0;
+    }
+
+    .realignWithMacWrapper {
+        float: left;
+        width: 50%;
+        padding: 0 0 0 1em;
+    }
+
     .disabled {
         opacity: 0.5;
         pointer-events: none;
