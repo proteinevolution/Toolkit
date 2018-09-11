@@ -31,8 +31,9 @@ const Notifications = {
                 if (favicon) {
                     notifOptions.icon = (favicon as HTMLLinkElement).href;
                 }
-                console.log(notifOptions.icon);
-                if ('Notification' in window && newParams.useBrowserNotifications) {
+                if ('Notification' in window && newParams.useBrowserNotifications &&
+                    (!args.browserNotifications.onlyIfHidden || document.hidden)) {
+
                     const browserNotification = (window as any).Notification;
                     if (browserNotification.permission === 'granted') {
                         const n = new Notification(newParams.text, notifOptions);

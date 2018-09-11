@@ -12,5 +12,6 @@ Vue.use(Notifications, {
     browserNotifications: {
         enabled: true,
         timeout: 5000,
+        onlyIfHidden: true,
     },
 });
