@@ -9,6 +9,10 @@ export function validation(val: string, inputType: TextAreaInputType, params: Va
             return validateSequence(val, params as AlignmentValidationParams);
         case TextAreaInputType.Regex:
             return validateRegex(val);
+        case TextAreaInputType.PDB:
+            return validatePDB(val);
+        case TextAreaInputType.AccessionID:
+            return validateAccessionID(val);
     }
 }
 
@@ -22,7 +26,7 @@ function validateSequence(val: string, params: AlignmentValidationParams): Valid
         if (detectedFormat === '') {
             return result(true, 'danger', 'invalidCharacters');
         } else if (!isFasta) {
-            return result(false, 'success', 'shouldAutoTransform');
+            return result(false, 'success', 'shouldAutoTransform', {detected: detectedFormat});
         } else {
             // TODO order of validation checks
             // TODO auto transform or refuse disallowed formats?
@@ -40,6 +44,9 @@ function validateSequence(val: string, params: AlignmentValidationParams): Valid
             }
             if (params.minCharPerSeq && !elem.minSeqLength(params.minCharPerSeq)) {
                 return result(true, 'danger', 'minSeqLength', {limit: params.minCharPerSeq});
+            }
+            if (params.requiresSameLengthSeq && !elem.sameLength()) {
+                return result(true, 'danger', 'sameLength');
             }
             if (elem.hasEmptyHeaders()) {
                 return result(true, 'danger', 'emptyHeader');
@@ -73,6 +80,16 @@ export function transformToFasta(val: string): string {
 export function validateRegex(val: string): ValidationResult {
     // TODO regex validation
     return result(false, 'success', 'validRegex');
+}
+
+export function validatePDB(val: string): ValidationResult {
+    // TODO pdb validation
+    return result(false, 'success', 'validPDB');
+}
+
+export function validateAccessionID(val: string): ValidationResult {
+    // TODO accession id validation
+    return result(false, 'success', 'validAccessionID');
 }
 
 function result(failed: boolean, cssClass: string, textKey: string, textKeyParams?: any): ValidationResult {

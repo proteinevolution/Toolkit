@@ -19,6 +19,8 @@ export default {
             sections: {
                 Search: 'Search',
                 Alignment: 'Alignment',
+                ThreeAryStructure: '3ary Structure',
+                Utils: 'Utils',
             },
             parameters: {
                 textArea: {
@@ -35,7 +37,7 @@ export default {
             },
             validation: {
                 invalidCharacters: 'Invalid Characters.',
-                autoTransformedToFasta: 'Auto-transformed to FASTA.',
+                autoTransformedToFasta: '{detected} detected. Auto-transformed to FASTA.',
                 nucleotideError: 'Input contains nucleotide sequence(s). Expecting protein sequence(s).',
                 emptyHeader: 'Empty header.',
                 maxSeqNumber: 'Input contains more than {limit} sequences.',
@@ -49,6 +51,8 @@ export default {
                 invalidSequenceType: 'Invalid sequence type. Expected {expected}.',
                 valid: '{type} {format}',
                 validRegex: 'Valid input.',
+                validPDB: 'Valid input.',
+                validAccessionID: 'Valid input.',
             },
         },
         helpModals: {

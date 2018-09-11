@@ -1,6 +1,6 @@
 import {AlignmentSeqFormat, AlignmentSeqType, ParameterType, TextAreaInputType} from '../types/toolkit/enums';
 import {BooleanParameter, NumberParameter, Parameter, SelectParameter, TextAreaParameter} from '../types/toolkit';
-import {patternProt, singleDNASeq, singleProtSeq} from './sampleseq';
+import {multiProtSeq, patternProt, protHeaders, singleDNASeq, singleProtSeq} from './sampleseq';
 
 export const numberParameter: NumberParameter = {
     type: ParameterType.Number,
@@ -93,4 +93,42 @@ export const regexParameter: TextAreaParameter = {
     sampleInput: patternProt,
     validationParams: {},
 };
+
+export const pdbParameter: TextAreaParameter = {
+    type: ParameterType.TextArea,
+    name: 'pdb',
+    label: '',
+    inputType: TextAreaInputType.PDB,
+    allowsTwoTextAreas: false,
+    inputPlaceholder: 'Enter PDB coordinates of a four-helical bundle.',
+    sampleInput: '<Sample PDB Input>', // TODO pdb sample input logic
+    validationParams: {},
+};
+
+export const accessionIDParameter: TextAreaParameter = {
+    type: ParameterType.TextArea,
+    name: 'accessionID',
+    label: '',
+    inputType: TextAreaInputType.AccessionID,
+    allowsTwoTextAreas: false,
+    inputPlaceholder: 'Enter a newline separated list of identifiers and choose the corresponding database.',
+    sampleInput: protHeaders,
+    validationParams: {},
+};
+
+
+export const fastaHeaderParameter: TextAreaParameter = {
+    type: ParameterType.TextArea,
+    name: 'accessionID',
+    label: '',
+    inputType: TextAreaInputType.Sequence,
+    allowsTwoTextAreas: false,
+    inputPlaceholder: 'Enter protein sequences (or their headers) in FASTA format.',
+    sampleInput: multiProtSeq,
+    validationParams: {
+        allowedSeqFormats:  [AlignmentSeqFormat.FASTA_HEADERS, AlignmentSeqFormat.FASTA],
+        allowedSeqType: AlignmentSeqType.PROTEIN,
+    },
+};
+
 

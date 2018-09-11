@@ -3,10 +3,11 @@
 
 import {ParameterSection, Tool} from '../types/toolkit';
 import {
+    accessionIDParameter,
     alignmentModeParameter,
     booleanParameter,
-    dnaSequenceParameter,
-    multiSelectParameter,
+    dnaSequenceParameter, fastaHeaderParameter,
+    multiSelectParameter, pdbParameter,
     proteinSequenceParameter,
     regexParameter,
     singleSelectParameter,
@@ -65,6 +66,39 @@ export default class ToolService {
             },
             parameters: undefined,
         },
+        {
+            name: 'samcc',
+            longname: 'SamCC',
+            title: 'Great tool 1',
+            section: 'ThreeAryStructure',
+            forwarding: {
+                alignment: [],
+                multiSeq: [],
+            },
+            parameters: undefined,
+        },
+        {
+            name: 'retseq',
+            longname: 'RetrieveSeq',
+            title: 'Great tool 1',
+            section: 'Utils',
+            forwarding: {
+                alignment: [],
+                multiSeq: [],
+            },
+            parameters: undefined,
+        },
+        {
+            name: 'seq2id',
+            longname: 'Seq2ID',
+            title: 'Great tool 1',
+            section: 'Utils',
+            forwarding: {
+                alignment: [],
+                multiSeq: [],
+            },
+            parameters: undefined,
+        },
     ];
 
     private static parameters: Array<[string, ParameterSection[]]> = [
@@ -107,6 +141,39 @@ export default class ToolService {
                     multiColumnLayout: false,
                     parameters: [
                         regexParameter,
+                    ],
+                },
+            ],
+        ],
+        ['samcc',
+            [
+                {
+                    name: 'Input',
+                    multiColumnLayout: false,
+                    parameters: [
+                        pdbParameter,
+                    ],
+                },
+            ],
+        ],
+        ['retseq',
+            [
+                {
+                    name: 'Input',
+                    multiColumnLayout: false,
+                    parameters: [
+                        accessionIDParameter,
+                    ],
+                },
+            ],
+        ],
+        ['seq2id',
+            [
+                {
+                    name: 'Input',
+                    multiColumnLayout: false,
+                    parameters: [
+                        fastaHeaderParameter,
                     ],
                 },
             ],

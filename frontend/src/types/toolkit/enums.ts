@@ -8,10 +8,11 @@ export enum ParameterType {
     ModellerKey = 'ModellerKey',
 }
 
-// TODO does it make sense to have these types ?
 export enum TextAreaInputType {
     Sequence = 'sequence',
     Regex = 'regex',
+    PDB = 'pdb', // samcc
+    AccessionID = 'accessionID', // retrieve Seq
 }
 
 export enum AlignmentSeqFormat {
@@ -19,8 +20,8 @@ export enum AlignmentSeqFormat {
     CLUSTAL = 'CLUSTAL',
     A3M = 'A3M',
     STOCKHOM = 'STOCKHOLM',
-    // PBD = 'pbd',
-    // PIR = 'pir',
+    PIR = 'pir', // modeller
+    FASTA_HEADERS = 'FASTA_HEADER', // Seq2ID
 }
 
 export enum AlignmentSeqType {
