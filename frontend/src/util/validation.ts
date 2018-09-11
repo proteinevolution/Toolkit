@@ -41,6 +41,9 @@ function validateSequence(val: string, params: AlignmentValidationParams): Valid
             if (params.minCharPerSeq && !elem.minSeqLength(params.minCharPerSeq)) {
                 return result(true, 'danger', 'minSeqLength', {limit: params.minCharPerSeq});
             }
+            if (params.requiresSameLengthSeq && !elem.sameLength()) {
+                return result(true, 'danger', 'sameLength');
+            }
             if (elem.hasEmptyHeaders()) {
                 return result(true, 'danger', 'emptyHeader');
             }
