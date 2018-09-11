@@ -104,12 +104,12 @@
                 if (error) {
                     switch (error.code) {
                         case error.NOT_FOUND_ERR:
-                            this.$notify('File Not Found!');
+                            this.$notify(this.$t('errors.fileNotFound'), 'danger');
                             break;
                         case error.ABORT_ERR:
                             break; // noop
                         default:
-                            alert('An error occurred reading this file.');
+                            this.$notify(this.$t('errors.fileUnreadable'), 'danger');
                     }
                 }
             },

@@ -68,5 +68,9 @@ export default {
         },
         copyright: '© 2008-{currentYear}, Dept. of Protein Evolution, ' +
             'Max Planck Institute for Developmental Biology, Tübingen',
+        errors: {
+            fileNotFound: 'File not found!',
+            fileUnreadable: 'File could not be read.',
+        },
     },
 };
