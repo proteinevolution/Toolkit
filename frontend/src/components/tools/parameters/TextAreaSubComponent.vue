@@ -14,10 +14,10 @@
                         class="mt-1 mb-3">
             <b-btn variant="link"
                    @click="handlePasteExample">
-                Paste Example
+                {{ $t('tools.parameters.textArea.pasteExample') }}
             </b-btn>
             <label class="btn btn-link mb-0">
-                Upload File
+                {{ $t('tools.parameters.textArea.uploadFile') }}
                 <input type="file"
                        class="d-none"
                        @change="handleFileUpload"/>
@@ -89,6 +89,7 @@
                     };
                     reader.onloadend = () => {
                         setTimeout(() => {
+                            this.$notify(this.$t('tools.parameters.textArea.uploadedFile'));
                             this.uploadingFile = false;
                         }, 500);
                     };

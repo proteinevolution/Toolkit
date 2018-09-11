@@ -21,7 +21,12 @@ export default {
                 Alignment: 'Alignment',
             },
             parameters: {
-                alignTwoSeqToggle: 'Align two sequences or MSAs',
+                textArea: {
+                    pasteExample: 'Paste Example',
+                    uploadFile: 'Upload File',
+                    uploadedFile: 'Uploaded File',
+                    alignTwoSeqToggle: 'Align two sequences or MSAs',
+                },
                 select: {
                     singlePlaceholder: 'Select one',
                     multiplePlaceholder: 'Select options',

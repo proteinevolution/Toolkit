@@ -10,7 +10,7 @@
             </TextAreaSubComponent>
         </ExpandHeight>
         <b-form-group v-if="parameter.allowsTwoTextAreas"
-                      :label="$t('tools.parameters.alignTwoSeqToggle')">
+                      :label="$t('tools.parameters.textArea.alignTwoSeqToggle')">
             <switches v-model="secondTextAreaEnabled">
             </switches>
         </b-form-group>
