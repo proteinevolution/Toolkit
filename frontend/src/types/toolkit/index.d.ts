@@ -33,6 +33,7 @@ export interface Parameter {
 export interface TextAreaParameter extends Parameter {
     inputType: TextAreaInputType;
     inputPlaceholder: string;
+    sampleInput: string;
     allowsTwoTextAreas: boolean;
     validationParams: ValidationParams;
 }

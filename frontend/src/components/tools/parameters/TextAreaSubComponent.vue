@@ -12,7 +12,8 @@
                     :max="100"/>
         <b-button-group size="sm"
                         class="mt-1 mb-3">
-            <b-btn variant="link">
+            <b-btn variant="link"
+                   @click="handlePasteExample">
                 Paste Example
             </b-btn>
             <label class="btn btn-link mb-0">
@@ -106,7 +107,10 @@
                     default:
                         alert('An error occurred reading this file.');
                 }
-            }
+            },
+            handlePasteExample() {
+                this.text = this.parameter.sampleInput;
+            },
         },
     });
 </script>

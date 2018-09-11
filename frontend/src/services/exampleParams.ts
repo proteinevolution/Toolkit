@@ -1,5 +1,6 @@
 import {AlignmentSeqFormat, AlignmentSeqType, ParameterType, TextAreaInputType} from '../types/toolkit/enums';
 import {BooleanParameter, NumberParameter, Parameter, SelectParameter, TextAreaParameter} from '../types/toolkit';
+import {patternProt, singleDNASeq, singleProtSeq} from './sampleseq';
 
 export const numberParameter: NumberParameter = {
     type: ParameterType.Number,
@@ -57,6 +58,7 @@ export const proteinSequenceParameter: TextAreaParameter = {
     inputType: TextAreaInputType.Sequence,
     allowsTwoTextAreas: true,
     inputPlaceholder: 'Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL/A3M format',
+    sampleInput: singleProtSeq,
     validationParams: {
         allowedSeqFormats: [AlignmentSeqFormat.FASTA, AlignmentSeqFormat.CLUSTAL],
         allowedSeqType: AlignmentSeqType.PROTEIN,
@@ -74,6 +76,7 @@ export const dnaSequenceParameter: TextAreaParameter = {
     inputType: TextAreaInputType.Sequence,
     allowsTwoTextAreas: false,
     inputPlaceholder: 'Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL/A3M format',
+    sampleInput: singleDNASeq,
     validationParams: {
         allowedSeqFormats: [AlignmentSeqFormat.FASTA],
         allowedSeqType: AlignmentSeqType.DNA,
@@ -87,6 +90,7 @@ export const regexParameter: TextAreaParameter = {
     inputType: TextAreaInputType.Regex,
     allowsTwoTextAreas: false,
     inputPlaceholder: 'Enter a PROSITE grammar/regular expression.',
+    sampleInput: patternProt,
     validationParams: {},
 };
 
