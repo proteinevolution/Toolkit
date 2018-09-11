@@ -104,7 +104,7 @@
                 if (error) {
                     switch (error.code) {
                         case error.NOT_FOUND_ERR:
-                            alert('File Not Found!');
+                            this.$notify('File Not Found!');
                             break;
                         case error.ABORT_ERR:
                             break; // noop

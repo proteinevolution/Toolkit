@@ -10,15 +10,18 @@ const Notifications = {
     install(vconst: VueConstructor, args: any = {}) {
         // override notify method to allow browser notifications
         if (args.allowBrowserNotification) {
-            vconst.prototype.$notify = (params: TKNotificationOptions | string) => {
-                Vue.notify(params);
-
+            vconst.prototype.$notify = (params: TKNotificationOptions | string, type: string) => {
                 const newParams: TKNotificationOptions = (typeof params === 'string') ?
                     {
                         title: '',
                         text: params,
                         useBrowserNotifications: false,
                     } : params;
+
+                if (type) {
+                    newParams.type = type;
+                }
+                Vue.notify(newParams);
 
                 // TODO show browser notification if necessary
             };
