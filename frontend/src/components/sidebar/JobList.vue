@@ -51,7 +51,7 @@
                 font-weight: bold;
                 color: $tk-dark-gray;
                 font-size: 0.7em;
-                padding: 0.4rem 0.8rem;
+                padding: 0.4rem 6%;
 
                 &.selected {
                     color: $primary;

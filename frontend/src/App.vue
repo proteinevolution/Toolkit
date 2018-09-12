@@ -4,15 +4,16 @@
             <b-row>
                 <Header></Header>
             </b-row>
-            <b-row class="pt-3 mb-2">
-                <b-col v-if="showJobList"
+            <b-row class="pt-3 mb-2 main-content"
+                   :class="[showJobList ? 'job-list-visible' : '']">
+                <b-col class="job-list-col"
                        md="2">
-                    <ExpandWidth>
-                        <SideBar/>
-                    </ExpandWidth>
+                    <SideBar/>
                 </b-col>
-                <b-col :md="showJobList ? 10 : 12">
-                    <router-view/>
+                <b-col>
+                    <VelocityFade :duration="1000">
+                        <router-view/>
+                    </VelocityFade>
                 </b-col>
             </b-row>
             <b-row>
@@ -30,7 +31,7 @@
     import Header from '@/components/header/Header.vue';
     import Footer from '@/components/Footer.vue';
     import SideBar from '@/components/sidebar/SideBar.vue';
-    import ExpandWidth from '@/transitions/ExpandWidth.vue';
+    import VelocityFade from '@/transitions/VelocityFade.vue';
 
     export default Vue.extend({
         name: 'App',
@@ -38,7 +39,7 @@
             Header,
             SideBar,
             Footer,
-            ExpandWidth,
+            VelocityFade,
         },
         computed: {
             showJobList(): boolean {
@@ -59,6 +60,16 @@
         margin-bottom: 3rem;
         border-bottom-left-radius: $global-radius;
         border-bottom-right-radius: $global-radius;
+    }
+
+    .main-content .job-list-col {
+        transition: padding 0.6s, opacity 0.6s, max-width 0.6s;
+    }
+
+    .main-content:not(.job-list-visible) .job-list-col {
+        max-width: 0;
+        padding: 0;
+        opacity: 0;
     }
 </style>
 

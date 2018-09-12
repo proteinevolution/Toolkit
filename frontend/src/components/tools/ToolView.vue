@@ -1,5 +1,5 @@
 <template>
-    <VelocityFade :duration="50">
+    <VelocityFade :duration="100">
         <div class="tool-view"
              :key="toolName + 'view'">
             <div class="tool-header">

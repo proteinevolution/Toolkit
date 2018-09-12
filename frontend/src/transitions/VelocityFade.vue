@@ -2,6 +2,7 @@
     <transition
             name="fade"
             mode="out-in"
+            :css="false"
             :before-enter="beforeEnter"
             :enter="enter"
             :before-leave="beforeLeave"
@@ -9,6 +10,7 @@
         <slot></slot>
     </transition>
 </template>
+
 <script lang="ts">
     import Velocity from 'velocity-animate';
     import Vue from 'vue';
@@ -17,6 +19,7 @@
         name: 'VelocityFade',
         props: {
             duration: {
+                type: Number,
                 default: 500,
             },
         },
@@ -25,11 +28,10 @@
                 el.style.opacity = '0';
             },
             enter(el: HTMLElement, done: () => void): void {
-                const vm = this;
                 Velocity(el,
                     {opacity: 1},
                     {
-                        duration: vm.duration,
+                        duration: this.duration,
                         easing: [0.39, 0.67, 0.04, 0.98],
                         complete: () => {
                             done();
@@ -41,11 +43,10 @@
                 el.style.opacity = '1';
             },
             leave(el: HTMLElement, done: () => void): void {
-                const vm = this;
                 Velocity(el,
                     {opacity: 0},
                     {
-                        duration: vm.duration,
+                        duration: this.duration,
                         easing: [0.39, 0.67, 0.04, 0.98],
                         complete: () => {
                             done();
