@@ -3,7 +3,7 @@
         <div class="caption-container">
             <img :src="require('../../assets/images/Toolkit100.png')"
                  class="img-fluid"/>
-            <div class="caption">
+            <div class="caption d-none d-lg-block">
                 <div class="caption-header">{{ $t('index.welcomeTitle') }}</div>
                 <div class="caption-body">{{ $t('index.welcomeBody') }}</div>
             </div>
