@@ -7,7 +7,8 @@
             </div>
 
             <b-form class="tool-form">
-                <b-card no-body>
+                <b-card no-body
+                        :class="[fullScreen ? 'fullscreen' : '']">
                     <b-tabs class="parameter-tabs"
                             card
                             nav-class="tabs-nav">
@@ -134,6 +135,16 @@
                 float: right;
                 width: 10em;
             }
+        }
+
+        .card.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            overflow-y: auto;
         }
     }
 </style>
