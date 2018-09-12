@@ -6,41 +6,37 @@
                 <h1>{{ tool.longname }}</h1>
             </div>
 
-            <b-row>
-                <b-col>
-                    <b-form class="tool-form">
-                        <b-card no-body>
-                            <b-tabs class="parameter-tabs"
-                                    card
-                                    nav-class="tabs-nav">
-                                <b-tab v-for="section in parameterSections"
-                                       :key="toolName + section.name"
-                                       :title="section.name">
-                                    <div class="tabs-panel">
-                                        <Section :section="section"></Section>
-                                    </div>
-                                </b-tab>
+            <b-form class="tool-form">
+                <b-card no-body>
+                    <b-tabs class="parameter-tabs"
+                            card
+                            nav-class="tabs-nav">
+                        <b-tab v-for="section in parameterSections"
+                               :key="toolName + section.name"
+                               :title="section.name">
+                            <div class="tabs-panel">
+                                <Section :section="section"></Section>
+                            </div>
+                        </b-tab>
 
-                                <template slot="tabs">
-                                    <i class="fullscreen-toggler fa ml-auto mr-1"
-                                       @click="toggleFullScreen"
-                                       :class="[fullScreen ? 'fa-compress' : 'fa-expand']"></i>
-                                </template>
-                            </b-tabs>
-                            <b-form-group class="submit-buttons card-body">
-                                <b-btn class="submit-button"
-                                       variant="primary">
-                                    Submit Job
-                                </b-btn>
-                                <b-form-input class="custom-job-id"
-                                              placeholder="Custom Job ID">
+                        <template slot="tabs">
+                            <i class="fullscreen-toggler fa ml-auto mr-1"
+                               @click="toggleFullScreen"
+                               :class="[fullScreen ? 'fa-compress' : 'fa-expand']"></i>
+                        </template>
+                    </b-tabs>
+                    <b-form-group class="submit-buttons card-body">
+                        <b-btn class="submit-button"
+                               variant="primary">
+                            Submit Job
+                        </b-btn>
+                        <b-form-input class="custom-job-id"
+                                      placeholder="Custom Job ID">
 
-                                </b-form-input>
-                            </b-form-group>
-                        </b-card>
-                    </b-form>
-                </b-col>
-            </b-row>
+                        </b-form-input>
+                    </b-form-group>
+                </b-card>
+            </b-form>
         </div>
     </VelocityFade>
 </template>
