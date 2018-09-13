@@ -4,11 +4,39 @@ export const CLUSTAL: Format = {
     name: 'Clustal',
 
     validate(value: string): boolean {
-        return readInternal(value) !== undefined;
+        const lines = value.trimLeft().split('\n');
+
+        if (!lines[0].startsWith('CLUSTAL')) {
+            return false;
+        }
+
+        const blocks = parseBlocks(lines.slice(1));
+
+        return blocks !== undefined
+            && validateSameLengthBlocks(blocks)
+            && validateHeaders(blocks)
+            && validateSequences(blocks);
     },
 
     read(value: string): Sequence[] {
-        return readInternal(value) || [];
+        const blocks = parseBlocks(value.trimLeft().split('\n').slice(1));
+
+        if (!blocks) {
+            return [];
+        }
+
+        const sequences: Sequence[] = [];
+        for (const line of blocks[0]) {
+            sequences.push({identifier: line[0], seq: line[1], description: ''});
+        }
+
+        for (const block of blocks.slice(1)) {
+            for (const [index, line] of block.entries()) {
+                sequences[index].seq += line[1];
+            }
+        }
+
+        return sequences;
     },
 
     write(sequences: Sequence[]): string {
@@ -16,28 +44,45 @@ export const CLUSTAL: Format = {
     },
 };
 
-function readInternal(value: string): Sequence[] | undefined {
-    const lines = value.trimLeft().split('\n');
 
-    // check header
-    if (!lines[0].startsWith('CLUSTAL')) {
-        return undefined;
-    }
+/** A sequence data line is a pair consisting of the identifier and the sequence string. */
+type Line = [string, string];
 
-    // parse lines
-    const parsed = parseBlocks(lines.slice(1));
+type Block = Line[];
 
-    // TODO convert parsed lines into sequences, check if identifiers match etc.
 
-    return undefined;
+/**
+ * Checks whether all blocks contain the same number of data lines
+ */
+function validateSameLengthBlocks(blocks: Block[]): boolean {
+    return blocks.every((block: Block) => block.length === blocks[0].length);
 }
 
-export function parseBlocks(lines: string[]): Array<Array<[string, string]>> | undefined {
-    const blocks: Array<Array<[string, string]>> = [];
-    let currentBlock: string[] = [];
+/**
+ * Checks whether all data line headers match
+ */
+function validateHeaders(blocks: Block[]): boolean {
+    return blocks.every((block: Block) => block.every((line: Line, i: number) =>
+        line[0] === blocks[0][i][0]));
+}
 
-    for (const line of lines) {
-        if (isNoDataLine(line)) {
+/**
+ * Checks whether all sequences in a block are of the same length (though the length can differ between blocks)
+ */
+function validateSequences(blocks: Block[]): boolean {
+    return blocks.every((block: Block) => block.every((line: Line) =>
+        line[1].length === block[0][1].length));
+}
+
+/**
+ * Parses a clustal input (without its header) into an array of blocks
+ */
+function parseBlocks(lines: string[]): Block[] | undefined {
+    const blocks = [];
+
+    let currentBlock = [];
+    for (let i = 0; i <= lines.length; i++) {
+        if (i === lines.length || isNoDataLine(lines[i])) {
             if (currentBlock.length > 0) {
                 const parsed = parseBlock(currentBlock);
                 if (!parsed) {
@@ -47,7 +92,7 @@ export function parseBlocks(lines: string[]): Array<Array<[string, string]>> | u
                 currentBlock = [];
             }
         } else {
-            currentBlock.push(line);
+            currentBlock.push(lines[i]);
         }
     }
 
@@ -56,11 +101,9 @@ export function parseBlocks(lines: string[]): Array<Array<[string, string]>> | u
 
 /**
  * Parses a block of sequence data lines
- *
- * @param lines: the lines of this block without the special alignment line at the bottom
- * @return An array of sequence data pairs
+ * @param lines: the lines belonging to this block without the special alignment line at the bottom
  */
-function parseBlock(lines: string[]): Array<[string, string]> | undefined {
+function parseBlock(lines: string[]): Block | undefined {
     const result = [];
     for (const line of lines) {
         const data = parseDataLine(line);
@@ -72,16 +115,13 @@ function parseBlock(lines: string[]): Array<[string, string]> | undefined {
     return result;
 }
 
-
 /**
  * Parses a single sequence data line in a block.
- *
- * @param value: the line to be parsed
- * @return A pair consisting of the identifier and the sequence string
+ * @param line: the line to be parsed
  */
-function parseDataLine(value: string): [string, string] | undefined {
+function parseDataLine(line: string): Line | undefined {
     const regex = /^(?:\s*)(\S+)(?:\s+)(\S+)(?:\s*)(\d*)(?:\s*|$)/g;
-    const match = regex.exec(value);
+    const match = regex.exec(line);
     if (!match) {
        return undefined;
     }
