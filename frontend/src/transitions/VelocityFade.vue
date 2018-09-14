@@ -32,9 +32,7 @@
                     {
                         duration: this.duration,
                         easing: [0.39, 0.67, 0.04, 0.98],
-                        complete: () => {
-                            done();
-                        },
+                        complete: done,
                     },
                 );
             },
@@ -47,9 +45,7 @@
                     {
                         duration: this.duration,
                         easing: [0.39, 0.67, 0.04, 0.98],
-                        complete: () => {
-                            done();
-                        },
+                        complete: done,
                     },
                 );
             },

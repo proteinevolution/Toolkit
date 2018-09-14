@@ -119,7 +119,7 @@
                     }, 1);
                 }
             },
-            displayAutoTransformMessage(params) {
+            displayAutoTransformMessage(params: any) {
                 this.autoTransformedParams = params;
                 setTimeout(() => {
                     this.autoTransformedParams = null;
