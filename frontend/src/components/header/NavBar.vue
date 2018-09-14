@@ -18,12 +18,15 @@
 
                         <b-navbar-nav class="lower-nav"
                                       :style="{borderTopColor: sectionColor}">
-                            <b-nav-item v-for="tool in tools"
-                                        :key="tool.name"
-                                        :to="'/tools/' + tool.name"
-                                        v-show="tool.section === selectedSection">
-                                {{tool.longname}}
-                            </b-nav-item>
+                            <transition-group name="list-complete">
+                                <b-nav-item v-for="tool in tools"
+                                            class="list-complete-item"
+                                            :key="tool.name"
+                                            :to="'/tools/' + tool.name"
+                                            v-if="tool.section === selectedSection">
+                                    {{tool.longname}}
+                                </b-nav-item>
+                            </transition-group>
                         </b-navbar-nav>
                     </b-col>
                 </b-row>
@@ -94,6 +97,7 @@
                 text-shadow: 0 1px 1px #fefefe;
                 padding: 1rem 1rem;
                 font-size: 0.8em;
+                transition: background-color 0.2s;
             }
 
             .nav-item.active a, .nav-item:hover a, .nav-item .nav-link.active {
@@ -114,6 +118,26 @@
                     color: $tk-gray;
                 }
             }
+        }
+    }
+
+    .list-complete-item {
+        transition: opacity .5s, transform .5s;
+        display: inline-block;
+
+        &.list-complete-enter,
+        &.list-complete-leave-to {
+            opacity: 0;
+            transform: translateY(-15px);
+        }
+
+        &.list-complete-leave-to {
+            transition: opacity 0s;
+        }
+
+        &.list-complete-leave-active {
+            position: absolute;
+            transform: translateY(-20px);
         }
     }
 </style>
