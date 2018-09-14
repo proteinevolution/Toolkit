@@ -28,7 +28,7 @@ function validateSequence(val: string, params: AlignmentValidationParams): Valid
         } else if (autoTransformToFormat) {
             return result(false, 'success', 'shouldAutoTransform', {
                 detected: detectedFormat,
-                transformFormat: autoTransformToFormat
+                transformFormat: autoTransformToFormat,
             });
         } else {
             // TODO order of validation checks
