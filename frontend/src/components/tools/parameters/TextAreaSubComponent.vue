@@ -23,12 +23,22 @@
                        @change="handleFileUpload"/>
             </label>
         </b-button-group>
-        <b-alert show
-                 v-if="validation.cssClass"
-                 :variant="validation.cssClass"
-                 class="validation-alert mb-0">
-            {{ $t('tools.validation.' + validation.textKey, validation.textKeyParams) }}
-        </b-alert>
+        <VelocityFade>
+            <b-alert show
+                     key="autoTransformMessage"
+                     v-if="autoTransformedParams"
+                     variant="success"
+                     class="validation-alert mb-0 mr-2">
+                {{ $t('tools.validation.autoTransformedToFasta', autoTransformedParams) }}
+            </b-alert>
+            <b-alert show
+                     key="validationMessage"
+                     v-if="validation.cssClass && !autoTransformedParams"
+                     :variant="validation.cssClass"
+                     class="validation-alert mb-0">
+                {{ $t('tools.validation.' + validation.textKey, validation.textKeyParams) }}
+            </b-alert>
+        </VelocityFade>
     </b-form-group>
 </template>
 
@@ -37,9 +47,13 @@
     import {TextAreaParameter} from '../../../types/toolkit';
     import {transformToFasta, validation} from '@/util/validation';
     import {ValidationResult} from '../../../types/toolkit/validation';
+    import VelocityFade from '@/transitions/VelocityFade.vue';
 
     export default Vue.extend({
         name: 'TextAreaSubComponent',
+        components: {
+            VelocityFade,
+        },
         props: {
             id: String,
             /*
@@ -53,6 +67,8 @@
                 text: '',
                 fileUploadProgress: 0,
                 uploadingFile: false,
+                autoTransformedParams: null,
+                autoTransformMessageTimeout: 1000,
             };
         },
         computed: {
@@ -61,7 +77,11 @@
                     this.parameter.inputType, this.parameter.validationParams);
                 if (val.textKey === 'shouldAutoTransform') {
                     this.text = transformToFasta(this.text);
-                    val.textKey = 'autoTransformedToFasta';
+                    this.displayAutoTransformMessage(val.textKeyParams);
+
+                    // trigger validation again
+                    return validation(this.text,
+                        this.parameter.inputType, this.parameter.validationParams);
                 }
                 return val;
             },
@@ -98,6 +118,12 @@
                         reader.abort();
                     }, 1);
                 }
+            },
+            displayAutoTransformMessage(params) {
+                this.autoTransformedParams = params;
+                setTimeout(() => {
+                    this.autoTransformedParams = null;
+                }, this.autoTransformMessageTimeout);
             },
             errorHandler(evt: Event) {
                 const error = (evt.target as FileReader).error;

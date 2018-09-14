@@ -137,6 +137,10 @@
             }
         }
 
+        & > .card {
+
+        }
+
         .card.fullscreen {
             position: fixed;
             top: 0;
