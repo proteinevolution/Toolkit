@@ -157,7 +157,7 @@ const ParameterAlignmentComponent = {
                         }, "Upload File"),
                         m("input", {
                             type: "file",
-                            name: "alignment_two",
+                            name: "file_alignment_two",
                             id: "fileUpload" + suffix2,
                             "class": "show-for-sr",
                             onchange: function() {
@@ -242,7 +242,7 @@ const ParameterAlignmentComponent = {
                             }, "Upload File"),
                             m("input", {
                                 type: "file",
-                                name: "alignment",
+                                name: "file_alignment",
                                 id: "fileUpload",
                                 "class": "show-for-sr",
                                 onchange: function() {
