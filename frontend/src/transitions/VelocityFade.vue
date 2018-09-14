@@ -2,7 +2,6 @@
     <transition
             name="fade"
             mode="out-in"
-            :css="false"
             :before-enter="beforeEnter"
             :enter="enter"
             :before-leave="beforeLeave"
