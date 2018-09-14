@@ -10,6 +10,7 @@ const NotFoundView = () => import(/* webpackChunkName: "about" */ '../components
 export default [
     {
         path: '/',
+        name: 'index',
         component: IndexView,
         meta: {
             showJobList: false,
@@ -17,6 +18,7 @@ export default [
     },
     {
         path: '/tools/:toolName',
+        name: 'tools',
         component: ToolView,
         meta: {
             showJobList: true,
@@ -24,6 +26,7 @@ export default [
     },
     {
         path: '/jobmanager',
+        name: 'jobmanager',
         component: JobManagerView,
         meta: {
             showJobList: true,
@@ -31,6 +34,7 @@ export default [
     },
     {
         path: '/404',
+        name: '404',
         component: NotFoundView,
         meta: {
             showJobList: true,
