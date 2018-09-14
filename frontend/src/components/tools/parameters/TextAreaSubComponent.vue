@@ -68,7 +68,7 @@
                 fileUploadProgress: 0,
                 uploadingFile: false,
                 autoTransformedParams: null,
-                autoTransformMessageTimeout: 1000,
+                autoTransformMessageTimeout: 2500,
             };
         },
         computed: {
