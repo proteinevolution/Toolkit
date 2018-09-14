@@ -200,7 +200,11 @@ const ParameterAlignmentComponent = {
             ]);
         }
         return renderParameter([
-            m("input#parent_id", {type: "hidden", value: window.JobModel.getParamValue("parent_id")}),
+            m("input#parent_id", {type: "hidden", config: (elem: HTMLInputElement, isInit: boolean) => {
+                if (!isInit) {
+                    elem.value = window.JobModel.getParamValue("parent_id")
+                }
+            }}),
             m("div", {
                     "class": "alignment_textarea"
                 },
