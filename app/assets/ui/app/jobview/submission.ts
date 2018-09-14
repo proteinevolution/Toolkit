@@ -5,7 +5,7 @@
     jobIDValid: false,    // Is the current jobID valid?
     jobIDValidationTimeout: null,     // timer ID for the timeout
     jobIDRegExp: new RegExp(/^([0-9a-zA-Z_]{3,96})(?:_([0-9]{1,3}))?$/),
-    checkJobID: function(jobID: string) {
+    checkJobID: function (jobID: string) {
         // ensure that the user can not send the job form
         JobSubmissionComponent.jobIDValid = false;
         // clear all previous timeouts
@@ -23,8 +23,8 @@
         }
         return JobSubmissionComponent.currentJobID;
     },
-    checkJobIDTimed: function(timeout: number): Function {
-        return function(jobID: string): string {
+    checkJobIDTimed: function (timeout: number): Function {
+        return function (jobID: string): string {
             // ensure that the user can not send the job form
             JobSubmissionComponent.jobIDValid = false;
             // clear all previous timeouts
@@ -37,7 +37,7 @@
                 JobSubmissionComponent.currentJobID = jobID;
                 // ignore checking if the field is empty as the server will generate a jobID in that case.
                 if (JobSubmissionComponent.jobIDRegExp.test(jobID)) {   // Check if the JobID is passing the Regex
-                    JobSubmissionComponent.jobIDValidationTimeout = setTimeout(function(a) {   // create the timeout
+                    JobSubmissionComponent.jobIDValidationTimeout = setTimeout(function (a) {   // create the timeout
                         JobSubmissionComponent.checkJobIDWithRequest();
                     }, timeout);
                 }
@@ -45,7 +45,7 @@
             return JobSubmissionComponent.currentJobID;
         };
     },
-    checkJobIDWithRequest: function() {
+    checkJobIDWithRequest: function () {
         m.request({
             method: "GET",
             url: "/api/jobs/check/jobid/"
@@ -53,7 +53,7 @@
             + "/?resubmitJobID="
             + JobSubmissionComponent.oldJobID
         }).then(
-            function(data: any) {
+            function (data: any) {
                 JobSubmissionComponent.jobIDValid = !data.exists;
                 if (data.exists && data.suggested != null) {
                     JobSubmissionComponent.currentJobID = data.suggested;
@@ -64,11 +64,11 @@
                     "Suggested version:", data.version,
                     "Current jobID Valid?", JobSubmissionComponent.jobIDValid);
             },
-            function(data: any) {
+            function (data: any) {
             }
         );
     },
-    jobIDComponent: function(ctrl: any) {
+    jobIDComponent: function (ctrl: any) {
         let style: string = "jobID";
 
         style += JobSubmissionComponent.currentJobID === "" ? " white" :
@@ -85,7 +85,7 @@
 
         return m("input", options);
     },
-    controller: function(args: any) {
+    controller: function (args: any) {
         if (args.isJob) {
             if (JobSubmissionComponent.oldJobID !== args.job().jobID) {
                 JobSubmissionComponent.currentJobID = null;
@@ -103,7 +103,7 @@
             }
         }
         return {
-            submit: function(startJob: boolean) {
+            submit: function (startJob: boolean) {
                 if (!JobSubmissionComponent.jobIDValid) {
                     console.log("[Job Submission] failed to submit - jobID is invalid: ", JobSubmissionComponent.submitting);
                     return;
@@ -133,7 +133,7 @@
                 formData.append("tool", tool);
 
                 const parentID: string = $("#parent_id").val();
-                if(parentID) {
+                if (parentID) {
                     formData.append("parent_id", parentID);
                 }
 
@@ -145,26 +145,27 @@
                 const fileInputs: JQuery = $("input[type=file]");
                 for (let i = 0; i < fileInputs.length; i++) {
                     const fileInput: HTMLInputElement = (<HTMLInputElement>fileInputs[i]);
+                    // remove file data which was already added to FormData
+                    formData.delete(fileInput.name);
                     if (fileInput.files.length > 0) {
                         const file: File = fileInput.files[0];
-                        if(file) {
-                            if (file.size == 0) {
-                                console.log("skipping empty file " + file.name);
-                            } else {
-                                console.log("uploading file " + file.name);
-                                formData.append(fileInput.name, file);
-                            }
+                        if (file !== undefined && file.size > 0) {
+                            const fileName: string = fileInput.name.substring(5);
+                            formData.append(fileName, file);
                         }
                     }
+                    // delete file inputs after FormData has been read. Otherwise submission is prevented in Safari >11.1
+                    fileInput.remove();
                 }
+
                 m.request({
                     method: "POST",
                     url: "/api/jobs/?toolName=" + tool,
                     data: formData,
-                    serialize: function(submissionReturnData) {
+                    serialize: function (submissionReturnData) {
                         return submissionReturnData;
                     }
-                }).then(function(submissionReturnData: any) {
+                }).then(function (submissionReturnData: any) {
                     if (submissionReturnData.successful) {
                         jobID = submissionReturnData.jobID;
                         // listen for this job
@@ -192,7 +193,7 @@
                     }
                     $(".submitJob").prop("disabled", false);
                     JobSubmissionComponent.submitting = false;
-                }, function(error: any) {
+                }, function (error: any) {
                     console.log("Error while submitting:", error);
                     $(".submitJob").prop("disabled", false);
                     JobSubmissionComponent.submitting = false;
@@ -201,8 +202,8 @@
             }
         };
     },
-    hide: function(ctrl: any, args: any) {
-        return function(elem: any, isInit: any) {
+    hide: function (ctrl: any, args: any) {
+        return function (elem: any, isInit: any) {
             if (!isInit) {
                 $("#uploadBoxClose").hide();
                 $(".uploadFileName").hide();
@@ -213,7 +214,7 @@
             }
         };
     },
-    view: function(ctrl: any, args: any) {
+    view: function (ctrl: any, args: any) {
         return m("div", {"class": "submitbuttons", config: JobSubmissionComponent.hide(ctrl, args)}, [
             m("div", {
                 "class": "reveal",
