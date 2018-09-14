@@ -26,7 +26,8 @@
                                :class="[fullScreen ? 'fa-compress' : 'fa-expand']"></i>
                         </template>
                     </b-tabs>
-                    <b-form-group class="submit-buttons card-body">
+                    <b-form-group v-if="tool.showSubmitButtons"
+                                  class="submit-buttons card-body">
                         <b-btn class="submit-button"
                                variant="primary">
                             Submit Job

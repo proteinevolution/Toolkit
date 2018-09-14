@@ -1,6 +1,13 @@
 import {AlignmentSeqFormat, AlignmentSeqType, ParameterType, TextAreaInputType} from '../types/toolkit/enums';
-import {BooleanParameter, NumberParameter, Parameter, SelectParameter, TextAreaParameter} from '../types/toolkit';
-import {multiProtSeq, patternProt, protHeaders, singleDNASeq, singleProtSeq} from './sampleseq';
+import {
+    BooleanParameter,
+    NumberParameter,
+    Parameter,
+    ReformatViewParameter,
+    SelectParameter,
+    TextAreaParameter,
+} from '../types/toolkit';
+import {inputClustal, multiProtSeq, patternProt, protHeaders, singleDNASeq, singleProtSeq} from './sampleseq';
 
 export const numberParameter: NumberParameter = {
     type: ParameterType.Number,
@@ -129,6 +136,15 @@ export const fastaHeaderParameter: TextAreaParameter = {
         allowedSeqFormats:  [AlignmentSeqFormat.FASTA_HEADERS, AlignmentSeqFormat.FASTA],
         allowedSeqType: AlignmentSeqType.PROTEIN,
     },
+};
+
+// ----------------- Reformat View Parameter -----------------------
+
+export const reformatView: ReformatViewParameter = {
+    type: ParameterType.ReformatView,
+    name: '',
+    label: '',
+    sampleInput: inputClustal,
 };
 
 

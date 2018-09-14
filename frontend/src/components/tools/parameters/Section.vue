@@ -21,6 +21,7 @@
     import Number from './Number.vue';
     import Boolean from './Boolean.vue';
     import AlignmentMode from './AlignmentMode.vue';
+    import ReformatView from './ReformatView.vue';
     import {ParameterSection} from '@/types/toolkit/index';
 
     export default Vue.extend({
@@ -31,6 +32,7 @@
             Number,
             Boolean,
             AlignmentMode,
+            ReformatView,
         },
         props: {
             /*

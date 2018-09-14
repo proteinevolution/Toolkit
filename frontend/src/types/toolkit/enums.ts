@@ -6,6 +6,7 @@ export enum ParameterType {
     Boolean = 'Boolean',
     AlignmentMode = 'AlignmentMode',
     ModellerKey = 'ModellerKey',
+    ReformatView = 'ReformatView',
 }
 
 export enum TextAreaInputType {
