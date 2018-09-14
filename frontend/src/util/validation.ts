@@ -21,12 +21,15 @@ function validateSequence(val: string, params: AlignmentValidationParams): Valid
 
     if (val.length > 0) {
         const detectedFormat: string = elem.getFormat();
-        const isFasta: boolean = elem.validate('Fasta');
+        const autoTransformToFormat: string = elem.getAutoTransformToFormat();
 
         if (detectedFormat === '') {
             return result(true, 'danger', 'invalidCharacters');
-        } else if (!isFasta) {
-            return result(false, 'success', 'shouldAutoTransform', {detected: detectedFormat});
+        } else if (autoTransformToFormat) {
+            return result(false, 'success', 'shouldAutoTransform', {
+                detected: detectedFormat,
+                transformFormat: autoTransformToFormat
+            });
         } else {
             // TODO order of validation checks
             // TODO auto transform or refuse disallowed formats?
@@ -73,8 +76,8 @@ function validateSequence(val: string, params: AlignmentValidationParams): Valid
     return result(false, '', '');
 }
 
-export function transformToFasta(val: string): string {
-    return new Reformat(val).reformat('FASTA');
+export function transformToFormat(val: string, format: string): string {
+    return new Reformat(val).reformat(format);
 }
 
 export function validateRegex(val: string): ValidationResult {

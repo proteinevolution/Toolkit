@@ -2,6 +2,7 @@ import {Format, Sequence} from '@/modules/reformat/types';
 
 export const STOCKHOLM: Format = {
     name: 'Stockholm',
+    autoTransformToFormat: 'FASTA',
 
     validate(value: string): boolean {
         return false;

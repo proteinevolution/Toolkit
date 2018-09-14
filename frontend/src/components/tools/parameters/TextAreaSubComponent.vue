@@ -45,7 +45,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import {TextAreaParameter} from '../../../types/toolkit';
-    import {transformToFasta, validation} from '@/util/validation';
+    import {transformToFormat, validation} from '@/util/validation';
     import {ValidationResult} from '../../../types/toolkit/validation';
     import VelocityFade from '@/transitions/VelocityFade.vue';
 
@@ -76,7 +76,7 @@
                 const val: ValidationResult = validation(this.text,
                     this.parameter.inputType, this.parameter.validationParams);
                 if (val.textKey === 'shouldAutoTransform') {
-                    this.text = transformToFasta(this.text);
+                    this.text = transformToFormat(this.text, val.textKeyParams.transformFormat);
                     this.displayAutoTransformMessage(val.textKeyParams);
 
                     // trigger validation again

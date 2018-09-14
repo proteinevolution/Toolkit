@@ -59,6 +59,13 @@ export class Reformat {
         return '';
     }
 
+    public getAutoTransformToFormat(): string {
+        if (this.format && this.format.autoTransformToFormat) {
+            return this.format.autoTransformToFormat;
+        }
+        return '';
+    }
+
     public getTypes(): string[] {
         return this.types ? this.types.map((val: SequenceType) => val.name) : [];
     }

@@ -5,6 +5,11 @@ export interface Format {
     name: string;
 
     /**
+     * Name of the format to which inputs of this format should be auto-transformed if possible
+     */
+    autoTransformToFormat?: string;
+
+    /**
      * Function which can translate array of internal sequences to this format
      * @param sequences - array of sequence strings
      */

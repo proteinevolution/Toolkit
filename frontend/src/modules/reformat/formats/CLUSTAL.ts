@@ -2,6 +2,7 @@ import {Format, Sequence} from '@/modules/reformat/types';
 
 export const CLUSTAL: Format = {
     name: 'Clustal',
+    autoTransformToFormat: 'FASTA',
 
     validate(value: string): boolean {
         const lines = value.trimLeft().split('\n');
