@@ -54,6 +54,11 @@ export default {
                 validPDB: 'Valid input.',
                 validAccessionID: 'Valid input.',
             },
+            reformat: {
+                detectedFormat: 'Found format: <b>{format}</b>',
+                selectOutputFormat: 'Select Output Format',
+                forwardTo: 'Forward to',
+            },
         },
         helpModals: {
             names: {

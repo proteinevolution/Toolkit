@@ -13,12 +13,15 @@ describe('tools/getters', () => {
             tools: [
                 {
                     name: 'Tool1', longname: 'Tool1', section: 'Section1', forwarding: {alignment: [], multiSeq: []},
+                        showSubmitButtons: true,
                 },
                 {
                     name: 'Tool2', longname: 'Tool1', section: 'Section2', forwarding: {alignment: [], multiSeq: []},
+                        showSubmitButtons: true,
                 },
                 {
                     name: 'Tool3', longname: 'Tool1', section: 'Section2', forwarding: {alignment: [], multiSeq: []},
+                        showSubmitButtons: true,
                 },
             ],
         };

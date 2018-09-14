@@ -8,7 +8,7 @@ import {
     booleanParameter,
     dnaSequenceParameter, fastaHeaderParameter,
     multiSelectParameter, pdbParameter,
-    proteinSequenceParameter,
+    proteinSequenceParameter, reformatView,
     regexParameter,
     singleSelectParameter,
 } from './exampleParams';
@@ -42,6 +42,7 @@ export default class ToolService {
                 alignment: [],
                 multiSeq: [],
             },
+            showSubmitButtons: true,
             parameters: undefined,
         },
         {
@@ -53,6 +54,7 @@ export default class ToolService {
                 alignment: [],
                 multiSeq: [],
             },
+            showSubmitButtons: true,
             parameters: undefined,
         },
         {
@@ -64,6 +66,7 @@ export default class ToolService {
                 alignment: [],
                 multiSeq: [],
             },
+            showSubmitButtons: true,
             parameters: undefined,
         },
         {
@@ -75,6 +78,7 @@ export default class ToolService {
                 alignment: [],
                 multiSeq: [],
             },
+            showSubmitButtons: true,
             parameters: undefined,
         },
         {
@@ -86,6 +90,7 @@ export default class ToolService {
                 alignment: [],
                 multiSeq: [],
             },
+            showSubmitButtons: true,
             parameters: undefined,
         },
         {
@@ -97,6 +102,19 @@ export default class ToolService {
                 alignment: [],
                 multiSeq: [],
             },
+            showSubmitButtons: true,
+            parameters: undefined,
+        },
+        {
+            name: 'reformat',
+            longname: 'Reformat',
+            title: 'Great tool 1',
+            section: 'Utils',
+            forwarding: {
+                alignment: [],
+                multiSeq: [],
+            },
+            showSubmitButtons: false,
             parameters: undefined,
         },
     ];
@@ -174,6 +192,17 @@ export default class ToolService {
                     multiColumnLayout: false,
                     parameters: [
                         fastaHeaderParameter,
+                    ],
+                },
+            ],
+        ],
+        ['reformat',
+            [
+                {
+                    name: 'Input',
+                    multiColumnLayout: false,
+                    parameters: [
+                        reformatView,
                     ],
                 },
             ],

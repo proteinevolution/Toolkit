@@ -8,6 +8,7 @@ export interface Tool {
     code?: string;
     section: string;
     forwarding: ForwardingMode;
+    showSubmitButtons: boolean;
 
     parameters?: ParameterSection[];
 }
@@ -60,6 +61,7 @@ export interface SelectParameter extends Parameter {
 export interface SelectOption {
     value: string;
     text: string;
+    $isDisabled?: boolean;
 }
 
 export interface NumberParameter extends Parameter {
@@ -70,4 +72,8 @@ export interface NumberParameter extends Parameter {
 
 export interface BooleanParameter extends Parameter {
     default: boolean;
+}
+
+export interface ReformatViewParameter extends Parameter {
+    sampleInput: string;
 }
