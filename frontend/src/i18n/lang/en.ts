@@ -57,9 +57,11 @@ export default {
                 validAccessionID: 'Valid input.',
             },
             reformat: {
+                inputPlaceholder: 'Enter a sequence...',
                 detectedFormat: 'Found format: <b>{format}</b>',
                 selectOutputFormat: 'Select Output Format',
                 forwardTo: 'Forward to',
+                download: 'Download',
             },
         },
         helpModals: {

@@ -4,6 +4,7 @@ import {AlignmentSeqFormat} from '../../../types/toolkit/enums';
         <b-form-textarea class="textarea-input"
                          v-model="input"
                          @input="clearOutput"
+                         :placeholder="$t('tools.reformat.inputPlaceholder')"
                          cols="70"
                          spellcheck="false">
         </b-form-textarea>
@@ -20,48 +21,48 @@ import {AlignmentSeqFormat} from '../../../types/toolkit/enums';
                  class="validation-alert mb-0"
                  v-html="$t('tools.reformat.detectedFormat', {format: detectedFormat})">
         </b-alert>
-        <b-form-group>
-            <b-row align-h="center">
-                <b-col cols="4">
-                    <multiselect v-model="selectedOutputFormat"
-                                 @select="computeOutput"
-                                 :allowEmpty="true"
-                                 :options="outputFormatOptions"
-                                 :disabled="!detectedFormat"
-                                 track-by="value"
-                                 label="text"
-                                 :placeholder="$t('tools.reformat.selectOutputFormat')"
-                                 :searchable="false"
-                                 selectLabel=""
-                                 deselectLabel=""
-                                 selectedLabel="">
-                    </multiselect>
-                </b-col>
-                <b-col cols="4">
-                    <multiselect v-model="selectedForwardingTool"
-                                 @select="forward"
-                                 :allowEmpty="true"
-                                 :options="forwardingOptions"
-                                 :disabled="!output"
-                                 track-by="value"
-                                 label="text"
-                                 :placeholder="$t('tools.reformat.forwardTo')"
-                                 :searchable="false"
-                                 selectLabel=""
-                                 deselectLabel=""
-                                 selectedLabel="">
-                    </multiselect>
-                </b-col>
-            </b-row>
-        </b-form-group>
-        <b-form-group>
+        <b-row align-h="center" class="mb-3">
+            <b-col cols="4">
+                <multiselect v-model="selectedOutputFormat"
+                             @select="computeOutput"
+                             :allowEmpty="true"
+                             :options="outputFormatOptions"
+                             :disabled="!detectedFormat"
+                             track-by="value"
+                             label="text"
+                             :placeholder="$t('tools.reformat.selectOutputFormat')"
+                             :searchable="false"
+                             selectLabel=""
+                             deselectLabel=""
+                             selectedLabel="">
+                </multiselect>
+            </b-col>
+        </b-row>
+        <div v-if="output">
             <b-form-textarea class="textarea-output"
                              v-model="output"
                              cols="70"
                              spellcheck="false"
                              readonly>
             </b-form-textarea>
-        </b-form-group>
+            <b-button-group size="sm"
+                            class="mt-2">
+                <b-button class="download"
+                          download="reformat_download.txt"
+                          :href="'data:application/octet-stream;content-disposition:attachment;filename=file.txt;charset=utf-8,'
+                                    + encodeURIComponent(this.output)">
+                    {{ $t('tools.reformat.download') }}
+                </b-button>
+                <b-dropdown :text="$t('tools.reformat.forwardTo')"
+                            size="sm">
+                    <b-dropdown-item v-for="option in forwardingOptions"
+                                     :key="option.value"
+                                     @click="forward(option)">
+                        {{option.text}}
+                    </b-dropdown-item>
+                </b-dropdown>
+            </b-button-group>
+        </div>
     </div>
 </template>
 
@@ -131,7 +132,6 @@ import {AlignmentSeqFormat} from '../../../types/toolkit/enums';
             },
             clearOutput(): void {
                 this.selectedOutputFormat = undefined;
-                this.selectedForwardingTool = undefined;
                 this.output = '';
             },
             forward(selectedTool: SelectOption): void {
@@ -143,14 +143,28 @@ import {AlignmentSeqFormat} from '../../../types/toolkit/enums';
 
 <style lang="scss" scoped>
     .textarea-input, .textarea-output {
+        background-color: $white;
         font-family: $font-family-monospace;
         font-size: 0.8em;
         height: 15em;
+    }
+
+    .btn-link:hover, .btn-link:active, .btn-link:focus {
+        text-decoration: none;
     }
 
     .validation-alert {
         margin-top: 0.5rem;
         float: right;
         padding: 0.4rem 0.5rem;
+    }
+
+    .download {
+        float: left;
+    }
+
+    .forwardToSelect {
+        width: 10em;
+        float: left;
     }
 </style>
