@@ -1,5 +1,22 @@
 <template>
     <div class="toolkit">
+        <vue-particles class="tk-particles"
+                       color="#d0d0d0"
+                       :particleOpacity="0.7"
+                       :particlesNumber="80"
+                       shapeType="circle"
+                       :particleSize="4"
+                       linesColor="#ccc"
+                       :linesWidth="1"
+                       :lineLinked="true"
+                       :lineOpacity="0.4"
+                       :linesDistance="150"
+                       :moveSpeed="2"
+                       :hoverEffect="true"
+                       hoverMode="grab"
+                       :clickEffect="true"
+                       clickMode="push"/>
+
         <b-container class="main-container">
             <b-row>
                 <Header></Header>
@@ -60,6 +77,8 @@
         margin-bottom: 3rem;
         border-bottom-left-radius: $global-radius;
         border-bottom-right-radius: $global-radius;
+        z-index: 1;
+        position: relative;
     }
 
     .main-content .job-list-col {
@@ -70,6 +89,14 @@
         max-width: 0;
         padding: 0;
         opacity: 0;
+    }
+
+    .tk-particles {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
     }
 </style>
 
