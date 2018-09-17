@@ -21,7 +21,7 @@
         <b-form-group>
             <b-row align-h="center">
                 <b-col cols="4">
-                    <multiselect v-model="selectedOutputFormat"
+                    <multiselect @change="computeOutput"
                                  :allowEmpty="true"
                                  :options="outputFormatOptions"
                                  track-by="value"
@@ -80,7 +80,6 @@
                     {value: 'hhblits', text: 'HHBlits', $isDisabled: false},
                     {value: 'test', text: 'Test', $isDisabled: false},
                 ],
-                selectedOutputFormat: undefined,
                 selectedForwardingTool: undefined,
             };
         },
@@ -99,26 +98,17 @@
             reformat(): Reformat {
                 return new Reformat(this.input);
             },
-            detectedFormat(): string {
-                return this.reformat.getFormat();
-            },
-        },
-        watch: {
-            detectedFormat() {
-                for (const option of this.outputFormatOptions) {
-                    option.$isDisabled = option.value.toUpperCase() === this.detectedFormat.toUpperCase();
-                }
-                this.selectedOutputFormat = undefined;
-            },
-            selectedOutputFormat() {
-                if (this.selectedOutputFormat !== undefined && this.reformat !== undefined) {
-                    this.output = this.reformat.reformat(this.selectedOutputFormat.value);
-                }
-            },
         },
         methods: {
-            handlePasteExample() {
+            handlePasteExample(): void {
                 this.input = this.parameter.sampleInput;
+            },
+            computeOutput(value: string): void {
+                if (value !== undefined &&
+                    this.reformat !== undefined &&
+                    this.reformat.reformat !== undefined) {
+                    this.output = this.reformat.reformat(value);
+                }
             },
         },
     });
