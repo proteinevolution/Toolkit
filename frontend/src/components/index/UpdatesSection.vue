@@ -5,7 +5,7 @@
             <b-row>
                 <b-col class="tile-image">
                 </b-col>
-                <b-col class="py-3 px-4 update-section"
+                <b-col class="py-4 px-4 update-section"
                        cols="7">
                     <h4>Recent Updates</h4>
                     <div v-for="update in updates"
@@ -16,7 +16,7 @@
                         <p v-html="update.html"></p>
                     </div>
                 </b-col>
-                <b-col class="py-3 quick-link-section">
+                <b-col class="py-4 px-4 quick-link-section">
                     <h4>Quick Links</h4>
                     <b-nav vertical>
                         <router-link v-for="quickLink in quickLinks"
@@ -103,7 +103,6 @@
             font-size: 1.1em;
             font-weight: bold;
             margin-bottom: 0.9rem;
-            text-align: center;
         }
 
         .tile-image {
@@ -135,8 +134,8 @@
                 display: flex;
                 justify-content: space-between;
                 text-decoration: none;
-                width: 70%;
-                margin: 0 auto 0.2rem;
+                width: 80%;
+                margin-bottom: 0.25em;
 
                 i {
                     font-size: 1.4em;
