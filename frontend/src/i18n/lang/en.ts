@@ -1,3 +1,5 @@
+import modalContent from './modals/en';
+
 export default {
     en: {
         helpContents: 'Some help text',
@@ -73,12 +75,13 @@ export default {
             titles: {
                 help: 'Welcome to the MPI Bioinformatics Toolkit',
                 faq: 'FAQ',
-                privacy: 'Privacy Policy',
+                privacy: 'Datenschutzhinweis (Privacy Policy<sup>*</sup>)',
                 imprint: 'Imprint',
                 contact: 'Contact Us',
                 cite: 'Cite Us',
                 updates: 'Recent Updates',
             },
+            content: modalContent,
         },
         copyright: '© 2008-{currentYear}, Dept. of Protein Evolution, ' +
             'Max Planck Institute for Developmental Biology, Tübingen',

@@ -36,8 +36,8 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import updates from '@/assets/content/updates';
-    import Help from '@/components/modals/Help.vue';
+    import updates from '@/i18n/lang/updates';
+    import Updates from '@/components/modals/Updates.vue';
 
     export default Vue.extend({
         name: 'UpdatesSection',
@@ -80,7 +80,7 @@
         },
         methods: {
             launchUpdatesModal() {
-                this.$modal.show(Help, {}, {
+                this.$modal.show(Updates, {}, {
                     draggable: false,
                     width: '60%',
                     height: 'auto',

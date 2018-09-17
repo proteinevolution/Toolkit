@@ -1,8 +1,8 @@
 <template>
     <div class="tk-modal">
         <div class="tk-modal-header">
-            <span class="tk-modal-title">
-                {{title}}
+            <span class="tk-modal-title"
+                  v-html="title">
             </span>
 
             <span class="tk-modal-close d-none"
@@ -32,11 +32,13 @@
     });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     .tk-modal {
+        padding: 1.5rem 2rem;
+
         .tk-modal-header {
-            padding: 0.7rem 1rem;
             display: flex;
+            margin-bottom: 1.5rem;
 
             .tk-modal-title {
                 color: $primary;
@@ -54,7 +56,17 @@
         }
 
         .tk-modal-body {
-            padding: 0.75rem 1rem;
+            color: $tk-dark-gray;
+
+            .section {
+                margin-top: 1.5rem;
+
+                h6 {
+                    font-weight: bold;
+                    font-size: 1em;
+                    margin-bottom: 0.25em;
+                }
+            }
         }
     }
 </style>

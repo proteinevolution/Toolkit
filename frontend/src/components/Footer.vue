@@ -1,13 +1,12 @@
 <template>
     <footer>
         <b-nav class="modals-nav">
-            <b-nav-item @click="launchHelpModal">{{ $t('helpModals.names.help') }}</b-nav-item>
-            <b-nav-item @click="launchHelpModal">{{ $t('helpModals.names.faq') }}</b-nav-item>
-            <b-nav-item @click="launchHelpModal">{{ $t('helpModals.names.privacy') }}</b-nav-item>
-            <b-nav-item @click="launchHelpModal">{{ $t('helpModals.names.imprint') }}</b-nav-item>
-            <b-nav-item @click="launchHelpModal">{{ $t('helpModals.names.contact') }}</b-nav-item>
-            <b-nav-item @click="launchHelpModal">{{ $t('helpModals.names.cite') }}</b-nav-item>
-            <b-nav-item @click="launchHelpModal">{{ $t('helpModals.names.updates') }}</b-nav-item>
+            <b-nav-item v-for="simpleModal in simpleModals"
+                        :key="simpleModal"
+                        @click="launchHelpModal(simpleModal)">
+                {{ $t('helpModals.names.' + simpleModal) }}
+            </b-nav-item>
+            <b-nav-item @click="launchUpdatesModal">{{ $t('helpModals.names.updates') }}</b-nav-item>
         </b-nav>
         <b-row>
             <b-col>
@@ -19,13 +18,34 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import Help from './modals/Help.vue';
+    import Simple from './modals/Simple.vue';
+    import Updates from '@/components/modals/Updates.vue';
 
     export default Vue.extend({
         name: 'Footer',
+        data() {
+            return {
+                simpleModals: [
+                    'help',
+                    'faq',
+                    'privacy',
+                    'imprint',
+                    'contact',
+                    'cite',
+                ],
+            };
+        },
         methods: {
-            launchHelpModal() {
-                this.$modal.show(Help, {}, {
+            launchHelpModal(modal: string): void {
+                this.$modal.show(Simple, {modal}, {
+                    draggable: false,
+                    width: '60%',
+                    height: 'auto',
+                    scrollable: true,
+                });
+            },
+            launchUpdatesModal(): void {
+                this.$modal.show(Updates, {}, {
                     draggable: false,
                     width: '60%',
                     height: 'auto',
