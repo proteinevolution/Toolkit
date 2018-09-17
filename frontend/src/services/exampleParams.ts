@@ -1,5 +1,6 @@
 import {AlignmentSeqFormat, AlignmentSeqType, ParameterType, TextAreaInputType} from '../types/toolkit/enums';
 import {
+    SequenceValidationParams,
     BooleanParameter,
     NumberParameter,
     Parameter,
@@ -66,14 +67,15 @@ export const proteinSequenceParameter: TextAreaParameter = {
     allowsTwoTextAreas: true,
     inputPlaceholder: 'Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL/A3M format',
     sampleInput: singleProtSeq,
-    validationParams: {
-        allowedSeqFormats: [AlignmentSeqFormat.FASTA, AlignmentSeqFormat.CLUSTAL],
-        allowedSeqType: AlignmentSeqType.PROTEIN,
-        minCharPerSeq: 5,
-        minNumSeq: 1,
-        maxNumSeq: 2,
-        requiresSameLengthSeq: true,
-    },
+};
+
+export const proteinSequenceValidationParams: SequenceValidationParams = {
+    allowedSeqFormats: [AlignmentSeqFormat.FASTA, AlignmentSeqFormat.CLUSTAL],
+    allowedSeqType: AlignmentSeqType.PROTEIN,
+    minCharPerSeq: 5,
+    minNumSeq: 1,
+    maxNumSeq: 2,
+    requiresSameLengthSeq: true,
 };
 
 export const dnaSequenceParameter: TextAreaParameter = {
@@ -84,10 +86,11 @@ export const dnaSequenceParameter: TextAreaParameter = {
     allowsTwoTextAreas: false,
     inputPlaceholder: 'Enter a protein sequence/multiple sequence alignment in FASTA/CLUSTAL/A3M format',
     sampleInput: singleDNASeq,
-    validationParams: {
-        allowedSeqFormats: [AlignmentSeqFormat.FASTA],
-        allowedSeqType: AlignmentSeqType.DNA,
-    },
+};
+
+export const dnaSequenceValidationParams: SequenceValidationParams = {
+    allowedSeqFormats: [AlignmentSeqFormat.FASTA],
+    allowedSeqType: AlignmentSeqType.DNA,
 };
 
 export const regexParameter: TextAreaParameter = {
@@ -98,7 +101,6 @@ export const regexParameter: TextAreaParameter = {
     allowsTwoTextAreas: false,
     inputPlaceholder: 'Enter a PROSITE grammar/regular expression.',
     sampleInput: patternProt,
-    validationParams: {},
 };
 
 export const pdbParameter: TextAreaParameter = {
@@ -109,7 +111,6 @@ export const pdbParameter: TextAreaParameter = {
     allowsTwoTextAreas: false,
     inputPlaceholder: 'Enter PDB coordinates of a four-helical bundle.',
     sampleInput: '<Sample PDB Input>', // TODO pdb sample input logic
-    validationParams: {},
 };
 
 export const accessionIDParameter: TextAreaParameter = {
@@ -120,7 +121,6 @@ export const accessionIDParameter: TextAreaParameter = {
     allowsTwoTextAreas: false,
     inputPlaceholder: 'Enter a newline separated list of identifiers and choose the corresponding database.',
     sampleInput: protHeaders,
-    validationParams: {},
 };
 
 
@@ -132,10 +132,11 @@ export const fastaHeaderParameter: TextAreaParameter = {
     allowsTwoTextAreas: false,
     inputPlaceholder: 'Enter protein sequences (or their headers) in FASTA format.',
     sampleInput: multiProtSeq,
-    validationParams: {
-        allowedSeqFormats:  [AlignmentSeqFormat.FASTA_HEADERS, AlignmentSeqFormat.FASTA],
-        allowedSeqType: AlignmentSeqType.PROTEIN,
-    },
+};
+
+export const fastaHeaderValidationParams: SequenceValidationParams = {
+    allowedSeqFormats:  [AlignmentSeqFormat.FASTA_HEADERS, AlignmentSeqFormat.FASTA],
+    allowedSeqType: AlignmentSeqType.PROTEIN,
 };
 
 // ----------------- Reformat View Parameter -----------------------

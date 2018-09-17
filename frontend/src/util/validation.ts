@@ -1,12 +1,12 @@
 import {ValidationResult} from '@/types/toolkit/validation';
 import {Reformat} from '@/modules/reformat';
 import {AlignmentSeqType, TextAreaInputType} from '@/types/toolkit/enums';
-import {AlignmentValidationParams, ValidationParams} from '@/types/toolkit';
+import {SequenceValidationParams, ValidationParams} from '@/types/toolkit';
 
 export function validation(val: string, inputType: TextAreaInputType, params: ValidationParams): ValidationResult {
     switch (inputType) {
         case TextAreaInputType.Sequence:
-            return validateSequence(val, params as AlignmentValidationParams);
+            return validateSequence(val, params as SequenceValidationParams);
         case TextAreaInputType.Regex:
             return validateRegex(val);
         case TextAreaInputType.PDB:
@@ -16,7 +16,7 @@ export function validation(val: string, inputType: TextAreaInputType, params: Va
     }
 }
 
-function validateSequence(val: string, params: AlignmentValidationParams): ValidationResult {
+function validateSequence(val: string, params: SequenceValidationParams): ValidationResult {
     const elem: Reformat = new Reformat(val);
 
     if (val.length > 0) {

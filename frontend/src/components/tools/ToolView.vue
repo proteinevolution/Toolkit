@@ -16,7 +16,8 @@
                                :key="toolName + section.name"
                                :title="section.name">
                             <div class="tabs-panel">
-                                <Section :section="section"></Section>
+                                <Section :section="section"
+                                         :validationParams="tool.validationParams"></Section>
                             </div>
                         </b-tab>
 
