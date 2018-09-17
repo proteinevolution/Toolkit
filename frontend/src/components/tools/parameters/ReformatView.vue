@@ -21,7 +21,8 @@
         <b-form-group>
             <b-row align-h="center">
                 <b-col cols="4">
-                    <multiselect @change="computeOutput"
+                    <multiselect v-model="selectedOutputFormat"
+                                 @select="computeOutput"
                                  :allowEmpty="true"
                                  :options="outputFormatOptions"
                                  track-by="value"
@@ -61,7 +62,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {ReformatViewParameter} from '../../../types/toolkit';
+    import {ReformatViewParameter, SelectOption} from '../../../types/toolkit';
     import {Reformat} from '../../../modules/reformat';
     import Multiselect from 'vue-multiselect';
     import Select from './Select.vue';
@@ -80,6 +81,7 @@
                     {value: 'hhblits', text: 'HHBlits', $isDisabled: false},
                     {value: 'test', text: 'Test', $isDisabled: false},
                 ],
+                selectedOutputFormat: undefined,
                 selectedForwardingTool: undefined,
             };
         },
@@ -98,16 +100,17 @@
             reformat(): Reformat {
                 return new Reformat(this.input);
             },
+            detectedFormat(): string {
+                return this.reformat.getFormat();
+            },
         },
         methods: {
             handlePasteExample(): void {
                 this.input = this.parameter.sampleInput;
             },
-            computeOutput(value: string): void {
-                if (value !== undefined &&
-                    this.reformat !== undefined &&
-                    this.reformat.reformat !== undefined) {
-                    this.output = this.reformat.reformat(value);
+            computeOutput(selectedFormat: SelectOption): void {
+                if (selectedFormat !== undefined && this.reformat !== undefined) {
+                    this.output = this.reformat.reformat(selectedFormat.value);
                 }
             },
         },
