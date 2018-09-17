@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 import messages from './lang/en';
+import moment from 'moment';
 
 export const defaultLanguage = 'en';
 Vue.use(VueI18n);
@@ -17,6 +18,7 @@ const loadedLanguages = [defaultLanguage]; // our default language that is prelo
 
 function setI18nLanguage(lang: string) {
     i18n.locale = lang;
+    moment.locale(lang);
     const html = document.querySelector('html');
     if (html != null) {
         html.setAttribute('lang', lang);

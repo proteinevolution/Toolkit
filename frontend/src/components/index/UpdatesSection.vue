@@ -6,9 +6,15 @@
                 <b-col class="tile-image">
                 </b-col>
                 <b-col class="py-3 px-4 update-section"
-                       cols="6">
+                       cols="7">
                     <h4>Recent Updates</h4>
-
+                    <div v-for="update in updates"
+                         :key="update.date"
+                         class="update-item"
+                         @click="launchUpdatesModal">
+                        <h6 v-text="moment(update.date).format('LL')"></h6>
+                        <p v-html="update.html"></p>
+                    </div>
                 </b-col>
                 <b-col class="py-3 quick-link-section">
                     <h4>Quick Links</h4>
@@ -30,6 +36,8 @@
 
 <script lang="ts">
     import Vue from 'vue';
+    import updates from '@/assets/content/updates';
+    import Help from '@/components/modals/Help.vue';
 
     export default Vue.extend({
         name: 'UpdatesSection',
@@ -65,6 +73,21 @@
                 }],
             };
         },
+        computed: {
+            updates() {
+                return updates.slice(0, 3);
+            },
+        },
+        methods: {
+            launchUpdatesModal() {
+                this.$modal.show(Help, {}, {
+                    draggable: false,
+                    width: '60%',
+                    height: 'auto',
+                    scrollable: true,
+                });
+            },
+        },
     });
 </script>
 
@@ -79,7 +102,7 @@
             color: $primary;
             font-size: 1.1em;
             font-weight: bold;
-            margin-bottom: 1rem;
+            margin-bottom: 0.9rem;
             text-align: center;
         }
 
@@ -91,16 +114,29 @@
             background-size: cover;
         }
 
+        .update-section .update-item {
+            cursor: pointer;
+
+            h6 {
+                color: $primary;
+                margin-bottom: 0.25em;
+            }
+            p {
+                color: $tk-darker-gray;
+                font-size: 0.8em;
+            }
+        }
+
         .quick-link-section {
             border-left: 1px dashed $tk-light-gray;
 
             .quick-link {
-                color: $tk-dark-gray;
+                color: $tk-darker-gray;
                 display: flex;
                 justify-content: space-between;
                 text-decoration: none;
                 width: 70%;
-                margin: 0 auto;
+                margin: 0 auto 0.2rem;
 
                 i {
                     font-size: 1.4em;

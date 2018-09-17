@@ -1,6 +1,7 @@
 import BootstrapVue from 'bootstrap-vue';
 import VueJsModal from 'vue-js-modal';
 import Notifications from '@/modules/notifications';
+import moment from 'moment';
 import Vue from 'vue';
 
 Vue.use(BootstrapVue);
@@ -15,3 +16,4 @@ Vue.use(Notifications, {
         onlyIfHidden: true,
     },
 });
+Vue.prototype.moment = moment;
