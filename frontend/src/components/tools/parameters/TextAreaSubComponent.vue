@@ -44,7 +44,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {TextAreaParameter} from '../../../types/toolkit';
+    import {TextAreaParameter, ValidationParams} from '../../../types/toolkit';
     import {transformToFormat, validation} from '@/util/validation';
     import {ValidationResult} from '../../../types/toolkit/validation';
     import VelocityFade from '@/transitions/VelocityFade.vue';
@@ -61,10 +61,12 @@
              https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
              */
             parameter: Object as () => TextAreaParameter,
+            validationParams: Object as () => ValidationParams,
+            input: String,
         },
         data() {
             return {
-                text: '',
+                text: this.input ? this.input : '',
                 fileUploadProgress: 0,
                 uploadingFile: false,
                 autoTransformedParams: null,
@@ -74,14 +76,14 @@
         computed: {
             validation(): ValidationResult {
                 const val: ValidationResult = validation(this.text,
-                    this.parameter.inputType, this.parameter.validationParams);
+                    this.parameter.inputType, this.validationParams);
                 if (val.textKey === 'shouldAutoTransform') {
                     this.text = transformToFormat(this.text, val.textKeyParams.transformFormat);
                     this.displayAutoTransformMessage(val.textKeyParams);
 
                     // trigger validation again
                     return validation(this.text,
-                        this.parameter.inputType, this.parameter.validationParams);
+                        this.parameter.inputType, this.validationParams);
                 }
                 return val;
             },

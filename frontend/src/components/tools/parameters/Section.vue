@@ -7,6 +7,7 @@
                    :key="parameter.name">
                 <component :is="parameter.type"
                            :parameter="parameter"
+                           :validationParams="validationParams"
                            class="parameter-component">
                 </component>
             </b-col>
@@ -23,6 +24,7 @@
     import AlignmentMode from './AlignmentMode.vue';
     import ReformatView from './ReformatView.vue';
     import {ParameterSection} from '@/types/toolkit/index';
+    import {ValidationParams} from '../../../types/toolkit';
 
     export default Vue.extend({
         name: 'Section',
@@ -40,6 +42,7 @@
              https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
              */
             section: Object as () => ParameterSection,
+            validationParams: Object as () => ValidationParams,
         },
     });
 </script>

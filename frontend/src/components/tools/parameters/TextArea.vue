@@ -1,12 +1,15 @@
 <template>
     <div>
         <ExpandHeight>
-            <TextAreaSubComponent :parameter="parameter">
+            <TextAreaSubComponent :parameter="parameter"
+                                  :validationParams="validationParams"
+                                  :input="this.$route.params.input">
             </TextAreaSubComponent>
         </ExpandHeight>
         <ExpandHeight>
             <TextAreaSubComponent v-if="secondTextAreaEnabled"
-                                  :parameter="parameter">
+                                  :parameter="parameter"
+                                  :validationParams="validationParams">
             </TextAreaSubComponent>
         </ExpandHeight>
         <b-form-group v-if="parameter.allowsTwoTextAreas"
@@ -23,6 +26,7 @@
     import TextAreaSubComponent from './TextAreaSubComponent.vue';
     import {TextAreaParameter} from '@/types/toolkit/index';
     import ExpandHeight from '@/transitions/ExpandHeight.vue';
+    import {ValidationParams} from '../../../types/toolkit';
 
     export default Vue.extend({
         name: 'TextArea',
@@ -37,6 +41,7 @@
              https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
              */
             parameter: Object as () => TextAreaParameter,
+            validationParams: Object as () => ValidationParams,
         },
         data() {
             return {

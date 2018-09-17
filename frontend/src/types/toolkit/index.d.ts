@@ -9,8 +9,23 @@ export interface Tool {
     section: string;
     forwarding: ForwardingMode;
     showSubmitButtons: boolean;
+    validationParams: ValidationParams;
 
     parameters?: ParameterSection[];
+}
+
+export interface ValidationParams {
+
+}
+
+export interface SequenceValidationParams extends ValidationParams {
+    allowedSeqFormats: AlignmentSeqFormat[];
+    allowedSeqType: AlignmentSeqType;
+    minCharPerSeq?: number;
+    maxCharPerSeq?: number;
+    minNumSeq?: number;
+    maxNumSeq?: number;
+    requiresSameLengthSeq?: boolean;
 }
 
 export interface ForwardingMode {
@@ -36,21 +51,6 @@ export interface TextAreaParameter extends Parameter {
     inputPlaceholder: string;
     sampleInput: string;
     allowsTwoTextAreas: boolean;
-    validationParams: ValidationParams;
-}
-
-export interface ValidationParams {
-
-}
-
-export interface AlignmentValidationParams extends ValidationParams {
-    allowedSeqFormats: AlignmentSeqFormat[];
-    allowedSeqType: AlignmentSeqType;
-    minCharPerSeq?: number;
-    maxCharPerSeq?: number;
-    minNumSeq?: number;
-    maxNumSeq?: number;
-    requiresSameLengthSeq?: boolean;
 }
 
 export interface SelectParameter extends Parameter {

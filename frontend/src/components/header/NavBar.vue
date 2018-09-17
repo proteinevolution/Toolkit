@@ -78,6 +78,12 @@
                 return this.userSelectedSection ? this.userSelectedSection : this.defaultSelectedSection;
             },
         },
+        watch: {
+            '$route.params.toolName'() {
+                // clear user selection to select correct tool/group upon programmatic routing
+                this.userSelectedSection = '';
+            },
+        },
         methods: {
             selectSection(section: string): void {
                 this.userSelectedSection = section;
