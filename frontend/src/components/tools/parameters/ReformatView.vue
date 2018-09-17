@@ -1,7 +1,9 @@
+import {AlignmentSeqFormat} from '../../../types/toolkit/enums';
 <template>
     <div>
         <b-form-textarea class="textarea-input"
                          v-model="input"
+                         @input="clearOutput"
                          cols="70"
                          spellcheck="false">
         </b-form-textarea>
@@ -25,6 +27,7 @@
                                  @select="computeOutput"
                                  :allowEmpty="true"
                                  :options="outputFormatOptions"
+                                 :disabled="!detectedFormat"
                                  track-by="value"
                                  label="text"
                                  :placeholder="$t('tools.reformat.selectOutputFormat')"
@@ -36,8 +39,10 @@
                 </b-col>
                 <b-col cols="4">
                     <multiselect v-model="selectedForwardingTool"
+                                 @select="forward"
                                  :allowEmpty="true"
                                  :options="forwardingOptions"
+                                 :disabled="!output"
                                  track-by="value"
                                  label="text"
                                  :placeholder="$t('tools.reformat.forwardTo')"
@@ -62,10 +67,11 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {ReformatViewParameter, SelectOption} from '../../../types/toolkit';
+    import {ReformatViewParameter, SelectOption, SequenceValidationParams, Tool} from '../../../types/toolkit';
     import {Reformat} from '../../../modules/reformat';
     import Multiselect from 'vue-multiselect';
     import Select from './Select.vue';
+    import {AlignmentSeqFormat} from '../../../types/toolkit/enums';
 
     export default Vue.extend({
         name: 'ReformatView',
@@ -74,13 +80,10 @@
                 input: '',
                 output: '',
                 outputFormatOptions: [
-                    {value: 'fasta', text: 'FASTA', $isDisabled: false},
-                    {value: 'clustal', text: 'CLUSTAL', $isDisabled: false},
+                    {value: AlignmentSeqFormat.FASTA, text: 'FASTA', $isDisabled: false},
+                    {value: AlignmentSeqFormat.CLUSTAL, text: 'CLUSTAL', $isDisabled: false},
                 ],
-                forwardingOptions: [
-                    {value: 'hhblits', text: 'HHBlits', $isDisabled: false},
-                    {value: 'test', text: 'Test', $isDisabled: false},
-                ],
+                forwardingOptions: [] as SelectOption[],
                 selectedOutputFormat: undefined,
                 selectedForwardingTool: undefined,
             };
@@ -97,6 +100,9 @@
             parameter: Object as () => ReformatViewParameter,
         },
         computed: {
+            tools(): Tool[] {
+                return this.$store.getters['tools/tools'];
+            },
             reformat(): Reformat {
                 return new Reformat(this.input);
             },
@@ -111,7 +117,25 @@
             computeOutput(selectedFormat: SelectOption): void {
                 if (selectedFormat !== undefined && this.reformat !== undefined) {
                     this.output = this.reformat.reformat(selectedFormat.value);
+                    this.forwardingOptions = this.tools
+                        .filter((tool: Tool) => {
+                            const allowedFormats = (tool.validationParams as SequenceValidationParams).allowedSeqFormats;
+                            return allowedFormats !== undefined &&
+                                allowedFormats.includes((selectedFormat.value as AlignmentSeqFormat));
+                        })
+                        .map((tool: Tool) => ({
+                            value: tool.name,
+                            text: tool.longname,
+                        }));
                 }
+            },
+            clearOutput(): void {
+                this.selectedOutputFormat = undefined;
+                this.selectedForwardingTool = undefined;
+                this.output = '';
+            },
+            forward(selectedTool: SelectOption): void {
+                this.$router.push({name: 'tools', params: {toolName: selectedTool.value, input: this.output}});
             },
         },
     });

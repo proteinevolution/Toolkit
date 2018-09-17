@@ -62,10 +62,11 @@
              */
             parameter: Object as () => TextAreaParameter,
             validationParams: Object as () => ValidationParams,
+            input: String,
         },
         data() {
             return {
-                text: '',
+                text: this.input ? this.input : '',
                 fileUploadProgress: 0,
                 uploadingFile: false,
                 autoTransformedParams: null,

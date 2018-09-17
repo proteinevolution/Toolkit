@@ -2,7 +2,8 @@
     <div>
         <ExpandHeight>
             <TextAreaSubComponent :parameter="parameter"
-                                  :validationParams="validationParams">
+                                  :validationParams="validationParams"
+                                  :input="this.$route.params.input">
             </TextAreaSubComponent>
         </ExpandHeight>
         <ExpandHeight>
