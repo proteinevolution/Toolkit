@@ -1,15 +1,112 @@
 <template>
-    <div>
-        Updates
-    </div>
+    <b-row class="mt-5 justify-content-center">
+        <b-col md="9"
+               class="tile-main-container">
+            <b-row>
+                <b-col class="tile-image">
+                </b-col>
+                <b-col class="py-3 px-4 update-section"
+                       cols="6">
+                    <h4>Recent Updates</h4>
+
+                </b-col>
+                <b-col class="py-3 quick-link-section">
+                    <h4>Quick Links</h4>
+                    <b-nav vertical>
+                        <router-link v-for="quickLink in quickLinks"
+                                     :key="quickLink.title"
+                                     :to="quickLink.link"
+                                     class="quick-link">
+                            {{ quickLink.title }}
+                            <i class="fa fa-angle-right"></i>
+                        </router-link>
+                    </b-nav>
+                </b-col>
+            </b-row>
+        </b-col>
+    </b-row>
+
 </template>
 
 <script lang="ts">
-    export default {
+    import Vue from 'vue';
+
+    export default Vue.extend({
         name: 'UpdatesSection',
-    };
+        data() {
+            return {
+                quickLinks: [{
+                    title: 'HHpred',
+                    link: 'tools/hhpred',
+                }, {
+                    title: 'HHblits',
+                    link: 'tools/hhblits',
+                }, {
+                    title: 'HHrepID',
+                    link: 'tools/hhrepid',
+                }, {
+                    title: 'BLAST',
+                    link: 'tools/psiblast',
+                }, {
+                    title: 'PCOILS',
+                    link: 'tools/pcoils',
+                }, {
+                    title: 'CLANS',
+                    link: 'tools/clans',
+                }, {
+                    title: 'MAFFT',
+                    link: 'tools/mafft',
+                }, {
+                    title: 'Quick2D',
+                    link: 'tools/quick2d',
+                }, {
+                    title: 'MMseqs2',
+                    link: 'tools/mmseqs2',
+                }],
+            };
+        },
+    });
 </script>
 
 <style lang="scss" scoped>
+    .tile-main-container {
+        background-color: $white;
+        border: 1px solid $tk-light-gray;
+        border-radius: $global-radius;
+        box-shadow: 1px 1px 2px $tk-light-gray;
 
+        h4 {
+            color: $primary;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .tile-image {
+            border-top-left-radius: $global-radius;
+            border-bottom-left-radius: $global-radius;
+            opacity: 0.85;
+            background: url(../../assets/images/fold_galaxy.png) no-repeat center;
+            background-size: cover;
+        }
+
+        .quick-link-section {
+            border-left: 1px dashed $tk-light-gray;
+
+            .quick-link {
+                color: $tk-dark-gray;
+                display: flex;
+                justify-content: space-between;
+                text-decoration: none;
+                width: 70%;
+                margin: 0 auto;
+
+                i {
+                    font-size: 1.4em;
+                    color: $primary;
+                }
+            }
+        }
+    }
 </style>
