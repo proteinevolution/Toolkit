@@ -45,23 +45,27 @@ import {AlignmentSeqFormat} from '../../../types/toolkit/enums';
                              spellcheck="false"
                              readonly>
             </b-form-textarea>
-            <b-button-group size="sm"
-                            class="mt-2">
-                <b-button class="download"
-                          download="reformat_download.txt"
-                          :href="'data:application/octet-stream;content-disposition:attachment;filename=file.txt;charset=utf-8,'
-                                    + encodeURIComponent(this.output)">
-                    {{ $t('tools.reformat.download') }}
-                </b-button>
-                <b-dropdown :text="$t('tools.reformat.forwardTo')"
-                            size="sm">
-                    <b-dropdown-item v-for="option in forwardingOptions"
-                                     :key="option.value"
-                                     @click="forward(option)">
-                        {{option.text}}
-                    </b-dropdown-item>
-                </b-dropdown>
-            </b-button-group>
+            <div class="halign-center-wrapper">
+                <b-button-group class="mt-2 output-button-group"
+                                size="sm">
+                    <b-dropdown :text="$t('tools.reformat.forwardTo')"
+                                size="sm">
+                        <b-dropdown-item v-for="option in forwardingOptions"
+                                         :key="option.value"
+                                         @click="forward(option)">
+                            {{option.text}}
+                        </b-dropdown-item>
+                    </b-dropdown>
+                    <b-button @click="copyToClipboard">
+                        {{ $t('tools.reformat.copyToClipboard') }}
+                    </b-button>
+                    <b-button download="reformat_download.txt"
+                              :href="'data:application/octet-stream;content-disposition:attachment;filename=file.txt;charset=utf-8,'
+                                        + encodeURIComponent(this.output)">
+                        {{ $t('tools.reformat.download') }}
+                    </b-button>
+                </b-button-group>
+            </div>
         </div>
     </div>
 </template>
@@ -137,6 +141,14 @@ import {AlignmentSeqFormat} from '../../../types/toolkit/enums';
             forward(selectedTool: SelectOption): void {
                 this.$router.push({name: 'tools', params: {toolName: selectedTool.value, input: this.output}});
             },
+            copyToClipboard() {
+                (this as any).$copyText(this.output).then(() => {
+                    // TODO browser notification
+                    alert('Copied to clipboard');
+                }, () => {
+                    alert('Can not copy');
+                });
+            },
         },
     });
 </script>
@@ -159,12 +171,11 @@ import {AlignmentSeqFormat} from '../../../types/toolkit/enums';
         padding: 0.4rem 0.5rem;
     }
 
-    .download {
-        float: left;
+    .halign-center-wrapper {
+        text-align: center;
     }
 
-    .forwardToSelect {
-        width: 10em;
-        float: left;
+    .output-button-group {
+        display: inline-block;
     }
 </style>

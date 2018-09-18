@@ -62,6 +62,7 @@ export default {
                 selectOutputFormat: 'Select Output Format',
                 forwardTo: 'Forward to',
                 download: 'Download',
+                copyToClipboard: 'Copy to clipboard',
             },
         },
         helpModals: {
