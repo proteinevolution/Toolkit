@@ -41,7 +41,21 @@ export const CLUSTAL: Format = {
     },
 
     write(sequences: Sequence[]): string {
-        return '';
+        let result = 'CLUSTAL multiple sequence alignment\n\n';
+
+        const maxLength = Math.max(...sequences.map((val: Sequence) => val.seq.length));
+
+        for (let j = 0; j < Math.ceil(maxLength / 60); j++) {
+            for (const seq of sequences) {
+                result += seq.identifier.replace(/\s/g, '');
+                result += '\t';
+                result += seq.seq.slice(j * 60, (j + 1) * 60);
+                result += '\n';
+            }
+            result += '\n\n';
+        }
+
+        return result;
     },
 };
 
