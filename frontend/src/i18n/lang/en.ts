@@ -63,6 +63,8 @@ export default {
                 forwardTo: 'Forward to',
                 download: 'Download',
                 copyToClipboard: 'Copy to clipboard',
+                copySuccess: 'Successfully copied',
+                copyFailure: 'Unable to copy',
             },
         },
         helpModals: {

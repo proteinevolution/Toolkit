@@ -143,10 +143,9 @@ import {AlignmentSeqFormat} from '../../../types/toolkit/enums';
             },
             copyToClipboard() {
                 (this as any).$copyText(this.output).then(() => {
-                    // TODO browser notification
-                    alert('Copied to clipboard');
+                    this.$alert(this.$t('tools.reformat.copySuccess'));
                 }, () => {
-                    alert('Can not copy');
+                    this.$alert(this.$t('tools.reformat.copyFailure'));
                 });
             },
         },
