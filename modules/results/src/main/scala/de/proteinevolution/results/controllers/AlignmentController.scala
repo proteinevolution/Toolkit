@@ -1,33 +1,32 @@
 package de.proteinevolution.results.controllers
 
+import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.results.results.{ Alignment, Common }
+import de.proteinevolution.results.results.Common
 import javax.inject.Inject
-import play.api.libs.json.JsArray
-import play.api.mvc._
+import io.circe.parser._
+import io.circe._
+import play.api.mvc.{ AnyContent, ControllerComponents }
+import play.mvc.Action
 
 import scala.concurrent.ExecutionContext
 
 class AlignmentController @Inject()(
     resultFiles: ResultFileAccessor,
-    aln: Alignment,
     constants: ConstantsV2,
     cc: ControllerComponents
 )(implicit ec: ExecutionContext)
-    extends AbstractController(cc) {
+    extends ToolkitController(cc) {
 
   def getAln(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    val json       = request.body.asJson.get
+    val json       = request.body.asJson
     val resultName = (json \ "resultName").as[String]
     val numList    = (json \ "checkboxes").as[List[Int]]
     resultFiles.getResults(jobID).map {
       case None => NotFound
-      case Some(jsValue) =>
-        val result = aln.parse((jsValue \ resultName).as[JsArray]).alignment
-        val fas = numList.distinct.map { num =>
-          ">" + result { num - 1 }.accession + "\n" + result { num - 1 }.seq + "\n"
-        }
+      case Some(json) =>
+
         Ok(fas.mkString)
     }
   }
@@ -40,7 +39,7 @@ class AlignmentController @Inject()(
     resultFiles.getResults(jobID).map {
       case None => NotFound
       case Some(jsValue) =>
-        val result = aln.parse((jsValue \ resultName).as[JsArray])
+        val result = Alignment.parse((jsValue \ resultName).as[JsArray])
         if (end > result.alignment.length || start > result.alignment.length) {
           BadRequest
         } else {
@@ -57,9 +56,10 @@ class AlignmentController @Inject()(
     resultFiles.getResults(jobID).map {
       case None => NotFound
       case Some(jsValue) =>
-        val result = aln.parse((jsValue \ resultName).as[JsArray])
+        val result = Alignment.parse((jsValue \ resultName).as[JsArray])
         val hits   = Common.clustal(result, 0, constants.breakAfterClustal, color)
         Ok(hits.mkString)
     }
   }
+
 }

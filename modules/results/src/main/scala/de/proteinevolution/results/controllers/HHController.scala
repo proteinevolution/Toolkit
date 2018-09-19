@@ -3,18 +3,12 @@ package de.proteinevolution.results.controllers
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.models.ToolName._
-import de.proteinevolution.results.models.{ HHContext, ResultContext, ResultsForm }
+import de.proteinevolution.results.models.{ HHContext, ResultsForm }
 import de.proteinevolution.results.results.General.DTParam
-import de.proteinevolution.results.results.HHBlits.HHBlitsHSP
-import de.proteinevolution.results.results.HHPred.HHPredHSP
-import de.proteinevolution.results.results.HHomp.HHompHSP
-import de.proteinevolution.results.results.Hmmer.HmmerHSP
-import de.proteinevolution.results.results.PSIBlast.PSIBlastHSP
-import de.proteinevolution.results.results.HSP
+import de.proteinevolution.results.results._
 import de.proteinevolution.results.services.ResultsRepository.ResultsService
-import de.proteinevolution.results.services.{ DTService, ResultsRepository, ToolNameGetService }
+import de.proteinevolution.results.services.{ DTService, HHService, ResultsRepository, ToolNameGetService }
 import javax.inject.{ Inject, Singleton }
-import play.api.libs.json.{ JsObject, Json }
 import play.api.mvc.{ Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
@@ -22,13 +16,12 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class HHController @Inject()(
     ctx: HHContext,
-    resultCtx: ResultContext,
     toolFinder: ToolNameGetService,
     resultFiles: ResultFileAccessor,
 )(implicit ec: ExecutionContext)
     extends ToolkitController(ctx.controllerComponents)
     with ResultsRepository
-    with DTService {
+    with DTService with HHService {
 
   private val resultsService = ResultsService(toolFinder, resultFiles)
 
@@ -40,26 +33,7 @@ class HHController @Inject()(
       .run(resultsService)
       .flatMap {
         case Some(jsValue) =>
-          getTool(jobId).run(resultsService).map {
-            case HHBLITS =>
-              (resultCtx.hhblits.parseResult(jsValue),
-               (hsp: HSP) => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped, jobId))
-            case HHPRED =>
-              (resultCtx.hhpred.parseResult(jsValue),
-               (hsp: HSP) => views.html.hhpred.hit(hsp.asInstanceOf[HHPredHSP], isColor, wrapped, jobId))
-            case HHOMP =>
-              (resultCtx.hhomp.parseResult(jsValue),
-               (hsp: HSP) => views.html.hhomp.hit(hsp.asInstanceOf[HHompHSP], isColor, wrapped, jobId))
-            case HMMER =>
-              val result = resultCtx.hmmer.parseResult(jsValue)
-              (result, (hsp: HSP) => views.html.hmmer.hit(hsp.asInstanceOf[HmmerHSP], result.db, wrapped))
-            case PSIBLAST =>
-              val result = resultCtx.psiblast.parseResult(jsValue)
-              (result, (hsp: HSP) => views.html.psiblast.hit(hsp.asInstanceOf[PSIBlastHSP], result.db, wrapped))
-            case _ => throw new IllegalArgumentException("tool has no hitlist") // TODO integrate Alignmnent Ctrl
-          }
-        case None => throw new IllegalStateException("no result found")
-      }
+          getTool(jobId).run(resultsService).map(x => )
       .map {
         case (result, view) =>
           if (data.end > result.num_hits || data.start > result.num_hits) {

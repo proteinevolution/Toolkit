@@ -19,7 +19,7 @@ case class HHFilterResultView(
   override lazy val tabs = ListMap(
     ResultViews.ALIGNMENT -> views.html.resultpanels.alignment(
       jobId,
-      aln.parse((result \ "alignment").as[JsArray]),
+      Alignment.parse((result \ "alignment").as[JsArray]),
       "alignment",
       toolConfig.values(ToolName.HHFILTER.value)
     ),

@@ -1,10 +1,5 @@
 package de.proteinevolution.results.results
 
-import de.proteinevolution.results.results.HHBlits.HHBlitsHSP
-import de.proteinevolution.results.results.HHPred.HHPredHSP
-import de.proteinevolution.results.results.HHomp.HHompHSP
-import de.proteinevolution.results.results.Hmmer.HmmerHSP
-import de.proteinevolution.results.results.PSIBlast.PSIBlastHSP
 import simulacrum._
 
 @typeclass trait Accession[A] {
@@ -12,19 +7,9 @@ import simulacrum._
 }
 
 object Accession {
-  implicit val hmmerValue: Accession[HmmerHSP] = new Accession[HmmerHSP] {
-    def value(a: HmmerHSP): String = a.accession
-  }
-  implicit val hhpredValue: Accession[HHPredHSP] = new Accession[HHPredHSP] {
-    def value(a: HHPredHSP): String = a.template.accession
-  }
-  implicit val hhblitsValue: Accession[HHBlitsHSP] = new Accession[HHBlitsHSP] {
-    def value(a: HHBlitsHSP): String = a.template.accession
-  }
-  implicit val hhompValue: Accession[HHompHSP] = new Accession[HHompHSP] {
-    def value(a: HHompHSP): String = a.template.accession
-  }
-  implicit val psiBlastValue: Accession[PSIBlastHSP] = new Accession[PSIBlastHSP] {
-    def value(a: PSIBlastHSP): String = a.template.accession
-  }
+  implicit val hmmerValue: Accession[HmmerHSP] = (a: HmmerHSP) => a.accession
+  implicit val hhpredValue: Accession[HHPredHSP] = (a: HHPredHSP) => a.template.accession
+  implicit val hhblitsValue: Accession[HHBlitsHSP] = (a: HHBlitsHSP) => a.template.accession
+  implicit val hhompValue: Accession[HHompHSP] = (a: HHompHSP) => a.template.accession
+  implicit val psiBlastValue: Accession[PSIBlastHSP] = (a: PSIBlastHSP) => a.template.accession
 }

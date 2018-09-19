@@ -12,21 +12,20 @@ case class ClustalOmegaResultView(
     jobId: String,
     result: JsValue,
     constants: ConstantsV2,
-    toolConfig: ToolConfig,
-    aln: Alignment
+    toolConfig: ToolConfig
 ) extends ResultView {
 
   override lazy val tabs = ListMap(
     ResultViews.CLUSTAL -> views.html.resultpanels.clustal(
       jobId,
-      aln.parse((result \ "alignment").as[JsArray]),
+      Alignment.parse((result \ "alignment").as[JsArray]),
       "alignment",
       toolConfig.values(ToolName.CLUSTALO.value)
     ),
     ResultViews.ALIGNMENT ->
     views.html.resultpanels.alignment(
       jobId,
-      aln.parse((result \ "alignment").as[JsArray]),
+      Alignment.parse((result \ "alignment").as[JsArray]),
       "alignment",
       toolConfig.values(ToolName.CLUSTALO.value)
     ),

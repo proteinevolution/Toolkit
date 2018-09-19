@@ -13,19 +13,18 @@ case class MafftResultView(
     result: JsValue,
     constants: ConstantsV2,
     toolConfig: ToolConfig,
-    aln: Alignment,
 ) extends ResultView {
 
   override lazy val tabs = ListMap(
     ResultViews.CLUSTAL -> views.html.resultpanels.clustal(
       jobId,
-      aln.parse((result \ "alignment").as[JsArray]),
+      Alignment.parse((result \ "alignment").as[JsArray]),
       "alignment",
       toolConfig.values(ToolName.MAFFT.value)
     ),
     ResultViews.ALIGNMENT -> views.html.resultpanels.alignment(
       jobId,
-      aln.parse((result \ "alignment").as[JsArray]),
+      Alignment.parse((result \ "alignment").as[JsArray]),
       "alignment",
       toolConfig.values(ToolName.MAFFT.value)
     ),

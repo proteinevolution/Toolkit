@@ -12,7 +12,6 @@ case class HHBlitsResultView(
     jobId: String,
     result: JsValue,
     hhblits: HHBlits,
-    aln: Alignment,
     toolConfig: ToolConfig,
     constants: ConstantsV2
 ) extends ResultView {
@@ -28,13 +27,13 @@ case class HHBlitsResultView(
     "E-Value Plot" -> views.html.resultpanels.evalues(hhblits.parseResult(result).HSPS.map(_.info.evalue)),
     "Query Template MSA" -> views.html.resultpanels.alignmentQueryMSA(
       jobId,
-      aln.parse((result \ "querytemplate").as[JsArray]),
+      Alignment.parse((result \ "querytemplate").as[JsArray]),
       "querytemplate",
       toolConfig.values(ToolName.HHBLITS.value)
     ),
     "Query Alignment" -> views.html.resultpanels.alignmentQueryMSA(
       jobId,
-      aln.parse((result \ "reduced").as[JsArray]),
+      Alignment.parse((result \ "reduced").as[JsArray]),
       "reduced",
       toolConfig.values(ToolName.HHBLITS.value)
     )

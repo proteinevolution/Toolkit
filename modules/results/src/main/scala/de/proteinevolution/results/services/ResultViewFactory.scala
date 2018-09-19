@@ -10,7 +10,7 @@ import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.results.models.resultviews._
 import de.proteinevolution.results.results.{ Alignment, HHBlits, HHPred, HHomp }
 import de.proteinevolution.services.ToolConfig
-import play.api.libs.json.JsValue
+import io.circe.Json
 
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -69,7 +69,7 @@ final class ResultViewFactory @Inject()(
     }
   }
 
-  private def getResultViewsWithJson(toolName: String, jobId: String, result: JsValue): ResultView = {
+  private def getResultViewsWithJson(toolName: String, jobId: String, result: Json): ResultView = {
     toolName match {
       case PSIBLAST.value     => PsiBlastResultView(jobId, result, psi, toolConfig, constants)
       case TPRPRED.value      => TprPredResultView(jobId, result)

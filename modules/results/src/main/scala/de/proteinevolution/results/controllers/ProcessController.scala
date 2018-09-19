@@ -25,7 +25,6 @@ class ProcessController @Inject()(
     toolFinder: ToolNameGetService,
     resultFiles: ResultFileAccessor,
     constants: ConstantsV2,
-    resultContext: ResultContext,
     config: Configuration
 )(implicit ec: ExecutionContext, futures: Futures)
     extends ToolkitController(ctx.controllerComponents)

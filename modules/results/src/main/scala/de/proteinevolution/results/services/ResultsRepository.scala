@@ -4,14 +4,14 @@ import cats.data.Reader
 import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.models.ToolName
 import de.proteinevolution.results.services.ResultsRepository.ResultsService
-import play.api.libs.json.JsValue
+import io.circe.Json
 
 import scala.concurrent.Future
 
 trait ResultsRepository {
 
-  def getResults(jobId: String): Reader[ResultsService, Future[Option[JsValue]]] =
-    Reader[ResultsService, Future[Option[JsValue]]] { rs =>
+  def getResults(jobId: String): Reader[ResultsService, Future[Option[Json]]] =
+    Reader[ResultsService, Future[Option[Json]]] { rs =>
       rs.resultFiles.getResults(jobId)
     }
 

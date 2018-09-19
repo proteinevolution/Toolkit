@@ -3,14 +3,15 @@ package de.proteinevolution.results.models.resultviews
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.results.ResultViews
 import de.proteinevolution.results.results.PSIBlast
+import de.proteinevolution.results.results.PSIBlast.PSIBlastResult
 import de.proteinevolution.services.ToolConfig
-import play.api.libs.json.JsValue
+import io.circe.Json
 
 import scala.collection.immutable.ListMap
 
 case class PsiBlastResultView(
     jobId: String,
-    result: JsValue,
+    result: Json,
     psi: PSIBlast,
     toolConfig: ToolConfig,
     constants: ConstantsV2
@@ -19,7 +20,7 @@ case class PsiBlastResultView(
   override lazy val tabs = ListMap(
     ResultViews.RESULTS -> views.html.resultpanels.psiblast.hitlist(
       jobId,
-      psi.parseResult(result),
+      result.as[PSIBlastResult],
       toolConfig.values("psiblast"),
       s"${constants.jobPath}$jobId/results/blastviz.html"
     ),
