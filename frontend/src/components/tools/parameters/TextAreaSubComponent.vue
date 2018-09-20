@@ -116,9 +116,6 @@
                         }, 500);
                     };
                     reader.readAsText(file);
-                    setTimeout(() => {
-                        reader.abort();
-                    }, 1);
                 }
             },
             displayAutoTransformMessage(params: any) {
