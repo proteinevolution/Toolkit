@@ -1,12 +1,13 @@
 <template>
-    <b-row class="mt-5 justify-content-center">
+    <b-row class="mt-3 mt-md-5 justify-content-center">
         <b-col md="9"
                class="tile-main-container">
             <b-row>
-                <b-col class="tile-image">
+                <b-col class="tile-image d-none d-md-flex">
                 </b-col>
                 <b-col class="py-4 px-4 update-section"
-                       cols="7">
+                       cols="12"
+                       sm="7">
                     <h4>Recent Updates</h4>
                     <div v-for="update in updates"
                          :key="update.date"
