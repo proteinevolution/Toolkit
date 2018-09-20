@@ -2,8 +2,7 @@
     <BaseModal :title="$t('helpModals.titles.updates')">
         <div v-for="(update, index) in updates"
              :key="update.date"
-             class="update-item"
-             @click="launchUpdatesModal">
+             class="update-item">
             <h6 v-text="moment(update.date).format('LL')"></h6>
             <div v-html="update.html"></div>
             <hr v-if="index < (updates.length - 1)">
