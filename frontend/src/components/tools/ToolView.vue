@@ -49,10 +49,11 @@
     import Section from '@/components/tools/parameters/Section.vue';
     import {ParameterSection, Tool} from '@/types/toolkit/index';
     import VelocityFade from '@/transitions/VelocityFade.vue';
-
+    import hasHTMLTitle from '@/mixins/hasHTMLTitle';
 
     export default Vue.extend({
         name: 'ToolView',
+        mixins: [hasHTMLTitle],
         components: {
             Section,
             VelocityFade,
@@ -71,6 +72,9 @@
             },
             parameterSections(): ParameterSection[] | undefined {
                 return this.tool.parameters;
+            },
+            htmlTitle(): string {
+                return this.tool.longname;
             },
         },
         created() {

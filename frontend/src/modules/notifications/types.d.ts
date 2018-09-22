@@ -1,3 +1,6 @@
+// Important: import Vue from 'vue';
+import Vue from 'vue';
+
 import {NotificationOptions} from 'vue-notification';
 
 declare module 'vue/types/vue' {

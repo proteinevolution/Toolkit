@@ -1,6 +1,7 @@
 import BootstrapVue from 'bootstrap-vue';
 import VueJsModal from 'vue-js-modal';
 import Notifications from '@/modules/notifications';
+import TitleManager from '@/modules/title_manager';
 import moment from 'moment';
 import VueParticles from 'vue-particles';
 // @ts-ignore (vue-clipboard doesn't include type declarations)
@@ -19,6 +20,7 @@ Vue.use(Notifications, {
         onlyIfHidden: true,
     },
 });
+Vue.use(TitleManager);
 Vue.prototype.moment = moment;
 Vue.use(VueParticles);
 Vue.use(VueClipboard);

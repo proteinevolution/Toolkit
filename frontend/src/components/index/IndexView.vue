@@ -17,9 +17,11 @@
     import Vue from 'vue';
     import ToolFinder from './ToolFinder.vue';
     import UpdatesSection from './UpdatesSection.vue';
+    import hasHTMLTitle from '@/mixins/hasHTMLTitle';
 
     export default Vue.extend({
         name: 'IndexView',
+        mixins: [hasHTMLTitle],
         components: {
             ToolFinder,
             UpdatesSection,

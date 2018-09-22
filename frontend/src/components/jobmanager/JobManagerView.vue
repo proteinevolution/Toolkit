@@ -12,9 +12,16 @@
 
 <script lang="ts">
     import Vue from 'vue';
+    import hasHTMLTitle from '@/mixins/hasHTMLTitle';
 
     export default Vue.extend({
         name: 'JobManagerView',
+        mixins: [hasHTMLTitle],
+        computed: {
+            htmlTitle() {
+                return 'Jobmanager';
+            },
+        },
     });
 </script>
 
