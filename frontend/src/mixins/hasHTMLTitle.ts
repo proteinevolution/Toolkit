@@ -15,6 +15,11 @@ const hasHTMLTitle = Vue.extend({
     beforeDestroy() {
         this.$title.addon('');
     },
+    watch: {
+        htmlTitle(val: string) {
+            this.$title.addon(val);
+        },
+    },
 });
 
 export default hasHTMLTitle;
