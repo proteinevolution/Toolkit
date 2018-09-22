@@ -3,14 +3,14 @@ import Vue from 'vue';
 const hasHTMLTitle = Vue.extend({
     computed: {
         htmlTitle() {
-          return '';
+            return '';
         },
     },
     beforeMount() {
         this.$title.addon(this.htmlTitle);
     },
     beforeUpdate() {
-        this.$title.refresh();
+        this.$title.addon(this.htmlTitle);
     },
     beforeDestroy() {
         this.$title.addon('');
