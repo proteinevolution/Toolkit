@@ -9,9 +9,6 @@ const hasHTMLTitle = Vue.extend({
     beforeMount() {
         this.$title.addon(this.htmlTitle);
     },
-    beforeUpdate() {
-        this.$title.addon(this.htmlTitle);
-    },
     beforeDestroy() {
         this.$title.addon('');
     },
