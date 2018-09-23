@@ -1,5 +1,7 @@
 <template>
-    <input class="form-control search-field"/>
+    <input class="form-control search-field"
+           v-bind="$attrs"
+           v-on="listeners"/>
 </template>
 
 <script lang="ts">
@@ -7,6 +9,16 @@
 
     export default Vue.extend({
         name: 'SearchField',
+        inheritAttrs: false,
+        computed: {
+            listeners() {
+                return {
+                    ...this.$listeners,
+                    input: event =>
+                        this.$emit('input', event.target.value),
+                };
+            },
+        },
     });
 </script>
 
