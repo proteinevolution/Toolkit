@@ -4,9 +4,9 @@ import com.typesafe.config.{ Config, ConfigObject }
 
 import scala.collection.JavaConverters._
 import de.proteinevolution.models.Tool
-import de.proteinevolution.models.forms.ToolForm
+import de.proteinevolution.models.forms.{ ToolForm, ToolFormSimple, ValidationParamsForm }
 import de.proteinevolution.models.param.{ Param, ParamAccess }
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{ Inject, Singleton}
 import play.api.Configuration
 
 @Singleton
@@ -61,6 +61,13 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       }.toSeq :+
       "Parameters" -> params.map(_.name).diff(paramAccess.paramGroups.values.flatten.toSeq).map(paramMap(_))
     )
+    val toolFormSimple = ToolFormSimple(
+      toolNameShort,
+      toolNameLong,
+      title,
+      category,
+      ValidationParamsForm(Seq("FASTA", "CLUSTAL"))
+    )
     Tool(
       toolNameShort,
       toolNameLong,
@@ -68,6 +75,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       category,
       paramMap,
       toolForm,
+      toolFormSimple,
       paramAccess.paramGroups,
       forwardAlignment,
       forwardMultiSeq,

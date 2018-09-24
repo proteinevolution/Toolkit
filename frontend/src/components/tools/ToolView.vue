@@ -28,7 +28,7 @@
                                :class="[fullScreen ? 'fa-compress' : 'fa-expand']"></i>
                         </template>
                     </b-tabs>
-                    <b-form-group v-if="tool.showSubmitButtons"
+                    <b-form-group v-if="tool.parameters.showSubmitButtons"
                                   class="submit-buttons card-body">
                         <b-btn class="submit-button"
                                variant="primary">
@@ -76,10 +76,10 @@
                 return this.$store.getters['tools/tools'].filter((tool: Tool) => tool.name === this.toolName)[0];
             },
             parameterSections(): ParameterSection[] | undefined {
-                if (!this.tool) {
+                if (!this.tool || !this.tool.parameters) {
                     return undefined;
                 }
-                return this.tool.parameters;
+                return this.tool.parameters.sections;
             },
             htmlTitle(): string {
                 if (!this.tool) {

@@ -31,6 +31,13 @@ class UiController @Inject()(
     }
   }
 
+  def getTools = Action {
+    Ok(Json.toJson(toolConfig.values.map {
+      case (_, v) =>
+        v.toolFormSimple
+    }))
+  }
+
   def recentUpdates = Action {
     Ok(views.html.elements.recentupdates())
   }

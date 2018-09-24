@@ -4,14 +4,18 @@ import {AlignmentSeqFormat, AlignmentSeqType, ParameterType, TextAreaInputType} 
 export interface Tool {
     name: string;
     longname: string;
-    title?: string;
-    code?: string;
+    description: string;
     section: string;
-    forwarding: ForwardingMode;
-    showSubmitButtons: boolean;
     validationParams: ValidationParams;
 
-    parameters?: ParameterSection[];
+    parameters?: ToolParameters;
+}
+
+
+export interface ToolParameters {
+    sections: ParameterSection[];
+    forwarding?: ForwardingMode;
+    showSubmitButtons?: boolean;
 }
 
 export interface ValidationParams {
@@ -33,7 +37,6 @@ export interface ForwardingMode {
     alignment: string[];
     multiSeq: string[];
 }
-
 
 export interface ParameterSection {
     name: string;

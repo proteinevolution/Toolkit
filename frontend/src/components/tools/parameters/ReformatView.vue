@@ -1,4 +1,3 @@
-import {AlignmentSeqFormat} from '../../../types/toolkit/enums';
 <template>
     <div>
         <b-form-textarea class="textarea-input"
@@ -143,6 +142,9 @@ import {AlignmentSeqFormat} from '../../../types/toolkit/enums';
                     this.output = this.reformat.reformat(selectedFormat.value);
                     this.forwardingOptions = this.tools
                         .filter((tool: Tool) => {
+                            if (!tool.validationParams) {
+                                return false;
+                            }
                             const allowedFormats = (tool.validationParams as SequenceValidationParams).allowedSeqFormats;
                             return allowedFormats !== undefined &&
                                 allowedFormats.includes((selectedFormat.value as AlignmentSeqFormat));

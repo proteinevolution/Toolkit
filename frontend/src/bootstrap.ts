@@ -4,9 +4,9 @@ import Notifications from '@/modules/notifications';
 import TitleManager from '@/modules/title_manager';
 import moment from 'moment';
 import VueParticles from 'vue-particles';
-// @ts-ignore (vue-clipboard doesn't include type declarations)
 import VueClipboard from 'vue-clipboard2';
 import Vue from 'vue';
+import 'es6-promise/auto';
 
 Vue.use(BootstrapVue);
 Vue.use(VueJsModal, {
@@ -24,4 +24,3 @@ Vue.use(TitleManager);
 Vue.prototype.moment = moment;
 Vue.use(VueParticles);
 Vue.use(VueClipboard);
-

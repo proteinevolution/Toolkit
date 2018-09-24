@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import {expect} from 'chai';
 import toolGetters from '@/store/modules/tools/getters.ts';
 import {ToolState} from '@/store/types';
 
@@ -12,16 +12,16 @@ describe('tools/getters', () => {
         const state: ToolState = {
             tools: [
                 {
-                    name: 'Tool1', longname: 'Tool1', section: 'Section1', forwarding: {alignment: [], multiSeq: []},
-                        validationParams: {}, showSubmitButtons: true,
+                    name: 'Tool1', longname: 'Tool1', section: 'Section1', description: '', validationParams: {},
+                    parameters: undefined,
                 },
                 {
-                    name: 'Tool2', longname: 'Tool1', section: 'Section2', forwarding: {alignment: [], multiSeq: []},
-                        validationParams: {}, showSubmitButtons: true,
+                    name: 'Tool2', longname: 'Tool1', section: 'Section2', description: '', validationParams: {},
+                    parameters: undefined,
                 },
                 {
-                    name: 'Tool3', longname: 'Tool1', section: 'Section2', forwarding: {alignment: [], multiSeq: []},
-                        validationParams: {}, showSubmitButtons: true,
+                    name: 'Tool3', longname: 'Tool1', section: 'Section2', description: '', validationParams: {},
+                    parameters: undefined,
                 },
             ],
         };

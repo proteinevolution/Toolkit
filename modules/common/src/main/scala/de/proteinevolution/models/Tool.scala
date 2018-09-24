@@ -1,6 +1,6 @@
 package de.proteinevolution.models
 
-import de.proteinevolution.models.forms.ToolForm
+import de.proteinevolution.models.forms.{ ToolForm, ToolFormSimple }
 import de.proteinevolution.models.param.Param
 
 case class Tool(
@@ -10,6 +10,7 @@ case class Tool(
     category: String,
     params: Map[String, Param], // Maps a parameter name to the respective Param instance
     toolForm: ToolForm,
+    toolFormSimple: ToolFormSimple,
     paramGroups: Map[String, Seq[String]],
     forwardAlignment: Seq[String],
     forwardMultiSeq: Seq[String],
