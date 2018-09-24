@@ -14,6 +14,11 @@ import {AlignmentSeqFormat} from '../../../types/toolkit/enums';
                    @click="handlePasteExample">
                 {{ $t('tools.parameters.textArea.pasteExample') }}
             </b-btn>
+            <b-button variant="link"
+                      :disabled="!detectedFormat"
+                      @click="showAlignmentViewer">
+                AlignmentViewer
+            </b-button>
         </b-button-group>
         <b-alert show
                  v-if="detectedFormat"
@@ -76,6 +81,7 @@ import {AlignmentSeqFormat} from '../../../types/toolkit/enums';
     import {Reformat} from '../../../modules/reformat';
     import Multiselect from 'vue-multiselect';
     import Select from './Select.vue';
+    import AlignmentViewerModal from '@/components/modals/AlignmentViewerModal.vue';
     import {AlignmentSeqFormat} from '../../../types/toolkit/enums';
 
     export default Vue.extend({
@@ -118,6 +124,19 @@ import {AlignmentSeqFormat} from '../../../types/toolkit/enums';
         methods: {
             handlePasteExample(): void {
                 this.input = this.parameter.sampleInput;
+            },
+            showAlignmentViewer(): void {
+                this.$modal.show(AlignmentViewerModal,
+                    {
+                        sequences: this.input,
+                        format: this.detectedFormat.toLowerCase(),
+                    },
+                    {
+                        draggable: false,
+                        width: '60%',
+                        height: 'auto',
+                        scrollable: true,
+                    });
             },
             computeOutput(selectedFormat: SelectOption): void {
                 if (selectedFormat !== undefined && this.reformat !== undefined) {
