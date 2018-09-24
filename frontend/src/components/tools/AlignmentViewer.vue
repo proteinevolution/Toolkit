@@ -7,6 +7,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
+    import msa from 'msa';
 
     export default Vue.extend({
         name: 'AlignmentViewer',
@@ -15,7 +16,7 @@
             format: String,
         },
         mounted() {
-            const seqs = this.$msa.io[this.format].parse(this.sequences);
+            const seqs = msa.io[this.format].parse(this.sequences);
             if (!seqs) {
                 return;
             }
@@ -56,29 +57,16 @@
                     autoResize: false,
                 },
             };
-            const msa = new this.$msa.msa(opts);
+            const msaView = new msa.msa(opts);
 
             const menuOpts = {
                 el: this.$refs.menu,
-                msa,
+                msaView,
             };
-            const defMenu = new this.$msa.menu.defaultmenu(menuOpts);
-            msa.addView('menu', defMenu);
+            const defMenu = new msa.menu.defaultmenu(menuOpts);
+            msaView.addView('menu', defMenu);
 
-            msa.render();
-
-            /*
-            $(window).on("resize.MSAViewerClustal", function () {
-                if ($("#rootDiv").parents("html").length === 0) {
-                    $(window).off("resize.MSAViewerClustal");
-                    return;
-                }
-                alignmentItem.g.zoomer.set("alignmentWidth", toolTabs.width() - 240);
-                if (toolTabs.hasClass('fullscreen')) {
-                    alignmentItem.g.zoomer.set("alignmentHeight", Math.max(400, $(window).height() - 320));
-                }
-            });
-            */
+            msaView.render();
         },
     });
 </script>
