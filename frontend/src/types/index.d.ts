@@ -7,18 +7,16 @@ declare module 'msa' {
         addView: (name: string, menu: any) => void;
     }
 
-    interface MsaAPI {
-        msa: {
-            new(options: any): MSA;
-        };
+    const msa: {
         menu: {
             defaultmenu: {
                 new(options: any): void;
             },
         };
         io: any;
-    }
-
-    const msa: MsaAPI;
+        msa: {
+            new(options: any): MSA;
+        }
+    };
     export = msa;
 }

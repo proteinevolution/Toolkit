@@ -7,7 +7,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import msa from 'msa';
+    import * as msa from 'msa';
 
     export default Vue.extend({
         name: 'AlignmentViewer',
@@ -61,7 +61,7 @@
 
             const menuOpts = {
                 el: this.$refs.menu,
-                msaView,
+                msa: msaView,
             };
             const defMenu = new msa.menu.defaultmenu(menuOpts);
             msaView.addView('menu', defMenu);
