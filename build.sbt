@@ -1,4 +1,7 @@
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
+import java.util.Properties
+
+val appProperties = settingKey[Properties]("The application properties")
 
 inThisBuild(
   Seq(
@@ -242,5 +245,5 @@ testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
 
 PlayKeys.devSettings := Seq("play.server.http.idleTimeout" -> "220s")
-// run yarn install (if necessary) and yarn run serve on sbt run
+// run yarn install (if necessary) and yarn run serve on sbt run.
 PlayKeys.playRunHooks += Yarn(baseDirectory.value)

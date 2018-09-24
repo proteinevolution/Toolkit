@@ -1,3 +1,4 @@
+import java.io.{ BufferedWriter, FileWriter }
 import java.net.InetSocketAddress
 
 import play.sbt.PlayRunHook
@@ -41,6 +42,11 @@ object Yarn {
         * Executed after play run start.
         */
       override def afterStarted(addr: InetSocketAddress): Unit = {
+        val port: String = addr.getPort.toString
+        val file         = new File(frontendFolder, ".env.development.local")
+        val bw           = new BufferedWriter(new FileWriter(file))
+        bw.write(s"VUE_APP_BACKEND_PORT=$port")
+        bw.close()
         process = Option(
           Process(yarnServe, frontendFolder).run
         )
