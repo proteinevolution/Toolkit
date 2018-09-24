@@ -94,6 +94,8 @@ export default {
         errors: {
             fileNotFound: 'File not found!',
             fileUnreadable: 'File could not be read.',
+            PageNotFound: 'Page not found.',
+            ToolNotFound: 'Tool not found.',
         },
     },
 };

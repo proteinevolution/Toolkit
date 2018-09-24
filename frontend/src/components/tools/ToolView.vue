@@ -1,7 +1,8 @@
 <template>
     <VelocityFade :duration="100">
         <div class="tool-view"
-             :key="toolName + 'view'">
+             :key="toolName + 'view'"
+             v-if="tool">
             <div class="tool-header">
                 <h1>{{ tool.longname }}</h1>
             </div>
@@ -41,6 +42,8 @@
                 </b-card>
             </b-form>
         </div>
+        <not-found-view v-else
+                        errorMessage="errors.ToolNotFound"/>
     </VelocityFade>
 </template>
 
@@ -50,6 +53,7 @@
     import {ParameterSection, Tool} from '@/types/toolkit/index';
     import VelocityFade from '@/transitions/VelocityFade.vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
+    import NotFoundView from '@/components/NotFoundView.vue';
 
     export default Vue.extend({
         name: 'ToolView',
@@ -57,6 +61,7 @@
         components: {
             Section,
             VelocityFade,
+            NotFoundView,
         },
         data() {
             return {
@@ -71,23 +76,20 @@
                 return this.$store.getters['tools/tools'].filter((tool: Tool) => tool.name === this.toolName)[0];
             },
             parameterSections(): ParameterSection[] | undefined {
+                if (!this.tool) {
+                    return undefined;
+                }
                 return this.tool.parameters;
             },
             htmlTitle(): string {
+                if (!this.tool) {
+                    return '';
+                }
                 return this.tool.longname;
             },
         },
         created() {
             this.loadToolParameters(this.toolName);
-        },
-        beforeRouteEnter(to, from, next) {
-            next((vm) => {
-                if (!vm.$store.getters['tools/tools'].some((tool: Tool) => tool.name === to.params.toolName)) {
-                    next({path: '/404'});
-                } else {
-                    next();
-                }
-            });
         },
         beforeRouteUpdate(to, from, next) {
             this.loadToolParameters(to.params.toolName);

@@ -1,11 +1,7 @@
 <template>
-    <b-container>
-        <b-row>
-            <b-col>
-                <span class="page-not-found">Page not found.</span>
-            </b-col>
-        </b-row>
-    </b-container>
+    <div class="page-not-found">
+        <h5 class="text-center text-muted">{{ $t(errorMessage) }}</h5>
+    </div>
 </template>
 
 <script lang="ts">
@@ -15,6 +11,13 @@
     export default Vue.extend({
         name: 'NotFoundView',
         mixins: [hasHTMLTitle],
+        props: {
+            errorMessage: {
+                type: String,
+                required: false,
+                default: 'errors.PageNotFound',
+            },
+        },
         computed: {
             htmlTitle() {
                 return '404';
@@ -23,8 +26,6 @@
     });
 </script>
 
-<style scoped>
-    .page-not-found {
-        text-align: center;
-    }
+<style lang="scss" scoped>
+
 </style>

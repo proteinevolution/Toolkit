@@ -3,9 +3,9 @@ import IndexView from '../components/index/IndexView.vue';
 // route level code-splitting
 // this generates a separate chunk (about.[hash].js) for this route
 // which is lazy-loaded when the route is visited.
-const ToolView = () => import(/* webpackChunkName: "about" */ '../components/tools/ToolView.vue');
-const JobManagerView = () => import(/* webpackChunkName: "about" */ '../components/jobmanager/JobManagerView.vue');
-const NotFoundView = () => import(/* webpackChunkName: "about" */ '../components/NotFoundView.vue');
+const ToolView = () => import(/* webpackChunkName: "tool" */ '../components/tools/ToolView.vue');
+const JobManagerView = () => import(/* webpackChunkName: "jobmanager" */ '../components/jobmanager/JobManagerView.vue');
+const NotFoundView = () => import(/* webpackChunkName: "404" */ '../components/NotFoundView.vue');
 
 export default [
     {
@@ -33,15 +33,11 @@ export default [
         },
     },
     {
-        path: '/404',
+        path: '/**',
         name: '404',
         component: NotFoundView,
         meta: {
             showJobList: true,
         },
-    },
-    {
-        path: '/**',
-        redirect: '/404',
     },
 ];
