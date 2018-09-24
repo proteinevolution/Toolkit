@@ -26,6 +26,7 @@ export interface SequenceValidationParams extends ValidationParams {
     minNumSeq?: number;
     maxNumSeq?: number;
     requiresSameLengthSeq?: boolean;
+    allowEmptySeq?: boolean;
 }
 
 export interface ForwardingMode {

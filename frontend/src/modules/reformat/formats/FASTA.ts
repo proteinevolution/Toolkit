@@ -4,7 +4,7 @@ import {formatLongSeq} from '@/modules/reformat';
 export const FASTA: Format = {
     name: 'FASTA',
 
-    validate(value: string): boolean {
+    validate(value: string, allowEmpty?: boolean): boolean {
 
         // remove preceding spaces and newlines
         value = value.trimLeft();
@@ -19,26 +19,30 @@ export const FASTA: Format = {
             const sequences = value.substr(1)
                 .split('\n>');
 
+
             for (let sequence of sequences) {
 
                 // remove all spaces
                 sequence = sequence.replace(/ /g, '');
 
                 // validate header
-                const headerEnd: number = sequence.indexOf('\n');
+                const headerEnd: number = sequence.includes('\n') ? sequence.indexOf('\n') : sequence.length;
                 const header: string = sequence.substring(0, headerEnd);
 
                 sequence = sequence.substr(headerEnd).replace(/\s/g, '');
 
+                console.log(header)
+                console.log(sequence)
                 // it must start with a alphanumerical character
                 if (header.length < 1 || !(/[A-Z0-9]/i).test(header[0].toUpperCase())) {
                     return false;
                 }
 
-                // if no sequence is found for header, it can't be FASTA.
-                if (sequence.length < 1 || (/[^-.*A-Z]/i.test(sequence.toUpperCase()))) {
+                // Check if sequences contain invalid characters
+                if (/[^-.*A-Z]/i.test(sequence.toUpperCase())) {
                     return false;
                 }
+
             }
             return true;
 

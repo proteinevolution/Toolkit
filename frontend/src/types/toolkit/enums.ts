@@ -22,7 +22,6 @@ export enum AlignmentSeqFormat {
     A3M = 'A3M',
     STOCKHOM = 'STOCKHOLM',
     PIR = 'pir', // modeller
-    FASTA_HEADERS = 'FASTA_HEADER', // Seq2ID
 }
 
 export enum AlignmentSeqType {

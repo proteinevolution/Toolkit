@@ -135,8 +135,9 @@ export const fastaHeaderParameter: TextAreaParameter = {
 };
 
 export const fastaHeaderValidationParams: SequenceValidationParams = {
-    allowedSeqFormats:  [AlignmentSeqFormat.FASTA_HEADERS, AlignmentSeqFormat.FASTA],
+    allowedSeqFormats:  [AlignmentSeqFormat.FASTA],
     allowedSeqType: AlignmentSeqType.PROTEIN,
+    allowEmptySeq: true,
 };
 
 // ----------------- Reformat View Parameter -----------------------

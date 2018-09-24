@@ -36,6 +36,9 @@ function validateSequence(val: string, params: SequenceValidationParams): Valida
             if (!elem.isOfType(params.allowedSeqType)) {
                 return result(true, 'danger', 'invalidSequenceType', {expected: params.allowedSeqType});
             }
+            if (!params.allowEmptySeq && elem.hasEmptySequences()) {
+                return result(true, 'danger', 'emptySequences');
+            }
             if (params.maxNumSeq && !elem.maxSeqNumber(params.maxNumSeq)) {
                 return result(true, 'danger', 'maxSeqNumber', {limit: params.maxNumSeq});
             }

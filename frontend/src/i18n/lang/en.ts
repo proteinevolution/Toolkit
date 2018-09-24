@@ -55,6 +55,7 @@ export default {
                 validRegex: 'Valid input.',
                 validPDB: 'Valid input.',
                 validAccessionID: 'Valid input.',
+                emptySequences: 'Empty sequences are not allowed.',
             },
             reformat: {
                 inputPlaceholder: 'Enter a sequence...',

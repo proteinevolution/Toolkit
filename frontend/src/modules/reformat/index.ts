@@ -122,6 +122,10 @@ export class Reformat {
         return false;
     }
 
+    public hasEmptySequences(): boolean {
+        return this.sequences ? this.sequences.some((seq: Sequence) => seq.seq === '') : false;
+    }
+
     public sameLength(): boolean {
         if (this.sequences) {
             const firstLength = this.sequences[0].seq.length;
