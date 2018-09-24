@@ -31,8 +31,6 @@ export const FASTA: Format = {
 
                 sequence = sequence.substr(headerEnd).replace(/\s/g, '');
 
-                console.log(header)
-                console.log(sequence)
                 // it must start with a alphanumerical character
                 if (header.length < 1 || !(/[A-Z0-9]/i).test(header[0].toUpperCase())) {
                     return false;

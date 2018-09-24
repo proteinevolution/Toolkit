@@ -11,11 +11,11 @@
         name: 'SearchField',
         inheritAttrs: false,
         computed: {
-            listeners() {
+            listeners(): any {
                 return {
                     ...this.$listeners,
-                    input: event =>
-                        this.$emit('input', event.target.value),
+                    input: (event: Event) =>
+                        this.$emit('input', (event.target as HTMLInputElement).value),
                 };
             },
         },
