@@ -23,7 +23,7 @@
                        @change="handleFileUpload"/>
             </label>
         </b-button-group>
-        <VelocityFade>
+        <VelocityFade v-if="text">
             <b-alert show
                      key="autoTransformMessage"
                      v-if="autoTransformedParams"
