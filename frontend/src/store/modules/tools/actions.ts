@@ -1,7 +1,7 @@
 import {ActionTree} from 'vuex';
 import ToolService from '@/services/ToolService';
 import {RootState, ToolState} from '../../types';
-import {Tool} from '../../../types/toolkit';
+import {Tool} from '@/types/toolkit';
 
 const actions: ActionTree<ToolState, RootState> = {
     async fetchAllTools(context) {
@@ -9,7 +9,8 @@ const actions: ActionTree<ToolState, RootState> = {
         context.commit('setTools', tools);
     },
     async fetchToolParametersIfNotPresent(context, toolName: string) {
-        if (!context.state.tools.filter((tool: Tool) => tool.name === toolName)[0].parameters) {
+        const tool: Tool = context.state.tools.filter((t: Tool) => t.name === toolName)[0];
+        if (tool && !tool.parameters) {
             const parameters = await ToolService.fetchToolParameters(toolName);
             context.commit('setToolParameters', {toolName, parameters});
         }
