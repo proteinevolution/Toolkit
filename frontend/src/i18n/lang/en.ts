@@ -19,10 +19,13 @@ export default {
         },
         tools: {
             sections: {
-                Search: 'Search',
-                Alignment: 'Alignment',
-                ThreeAryStructure: '3ary Structure',
-                Utils: 'Utils',
+                'search': 'Search',
+                'alignment': 'Alignment',
+                'seqanal': 'Sequence Analysis',
+                '2ary': '2ary Structure',
+                '3ary': '3ary Structure',
+                'classification': 'Classification',
+                'utils': 'Utils',
             },
             parameters: {
                 textArea: {
