@@ -16,7 +16,7 @@ object ParamType {
 
   case class Sequence(formats: Seq[(String, String)], placeholder: String, allowTwoTextAreas: Boolean)
       extends ParamType {
-    // Sequence currently alwasus valid
+    // Sequence currently always valid
     def validate(value: String): Option[String] = Some(value)
   }
 
@@ -26,7 +26,10 @@ object ParamType {
         ⌊ ← min
         ⌉ ← max
         if ⌊ <= value.toDouble && value.toDouble <= ⌉
-      } yield value
+      } yield {
+        val _ = (⌊, ⌉)
+        value
+      }
     }
   }
   case class Select(options: Seq[(String, String)]) extends ParamType {
@@ -54,7 +57,10 @@ object ParamType {
         ⌊ ← min
         ⌉ ← max
         if ⌉ - value.toDouble > ⌊
-      } yield value
+      } yield {
+        val _ = (⌊, ⌉)
+        value
+      }
     }
   }
 
