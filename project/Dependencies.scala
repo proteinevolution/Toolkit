@@ -5,7 +5,7 @@ import org.portablescala.sbtplatformdeps.PlatformDepsPlugin.autoImport._
 
 object Dependencies {
 
-  lazy val akkaVersion = "2.5.16"
+  lazy val akkaVersion = "2.5.17"
   lazy val catsV       = "1.4.0"
 
   lazy val commonDeps = Seq(
