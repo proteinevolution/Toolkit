@@ -43,8 +43,8 @@ class AlignmentController @Inject()(
         (!(request.body.end < r.alignment.length || request.body.start > r.alignment.length),
          r.alignment.slice(request.body.start, request.body.end).map(views.html.alignment.alignmentrow(_)))
       }).value.map {
-        case Some((bool, hits)) =>
-          if (bool) {
+        case Some((inRange, hits)) =>
+          if (inRange) {
             Ok(hits.mkString)
           } else {
             BadRequest

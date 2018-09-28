@@ -1,8 +1,5 @@
 package de.proteinevolution.results.results
 
-import de.proteinevolution.results.results.HHPred.HHPredHSP
-import de.proteinevolution.results.results.Hmmer.HmmerHSP
-import de.proteinevolution.results.results.Quick2D.Quick2DResult
 import play.api.Logger
 import play.twirl.api.Html
 
