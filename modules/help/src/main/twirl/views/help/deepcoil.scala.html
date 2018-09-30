@@ -14,7 +14,11 @@
         <p>DeepCoil predictions can be made based on a single sequence or based on a multiple sequence alignment (MSA). Users
             are provided with the option to enter their own alignment as well as with an option to have the alignment generated
             for their input sequence ('Run_PSI-BLAST' mode). DeepCoil generates a graphical summary of the predictions and
-            a text output with probability value for each residue in the sequence to be in a coiled coil domain.</p>
+            a text output with probability value for each residue in the sequence to be in a coiled coil domain.
+        </p>
+
+        <p>Please check the 'Input & Parameters' tab for details on allowed input formats.</p>
+
     </div>
     <div id="tabs-2" class="greenlink">
         <ul class="accordion" data-accordion data-allow-all-closed='true'>
@@ -23,8 +27,8 @@
                 <div class="accordion-content" data-tab-content>
                     You have the option to enter or upload either a single protein sequence or a multiple sequence
                     alignment (MSA) in FASTA or CLUSTAL format.<br/><br/>
-                    @views.html.help.common.singleseq()
-                    @views.html.help.common.msa()
+                    @views.html.help.common.cc_singleseq()
+                    @views.html.help.common.cc_msa()
                 </div>
             </li>
             <li class="accordion-item" data-accordion-item>
