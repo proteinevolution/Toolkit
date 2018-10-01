@@ -13,7 +13,11 @@
     export default Vue.extend({
         name: 'Loading',
         props: {
-            loading: Boolean,
+            loading: {
+                type: Boolean,
+                required: false,
+                default: true,
+            },
         },
         components: {
             VelocityFade,

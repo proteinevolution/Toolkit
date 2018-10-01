@@ -99,9 +99,11 @@
         created() {
             this.loadToolParameters(this.toolName);
         },
-        beforeRouteUpdate(to, from, next) {
-            this.loadToolParameters(to.params.toolName);
-            next();
+        watch: {
+            // Use a watcher here - component cannot use 'beforeRouteUpdate' because of lazy loading
+            $route(to, from) {
+                this.loadToolParameters(to.params.toolName);
+            },
         },
         methods: {
             loadToolParameters(toolName: string) {
