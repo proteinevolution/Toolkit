@@ -33,6 +33,7 @@
   "devDependencies": {
     "@types/chai": "^4.1.6",
     "@types/mocha": "^5.2.5",
+    "@types/node": "^10.11.3",
     "@vue/cli-plugin-babel": "^3.0.4",
     "@vue/cli-plugin-e2e-nightwatch": "^3.0.4",
     "@vue/cli-plugin-typescript": "^3.0.4",
