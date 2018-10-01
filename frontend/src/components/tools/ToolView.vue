@@ -7,40 +7,42 @@
                 <h1>{{ tool.longname }}</h1>
             </div>
 
-            <b-form class="tool-form">
-                <b-card no-body
-                        :class="[fullScreen ? 'fullscreen' : '']">
-                    <b-tabs class="parameter-tabs"
-                            card
-                            nav-class="tabs-nav">
-                        <b-tab v-for="section in parameterSections"
-                               :key="toolName + section.name"
-                               :title="section.name">
-                            <div class="tabs-panel">
-                                <Section :section="section"
-                                         :validationParams="tool.validationParams"></Section>
-                            </div>
-                        </b-tab>
+            <Loading :loading="$store.state.loading.toolParameters">
+                <b-form class="tool-form">
+                    <b-card no-body
+                            :class="[fullScreen ? 'fullscreen' : '']">
+                        <b-tabs class="parameter-tabs"
+                                card
+                                nav-class="tabs-nav">
+                            <b-tab v-for="section in parameterSections"
+                                   :key="toolName + section.name"
+                                   :title="section.name">
+                                <div class="tabs-panel">
+                                    <Section :section="section"
+                                             :validationParams="tool.validationParams"></Section>
+                                </div>
+                            </b-tab>
 
-                        <template slot="tabs">
-                            <i class="fullscreen-toggler fa ml-auto mr-1"
-                               @click="toggleFullScreen"
-                               :class="[fullScreen ? 'fa-compress' : 'fa-expand']"></i>
-                        </template>
-                    </b-tabs>
-                    <b-form-group v-if="tool.parameters.showSubmitButtons"
-                                  class="submit-buttons card-body">
-                        <b-btn class="submit-button"
-                               variant="primary">
-                            Submit Job
-                        </b-btn>
-                        <b-form-input class="custom-job-id"
-                                      placeholder="Custom Job ID">
+                            <template slot="tabs">
+                                <i class="fullscreen-toggler fa ml-auto mr-1"
+                                   @click="toggleFullScreen"
+                                   :class="[fullScreen ? 'fa-compress' : 'fa-expand']"></i>
+                            </template>
+                        </b-tabs>
+                        <b-form-group v-if="showSubmitButtons"
+                                      class="submit-buttons card-body">
+                            <b-btn class="submit-button"
+                                   variant="primary">
+                                Submit Job
+                            </b-btn>
+                            <b-form-input class="custom-job-id"
+                                          placeholder="Custom Job ID">
 
-                        </b-form-input>
-                    </b-form-group>
-                </b-card>
-            </b-form>
+                            </b-form-input>
+                        </b-form-group>
+                    </b-card>
+                </b-form>
+            </Loading>
         </div>
         <not-found-view v-else
                         errorMessage="errors.ToolNotFound"/>
@@ -54,6 +56,7 @@
     import VelocityFade from '@/transitions/VelocityFade.vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
     import NotFoundView from '@/components/NotFoundView.vue';
+    import Loading from '@/components/Loading.vue';
 
     export default Vue.extend({
         name: 'ToolView',
@@ -62,6 +65,7 @@
             Section,
             VelocityFade,
             NotFoundView,
+            Loading,
         },
         data() {
             return {
@@ -80,6 +84,10 @@
                     return undefined;
                 }
                 return this.tool.parameters.sections;
+            },
+            showSubmitButtons(): boolean {
+                return this.tool.parameters !== undefined && this.tool.parameters.showSubmitButtons !== undefined &&
+                    this.tool.parameters.showSubmitButtons;
             },
             htmlTitle(): string {
                 if (!this.tool) {
