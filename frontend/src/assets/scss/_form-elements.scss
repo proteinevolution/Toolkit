@@ -74,3 +74,12 @@
 .form-group legend {
   color: $tk-darker-gray;
 }
+
+/* Loading Spinner */
+.vue-simple-spinner {
+  // "important" is needed here to override the 'style'-property in vue-simple-spinner
+  border-top-color: $primary !important;
+  border-bottom-color: $tk-lighter-gray !important;
+  border-right-color: $tk-lighter-gray !important;
+  border-left-color: $tk-lighter-gray !important;
+}

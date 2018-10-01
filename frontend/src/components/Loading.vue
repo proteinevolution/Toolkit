@@ -1,15 +1,8 @@
 <template>
-    <div class="loading-base">
-        <VelocityFade>
-            <vue-simple-spinner v-show="loading"
-                                class="spinner"
-                                line-fg-color="#2E8C81"> <!-- TODO use scss primary color -->
-            </vue-simple-spinner>
-        </VelocityFade>
-        <VelocityFade>
-            <slot v-show="!loading"></slot>
-        </VelocityFade>
-    </div>
+    <VelocityFade>
+        <vue-simple-spinner v-if="loading"></vue-simple-spinner>
+        <slot v-else></slot>
+    </VelocityFade>
 </template>
 
 <script lang="ts">
@@ -24,21 +17,10 @@
         },
         components: {
             VelocityFade,
-            VueSimpleSpinner
-        }
+            VueSimpleSpinner,
+        },
     });
 </script>
 
 <style lang="scss" scoped>
-    .loading-base {
-        width: 100%;
-        height: 100%;
-    }
-
-    .spinner {
-        position: absolute;
-        top: 40%;
-        left: 40%;
-    }
-
 </style>

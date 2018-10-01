@@ -5,6 +5,10 @@ import {ToolState} from '@/store/types';
 const rootState = {
     maintenanceMode: false,
     reconnecting: false,
+    loading: {
+        tools: false,
+        toolParameters: false,
+    },
 };
 
 describe('tools/getters', () => {

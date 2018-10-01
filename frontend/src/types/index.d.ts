@@ -2,6 +2,7 @@ declare module 'vue-multiselect';
 declare module 'velocity-animate';
 declare module 'vue-particles';
 declare module 'vue-clipboard2';
+declare module 'vue-simple-spinner';
 declare module 'msa' {
     interface MSA {
         render: () => void;
