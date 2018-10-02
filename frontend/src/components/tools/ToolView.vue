@@ -7,7 +7,7 @@
                 <h1>{{ tool.longname }}</h1>
             </div>
 
-            <Loading :loading="$store.state.loading.toolParameters">
+            <LoadingWrapper :loading="$store.state.loading.toolParameters">
                 <b-form class="tool-form">
                     <b-card no-body
                             :class="[fullScreen ? 'fullscreen' : '']">
@@ -42,7 +42,7 @@
                         </b-form-group>
                     </b-card>
                 </b-form>
-            </Loading>
+            </LoadingWrapper>
         </div>
         <not-found-view v-else
                         errorMessage="errors.ToolNotFound"/>
@@ -56,7 +56,7 @@
     import VelocityFade from '@/transitions/VelocityFade.vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
     import NotFoundView from '@/components/NotFoundView.vue';
-    import Loading from '@/components/Loading.vue';
+    import LoadingWrapper from '@/components/LoadingWrapper.vue';
 
     export default Vue.extend({
         name: 'ToolView',
@@ -65,7 +65,7 @@
             Section,
             VelocityFade,
             NotFoundView,
-            Loading,
+            LoadingWrapper,
         },
         data() {
             return {

@@ -3,6 +3,7 @@ import modalContent from './modals/en';
 export default {
     en: {
         helpContents: 'Some help text',
+        fetching: 'Fetching...',
 
         index: {
             welcomeTitle: 'Welcome to the Bioinformatics Toolkit',

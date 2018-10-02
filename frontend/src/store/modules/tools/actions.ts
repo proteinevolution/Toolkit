@@ -5,7 +5,9 @@ import {Tool, ToolParameters} from '@/types/toolkit';
 
 const actions: ActionTree<ToolState, RootState> = {
     async fetchAllTools(context) {
+        context.commit('startLoading', 'fetching', {root: true});
         const version = await ToolService.fetchToolsVersion();
+        context.commit('stopLoading', 'fetching', {root: true});
         if (version !== context.state.version) {
             context.commit('startLoading', 'tools', {root: true});
             const tools = await ToolService.fetchTools();

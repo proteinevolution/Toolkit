@@ -1,6 +1,6 @@
 <template>
     <div class="navbar-container">
-        <Loading :loading="$store.state.loading.tools">
+        <LoadingWrapper :loading="$store.state.loading.tools">
             <b-navbar toggleable="md"
                       type="light">
                 <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
@@ -33,14 +33,14 @@
                     </b-row>
                 </b-collapse>
             </b-navbar>
-        </Loading>
+        </LoadingWrapper>
     </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
     import {Tool} from '../../types/toolkit';
-    import Loading from '@/components/Loading.vue';
+    import LoadingWrapper from '@/components/LoadingWrapper.vue';
 
     export default Vue.extend({
         name: 'NavBar',
@@ -59,7 +59,7 @@
             };
         },
         components: {
-            Loading,
+            LoadingWrapper,
         },
         computed: {
             tools(): Tool[] {

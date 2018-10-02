@@ -40,6 +40,13 @@
 
         <modals-container/>
         <notifications animation-type="velocity"/>
+        <VelocityFade>
+            <Loading v-if="$store.state.loading.fetching"
+                     class="fetching-spinner"
+                     variant="secondary"
+                     :message="$t('fetching')">
+            </Loading>
+        </VelocityFade>
     </div>
 </template>
 
@@ -49,6 +56,7 @@
     import Footer from '@/components/Footer.vue';
     import SideBar from '@/components/sidebar/SideBar.vue';
     import VelocityFade from '@/transitions/VelocityFade.vue';
+    import Loading from '@/components/Loading.vue';
 
     export default Vue.extend({
         name: 'App',
@@ -57,6 +65,7 @@
             SideBar,
             Footer,
             VelocityFade,
+            Loading,
         },
         computed: {
             showJobList(): boolean {
@@ -97,6 +106,12 @@
         bottom: 0;
         left: 0;
         right: 0;
+    }
+
+    .fetching-spinner {
+        position: fixed;
+        bottom: 1em;
+        left: 1em;
     }
 </style>
 
