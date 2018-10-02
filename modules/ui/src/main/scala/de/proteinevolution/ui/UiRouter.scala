@@ -12,6 +12,7 @@ class UiRouter @Inject()(uiController: UiController) extends SimpleRouter {
   override lazy val routes: Routes = {
     case GET(p"/tool/$toolName") => uiController.getTool(toolName)
     case GET(p"/tools")          => uiController.getTools
+    case GET(p"/tools/version")  => uiController.getToolsVersion
     case GET(p"/static/$static") => uiController.static(static)
     case GET(p"/recent/updates") => uiController.recentUpdates
   }

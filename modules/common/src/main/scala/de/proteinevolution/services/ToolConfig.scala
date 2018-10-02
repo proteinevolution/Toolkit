@@ -12,6 +12,8 @@ import play.api.Configuration
 @Singleton
 class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
 
+  lazy val version: String = config.get[String]("version")
+
   lazy val values: Map[String, Tool] = {
     config.get[Config]("Tools").root.asScala.map {
       case (_, configObject: ConfigObject) =>

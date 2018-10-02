@@ -11,5 +11,6 @@ export interface RootState {
 }
 
 export interface ToolState {
+    version: string;
     tools: Tool[];
 }

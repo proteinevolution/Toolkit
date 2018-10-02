@@ -28,6 +28,7 @@ describe('tools/getters', () => {
                     parameters: undefined,
                 },
             ],
+            version: '0.0.0',
         };
 
         const result = toolGetters.sections(state, null, rootState, null);

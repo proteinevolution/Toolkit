@@ -5,6 +5,7 @@ import mutations from './mutations';
 import {RootState, ToolState} from '../../types';
 
 export const state: ToolState = {
+    version: '',
     tools: [],
 };
 

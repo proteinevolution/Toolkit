@@ -38,6 +38,10 @@ class UiController @Inject()(
     }))
   }
 
+  def getToolsVersion = Action {
+    Ok(toolConfig.version)
+  }
+
   def recentUpdates = Action {
     Ok(views.html.elements.recentupdates())
   }

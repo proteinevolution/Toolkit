@@ -6,6 +6,9 @@ const mutations: MutationTree<ToolState> = {
     setTools(state, tools) {
         state.tools = tools;
     },
+    setVersion(state, version) {
+        state.version = version;
+    },
     setToolParameters(state, {toolName, parameters}) {
         state.tools.filter((tool: Tool) => tool.name === toolName)[0].parameters = parameters;
     },
