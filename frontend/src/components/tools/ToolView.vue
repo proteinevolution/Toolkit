@@ -86,8 +86,7 @@
                 return this.tool.parameters.sections;
             },
             showSubmitButtons(): boolean {
-                return this.tool.parameters !== undefined && this.tool.parameters.showSubmitButtons !== undefined &&
-                    this.tool.parameters.showSubmitButtons;
+                return this.tool.parameters !== undefined && !this.tool.parameters.hideSubmitButtons;
             },
             htmlTitle(): string {
                 if (!this.tool) {

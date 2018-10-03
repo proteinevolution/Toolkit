@@ -1,32 +1,21 @@
 package de.proteinevolution.ui.controllers
 
-import controllers.AssetsFinder
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.services.ToolConfig
+import io.circe.generic.auto._
+import io.circe.syntax._
 import javax.inject.{ Inject, Singleton }
-import play.api.libs.json.Json
-import play.api.mvc.{ Action, AnyContent, ControllerComponents }
+import play.api.mvc.ControllerComponents
 
 @Singleton
 class UiController @Inject()(
     cc: ControllerComponents,
-    toolConfig: ToolConfig,
-    assets: AssetsFinder
+    toolConfig: ToolConfig
 ) extends ToolkitController(cc) {
 
-  def static(static: String): Action[AnyContent] = Action { implicit request =>
-    static match {
-      // Frontend tools
-      case "reformat" =>
-        Ok(views.html.tools.forms.reformat(assets))
-      case _ =>
-        NotFound(views.html.errors.pagenotfound(assets))
-    }
-  }
-
-  def getTool(toolname: String) = Action {
+  def getToolParameters(toolname: String) = Action {
     toolConfig.values.get(toolname) match {
-      case Some(tool) => Ok(Json.toJson(tool.toolForm))
+      case Some(tool) => Ok(tool.toolParameterForm.asJson)
       case None       => NotFound
     }
   }
@@ -42,15 +31,11 @@ class UiController @Inject()(
         case (_, v) =>
           v.toolFormSimple
       }
-    Ok(Json.toJson(sorted))
+    Ok(sorted.asJson)
   }
 
   def getToolsVersion = Action {
     Ok(toolConfig.version)
-  }
-
-  def recentUpdates = Action {
-    Ok(views.html.elements.recentupdates())
   }
 
 }

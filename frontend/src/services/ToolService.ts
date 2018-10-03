@@ -23,7 +23,11 @@ export default class ToolService {
 
     public static fetchToolParameters(toolName: string): Promise<ToolParameters> {
         return new Promise<ToolParameters>((resolve, reject) => {
-            resolve({sections: [], showSubmitButtons: true}); // TODO: this is a mock
+            axios.get(`ui/tool/${toolName}`)
+                .then((response) => {
+                    resolve(response.data);
+                })
+                .catch(reject);
         });
     }
 }

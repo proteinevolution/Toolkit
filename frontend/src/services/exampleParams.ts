@@ -1,17 +1,17 @@
 import {AlignmentSeqFormat, AlignmentSeqType, ParameterType, TextAreaInputType} from '../types/toolkit/enums';
 import {
-    SequenceValidationParams,
     BooleanParameter,
     NumberParameter,
     Parameter,
     ReformatViewParameter,
     SelectParameter,
+    SequenceValidationParams,
     TextAreaParameter,
 } from '../types/toolkit';
 import {inputClustal, multiProtSeq, patternProt, protHeaders, singleDNASeq, singleProtSeq} from './sampleseq';
 
 export const numberParameter: NumberParameter = {
-    type: ParameterType.Number,
+    parameterType: ParameterType.Number,
     name: 'number_parameter',
     label: 'Some Number Parameter',
     min: 0,
@@ -20,14 +20,14 @@ export const numberParameter: NumberParameter = {
 };
 
 export const booleanParameter: BooleanParameter = {
-    type: ParameterType.Boolean,
+    parameterType: ParameterType.Boolean,
     name: 'boolean_paramter',
     label: 'Some Boolean Parameter',
     default: false,
 };
 
 export const singleSelectParameter: SelectParameter = {
-    type: ParameterType.Select,
+    parameterType: ParameterType.Select,
     name: 'msa_gen_method2',
     label: 'MSA generation method',
     options: [
@@ -39,7 +39,7 @@ export const singleSelectParameter: SelectParameter = {
 };
 
 export const multiSelectParameter: SelectParameter = {
-    type: ParameterType.Select,
+    parameterType: ParameterType.Select,
     name: 'msa_gen_method',
     label: 'MSA generation method',
     options: [
@@ -51,7 +51,7 @@ export const multiSelectParameter: SelectParameter = {
 };
 
 export const alignmentModeParameter: Parameter = {
-    type: ParameterType.AlignmentMode,
+    parameterType: ParameterType.AlignmentMode,
     name: 'alignmentmode',
     label: '',
 };
@@ -60,7 +60,7 @@ export const alignmentModeParameter: Parameter = {
 
 
 export const proteinSequenceParameter: TextAreaParameter = {
-    type: ParameterType.TextArea,
+    parameterType: ParameterType.TextArea,
     name: 'alignment',
     label: '',
     inputType: TextAreaInputType.Sequence,
@@ -79,7 +79,7 @@ export const proteinSequenceValidationParams: SequenceValidationParams = {
 };
 
 export const dnaSequenceParameter: TextAreaParameter = {
-    type: ParameterType.TextArea,
+    parameterType: ParameterType.TextArea,
     name: 'alignment',
     label: '',
     inputType: TextAreaInputType.Sequence,
@@ -94,7 +94,7 @@ export const dnaSequenceValidationParams: SequenceValidationParams = {
 };
 
 export const regexParameter: TextAreaParameter = {
-    type: ParameterType.TextArea,
+    parameterType: ParameterType.TextArea,
     name: 'regex',
     label: '',
     inputType: TextAreaInputType.Regex,
@@ -104,7 +104,7 @@ export const regexParameter: TextAreaParameter = {
 };
 
 export const pdbParameter: TextAreaParameter = {
-    type: ParameterType.TextArea,
+    parameterType: ParameterType.TextArea,
     name: 'pdb',
     label: '',
     inputType: TextAreaInputType.PDB,
@@ -114,7 +114,7 @@ export const pdbParameter: TextAreaParameter = {
 };
 
 export const accessionIDParameter: TextAreaParameter = {
-    type: ParameterType.TextArea,
+    parameterType: ParameterType.TextArea,
     name: 'accessionID',
     label: '',
     inputType: TextAreaInputType.AccessionID,
@@ -125,7 +125,7 @@ export const accessionIDParameter: TextAreaParameter = {
 
 
 export const fastaHeaderParameter: TextAreaParameter = {
-    type: ParameterType.TextArea,
+    parameterType: ParameterType.TextArea,
     name: 'accessionID',
     label: '',
     inputType: TextAreaInputType.Sequence,
@@ -135,7 +135,7 @@ export const fastaHeaderParameter: TextAreaParameter = {
 };
 
 export const fastaHeaderValidationParams: SequenceValidationParams = {
-    allowedSeqFormats:  [AlignmentSeqFormat.FASTA],
+    allowedSeqFormats: [AlignmentSeqFormat.FASTA],
     allowedSeqType: AlignmentSeqType.PROTEIN,
     allowEmptySeq: true,
 };
@@ -143,7 +143,7 @@ export const fastaHeaderValidationParams: SequenceValidationParams = {
 // ----------------- Reformat View Parameter -----------------------
 
 export const reformatView: ReformatViewParameter = {
-    type: ParameterType.ReformatView,
+    parameterType: ParameterType.ReformatView,
     name: '',
     label: '',
     sampleInput: inputClustal,

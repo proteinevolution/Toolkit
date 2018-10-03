@@ -1,13 +1,14 @@
 package de.proteinevolution.services
 
 import com.typesafe.config.{ Config, ConfigObject }
+import de.proteinevolution.models.{ Tool, parameters }
+import de.proteinevolution.models.forms._
+import de.proteinevolution.models.param.ParamAccess
+import de.proteinevolution.models.parameters.{ ForwardingMode, Parameter, ParameterSection, ToolParameters }
+import javax.inject.{ Inject, Singleton }
+import play.api.Configuration
 
 import scala.collection.JavaConverters._
-import de.proteinevolution.models.Tool
-import de.proteinevolution.models.forms.{ ToolForm, ToolFormSimple, ValidationParamsForm }
-import de.proteinevolution.models.param.{ Param, ParamAccess }
-import javax.inject.{ Inject, Singleton}
-import play.api.Configuration
 
 @Singleton
 class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
@@ -50,27 +51,35 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       description: String,
       code: String,
       section: String,
-      params: Seq[Param],
+      params: Seq[Parameter],
       forwardAlignment: Seq[String],
       forwardMultiSeq: Seq[String]
   ): Tool = {
-    val paramMap = params.map(p => p.name -> p).toMap
-    val toolForm = ToolForm(
-      toolNameShort,
-      toolNameLong,
-      code,
-      section,
-      paramAccess.paramGroups.keysIterator.map { group =>
-        group -> paramAccess.paramGroups(group).filter(params.map(_.name).contains(_)).map(paramMap(_))
-      }.toSeq :+
-      "Parameters" -> params.map(_.name).diff(paramAccess.paramGroups.values.flatten.toSeq).map(paramMap(_))
-    )
     val toolFormSimple = ToolFormSimple(
       toolNameShort,
       toolNameLong,
       description,
       section,
       ValidationParamsForm(Seq("FASTA", "CLUSTAL"))
+    )
+    val inputGroup: Seq[String] = paramAccess.paramGroups("Input")
+    val toolParameterForm = ToolParameters(
+      Seq(
+        ParameterSection(
+          "Input",
+          multiColumnLayout = false,
+          params.filter(p => inputGroup.contains(p.name))
+        ),
+        parameters.ParameterSection(
+          "Parameters",
+          multiColumnLayout = true,
+          params.filter(p => !inputGroup.contains(p.name))
+        )
+      ),
+      ForwardingMode(
+        forwardAlignment,
+        forwardMultiSeq
+      )
     )
     Tool(
       toolNameShort,
@@ -79,12 +88,8 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       description,
       code,
       section,
-      paramMap,
-      toolForm,
-      toolFormSimple,
-      paramAccess.paramGroups,
-      forwardAlignment,
-      forwardMultiSeq
+      toolParameterForm,
+      toolFormSimple
     )
   }
 

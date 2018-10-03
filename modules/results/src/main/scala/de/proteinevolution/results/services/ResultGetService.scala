@@ -12,7 +12,7 @@ import de.proteinevolution.jobs.services.JobFolderValidation
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.jobs.JobState.{ Done, Pending, Prepared }
-import de.proteinevolution.models.forms.{ JobForm, ToolForm }
+import de.proteinevolution.models.forms.JobForm
 import de.proteinevolution.services.ToolConfig
 import javax.inject.{ Inject, Singleton }
 import play.api.cache.{ AsyncCacheApi, NamedCache }
@@ -51,26 +51,25 @@ class ResultGetService @Inject()(
     }
     (for {
       job      <- OptionT(jobDao.selectJob(jobId))
-      toolForm <- OptionT.pure[Future](toolConfig.values(job.tool).toolForm)
-      jobViews <- OptionT.liftF(jobViews(job, toolForm))
+      toolName <- OptionT.pure[Future](toolConfig.values(job.tool).toolFormSimple.name)
+      jobViews <- OptionT.liftF(jobViews(job, toolName))
     } yield {
-      (job, toolForm, jobViews)
+      (job, jobViews)
     }).map {
-      case (job, toolForm, jobViews) =>
+      case (job, jobViews) =>
         JobForm(
           job.jobID,
           job.status,
           job.dateCreated.getOrElse(ZonedDateTime.now).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-          toolForm,
           jobViews,
           paramValues
         )
     }
   }
 
-  private def jobViews(job: Job, toolForm: ToolForm): Future[Seq[String]] = job.status match {
+  private def jobViews(job: Job, toolName: String): Future[Seq[String]] = job.status match {
     case Done =>
-      resultViewFactory(toolForm.toolname, job.jobID).value.map {
+      resultViewFactory(toolName, job.jobID).value.map {
         case Some(r) => r.tabs.keys.toSeq
         case None    => Nil // TODO throw some exception or something
       }

@@ -46,7 +46,7 @@
         data() {
             return {
                 userSelectedSection: '',
-                sectionColors: sectionColors,
+                sectionColors,
             };
         },
         computed: {

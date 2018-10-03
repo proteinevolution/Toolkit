@@ -9,7 +9,7 @@ export const Reformat: Tool = {
     section: 'utils',
     validationParams: {},
     parameters: {
-        showSubmitButtons: false,
+        hideSubmitButtons: true,
         forwarding: {
             alignment: [],
             multiSeq: [],
@@ -18,7 +18,7 @@ export const Reformat: Tool = {
             name: 'Input',
             multiColumnLayout: false,
             parameters: [({
-                type: ParameterType.ReformatView,
+                parameterType: ParameterType.ReformatView,
                 sampleInput: inputClustal,
                 label: '',
                 name: '',
@@ -34,7 +34,7 @@ export const AlignmentViewer: Tool = {
     section: 'alignment',
     validationParams: {},
     parameters: {
-        showSubmitButtons: false,
+        hideSubmitButtons: true,
         forwarding: {
             alignment: [],
             multiSeq: [],
@@ -43,7 +43,7 @@ export const AlignmentViewer: Tool = {
             name: 'Input',
             multiColumnLayout: false,
             parameters: [{
-                type: ParameterType.TextArea, // TODO custom view?
+                parameterType: ParameterType.TextArea, // TODO custom view?
                 label: '',
                 name: '',
             }],

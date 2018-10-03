@@ -1,10 +1,7 @@
 <template>
     <b-form-group :label="parameter.label">
-        <b-form-input v-model="number"
-                      type="number"
-                      :min="parameter.min"
-                      :max="parameter.max"
-                      :step="parameter.step"
+        <b-form-input v-model="text"
+                      type="text"
                       size="sm"
                       required>
         </b-form-input>
@@ -13,20 +10,20 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {NumberParameter} from '../../../types/toolkit';
+    import {TextInputParameter} from '../../../types/toolkit';
 
     export default Vue.extend({
-        name: 'Number',
+        name: 'TextInput',
         props: {
             /*
              Simply stating the interface type doesn't work, this is a workaround. See
              https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
              */
-            parameter: Object as () => NumberParameter,
+            parameter: Object as () => TextInputParameter,
         },
         data() {
             return {
-                number: this.parameter.default || 0,
+                text: '',
             };
         },
     });

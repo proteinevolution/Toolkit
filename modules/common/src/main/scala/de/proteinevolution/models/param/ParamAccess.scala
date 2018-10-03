@@ -1,6 +1,6 @@
 package de.proteinevolution.models.param
-
-import de.proteinevolution.models.param.ParamType.{ Bool, Decimal, ModellerKey, Select, Sequence, Text }
+import de.proteinevolution.models.parameters.Parameter._
+import de.proteinevolution.models.parameters._
 import de.proteinevolution.tel.TEL
 import javax.inject.{ Inject, Singleton }
 
@@ -10,9 +10,12 @@ import javax.inject.{ Inject, Singleton }
 @Singleton
 class ParamAccess @Inject()(tel: TEL) {
 
-  // TODO param intersection logic
+  def select(name: String, label: String, maxSelectedOptions: Int = 1) =
+    SelectParameter(name,
+                    label,
+                    tel.generateValues(name).toSeq.map(option => SelectOption(option._1, option._2)),
+                    maxSelectedOptions)
 
-  def select(name: String, label: String) = Param(name, Select(tel.generateValues(name).toSeq), 1, label)
   final val alignmentFormats = Seq(
     "fas" -> "fas",
     "a2m" -> "a2m",
@@ -22,54 +25,44 @@ class ParamAccess @Inject()(tel: TEL) {
     "clu" -> "clu"
   )
 
-  def getParam(paramName: String, placeholder: String = ""): Param = paramName match {
-    case "ALIGNMENT"        => Param("alignment", Sequence(alignmentFormats, placeholder, false), 1, "")
-    case "TWOTEXTALIGNMENT" => Param("alignment", Sequence(alignmentFormats, placeholder, true), 1, "")
-    case "HMMER_DB"         => select("hmmerdb", "Select database")
-    case "STANDARD_DB"      => select("standarddb", "Select standard database")
-    case "HHSUITEDB"        => select("hhsuitedb", "Select database (PDB_mmCIF70 for modeling)")
-    case "MATRIX"           => select("matrix", "Scoring Matrix")
-    case "NUM_ITER"         => Param("num_iter", ParamType.UnconstrainedNumber, 1, "No. of iterations")
-    case "EVALUE"           => select("evalue", "E-value")
-    case "GAP_OPEN"         => Param("gap_open", ParamType.UnconstrainedNumber, 1, "Gap open penalty")
-    case "GAP_TERM"         => Param("gap_term", Decimal("0.01", Some(0), Some(10)), 1, "Terminal gap penalty")
-    case "GAP_EXT_KALN"     => Param("gap_ext_kaln", Decimal("0.01", Some(0), Some(10)), 1, "Gap extension penalty")
-    case "BONUSSCORE"       => Param("bonusscore", Decimal("0.01", Some(0), Some(10)), 1, "Bonus Score")
-    case "DESC"             => select("desc", "No. of target sequences (up to 10000)")
-    case "CONSISTENCY" =>
-      Param("consistency", ParamType.UnconstrainedNumber, 1, "Passes of consistency transformation")
-    case "ITREFINE"                 => Param("itrefine", ParamType.UnconstrainedNumber, 1, "Passes of iterative refinements")
-    case "PRETRAIN"                 => Param("pretrain", ParamType.UnconstrainedNumber, 1, "Rounds of pretraining")
+  def getParam(paramName: String, placeholder: String = ""): Parameter = paramName match {
+    case "ALIGNMENT" => TextAreaParameter("alignment", TextAreaInputType.SEQUENCE, placeholder)
+    case "TWOTEXTALIGNMENT" =>
+      TextAreaParameter("alignment", TextAreaInputType.SEQUENCE, placeholder, allowsTwoTextAreas = true)
+    case "HMMER_DB"                 => select("hmmerdb", "Select database")
+    case "STANDARD_DB"              => select("standarddb", "Select standard database")
+    case "HHSUITEDB"                => select("hhsuitedb", "Select database (PDB_mmCIF70 for modeling)")
+    case "MATRIX"                   => select("matrix", "Scoring Matrix")
+    case "EVALUE"                   => select("evalue", "E-value")
+    case "GAP_OPEN"                 => NumberParameter("gap_open", "Gap open penalty")
+    case "GAP_TERM"                 => NumberParameter("gap_term", "Terminal gap penalty", Some(0), Some(10), Some(0.01))
+    case "GAP_EXT_KALN"             => NumberParameter("gap_ext_kaln", "Gap extension penalty", Some(0), Some(10), Some(0.01))
+    case "BONUSSCORE"               => NumberParameter("bonusscore", "Bonus Score", Some(0), Some(10), Some(0.01))
+    case "DESC"                     => select("desc", "No. of target sequences (up to 10000)")
     case "MAXROUNDS"                => select("maxrounds", "Max. number of iterations")
-    case "OFFSET"                   => Param("offset", Decimal("0.01", Some(0), Some(10)), 1, "Offset")
-    case "OUTORDER"                 => Param("outorder", ParamType.UnconstrainedNumber, 1, "Outorder")
-    case "ETRESH"                   => Param("inclusion_ethresh", ParamType.UnconstrainedNumber, 1, "E-value inclusion threshold")
-    case "HHBLITSDB"                => Param("hhblitsdb", Select(tel.generateValues("hhblitsdb").toSeq), 1, "Select database")
+    case "OFFSET"                   => NumberParameter("offset", "Offset", Some(0), Some(10), Some(0.01))
+    case "HHBLITSDB"                => select("hhblitsdb", "Select database")
     case "ALIGNMODE"                => select("alignmode", "Alignment Mode")
     case "MSA_GEN_MAX_ITER"         => select("msa_gen_max_iter", "Maximal no. of MSA generation steps")
     case "MSA_GEN_MAX_ITER_HHREPID" => select("msa_gen_max_iter_hhrepid", "Maximal no. of MSA generation steps")
     case "MSA_GEN_METHOD"           => select("msa_gen_method", "MSA generation method")
     case "INC_AMINO"                => select("inc_amino", "Include amino acid sequence in output")
     case "GENETIC_CODE"             => select("genetic_code", "Choose a genetic Code")
-    case "LONG_SEQ_NAME"            => Param("long_seq_name", Bool, 1, "Use long sequence name")
     case "MACMODE"                  => select("macmode", "Realign with MAC")
     case "MACTHRESHOLD"             => select("macthreshold", "MAC realignment threshold")
-    case "MIN_COV"                  => Param("min_cov", ParamType.Percentage, 1, "Min. coverage of MSA hits (%)")
-    case "PMIN"                     => Param("pmin", ParamType.Percentage, 1, "Min. probability in hit list (> 10%)")
-    case "MAX_SEQID"                => Param("max_seqid", ParamType.UnconstrainedNumber, 1, "Maximal Sequence Identity (%)")
-    case "MIN_QUERY_COV"            => Param("min_query_cov", ParamType.Percentage, 1, "Minimal coverage with query (%)")
+    case "MIN_COV"                  => NumberParameter("min_cov", "Min. coverage of MSA hits (%)", Some(0), Some(100))
+    case "PMIN"                     => NumberParameter("pmin", "Min. probability in hit list (> 10%)", Some(0), Some(100))
+    case "MAX_SEQID"                => NumberParameter("max_seqid", "Maximal Sequence Identity (%)")
+    case "MIN_QUERY_COV"            => NumberParameter("min_query_cov", "Minimal coverage with query (%)", Some(0), Some(100))
     case "MATRIX_PHYML"             => select("matrix_phyml", "Model of AminoAcid replacement")
-    case "PROTBLASTPROGRAM"         => select("protblastprogram", "Program for Protein BLAST")
-    case "FILTER_LOW_COMPLEXITY"    => Param("filter_low_complexity", Bool, 1, "Filter for low oltcomplexity regions")
     case "MATRIX_MARCOIL"           => select("matrix_marcoil", "Matrix")
     case "TRANSITION_PROBABILITY"   => select("transition_probability", "Transition Probability")
     case "MIN_SEQID_QUERY" =>
-      Param("min_seqid_query", ParamType.Percentage, 1, "Min. seq. identity of MSA hits with query (%)")
+      NumberParameter("min_seqid_query", "Min. seq. identity of MSA hits with query (%)", Some(0), Some(100))
     case "NUM_SEQS_EXTRACT" =>
-      Param("num_seqs_extract", ParamType.UnconstrainedNumber, 1, "No. of most dissimilar sequences to extract")
+      NumberParameter("num_seqs_extract", "No. of most dissimilar sequences to extract")
     case "SCORE_SS"                => select("score_ss", "Score secondary structure")
     case "SS_SCORING"              => select("ss_scoring", "Secondary structure scoring")
-    case "UNIQUE_SEQUENCE"         => select("unique_sequence", "Retrieve only unique sequences")
     case "MIN_SEQID"               => select("min_seqid", "Minimum sequence identity")
     case "MIN_ALN_COV"             => select("min_aln_cov", "Minimum alignment coverage")
     case "GRAMMAR"                 => select("grammar", "Select grammar")
@@ -83,10 +76,9 @@ class ParamAccess @Inject()(tel: TEL) {
     case "SELF_ALN_PVAL_THRESHOLD" => select("self_aln_pval_threshold", "Self-Alignment P-value threshold")
     case "MERGE_ITERS"             => select("merge_iters", "Merge rounds")
     case "DOMAIN_BOUND_DETECTION"  => select("domain_bound_detection", "Domain boundary detection")
-    case "ALN_STRINGENCY"          => select("aln_stringency", "Alignment stringency")
     case "OUTPUT_ORDER"            => select("output_order", "Output the alignment in:")
     case "EVAL_TPR"                => select("eval_tpr", "E-value inclusion TPR & SEL")
-    case "CODON_TABLE_ORGANISM"    => Param("codon_table_organism", Text(""), 1, "Use codon usage table of")
+    case "CODON_TABLE_ORGANISM"    => TextInputParameter("codon_table_organism", "Use codon usage table of", "")
     case "HHPRED_INCL_EVAL"        => select("hhpred_incl_eval", "E-value incl. threshold for MSA generation")
     case "BLAST_INCL_EVAL"         => select("blast_incl_eval", "E-value inclusion threshold")
     case "HHBLITS_INCL_EVAL"       => select("hhblits_incl_eval", "E-value inclusion threshold")
@@ -97,28 +89,28 @@ class ParamAccess @Inject()(tel: TEL) {
     case "NO_REPLICATES"           => select("no_replicates", "Number of replicates")
     case "SAMCC_PERIODICITY"       => select("samcc_periodicity", "Periodicity")
     case "EFF_CRICK_ANGLE"         => select("eff_crick_angle", "Effective Crick angle")
-    case "REGKEY"                  => Param("regkey", ModellerKey, 1, "Enter MODELLER-key (see help pages for details)")
+    case "REGKEY"                  => ModellerParameter("regkey", "Enter MODELLER-key (see help pages for details)")
     case "SAMCC_HELIXONE" =>
-      Param("samcc_helixone", Text("CC_first_position;chain;start_pos;end_pos"), 1, "Definition for helix 1")
+      TextInputParameter("samcc_helixone", "Definition for helix 1", "CC_first_position;chain;start_pos;end_pos")
     case "SAMCC_HELIXTWO" =>
-      Param("samcc_helixtwo", Text("CC_first_position;chain;start_pos;end_pos"), 1, "Definition for helix 2")
+      TextInputParameter("samcc_helixtwo", "Definition for helix 2", "CC_first_position;chain;start_pos;end_pos")
     case "SAMCC_HELIXTHREE" =>
-      Param("samcc_helixthree", Text("CC_first_position;chain;start_pos;end_pos"), 1, "Definition for helix 3")
+      TextInputParameter("samcc_helixthree", "Definition for helix 3", "CC_first_position;chain;start_pos;end_pos")
     case "SAMCC_HELIXFOUR" =>
-      Param("samcc_helixfour", Text("CC_first_position;chain;start_pos;end_pos"), 1, "Definition for helix 4")
+      TextInputParameter("samcc_helixfour", "Definition for helix 4", "CC_first_position;chain;start_pos;end_pos")
     case "INVOKE_PSIPRED" =>
-      Param("invoke_psipred", ParamType.Percentage, 1, "% identity cutoff to invoke a new PSIPRED run")
+      NumberParameter("invoke_psipred", "% identity cutoff to invoke a new PSIPRED run", Some(0), Some(100))
     case "CLANS_EVAL"       => select("clans_eval", "Extract BLAST HSP's up to E-values of")
     case "PATSEARCH_DB"     => select("patsearchdb", "Select database")
-    case "MAFFT_GAP_OPEN"   => Param("mafft_gap_open", Decimal("0.01", Some(0), Some(10)), 1, "Gap open penalty")
+    case "MAFFT_GAP_OPEN"   => NumberParameter("mafft_gap_open", "Gap open penalty", Some(0), Some(10), Some(0.01))
     case "HHOMPDB"          => select("hhompdb", "Select HMM databases")
     case "QUICK_ITERS"      => select("quick_iters", "Maximal no. of MSA generation steps")
     case "TARGET_PSI_DB"    => select("target_psi_db", "Select database for MSA generation ")
-    case "WINDOW_SIZE"      => Param("window_size", ParamType.UnconstrainedNumber, 1, "Window size (< sequence length)")
-    case "PERIODICITY_MIN"  => Param("periodicity_min", ParamType.UnconstrainedNumber, 1, "Periodicity range - Min")
-    case "PERIODICITY_MAX"  => Param("periodicity_max", ParamType.UnconstrainedNumber, 1, "Periodicity range - Max")
-    case "FTWIN_THRESHOLD"  => Param("ftwin_threshold", ParamType.UnconstrainedNumber, 1, "FTwin threshold")
-    case "REPWIN_THRESHOLD" => Param("repwin_threshold", ParamType.UnconstrainedNumber, 1, "REPwin threshold")
+    case "WINDOW_SIZE"      => NumberParameter("window_size", "Window size (< sequence length)")
+    case "PERIODICITY_MIN"  => NumberParameter("periodicity_min", "Periodicity range - Min")
+    case "PERIODICITY_MAX"  => NumberParameter("periodicity_max", "Periodicity range - Max")
+    case "FTWIN_THRESHOLD"  => NumberParameter("ftwin_threshold", "FTwin threshold")
+    case "REPWIN_THRESHOLD" => NumberParameter("repwin_threshold", "REPwin threshold")
     case "IN_FORMAT"        => select("in_format", "Input format")
     case "OUT_FORMAT"       => select("out_format", "Output format")
     case "CLUSTERING_MODE"  => select("clustering_mode", "Clustering mode")
@@ -129,7 +121,6 @@ class ParamAccess @Inject()(tel: TEL) {
       getParam("ALIGNMENT").name,
       getParam("STANDARD_DB").name,
       getParam("HHSUITEDB").name,
-      getParam("PROTBLASTPROGRAM").name,
       getParam("HHBLITSDB").name,
       getParam("HHOMPDB").name,
       getParam("PROTEOMES").name,
