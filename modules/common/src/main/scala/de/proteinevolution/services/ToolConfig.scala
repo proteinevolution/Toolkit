@@ -14,6 +14,15 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
 
   lazy val version: String = config.get[String]("version")
 
+  lazy val sections: Map[String, Int] = {
+    config.get[Config]("Sections").root.asScala.map {
+      case (name, configObject: ConfigObject) =>
+        val config = configObject.toConfig
+        name.toLowerCase -> config.getInt("order")
+      case (_, _) => throw new IllegalStateException("section does not exist")
+    }
+  }.toMap
+
   lazy val values: Map[String, Tool] = {
     config.get[Config]("Tools").root.asScala.map {
       case (_, configObject: ConfigObject) =>
@@ -21,14 +30,15 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
         config.getString("name") -> toTool(
           config.getString("name"),
           config.getString("longname"),
+          config.getInt("order"),
+          config.getString("title"),
           config.getString("code"),
           config.getString("section").toLowerCase,
           config.getStringList("parameter").asScala.map { param =>
             paramAccess.getParam(param, config.getString("input_placeholder"))
           },
           config.getStringList("forwarding.alignment").asScala,
-          config.getStringList("forwarding.multi_seq").asScala,
-          config.getString("title")
+          config.getStringList("forwarding.multi_seq").asScala
         )
       case (_, _) => throw new IllegalStateException("tool does not exist")
     }
@@ -45,19 +55,20 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
   private def toTool(
       toolNameShort: String,
       toolNameLong: String,
+      order: Int,
+      title: String,
       code: String,
-      category: String,
+      section: String,
       params: Seq[Param],
       forwardAlignment: Seq[String],
-      forwardMultiSeq: Seq[String],
-      title: String
+      forwardMultiSeq: Seq[String]
   ): Tool = {
     val paramMap = params.map(p => p.name -> p).toMap
     val toolForm = ToolForm(
       toolNameShort,
       toolNameLong,
       code,
-      category,
+      section,
       paramAccess.paramGroups.keysIterator.map { group =>
         group -> paramAccess.paramGroups(group).filter(params.map(_.name).contains(_)).map(paramMap(_))
       }.toSeq :+
@@ -67,21 +78,22 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       toolNameShort,
       toolNameLong,
       title,
-      category,
+      section,
       ValidationParamsForm(Seq("FASTA", "CLUSTAL"))
     )
     Tool(
       toolNameShort,
       toolNameLong,
+      order,
+      title,
       code,
-      category,
+      section,
       paramMap,
       toolForm,
       toolFormSimple,
       paramAccess.paramGroups,
       forwardAlignment,
-      forwardMultiSeq,
-      title
+      forwardMultiSeq
     )
   }
 

@@ -6,15 +6,16 @@ import de.proteinevolution.models.param.Param
 case class Tool(
     toolNameShort: String,
     toolNameLong: String,
+    order: Int,
+    title: String,
     code: String,
-    category: String,
+    section: String,
     params: Map[String, Param], // Maps a parameter name to the respective Param instance
     toolForm: ToolForm,
     toolFormSimple: ToolFormSimple,
     paramGroups: Map[String, Seq[String]],
     forwardAlignment: Seq[String],
-    forwardMultiSeq: Seq[String],
-    title: String
+    forwardMultiSeq: Seq[String]
 ) {
 
   def isToolName(toolName: String, caseSensitive: Boolean = false): Boolean = {

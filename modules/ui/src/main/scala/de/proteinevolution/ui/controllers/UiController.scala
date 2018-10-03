@@ -32,10 +32,22 @@ class UiController @Inject()(
   }
 
   def getTools = Action {
-    Ok(Json.toJson(toolConfig.values.map {
-      case (_, v) =>
-        v.toolFormSimple
-    }))
+    val sections = toolConfig.sections
+    val sorted = toolConfig.values.toSeq
+      .filter(t => sections.contains(t._2.section))
+      .sortWith((l, r) => {
+        val lTool = l._2
+        val rTool = r._2
+        if (lTool.section == rTool.section)
+          lTool.order < rTool.order
+        else
+          sections.getOrElse(lTool.section, 0) < sections.getOrElse(rTool.section, 0)
+      })
+      .map {
+        case (_, v) =>
+          v.toolFormSimple
+      }
+    Ok(Json.toJson(sorted))
   }
 
   def getToolsVersion = Action {
