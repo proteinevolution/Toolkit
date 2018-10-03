@@ -7,7 +7,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import VelocityFade from '@/transitions/VelocityFade.vue';
+    import VelocityFade from '../../transitions/VelocityFade.vue';
     import Loading from './Loading.vue';
 
     export default Vue.extend({

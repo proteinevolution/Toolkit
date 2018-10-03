@@ -6,7 +6,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import hasHTMLTitle from '@/mixins/hasHTMLTitle';
+    import hasHTMLTitle from '../../mixins/hasHTMLTitle';
 
     export default Vue.extend({
         name: 'NotFoundView',

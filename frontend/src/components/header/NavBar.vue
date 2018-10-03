@@ -1,46 +1,43 @@
 <template>
     <div class="navbar-container">
-        <LoadingWrapper :loading="$store.state.loading.tools">
-            <b-navbar toggleable="md"
-                      type="light">
-                <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+        <b-navbar toggleable="md"
+                  type="light">
+            <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
-                <b-collapse is-nav id="nav_collapse">
-                    <b-row>
-                        <b-col>
-                            <b-navbar-nav class="upper-nav">
-                                <b-nav-item v-for="section in sections"
-                                            :key="section"
-                                            :class="[section === selectedSection ? 'active' : '']"
-                                            @click="selectSection(section)">
-                                    {{ $t('tools.sections.' + section) }}
+            <b-collapse is-nav id="nav_collapse">
+                <b-row>
+                    <b-col>
+                        <b-navbar-nav class="upper-nav">
+                            <b-nav-item v-for="section in sections"
+                                        :key="section"
+                                        :class="[section === selectedSection ? 'active' : '']"
+                                        @click="selectSection(section)">
+                                {{ $t('tools.sections.' + section) }}
+                            </b-nav-item>
+                        </b-navbar-nav>
+
+                        <b-navbar-nav class="lower-nav"
+                                      :style="{borderTopColor: sectionColor}">
+                            <transition-group name="list-complete">
+                                <b-nav-item v-for="tool in tools"
+                                            class="list-complete-item"
+                                            :key="tool.name"
+                                            :to="'/tools/' + tool.name"
+                                            v-if="tool.section === selectedSection">
+                                    {{tool.longname}}
                                 </b-nav-item>
-                            </b-navbar-nav>
-
-                            <b-navbar-nav class="lower-nav"
-                                          :style="{borderTopColor: sectionColor}">
-                                <transition-group name="list-complete">
-                                    <b-nav-item v-for="tool in tools"
-                                                class="list-complete-item"
-                                                :key="tool.name"
-                                                :to="'/tools/' + tool.name"
-                                                v-if="tool.section === selectedSection">
-                                        {{tool.longname}}
-                                    </b-nav-item>
-                                </transition-group>
-                            </b-navbar-nav>
-                        </b-col>
-                    </b-row>
-                </b-collapse>
-            </b-navbar>
-        </LoadingWrapper>
+                            </transition-group>
+                        </b-navbar-nav>
+                    </b-col>
+                </b-row>
+            </b-collapse>
+        </b-navbar>
     </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
     import {Tool} from '../../types/toolkit';
-    import LoadingWrapper from '@/components/LoadingWrapper.vue';
 
     export default Vue.extend({
         name: 'NavBar',
@@ -57,9 +54,6 @@
                     '#CC3333',
                 ],
             };
-        },
-        components: {
-            LoadingWrapper,
         },
         computed: {
             tools(): Tool[] {

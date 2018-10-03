@@ -10,7 +10,6 @@ const store: StoreOptions<RootState> = {
     strict: process.env.NODE_ENV !== 'production',
     state: {
         loading: {
-            fetching: false,
             tools: false,
             toolParameters: false,
         },

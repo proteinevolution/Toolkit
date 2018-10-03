@@ -55,8 +55,8 @@
     import {ParameterSection, Tool} from '@/types/toolkit/index';
     import VelocityFade from '@/transitions/VelocityFade.vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
-    import NotFoundView from '@/components/NotFoundView.vue';
-    import LoadingWrapper from '@/components/LoadingWrapper.vue';
+    import NotFoundView from '@/components/utils/NotFoundView.vue';
+    import LoadingWrapper from '@/components/utils/LoadingWrapper.vue';
 
     export default Vue.extend({
         name: 'ToolView',
