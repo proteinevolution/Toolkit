@@ -17,36 +17,33 @@
                        :clickEffect="true"
                        clickMode="push"/>
 
-        <b-container class="main-container">
-            <b-row>
-                <Header></Header>
-            </b-row>
-            <b-row class="pt-3 mb-2 main-content"
-                   :class="[showJobList ? 'job-list-visible' : '']">
-                <b-col class="job-list-col"
-                       md="2">
-                    <SideBar/>
-                </b-col>
-                <b-col>
-                    <VelocityFade :duration="1000">
-                        <router-view/>
-                    </VelocityFade>
-                </b-col>
-            </b-row>
-            <b-row>
-                <Footer></Footer>
-            </b-row>
-        </b-container>
+        <VelocityFade>
+            <LoadingView v-if="$store.state.loading.tools">
+            </LoadingView>
+            <b-container v-else class="main-container">
+                <b-row>
+                    <Header></Header>
+                </b-row>
+                <b-row class="pt-3 mb-2 main-content"
+                       :class="[showJobList ? 'job-list-visible' : '']">
+                    <b-col class="job-list-col"
+                           md="2">
+                        <SideBar/>
+                    </b-col>
+                    <b-col>
+                        <VelocityFade :duration="1000">
+                            <router-view/>
+                        </VelocityFade>
+                    </b-col>
+                </b-row>
+                <b-row>
+                    <Footer></Footer>
+                </b-row>
+            </b-container>
+        </VelocityFade>
 
         <modals-container/>
         <notifications animation-type="velocity"/>
-        <VelocityFade>
-            <Loading v-if="$store.state.loading.fetching"
-                     class="fetching-spinner"
-                     variant="secondary"
-                     :message="$t('fetching')">
-            </Loading>
-        </VelocityFade>
     </div>
 </template>
 
@@ -56,7 +53,7 @@
     import Footer from '@/components/Footer.vue';
     import SideBar from '@/components/sidebar/SideBar.vue';
     import VelocityFade from '@/transitions/VelocityFade.vue';
-    import Loading from '@/components/Loading.vue';
+    import LoadingView from '@/components/utils/LoadingView.vue';
 
     export default Vue.extend({
         name: 'App',
@@ -65,7 +62,7 @@
             SideBar,
             Footer,
             VelocityFade,
-            Loading,
+            LoadingView,
         },
         computed: {
             showJobList(): boolean {

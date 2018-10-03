@@ -4,7 +4,7 @@ import {Component, CreateElement, VNode, VNodeChildren, VNodeData} from 'vue';
 const ToolView = () => lazyLoadView(import(/* webpackChunkName: "tool" */ '../components/tools/ToolView.vue'));
 const JobManagerView = () => lazyLoadView(import(/* webpackChunkName: "jobmanager" */ '../components/' +
                                                                             'jobmanager/JobManagerView.vue'));
-const NotFoundView = () => lazyLoadView(import(/* webpackChunkName: "404" */ '../components/NotFoundView.vue'));
+const NotFoundView = () => lazyLoadView(import(/* webpackChunkName: "404" */ '../components/utils/NotFoundView.vue'));
 
 export default [
     {
@@ -66,9 +66,9 @@ function lazyLoadView(AsyncView: Promise<typeof import ('*.vue')>) {
     const AsyncHandler = () => ({
         component: AsyncView,
         // A component to use while the component is loading.
-        loading: require('../components/Loading.vue').default,
+        loading: require('../components/utils/Loading.vue').default,
         // A fallback component in case the timeout is exceeded when loading the component.
-        error: require('../components/TimeoutView.vue').default,
+        error: require('../components/utils/TimeoutView.vue').default,
         // Delay before showing the loading component.
         delay: 400,
         // Time before giving up trying to load the component.
