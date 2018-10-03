@@ -2,6 +2,7 @@ import {ActionTree} from 'vuex';
 import ToolService from '@/services/ToolService';
 import {RootState, ToolState} from '../../types';
 import {Tool, ToolParameters} from '@/types/toolkit';
+import {AlignmentViewer, Reformat} from '@/conf/FrontendTools';
 
 const actions: ActionTree<ToolState, RootState> = {
     async fetchAllTools(context) {
@@ -9,6 +10,8 @@ const actions: ActionTree<ToolState, RootState> = {
         const version = await ToolService.fetchToolsVersion();
         if (version !== context.state.version) {
             const tools = await ToolService.fetchTools();
+            tools.unshift(AlignmentViewer);
+            tools.push(Reformat);
             context.commit('setTools', tools);
             context.commit('setVersion', version);
         }

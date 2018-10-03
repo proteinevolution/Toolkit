@@ -14,15 +14,6 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
 
   lazy val version: String = config.get[String]("version")
 
-  lazy val sections: Map[String, Int] = {
-    config.get[Config]("Sections").root.asScala.map {
-      case (name, configObject: ConfigObject) =>
-        val config = configObject.toConfig
-        name.toLowerCase -> config.getInt("order")
-      case (_, _) => throw new IllegalStateException("section does not exist")
-    }
-  }.toMap
-
   lazy val values: Map[String, Tool] = {
     config.get[Config]("Tools").root.asScala.map {
       case (_, configObject: ConfigObject) =>

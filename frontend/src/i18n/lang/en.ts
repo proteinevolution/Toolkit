@@ -20,13 +20,27 @@ export default {
         },
         tools: {
             sections: {
-                'search': 'Search',
-                'alignment': 'Alignment',
-                'seqanal': 'Sequence Analysis',
-                '2ary': '2ary Structure',
-                '3ary': '3ary Structure',
-                'classification': 'Classification',
-                'utils': 'Utils',
+                'search': {
+                    title: 'Search',
+                },
+                'alignment': {
+                    title: 'Alignment',
+                },
+                'seqanal': {
+                    title: 'Sequence Analysis',
+                },
+                '2ary': {
+                    title: '2ary Structure',
+                },
+                '3ary': {
+                    title: '3ary Structure',
+                },
+                'classification': {
+                    title: 'Classification',
+                },
+                'utils': {
+                    title: 'Utils',
+                },
             },
             parameters: {
                 textArea: {

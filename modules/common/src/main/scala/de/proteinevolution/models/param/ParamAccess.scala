@@ -23,7 +23,6 @@ class ParamAccess @Inject()(tel: TEL) {
   )
 
   def getParam(paramName: String, placeholder: String = ""): Param = paramName match {
-    case "REFORMAT_VIEW"    => Param("", ParamType.ReformatView, 1, "")
     case "ALIGNMENT"        => Param("alignment", Sequence(alignmentFormats, placeholder, false), 1, "")
     case "TWOTEXTALIGNMENT" => Param("alignment", Sequence(alignmentFormats, placeholder, true), 1, "")
     case "HMMER_DB"         => select("hmmerdb", "Select database")

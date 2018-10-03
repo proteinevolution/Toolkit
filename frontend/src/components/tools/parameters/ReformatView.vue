@@ -49,23 +49,24 @@
                              spellcheck="false"
                              readonly>
             </b-form-textarea>
-            <div class="halign-center-wrapper">
-                <b-button-group class="mt-2 output-button-group"
-                                size="sm">
+            <div class="halign-center-wrapper mt-2">
+                <b-button-group class="mt-2 output-button-group">
                     <b-dropdown :text="$t('tools.reformat.forwardTo')"
-                                size="sm">
+                                variant="primary">
                         <b-dropdown-item v-for="option in forwardingOptions"
                                          :key="option.value"
                                          @click="forward(option)">
                             {{option.text}}
                         </b-dropdown-item>
                     </b-dropdown>
-                    <b-button @click="copyToClipboard">
+                    <b-button @click="copyToClipboard"
+                              variant="primary">
                         {{ $t('tools.reformat.copyToClipboard') }}
                     </b-button>
                     <b-button download="reformat_download.txt"
                               :href="'data:application/octet-stream;content-disposition:attachment;filename=file.txt;charset=utf-8,'
-                                        + encodeURIComponent(this.output)">
+                                        + encodeURIComponent(this.output)"
+                              variant="primary">
                         {{ $t('tools.reformat.download') }}
                     </b-button>
                 </b-button-group>

@@ -11,7 +11,6 @@ export interface Tool {
     parameters?: ToolParameters;
 }
 
-
 export interface ToolParameters {
     sections: ParameterSection[];
     forwarding?: ForwardingMode;

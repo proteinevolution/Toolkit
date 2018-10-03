@@ -12,20 +12,19 @@
                                         :key="section"
                                         :class="[section === selectedSection ? 'active' : '']"
                                         @click="selectSection(section)">
-                                {{ $t('tools.sections.' + section) }}
+                                {{ $t(`tools.sections.${section}.title`) }}
                             </b-nav-item>
                         </b-navbar-nav>
 
                         <b-navbar-nav class="lower-nav"
                                       :style="{borderTopColor: sectionColor}">
                             <transition-group name="list-complete">
-                                <b-nav-item v-for="tool in tools"
+                                <b-nav-item v-for="tool in displayedTools"
                                             class="list-complete-item"
                                             :key="tool.name"
                                             :to="'/tools/' + tool.name"
-                                            v-b-tooltip.hover
-                                            :title="tool.description"
-                                            v-if="tool.section === selectedSection">
+                                            v-b-tooltip.hover.bottom
+                                            :title="tool.description">
                                     {{tool.longname}}
                                 </b-nav-item>
                             </transition-group>
@@ -40,29 +39,25 @@
 <script lang="ts">
     import Vue from 'vue';
     import {Tool} from '../../types/toolkit';
+    import {sectionColors, sections} from '../../conf/ToolSections';
 
     export default Vue.extend({
         name: 'NavBar',
         data() {
             return {
                 userSelectedSection: '',
-                sectionColors: [
-                    '#D0BA89',
-                    '#ffbb55',
-                    '#669933',
-                    '#79A4C4',
-                    '#666699',
-                    '#D6ABAB',
-                    '#CC3333',
-                ],
+                sectionColors: sectionColors,
             };
         },
         computed: {
+            displayedTools(): Tool[] {
+                return this.tools.filter((tool: Tool) => tool.section === this.selectedSection);
+            },
             tools(): Tool[] {
                 return this.$store.getters['tools/tools'];
             },
             sections(): string[] {
-                return this.$store.getters['tools/sections'];
+                return sections;
             },
             sectionColor(): string {
                 const index = this.sections.indexOf(this.selectedSection) % this.sections.length;
