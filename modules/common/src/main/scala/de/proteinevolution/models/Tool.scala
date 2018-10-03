@@ -7,7 +7,7 @@ case class Tool(
     toolNameShort: String,
     toolNameLong: String,
     order: Int,
-    title: String,
+    description: String,
     code: String,
     section: String,
     params: Map[String, Param], // Maps a parameter name to the respective Param instance

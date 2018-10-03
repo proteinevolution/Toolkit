@@ -6,6 +6,7 @@ sealed trait ParamType {
 
   /**
    * Parses the value and return the same value as Option if valid, otherwise None
+   *
    * @param value String value to be validated
    * @return Some(value) if value is valid, else None
    */
@@ -62,6 +63,10 @@ object ParamType {
     def validate(value: String): Option[String] = Some(value)
   }
 
+  case object ReformatView extends ParamType {
+    def validate(value: String): Option[String] = Some(value)
+  }
+
   case object ModellerKey extends ParamType {
     def validate(value: String): Option[String] = Some(value)
   }
@@ -89,6 +94,7 @@ object ParamType {
       case Decimal(step, minVal, maxVal) => Json.obj(FIELD_TYPE -> 2, "step" -> step, "min" -> minVal, "max" -> maxVal)
       case Text(placeholder)             => Json.obj(FIELD_TYPE -> 7, "placeholder" -> placeholder)
       case ModellerKey                   => Json.obj(FIELD_TYPE -> 8)
+      case ReformatView                  => Json.obj(FIELD_TYPE -> "ReformatView")
     }
   }
 }

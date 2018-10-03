@@ -23,6 +23,8 @@
                                             class="list-complete-item"
                                             :key="tool.name"
                                             :to="'/tools/' + tool.name"
+                                            v-b-tooltip.hover
+                                            :title="tool.description"
                                             v-if="tool.section === selectedSection">
                                     {{tool.longname}}
                                 </b-nav-item>

@@ -1,9 +1,8 @@
 package de.proteinevolution.models.param
 
-import javax.inject.{ Inject, Singleton }
-
 import de.proteinevolution.models.param.ParamType.{ Bool, Decimal, ModellerKey, Select, Sequence, Text }
 import de.proteinevolution.tel.TEL
+import javax.inject.{ Inject, Singleton }
 
 /**
  * Provides the specification of the Parameters as they appear in the individual tools
@@ -24,6 +23,7 @@ class ParamAccess @Inject()(tel: TEL) {
   )
 
   def getParam(paramName: String, placeholder: String = ""): Param = paramName match {
+    case "REFORMAT_VIEW"    => Param("", ParamType.ReformatView, 1, "")
     case "ALIGNMENT"        => Param("alignment", Sequence(alignmentFormats, placeholder, false), 1, "")
     case "TWOTEXTALIGNMENT" => Param("alignment", Sequence(alignmentFormats, placeholder, true), 1, "")
     case "HMMER_DB"         => select("hmmerdb", "Select database")

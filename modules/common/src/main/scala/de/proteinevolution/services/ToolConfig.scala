@@ -31,7 +31,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
           config.getString("name"),
           config.getString("longname"),
           config.getInt("order"),
-          config.getString("title"),
+          config.getString("description"),
           config.getString("code"),
           config.getString("section").toLowerCase,
           config.getStringList("parameter").asScala.map { param =>
@@ -56,7 +56,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       toolNameShort: String,
       toolNameLong: String,
       order: Int,
-      title: String,
+      description: String,
       code: String,
       section: String,
       params: Seq[Param],
@@ -77,7 +77,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
     val toolFormSimple = ToolFormSimple(
       toolNameShort,
       toolNameLong,
-      title,
+      description,
       section,
       ValidationParamsForm(Seq("FASTA", "CLUSTAL"))
     )
@@ -85,7 +85,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       toolNameShort,
       toolNameLong,
       order,
-      title,
+      description,
       code,
       section,
       paramMap,
