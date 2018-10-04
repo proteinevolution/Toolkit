@@ -1,11 +1,12 @@
-FROM hseeberger/scala-sbt:8u171_2.12.6_1.1.6
+FROM hseeberger/scala-sbt:8u181_2.12.7_1.2.3
 
 ENV MAXMIND_DB "/root/GeoLite2-City.mmdb"
+ENV TK_BASE_PATH "/root/Toolkit"
 
 WORKDIR /root
-RUN mkdir -p Toolkit/development
-RUN mkdir -p Toolkit/bioprogs
-RUN mkdir -p Toolkit/databases
+RUN mkdir -p $TK_BASE_PATH/development
+RUN mkdir -p $TK_BASE_PATH/bioprogs
+RUN mkdir -p $TK_BASE_PATH/databases
 
 # Install custom maxmind geoip
 RUN \
