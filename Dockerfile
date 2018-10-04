@@ -1,5 +1,13 @@
 FROM hseeberger/scala-sbt:8u181_2.12.7_1.2.3
 
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+RUN apt-get update -qqy && apt-get -qqyy install \
+    nodejs \
+    yarn \
+  && rm -rf /var/lib/apt/lists/*
+
 ENV MAXMIND_DB "/root/GeoLite2-City.mmdb"
 ENV TK_BASE_PATH "/root/Toolkit"
 
