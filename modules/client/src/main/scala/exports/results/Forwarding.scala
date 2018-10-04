@@ -11,14 +11,13 @@ import org.scalajs.jquery.{ jQuery, JQueryAjaxSettings, JQueryXHR }
 import upickle.default.write
 
 import scala.scalajs.js
+import scala.scalajs.js.Dynamic.{ global => g }
+import scala.scalajs.js.JSON
 import scala.scalajs.js.annotation.{ JSExport, JSExportTopLevel }
 import scala.scalajs.js.timers._
-import scala.scalajs.js.JSON
 
 @JSExportTopLevel("Forwarding")
 object Forwarding {
-
-  import js.Dynamic.{ global => g }
 
   def processResults(
       jobID: String,
@@ -121,19 +120,19 @@ object Forwarding {
   }
 
   @JSExport
-  def simple(tool: String, forwardData: String): Unit = {
+  def simple(tool: String, forwardData: String, jobID: String = ""): Unit = {
     if (forwardData.isEmpty) {
       AlertService.alert("No sequences selected!", "alert-danger")
       return
     }
     m.route(s"/tools/$tool")
-    tryPasting(tool, forwardData)
+    tryPasting(tool, forwardData, jobID)
   }
 
-  def tryPasting(tool: String, forwardData: String): Unit = {
+  def tryPasting(tool: String, forwardData: String, jobID: String): Unit = {
     if (dom.window.location.hash != s"#/tools/$tool") {
       setTimeout(10) {
-        tryPasting(tool, forwardData)
+        tryPasting(tool, forwardData, jobID)
       }
     } else if (tool == "reformat") {
       setTimeout(500) { // there is no way to determine whether reformat is loaded. Because it is not used a lot, we just use a bigger timeout to make sure.
@@ -141,6 +140,7 @@ object Forwarding {
       }
     } else {
       jQuery("#alignment").value(forwardData)
+      jQuery("#parent_id").value(jobID)
       g.validationProcess(jQuery("#alignment"), jQuery("#toolnameAccess").value())
     }
   }

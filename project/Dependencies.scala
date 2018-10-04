@@ -5,8 +5,8 @@ import org.portablescala.sbtplatformdeps.PlatformDepsPlugin.autoImport._
 
 object Dependencies {
 
-  lazy val akkaVersion = "2.5.14"
-  lazy val catsV       = "1.1.0"
+  lazy val akkaVersion = "2.5.17"
+  lazy val catsV       = "1.4.0"
 
   lazy val commonDeps = Seq(
     ws,
@@ -24,16 +24,16 @@ object Dependencies {
     "com.typesafe.play"    %% "play-mailer-guice"        % "6.0.1",
     "com.github.pathikrit" %% "better-files"             % "3.5.0",
     "org.mindrot"          % "jbcrypt"                   % "0.3m",
-    "org.reactivemongo"    %% "play2-reactivemongo"      % "0.15.0-play26",
-    "org.reactivemongo"    %% "reactivemongo-akkastream" % "0.15.0",
+    "org.reactivemongo"    %% "play2-reactivemongo"      % "0.16.0-play26",
+    "org.reactivemongo"    %% "reactivemongo-akkastream" % "0.16.0",
     "org.typelevel"        %% "cats-core"                % catsV,
-    "org.typelevel"        %% "cats-effect"              % "1.0.0-RC2",
+    "org.typelevel"        %% "cats-effect"              % "1.0.0",
     "com.chuusai"          %% "shapeless"                % "2.3.3",
     "org.atnos"            %% "eff"                      % "5.3.0",
     "org.tpolecat"         %% "atto-core"                % "0.6.1",
     "com.vmunier"          %% "scalajs-scripts"          % "1.1.1",
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
-    "com.typesafe.play"    %% "play-json"                % "2.6.9",
+    "com.typesafe.play"    %% "play-json"                % "2.6.10",
     "com.dripower"         %% "play-circe"               % "2609.1",
     "org.webjars"          %% "webjars-play"             % "2.6.3",
     "org.scala-js"         %% "scalajs-stubs"            % scalaJSVersion % "provided",

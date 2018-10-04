@@ -157,7 +157,7 @@ const ParameterAlignmentComponent = {
                         }, "Upload File"),
                         m("input", {
                             type: "file",
-                            name: "alignment_two",
+                            name: "file_alignment_two",
                             id: "fileUpload" + suffix2,
                             "class": "show-for-sr",
                             onchange: function() {
@@ -200,6 +200,11 @@ const ParameterAlignmentComponent = {
             ]);
         }
         return renderParameter([
+            m("input#parent_id", {type: "hidden", config: (elem: HTMLInputElement, isInit: boolean) => {
+                if (!isInit) {
+                    elem.value = window.JobModel.getParamValue("parent_id")
+                }
+            }}),
             m("div", {
                     "class": "alignment_textarea"
                 },
@@ -241,7 +246,7 @@ const ParameterAlignmentComponent = {
                             }, "Upload File"),
                             m("input", {
                                 type: "file",
-                                name: "alignment",
+                                name: "file_alignment",
                                 id: "fileUpload",
                                 "class": "show-for-sr",
                                 onchange: function() {

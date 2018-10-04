@@ -75,10 +75,11 @@ const sampleSeqConfig = function(textAreaId: string) {
                         break;
 
                     case "hhpred":
-                        if(textAreaId == "#alignment_two")
+                        if (textAreaId == "#alignment_two") {
                             $a.val(singleProtSeq2);
-                        else
+                        } else {
                             $a.val(singleProtSeq);
+                        }
                         break;
 
                     case "hmmer":
@@ -174,7 +175,7 @@ const sampleSeqConfig = function(textAreaId: string) {
                         break;
 
                     case "samcc":
-                        $(document).ready(function() {
+                        $(function() {
                             //fetch text file
                             $.get("assets/images/Examples/samcc.txt", function(data) {
                                 let samccText = "";
@@ -187,10 +188,10 @@ const sampleSeqConfig = function(textAreaId: string) {
                                 $a.val(samccText);
                             });
                         });
-                        $("#samcc_helixone").val("a;A;2;30");
-                        $("#samcc_helixtwo").val("a;B;2;30");
-                        $("#samcc_helixthree").val("a;C;2;30");
-                        $("#samcc_helixfour").val("a;D;2;30");
+                        $("#samcc_helixone").val("a;A;2;30").trigger("input");
+                        $("#samcc_helixtwo").val("a;B;2;30").trigger("input");
+                        $("#samcc_helixthree").val("a;C;2;30").trigger("input");
+                        $("#samcc_helixfour").val("a;D;2;30").trigger("input");
                         break;
 
                     case "mmseqs2":

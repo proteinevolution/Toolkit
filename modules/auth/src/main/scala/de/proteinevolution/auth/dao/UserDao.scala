@@ -20,10 +20,12 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
   def addUser(user: User): Future[WriteResult] = userCollection.flatMap(_.insert(user))
 
   def findUser(selector: BSONDocument): Future[Option[User]] =
-    userCollection.flatMap(_.find(selector).one[User])
+    userCollection.flatMap(_.find(selector, None).one[User])
 
   def findUsers(selector: BSONDocument): Future[scala.List[User]] = {
-    userCollection.map(_.find(selector).cursor[User]()).flatMap(_.collect[List](-1, Cursor.FailOnError[List[User]]()))
+    userCollection
+      .map(_.find(selector, None).cursor[User]())
+      .flatMap(_.collect[List](-1, Cursor.FailOnError[List[User]]()))
   }
 
   def modifyUser(selector: BSONDocument, modifier: BSONDocument): Future[Option[User]] = {
