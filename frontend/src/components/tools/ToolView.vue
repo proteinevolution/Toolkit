@@ -7,7 +7,7 @@
                 <h1>{{ tool.longname }}</h1>
             </div>
 
-            <Loading :loading="$store.state.loading.toolParameters">
+            <LoadingWrapper :loading="$store.state.loading.toolParameters">
                 <b-form class="tool-form">
                     <b-card no-body
                             :class="[fullScreen ? 'fullscreen' : '']">
@@ -42,7 +42,7 @@
                         </b-form-group>
                     </b-card>
                 </b-form>
-            </Loading>
+            </LoadingWrapper>
         </div>
         <not-found-view v-else
                         errorMessage="errors.ToolNotFound"/>
@@ -55,8 +55,8 @@
     import {ParameterSection, Tool} from '@/types/toolkit/index';
     import VelocityFade from '@/transitions/VelocityFade.vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
-    import NotFoundView from '@/components/NotFoundView.vue';
-    import Loading from '@/components/Loading.vue';
+    import NotFoundView from '@/components/utils/NotFoundView.vue';
+    import LoadingWrapper from '@/components/utils/LoadingWrapper.vue';
 
     export default Vue.extend({
         name: 'ToolView',
@@ -65,7 +65,7 @@
             Section,
             VelocityFade,
             NotFoundView,
-            Loading,
+            LoadingWrapper,
         },
         data() {
             return {
@@ -86,8 +86,7 @@
                 return this.tool.parameters.sections;
             },
             showSubmitButtons(): boolean {
-                return this.tool.parameters !== undefined && this.tool.parameters.showSubmitButtons !== undefined &&
-                    this.tool.parameters.showSubmitButtons;
+                return this.tool.parameters !== undefined && !this.tool.parameters.hideSubmitButtons;
             },
             htmlTitle(): string {
                 if (!this.tool) {

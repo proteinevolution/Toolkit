@@ -5,7 +5,7 @@
                    :sm="section.multiColumnLayout ? 6 : 12"
                    :md="section.multiColumnLayout ? 4 : 12"
                    :key="parameter.name">
-                <component :is="parameter.type"
+                <component :is="parameter.parameterType"
                            :parameter="parameter"
                            :validationParams="validationParams"
                            class="parameter-component">
@@ -17,6 +17,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
+    import TextInput from './TextInput.vue';
     import TextArea from './TextArea.vue';
     import Select from './Select.vue';
     import Number from './Number.vue';
@@ -29,6 +30,7 @@
     export default Vue.extend({
         name: 'Section',
         components: {
+            TextInput,
             TextArea,
             Select,
             Number,

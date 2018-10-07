@@ -6,6 +6,7 @@ sealed trait ParamType {
 
   /**
    * Parses the value and return the same value as Option if valid, otherwise None
+   *
    * @param value String value to be validated
    * @return Some(value) if value is valid, else None
    */

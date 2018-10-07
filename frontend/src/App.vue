@@ -17,26 +17,30 @@
                        :clickEffect="true"
                        clickMode="push"/>
 
-        <b-container class="main-container">
-            <b-row>
-                <Header></Header>
-            </b-row>
-            <b-row class="pt-3 mb-2 main-content"
-                   :class="[showJobList ? 'job-list-visible' : '']">
-                <b-col class="job-list-col"
-                       md="2">
-                    <SideBar/>
-                </b-col>
-                <b-col>
-                    <VelocityFade :duration="1000">
-                        <router-view/>
-                    </VelocityFade>
-                </b-col>
-            </b-row>
-            <b-row>
-                <Footer></Footer>
-            </b-row>
-        </b-container>
+        <VelocityFade>
+            <LoadingView v-if="$store.state.loading.tools">
+            </LoadingView>
+            <b-container v-else class="main-container">
+                <b-row>
+                    <Header></Header>
+                </b-row>
+                <b-row class="pt-3 mb-2 main-content"
+                       :class="[showJobList ? 'job-list-visible' : '']">
+                    <b-col class="job-list-col"
+                           md="2">
+                        <SideBar/>
+                    </b-col>
+                    <b-col>
+                        <VelocityFade :duration="1000">
+                            <router-view :key="$route.fullPath"/>
+                        </VelocityFade>
+                    </b-col>
+                </b-row>
+                <b-row>
+                    <Footer></Footer>
+                </b-row>
+            </b-container>
+        </VelocityFade>
 
         <modals-container/>
         <notifications animation-type="velocity"/>
@@ -49,6 +53,7 @@
     import Footer from '@/components/Footer.vue';
     import SideBar from '@/components/sidebar/SideBar.vue';
     import VelocityFade from '@/transitions/VelocityFade.vue';
+    import LoadingView from '@/components/utils/LoadingView.vue';
 
     export default Vue.extend({
         name: 'App',
@@ -57,6 +62,7 @@
             SideBar,
             Footer,
             VelocityFade,
+            LoadingView,
         },
         computed: {
             showJobList(): boolean {
@@ -69,7 +75,42 @@
     });
 </script>
 
-<style lang="scss" scoped>
+<!-- This should generally be the only global CSS in the app. -->
+<style lang="scss">
+    @import "./assets/scss/reset";
+    @import "~bootstrap/scss/bootstrap";
+    @import "~bootstrap-vue/dist/bootstrap-vue.css";
+    @import "~vue-multiselect/dist/vue-multiselect.min.css";
+    @import "./assets/scss/form-elements";
+    @import "./assets/scss/modals";
+    @import url("https://use.fontawesome.com/releases/v5.2.0/css/all.css");
+
+    html {
+        overflow-y: scroll;
+    }
+
+    .toolkit .vue-notification {
+        padding: 10px;
+        margin: 5px 10px 0;
+        border-radius: $global-radius;
+
+        font-size: 12px;
+
+        color: #ffffff;
+        background: $primary-light;
+        border-left: 5px solid $primary;
+
+        &.warning, &.warn {
+            background: $warning-light;
+            border-left-color: $warning;
+        }
+
+        &.danger, &.error {
+            background: $danger-light;
+            border-left-color: $danger;
+        }
+    }
+
     .main-container {
         background-color: $bg-gray;
         box-shadow: 1px 2px 4px 3px rgba(200, 200, 200, 0.75);
@@ -98,28 +139,10 @@
         left: 0;
         right: 0;
     }
-</style>
 
-<style lang="scss">
-    .toolkit .vue-notification {
-        padding: 10px;
-        margin: 5px 10px 0;
-        border-radius: $global-radius;
-
-        font-size: 12px;
-
-        color: #ffffff;
-        background: $primary-light;
-        border-left: 5px solid $primary;
-
-        &.warning, &.warn {
-            background: $warning-light;
-            border-left-color: $warning;
-        }
-
-        &.danger, &.error {
-            background: $danger-light;
-            border-left-color: $danger;
-        }
+    .fetching-spinner {
+        position: fixed;
+        bottom: 1em;
+        left: 1em;
     }
 </style>

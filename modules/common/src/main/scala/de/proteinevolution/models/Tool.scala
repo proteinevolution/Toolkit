@@ -1,20 +1,17 @@
 package de.proteinevolution.models
 
-import de.proteinevolution.models.forms.{ ToolForm, ToolFormSimple }
-import de.proteinevolution.models.param.Param
+import de.proteinevolution.models.forms.ToolFormSimple
+import de.proteinevolution.models.parameters.ToolParameters
 
 case class Tool(
     toolNameShort: String,
     toolNameLong: String,
+    order: Int,
+    description: String,
     code: String,
-    category: String,
-    params: Map[String, Param], // Maps a parameter name to the respective Param instance
-    toolForm: ToolForm,
-    toolFormSimple: ToolFormSimple,
-    paramGroups: Map[String, Seq[String]],
-    forwardAlignment: Seq[String],
-    forwardMultiSeq: Seq[String],
-    title: String
+    section: String,
+    toolParameterForm: ToolParameters,
+    toolFormSimple: ToolFormSimple
 ) {
 
   def isToolName(toolName: String, caseSensitive: Boolean = false): Boolean = {

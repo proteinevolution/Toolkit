@@ -1,16 +1,19 @@
 package de.proteinevolution.services
 
 import com.typesafe.config.{ Config, ConfigObject }
+import de.proteinevolution.models.{ Tool, parameters }
+import de.proteinevolution.models.forms._
+import de.proteinevolution.models.param.ParamAccess
+import de.proteinevolution.models.parameters.{ ForwardingMode, Parameter, ParameterSection, ToolParameters }
+import javax.inject.{ Inject, Singleton }
+import play.api.Configuration
 
 import scala.collection.JavaConverters._
-import de.proteinevolution.models.Tool
-import de.proteinevolution.models.forms.{ ToolForm, ToolFormSimple, ValidationParamsForm }
-import de.proteinevolution.models.param.{ Param, ParamAccess }
-import javax.inject.{ Inject, Singleton}
-import play.api.Configuration
 
 @Singleton
 class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
+
+  lazy val version: String = config.get[String]("version")
 
   lazy val values: Map[String, Tool] = {
     config.get[Config]("Tools").root.asScala.map {
@@ -19,14 +22,15 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
         config.getString("name") -> toTool(
           config.getString("name"),
           config.getString("longname"),
+          config.getInt("order"),
+          config.getString("description"),
           config.getString("code"),
           config.getString("section").toLowerCase,
           config.getStringList("parameter").asScala.map { param =>
             paramAccess.getParam(param, config.getString("input_placeholder"))
           },
           config.getStringList("forwarding.alignment").asScala,
-          config.getStringList("forwarding.multi_seq").asScala,
-          config.getString("title")
+          config.getStringList("forwarding.multi_seq").asScala
         )
       case (_, _) => throw new IllegalStateException("tool does not exist")
     }
@@ -43,43 +47,49 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
   private def toTool(
       toolNameShort: String,
       toolNameLong: String,
+      order: Int,
+      description: String,
       code: String,
-      category: String,
-      params: Seq[Param],
+      section: String,
+      params: Seq[Parameter],
       forwardAlignment: Seq[String],
-      forwardMultiSeq: Seq[String],
-      title: String
+      forwardMultiSeq: Seq[String]
   ): Tool = {
-    val paramMap = params.map(p => p.name -> p).toMap
-    val toolForm = ToolForm(
-      toolNameShort,
-      toolNameLong,
-      code,
-      category,
-      paramAccess.paramGroups.keysIterator.map { group =>
-        group -> paramAccess.paramGroups(group).filter(params.map(_.name).contains(_)).map(paramMap(_))
-      }.toSeq :+
-      "Parameters" -> params.map(_.name).diff(paramAccess.paramGroups.values.flatten.toSeq).map(paramMap(_))
-    )
     val toolFormSimple = ToolFormSimple(
       toolNameShort,
       toolNameLong,
-      title,
-      category,
+      description,
+      section,
       ValidationParamsForm(Seq("FASTA", "CLUSTAL"))
+    )
+    val inputGroup: Seq[String] = paramAccess.paramGroups("Input")
+    val toolParameterForm = ToolParameters(
+      Seq(
+        ParameterSection(
+          "Input",
+          multiColumnLayout = false,
+          params.filter(p => inputGroup.contains(p.name))
+        ),
+        parameters.ParameterSection(
+          "Parameters",
+          multiColumnLayout = true,
+          params.filter(p => !inputGroup.contains(p.name))
+        )
+      ),
+      ForwardingMode(
+        forwardAlignment,
+        forwardMultiSeq
+      )
     )
     Tool(
       toolNameShort,
       toolNameLong,
+      order,
+      description,
       code,
-      category,
-      paramMap,
-      toolForm,
-      toolFormSimple,
-      paramAccess.paramGroups,
-      forwardAlignment,
-      forwardMultiSeq,
-      title
+      section,
+      toolParameterForm,
+      toolFormSimple
     )
   }
 

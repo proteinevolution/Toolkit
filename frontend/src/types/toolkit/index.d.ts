@@ -11,11 +11,10 @@ export interface Tool {
     parameters?: ToolParameters;
 }
 
-
 export interface ToolParameters {
     sections: ParameterSection[];
     forwarding?: ForwardingMode;
-    showSubmitButtons?: boolean;
+    hideSubmitButtons?: boolean;
 }
 
 export interface ValidationParams {
@@ -45,9 +44,13 @@ export interface ParameterSection {
 }
 
 export interface Parameter {
-    type: ParameterType;
+    parameterType: ParameterType;
     name: string;
     label: string;
+}
+
+export interface TextInputParameter extends Parameter {
+    inputPlaceholder: string;
 }
 
 export interface TextAreaParameter extends Parameter {
@@ -71,6 +74,7 @@ export interface SelectOption {
 export interface NumberParameter extends Parameter {
     min: number;
     max: number;
+    step?: number;
     default: number;
 }
 

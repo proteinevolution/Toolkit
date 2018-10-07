@@ -1,17 +1,17 @@
 <template>
     <VelocityFade>
-        <vue-simple-spinner v-if="loading"></vue-simple-spinner>
+        <Loading v-if="loading"></Loading>
         <slot v-else></slot>
     </VelocityFade>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
-    import VelocityFade from '@/transitions/VelocityFade.vue';
-    import VueSimpleSpinner from 'vue-simple-spinner';
+    import VelocityFade from '../../transitions/VelocityFade.vue';
+    import Loading from './Loading.vue';
 
     export default Vue.extend({
-        name: 'Loading',
+        name: 'LoadingWrapper',
         props: {
             loading: {
                 type: Boolean,
@@ -21,7 +21,7 @@
         },
         components: {
             VelocityFade,
-            VueSimpleSpinner,
+            Loading,
         },
     });
 </script>

@@ -22,46 +22,46 @@
 
 <div class="navbar-tabs-content" data-tabs-content="navbar-tabs">
     <div class="tabs-panel toolsection active is-active" id="panel1">
-        @for(tool <- tools.filter(_.category == "search")) {
-            <a id="@tool.code" href="/#/tools/@tool.toolNameShort" title="@tool.title" data-tooltip>@tool.toolNameLong</a>
+        @for(tool <- tools.filter(_.section == "search")) {
+            <a id="@tool.code" href="/#/tools/@tool.toolNameShort" title="@tool.description" data-tooltip>@tool.toolNameLong</a>
         }
     </div>
 
     <div class="tabs-panel toolsection" id="panel2">
         <a id="alnviz" href="/#/tools/alnviz" title="BioJS multiple sequence alignment viewer" data-tooltip>
             AlignmentViewer</a>
-        @for(tool <- tools.filter(_.category == "alignment")) {
-            <a id="@tool.code" href="/#/tools/@tool.toolNameShort" title="@tool.title" data-tooltip>@tool.toolNameLong</a>
+        @for(tool <- tools.filter(_.section == "alignment")) {
+            <a id="@tool.code" href="/#/tools/@tool.toolNameShort" title="@tool.description" data-tooltip>@tool.toolNameLong</a>
         }
     </div>
 
     <div class="tabs-panel toolsection" id="panel3">
-    @for(tool <- tools.filter(_.category == "seqanal")) {
-        <a id="@tool.code" href="/#/tools/@tool.toolNameShort" title="@tool.title" data-tooltip>@tool.toolNameLong</a>
+    @for(tool <- tools.filter(_.section == "seqanal")) {
+        <a id="@tool.code" href="/#/tools/@tool.toolNameShort" title="@tool.description" data-tooltip>@tool.toolNameLong</a>
     }
     </div>
 
     <div class="tabs-panel toolsection" id="panel4">
-    @for(tool <- tools.filter(_.category == "2ary")) {
-        <a id="@tool.code" href="/#/tools/@tool.toolNameShort" title="@tool.title" data-tooltip>@tool.toolNameLong</a>
+    @for(tool <- tools.filter(_.section == "2ary")) {
+        <a id="@tool.code" href="/#/tools/@tool.toolNameShort" title="@tool.description" data-tooltip>@tool.toolNameLong</a>
     }
     </div>
 
     <div class="tabs-panel toolsection" id="panel5">
-    @for(tool <- tools.filter(tool => tool.category == "3ary")) {
-        <a id="@tool.code" href="/#/tools/@tool.toolNameShort" title="@tool.title" data-tooltip>@tool.toolNameLong</a>
+    @for(tool <- tools.filter(tool => tool.section == "3ary")) {
+        <a id="@tool.code" href="/#/tools/@tool.toolNameShort" title="@tool.description" data-tooltip>@tool.toolNameLong</a>
     }
     </div>
 
     <div class="tabs-panel toolsection" id="panel6">
-    @for(tool <- tools.filter(_.category == "classification")) {
-        <a id="@tool.code" href="/#/tools/@tool.toolNameShort" title="@tool.title" data-tooltip>@tool.toolNameLong</a>
+    @for(tool <- tools.filter(_.section == "classification")) {
+        <a id="@tool.code" href="/#/tools/@tool.toolNameShort" title="@tool.description" data-tooltip>@tool.toolNameLong</a>
     }
     </div>
 
     <div class="tabs-panel toolsection" id="panel7">
-        @for(tool <- tools.filter(_.category == "utils")) {
-            <a id="@tool.code" href="/#/tools/@tool.toolNameShort" title="@tool.title" data-tooltip>@tool.toolNameLong</a>
+        @for(tool <- tools.filter(_.section == "utils")) {
+            <a id="@tool.code" href="/#/tools/@tool.toolNameShort" title="@tool.description" data-tooltip>@tool.toolNameLong</a>
         }
         <a id="reformat" href="/#/tools/reformat" title="Sequence reformatting utility" data-tooltip>
             Reformat</a>

@@ -1,5 +1,6 @@
 
 export enum ParameterType {
+    TextInput = 'TextInput',
     TextArea = 'TextArea',
     Select = 'Select',
     Number = 'Number',

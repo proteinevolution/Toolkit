@@ -10,10 +10,9 @@ import play.api.routing.sird._
 class UiRouter @Inject()(uiController: UiController) extends SimpleRouter {
 
   override lazy val routes: Routes = {
-    case GET(p"/tool/$toolName") => uiController.getTool(toolName)
+    case GET(p"/tool/$toolName") => uiController.getToolParameters(toolName)
     case GET(p"/tools")          => uiController.getTools
-    case GET(p"/static/$static") => uiController.static(static)
-    case GET(p"/recent/updates") => uiController.recentUpdates
+    case GET(p"/tools/version")  => uiController.getToolsVersion
   }
 
 }

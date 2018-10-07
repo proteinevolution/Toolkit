@@ -8,7 +8,6 @@ case class JobForm(
     jobID: String,
     state: JobState,
     dateCreated: String,
-    toolitem: ToolForm,
     views: Seq[String],
     paramValues: Map[String, String]
 )
