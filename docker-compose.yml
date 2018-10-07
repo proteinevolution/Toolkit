@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3.7'
 # Here we configure the Containers to run.
 services:
 
@@ -7,6 +7,8 @@ services:
     env_file:
       - conf/.env
     container_name: toolkit
+    stdin_open: true
+    tty: true
     ports:
     - 1234:1234
     volumes:
@@ -15,6 +17,9 @@ services:
     - mongodb
     depends_on:
     - mongodb
+    networks:
+      tk-network:
+        ipv4_address: 174.18.0.2
 
   # The container for the MongoDB Database
   mongodb:
@@ -31,8 +36,18 @@ services:
     ports:
     - 27017:27017
     command: mongod
+    networks:
+      tk-network:
+        ipv4_address: 174.18.0.3
 
 volumes:
   mongodb:
 
-# maybe we could also use a docker network if necessary
+networks:
+  tk-network:
+    name: tk-network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 174.18.0.1/24
