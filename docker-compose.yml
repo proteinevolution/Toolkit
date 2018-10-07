@@ -3,10 +3,10 @@ version: '3.7'
 services:
 
   toolkit:
-    build: .
+    image: proteinevolution/toolkit-docker:latest
+    container_name: toolkit
     env_file:
       - conf/.env
-    container_name: toolkit
     stdin_open: true
     tty: true
     ports:
