@@ -11,6 +11,7 @@ services:
     tty: true
     ports:
     - 1234:1234
+    - 8080:8080
     volumes:
     - .:/app
     links:
