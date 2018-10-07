@@ -19,3 +19,4 @@ native
 node_modules
 package-lock.json
 main.log
+conf/.env

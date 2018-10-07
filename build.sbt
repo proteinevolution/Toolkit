@@ -218,6 +218,8 @@ lazy val root = (project in file("."))
     libraryDependencies ++= (Dependencies.commonDeps ++ Dependencies.testDeps ++ Dependencies.frontendDeps),
     pipelineStages := Seq(digest, gzip),
     compile in Compile := (compile in Compile).dependsOn(scalaJSPipeline).value,
+    // TODO: TypescriptKeys.configFile := "/app/app/assets/tsconfig.json"
+    // https://github.com/ArpNetworking/sbt-typescript#tsconfigjson-support-version--030
   )
 
 resolvers += "scalaz-bintray".at("http://dl.bintray.com/scalaz/releases")
