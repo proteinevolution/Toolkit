@@ -1,5 +1,6 @@
 <template>
-    <BaseModal :title="'AlignmentViewer'">
+    <BaseModal :title="'AlignmentViewer'"
+               @close="$emit('close')">
         <AlignmentViewer :sequences="sequences"
                          :format="format">
         </AlignmentViewer>

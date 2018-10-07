@@ -5,8 +5,8 @@
                   v-html="title">
             </span>
 
-            <span class="tk-modal-close d-none"
-                  @click="close">
+            <span class="tk-modal-close"
+                  @click="$emit('close')">
                 &times;
             </span>
         </div>
@@ -23,11 +23,6 @@
         name: 'BaseModal',
         props: {
             title: String,
-        },
-        methods: {
-            close(): void {
-                // TODO: make it closable
-            },
         },
     });
 </script>

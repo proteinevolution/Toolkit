@@ -85,7 +85,7 @@
     @import "./assets/scss/modals";
     @import url("https://use.fontawesome.com/releases/v5.2.0/css/all.css");
 
-    html {
+    body {
         overflow-y: scroll;
     }
 

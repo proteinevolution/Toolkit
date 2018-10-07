@@ -1,5 +1,6 @@
 <template>
-    <BaseModal :title="$t('helpModals.titles.' + modal)">
+    <BaseModal :title="$t('helpModals.titles.' + modal)"
+               @close="$emit('close')">
         <div v-html="$t('helpModals.content.' + modal)"/>
     </BaseModal>
 </template>
