@@ -12,5 +12,5 @@ object AlignmentItem {
       seq       <- j.hcursor.right.as[String]
     } yield {
       new AlignmentItem(accession, seq, i + 1)
-  }
+    }
 }

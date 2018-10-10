@@ -127,7 +127,4 @@ class Quick2D @Inject()(general: General) {
   }
 }
 
-object Quick2D {
-
-
-}
+object Quick2D {}

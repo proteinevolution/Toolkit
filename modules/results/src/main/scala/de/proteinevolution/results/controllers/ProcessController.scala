@@ -31,53 +31,10 @@ class ProcessController @Inject()(
 
   def forwardAlignment(jobId: String, mode: ForwardMode): Action[ForwardingData] =
     Action(circe.json[ForwardingData]).async { implicit request =>
-        .withTimeout(220.seconds)
-        .map {
-          case 0 =>
-            NoContent
-          case _ =>
-            BadRequest
-        }
-        .recover {
-          case _: scala.concurrent.TimeoutException =>
-            InternalServerError("timeout")
-        }
+      service.forwardAlignment(jobId, mode, request.body).value.map {
+        case Right(res) if res == 0 => NoContent
+        case _                      => BadRequest
+      }
     }
-
-  private[this] def parseAccString(
-      toolName: ToolName,
-      result: SearchResult[HSP],
-      accStr: String,
-      mode: ForwardMode
-  ): String = {
-    (toolName, mode.toString) match {
-      case (HHBLITS, "alnEval") | (HHPRED, "alnEval") =>
-        result.HSPS.filter(_.info.eval <= accStr.toDouble).map { _.num }.mkString(" ")
-      case (HMMER, "alnEval") =>
-        result.HSPS
-          .filter(_.eValue <= accStr.toDouble)
-          .map { hit =>
-            result.alignment.alignment(hit.num - 1).accession + "\n"
-          }
-          .size
-          .toString
-      case (PSIBLAST, "alnEval") =>
-        accStr
-      case (_, "aln") => accStr
-      case (HMMER, "evalFull") | (PSIBLAST, "evalFull") =>
-        result.HSPS.filter(_.eValue <= accStr.toDouble).map { _.accession + " " }.mkString
-      case (HHBLITS, "evalFull") =>
-        result.HSPS.filter(_.info.eval <= accStr.toDouble).map { _.template.accession + " " }.mkString
-      case (_, "full") =>
-        val numList = accStr.split("\n").map(_.toInt)
-        numList.map { num =>
-          if (toolName == HHBLITS)
-            result.HSPS(num - 1).template.accession + " "
-          else
-            result.HSPS(num - 1).accession + " "
-        }.mkString
-      case _ => throw new IllegalStateException("parsing accession identifiers failed")
-    }
-  }
 
 }

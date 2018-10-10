@@ -11,16 +11,11 @@ trait HHService {
 
     for {
       a <- json.hcursor
-    } yield {
-
-    }
+    } yield {}
 
   }
 
 }
-
-
-
 /*
  case HHBLITS =>
               (jsValue.as[HHBlitsResult],
