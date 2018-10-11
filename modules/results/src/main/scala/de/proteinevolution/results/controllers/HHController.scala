@@ -16,37 +16,20 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class HHController @Inject()(
     ctx: HHContext,
-    toolFinder: ToolNameGetService,
-    resultFiles: ResultFileAccessor,
+    service: HHService
 )(implicit ec: ExecutionContext)
     extends ToolkitController(ctx.controllerComponents)
-    with ResultsRepository
-    with DTService with HHService {
-
-  private val resultsService = ResultsService(toolFinder, resultFiles)
+    with DTService {
 
   def loadHits(jobId: String): Action[ResultsForm] = Action(circe.json[ResultsForm]).async { implicit request =>
-    val data    = request.body
-    val wrapped = data.wrapped.getOrElse(false)
-    val isColor = data.isColor.getOrElse(false)
-    getResults(jobId)
-      .run(resultsService)
-      .flatMap {
-        case Some(jsValue) =>
-          getTool(jobId).run(resultsService).map(x => )
-      .map {
-        case (result, view) =>
-          if (data.end > result.num_hits || data.start > result.num_hits) {
-            BadRequest
-          } else {
-            val hits = result.HSPS.slice(data.start, data.end).map(view)
-            Ok(hits.mkString)
-          }
-      }
+    service.loadHits(jobId, request.body).value.map {
+      case Right(hits) => Ok(hits.mkString)
+      case Left(_)     => BadRequest
+    }
   }
 
   def dataTable(jobId: String): Action[AnyContent] = Action.async { implicit request =>
-    val params = DTParam(
+    /*val params = DTParam(
       request.getQueryString("draw").getOrElse("1").toInt,
       request.getQueryString("search[value]").getOrElse(""),
       request.getQueryString("start").getOrElse("0").toInt,
@@ -92,7 +75,8 @@ class HHController @Inject()(
                 )
               )
           )
-      }
+      } */
+    fuccess(Ok)
   }
 
 }

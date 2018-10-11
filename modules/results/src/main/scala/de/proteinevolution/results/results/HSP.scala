@@ -19,3 +19,5 @@ trait HSP {
   def template: HHTemplate
 
 }
+
+object HSP {}

@@ -1,23 +1,20 @@
 package de.proteinevolution.results.services
 
+import better.files._
+import cats.data.{ EitherT, OptionT }
+import cats.implicits._
+import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.models.ToolName._
 import de.proteinevolution.results.db.ResultFileAccessor
+import de.proteinevolution.results.models.{ ForwardMode, ForwardingData }
+import de.proteinevolution.results.results.{ HSP, SearchResult, _ }
 import de.proteinevolution.results.services.ResultsRepository.ResultsService
-import de.proteinevolution.models.ToolName
-import de.proteinevolution.results.results.{ HSP, SearchResult }
+import io.circe.DecodingFailure
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
-import better.files._
-import cats.data.OptionT
-import cats.implicits._
-import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.results.models.{ ForwardMode, ForwardingData }
-import io.circe.Json
-import cats.data.EitherT
-import scala.sys.process.Process
+import play.api.Logger
 import scala.concurrent.{ ExecutionContext, Future }
-import de.proteinevolution.results.results._
-import io.circe.DecodingFailure
+import scala.sys.process.Process
 
 @Singleton
 class ProcessService @Inject()(
@@ -27,6 +24,8 @@ class ProcessService @Inject()(
     constants: ConstantsV2
 )(implicit ec: ExecutionContext)
     extends ResultsRepository {
+
+  private val logger = Logger(this.getClass)
 
   private val scriptPath: String = config.get[String]("server_scripts")
 
@@ -61,38 +60,29 @@ class ProcessService @Inject()(
       (json, tool)
     }).map {
       case (Some(json), tool) =>
-        parseResult(tool.value, json).map { result =>
-          val accStr = mode.toString match {
-            case "alnEval" | "evalFull" => form.evalue.getOrElse("")
-            case "aln" | "full"         => form.checkboxes.toSeq.mkString("\n")
-          }
-          val accStrParsed = parseAccString(tool, result, accStr, mode)
-          ProcessFactory(
-            (constants.jobPath + jobId).toFile,
-            jobId,
-            tool.value,
-            form.fileName.getOrElse(""),
-            mode,
-            accStrParsed,
-            result.db,
-            scriptPath
-          ).run().exitValue()
+        parseResult(tool, json).map {
+          case (result, _) =>
+            val accStr = mode.toString match {
+              case "alnEval" | "evalFull" => form.evalue.getOrElse("")
+              case "aln" | "full"         => form.checkboxes.toSeq.mkString("\n")
+            }
+            val accStrParsed = parseAccString(tool, result, accStr, mode)
+            ProcessFactory(
+              (constants.jobPath + jobId).toFile,
+              jobId,
+              tool.value,
+              form.fileName.getOrElse(""),
+              mode,
+              accStrParsed,
+              result.db,
+              scriptPath
+            ).run().exitValue()
         }
+      case _ =>
+        val error = "parsing result json failed."
+        logger.error(error)
+        Left(DecodingFailure(error, Nil))
     })
-  }
-
-  private[this] def parseResult(
-      tool: String,
-      json: Json
-  ): Either[DecodingFailure, SearchResult[HSP]] = {
-    tool match {
-      case HHBLITS  => json.as[HHBlitsResult]
-      case HHPRED   => json.as[HHPredResult]
-      case HHOMP    => json.as[HHompResult]
-      case HMMER    => json.as[HmmerResult]
-      case PSIBLAST => json.as[PSIBlastResult]
-      case _        => throw new IllegalArgumentException("tool has no hitlist")
-    }
   }
 
   private[this] def parseAccString(

@@ -1,38 +1,70 @@
 package de.proteinevolution.results.services
+
+import cats.data.EitherT
+import cats.implicits._
 import de.proteinevolution.models.ToolName
-import io.circe.Json
+import de.proteinevolution.models.ToolName._
+import de.proteinevolution.results.db.ResultFileAccessor
+import de.proteinevolution.results.models.ResultsForm
+import de.proteinevolution.results.results._
+import de.proteinevolution.results.services.ResultsRepository.ResultsService
+import io.circe.DecodingFailure
+import javax.inject.{ Inject, Singleton }
+import play.api.Logger
+import play.twirl.api.HtmlFormat
 
-trait HHService {
+import scala.concurrent.{ ExecutionContext, Future }
 
-  // gets json and returns a tuple consisting of (a searchtoolresult , eta function from hsp => view)
-  // erst fp to the max anschauen?
+@Singleton
+class HHService @Inject()(
+    toolFinder: ToolNameGetService,
+    resultFiles: ResultFileAccessor
+)(implicit ec: ExecutionContext)
+    extends ResultsRepository {
 
-  protected def parseResult(tool: ToolName, json: Json) = {
+  private val logger = Logger(this.getClass)
 
-    for {
-      a <- json.hcursor
-    } yield {}
+  private val resultsService = ResultsService(toolFinder, resultFiles)
 
+  def loadHits(jobId: String, form: ResultsForm): EitherT[Future, DecodingFailure, List[HtmlFormat.Appendable]] = {
+    EitherT((for {
+      json <- getResults(jobId).run(resultsService)
+      tool <- getTool(jobId).run(resultsService)
+    } yield {
+      (json, tool)
+    }).map {
+      case (Some(json), tool) => parseResult(tool, json)
+      case _ =>
+        val error = "parsing result json failed."
+        logger.error(error)
+        Left(DecodingFailure(error, Nil))
+    }).subflatMap {
+      case (result, tool) =>
+        if (form.end > result.num_hits || form.start > result.num_hits) {
+          Left(DecodingFailure("", Nil))
+        } else {
+          Right(result.HSPS.slice(form.start, form.end).map(hsp => createView(jobId, tool, hsp, form, result)))
+        }
+    }
+  }
+
+  private[this] def createView(
+      jobId: String,
+      tool: ToolName,
+      hsp: HSP,
+      form: ResultsForm,
+      result: SearchResult[HSP]
+  ): HtmlFormat.Appendable = {
+    val wrapped = form.wrapped.getOrElse(false)
+    val isColor = form.isColor.getOrElse(false)
+    tool match {
+      case HHBLITS  => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped, jobId)
+      case HHPRED   => views.html.hhpred.hit(hsp.asInstanceOf[HHPredHSP], isColor, wrapped, jobId)
+      case HHOMP    => views.html.hhomp.hit(hsp.asInstanceOf[HHompHSP], isColor, wrapped, jobId)
+      case HMMER    => views.html.hmmer.hit(hsp.asInstanceOf[HmmerHSP], result.db, wrapped)
+      case PSIBLAST => views.html.psiblast.hit(hsp.asInstanceOf[PSIBlastHSP], result.db, wrapped)
+      case _        => throw new IllegalArgumentException("tool has no hitlist")
+    }
   }
 
 }
-/*
- case HHBLITS =>
-              (jsValue.as[HHBlitsResult],
-               (hsp: HSP) => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped, jobId))
-            case HHPRED =>
-              (jsValue.as[HHPredResult],
-               (hsp: HSP) => views.html.hhpred.hit(hsp.asInstanceOf[HHPredHSP], isColor, wrapped, jobId))
-            case HHOMP =>
-              (jsValue.as[HHompResult],
-               (hsp: HSP) => views.html.hhomp.hit(hsp.asInstanceOf[HHompHSP], isColor, wrapped, jobId))
-            case HMMER =>
-              val result = jsValue.as[HmmerResult]
-              (result, (hsp: HSP) => views.html.hmmer.hit(hsp.asInstanceOf[HmmerHSP], result.db, wrapped))
-            case PSIBLAST =>
-              val result = jsValue.as[PSIBlastResult].toOption
-              (result.get, (hsp: HSP) => views.html.psiblast.hit(hsp.asInstanceOf[PSIBlastHSP], result.get.db, wrapped))
-            case _ => throw new IllegalArgumentException("tool has no hitlist") // TODO integrate Alignmnent Ctrl
-          }
-        case None => throw new IllegalStateException("no result found")
- */
