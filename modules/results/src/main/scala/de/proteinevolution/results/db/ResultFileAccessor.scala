@@ -1,17 +1,17 @@
 package de.proteinevolution.results.db
 
-import javax.inject.{ Inject, Singleton }
-import play.api.cache.{ AsyncCacheApi, NamedCache }
 import better.files._
 import de.proteinevolution.jobs.services.JobFolderValidation
 import de.proteinevolution.models.ConstantsV2
-import play.api.Logger
-
-import scala.concurrent.{ ExecutionContext, Future }
-import scala.concurrent.duration._
-import io.circe.syntax._
 import io.circe.Json
 import io.circe.parser._
+import io.circe.syntax._
+import javax.inject.{ Inject, Singleton }
+import play.api.Logger
+import play.api.cache.{ AsyncCacheApi, NamedCache }
+
+import scala.concurrent.duration._
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class ResultFileAccessor @Inject()(
@@ -37,7 +37,7 @@ final class ResultFileAccessor @Inject()(
                 file.nameWithoutExtension -> parse(file.contentAsString).asJson
               }
               .toMap[String, Json]
-              .updated("jobID", jobID.asJson)
+              .updated("jobID", jobID)
               .asJson
           resultCache.set(jobID, results, 10.minutes)
           Some(results)

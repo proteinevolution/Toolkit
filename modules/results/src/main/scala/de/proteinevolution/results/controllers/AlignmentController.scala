@@ -23,7 +23,7 @@ class AlignmentController @Inject()(
     (for {
       json       <- OptionT(resultFiles.getResults(jobID))
       r          <- OptionT.fromOption[Future](json.hcursor.downField(request.body.resultName).as[AlignmentResult].toOption)
-      checkboxes <- OptionT.pure(request.body.checkboxes.distinct)
+      checkboxes <- OptionT.pure[Future](request.body.checkboxes.distinct)
     } yield {
       checkboxes.map { num =>
         ">" + r.alignment { num - 1 }.accession + "\n" + r.alignment { num - 1 }.seq + "\n"

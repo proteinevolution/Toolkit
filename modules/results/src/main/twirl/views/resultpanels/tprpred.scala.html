@@ -1,9 +1,8 @@
 @import de.proteinevolution.results.results.Common
-@import play.api.libs.json.JsValue
-@import play.api.libs.json.JsDefined
+@import io.circe.Json
 @import play.twirl.api.Html
 
-@(jobID: String,jsValue: JsValue)()
+@(jobID: String, json: Json)()
 
 @if((jsValue \ jobID \ "hits").as[List[JsValue]].size < 1) {
         <div class="note">
@@ -70,6 +69,4 @@
         $.getJSON(fileUrl, function (data_) {
             data = data_;
         });
-
-
 </script>

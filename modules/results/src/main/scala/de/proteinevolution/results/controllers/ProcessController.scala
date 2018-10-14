@@ -1,18 +1,13 @@
 package de.proteinevolution.results.controllers
 
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.models.ToolName._
-import de.proteinevolution.models.ToolName
 import de.proteinevolution.results.models.{ ForwardMode, ForwardingData, HHContext }
-import de.proteinevolution.results.results.{ HSP, SearchResult }
-import de.proteinevolution.results.services.{ ProcessFactory, ProcessService, ResultsRepository }
+import de.proteinevolution.results.services.{ ProcessService, ResultsRepository }
 import javax.inject.{ Inject, Singleton }
 import play.api.libs.concurrent.Futures
-import play.api.libs.concurrent.Futures._
 import play.api.mvc.{ Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
-import scala.concurrent.duration._
 
 @Singleton
 class ProcessController @Inject()(

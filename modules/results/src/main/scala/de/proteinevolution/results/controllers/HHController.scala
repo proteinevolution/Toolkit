@@ -39,7 +39,7 @@ class HHController @Inject()(
         val data = "data" -> hits
           .slice(params.displayStart, params.displayStart + params.pageLength)
           .map(_.toDataTable(result.db))
-        Ok((config + data).asJson)
+        Ok(config.asJson.deepMerge(data.asJson))
       case Left(_) => BadRequest
     }
   }

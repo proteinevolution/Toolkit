@@ -2,15 +2,14 @@ package de.proteinevolution.results.models.resultviews
 
 import de.proteinevolution.models.results.ResultViews
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
-import de.proteinevolution.results.results.Alignment
+import de.proteinevolution.results.results.AlignmentResult
 import de.proteinevolution.services.ToolConfig
-import play.api.libs.json.{ JsArray, JsValue }
 
 import scala.collection.immutable.ListMap
 
 case class MuscleResultView(
     jobId: String,
-    result: JsValue,
+    alignment: AlignmentResult,
     constants: ConstantsV2,
     toolConfig: ToolConfig
 ) extends ResultView {
@@ -18,14 +17,14 @@ case class MuscleResultView(
   override lazy val tabs = ListMap(
     ResultViews.CLUSTAL -> views.html.resultpanels.clustal(
       jobId,
-      Alignment.parse((result \ "alignment").as[JsArray]),
+      alignment,
       "alignment",
       toolConfig.values(ToolName.MUSCLE.value)
     ),
     ResultViews.ALIGNMENT ->
     views.html.resultpanels.alignment(
       jobId,
-      Alignment.parse((result \ "alignment").as[JsArray]),
+      alignment,
       "alignment",
       toolConfig.values(ToolName.MUSCLE.value)
     ),
