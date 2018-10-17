@@ -63,9 +63,7 @@ object PSIBlastResult {
         .downField("hits")
         .as[List[JsonObject]]
       num_hits = hits.length
-      hspList = hits.map { hit =>
-        PSIBlastHSP.parseHSP(hit.asJson, db)
-      }
+      hspList <- PSIBlastHSP.parseHSP(hit.asJson, db) // TODO !!! 
       tmpred   <- c.downField("output_psiblastp").downField("TMPRED").as[Option[String]]
       coilpred <- c.downField("output_psiblastp").downField("COILPRED").as[Option[String]]
       upperBound = calculateUpperBound(hits, eValue).getOrElse(hspList.length + 1)

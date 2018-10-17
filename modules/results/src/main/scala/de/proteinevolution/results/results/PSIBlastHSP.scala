@@ -37,20 +37,22 @@ case class PSIBlastHSP(
       "2" -> Right(Common.addBreak(description.slice(0, 84))),
       "3" -> Right("%.2e".format(eValue)),
       "4" -> Left(bitScore),
-      "5" -> Left(ref_len),
-      "6" -> Left(hit_len)
+      "5" -> Left(ref_len.toDouble),
+      "6" -> Left(hit_len.toDouble)
     ).asJson
   }
 }
 
 object PSIBlastHSP {
 
-  def parseHSP(json: Json, db: String): PSIBlastHSP = {
+  import io.circe.DecodingFailure
+
+  def parseHSP(json: Json, db: String): Either[DecodingFailure, PSIBlastHSP] = {
     val c               = json.hcursor
     val hsps            = c.downField("hsps").first
     val descriptionBase = c.downField("description").first
     for {
-      eValue      <- hsps.downField("evalue")
+      eValue      <- hsps.downField("evalue").as[Double]
       num         <- c.downField("num").as[Int]
       bitScore    <- hsps.downField("bit_score").as[Double]
       score       <- hsps.downField("score").as[Int]

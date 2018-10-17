@@ -3,16 +3,16 @@ package de.proteinevolution.results.services
 import better.files._
 import cats.data.{ EitherT, OptionT }
 import cats.implicits._
-import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.models.ToolName._
+import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.results.models.{ ForwardMode, ForwardingData }
-import de.proteinevolution.results.results.{ HSP, SearchResult, _ }
+import de.proteinevolution.results.results.{ HSP, SearchResult }
 import de.proteinevolution.results.services.ResultsRepository.ResultsService
 import io.circe.DecodingFailure
 import javax.inject.{ Inject, Singleton }
-import play.api.Configuration
-import play.api.Logger
+import play.api.{ Configuration, Logger }
+
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.sys.process.Process
 
@@ -39,7 +39,7 @@ class ProcessService @Inject()(
         case HHPRED  => (scriptPath + "/templateAlignment.sh").toFile
         case _       => throw new IllegalStateException("tool either not found nor not supported")
       })
-      isExec <- OptionT.pure(file.isExecutable)
+      isExec <- OptionT.pure[Future](file.isExecutable)
       if isExec
     } yield {
       Process(file.pathAsString, (constants.jobPath + jobId).toFile.toJava, "jobID" -> jobId, "accession" -> accession)

@@ -4,7 +4,6 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.results.models.{ ForwardMode, ForwardingData, HHContext }
 import de.proteinevolution.results.services.{ ProcessService, ResultsRepository }
 import javax.inject.{ Inject, Singleton }
-import play.api.libs.concurrent.Futures
 import play.api.mvc.{ Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
@@ -13,7 +12,7 @@ import scala.concurrent.ExecutionContext
 class ProcessController @Inject()(
     ctx: HHContext,
     service: ProcessService
-)(implicit ec: ExecutionContext, futures: Futures)
+)(implicit ec: ExecutionContext)
     extends ToolkitController(ctx.controllerComponents)
     with ResultsRepository {
 

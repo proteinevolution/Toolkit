@@ -25,9 +25,9 @@
 <tr>
     <td></td>
     <td class="hitInfo" colspan="5">
-        E-value: @{hit.evalue},&emsp;
+        E-value: @{hit.eValue},&emsp;
         Length: @{hit.ref_len},&emsp;
-        Score: @{hit.bitscore}bits (@{hit.score}),&emsp;
+        Score: @{hit.bitScore}bits (@{hit.score}),&emsp;
         Identities: @{hit.identity}/@{hit.hit_len}
         (@{Common.calculatePercentage(hit.identity, hit.hit_len)}),&emsp;
         Positives: @{hit.positive}/@{hit.hit_len}
@@ -48,7 +48,7 @@
     }
     @* Midline *@
     @{
-        Html(Common.makeRow("sequence", Array("", "", hit.midline)))
+        Html(Common.makeRow("sequence", Array("", "", hit.midLine)))
     }
     @* Hit *@
     @{

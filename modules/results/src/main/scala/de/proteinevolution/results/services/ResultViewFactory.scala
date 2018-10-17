@@ -26,7 +26,7 @@ final class ResultViewFactory @Inject()(
     if (hasResultsJson(toolName)) {
       for {
         result <- OptionT(resultFiles.getResults(jobId))
-        view   <- getResultViewsWithJson(toolName, jobId, result)
+        view   <- OptionT.fromOption[Future](getResultViewsWithJson(toolName, jobId, result).toOption)
       } yield {
         view
       }
@@ -49,7 +49,7 @@ final class ResultViewFactory @Inject()(
       case FORMATSEQ.value           => FormatSeqResultView(jobId, toolConfig)
       case CLANS.value               => ClansResultView(jobId)
       case MARCOIL.value             => MarcoilResultView(jobId, toolConfig)
-      case DEEPCOIL                  => DeepCoilResultView(jobId, toolConfig, constants)
+      case DEEPCOIL.value            => DeepCoilResultView(jobId, toolConfig, constants)
       case PCOILS.value              => PcoilsResultView(jobId, constants)
       case REPPER.value              => RepperResultView(jobId, constants)
       case MODELLER.value            => ModellerResultView(jobId, constants)
