@@ -65,8 +65,8 @@ object PSIBlastResult {
       tmpred   <- c.downField("output_psiblastp").downField("TMPRED").as[Option[String]]
       coilpred <- c.downField("output_psiblastp").downField("COILPRED").as[Option[String]]
     } yield {
-      val num_hits = hits.length
-      val hspList = hits.map(h => PSIBlastHSP.parseHSP(h.asJson, db)).flatMap(_.right.toOption)
+      val num_hits   = hits.length
+      val hspList    = hits.map(h => PSIBlastHSP.parseHSP(h.asJson, db)).flatMap(_.right.toOption)
       val upperBound = calculateUpperBound(hits, eValue).getOrElse(hspList.length + 1)
       new PSIBlastResult(
         hspList,
