@@ -29,12 +29,15 @@ final class ResultFileAccessor @Inject()(
       case None =>
         if (resultsExist(jobID, constants)) {
           val files: List[File] =
-            (constants.jobPath / jobID / "results").list.withFilter(_.extension.contains(".json")).toList
+            File(s"${constants.jobPath}/$jobID/results").list.withFilter(_.extension.contains(".json")).toList
           logger.info(s"Loading files for $jobID: ${files.map(_.name).mkString(",")}")
           val results: Json =
             files
               .map { file =>
-                file.nameWithoutExtension -> parse(file.contentAsString).asJson
+                file.nameWithoutExtension -> parse(file.contentAsString).right.toOption.getOrElse {
+                  logger.error("Invalid result json from database")
+                  throw new NoSuchElementException
+                }
               }
               .toMap[String, Json]
               .updated("jobID", jobID.asJson)

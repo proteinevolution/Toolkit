@@ -8,8 +8,8 @@ object TPRPredResult {
 
   implicit def tprpredDecoder(jobId: String, json: Json): Either[DecodingFailure, TPRPredResult] =
     for {
-      info   <- json.hcursor.downField(jobId).downField("desc").focus
-      hits   <- json.hcursor.downField(jobId).downField("hits").focus
+      info   <- json.hcursor.downField(jobId).downField("desc").as[Json]
+      hits   <- json.hcursor.downField(jobId).downField("hits").as[Json]
       info_0 <- info.hcursor.downField("0").as[Option[String]]
       info_1 <- info.hcursor.downField("1").as[Option[String]]
       hits_0 <- hits.hcursor.downField("0").as[Option[String]]
