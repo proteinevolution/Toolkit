@@ -12,7 +12,9 @@
         <br/><hr><br/><br/>
         <div class="tprResults">
                 <br>
-                <div class="tprInfo">  @{result.info.head} : <span>@{result.info(1)} </span>  </div>
+                <div class="tprInfo">
+                        @{result.info.head.getOrElse("")} : <span>@{result.info(1).getOrElse("")} </span>
+                </div>
                 <br>
                 <br>
         <table class="unstriped">
@@ -25,13 +27,13 @@
                                 <td>P-value</td>
                         </tr>
                         <tr class="sequenceAlignment">
-                                <td>@{result.hits(1)} </td>
-                                <td>@{result.hits(2)} </td>
+                                <td>@{result.hits(1).getOrElse("")} </td>
+                                <td>@{result.hits(2).getOrElse("")} </td>
                                 <td class="tprHit">
-                                        @{result.hits.headOption.map(s => Html(Common.colorRegexReplacer(s)))}
+                                        @{result.hits.head.map(s => Html(Common.colorRegexReplacer(s)))}
                                 </td>
-                                <td>@{result.hits(3)} </td>
-                                <td>@{result.hits(4)} </td>
+                                <td>@{result.hits(3).getOrElse("")} </td>
+                                <td>@{result.hits(4).getOrElse("")} </td>
                         </tr>
                 </tbody>
         </table>
