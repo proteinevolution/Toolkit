@@ -37,7 +37,7 @@ final class ResultFileAccessor @Inject()(
                 file.nameWithoutExtension -> parse(file.contentAsString).asJson
               }
               .toMap[String, Json]
-              .updated("jobID", jobID)
+              .updated("jobID", jobID.asJson)
               .asJson
           resultCache.set(jobID, results, 10.minutes)
           Some(results)

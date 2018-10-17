@@ -1,10 +1,10 @@
-@import de.proteinevolution.results.results.Common
+@import de.proteinevolution.results.results.{ Common, TPRPredResult }
 @import io.circe.Json
 @import play.twirl.api.Html
 
-@(jobID: String, json: Json)()
+@(jobID: String, result: TPRPredResult)()
 
-@if((jsValue \ jobID \ "hits").as[List[JsValue]].size < 1) {
+@if(result.hits.size < 1) {
         <div class="note">
                 No repeats found! You could consider picking a less stringent E-value inclusion cut-off.<br><br><br><br>
         </div>
@@ -12,11 +12,7 @@
         <br/><hr><br/><br/>
         <div class="tprResults">
                 <br>
-
-                @for((info) <- (jsValue \ jobID \ "desc").as[List[JsValue]]){
-
-                        <div class="tprInfo">  @{{info \ 0 }.get.as[String]} : <span>@{{info \ 1 }.get.as[String]} </span>  </div>
-                }
+                <div class="tprInfo">  @{result.info.head} : <span>@{result.info(1)} </span>  </div>
                 <br>
                 <br>
         <table class="unstriped">
@@ -28,22 +24,15 @@
                                 <td>End</td>
                                 <td>P-value</td>
                         </tr>
-                        @for((seq) <- (jsValue \ jobID \ "hits").as[List[JsValue]]){
                         <tr class="sequenceAlignment">
-                                <td>@{{seq \ 1 }.get.as[String]} </td>
-                                <td>@{{seq \ 2 }.get.as[String]} </td>
+                                <td>@{result.hits(1)} </td>
+                                <td>@{result.hits(2)} </td>
                                 <td class="tprHit">
-                                        @{seq \ 0 match {
-                                                        case JsDefined(_) => Html(Common.colorRegexReplacer((seq \ 0).get.as[String]))
-                                                        case _ => ()
-                                                }
-                                        }
-
+                                        @{result.hits.headOption.map(s => Html(Common.colorRegexReplacer(s)))}
                                 </td>
-                                <td>@{{seq \ 3 }.get.as[String]} </td>
-                                <td>@{{seq \ 4 }.get.as[String]} </td>
+                                <td>@{result.hits(3)} </td>
+                                <td>@{result.hits(4)} </td>
                         </tr>
-                        }
                 </tbody>
         </table>
         </div>

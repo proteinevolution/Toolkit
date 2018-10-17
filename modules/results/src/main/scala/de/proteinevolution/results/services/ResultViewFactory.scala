@@ -80,7 +80,11 @@ final class ResultViewFactory @Inject()(
           PsiBlastResultView(jobId, result, toolConfig, constants)
         }
       case TPRPRED.value =>
-        Right(TprPredResultView(jobId, json)) // TODO create model
+        for {
+          result <- TPRPredResult.tprpredDecoder(jobId, json)
+        } yield {
+          TprPredResultView(jobId, result)
+        }
       case HHBLITS.value =>
         for {
           result    <- json.as[HHBlitsResult]
@@ -171,7 +175,7 @@ final class ResultViewFactory @Inject()(
         }
       case PATSEARCH.value =>
         for {
-          alignment <- json.as[AlignmentResult] |
+          alignment <- json.as[AlignmentResult]
         } yield {
           PatSearchResultView(jobId, alignment, toolConfig) // TOOD create model
         }
