@@ -175,9 +175,9 @@ final class ResultViewFactory @Inject()(
         }
       case PATSEARCH.value =>
         for {
-          alignment <- json.as[AlignmentResult]
+          result <- PatSearchResult.patSearchResultDecoder(json, jobId)
         } yield {
-          PatSearchResultView(jobId, alignment, toolConfig) // TOOD create model
+          PatSearchResultView(jobId, result, toolConfig)
         }
     }
   }
