@@ -2,6 +2,7 @@
 @import better.files._
 @import play.twirl.api.Html
 @(jobID: String, result: HHompResult, tool: de.proteinevolution.models.Tool, htmlPath: String)()
+
 @if(result.num_hits < 1) {
     <div class="note">
         No hits found! Please re-run HHomp with an increased number of MSA generation steps or with a custom-built

@@ -1,6 +1,7 @@
 @import better.files._
 @import de.proteinevolution.results.results.HmmerResult
 @import play.twirl.api.Html
+
 @(jobID: String, result: HmmerResult, tool: de.proteinevolution.models.Tool, htmlPath: String)()
     @* Load html Map used for the image representation *@
     @if(result.num_hits < 1) {

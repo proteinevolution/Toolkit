@@ -5,7 +5,7 @@ import io.circe.{ DecodingFailure, Json }
 case class AlignmentItem(accession: String, seq: String, num: Int)
 
 object AlignmentItem {
-  //implicit val alignmentItemDecoder: Decoder[AlignmentItem] = deriveDecoder[AlignmentItem]
+
   implicit def alignmentItemDecoder(j: Json, i: Int): Either[DecodingFailure, AlignmentItem] =
     for {
       accession <- j.hcursor.first.as[String]
@@ -13,4 +13,5 @@ object AlignmentItem {
     } yield {
       new AlignmentItem(accession, seq, i + 1)
     }
+
 }
