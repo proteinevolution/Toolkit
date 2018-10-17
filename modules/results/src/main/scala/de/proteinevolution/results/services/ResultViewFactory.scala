@@ -163,9 +163,9 @@ final class ResultViewFactory @Inject()(
         }
       case SEQ2ID.value =>
         for {
-          alignment <- json.as[AlignmentResult]
+          result <- json.as[Unchecked]
         } yield {
-          Seq2IdResultView(jobId, alignment) // TODO model
+          Seq2IdResultView(jobId, result)
         }
       case HHFILTER.value =>
         for {
