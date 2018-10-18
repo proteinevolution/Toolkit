@@ -173,7 +173,7 @@ echo "#Executing SPIDER2 and SPOT-Disorder." >> ../results/process.log
 
 cd ../results/
 ${SPOTD}/run_local.sh ${JOBID}.pssm
-cd ../0/    1443070_4
+cd ../0/
 
 echo "done" >> ../results/process.log
 
