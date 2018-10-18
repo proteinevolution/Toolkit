@@ -8,7 +8,7 @@ object AlignmentResult {
 
   implicit val alignmentResultDecoder: Decoder[AlignmentResult] = (c: HCursor) => {
     (for {
-      alignment <- c.downArray.as[List[Json]]
+      alignment <- c.as[List[Json]]
     } yield {
       alignment
     }).map { alignment =>

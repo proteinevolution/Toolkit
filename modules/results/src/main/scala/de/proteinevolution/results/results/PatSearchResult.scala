@@ -15,7 +15,7 @@ object PatSearchResult {
 
   implicit def patSearchResultDecoder(json: Json, jobId: String): Either[DecodingFailure, PatSearchResult] =
     for {
-      hitList <- json.hcursor.downArray.as[List[Hit]]
+      hitList <- json.hcursor.downField(jobId).downField("hits").as[List[Hit]]
       len     <- json.hcursor.downField(jobId).downField("len").as[Int]
     } yield {
       new PatSearchResult(hitList, len)

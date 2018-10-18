@@ -15,6 +15,7 @@ import de.proteinevolution.models.database.jobs.JobState.{ Done, Pending, Prepar
 import de.proteinevolution.models.forms.{ JobForm, ToolForm }
 import de.proteinevolution.services.ToolConfig
 import javax.inject.{ Inject, Singleton }
+import play.api.Logger
 import play.api.cache.{ AsyncCacheApi, NamedCache }
 import play.twirl.api.HtmlFormat
 import reactivemongo.bson.BSONDocument
@@ -32,10 +33,13 @@ class ResultGetService @Inject()(
     extends JobFolderValidation
     with ToolkitTypes {
 
+  private val logger = Logger(this.getClass)
+
   def get(jobId: String, tool: String, resultView: String): Future[HtmlFormat.Appendable] = {
     resultViewFactory.apply(tool, jobId).value.map {
       case Some(view) => view.tabs(resultView)
       case None =>
+        logger.error(s"result for $jobId could not be found.")
         cleanLostJobs(jobId)
         views.html.errors.resultnotfound()
     }
