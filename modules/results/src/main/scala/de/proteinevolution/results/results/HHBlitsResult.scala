@@ -40,8 +40,8 @@ object HHBlitsResult {
   implicit val hhblitsResultDecoder: Decoder[HHBlitsResult] = (c: HCursor) =>
     for {
       jobId      <- c.downField("jobID").as[String]
-      hits       <- c.downField(jobId).downField("hits").downArray.as[List[Json]] // downArray?
-      alignments <- c.downField(jobId).downField("alignments").as[List[Json]] // or not?
+      hits       <- c.downField(jobId).downField("hits").as[List[Json]]
+      alignments <- c.downField(jobId).downField("alignments").as[List[Json]]
       db         <- c.downField(jobId).downField("db").as[String]
       alignment  <- c.downField("reduced").as[AlignmentResult]
       query      <- c.downField("query").as[SingleSeq]
