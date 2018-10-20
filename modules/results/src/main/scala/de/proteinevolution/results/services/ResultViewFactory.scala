@@ -127,37 +127,37 @@ final class ResultViewFactory @Inject()(
         }
       case CLUSTALO.value =>
         for {
-          alignment <- json.as[AlignmentResult]
+          alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
         } yield {
           ClustalOmegaResultView(jobId, alignment, constants, toolConfig)
         }
       case KALIGN.value =>
         for {
-          alignment <- json.as[AlignmentResult]
+          alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
         } yield {
           KalignResultView(jobId, alignment, constants, toolConfig)
         }
       case MAFFT.value =>
         for {
-          alignment <- json.as[AlignmentResult]
+          alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
         } yield {
           MafftResultView(jobId, alignment, constants, toolConfig)
         }
       case MSAPROBS.value =>
         for {
-          alignment <- json.as[AlignmentResult]
+          alignment <- json.hcursor.downField("alignnment").as[AlignmentResult]
         } yield {
           MsaProbsResultView(jobId, alignment, constants, toolConfig)
         }
       case MUSCLE.value =>
         for {
-          alignment <- json.as[AlignmentResult]
+          alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
         } yield {
           MuscleResultView(jobId, alignment, constants, toolConfig)
         }
       case TCOFFEE.value =>
         for {
-          alignment <- json.as[AlignmentResult]
+          alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
         } yield {
           TcoffeeResultView(jobId, alignment, constants, toolConfig)
         }
@@ -169,7 +169,7 @@ final class ResultViewFactory @Inject()(
         }
       case HHFILTER.value =>
         for {
-          alignment <- json.as[AlignmentResult]
+          alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
         } yield {
           HHFilterResultView(jobId, alignment, constants, toolConfig)
         }
