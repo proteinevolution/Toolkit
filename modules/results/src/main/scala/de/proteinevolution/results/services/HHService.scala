@@ -6,13 +6,13 @@ import de.proteinevolution.models.ToolName
 import de.proteinevolution.models.ToolName._
 import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.results.models.ResultsForm
+import de.proteinevolution.results.results.General.DTParam
 import de.proteinevolution.results.results._
 import de.proteinevolution.results.services.ResultsRepository.ResultsService
 import io.circe.DecodingFailure
 import javax.inject.{ Inject, Singleton }
 import play.api.Logger
 import play.twirl.api.HtmlFormat
-import de.proteinevolution.results.results.General.DTParam
 
 import scala.concurrent.{ ExecutionContext, Future }
 

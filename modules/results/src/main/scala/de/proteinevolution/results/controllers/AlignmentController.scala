@@ -40,7 +40,7 @@ class AlignmentController @Inject()(
         json <- OptionT(resultFiles.getResults(jobID))
         r    <- OptionT.fromOption[Future](json.hcursor.downField(request.body.resultName).as[AlignmentResult].toOption)
       } yield {
-        (!(request.body.end < r.alignment.length || request.body.start > r.alignment.length),
+        (request.body.end < r.alignment.length && request.body.start < r.alignment.length,
          r.alignment.slice(request.body.start, request.body.end).map(views.html.alignment.alignmentrow(_)))
       }).value.map {
         case Some((inRange, hits)) =>
