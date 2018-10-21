@@ -29,7 +29,7 @@ object General {
     implicit val decodeSingleSeq: Decoder[SingleSeq] = (c: HCursor) =>
       for {
         accession <- c.downArray.first.downArray.first.as[String]
-        seq       <- c.downArray.first.downArray.rightN(1).as[String]
+        seq       <- c.downArray.first.downArray.right.as[String]
       } yield {
         new SingleSeq(accession, seq)
     }

@@ -1,7 +1,7 @@
 package de.proteinevolution.results.results
 
-import io.circe.{ Decoder, HCursor, Json }
 import io.circe.syntax._
+import io.circe.{ Decoder, HCursor, Json }
 
 case class HHPredHSP(
     query: HHPredQuery,
@@ -33,6 +33,7 @@ case class HHPredHSP(
 }
 
 object HHPredHSP {
+
   implicit def hhpredHSPDecoder(struct: String): Decoder[HHPredHSP] =
     (c: HCursor) =>
       for {
@@ -41,9 +42,9 @@ object HHPredHSP {
         templateResult <- c.downField("template").as[HHPredTemplate](HHPredTemplate.hhpredTemplateDecoder(struct))
         agree          <- c.downField("agree").as[String]
         description    <- c.downField("header").as[String]
-        num            <- c.downField("no").as[Int]
-        ss_score       <- c.downField("ss").as[Double]
-        confidence     <- c.downField("confidence").as[String]
+        num            <- c.downField("no").as[Option[Int]]
+        ss_score       <- c.downField("ss").as[Option[Double]]
+        confidence     <- c.downField("confidence").as[Option[String]]
       } yield {
         new HHPredHSP(
           queryResult,
@@ -51,21 +52,26 @@ object HHPredHSP {
           infoResult,
           agree,
           description,
-          num,
-          ss_score,
-          confidence,
+          num.getOrElse(-1),
+          ss_score.getOrElse(-1D),
+          confidence.getOrElse(""),
           agree.length
         )
     }
+
   def hhpredHSPListDecoder(hits: List[Json], alignments: List[Json]): List[HHPredHSP] = {
-    alignments.zip(hits).flatMap {
-      case (a, h) =>
-        (for {
-          struct <- h.hcursor.downField("struc").as[String]
-          hsp    <- a.hcursor.as[HHPredHSP](hhpredHSPDecoder(struct))
-        } yield {
-          hsp
-        }).toOption
-    }
+    alignments
+      .zip(hits)
+      .map {
+        case (a, h) =>
+          for {
+            struct <- h.hcursor.downField("struc").as[Option[String]]
+            hsp    <- a.hcursor.as[HHPredHSP](hhpredHSPDecoder(struct.getOrElse("")))
+          } yield {
+            hsp
+          }
+      }
+      .flatMap(_.right.toOption)
   }
+
 }
