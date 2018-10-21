@@ -9,8 +9,8 @@ object TPRPredResult {
 
   implicit def tprpredDecoder(jobId: String, json: Json): Either[DecodingFailure, TPRPredResult] =
     for {
-      info <- json.hcursor.downField(jobId).downField("desc").downArray.as[List[Desc]]
-      hits <- json.hcursor.downField(jobId).downField("hits").downArray.as[List[Hit]]
+      info <- json.hcursor.downField(jobId).downField("desc").as[List[Desc]]
+      hits <- json.hcursor.downField(jobId).downField("hits").as[List[Hit]]
     } yield {
       new TPRPredResult(info, hits)
     }
@@ -20,8 +20,8 @@ object TPRPredResult {
   object Desc {
     implicit val descDecoder: Decoder[Desc] = (c: HCursor) =>
       for {
-        title <- c.right.as[Option[String]]
-        value <- c.first.as[Option[String]]
+        title <- c.downArray.first.as[Option[String]]
+        value <- c.downArray.right.as[Option[String]]
       } yield new Desc(title, value)
   }
 
@@ -36,11 +36,11 @@ object TPRPredResult {
   object Hit {
     implicit val hitDecoder: Decoder[Hit] = (c: HCursor) =>
       for {
-        alignment <- c.first.as[Option[String]]
-        repeat    <- c.right.as[Option[String]]
-        begin     <- c.rightN(2).as[Option[String]]
-        end       <- c.rightN(3).as[Option[String]]
-        pValue    <- c.rightN(4).as[Option[String]]
+        alignment <- c.downArray.first.as[Option[String]]
+        repeat    <- c.downArray.right.as[Option[String]]
+        begin     <- c.downArray.rightN(2).as[Option[String]]
+        end       <- c.downArray.rightN(3).as[Option[String]]
+        pValue    <- c.downArray.rightN(4).as[Option[String]]
       } yield new Hit(alignment, repeat, begin, end, pValue)
   }
 
