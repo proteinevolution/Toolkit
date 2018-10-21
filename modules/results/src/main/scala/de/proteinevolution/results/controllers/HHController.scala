@@ -4,6 +4,7 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.results.models.{ HHContext, ResultsForm }
 import de.proteinevolution.results.results.General.DTParam
 import de.proteinevolution.results.services.HHService
+import io.circe.JsonObject
 import io.circe.syntax._
 import javax.inject.{ Inject, Singleton }
 import play.api.mvc.{ Action, AnyContent }
@@ -35,11 +36,18 @@ class HHController @Inject()(
     )
     service.dataTable(jobId, params).value.map {
       case Right((hits, result)) =>
-        val config = Map("draw" -> params.draw, "recordsTotal" -> result.num_hits, "recordsFiltered" -> hits.length)
-        val data = "data" -> hits
-          .slice(params.displayStart, params.displayStart + params.pageLength)
-          .map(_.toDataTable(result.db))
-        Ok(config.asJson.deepMerge(data.asJson))
+        val config = Map(
+          "draw"            -> params.draw.asJson,
+          "recordsTotal"    -> result.num_hits.asJson,
+          "recordsFiltered" -> hits.length.asJson
+        )
+        val data = Map(
+          "data" -> hits
+            .slice(params.displayStart, params.displayStart + params.pageLength)
+            .map(_.toDataTable(result.db))
+            .asJson
+        )
+        Ok(JsonObject.fromMap(config ++ data).asJson)
       case Left(_) => BadRequest
     }
   }

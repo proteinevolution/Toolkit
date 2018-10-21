@@ -60,18 +60,15 @@ object HHPredHSP {
     }
 
   def hhpredHSPListDecoder(hits: List[Json], alignments: List[Json]): List[HHPredHSP] = {
-    alignments
-      .zip(hits)
-      .map {
-        case (a, h) =>
-          for {
-            struct <- h.hcursor.downField("struc").as[Option[String]]
-            hsp    <- a.hcursor.as[HHPredHSP](hhpredHSPDecoder(struct.getOrElse("")))
-          } yield {
-            hsp
-          }
-      }
-      .flatMap(_.right.toOption)
+    alignments.zip(hits).flatMap {
+      case (a, h) =>
+        (for {
+          struct <- h.hcursor.downField("struc").as[Option[String]]
+          hsp    <- a.hcursor.as[HHPredHSP](hhpredHSPDecoder(struct.getOrElse("")))
+        } yield {
+          hsp
+        }).toOption
+    }
   }
 
 }
