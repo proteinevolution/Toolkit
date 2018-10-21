@@ -34,7 +34,7 @@ case class HHPredHSP(
 
 object HHPredHSP {
 
-  implicit def hhpredHSPDecoder(struct: String): Decoder[HHPredHSP] =
+  implicit def hhpredHSPDecoder(struct: String, ss_score: Double): Decoder[HHPredHSP] =
     (c: HCursor) =>
       for {
         queryResult    <- c.downField("query").as[HHPredQuery]
@@ -43,7 +43,6 @@ object HHPredHSP {
         agree          <- c.downField("agree").as[String]
         description    <- c.downField("header").as[String]
         num            <- c.downField("no").as[Option[Int]]
-        ss_score       <- c.downField("ss").as[Option[Double]]
         confidence     <- c.downField("confidence").as[Option[String]]
       } yield {
         new HHPredHSP(
@@ -53,7 +52,7 @@ object HHPredHSP {
           agree,
           description,
           num.getOrElse(-1),
-          ss_score.getOrElse(-1D),
+          ss_score,
           confidence.getOrElse(""),
           agree.length
         )
@@ -63,8 +62,9 @@ object HHPredHSP {
     alignments.zip(hits).flatMap {
       case (a, h) =>
         (for {
-          struct <- h.hcursor.downField("struc").as[Option[String]]
-          hsp    <- a.hcursor.as[HHPredHSP](hhpredHSPDecoder(struct.getOrElse("")))
+          struct   <- h.hcursor.downField("struc").as[Option[String]]
+          ss_score <- h.hcursor.downField("ss").as[Option[Double]]
+          hsp      <- a.hcursor.as[HHPredHSP](hhpredHSPDecoder(struct.getOrElse(""), ss_score.getOrElse(-1D)))
         } yield {
           hsp
         }).toOption
