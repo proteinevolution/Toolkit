@@ -36,7 +36,7 @@ final class ResultViewFactory @Inject()(
   }
 
   private val toolsWithResultJson: List[String] =
-    (PSIBLAST :: TPRPRED :: HHBLITS :: DEEPCOIL :: HMMER :: HHPRED :: HHOMP ::
+    (PSIBLAST :: TPRPRED :: HHBLITS :: HMMER :: HHPRED :: HHOMP ::
     HHPRED_ALIGN :: QUICK2D :: CLUSTALO :: KALIGN :: MAFFT :: MSAPROBS ::
     MUSCLE :: TCOFFEE :: SEQ2ID :: HHFILTER :: PATSEARCH :: Nil).map(_.value)
 
