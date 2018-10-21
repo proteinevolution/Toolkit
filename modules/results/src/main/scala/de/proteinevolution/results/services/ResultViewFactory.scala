@@ -145,7 +145,7 @@ final class ResultViewFactory @Inject()(
         }
       case MSAPROBS.value =>
         for {
-          alignment <- json.hcursor.downField("alignnment").as[AlignmentResult]
+          alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
         } yield {
           MsaProbsResultView(jobId, alignment, constants, toolConfig)
         }
