@@ -73,10 +73,10 @@ object Quick2DResult {
   object Psipred {
     implicit val psipredDecoder: Decoder[Psipred] = (c: HCursor) =>
       for {
-        conf <- c.downField("psipred_conf").as[String]
-        seq  <- c.downField("psipred").as[String]
+        conf <- c.downField("psipred_conf").as[Option[String]]
+        seq  <- c.downField("psipred").as[Option[String]]
       } yield {
-        new Psipred("psipred", seq, conf)
+        new Psipred("psipred", seq.getOrElse(""), conf.getOrElse(""))
     }
   }
 
@@ -85,10 +85,10 @@ object Quick2DResult {
   object Pipred {
     implicit val pipredDecoder: Decoder[Pipred] = (c: HCursor) =>
       for {
-        conf <- c.downField("pipred_conf").as[String]
-        seq  <- c.downField("pipred").as[String]
+        conf <- c.downField("pipred_conf").as[Option[String]]
+        seq  <- c.downField("pipred").as[Option[String]]
       } yield {
-        new Pipred("pipred", seq, conf)
+        new Pipred("pipred", seq.getOrElse(""), conf.getOrElse(""))
     }
   }
 
@@ -97,9 +97,9 @@ object Quick2DResult {
   object Marcoil {
     implicit val marcoilDecoder: Decoder[Marcoil] = (c: HCursor) =>
       for {
-        seq <- c.downField("marcoil").as[String]
+        seq <- c.downField("marcoil").as[Option[String]]
       } yield {
-        new Marcoil("marcoil", seq)
+        new Marcoil("marcoil", seq.getOrElse(""))
     }
   }
 
@@ -108,9 +108,9 @@ object Quick2DResult {
   object Coils {
     implicit val coilsDecoder: Decoder[Coils] = (c: HCursor) =>
       for {
-        seq <- c.downField("coils_w28").as[String]
+        seq <- c.downField("coils_w28").as[Option[String]]
       } yield {
-        new Coils("coils", seq)
+        new Coils("coils", seq.getOrElse(""))
     }
   }
 
@@ -119,9 +119,9 @@ object Quick2DResult {
   object Pcoils {
     implicit val pcoilsDecoder: Decoder[Pcoils] = (c: HCursor) =>
       for {
-        seq <- c.downField("pcoils_w28").as[String]
+        seq <- c.downField("pcoils_w28").as[Option[String]]
       } yield {
-        new Pcoils("pcoils", seq)
+        new Pcoils("pcoils", seq.getOrElse(""))
     }
   }
 
@@ -130,9 +130,9 @@ object Quick2DResult {
   object Tmhmm {
     implicit val tmhmmDecoder: Decoder[Tmhmm] = (c: HCursor) =>
       for {
-        seq <- c.downField("tmhmm").as[String]
+        seq <- c.downField("tmhmm").as[Option[String]]
       } yield {
-        new Tmhmm("tmhmm", seq)
+        new Tmhmm("tmhmm", seq.getOrElse(""))
     }
   }
 
@@ -141,9 +141,9 @@ object Quick2DResult {
   object Phobius {
     implicit val phobiusDecoder: Decoder[Phobius] = (c: HCursor) =>
       for {
-        seq <- c.downField("phobius").as[String]
+        seq <- c.downField("phobius").as[Option[String]]
       } yield {
-        new Phobius("phobius", seq)
+        new Phobius("phobius", seq.getOrElse(""))
     }
   }
 
@@ -152,9 +152,9 @@ object Quick2DResult {
   object Polyphobius {
     implicit val decodePolyphobius: Decoder[Polyphobius] = (c: HCursor) =>
       for {
-        seq <- c.downField("polyphobius").as[String]
+        seq <- c.downField("polyphobius").as[Option[String]]
       } yield {
-        new Polyphobius("polyphobius", seq)
+        new Polyphobius("polyphobius", seq.getOrElse(""))
     }
   }
 
@@ -163,9 +163,9 @@ object Quick2DResult {
   object Spider2 {
     implicit val decodeSpider2: Decoder[Spider2] = (c: HCursor) =>
       for {
-        seq <- c.downField("spider2").as[String]
+        seq <- c.downField("spider2").as[Option[String]]
       } yield {
-        new Spider2("spider2", seq)
+        new Spider2("spider2", seq.getOrElse(""))
     }
   }
 
@@ -174,9 +174,9 @@ object Quick2DResult {
   object Spotd {
     implicit val spotdDecoder: Decoder[Spotd] = (c: HCursor) =>
       for {
-        seq <- c.downField("spot-d").as[String]
+        seq <- c.downField("spot-d").as[Option[String]]
       } yield {
-        new Spotd("spotd", seq)
+        new Spotd("spotd", seq.getOrElse(""))
     }
   }
 
@@ -185,9 +185,9 @@ object Quick2DResult {
   object Iupred {
     implicit val iupredDecoder: Decoder[Iupred] = (c: HCursor) =>
       for {
-        seq <- c.downField("iupred").as[String]
+        seq <- c.downField("iupred").as[Option[String]]
       } yield {
-        new Iupred("iupred", seq)
+        new Iupred("iupred", seq.getOrElse(""))
     }
   }
 
@@ -196,9 +196,9 @@ object Quick2DResult {
   object Disopred3 {
     implicit val dispored3Decoder: Decoder[Disopred3] = (c: HCursor) =>
       for {
-        seq <- c.downField("disopred3").as[String]
+        seq <- c.downField("disopred3").as[Option[String]]
       } yield {
-        new Disopred3("disopred3", seq)
+        new Disopred3("disopred3", seq.getOrElse(""))
     }
   }
 
@@ -207,9 +207,9 @@ object Quick2DResult {
   object Signal {
     implicit val signalDecoder: Decoder[Signal] = (c: HCursor) =>
       for {
-        seq <- c.downField("signal").as[String]
+        seq <- c.downField("signal").as[Option[String]]
       } yield {
-        new Signal("signal", seq)
+        new Signal("signal", seq.getOrElse(""))
     }
   }
 
@@ -218,9 +218,9 @@ object Quick2DResult {
   object Psspred {
     implicit val psspredDecoder: Decoder[Psspred] = (c: HCursor) =>
       for {
-        seq <- c.downField("psspred").as[String]
+        seq <- c.downField("psspred").as[Option[String]]
       } yield {
-        new Psspred("psspred", seq)
+        new Psspred("psspred", seq.getOrElse(""))
     }
   }
 
@@ -229,9 +229,9 @@ object Quick2DResult {
   object Deepcnf {
     implicit val deepcnfDecoder: Decoder[Deepcnf] = (c: HCursor) =>
       for {
-        seq <- c.downField("deepcnf").as[String]
+        seq <- c.downField("deepcnf").as[Option[String]]
       } yield {
-        new Deepcnf("deepcnf", seq)
+        new Deepcnf("deepcnf", seq.getOrElse(""))
     }
   }
 
