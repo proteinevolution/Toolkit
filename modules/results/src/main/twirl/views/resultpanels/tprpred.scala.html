@@ -11,9 +11,11 @@
         <br/><hr><br/><br/>
         <div class="tprResults">
                 <br>
-                <div class="tprInfo">
-                    @{result.info.head.getOrElse("")}: <span>@{result.info(1).getOrElse("")} </span>
-                </div>
+                @for(info <- result.info) {
+                        <div class="tprInfo">
+                            @{info.title.getOrElse("")}: <span>@{info.value.getOrElse("")} </span>
+                        </div>
+                }
                 <br>
                 <br>
         <table class="unstriped">
@@ -25,15 +27,17 @@
                                 <td>End</td>
                                 <td>P-value</td>
                         </tr>
-                        <tr class="sequenceAlignment">
-                                <td>@{result.hits(1).getOrElse("")} </td>
-                                <td>@{result.hits(2).getOrElse("")} </td>
-                                <td class="tprHit">
-                                    @{result.hits.head.map(s => Html(Common.colorRegexReplacer(s))).getOrElse("")}
-                                </td>
-                                <td>@{result.hits(3).getOrElse("")} </td>
-                                <td>@{result.hits(4).getOrElse("")} </td>
-                        </tr>
+                        @for(hit <- result.hits) {
+                                <tr class="sequenceAlignment">
+                                        <td>@{hit.repeat.getOrElse("")} </td>
+                                        <td>@{hit.begin.getOrElse("")} </td>
+                                        <td class="tprHit">
+                                            @{hit.alignment.map(s => Html(Common.colorRegexReplacer(s))).getOrElse("")}
+                                        </td>
+                                        <td>@{hit.end.getOrElse("")} </td>
+                                        <td>@{hit.pValue.getOrElse("")} </td>
+                                </tr>
+                        }
                 </tbody>
         </table>
         </div>
