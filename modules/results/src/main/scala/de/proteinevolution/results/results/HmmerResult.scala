@@ -34,13 +34,14 @@ case class HmmerResult(
 }
 
 object HmmerResult {
+
   implicit val hmmerResultDecoder: Decoder[HmmerResult] = (c: HCursor) =>
     for {
       jobId           <- c.downField("jobID").as[String]
       hits            <- c.downField(jobId).downField("hits").as[List[Json]]
-      alignmentResult <- c.downField("alignment").as[AlignmentResult]
+      alignmentResult <- c.downField("alignment").as[Option[AlignmentResult]]
       hsps            <- c.downField(jobId).downField("hsps").as[List[Json]]
-      db              <- c.downField(jobId).downField("db").as[String]
+      db              <- c.downField(jobId).downField("db").as[Option[String]]
       query           <- c.downField("query").as[SingleSeq]
       tmpred          <- c.downField(jobId).downField("TMPRED").as[Option[String]]
       coilpred        <- c.downField(jobId).downField("COILPRED").as[Option[String]]
@@ -49,11 +50,12 @@ object HmmerResult {
       new HmmerResult(
         hspList,
         hspList.length,
-        alignmentResult,
+        alignmentResult.getOrElse(AlignmentResult(Nil)),
         query,
-        db,
+        db.getOrElse(""),
         tmpred.getOrElse("0"),
         coilpred.getOrElse("1")
       )
   }
+
 }
