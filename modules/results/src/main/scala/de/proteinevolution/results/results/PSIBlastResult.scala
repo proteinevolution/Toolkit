@@ -45,6 +45,7 @@ object PSIBlastResult {
       iter_num <- c
         .downField("output_psiblastp")
         .downField("BlastOutput2")
+        .downArray
         .first
         .downField("report")
         .downField("results")
@@ -55,9 +56,11 @@ object PSIBlastResult {
       hits <- c
         .downField("output_psiblastp")
         .downField("BlastOutput2")
+        .downArray
         .first
         .downField("report")
         .downField("iterations")
+        .downArray
         .rightN(iter_num.size - 1)
         .downField("search")
         .downField("hits")
@@ -86,7 +89,7 @@ object PSIBlastResult {
     (for {
       hit <- hits
       cursor = hit.asJson.hcursor
-      eval <- cursor.downField("hsps").first.downField("evalue").as[Double].toOption
+      eval <- cursor.downField("hsps").downArray.first.downField("evalue").as[Double].toOption
       num  <- cursor.downField("num").as[Int].toOption
       if eval >= eValue.toDouble
     } yield {

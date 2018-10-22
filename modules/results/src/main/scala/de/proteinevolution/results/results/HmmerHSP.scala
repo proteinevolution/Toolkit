@@ -1,8 +1,8 @@
 package de.proteinevolution.results.results
 
 import de.proteinevolution.results.results.HHTemplate.DummyTemplate
-import io.circe.{ Decoder, HCursor, Json }
 import io.circe.syntax._
+import io.circe.{ Decoder, HCursor, Json }
 
 case class HmmerHSP(
     eValue: Double,
