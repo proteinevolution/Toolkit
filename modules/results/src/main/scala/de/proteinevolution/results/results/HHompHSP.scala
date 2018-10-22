@@ -36,7 +36,7 @@ case class HHompHSP(
 
 object HHompHSP {
 
-  implicit def hhompHSPDecoder(struct: String): Decoder[HHompHSP] =
+  implicit def hhompHSPDecoder(struct: String, ss_score: Double): Decoder[HHompHSP] =
     (c: HCursor) =>
       for {
         queryResult    <- c.downField("query").as[HHompQuery]
@@ -45,7 +45,6 @@ object HHompHSP {
         agree          <- c.downField("agree").as[String]
         description    <- c.downField("header").as[String]
         num            <- c.downField("no").as[Int]
-        ss_score       <- c.downField("ss").as[Double]
       } yield {
         new HHompHSP(queryResult, templateResult, infoResult, agree, description, num, ss_score, agree.length)
     }
@@ -54,8 +53,9 @@ object HHompHSP {
     alignments.zip(hits).flatMap {
       case (a, h) =>
         (for {
-          struct <- h.hcursor.downField("struc").as[String]
-          hsp    <- a.hcursor.as[HHompHSP](hhompHSPDecoder(struct))
+          struct   <- h.hcursor.downField("struc").as[String]
+          ss_score <- h.hcursor.downField("ss").as[Double]
+          hsp      <- a.hcursor.as[HHompHSP](hhompHSPDecoder(struct, ss_score))
         } yield {
           hsp
         }).toOption
