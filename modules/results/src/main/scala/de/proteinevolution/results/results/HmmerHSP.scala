@@ -39,6 +39,7 @@ case class HmmerHSP(
 }
 
 object HmmerHSP {
+
   implicit def hmmerHSPDecoder(struct: String): Decoder[HmmerHSP] =
     (c: HCursor) =>
       for {
@@ -82,11 +83,12 @@ object HmmerHSP {
     alignments.zip(hits).flatMap {
       case (a, h) =>
         (for {
-          struct <- h.hcursor.downField("struc").as[String]
-          hsp    <- a.hcursor.as[HmmerHSP](hmmerHSPDecoder(struct))
+          struct <- h.hcursor.downField("struc").as[Option[String]]
+          hsp    <- a.hcursor.as[HmmerHSP](hmmerHSPDecoder(struct.getOrElse("")))
         } yield {
           hsp
         }).toOption
     }
   }
+
 }

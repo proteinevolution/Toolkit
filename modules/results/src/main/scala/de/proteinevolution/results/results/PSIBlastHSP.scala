@@ -49,8 +49,8 @@ object PSIBlastHSP {
 
   def parseHSP(json: Json, db: String): Either[DecodingFailure, PSIBlastHSP] = {
     val c               = json.hcursor
-    val hsps            = c.downField("hsps").first
-    val descriptionBase = c.downField("description").first
+    val hsps            = c.downField("hsps").downArray.first
+    val descriptionBase = c.downField("description").downArray.first
     for {
       eValue      <- hsps.downField("evalue").as[Double]
       num         <- c.downField("num").as[Int]
