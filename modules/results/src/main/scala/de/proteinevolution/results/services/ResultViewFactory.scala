@@ -22,6 +22,8 @@ final class ResultViewFactory @Inject()(
 
   import io.circe.DecodingFailure
 
+  // TODO pass error to the frontend if the result is NONE
+
   def apply(toolName: String, jobId: String): OptionT[Future, ResultView] = {
     if (hasResultsJson(toolName)) {
       for {

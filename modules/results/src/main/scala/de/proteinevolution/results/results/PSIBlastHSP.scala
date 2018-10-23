@@ -24,8 +24,8 @@ case class PSIBlastHSP(
     accession: String,
     midLine: String,
     description: String,
-    info: PSIBlastInfo = PSIBlastInfo(-1, -1, -1, -1),
-    template: HHTemplate = DummyTemplate()
+    info: PSIBlastInfo = PSIBlastInfo(-1, -1, -1, -1), // TODO get rid of that
+    template: HHTemplate = DummyTemplate() // TODO get rid of that
 ) extends HSP {
 
   import SearchResultImplicits._
@@ -41,6 +41,7 @@ case class PSIBlastHSP(
       "6" -> Left(hit_len.toDouble)
     ).asJson
   }
+
 }
 
 object PSIBlastHSP {
@@ -71,13 +72,13 @@ object PSIBlastHSP {
       midLine     <- hsps.downField("midline").as[String]
       description <- descriptionBase.downField("title").as[String]
       accession1  <- descriptionBase.downField("title").as[String]
-      accession2  <- descriptionBase.downField("accession").as[String]
+      accession2  <- descriptionBase.downField("accession").as[Option[String]]
     } yield {
       // workaround: bug of psiblast output when searching pdb_nr
       val accession = if (db == "pdb_nr") {
-        accession1.split("\\s+").head
+        accession1.split("\\s+").headOption.getOrElse("")
       } else {
-        General.refineAccession(accession2)
+        General.refineAccession(accession2.getOrElse(""))
       }
       PSIBlastHSP(
         eValue,
