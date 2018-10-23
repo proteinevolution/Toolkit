@@ -46,10 +46,9 @@ case class PSIBlastHSP(
 
 object PSIBlastHSP {
 
-  import io.circe.DecodingFailure
+  import io.circe.{ Decoder, HCursor }
 
-  def parseHSP(json: Json, db: String): Either[DecodingFailure, PSIBlastHSP] = {
-    val c               = json.hcursor
+  def parseHSP(db: String): Decoder[PSIBlastHSP] = (c: HCursor) => {
     val hsps            = c.downField("hsps").downArray.first
     val descriptionBase = c.downField("description").downArray.first
     for {
@@ -66,19 +65,18 @@ object PSIBlastHSP {
       query_seq   <- hsps.downField("qseq").as[String]
       query_start <- hsps.downField("query_from").as[Int]
       query_end   <- hsps.downField("query_to").as[Int]
-      query_id    <- hsps.downField("query_id").as[String]
+      query_id    <- hsps.downField("query_id").as[Option[String]]
       ref_len     <- c.downField("len").as[Int]
       hit_len     <- hsps.downField("align_len").as[Int]
       midLine     <- hsps.downField("midline").as[String]
       description <- descriptionBase.downField("title").as[String]
-      accession1  <- descriptionBase.downField("title").as[String]
-      accession2  <- descriptionBase.downField("accession").as[Option[String]]
+      accession   <- descriptionBase.downField("accession").as[String]
     } yield {
       // workaround: bug of psiblast output when searching pdb_nr
-      val accession = if (db == "pdb_nr") {
-        accession1.split("\\s+").headOption.getOrElse("")
+      val accessionString = if (db == "pdb_nr") {
+        description.split("\\s+").headOption.getOrElse("")
       } else {
-        General.refineAccession(accession2.getOrElse(""))
+        General.refineAccession(accession)
       }
       PSIBlastHSP(
         eValue,
@@ -91,13 +89,13 @@ object PSIBlastHSP {
         query_seq.toUpperCase,
         query_start,
         query_end,
-        query_id,
+        query_id.getOrElse(""),
         hit_len,
         gaps,
         identity,
         positive,
         ref_len,
-        accession,
+        accessionString,
         midLine.toUpperCase,
         description
       )

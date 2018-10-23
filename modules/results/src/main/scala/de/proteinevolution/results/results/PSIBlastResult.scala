@@ -2,7 +2,6 @@ package de.proteinevolution.results.results
 
 import de.proteinevolution.results.results.General.{ DTParam, SingleSeq }
 import io.circe._
-import io.circe.syntax._
 
 case class PSIBlastResult(
     HSPS: List[PSIBlastHSP],
@@ -39,42 +38,31 @@ case class PSIBlastResult(
 
 object PSIBlastResult {
 
-  implicit val decodePsiBlastResult: Decoder[PSIBlastResult] = (c: HCursor) =>
+  implicit val decodePsiBlastResult: Decoder[PSIBlastResult] = (c: HCursor) => {
+    val iterations = c
+      .downField("output_psiblastp")
+      .downField("BlastOutput2")
+      .downArray
+      .first
+      .downField("report")
+      .downField("results")
+      .downField("iterations")
     for {
-      query <- c.downField("query").as[SingleSeq]
-      iter_num <- c
-        .downField("output_psiblastp")
-        .downField("BlastOutput2")
-        .downArray
-        .first
-        .downField("report")
-        .downField("results")
-        .downField("iterations")
-        .as[List[Json]]
-      db     <- c.downField("output_psiblastp").downField("db").as[String]
-      eValue <- c.downField("output_psiblastp").downField("evalue").as[String]
-      hits <- c
-        .downField("output_psiblastp")
-        .downField("BlastOutput2")
-        .downArray
-        .first
-        .downField("report")
-        .downField("iterations")
-        .downArray
-        .rightN(iter_num.size - 1)
-        .downField("search")
-        .downField("hits")
-        .as[List[Json]]
-      tmpred   <- c.downField("output_psiblastp").downField("TMPRED").as[Option[String]]
-      coilpred <- c.downField("output_psiblastp").downField("COILPRED").as[Option[String]]
+      query     <- c.downField("query").as[SingleSeq]
+      iter_list <- iterations.as[List[Json]]
+      db        <- c.downField("output_psiblastp").downField("db").as[String]
+      eValue    <- c.downField("output_psiblastp").downField("evalue").as[String]
+      hits      <- iterations.downArray.rightN(iter_list.size - 1).downField("search").downField("hits").as[List[Json]]
+      tmpred    <- c.downField("output_psiblastp").downField("TMPRED").as[Option[String]]
+      coilpred  <- c.downField("output_psiblastp").downField("COILPRED").as[Option[String]]
     } yield {
       val num_hits   = hits.length
-      val hspList    = hits.map(h => PSIBlastHSP.parseHSP(h.asJson, db)).flatMap(_.right.toOption)
+      val hspList    = hits.flatMap(_.hcursor.as[PSIBlastHSP](PSIBlastHSP.parseHSP(db)).toOption)
       val upperBound = calculateUpperBound(hits, eValue).getOrElse(hspList.length + 1)
       new PSIBlastResult(
         hspList,
         num_hits,
-        iter_num.size - 1,
+        iter_list.size - 1,
         db,
         eValue.toDouble,
         query,
@@ -82,6 +70,7 @@ object PSIBlastResult {
         tmpred.getOrElse("0"),
         coilpred.getOrElse("1")
       )
+    }
   }
 
   private[this] def calculateUpperBound(hits: List[Json], eValue: String): Option[Int] = {
