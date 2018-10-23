@@ -40,7 +40,7 @@ case class HmmerHSP(
 
 object HmmerHSP {
 
-  implicit def hmmerHSPDecoder(struct: String): Decoder[HmmerHSP] =
+  implicit val hmmerHSPDecoder: Decoder[HmmerHSP] =
     (c: HCursor) =>
       for {
         evalue         <- c.downField("evalue").as[Double]
@@ -55,11 +55,12 @@ object HmmerHSP {
         query_end      <- c.downField("query_end").as[Int]
         query_id       <- c.downField("query_id").as[String]
         hit_len        <- c.downField("hit_len").as[Int]
+        hit_id         <- c.downField("hit_id").as[String]
         midline        <- c.downField("aln_ann").downField("PP").as[String]
         description    <- c.downField("hit_description").as[String]
         domain_obs_num <- c.downField("domain_obs_num").as[Int]
       } yield {
-        val accession = General.refineAccession(struct)
+        val accession = General.refineAccession(hit_id)
         new HmmerHSP(
           evalue,
           full_evalue,
@@ -79,16 +80,5 @@ object HmmerHSP {
           domain_obs_num
         )
     }
-  def hmmerHSPListDecoder(hits: List[Json], alignments: List[Json]): List[HmmerHSP] = {
-    alignments.zip(hits).flatMap {
-      case (a, h) =>
-        (for {
-          struct <- h.hcursor.downField("struc").as[Option[String]]
-          hsp    <- a.hcursor.as[HmmerHSP](hmmerHSPDecoder(struct.getOrElse("")))
-        } yield {
-          hsp
-        }).toOption
-    }
-  }
 
 }

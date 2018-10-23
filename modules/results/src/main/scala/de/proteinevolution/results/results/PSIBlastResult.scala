@@ -64,7 +64,7 @@ object PSIBlastResult {
         .rightN(iter_num.size - 1)
         .downField("search")
         .downField("hits")
-        .as[List[JsonObject]]
+        .as[List[Json]]
       tmpred   <- c.downField("output_psiblastp").downField("TMPRED").as[Option[String]]
       coilpred <- c.downField("output_psiblastp").downField("COILPRED").as[Option[String]]
     } yield {
@@ -84,11 +84,11 @@ object PSIBlastResult {
       )
   }
 
-  private def calculateUpperBound(hits: List[JsonObject], eValue: String): Option[Int] = {
+  private def calculateUpperBound(hits: List[Json], eValue: String): Option[Int] = {
     // take the smallest value above the threshold
     (for {
       hit <- hits
-      cursor = hit.asJson.hcursor
+      cursor = hit.hcursor
       eval <- cursor.downField("hsps").downArray.first.downField("evalue").as[Double].toOption
       num  <- cursor.downField("num").as[Int].toOption
       if eval >= eValue.toDouble

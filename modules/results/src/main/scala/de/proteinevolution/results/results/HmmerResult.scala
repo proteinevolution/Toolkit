@@ -1,7 +1,7 @@
 package de.proteinevolution.results.results
 
 import de.proteinevolution.results.results.General.{ DTParam, SingleSeq }
-import io.circe.{ Decoder, HCursor, Json }
+import io.circe.{ Decoder, HCursor }
 
 case class HmmerResult(
     HSPS: List[HmmerHSP],
@@ -38,18 +38,16 @@ object HmmerResult {
   implicit val hmmerResultDecoder: Decoder[HmmerResult] = (c: HCursor) =>
     for {
       jobId           <- c.downField("jobID").as[String]
-      hits            <- c.downField(jobId).downField("hits").as[List[Json]]
       alignmentResult <- c.downField("alignment").as[Option[AlignmentResult]]
-      hsps            <- c.downField(jobId).downField("hsps").as[List[Json]]
+      hsps            <- c.downField(jobId).downField("hsps").as[List[HmmerHSP]]
       db              <- c.downField(jobId).downField("db").as[Option[String]]
       query           <- c.downField("query").as[SingleSeq]
       tmpred          <- c.downField(jobId).downField("TMPRED").as[Option[String]]
       coilpred        <- c.downField(jobId).downField("COILPRED").as[Option[String]]
     } yield {
-      val hspList = HmmerHSP.hmmerHSPListDecoder(hits, hsps)
       new HmmerResult(
-        hspList,
-        hspList.length,
+        hsps,
+        hsps.length,
         alignmentResult.getOrElse(AlignmentResult(Nil)),
         query,
         db.getOrElse(""),
