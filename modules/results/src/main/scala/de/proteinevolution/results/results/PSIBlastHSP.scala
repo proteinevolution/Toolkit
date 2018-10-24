@@ -15,7 +15,6 @@ case class PSIBlastHSP(
     query_seq: String,
     query_start: Int,
     query_end: Int,
-    query_id: String,
     hit_len: Int,
     gaps: Int,
     identity: Int,
@@ -65,7 +64,6 @@ object PSIBlastHSP {
       query_seq   <- hsps.downField("qseq").as[String]
       query_start <- hsps.downField("query_from").as[Int]
       query_end   <- hsps.downField("query_to").as[Int]
-      query_id    <- hsps.downField("query_id").as[Option[String]]
       ref_len     <- c.downField("len").as[Int]
       hit_len     <- hsps.downField("align_len").as[Int]
       midLine     <- hsps.downField("midline").as[String]
@@ -89,7 +87,6 @@ object PSIBlastHSP {
         query_seq.toUpperCase,
         query_start,
         query_end,
-        query_id.getOrElse(""),
         hit_len,
         gaps,
         identity,
