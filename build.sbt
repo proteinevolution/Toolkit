@@ -3,7 +3,7 @@ import sbtbuildinfo.BuildInfoPlugin.autoImport._
 inThisBuild(
   Seq(
     organization := "de.proteinevolution",
-    scalaVersion := "2.12.6"
+    scalaVersion := "2.12.7"
   )
 )
 
