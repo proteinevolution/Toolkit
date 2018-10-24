@@ -3,8 +3,9 @@ package de.proteinevolution.ui.controllers
 import controllers.AssetsFinder
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.services.ToolConfig
+import io.circe.generic.auto._
+import io.circe.syntax._
 import javax.inject.{ Inject, Singleton }
-import play.api.libs.json.Json
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 
 @Singleton
@@ -26,7 +27,7 @@ class UiController @Inject()(
 
   def getTool(toolname: String) = Action {
     toolConfig.values.get(toolname) match {
-      case Some(tool) => Ok(Json.toJson(tool.toolForm))
+      case Some(tool) => Ok(tool.toolForm.asJson)
       case None       => NotFound
     }
   }
