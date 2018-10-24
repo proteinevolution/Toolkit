@@ -1,9 +1,10 @@
 package de.proteinevolution.models.database.statistics
 
 import java.time.ZonedDateTime
+import de.proteinevolution.models.database.jobs.JobState
 import de.proteinevolution.models.database.jobs.JobState._
-import play.api.libs.json._
 import reactivemongo.bson._
+import io.circe.generic.auto._
 
 case class JobEventLog(
     mainID: BSONObjectID = BSONObjectID.generate(), // ID of the Job in the System
@@ -16,7 +17,7 @@ case class JobEventLog(
   def addJobStateEvent(jobState: JobState): JobEventLog = {
     val runtimeDiff: Long =
       events.head.timestamp.map(d => ZonedDateTime.now.toInstant.toEpochMilli - d.toInstant.toEpochMilli).getOrElse(0L)
-    this.copy(events = events.::(JobEvent(jobState, Some(ZonedDateTime.now), runtimeDiff)),
+    this.copy(events = events.::(JobEvent(jobState, Some(ZonedDateTime.now), Some(runtimeDiff))),
               runtime = runtime + runtimeDiff)
   }
 
@@ -43,30 +44,32 @@ case class JobEventLog(
 
 object JobEventLog {
 
-  val ID          = "mainID"
-  val IDDB        = "_id"
-  val TOOLNAME    = "tool"
-  val INTERNALJOB = "internalJob"
-  val EVENTS      = "events"
-  val RUNTIME     = "runtime"
+  import io.circe.{ Decoder, HCursor, Json }
 
-  implicit object JsonReader extends Reads[JobEventLog] {
-    override def reads(json: JsValue): JsResult[JobEventLog] = json match {
-      case obj: JsObject =>
-        try {
-          val mainID      = BSONObjectID.parse((obj \ ID).as[String]).getOrElse(BSONObjectID.generate())
-          val events      = (obj \ EVENTS).asOpt[List[JobEvent]].getOrElse(List.empty)
-          val runtime     = (obj \ RUNTIME).as[Long]
-          val toolName    = (obj \ TOOLNAME).as[String]
-          val internalJob = (obj \ INTERNALJOB).as[Boolean]
-          JsSuccess(JobEventLog(mainID, toolName, internalJob, events, runtime))
-        } catch {
-          case cause: Throwable => JsError(cause.getMessage)
-        }
-      case _ => JsError("expected.jsobject")
-    }
-  }
+  final val ID          = "mainID"
+  final val IDDB        = "_id"
+  final val TOOLNAME    = "tool"
+  final val INTERNALJOB = "internalJob"
+  final val EVENTS      = "events"
+  final val RUNTIME     = "runtime"
 
+  implicit val jobEventLogDecoder: Decoder[JobEventLog] = (c: HCursor) =>
+    for {
+      id          <- c.downField(ID).as[String]
+      toolName    <- c.downField(TOOLNAME).as[String]
+      internalJob <- c.downField(INTERNALJOB).as[Boolean]
+      runtime     <- c.downField(RUNTIME).as[Long]
+      events      <- c.downField(EVENTS).as[List[Json]]
+    } yield
+      new JobEventLog(
+        BSONObjectID.parse(id).getOrElse(BSONObjectID.generate()),
+        toolName,
+        internalJob,
+        events.flatMap(_.hcursor.as[JobEvent].toOption),
+        runtime
+    )
+
+  /*
   implicit object JsonWriter extends Writes[JobEventLog] {
     override def writes(jobEventLog: JobEventLog): JsObject = Json.obj(
       ID          -> jobEventLog.mainID.stringify,
@@ -75,7 +78,7 @@ object JobEventLog {
       EVENTS      -> jobEventLog.events,
       RUNTIME     -> jobEventLog.runtime
     )
-  }
+  } */
 
   implicit object Reader extends BSONDocumentReader[JobEventLog] {
     def read(bson: BSONDocument): JobEventLog = {

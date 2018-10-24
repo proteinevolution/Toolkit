@@ -5,8 +5,9 @@ import org.portablescala.sbtplatformdeps.PlatformDepsPlugin.autoImport._
 
 object Dependencies {
 
-  lazy val akkaVersion = "2.5.17"
-  lazy val catsV       = "1.4.0"
+  val akkaVersion = "2.5.17"
+  val catsV       = "1.4.0"
+  val circeV      = "0.10.0"
 
   lazy val commonDeps = Seq(
     ws,
@@ -35,7 +36,10 @@ object Dependencies {
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
     "com.typesafe.play"    %% "play-json"                % "2.6.10",
     "com.dripower"         %% "play-circe"               % "2610.0",
-    "io.circe"             %% "circe-optics"             % "0.10.0",
+    "io.circe"             %% "circe-generic"            % circeV,
+    "io.circe"             %% "circe-generic-extras"     % circeV,
+    "io.circe"             %% "circe-java8"              % circeV,
+    "io.circe"             %% "circe-optics"             % circeV,
     "org.webjars"          %% "webjars-play"             % "2.6.3",
     "org.scala-js"         %% "scalajs-stubs"            % scalaJSVersion % "provided",
     "com.github.mpilquist" %% "simulacrum"               % "0.12.0"

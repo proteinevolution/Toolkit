@@ -1,10 +1,9 @@
 package de.proteinevolution.models.forms
 
-import de.proteinevolution.models.database.jobs.JobState._
-import play.api.libs.json._
+import de.proteinevolution.models.database.jobs.JobState
+import io.circe.generic.JsonCodec
 
-// Server returns such an object when asked for a job
-case class JobForm(
+@JsonCodec case class JobForm(
     jobID: String,
     state: JobState,
     dateCreated: String,
@@ -12,9 +11,3 @@ case class JobForm(
     views: Seq[String],
     paramValues: Map[String, String]
 )
-
-object JobForm {
-
-  implicit val jobFormWrites: OWrites[JobForm] = Json.writes[JobForm]
-
-}

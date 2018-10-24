@@ -14,4 +14,43 @@ trait ToolkitTypes {
 
 }
 
-object ToolkitTypes extends ToolkitTypes
+object ToolkitTypes extends ToolkitTypes {
+
+  import shapeless._
+
+  trait AllSingletons[A, C <: Coproduct] {
+    def values: List[A]
+  }
+
+  object AllSingletons {
+    implicit def cnilSingletons[A]: AllSingletons[A, CNil] =
+      new AllSingletons[A, CNil] {
+        def values: Nil.type = Nil
+      }
+
+    implicit def coproductSingletons[A, H <: A, T <: Coproduct](
+        implicit
+        tsc: AllSingletons[A, T],
+        witness: Witness.Aux[H]
+    ): AllSingletons[A, H :+: T] =
+      new AllSingletons[A, H :+: T] {
+        def values: List[A] = witness.value :: tsc.values
+      }
+  }
+
+  trait EnumerableAdt[A] {
+    def values: Set[A]
+  }
+
+  object EnumerableAdt {
+    implicit def fromAllSingletons[A, C <: Coproduct](
+        implicit
+        gen: Generic.Aux[A, C],
+        singletons: AllSingletons[A, C]
+    ): EnumerableAdt[A] =
+      new EnumerableAdt[A] {
+        def values: Set[A] = singletons.values.toSet
+      }
+  }
+
+}
