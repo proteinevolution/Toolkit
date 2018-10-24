@@ -2,16 +2,14 @@ package de.proteinevolution.results.models.resultviews
 
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.results.ResultViews
-import de.proteinevolution.results.results.PSIBlast
+import de.proteinevolution.results.results.PSIBlastResult
 import de.proteinevolution.services.ToolConfig
-import play.api.libs.json.JsValue
 
 import scala.collection.immutable.ListMap
 
 case class PsiBlastResultView(
     jobId: String,
-    result: JsValue,
-    psi: PSIBlast,
+    result: PSIBlastResult,
     toolConfig: ToolConfig,
     constants: ConstantsV2
 ) extends ResultView {
@@ -19,7 +17,7 @@ case class PsiBlastResultView(
   override lazy val tabs = ListMap(
     ResultViews.RESULTS -> views.html.resultpanels.psiblast.hitlist(
       jobId,
-      psi.parseResult(result),
+      result,
       toolConfig.values("psiblast"),
       s"${constants.jobPath}$jobId/results/blastviz.html"
     ),
@@ -28,7 +26,7 @@ case class PsiBlastResultView(
       jobId,
       "PSIBLAST_OUTPUT"
     ),
-    "E-Value Plot" -> views.html.resultpanels.evalues(psi.parseResult(result).HSPS.map(_.evalue))
+    "E-Value Plot" -> views.html.resultpanels.evalues(result.HSPS.map(_.eValue))
   )
 
 }

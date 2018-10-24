@@ -1,6 +1,5 @@
 package de.proteinevolution.results.results
 
-import de.proteinevolution.results.results.Alignment.AlignmentResult
 import de.proteinevolution.results.results.General.DTParam
 import simulacrum._
 

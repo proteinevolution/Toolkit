@@ -1,5 +1,5 @@
 @import de.proteinevolution.results.results.Common
-@import de.proteinevolution.results.results.HHomp.HHompHSP
+@import de.proteinevolution.results.results.HHompHSP
 @import play.twirl.api.Html
 @(hit: HHompHSP, isColor: Boolean, wrapped: Boolean, jobID: String)()
 @* hit number, links *@
@@ -23,8 +23,8 @@
 @* Alignment Details*@
 <tr>
     <td></td>
-    <td class="hitInfo"  colspan="4">Probability(hit): @{hit.info.probab_hit}&emsp;&emsp; Probability(OMP): @{hit.info.probab_omp}&emsp;&emsp; E-value: @{hit.info.evalue}&emsp;&emsp;
-        Score: @{hit.info.score}&emsp;&emsp; Aligned Cols: @{hit.info.aligned_cols}&emsp;&emsp;
+    <td class="hitInfo"  colspan="4">Probability(hit): @{hit.info.probabHit}&emsp;&emsp; Probability(OMP): @{hit.info.probabOMP}&emsp;&emsp; E-value: @{hit.info.eval}&emsp;&emsp;
+        Score: @{hit.info.score}&emsp;&emsp; Aligned Cols: @{hit.info.alignedCols}&emsp;&emsp;
         Identities: @{Common.percentage(hit.info.identities.toString)}&emsp;&emsp;
     </td>
 </tr>
