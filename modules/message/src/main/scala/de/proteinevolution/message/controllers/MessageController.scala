@@ -23,10 +23,12 @@ class MessageController @Inject()(
 )(implicit actorSystem: ActorSystem, mat: Materializer, ec: ExecutionContext)
     extends ToolkitController(cc) {
 
+  import de.proteinevolution.message.helpers.CirceFlowTransformer
+
   private val logger = Logger(this.getClass)
 
   implicit val flowTransformer: WebSocket.MessageFlowTransformer[Json, Json] =
-    de.proteinevolution.base.helpers.CirceFlowTransformer.jsonMessageFlowTransformer
+    CirceFlowTransformer.jsonMessageFlowTransformer
 
   def ws: WebSocket = WebSocket.acceptOrResult[Json, Json] {
     case rh if sameOriginCheck(rh) =>
