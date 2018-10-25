@@ -16,6 +16,7 @@ import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSON
 
 object JobEvent {
 
+  // TODO refactor mongo document keys
   final val JOBSTATE  = "jobState"
   final val TIMESTAMP = "timestamp"
   final val RUNTIME   = "runtime"
