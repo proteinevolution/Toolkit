@@ -1,7 +1,7 @@
 package de.proteinevolution.models.param
 
 import io.circe.syntax._
-import io.circe.{ Encoder, Json, JsonObject }
+import io.circe._
 
 sealed trait ParamType {
 
@@ -109,6 +109,13 @@ object ParamType {
         "allowsTwoTextAreas" -> Json.fromBoolean(allowTwoTextAreas),
         "placeholder"        -> Json.fromString(placeholder)
       ).asJson
+  }
+
+  // temporary hack, needed in order to use the @JsonCodec annotation for the Param case class
+  implicit val paramTypeDecoder: Decoder[ParamType] = (_: HCursor) => {
+    Right(new ParamType {
+      override def validate(value: String): Option[String] = Option("foo")
+    })
   }
 
 }
