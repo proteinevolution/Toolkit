@@ -1,15 +1,12 @@
-package de.proteinevolution.base.helpers
+package de.proteinevolution.message.helpers
 
 import akka.stream.scaladsl.Flow
+import io.circe.Json
 import play.api.http.websocket._
 import play.api.libs.streams.AkkaStreams
 import play.api.mvc.WebSocket.MessageFlowTransformer
-import scala.util.control.NonFatal
-import io.circe.Json
 
-/*
-  Websocket handler for circe
- */
+import scala.util.control.NonFatal
 
 object CirceFlowTransformer {
 
@@ -27,8 +24,8 @@ object CirceFlowTransformer {
     flow: Flow[Json, Json, _] =>
       {
         AkkaStreams.bypassWith[Message, Json, Message](Flow[Message].collect {
-          // case BinaryMessage(data) => closeOnException(Json.(data.iterator.asInputStream))
-          case TextMessage(text) => closeOnException(Json.fromString(text))
+          case BinaryMessage(data) => closeOnException(Json.fromString(data.decodeString("UTF-8")))
+          case TextMessage(text)   => closeOnException(Json.fromString(text))
         })(flow.map { json =>
           TextMessage(json.noSpaces)
         })
