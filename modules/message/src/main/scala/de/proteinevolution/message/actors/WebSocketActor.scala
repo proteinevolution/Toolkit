@@ -16,14 +16,12 @@ import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.jobs.JobState.Running
 import de.proteinevolution.models.message.Session.ChangeSessionID
 import de.proteinevolution.services.ToolConfig
+import io.circe.syntax._
+import io.circe.{ Json, JsonObject }
 import javax.inject.{ Inject, Named }
 import play.api.Configuration
 import play.api.cache.{ NamedCache, SyncCacheApi }
-import play.api.libs.json.{ JsValue, Json }
 import reactivemongo.bson.BSONObjectID
-// import better.files._
-import io.circe.JsonObject
-import io.circe.syntax._
 
 import scala.concurrent.ExecutionContext
 
@@ -77,30 +75,29 @@ final class WebSocketActor @Inject()(
 
   private def active(sid: BSONObjectID): Receive = {
 
-    case js: JsValue =>
+    case json: Json =>
       userSessions.getUser(sid).foreach {
         case Some(user) =>
-          (js \ "type").validate[String].foreach {
+          json.hcursor.get[String]("type").toOption.foreach {
 
             // Message containing a List of Jobs the user wants to register for the job list
             case "RegisterJobs" =>
-              (js \ "jobIDs").validate[Seq[String]].asOpt match {
-
-                case Some(jobIDs) =>
+              json.hcursor.get[Seq[String]]("jobIDs") match {
+                case Right(jobIDs) =>
                   jobIDs.foreach { jobID =>
                     jobActorAccess.sendToJobActor(jobID, AddToWatchlist(jobID, user.userID))
                   }
-                case None => // Client has sent strange message over the Websocket
+                case Left(_) => // Client has sent strange message over the Websocket
               }
 
             // Request to remove a Job from the user's Joblist
             case "ClearJob" =>
-              (js \ "jobIDs").validate[Seq[String]].asOpt match {
-                case Some(jobIDs) =>
+              json.hcursor.get[Seq[String]]("jobIDs") match {
+                case Right(jobIDs) =>
                   jobIDs.foreach { jobID =>
                     jobActorAccess.sendToJobActor(jobID, RemoveFromWatchlist(jobID, user.userID))
                   }
-                case None => //
+                case Left(_) => //
               }
 
             // Request to receive load messages
@@ -114,20 +111,20 @@ final class WebSocketActor @Inject()(
 
             // Received a ping, so we return a pong
             case "Ping" =>
-              (js \ "date").validate[Long].asOpt match {
-                case Some(msTime) =>
+              json.hcursor.get[Long]("date") match {
+                case Right(msTime) =>
                   //log.info(s"[WSActor] Ping from session ${sid.stringify} with msTime $msTime")
-                  out ! Json.obj("type" -> "Pong", "date" -> msTime)
-                case None =>
+                  out ! JsonObject("type" -> Json.fromString("Pong"), "date" -> Json.fromLong(msTime))
+                case Left(_) =>
               }
 
             // Received a pong message from the client - lets see how long it took
             case "Pong" =>
-              (js \ "date").validate[Long].asOpt match {
-                case Some(msTime) =>
+              json.hcursor.get[Long]("date") match {
+                case Right(msTime) =>
                   val ping = ZonedDateTime.now.toInstant.toEpochMilli - msTime
                   log.info(s"[WSActor] Ping of session ${sid.stringify} is ${ping}ms.")
-                case None =>
+                case Left(_) =>
               }
           }
         case None =>
@@ -138,14 +135,19 @@ final class WebSocketActor @Inject()(
       out ! JsonObject("type" -> "PushJob".asJson, "job" -> job.cleaned(toolConfig).asJson).asJson
 
     case ShowNotification(notificationType: String, tag: String, title: String, body: String) =>
-      out ! Json.obj("type"             -> "ShowNotification",
-                     "tag"              -> tag,
-                     "title"            -> title,
-                     "body"             -> body,
-                     "notificationType" -> notificationType)
+      out ! JsonObject(
+        "type"             -> Json.fromString("ShowNotification"),
+        "tag"              -> Json.fromString(tag),
+        "title"            -> Json.fromString(title),
+        "body"             -> Json.fromString(body),
+        "notificationType" -> Json.fromString(notificationType)
+      )
 
     case UpdateLog(jobID: String) =>
-      out ! Json.obj("type" -> "UpdateLog", "jobID" -> jobID)
+      out ! JsonObject(
+        "type"  -> Json.fromString("UpdateLog"),
+        "jobID" -> Json.fromString(jobID)
+      )
 
     case WatchLogFile(job: Job) =>
       // Do filewatching here
@@ -155,25 +157,36 @@ final class WebSocketActor @Inject()(
           val source = scala.io.Source.fromFile(file)
           val lines  = source.mkString
           // val lines = File(file).lineIterator.mkString // use buffered source since it behaves differently
-          out ! Json.obj("type" -> "WatchLogFile", "jobID" -> job.jobID, "lines" -> lines)
+          out ! JsonObject(
+            "type"  -> Json.fromString("WatchLogFile"),
+            "jobID" -> Json.fromString(job.jobID),
+            "lines" -> Json.fromString(lines)
+          ).asJson
           source.close()
         }
       }
 
     case UpdateLoad(load: Double) =>
-      out ! Json.obj("type" -> "UpdateLoad", "load" -> load)
+      out ! JsonObject(
+        "type" -> Json.fromString("UpdateLoad"),
+        "load" -> Json.fromDoubleOrNull(load)
+      ).asJson
 
     case ClearJob(jobID: String, deleted: Boolean) =>
-      out ! Json.obj("type" -> "ClearJob", "jobID" -> jobID, "deleted" -> deleted)
+      out ! JsonObject(
+        "type"    -> Json.fromString("ClearJob"),
+        "jobID"   -> Json.fromString(jobID),
+        "deleted" -> Json.fromBoolean(deleted)
+      )
 
     case ChangeSessionID(newSid: BSONObjectID) =>
       context.become(active(newSid))
 
     case LogOut =>
-      out ! Json.obj("type" -> "LogOut")
+      out ! JsonObject("type" -> Json.fromString("LogOut")).asJson
 
     case MaintenanceAlert =>
-      out ! Json.obj("type" -> "MaintenanceAlert")
+      out ! JsonObject("type" -> Json.fromString("MaintenanceAlert")).asJson
   }
 
   override def receive = LoggingReceive {
