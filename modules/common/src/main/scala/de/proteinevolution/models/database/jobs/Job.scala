@@ -5,8 +5,9 @@ import java.time.ZonedDateTime
 import de.proteinevolution.models.database.jobs.JobState._
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 import de.proteinevolution.services.ToolConfig
-import io.circe.{ Encoder, JsonObject }
+import io.circe.java8.time._
 import io.circe.syntax._
+import io.circe.{ Encoder, JsonObject }
 import play.api.Configuration
 import reactivemongo.bson._
 
@@ -128,13 +129,13 @@ object Job {
        job.jobID,
        job.parentID,
        job.hash,
-       job.ownerID,
+       job.ownerID.map(_.stringify),
        job.isPublic,
        job.status,
        job.emailUpdate,
        job.tool,
-       job.watchList,
-       job.commentList,
+       job.watchList.map(_.stringify),
+       job.commentList.map(_.stringify),
        job.clusterData,
        job.dateCreated,
        job.dateUpdated,

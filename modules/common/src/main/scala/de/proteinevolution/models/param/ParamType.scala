@@ -109,6 +109,7 @@ object ParamType {
         "allowsTwoTextAreas" -> Json.fromBoolean(allowTwoTextAreas),
         "placeholder"        -> Json.fromString(placeholder)
       ).asJson
+    case _ => throw new Exception // why is this even necessary?
   }
 
   // temporary hack, needed in order to use the @JsonCodec annotation for the Param case class
