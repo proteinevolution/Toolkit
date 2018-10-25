@@ -1,6 +1,7 @@
 package de.proteinevolution.models.param
 
-import play.api.libs.json._
+import io.circe.syntax._
+import io.circe.{ Encoder, Json, JsonObject }
 
 sealed trait ParamType {
 
@@ -66,29 +67,48 @@ object ParamType {
     def validate(value: String): Option[String] = Some(value)
   }
 
-  implicit def tuple2Writes[A, B](implicit a: Writes[A], b: Writes[B]): Writes[(A, B)] = new Writes[(A, B)] {
-    def writes(tuple: (A, B)) = JsArray(Seq(a.writes(tuple._1), b.writes(tuple._2)))
-  }
-
   final val UnconstrainedNumber = Number(None, None)
   final val Percentage          = Number(Some(0), Some(100))
   final val ConstrainedNumber   = Number(Some(1), Some(10000))
   final val FIELD_TYPE          = "type"
 
-  implicit object ParamTypeWrites extends Writes[ParamType] {
-    def writes(paramType: ParamType): JsObject = paramType match {
-      case Sequence(formats: Seq[(String, String)], placeholder: String, allowsTwoTextAreas: Boolean) =>
-        Json.obj(FIELD_TYPE           -> 1,
-                 "modes"              -> formats,
-                 "allowsTwoTextAreas" -> allowsTwoTextAreas,
-                 "placeholder"        -> placeholder)
-      case Number(minOpt, maxOpt)        => Json.obj(FIELD_TYPE -> 2, "min" -> minOpt, "max" -> maxOpt)
-      case Select(options)               => Json.obj(FIELD_TYPE -> 3, "options" -> options)
-      case Bool                          => Json.obj(FIELD_TYPE -> 4)
-      case Radio                         => Json.obj(FIELD_TYPE -> 5)
-      case Decimal(step, minVal, maxVal) => Json.obj(FIELD_TYPE -> 2, "step" -> step, "min" -> minVal, "max" -> maxVal)
-      case Text(placeholder)             => Json.obj(FIELD_TYPE -> 7, "placeholder" -> placeholder)
-      case ModellerKey                   => Json.obj(FIELD_TYPE -> 8)
-    }
+  implicit val paramTypeEncoder: Encoder[ParamType] = Encoder.instance {
+    case Bool  => JsonObject(FIELD_TYPE -> Json.fromInt(4)).asJson
+    case Radio => JsonObject(FIELD_TYPE -> Json.fromInt(5)).asJson
+    case Decimal(step, minVal, maxVal) =>
+      JsonObject(
+        FIELD_TYPE -> Json.fromInt(2),
+        "step"     -> Json.fromString(step),
+        "min"      -> minVal.map(Json.fromDoubleOrNull).getOrElse(Json.Null),
+        "max"      -> maxVal.map(Json.fromDoubleOrNull).getOrElse(Json.Null)
+      ).asJson
+    case Text(placeholder) =>
+      JsonObject(
+        FIELD_TYPE    -> Json.fromInt(7),
+        "placeholder" -> Json.fromString(placeholder)
+      ).asJson
+    case Number(minOpt, maxOpt) =>
+      JsonObject(
+        FIELD_TYPE -> Json.fromInt(2),
+        "min"      -> minOpt.map(Json.fromInt).getOrElse(Json.Null),
+        "max"      -> maxOpt.map(Json.fromInt).getOrElse(Json.Null)
+      ).asJson
+    case Select(options) =>
+      JsonObject(
+        FIELD_TYPE -> Json.fromInt(3),
+        "options"  -> options.asJson
+      ).asJson
+    case ModellerKey =>
+      JsonObject(
+        FIELD_TYPE -> Json.fromInt(8)
+      ).asJson
+    case Sequence(formats, placeholder, allowTwoTextAreas) =>
+      JsonObject(
+        FIELD_TYPE           -> Json.fromInt(1),
+        "modes"              -> formats.asJson,
+        "allowsTwoTextAreas" -> Json.fromBoolean(allowTwoTextAreas),
+        "placeholder"        -> Json.fromString(placeholder)
+      ).asJson
   }
+
 }

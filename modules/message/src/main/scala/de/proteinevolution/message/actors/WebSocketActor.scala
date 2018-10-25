@@ -22,6 +22,9 @@ import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.json.{ JsValue, Json }
 import reactivemongo.bson.BSONObjectID
 // import better.files._
+import io.circe.JsonObject
+import io.circe.syntax._
+
 import scala.concurrent.ExecutionContext
 
 final class WebSocketActor @Inject()(
@@ -132,7 +135,7 @@ final class WebSocketActor @Inject()(
       }
 
     case PushJob(job: Job) =>
-      out ! Json.obj("type" -> "PushJob", "job" -> job.cleaned(toolConfig))
+      out ! JsonObject("type" -> "PushJob".asJson, "job" -> job.cleaned(toolConfig).asJson).asJson
 
     case ShowNotification(notificationType: String, tag: String, title: String, body: String) =>
       out ! Json.obj("type"             -> "ShowNotification",
