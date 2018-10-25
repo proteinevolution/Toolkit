@@ -12,14 +12,14 @@ import de.proteinevolution.jobs.services.{ JobFolderValidation, JobHashService }
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.services.ToolConfig
+import io.circe.{ Json, JsonObject }
+import io.circe.syntax._
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext
-import io.circe.JsonObject
-import io.circe.syntax._
 
 @Singleton
 class JobGetController @Inject()(
@@ -37,7 +37,7 @@ class JobGetController @Inject()(
     userSessions.getUser.flatMap { user =>
       jobDao.findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false))).map {
         jobs =>
-          NoCache(Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.jobManagerJob())))
+          NoCache(Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.jobManagerJob()).asJson))
       }
     }
   }
@@ -45,7 +45,7 @@ class JobGetController @Inject()(
   def listJobs: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>
-        Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.cleaned(toolConfig)))
+        Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.cleaned(toolConfig)).asJson)
       }
     }
   }
@@ -67,7 +67,7 @@ class JobGetController @Inject()(
       (job.jobID, job.dateCreated.getOrElse(ZonedDateTime.now).toInstant.toEpochMilli)
     }).value.map {
       case Some((latestJobId, dateCreated)) =>
-        Ok(JsonObject("jobID" -> latestJobId.asJson, "dateCreated" -> dateCreated.asJson))
+        Ok(JsonObject("jobID" -> Json.fromString(latestJobId), "dateCreated" -> Json.fromLong(dateCreated)).asJson)
       case None => NotFound(errors(JobHashError.JobNotFound.msg))
     }
   }
