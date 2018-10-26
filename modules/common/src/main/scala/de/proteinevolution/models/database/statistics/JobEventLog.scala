@@ -38,7 +38,7 @@ case class JobEventLog(
        |internalJob? ${if (internalJob) { "yes" } else { "no" }}
        |events: ${events.mkString(",")}""".stripMargin
   }
-  
+
 }
 
 object JobEventLog {
