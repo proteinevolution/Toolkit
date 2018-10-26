@@ -114,7 +114,7 @@ final class WebSocketActor @Inject()(
               json.hcursor.get[Long]("date") match {
                 case Right(msTime) =>
                   //log.info(s"[WSActor] Ping from session ${sid.stringify} with msTime $msTime")
-                  out ! JsonObject("type" -> Json.fromString("Pong"), "date" -> Json.fromLong(msTime))
+                  out ! JsonObject("type" -> Json.fromString("Pong"), "date" -> Json.fromLong(msTime)).asJson
                 case Left(_) =>
               }
 
@@ -132,7 +132,7 @@ final class WebSocketActor @Inject()(
       }
 
     case PushJob(job: Job) =>
-      out ! JsonObject("type" -> "PushJob".asJson, "job" -> job.cleaned(toolConfig).asJson).asJson
+      out ! JsonObject("type" -> Json.fromString("PushJob"), "job" -> job.cleaned(toolConfig).asJson).asJson
 
     case ShowNotification(notificationType: String, tag: String, title: String, body: String) =>
       out ! JsonObject(
@@ -141,13 +141,13 @@ final class WebSocketActor @Inject()(
         "title"            -> Json.fromString(title),
         "body"             -> Json.fromString(body),
         "notificationType" -> Json.fromString(notificationType)
-      )
+      ).asJson
 
     case UpdateLog(jobID: String) =>
       out ! JsonObject(
         "type"  -> Json.fromString("UpdateLog"),
         "jobID" -> Json.fromString(jobID)
-      )
+      ).asJson
 
     case WatchLogFile(job: Job) =>
       // Do filewatching here
@@ -177,7 +177,7 @@ final class WebSocketActor @Inject()(
         "type"    -> Json.fromString("ClearJob"),
         "jobID"   -> Json.fromString(jobID),
         "deleted" -> Json.fromBoolean(deleted)
-      )
+      ).asJson
 
     case ChangeSessionID(newSid: BSONObjectID) =>
       context.become(active(newSid))

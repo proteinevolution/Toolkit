@@ -70,7 +70,7 @@ object JobState {
   implicit val jobStateEncoder: Encoder[JobState] = Encoder[Int].contramap(_.toInt)
 
   implicit object JobStateReader extends BSONReader[BSONInteger, JobState] {
-    def read(state: BSONInteger): JobState = {
+    def read(state: BSONInteger): JobState with Product with Serializable = {
       state match {
         case BSONInteger(1) => Prepared
         case BSONInteger(2) => Queued
@@ -87,19 +87,7 @@ object JobState {
   }
 
   implicit object JobStateWriter extends BSONWriter[JobState, BSONInteger] {
-    def write(state: JobState): BSONInteger = {
-      state match {
-        case Prepared     => BSONInteger(1)
-        case Queued       => BSONInteger(2)
-        case Running      => BSONInteger(3)
-        case Error        => BSONInteger(4)
-        case Done         => BSONInteger(5)
-        case Submitted    => BSONInteger(6)
-        case Pending      => BSONInteger(7)
-        case LimitReached => BSONInteger(8)
-        case Deleted      => BSONInteger(9)
-      }
-    }
+    def write(state: JobState): BSONInteger = BSONInteger(state.toInt)
   }
 
 }

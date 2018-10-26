@@ -25,7 +25,6 @@ class MessageController @Inject()(
 
   import de.proteinevolution.message.helpers.CirceFlowTransformer._
 
-
   private val logger = Logger(this.getClass)
 
   def ws: WebSocket = WebSocket.acceptOrResult[Json, Json] {

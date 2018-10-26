@@ -8,7 +8,7 @@ import io.circe.generic.auto._
 import reactivemongo.bson._
 
 case class JobEventLog(
-    mainID: String = BSONObjectID.generate().stringify,
+    mainID: BSONObjectID = BSONObjectID.generate(),
     toolName: String,
     internalJob: Boolean = false,
     events: List[JobEvent] = List.empty[JobEvent],
@@ -38,6 +38,7 @@ case class JobEventLog(
        |internalJob? ${if (internalJob) { "yes" } else { "no" }}
        |events: ${events.mkString(",")}""".stripMargin
   }
+  
 }
 
 object JobEventLog {
@@ -60,7 +61,7 @@ object JobEventLog {
       events      <- c.downField(EVENTS).as[List[Json]]
     } yield
       new JobEventLog(
-        BSONObjectID.parse(id).getOrElse(BSONObjectID.generate()).stringify,
+        BSONObjectID.parse(id).getOrElse(BSONObjectID.generate()),
         toolName,
         internalJob,
         events.flatMap(_.hcursor.as[JobEvent].toOption),
@@ -70,13 +71,13 @@ object JobEventLog {
   // TODO make fully automatically encodable by adjusting the keys in the frontend
   implicit val jobEventLogEncoder: Encoder[JobEventLog] =
     Encoder.forProduct5(ID, TOOLNAME, INTERNALJOB, EVENTS, RUNTIME)(
-      l => (l.mainID, l.toolName, l.internalJob, l.events, l.runtime)
+      l => (l.mainID.stringify, l.toolName, l.internalJob, l.events, l.runtime)
     )
 
   implicit object Reader extends BSONDocumentReader[JobEventLog] {
     def read(bson: BSONDocument): JobEventLog = {
       JobEventLog(
-        mainID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()).stringify,
+        mainID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         toolName = bson.getAs[String](TOOLNAME).getOrElse(""),
         internalJob = bson.getAs[Boolean](INTERNALJOB).getOrElse(false),
         events = bson.getAs[List[JobEvent]](EVENTS).getOrElse(List.empty),
@@ -87,7 +88,7 @@ object JobEventLog {
 
   implicit object Writer extends BSONDocumentWriter[JobEventLog] {
     def write(jobEventLog: JobEventLog): BSONDocument = BSONDocument(
-      IDDB        -> BSONObjectID.parse(jobEventLog.mainID).get,
+      IDDB        -> jobEventLog.mainID,
       TOOLNAME    -> jobEventLog.toolName,
       INTERNALJOB -> jobEventLog.internalJob,
       EVENTS      -> jobEventLog.events,

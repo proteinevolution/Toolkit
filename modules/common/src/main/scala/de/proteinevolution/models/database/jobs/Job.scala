@@ -13,7 +13,7 @@ import reactivemongo.bson._
 
 // TODO remove default values
 case class Job(
-    mainID: String = BSONObjectID.generate.stringify,
+    mainID: BSONObjectID = BSONObjectID.generate,
     jobID: String,
     parentID: Option[String] = None,
     hash: Option[String] = None,
@@ -125,7 +125,7 @@ object Job {
     IPHASH
   )(
     job =>
-      (job.mainID,
+      (job.mainID.stringify,
        job.jobID,
        job.parentID,
        job.hash,
@@ -148,7 +148,7 @@ object Job {
   implicit object Reader extends BSONDocumentReader[Job] {
     def read(bson: BSONDocument): Job = {
       Job(
-        mainID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()).stringify,
+        mainID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         jobID = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
         parentID = bson.getAs[String](PARENTID),
         hash = bson.getAs[String](HASH),

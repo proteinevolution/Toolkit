@@ -6,7 +6,7 @@ class WebsocketWrapper {
     interval  : number        = null;   // interval id for the timeout check function
 
     // Config
-    static showConsoleMessages    : boolean = false;       // will show web socket console messages
+    static showConsoleMessages    : boolean = true;       // will show web socket console messages
     static reconnectTimeMin       : number  =  2000; //ms // minimum time in between reconnects
     static reconnectTimeMax       : number  = 40000; //ms // maximum time in between reconnects
     static connectionCheckTimeout : number  = 20000; //ms // time between each timeout check
