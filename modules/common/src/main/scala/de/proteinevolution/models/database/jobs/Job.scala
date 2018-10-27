@@ -23,7 +23,6 @@ case class Job(
     emailUpdate: Boolean = false,
     tool: String,
     watchList: List[BSONObjectID] = List.empty,
-    commentList: List[BSONObjectID] = List.empty,
     clusterData: Option[JobClusterData] = None,
     dateCreated: Option[ZonedDateTime] = Some(ZonedDateTime.now),
     dateUpdated: Option[ZonedDateTime] = Some(ZonedDateTime.now),
@@ -48,7 +47,6 @@ case class Job(
       Job.JOBID        -> jobID.asJson,
       Job.STATUS       -> status.asJson,
       Job.TOOL         -> tool.asJson,
-      Job.COMMENTLIST  -> commentList.length.asJson,
       Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli).asJson,
       Job.DATEUPDATED  -> dateUpdated.map(_.toInstant.toEpochMilli).asJson,
       Job.DATEVIEWED   -> dateViewed.map(_.toInstant.toEpochMilli).asJson,
@@ -94,7 +92,6 @@ object Job {
   final val TOOL         = "tool"
   final val LABEL        = "label"
   final val WATCHLIST    = "watchList"
-  final val COMMENTLIST  = "commentList"
   final val CLUSTERDATA  = "clusterData"
   final val SGEID        = s"$CLUSTERDATA.${JobClusterData.SGEID}"
   final val DATECREATED  = "dateCreated"
@@ -105,7 +102,7 @@ object Job {
   final val IPHASH       = "IPHash"
 
   // TODO manual wiring is a code smell - no consistent key schema and _id should not be exposed at all
-  implicit val jobEncoder: Encoder[Job] = Encoder.forProduct17(
+  implicit val jobEncoder: Encoder[Job] = Encoder.forProduct16(
     IDDB,
     JOBID,
     PARENTID,
@@ -116,7 +113,6 @@ object Job {
     EMAILUPDATE,
     TOOL,
     WATCHLIST,
-    COMMENTLIST,
     CLUSTERDATA,
     DATECREATED,
     DATEUPDATED,
@@ -135,7 +131,6 @@ object Job {
        job.emailUpdate,
        job.tool,
        job.watchList.map(_.stringify),
-       job.commentList.map(_.stringify),
        job.clusterData,
        job.dateCreated,
        job.dateUpdated,
@@ -158,7 +153,6 @@ object Job {
         emailUpdate = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
         tool = bson.getAs[String](TOOL).getOrElse(""),
         watchList = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
-        commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
         clusterData = bson.getAs[JobClusterData](CLUSTERDATA),
         dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
         dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
@@ -182,7 +176,6 @@ object Job {
         EMAILUPDATE  -> job.emailUpdate,
         TOOL         -> job.tool,
         WATCHLIST    -> job.watchList,
-        COMMENTLIST  -> job.commentList,
         CLUSTERDATA  -> job.clusterData,
         DATECREATED  -> BSONDateTime(job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
         DATEUPDATED  -> BSONDateTime(job.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli)),
