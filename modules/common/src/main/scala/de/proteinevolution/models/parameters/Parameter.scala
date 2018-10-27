@@ -1,68 +1,59 @@
 package de.proteinevolution.models.parameters
 
-import cats.syntax.functor._
-import de.proteinevolution.models.parameters.Parameter.TextAreaInputType.TextAreaInputType
+import io.circe.Encoder
+import io.circe.generic.JsonCodec
 import io.circe.generic.auto._
 import io.circe.syntax._
-import io.circe.{ Decoder, Encoder }
 
 sealed trait Parameter {
-  val name: String
-  val label: String
+  def name: String
+  def label: String
 }
 
 object Parameter {
 
-  case class TextInputParameter(
-      override val name: String,
-      override val label: String,
+  @JsonCodec case class TextInputParameter(
+      name: String,
+      label: String,
       inputPlaceholder: String
   ) extends Parameter
 
-  object TextAreaInputType extends Enumeration {
-    type TextAreaInputType = Value
-    val SEQUENCE     = Value("sequence")
-    val REGEX        = Value("regex")
-    val PDB          = Value("pdb")
-    val ACCESSION_ID = Value("accessionID")
-  }
-
-  case class TextAreaParameter(
-      override val name: String,
-      inputType: TextAreaInputType,
+  @JsonCodec case class TextAreaParameter(
+      name: String,
+      inputType: String,
       inputPlaceholder: String,
       allowsTwoTextAreas: Boolean = false
   ) extends Parameter {
     override val label: String = ""
   }
 
-  case class SelectOption(value: String, text: String)
+  @JsonCodec case class SelectOption(value: String, text: String)
 
-  case class SelectParameter(
-      override val name: String,
-      override val label: String,
+  @JsonCodec case class SelectParameter(
+      name: String,
+      label: String,
       options: Seq[SelectOption],
       maxSelectedOptions: Int
   ) extends Parameter
 
-  case class NumberParameter(
-      override val name: String,
-      override val label: String,
+  @JsonCodec case class NumberParameter(
+      name: String,
+      label: String,
       min: Option[Double] = None,
       max: Option[Double] = None,
       step: Option[Double] = None,
       default: Option[Double] = None
   ) extends Parameter
 
-  case class BooleanParameter(
-      override val name: String,
-      override val label: String,
+  @JsonCodec case class BooleanParameter(
+      name: String,
+      label: String,
       default: Option[Boolean]
   ) extends Parameter
 
-  case class ModellerParameter(
-      override val name: String,
-      override val label: String,
+  @JsonCodec case class ModellerParameter(
+      name: String,
+      label: String,
   ) extends Parameter
 
   implicit val encodeParameter: Encoder[Parameter] = Encoder.instance {
@@ -73,14 +64,5 @@ object Parameter {
     case boolean @ BooleanParameter(_, _, _)        => boolean.asJson
     case modeller @ ModellerParameter(_, _)         => modeller.asJson
   }
-
-  implicit val decodeParameter: Decoder[Parameter] = List[Decoder[Parameter]](
-    Decoder[TextInputParameter].widen,
-    Decoder[TextAreaParameter].widen,
-    Decoder[SelectParameter].widen,
-    Decoder[NumberParameter].widen,
-    Decoder[BooleanParameter].widen,
-    Decoder[ModellerParameter].widen
-  ).reduceLeft(_.or(_))
 
 }
