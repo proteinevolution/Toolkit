@@ -1,17 +1,15 @@
 package de.proteinevolution.results.models.resultviews
 
-import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.models.results.ResultViews
-import de.proteinevolution.results.results.Hmmer
+import de.proteinevolution.models.{ ConstantsV2, ToolName }
+import de.proteinevolution.results.results.HmmerResult
 import de.proteinevolution.services.ToolConfig
-import play.api.libs.json.JsValue
 
 import scala.collection.immutable.ListMap
 
 case class HmmerResultView(
     jobId: String,
-    result: JsValue,
-    hmmer: Hmmer,
+    result: HmmerResult,
     toolConfig: ToolConfig,
     constants: ConstantsV2
 ) extends ResultView {
@@ -19,11 +17,11 @@ case class HmmerResultView(
   override lazy val tabs = ListMap(
     ResultViews.RESULTS -> views.html.resultpanels.hmmer.hitlist(
       jobId,
-      hmmer.parseResult(result),
+      result,
       toolConfig.values(ToolName.HMMER.value),
       s"${constants.jobPath}/$jobId/results/blastviz.html"
     ),
-    "E-Value Plot" -> views.html.resultpanels.evalues(hmmer.parseResult(result).HSPS.map(_.evalue))
+    "E-Value Plot" -> views.html.resultpanels.evalues(result.HSPS.map(_.eValue))
   )
 
 }

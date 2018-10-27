@@ -1,17 +1,15 @@
 package de.proteinevolution.results.models.resultviews
 
-import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.models.results.ResultViews
-import de.proteinevolution.results.results.HHPred
+import de.proteinevolution.models.{ ConstantsV2, ToolName }
+import de.proteinevolution.results.results.HHPredResult
 import de.proteinevolution.services.ToolConfig
-import play.api.libs.json.JsValue
 
 import scala.collection.immutable.ListMap
 
 case class HHPredAlignResultView(
     jobId: String,
-    result: JsValue,
-    hhpred: HHPred,
+    result: HHPredResult,
     toolConfig: ToolConfig,
     constants: ConstantsV2
 ) extends ResultView {
@@ -20,7 +18,7 @@ case class HHPredAlignResultView(
     ResultViews.HITLIST ->
     views.html.resultpanels.hhpred.hitlist(
       jobId,
-      hhpred.parseResult(result),
+      result,
       toolConfig.values(ToolName.HHPRED_ALIGN.value),
       s"${constants.jobPath}/$jobId/results/$jobId.html_NOIMG"
     ),

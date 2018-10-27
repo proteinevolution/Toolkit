@@ -1,43 +1,37 @@
-@import de.proteinevolution.results.results.Common
-@import play.api.libs.json.JsObject
-@import play.api.libs.json.JsValue
-@import play.api.libs.json.JsDefined
+@import de.proteinevolution.results.results.{ Common, PatSearchResult }
 @import play.twirl.api.Html
-@(jobID: String, jsValue: JsValue, tool: de.proteinevolution.models.Tool)()
-@if((jsValue \ jobID \ "hits").as[List[JsObject]].size < 1) {
+
+@(jobID: String, result: PatSearchResult, tool: de.proteinevolution.models.Tool)()
+
+@if(result.hits.size < 1) {
     <div class="note">
         No hits found! You could consider picking a different target database.<br><br><br><br>
     </div>
 }else{
 <div class="colorOptsAlignment">
     <a onclick="download_()" type="button"><span id="downloadAlignment">Download Hits</span></a>
-    <a class="forwardModalOpenBtn" data-modal-type="simpler" data-result-name="@{tool.toolNameShort}" data-forward-issuer="PATTERN_SEARCH" type="button"><span id="downloadAlignment">Forward All</span></a>
+    <a class="forwardModalOpenBtn" data-modal-type="simpler" data-result-name="@{tool.toolNameShort}" data-forward-issuer="PATTERN_SEARCH" type="button">
+        <span id="downloadAlignment">Forward All</span>
+    </a>
     <hr class="horizontal-line">
 </div>
 <div id="alignmentResultView">
     <br/>
-    Number of sequences: <b>@{{jsValue \ jobID \ "hits"}.as[List[JsObject]].size}</b>
+    Number of sequences: <b>@{result.hits.size}</b>
     <br />
     <br />
     <form id="alignmentResult">
         <table class="unstriped">
             <tbody class="alignmentTBody">
-                @for((hit,index) <- {jsValue \ jobID \ "hits" }.as[List[JsObject]].zipWithIndex) {
+                @for((hit,index) <- result.hits.zipWithIndex) {
                     <tr class="header">
                         <td>
-                            @{ hit \ "name" match {
-                                    case JsDefined(_) => (hit \ "name").get.as[String]
-                                    case _ => Html("")
-                                }
-                            }
+                            @{hit.name.getOrElse(Html(""))}
                         </td>
                     </tr>
                     <tr>
                         <td class="sequenceAlignment">
-                        @{ hit \ "seq" match {
-                                case JsDefined(_) => Html(Common.insertMatch((hit \ "seq").get.as[String], (jsValue \ jobID \ "len").get.as[Int],(hit \ "pats").get.as[List[Int]]))
-                                case _ => Html("")
-                            }
+                        @{ hit.seq.map(s => Html(Common.insertMatch(s, result.len, hit.pats.getOrElse(Nil))))
                         }
                         </td>
                     </tr>
@@ -60,19 +54,15 @@
 <hr class="horizontal-line">
 
 <script>
-
    // wrap seqs by default
     $(function () {
         wrapSequences()
     });
-
     new ForwardingModal($("#jobview"), "@{tool.toolNameShort}", "@{jobID}");
-
     function wrapSequences(){
             $(".sequenceAlignment").addClass("wrap");
             $("#wrapSequences").addClass("colorToggleBar");
     }
-
     function download_(){
         var downloadFilename = "@{tool.toolNameShort}_@{jobID}" + ".fas";
         var fileURL="/results/files/@{jobID}/@{jobID}" + ".fas";
@@ -83,5 +73,4 @@
             DownloadHelper.download(downloadFilename, data);
         })
     }
-
 </script>

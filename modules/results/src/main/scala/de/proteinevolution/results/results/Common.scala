@@ -1,12 +1,5 @@
 package de.proteinevolution.results.results
 
-import de.proteinevolution.results.results.Alignment.AlignmentResult
-import de.proteinevolution.results.results.HHBlits.HHBlitsHSP
-import de.proteinevolution.results.results.HHPred.HHPredHSP
-import de.proteinevolution.results.results.HHomp.HHompHSP
-import de.proteinevolution.results.results.Hmmer.HmmerHSP
-import de.proteinevolution.results.results.PSIBlast.PSIBlastHSP
-import de.proteinevolution.results.results.Quick2D.Quick2DResult
 import play.api.Logger
 import play.twirl.api.Html
 
@@ -378,7 +371,7 @@ object Common {
       ""
     } else {
       val query       = hit.query_seq.slice(charCount, Math.min(charCount + breakAfter, hit.query_seq.length))
-      val midline     = hit.midline.slice(charCount, Math.min(charCount + breakAfter, hit.midline.length))
+      val midline     = hit.midLine.slice(charCount, Math.min(charCount + breakAfter, hit.midLine.length))
       val template    = hit.hit_seq.slice(charCount, Math.min(charCount + breakAfter, hit.hit_seq.length))
       val queryEnd    = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)

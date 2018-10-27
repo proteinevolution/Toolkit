@@ -1,16 +1,17 @@
 package de.proteinevolution.results.db
 
-import javax.inject.{ Inject, Singleton }
-import play.api.cache.{ AsyncCacheApi, NamedCache }
-import play.api.libs.json.JsValue
 import better.files._
 import de.proteinevolution.jobs.services.JobFolderValidation
 import de.proteinevolution.models.ConstantsV2
+import io.circe.Json
+import io.circe.parser._
+import io.circe.syntax._
+import javax.inject.{ Inject, Singleton }
 import play.api.Logger
-import play.api.libs.json._
+import play.api.cache.{ AsyncCacheApi, NamedCache }
 
-import scala.concurrent.{ ExecutionContext, Future }
 import scala.concurrent.duration._
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class ResultFileAccessor @Inject()(
@@ -21,33 +22,27 @@ final class ResultFileAccessor @Inject()(
 
   private val logger = Logger(this.getClass)
 
-  def getResults(jobID: String): Future[Option[JsValue]] = {
-    resultCache.get[JsValue](jobID).map {
+  def getResults(jobID: String): Future[Option[Json]] = {
+    resultCache.get[Json](jobID).map {
       case Some(resultMap) =>
-        // Pull the results directly from the cache
         Some(resultMap)
       case None =>
-        // check if the directories exist
         if (resultsExist(jobID, constants)) {
-          // Gather the files
           val files: List[File] =
-            (constants.jobPath / jobID / "results").list.withFilter(_.extension.contains(".json")).toList
+            File(s"${constants.jobPath}/$jobID/results").list.withFilter(_.extension.contains(".json")).toList
           logger.info(s"Loading files for $jobID: ${files.map(_.name).mkString(",")}")
-
-          // Merge the results from the files
-          val results: JsValue =
-            Json.toJson(
-              files
-                .map { file =>
-                  file.nameWithoutExtension -> Json.parse(file.contentAsString)
+          val results: Json =
+            files
+              .map { file =>
+                file.nameWithoutExtension -> parse(file.contentAsString).right.toOption.getOrElse {
+                  logger.error("Invalid result json from database")
+                  throw new NoSuchElementException
                 }
-                .toMap[String, JsValue]
-                .updated("jobID", Json.toJson(jobID))
-            )
-
-          // Push them into the cache
+              }
+              .toMap[String, Json]
+              .updated("jobID", jobID.asJson)
+              .asJson
           resultCache.set(jobID, results, 10.minutes)
-          // show them to the user
           Some(results)
         } else {
           None

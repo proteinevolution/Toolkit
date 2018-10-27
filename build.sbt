@@ -6,7 +6,7 @@ val appProperties = settingKey[Properties]("The application properties")
 inThisBuild(
   Seq(
     organization := "de.proteinevolution",
-    scalaVersion := "2.12.6"
+    scalaVersion := "2.12.7"
   )
 )
 
