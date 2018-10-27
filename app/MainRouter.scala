@@ -52,7 +52,7 @@ class MainRouter @Inject()(
     mainRoutes
       .orElse(messageRouter.withPrefix("/ws").routes)
       .orElse(uiRoutes)
-      .orElse(uiRouter.withPrefix("/ui").routes)
+      .orElse(uiRouter.withPrefix("/api/tools").routes)
       .orElse(searchRouter.withPrefix("/search").routes)
       .orElse(jobsRouter.withPrefix("/api/jobs").routes)
       .orElse(backendRouter.withPrefix("/backend").routes)

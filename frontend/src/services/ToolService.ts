@@ -23,7 +23,7 @@ export default class ToolService {
 
     public static fetchToolParameters(toolName: string): Promise<ToolParameters> {
         return new Promise<ToolParameters>((resolve, reject) => {
-            axios.get(`ui/tool/${toolName}`)
+            axios.get(`ui/tools/${toolName}`)
                 .then((response) => {
                     resolve(response.data);
                 })
