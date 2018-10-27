@@ -42,10 +42,7 @@ class HHController @Inject()(
           "recordsFiltered" -> hits.length.asJson
         )
         val data = Map(
-          "data" -> hits
-            .slice(params.displayStart, params.displayStart + params.pageLength)
-            .map(_.toDataTable(result.db))
-            .asJson
+          "data" -> hits.slice(params.displayStart, params.displayStart + params.pageLength).map(_.toDataTable(result.db)).asJson
         )
         Ok(JsonObject.fromMap(config ++ data).asJson)
       case Left(_) => BadRequest

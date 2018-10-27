@@ -19,19 +19,19 @@ class AlignmentController @Inject()(
 )(implicit ec: ExecutionContext)
     extends ToolkitController(cc) {
 
-  def getAln(jobID: String): Action[AlignmentGetForm] = Action(circe.json[AlignmentGetForm]).async { implicit request =>
-    (for {
-      json       <- OptionT(resultFiles.getResults(jobID))
-      r          <- OptionT.fromOption[Future](json.hcursor.downField(request.body.resultName).as[AlignmentResult].toOption)
-      checkboxes <- OptionT.pure[Future](request.body.checkboxes.distinct)
-    } yield {
-      checkboxes.map { num =>
-        ">" + r.alignment { num - 1 }.accession + "\n" + r.alignment { num - 1 }.seq + "\n"
+  def getAln(jobID: String): Action[AlignmentGetForm] = Action(circe.json[AlignmentGetForm]).async {
+    implicit request =>
+      (for {
+        json       <- OptionT(resultFiles.getResults(jobID))
+        r          <- OptionT.fromOption[Future](json.hcursor.downField(request.body.resultName).as[AlignmentResult].toOption)
+        checkboxes <- OptionT.pure[Future](request.body.checkboxes.distinct)
+      } yield {
+        checkboxes.map { num => ">" + r.alignment { num - 1 }.accession + "\n" + r.alignment { num - 1 }.seq + "\n"
+        }
+      }).value.map {
+        case Some(list) => Ok(list.mkString)
+        case None       => NotFound
       }
-    }).value.map {
-      case Some(list) => Ok(list.mkString)
-      case None       => NotFound
-    }
   }
 
   def loadHits(jobID: String): Action[AlignmentLoadHitsForm] = Action(circe.json[AlignmentLoadHitsForm]).async {

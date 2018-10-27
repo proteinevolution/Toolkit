@@ -16,8 +16,7 @@ object AlignmentResult {
           case (j, i) => AlignmentItem.alignmentItemDecoder(j, i)
         }
       }
-      .map { items =>
-        new AlignmentResult(items.flatMap(_.right.toOption))
+      .map { items => new AlignmentResult(items.flatMap(_.right.toOption))
       }
   }
 

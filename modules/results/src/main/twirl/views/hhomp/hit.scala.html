@@ -23,8 +23,18 @@
 @* Alignment Details*@
 <tr>
     <td></td>
-    <td class="hitInfo"  colspan="4">Probability(hit): @{hit.info.probabHit}&emsp;&emsp; Probability(OMP): @{hit.info.probabOMP}&emsp;&emsp; E-value: @{hit.info.eval}&emsp;&emsp;
-        Score: @{hit.info.score}&emsp;&emsp; Aligned Cols: @{hit.info.alignedCols}&emsp;&emsp;
+    <td class="hitInfo" colspan="4">Probability(hit): @{
+        hit.info.probabHit
+    }&emsp;&emsp; Probability(OMP): @{
+        hit.info.probabOMP
+    }&emsp;&emsp; E-value: @{
+        hit.info.eval
+    }&emsp;&emsp;
+        Score: @{
+            hit.info.score
+        }&emsp;&emsp; Aligned Cols: @{
+            hit.info.alignedCols
+        }&emsp;&emsp;
         Identities: @{Common.percentage(hit.info.identities.toString)}&emsp;&emsp;
     </td>
 </tr>
