@@ -1,66 +1,73 @@
 package de.proteinevolution.models.database.jobs
 
-import play.api.libs.json._
+import de.proteinevolution.base.helpers.ToolkitTypes._
+import io.circe.{ Decoder, Encoder, HCursor }
 import reactivemongo.bson.{ BSONInteger, BSONReader, BSONWriter }
+import shapeless._
+
+sealed trait JobState {
+  def toInt: Int
+}
 
 object JobState {
 
-  sealed trait JobState
-
-  case object Prepared extends JobState
-
-  case object Queued extends JobState
-
-  case object Running extends JobState
-
-  case object Error extends JobState
-
-  case object Done extends JobState
-
-  case object Submitted extends JobState
-
-  case object Pending extends JobState
-
-  case object LimitReached extends JobState
-
-  case object Deleted extends JobState
-
-  implicit object JobStateReads extends Reads[JobState] {
-    override def reads(json: JsValue): JsResult[JobState] = json match {
-      case obj: JsObject =>
-        try {
-          JsSuccess((obj \ "status").as[Int] match {
-            case 1 => Prepared
-            case 2 => Queued
-            case 3 => Running
-            case 4 => Error
-            case 5 => Done
-            case 6 => Submitted
-            case 7 => Pending
-            case 8 => LimitReached
-            case 9 => Deleted
-            case _ => Error
-          })
-        } catch {
-          case cause: Throwable => JsError(cause.getMessage)
-        }
-      case _ => JsError("expected.jsobject")
-    }
+  case object Prepared extends JobState {
+    override def toInt = 1
   }
 
-  implicit object JobStateWrites extends Writes[JobState] {
-    def writes(jobState: JobState): JsNumber = jobState match {
-      case Prepared     => JsNumber(1)
-      case Queued       => JsNumber(2)
-      case Running      => JsNumber(3)
-      case Error        => JsNumber(4)
-      case Done         => JsNumber(5)
-      case Submitted    => JsNumber(6)
-      case Pending      => JsNumber(7)
-      case LimitReached => JsNumber(8)
-      case Deleted      => JsNumber(9)
-    }
+  case object Queued extends JobState {
+    override def toInt = 2
   }
+
+  case object Running extends JobState {
+    override def toInt = 3
+  }
+
+  case object Error extends JobState {
+    override def toInt = 4
+  }
+
+  case object Done extends JobState {
+    override def toInt = 5
+  }
+
+  case object Submitted extends JobState {
+    override def toInt = 6
+  }
+
+  case object Pending extends JobState {
+    override def toInt = 7
+  }
+
+  case object LimitReached extends JobState {
+    override def toInt = 8
+  }
+
+  case object Deleted extends JobState {
+    override def toInt = 9
+  }
+
+  implicit val jobStateDecoder: Decoder[JobState] = (c: HCursor) =>
+    for {
+      number <- c.downField("status").as[Int]
+    } yield {
+      implicitly[
+        AllSingletons[
+          JobState,
+          Prepared.type :+:
+          Queued.type :+:
+          Running.type :+:
+          Done.type :+:
+          Error.type :+:
+          Submitted.type :+:
+          Pending.type :+:
+          LimitReached.type :+:
+          CNil
+        ]
+      ].values.find(_.toInt == number).getOrElse(throw new Exception)
+  }
+
+  implicit val jobStateEncoder: Encoder[JobState] = Encoder[Int].contramap(_.toInt)
 
   implicit object JobStateReader extends BSONReader[BSONInteger, JobState] {
     def read(state: BSONInteger): JobState with Product with Serializable = {
@@ -80,19 +87,7 @@ object JobState {
   }
 
   implicit object JobStateWriter extends BSONWriter[JobState, BSONInteger] {
-    def write(state: JobState): BSONInteger = {
-      state match {
-        case Prepared     => BSONInteger(1)
-        case Queued       => BSONInteger(2)
-        case Running      => BSONInteger(3)
-        case Error        => BSONInteger(4)
-        case Done         => BSONInteger(5)
-        case Submitted    => BSONInteger(6)
-        case Pending      => BSONInteger(7)
-        case LimitReached => BSONInteger(8)
-        case Deleted      => BSONInteger(9)
-      }
-    }
+    def write(state: JobState): BSONInteger = BSONInteger(state.toInt)
   }
 
 }

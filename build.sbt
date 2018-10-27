@@ -37,15 +37,17 @@ lazy val disableDocs = Seq[Setting[_]](
 
 import sbtcrossproject.{ crossProject, CrossType }
 
-lazy val common = (crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure) in file("modules/common")).settings(
-  name := "common",
-  libraryDependencies ++= Dependencies.commonDeps,
-  Settings.compileSettings,
-  disableDocs
-)
+lazy val common = (crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure) in file("modules/common"))
+  .settings(
+    name := "common",
+    libraryDependencies ++= Dependencies.commonDeps,
+    Settings.compileSettings,
+    disableDocs
+  )
+  .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
 
-lazy val commonJS  = common.js
-lazy val commonJVM = common.jvm
+lazy val commonJS  = common.js.dependsOn(base)
+lazy val commonJVM = common.jvm.dependsOn(base)
 
 lazy val results = (project in file("modules/results"))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl)
