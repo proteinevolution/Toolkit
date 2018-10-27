@@ -17,11 +17,11 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import TextInput from './TextInput.vue';
-    import TextArea from './TextArea.vue';
-    import Select from './Select.vue';
-    import Number from './Number.vue';
-    import Boolean from './Boolean.vue';
+    import TextInputParameter from './TextInput.vue';
+    import TextAreaParameter from './TextArea.vue';
+    import SelectParameter from './Select.vue';
+    import NumberParameter from './Number.vue';
+    import BooleanParameter from './Boolean.vue';
     import AlignmentMode from './AlignmentMode.vue';
     import ReformatView from './ReformatView.vue';
     import {ParameterSection} from '@/types/toolkit/index';
@@ -30,11 +30,11 @@
     export default Vue.extend({
         name: 'Section',
         components: {
-            TextInput,
-            TextArea,
-            Select,
-            Number,
-            Boolean,
+            TextInputParameter,
+            TextAreaParameter,
+            SelectParameter,
+            NumberParameter,
+            BooleanParameter,
             AlignmentMode,
             ReformatView,
         },

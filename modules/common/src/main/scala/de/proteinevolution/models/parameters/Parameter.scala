@@ -1,9 +1,7 @@
 package de.proteinevolution.models.parameters
 
 import io.circe.Encoder
-import io.circe.generic.JsonCodec
-import io.circe.generic.auto._
-import io.circe.syntax._
+import io.circe.generic.extras.Configuration
 
 sealed trait Parameter {
   def name: String
@@ -12,13 +10,13 @@ sealed trait Parameter {
 
 object Parameter {
 
-  @JsonCodec case class TextInputParameter(
+  case class TextInputParameter(
       name: String,
       label: String,
-      inputPlaceholder: String
+      inputPlaceholder: String,
   ) extends Parameter
 
-  @JsonCodec case class TextAreaParameter(
+  case class TextAreaParameter(
       name: String,
       inputType: String,
       inputPlaceholder: String,
@@ -27,16 +25,16 @@ object Parameter {
     override val label: String = ""
   }
 
-  @JsonCodec case class SelectOption(value: String, text: String)
+  case class SelectOption(value: String, text: String)
 
-  @JsonCodec case class SelectParameter(
+  case class SelectParameter(
       name: String,
       label: String,
       options: Seq[SelectOption],
       maxSelectedOptions: Int
   ) extends Parameter
 
-  @JsonCodec case class NumberParameter(
+  case class NumberParameter(
       name: String,
       label: String,
       min: Option[Double] = None,
@@ -45,24 +43,25 @@ object Parameter {
       default: Option[Double] = None
   ) extends Parameter
 
-  @JsonCodec case class BooleanParameter(
+  case class BooleanParameter(
       name: String,
       label: String,
       default: Option[Boolean]
   ) extends Parameter
 
-  @JsonCodec case class ModellerParameter(
+  case class ModellerParameter(
       name: String,
       label: String,
   ) extends Parameter
 
-  implicit val encodeParameter: Encoder[Parameter] = Encoder.instance {
-    case input @ TextInputParameter(_, _, _)        => input.asJson
-    case area @ TextAreaParameter(_, _, _, _)       => area.asJson
-    case select @ SelectParameter(_, _, _, _)       => select.asJson
-    case number @ NumberParameter(_, _, _, _, _, _) => number.asJson
-    case boolean @ BooleanParameter(_, _, _)        => boolean.asJson
-    case modeller @ ModellerParameter(_, _)         => modeller.asJson
+  implicit val ep: Encoder[Parameter] = {
+    import io.circe.generic.extras.auto._
+
+    implicit val config: Configuration =
+      io.circe.generic.extras.defaults.defaultGenericConfiguration.copy(discriminator = Some("parameterType"))
+    val _ = config
+    io.circe.generic.extras.semiauto.deriveEncoder[Parameter]
+
   }
 
 }
