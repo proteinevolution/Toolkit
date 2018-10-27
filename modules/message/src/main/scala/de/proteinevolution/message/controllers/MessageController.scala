@@ -5,11 +5,12 @@ import akka.stream.Materializer
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.message.actors.WebSocketActor
+import io.circe.syntax._
+import io.circe.{ Json, JsonObject }
 import javax.inject.Inject
-import play.api.{ Configuration, Environment, Logger }
-import play.api.libs.json.{ JsValue, Json }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
+import play.api.{ Configuration, Environment, Logger }
 
 import scala.concurrent.ExecutionContext
 
@@ -22,9 +23,11 @@ class MessageController @Inject()(
 )(implicit actorSystem: ActorSystem, mat: Materializer, ec: ExecutionContext)
     extends ToolkitController(cc) {
 
+  import de.proteinevolution.message.helpers.CirceFlowTransformer._
+
   private val logger = Logger(this.getClass)
 
-  def ws: WebSocket = WebSocket.acceptOrResult[JsValue, JsValue] {
+  def ws: WebSocket = WebSocket.acceptOrResult[Json, Json] {
     case rh if sameOriginCheck(rh) =>
       logger.info("Creating new WebSocket. ip: " + rh.remoteAddress.toString + ", with sessionId: " + rh.session)
       userSessions
@@ -35,8 +38,8 @@ class MessageController @Inject()(
         .recover {
           case e: Exception =>
             logger.warn("Cannot create websocket", e)
-            val jsError = Json.obj("error" -> "Cannot create websocket")
-            Left(BadRequest(jsError))
+            val jsError = JsonObject("error" -> Json.fromString("Cannot create websocket"))
+            Left(BadRequest(jsError.asJson))
         }
     case rejected =>
       logger.warn(s"Request $rejected failed same origin check")

@@ -3,11 +3,11 @@ package de.proteinevolution.models.database.jobs
 import java.time.ZonedDateTime
 
 import de.proteinevolution.models.util.ZonedDateTimeHelper
-import play.api.libs.json._
+import io.circe.generic.JsonCodec
 import reactivemongo.bson._
 
-case class JobClusterData(
-    sgeID: String, // sun grid engine job id
+@JsonCodec case class JobClusterData(
+    sgeID: String,
     memory: Option[Int],
     threads: Option[Int],
     hardruntime: Option[Int],
@@ -23,27 +23,14 @@ case class JobClusterData(
 }
 
 object JobClusterData {
-  val SGEID        = "sgeid"
-  val MEMORY       = "memory"
-  val THREADS      = "threads"
-  val HARDRUNTIME  = "hardruntime"
-  val DATESTARTED  = "started"
-  val DATEFINISHED = "finished"
 
-  implicit object JobWrites extends Writes[JobClusterData] {
-    def writes(job: JobClusterData): JsObject = Json.obj(
-      SGEID        -> job.sgeID,
-      MEMORY       -> job.memory,
-      THREADS      -> job.threads,
-      HARDRUNTIME  -> job.hardruntime,
-      DATESTARTED  -> job.dateStarted,
-      DATEFINISHED -> job.dateFinished
-    )
-  }
+  final val SGEID        = "sgeid"
+  final val MEMORY       = "memory"
+  final val THREADS      = "threads"
+  final val HARDRUNTIME  = "hardruntime"
+  final val DATESTARTED  = "started"
+  final val DATEFINISHED = "finished"
 
-  /**
-   * Object containing the reader for the Class
-   */
   implicit object Reader extends BSONDocumentReader[JobClusterData] {
     def read(bson: BSONDocument): JobClusterData = {
       JobClusterData(
@@ -57,9 +44,6 @@ object JobClusterData {
     }
   }
 
-  /**
-   * Object containing the writer for the Class
-   */
   implicit object Writer extends BSONDocumentWriter[JobClusterData] {
     def write(clusterData: JobClusterData): BSONDocument = BSONDocument(
       SGEID        -> clusterData.sgeID,
@@ -70,4 +54,5 @@ object JobClusterData {
       DATEFINISHED -> BSONDateTime(clusterData.dateStarted.fold(-1L)(_.toInstant.toEpochMilli))
     )
   }
+
 }
