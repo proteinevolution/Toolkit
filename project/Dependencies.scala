@@ -1,7 +1,7 @@
+import org.portablescala.sbtplatformdeps.PlatformDepsPlugin.autoImport._
+import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 import play.sbt.PlayImport._
 import sbt._
-import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
-import org.portablescala.sbtplatformdeps.PlatformDepsPlugin.autoImport._
 
 object Dependencies {
 
@@ -43,7 +43,8 @@ object Dependencies {
     "io.circe"             %% "circe-bson"               % "0.2.0",
     "org.webjars"          %% "webjars-play"             % "2.6.3",
     "org.scala-js"         %% "scalajs-stubs"            % scalaJSVersion % "provided",
-    "com.github.mpilquist" %% "simulacrum"               % "0.12.0"
+    "com.github.mpilquist" %% "simulacrum"               % "0.12.0",
+    "com.github.mongobee"  % "mongobee"                  % "0.13"
   )
 
   lazy val clientDeps: Def.Initialize[Seq[sbt.ModuleID]] = Def.setting(
