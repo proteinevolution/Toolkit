@@ -3,11 +3,11 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.models.database.jobs.JobState.Done
-import de.proteinevolution.models.database.statistics.{JobEvent, JobEventLog}
-import javax.inject.{Inject, Singleton}
+import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
+import javax.inject.{ Inject, Singleton }
 import reactivemongo.api.commands.WriteResult
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 class JobFrontendToolsService @Inject()(
