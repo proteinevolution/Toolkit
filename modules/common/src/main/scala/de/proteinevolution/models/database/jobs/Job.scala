@@ -5,9 +5,8 @@ import java.time.ZonedDateTime
 import de.proteinevolution.models.database.jobs.JobState._
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 import de.proteinevolution.services.ToolConfig
-import io.circe.generic.semiauto.deriveEncoder
+import io.circe.JsonObject
 import io.circe.syntax._
-import io.circe.{ Encoder, JsonObject }
 import play.api.Configuration
 import reactivemongo.bson._
 
@@ -95,45 +94,6 @@ object Job {
   final val DATEDELETION = "date_deleted"
   final val TOOLNAMELONG = "toolname_long"
   final val IPHASH       = "ip_hash"
-
-  implicit val bsonEncoder: Encoder[BSONObjectID] = Encoder[String].contramap(_.stringify)
-
-  implicit val jobEncoder: Encoder[Job] = deriveEncoder
-  // TODO manual wiring is a code smell - no consistent key schema and _id should not be exposed at all
-//  implicit val jobEncoder: Encoder[Job] = Encoder.forProduct15(
-//    JOBID,
-//    PARENTID,
-//    HASH,
-//    OWNERID,
-//    ISPUBLIC,
-//    STATUS,
-//    EMAILUPDATE,
-//    TOOL,
-//    WATCHLIST,
-//    CLUSTERDATA,
-//    DATECREATED,
-//    DATEUPDATED,
-//    DATEVIEWED,
-//    DATEDELETION,
-//    IPHASH
-//  )(
-//    job =>
-//      (job.jobID,
-//       job.parentID,
-//       job.hash,
-//       job.ownerID.map(_.stringify),
-//       job.isPublic,
-//       job.status,
-//       job.emailUpdate,
-//       job.tool,
-//       job.watchList.map(_.stringify),
-//       job.clusterData,
-//       job.dateCreated,
-//       job.dateUpdated,
-//       job.dateViewed,
-//       job.dateDeletion,
-//       job.IPHash)
-//  )
 
   // TODO Bson macros handler
   implicit object Reader extends BSONDocumentReader[Job] {
