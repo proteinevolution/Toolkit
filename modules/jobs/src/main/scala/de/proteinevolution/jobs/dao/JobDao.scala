@@ -2,7 +2,7 @@ package de.proteinevolution.jobs.dao
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.models.database.jobs.Job
+import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.models.database.statistics.JobEventLog
 import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -19,7 +19,7 @@ class JobDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit 
 
   private lazy val jobCollection: Future[BSONCollection] = {
     reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs")).map { collection =>
-      collection.indexesManager.ensure(Index(Seq("jobID" -> IndexType.Text), background = true, unique = true))
+      collection.indexesManager.ensure(Index(Seq(Job.JOBID -> IndexType.Text), background = true, unique = true))
       collection
     }
   }
@@ -36,7 +36,7 @@ class JobDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit 
   }
 
   def selectJob(jobID: String): Future[Option[Job]] = {
-    findJob(BSONDocument("jobID" -> jobID))
+    findJob(BSONDocument(Job.JOBID -> jobID))
   }
 
   def removeJob(selector: BSONDocument): Future[WriteResult] = {

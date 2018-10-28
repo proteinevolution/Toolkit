@@ -15,7 +15,7 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%coloredLevel %logger{15} - %message%n%xException{10}</pattern>
+            <pattern>%date %coloredLevel %logger{15} - %message%n%xException{10}</pattern>
         </encoder>
     </appender>
 
@@ -23,14 +23,13 @@
         <appender-ref ref="STDOUT"/>
     </appender>
 
-    <logger name="play" level="INFO"/>
     <logger name="play.core.server.akkahttp" level="WARN"/>
+    <logger name="reactivemongo" level="WARN" />
     <logger name="application" level="DEBUG"/>
-
-    <logger name="controllers" level="INFO"/>
     <logger name="actors" level="INFO"/>
-
+    <logger name="controllers" level="INFO"/>
     <logger name="http.filters" level="INFO"/>
+    <logger name="play" level="INFO"/>
 
     <root level="WARN">
         <appender-ref ref="ASYNCSTDOUT"/>

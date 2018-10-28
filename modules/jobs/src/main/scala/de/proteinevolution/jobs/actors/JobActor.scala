@@ -2,8 +2,6 @@ package de.proteinevolution.jobs.actors
 
 import java.time.ZonedDateTime
 
-import javax.inject.Inject
-import de.proteinevolution.jobs.actors.JobActor._
 import akka.NotUsed
 import akka.actor._
 import akka.event.LoggingReceive
@@ -11,6 +9,14 @@ import better.files._
 import com.google.inject.assistedinject.Assisted
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.dao.UserDao
+import de.proteinevolution.auth.models.MailTemplate.JobFinishedMail
+import de.proteinevolution.base.helpers.ToolkitTypes
+import de.proteinevolution.cluster.api.Polling.PolledJobs
+import de.proteinevolution.cluster.api.{ QStat, Qdel }
+import de.proteinevolution.jobs.actors.JobActor._
+import de.proteinevolution.jobs.dao.JobDao
+import de.proteinevolution.jobs.models.{ Job, JobClusterData }
+import de.proteinevolution.jobs.services.{ GeneralHashService, JobTerminator }
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.JobState._
 import de.proteinevolution.models.database.jobs._
@@ -23,12 +29,7 @@ import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecutio
 import de.proteinevolution.tel.execution.{ ExecutionContext, WrapperExecutionFactory }
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
-import de.proteinevolution.auth.models.MailTemplate.JobFinishedMail
-import de.proteinevolution.base.helpers.ToolkitTypes
-import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.services.{ GeneralHashService, JobTerminator }
-import de.proteinevolution.cluster.api.Polling.PolledJobs
-import de.proteinevolution.cluster.api.{ QStat, Qdel }
+import javax.inject.Inject
 import play.api.Configuration
 import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
@@ -182,7 +183,7 @@ class JobActor @Inject()(
     jobDao.eventLogCollection
       .flatMap(
         _.findAndUpdate(
-          BSONDocument(JobEventLog.IDDB -> job.mainID),
+          BSONDocument(JobEventLog.JOBID -> job.jobID),
           BSONDocument(
             "$push" ->
             BSONDocument(JobEventLog.EVENTS -> JobEvent(Deleted, Some(now), Some(0L)))
@@ -198,7 +199,7 @@ class JobActor @Inject()(
       }
 
     // Remove the job from mongoDB collection
-    jobDao.removeJob(BSONDocument(Job.IDDB -> job.mainID)).foreach { writeResult =>
+    jobDao.removeJob(BSONDocument(Job.JOBID -> job.jobID)).foreach { writeResult =>
       if (writeResult.ok) {
         if (verbose) log.info(s"[JobActor.Delete] Deletion of Job was successful:\n${job.toString()}")
       } else {
@@ -215,12 +216,12 @@ class JobActor @Inject()(
 
     // Update job in the database and notify watcher upon completion
     jobDao
-      .modifyJob(BSONDocument(Job.IDDB -> job.mainID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
+      .modifyJob(BSONDocument(Job.JOBID -> job.jobID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
       .map { _ =>
         val jobLog = this.currentJobLogs.get(job.jobID) match {
           case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
           case None =>
-            JobEventLog(mainID = job.mainID,
+            JobEventLog(jobID = job.jobID,
                         toolName = job.tool,
                         events = List(JobEvent(job.status, Some(ZonedDateTime.now))))
         }
@@ -256,7 +257,7 @@ class JobActor @Inject()(
               log.info(
                 s"[JobActor[$jobActorNumber].sendJobUpdateMail] Sending eMail to job owner for job ${job.jobID}: Job is ${job.status.toString}"
               )
-              val eMail = JobFinishedMail(user, job, environment, env)
+              val eMail = JobFinishedMail(user, job.jobID, job.status, environment, env)
               eMail.send
             case None => NotUsed
           }
@@ -288,7 +289,7 @@ class JobActor @Inject()(
         // Create a log for this job
         this.currentJobLogs =
           this.currentJobLogs.updated(job.jobID,
-                                      JobEventLog(mainID = job.mainID,
+                                      JobEventLog(jobID = job.jobID,
                                                   toolName = job.tool,
                                                   internalJob = isInternalJob,
                                                   events = List(JobEvent(job.status, Some(ZonedDateTime.now)))))
@@ -496,8 +497,8 @@ class JobActor @Inject()(
 
               jobDao
                 .modifyJob(
-                  BSONDocument(Job.IDDB -> job.mainID),
-                  BSONDocument("$set"   -> BSONDocument(Job.CLUSTERDATA -> clusterData, Job.HASH -> jobHash))
+                  BSONDocument(Job.JOBID -> job.jobID),
+                  BSONDocument("$set"    -> BSONDocument(Job.CLUSTERDATA -> clusterData, Job.HASH -> jobHash))
                 )
                 .foreach {
                   case Some(_) =>

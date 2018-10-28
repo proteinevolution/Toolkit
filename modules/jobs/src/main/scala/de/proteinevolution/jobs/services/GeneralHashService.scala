@@ -2,7 +2,7 @@ package de.proteinevolution.jobs.services
 
 import better.files._
 import com.typesafe.config.Config
-import de.proteinevolution.models.database.jobs.Job
+import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.parsers.FASTA
 import de.proteinevolution.tel.RunscriptPathProvider
 import de.proteinevolution.tel.env.Env
@@ -35,7 +35,7 @@ final class GeneralHashService @Inject()(runscriptPathProvider: RunscriptPathPro
   def generateJobHash(job: Job, params: Map[String, String], env: Env): String = {
     // filter unique parameters
     val paramsWithoutUniques: Map[String, String] =
-    params - Job.ID - Job.IDDB - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid" - Job.IPHASH - "parentID" - "htb_length" - "alignment" - "file"
+    params - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid" - Job.IPHASH - "parentID" - "htb_length" - "alignment" - "file"
     logger.info(
       s"[JobDAO.generateJobHash] Hashing values: ${paramsWithoutUniques.map(kv => s"${kv._1} ${kv._2}").mkString(", ")}"
     )

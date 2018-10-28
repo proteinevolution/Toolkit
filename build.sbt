@@ -82,6 +82,7 @@ lazy val jobs = (project in file("modules/jobs"))
     TwirlKeys.templateImports := Seq.empty,
     disableDocs
   )
+  .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val auth = (project in file("modules/auth"))
