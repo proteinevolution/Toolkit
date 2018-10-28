@@ -81,6 +81,15 @@ public class DatabaseChangelog {
         db.getCollection("jobs").updateMany(filters, update);
     }
 
+    @ChangeSet(order = "005", id = "5", author = "Felix Gabler")
+    public void removeCommentListFromJob(final MongoDatabase db) {
+        final Document unset = new Document();
+        unset.put("commentList", 1);
+        Bson filters = Filters.exists("commentList", true);
+        Bson update = new Document("$unset", unset);
+        db.getCollection("jobs").updateMany(filters, update);
+    }
+
 //    @ChangeSet(order = "004", id = "4", author = "Felix Gabler")
 //    public void changeJobEventKeysToSnakeCase(final MongoDatabase db) {
 //        // TODO: does not work yet because events is an array of dynamic documents
@@ -88,7 +97,7 @@ public class DatabaseChangelog {
 //
 //        final Document project = new Document();
 //        project.put("job_state", "$events.$.jobState");
-//        Bson $project = new Document("$project", project);
+//        Bson $project = new Document("$cproject", project);
 //        pipeline.add($project);
 //
 //        db.getCollection("jobevents").aggregate(pipeline);
