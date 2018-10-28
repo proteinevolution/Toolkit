@@ -4,9 +4,10 @@ import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.search.services.SearchService
 import de.proteinevolution.services.ToolConfig
+import io.circe.JsonObject
+import io.circe.syntax._
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
-import play.api.libs.json.Json
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 
 import scala.concurrent.ExecutionContext
@@ -26,7 +27,7 @@ class SearchController @Inject()(
   def recentJobInfo: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       searchService.recentJob(user).map { lastJob =>
-        Ok(Json.obj("lastJob" -> lastJob.map(_.cleaned(toolConfig))))
+        Ok(JsonObject("lastJob" -> lastJob.map(_.cleaned(toolConfig)).asJson).asJson)
       }
     }
   }
@@ -34,7 +35,7 @@ class SearchController @Inject()(
   def existsTool(queryString: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { _ =>
       if (toolConfig.isTool(queryString)) {
-        Ok(Json.toJson(true))
+        Ok(true.asJson)
       } else {
         NotFound
       }
@@ -43,11 +44,10 @@ class SearchController @Inject()(
 
   def getToolList: Action[AnyContent] = Action {
     Ok(
-      Json.toJson(
-        toolConfig.values.values
-          .filterNot(_.toolNameShort == "hhpred_manual")
-          .map(a => Json.obj("long" -> a.toolNameLong, "short" -> a.toolNameShort))
-      )
+      toolConfig.values.values
+        .filterNot(_.toolNameShort == "hhpred_manual")
+        .map(a => JsonObject("long" -> a.toolNameLong.asJson, "short" -> a.toolNameShort.asJson))
+        .asJson
     )
   }
 
@@ -59,7 +59,7 @@ class SearchController @Inject()(
   def autoComplete(queryString_ : String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
       searchService.autoComplete(user, queryString_).value.map {
-        case Some(jobs) => Ok(Json.toJson(jobs.map(_.cleaned(toolConfig))))
+        case Some(jobs) => Ok(jobs.map(_.cleaned(toolConfig)).asJson)
         case None       => NoContent
       }
     }

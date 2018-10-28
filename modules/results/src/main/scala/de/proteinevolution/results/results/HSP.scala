@@ -1,21 +1,21 @@
 package de.proteinevolution.results.results
 
-import play.api.libs.json.JsValue
+import io.circe.Json
 
 trait HSP {
 
   def description: String
 
-  def toDataTable(db: String): JsValue
+  def toDataTable(db: String): Json
 
-  def info: SearchToolInfo
+  def info: SearchToolInfo // TODO make nullable
 
   def num: Int
 
-  def evalue: Double
+  def eValue: Double
 
   def accession: String
 
-  def template: HHTemplate
+  def template: HHTemplate // TODO make nullable
 
 }

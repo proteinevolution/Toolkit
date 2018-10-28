@@ -1,78 +1,74 @@
 package de.proteinevolution.models.database.jobs
 
-import play.api.libs.json._
+import de.proteinevolution.base.helpers.ToolkitTypes._
+import io.circe.{ Decoder, Encoder, HCursor }
 import reactivemongo.bson.{ BSONInteger, BSONReader, BSONWriter }
+import shapeless._
 
-/**
- * Object which describes the job's status
- */
+sealed trait JobState {
+  def toInt: Int
+}
+
 object JobState {
 
-  sealed trait JobState
-
-  /*
-   A Pending Job has parameters which have not been supplied yet. This might happen for file download
-   and when a job depends on the successful execution of another job.
-   */
-  // Job State which is set to save a job without submitting it
-  case object Prepared extends JobState
-  // Job State which is set when the job is submitted to the cluster but has to wait in the queue
-  case object Queued extends JobState
-  // Job State which is set when the job is being executed
-  case object Running extends JobState
-  // Job State which is set when the job has reached an error state
-  case object Error extends JobState
-  // Job State which is set when the job has completed successfully
-  case object Done extends JobState
-  // Job State which is set when the job was successfully sent to the server
-  case object Submitted extends JobState
-  // Job State which is set when the job was validated by the hash search but a different job was found
-  case object Pending extends JobState
-  // Job State which is set when the maximal number of jobs is reached within a fixed time
-  case object LimitReached extends JobState
-  // Job State which is set when the maximal number of jobs is reached within a fixed time
-  case object Deleted extends JobState
-
-  implicit object JobStateReads extends Reads[JobState] {
-    override def reads(json: JsValue): JsResult[JobState] = json match {
-      case obj: JsObject =>
-        try {
-          JsSuccess((obj \ "status").as[Int] match {
-            case 1 => Prepared
-            case 2 => Queued
-            case 3 => Running
-            case 4 => Error
-            case 5 => Done
-            case 6 => Submitted
-            case 7 => Pending
-            case 8 => LimitReached
-            case 9 => Deleted
-            case _ => Error
-          })
-        } catch {
-          case cause: Throwable => JsError(cause.getMessage)
-        }
-      case _ => JsError("expected.jsobject")
-    }
+  case object Prepared extends JobState {
+    override def toInt = 1
   }
 
-  implicit object JobStateWrites extends Writes[JobState] {
-    def writes(jobState: JobState): JsNumber = jobState match {
-      case Prepared     => JsNumber(1)
-      case Queued       => JsNumber(2)
-      case Running      => JsNumber(3)
-      case Error        => JsNumber(4)
-      case Done         => JsNumber(5)
-      case Submitted    => JsNumber(6)
-      case Pending      => JsNumber(7)
-      case LimitReached => JsNumber(8)
-      case Deleted      => JsNumber(9)
-    }
+  case object Queued extends JobState {
+    override def toInt = 2
   }
 
-  /**
-   * Object containing the reader for the job state
-   */
+  case object Running extends JobState {
+    override def toInt = 3
+  }
+
+  case object Error extends JobState {
+    override def toInt = 4
+  }
+
+  case object Done extends JobState {
+    override def toInt = 5
+  }
+
+  case object Submitted extends JobState {
+    override def toInt = 6
+  }
+
+  case object Pending extends JobState {
+    override def toInt = 7
+  }
+
+  case object LimitReached extends JobState {
+    override def toInt = 8
+  }
+
+  case object Deleted extends JobState {
+    override def toInt = 9
+  }
+
+  implicit val jobStateDecoder: Decoder[JobState] = (c: HCursor) =>
+    for {
+      number <- c.downField("status").as[Int]
+    } yield {
+      implicitly[
+        AllSingletons[
+          JobState,
+          Prepared.type :+:
+          Queued.type :+:
+          Running.type :+:
+          Done.type :+:
+          Error.type :+:
+          Submitted.type :+:
+          Pending.type :+:
+          LimitReached.type :+:
+          CNil
+        ]
+      ].values.find(_.toInt == number).getOrElse(throw new Exception)
+  }
+
+  implicit val jobStateEncoder: Encoder[JobState] = Encoder[Int].contramap(_.toInt)
+
   implicit object JobStateReader extends BSONReader[BSONInteger, JobState] {
     def read(state: BSONInteger): JobState with Product with Serializable = {
       state match {
@@ -90,22 +86,8 @@ object JobState {
     }
   }
 
-  /**
-   * Object containing the writer for the job state
-   */
   implicit object JobStateWriter extends BSONWriter[JobState, BSONInteger] {
-    def write(state: JobState): BSONInteger = {
-      state match {
-        case Prepared     => BSONInteger(1)
-        case Queued       => BSONInteger(2)
-        case Running      => BSONInteger(3)
-        case Error        => BSONInteger(4)
-        case Done         => BSONInteger(5)
-        case Submitted    => BSONInteger(6)
-        case Pending      => BSONInteger(7)
-        case LimitReached => BSONInteger(8)
-        case Deleted      => BSONInteger(9)
-      }
-    }
+    def write(state: JobState): BSONInteger = BSONInteger(state.toInt)
   }
+
 }

@@ -1,18 +1,16 @@
 package de.proteinevolution.results.models.resultviews
 
-import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.models.results.ResultViews
-import de.proteinevolution.results.results.HHomp
+import de.proteinevolution.models.{ ConstantsV2, ToolName }
+import de.proteinevolution.results.results.HHompResult
 import de.proteinevolution.services.ToolConfig
-import play.api.libs.json.JsValue
 
 import scala.collection.immutable.ListMap
 
 case class HHompResultView(
     jobId: String,
-    result: JsValue,
+    result: HHompResult,
     constants: ConstantsV2,
-    hhomp: HHomp,
     toolConfig: ToolConfig
 ) extends ResultView {
 
@@ -20,7 +18,7 @@ case class HHompResultView(
     ResultViews.RESULTS ->
     views.html.resultpanels.hhomp.hitlist(
       jobId,
-      hhomp.parseResult(result),
+      result,
       toolConfig.values(ToolName.HHOMP.value),
       s"${constants.jobPath}/$jobId/results/$jobId.html_NOIMG"
     ),

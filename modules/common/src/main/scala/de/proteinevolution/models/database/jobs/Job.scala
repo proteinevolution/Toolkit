@@ -2,73 +2,60 @@ package de.proteinevolution.models.database.jobs
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.models.util.ZonedDateTimeHelper
 import de.proteinevolution.models.database.jobs.JobState._
+import de.proteinevolution.models.util.ZonedDateTimeHelper
 import de.proteinevolution.services.ToolConfig
+import io.circe.java8.time._
+import io.circe.syntax._
+import io.circe.{ Encoder, JsonObject }
 import play.api.Configuration
-import play.api.libs.json._
 import reactivemongo.bson._
-import reactivemongo.play.json._
 
+// TODO remove default values
 case class Job(
-    mainID: BSONObjectID = BSONObjectID.generate, // ID of the Job in the System
-    jobID: String, // User visible ID of the Job
-    parentID: Option[String] = None, // Id of the parent (forwarding)
-    hash: Option[String] = None, // Non unique ID to identify duplicate jobs
-    ownerID: Option[BSONObjectID] = None, // User to whom the Job belongs
-    isPublic: Boolean = false, // User wants this job to be public
-    status: JobState = Submitted, // Status of the Job
-    emailUpdate: Boolean = false, // Owner wants to be notified when the job is ready
-    tool: String, // Tool used for this Job
-    watchList: List[BSONObjectID] = List.empty, // List of the users who watch this job, None if not public
-    commentList: List[BSONObjectID] = List.empty, // List of comment IDs for the Job
-    clusterData: Option[JobClusterData] = None, // Cluster Data
-    dateCreated: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Creation time of the Job
-    dateUpdated: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Last Updated on
-    dateViewed: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Last Viewed on
-    dateDeletion: Option[ZonedDateTime] = None, // Date the job should be deleted on (if non standard)
+    mainID: BSONObjectID = BSONObjectID.generate,
+    jobID: String,
+    parentID: Option[String] = None,
+    hash: Option[String] = None,
+    ownerID: Option[BSONObjectID] = None,
+    isPublic: Boolean = false,
+    status: JobState = Submitted,
+    emailUpdate: Boolean = false,
+    tool: String,
+    watchList: List[BSONObjectID] = List.empty,
+    commentList: List[BSONObjectID] = List.empty,
+    clusterData: Option[JobClusterData] = None,
+    dateCreated: Option[ZonedDateTime] = Some(ZonedDateTime.now),
+    dateUpdated: Option[ZonedDateTime] = Some(ZonedDateTime.now),
+    dateViewed: Option[ZonedDateTime] = Some(ZonedDateTime.now),
+    dateDeletion: Option[ZonedDateTime] = None,
     IPHash: Option[String]
-) // hash of the ip
-{
+) {
 
-  // Returns if the job is private or not
-  def isPrivate: Boolean = {
-    ownerID.isDefined && !isPublic
-  }
-
-  /**
-   * Returns a clean JSON Object representation of the Job (used in the websockets to push a job)
-   *
-   * @return
-   */
-  def cleaned(toolConfig: ToolConfig)(implicit config: Configuration): JsObject = {
-    Json.obj(
-      Job.JOBID        -> jobID,
-      Job.STATUS       -> status,
-      Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli),
-      Job.TOOL         -> tool,
-      "code"           -> toolConfig.values(tool).code,
-      Job.TOOLNAMELONG -> config.get[String](s"Tools.$tool.longname")
+  def cleaned(toolConfig: ToolConfig)(implicit config: Configuration): JsonObject = {
+    JsonObject(
+      Job.JOBID        -> jobID.asJson,
+      Job.STATUS       -> status.asJson,
+      Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli).asJson,
+      Job.TOOL         -> tool.asJson,
+      "code"           -> toolConfig.values(tool).code.asJson,
+      Job.TOOLNAMELONG -> config.get[String](s"Tools.$tool.longname").asJson
     )
   }
 
-  /**
-   * Returns a clean JSON Object representation of the Job (used in the Job Manager)
-   *
-   * @return
-   */
-  def jobManagerJob()(implicit config: Configuration): JsObject = {
-    Json.obj(
-      Job.JOBID        -> jobID,
-      Job.STATUS       -> status,
-      Job.TOOL         -> tool,
-      Job.COMMENTLIST  -> commentList.length,
-      Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli),
-      Job.DATEUPDATED  -> dateUpdated.map(_.toInstant.toEpochMilli),
-      Job.DATEVIEWED   -> dateViewed.map(_.toInstant.toEpochMilli),
-      Job.TOOLNAMELONG -> config.get[String](s"Tools.$tool.longname")
+  def jobManagerJob()(implicit config: Configuration): JsonObject = {
+    JsonObject(
+      Job.JOBID        -> jobID.asJson,
+      Job.STATUS       -> status.asJson,
+      Job.TOOL         -> tool.asJson,
+      Job.COMMENTLIST  -> commentList.length.asJson,
+      Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli).asJson,
+      Job.DATEUPDATED  -> dateUpdated.map(_.toInstant.toEpochMilli).asJson,
+      Job.DATEVIEWED   -> dateViewed.map(_.toInstant.toEpochMilli).asJson,
+      Job.TOOLNAMELONG -> config.get[String](s"Tools.$tool.longname").asJson
     )
   }
+
   override def toString: String = {
     s"""--[Job Object]--
         |mainID: ${this.mainID}
@@ -76,69 +63,88 @@ case class Job(
         |parentID: ${this.parentID}
         |tool: ${this.tool}
         |state: ${this.status}
-        |ownerID: ${this.ownerID.map(_.stringify).getOrElse("no Owner")}
+        |ownerID: ${this.ownerID.map(_.stringify).getOrElse("no owner")}
         |created on: ${this.dateCreated.map(_.toString()).getOrElse("--")}
         |--[Job Object end]--
      """.stripMargin
   }
 
-  def isFinished: Boolean = {
-    status == Done || status == Error
-  }
+  def isPrivate: Boolean = ownerID.isDefined && !isPublic
+
+  def isFinished: Boolean = status == Done || status == Error
+
 }
 
 object Job {
-  // Constants for the JSON object identifiers
-  val ID           = "id" // name for the ID in scala
-  val IDDB         = "_id" //              ID in MongoDB
-  val JOBID        = "jobID" //              ID for the job
-  val PARENTID     = "parent_id" //              ID for the jobs parent
-  val HASH         = "hash"
-  val PROJECT      = "project" //              project id
-  val OWNERID      = "ownerID" //              ID of the job owner
-  val OWNER        = "owner" //              Name of the job owner
-  val ISPUBLIC     = "isPublic"
-  val STATUS       = "status" //              Status of the job field
-  val EMAILUPDATE  = "emailUpdate" //              check if the user wants a notification when the job is done
-  val DELETION     = "deletion" //              Deletion status flag
-  val TOOL         = "tool" //              name of the tool field
-  val LABEL        = "label"
-  val WATCHLIST    = "watchList" //              optional list of watching users references
-  val COMMENTLIST  = "commentList" //              comment list references
-  val CLUSTERDATA  = "clusterData" //              detailed data on the cluster usage
-  val SGEID        = s"$CLUSTERDATA.${JobClusterData.SGEID}"
-  val DATECREATED  = "dateCreated" //              created on field
-  val DATEUPDATED  = "dateUpdated" //              changed on field
-  val DATEVIEWED   = "dateViewed" //              last view on field
-  val DATEDELETION = "dateDeletion" // date wh
-  val TOOLNAMELONG = "toolnameLong" //           long tool name
-  val IPHASH       = "IPHash" //                  ip hash
 
-  implicit object JobWrites extends Writes[Job] {
-    def writes(job: Job): JsObject = Json.obj(
-      IDDB         -> job.mainID,
-      JOBID        -> job.jobID,
-      PARENTID     -> job.parentID,
-      HASH         -> job.hash,
-      OWNERID      -> job.ownerID,
-      ISPUBLIC     -> job.isPublic,
-      STATUS       -> job.status,
-      EMAILUPDATE  -> job.emailUpdate,
-      TOOL         -> job.tool,
-      WATCHLIST    -> job.watchList,
-      COMMENTLIST  -> job.commentList,
-      CLUSTERDATA  -> job.clusterData,
-      DATECREATED  -> job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli),
-      DATEUPDATED  -> job.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli),
-      DATEVIEWED   -> job.dateViewed.fold(-1L)(_.toInstant.toEpochMilli),
-      DATEDELETION -> job.dateDeletion.map(_.toInstant.toEpochMilli),
-      IPHASH       -> job.IPHash
-    )
-  }
+  // TODO https://stackoverflow.com/questions/5916080/what-are-naming-conventions-for-mongodb
+  // change as soon as we have a migration tool integrated
+  final val ID           = "id"
+  final val IDDB         = "_id"
+  final val JOBID        = "jobID"
+  final val PARENTID     = "parent_id"
+  final val HASH         = "hash"
+  final val PROJECT      = "project"
+  final val OWNERID      = "ownerID"
+  final val OWNER        = "owner"
+  final val ISPUBLIC     = "isPublic"
+  final val STATUS       = "status"
+  final val EMAILUPDATE  = "emailUpdate"
+  final val DELETION     = "deletion"
+  final val TOOL         = "tool"
+  final val LABEL        = "label"
+  final val WATCHLIST    = "watchList"
+  final val COMMENTLIST  = "commentList"
+  final val CLUSTERDATA  = "clusterData"
+  final val SGEID        = s"$CLUSTERDATA.${JobClusterData.SGEID}"
+  final val DATECREATED  = "dateCreated"
+  final val DATEUPDATED  = "dateUpdated"
+  final val DATEVIEWED   = "dateViewed"
+  final val DATEDELETION = "dateDeletion"
+  final val TOOLNAMELONG = "toolnameLong"
+  final val IPHASH       = "IPHash"
 
-  /**
-   * Object containing the writer for the Class
-   */
+  // TODO manual wiring is a code smell - no consistent key schema and _id should not be exposed at all
+  implicit val jobEncoder: Encoder[Job] = Encoder.forProduct17(
+    IDDB,
+    JOBID,
+    PARENTID,
+    HASH,
+    OWNERID,
+    ISPUBLIC,
+    STATUS,
+    EMAILUPDATE,
+    TOOL,
+    WATCHLIST,
+    COMMENTLIST,
+    CLUSTERDATA,
+    DATECREATED,
+    DATEUPDATED,
+    DATEVIEWED,
+    DATEDELETION,
+    IPHASH
+  )(
+    job =>
+      (job.mainID.stringify,
+       job.jobID,
+       job.parentID,
+       job.hash,
+       job.ownerID.map(_.stringify),
+       job.isPublic,
+       job.status,
+       job.emailUpdate,
+       job.tool,
+       job.watchList.map(_.stringify),
+       job.commentList.map(_.stringify),
+       job.clusterData,
+       job.dateCreated,
+       job.dateUpdated,
+       job.dateViewed,
+       job.dateDeletion,
+       job.IPHash)
+  )
+
+  // TODO Bson macros handler
   implicit object Reader extends BSONDocumentReader[Job] {
     def read(bson: BSONDocument): Job = {
       Job(
@@ -163,9 +169,6 @@ object Job {
     }
   }
 
-  /**
-   * Object containing the writer for the Class
-   */
   implicit object Writer extends BSONDocumentWriter[Job] {
     def write(job: Job): BSONDocument = {
       BSONDocument(
@@ -189,4 +192,5 @@ object Job {
       )
     }
   }
+
 }

@@ -13,7 +13,8 @@ class ParamAccess @Inject()(tel: TEL) {
 
   // TODO param intersection logic
 
-  def select(name: String, label: String) = Param(name, Select(tel.generateValues(name).toSeq), 1, label)
+  def select(name: String, label: String): Param = Param(name, Select(tel.generateValues(name).toSeq), 1, label)
+
   final val alignmentFormats = Seq(
     "fas" -> "fas",
     "a2m" -> "a2m",
@@ -24,19 +25,20 @@ class ParamAccess @Inject()(tel: TEL) {
   )
 
   def getParam(paramName: String, placeholder: String = ""): Param = paramName match {
-    case "ALIGNMENT"        => Param("alignment", Sequence(alignmentFormats, placeholder, false), 1, "")
-    case "TWOTEXTALIGNMENT" => Param("alignment", Sequence(alignmentFormats, placeholder, true), 1, "")
-    case "HMMER_DB"         => select("hmmerdb", "Select database")
-    case "STANDARD_DB"      => select("standarddb", "Select standard database")
-    case "HHSUITEDB"        => select("hhsuitedb", "Select database (PDB_mmCIF70 for modeling)")
-    case "MATRIX"           => select("matrix", "Scoring Matrix")
-    case "NUM_ITER"         => Param("num_iter", ParamType.UnconstrainedNumber, 1, "No. of iterations")
-    case "EVALUE"           => select("evalue", "E-value")
-    case "GAP_OPEN"         => Param("gap_open", ParamType.UnconstrainedNumber, 1, "Gap open penalty")
-    case "GAP_TERM"         => Param("gap_term", Decimal("0.01", Some(0), Some(10)), 1, "Terminal gap penalty")
-    case "GAP_EXT_KALN"     => Param("gap_ext_kaln", Decimal("0.01", Some(0), Some(10)), 1, "Gap extension penalty")
-    case "BONUSSCORE"       => Param("bonusscore", Decimal("0.01", Some(0), Some(10)), 1, "Bonus Score")
-    case "DESC"             => select("desc", "No. of target sequences (up to 10000)")
+    case "ALIGNMENT" => Param("alignment", Sequence(alignmentFormats, placeholder, allowTwoTextAreas = false), 1, "")
+    case "TWOTEXTALIGNMENT" =>
+      Param("alignment", Sequence(alignmentFormats, placeholder, allowTwoTextAreas = true), 1, "")
+    case "HMMER_DB"     => select("hmmerdb", "Select database")
+    case "STANDARD_DB"  => select("standarddb", "Select standard database")
+    case "HHSUITEDB"    => select("hhsuitedb", "Select database (PDB_mmCIF70 for modeling)")
+    case "MATRIX"       => select("matrix", "Scoring Matrix")
+    case "NUM_ITER"     => Param("num_iter", ParamType.UnconstrainedNumber, 1, "No. of iterations")
+    case "EVALUE"       => select("evalue", "E-value")
+    case "GAP_OPEN"     => Param("gap_open", ParamType.UnconstrainedNumber, 1, "Gap open penalty")
+    case "GAP_TERM"     => Param("gap_term", Decimal("0.01", Some(0), Some(10)), 1, "Terminal gap penalty")
+    case "GAP_EXT_KALN" => Param("gap_ext_kaln", Decimal("0.01", Some(0), Some(10)), 1, "Gap extension penalty")
+    case "BONUSSCORE"   => Param("bonusscore", Decimal("0.01", Some(0), Some(10)), 1, "Bonus Score")
+    case "DESC"         => select("desc", "No. of target sequences (up to 10000)")
     case "CONSISTENCY" =>
       Param("consistency", ParamType.UnconstrainedNumber, 1, "Passes of consistency transformation")
     case "ITREFINE"                 => Param("itrefine", ParamType.UnconstrainedNumber, 1, "Passes of iterative refinements")
@@ -87,7 +89,7 @@ class ParamAccess @Inject()(tel: TEL) {
     case "ALN_STRINGENCY"          => select("aln_stringency", "Alignment stringency")
     case "OUTPUT_ORDER"            => select("output_order", "Output the alignment in:")
     case "EVAL_TPR"                => select("eval_tpr", "E-value inclusion TPR & SEL")
-    case "CODON_TABLE_ORGANISM"    => Param("codon_table_organism", Text(""), 1, "Use codon usage table of")
+    case "CODON_TABLE_ORGANISM"    => Param("codon_table_organism", Text(), 1, "Use codon usage table of")
     case "HHPRED_INCL_EVAL"        => select("hhpred_incl_eval", "E-value incl. threshold for MSA generation")
     case "BLAST_INCL_EVAL"         => select("blast_incl_eval", "E-value inclusion threshold")
     case "HHBLITS_INCL_EVAL"       => select("hhblits_incl_eval", "E-value inclusion threshold")

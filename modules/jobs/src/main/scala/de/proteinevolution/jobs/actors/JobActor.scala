@@ -185,7 +185,7 @@ class JobActor @Inject()(
           BSONDocument(JobEventLog.IDDB -> job.mainID),
           BSONDocument(
             "$push" ->
-            BSONDocument(JobEventLog.EVENTS -> JobEvent(Deleted, Some(now), 0))
+            BSONDocument(JobEventLog.EVENTS -> JobEvent(Deleted, Some(now), Some(0L)))
           ),
           fetchNewObject = true
         ).map(_.result[JobEventLog])

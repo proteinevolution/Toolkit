@@ -1,22 +1,20 @@
-@import de.proteinevolution.results.results.Common
-@import play.api.libs.json.JsValue
-@import play.api.libs.json.JsDefined
+@import de.proteinevolution.results.results.{ Common, TPRPredResult }
 @import play.twirl.api.Html
 
-@(jobID: String,jsValue: JsValue)()
+@(jobID: String, result: TPRPredResult)()
 
-@if((jsValue \ jobID \ "hits").as[List[JsValue]].size < 1) {
+@if(result.hits.size < 1) {
         <div class="note">
-                No repeats found! You could consider picking a less stringent E-value inclusion cut-off.<br><br><br><br>
+            No repeats found! You could consider picking a less stringent E-value inclusion cut-off.<br><br><br><br>
         </div>
 } else {
         <br/><hr><br/><br/>
         <div class="tprResults">
                 <br>
-
-                @for((info) <- (jsValue \ jobID \ "desc").as[List[JsValue]]){
-
-                        <div class="tprInfo">  @{{info \ 0 }.get.as[String]} : <span>@{{info \ 1 }.get.as[String]} </span>  </div>
+                @for(info <- result.info) {
+                        <div class="tprInfo">
+                            @{info.title.getOrElse("")}: <span>@{info.value.getOrElse("")} </span>
+                        </div>
                 }
                 <br>
                 <br>
@@ -29,21 +27,16 @@
                                 <td>End</td>
                                 <td>P-value</td>
                         </tr>
-                        @for((seq) <- (jsValue \ jobID \ "hits").as[List[JsValue]]){
-                        <tr class="sequenceAlignment">
-                                <td>@{{seq \ 1 }.get.as[String]} </td>
-                                <td>@{{seq \ 2 }.get.as[String]} </td>
-                                <td class="tprHit">
-                                        @{seq \ 0 match {
-                                                        case JsDefined(_) => Html(Common.colorRegexReplacer((seq \ 0).get.as[String]))
-                                                        case _ => ()
-                                                }
-                                        }
-
-                                </td>
-                                <td>@{{seq \ 3 }.get.as[String]} </td>
-                                <td>@{{seq \ 4 }.get.as[String]} </td>
-                        </tr>
+                        @for(hit <- result.hits) {
+                                <tr class="sequenceAlignment">
+                                        <td>@{hit.repeat.getOrElse("")} </td>
+                                        <td>@{hit.begin.getOrElse("")} </td>
+                                        <td class="tprHit">
+                                            @{hit.alignment.map(s => Html(Common.colorRegexReplacer(s))).getOrElse("")}
+                                        </td>
+                                        <td>@{hit.end.getOrElse("")} </td>
+                                        <td>@{hit.pValue.getOrElse("")} </td>
+                                </tr>
                         }
                 </tbody>
         </table>
@@ -70,6 +63,4 @@
         $.getJSON(fileUrl, function (data_) {
             data = data_;
         });
-
-
 </script>
