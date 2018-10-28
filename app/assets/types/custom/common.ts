@@ -19,7 +19,6 @@ interface JobManagerObject {
     project: any,
     status: number,
     tool: string,
-    commentList: number,
     dateCreated: Object,
     dateUpdated: Object,
     dateViewed: Object

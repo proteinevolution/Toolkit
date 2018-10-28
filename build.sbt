@@ -192,9 +192,36 @@ lazy val verification = (project in file("modules/verification"))
   )
   .disablePlugins(PlayLayoutPlugin)
 
+lazy val migrations = (project in file("modules/migrations"))
+  .enablePlugins(PlayScala, JavaAppPackaging)
+  .settings(
+    name := "de.proteinevolution.migrations",
+    libraryDependencies ++= Dependencies.commonDeps,
+    Settings.compileSettings,
+    TwirlKeys.templateImports := Seq.empty,
+    disableDocs
+  )
+  .settings(scalacOptions --= Seq("-Ywarn-unused:imports"))
+  .disablePlugins(PlayLayoutPlugin)
+
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb)
-  .dependsOn(client, commonJVM, results, jobs, auth, base, cluster, help, backend, search, ui, message, verification)
+  .dependsOn(
+    client,
+    commonJVM,
+    results,
+    jobs,
+    auth,
+    base,
+    cluster,
+    help,
+    backend,
+    search,
+    ui,
+    message,
+    verification,
+    migrations
+  )
   .aggregate(
     client,
     commonJVM,
@@ -209,7 +236,8 @@ lazy val root = (project in file("."))
     ui,
     message,
     verification,
-    clusterApi
+    clusterApi,
+    migrations
   )
   .settings(
     coreSettings,
