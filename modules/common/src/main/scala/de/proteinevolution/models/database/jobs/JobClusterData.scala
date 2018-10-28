@@ -24,7 +24,7 @@ import reactivemongo.bson._
 
 object JobClusterData {
 
-  final val SGEID        = "sgeid"
+  final val SGEID        = "sge_id"
   final val MEMORY       = "memory"
   final val THREADS      = "threads"
   final val HARDRUNTIME  = "hardruntime"
