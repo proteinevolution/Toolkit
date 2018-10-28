@@ -198,7 +198,7 @@ class JobActor @Inject()(
       }
 
     // Remove the job from mongoDB collection
-    jobDao.removeJob(BSONDocument(Job.ID -> job.jobID)).foreach { writeResult =>
+    jobDao.removeJob(BSONDocument(Job.JOBID -> job.jobID)).foreach { writeResult =>
       if (writeResult.ok) {
         if (verbose) log.info(s"[JobActor.Delete] Deletion of Job was successful:\n${job.toString()}")
       } else {
@@ -215,7 +215,7 @@ class JobActor @Inject()(
 
     // Update job in the database and notify watcher upon completion
     jobDao
-      .modifyJob(BSONDocument(Job.ID -> job.jobID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
+      .modifyJob(BSONDocument(Job.JOBID -> job.jobID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
       .map { _ =>
         val jobLog = this.currentJobLogs.get(job.jobID) match {
           case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
@@ -496,7 +496,7 @@ class JobActor @Inject()(
 
               jobDao
                 .modifyJob(
-                  BSONDocument(Job.ID -> job.jobID),
+                  BSONDocument(Job.JOBID -> job.jobID),
                   BSONDocument("$set"   -> BSONDocument(Job.CLUSTERDATA -> clusterData, Job.HASH -> jobHash))
                 )
                 .foreach {

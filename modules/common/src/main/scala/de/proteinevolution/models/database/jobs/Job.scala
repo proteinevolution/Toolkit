@@ -75,7 +75,6 @@ object Job {
 
   // TODO https://stackoverflow.com/questions/5916080/what-are-naming-conventions-for-mongodb
   // change as soon as we have a migration tool integrated
-  final val ID           = "id"
   final val JOBID        = "jobID"
   final val PARENTID     = "parent_id"
   final val HASH         = "hash"
