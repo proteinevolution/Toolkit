@@ -1,19 +1,18 @@
-package de.proteinevolution.models.database.jobs
+package de.proteinevolution.jobs.models
 
 import java.time.ZonedDateTime
 
 import de.proteinevolution.models.database.jobs.JobState._
+import de.proteinevolution.models.database.jobs.JobState
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 import de.proteinevolution.services.ToolConfig
-import io.circe.java8.time._
+import io.circe.JsonObject
 import io.circe.syntax._
-import io.circe.{ Encoder, JsonObject }
 import play.api.Configuration
 import reactivemongo.bson._
 
 // TODO remove default values
 case class Job(
-    mainID: BSONObjectID = BSONObjectID.generate,
     jobID: String,
     parentID: Option[String] = None,
     hash: Option[String] = None,
@@ -23,7 +22,6 @@ case class Job(
     emailUpdate: Boolean = false,
     tool: String,
     watchList: List[BSONObjectID] = List.empty,
-    commentList: List[BSONObjectID] = List.empty,
     clusterData: Option[JobClusterData] = None,
     dateCreated: Option[ZonedDateTime] = Some(ZonedDateTime.now),
     dateUpdated: Option[ZonedDateTime] = Some(ZonedDateTime.now),
@@ -34,31 +32,29 @@ case class Job(
 
   def cleaned(toolConfig: ToolConfig)(implicit config: Configuration): JsonObject = {
     JsonObject(
-      Job.JOBID        -> jobID.asJson,
-      Job.STATUS       -> status.asJson,
-      Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli).asJson,
-      Job.TOOL         -> tool.asJson,
-      "code"           -> toolConfig.values(tool).code.asJson,
-      Job.TOOLNAMELONG -> config.get[String](s"Tools.$tool.longname").asJson
+      "jobID"        -> jobID.asJson,
+      "status"       -> status.asJson,
+      "dateCreated"  -> dateCreated.map(_.toInstant.toEpochMilli).asJson,
+      "tool"         -> tool.asJson,
+      "code"         -> toolConfig.values(tool).code.asJson,
+      "toolnameLong" -> config.get[String](s"Tools.$tool.longname").asJson
     )
   }
 
   def jobManagerJob()(implicit config: Configuration): JsonObject = {
     JsonObject(
-      Job.JOBID        -> jobID.asJson,
-      Job.STATUS       -> status.asJson,
-      Job.TOOL         -> tool.asJson,
-      Job.COMMENTLIST  -> commentList.length.asJson,
-      Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli).asJson,
-      Job.DATEUPDATED  -> dateUpdated.map(_.toInstant.toEpochMilli).asJson,
-      Job.DATEVIEWED   -> dateViewed.map(_.toInstant.toEpochMilli).asJson,
-      Job.TOOLNAMELONG -> config.get[String](s"Tools.$tool.longname").asJson
+      "jobID"        -> jobID.asJson,
+      "status"       -> status.asJson,
+      "tool"         -> tool.asJson,
+      "dateCreated"  -> dateCreated.map(_.toInstant.toEpochMilli).asJson,
+      "dateUpdated"  -> dateUpdated.map(_.toInstant.toEpochMilli).asJson,
+      "dateViewed"   -> dateViewed.map(_.toInstant.toEpochMilli).asJson,
+      "toolnameLong" -> config.get[String](s"Tools.$tool.longname").asJson
     )
   }
 
   override def toString: String = {
     s"""--[Job Object]--
-        |mainID: ${this.mainID}
         |jobID: ${this.jobID}
         |parentID: ${this.parentID}
         |tool: ${this.tool}
@@ -77,78 +73,33 @@ case class Job(
 
 object Job {
 
-  // TODO https://stackoverflow.com/questions/5916080/what-are-naming-conventions-for-mongodb
-  // change as soon as we have a migration tool integrated
-  final val ID           = "id"
-  final val IDDB         = "_id"
-  final val JOBID        = "jobID"
+  final val JOBID        = "job_id"
   final val PARENTID     = "parent_id"
   final val HASH         = "hash"
   final val PROJECT      = "project"
-  final val OWNERID      = "ownerID"
+  final val OWNERID      = "owner_id"
   final val OWNER        = "owner"
-  final val ISPUBLIC     = "isPublic"
+  final val ISPUBLIC     = "is_public"
   final val STATUS       = "status"
-  final val EMAILUPDATE  = "emailUpdate"
+  final val EMAILUPDATE  = "email_update"
   final val DELETION     = "deletion"
   final val TOOL         = "tool"
+  final val CODE         = "code"
   final val LABEL        = "label"
-  final val WATCHLIST    = "watchList"
-  final val COMMENTLIST  = "commentList"
-  final val CLUSTERDATA  = "clusterData"
+  final val WATCHLIST    = "watch_list"
+  final val CLUSTERDATA  = "cluster_data"
   final val SGEID        = s"$CLUSTERDATA.${JobClusterData.SGEID}"
-  final val DATECREATED  = "dateCreated"
-  final val DATEUPDATED  = "dateUpdated"
-  final val DATEVIEWED   = "dateViewed"
-  final val DATEDELETION = "dateDeletion"
-  final val TOOLNAMELONG = "toolnameLong"
-  final val IPHASH       = "IPHash"
-
-  // TODO manual wiring is a code smell - no consistent key schema and _id should not be exposed at all
-  implicit val jobEncoder: Encoder[Job] = Encoder.forProduct17(
-    IDDB,
-    JOBID,
-    PARENTID,
-    HASH,
-    OWNERID,
-    ISPUBLIC,
-    STATUS,
-    EMAILUPDATE,
-    TOOL,
-    WATCHLIST,
-    COMMENTLIST,
-    CLUSTERDATA,
-    DATECREATED,
-    DATEUPDATED,
-    DATEVIEWED,
-    DATEDELETION,
-    IPHASH
-  )(
-    job =>
-      (job.mainID.stringify,
-       job.jobID,
-       job.parentID,
-       job.hash,
-       job.ownerID.map(_.stringify),
-       job.isPublic,
-       job.status,
-       job.emailUpdate,
-       job.tool,
-       job.watchList.map(_.stringify),
-       job.commentList.map(_.stringify),
-       job.clusterData,
-       job.dateCreated,
-       job.dateUpdated,
-       job.dateViewed,
-       job.dateDeletion,
-       job.IPHash)
-  )
+  final val DATECREATED  = "date_created"
+  final val DATEUPDATED  = "date_updated"
+  final val DATEVIEWED   = "date_viewed"
+  final val DATEDELETION = "date_deleted"
+  final val TOOLNAMELONG = "toolname_long"
+  final val IPHASH       = "ip_hash"
 
   // TODO Bson macros handler
   implicit object Reader extends BSONDocumentReader[Job] {
     def read(bson: BSONDocument): Job = {
       Job(
-        mainID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         jobID = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
         parentID = bson.getAs[String](PARENTID),
         hash = bson.getAs[String](HASH),
@@ -158,7 +109,6 @@ object Job {
         emailUpdate = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
         tool = bson.getAs[String](TOOL).getOrElse(""),
         watchList = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
-        commentList = bson.getAs[List[BSONObjectID]](COMMENTLIST).getOrElse(List.empty),
         clusterData = bson.getAs[JobClusterData](CLUSTERDATA),
         dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
         dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
@@ -172,7 +122,6 @@ object Job {
   implicit object Writer extends BSONDocumentWriter[Job] {
     def write(job: Job): BSONDocument = {
       BSONDocument(
-        IDDB         -> job.mainID,
         JOBID        -> job.jobID,
         PARENTID     -> job.parentID,
         HASH         -> job.hash,
@@ -182,7 +131,6 @@ object Job {
         EMAILUPDATE  -> job.emailUpdate,
         TOOL         -> job.tool,
         WATCHLIST    -> job.watchList,
-        COMMENTLIST  -> job.commentList,
         CLUSTERDATA  -> job.clusterData,
         DATECREATED  -> BSONDateTime(job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
         DATEUPDATED  -> BSONDateTime(job.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli)),

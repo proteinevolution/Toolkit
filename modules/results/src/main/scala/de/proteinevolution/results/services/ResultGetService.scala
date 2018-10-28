@@ -8,9 +8,9 @@ import cats.data.OptionT
 import cats.implicits._
 import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.jobs.dao.JobDao
+import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobFolderValidation
 import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.models.database.jobs.JobState.{ Done, Pending, Prepared }
 import de.proteinevolution.models.forms.JobForm
 import de.proteinevolution.services.ToolConfig

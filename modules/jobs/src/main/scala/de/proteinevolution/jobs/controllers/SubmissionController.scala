@@ -1,14 +1,10 @@
 package de.proteinevolution.jobs.controllers
 
-import java.time.ZonedDateTime
-
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete }
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.services.{ JobActorAccess, JobDispatcher, JobResubmitService }
-import de.proteinevolution.models.database.jobs.JobState.Done
-import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
+import de.proteinevolution.jobs.services._
 import de.proteinevolution.services.ToolConfig
 import javax.inject.{ Inject, Singleton }
 import play.api.Logger
@@ -26,7 +22,9 @@ class SubmissionController @Inject()(
     cc: ControllerComponents,
     jobDao: JobDao,
     toolConfig: ToolConfig,
-    jobResubmitService: JobResubmitService
+    jobResubmitService: JobResubmitService,
+    jobIdProvider: JobIdProvider,
+    jobFrontendToolsService: JobFrontendToolsService
 )(implicit ec: ExecutionContext)
     extends ToolkitController(cc) {
 
@@ -42,11 +40,7 @@ class SubmissionController @Inject()(
   def frontend(toolName: String): Action[AnyContent] = Action.async { implicit request =>
     if (toolConfig.isTool(toolName)) {
       // Add Frontend Job to Database
-      val jobLog =
-        JobEventLog(toolName = toolName.trim.toLowerCase, events = JobEvent(Done, Some(ZonedDateTime.now)) :: Nil)
-      jobDao.addJobLog(jobLog).map { _ =>
-        NoContent
-      }
+      jobFrontendToolsService.logFrontendJob(toolName).map(_ => NoContent)
     } else {
       fuccess(BadRequest)
     }

@@ -33,10 +33,10 @@ class FileController @Inject()(
     Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$filename")).as(BINARY)
   }
 
-  def file(filename: String, mainID: String): Action[AnyContent] = Action.async { implicit request =>
+  def file(filename: String, jobID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
       val file = new java.io.File(
-        s"${constants.jobPath}${constants.SEPARATOR}$mainID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"
+        s"${constants.jobPath}${constants.SEPARATOR}$jobID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"
       )
       if (file.exists) {
         Ok.sendFile(file)

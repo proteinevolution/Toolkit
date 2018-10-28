@@ -19,7 +19,7 @@ sealed trait LocationProvider {
 @Singleton
 class LocationProviderImpl @Inject()(config: Configuration) extends LocationProvider {
 
-  private val geoIp = MaxMindIpGeo(config.get[String]("maxmindDB"), 1000)
+  private val geoIp = MaxMindIpGeo(config.get[String]("maxmind_db"), 1000)
 
   def getLocation(ipAddress: String): Location = {
     geoIp.getLocation(ipAddress) match {
