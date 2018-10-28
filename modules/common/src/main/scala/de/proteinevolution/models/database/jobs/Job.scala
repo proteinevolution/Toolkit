@@ -88,7 +88,7 @@ object Job {
   final val LABEL        = "label"
   final val WATCHLIST    = "watch_list"
   final val CLUSTERDATA  = "cluster_data"
-  final val SGEID        = "cluster_data.sge_id"
+  final val SGEID        = s"$CLUSTERDATA.${JobClusterData.SGEID}"
   final val DATECREATED  = "date_created"
   final val DATEUPDATED  = "date_updated"
   final val DATEVIEWED   = "date_viewed"

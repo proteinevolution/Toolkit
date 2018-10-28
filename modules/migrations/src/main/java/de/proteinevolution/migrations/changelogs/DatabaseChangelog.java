@@ -2,11 +2,16 @@ package de.proteinevolution.migrations.changelogs;
 
 import com.github.mongobee.changeset.ChangeLog;
 import com.github.mongobee.changeset.ChangeSet;
+import com.mongodb.Block;
 import com.mongodb.DB;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @ChangeLog
 public class DatabaseChangelog {
@@ -43,5 +48,50 @@ public class DatabaseChangelog {
         Bson update = new Document("$rename", rename);
         db.getCollection("jobs").updateMany(filters, update);
     }
+
+    @ChangeSet(order = "003", id = "3", author = "Felix Gabler")
+    public void changeJobEventLogKeysToSnakeCase(final MongoDatabase db) {
+        final Document rename = new Document();
+        rename.put("internalJob", "internal_job");
+        Bson filters = Filters.and(
+                Filters.and(
+                        Filters.exists("internalJob", true)
+                ),
+                Filters.and(
+                        Filters.exists("internal_job", false)
+                )
+        );
+        Bson update = new Document("$rename", rename);
+        db.getCollection("jobevents").updateMany(filters, update);
+    }
+
+    @ChangeSet(order = "004", id = "4", author = "Felix Gabler")
+    public void changeJobClusterDataKeysToSnakeCase(final MongoDatabase db) {
+        final Document rename = new Document();
+        rename.put("cluster_data.sgeid", "cluster_data.sge_id");
+        Bson filters = Filters.and(
+                Filters.and(
+                        Filters.exists("cluster_data.sgeid", true)
+                ),
+                Filters.and(
+                        Filters.exists("cluster_data.sge_id", false)
+                )
+        );
+        Bson update = new Document("$rename", rename);
+        db.getCollection("jobs").updateMany(filters, update);
+    }
+
+//    @ChangeSet(order = "004", id = "4", author = "Felix Gabler")
+//    public void changeJobEventKeysToSnakeCase(final MongoDatabase db) {
+//        // TODO: does not work yet because events is an array of dynamic documents
+//        List<Bson> pipeline = new ArrayList<>();
+//
+//        final Document project = new Document();
+//        project.put("job_state", "$events.$.jobState");
+//        Bson $project = new Document("$project", project);
+//        pipeline.add($project);
+//
+//        db.getCollection("jobevents").aggregate(pipeline);
+//    }
 
 }
