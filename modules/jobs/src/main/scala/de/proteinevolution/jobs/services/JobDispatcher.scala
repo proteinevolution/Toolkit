@@ -8,8 +8,7 @@ import cats.implicits._
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.jobs.actors.JobActor.PrepareJob
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.models.JobSubmitError
-import de.proteinevolution.models.database.jobs.Job
+import de.proteinevolution.jobs.models.{ Job, JobSubmitError }
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import javax.inject.{ Inject, Singleton }
@@ -18,6 +17,7 @@ import play.api.libs.Files
 import play.api.mvc.MultipartFormData
 import reactivemongo.bson.BSONDocument
 import better.files._
+
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton

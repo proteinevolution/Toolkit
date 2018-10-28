@@ -2,9 +2,8 @@ package de.proteinevolution.jobs.services
 
 import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.models.ResubmitData
+import de.proteinevolution.jobs.models.{ Job, ResubmitData }
 import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.models.database.jobs.Job
 import javax.inject.{ Inject, Singleton }
 import play.api.Logger
 import reactivemongo.bson.BSONDocument

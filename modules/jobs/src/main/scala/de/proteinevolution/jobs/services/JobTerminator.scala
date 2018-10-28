@@ -3,7 +3,8 @@ package de.proteinevolution.jobs.services
 import java.time.{ Duration, ZonedDateTime }
 
 import de.proteinevolution.cluster.api.QStat
-import de.proteinevolution.models.database.jobs.{ Job, JobState }
+import de.proteinevolution.jobs.models.Job
+import de.proteinevolution.models.database.jobs.JobState
 
 trait JobTerminator {
 

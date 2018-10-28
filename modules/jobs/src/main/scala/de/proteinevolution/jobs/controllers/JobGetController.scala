@@ -7,10 +7,9 @@ import cats.implicits._
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.models.JobHashError
+import de.proteinevolution.jobs.models.{ Job, JobHashError }
 import de.proteinevolution.jobs.services.{ JobFolderValidation, JobHashService }
 import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.models.database.jobs.Job
 import de.proteinevolution.services.ToolConfig
 import io.circe.{ Json, JsonObject }
 import io.circe.syntax._

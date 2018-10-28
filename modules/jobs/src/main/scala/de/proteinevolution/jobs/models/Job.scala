@@ -1,8 +1,9 @@
-package de.proteinevolution.models.database.jobs
+package de.proteinevolution.jobs.models
 
 import java.time.ZonedDateTime
 
 import de.proteinevolution.models.database.jobs.JobState._
+import de.proteinevolution.models.database.jobs.JobState
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 import de.proteinevolution.services.ToolConfig
 import io.circe.JsonObject
