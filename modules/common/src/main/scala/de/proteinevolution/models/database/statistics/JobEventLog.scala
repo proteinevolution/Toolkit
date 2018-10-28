@@ -45,7 +45,7 @@ object JobEventLog {
 
   import io.circe.{ Decoder, Encoder, HCursor, Json }
 
-  final val JOBID          = "jobID"
+  final val JOBID       = "jobID"
   final val TOOLNAME    = "tool"
   final val INTERNALJOB = "internalJob"
   final val EVENTS      = "events"
@@ -87,7 +87,7 @@ object JobEventLog {
 
   implicit object Writer extends BSONDocumentWriter[JobEventLog] {
     def write(jobEventLog: JobEventLog): BSONDocument = BSONDocument(
-      JOBID        -> jobEventLog.jobID,
+      JOBID       -> jobEventLog.jobID,
       TOOLNAME    -> jobEventLog.toolName,
       INTERNALJOB -> jobEventLog.internalJob,
       EVENTS      -> jobEventLog.events,

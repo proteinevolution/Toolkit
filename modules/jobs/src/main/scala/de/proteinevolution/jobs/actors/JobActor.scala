@@ -497,7 +497,7 @@ class JobActor @Inject()(
               jobDao
                 .modifyJob(
                   BSONDocument(Job.JOBID -> job.jobID),
-                  BSONDocument("$set"   -> BSONDocument(Job.CLUSTERDATA -> clusterData, Job.HASH -> jobHash))
+                  BSONDocument("$set"    -> BSONDocument(Job.CLUSTERDATA -> clusterData, Job.HASH -> jobHash))
                 )
                 .foreach {
                   case Some(_) =>

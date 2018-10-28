@@ -28,7 +28,7 @@ class ResultsRouter @Inject()(
     case POST(p"/alignment/getAln/$jobID")            => alignmentController.getAln(jobID)
     case POST(p"/alignment/loadHits/$jobID")          => alignmentController.loadHits(jobID)
     case POST(p"/alignment/clustal/$jobID")           => alignmentController.loadHitsClustal(jobID)
-    case GET(p"/files/$jobID/$filename")             => fileController.file(filename = filename, jobID = jobID)
+    case GET(p"/files/$jobID/$filename")              => fileController.file(filename = filename, jobID = jobID)
     case GET(p"/forward/modal/$toolName/$modalType") =>
       forwardModalController.getForwardModalOptions(modalType, toolName)
     case GET(p"/$jobID/$tool/$view") => resultGetController.get(jobID, tool, view)
