@@ -530,13 +530,19 @@ object MailTemplate {
     }
   }
 
-  case class JobFinishedMail(userParam: User, job: Job, environment: play.Environment, env: Env) extends MailTemplate {
-    override def subject: String = s"""Job ${job.jobID} finished running - The MPI Bioinformatics Toolkit""".stripMargin
+  case class JobFinishedMail(
+      userParam: User,
+      jobId: String,
+      jobState: JobState,
+      environment: play.Environment,
+      env: Env
+  ) extends MailTemplate {
+    override def subject: String = s"""Job $jobId finished running - The MPI Bioinformatics Toolkit""".stripMargin
 
     val user: User = userParam
 
     def statusMessage: String = {
-      job.status match {
+      jobState match {
         case Done  => "your job has finished successfully. You can now look at the results."
         case Error => "your job has failed. Please check all parameters and see if you find any issues."
         case _     => "your job has changed state."
@@ -546,13 +552,13 @@ object MailTemplate {
     val bodyText: String = {
       s"""Dear ${user.getUserData.nameLogin},
          |$statusMessage
-         |you can view it at any time at $origin/jobs/${job.jobID}
+         |you can view it at any time at $origin/jobs/$jobId
          |Your Toolkit Team
      """.stripMargin
     }
 
     val bodyHtml: String = {
-      val jobLink = s"$origin/jobs/${job.jobID}"
+      val jobLink = s"$origin/jobs/$jobId"
       super.bodyHtmlTemplate(
         subject,
         s"""<tr>

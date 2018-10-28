@@ -2,8 +2,6 @@ package de.proteinevolution.jobs.actors
 
 import java.time.ZonedDateTime
 
-import javax.inject.Inject
-import de.proteinevolution.jobs.actors.JobActor._
 import akka.NotUsed
 import akka.actor._
 import akka.event.LoggingReceive
@@ -11,6 +9,14 @@ import better.files._
 import com.google.inject.assistedinject.Assisted
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.dao.UserDao
+import de.proteinevolution.auth.models.MailTemplate.JobFinishedMail
+import de.proteinevolution.base.helpers.ToolkitTypes
+import de.proteinevolution.cluster.api.Polling.PolledJobs
+import de.proteinevolution.cluster.api.{ QStat, Qdel }
+import de.proteinevolution.jobs.actors.JobActor._
+import de.proteinevolution.jobs.dao.JobDao
+import de.proteinevolution.jobs.models.{ Job, JobClusterData }
+import de.proteinevolution.jobs.services.{ GeneralHashService, JobTerminator }
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.JobState._
 import de.proteinevolution.models.database.jobs._
@@ -23,12 +29,7 @@ import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecutio
 import de.proteinevolution.tel.execution.{ ExecutionContext, WrapperExecutionFactory }
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
-import de.proteinevolution.auth.models.MailTemplate.JobFinishedMail
-import de.proteinevolution.base.helpers.ToolkitTypes
-import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.services.{ GeneralHashService, JobTerminator }
-import de.proteinevolution.cluster.api.Polling.PolledJobs
-import de.proteinevolution.cluster.api.{ QStat, Qdel }
+import javax.inject.Inject
 import play.api.Configuration
 import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
@@ -256,7 +257,7 @@ class JobActor @Inject()(
               log.info(
                 s"[JobActor[$jobActorNumber].sendJobUpdateMail] Sending eMail to job owner for job ${job.jobID}: Job is ${job.status.toString}"
               )
-              val eMail = JobFinishedMail(user, job, environment, env)
+              val eMail = JobFinishedMail(user, job.jobID, job.status, environment, env)
               eMail.send
             case None => NotUsed
           }
