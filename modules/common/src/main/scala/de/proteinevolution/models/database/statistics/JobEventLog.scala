@@ -45,9 +45,9 @@ object JobEventLog {
 
   import io.circe.{ Decoder, Encoder, HCursor, Json }
 
-  final val JOBID       = "jobID"
+  final val JOBID       = "job_id"
   final val TOOLNAME    = "tool"
-  final val INTERNALJOB = "internalJob"
+  final val INTERNALJOB = "internal_job"
   final val EVENTS      = "events"
   final val RUNTIME     = "runtime"
 
