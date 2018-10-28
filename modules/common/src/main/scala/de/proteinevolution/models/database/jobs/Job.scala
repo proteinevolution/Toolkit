@@ -73,32 +73,30 @@ case class Job(
 
 object Job {
 
-  // TODO https://stackoverflow.com/questions/5916080/what-are-naming-conventions-for-mongodb
-  // change as soon as we have a migration tool integrated
-  final val JOBID        = "jobID"
+  final val JOBID        = "job_id"
   final val PARENTID     = "parent_id"
   final val HASH         = "hash"
   final val PROJECT      = "project"
-  final val OWNERID      = "ownerID"
+  final val OWNERID      = "owner_id"
   final val OWNER        = "owner"
-  final val ISPUBLIC     = "isPublic"
+  final val ISPUBLIC     = "is_public"
   final val STATUS       = "status"
-  final val EMAILUPDATE  = "emailUpdate"
+  final val EMAILUPDATE  = "email_update"
   final val DELETION     = "deletion"
   final val TOOL         = "tool"
   final val CODE         = "code"
   final val LABEL        = "label"
-  final val WATCHLIST    = "watchList"
-  final val CLUSTERDATA  = "clusterData"
-  final val SGEID        = s"$CLUSTERDATA.${JobClusterData.SGEID}"
-  final val DATECREATED  = "dateCreated"
-  final val DATEUPDATED  = "dateUpdated"
-  final val DATEVIEWED   = "dateViewed"
-  final val DATEDELETION = "dateDeletion"
-  final val TOOLNAMELONG = "toolnameLong"
-  final val IPHASH       = "IPHash"
+  final val WATCHLIST    = "watch_list"
+  final val CLUSTERDATA  = "cluster_data"
+  final val SGEID        = "cluster_data.sge_id"
+  final val DATECREATED  = "date_created"
+  final val DATEUPDATED  = "date_updated"
+  final val DATEVIEWED   = "date_viewed"
+  final val DATEDELETION = "date_deleted"
+  final val TOOLNAMELONG = "toolname_long"
+  final val IPHASH       = "ip_hash"
 
-  // TODO manual wiring is a code smell - no consistent key schema and _id should not be exposed at all
+  // TODO manual wiring is a code smell - no consistent key schema
   implicit val jobEncoder: Encoder[Job] = Encoder.forProduct15(
     JOBID,
     PARENTID,
