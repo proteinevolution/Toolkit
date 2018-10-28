@@ -182,7 +182,7 @@ class JobActor @Inject()(
     jobDao.eventLogCollection
       .flatMap(
         _.findAndUpdate(
-          BSONDocument(JobEventLog.IDDB -> job.mainID),
+          BSONDocument(JobEventLog.JOBID -> job.jobID),
           BSONDocument(
             "$push" ->
             BSONDocument(JobEventLog.EVENTS -> JobEvent(Deleted, Some(now), Some(0L)))
@@ -198,7 +198,7 @@ class JobActor @Inject()(
       }
 
     // Remove the job from mongoDB collection
-    jobDao.removeJob(BSONDocument(Job.IDDB -> job.mainID)).foreach { writeResult =>
+    jobDao.removeJob(BSONDocument(Job.JOBID -> job.jobID)).foreach { writeResult =>
       if (writeResult.ok) {
         if (verbose) log.info(s"[JobActor.Delete] Deletion of Job was successful:\n${job.toString()}")
       } else {
@@ -215,12 +215,12 @@ class JobActor @Inject()(
 
     // Update job in the database and notify watcher upon completion
     jobDao
-      .modifyJob(BSONDocument(Job.IDDB -> job.mainID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
+      .modifyJob(BSONDocument(Job.JOBID -> job.jobID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
       .map { _ =>
         val jobLog = this.currentJobLogs.get(job.jobID) match {
           case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
           case None =>
-            JobEventLog(mainID = job.mainID,
+            JobEventLog(jobID = job.jobID,
                         toolName = job.tool,
                         events = List(JobEvent(job.status, Some(ZonedDateTime.now))))
         }
@@ -288,7 +288,7 @@ class JobActor @Inject()(
         // Create a log for this job
         this.currentJobLogs =
           this.currentJobLogs.updated(job.jobID,
-                                      JobEventLog(mainID = job.mainID,
+                                      JobEventLog(jobID = job.jobID,
                                                   toolName = job.tool,
                                                   internalJob = isInternalJob,
                                                   events = List(JobEvent(job.status, Some(ZonedDateTime.now)))))
@@ -496,8 +496,8 @@ class JobActor @Inject()(
 
               jobDao
                 .modifyJob(
-                  BSONDocument(Job.IDDB -> job.mainID),
-                  BSONDocument("$set"   -> BSONDocument(Job.CLUSTERDATA -> clusterData, Job.HASH -> jobHash))
+                  BSONDocument(Job.JOBID -> job.jobID),
+                  BSONDocument("$set"    -> BSONDocument(Job.CLUSTERDATA -> clusterData, Job.HASH -> jobHash))
                 )
                 .foreach {
                   case Some(_) =>

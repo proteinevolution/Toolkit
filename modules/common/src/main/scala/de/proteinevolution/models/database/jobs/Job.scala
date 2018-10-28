@@ -13,7 +13,6 @@ import reactivemongo.bson._
 
 // TODO remove default values
 case class Job(
-    mainID: BSONObjectID = BSONObjectID.generate,
     jobID: String,
     parentID: Option[String] = None,
     hash: Option[String] = None,
@@ -37,7 +36,7 @@ case class Job(
       Job.STATUS       -> status.asJson,
       Job.DATECREATED  -> dateCreated.map(_.toInstant.toEpochMilli).asJson,
       Job.TOOL         -> tool.asJson,
-      "code"           -> toolConfig.values(tool).code.asJson,
+      Job.CODE         -> toolConfig.values(tool).code.asJson,
       Job.TOOLNAMELONG -> config.get[String](s"Tools.$tool.longname").asJson
     )
   }
@@ -56,7 +55,6 @@ case class Job(
 
   override def toString: String = {
     s"""--[Job Object]--
-        |mainID: ${this.mainID}
         |jobID: ${this.jobID}
         |parentID: ${this.parentID}
         |tool: ${this.tool}
@@ -77,8 +75,6 @@ object Job {
 
   // TODO https://stackoverflow.com/questions/5916080/what-are-naming-conventions-for-mongodb
   // change as soon as we have a migration tool integrated
-  final val ID           = "id"
-  final val IDDB         = "_id"
   final val JOBID        = "jobID"
   final val PARENTID     = "parent_id"
   final val HASH         = "hash"
@@ -90,6 +86,7 @@ object Job {
   final val EMAILUPDATE  = "emailUpdate"
   final val DELETION     = "deletion"
   final val TOOL         = "tool"
+  final val CODE         = "code"
   final val LABEL        = "label"
   final val WATCHLIST    = "watchList"
   final val CLUSTERDATA  = "clusterData"
@@ -102,8 +99,7 @@ object Job {
   final val IPHASH       = "IPHash"
 
   // TODO manual wiring is a code smell - no consistent key schema and _id should not be exposed at all
-  implicit val jobEncoder: Encoder[Job] = Encoder.forProduct16(
-    IDDB,
+  implicit val jobEncoder: Encoder[Job] = Encoder.forProduct15(
     JOBID,
     PARENTID,
     HASH,
@@ -121,8 +117,7 @@ object Job {
     IPHASH
   )(
     job =>
-      (job.mainID.stringify,
-       job.jobID,
+      (job.jobID,
        job.parentID,
        job.hash,
        job.ownerID.map(_.stringify),
@@ -143,7 +138,6 @@ object Job {
   implicit object Reader extends BSONDocumentReader[Job] {
     def read(bson: BSONDocument): Job = {
       Job(
-        mainID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         jobID = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
         parentID = bson.getAs[String](PARENTID),
         hash = bson.getAs[String](HASH),
@@ -166,7 +160,6 @@ object Job {
   implicit object Writer extends BSONDocumentWriter[Job] {
     def write(job: Job): BSONDocument = {
       BSONDocument(
-        IDDB         -> job.mainID,
         JOBID        -> job.jobID,
         PARENTID     -> job.parentID,
         HASH         -> job.hash,
