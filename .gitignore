@@ -9,6 +9,7 @@ development
 production
 target
 .DS_Store
+application-ext.conf
 public/javascripts/typescriptc.js
 public/javascripts/typescriptc.js.map
 native
