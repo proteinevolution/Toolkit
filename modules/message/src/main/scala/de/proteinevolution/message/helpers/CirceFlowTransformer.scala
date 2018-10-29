@@ -54,6 +54,8 @@ object CirceFlowTransformer {
     byteStringMessageFlowTransformer.map(_.toArray, ByteString.apply)
   }
 
+  import io.circe.parser._
+
   /**
    * Converts messages to/from Json
    */
@@ -68,8 +70,9 @@ object CirceFlowTransformer {
     flow: Flow[Json, Json, _] =>
       {
         AkkaStreams.bypassWith[Message, Json, Message](Flow[Message].collect {
-          case BinaryMessage(data) => closeOnException(Json.fromString(data.decodeString("UTF-8")))
-          case TextMessage(text)   => closeOnException(Json.fromString(text))
+          case BinaryMessage(data) =>
+            Right(CloseMessage(Some(CloseCodes.Unacceptable), "does not deal with binary messages"))
+          case TextMessage(text) => closeOnException(parse(text).toOption.getOrElse(Json.Null))
         })(flow.map { json =>
           TextMessage(json.noSpaces)
         })

@@ -82,22 +82,22 @@ final class WebSocketActor @Inject()(
 
             // Message containing a List of Jobs the user wants to register for the job list
             case "RegisterJobs" =>
-              json.hcursor.get[Seq[String]]("jobIDs") match {
-                case Right(jobIDs) =>
+              json.hcursor.get[List[String]]("jobIDs").toOption match {
+                case Some(jobIDs) =>
                   jobIDs.foreach { jobID =>
                     jobActorAccess.sendToJobActor(jobID, AddToWatchlist(jobID, user.userID))
                   }
-                case Left(_) => // Client has sent strange message over the Websocket
+                case None => // Client has sent strange message over the Websocket
               }
 
             // Request to remove a Job from the user's Joblist
             case "ClearJob" =>
-              json.hcursor.get[Seq[String]]("jobIDs") match {
-                case Right(jobIDs) =>
+              json.hcursor.get[List[String]]("jobIDs").toOption match {
+                case Some(jobIDs) =>
                   jobIDs.foreach { jobID =>
                     jobActorAccess.sendToJobActor(jobID, RemoveFromWatchlist(jobID, user.userID))
                   }
-                case Left(_) => //
+                case None => //
               }
 
             // Request to receive load messages
