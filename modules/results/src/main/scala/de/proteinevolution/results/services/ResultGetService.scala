@@ -35,14 +35,20 @@ class ResultGetService @Inject()(
 
   private val logger = Logger(this.getClass)
 
-  def get(jobId: String, tool: String, resultView: String): Future[HtmlFormat.Appendable] = {
-    resultViewFactory.apply(tool, jobId).value.map {
-      case Some(view) => view.tabs(resultView)
-      case None =>
+  def get(
+      jobId: String,
+      tool: String,
+      resultView: String
+  ): OptionT[Future, HtmlFormat.Appendable] = {
+    resultViewFactory
+      .apply(tool, jobId)
+      .map(_.tabs(resultView))
+      .toRight[Unit](())
+      .leftMap { _ =>
         logger.error(s"result for $jobId could not be found.")
         cleanLostJobs(jobId)
-        views.html.errors.resultnotfound()
-    }
+      }
+      .toOption
   }
 
   def getJob(jobId: String): OptionT[Future, JobForm] = {
@@ -76,7 +82,9 @@ class ResultGetService @Inject()(
     case Done =>
       resultViewFactory(toolForm.toolname, job.jobID).value.map {
         case Some(r) => r.tabs.keys.toSeq
-        case None    => Nil // TODO throw some exception or something
+        case None =>
+          logger.error(s"no views found for $job")
+          Nil
       }
     case _ => fuccess(Nil)
   }

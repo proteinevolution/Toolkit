@@ -2,7 +2,7 @@ package de.proteinevolution.results.services
 
 import cats.data.OptionT
 import cats.implicits._
-import de.proteinevolution.models.ConstantsV2
+import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.models.ToolName._
 import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.results.models.resultviews._
@@ -21,8 +21,6 @@ final class ResultViewFactory @Inject()(
 )(implicit ec: ExecutionContext) {
 
   import io.circe.DecodingFailure
-
-  // TODO pass error to the frontend if the result is NONE
 
   def apply(toolName: String, jobId: String): OptionT[Future, ResultView] = {
     if (hasResultsJson(toolName)) {
@@ -47,25 +45,25 @@ final class ResultViewFactory @Inject()(
   }
 
   private def getResultViewsWithoutJson(toolName: String, jobId: String): ResultView = {
-    toolName match {
-      case FORMATSEQ.value           => FormatSeqResultView(jobId, toolConfig)
-      case CLANS.value               => ClansResultView(jobId)
-      case MARCOIL.value             => MarcoilResultView(jobId, toolConfig)
-      case DEEPCOIL.value            => DeepCoilResultView(jobId, toolConfig, constants)
-      case PCOILS.value              => PcoilsResultView(jobId, constants)
-      case REPPER.value              => RepperResultView(jobId, constants)
-      case MODELLER.value            => ModellerResultView(jobId, constants)
-      case HHPRED_MANUAL.value       => HHPredManual(jobId, constants)
-      case HHREPID.value             => HHrepIdResultView(jobId, constants)
-      case ALI2D.value               => Ali2DResultView(jobId, constants)
-      case ALN2PLOT.value            => Aln2PlotResultView(jobId)
-      case ANCESCON.value            => AncesconResultView(jobId, constants)
-      case PHYML.value               => PhyMLResultView(jobId, constants)
-      case MMSEQS2.value             => MMSeqsResultView(jobId, toolConfig)
-      case RETSEQ.value              => RetSeqResultView(jobId, constants, toolConfig)
-      case SAMCC.value               => SamCCResultView(jobId)
-      case SIXFRAMETRANSLATION.value => SixFrameTranslationResultView(jobId)
-      case BACKTRANS.value           => BackTransResultView(jobId)
+    (ToolName(toolName): @unchecked) match {
+      case FORMATSEQ           => FormatSeqResultView(jobId, toolConfig)
+      case CLANS               => ClansResultView(jobId)
+      case MARCOIL             => MarcoilResultView(jobId, toolConfig)
+      case DEEPCOIL            => DeepCoilResultView(jobId, toolConfig, constants)
+      case PCOILS              => PcoilsResultView(jobId, constants)
+      case REPPER              => RepperResultView(jobId, constants)
+      case MODELLER            => ModellerResultView(jobId, constants)
+      case HHPRED_MANUAL       => HHPredManual(jobId, constants)
+      case HHREPID             => HHrepIdResultView(jobId, constants)
+      case ALI2D               => Ali2DResultView(jobId, constants)
+      case ALN2PLOT            => Aln2PlotResultView(jobId)
+      case ANCESCON            => AncesconResultView(jobId, constants)
+      case PHYML               => PhyMLResultView(jobId, constants)
+      case MMSEQS2             => MMSeqsResultView(jobId, toolConfig)
+      case RETSEQ              => RetSeqResultView(jobId, constants, toolConfig)
+      case SAMCC               => SamCCResultView(jobId)
+      case SIXFRAMETRANSLATION => SixFrameTranslationResultView(jobId)
+      case BACKTRANS           => BackTransResultView(jobId)
     }
   }
 
