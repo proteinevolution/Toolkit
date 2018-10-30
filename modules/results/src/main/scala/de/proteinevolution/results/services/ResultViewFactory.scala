@@ -2,13 +2,13 @@ package de.proteinevolution.results.services
 
 import cats.data.OptionT
 import cats.implicits._
-import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.models.ToolName._
+import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.results.models.resultviews._
 import de.proteinevolution.results.results._
 import de.proteinevolution.services.ToolConfig
-import io.circe.Json
+import io.circe.{ DecodingFailure, Json }
 import javax.inject.{ Inject, Singleton }
 
 import scala.concurrent.{ ExecutionContext, Future }
@@ -20,28 +20,15 @@ final class ResultViewFactory @Inject()(
     resultFiles: ResultFileAccessor
 )(implicit ec: ExecutionContext) {
 
-  import io.circe.DecodingFailure
-
   def apply(toolName: String, jobId: String): OptionT[Future, ResultView] = {
-    if (hasResultsJson(toolName)) {
+    if (ToolName(toolName).hasJson) {
       for {
         result <- OptionT(resultFiles.getResults(jobId))
         view   <- OptionT.fromOption[Future](getResultViewsWithJson(toolName, jobId, result).toOption)
-      } yield {
-        view
-      }
+      } yield view
     } else {
       OptionT.pure[Future](getResultViewsWithoutJson(toolName, jobId))
     }
-  }
-
-  private val toolsWithResultJson: List[String] =
-    (PSIBLAST :: TPRPRED :: HHBLITS :: HMMER :: HHPRED :: HHOMP ::
-    HHPRED_ALIGN :: QUICK2D :: CLUSTALO :: KALIGN :: MAFFT :: MSAPROBS ::
-    MUSCLE :: TCOFFEE :: SEQ2ID :: HHFILTER :: PATSEARCH :: Nil).map(_.value)
-
-  private def hasResultsJson(toolName: String): Boolean = {
-    toolsWithResultJson.contains(toolName)
   }
 
   private def getResultViewsWithoutJson(toolName: String, jobId: String): ResultView = {
@@ -72,113 +59,79 @@ final class ResultViewFactory @Inject()(
       jobId: String,
       json: Json
   ): Either[DecodingFailure, ResultView] = {
-    toolName match {
-      case PSIBLAST.value =>
+    (ToolName(toolName): @unchecked) match {
+      case PSIBLAST =>
         for {
           result <- json.as[PSIBlastResult]
-        } yield {
-          PsiBlastResultView(jobId, result, toolConfig, constants)
-        }
-      case TPRPRED.value =>
+        } yield PsiBlastResultView(jobId, result, toolConfig, constants)
+      case TPRPRED =>
         for {
           result <- TPRPredResult.tprpredDecoder(jobId, json)
-        } yield {
-          TprPredResultView(jobId, result)
-        }
-      case HHBLITS.value =>
+        } yield TprPredResultView(jobId, result)
+      case HHBLITS =>
         for {
           result    <- json.as[HHBlitsResult]
           alignment <- json.hcursor.downField("querytemplate").as[AlignmentResult]
           reduced   <- json.hcursor.downField("reduced").as[AlignmentResult]
-        } yield {
-          HHBlitsResultView(jobId, result, alignment, reduced, toolConfig, constants)
-        }
-      case HMMER.value =>
+        } yield HHBlitsResultView(jobId, result, alignment, reduced, toolConfig, constants)
+      case HMMER =>
         for {
           result <- json.as[HmmerResult]
-        } yield {
-          HmmerResultView(jobId, result, toolConfig, constants)
-        }
-      case HHPRED.value =>
+        } yield HmmerResultView(jobId, result, toolConfig, constants)
+      case HHPRED =>
         for {
           result    <- json.as[HHPredResult]
           alignment <- json.hcursor.downField("querytemplate").as[AlignmentResult]
           reduced   <- json.hcursor.downField("reduced").as[AlignmentResult]
-        } yield {
-          HHPredResultView(jobId, result, alignment, reduced, toolConfig, constants)
-        }
-      case HHOMP.value =>
+        } yield HHPredResultView(jobId, result, alignment, reduced, toolConfig, constants)
+      case HHOMP =>
         for {
           result <- json.as[HHompResult]
-        } yield {
-          HHompResultView(jobId, result, constants, toolConfig)
-        }
-      case HHPRED_ALIGN.value =>
+        } yield HHompResultView(jobId, result, constants, toolConfig)
+      case HHPRED_ALIGN =>
         for {
           result <- json.as[HHPredResult]
-        } yield {
-          HHPredAlignResultView(jobId, result, toolConfig, constants)
-        }
-      case QUICK2D.value =>
+        } yield HHPredAlignResultView(jobId, result, toolConfig, constants)
+      case QUICK2D =>
         for {
           result <- json.as[Quick2DResult]
-        } yield {
-          Quick2DResultView(result)
-        }
-      case CLUSTALO.value =>
+        } yield Quick2DResultView(result)
+      case CLUSTALO =>
         for {
           alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
-        } yield {
-          ClustalOmegaResultView(jobId, alignment, constants, toolConfig)
-        }
-      case KALIGN.value =>
+        } yield ClustalOmegaResultView(jobId, alignment, constants, toolConfig)
+      case KALIGN =>
         for {
           alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
-        } yield {
-          KalignResultView(jobId, alignment, constants, toolConfig)
-        }
-      case MAFFT.value =>
+        } yield KalignResultView(jobId, alignment, constants, toolConfig)
+      case MAFFT =>
         for {
           alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
-        } yield {
-          MafftResultView(jobId, alignment, constants, toolConfig)
-        }
-      case MSAPROBS.value =>
+        } yield MafftResultView(jobId, alignment, constants, toolConfig)
+      case MSAPROBS =>
         for {
           alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
-        } yield {
-          MsaProbsResultView(jobId, alignment, constants, toolConfig)
-        }
-      case MUSCLE.value =>
+        } yield MsaProbsResultView(jobId, alignment, constants, toolConfig)
+      case MUSCLE =>
         for {
           alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
-        } yield {
-          MuscleResultView(jobId, alignment, constants, toolConfig)
-        }
-      case TCOFFEE.value =>
+        } yield MuscleResultView(jobId, alignment, constants, toolConfig)
+      case TCOFFEE =>
         for {
           alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
-        } yield {
-          TcoffeeResultView(jobId, alignment, constants, toolConfig)
-        }
-      case SEQ2ID.value =>
+        } yield TcoffeeResultView(jobId, alignment, constants, toolConfig)
+      case SEQ2ID =>
         for {
           result <- json.as[Unchecked]
-        } yield {
-          Seq2IdResultView(jobId, result)
-        }
-      case HHFILTER.value =>
+        } yield Seq2IdResultView(jobId, result)
+      case HHFILTER =>
         for {
           alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
-        } yield {
-          HHFilterResultView(jobId, alignment, constants, toolConfig)
-        }
-      case PATSEARCH.value =>
+        } yield HHFilterResultView(jobId, alignment, constants, toolConfig)
+      case PATSEARCH =>
         for {
           result <- PatSearchResult.patSearchResultDecoder(json, jobId)
-        } yield {
-          PatSearchResultView(jobId, result, toolConfig)
-        }
+        } yield PatSearchResultView(jobId, result, toolConfig)
     }
   }
 

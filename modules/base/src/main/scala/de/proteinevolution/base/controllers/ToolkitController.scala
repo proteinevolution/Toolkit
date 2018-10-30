@@ -1,9 +1,10 @@
 package de.proteinevolution.base.controllers
 
 import de.proteinevolution.base.helpers.ToolkitTypes
+import io.circe.{ Json, JsonObject }
+import io.circe.syntax._
 import play.api.i18n.I18nSupport
 import play.api.libs.circe.Circe
-import play.api.libs.json._
 import play.api.mvc.{ AbstractController, ControllerComponents, Result }
 
 abstract class ToolkitController(cc: ControllerComponents)
@@ -17,10 +18,8 @@ abstract class ToolkitController(cc: ControllerComponents)
     EXPIRES       -> "0"
   )
 
-  protected def errors(names: String*): JsValue = {
-    JsError.toJson(JsError(names.map { name =>
-      (__ \ name, JsonValidationError("invalid") :: Nil)
-    }))
+  protected def errors(names: String*): Json = {
+    JsonObject.fromMap(names.map(_ -> Json.fromString("invalid")).toMap).asJson
   }
 
 }
