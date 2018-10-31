@@ -295,7 +295,7 @@ object Common {
   }
 
   def addBreak(description: String): String = {
-    description.replaceAll("(\\S{40})", "$1</br>");
+    description.replaceAll("(\\S{40})", "$1</br>")
   }
 
   def addBreakHHpred(description: String): String = {
@@ -449,8 +449,8 @@ object Common {
     if (charCount >= hit.length) {
       ""
     } else {
-      val querySSDSSP = hit.query.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_dssp.length))
-      val querySSPRED = hit.query.ss_pred.slice(charCount, Math.min(charCount + breakAfter, hit.query.ss_pred.length))
+      val querySSDSSP = hit.query.ss_dssp.map(s => s.slice(charCount, Math.min(charCount + breakAfter, s.length)))
+      val querySSPRED = hit.query.ss_pred.map(s => s.slice(charCount, Math.min(charCount + breakAfter, s.length)))
       val query       = hit.query.seq.slice(charCount, Math.min(charCount + breakAfter, hit.query.seq.length))
       val queryCons =
         hit.query.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
@@ -470,11 +470,11 @@ object Common {
         ""
       } else {
         var html = ""
-        if (!querySSPRED.isEmpty) {
-          html += makeRow("sequence", Array("", "Q ss_pred", "", Common.SSColorReplace(querySSPRED)))
+        if (querySSPRED.nonEmpty) {
+          html += makeRow("sequence", Array("", "Q ss_pred", "", Common.SSColorReplace(querySSPRED.getOrElse(""))))
         }
-        if (!querySSDSSP.isEmpty) {
-          html += makeRow("sequence", Array("", "Q ss_dssp", "", Common.SSColorReplace(querySSDSSP)))
+        if (querySSDSSP.nonEmpty) {
+          html += makeRow("sequence", Array("", "Q ss_dssp", "", Common.SSColorReplace(querySSDSSP.getOrElse(""))))
         }
         html += makeRow(
           "sequence",

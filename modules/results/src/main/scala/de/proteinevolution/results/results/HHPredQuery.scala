@@ -6,13 +6,17 @@ import io.circe.generic.semiauto.deriveDecoder
 case class HHPredQuery(
     consensus: String,
     end: Int,
-    accession: String,
+    name: String,
     ref: Int,
     seq: String,
-    ss_dssp: String,
-    ss_pred: String,
+    ss_dssp: Option[String],
+    ss_pred: Option[String],
     start: Int
-)
+) {
+
+  def accession: String = name
+
+}
 
 object HHPredQuery {
 
