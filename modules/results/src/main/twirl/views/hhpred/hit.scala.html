@@ -36,15 +36,15 @@
         @Html(Common.hhpredHitWrapped(hit, 0, 70, hit.query.start, hit.template.start, isColor))
     }else {
     @* Handle secondary structure annotation for query, if present *@
-    @if(!hit.query.ss_dssp.isEmpty) {
+    @if(hit.query.ss_dssp.isDefined) {
         @{
-            Html(Common.makeRow("sequence", Array("", "Q ss_dssp", "", Common.SSColorReplace(hit.query.ss_dssp))))
+            Html(Common.makeRow("sequence", Array("", "Q ss_dssp", "", Common.SSColorReplace(hit.query.ss_dssp.get))))
         }
     }
 
-    @if(!hit.query.ss_pred.isEmpty) {
+    @if(hit.query.ss_pred.isDefined) {
         @{
-            Html(Common.makeRow("sequence", Array("", "Q ss_pred", "", Common.SSColorReplace(hit.query.ss_pred))))
+            Html(Common.makeRow("sequence", Array("", "Q ss_pred", "", Common.SSColorReplace(hit.query.ss_pred.get))))
         }
     }
     @if(!hit.query.seq.isEmpty) {

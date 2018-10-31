@@ -43,7 +43,7 @@ object HHPredHSP {
         agree          <- c.downField("agree").as[String]
         description    <- c.downField("header").as[String]
         num            <- c.downField("no").as[Int]
-        confidence     <- c.downField("confidence").as[String]
+        confidence     <- c.downField("confidence").as[Option[String]]
       } yield {
         new HHPredHSP(
           queryResult,
@@ -53,7 +53,7 @@ object HHPredHSP {
           description,
           num,
           ss_score,
-          confidence,
+          confidence.getOrElse(""),
           agree.length
         )
     }
