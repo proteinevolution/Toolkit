@@ -26,7 +26,7 @@ case class HHPredHSP(
       "3" -> Left(Left(info.probab)),
       "4" -> Left(Left(info.eval)),
       "5" -> Left(Left(ss_score)),
-      "6" -> Left(Right(info.alignedCols)),
+      "6" -> Left(Right(info.aligned_cols)),
       "7" -> Left(Right(template.ref))
     ).asJson
   }
@@ -42,8 +42,8 @@ object HHPredHSP {
         templateResult <- c.downField("template").as[HHPredTemplate](HHPredTemplate.hhpredTemplateDecoder(struct))
         agree          <- c.downField("agree").as[String]
         description    <- c.downField("header").as[String]
-        num            <- c.downField("no").as[Option[Int]]
-        confidence     <- c.downField("confidence").as[Option[String]]
+        num            <- c.downField("no").as[Int]
+        confidence     <- c.downField("confidence").as[String]
       } yield {
         new HHPredHSP(
           queryResult,
@@ -51,9 +51,9 @@ object HHPredHSP {
           infoResult,
           agree,
           description,
-          num.getOrElse(-1),
+          num,
           ss_score,
-          confidence.getOrElse(""),
+          confidence,
           agree.length
         )
     }
