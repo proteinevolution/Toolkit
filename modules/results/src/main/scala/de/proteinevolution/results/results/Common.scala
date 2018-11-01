@@ -470,11 +470,11 @@ object Common {
         ""
       } else {
         var html = ""
-        if (querySSPRED.nonEmpty) {
-          html += makeRow("sequence", Array("", "Q ss_pred", "", Common.SSColorReplace(querySSPRED.getOrElse(""))))
+        if (querySSPRED.get.nonEmpty) {
+          html += makeRow("sequence", Array("", "Q ss_pred", "", Common.SSColorReplace(querySSPRED.get)))
         }
-        if (querySSDSSP.nonEmpty) {
-          html += makeRow("sequence", Array("", "Q ss_dssp", "", Common.SSColorReplace(querySSDSSP.getOrElse(""))))
+        if (querySSDSSP.get.nonEmpty) {
+          html += makeRow("sequence", Array("", "Q ss_dssp", "", Common.SSColorReplace(querySSDSSP.get)))
         }
         html += makeRow(
           "sequence",
