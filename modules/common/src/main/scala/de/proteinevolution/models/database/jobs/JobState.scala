@@ -5,6 +5,8 @@ import io.circe.{ Decoder, Encoder, HCursor }
 import reactivemongo.bson.{ BSONInteger, BSONReader, BSONWriter }
 import shapeless._
 
+import scala.collection.immutable
+
 sealed trait JobState {
   def toInt: Int
 }
@@ -47,42 +49,30 @@ object JobState {
     override def toInt = 9
   }
 
+  private def states: immutable.Seq[JobState] =
+    implicitly[AllSingletons[
+      JobState,
+      Prepared.type :+:
+      Queued.type :+:
+      Running.type :+:
+      Done.type :+:
+      Error.type :+:
+      Submitted.type :+:
+      Pending.type :+:
+      LimitReached.type :+:
+      CNil
+    ]].values
+
   implicit val jobStateDecoder: Decoder[JobState] = (c: HCursor) =>
     for {
       number <- c.downField("status").as[Int]
-    } yield {
-      implicitly[
-        AllSingletons[
-          JobState,
-          Prepared.type :+:
-          Queued.type :+:
-          Running.type :+:
-          Done.type :+:
-          Error.type :+:
-          Submitted.type :+:
-          Pending.type :+:
-          LimitReached.type :+:
-          CNil
-        ]
-      ].values.find(_.toInt == number).getOrElse(throw new Exception)
-  }
+    } yield states.find(_.toInt == number).getOrElse(Error)
 
   implicit val jobStateEncoder: Encoder[JobState] = Encoder[Int].contramap(_.toInt)
 
   implicit object JobStateReader extends BSONReader[BSONInteger, JobState] {
-    def read(state: BSONInteger): JobState with Product with Serializable = {
-      state match {
-        case BSONInteger(1) => Prepared
-        case BSONInteger(2) => Queued
-        case BSONInteger(3) => Running
-        case BSONInteger(4) => Error
-        case BSONInteger(5) => Done
-        case BSONInteger(6) => Submitted
-        case BSONInteger(7) => Pending
-        case BSONInteger(8) => LimitReached
-        case BSONInteger(9) => Deleted
-        case _              => Error
-      }
+    def read(state: BSONInteger): JobState = {
+      states.find(_.toInt == state.value).getOrElse(Error)
     }
   }
 
