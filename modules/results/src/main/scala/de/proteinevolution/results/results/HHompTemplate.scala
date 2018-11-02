@@ -17,6 +17,7 @@ case class HHompTemplate(
 ) extends HHTemplate
 
 object HHompTemplate {
+
   implicit def hhompTemplateDecoder(struct: String): Decoder[HHompTemplate] =
     (c: HCursor) =>
       for {
@@ -34,4 +35,5 @@ object HHompTemplate {
         val accession = General.refineAccession(struct)
         new HHompTemplate(consensus, end, accession, ref, seq, ss_conf, ss_dssp, ss_pred, bb_pred, bb_conf, start)
     }
+
 }

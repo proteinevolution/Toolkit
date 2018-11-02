@@ -5,8 +5,8 @@ import io.circe._
 
 case class HHompHSP(
     query: HHompQuery,
-    template: HHompTemplate,
-    info: HHompInfo,
+    template: Option[HHompTemplate],
+    info: Option[HHompInfo],
     agree: String,
     description: String,
     num: Int,
@@ -22,14 +22,14 @@ case class HHompHSP(
     val _ = db
     Map[String, Either[Either[Double, Int], String]](
       "0" -> Right(Common.getAddScrollLink(num)),
-      "1" -> Right(template.accession),
+      "1" -> Right(template.get.accession),
       "2" -> Right(description.slice(0, 18)),
-      "3" -> Left(Left(info.probabHit)),
-      "4" -> Left(Left(info.probabOMP)),
-      "5" -> Left(Left(info.eval)),
+      "3" -> Left(Left(info.get.probab_hit)),
+      "4" -> Left(Left(info.get.probab_OMP)),
+      "5" -> Left(Left(info.get.eval)),
       "6" -> Left(Left(ss_score)),
-      "7" -> Left(Right(info.alignedCols)),
-      "8" -> Left(Right(template.ref))
+      "7" -> Left(Right(info.get.aligned_cols)),
+      "8" -> Left(Right(template.get.ref))
     ).asJson
   }
 }
@@ -46,7 +46,16 @@ object HHompHSP {
         description    <- c.downField("header").as[String]
         num            <- c.downField("no").as[Int]
       } yield {
-        new HHompHSP(queryResult, templateResult, infoResult, agree, description, num, ss_score, agree.length)
+        new HHompHSP(
+          queryResult,
+          Some(templateResult),
+          Some(infoResult),
+          agree,
+          description,
+          num,
+          ss_score,
+          agree.length
+        )
     }
 
   def hhompHSPListDecoder(hits: List[Json], alignments: List[Json]): List[HHompHSP] = {

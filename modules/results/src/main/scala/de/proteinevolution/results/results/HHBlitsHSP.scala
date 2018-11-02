@@ -5,8 +5,8 @@ import io.circe._
 
 case class HHBlitsHSP(
     query: HHBlitsQuery,
-    template: HHBlitsTemplate,
-    info: HHBlitsInfo,
+    template: Option[HHBlitsTemplate],
+    info: Option[HHBlitsInfo],
     agree: String,
     description: String,
     num: Int,
@@ -21,12 +21,12 @@ case class HHBlitsHSP(
     val _ = db
     Map[String, Either[Either[Double, Int], String]](
       "0" -> Right(Common.getCheckbox(num)),
-      "1" -> Right(Common.getSingleLinkHHBlits(template.accession).toString),
+      "1" -> Right(Common.getSingleLinkHHBlits(template.get.accession).toString),
       "2" -> Right(Common.addBreak(description)),
-      "3" -> Left(Left(info.probab)),
-      "4" -> Left(Left(info.eval)),
-      "5" -> Left(Right(info.aligned_cols)),
-      "6" -> Left(Right(template.ref))
+      "3" -> Left(Left(info.get.probab)),
+      "4" -> Left(Left(info.get.eval)),
+      "5" -> Left(Right(info.get.aligned_cols)),
+      "6" -> Left(Right(template.get.ref))
     ).asJson
   }
 
@@ -43,9 +43,16 @@ object HHBlitsHSP {
         agree          <- c.downField("agree").as[String]
         description    <- c.downField("header").as[String]
         num            <- c.downField("no").as[Int]
-      } yield {
-        new HHBlitsHSP(queryResult, templateResult, infoResult, agree, description, num, agree.length)
-    }
+      } yield
+        new HHBlitsHSP(
+          queryResult,
+          Some(templateResult),
+          Some(infoResult),
+          agree,
+          description,
+          num,
+          agree.length
+      )
 
   def hhblitsHSPListDecoder(hits: List[Json], alignments: List[Json]): List[HHBlitsHSP] = {
     alignments.zip(hits).flatMap {

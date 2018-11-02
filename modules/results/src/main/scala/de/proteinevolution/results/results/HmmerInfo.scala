@@ -12,5 +12,7 @@ case class HmmerInfo(
 ) extends SearchToolInfo
 
 object HmmerInfo {
+
   implicit val hhompInfoDecoder: Decoder[HmmerInfo] = deriveDecoder[HmmerInfo]
+
 }

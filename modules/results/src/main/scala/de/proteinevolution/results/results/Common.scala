@@ -412,8 +412,9 @@ object Common {
         hit.query.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
       val midline = hit.agree.slice(charCount, Math.min(charCount + breakAfter, hit.agree.length))
       val templateCons =
-        hit.template.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
-      val template    = hit.template.seq.slice(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
+        hit.template.get.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.template.get.consensus.length))
+      val template =
+        hit.template.get.seq.slice(charCount, Math.min(charCount + breakAfter, hit.template.get.seq.length))
       val queryEnd    = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
       if (beginQuery == beginQuery + queryEnd) {
@@ -430,7 +431,7 @@ object Common {
           makeRow("sequence",
                   Array("",
                         "T " + beginTemplate,
-                        template + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")")) +
+                        template + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.get.ref + ")")) +
           emptyRow + emptyRow +
           hhblitsHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
         }
@@ -456,15 +457,15 @@ object Common {
         hit.query.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
       val midline = hit.agree.slice(charCount, Math.min(charCount + breakAfter, hit.agree.length))
       val templateCons =
-        hit.template.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
-      val template = hit.template.seq.slice(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
+        hit.template.map(t => t.consensus.slice(charCount, Math.min(charCount + breakAfter, t.consensus.length)))
+      val template = hit.template.map(t => t.seq.slice(charCount, Math.min(charCount + breakAfter, t.seq.length)))
       val templateSSDSSP =
-        hit.template.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_dssp.length))
+        hit.template.map(t => t.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, t.ss_dssp.length)))
       val templateSSPRED =
-        hit.template.ss_pred.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_pred.length))
+        hit.template.map(t => t.ss_pred.slice(charCount, Math.min(charCount + breakAfter, t.ss_pred.length)))
       val confidence  = hit.confidence.slice(charCount, Math.min(charCount + breakAfter, hit.confidence.length))
       val queryEnd    = lengthWithoutDashDots(query)
-      val templateEnd = lengthWithoutDashDots(template)
+      val templateEnd = lengthWithoutDashDots(template.getOrElse(""))
 
       if (beginQuery == beginQuery + queryEnd) {
         ""
@@ -481,7 +482,8 @@ object Common {
           Array(
             "",
             "Q " + hit.query.accession,
-            beginQuery, { if (color) colorRegexReplacer(query) else query } + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"
+            beginQuery,
+            s"${if (color) colorRegexReplacer(query) else query}  ${beginQuery + queryEnd - 1} (${hit.query.ref})"
           )
         )
         html += makeRow("sequence",
@@ -490,24 +492,27 @@ object Common {
                               beginQuery,
                               queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"))
         html += makeRow("sequence", Array("", "", "", midline))
-        html += makeRow("sequence",
-                        Array("",
-                              "T Consensus ",
-                              beginTemplate,
-                              templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"))
+        html += makeRow(
+          "sequence",
+          Array("",
+                "T Consensus ",
+                beginTemplate,
+                "%s  %d (%d)".format(templateCons, beginTemplate + templateEnd - 1, hit.template.get.ref))
+        )
         html += makeRow(
           "sequence",
           Array(
             "",
-            "T " + hit.template.accession,
-            beginTemplate, { if (color) colorRegexReplacer(template) else template } + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"
+            "T " + hit.template.get.accession,
+            beginTemplate,
+            s"${if (color) colorRegexReplacer(template.getOrElse("")) else template}  ${beginTemplate + templateEnd - 1} (${hit.template.get.ref})"
           )
         )
-        if (!templateSSDSSP.isEmpty) {
-          html += makeRow("sequence", Array("", "T ss_dssp", "", Common.SSColorReplace(templateSSDSSP)))
+        if (!templateSSDSSP.get.isEmpty) {
+          html += makeRow("sequence", Array("", "T ss_dssp", "", Common.SSColorReplace(templateSSDSSP.get)))
         }
-        if (!templateSSPRED.isEmpty) {
-          html += makeRow("sequence", Array("", "T ss_pred", "", Common.SSColorReplace(templateSSPRED)))
+        if (!templateSSPRED.get.isEmpty) {
+          html += makeRow("sequence", Array("", "T ss_pred", "", Common.SSColorReplace(templateSSPRED.get)))
         }
         if (!confidence.isEmpty) {
           html += makeRow("sequence", Array("", "Confidence", "", confidence))
@@ -542,21 +547,21 @@ object Common {
         hit.query.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
       val midline = hit.agree.slice(charCount, Math.min(charCount + breakAfter, hit.agree.length))
       val templateCons =
-        hit.template.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
-      val template = hit.template.seq.slice(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
+        hit.template.map(t => t.consensus.slice(charCount, Math.min(charCount + breakAfter, t.consensus.length)))
+      val template = hit.template.map(t => t.seq.slice(charCount, Math.min(charCount + breakAfter, t.seq.length)))
       val templateSSDSSP =
-        hit.template.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_dssp.length))
+        hit.template.map(t => t.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, t.ss_dssp.length)))
       val templateSSPRED =
-        hit.template.ss_pred.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_pred.length))
+        hit.template.map(t => t.ss_pred.slice(charCount, Math.min(charCount + breakAfter, t.ss_pred.length)))
       val templateSSCONF =
-        hit.template.ss_conf.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_conf.length))
+        hit.template.map(t => t.ss_conf.slice(charCount, Math.min(charCount + breakAfter, t.ss_conf.length)))
       val templateBBPRED =
-        hit.template.bb_pred.slice(charCount, Math.min(charCount + breakAfter, hit.template.bb_pred.length))
+        hit.template.map(t => t.bb_pred.slice(charCount, Math.min(charCount + breakAfter, t.bb_pred.length)))
       val templateBBCONF =
-        hit.template.bb_conf.slice(charCount, Math.min(charCount + breakAfter, hit.template.bb_conf.length))
+        hit.template.map(t => t.bb_conf.slice(charCount, Math.min(charCount + breakAfter, t.bb_conf.length)))
 
       val queryEnd    = lengthWithoutDashDots(query)
-      val templateEnd = lengthWithoutDashDots(template)
+      val templateEnd = lengthWithoutDashDots(template.getOrElse(""))
 
       if (beginQuery == beginQuery + queryEnd) {
         ""
@@ -585,32 +590,35 @@ object Common {
                               beginQuery,
                               queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"))
         html += makeRow("sequence", Array("", "", "", midline))
-        html += makeRow("sequence",
-                        Array("",
-                              "T Consensus ",
-                              beginTemplate,
-                              templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"))
+        html += makeRow(
+          "sequence",
+          Array("",
+                "T Consensus ",
+                beginTemplate,
+                templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.get.ref + ")")
+        )
         html += makeRow(
           "sequence",
           Array(
             "",
-            "T " + hit.template.accession,
-            beginTemplate, { if (color) colorRegexReplacer(template) else template } + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"
+            "T " + hit.template.get.accession,
+            beginTemplate,
+            s"${if (color) colorRegexReplacer(template.getOrElse("")) else template}  ${beginTemplate + templateEnd - 1} (${hit.template.get.ref})"
           )
         )
-        if (!templateSSDSSP.isEmpty) {
-          html += makeRow("sequence", Array("", "T ss_dssp", "", Common.SSColorReplace(templateSSDSSP)))
+        if (!templateSSDSSP.get.isEmpty) {
+          html += makeRow("sequence", Array("", "T ss_dssp", "", Common.SSColorReplace(templateSSDSSP.get)))
         }
-        if (!templateSSPRED.isEmpty) {
-          html += makeRow("sequence", Array("", "T ss_pred", "", Common.SSColorReplace(templateSSPRED)))
+        if (!templateSSPRED.get.isEmpty) {
+          html += makeRow("sequence", Array("", "T ss_pred", "", Common.SSColorReplace(templateSSPRED.get)))
         }
-        if (!templateSSCONF.isEmpty) {
+        if (!templateSSCONF.get.isEmpty) {
           html += makeRow("sequence", Array("", "T ss_conf", "", templateSSCONF))
         }
-        if (!templateBBPRED.isEmpty) {
+        if (!templateBBPRED.get.isEmpty) {
           html += makeRow("sequence", Array("", "T bb_pred", "", templateBBPRED))
         }
-        if (!templateBBCONF.isEmpty) {
+        if (!templateBBCONF.get.isEmpty) {
           html += makeRow("sequence", Array("", "T bb_conf", "", templateBBCONF))
         }
 
