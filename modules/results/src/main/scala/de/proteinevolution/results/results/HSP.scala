@@ -8,7 +8,7 @@ trait HSP {
 
   def toDataTable(db: String): Json
 
-  def info: SearchToolInfo // TODO make nullable
+  def info: Option[SearchToolInfo]
 
   def num: Int
 
@@ -16,6 +16,6 @@ trait HSP {
 
   def accession: String
 
-  def template: HHTemplate // TODO make nullable
+  def template: Option[HHTemplate]
 
 }

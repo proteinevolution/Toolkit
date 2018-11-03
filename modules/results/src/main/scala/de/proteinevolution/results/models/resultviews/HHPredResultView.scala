@@ -24,7 +24,7 @@ case class HHPredResultView(
       s"${constants.jobPath}/$jobId/results/$jobId.html_NOIMG"
     ),
     "Raw Output"        -> views.html.resultpanels.fileviewWithDownload(jobId + ".hhr", jobId, "hhpred"),
-    "Probability  Plot" -> views.html.resultpanels.probability(result.HSPS.map(_.info.probab)),
+    "Probability  Plot" -> views.html.resultpanels.probability(result.HSPS.map(_.info.get.probab)),
     "Query Template MSA" -> views.html.resultpanels.alignment(
       jobId,
       alignment,

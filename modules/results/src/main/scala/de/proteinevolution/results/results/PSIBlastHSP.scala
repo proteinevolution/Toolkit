@@ -1,6 +1,5 @@
 package de.proteinevolution.results.results
 
-import de.proteinevolution.results.results.HHTemplate.DummyTemplate
 import io.circe.Json
 import io.circe.syntax._
 
@@ -23,8 +22,8 @@ case class PSIBlastHSP(
     accession: String,
     midLine: String,
     description: String,
-    info: PSIBlastInfo = PSIBlastInfo(-1, -1, -1, -1), // TODO get rid of that
-    template: HHTemplate = DummyTemplate() // TODO get rid of that
+    info: Option[SearchToolInfo],
+    template: Option[HHTemplate]
 ) extends HSP {
 
   import SearchResultImplicits._
@@ -94,7 +93,9 @@ object PSIBlastHSP {
         ref_len,
         accessionString,
         midLine.toUpperCase,
-        description
+        description,
+        None,
+        None
       )
     }
   }

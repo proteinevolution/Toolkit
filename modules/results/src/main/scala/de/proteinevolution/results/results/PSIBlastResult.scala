@@ -15,6 +15,7 @@ case class PSIBlastResult(
     COILPRED: String,
     alignment: AlignmentResult = AlignmentResult(Nil)
 ) extends SearchResult[PSIBlastHSP] {
+
   override def hitsOrderBy(params: DTParam): List[PSIBlastHSP] = {
     (params.orderCol, params.orderDir) match {
       case (1, "asc")  => HSPS.sortBy(_.accession)
@@ -34,6 +35,7 @@ case class PSIBlastResult(
       case (_, _)      => HSPS.sortBy(_.num)
     }
   }
+
 }
 
 object PSIBlastResult {

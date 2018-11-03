@@ -5,8 +5,8 @@ import io.circe.{ Decoder, HCursor, Json }
 
 case class HHPredHSP(
     query: HHPredQuery,
-    template: HHPredTemplate,
-    info: HHPredInfo,
+    template: Option[HHPredTemplate],
+    info: Option[HHPredInfo],
     agree: String,
     description: String,
     num: Int,
@@ -21,13 +21,13 @@ case class HHPredHSP(
     val _ = db
     Map[String, Either[Either[Double, Int], String]](
       "0" -> Right(Common.getCheckbox(num)),
-      "1" -> Right(Common.getSingleLink(template.accession).toString),
+      "1" -> Right(Common.getSingleLink(template.get.accession).toString),
       "2" -> Right(Common.addBreakHHpred(description)),
-      "3" -> Left(Left(info.probab)),
-      "4" -> Left(Left(info.eval)),
+      "3" -> Left(Left(info.get.probab)),
+      "4" -> Left(Left(info.get.eval)),
       "5" -> Left(Left(ss_score)),
-      "6" -> Left(Right(info.aligned_cols)),
-      "7" -> Left(Right(template.ref))
+      "6" -> Left(Right(info.get.aligned_cols)),
+      "7" -> Left(Right(template.get.ref))
     ).asJson
   }
 }
@@ -47,8 +47,8 @@ object HHPredHSP {
       } yield {
         new HHPredHSP(
           queryResult,
-          templateResult,
-          infoResult,
+          Some(templateResult),
+          Some(infoResult),
           agree,
           description,
           num,

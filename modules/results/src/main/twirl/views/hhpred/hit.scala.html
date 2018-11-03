@@ -6,7 +6,7 @@
 <tr>
     <td></td>
     <td id="hhpredlinks" colspan="3">
-        @Common.getLinksHHpred(jobID, hit.template.accession)
+        @Common.getLinksHHpred(jobID, hit.template.get.accession)
     </td>
     <td></td>
 </tr>
@@ -14,17 +14,17 @@
 <tr class="header">
     <td class="indexCheckbox"><input type="checkbox" name="alignment_elem" class="checkbox aln" value='@{hit.num}' data-id='@{hit.num}'> @{hit.num}.</td>
 <td class="hitInfo"  colspan="4">
-    @Common.getSingleLink(hit.template.accession)
+    @Common.getSingleLink(hit.template.get.accession)
     @{"  "+ hit.description}
 </td>
 </tr>
 @* Alignment Details*@
 <tr>
     <td></td>
-    <td class="hitInfo"  colspan="4">Probability: @{hit.info.probab}&emsp;&emsp; E-value: @{hit.info.eval}&emsp;&emsp;
-        Score: @{hit.info.score}&emsp;&emsp; Aligned Cols: @{hit.info.aligned_cols}&emsp;&emsp;
-        Identities: @{Common.percentage(hit.info.identities.toString)}&emsp;&emsp;
-        Similarity: @{hit.info.similarity}&emsp;&emsp;
+    <td class="hitInfo"  colspan="4">Probability: @{hit.info.get.probab}&emsp;&emsp; E-value: @{hit.info.get.eval}&emsp;&emsp;
+        Score: @{hit.info.get.score}&emsp;&emsp; Aligned Cols: @{hit.info.get.aligned_cols}&emsp;&emsp;
+        Identities: @{Common.percentage(hit.info.get.identities.toString)}&emsp;&emsp;
+        Similarity: @{hit.info.get.similarity}&emsp;&emsp;
     </td>
 </tr>
 <tr>
@@ -33,7 +33,7 @@
 
 
 @if(wrapped){
-        @Html(Common.hhpredHitWrapped(hit, 0, 70, hit.query.start, hit.template.start, isColor))
+        @Html(Common.hhpredHitWrapped(hit, 0, 70, hit.query.start, hit.template.get.start, isColor))
     }else {
     @* Handle secondary structure annotation for query, if present *@
     @if(hit.query.ss_pred.get.nonEmpty) {
@@ -68,33 +68,33 @@
     @* agree of query, if present *@
     @Html(Common.makeRow("sequence", Array("", "", "", hit.agree)))
     @* consensus template, if present *@
-    @if(!hit.template.consensus.isEmpty) {
+    @if(!hit.template.get.consensus.isEmpty) {
         @{
-            Html(Common.makeRow("sequence", Array("", "T Consensus", hit.template.start.toString, hit.template.consensus + "    " + hit.template.end.toString + " " + "(" + hit.template.ref + ")")))
+            Html(Common.makeRow("sequence", Array("", "T Consensus", hit.template.get.start.toString, hit.template.get.consensus + "    " + hit.template.get.end.toString + " " + "(" + hit.template.get.ref + ")")))
         }
     }
     @* seq template, if present *@
-    @if(!hit.template.seq.isEmpty) {
+    @if(!hit.template.get.seq.isEmpty) {
         @if(isColor) {
             @{
-                Html(Common.makeRow("sequence", Array("", "T " + hit.template.accession, hit.template.start.toString, Common.colorRegexReplacer(hit.template.seq) + "    " + hit.template.end.toString + " " + "(" + hit.template.ref + ")")))
+                Html(Common.makeRow("sequence", Array("", "T " + hit.template.get.accession, hit.template.get.start.toString, Common.colorRegexReplacer(hit.template.get.seq) + "    " + hit.template.get.end.toString + " " + "(" + hit.template.get.ref + ")")))
             }
         } else {
             @{
-                Html(Common.makeRow("sequence", Array("", "T " + hit.template.accession, hit.template.start.toString, hit.template.seq + "    " + hit.template.end.toString + " " + "(" + hit.template.ref + ")")))
+                Html(Common.makeRow("sequence", Array("", "T " + hit.template.get.accession, hit.template.get.start.toString, hit.template.seq + "    " + hit.template.get.end.toString + " " + "(" + hit.template.get.ref + ")")))
             }
         }
     }
     @* Handle secondary structure annotation for template, if present *@
-    @if(!hit.template.ss_dssp.isEmpty) {
+    @if(!hit.template.get.ss_dssp.isEmpty) {
         @{
-            Html(Common.makeRow("sequence", Array("", "T ss_dssp", "", Common.SSColorReplace(hit.template.ss_dssp))))
+            Html(Common.makeRow("sequence", Array("", "T ss_dssp", "", Common.SSColorReplace(hit.template.get.ss_dssp))))
         }
     }
 
-    @if(!hit.template.ss_pred.isEmpty) {
+    @if(!hit.template.get.ss_pred.isEmpty) {
         @{
-            Html(Common.makeRow("sequence", Array("", "T ss_pred", "", Common.SSColorReplace(hit.template.ss_pred))))
+            Html(Common.makeRow("sequence", Array("", "T ss_pred", "", Common.SSColorReplace(hit.template.get.ss_pred))))
         }
     }
 

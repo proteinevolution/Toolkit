@@ -93,7 +93,7 @@ class ProcessService @Inject()(
   ): String = {
     (toolName, mode.toString) match {
       case (HHBLITS, "alnEval") | (HHPRED, "alnEval") =>
-        result.HSPS.filter(_.info.eval <= accStr.toDouble).map { _.num }.mkString(" ")
+        result.HSPS.filter(_.info.get.eval <= accStr.toDouble).map { _.num }.mkString(" ")
       case (HMMER, "alnEval") =>
         result.HSPS
           .filter(_.eValue <= accStr.toDouble)
@@ -108,14 +108,14 @@ class ProcessService @Inject()(
       case (HMMER, "evalFull") | (PSIBLAST, "evalFull") =>
         result.HSPS.filter(_.eValue <= accStr.toDouble).map { _.accession + " " }.mkString
       case (HHBLITS, "evalFull") =>
-        result.HSPS.filter(_.info.eval <= accStr.toDouble).map { _.template.accession + " " }.mkString
+        result.HSPS.filter(_.info.get.eval <= accStr.toDouble).map { _.template.get.accession + " " }.mkString
       case (_, "full") =>
         val numList = accStr.split("\n").map(_.toInt)
         numList.map { num =>
           if (toolName == HHBLITS)
-            result.HSPS(num - 1).template.accession + " "
+            "%s ".format(result.HSPS(num - 1).template.get.accession)
           else
-            result.HSPS(num - 1).accession + " "
+            "%s ".format(result.HSPS(num - 1).accession)
         }.mkString
       case _ => throw new IllegalStateException("parsing accession identifiers failed")
     }
