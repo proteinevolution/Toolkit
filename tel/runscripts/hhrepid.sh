@@ -94,7 +94,6 @@ else
             -d %UNICLUST  \
             -o /dev/null \
             -oa3m ../results/query.a3m \
-            -e 1 \
             -n ${ITERS}
 fi
 
@@ -104,7 +103,7 @@ echo "#Running HHrepID." >> ../results/process.log
 
 addss.pl ../results/query.a3m
 
-hhrepid  -qsc 0.1 \
+hhrepid  -qsc 0.0 \
         -i ../results/query.a3m \
         -o ../results/query.hhrepid \
         -d ${HHREPIDPATH}/cal_small.hhm \
