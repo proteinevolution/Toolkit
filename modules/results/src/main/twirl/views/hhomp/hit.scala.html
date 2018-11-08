@@ -76,7 +76,9 @@
     @* consensus template, if present *@
     @if(!hit.template.get.consensus.isEmpty) {
         @{
-            Html(Common.makeRow("sequence", Array("", "T Consensus", hit.template.get.start.toString, hit.template.get.consensus + "    " + hit.template.get.end.toString + " " + "(" + hit.template.get.ref + ")")))
+            Html(Common.makeRow("sequence",
+                Array("", "T Consensus",
+                    hit.template.get.start.toString, hit.template.get.consensus + "    " + hit.template.get.end.toString + " " + "(" + hit.template.get.ref + ")")))
         }
     }
     @* seq template, if present *@
