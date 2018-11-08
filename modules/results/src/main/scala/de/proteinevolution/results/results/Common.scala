@@ -5,6 +5,8 @@ import play.twirl.api.Html
 
 import scala.collection.mutable.ArrayBuffer
 
+// TODO scrap this
+
 object Common {
 
   private val logger = Logger(this.getClass)
@@ -489,7 +491,7 @@ object Common {
           Array("",
                 "T Consensus ",
                 beginTemplate.toString,
-                "%s  %d (%d)".format(templateCons, beginTemplate + templateEnd - 1, hit.template.get.ref))
+                "%s  %d (%d)".format(templateCons.getOrElse(""), beginTemplate + templateEnd - 1, hit.template.get.ref))
         )
         html += makeRow(
           "sequence",
@@ -587,10 +589,12 @@ object Common {
         html += makeRow("sequence", Array("", "", "", midline))
         html += makeRow(
           "sequence",
-          Array("",
-                "T Consensus ",
-                beginTemplate.toString,
-                templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.get.ref + ")")
+          Array(
+            "",
+            "T Consensus ",
+            beginTemplate.toString,
+            templateCons.getOrElse("") + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.get.ref + ")"
+          )
         )
         html += makeRow(
           "sequence",
