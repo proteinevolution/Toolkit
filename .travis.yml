@@ -2,7 +2,7 @@ language: scala
 dist: trusty
 sudo: required
 scala:
-  - 2.12.6
+  - 2.12.7
 jdk:
   - openjdk8
 services:

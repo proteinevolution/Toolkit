@@ -59,8 +59,8 @@ marcoil  ${PARAMMATRIX} \
                       +dssSl \
                       -T ${TRANSPROB} \
                       -E ${MARCOILINPUT}/R2.emissProb \
-                      -P "$(readlink -f ../params/alignment)" \
-                      "$(readlink -f ../params/alignment.in)"
+                      -P ../params/alignment \
+                      ../params/alignment.in
 
 echo "done" >> ../results/process.log
 

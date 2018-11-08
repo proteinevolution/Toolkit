@@ -15,7 +15,10 @@ class ResultGetController @Inject()(cc: ControllerComponents, resultGetService: 
 ) extends ToolkitController(cc) {
 
   def get(jobId: String, tool: String, resultView: String): Action[AnyContent] = Action.async { implicit request =>
-    resultGetService.get(jobId, tool, resultView).map(view => Ok(view.body.asJson))
+    resultGetService.get(jobId, tool, resultView).value.map {
+      case Some(view) => Ok(view.body)
+      case None       => Ok(views.html.errors.resultnotfound())
+    }
   }
 
   def getJob(jobId: String): Action[AnyContent] = Action.async { implicit request =>

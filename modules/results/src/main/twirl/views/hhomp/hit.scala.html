@@ -6,7 +6,7 @@
 <tr>
     <td></td>
     <td colspan="3">
-                <a data-open="templateAlignmentModal" onclick="new TemplateAlignment('hhomp', false).get('@jobID', '@hit.template.accession')">Template alignment</a>
+                <a data-open="templateAlignmentModal" onclick="new TemplateAlignment('hhomp', false).get('@jobID', '@hit.template.get.accession')">Template alignment</a>
     </td>
     <td></td>
 </tr>
@@ -16,26 +16,16 @@
         <div class="aln" data-id="@{hit.num}"> @{hit.num}. </div>
     </td>
     <td class="hitInfo" colspan="4">
-        @hit.template.accession
+        @hit.template.get.accession
         @{"  "+ hit.description}
     </td>
 </tr>
 @* Alignment Details*@
 <tr>
     <td></td>
-    <td class="hitInfo" colspan="4">Probability(hit): @{
-        hit.info.probabHit
-    }&emsp;&emsp; Probability(OMP): @{
-        hit.info.probabOMP
-    }&emsp;&emsp; E-value: @{
-        hit.info.eval
-    }&emsp;&emsp;
-        Score: @{
-            hit.info.score
-        }&emsp;&emsp; Aligned Cols: @{
-            hit.info.alignedCols
-        }&emsp;&emsp;
-        Identities: @{Common.percentage(hit.info.identities.toString)}&emsp;&emsp;
+    <td class="hitInfo"  colspan="4">Probability(hit): @{hit.info.get.probab_hit}&emsp;&emsp; Probability(OMP): @{hit.info.get.probab_OMP}&emsp;&emsp; E-value: @{hit.info.get.eval}&emsp;&emsp;
+        Score: @{hit.info.get.score}&emsp;&emsp; Aligned Cols: @{hit.info.get.aligned_cols}&emsp;&emsp;
+        Identities: @{Common.percentage(hit.info.get.identities.toString)}&emsp;&emsp;
     </td>
 </tr>
 <tr>
@@ -44,7 +34,7 @@
 
 
 @if(wrapped){
-    @Html(Common.hhompHitWrapped(hit, 0, 70, hit.query.start, hit.template.start, isColor))
+    @Html(Common.hhompHitWrapped(hit, 0, 70, hit.query.start, hit.template.get.start, isColor))
 }else {
     @* Handle secondary structure annotation for query, if present *@
     @if(!hit.query.ss_conf.isEmpty) {
@@ -84,48 +74,48 @@
     @* agree of query, if present *@
     @Html(Common.makeRow("sequence", Array("", "", "", hit.agree)))
     @* consensus template, if present *@
-    @if(!hit.template.consensus.isEmpty) {
+    @if(!hit.template.get.consensus.isEmpty) {
         @{
-            Html(Common.makeRow("sequence", Array("", "T Consensus", hit.template.start.toString, hit.template.consensus + "    " + hit.template.end.toString + " " + "(" + hit.template.ref + ")")))
+            Html(Common.makeRow("sequence", Array("", "T Consensus", hit.template.get.start.toString, hit.template.get.consensus + "    " + hit.template.get.end.toString + " " + "(" + hit.template.get.ref + ")")))
         }
     }
     @* seq template, if present *@
-    @if(!hit.template.seq.isEmpty) {
+    @if(!hit.template.get.seq.isEmpty) {
         @if(isColor) {
             @{
-                Html(Common.makeRow("sequence", Array("", "T " + hit.template.accession, hit.template.start.toString, Common.colorRegexReplacer(hit.template.seq) + "    " + hit.template.end.toString + " " + "(" + hit.template.ref + ")")))
+                Html(Common.makeRow("sequence", Array("", "T " + hit.template.get.accession, hit.template.get.start.toString, Common.colorRegexReplacer(hit.template.get.seq) + "    " + hit.template.get.end.toString + " " + "(" + hit.template.get.ref + ")")))
             }
         } else {
             @{
-                Html(Common.makeRow("sequence", Array("", "T " + hit.template.accession, hit.template.start.toString, hit.template.seq + "    " + hit.template.end.toString + " " + "(" + hit.template.ref + ")")))
+                Html(Common.makeRow("sequence", Array("", "T " + hit.template.get.accession, hit.template.get.start.toString, hit.template.seq + "    " + hit.template.get.end.toString + " " + "(" + hit.template.get.ref + ")")))
             }
         }
     }
     @* Handle secondary structure annotation for template, if present *@
-    @if(!hit.template.ss_pred.isEmpty) {
+    @if(!hit.template.get.ss_pred.isEmpty) {
         @{
-            Html(Common.makeRow("sequence", Array("", "T ss_pred", "", Common.SSColorReplace(hit.template.ss_pred))))
+            Html(Common.makeRow("sequence", Array("", "T ss_pred", "", Common.SSColorReplace(hit.template.get.ss_pred))))
         }
     }
-    @if(!hit.template.ss_dssp.isEmpty) {
+    @if(!hit.template.get.ss_dssp.isEmpty) {
         @{
-            Html(Common.makeRow("sequence", Array("", "T ss_dssp", "", Common.SSColorReplace(hit.template.ss_dssp))))
+            Html(Common.makeRow("sequence", Array("", "T ss_dssp", "", Common.SSColorReplace(hit.template.get.ss_dssp))))
         }
     }
-    @if(!hit.template.ss_conf.isEmpty) {
+    @if(!hit.template.get.ss_conf.isEmpty) {
         @{
-            Html(Common.makeRow("sequence", Array("", "T ss_conf", "", hit.template.ss_conf)))
+            Html(Common.makeRow("sequence", Array("", "T ss_conf", "", hit.template.get.ss_conf)))
         }
     }
-    @if(!hit.template.bb_pred.isEmpty) {
+    @if(!hit.template.get.bb_pred.isEmpty) {
         @{
-            Html(Common.makeRow("sequence", Array("", "T bb_pred", "", hit.template.bb_pred)))
+            Html(Common.makeRow("sequence", Array("", "T bb_pred", "", hit.template.get.bb_pred)))
         }
     }
 
-    @if(!hit.template.bb_conf.isEmpty) {
+    @if(!hit.template.get.bb_conf.isEmpty) {
         @{
-            Html(Common.makeRow("sequence", Array("", "T bb_conf", "", hit.template.bb_conf)))
+            Html(Common.makeRow("sequence", Array("", "T bb_conf", "", hit.template.get.bb_conf)))
         }
     }
 

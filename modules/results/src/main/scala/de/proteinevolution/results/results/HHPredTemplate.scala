@@ -14,27 +14,29 @@ case class HHPredTemplate(
 ) extends HHTemplate
 
 object HHPredTemplate {
+
   implicit def hhpredTemplateDecoder(struct: String): Decoder[HHPredTemplate] =
     (c: HCursor) =>
       for {
-        consensus <- c.downField("consensus").as[Option[String]]
-        end       <- c.downField("end").as[Option[Int]]
-        ref       <- c.downField("ref").as[Option[Int]]
-        seq       <- c.downField("seq").as[Option[String]]
-        ss_dssp   <- c.downField("ss_dssp").as[Option[String]]
-        ss_pred   <- c.downField("ss_pred").as[Option[String]]
-        start     <- c.downField("start").as[Option[Int]]
+        consensus <- c.downField("consensus").as[String]
+        end       <- c.downField("end").as[Int]
+        ref       <- c.downField("ref").as[Int]
+        seq       <- c.downField("seq").as[String]
+        ss_dssp   <- c.downField("ss_dssp").as[String]
+        ss_pred   <- c.downField("ss_pred").as[String]
+        start     <- c.downField("start").as[Int]
       } yield {
         val accession = General.refineAccession(struct)
         new HHPredTemplate(
-          consensus.getOrElse(""),
-          end.getOrElse(-1),
+          consensus,
+          end,
           accession,
-          ref.getOrElse(-1),
-          seq.getOrElse(""),
-          ss_dssp.getOrElse(""),
-          ss_pred.getOrElse(""),
-          start.getOrElse(-1)
+          ref,
+          seq,
+          ss_dssp,
+          ss_pred,
+          start
         )
     }
+
 }

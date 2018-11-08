@@ -1,4 +1,5 @@
 package de.proteinevolution.migrations.services
+
 import com.github.mongobee.Mongobee
 import javax.inject.Singleton
 

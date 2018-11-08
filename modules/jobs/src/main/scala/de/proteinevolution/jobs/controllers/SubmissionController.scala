@@ -9,9 +9,11 @@ import de.proteinevolution.services.ToolConfig
 import javax.inject.{ Inject, Singleton }
 import play.api.Logger
 import play.api.libs.Files
-import play.api.libs.json.Json
 import play.api.mvc.{ Action, AnyContent, ControllerComponents, MultipartFormData }
 
+import io.circe.JsonObject
+import io.circe.Json
+import io.circe.syntax._
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -33,7 +35,7 @@ class SubmissionController @Inject()(
   def startJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { _ =>
       jobActorAccess.sendToJobActor(jobID, CheckIPHash(jobID))
-      Ok(Json.toJson(Json.obj("message" -> "Starting Job...")))
+      Ok(JsonObject("message" -> Json.fromString("Starting Job...")).asJson)
     }
   }
 
@@ -59,8 +61,14 @@ class SubmissionController @Inject()(
       userSessions.getUser.flatMap { user =>
         jobDispatcher.submitJob(toolName, request.body, user).value.map {
           case Right(job) =>
-            Ok(Json.obj("successful" -> true, "code" -> 0, "message" -> "Submission successful.", "jobID" -> job.jobID))
-              .withSession(userSessions.sessionCookie(request, user.sessionID.get))
+            Ok(
+              JsonObject(
+                "successful" -> Json.fromBoolean(true),
+                "code"       -> Json.fromInt(0),
+                "message"    -> Json.fromString("Submission successful."),
+                "jobID"      -> Json.fromString(job.jobID)
+              ).asJson
+            ).withSession(userSessions.sessionCookie(request, user.sessionID.get))
           case Left(error) => BadRequest(errors(error.msg))
         }
       }
@@ -68,7 +76,7 @@ class SubmissionController @Inject()(
 
   def resubmitJob(newJobID: String, resubmitForJobID: Option[String]): Action[AnyContent] = Action.async {
     implicit request =>
-      jobResubmitService.resubmit(newJobID, resubmitForJobID).map(resubmitData => Ok(Json.toJson(resubmitData)))
+      jobResubmitService.resubmit(newJobID, resubmitForJobID).map(r => Ok(r.asJson))
   }
 
 }
