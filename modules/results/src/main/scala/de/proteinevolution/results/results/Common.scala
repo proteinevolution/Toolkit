@@ -121,7 +121,7 @@ object Common {
     "<span class=\"sequenceBold\">" + sequence + "</span>"
   }
 
-  def makeRow(rowClass: String, entries: Array[Any]): String = {
+  def makeRow(rowClass: String, entries: Array[String]): String = {
     val DOMElement = for (entry <- entries) yield {
       "<td>" + entry.toString + "</td>"
     }
@@ -287,7 +287,9 @@ object Common {
   }
 
   def getCheckbox(num: Int): String = {
-    "<div class=\"nowrap\"><input type=\"checkbox\" data-id=\"" + num + "\" value=\"" + num + "\" name=\"alignment_elem\" class=\"checkbox\"><a onclick=\"Toolkit.resultView.scrollToHit(" + num + ")\">" + num + "</a></div>"
+    "<div class=\"nowrap\"><input type=\"checkbox\" data-id=\"" + num + "\" value=\"" + num +
+    "\" name=\"alignment_elem\" class=\"checkbox\"><a onclick=\"Toolkit.resultView.scrollToHit(" + num + ")\">" +
+    num + "</a></div>"
   }
 
   def getAddScrollLink(num: Int): String = {
@@ -349,13 +351,11 @@ object Common {
       if (beginQuery == beginQuery + queryEnd) {
         ""
       } else {
-        {
-          makeRow("sequence", Array("", "Q " + (beginQuery + 1), query + "   " + (beginQuery + queryEnd))) +
-          makeRow("sequence", Array("", "", midline)) +
-          makeRow("sequence", Array("", "T " + (beginTemplate + 1), template + "   " + (beginTemplate + templateEnd))) +
-          emptyRow + emptyRow +
-          hmmerHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
-        }
+        makeRow("sequence", Array("", "Q " + (beginQuery + 1), query + "   " + (beginQuery + queryEnd))) +
+        makeRow("sequence", Array("", "", midline)) +
+        makeRow("sequence", Array("", "T " + (beginTemplate + 1), template + "   " + (beginTemplate + templateEnd))) +
+        emptyRow + emptyRow +
+        hmmerHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
       }
     }
   }
@@ -378,17 +378,11 @@ object Common {
       if (beginQuery == beginQuery + queryEnd) {
         ""
       } else {
-        {
-          makeRow("sequence", Array("", "Q " + beginQuery, query + "   " + (beginQuery + queryEnd - 1))) +
-          makeRow("sequence", Array("", "", midline)) +
-          makeRow("sequence", Array("", "T " + beginTemplate, template + "   " + (beginTemplate + templateEnd - 1))) +
-          emptyRow + emptyRow +
-          psiblastHitWrapped(hit,
-                             charCount + breakAfter,
-                             breakAfter,
-                             beginQuery + queryEnd,
-                             beginTemplate + templateEnd)
-        }
+        makeRow("sequence", Array("", "Q " + beginQuery, query + "   " + (beginQuery + queryEnd - 1))) +
+        makeRow("sequence", Array("", "", midline)) +
+        makeRow("sequence", Array("", "T " + beginTemplate, template + "   " + (beginTemplate + templateEnd - 1))) +
+        emptyRow + emptyRow +
+        psiblastHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
       }
     }
   }
@@ -420,21 +414,19 @@ object Common {
       if (beginQuery == beginQuery + queryEnd) {
         ""
       } else {
-        {
-          makeRow(
-            "sequence",
-            Array("", "Q " + beginQuery, query + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")")
-          ) +
-          makeRow("sequence", Array("", "", queryCons)) +
-          makeRow("sequence", Array("", "", midline)) +
-          makeRow("sequence", Array("", "", templateCons)) +
-          makeRow("sequence",
-                  Array("",
-                        "T " + beginTemplate,
-                        template + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.get.ref + ")")) +
-          emptyRow + emptyRow +
-          hhblitsHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
-        }
+        makeRow(
+          "sequence",
+          Array("", "Q " + beginQuery, query + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")")
+        ) +
+        makeRow("sequence", Array("", "", queryCons)) +
+        makeRow("sequence", Array("", "", midline)) +
+        makeRow("sequence", Array("", "", templateCons)) +
+        makeRow("sequence",
+                Array("",
+                      "T " + beginTemplate,
+                      template + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.get.ref + ")")) +
+        emptyRow + emptyRow +
+        hhblitsHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
       }
     }
   }
@@ -482,21 +474,21 @@ object Common {
           Array(
             "",
             "Q " + hit.query.accession,
-            beginQuery,
+            beginQuery.toString,
             s"${if (color) colorRegexReplacer(query) else query}  ${beginQuery + queryEnd - 1} (${hit.query.ref})"
           )
         )
         html += makeRow("sequence",
                         Array("",
                               "Q Consensus ",
-                              beginQuery,
+                              beginQuery.toString,
                               queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"))
         html += makeRow("sequence", Array("", "", "", midline))
         html += makeRow(
           "sequence",
           Array("",
                 "T Consensus ",
-                beginTemplate,
+                beginTemplate.toString,
                 "%s  %d (%d)".format(templateCons, beginTemplate + templateEnd - 1, hit.template.get.ref))
         )
         html += makeRow(
@@ -504,7 +496,7 @@ object Common {
           Array(
             "",
             "T " + hit.template.get.accession,
-            beginTemplate,
+            beginTemplate.toString,
             s"${if (color) colorRegexReplacer(template.getOrElse("")) else template}  ${beginTemplate + templateEnd - 1} (${hit.template.get.ref})"
           )
         )
@@ -518,12 +510,14 @@ object Common {
           html += makeRow("sequence", Array("", "Confidence", "", confidence))
         }
         html += emptyRow + emptyRow
-        html + hhpredHitWrapped(hit,
-                                charCount + breakAfter,
-                                breakAfter,
-                                beginQuery + queryEnd,
-                                beginTemplate + templateEnd,
-                                color)
+        html + hhpredHitWrapped(
+          hit,
+          charCount + breakAfter,
+          breakAfter,
+          beginQuery + queryEnd,
+          beginTemplate + templateEnd,
+          color
+        )
       }
     }
   }
@@ -581,20 +575,21 @@ object Common {
           Array(
             "",
             "Q " + hit.query.accession,
-            beginQuery, { if (color) colorRegexReplacer(query) else query } + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"
+            beginQuery.toString,
+            { if (color) colorRegexReplacer(query) else query } + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"
           )
         )
         html += makeRow("sequence",
                         Array("",
                               "Q Consensus ",
-                              beginQuery,
+                              beginQuery.toString,
                               queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"))
         html += makeRow("sequence", Array("", "", "", midline))
         html += makeRow(
           "sequence",
           Array("",
                 "T Consensus ",
-                beginTemplate,
+                beginTemplate.toString,
                 templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.get.ref + ")")
         )
         html += makeRow(
@@ -602,8 +597,9 @@ object Common {
           Array(
             "",
             "T " + hit.template.get.accession,
-            beginTemplate,
-            s"${if (color) colorRegexReplacer(template.getOrElse("")) else template}  ${beginTemplate + templateEnd - 1} (${hit.template.get.ref})"
+            beginTemplate.toString,
+            s"${if (color) colorRegexReplacer(template.getOrElse(""))
+            else template}  ${beginTemplate + templateEnd - 1} (${hit.template.get.ref})"
           )
         )
         if (!templateSSDSSP.get.isEmpty) {
@@ -613,13 +609,13 @@ object Common {
           html += makeRow("sequence", Array("", "T ss_pred", "", Common.SSColorReplace(templateSSPRED.get)))
         }
         if (!templateSSCONF.get.isEmpty) {
-          html += makeRow("sequence", Array("", "T ss_conf", "", templateSSCONF))
+          html += makeRow("sequence", Array("", "T ss_conf", "", templateSSCONF.get))
         }
         if (!templateBBPRED.get.isEmpty) {
-          html += makeRow("sequence", Array("", "T bb_pred", "", templateBBPRED))
+          html += makeRow("sequence", Array("", "T bb_pred", "", templateBBPRED.get))
         }
         if (!templateBBCONF.get.isEmpty) {
-          html += makeRow("sequence", Array("", "T bb_conf", "", templateBBCONF))
+          html += makeRow("sequence", Array("", "T bb_conf", "", templateBBCONF.get))
         }
 
         html += emptyRow + emptyRow
@@ -660,7 +656,7 @@ object Common {
       htmlString += makeRow(
         "sequenceCompact",
         Array("AA_QUERY",
-              charCount + 1,
+              (charCount + 1).toString,
               Highlight(query) + "&nbsp;&nbsp;&nbsp;&nbsp;" + Math.min(length, charCount + breakAfter))
       )
       if (!psipred.isEmpty) {
@@ -754,4 +750,5 @@ object Common {
       htmlString + quick2dWrapped(result, charCount + breakAfter, breakAfter)
     }
   }
+
 }
