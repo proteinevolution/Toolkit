@@ -42,7 +42,7 @@
     @* consensus template, if present *@
     @Html(Common.makeRow("sequence", Array("", "", hit.template.get.consensus)))
     @* seq template, if present *@
-    @Html(Common.makeRow("sequence", Array("", "T " + hit.template.get.start.toString, hit.template.seq + "   " + hit.template.get.end.toString + " " + "(" + hit.template.get.ref + ")")))
+    @Html(Common.makeRow("sequence", Array("", "T " + hit.template.get.start.toString, hit.template.get.seq + "   " + hit.template.get.end.toString + " " + "(" + hit.template.get.ref + ")")))
     <tr class="blank_row"><td colspan="5"></td></tr>
 }
 <tr>
