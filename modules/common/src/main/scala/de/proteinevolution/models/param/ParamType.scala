@@ -23,7 +23,7 @@ object ParamType {
 
   case class Number(min: Option[Int], max: Option[Int]) extends ParamType {
     def validate(value: String): Option[String] = {
-      if (min.exists(_ <= value.toInt) && max.exists(_ <= value.toInt))
+      if (min.getOrElse(Integer.MIN_VALUE) <= value.toInt && value.toInt <= max.getOrElse(Integer.MAX_VALUE)))
         Some(value)
       else
         None
@@ -50,7 +50,7 @@ object ParamType {
   }
   case class Decimal(step: String, min: Option[Double], max: Option[Double]) extends ParamType {
     def validate(value: String): Option[String] = {
-      if (min.exists(_ <= value.toDouble) && max.exists(_ <= value.toDouble))
+      if (min.getOrElse(Double.MinValue) <= value.toDouble && value.toDouble <= max.getOrElse(Double.MaxValue))
         Some(value)
       else
         None
