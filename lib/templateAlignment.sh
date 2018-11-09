@@ -9,7 +9,6 @@ if [ "${HOSTNAME}" = "olt" ]
 fi
 
 HHSUITE=${DATABASES}/hh-suite/
-PFAMREGEX="(pfam[0-9]+)|(^PF[0-9]+ ?(.[0-9]+))"
 FILESTRING=$(tr "\n" " " < params/dbs)
 DBS=(${FILESTRING})
 
@@ -17,12 +16,7 @@ if [ ! -e "results/${accession}.a3m" ]
 then
     for i in "${DBS[@]}"
     do
-        if [[ "${accession}" =~ ${PFAMREGEX} ]]
-        then
-            ffindex_get ${HHSUITE}${i}_a3m.ffdata ${HHSUITE}${i}_a3m.ffindex "${accession}.a3m" >> results/${accession}.a3m
-        else
-            ffindex_get ${HHSUITE}${i}_a3m.ffdata ${HHSUITE}${i}_a3m.ffindex ${accession} >> results/${accession}.a3m
-        fi
+    	ffindex_get ${HHSUITE}${i}_a3m.ffdata ${HHSUITE}${i}_a3m.ffindex ${accession} >> results/${accession}.a3m
     done
 
     # Align two sequences or MSAs
