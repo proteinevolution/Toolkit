@@ -23,7 +23,7 @@ object ParamType {
 
   case class Number(min: Option[Int], max: Option[Int]) extends ParamType {
     def validate(value: String): Option[String] = {
-      if (min.getOrElse(Integer.MIN_VALUE) <= value.toInt && value.toInt <= max.getOrElse(Integer.MAX_VALUE)))
+      if (min.getOrElse(Integer.MIN_VALUE) <= value.toInt && value.toInt <= max.getOrElse(Integer.MAX_VALUE))
         Some(value)
       else
         None
