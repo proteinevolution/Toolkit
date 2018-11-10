@@ -1,8 +1,7 @@
 package de.proteinevolution.tel
 
-import javax.inject.{ Inject, Provider }
-
 import de.proteinevolution.tel.param.{ GenerativeParamFileParser, ParamCollector }
+import javax.inject.{ Inject, Provider }
 import play.api.{ Configuration, Logger }
 
 sealed trait TELProvider      extends Provider[String]

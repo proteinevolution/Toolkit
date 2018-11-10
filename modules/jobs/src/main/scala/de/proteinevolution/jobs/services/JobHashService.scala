@@ -24,24 +24,22 @@ class JobHashService @Inject()(
 
   def checkHash(jobID: String): OptionT[Future, Job] = {
     for {
-      job <- OptionT(jobDao.findJob(BSONDocument(Job.JOBID -> jobID)))
-      list <- OptionT.liftF(
-        jobDao.findAndSortJobs(
-          BSONDocument(Job.HASH        -> hashService.generateJobHash(job, params(jobID), env)),
-          BSONDocument(Job.DATECREATED -> -1)
-        )
-      )
-      filtered <- OptionT.fromOption[Future] {
-        list.find(
-          j => (j.isPublic || j.ownerID == job.ownerID) && j.status == Done && resultsExist(j.jobID, constants)
-        )
-      }
-    } yield {
-      filtered
-    }
+      job      <- OptionT(jobDao.findJob(BSONDocument(Job.JOBID -> jobID)))
+      list     <- OptionT.liftF(listSameJobsSorted(job))
+      filtered <- OptionT.fromOption[Future](list.find(filterJobs(job, _)))
+    } yield filtered
   }
 
-  private def params(jobID: String): Map[String, String] = {
+  private[this] def listSameJobsSorted(job: Job): Future[List[Job]] =
+    jobDao.findAndSortJobs(
+      BSONDocument(Job.HASH        -> hashService.generateJobHash(job, params(job.jobID), env)),
+      BSONDocument(Job.DATECREATED -> -1)
+    )
+
+  private[this] def filterJobs(job: Job, j: Job): Boolean =
+    (j.isPublic || j.ownerID == job.ownerID) && j.status == Done && resultsExist(j.jobID, constants)
+
+  private[this] def params(jobID: String): Map[String, String] = {
     (constants.jobPath / jobID / constants.serializedParam).readDeserialized[Map[String, String]]
   }
 

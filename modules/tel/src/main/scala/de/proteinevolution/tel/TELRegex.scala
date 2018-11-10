@@ -1,4 +1,5 @@
 package de.proteinevolution.tel
+
 import scala.util.matching.Regex
 
 trait TELRegex {
