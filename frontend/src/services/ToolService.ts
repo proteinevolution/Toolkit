@@ -5,7 +5,7 @@ export default class ToolService {
 
     public static fetchToolsVersion(): Promise<string> {
         return new Promise<string>(((resolve, reject) => {
-            axios.get('ui/tools/version')
+            axios.get('/api/tools/version')
                 .then((response) => resolve(response.data))
                 .catch(reject);
         }));
@@ -13,7 +13,7 @@ export default class ToolService {
 
     public static fetchTools(): Promise<Tool[]> {
         return new Promise<Tool[]>((resolve, reject) => {
-            axios.get('ui/tools')
+            axios.get('/api/tools')
                 .then((response) => {
                     resolve(response.data);
                 })
@@ -23,7 +23,7 @@ export default class ToolService {
 
     public static fetchToolParameters(toolName: string): Promise<ToolParameters> {
         return new Promise<ToolParameters>((resolve, reject) => {
-            axios.get(`ui/tools/${toolName}`)
+            axios.get(`/api/tools/${toolName}`)
                 .then((response) => {
                     resolve(response.data);
                 })
