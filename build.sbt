@@ -43,8 +43,8 @@ lazy val common = (crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pur
   )
   .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
 
-lazy val commonJS  = common.js.dependsOn(base)
-lazy val commonJVM = common.jvm.dependsOn(base)
+lazy val commonJS  = common.js.dependsOn(base, tel)
+lazy val commonJVM = common.jvm.dependsOn(base, tel)
 
 lazy val results = (project in file("modules/results"))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl)
@@ -74,7 +74,7 @@ lazy val help = (project in file("modules/help"))
 
 lazy val jobs = (project in file("modules/jobs"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, auth, base, clusterApi)
+  .dependsOn(commonJVM, auth, base, clusterApi, tel)
   .settings(
     name := "de.proteinevolution.jobs",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -87,7 +87,7 @@ lazy val jobs = (project in file("modules/jobs"))
 
 lazy val auth = (project in file("modules/auth"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, base)
+  .dependsOn(commonJVM, base, tel)
   .settings(
     name := "de.proteinevolution.auth",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -134,7 +134,7 @@ lazy val clusterApi = (project in file("modules/cluster-api"))
 
 lazy val backend = (project in file("modules/backend"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, base, auth, jobs)
+  .dependsOn(commonJVM, base, auth, jobs, tel)
   .settings(
     name := "de.proteinevolution.backend",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -183,7 +183,7 @@ lazy val message = (project in file("modules/message"))
 
 lazy val verification = (project in file("modules/verification"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, base, auth, ui, message)
+  .dependsOn(commonJVM, base, auth, ui, message, tel)
   .settings(
     name := "de.proteinevolution.verification",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -205,6 +205,17 @@ lazy val migrations = (project in file("modules/migrations"))
   .settings(scalacOptions --= Seq("-Ywarn-unused:imports"))
   .disablePlugins(PlayLayoutPlugin)
 
+lazy val tel = (project in file("modules/tel"))
+    .enablePlugins(PlayScala, JavaAppPackaging)
+    .settings(
+      name := "de.proteinevolution.tel",
+      libraryDependencies ++= Dependencies.commonDeps,
+      Settings.compileSettings,
+      TwirlKeys.templateImports := Seq.empty,
+      disableDocs
+    )
+    .disablePlugins(PlayLayoutPlugin)
+
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb)
   .dependsOn(
@@ -221,7 +232,8 @@ lazy val root = (project in file("."))
     ui,
     message,
     verification,
-    migrations
+    migrations,
+    tel
   )
   .aggregate(
     client,
@@ -238,7 +250,8 @@ lazy val root = (project in file("."))
     message,
     verification,
     clusterApi,
-    migrations
+    migrations,
+    tel
   )
   .settings(
     coreSettings,
