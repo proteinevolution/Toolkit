@@ -24,11 +24,10 @@ object ParamType {
 
   case class Number(min: Option[Int], max: Option[Int]) extends ParamType {
     def validate(value: String): Option[String] = {
-      for {
-        ⌊ ← min
-        ⌉ ← max
-        if ⌊ <= value.toDouble && value.toDouble <= ⌉
-      } yield value
+      if (min.getOrElse(Integer.MIN_VALUE) <= value.toInt && value.toInt <= max.getOrElse(Integer.MAX_VALUE))
+        Some(value)
+      else
+        None
     }
   }
   case class Select(options: Seq[(String, String)]) extends ParamType {
@@ -52,11 +51,10 @@ object ParamType {
   }
   case class Decimal(step: String, min: Option[Double], max: Option[Double]) extends ParamType {
     def validate(value: String): Option[String] = {
-      for {
-        ⌊ ← min
-        ⌉ ← max
-        if ⌉ - value.toDouble > ⌊
-      } yield value
+      if (min.getOrElse(Double.MinValue) <= value.toDouble && value.toDouble <= max.getOrElse(Double.MaxValue))
+        Some(value)
+      else
+        None
     }
   }
 
