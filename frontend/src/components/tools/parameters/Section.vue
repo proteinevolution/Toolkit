@@ -22,6 +22,7 @@
     import SelectParameter from './Select.vue';
     import NumberParameter from './Number.vue';
     import BooleanParameter from './Boolean.vue';
+    import ModellerParameter from './ModellerParameter.vue';
     import AlignmentMode from './AlignmentMode.vue';
     import ReformatView from './ReformatView.vue';
     import {ParameterSection} from '@/types/toolkit/index';
@@ -35,6 +36,7 @@
             SelectParameter,
             NumberParameter,
             BooleanParameter,
+            ModellerParameter,
             AlignmentMode,
             ReformatView,
         },
