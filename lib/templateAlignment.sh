@@ -30,6 +30,7 @@ then
 
     mv results/${accession}_tmp.a3m results/${accession}.a3m
 
+    sed -i '/^#/d' results/${accession}.a3m
     sed -i "1 i\#A3M#" results/${accession}.a3m
 
 fi
