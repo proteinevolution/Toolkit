@@ -11,7 +11,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import AuthService from '../../../services/AuthService.ts';
+    import AuthService from '../../../services/AuthService';
     import {debounce} from 'lodash-es';
     import {Parameter} from '../../../types/toolkit';
 
@@ -33,21 +33,17 @@
         watch: {
             key(value: string) {
                 this.valid = null;
-                this.debouncedValidateModellerKey(value);
+                this.validateModellerKey(value);
             },
         },
-        created() {
-            this.debouncedValidateModellerKey = debounce(this.validateModellerKey, 500);
-        },
         methods: {
-            validateModellerKey(value: string) {
-                const vm = this;
+            validateModellerKey: debounce(function(value: string) {
+                const vm: any = this;
                 AuthService.validateModellerKey(value)
                     .then((result: boolean) => {
                         vm.valid = result;
-                    })
-                    .catch(console.log);
-            },
+                    });
+            }, 500),
         },
     });
 </script>
