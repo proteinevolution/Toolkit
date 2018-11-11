@@ -8,6 +8,7 @@
         </ExpandHeight>
         <ExpandHeight>
             <TextAreaSubComponent v-if="secondTextAreaEnabled"
+                                  :second="true"
                                   :parameter="parameter"
                                   :validationParams="validationParams">
             </TextAreaSubComponent>

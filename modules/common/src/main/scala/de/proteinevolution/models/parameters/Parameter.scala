@@ -20,6 +20,7 @@ object Parameter {
       name: String,
       inputType: String,
       inputPlaceholder: String,
+      sampleInputKey: String,
       allowsTwoTextAreas: Boolean = false
   ) extends Parameter {
     override val label: String = ""

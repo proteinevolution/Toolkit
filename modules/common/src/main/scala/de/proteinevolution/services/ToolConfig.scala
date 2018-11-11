@@ -27,7 +27,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
           config.getString("code"),
           config.getString("section").toLowerCase,
           config.getStringList("parameter").asScala.map { param =>
-            paramAccess.getParam(param, config.getString("input_placeholder"))
+            paramAccess.getParam(param, config.getString("input_placeholder"), config.getString("sample_input_key"))
           },
           config.getStringList("forwarding.alignment").asScala,
           config.getStringList("forwarding.multi_seq").asScala
