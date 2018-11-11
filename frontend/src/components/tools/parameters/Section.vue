@@ -3,7 +3,7 @@
         <b-row>
             <b-col v-for="parameter in section.parameters"
                    :sm="section.multiColumnLayout ? 6 : 12"
-                   :md="section.multiColumnLayout ? 4 : 12"
+                   :md="section.multiColumnLayout ? 4 : parameter.parameterType === 'TextAreaParameter' ? 12 : 6"
                    :key="parameter.name">
                 <component :is="parameter.parameterType"
                            :parameter="parameter"

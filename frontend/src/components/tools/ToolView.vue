@@ -15,6 +15,7 @@
                                 card
                                 nav-class="tabs-nav">
                             <b-tab v-for="section in parameterSections"
+                                   v-if="section.parameters.length > 0"
                                    :key="toolName + section.name"
                                    :title="section.name">
                                 <div class="tabs-panel">

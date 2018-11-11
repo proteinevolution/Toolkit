@@ -33,15 +33,16 @@
         watch: {
             key(value: string) {
                 this.valid = null;
-                this.validateModellerKey(value);
+                if (value.length > 0) {
+                    this.validateModellerKey(value);
+                }
             },
         },
         methods: {
-            validateModellerKey: debounce(function(value: string) {
-                const vm: any = this;
+            validateModellerKey: debounce(function(this: any, value: string) {
                 AuthService.validateModellerKey(value)
                     .then((result: boolean) => {
-                        vm.valid = result;
+                        this.valid = result;
                     });
             }, 500),
         },
