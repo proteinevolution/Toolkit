@@ -46,7 +46,7 @@ jobs:
         key: v1-dependencies--{{ checksum "build.sbt" }}
 
     # run tests!
-    - run:
-        name: Running tests
-        command: sbt -no-colors -batch "; test"
+    # - run:
+    #    name: Running tests
+    #    command: sbt -no-colors -batch "; test"
       
