@@ -20,7 +20,7 @@
                                    :title="section.name">
                                 <div class="tabs-panel">
                                     <Section :section="section"
-                                             :validationParams="tool.validationParams"></Section>
+                                             :validationParams="tool.validationParams"/>
                                 </div>
                             </b-tab>
 

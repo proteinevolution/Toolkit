@@ -1,4 +1,5 @@
 import {MutationTree} from 'vuex';
+import Vue from 'vue';
 import {ToolState} from '../../types';
 import {Tool} from '@/types/toolkit';
 
@@ -10,7 +11,7 @@ const mutations: MutationTree<ToolState> = {
         state.version = version;
     },
     setToolParameters(state, {toolName, parameters}) {
-        state.tools.filter((tool: Tool) => tool.name === toolName)[0].parameters = parameters;
+        Vue.set(state.tools.filter((tool: Tool) => tool.name === toolName)[0], 'parameters', parameters);
     },
 };
 
