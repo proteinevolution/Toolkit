@@ -13,7 +13,7 @@
     import {TextInputParameter} from '../../../types/toolkit';
 
     export default Vue.extend({
-        name: 'TextInput',
+        name: 'TextInputParameter',
         props: {
             /*
              Simply stating the interface type doesn't work, this is a workaround. See

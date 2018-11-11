@@ -7,7 +7,8 @@
                    :key="parameter.name">
                 <component :is="parameter.parameterType"
                            :parameter="parameter"
-                           :validationParams="validationParams"
+                           :validation-params="validationParams"
+                           :validation-states="validationStates"
                            class="parameter-component">
                 </component>
             </b-col>
@@ -17,13 +18,14 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import TextInputParameter from './TextInput.vue';
-    import TextAreaParameter from './TextArea.vue';
-    import SelectParameter from './Select.vue';
-    import NumberParameter from './Number.vue';
-    import BooleanParameter from './Boolean.vue';
+    import TextInputParameter from './TextInputParameter.vue';
+    import TextAreaParameter from './TextAreaParameter.vue';
+    import SelectParameter from './SelectParameter.vue';
+    import NumberParameter from './NumberParameter.vue';
+    import BooleanParameter from './BooleanParameter.vue';
     import ModellerParameter from './ModellerParameter.vue';
     import AlignmentMode from './AlignmentMode.vue';
+    import AlignmentViewerView from './AlignmentViewerView.vue';
     import ReformatView from './ReformatView.vue';
     import {ParameterSection} from '@/types/toolkit/index';
     import {ValidationParams} from '../../../types/toolkit';
@@ -38,6 +40,7 @@
             BooleanParameter,
             ModellerParameter,
             AlignmentMode,
+            AlignmentViewerView,
             ReformatView,
         },
         props: {
@@ -47,6 +50,7 @@
              */
             section: Object as () => ParameterSection,
             validationParams: Object as () => ValidationParams,
+            validationStates: Object,
         },
     });
 </script>

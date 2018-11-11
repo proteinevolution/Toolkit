@@ -15,8 +15,8 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import Select from './Select.vue';
-    import Boolean from './Boolean.vue';
+    import Select from './SelectParameter.vue';
+    import Boolean from './BooleanParameter.vue';
     import {Parameter, SelectOption} from '../../../types/toolkit';
 
     export default Vue.extend({

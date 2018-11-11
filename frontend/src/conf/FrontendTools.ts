@@ -1,6 +1,6 @@
-import {ReformatViewParameter, Tool} from '@/types/toolkit';
+import {FrontendToolParameter, Tool} from '@/types/toolkit';
 import {ParameterType} from '@/types/toolkit/enums';
-import {inputClustal} from '@/services/sampleseq';
+import {inputClustal, singleProtSeq} from '@/services/sampleseq';
 
 export const Reformat: Tool = {
     name: 'reformat',
@@ -22,7 +22,7 @@ export const Reformat: Tool = {
                 sampleInput: inputClustal,
                 label: '',
                 name: '',
-            } as ReformatViewParameter)],
+            } as FrontendToolParameter)],
         }],
     },
 };
@@ -42,11 +42,12 @@ export const AlignmentViewer: Tool = {
         sections: [{
             name: 'Input',
             multiColumnLayout: false,
-            parameters: [{
-                parameterType: ParameterType.TextArea, // TODO custom view?
+            parameters: [({
+                parameterType: ParameterType.AlignmentViewerView,
+                sampleInput: singleProtSeq,
                 label: '',
                 name: '',
-            }],
+            } as FrontendToolParameter)],
         }],
     },
 };

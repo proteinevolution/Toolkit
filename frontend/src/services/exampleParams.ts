@@ -1,9 +1,9 @@
 import {AlignmentSeqFormat, AlignmentSeqType, ParameterType, TextAreaInputType} from '../types/toolkit/enums';
 import {
     BooleanParameter,
+    FrontendToolParameter,
     NumberParameter,
     Parameter,
-    ReformatViewParameter,
     SelectParameter,
     SequenceValidationParams,
     TextAreaParameter,
@@ -11,7 +11,7 @@ import {
 import {inputClustal, multiProtSeq, patternProt, protHeaders, singleDNASeq, singleProtSeq} from './sampleseq';
 
 export const numberParameter: NumberParameter = {
-    parameterType: ParameterType.Number,
+    parameterType: ParameterType.NumberParameter,
     name: 'number_parameter',
     label: 'Some Number Parameter',
     min: 0,
@@ -20,14 +20,14 @@ export const numberParameter: NumberParameter = {
 };
 
 export const booleanParameter: BooleanParameter = {
-    parameterType: ParameterType.Boolean,
+    parameterType: ParameterType.TextAreaParameter,
     name: 'boolean_paramter',
     label: 'Some Boolean Parameter',
     default: false,
 };
 
 export const singleSelectParameter: SelectParameter = {
-    parameterType: ParameterType.Select,
+    parameterType: ParameterType.TextAreaParameter,
     name: 'msa_gen_method2',
     label: 'MSA generation method',
     options: [
@@ -39,7 +39,7 @@ export const singleSelectParameter: SelectParameter = {
 };
 
 export const multiSelectParameter: SelectParameter = {
-    parameterType: ParameterType.Select,
+    parameterType: ParameterType.TextAreaParameter,
     name: 'msa_gen_method',
     label: 'MSA generation method',
     options: [
@@ -60,7 +60,7 @@ export const alignmentModeParameter: Parameter = {
 
 
 export const proteinSequenceParameter: TextAreaParameter = {
-    parameterType: ParameterType.TextArea,
+    parameterType: ParameterType.TextAreaParameter,
     name: 'alignment',
     label: '',
     inputType: TextAreaInputType.Sequence,
@@ -79,7 +79,7 @@ export const proteinSequenceValidationParams: SequenceValidationParams = {
 };
 
 export const dnaSequenceParameter: TextAreaParameter = {
-    parameterType: ParameterType.TextArea,
+    parameterType: ParameterType.TextAreaParameter,
     name: 'alignment',
     label: '',
     inputType: TextAreaInputType.Sequence,
@@ -94,7 +94,7 @@ export const dnaSequenceValidationParams: SequenceValidationParams = {
 };
 
 export const regexParameter: TextAreaParameter = {
-    parameterType: ParameterType.TextArea,
+    parameterType: ParameterType.TextAreaParameter,
     name: 'regex',
     label: '',
     inputType: TextAreaInputType.Regex,
@@ -104,7 +104,7 @@ export const regexParameter: TextAreaParameter = {
 };
 
 export const pdbParameter: TextAreaParameter = {
-    parameterType: ParameterType.TextArea,
+    parameterType: ParameterType.TextAreaParameter,
     name: 'pdb',
     label: '',
     inputType: TextAreaInputType.PDB,
@@ -114,7 +114,7 @@ export const pdbParameter: TextAreaParameter = {
 };
 
 export const accessionIDParameter: TextAreaParameter = {
-    parameterType: ParameterType.TextArea,
+    parameterType: ParameterType.TextAreaParameter,
     name: 'accessionID',
     label: '',
     inputType: TextAreaInputType.AccessionID,
@@ -125,7 +125,7 @@ export const accessionIDParameter: TextAreaParameter = {
 
 
 export const fastaHeaderParameter: TextAreaParameter = {
-    parameterType: ParameterType.TextArea,
+    parameterType: ParameterType.TextAreaParameter,
     name: 'accessionID',
     label: '',
     inputType: TextAreaInputType.Sequence,
@@ -142,7 +142,7 @@ export const fastaHeaderValidationParams: SequenceValidationParams = {
 
 // ----------------- Reformat View Parameter -----------------------
 
-export const reformatView: ReformatViewParameter = {
+export const reformatView: FrontendToolParameter = {
     parameterType: ParameterType.ReformatView,
     name: '',
     label: '',

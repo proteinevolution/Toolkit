@@ -27,7 +27,7 @@
     import {SelectParameter} from '../../../types/toolkit';
 
     export default Vue.extend({
-        name: 'Select',
+        name: 'SelectParameter',
         components: {
             Multiselect,
         },

@@ -82,6 +82,6 @@ export interface BooleanParameter extends Parameter {
     default: boolean;
 }
 
-export interface ReformatViewParameter extends Parameter {
+export interface FrontendToolParameter extends Parameter {
     sampleInput: string;
 }
