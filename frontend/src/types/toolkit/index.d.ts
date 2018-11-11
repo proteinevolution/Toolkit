@@ -84,4 +84,5 @@ export interface BooleanParameter extends Parameter {
 
 export interface FrontendToolParameter extends Parameter {
     sampleInput: string;
+    inputPlaceholder: string;
 }

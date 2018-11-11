@@ -21,7 +21,7 @@
                                 <div class="tabs-panel">
                                     <Section :section="section"
                                              :validationParams="tool.validationParams"
-                                    :validation-states="validationStates"/>
+                                             :validation-states="validationStates"/>
                                 </div>
                             </b-tab>
 
@@ -165,10 +165,11 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             z-index: 1;
             overflow-y: auto;
+            border-radius: 0;
         }
     }
 </style>

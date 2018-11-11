@@ -1,9 +1,11 @@
+import {ParameterType} from '../../../types/toolkit/enums';
+import {ParameterType} from '../../../types/toolkit/enums';
 <template>
     <div>
         <b-row>
             <b-col v-for="parameter in section.parameters"
                    :sm="section.multiColumnLayout ? 6 : 12"
-                   :md="section.multiColumnLayout ? 4 : parameter.parameterType === 'TextAreaParameter' ? 12 : 6"
+                   :md="mediumSize(parameter)"
                    :key="parameter.name">
                 <component :is="parameter.parameterType"
                            :parameter="parameter"
@@ -28,7 +30,8 @@
     import AlignmentViewerView from './AlignmentViewerView.vue';
     import ReformatView from './ReformatView.vue';
     import {ParameterSection} from '@/types/toolkit/index';
-    import {ValidationParams} from '../../../types/toolkit';
+    import {Parameter, ValidationParams} from '../../../types/toolkit';
+    import {ParameterType} from '../../../types/toolkit/enums';
 
     export default Vue.extend({
         name: 'Section',
@@ -51,6 +54,21 @@
             section: Object as () => ParameterSection,
             validationParams: Object as () => ValidationParams,
             validationStates: Object,
+        },
+        methods: {
+            mediumSize(parameter: Parameter) {
+                if (this.section.multiColumnLayout) {
+                    return 4;
+                } else if (
+                    parameter.parameterType === ParameterType.TextAreaParameter ||
+                    parameter.parameterType === ParameterType.ReformatView ||
+                    parameter.parameterType === ParameterType.AlignmentViewerView
+                ) {
+                    return 12;
+                } else {
+                    return 6;
+                }
+            },
         },
     });
 </script>
