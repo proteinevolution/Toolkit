@@ -19,7 +19,7 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.ExecutionContext
 
 @Singleton
 final class BackendController @Inject()(
@@ -156,7 +156,7 @@ final class BackendController @Inject()(
           NoCache(Ok(Json.toJson(users)))
         }
       } else {
-        Future.successful(NotFound)
+        fuccess(NotFound)
       }
     }
   }

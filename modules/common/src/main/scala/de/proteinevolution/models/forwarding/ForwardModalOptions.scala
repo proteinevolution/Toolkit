@@ -1,10 +1,8 @@
 package de.proteinevolution.models.forwarding
 
-import play.api.libs.json.JsonConfiguration.Aux
-import play.api.libs.json.JsonNaming.SnakeCase
-import play.api.libs.json.{ Json, JsonConfiguration, OFormat }
+import io.circe.generic.extras._
 
-case class ForwardModalOptions(
+@ConfiguredJsonCodec case class ForwardModalOptions(
     heading: String,
     showRadioBtnSelection: Boolean,
     showRadioBtnSequenceLength: Boolean,
@@ -14,8 +12,6 @@ case class ForwardModalOptions(
 
 object ForwardModalOptions {
 
-  implicit val config: Aux[Json.MacroOptions] = JsonConfiguration(SnakeCase)
-
-  implicit val forwardModalOptionsWrites: OFormat[ForwardModalOptions] = Json.format[ForwardModalOptions]
+  implicit val config: Configuration = Configuration.default.withSnakeCaseMemberNames
 
 }
