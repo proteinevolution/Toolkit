@@ -15,7 +15,7 @@ import de.proteinevolution.message.actors.WebSocketActor.{ LogOut, MaintenanceAl
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.JobState.Running
 import de.proteinevolution.models.message.Session.ChangeSessionID
-import de.proteinevolution.services.ToolConfig
+import de.proteinevolution.tools.ToolConfig
 import io.circe.syntax._
 import io.circe.{ Json, JsonObject }
 import javax.inject.{ Inject, Named }

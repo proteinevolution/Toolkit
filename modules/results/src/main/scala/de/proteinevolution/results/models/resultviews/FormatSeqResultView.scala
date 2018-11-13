@@ -2,7 +2,7 @@ package de.proteinevolution.results.models.resultviews
 
 import de.proteinevolution.models.ToolName
 import de.proteinevolution.models.results.ResultViews
-import de.proteinevolution.services.ToolConfig
+import de.proteinevolution.tools.ToolConfig
 
 import scala.collection.immutable.ListMap
 

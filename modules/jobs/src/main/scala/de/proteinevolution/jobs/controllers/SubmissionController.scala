@@ -5,15 +5,15 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete }
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services._
-import de.proteinevolution.services.ToolConfig
+import de.proteinevolution.tools.ToolConfig
 import javax.inject.{ Inject, Singleton }
 import play.api.Logger
 import play.api.libs.Files
 import play.api.mvc.{ Action, AnyContent, ControllerComponents, MultipartFormData }
-
 import io.circe.JsonObject
 import io.circe.Json
 import io.circe.syntax._
+
 import scala.concurrent.ExecutionContext
 
 @Singleton

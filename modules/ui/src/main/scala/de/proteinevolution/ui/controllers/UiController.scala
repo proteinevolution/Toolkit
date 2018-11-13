@@ -2,7 +2,7 @@ package de.proteinevolution.ui.controllers
 
 import controllers.AssetsFinder
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.services.ToolConfig
+import de.proteinevolution.tools.ToolConfig
 import io.circe.generic.auto._
 import io.circe.syntax._
 import javax.inject.{ Inject, Singleton }

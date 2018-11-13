@@ -1,13 +1,12 @@
-package de.proteinevolution.services
+package de.proteinevolution.tools
 
 import com.typesafe.config.{ Config, ConfigObject }
-
-import scala.collection.JavaConverters._
-import de.proteinevolution.models.Tool
 import de.proteinevolution.models.forms.ToolForm
 import de.proteinevolution.models.param.{ Param, ParamAccess }
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
+
+import scala.collection.JavaConverters._
 
 @Singleton
 class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
