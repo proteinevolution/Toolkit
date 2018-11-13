@@ -1,4 +1,4 @@
-package de.proteinevolution.models
+package de.proteinevolution.tools
 
 import de.proteinevolution.models.forms.ToolForm
 import de.proteinevolution.models.param.Param
@@ -8,7 +8,7 @@ case class Tool(
     toolNameLong: String,
     code: String,
     category: String,
-    params: Map[String, Param], // Maps a parameter name to the respective Param instance
+    params: Map[String, Param],
     toolForm: ToolForm,
     paramGroups: Map[String, Seq[String]],
     forwardAlignment: Seq[String],

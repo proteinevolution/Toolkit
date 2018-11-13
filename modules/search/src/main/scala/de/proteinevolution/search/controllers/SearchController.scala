@@ -3,7 +3,7 @@ package de.proteinevolution.search.controllers
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.search.services.SearchService
-import de.proteinevolution.services.ToolConfig
+import de.proteinevolution.tools.ToolConfig
 import io.circe.JsonObject
 import io.circe.syntax._
 import javax.inject.{ Inject, Singleton }
