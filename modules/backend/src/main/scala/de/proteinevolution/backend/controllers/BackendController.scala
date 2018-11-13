@@ -12,7 +12,7 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
-import de.proteinevolution.services.ToolConfig
+import de.proteinevolution.tools.ToolConfig
 import javax.inject.{ Inject, Named, Singleton }
 import play.api.Logger
 import play.api.libs.json.Json

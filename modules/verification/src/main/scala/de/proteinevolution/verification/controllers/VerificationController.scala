@@ -12,8 +12,8 @@ import de.proteinevolution.models.database.users.{ User, UserToken }
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.message.actors.WebSocketActor.LogOut
-import de.proteinevolution.services.ToolConfig
 import de.proteinevolution.tel.env.Env
+import de.proteinevolution.tools.ToolConfig
 import play.api.cache._
 import play.api.mvc._
 import play.api.libs.mailer._

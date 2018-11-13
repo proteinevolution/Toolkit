@@ -3,7 +3,7 @@ package de.proteinevolution.results.controllers
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.models.forwarding.ForwardingError.InvalidModal
 import de.proteinevolution.models.forwarding.{ ForwardModalOptions, ForwardingError }
-import de.proteinevolution.services.ToolConfig
+import de.proteinevolution.tools.ToolConfig
 import javax.inject.{ Inject, Singleton }
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 import io.circe.syntax._

@@ -6,13 +6,13 @@ import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services.JobFolderValidation
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.users.User
-import de.proteinevolution.services.ToolConfig
 import javax.inject.{ Inject, Singleton }
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.{ ExecutionContext, Future }
 import de.proteinevolution.base.helpers.ToolkitTypes._
 import de.proteinevolution.jobs.models.Job
+import de.proteinevolution.tools.ToolConfig
 
 @Singleton
 class SearchService @Inject()(
