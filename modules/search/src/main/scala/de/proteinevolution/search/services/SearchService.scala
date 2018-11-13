@@ -2,17 +2,17 @@ package de.proteinevolution.search.services
 
 import cats.data.OptionT
 import cats.implicits._
+import de.proteinevolution.base.helpers.ToolkitTypes._
 import de.proteinevolution.jobs.dao.JobDao
+import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobFolderValidation
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.users.User
+import de.proteinevolution.tools.{ Tool, ToolConfig }
 import javax.inject.{ Inject, Singleton }
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.{ ExecutionContext, Future }
-import de.proteinevolution.base.helpers.ToolkitTypes._
-import de.proteinevolution.jobs.models.Job
-import de.proteinevolution.tools.ToolConfig
 
 @Singleton
 class SearchService @Inject()(
@@ -34,7 +34,7 @@ class SearchService @Inject()(
 
   def autoComplete(user: User, queryString_ : String): OptionT[Future, List[Job]] = {
     val queryString = queryString_.trim()
-    val tools: List[de.proteinevolution.models.Tool] = toolConfig.values.values
+    val tools: List[Tool] = toolConfig.values.values
       .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
       .filterNot(_.toolNameShort == "hhpred_manual")
       .toList

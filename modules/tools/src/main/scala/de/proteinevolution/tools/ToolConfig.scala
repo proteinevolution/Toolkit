@@ -1,7 +1,6 @@
 package de.proteinevolution.tools
 
 import com.typesafe.config.{ Config, ConfigObject }
-import de.proteinevolution.models.Tool
 import de.proteinevolution.models.forms.ToolForm
 import de.proteinevolution.models.param.{ Param, ParamAccess }
 import javax.inject.{ Inject, Singleton }
