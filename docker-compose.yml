@@ -5,8 +5,8 @@ services:
   toolkit:
     image: proteinevolution/toolkit-docker:latest
     container_name: toolkit
-    env_file:
-      - conf/.env
+    environment:
+    - SUBMIT_MODE=LOCAL
     stdin_open: true
     tty: true
     ports:
