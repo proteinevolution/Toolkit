@@ -16,7 +16,7 @@
     import {NumberParameter} from '../../../types/toolkit';
 
     export default Vue.extend({
-        name: 'Number',
+        name: 'NumberParameter',
         props: {
             /*
              Simply stating the interface type doesn't work, this is a workaround. See

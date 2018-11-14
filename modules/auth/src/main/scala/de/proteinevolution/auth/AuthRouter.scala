@@ -22,7 +22,7 @@ class AuthRouter @Inject()(authController: AuthController, validationController:
   }
 
   private lazy val validationRoutes: Routes = {
-    case POST(p"/validate/modeller" ? q_o"input=$input") => validationController.validateModellerKey(input)
+    case GET(p"/validate/modeller" ? q_o"input=$input") => validationController.validateModellerKey(input)
   }
 
   override def routes: Routes = {

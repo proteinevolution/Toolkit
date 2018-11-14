@@ -77,10 +77,10 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {ReformatViewParameter, SelectOption, SequenceValidationParams, Tool} from '../../../types/toolkit';
+    import {FrontendToolParameter, SelectOption, SequenceValidationParams, Tool} from '../../../types/toolkit';
     import {Reformat} from '../../../modules/reformat';
     import Multiselect from 'vue-multiselect';
-    import Select from './Select.vue';
+    import Select from './SelectParameter.vue';
     import AlignmentViewerModal from '@/components/modals/AlignmentViewerModal.vue';
     import {AlignmentSeqFormat} from '../../../types/toolkit/enums';
 
@@ -108,7 +108,7 @@
              Simply stating the interface type doesn't work, this is a workaround. See
              https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
              */
-            parameter: Object as () => ReformatViewParameter,
+            parameter: Object as () => FrontendToolParameter,
         },
         computed: {
             tools(): Tool[] {

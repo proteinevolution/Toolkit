@@ -25,10 +25,10 @@ class ParamAccess @Inject()(tel: TEL) {
     "clu" -> "clu"
   )
 
-  def getParam(paramName: String, placeholder: String = ""): Parameter = paramName match {
-    case "ALIGNMENT" => TextAreaParameter("alignment", TextAreaInputType.SEQUENCE, placeholder)
+  def getParam(paramName: String, placeholder: String = "", sampleInputKey: String = ""): Parameter = paramName match {
+    case "ALIGNMENT" => TextAreaParameter("alignment", TextAreaInputType.SEQUENCE, placeholder, sampleInputKey)
     case "TWOTEXTALIGNMENT" =>
-      TextAreaParameter("alignment", TextAreaInputType.SEQUENCE, placeholder, allowsTwoTextAreas = true)
+      TextAreaParameter("alignment", TextAreaInputType.SEQUENCE, placeholder, sampleInputKey, allowsTwoTextAreas = true)
     case "HMMER_DB"                 => select("hmmerdb", "Select database")
     case "STANDARD_DB"              => select("standarddb", "Select standard database")
     case "HHSUITEDB"                => select("hhsuitedb", "Select database (PDB_mmCIF70 for modeling)")

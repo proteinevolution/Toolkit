@@ -48,6 +48,7 @@
     import {transformToFormat, validation} from '@/util/validation';
     import {ValidationResult} from '../../../types/toolkit/validation';
     import VelocityFade from '@/transitions/VelocityFade.vue';
+    import SampleSeqs from '@/conf/SampleSeqs';
 
     export default Vue.extend({
         name: 'TextAreaSubComponent',
@@ -55,14 +56,29 @@
             VelocityFade,
         },
         props: {
-            id: String,
+            id: {
+                type: String,
+            },
             /*
              Simply stating the interface type doesn't work, this is a workaround. See
              https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
              */
-            parameter: Object as () => TextAreaParameter,
-            validationParams: Object as () => ValidationParams,
-            input: String,
+            parameter: {
+                type: Object as () => TextAreaParameter,
+            },
+            validationParams: {
+                type: Object as () => ValidationParams,
+            },
+            input: {
+                type: String,
+                required: false,
+                default: undefined,
+            },
+            second: {
+                type: Boolean,
+                required: false,
+                default: false,
+            },
         },
         data() {
             return {
@@ -89,7 +105,7 @@
             },
         },
         methods: {
-            handleFileUpload($event: Event) {
+            handleFileUpload($event: Event): void {
                 const fileUpload: HTMLInputElement = $event.target as HTMLInputElement;
                 if (fileUpload.files && fileUpload.files.length > 0) {
                     this.fileUploadProgress = 0;
@@ -118,13 +134,13 @@
                     reader.readAsText(file);
                 }
             },
-            displayAutoTransformMessage(params: any) {
+            displayAutoTransformMessage(params: any): void {
                 this.autoTransformedParams = params;
                 setTimeout(() => {
                     this.autoTransformedParams = null;
                 }, this.autoTransformMessageTimeout);
             },
-            errorHandler(evt: Event) {
+            errorHandler(evt: Event): void {
                 const error = (evt.target as FileReader).error;
                 this.uploadingFile = false;
                 if (error) {
@@ -139,8 +155,9 @@
                     }
                 }
             },
-            handlePasteExample() {
-                this.text = this.parameter.sampleInput;
+            handlePasteExample(): void {
+                const sampleSeqKeys: string[] = this.parameter.sampleInputKey.split(',');
+                this.text = SampleSeqs[sampleSeqKeys[this.second ? 1 : 0]];
             },
         },
     });

@@ -15,11 +15,13 @@
                                 card
                                 nav-class="tabs-nav">
                             <b-tab v-for="section in parameterSections"
+                                   v-if="section.parameters.length > 0"
                                    :key="toolName + section.name"
                                    :title="section.name">
                                 <div class="tabs-panel">
                                     <Section :section="section"
-                                             :validationParams="tool.validationParams"></Section>
+                                             :validationParams="tool.validationParams"
+                                             :validation-states="validationStates"/>
                                 </div>
                             </b-tab>
 
@@ -70,6 +72,7 @@
         data() {
             return {
                 fullScreen: false,
+                validationStates: {},
             };
         },
         computed: {
@@ -162,10 +165,11 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             z-index: 1;
             overflow-y: auto;
+            border-radius: 0;
         }
     }
 </style>

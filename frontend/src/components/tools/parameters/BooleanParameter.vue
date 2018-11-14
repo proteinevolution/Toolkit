@@ -11,7 +11,7 @@
     import {BooleanParameter} from '../../../types/toolkit';
 
     export default Vue.extend({
-        name: 'Boolean',
+        name: 'BooleanParameter',
         components: {
             Switches,
         },

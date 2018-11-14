@@ -8,6 +8,7 @@
         </ExpandHeight>
         <ExpandHeight>
             <TextAreaSubComponent v-if="secondTextAreaEnabled"
+                                  :second="true"
                                   :parameter="parameter"
                                   :validationParams="validationParams">
             </TextAreaSubComponent>
@@ -29,7 +30,7 @@
     import {ValidationParams} from '../../../types/toolkit';
 
     export default Vue.extend({
-        name: 'TextArea',
+        name: 'TextAreaParameter',
         components: {
             Switches,
             TextAreaSubComponent,

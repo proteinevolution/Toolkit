@@ -1,13 +1,14 @@
 
 export enum ParameterType {
-    TextInput = 'TextInput',
-    TextArea = 'TextArea',
-    Select = 'Select',
-    Number = 'Number',
-    Boolean = 'Boolean',
+    TextInputParameter = 'TextInputParameter',
+    TextAreaParameter = 'TextAreaParameter',
+    SelectParameter = 'SelectParameter',
+    NumberParameter = 'NumberParameter',
+    BooleanParameter = 'BooleanParameter',
     AlignmentMode = 'AlignmentMode',
     ModellerKey = 'ModellerKey',
     ReformatView = 'ReformatView',
+    AlignmentViewerView = 'AlignmentViewerView',
 }
 
 export enum TextAreaInputType {
