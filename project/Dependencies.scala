@@ -6,7 +6,7 @@ import sbt._
 object Dependencies {
 
   val akkaVersion = "2.5.17"
-  val catsV       = "1.4.0"
+  val catsV       = "1.5.0-RC0"
   val circeV      = "0.10.0"
 
   lazy val commonDeps = Seq(
@@ -23,15 +23,15 @@ object Dependencies {
     "com.typesafe.akka"    %% "akka-stream"              % akkaVersion,
     "com.typesafe.play"    %% "play-mailer"              % "6.0.1",
     "com.typesafe.play"    %% "play-mailer-guice"        % "6.0.1",
-    "com.github.pathikrit" %% "better-files"             % "3.5.0",
+    "com.github.pathikrit" %% "better-files"             % "3.6.0",
     "org.mindrot"          % "jbcrypt"                   % "0.3m",
     "org.reactivemongo"    %% "play2-reactivemongo"      % "0.16.0-play26",
     "org.reactivemongo"    %% "reactivemongo-akkastream" % "0.16.0",
     "org.typelevel"        %% "cats-core"                % catsV,
-    "org.typelevel"        %% "cats-effect"              % "1.0.0",
+    "org.typelevel"        %% "cats-effect"              % "1.1.0-M1",
     "com.chuusai"          %% "shapeless"                % "2.3.3",
     "org.atnos"            %% "eff"                      % "5.3.0",
-    "org.tpolecat"         %% "atto-core"                % "0.6.1",
+    "org.tpolecat"         %% "atto-core"                % "0.6.4",
     "com.vmunier"          %% "scalajs-scripts"          % "1.1.1",
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
     "com.typesafe.play"    %% "play-json"                % "2.6.10",
@@ -63,7 +63,7 @@ object Dependencies {
     "com.typesafe.akka"        %% "akka-stream-testkit" % akkaVersion % Test,
     "org.scalatestplus.play"   %% "scalatestplus-play"  % "3.1.2"     % Test,
     "org.mockito"              % "mockito-core"         % "2.11.0"    % Test,
-    "com.softwaremill.macwire" %% "macros"              % "2.3.0"     % Test,
+    "com.softwaremill.macwire" %% "macros"              % "2.3.1"     % Test,
     "org.awaitility"           % "awaitility"           % "3.0.0"     % Test
   )
 
