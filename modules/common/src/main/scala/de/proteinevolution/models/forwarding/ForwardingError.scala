@@ -1,23 +1,20 @@
 package de.proteinevolution.models.forwarding
 
-import play.api.libs.json._
+import io.circe.{ Json, JsonObject }
+import io.circe.syntax._
 
-trait ForwardingError {
-
-  def message: JsValue
-
+sealed trait ForwardingError {
+  def message: Json
 }
 
 object ForwardingError {
 
-  private[this] def errors(names: String*): JsValue = {
-    JsError.toJson(JsError(names.map { name =>
-      (__ \ name, JsonValidationError("invalid") :: Nil)
-    }))
+  protected def errors(names: String*): Json = {
+    JsonObject.fromMap(names.map(_ -> Json.fromString("invalid")).toMap).asJson
   }
 
   case object InvalidModal extends ForwardingError {
-    val message: JsValue = errors("Invalid Forwarding Options")
+    val message: Json = errors("Invalid Forwarding Options")
   }
 
 }

@@ -12,14 +12,14 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
-import de.proteinevolution.services.ToolConfig
+import de.proteinevolution.tools.ToolConfig
 import javax.inject.{ Inject, Named, Singleton }
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc._
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.ExecutionContext
 
 @Singleton
 final class BackendController @Inject()(
@@ -156,7 +156,7 @@ final class BackendController @Inject()(
           NoCache(Ok(Json.toJson(users)))
         }
       } else {
-        Future.successful(NotFound)
+        fuccess(NotFound)
       }
     }
   }

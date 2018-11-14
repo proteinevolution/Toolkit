@@ -5,8 +5,8 @@ import java.net.InetAddress
 import javax.inject.{ Inject, Singleton }
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.services.ToolConfig
 import de.proteinevolution.tel.env.Env
+import de.proteinevolution.tools.ToolConfig
 import play.api.mvc._
 import play.api.{ Environment, Logger }
 import org.webjars.play.WebJarsUtil

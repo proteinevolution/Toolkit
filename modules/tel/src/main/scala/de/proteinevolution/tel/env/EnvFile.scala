@@ -4,6 +4,7 @@ import better.files._
 import de.proteinevolution.tel.Subject
 import play.api.{ Configuration, Logger }
 
+import scala.collection.immutable.StringLike
 import scala.sys.process.Process
 import scala.util.matching.Regex
 
@@ -29,7 +30,8 @@ class ExecFile(path: String) extends EnvFile(path) {
     if (!f.isExecutable) {
       throw EnvFileException(s"File ${f.name} is not executable.")
     }
-    Process(f.pathAsString).!!.lines.map { line =>
+    // ambiguous implicit conversion because of method `lines` in better.files.package.StringOps
+    Process(f.pathAsString).!!.asInstanceOf[StringLike[String]].lines.map { line =>
       val spt = line.split('=')
       spt(0).trim() -> spt(1).trim()
     }.toMap

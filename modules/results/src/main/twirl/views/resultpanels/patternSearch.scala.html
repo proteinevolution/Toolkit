@@ -1,7 +1,8 @@
 @import de.proteinevolution.results.results.{ Common, PatSearchResult }
+@import de.proteinevolution.tools.Tool
 @import play.twirl.api.Html
 
-@(jobID: String, result: PatSearchResult, tool: de.proteinevolution.models.Tool)()
+@(jobID: String, result: PatSearchResult, tool: Tool)()
 
 @if(result.hits.size < 1) {
     <div class="note">

@@ -1,5 +1,6 @@
 @import de.proteinevolution.results.results.AlignmentResult
-@(jobID: String, alignment: AlignmentResult, resultName: String,  tool: de.proteinevolution.models.Tool)()
+@import de.proteinevolution.tools.Tool
+@(jobID: String, alignment: AlignmentResult, resultName: String,  tool: Tool)()
 
 @fileURL = @{"/results/files/" + jobID + "/" + "alignment.clustalw_aln"}
 

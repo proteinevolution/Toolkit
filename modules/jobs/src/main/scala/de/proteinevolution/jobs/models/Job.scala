@@ -5,7 +5,7 @@ import java.time.ZonedDateTime
 import de.proteinevolution.models.database.jobs.JobState._
 import de.proteinevolution.models.database.jobs.JobState
 import de.proteinevolution.models.util.ZonedDateTimeHelper
-import de.proteinevolution.services.ToolConfig
+import de.proteinevolution.tools.ToolConfig
 import io.circe.JsonObject
 import io.circe.syntax._
 import play.api.Configuration

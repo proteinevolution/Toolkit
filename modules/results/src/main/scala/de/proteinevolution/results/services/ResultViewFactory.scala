@@ -7,7 +7,7 @@ import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.results.models.resultviews._
 import de.proteinevolution.results.results._
-import de.proteinevolution.services.ToolConfig
+import de.proteinevolution.tools.ToolConfig
 import io.circe.{ DecodingFailure, Json }
 import javax.inject.{ Inject, Singleton }
 
