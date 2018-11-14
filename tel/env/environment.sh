@@ -10,33 +10,33 @@ export TAXONOMY="${DATABASES}/standard/taxonomy"
 
 # JAVA
 ##########################################################
-export JAVA_HOME=/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/jdk1.8.0_112
-export JRE_HOME=/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/jdk1.8.0_112/jre
+export JAVA_HOME="${BIOPROGS}/dependencies/jdk1.8.0_112"
+export JRE_HOME="${BIOPROGS}/dependencies/jdk1.8.0_112/jre"
 
 
 # PERL
 ##########################################################
-export PERL5LIB=/ebio/abt1_share/toolkit_support1/code/bioprogs/lib
+export PERL5LIB="${BIOPROGS}/lib"
 
 # HHLIB
-export HHLIB=/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/hh-suite-build
+export HHLIB="${BIOPROGS}/tools/hh-suite-build"
 
 
 # HHpred
-export HHPRED_CONFIG=/ebio/abt1_share/toolkit_support1/code/bioprogs/env/hhpred.config
+export HHPRED_CONFIG="${BIOPROGS}/env/hhpred.config"
 
 
 # COILS/PCOILS
-export COILSDIR=/ebio/abt1_share/toolkit_support1/code/bioprogs/pcoils
+export COILSDIR="${BIOPROGS}/pcoils"
 
 #BACKTRANSLATOR
-export BACKTRANSLATORPATH=/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/backtranslate
+export BACKTRANSLATORPATH="${BIOPROGS}/tools/backtranslate"
 
 #SamCC
-export SAMCCPATH=/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/samcc
+export SAMCCPATH="${BIOPROGS}/tools/samcc"
 
 
-# PATH variable 
+# PATH variable
 export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}" # Python binary
 export PATH="${BIOPROGS}/dependencies/hh-suite_misc_scripts:$PATH" # helper scripts from the old Toolkit
 export PATH="${BIOPROGS}/tools/hh-suite-build/scripts:${PATH}" # HHSCRIPTS
@@ -65,7 +65,7 @@ export PATH="${BIOPROGS}/tools/modeller_9.15/bin:${PATH}" # MODELLER
 export PATH="${BIOPROGS}/helpers/anolea_bin:${PATH}" # Helpers MODELLER QUALITY CHECK
 export PATH="${BIOPROGS}/helpers/Solvx:${PATH}" # Helpers MODELLER QUALITY CHECK
 export PATH="${BIOPROGS}/helpers/verify3d:${PATH}" # Helpers MODELLER QUALITY CHECK
-export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}" 
+export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}"
 export PATH="${BIOPROGS}/tools/hmmer/binaries:${PATH}" # HMMER
 export PATH="${BIOPROGS}/tools/retrieveseq:${PATH}" # RetrieveSeq
 export PATH="${BIOPROGS}/tools/seq2id:${PATH}" # Seq2ID
@@ -102,14 +102,14 @@ MARCOILMTK="${BIOPROGS}/tools/marcoil/R5.MTK"
 MARCOILINPUT="${BIOPROGS}/tools/marcoil/Inputs"
 
 # PYTHONPATH FOR PDBX AND MODELLER
-export PYTHONPATH=/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/modeller_9.15/modlib/:/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/pdbx
+export PYTHONPATH="${BIOPROGS}/tools/modeller_9.15/modlib/:${BIOPROGS}/dependencies/pdbx"
 
 # Setup PHYLIP (needed by the Perl Script of Phylip)
-export PHYLIPBIN=/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/phylip/current/bin64
+export PHYLIPBIN="${BIOPROGS}/tools/phylip/current/bin64"
 
 
 # Reformat version with PHYLIP Support (new reformat.pl does not have this support)
-export REFORMAT_PHYLIP=/ebio/abt1_share/toolkit_support1/code/bioprogs/helpers/reformat_protblast.pl
+export REFORMAT_PHYLIP="${BIOPROGS}/helpers/reformat_protblast.pl"
 
 
 
