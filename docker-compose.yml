@@ -5,9 +5,8 @@ services:
   toolkit:
     image: proteinevolution/toolkit-docker:latest
     container_name: toolkit
-    env_file:
-    - conf/.env
     environment:
+    - SUBMIT_MODE=LOCAL
     - SBT_OPTS=-Xms1G -Xmx2G -Xss2M
     stdin_open: true
     tty: true
