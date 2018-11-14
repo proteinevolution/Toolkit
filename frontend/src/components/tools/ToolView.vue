@@ -21,7 +21,7 @@
                                 <div class="tabs-panel">
                                     <Section :section="section"
                                              :validationParams="tool.validationParams"
-                                             :validation-states="validationStates"/>
+                                             :validation-errors="validationErrors"/>
                                 </div>
                             </b-tab>
 
@@ -72,7 +72,7 @@
         data() {
             return {
                 fullScreen: false,
-                validationStates: {},
+                validationErrors: {},
             };
         },
         computed: {

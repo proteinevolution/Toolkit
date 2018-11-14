@@ -115,5 +115,8 @@ export default {
             PageNotFound: 'Page not found.',
             ToolNotFound: 'Tool not found.',
         },
+        constraints: {
+            range: 'has to be between {min} and {max}',
+        },
     },
 };

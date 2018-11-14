@@ -10,7 +10,7 @@ import {ParameterType} from '../../../types/toolkit/enums';
                 <component :is="parameter.parameterType"
                            :parameter="parameter"
                            :validation-params="validationParams"
-                           :validation-states="validationStates"
+                           :validation-errors="validationErrors"
                            class="parameter-component">
                 </component>
             </b-col>
@@ -53,7 +53,7 @@ import {ParameterType} from '../../../types/toolkit/enums';
              */
             section: Object as () => ParameterSection,
             validationParams: Object as () => ValidationParams,
-            validationStates: Object,
+            validationErrors: Object,
         },
         methods: {
             mediumSize(parameter: Parameter) {

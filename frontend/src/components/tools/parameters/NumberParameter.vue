@@ -5,9 +5,13 @@
                       :min="parameter.min"
                       :max="parameter.max"
                       :step="parameter.step"
+                      :state="validationErrors[parameter.name]"
+                      :aria-describedby="parameter.name + '-invalid'"
                       size="sm"
                       required>
         </b-form-input>
+        <b-form-invalid-feedback :id="parameter.name + '-invalid'"
+                                 v-text="$t('constraints.range', {min: min, max: max})"/>
     </b-form-group>
 </template>
 
@@ -23,11 +27,21 @@
              https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
              */
             parameter: Object as () => NumberParameter,
+            validationErrors: Object,
         },
         data() {
             return {
                 number: this.parameter.default || 0,
             };
+        },
+        watch: {
+            number(value) {
+                if (value < this.parameter.min || value > this.parameter.max) {
+                    Vue.set(this.validationErrors, this.parameter.name, 'false');
+                } else {
+                    delete this.validationErrors[this.parameter.name];
+                }
+            },
         },
     });
 </script>
