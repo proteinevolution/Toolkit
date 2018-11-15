@@ -12,7 +12,7 @@ services:
     ports:
     - 1234:1234
     volumes:
-    - .:/app
+    - .:/toolkit
     links:
     - mongodb
     depends_on:
