@@ -62,7 +62,7 @@ class PropFile(path: String, config: Configuration) extends EnvFile(path) {
             updated = updated.replace("perllib_foo", config.get[String]("PERLLIB"))
           case x if x.startsWith("standarddb_bar") =>
             updated = updated.replace("standarddb_bar", config.get[String]("STANDARDDB"))
-          case _ => logger.warn("Env file has no preconfigured key in the configs")
+          case _ => logger.debug("Env file has no preconfigured key in the configs")
         }
         a.updated(spt(0).trim(), updated)
     }
