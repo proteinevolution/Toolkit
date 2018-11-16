@@ -6,7 +6,9 @@ services:
     image: proteinevolution/toolkit-docker:latest
     container_name: toolkit
     env_file:
-      - conf/.env
+    - conf/.env
+    environment:
+    - SBT_OPTS=-Xms1G -Xmx2G -Xss2M
     stdin_open: true
     tty: true
     ports:
