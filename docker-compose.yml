@@ -7,7 +7,7 @@ services:
     container_name: toolkit
     environment:
     - SUBMIT_MODE=LOCAL
-    - SBT_OPTS=-Xms1G -Xmx2G -Xss2M
+    - SBT_OPTS=-Xms2G -Xmx4G -Xss2M
     stdin_open: true
     tty: true
     ports:
