@@ -1,9 +1,9 @@
 package de.proteinevolution.tools
 
 import com.typesafe.config.{ Config, ConfigObject }
-import de.proteinevolution.models.{ Tool, parameters }
 import de.proteinevolution.models.forms._
 import de.proteinevolution.models.param.ParamAccess
+import de.proteinevolution.models.parameters
 import de.proteinevolution.models.parameters.{ ForwardingMode, Parameter, ParameterSection, ToolParameters }
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
