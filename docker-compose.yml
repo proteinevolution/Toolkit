@@ -35,7 +35,7 @@ services:
     - mongodb:/data/db
     ports:
     - 27017:27017
-    command: mongod
+    command: mongod --auth
     networks:
       tk-network:
         ipv4_address: 174.18.0.3
