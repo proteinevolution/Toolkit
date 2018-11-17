@@ -4,7 +4,6 @@ import better.files._
 import de.proteinevolution.tel.Subject
 import play.api.{ Configuration, Logger }
 
-import scala.collection.immutable.StringLike
 import scala.sys.process.Process
 import scala.util.matching.Regex
 
@@ -31,7 +30,7 @@ class ExecFile(path: String) extends EnvFile(path) {
       throw EnvFileException(s"File ${f.name} is not executable.")
     }
     // ambiguous implicit conversion because of method `lines` in better.files.package.StringOps
-    Process(f.pathAsString).!!.asInstanceOf[StringLike[String]].lines.map { line =>
+    Process(f.pathAsString).!!.lines.map { line =>
       val spt = line.split('=')
       spt(0).trim() -> spt(1).trim()
     }.toMap
@@ -63,7 +62,7 @@ class PropFile(path: String, config: Configuration) extends EnvFile(path) {
             updated = updated.replace("perllib_foo", config.get[String]("PERLLIB"))
           case x if x.startsWith("standarddb_bar") =>
             updated = updated.replace("standarddb_bar", config.get[String]("STANDARDDB"))
-          case _ => logger.warn("Env file has no preconfigured key in the configs")
+          case _ => logger.debug("Env file has no preconfigured key in the configs")
         }
         a.updated(spt(0).trim(), updated)
     }
