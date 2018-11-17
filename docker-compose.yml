@@ -5,8 +5,9 @@ services:
   toolkit:
     image: proteinevolution/toolkit-docker:latest
     container_name: toolkit
-    env_file:
-      - conf/.env
+    environment:
+    - SUBMIT_MODE=LOCAL
+    - SBT_OPTS=-Xms2G -Xmx4G -Xss2M
     stdin_open: true
     tty: true
     ports:
@@ -29,14 +30,13 @@ services:
     environment:
     - MONGO_DATA_DIR=/data/db
     - MONGO_LOG_DIR=/data/log
-    # uncomment the following lines to setup auth for mongo
-    # - MONGO_INITDB_ROOT_USERNAME=root
-    # - MONGO_INITDB_ROOT_PASSWORD=rootPassXXX
+    - MONGO_INITDB_ROOT_USERNAME=root
+    - MONGO_INITDB_ROOT_PASSWORD=rootPassXX
     volumes:
     - mongodb:/data/db
     ports:
     - 27017:27017
-    command: mongod
+    command: mongod --auth
     networks:
       tk-network:
         ipv4_address: 174.18.0.3

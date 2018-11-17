@@ -1,4 +1,5 @@
-@(filename: String, jobID: String, resultname: String, tool: de.proteinevolution.models.Tool)()
+@import de.proteinevolution.tools.Tool
+@(filename: String, jobID: String, resultname: String, tool: Tool)()
 
     <div class="colorOptsAlignment">
     <a type="button" onclick="@{resultname}_download()"> <span id="downloadAlignment">Download</span></a>

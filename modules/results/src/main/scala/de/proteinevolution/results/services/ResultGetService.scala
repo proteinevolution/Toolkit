@@ -13,7 +13,7 @@ import de.proteinevolution.jobs.services.JobFolderValidation
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.JobState.{ Done, Pending, Prepared }
 import de.proteinevolution.models.forms.JobForm
-import de.proteinevolution.services.ToolConfig
+import de.proteinevolution.tools.ToolConfig
 import javax.inject.{ Inject, Singleton }
 import play.api.Logger
 import play.api.cache.{ AsyncCacheApi, NamedCache }

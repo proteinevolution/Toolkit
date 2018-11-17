@@ -1,8 +1,9 @@
 @import better.files._
 @import de.proteinevolution.results.results.HHPredResult
+@import de.proteinevolution.tools.Tool
 @import play.twirl.api.Html
 
-@(jobID: String, result: HHPredResult, tool: de.proteinevolution.models.Tool, htmlPath: String)()
+@(jobID: String, result: HHPredResult, tool: Tool, htmlPath: String)()
 
 @if(result.num_hits < 1) {
     <div class="note">

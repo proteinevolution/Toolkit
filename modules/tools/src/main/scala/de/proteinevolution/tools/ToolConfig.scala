@@ -1,4 +1,4 @@
-package de.proteinevolution.services
+package de.proteinevolution.tools
 
 import com.typesafe.config.{ Config, ConfigObject }
 import de.proteinevolution.models.{ Tool, parameters }

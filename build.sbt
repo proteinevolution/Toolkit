@@ -51,7 +51,7 @@ lazy val commonJVM = common.jvm.dependsOn(base, tel)
 
 lazy val results = (project in file("modules/results"))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl)
-  .dependsOn(commonJVM, auth, jobs, help, ui, base)
+  .dependsOn(commonJVM, auth, jobs, help, ui, base, tools)
   .settings(
     name := "de.proteinevolution.results",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -77,7 +77,7 @@ lazy val help = (project in file("modules/help"))
 
 lazy val jobs = (project in file("modules/jobs"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, auth, base, clusterApi, tel)
+  .dependsOn(commonJVM, auth, base, clusterApi, tel, tools)
   .settings(
     name := "de.proteinevolution.jobs",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -137,7 +137,7 @@ lazy val clusterApi = (project in file("modules/cluster-api"))
 
 lazy val backend = (project in file("modules/backend"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, base, auth, jobs, tel)
+  .dependsOn(commonJVM, base, auth, jobs, tel, tools)
   .settings(
     name := "de.proteinevolution.backend",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -149,7 +149,7 @@ lazy val backend = (project in file("modules/backend"))
 
 lazy val search = (project in file("modules/search"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, base, auth, jobs)
+  .dependsOn(commonJVM, base, auth, jobs, tools)
   .settings(
     name := "de.proteinevolution.search",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -161,7 +161,7 @@ lazy val search = (project in file("modules/search"))
 
 lazy val ui = (project in file("modules/ui"))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl, BuildInfoPlugin)
-  .dependsOn(commonJVM, base)
+  .dependsOn(commonJVM, base, tools)
   .settings(
     name := "de.proteinevolution.ui",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -174,7 +174,7 @@ lazy val ui = (project in file("modules/ui"))
 
 lazy val message = (project in file("modules/message"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, base, auth, cluster, jobs)
+  .dependsOn(commonJVM, base, auth, cluster, jobs, tools)
   .settings(
     name := "de.proteinevolution.message",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -186,7 +186,7 @@ lazy val message = (project in file("modules/message"))
 
 lazy val verification = (project in file("modules/verification"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, base, auth, ui, message, tel)
+  .dependsOn(commonJVM, base, auth, ui, message, tel, tools)
   .settings(
     name := "de.proteinevolution.verification",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -219,6 +219,18 @@ lazy val tel = (project in file("modules/tel"))
     )
     .disablePlugins(PlayLayoutPlugin)
 
+lazy val tools = (project in file("modules/tools"))
+    .enablePlugins(PlayScala, JavaAppPackaging)
+    .dependsOn(commonJVM)
+    .settings(
+      name := "de.proteinevolution.tools",
+      libraryDependencies ++= Dependencies.commonDeps,
+      Settings.compileSettings,
+      TwirlKeys.templateImports := Seq.empty,
+      disableDocs
+    )
+    .disablePlugins(PlayLayoutPlugin)
+
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb)
   .dependsOn(
@@ -236,7 +248,8 @@ lazy val root = (project in file("."))
     message,
     verification,
     migrations,
-    tel
+    tel,
+    tools
   )
   .aggregate(
     client,
@@ -254,7 +267,8 @@ lazy val root = (project in file("."))
     verification,
     clusterApi,
     migrations,
-    tel
+    tel,
+    tools
   )
   .settings(
     coreSettings,

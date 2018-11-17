@@ -1,7 +1,8 @@
-@import de.proteinevolution.results.results.{Common, PatSearchResult}
+@import de.proteinevolution.results.results.{ Common, PatSearchResult }
+@import de.proteinevolution.tools.Tool
 @import play.twirl.api.Html
 
-@(jobID: String, result: PatSearchResult, tool: de.proteinevolution.models.Tool)()
+@(jobID: String, result: PatSearchResult, tool: Tool)()
 
 @if(result.hits.size < 1) {
     <div class="note">
@@ -10,35 +11,28 @@
 }else{
 <div class="colorOptsAlignment">
     <a onclick="download_()" type="button"><span id="downloadAlignment">Download Hits</span></a>
-    <a class="forwardModalOpenBtn" data-modal-type="simpler" data-result-name="@{
-        tool.toolNameShort
-    }" data-forward-issuer="PATTERN_SEARCH" type="button">
+    <a class="forwardModalOpenBtn" data-modal-type="simpler" data-result-name="@{tool.toolNameShort}" data-forward-issuer="PATTERN_SEARCH" type="button">
         <span id="downloadAlignment">Forward All</span>
     </a>
     <hr class="horizontal-line">
 </div>
 <div id="alignmentResultView">
     <br/>
-    Number of sequences: <b>@{
-    result.hits.size
-}</b>
+    Number of sequences: <b>@{result.hits.size}</b>
     <br />
     <br />
     <form id="alignmentResult">
         <table class="unstriped">
             <tbody class="alignmentTBody">
-                @for((hit, index) <- result.hits.zipWithIndex) {
+                @for((hit,index) <- result.hits.zipWithIndex) {
                     <tr class="header">
                         <td>
-                        @{
-                            hit.name.getOrElse(Html(""))
-                        }
+                            @{hit.name.getOrElse(Html(""))}
                         </td>
                     </tr>
                     <tr>
                         <td class="sequenceAlignment">
-                        @{
-                            hit.seq.map(s => Html(Common.insertMatch(s, result.len, hit.pats.getOrElse(Nil))))
+                        @{ hit.seq.map(s => Html(Common.insertMatch(s, result.len, hit.pats.getOrElse(Nil))))
                         }
                         </td>
                     </tr>

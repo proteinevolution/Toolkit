@@ -31,7 +31,14 @@ jobs:
         # fallback to using the latest cache if no exact match is found
         - v1-dependencies-
 
-    - run: cat /dev/null | sbt test:compile
+    - run:
+        command: ./bin/install-local-deps.sh
+        name: Install local dependencies
+
+    - run:
+        command: sbt -no-colors -batch "; compile"
+        name: Running SBT compilation
+        no_output_timeout: 30m
 
     - save_cache:
         paths:
@@ -39,5 +46,7 @@ jobs:
         key: v1-dependencies--{{ checksum "build.sbt" }}
 
     # run tests!
-    - run: cat /dev/null | sbt test:test
+    # - run:
+    #    name: Running tests
+    #    command: sbt -no-colors -batch "; test"
       

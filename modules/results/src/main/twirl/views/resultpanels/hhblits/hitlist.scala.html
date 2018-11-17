@@ -1,7 +1,8 @@
 @import de.proteinevolution.results.results.HHBlitsResult
 @import better.files._
+@import de.proteinevolution.tools.Tool
 @import play.twirl.api.Html
-@(jobID: String, result: HHBlitsResult, tool: de.proteinevolution.models.Tool, htmlPath: String)()
+@(jobID: String, result: HHBlitsResult, tool: Tool, htmlPath: String)()
     @if(result.num_hits < 1) {
         <div class="note">
             No hits found! Please re-run HHblits with a custom-built multiple sequence alignment as input. You could also

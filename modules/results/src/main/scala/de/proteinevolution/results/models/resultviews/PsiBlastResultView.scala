@@ -3,7 +3,7 @@ package de.proteinevolution.results.models.resultviews
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.results.ResultViews
 import de.proteinevolution.results.results.PSIBlastResult
-import de.proteinevolution.services.ToolConfig
+import de.proteinevolution.tools.ToolConfig
 
 import scala.collection.immutable.ListMap
 
