@@ -59,18 +59,26 @@ class SubmissionController @Inject()(
   def submitJob(toolName: String): Action[MultipartFormData[Files.TemporaryFile]] =
     Action(parse.multipartFormData).async { implicit request =>
       userSessions.getUser.flatMap { user =>
-        jobDispatcher.submitJob(toolName, request.body, user).value.map {
-          case Right(job) =>
-            Ok(
-              JsonObject(
-                "successful" -> Json.fromBoolean(true),
-                "code"       -> Json.fromInt(0),
-                "message"    -> Json.fromString("Submission successful."),
-                "jobID"      -> Json.fromString(job.jobID)
-              ).asJson
-            ).withSession(userSessions.sessionCookie(request, user.sessionID.get))
-          case Left(error) => BadRequest(errors(error.msg))
-        }
+        jobDispatcher
+          .submitJob(
+            toolName,
+            request.body.dataParts,
+            request.body.file("files").filter(_.contentType.contains("text/plain")),
+            user
+          )
+          .value
+          .map {
+            case Right(job) =>
+              Ok(
+                JsonObject(
+                  "successful" -> Json.fromBoolean(true),
+                  "code"       -> Json.fromInt(0),
+                  "message"    -> Json.fromString("Submission successful."),
+                  "jobID"      -> Json.fromString(job.jobID)
+                ).asJson
+              ).withSession(userSessions.sessionCookie(request, user.sessionID.get))
+            case Left(error) => BadRequest(errors(error.msg))
+          }
       }
     }
 
