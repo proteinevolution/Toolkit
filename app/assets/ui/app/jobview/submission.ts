@@ -194,7 +194,7 @@
                     $(".submitJob").prop("disabled", false);
                     JobSubmissionComponent.submitting = false;
                 }, function (error: any) {
-                    console.log("Error while submitting:", error);
+                    console.error("Error while submitting:", error);
                     $(".submitJob").prop("disabled", false);
                     JobSubmissionComponent.submitting = false;
                 });
