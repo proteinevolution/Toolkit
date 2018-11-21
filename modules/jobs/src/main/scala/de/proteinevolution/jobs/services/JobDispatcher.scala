@@ -63,8 +63,8 @@ final class JobDispatcher @Inject()(
     filePart
       .map { file =>
         val lines = File(file.ref.path).newInputStream.autoClosed.map(_.lines.mkString("\n")).get()
-        if (("alignment" :: "alignment_two" :: Nil).contains(file.key) && lines.nonEmpty) {
-          form.updated(file.key, lines)
+        if (("alignment" :: "alignment_two" :: Nil).contains(file.filename) && lines.nonEmpty) {
+          form.updated(file.filename, lines)
         } else {
           form
         }
