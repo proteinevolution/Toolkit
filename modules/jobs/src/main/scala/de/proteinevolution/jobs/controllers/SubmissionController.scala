@@ -60,10 +60,12 @@ class SubmissionController @Inject()(
     Action(parse.multipartFormData).async { implicit request =>
       userSessions.getUser.flatMap { user =>
         jobDispatcher
-          .submitJob(toolName,
-                     request.body.dataParts,
-                     request.body.file("files").filter(_.contentType.contains("text/plain")),
-                     user)
+          .submitJob(
+            toolName,
+            request.body.dataParts,
+            request.body.file("files").filter(_.contentType.contains("text/plain")),
+            user
+          )
           .value
           .map {
             case Right(job) =>
