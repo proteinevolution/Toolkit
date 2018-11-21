@@ -59,15 +59,17 @@ final class JobDispatcher @Inject()(
       dataParts: Map[String, Seq[String]],
       filePart: Option[MultipartFormData.FilePart[Files.TemporaryFile]]
   ): Map[String, String] = {
+    val form = dataParts.mapValues(_.mkString(constants.formMultiValueSeparator)) - "file"
     filePart
       .map { file =>
         val lines = File(file.ref.path).newInputStream.autoClosed.map(_.lines.mkString("\n")).get()
-        val form  = dataParts.mapValues(_.mkString(constants.formMultiValueSeparator)) - "file"
         if (("alignment" :: "alignment_two" :: Nil).contains(file.key) && lines.nonEmpty) {
           form.updated(file.key, lines)
-        } else { form }
+        } else {
+          Map.empty
+        }
       }
-      .getOrElse(Map.empty)
+      .getOrElse(form)
       .collect {
         case (k, v) if v.nonEmpty => (k, v)
       }
