@@ -6,13 +6,13 @@ import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete }
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services._
 import de.proteinevolution.tools.ToolConfig
+import io.circe.{ Json, JsonObject }
+import io.circe.syntax._
 import javax.inject.{ Inject, Singleton }
 import play.api.Logger
 import play.api.libs.Files
 import play.api.mvc.{ Action, AnyContent, ControllerComponents, MultipartFormData }
-import io.circe.JsonObject
-import io.circe.Json
-import io.circe.syntax._
+import play.mvc.Http.MimeTypes
 
 import scala.concurrent.ExecutionContext
 
@@ -63,7 +63,9 @@ class SubmissionController @Inject()(
           .submitJob(
             toolName,
             request.body.dataParts,
-            request.body.file("files").filter(_.contentType.contains("text/plain")),
+            request.body
+              .file("files")
+              .filter(f => java.nio.file.Files.probeContentType(f.ref.path).contains(MimeTypes.TEXT)),
             user
           )
           .value
