@@ -112,7 +112,7 @@ else
                 -e %hhpred_incl_eval.content \
                 -i ../results/${JOBID}.in.a3m \
                 -M first \
-                -d %UNIPROT  \
+                -d %UNICLUST  \
                 -oa3m ../results/${JOBID}.a3m \
                 -n -${ITERS} \
                 -qid %min_seqid_query.content \
