@@ -11,7 +11,7 @@
                       required>
         </b-form-input>
         <b-form-invalid-feedback :id="parameter.name + '-invalid'"
-                                 v-text="$t('constraints.range', {min: min, max: max})"/>
+                                 v-text="$t('constraints.range', {min: parameter.min, max: parameter.max})"/>
     </b-form-group>
 </template>
 
@@ -37,9 +37,9 @@
         watch: {
             number(value) {
                 if (value < this.parameter.min || value > this.parameter.max) {
-                    Vue.set(this.validationErrors, this.parameter.name, 'false');
+                    Vue.set(this.validationErrors, this.parameter.name, false);
                 } else {
-                    delete this.validationErrors[this.parameter.name];
+                    Vue.delete(this.validationErrors, this.parameter.name);
                 }
             },
         },

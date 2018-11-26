@@ -34,7 +34,8 @@
                         <b-form-group v-if="showSubmitButtons"
                                       class="submit-buttons card-body">
                             <b-btn class="submit-button"
-                                   variant="primary">
+                                   variant="primary"
+                                   :disabled="preventSubmit">
                                 Submit Job
                             </b-btn>
                             <b-form-input class="custom-job-id"
@@ -97,6 +98,9 @@
                 }
                 return this.tool.longname;
             },
+            preventSubmit(): boolean {
+                return Object.keys(this.validationErrors).length > 0;
+            }
         },
         created() {
             this.loadToolParameters(this.toolName);
