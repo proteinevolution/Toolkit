@@ -46,19 +46,18 @@
     import Vue from 'vue';
     import {TextAreaParameter, ValidationParams} from '../../../types/toolkit';
     import {transformToFormat, validation} from '@/util/validation';
-    import {ValidationResult} from '../../../types/toolkit/validation';
+    import {ValidationResult} from '@/types/toolkit/validation';
     import VelocityFade from '@/transitions/VelocityFade.vue';
     import SampleSeqs from '@/conf/SampleSeqs';
+    import ToolParameterMixin from '@/mixins/ToolParameterMixin';
 
     export default Vue.extend({
         name: 'TextAreaSubComponent',
+        mixins: [ToolParameterMixin],
         components: {
             VelocityFade,
         },
         props: {
-            id: {
-                type: String,
-            },
             /*
              Simply stating the interface type doesn't work, this is a workaround. See
              https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
@@ -89,7 +88,18 @@
                 autoTransformMessageTimeout: 2500,
             };
         },
+        watch: {
+            text: {
+                immediate: true,
+                handler(value: string) {
+                    this.setSubmissionValue(value);
+                }
+            }
+        },
         computed: {
+            parameterName(): string {
+                return this.parameter.name + (this.second ? "_two" : "");
+            },
             validation(): ValidationResult {
                 const val: ValidationResult = validation(this.text,
                     this.parameter.inputType, this.validationParams);
@@ -181,6 +191,7 @@
                 border-bottom-left-radius: 0;
                 border-bottom-right-radius: 0;
             }
+
             .file-upload-progress {
                 height: 1rem;
                 transition: height 0s;

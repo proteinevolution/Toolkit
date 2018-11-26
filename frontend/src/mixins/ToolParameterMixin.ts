@@ -9,8 +9,11 @@ const ToolParameterMixin = Vue.extend({
         submission: Object,
     },
     computed: {
+        parameterName(): string {
+            return this.parameter.name;
+        },
         error(): ConstraintError {
-            return this.validationErrors[this.parameter.name];
+            return this.validationErrors[this.parameterName];
         },
         hasError(): boolean {
             return this.error != null;
@@ -22,13 +25,13 @@ const ToolParameterMixin = Vue.extend({
     methods: {
         setError(error: ConstraintError) {
             if (error) {
-                Vue.set(this.validationErrors, this.parameter.name, error);
+                Vue.set(this.validationErrors, this.parameterName, error);
             } else {
-                Vue.delete(this.validationErrors, this.parameter.name);
+                Vue.delete(this.validationErrors, this.parameterName);
             }
         },
         setSubmissionValue(value: any) {
-            Vue.set(this.submission, this.parameter.name, value);
+            Vue.set(this.submission, this.parameterName, value);
         },
     },
 });

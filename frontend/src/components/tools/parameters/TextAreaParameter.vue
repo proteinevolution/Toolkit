@@ -2,15 +2,19 @@
     <div>
         <ExpandHeight>
             <TextAreaSubComponent :parameter="parameter"
-                                  :validationParams="validationParams"
-                                  :input="this.$route.params.input">
+                                  :validation-params="validationParams"
+                                  :input="this.$route.params.input"
+                                  :validation-errors="validationErrors"
+                                  :submission="submission">
             </TextAreaSubComponent>
         </ExpandHeight>
         <ExpandHeight>
             <TextAreaSubComponent v-if="secondTextAreaEnabled"
                                   :second="true"
                                   :parameter="parameter"
-                                  :validationParams="validationParams">
+                                  :validation-params="validationParams"
+                                  :validation-errors="validationErrors"
+                                  :submission="submission">
             </TextAreaSubComponent>
         </ExpandHeight>
         <b-form-group v-if="parameter.allowsTwoTextAreas"
@@ -25,12 +29,14 @@
     import Vue from 'vue';
     import Switches from 'vue-switches';
     import TextAreaSubComponent from './TextAreaSubComponent.vue';
-    import {TextAreaParameter} from '@/types/toolkit/index';
+    import {TextAreaParameter, ValidationParams} from '@/types/toolkit';
     import ExpandHeight from '@/transitions/ExpandHeight.vue';
-    import {ValidationParams} from '../../../types/toolkit';
+    import ToolParameterMixin from '@/mixins/ToolParameterMixin';
 
     export default Vue.extend({
         name: 'TextAreaParameter',
+        mixins: [ToolParameterMixin],
+
         components: {
             Switches,
             TextAreaSubComponent,
@@ -43,6 +49,8 @@
              */
             parameter: Object as () => TextAreaParameter,
             validationParams: Object as () => ValidationParams,
+            validationErrors: Object,
+            submission: Object,
         },
         data() {
             return {

@@ -24,10 +24,12 @@
 <script lang="ts">
     import Vue from 'vue';
     import Multiselect from 'vue-multiselect';
-    import {SelectParameter} from '../../../types/toolkit';
+    import {SelectParameter} from '@/types/toolkit';
+    import ToolParameterMixin from '@/mixins/ToolParameterMixin';
 
     export default Vue.extend({
         name: 'SelectParameter',
+        mixins: [ToolParameterMixin],
         components: {
             Multiselect,
         },
@@ -48,6 +50,14 @@
                 return this.parameter.maxSelectedOptions > 1;
             },
         },
+        watch: {
+            selected: {
+                immediate: true,
+                handler(value: any) {
+                    this.setSubmissionValue(this.isMulti ? value.map(v => v.value) : value.value);
+                }
+            }
+        }
     });
 </script>
 
