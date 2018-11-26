@@ -6,7 +6,7 @@ import i18n from './i18n';
 import './bootstrap.ts';
 import axios from 'axios';
 
-const devMode: boolean = process.env.NODE_ENV === 'development';
+export const devMode: boolean = process.env.NODE_ENV === 'development';
 Vue.config.productionTip = devMode;
 Vue.config.silent = !devMode;
 Vue.config.devtools = devMode;

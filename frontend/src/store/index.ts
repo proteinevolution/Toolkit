@@ -3,6 +3,7 @@ import Vuex, {StoreOptions} from 'vuex';
 import tools from './modules/tools';
 import {RootState} from './types';
 import localStoragePlugin from './plugins/localStoragePlugin';
+import {devMode} from '@/main';
 
 Vue.use(Vuex);
 
@@ -27,7 +28,10 @@ const store: StoreOptions<RootState> = {
     modules: {
         tools,
     },
-    plugins: [localStoragePlugin],
 };
+
+if (!devMode) {
+    store.plugins = [localStoragePlugin];
+}
 
 export default new Vuex.Store<RootState>(store);
