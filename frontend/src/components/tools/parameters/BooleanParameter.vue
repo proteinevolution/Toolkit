@@ -8,10 +8,12 @@
 <script lang="ts">
     import Vue from 'vue';
     import Switches from 'vue-switches';
-    import {BooleanParameter} from '../../../types/toolkit';
+    import {BooleanParameter} from '@/types/toolkit';
+    import ToolParameterMixin from '@/mixins/ToolParameterMixin';
 
     export default Vue.extend({
         name: 'BooleanParameter',
+        mixins: [ToolParameterMixin],
         components: {
             Switches,
         },
@@ -32,6 +34,12 @@
         watch: {
             enabledOverride() {
                 this.enabled = this.enabledOverride || this.enabled;
+            },
+            enabled: {
+                immediate: true,
+                handler(value: boolean) {
+                    this.setSubmissionValue(value);
+                },
             },
         },
     });

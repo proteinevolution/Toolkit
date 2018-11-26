@@ -118,6 +118,8 @@ export default {
         constraints: {
             range: 'has to be between {min} and {max}',
             notEmpty: 'must not be empty',
+            invalidModellerKey: 'invalid modeller key',
+            modellerNoConnection: 'could not validate the key. Try again later!',
         },
     },
 };
