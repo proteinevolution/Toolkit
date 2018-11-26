@@ -2,7 +2,8 @@ package de.proteinevolution.models.forms
 import play.api.libs.json.{ Json, OWrites }
 
 case class ValidationParamsForm(
-    allowedSeqFormat: Seq[String]
+    allowedSeqFormats: Seq[String],
+    allowedSeqType: String
 )
 
 object ValidationParamsForm {

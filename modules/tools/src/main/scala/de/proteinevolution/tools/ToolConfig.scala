@@ -60,7 +60,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       toolNameLong,
       description,
       section,
-      ValidationParamsForm(Seq("FASTA", "CLUSTAL"))
+      ValidationParamsForm(Seq("FASTA", "CLUSTAL"), "PROTEIN") // TODO
     )
     val inputGroup: Seq[String] = paramAccess.paramGroups("Input")
     val toolParameterForm = ToolParameters(
