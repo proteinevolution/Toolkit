@@ -63,9 +63,7 @@ class SubmissionController @Inject()(
           .submitJob(
             toolName,
             request.body.dataParts,
-            request.body
-              .file("files")
-              .filter(f => java.nio.file.Files.probeContentType(f.ref.path).contains(MimeTypes.TEXT)),
+            request.body.files.filter(f => java.nio.file.Files.probeContentType(f.ref.path).contains(MimeTypes.TEXT)),
             user
           )
           .value
