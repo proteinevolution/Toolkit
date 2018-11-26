@@ -21,7 +21,8 @@
                                 <div class="tabs-panel">
                                     <Section :section="section"
                                              :validationParams="tool.validationParams"
-                                             :validation-errors="validationErrors"/>
+                                             :validation-errors="validationErrors"
+                                             :submission="submission"/>
                                 </div>
                             </b-tab>
 
@@ -74,6 +75,7 @@
             return {
                 fullScreen: false,
                 validationErrors: {},
+                submission: {},
             };
         },
         computed: {
@@ -100,7 +102,7 @@
             },
             preventSubmit(): boolean {
                 return Object.keys(this.validationErrors).length > 0;
-            }
+            },
         },
         created() {
             this.loadToolParameters(this.toolName);
@@ -155,6 +157,7 @@
                 margin-left: 1em;
                 float: right;
             }
+
             .custom-job-id {
                 float: right;
                 width: 10em;

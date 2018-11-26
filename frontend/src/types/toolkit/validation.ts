@@ -4,3 +4,8 @@ export interface ValidationResult {
     textKey: string; // this has to be a key defined in i18n files for translation
     textKeyParams?: any; // this should be an object containing the i18n named parameters
 }
+
+export interface ConstraintError {
+    textKey: string;
+    textKeyParams?: any;
+}

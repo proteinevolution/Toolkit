@@ -117,6 +117,7 @@ export default {
         },
         constraints: {
             range: 'has to be between {min} and {max}',
+            notEmpty: 'must not be empty',
         },
     },
 };
