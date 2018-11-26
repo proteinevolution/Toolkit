@@ -25,6 +25,8 @@ class ParamAccess @Inject()(tel: TEL) {
     "clu" -> "clu"
   )
 
+  final val samCCHelixRegex: Option[String] = Some("^[a-r];[a-zA-Z0-9];\\d+;\\d+$")
+
   def getParam(paramName: String, placeholder: String = "", sampleInputKey: String = ""): Parameter = paramName match {
     case "ALIGNMENT" => TextAreaParameter("alignment", TextAreaInputType.SEQUENCE, placeholder, sampleInputKey)
     case "TWOTEXTALIGNMENT" =>
@@ -91,13 +93,13 @@ class ParamAccess @Inject()(tel: TEL) {
     case "EFF_CRICK_ANGLE"         => select("eff_crick_angle", "Effective Crick angle")
     case "REGKEY"                  => ModellerParameter("regkey", "Enter MODELLER-key (see help pages for details)")
     case "SAMCC_HELIXONE" =>
-      TextInputParameter("samcc_helixone", "Definition for helix 1", "CC_first_position;chain;start_pos;end_pos")
+      TextInputParameter("samcc_helixone", "Definition for helix 1", "CC_first_position;chain;start_pos;end_pos", samCCHelixRegex)
     case "SAMCC_HELIXTWO" =>
-      TextInputParameter("samcc_helixtwo", "Definition for helix 2", "CC_first_position;chain;start_pos;end_pos")
+      TextInputParameter("samcc_helixtwo", "Definition for helix 2", "CC_first_position;chain;start_pos;end_pos", samCCHelixRegex)
     case "SAMCC_HELIXTHREE" =>
-      TextInputParameter("samcc_helixthree", "Definition for helix 3", "CC_first_position;chain;start_pos;end_pos")
+      TextInputParameter("samcc_helixthree", "Definition for helix 3", "CC_first_position;chain;start_pos;end_pos", samCCHelixRegex)
     case "SAMCC_HELIXFOUR" =>
-      TextInputParameter("samcc_helixfour", "Definition for helix 4", "CC_first_position;chain;start_pos;end_pos")
+      TextInputParameter("samcc_helixfour", "Definition for helix 4", "CC_first_position;chain;start_pos;end_pos", samCCHelixRegex)
     case "INVOKE_PSIPRED" =>
       NumberParameter("invoke_psipred", "% identity cutoff to invoke a new PSIPRED run", Some(0), Some(100))
     case "CLANS_EVAL"       => select("clans_eval", "Extract BLAST HSP's up to E-values of")

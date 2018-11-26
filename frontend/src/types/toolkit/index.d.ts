@@ -51,6 +51,7 @@ export interface Parameter {
 
 export interface TextInputParameter extends Parameter {
     inputPlaceholder: string;
+    regex?: string;
 }
 
 export interface TextAreaParameter extends Parameter {

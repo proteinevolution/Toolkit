@@ -93,24 +93,28 @@
                 immediate: true,
                 handler(value: string) {
                     this.setSubmissionValue(value);
-                }
-            }
+                    // check for empty text here, somehow the computed property is not recalculated upon clearing the input
+                    if (!value) {
+                        this.setError({textKey: 'constraints.notEmpty'});
+                    }
+                },
+            },
         },
         computed: {
             parameterName(): string {
-                return this.parameter.name + (this.second ? "_two" : "");
+                return this.parameter.name + (this.second ? '_two' : '');
             },
             validation(): ValidationResult {
-                const val: ValidationResult = validation(this.text,
-                    this.parameter.inputType, this.validationParams);
+                const val: ValidationResult = validation(this.text, this.parameter.inputType, this.validationParams);
                 if (val.textKey === 'shouldAutoTransform') {
                     this.text = transformToFormat(this.text, val.textKeyParams.transformFormat);
                     this.displayAutoTransformMessage(val.textKeyParams);
 
                     // trigger validation again
-                    return validation(this.text,
-                        this.parameter.inputType, this.validationParams);
+                    return validation(this.text, this.parameter.inputType, this.validationParams);
                 }
+                // propagate error
+                this.setError(val.failed ? {textKey: val.textKey, textKeyParams: val.textKeyParams} : null);
                 return val;
             },
         },

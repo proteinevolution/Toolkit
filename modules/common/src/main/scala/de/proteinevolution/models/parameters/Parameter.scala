@@ -14,6 +14,7 @@ object Parameter {
       name: String,
       label: String,
       inputPlaceholder: String,
+      regex: Option[String] = None
   ) extends Parameter
 
   case class TextAreaParameter(
