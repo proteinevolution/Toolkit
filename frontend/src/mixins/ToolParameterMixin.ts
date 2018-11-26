@@ -23,7 +23,8 @@ const ToolParameterMixin = Vue.extend({
         },
     },
     methods: {
-        setError(error: ConstraintError) {
+        setError(error?: ConstraintError) {
+            console.log(error, "s");
             if (error) {
                 Vue.set(this.validationErrors, this.parameterName, error);
             } else {

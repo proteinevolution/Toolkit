@@ -41,14 +41,14 @@
             number: {
                 immediate: true,
                 handler(value: number) {
-                    const error = this.validate(value);
+                    const error: ConstraintError | undefined = this.validate(value);
                     this.setError(error);
                     this.setSubmissionValue(value);
                 },
             },
         },
         methods: {
-            validate(value: number): ConstraintError {
+            validate(value: number): ConstraintError | undefined {
                 if (!value && value !== 0) {
                     return {
                         textKey: 'constraints.notEmpty',

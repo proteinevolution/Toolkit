@@ -53,11 +53,11 @@
         watch: {
             selected: {
                 immediate: true,
-                handler(value: any) {
-                    this.setSubmissionValue(this.isMulti ? value.map(v => v.value) : value.value);
-                }
-            }
-        }
+                handler(value: any) { // TODO: can we refine the types some more?
+                    this.setSubmissionValue(this.isMulti ? value.map((v: any) => v.value) : value.value);
+                },
+            },
+        },
     });
 </script>
 
