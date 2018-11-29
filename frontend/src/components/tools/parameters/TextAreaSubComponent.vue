@@ -49,11 +49,9 @@
     import {ValidationResult} from '@/types/toolkit/validation';
     import VelocityFade from '@/transitions/VelocityFade.vue';
     import SampleSeqs from '@/conf/SampleSeqs';
-    import ToolParameterMixin from '@/mixins/ToolParameterMixin';
 
     export default Vue.extend({
         name: 'TextAreaSubComponent',
-        mixins: [ToolParameterMixin],
         components: {
             VelocityFade,
         },
@@ -68,10 +66,9 @@
             validationParams: {
                 type: Object as () => ValidationParams,
             },
-            input: {
+            value: {
                 type: String,
-                required: false,
-                default: undefined,
+                required: true,
             },
             second: {
                 type: Boolean,
@@ -81,42 +78,33 @@
         },
         data() {
             return {
-                text: this.input ? this.input : '',
+                text: this.value,
                 fileUploadProgress: 0,
                 uploadingFile: false,
                 autoTransformedParams: null,
                 autoTransformMessageTimeout: 2500,
+                validation: undefined,
             };
         },
         watch: {
             text: {
                 immediate: true,
                 handler(value: string) {
-                    this.setSubmissionValue(value);
-                    // check for empty text here, somehow the computed property is not recalculated upon clearing the input
-                    if (!value) {
-                        this.setError({textKey: 'constraints.notEmpty'});
-                    }
-                },
-            },
-        },
-        computed: {
-            parameterName(): string {
-                return this.parameter.name + (this.second ? '_two' : '');
-            },
-            validation(): ValidationResult {
-                const val: ValidationResult = validation(this.text, this.parameter.inputType, this.validationParams);
-                if (val.textKey === 'shouldAutoTransform') {
-                    this.text = transformToFormat(this.text, val.textKeyParams.transformFormat);
-                    this.displayAutoTransformMessage(val.textKeyParams);
+                    this.$emit('input', value);
 
-                    // trigger validation again
-                    return validation(this.text, this.parameter.inputType, this.validationParams);
-                }
-                // propagate error
-                this.setError(val.failed ? {textKey: val.textKey, textKeyParams: val.textKeyParams} : null);
-                return val;
-            },
+                    // validate in watcher since somehow computed properties don't update on empty strings
+                    const val: ValidationResult = validation(this.text, this.parameter.inputType, this.validationParams);
+                    if (val.textKey === 'shouldAutoTransform') {
+                        this.text = transformToFormat(this.text, val.textKeyParams.transformFormat);
+                        this.displayAutoTransformMessage(val.textKeyParams);
+
+                        // trigger validation again
+                        this.validation = validation(this.text, this.parameter.inputType, this.validationParams);
+                    }
+                    this.validation = val;
+                    this.$emit('validation', val);
+                },
+            }
         },
         methods: {
             handleFileUpload($event: Event): void {
