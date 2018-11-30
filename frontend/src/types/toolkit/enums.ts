@@ -1,4 +1,3 @@
-
 export enum ParameterType {
     TextInputParameter = 'TextInputParameter',
     TextAreaParameter = 'TextAreaParameter',
@@ -30,4 +29,16 @@ export enum AlignmentSeqType {
     PROTEIN = 'PROTEIN',
     DNA = 'DNA',
     RNA = 'RNA',
+}
+
+export enum JobState {
+    Prepared = 1,
+    Queued = 2,
+    Running = 3,
+    Error = 4,
+    Done = 5,
+    Submitted = 6,
+    Pending = 7,
+    LimitReached = 8,
+    Deleted = 9,
 }
