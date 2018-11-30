@@ -22,14 +22,13 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
     import Multiselect from 'vue-multiselect';
     import {SelectParameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
+    import mixins from 'vue-typed-mixins';
 
-    export default Vue.extend({
+    export default mixins(ToolParameterMixin).extend({
         name: 'SelectParameter',
-        mixins: [ToolParameterMixin],
         components: {
             Multiselect,
         },

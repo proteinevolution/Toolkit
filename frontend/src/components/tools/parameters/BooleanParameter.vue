@@ -6,14 +6,13 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
     import Switches from 'vue-switches';
     import {BooleanParameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
+    import mixins from 'vue-typed-mixins';
 
-    export default Vue.extend({
+    export default mixins(ToolParameterMixin).extend({
         name: 'BooleanParameter',
-        mixins: [ToolParameterMixin],
         components: {
             Switches,
         },

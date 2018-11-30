@@ -10,16 +10,14 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
     import AuthService from '@/services/AuthService';
     import {debounce} from 'lodash-es';
     import {Parameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
     import {ConstraintError} from '@/types/toolkit/validation';
 
-    export default Vue.extend({
+    export default ToolParameterMixin.extend({
         name: 'ModellerParameter',
-        mixins: [ToolParameterMixin],
         props: {
             /*
              Simply stating the interface type doesn't work, this is a workaround. See

@@ -11,13 +11,12 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
     import {TextInputParameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
+    import mixins from 'vue-typed-mixins';
 
-    export default Vue.extend({
+    export default mixins(ToolParameterMixin).extend({
         name: 'TextInputParameter',
-        mixins: [ToolParameterMixin],
         props: {
             /*
              Simply stating the interface type doesn't work, this is a workaround. See
@@ -41,7 +40,7 @@
                 }
                 return null;
             },
-            regex() {
+            regex(): RegExp | null {
                 return this.parameter.regex ? new RegExp(this.parameter.regex, 'g') : null;
             },
         },
@@ -50,10 +49,10 @@
                 immediate: true,
                 handler(value: string) {
                     this.setSubmissionValue(value);
-                    if (this.parameter.regex && !this.regex.test(value)) {
-                        this.setError({textKey: 'constraints.format'});
+                    if (this.regex) {
+                        this.setError(this.regex.test(value) ? undefined : {textKey: 'constraints.format'});
                     } else {
-                        this.setError(null);
+                        this.setError(undefined);
                     }
                 },
             },

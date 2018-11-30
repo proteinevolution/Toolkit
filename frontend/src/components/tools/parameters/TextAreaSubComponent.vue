@@ -83,7 +83,7 @@
                 uploadingFile: false,
                 autoTransformedParams: null,
                 autoTransformMessageTimeout: 2500,
-                validation: undefined,
+                validation: {},
             };
         },
         watch: {
@@ -104,7 +104,7 @@
                     this.validation = val;
                     this.$emit('validation', val);
                 },
-            }
+            },
         },
         methods: {
             handleFileUpload($event: Event): void {

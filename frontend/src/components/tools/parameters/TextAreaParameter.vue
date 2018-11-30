@@ -27,16 +27,15 @@
 <script lang="ts">
     import Vue from 'vue';
     import Switches from 'vue-switches';
+    import mixins from 'vue-typed-mixins';
     import TextAreaSubComponent from './TextAreaSubComponent.vue';
     import {TextAreaParameter, ValidationParams} from '@/types/toolkit/tools';
     import ExpandHeight from '@/transitions/ExpandHeight.vue';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
     import {ValidationResult} from '@/types/toolkit/validation';
 
-    export default Vue.extend({
+    export default mixins(ToolParameterMixin).extend({
         name: 'TextAreaParameter',
-        mixins: [ToolParameterMixin],
-
         components: {
             Switches,
             TextAreaSubComponent,
@@ -88,7 +87,7 @@
                 } else if (this.text === '') {
                     this.setError({textKey: 'constraints.notEmpty'});
                 } else {
-                    this.setError(null);
+                    this.setError(undefined);
                 }
             },
             handleValidationSecond(val: ValidationResult) {
