@@ -3,9 +3,8 @@
         <ExpandHeight>
             <TextAreaSubComponent :parameter="parameter"
                                   :validation-params="validationParams"
-                                  :input="this.$route.params.input"
-                                  :validation-errors="validationErrors"
-                                  :submission="submission">
+                                  v-model="text"
+                                  v-on:validation="handleValidation">
             </TextAreaSubComponent>
         </ExpandHeight>
         <ExpandHeight>
@@ -13,8 +12,8 @@
                                   :second="true"
                                   :parameter="parameter"
                                   :validation-params="validationParams"
-                                  :validation-errors="validationErrors"
-                                  :submission="submission">
+                                  v-model="textSecond"
+                                  v-on:validation="handleValidationSecond">
             </TextAreaSubComponent>
         </ExpandHeight>
         <b-form-group v-if="parameter.allowsTwoTextAreas"
@@ -32,6 +31,7 @@
     import {TextAreaParameter, ValidationParams} from '@/types/toolkit/tools';
     import ExpandHeight from '@/transitions/ExpandHeight.vue';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
+    import {ValidationResult} from '@/types/toolkit/validation';
 
     export default Vue.extend({
         name: 'TextAreaParameter',
@@ -55,8 +55,50 @@
         data() {
             return {
                 secondTextAreaEnabled: false,
+                text: this.$route.params.input ? this.$route.params.input : '',
+                textSecond: '',
             };
         },
+        watch: {
+            text: {
+                immediate: true,
+                handler(value: string) {
+                    this.setSubmissionValue(value);
+                },
+            },
+            textSecond(value: string) {
+                if(value){
+                    Vue.set(this.submission, this.parameterName + "_two", value);
+                } else {
+                    Vue.delete(this.submission, this.parameterName + "_two");
+                }
+            },
+            secondTextAreaEnabled(value: boolean) {
+                if(!value) {
+                    Vue.delete(this.submission, this.parameterName + "_two");
+                    Vue.delete(this.validationErrors, this.parameterName + "_two");
+                }
+            }
+        },
+        methods: {
+            handleValidation(val: ValidationResult) {
+                if(val.failed) {
+                    this.setError({textKey: val.textKey, textKeyParams: val.textKeyParams});
+                } else if(this.text === '') {
+                    this.setError({textKey: 'constraints.notEmpty'})
+                } else {
+                    this.setError(null);
+                }
+            },
+            handleValidationSecond(val: ValidationResult) {
+                if(val.failed) {
+                    Vue.set(this.validationErrors, this.parameterName + "_two",
+                        {textKey: val.textKey, textKeyParams: val.textKeyParams});
+                } else {
+                    Vue.delete(this.validationErrors, this.parameterName + "_two")
+                }
+            }
+        }
     });
 </script>
 
