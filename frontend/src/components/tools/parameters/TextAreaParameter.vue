@@ -4,7 +4,7 @@
             <TextAreaSubComponent :parameter="parameter"
                                   :validation-params="validationParams"
                                   v-model="text"
-                                  v-on:validation="handleValidation">
+                                  @validation="handleValidation">
             </TextAreaSubComponent>
         </ExpandHeight>
         <ExpandHeight>
@@ -13,7 +13,7 @@
                                   :parameter="parameter"
                                   :validation-params="validationParams"
                                   v-model="textSecond"
-                                  v-on:validation="handleValidationSecond">
+                                  @validation="handleValidationSecond">
             </TextAreaSubComponent>
         </ExpandHeight>
         <b-form-group v-if="parameter.allowsTwoTextAreas"
@@ -67,38 +67,39 @@
                 },
             },
             textSecond(value: string) {
-                if(value){
-                    Vue.set(this.submission, this.parameterName + "_two", value);
+                if (value) {
+                    Vue.set(this.submission, this.parameterName + '_two', value);
                 } else {
-                    Vue.delete(this.submission, this.parameterName + "_two");
+                    Vue.delete(this.submission, this.parameterName + '_two');
                 }
             },
             secondTextAreaEnabled(value: boolean) {
-                if(!value) {
-                    Vue.delete(this.submission, this.parameterName + "_two");
-                    Vue.delete(this.validationErrors, this.parameterName + "_two");
+                if (!value) {
+                    this.textSecond = '';
+                    Vue.delete(this.submission, this.parameterName + '_two');
+                    Vue.delete(this.validationErrors, this.parameterName + '_two');
                 }
-            }
+            },
         },
         methods: {
             handleValidation(val: ValidationResult) {
-                if(val.failed) {
+                if (val.failed) {
                     this.setError({textKey: val.textKey, textKeyParams: val.textKeyParams});
-                } else if(this.text === '') {
-                    this.setError({textKey: 'constraints.notEmpty'})
+                } else if (this.text === '') {
+                    this.setError({textKey: 'constraints.notEmpty'});
                 } else {
                     this.setError(null);
                 }
             },
             handleValidationSecond(val: ValidationResult) {
-                if(val.failed) {
-                    Vue.set(this.validationErrors, this.parameterName + "_two",
+                if (val.failed) {
+                    Vue.set(this.validationErrors, this.parameterName + '_two',
                         {textKey: val.textKey, textKeyParams: val.textKeyParams});
                 } else {
-                    Vue.delete(this.validationErrors, this.parameterName + "_two")
+                    Vue.delete(this.validationErrors, this.parameterName + '_two');
                 }
-            }
-        }
+            },
+        },
     });
 </script>
 
