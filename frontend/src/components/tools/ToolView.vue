@@ -4,7 +4,12 @@
              :key="toolName + 'view'"
              v-if="tool">
             <div class="tool-header">
-                <h1>{{ tool.longname }}</h1>
+                <h1>
+                    {{ tool.longname }}
+                    <b-link class="help-icon" @click="launchHelpModal">
+                        <i class="far fa-question-circle"></i>
+                    </b-link>
+                </h1>
             </div>
 
             <LoadingWrapper :loading="$store.state.loading.toolParameters">
@@ -61,6 +66,8 @@
     import NotFoundView from '@/components/utils/NotFoundView.vue';
     import LoadingWrapper from '@/components/utils/LoadingWrapper.vue';
     import JobService from '@/services/JobService';
+    import HelpModal from '@/components/modals/HelpModal.vue';
+    import ToolService from '@/services/ToolService';
 
     export default Vue.extend({
         name: 'ToolView',
@@ -126,6 +133,17 @@
                         this.$alert(response.message);
                     });
             },
+            launchHelpModal(): void {
+                ToolService.fetchToolHelp(this.toolName)
+                    .then((response) => {
+                        this.$modal.show(HelpModal, {contents: response}, {
+                            draggable: false,
+                            width: '60%',
+                            height: 'auto',
+                            scrollable: true,
+                        });
+                    });
+            },
         },
     });
 </script>
@@ -139,6 +157,10 @@
             font-weight: bold;
             font-size: 1.25em;
             line-height: 1.6;
+        }
+
+        .help-icon i {
+            color: $tk-medium-gray;
         }
     }
 
