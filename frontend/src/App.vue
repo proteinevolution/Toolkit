@@ -71,6 +71,7 @@
         },
         created() {
             this.$store.dispatch('tools/fetchAllTools');
+            this.$store.dispatch('jobs/fetchAllJobs');
         },
     });
 </script>
