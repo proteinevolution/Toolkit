@@ -5,11 +5,11 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete }
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services._
+import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.tools.ToolConfig
 import javax.inject.{ Inject, Singleton }
 import play.api.Logger
-import play.api.libs.Files
-import play.api.mvc.{ Action, AnyContent, ControllerComponents, MultipartFormData }
+import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 import io.circe.JsonObject
 import io.circe.Json
 import io.circe.syntax._
@@ -21,6 +21,7 @@ class SubmissionController @Inject()(
     jobActorAccess: JobActorAccess,
     userSessions: UserSessions,
     jobDispatcher: JobDispatcher,
+    constants: ConstantsV2,
     cc: ControllerComponents,
     jobDao: JobDao,
     toolConfig: ToolConfig,
@@ -56,14 +57,14 @@ class SubmissionController @Inject()(
     }
   }
 
-  def submitJob(toolName: String): Action[MultipartFormData[Files.TemporaryFile]] =
-    Action(parse.multipartFormData).async { implicit request =>
+  def submitJob(toolName: String): Action[Map[String, Seq[String]]] =
+    Action(circe.json[Map[String, Seq[String]]]).async { implicit request =>
+      val parts = request.body.mapValues(_.mkString(constants.formMultiValueSeparator))
       userSessions.getUser.flatMap { user =>
         jobDispatcher
           .submitJob(
             toolName,
-            request.body.dataParts,
-            request.body.file("files").filter(_.contentType.contains("text/plain")),
+            parts,
             user
           )
           .value

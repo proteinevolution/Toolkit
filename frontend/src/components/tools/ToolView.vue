@@ -36,13 +36,12 @@
                                       class="submit-buttons card-body">
                             <b-btn class="submit-button"
                                    variant="primary"
+                                   @click="submitJob"
                                    :disabled="preventSubmit">
                                 Submit Job
                             </b-btn>
                             <b-form-input class="custom-job-id"
-                                          placeholder="Custom Job ID">
-
-                            </b-form-input>
+                                          placeholder="Custom Job ID"/>
                         </b-form-group>
                     </b-card>
                 </b-form>
@@ -61,6 +60,7 @@
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
     import NotFoundView from '@/components/utils/NotFoundView.vue';
     import LoadingWrapper from '@/components/utils/LoadingWrapper.vue';
+    import JobService from '@/services/JobService';
 
     export default Vue.extend({
         name: 'ToolView',
@@ -114,11 +114,17 @@
             },
         },
         methods: {
-            loadToolParameters(toolName: string) {
+            loadToolParameters(toolName: string): void {
                 this.$store.dispatch('tools/fetchToolParametersIfNotPresent', toolName);
             },
-            toggleFullScreen() {
+            toggleFullScreen(): void {
                 this.fullScreen = !this.fullScreen;
+            },
+            submitJob(): void {
+                JobService.submitJob(this.toolName, this.submission)
+                    .then((response) => {
+                        this.$alert(response.message);
+                    });
             },
         },
     });

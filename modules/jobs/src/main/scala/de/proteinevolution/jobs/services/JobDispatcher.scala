@@ -3,7 +3,6 @@ package de.proteinevolution.jobs.services
 import java.security.MessageDigest
 import java.time.ZonedDateTime
 
-import better.files._
 import cats.data.EitherT
 import cats.implicits._
 import de.proteinevolution.auth.UserSessions
@@ -14,8 +13,6 @@ import de.proteinevolution.models.database.users.User
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import javax.inject.{ Inject, Singleton }
 import play.api.Logger
-import play.api.libs.Files
-import play.api.mvc.MultipartFormData
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.{ ExecutionContext, Future }
@@ -33,15 +30,13 @@ final class JobDispatcher @Inject()(
 
   def submitJob(
       toolName: String,
-      dataParts: Map[String, Seq[String]],
-      filePart: Option[MultipartFormData.FilePart[Files.TemporaryFile]],
+      parts: Map[String, String],
       user: User
   ): EitherT[Future, JobSubmitError, Job] = {
     if (!modellerKeyIsValid(toolName, user)) {
       EitherT.leftT(JobSubmitError.ModellerKeyInvalid)
     } else {
       for {
-        parts           <- EitherT.pure[Future, JobSubmitError](readForm(dataParts, filePart))
         generatedId     <- generateJobId(parts)
         _               <- validateJobId(generatedId)
         _               <- EitherT(checkNotAlreadyTaken(generatedId))
@@ -53,26 +48,6 @@ final class JobDispatcher @Inject()(
         _               <- EitherT.pure[Future, JobSubmitError](send(generatedId, job, parts, isFromInstitute))
       } yield job
     }
-  }
-
-  private[this] def readForm(
-      dataParts: Map[String, Seq[String]],
-      filePart: Option[MultipartFormData.FilePart[Files.TemporaryFile]]
-  ): Map[String, String] = {
-    val form = dataParts.mapValues(_.mkString(constants.formMultiValueSeparator))
-    filePart
-      .map { file =>
-        val lines = File(file.ref.path).newInputStream.autoClosed.map(_.lines.mkString("\n")).get()
-        if (("alignment" :: "alignment_two" :: Nil).contains(file.filename) && lines.nonEmpty) {
-          form.updated(file.filename, lines)
-        } else {
-          form
-        }
-      }
-      .getOrElse(form)
-      .collect {
-        case (k, v) if v.nonEmpty => (k, v)
-      }
   }
 
   private[this] def send(gid: String, job: Job, parts: Map[String, String], isFromInstitute: Boolean): Unit = {

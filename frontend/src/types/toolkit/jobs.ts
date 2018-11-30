@@ -10,3 +10,10 @@ export interface Job {
     dateUpdated?: Date;
     dateViewed?: Date;
 }
+
+export interface SubmissionResponse {
+    successful: boolean;
+    code: number;
+    message: string;
+    jobID: string;
+}
