@@ -1,7 +1,7 @@
 import {ValidationResult} from '@/types/toolkit/validation';
 import {Reformat} from '@/modules/reformat';
 import {AlignmentSeqType, TextAreaInputType} from '@/types/toolkit/enums';
-import {SequenceValidationParams, ValidationParams} from '@/types/toolkit';
+import {SequenceValidationParams, ValidationParams} from '@/types/toolkit/tools';
 
 export function validation(val: string, inputType: TextAreaInputType, params: ValidationParams): ValidationResult {
     switch (inputType) {

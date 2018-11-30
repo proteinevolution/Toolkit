@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {Tool, ToolParameters} from '../types/toolkit';
+import {Tool, ToolParameters} from '../types/toolkit/tools';
 
 export default class ToolService {
 

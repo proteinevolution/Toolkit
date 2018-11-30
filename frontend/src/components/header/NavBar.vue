@@ -38,7 +38,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {Tool} from '../../types/toolkit';
+    import {Tool} from '../../types/toolkit/tools';
     import {sectionColors, sections} from '../../conf/ToolSections';
 
     export default Vue.extend({

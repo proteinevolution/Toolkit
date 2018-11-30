@@ -77,7 +77,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {FrontendToolParameter, SelectOption, SequenceValidationParams, Tool} from '../../../types/toolkit';
+    import {FrontendToolParameter, SelectOption, SequenceValidationParams, Tool} from '../../../types/toolkit/tools';
     import {Reformat} from '../../../modules/reformat';
     import Multiselect from 'vue-multiselect';
     import Select from './SelectParameter.vue';

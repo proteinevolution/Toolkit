@@ -18,7 +18,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {NumberParameter} from '@/types/toolkit';
+    import {NumberParameter} from '@/types/toolkit/tools';
     import {ConstraintError} from '@/types/toolkit/validation';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
 

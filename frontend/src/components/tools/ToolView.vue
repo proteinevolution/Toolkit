@@ -56,7 +56,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import Section from '@/components/tools/parameters/Section.vue';
-    import {ParameterSection, Tool} from '@/types/toolkit/index';
+    import {ParameterSection, Tool} from '@/types/toolkit/tools';
     import VelocityFade from '@/transitions/VelocityFade.vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
     import NotFoundView from '@/components/utils/NotFoundView.vue';

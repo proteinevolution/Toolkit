@@ -1,7 +1,7 @@
 import {MutationTree} from 'vuex';
 import Vue from 'vue';
 import {ToolState} from '../../types';
-import {Tool} from '@/types/toolkit';
+import {Tool} from '@/types/toolkit/tools';
 
 const mutations: MutationTree<ToolState> = {
     setTools(state, tools) {

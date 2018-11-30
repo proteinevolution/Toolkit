@@ -29,7 +29,7 @@
     import Vue from 'vue';
     import Switches from 'vue-switches';
     import TextAreaSubComponent from './TextAreaSubComponent.vue';
-    import {TextAreaParameter, ValidationParams} from '@/types/toolkit';
+    import {TextAreaParameter, ValidationParams} from '@/types/toolkit/tools';
     import ExpandHeight from '@/transitions/ExpandHeight.vue';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
 
