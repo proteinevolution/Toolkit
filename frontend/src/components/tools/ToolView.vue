@@ -46,6 +46,7 @@
                                 Submit Job
                             </b-btn>
                             <b-form-input class="custom-job-id"
+                                          v-model="customJobId"
                                           placeholder="Custom Job ID"/>
                         </b-form-group>
                     </b-card>
@@ -83,6 +84,7 @@
                 fullScreen: false,
                 validationErrors: {},
                 submission: {},
+                customJobId: '',
             };
         },
         computed: {
@@ -128,6 +130,9 @@
                 this.fullScreen = !this.fullScreen;
             },
             submitJob(): void {
+                if (this.customJobId) {
+                    Vue.set(this.submission, 'jobID', this.customJobId);
+                }
                 JobService.submitJob(this.toolName, this.submission)
                     .then((response) => {
                         this.$alert(response.message);
