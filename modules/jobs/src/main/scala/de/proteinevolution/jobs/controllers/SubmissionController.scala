@@ -2,16 +2,15 @@ package de.proteinevolution.jobs.controllers
 
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete }
+import de.proteinevolution.jobs.actors.JobActor.{CheckIPHash, Delete}
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services._
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.tools.ToolConfig
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.mvc.{ Action, AnyContent, ControllerComponents }
-import io.circe.JsonObject
-import io.circe.Json
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import io.circe.{Decoder, Json, JsonObject}
 import io.circe.syntax._
 
 import scala.concurrent.ExecutionContext
@@ -57,9 +56,18 @@ class SubmissionController @Inject()(
     }
   }
 
-  def submitJob(toolName: String): Action[Map[String, Seq[String]]] =
-    Action(circe.json[Map[String, Seq[String]]]).async { implicit request =>
-      val parts = request.body.mapValues(_.mkString(constants.formMultiValueSeparator))
+  implicit def eitherDecoder[A,B](implicit a: Decoder[A], b: Decoder[B]): Decoder[Either[A,B]] = {
+    val l: Decoder[Either[A,B]]= a.map(Left.apply)
+    val r: Decoder[Either[A,B]]= b.map(Right.apply)
+    l or r
+  }
+
+  def submitJob(toolName: String): Action[Map[String, Either[Seq[String], String]]] =
+    Action(circe.json[Map[String, Either[Seq[String], String]]]).async { implicit request =>
+      val parts = request.body.mapValues {
+        case Left(list) => list.mkString(constants.formMultiValueSeparator)
+        case Right(str) => str
+      }
       userSessions.getUser.flatMap { user =>
         jobDispatcher
           .submitJob(
