@@ -49,6 +49,7 @@
     import {ValidationResult} from '@/types/toolkit/validation';
     import VelocityFade from '@/transitions/VelocityFade.vue';
     import SampleSeqs from '@/conf/SampleSeqs';
+    import EventBus from '@/util/EventBus';
 
     export default Vue.extend({
         name: 'TextAreaSubComponent',
@@ -83,7 +84,7 @@
                 uploadingFile: false,
                 autoTransformedParams: null,
                 autoTransformMessageTimeout: 2500,
-                validation: undefined,
+                validation: {},
             };
         },
         watch: {
@@ -104,7 +105,7 @@
                     this.validation = val;
                     this.$emit('validation', val);
                 },
-            }
+            },
         },
         methods: {
             handleFileUpload($event: Event): void {
@@ -158,6 +159,7 @@
                 }
             },
             handlePasteExample(): void {
+                EventBus.$emit('paste-example');
                 const sampleSeqKeys: string[] = this.parameter.sampleInputKey.split(',');
                 this.text = SampleSeqs[sampleSeqKeys[this.second ? 1 : 0]];
             },

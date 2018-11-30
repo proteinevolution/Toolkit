@@ -17,14 +17,13 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
     import {NumberParameter} from '@/types/toolkit/tools';
     import {ConstraintError} from '@/types/toolkit/validation';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
+    import mixins from 'vue-typed-mixins';
 
-    export default Vue.extend({
+    export default mixins(ToolParameterMixin).extend({
         name: 'NumberParameter',
-        mixins: [ToolParameterMixin],
         props: {
             /*
              Simply stating the interface type doesn't work, this is a workaround. See

@@ -14,7 +14,8 @@ object Parameter {
       name: String,
       label: String,
       inputPlaceholder: String,
-      regex: Option[String] = None
+      regex: Option[String] = None,
+      sampleInput: Option[String] = None
   ) extends Parameter
 
   case class TextAreaParameter(
@@ -57,7 +58,6 @@ object Parameter {
   ) extends Parameter
 
   implicit val ep: Encoder[Parameter] = {
-    import io.circe.generic.extras.auto._
 
     implicit val config: Configuration =
       io.circe.generic.extras.defaults.defaultGenericConfiguration.copy(discriminator = Some("parameterType"))
