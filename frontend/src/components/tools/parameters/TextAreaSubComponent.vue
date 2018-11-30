@@ -49,6 +49,7 @@
     import {ValidationResult} from '@/types/toolkit/validation';
     import VelocityFade from '@/transitions/VelocityFade.vue';
     import SampleSeqs from '@/conf/SampleSeqs';
+    import EventBus from '@/util/EventBus';
 
     export default Vue.extend({
         name: 'TextAreaSubComponent',
@@ -158,6 +159,7 @@
                 }
             },
             handlePasteExample(): void {
+                EventBus.$emit('paste-example');
                 const sampleSeqKeys: string[] = this.parameter.sampleInputKey.split(',');
                 this.text = SampleSeqs[sampleSeqKeys[this.second ? 1 : 0]];
             },

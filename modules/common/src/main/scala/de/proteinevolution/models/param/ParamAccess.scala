@@ -93,13 +93,21 @@ class ParamAccess @Inject()(tel: TEL) {
     case "EFF_CRICK_ANGLE"         => select("eff_crick_angle", "Effective Crick angle")
     case "REGKEY"                  => ModellerParameter("regkey", "Enter MODELLER-key (see help pages for details)")
     case "SAMCC_HELIXONE" =>
-      TextInputParameter("samcc_helixone", "Definition for helix 1", "CC_first_position;chain;start_pos;end_pos", samCCHelixRegex)
+      TextInputParameter("samcc_helixone",
+                         "Definition for helix 1",
+                         "CC_first_position;chain;start_pos;end_pos", samCCHelixRegex, Some("a;A;2;30"))
     case "SAMCC_HELIXTWO" =>
-      TextInputParameter("samcc_helixtwo", "Definition for helix 2", "CC_first_position;chain;start_pos;end_pos", samCCHelixRegex)
+      TextInputParameter("samcc_helixtwo",
+                         "Definition for helix 2",
+                         "CC_first_position;chain;start_pos;end_pos", samCCHelixRegex, Some("a;B;2;30"))
     case "SAMCC_HELIXTHREE" =>
-      TextInputParameter("samcc_helixthree", "Definition for helix 3", "CC_first_position;chain;start_pos;end_pos", samCCHelixRegex)
+      TextInputParameter("samcc_helixthree",
+                         "Definition for helix 3",
+                         "CC_first_position;chain;start_pos;end_pos", samCCHelixRegex, Some("a;C;2;30"))
     case "SAMCC_HELIXFOUR" =>
-      TextInputParameter("samcc_helixfour", "Definition for helix 4", "CC_first_position;chain;start_pos;end_pos", samCCHelixRegex)
+      TextInputParameter("samcc_helixfour",
+                         "Definition for helix 4",
+                         "CC_first_position;chain;start_pos;end_pos", samCCHelixRegex, Some("a;D;2;30"))
     case "INVOKE_PSIPRED" =>
       NumberParameter("invoke_psipred", "% identity cutoff to invoke a new PSIPRED run", Some(0), Some(100))
     case "CLANS_EVAL"       => select("clans_eval", "Extract BLAST HSP's up to E-values of")

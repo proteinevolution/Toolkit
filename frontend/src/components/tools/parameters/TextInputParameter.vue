@@ -14,6 +14,7 @@
     import {TextInputParameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
     import mixins from 'vue-typed-mixins';
+    import EventBus from '@/util/EventBus';
 
     export default mixins(ToolParameterMixin).extend({
         name: 'TextInputParameter',
@@ -28,6 +29,9 @@
             return {
                 text: '',
             };
+        },
+        mounted() {
+            EventBus.$on('paste-example', this.handlePasteExample);
         },
         computed: {
             state() {
@@ -55,6 +59,13 @@
                         this.setError(undefined);
                     }
                 },
+            },
+        },
+        methods: {
+            handlePasteExample() {
+                if (this.parameter.sampleInput) {
+                    this.text = this.parameter.sampleInput;
+                }
             },
         },
     });
