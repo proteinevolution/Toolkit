@@ -44,7 +44,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {TextAreaParameter, ValidationParams} from '../../../types/toolkit';
+    import {TextAreaParameter, ValidationParams} from '../../../types/toolkit/tools';
     import {transformToFormat, validation} from '@/util/validation';
     import {ValidationResult} from '@/types/toolkit/validation';
     import VelocityFade from '@/transitions/VelocityFade.vue';

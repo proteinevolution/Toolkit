@@ -1,7 +1,7 @@
 import {ActionTree} from 'vuex';
 import ToolService from '@/services/ToolService';
 import {RootState, ToolState} from '../../types';
-import {Tool, ToolParameters} from '@/types/toolkit';
+import {Tool, ToolParameters} from '@/types/toolkit/tools';
 import {AlignmentViewer, Reformat} from '@/conf/FrontendTools';
 
 const actions: ActionTree<ToolState, RootState> = {

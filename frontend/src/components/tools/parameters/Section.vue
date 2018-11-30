@@ -30,8 +30,8 @@ import {ParameterType} from '../../../types/toolkit/enums';
     import AlignmentMode from './AlignmentMode.vue';
     import AlignmentViewerView from './AlignmentViewerView.vue';
     import ReformatView from './ReformatView.vue';
-    import {ParameterSection} from '@/types/toolkit/index';
-    import {Parameter, ValidationParams} from '../../../types/toolkit';
+    import {ParameterSection} from '@/types/toolkit/tools';
+    import {Parameter, ValidationParams} from '../../../types/toolkit/tools';
     import {ParameterType} from '../../../types/toolkit/enums';
 
     export default Vue.extend({

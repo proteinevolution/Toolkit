@@ -25,7 +25,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {FrontendToolParameter} from '@/types/toolkit/index';
+    import {FrontendToolParameter} from '@/types/toolkit/tools';
     import AlignmentViewerModal from '@/components/modals/AlignmentViewerModal.vue';
     import {Reformat} from '@/modules/reformat';
 

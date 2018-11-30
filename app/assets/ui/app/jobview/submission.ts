@@ -149,9 +149,9 @@
                     formData.delete(fileInput.name);
                     if (fileInput.files.length > 0) {
                         const file: File = fileInput.files[0];
-                        if (file !== undefined && file.size > 0) {
+                        if (file && file.size > 0) {
                             const fileName: string = fileInput.name.substring(5);
-                            formData.append(fileName, file);
+                            formData.append("files", file, fileName);
                         }
                     }
                     // delete file inputs after FormData has been read. Otherwise submission is prevented in Safari >11.1
@@ -194,7 +194,7 @@
                     $(".submitJob").prop("disabled", false);
                     JobSubmissionComponent.submitting = false;
                 }, function (error: any) {
-                    console.log("Error while submitting:", error);
+                    console.error("Error while submitting:", error);
                     $(".submitJob").prop("disabled", false);
                     JobSubmissionComponent.submitting = false;
                 });

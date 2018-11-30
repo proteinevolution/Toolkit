@@ -8,7 +8,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import Switches from 'vue-switches';
-    import {BooleanParameter} from '@/types/toolkit';
+    import {BooleanParameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
 
     export default Vue.extend({

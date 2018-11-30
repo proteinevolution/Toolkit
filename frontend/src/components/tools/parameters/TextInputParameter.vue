@@ -12,7 +12,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {TextInputParameter} from '@/types/toolkit';
+    import {TextInputParameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
 
     export default Vue.extend({

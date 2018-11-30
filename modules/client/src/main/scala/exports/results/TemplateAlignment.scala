@@ -18,7 +18,7 @@ class TemplateAlignment(tool: String, forwardingEnabled: Boolean = true) {
   if (forwardingEnabled) {
     templateAlignmentModal.find(".hide-for-forwarding-disabled").show()
     toolSelect.on(
-      "click", { selectElement: HTMLSelectElement =>
+      "change", { selectElement: HTMLSelectElement =>
         {
           val forwardData = textArea.value().toString
           val tool        = selectElement.value

@@ -1,4 +1,4 @@
-import {Tool} from '@/types/toolkit';
+import {Tool} from '@/types/toolkit/tools';
 
 export interface LoadingState {
     [key: string]: boolean;

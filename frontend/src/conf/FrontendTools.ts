@@ -1,4 +1,4 @@
-import {FrontendToolParameter, Tool} from '@/types/toolkit';
+import {FrontendToolParameter, Tool} from '@/types/toolkit/tools';
 import {ParameterType} from '@/types/toolkit/enums';
 import SampleSeqs from '@/conf/SampleSeqs';
 

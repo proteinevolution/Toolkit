@@ -24,7 +24,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import Multiselect from 'vue-multiselect';
-    import {SelectParameter} from '@/types/toolkit';
+    import {SelectParameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
 
     export default Vue.extend({

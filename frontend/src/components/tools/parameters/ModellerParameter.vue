@@ -13,7 +13,7 @@
     import Vue from 'vue';
     import AuthService from '../../../services/AuthService';
     import {debounce} from 'lodash-es';
-    import {Parameter} from '@/types/toolkit';
+    import {Parameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
     import {ConstraintError} from '@/types/toolkit/validation';
 

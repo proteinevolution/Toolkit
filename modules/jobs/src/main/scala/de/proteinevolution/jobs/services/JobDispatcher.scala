@@ -33,14 +33,15 @@ final class JobDispatcher @Inject()(
 
   def submitJob(
       toolName: String,
-      form: MultipartFormData[Files.TemporaryFile],
+      dataParts: Map[String, Seq[String]],
+      filePart: Option[MultipartFormData.FilePart[Files.TemporaryFile]],
       user: User
   ): EitherT[Future, JobSubmitError, Job] = {
     if (!modellerKeyIsValid(toolName, user)) {
       EitherT.leftT(JobSubmitError.ModellerKeyInvalid)
     } else {
       for {
-        parts           <- EitherT.pure[Future, JobSubmitError](readForm(form))
+        parts           <- EitherT.pure[Future, JobSubmitError](readForm(dataParts, filePart))
         generatedId     <- generateJobId(parts)
         _               <- validateJobId(generatedId)
         _               <- EitherT(checkNotAlreadyTaken(generatedId))
@@ -54,21 +55,24 @@ final class JobDispatcher @Inject()(
     }
   }
 
-  private[this] def readForm(form: MultipartFormData[Files.TemporaryFile]): Map[String, String] = {
-    var parts        = form.dataParts.mapValues(_.mkString(constants.formMultiValueSeparator)) - "file"
-    val allowedFiles = "alignment" :: "alignment_two" :: Nil
-    for {
-      file <- form.files.filter(file => allowedFiles.contains(file.key))
-      in   <- File(file.ref.path).newInputStream.autoClosed
-    } {
-      val value = in.lines.mkString("\n")
-      if (value.nonEmpty) parts = parts.updated(file.key, value)
-    }
-    // remove empty parameter
-    parts.get("alignment_two").foreach { alignment =>
-      if (alignment.isEmpty) parts = parts - "alignment_two"
-    }
-    parts
+  private[this] def readForm(
+      dataParts: Map[String, Seq[String]],
+      filePart: Option[MultipartFormData.FilePart[Files.TemporaryFile]]
+  ): Map[String, String] = {
+    val form = dataParts.mapValues(_.mkString(constants.formMultiValueSeparator))
+    filePart
+      .map { file =>
+        val lines = File(file.ref.path).newInputStream.autoClosed.map(_.lines.mkString("\n")).get()
+        if (("alignment" :: "alignment_two" :: Nil).contains(file.filename) && lines.nonEmpty) {
+          form.updated(file.filename, lines)
+        } else {
+          form
+        }
+      }
+      .getOrElse(form)
+      .collect {
+        case (k, v) if v.nonEmpty => (k, v)
+      }
   }
 
   private[this] def send(gid: String, job: Job, parts: Map[String, String], isFromInstitute: Boolean): Unit = {
