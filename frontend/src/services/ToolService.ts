@@ -30,4 +30,14 @@ export default class ToolService {
                 .catch(reject);
         });
     }
+
+    public static fetchToolHelp(toolName: string): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            axios.get(`/api/tools/help/${toolName}`)
+                .then((response) => {
+                    resolve(response.data);
+                })
+                .catch(reject);
+        });
+    }
 }

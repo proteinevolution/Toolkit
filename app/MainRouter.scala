@@ -54,7 +54,7 @@ class MainRouter @Inject()(
       .orElse(searchRouter.withPrefix("/search").routes)
       .orElse(jobsRouter.withPrefix("/api/jobs").routes)
       .orElse(backendRouter.withPrefix("/backend").routes)
-      .orElse(helpRouter.withPrefix("/help").routes)
+      .orElse(helpRouter.withPrefix("/api/tools/help").routes)
       .orElse(authRouter.withPrefix("/auth").routes)
       .orElse(verificationRouter.withPrefix("/verification").routes)
       .orElse(webjarsRouter.withPrefix("/webjars").routes)
