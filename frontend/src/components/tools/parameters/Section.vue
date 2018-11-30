@@ -31,8 +31,8 @@ import {ParameterType} from '../../../types/toolkit/enums';
     import AlignmentViewerView from './AlignmentViewerView.vue';
     import ReformatView from './ReformatView.vue';
     import {ParameterSection} from '@/types/toolkit/tools';
-    import {Parameter, ValidationParams} from '../../../types/toolkit/tools';
-    import {ParameterType} from '../../../types/toolkit/enums';
+    import {Parameter, ValidationParams} from '@/types/toolkit/tools';
+    import {ParameterType} from '@/types/toolkit/enums';
 
     export default Vue.extend({
         name: 'Section',

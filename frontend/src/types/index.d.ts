@@ -3,6 +3,7 @@ declare module 'velocity-animate';
 declare module 'vue-particles';
 declare module 'vue-clipboard2';
 declare module 'vue-simple-spinner';
+declare module 'vue-switches';
 declare module 'msa' {
     interface MSA {
         render: () => void;

@@ -17,7 +17,7 @@
     import Vue from 'vue';
     import Select from './SelectParameter.vue';
     import Boolean from './BooleanParameter.vue';
-    import {Parameter, SelectOption} from '../../../types/toolkit/tools';
+    import {Parameter, SelectOption} from '@/types/toolkit/tools';
 
     export default Vue.extend({
         name: 'AlignmentMode',

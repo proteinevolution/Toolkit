@@ -11,7 +11,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import AuthService from '../../../services/AuthService';
+    import AuthService from '@/services/AuthService';
     import {debounce} from 'lodash-es';
     import {Parameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
