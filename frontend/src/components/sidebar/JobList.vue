@@ -29,6 +29,8 @@
                  @click="goToJob(job.jobID)">
                 <span v-text="job.jobID"></span>
                 <span v-text="job.code.toUpperCase()"></span>
+                <i class="fas fa-times"
+                   @click.stop="deleteJob(job.jobID)"></i>
             </div>
 
             <div class="job-list-down d-flex flex-column"
@@ -93,6 +95,10 @@
         methods: {
             goToJob(jobID: string): void {
                 this.$router.push(`/jobs/${jobID}`);
+            },
+            deleteJob(jobID: string): void {
+                // TODO
+                this.$alert('implement me!!', '', 'warning');
             },
             scrollDown(): void {
                 if (this.startIndex > 0) {
@@ -171,6 +177,8 @@
 
             .job-element {
                 display: flex;
+                align-items: baseline;
+                justify-content: space-around;
                 cursor: pointer;
                 font-size: 0.7em;
                 color: $tk-gray;
@@ -178,7 +186,6 @@
                 border: 1px solid $tk-light-gray;
                 border-bottom: 0;
                 width: 100%;
-                justify-content: space-around;
 
                 &.selected {
                     margin: 0 2px;
