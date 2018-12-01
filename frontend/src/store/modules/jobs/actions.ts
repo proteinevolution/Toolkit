@@ -10,6 +10,12 @@ const actions: ActionTree<JobState, RootState> = {
         context.commit('setJobs', jobs);
         context.commit('stopLoading', 'jobs', {root: true});
     },
+    async loadJobDetails(context, jobID: string) {
+        context.commit('startLoading', 'jobDetails', {root: true});
+        const job: Job = await JobService.fetchJob(jobID);
+        context.commit('setJob', {jobID, job});
+        context.commit('stopLoading', 'jobDetails', {root: true});
+    },
 };
 
 export default actions;

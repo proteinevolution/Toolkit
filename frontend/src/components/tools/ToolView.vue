@@ -3,13 +3,16 @@
         <div class="tool-view"
              :key="toolName + 'view'"
              v-if="tool">
-            <div class="tool-header">
+            <div class="tool-header d-flex align-items-baseline">
                 <h1>
                     {{ tool.longname }}
                     <b-link class="help-icon" @click="launchHelpModal">
                         <i class="far fa-question-circle"></i>
                     </b-link>
                 </h1>
+                <div class="job-details ml-auto text-muted">
+                    <slot name="job-details"></slot>
+                </div>
             </div>
 
             <LoadingWrapper :loading="$store.state.loading.toolParameters">
@@ -29,7 +32,22 @@
                                              :validation-errors="validationErrors"
                                              :submission="submission"/>
                                 </div>
+
+                                <b-form-group v-if="showSubmitButtons"
+                                              class="submit-buttons card-body">
+                                    <b-btn class="submit-button"
+                                           variant="primary"
+                                           @click="submitJob"
+                                           :disabled="preventSubmit">
+                                        Submit Job
+                                    </b-btn>
+                                    <custom-job-id-input :validation-errors="validationErrors"
+                                                         :submission="submission"/>
+                                </b-form-group>
                             </b-tab>
+
+                            <!-- the job form can insert more tabs here -->
+                            <slot name="job-tabs"></slot>
 
                             <template slot="tabs">
                                 <i class="fullscreen-toggler fa ml-auto mr-1"
@@ -37,17 +55,6 @@
                                    :class="[fullScreen ? 'fa-compress' : 'fa-expand']"></i>
                             </template>
                         </b-tabs>
-                        <b-form-group v-if="showSubmitButtons"
-                                      class="submit-buttons card-body">
-                            <b-btn class="submit-button"
-                                   variant="primary"
-                                   @click="submitJob"
-                                   :disabled="preventSubmit">
-                                Submit Job
-                            </b-btn>
-                            <custom-job-id-input :validation-errors="validationErrors"
-                                                 :submission="submission"/>
-                        </b-form-group>
                     </b-card>
                 </b-form>
             </LoadingWrapper>
@@ -73,6 +80,13 @@
     export default Vue.extend({
         name: 'ToolView',
         mixins: [hasHTMLTitle],
+        props: {
+            job: {
+                type: Object,
+                required: false,
+                default: undefined,
+            },
+        },
         components: {
             Section,
             VelocityFade,
@@ -89,10 +103,13 @@
         },
         computed: {
             toolName(): string {
+                if (this.job) {
+                    return this.job.tool;
+                }
                 return this.$route.params.toolName;
             },
             tool(): Tool {
-                return this.$store.getters['tools/tools'].filter((tool: Tool) => tool.name === this.toolName)[0];
+                return this.$store.getters['tools/tools'].find((tool: Tool) => tool.name === this.toolName);
             },
             parameterSections(): ParameterSection[] | undefined {
                 if (!this.tool || !this.tool.parameters) {
@@ -132,7 +149,11 @@
             submitJob(): void {
                 JobService.submitJob(this.toolName, this.submission)
                     .then((response) => {
-                        this.$alert(response.message);
+                        this.$router.push(`/jobs/${response.jobID}`);
+                    })
+                    .catch((response) => { // TODO
+                        // console.log(response);
+                        this.$alert('Error!', '', 'danger');
                     });
             },
             launchHelpModal(): void {
@@ -184,6 +205,8 @@
 
         .submit-buttons {
             margin-bottom: 0;
+            padding-bottom: 0;
+            padding-right: 0;
 
             .submit-button {
                 margin-left: 1em;

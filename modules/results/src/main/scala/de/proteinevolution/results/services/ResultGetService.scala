@@ -64,12 +64,13 @@ class ResultGetService @Inject()(
       toolName <- OptionT.pure[Future](toolConfig.values(job.tool).toolFormSimple.name)
       jobViews <- OptionT.liftF(jobViews(job, toolName))
     } yield {
-      (job, jobViews)
+      (job, jobViews, toolName)
     }).map {
-      case (job, jobViews) =>
+      case (job, jobViews, toolName) =>
         JobForm(
           job.jobID,
           job.status,
+          toolName,
           job.dateCreated.getOrElse(ZonedDateTime.now).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
           jobViews,
           paramValues

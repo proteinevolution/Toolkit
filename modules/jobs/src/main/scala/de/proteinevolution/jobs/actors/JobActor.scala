@@ -488,6 +488,8 @@ class JobActor @Inject()(
               env.configure(s"THREADS", threads.toString)
               env.configure(s"HARDRUNTIME", h_rt.toString)
               env.configure(s"SOFTRUNTIME", s_rt.toString)
+              env.configure("HOSTNAME", "olt") // todo remove
+              env.configure("PORT", "5555") // todo remove
 
               log.info(s"$jobID is running with $h_vmem GB h_vmem")
               log.info(s"$jobID is running with $threads threads")

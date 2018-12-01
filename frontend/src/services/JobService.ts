@@ -13,6 +13,16 @@ export default class JobService {
         });
     }
 
+    public static fetchJob(jobID: string): Promise<Job> {
+        return new Promise<Job>(((resolve, reject) => {
+            axios.get(`/results/job/${jobID}`)
+                .then((response) => {
+                    resolve(response.data);
+                })
+                .catch(reject);
+        }));
+    }
+
     public static submitJob(toolName: string, submission: any): Promise<SubmissionResponse> {
         return new Promise<SubmissionResponse>((resolve, reject) => {
             axios.post(`/api/jobs/?toolName=${toolName}`, submission)

@@ -89,6 +89,9 @@ export default {
                 copyFailure: 'Unable to copy',
             },
         },
+        jobs: {
+            details: 'JobID: {jobID}, Created: {dateCreated}',
+        },
         helpModals: {
             names: {
                 help: 'Help',

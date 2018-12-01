@@ -2,6 +2,7 @@ import IndexView from '../components/index/IndexView.vue';
 import {Component, CreateElement, VNode, VNodeChildren, VNodeData} from 'vue';
 
 const ToolView = () => lazyLoadView(import(/* webpackChunkName: "tool" */ '../components/tools/ToolView.vue'));
+const JobView = () => lazyLoadView(import(/* webpackChunkName: "job" */ '../components/jobs/JobView.vue'));
 const JobManagerView = () => lazyLoadView(import(/* webpackChunkName: "jobmanager" */ '../components/' +
                                                                             'jobmanager/JobManagerView.vue'));
 const NotFoundView = () => lazyLoadView(import(/* webpackChunkName: "404" */ '../components/utils/NotFoundView.vue'));
@@ -19,6 +20,14 @@ export default [
         path: '/tools/:toolName',
         name: 'tools',
         component: ToolView,
+        meta: {
+            showJobList: true,
+        },
+    },
+    {
+        path: '/jobs/:jobID',
+        name: 'jobs',
+        component: JobView,
         meta: {
             showJobList: true,
         },
