@@ -124,6 +124,7 @@ export default {
             notEmpty: 'must not be empty',
             invalidModellerKey: 'invalid modeller key',
             invalidCustomJobId: 'Invalid job ID. Try "{0}"',
+            customerJobIdTooShort: 'needs to have more than two characters.',
             modellerNoConnection: 'could not validate the key. Try again later!',
         },
     },

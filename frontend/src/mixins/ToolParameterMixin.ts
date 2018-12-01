@@ -33,6 +33,9 @@ const ToolParameterMixin = Vue.extend({
         setSubmissionValue(value: any) {
             Vue.set(this.submission, this.parameterName, value);
         },
+        resetSubmissionValue() {
+            Vue.delete(this.submission, this.parameterName);
+        },
     },
 });
 

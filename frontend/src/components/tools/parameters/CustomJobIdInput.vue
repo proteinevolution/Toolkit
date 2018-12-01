@@ -46,24 +46,40 @@
                 handler(value: string) {
                     this.valid = null;
                     this.suggestion = '';
-                    if (value.length > 0) {
-                        this.validateCustomJobId(value);
+                    if (value.length === 0) {
+                        this.resetSubmissionValue();
+                        this.setError(undefined);
                     }
-                    this.setSubmissionValue(value);
+                    this.validateCustomJobId(value);
                 },
             },
         },
         methods: {
             validateCustomJobId: debounce(function(this: any, value: string) {
-                AuthService.validateJobId(value)
-                    .then((result: CustomJobIdValidationResult) => {
-                        const error: ConstraintError | undefined = !result.exists ? undefined : {
-                            textKey: 'constraints.invalidCustomJobId',
-                        };
-                        this.setError(error);
-                        this.suggestion = result.suggested;
-                        this.valid = !result.exists;
+                if (value.length === 0) {
+                    this.resetSubmissionValue();
+                    this.setError(null);
+                } else if (value.length < 3) {
+                    this.setError({
+                        textKey: 'constraints.customerJobIdTooShort',
                     });
+                    this.valid = false;
+                } else {
+                    this.setSubmissionValue(value);
+                    AuthService.validateJobId(value)
+                        .then((result: CustomJobIdValidationResult) => {
+                            if (this.customJobId.length === 0) {
+                                this.valid = null;
+                                return;
+                            }
+                            const error: ConstraintError | undefined = !result.exists ? undefined : {
+                                textKey: 'constraints.invalidCustomJobId',
+                            };
+                            this.setError(error);
+                            this.suggestion = result.suggested;
+                            this.valid = !result.exists;
+                        });
+                }
             }, 500),
             takeSuggestion() {
                 this.customJobId = this.suggestion;
