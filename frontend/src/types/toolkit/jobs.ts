@@ -17,3 +17,9 @@ export interface SubmissionResponse {
     message: string;
     jobID: string;
 }
+
+export interface CustomJobIdValidationResult {
+    exists: boolean;
+    version?: number;
+    suggested?: string;
+}

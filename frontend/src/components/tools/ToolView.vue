@@ -45,9 +45,8 @@
                                    :disabled="preventSubmit">
                                 Submit Job
                             </b-btn>
-                            <b-form-input class="custom-job-id"
-                                          v-model="customJobId"
-                                          placeholder="Custom Job ID"/>
+                            <custom-job-id-input :validation-errors="validationErrors"
+                                                 :submission="submission"/>
                         </b-form-group>
                     </b-card>
                 </b-form>
@@ -61,6 +60,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import Section from '@/components/tools/parameters/Section.vue';
+    import CustomJobIdInput from '@/components/tools/parameters/CustomJobIdInput.vue';
     import {ParameterSection, Tool} from '@/types/toolkit/tools';
     import VelocityFade from '@/transitions/VelocityFade.vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
@@ -78,13 +78,13 @@
             VelocityFade,
             NotFoundView,
             LoadingWrapper,
+            CustomJobIdInput,
         },
         data() {
             return {
                 fullScreen: false,
                 validationErrors: {},
                 submission: {},
-                customJobId: '',
             };
         },
         computed: {
@@ -130,9 +130,6 @@
                 this.fullScreen = !this.fullScreen;
             },
             submitJob(): void {
-                if (this.customJobId) {
-                    Vue.set(this.submission, 'jobID', this.customJobId);
-                }
                 JobService.submitJob(this.toolName, this.submission)
                     .then((response) => {
                         this.$alert(response.message);

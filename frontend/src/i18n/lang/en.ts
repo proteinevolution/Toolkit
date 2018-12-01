@@ -54,6 +54,9 @@ export default {
                     multiplePlaceholder: 'Select options',
                     maxElementsSelected: 'Max. elements selected',
                 },
+                customJobId: {
+                    placeholder: 'Custom Job ID',
+                },
             },
             validation: {
                 invalidCharacters: 'Invalid Characters.',
@@ -120,6 +123,7 @@ export default {
             format: 'wrong input format',
             notEmpty: 'must not be empty',
             invalidModellerKey: 'invalid modeller key',
+            invalidCustomJobId: 'Invalid job ID. Try "{0}"',
             modellerNoConnection: 'could not validate the key. Try again later!',
         },
     },
