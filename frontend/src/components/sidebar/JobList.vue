@@ -83,7 +83,8 @@
                 return this.$store.getters['jobs/jobs'].slice(0);
             },
             sortedJobs(): Job[] {
-                return this.jobs.sort(this.sortColumns[this.selectedSort].sort).slice(this.startIndex, this.startIndex + this.itemsPerPage);
+                return this.jobs.sort(this.sortColumns[this.selectedSort].sort)
+                    .slice(this.startIndex, this.startIndex + this.itemsPerPage);
             },
             currentPage(): number {
                 return Math.floor(this.startIndex / this.itemsPerPage) + 1;
