@@ -162,7 +162,9 @@
         }
 
         .help-icon i {
-            color: $tk-medium-gray;
+            color: $tk-gray;
+            font-size: 0.9em;
+            margin-left: 0.15rem;
         }
     }
 
@@ -192,10 +194,6 @@
                 float: right;
                 width: 10em;
             }
-        }
-
-        & > .card {
-
         }
 
         .card.fullscreen {
