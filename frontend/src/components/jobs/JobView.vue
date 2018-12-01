@@ -1,5 +1,6 @@
 <template>
-    <tool-view :job="job">
+    <tool-view v-if="job"
+               :job="job">
 
         <template slot="job-details">
             <small class="text-muted"

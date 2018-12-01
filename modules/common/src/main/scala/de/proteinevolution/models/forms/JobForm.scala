@@ -5,8 +5,9 @@ import io.circe.generic.JsonCodec
 
 @JsonCodec case class JobForm(
     jobID: String,
-    state: JobState,
+    status: JobState,
     tool: String,
+    code: String,
     dateCreated: String,
     views: Seq[String],
     paramValues: Map[String, String]

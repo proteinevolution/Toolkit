@@ -13,10 +13,11 @@ export default {
         },
         jobList: {
             sortColumns: {
-                id: 'ID',
-                date: 'Date',
+                jobID: 'ID',
+                dateCreated: 'Date',
                 tool: 'Tool',
             },
+            pagination: 'Page {currentPage} of {pageCount}',
         },
         tools: {
             sections: {
