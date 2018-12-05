@@ -23,7 +23,7 @@ case class PSIBlastHSP(
     midLine: String,
     description: String,
     info: Option[SearchToolInfo],
-    template: Option[HHTemplate]
+    template: Option[HHTemplate] // is not used in psiblast. just for inheritance reasons. should be refactored tbh
 ) extends HSP {
 
   import SearchResultImplicits._
