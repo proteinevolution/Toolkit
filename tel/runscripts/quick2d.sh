@@ -156,15 +156,16 @@ cd ../0/
 
 echo "done" >> ../results/process.log
 
-
 #RUN PiPred
+if [ -f ../results/${JOBID}.pssm ]; then
 
-if [ ${CHAR_COUNT} -gt "30" ] && [ ${CHAR_COUNT} -lt "700" ] ; then
-    echo "#Executing PiPred." >> ../results/process.log
-    ${PIPRED}/pipred -i ../results/${JOBID}.fseq \
-        -pssm_path ../results/ \
-        -out_path ../results/
-    echo "done" >> ../results/process.log
+    if [ ${CHAR_COUNT} -gt "30" ] && [ ${CHAR_COUNT} -lt "700" ] ; then
+        echo "#Executing PiPred." >> ../results/process.log
+        ${PIPRED}/pipred -i ../results/${JOBID}.fseq \
+            -pssm_path ../results/ \
+            -out_path ../results/
+        echo "done" >> ../results/process.log
+    fi
 fi
 
 #RUN SPOT-D and SPIDER2

@@ -84,7 +84,7 @@ else
             -v 2 \
             -i ../results/${JOBID}.in.a3m \
             -M first \
-            -d %UNIPROT  \
+            -d %UNICLUST  \
             -oa3m ../results/${JOBID}.a3m \
             -n %max_hhblits_iter.content \
             -mact 0.35 \
