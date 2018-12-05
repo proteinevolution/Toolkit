@@ -14,7 +14,7 @@ echo $key > ../key
 # When the cluster system is busy, the LOCAL mode could be used to have jobs run through immediately.
 # However, qstat-related functions (e.g. cluster load calculation) will not work in this mode.
 # Can be overriden by setting the SUBMIT_MODE environment variable (used by docker)
-MODE=${SUBMIT_MODE:-"LOCAL"}
+MODE=${SUBMIT_MODE:-"SGE"}
 
 if [ "$HOSTNAME" = "olt" ] || [ "$HOSTNAME" = "rye" ]; then
 
