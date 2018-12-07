@@ -51,12 +51,12 @@ private[results] object ProcessFactory {
     }
 
     val env: List[(String, String)] = List(
-      "ENVIRONMENT" -> config.get[String]("environment"),
+      "ENVIRONMENT"  -> config.get[String]("environment"),
       "BIOPROGSROOT" -> config.get[String]("bioprogs_root"),
-      "DATABASES" -> config.get[String]("db_root")
+      "DATABASES"    -> config.get[String]("db_root")
     )
 
-    Process(script.pathAsString, resultFile.toJava, params ++ env : _*)
+    Process(script.pathAsString, resultFile.toJava, params ++ env: _*)
   }
 
 }

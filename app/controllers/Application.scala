@@ -8,7 +8,7 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tools.ToolConfig
 import play.api.mvc._
-import play.api.{ Environment, Logger, Configuration }
+import play.api.{ Configuration, Environment, Logger }
 import org.webjars.play.WebJarsUtil
 
 import scala.concurrent.ExecutionContext
@@ -65,11 +65,11 @@ final class Application @Inject()(
   private def configEnv(request: Request[AnyContent]): Unit = {
 
     env.configure(s"HOSTNAME", config.get[String]("host_name"))
-    
+
     environment.mode match {
 
       case play.api.Mode.Prod =>
-        val port     = "9000"
+        val port = "9000"
         env.configure("PORT", port)
 
       case _ =>

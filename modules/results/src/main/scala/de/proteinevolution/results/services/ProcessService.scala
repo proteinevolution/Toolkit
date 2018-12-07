@@ -44,16 +44,14 @@ class ProcessService @Inject()(
     } yield {
 
       val env: List[(String, String)] = List(
-        "jobID" -> jobId,
-        "accession" -> accession,
-        "ENVIRONMENT" -> config.get[String]("environment"),
+        "jobID"        -> jobId,
+        "accession"    -> accession,
+        "ENVIRONMENT"  -> config.get[String]("environment"),
         "BIOPROGSROOT" -> config.get[String]("bioprogs_root"),
-        "DATABASES" -> config.get[String]("db_root")
+        "DATABASES"    -> config.get[String]("db_root")
       )
 
-      Process(file.pathAsString, (constants.jobPath + jobId).toFile.toJava, env : _*)
-        .run()
-        .exitValue()
+      Process(file.pathAsString, (constants.jobPath + jobId).toFile.toJava, env: _*).run().exitValue()
     }
   }
 
