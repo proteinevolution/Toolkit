@@ -52,7 +52,7 @@ private[results] object ProcessFactory {
 
     val env: List[(String, String)] = List(
       "ENVIRONMENT" -> config.get[String]("environment"),
-      "BIOPROGS" -> config.get[String]("bio_prog_root"),
+      "BIOPROGSROOT" -> config.get[String]("bioprogs_root"),
       "DATABASES" -> config.get[String]("db_root")
     )
 

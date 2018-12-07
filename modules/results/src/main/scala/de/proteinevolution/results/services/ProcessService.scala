@@ -47,7 +47,7 @@ class ProcessService @Inject()(
         "jobID" -> jobId,
         "accession" -> accession,
         "ENVIRONMENT" -> config.get[String]("environment"),
-        "BIOPROGS" -> config.get[String]("bio_prog_root"),
+        "BIOPROGSROOT" -> config.get[String]("bioprogs_root"),
         "DATABASES" -> config.get[String]("db_root")
       )
 

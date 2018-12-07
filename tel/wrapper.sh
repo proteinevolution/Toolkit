@@ -21,10 +21,10 @@ if [[ %SUBMITMODE = "sge" ]]; then
                 -pe parallel %THREADS \
                 -cwd  \
                 -terse \
-                -v BIOPROGS=%BIOPROGS,DATABASES=%DATABASES \
+                -v BIOPROGSROOT=%BIOPROGSROOT,DATABASES=%DATABASES \
                 %r > jobIDCluster
 else
-                export BIOPROGS="%BIOPROGS"
+                export BIOPROGSROOT="%BIOPROGSROOT"
                 export DATABASES="%DATABASES"
                 %r > jobIDCluster
 fi

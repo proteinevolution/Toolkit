@@ -25,7 +25,8 @@
                 <a class="forwardModalOpenBtn" data-modal-type="simple">Forward</a>
                 <a class="forwardModalOpenBtn" data-modal-type="hhsuite">Forward Query A3M</a>
                 @*only show create model when chosen db=mmcif70/pdb70*@
-                @if(result.db.matches("mmcif70/pdb70") || result.db.matches("mmcif30/pdb30")) {
+                @if((result.db.matches("mmcif70/pdb70") || result.db.matches("mmcif30/pdb30"))
+                        && result.proteomes.matches("false")) {
                     <a onclick="@{tool.toolNameShort}_manual()">Model using selection</a>
                 }
                 <a onclick="downloadHHR()" class="downloadHHR">HHR file</a>

@@ -1,5 +1,8 @@
 #!/bin/bash
 #Databases
+
+export TK_ROOT="${BIOPROGSROOT}"
+export BIOPROGS="${TK_ROOT}/bioprogs"
 export STANDARD="${DATABASES}/standard"
 
 #HHomp database
