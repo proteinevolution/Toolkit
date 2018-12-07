@@ -3,6 +3,7 @@ package de.proteinevolution.results.services
 import better.files._
 import de.proteinevolution.models.ToolName._
 import de.proteinevolution.results.models.ForwardMode
+import play.api.Configuration
 
 import scala.sys.process
 import scala.sys.process.Process
@@ -17,7 +18,8 @@ private[results] object ProcessFactory {
       mode: ForwardMode,
       accString: String,
       db: String,
-      basePath: String
+      basePath: String,
+      config: Configuration
   ): process.ProcessBuilder = {
 
     val generateAlignmentScript = (basePath + "/generateAlignment.sh").toFile // HHPRED, HHBLITS alnEval
@@ -47,7 +49,14 @@ private[results] object ProcessFactory {
         (retrieveFullSeq, List("jobID" -> jobID, "accessionsStr" -> accString, "filename" -> tempFileName, "db" -> db))
       case _ => throw new IllegalArgumentException("no valid parameters for processing a forwarding job")
     }
-    Process(script.pathAsString, resultFile.toJava, params: _*)
+
+    val env: List[(String, String)] = List(
+      "ENVIRONMENT" -> config.get[String]("environment"),
+      "BIOPROGS" -> config.get[String]("bio_prog_root"),
+      "DATABASES" -> config.get[String]("db_root")
+    )
+
+    Process(script.pathAsString, resultFile.toJava, params ++ env : _*)
   }
 
 }

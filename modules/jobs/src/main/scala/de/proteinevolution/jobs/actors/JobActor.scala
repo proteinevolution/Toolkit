@@ -482,15 +482,16 @@ class JobActor @Inject()(
               //Set soft memory limit to 95% of hard memory limit
               val s_vmem  = h_vmem * 0.95
               val threads = math.ceil(config.get[Int](s"Tools.${job.tool}.threads") * TEL.threadsFactor).toInt
-              val sgeNodes = config.get[String]("sge_nodes")
-
 
               env.configure(s"MEMORY", h_vmem.toString + "G")
               env.configure(s"SOFTMEMORY", s_vmem.toString + "G")
               env.configure(s"THREADS", threads.toString)
               env.configure(s"HARDRUNTIME", h_rt.toString)
               env.configure(s"SOFTRUNTIME", s_rt.toString)
-              env.configure(s"SGENODES", sgeNodes.toString)
+              env.configure(s"SUBMITMODE", config.get[String]("submit_mode"))
+              env.configure(s"SGENODES", config.get[String]("sge_nodes"))
+              env.configure(s"DATABASES", config.get[String]("db_root"))
+              env.configure(s"BIOPROGS", config.get[String]("bio_prog_root"))
 
               log.info(s"$jobID is running with $h_vmem GB h_vmem")
               log.info(s"$jobID is running with $threads threads")

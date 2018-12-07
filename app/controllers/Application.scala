@@ -8,7 +8,7 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tools.ToolConfig
 import play.api.mvc._
-import play.api.{ Environment, Logger }
+import play.api.{ Environment, Logger, Configuration }
 import org.webjars.play.WebJarsUtil
 
 import scala.concurrent.ExecutionContext
@@ -21,7 +21,8 @@ final class Application @Inject()(
     cc: ControllerComponents,
     env: Env,
     environment: Environment,
-    assetsFinder: AssetsFinder
+    assetsFinder: AssetsFinder,
+    config: Configuration
 )(implicit ec: ExecutionContext)
     extends ToolkitController(cc) {
 
@@ -62,17 +63,18 @@ final class Application @Inject()(
   }
 
   private def configEnv(request: Request[AnyContent]): Unit = {
+
+    env.configure(s"HOSTNAME", config.get[String]("host_name"))
+    
     environment.mode match {
+
       case play.api.Mode.Prod =>
         val port     = "9000"
-        val hostname = "rye"
         env.configure("PORT", port)
-        env.configure("HOSTNAME", hostname)
+
       case _ =>
         val port = request.host.slice(request.host.indexOf(":") + 1, request.host.length)
-        //val hostname = request.host.slice(0, request.host.indexOf(":"))
         env.configure("PORT", port)
-        env.configure("HOSTNAME", "olt")
     }
   }
 
