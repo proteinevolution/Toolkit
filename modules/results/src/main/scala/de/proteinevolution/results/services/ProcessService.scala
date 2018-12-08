@@ -42,9 +42,16 @@ class ProcessService @Inject()(
       isExec <- OptionT.pure[Future](file.isExecutable)
       if isExec
     } yield {
-      Process(file.pathAsString, (constants.jobPath + jobId).toFile.toJava, "jobID" -> jobId, "accession" -> accession)
-        .run()
-        .exitValue()
+
+      val env: List[(String, String)] = List(
+        "jobID"        -> jobId,
+        "accession"    -> accession,
+        "ENVIRONMENT"  -> config.get[String]("environment"),
+        "BIOPROGSROOT" -> config.get[String]("bioprogs_root"),
+        "DATABASES"    -> config.get[String]("db_root")
+      )
+
+      Process(file.pathAsString, (constants.jobPath + jobId).toFile.toJava, env: _*).run().exitValue()
     }
   }
 
@@ -75,7 +82,8 @@ class ProcessService @Inject()(
               mode,
               accStrParsed,
               result.db,
-              scriptPath
+              scriptPath,
+              config
             ).run().exitValue()
         }
       case _ =>

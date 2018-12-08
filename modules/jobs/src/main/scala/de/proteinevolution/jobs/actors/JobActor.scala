@@ -488,6 +488,10 @@ class JobActor @Inject()(
               env.configure(s"THREADS", threads.toString)
               env.configure(s"HARDRUNTIME", h_rt.toString)
               env.configure(s"SOFTRUNTIME", s_rt.toString)
+              env.configure(s"SUBMITMODE", config.get[String]("submit_mode"))
+              env.configure(s"SGENODES", config.get[String]("sge_nodes"))
+              env.configure(s"DATABASES", config.get[String]("db_root"))
+              env.configure(s"BIOPROGSROOT", config.get[String]("bioprogs_root"))
 
               log.info(s"$jobID is running with $h_vmem GB h_vmem")
               log.info(s"$jobID is running with $threads threads")

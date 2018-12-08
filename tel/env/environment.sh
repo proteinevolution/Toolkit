@@ -1,116 +1,113 @@
 #!/bin/bash
+#Databases
 
+export TK_ROOT="${BIOPROGSROOT}"
+export BIOPROGS="${TK_ROOT}/bioprogs"
+export STANDARD="${DATABASES}/standard"
 
-BIOPROGS="/ebio/abt1_share/toolkit_support1/code/bioprogs"
-DATABASES="/ebio/abt1_share/toolkit_sync/databases"
+#HHomp database
+export HHOMPDBPATH="${DATABASES}/hhomp/db"
 
-# Databases
-export STANDARDNEW="${DATABASES}/standard/NewToolkitDBs"
-export TAXONOMY="${DATABASES}/standard/taxonomy"
-
-# JAVA
+#JAVA
 ##########################################################
-export JAVA_HOME=/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/jdk1.8.0_112
-export JRE_HOME=/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/jdk1.8.0_112/jre
+export JAVA_HOME="${BIOPROGS}/dependencies/jdk1.8.0_112"
+export JRE_HOME="${BIOPROGS}/dependencies/jdk1.8.0_112/jre"
 
-
-# PERL
+#PERL
 ##########################################################
-export PERL5LIB=/ebio/abt1_share/toolkit_support1/code/bioprogs/lib
+export PERL5LIB="${BIOPROGS}/lib"
 
-# HHLIB
-export HHLIB=/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/hh-suite-build
-
-
-# HHpred
-export HHPRED_CONFIG=/ebio/abt1_share/toolkit_support1/code/bioprogs/env/hhpred.config
-
-
-# COILS/PCOILS
-export COILSDIR=/ebio/abt1_share/toolkit_support1/code/bioprogs/pcoils
-
-#BACKTRANSLATOR
-export BACKTRANSLATORPATH=/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/backtranslate
-
-#SamCC
-export SAMCCPATH=/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/samcc
-
-
-# PATH variable 
-export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}" # Python binary
-export PATH="${BIOPROGS}/dependencies/hh-suite_misc_scripts:$PATH" # helper scripts from the old Toolkit
-export PATH="${BIOPROGS}/tools/hh-suite-build/scripts:${PATH}" # HHSCRIPTS
-export PATH="${BIOPROGS}/tools/hh-suite-build/bin:${PATH}" # HHBINS
-export PATH="${BIOPROGS}/dependencies/psipred:/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/psipred/bin:${PATH}" # PSIPRED
-export PATH="${BIOPROGS}/tools/mmseqs2/build/bin:${PATH}" # MMSEQS
-export PATH="${BIOPROGS}/dependencies/dssp:${PATH}" # DSSP
-export PATH="${BIOPROGS}/tools/ali2d:${PATH}" # ALI2D
-export PATH="${BIOPROGS}/tools/tcoffee/bin:${PATH}" # T-COFFEE
-export PATH="${BIOPROGS}/tools/backtranslate:${PATH}" # Backtranslate
-export PATH="${BIOPROGS}/helpers:${PATH}" # Helpers
-export PATH="${BIOPROGS}/tools/blastplus/bin:${PATH}" # NCBI-BLAST
-export PATH="${BIOPROGS}/tools/ancescon:${PATH}" # ANCESCON
-export PATH="${BIOPROGS}/tools/clustalo/bin:${PATH}" #CLustalOmega
-export PATH="${BIOPROGS}/tools/glprobs:${PATH}" # GLProbs
-export PATH="${BIOPROGS}/tools/msaprobs:${PATH}" # MSAProbs
-export PATH="${BIOPROGS}/tools/muscle:${PATH}" # MUSCLE
-export PATH="${BIOPROGS}/tools/tprpred:${PATH}" # TPRPRED
-export PATH="${BIOPROGS}/tools/kalign:${PATH}" # KAlign
-export PATH="${BIOPROGS}/tools/mafft2/scripts:${PATH}"
-export PATH="${BIOPROGS}/tools/aln2plot:${PATH}"
-export PATH="${BIOPROGS}/tools/phylip:${PATH}" # PHYLIP
-export PATH="${BIOPROGS}/tools/pcoils:${PATH}" # PCOILS
-export PATH="${BIOPROGS}/tools/marcoil:${PATH}" # MARCOIL
-export PATH="${BIOPROGS}/tools/modeller_9.15/bin:${PATH}" # MODELLER
-export PATH="${BIOPROGS}/helpers/anolea_bin:${PATH}" # Helpers MODELLER QUALITY CHECK
-export PATH="${BIOPROGS}/helpers/Solvx:${PATH}" # Helpers MODELLER QUALITY CHECK
-export PATH="${BIOPROGS}/helpers/verify3d:${PATH}" # Helpers MODELLER QUALITY CHECK
-export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}" 
-export PATH="${BIOPROGS}/tools/hmmer/binaries:${PATH}" # HMMER
-export PATH="${BIOPROGS}/tools/retrieveseq:${PATH}" # RetrieveSeq
-export PATH="${BIOPROGS}/tools/seq2id:${PATH}" # Seq2ID
-export PATH="${BIOPROGS}/tools/mmseqs2-build/bin:${PATH}" # MMseqs2
-export PATH="${BIOPROGS}/tools/patternsearch:${PATH}" # PatternSearch
-export PATH="${BIOPROGS}/tools/sixframe:${PATH}" # 6FrameTranslation
-export PATH="${BIOPROGS}/tools/hhrepid/bin:${PATH}" # HHrepid
-export PATH="${BIOPROGS}/tools/tmhmm/bin:${PATH}" # TMHMM
-
-#Setup Ali2D
+#COILS/PCOILS
+export COILSDIR="${BIOPROGS}/pcoils"
+#HHLIB
+export HHLIB="${BIOPROGS}/tools/hh-suite-build"
+#ALI2D
 export ALI2DPATH="${BIOPROGS}/tools/ali2d"
-
-#Setup SamCC
+#HHpred
+export HHPRED_CONFIG="${BIOPROGS}/env/hhpred.config"
+#CLANS
+export CLANSPATH="${BIOPROGS}/tools/clans"
+#REPPER
+export REPPERDIR="${BIOPROGS}/tools/repper"
+#BACKTRANSLATOR
+export BACKTRANSLATORPATH="${BIOPROGS}/tools/backtranslate"
+#SamCC
 export SAMCCPATH="${BIOPROGS}/tools/samcc"
-
-# Setup HHrepid
-export HHREPIDPATH="${BIOPROGS}/tools/hhrepid"
-
+#HHomp
+export HHOMPPATH="${BIOPROGS}/tools/hhomp"
+#PolyPhobius
+export POLYPHOBIUS="${BIOPROGS}/tools/Phobius/PolyPhobius"
+#SPOT-D and SPIDER2
+export SPOTD="${BIOPROGS}/tools/SPOT-disorder_local/misc"
+#IUPred
+export IUPred_PATH="${BIOPROGS}/tools/iupred"
+#PSSPRED
+export PSSPRED="${BIOPROGS}/tools/PSSpred_v3"
+#DeepCNF_SS
+export DEEPCNF="${BIOPROGS}/tools/DeepCNF_SS_v1.02_release"
+#PiPred
+export PIPRED="${BIOPROGS}/tools/pipred"
+#DeepCoil
+export DEEPCOIL="${BIOPROGS}/tools/deepcoil"
+#Setup HHrepid
+export HHREPIDPATH="${BIOPROGS}/tools/hhrepid" 
 #Setup HMMER
 export HMMERPATH="${BIOPROGS}/tools/hmmer/bin"
-
-# Setup Blammer
-export BLAMMERJAR="${BIOPROGS}/tools/blammer/blammer.jar"
-export BLAMMERCONF="${BIOPROGS}/tools/blammer/blammer.conf"
-
 export HMMERBINARIES="${BIOPROGS}/tools/hmmer/binaries"
-
-# Setup Mafft
+#Setup Mafft
 export MAFFT_BINARIES="${BIOPROGS}/tools/mafft2/binaries"
-
-# Setup MARCOIL
+#Setup MARCOIL
 MARCOILMTIDK="${BIOPROGS}/tools/marcoil/R5.MTIDK"
 MARCOILMTK="${BIOPROGS}/tools/marcoil/R5.MTK"
 MARCOILINPUT="${BIOPROGS}/tools/marcoil/Inputs"
+#PYTHONPATH FOR PDBX AND MODELLER
+export PYTHONPATH="${BIOPROGS}/tools/modeller/modlib/:${BIOPROGS}/dependencies/pdbx"
+#Setup PHYLIP (needed by the Perl Script of Phylip)
+export PHYLIPBIN="${BIOPROGS}/tools/phylip/current/bin64"
+#Reformat version with PHYLIP Support (new reformat.pl does not have this support)
+export REFORMAT_PHYLIP="${BIOPROGS}/helpers/reformat_protblast.pl"
 
-# PYTHONPATH FOR PDBX AND MODELLER
-export PYTHONPATH=/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/modeller_9.15/modlib/:/ebio/abt1_share/toolkit_support1/code/bioprogs/dependencies/pdbx
-
-# Setup PHYLIP (needed by the Perl Script of Phylip)
-export PHYLIPBIN=/ebio/abt1_share/toolkit_support1/code/bioprogs/tools/phylip/current/bin64
-
-
-# Reformat version with PHYLIP Support (new reformat.pl does not have this support)
-export REFORMAT_PHYLIP=/ebio/abt1_share/toolkit_support1/code/bioprogs/helpers/reformat_protblast.pl
-
-
-
-
+#PATH variable
+export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}" #Python binary
+export PATH="${BIOPROGS}/pcoils:${PATH}" #PCOILS
+export PATH="${BIOPROGS}/dependencies/hh-suite_misc_scripts:${PATH}" # helper scripts from the old Toolkit
+export PATH="${BIOPROGS}/tools/hh-suite-build/scripts:${PATH}" #HHSCRIPTS
+export PATH="${BIOPROGS}/tools/hh-suite-build/bin:${PATH}" #HHBINS
+export PATH="${BIOPROGS}/dependencies/psipred:${BIOPROGS}/dependencies/psipred/bin:${PATH}" #PSIPRED
+export PATH="${BIOPROGS}/tools/mmseqs2/build/bin:${PATH}" #MMSEQS
+export PATH="${BIOPROGS}/dependencies/dssp:${PATH}" #DSSP
+export PATH="${BIOPROGS}/tools/tcoffee/bin:${PATH}" #T-COFFEE
+export PATH="${BIOPROGS}/tools/backtranslate:${PATH}" #Backtranslate
+export PATH="${BIOPROGS}/helpers:${PATH}" #Helpers
+export PATH="${BIOPROGS}/tools/blastplus/bin:${PATH}" #NCBI-BLAST+
+export PATH="${BIOPROGS}/tools/ancescon:${PATH}" #ANCESCON
+export PATH="${BIOPROGS}/tools/ali2d:${PATH}" #ALI2D
+export PATH="${BIOPROGS}/tools/memsat2:${PATH}" #MEMSAT
+export PATH="${BIOPROGS}/tools/clustalo/bin:${PATH}" #CLustalOmega
+export PATH="${BIOPROGS}/tools/glprobs:${PATH}" #GLProbs
+export PATH="${BIOPROGS}/tools/msaprobs:${PATH}" #MSAProbs
+export PATH="${BIOPROGS}/tools/muscle:${PATH}" #MUSCLE
+export PATH="${BIOPROGS}/tools/tprpred:${PATH}" #TPRPRED
+export PATH="${BIOPROGS}/tools/kalign:${PATH}" #KAlign
+export PATH="${BIOPROGS}/tools/mafft2/scripts:${PATH}" #MAFFT
+export PATH="${BIOPROGS}/tools/aln2plot:${PATH}"
+export PATH="${BIOPROGS}/tools/phylip:${PATH}" #PHYLIP
+export PATH="${BIOPROGS}/tools/marcoil:${PATH}" #MARCOIL
+export PATH="${BIOPROGS}/tools/modeller/bin:${PATH}" #MODELLER
+export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}" 
+export PATH="${BIOPROGS}/tools/hmmer/binaries:${PATH}" #HMMER
+export PATH="${BIOPROGS}/tools/retrieveseq:${PATH}" #RetrieveSeq
+export PATH="${BIOPROGS}/tools/seq2id:${PATH}" #Seq2ID
+export PATH="${BIOPROGS}/tools/patternsearch:${PATH}" #PatternSearch
+export PATH="${BIOPROGS}/tools/sixframe:${PATH}" #6FrameTranslation
+export PATH="${BIOPROGS}/tools/hhrepid/bin:${PATH}" #HHrepid
+export PATH="${BIOPROGS}/tools/clans:${PATH}" #CLANS
+export PATH="${BIOPROGS}/tools/phyml/PhyML-3.1:${PATH}" #PhyML
+export PATH="${BIOPROGS}/tools/samcc:${PATH}"  #SamCC
+export PATH="${BIOPROGS}/tools/tmhmm/bin:${PATH}" #TMHMM
+export PATH="${BIOPROGS}/tools/Phobius:${PATH}" #PHOBIUS
+export PATH="${BIOPROGS}/tools/Phobius/PolyPhobius:${PATH}" #POLYPHOBIUS
+export PATH="${BIOPROGS}/tools/iupred:${PATH}" #IUPRED
+export PATH="${BIOPROGS}/tools/signalp-4.1:${PATH}" #SIGNALP
+export PATH="${BIOPROGS}/tools/blast-2.2.26/bin:${PATH}" #LEGACY BLAST
+export PATH="${BIOPROGS}/tools/DISOPRED:${PATH}" #DISOPRED
