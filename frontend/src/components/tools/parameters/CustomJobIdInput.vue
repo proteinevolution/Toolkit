@@ -7,7 +7,7 @@
         </b-form-input>
         <b-form-invalid-feedback id="custom-job-id-invalid"
                                  v-if="valid === false">
-            <i18n :path="error.textKey" tag="span" for="suggestion">
+            <i18n :path="error.textKey" tag="span">
                 <span class="suggestion-link"
                       @click="takeSuggestion"
                 >{{ suggestion }}</span>

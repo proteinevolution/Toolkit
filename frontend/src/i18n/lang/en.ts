@@ -1,4 +1,6 @@
 import modalContent from './modals/en';
+import common from './modals/help/en/common';
+import hhblits from './modals/help/en/hhblits';
 
 export default {
     en: {
@@ -113,6 +115,10 @@ export default {
                 updates: 'Recent Updates',
             },
             content: modalContent,
+        },
+        toolHelpModals: {
+            common,
+            hhblits,
         },
         copyright: '© 2008-{currentYear}, Dept. of Protein Evolution, ' +
             'Max Planck Institute for Developmental Biology, Tübingen',

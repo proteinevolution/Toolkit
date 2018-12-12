@@ -1,7 +1,7 @@
 <template>
-    <BaseModal :title="'Help'"
+    <BaseModal :title="toolName"
                @close="$emit('close')">
-        <div v-html="contents"/>
+        <component :is="`${toolName}Help`"></component>
     </BaseModal>
 </template>
 
@@ -13,12 +13,19 @@
         name: 'HelpModal',
         components: {
             BaseModal,
+            hhblitsHelp: () => import('./help/hhblitsHelp.vue'),
         },
         props: {
-            contents: {
+            toolName: {
                 type: String,
                 required: true,
             },
         },
     });
 </script>
+
+<style>
+    .tab-pane {
+        padding: 2em;
+    }
+</style>

@@ -157,15 +157,12 @@
                     });
             },
             launchHelpModal(): void {
-                ToolService.fetchToolHelp(this.toolName)
-                    .then((response) => {
-                        this.$modal.show(HelpModal, {contents: response}, {
-                            draggable: false,
-                            width: '60%',
-                            height: 'auto',
-                            scrollable: true,
-                        });
-                    });
+                this.$modal.show(HelpModal, {toolName: this.toolName}, {
+                    draggable: false,
+                    width: '60%',
+                    height: 'auto',
+                    scrollable: true,
+                });
             },
         },
     });
