@@ -60,19 +60,12 @@ final class JobDispatcher @Inject()(
       fileParts: Seq[MultipartFormData.FilePart[Files.TemporaryFile]]
   ): Map[String, String] = {
     val form = dataParts.mapValues(_.mkString(constants.formMultiValueSeparator))
-    fileParts
-      .flatMap { file =>
-        val lines = File(file.ref.path).newInputStream.autoClosed.map(_.lines.mkString("\n")).get()
-        if (("alignment" :: "alignment_two" :: Nil).contains(file.filename) && lines.nonEmpty) {
-          form.updated(file.filename, lines)
-        } else {
-          form
-        }
-      }
-      .collect {
-        case (k, v) if v.nonEmpty => (k, v)
-      }
-      .toMap
+    val fileParams = for {
+      file <- fileParts
+      lines = File(file.ref.path).newInputStream.autoClosed.map(_.lines.mkString("\n")).get()
+      if ("alignment" :: "alignment_two" :: Nil).contains(file.filename) && lines.nonEmpty
+    } yield (file.filename, lines)
+    form ++ fileParams
   }
 
   private[this] def send(gid: String, job: Job, parts: Map[String, String], isFromInstitute: Boolean): Unit = {
