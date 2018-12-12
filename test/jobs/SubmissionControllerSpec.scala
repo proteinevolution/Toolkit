@@ -2,17 +2,16 @@ package jobs
 
 import org.scalatestplus.play.PlaySpec
 import play.api.http.ContentTypes
-import de.proteinevolution.jobs.controllers.SubmissionController
 
 class SubmissionControllerSpec extends PlaySpec with ContentTypes {
 
 
-  private val ctrl = new SubmissionController()
-
-  "SubmissionController#submitJob" should {
-    "return a job if a valid input file was uploaded" in {
-
-    }
-  }
+//  private val ctrl = new SubmissionController()
+//
+//  "SubmissionController#submitJob" should {
+//    "return a job if a valid input file was uploaded" in {
+//
+//    }
+//  }
 
 }
