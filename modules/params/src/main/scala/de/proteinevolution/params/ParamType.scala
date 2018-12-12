@@ -113,7 +113,7 @@ object ParamType {
   // temporary hack, needed in order to use the @JsonCodec annotation for the Param case class
   implicit val paramTypeDecoder: Decoder[ParamType] = (_: HCursor) => {
     Right(new ParamType {
-      override def validate(value: String): Option[String] = Option("foo")
+      override def validate(value: String): Option[String] = Option("error")
     })
   }
 

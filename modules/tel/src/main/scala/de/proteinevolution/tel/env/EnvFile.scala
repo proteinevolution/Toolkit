@@ -53,15 +53,13 @@ class PropFile(path: String, config: Configuration) extends EnvFile(path) {
         val spt     = b.split('=')
         var updated = EnvFile.placeholder.replaceAllIn(spt(1), matcher => a(matcher.group("expression"))).trim()
         updated match {
-          case x if x.startsWith("foo") => updated = updated.replace("foo", config.get[String]("db_root"))
-          case x if x.startsWith("env_foo") =>
-            updated = updated.replace("env_foo", config.get[String]("environment"))
-          case x if x.startsWith("helper_foo") =>
-            updated = updated.replace("helper_foo", config.get[String]("helper_scripts"))
-          case x if x.startsWith("perllib_foo") =>
-            updated = updated.replace("perllib_foo", config.get[String]("perl_lib"))
-          case x if x.startsWith("standarddb_bar") =>
-            updated = updated.replace("standarddb_bar", config.get[String]("standard_db"))
+          case x if x.startsWith("db_root_placeholder") => updated = updated.replace("db_root_placeholder", config.get[String]("db_root"))
+          case x if x.startsWith("env_placeholder") =>
+            updated = updated.replace("env_placeholder", config.get[String]("environment"))
+          case x if x.startsWith("helper_placeholder") =>
+            updated = updated.replace("helper_placeholder", config.get[String]("helper_scripts"))
+          case x if x.startsWith("perllib_placeholder") =>
+            updated = updated.replace("perllib_placeholder", config.get[String]("perl_lib"))
           case _ => logger.debug("Env file has no preconfigured key in the configs")
         }
         a.updated(spt(0).trim(), updated)
