@@ -9,7 +9,9 @@ services:
   - mongodb
   - docker
 env:
-  matrix: SBT_BIN=sbt -Dsbt.override.build.repos=true
+  matrix:
+  - SBT_BIN=sbt -Dsbt.override.build.repos=true
+  - MONGODB_URI=mongodb://127.0.0.1:27017/test
 before_cache:
   - find $HOME/.ivy2/cache -name 'ivydata-*.properties' -delete
   - find $HOME/.sbt -name '*.lock' -delete

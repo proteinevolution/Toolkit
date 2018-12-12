@@ -34,7 +34,7 @@ final class JobDispatcher @Inject()(
   def submitJob(
       toolName: String,
       dataParts: Map[String, Seq[String]],
-      filePart: Option[MultipartFormData.FilePart[Files.TemporaryFile]],
+      filePart: Seq[MultipartFormData.FilePart[Files.TemporaryFile]],
       user: User
   ): EitherT[Future, JobSubmitError, Job] = {
     if (!modellerKeyIsValid(toolName, user)) {
@@ -57,22 +57,15 @@ final class JobDispatcher @Inject()(
 
   private[this] def readForm(
       dataParts: Map[String, Seq[String]],
-      filePart: Option[MultipartFormData.FilePart[Files.TemporaryFile]]
+      fileParts: Seq[MultipartFormData.FilePart[Files.TemporaryFile]]
   ): Map[String, String] = {
     val form = dataParts.mapValues(_.mkString(constants.formMultiValueSeparator))
-    filePart
-      .map { file =>
-        val lines = File(file.ref.path).newInputStream.autoClosed.map(_.lines.mkString("\n")).get()
-        if (("alignment" :: "alignment_two" :: Nil).contains(file.filename) && lines.nonEmpty) {
-          form.updated(file.filename, lines)
-        } else {
-          form
-        }
-      }
-      .getOrElse(form)
-      .collect {
-        case (k, v) if v.nonEmpty => (k, v)
-      }
+    val fileParams = for {
+      file <- fileParts
+      lines = File(file.ref.path).newInputStream.autoClosed.map(_.lines.mkString("\n")).get()
+      if ("alignment" :: "alignment_two" :: Nil).contains(file.filename) && lines.nonEmpty
+    } yield (file.filename, lines)
+    form ++ fileParams
   }
 
   private[this] def send(gid: String, job: Job, parts: Map[String, String], isFromInstitute: Boolean): Unit = {
