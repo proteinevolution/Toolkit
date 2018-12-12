@@ -11,5 +11,5 @@ object Accession {
   implicit val hhpredValue: Accession[HHPredHSP]     = (a: HHPredHSP) => a.template.get.accession
   implicit val hhblitsValue: Accession[HHBlitsHSP]   = (a: HHBlitsHSP) => a.template.get.accession
   implicit val hhompValue: Accession[HHompHSP]       = (a: HHompHSP) => a.template.get.accession
-  implicit val psiBlastValue: Accession[PSIBlastHSP] = (a: PSIBlastHSP) => a.template.get.accession
+  implicit val psiBlastValue: Accession[PSIBlastHSP] = (a: PSIBlastHSP) => a.accession
 }

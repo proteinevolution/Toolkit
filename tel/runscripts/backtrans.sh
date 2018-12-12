@@ -29,12 +29,11 @@ echo "#Query is a protein sequence with ${CHAR_COUNT} residues." >> ../results/p
 echo "done" >> ../results/process.log
 
 
-if [ "%codon_table_organism.content" == "" ] ; then
+if [ %codon_table_organism.content = "" ] || [ %codon_table_organism.content = "false" ] ; then
         backtranslate.pl  -o=../results/${JOBID}.out \
                           -i=%alignment.path \
                           -oformat=%inc_amino.content \
                           -g=%genetic_code.content
-
 else
         findOrganism.pl -i "%codon_table_organism.content" \
                         -d ${BACKTRANSLATORPATH}/CUT_database \
