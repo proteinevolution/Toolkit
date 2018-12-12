@@ -10,7 +10,7 @@ def main(argv):
     path = "%STANDARD/PATDB"
     # If directory does not exist, print random stuff
     if not os.path.exists(path):
-        print("foo bar")
+        print("error error")
         return
     args = []
     with open(path, 'r') as infile:

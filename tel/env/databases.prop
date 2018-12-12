@@ -1,4 +1,4 @@
-dbroot   = foo
+dbroot   = db_root_placeholder
 HHSUITE  = %dbroot/hh-suite
 UNICLUST = %dbroot/hhblits/uniclust30
 STANDARD = %dbroot/standard

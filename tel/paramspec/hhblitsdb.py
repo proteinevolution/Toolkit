@@ -7,7 +7,7 @@ def main(argv):
 
     # If directory does not exist, print random stuff
     if not os.path.exists(path): #todo: implement fallback mechanism
-        print("foo bar")
+        print("error error")
         return
 
     with open(path, 'r') as infile:

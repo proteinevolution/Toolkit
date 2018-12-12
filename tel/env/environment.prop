@@ -1,2 +1,3 @@
-ENVIRONMENT = env_foo
-HELPER = helper_foo
+ENVIRONMENT = env_placeholder
+HELPER = helper_placeholder
+PERLLIB  = perllib_placeholder
