@@ -248,7 +248,7 @@ const ParameterAlignmentComponent = {
                                 type: "file",
                                 name: "file_alignment",
                                 id: "fileUpload",
-                                accept: "text/plain",
+                                // accept: "text/plain", MAC OS
                                 "class": "show-for-sr",
                                 onchange: function() {
                                     if (this.value) {
