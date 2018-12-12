@@ -10,8 +10,8 @@ export HHOMPDBPATH="${DATABASES}/hhomp/db"
 
 #JAVA
 ##########################################################
-export JAVA_HOME="${BIOPROGS}/dependencies/jdk1.8.0_112"
-export JRE_HOME="${BIOPROGS}/dependencies/jdk1.8.0_112/jre"
+export JAVA_HOME="${BIOPROGS}/dependencies/jdk1.8.0"
+export JRE_HOME="${BIOPROGS}/dependencies/jdk1.8.0/jre"
 
 #PERL
 ##########################################################
@@ -68,6 +68,7 @@ export PHYLIPBIN="${BIOPROGS}/tools/phylip/current/bin64"
 export REFORMAT_PHYLIP="${BIOPROGS}/helpers/reformat_protblast.pl"
 
 #PATH variable
+export PATH="${BIORPOGS}/dependencies/anaconda3/bin:${PATH}"
 export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}" #Python binary
 export PATH="${BIOPROGS}/pcoils:${PATH}" #PCOILS
 export PATH="${BIOPROGS}/dependencies/hh-suite_misc_scripts:${PATH}" # helper scripts from the old Toolkit

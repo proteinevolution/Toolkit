@@ -1,17 +1,17 @@
 language: scala
-dist: trusty
+dist: xenial
 sudo: required
 scala:
-  - 2.12.7
+  - 2.12.8
 jdk:
   - openjdk8
 services:
   - mongodb
   - docker
 env:
-  matrix:
-  - SBT_BIN=sbt -Dsbt.override.build.repos=true
-  - MONGODB_URI=mongodb://127.0.0.1:27017/test
+  global:
+    - SBT_BIN=sbt -Dsbt.override.build.repos=true
+    - MONGODB_URI=mongodb://127.0.0.1:27017/test
 before_cache:
   - find $HOME/.ivy2/cache -name 'ivydata-*.properties' -delete
   - find $HOME/.sbt -name '*.lock' -delete

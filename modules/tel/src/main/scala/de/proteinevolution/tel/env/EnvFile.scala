@@ -9,7 +9,7 @@ import scala.util.matching.Regex
 
 object EnvFile {
 
-  final val placeholder: Regex = "%([A-Z]+)".r("expression")
+  final val placeholder: Regex = "%([a-z]+)".r("expression")
 
 }
 
