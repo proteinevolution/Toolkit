@@ -11,14 +11,14 @@ services:
     stdin_open: true
     tty: true
     ports:
-    - 1234:1234
-    - 8080:8080
+      - 1234:1234
+      - 8080:8080
     volumes:
     - .:/toolkit
     links:
-    - mongodb
+      - mongodb
     depends_on:
-    - mongodb
+      - mongodb
     networks:
       tk-network:
         ipv4_address: 174.18.0.2
@@ -28,12 +28,12 @@ services:
     image: mongo:4.0
     container_name: tk-mongodb
     environment:
-    - MONGO_DATA_DIR=/data/db
-    - MONGO_LOG_DIR=/data/log
-    - MONGO_INITDB_ROOT_USERNAME=root
-    - MONGO_INITDB_ROOT_PASSWORD=rootPassXX
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/data/log
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=rootPassXX
     volumes:
-    - mongodb:/data/db
+      - mongodb:/data/db
     ports:
     - 27017:27017
     command: mongod --auth
