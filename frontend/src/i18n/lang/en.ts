@@ -1,5 +1,4 @@
 import modalContent from './modals/en';
-import common from './modals/help/en/common';
 import hhblits from './modals/help/en/hhblits';
 
 export default {
@@ -116,8 +115,8 @@ export default {
             },
             content: modalContent,
         },
+        // TODO lazy load translations
         toolHelpModals: {
-            common,
             hhblits,
         },
         copyright: '© 2008-{currentYear}, Dept. of Protein Evolution, ' +
