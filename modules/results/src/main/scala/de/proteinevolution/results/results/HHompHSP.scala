@@ -5,15 +5,13 @@ import io.circe._
 
 case class HHompHSP(
     query: HHompQuery,
-    template: Option[HHompTemplate],
-    info: Option[HHompInfo],
+    template: HHompTemplate,
+    info: HHompInfo,
     agree: String,
     description: String,
     num: Int,
     ss_score: Double,
     length: Int,
-    eValue: Double = -1,
-    accession: String = ""
 ) extends HSP {
 
   import SearchResultImplicits._
@@ -22,16 +20,21 @@ case class HHompHSP(
     val _ = db
     Map[String, Either[Either[Double, Int], String]](
       "0" -> Right(Common.getAddScrollLink(num)),
-      "1" -> Right(template.get.accession),
+      "1" -> Right(template.accession),
       "2" -> Right(description.slice(0, 18)),
-      "3" -> Left(Left(info.get.probab_hit)),
-      "4" -> Left(Left(info.get.probab_OMP)),
-      "5" -> Left(Left(info.get.eval)),
+      "3" -> Left(Left(info.probab_hit)),
+      "4" -> Left(Left(info.probab_OMP)),
+      "5" -> Left(Left(info.eval)),
       "6" -> Left(Left(ss_score)),
-      "7" -> Left(Right(info.get.aligned_cols)),
-      "8" -> Left(Right(template.get.ref))
+      "7" -> Left(Right(info.aligned_cols)),
+      "8" -> Left(Right(template.ref))
     ).asJson
   }
+
+  override val accession: String = template.accession
+
+  override val eValue: Double = info.eval
+
 }
 
 object HHompHSP {
@@ -48,8 +51,8 @@ object HHompHSP {
       } yield {
         new HHompHSP(
           queryResult,
-          Some(templateResult),
-          Some(infoResult),
+          templateResult,
+          infoResult,
           agree,
           description,
           num,

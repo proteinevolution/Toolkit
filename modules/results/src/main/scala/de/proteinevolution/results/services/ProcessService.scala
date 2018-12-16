@@ -17,7 +17,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 import scala.sys.process.Process
 
 @Singleton
-class ProcessService @Inject()(
+final class ProcessService @Inject()(
     config: Configuration,
     toolFinder: ToolNameGetService,
     resultFiles: ResultFileAccessor,
@@ -25,11 +25,11 @@ class ProcessService @Inject()(
 )(implicit ec: ExecutionContext)
     extends ResultsRepository {
 
-  private val logger = Logger(this.getClass)
+  private[this] val logger = Logger(this.getClass)
 
-  private val scriptPath: String = config.get[String]("server_scripts")
+  private[this] val scriptPath: String = config.get[String]("server_scripts")
 
-  private val resultsService = ResultsService(toolFinder, resultFiles)
+  private[this] val resultsService = ResultsService(toolFinder, resultFiles)
 
   def templateAlignment(jobId: String, accession: String): OptionT[Future, Int] = {
     for {
@@ -101,7 +101,7 @@ class ProcessService @Inject()(
   ): String = {
     (toolName, mode.toString) match {
       case (HHBLITS, "alnEval") | (HHPRED, "alnEval") =>
-        result.HSPS.filter(_.info.get.eval <= accStr.toDouble).map { _.num }.mkString(" ")
+        result.HSPS.filter(_.eValue <= accStr.toDouble).map { _.num }.mkString(" ")
       case (HMMER, "alnEval") =>
         result.HSPS
           .filter(_.eValue <= accStr.toDouble)
@@ -116,12 +116,12 @@ class ProcessService @Inject()(
       case (HMMER, "evalFull") | (PSIBLAST, "evalFull") =>
         result.HSPS.filter(_.eValue <= accStr.toDouble).map { _.accession + " " }.mkString
       case (HHBLITS, "evalFull") =>
-        result.HSPS.filter(_.info.get.eval <= accStr.toDouble).map { _.template.get.accession + " " }.mkString
+        result.HSPS.filter(_.eValue <= accStr.toDouble).map { _.accession + " " }.mkString
       case (_, "full") =>
         val numList = accStr.split("\n").map(_.toInt)
         numList.map { num =>
           if (toolName == HHBLITS)
-            "%s ".format(result.HSPS(num - 1).template.get.accession)
+            "%s ".format(result.HSPS(num - 1).accession)
           else
             "%s ".format(result.HSPS(num - 1).accession)
         }.mkString

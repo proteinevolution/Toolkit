@@ -10,7 +10,7 @@ case class HHPredInfo(
     probab: Double,
     score: Double,
     similarity: Double
-) extends SearchToolInfo
+)
 
 object HHPredInfo {
 

@@ -6,7 +6,7 @@
 <tr>
     <td></td>
     <td colspan="3">
-    @Common.getLinksHHBlits(jobID, hit.template.get.accession)
+    @Common.getLinksHHBlits(jobID, hit.template.accession)
     </td>
     <td></td>
 </tr>
@@ -14,17 +14,17 @@
 <tr class="header">
     <td class="indexCheckbox"><input type="checkbox" name="alignment_elem" class="checkbox aln" value='@{hit.num}' data-id='@{hit.num}'> @{hit.num}.</td>
 <td class="hitInfo" colspan="4">
-    @Common.getSingleLinkHHBlits(hit.template.get.accession)
+    @Common.getSingleLinkHHBlits(hit.template.accession)
     @{"  "+ hit.description}
 </td>
 </tr>
 @* Alignment Details*@
 <tr>
     <td></td>
-    <td class="hitInfo" colspan="4">Probability: @{hit.info.get.probab}&emsp;&emsp;E-value: @{hit.info.get.eval}&emsp;&emsp;
-        Score: @{hit.info.get.score}&emsp;&emsp;Aligned Cols: @{hit.info.get.aligned_cols}&emsp;&emsp;
-        Identities: @{Common.percentage(hit.info.get.identities.toString)}&emsp;&emsp;
-        Similarity: @{hit.info.get.similarity}
+    <td class="hitInfo" colspan="4">Probability: @{hit.info.probab}&emsp;&emsp;E-value: @{hit.info.eval}&emsp;&emsp;
+        Score: @{hit.info.score}&emsp;&emsp;Aligned Cols: @{hit.info.aligned_cols}&emsp;&emsp;
+        Identities: @{Common.percentage(hit.info.identities.toString)}&emsp;&emsp;
+        Similarity: @{hit.info.similarity}
     </td>
 </tr>
 <tr>
@@ -32,7 +32,7 @@
 </tr>
 
 @if(wrapped){
-    @Html(Common.hhblitsHitWrapped(hit, 0, 85, hit.query.start, hit.template.get.start))
+    @Html(Common.hhblitsHitWrapped(hit, 0, 85, hit.query.start, hit.template.start))
 }else {
     @Html(Common.makeRow("sequence", Array("", "Q " + hit.query.start.toString, hit.query.seq + "   " + hit.query.end.toString + " " + "(" + hit.query.ref + ")")))
     @*Consensus of query, if present*@
@@ -40,9 +40,9 @@
     @* agree of query, if present *@
     @Html(Common.makeRow("sequence", Array("", "", hit.agree)))
     @* consensus template, if present *@
-    @Html(Common.makeRow("sequence", Array("", "", hit.template.get.consensus)))
+    @Html(Common.makeRow("sequence", Array("", "", hit.template.consensus)))
     @* seq template, if present *@
-    @Html(Common.makeRow("sequence", Array("", "T " + hit.template.get.start.toString, hit.template.get.seq + "   " + hit.template.get.end.toString + " " + "(" + hit.template.get.ref + ")")))
+    @Html(Common.makeRow("sequence", Array("", "T " + hit.template.start.toString, hit.template.seq + "   " + hit.template.end.toString + " " + "(" + hit.template.ref + ")")))
     <tr class="blank_row"><td colspan="5"></td></tr>
 }
 <tr>

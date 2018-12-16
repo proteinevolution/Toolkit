@@ -9,7 +9,7 @@ case class HHBlitsTemplate(
     ref: Int,
     seq: String,
     start: Int
-) extends HHTemplate
+)
 
 object HHBlitsTemplate {
 
