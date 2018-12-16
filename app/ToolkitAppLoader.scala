@@ -23,7 +23,7 @@ class ToolkitAppLoader extends GuiceApplicationLoader {
   }
 
   override def builder(context: Context): GuiceApplicationBuilder = {
-    new MongobeeRunner(mongoUri).run()
+    MongobeeRunner.run(mongoUri)
     super.builder(context)
   }
 
