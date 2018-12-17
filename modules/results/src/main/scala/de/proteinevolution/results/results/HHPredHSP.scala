@@ -5,8 +5,8 @@ import io.circe.{ Decoder, HCursor, Json }
 
 case class HHPredHSP(
     query: HHPredQuery,
-    template: Option[HHPredTemplate],
-    info: Option[HHPredInfo],
+    template: HHPredTemplate,
+    info: HHPredInfo,
     agree: String,
     description: String,
     num: Int,
@@ -14,22 +14,25 @@ case class HHPredHSP(
     confidence: String,
     length: Int,
     eValue: Double = -1,
-    accession: String = ""
 ) extends HSP {
+
   def toDataTable(db: String = ""): Json = {
     import SearchResultImplicits._
     val _ = db
     Map[String, Either[Either[Double, Int], String]](
       "0" -> Right(Common.getCheckbox(num)),
-      "1" -> Right(Common.getSingleLink(template.get.accession).toString),
+      "1" -> Right(Common.getSingleLink(template.accession).toString),
       "2" -> Right(Common.addBreakHHpred(description)),
-      "3" -> Left(Left(info.get.probab)),
-      "4" -> Left(Left(info.get.eval)),
+      "3" -> Left(Left(info.probab)),
+      "4" -> Left(Left(info.eval)),
       "5" -> Left(Left(ss_score)),
-      "6" -> Left(Right(info.get.aligned_cols)),
-      "7" -> Left(Right(template.get.ref))
+      "6" -> Left(Right(info.aligned_cols)),
+      "7" -> Left(Right(template.ref))
     ).asJson
   }
+
+  override val accession: String = template.accession
+
 }
 
 object HHPredHSP {
@@ -47,8 +50,8 @@ object HHPredHSP {
       } yield {
         new HHPredHSP(
           queryResult,
-          Some(templateResult),
-          Some(infoResult),
+          templateResult,
+          infoResult,
           agree,
           description,
           num,

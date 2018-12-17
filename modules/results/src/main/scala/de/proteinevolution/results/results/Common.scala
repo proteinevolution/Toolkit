@@ -408,9 +408,9 @@ object Common {
         hit.query.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
       val midline = hit.agree.slice(charCount, Math.min(charCount + breakAfter, hit.agree.length))
       val templateCons =
-        hit.template.get.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.template.get.consensus.length))
+        hit.template.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
       val template =
-        hit.template.get.seq.slice(charCount, Math.min(charCount + breakAfter, hit.template.get.seq.length))
+        hit.template.seq.slice(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
       val queryEnd    = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
       if (beginQuery == beginQuery + queryEnd) {
@@ -426,7 +426,7 @@ object Common {
         makeRow("sequence",
                 Array("",
                       "T " + beginTemplate,
-                      template + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.get.ref + ")")) +
+                      template + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")")) +
         emptyRow + emptyRow +
         hhblitsHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
       }
@@ -451,15 +451,15 @@ object Common {
         hit.query.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
       val midline = hit.agree.slice(charCount, Math.min(charCount + breakAfter, hit.agree.length))
       val templateCons =
-        hit.template.map(t => t.consensus.slice(charCount, Math.min(charCount + breakAfter, t.consensus.length)))
-      val template = hit.template.map(t => t.seq.slice(charCount, Math.min(charCount + breakAfter, t.seq.length)))
+        hit.template.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
+      val template = hit.template.seq.slice(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
       val templateSSDSSP =
-        hit.template.map(t => t.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, t.ss_dssp.length)))
+        hit.template.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_dssp.length))
       val templateSSPRED =
-        hit.template.map(t => t.ss_pred.slice(charCount, Math.min(charCount + breakAfter, t.ss_pred.length)))
+        hit.template.ss_pred.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_pred.length))
       val confidence  = hit.confidence.slice(charCount, Math.min(charCount + breakAfter, hit.confidence.length))
       val queryEnd    = lengthWithoutDashDots(query)
-      val templateEnd = lengthWithoutDashDots(template.getOrElse(""))
+      val templateEnd = lengthWithoutDashDots(template)
 
       if (beginQuery == beginQuery + queryEnd) {
         ""
@@ -491,22 +491,22 @@ object Common {
           Array("",
                 "T Consensus ",
                 beginTemplate.toString,
-                "%s  %d (%d)".format(templateCons.getOrElse(""), beginTemplate + templateEnd - 1, hit.template.get.ref))
+                "%s  %d (%d)".format(templateCons, beginTemplate + templateEnd - 1, hit.template.ref))
         )
         html += makeRow(
           "sequence",
           Array(
             "",
-            "T " + hit.template.get.accession,
+            "T " + hit.template.accession,
             beginTemplate.toString,
-            s"${if (color) colorRegexReplacer(template.getOrElse("")) else template}  ${beginTemplate + templateEnd - 1} (${hit.template.get.ref})"
+            s"${if (color) colorRegexReplacer(template) else template}  ${beginTemplate + templateEnd - 1} (${hit.template.ref})"
           )
         )
-        if (!templateSSDSSP.get.isEmpty) {
-          html += makeRow("sequence", Array("", "T ss_dssp", "", Common.SSColorReplace(templateSSDSSP.get)))
+        if (!templateSSDSSP.isEmpty) {
+          html += makeRow("sequence", Array("", "T ss_dssp", "", Common.SSColorReplace(templateSSDSSP)))
         }
-        if (!templateSSPRED.get.isEmpty) {
-          html += makeRow("sequence", Array("", "T ss_pred", "", Common.SSColorReplace(templateSSPRED.get)))
+        if (!templateSSPRED.isEmpty) {
+          html += makeRow("sequence", Array("", "T ss_pred", "", Common.SSColorReplace(templateSSPRED)))
         }
         if (!confidence.isEmpty) {
           html += makeRow("sequence", Array("", "Confidence", "", confidence))
@@ -543,21 +543,21 @@ object Common {
         hit.query.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.query.consensus.length))
       val midline = hit.agree.slice(charCount, Math.min(charCount + breakAfter, hit.agree.length))
       val templateCons =
-        hit.template.map(t => t.consensus.slice(charCount, Math.min(charCount + breakAfter, t.consensus.length)))
-      val template = hit.template.map(t => t.seq.slice(charCount, Math.min(charCount + breakAfter, t.seq.length)))
+        hit.template.consensus.slice(charCount, Math.min(charCount + breakAfter, hit.template.consensus.length))
+      val template = hit.template.seq.slice(charCount, Math.min(charCount + breakAfter, hit.template.seq.length))
       val templateSSDSSP =
-        hit.template.map(t => t.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, t.ss_dssp.length)))
+        hit.template.ss_dssp.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_dssp.length))
       val templateSSPRED =
-        hit.template.map(t => t.ss_pred.slice(charCount, Math.min(charCount + breakAfter, t.ss_pred.length)))
+        hit.template.ss_pred.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_pred.length))
       val templateSSCONF =
-        hit.template.map(t => t.ss_conf.slice(charCount, Math.min(charCount + breakAfter, t.ss_conf.length)))
+        hit.template.ss_conf.slice(charCount, Math.min(charCount + breakAfter, hit.template.ss_conf.length))
       val templateBBPRED =
-        hit.template.map(t => t.bb_pred.slice(charCount, Math.min(charCount + breakAfter, t.bb_pred.length)))
+        hit.template.bb_pred.slice(charCount, Math.min(charCount + breakAfter, hit.template.bb_pred.length))
       val templateBBCONF =
-        hit.template.map(t => t.bb_conf.slice(charCount, Math.min(charCount + breakAfter, t.bb_conf.length)))
+        hit.template.bb_conf.slice(charCount, Math.min(charCount + breakAfter, hit.template.bb_conf.length))
 
       val queryEnd    = lengthWithoutDashDots(query)
-      val templateEnd = lengthWithoutDashDots(template.getOrElse(""))
+      val templateEnd = lengthWithoutDashDots(template)
 
       if (beginQuery == beginQuery + queryEnd) {
         ""
@@ -593,33 +593,33 @@ object Common {
             "",
             "T Consensus ",
             beginTemplate.toString,
-            templateCons.getOrElse("") + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.get.ref + ")"
+            templateCons + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"
           )
         )
         html += makeRow(
           "sequence",
           Array(
             "",
-            "T " + hit.template.get.accession,
+            "T " + hit.template.accession,
             beginTemplate.toString,
-            s"${if (color) colorRegexReplacer(template.getOrElse(""))
-            else template}  ${beginTemplate + templateEnd - 1} (${hit.template.get.ref})"
+            s"${if (color) colorRegexReplacer(template)
+            else template}  ${beginTemplate + templateEnd - 1} (${hit.template.ref})"
           )
         )
-        if (!templateSSDSSP.get.isEmpty) {
-          html += makeRow("sequence", Array("", "T ss_dssp", "", Common.SSColorReplace(templateSSDSSP.get)))
+        if (!templateSSDSSP.isEmpty) {
+          html += makeRow("sequence", Array("", "T ss_dssp", "", Common.SSColorReplace(templateSSDSSP)))
         }
-        if (!templateSSPRED.get.isEmpty) {
-          html += makeRow("sequence", Array("", "T ss_pred", "", Common.SSColorReplace(templateSSPRED.get)))
+        if (!templateSSPRED.isEmpty) {
+          html += makeRow("sequence", Array("", "T ss_pred", "", Common.SSColorReplace(templateSSPRED)))
         }
-        if (!templateSSCONF.get.isEmpty) {
-          html += makeRow("sequence", Array("", "T ss_conf", "", templateSSCONF.get))
+        if (!templateSSCONF.isEmpty) {
+          html += makeRow("sequence", Array("", "T ss_conf", "", templateSSCONF))
         }
-        if (!templateBBPRED.get.isEmpty) {
-          html += makeRow("sequence", Array("", "T bb_pred", "", templateBBPRED.get))
+        if (!templateBBPRED.isEmpty) {
+          html += makeRow("sequence", Array("", "T bb_pred", "", templateBBPRED))
         }
-        if (!templateBBCONF.get.isEmpty) {
-          html += makeRow("sequence", Array("", "T bb_conf", "", templateBBCONF.get))
+        if (!templateBBCONF.isEmpty) {
+          html += makeRow("sequence", Array("", "T bb_conf", "", templateBBCONF))
         }
 
         html += emptyRow + emptyRow
