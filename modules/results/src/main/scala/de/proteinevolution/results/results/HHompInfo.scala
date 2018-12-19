@@ -10,7 +10,7 @@ case class HHompInfo(
     probab_hit: Double,
     probab_OMP: Double,
     score: Double
-) extends SearchToolInfo
+)
 
 object HHompInfo {
 

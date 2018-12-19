@@ -19,9 +19,7 @@ case class HmmerHSP(
     accession: String,
     midline: String,
     description: String,
-    domain_obs_num: Int,
-    info: Option[HmmerInfo],
-    template: Option[HHTemplate]
+    domain_obs_num: Int
 ) extends HSP {
   def toDataTable(db: String): Json = {
     import SearchResultImplicits._
@@ -76,9 +74,7 @@ object HmmerHSP {
           accession,
           midline.toUpperCase,
           description,
-          domain_obs_num,
-          None,
-          None
+          domain_obs_num
         )
     }
 

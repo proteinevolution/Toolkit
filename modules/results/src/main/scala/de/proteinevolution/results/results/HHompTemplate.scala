@@ -14,7 +14,7 @@ case class HHompTemplate(
     bb_pred: String,
     bb_conf: String,
     start: Int
-) extends HHTemplate
+)
 
 object HHompTemplate {
 

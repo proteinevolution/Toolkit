@@ -10,8 +10,8 @@ export HHOMPDBPATH="${DATABASES}/hhomp/db"
 
 #JAVA
 ##########################################################
-export JAVA_HOME="${BIOPROGS}/dependencies/jdk1.8.0_112"
-export JRE_HOME="${BIOPROGS}/dependencies/jdk1.8.0_112/jre"
+export JAVA_HOME="${BIOPROGS}/dependencies/jdk1.8.0"
+export JRE_HOME="${BIOPROGS}/dependencies/jdk1.8.0/jre"
 
 #PERL
 ##########################################################
@@ -19,8 +19,6 @@ export PERL5LIB="${BIOPROGS}/lib"
 
 #COILS/PCOILS
 export COILSDIR="${BIOPROGS}/pcoils"
-#HHLIB
-export HHLIB="${BIOPROGS}/tools/hh-suite-build"
 #ALI2D
 export ALI2DPATH="${BIOPROGS}/tools/ali2d"
 #HHpred
@@ -57,9 +55,9 @@ export HMMERBINARIES="${BIOPROGS}/tools/hmmer/binaries"
 #Setup Mafft
 export MAFFT_BINARIES="${BIOPROGS}/tools/mafft2/binaries"
 #Setup MARCOIL
-MARCOILMTIDK="${BIOPROGS}/tools/marcoil/R5.MTIDK"
-MARCOILMTK="${BIOPROGS}/tools/marcoil/R5.MTK"
-MARCOILINPUT="${BIOPROGS}/tools/marcoil/Inputs"
+export MARCOILMTIDK="${BIOPROGS}/tools/marcoil/R5.MTIDK"
+export MARCOILMTK="${BIOPROGS}/tools/marcoil/R5.MTK"
+export MARCOILINPUT="${BIOPROGS}/tools/marcoil/Inputs"
 #PYTHONPATH FOR PDBX AND MODELLER
 export PYTHONPATH="${BIOPROGS}/tools/modeller/modlib/:${BIOPROGS}/dependencies/pdbx"
 #Setup PHYLIP (needed by the Perl Script of Phylip)
@@ -67,12 +65,24 @@ export PHYLIPBIN="${BIOPROGS}/tools/phylip/current/bin64"
 #Reformat version with PHYLIP Support (new reformat.pl does not have this support)
 export REFORMAT_PHYLIP="${BIOPROGS}/helpers/reformat_protblast.pl"
 
+#HHLIB
+#Rye and its nodes have slightly different architectures.
+#hh-suite needs to be compiled separately on them
+if [[ $(hostname) = "rye" ]]; then
+        export HHLIB="${BIOPROGS}/tools/hh-suite-build-prod"
+        export PATH="${BIOPROGS}/tools/hh-suite-build-prod/scripts:${PATH}" #HHSCRIPTS
+        export PATH="${BIOPROGS}/tools/hh-suite-build-prod/bin:${PATH}" #HHBINS
+else
+        export HHLIB="${BIOPROGS}/tools/hh-suite-build"
+        export PATH="${BIOPROGS}/tools/hh-suite-build/scripts:${PATH}" #HHSCRIPTS
+        export PATH="${BIOPROGS}/tools/hh-suite-build/bin:${PATH}" #HHBINS
+fi
+
 #PATH variable
+export PATH="${BIORPOGS}/dependencies/anaconda3/bin:${PATH}"
 export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}" #Python binary
 export PATH="${BIOPROGS}/pcoils:${PATH}" #PCOILS
 export PATH="${BIOPROGS}/dependencies/hh-suite_misc_scripts:${PATH}" # helper scripts from the old Toolkit
-export PATH="${BIOPROGS}/tools/hh-suite-build/scripts:${PATH}" #HHSCRIPTS
-export PATH="${BIOPROGS}/tools/hh-suite-build/bin:${PATH}" #HHBINS
 export PATH="${BIOPROGS}/dependencies/psipred:${BIOPROGS}/dependencies/psipred/bin:${PATH}" #PSIPRED
 export PATH="${BIOPROGS}/tools/mmseqs2/build/bin:${PATH}" #MMSEQS
 export PATH="${BIOPROGS}/dependencies/dssp:${PATH}" #DSSP

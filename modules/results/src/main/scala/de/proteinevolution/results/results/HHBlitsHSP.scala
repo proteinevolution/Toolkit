@@ -5,14 +5,12 @@ import io.circe._
 
 case class HHBlitsHSP(
     query: HHBlitsQuery,
-    template: Option[HHBlitsTemplate],
-    info: Option[HHBlitsInfo],
+    template: HHBlitsTemplate,
+    info: HHBlitsInfo,
     agree: String,
     description: String,
     num: Int,
-    length: Int,
-    eValue: Double = -1,
-    accession: String = ""
+    length: Int
 ) extends HSP {
 
   import SearchResultImplicits._
@@ -21,14 +19,18 @@ case class HHBlitsHSP(
     val _ = db
     Map[String, Either[Either[Double, Int], String]](
       "0" -> Right(Common.getCheckbox(num)),
-      "1" -> Right(Common.getSingleLinkHHBlits(template.get.accession).toString),
+      "1" -> Right(Common.getSingleLinkHHBlits(template.accession).toString),
       "2" -> Right(Common.addBreak(description)),
-      "3" -> Left(Left(info.get.probab)),
-      "4" -> Left(Left(info.get.eval)),
-      "5" -> Left(Right(info.get.aligned_cols)),
-      "6" -> Left(Right(template.get.ref))
+      "3" -> Left(Left(info.probab)),
+      "4" -> Left(Left(info.eval)),
+      "5" -> Left(Right(info.aligned_cols)),
+      "6" -> Left(Right(template.ref))
     ).asJson
   }
+
+  override val eValue: Double = info.eval
+
+  override val accession: String = template.accession
 
 }
 
@@ -46,8 +48,8 @@ object HHBlitsHSP {
       } yield
         new HHBlitsHSP(
           queryResult,
-          Some(templateResult),
-          Some(infoResult),
+          templateResult,
+          infoResult,
           agree,
           description,
           num,

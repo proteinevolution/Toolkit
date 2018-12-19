@@ -1,15 +1,15 @@
 language: scala
-dist: trusty
+dist: xenial
 sudo: required
 scala:
-  - 2.12.7
+  - 2.12.8
 jdk:
   - openjdk8
 services:
   - mongodb
   - docker
 env:
-  matrix:
+  global:
     - SBT_BIN=sbt -Dsbt.override.build.repos=true
     - MONGODB_URI=mongodb://127.0.0.1:27017/test
 before_cache:
@@ -36,5 +36,5 @@ install:
   - npm install jsdom@9.12.0
 script:
  - bin/validate-code
-  # - $SBT_BIN test:compile test stage
+ - $SBT_BIN test:compile test stage
  - $HOME/cloc/cloc $(git ls-files)
