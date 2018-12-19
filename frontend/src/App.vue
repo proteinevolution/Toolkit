@@ -146,4 +146,8 @@
         bottom: 1em;
         left: 1em;
     }
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
 </style>

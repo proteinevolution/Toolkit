@@ -33,4 +33,14 @@ export default class JobService {
         });
     }
 
+    public static deleteJob(jobID: string): Promise<void> {
+        return new Promise<void>(((resolve, reject) => {
+            axios.delete(`/api/jobs/${jobID}`)
+                .then(() => {
+                    resolve();
+                })
+                .catch(reject);
+        }));
+    }
+
 }

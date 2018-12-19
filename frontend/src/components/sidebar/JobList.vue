@@ -30,7 +30,7 @@
                 <span v-text="job.jobID"></span>
                 <span v-text="job.code.toUpperCase()"></span>
                 <i class="fas fa-times"
-                   @click.stop="deleteJob(job.jobID)"></i>
+                   @click.stop="hideJob(job.jobID)"></i>
             </div>
 
             <div class="job-list-down d-flex flex-column"
@@ -97,7 +97,7 @@
             goToJob(jobID: string): void {
                 this.$router.push(`/jobs/${jobID}`);
             },
-            deleteJob(jobID: string): void {
+            hideJob(jobID: string): void {
                 this.$store.commit('jobs/setJobHidden', {jobID, hidden: true});
             },
             scrollDown(): void {

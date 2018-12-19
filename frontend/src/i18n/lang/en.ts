@@ -12,6 +12,16 @@ export default {
             loadBarLabel: 'Cluster workload: {load}%',
             searchPlaceholder: 'Enter a job ID or a tool name',
         },
+        jobManager: {
+            table: {
+                jobListStatus: 'Job List',
+                jobID: 'Job ID',
+                tool: 'Tool',
+                dateCreated: 'Created',
+                actions: 'Actions',
+                noData: 'No jobs available.',
+            },
+        },
         jobList: {
             sortColumns: {
                 jobID: 'ID',
@@ -126,6 +136,7 @@ export default {
             fileUnreadable: 'File could not be read.',
             PageNotFound: 'Page not found.',
             ToolNotFound: 'Tool not found.',
+            couldNotDeleteJob: 'Could not delete job!',
         },
         constraints: {
             range: 'has to be between {min} and {max}',

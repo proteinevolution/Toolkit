@@ -17,6 +17,15 @@ const mutations: MutationTree<JobState> = {
             Vue.set(job, 'hidden', hidden);
         }
     },
+    toggleJobHidden(state, {jobID}) {
+        const job = state.jobs.find((j) => j.jobID === jobID);
+        if (job) {
+            Vue.set(job, 'hidden', !job.hidden);
+        }
+    },
+    removeJob(state, {jobID}) {
+        state.jobs = state.jobs.filter((job: Job) => job.jobID !== jobID);
+    },
 };
 
 export default mutations;
