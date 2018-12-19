@@ -70,8 +70,8 @@ function validateSequence(val: string, params: SequenceValidationParams): Valida
                 return result(false, 'warning', 'nucleotideError');
             }
 
-            const typeName: string = elem.getTypes().filter((type: string) =>
-                type.toUpperCase() === params.allowedSeqType.toUpperCase())[0];
+            const typeName: string | undefined = elem.getTypes().find((type: string) =>
+                type.toUpperCase() === params.allowedSeqType.toUpperCase());
             return result(false, 'success', 'valid', {type: typeName, format: detectedFormat});
         }
     }

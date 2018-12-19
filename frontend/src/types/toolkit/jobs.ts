@@ -5,6 +5,7 @@ export interface Job {
     status: JobState;
     tool: string;
     code: string;
+    hidden?: boolean;
     // toolnameLong: string;
     dateCreated?: Date;
     dateUpdated?: Date;
