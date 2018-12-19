@@ -11,13 +11,13 @@
                       :data="jobs"
                       :fields="fields">
                 <template slot="joblist"
-                          scope="props">
+                          slot-scope="props">
                     <i class="fas cursor-pointer"
                        :class="[props.rowData.hidden ? 'fa-plus-circle':'fa-minus-circle']"
                        @click="toggleJobListStatus(props.rowData.jobID)"></i>
                 </template>
                 <template slot="actions"
-                          scope="props">
+                          slot-scope="props">
                     <i class="fa fa-trash cursor-pointer"
                        @click="deleteJob(props.rowData.jobID)"></i>
                 </template>
@@ -73,7 +73,7 @@
             },
         },
         methods: {
-            deleteJob(jobID) {
+            deleteJob(jobID: string): void {
                 JobService.deleteJob(jobID)
                     .then(() => {
                         this.$store.commit('jobs/removeJob', {jobID});
@@ -82,14 +82,15 @@
                         this.$alert(this.$t('errors.couldNotDeleteJob'), '', 'danger');
                     });
             },
-            toggleJobListStatus(jobID) {
+            toggleJobListStatus(jobID: string): void {
                 this.$store.commit('jobs/toggleJobHidden', {jobID});
             },
-            fromNow(date) {
+            fromNow(date: string): string {
                 return moment(date).fromNow();
             },
-            translateToolName(toolName) {
-                return this.tools.find((tool: Tool) => tool.name === toolName).longname;
+            translateToolName(toolName: string): string {
+                const tool: Tool | undefined = this.tools.find((t: Tool) => t.name === toolName);
+                return tool ? tool.longname : toolName;
             },
         },
     });
