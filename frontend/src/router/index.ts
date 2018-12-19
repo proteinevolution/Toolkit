@@ -13,7 +13,7 @@ const router = new Router({
 
 // soon to be removed/refactored
 router.beforeEach((to, from, next) => {
-    const lang = to.query.lang;
+    const lang: string = (to.query.lang as string);
     if (lang !== undefined && lang !== from.query.lang) {
         if (possibleLanguages.includes(lang)) {
             // logger.debug('switching to language: ' + lang);
