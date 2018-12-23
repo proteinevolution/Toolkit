@@ -8,7 +8,7 @@ object EnvProvider {
   def get(config: Configuration, environment: Environment): String = {
     val envPath = config.get[String]("environment")
     if (environment.isDev) {
-      environment.rootPath().getAbsolutePath + "/" + envPath
+      environment.rootPath().getAbsolutePath + "/tel/env/environment.sh"
     } else {
       envPath
     }
