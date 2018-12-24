@@ -53,7 +53,8 @@ class PropFile(path: String, config: Configuration, envConfig: String) extends E
         val spt     = b.split('=')
         var updated = EnvFile.placeholder.replaceAllIn(spt(1), matcher => a(matcher.group("expression"))).trim()
         updated match {
-          case x if x.startsWith("db_root_placeholder") => updated = updated.replace("db_root_placeholder", config.get[String]("db_root"))
+          case x if x.startsWith("db_root_placeholder") =>
+            updated = updated.replace("db_root_placeholder", config.get[String]("db_root"))
           case x if x.startsWith("env_placeholder") =>
             updated = updated.replace("env_placeholder", envConfig)
           case x if x.startsWith("helper_placeholder") =>
