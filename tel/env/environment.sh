@@ -16,8 +16,6 @@ export JRE_HOME="${BIOPROGSROOT}/dependencies/jdk1.8.0/jre"
 export PERL5LIB="${BIOPROGSROOT}/lib"
 #COILS/PCOILS
 export COILSDIR="${BIOPROGSROOT}/pcoils"
-#HHLIB
-export HHLIB="${BIOPROGSROOT}/tools/hh-suite-build"
 #ALI2D
 export ALI2DPATH="${BIOPROGSROOT}/tools/ali2d"
 #HHpred
@@ -63,13 +61,26 @@ export PYTHONPATH="${BIOPROGSROOT}/tools/modeller/modlib/:${BIOPROGSROOT}/depend
 export PHYLIPBIN="${BIOPROGSROOT}/tools/phylip/current/bin64"
 #Reformat version with PHYLIP Support (new reformat.pl does not have this support)
 export REFORMAT_PHYLIP="${BIOPROGSROOT}/helpers/reformat_protblast.pl"
+
+#HHLIB
+#Rye and its nodes have slightly different architectures.
+#hh-suite needs to be compiled separately on them
+#TODO: get rid of environment dependency
+if [[ $(hostname) = "rye" ]]; then
+        export HHLIB="${BIOPROGSROOT}/tools/hh-suite-build-prod"
+        export PATH="${BIOPROGSROOT}/tools/hh-suite-build-prod/scripts:${PATH}" #HHSCRIPTS
+        export PATH="${BIOPROGSROOT}/tools/hh-suite-build-prod/bin:${PATH}" #HHBINS
+else
+        export HHLIB="${BIOPROGSROOT}/tools/hh-suite-build"
+        export PATH="${BIOPROGSROOT}/tools/hh-suite-build/scripts:${PATH}" #HHSCRIPTS
+        export PATH="${BIOPROGSROOT}/tools/hh-suite-build/bin:${PATH}" #HHBINS
+fi
+
 #PATH variable
 export PATH="${BIOPROGSROOT}/dependencies/anaconda3/bin:${PATH}"
 export PATH="${BIOPROGSROOT}/dependencies/Python-3.5.2/bin:${PATH}" #Python binary
 export PATH="${BIOPROGSROOT}/pcoils:${PATH}" #PCOILS
 export PATH="${BIOPROGSROOT}/dependencies/hh-suite_misc_scripts:${PATH}" # helper scripts from the old Toolkit
-export PATH="${BIOPROGSROOT}/tools/hh-suite-build/scripts:${PATH}" #HHSCRIPTS
-export PATH="${BIOPROGSROOT}/tools/hh-suite-build/bin:${PATH}" #HHBINS
 export PATH="${BIOPROGSROOT}/dependencies/psipred:${BIOPROGSROOT}/dependencies/psipred/bin:${PATH}" #PSIPRED
 export PATH="${BIOPROGSROOT}/tools/mmseqs2/build/bin:${PATH}" #MMSEQS
 export PATH="${BIOPROGSROOT}/dependencies/dssp:${PATH}" #DSSP

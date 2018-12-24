@@ -11,7 +11,7 @@ case class HHPredTemplate(
     ss_dssp: String,
     ss_pred: String,
     start: Int
-) extends HHTemplate
+)
 
 object HHPredTemplate {
 
