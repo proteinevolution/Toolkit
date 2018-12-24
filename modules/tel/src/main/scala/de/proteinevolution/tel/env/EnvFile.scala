@@ -42,7 +42,7 @@ class ExecFile(path: String) extends EnvFile(path) {
  * its content
  *
  */
-class PropFile(path: String, config: Configuration) extends EnvFile(path) {
+class PropFile(path: String, config: Configuration, envConfig: String) extends EnvFile(path) {
 
   private val logger = Logger(this.getClass)
 
@@ -55,7 +55,7 @@ class PropFile(path: String, config: Configuration) extends EnvFile(path) {
         updated match {
           case x if x.startsWith("db_root_placeholder") => updated = updated.replace("db_root_placeholder", config.get[String]("db_root"))
           case x if x.startsWith("env_placeholder") =>
-            updated = updated.replace("env_placeholder", config.get[String]("environment"))
+            updated = updated.replace("env_placeholder", envConfig)
           case x if x.startsWith("helper_placeholder") =>
             updated = updated.replace("helper_placeholder", config.get[String]("helper_scripts"))
           case x if x.startsWith("perllib_placeholder") =>

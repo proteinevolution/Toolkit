@@ -3,6 +3,7 @@ package de.proteinevolution.results.services
 import better.files._
 import cats.data.{ EitherT, OptionT }
 import cats.implicits._
+import de.proteinevolution.base.helpers.EnvProvider
 import de.proteinevolution.models.ToolName._
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.results.db.ResultFileAccessor
@@ -21,7 +22,8 @@ final class ProcessService @Inject()(
     config: Configuration,
     toolFinder: ToolNameGetService,
     resultFiles: ResultFileAccessor,
-    constants: ConstantsV2
+    constants: ConstantsV2,
+    environment: play.Environment
 )(implicit ec: ExecutionContext)
     extends ResultsRepository {
 
@@ -30,6 +32,8 @@ final class ProcessService @Inject()(
   private[this] val scriptPath: String = config.get[String]("server_scripts")
 
   private[this] val resultsService = ResultsService(toolFinder, resultFiles)
+
+  private[this] lazy val envConfig = EnvProvider.get(config, environment)
 
   def templateAlignment(jobId: String, accession: String): OptionT[Future, Int] = {
     for {
@@ -42,15 +46,13 @@ final class ProcessService @Inject()(
       isExec <- OptionT.pure[Future](file.isExecutable)
       if isExec
     } yield {
-
       val env: List[(String, String)] = List(
         "jobID"        -> jobId,
         "accession"    -> accession,
-        "ENVIRONMENT"  -> config.get[String]("environment"),
+        "ENVIRONMENT"  -> envConfig,
         "BIOPROGSROOT" -> config.get[String]("bioprogs_root"),
         "DATABASES"    -> config.get[String]("db_root")
       )
-
       Process(file.pathAsString, (constants.jobPath + jobId).toFile.toJava, env: _*).run().exitValue()
     }
   }
@@ -83,7 +85,8 @@ final class ProcessService @Inject()(
               accStrParsed,
               result.db,
               scriptPath,
-              config
+              config,
+              envConfig
             ).run().exitValue()
         }
       case _ =>

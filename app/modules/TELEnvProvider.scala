@@ -1,11 +1,14 @@
 package modules
 
-import javax.inject.{ Inject, Provider }
+import javax.inject.{ Inject, Provider, Singleton }
 import better.files._
+import de.proteinevolution.base.helpers.EnvProvider
 import de.proteinevolution.tel.env.{ ExecFile, PropFile, TELEnv }
 import play.api.{ Configuration, Logger }
 
-class TELEnvProvider @Inject()(tv: TELEnv, configuration: Configuration) extends Provider[TELEnv] {
+@Singleton
+class TELEnvProvider @Inject()(tv: TELEnv, configuration: Configuration, environment: play.Environment)
+    extends Provider[TELEnv] {
 
   private val logger = Logger(this.getClass)
 
@@ -21,9 +24,10 @@ class TELEnvProvider @Inject()(tv: TELEnv, configuration: Configuration) extends
       .list
       .foreach { file =>
         file.extension match {
-          case Some(".prop") => new PropFile(file.pathAsString, configuration).addObserver(tv)
-          case Some(".sh")   => new ExecFile(file.pathAsString).addObserver(tv)
-          case _             => ()
+          case Some(".prop") =>
+            new PropFile(file.pathAsString, configuration, EnvProvider.get(configuration, environment)).addObserver(tv)
+          case Some(".sh") => new ExecFile(file.pathAsString).addObserver(tv)
+          case _           => ()
         }
       }
     tv

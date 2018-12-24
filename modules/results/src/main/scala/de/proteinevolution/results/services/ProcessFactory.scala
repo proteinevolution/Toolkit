@@ -19,7 +19,8 @@ private[results] object ProcessFactory {
       accString: String,
       db: String,
       basePath: String,
-      config: Configuration
+      config: Configuration,
+      envConfig: String
   ): process.ProcessBuilder = {
 
     val generateAlignmentScript = (basePath + "/generateAlignment.sh").toFile // HHPRED, HHBLITS alnEval
@@ -51,7 +52,7 @@ private[results] object ProcessFactory {
     }
 
     val env: List[(String, String)] = List(
-      "ENVIRONMENT"  -> config.get[String]("environment"),
+      "ENVIRONMENT"  -> envConfig,
       "BIOPROGSROOT" -> config.get[String]("bioprogs_root"),
       "DATABASES"    -> config.get[String]("db_root")
     )
