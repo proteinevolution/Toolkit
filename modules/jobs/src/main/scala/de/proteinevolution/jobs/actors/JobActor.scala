@@ -74,14 +74,14 @@ class JobActor @Inject()(
 
   private def getCurrentJob(jobID: String): Future[Option[Job]] = {
     // Check if the job is still in the current jobs.
-    this.currentJobs.get(jobID) match {
+    currentJobs.get(jobID) match {
       case Some(job) => // Everything is fine. Return the job.
         fuccess(Some(job))
       case None => // Job is not in the current jobs.. try to get it back.
         jobDao.findJob(BSONDocument(Job.JOBID -> jobID)).map {
           case Some(job) =>
             // Get the job back into the current jobs
-            this.currentJobs = this.currentJobs.updated(job.jobID, job)
+            currentJobs = currentJobs.updated(job.jobID, job)
             // TODO Check if the job is a running job and also if the cluster has done any changes with on the job.
             // Return the job
             Some(job)
@@ -93,12 +93,12 @@ class JobActor @Inject()(
   }
 
   private def getCurrentExecutionContext(jobID: String): Option[ExecutionContext] = {
-    this.currentExecutionContexts.get(jobID) match {
+    currentExecutionContexts.get(jobID) match {
       case Some(executionContext) => Some(executionContext)
       case None =>
         if ((constants.jobPath / jobID).exists) {
           val executionContext = ExecutionContext(constants.jobPath / jobID, reOpen = true)
-          this.currentExecutionContexts = this.currentExecutionContexts.updated(jobID, executionContext)
+          currentExecutionContexts = currentExecutionContexts.updated(jobID, executionContext)
           Some(executionContext)
         } else {
           None
@@ -133,36 +133,36 @@ class JobActor @Inject()(
   ): Seq[(String, (Runscript.Evaluation, Option[Argument]))] = {
     params.map {
       case (paramName, (evaluation, _)) if paramName == name =>
-        val x = Some(evaluation(RString(value), this.currentExecutionContexts(jobID)))
+        val x = Some(evaluation(RString(value), currentExecutionContexts(jobID)))
         (name, (evaluation, x))
       case q => q
     }
   }
 
   private def removeJob(jobID: String): Boolean = {
-    var wasActive = this.currentJobs.contains(jobID)
+    var wasActive = currentJobs.contains(jobID)
     // If the job is in the current jobs remove it
     if (wasActive) {
-      this.currentJobs = this.currentJobs.filter(_._1 != jobID)
+      currentJobs = currentJobs.filter(_._1 != jobID)
     }
 
     // Save Job Event Log to the collection and remove it from the map afterwards
-    if (this.currentJobLogs.contains(jobID)) {
-      jobDao.addJobLog(this.currentJobLogs(jobID))
-      this.currentJobLogs = this.currentJobLogs.filter(_._1 != jobID)
+    if (currentJobLogs.contains(jobID)) {
+      jobDao.addJobLog(currentJobLogs(jobID))
+      currentJobLogs = currentJobLogs.filter(_._1 != jobID)
       wasActive = true
     }
 
     // If the job appears in the running Execution, terminate it
-    if (this.runningExecutions.contains(jobID)) {
-      this.runningExecutions(jobID).terminate()
-      this.runningExecutions = this.runningExecutions.filter(_._1 != jobID)
+    if (runningExecutions.contains(jobID)) {
+      runningExecutions(jobID).terminate()
+      runningExecutions = runningExecutions.filter(_._1 != jobID)
       wasActive = true
     }
 
     // if the job appears in the current execution contexts, remove it from there too
-    if (this.currentExecutionContexts.contains(jobID)) {
-      this.currentExecutionContexts = this.currentExecutionContexts.filter(_._1 != jobID)
+    if (currentExecutionContexts.contains(jobID)) {
+      currentExecutionContexts = currentExecutionContexts.filter(_._1 != jobID)
       wasActive = true
     }
     wasActive
@@ -173,7 +173,7 @@ class JobActor @Inject()(
     if (verbose) log.info(s"[JobActor.Delete] Deletion of job folder for jobID ${job.jobID} is done")
     s"${constants.jobPath}${job.jobID}".toFile.delete(true)
     if (verbose) log.info("[JobActor.Delete] Removing Job from current Jobs.")
-    this.removeJob(job.jobID) // Remove the job from the current job map
+    removeJob(job.jobID) // Remove the job from the current job map
     // Message user clients to remove the job from their watchlist
     if (verbose) log.info(s"[JobActor.Delete] Informing Users of deletion of Job with JobID ${job.jobID}.")
     val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
@@ -212,20 +212,20 @@ class JobActor @Inject()(
 
   private def updateJobState(job: Job): Future[Job] = {
     // Push the updated job into the current jobs
-    this.currentJobs = this.currentJobs.updated(job.jobID, job)
+    currentJobs = currentJobs.updated(job.jobID, job)
 
     // Update job in the database and notify watcher upon completion
     jobDao
       .modifyJob(BSONDocument(Job.JOBID -> job.jobID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
       .map { _ =>
-        val jobLog = this.currentJobLogs.get(job.jobID) match {
+        val jobLog = currentJobLogs.get(job.jobID) match {
           case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
           case None =>
             JobEventLog(jobID = job.jobID,
                         toolName = job.tool,
                         events = List(JobEvent(job.status, Some(ZonedDateTime.now))))
         }
-        this.currentJobLogs = this.currentJobLogs.updated(job.jobID, jobLog)
+        currentJobLogs = currentJobLogs.updated(job.jobID, jobLog)
         val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
         foundWatchers.flatten.foreach(_ ! PushJob(job))
         if (job.status == Done) {
@@ -279,26 +279,26 @@ class JobActor @Inject()(
       val extendedParams = params + ("jobid" -> job.jobID)
 
       // Add job to the current jobs
-      this.currentJobs = this.currentJobs.updated(job.jobID, job)
+      currentJobs = currentJobs.updated(job.jobID, job)
 
       try {
         // Establish execution context for the new Job
         val executionContext = ExecutionContext(constants.jobPath / job.jobID)
-        this.currentExecutionContexts = this.currentExecutionContexts.updated(job.jobID, executionContext)
+        currentExecutionContexts = currentExecutionContexts.updated(job.jobID, executionContext)
 
         // Create a log for this job
-        this.currentJobLogs =
-          this.currentJobLogs.updated(job.jobID,
-                                      JobEventLog(jobID = job.jobID,
-                                                  toolName = job.tool,
-                                                  internalJob = isInternalJob,
-                                                  events = List(JobEvent(job.status, Some(ZonedDateTime.now)))))
+        currentJobLogs =
+          currentJobLogs.updated(job.jobID,
+                                 JobEventLog(jobID = job.jobID,
+                                             toolName = job.tool,
+                                             internalJob = isInternalJob,
+                                             events = List(JobEvent(job.status, Some(ZonedDateTime.now)))))
 
         // Get new runscript instance from the runscript manager
         val runscript: Runscript = runscriptManager(job.tool).withEnvironment(env)
 
         // Validate the Parameters right away
-        val validParameters = this.validatedParameters(job, runscript, extendedParams)
+        val validParameters = validatedParameters(job, runscript, extendedParams)
 
         // adds the params of the disabled controls from formData, sets value of those to "false"
         validParameters.filterNot(pv => extendedParams.contains(pv._1)).foreach { pv =>
@@ -335,9 +335,9 @@ class JobActor @Inject()(
     // Checks the jobHashDB for matches and generates one for the job if there are none.
     case CheckJobHashes(jobID) =>
       log.info(s"[JobActor[$jobActorNumber].CheckJobHashes] Job with jobID $jobID will now be hashed.")
-      this.getCurrentJob(jobID).foreach {
+      getCurrentJob(jobID).foreach {
         case Some(job) =>
-          this.getCurrentExecutionContext(jobID) match {
+          getCurrentExecutionContext(jobID) match {
             case Some(executionContext) =>
               // Ensure that the jobID is not being hashed
               val params  = executionContext.reloadParams
@@ -389,7 +389,7 @@ class JobActor @Inject()(
             if (userIDOption.isEmpty || userIDOption == job.ownerID) {
               if (verbose)
                 log.info(s"[JobActor[$jobActorNumber].Delete] Found Job with ${job.jobID} - starting file deletion")
-              this.delete(job, verbose)
+              delete(job, verbose)
             } else {
               userIDOption match {
                 case Some(userID) =>
@@ -401,7 +401,7 @@ class JobActor @Inject()(
         }
 
     case CheckIPHash(jobID) =>
-      this.getCurrentJob(jobID).foreach {
+      getCurrentJob(jobID).foreach {
         case Some(job) =>
           job.IPHash match {
             case Some(hash) =>
@@ -459,9 +459,9 @@ class JobActor @Inject()(
       }
 
     case StartJob(jobID) =>
-      this.getCurrentJob(jobID).foreach {
+      getCurrentJob(jobID).foreach {
         case Some(job) =>
-          this.getCurrentExecutionContext(jobID) match {
+          getCurrentExecutionContext(jobID) match {
             case Some(executionContext) =>
               log.info(s"[JobActor[$jobActorNumber].StartJob] reached. starting job " + jobID)
 
@@ -511,7 +511,7 @@ class JobActor @Inject()(
                     // Load the parameters from the serialized parameters file
                     val params = executionContext.reloadParams
                     // Validate the Parameters (again) to ensure that everything works
-                    val validParameters = this.validatedParameters(job, runscript, params)
+                    val validParameters = validatedParameters(job, runscript, params)
 
                     // adds the params of the disabled controls from formData, sets value of those to "false"
                     validParameters.filterNot(pv => params.contains(pv._1)).foreach { pv =>
@@ -527,8 +527,7 @@ class JobActor @Inject()(
 
                         executionContext.accept(pendingExecution)
                         log.info(s"[JobActor[$jobActorNumber].StartJob] Running job now.")
-                        this.runningExecutions =
-                          this.runningExecutions.updated(job.jobID, executionContext.executeNext.run())
+                        runningExecutions = runningExecutions.updated(job.jobID, executionContext.executeNext.run())
                       }
                     } else {
                       // TODO Implement Me. This specifies what the JobActor should do if not all parameters have been specified
@@ -553,7 +552,7 @@ class JobActor @Inject()(
               .modifyUserWithCache(BSONDocument(User.IDDB   -> userID),
                                    BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> jobID)))
               .foreach { _ =>
-                this.currentJobs = this.currentJobs.updated(jobID, updatedJob)
+                currentJobs = currentJobs.updated(jobID, updatedJob)
                 val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
                 wsActors.foreach(_.foreach(_ ! PushJob(updatedJob)))
               }
@@ -579,7 +578,7 @@ class JobActor @Inject()(
 
     // Message from outside that the jobState has changed
     case JobStateChanged(jobID: String, jobState: JobState) =>
-      this.getCurrentJob(jobID).foreach {
+      getCurrentJob(jobID).foreach {
         case Some(oldJob) =>
           // Update the job object
           val job = oldJob.copy(status = jobState)
@@ -591,14 +590,14 @@ class JobActor @Inject()(
           // Dependent on the state, we have to do different things
           if (job.isFinished) {
             // Now we can update the JobState and remove it, once the update has completed
-            this.updateJobState(job).map { job =>
+            updateJobState(job).map { job =>
               //Remove the job from the jobActor
-              this.removeJob(job.jobID)
+              removeJob(job.jobID)
               // Tell the user that their job finished via eMail (can be either failed or done)
               sendJobUpdateMail(job)
             }
           } else {
-            this.updateJobState(job)
+            updateJobState(job)
           }
         case None => NotUsed
       }
