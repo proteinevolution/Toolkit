@@ -2,7 +2,7 @@ Copying the MPI Toolkit
 =======================
 
 Any file in this project that does not state otherwise and is not listed as an
-exception below is part of MPI-Toolkit and copyright (c) 2014-2018 the MPI-Toolkit authors.
+exception below is part of MPI-Toolkit and copyright (c) 2014-2019 the MPI-Toolkit authors.
 
 For a list of the authors see the commit log.
 
@@ -20,10 +20,8 @@ Files | Author(s) | License
 --- | --- | ---
 public/font/mfglabs*, public/font/gibson*, public/styles/mfglabs* | [MFGLabs](https://github.com/MfgLabs/mfglabs-iconset) | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/deed.fr)
 public/javascripts/vendor/msa.min.js | [Sebastian Wilzbach](https://github.com/wilzbach/msa) | [BSL-1.0](http://www.boost.org/LICENSE_1_0.txt)
-public/javascripts/vendor/biojs-vis-tree | [Miguel Pignatelli](https://github.com/emepyc/biojs-vis-tree) | [Apache 2.0](https://github.com/LexLuengas/chessnut-pieces/blob/master/LICENSE.txt)
 public/javascripts/vendor/loadingoverlay.js | [Gaspare Sganga](http://gasparesganga.com/labs/jquery-loading-overlay/) |  [MIT](https://github.com/gosquared/flags/blob/master/LICENSE.txt)
 public/javascripts/vendor/reformat | Seung-Zin Nam and [David Rau](https://github.com/davidmrau) |  [MIT](https://github.com/gosquared/flags/blob/master/LICENSE.txt)
-modules/common/src/main/scala/de/proteinevolution/tools/FNV.scala | [Philip Southam](https://github.com/philipsoutham/scala-fnv) | [Apache 2.0](https://github.com/LexLuengas/chessnut-pieces/blob/master/LICENSE.txt)
 
 Exceptions (non-free)
 ---------------------

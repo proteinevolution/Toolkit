@@ -6,19 +6,19 @@ services:
     image: proteinevolution/toolkit-docker:latest
     container_name: toolkit
     environment:
-    - SUBMIT_MODE=LOCAL
-    - SBT_OPTS=-Xms2G -Xmx4G -Xss2M
+      - SUBMIT_MODE=LOCAL
+      - SBT_OPTS=-Xms2G -Xmx4G -Xss2M
     stdin_open: true
     tty: true
     ports:
-    - 1234:1234
-    - 8080:8080
+      - 1234:1234
+      - 8080:8080
     volumes:
-    - .:/toolkit
+      - .:/toolkit
     links:
-    - mongodb
+      - mongodb
     depends_on:
-    - mongodb
+      - mongodb
     networks:
       tk-network:
         ipv4_address: 174.18.0.2
@@ -33,9 +33,9 @@ services:
     - MONGO_INITDB_ROOT_USERNAME=root
     - MONGO_INITDB_ROOT_PASSWORD=rootPassXX
     volumes:
-    - mongodb:/data/db
+      - mongodb:/data/db
     ports:
-    - 27017:27017
+      - 27017:27017
     command: mongod --auth
     networks:
       tk-network:
