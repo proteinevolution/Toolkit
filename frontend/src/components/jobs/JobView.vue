@@ -8,15 +8,25 @@
         </template>
 
         <template slot="job-tabs">
-            <b-tab title="Test">
-                <div class="tabs-panel">
-                    Display job data
-                </div>
-            </b-tab>
-            <b-tab title="Test2">
-                <div class="tabs-panel">
-                    Display job data
-                </div>
+            <b-tab :title="$t('jobs.states.' + job.status)"
+                   active>
+                <job-prepared-tab v-if="job.status === JobState.Prepared"
+                                  :job="job"/>
+                <job-queued-tab v-else-if="job.status === JobState.Queued"
+                                  :job="job"/>
+                <job-running-tab v-else-if="job.status === JobState.Running"
+                                  :job="job"/>
+                <job-error-tab v-else-if="job.status === JobState.Error"
+                                  :job="job"/>
+                <job-done-tab v-else-if="job.status === JobState.Done"
+                                  :job="job"/>
+                <job-submitted-tab v-else-if="job.status === JobState.Submitted"
+                                  :job="job"/>
+                <job-pending-tab v-else-if="job.status === JobState.Pending"
+                                  :job="job"/>
+                <span v-else>
+                    Not yet implemented
+                </span>
             </b-tab>
         </template>
 
@@ -25,14 +35,34 @@
 
 <script lang="ts">
     import Vue from 'vue';
+    import JobPreparedTab from './JobPreparedTab.vue';
+    import JobQueuedTab from './JobQueuedTab.vue';
+    import JobRunningTab from './JobRunningTab.vue';
+    import JobErrorTab from './JobErrorTab.vue';
+    import JobDoneTab from './JobDoneTab.vue';
+    import JobSubmittedTab from './JobSubmittedTab.vue';
+    import JobPendingTab from './JobPendingTab.vue';
     import ToolView from '../tools/ToolView.vue';
     import {Job} from '@/types/toolkit/jobs';
     import moment from 'moment';
+    import {JobState} from '@/types/toolkit/enums';
 
     export default Vue.extend({
         name: 'JobView',
         components: {
             ToolView,
+            JobPreparedTab,
+            JobQueuedTab,
+            JobRunningTab,
+            JobErrorTab,
+            JobDoneTab,
+            JobSubmittedTab,
+            JobPendingTab,
+        },
+        data() {
+            return {
+                JobState,
+            };
         },
         computed: {
             jobID(): string {

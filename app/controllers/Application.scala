@@ -5,10 +5,9 @@ import java.net.InetAddress
 import javax.inject.{ Inject, Singleton }
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tools.ToolConfig
 import play.api.mvc._
-import play.api.{ Configuration, Environment, Logger }
+import play.api.{ Environment, Logger }
 import org.webjars.play.WebJarsUtil
 
 import scala.concurrent.ExecutionContext
@@ -19,17 +18,14 @@ final class Application @Inject()(
     toolConfig: ToolConfig,
     userSessions: UserSessions,
     cc: ControllerComponents,
-    env: Env,
     environment: Environment,
-    assetsFinder: AssetsFinder,
-    config: Configuration
+    assetsFinder: AssetsFinder
 )(implicit ec: ExecutionContext)
     extends ToolkitController(cc) {
 
   private val logger = Logger(this.getClass)
 
   def index(message: String = ""): Action[AnyContent] = Action.async { implicit request =>
-    configEnv(request)
     userSessions.getUser.map { user =>
       logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
       Ok(
@@ -60,22 +56,6 @@ final class Application @Inject()(
     Ok(
       "User-agent: *\nAllow: /\nDisallow: /#/jobmanager/\nDisallow: /#/jobs/\nSitemap: https://toolkit.tuebingen.mpg.de/sitemap.xml"
     )
-  }
-
-  private def configEnv(request: Request[AnyContent]): Unit = {
-
-    env.configure(s"HOSTNAME", config.get[String]("host_name"))
-
-    environment.mode match {
-
-      case play.api.Mode.Prod =>
-        val port = "9000"
-        env.configure("PORT", port)
-
-      case _ =>
-        val port = request.host.slice(request.host.indexOf(":") + 1, request.host.length)
-        env.configure("PORT", port)
-    }
   }
 
 }

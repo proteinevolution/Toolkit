@@ -16,6 +16,7 @@ import de.proteinevolution.models.database.statistics.{ StatisticsObject, UserSt
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.tel.env.Env
 import javax.inject.{ Inject, Singleton }
+import play.api.Environment
 import play.api.libs.mailer.MailerClient
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
@@ -28,7 +29,7 @@ final class DatabaseMonitor @Inject()(
     jobDao: JobDao,
     jobActorAccess: JobActorAccess,
     constants: ConstantsV2,
-    environment: play.Environment,
+    environment: Environment,
     env: Env
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
     extends Actor
@@ -55,6 +56,7 @@ final class DatabaseMonitor @Inject()(
 
   /**
    * Function removes old users and eMails registered users who may be deleted soon
+   *
    * @param verbose when true, the log will show the current action
    */
   private def deleteOldUsers(verbose: Boolean): Unit = {

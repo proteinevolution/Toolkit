@@ -30,7 +30,7 @@ import de.proteinevolution.tel.execution.{ ExecutionContext, WrapperExecutionFac
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
 import javax.inject.Inject
-import play.api.Configuration
+import play.api.{ Configuration, Environment }
 import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
@@ -41,7 +41,7 @@ import scala.language.postfixOps
 
 class JobActor @Inject()(
     runscriptManager: RunscriptManager,
-    environment: play.Environment,
+    environment: Environment,
     env: Env,
     hashService: GeneralHashService,
     jobDao: JobDao,
@@ -492,6 +492,8 @@ class JobActor @Inject()(
               env.configure(s"SGENODES", config.get[String]("sge_nodes"))
               env.configure(s"DATABASES", config.get[String]("db_root"))
               env.configure(s"BIOPROGSROOT", config.get[String]("bioprogs_root"))
+              env.configure(s"HOSTNAME", config.get[String]("host_name"))
+              env.configure(s"PORT", config.get[String]("port"))
 
               log.info(s"$jobID is running with $h_vmem GB h_vmem")
               log.info(s"$jobID is running with $threads threads")

@@ -103,6 +103,19 @@ export default {
         },
         jobs: {
             details: 'JobID: {jobID}, Created: {dateCreated}',
+            states: {
+                1: 'Prepared',
+                2: 'Queued',
+                3: 'Running',
+                4: 'Error',
+                5: 'Done',
+                6: 'Submitted',
+                7: 'Pending',
+                8: 'Limit Reached',
+                9: 'Deleted',
+            },
+            foundIdenticalCopy: 'We found an identical copy of your job in our database!<br>' +
+                'Job ID: {jobID}, which was created {createdAt}.',
         },
         helpModals: {
             names: {

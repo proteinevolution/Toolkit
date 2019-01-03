@@ -31,7 +31,6 @@ final class VerificationController @Inject()(
     userSessions: UserSessions,
     @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
     environment: Environment,
-    environment2: play.Environment,
     assets: AssetsFinder,
     cc: ControllerComponents,
     env: Env
@@ -115,7 +114,7 @@ final class VerificationController @Inject()(
                           .map {
                             case Some(modifiedUser) =>
                               userSessions.removeUserFromCache(user)
-                              val eMail = PasswordChangedMail(modifiedUser, environment2, env)
+                              val eMail = PasswordChangedMail(modifiedUser, environment, env)
                               eMail.send
                               // Force Log Out on all connected users.
                               (wsActorCache.get(modifiedUser.userID.stringify): Option[List[ActorRef]]) match {

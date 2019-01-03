@@ -24,3 +24,8 @@ export interface CustomJobIdValidationResult {
     version?: number;
     suggested?: string;
 }
+
+export interface SimilarJobResult {
+    jobID: string;
+    dateCreated: number;
+}
