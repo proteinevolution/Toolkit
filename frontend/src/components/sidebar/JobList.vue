@@ -192,14 +192,14 @@
                     box-shadow: 1px 1px 6px 1px #8a8a8a;
                 }
 
-                // prepared
-                &.status-1 {
-                    background-color: #f2f2f2;
+                // prepared, submitted
+                &.status-1, &.status-6 {
+                    background-color: #F2F2F2;
                 }
 
                 // queued, pending
                 &.status-2, &.status-7 {
-                    background-color: #c0b5bf;
+                    background-color: #C0B5BF;
                 }
 
                 // running
@@ -214,17 +214,12 @@
 
                 // done
                 &.status-5 {
-                    background-color: #dbdbff;
-                }
-
-                // submitted
-                &.status-6 {
-                    background-color: #f2f2f2;
+                    background-color: #DBFFDB;
                 }
 
                 // deleted
                 &.status-9 {
-                    background-color: #DBFFDB;
+                    background-color: #DBDBFF;
                 }
             }
         }
