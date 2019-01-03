@@ -5,6 +5,7 @@ declare module 'vue-clipboard2';
 declare module 'vue-simple-spinner';
 declare module 'vue-switches';
 declare module 'vuetable-2/src/components/Vuetable';
+declare module 'vue-native-websocket';
 declare module 'msa' {
     interface MSA {
         render: () => void;

@@ -168,7 +168,7 @@ final class WebSocketActor @Inject()(
 
     case UpdateLoad(load: Double) =>
       out ! JsonObject(
-        "type" -> Json.fromString("UpdateLoad"),
+        "mutation" -> Json.fromString("UpdateLoad"),
         "load" -> Json.fromDoubleOrNull(load)
       ).asJson
 

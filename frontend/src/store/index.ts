@@ -16,7 +16,8 @@ const store: StoreOptions<RootState> = {
             toolParameters: false,
         },
         maintenanceMode: false,
-        reconnecting: false,
+        reconnecting: true,
+        clusterWorkload: 0,
     },
     mutations: {
         startLoading(state, loadingType: string) {
@@ -24,6 +25,22 @@ const store: StoreOptions<RootState> = {
         },
         stopLoading(state, loadingType: string) {
             state.loading[loadingType] = false;
+        },
+        SOCKET_ONOPEN(state, event) {
+            Vue.prototype.$socket = event.currentTarget;
+            state.reconnecting = false;
+        },
+        SOCKET_ONCLOSE(state, event) {
+            state.reconnecting = true;
+        },
+        SOCKET_ONERROR(state, event) {
+            console.error(state, event);
+        },
+        UpdateLoad(state, message) {
+            state.clusterWorkload = message.load;
+        },
+        SOCKET_ONMESSAGE(state, message) {
+            console.log(message);
         },
     },
     modules: {
