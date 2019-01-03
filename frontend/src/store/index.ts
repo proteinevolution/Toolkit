@@ -36,11 +36,12 @@ const store: StoreOptions<RootState> = {
         SOCKET_ONERROR(state, event) {
             // console.error(state, event);
         },
-        UpdateLoad(state, message) {
+        SOCKET_UpdateLoad(state, message) {
             state.clusterWorkload = message.load;
         },
         SOCKET_ONMESSAGE(state, message) {
             // console.log(message);
+            // messages which haven't been caught will end up here
         },
     },
     modules: {

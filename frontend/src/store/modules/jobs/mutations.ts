@@ -26,6 +26,9 @@ const mutations: MutationTree<JobState> = {
     removeJob(state, {jobID}) {
         state.jobs = state.jobs.filter((job: Job) => job.jobID !== jobID);
     },
+    SOCKET_UpdateJob(state, message) {
+        console.log(message);
+    },
 };
 
 export default mutations;

@@ -132,7 +132,7 @@ final class WebSocketActor @Inject()(
       }
 
     case PushJob(job: Job) =>
-      out ! JsonObject("type" -> Json.fromString("PushJob"), "job" -> job.cleaned(toolConfig).asJson).asJson
+      out ! JsonObject("namespace" -> Json.fromString("jobs"), "mutation" -> Json.fromString("SOCKET_UpdateJob"), "job" -> job.cleaned(toolConfig).asJson).asJson
 
     case ShowNotification(notificationType: String, tag: String, title: String, body: String) =>
       out ! JsonObject(
@@ -168,7 +168,7 @@ final class WebSocketActor @Inject()(
 
     case UpdateLoad(load: Double) =>
       out ! JsonObject(
-        "mutation" -> Json.fromString("UpdateLoad"),
+        "mutation" -> Json.fromString("SOCKET_UpdateLoad"),
         "load" -> Json.fromDoubleOrNull(load)
       ).asJson
 
