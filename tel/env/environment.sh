@@ -1,22 +1,14 @@
 #!/bin/bash
-#Databases
-
-export TK_ROOT="${BIOPROGSROOT}"
-export BIOPROGS="${TK_ROOT}/bioprogs"
-export STANDARD="${DATABASES}/standard"
-
+export BIOPROGS="${BIOPROGSROOT}/bioprogs"
 #HHomp database
 export HHOMPDBPATH="${DATABASES}/hhomp/db"
-
 #JAVA
 ##########################################################
 export JAVA_HOME="${BIOPROGS}/dependencies/jdk1.8.0"
 export JRE_HOME="${BIOPROGS}/dependencies/jdk1.8.0/jre"
-
 #PERL
 ##########################################################
 export PERL5LIB="${BIOPROGS}/lib"
-
 #COILS/PCOILS
 export COILSDIR="${BIOPROGS}/pcoils"
 #ALI2D
@@ -48,7 +40,7 @@ export PIPRED="${BIOPROGS}/tools/pipred"
 #DeepCoil
 export DEEPCOIL="${BIOPROGS}/tools/deepcoil"
 #Setup HHrepid
-export HHREPIDPATH="${BIOPROGS}/tools/hhrepid" 
+export HHREPIDPATH="${BIOPROGS}/tools/hhrepid"
 #Setup HMMER
 export HMMERPATH="${BIOPROGS}/tools/hmmer/bin"
 export HMMERBINARIES="${BIOPROGS}/tools/hmmer/binaries"
@@ -64,7 +56,6 @@ export PYTHONPATH="${BIOPROGS}/tools/modeller/modlib/:${BIOPROGS}/dependencies/p
 export PHYLIPBIN="${BIOPROGS}/tools/phylip/current/bin64"
 #Reformat version with PHYLIP Support (new reformat.pl does not have this support)
 export REFORMAT_PHYLIP="${BIOPROGS}/helpers/reformat_protblast.pl"
-
 #HHLIB
 #Rye and its nodes have slightly different architectures.
 #hh-suite needs to be compiled separately on them
@@ -77,9 +68,8 @@ else
         export PATH="${BIOPROGS}/tools/hh-suite-build/scripts:${PATH}" #HHSCRIPTS
         export PATH="${BIOPROGS}/tools/hh-suite-build/bin:${PATH}" #HHBINS
 fi
-
 #PATH variable
-export PATH="${BIORPOGS}/dependencies/anaconda3/bin:${PATH}"
+export PATH="${BIOPROGS}/dependencies/anaconda3/bin:${PATH}"
 export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}" #Python binary
 export PATH="${BIOPROGS}/pcoils:${PATH}" #PCOILS
 export PATH="${BIOPROGS}/dependencies/hh-suite_misc_scripts:${PATH}" # helper scripts from the old Toolkit
@@ -104,7 +94,7 @@ export PATH="${BIOPROGS}/tools/aln2plot:${PATH}"
 export PATH="${BIOPROGS}/tools/phylip:${PATH}" #PHYLIP
 export PATH="${BIOPROGS}/tools/marcoil:${PATH}" #MARCOIL
 export PATH="${BIOPROGS}/tools/modeller/bin:${PATH}" #MODELLER
-export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}" 
+export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}"
 export PATH="${BIOPROGS}/tools/hmmer/binaries:${PATH}" #HMMER
 export PATH="${BIOPROGS}/tools/retrieveseq:${PATH}" #RetrieveSeq
 export PATH="${BIOPROGS}/tools/seq2id:${PATH}" #Seq2ID
