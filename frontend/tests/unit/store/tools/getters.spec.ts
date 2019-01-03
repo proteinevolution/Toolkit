@@ -9,6 +9,7 @@ const rootState = {
         tools: false,
         toolParameters: false,
     },
+    clusterWorkload: 0,
 };
 
 describe('tools/getters', () => {

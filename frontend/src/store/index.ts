@@ -34,13 +34,13 @@ const store: StoreOptions<RootState> = {
             state.reconnecting = true;
         },
         SOCKET_ONERROR(state, event) {
-            console.error(state, event);
+            // console.error(state, event);
         },
         UpdateLoad(state, message) {
             state.clusterWorkload = message.load;
         },
         SOCKET_ONMESSAGE(state, message) {
-            console.log(message);
+            // console.log(message);
         },
     },
     modules: {
