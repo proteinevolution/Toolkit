@@ -2,10 +2,11 @@ package de.proteinevolution.models.database.users
 
 import java.time.ZonedDateTime
 
+import de.proteinevolution.models.util.{ ZonedDateTimeHelper => helper }
+import io.circe.syntax._
+import io.circe.{ Encoder, Json }
 import org.mindrot.jbcrypt.BCrypt
-import play.api.libs.json.{ JsObject, Json, Writes }
 import reactivemongo.bson._
-import de.proteinevolution.models.util.ZonedDateTimeHelper
 
 case class User(
     userID: BSONObjectID = BSONObjectID.generate(), // ID of the User
@@ -91,31 +92,24 @@ object User {
   final val NORMALUSERAWAITINGREGISTRATION: Int = 0
   final val NORMALUSER: Int                     = -1
 
-  /**
-   * Define how the User object is formatted when turned into a json object
-   */
-  implicit object UserWrites extends Writes[User] {
-    val dtf = "dd.MM.yyyy HH:mm:ss"
-    def writes(user: User): JsObject = Json.obj(
-      ID                 -> user.userID.stringify,
-      SESSIONID          -> user.sessionID.map(_.stringify),
-      SESSIONDATA        -> user.sessionData,
-      CONNECTED          -> user.connected,
-      ACCOUNTTYPE        -> user.accountType,
-      UserData.NAMELOGIN -> user.getUserData.nameLogin,
-      UserData.EMAIL     -> user.getUserData.eMail,
-      //USERCONFIG    -> user.userConfig,
-      //USERTOKENS    -> user.userTokens,
-      JOBS          -> user.jobs,
-      DATELASTLOGIN -> user.dateLastLogin.map(_.format(ZonedDateTimeHelper.dateTimeFormatter)),
-      DATECREATED   -> user.dateCreated.map(_.format(ZonedDateTimeHelper.dateTimeFormatter)),
-      DATEUPDATED   -> user.dateUpdated.map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
-    )
-  }
+  implicit val encodeUser: Encoder[User] = (u: User) =>
+    Json.obj(
+      (ID, Json.fromString(u.userID.stringify)),
+      (SESSIONID, u.sessionID.map(id => Json.fromString(id.stringify)).getOrElse(Json.Null)),
+      (SESSIONDATA, u.sessionData.asJson),
+      (CONNECTED, Json.fromBoolean(u.connected)),
+      (ACCOUNTTYPE, Json.fromInt(u.accountType)),
+      (UserData.NAMELOGIN, Json.fromString(u.getUserData.nameLogin)),
+      (UserData.EMAIL, Json.fromString(u.getUserData.eMail)),
+      (JOBS, u.jobs.asJson),
+      (DATELASTLOGIN,
+       u.dateLastLogin.map(zdt => Json.fromString(zdt.format(helper.dateTimeFormatter))).getOrElse(Json.Null)),
+      (DATECREATED,
+       u.dateCreated.map(zdt => Json.fromString(zdt.format(helper.dateTimeFormatter))).getOrElse(Json.Null)),
+      (DATEUPDATED,
+       u.dateUpdated.map(zdt => Json.fromString(zdt.format(helper.dateTimeFormatter))).getOrElse(Json.Null))
+  )
 
-  /**
-   * Define how the User object is formatted as a BSON Document
-   */
   implicit object Reader extends BSONDocumentReader[User] {
     override def read(bson: BSONDocument): User =
       User(
@@ -128,10 +122,10 @@ object User {
         userConfig = bson.getAs[UserConfig](USERCONFIG).getOrElse(UserConfig()),
         userToken = bson.getAs[UserToken](USERTOKEN),
         jobs = bson.getAs[List[String]](JOBS).getOrElse(List.empty),
-        dateDeletedOn = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateLastLogin = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt))
+        dateDeletedOn = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => helper.getZDT(dt)),
+        dateLastLogin = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => helper.getZDT(dt)),
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => helper.getZDT(dt)),
+        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => helper.getZDT(dt))
       )
   }
 
@@ -154,11 +148,6 @@ object User {
       )
   }
 
-  /**
-   * Helper class for a login Form Object
-   *
-   * @param nameLogin
-   * @param password
-   */
-  case class Login(nameLogin: String, password: String)
+  final case class Login(nameLogin: String, password: String)
+
 }
