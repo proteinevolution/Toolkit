@@ -1,7 +1,8 @@
 package de.proteinevolution.models.database.statistics
 
-import play.api.libs.json._
 import reactivemongo.bson._
+import io.circe.Encoder
+import io.circe.generic.semiauto._
 
 case class ToolStatistic(
     toolName: String,
@@ -13,34 +14,26 @@ case class ToolStatistic(
 
   /**
    * Returns the total amount of jobs used with the tool
-   * @return
    */
   def total: Long = monthly.map(_.toLong).sum[Long]
 
   /**
    * Returns the total amount of failed jobs used with the tool
-   * @return
    */
   def totalFailed: Long = monthlyFailed.map(_.toLong).sum[Long]
 
   /**
    * Returns the total amount of deleted jobs used with the tool
-   * @return
    */
   def totalDeleted: Long = monthlyFailed.map(_.toLong).sum[Long]
 
   /**
    * Returns the total amount of internal jobs used with the tool
-   * @return
    */
   def totalInternal: Long = monthlyInternal.map(_.toLong).sum[Long]
 
   /**
    * Creates a new ToolStatistic object which is a copy of this one - with the current month added
-   * @param current
-   * @param currentFailed
-   * @param currentDeleted
-   * @return
    */
   def addMonth(current: Int, currentFailed: Int, currentDeleted: Int, currentInternal: Int): ToolStatistic = {
     this.copy(
@@ -53,10 +46,6 @@ case class ToolStatistic(
 
   /**
    * Creates a new ToolStatistic object which is a copy of this one - with the current month added
-   * @param currents
-   * @param currentsFailed
-   * @param currentsDeleted
-   * @return
    */
   def addMonths(
       currents: List[Int],
@@ -74,7 +63,6 @@ case class ToolStatistic(
 
   /**
    * Adds empty months "amount" of times recursively
-   * @param amount
    */
   def addEmptyMonths(amount: Int = 1): ToolStatistic = {
     if (amount > 0) this.addMonth(0, 0, 0, 0).addEmptyMonths(amount - 1)
@@ -83,21 +71,14 @@ case class ToolStatistic(
 }
 
 object ToolStatistic {
+
   val TOOLNAME        = "tool"
   val MONTHLY         = "monthly"
   val MONTHLYFAILED   = "monthlyFailed"
   val MONTHLYDELETED  = "monthlyDeleted"
   val MONTHLYINTERNAL = "monthlyInternal"
 
-  implicit object JsonWriter extends Writes[ToolStatistic] {
-    override def writes(toolStatistic: ToolStatistic): JsObject = Json.obj(
-      TOOLNAME        -> toolStatistic.toolName,
-      MONTHLY         -> toolStatistic.monthly,
-      MONTHLYFAILED   -> toolStatistic.monthlyFailed,
-      MONTHLYDELETED  -> toolStatistic.monthlyDeleted,
-      MONTHLYINTERNAL -> toolStatistic.monthlyInternal
-    )
-  }
+  implicit val toolStatsEncoder: Encoder[ToolStatistic] = deriveEncoder[ToolStatistic]
 
   implicit object Reader extends BSONDocumentReader[ToolStatistic] {
     def read(bson: BSONDocument): ToolStatistic = {
@@ -120,4 +101,5 @@ object ToolStatistic {
       MONTHLYINTERNAL -> toolStatistic.monthlyDeleted
     )
   }
+
 }
