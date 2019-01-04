@@ -1,6 +1,5 @@
 package de.proteinevolution.results.models.resultviews
 
-import de.proteinevolution.models.results.ResultViews
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.results.results.{ AlignmentResult, HHBlitsResult }
 import de.proteinevolution.tools.ToolConfig
@@ -18,7 +17,7 @@ case class HHBlitsResultView(
   import play.twirl.api.HtmlFormat
 
   override lazy val tabs: ListMap[String, HtmlFormat.Appendable] = ListMap(
-    ResultViews.RESULTS -> views.html.resultpanels.hhblits.hitlist(
+    RESULTS -> views.html.resultpanels.hhblits.hitlist(
       jobId,
       result,
       toolConfig.values(ToolName.HHBLITS.value),
