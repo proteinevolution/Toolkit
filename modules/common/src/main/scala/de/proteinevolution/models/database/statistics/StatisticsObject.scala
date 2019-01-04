@@ -3,8 +3,10 @@ package de.proteinevolution.models.database.statistics
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
-import de.proteinevolution.models.util.ZonedDateTimeHelper
-import play.api.libs.json._
+import de.proteinevolution.models.util.{ ZonedDateTimeHelper => helper }
+import io.circe.java8.time.encodeZonedDateTime
+import io.circe.syntax._
+import io.circe.{ Encoder, Json }
 import reactivemongo.bson._
 
 case class StatisticsObject(
@@ -120,19 +122,21 @@ case class StatisticsObject(
 }
 
 object StatisticsObject {
+
   val ID             = "statisticsID"
   val IDDB           = "_id"
   val USERSTATISTICS = "userStat"
   val TOOLSTATISTICS = "toolStat"
   val DATEPUSHED     = "datePushed"
 
-  implicit object JsonWriter extends Writes[StatisticsObject] {
-    override def writes(statisticObject: StatisticsObject): JsObject = Json.obj(
-      IDDB           -> statisticObject.statisticsID.stringify,
-      USERSTATISTICS -> statisticObject.userStatistics,
-      TOOLSTATISTICS -> statisticObject.toolStatistics,
-      DATEPUSHED     -> statisticObject.datePushed
-    )
+  implicit val statObjEncoder: Encoder[StatisticsObject] = new Encoder[StatisticsObject] {
+    final override def apply(obj: StatisticsObject): Json =
+      Json.obj(
+        (IDDB, Json.fromString(obj.statisticsID.stringify)),
+        (USERSTATISTICS, obj.userStatistics.asJson),
+        (TOOLSTATISTICS, obj.toolStatistics.asJson),
+        (DATEPUSHED, obj.datePushed.asJson)
+      )
   }
 
   implicit object Reader extends BSONDocumentReader[StatisticsObject] {
@@ -141,10 +145,8 @@ object StatisticsObject {
         statisticsID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
         userStatistics = bson.getAs[UserStatistic](USERSTATISTICS).getOrElse(UserStatistic()),
         toolStatistics = bson.getAs[List[ToolStatistic]](TOOLSTATISTICS).getOrElse(List.empty),
-        datePushed = bson
-          .getAs[List[BSONDateTime]](DATEPUSHED)
-          .getOrElse(List.empty[BSONDateTime])
-          .map(dt => ZonedDateTimeHelper.getZDT(dt))
+        datePushed =
+          bson.getAs[List[BSONDateTime]](DATEPUSHED).getOrElse(List.empty[BSONDateTime]).map(dt => helper.getZDT(dt))
       )
     }
   }
@@ -157,4 +159,5 @@ object StatisticsObject {
       DATEPUSHED     -> statisticObject.datePushed.map(a => BSONDateTime(a.toInstant.toEpochMilli))
     )
   }
+
 }

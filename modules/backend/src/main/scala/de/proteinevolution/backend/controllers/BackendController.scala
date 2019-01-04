@@ -13,9 +13,10 @@ import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.tools.ToolConfig
+import io.circe.Json
+import io.circe.syntax._
 import javax.inject.{ Inject, Named, Singleton }
 import play.api.Logger
-import play.api.libs.json.Json
 import play.api.mvc._
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
@@ -39,7 +40,7 @@ final class BackendController @Inject()(
   def index: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
       if (user.isSuperuser) {
-        NoCache(Ok(Json.toJson(List("Index Page"))))
+        NoCache(Ok(List("Index Page").asJson))
       } else {
         NotFound
       }
@@ -98,16 +99,18 @@ final class BackendController @Inject()(
                     )
                     // TODO add a way to remove the now collected elements from the JobEventLogs
                     NoCache(
-                      Ok(Json.toJson(Json.obj("success" -> "new statistics added", "stat" -> statisticsObjectUpdated)))
+                      Ok(
+                        Json.obj("success" -> Json.fromString("new statistics added"),
+                                 "stat"    -> statisticsObjectUpdated.asJson)
+                      )
                     )
                   case None =>
                     Logger
                       .info("Statistics generated, but it seems like the statistics could not be reloaded from the db")
                     NoCache(
                       Ok(
-                        Json.toJson(
-                          Json.obj("error" -> "could not reload new stats from DB", "stat" -> statisticsObject)
-                        )
+                        Json.obj("error" -> Json.fromString("could not reload new stats from DB"),
+                                 "stat"  -> statisticsObject.asJson)
                       )
                     )
                 }
@@ -115,7 +118,7 @@ final class BackendController @Inject()(
           } else {
             logger.info("No need to push statistics. Last Push: " + statistics.lastPushed)
             fuccess(
-              NoCache(Ok(Json.toJson(Json.obj("success" -> "old statistics used", "stat" -> statistics))))
+              NoCache(Ok(Json.obj("success" -> Json.fromString("old statistics used"), "stat" -> statistics.asJson)))
             )
           }
         }
@@ -153,7 +156,7 @@ final class BackendController @Inject()(
     userSessions.getUser.flatMap { user =>
       if (user.isSuperuser) {
         userDao.findUsers(BSONDocument(User.USERDATA -> BSONDocument("$exists" -> true))).map { users =>
-          NoCache(Ok(Json.toJson(users)))
+          NoCache(Ok(users.asJson))
         }
       } else {
         fuccess(NotFound)
