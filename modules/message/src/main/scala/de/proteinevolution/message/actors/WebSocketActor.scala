@@ -183,9 +183,9 @@ final class WebSocketActor @Inject()(
     case ClearJob(jobID: String, deleted: Boolean) =>
       out ! JsonObject(
         "namespace" -> Json.fromString("jobs"),
-        "mutation"    -> Json.fromString("SOCKET_ClearJob"),
-        "jobID"   -> Json.fromString(jobID),
-        "deleted" -> Json.fromBoolean(deleted)
+        "mutation"  -> Json.fromString("SOCKET_ClearJob"),
+        "jobID"     -> Json.fromString(jobID),
+        "deleted"   -> Json.fromBoolean(deleted)
       ).asJson
 
     case ChangeSessionID(newSid: BSONObjectID) =>
