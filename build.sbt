@@ -48,7 +48,7 @@ lazy val commonJVM = common.jvm.dependsOn(base, tel)
 
 lazy val results = (project in file("modules/results"))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl)
-  .dependsOn(commonJVM, auth, jobs, help, ui, base, tools)
+  .dependsOn(commonJVM, auth, jobs, help, ui, base, tools, util)
   .settings(
     name := "de.proteinevolution.results",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -87,7 +87,7 @@ lazy val jobs = (project in file("modules/jobs"))
 
 lazy val auth = (project in file("modules/auth"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, base, tel)
+  .dependsOn(commonJVM, base, tel, util)
   .settings(
     name := "de.proteinevolution.auth",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -206,27 +206,40 @@ lazy val migrations = (project in file("modules/migrations"))
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val tel = (project in file("modules/tel"))
-    .enablePlugins(PlayScala, JavaAppPackaging)
-    .settings(
-      name := "de.proteinevolution.tel",
-      libraryDependencies ++= Dependencies.commonDeps,
-      Settings.compileSettings,
-      TwirlKeys.templateImports := Seq.empty,
-      disableDocs
-    )
-    .disablePlugins(PlayLayoutPlugin)
+  .enablePlugins(PlayScala, JavaAppPackaging)
+  .settings(
+    name := "de.proteinevolution.tel",
+    libraryDependencies ++= Dependencies.commonDeps,
+    Settings.compileSettings,
+    TwirlKeys.templateImports := Seq.empty,
+    disableDocs
+  )
+  .disablePlugins(PlayLayoutPlugin)
 
 lazy val tools = (project in file("modules/tools"))
-    .enablePlugins(PlayScala, JavaAppPackaging)
-    .dependsOn(commonJVM)
-    .settings(
-      name := "de.proteinevolution.tools",
-      libraryDependencies ++= Dependencies.commonDeps,
-      Settings.compileSettings,
-      TwirlKeys.templateImports := Seq.empty,
-      disableDocs
-    )
-    .disablePlugins(PlayLayoutPlugin)
+  .enablePlugins(PlayScala, JavaAppPackaging)
+  .dependsOn(commonJVM)
+  .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
+  .settings(
+    name := "de.proteinevolution.tools",
+    libraryDependencies ++= Dependencies.commonDeps,
+    Settings.compileSettings,
+    TwirlKeys.templateImports := Seq.empty,
+    disableDocs
+  )
+  .disablePlugins(PlayLayoutPlugin)
+
+lazy val util = (project in file("modules/util"))
+  .enablePlugins(PlayScala, JavaAppPackaging)
+  .dependsOn(commonJVM)
+  .settings(
+    name := "de.proteinevolution.util",
+    libraryDependencies ++= Dependencies.commonDeps,
+    Settings.compileSettings,
+    TwirlKeys.templateImports := Seq.empty,
+    disableDocs
+  )
+  .disablePlugins(PlayLayoutPlugin)
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb)
@@ -246,7 +259,8 @@ lazy val root = (project in file("."))
     verification,
     migrations,
     tel,
-    tools
+    tools,
+    util
   )
   .aggregate(
     client,
@@ -265,7 +279,8 @@ lazy val root = (project in file("."))
     clusterApi,
     migrations,
     tel,
-    tools
+    tools,
+    util
   )
   .settings(
     coreSettings,

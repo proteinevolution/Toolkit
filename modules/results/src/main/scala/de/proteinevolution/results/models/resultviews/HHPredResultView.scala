@@ -1,6 +1,5 @@
 package de.proteinevolution.results.models.resultviews
 
-import de.proteinevolution.models.results.ResultViews
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.results.results.{ AlignmentResult, HHPredResult }
 import de.proteinevolution.tools.ToolConfig
@@ -18,7 +17,7 @@ case class HHPredResultView(
 ) extends ResultView {
 
   override lazy val tabs: ListMap[String, HtmlFormat.Appendable] = ListMap(
-    ResultViews.RESULTS -> views.html.resultpanels.hhpred.hitlist(
+    RESULTS -> views.html.resultpanels.hhpred.hitlist(
       jobId,
       result,
       toolConfig.values(ToolName.HHPRED.value),

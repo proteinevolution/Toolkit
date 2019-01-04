@@ -1,9 +1,9 @@
-package de.proteinevolution.common
+package de.proteinevolution.util
 
-import javax.inject.{ Inject, Singleton }
 import com.google.inject.ImplementedBy
 import com.tgf.pizza.geoip.MaxMindIpGeo
 import de.proteinevolution.models.database.users.Location
+import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 import play.api.mvc.RequestHeader
 

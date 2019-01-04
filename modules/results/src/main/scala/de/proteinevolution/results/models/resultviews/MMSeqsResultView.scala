@@ -2,12 +2,13 @@ package de.proteinevolution.results.models.resultviews
 
 import de.proteinevolution.models.ToolName
 import de.proteinevolution.tools.ToolConfig
+import play.twirl.api.HtmlFormat
 
 import scala.collection.immutable.ListMap
 
 case class MMSeqsResultView(jobId: String, toolConfig: ToolConfig) extends ResultView {
 
-  override lazy val tabs = ListMap(
+  override lazy val tabs: ListMap[String, HtmlFormat.Appendable] = ListMap(
     "Reduced set" ->
     views.html.resultpanels.fileviewWithDownloadForward(
       jobId + ".fas",

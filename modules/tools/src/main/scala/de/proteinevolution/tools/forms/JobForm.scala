@@ -1,4 +1,4 @@
-package de.proteinevolution.models.forms
+package de.proteinevolution.tools.forms
 
 import de.proteinevolution.models.database.jobs.JobState
 import io.circe.generic.JsonCodec

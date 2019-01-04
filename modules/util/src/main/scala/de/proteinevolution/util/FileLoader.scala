@@ -1,4 +1,5 @@
-package de.proteinevolution.models.results
+package de.proteinevolution.util
+
 import better.files._
 
 object FileLoader {

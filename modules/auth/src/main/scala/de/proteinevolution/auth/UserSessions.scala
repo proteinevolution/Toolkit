@@ -4,8 +4,8 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.base.helpers.ToolkitTypes
-import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.database.users.{ SessionData, User }
+import de.proteinevolution.util.LocationProvider
 import javax.inject.{ Inject, Singleton }
 import play.api.cache._
 import play.api.mvc.RequestHeader
@@ -24,15 +24,10 @@ class UserSessions @Inject()(
     locationProvider: LocationProvider
 )(implicit ec: ExecutionContext)
     extends ToolkitTypes {
+
   private val SID    = "sid"
   private val logger = Logger(this.getClass)
 
-  /**
-   * Creates a update modifier for the user according to the
-   * @param user
-   * @param sessionDataOption
-   * @return
-   */
   def getUserModifier(
       user: User,
       sessionDataOption: Option[SessionData] = None,
@@ -73,11 +68,6 @@ class UserSessions @Inject()(
       )
   }
 
-  /**
-   *
-   * Associates a user with the provided sessionID
-   *
-   */
   def putUser(implicit request: RequestHeader, sessionID: BSONObjectID): Future[User] = {
     val newSessionData = SessionData(
       ip = MurmurHash3.stringHash(request.remoteAddress).toString,
@@ -117,9 +107,6 @@ class UserSessions @Inject()(
     }
   }
 
-  /**
-   * Returns a Future User
-   */
   def getUser(implicit request: RequestHeader): Future[User] = {
     // Ignore our monitoring service and don't update it in the DB
     if (request.remoteAddress.contentEquals("10.3.7.70")) { // TODO Put this in the config?
