@@ -1,9 +1,8 @@
-package de.proteinevolution.models.param
+package de.proteinevolution.params
 
-import javax.inject.{ Inject, Singleton }
-
-import de.proteinevolution.models.param.ParamType.{ Bool, Decimal, ModellerKey, Select, Sequence, Text }
+import de.proteinevolution.params.ParamType._
 import de.proteinevolution.tel.TEL
+import javax.inject.{ Inject, Singleton }
 
 /**
  * Provides the specification of the Parameters as they appear in the individual tools
@@ -127,7 +126,7 @@ class ParamAccess @Inject()(tel: TEL) {
     case "CLUSTERING_MODE"  => select("clustering_mode", "Clustering mode")
   }
 
-  val paramGroups = Map(
+  val paramGroups: Map[String, Seq[String]] = Map(
     "Input" -> Seq(
       getParam("ALIGNMENT").name,
       getParam("STANDARD_DB").name,

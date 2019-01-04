@@ -1,4 +1,4 @@
-package de.proteinevolution.models.param
+package de.proteinevolution.params
 
 import io.circe.generic.JsonCodec
 

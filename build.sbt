@@ -74,7 +74,7 @@ lazy val help = (project in file("modules/help"))
 
 lazy val jobs = (project in file("modules/jobs"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, auth, base, clusterApi, tel, tools)
+  .dependsOn(commonJVM, auth, base, clusterApi, tel, tools, util)
   .settings(
     name := "de.proteinevolution.jobs",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -218,7 +218,7 @@ lazy val tel = (project in file("modules/tel"))
 
 lazy val tools = (project in file("modules/tools"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM)
+  .dependsOn(commonJVM, params)
   .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
   .settings(
     name := "de.proteinevolution.tools",
@@ -239,6 +239,19 @@ lazy val util = (project in file("modules/util"))
     TwirlKeys.templateImports := Seq.empty,
     disableDocs
   )
+  .disablePlugins(PlayLayoutPlugin)
+
+lazy val params = (project in file("modules/params"))
+  .enablePlugins(PlayScala, JavaAppPackaging)
+  .dependsOn(commonJVM)
+  .settings(
+    name := "de.proteinevolution.params",
+    libraryDependencies ++= Dependencies.commonDeps,
+    Settings.compileSettings,
+    TwirlKeys.templateImports := Seq.empty,
+    disableDocs
+  )
+  .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val root = (project in file("."))
@@ -280,7 +293,8 @@ lazy val root = (project in file("."))
     migrations,
     tel,
     tools,
-    util
+    util,
+    params
   )
   .settings(
     coreSettings,

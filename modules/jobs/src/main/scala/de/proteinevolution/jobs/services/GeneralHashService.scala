@@ -6,7 +6,7 @@ import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.parsers.FASTA
 import de.proteinevolution.tel.RunscriptPathProvider
 import de.proteinevolution.tel.env.Env
-import de.proteinevolution.tools.FNV
+import de.proteinevolution.util.FNV
 import javax.inject.{ Inject, Singleton }
 import play.api.{ Configuration, Logger }
 

@@ -1,7 +1,7 @@
-package de.proteinevolution.models.param
+package de.proteinevolution.params
 
-import io.circe.syntax._
 import io.circe._
+import io.circe.syntax._
 
 sealed trait ParamType {
 
