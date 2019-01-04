@@ -7,7 +7,7 @@ import VueNativeSock from 'vue-native-websocket';
 import axios from 'axios';
 import './bootstrap.ts';
 
-export const devMode: boolean = process.env.NODE_ENV === 'development';
+const devMode: boolean = process.env.NODE_ENV === 'development';
 Vue.config.productionTip = devMode;
 Vue.config.silent = !devMode;
 Vue.config.devtools = devMode;

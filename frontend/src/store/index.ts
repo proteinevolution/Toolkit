@@ -4,7 +4,6 @@ import tools from './modules/tools';
 import jobs from './modules/jobs';
 import {RootState} from './types';
 import localStoragePlugin from './plugins/localStoragePlugin';
-import {devMode} from '@/main';
 
 Vue.use(Vuex);
 
@@ -25,6 +24,9 @@ const store: StoreOptions<RootState> = {
         },
         stopLoading(state, loadingType: string) {
             state.loading[loadingType] = false;
+        },
+        SOCKET_RECONNECT(state, event) {
+            // TODO
         },
         SOCKET_ONOPEN(state, event) {
             Vue.prototype.$socket = event.currentTarget;
@@ -50,7 +52,7 @@ const store: StoreOptions<RootState> = {
     },
 };
 
-if (!devMode) {
+if (process.env.NODE_ENV !== 'development') {
     store.plugins = [localStoragePlugin];
 }
 
