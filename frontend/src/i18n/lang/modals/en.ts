@@ -1,4 +1,4 @@
-const citation = `A Completely Reimplemented MPI Bioinformatics Toolkit
+export const citation = `A Completely Reimplemented MPI Bioinformatics Toolkit
 with a New HHpred Server at its Core.<br>Zimmermann L, Stephens A, Nam SZ, Rau D,
 Kübler J, Lozajic M, Gabler F, Söding J, Lupas AN, Alva V.
 <a href="http://www.sciencedirect.com/science/article/pii/S0022283617305879" target="_blank" rel="noopener">

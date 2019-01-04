@@ -166,9 +166,9 @@ final class WebSocketActor @Inject()(
           val lines  = source.mkString
           // val lines = File(file).lineIterator.mkString // use buffered source since it behaves differently
           out ! JsonObject(
-            "type"  -> Json.fromString("WatchLogFile"),
-            "jobID" -> Json.fromString(job.jobID),
-            "lines" -> Json.fromString(lines)
+            "mutation" -> Json.fromString("SOCKET_WatchLogFile"),
+            "jobID"    -> Json.fromString(job.jobID),
+            "lines"    -> Json.fromString(lines)
           ).asJson
           source.close()
         }

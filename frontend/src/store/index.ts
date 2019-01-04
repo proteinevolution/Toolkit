@@ -55,6 +55,9 @@ const store: StoreOptions<RootState> = {
         SOCKET_ShowJobNotification() {
             // handled in App.vue
         },
+        SOCKET_WatchLogFile() {
+            // handled in JobRunningTab.vue
+        },
     },
     modules: {
         tools,

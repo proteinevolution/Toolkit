@@ -11,19 +11,26 @@
             <b-tab :title="$t('jobs.states.' + job.status)"
                    active>
                 <job-prepared-tab v-if="job.status === JobState.Prepared"
+                                  :tool="tool"
                                   :job="job"/>
                 <job-queued-tab v-else-if="job.status === JobState.Queued"
-                                  :job="job"/>
+                                :tool="tool"
+                                :job="job"/>
                 <job-running-tab v-else-if="job.status === JobState.Running"
-                                  :job="job"/>
+                                 :tool="tool"
+                                 :job="job"/>
                 <job-error-tab v-else-if="job.status === JobState.Error"
-                                  :job="job"/>
+                               :tool="tool"
+                               :job="job"/>
                 <job-done-tab v-else-if="job.status === JobState.Done"
-                                  :job="job"/>
+                              :tool="tool"
+                              :job="job"/>
                 <job-submitted-tab v-else-if="job.status === JobState.Submitted"
-                                  :job="job"/>
+                                   :tool="tool"
+                                   :job="job"/>
                 <job-pending-tab v-else-if="job.status === JobState.Pending"
-                                  :job="job"/>
+                                 :tool="tool"
+                                 :job="job"/>
                 <span v-else>
                     Not yet implemented
                 </span>
@@ -46,6 +53,7 @@
     import {Job} from '@/types/toolkit/jobs';
     import moment from 'moment';
     import {JobState} from '@/types/toolkit/enums';
+    import {Tool} from '@/types/toolkit/tools';
 
     export default Vue.extend({
         name: 'JobView',
@@ -73,6 +81,9 @@
             },
             job(): Job {
                 return this.$store.getters['jobs/jobs'].find((job: Job) => job.jobID === this.jobID);
+            },
+            tool(): Tool {
+                return this.$store.getters['tools/tools'].find((tool: Tool) => tool.name === this.job.tool);
             },
         },
         created() {

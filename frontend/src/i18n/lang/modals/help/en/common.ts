@@ -1,6 +1,8 @@
+import citation from '../../en';
+
 /* tslint:disable:max-line-length */
 export default {
-    citation: `<p>A Completely Reimplemented MPI Bioinformatics Toolkit with a New HHpred Server at its Core. Zimmermann L, Stephens A, Nam SZ, Rau D, Kübler J, Lozajic M, Gabler F, Söding J, Lupas AN, Alva V. J Mol Biol. 2018 Jul 20. <a href=http://www.sciencedirect.com/science/article/pii/S0022283617305879 target="_blank" rel="noopener">PMID: 29258817</a></p>`,
+    citation: `<p>${citation}</p>`,
 
     singleseq: `<p><b>Single query sequence:</b></p>
 <p>You can enter a single query sequence in FASTA format (with or without name line):</p>

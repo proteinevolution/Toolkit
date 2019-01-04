@@ -57,6 +57,7 @@
     import {Job} from '@/types/toolkit/jobs';
     import Logger from 'js-logger';
     import {TKNotificationOptions} from '@/modules/notifications/types';
+    import {Tool} from '@/types/toolkit/tools';
 
     const logger = Logger.get('App');
 
@@ -80,7 +81,7 @@
         created() {
             // remove title star on focus
             document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === "visible") {
+                if (document.visibilityState === 'visible') {
                     this.$title.alert(false);
                 }
             });
@@ -103,11 +104,15 @@
                 }
             };
         },
+        destroyed(): void {
+            delete (this.$options as any).sockets.onmessage;
+        },
         methods: {
             showJobNotification(jobID: string, title: string, body: string): void {
                 if (jobID === this.openJobId) {
                     const job: Job = this.$store.getters['jobs/jobs'].find((j: Job) => j.jobID === jobID);
-                    this.showNotification(title, body, job);
+                    const tool: Tool = this.$store.getters['tools/tools'].find((t: Tool) => t.name === job.tool);
+                    this.showNotification(title, body, {tool: tool.longname});
                     this.$title.alert(true);
                 }
             },

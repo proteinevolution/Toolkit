@@ -1,9 +1,8 @@
-import modalContent from './modals/en';
+import modalContent, {citation} from './modals/en';
 import hhblits from './modals/help/en/hhblits';
 
 export default {
     en: {
-        helpContents: 'Some help text',
         fetching: 'Fetching...',
 
         index: {
@@ -126,6 +125,15 @@ export default {
                     update: 'Job Update',
                 },
                 jobFinished: 'Your {tool} job has finished!',
+            },
+            citationInfo: `If you use {tool} within the Toolkit for your research, please cite:<br>
+<a href="http://www.sciencedirect.com/science/article/pii/S0022283617305879" target="_blank" rel="noopener">
+A Completely Reimplemented MPI Bioinformatics Toolkit with a New HHpred Server at its Core.
+</a>`,
+            jobIDDetails: 'Job ID: {jobID}',
+            stateMessages: {
+                queued: 'Your submission is queued!',
+                running: 'Your submission is being processed!',
             },
         },
         helpModals: {
