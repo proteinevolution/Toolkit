@@ -1,6 +1,6 @@
 <template>
     <b-form-group :label="parameter.label">
-        <b-form-input v-model="text"
+        <b-form-input v-model="submissionValue"
                       :placeholder="parameter.inputPlaceholder"
                       :state="state"
                       type="text"
@@ -25,17 +25,16 @@
              */
             parameter: Object as () => TextInputParameter,
         },
-        data() {
-            return {
-                text: '',
-            };
-        },
         mounted() {
             EventBus.$on('paste-example', this.handlePasteExample);
         },
         computed: {
+            defaultSubmissionValue(): any {
+                // overrides the property in ToolParameterMixin
+                return '';
+            },
             state() {
-                if (this.text.length === 0) {
+                if (this.submissionValue.length === 0) {
                     return null;
                 } else if (this.hasError) {
                     return false;
@@ -45,16 +44,15 @@
                 return null;
             },
             regex(): RegExp | null {
-                return this.parameter.regex ? new RegExp(this.parameter.regex, 'g') : null;
+                return this.parameter.regex ? new RegExp(this.parameter.regex) : null;
             },
         },
         watch: {
-            text: {
+            submissionValue: {
                 immediate: true,
                 handler(value: string) {
-                    this.setSubmissionValue(value);
-                    if (this.regex) {
-                        this.setError(this.regex.test(value) ? undefined : {textKey: 'constraints.format'});
+                    if (this.regex && !this.regex.test(value)) {
+                        this.setError({textKey: 'constraints.format'});
                     } else {
                         this.setError(undefined);
                     }
@@ -64,7 +62,7 @@
         methods: {
             handlePasteExample() {
                 if (this.parameter.sampleInput) {
-                    this.text = this.parameter.sampleInput;
+                    this.submissionValue = this.parameter.sampleInput;
                 }
             },
         },

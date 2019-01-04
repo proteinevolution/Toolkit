@@ -10,6 +10,7 @@ export interface Job {
     dateCreated?: Date;
     dateUpdated?: Date;
     dateViewed?: Date;
+    paramValues?: object;
 }
 
 export interface SubmissionResponse {

@@ -1,6 +1,6 @@
 <template>
     <b-form-group :label="parameter.label">
-        <switches v-model="enabled">
+        <switches v-model="submissionValue">
         </switches>
     </b-form-group>
 </template>
@@ -25,20 +25,15 @@
             // this prop can be used by parent components to override the selection, but is not required
             enabledOverride: Boolean,
         },
-        data() {
-            return {
-                enabled: this.enabledOverride || this.parameter.default,
-            };
+        computed: {
+            defaultSubmissionValue(): any {
+                // overrides the property in ToolParameterMixin
+                return this.enabledOverride || this.parameter.default;
+            },
         },
         watch: {
             enabledOverride() {
-                this.enabled = this.enabledOverride || this.enabled;
-            },
-            enabled: {
-                immediate: true,
-                handler(value: boolean) {
-                    this.setSubmissionValue(value);
-                },
+                this.submissionValue = this.enabledOverride || this.submissionValue;
             },
         },
     });

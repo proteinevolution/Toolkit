@@ -1,6 +1,6 @@
 <template>
     <b-form-group :label="parameter.label">
-        <b-form-input v-model.number="number"
+        <b-form-input v-model.number="submissionValue"
                       type="number"
                       :min="parameter.min"
                       :max="parameter.max"
@@ -31,18 +31,18 @@
              */
             parameter: Object as () => NumberParameter,
         },
-        data() {
-            return {
-                number: this.parameter.default || 0,
-            };
+        computed: {
+            defaultSubmissionValue(): any {
+                // overrides property in ToolParameterMixin
+                return this.parameter.default || 0;
+            },
         },
         watch: {
-            number: {
+            submissionValue: {
                 immediate: true,
                 handler(value: number) {
                     const error: ConstraintError | undefined = this.validate(value);
                     this.setError(error);
-                    this.setSubmissionValue(value);
                 },
             },
         },

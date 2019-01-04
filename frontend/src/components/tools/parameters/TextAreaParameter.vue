@@ -3,7 +3,7 @@
         <ExpandHeight>
             <TextAreaSubComponent :parameter="parameter"
                                   :validation-params="validationParams"
-                                  v-model="text"
+                                  v-model="submissionValue"
                                   @validation="handleValidation">
             </TextAreaSubComponent>
         </ExpandHeight>
@@ -12,7 +12,7 @@
                                   :second="true"
                                   :parameter="parameter"
                                   :validation-params="validationParams"
-                                  v-model="textSecond"
+                                  v-model="submissionValueTwo"
                                   @validation="handleValidationSecond">
             </TextAreaSubComponent>
         </ExpandHeight>
@@ -54,28 +54,37 @@
         data() {
             return {
                 secondTextAreaEnabled: false,
-                text: this.$route.params.input ? this.$route.params.input : '',
-                textSecond: '',
             };
         },
-        watch: {
-            text: {
-                immediate: true,
-                handler(value: string) {
-                    this.setSubmissionValue(value);
+        computed: {
+            parameterNameTwo(): string {
+                return this.parameterName + '_two';
+            },
+            defaultSubmissionValue(): any {
+                // overrides property in ToolParameterMixin
+                return this.$route.params.input ? this.$route.params.input : '';
+            },
+            submissionValueTwo: { // has to be handled manually, not covered by the ToolParameterMixin
+                get(): string {
+                    if (!this.submission.hasOwnProperty(this.parameterNameTwo)) {
+                        return '';
+                    }
+                    return this.submission[this.parameterNameTwo];
+                },
+                set(value: string) {
+                    // don't set submission for second text area if its empty
+                    if (value) {
+                        Vue.set(this.submission, this.parameterNameTwo, value);
+                    } else {
+                        Vue.delete(this.submission, this.parameterNameTwo);
+                    }
                 },
             },
-            textSecond(value: string) {
-                if (value) {
-                    Vue.set(this.submission, this.parameterName + '_two', value);
-                } else {
-                    Vue.delete(this.submission, this.parameterName + '_two');
-                }
-            },
+        },
+        watch: {
             secondTextAreaEnabled(value: boolean) {
                 if (!value) {
-                    this.textSecond = '';
-                    Vue.delete(this.submission, this.parameterName + '_two');
+                    this.submissionValueTwo = '';
                     Vue.delete(this.validationErrors, this.parameterName + '_two');
                 }
             },
@@ -84,7 +93,7 @@
             handleValidation(val: ValidationResult) {
                 if (val.failed) {
                     this.setError({textKey: val.textKey, textKeyParams: val.textKeyParams});
-                } else if (this.text === '') {
+                } else if (this.submissionValue === '') {
                     this.setError({textKey: 'constraints.notEmpty'});
                 } else {
                     this.setError(undefined);
@@ -92,10 +101,10 @@
             },
             handleValidationSecond(val: ValidationResult) {
                 if (val.failed) {
-                    Vue.set(this.validationErrors, this.parameterName + '_two',
+                    Vue.set(this.validationErrors, this.parameterNameTwo,
                         {textKey: val.textKey, textKeyParams: val.textKeyParams});
                 } else {
-                    Vue.delete(this.validationErrors, this.parameterName + '_two');
+                    Vue.delete(this.validationErrors, this.parameterNameTwo);
                 }
             },
         },
