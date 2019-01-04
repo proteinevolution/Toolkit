@@ -1,4 +1,5 @@
 package de.proteinevolution.parsers
+
 import scala.util.parsing.combinator._
 import better.files._
 
