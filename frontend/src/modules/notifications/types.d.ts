@@ -18,8 +18,8 @@ declare module 'vue/types/vue' {
 }
 
 export interface TKNotificationOptions extends NotificationOptions {
-    text: string;
-    body?: string;
+    title: string;
+    text?: string;
     useBrowserNotifications?: boolean;
     onClick?: () => void;
 }

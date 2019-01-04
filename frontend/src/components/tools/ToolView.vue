@@ -155,7 +155,7 @@
                     })
                     .catch((response) => {
                         logger.error('Could not submit job', response);
-                        this.$alert(this.$t('errors.general'), '', 'danger');
+                        this.$alert(this.$t('errors.general'), 'danger');
                     });
             },
             launchHelpModal(): void {

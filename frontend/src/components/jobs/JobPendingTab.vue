@@ -52,7 +52,7 @@
                 })
                 .catch(() => {
                     logger.error('No similar job returned');
-                    this.$alert(this.$t('errors.general'), '', 'danger');
+                    this.$alert(this.$t('errors.general'), 'danger');
                 });
         },
         methods: {
@@ -60,7 +60,7 @@
                 JobService.startJob(this.job.jobID)
                     .catch(() => {
                         logger.error('Could not start job!');
-                        this.$alert(this.$t('errors.general'), '', 'danger');
+                        this.$alert(this.$t('errors.general'), 'danger');
                     });
             },
             loadExistingJob() {
@@ -73,7 +73,7 @@
                         this.$router.push(`/jobs/${this.similarJob.jobID}`);
                     })
                     .catch(() => {
-                        this.$alert(this.$t('errors.couldNotDeleteJob'), '', 'danger');
+                        this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
                     });
             },
             fromNow(date: string): string {

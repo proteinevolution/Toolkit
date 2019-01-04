@@ -15,6 +15,6 @@ interface TKTitleFunctions {
 
 declare module 'vue/types/vue' {
     interface Vue {
-        $title: TKTitleFunctions
+        $title: TKTitleFunctions;
     }
 }

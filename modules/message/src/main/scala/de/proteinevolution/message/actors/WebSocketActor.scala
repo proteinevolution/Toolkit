@@ -136,13 +136,19 @@ final class WebSocketActor @Inject()(
                        "mutation"  -> Json.fromString("SOCKET_UpdateJob"),
                        "job"       -> job.cleaned(toolConfig).asJson).asJson
 
-    case ShowNotification(notificationType: String, tag: String, title: String, body: String) =>
+    case ShowNotification(title: String, body: String) =>
       out ! JsonObject(
-        "mutation"         -> Json.fromString("SOCKET_ShowNotification"),
-        "tag"              -> Json.fromString(tag),
-        "title"            -> Json.fromString(title),
-        "body"             -> Json.fromString(body),
-        "notificationType" -> Json.fromString(notificationType)
+        "mutation" -> Json.fromString("SOCKET_ShowNotification"),
+        "title"    -> Json.fromString(title),
+        "body"     -> Json.fromString(body)
+      ).asJson
+
+    case ShowJobNotification(jobID: String, title: String, body: String) =>
+      out ! JsonObject(
+        "mutation" -> Json.fromString("SOCKET_ShowJobNotification"),
+        "jobID"    -> Json.fromString(jobID),
+        "title"    -> Json.fromString(title),
+        "body"     -> Json.fromString(body)
       ).asJson
 
     case UpdateLog(jobID: String) =>
@@ -176,7 +182,8 @@ final class WebSocketActor @Inject()(
 
     case ClearJob(jobID: String, deleted: Boolean) =>
       out ! JsonObject(
-        "type"    -> Json.fromString("ClearJob"),
+        "namespace" -> Json.fromString("jobs"),
+        "mutation"    -> Json.fromString("SOCKET_ClearJob"),
         "jobID"   -> Json.fromString(jobID),
         "deleted" -> Json.fromBoolean(deleted)
       ).asJson

@@ -230,11 +230,10 @@ class JobActor @Inject()(
         foundWatchers.flatten.foreach(_ ! PushJob(job))
         if (job.status == Done) {
           foundWatchers.flatten.foreach(
-            _ ! ShowNotification(
-              "job_update",
+            _ ! ShowJobNotification(
               job.jobID,
-              "Job Update",
-              "Your " + config.get[String](s"Tools.${job.tool}.longname") + " job has finished!"
+              "jobs.notifications.titles.update",
+              "jobs.notifications.jobFinished"
             )
           )
         }
@@ -692,7 +691,8 @@ object JobActor {
   case class SetSGEID(jobID: String, sgeID: String)
 
   // show browser notification
-  case class ShowNotification(notificationType: String, tag: String, title: String, body: String)
+  case class ShowNotification(title: String, body: String)
+  case class ShowJobNotification(jobID: String, title: String, body: String)
 
   // Job Controller receives push message to update the log
   case class UpdateLog(jobID: String)

@@ -79,7 +79,7 @@
                         this.$store.commit('jobs/removeJob', {jobID});
                     })
                     .catch(() => {
-                        this.$alert(this.$t('errors.couldNotDeleteJob'), '', 'danger');
+                        this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
                     });
             },
             toggleJobListStatus(jobID: string): void {

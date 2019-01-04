@@ -121,6 +121,12 @@ export default {
             startJob: 'Start job anyways',
             loadExistingJob: 'Load existing job',
             loadExistingJobAndDelete: 'Load existing job and delete this one',
+            notifications: {
+                titles: {
+                    update: 'Job Update',
+                },
+                jobFinished: 'Your {tool} job has finished!',
+            },
         },
         helpModals: {
             names: {

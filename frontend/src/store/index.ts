@@ -49,9 +49,11 @@ const store: StoreOptions<RootState> = {
         SOCKET_ONMESSAGE(state, message) {
             logger.log('Uncaught message from websocket', message);
         },
-        SOCKET_ShowNotification(state, message) {
-            logger.log('Received notification from websocket', message);
-            // TODO display notification in only one tab (find a way to check which job is viewed)
+        SOCKET_ShowNotification() {
+            // handled in App.vue
+        },
+        SOCKET_ShowJobNotification() {
+            // handled in App.vue
         },
     },
     modules: {

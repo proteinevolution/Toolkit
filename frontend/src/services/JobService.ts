@@ -33,6 +33,10 @@ export default class JobService {
         });
     }
 
+    /**
+     * Ask for delete of job. Job will get cleared over websockets as well.
+     * @param jobID
+     */
     public static deleteJob(jobID: string): Promise<void> {
         return new Promise<void>(((resolve, reject) => {
             axios.delete(`/api/jobs/${jobID}`)
