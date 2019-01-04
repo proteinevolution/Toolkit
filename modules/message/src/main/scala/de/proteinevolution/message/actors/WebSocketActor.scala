@@ -136,7 +136,7 @@ final class WebSocketActor @Inject()(
 
     case ShowNotification(notificationType: String, tag: String, title: String, body: String) =>
       out ! JsonObject(
-        "type"             -> Json.fromString("ShowNotification"),
+        "mutation"             -> Json.fromString("SOCKET_ShowNotification"),
         "tag"              -> Json.fromString(tag),
         "title"            -> Json.fromString(title),
         "body"             -> Json.fromString(body),

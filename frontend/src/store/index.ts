@@ -28,6 +28,9 @@ const store: StoreOptions<RootState> = {
         SOCKET_RECONNECT(state, event) {
             // TODO
         },
+        SOCKET_RECONNECT_ERROR(state, event) {
+            // TODO
+        },
         SOCKET_ONOPEN(state, event) {
             Vue.prototype.$socket = event.currentTarget;
             state.reconnecting = false;
@@ -44,6 +47,9 @@ const store: StoreOptions<RootState> = {
         SOCKET_ONMESSAGE(state, message) {
             // console.log(message);
             // messages which haven't been caught will end up here
+        },
+        SOCKET_ShowNotification(state, message) {
+            console.log(message);
         },
     },
     modules: {

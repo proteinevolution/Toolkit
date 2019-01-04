@@ -1,6 +1,6 @@
+import Vue from 'vue';
 import {MutationTree} from 'vuex';
 import {JobState} from '../../types';
-import Vue from 'vue';
 import {Job} from '@/types/toolkit/jobs';
 
 const mutations: MutationTree<JobState> = {
@@ -26,8 +26,9 @@ const mutations: MutationTree<JobState> = {
     removeJob(state, {jobID}) {
         state.jobs = state.jobs.filter((job: Job) => job.jobID !== jobID);
     },
-    SOCKET_UpdateJob(state, message) {
-        console.log(message);
+    SOCKET_UpdateJob(state, {job}) {
+        const index: number = state.jobs.findIndex((j) => j.jobID === job.jobID);
+        Vue.set(state.jobs, index < 0 ? state.jobs.length : index, job);
     },
 };
 

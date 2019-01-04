@@ -17,6 +17,7 @@ const isSecure: boolean = location.protocol === 'https:';
 
 if (devMode) {
     const loc = window.location;
+    axios.defaults.withCredentials = true;
     axios.defaults.baseURL = `${loc.protocol}//${loc.hostname}:${process.env.VUE_APP_BACKEND_PORT}`;
     websocketUrl = isSecure ? `wss://${loc.hostname}:${process.env.VUE_APP_BACKEND_PORT}/ws/` :
         `ws://${loc.hostname}:${process.env.VUE_APP_BACKEND_PORT}/ws/`;

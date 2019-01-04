@@ -134,7 +134,8 @@ class UserSessions @Inject()(
       }
       // cache related stuff should remain in the project where the cache is bound
       userCache.get[User](sessionID.stringify) match {
-        case Some(user) => fuccess(user)
+        case Some(user) =>
+          fuccess(user)
         case None =>
           putUser(request, sessionID)
       }
