@@ -18,9 +18,6 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import Logger from 'js-logger';
-
-    const logger = Logger.get('JobRunningTab');
 
     export default Vue.extend({
         name: 'JobRunningTab',
@@ -40,7 +37,6 @@
             };
         },
         created() {
-            logger.log('attach');
             (this.$options as any).sockets.onmessage = (response: any) => {
                 const json = JSON.parse(response.data);
                 if (json.mutation === 'SOCKET_WatchLogFile') {
@@ -63,7 +59,6 @@
             };
         },
         destroyed(): void {
-            logger.log('detach');
             delete (this.$options as any).sockets.onmessage;
         },
     });
