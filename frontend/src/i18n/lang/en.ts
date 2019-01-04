@@ -114,8 +114,13 @@ export default {
                 8: 'Limit Reached',
                 9: 'Deleted',
             },
+            submitJob: 'Submit Job',
+            resubmitJob: 'Resubmit Job',
             foundIdenticalCopy: 'We found an identical copy of your job in our database!<br>' +
                 'Job ID: {jobID}, which was created {createdAt}.',
+            startJob: 'Start job anyways',
+            loadExistingJob: 'Load existing job',
+            loadExistingJobAndDelete: 'Load existing job and delete this one',
         },
         helpModals: {
             names: {
@@ -145,6 +150,7 @@ export default {
         copyright: '© 2008-{currentYear}, Dept. of Protein Evolution, ' +
             'Max Planck Institute for Developmental Biology, Tübingen',
         errors: {
+            general: 'Error!',
             fileNotFound: 'File not found!',
             fileUnreadable: 'File could not be read.',
             PageNotFound: 'Page not found.',

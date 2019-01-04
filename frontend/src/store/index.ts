@@ -4,8 +4,10 @@ import tools from './modules/tools';
 import jobs from './modules/jobs';
 import {RootState} from './types';
 import localStoragePlugin from './plugins/localStoragePlugin';
+import Logger from 'js-logger';
 
 Vue.use(Vuex);
+const logger = Logger.get('Store');
 
 const store: StoreOptions<RootState> = {
     strict: process.env.NODE_ENV !== 'production',
@@ -26,10 +28,10 @@ const store: StoreOptions<RootState> = {
             state.loading[loadingType] = false;
         },
         SOCKET_RECONNECT(state, event) {
-            // TODO
+            logger.log('Trying to reconnect websocket', event);
         },
         SOCKET_RECONNECT_ERROR(state, event) {
-            // TODO
+            logger.error('Could not reconnect websocket', event);
         },
         SOCKET_ONOPEN(state, event) {
             Vue.prototype.$socket = event.currentTarget;
@@ -39,17 +41,17 @@ const store: StoreOptions<RootState> = {
             state.reconnecting = true;
         },
         SOCKET_ONERROR(state, event) {
-            // console.error(state, event);
+            logger.error('Websocket error', event);
         },
         SOCKET_UpdateLoad(state, message) {
             state.clusterWorkload = message.load;
         },
         SOCKET_ONMESSAGE(state, message) {
-            // console.log(message);
-            // messages which haven't been caught will end up here
+            logger.log('Uncaught message from websocket', message);
         },
         SOCKET_ShowNotification(state, message) {
-            // console.log(message); TODO display notification in only one tab (find a way to check which job is viewed)
+            logger.log('Received notification from websocket', message);
+            // TODO display notification in only one tab (find a way to check which job is viewed)
         },
     },
     modules: {

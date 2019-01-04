@@ -5,16 +5,16 @@
         </p>
         <div class="d-flex justify-content-around mt-3 mx-5">
             <b-btn variant="primary"
-                   @click="startJob">
-                Start job anyways
+                   @click="startJob"
+                   v-text="$t('jobs.startJob')">
             </b-btn>
             <b-btn variant="primary"
-                   @click="loadExistingJob">
-                Load existing job
+                   @click="loadExistingJob"
+                   v-text="$t('jobs.loadExistingJob')">
             </b-btn>
             <b-btn variant="primary"
-                   @click="loadExistingJobAndDelete">
-                Load existing job and delete this one
+                   @click="loadExistingJobAndDelete"
+                   v-text="$t('jobs.loadExistingJobAndDelete')">
             </b-btn>
         </div>
     </div>
@@ -25,6 +25,9 @@
     import moment from 'moment';
     import JobService from '@/services/JobService';
     import {SimilarJobResult} from '@/types/toolkit/jobs';
+    import Logger from 'js-logger';
+
+    const logger = Logger.get('JobPendingTab');
 
     export default Vue.extend({
         name: 'JobPendingTab',
@@ -48,14 +51,16 @@
                     this.similarJob = similarJob;
                 })
                 .catch(() => {
-                    // TODO: error-handling
+                    logger.error('No similar job returned');
+                    this.$alert(this.$t('errors.general'), '', 'danger');
                 });
         },
         methods: {
             startJob() {
                 JobService.startJob(this.job.jobID)
                     .catch(() => {
-                        // TODO: error-handling
+                        logger.error('Could not start job!');
+                        this.$alert(this.$t('errors.general'), '', 'danger');
                     });
             },
             loadExistingJob() {
