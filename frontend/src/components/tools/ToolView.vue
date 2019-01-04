@@ -100,7 +100,7 @@
             return {
                 fullScreen: false,
                 validationErrors: {},
-                submission: {},
+                submission: this.job && this.job.paramValues ? { ...this.job.paramValues } : {},
             };
         },
         computed: {

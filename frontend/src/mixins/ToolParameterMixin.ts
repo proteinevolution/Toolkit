@@ -21,6 +21,21 @@ const ToolParameterMixin = Vue.extend({
         errorMessage(): TranslateResult {
             return this.$t(this.error.textKey, this.error.textKeyParams);
         },
+        defaultSubmissionValue(): any {
+            // should be overridden in the component
+            return undefined;
+        },
+        submissionValue: {
+            get(): any {
+                if (!this.submission.hasOwnProperty(this.parameterName)) {
+                    Vue.set(this.submission, this.parameterName, this.defaultSubmissionValue);
+                }
+                return this.submission[this.parameterName];
+            },
+            set(value: any) {
+                Vue.set(this.submission, this.parameterName, value);
+            },
+        },
     },
     methods: {
         setError(error?: ConstraintError) {

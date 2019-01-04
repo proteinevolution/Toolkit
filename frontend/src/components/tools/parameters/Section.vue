@@ -27,7 +27,6 @@ import {ParameterType} from '../../../types/toolkit/enums';
     import NumberParameter from './NumberParameter.vue';
     import BooleanParameter from './BooleanParameter.vue';
     import ModellerParameter from './ModellerParameter.vue';
-    import AlignmentMode from './AlignmentMode.vue';
     import AlignmentViewerView from './AlignmentViewerView.vue';
     import ReformatView from './ReformatView.vue';
     import {ParameterSection} from '@/types/toolkit/tools';
@@ -43,7 +42,6 @@ import {ParameterType} from '../../../types/toolkit/enums';
             NumberParameter,
             BooleanParameter,
             ModellerParameter,
-            AlignmentMode,
             AlignmentViewerView,
             ReformatView,
         },
