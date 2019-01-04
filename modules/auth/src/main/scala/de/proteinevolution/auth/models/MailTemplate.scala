@@ -2,13 +2,13 @@ package de.proteinevolution.auth.models
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.models.database.jobs.JobState.{Done, Error}
+import de.proteinevolution.models.database.jobs.JobState.{ Done, Error }
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 import de.proteinevolution.tel.env.Env
 import play.api.Environment
-import play.api.libs.mailer.{Email, MailerClient}
+import play.api.libs.mailer.{ Email, MailerClient }
 
 sealed trait MailTemplate {
 

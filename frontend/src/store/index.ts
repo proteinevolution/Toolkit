@@ -49,7 +49,7 @@ const store: StoreOptions<RootState> = {
             // messages which haven't been caught will end up here
         },
         SOCKET_ShowNotification(state, message) {
-            console.log(message);
+            // console.log(message); TODO display notification in only one tab (find a way to check which job is viewed)
         },
     },
     modules: {

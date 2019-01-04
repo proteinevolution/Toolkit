@@ -105,7 +105,8 @@ final class ProcessService @Inject()(
       case (HMMER, "alnEval") =>
         result.HSPS
           .filter(_.eValue <= accStr.toDouble)
-          .map { hit => result.alignment.alignment(hit.num - 1).accession + "\n"
+          .map { hit =>
+            result.alignment.alignment(hit.num - 1).accession + "\n"
           }
           .size
           .toString

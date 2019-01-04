@@ -373,7 +373,7 @@ object Common {
       ""
     } else {
       val query       = hit.query_seq.slice(charCount, Math.min(charCount + breakAfter, hit.query_seq.length))
-      val midline = hit.midLine.slice(charCount, Math.min(charCount + breakAfter, hit.midLine.length))
+      val midline     = hit.midLine.slice(charCount, Math.min(charCount + breakAfter, hit.midLine.length))
       val template    = hit.hit_seq.slice(charCount, Math.min(charCount + breakAfter, hit.hit_seq.length))
       val queryEnd    = lengthWithoutDashDots(query)
       val templateEnd = lengthWithoutDashDots(template)
