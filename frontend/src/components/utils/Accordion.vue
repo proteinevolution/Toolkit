@@ -10,7 +10,7 @@
                 <b-btn block
                        href="#"
                        v-b-toggle="item.title"
-                       variant="info">
+                       variant="secondary">
                     {{ item.title }}
                 </b-btn>
             </b-card-header>
@@ -43,6 +43,9 @@
     };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    .btn-secondary {
+        background: none;
+        border: none;
+    }
 </style>

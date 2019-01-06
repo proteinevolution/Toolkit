@@ -1,6 +1,20 @@
 import modalContent from './modals/help/en';
 import hhblits from './modals/toolHelp/en/hhblits';
 import common from '@/i18n/lang/modals/toolHelp/en/common';
+import ali2d from '@/i18n/lang/modals/toolHelp/en/ali2d';
+import aln2plot from '@/i18n/lang/modals/toolHelp/en/aln2plot';
+import ancescon from '@/i18n/lang/modals/toolHelp/en/ancescon';
+import backtrans from '@/i18n/lang/modals/toolHelp/en/backtrans';
+import deepcoil from '@/i18n/lang/modals/toolHelp/en/deepcoil';
+import marcoil from '@/i18n/lang/modals/toolHelp/en/marcoil';
+import mafft from '@/i18n/lang/modals/toolHelp/en/mafft';
+import kalign from '@/i18n/lang/modals/toolHelp/en/kalign';
+import hmmer from '@/i18n/lang/modals/toolHelp/en/hmmer';
+import hhfilter from '@/i18n/lang/modals/toolHelp/en/hhfilter';
+import hhpred from '@/i18n/lang/modals/toolHelp/en/hhpred';
+import clans from '@/i18n/lang/modals/toolHelp/en/clans';
+import hhrepid from '@/i18n/lang/modals/toolHelp/en/hhrepid';
+import clustalo from '@/i18n/lang/modals/toolHelp/en/clustalo';
 
 export default {
     en: {
@@ -161,7 +175,21 @@ A Completely Reimplemented MPI Bioinformatics Toolkit with a New HHpred Server a
         // TODO lazy load translations
         toolHelpModals: {
             common,
+            ali2d,
+            aln2plot,
+            ancescon,
+            backtrans,
+            clans,
+            clustalo,
+            deepcoil,
             hhblits,
+            hhfilter,
+            hhpred,
+            hhrepid,
+            hmmer,
+            kalign,
+            mafft,
+            marcoil,
         },
         copyright: '© 2008-{currentYear}, Dept. of Protein Evolution, ' +
             'Max Planck Institute for Developmental Biology, Tübingen',
