@@ -1,5 +1,4 @@
 /* tslint:disable:max-line-length */
-import common from '@/i18n/lang/modals/help/en/common';
 
 export default {
     overview: `
@@ -34,9 +33,9 @@ The query-template and query alignments can be visualized, downloaded, and forwa
             title: 'Input',
             content: `You have the option to enter or upload either a single protein sequence or a multiple sequence
                 alignment (MSA) in FASTA, CLUSTAL, or A3M format.<br/><br/>
-                ${common.singleseq}
-                ${common.msa}
-                ${common.a3m}`,
+                @:toolHelpModals.common.singleseq
+                @:toolHelpModals.common.msa
+                @:toolHelpModals.common.a3m`,
         },
         {
             title: 'Select database',
@@ -60,9 +59,7 @@ The query-template and query alignments can be visualized, downloaded, and forwa
         },
     ],
     references: `
-        ${common.citation}
         <p>HHblits: lightning-fast iterative protein sequence searching by HMM-HMM alignment.
             Remmert M, Biegert A, Hauser A, Söding J. <a href = https://www.nature.com/articles/nmeth.1818 target="_blank" rel="noopener">Nat Methods. 2011 Dec 25;9(2):173-5</a>.</p>
     `,
-    version: '<strong>Version:</strong> {0}',
 };

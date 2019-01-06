@@ -1,5 +1,6 @@
-import modalContent, {citation} from './modals/en';
-import hhblits from './modals/help/en/hhblits';
+import modalContent from './modals/help/en';
+import hhblits from './modals/toolHelp/en/hhblits';
+import common from '@/i18n/lang/modals/toolHelp/en/common';
 
 export default {
     en: {
@@ -159,10 +160,16 @@ A Completely Reimplemented MPI Bioinformatics Toolkit with a New HHpred Server a
         },
         // TODO lazy load translations
         toolHelpModals: {
+            common,
             hhblits,
         },
         copyright: '© 2008-{currentYear}, Dept. of Protein Evolution, ' +
             'Max Planck Institute for Developmental Biology, Tübingen',
+        citation: `A Completely Reimplemented MPI Bioinformatics Toolkit
+with a New HHpred Server at its Core.<br>Zimmermann L, Stephens A, Nam SZ, Rau D,
+Kübler J, Lozajic M, Gabler F, Söding J, Lupas AN, Alva V.
+<a href="http://www.sciencedirect.com/science/article/pii/S0022283617305879" target="_blank" rel="noopener">
+J Mol Biol. 2018 Jul 20. S0022-2836(17)30587-9</a>.`,
         errors: {
             general: 'Error!',
             fileNotFound: 'File not found!',

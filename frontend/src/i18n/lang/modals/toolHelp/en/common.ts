@@ -1,9 +1,6 @@
-import citation from '../../en';
 
 /* tslint:disable:max-line-length */
 export default {
-    citation: `<p>${citation}</p>`,
-
     singleseq: `<p><b>Single query sequence:</b></p>
 <p>You can enter a single query sequence in FASTA format (with or without name line):</p>
 <pre>>AAN59974.1 histone H2A [Homo sapiens]<br/>MSGRGKQGGKARAKAKTRSSRAGLQFPVGRVHRLLRKGNYAERVGAGAPVYLAAVLEYLT<br/>AEILELAGNAARDNKKTRIIPRHLQLAIRNDEELNKLLGKVTIAQGGVLPNIQAVLLPKK<br/>TESHHKAKGK<br/></pre>
@@ -27,4 +24,6 @@ export default {
     <a href = https://github.com/soedinglab/hh-suite/blob/master/hhsuite-userguide.pdf target="_blank" rel="noopener">HHsuite manual</a>
     for further details.
 </p>`,
+
+    version: '<strong>Version:</strong> {0}',
 };

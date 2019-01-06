@@ -26,12 +26,17 @@
 </template>
 
 <script lang="ts">
+    import {AccordionItem} from '@/types/toolkit/utils';
+
     export default {
         name: 'Accordion',
         props: {
+            /*
+             Simply stating the interface type doesn't work, this is a workaround. See
+             https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
+             */
             items: {
-                // array of title-content-pairs from i18n
-                type: Array,
+                type: Array as () => AccordionItem[],
                 required: true,
             },
         },
