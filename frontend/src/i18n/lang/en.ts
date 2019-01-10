@@ -15,6 +15,22 @@ import hhpred from '@/i18n/lang/modals/toolHelp/en/hhpred';
 import clans from '@/i18n/lang/modals/toolHelp/en/clans';
 import hhrepid from '@/i18n/lang/modals/toolHelp/en/hhrepid';
 import clustalo from '@/i18n/lang/modals/toolHelp/en/clustalo';
+import mmseqs2 from '@/i18n/lang/modals/toolHelp/en/mmseqs2';
+import modeller from '@/i18n/lang/modals/toolHelp/en/modeller';
+import msaprobs from '@/i18n/lang/modals/toolHelp/en/msaprobs';
+import muscle from '@/i18n/lang/modals/toolHelp/en/muscle';
+import patsearch from '@/i18n/lang/modals/toolHelp/en/patsearch';
+import tprpred from '@/i18n/lang/modals/toolHelp/en/tprpred';
+import retseq from '@/i18n/lang/modals/toolHelp/en/retseq';
+import pcoils from '@/i18n/lang/modals/toolHelp/en/pcoils';
+import quick2d from '@/i18n/lang/modals/toolHelp/en/quick2d';
+import psiblast from '@/i18n/lang/modals/toolHelp/en/psiblast';
+import sixframe from '@/i18n/lang/modals/toolHelp/en/sixframe';
+import phyml from '@/i18n/lang/modals/toolHelp/en/phyml';
+import repper from '@/i18n/lang/modals/toolHelp/en/repper';
+import samcc from '@/i18n/lang/modals/toolHelp/en/samcc';
+import seq2id from '@/i18n/lang/modals/toolHelp/en/seq2id';
+import tcoffee from '@/i18n/lang/modals/toolHelp/en/tcoffee';
 
 export default {
     en: {
@@ -190,6 +206,22 @@ A Completely Reimplemented MPI Bioinformatics Toolkit with a New HHpred Server a
             kalign,
             mafft,
             marcoil,
+            mmseqs2,
+            modeller,
+            msaprobs,
+            muscle,
+            patsearch,
+            pcoils,
+            phyml,
+            psiblast,
+            quick2d,
+            repper,
+            retseq,
+            samcc,
+            seq2id,
+            sixframe,
+            tcoffee,
+            tprpred,
         },
         copyright: '© 2008-{currentYear}, Dept. of Protein Evolution, ' +
             'Max Planck Institute for Developmental Biology, Tübingen',
