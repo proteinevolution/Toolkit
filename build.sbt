@@ -57,7 +57,7 @@ lazy val results = (project in file("modules/results"))
     disableDocs
   )
   .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
-  .settings(addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3"))
+  .settings(addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9"))
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val help = (project in file("modules/help"))
