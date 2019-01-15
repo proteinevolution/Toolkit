@@ -10,7 +10,7 @@ case class HHBlitsInfo(
     probab: Double,
     score: Double,
     similarity: Double
-) extends SearchToolInfo
+)
 
 object HHBlitsInfo {
 

@@ -1,6 +1,6 @@
 package de.proteinevolution.results.results
 
-import io.circe.{ Decoder, HCursor, Json }
+import io.circe.{Decoder, HCursor, Json}
 
 case class AlignmentResult(alignment: List[AlignmentItem])
 
@@ -16,7 +16,8 @@ object AlignmentResult {
           case (j, i) => AlignmentItem.alignmentItemDecoder(j, i)
         }
       }
-      .map { items => new AlignmentResult(items.flatMap(_.right.toOption))
+      .map { items =>
+        new AlignmentResult(items.flatMap(_.right.toOption))
       }
   }
 

@@ -38,8 +38,8 @@
                                     <b-btn class="submit-button"
                                            variant="primary"
                                            @click="submitJob"
-                                           :disabled="preventSubmit">
-                                        Submit Job
+                                           :disabled="preventSubmit"
+                                           v-text="$t(job ? 'jobs.resubmitJob' : 'jobs.submitJob')">
                                     </b-btn>
                                     <custom-job-id-input :validation-errors="validationErrors"
                                                          :submission="submission"/>
@@ -75,7 +75,9 @@
     import LoadingWrapper from '@/components/utils/LoadingWrapper.vue';
     import JobService from '@/services/JobService';
     import HelpModal from '@/components/modals/HelpModal.vue';
-    import ToolService from '@/services/ToolService';
+    import Logger from 'js-logger';
+
+    const logger = Logger.get('ToolView');
 
     export default Vue.extend({
         name: 'ToolView',
@@ -98,7 +100,7 @@
             return {
                 fullScreen: false,
                 validationErrors: {},
-                submission: {},
+                submission: this.job && this.job.paramValues ? { ...this.job.paramValues } : {},
             };
         },
         computed: {
@@ -151,9 +153,9 @@
                     .then((response) => {
                         this.$router.push(`/jobs/${response.jobID}`);
                     })
-                    .catch((response) => { // TODO
-                        // console.log(response);
-                        this.$alert('Error!', '', 'danger');
+                    .catch((response) => {
+                        logger.error('Could not submit job', response);
+                        this.$alert(this.$t('errors.general'), 'danger');
                     });
             },
             launchHelpModal(): void {

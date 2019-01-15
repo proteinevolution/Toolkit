@@ -1,26 +1,26 @@
 package de.proteinevolution.message.actors
 
-import java.nio.file.{ Files, Paths }
+import java.nio.file.{Files, Paths}
 import java.time.ZonedDateTime
 
-import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
+import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
 import de.proteinevolution.auth.UserSessions
-import de.proteinevolution.cluster.actors.ClusterMonitor.{ Connect, Disconnect, UpdateLoad }
+import de.proteinevolution.cluster.actors.ClusterMonitor.{Connect, Disconnect, UpdateLoad}
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobActorAccess
-import de.proteinevolution.message.actors.WebSocketActor.{ LogOut, MaintenanceAlert }
+import de.proteinevolution.message.actors.WebSocketActor.{LogOut, MaintenanceAlert}
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.JobState.Running
 import de.proteinevolution.models.message.Session.ChangeSessionID
 import de.proteinevolution.tools.ToolConfig
 import io.circe.syntax._
-import io.circe.{ Json, JsonObject }
-import javax.inject.{ Inject, Named }
+import io.circe.{Json, JsonObject}
+import javax.inject.{Inject, Named}
 import play.api.Configuration
-import play.api.cache.{ NamedCache, SyncCacheApi }
+import play.api.cache.{NamedCache, SyncCacheApi}
 import reactivemongo.bson.BSONObjectID
 
 import scala.concurrent.ExecutionContext
@@ -132,15 +132,23 @@ final class WebSocketActor @Inject()(
       }
 
     case PushJob(job: Job) =>
-      out ! JsonObject("type" -> Json.fromString("PushJob"), "job" -> job.cleaned(toolConfig).asJson).asJson
+      out ! JsonObject("namespace" -> Json.fromString("jobs"),
+                       "mutation"  -> Json.fromString("SOCKET_UpdateJob"),
+                       "job"       -> job.cleaned(toolConfig).asJson).asJson
 
-    case ShowNotification(notificationType: String, tag: String, title: String, body: String) =>
+    case ShowNotification(title: String, body: String) =>
       out ! JsonObject(
-        "type"             -> Json.fromString("ShowNotification"),
-        "tag"              -> Json.fromString(tag),
-        "title"            -> Json.fromString(title),
-        "body"             -> Json.fromString(body),
-        "notificationType" -> Json.fromString(notificationType)
+        "mutation" -> Json.fromString("SOCKET_ShowNotification"),
+        "title"    -> Json.fromString(title),
+        "body"     -> Json.fromString(body)
+      ).asJson
+
+    case ShowJobNotification(jobID: String, title: String, body: String) =>
+      out ! JsonObject(
+        "mutation" -> Json.fromString("SOCKET_ShowJobNotification"),
+        "jobID"    -> Json.fromString(jobID),
+        "title"    -> Json.fromString(title),
+        "body"     -> Json.fromString(body)
       ).asJson
 
     case UpdateLog(jobID: String) =>
@@ -158,9 +166,9 @@ final class WebSocketActor @Inject()(
           val lines  = source.mkString
           // val lines = File(file).lineIterator.mkString // use buffered source since it behaves differently
           out ! JsonObject(
-            "type"  -> Json.fromString("WatchLogFile"),
-            "jobID" -> Json.fromString(job.jobID),
-            "lines" -> Json.fromString(lines)
+            "mutation" -> Json.fromString("SOCKET_WatchLogFile"),
+            "jobID"    -> Json.fromString(job.jobID),
+            "lines"    -> Json.fromString(lines)
           ).asJson
           source.close()
         }
@@ -168,15 +176,16 @@ final class WebSocketActor @Inject()(
 
     case UpdateLoad(load: Double) =>
       out ! JsonObject(
-        "type" -> Json.fromString("UpdateLoad"),
-        "load" -> Json.fromDoubleOrNull(load)
+        "mutation" -> Json.fromString("SOCKET_UpdateLoad"),
+        "load"     -> Json.fromDoubleOrNull(load)
       ).asJson
 
     case ClearJob(jobID: String, deleted: Boolean) =>
       out ! JsonObject(
-        "type"    -> Json.fromString("ClearJob"),
-        "jobID"   -> Json.fromString(jobID),
-        "deleted" -> Json.fromBoolean(deleted)
+        "namespace" -> Json.fromString("jobs"),
+        "mutation"  -> Json.fromString("SOCKET_ClearJob"),
+        "jobID"     -> Json.fromString(jobID),
+        "deleted"   -> Json.fromBoolean(deleted)
       ).asJson
 
     case ChangeSessionID(newSid: BSONObjectID) =>

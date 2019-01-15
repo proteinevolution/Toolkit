@@ -38,8 +38,9 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {Tool} from '../../types/toolkit/tools';
-    import {sectionColors, sections} from '../../conf/ToolSections';
+    import {Tool} from '@/types/toolkit/tools';
+    import {Job} from '@/types/toolkit/jobs';
+    import {sectionColors, sections} from '@/conf/ToolSections';
 
     export default Vue.extend({
         name: 'NavBar',
@@ -64,7 +65,17 @@
                 return this.sectionColors[index];
             },
             defaultSelectedSection(): string {
-                const matchingTools = this.tools.filter((tool: Tool) => tool.name === this.$route.params.toolName);
+                let toolName: string;
+                if (this.$route.params.toolName) {
+                    toolName = this.$route.params.toolName;
+                } else {
+                    const currentJob: Job = this.$store.getters['jobs/jobs']
+                        .find((job: Job) => job.jobID === this.$route.params.jobID);
+                    if (currentJob) {
+                        toolName = currentJob.tool;
+                    }
+                }
+                const matchingTools = this.tools.filter((tool: Tool) => tool.name === toolName);
                 if (matchingTools.length > 0) {
                     return matchingTools[0].section;
                 } else {

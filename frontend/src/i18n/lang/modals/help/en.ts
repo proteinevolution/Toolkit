@@ -1,10 +1,3 @@
-const citation = `A Completely Reimplemented MPI Bioinformatics Toolkit
-with a New HHpred Server at its Core.<br>Zimmermann L, Stephens A, Nam SZ, Rau D,
-Kübler J, Lozajic M, Gabler F, Söding J, Lupas AN, Alva V.
-<a href="http://www.sciencedirect.com/science/article/pii/S0022283617305879" target="_blank" rel="noopener">
-J Mol Biol. 2018 Jul 20. S0022-2836(17)30587-9
-</a>.`;
-
 export default {
     help: `
 <div>
@@ -66,7 +59,7 @@ export default {
         If you use our Toolkit for your research, please cite:
     </p>
     <p>
-    ${citation}
+    @:citation
     </p>
 </div>`,
 
@@ -74,7 +67,7 @@ export default {
 <div class="section">
     <h6>How do I reference use of the MPI Bioinformatics Toolkit?</h6>
     <p>
-        ${citation}
+        @:citation
     </p>
 </div>
 <div class="section">
@@ -268,7 +261,7 @@ export default {
     <p>
         If you use our Toolkit for your research, please cite us. It helps us keep this service running for you.
     </p>
- <p>${citation}</p>
+ <p>@:citation</p>
 </div>`,
 
     privacy: `

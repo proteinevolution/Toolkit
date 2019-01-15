@@ -10,7 +10,7 @@
                 <b-btn block
                        href="#"
                        v-b-toggle="item.title"
-                       variant="info">
+                       variant="secondary">
                     {{ item.title }}
                 </b-btn>
             </b-card-header>
@@ -26,18 +26,26 @@
 </template>
 
 <script lang="ts">
+    import {AccordionItem} from '@/types/toolkit/utils';
+
     export default {
         name: 'Accordion',
         props: {
+            /*
+             Simply stating the interface type doesn't work, this is a workaround. See
+             https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
+             */
             items: {
-                // array of title-content-pairs from i18n
-                type: Array,
+                type: Array as () => AccordionItem[],
                 required: true,
             },
         },
     };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    .btn-secondary {
+        background: none;
+        border: none;
+    }
 </style>

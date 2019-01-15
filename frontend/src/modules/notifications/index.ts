@@ -8,12 +8,11 @@ Vue.use(VueNotifications, {velocity});
 
 const Notifications = {
     install(vconst: VueConstructor, args: any = {}) {
-        vconst.prototype.$alert = (params: TKNotificationOptions | string, body?: string, type?: string) => {
+        vconst.prototype.$alert = (params: TKNotificationOptions | string, type?: string) => {
             const newParams: TKNotificationOptions = (typeof params === 'string') ?
                 {
                     title: '',
                     text: params,
-                    body,
                     useBrowserNotifications: true, // TODO
                 } : params;
 
@@ -24,7 +23,7 @@ const Notifications = {
 
             if (args.browserNotifications.enabled) {
                 const notifOptions = {
-                    body,
+                    body: newParams.text ? newParams.text : '',
                     icon: '',
                 };
                 const favicon: HTMLElement | null = document.getElementById('tk-favicon');
@@ -36,7 +35,7 @@ const Notifications = {
 
                     const browserNotification = (window as any).Notification;
                     if (browserNotification.permission === 'granted') {
-                        const n = new Notification(newParams.text, notifOptions);
+                        const n = new Notification(newParams.title, notifOptions);
                         if (newParams.onClick) {
                             n.onclick = newParams.onClick;
                         }

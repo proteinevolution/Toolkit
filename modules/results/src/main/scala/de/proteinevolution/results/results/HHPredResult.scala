@@ -1,7 +1,7 @@
 package de.proteinevolution.results.results
 
-import de.proteinevolution.results.results.General.{ DTParam, SingleSeq }
-import io.circe.{ Decoder, HCursor, Json }
+import de.proteinevolution.results.results.General.{DTParam, SingleSeq}
+import io.circe.{Decoder, HCursor, Json}
 
 case class HHPredResult(
     HSPS: List[HHPredHSP],
@@ -17,20 +17,20 @@ case class HHPredResult(
 ) extends SearchResult[HHPredHSP] {
   def hitsOrderBy(params: DTParam): List[HHPredHSP] = {
     (params.orderCol, params.orderDir) match {
-      case (1, "asc")  => HSPS.sortBy(_.template.get.accession)
-      case (1, "desc") => HSPS.sortWith(_.template.get.accession > _.template.get.accession)
+      case (1, "asc")  => HSPS.sortBy(_.template.accession)
+      case (1, "desc") => HSPS.sortWith(_.template.accession > _.template.accession)
       case (2, "asc")  => HSPS.sortBy(_.description)
       case (2, "desc") => HSPS.sortWith(_.description > _.description)
-      case (3, "asc")  => HSPS.sortBy(_.info.get.probab)
-      case (3, "desc") => HSPS.sortWith(_.info.get.probab > _.info.get.probab)
-      case (4, "asc")  => HSPS.sortBy(_.info.get.eval)
-      case (4, "desc") => HSPS.sortWith(_.info.get.eval > _.info.get.eval)
+      case (3, "asc")  => HSPS.sortBy(_.info.probab)
+      case (3, "desc") => HSPS.sortWith(_.info.probab > _.info.probab)
+      case (4, "asc")  => HSPS.sortBy(_.info.eval)
+      case (4, "desc") => HSPS.sortWith(_.info.eval > _.info.eval)
       case (5, "asc")  => HSPS.sortBy(_.ss_score)
       case (5, "desc") => HSPS.sortWith(_.ss_score > _.ss_score)
-      case (6, "asc")  => HSPS.sortBy(_.info.get.aligned_cols)
-      case (6, "desc") => HSPS.sortWith(_.info.get.aligned_cols > _.info.get.aligned_cols)
-      case (7, "asc")  => HSPS.sortBy(_.template.get.ref)
-      case (7, "desc") => HSPS.sortWith(_.template.get.ref > _.template.get.ref)
+      case (6, "asc")  => HSPS.sortBy(_.info.aligned_cols)
+      case (6, "desc") => HSPS.sortWith(_.info.aligned_cols > _.info.aligned_cols)
+      case (7, "asc")  => HSPS.sortBy(_.template.ref)
+      case (7, "desc") => HSPS.sortWith(_.template.ref > _.template.ref)
       case (_, "asc")  => HSPS.sortBy(_.num)
       case (_, "desc") => HSPS.sortWith(_.num > _.num)
       case (_, _)      => HSPS.sortBy(_.num)

@@ -2,26 +2,26 @@ package de.proteinevolution.verification.controllers
 
 import java.time.ZonedDateTime
 
-import javax.inject.{ Inject, Singleton }
 import akka.actor.ActorRef
 import controllers.AssetsFinder
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.JSONTemplate
-import de.proteinevolution.models.database.users.{ User, UserToken }
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.message.actors.WebSocketActor.LogOut
+import de.proteinevolution.models.database.users.{User, UserToken}
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tools.ToolConfig
-import play.api.cache._
-import play.api.mvc._
-import play.api.libs.mailer._
-import reactivemongo.bson._
+import javax.inject.{Inject, Singleton}
 import org.webjars.play.WebJarsUtil
 import play.api.Environment
+import play.api.cache._
+import play.api.libs.mailer._
+import play.api.mvc._
+import reactivemongo.bson._
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 final class VerificationController @Inject()(
@@ -31,7 +31,6 @@ final class VerificationController @Inject()(
     userSessions: UserSessions,
     @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
     environment: Environment,
-    environment2: play.Environment,
     assets: AssetsFinder,
     cc: ControllerComponents,
     env: Env
@@ -115,7 +114,7 @@ final class VerificationController @Inject()(
                           .map {
                             case Some(modifiedUser) =>
                               userSessions.removeUserFromCache(user)
-                              val eMail = PasswordChangedMail(modifiedUser, environment2, env)
+                              val eMail = PasswordChangedMail(modifiedUser, environment, env)
                               eMail.send
                               // Force Log Out on all connected users.
                               (wsActorCache.get(modifiedUser.userID.stringify): Option[List[ActorRef]]) match {

@@ -21,9 +21,7 @@ case class PSIBlastHSP(
     ref_len: Int,
     accession: String,
     midLine: String,
-    description: String,
-    info: Option[SearchToolInfo],
-    template: Option[HHTemplate] // is not used in psiblast. just for inheritance reasons. should be refactored tbh
+    description: String
 ) extends HSP {
 
   import SearchResultImplicits._
@@ -44,7 +42,7 @@ case class PSIBlastHSP(
 
 object PSIBlastHSP {
 
-  import io.circe.{ Decoder, HCursor }
+  import io.circe.{Decoder, HCursor}
 
   def parseHSP(db: String): Decoder[PSIBlastHSP] = (c: HCursor) => {
     val hsps            = c.downField("hsps").downArray.first
@@ -93,9 +91,7 @@ object PSIBlastHSP {
         ref_len,
         accessionString,
         midLine.toUpperCase,
-        description,
-        None,
-        None
+        description
       )
     }
   }

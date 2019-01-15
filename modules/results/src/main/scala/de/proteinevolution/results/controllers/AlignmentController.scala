@@ -3,14 +3,14 @@ package de.proteinevolution.results.controllers
 import cats.data.OptionT
 import cats.implicits._
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.results.models.{ AlignmentClustalLoadHitsForm, AlignmentGetForm, AlignmentLoadHitsForm }
-import de.proteinevolution.results.results.{ AlignmentResult, Common }
+import de.proteinevolution.results.db.ResultFileAccessor
+import de.proteinevolution.results.models.{AlignmentClustalLoadHitsForm, AlignmentGetForm, AlignmentLoadHitsForm}
+import de.proteinevolution.results.results.{AlignmentResult, Common}
 import javax.inject.Inject
-import play.api.mvc.{ Action, ControllerComponents }
+import play.api.mvc.{Action, ControllerComponents}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 class AlignmentController @Inject()(
     resultFiles: ResultFileAccessor,
@@ -19,19 +19,19 @@ class AlignmentController @Inject()(
 )(implicit ec: ExecutionContext)
     extends ToolkitController(cc) {
 
-  def getAln(jobID: String): Action[AlignmentGetForm] = Action(circe.json[AlignmentGetForm]).async {
-    implicit request =>
-      (for {
-        json       <- OptionT(resultFiles.getResults(jobID))
-        r          <- OptionT.fromOption[Future](json.hcursor.downField(request.body.resultName).as[AlignmentResult].toOption)
-        checkboxes <- OptionT.pure[Future](request.body.checkboxes.distinct)
-      } yield {
-        checkboxes.map { num => ">" + r.alignment { num - 1 }.accession + "\n" + r.alignment { num - 1 }.seq + "\n"
-        }
-      }).value.map {
-        case Some(list) => Ok(list.mkString)
-        case None       => NotFound
+  def getAln(jobID: String): Action[AlignmentGetForm] = Action(circe.json[AlignmentGetForm]).async { implicit request =>
+    (for {
+      json       <- OptionT(resultFiles.getResults(jobID))
+      r          <- OptionT.fromOption[Future](json.hcursor.downField(request.body.resultName).as[AlignmentResult].toOption)
+      checkboxes <- OptionT.pure[Future](request.body.checkboxes.distinct)
+    } yield {
+      checkboxes.map { num =>
+        ">" + r.alignment { num - 1 }.accession + "\n" + r.alignment { num - 1 }.seq + "\n"
       }
+    }).value.map {
+      case Some(list) => Ok(list.mkString)
+      case None       => NotFound
+    }
   }
 
   def loadHits(jobID: String): Action[AlignmentLoadHitsForm] = Action(circe.json[AlignmentLoadHitsForm]).async {

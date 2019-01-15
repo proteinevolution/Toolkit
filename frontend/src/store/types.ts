@@ -9,6 +9,7 @@ export interface RootState {
     loading: LoadingState;
     maintenanceMode: boolean;
     reconnecting: boolean;
+    clusterWorkload: number;
 }
 
 export interface ToolState {

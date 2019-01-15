@@ -1,13 +1,13 @@
 package de.proteinevolution.results.controllers
 
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.results.models.{ HHContext, ResultsForm }
+import de.proteinevolution.results.models.{HHContext, ResultsForm}
 import de.proteinevolution.results.results.General.DTParam
 import de.proteinevolution.results.services.HHService
 import io.circe.JsonObject
 import io.circe.syntax._
-import javax.inject.{ Inject, Singleton }
-import play.api.mvc.{ Action, AnyContent }
+import javax.inject.{Inject, Singleton}
+import play.api.mvc.{Action, AnyContent}
 
 import scala.concurrent.ExecutionContext
 
@@ -42,7 +42,10 @@ class HHController @Inject()(
           "recordsFiltered" -> hits.length.asJson
         )
         val data = Map(
-          "data" -> hits.slice(params.displayStart, params.displayStart + params.pageLength).map(_.toDataTable(result.db)).asJson
+          "data" -> hits
+            .slice(params.displayStart, params.displayStart + params.pageLength)
+            .map(_.toDataTable(result.db))
+            .asJson
         )
         Ok(JsonObject.fromMap(config ++ data).asJson)
       case Left(_) => BadRequest

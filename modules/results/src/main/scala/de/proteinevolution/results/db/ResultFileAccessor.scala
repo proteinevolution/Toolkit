@@ -6,12 +6,12 @@ import de.proteinevolution.models.ConstantsV2
 import io.circe.Json
 import io.circe.parser._
 import io.circe.syntax._
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.cache.{ AsyncCacheApi, NamedCache }
+import play.api.cache.{AsyncCacheApi, NamedCache}
 
 import scala.concurrent.duration._
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 final class ResultFileAccessor @Inject()(
@@ -32,12 +32,14 @@ final class ResultFileAccessor @Inject()(
             File(s"${constants.jobPath}/$jobID/results").list.withFilter(_.extension.contains(".json")).toList
           logger.info(s"Loading files for $jobID: ${files.map(_.name).mkString(",")}")
           val results: Json =
-            files.map { file =>
+            files
+              .map { file =>
                 file.nameWithoutExtension -> parse(file.contentAsString).right.toOption.getOrElse {
                   logger.error("Invalid result json from database")
                   throw new NoSuchElementException
                 }
-            }.toMap[String, Json]
+              }
+              .toMap[String, Json]
               .updated("jobID", jobID.asJson)
               .asJson
           resultCache.set(jobID, results, 10.minutes)

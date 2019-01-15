@@ -42,7 +42,7 @@
                 <b>Maintenance in a few seconds!</b>
             </b-alert>
             <div class="offline-alert"
-                 @click="reload"
+                 @click="reloadApp"
                  v-if="reconnecting">
                 <i class="fas fa-retweet"></i>
                 <b>Reconnecting...</b>

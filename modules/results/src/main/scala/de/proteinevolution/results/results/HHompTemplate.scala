@@ -1,6 +1,6 @@
 package de.proteinevolution.results.results
 
-import io.circe.{ Decoder, HCursor }
+import io.circe.{Decoder, HCursor}
 
 case class HHompTemplate(
     consensus: String,
@@ -14,7 +14,7 @@ case class HHompTemplate(
     bb_pred: String,
     bb_conf: String,
     start: Int
-) extends HHTemplate
+)
 
 object HHompTemplate {
 

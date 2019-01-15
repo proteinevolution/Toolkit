@@ -2,7 +2,7 @@ import {Module} from 'vuex';
 import getters from './getters';
 import actions from './actions';
 import mutations from './mutations';
-import {RootState, JobState} from '../../types';
+import {JobState, RootState} from '../../types';
 
 export const state: JobState = {
     jobs: [],
@@ -10,7 +10,7 @@ export const state: JobState = {
 
 const namespaced: boolean = true;
 
-const tools: Module<JobState, RootState> = {
+const jobs: Module<JobState, RootState> = {
     namespaced,
     state,
     getters,
@@ -18,4 +18,4 @@ const tools: Module<JobState, RootState> = {
     mutations,
 };
 
-export default tools;
+export default jobs;

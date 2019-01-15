@@ -53,15 +53,25 @@
                 clusterWorkload: 0,
             };
         },
-        created() {
-            this.animateClusterload(70);
-        },
         components: {
             SearchField,
         },
         computed: {
             currentJobStatus(): string {
-                return 'done';
+                return 'done'; // TODO: compute correct state
+            },
+            storeClusterWorkload(): number {
+                return this.$store.state.clusterWorkload;
+            },
+        },
+        watch: {
+            storeClusterWorkload: {
+                immediate: true,
+                handler(value: number) {
+                    if (value !== this.clusterWorkload) {
+                        this.animateClusterload(value);
+                    }
+                },
             },
         },
         methods: {
@@ -125,6 +135,7 @@
                             color: $tk-gray;
                             margin-bottom: 4px;
                         }
+
                         .load-bar-graph {
                             display: flex;
                             flex-direction: row;
@@ -180,15 +191,19 @@
                         background: rgba(192, 181, 191, 1);
                         height: 0.3em;
                     }
+
                     &.done {
                         background: rgba(0, 180, 40, 0.9);
                     }
+
                     &.error {
                         background: rgba(180, 0, 40, 0.9);
                     }
+
                     &.running {
                         background: rgba(255, 255, 0, 0.9);
                     }
+
                     &.not_init {
                         display: none;
                     }

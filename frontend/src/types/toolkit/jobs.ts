@@ -5,10 +5,12 @@ export interface Job {
     status: JobState;
     tool: string;
     code: string;
+    hidden?: boolean;
     // toolnameLong: string;
     dateCreated?: Date;
     dateUpdated?: Date;
     dateViewed?: Date;
+    paramValues?: object;
 }
 
 export interface SubmissionResponse {
@@ -22,4 +24,9 @@ export interface CustomJobIdValidationResult {
     exists: boolean;
     version?: number;
     suggested?: string;
+}
+
+export interface SimilarJobResult {
+    jobID: string;
+    dateCreated: number;
 }

@@ -1,13 +1,11 @@
 // Important: import Vue from 'vue';
-import Vue from 'vue';
-
 import {NotificationOptions} from 'vue-notification';
 
 declare module 'vue/types/vue' {
     // Global properties can be declared
     // on the `VueConstructor` interface
     interface VueConstructor {
-        notify: (options: TKNotificationOptions | string) => void;
+        notify: (options: NotificationOptions | string) => void;
     }
 }
 
@@ -18,8 +16,8 @@ declare module 'vue/types/vue' {
 }
 
 export interface TKNotificationOptions extends NotificationOptions {
-    text: string;
-    body?: string;
+    title: string;
+    text?: string;
     useBrowserNotifications?: boolean;
     onClick?: () => void;
 }

@@ -2,7 +2,7 @@ package de.proteinevolution.models.param
 import de.proteinevolution.models.parameters.Parameter._
 import de.proteinevolution.models.parameters._
 import de.proteinevolution.tel.TEL
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
 /**
  * Provides the specification of the Parameters as they appear in the individual tools
@@ -31,19 +31,21 @@ class ParamAccess @Inject()(tel: TEL) {
     case "ALIGNMENT" => TextAreaParameter("alignment", TextAreaInputType.SEQUENCE, placeholder, sampleInputKey)
     case "TWOTEXTALIGNMENT" =>
       TextAreaParameter("alignment", TextAreaInputType.SEQUENCE, placeholder, sampleInputKey, allowsTwoTextAreas = true)
-    case "HMMER_DB"                 => select("hmmerdb", "Select database")
-    case "STANDARD_DB"              => select("standarddb", "Select standard database")
-    case "HHSUITEDB"                => select("hhsuitedb", "Select database (PDB_mmCIF70 for modeling)")
-    case "MATRIX"                   => select("matrix", "Scoring Matrix")
-    case "EVALUE"                   => select("evalue", "E-value")
-    case "GAP_OPEN"                 => NumberParameter("gap_open", "Gap open penalty")
-    case "GAP_TERM"                 => NumberParameter("gap_term", "Terminal gap penalty", Some(0), Some(10), Some(0.01))
-    case "GAP_EXT_KALN"             => NumberParameter("gap_ext_kaln", "Gap extension penalty", Some(0), Some(10), Some(0.01))
-    case "BONUSSCORE"               => NumberParameter("bonusscore", "Bonus Score", Some(0), Some(10), Some(0.01))
-    case "DESC"                     => select("desc", "No. of target sequences (up to 10000)")
-    case "MAXROUNDS"                => select("maxrounds", "Max. number of iterations")
-    case "OFFSET"                   => NumberParameter("offset", "Offset", Some(0), Some(10), Some(0.01))
-    case "HHBLITSDB"                => select("hhblitsdb", "Select database")
+    case "HMMER_DB"    => select("hmmerdb", "Select database")
+    case "STANDARD_DB" => select("standarddb", "Select standard database")
+    // TODO fix max selected options (the SUM of selected dbs from hhsuiteddb and proteomes must not be > 4)
+    case "HHSUITEDB"    => select("hhsuitedb", "Select database (PDB_mmCIF70 for modeling)", 4)
+    case "MATRIX"       => select("matrix", "Scoring Matrix")
+    case "EVALUE"       => select("evalue", "E-value")
+    case "GAP_OPEN"     => NumberParameter("gap_open", "Gap open penalty")
+    case "GAP_TERM"     => NumberParameter("gap_term", "Terminal gap penalty", Some(0), Some(10), Some(0.01))
+    case "GAP_EXT_KALN" => NumberParameter("gap_ext_kaln", "Gap extension penalty", Some(0), Some(10), Some(0.01))
+    case "BONUSSCORE"   => NumberParameter("bonusscore", "Bonus Score", Some(0), Some(10), Some(0.01))
+    case "DESC"         => select("desc", "No. of target sequences (up to 10000)")
+    case "MAXROUNDS"    => select("maxrounds", "Max. number of iterations")
+    case "OFFSET"       => NumberParameter("offset", "Offset", Some(0), Some(10), Some(0.01))
+    case "HHBLITSDB"    => select("hhblitsdb", "Select database")
+    // TODO join aligmode/macmode into a single select component
     case "ALIGNMODE"                => select("alignmode", "Alignment Mode")
     case "MSA_GEN_MAX_ITER"         => select("msa_gen_max_iter", "Maximal no. of MSA generation steps")
     case "MSA_GEN_MAX_ITER_HHREPID" => select("msa_gen_max_iter_hhrepid", "Maximal no. of MSA generation steps")
@@ -63,17 +65,18 @@ class ParamAccess @Inject()(tel: TEL) {
       NumberParameter("min_seqid_query", "Min. seq. identity of MSA hits with query (%)", Some(0), Some(100))
     case "NUM_SEQS_EXTRACT" =>
       NumberParameter("num_seqs_extract", "No. of most dissimilar sequences to extract")
-    case "SCORE_SS"                => select("score_ss", "Score secondary structure")
-    case "SS_SCORING"              => select("ss_scoring", "Secondary structure scoring")
-    case "MIN_SEQID"               => select("min_seqid", "Minimum sequence identity")
-    case "MIN_ALN_COV"             => select("min_aln_cov", "Minimum alignment coverage")
-    case "GRAMMAR"                 => select("grammar", "Select grammar")
-    case "SEQCOUNT"                => select("seqcount", "Maximum number of sequences to display")
-    case "INC_NUCL"                => select("inc_nucl", "Include nucleic acid sequence")
-    case "AMINO_NUCL_REL"          => select("amino_nucl_rel", "Amino acids in relation to nucleotides")
-    case "CODON_TABLE"             => select("codon_table", "Select codon usage table")
-    case "MAX_HHBLITS_ITER"        => select("max_hhblits_iter", "MSA enrichment iterations using HHblits")
-    case "PROTEOMES"               => select("proteomes", "Proteomes")
+    case "SCORE_SS"         => select("score_ss", "Score secondary structure")
+    case "SS_SCORING"       => select("ss_scoring", "Secondary structure scoring")
+    case "MIN_SEQID"        => select("min_seqid", "Minimum sequence identity")
+    case "MIN_ALN_COV"      => select("min_aln_cov", "Minimum alignment coverage")
+    case "GRAMMAR"          => select("grammar", "Select grammar")
+    case "SEQCOUNT"         => select("seqcount", "Maximum number of sequences to display")
+    case "INC_NUCL"         => select("inc_nucl", "Include nucleic acid sequence")
+    case "AMINO_NUCL_REL"   => select("amino_nucl_rel", "Amino acids in relation to nucleotides")
+    case "CODON_TABLE"      => select("codon_table", "Select codon usage table")
+    case "MAX_HHBLITS_ITER" => select("max_hhblits_iter", "MSA enrichment iterations using HHblits")
+    // TODO fix max selected options (the SUM of selected dbs from hhsuiteddb and proteomes must not be > 4)
+    case "PROTEOMES"               => select("proteomes", "Proteomes", 4)
     case "REP_PVAL_THRESHOLD"      => select("rep_pval_threshold", "Repeat family P-value threshold")
     case "SELF_ALN_PVAL_THRESHOLD" => select("self_aln_pval_threshold", "Self-Alignment P-value threshold")
     case "MERGE_ITERS"             => select("merge_iters", "Merge rounds")
@@ -95,19 +98,27 @@ class ParamAccess @Inject()(tel: TEL) {
     case "SAMCC_HELIXONE" =>
       TextInputParameter("samcc_helixone",
                          "Definition for helix 1",
-                         "CC_first_position;chain;start_pos;end_pos", samCCHelixRegex, Some("a;A;2;30"))
+                         "CC_first_position;chain;start_pos;end_pos",
+                         samCCHelixRegex,
+                         Some("a;A;2;30"))
     case "SAMCC_HELIXTWO" =>
       TextInputParameter("samcc_helixtwo",
                          "Definition for helix 2",
-                         "CC_first_position;chain;start_pos;end_pos", samCCHelixRegex, Some("a;B;2;30"))
+                         "CC_first_position;chain;start_pos;end_pos",
+                         samCCHelixRegex,
+                         Some("a;B;2;30"))
     case "SAMCC_HELIXTHREE" =>
       TextInputParameter("samcc_helixthree",
                          "Definition for helix 3",
-                         "CC_first_position;chain;start_pos;end_pos", samCCHelixRegex, Some("a;C;2;30"))
+                         "CC_first_position;chain;start_pos;end_pos",
+                         samCCHelixRegex,
+                         Some("a;C;2;30"))
     case "SAMCC_HELIXFOUR" =>
       TextInputParameter("samcc_helixfour",
                          "Definition for helix 4",
-                         "CC_first_position;chain;start_pos;end_pos", samCCHelixRegex, Some("a;D;2;30"))
+                         "CC_first_position;chain;start_pos;end_pos",
+                         samCCHelixRegex,
+                         Some("a;D;2;30"))
     case "INVOKE_PSIPRED" =>
       NumberParameter("invoke_psipred", "% identity cutoff to invoke a new PSIPRED run", Some(0), Some(100))
     case "CLANS_EVAL"       => select("clans_eval", "Extract BLAST HSP's up to E-values of")

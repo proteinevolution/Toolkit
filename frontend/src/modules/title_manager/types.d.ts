@@ -1,5 +1,4 @@
 // Important: import Vue from 'vue';
-import Vue from 'vue';
 
 interface TitleProperties {
     base: string;
@@ -15,6 +14,6 @@ interface TKTitleFunctions {
 
 declare module 'vue/types/vue' {
     interface Vue {
-        $title: TKTitleFunctions
+        $title: TKTitleFunctions;
     }
 }

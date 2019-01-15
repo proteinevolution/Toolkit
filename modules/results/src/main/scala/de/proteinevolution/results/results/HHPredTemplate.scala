@@ -1,6 +1,6 @@
 package de.proteinevolution.results.results
 
-import io.circe.{ Decoder, HCursor }
+import io.circe.{Decoder, HCursor}
 
 case class HHPredTemplate(
     consensus: String,
@@ -11,7 +11,7 @@ case class HHPredTemplate(
     ss_dssp: String,
     ss_pred: String,
     start: Int
-) extends HHTemplate
+)
 
 object HHPredTemplate {
 

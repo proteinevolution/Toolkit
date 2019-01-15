@@ -1,7 +1,6 @@
+
 /* tslint:disable:max-line-length */
 export default {
-    citation: `<p>A Completely Reimplemented MPI Bioinformatics Toolkit with a New HHpred Server at its Core. Zimmermann L, Stephens A, Nam SZ, Rau D, Kübler J, Lozajic M, Gabler F, Söding J, Lupas AN, Alva V. J Mol Biol. 2018 Jul 20. <a href=http://www.sciencedirect.com/science/article/pii/S0022283617305879 target="_blank" rel="noopener">PMID: 29258817</a></p>`,
-
     singleseq: `<p><b>Single query sequence:</b></p>
 <p>You can enter a single query sequence in FASTA format (with or without name line):</p>
 <pre>>AAN59974.1 histone H2A [Homo sapiens]<br/>MSGRGKQGGKARAKAKTRSSRAGLQFPVGRVHRLLRKGNYAERVGAGAPVYLAAVLEYLT<br/>AEILELAGNAARDNKKTRIIPRHLQLAIRNDEELNKLLGKVTIAQGGVLPNIQAVLLPKK<br/>TESHHKAKGK<br/></pre>
@@ -25,4 +24,11 @@ export default {
     <a href = https://github.com/soedinglab/hh-suite/blob/master/hhsuite-userguide.pdf target="_blank" rel="noopener">HHsuite manual</a>
     for further details.
 </p>`,
+
+    multiseq: `<p>Enter multiple sequences in FASTA format. A sequence in FASTA format begins with a single-line
+    description, followed by lines of sequence data. The description line is distinguished from the
+    sequence data by a greater-than (">") symbol in the first column.</p>
+<pre>>AAN59974.1 histone H2A [Homo sapiens]<br/>MSGRGKQGGKARAKAKTRSSRAGLQFPVGRVHRLLRKGNYAERVGAGAPVYLAAVLEYLT<br/>AEILELAGNAARDNKKTRIIPRHLQLAIRNDEELNKLLGKVTIAQGGVLPNIQAVLLPKK<br/>TESHHKAKGK<br/>>NP_001005967.1 histone 2, H2a [Danio rerio]<br/>MSGRGKTGGKARAKAKSRSSRAGLQFPVGRVHRLLRKGNYAERVGAGAPVYLAAVLEYLT<br/>AEILELAGNAARDNKKTRIIPRHLQLAVRNDEELNKLLGGVTIAQGGVLPNIQAVLLPKK<br/>TEKPAKSK<br/>>NP_001027366.1 histone H2A [Drosophila melanogaster]<br/>MSGRGKGGKVKGKAKSRSDRAGLQFPVGRIHRLLRKGNYAERVGAGAPVYLAAVMEYLAA<br/>EVLELAGNAARDNKKTRIIPRHLQLAIRNDEELNKLLSGVTIAQGGVLPNIQAVLLPKKT<br/>EKKA<br/>>NP_175517.1 histone H2A 10 [Arabidopsis thaliana]<br>MAGRGKTLGSGSAKKATTRSSKAGLQFPVGRIARFLKKGKYAERVGAGAPVYLAAVLEYL<br/>AAEVLELAGNAARDNKKTRIVPRHIQLAVRNDEELSKLLGDVTIANGGVMPNIHNLLLPK<br/>KTGASKPSAEDD<br/>>NP_001263788.1 Histone H2A [Caenorhabditis elegans]<br>MSGRGKGGKAKTGGKAKSRSSRAGLQFPVGRLHRILRKGNYAQRVGAGAPVYLAAVLEYL<br/>AAEVLELAGNAARDNKKTRIAPRHLQLAVRNDEELNKLLAGVTIAQGGVLPNIQAVLLPK<br/>KTGGDKEIRLSNLPKQ<br/>>NP_009552.1 histone H2A [Saccharomyces cerevisiae S288C]<br>MSGGKGGKAGSAAKASQSRSAKAGLTFPVGRVHRLLRRGNYAQRIGSGAPVYLTAVLEYL<br/>AAEILELAGNAARDNKKTRIIPRHLQLAIRNDDELNKLLGNVTIAQGGVLPNIHQNLLPK<br/>KSAKTAKASQEL<br/>>XP_641587.1 histone H2A [Dictyostelium discoideum AX4]<br>MSETKPASSKPAAAAKPKKVIPRVSRTGEPKSKPESRSARAGITFPVSRVDRLLREGRFA<br/>PRVESTAPVYLAAVLEYLVFEILELAHNTCSISKKTRITPQHINWAVGNDLELNSLFQHV<br/>TIAYGGVLPTPQQSTGEKKKKPSKKAAEGSSQIY</pre>`,
+
+    version: '<strong>Version:</strong> {0}',
 };

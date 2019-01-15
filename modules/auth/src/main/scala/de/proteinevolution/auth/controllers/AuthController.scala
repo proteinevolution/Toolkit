@@ -5,21 +5,21 @@ import java.time.ZonedDateTime
 import akka.actor.ActorRef
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.dao.UserDao
-import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
 import de.proteinevolution.auth.models.MailTemplate._
+import de.proteinevolution.auth.models.{FormDefinitions, JSONTemplate}
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.models.database.users.{ User, UserToken }
+import de.proteinevolution.models.database.users.{User, UserToken}
 import de.proteinevolution.models.message.Session.ChangeSessionID
 import de.proteinevolution.tel.env.Env
-import javax.inject.{ Inject, Singleton }
-import play.api.Logger
-import play.api.cache.{ NamedCache, SyncCacheApi }
-import play.api.libs.json.Json
+import io.circe.syntax._
+import javax.inject.{Inject, Singleton}
+import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
-import play.api.mvc.{ Action, AnyContent, ControllerComponents }
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.{Environment, Logger}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthController @Inject()(
@@ -27,7 +27,7 @@ class AuthController @Inject()(
     userDao: UserDao,
     cc: ControllerComponents,
     @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
-    environment: play.Environment,
+    environment: Environment,
     env: Env
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
     extends ToolkitController(cc)
@@ -47,7 +47,7 @@ class AuthController @Inject()(
   def getUserData: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { user =>
       logger.info("Sending user data.")
-      Ok(Json.toJson(user.userData))
+      Ok(user.userData.asJson)
     }
   }
 
@@ -233,7 +233,7 @@ class AuthController @Inject()(
                     case Some(registeredUser) =>
                       // All done. User is registered, now send the welcome eMail
                       val eMail =
-                        ResetPasswordMail(registeredUser, token.token, environment: play.Environment, env: Env)
+                        ResetPasswordMail(registeredUser, token.token, environment, env: Env)
                       eMail.send
                       Ok(passwordRequestSent)
                     case None =>
@@ -283,7 +283,7 @@ class AuthController @Inject()(
                       .map {
                         case Some(updatedUser) =>
                           // All done. Now send the eMail to notify the user that the password has been changed
-                          val eMail = PasswordChangedMail(updatedUser, environment: play.Environment, env: Env)
+                          val eMail = PasswordChangedMail(updatedUser, environment, env: Env)
                           eMail.send
                           Ok(passwordChanged(updatedUser))
                         case None =>
@@ -334,7 +334,7 @@ class AuthController @Inject()(
                   userSessions.modifyUserWithCache(selector, modifier).map {
                     case Some(updatedUser) =>
                       // All done. Now send the eMail
-                      val eMail = ChangePasswordMail(updatedUser, token.token, environment: play.Environment, env: Env)
+                      val eMail = ChangePasswordMail(updatedUser, token.token, environment, env: Env)
                       eMail.send
                       // Everything is ok, let the user know that they are logged in now
                       Ok(passwordChanged(updatedUser))

@@ -2,16 +2,16 @@ package de.proteinevolution.jobs.controllers
 
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete }
+import de.proteinevolution.jobs.actors.JobActor.{CheckIPHash, Delete}
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services._
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.tools.ToolConfig
-import javax.inject.{ Inject, Singleton }
-import play.api.Logger
-import play.api.mvc.{ Action, AnyContent, ControllerComponents }
-import io.circe.{ Json, JsonObject }
 import io.circe.syntax._
+import io.circe.{Json, JsonObject}
+import javax.inject.{Inject, Singleton}
+import play.api.Logger
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 
 import scala.concurrent.ExecutionContext
 
@@ -60,9 +60,14 @@ class SubmissionController @Inject()(
     request.body.asObject match {
       case None => fuccess(BadRequest)
       case Some(obj) =>
-        val parts = for {
+        val parts: Iterable[(String, String)] = for {
           (key, json) <- obj.toIterable
-          str = if (json.isArray) json.asArray.mkString(constants.formMultiValueSeparator) else json.toString
+          str = json.fold[String]("",
+                                  bool => bool.toString,
+                                  num => num.toString,
+                                  identity,
+                                  vec => vec.toString,
+                                  obj => obj.toString)
         } yield (key, str)
         userSessions.getUser.flatMap { user =>
           jobDispatcher

@@ -54,6 +54,12 @@
     import SideBar from '@/components/sidebar/SideBar.vue';
     import VelocityFade from '@/transitions/VelocityFade.vue';
     import LoadingView from '@/components/utils/LoadingView.vue';
+    import {Job} from '@/types/toolkit/jobs';
+    import Logger from 'js-logger';
+    import {TKNotificationOptions} from '@/modules/notifications/types';
+    import {Tool} from '@/types/toolkit/tools';
+
+    const logger = Logger.get('App');
 
     export default Vue.extend({
         name: 'App',
@@ -68,10 +74,56 @@
             showJobList(): boolean {
                 return this.$route.meta.showJobList;
             },
+            openJobId(): string {
+                return this.$route.params.jobID;
+            },
         },
         created() {
+            // remove title star on focus
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    this.$title.alert(false);
+                }
+            });
+
             this.$store.dispatch('tools/fetchAllTools');
             this.$store.dispatch('jobs/fetchAllJobs');
+
+            // handle websocket messages which depend on the ui
+            (this.$options as any).sockets.onmessage = (response: any) => {
+                const json = JSON.parse(response.data);
+                switch (json.mutation) {
+                    case 'SOCKET_ShowNotification':
+                        this.showNotification(json.title, json.body, json.arguments);
+                        break;
+                    case 'SOCKET_ShowJobNotification':
+                        this.showJobNotification(json.jobID, json.title, json.body);
+                        break;
+                    default:
+                        break;
+                }
+            };
+        },
+        destroyed(): void {
+            delete (this.$options as any).sockets.onmessage;
+        },
+        methods: {
+            showJobNotification(jobID: string, title: string, body: string): void {
+                if (jobID === this.openJobId) {
+                    const job: Job = this.$store.getters['jobs/jobs'].find((j: Job) => j.jobID === jobID);
+                    const tool: Tool = this.$store.getters['tools/tools'].find((t: Tool) => t.name === job.tool);
+                    this.showNotification(title, body, {tool: tool.longname});
+                    this.$title.alert(true);
+                }
+            },
+            showNotification(title: string, text: string, args: any): void {
+                logger.debug('Notification received.', title, text, args);
+                this.$alert({
+                    title: this.$t(title, args),
+                    text: this.$t(text, args),
+                    useBrowserNotifications: true,
+                } as TKNotificationOptions);
+            },
         },
     });
 </script>
@@ -145,5 +197,9 @@
         position: fixed;
         bottom: 1em;
         left: 1em;
+    }
+
+    .cursor-pointer {
+        cursor: pointer;
     }
 </style>

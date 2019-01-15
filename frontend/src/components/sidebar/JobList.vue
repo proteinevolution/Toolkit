@@ -30,7 +30,7 @@
                 <span v-text="job.jobID"></span>
                 <span v-text="job.code.toUpperCase()"></span>
                 <i class="fas fa-times"
-                   @click.stop="deleteJob(job.jobID)"></i>
+                   @click.stop="hideJob(job.jobID)"></i>
             </div>
 
             <div class="job-list-down d-flex flex-column"
@@ -80,7 +80,7 @@
                 return this.$route.params.jobID;
             },
             jobs(): Job[] {
-                return this.$store.getters['jobs/jobs'].slice(0);
+                return this.$store.getters['jobs/jobs'].slice(0).filter((j: Job) => !j.hidden);
             },
             sortedJobs(): Job[] {
                 return this.jobs.sort(this.sortColumns[this.selectedSort].sort)
@@ -97,9 +97,8 @@
             goToJob(jobID: string): void {
                 this.$router.push(`/jobs/${jobID}`);
             },
-            deleteJob(jobID: string): void {
-                // TODO
-                this.$alert('implement me!!', '', 'warning');
+            hideJob(jobID: string): void {
+                this.$store.commit('jobs/setJobHidden', {jobID, hidden: true});
             },
             scrollDown(): void {
                 if (this.startIndex > 0) {
@@ -193,14 +192,14 @@
                     box-shadow: 1px 1px 6px 1px #8a8a8a;
                 }
 
-                // prepared
-                &.status-1 {
-                    background-color: #f2f2f2;
+                // prepared, submitted
+                &.status-1, &.status-6 {
+                    background-color: #F2F2F2;
                 }
 
                 // queued, pending
                 &.status-2, &.status-7 {
-                    background-color: #c0b5bf;
+                    background-color: #C0B5BF;
                 }
 
                 // running
@@ -215,17 +214,12 @@
 
                 // done
                 &.status-5 {
-                    background-color: #dbdbff;
-                }
-
-                // submitted
-                &.status-6 {
-                    background-color: #f2f2f2;
+                    background-color: #DBFFDB;
                 }
 
                 // deleted
                 &.status-9 {
-                    background-color: #DBFFDB;
+                    background-color: #DBDBFF;
                 }
             }
         }
