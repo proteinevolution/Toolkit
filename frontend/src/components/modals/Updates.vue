@@ -1,6 +1,6 @@
 <template>
     <BaseModal :title="$t('helpModals.titles.updates')"
-               @close="$emit('close')">
+               id="updates">
         <div v-for="(update, index) in updates"
              :key="update.date"
              class="update-item">

@@ -7,6 +7,7 @@ $container-max-widths: (
         lg: 960px,
         xl: 1200px
 );
+$modal-lg: 1200px;
 
 // COLORS
 $white: #fefefe;
@@ -35,7 +36,14 @@ $danger-light: lighten($danger, 15%);
 
 $input-border-color: #ddd;
 
-// TYPOGRAPHY
+// MODALS
+$modal-content-border-width: 0;
+$modal-content-border-radius: 3px;
+$modal-inner-padding: 1.5rem 2rem;
+$modal-backdrop-opacity: 0.2;
+$modal-content-box-shadow-sm-up:    0 20px 60px -2px rgba(27, 33, 58, 0.4);
+
+  // TYPOGRAPHY
 $font-size-base: 0.9rem;
 $font-family-sans-serif: "Noto Sans", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 $font-family-monospace: Consolas, "SFMono-Regular", "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;

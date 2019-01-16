@@ -1,16 +1,25 @@
 <template>
     <BaseModal :title="toolName"
-               @close="$emit('close')">
-        <b-tabs>
-            <b-tab title="Overview" v-html="$t(`toolHelpModals.${toolName}.overview`)"></b-tab>
-            <b-tab title="Input & Parameters">
+               id="helpModal">
+        <b-tabs v-if="toolName">
+            <b-tab class="helpTab"
+                   title="Overview"
+                   v-html="$t(`toolHelpModals.${toolName}.overview`)">
+
+            </b-tab>
+            <b-tab class="helpTab"
+                   title="Input & Parameters">
                 <Accordion :items="accordionItems"></Accordion>
             </b-tab>
-            <b-tab title="References">
+            <b-tab class="helpTab"
+                   title="References">
                 <div v-html="$t(`citation`)"></div><br>
                 <div v-html="$t(`toolHelpModals.${toolName}.references`)"></div>
             </b-tab>
-            <b-tab title="Version" v-html="$t(`toolHelpModals.common.version`, ['TODO'])"></b-tab>
+            <b-tab class="helpTab"
+                   title="Version"
+                   v-html="$t(`toolHelpModals.common.version`, ['TODO'])">
+            </b-tab>
         </b-tabs>
     </BaseModal>
 </template>
@@ -51,8 +60,8 @@
     });
 </script>
 
-<style>
-    .tab-pane {
-        padding: 2em;
+<style lang="scss" scoped>
+    .helpTab {
+        padding-top: 1rem;
     }
 </style>

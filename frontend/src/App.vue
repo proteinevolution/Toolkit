@@ -42,7 +42,14 @@
             </b-container>
         </VelocityFade>
 
-        <modals-container/>
+        <div>
+            <!-- Place modals here -->
+            <Simple :modal="modalProps.modal"></Simple>
+            <Updates></Updates>
+            <AlignmentViewerModal v-bind="modalProps.avProps"></AlignmentViewerModal>
+            <HelpModal :toolName="modalProps.toolName"></HelpModal>
+        </div>
+
         <notifications animation-type="velocity"/>
     </div>
 </template>
@@ -58,6 +65,11 @@
     import Logger from 'js-logger';
     import {TKNotificationOptions} from '@/modules/notifications/types';
     import {Tool} from '@/types/toolkit/tools';
+    import EventBus from '@/util/EventBus';
+    import Simple from '@/components/modals/Simple';
+    import Updates from '@/components/modals/Updates';
+    import HelpModal from '@/components/modals/HelpModal';
+    import AlignmentViewerModal from '@/components/modals/AlignmentViewerModal';
 
     const logger = Logger.get('App');
 
@@ -69,6 +81,22 @@
             Footer,
             VelocityFade,
             LoadingView,
+            Simple,
+            Updates,
+            HelpModal,
+            AlignmentViewerModal,
+        },
+        data() {
+            return {
+                modalProps: {
+                    modal: 'help',
+                    toolName: '',
+                    avProps: {
+                        sequences: '',
+                        format: '',
+                    },
+                },
+            };
         },
         computed: {
             showJobList(): boolean {
@@ -104,6 +132,9 @@
                 }
             };
         },
+        mounted() {
+            EventBus.$on('show-modal', this.showModal);
+        },
         destroyed(): void {
             delete (this.$options as any).sockets.onmessage;
         },
@@ -123,6 +154,12 @@
                     text: this.$t(text, args),
                     useBrowserNotifications: true,
                 } as TKNotificationOptions);
+            },
+            showModal(args) {
+                if (args.props) {
+                    Object.keys(args.props).forEach(key => this.modalProps[key] = args.props[key]);
+                }
+                this.$root.$emit('bv::show::modal', args.id);
             },
         },
     });

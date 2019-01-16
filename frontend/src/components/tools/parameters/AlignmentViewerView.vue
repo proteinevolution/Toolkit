@@ -26,8 +26,8 @@
 <script lang="ts">
     import Vue from 'vue';
     import {FrontendToolParameter} from '@/types/toolkit/tools';
-    import AlignmentViewerModal from '@/components/modals/AlignmentViewerModal.vue';
     import {Reformat} from '@/modules/reformat';
+    import EventBus from '@/util/EventBus';
 
     export default Vue.extend({
         name: 'AlignmentViewerView',
@@ -56,17 +56,15 @@
                 this.input = this.parameter.sampleInput;
             },
             showAlignment() {
-                this.$modal.show(AlignmentViewerModal,
-                    {
-                        sequences: this.input,
-                        format: this.detectedFormat.toLowerCase(),
+                EventBus.$emit('show-modal', {
+                    id: 'alignmentViewer',
+                    props: {
+                        avProps: {
+                            sequences: this.input,
+                            format: this.detectedFormat.toLowerCase(),
+                        },
                     },
-                    {
-                        draggable: false,
-                        width: '60%',
-                        height: 'auto',
-                        scrollable: true,
-                    });
+                });
             },
         },
     });

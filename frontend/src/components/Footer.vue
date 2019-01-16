@@ -18,13 +18,13 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import Simple from './modals/Simple.vue';
-    import Updates from '@/components/modals/Updates.vue';
+    import EventBus from '@/util/EventBus';
 
     export default Vue.extend({
         name: 'Footer',
         data() {
             return {
+                currentModal: '',
                 simpleModals: [
                     'help',
                     'faq',
@@ -37,20 +37,10 @@
         },
         methods: {
             launchHelpModal(modal: string): void {
-                this.$modal.show(Simple, {modal}, {
-                    draggable: false,
-                    width: '60%',
-                    height: 'auto',
-                    scrollable: true,
-                });
+                EventBus.$emit('show-modal', {id: 'simple', props: {modal}});
             },
             launchUpdatesModal(): void {
-                this.$modal.show(Updates, {}, {
-                    draggable: false,
-                    width: '60%',
-                    height: 'auto',
-                    scrollable: true,
-                });
+                EventBus.$emit('show-modal', {id: 'updates'});
             },
         },
     });
@@ -68,6 +58,7 @@
 
         .modals-nav {
             margin-bottom: 0.5rem;
+
             .nav-item a {
                 color: $tk-gray;
             }
