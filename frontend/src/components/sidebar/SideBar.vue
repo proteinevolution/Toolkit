@@ -1,6 +1,6 @@
 <template>
     <div class="side-bar">
-        <SearchField class="form-control-sm form-control-gray"></SearchField>
+        <SearchField targetClass="form-control-sm form-control-gray"></SearchField>
         <JobList/>
     </div>
 </template>
@@ -20,7 +20,5 @@
 </script>
 
 <style lang="scss" scoped>
-    .form-control-gray:not(:focus) {
-        background-color: transparent;
-    }
+
 </style>

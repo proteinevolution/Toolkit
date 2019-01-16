@@ -61,6 +61,7 @@ export default {
             pagination: 'Page {currentPage} of {pageCount}',
         },
         tools: {
+            header: 'Tools',
             sections: {
                 'search': {
                     title: 'Search',
@@ -132,6 +133,7 @@ export default {
             },
         },
         jobs: {
+            header: 'Jobs',
             details: 'JobID: {jobID}, Created: {dateCreated}',
             states: {
                 1: 'Prepared',
