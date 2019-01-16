@@ -1,11 +1,10 @@
-package de.proteinevolution.search.services
+package de.proteinevolution.jobs.services
 
 import cats.data.OptionT
 import cats.implicits._
 import de.proteinevolution.base.helpers.ToolkitTypes._
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.Job
-import de.proteinevolution.jobs.services.JobFolderValidation
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.tools.{ Tool, ToolConfig }
@@ -15,7 +14,7 @@ import reactivemongo.bson.BSONDocument
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class SearchService @Inject()(
+class JobSearchService @Inject()(
     jobDao: JobDao,
     constants: ConstantsV2,
     toolConfig: ToolConfig

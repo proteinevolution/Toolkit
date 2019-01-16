@@ -60,6 +60,10 @@ export default {
             },
             pagination: 'Page {currentPage} of {pageCount}',
         },
+        search: {
+            nothingFound: 'Nothing found.',
+            loading: 'Loading...',
+        },
         tools: {
             header: 'Tools',
             sections: {

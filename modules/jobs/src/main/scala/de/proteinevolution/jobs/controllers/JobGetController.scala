@@ -8,11 +8,11 @@ import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.{ Job, JobHashError }
-import de.proteinevolution.jobs.services.{ JobFolderValidation, JobHashService }
+import de.proteinevolution.jobs.services.{ JobFolderValidation, JobHashService, JobSearchService }
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.tools.ToolConfig
-import io.circe.{ Json, JsonObject }
 import io.circe.syntax._
+import io.circe.{ Json, JsonObject }
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
@@ -27,7 +27,8 @@ class JobGetController @Inject()(
     jobDao: JobDao,
     cc: ControllerComponents,
     toolConfig: ToolConfig,
-    constants: ConstantsV2
+    constants: ConstantsV2,
+    jobSearchService: JobSearchService
 )(implicit ec: ExecutionContext, config: Configuration)
     extends ToolkitController(cc)
     with JobFolderValidation {
@@ -45,6 +46,31 @@ class JobGetController @Inject()(
     userSessions.getUser.flatMap { user =>
       jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>
         Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.cleaned(toolConfig)).asJson)
+      }
+    }
+  }
+
+  /**
+   * Returns the last updated job
+   */
+  def recentJob: Action[AnyContent] = Action.async { implicit request =>
+    userSessions.getUser.flatMap { user =>
+      jobSearchService.recentJob(user).map { lastJob =>
+        Ok(lastJob.map(_.cleaned(toolConfig)).asJson)
+      }
+    }
+  }
+
+  /**
+   * if no tool is found for a given query,
+   * it looks for jobs which belong to the current user.
+   * only jobIDs that belong to the user are autocompleted
+   */
+  def suggestJobsForJobId(queryString_ : String): Action[AnyContent] = Action.async { implicit request =>
+    userSessions.getUser.flatMap { user =>
+      jobSearchService.autoComplete(user, queryString_).value.map {
+        case Some(jobs) => Ok(jobs.map(_.cleaned(toolConfig)).asJson)
+        case None       => NoContent
       }
     }
   }
