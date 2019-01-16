@@ -114,12 +114,12 @@
             filterResults() {
                 this.isLoading = true;
                 // first uncapitalize all the things
-                this.suggestions.tools = this.tools.filter((t: Tool) => {
+                (this.suggestions.tools as Tool[]) = this.tools.filter((t: Tool) => {
                     return t.longname.toLowerCase().indexOf(this.search.toLowerCase()) > -1;
                 });
                 JobService.suggestJobsForJobId(this.search)
                     .then((jobs: Job[]) => {
-                        this.suggestions.jobs = jobs;
+                        (this.suggestions.jobs as Job[]) = jobs;
                     })
                     .finally(() => {
                         this.isLoading = false;
@@ -161,7 +161,7 @@
                     this.isOpen = true;
                 }
             },
-            handleClickOutside(evt) {
+            handleClickOutside(evt: any) {
                 if (!this.$el.contains(evt.target)) {
                     this.clearSearch();
                 }
