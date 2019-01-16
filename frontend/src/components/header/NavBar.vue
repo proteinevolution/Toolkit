@@ -47,6 +47,7 @@
         data() {
             return {
                 userSelectedSection: '',
+                defaultSelectedSection: sections[0],
                 sectionColors,
             };
         },
@@ -64,32 +65,35 @@
                 const index = this.sections.indexOf(this.selectedSection) % this.sections.length;
                 return this.sectionColors[index];
             },
-            defaultSelectedSection(): string {
-                let toolName: string;
-                if (this.$route.params.toolName) {
-                    toolName = this.$route.params.toolName;
-                } else {
-                    const currentJob: Job = this.$store.getters['jobs/jobs']
-                        .find((job: Job) => job.jobID === this.$route.params.jobID);
-                    if (currentJob) {
-                        toolName = currentJob.tool;
-                    }
-                }
-                const matchingTools = this.tools.filter((tool: Tool) => tool.name === toolName);
-                if (matchingTools.length > 0) {
-                    return matchingTools[0].section;
-                } else {
-                    return this.tools[0] ? this.tools[0].section : '';
-                }
-            },
             selectedSection(): string {
                 return this.userSelectedSection ? this.userSelectedSection : this.defaultSelectedSection;
             },
         },
         watch: {
-            '$route.params.toolName'() {
-                // clear user selection to select correct tool/group upon programmatic routing
-                this.userSelectedSection = '';
+            '$route.params': {
+                immediate: true,
+                handler() {
+                    // clear user selection to select correct tool/group upon programmatic routing
+                    this.userSelectedSection = '';
+                    let toolName: string = '';
+                    if (this.$route.params.toolName) {
+                        toolName = this.$route.params.toolName;
+                    } else {
+                        const currentJob: Job = this.$store.getters['jobs/jobs']
+                            .find((job: Job) => job.jobID === this.$route.params.jobID);
+                        if (currentJob) {
+                            toolName = currentJob.tool;
+                        }
+                    }
+                    if (toolName) {
+                        const matchingTools = this.tools.filter((tool: Tool) => tool.name === toolName);
+                        if (matchingTools.length > 0) {
+                            this.defaultSelectedSection = matchingTools[0].section;
+                        } else {
+                            this.defaultSelectedSection = sections[0];
+                        }
+                    }
+                },
             },
         },
         methods: {
