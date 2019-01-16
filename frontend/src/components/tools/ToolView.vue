@@ -5,7 +5,7 @@
              v-if="tool">
             <div class="tool-header d-flex align-items-baseline">
                 <h1>
-                    {{ tool.longname }}Test
+                    {{ tool.longname }}
                     <b-link class="help-icon" @click="launchHelpModal">
                         <i class="far fa-question-circle"></i>
                     </b-link>

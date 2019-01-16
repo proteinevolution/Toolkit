@@ -24,7 +24,6 @@
         name: 'Footer',
         data() {
             return {
-                currentModal: '',
                 simpleModals: [
                     'help',
                     'faq',
