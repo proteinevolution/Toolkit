@@ -8,28 +8,53 @@
                @input="onChange"
                @keydown.down="onArrowDown"
                @keydown.up="onArrowUp"
-               @keydown.enter="onEnter"/>
+               @keydown.enter="onEnter"
+               @focus="onFocus"/>
+        <i class="fas fa-search search-icon"></i>
         <div class="autocomplete-results"
              v-show="isOpen">
-            <li class="autocomplete-loading"
-                v-if="isLoading">
-                Loading...
-            </li>
+            <div class="autocomplete-no-results"
+                 v-show="!isLoading && suggestions.jobs.length === 0 && suggestions.tools.length === 0">
+                {{ $t('search.nothingFound') }}
+            </div>
             <div class="autocomplete-group"
-                 v-show="!isLoading && suggestions.tools.length > 0">
+                 v-show="suggestions.tools.length > 0"
+                 :class="[suggestions.jobs.length > 0 ? 'mb-3' : '']">
                 <h6 class="autocomplete-group-header">{{ $t('tools.header') }}</h6>
                 <div class="autocomplete-result"
-                     v-for="(tool, i) in suggestions.tools"
+                     v-for="(tool, i) in suggestions.tools.slice(0, itemsPerGroup)"
                      :class="{ 'is-active': i === arrowCounter }"
                      :key="i">
                     <a class="search-results"
-                       @click="goToTool(tool.name)"
+                       @click="goToTool(tool)"
                        v-text="tool.longname"></a>
+                </div>
+                <div class="autocomplete-more-results"
+                     v-if="suggestions.tools.length > itemsPerGroup">
+                    ...
                 </div>
             </div>
             <div class="autocomplete-group"
                  v-show="!isLoading && suggestions.jobs.length > 0">
                 <h6 class="autocomplete-group-header">{{ $t('jobs.header') }}</h6>
+                <li class="autocomplete-loading"
+                    v-if="isLoading">
+                    {{ $t('search.loading') }}
+                </li>
+                <div class="autocomplete-result"
+                     v-if="!isLoading"
+                     v-for="(job, i) in suggestions.jobs.slice(0, itemsPerGroup)"
+                     :class="{ 'is-active': (i + suggestions.tools.length) === arrowCounter }"
+                     :key="i">
+                    <a class="search-results"
+                       @click="goToJob(job)">
+                        {{ job.jobID }} ({{ job.tool.substr(0, 4).toUpperCase() }})
+                    </a>
+                </div>
+                <div class="autocomplete-more-results"
+                     v-if="suggestions.tools.length > itemsPerGroup && !isLoading">
+                    ...
+                </div>
             </div>
         </div>
     </div>
@@ -38,7 +63,9 @@
 <script lang="ts">
     import Vue from 'vue';
     import {Tool} from '@/types/toolkit/tools';
+    import {Job} from '@/types/toolkit/jobs';
     import {sections} from '@/conf/ToolSections';
+    import JobService from '@/services/JobService';
 
     export default Vue.extend({
         name: 'SearchField',
@@ -60,6 +87,7 @@
                 isOpen: false,
                 isLoading: false,
                 arrowCounter: -1,
+                itemsPerGroup: 5,
             };
         },
         computed: {
@@ -68,43 +96,6 @@
             },
         },
         mounted() {
-            // configure datasource for the suggestions (i.e. Bloodhound)
-            // this.suggestions = {
-            //     engine: new Bloodhound({
-            //         remote: {
-            //             url: '/search/suggest/%QUERY%',
-            //             wildcard: '%QUERY%',
-            //         },
-            //         datumTokenizer: Bloodhound.tokenizers.whitespace('q'),
-            //         queryTokenizer: Bloodhound.tokenizers.whitespace,
-            //     }),
-            // };
-            //
-            // // get the input element and init typeahead on it
-            // const inputEl = this.$refs.searchInput;
-            // inputEl.typeahead({
-            //     highlight: true,
-            //     minLength: 1,
-            //     autoselect: 'first',
-            // }, [{
-            //     source: this.suggestions.engine.ttAdapter(),
-            //     name: 'jobList',
-            //     limit: 30,
-            //     displayKey: 'jobID',
-            //     templates: {
-            //         //empty: '<div class="list-group search-results-dropdown"><div class="list-group-item-notfound">Nothing found.</div></div>',
-            //         suggestion: function(data: any) {
-            //             if (data != null) {
-            //                 return '<div class="list-group-item"><a class="search-results" data-typeahead-id=\'' + data.jobID + '\' data-link="/jobs/' + data.jobID + '" name="' + data.jobID + ' - ' + data.toolnameLong + '">' +
-            //                     '<span class="search-result-jobid">' + data.jobID + '</span> <span class="search-result-tool"> ' +
-            //                     '(' + data.toolnameLong + ')</span> <span class="search-result-tool-short"> (' + data.tool.substr(0, 4).toUpperCase() + ')</span></a></div>';
-            //             } else {
-            //                 return '';
-            //             }
-            //         },
-            //     },
-            // },
-            // ]);
             document.addEventListener('click', this.handleClickOutside);
         },
         destroyed() {
@@ -114,41 +105,65 @@
             onChange() {
                 // Let's warn the parent that a change was made
                 this.$emit('input', this.search);
-                this.filterResults();
-                this.isOpen = true;
+                if (this.search.length > 0) {
+                    this.filterResults();
+                }
+                this.isOpen = this.search.length > 0;
+                this.arrowCounter = -1;
             },
             filterResults() {
                 this.isLoading = true;
                 // first uncapitalize all the things
-                this.suggestions.tools = this.tools.filter((t: Tool) => {
+                (this.suggestions.tools as Tool[]) = this.tools.filter((t: Tool) => {
                     return t.longname.toLowerCase().indexOf(this.search.toLowerCase()) > -1;
                 });
-                this.isLoading = false;
+                JobService.suggestJobsForJobId(this.search)
+                    .then((jobs: Job[]) => {
+                        (this.suggestions.jobs as Job[]) = jobs;
+                    })
+                    .finally(() => {
+                        this.isLoading = false;
+                    });
             },
-            goToTool(toolName: string): void {
-                this.$router.push('/tools/' + toolName);
+            goToTool(tool: Tool): void {
+                this.$router.push('/tools/' + tool.name);
+                this.clearSearch();
             },
-            onArrowDown() {
-                if (this.arrowCounter < this.suggestions.tools.length) {
+            goToJob(job: Job): void {
+                this.$router.push('/jobs/' + job.jobID);
+                this.clearSearch();
+            },
+            clearSearch(): void {
+                this.search = '';
+                this.isOpen = false;
+                this.arrowCounter = -1;
+            },
+            onArrowDown(): void {
+                if (this.arrowCounter < this.suggestions.tools.length + this.suggestions.jobs.length - 1) {
                     this.arrowCounter = this.arrowCounter + 1;
                 }
             },
-            onArrowUp() {
+            onArrowUp(): void {
                 if (this.arrowCounter > 0) {
                     this.arrowCounter = this.arrowCounter - 1;
                 }
             },
-            onEnter() {
+            onEnter(): void {
                 if (this.arrowCounter < this.suggestions.tools.length) {
-                    this.goToTool(this.suggestions.tools[this.arrowCounter].name);
+                    this.goToTool(this.suggestions.tools[this.arrowCounter]);
+                } else if (this.arrowCounter < this.suggestions.tools.length + this.suggestions.jobs.length) {
+                    this.goToJob(this.suggestions.jobs[this.arrowCounter - this.suggestions.tools.length]);
                 }
-                this.isOpen = false;
-                this.arrowCounter = -1;
+                this.clearSearch();
             },
-            handleClickOutside(evt) {
+            onFocus(): void {
+                if (this.search.length > 0) {
+                    this.isOpen = true;
+                }
+            },
+            handleClickOutside(evt: any) {
                 if (!this.$el.contains(evt.target)) {
-                    this.isOpen = false;
-                    this.arrowCounter = -1;
+                    this.clearSearch();
                 }
             },
         },
@@ -156,16 +171,31 @@
 </script>
 
 <style lang="scss" scoped>
-    .search-field {
-        font-size: 0.9em;
-    }
-
-    .form-control-gray:not(:focus) {
-        background-color: transparent;
-    }
-
     .autocomplete {
         width: 100%;
+        position: relative;
+        z-index: 10;
+
+        .search-field {
+            font-size: 0.9em;
+        }
+
+        .form-control-gray:not(:focus) {
+            background-color: transparent;
+        }
+
+        .search-icon {
+            color: $tk-gray;
+            position: absolute;
+            right: 0.7rem;
+            top: 0.63rem;
+            pointer-events: none;
+        }
+
+        .form-control-sm ~ .search-icon {
+            right: 0.6rem;
+            top: 25%;
+        }
 
         .autocomplete-results {
             border-radius: $global-radius;
@@ -173,7 +203,7 @@
             padding: 0.5rem 0;
             margin-top: 0.25rem;
             border: 1px solid $tk-light-gray;
-            max-height: 120px;
+            max-height: 15rem;
             overflow: auto;
             position: absolute;
             width: 100%;
@@ -184,10 +214,17 @@
                 padding: 0 0.6rem;
             }
 
+            .autocomplete-more-results,
+            .autocomplete-no-results {
+                list-style: none;
+                text-align: left;
+                padding: 0.3rem 0.6rem;
+            }
+
             .autocomplete-result {
                 list-style: none;
                 text-align: left;
-                padding: 4px 0.6rem;
+                padding: 0.3rem 0.6rem;
                 cursor: pointer;
             }
 

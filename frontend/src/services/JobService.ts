@@ -23,6 +23,16 @@ export default class JobService {
         }));
     }
 
+    public static getRecentJob(): Promise<Job> {
+        return new Promise<Job>(((resolve, reject) => {
+            axios.get(`/api/jobs/recent`)
+                .then((response) => {
+                    resolve(response.data);
+                })
+                .catch(reject);
+        }));
+    }
+
     public static submitJob(toolName: string, submission: any): Promise<SubmissionResponse> {
         return new Promise<SubmissionResponse>((resolve, reject) => {
             axios.post(`/api/jobs/?toolName=${toolName}`, submission)
@@ -56,9 +66,20 @@ export default class JobService {
                 .catch(reject);
         }));
     }
+
     public static startJob(jobID: string): Promise<void> {
         return new Promise<void>(((resolve, reject) => {
             axios.post(`/api/jobs/start/${jobID}`) // TODO: use get and change order $jobID/start
+                .catch(reject);
+        }));
+    }
+
+    public static suggestJobsForJobId(query: string): Promise<Job[]> {
+        return new Promise<Job[]>(((resolve, reject) => {
+            axios.get(`/api/jobs/suggest/${query}`)
+                .then((response) => {
+                    resolve(response.data);
+                })
                 .catch(reject);
         }));
     }

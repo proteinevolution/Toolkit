@@ -147,18 +147,6 @@ lazy val backend = (project in file("modules/backend"))
   )
   .disablePlugins(PlayLayoutPlugin)
 
-lazy val search = (project in file("modules/search"))
-  .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, base, auth, jobs, tools)
-  .settings(
-    name := "de.proteinevolution.search",
-    libraryDependencies ++= Dependencies.commonDeps,
-    Settings.compileSettings,
-    TwirlKeys.templateImports := Seq.empty,
-    disableDocs
-  )
-  .disablePlugins(PlayLayoutPlugin)
-
 lazy val ui = (project in file("modules/ui"))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl, BuildInfoPlugin)
   .dependsOn(commonJVM, base, tools)
@@ -243,7 +231,6 @@ lazy val root = (project in file("."))
     cluster,
     help,
     backend,
-    search,
     ui,
     message,
     verification,
@@ -261,7 +248,6 @@ lazy val root = (project in file("."))
     cluster,
     help,
     backend,
-    search,
     ui,
     message,
     verification,

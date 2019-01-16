@@ -5,7 +5,6 @@ import de.proteinevolution.help.HelpRouter
 import de.proteinevolution.jobs.JobsRouter
 import de.proteinevolution.message.MessageRouter
 import de.proteinevolution.results.ResultsRouter
-import de.proteinevolution.search.SearchRouter
 import de.proteinevolution.verification.VerificationRouter
 import de.proteinevolution.ui.UiRouter
 import javax.inject.{ Inject, Singleton }
@@ -24,7 +23,6 @@ class MainRouter @Inject()(
     helpRouter: HelpRouter,
     backendRouter: BackendRouter,
     jobsRouter: JobsRouter,
-    searchRouter: SearchRouter,
     uiRouter: UiRouter,
     messageRouter: MessageRouter,
     verificationRouter: VerificationRouter
@@ -51,7 +49,6 @@ class MainRouter @Inject()(
       .orElse(messageRouter.withPrefix("/ws").routes)
       .orElse(uiRoutes)
       .orElse(uiRouter.withPrefix("/api/tools").routes)
-      .orElse(searchRouter.withPrefix("/search").routes)
       .orElse(jobsRouter.withPrefix("/api/jobs").routes)
       .orElse(backendRouter.withPrefix("/backend").routes)
       .orElse(helpRouter.withPrefix("/api/tools/help").routes)
