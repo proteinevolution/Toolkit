@@ -1,5 +1,5 @@
 <template>
-    <BaseModal :title="tool.longname"
+    <BaseModal :title="tool ? tool.longname : ''"
                id="helpModal">
         <b-tabs v-if="toolName">
             <b-tab class="helpTab"
@@ -15,7 +15,7 @@
                 <div v-html="$t(`citation`)"></div><br>
                 <div v-html="$t(`toolHelpModals.${toolName}.references`)"></div>
             </b-tab>
-            <b-tab v-if="tool.version"
+            <b-tab v-if="tool && tool.version"
                    class="helpTab"
                    title="Version"
                    v-html="$t(`toolHelpModals.common.version`, [tool.version])">

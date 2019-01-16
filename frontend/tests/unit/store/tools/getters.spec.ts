@@ -17,16 +17,16 @@ describe('tools/getters', () => {
         const state: ToolState = {
             tools: [
                 {
-                    name: 'Tool1', longname: 'Tool1', section: 'Section1', description: '', validationParams: {},
-                    parameters: undefined,
+                    name: 'Tool1', longname: 'Tool1', section: 'Section1', description: '', version: '',
+                    validationParams: {}, parameters: undefined,
                 },
                 {
-                    name: 'Tool2', longname: 'Tool1', section: 'Section2', description: '', validationParams: {},
-                    parameters: undefined,
+                    name: 'Tool2', longname: 'Tool1', section: 'Section2', description: '', version: '',
+                    validationParams: {}, parameters: undefined,
                 },
                 {
-                    name: 'Tool3', longname: 'Tool1', section: 'Section2', description: '', validationParams: {},
-                    parameters: undefined,
+                    name: 'Tool3', longname: 'Tool1', section: 'Section2', description: '', version: '',
+                    validationParams: {}, parameters: undefined,
                 },
             ],
             version: '0.0.0',

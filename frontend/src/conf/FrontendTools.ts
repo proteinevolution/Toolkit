@@ -7,6 +7,7 @@ export const Reformat: Tool = {
     longname: 'Reformat',
     description: 'Sequence reformatting utility',
     section: 'utils',
+    version: '',
     validationParams: {},
     parameters: {
         hideSubmitButtons: true,
@@ -33,6 +34,7 @@ export const AlignmentViewer: Tool = {
     longname: 'AlignmentViewer',
     description: 'BioJS multiple sequence alignment viewer',
     section: 'alignment',
+    version: '',
     validationParams: {},
     parameters: {
         hideSubmitButtons: true,
