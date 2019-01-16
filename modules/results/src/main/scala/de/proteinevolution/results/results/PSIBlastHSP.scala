@@ -42,7 +42,7 @@ case class PSIBlastHSP(
 
 object PSIBlastHSP {
 
-  import io.circe.{Decoder, HCursor}
+  import io.circe.{ Decoder, HCursor }
 
   def parseHSP(db: String): Decoder[PSIBlastHSP] = (c: HCursor) => {
     val hsps            = c.downField("hsps").downArray.first

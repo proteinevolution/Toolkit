@@ -2,6 +2,14 @@ package controllers
 
 import java.net.InetAddress
 
+import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.base.controllers.ToolkitController
+import de.proteinevolution.tools.ToolConfig
+import javax.inject.{ Inject, Singleton }
+import org.webjars.play.WebJarsUtil
+import play.api.mvc._
+import play.api.{ Environment, Logger }
+
 import scala.concurrent.ExecutionContext
 
 @Singleton

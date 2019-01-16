@@ -2,8 +2,8 @@ package de.proteinevolution.models.database.users
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.models.util.{ZonedDateTimeHelper => h}
-import io.circe.{Encoder, Json}
+import de.proteinevolution.models.util.{ ZonedDateTimeHelper => h }
+import io.circe.{ Encoder, Json }
 import reactivemongo.bson._
 
 case class IPConfig(

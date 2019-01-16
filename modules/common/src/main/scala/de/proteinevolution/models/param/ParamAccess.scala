@@ -2,7 +2,7 @@ package de.proteinevolution.models.param
 import de.proteinevolution.models.parameters.Parameter._
 import de.proteinevolution.models.parameters._
 import de.proteinevolution.tel.TEL
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 /**
  * Provides the specification of the Parameters as they appear in the individual tools

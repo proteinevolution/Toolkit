@@ -1,7 +1,7 @@
 package de.proteinevolution.ui
 
 import de.proteinevolution.ui.controllers.UiController
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
 import play.api.routing.sird._

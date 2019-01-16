@@ -5,12 +5,12 @@ import cats.implicits._
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.results.db.ResultFileAccessor
-import de.proteinevolution.results.models.{AlignmentClustalLoadHitsForm, AlignmentGetForm, AlignmentLoadHitsForm}
-import de.proteinevolution.results.results.{AlignmentResult, Common}
+import de.proteinevolution.results.models.{ AlignmentClustalLoadHitsForm, AlignmentGetForm, AlignmentLoadHitsForm }
+import de.proteinevolution.results.results.{ AlignmentResult, Common }
 import javax.inject.Inject
-import play.api.mvc.{Action, ControllerComponents}
+import play.api.mvc.{ Action, ControllerComponents }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 class AlignmentController @Inject()(
     resultFiles: ResultFileAccessor,

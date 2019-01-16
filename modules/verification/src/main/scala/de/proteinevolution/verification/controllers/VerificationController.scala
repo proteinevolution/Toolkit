@@ -10,10 +10,10 @@ import de.proteinevolution.auth.models.JSONTemplate
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.message.actors.WebSocketActor.LogOut
-import de.proteinevolution.models.database.users.{User, UserToken}
+import de.proteinevolution.models.database.users.{ User, UserToken }
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tools.ToolConfig
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import org.webjars.play.WebJarsUtil
 import play.api.Environment
 import play.api.cache._
@@ -21,7 +21,7 @@ import play.api.libs.mailer._
 import play.api.mvc._
 import reactivemongo.bson._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class VerificationController @Inject()(

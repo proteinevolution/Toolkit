@@ -6,19 +6,19 @@ import java.time.temporal.ChronoUnit
 import akka.actor.ActorRef
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.dao.UserDao
-import de.proteinevolution.backend.actors.DatabaseMonitor.{DeleteOldJobs, DeleteOldUsers}
+import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.models.database.statistics.{JobEvent, JobEventLog}
+import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.tools.ToolConfig
 import io.circe.Json
 import io.circe.syntax._
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 import play.api.Logger
 import play.api.mvc._
-import reactivemongo.bson.{BSONDateTime, BSONDocument}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
 import scala.concurrent.ExecutionContext
 

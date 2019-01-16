@@ -1,7 +1,7 @@
 package de.proteinevolution.results.results
 
 import io.circe.syntax._
-import io.circe.{Decoder, HCursor, Json}
+import io.circe.{ Decoder, HCursor, Json }
 
 case class HHPredHSP(
     query: HHPredQuery,

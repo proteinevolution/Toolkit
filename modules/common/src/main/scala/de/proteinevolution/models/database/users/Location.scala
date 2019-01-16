@@ -1,6 +1,6 @@
 package de.proteinevolution.models.database.users
 
-import io.circe.{Encoder, Json}
+import io.circe.{ Encoder, Json }
 import reactivemongo.bson._
 
 case class Location(country: String, countryCode: Option[String], region: Option[String], city: Option[String])

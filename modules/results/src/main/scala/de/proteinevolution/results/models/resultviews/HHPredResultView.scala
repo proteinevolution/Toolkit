@@ -1,8 +1,8 @@
 package de.proteinevolution.results.models.resultviews
 
 import de.proteinevolution.models.results.ResultViews
-import de.proteinevolution.models.{ConstantsV2, ToolName}
-import de.proteinevolution.results.results.{AlignmentResult, HHPredResult}
+import de.proteinevolution.models.{ ConstantsV2, ToolName }
+import de.proteinevolution.results.results.{ AlignmentResult, HHPredResult }
 import de.proteinevolution.tools.ToolConfig
 import play.twirl.api.HtmlFormat
 

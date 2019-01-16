@@ -3,10 +3,10 @@ package de.proteinevolution.models.database.statistics
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
-import de.proteinevolution.models.util.{ZonedDateTimeHelper => helper}
+import de.proteinevolution.models.util.{ ZonedDateTimeHelper => helper }
 import io.circe.java8.time.encodeZonedDateTime
 import io.circe.syntax._
-import io.circe.{Encoder, Json}
+import io.circe.{ Encoder, Json }
 import reactivemongo.bson._
 
 case class StatisticsObject(

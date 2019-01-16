@@ -1,26 +1,26 @@
 package de.proteinevolution.message.actors
 
-import java.nio.file.{Files, Paths}
+import java.nio.file.{ Files, Paths }
 import java.time.ZonedDateTime
 
-import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
+import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
 import de.proteinevolution.auth.UserSessions
-import de.proteinevolution.cluster.actors.ClusterMonitor.{Connect, Disconnect, UpdateLoad}
+import de.proteinevolution.cluster.actors.ClusterMonitor.{ Connect, Disconnect, UpdateLoad }
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobActorAccess
-import de.proteinevolution.message.actors.WebSocketActor.{LogOut, MaintenanceAlert}
+import de.proteinevolution.message.actors.WebSocketActor.{ LogOut, MaintenanceAlert }
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.JobState.Running
 import de.proteinevolution.models.message.Session.ChangeSessionID
 import de.proteinevolution.tools.ToolConfig
 import io.circe.syntax._
-import io.circe.{Json, JsonObject}
-import javax.inject.{Inject, Named}
+import io.circe.{ Json, JsonObject }
+import javax.inject.{ Inject, Named }
 import play.api.Configuration
-import play.api.cache.{NamedCache, SyncCacheApi}
+import play.api.cache.{ NamedCache, SyncCacheApi }
 import reactivemongo.bson.BSONObjectID
 
 import scala.concurrent.ExecutionContext

@@ -6,12 +6,12 @@ import de.proteinevolution.models.ConstantsV2
 import io.circe.Json
 import io.circe.parser._
 import io.circe.syntax._
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import play.api.Logger
-import play.api.cache.{AsyncCacheApi, NamedCache}
+import play.api.cache.{ AsyncCacheApi, NamedCache }
 
 import scala.concurrent.duration._
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class ResultFileAccessor @Inject()(

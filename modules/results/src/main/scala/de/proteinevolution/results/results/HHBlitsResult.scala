@@ -1,7 +1,7 @@
 package de.proteinevolution.results.results
 
-import de.proteinevolution.results.results.General.{DTParam, SingleSeq}
-import io.circe.{Decoder, HCursor, Json}
+import de.proteinevolution.results.results.General.{ DTParam, SingleSeq }
+import io.circe.{ Decoder, HCursor, Json }
 
 case class HHBlitsResult(
     HSPS: List[HHBlitsHSP],

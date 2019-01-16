@@ -2,9 +2,9 @@ package de.proteinevolution.models.database.users
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.models.util.{ZonedDateTimeHelper => helper}
+import de.proteinevolution.models.util.{ ZonedDateTimeHelper => helper }
 import io.circe.syntax._
-import io.circe.{Encoder, Json}
+import io.circe.{ Encoder, Json }
 import org.mindrot.jbcrypt.BCrypt
 import reactivemongo.bson._
 

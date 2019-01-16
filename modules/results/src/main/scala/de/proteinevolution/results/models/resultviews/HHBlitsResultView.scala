@@ -1,8 +1,8 @@
 package de.proteinevolution.results.models.resultviews
 
 import de.proteinevolution.models.results.ResultViews
-import de.proteinevolution.models.{ConstantsV2, ToolName}
-import de.proteinevolution.results.results.{AlignmentResult, HHBlitsResult}
+import de.proteinevolution.models.{ ConstantsV2, ToolName }
+import de.proteinevolution.results.results.{ AlignmentResult, HHBlitsResult }
 import de.proteinevolution.tools.ToolConfig
 
 import scala.collection.immutable.ListMap

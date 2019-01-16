@@ -2,16 +2,16 @@ package de.proteinevolution.jobs.controllers
 
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.jobs.actors.JobActor.{CheckIPHash, Delete}
+import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete }
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services._
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.tools.ToolConfig
 import io.circe.syntax._
-import io.circe.{Json, JsonObject}
-import javax.inject.{Inject, Singleton}
+import io.circe.{ Json, JsonObject }
+import javax.inject.{ Inject, Singleton }
 import play.api.Logger
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 
 import scala.concurrent.ExecutionContext
 

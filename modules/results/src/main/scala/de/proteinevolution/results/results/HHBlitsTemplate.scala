@@ -1,6 +1,6 @@
 package de.proteinevolution.results.results
 
-import io.circe.{Decoder, HCursor}
+import io.circe.{ Decoder, HCursor }
 
 case class HHBlitsTemplate(
     consensus: String,

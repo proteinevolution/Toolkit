@@ -1,16 +1,16 @@
 package de.proteinevolution.message.controllers
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ ActorSystem, Props }
 import akka.stream.Materializer
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.message.actors.WebSocketActor
 import io.circe.syntax._
-import io.circe.{Json, JsonObject}
+import io.circe.{ Json, JsonObject }
 import javax.inject.Inject
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
-import play.api.{Configuration, Environment, Logger}
+import play.api.{ Configuration, Environment, Logger }
 
 import scala.concurrent.ExecutionContext
 

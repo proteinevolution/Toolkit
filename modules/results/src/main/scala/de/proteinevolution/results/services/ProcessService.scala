@@ -1,19 +1,19 @@
 package de.proteinevolution.results.services
 
 import better.files._
-import cats.data.{EitherT, OptionT}
+import cats.data.{ EitherT, OptionT }
 import cats.implicits._
 import de.proteinevolution.models.ToolName._
-import de.proteinevolution.models.{ConstantsV2, ToolName}
+import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.results.db.ResultFileAccessor
-import de.proteinevolution.results.models.{ForwardMode, ForwardingData}
-import de.proteinevolution.results.results.{HSP, SearchResult}
+import de.proteinevolution.results.models.{ ForwardMode, ForwardingData }
+import de.proteinevolution.results.results.{ HSP, SearchResult }
 import de.proteinevolution.results.services.ResultsRepository.ResultsService
 import io.circe.DecodingFailure
-import javax.inject.{Inject, Singleton}
-import play.api.{Configuration, Logger}
+import javax.inject.{ Inject, Singleton }
+import play.api.{ Configuration, Logger }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.sys.process.Process
 
 @Singleton

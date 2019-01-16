@@ -1,13 +1,13 @@
 package de.proteinevolution.results.controllers
 
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.results.models.{HHContext, ResultsForm}
+import de.proteinevolution.results.models.{ HHContext, ResultsForm }
 import de.proteinevolution.results.results.General.DTParam
 import de.proteinevolution.results.services.HHService
 import io.circe.JsonObject
 import io.circe.syntax._
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.{Action, AnyContent}
+import javax.inject.{ Inject, Singleton }
+import play.api.mvc.{ Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
 
