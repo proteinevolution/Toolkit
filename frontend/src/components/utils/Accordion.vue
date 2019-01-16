@@ -5,12 +5,13 @@
                 no-body
                 class="mb-1">
             <b-card-header header-tag="header"
-                           class="p-1"
+                           class="p-1 header"
                            role="tab">
                 <b-btn block
                        href="#"
                        v-b-toggle="item.title"
-                       variant="secondary">
+                       variant="secondary"
+                       class="button">
                     {{ item.title }}
                 </b-btn>
             </b-card-header>
@@ -47,5 +48,13 @@
     .btn-secondary {
         background: none;
         border: none;
+    }
+    
+    .button {
+        text-align: left;
+    }
+
+    .header {
+        border-bottom: none;
     }
 </style>

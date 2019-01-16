@@ -1,7 +1,7 @@
 /* tslint:disable:max-line-length */
 
 export default {
-    overview: `Performs a six-frame translation on a given nucleotide sequence. 
+    overview: `Performs a six-frame translation on a given nucleotide sequence.
         A selection of different codon usage tables are provides in the Parameters tab.`,
     parameters: [
         {

@@ -1,4 +1,5 @@
 // Important: import Vue from 'vue';
+import Vue from 'vue';
 
 interface TitleProperties {
     base: string;

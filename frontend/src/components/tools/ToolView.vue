@@ -74,8 +74,8 @@
     import NotFoundView from '@/components/utils/NotFoundView.vue';
     import LoadingWrapper from '@/components/utils/LoadingWrapper.vue';
     import JobService from '@/services/JobService';
-    import HelpModal from '@/components/modals/HelpModal.vue';
     import Logger from 'js-logger';
+    import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('ToolView');
 
@@ -159,12 +159,7 @@
                     });
             },
             launchHelpModal(): void {
-                this.$modal.show(HelpModal, {toolName: this.toolName}, {
-                    draggable: false,
-                    width: '60%',
-                    height: 'auto',
-                    scrollable: true,
-                });
+                EventBus.$emit('show-modal', {id: 'helpModal', props: {toolName: this.toolName}});
             },
         },
     });

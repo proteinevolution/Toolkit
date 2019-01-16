@@ -1,19 +1,26 @@
 <template>
-    <div class="tk-modal">
-        <div class="tk-modal-header">
+    <b-modal centered
+             :id="id"
+             hide-header
+             hide-footer
+             no-fade
+             size="lg"
+             body-class="tk-modal"
+             lazy>
+            <div class="tk-modal-header">
             <span class="tk-modal-title"
                   v-html="title">
             </span>
 
-            <span class="tk-modal-close"
-                  @click="$emit('close')">
+                <span class="tk-modal-close"
+                      @click="$root.$emit('bv::hide::modal',id)">
                 &times;
             </span>
-        </div>
-        <div class="tk-modal-body">
-            <slot></slot>
-        </div>
-    </div>
+            </div>
+            <div class="tk-modal-body">
+                <slot></slot>
+            </div>
+    </b-modal>
 </template>
 
 <script lang="ts">
@@ -22,6 +29,7 @@
     export default Vue.extend({
         name: 'BaseModal',
         props: {
+            id: String,
             title: String,
         },
     });
@@ -30,6 +38,7 @@
 <style lang="scss">
     .tk-modal {
         padding: 1.5rem 2rem;
+        box-shadow: 0 20px 60px -2px rgba(27, 33, 58, 0.4);
 
         .tk-modal-header {
             display: flex;
@@ -64,4 +73,6 @@
             }
         }
     }
+
+
 </style>

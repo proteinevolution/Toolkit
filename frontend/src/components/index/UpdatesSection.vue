@@ -38,7 +38,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import updates from '@/i18n/lang/updates';
-    import Updates from '@/components/modals/Updates.vue';
+    import EventBus from '@/util/EventBus';
 
     export default Vue.extend({
         name: 'UpdatesSection',
@@ -81,12 +81,7 @@
         },
         methods: {
             launchUpdatesModal() {
-                this.$modal.show(Updates, {}, {
-                    draggable: false,
-                    width: '60%',
-                    height: 'auto',
-                    scrollable: true,
-                });
+                EventBus.$emit('show-modal', {id: 'updates'});
             },
         },
     });
@@ -121,6 +116,7 @@
                 color: $primary;
                 margin-bottom: 0.25em;
             }
+
             p {
                 color: $tk-darker-gray;
                 font-size: 0.8em;

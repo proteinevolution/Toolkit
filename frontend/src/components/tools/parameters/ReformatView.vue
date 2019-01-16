@@ -81,8 +81,8 @@
     import {Reformat} from '@/modules/reformat';
     import Multiselect from 'vue-multiselect';
     import Select from './SelectParameter.vue';
-    import AlignmentViewerModal from '@/components/modals/AlignmentViewerModal.vue';
     import {AlignmentSeqFormat} from '@/types/toolkit/enums';
+    import EventBus from '@/util/EventBus';
 
     export default Vue.extend({
         name: 'ReformatView',
@@ -126,17 +126,13 @@
                 this.input = this.parameter.sampleInput;
             },
             showAlignmentViewer(): void {
-                this.$modal.show(AlignmentViewerModal,
-                    {
+                EventBus.$emit('show-modal', {
+                    id: 'alignmentViewer',
+                    props: {
                         sequences: this.input,
                         format: this.detectedFormat.toLowerCase(),
                     },
-                    {
-                        draggable: false,
-                        width: '60%',
-                        height: 'auto',
-                        scrollable: true,
-                    });
+                });
             },
             computeOutput(selectedFormat: SelectOption): void {
                 if (selectedFormat !== undefined && this.reformat !== undefined) {

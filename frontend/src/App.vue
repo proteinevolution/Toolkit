@@ -42,7 +42,16 @@
             </b-container>
         </VelocityFade>
 
-        <modals-container/>
+        <div>
+            <!-- Place modals here -->
+            <Simple :modal="modalProps.modal"></Simple>
+            <Updates></Updates>
+            <AlignmentViewerModal :sequences="modalProps.sequences"
+                                  :format="modalProps.format">
+            </AlignmentViewerModal>
+            <HelpModal :toolName="modalProps.toolName"></HelpModal>
+        </div>
+
         <notifications animation-type="velocity"/>
     </div>
 </template>
@@ -58,6 +67,12 @@
     import Logger from 'js-logger';
     import {TKNotificationOptions} from '@/modules/notifications/types';
     import {Tool} from '@/types/toolkit/tools';
+    import EventBus from '@/util/EventBus';
+    import Simple from '@/components/modals/Simple.vue';
+    import Updates from '@/components/modals/Updates.vue';
+    import HelpModal from '@/components/modals/HelpModal.vue';
+    import AlignmentViewerModal from '@/components/modals/AlignmentViewerModal.vue';
+    import {ModalParams} from '@/types/toolkit/utils';
 
     const logger = Logger.get('App');
 
@@ -69,6 +84,20 @@
             Footer,
             VelocityFade,
             LoadingView,
+            Simple,
+            Updates,
+            HelpModal,
+            AlignmentViewerModal,
+        },
+        data() {
+            return {
+                modalProps: {
+                    modal: 'help', // Simple Modal
+                    toolName: '', // Help Modal
+                    sequences: '', // AlignmentViewerModal
+                    format: '', // AlignmentViewerModal
+                },
+            };
         },
         computed: {
             showJobList(): boolean {
@@ -104,6 +133,9 @@
                 }
             };
         },
+        mounted() {
+            EventBus.$on('show-modal', this.showModal);
+        },
         destroyed(): void {
             delete (this.$options as any).sockets.onmessage;
         },
@@ -123,6 +155,12 @@
                     text: this.$t(text, args),
                     useBrowserNotifications: true,
                 } as TKNotificationOptions);
+            },
+            showModal(params: ModalParams) {
+                if (params.props) {
+                    Object.assign(this.modalProps, params.props);
+                }
+                this.$root.$emit('bv::show::modal', params.id);
             },
         },
     });
