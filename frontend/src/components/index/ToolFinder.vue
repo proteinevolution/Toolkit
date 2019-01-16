@@ -33,9 +33,9 @@
             </div>
             <div class="search-container row">
                 <div class="traffic-bar col-12"
-                     :class="currentJobStatus"></div>
+                     :class="'status-' + currentJobStatus"></div>
                 <div class="search-field-container col-12">
-                    <SearchField :placeholder="$t('index.searchPlaceholder')" />
+                    <SearchField :placeholder="$t('index.searchPlaceholder')"/>
                 </div>
             </div>
         </div>
@@ -45,6 +45,8 @@
 <script lang="ts">
     import Vue from 'vue';
     import SearchField from './SearchField.vue';
+    import {JobState} from '@/types/toolkit/enums';
+    import {Job} from '@/types/toolkit/jobs';
 
     export default Vue.extend({
         name: 'ToolFinder',
@@ -57,8 +59,13 @@
             SearchField,
         },
         computed: {
-            currentJobStatus(): string {
-                return 'done'; // TODO: compute correct state
+            currentJobStatus(): JobState {
+                const recentJob: Job | undefined = this.$store.getters['jobs/recentJob'];
+                if (recentJob) {
+                    return recentJob.status;
+                } else {
+                    return JobState.Done;
+                }
             },
             storeClusterWorkload(): number {
                 return this.$store.state.clusterWorkload;
@@ -187,21 +194,25 @@
                     animation: background 10s cubic-bezier(1, 0, 0, 1) infinite;
                     box-shadow: -2px 0 4px $tk-lighter-gray;
 
-                    &.queue {
+                    // queued
+                    &.status-2 {
                         background: rgba(192, 181, 191, 1);
                         height: 0.3em;
                     }
 
-                    &.done {
-                        background: rgba(0, 180, 40, 0.9);
+                    // running
+                    &.status-3 {
+                        background: rgba(255, 255, 0, 0.9);
                     }
 
-                    &.error {
+                    // error
+                    &.status-4 {
                         background: rgba(180, 0, 40, 0.9);
                     }
 
-                    &.running {
-                        background: rgba(255, 255, 0, 0.9);
+                    // done
+                    &.status-5 {
+                        background: rgba(0, 180, 40, 0.9);
                     }
 
                     &.not_init {

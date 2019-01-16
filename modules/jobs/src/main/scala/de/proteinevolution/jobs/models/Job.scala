@@ -35,6 +35,7 @@ case class Job(
       "jobID"        -> jobID.asJson,
       "status"       -> status.asJson,
       "dateCreated"  -> dateCreated.map(_.toInstant.toEpochMilli).asJson,
+      "dateUpdated"  -> dateUpdated.map(_.toInstant.toEpochMilli).asJson,
       "tool"         -> tool.asJson,
       "code"         -> toolConfig.values(tool).code.asJson,
       "toolnameLong" -> config.get[String](s"Tools.$tool.longname").asJson

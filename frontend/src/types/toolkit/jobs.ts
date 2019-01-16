@@ -6,10 +6,9 @@ export interface Job {
     tool: string;
     code: string;
     hidden?: boolean;
-    // toolnameLong: string;
-    dateCreated?: Date;
-    dateUpdated?: Date;
-    dateViewed?: Date;
+    dateCreated?: number;
+    dateUpdated?: number;
+    dateViewed?: number;
     paramValues?: object;
 }
 
