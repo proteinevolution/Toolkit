@@ -6,6 +6,7 @@ export interface Tool {
     longname: string;
     description: string;
     section: string;
+    version: string;
     validationParams: ValidationParams;
 
     parameters?: ToolParameters;

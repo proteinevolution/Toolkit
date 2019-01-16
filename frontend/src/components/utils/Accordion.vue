@@ -1,28 +1,26 @@
 <template>
     <div role="tablist">
-        <b-card v-for="item in items"
-                :key="item.title"
-                no-body
-                class="mb-1">
-            <b-card-header header-tag="header"
-                           class="p-1 header"
-                           role="tab">
+        <div v-for="item in items"
+             :key="item.title"
+             class="card mb-2">
+            <b-card-header class="p-1 header" role="tab">
                 <b-btn block
                        href="#"
                        v-b-toggle="item.title"
-                       variant="secondary"
+                       variant="link"
                        class="button">
-                    {{ item.title }}
+                        <i class="icon fas fa-angle-right mr-2"></i>
+                    <b>{{ item.title }}</b>
                 </b-btn>
             </b-card-header>
             <b-collapse :id="item.title"
                         accordion="my-accordion"
                         role="tabpanel">
-                <b-card-body>
-                    <p v-html="item.content"></p>
-                </b-card-body>
+                    <div v-html="item.content"
+                         class="content">
+                    </div>
             </b-collapse>
-        </b-card>
+        </div>
     </div>
 </template>
 
@@ -45,16 +43,35 @@
 </script>
 
 <style lang="scss" scoped>
-    .btn-secondary {
-        background: none;
-        border: none;
+    .card {
+        border-radius: 0;
+        border: 1px solid $tk-lighter-gray;
     }
-    
+
     .button {
         text-align: left;
+        color: $tk-gray;
+        text-decoration: none !important;
     }
 
     .header {
-        border-bottom: none;
+        background: none;
+        border: none;
+    }
+
+    .content {
+        padding: 0.5rem 2rem 1rem 2rem;
+    }
+
+    .icon {
+        transition: all 0.2s ease;
+    }
+
+    :not(.collapsed) > .icon {
+        -webkit-transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        -o-transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
+        transform: rotate(90deg);
     }
 </style>
