@@ -35,7 +35,7 @@
                 <div class="traffic-bar col-12"
                      :class="currentJobStatus"></div>
                 <div class="search-field-container col-12">
-                    <SearchField :placeholder="$t('index.searchPlaceholder')"></SearchField>
+                    <SearchField :placeholder="$t('index.searchPlaceholder')" />
                 </div>
             </div>
         </div>
