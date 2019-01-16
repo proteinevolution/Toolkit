@@ -7,6 +7,7 @@ case class ToolFormSimple(
     longname: String,
     description: String,
     section: String,
+    version: String,
     validationParams: ValidationParamsForm
 )
 

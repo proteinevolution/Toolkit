@@ -26,6 +26,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
           config.getString("description"),
           config.getString("code"),
           config.getString("section").toLowerCase,
+          config.getString("version"),
           config.getStringList("parameter").asScala.map { param =>
             paramAccess.getParam(param, config.getString("input_placeholder"), config.getString("sample_input_key"))
           },
@@ -51,6 +52,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       description: String,
       code: String,
       section: String,
+      version: String,
       params: Seq[Parameter],
       forwardAlignment: Seq[String],
       forwardMultiSeq: Seq[String]
@@ -60,6 +62,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       toolNameLong,
       description,
       section,
+      version,
       ValidationParamsForm(Seq("FASTA", "CLUSTAL"), "PROTEIN") // TODO
     )
     val inputGroup: Seq[String] = paramAccess.paramGroups("Input")
