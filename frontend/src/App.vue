@@ -46,7 +46,9 @@
             <!-- Place modals here -->
             <Simple :modal="modalProps.modal"></Simple>
             <Updates></Updates>
-            <AlignmentViewerModal v-bind="modalProps.avProps"></AlignmentViewerModal>
+            <AlignmentViewerModal :sequences="modalProps.sequences"
+                                  :format="modalProps.format">
+            </AlignmentViewerModal>
             <HelpModal :toolName="modalProps.toolName"></HelpModal>
         </div>
 
@@ -66,10 +68,11 @@
     import {TKNotificationOptions} from '@/modules/notifications/types';
     import {Tool} from '@/types/toolkit/tools';
     import EventBus from '@/util/EventBus';
-    import Simple from '@/components/modals/Simple';
-    import Updates from '@/components/modals/Updates';
-    import HelpModal from '@/components/modals/HelpModal';
-    import AlignmentViewerModal from '@/components/modals/AlignmentViewerModal';
+    import Simple from '@/components/modals/Simple.vue';
+    import Updates from '@/components/modals/Updates.vue';
+    import HelpModal from '@/components/modals/HelpModal.vue';
+    import AlignmentViewerModal from '@/components/modals/AlignmentViewerModal.vue';
+    import {ModalParams} from '@/types/toolkit/utils';
 
     const logger = Logger.get('App');
 
@@ -89,12 +92,10 @@
         data() {
             return {
                 modalProps: {
-                    modal: 'help',
-                    toolName: '',
-                    avProps: {
-                        sequences: '',
-                        format: '',
-                    },
+                    modal: 'help', // Simple Modal
+                    toolName: '', // Help Modal
+                    sequences: '', // AlignmentViewerModal
+                    format: '', // AlignmentViewerModal
                 },
             };
         },
@@ -155,11 +156,11 @@
                     useBrowserNotifications: true,
                 } as TKNotificationOptions);
             },
-            showModal(args) {
-                if (args.props) {
-                    Object.keys(args.props).forEach(key => this.modalProps[key] = args.props[key]);
+            showModal(params: ModalParams) {
+                if (params.props) {
+                    Object.assign(this.modalProps, params.props);
                 }
-                this.$root.$emit('bv::show::modal', args.id);
+                this.$root.$emit('bv::show::modal', params.id);
             },
         },
     });

@@ -129,10 +129,8 @@
                 EventBus.$emit('show-modal', {
                     id: 'alignmentViewer',
                     props: {
-                        avProps: {
-                            sequences: this.input,
-                            format: this.detectedFormat.toLowerCase(),
-                        },
+                        sequences: this.input,
+                        format: this.detectedFormat.toLowerCase(),
                     },
                 });
             },
