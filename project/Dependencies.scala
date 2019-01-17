@@ -52,7 +52,7 @@ object Dependencies {
       "com.tgf.pizza" %%% "scalajs-mithril" % "1.1.5",
       "be.doeraene"   %%% "scalajs-jquery"  % "0.9.4",
       "org.typelevel" %%% "cats-core"       % catsV,
-      "com.lihaoyi"   %%% "upickle"         % "0.6.7"
+      "com.lihaoyi"   %%% "upickle"         % "0.6.5"
     )
   )
 
