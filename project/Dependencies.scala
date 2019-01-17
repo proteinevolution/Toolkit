@@ -50,9 +50,9 @@ object Dependencies {
     Seq(
       "org.scala-js"  %%% "scalajs-dom"     % "0.9.6",
       "com.tgf.pizza" %%% "scalajs-mithril" % "1.1.5",
-      "be.doeraene"   %%% "scalajs-jquery"  % "0.9.3",
+      "be.doeraene"   %%% "scalajs-jquery"  % "0.9.4",
       "org.typelevel" %%% "cats-core"       % catsV,
-      "com.lihaoyi"   %%% "upickle"         % "0.7.1"
+      "com.lihaoyi"   %%% "upickle"         % "0.6.7"
     )
   )
 
