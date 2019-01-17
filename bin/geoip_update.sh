@@ -35,10 +35,10 @@ if [ -f "${DBNAME}.mmdb" ] ; then
     
 
 
-    BAK="${DBNAME}_backup_`date -u | tr ' ' '_'`"
+    BAK="${DBNAME}_backup_$(date -u | tr ' ' '_')"
     mkdir "$BAK"   
     mv "${DBNAME}.mmdb" "$BAK" 
-    log "Old Database has been updated to `pwd`/$BAK"
+    log "Old Database has been updated to $(pwd)/$BAK"
 fi
 
 
@@ -52,7 +52,7 @@ gunzip  "GeoLite2-City.mmdb.gz" || die "Error extracting file" 4
 if [ "$?" -eq 0 ] ; then
 
     log "Update has been completed successfully"
-    log "Database is available at `pwd`/GeoLite2-City.mmdb.gz" 
+    log "Database is available at $(pwd)/GeoLite2-City.mmdb.gz" 
 else 
 
     log "Error updating Maxmind Database. Error code was $?" 
