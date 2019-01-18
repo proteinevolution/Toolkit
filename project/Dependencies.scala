@@ -53,7 +53,7 @@ object Dependencies {
       "be.doeraene"   %%% "scalajs-jquery"  % "0.9.4",
       "org.querki"    %%% "jquery-facade"   % "1.2",
       "org.typelevel" %%% "cats-core"       % catsV,
-      "com.lihaoyi"   %%% "upickle"         % "0.7.1"
+      "com.lihaoyi"   %%% "upickle"         % "0.6.7"
     )
   )
 
