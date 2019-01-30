@@ -1,5 +1,5 @@
 import {Format, Sequence} from '@/modules/reformat/types';
-import {formatLongSeq} from '@/modules/reformat';
+import {formatLongSeq} from '@/modules/reformat/utils';
 
 export const FASTA: Format = {
     name: 'FASTA',
