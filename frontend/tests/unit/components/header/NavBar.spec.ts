@@ -2,21 +2,10 @@ import {expect} from 'chai';
 import BootstrapVue from 'bootstrap-vue';
 import {createLocalVue, shallowMount} from '@vue/test-utils';
 import NavBar from '@/components/header/NavBar.vue';
+import {tools1} from '../../mocks/tools';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
-
-const tools = [
-    {
-        name: 'Tool1', longname: 'Tool1', section: 'Section1', forwarding: {alignment: [], multiSeq: []},
-    },
-    {
-        name: 'Tool2', longname: 'Tool1', section: 'Section2', forwarding: {alignment: [], multiSeq: []},
-    },
-    {
-        name: 'Tool3', longname: 'Tool1', section: 'Section2', forwarding: {alignment: [], multiSeq: []},
-    },
-];
 
 const sections: string[] = [];
 
@@ -34,7 +23,8 @@ function initNavBar(toolNameRouteParam: string | undefined) {
             $t: (arg: string) => arg,
         },
         computed: {
-            tools: () => tools,
+            tools: () => tools1,
+            jobs: () => [],
             sections: () => sections,
             sectionColor: () => '#FFFFFF',
         },
@@ -55,17 +45,12 @@ describe('NavBar', () => {
 
     it('selects first section if invalid route parameter is set', () => {
         const wrapper = initNavBar('ToolXYZ');
-        expect((wrapper.vm as any).selectedSection).to.equal('Section1');
+        expect((wrapper.vm as any).selectedSection).to.equal('search');
     });
 
     it('selects first section if no route parameter is set', () => {
         const wrapper = initNavBar(undefined);
-        expect((wrapper.vm as any).selectedSection).to.equal('Section1');
-    });
-
-    it('reacts on changes to the sections', () => {
-        const wrapper = initNavBar(undefined);
-        expect((wrapper.vm as any).selectedSection).to.equal('Section1');
+        expect((wrapper.vm as any).selectedSection).to.equal('search');
     });
 
     it('updates manually selected selection correctly', () => {

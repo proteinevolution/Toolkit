@@ -58,6 +58,9 @@
             tools(): Tool[] {
                 return this.$store.getters['tools/tools'];
             },
+            jobs(): Job[] {
+                return this.$store.getters['jobs/jobs'];
+            },
             sections(): string[] {
                 return sections;
             },
@@ -79,8 +82,8 @@
                     if (this.$route.params.toolName) {
                         toolName = this.$route.params.toolName;
                     } else {
-                        const currentJob: Job = this.$store.getters['jobs/jobs']
-                            .find((job: Job) => job.jobID === this.$route.params.jobID);
+                        const currentJob: Job | undefined =
+                            this.jobs.find((job: Job) => job.jobID === this.$route.params.jobID);
                         if (currentJob) {
                             toolName = currentJob.tool;
                         }
