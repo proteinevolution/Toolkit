@@ -89,7 +89,7 @@
                 const stepTime: number = Math.abs(Math.floor(duration / range));
                 const timer = setInterval(() => {
                     this.clusterWorkload += increment;
-                    if (this.clusterWorkload === end) {
+                    if (this.clusterWorkload === end || this.clusterWorkload <= 0 || this.clusterWorkload >= 100) {
                         clearInterval(timer);
                     }
                 }, stepTime);
