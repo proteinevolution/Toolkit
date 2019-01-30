@@ -3,10 +3,10 @@ package de.proteinevolution.message.actors
 import java.nio.file.{ Files, Paths }
 import java.time.ZonedDateTime
 
-import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
+import akka.actor.{ Actor, ActorLogging, ActorRef }
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
-import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.cluster.actors.ClusterMonitor.{ Connect, Disconnect, UpdateLoad }
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.models.Job
@@ -29,7 +29,7 @@ final class WebSocketActor @Inject()(
     @Named("clusterMonitor") clusterMonitor: ActorRef,
     @Assisted("out") out: ActorRef,
     jobActorAccess: JobActorAccess,
-    userSessions: UserSessions,
+    userSessions: UserSessionService,
     constants: ConstantsV2,
     @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
     @Assisted("sessionID") sessionID: BSONObjectID,
@@ -42,32 +42,27 @@ final class WebSocketActor @Inject()(
   override def preStart(): Unit = {
     // Grab the user from cache to ensure a working job
     clusterMonitor ! Connect(self)
-    userSessions.getUser(sessionID).foreach {
-      case Some(user) =>
-        wsActorCache.get[List[ActorRef]](user.userID.stringify) match {
-          case Some(wsActors) =>
-            val actorSet = (wsActors: List[ActorRef]).::(self)
-            wsActorCache.set(user.userID.stringify, actorSet)
-          case None =>
-            wsActorCache.set(user.userID.stringify, List(self))
-        }
-      case None =>
-        self ! PoisonPill
+    userSessions.getUserFromCache(sessionID).foreach { user =>
+      wsActorCache.get[List[ActorRef]](user.userID.stringify) match {
+        case Some(wsActors) =>
+          val actorSet = (wsActors: List[ActorRef]).::(self)
+          wsActorCache.set(user.userID.stringify, actorSet)
+        case None =>
+          wsActorCache.set(user.userID.stringify, List(self))
+      }
     }
   } // TODO May not be able to send any messages at this point of init
 
   override def postStop(): Unit = {
     clusterMonitor ! Disconnect(self)
-    userSessions.getUser(sessionID).foreach {
-      case Some(user) =>
-        wsActorCache.get[List[ActorRef]](user.userID.stringify) match {
-          case Some(wsActors) =>
-            val actorSet: List[ActorRef] = wsActors: List[ActorRef]
-            val newActorSet              = actorSet.filterNot(_ == self)
-            wsActorCache.set(user.userID.stringify, newActorSet)
-          case None => ()
-        }
-      case None => ()
+    userSessions.getUserFromCache(sessionID).foreach { user =>
+      wsActorCache.get[List[ActorRef]](user.userID.stringify) match {
+        case Some(wsActors) =>
+          val actorSet: List[ActorRef] = wsActors: List[ActorRef]
+          val newActorSet              = actorSet.filterNot(_ == self)
+          wsActorCache.set(user.userID.stringify, newActorSet)
+        case None => ()
+      }
     }
 
     log.info(s"[WSActor] Websocket closed for session ${sessionID.stringify}")
@@ -76,59 +71,56 @@ final class WebSocketActor @Inject()(
   private def active(sid: BSONObjectID): Receive = {
 
     case json: Json =>
-      userSessions.getUser(sid).foreach {
-        case Some(user) =>
-          json.hcursor.get[String]("type").toOption.foreach {
+      userSessions.getUserFromCache(sid).foreach { user =>
+        json.hcursor.get[String]("type").toOption.foreach {
 
-            // Message containing a List of Jobs the user wants to register for the job list
-            case "RegisterJobs" =>
-              json.hcursor.get[List[String]]("jobIDs") match {
-                case Right(jobIDs) =>
-                  jobIDs.foreach { jobID =>
-                    jobActorAccess.sendToJobActor(jobID, AddToWatchlist(jobID, user.userID))
-                  }
-                case Left(_) => // Client has sent strange message over the Websocket
-              }
+          // Message containing a List of Jobs the user wants to register for the job list
+          case "RegisterJobs" =>
+            json.hcursor.get[List[String]]("jobIDs") match {
+              case Right(jobIDs) =>
+                jobIDs.foreach { jobID =>
+                  jobActorAccess.sendToJobActor(jobID, AddToWatchlist(jobID, user.userID))
+                }
+              case Left(_) => // Client has sent strange message over the Websocket
+            }
 
-            // Request to remove a Job from the user's Joblist
-            case "ClearJob" =>
-              json.hcursor.get[List[String]]("jobIDs") match {
-                case Right(jobIDs) =>
-                  jobIDs.foreach { jobID =>
-                    jobActorAccess.sendToJobActor(jobID, RemoveFromWatchlist(jobID, user.userID))
-                  }
-                case Left(_) => //
-              }
+          // Request to remove a Job from the user's Joblist
+          case "ClearJob" =>
+            json.hcursor.get[List[String]]("jobIDs") match {
+              case Right(jobIDs) =>
+                jobIDs.foreach { jobID =>
+                  jobActorAccess.sendToJobActor(jobID, RemoveFromWatchlist(jobID, user.userID))
+                }
+              case Left(_) => //
+            }
 
-            // Request to receive load messages
-            case "RegisterLoad" =>
-              log.info("Received RegisterLoad message.")
-              clusterMonitor ! Connect(self)
+          // Request to receive load messages
+          case "RegisterLoad" =>
+            log.info("Received RegisterLoad message.")
+            clusterMonitor ! Connect(self)
 
-            //// Request to no longer receive load messages
-            case "UnregisterLoad" =>
-              clusterMonitor ! Disconnect(self)
+          //// Request to no longer receive load messages
+          case "UnregisterLoad" =>
+            clusterMonitor ! Disconnect(self)
 
-            // Received a ping, so we return a pong
-            case "Ping" =>
-              json.hcursor.get[Long]("date") match {
-                case Right(msTime) =>
-                  //log.info(s"[WSActor] Ping from session ${sid.stringify} with msTime $msTime")
-                  out ! JsonObject("type" -> Json.fromString("Pong"), "date" -> Json.fromLong(msTime)).asJson
-                case Left(_) =>
-              }
+          // Received a ping, so we return a pong
+          case "Ping" =>
+            json.hcursor.get[Long]("date") match {
+              case Right(msTime) =>
+                //log.info(s"[WSActor] Ping from session ${sid.stringify} with msTime $msTime")
+                out ! JsonObject("type" -> Json.fromString("Pong"), "date" -> Json.fromLong(msTime)).asJson
+              case Left(_) =>
+            }
 
-            // Received a pong message from the client - lets see how long it took
-            case "Pong" =>
-              json.hcursor.get[Long]("date") match {
-                case Right(msTime) =>
-                  val ping = ZonedDateTime.now.toInstant.toEpochMilli - msTime
-                  log.info(s"[WSActor] Ping of session ${sid.stringify} is ${ping}ms.")
-                case Left(_) =>
-              }
-          }
-        case None =>
-          self ! PoisonPill
+          // Received a pong message from the client - lets see how long it took
+          case "Pong" =>
+            json.hcursor.get[Long]("date") match {
+              case Right(msTime) =>
+                val ping = ZonedDateTime.now.toInstant.toEpochMilli - msTime
+                log.info(s"[WSActor] Ping of session ${sid.stringify} is ${ping}ms.")
+              case Left(_) =>
+            }
+        }
       }
 
     case PushJob(job: Job) =>

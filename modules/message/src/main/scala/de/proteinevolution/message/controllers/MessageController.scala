@@ -2,7 +2,7 @@ package de.proteinevolution.message.controllers
 
 import akka.actor.{ ActorSystem, Props }
 import akka.stream.Materializer
-import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.message.actors.WebSocketActor
 import io.circe.syntax._
@@ -16,7 +16,7 @@ import scala.concurrent.ExecutionContext
 
 class MessageController @Inject()(
     cc: ControllerComponents,
-    userSessions: UserSessions,
+    userSessions: UserSessionService,
     environment: Environment,
     config: Configuration,
     webSocketActorFactory: WebSocketActor.Factory
@@ -31,7 +31,7 @@ class MessageController @Inject()(
     case rh if sameOriginCheck(rh) =>
       logger.info("Creating new WebSocket. ip: " + rh.remoteAddress.toString + ", with sessionId: " + rh.session)
       userSessions
-        .getUser(rh)
+        .getUserFromCache(rh)
         .map { user =>
           Right(ActorFlow.actorRef(out => Props(webSocketActorFactory(user.sessionID.get, out))))
         }

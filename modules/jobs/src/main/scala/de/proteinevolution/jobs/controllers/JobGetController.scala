@@ -2,9 +2,9 @@ package de.proteinevolution.jobs.controllers
 
 import java.time.ZonedDateTime
 
-import cats.data.OptionT
 import cats.implicits._
-import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.auth.services.UserSessionService
+import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.{ Job, JobHashError }
@@ -23,41 +23,37 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class JobGetController @Inject()(
     jobHashService: JobHashService,
-    userSessions: UserSessions,
+    userSessions: UserSessionService,
     jobDao: JobDao,
     cc: ControllerComponents,
     toolConfig: ToolConfig,
     constants: ConstantsV2,
-    jobSearchService: JobSearchService
+    jobSearchService: JobSearchService,
+    userAction: UserAction
 )(implicit ec: ExecutionContext, config: Configuration)
     extends ToolkitController(cc)
     with JobFolderValidation {
 
-  def jobManagerListJobs: Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      jobDao.findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false))).map {
-        jobs =>
-          NoCache(Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.jobManagerJob()).asJson))
+  def jobManagerListJobs: Action[AnyContent] = userAction.async { implicit request =>
+    jobDao
+      .findJobs(BSONDocument(Job.OWNERID -> request.user.userID, Job.DELETION -> BSONDocument("$exists" -> false)))
+      .map { jobs =>
+        NoCache(Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.jobManagerJob()).asJson))
       }
-    }
   }
 
-  def listJobs: Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>
-        Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.cleaned(toolConfig)).asJson)
-      }
+  def listJobs: Action[AnyContent] = userAction.async { implicit request =>
+    jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> request.user.jobs))).map { jobs =>
+      Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.cleaned(toolConfig)).asJson)
     }
   }
 
   /**
    * Returns the last updated job
    */
-  def recentJob: Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      jobSearchService.recentJob(user).map { lastJob =>
-        Ok(lastJob.map(_.cleaned(toolConfig)).asJson)
-      }
+  def recentJob: Action[AnyContent] = userAction.async { implicit request =>
+    jobSearchService.recentJob(request.user).map { lastJob =>
+      Ok(lastJob.map(_.cleaned(toolConfig)).asJson)
     }
   }
 
@@ -66,27 +62,22 @@ class JobGetController @Inject()(
    * it looks for jobs which belong to the current user.
    * only jobIDs that belong to the user are autocompleted
    */
-  def suggestJobsForJobId(queryString_ : String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      jobSearchService.autoComplete(user, queryString_).value.map {
-        case Some(jobs) => Ok(jobs.map(_.cleaned(toolConfig)).asJson)
-        case None       => NoContent
-      }
+  def suggestJobsForJobId(queryString_ : String): Action[AnyContent] = userAction.async { implicit request =>
+    jobSearchService.autoComplete(request.user, queryString_).value.map {
+      case Some(jobs) => Ok(jobs.map(_.cleaned(toolConfig)).asJson)
+      case None       => NoContent
     }
   }
 
-  def loadJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { _ =>
-      jobDao.selectJob(jobID).map {
-        case Some(job) if jobFolderIsValid(job.jobID, constants) => Ok(job.cleaned(toolConfig).asJson)
-        case _                                                   => NotFound
-      }
+  def loadJob(jobID: String): Action[AnyContent] = userAction.async { implicit request =>
+    jobDao.selectJob(jobID).map {
+      case Some(job) if jobFolderIsValid(job.jobID, constants) => Ok(job.cleaned(toolConfig).asJson)
+      case _                                                   => NotFound
     }
   }
 
-  def checkHash(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+  def checkHash(jobID: String): Action[AnyContent] = userAction.async { implicit request =>
     (for {
-      _   <- OptionT.liftF(userSessions.getUser)
       job <- jobHashService.checkHash(jobID)
     } yield {
       (job.jobID, job.dateCreated.getOrElse(ZonedDateTime.now).toInstant.toEpochMilli)

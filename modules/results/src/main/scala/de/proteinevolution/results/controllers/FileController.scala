@@ -1,6 +1,6 @@
 package de.proteinevolution.results.controllers
-
-import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.auth.services.UserSessionService
+import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.results.models.HHContext
 import de.proteinevolution.results.results.Common
@@ -15,7 +15,8 @@ class FileController @Inject()(
     ctx: HHContext,
     env: Env,
     constants: ConstantsV2,
-    userSessions: UserSessions
+    userSessions: UserSessionService,
+    userAction: UserAction
 )(implicit ec: ExecutionContext)
     extends AbstractController(ctx.controllerComponents)
     with ContentTypes {
@@ -33,19 +34,16 @@ class FileController @Inject()(
     Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$filename")).as(BINARY)
   }
 
-  def file(filename: String, jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.map { user =>
-      val file = new java.io.File(
-        s"${constants.jobPath}${constants.SEPARATOR}$jobID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"
-      )
-      if (file.exists) {
-        Ok.sendFile(file)
-          .withSession(userSessions.sessionCookie(request, user.sessionID.get))
-          .as(TEXT) // text/plain in order to open the file in a new browser tab
-      } else {
-        NoContent
-      }
+  def file(filename: String, jobID: String): Action[AnyContent] = userAction { implicit request =>
+    val file = new java.io.File(
+      s"${constants.jobPath}${constants.SEPARATOR}$jobID${constants.SEPARATOR}results${constants.SEPARATOR}$filename"
+    )
+    if (file.exists) {
+      Ok.sendFile(file)
+        .withSession(userSessions.sessionCookie(request))
+        .as(TEXT) // text/plain in order to open the file in a new browser tab
+    } else {
+      NoContent
     }
   }
-
 }

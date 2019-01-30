@@ -1,6 +1,6 @@
 package de.proteinevolution.jobs.controllers
-
-import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.auth.services.UserSessionService
+import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete }
 import de.proteinevolution.jobs.dao.JobDao
@@ -18,7 +18,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class SubmissionController @Inject()(
     jobActorAccess: JobActorAccess,
-    userSessions: UserSessions,
+    userSessions: UserSessionService,
     jobDispatcher: JobDispatcher,
     constants: ConstantsV2,
     cc: ControllerComponents,
@@ -26,17 +26,16 @@ class SubmissionController @Inject()(
     toolConfig: ToolConfig,
     jobResubmitService: JobResubmitService,
     jobIdProvider: JobIdProvider,
-    jobFrontendToolsService: JobFrontendToolsService
+    jobFrontendToolsService: JobFrontendToolsService,
+    userAction: UserAction
 )(implicit ec: ExecutionContext)
     extends ToolkitController(cc) {
 
   private val logger = Logger(this.getClass)
 
-  def startJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.map { _ =>
+  def startJob(jobID: String): Action[AnyContent] = userAction { implicit request =>
       jobActorAccess.sendToJobActor(jobID, CheckIPHash(jobID))
       Ok(JsonObject("message" -> Json.fromString("Starting Job...")).asJson)
-    }
   }
 
   def frontend(toolName: String): Action[AnyContent] = Action.async { implicit request =>
@@ -48,15 +47,13 @@ class SubmissionController @Inject()(
     }
   }
 
-  def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+  def delete(jobID: String): Action[AnyContent] = userAction { implicit request =>
     logger.info("Delete Action in JobController reached")
-    userSessions.getUser.map { user =>
-      jobActorAccess.sendToJobActor(jobID, Delete(jobID, Some(user.userID)))
+      jobActorAccess.sendToJobActor(jobID, Delete(jobID, Some(request.user.userID)))
       NoContent
-    }
   }
 
-  def submitJob(toolName: String): Action[Json] = Action(circe.json).async { implicit request =>
+  def submitJob(toolName: String): Action[Json] = userAction(circe.json).async { implicit request =>
     request.body.asObject match {
       case None => fuccess(BadRequest)
       case Some(obj) =>
@@ -69,12 +66,11 @@ class SubmissionController @Inject()(
                                   vec => vec.toString,
                                   obj => obj.toString)
         } yield (key, str)
-        userSessions.getUser.flatMap { user =>
           jobDispatcher
             .submitJob(
               toolName,
               parts.toMap,
-              user
+              request.user
             )
             .value
             .map {
@@ -86,10 +82,9 @@ class SubmissionController @Inject()(
                     "message"    -> Json.fromString("Submission successful."),
                     "jobID"      -> Json.fromString(job.jobID)
                   ).asJson
-                ).withSession(userSessions.sessionCookie(request, user.sessionID.get))
+                ).withSession(userSessions.sessionCookie(request))
               case Left(error) => BadRequest(errors(error.msg))
             }
-        }
     }
   }
 

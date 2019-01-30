@@ -11,14 +11,14 @@ class AuthRouter @Inject()(authController: AuthController, validationController:
     extends SimpleRouter {
 
   private lazy val authRoutes: Routes = {
-    case GET(p"/signout")                => authController.signOut
+    case POST(p"/login")                 => authController.login
+    case GET(p"/logout")                 => authController.logout
     case GET(p"/user/data")              => authController.getUserData
     case POST(p"/signup")                => authController.signUpSubmit
     case POST(p"/reset/password")        => authController.resetPassword
     case POST(p"/reset/password/change") => authController.resetPasswordChange
     case POST(p"/password")              => authController.passwordChangeSubmit()
     case POST(p"/profile")               => authController.profileSubmit()
-    case POST(p"/signin")                => authController.signInSubmit
   }
 
   private lazy val validationRoutes: Routes = {

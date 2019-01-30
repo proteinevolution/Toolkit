@@ -21,14 +21,14 @@ object FormDefinitions {
    */
   def signUp(user: User) = Form(
     mapping(
-      UserData.NAMELOGIN -> (text(6, 40).verifying(pattern(textRegex, error = "error.NameLogin"))),
-      UserData.PASSWORD  -> (text(8, 128).verifying(pattern(textRegex, error = "error.Password"))),
+      UserData.NAMELOGIN -> text(6, 40).verifying(pattern(textRegex, error = "error.NameLogin")) ,
+      UserData.PASSWORD  -> text(8, 128).verifying(pattern(textRegex, error = "error.Password")) ,
       UserData.EMAIL     -> email,
       User.ACCEPTEDTOS   -> boolean,
       User.DATELASTLOGIN -> optional(longNumber),
       User.DATECREATED   -> optional(longNumber),
       User.DATEUPDATED   -> optional(longNumber)
-    ) { (nameLogin, password, eMail, acceptToS, dateLastLogin, dateCreated, dateUpdated) =>
+    ) { (nameLogin, password, eMail, acceptToS, _, _, _) =>
       User(
         userID = user.userID,
         sessionID = user.sessionID,

@@ -2,7 +2,8 @@ package controllers
 
 import java.net.InetAddress
 
-import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.auth.services.UserSessionService
+import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.tools.ToolConfig
 import javax.inject.{ Inject, Singleton }
@@ -16,27 +17,26 @@ import scala.concurrent.ExecutionContext
 final class Application @Inject()(
     webJarsUtil: WebJarsUtil,
     toolConfig: ToolConfig,
-    userSessions: UserSessions,
+    userSessions: UserSessionService,
     cc: ControllerComponents,
     environment: Environment,
-    assetsFinder: AssetsFinder
+    assetsFinder: AssetsFinder,
+    userAction: UserAction
 )(implicit ec: ExecutionContext)
     extends ToolkitController(cc) {
 
   private val logger = Logger(this.getClass)
 
-  def index(message: String = ""): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.map { user =>
-      logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
-      Ok(
-        views.html.main(assetsFinder,
-                        webJarsUtil,
-                        toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
-                        message,
-                        "",
-                        environment)
-      ).withSession(userSessions.sessionCookie(request, user.sessionID.get))
-    }
+  def index(message: String = ""): Action[AnyContent] = userAction { implicit request =>
+    logger.info(InetAddress.getLocalHost.getHostName + "\n" + request.user.toString)
+    Ok(
+      views.html.main(assetsFinder,
+                      webJarsUtil,
+                      toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
+                      message,
+                      "",
+                      environment)
+    ).withSession(userSessions.sessionCookie(request))
   }
 
   // Routes are handled by Mithril, redirect.
@@ -52,7 +52,7 @@ final class Application @Inject()(
     PermanentRedirect(s"/#/$static")
   }
 
-  val robots = Action { _ =>
+  val robots: Action[AnyContent] = Action { _ =>
     Ok(
       "User-agent: *\nAllow: /\nDisallow: /#/jobmanager/\nDisallow: /#/jobs/\nSitemap: https://toolkit.tuebingen.mpg.de/sitemap.xml"
     )
