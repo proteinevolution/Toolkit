@@ -39,7 +39,7 @@
                                            variant="primary"
                                            @click="submitJob"
                                            :disabled="preventSubmit"
-                                           v-text="$t(job ? 'jobs.resubmitJob' : 'jobs.submitJob')">
+                                           v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')">
                                     </b-btn>
                                     <custom-job-id-input :validation-errors="validationErrors"
                                                          :submission="submission"/>
@@ -83,7 +83,17 @@
         name: 'ToolView',
         mixins: [hasHTMLTitle],
         props: {
-            job: {
+            isJobView: {
+                type: Boolean,
+                required: false,
+                default: false,
+            },
+            jobToolName: {
+                type: String,
+                required: false,
+                default: undefined,
+            },
+            jobParamValues: {
                 type: Object,
                 required: false,
                 default: undefined,
@@ -100,13 +110,13 @@
             return {
                 fullScreen: false,
                 validationErrors: {},
-                submission: this.job && this.job.paramValues ? { ...this.job.paramValues } : {},
+                submission: {},
             };
         },
         computed: {
             toolName(): string {
-                if (this.job) {
-                    return this.job.tool;
+                if (this.jobToolName) {
+                    return this.jobToolName;
                 }
                 return this.$route.params.toolName;
             },
@@ -132,14 +142,19 @@
                 return Object.keys(this.validationErrors).length > 0;
             },
         },
-        created() {
-            this.loadToolParameters(this.toolName);
-        },
         watch: {
-            // Use a watcher here - component cannot use 'beforeRouteUpdate' because of lazy loading
-            $route(to, from) {
-                this.loadToolParameters(to.params.toolName);
-            },
+            jobParamValues: {
+                immediate: true,
+                handler(value: object | undefined) {
+                    if(value) {
+                        this.submission = value;
+                    }
+                }
+            }
+        },
+        created() {
+            // tool view is never reused (see App.vue), therefore loading parameters in created hook only is sufficient
+            this.loadToolParameters(this.toolName);
         },
         methods: {
             loadToolParameters(toolName: string): void {
