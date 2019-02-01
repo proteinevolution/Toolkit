@@ -1,7 +1,7 @@
 <template>
-    <BaseModal :title="$t('helpModals.titles.' + modal)"
+    <BaseModal :title="$t('footerLinkModals.titles.' + modal)"
                id="simple">
-        <div v-html="$t('helpModals.content.' + modal)"/>
+        <div v-html="$t('footerLinkModals.content.' + modal)"/>
     </BaseModal>
 </template>
 
@@ -10,7 +10,7 @@
     import BaseModal from './BaseModal.vue';
 
     export default Vue.extend({
-        name: 'Simple',
+        name: 'FooterLinkModal',
         components: {
             BaseModal,
         },

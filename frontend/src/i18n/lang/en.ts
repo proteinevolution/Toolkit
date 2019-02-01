@@ -173,7 +173,7 @@ A Completely Reimplemented MPI Bioinformatics Toolkit with a New HHpred Server a
                 running: 'Your submission is being processed!',
             },
         },
-        helpModals: {
+        footerLinkModals: {
             names: {
                 help: 'Help',
                 faq: 'FAQ',

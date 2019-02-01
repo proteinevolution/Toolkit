@@ -1,5 +1,5 @@
 <template>
-    <BaseModal :title="$t('helpModals.titles.updates')"
+    <BaseModal :title="$t('footerLinkModals.titles.updates')"
                id="updates">
         <div v-for="(update, index) in updates"
              :key="update.date"
@@ -17,7 +17,7 @@
     import updates from '@/i18n/lang/updates';
 
     export default Vue.extend({
-        name: 'Updates',
+        name: 'UpdatesModal',
         components: {
             BaseModal,
         },

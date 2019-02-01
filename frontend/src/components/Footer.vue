@@ -4,9 +4,9 @@
             <b-nav-item v-for="simpleModal in simpleModals"
                         :key="simpleModal"
                         @click="launchHelpModal(simpleModal)">
-                {{ $t('helpModals.names.' + simpleModal) }}
+                {{ $t('footerLinkModals.names.' + simpleModal) }}
             </b-nav-item>
-            <b-nav-item @click="launchUpdatesModal">{{ $t('helpModals.names.updates') }}</b-nav-item>
+            <b-nav-item @click="launchUpdatesModal">{{ $t('footerLinkModals.names.updates') }}</b-nav-item>
         </b-nav>
         <b-row>
             <b-col>

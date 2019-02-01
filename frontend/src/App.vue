@@ -44,12 +44,11 @@
 
         <div>
             <!-- Place modals here -->
-            <Simple :modal="modalProps.modal"></Simple>
-            <Updates></Updates>
+            <FooterLinkModal :modal="modalProps.modal"/>
+            <UpdatesModal/>
             <AlignmentViewerModal :sequences="modalProps.sequences"
-                                  :format="modalProps.format">
-            </AlignmentViewerModal>
-            <HelpModal :toolName="modalProps.toolName"></HelpModal>
+                                  :format="modalProps.format"/>
+            <HelpModal :toolName="modalProps.toolName"/>
         </div>
 
         <notifications animation-type="velocity"/>
@@ -68,8 +67,8 @@
     import {TKNotificationOptions} from '@/modules/notifications/types';
     import {Tool} from '@/types/toolkit/tools';
     import EventBus from '@/util/EventBus';
-    import Simple from '@/components/modals/Simple.vue';
-    import Updates from '@/components/modals/Updates.vue';
+    import FooterLinkModal from '@/components/modals/FooterLinkModal.vue';
+    import UpdatesModal from '@/components/modals/UpdatesModal.vue';
     import HelpModal from '@/components/modals/HelpModal.vue';
     import AlignmentViewerModal from '@/components/modals/AlignmentViewerModal.vue';
     import {ModalParams} from '@/types/toolkit/utils';
@@ -84,8 +83,8 @@
             Footer,
             VelocityFade,
             LoadingView,
-            Simple,
-            Updates,
+            FooterLinkModal,
+            UpdatesModal,
             HelpModal,
             AlignmentViewerModal,
         },
