@@ -38,7 +38,7 @@ class JobGetController @Inject()(
     jobDao
       .findJobs(BSONDocument(Job.OWNERID -> request.user.userID, Job.DELETION -> BSONDocument("$exists" -> false)))
       .map { jobs =>
-        NoCache(Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.jobManagerJob()).asJson))
+        NoCache(Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.cleaned(toolConfig)).asJson))
       }
   }
 

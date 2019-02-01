@@ -9,7 +9,11 @@ const mutations: MutationTree<JobState> = {
     },
     setJob(state, {jobID, job}) {
         const index: number = state.jobs.findIndex((j) => j.jobID === jobID);
-        Vue.set(state.jobs, index < 0 ? state.jobs.length : index, job);
+        if (index < 0) {
+            state.jobs.push(job);
+        } else {
+            Vue.set(state.jobs, index, job);
+        }
     },
     setJobHidden(state, {jobID, hidden}) {
         const job = state.jobs.find((j) => j.jobID === jobID);
@@ -31,7 +35,11 @@ const mutations: MutationTree<JobState> = {
     },
     SOCKET_UpdateJob(state, {job}) {
         const index: number = state.jobs.findIndex((j) => j.jobID === job.jobID);
-        Vue.set(state.jobs, index < 0 ? state.jobs.length : index, job);
+        if (index < 0) {
+            state.jobs.push(job);
+        } else {
+            Vue.set(state.jobs, index, job);
+        }
     },
 };
 

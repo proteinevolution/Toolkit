@@ -34,23 +34,12 @@ case class Job(
     JsonObject(
       "jobID"        -> jobID.asJson,
       "status"       -> status.asJson,
-      "dateCreated"  -> dateCreated.map(_.toInstant.toEpochMilli).asJson,
-      "dateUpdated"  -> dateUpdated.map(_.toInstant.toEpochMilli).asJson,
-      "tool"         -> tool.asJson,
       "code"         -> toolConfig.values(tool).code.asJson,
-      "toolnameLong" -> config.get[String](s"Tools.$tool.longname").asJson
-    )
-  }
-
-  def jobManagerJob()(implicit config: Configuration): JsonObject = {
-    JsonObject(
-      "jobID"        -> jobID.asJson,
-      "status"       -> status.asJson,
       "tool"         -> tool.asJson,
+      "toolnameLong" -> config.get[String](s"Tools.$tool.longname").asJson,
       "dateCreated"  -> dateCreated.map(_.toInstant.toEpochMilli).asJson,
       "dateUpdated"  -> dateUpdated.map(_.toInstant.toEpochMilli).asJson,
-      "dateViewed"   -> dateViewed.map(_.toInstant.toEpochMilli).asJson,
-      "toolnameLong" -> config.get[String](s"Tools.$tool.longname").asJson
+      "dateViewed"   -> dateViewed.map(_.toInstant.toEpochMilli).asJson
     )
   }
 

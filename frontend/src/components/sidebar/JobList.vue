@@ -62,7 +62,7 @@
                 }, {
                     name: 'dateCreated',
                     sort: (a: Job, b: Job) => {
-                        return moment.utc(a.dateCreated).diff(moment.utc(b.dateCreated));
+                        return moment.utc(b.dateCreated).diff(moment.utc(a.dateCreated));
                     },
                 }, {
                     name: 'tool',

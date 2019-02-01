@@ -8,7 +8,7 @@ import io.circe.generic.JsonCodec
     status: JobState,
     tool: String,
     code: String,
-    dateCreated: String,
+    dateCreated: Long,
     views: Seq[String],
     paramValues: Map[String, String]
 )

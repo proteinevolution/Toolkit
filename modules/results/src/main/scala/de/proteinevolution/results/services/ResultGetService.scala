@@ -1,7 +1,6 @@
 package de.proteinevolution.results.services
 
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 
 import better.files._
 import cats.data.OptionT
@@ -72,7 +71,7 @@ class ResultGetService @Inject()(
           job.status,
           job.tool,
           toolConfig.values(job.tool).code,
-          job.dateCreated.getOrElse(ZonedDateTime.now).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+          job.dateCreated.getOrElse(ZonedDateTime.now).toInstant.toEpochMilli,
           jobViews,
           paramValues
         )
