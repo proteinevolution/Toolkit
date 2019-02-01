@@ -44,6 +44,7 @@
 
         <div>
             <!-- Place modals here -->
+            <AuthModal/>
             <FooterLinkModal :modal="modalProps.modal"/>
             <UpdatesModal/>
             <AlignmentViewerModal :sequences="modalProps.sequences"
@@ -70,6 +71,7 @@
     import FooterLinkModal from '@/components/modals/FooterLinkModal.vue';
     import UpdatesModal from '@/components/modals/UpdatesModal.vue';
     import HelpModal from '@/components/modals/HelpModal.vue';
+    import AuthModal from '@/components/modals/AuthModal.vue';
     import AlignmentViewerModal from '@/components/modals/AlignmentViewerModal.vue';
     import {ModalParams} from '@/types/toolkit/utils';
 
@@ -87,6 +89,7 @@
             UpdatesModal,
             HelpModal,
             AlignmentViewerModal,
+            AuthModal,
         },
         data() {
             return {

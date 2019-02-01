@@ -26,10 +26,10 @@
                 <i class="fab fa-twitter"></i>
             </b-button>
             <b-button variant="href"
-                      href="#"
                       size="sm"
-                      class="sign-in-link">
-                Sign In
+                      class="sign-in-link"
+                      @click="openAuthModal"
+                      v-text="$t('auth.signIn')">
             </b-button>
         </div>
 
@@ -39,13 +39,13 @@
                      fade
                      :show="maintenanceMode">
                 <i class="fa fa-wrench"></i>
-                <b>Maintenance in a few seconds!</b>
+                <b v-text="$t('maintenanceWarning')"></b>
             </b-alert>
             <div class="offline-alert"
                  @click="reloadApp"
                  v-if="reconnecting">
                 <i class="fas fa-retweet"></i>
-                <b>Reconnecting...</b>
+                <b v-text="$t('reconnecting')"></b>
             </div>
         </div>
 
@@ -54,6 +54,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
+    import EventBus from '@/util/EventBus';
 
     export default Vue.extend({
         name: 'TopNavBar',
@@ -69,6 +70,9 @@
             reloadApp(): void {
                 window.location.reload();
             },
+            openAuthModal(): void {
+                EventBus.$emit('show-modal', {id: 'auth'});
+            },
         },
     });
 </script>
@@ -83,6 +87,10 @@
     .social-nav {
         .dark-link i {
             color: $tk-dark-gray;
+        }
+
+        .sign-in-link {
+            color: $primary;
         }
     }
 

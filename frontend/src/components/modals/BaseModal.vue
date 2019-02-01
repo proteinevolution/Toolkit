@@ -4,9 +4,10 @@
              hide-header
              hide-footer
              no-fade
-             size="lg"
-             body-class="tk-modal"
+             :size="size"
+             :body-class="bodyClass"
              lazy>
+        <slot name="header">
             <div class="tk-modal-header">
             <span class="tk-modal-title"
                   v-html="title">
@@ -17,9 +18,12 @@
                 &times;
             </span>
             </div>
+        </slot>
+        <slot name="body">
             <div class="tk-modal-body">
                 <slot></slot>
             </div>
+        </slot>
     </b-modal>
 </template>
 
@@ -28,9 +32,20 @@
 
     export default Vue.extend({
         name: 'BaseModal',
+        inheritAttrs: true,
         props: {
             id: String,
             title: String,
+            size: {
+                type: String,
+                required: false,
+                default: 'lg',
+            },
+            bodyClass: {
+                type: String,
+                required: false,
+                default: 'tk-modal',
+            },
         },
     });
 </script>
@@ -73,6 +88,4 @@
             }
         }
     }
-
-
 </style>

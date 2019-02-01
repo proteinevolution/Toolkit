@@ -146,11 +146,11 @@
             jobParamValues: {
                 immediate: true,
                 handler(value: object | undefined) {
-                    if(value) {
+                    if (value) {
                         this.submission = value;
                     }
-                }
-            }
+                },
+            },
         },
         created() {
             // tool view is never reused (see App.vue), therefore loading parameters in created hook only is sufficient

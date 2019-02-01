@@ -35,7 +35,17 @@ import tcoffee from '@/i18n/lang/modals/toolHelp/en/tcoffee';
 export default {
     en: {
         fetching: 'Fetching...',
-
+        reconnecting: 'Reconnecting...',
+        maintenanceWarning: 'Maintenance in a few seconds!',
+        auth: {
+            signIn: 'Sign In',
+            signUp: 'Sign Up',
+            username: 'Username',
+            email: 'E-Mail',
+            password: 'Password',
+            passwordRepeat: 'Confirm password',
+            privacyAccept: ' I accept the {0}',
+        },
         index: {
             welcomeTitle: 'Welcome to the Bioinformatics Toolkit',
             welcomeBody: 'of the Max Planck Institute for Developmental Biology, Tübingen, Germany.',
