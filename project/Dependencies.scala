@@ -38,7 +38,6 @@ object Dependencies {
     "io.circe"             %% "circe-generic"            % circeV,
     "io.circe"             %% "circe-generic-extras"     % circeV,
     "io.circe"             %% "circe-java8"              % circeV,
-    "io.circe"             %% "circe-optics"             % circeV,
     "io.circe"             %% "circe-bson"               % "0.2.0",
     "org.webjars"          %% "webjars-play"             % "2.6.3",
     "org.scala-js"         %% "scalajs-stubs"            % scalaJSVersion % "provided",
