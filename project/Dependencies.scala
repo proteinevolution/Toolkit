@@ -7,7 +7,7 @@ object Dependencies {
 
   val akkaVersion = "2.5.19"
   val catsV       = "1.5.0"
-  val circeV      = "0.10.0"
+  val circeV      = "0.11.1"
 
   lazy val commonDeps: Seq[ModuleID] = Seq(
     ws,
@@ -34,11 +34,10 @@ object Dependencies {
     "org.tpolecat"         %% "atto-core"                % "0.6.4",
     "com.vmunier"          %% "scalajs-scripts"          % "1.1.1",
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
-    "com.dripower"         %% "play-circe"               % "2610.0",
+    "com.dripower"         %% "play-circe-2611"          % "0",
     "io.circe"             %% "circe-generic"            % circeV,
     "io.circe"             %% "circe-generic-extras"     % circeV,
     "io.circe"             %% "circe-java8"              % circeV,
-    "io.circe"             %% "circe-optics"             % circeV,
     "io.circe"             %% "circe-bson"               % "0.2.0",
     "org.webjars"          %% "webjars-play"             % "2.6.3",
     "org.scala-js"         %% "scalajs-stubs"            % scalaJSVersion % "provided",
