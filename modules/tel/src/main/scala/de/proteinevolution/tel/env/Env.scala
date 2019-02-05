@@ -1,4 +1,5 @@
 package de.proteinevolution.tel.env
+import scala.collection.mutable
 
 /**
  * An Env is anything that provides key/value pairs
@@ -10,8 +11,14 @@ trait Env {
   // Adds a Key value pair to this environment
   def configure(key: String, value: String): Unit
 
-  def remove(key: String): Unit
+}
+object Env {
+  implicit def mapToEnv(m: mutable.Map[String, String]): Env = new Env {
+    def get(key: String): String = m.getOrElse(key, "")
 
+    // Adds a Key value pair to this environment
+    def configure(key: String, value: String): Unit = m.update(key, value)
+  }
 }
 
 /**
