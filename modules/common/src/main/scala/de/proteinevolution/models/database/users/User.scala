@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 import io.circe.syntax._
-import io.circe.{Encoder, Json}
+import io.circe.{ Encoder, Json }
 import org.mindrot.jbcrypt.BCrypt
 import reactivemongo.bson._
 
@@ -103,11 +103,17 @@ object User {
       (UserData.EMAIL, Json.fromString(u.getUserData.eMail)),
       (JOBS, u.jobs.asJson),
       (DATELASTLOGIN,
-       u.dateLastLogin.map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter))).getOrElse(Json.Null)),
+       u.dateLastLogin
+         .map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter)))
+         .getOrElse(Json.Null)),
       (DATECREATED,
-       u.dateCreated.map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter))).getOrElse(Json.Null)),
+       u.dateCreated
+         .map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter)))
+         .getOrElse(Json.Null)),
       (DATEUPDATED,
-       u.dateUpdated.map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter))).getOrElse(Json.Null))
+       u.dateUpdated
+         .map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter)))
+         .getOrElse(Json.Null))
   )
 
   implicit object Reader extends BSONDocumentReader[User] {

@@ -1,7 +1,7 @@
 package modules
 
 import de.proteinevolution.tel.env.Env
-import javax.inject.{Inject, Provider}
+import javax.inject.{ Inject, Provider }
 import play.api.Configuration
 
 import scala.collection.mutable
