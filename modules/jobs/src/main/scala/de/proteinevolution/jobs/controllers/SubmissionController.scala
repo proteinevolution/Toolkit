@@ -34,8 +34,8 @@ class SubmissionController @Inject()(
   private val logger = Logger(this.getClass)
 
   def startJob(jobID: String): Action[AnyContent] = userAction { implicit request =>
-      jobActorAccess.sendToJobActor(jobID, CheckIPHash(jobID))
-      Ok(JsonObject("message" -> Json.fromString("Starting Job...")).asJson)
+    jobActorAccess.sendToJobActor(jobID, CheckIPHash(jobID))
+    Ok(JsonObject("message" -> Json.fromString("Starting Job...")).asJson)
   }
 
   def frontend(toolName: String): Action[AnyContent] = Action.async { implicit request =>
@@ -49,8 +49,8 @@ class SubmissionController @Inject()(
 
   def delete(jobID: String): Action[AnyContent] = userAction { implicit request =>
     logger.info("Delete Action in JobController reached")
-      jobActorAccess.sendToJobActor(jobID, Delete(jobID, Some(request.user.userID)))
-      NoContent
+    jobActorAccess.sendToJobActor(jobID, Delete(jobID, Some(request.user.userID)))
+    NoContent
   }
 
   def submitJob(toolName: String): Action[Json] = userAction(circe.json).async { implicit request =>
@@ -66,25 +66,25 @@ class SubmissionController @Inject()(
                                   vec => vec.toString,
                                   obj => obj.toString)
         } yield (key, str)
-          jobDispatcher
-            .submitJob(
-              toolName,
-              parts.toMap,
-              request.user
-            )
-            .value
-            .map {
-              case Right(job) =>
-                Ok(
-                  JsonObject(
-                    "successful" -> Json.fromBoolean(true),
-                    "code"       -> Json.fromInt(0),
-                    "message"    -> Json.fromString("Submission successful."),
-                    "jobID"      -> Json.fromString(job.jobID)
-                  ).asJson
-                ).withSession(userSessions.sessionCookie(request))
-              case Left(error) => BadRequest(errors(error.msg))
-            }
+        jobDispatcher
+          .submitJob(
+            toolName,
+            parts.toMap,
+            request.user
+          )
+          .value
+          .map {
+            case Right(job) =>
+              Ok(
+                JsonObject(
+                  "successful" -> Json.fromBoolean(true),
+                  "code"       -> Json.fromInt(0),
+                  "message"    -> Json.fromString("Submission successful."),
+                  "jobID"      -> Json.fromString(job.jobID)
+                ).asJson
+              ).withSession(userSessions.sessionCookie(request))
+            case Left(error) => BadRequest(errors(error.msg))
+          }
     }
   }
 

@@ -1,4 +1,5 @@
-package de.proteinevolution.models.forms
+package de.proteinevolution.tools.forms
+
 import play.api.libs.json.{ Json, OWrites }
 
 case class ValidationParamsForm(

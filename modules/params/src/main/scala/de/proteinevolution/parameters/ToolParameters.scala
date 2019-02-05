@@ -1,4 +1,4 @@
-package de.proteinevolution.models.parameters
+package de.proteinevolution.parameters
 
 case class ToolParameters(
     sections: Seq[ParameterSection],

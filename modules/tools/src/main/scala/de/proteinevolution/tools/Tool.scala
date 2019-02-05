@@ -1,7 +1,7 @@
 package de.proteinevolution.tools
 
 import de.proteinevolution.tools.forms.ToolFormSimple
-import de.proteinevolution.models.parameters.ToolParameters
+import de.proteinevolution.parameters.ToolParameters
 
 case class Tool(
     toolNameShort: String,

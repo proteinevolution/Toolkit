@@ -1,4 +1,4 @@
-package de.proteinevolution.models.forms
+package de.proteinevolution.tools.forms
 
 import play.api.libs.json._
 

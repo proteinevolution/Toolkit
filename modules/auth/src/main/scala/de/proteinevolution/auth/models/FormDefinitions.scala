@@ -21,8 +21,8 @@ object FormDefinitions {
    */
   def signUp(user: User) = Form(
     mapping(
-      UserData.NAMELOGIN -> text(6, 40).verifying(pattern(textRegex, error = "error.NameLogin")) ,
-      UserData.PASSWORD  -> text(8, 128).verifying(pattern(textRegex, error = "error.Password")) ,
+      UserData.NAMELOGIN -> text(6, 40).verifying(pattern(textRegex, error = "error.NameLogin")),
+      UserData.PASSWORD  -> text(8, 128).verifying(pattern(textRegex, error = "error.Password")),
       UserData.EMAIL     -> email,
       User.ACCEPTEDTOS   -> boolean,
       User.DATELASTLOGIN -> optional(longNumber),

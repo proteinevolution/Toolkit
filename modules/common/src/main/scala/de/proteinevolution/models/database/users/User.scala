@@ -2,9 +2,9 @@ package de.proteinevolution.models.database.users
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.models.util.{ ZonedDateTimeHelper => helper }
+import de.proteinevolution.models.util.ZonedDateTimeHelper
 import io.circe.syntax._
-import io.circe.{ Encoder, Json }
+import io.circe.{Encoder, Json}
 import org.mindrot.jbcrypt.BCrypt
 import reactivemongo.bson._
 
@@ -103,11 +103,11 @@ object User {
       (UserData.EMAIL, Json.fromString(u.getUserData.eMail)),
       (JOBS, u.jobs.asJson),
       (DATELASTLOGIN,
-       u.dateLastLogin.map(zdt => Json.fromString(zdt.format(helper.dateTimeFormatter))).getOrElse(Json.Null)),
+       u.dateLastLogin.map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter))).getOrElse(Json.Null)),
       (DATECREATED,
-       u.dateCreated.map(zdt => Json.fromString(zdt.format(helper.dateTimeFormatter))).getOrElse(Json.Null)),
+       u.dateCreated.map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter))).getOrElse(Json.Null)),
       (DATEUPDATED,
-       u.dateUpdated.map(zdt => Json.fromString(zdt.format(helper.dateTimeFormatter))).getOrElse(Json.Null))
+       u.dateUpdated.map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter))).getOrElse(Json.Null))
   )
 
   implicit object Reader extends BSONDocumentReader[User] {
@@ -122,10 +122,10 @@ object User {
         userConfig = bson.getAs[UserConfig](USERCONFIG).getOrElse(UserConfig()),
         userToken = bson.getAs[UserToken](USERTOKEN),
         jobs = bson.getAs[List[String]](JOBS).getOrElse(List.empty),
-        dateDeletedOn = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => helper.getZDT(dt)),
-        dateLastLogin = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => helper.getZDT(dt)),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => helper.getZDT(dt)),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => helper.getZDT(dt))
+        dateDeletedOn = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateLastLogin = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
   }
 

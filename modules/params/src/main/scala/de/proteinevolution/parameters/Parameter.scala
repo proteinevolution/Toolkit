@@ -1,4 +1,4 @@
-package de.proteinevolution.models.parameters
+package de.proteinevolution.parameters
 
 import io.circe.Encoder
 import io.circe.generic.extras.Configuration

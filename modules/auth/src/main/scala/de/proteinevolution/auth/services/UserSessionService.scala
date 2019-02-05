@@ -8,17 +8,16 @@ import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.models.database.users.{ SessionData, User }
 import de.proteinevolution.util.LocationProvider
 import javax.inject.{ Inject, Singleton }
-import de.proteinevolution.common.LocationProvider
-import de.proteinevolution.models.database.users.{SessionData, User}
-import javax.inject.{Inject, Singleton}
+import de.proteinevolution.models.database.users.{ SessionData, User }
+import javax.inject.{ Inject, Singleton }
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{Logger, mvc}
+import play.api.{ mvc, Logger }
 import play.mvc.Http
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.duration._
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.hashing.MurmurHash3
 
 @Singleton

@@ -8,14 +8,14 @@ import cats.implicits._
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.jobs.actors.JobActor.PrepareJob
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.models.{Job, JobSubmitError}
+import de.proteinevolution.jobs.models.{ Job, JobSubmitError }
 import de.proteinevolution.models.database.users.User
-import de.proteinevolution.models.{ConstantsV2, ToolName}
-import javax.inject.{Inject, Singleton}
+import de.proteinevolution.models.{ ConstantsV2, ToolName }
+import javax.inject.{ Inject, Singleton }
 import play.api.Logger
 import reactivemongo.bson.BSONDocument
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class JobDispatcher @Inject()(

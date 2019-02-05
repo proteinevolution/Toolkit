@@ -1,12 +1,9 @@
 package de.proteinevolution.tools
 
 import com.typesafe.config.{ Config, ConfigObject }
-import de.proteinevolution.models.forms._
-import de.proteinevolution.models.param.ParamAccess
-import de.proteinevolution.models.parameters
-import de.proteinevolution.models.parameters.{ ForwardingMode, Parameter, ParameterSection, ToolParameters }
-import de.proteinevolution.params.{ Param, ParamAccess }
-import de.proteinevolution.tools.forms.ToolForm
+import de.proteinevolution.parameters.{ ForwardingMode, Parameter, ParameterSection, ToolParameters }
+import de.proteinevolution.params.ParamAccess
+import de.proteinevolution.tools.forms.{ ToolFormSimple, ValidationParamsForm }
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 
@@ -75,7 +72,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
           multiColumnLayout = false,
           params.filter(p => inputGroup.contains(p.name))
         ),
-        parameters.ParameterSection(
+        ParameterSection(
           "Parameters",
           multiColumnLayout = true,
           params.filter(p => !inputGroup.contains(p.name))

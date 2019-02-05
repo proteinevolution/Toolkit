@@ -1,6 +1,7 @@
-package de.proteinevolution.models.param
-import de.proteinevolution.models.parameters.Parameter._
-import de.proteinevolution.models.parameters._
+package de.proteinevolution.params
+
+import de.proteinevolution.parameters.Parameter._
+import de.proteinevolution.parameters._
 import de.proteinevolution.tel.TEL
 import javax.inject.{ Inject, Singleton }
 
