@@ -1,9 +1,9 @@
 package de.proteinevolution.results.models.resultviews
 
-import de.proteinevolution.models.results.ResultViews
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.results.results.HHompResult
 import de.proteinevolution.tools.ToolConfig
+import play.twirl.api.HtmlFormat
 
 import scala.collection.immutable.ListMap
 
@@ -14,8 +14,8 @@ case class HHompResultView(
     toolConfig: ToolConfig
 ) extends ResultView {
 
-  override lazy val tabs = ListMap(
-    ResultViews.RESULTS ->
+  override lazy val tabs: ListMap[String, HtmlFormat.Appendable] = ListMap(
+    RESULTS ->
     views.html.resultpanels.hhomp.hitlist(
       jobId,
       result,

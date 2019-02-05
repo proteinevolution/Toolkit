@@ -7,7 +7,7 @@ import scala.collection.immutable
 
 case class ToolName(value: String) extends AnyVal {
 
-  override def toString = toolTitlesDictionary(value)
+  override def toString: String = toolTitlesDictionary(value)
 
   def hasJson: Boolean =
     NEL

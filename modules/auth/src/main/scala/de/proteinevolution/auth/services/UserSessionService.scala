@@ -5,6 +5,9 @@ import java.time.ZonedDateTime
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.util.UserRequest
 import de.proteinevolution.base.helpers.ToolkitTypes
+import de.proteinevolution.models.database.users.{ SessionData, User }
+import de.proteinevolution.util.LocationProvider
+import javax.inject.{ Inject, Singleton }
 import de.proteinevolution.common.LocationProvider
 import de.proteinevolution.models.database.users.{SessionData, User}
 import javax.inject.{Inject, Singleton}
@@ -25,6 +28,7 @@ class UserSessionService @Inject()(
     locationProvider: LocationProvider
 )(implicit ec: ExecutionContext)
     extends ToolkitTypes {
+
   private val SID    = "sid"
   private val logger = Logger(this.getClass)
 

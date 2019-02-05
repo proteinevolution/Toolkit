@@ -1,15 +1,15 @@
 package de.proteinevolution.results.models.resultviews
 
 import de.proteinevolution.models.ToolName
-import de.proteinevolution.models.results.ResultViews
 import de.proteinevolution.tools.ToolConfig
+import play.twirl.api.HtmlFormat
 
 import scala.collection.immutable.ListMap
 
 case class FormatSeqResultView(jobId: String, toolConfig: ToolConfig) extends ResultView {
 
-  override lazy val tabs = ListMap(
-    ResultViews.RESULTS -> views.html.resultpanels.fileviewWithDownloadForward(
+  override lazy val tabs: ListMap[String, HtmlFormat.Appendable] = ListMap(
+    RESULTS -> views.html.resultpanels.fileviewWithDownloadForward(
       jobId + ".out",
       jobId,
       "FormatSeq",

@@ -1,9 +1,9 @@
 package de.proteinevolution.results.models.resultviews
 
-import de.proteinevolution.models.results.ResultViews
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.results.results.AlignmentResult
 import de.proteinevolution.tools.ToolConfig
+import play.twirl.api.HtmlFormat
 
 import scala.collection.immutable.ListMap
 
@@ -14,22 +14,21 @@ case class MuscleResultView(
     toolConfig: ToolConfig
 ) extends ResultView {
 
-  override lazy val tabs = ListMap(
-    ResultViews.CLUSTAL -> views.html.resultpanels.clustal(
+  override lazy val tabs: ListMap[String, HtmlFormat.Appendable] = ListMap(
+    CLUSTAL -> views.html.resultpanels.clustal(
       jobId,
       alignment,
       "alignment",
       toolConfig.values(ToolName.MUSCLE.value)
     ),
-    ResultViews.ALIGNMENT ->
+    ALIGNMENT ->
     views.html.resultpanels.alignment(
       jobId,
       alignment,
       "alignment",
       toolConfig.values(ToolName.MUSCLE.value)
     ),
-    ResultViews.ALIGNMENTVIEWER -> views.html.resultpanels
-      .msaviewer(s"${constants.jobPath}/$jobId/results/alignment.fas")
+    ALIGNMENTVIEWER -> views.html.resultpanels.msaviewer(s"${constants.jobPath}/$jobId/results/alignment.fas")
   )
 
 }

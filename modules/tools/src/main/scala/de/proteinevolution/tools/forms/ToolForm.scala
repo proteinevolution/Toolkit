@@ -1,6 +1,5 @@
-package de.proteinevolution.models.forms
-
-import de.proteinevolution.models.param.Param
+package de.proteinevolution.tools.forms
+import de.proteinevolution.params.Param
 import io.circe.generic.JsonCodec
 
 @JsonCodec case class ToolForm(

@@ -137,7 +137,7 @@ class ParamAccess @Inject()(tel: TEL) {
     case "CLUSTERING_MODE"  => select("clustering_mode", "Clustering mode")
   }
 
-  val paramGroups = Map(
+  val paramGroups: Map[String, Seq[String]] = Map(
     "Input" -> Seq(
       getParam("ALIGNMENT").name,
       getParam("STANDARD_DB").name,

@@ -1,6 +1,6 @@
-package de.proteinevolution.models.results
+package de.proteinevolution.results.models
 
-object ResultViews {
+package object resultviews {
 
   final val HITLIST         = "Hitlist"
   final val RESULTS         = "Results"

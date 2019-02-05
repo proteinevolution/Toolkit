@@ -7,13 +7,14 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.message.actors.WebSocketActor
 import io.circe.syntax._
 import io.circe.{ Json, JsonObject }
-import javax.inject.Inject
+import javax.inject.{ Inject, Singleton }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import play.api.{ Configuration, Environment, Logger }
 
 import scala.concurrent.ExecutionContext
 
+@Singleton
 class MessageController @Inject()(
     cc: ControllerComponents,
     userSessions: UserSessionService,

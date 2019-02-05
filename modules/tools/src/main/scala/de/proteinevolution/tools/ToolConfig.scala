@@ -5,6 +5,8 @@ import de.proteinevolution.models.forms._
 import de.proteinevolution.models.param.ParamAccess
 import de.proteinevolution.models.parameters
 import de.proteinevolution.models.parameters.{ ForwardingMode, Parameter, ParameterSection, ToolParameters }
+import de.proteinevolution.params.{ Param, ParamAccess }
+import de.proteinevolution.tools.forms.ToolForm
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 

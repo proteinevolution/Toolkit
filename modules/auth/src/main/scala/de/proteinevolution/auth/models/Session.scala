@@ -1,4 +1,4 @@
-package de.proteinevolution.models.message
+package de.proteinevolution.auth.models
 
 import reactivemongo.bson.BSONObjectID
 
