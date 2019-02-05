@@ -4,12 +4,12 @@
                :jobToolName="job.tool"
                :jobParamValues="job.paramValues">
 
-        <template slot="job-details">
+        <template #job-details>
             <small class="text-muted"
                    v-text="$t('jobs.details', {jobID, dateCreated})"></small>
         </template>
 
-        <template slot="job-tabs">
+        <template #job-tabs>
             <b-tab :title="$t('jobs.states.' + job.status)"
                    active>
                 <job-prepared-tab v-if="job.status === JobState.Prepared"

@@ -49,7 +49,7 @@
                             <!-- the job form can insert more tabs here -->
                             <slot name="job-tabs"></slot>
 
-                            <template slot="tabs">
+                            <template #tabs>
                                 <i class="fullscreen-toggler fa ml-auto mr-1"
                                    @click="toggleFullScreen"
                                    :class="[fullScreen ? 'fa-compress' : 'fa-expand']"></i>

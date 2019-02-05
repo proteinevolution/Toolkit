@@ -10,16 +10,14 @@
                       :no-data-template="$t('jobManager.table.noData')"
                       :data="jobs"
                       :fields="fields">
-                <template slot="joblist"
-                          slot-scope="props">
+                <template #joblist="{rowData}">
                     <i class="fas cursor-pointer"
-                       :class="[props.rowData.hidden ? 'fa-plus-circle':'fa-minus-circle']"
-                       @click="toggleJobListStatus(props.rowData.jobID)"></i>
+                       :class="[rowData.hidden ? 'fa-plus-circle':'fa-minus-circle']"
+                       @click="toggleJobListStatus(rowData.jobID)"></i>
                 </template>
-                <template slot="actions"
-                          slot-scope="props">
+                <template #actions="{rowData}">
                     <i class="fa fa-trash cursor-pointer"
-                       @click="deleteJob(props.rowData.jobID)"></i>
+                       @click="deleteJob(rowData.jobID)"></i>
                 </template>
             </vuetable>
         </b-card>

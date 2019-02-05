@@ -3,10 +3,10 @@
                id="auth"
                size="sm"
                body-class="tk-auth-modal tk-modal">
-        <template slot="header">
+        <template #header>
             &#8203;
         </template>
-        <template slot="body">
+        <template #body>
             <b-tabs>
                 <b-tab :title="$t('auth.signIn')">
                     <LoginForm/>
