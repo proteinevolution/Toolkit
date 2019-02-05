@@ -2,7 +2,7 @@ package modules
 
 import scala.collection.mutable
 
-class TELEnvProvider @Inject()(configuration: Configuration) extends Provider[Env] {
+class EnvProvider @Inject()(configuration: Configuration) extends Provider[Env] {
 
   val m = mutable.Map(configuration.get[Map[String, String]]("tel.env_vars").toSeq: _*)
 
