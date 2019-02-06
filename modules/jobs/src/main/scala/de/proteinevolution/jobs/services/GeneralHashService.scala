@@ -8,14 +8,13 @@ import de.proteinevolution.tel.RunscriptPathProvider
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.util.FNV
 import javax.inject.{ Inject, Singleton }
-import play.api.{ Configuration, Logger }
+import play.api.{ Configuration, Logging }
 
 import scala.util.hashing.MurmurHash3
 
 @Singleton
-final class GeneralHashService @Inject()(runscriptPathProvider: RunscriptPathProvider, config: Configuration) {
-
-  private val logger = Logger(this.getClass)
+final class GeneralHashService @Inject()(runscriptPathProvider: RunscriptPathProvider, config: Configuration)
+    extends Logging {
 
   def generateHash(params: Map[String, String]): BigInt = {
     FNV.hash64(params.toString.getBytes())

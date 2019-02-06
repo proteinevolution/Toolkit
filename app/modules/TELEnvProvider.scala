@@ -1,13 +1,11 @@
 package modules
 
-import javax.inject.{ Inject, Provider }
 import better.files._
 import de.proteinevolution.tel.env.{ ExecFile, PropFile, TELEnv }
-import play.api.{ Configuration, Logger }
+import javax.inject.{ Inject, Provider }
+import play.api.{ Configuration, Logging }
 
-class TELEnvProvider @Inject()(tv: TELEnv, configuration: Configuration) extends Provider[TELEnv] {
-
-  private val logger = Logger(this.getClass)
+class TELEnvProvider @Inject()(tv: TELEnv, configuration: Configuration) extends Provider[TELEnv] with Logging {
 
   override def get(): TELEnv = {
     configuration

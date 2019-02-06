@@ -2,7 +2,7 @@ package services
 
 import javax.inject._
 import play.Environment
-import play.api.Logger
+import play.api.Logging
 import play.api.inject.ApplicationLifecycle
 import play.api.libs.ws.WSClient
 
@@ -13,9 +13,8 @@ final class ConfigurationImpl @Inject()(
     appLifecycle: ApplicationLifecycle,
     ws: WSClient,
     environment: Environment
-) extends Configuration {
-
-  private val logger = Logger(this.getClass)
+) extends Configuration
+    with Logging {
 
   private def init(): Unit = {
     if (environment.isProd) {

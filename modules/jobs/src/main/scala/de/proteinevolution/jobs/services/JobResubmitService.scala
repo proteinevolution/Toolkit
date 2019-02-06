@@ -5,16 +5,15 @@ import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.{ Job, ResubmitData }
 import de.proteinevolution.models.ConstantsV2
 import javax.inject.{ Inject, Singleton }
-import play.api.Logger
+import play.api.Logging
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 class JobResubmitService @Inject()(constants: ConstantsV2, jobDao: JobDao)(implicit ec: ExecutionContext)
-    extends ToolkitTypes {
-
-  private val logger = Logger(this.getClass)
+    extends ToolkitTypes
+    with Logging {
 
   def resubmit(newJobId: String, resubmitForJobId: Option[String]): Future[ResubmitData] = {
     generateParentJobId((newJobId, resubmitForJobId)) match {

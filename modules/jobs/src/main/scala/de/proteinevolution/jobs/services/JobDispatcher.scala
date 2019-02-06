@@ -13,7 +13,7 @@ import de.proteinevolution.jobs.models.{ Job, JobSubmitError }
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.models.{ ConstantsV2, ToolName }
 import javax.inject.{ Inject, Singleton }
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.Files
 import play.api.mvc.MultipartFormData
 import reactivemongo.bson.BSONDocument
@@ -27,9 +27,8 @@ final class JobDispatcher @Inject()(
     jobIdProvider: JobIdProvider,
     jobActorAccess: JobActorAccess,
     userSessions: UserSessions
-)(implicit ec: ExecutionContext) {
-
-  private[this] val logger = Logger(this.getClass)
+)(implicit ec: ExecutionContext)
+    extends Logging {
 
   def submitJob(
       toolName: String,
