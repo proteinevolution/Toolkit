@@ -34,7 +34,7 @@ object Dependencies {
     "org.tpolecat"         %% "atto-core"                % "0.6.4",
     "com.vmunier"          %% "scalajs-scripts"          % "1.1.1",
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
-    "com.dripower"         %% "play-circe-2611"          % "0",
+    "com.dripower"         %% "play-circe"               % "2711.0",
     "io.circe"             %% "circe-generic"            % circeV,
     "io.circe"             %% "circe-generic-extras"     % circeV,
     "io.circe"             %% "circe-java8"              % circeV,

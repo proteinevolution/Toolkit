@@ -6,10 +6,10 @@ import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete }
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services._
 import de.proteinevolution.tools.ToolConfig
-import io.circe.{ Json, JsonObject }
 import io.circe.syntax._
+import io.circe.{ Json, JsonObject }
 import javax.inject.{ Inject, Singleton }
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.Files
 import play.api.mvc.{ Action, AnyContent, ControllerComponents, MultipartFormData }
 import play.mvc.Http.MimeTypes
@@ -28,9 +28,8 @@ class SubmissionController @Inject()(
     jobIdProvider: JobIdProvider,
     jobFrontendToolsService: JobFrontendToolsService
 )(implicit ec: ExecutionContext)
-    extends ToolkitController(cc) {
-
-  private val logger = Logger(this.getClass)
+    extends ToolkitController(cc)
+    with Logging {
 
   def startJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.map { _ =>

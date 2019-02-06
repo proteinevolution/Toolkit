@@ -1,9 +1,8 @@
 package de.proteinevolution.tel.runscripts
 
-import javax.inject.{ Inject, Named, Singleton }
-
 import better.files._
-import play.api.Logger
+import javax.inject.{ Inject, Named, Singleton }
+import play.api.Logging
 
 //TODO
 // * Support Constraints and Conditions
@@ -16,9 +15,7 @@ import play.api.Logger
  *
  */
 @Singleton
-class RunscriptManager @Inject()(@Named("runscriptPath") runscriptPath: String) {
-
-  private val logger = Logger(this.getClass)
+class RunscriptManager @Inject()(@Named("runscriptPath") runscriptPath: String) extends Logging {
 
   // Constants for the RunscriptManager
   final val SUFFIX = "SUFFIX"
