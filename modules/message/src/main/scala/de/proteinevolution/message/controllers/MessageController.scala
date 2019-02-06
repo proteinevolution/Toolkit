@@ -10,7 +10,7 @@ import io.circe.{ Json, JsonObject }
 import javax.inject.{ Inject, Singleton }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
-import play.api.{ Configuration, Environment, Logger }
+import play.api.{ Configuration, Environment, Logging }
 
 import scala.concurrent.ExecutionContext
 
@@ -22,11 +22,10 @@ class MessageController @Inject()(
     config: Configuration,
     webSocketActorFactory: WebSocketActor.Factory
 )(implicit actorSystem: ActorSystem, mat: Materializer, ec: ExecutionContext)
-    extends ToolkitController(cc) {
+    extends ToolkitController(cc)
+    with Logging {
 
   import de.proteinevolution.message.helpers.CirceFlowTransformer._
-
-  private val logger = Logger(this.getClass)
 
   def ws: WebSocket = WebSocket.acceptOrResult[Json, Json] {
     case rh if sameOriginCheck(rh) =>

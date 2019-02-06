@@ -5,7 +5,7 @@ import de.proteinevolution.tel.TELRegex
 import de.proteinevolution.tel.env.{ Env, EnvAware }
 import de.proteinevolution.tel.execution.ExecutionContext
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
-import play.api.Logger
+import play.api.Logging
 
 import scala.collection.mutable
 import scala.util.matching.Regex
@@ -15,7 +15,7 @@ import scala.util.matching.Regex
  * Instances should be created via the companion object.
  *
  */
-class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript] {
+class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript] with Logging {
 
   val parameters: Seq[(String, Evaluation)] = parameterString
     .findAllIn(files.map(_.contentAsString).mkString("\n"))
@@ -42,8 +42,6 @@ class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript] {
 
   private case class Replacer(arguments: Seq[(String, ValidArgument)]) {
     private var counter = -1
-    private val logger  = Logger(this.getClass)
-
     def apply(m: Regex.Match): String = {
       m.groupNames.foreach(s => logger.debug(s)) // just use m because of https://stackoverflow.com/questions/43964571/scala-2-12-2-emits-a-ton-of-useless-warning-parameter-value-in-method
       counter += 1

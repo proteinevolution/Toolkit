@@ -1,6 +1,5 @@
 package de.proteinevolution.results.results
 
-import play.api.Logger
 import play.twirl.api.Html
 
 import scala.collection.mutable.ArrayBuffer
@@ -8,8 +7,6 @@ import scala.collection.mutable.ArrayBuffer
 // TODO scrap this
 
 object Common {
-
-  private val logger = Logger(this.getClass)
 
   private val color_regex     = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
   private val CC_pattern      = """(C+)""".r("C")
@@ -268,9 +265,7 @@ object Common {
     case uniprotReg(_)    => "uniprot"
     case ecodReg(_)       => "ecod"
     case ncbiReg(_)       => "ncbi"
-    case e: String =>
-      logger.info("Struc: (" + e + ") could not be matched against any database!")
-      ""
+    case e: String        => ""
   }
 
   def percentage(str: String): String = (str.toDouble * 100).toInt.toString + "%"

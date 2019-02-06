@@ -12,10 +12,10 @@ import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobFolderValidation
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.JobState.{ Done, Pending, Prepared }
-import de.proteinevolution.tools.forms.{ JobForm, ToolForm }
 import de.proteinevolution.tools.ToolConfig
+import de.proteinevolution.tools.forms.{ JobForm, ToolForm }
 import javax.inject.{ Inject, Singleton }
-import play.api.Logger
+import play.api.Logging
 import play.api.cache.{ AsyncCacheApi, NamedCache }
 import play.twirl.api.HtmlFormat
 import reactivemongo.bson.BSONDocument
@@ -31,9 +31,8 @@ class ResultGetService @Inject()(
     @NamedCache("resultCache") resultCache: AsyncCacheApi
 )(implicit ec: ExecutionContext)
     extends JobFolderValidation
-    with ToolkitTypes {
-
-  private val logger = Logger(this.getClass)
+    with ToolkitTypes
+    with Logging {
 
   def get(
       jobId: String,

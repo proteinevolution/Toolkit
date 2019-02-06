@@ -11,7 +11,7 @@ import de.proteinevolution.results.results._
 import de.proteinevolution.results.services.ResultsRepository.ResultsService
 import io.circe.DecodingFailure
 import javax.inject.{ Inject, Singleton }
-import play.api.Logger
+import play.api.Logging
 import play.twirl.api.HtmlFormat
 
 import scala.concurrent.{ ExecutionContext, Future }
@@ -22,9 +22,8 @@ class HHService @Inject()(
     resultFiles: ResultFileAccessor
 )(implicit ec: ExecutionContext)
     extends ResultsRepository
-    with DTService {
-
-  private val logger = Logger(this.getClass)
+    with DTService
+    with Logging {
 
   private val resultsService = ResultsService(toolFinder, resultFiles)
 

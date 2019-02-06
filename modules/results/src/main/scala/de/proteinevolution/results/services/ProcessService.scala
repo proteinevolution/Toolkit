@@ -11,7 +11,7 @@ import de.proteinevolution.results.results.{ HSP, SearchResult }
 import de.proteinevolution.results.services.ResultsRepository.ResultsService
 import io.circe.DecodingFailure
 import javax.inject.{ Inject, Singleton }
-import play.api.{ Configuration, Logger }
+import play.api.{ Configuration, Logging }
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.sys.process.Process
@@ -23,9 +23,8 @@ final class ProcessService @Inject()(
     resultFiles: ResultFileAccessor,
     constants: ConstantsV2
 )(implicit ec: ExecutionContext)
-    extends ResultsRepository {
-
-  private[this] val logger = Logger(this.getClass)
+    extends ResultsRepository
+    with Logging {
 
   private[this] val scriptPath: String = config.get[String]("server_scripts")
 

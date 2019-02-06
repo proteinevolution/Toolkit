@@ -2,14 +2,14 @@ package controllers
 
 import java.net.InetAddress
 
-import javax.inject.{ Inject, Singleton }
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tools.ToolConfig
-import play.api.mvc._
-import play.api.{ Configuration, Environment, Logger }
+import javax.inject.{ Inject, Singleton }
 import org.webjars.play.WebJarsUtil
+import play.api.mvc._
+import play.api.{ Configuration, Environment, Logging }
 
 import scala.concurrent.ExecutionContext
 
@@ -24,9 +24,8 @@ final class Application @Inject()(
     assetsFinder: AssetsFinder,
     config: Configuration
 )(implicit ec: ExecutionContext)
-    extends ToolkitController(cc) {
-
-  private val logger = Logger(this.getClass)
+    extends ToolkitController(cc)
+    with Logging {
 
   def index(message: String = ""): Action[AnyContent] = Action.async { implicit request =>
     configEnv(request)

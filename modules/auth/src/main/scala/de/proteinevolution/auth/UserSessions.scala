@@ -9,7 +9,7 @@ import de.proteinevolution.util.LocationProvider
 import javax.inject.{ Inject, Singleton }
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{ mvc, Logger }
+import play.api.{ mvc, Logging }
 import play.mvc.Http
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
@@ -23,10 +23,10 @@ class UserSessions @Inject()(
     @NamedCache("userCache") userCache: SyncCacheApi,
     locationProvider: LocationProvider
 )(implicit ec: ExecutionContext)
-    extends ToolkitTypes {
+    extends ToolkitTypes
+    with Logging {
 
-  private val SID    = "sid"
-  private val logger = Logger(this.getClass)
+  private val SID = "sid"
 
   def getUserModifier(
       user: User,

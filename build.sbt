@@ -36,7 +36,7 @@ import sbtcrossproject.{ crossProject, CrossType }
 
 lazy val common = (crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure) in file("modules/common"))
   .settings(
-    name := "common",
+    name := "de.proteinevolution.common",
     libraryDependencies ++= Dependencies.commonDeps,
     Settings.compileSettings,
     disableDocs
