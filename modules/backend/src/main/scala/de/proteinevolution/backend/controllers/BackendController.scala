@@ -16,7 +16,7 @@ import de.proteinevolution.tools.ToolConfig
 import io.circe.Json
 import io.circe.syntax._
 import javax.inject.{ Inject, Named, Singleton }
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc._
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
@@ -32,9 +32,8 @@ final class BackendController @Inject()(
     @Named("databaseMonitor") databaseMonitor: ActorRef,
     cc: ControllerComponents
 )(implicit ec: ExecutionContext)
-    extends ToolkitController(cc) {
-
-  private val logger = Logger(this.getClass)
+    extends ToolkitController(cc)
+    with Logging {
 
   //TODO currently working mithril routes for the backend
   def index: Action[AnyContent] = Action.async { implicit request =>
@@ -105,7 +104,7 @@ final class BackendController @Inject()(
                       )
                     )
                   case None =>
-                    Logger
+                    logger
                       .info("Statistics generated, but it seems like the statistics could not be reloaded from the db")
                     NoCache(
                       Ok(

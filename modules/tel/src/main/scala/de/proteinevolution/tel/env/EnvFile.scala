@@ -2,7 +2,7 @@ package de.proteinevolution.tel.env
 
 import better.files._
 import de.proteinevolution.tel.Subject
-import play.api.{ Configuration, Logger }
+import play.api.{ Configuration, Logging }
 
 import scala.sys.process.Process
 import scala.util.matching.Regex
@@ -42,9 +42,7 @@ class ExecFile(path: String) extends EnvFile(path) {
  * its content
  *
  */
-class PropFile(path: String, config: Configuration) extends EnvFile(path) {
-
-  private val logger = Logger(this.getClass)
+class PropFile(path: String, config: Configuration) extends EnvFile(path) with Logging {
 
   def load: Map[String, String] = {
     // Remove comment lines and lines containing only whitespace
@@ -67,4 +65,5 @@ class PropFile(path: String, config: Configuration) extends EnvFile(path) {
         a.updated(spt(0).trim(), updated)
     }
   }
+
 }
