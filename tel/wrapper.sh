@@ -11,6 +11,9 @@ until $(curl -X PUT --output /dev/null --silent --head --fail http://%HOSTNAME:%
     sleep 5
 done
 
+export BIOPROGSROOT="%BIOPROGSROOT"
+export DATABASES="%DATABASES"
+
 #Submit job to SGE
 if [[ %SUBMITMODE = "sge" ]]; then
             qsub -sync n \
@@ -21,11 +24,10 @@ if [[ %SUBMITMODE = "sge" ]]; then
                 -pe parallel %THREADS \
                 -cwd  \
                 -terse \
-                -v BIOPROGSROOT=%BIOPROGSROOT,DATABASES=%DATABASES \
+                -V \
                 %r > jobIDCluster
 else
-                export BIOPROGSROOT="%BIOPROGSROOT"
-                export DATABASES="%DATABASES"
+#Run job on master node
                 %r > jobIDCluster
 fi
 
