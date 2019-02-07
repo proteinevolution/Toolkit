@@ -20,7 +20,6 @@ Files | Author(s) | License
 --- | --- | ---
 public/font/mfglabs*, public/font/gibson*, public/styles/mfglabs* | [MFGLabs](https://github.com/MfgLabs/mfglabs-iconset) | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/deed.fr)
 public/javascripts/vendor/msa.min.js | [Sebastian Wilzbach](https://github.com/wilzbach/msa) | [BSL-1.0](http://www.boost.org/LICENSE_1_0.txt)
-public/javascripts/vendor/loadingoverlay.js | [Gaspare Sganga](http://gasparesganga.com/labs/jquery-loading-overlay/) |  [MIT](https://github.com/gosquared/flags/blob/master/LICENSE.txt)
 public/javascripts/vendor/reformat | Seung-Zin Nam and [David Rau](https://github.com/davidmrau) |  [MIT](https://github.com/gosquared/flags/blob/master/LICENSE.txt)
 
 Exceptions (non-free)
