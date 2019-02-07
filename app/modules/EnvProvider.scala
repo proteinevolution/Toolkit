@@ -15,8 +15,6 @@ class EnvProvider @Inject()(configuration: Configuration) extends Provider[Env] 
 
     // Adds a Key value pair to this environment
     def configure(key: String, value: String): Unit = m.update(key, value)
-
-    def remove(key: String): Unit = {}
   }
 
 }
