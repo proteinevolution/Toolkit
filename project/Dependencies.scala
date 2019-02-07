@@ -39,7 +39,7 @@ object Dependencies {
     "io.circe"             %% "circe-generic-extras"     % circeV,
     "io.circe"             %% "circe-java8"              % circeV,
     "io.circe"             %% "circe-bson"               % "0.2.0",
-    "org.webjars"          %% "webjars-play"             % "2.6.3",
+    "org.webjars"          %% "webjars-play"             % "2.7.0",
     "org.scala-js"         %% "scalajs-stubs"            % scalaJSVersion % "provided",
     "com.github.mpilquist" %% "simulacrum"               % "0.12.0",
     "com.github.mongobee"  % "mongobee"                  % "0.13"
