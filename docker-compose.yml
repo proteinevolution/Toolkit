@@ -15,13 +15,14 @@ services:
       - 8080:8080
     volumes:
       - .:/toolkit
+#      Uncommenting following 3 lines will speed up sbt boot time significatnly providing you have GeoIP built locally
+#      - ~/.ivy2:/root/.ivy2
+#      - ~/.sbt:/root/.sbt
+#      - ~/.coursier:/root/.coursier
     links:
       - mongodb
     depends_on:
       - mongodb
-    networks:
-      tk-network:
-        ipv4_address: 174.18.0.2
 
   # The container for the MongoDB Database
   mongodb:
@@ -30,25 +31,11 @@ services:
     environment:
     - MONGO_DATA_DIR=/data/db
     - MONGO_LOG_DIR=/data/log
-    - MONGO_INITDB_ROOT_USERNAME=root
-    - MONGO_INITDB_ROOT_PASSWORD=rootPassXX
     volumes:
       - mongodb:/data/db
     ports:
       - 27017:27017
-    command: mongod --auth
-    networks:
-      tk-network:
-        ipv4_address: 174.18.0.3
+    command: mongod
 
 volumes:
   mongodb:
-
-networks:
-  tk-network:
-    name: tk-network
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-      - subnet: 174.18.0.1/24

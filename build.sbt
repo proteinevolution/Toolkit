@@ -265,26 +265,6 @@ lazy val root = (project in file("."))
     tools,
     util
   )
-  .aggregate(
-    client,
-    commonJVM,
-    results,
-    jobs,
-    auth,
-    base,
-    cluster,
-    help,
-    backend,
-    ui,
-    message,
-    verification,
-    clusterApi,
-    migrations,
-    tel,
-    tools,
-    util,
-    params
-  )
   .settings(
     coreSettings,
     name := "mpi-toolkit",
