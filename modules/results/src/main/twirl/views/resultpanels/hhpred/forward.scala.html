@@ -2,9 +2,7 @@
 @(filepath : String, jobID: String)()
 
 <div>
-    <pre  id="pir" class="fileview">
-        @FileLoader.loadFile(filepath)
-    </pre>
+    <pre  id="pir" class="fileview">@FileLoader.loadFile(filepath)</pre>
     <input id="forward"  class="success button small" type="button" value="Forward to Modeller" onclick="tomodeller()">
     <button type="button" class="button success small goToParentJob" style="display: none">Go to Parent Job</button>
 </div>
