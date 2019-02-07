@@ -18,7 +18,6 @@ class MainRouter @Inject()(
     uptime: UptimeController,
     resultsRouter: ResultsRouter,
     assets: Assets,
-    webjarsRouter: webjars.Routes,
     authRouter: AuthRouter,
     helpRouter: HelpRouter,
     backendRouter: BackendRouter,
@@ -54,7 +53,6 @@ class MainRouter @Inject()(
       .orElse(helpRouter.withPrefix("/api/tools/help").routes)
       .orElse(authRouter.withPrefix("/api/auth").routes)
       .orElse(verificationRouter.withPrefix("/verification").routes)
-      .orElse(webjarsRouter.withPrefix("/webjars").routes)
       .orElse(resultsRouter.withPrefix("/results").routes)
   }
 

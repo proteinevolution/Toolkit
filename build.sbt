@@ -11,8 +11,6 @@ inThisBuild(
 )
 
 lazy val commonSettings = Seq(
-  scalaJSProjects := Seq(client),
-  pipelineStages in Assets := Seq(scalaJSPipeline),
   TwirlKeys.templateImports := Nil
 )
 
@@ -21,7 +19,6 @@ lazy val buildInfoSettings = Seq(
     name,
     version,
     scalaVersion,
-    "scalaJSVersion" -> scalaJSVersion,
     sbtVersion,
     "playVersion" -> play.core.PlayVersion.current
   ),
@@ -35,9 +32,7 @@ lazy val disableDocs = Seq[Setting[_]](
   publishArtifact in (Compile, packageDoc) := false
 )
 
-import sbtcrossproject.{ crossProject, CrossType }
-
-lazy val common = (crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure) in file("modules/common"))
+lazy val common = (project in file("modules/common"))
   .settings(
     name := "common",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -45,13 +40,11 @@ lazy val common = (crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pur
     disableDocs
   )
   .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
-
-lazy val commonJS  = common.js.dependsOn(base, tel)
-lazy val commonJVM = common.jvm.dependsOn(base, tel)
+  .dependsOn(base, tel)
 
 lazy val results = (project in file("modules/results"))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl)
-  .dependsOn(commonJVM, auth, jobs, help, ui, base, tools, util)
+  .dependsOn(common, auth, jobs, help, ui, base, tools, util)
   .settings(
     name := "de.proteinevolution.results",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -65,7 +58,7 @@ lazy val results = (project in file("modules/results"))
 
 lazy val help = (project in file("modules/help"))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl)
-  .dependsOn(commonJVM, base)
+  .dependsOn(common, base)
   .settings(
     name := "de.proteinevolution.help",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -77,7 +70,7 @@ lazy val help = (project in file("modules/help"))
 
 lazy val jobs = (project in file("modules/jobs"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, auth, base, clusterApi, tel, tools, util)
+  .dependsOn(common, auth, base, clusterApi, tel, tools, util)
   .settings(
     name := "de.proteinevolution.jobs",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -90,7 +83,7 @@ lazy val jobs = (project in file("modules/jobs"))
 
 lazy val auth = (project in file("modules/auth"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, base, tel, util)
+  .dependsOn(common, base, tel, util)
   .settings(
     name := "de.proteinevolution.auth",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -113,7 +106,7 @@ lazy val base = (project in file("modules/base"))
 
 lazy val cluster = (project in file("modules/cluster"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, base, jobs, clusterApi)
+  .dependsOn(common, base, jobs, clusterApi)
   .settings(
     name := "de.proteinevolution.cluster",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -125,7 +118,7 @@ lazy val cluster = (project in file("modules/cluster"))
 
 lazy val clusterApi = (project in file("modules/cluster-api"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, base)
+  .dependsOn(common, base)
   .settings(
     name := "de.proteinevolution.cluster.api",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -137,7 +130,7 @@ lazy val clusterApi = (project in file("modules/cluster-api"))
 
 lazy val backend = (project in file("modules/backend"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, base, auth, jobs, tel, tools)
+  .dependsOn(common, base, auth, jobs, tel, tools)
   .settings(
     name := "de.proteinevolution.backend",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -149,7 +142,7 @@ lazy val backend = (project in file("modules/backend"))
 
 lazy val ui = (project in file("modules/ui"))
   .enablePlugins(PlayScala, JavaAppPackaging, SbtTwirl, BuildInfoPlugin)
-  .dependsOn(commonJVM, base, tools)
+  .dependsOn(common, base, tools)
   .settings(
     name := "de.proteinevolution.ui",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -162,7 +155,7 @@ lazy val ui = (project in file("modules/ui"))
 
 lazy val message = (project in file("modules/message"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, base, auth, cluster, jobs, tools)
+  .dependsOn(common, base, auth, cluster, jobs, tools)
   .settings(
     name := "de.proteinevolution.message",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -174,7 +167,7 @@ lazy val message = (project in file("modules/message"))
 
 lazy val verification = (project in file("modules/verification"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, base, auth, ui, message, tel, tools)
+  .dependsOn(common, base, auth, ui, message, tel, tools)
   .settings(
     name := "de.proteinevolution.verification",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -209,7 +202,7 @@ lazy val tel = (project in file("modules/tel"))
 
 lazy val tools = (project in file("modules/tools"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM, params)
+  .dependsOn(common, params)
   .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
   .settings(
     name := "de.proteinevolution.tools",
@@ -222,7 +215,7 @@ lazy val tools = (project in file("modules/tools"))
 
 lazy val util = (project in file("modules/util"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM)
+  .dependsOn(common)
   .settings(
     name := "de.proteinevolution.util",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -234,7 +227,7 @@ lazy val util = (project in file("modules/util"))
 
 lazy val params = (project in file("modules/params"))
   .enablePlugins(PlayScala, JavaAppPackaging)
-  .dependsOn(commonJVM)
+  .dependsOn(common)
   .settings(
     name := "de.proteinevolution.params",
     libraryDependencies ++= Dependencies.commonDeps,
@@ -246,10 +239,8 @@ lazy val params = (project in file("modules/params"))
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val root = (project in file("."))
-  .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb)
+  .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging)
   .dependsOn(
-    client,
-    commonJVM,
     results,
     jobs,
     auth,
@@ -268,25 +259,12 @@ lazy val root = (project in file("."))
   .settings(
     coreSettings,
     name := "mpi-toolkit",
-    libraryDependencies ++= (Dependencies.commonDeps ++ Dependencies.testDeps ++ Dependencies.frontendDeps),
-    pipelineStages := Seq(digest, gzip),
-    compile in Compile := (compile in Compile).dependsOn(scalaJSPipeline).value,
+    libraryDependencies ++= (Dependencies.commonDeps ++ Dependencies.testDeps),
+    pipelineStages := Seq(digest, gzip)
   )
 
 resolvers += "scalaz-bintray".at("http://dl.bintray.com/scalaz/releases")
 resolvers ++= Resolver.sonatypeRepo("releases") :: Resolver.sonatypeRepo("snapshots") :: Nil
-
-lazy val client = (project in file("modules/client"))
-  .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
-  .dependsOn(commonJS)
-  .settings(
-    Settings.sjsCompileSettings,
-    scalaJSUseMainModuleInitializer := true,
-    scalacOptions += "-P:scalajs:sjsDefinedByDefault",
-    scalaJSUseMainModuleInitializer in Test := false,
-    jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv,
-    libraryDependencies ++= Dependencies.clientDeps.value
-  )
 
 fork := true // required for "sbt run" to pick up javaOptions
 javaOptions += "-Dplay.editor=http://localhost:63342/api/file/?file=%s&line=%s"
@@ -295,7 +273,6 @@ logLevel in Test := Level.Info
 
 scalacOptions in Test ++= Seq("-Yrangepos")
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
-JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
 
 PlayKeys.devSettings := Seq("play.server.http.idleTimeout" -> "220s")
 // run yarn install (if necessary) and yarn run serve on sbt run.

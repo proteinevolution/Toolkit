@@ -8,21 +8,23 @@ services:
     environment:
       - SUBMIT_MODE=LOCAL
       - SBT_OPTS=-Xms2G -Xmx4G -Xss2M
-    stdin_open: true
-    tty: true
+#    stdin_open: true
+#    tty: true
     ports:
       - 1234:1234
       - 8080:8080
+    command: ["sbt", "shell"]
     volumes:
       - .:/toolkit
 #      Uncommenting following 3 lines will speed up sbt boot time significatnly providing you have GeoIP built locally
-#      - ~/.ivy2:/root/.ivy2
-#      - ~/.sbt:/root/.sbt
-#      - ~/.coursier:/root/.coursier
+      - ~/.ivy2:/root/.ivy2
+      - ~/.sbt:/root/.sbt
+      - ~/.coursier:/root/.coursier
     links:
       - mongodb
     depends_on:
       - mongodb
+
 
   # The container for the MongoDB Database
   mongodb:

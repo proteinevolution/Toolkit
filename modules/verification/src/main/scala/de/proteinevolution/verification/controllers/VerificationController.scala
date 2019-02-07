@@ -15,7 +15,6 @@ import de.proteinevolution.models.database.users.{ User, UserToken }
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tools.ToolConfig
 import javax.inject.{ Inject, Singleton }
-import org.webjars.play.WebJarsUtil
 import play.api.Environment
 import play.api.cache._
 import play.api.libs.mailer._
@@ -26,7 +25,6 @@ import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class VerificationController @Inject()(
-    webJarsUtil: WebJarsUtil,
     userDao: UserDao,
     toolConfig: ToolConfig,
     userSessions: UserSessionService,
@@ -77,7 +75,6 @@ final class VerificationController @Inject()(
                       case Some(_) =>
                         Ok(
                           views.html.main(assets,
-                                          webJarsUtil,
                                           toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                                           "Account verification was successful. Please log in.",
                                           "",
@@ -87,7 +84,6 @@ final class VerificationController @Inject()(
                         Ok(
                           views.html.main(
                             assets,
-                            webJarsUtil,
                             toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                             "Verification was not successful due to a database error. Please try again later.",
                             "",
@@ -126,7 +122,6 @@ final class VerificationController @Inject()(
                             Ok(
                               views.html.main(
                                 assets,
-                                webJarsUtil,
                                 toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                                 "Password change verification was successful. Please log in with Your new password.",
                                 "",
@@ -137,7 +132,6 @@ final class VerificationController @Inject()(
                             Ok(
                               views.html.main(
                                 assets,
-                                webJarsUtil,
                                 toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                                 "Verification was not successful due to a database error. Please try again later.",
                                 "",
@@ -151,7 +145,6 @@ final class VerificationController @Inject()(
                         Ok(
                           views.html.main(
                             assets,
-                            webJarsUtil,
                             toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                             "The Password you have entered was insufficient, please create a new one.",
                             "",
@@ -176,7 +169,6 @@ final class VerificationController @Inject()(
                     case Some(_) =>
                       Ok(
                         views.html.main(assets,
-                                        webJarsUtil,
                                         toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                                         "",
                                         "passwordReset",
@@ -186,7 +178,6 @@ final class VerificationController @Inject()(
                       Ok(
                         views.html.main(
                           assets,
-                          webJarsUtil,
                           toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                           "Verification was not successful due to a database error. Please try again later.",
                           "",
@@ -198,7 +189,6 @@ final class VerificationController @Inject()(
                   Future.successful(
                     Ok(
                       views.html.main(assets,
-                                      webJarsUtil,
                                       toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                                       "There was an error finding your token.",
                                       "",
@@ -212,7 +202,6 @@ final class VerificationController @Inject()(
               Future.successful(
                 Ok(
                   views.html.main(assets,
-                                  webJarsUtil,
                                   toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                                   "The token you used is not valid.",
                                   "",
@@ -224,7 +213,6 @@ final class VerificationController @Inject()(
             Future.successful(
               Ok(
                 views.html.main(assets,
-                                webJarsUtil,
                                 toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                                 "There was an error finding your token.",
                                 "",
@@ -236,7 +224,6 @@ final class VerificationController @Inject()(
         Future.successful(
           Ok(
             views.html.main(assets,
-                            webJarsUtil,
                             toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                             "There was an error finding your account.",
                             "",

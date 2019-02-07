@@ -7,7 +7,6 @@ import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.tools.ToolConfig
 import javax.inject.{ Inject, Singleton }
-import org.webjars.play.WebJarsUtil
 import play.api.mvc._
 import play.api.{ Environment, Logger }
 
@@ -15,7 +14,6 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 final class Application @Inject()(
-    webJarsUtil: WebJarsUtil,
     toolConfig: ToolConfig,
     userSessions: UserSessionService,
     cc: ControllerComponents,
@@ -31,7 +29,6 @@ final class Application @Inject()(
     logger.info(InetAddress.getLocalHost.getHostName + "\n" + request.user.toString)
     Ok(
       views.html.main(assetsFinder,
-                      webJarsUtil,
                       toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
                       message,
                       "",
