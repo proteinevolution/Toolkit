@@ -8,8 +8,8 @@ services:
     environment:
       - SUBMIT_MODE=LOCAL
       - SBT_OPTS=-Xms2G -Xmx4G -Xss2M
-    stdin_open: true
-    tty: true
+#    stdin_open: true
+#    tty: true
     ports:
       - 1234:1234
       - 8080:8080
