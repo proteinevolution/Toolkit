@@ -1,4 +1,6 @@
-import sbt.Keys.scalacOptions
+import play.twirl.sbt.Import.TwirlKeys
+import sbt.Keys._
+import sbt.{Compile, Project, Setting}
 
 object Settings {
 
@@ -58,5 +60,21 @@ object Settings {
   lazy val compileSettings = Seq(scalacOptions ++= allFlags)
 
   lazy val sjsCompileSettings = Seq(scalacOptions ++= coreFlags)
+
+  lazy val disableDocs = Seq[Setting[_]](
+    sources in (Compile, doc) := Seq.empty,
+    publishArtifact in (Compile, packageDoc) := false
+  )
+
+  implicit class SettingsFromProject(project: Project) {
+    def commonSettings(projectName: String): Project =
+      project.settings(
+        name := projectName,
+        libraryDependencies ++= Dependencies.commonDeps,
+        Settings.compileSettings,
+        TwirlKeys.templateImports := Seq.empty,
+        disableDocs
+      )
+  }
 
 }
