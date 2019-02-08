@@ -17,27 +17,49 @@
 </template>
 
 <script lang="ts">
+    import Vue from 'vue';
     import AuthService from '@/services/AuthService';
     import {debounce} from 'lodash-es';
-    import {Parameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
     import {ConstraintError} from '@/types/toolkit/validation';
     import {CustomJobIdValidationResult} from '@/types/toolkit/jobs';
+    import mixins from 'vue-typed-mixins';
 
-    export default ToolParameterMixin.extend({
+    export default mixins(ToolParameterMixin).extend({
         name: 'CustomJobIdInput',
         props: {},
         data() {
             return {
-                customJobId: '',
-                valid: null,
+                valid: null as boolean | null,
                 suggestion: '',
             };
         },
         computed: {
-            // necessary to override mixin values
             parameterName() {
+                // override mixin value
                 return 'jobID';
+            },
+            customJobId: { // handle submission manually (not via ToolParameterMixin) to exclude empty strings
+                get(): string {
+                    if (!this.submission.hasOwnProperty(this.parameterName)) {
+                        return '';
+                    }
+                    return this.submission[this.parameterName];
+                },
+                set(value: string) {
+                    // don't set submission if its empty
+                    if (value) {
+                        Vue.set(this.submission, this.parameterName, value);
+                    } else {
+                        Vue.delete(this.submission, this.parameterName);
+                    }
+                },
+            },
+            debouncedValidateCustomJobId() {
+                // There is a weird bug when the method is debounced directly, this is a workaround.
+                // When debouncing directly, the 'this' parameter somehow isn't bound correctly. This leads to
+                // wrong updates of the component data.
+                return debounce(this.validateCustomJobId, 500);
             },
         },
         watch: {
@@ -47,40 +69,35 @@
                     this.valid = null;
                     this.suggestion = '';
                     if (value.length === 0) {
-                        this.resetSubmissionValue();
                         this.setError(undefined);
+                        return;
                     }
-                    this.validateCustomJobId(value);
+                    this.debouncedValidateCustomJobId(value);
                 },
             },
         },
         methods: {
-            validateCustomJobId: debounce(function(this: any, value: string) {
-                if (value.length === 0) {
-                    this.resetSubmissionValue();
-                    this.setError(null);
-                } else if (value.length < 3) {
+            validateCustomJobId(value: string) {
+                if (value.length < 3) {
                     this.setError({
                         textKey: 'constraints.customerJobIdTooShort',
                     });
                     this.valid = false;
                 } else {
-                    this.setSubmissionValue(value);
                     AuthService.validateJobId(value)
                         .then((result: CustomJobIdValidationResult) => {
-                            if (this.customJobId.length === 0) {
-                                this.valid = null;
-                                return;
+                            if (this.customJobId === value) {
+                                // only update the error if value hasn't changed since api call
+                                const error: ConstraintError | undefined = !result.exists ? undefined : {
+                                    textKey: 'constraints.invalidCustomJobId',
+                                };
+                                this.setError(error);
+                                this.suggestion = result.suggested ? result.suggested : '';
+                                this.valid = !result.exists;
                             }
-                            const error: ConstraintError | undefined = !result.exists ? undefined : {
-                                textKey: 'constraints.invalidCustomJobId',
-                            };
-                            this.setError(error);
-                            this.suggestion = result.suggested;
-                            this.valid = !result.exists;
                         });
                 }
-            }, 500),
+            },
             takeSuggestion() {
                 this.customJobId = this.suggestion;
             },

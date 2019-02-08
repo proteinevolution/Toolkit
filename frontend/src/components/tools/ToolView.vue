@@ -147,7 +147,7 @@
                 immediate: true,
                 handler(value: object | undefined) {
                     if (value) {
-                        this.submission = value;
+                        this.submission = {... value};
                     }
                 },
             },

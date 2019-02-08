@@ -1,6 +1,6 @@
 <template>
     <b-form-group :label="parameter.label">
-        <b-form-input v-model="modellerKey"
+        <b-form-input v-model="submissionValue"
                       type="text"
                       size="sm"
                       :state="valid"
@@ -12,11 +12,12 @@
 <script lang="ts">
     import AuthService from '@/services/AuthService';
     import {debounce} from 'lodash-es';
+    import mixins from 'vue-typed-mixins';
     import {Parameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
     import {ConstraintError} from '@/types/toolkit/validation';
 
-    export default ToolParameterMixin.extend({
+    export default mixins(ToolParameterMixin).extend({
         name: 'ModellerParameter',
         props: {
             /*
@@ -27,19 +28,23 @@
         },
         data() {
             return {
-                modellerKey: '',
                 valid: null,
             };
         },
+        computed: {
+            defaultSubmissionValue(): any {
+                // overrides the property in ToolParameterMixin
+                return '';
+            },
+        },
         watch: {
-            modellerKey: {
+            submissionValue: {
                 immediate: true,
                 handler(value: string) {
                     this.valid = null;
                     if (value.length > 0) {
                         this.validateModellerKey(value);
                     }
-                    this.setSubmissionValue(value);
                 },
             },
         },
