@@ -7,11 +7,11 @@ import better.files._
 import cats.data.OptionT
 import cats.implicits._
 import de.proteinevolution.base.helpers.ToolkitTypes
+import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.common.models.database.jobs.JobState.{ Done, Pending, Prepared }
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobFolderValidation
-import de.proteinevolution.common.models.ConstantsV2
-import de.proteinevolution.common.models.database.jobs.JobState.{ Done, Pending, Prepared }
 import de.proteinevolution.tools.ToolConfig
 import de.proteinevolution.tools.forms.{ JobForm, ToolForm }
 import javax.inject.{ Inject, Singleton }
@@ -90,7 +90,7 @@ class ResultGetService @Inject()(
 
   private def cleanLostJobs(jobId: String): OptionT[Future, Unit] = {
     for {
-      job <- OptionT(jobDao.findJob(BSONDocument(Job.JOBID -> jobId)))
+      job <- OptionT(jobDao.findJob(jobId))
       jobs <- OptionT.liftF(
         jobDao
           .findJobs(BSONDocument(Job.HASH -> job.hash))
@@ -98,7 +98,7 @@ class ResultGetService @Inject()(
       )
     } yield {
       jobs.foreach { job =>
-        jobDao.removeJob(BSONDocument(Job.JOBID -> job.jobID))
+        jobDao.removeJob(job.jobID)
         resultCache.remove(job.jobID)
       }
     }

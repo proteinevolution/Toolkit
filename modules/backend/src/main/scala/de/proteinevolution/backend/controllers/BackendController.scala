@@ -9,16 +9,15 @@ import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.common.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.common.models.database.users.User
+import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.tools.ToolConfig
 import io.circe.Json
 import io.circe.syntax._
 import javax.inject.{ Inject, Named, Singleton }
 import play.api.Logging
 import play.api.mvc._
-import reactivemongo.bson.{ BSONDateTime, BSONDocument }
+import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext
 
@@ -66,18 +65,7 @@ final class BackendController @Inject()(
         statsUpdated.flatMap { statistics =>
           if (statistics.lastPushed.compareTo(firstOfLastMonth) < 0) {
             jobDao
-              .findJobEventLogs(
-                BSONDocument(
-                  JobEventLog.EVENTS ->
-                  BSONDocument(
-                    "$elemMatch" ->
-                    BSONDocument(
-                      JobEvent.TIMESTAMP ->
-                      BSONDocument("$lt" -> BSONDateTime(firstOfLastMonth.toInstant.toEpochMilli))
-                    )
-                  )
-                )
-              )
+              .findJobEventLogs(firstOfLastMonth.toInstant.toEpochMilli)
               .map { jobEventLogs =>
                 logger.info(
                   "Collected " + jobEventLogs.length + " elements from the job event logs. Last Push: " + statistics.lastPushed
