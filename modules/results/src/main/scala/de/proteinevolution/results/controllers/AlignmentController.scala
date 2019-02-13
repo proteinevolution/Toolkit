@@ -4,7 +4,7 @@ import cats.data.OptionT
 import cats.implicits._
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.results.db.ResultFileAccessor
-import de.proteinevolution.models.ConstantsV2
+import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.results.models.{ AlignmentClustalLoadHitsForm, AlignmentGetForm, AlignmentLoadHitsForm }
 import de.proteinevolution.results.results.{ AlignmentResult, Common }
 import javax.inject.Inject

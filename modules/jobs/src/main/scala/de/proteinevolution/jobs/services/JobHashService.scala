@@ -5,8 +5,8 @@ import cats.data.OptionT
 import cats.implicits._
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.Job
-import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.models.database.jobs.JobState.Done
+import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.common.models.database.jobs.JobState.Done
 import de.proteinevolution.tel.env.Env
 import javax.inject.{ Inject, Singleton }
 import reactivemongo.bson.BSONDocument

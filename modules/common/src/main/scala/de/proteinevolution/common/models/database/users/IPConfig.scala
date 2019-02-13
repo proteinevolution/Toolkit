@@ -1,8 +1,8 @@
-package de.proteinevolution.models.database.users
+package de.proteinevolution.common.models.database.users
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.models.util.{ ZonedDateTimeHelper => h }
+import de.proteinevolution.common.models.util.{ ZonedDateTimeHelper => h }
 import io.circe.{ Encoder, Json }
 import reactivemongo.bson._
 

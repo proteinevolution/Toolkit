@@ -1,6 +1,6 @@
 package exports
 
-import de.proteinevolution.models.ToolName
+import de.proteinevolution.common.models.ToolName
 import org.scalajs.dom
 import org.scalajs.dom.raw.Node
 import org.scalajs.jquery.jQuery

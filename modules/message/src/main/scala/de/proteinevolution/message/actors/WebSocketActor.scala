@@ -12,8 +12,8 @@ import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobActorAccess
 import de.proteinevolution.message.actors.WebSocketActor.{ LogOut, MaintenanceAlert }
-import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.models.database.jobs.JobState.Running
+import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.common.models.database.jobs.JobState.Running
 import de.proteinevolution.auth.models.Session.ChangeSessionID
 import de.proteinevolution.tools.ToolConfig
 import io.circe.syntax._

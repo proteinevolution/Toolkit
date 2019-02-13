@@ -1,8 +1,8 @@
 package de.proteinevolution.results.services
 
 import cats.data.Reader
-import de.proteinevolution.models.ToolName
-import de.proteinevolution.models.ToolName._
+import de.proteinevolution.common.models.ToolName
+import de.proteinevolution.common.models.ToolName._
 import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.results.results._
 import de.proteinevolution.results.services.ResultsRepository.ResultsService

@@ -1,4 +1,4 @@
-package de.proteinevolution.models.database.jobs
+package de.proteinevolution.common.models.database.jobs
 
 import de.proteinevolution.base.helpers.ToolkitTypes._
 import io.circe.{ Decoder, Encoder, HCursor }

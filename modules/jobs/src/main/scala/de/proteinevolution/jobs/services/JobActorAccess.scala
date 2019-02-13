@@ -2,7 +2,7 @@ package de.proteinevolution.jobs.services
 
 import akka.actor.{ ActorRef, ActorSystem, Props }
 import de.proteinevolution.jobs.actors.JobActor
-import de.proteinevolution.models.ConstantsV2
+import de.proteinevolution.common.models.ConstantsV2
 import javax.inject.{ Inject, Singleton }
 
 @Singleton

@@ -3,7 +3,7 @@ package de.proteinevolution.jobs.services
 import better.files._
 import com.typesafe.config.Config
 import de.proteinevolution.jobs.models.Job
-import de.proteinevolution.parsers.FASTA
+import de.proteinevolution.common.parsers.FASTA
 import de.proteinevolution.tel.RunscriptPathProvider
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.util.FNV

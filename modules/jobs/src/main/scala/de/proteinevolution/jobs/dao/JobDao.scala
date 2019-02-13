@@ -3,7 +3,7 @@ package de.proteinevolution.jobs.dao
 import java.time.ZonedDateTime
 
 import de.proteinevolution.jobs.models.Job
-import de.proteinevolution.models.database.statistics.JobEventLog
+import de.proteinevolution.common.models.database.statistics.JobEventLog
 import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.{ Cursor, ReadConcern }

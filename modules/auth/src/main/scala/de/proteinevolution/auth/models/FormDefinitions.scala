@@ -2,7 +2,7 @@ package de.proteinevolution.auth.models
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.models.database.users.{ User, UserData }
+import de.proteinevolution.common.models.database.users.{ User, UserData }
 import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Form
 import play.api.data.Forms._

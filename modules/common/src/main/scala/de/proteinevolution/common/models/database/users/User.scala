@@ -1,8 +1,8 @@
-package de.proteinevolution.models.database.users
+package de.proteinevolution.common.models.database.users
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.models.util.{ ZonedDateTimeHelper => helper }
+import de.proteinevolution.common.models.util.{ ZonedDateTimeHelper => helper }
 import io.circe.syntax._
 import io.circe.{ Encoder, Json }
 import org.mindrot.jbcrypt.BCrypt

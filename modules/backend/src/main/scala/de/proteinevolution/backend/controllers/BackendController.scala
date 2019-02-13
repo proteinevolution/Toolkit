@@ -10,8 +10,8 @@ import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, Delet
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
-import de.proteinevolution.models.database.users.User
+import de.proteinevolution.common.models.database.statistics.{ JobEvent, JobEventLog }
+import de.proteinevolution.common.models.database.users.User
 import de.proteinevolution.tools.ToolConfig
 import io.circe.Json
 import io.circe.syntax._

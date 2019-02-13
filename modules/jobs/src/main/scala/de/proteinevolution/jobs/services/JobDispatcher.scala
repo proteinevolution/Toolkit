@@ -10,8 +10,8 @@ import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.jobs.actors.JobActor.PrepareJob
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.{ Job, JobSubmitError }
-import de.proteinevolution.models.database.users.User
-import de.proteinevolution.models.{ ConstantsV2, ToolName }
+import de.proteinevolution.common.models.database.users.User
+import de.proteinevolution.common.models.{ ConstantsV2, ToolName }
 import javax.inject.{ Inject, Singleton }
 import play.api.Logging
 import play.api.libs.Files
