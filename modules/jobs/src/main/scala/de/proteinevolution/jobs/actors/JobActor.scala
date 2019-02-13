@@ -78,7 +78,7 @@ class JobActor @Inject()(
       case Some(job) => // Everything is fine. Return the job.
         fuccess(Some(job))
       case None => // Job is not in the current jobs.. try to get it back.
-        jobDao.findJob(BSONDocument(Job.JOBID -> jobID)).map {
+        jobDao.findJob(jobID).map {
           case Some(job) =>
             // Get the job back into the current jobs
             currentJobs = currentJobs.updated(job.jobID, job)
@@ -199,7 +199,7 @@ class JobActor @Inject()(
       }
 
     // Remove the job from mongoDB collection
-    jobDao.removeJob(BSONDocument(Job.JOBID -> job.jobID)).foreach { writeResult =>
+    jobDao.removeJob(job.jobID).foreach { writeResult =>
       if (writeResult.ok) {
         if (verbose) log.info(s"[JobActor.Delete] Deletion of Job was successful:\n${job.toString()}")
       } else {
@@ -345,10 +345,7 @@ class JobActor @Inject()(
               log.info(s"[JobActor[$jobActorNumber].CheckJobHashes] Job hash: " + jobHash)
               // Find the Jobs in the Database
               jobDao
-                .findAndSortJobs(
-                  BSONDocument(Job.HASH        -> jobHash),
-                  BSONDocument(Job.DATECREATED -> -1)
-                )
+                .findAndSortJobs(jobHash)
                 .foreach { jobList =>
                   // Check if the jobs are owned by the user, unless they are public and if the job is Done
                   jobList.find(
@@ -381,7 +378,7 @@ class JobActor @Inject()(
               log.info(
                 s"[JobActor[$jobActorNumber].Delete] jobID $jobID not found in current jobs. Loading job from DB."
               )
-            jobDao.findJob(BSONDocument(Job.JOBID -> jobID))
+            jobDao.findJob(jobID)
         }
         .foreach {
           case Some(job) =>
