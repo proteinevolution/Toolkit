@@ -62,9 +62,7 @@ object HHBlitsHSP {
         (for {
           struct <- h.hcursor.downField("struc").as[String]
           hsp    <- a.hcursor.as[HHBlitsHSP](hhblitsHSPDecoder(struct))
-        } yield {
-          hsp
-        }).toOption
+        } yield hsp).toOption
     }
   }
 

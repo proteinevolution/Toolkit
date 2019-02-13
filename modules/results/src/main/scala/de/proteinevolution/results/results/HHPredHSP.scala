@@ -47,7 +47,7 @@ object HHPredHSP {
         description    <- c.downField("header").as[String]
         num            <- c.downField("no").as[Int]
         confidence     <- c.downField("confidence").as[Option[String]]
-      } yield {
+      } yield
         new HHPredHSP(
           queryResult,
           templateResult,
@@ -58,8 +58,7 @@ object HHPredHSP {
           ss_score,
           confidence.getOrElse(""),
           agree.length
-        )
-    }
+      )
 
   def hhpredHSPListDecoder(hits: List[Json], alignments: List[Json]): List[HHPredHSP] = {
     alignments.zip(hits).flatMap {
@@ -68,9 +67,7 @@ object HHPredHSP {
           struct   <- h.hcursor.downField("struc").as[Option[String]]
           ss_score <- h.hcursor.downField("ss").as[Option[Double]]
           hsp      <- a.hcursor.as[HHPredHSP](hhpredHSPDecoder(struct.getOrElse(""), ss_score.getOrElse(-1D)))
-        } yield {
-          hsp
-        }).toOption
+        } yield hsp).toOption
     }
   }
 

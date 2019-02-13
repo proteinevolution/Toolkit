@@ -30,9 +30,7 @@ object General {
       for {
         accession <- c.downArray.first.downArray.first.as[String]
         seq       <- c.downArray.first.downArray.right.as[String]
-      } yield {
-        new SingleSeq(accession, seq)
-    }
+      } yield new SingleSeq(accession, seq)
 
   }
 
