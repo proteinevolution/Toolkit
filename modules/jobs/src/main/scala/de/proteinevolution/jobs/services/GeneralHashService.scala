@@ -5,7 +5,6 @@ import com.typesafe.config.Config
 import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.parsers.FASTA
 import de.proteinevolution.tel.RunscriptPathProvider
-import de.proteinevolution.tel.env.Env
 import de.proteinevolution.util.FNV
 import javax.inject.{ Inject, Singleton }
 import play.api.{ Configuration, Logging }
@@ -31,7 +30,7 @@ final class GeneralHashService @Inject()(runscriptPathProvider: RunscriptPathPro
     MurmurHash3.stringHash(config.get[Config](s"Tools.$name").toString, 0).toString
   }
 
-  def generateJobHash(job: Job, params: Map[String, String], env: Env): String = {
+  def generateJobHash(job: Job, params: Map[String, String]): String = {
     // filter unique parameters
     val paramsWithoutUniques: Map[String, String] =
     params - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid" - Job.IPHASH - "parentID" - "htb_length" - "alignment" - "file"
@@ -52,13 +51,13 @@ final class GeneralHashService @Inject()(runscriptPathProvider: RunscriptPathPro
 
     val dbParam = params match {
       case x if x.isDefinedAt("standarddb") =>
-        val STANDARDDB = (env.get("STANDARD") + "/" + params.getOrElse("standarddb", "")).toFile
+        val STANDARDDB = (config.get[String]("tel.env.STANDARD") + "/" + params.getOrElse("standarddb", "")).toFile
         (Some("standarddb"), Some(STANDARDDB.lastModifiedTime.toString))
       case x if x.isDefinedAt("hhsuitedb") =>
-        val HHSUITEDB = env.get("HHSUITE").toFile
+        val HHSUITEDB = config.get[String]("tel.env.HHSUITE").toFile
         (Some("hhsuitedb"), Some(HHSUITEDB.lastModifiedTime.toString))
       case x if x.isDefinedAt("hhblitsdb") =>
-        val HHBLITSDB = env.get("HHBLITS").toFile
+        val HHBLITSDB = config.get[String]("tel.env.HHBLITS").toFile
         (Some("hhblitsdb"), Some(HHBLITSDB.lastModifiedTime.toString))
       case _ => (None, None)
     }

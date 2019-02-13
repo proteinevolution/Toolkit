@@ -1,21 +1,17 @@
 package de.proteinevolution.tel.execution
 
-import javax.inject.{ Inject, Named, Singleton }
+import javax.inject.{Inject, Named, Singleton}
 import better.files._
 import de.proteinevolution.tel.TELRegex
 import java.nio.file.attribute.PosixFilePermission
 
-import de.proteinevolution.tel.env.Env
-import de.proteinevolution.tel.execution.WrapperExecutionFactory.{
-  PendingExecution,
-  RegisteredExecution,
-  RunningExecution
-}
+import de.proteinevolution.tel.execution.WrapperExecutionFactory.{PendingExecution, RegisteredExecution, RunningExecution}
+import play.api.Configuration
 
 import scala.sys.process.Process
 
 @Singleton
-class WrapperExecutionFactory @Inject()(@Named("wrapperPath") wrapperPath: String, env: Env) extends TELRegex {
+class WrapperExecutionFactory @Inject()(@Named("wrapperPath") wrapperPath: String, config: Configuration) extends TELRegex {
 
   private final val filePermissions = Set(
     PosixFilePermission.OWNER_EXECUTE,
@@ -42,7 +38,7 @@ class WrapperExecutionFactory @Inject()(@Named("wrapperPath") wrapperPath: Strin
         wrapper.write(
           envString.replaceAllIn(
             runscriptString.replaceAllIn(wrapperPath.toFile.contentAsString, runscript.pathAsString),
-            m => env.get(m.group("constant"))
+            m => config.get[String](m.group("constant"))
           )
         )
         wrapper.setPermissions(filePermissions)

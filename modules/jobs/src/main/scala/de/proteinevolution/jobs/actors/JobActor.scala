@@ -12,29 +12,29 @@ import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate.JobFinishedMail
 import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.cluster.api.Polling.PolledJobs
-import de.proteinevolution.cluster.api.{ QStat, Qdel }
+import de.proteinevolution.cluster.api.{QStat, Qdel}
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.models.{ Job, JobClusterData }
-import de.proteinevolution.jobs.services.{ GeneralHashService, JobTerminator }
+import de.proteinevolution.jobs.models.{Job, JobClusterData}
+import de.proteinevolution.jobs.services.{GeneralHashService, JobTerminator}
 import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.models.database.jobs.JobState._
 import de.proteinevolution.models.database.jobs._
-import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
+import de.proteinevolution.models.database.statistics.{JobEvent, JobEventLog}
 import de.proteinevolution.models.database.users.User
 import de.proteinevolution.tel.TEL
-import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
 import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecution
-import de.proteinevolution.tel.execution.{ ExecutionContext, WrapperExecutionFactory }
+import de.proteinevolution.tel.execution.{ExecutionContext, WrapperExecutionFactory}
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
 import javax.inject.Inject
 import play.api.Configuration
-import play.api.cache.{ NamedCache, SyncCacheApi }
+import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
+import scala.collection.mutable
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -42,7 +42,6 @@ import scala.language.postfixOps
 class JobActor @Inject()(
     runscriptManager: RunscriptManager,
     environment: play.Environment,
-    env: Env,
     hashService: GeneralHashService,
     jobDao: JobDao,
     userDao: UserDao,
@@ -71,6 +70,8 @@ class JobActor @Inject()(
 
   // Running executions
   @volatile private var runningExecutions: Map[String, RunningExecution] = Map.empty
+
+  private val env = mutable.Map(config.get[Map[String, String]]("tel.env").toSeq: _*)
 
   private def getCurrentJob(jobID: String): Future[Option[Job]] = {
     // Check if the job is still in the current jobs.
@@ -257,7 +258,7 @@ class JobActor @Inject()(
               log.info(
                 s"[JobActor[$jobActorNumber].sendJobUpdateMail] Sending eMail to job owner for job ${job.jobID}: Job is ${job.status.toString}"
               )
-              val eMail = JobFinishedMail(user, job.jobID, job.status, environment, env)
+              val eMail = JobFinishedMail(user, job.jobID, job.status, environment, config)
               eMail.send
             case None => NotUsed
           }
@@ -341,7 +342,7 @@ class JobActor @Inject()(
             case Some(executionContext) =>
               // Ensure that the jobID is not being hashed
               val params  = executionContext.reloadParams
-              val jobHash = hashService.generateJobHash(job, params, env)
+              val jobHash = hashService.generateJobHash(job, params)
               log.info(s"[JobActor[$jobActorNumber].CheckJobHashes] Job hash: " + jobHash)
               // Find the Jobs in the Database
               jobDao
@@ -468,7 +469,7 @@ class JobActor @Inject()(
               // get the params
               val params = executionContext.reloadParams
               // generate job hash
-              val jobHash = Some(hashService.generateJobHash(job, params, env))
+              val jobHash = Some(hashService.generateJobHash(job, params))
 
               // Set memory allocation on the cluster and let the clusterMonitor define the multiplier.
               // To receive a catchable signal in an SGE job, one must set soft limits
@@ -483,15 +484,11 @@ class JobActor @Inject()(
               val s_vmem  = h_vmem * 0.95
               val threads = math.ceil(config.get[Int](s"Tools.${job.tool}.threads") * TEL.threadsFactor).toInt
 
-              env.configure(s"MEMORY", h_vmem.toString + "G")
-              env.configure(s"SOFTMEMORY", s_vmem.toString + "G")
-              env.configure(s"THREADS", threads.toString)
-              env.configure(s"HARDRUNTIME", h_rt.toString)
-              env.configure(s"SOFTRUNTIME", s_rt.toString)
-              env.configure(s"SUBMITMODE", config.get[String]("submit_mode"))
-              env.configure(s"SGENODES", config.get[String]("sge_nodes"))
-              env.configure(s"DATABASES", config.get[String]("db_root"))
-              env.configure(s"BIOPROGSROOT", config.get[String]("bioprogs_root"))
+              env.put(s"MEMORY", h_vmem.toString + "G")
+              env.put(s"SOFTMEMORY", s_vmem.toString + "G")
+              env.put(s"THREADS", threads.toString)
+              env.put(s"HARDRUNTIME", h_rt.toString)
+              env.put(s"SOFTRUNTIME", s_rt.toString)
 
               log.info(s"$jobID is running with $h_vmem GB h_vmem")
               log.info(s"$jobID is running with $threads threads")

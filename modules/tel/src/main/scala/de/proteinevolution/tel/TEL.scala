@@ -1,6 +1,5 @@
 package de.proteinevolution.tel
 
-import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tel.param.Params
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
@@ -10,7 +9,7 @@ import play.api.Configuration
  *
  */
 @Singleton
-class TEL @Inject()(env: Env, params: Params, config: Configuration) extends TELRegex with TELConstants {
+class TEL @Inject()(params: Params, config: Configuration) extends TELRegex with TELConstants {
 
   // Ignore the following keys when writing parameters // TODO This is a hack and must be changed
   val ignore: Seq[String] = Array("jobid", "newSubmission", "start", "edit")

@@ -2,22 +2,22 @@ package de.proteinevolution.backend.actors
 
 import java.time.ZonedDateTime
 
-import akka.actor.{ Actor, ActorLogging, Cancellable }
+import akka.actor.{Actor, ActorLogging, Cancellable}
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate.OldAccountEmail
-import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
+import de.proteinevolution.backend.actors.DatabaseMonitor.{DeleteOldJobs, DeleteOldUsers}
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.jobs.actors.JobActor.Delete
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobActorAccess
 import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.models.database.statistics.{ StatisticsObject, UserStatistic }
+import de.proteinevolution.models.database.statistics.{StatisticsObject, UserStatistic}
 import de.proteinevolution.models.database.users.User
-import de.proteinevolution.tel.env.Env
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
+import play.api.Configuration
 import play.api.libs.mailer.MailerClient
-import reactivemongo.bson.{ BSONDateTime, BSONDocument }
+import reactivemongo.bson.{BSONDateTime, BSONDocument}
 
 import scala.concurrent.ExecutionContext
 
@@ -29,7 +29,7 @@ final class DatabaseMonitor @Inject()(
     jobActorAccess: JobActorAccess,
     constants: ConstantsV2,
     environment: play.Environment,
-    env: Env
+    implicit val config: Configuration
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
     extends Actor
     with ActorLogging {
@@ -158,7 +158,7 @@ final class DatabaseMonitor @Inject()(
           )
 
         val userIDs = users.map { user =>
-          val mail = OldAccountEmail(user, registeredUserDeletionDateForEmail, environment, env)
+          val mail = OldAccountEmail(user, registeredUserDeletionDateForEmail, environment, config)
           mail.send
           if (verbose)
             log.info(

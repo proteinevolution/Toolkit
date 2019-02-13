@@ -7,19 +7,18 @@ import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.auth.models.Session.ChangeSessionID
-import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
+import de.proteinevolution.auth.models.{FormDefinitions, JSONTemplate}
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.models.database.users.{ User, UserToken }
-import de.proteinevolution.tel.env.Env
+import de.proteinevolution.models.database.users.{User, UserToken}
 import io.circe.syntax._
-import javax.inject.{ Inject, Singleton }
-import play.api.Logging
-import play.api.cache.{ NamedCache, SyncCacheApi }
+import javax.inject.{Inject, Singleton}
+import play.api.{Configuration, Logging}
+import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
-import play.api.mvc.{ Action, AnyContent, ControllerComponents }
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthController @Inject()(
@@ -28,7 +27,7 @@ class AuthController @Inject()(
     cc: ControllerComponents,
     @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
     environment: play.Environment,
-    env: Env
+    config: Configuration,
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
     extends ToolkitController(cc)
     with JSONTemplate
@@ -177,7 +176,7 @@ class AuthController @Inject()(
                         // All done. User is registered, now send the welcome eMail
                         registeredUser.userToken match {
                           case Some(token) =>
-                            val eMail = NewUserWelcomeMail(registeredUser, token.token, environment, env)
+                            val eMail = NewUserWelcomeMail(registeredUser, token.token, environment, config)
                             eMail.send
                             Ok(signedUp)
                           case None => Ok(tokenMismatch())
@@ -232,7 +231,7 @@ class AuthController @Inject()(
                     case Some(registeredUser) =>
                       // All done. User is registered, now send the welcome eMail
                       val eMail =
-                        ResetPasswordMail(registeredUser, token.token, environment: play.Environment, env: Env)
+                        ResetPasswordMail(registeredUser, token.token, environment: play.Environment, config)
                       eMail.send
                       Ok(passwordRequestSent)
                     case None =>
@@ -282,7 +281,7 @@ class AuthController @Inject()(
                       .map {
                         case Some(updatedUser) =>
                           // All done. Now send the eMail to notify the user that the password has been changed
-                          val eMail = PasswordChangedMail(updatedUser, environment: play.Environment, env: Env)
+                          val eMail = PasswordChangedMail(updatedUser, environment, config)
                           eMail.send
                           Ok(passwordChanged(updatedUser))
                         case None =>
@@ -333,7 +332,7 @@ class AuthController @Inject()(
                   userSessions.modifyUserWithCache(selector, modifier).map {
                     case Some(updatedUser) =>
                       // All done. Now send the eMail
-                      val eMail = ChangePasswordMail(updatedUser, token.token, environment: play.Environment, env: Env)
+                      val eMail = ChangePasswordMail(updatedUser, token.token, environment: play.Environment, config)
                       eMail.send
                       // Everything is ok, let the user know that they are logged in now
                       Ok(passwordChanged(updatedUser))

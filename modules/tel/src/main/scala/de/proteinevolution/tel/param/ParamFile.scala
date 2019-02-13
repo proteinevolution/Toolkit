@@ -1,18 +1,19 @@
 package de.proteinevolution.tel.param
 
 import java.nio.file.attribute.PosixFilePermission
-import javax.inject.{ Inject, Singleton }
 
+import javax.inject.{Inject, Singleton}
 import better.files._
-import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tel.param.Implicits._
+
 import scala.collection.immutable.ListMap
+import scala.collection.mutable
 
 /**
   Provides methods to read Generative Params from a file
  */
 @Singleton
-class GenerativeParamFileParser @Inject()(env: Env) {
+class GenerativeParamFileParser @Inject()(env: mutable.Map[String, String]) {
 
   private final val genKeyword = "GEN" // Denotes the parameter in the descriptor file as generative
 
@@ -51,10 +52,10 @@ abstract class GenerativeParamFile(name: String) extends GenerativeParam(name) {
 class ExecGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String])
     extends GenerativeParamFile(name) {
 
-  private var env: Option[Env] = None
+  private var env: Option[mutable.Map[String, String]] = None
   import scala.sys.process.Process
 
-  override def withEnvironment(env: Env): ExecGenParamFile = {
+  def withEnvironment(env: mutable.Map[String, String]): ExecGenParamFile = {
     this.env = Some(env)
     this.load()
     this
@@ -77,7 +78,7 @@ class ExecGenParamFile(name: String, path: String, private var allowed: Set[Stri
             PosixFilePermission.GROUP_WRITE
           )
         )
-        tempFile.write(envString.replaceAllIn(path.toFile.contentAsString, m => e.get(m.group("constant"))))
+        tempFile.write(envString.replaceAllIn(path.toFile.contentAsString, m => e.getOrElse(m.group("constant"), "")))
         val x = Process(tempFile.pathAsString).!!.split('\n')
         tempFile.delete(swallowIOExceptions = true)
         x
@@ -98,7 +99,7 @@ class ListGenParamFile(name: String, path: String, private var allowed: Set[Stri
 
   private val f = path.toFile
 
-  override def withEnvironment(env: Env): ListGenParamFile = this
+  def withEnvironment(env: mutable.Map[String, String]): ListGenParamFile = this
 
   // Load file upon instantiation
   load()
