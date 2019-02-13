@@ -44,7 +44,7 @@ object HmmerResult {
       query           <- c.downField("query").as[SingleSeq]
       tmpred          <- c.downField(jobId).downField("TMPRED").as[Option[String]]
       coilpred        <- c.downField(jobId).downField("COILPRED").as[Option[String]]
-    } yield {
+    } yield
       new HmmerResult(
         hsps,
         hsps.length,
@@ -53,7 +53,6 @@ object HmmerResult {
         db.getOrElse(""),
         tmpred.getOrElse("0"),
         coilpred.getOrElse("1")
-      )
-  }
+    )
 
 }

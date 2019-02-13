@@ -17,8 +17,6 @@ object PatSearchResult {
     for {
       hitList <- json.hcursor.downField(jobId).downField("hits").as[List[Hit]]
       len     <- json.hcursor.downField(jobId).downField("len").as[Int]
-    } yield {
-      new PatSearchResult(hitList, len)
-    }
+    } yield new PatSearchResult(hitList, len)
 
 }

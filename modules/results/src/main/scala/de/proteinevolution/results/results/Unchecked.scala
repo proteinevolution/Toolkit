@@ -9,8 +9,6 @@ object Unchecked {
   implicit val uncheckedDecoder: Decoder[Unchecked] = (c: HCursor) =>
     for {
       ids <- c.downField("ids").downField("ACC_IDS").as[List[String]]
-    } yield {
-      new Unchecked(ids)
-  }
+    } yield new Unchecked(ids)
 
 }
