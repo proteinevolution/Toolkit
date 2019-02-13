@@ -83,9 +83,7 @@ object PSIBlastResult {
       eval <- cursor.downField("hsps").downArray.first.downField("evalue").as[Double].toOption
       num  <- cursor.downField("num").as[Int].toOption
       if eval >= eValue.toDouble
-    } yield {
-      (eval, num)
-    }).sortWith(_._1 < _._1).toMap.headOption.map(_._2)
+    } yield (eval, num)).sortWith(_._1 < _._1).toMap.headOption.map(_._2)
   }
 
 }

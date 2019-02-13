@@ -48,7 +48,7 @@ object HHompHSP {
         agree          <- c.downField("agree").as[String]
         description    <- c.downField("header").as[String]
         num            <- c.downField("no").as[Int]
-      } yield {
+      } yield
         new HHompHSP(
           queryResult,
           templateResult,
@@ -58,8 +58,7 @@ object HHompHSP {
           num,
           ss_score,
           agree.length
-        )
-    }
+      )
 
   def hhompHSPListDecoder(hits: List[Json], alignments: List[Json]): List[HHompHSP] = {
     alignments.zip(hits).flatMap {
@@ -68,9 +67,7 @@ object HHompHSP {
           struct   <- h.hcursor.downField("struc").as[String]
           ss_score <- h.hcursor.downField("ss").as[Double]
           hsp      <- a.hcursor.as[HHompHSP](hhompHSPDecoder(struct, ss_score))
-        } yield {
-          hsp
-        }).toOption
+        } yield hsp).toOption
     }
   }
 

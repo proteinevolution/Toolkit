@@ -11,9 +11,7 @@ object TPRPredResult {
     for {
       info <- json.hcursor.downField(jobId).downField("desc").as[List[Desc]]
       hits <- json.hcursor.downField(jobId).downField("hits").as[List[Hit]]
-    } yield {
-      new TPRPredResult(info, hits)
-    }
+    } yield new TPRPredResult(info, hits)
 
   case class Desc(title: Option[String], value: Option[String])
 
