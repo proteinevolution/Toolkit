@@ -54,6 +54,7 @@ lazy val help = (project in file("modules/help"))
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val jobs = (project in file("modules/jobs"))
+  .commonSettings("de.proteinevolution.jobs")
   .enablePlugins(PlayScala)
   .dependsOn(commonJVM, auth, base, clusterApi, tel, tools, util)
   .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
