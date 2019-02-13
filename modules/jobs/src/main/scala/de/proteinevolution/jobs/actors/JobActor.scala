@@ -269,7 +269,12 @@ class JobActor @Inject()(
     }
   }
 
+  override def preStart(): Unit = {
+    val _ = context.system.eventStream.subscribe(self, classOf[PolledJobs])
+  }
+
   override def postStop(): Unit = {
+    context.system.eventStream.unsubscribe(self, classOf[PolledJobs])
     val _ = Tick.cancel()
   }
   override def receive = LoggingReceive {
@@ -344,23 +349,21 @@ class JobActor @Inject()(
               val jobHash = hashService.generateJobHash(job, params, env)
               log.info(s"[JobActor[$jobActorNumber].CheckJobHashes] Job hash: " + jobHash)
               // Find the Jobs in the Database
-              jobDao
-                .findAndSortJobs(jobHash)
-                .foreach { jobList =>
-                  // Check if the jobs are owned by the user, unless they are public and if the job is Done
-                  jobList.find(
-                    filterJob => (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done
-                  ) match {
-                    case Some(oldJob) =>
-                      log.info(
-                        s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID is a duplicate of ${oldJob.jobID}."
-                      )
-                      self ! JobStateChanged(job.jobID, Pending)
-                    case None =>
-                      log.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID will now be started.")
-                      self ! CheckIPHash(job.jobID)
-                  }
+              jobDao.findAndSortJobs(jobHash).foreach { jobList =>
+                // Check if the jobs are owned by the user, unless they are public and if the job is Done
+                jobList.find(
+                  filterJob => (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done
+                ) match {
+                  case Some(oldJob) =>
+                    log.info(
+                      s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID is a duplicate of ${oldJob.jobID}."
+                    )
+                    self ! JobStateChanged(job.jobID, Pending)
+                  case None =>
+                    log.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID will now be started.")
+                    self ! CheckIPHash(job.jobID)
                 }
+              }
             case None => NotUsed
           }
         case None => NotUsed

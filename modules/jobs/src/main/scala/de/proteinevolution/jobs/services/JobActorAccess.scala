@@ -34,11 +34,4 @@ final class JobActorAccess @Inject()(
     this.jobActors(jobIDHash(jobID)) ! message
   }
 
-  /**
-   * Sends a message to all JobActors
-   * @param message
-   */
-  def broadcast(message: Any): Unit = {
-    this.jobActors.foreach(_ ! message)
-  }
 }
