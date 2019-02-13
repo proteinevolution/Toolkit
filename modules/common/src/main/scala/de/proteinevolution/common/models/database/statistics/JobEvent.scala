@@ -1,10 +1,10 @@
-package de.proteinevolution.models.database.statistics
+package de.proteinevolution.common.models.database.statistics
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.models.database.jobs.JobState
-import de.proteinevolution.models.database.jobs.JobState._
-import de.proteinevolution.models.util.ZonedDateTimeHelper
+import de.proteinevolution.common.models.database.jobs.JobState
+import de.proteinevolution.common.models.database.jobs.JobState._
+import de.proteinevolution.common.models.util.ZonedDateTimeHelper
 import io.circe.generic.JsonCodec
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter }
 

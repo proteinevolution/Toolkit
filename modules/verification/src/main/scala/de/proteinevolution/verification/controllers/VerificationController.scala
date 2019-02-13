@@ -8,7 +8,7 @@ import controllers.AssetsFinder
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.JSONTemplate
-import de.proteinevolution.models.database.users.{ User, UserToken }
+import de.proteinevolution.common.models.database.users.{ User, UserToken }
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.message.actors.WebSocketActor.LogOut

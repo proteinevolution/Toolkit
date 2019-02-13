@@ -2,7 +2,7 @@ package de.proteinevolution.jobs.models
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.models.util.ZonedDateTimeHelper
+import de.proteinevolution.common.models.util.ZonedDateTimeHelper
 import io.circe.generic.JsonCodec
 import reactivemongo.bson._
 

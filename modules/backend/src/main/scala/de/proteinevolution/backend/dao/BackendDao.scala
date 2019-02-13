@@ -1,6 +1,6 @@
 package de.proteinevolution.backend.dao
 
-import de.proteinevolution.models.database.statistics.StatisticsObject
+import de.proteinevolution.common.models.database.statistics.StatisticsObject
 import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.collections.bson.BSONCollection

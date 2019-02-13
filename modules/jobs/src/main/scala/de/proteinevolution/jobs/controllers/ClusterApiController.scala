@@ -3,8 +3,8 @@ package de.proteinevolution.jobs.controllers
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.actors.JobActor.{ JobStateChanged, SetSGEID }
 import de.proteinevolution.jobs.services.JobActorAccess
-import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.models.database.jobs.JobState.{ Done, Error, Queued, Running }
+import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.common.models.database.jobs.JobState.{ Done, Error, Queued, Running }
 import javax.inject.{ Inject, Singleton }
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 import better.files._

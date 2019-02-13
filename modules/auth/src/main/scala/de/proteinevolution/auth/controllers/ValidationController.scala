@@ -2,8 +2,8 @@ package de.proteinevolution.auth.controllers
 
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.models.database.users.{ User, UserConfig }
+import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.common.models.database.users.{ User, UserConfig }
 import io.circe.{ Json, JsonObject }
 import io.circe.syntax._
 import javax.inject.{ Inject, Singleton }

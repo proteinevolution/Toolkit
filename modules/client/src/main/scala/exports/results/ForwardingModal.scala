@@ -1,6 +1,6 @@
 package exports.results
 
-import de.proteinevolution.models.forwarding.ForwardModalOptions
+import de.proteinevolution.common.models.forwarding.ForwardModalOptions
 import exports.facades.JQueryPlugin._
 import helpers.SnakePickle
 import org.scalajs.dom.raw.{ HTMLElement, HTMLInputElement }

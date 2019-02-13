@@ -1,7 +1,7 @@
 package de.proteinevolution.jobs.services
 
 import better.files._
-import de.proteinevolution.models.ConstantsV2
+import de.proteinevolution.common.models.ConstantsV2
 
 trait JobFolderValidation {
 

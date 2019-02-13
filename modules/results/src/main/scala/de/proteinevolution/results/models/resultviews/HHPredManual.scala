@@ -1,6 +1,6 @@
 package de.proteinevolution.results.models.resultviews
 
-import de.proteinevolution.models.ConstantsV2
+import de.proteinevolution.common.models.ConstantsV2
 import play.twirl.api.HtmlFormat
 
 import scala.collection.immutable.ListMap

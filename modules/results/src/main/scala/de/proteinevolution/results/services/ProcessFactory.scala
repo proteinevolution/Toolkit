@@ -1,7 +1,7 @@
 package de.proteinevolution.results.services
 
 import better.files._
-import de.proteinevolution.models.ToolName._
+import de.proteinevolution.common.models.ToolName._
 import de.proteinevolution.results.models.ForwardMode
 import play.api.Configuration
 

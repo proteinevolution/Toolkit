@@ -1,4 +1,4 @@
-package de.proteinevolution.models.database.users
+package de.proteinevolution.common.models.database.users
 
 import io.circe._
 import io.circe.generic.semiauto._

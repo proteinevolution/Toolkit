@@ -1,9 +1,9 @@
-package de.proteinevolution.models.database.statistics
+package de.proteinevolution.common.models.database.statistics
 
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
-import de.proteinevolution.models.util.{ ZonedDateTimeHelper => helper }
+import de.proteinevolution.common.models.util.{ ZonedDateTimeHelper => helper }
 import io.circe.java8.time.encodeZonedDateTime
 import io.circe.syntax._
 import io.circe.{ Encoder, Json }

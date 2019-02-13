@@ -2,8 +2,8 @@ package de.proteinevolution.results.services
 
 import cats.data.EitherT
 import cats.implicits._
-import de.proteinevolution.models.ToolName
-import de.proteinevolution.models.ToolName._
+import de.proteinevolution.common.models.ToolName
+import de.proteinevolution.common.models.ToolName._
 import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.results.models.ResultsForm
 import de.proteinevolution.results.results.General.DTParam

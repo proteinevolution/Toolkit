@@ -1,4 +1,4 @@
-package de.proteinevolution.models.forwarding
+package de.proteinevolution.common.models.forwarding
 
 import io.circe.{ Json, JsonObject }
 import io.circe.syntax._

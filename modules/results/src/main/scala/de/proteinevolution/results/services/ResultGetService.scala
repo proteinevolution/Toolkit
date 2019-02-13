@@ -10,8 +10,8 @@ import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobFolderValidation
-import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.models.database.jobs.JobState.{ Done, Pending, Prepared }
+import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.common.models.database.jobs.JobState.{ Done, Pending, Prepared }
 import de.proteinevolution.tools.ToolConfig
 import de.proteinevolution.tools.forms.{ JobForm, ToolForm }
 import javax.inject.{ Inject, Singleton }

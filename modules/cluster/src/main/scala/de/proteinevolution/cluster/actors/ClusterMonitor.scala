@@ -4,7 +4,7 @@ import akka.actor.{ Actor, ActorLogging, ActorRef, Cancellable }
 import akka.event.LoggingReceive
 import de.proteinevolution.cluster.actors.ClusterMonitor._
 import de.proteinevolution.jobs.services.JobActorAccess
-import de.proteinevolution.models.ConstantsV2
+import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.cluster.api.Polling.PolledJobs
 import de.proteinevolution.cluster.api.QStat
 import de.proteinevolution.jobs.models.Job
