@@ -18,7 +18,7 @@ import de.proteinevolution.message.actors.WebSocketActor.{ LogOut, MaintenanceAl
 import de.proteinevolution.tools.ToolConfig
 import io.circe.syntax._
 import io.circe.{ Json, JsonObject }
-import javax.inject.{ Inject, Named }
+import javax.inject.Inject
 import play.api.Configuration
 import play.api.cache.{ NamedCache, SyncCacheApi }
 import reactivemongo.bson.BSONObjectID
@@ -26,7 +26,6 @@ import reactivemongo.bson.BSONObjectID
 import scala.concurrent.ExecutionContext
 
 final class WebSocketActor @Inject()(
-    @Named("clusterMonitor") clusterMonitor: ActorRef,
     @Assisted("out") out: ActorRef,
     jobActorAccess: JobActorAccess,
     userSessions: UserSessions,
