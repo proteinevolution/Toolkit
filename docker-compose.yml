@@ -16,9 +16,9 @@ services:
     volumes:
       - .:/toolkit
 #      Uncommenting following 3 lines will speed up sbt boot time significatnly providing you have GeoIP built locally
-#      - ~/.ivy2:/root/.ivy2
-#      - ~/.sbt:/root/.sbt
-#      - ~/.coursier:/root/.coursier
+      - ~/.ivy2:/root/.ivy2
+      - ~/.sbt:/root/.sbt
+      - ~/.coursier:/root/.coursier
     links:
       - mongodb
     depends_on:
