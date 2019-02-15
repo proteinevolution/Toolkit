@@ -64,7 +64,7 @@ class Runscript(files: Seq[File]) extends TELRegex with Logging {
     parameterString.replaceAllIn(init, replacer.apply _)
   }
 
-  def withEnvironment(env: mutable.Map[String, String]): Runscript = {
+  def withEnvironment(env: Map[String, String]): Runscript = {
 
     translationSteps.enqueue { s =>
       envString.replaceAllIn(s, m => env.getOrElse(m.group("constant"), ""))
