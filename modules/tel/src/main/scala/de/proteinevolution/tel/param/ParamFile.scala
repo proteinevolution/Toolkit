@@ -5,21 +5,22 @@ import java.nio.file.attribute.PosixFilePermission
 import javax.inject.{Inject, Singleton}
 import better.files._
 import de.proteinevolution.tel.param.Implicits._
+import play.api.Configuration
 
 import scala.collection.immutable.ListMap
-import scala.collection.mutable
 
 /**
   Provides methods to read Generative Params from a file
  */
 @Singleton
-class GenerativeParamFileParser @Inject()(env: mutable.Map[String, String]) {
+class GenerativeParamFileParser @Inject()(config: Configuration) {
 
   private final val genKeyword = "GEN" // Denotes the parameter in the descriptor file as generative
 
   def read(filePath: String): Iterator[GenerativeParam] = {
 
     val f = filePath.toFile
+    val env = config.get[Map[String, String]]("tel.env")
 
     f.lineIterator.noWSLines.map { line =>
       val spt = line.split("\\s+")
@@ -52,10 +53,10 @@ abstract class GenerativeParamFile(name: String) extends GenerativeParam(name) {
 class ExecGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String])
     extends GenerativeParamFile(name) {
 
-  private var env: Option[mutable.Map[String, String]] = None
+  private var env: Option[Map[String, String]] = None
   import scala.sys.process.Process
 
-  def withEnvironment(env: mutable.Map[String, String]): ExecGenParamFile = {
+  def withEnvironment(env: Map[String, String]): ExecGenParamFile = {
     this.env = Some(env)
     this.load()
     this
@@ -99,7 +100,7 @@ class ListGenParamFile(name: String, path: String, private var allowed: Set[Stri
 
   private val f = path.toFile
 
-  def withEnvironment(env: mutable.Map[String, String]): ListGenParamFile = this
+  def withEnvironment(env: Map[String, String]): ListGenParamFile = this
 
   // Load file upon instantiation
   load()
