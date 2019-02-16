@@ -1,4 +1,4 @@
-package de.proteinevolution.models
+package de.proteinevolution.common.models
 
 import java.io.File
 

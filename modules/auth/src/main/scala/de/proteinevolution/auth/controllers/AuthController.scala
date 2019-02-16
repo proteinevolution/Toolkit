@@ -8,12 +8,19 @@ import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.auth.models.Session.ChangeSessionID
 import de.proteinevolution.auth.models.{FormDefinitions, JSONTemplate}
+import de.proteinevolution.auth.models.Session.ChangeSessionID
+import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.models.database.users.{User, UserToken}
+import de.proteinevolution.common.models.database.users.{ User, UserToken }
+import de.proteinevolution.tel.env.Env
 import io.circe.syntax._
 import javax.inject.{Inject, Singleton}
 import play.api.{Configuration, Logging}
 import play.api.cache.{NamedCache, SyncCacheApi}
+import javax.inject.{ Inject, Singleton }
+import play.api.Logging
+import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}

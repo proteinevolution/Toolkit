@@ -16,6 +16,11 @@ import de.proteinevolution.models.database.statistics.{StatisticsObject, UserSta
 import de.proteinevolution.models.database.users.User
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.common.models.database.statistics.{ StatisticsObject, UserStatistic }
+import de.proteinevolution.common.models.database.users.User
+import de.proteinevolution.tel.env.Env
+import javax.inject.{ Inject, Singleton }
 import play.api.libs.mailer.MailerClient
 import reactivemongo.bson.{BSONDateTime, BSONDocument}
 

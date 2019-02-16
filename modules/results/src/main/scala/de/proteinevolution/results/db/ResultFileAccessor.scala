@@ -2,7 +2,7 @@ package de.proteinevolution.results.db
 
 import better.files._
 import de.proteinevolution.jobs.services.JobFolderValidation
-import de.proteinevolution.models.ConstantsV2
+import de.proteinevolution.common.models.ConstantsV2
 import io.circe.Json
 import io.circe.parser._
 import io.circe.syntax._

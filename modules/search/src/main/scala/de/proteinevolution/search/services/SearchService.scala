@@ -3,11 +3,11 @@ package de.proteinevolution.search.services
 import cats.data.OptionT
 import cats.implicits._
 import de.proteinevolution.base.helpers.ToolkitTypes._
+import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.common.models.database.users.User
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobFolderValidation
-import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.models.database.users.User
 import de.proteinevolution.tools.{ Tool, ToolConfig }
 import javax.inject.{ Inject, Singleton }
 import reactivemongo.bson.BSONDocument
@@ -22,15 +22,7 @@ class SearchService @Inject()(
 )(implicit ec: ExecutionContext)
     extends JobFolderValidation {
 
-  def recentJob(user: User): Future[Option[Job]] = {
-    jobDao.findSortedJob(
-      BSONDocument(
-        BSONDocument(Job.DELETION -> BSONDocument("$exists" -> false)),
-        BSONDocument(Job.OWNERID  -> user.userID)
-      ),
-      BSONDocument(Job.DATEUPDATED -> -1)
-    )
-  }
+  def recentJob(user: User): Future[Option[Job]] = jobDao.findSortedJob(user.userID)
 
   def autoComplete(user: User, queryString_ : String): OptionT[Future, List[Job]] = {
     val queryString = queryString_.trim()
@@ -42,14 +34,9 @@ class SearchService @Inject()(
       (for {
         jobs     <- OptionT.liftF(jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))))
         filtered <- OptionT.pure[Future](jobs.filter(job => job.ownerID.contains(user.userID)))
-      } yield {
-        filtered
-      }).flatMapF { jobs =>
+      } yield filtered).flatMapF { jobs =>
         if (jobs.isEmpty) {
-          OptionT(jobDao.findJob(BSONDocument(Job.JOBID -> queryString)))
-            .filter(job => resultsExist(job.jobID, constants))
-            .map(_ :: Nil)
-            .value
+          OptionT(jobDao.findJob(queryString)).filter(job => resultsExist(job.jobID, constants)).map(_ :: Nil).value
         } else {
           fuccess(Some(jobs.filter(job => resultsExist(job.jobID, constants))))
         }

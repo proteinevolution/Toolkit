@@ -22,6 +22,13 @@ import de.proteinevolution.models.database.jobs.JobState._
 import de.proteinevolution.models.database.jobs._
 import de.proteinevolution.models.database.statistics.{JobEvent, JobEventLog}
 import de.proteinevolution.models.database.users.User
+import de.proteinevolution.jobs.models.{ Job, JobClusterData }
+import de.proteinevolution.jobs.services.{ GeneralHashService, JobTerminator }
+import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.common.models.database.jobs.JobState._
+import de.proteinevolution.common.models.database.jobs._
+import de.proteinevolution.common.models.database.statistics.{ JobEvent, JobEventLog }
+import de.proteinevolution.common.models.database.users.User
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
 import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecution
@@ -77,7 +84,7 @@ class JobActor @Inject()(
       case Some(job) => // Everything is fine. Return the job.
         fuccess(Some(job))
       case None => // Job is not in the current jobs.. try to get it back.
-        jobDao.findJob(BSONDocument(Job.JOBID -> jobID)).map {
+        jobDao.findJob(jobID).map {
           case Some(job) =>
             // Get the job back into the current jobs
             currentJobs = currentJobs.updated(job.jobID, job)
@@ -198,7 +205,7 @@ class JobActor @Inject()(
       }
 
     // Remove the job from mongoDB collection
-    jobDao.removeJob(BSONDocument(Job.JOBID -> job.jobID)).foreach { writeResult =>
+    jobDao.removeJob(job.jobID).foreach { writeResult =>
       if (writeResult.ok) {
         if (verbose) log.info(s"[JobActor.Delete] Deletion of Job was successful:\n${job.toString()}")
       } else {
@@ -268,7 +275,12 @@ class JobActor @Inject()(
     }
   }
 
+  override def preStart(): Unit = {
+    val _ = context.system.eventStream.subscribe(self, classOf[PolledJobs])
+  }
+
   override def postStop(): Unit = {
+    context.system.eventStream.unsubscribe(self, classOf[PolledJobs])
     val _ = Tick.cancel()
   }
   override def receive = LoggingReceive {
@@ -343,26 +355,21 @@ class JobActor @Inject()(
               val jobHash = hashService.generateJobHash(job, params)
               log.info(s"[JobActor[$jobActorNumber].CheckJobHashes] Job hash: " + jobHash)
               // Find the Jobs in the Database
-              jobDao
-                .findAndSortJobs(
-                  BSONDocument(Job.HASH        -> jobHash),
-                  BSONDocument(Job.DATECREATED -> -1)
-                )
-                .foreach { jobList =>
-                  // Check if the jobs are owned by the user, unless they are public and if the job is Done
-                  jobList.find(
-                    filterJob => (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done
-                  ) match {
-                    case Some(oldJob) =>
-                      log.info(
-                        s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID is a duplicate of ${oldJob.jobID}."
-                      )
-                      self ! JobStateChanged(job.jobID, Pending)
-                    case None =>
-                      log.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID will now be started.")
-                      self ! CheckIPHash(job.jobID)
-                  }
+              jobDao.findAndSortJobs(jobHash).foreach { jobList =>
+                // Check if the jobs are owned by the user, unless they are public and if the job is Done
+                jobList.find(
+                  filterJob => (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done
+                ) match {
+                  case Some(oldJob) =>
+                    log.info(
+                      s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID is a duplicate of ${oldJob.jobID}."
+                    )
+                    self ! JobStateChanged(job.jobID, Pending)
+                  case None =>
+                    log.info(s"[JobActor[$jobActorNumber].CheckJobHashes] JobID $jobID will now be started.")
+                    self ! CheckIPHash(job.jobID)
                 }
+              }
             case None => NotUsed
           }
         case None => NotUsed
@@ -380,7 +387,7 @@ class JobActor @Inject()(
               log.info(
                 s"[JobActor[$jobActorNumber].Delete] jobID $jobID not found in current jobs. Loading job from DB."
               )
-            jobDao.findJob(BSONDocument(Job.JOBID -> jobID))
+            jobDao.findJob(jobID)
         }
         .foreach {
           case Some(job) =>

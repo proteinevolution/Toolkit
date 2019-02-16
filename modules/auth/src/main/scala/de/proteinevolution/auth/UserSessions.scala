@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.base.helpers.ToolkitTypes
-import de.proteinevolution.models.database.users.{ SessionData, User }
+import de.proteinevolution.common.models.database.users.{ SessionData, User }
 import de.proteinevolution.util.LocationProvider
 import javax.inject.{ Inject, Singleton }
 import play.api.cache._

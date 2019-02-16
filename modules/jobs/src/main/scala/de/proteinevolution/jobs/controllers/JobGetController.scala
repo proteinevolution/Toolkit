@@ -9,7 +9,7 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.{ Job, JobHashError }
 import de.proteinevolution.jobs.services.{ JobFolderValidation, JobHashService }
-import de.proteinevolution.models.ConstantsV2
+import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.tools.ToolConfig
 import io.circe.{ Json, JsonObject }
 import io.circe.syntax._

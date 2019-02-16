@@ -1,7 +1,7 @@
-package de.proteinevolution.models
+package de.proteinevolution.common.models
 
 import cats.data.{ NonEmptyList => NEL }
-import de.proteinevolution.models.ToolName._
+import de.proteinevolution.common.models.ToolName._
 
 import scala.collection.immutable
 

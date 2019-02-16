@@ -1,4 +1,4 @@
-package de.proteinevolution.models.database.statistics
+package de.proteinevolution.common.models.database.statistics
 
 import reactivemongo.bson._
 import io.circe.Encoder

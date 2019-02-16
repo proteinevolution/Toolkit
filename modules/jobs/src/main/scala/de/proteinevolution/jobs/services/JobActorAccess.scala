@@ -2,7 +2,7 @@ package de.proteinevolution.jobs.services
 
 import akka.actor.{ ActorRef, ActorSystem, Props }
 import de.proteinevolution.jobs.actors.JobActor
-import de.proteinevolution.models.ConstantsV2
+import de.proteinevolution.common.models.ConstantsV2
 import javax.inject.{ Inject, Singleton }
 
 @Singleton
@@ -34,11 +34,4 @@ final class JobActorAccess @Inject()(
     this.jobActors(jobIDHash(jobID)) ! message
   }
 
-  /**
-   * Sends a message to all JobActors
-   * @param message
-   */
-  def broadcast(message: Any): Unit = {
-    this.jobActors.foreach(_ ! message)
-  }
 }

@@ -1,7 +1,7 @@
 package de.proteinevolution.help.controllers
 
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.models.ToolName
+import de.proteinevolution.common.models.ToolName
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 import play.api.mvc.ControllerComponents

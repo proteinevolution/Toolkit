@@ -1,6 +1,6 @@
 package de.proteinevolution.tools.forms
 
-import de.proteinevolution.models.database.jobs.JobState
+import de.proteinevolution.common.models.database.jobs.JobState
 import io.circe.generic.JsonCodec
 
 @JsonCodec case class JobForm(

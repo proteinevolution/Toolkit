@@ -8,6 +8,11 @@ import de.proteinevolution.models.database.users.User
 import de.proteinevolution.models.util.ZonedDateTimeHelper
 import play.api.Configuration
 import play.api.libs.mailer.{Email, MailerClient}
+import de.proteinevolution.common.models.database.jobs.JobState.{ Done, Error }
+import de.proteinevolution.common.models.database.jobs._
+import de.proteinevolution.common.models.database.users.User
+import de.proteinevolution.common.models.util.ZonedDateTimeHelper
+import play.api.libs.mailer.{ Email, MailerClient }
 
 sealed trait MailTemplate {
 

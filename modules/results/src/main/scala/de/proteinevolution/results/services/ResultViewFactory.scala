@@ -2,8 +2,8 @@ package de.proteinevolution.results.services
 
 import cats.data.OptionT
 import cats.implicits._
-import de.proteinevolution.models.ToolName._
-import de.proteinevolution.models.{ ConstantsV2, ToolName }
+import de.proteinevolution.common.models.ToolName._
+import de.proteinevolution.common.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.results.models.resultviews._
 import de.proteinevolution.results.results._

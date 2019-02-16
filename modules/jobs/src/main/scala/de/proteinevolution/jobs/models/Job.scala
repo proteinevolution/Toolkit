@@ -2,9 +2,9 @@ package de.proteinevolution.jobs.models
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.models.database.jobs.JobState._
-import de.proteinevolution.models.database.jobs.JobState
-import de.proteinevolution.models.util.ZonedDateTimeHelper
+import de.proteinevolution.common.models.database.jobs.JobState._
+import de.proteinevolution.common.models.database.jobs.JobState
+import de.proteinevolution.common.models.util.ZonedDateTimeHelper
 import de.proteinevolution.tools.ToolConfig
 import io.circe.JsonObject
 import io.circe.syntax._

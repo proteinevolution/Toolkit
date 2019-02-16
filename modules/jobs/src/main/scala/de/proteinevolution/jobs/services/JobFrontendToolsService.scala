@@ -2,8 +2,8 @@ package de.proteinevolution.jobs.services
 import java.time.ZonedDateTime
 
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.models.database.jobs.JobState.Done
-import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
+import de.proteinevolution.common.models.database.jobs.JobState.Done
+import de.proteinevolution.common.models.database.statistics.{ JobEvent, JobEventLog }
 import javax.inject.{ Inject, Singleton }
 import reactivemongo.api.commands.WriteResult
 

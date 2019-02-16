@@ -1,6 +1,6 @@
 package de.proteinevolution.results.models.resultviews
 
-import de.proteinevolution.models.{ ConstantsV2, ToolName }
+import de.proteinevolution.common.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.results.results.{ AlignmentResult, HHBlitsResult }
 import de.proteinevolution.tools.ToolConfig
 

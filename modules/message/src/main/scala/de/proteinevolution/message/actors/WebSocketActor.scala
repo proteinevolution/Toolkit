@@ -7,18 +7,18 @@ import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
 import de.proteinevolution.auth.UserSessions
-import de.proteinevolution.cluster.actors.ClusterMonitor.{ Connect, Disconnect, UpdateLoad }
+import de.proteinevolution.auth.models.Session.ChangeSessionID
+import de.proteinevolution.cluster.ClusterSource.UpdateLoad
+import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.common.models.database.jobs.JobState.Running
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobActorAccess
 import de.proteinevolution.message.actors.WebSocketActor.{ LogOut, MaintenanceAlert }
-import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.models.database.jobs.JobState.Running
-import de.proteinevolution.auth.models.Session.ChangeSessionID
 import de.proteinevolution.tools.ToolConfig
 import io.circe.syntax._
 import io.circe.{ Json, JsonObject }
-import javax.inject.{ Inject, Named }
+import javax.inject.Inject
 import play.api.Configuration
 import play.api.cache.{ NamedCache, SyncCacheApi }
 import reactivemongo.bson.BSONObjectID
@@ -26,7 +26,6 @@ import reactivemongo.bson.BSONObjectID
 import scala.concurrent.ExecutionContext
 
 final class WebSocketActor @Inject()(
-    @Named("clusterMonitor") clusterMonitor: ActorRef,
     @Assisted("out") out: ActorRef,
     jobActorAccess: JobActorAccess,
     userSessions: UserSessions,
@@ -40,8 +39,8 @@ final class WebSocketActor @Inject()(
     with ActorLogging {
 
   override def preStart(): Unit = {
+    context.system.eventStream.subscribe(self, classOf[UpdateLoad])
     // Grab the user from cache to ensure a working job
-    clusterMonitor ! Connect(self)
     userSessions.getUser(sessionID).foreach {
       case Some(user) =>
         wsActorCache.get[List[ActorRef]](user.userID.stringify) match {
@@ -57,7 +56,6 @@ final class WebSocketActor @Inject()(
   } // TODO May not be able to send any messages at this point of init
 
   override def postStop(): Unit = {
-    clusterMonitor ! Disconnect(self)
     userSessions.getUser(sessionID).foreach {
       case Some(user) =>
         wsActorCache.get[List[ActorRef]](user.userID.stringify) match {
@@ -69,7 +67,7 @@ final class WebSocketActor @Inject()(
         }
       case None => ()
     }
-
+    context.system.eventStream.unsubscribe(self, classOf[UpdateLoad])
     log.info(s"[WSActor] Websocket closed for session ${sessionID.stringify}")
   }
 
@@ -99,15 +97,6 @@ final class WebSocketActor @Inject()(
                   }
                 case Left(_) => //
               }
-
-            // Request to receive load messages
-            case "RegisterLoad" =>
-              log.info("Received RegisterLoad message.")
-              clusterMonitor ! Connect(self)
-
-            //// Request to no longer receive load messages
-            case "UnregisterLoad" =>
-              clusterMonitor ! Disconnect(self)
 
             // Received a ping, so we return a pong
             case "Ping" =>

@@ -1,7 +1,7 @@
 package de.proteinevolution.results.controllers
 
 import de.proteinevolution.auth.UserSessions
-import de.proteinevolution.models.ConstantsV2
+import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.results.models.HHContext
 import de.proteinevolution.results.results.Common
 import javax.inject.Inject
