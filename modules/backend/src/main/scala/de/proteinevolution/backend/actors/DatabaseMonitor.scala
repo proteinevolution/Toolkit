@@ -29,7 +29,7 @@ final class DatabaseMonitor @Inject()(
     jobActorAccess: JobActorAccess,
     constants: ConstantsV2,
     environment: play.Environment,
-    implicit val config: Configuration
+    config: Configuration
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
     extends Actor
     with ActorLogging {
