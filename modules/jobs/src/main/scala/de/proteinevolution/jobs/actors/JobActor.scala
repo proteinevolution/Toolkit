@@ -15,13 +15,6 @@ import de.proteinevolution.cluster.api.Polling.PolledJobs
 import de.proteinevolution.cluster.api.{QStat, Qdel}
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.models.{Job, JobClusterData}
-import de.proteinevolution.jobs.services.{GeneralHashService, JobTerminator}
-import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.models.database.jobs.JobState._
-import de.proteinevolution.models.database.jobs._
-import de.proteinevolution.models.database.statistics.{JobEvent, JobEventLog}
-import de.proteinevolution.models.database.users.User
 import de.proteinevolution.jobs.models.{ Job, JobClusterData }
 import de.proteinevolution.jobs.services.{ GeneralHashService, JobTerminator }
 import de.proteinevolution.common.models.ConstantsV2
@@ -41,7 +34,6 @@ import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
-import scala.collection.mutable
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.language.postfixOps

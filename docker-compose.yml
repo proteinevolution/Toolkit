@@ -8,17 +8,17 @@ services:
     environment:
       - SUBMIT_MODE=LOCAL
       - SBT_OPTS=-Xms2G -Xmx4G -Xss2M
-#    stdin_open: true
-#    tty: true
+    #    stdin_open: true
+    #    tty: true
     ports:
       - 1234:1234
       - 8080:8080
     volumes:
       - .:/toolkit
-#      Uncommenting following 3 lines will speed up sbt boot time significatnly providing you have GeoIP built locally
-      - ~/.ivy2:/root/.ivy2
-      - ~/.sbt:/root/.sbt
-      - ~/.coursier:/root/.coursier
+    #      Uncommenting following 3 lines will speed up sbt boot time significatnly providing you have GeoIP built locally
+    #      - ~/.ivy2:/root/.ivy2
+    #      - ~/.sbt:/root/.sbt
+    #      - ~/.coursier:/root/.coursier
     links:
       - mongodb
     depends_on:
@@ -29,8 +29,8 @@ services:
     image: mongo:4.0
     container_name: tk-mongodb
     environment:
-    - MONGO_DATA_DIR=/data/db
-    - MONGO_LOG_DIR=/data/log
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/data/log
     volumes:
       - mongodb:/data/db
     ports:

@@ -2,12 +2,7 @@ package de.proteinevolution.auth.models
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.models.database.jobs.JobState
-import de.proteinevolution.models.database.jobs.JobState.Done
-import de.proteinevolution.models.database.users.User
-import de.proteinevolution.models.util.ZonedDateTimeHelper
 import play.api.Configuration
-import play.api.libs.mailer.{Email, MailerClient}
 import de.proteinevolution.common.models.database.jobs.JobState.{ Done, Error }
 import de.proteinevolution.common.models.database.jobs._
 import de.proteinevolution.common.models.database.users.User
