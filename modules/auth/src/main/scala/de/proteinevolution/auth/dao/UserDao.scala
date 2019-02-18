@@ -17,7 +17,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
     reactiveMongoApi.database.map(_.collection[BSONCollection]("users"))
   }
 
-  def addUser(user: User): Future[WriteResult] = userCollection.flatMap(_.insert(user))
+  def addUser(user: User): Future[WriteResult] = userCollection.flatMap(_.insert(ordered = false).one(user))
 
   def findUser(selector: BSONDocument): Future[Option[User]] =
     userCollection.flatMap(_.find(selector, None).one[User])
@@ -33,7 +33,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
   }
 
   def modifyUsers(selector: BSONDocument, modifier: BSONDocument): Future[WriteResult] = {
-    userCollection.flatMap(_.update(selector, modifier, multi = true))
+    userCollection.flatMap(_.update(ordered = false).one(selector, modifier, multi = true))
   }
 
   def removeUsers(selector: BSONDocument): Future[WriteResult] = {
