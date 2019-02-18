@@ -64,11 +64,11 @@ class HHService @Inject()(
 
   private[this] def generateDTQuery(tool: ToolName, params: DTParam, result: SearchResult[_]): List[HSP] = {
     tool match {
-      case HHBLITS  => getHitsByKeyWord[HHBlitsHSP](result.asInstanceOf[HHBlitsResult], params)
-      case HHOMP    => getHitsByKeyWord[HHompHSP](result.asInstanceOf[HHompResult], params)
-      case HHPRED   => getHitsByKeyWord[HHPredHSP](result.asInstanceOf[HHPredResult], params)
-      case HMMER    => getHitsByKeyWord[HmmerHSP](result.asInstanceOf[HmmerResult], params)
-      case PSIBLAST => getHitsByKeyWord[PSIBlastHSP](result.asInstanceOf[PSIBlastResult], params)
+      case HHBLITS  => getHitsByKeyWord[HHBlitsHSP](result, params)
+      case HHOMP    => getHitsByKeyWord[HHompHSP](result, params)
+      case HHPRED   => getHitsByKeyWord[HHPredHSP](result, params)
+      case HMMER    => getHitsByKeyWord[HmmerHSP](result, params)
+      case PSIBLAST => getHitsByKeyWord[PSIBlastHSP](result, params)
       case _        => throw new IllegalStateException("no search feature available for this tool")
     }
   }

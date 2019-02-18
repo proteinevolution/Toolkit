@@ -23,7 +23,7 @@ import reactivemongo.bson.BSONDocument
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class ResultGetService @Inject()(
+final class ResultGetService @Inject()(
     resultViewFactory: ResultViewFactory,
     jobDao: JobDao,
     toolConfig: ToolConfig,
@@ -58,23 +58,19 @@ class ResultGetService @Inject()(
         Map.empty[String, String]
       }
     }
-    (for {
+    for {
       job      <- OptionT(jobDao.selectJob(jobId))
       toolForm <- OptionT.pure[Future](toolConfig.values(job.tool).toolForm)
       jobViews <- OptionT.liftF(jobViews(job, toolForm))
-    } yield {
-      (job, toolForm, jobViews)
-    }).map {
-      case (job, toolForm, jobViews) =>
-        JobForm(
-          job.jobID,
-          job.status,
-          job.dateCreated.getOrElse(ZonedDateTime.now).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-          toolForm,
-          jobViews,
-          paramValues
-        )
-    }
+    } yield
+      JobForm(
+        job.jobID,
+        job.status,
+        job.dateCreated.getOrElse(ZonedDateTime.now).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+        toolForm,
+        jobViews,
+        paramValues
+      )
   }
 
   private def jobViews(job: Job, toolForm: ToolForm): Future[Seq[String]] = job.status match {
