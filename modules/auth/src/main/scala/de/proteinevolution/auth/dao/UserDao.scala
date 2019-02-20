@@ -1,6 +1,6 @@
 package de.proteinevolution.auth.dao
 
-import de.proteinevolution.common.models.database.users.User
+import de.proteinevolution.user.User
 import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.Cursor

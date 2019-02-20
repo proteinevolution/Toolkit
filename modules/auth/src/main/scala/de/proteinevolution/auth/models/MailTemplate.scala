@@ -4,9 +4,9 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.common.models.database.jobs.JobState.{ Done, Error }
 import de.proteinevolution.common.models.database.jobs._
-import de.proteinevolution.common.models.database.users.User
 import de.proteinevolution.common.models.util.ZonedDateTimeHelper
 import de.proteinevolution.tel.env.Env
+import de.proteinevolution.user.User
 import play.api.libs.mailer.{ Email, MailerClient }
 
 sealed trait MailTemplate {

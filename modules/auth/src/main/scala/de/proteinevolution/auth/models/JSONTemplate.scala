@@ -1,6 +1,6 @@
 package de.proteinevolution.auth.models
 
-import de.proteinevolution.common.models.database.users.User
+import de.proteinevolution.user.User
 import io.circe.Json
 import io.circe.syntax._
 
