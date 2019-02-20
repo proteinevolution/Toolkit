@@ -64,9 +64,7 @@ object JobState {
     ]].values
 
   implicit val jobStateDecoder: Decoder[JobState] = (c: HCursor) =>
-    for {
-      number <- c.downField("status").as[Int]
-    } yield states.find(_.toInt == number).getOrElse(Error)
+    c.downField("status").as[Int].map(n => states.find(_.toInt == n).getOrElse(Error))
 
   implicit val jobStateEncoder: Encoder[JobState] = Encoder[Int].contramap(_.toInt)
 
