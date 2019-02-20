@@ -1,14 +1,15 @@
-package de.proteinevolution.common.models.database.statistics
+package de.proteinevolution.statistics
 
 import java.time.ZonedDateTime
 
 import de.proteinevolution.common.models.database.jobs.JobState
 import de.proteinevolution.common.models.database.jobs.JobState._
 import de.proteinevolution.common.models.util.ZonedDateTimeHelper
-import io.circe.generic.JsonCodec
+import io.circe.{ Decoder, Encoder }
+import io.circe.generic.semiauto.{ deriveDecoder, deriveEncoder }
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter }
 
-@JsonCodec case class JobEvent(
+final case class JobEvent(
     jobState: JobState,
     timestamp: Option[ZonedDateTime],
     runtime: Option[Long] = Some(0L)
@@ -20,6 +21,10 @@ object JobEvent {
   final val JOBSTATE  = "jobState"
   final val TIMESTAMP = "timestamp"
   final val RUNTIME   = "runtime"
+
+  implicit val jobEventDecoder: Decoder[JobEvent] = deriveDecoder
+
+  implicit val jobEventEncoder: Encoder[JobEvent] = deriveEncoder
 
   implicit object Reader extends BSONDocumentReader[JobEvent] {
     def read(bson: BSONDocument): JobEvent = {
