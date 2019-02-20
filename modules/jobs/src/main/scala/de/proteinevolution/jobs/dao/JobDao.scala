@@ -2,8 +2,8 @@ package de.proteinevolution.jobs.dao
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.common.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.jobs.models.Job
+import de.proteinevolution.statistics.{ JobEvent, JobEventLog }
 import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.collections.bson.BSONCollection

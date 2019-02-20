@@ -1,4 +1,4 @@
-package de.proteinevolution.common.models.database.statistics
+package de.proteinevolution.statistics
 
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
