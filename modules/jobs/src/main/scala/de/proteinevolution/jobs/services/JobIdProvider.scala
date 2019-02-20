@@ -1,12 +1,12 @@
 package de.proteinevolution.jobs.services
 
+import cats.effect.IO
 import de.proteinevolution.jobs.dao.JobDao
 import javax.inject.{ Inject, Singleton }
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Random
-import cats.effect.IO
 
 @Singleton
 class JobIdProvider @Inject()(

@@ -9,9 +9,9 @@ import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.common.models.database.users.User
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.tools.ToolConfig
+import de.proteinevolution.user.User
 import io.circe.Json
 import io.circe.syntax._
 import javax.inject.{ Inject, Named, Singleton }

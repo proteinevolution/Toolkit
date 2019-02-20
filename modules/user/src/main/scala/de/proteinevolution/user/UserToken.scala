@@ -1,10 +1,11 @@
-package de.proteinevolution.common.models.database.users
+package de.proteinevolution.user
 
-import java.time.ZonedDateTime
-import java.security.SecureRandom
 import java.math.BigInteger
-import reactivemongo.bson._
+import java.security.SecureRandom
+import java.time.ZonedDateTime
+
 import de.proteinevolution.common.models.util.ZonedDateTimeHelper
+import reactivemongo.bson._
 
 case class UserToken(
     tokenType: Int,
