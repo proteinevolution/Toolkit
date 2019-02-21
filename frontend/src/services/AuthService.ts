@@ -1,12 +1,21 @@
 import axios from 'axios';
 import {CustomJobIdValidationResult} from '@/types/toolkit/jobs';
+import {AuthMessage, LoginData, SignUpData} from '@/types/toolkit/auth';
 
 export default class AuthService {
 
-    public static performLogin(username: string, password: string): Promise<any> {
-        return new Promise<any>(((resolve, reject) => {
-            axios.post(`/api/auth/login`, {nameLogin: username, password})
-                .then((response) => resolve(response.data.isValid))
+    public static performLogin(data: LoginData): Promise<AuthMessage> {
+        return new Promise<AuthMessage>(((resolve, reject) => {
+            axios.post(`/api/auth/login`, data)
+                .then((response) => resolve(response.data))
+                .catch(reject);
+        }));
+    }
+
+    public static signUp(data: SignUpData): Promise<AuthMessage> {
+        return new Promise<AuthMessage>(((resolve, reject) => {
+            axios.post(`/api/auth/signup`, data)
+                .then((response) => resolve(response.data))
                 .catch(reject);
         }));
     }

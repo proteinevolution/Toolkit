@@ -34,16 +34,19 @@
                 </i18n>
             </b-form-checkbox>
         </b-form-group>
-        <b-alert variant="danger"
-                 :show="error"
-                 v-text="error"/>
-        <b-btn v-text="$t('auth.signUp')"/>
+        <b-alert :variant="successful ? 'info' : 'danger'"
+                 :show="message !== ''"
+                 v-text="message"/>
+        <b-btn @click="signUp"
+               v-text="$t('auth.signUp')"/>
     </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
     import EventBus from '@/util/EventBus';
+    import AuthService from '@/services/AuthService';
+    import {SignUpData} from '@/types/toolkit/auth';
 
     export default Vue.extend({
         name: 'RegisterForm',
@@ -54,10 +57,28 @@
                 password: '',
                 passwordRepeat: '',
                 privacyAccepted: false,
-                error: null,
+                successful: false,
+                message: '',
             };
         },
         methods: {
+            async signUp() {
+                const data: SignUpData = {
+                    nameLogin: this.username,
+                    password: this.password,
+                    eMail: this.email,
+                    acceptToS: this.privacyAccepted,
+                };
+                try {
+                    const msg = await AuthService.signUp(data);
+                    this.successful = msg.successful;
+                    this.message = msg.message;
+                } catch (error) {
+                    this.successful = false;
+                    this.message = '';
+                    this.$alert(error.message, 'danger');
+                }
+            },
             openPrivacyPolicy() {
                 EventBus.$emit('show-modal', {id: 'simple', props: {modal: 'privacy'}});
             },

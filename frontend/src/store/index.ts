@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex, {StoreOptions} from 'vuex';
 import tools from './modules/tools';
 import jobs from './modules/jobs';
+import auth from './modules/auth';
 import {RootState} from './types';
 import localStoragePlugin from './plugins/localStoragePlugin';
 import Logger from 'js-logger';
@@ -62,6 +63,7 @@ const store: StoreOptions<RootState> = {
     modules: {
         tools,
         jobs,
+        auth,
     },
 };
 

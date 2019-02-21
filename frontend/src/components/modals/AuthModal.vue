@@ -8,12 +8,18 @@
         </template>
         <template #body>
             <b-tabs>
-                <b-tab :title="$t('auth.signIn')">
-                    <LoginForm/>
-                </b-tab>
-                <b-tab :title="$t('auth.signUp')">
-                    <RegisterForm/>
-                </b-tab>
+                    <b-tab v-if="!loggedIn"
+                           :title="$t('auth.signIn')">
+                        <LoginForm/>
+                    </b-tab>
+                    <b-tab v-if="!loggedIn"
+                           :title="$t('auth.signUp')">
+                        <RegisterForm/>
+                    </b-tab>
+                    <b-tab v-else
+                           title="TODO">
+                            Logged In!
+                    </b-tab>
             </b-tabs>
         </template>
     </BaseModal>
@@ -31,6 +37,11 @@
             BaseModal,
             LoginForm,
             RegisterForm,
+        },
+        computed: {
+            loggedIn(): boolean {
+                return this.$store.getters['auth/loggedIn'];
+            },
         },
     });
 </script>

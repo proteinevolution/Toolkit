@@ -13,14 +13,17 @@
             </b-form-input>
         </b-form-group>
         <b-alert variant="danger"
-                 :show="error"
-                 v-text="error"/>
-        <b-btn v-text="$t('auth.signIn')"/>
+                 :show="message !== ''"
+                 v-text="message"/>
+        <b-btn @click="login"
+               v-text="$t('auth.signIn')"/>
     </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
+    import {LoginData} from '@/types/toolkit/auth';
+    import AuthService from '@/services/AuthService';
 
     export default Vue.extend({
         name: 'LoginForm',
@@ -28,8 +31,27 @@
             return {
                 username: '',
                 password: '',
-                error: null,
+                message: '',
             };
+        },
+        methods: {
+            async login() {
+                const data: LoginData = {
+                    nameLogin: this.username,
+                    password: this.password,
+                };
+                try {
+                    const msg = await AuthService.performLogin(data);
+                    if (msg.successful) {
+                        this.$store.commit('auth/setUser', msg.user);
+                    }
+                    this.message = msg.message;
+                } catch (error) {
+                    this.message = '';
+                    this.$alert(error.message, 'danger');
+                }
+            },
+
         },
     });
 </script>
