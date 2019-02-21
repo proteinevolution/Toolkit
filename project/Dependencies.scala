@@ -28,7 +28,7 @@ object Dependencies {
     "org.reactivemongo"    %% "play2-reactivemongo"      % "0.16.2-play27",
     "org.reactivemongo"    %% "reactivemongo-akkastream" % "0.16.2",
     "org.typelevel"        %% "cats-core"                % catsV,
-    "org.typelevel"        %% "cats-effect"              % "1.1.0",
+    "org.typelevel"        %% "cats-effect"              % "1.2.0",
     "com.chuusai"          %% "shapeless"                % "2.3.3",
     "com.vmunier"          %% "scalajs-scripts"          % "1.1.1",
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
