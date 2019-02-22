@@ -1,4 +1,4 @@
-package de.proteinevolution.common.models.database.statistics
+package de.proteinevolution.statistics
 
 import io.circe.Encoder
 import io.circe.generic.semiauto._

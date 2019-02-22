@@ -56,14 +56,20 @@ lazy val help = (project in file("modules/help"))
 lazy val jobs = (project in file("modules/jobs"))
   .commonSettings("de.proteinevolution.jobs")
   .enablePlugins(PlayScala)
-  .dependsOn(commonJVM, auth, base, clusterApi, tel, tools, util)
+  .dependsOn(commonJVM, auth, base, clusterApi, tel, tools, util, user, statistics)
   .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
   .disablePlugins(PlayLayoutPlugin)
+
+lazy val user = (project in file("modules/user"))
+    .commonSettings("de.proteinevolution.user")
+    .enablePlugins(PlayScala)
+    .dependsOn(commonJVM, base)
+    .disablePlugins(PlayLayoutPlugin)
 
 lazy val auth = (project in file("modules/auth"))
   .commonSettings("de.proteinevolution.auth")
   .enablePlugins(PlayScala)
-  .dependsOn(commonJVM, base, tel, util)
+  .dependsOn(commonJVM, base, tel, util, user)
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val base = (project in file("modules/base"))
@@ -86,13 +92,19 @@ lazy val clusterApi = (project in file("modules/cluster-api"))
 lazy val backend = (project in file("modules/backend"))
   .commonSettings("de.proteinevolution.backend")
   .enablePlugins(PlayScala)
-  .dependsOn(commonJVM, base, auth, jobs, tel, tools)
+  .dependsOn(commonJVM, base, auth, jobs, tel, tools, user, statistics)
   .disablePlugins(PlayLayoutPlugin)
+
+lazy val statistics = (project in file("modules/statistics"))
+    .commonSettings("de.proteinevolution.statistics")
+    .enablePlugins(PlayScala)
+    .dependsOn(commonJVM, base)
+    .disablePlugins(PlayLayoutPlugin)
 
 lazy val search = (project in file("modules/search"))
   .commonSettings("de.proteinevolution.search")
   .enablePlugins(PlayScala)
-  .dependsOn(commonJVM, base, auth, jobs, tools)
+  .dependsOn(commonJVM, base, auth, jobs, tools, user)
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val ui = (project in file("modules/ui"))
@@ -113,7 +125,7 @@ lazy val message = (project in file("modules/message"))
 lazy val verification = (project in file("modules/verification"))
   .commonSettings("de.proteinevolution.verification")
   .enablePlugins(PlayScala)
-  .dependsOn(commonJVM, base, auth, ui, message, tel, tools)
+  .dependsOn(commonJVM, base, auth, ui, message, tel, tools, user)
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val migrations = (project in file("modules/migrations"))
@@ -137,7 +149,7 @@ lazy val tools = (project in file("modules/tools"))
 lazy val util = (project in file("modules/util"))
   .commonSettings("de.proteinevolution.util")
   .enablePlugins(PlayScala)
-  .dependsOn(commonJVM)
+  .dependsOn(commonJVM, user)
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val params = (project in file("modules/params"))
@@ -158,7 +170,8 @@ lazy val root = (project in file("."))
     search,
     message,
     verification,
-    migrations
+    migrations,
+    user
   )
   .settings(
     coreSettings,

@@ -4,12 +4,12 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.base.helpers.ToolkitTypes
-import de.proteinevolution.common.models.database.users.{ SessionData, User }
+import de.proteinevolution.user.{ SessionData, User }
 import de.proteinevolution.util.LocationProvider
 import javax.inject.{ Inject, Singleton }
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{ mvc, Logging }
+import play.api.{ Logging, mvc }
 import play.mvc.Http
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
@@ -197,7 +197,7 @@ class UserSessions @Inject()(
 
     if (withDB) {
       userDao.userCollection.flatMap(
-        _.update(
+        _.update(ordered = false).one(
           BSONDocument(User.IDDB -> user.userID),
           BSONDocument(
             "$set" ->

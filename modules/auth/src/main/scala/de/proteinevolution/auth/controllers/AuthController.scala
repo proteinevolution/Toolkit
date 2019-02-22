@@ -9,7 +9,7 @@ import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.auth.models.Session.ChangeSessionID
 import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.common.models.database.users.{ User, UserToken }
+import de.proteinevolution.user.{ User, UserToken }
 import io.circe.syntax._
 import javax.inject.{ Inject, Singleton }
 import play.api.{ Configuration, Logging }

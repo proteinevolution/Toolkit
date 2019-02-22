@@ -1,4 +1,4 @@
-package de.proteinevolution.common.models.database.users
+package de.proteinevolution.user
 
 import io.circe.{ Encoder, Json }
 import reactivemongo.bson._

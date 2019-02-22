@@ -8,16 +8,17 @@ import controllers.AssetsFinder
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.JSONTemplate
-import de.proteinevolution.common.models.database.users.{ User, UserToken }
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.message.actors.WebSocketActor.LogOut
 import de.proteinevolution.tools.ToolConfig
-import play.api.cache._
-import play.api.mvc._
-import play.api.libs.mailer._
-import reactivemongo.bson._
+import de.proteinevolution.user.{ User, UserToken }
+import javax.inject.{ Inject, Singleton }
 import org.webjars.play.WebJarsUtil
+import play.api.cache._
+import play.api.libs.mailer._
+import play.api.mvc._
+import reactivemongo.bson._
 import play.api.{Configuration, Environment}
 
 import scala.concurrent.{ExecutionContext, Future}

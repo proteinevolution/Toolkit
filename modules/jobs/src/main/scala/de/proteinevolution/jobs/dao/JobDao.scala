@@ -2,8 +2,8 @@ package de.proteinevolution.jobs.dao
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.common.models.database.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.jobs.models.Job
+import de.proteinevolution.statistics.{ JobEvent, JobEventLog }
 import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.collections.bson.BSONCollection
@@ -64,7 +64,7 @@ class JobDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit 
   }
 
   final def insertJob(job: Job): Future[Option[Job]] = {
-    jobCollection.flatMap(_.insert(job)).map { a =>
+    jobCollection.flatMap(_.insert(ordered = false).one(job)).map { a =>
       if (a.ok) { Some(job) } else { None }
     }
   }
@@ -90,7 +90,7 @@ class JobDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit 
   }
 
   final def addJobLog(jobEventLog: JobEventLog): Future[WriteResult] =
-    eventLogCollection.flatMap(_.insert(jobEventLog))
+    eventLogCollection.flatMap(_.insert(ordered = false).one(jobEventLog))
 
   final def findJobEventLogs(instant: Long): Future[scala.List[JobEventLog]] = {
     eventLogCollection

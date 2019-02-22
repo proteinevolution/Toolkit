@@ -1,8 +1,8 @@
-package de.proteinevolution.common.models.database.statistics
+package de.proteinevolution.statistics
 
-import reactivemongo.bson._
 import io.circe.Encoder
 import io.circe.generic.semiauto._
+import reactivemongo.bson._
 
 case class ToolStatistic(
     toolName: String,

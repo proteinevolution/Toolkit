@@ -2,7 +2,7 @@ package de.proteinevolution.util
 
 import com.google.inject.ImplementedBy
 import com.tgf.pizza.geoip.MaxMindIpGeo
-import de.proteinevolution.common.models.database.users.Location
+import de.proteinevolution.user.Location
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 import play.api.mvc.RequestHeader

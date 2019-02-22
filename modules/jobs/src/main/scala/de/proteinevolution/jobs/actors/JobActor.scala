@@ -12,22 +12,22 @@ import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate.JobFinishedMail
 import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.cluster.api.Polling.PolledJobs
-import de.proteinevolution.cluster.api.{QStat, Qdel}
+import de.proteinevolution.cluster.api.{ QStat, Qdel }
+import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.common.models.database.jobs.JobState._
+import de.proteinevolution.common.models.database.jobs._
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.{ Job, JobClusterData }
 import de.proteinevolution.jobs.services.{ GeneralHashService, JobTerminator }
-import de.proteinevolution.common.models.ConstantsV2
-import de.proteinevolution.common.models.database.jobs.JobState._
-import de.proteinevolution.common.models.database.jobs._
-import de.proteinevolution.common.models.database.statistics.{ JobEvent, JobEventLog }
-import de.proteinevolution.common.models.database.users.User
+import de.proteinevolution.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
 import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecution
 import de.proteinevolution.tel.execution.{ExecutionContext, WrapperExecutionFactory}
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
+import de.proteinevolution.user.User
 import javax.inject.Inject
 import play.api.Configuration
 import play.api.cache.{NamedCache, SyncCacheApi}

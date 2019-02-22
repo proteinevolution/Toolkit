@@ -6,7 +6,7 @@ import sbt._
 object Dependencies {
 
   val akkaVersion = "2.5.21"
-  val catsV       = "1.5.0"
+  val catsV       = "1.6.0"
   val circeV      = "0.11.1"
 
   lazy val commonDeps: Seq[ModuleID] = Seq(
@@ -25,10 +25,10 @@ object Dependencies {
     "com.typesafe.play"    %% "play-mailer-guice"        % "6.0.1",
     "com.github.pathikrit" %% "better-files"             % "3.5.0",
     "org.mindrot"          % "jbcrypt"                   % "0.3m",
-    "org.reactivemongo"    %% "play2-reactivemongo"      % "0.16.0-play26",
-    "org.reactivemongo"    %% "reactivemongo-akkastream" % "0.16.0",
+    "org.reactivemongo"    %% "play2-reactivemongo"      % "0.16.2-play27",
+    "org.reactivemongo"    %% "reactivemongo-akkastream" % "0.16.2",
     "org.typelevel"        %% "cats-core"                % catsV,
-    "org.typelevel"        %% "cats-effect"              % "1.1.0",
+    "org.typelevel"        %% "cats-effect"              % "1.2.0",
     "com.chuusai"          %% "shapeless"                % "2.3.3",
     "com.vmunier"          %% "scalajs-scripts"          % "1.1.1",
     "com.mohiva"           %% "play-html-compressor"     % "0.7.1",
@@ -36,7 +36,7 @@ object Dependencies {
     "io.circe"             %% "circe-generic"            % circeV,
     "io.circe"             %% "circe-generic-extras"     % circeV,
     "io.circe"             %% "circe-java8"              % circeV,
-    "io.circe"             %% "circe-bson"               % "0.2.0",
+    "io.circe"             %% "circe-bson"               % "0.3.0",
     "org.webjars"          %% "webjars-play"             % "2.7.0",
     "org.scala-js"         %% "scalajs-stubs"            % scalaJSVersion % "provided",
     "com.github.mpilquist" %% "simulacrum"               % "0.12.0",

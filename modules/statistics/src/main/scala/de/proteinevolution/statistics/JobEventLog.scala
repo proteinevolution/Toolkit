@@ -1,10 +1,9 @@
-package de.proteinevolution.common.models.database.statistics
+package de.proteinevolution.statistics
 
 import java.time.ZonedDateTime
 
 import de.proteinevolution.common.models.database.jobs.JobState
 import de.proteinevolution.common.models.database.jobs.JobState._
-import io.circe.generic.auto._
 import reactivemongo.bson._
 
 case class JobEventLog(
