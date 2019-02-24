@@ -1,6 +1,6 @@
 import play.twirl.sbt.Import.TwirlKeys
 import sbt.Keys._
-import sbt.{Compile, Project, Setting}
+import sbt.{ Compile, Def, Project, Setting, Task }
 
 object Settings {
 
@@ -42,7 +42,7 @@ object Settings {
     "-Ywarn-inaccessible", // Warn about inaccessible types in method signatures.
     "-Ywarn-infer-any", // Warn when a type argument is inferred to be `Any`.
     "-Ywarn-nullary-override", // Warn when non-nullary `def f()' overrides nullary `def f'.
-    "-Ywarn-nullary-unit", // Warn when nullary methods return Unit.
+    "-Ywarn-nullary-unit",  // Warn when nullary methods return Unit.
     "-Ywarn-numeric-widen", // Warn when numerics are widened.
     // "-Ywarn-unused:implicits", // Warn if an implicit parameter is unused.
     "-Ywarn-unused:imports", // Warn if an import selector is not referenced.
@@ -57,24 +57,27 @@ object Settings {
 
   private val allFlags: Seq[String] = coreFlags ++ additionalFlags
 
-  lazy val compileSettings = Seq(scalacOptions ++= allFlags)
+  lazy val compileSettings: Seq[Def.Setting[Task[Seq[String]]]] = Seq(scalacOptions ++= allFlags)
 
-  lazy val sjsCompileSettings = Seq(scalacOptions ++= coreFlags)
+  lazy val sjsCompileSettings: Seq[Def.Setting[Task[Seq[String]]]] = Seq(scalacOptions ++= coreFlags)
 
-  lazy val disableDocs = Seq[Setting[_]](
+  lazy val disableDocs: Seq[Def.Setting[_]] = Seq[Setting[_]](
     sources in (Compile, doc) := Seq.empty,
     publishArtifact in (Compile, packageDoc) := false
   )
 
   implicit class SettingsFromProject(project: Project) {
+    import de.heikoseeberger.sbtheader.AutomateHeaderPlugin
     def commonSettings(projectName: String): Project =
-      project.settings(
-        name := projectName,
-        libraryDependencies ++= Dependencies.commonDeps,
-        Settings.compileSettings,
-        TwirlKeys.templateImports := Seq.empty,
-        disableDocs
-      )
+      project
+        .settings(
+          name := projectName,
+          libraryDependencies ++= Dependencies.commonDeps,
+          Settings.compileSettings,
+          TwirlKeys.templateImports := Nil,
+          disableDocs
+        )
+        .enablePlugins(AutomateHeaderPlugin)
   }
 
 }
