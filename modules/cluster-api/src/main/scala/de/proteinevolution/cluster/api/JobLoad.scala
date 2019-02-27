@@ -20,9 +20,9 @@ object JobLoad {
 
   @volatile private var runningJobs: Long = 0
 
-  def watch(): Unit = runningJobs += 1
+  @inline def watch(): Unit = runningJobs += 1
 
-  def unwatch(): Unit = runningJobs -= 1
+  @inline def unwatch(): Unit = runningJobs -= 1
 
   def get: Long = runningJobs
 
