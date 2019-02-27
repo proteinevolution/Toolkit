@@ -88,9 +88,9 @@ class ConstantsV2 @Inject()(config: Configuration) {
   /** Deletes registered accounts after this time frame */
   final val userDeletingRegistered: Int = 24 //months
 
-  // Polling and cluster load checking settings
+  // qstat long polling in order to detect zombie jobs, not used for cluster load calc anymore
   /** Interval of the qstat requests */
-  final val pollingInterval: FiniteDuration = 1 second
+  final val pollingInterval: FiniteDuration = 5 minutes
 
   /** The marker for 100% load capacity */
   final val loadPercentageMarker: Int = 32 // Jobs
