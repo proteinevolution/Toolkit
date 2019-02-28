@@ -22,7 +22,7 @@ import akka.stream.Materializer
 import akka.stream.scaladsl.Source
 import de.proteinevolution.cluster.ClusterSource.UpdateLoad
 import de.proteinevolution.cluster.api.Polling.PolledJobs
-import de.proteinevolution.cluster.api.QStat
+import de.proteinevolution.cluster.api.{ SGELoad, QStat }
 import de.proteinevolution.common.models.ConstantsV2
 import javax.inject.{ Inject, Singleton }
 
@@ -37,17 +37,24 @@ final class ClusterSource @Inject()(constants: ConstantsV2)(
     ec: ExecutionContext
 ) {
 
-  private[this] def update(): Unit = {
+  private[this] def qStat(): Unit = {
     val qStat = QStat("qstat -xml".!!)
-    // 32 Tasks are 100% - calculate the load from this.
-    val load: Double = qStat.totalJobs().toDouble / constants.loadPercentageMarker
     system.eventStream.publish(PolledJobs(qStat))
+  }
+
+  private[this] def updateLoad(): Unit = {
+    // 32 Tasks are 100% - calculate the load from this.
+    val load: Double = SGELoad.get.toDouble / constants.loadPercentageMarker
     system.eventStream.publish(UpdateLoad(load))
   }
 
-  private[this] val tick: Source[NotUsed, Cancellable] = Source.tick(0.seconds, constants.pollingInterval, NotUsed)
+  private[this] val qStatTick: Source[NotUsed, Cancellable] = Source.tick(5.seconds, constants.pollingInterval, NotUsed)
 
-  tick.runForeach(_ => update())
+  private[this] val loadTick: Source[NotUsed, Cancellable] = Source.tick(0.seconds, 1.second, NotUsed)
+
+  qStatTick.runForeach(_ => qStat())
+
+  loadTick.runForeach(_ => updateLoad())
 
 }
 

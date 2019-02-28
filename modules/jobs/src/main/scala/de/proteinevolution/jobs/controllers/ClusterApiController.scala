@@ -16,20 +16,20 @@
 
 package de.proteinevolution.jobs.controllers
 
+import better.files._
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.jobs.actors.JobActor.{ JobStateChanged, SetSGEID }
-import de.proteinevolution.jobs.services.JobActorAccess
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.common.models.database.jobs.JobState.{ Done, Error, Queued, Running }
+import de.proteinevolution.jobs.actors.JobActor.{ JobStateChanged, SetSGEID }
+import de.proteinevolution.jobs.services.JobActorAccess
 import javax.inject.{ Inject, Singleton }
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
-import better.files._
 
 @Singleton
 class ClusterApiController @Inject()(constants: ConstantsV2, jobActorAccess: JobActorAccess, cc: ControllerComponents)
     extends ToolkitController(cc) {
 
-  def setJobStatus(status: String, jobID: String, key: String) = Action {
+  def setJobStatus(status: String, jobID: String, key: String): Action[AnyContent] = Action {
     if (checkKey(jobID, key)) {
       val jobStatus = status match {
         case "done"    => Done
