@@ -22,7 +22,7 @@ import akka.stream.Materializer
 import akka.stream.scaladsl.Source
 import de.proteinevolution.cluster.ClusterSource.UpdateLoad
 import de.proteinevolution.cluster.api.Polling.PolledJobs
-import de.proteinevolution.cluster.api.{ JobLoad, QStat }
+import de.proteinevolution.cluster.api.{ SGELoad, QStat }
 import de.proteinevolution.common.models.ConstantsV2
 import javax.inject.{ Inject, Singleton }
 
@@ -44,7 +44,7 @@ final class ClusterSource @Inject()(constants: ConstantsV2)(
 
   private[this] def updateLoad(): Unit = {
     // 32 Tasks are 100% - calculate the load from this.
-    val load: Double = JobLoad.get.toDouble / constants.loadPercentageMarker
+    val load: Double = SGELoad.get.toDouble / constants.loadPercentageMarker
     system.eventStream.publish(UpdateLoad(load))
   }
 

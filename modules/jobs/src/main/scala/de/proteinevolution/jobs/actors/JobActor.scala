@@ -28,7 +28,7 @@ import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate.JobFinishedMail
 import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.cluster.api.Polling.PolledJobs
-import de.proteinevolution.cluster.api.{ JobLoad, QStat, Qdel }
+import de.proteinevolution.cluster.api.{ SGELoad, QStat, Qdel }
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.common.models.database.jobs.JobState._
 import de.proteinevolution.common.models.database.jobs._
@@ -168,7 +168,6 @@ class JobActor @Inject()(
       if (currentExecutionContexts.contains(jobID)) {
         currentExecutionContexts = currentExecutionContexts.filter(_._1 != jobID)
       }
-      JobLoad.unwatch()
     }
   }
 
@@ -220,7 +219,7 @@ class JobActor @Inject()(
 
     // update the cluster load
     if (job.status == JobState.Running)
-      JobLoad.watch()
+      SGELoad.push()
 
     // Update job in the database and notify watcher upon completion
     jobDao
@@ -604,6 +603,7 @@ class JobActor @Inject()(
               // Tell the user that their job finished via eMail (can be either failed or done)
               sendJobUpdateMail(job)
             }
+            SGELoad.pop()
           } else {
             updateJobState(job)
           }

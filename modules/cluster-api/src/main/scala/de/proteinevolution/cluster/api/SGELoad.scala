@@ -16,13 +16,14 @@
 
 package de.proteinevolution.cluster.api
 
-object JobLoad {
+object SGELoad {
 
   @volatile private var runningJobs: Long = 0
 
-  @inline def watch(): Unit = runningJobs += 1
+  @inline def push(): Unit = runningJobs += 1
 
-  @inline def unwatch(): Unit = runningJobs -= 1
+  // prevent negative values if the first job fails
+  @inline def pop(): Unit = if (runningJobs > 0) runningJobs -= 1
 
   def get: Long = runningJobs
 
