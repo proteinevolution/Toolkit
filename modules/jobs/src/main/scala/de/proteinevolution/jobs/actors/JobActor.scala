@@ -169,6 +169,7 @@ class JobActor @Inject()(
         currentExecutionContexts = currentExecutionContexts.filter(_._1 != jobID)
       }
     }
+    SGELoad.pop()
   }
 
   private def delete(job: Job, verbose: Boolean): Unit = {
@@ -603,7 +604,6 @@ class JobActor @Inject()(
               // Tell the user that their job finished via eMail (can be either failed or done)
               sendJobUpdateMail(job)
             }
-            SGELoad.pop()
           } else {
             updateJobState(job)
           }
