@@ -218,7 +218,7 @@ class JobActor @Inject()(
     currentJobs = currentJobs.updated(job.jobID, job)
 
     // update the cluster load
-    if (job.status == JobState.Running)
+    if (job.status == JobState.Queued)
       SGELoad.push()
 
     // Update job in the database and notify watcher upon completion
