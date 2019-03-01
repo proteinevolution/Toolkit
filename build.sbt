@@ -4,6 +4,9 @@ import Settings._
 inThisBuild(
   Seq(
     organization := "de.proteinevolution",
+    organizationName := "Dept. Protein Evolution, Max Planck Institute for Developmental Biology",
+    startYear := Some(2018),
+    licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
     scalaVersion := "2.12.8"
   )
 )
@@ -34,6 +37,7 @@ lazy val common = (crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pur
     libraryDependencies ++= Dependencies.commonDeps,
     Settings.compileSettings
   )
+  .enablePlugins(AutomateHeaderPlugin)
   .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
 
 lazy val commonJS  = common.js.dependsOn(base, tel)
@@ -61,10 +65,10 @@ lazy val jobs = (project in file("modules/jobs"))
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val user = (project in file("modules/user"))
-    .commonSettings("de.proteinevolution.user")
-    .enablePlugins(PlayScala)
-    .dependsOn(commonJVM, base)
-    .disablePlugins(PlayLayoutPlugin)
+  .commonSettings("de.proteinevolution.user")
+  .enablePlugins(PlayScala)
+  .dependsOn(commonJVM, base)
+  .disablePlugins(PlayLayoutPlugin)
 
 lazy val auth = (project in file("modules/auth"))
   .commonSettings("de.proteinevolution.auth")
@@ -96,10 +100,10 @@ lazy val backend = (project in file("modules/backend"))
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val statistics = (project in file("modules/statistics"))
-    .commonSettings("de.proteinevolution.statistics")
-    .enablePlugins(PlayScala)
-    .dependsOn(commonJVM, base)
-    .disablePlugins(PlayLayoutPlugin)
+  .commonSettings("de.proteinevolution.statistics")
+  .enablePlugins(PlayScala)
+  .dependsOn(commonJVM, base)
+  .disablePlugins(PlayLayoutPlugin)
 
 lazy val search = (project in file("modules/search"))
   .commonSettings("de.proteinevolution.search")
@@ -160,7 +164,7 @@ lazy val params = (project in file("modules/params"))
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val root = (project in file("."))
-  .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb)
+  .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, SbtWeb, AutomateHeaderPlugin)
   .dependsOn(
     client,
     commonJVM,
@@ -184,7 +188,7 @@ lazy val root = (project in file("."))
   )
 
 lazy val client = (project in file("modules/client"))
-  .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
+  .enablePlugins(ScalaJSPlugin, ScalaJSWeb, AutomateHeaderPlugin)
   .dependsOn(commonJS)
   .settings(
     Settings.sjsCompileSettings,

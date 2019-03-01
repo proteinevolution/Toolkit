@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.jobs.actors
 
 import java.time.ZonedDateTime
@@ -12,7 +28,7 @@ import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate.JobFinishedMail
 import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.cluster.api.Polling.PolledJobs
-import de.proteinevolution.cluster.api.{ QStat, Qdel }
+import de.proteinevolution.cluster.api.{ SGELoad, QStat, Qdel }
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.common.models.database.jobs.JobState._
 import de.proteinevolution.common.models.database.jobs._
@@ -137,33 +153,21 @@ class JobActor @Inject()(
     }
   }
 
-  private def removeJob(jobID: String): Boolean = {
-    var wasActive = currentJobs.contains(jobID)
-    // If the job is in the current jobs remove it
-    if (wasActive) {
-      currentJobs = currentJobs.filter(_._1 != jobID)
-    }
-
+  private def removeJob(jobID: String): Unit = {
     // Save Job Event Log to the collection and remove it from the map afterwards
     if (currentJobLogs.contains(jobID)) {
+      currentJobs = currentJobs.filter(_._1 != jobID)
       jobDao.addJobLog(currentJobLogs(jobID))
       currentJobLogs = currentJobLogs.filter(_._1 != jobID)
-      wasActive = true
+      if (runningExecutions.contains(jobID)) {
+        runningExecutions(jobID).terminate()
+        runningExecutions = runningExecutions.filter(_._1 != jobID)
+      }
+      if (currentExecutionContexts.contains(jobID)) {
+        currentExecutionContexts = currentExecutionContexts.filter(_._1 != jobID)
+      }
     }
-
-    // If the job appears in the running Execution, terminate it
-    if (runningExecutions.contains(jobID)) {
-      runningExecutions(jobID).terminate()
-      runningExecutions = runningExecutions.filter(_._1 != jobID)
-      wasActive = true
-    }
-
-    // if the job appears in the current execution contexts, remove it from there too
-    if (currentExecutionContexts.contains(jobID)) {
-      currentExecutionContexts = currentExecutionContexts.filter(_._1 != jobID)
-      wasActive = true
-    }
-    wasActive
+    SGELoad.pop()
   }
 
   private def delete(job: Job, verbose: Boolean): Unit = {
@@ -211,6 +215,10 @@ class JobActor @Inject()(
   private def updateJobState(job: Job): Future[Job] = {
     // Push the updated job into the current jobs
     currentJobs = currentJobs.updated(job.jobID, job)
+
+    // update the cluster load
+    if (job.status == JobState.Queued)
+      SGELoad.push()
 
     // Update job in the database and notify watcher upon completion
     jobDao
@@ -600,25 +608,18 @@ class JobActor @Inject()(
 
     // Checks the current jobs against the currently running cluster jobs to see if there are any dead jobs
     case PolledJobs(qStat: QStat) =>
-      val clusterJobIDs = qStat.qStatJobs.map(_.sgeID)
-      log.info(
-        s"[JobActor[$jobActorNumber].PolledJobs] sge Jobs to check: ${clusterJobIDs
-          .mkString(", ")}\nactor Jobs to check:${currentJobs.values.flatMap(_.clusterData.map(_.sgeID)).mkString(", ")}"
-      )
-      currentJobs.values.foreach { job =>
-        job.clusterData match {
-          case Some(clusterData) =>
-            val jobInCluster = clusterJobIDs.contains(clusterData.sgeID)
-            log.info(
-              s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} with sgeID ${clusterData.sgeID}: ${if (jobInCluster) "active"
-              else "inactive"}"
-            )
-            if ((!job.isFinished && !jobInCluster) || isOverDue(job) || sgeFailed(clusterData.sgeID, qStat)) {
-              self ! JobStateChanged(job.jobID, Error)
-            }
-          case None => NotUsed
-          // also delete
-        }
+      for {
+        job         <- currentJobs.values
+        clusterData <- job.clusterData
+      } {
+        val clusterJobIDs = qStat.qStatJobs.map(_.sgeID)
+        val jobInCluster  = clusterJobIDs.contains(clusterData.sgeID)
+        log.info(
+          s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} with sgeID ${clusterData.sgeID}: ${if (jobInCluster) "active"
+          else "inactive"}"
+        )
+        if ((!job.isFinished && !jobInCluster) || isOverDue(job) || sgeFailed(clusterData.sgeID, qStat))
+          self ! JobStateChanged(job.jobID, Error)
       }
 
     // Sets the cluster job ID for a job

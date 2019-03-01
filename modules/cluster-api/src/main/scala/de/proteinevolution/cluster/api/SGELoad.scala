@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package de.proteinevolution.results.models.resultviews
+package de.proteinevolution.cluster.api
 
-import de.proteinevolution.common.models.ConstantsV2
-import play.twirl.api.HtmlFormat
+object SGELoad {
 
-import scala.collection.immutable.ListMap
+  @volatile private var runningJobs: Long = 0
 
-case class RepperResultView(jobId: String, constants: ConstantsV2) extends ResultView {
+  @inline def push(): Unit = runningJobs += 1
 
-  override lazy val tabs: ListMap[String, HtmlFormat.Appendable] = ListMap(
-    RESULTS -> views.html.resultpanels.repper(jobId, s"${constants.jobPath}$jobId/results/" + jobId)
-  )
+  // prevent negative values if the first job fails
+  @inline def pop(): Unit = if (runningJobs > 0) runningJobs -= 1
+
+  def get: Long = runningJobs
 
 }

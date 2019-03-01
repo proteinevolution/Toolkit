@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.common.models
 
 import java.io.File
@@ -72,9 +88,9 @@ class ConstantsV2 @Inject()(config: Configuration) {
   /** Deletes registered accounts after this time frame */
   final val userDeletingRegistered: Int = 24 //months
 
-  // Polling and cluster load checking settings
+  // qstat long polling in order to detect zombie jobs, not used for cluster load calc anymore
   /** Interval of the qstat requests */
-  final val pollingInterval: FiniteDuration = 1 second
+  final val pollingInterval: FiniteDuration = 5 minutes
 
   /** The marker for 100% load capacity */
   final val loadPercentageMarker: Int = 32 // Jobs
