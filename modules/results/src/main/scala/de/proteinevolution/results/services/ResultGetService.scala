@@ -69,7 +69,7 @@ final class ResultGetService @Inject()(
   def getJob(jobId: String): OptionT[Future, JobForm] = {
     val paramValues: Map[String, String] = {
       if (paramsExist(jobId, constants)) {
-        (constants.jobPath / jobId / "sparam").readDeserialized[Map[String, String]]
+        (constants.jobPath / jobId / "sparam").readDeserialized[Map[String, String]]()
       } else {
         Map.empty[String, String]
       }
