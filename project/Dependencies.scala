@@ -6,7 +6,7 @@ import sbt._
 object Dependencies {
 
   val akkaVersion = "2.5.21"
-  val catsV       = "1.6.0"
+  val catsV       = "1.5.0"
   val circeV      = "0.11.1"
 
   lazy val commonDeps: Seq[ModuleID] = Seq(
@@ -25,8 +25,8 @@ object Dependencies {
     "com.typesafe.play"    %% "play-mailer-guice"        % "6.0.1",
     "com.github.pathikrit" %% "better-files"             % "3.7.1",
     "org.mindrot"          % "jbcrypt"                   % "0.3m",
-    "org.reactivemongo"    %% "play2-reactivemongo"      % "0.16.2-play27",
-    "org.reactivemongo"    %% "reactivemongo-akkastream" % "0.16.2",
+    "org.reactivemongo"    %% "play2-reactivemongo"      % "0.16.0-play26",
+    "org.reactivemongo"    %% "reactivemongo-akkastream" % "0.16.0",
     "org.typelevel"        %% "cats-core"                % catsV,
     "org.typelevel"        %% "cats-effect"              % "1.2.0",
     "com.chuusai"          %% "shapeless"                % "2.3.3",

@@ -213,7 +213,7 @@ class UserSessions @Inject()(
 
     if (withDB) {
       userDao.userCollection.flatMap(
-        _.update(ordered = false).one(
+        _.update(
           BSONDocument(User.IDDB -> user.userID),
           BSONDocument(
             "$set" ->
