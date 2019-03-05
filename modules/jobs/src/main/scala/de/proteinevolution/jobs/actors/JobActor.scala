@@ -164,12 +164,12 @@ class JobActor @Inject()(
       if (runningExecutions.contains(jobID)) {
         runningExecutions(jobID).terminate()
         runningExecutions = runningExecutions.filter(_._1 != jobID)
+        SGELoad.pop()
       }
       if (currentExecutionContexts.contains(jobID)) {
         currentExecutionContexts = currentExecutionContexts.filter(_._1 != jobID)
       }
     }
-    SGELoad.pop()
   }
 
   private def delete(job: Job, verbose: Boolean): Unit = {
