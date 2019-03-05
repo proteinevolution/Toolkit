@@ -29,7 +29,7 @@ lazy val coreSettings = Seq(
   TwirlKeys.templateImports := Nil
 ) ++ Settings.compileSettings ++ Release.settings
 
-import sbtcrossproject.{ crossProject, CrossType }
+import sbtcrossproject.CrossPlugin.autoImport.{ crossProject, CrossType }
 
 lazy val common = (crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure) in file("modules/common"))
   .settings(
