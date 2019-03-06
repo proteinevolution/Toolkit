@@ -16,7 +16,7 @@
 
 package de.proteinevolution.results.services
 
-import cats.data.OptionT
+import cats.data.EitherT
 import cats.implicits._
 import de.proteinevolution.common.models.ToolName._
 import de.proteinevolution.common.models.{ ConstantsV2, ToolName }
@@ -36,14 +36,14 @@ final class ResultViewFactory @Inject()(
     resultFiles: ResultFileAccessor
 )(implicit ec: ExecutionContext) {
 
-  def apply(toolName: String, jobId: String): OptionT[Future, ResultView] = {
+  def apply(toolName: String, jobId: String): EitherT[Future, _, ResultView] = {
     if (ToolName(toolName).hasJson) {
       for {
-        result <- OptionT(resultFiles.getResults(jobId))
-        view   <- OptionT.fromOption[Future](getResultViewsWithJson(toolName, jobId, result).toOption)
+        result <- EitherT.liftF(resultFiles.getResults(jobId))
+        view   <- EitherT.fromEither[Future](getResultViewsWithJson(toolName, jobId, result))
       } yield view
     } else {
-      OptionT.pure[Future](getResultViewsWithoutJson(toolName, jobId))
+      EitherT.pure(getResultViewsWithoutJson(toolName, jobId))
     }
   }
 

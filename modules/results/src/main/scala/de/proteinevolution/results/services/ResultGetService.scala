@@ -20,7 +20,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 import better.files._
-import cats.data.OptionT
+import cats.data.{ EitherT, OptionT }
 import cats.implicits._
 import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.common.models.ConstantsV2
@@ -54,16 +54,11 @@ final class ResultGetService @Inject()(
       jobId: String,
       tool: String,
       resultView: String
-  ): OptionT[Future, HtmlFormat.Appendable] = {
-    resultViewFactory
-      .apply(tool, jobId)
-      .map(_.tabs(resultView))
-      .toRight[Unit](())
-      .leftMap { _ =>
-        logger.error(s"result for $jobId could not be found.")
-        cleanLostJobs(jobId)
-      }
-      .toOption
+  ): EitherT[Future, _, HtmlFormat.Appendable] = {
+    resultViewFactory.apply(tool, jobId).map(_.tabs(resultView)).leftMap { _ =>
+      logger.error(s"result for $jobId could not be found.")
+      cleanLostJobs(jobId)
+    }
   }
 
   def getJob(jobId: String): OptionT[Future, JobForm] = {
@@ -92,8 +87,8 @@ final class ResultGetService @Inject()(
   private def jobViews(job: Job, toolForm: ToolForm): Future[Seq[String]] = job.status match {
     case Done =>
       resultViewFactory(toolForm.toolname, job.jobID).value.map {
-        case Some(r) => r.tabs.keys.toSeq
-        case None =>
+        case Right(r) => r.tabs.keys.toSeq
+        case Left(_) =>
           logger.error(s"no views found for $job")
           Nil
       }

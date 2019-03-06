@@ -32,8 +32,8 @@ class ResultGetController @Inject()(cc: ControllerComponents, resultGetService: 
 
   def get(jobId: String, tool: String, resultView: String): Action[AnyContent] = Action.async { implicit request =>
     resultGetService.get(jobId, tool, resultView).value.map {
-      case Some(view) => Ok(view.body)
-      case None       => Ok(views.html.errors.resultnotfound())
+      case Right(view) => Ok(view.body)
+      case Left(_)     => Ok(views.html.errors.resultnotfound())
     }
   }
 

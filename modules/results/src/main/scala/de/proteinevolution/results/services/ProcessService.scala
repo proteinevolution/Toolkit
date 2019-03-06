@@ -81,7 +81,7 @@ final class ProcessService @Inject()(
     } yield {
       (json, tool)
     }).map {
-      case (Some(json), tool) =>
+      case (json, tool) =>
         parseResult(tool, json).map {
           case (result, _) =>
             val accStr = mode.toString match {
