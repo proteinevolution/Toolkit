@@ -49,7 +49,7 @@ final class ResultFileAccessor @Inject()(
           files
             .map { file =>
               file.nameWithoutExtension -> parse(file.contentAsString).right.toOption.getOrElse {
-                logger.error("Invalid result json from database")
+                logger.error("Invalid result json")
                 throw new NoSuchElementException
               }
             }
