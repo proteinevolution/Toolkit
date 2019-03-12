@@ -34,17 +34,26 @@ import tcoffee from '@/i18n/lang/modals/toolHelp/en/tcoffee';
 
 export default {
     en: {
+        cancel: 'Cancel',
+        submit: 'Submit',
         fetching: 'Fetching...',
         reconnecting: 'Reconnecting...',
         maintenanceWarning: 'Maintenance in a few seconds!',
         auth: {
             signIn: 'Sign In',
+            signOut: 'Sign Out',
             signUp: 'Sign Up',
             username: 'Username',
-            email: 'E-Mail',
+            eMail: 'E-Mail',
             password: 'Password',
             passwordRepeat: 'Confirm password',
+            reenterPassword: 'Please re-enter your password',
             privacyAccept: ' I accept the {0}',
+            firstName: 'First Name',
+            lastName: 'Last Name',
+            country: 'Country',
+            selectCountry: 'Select a country',
+            editProfile: 'Edit Profile',
         },
         index: {
             welcomeTitle: 'Welcome to the Bioinformatics Toolkit',

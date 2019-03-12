@@ -119,6 +119,7 @@
 
             this.$store.dispatch('tools/fetchAllTools');
             this.$store.dispatch('jobs/fetchAllJobs');
+            this.$store.dispatch('auth/fetchUserData');
 
             // handle websocket messages which depend on the ui
             (this.$options as any).sockets.onmessage = (response: any) => {

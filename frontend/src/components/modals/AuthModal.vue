@@ -1,4 +1,4 @@
-<template>
+to<template>
     <BaseModal title=""
                id="auth"
                size="sm"
@@ -17,8 +17,8 @@
                         <RegisterForm/>
                     </b-tab>
                     <b-tab v-else
-                           title="TODO">
-                            Logged In!
+                           :title="user.nameLogin">
+                        <Profile/>
                     </b-tab>
             </b-tabs>
         </template>
@@ -30,6 +30,8 @@
     import BaseModal from './BaseModal.vue';
     import LoginForm from '../auth/LoginForm.vue';
     import RegisterForm from '../auth/RegisterForm.vue';
+    import Profile from '../auth/Profile.vue';
+    import User from '@/types/toolkit/auth';
 
     export default Vue.extend({
         name: 'AuthModal',
@@ -37,10 +39,14 @@
             BaseModal,
             LoginForm,
             RegisterForm,
+            Profile,
         },
         computed: {
             loggedIn(): boolean {
                 return this.$store.getters['auth/loggedIn'];
+            },
+            user(): User | null {
+                return this.$store.getters['auth/user'];
             },
         },
     });

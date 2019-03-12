@@ -6,7 +6,7 @@
                           required>
             </b-form-input>
         </b-form-group>
-        <b-form-group :label="$t('auth.email')">
+        <b-form-group :label="$t('auth.eMail')">
             <b-form-input v-model="email"
                           type="text"
                           required>

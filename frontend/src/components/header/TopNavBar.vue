@@ -29,7 +29,7 @@
                       size="sm"
                       class="sign-in-link"
                       @click="openAuthModal"
-                      v-text="$t('auth.signIn')">
+                      v-text="loggedIn ? user.nameLogin : $t('auth.signIn')">
             </b-button>
         </div>
 
@@ -55,6 +55,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import EventBus from '@/util/EventBus';
+    import User from '@/types/toolkit/auth';
 
     export default Vue.extend({
         name: 'TopNavBar',
@@ -64,6 +65,12 @@
             },
             reconnecting(): boolean {
                 return this.$store.state.reconnecting;
+            },
+            loggedIn(): boolean {
+                return this.$store.getters['auth/loggedIn'];
+            },
+            user(): User | null {
+                return this.$store.getters['auth/user'];
             },
         },
         methods: {
