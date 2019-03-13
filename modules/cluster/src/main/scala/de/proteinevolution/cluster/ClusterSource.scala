@@ -31,7 +31,7 @@ import scala.concurrent.duration._
 import scala.sys.process._
 
 @Singleton
-final class ClusterSource @Inject()(constants: ConstantsV2)(
+final private[cluster] class ClusterSource @Inject()(constants: ConstantsV2)(
     implicit system: ActorSystem,
     mat: Materializer,
     ec: ExecutionContext
