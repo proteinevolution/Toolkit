@@ -25,12 +25,29 @@
                       class="dark-link">
                 <i class="fab fa-twitter"></i>
             </b-button>
-            <b-button variant="href"
+            <b-button v-if="!loggedIn"
+                      variant="href"
                       size="sm"
                       class="sign-in-link"
                       @click="openAuthModal"
-                      v-text="loggedIn ? user.nameLogin : $t('auth.signIn')">
+                      v-text="$t('auth.signIn')">
             </b-button>
+            <b-dropdown v-else
+                        :text="user.nameLogin"
+                        right
+                        no-caret
+                        variant="href"
+                        size="sm"
+                        toggle-class="profile-link">
+                <b-dropdown-item @click="openAuthModal">
+                    <i class="fas fa-user mr-2"></i>
+                    <span v-text="$t('auth.profile')"></span>
+                </b-dropdown-item>
+                <b-dropdown-item @click="signOut">
+                    <i class="fas fa-sign-out-alt mr-2"></i>
+                    <span v-text="$t('auth.signOut')"></span>
+                </b-dropdown-item>
+            </b-dropdown>
         </div>
 
         <div class="warnings-container">
@@ -55,7 +72,8 @@
 <script lang="ts">
     import Vue from 'vue';
     import EventBus from '@/util/EventBus';
-    import User from '@/types/toolkit/auth';
+    import {User} from '@/types/toolkit/auth';
+    import AuthService from '@/services/AuthService';
 
     export default Vue.extend({
         name: 'TopNavBar',
@@ -80,9 +98,25 @@
             openAuthModal(): void {
                 EventBus.$emit('show-modal', {id: 'auth'});
             },
+            async signOut() {
+                try {
+                    const msg = await AuthService.logout();
+                    if (msg.successful) {
+                        this.$store.commit('auth/setUser', null);
+                    }
+                } catch (error) {
+                    this.$alert(error.message, 'danger');
+                }
+            },
         },
     });
 </script>
+
+<style lang="scss">
+    .profile-link {
+        color: $primary !important;
+    }
+</style>
 
 <style lang="scss" scoped>
     .top-navbar {

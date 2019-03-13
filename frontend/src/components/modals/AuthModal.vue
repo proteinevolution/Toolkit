@@ -1,4 +1,4 @@
-to<template>
+<template>
     <BaseModal title=""
                id="auth"
                size="sm"
@@ -8,18 +8,29 @@ to<template>
         </template>
         <template #body>
             <b-tabs>
-                    <b-tab v-if="!loggedIn"
-                           :title="$t('auth.signIn')">
-                        <LoginForm/>
-                    </b-tab>
-                    <b-tab v-if="!loggedIn"
-                           :title="$t('auth.signUp')">
-                        <RegisterForm/>
-                    </b-tab>
-                    <b-tab v-else
-                           :title="user.nameLogin">
-                        <Profile/>
-                    </b-tab>
+                <b-tab v-if="!loggedIn"
+                       :title="$t('auth.signIn')">
+                    <LoginForm/>
+                </b-tab>
+                <b-tab v-if="!loggedIn"
+                       :title="$t('auth.signUp')">
+                    <RegisterForm/>
+                </b-tab>
+                <b-tab v-if="loggedIn"
+                       :title="$t('auth.profile')">
+                    <Profile/>
+                </b-tab>
+                <b-tab v-if="loggedIn"
+                       :title="$t('auth.settings')">
+                    <Settings/>
+                </b-tab>
+                <template v-if="loggedIn"
+                          slot="tabs">
+                    <b-nav-item href="#"
+                                @click="signOut"
+                                v-b-tooltip.hover.bottom="$t('auth.signOut')"><i class="fas fa-sign-out-alt"></i>
+                    </b-nav-item>
+                </template>
             </b-tabs>
         </template>
     </BaseModal>
@@ -31,7 +42,9 @@ to<template>
     import LoginForm from '../auth/LoginForm.vue';
     import RegisterForm from '../auth/RegisterForm.vue';
     import Profile from '../auth/Profile.vue';
-    import User from '@/types/toolkit/auth';
+    import Settings from '../auth/Settings.vue';
+    import {User} from '@/types/toolkit/auth';
+    import AuthService from '@/services/AuthService';
 
     export default Vue.extend({
         name: 'AuthModal',
@@ -40,6 +53,7 @@ to<template>
             LoginForm,
             RegisterForm,
             Profile,
+            Settings,
         },
         computed: {
             loggedIn(): boolean {
@@ -47,6 +61,18 @@ to<template>
             },
             user(): User | null {
                 return this.$store.getters['auth/user'];
+            },
+        },
+        methods: {
+            async signOut() {
+                try {
+                    const msg = await AuthService.logout();
+                    if (msg.successful) {
+                        this.$store.commit('auth/setUser', null);
+                    }
+                } catch (error) {
+                    this.$alert(error.message, 'danger');
+                }
             },
         },
     });
@@ -108,7 +134,7 @@ to<template>
             }
 
             .tab-content {
-                padding: 1rem;
+                padding: 1.5rem;
             }
         }
     }
