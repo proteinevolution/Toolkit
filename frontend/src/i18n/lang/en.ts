@@ -60,6 +60,10 @@ export default {
             oldPassword: 'Old Password',
             newPassword: 'New Password',
             confirmPassword: 'Confirm Password',
+            forgotPassword: 'Forgot Password?',
+            forgotPasswordInstructions: 'Provide your account email address or username to receive an email to ' +
+                                        'reset your password.',
+            eMailOrUsername: 'E-Mail or username',
             privacyAccept: ' I accept the {0}',
             editProfile: 'Edit Profile',
         },

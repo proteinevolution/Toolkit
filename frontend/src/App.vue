@@ -138,6 +138,7 @@
         },
         mounted() {
             EventBus.$on('show-modal', this.showModal);
+            EventBus.$on('hide-modal', this.hideModal);
         },
         destroyed(): void {
             delete (this.$options as any).sockets.onmessage;
@@ -164,6 +165,9 @@
                     Object.assign(this.modalProps, params.props);
                 }
                 this.$root.$emit('bv::show::modal', params.id);
+            },
+            hideModal(id: string) {
+                this.$root.$emit('bv::hide::modal', id);
             },
         },
     });

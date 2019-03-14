@@ -44,6 +44,10 @@
             </b-alert>
         </ExpandHeight>
 
+        <b-alert variant="danger"
+                 :show="message !== ''"
+                 v-text="message"/>
+
         <b-btn @click="state = 1"
                v-text="$t('auth.editProfile')"
                :disabled="!editButtonEnabled"/>
@@ -53,9 +57,10 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {User} from '@/types/toolkit/auth';
+    import {ProfileData, User, AuthMessage} from '@/types/toolkit/auth';
     import countries from '@/i18n/lang/countries';
     import ExpandHeight from '@/transitions/ExpandHeight.vue';
+    import AuthService from '@/services/AuthService';
 
     const options = countries.map((value: string[]) => ({value: value[0], text: value[1]}));
 
@@ -73,6 +78,7 @@
                 country: '',
                 countries: options,
                 password: '',
+                message: '',
             };
         },
         computed: {
@@ -115,7 +121,28 @@
                 this.resetValues();
             },
             async editProfileSubmit() {
-
+                const data: ProfileData = {
+                    nameLogin: this.user !== null ? this.user.nameLogin : '',
+                    nameFirst: this.firstName,
+                    nameLast: this.lastName,
+                    eMail: this.eMail,
+                    country: this.country,
+                    password: this.password,
+                };
+                try {
+                    const msg = await AuthService.editProfile(data);
+                    if (msg.successful) {
+                        if (msg.user !== null) {
+                            this.$store.commit('auth/setUser', msg.user);
+                        }
+                        this.$alert(msg.message);
+                    } else {
+                        this.message = msg.message;
+                    }
+                } catch (error) {
+                    this.message = error.message;
+                }
+                this.cancel();
             },
         },
     });

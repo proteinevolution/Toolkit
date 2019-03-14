@@ -15,7 +15,12 @@
                           type="password" class="mb-3"
                           :placeholder="$t('auth.confirmPassword')">
             </b-form-input>
-            <b-btn v-text="$t('auth.changePassword')"></b-btn>
+            <b-alert :variant="successful ? 'info' : 'danger'"
+                     :show="message !== ''"
+                     v-text="message"/>
+            <b-btn v-text="$t('auth.changePassword')"
+                   @click="changePassword">
+            </b-btn>
         </b-form-group>
     </div>
 </template>
@@ -23,6 +28,8 @@
 <script lang="ts">
     import Vue from 'vue';
     import ExpandHeight from '@/transitions/ExpandHeight.vue';
+    import {PasswordChangeData} from '@/types/toolkit/auth';
+    import AuthService from '@/services/AuthService';
 
 
     export default Vue.extend({
@@ -35,9 +42,26 @@
                 oldPassword: '',
                 newPassword: '',
                 confirmPassword: '',
+                message: '',
+                successful: true,
             };
         },
-
+        methods: {
+            async changePassword() {
+                const data: PasswordChangeData = {
+                    passwordOld: this.oldPassword,
+                    passwordNew: this.newPassword,
+                };
+                try {
+                    const msg = await AuthService.changePassword(data);
+                    this.message = msg.message;
+                    this.successful = msg.successful;
+                } catch (error) {
+                    this.message = error.message;
+                    this.successful = false;
+                }
+            },
+        },
     });
 </script>
 

@@ -1,6 +1,14 @@
 import axios from 'axios';
 import {CustomJobIdValidationResult} from '@/types/toolkit/jobs';
-import {AuthMessage, LoginData, SignUpData, User} from '@/types/toolkit/auth';
+import {
+    AuthMessage,
+    ForgotPasswordData,
+    LoginData,
+    PasswordChangeData,
+    ProfileData,
+    SignUpData,
+    User,
+} from '@/types/toolkit/auth';
 
 export default class AuthService {
 
@@ -13,7 +21,7 @@ export default class AuthService {
     }
 
 
-    public static performLogin(data: LoginData): Promise<AuthMessage> {
+    public static login(data: LoginData): Promise<AuthMessage> {
         return new Promise<AuthMessage>(((resolve, reject) => {
             axios.post(`/api/auth/login`, data)
                 .then((response) => resolve(response.data))
@@ -32,6 +40,30 @@ export default class AuthService {
     public static signUp(data: SignUpData): Promise<AuthMessage> {
         return new Promise<AuthMessage>(((resolve, reject) => {
             axios.post(`/api/auth/signup`, data)
+                .then((response) => resolve(response.data))
+                .catch(reject);
+        }));
+    }
+
+    public static editProfile(data: ProfileData): Promise<AuthMessage> {
+        return new Promise<AuthMessage>(((resolve, reject) => {
+            axios.post(`/api/auth/profile`, data)
+                .then((response) => resolve(response.data))
+                .catch(reject);
+        }));
+    }
+
+    public static changePassword(data: PasswordChangeData): Promise<AuthMessage> {
+        return new Promise<AuthMessage>(((resolve, reject) => {
+            axios.post(`/api/auth/password`, data)
+                .then((response) => resolve(response.data))
+                .catch(reject);
+        }));
+    }
+
+    public static forgotPassword(data: ForgotPasswordData): Promise<AuthMessage> {
+        return new Promise<AuthMessage>(((resolve, reject) => {
+            axios.post(`/api/auth/reset/password`, data)
                 .then((response) => resolve(response.data))
                 .catch(reject);
         }));

@@ -103,6 +103,7 @@
                     const msg = await AuthService.logout();
                     if (msg.successful) {
                         this.$store.commit('auth/setUser', null);
+                        this.$alert(msg.message);
                     }
                 } catch (error) {
                     this.$alert(error.message, 'danger');

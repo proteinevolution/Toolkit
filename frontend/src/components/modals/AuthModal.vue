@@ -45,6 +45,7 @@
     import Settings from '../auth/Settings.vue';
     import {User} from '@/types/toolkit/auth';
     import AuthService from '@/services/AuthService';
+    import EventBus from '@/util/EventBus';
 
     export default Vue.extend({
         name: 'AuthModal',
@@ -69,6 +70,8 @@
                     const msg = await AuthService.logout();
                     if (msg.successful) {
                         this.$store.commit('auth/setUser', null);
+                        EventBus.$emit('hide-modal', 'auth');
+                        this.$alert(msg.message);
                     }
                 } catch (error) {
                     this.$alert(error.message, 'danger');
