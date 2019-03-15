@@ -33,7 +33,7 @@ export interface PasswordChangeData {
 }
 
 export interface ForgotPasswordData {
-    eMail: string;
+    eMailOrUsername: string;
 }
 
 export interface AuthMessage {

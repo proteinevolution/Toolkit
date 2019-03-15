@@ -96,7 +96,7 @@
             },
             async forgotPasswordSubmit() {
                 const data: ForgotPasswordData = {
-                    eMail: this.forgot.eMailOrUsername,
+                    eMailOrUsername: this.forgot.eMailOrUsername,
                 };
                 try {
                     const msg = await AuthService.forgotPassword(data);

@@ -110,7 +110,7 @@ object FormDefinitions {
   )
 
   def forgottenPasswordEdit = Form(
-    mapping(UserData.EMAIL -> email) {
+    mapping(UserData.EMAILORUSERNAME -> nonEmptyText.verifying(pattern(textRegex))) {
       Some(_)
     } { _ =>
       None
