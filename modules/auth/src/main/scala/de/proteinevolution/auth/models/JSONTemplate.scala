@@ -6,6 +6,8 @@ import io.circe.syntax._
 
 trait JSONTemplate {
 
+  final val SHOWPASSWORDRESETVIEW = "showPasswordResetView"
+
   def userToJSON(user: User): Json = {
     Json.obj("nameLogin" -> Json.fromString(user.getUserData.nameLogin))
   }
@@ -41,6 +43,10 @@ trait JSONTemplate {
 
   def accountEmailUsed(): Json = {
     authMessage("This email is already used, please try a different one.")
+  }
+
+  def accountError(): Json = {
+    authMessage("There was an error finding your account.")
   }
 
   def loginIncorrect(): Json = {
@@ -103,10 +109,18 @@ trait JSONTemplate {
     authMessage("We have sent You a link for resetting Your password.\nPlease check your emails.", success = true)
   }
 
-  def passwordResetChanged(user: User): Json = {
-    authMessage("Password has been accepted.\nPlease sign in with your new Password.",
+  def passwordChangeAccepted(user: User): Json = {
+    authMessage("Password change verification was successful.\n Please log in with Your new password.",
                 success = true,
                 userOption = Some(user))
+  }
+
+  def passwordChangeFailed: Json = {
+    authMessage("The Password you have entered was insufficient, please create a new one.")
+  }
+
+  def showPasswordResetView: Json = {
+    authMessage(SHOWPASSWORDRESETVIEW, success = true)
   }
 
   def noSuchUser: Json = {

@@ -72,24 +72,9 @@ final class VerificationController @Inject()(
                       )
                     )
                     .map {
-                      case Some(_) =>
-                        Ok(
-                          views.html.main(assets,
-                                          toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
-                                          "Account verification was successful. Please log in.",
-                                          "",
-                                          environment)
-                        )
+                      case Some(_) => Ok(verificationSuccessful(userToVerify))
                       case None => // Could not save the modified user to the DB
-                        Ok(
-                          views.html.main(
-                            assets,
-                            toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
-                            "Verification was not successful due to a database error. Please try again later.",
-                            "",
-                            environment
-                          )
-                        )
+                        Ok(databaseError)
                     }
                 case 2 => // Token for password change validation
                   userToken.passwordHash match {
@@ -119,39 +104,13 @@ final class VerificationController @Inject()(
                               case None =>
                             }
                             // User modified properly
-                            Ok(
-                              views.html.main(
-                                assets,
-                                toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
-                                "Password change verification was successful. Please log in with Your new password.",
-                                "",
-                                environment
-                              )
-                            )
+                            Ok(passwordChangeAccepted(modifiedUser))
                           case None => // Could not save the modified user to the DB - failsave in case the DB is down
-                            Ok(
-                              views.html.main(
-                                assets,
-                                toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
-                                "Verification was not successful due to a database error. Please try again later.",
-                                "",
-                                environment
-                              )
-                            )
+                            Ok(databaseError)
                         }
                     case None =>
                       // This should not happen - Failsafe when the password hash got overwritten somehow
-                      Future.successful(
-                        Ok(
-                          views.html.main(
-                            assets,
-                            toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
-                            "The Password you have entered was insufficient, please create a new one.",
-                            "",
-                            environment
-                          )
-                        )
-                      )
+                      Future.successful(Ok(passwordChangeFailed))
                   }
 
                 case 3 =>
@@ -166,70 +125,20 @@ final class VerificationController @Inject()(
                     )
                   )
                   userSessions.modifyUserWithCache(selector, modifier).map {
-                    case Some(_) =>
-                      Ok(
-                        views.html.main(assets,
-                                        toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
-                                        "",
-                                        "passwordReset",
-                                        environment)
-                      )
+                    case Some(_) => Ok(showPasswordResetView)
                     case None => // Could not save the modified user to the DB
-                      Ok(
-                        views.html.main(
-                          assets,
-                          toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
-                          "Verification was not successful due to a database error. Please try again later.",
-                          "",
-                          environment
-                        )
-                      )
+                      Ok(databaseError)
                   }
-                case _ =>
-                  Future.successful(
-                    Ok(
-                      views.html.main(assets,
-                                      toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
-                                      "There was an error finding your token.",
-                                      "",
-                                      environment)
-                    )
-                  )
+                case _ => Future.successful(Ok(tokenNotFound()))
               }
 
             } else {
               // No Token in DB
-              Future.successful(
-                Ok(
-                  views.html.main(assets,
-                                  toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
-                                  "The token you used is not valid.",
-                                  "",
-                                  environment)
-                )
-              )
+              Future.successful(Ok(tokenMismatch()))
             }
-          case None =>
-            Future.successful(
-              Ok(
-                views.html.main(assets,
-                                toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
-                                "There was an error finding your token.",
-                                "",
-                                environment)
-              )
-            )
+          case None => Future.successful(Ok(tokenNotFound()))
         }
-      case None =>
-        Future.successful(
-          Ok(
-            views.html.main(assets,
-                            toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
-                            "There was an error finding your account.",
-                            "",
-                            environment)
-          )
-        )
+      case None => Future.successful(Ok(accountError()))
     }
   }
 

@@ -52,7 +52,7 @@ class MainRouter @Inject()(
       .orElse(backendRouter.withPrefix("/backend").routes)
       .orElse(helpRouter.withPrefix("/api/tools/help").routes)
       .orElse(authRouter.withPrefix("/api/auth").routes)
-      .orElse(verificationRouter.withPrefix("/verification").routes)
+      .orElse(verificationRouter.withPrefix("/api/verification").routes)
       .orElse(resultsRouter.withPrefix("/results").routes)
   }
 
