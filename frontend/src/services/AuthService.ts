@@ -5,6 +5,7 @@ import {
     ForgotPasswordData,
     LoginData,
     PasswordChangeData,
+    PasswordResetData,
     ProfileData,
     SignUpData,
     User,
@@ -64,6 +65,22 @@ export default class AuthService {
     public static forgotPassword(data: ForgotPasswordData): Promise<AuthMessage> {
         return new Promise<AuthMessage>(((resolve, reject) => {
             axios.post(`/api/auth/reset/password`, data)
+                .then((response) => resolve(response.data))
+                .catch(reject);
+        }));
+    }
+
+    public static resetPassword(data: PasswordResetData): Promise<AuthMessage> {
+        return new Promise<AuthMessage>(((resolve, reject) => {
+            axios.post(`/api/auth/reset/password/change`, data)
+                .then((response) => resolve(response.data))
+                .catch(reject);
+        }));
+    }
+
+    public static verifyToken(nameLogin: string, token: string): Promise<AuthMessage> {
+        return new Promise<AuthMessage>(((resolve, reject) => {
+            axios.get(`/api/verification/${nameLogin}/${token}`)
                 .then((response) => resolve(response.data))
                 .catch(reject);
         }));

@@ -27,16 +27,11 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import ExpandHeight from '@/transitions/ExpandHeight.vue';
     import {PasswordChangeData} from '@/types/toolkit/auth';
     import AuthService from '@/services/AuthService';
 
-
     export default Vue.extend({
         name: 'Settings',
-        components: {
-            ExpandHeight,
-        },
         data() {
             return {
                 oldPassword: '',

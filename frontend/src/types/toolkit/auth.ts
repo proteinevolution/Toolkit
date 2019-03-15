@@ -32,6 +32,10 @@ export interface PasswordChangeData {
     passwordNew: string;
 }
 
+export interface PasswordResetData {
+    passwordNew: string;
+}
+
 export interface ForgotPasswordData {
     eMailOrUsername: string;
 }
@@ -39,6 +43,6 @@ export interface ForgotPasswordData {
 export interface AuthMessage {
     message: string;
     successful: boolean;
-    user: User;
+    user: User | null;
 }
 

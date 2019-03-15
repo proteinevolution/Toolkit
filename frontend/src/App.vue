@@ -50,6 +50,7 @@
             <AlignmentViewerModal :sequences="modalProps.sequences"
                                   :format="modalProps.format"/>
             <HelpModal :toolName="modalProps.toolName"/>
+            <VerificationModal :authMessage="modalProps.authMessage"/>
         </div>
 
         <notifications animation-type="velocity"/>
@@ -74,6 +75,7 @@
     import AuthModal from '@/components/modals/AuthModal.vue';
     import AlignmentViewerModal from '@/components/modals/AlignmentViewerModal.vue';
     import {ModalParams} from '@/types/toolkit/utils';
+    import VerificationModal from '@/components/modals/VerificationModal.vue';
 
     const logger = Logger.get('App');
 
@@ -88,16 +90,22 @@
             FooterLinkModal,
             UpdatesModal,
             HelpModal,
+            VerificationModal,
             AlignmentViewerModal,
             AuthModal,
         },
         data() {
             return {
                 modalProps: {
-                    modal: 'help', // Simple Modal
-                    toolName: '', // Help Modal
-                    sequences: '', // AlignmentViewerModal
-                    format: '', // AlignmentViewerModal
+                    modal: 'help', // for Simple Modal
+                    toolName: '', // for Help Modal
+                    sequences: '', // for AlignmentViewerModal
+                    format: '', // for AlignmentViewerModal
+                    authMessage: { // for VerificationModal
+                        message: '',
+                        successful: true,
+                        user: null,
+                    },
                 },
             };
         },
@@ -137,6 +145,12 @@
             };
         },
         mounted() {
+            /* Modals are shown using EventBus.$emit('show-modal', {id: <MODAL_ID>, props: {<ANY PROPS TO BE PASSED>}});
+               where MODAL_ID is the prop "id" passed to the base modal. It is used by Bootstrap-Vue to access the modal
+               programmatically. The props are passed to the modal via data attributes of the App-component.
+
+               They are hidden with EventBus.$emit('hide-modal', <MODAL_ID>). */
+
             EventBus.$on('show-modal', this.showModal);
             EventBus.$on('hide-modal', this.hideModal);
         },

@@ -57,6 +57,8 @@ export default {
             passwordRepeat: 'Confirm password',
             reenterPassword: 'Please re-enter your password',
             changePassword: 'Change Password',
+            enterNewPassword: 'Please enter a new password.',
+            resetPassword: 'Reset Password',
             oldPassword: 'Old Password',
             newPassword: 'New Password',
             confirmPassword: 'Confirm Password',
@@ -66,6 +68,8 @@ export default {
             eMailOrUsername: 'E-Mail or username',
             privacyAccept: ' I accept the {0}',
             editProfile: 'Edit Profile',
+            verificationSucceeded: 'Verification succeeded',
+            verificationFailed: 'Verification failed',
         },
         index: {
             welcomeTitle: 'Welcome to the Bioinformatics Toolkit',
