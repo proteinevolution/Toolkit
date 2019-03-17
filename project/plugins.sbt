@@ -24,6 +24,6 @@ addSbtPlugin("ch.epfl.scala" % "sbt-scalajs-bundler" % "0.9.0")
 
 addSbtPlugin("org.portable-scala" % "sbt-scalajs-crossproject" % "0.6.0")
 
-addSbtPlugin("de.heikoseeberger" % "sbt-header" % "5.1.0")
+addSbtPlugin("de.heikoseeberger" % "sbt-header" % "5.2.0")
 
 resolvers += "Typesafe Repository" at "https://repo.typesafe.com/typesafe/maven-releases"
