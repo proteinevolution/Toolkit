@@ -72,17 +72,15 @@ final class WebSocketActor @Inject()(
   } // TODO May not be able to send any messages at this point of init
 
   override def postStop(): Unit = {
-    userSessions.getUser(sessionID).foreach {
-      case Some(user) =>
-        wsActorCache.get[List[ActorRef]](user.userID.stringify) match {
-          case Some(wsActors) =>
-            val actorSet: List[ActorRef] = wsActors: List[ActorRef]
-            val newActorSet              = actorSet.filterNot(_ == self)
-            wsActorCache.set(user.userID.stringify, newActorSet)
-          case None => ()
+    userSessions
+      .getUser(sessionID)
+      .map(_.foreach { user =>
+        wsActorCache.get[List[ActorRef]](user.userID.stringify).foreach { wsActors =>
+          val actorSet: List[ActorRef] = wsActors: List[ActorRef]
+          val newActorSet              = actorSet.filterNot(_ == self)
+          wsActorCache.set(user.userID.stringify, newActorSet)
         }
-      case None => ()
-    }
+      })
     context.system.eventStream.unsubscribe(self, classOf[UpdateLoad])
     log.info(s"[WSActor] Websocket closed for session ${sessionID.stringify}")
   }
@@ -96,40 +94,32 @@ final class WebSocketActor @Inject()(
 
             // Message containing a List of Jobs the user wants to register for the job list
             case "RegisterJobs" =>
-              json.hcursor.get[List[String]]("jobIDs") match {
-                case Right(jobIDs) =>
-                  jobIDs.foreach { jobID =>
-                    jobActorAccess.sendToJobActor(jobID, AddToWatchlist(jobID, user.userID))
-                  }
-                case Left(_) => // Client has sent strange message over the Websocket
+              json.hcursor.get[List[String]]("jobIDs").map { jobIDs =>
+                jobIDs.foreach { jobID =>
+                  jobActorAccess.sendToJobActor(jobID, AddToWatchlist(jobID, user.userID))
+                }
               }
 
             // Request to remove a Job from the user's Joblist
             case "ClearJob" =>
-              json.hcursor.get[List[String]]("jobIDs") match {
-                case Right(jobIDs) =>
-                  jobIDs.foreach { jobID =>
-                    jobActorAccess.sendToJobActor(jobID, RemoveFromWatchlist(jobID, user.userID))
-                  }
-                case Left(_) => //
+              json.hcursor.get[List[String]]("jobIDs").map { jobIDs =>
+                jobIDs.foreach { jobID =>
+                  jobActorAccess.sendToJobActor(jobID, RemoveFromWatchlist(jobID, user.userID))
+                }
               }
 
             // Received a ping, so we return a pong
             case "Ping" =>
-              json.hcursor.get[Long]("date") match {
-                case Right(msTime) =>
-                  //log.info(s"[WSActor] Ping from session ${sid.stringify} with msTime $msTime")
-                  out ! JsonObject("type" -> Json.fromString("Pong"), "date" -> Json.fromLong(msTime)).asJson
-                case Left(_) =>
+              json.hcursor.get[Long]("date").map { msTime =>
+                //log.info(s"[WSActor] Ping from session ${sid.stringify} with msTime $msTime")
+                out ! JsonObject("type" -> Json.fromString("Pong"), "date" -> Json.fromLong(msTime)).asJson
               }
 
             // Received a pong message from the client - lets see how long it took
             case "Pong" =>
-              json.hcursor.get[Long]("date") match {
-                case Right(msTime) =>
-                  val ping = ZonedDateTime.now.toInstant.toEpochMilli - msTime
-                  log.info(s"[WSActor] Ping of session ${sid.stringify} is ${ping}ms.")
-                case Left(_) =>
+              json.hcursor.get[Long]("date").map { msTime =>
+                val ping = ZonedDateTime.now.toInstant.toEpochMilli - msTime
+                log.info(s"[WSActor] Ping of session ${sid.stringify} is ${ping}ms.")
               }
           }
         case None =>
