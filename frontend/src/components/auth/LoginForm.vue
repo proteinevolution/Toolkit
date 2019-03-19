@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-form-group :label="$t('auth.username')">
+        <b-form-group :label="$t('auth.eMailOrUsername')">
             <b-form-input v-model="username"
                           type="text"
                           required>

@@ -1,21 +1,30 @@
 <template>
     <div>
 
-        <b-form-group :label="$t('auth.firstName')">
+        <b-form-group :label="$t('auth.firstName')"
+                      :invalid-feedback="$t('constraints.lengthMax', { max: 25 })">
             <b-form-input v-model="firstName"
                           type="text"
+                          :state="firstNameState"
+                          @change="validateFirstName"
                           :placeholder="$t('auth.firstNameEnter')">
             </b-form-input>
         </b-form-group>
-        <b-form-group :label="$t('auth.lastName')">
+        <b-form-group :label="$t('auth.lastName')"
+                      :invalid-feedback="$t('constraints.lengthMax', { max: 25 })">
             <b-form-input v-model="lastName"
                           type="text"
+                          :state="lastNameState"
+                          @change="validateLastName"
                           :placeholder="$t('auth.lastNameEnter')">
             </b-form-input>
         </b-form-group>
-        <b-form-group :label="$t('auth.eMail')">
+        <b-form-group :label="$t('auth.eMail')"
+                      :invalid-feedback="$t('constraints.email')">
             <b-form-input v-model="eMail"
-                          type="text">
+                          type="text"
+                          :state="eMailState"
+                          @change="validateEmail">
             </b-form-input>
         </b-form-group>
         <b-form-group :label="$t('auth.country')">
@@ -39,7 +48,7 @@
                        v-text="$t('cancel')"
                        class="mr-1"/>
                 <b-btn @click="editProfileSubmit"
-                       :disabled="passwordInvalid"
+                       :disabled="!valid"
                        v-text="$t('submit')" variant="primary"/>
             </b-alert>
         </ExpandHeight>
@@ -57,7 +66,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {ProfileData, User, AuthMessage} from '@/types/toolkit/auth';
+    import {ProfileData, User} from '@/types/toolkit/auth';
     import countries from '@/i18n/lang/countries';
     import ExpandHeight from '@/transitions/ExpandHeight.vue';
     import AuthService from '@/services/AuthService';
@@ -73,8 +82,11 @@
             return {
                 state: 0,
                 firstName: '',
+                firstNameState: null as boolean | null,
                 lastName: '',
+                lastNameState: null as boolean | null,
                 eMail: '',
+                eMailState: null as boolean | null,
                 country: '',
                 countries: options,
                 password: '',
@@ -87,16 +99,30 @@
             },
             editButtonEnabled(): boolean {
                 if (this.user) {
-                    const changed = this.firstName !== this.user.nameFirst
+                    return this.firstName !== this.user.nameFirst
                         || this.lastName !== this.user.nameLast
                         || this.eMail !== this.user.eMail
                         || this.country !== this.user.country;
-                    return changed;
                 }
                 return false;
             },
-            passwordInvalid(): boolean {
-                return this.password === '';
+            firstNameValid(): boolean {
+                return /^.{0,25}$/.test(this.firstName);
+            },
+            lastNameValid(): boolean {
+                return /^.{0,25}$/.test(this.lastName);
+            },
+            eMailValid(): boolean {
+                return /^\S+@\S+$/.test(this.eMail);
+            },
+            passwordValid(): boolean {
+                return this.password !== '';
+            },
+            valid(): boolean {
+                return this.firstNameValid
+                    && this.lastNameValid
+                    && this.eMailValid
+                    && this.passwordValid;
             },
         },
         watch: {
@@ -108,6 +134,15 @@
             },
         },
         methods: {
+            validateFirstName() {
+                this.firstNameState = this.firstNameValid ? null : false;
+            },
+            validateLastName() {
+                this.lastNameState = this.lastNameValid ? null : false;
+            },
+            validateEmail() {
+                this.eMailState = this.eMailValid ? null : false;
+            },
             resetValues() {
                 if (this.user) {
                     this.firstName = this.user.nameFirst;

@@ -1,26 +1,38 @@
 <template>
     <div>
-        <b-form-group :label="$t('auth.username')">
+        <b-form-group :label="$t('auth.username')"
+                      :invalid-feedback="$t('constraints.username')">
             <b-form-input v-model="username"
                           type="text"
+                          :state="usernameState"
+                          @change="validateUsername"
                           required>
             </b-form-input>
         </b-form-group>
-        <b-form-group :label="$t('auth.eMail')">
+        <b-form-group :label="$t('auth.eMail')"
+                      :invalid-feedback="$t('constraints.email')">
             <b-form-input v-model="email"
-                          type="text"
+                          type="email"
+                          :state="emailState"
+                          @change="validateEmail"
                           required>
             </b-form-input>
         </b-form-group>
-        <b-form-group :label="$t('auth.password')">
+        <b-form-group :label="$t('auth.password')"
+                      :invalid-feedback="$t('constraints.password')">
             <b-form-input v-model="password"
                           type="password"
+                          :state="passwordState"
+                          @change="validatePassword"
                           required>
             </b-form-input>
         </b-form-group>
-        <b-form-group :label="$t('auth.passwordRepeat')">
+        <b-form-group :label="$t('auth.passwordRepeat')"
+                      :invalid-feedback="$t('constraints.passwordsMatch')">
             <b-form-input v-model="passwordRepeat"
                           type="password"
+                          :state="passwordRepeatState"
+                          @change="validatePasswordRepeat"
                           required>
             </b-form-input>
         </b-form-group>
@@ -38,6 +50,8 @@
                  :show="message !== ''"
                  v-text="message"/>
         <b-btn @click="signUp"
+               variant="primary"
+               :disabled="!valid"
                v-text="$t('auth.signUp')"/>
     </div>
 </template>
@@ -53,15 +67,52 @@
         data() {
             return {
                 username: '',
+                usernameState: null as boolean | null,
                 email: '',
+                emailState: null as boolean | null,
                 password: '',
+                passwordState: null as boolean | null,
                 passwordRepeat: '',
+                passwordRepeatState: null as boolean | null,
                 privacyAccepted: false,
                 successful: false,
                 message: '',
             };
         },
+        computed: {
+            usernameValid(): boolean {
+                return /^[a-zA-Z0-9]{6,40}$/.test(this.username);
+            },
+            emailValid(): boolean {
+                return /^\S+@\S+$/.test(this.email);
+            },
+            passwordValid(): boolean {
+                return /^.{8,128}$/.test(this.password);
+            },
+            passwordRepeatValid(): boolean {
+                return this.passwordRepeat === this.password;
+            },
+            valid(): boolean {
+                return this.usernameValid
+                    && this.emailValid
+                    && this.passwordValid
+                    && this.passwordRepeatValid
+                    && this.privacyAccepted;
+            },
+        },
         methods: {
+            validateUsername() {
+                this.usernameState = this.usernameValid ? null : false;
+            },
+            validateEmail() {
+                this.emailState = this.emailValid ? null : false;
+            },
+            validatePassword() {
+                this.passwordState = this.passwordValid ? null : false;
+            },
+            validatePasswordRepeat() {
+                this.passwordRepeatState = this.passwordRepeatValid ? null : false;
+            },
             async signUp() {
                 const data: SignUpData = {
                     nameLogin: this.username,
