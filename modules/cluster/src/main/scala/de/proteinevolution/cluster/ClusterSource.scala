@@ -18,13 +18,14 @@ package de.proteinevolution.cluster
 
 import akka.NotUsed
 import akka.actor.{ ActorSystem, Cancellable }
-import akka.stream.Materializer
+import akka.stream.{ ActorAttributes, Materializer, Supervision }
 import akka.stream.scaladsl.Source
 import de.proteinevolution.cluster.ClusterSource.UpdateLoad
 import de.proteinevolution.cluster.api.Polling.PolledJobs
-import de.proteinevolution.cluster.api.{ SGELoad, QStat }
+import de.proteinevolution.cluster.api.{ QStat, SGELoad }
 import de.proteinevolution.common.models.ConstantsV2
 import javax.inject.{ Inject, Singleton }
+import play.api.Logging
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
@@ -35,7 +36,7 @@ final private[cluster] class ClusterSource @Inject()(constants: ConstantsV2)(
     implicit system: ActorSystem,
     mat: Materializer,
     ec: ExecutionContext
-) {
+) extends Logging {
 
   private[this] def qStat(): Unit = {
     val qStat = QStat("qstat -xml".!!)
@@ -52,9 +53,19 @@ final private[cluster] class ClusterSource @Inject()(constants: ConstantsV2)(
 
   private[this] val loadTick: Source[NotUsed, Cancellable] = Source.tick(0.seconds, 1.second, NotUsed)
 
-  qStatTick.runForeach(_ => qStat())
+  qStatTick
+    .withAttributes(ActorAttributes.supervisionStrategy { t =>
+      logger.error("qstat tick stream crashed", t)
+      Supervision.Resume
+    })
+    .runForeach(_ => qStat())
 
-  loadTick.runForeach(_ => updateLoad())
+  loadTick
+    .withAttributes(ActorAttributes.supervisionStrategy { t =>
+      logger.error("cluster load stream crashed", t)
+      Supervision.Resume
+    })
+    .runForeach(_ => updateLoad())
 
 }
 
