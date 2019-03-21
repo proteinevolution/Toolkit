@@ -76,7 +76,7 @@ object PSIBlastResult {
     } yield {
       val num_hits   = hits.length
       val hspList    = hits.flatMap(_.hcursor.as[PSIBlastHSP](PSIBlastHSP.parseHSP(db)).toOption)
-      val upperBound = calculateUpperBound(hits, eValue).getOrElse(hspList.length + 1)
+      val upperBound = calculateUpperBound(hits, eValue)
       new PSIBlastResult(
         hspList,
         num_hits,
@@ -91,15 +91,14 @@ object PSIBlastResult {
     }
   }
 
-  private[this] def calculateUpperBound(hits: List[Json], eValue: String): Option[Int] = {
-    // take the smallest value above the threshold
+  private[this] def calculateUpperBound(hits: List[Json], eValue: String): Int = {
+    // count the number of times eval is bigger than eValue
     (for {
       hit <- hits
       cursor = hit.hcursor
       eval <- cursor.downField("hsps").downArray.first.downField("evalue").as[Double].toOption
-      num  <- cursor.downField("num").as[Int].toOption
-      if eval >= eValue.toDouble
-    } yield (eval, num)).sortWith(_._1 < _._1).toMap.headOption.map(_._2)
+      if eval <= eValue.toDouble
+    } yield eval).length
   }
 
 }
