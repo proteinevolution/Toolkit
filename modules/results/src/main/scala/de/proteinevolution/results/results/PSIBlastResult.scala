@@ -97,7 +97,7 @@ object PSIBlastResult {
       hit <- hits
       cursor = hit.hcursor
       eval <- cursor.downField("hsps").downArray.first.downField("evalue").as[Double].toOption
-      if eval >= eValue.toDouble
+      if eval <= eValue.toDouble
     } yield eval).length
   }
 
