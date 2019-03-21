@@ -96,7 +96,7 @@ class NormalResultView(
 
       if (resultContext.toolName.equals("psiblast")) {
         container.find(".selectAllSeqBar").addClass("colorToggleBar").text("Deselect all")
-        checkboxes.selectAll(resultContext.belowEvalThreshold - 1)
+        checkboxes.selectAll(resultContext.belowEvalThreshold)
       }
       showHits(0, hitsToLoad)
       setupBlastVizTooltipster()
