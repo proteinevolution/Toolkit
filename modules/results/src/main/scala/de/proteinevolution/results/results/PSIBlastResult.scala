@@ -92,7 +92,7 @@ object PSIBlastResult {
   }
 
   private[this] def calculateUpperBound(hits: List[Json], eValue: String): Int = {
-    // count the number of times eval is bigger than eValue
+    // count the number of times eValue >= eval of hsps
     (for {
       hit <- hits
       cursor = hit.hcursor
