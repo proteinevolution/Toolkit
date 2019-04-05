@@ -17,7 +17,7 @@
 package de.proteinevolution.cluster
 
 import akka.actor.SupervisorStrategy.Resume
-import akka.actor.{ Actor, OneForOneStrategy }
+import akka.actor.{ Actor, OneForOneStrategy, SupervisorStrategy }
 import akka.event.LoggingReceive
 import akka.stream.Materializer
 import de.proteinevolution.cluster.ClusterSubscriber.UpdateLoad
@@ -36,7 +36,6 @@ final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
     mat: Materializer
 ) extends Actor
     with Logging {
-  import akka.actor.SupervisorStrategy
 
   private[this] def calculated(runningJobs: Int): Double = {
     // 32 Tasks are 100% - calculate the load from this.
