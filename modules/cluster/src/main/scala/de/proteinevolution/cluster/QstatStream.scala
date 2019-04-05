@@ -17,25 +17,24 @@
 package de.proteinevolution.cluster
 
 import akka.NotUsed
-import akka.actor.{ ActorSystem, Cancellable }
-import akka.stream.{ ActorAttributes, Materializer, Supervision }
+import akka.actor.ActorSystem
 import akka.stream.scaladsl.Source
-import de.proteinevolution.cluster.ClusterSource.UpdateLoad
+import akka.stream.{ ActorAttributes, Materializer, Supervision }
 import de.proteinevolution.cluster.api.Polling.PolledJobs
-import de.proteinevolution.cluster.api.{ QStat, SGELoad }
+import de.proteinevolution.cluster.api.QStat
 import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.tel.execution.ExecutionContext
 import javax.inject.{ Inject, Singleton }
 import play.api.Logging
 
-import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import scala.sys.process._
 
 @Singleton
-final private[cluster] class ClusterSource @Inject()(constants: ConstantsV2)(
-    implicit system: ActorSystem,
+final private[cluster] class QstatStream @Inject()(constants: ConstantsV2)(
+    implicit ec: ExecutionContext,
     mat: Materializer,
-    ec: ExecutionContext
+    system: ActorSystem
 ) extends Logging {
 
   private[this] def qStat(): Unit = {
@@ -43,32 +42,12 @@ final private[cluster] class ClusterSource @Inject()(constants: ConstantsV2)(
     system.eventStream.publish(PolledJobs(qStat))
   }
 
-  private[this] def updateLoad(): Unit = {
-    // 32 Tasks are 100% - calculate the load from this.
-    val load: Double = SGELoad.get.toDouble / constants.loadPercentageMarker
-    system.eventStream.publish(UpdateLoad(load))
-  }
-
-  private[this] val qStatTick: Source[NotUsed, Cancellable] = Source.tick(5.seconds, constants.pollingInterval, NotUsed)
-
-  private[this] val loadTick: Source[NotUsed, Cancellable] = Source.tick(0.seconds, 1.second, NotUsed)
-
-  qStatTick
+  Source
+    .tick(5.seconds, constants.pollingInterval, NotUsed)
     .withAttributes(ActorAttributes.supervisionStrategy { t =>
       logger.error("qstat tick stream crashed", t)
       Supervision.Resume
     })
     .runForeach(_ => qStat())
 
-  loadTick
-    .withAttributes(ActorAttributes.supervisionStrategy { t =>
-      logger.error("cluster load stream crashed", t)
-      Supervision.Resume
-    })
-    .runForeach(_ => updateLoad())
-
-}
-
-object ClusterSource {
-  case class UpdateLoad(load: Double)
 }
