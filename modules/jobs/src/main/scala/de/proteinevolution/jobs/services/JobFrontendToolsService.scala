@@ -15,6 +15,7 @@
  */
 
 package de.proteinevolution.jobs.services
+
 import java.time.ZonedDateTime
 
 import de.proteinevolution.common.models.database.jobs.JobState.Done
@@ -33,7 +34,7 @@ class JobFrontendToolsService @Inject()(
 
   def logFrontendJob(toolName: String): Future[WriteResult] = {
     for {
-      jobId <- jobIdProvider.provide
+      jobId <- jobIdProvider.runSafe.unsafeToFuture()
       log = generateJobEventLog(jobId, toolName)
       wr <- jobDao.addJobLog(log)
     } yield wr
