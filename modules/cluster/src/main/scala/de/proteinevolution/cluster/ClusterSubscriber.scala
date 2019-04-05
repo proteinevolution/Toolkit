@@ -17,7 +17,7 @@
 package de.proteinevolution.cluster
 
 import akka.actor.SupervisorStrategy.Resume
-import akka.actor.{ Actor, OneForOneStrategy, SupervisorStrategy }
+import akka.actor.{ Actor, ActorLogging, OneForOneStrategy, SupervisorStrategy }
 import akka.event.LoggingReceive
 import akka.stream.Materializer
 import de.proteinevolution.cluster.ClusterSubscriber.UpdateLoad
@@ -25,7 +25,6 @@ import de.proteinevolution.cluster.api.SGELoad
 import de.proteinevolution.cluster.api.SGELoad.UpdateRunningJobs
 import de.proteinevolution.common.models.ConstantsV2
 import javax.inject.{ Inject, Singleton }
-import play.api.Logging
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
@@ -35,7 +34,7 @@ final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
     implicit ec: ExecutionContext,
     mat: Materializer
 ) extends Actor
-    with Logging {
+    with ActorLogging {
 
   private[this] def calculated(runningJobs: Int): Double = {
     // 32 Tasks are 100% - calculate the load from this.
@@ -47,7 +46,7 @@ final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
       t match {
         case SGELoad.+ =>
           val newJobCount = runningJobs + 1
-          if (newJobCount > constants.loadPercentageMarker) logger.warn(s"cluster load critical: > $newJobCount jobs")
+          if (newJobCount > constants.loadPercentageMarker) log.info(s"cluster load critical: > $newJobCount jobs")
           context.system.eventStream.publish(UpdateLoad(calculated(newJobCount)))
           context.become(active(newJobCount))
         case SGELoad.- =>
@@ -67,7 +66,8 @@ final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
 
   override def supervisorStrategy: SupervisorStrategy = {
     OneForOneStrategy(maxNrOfRetries = 5, withinTimeRange = 10.seconds) {
-      case _ =>
+      case t =>
+        log.error(s"clusterSubscriber crashed", t)
         Resume
     }
   }
