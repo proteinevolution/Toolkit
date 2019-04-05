@@ -16,7 +16,8 @@
 
 package de.proteinevolution.cluster
 
-import akka.actor.Actor
+import akka.actor.{ Actor, OneForOneStrategy }
+import akka.actor.SupervisorStrategy.Restart
 import akka.event.LoggingReceive
 import akka.stream.Materializer
 import de.proteinevolution.cluster.ClusterSubscriber.UpdateLoad
@@ -27,6 +28,7 @@ import javax.inject.{ Inject, Singleton }
 import play.api.Logging
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
 
 @Singleton
 final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
@@ -34,6 +36,7 @@ final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
     mat: Materializer
 ) extends Actor
     with Logging {
+  import akka.actor.SupervisorStrategy
 
   private[this] def calculated(runningJobs: Int): Double = {
     // 32 Tasks are 100% - calculate the load from this.
@@ -61,6 +64,13 @@ final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
 
   override def postStop(): Unit = {
     context.system.eventStream.unsubscribe(self, classOf[UpdateRunningJobs]).asInstanceOf[Unit]
+  }
+
+  override def supervisorStrategy: SupervisorStrategy = {
+    OneForOneStrategy(maxNrOfRetries = 5, withinTimeRange = 10.seconds) {
+      case _ =>
+        Restart
+    }
   }
 
   override def receive: Receive = LoggingReceive {
