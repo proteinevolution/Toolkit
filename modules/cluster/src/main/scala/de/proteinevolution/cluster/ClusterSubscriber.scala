@@ -47,7 +47,7 @@ final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
       t match {
         case SGELoad.+ =>
           val newJobCount = runningJobs + 1
-          if (newJobCount < 32) logger.warn(s"cluster load critical: $newJobCount")
+          if (newJobCount > constants.loadPercentageMarker) logger.warn(s"cluster load critical: > $newJobCount jobs")
           context.system.eventStream.publish(UpdateLoad(calculated(newJobCount)))
           context.become(active(newJobCount))
         case SGELoad.- =>
