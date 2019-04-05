@@ -16,8 +16,8 @@
 
 package de.proteinevolution.cluster
 
+import akka.actor.SupervisorStrategy.Resume
 import akka.actor.{ Actor, OneForOneStrategy }
-import akka.actor.SupervisorStrategy.Restart
 import akka.event.LoggingReceive
 import akka.stream.Materializer
 import de.proteinevolution.cluster.ClusterSubscriber.UpdateLoad
@@ -69,7 +69,7 @@ final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
   override def supervisorStrategy: SupervisorStrategy = {
     OneForOneStrategy(maxNrOfRetries = 5, withinTimeRange = 10.seconds) {
       case _ =>
-        Restart
+        Resume
     }
   }
 
