@@ -64,7 +64,6 @@ final class JobDispatcher @Inject()(
         isFromInstitute <- EitherT.pure[Future, JobSubmitError](user.getUserData.eMail.matches(".+@tuebingen.mpg.de"))
         _               <- EitherT.liftF(jobDao.insertJob(job))
         _               <- EitherT.liftF(assignJob(user, job))
-        _               <- EitherT.pure[Future, JobSubmitError](jobIdProvider.trash(generatedId))
         _               <- EitherT.pure[Future, JobSubmitError](send(generatedId, job, parts, isFromInstitute))
       } yield job
     }
@@ -102,7 +101,7 @@ final class JobDispatcher @Inject()(
 
   private[this] def generateJobId(parts: Map[String, String]): EitherT[Future, JobSubmitError, String] = {
     if (parts.get("jobID").isEmpty) {
-      EitherT.liftF(jobIdProvider.provide)
+      EitherT.liftF(jobIdProvider.runSafe.unsafeToFuture())
     } else {
       EitherT.rightT[Future, JobSubmitError](parts("jobID"))
     }
