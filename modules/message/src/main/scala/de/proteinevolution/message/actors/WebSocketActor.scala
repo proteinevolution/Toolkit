@@ -24,7 +24,7 @@ import akka.event.LoggingReceive
 import com.google.inject.assistedinject.Assisted
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.models.Session.ChangeSessionID
-import de.proteinevolution.cluster.ClusterSource.UpdateLoad
+import de.proteinevolution.cluster.ClusterSubscriber.UpdateLoad
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.common.models.database.jobs.JobState.Running
 import de.proteinevolution.jobs.actors.JobActor._

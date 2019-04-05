@@ -16,15 +16,14 @@
 
 package de.proteinevolution.cluster.api
 
+sealed trait SGELoad
+
 object SGELoad {
 
-  @volatile private var runningJobs: Long = 0
+  final case object + extends SGELoad
 
-  @inline def push(): Unit = runningJobs += 1
+  final case object - extends SGELoad
 
-  // prevent negative values if the first job fails
-  @inline def pop(): Unit = if (runningJobs > 0) runningJobs -= 1
-
-  def get: Long = runningJobs
+  final case class UpdateRunningJobs(`type`: SGELoad)
 
 }
