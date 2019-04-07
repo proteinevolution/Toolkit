@@ -16,7 +16,7 @@
 
 package de.proteinevolution.cluster
 
-import akka.actor.SupervisorStrategy.Resume
+import akka.actor.SupervisorStrategy.Restart
 import akka.actor.{ Actor, ActorLogging, OneForOneStrategy, SupervisorStrategy }
 import akka.event.LoggingReceive
 import akka.stream.Materializer
@@ -27,7 +27,6 @@ import de.proteinevolution.common.models.ConstantsV2
 import javax.inject.{ Inject, Singleton }
 
 import scala.concurrent.ExecutionContext
-import scala.concurrent.duration._
 
 @Singleton
 final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
@@ -36,10 +35,7 @@ final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
 ) extends Actor
     with ActorLogging {
 
-  private[this] def calculated(runningJobs: Int): Double = {
-    // 32 Tasks are 100% - calculate the load from this.
-    runningJobs.toDouble / constants.loadPercentageMarker
-  }
+  private[this] def calculated(runningJobs: Int): Double = runningJobs.toDouble / constants.loadPercentageMarker
 
   private[this] def active(runningJobs: Int): Receive = {
 
@@ -68,10 +64,10 @@ final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
   }
 
   override def supervisorStrategy: SupervisorStrategy = {
-    OneForOneStrategy(maxNrOfRetries = 5, withinTimeRange = 10.seconds) {
+    OneForOneStrategy() {
       case t =>
         log.error(s"clusterSubscriber crashed", t)
-        Resume
+        Restart
     }
   }
 

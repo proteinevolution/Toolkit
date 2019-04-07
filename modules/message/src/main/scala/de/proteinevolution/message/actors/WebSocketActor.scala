@@ -62,7 +62,6 @@ final class WebSocketActor @Inject()(
 
   override def preStart(): Unit = {
     context.system.eventStream.subscribe(self, classOf[UpdateLoad])
-    clusterSubscriber ? SGELoad.Ask
     userSessions.getUser(sessionID).foreach {
       case Some(user) =>
         wsActorCache.get[List[ActorRef]](user.userID.stringify) match {
@@ -71,6 +70,13 @@ final class WebSocketActor @Inject()(
             wsActorCache.set(user.userID.stringify, actorSet)
           case None =>
             wsActorCache.set(user.userID.stringify, List(self))
+        }
+        val loadFuture = clusterSubscriber ? SGELoad.Ask
+        loadFuture.mapTo[UpdateLoad].map { response =>
+          out ! JsonObject(
+            "type" -> Json.fromString("UpdateLoad"),
+            "load" -> Json.fromDoubleOrNull(response.load)
+          ).asJson
         }
       case None =>
         self ! PoisonPill
