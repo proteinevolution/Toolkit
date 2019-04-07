@@ -26,4 +26,6 @@ object SGELoad {
 
   final case class UpdateRunningJobs(`type`: SGELoad)
 
+  final case object Ask
+
 }
