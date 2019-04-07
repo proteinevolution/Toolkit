@@ -21,10 +21,13 @@ import java.time.ZonedDateTime
 
 import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
+import akka.pattern.ask
+import akka.util.Timeout
 import com.google.inject.assistedinject.Assisted
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.models.Session.ChangeSessionID
 import de.proteinevolution.cluster.ClusterSubscriber.UpdateLoad
+import de.proteinevolution.cluster.api.SGELoad
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.common.models.database.jobs.JobState.Running
 import de.proteinevolution.jobs.actors.JobActor._
@@ -34,12 +37,13 @@ import de.proteinevolution.message.actors.WebSocketActor.{ LogOut, MaintenanceAl
 import de.proteinevolution.tools.ToolConfig
 import io.circe.syntax._
 import io.circe.{ Json, JsonObject }
-import javax.inject.Inject
+import javax.inject.{ Inject, Named }
 import play.api.Configuration
 import play.api.cache.{ NamedCache, SyncCacheApi }
 import reactivemongo.bson.BSONObjectID
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
 
 final class WebSocketActor @Inject()(
     @Assisted("out") out: ActorRef,
@@ -49,14 +53,16 @@ final class WebSocketActor @Inject()(
     @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
     @Assisted("sessionID") sessionID: BSONObjectID,
     toolConfig: ToolConfig,
-    implicit val config: Configuration
-)(implicit ec: ExecutionContext)
+    @Named("clusterSubscriber") clusterSubscriber: ActorRef
+)(implicit ec: ExecutionContext, config: Configuration)
     extends Actor
     with ActorLogging {
 
+  implicit val timeout: Timeout = Timeout(5.seconds)
+
   override def preStart(): Unit = {
     context.system.eventStream.subscribe(self, classOf[UpdateLoad])
-    // Grab the user from cache to ensure a working job
+    clusterSubscriber ? SGELoad.Ask
     userSessions.getUser(sessionID).foreach {
       case Some(user) =>
         wsActorCache.get[List[ActorRef]](user.userID.stringify) match {
@@ -69,7 +75,7 @@ final class WebSocketActor @Inject()(
       case None =>
         self ! PoisonPill
     }
-  } // TODO May not be able to send any messages at this point of init
+  }
 
   override def postStop(): Unit = {
     userSessions
