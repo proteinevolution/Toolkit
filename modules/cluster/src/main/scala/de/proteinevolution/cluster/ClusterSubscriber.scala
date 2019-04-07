@@ -17,7 +17,7 @@
 package de.proteinevolution.cluster
 
 import akka.actor.SupervisorStrategy.Restart
-import akka.actor.{ Actor, ActorLogging, OneForOneStrategy, SupervisorStrategy }
+import akka.actor.{ Actor, ActorLogging, Cancellable, OneForOneStrategy, SupervisorStrategy }
 import akka.event.LoggingReceive
 import akka.stream.Materializer
 import de.proteinevolution.cluster.ClusterSubscriber.UpdateLoad
@@ -27,6 +27,7 @@ import de.proteinevolution.common.models.ConstantsV2
 import javax.inject.{ Inject, Singleton }
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
 
 @Singleton
 final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
@@ -35,6 +36,17 @@ final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
 ) extends Actor
     with ActorLogging {
 
+  private[this] final case object Tick
+
+  private[this] val innerScheduler: Cancellable = {
+    context.system.scheduler.schedule(
+      0.millis,
+      1.second,
+      self,
+      Tick
+    )(context.system.dispatcher)
+  }
+
   private[this] def calculated(runningJobs: Int): Double = runningJobs.toDouble / constants.loadPercentageMarker
 
   private[this] def active(runningJobs: Int): Receive = {
@@ -42,17 +54,18 @@ final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
     case SGELoad.Ask => sender ! UpdateLoad(calculated(runningJobs))
 
     case UpdateRunningJobs(t) =>
-      t match {
+      val newJobCount = t match {
         case SGELoad.+ =>
-          val newJobCount = runningJobs + 1
-          if (newJobCount > constants.loadPercentageMarker) log.info(s"cluster load critical: > $newJobCount jobs")
-          context.system.eventStream.publish(UpdateLoad(calculated(newJobCount)))
-          context.become(active(newJobCount))
+          runningJobs + 1
         case SGELoad.- =>
-          val newJobCount = if (runningJobs > 0) runningJobs - 1 else runningJobs
-          context.system.eventStream.publish(UpdateLoad(calculated(newJobCount)))
-          context.become(active(newJobCount))
+          if (runningJobs > 0) runningJobs - 1 else runningJobs
       }
+      if (newJobCount > constants.loadPercentageMarker) log.info(s"cluster load critical: > $newJobCount jobs")
+      context.system.eventStream.publish(UpdateLoad(calculated(newJobCount)))
+      context.become(active(newJobCount))
+
+    case Tick => context.system.eventStream.publish(UpdateLoad(calculated(runningJobs)))
+
   }
 
   override def preStart(): Unit = {
@@ -61,6 +74,7 @@ final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
 
   override def postStop(): Unit = {
     context.system.eventStream.unsubscribe(self, classOf[UpdateRunningJobs]).asInstanceOf[Unit]
+    innerScheduler.cancel().asInstanceOf[Unit]
   }
 
   override def supervisorStrategy: SupervisorStrategy = {
