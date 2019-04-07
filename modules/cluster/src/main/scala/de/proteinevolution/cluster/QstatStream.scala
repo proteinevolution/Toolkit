@@ -23,10 +23,10 @@ import akka.stream.{ ActorAttributes, Materializer, Supervision }
 import de.proteinevolution.cluster.api.Polling.PolledJobs
 import de.proteinevolution.cluster.api.QStat
 import de.proteinevolution.common.models.ConstantsV2
-import de.proteinevolution.tel.execution.ExecutionContext
 import javax.inject.{ Inject, Singleton }
 import play.api.Logging
 
+import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import scala.sys.process._
 
