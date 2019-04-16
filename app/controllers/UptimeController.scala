@@ -16,20 +16,22 @@
 
 package controllers
 
-import javax.inject.Inject
 import build.BuildInfo
+import de.proteinevolution.base.controllers.ToolkitController
+import javax.inject.{ Inject, Singleton }
 import play.api.mvc._
 
-class UptimeController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+@Singleton
+class UptimeController @Inject()(cc: ControllerComponents) extends ToolkitController(cc) {
 
   private val startTime: Long = System.currentTimeMillis()
 
-  def uptime = Action {
+  def uptime: Action[AnyContent] = Action {
     val uptimeInMillis = System.currentTimeMillis() - startTime
     Ok(s"$uptimeInMillis ms")
   }
 
-  def buildInfo = Action {
+  def buildInfo: Action[AnyContent] = Action {
     Ok(s"${BuildInfo.toString}")
   }
 
