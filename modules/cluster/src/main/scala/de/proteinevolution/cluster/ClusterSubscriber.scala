@@ -40,7 +40,7 @@ final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
 
   private[this] val innerScheduler: Cancellable = {
     context.system.scheduler.schedule(
-      0.millis,
+      Duration.Zero,
       1.second,
       self,
       Tick

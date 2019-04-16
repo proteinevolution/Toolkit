@@ -71,7 +71,7 @@ final class Application @Inject()(
     PermanentRedirect(s"/#/$static")
   }
 
-  val robots = Action { _ =>
+  val robots: Action[AnyContent] = Action { _ =>
     Ok(
       "User-agent: *\nAllow: /\nDisallow: /#/jobmanager/\nDisallow: /#/jobs/\nSitemap: https://toolkit.tuebingen.mpg.de/sitemap.xml"
     )
