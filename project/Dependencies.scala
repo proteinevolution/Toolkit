@@ -40,7 +40,7 @@ object Dependencies {
     "io.circe"      %% "circe-generic"        % circeV,
     "io.circe"      %% "circe-generic-extras" % circeV,
     "io.circe"      %% "circe-java8"          % circeV,
-    ("io.circe" %% "circe-bson" % "0.3.0").exclude("org.reactivemongo", "*"), // provided by play2-reactivemongo
+    ("io.circe" %% "circe-bson" % "0.3.1").exclude("org.reactivemongo", "*"), // provided by play2-reactivemongo
     "org.webjars"          %% "webjars-play"  % "2.7.0",
     "org.scala-js"         %% "scalajs-stubs" % scalaJSVersion % "provided",
     "com.github.mpilquist" %% "simulacrum"    % "0.15.0",
