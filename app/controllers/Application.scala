@@ -48,12 +48,14 @@ final class Application @Inject()(
     userSessions.getUser.map { user =>
       logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
       Ok(
-        views.html.main(assetsFinder,
-                        webJarsUtil,
-                        toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
-                        message,
-                        "",
-                        environment)
+        views.html.main(
+          assetsFinder,
+          webJarsUtil,
+          toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
+          message,
+          "",
+          environment
+        )
       ).withSession(userSessions.sessionCookie(request, user.sessionID.get))
     }
   }

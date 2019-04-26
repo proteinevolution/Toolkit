@@ -16,12 +16,12 @@
 
 import controllers.AssetsFinder
 import de.proteinevolution.base.helpers.ToolkitTypes
+import javax.inject.{ Inject, Singleton }
 import play.api.http.HttpErrorHandler
-import play.api.mvc._
 import play.api.mvc.Results._
+import play.api.mvc._
 
 import scala.concurrent._
-import javax.inject.{ Inject, Singleton }
 
 @Singleton
 final class ErrorHandler @Inject()(assets: AssetsFinder) extends HttpErrorHandler with ToolkitTypes {
