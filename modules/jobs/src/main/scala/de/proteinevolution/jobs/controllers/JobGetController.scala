@@ -24,7 +24,7 @@ import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.{ Job, JobHashError }
-import de.proteinevolution.jobs.services.{ JobFolderValidation, JobHashService }
+import de.proteinevolution.jobs.services.{ JobFolderValidation, JobHashCheckService }
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.tools.ToolConfig
 import io.circe.{ Json, JsonObject }
@@ -38,7 +38,7 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class JobGetController @Inject()(
-    jobHashService: JobHashService,
+    jobHashService: JobHashCheckService,
     userSessions: UserSessions,
     jobDao: JobDao,
     cc: ControllerComponents,

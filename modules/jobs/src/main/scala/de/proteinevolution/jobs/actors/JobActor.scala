@@ -36,7 +36,7 @@ import de.proteinevolution.common.models.database.jobs._
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.{ Job, JobClusterData }
-import de.proteinevolution.jobs.services.{ GeneralHashService, JobTerminator }
+import de.proteinevolution.jobs.services.{ JobHasher, JobTerminator }
 import de.proteinevolution.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.env.Env
@@ -60,7 +60,7 @@ class JobActor @Inject()(
     runscriptManager: RunscriptManager,
     environment: play.Environment,
     env: Env,
-    hashService: GeneralHashService,
+    hashService: JobHasher,
     jobDao: JobDao,
     userDao: UserDao,
     userSessions: UserSessions,
