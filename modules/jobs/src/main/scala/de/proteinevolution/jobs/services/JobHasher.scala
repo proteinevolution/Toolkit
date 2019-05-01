@@ -29,7 +29,7 @@ import play.api.Configuration
 import scala.util.hashing.MurmurHash3
 
 @Singleton
-final class GeneralHashService @Inject()(
+final class JobHasher @Inject()(
     runscriptPathProvider: RunscriptPathProvider,
     config: Configuration
 ) {
@@ -53,10 +53,12 @@ final class GeneralHashService @Inject()(
 
   def generateJobHash(job: Job, params: Map[String, String], env: Env): String = {
     val hashable: Map[String, String] = params -- EXCLUDED
+
     val sequenceHash: Option[Int] = for {
       alignment <- params.get("alignment")
       fastA     <- FASTA.fromString(alignment)
     } yield fastA.generateHashCode(MurmurHash3.stringHash)
+
     val (dbName, dbVersion): (String, String) = params match {
       case p if p.isDefinedAt("standarddb") =>
         ("standarddb",
@@ -67,6 +69,7 @@ final class GeneralHashService @Inject()(
         ("hhblitsdb", env.get("HHBLITS").toFile.lastModifiedTime.toString)
       case _ => ("", "")
     }
+
     s"""${sequenceHash.map(_.toString).getOrElse("")}
        |${generateHash(hashable).toString()}
        |${generateRSHash(job.tool)}

@@ -29,11 +29,11 @@ import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class JobHashService @Inject()(
+class JobHashCheckService @Inject()(
     env: Env,
     jobDao: JobDao,
     constants: ConstantsV2,
-    hashService: GeneralHashService
+    hashService: JobHasher
 )(implicit ec: ExecutionContext)
     extends JobFolderValidation {
 
