@@ -21,12 +21,13 @@ import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.results.models.HHContext
 import de.proteinevolution.results.results.Common
 import de.proteinevolution.tel.env.Env
-import javax.inject.Inject
+import javax.inject.{ Inject, Singleton }
 import play.api.http.ContentTypes
 import play.api.mvc.{ AbstractController, Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
 
+@Singleton
 class FileController @Inject()(
     ctx: HHContext,
     env: Env,

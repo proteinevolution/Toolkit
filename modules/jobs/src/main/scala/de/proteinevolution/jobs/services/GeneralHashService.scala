@@ -18,72 +18,60 @@ package de.proteinevolution.jobs.services
 
 import better.files._
 import com.typesafe.config.Config
-import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.common.parsers.FASTA
+import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.tel.RunscriptPathProvider
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.util.FNV
 import javax.inject.{ Inject, Singleton }
-import play.api.{ Configuration, Logging }
+import play.api.Configuration
 
 import scala.util.hashing.MurmurHash3
 
 @Singleton
-final class GeneralHashService @Inject()(runscriptPathProvider: RunscriptPathProvider, config: Configuration)
-    extends Logging {
+final class GeneralHashService @Inject()(
+    runscriptPathProvider: RunscriptPathProvider,
+    config: Configuration
+) {
 
-  def generateHash(params: Map[String, String]): BigInt = {
-    FNV.hash64(params.toString.getBytes())
-  }
+  private[this] def generateHash(params: Map[String, String]): BigInt = FNV.hash64(params.toString.getBytes())
 
-  def generateRSHash(toolname: String): String = {
-    val runscript = runscriptPathProvider.get() + s"$toolname.sh"
-    (for {
-      in <- File(runscript).newInputStream.autoClosed
-    } yield MurmurHash3.stringHash(in.lines.mkString, 0).toString).get()
-  }
+  private[this] def generateRSHash(toolname: String): String =
+    File(runscriptPathProvider.get() + s"$toolname.sh").newInputStream.autoClosed
+      .map(in => MurmurHash3.stringHash(in.lines.mkString, 0).toString)
+      .get()
 
-  def generateToolHash(name: String): String = {
+  private[this] def generateToolHash(name: String): String =
     MurmurHash3.stringHash(config.get[Config](s"Tools.$name").toString, 0).toString
-  }
+
+  /**
+   * params which won't get hashed
+   * TODO: we write all params into job descriptor files but we should model them, issue #705
+   */
+  private[this] final val EXCLUDED =
+    Set(Job.JOBID, Job.EMAILUPDATE, "public", "jobid", Job.IPHASH, "parentID", "htb_length", "alignment", "file")
 
   def generateJobHash(job: Job, params: Map[String, String], env: Env): String = {
-    // filter unique parameters
-    val paramsWithoutUniques: Map[String, String] =
-    params - Job.JOBID - Job.EMAILUPDATE - "public" - "jobid" - Job.IPHASH - "parentID" - "htb_length" - "alignment" - "file"
-    logger.info(
-      s"[JobDAO.generateJobHash] Hashing values: ${paramsWithoutUniques.map(kv => s"${kv._1} ${kv._2}").mkString(", ")}"
-    )
-    val sequenceHash = params.get("alignment") match {
-      case Some(alignment) =>
-        FASTA.fromString(alignment) match {
-          case Some(fastA) =>
-            fastA.generateHashCode(MurmurHash3.stringHash)
-          case None =>
-            ""
-        }
-      case None =>
-        ""
+    val hashable: Map[String, String] = params -- EXCLUDED
+    val sequenceHash: Option[Int] = for {
+      alignment <- params.get("alignment")
+      fastA     <- FASTA.fromString(alignment)
+    } yield fastA.generateHashCode(MurmurHash3.stringHash)
+    val (dbName, dbVersion): (String, String) = params match {
+      case p if p.isDefinedAt("standarddb") =>
+        ("standarddb",
+         (env.get("STANDARD") + "/" + params.getOrElse("standarddb", "")).toFile.lastModifiedTime.toString)
+      case p if p.isDefinedAt("hhsuitedb") =>
+        ("hhsuitedb", env.get("HHSUITE").toFile.lastModifiedTime.toString)
+      case p if p.isDefinedAt("hhblitsdb") =>
+        ("hhblitsdb", env.get("HHBLITS").toFile.lastModifiedTime.toString)
+      case _ => ("", "")
     }
-
-    val dbParam = params match {
-      case x if x.isDefinedAt("standarddb") =>
-        val STANDARDDB = (env.get("STANDARD") + "/" + params.getOrElse("standarddb", "")).toFile
-        (Some("standarddb"), Some(STANDARDDB.lastModifiedTime.toString))
-      case x if x.isDefinedAt("hhsuitedb") =>
-        val HHSUITEDB = env.get("HHSUITE").toFile
-        (Some("hhsuitedb"), Some(HHSUITEDB.lastModifiedTime.toString))
-      case x if x.isDefinedAt("hhblitsdb") =>
-        val HHBLITSDB = env.get("HHBLITS").toFile
-        (Some("hhblitsdb"), Some(HHBLITSDB.lastModifiedTime.toString))
-      case _ => (None, None)
-    }
-
-    s"""$sequenceHash
-       |${generateHash(paramsWithoutUniques).toString()}
+    s"""${sequenceHash.map(_.toString).getOrElse("")}
+       |${generateHash(hashable).toString()}
        |${generateRSHash(job.tool)}
-       |${dbParam._1.getOrElse("")}
-       |${dbParam._2.getOrElse("")}
+       |$dbName
+       |$dbVersion
        |${job.tool}
        |${generateToolHash(job.tool)}""".stripMargin
   }

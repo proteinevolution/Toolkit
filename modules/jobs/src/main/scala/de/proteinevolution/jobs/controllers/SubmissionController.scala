@@ -71,6 +71,7 @@ class SubmissionController @Inject()(
     }
   }
 
+  // TODO the MultipartFormData contains a dynamic Map which should be modelled properly, issue #705
   def submitJob(toolName: String): Action[MultipartFormData[Files.TemporaryFile]] =
     Action(parse.multipartFormData).async { implicit request =>
       userSessions.getUser.flatMap { user =>
