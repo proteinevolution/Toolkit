@@ -15,7 +15,6 @@ object Dependencies {
     ehcache,
     guice,
     "com.typesafe.akka"    %% "akka-actor"           % akkaVersion,
-    "com.tgf.pizza"        %% "maxmind-geoip2-scala" % "1.5.7",
     "com.typesafe.akka"    %% "akka-cluster"         % akkaVersion,
     "com.typesafe.akka"    %% "akka-cluster-tools"   % akkaVersion,
     "com.typesafe.akka"    %% "akka-cluster-metrics" % akkaVersion,
@@ -44,7 +43,8 @@ object Dependencies {
     "org.webjars"          %% "webjars-play"  % "2.7.0",
     "org.scala-js"         %% "scalajs-stubs" % scalaJSVersion % "provided",
     "com.github.mpilquist" %% "simulacrum"    % "0.15.0",
-    "com.github.mongobee"  % "mongobee"       % "0.13"
+    "com.github.mongobee"  % "mongobee"       % "0.13",
+    "com.maxmind.geoip2"   % "geoip2"         % "2.12.0"
   )
 
   lazy val clientDeps: Def.Initialize[Seq[sbt.ModuleID]] = Def.setting(
