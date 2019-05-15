@@ -16,6 +16,7 @@
 
 package de.proteinevolution.util
 
+import java.io.{ File, FileInputStream }
 import java.net.InetAddress
 
 import com.maxmind.geoip2.DatabaseReader
@@ -34,8 +35,8 @@ final class GeoIPInfo private (reader: DatabaseReader) {
 object GeoIPInfo {
 
   def apply(path: String): GeoIPInfo = {
-    val in  = getClass.getResourceAsStream(path)
-    val ref = new DatabaseReader.Builder(in).build()
+    val in  = new FileInputStream(new File(path))
+    val ref = new DatabaseReader.Builder(in).build
     new GeoIPInfo(ref)
   }
 
