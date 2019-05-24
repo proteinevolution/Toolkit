@@ -34,23 +34,12 @@ sealed trait LocationProvider {
 }
 
 @Singleton
-class LocationProviderImpl @Inject()(config: Configuration)(implicit ec: ExecutionContext)
-    extends LocationProvider {
+class LocationProviderImpl @Inject()(config: Configuration)(implicit ec: ExecutionContext) extends LocationProvider {
 
   private[this] val geoIp = GeoIPInfo(config.get[String]("maxmind_db"))
 
   def getLocation(ipAddress: String): Location = {
-    geoIp.getLocation(ipAddress) match {
-      case Some(cityResponse) =>
-        Location(
-          Some(cityResponse.getCountry.getName).getOrElse("Solar System"),
-          Some(cityResponse.getCountry.getIsoCode),
-          Some(cityResponse.getLeastSpecificSubdivision.getName),
-          Some(cityResponse.getCity.getName)
-        )
-      case None =>
-        Location("Solar System", None, None, None)
-    }
+    geoIp.getLocation(ipAddress).map(Location(_)).getOrElse(Location("Solar System", None, None, None))
   }
 
   def getLocation(request: RequestHeader): Location = getLocation(request.remoteAddress)
