@@ -43,7 +43,7 @@ class LocationProviderImpl @Inject()(config: Configuration)(implicit ec: Executi
     geoIp.getLocation(ipAddress) match {
       case Some(cityResponse) =>
         Location(
-          cityResponse.getCountry.getName,
+          Some(cityResponse.getCountry.getName).getOrElse("Solar System"),
           Some(cityResponse.getCountry.getIsoCode),
           Some(cityResponse.getLeastSpecificSubdivision.getName),
           Some(cityResponse.getCity.getName)
