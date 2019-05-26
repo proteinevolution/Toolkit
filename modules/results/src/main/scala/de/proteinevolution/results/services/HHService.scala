@@ -48,7 +48,7 @@ class HHService @Inject()(
       json <- getResults(jobId).run(resultsService)
       tool <- getTool(jobId).run(resultsService)
     } yield (json, tool)).map {
-      case (Some(json), tool) => parseResult(tool, json)
+      case (json, tool) => parseResult(tool, json)
       case _ =>
         val error = "parsing result json failed."
         logger.error(error)
@@ -68,7 +68,7 @@ class HHService @Inject()(
       json <- getResults(jobId).run(resultsService)
       tool <- getTool(jobId).run(resultsService)
     } yield (json, tool)).map {
-      case (Some(json), tool) => parseResult(tool, json)
+      case (json, tool) => parseResult(tool, json)
       case _ =>
         val error = "parsing result json failed."
         logger.error(error)

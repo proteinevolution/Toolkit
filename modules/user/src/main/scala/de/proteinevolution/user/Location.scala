@@ -19,6 +19,8 @@ package de.proteinevolution.user
 import io.circe.{ Encoder, Json }
 import reactivemongo.bson._
 
+import com.maxmind.geoip2.model.CityResponse
+
 case class Location(country: String, countryCode: Option[String], region: Option[String], city: Option[String])
 
 object Location {
@@ -27,5 +29,12 @@ object Location {
 
   implicit val locationEncoder: Encoder[Location] = (loc: Location) =>
     Json.fromString(s"${loc.country} - ${loc.city.getOrElse("/")}")
+
+  def apply(omni: CityResponse): Location = new Location(
+    if (omni.getCountry != null) Option(omni.getCountry.getIsoCode).getOrElse("Solar System") else "Solar System",
+    if (omni.getCountry != null) Option(omni.getCountry.getName) else None,
+    if (omni.getMostSpecificSubdivision != null) Option(omni.getMostSpecificSubdivision.getName) else None,
+    if (omni.getCity != null) Option(omni.getCity.getName) else None
+  )
 
 }

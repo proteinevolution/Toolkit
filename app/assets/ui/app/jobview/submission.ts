@@ -146,7 +146,12 @@
                 for (let i = 0; i < fileInputs.length; i++) {
                     const fileInput: HTMLInputElement = (<HTMLInputElement>fileInputs[i]);
                     // remove file data which was already added to FormData
-                    formData.delete(fileInput.name);
+                    // Internet Export does not support formData.delete()
+                    try {
+                        formData.delete(fileInput.name);
+                    } catch (e) {
+                        console.log(e);
+                    }
                     if (fileInput.files.length > 0) {
                         const file: File = fileInput.files[0];
                         if (file && file.size > 0) {
@@ -155,7 +160,12 @@
                         }
                     }
                     // delete file inputs after FormData has been read. Otherwise submission is prevented in Safari >11.1
-                    fileInput.remove();
+                    // Internet Export does not support fileInput.remove()
+                    try {
+                        fileInput.remove();
+                    } catch (e) {
+                        console.log(e);
+                    }
                 }
 
                 m.request({

@@ -28,8 +28,8 @@ import scala.concurrent.Future
 
 trait ResultsRepository {
 
-  protected def getResults(jobId: String): Reader[ResultsService, Future[Option[Json]]] =
-    Reader[ResultsService, Future[Option[Json]]] { rs =>
+  protected def getResults(jobId: String): Reader[ResultsService, Future[Json]] =
+    Reader[ResultsService, Future[Json]] { rs =>
       rs.resultFiles.getResults(jobId)
     }
 

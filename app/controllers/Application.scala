@@ -45,12 +45,14 @@ final class Application @Inject()(
     userSessions.getUser.map { user =>
       logger.info(InetAddress.getLocalHost.getHostName + "\n" + user.toString)
       Ok(
-        views.html.main(assetsFinder,
-                        webJarsUtil,
-                        toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
-                        message,
-                        "",
-                        environment)
+        views.html.main(
+          assetsFinder,
+          webJarsUtil,
+          toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
+          message,
+          "",
+          environment
+        )
       ).withSession(userSessions.sessionCookie(request, user.sessionID.get))
     }
   }
@@ -68,7 +70,7 @@ final class Application @Inject()(
     PermanentRedirect(s"/#/$static")
   }
 
-  val robots = Action { _ =>
+  val robots: Action[AnyContent] = Action { _ =>
     Ok(
       "User-agent: *\nAllow: /\nDisallow: /#/jobmanager/\nDisallow: /#/jobs/\nSitemap: https://toolkit.tuebingen.mpg.de/sitemap.xml"
     )

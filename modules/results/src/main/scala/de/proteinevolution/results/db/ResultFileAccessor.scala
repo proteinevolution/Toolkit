@@ -16,9 +16,11 @@
 
 package de.proteinevolution.results.db
 
+import java.io.FileNotFoundException
+
 import better.files._
-import de.proteinevolution.jobs.services.JobFolderValidation
 import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.jobs.services.JobFolderValidation
 import io.circe.Json
 import io.circe.parser._
 import io.circe.syntax._
@@ -37,31 +39,27 @@ final class ResultFileAccessor @Inject()(
     extends JobFolderValidation
     with Logging {
 
-  def getResults(jobID: String): Future[Option[Json]] = {
-    resultCache.get[Json](jobID).map {
-      case Some(resultMap) =>
-        Some(resultMap)
-      case None =>
-        if (resultsExist(jobID, constants)) {
-          val files: List[File] =
-            File(s"${constants.jobPath}/$jobID/results").list.withFilter(_.extension.contains(".json")).toList
-          logger.info(s"Loading files for $jobID: ${files.map(_.name).mkString(",")}")
-          val results: Json =
-            files
-              .map { file =>
-                file.nameWithoutExtension -> parse(file.contentAsString).right.toOption.getOrElse {
-                  logger.error("Invalid result json from database")
-                  throw new NoSuchElementException
-                }
+  def getResults(jobID: String): Future[Json] = {
+    if (resultsExist(jobID, constants)) {
+      resultCache.getOrElseUpdate[Json](jobID, 10.minutes) {
+        val files: List[File] =
+          File(s"${constants.jobPath}/$jobID/results").list.withFilter(_.extension.contains(".json")).toList
+        logger.info(s"Loading files for $jobID: ${files.map(_.name).mkString(",")}")
+        Future {
+          files
+            .map { file =>
+              file.nameWithoutExtension -> parse(file.contentAsString).right.toOption.getOrElse {
+                logger.error("Invalid result json")
+                throw new NoSuchElementException
               }
-              .toMap[String, Json]
-              .updated("jobID", jobID.asJson)
-              .asJson
-          resultCache.set(jobID, results, 10.minutes)
-          Some(results)
-        } else {
-          None
+            }
+            .toMap[String, Json]
+            .updated("jobID", jobID.asJson)
+            .asJson
         }
+      }
+    } else {
+      throw new FileNotFoundException(s"result file for $jobID not found")
     }
   }
 

@@ -28,10 +28,10 @@ import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class JobHashService @Inject()(
+class JobHashCheckService @Inject()(
     jobDao: JobDao,
     constants: ConstantsV2,
-    hashService: GeneralHashService
+    hashService: JobHasher
 )(implicit ec: ExecutionContext)
     extends JobFolderValidation {
 
@@ -50,7 +50,7 @@ class JobHashService @Inject()(
     (j.isPublic || j.ownerID == job.ownerID) && j.status == Done && resultsExist(j.jobID, constants)
 
   private[this] def params(jobID: String): Map[String, String] = {
-    (constants.jobPath / jobID / constants.serializedParam).readDeserialized[Map[String, String]]
+    (constants.jobPath / jobID / constants.serializedParam).readDeserialized[Map[String, String]]()
   }
 
 }

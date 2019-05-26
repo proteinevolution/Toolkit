@@ -21,8 +21,8 @@ import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.bson.BSONDocument
+import reactivemongo.api.commands.{ UpdateWriteResult, WriteResult }
+import reactivemongo.bson.{ BSONArray, BSONDocument }
 
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -63,6 +63,17 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
                       upsert = true,
                       fetchNewObject = true).map(_.result[User])
     )
+  }
+
+  /* removes job association from user */
+  def removeJob(jobId: String): Future[UpdateWriteResult] = {
+    userCollection.flatMap {
+      _.update(ordered = false).one(
+        BSONDocument.empty,
+        BSONDocument("$pull" -> BSONDocument("jobs" -> BSONDocument("$in" -> BSONArray(jobId)))),
+        multi = true
+      )
+    }
   }
 
 }

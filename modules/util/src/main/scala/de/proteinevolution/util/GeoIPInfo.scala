@@ -14,25 +14,30 @@
  * limitations under the License.
  */
 
-package controllers
+package de.proteinevolution.util
 
-import build.BuildInfo
-import de.proteinevolution.base.controllers.ToolkitController
-import javax.inject.{ Inject, Singleton }
-import play.api.mvc._
+import java.io.{ File, FileInputStream }
+import java.net.InetAddress
 
-@Singleton
-class UptimeController @Inject()(cc: ControllerComponents) extends ToolkitController(cc) {
+import com.maxmind.geoip2.DatabaseReader
+import com.maxmind.geoip2.model.CityResponse
 
-  private val startTime: Long = System.currentTimeMillis()
+import scala.concurrent.ExecutionContext
+import scala.util.Try
 
-  def uptime: Action[AnyContent] = Action {
-    val uptimeInMillis = System.currentTimeMillis() - startTime
-    Ok(s"$uptimeInMillis ms")
-  }
+final class GeoIPInfo private (reader: DatabaseReader) {
 
-  def buildInfo: Action[AnyContent] = Action {
-    Ok(s"${BuildInfo.toString}")
+  def getLocation(ip: String)(implicit ec: ExecutionContext): Option[CityResponse] =
+    Try(reader.city(InetAddress.getByName(ip))).toOption
+
+}
+
+object GeoIPInfo {
+
+  def apply(path: String): GeoIPInfo = {
+    val in  = new FileInputStream(new File(path))
+    val ref = new DatabaseReader.Builder(in).build
+    new GeoIPInfo(ref)
   }
 
 }

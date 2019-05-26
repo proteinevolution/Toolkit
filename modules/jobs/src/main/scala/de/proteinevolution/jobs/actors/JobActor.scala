@@ -28,14 +28,15 @@ import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate.JobFinishedMail
 import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.cluster.api.Polling.PolledJobs
-import de.proteinevolution.cluster.api.{ SGELoad, QStat, Qdel }
+import de.proteinevolution.cluster.api.SGELoad._
+import de.proteinevolution.cluster.api.{ QStat, Qdel }
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.common.models.database.jobs.JobState._
 import de.proteinevolution.common.models.database.jobs._
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.{ Job, JobClusterData }
-import de.proteinevolution.jobs.services.{ GeneralHashService, JobTerminator }
+import de.proteinevolution.jobs.services.{ JobHasher, JobTerminator }
 import de.proteinevolution.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
@@ -57,7 +58,7 @@ import scala.language.postfixOps
 class JobActor @Inject()(
     runscriptManager: RunscriptManager,
     environment: play.Environment,
-    hashService: GeneralHashService,
+    hashService: JobHasher,
     jobDao: JobDao,
     userDao: UserDao,
     userSessions: UserSessions,
@@ -162,54 +163,36 @@ class JobActor @Inject()(
       if (runningExecutions.contains(jobID)) {
         runningExecutions(jobID).terminate()
         runningExecutions = runningExecutions.filter(_._1 != jobID)
+        context.system.eventStream.publish(UpdateRunningJobs(-))
       }
       if (currentExecutionContexts.contains(jobID)) {
         currentExecutionContexts = currentExecutionContexts.filter(_._1 != jobID)
       }
     }
-    SGELoad.pop()
   }
 
-  private def delete(job: Job, verbose: Boolean): Unit = {
+  private def delete(job: Job): Future[Unit] = {
     val now: ZonedDateTime = ZonedDateTime.now
-    if (verbose) log.info(s"[JobActor.Delete] Deletion of job folder for jobID ${job.jobID} is done")
-    s"${constants.jobPath}${job.jobID}".toFile.delete(true)
-    if (verbose) log.info("[JobActor.Delete] Removing Job from current Jobs.")
+    s"${constants.jobPath}${job.jobID}".toFile.delete(swallowIOExceptions = true)
     removeJob(job.jobID) // Remove the job from the current job map
-    // Message user clients to remove the job from their watchlist
-    if (verbose) log.info(s"[JobActor.Delete] Informing Users of deletion of Job with JobID ${job.jobID}.")
     val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
     foundWatchers.flatten.foreach(_ ! ClearJob(job.jobID))
-    // execute Qdel in case the job is still queued or running
     job.clusterData.foreach(clusterData => Qdel.run(clusterData.sgeID))
-    jobDao.eventLogCollection
-      .flatMap(
-        _.findAndUpdate(
-          BSONDocument(JobEventLog.JOBID -> job.jobID),
-          BSONDocument(
-            "$push" ->
-            BSONDocument(JobEventLog.EVENTS -> JobEvent(Deleted, Some(now), Some(0L)))
-          ),
-          fetchNewObject = true
-        ).map(_.result[JobEventLog])
+    // TODO delete this collection
+    jobDao.eventLogCollection.foreach(
+      _.findAndUpdate(
+        BSONDocument(JobEventLog.JOBID -> job.jobID),
+        BSONDocument(
+          "$push" ->
+          BSONDocument(JobEventLog.EVENTS -> JobEvent(Deleted, Some(now), Some(0L)))
+        ),
+        fetchNewObject = true
       )
-      .foreach { jobEventLogOpt =>
-        if (verbose) log.info(s"""[JobActor.Delete] Event Log: ${jobEventLogOpt match {
-                                   case Some(x) => x.toString
-                                   case None    => ""
-                                 }}""".stripMargin)
-      }
-
-    // Remove the job from mongoDB collection
-    jobDao.removeJob(job.jobID).foreach { writeResult =>
-      if (writeResult.ok) {
-        if (verbose) log.info(s"[JobActor.Delete] Deletion of Job was successful:\n${job.toString()}")
-      } else {
-        if (verbose)
-          log.info(s"[JobActor.Delete] Deleting the job with jobID ${job.jobID} from the collection failed.")
-      }
-    }
-    if (verbose) log.info(s"[JobActor.Delete] Deletion of job with jobID ${job.jobID} Complete.")
+    )
+    for {
+      _ <- jobDao.removeJob(job.jobID)
+      _ <- userDao.removeJob(job.jobID)
+    } yield ()
   }
 
   private def updateJobState(job: Job): Future[Job] = {
@@ -218,34 +201,35 @@ class JobActor @Inject()(
 
     // update the cluster load
     if (job.status == JobState.Queued)
-      SGELoad.push()
+      context.system.eventStream.publish(UpdateRunningJobs(+))
 
-    // Update job in the database and notify watcher upon completion
-    jobDao
-      .modifyJob(BSONDocument(Job.JOBID -> job.jobID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
-      .map { _ =>
-        val jobLog = currentJobLogs.get(job.jobID) match {
-          case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
-          case None =>
-            JobEventLog(jobID = job.jobID,
-                        toolName = job.tool,
-                        events = List(JobEvent(job.status, Some(ZonedDateTime.now))))
-        }
-        currentJobLogs = currentJobLogs.updated(job.jobID, jobLog)
-        val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
-        foundWatchers.flatten.foreach(_ ! PushJob(job))
-        if (job.status == Done) {
-          foundWatchers.flatten.foreach(
-            _ ! ShowNotification(
-              "job_update",
-              job.jobID,
-              "Job Update",
-              "Your " + config.get[String](s"Tools.${job.tool}.longname") + " job has finished!"
+      // Update job in the database and notify watcher upon completion
+      jobDao
+        .modifyJob(BSONDocument(Job.JOBID -> job.jobID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
+        .map { _ =>
+          val jobLog = currentJobLogs.get(job.jobID) match {
+            case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
+            case None =>
+              JobEventLog(jobID = job.jobID,
+                          toolName = job.tool,
+                          events = List(JobEvent(job.status, Some(ZonedDateTime.now))))
+          }
+          currentJobLogs = currentJobLogs.updated(job.jobID, jobLog)
+          val foundWatchers =
+            job.watchList.flatMap(userID => wsActorCache.get(userID.stringify): Option[List[ActorRef]])
+          foundWatchers.flatten.foreach(_ ! PushJob(job))
+          if (job.status == Done) {
+            foundWatchers.flatten.foreach(
+              _ ! ShowNotification(
+                "job_update",
+                job.jobID,
+                "Job Update",
+                "Your " + config.get[String](s"Tools.${job.tool}.longname") + " job has finished!"
+              )
             )
-          )
+          }
+          job
         }
-        job
-      }
 
   }
 
@@ -395,7 +379,7 @@ class JobActor @Inject()(
             if (userIDOption.isEmpty || userIDOption == job.ownerID) {
               if (verbose)
                 log.info(s"[JobActor[$jobActorNumber].Delete] Found Job with ${job.jobID} - starting file deletion")
-              delete(job, verbose)
+              delete(job)
             } else {
               userIDOption match {
                 case Some(userID) =>
