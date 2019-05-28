@@ -31,7 +31,7 @@ object Dependencies {
       .exclude("com.typesafe.akka", "*") // provided
       .exclude("com.typesafe.play", "*"), // provided
     "org.typelevel" %% "cats-core"            % catsV,
-    "org.typelevel" %% "cats-effect"          % "1.3.0",
+    "org.typelevel" %% "cats-effect"          % "1.3.1",
     "com.chuusai"   %% "shapeless"            % "2.3.3",
     "com.vmunier"   %% "scalajs-scripts"      % "1.1.1",
     "com.mohiva"    %% "play-html-compressor" % "0.7.1",
@@ -42,7 +42,7 @@ object Dependencies {
     ("io.circe" %% "circe-bson" % "0.3.1").exclude("org.reactivemongo", "*"), // provided by play2-reactivemongo
     "org.webjars"          %% "webjars-play"  % "2.7.0",
     "org.scala-js"         %% "scalajs-stubs" % scalaJSVersion % "provided",
-    "com.github.mpilquist" %% "simulacrum"    % "0.15.0",
+    "com.github.mpilquist" %% "simulacrum"    % "0.17.0",
     "com.github.mongobee"  % "mongobee"       % "0.13",
     "com.maxmind.geoip2"   % "geoip2"         % "2.12.0"
   )
