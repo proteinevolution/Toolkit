@@ -4,6 +4,7 @@ import VueNotifications from 'vue-notification';
 import velocity from 'velocity-animate';
 import {TKNotificationOptions} from './types';
 
+// @ts-ignore wait until it is fixed in vue-notification
 Vue.use(VueNotifications, {velocity});
 
 const Notifications = {
