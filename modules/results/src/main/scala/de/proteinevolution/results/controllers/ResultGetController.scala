@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.results.controllers
 
 import de.proteinevolution.base.controllers.ToolkitController
@@ -16,8 +32,8 @@ class ResultGetController @Inject()(cc: ControllerComponents, resultGetService: 
 
   def get(jobId: String, tool: String, resultView: String): Action[AnyContent] = Action.async { implicit request =>
     resultGetService.get(jobId, tool, resultView).value.map {
-      case Some(view) => Ok(view.body)
-      case None       => Ok(views.html.errors.resultnotfound())
+      case Right(view) => Ok(view.body)
+      case Left(_)     => Ok(views.html.errors.resultnotfound())
     }
   }
 

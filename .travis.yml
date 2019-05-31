@@ -36,5 +36,5 @@ install:
   - npm install jsdom@9.12.0
 script:
  - bin/validate-code
- - $SBT_BIN test:compile test stage
+ - $SBT_BIN test stage
  - $HOME/cloc/cloc $(git ls-files)

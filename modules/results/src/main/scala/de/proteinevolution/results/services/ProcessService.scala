@@ -1,17 +1,33 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.results.services
 
 import better.files._
 import cats.data.{ EitherT, OptionT }
 import cats.implicits._
-import de.proteinevolution.models.ToolName._
-import de.proteinevolution.models.{ ConstantsV2, ToolName }
+import de.proteinevolution.common.models.ToolName._
+import de.proteinevolution.common.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.results.models.{ ForwardMode, ForwardingData }
 import de.proteinevolution.results.results.{ HSP, SearchResult }
 import de.proteinevolution.results.services.ResultsRepository.ResultsService
 import io.circe.DecodingFailure
 import javax.inject.{ Inject, Singleton }
-import play.api.{ Configuration, Logger }
+import play.api.{ Configuration, Logging }
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.sys.process.Process
@@ -23,9 +39,8 @@ final class ProcessService @Inject()(
     resultFiles: ResultFileAccessor,
     constants: ConstantsV2
 )(implicit ec: ExecutionContext)
-    extends ResultsRepository {
-
-  private[this] val logger = Logger(this.getClass)
+    extends ResultsRepository
+    with Logging {
 
   private[this] val scriptPath: String = config.get[String]("server_scripts")
 
@@ -66,7 +81,7 @@ final class ProcessService @Inject()(
     } yield {
       (json, tool)
     }).map {
-      case (Some(json), tool) =>
+      case (json, tool) =>
         parseResult(tool, json).map {
           case (result, _) =>
             val accStr = mode.toString match {

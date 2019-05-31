@@ -46,7 +46,7 @@
     "@vue/test-utils": "^1.0.0-beta.29",
     "chai": "^4.2.0",
     "image-webpack-loader": "^4.6.0",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.12.0",
     "sass-loader": "^7.1.0",
     "sass-resources-loader": "^2.0.0",
     "typescript": "^3.3.1",

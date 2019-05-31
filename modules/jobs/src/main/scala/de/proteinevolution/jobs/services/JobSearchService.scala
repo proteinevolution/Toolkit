@@ -1,13 +1,29 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.jobs.services
 
 import cats.data.OptionT
 import cats.implicits._
 import de.proteinevolution.base.helpers.ToolkitTypes._
+import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.Job
-import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.models.database.users.User
 import de.proteinevolution.tools.{ Tool, ToolConfig }
+import de.proteinevolution.user.User
 import javax.inject.{ Inject, Singleton }
 import reactivemongo.bson.BSONDocument
 
@@ -21,15 +37,7 @@ class JobSearchService @Inject()(
 )(implicit ec: ExecutionContext)
     extends JobFolderValidation {
 
-  def recentJob(user: User): Future[Option[Job]] = {
-    jobDao.findSortedJob(
-      BSONDocument(
-        BSONDocument(Job.DELETION -> BSONDocument("$exists" -> false)),
-        BSONDocument(Job.OWNERID  -> user.userID)
-      ),
-      BSONDocument(Job.DATEUPDATED -> -1)
-    )
-  }
+  def recentJob(user: User): Future[Option[Job]] = jobDao.findSortedJob(user.userID)
 
   def autoComplete(user: User, queryString_ : String): OptionT[Future, List[Job]] = {
     val queryString = queryString_.trim()
@@ -41,14 +49,9 @@ class JobSearchService @Inject()(
       (for {
         jobs     <- OptionT.liftF(jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))))
         filtered <- OptionT.pure[Future](jobs.filter(job => job.ownerID.contains(user.userID)))
-      } yield {
-        filtered
-      }).flatMapF { jobs =>
+      } yield filtered).flatMapF { jobs =>
         if (jobs.isEmpty) {
-          OptionT(jobDao.findJob(BSONDocument(Job.JOBID -> queryString)))
-            .filter(job => resultsExist(job.jobID, constants))
-            .map(_ :: Nil)
-            .value
+          OptionT(jobDao.findJob(queryString)).filter(job => resultsExist(job.jobID, constants)).map(_ :: Nil).value
         } else {
           fuccess(Some(jobs.filter(job => resultsExist(job.jobID, constants))))
         }

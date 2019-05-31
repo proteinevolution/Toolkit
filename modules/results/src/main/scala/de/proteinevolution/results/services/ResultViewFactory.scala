@@ -1,9 +1,25 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.results.services
 
-import cats.data.OptionT
+import cats.data.EitherT
 import cats.implicits._
-import de.proteinevolution.models.ToolName._
-import de.proteinevolution.models.{ ConstantsV2, ToolName }
+import de.proteinevolution.common.models.ToolName._
+import de.proteinevolution.common.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.results.db.ResultFileAccessor
 import de.proteinevolution.results.models.resultviews._
 import de.proteinevolution.results.results._
@@ -20,14 +36,14 @@ final class ResultViewFactory @Inject()(
     resultFiles: ResultFileAccessor
 )(implicit ec: ExecutionContext) {
 
-  def apply(toolName: String, jobId: String): OptionT[Future, ResultView] = {
+  def apply(toolName: String, jobId: String): EitherT[Future, _, ResultView] = {
     if (ToolName(toolName).hasJson) {
       for {
-        result <- OptionT(resultFiles.getResults(jobId))
-        view   <- OptionT.fromOption[Future](getResultViewsWithJson(toolName, jobId, result).toOption)
+        result <- EitherT.liftF(resultFiles.getResults(jobId))
+        view   <- EitherT.fromEither[Future](getResultViewsWithJson(toolName, jobId, result))
       } yield view
     } else {
-      OptionT.pure[Future](getResultViewsWithoutJson(toolName, jobId))
+      EitherT.pure(getResultViewsWithoutJson(toolName, jobId))
     }
   }
 

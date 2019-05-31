@@ -1,8 +1,24 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.auth.models
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.models.database.users.{ User, UserData }
+import de.proteinevolution.user.{ User, UserData }
 import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Form
 import play.api.data.Forms._
@@ -72,7 +88,7 @@ object FormDefinitions {
         UserData.NAMEFIRST -> optional(text(1, 25).verifying(pattern(textRegex, error = "error.NameFirst"))),
         UserData.NAMELAST  -> optional(text(1, 25).verifying(pattern(textRegex, error = "error.NameLast"))),
         UserData.COUNTRY   -> optional(text(3, 3).verifying(pattern(textRegex, error = "error.Country"))),
-        UserData.PASSWORD  -> (text(8, 128).verifying(pattern(textRegex, error = "error.Password")))
+        UserData.PASSWORD  -> text(8, 128).verifying(pattern(textRegex, error = "error.Password"))
       ) { (eMail, nameFirst, nameLast, country, password) =>
         if (user.checkPassword(password)) {
           Some(
@@ -96,8 +112,8 @@ object FormDefinitions {
    */
   def profilePasswordEdit(user: User) = Form(
     mapping(
-      UserData.PASSWORDOLD -> (text(8, 128).verifying(pattern(textRegex, error = "error.OldPassword"))),
-      UserData.PASSWORDNEW -> (text(8, 128).verifying(pattern(textRegex, error = "error.NewPassword")))
+      UserData.PASSWORDOLD -> text(8, 128).verifying(pattern(textRegex, error = "error.OldPassword")),
+      UserData.PASSWORDNEW -> text(8, 128).verifying(pattern(textRegex, error = "error.NewPassword"))
     ) { (passwordOld, passwordNew) =>
       if (user.checkPassword(passwordOld)) {
         Some(BCrypt.hashpw(passwordNew, BCrypt.gensalt(LOG_ROUNDS)))
@@ -118,7 +134,7 @@ object FormDefinitions {
   )
 
   def forgottenPasswordChange = Form(
-    mapping(UserData.PASSWORDNEW -> (text(8, 128).verifying(pattern(textRegex, error = "error.NewPassword")))) {
+    mapping(UserData.PASSWORDNEW -> text(8, 128).verifying(pattern(textRegex, error = "error.NewPassword"))) {
       passwordNew =>
         BCrypt.hashpw(passwordNew, BCrypt.gensalt(LOG_ROUNDS))
     } { _ =>

@@ -1,22 +1,40 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.results.controllers
+
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
-import de.proteinevolution.models.ConstantsV2
+import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.results.models.HHContext
 import de.proteinevolution.results.results.Common
 import de.proteinevolution.tel.env.Env
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import play.api.http.ContentTypes
-import play.api.mvc.{ AbstractController, Action, AnyContent }
+import play.api.mvc.{AbstractController, Action, AnyContent}
 
 import scala.concurrent.ExecutionContext
 
+@Singleton
 class FileController @Inject()(
-    ctx: HHContext,
-    env: Env,
-    constants: ConstantsV2,
-    userSessions: UserSessionService,
-    userAction: UserAction
+                                ctx: HHContext,
+                                env: Env,
+                                constants: ConstantsV2,
+                                userSessions: UserSessionService,
+                                userAction: UserAction
 )(implicit ec: ExecutionContext)
     extends AbstractController(ctx.controllerComponents)
     with ContentTypes {
@@ -40,7 +58,7 @@ class FileController @Inject()(
     )
     if (file.exists) {
       Ok.sendFile(file)
-        .withSession(userSessions.sessionCookie(request))
+        .withSession(userSessions.sessionCookie(request, request.user.sessionID.get))
         .as(TEXT) // text/plain in order to open the file in a new browser tab
     } else {
       NoContent

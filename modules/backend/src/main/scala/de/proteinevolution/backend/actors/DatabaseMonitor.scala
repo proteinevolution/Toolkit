@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.backend.actors
 
 import java.time.ZonedDateTime
@@ -7,14 +23,14 @@ import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate.OldAccountEmail
 import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import de.proteinevolution.backend.dao.BackendDao
+import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.actors.JobActor.Delete
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobActorAccess
-import de.proteinevolution.models.ConstantsV2
-import de.proteinevolution.models.database.statistics.{ StatisticsObject, UserStatistic }
-import de.proteinevolution.models.database.users.User
+import de.proteinevolution.statistics.{ StatisticsObject, UserStatistic }
 import de.proteinevolution.tel.env.Env
+import de.proteinevolution.user.User
 import javax.inject.{ Inject, Singleton }
 import play.api.Environment
 import play.api.libs.mailer.MailerClient

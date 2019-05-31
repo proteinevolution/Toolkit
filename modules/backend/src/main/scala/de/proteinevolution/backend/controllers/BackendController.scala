@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.backend.controllers
 
 import java.time.ZonedDateTime
@@ -7,36 +23,34 @@ import akka.actor.ActorRef
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
-import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
+import de.proteinevolution.backend.actors.DatabaseMonitor.{DeleteOldJobs, DeleteOldUsers}
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.models.database.statistics.{ JobEvent, JobEventLog }
-import de.proteinevolution.models.database.users.User
 import de.proteinevolution.tools.ToolConfig
+import de.proteinevolution.user.User
 import io.circe.Json
 import io.circe.syntax._
-import javax.inject.{ Inject, Named, Singleton }
-import play.api.Logger
+import javax.inject.{Inject, Named, Singleton}
+import play.api.Logging
 import play.api.mvc._
-import reactivemongo.bson.{ BSONDateTime, BSONDocument }
+import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
 final class BackendController @Inject()(
-    userSessions: UserSessionService,
-    backendDao: BackendDao,
-    userDao: UserDao,
-    jobDao: JobDao,
-    toolConfig: ToolConfig,
-    @Named("databaseMonitor") databaseMonitor: ActorRef,
-    cc: ControllerComponents,
-    userAction: UserAction
+                                         userSessions: UserSessionService,
+                                         backendDao: BackendDao,
+                                         userDao: UserDao,
+                                         jobDao: JobDao,
+                                         toolConfig: ToolConfig,
+                                         @Named("databaseMonitor") databaseMonitor: ActorRef,
+                                         cc: ControllerComponents,
+                                         userAction: UserAction
 )(implicit ec: ExecutionContext)
-    extends ToolkitController(cc) {
-
-  private val logger = Logger(this.getClass)
+    extends ToolkitController(cc)
+    with Logging {
 
   //TODO currently working mithril routes for the backend
   def index: Action[AnyContent] = userAction { implicit request =>
@@ -66,18 +80,7 @@ final class BackendController @Inject()(
       statsUpdated.flatMap { statistics =>
         if (statistics.lastPushed.compareTo(firstOfLastMonth) < 0) {
           jobDao
-            .findJobEventLogs(
-              BSONDocument(
-                JobEventLog.EVENTS ->
-                BSONDocument(
-                  "$elemMatch" ->
-                  BSONDocument(
-                    JobEvent.TIMESTAMP ->
-                    BSONDocument("$lt" -> BSONDateTime(firstOfLastMonth.toInstant.toEpochMilli))
-                  )
-                )
-              )
-            )
+            .findJobEventLogs(firstOfLastMonth.toInstant.toEpochMilli)
             .map { jobEventLogs =>
               logger.info(
                 "Collected " + jobEventLogs.length + " elements from the job event logs. Last Push: " + statistics.lastPushed
@@ -99,17 +102,21 @@ final class BackendController @Inject()(
                   // TODO add a way to remove the now collected elements from the JobEventLogs
                   NoCache(
                     Ok(
-                      Json.obj("success" -> Json.fromString("new statistics added"),
-                               "stat"    -> statisticsObjectUpdated.asJson)
+                      Json.obj(
+                        "success" -> Json.fromString("new statistics added"),
+                        "stat"    -> statisticsObjectUpdated.asJson
+                      )
                     )
                   )
                 case None =>
-                  Logger
+                  logger
                     .info("Statistics generated, but it seems like the statistics could not be reloaded from the db")
                   NoCache(
                     Ok(
-                      Json.obj("error" -> Json.fromString("could not reload new stats from DB"),
-                               "stat"  -> statisticsObject.asJson)
+                      Json.obj(
+                        "error" -> Json.fromString("could not reload new stats from DB"),
+                        "stat"  -> statisticsObject.asJson
+                      )
                     )
                   )
               }

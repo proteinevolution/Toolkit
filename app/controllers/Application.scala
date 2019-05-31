@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers
 
 import java.net.InetAddress
@@ -8,7 +24,7 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.tools.ToolConfig
 import javax.inject.{ Inject, Singleton }
 import play.api.mvc._
-import play.api.{ Environment, Logger }
+import play.api.{ Environment, Logging }
 
 import scala.concurrent.ExecutionContext
 
@@ -21,19 +37,14 @@ final class Application @Inject()(
     assetsFinder: AssetsFinder,
     userAction: UserAction
 )(implicit ec: ExecutionContext)
-    extends ToolkitController(cc) {
-
-  private val logger = Logger(this.getClass)
+    extends ToolkitController(cc)
+    with Logging {
 
   def index(message: String = ""): Action[AnyContent] = userAction { implicit request =>
     logger.info(InetAddress.getLocalHost.getHostName + "\n" + request.user.toString)
     Ok(
-      views.html.main(assetsFinder,
-                      toolConfig.values.values.toSeq.sortBy(_.toolNameLong),
-                      message,
-                      "",
-                      environment)
-    ).withSession(userSessions.sessionCookie(request))
+      views.html.main(assetsFinder, toolConfig.values.values.toSeq.sortBy(_.toolNameLong), message, "", environment)
+    ).withSession(userSessions.sessionCookie(request, request.user.sessionID.get))
   }
 
   // Routes are handled by Mithril, redirect.

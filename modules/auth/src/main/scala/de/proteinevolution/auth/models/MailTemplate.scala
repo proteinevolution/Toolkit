@@ -1,13 +1,29 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.auth.models
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.models.database.jobs.JobState.{ Done, Error }
-import de.proteinevolution.models.database.jobs._
-import de.proteinevolution.models.database.users.User
-import de.proteinevolution.models.util.ZonedDateTimeHelper
+import de.proteinevolution.common.models.database.jobs.JobState.{ Done, Error }
+import de.proteinevolution.common.models.database.jobs._
+import de.proteinevolution.common.models.util.ZonedDateTimeHelper
 import de.proteinevolution.tel.env.Env
 import play.api.Environment
+import de.proteinevolution.user.User
 import play.api.libs.mailer.{ Email, MailerClient }
 
 sealed trait MailTemplate {

@@ -1,16 +1,32 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.message.controllers
 
-import akka.actor.{ ActorSystem, Props }
+import akka.actor.{ActorSystem, Props}
 import akka.stream.Materializer
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.message.actors.WebSocketActor
 import io.circe.syntax._
-import io.circe.{ Json, JsonObject }
-import javax.inject.{ Inject, Singleton }
+import io.circe.{Json, JsonObject}
+import javax.inject.{Inject, Singleton}
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
-import play.api.{ Configuration, Environment, Logger }
+import play.api.{Configuration, Environment, Logging}
 
 import scala.concurrent.ExecutionContext
 
@@ -22,17 +38,16 @@ class MessageController @Inject()(
     config: Configuration,
     webSocketActorFactory: WebSocketActor.Factory
 )(implicit actorSystem: ActorSystem, mat: Materializer, ec: ExecutionContext)
-    extends ToolkitController(cc) {
+    extends ToolkitController(cc)
+    with Logging {
 
   import de.proteinevolution.message.helpers.CirceFlowTransformer._
-
-  private val logger = Logger(this.getClass)
 
   def ws: WebSocket = WebSocket.acceptOrResult[Json, Json] {
     case rh if sameOriginCheck(rh) =>
       logger.info("Creating new WebSocket. ip: " + rh.remoteAddress.toString + ", with sessionId: " + rh.session)
       userSessions
-        .getUserFromCache(rh)
+        .getUser(rh)
         .map { user =>
           Right(ActorFlow.actorRef(out => Props(webSocketActorFactory(user.sessionID.get, out))))
         }

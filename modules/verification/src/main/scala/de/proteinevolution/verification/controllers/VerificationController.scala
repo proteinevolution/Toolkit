@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.verification.controllers
 
 import java.time.ZonedDateTime
@@ -11,9 +27,9 @@ import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.message.actors.WebSocketActor.LogOut
-import de.proteinevolution.models.database.users.{ User, UserToken }
 import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tools.ToolConfig
+import de.proteinevolution.user.{ User, UserToken }
 import javax.inject.{ Inject, Singleton }
 import play.api.Environment
 import play.api.cache._
@@ -63,8 +79,10 @@ final class VerificationController @Inject()(
                       BSONDocument(User.IDDB -> userToVerify.userID),
                       BSONDocument(
                         "$set" ->
-                        BSONDocument(User.ACCOUNTTYPE -> 1,
-                                     User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)),
+                        BSONDocument(
+                          User.ACCOUNTTYPE -> 1,
+                          User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
+                        ),
                         BSONDocument(
                           "$unset" ->
                           BSONDocument(User.USERTOKEN -> "")

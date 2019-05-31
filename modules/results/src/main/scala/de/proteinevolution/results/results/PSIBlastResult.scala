@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.results.results
 
 import de.proteinevolution.results.results.General.{ DTParam, SingleSeq }
@@ -60,7 +76,7 @@ object PSIBlastResult {
     } yield {
       val num_hits   = hits.length
       val hspList    = hits.flatMap(_.hcursor.as[PSIBlastHSP](PSIBlastHSP.parseHSP(db)).toOption)
-      val upperBound = calculateUpperBound(hits, eValue).getOrElse(hspList.length + 1)
+      val upperBound = calculateUpperBound(hits, eValue)
       new PSIBlastResult(
         hspList,
         num_hits,
@@ -75,17 +91,14 @@ object PSIBlastResult {
     }
   }
 
-  private[this] def calculateUpperBound(hits: List[Json], eValue: String): Option[Int] = {
-    // take the smallest value above the threshold
+  private[this] def calculateUpperBound(hits: List[Json], eValue: String): Int = {
+    // count the number of times eValue >= eval of hsps
     (for {
       hit <- hits
       cursor = hit.hcursor
       eval <- cursor.downField("hsps").downArray.first.downField("evalue").as[Double].toOption
-      num  <- cursor.downField("num").as[Int].toOption
-      if eval >= eValue.toDouble
-    } yield {
-      (eval, num)
-    }).sortWith(_._1 < _._1).toMap.headOption.map(_._2)
+      if eval <= eValue.toDouble
+    } yield eval).length
   }
 
 }

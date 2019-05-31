@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.auth.controllers
 
 import java.time.ZonedDateTime
@@ -5,49 +21,51 @@ import java.time.ZonedDateTime
 import akka.actor.ActorRef
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate._
-import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
+import de.proteinevolution.auth.models.Session.ChangeSessionID
+import de.proteinevolution.auth.models.{FormDefinitions, JSONTemplate}
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.models.database.users.{ User, UserToken }
-import de.proteinevolution.auth.models.Session.ChangeSessionID
 import de.proteinevolution.tel.env.Env
+import de.proteinevolution.user.{User, UserToken}
 import io.circe.syntax._
-import javax.inject.{ Inject, Singleton }
-import play.api.cache.{ NamedCache, SyncCacheApi }
+import javax.inject.{Inject, Singleton}
+import play.api.Logging
+import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
-import play.api.mvc.{ Action, AnyContent, ControllerComponents }
-import play.api.{ Environment, Logger }
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.Environment
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthController @Inject()(
-    userSessions: UserSessionService,
-    userDao: UserDao,
-    cc: ControllerComponents,
-    @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
-    environment: Environment,
-    env: Env,
-    userAction: UserAction
+                                userSessions: UserSessionService,
+                                userDao: UserDao,
+                                cc: ControllerComponents,
+                                @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
+                                environment: Environment,
+                                env: Env,
+                                userAction: UserAction
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
     extends ToolkitController(cc)
-    with JSONTemplate {
+    with JSONTemplate
+    with Logging {
 
-  private val logger = Logger(this.getClass)
-
-  def logout: Action[AnyContent] = userAction { implicit request =>
-    userSessions.removeUserFromCache(request.user)
-    Ok(loggedOut()).withNewSession
+  def signOut: Action[AnyContent] = userAction { implicit request =>
+      userSessions.removeUserFromCache(request.user)
+      Redirect("/").withNewSession.flashing(
+        "success" -> "You've been logged out"
+      )
   }
 
   def getUserData: Action[AnyContent] = userAction { implicit request =>
-    logger.info("Sending user data.")
-    Ok(request.user.userData.asJson)
+      logger.info("Sending user data.")
+      Ok(request.user.userData.asJson)
   }
 
-  def login: Action[AnyContent] = userAction.async { implicit request =>
+  def signInSubmit: Action[AnyContent] = userAction.async { implicit request =>
     val user = request.user
     // check if unregistered user (accountType == -1)
     if (user.accountType < 0) {
@@ -101,7 +119,7 @@ class AuthController @Inject()(
 
                       // Everything is ok, let the user know that they are logged in now
                       Ok(loggedIn(loggedInUser)).withSession(
-                        userSessions.sessionCookie(request)
+                        userSessions.sessionCookie(request, loggedInUser.sessionID.get)
                       )
                     case None =>
                       Ok(loginIncorrect())
@@ -182,7 +200,7 @@ class AuthController @Inject()(
           }
         )
     } else {
-      Future.successful(Ok(accountNameUsed()))
+      fuccess(Ok(accountNameUsed()))
     }
   }
 
@@ -332,12 +350,12 @@ class AuthController @Inject()(
                 }
               case None =>
                 // Password was incorrect
-                Future.successful(Ok(passwordWrong()))
+                fuccess(Ok(passwordWrong()))
             }
           )
       case None =>
         // User was not logged in
-        Future.successful(Ok(notLoggedIn()))
+        fuccess(Ok(notLoggedIn()))
     }
   }
 
@@ -351,9 +369,7 @@ class AuthController @Inject()(
           .bindFromRequest
           .fold(
             _ =>
-              Future.successful {
-                Ok(formError())
-            },
+              fuccess(Ok(formError())),
             // when there are no errors, then insert the user to the collection
             {
               case Some(editedProfileUserData) =>
@@ -371,8 +387,8 @@ class AuthController @Inject()(
                   val selectorMail = BSONDocument(BSONDocument(User.EMAIL -> editedProfileUserData.eMail))
                   userDao.findUser(selectorMail).flatMap {
                     case Some(_) =>
-                      Future.successful(Ok(accountEmailUsed()))
-                    case None => Future.successful(NotFound)
+                      fuccess(Ok(accountEmailUsed()))
+                    case None => fuccess(NotFound)
                   }
                 }
                 userSessions.modifyUserWithCache(selector, modifier).map {
@@ -386,12 +402,12 @@ class AuthController @Inject()(
 
               case None =>
                 // Password was incorrect
-                Future.successful(Ok(passwordWrong()))
+                fuccess(Ok(passwordWrong()))
             }
           )
       case None =>
         // User was not logged in
-        Future.successful(Ok(notLoggedIn()))
+        fuccess(Ok(notLoggedIn()))
     }
   }
 

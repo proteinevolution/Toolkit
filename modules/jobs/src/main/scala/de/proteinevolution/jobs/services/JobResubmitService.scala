@@ -1,20 +1,35 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.jobs.services
 
 import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.{ Job, ResubmitData }
-import de.proteinevolution.models.ConstantsV2
+import de.proteinevolution.common.models.ConstantsV2
 import javax.inject.{ Inject, Singleton }
-import play.api.Logger
+import play.api.Logging
 import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 class JobResubmitService @Inject()(constants: ConstantsV2, jobDao: JobDao)(implicit ec: ExecutionContext)
-    extends ToolkitTypes {
-
-  private val logger = Logger(this.getClass)
+    extends ToolkitTypes
+    with Logging {
 
   def resubmit(newJobId: String, resubmitForJobId: Option[String]): Future[ResubmitData] = {
     generateParentJobId((newJobId, resubmitForJobId)) match {

@@ -1,16 +1,32 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.jobs.controllers
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
+import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete }
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services._
-import de.proteinevolution.models.ConstantsV2
 import de.proteinevolution.tools.ToolConfig
 import io.circe.syntax._
 import io.circe.{ Json, JsonObject }
 import javax.inject.{ Inject, Singleton }
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 
 import scala.concurrent.ExecutionContext
@@ -29,9 +45,8 @@ class SubmissionController @Inject()(
     jobFrontendToolsService: JobFrontendToolsService,
     userAction: UserAction
 )(implicit ec: ExecutionContext)
-    extends ToolkitController(cc) {
-
-  private val logger = Logger(this.getClass)
+    extends ToolkitController(cc)
+    with Logging {
 
   def startJob(jobID: String): Action[AnyContent] = userAction { implicit request =>
     jobActorAccess.sendToJobActor(jobID, CheckIPHash(jobID))
@@ -59,12 +74,14 @@ class SubmissionController @Inject()(
       case Some(obj) =>
         val parts: Iterable[(String, String)] = for {
           (key, json) <- obj.toIterable
-          str = json.fold[String]("",
-                                  bool => bool.toString,
-                                  num => num.toString,
-                                  identity,
-                                  vec => vec.toString,
-                                  obj => obj.toString)
+          str = json.fold[String](
+            "",
+            bool => bool.toString,
+            num => num.toString,
+            identity,
+            vec => vec.toString,
+            obj => obj.toString
+          )
         } yield (key, str)
         jobDispatcher
           .submitJob(
@@ -82,7 +99,7 @@ class SubmissionController @Inject()(
                   "message"    -> Json.fromString("Submission successful."),
                   "jobID"      -> Json.fromString(job.jobID)
                 ).asJson
-              ).withSession(userSessions.sessionCookie(request))
+              ).withSession(userSessions.sessionCookie(request, request.user.sessionID.get))
             case Left(error) => BadRequest(errors(error.msg))
           }
     }

@@ -1,6 +1,21 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.results.results
 
-import play.api.Logger
 import play.twirl.api.Html
 
 import scala.collection.mutable.ArrayBuffer
@@ -8,8 +23,6 @@ import scala.collection.mutable.ArrayBuffer
 // TODO scrap this
 
 object Common {
-
-  private val logger = Logger(this.getClass)
 
   private val color_regex     = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
   private val CC_pattern      = """(C+)""".r("C")
@@ -268,9 +281,7 @@ object Common {
     case uniprotReg(_)    => "uniprot"
     case ecodReg(_)       => "ecod"
     case ncbiReg(_)       => "ncbi"
-    case e: String =>
-      logger.info("Struc: (" + e + ") could not be matched against any database!")
-      ""
+    case e: String        => ""
   }
 
   def percentage(str: String): String = (str.toDouble * 100).toInt.toString + "%"

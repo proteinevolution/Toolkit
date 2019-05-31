@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.results.results
 
 import io.circe.syntax._
@@ -47,7 +63,7 @@ object HHPredHSP {
         description    <- c.downField("header").as[String]
         num            <- c.downField("no").as[Int]
         confidence     <- c.downField("confidence").as[Option[String]]
-      } yield {
+      } yield
         new HHPredHSP(
           queryResult,
           templateResult,
@@ -58,8 +74,7 @@ object HHPredHSP {
           ss_score,
           confidence.getOrElse(""),
           agree.length
-        )
-    }
+      )
 
   def hhpredHSPListDecoder(hits: List[Json], alignments: List[Json]): List[HHPredHSP] = {
     alignments.zip(hits).flatMap {
@@ -68,9 +83,7 @@ object HHPredHSP {
           struct   <- h.hcursor.downField("struc").as[Option[String]]
           ss_score <- h.hcursor.downField("ss").as[Option[Double]]
           hsp      <- a.hcursor.as[HHPredHSP](hhpredHSPDecoder(struct.getOrElse(""), ss_score.getOrElse(-1D)))
-        } yield {
-          hsp
-        }).toOption
+        } yield hsp).toOption
     }
   }
 
