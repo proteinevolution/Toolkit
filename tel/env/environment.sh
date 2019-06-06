@@ -40,7 +40,7 @@ export SPOTD="${BIOPROGS}/tools/SPOT-disorder_local/misc"
 #IUPred
 export IUPred_PATH="${BIOPROGS}/tools/iupred"
 #PSSPRED
-export PSSPRED="${BIOPROGS}/tools/PSSpred_v3"
+export PSSPRED="${BIOPROGS}/tools/PSSpred"
 #DeepCNF_SS
 export DEEPCNF="${BIOPROGS}/tools/DeepCNF_SS_v1.02_release"
 #PiPred
@@ -116,6 +116,5 @@ export PATH="${BIOPROGS}/tools/tmhmm/bin:${PATH}" #TMHMM
 export PATH="${BIOPROGS}/tools/Phobius:${PATH}" #PHOBIUS
 export PATH="${BIOPROGS}/tools/Phobius/PolyPhobius:${PATH}" #POLYPHOBIUS
 export PATH="${BIOPROGS}/tools/iupred:${PATH}" #IUPRED
-export PATH="${BIOPROGS}/tools/signalp-4.1:${PATH}" #SIGNALP
 export PATH="${BIOPROGS}/tools/blast-2.2.26/bin:${PATH}" #LEGACY BLAST
 export PATH="${BIOPROGS}/tools/DISOPRED:${PATH}" #DISOPRED
