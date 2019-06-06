@@ -470,7 +470,7 @@ const validationProcess = function(elem: any, toolname: string, suffix: string =
             const quick2dTarget = new alignmentVal($elem, suffix);
 
             if (quick2dTarget.basicValidation("yes")) {
-                quick2dTarget.sameLengthValidation();
+                quick2dTarget.mustHave1();
 
             }
 

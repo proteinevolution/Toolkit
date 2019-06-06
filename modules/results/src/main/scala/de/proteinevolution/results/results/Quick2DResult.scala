@@ -31,13 +31,16 @@ case class Quick2DResult(
     tmhmm: Tmhmm,
     phobius: Phobius,
     polyphobius: Polyphobius,
-    spider2: Spider2,
+    spider: spider,
     spotd: Spotd,
     iupred: Iupred,
-    disopred3: Disopred3,
+    disopred: disopred,
     signal: Signal,
     psspred: Psspred,
-    deepcnf: Deepcnf
+    deepcnf: Deepcnf,
+    netsurfp: Netsurfp,
+    netsurfpd: Netsurfpd
+
 )
 
 object Quick2DResult {
@@ -54,13 +57,15 @@ object Quick2DResult {
       tmhmm       <- c.downField(jobId).as[Tmhmm]
       phobius     <- c.downField(jobId).as[Phobius]
       polyphobius <- c.downField(jobId).as[Polyphobius]
-      spider2     <- c.downField(jobId).as[Spider2]
+      spider     <- c.downField(jobId).as[spider]
       spotd       <- c.downField(jobId).as[Spotd]
       iupred      <- c.downField(jobId).as[Iupred]
-      disopred3   <- c.downField(jobId).as[Disopred3]
+      disopred   <- c.downField(jobId).as[disopred]
       signal      <- c.downField(jobId).as[Signal]
       psspred     <- c.downField(jobId).as[Psspred]
       deepcnf     <- c.downField(jobId).as[Deepcnf]
+      netsurfp    <- c.downField(jobId).as[Netsurfp]
+      netsurfpd    <- c.downField(jobId).as[Netsurfpd]
     } yield
       new Quick2DResult(
         jobId,
@@ -73,13 +78,15 @@ object Quick2DResult {
         tmhmm,
         phobius,
         polyphobius,
-        spider2,
+        spider,
         spotd,
         iupred,
-        disopred3,
+        disopred,
         signal,
         psspred,
-        deepcnf
+        deepcnf,
+        netsurfp,
+        netsurfpd
       )
   }
 
@@ -162,13 +169,13 @@ object Quick2DResult {
 
   }
 
-  case class Spider2(name: String, seq: String)
+  case class spider(name: String, seq: String)
 
-  object Spider2 {
-    implicit val decodeSpider2: Decoder[Spider2] = (c: HCursor) =>
+  object spider {
+    implicit val decodespider: Decoder[spider] = (c: HCursor) =>
       for {
-        seq <- c.downField("spider2").as[Option[String]]
-      } yield new Spider2("spider2", seq.getOrElse(""))
+        seq <- c.downField("spider").as[Option[String]]
+      } yield new spider("spider", seq.getOrElse(""))
 
   }
 
@@ -192,13 +199,13 @@ object Quick2DResult {
 
   }
 
-  case class Disopred3(name: String, seq: String)
+  case class disopred(name: String, seq: String)
 
-  object Disopred3 {
-    implicit val dispored3Decoder: Decoder[Disopred3] = (c: HCursor) =>
+  object disopred {
+    implicit val dispored3Decoder: Decoder[disopred] = (c: HCursor) =>
       for {
-        seq <- c.downField("disopred3").as[Option[String]]
-      } yield new Disopred3("disopred3", seq.getOrElse(""))
+        seq <- c.downField("disopred").as[Option[String]]
+      } yield new disopred("disopred", seq.getOrElse(""))
 
   }
 
@@ -229,6 +236,26 @@ object Quick2DResult {
       for {
         seq <- c.downField("deepcnf").as[Option[String]]
       } yield new Deepcnf("deepcnf", seq.getOrElse(""))
+
+  }
+
+  case class Netsurfp(name: String, seq: String)
+
+  object Netsurfp {
+    implicit val netsurfpDecoder: Decoder[Netsurfp] = (c: HCursor) =>
+      for {
+        seq <- c.downField("netsurfpss").as[Option[String]]
+      } yield new Netsurfp("netsurfp", seq.getOrElse(""))
+
+  }
+
+  case class Netsurfpd(name: String, seq: String)
+
+  object Netsurfpd {
+    implicit val netsurfpdDecoder: Decoder[Netsurfpd] = (c: HCursor) =>
+      for {
+        seq <- c.downField("netsurfpd").as[Option[String]]
+      } yield new Netsurfpd("netsurfpd", seq.getOrElse(""))
 
   }
 
