@@ -31,10 +31,10 @@ case class Quick2DResult(
     tmhmm: Tmhmm,
     phobius: Phobius,
     polyphobius: Polyphobius,
-    spider: spider,
+    spider: Spider,
     spotd: Spotd,
     iupred: Iupred,
-    disopred: disopred,
+    disopred: Disopred,
     signal: Signal,
     psspred: Psspred,
     deepcnf: Deepcnf,
@@ -57,10 +57,10 @@ object Quick2DResult {
       tmhmm       <- c.downField(jobId).as[Tmhmm]
       phobius     <- c.downField(jobId).as[Phobius]
       polyphobius <- c.downField(jobId).as[Polyphobius]
-      spider     <- c.downField(jobId).as[spider]
+      spider     <- c.downField(jobId).as[Spider]
       spotd       <- c.downField(jobId).as[Spotd]
       iupred      <- c.downField(jobId).as[Iupred]
-      disopred   <- c.downField(jobId).as[disopred]
+      disopred   <- c.downField(jobId).as[Disopred]
       signal      <- c.downField(jobId).as[Signal]
       psspred     <- c.downField(jobId).as[Psspred]
       deepcnf     <- c.downField(jobId).as[Deepcnf]
@@ -169,13 +169,13 @@ object Quick2DResult {
 
   }
 
-  case class spider(name: String, seq: String)
+  case class Spider(name: String, seq: String)
 
-  object spider {
-    implicit val decodespider: Decoder[spider] = (c: HCursor) =>
+  object Spider {
+    implicit val decodespider: Decoder[Spider] = (c: HCursor) =>
       for {
         seq <- c.downField("spider").as[Option[String]]
-      } yield new spider("spider", seq.getOrElse(""))
+      } yield new Spider("spider", seq.getOrElse(""))
 
   }
 
@@ -199,13 +199,13 @@ object Quick2DResult {
 
   }
 
-  case class disopred(name: String, seq: String)
+  case class Disopred(name: String, seq: String)
 
-  object disopred {
-    implicit val dispored3Decoder: Decoder[disopred] = (c: HCursor) =>
+  object Disopred {
+    implicit val dispored3Decoder: Decoder[Disopred] = (c: HCursor) =>
       for {
         seq <- c.downField("disopred").as[Option[String]]
-      } yield new disopred("disopred", seq.getOrElse(""))
+      } yield new Disopred("disopred", seq.getOrElse(""))
 
   }
 
