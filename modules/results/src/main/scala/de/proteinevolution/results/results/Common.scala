@@ -87,7 +87,7 @@ object Common {
             }
           }
         )
-      case "spider2" =>
+      case "spider" =>
         helix_sheets.replaceAllIn(
           sequence, { m =>
             m.group("ss") match {
@@ -114,6 +114,16 @@ object Common {
             }
           }
         )
+      case "netsurfp" =>
+        helix_sheets.replaceAllIn(
+          sequence, { m =>
+            m.group("ss") match {
+              case helix_pattern(substr) => "<span class=\"ss_h_b\">" + substr + "</span>"
+              case sheet_pattern(substr) => "<span class=\"ss_e_b\">" + substr + "</span>"
+            }
+          }
+        )
+      case "netsurfpd"   => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
       case "marcoil"     => CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
       case "coils"       => CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
       case "pcoils"      => CC_pattern.replaceAllIn(sequence, "<span class=\"CC_b\">" + "$1" + "</span>")
@@ -122,7 +132,7 @@ object Common {
       case "polyphobius" => TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
       case "spotd"       => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
       case "iupred"      => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
-      case "disopred3"   => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
+      case "disopred"   => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
       case "pipred"      => PIHELIX_pattern.replaceAllIn(sequence, "<span class=\"ss_pihelix\">" + "$1" + "</span>")
 
     }
@@ -661,13 +671,14 @@ object Common {
       val phobius    = result.phobius.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val polyphobius =
         result.polyphobius.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val spider2   = result.spider2.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val spider   = result.spider.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val spotd     = result.spotd.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val iupred    = result.iupred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val disopred3 = result.disopred3.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val disopred = result.disopred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val psspred   = result.psspred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val deepcnf   = result.deepcnf.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-
+      val netsurfp   = result.netsurfp.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val netsurfpd   = result.netsurfpd.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       htmlString += makeRow(
         "sequenceCompact",
         Array("AA_QUERY",
@@ -680,15 +691,15 @@ object Common {
                                     "",
                                     Q2DColorReplace(result.psipred.name, psipred.replaceAll("C|T|S|B|G", "&nbsp;"))))
       }
-      if (!spider2.isEmpty) {
+      if (!spider.isEmpty) {
         htmlString += makeRow("sequenceCompact",
-                              Array("SS_" + result.spider2.name.toUpperCase(),
+                              Array("SS_" + result.spider.name.toUpperCase() + "3",
                                     "",
-                                    Q2DColorReplace(result.spider2.name, spider2.replace("C", "&nbsp;"))))
+                                    Q2DColorReplace(result.spider.name, spider.replace("C", "&nbsp;"))))
       }
       if (!psspred.isEmpty) {
         htmlString += makeRow("sequenceCompact",
-                              Array("SS_" + result.psspred.name.toUpperCase(),
+                              Array("SS_" + result.psspred.name.toUpperCase() + "4",
                                     "",
                                     Q2DColorReplace(result.psspred.name, psspred.replace("C", "&nbsp;"))))
       }
@@ -697,6 +708,12 @@ object Common {
                               Array("SS_" + result.deepcnf.name.toUpperCase(),
                                     "",
                                     Q2DColorReplace(result.deepcnf.name, deepcnf.replace("C", "&nbsp;"))))
+      }
+      if (!netsurfp.isEmpty) {
+        htmlString += makeRow("sequenceCompact",
+          Array("SS_" + result.netsurfp.name.toUpperCase() + "2",
+            "",
+            Q2DColorReplace(result.netsurfp.name, netsurfp.replace("C", "&nbsp;"))))
       }
       if (!pipred.isEmpty) {
         htmlString += makeRow("sequenceCompact",
@@ -742,11 +759,17 @@ object Common {
                 Q2DColorReplace(result.polyphobius.name, polyphobius.replace("x", "&nbsp;")))
         )
       }
-      if (!disopred3.isEmpty) {
+      if (!netsurfpd.isEmpty) {
         htmlString += makeRow("sequenceCompact",
-                              Array("DO_" + result.disopred3.name.toUpperCase(),
+          Array("DO_" + result.netsurfpd.name.toUpperCase() + "2",
+            "",
+            Q2DColorReplace(result.netsurfpd.name, netsurfpd.replace("O", "&nbsp;"))))
+      }
+      if (!disopred.isEmpty) {
+        htmlString += makeRow("sequenceCompact",
+                              Array("DO_" + result.disopred.name.toUpperCase() + "3",
                                     "",
-                                    Q2DColorReplace(result.disopred3.name, disopred3.replace("O", "&nbsp;"))))
+                                    Q2DColorReplace(result.disopred.name, disopred.replace("O", "&nbsp;"))))
       }
       if (!spotd.isEmpty) {
         htmlString += makeRow("sequenceCompact",
