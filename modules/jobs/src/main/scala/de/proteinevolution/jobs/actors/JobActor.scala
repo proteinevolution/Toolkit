@@ -508,7 +508,8 @@ class JobActor @Inject()(
 
                     if (isComplete(validParameters)) {
                       val pendingExecution = wrapperExecutionFactory.getInstance(
-                        runscript(validParameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument])))
+                        runscript(validParameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))),
+                        newEnv
                       )
 
                       if (!executionContext.blocked) {
