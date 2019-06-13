@@ -18,8 +18,6 @@ package de.proteinevolution.auth.controllers
 
 import java.time.ZonedDateTime
 
-import akka.actor.ActorRef
-import controllers.AssetsFinder
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.JSONTemplate
 import de.proteinevolution.auth.models.MailTemplate._
@@ -27,24 +25,22 @@ import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.tel.env.Env
-import de.proteinevolution.user.{User, UserToken}
-import javax.inject.{Inject, Singleton}
+import de.proteinevolution.user.{ User, UserToken }
+import javax.inject.{ Inject, Singleton }
 import play.api.Environment
 import play.api.cache._
 import play.api.libs.mailer._
 import play.api.mvc._
 import reactivemongo.bson._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class VerificationController @Inject()(
     userDao: UserDao,
-    toolConfig: ToolConfig,
     userSessions: UserSessionService,
     @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
     environment: Environment,
-    assets: AssetsFinder,
     cc: ControllerComponents,
     env: Env,
     userAction: UserAction
@@ -94,6 +90,7 @@ final class VerificationController @Inject()(
                 case 2 => // Token for password change validation
                   userToken.passwordHash match {
                     case Some(newPassword) =>
+                      val newSessionId: BSONObjectID = BSONObjectID.generate()
                       userDao
                         .modifyUser(
                           userToVerify.userID,
@@ -101,7 +98,8 @@ final class VerificationController @Inject()(
                             "$set" ->
                             BSONDocument(
                               User.PASSWORD    -> newPassword,
-                              User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
+                              User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli),
+                              User.SESSIONID   -> newSessionId
                             ),
                             "$unset" ->
                             BSONDocument(User.SESSIONID -> "", User.CONNECTED -> "", User.USERTOKEN -> "")
@@ -109,17 +107,14 @@ final class VerificationController @Inject()(
                         )
                         .map {
                           case Some(modifiedUser) =>
+                            // take use out of cache to prevent problems with invalid login states
                             userSessions.removeUserFromCache(request.user)
                             val eMail = PasswordChangedMail(modifiedUser, environment, env)
                             eMail.send
-                            // Force Log Out on all connected users.
-                            (wsActorCache.get(modifiedUser.userID.stringify): Option[List[ActorRef]]) match {
-                              case Some(webSocketActors) =>
-                                webSocketActors.foreach(_ ! LogOut)
-                              case None =>
-                            }
-                            // User modified properly
-                            Ok(passwordChangeAccepted(modifiedUser))
+                            // User modified properly. Use new session id for user => login lost in all other sessions
+                            Ok(passwordChangeAccepted(modifiedUser)).withSession(
+                              userSessions.sessionCookie(request, newSessionId)
+                            )
                           case None => // Could not save the modified user to the DB - failsave in case the DB is down
                             Ok(databaseError)
                         }
