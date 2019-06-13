@@ -169,7 +169,7 @@ class AuthController @Inject()(
                     userID = BSONObjectID.generate(),
                     sessionID = None,
                     userToken =
-                      Some(UserToken(tokenType = User.REGISTEREDUSER, eMail = Some(signUpFormUser.getUserData.eMail)))
+                      Some(UserToken(tokenType = UserToken.EMAIL_VERIFICATION_TOKEN, eMail = Some(signUpFormUser.getUserData.eMail)))
                   )
                   userDao.upsertUser(newUser).map {
                     case Some(registeredUser) =>
@@ -207,7 +207,7 @@ class AuthController @Inject()(
               user.userData match {
                 case Some(_) =>
                   // Generate a new Token to wait for the confirmation eMail
-                  val token = UserToken(tokenType = 3)
+                  val token = UserToken(tokenType = UserToken.PASSWORD_CHANGE_SEPARATE_WINDOW_TOKEN)
                   // create a modifier document to change the last login date in the Database
                   val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
                   // Push to the database using modifier
@@ -305,7 +305,7 @@ class AuthController @Inject()(
             {
               case Some(newPasswordHash) =>
                 // Generate a new Token to wait for the confirmation eMail
-                val token = UserToken(tokenType = 2, passwordHash = Some(newPasswordHash))
+                val token = UserToken(tokenType = UserToken.PASSWORD_CHANGE_TOKEN, passwordHash = Some(newPasswordHash))
                 // create a modifier document to change the last login date in the Database
                 val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
                 // Push to the database using modifier

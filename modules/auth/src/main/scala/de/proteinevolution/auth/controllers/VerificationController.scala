@@ -66,7 +66,7 @@ final class VerificationController @Inject()(
           case Some(userToken) =>
             if (userToken.token == token) {
               userToken.tokenType match {
-                case 1 => // Token for eMail verification
+                case UserToken.EMAIL_VERIFICATION_TOKEN =>
                   userDao
                     .modifyUser(
                       userToVerify.userID,
@@ -87,7 +87,7 @@ final class VerificationController @Inject()(
                       case None => // Could not save the modified user to the DB
                         Ok(databaseError)
                     }
-                case 2 => // Token for password change validation
+                case UserToken.PASSWORD_CHANGE_TOKEN =>
                   userToken.passwordHash match {
                     case Some(newPassword) =>
                       val newSessionId: BSONObjectID = BSONObjectID.generate()
@@ -123,10 +123,15 @@ final class VerificationController @Inject()(
                       Future.successful(Ok(passwordChangeFailed))
                   }
 
-                case 3 =>
+                case UserToken.PASSWORD_CHANGE_SEPARATE_WINDOW_TOKEN =>
                   // Give a token to the current user to allow him to change the password in a different view (Password Recovery)
+                  // TODO: Move password change logic in one route
                   val newToken =
-                    UserToken(tokenType = 4, token = userToken.token, userID = Some(userToVerify.userID))
+                    UserToken(
+                      tokenType = UserToken.PASSWORD_CHANGE_TOKEN,
+                      token = userToken.token,
+                      userID = Some(userToVerify.userID)
+                    )
                   val modifier = BSONDocument(
                     "$set" -> BSONDocument(
                       User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli),
