@@ -160,7 +160,7 @@
                 if (this.needsConfirmation) {
                     this.editProfileSubmit();
                 } else {
-                    this.needsConfirmation = true
+                    this.needsConfirmation = true;
                 }
             },
             async editProfileSubmit() {
