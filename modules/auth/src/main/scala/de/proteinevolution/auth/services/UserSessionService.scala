@@ -192,7 +192,9 @@ class UserSessionService @Inject()(
    * @param selector
    * @param modifier
    * @return
+    * @deprecated needs to be split from dao in order to remove modifiers
    */
+  @Deprecated
   def modifyUserWithCache(userID: BSONObjectID, modifier: BSONDocument): Future[Option[User]] = {
     userDao
       .modifyUser(userID, modifier)

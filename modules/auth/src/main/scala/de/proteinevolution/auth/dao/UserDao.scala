@@ -18,7 +18,6 @@ package de.proteinevolution.auth.dao
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.user.{ User, UserData }
 import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -72,16 +71,22 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       _.findAndUpdate(BSONDocument(User.IDDB -> userID), modifier, fetchNewObject = true).map(_.result[User])
     )
 
-  def changePassword(userID: BSONObjectID, newPasswordHash: String, newSessionId: BSONObjectID): Future[Option[User]] = {
+  def changePassword(
+      userID: BSONObjectID,
+      newPasswordHash: String,
+      newSessionId: BSONObjectID
+  ): Future[Option[User]] = {
     // create a modifier document to change the last login date in the Database
     val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
     // Push to the database using modifier
     val modifier =
-      BSONDocument("$set" -> BSONDocument(
-        User.DATEUPDATED -> bsonCurrentTime,
-        User.PASSWORD -> newPasswordHash,
-        User.SESSIONID -> newSessionId
-      ))
+      BSONDocument(
+        "$set" -> BSONDocument(
+          User.DATEUPDATED -> bsonCurrentTime,
+          User.PASSWORD    -> newPasswordHash,
+          User.SESSIONID   -> newSessionId
+        )
+      )
     modifyUser(userID, modifier)
   }
 

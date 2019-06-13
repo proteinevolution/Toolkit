@@ -22,45 +22,44 @@ import akka.actor.ActorRef
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.auth.models.Session.ChangeSessionID
-import de.proteinevolution.auth.models.{FormDefinitions, JSONTemplate}
+import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.tel.env.Env
-import de.proteinevolution.user.{User, UserToken}
+import de.proteinevolution.user.{ User, UserToken }
 import io.circe.syntax._
-import javax.inject.{Inject, Singleton}
-import play.api.Logging
-import play.api.cache.{NamedCache, SyncCacheApi}
+import javax.inject.{ Inject, Singleton }
+import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import play.api.Environment
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import play.api.mvc.{ Action, AnyContent, ControllerComponents }
+import play.api.{ Environment, Logging }
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 class AuthController @Inject()(
-                                userSessionService: UserSessionService,
-                                userDao: UserDao,
-                                cc: ControllerComponents,
-                                @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
-                                environment: Environment,
-                                env: Env,
-                                userAction: UserAction
+    userSessionService: UserSessionService,
+    userDao: UserDao,
+    cc: ControllerComponents,
+    @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
+    environment: Environment,
+    env: Env,
+    userAction: UserAction
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
     extends ToolkitController(cc)
     with JSONTemplate
     with Logging {
 
   def signOut: Action[AnyContent] = userAction { implicit request =>
-      userSessionService.removeUserFromCache(request.user)
-      Ok(loggedOut()).withNewSession
+    userSessionService.removeUserFromCache(request.user)
+    Ok(loggedOut()).withNewSession
   }
 
   def getUserData: Action[AnyContent] = userAction { implicit request =>
-      logger.info("Sending user data.")
-      Ok(request.user.userData.asJson)
+    logger.info("Sending user data.")
+    Ok(request.user.userData.asJson)
   }
 
   def signInSubmit: Action[AnyContent] = userAction.async { implicit request =>
@@ -75,59 +74,57 @@ class AuthController @Inject()(
         },
         // if no error, then insert the user to the collection
         signInFormUser => {
-          userDao
-            .findUserByUsernameOrEmail(signInFormUser.nameLogin, signInFormUser.nameLogin)
-            .flatMap {
-              case Some(databaseUser) =>
-                // Check the password
-                if (databaseUser.checkPassword(signInFormUser.password) && databaseUser.accountType > 0) {
-                  // Change the login time and give the new Session ID to the user.
-                  // Additionally add the watched jobs to the users watchlist.
-                  val modifier = userSessionService.getUserModifier(databaseUser, forceSessionID = true)
-                  // TODO this adds the non logged in user's jobs to the now logged in user's job list
-                  //                            "$addToSet"        ->
-                  //               BSONDocument(User.JOBS          ->
-                  //               BSONDocument("$each"            -> user.jobs)))
-                  // Finally add the edits to the collection
-                  userSessionService.modifyUserWithCache(databaseUser.userID, modifier).map {
-                    case Some(loggedInUser) =>
-                      logger.info(
-                        "\n-[old user]-\n"
-                        + user.toString
-                        + "\n-[new user]-\n"
-                        + loggedInUser.toString
-                      )
-                      // Remove the old, not logged in user
-                      //removeUser(BSONDocument(User.IDDB -> user.userID))
-                      userSessionService.removeUserFromCache(user)
+          userDao.findUserByUsernameOrEmail(signInFormUser.nameLogin, signInFormUser.nameLogin).flatMap {
+            case Some(databaseUser) =>
+              // Check the password
+              if (databaseUser.checkPassword(signInFormUser.password) && databaseUser.accountType > 0) {
+                // Change the login time and give the new Session ID to the user.
+                // Additionally add the watched jobs to the users watchlist.
+                val modifier = userSessionService.getUserModifier(databaseUser, forceSessionID = true)
+                // TODO this adds the non logged in user's jobs to the now logged in user's job list
+                //                            "$addToSet"        ->
+                //               BSONDocument(User.JOBS          ->
+                //               BSONDocument("$each"            -> user.jobs)))
+                // Finally add the edits to the collection
+                userSessionService.modifyUserWithCache(databaseUser.userID, modifier).map {
+                  case Some(loggedInUser) =>
+                    logger.info(
+                      "\n-[old user]-\n"
+                      + user.toString
+                      + "\n-[new user]-\n"
+                      + loggedInUser.toString
+                    )
+                    // Remove the old, not logged in user
+                    //removeUser(BSONDocument(User.IDDB -> user.userID))
+                    userSessionService.removeUserFromCache(user)
 
-                      // Tell the job actors to copy all jobs connected to the old user to the new user
-                      wsActorCache.get[List[ActorRef]](user.userID.stringify) match {
-                        case Some(wsActors) =>
-                          val actorList: List[ActorRef] = wsActors: List[ActorRef]
-                          wsActorCache.set(loggedInUser.userID.stringify, actorList)
-                          actorList.foreach(_ ! ChangeSessionID(loggedInUser.sessionID.get))
-                          wsActorCache.remove(user.userID.stringify)
-                        case None =>
-                      }
+                    // Tell the job actors to copy all jobs connected to the old user to the new user
+                    wsActorCache.get[List[ActorRef]](user.userID.stringify) match {
+                      case Some(wsActors) =>
+                        val actorList: List[ActorRef] = wsActors: List[ActorRef]
+                        wsActorCache.set(loggedInUser.userID.stringify, actorList)
+                        actorList.foreach(_ ! ChangeSessionID(loggedInUser.sessionID.get))
+                        wsActorCache.remove(user.userID.stringify)
+                      case None =>
+                    }
 
-                      // Everything is ok, let the user know that they are logged in now
-                      Ok(loggedIn(loggedInUser)).withSession(
-                        userSessionService.sessionCookie(request, loggedInUser.sessionID.get)
-                      )
-                    case None =>
-                      Ok(loginIncorrect())
-                  }
-                } else if (databaseUser.accountType < 1) {
-                  // User needs to Verify first
-                  fuccess(Ok(mustVerify()))
-                } else {
-                  // Wrong Password, show the error message
-                  fuccess(Ok(loginIncorrect()))
+                    // Everything is ok, let the user know that they are logged in now
+                    Ok(loggedIn(loggedInUser)).withSession(
+                      userSessionService.sessionCookie(request, loggedInUser.sessionID.get)
+                    )
+                  case None =>
+                    Ok(loginIncorrect())
                 }
-              case None => // no user found in database
+              } else if (databaseUser.accountType < 1) {
+                // User needs to Verify first
+                fuccess(Ok(mustVerify()))
+              } else {
+                // Wrong Password, show the error message
                 fuccess(Ok(loginIncorrect()))
-            }
+              }
+            case None => // no user found in database
+              fuccess(Ok(loginIncorrect()))
+          }
         }
       )
     } else {
@@ -147,7 +144,7 @@ class AuthController @Inject()(
             // Something went wrong with the Form.
             Future.successful {
               Ok(formError())
-          },
+            },
           // if no error, then insert the user to the collection
           signUpFormUser => {
             if (signUpFormUser.accountType < User.NORMALUSERAWAITINGREGISTRATION) {
@@ -157,35 +154,41 @@ class AuthController @Inject()(
               }
             } else {
               // Check database for existing users with the same email or login name
-              userDao.findUserByUsernameOrEmail(signUpFormUser.getUserData.nameLogin, signUpFormUser.getUserData.eMail).flatMap {
-                case Some(otherUser) =>
-                  if (signUpFormUser.getUserData.eMail == otherUser.getUserData.eMail) {
-                    Future.successful(Ok(accountEmailUsed()))
-                  } else {
-                    Future.successful(Ok(accountNameUsed()))
-                  }
-                case None =>
-                  // Create the database entry.
-                  val newUser = signUpFormUser.copy(
-                    userID = BSONObjectID.generate(),
-                    sessionID = None,
-                    userToken =
-                      Some(UserToken(tokenType = UserToken.EMAIL_VERIFICATION_TOKEN, eMail = Some(signUpFormUser.getUserData.eMail)))
-                  )
-                  userDao.upsertUser(newUser).map {
-                    case Some(registeredUser) =>
-                      // All done. User is registered, now send the welcome eMail
-                      registeredUser.userToken match {
-                        case Some(token) =>
-                          val eMail = NewUserWelcomeMail(registeredUser, token.token, environment, env)
-                          eMail.send
-                          Ok(signedUp)
-                        case None => Ok(tokenMismatch())
-                      }
-                    case None =>
-                      Ok(formError())
-                  }
-              }
+              userDao
+                .findUserByUsernameOrEmail(signUpFormUser.getUserData.nameLogin, signUpFormUser.getUserData.eMail)
+                .flatMap {
+                  case Some(otherUser) =>
+                    if (signUpFormUser.getUserData.eMail == otherUser.getUserData.eMail) {
+                      Future.successful(Ok(accountEmailUsed()))
+                    } else {
+                      Future.successful(Ok(accountNameUsed()))
+                    }
+                  case None =>
+                    // Create the database entry.
+                    val newUser = signUpFormUser.copy(
+                      userID = BSONObjectID.generate(),
+                      sessionID = None,
+                      userToken = Some(
+                        UserToken(
+                          tokenType = UserToken.EMAIL_VERIFICATION_TOKEN,
+                          eMail = Some(signUpFormUser.getUserData.eMail)
+                        )
+                      )
+                    )
+                    userDao.upsertUser(newUser).map {
+                      case Some(registeredUser) =>
+                        // All done. User is registered, now send the welcome eMail
+                        registeredUser.userToken match {
+                          case Some(token) =>
+                            val eMail = NewUserWelcomeMail(registeredUser, token.token, environment, env)
+                            eMail.send
+                            Ok(signedUp)
+                          case None => Ok(tokenMismatch())
+                        }
+                      case None =>
+                        Ok(formError())
+                    }
+                }
             }
           }
         )
@@ -199,7 +202,7 @@ class AuthController @Inject()(
       _ =>
         Future.successful {
           Ok(formError())
-      },
+        },
       // when there are no errors, then insert the user to the collection
       {
         case Some(userNameOrEmail: String) =>
@@ -303,7 +306,7 @@ class AuthController @Inject()(
             errors =>
               Future.successful {
                 Ok(formError(errors.errors.mkString(",\n")))
-            },
+              },
             // when there are no errors, then insert the user to the collection
             {
               case Some(newPasswordHash) =>
@@ -339,8 +342,7 @@ class AuthController @Inject()(
           .profileEdit(user)
           .bindFromRequest
           .fold(
-            _ =>
-              fuccess(Ok(formError())),
+            _ => fuccess(Ok(formError())),
             // when there are no errors, then insert the user to the collection
             {
               case Some(editedProfileUserData) =>
