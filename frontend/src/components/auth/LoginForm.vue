@@ -79,9 +79,6 @@
         },
         methods: {
             async login() {
-                if (this.eMailOrUsernameInvalid) {
-                    return;
-                }
                 const data: LoginData = {
                     nameLogin: this.username,
                     password: this.password,
@@ -100,6 +97,9 @@
                 }
             },
             async forgotPasswordSubmit() {
+                if (this.eMailOrUsernameInvalid) {
+                    return;
+                }
                 const data: ForgotPasswordData = {
                     eMailOrUsername: this.forgot.eMailOrUsername,
                 };
