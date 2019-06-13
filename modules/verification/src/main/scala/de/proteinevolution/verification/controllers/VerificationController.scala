@@ -64,10 +64,9 @@ final class VerificationController @Inject()(
    * @param token
    * @return
    */
-  def verification(nameLogin: String, token: String): Action[AnyContent] = userAction.async { implicit request =>
+  def verification(usernameOrEmail: String, token: String): Action[AnyContent] = userAction.async { implicit request =>
     // Grab the user from the database in case that the logged in user is not the user to verify
-    // TODO check for both name or email
-    userDao.findUser(BSONDocument(User.NAMELOGIN -> nameLogin)).flatMap {
+    userDao.findUserByUsernameOrEmail(usernameOrEmail, usernameOrEmail).flatMap {
       case Some(userToVerify) =>
         userToVerify.userToken match {
           case Some(userToken) =>

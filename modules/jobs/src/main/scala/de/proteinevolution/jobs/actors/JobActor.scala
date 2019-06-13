@@ -241,7 +241,7 @@ class JobActor @Inject()(
 
   private def sendJobUpdateMail(job: Job): Boolean = {
     if (job.emailUpdate && job.ownerID.isDefined) {
-      userDao.findUser(BSONDocument(User.IDDB -> job.ownerID)).foreach {
+      userDao.findUserByDBID(job.ownerID.get).foreach {
         case Some(user) =>
           user.userData match {
             case Some(_) =>

@@ -26,7 +26,7 @@ import play.api.routing.sird._
 class VerificationRouter @Inject()(ctrl: VerificationController) extends SimpleRouter {
 
   override lazy val routes: Routes = {
-    case GET(p"/$userName/$token") => ctrl.verification(userName, token)
+    case GET(p"/$usernameOrEmail/$token") => ctrl.verification(usernameOrEmail, token)
   }
 
 }

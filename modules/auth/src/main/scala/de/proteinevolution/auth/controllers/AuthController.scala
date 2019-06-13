@@ -75,12 +75,7 @@ class AuthController @Inject()(
         // if no error, then insert the user to the collection
         signInFormUser => {
           userDao
-            .findUser(
-              BSONDocument(
-                "$or" -> List(BSONDocument(User.EMAIL -> signInFormUser.nameLogin),
-                              BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin))
-              )
-            )
+            .findUserByUsernameOrEmail(signInFormUser.nameLogin, signInFormUser.nameLogin)
             .flatMap {
               case Some(databaseUser) =>
                 // Check the password
@@ -162,12 +157,8 @@ class AuthController @Inject()(
                 Ok(mustAcceptToS())
               }
             } else {
-              // Check database for existing users with the same email
-              val selector = BSONDocument(
-                "$or" -> List(BSONDocument(User.EMAIL -> signUpFormUser.getUserData.eMail),
-                              BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin))
-              )
-              userDao.findUser(selector).flatMap {
+              // Check database for existing users with the same email or login name
+              userDao.findUserByUsernameOrEmail(signUpFormUser.getUserData.nameLogin, signUpFormUser.getUserData.eMail).flatMap {
                 case Some(otherUser) =>
                   if (signUpFormUser.getUserData.eMail == otherUser.getUserData.eMail) {
                     Future.successful(Ok(accountEmailUsed()))
@@ -213,15 +204,7 @@ class AuthController @Inject()(
       // when there are no errors, then insert the user to the collection
       {
         case Some(userNameOrEmail: String) =>
-          val selector =
-            BSONDocument(
-              "$or" -> List(
-                BSONDocument(User.EMAIL     -> userNameOrEmail),
-                BSONDocument(User.NAMELOGIN -> userNameOrEmail)
-              )
-            )
-
-          userDao.findUser(selector).flatMap {
+          userDao.findUserByUsernameOrEmail(userNameOrEmail, userNameOrEmail).flatMap {
             case Some(user) =>
               user.userData match {
                 case Some(_) =>
@@ -384,8 +367,7 @@ class AuthController @Inject()(
                 )
 
                 if (editedProfileUserData.eMail != user.getUserData.eMail) {
-                  val selectorMail = BSONDocument(BSONDocument(User.EMAIL -> editedProfileUserData.eMail))
-                  userDao.findUser(selectorMail).flatMap {
+                  userDao.findUserByEmail(editedProfileUserData.eMail).flatMap {
                     case Some(_) =>
                       fuccess(Ok(accountEmailUsed()))
                     case None => fuccess(NotFound)

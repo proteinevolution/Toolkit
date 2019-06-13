@@ -91,7 +91,7 @@ class UserSessionService @Inject()(
       location = locationProvider.getLocation(request)
     )
 
-    userDao.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
+    userDao.findUserBySessionId(sessionID).flatMap {
       case Some(user) =>
         logger.info(s"User found by SessionID:\n${user.toString}")
         val selector = BSONDocument(User.IDDB -> user.userID)
@@ -159,7 +159,7 @@ class UserSessionService @Inject()(
         fuccess(Some(user))
       case None =>
         // Pull it from the DB, as it is not in the cache
-        userDao.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
+        userDao.findUserBySessionId(sessionID).flatMap {
           case Some(user) =>
             // Update the last login time
             val selector = BSONDocument(User.IDDB -> user.userID)

@@ -54,7 +54,7 @@ trait JSONTemplate {
   }
 
   def accountNameUsed(): Json = {
-    authMessage("There already is an Account using this username, please use a different one.")
+    authMessage("There already is an account using this username, please use a different one.")
   }
 
   def accountEmailUsed(): Json = {
@@ -74,7 +74,7 @@ trait JSONTemplate {
   }
 
   def mustVerify(): Json = {
-    authMessage("Please verify your account.\nCheck Your emails for the verification link.")
+    authMessage("Please verify your account.\nCheck your emails for the verification link.")
   }
 
   def alreadyLoggedIn(): Json = {
