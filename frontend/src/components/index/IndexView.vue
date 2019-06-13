@@ -18,6 +18,8 @@
     import ToolFinder from './ToolFinder.vue';
     import UpdatesSection from './UpdatesSection.vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
+    import AuthService from '@/services/AuthService';
+    import EventBus from '@/util/EventBus';
 
     export default Vue.extend({
         name: 'IndexView',
@@ -25,6 +27,17 @@
         components: {
             ToolFinder,
             UpdatesSection,
+        },
+        watch: {
+            // Use a watcher here - component cannot use 'beforeRouteEnter' because of lazy loading
+            '$route.query': {
+                immediate: true,
+                async handler(query: any) {
+                    if (query && query.action) {
+                        EventBus.$emit('show-modal', {id: query.action});
+                    }
+                },
+            },
         },
     });
 </script>

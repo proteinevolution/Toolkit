@@ -337,17 +337,18 @@ object MailTemplate {
 
     val user: User = userParam
 
+    val verificationLink = s"$origin/verify/${user.getUserData.nameLogin}/$token"
+
     val bodyText: String = {
       s"""Welcome ${user.getUserData.nameLogin},
          |your registration was successful. Please take a moment and verify that this is indeed your E-Mail account.
          |To do this, visit
-         |$origin/auth/verify/${user.getUserData.nameLogin}/$token
+         |$verificationLink
          |Your Toolkit Team
      """.stripMargin
     }
 
     val bodyHtml: String = {
-      val verificationLink = s"$origin/auth/verify/${user.getUserData.nameLogin}/$token"
       super.bodyHtmlTemplate(
         subject,
         s"""<tr>
@@ -390,18 +391,19 @@ object MailTemplate {
 
     val user: User = userParam
 
+    val resetPasswordLink = s"$origin/reset-password/${user.getUserData.nameLogin}/$token"
+
     val bodyText: String = {
       s"""Dear ${user.getUserData.nameLogin},
          |you requested to reset your password and set a new one.
          |To complete the process, visit
-         |$origin/auth/verify/${user.getUserData.nameLogin}/$token
+         |$resetPasswordLink
          |If you did not request this, then someone may have tried to log into your account.
          |Your Toolkit Team
      """.stripMargin
     }
 
     val bodyHtml: String = {
-      val verificationLink = s"$origin/auth/verify/${user.getUserData.nameLogin}/$token"
       super.bodyHtmlTemplate(
         subject,
         s"""<tr>
@@ -418,7 +420,7 @@ object MailTemplate {
            |    <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%;">
            |      <tr>
            |        <td align="center" bgcolor="#3c8e85" role="presentation" style="border:none;border-radius:3px;color:white;cursor:auto;padding:10px 25px;" valign="middle">
-           |           <a href="$verificationLink" style="background:#3c8e85;color:white;font-family:Noto Sans;font-size:13px;font-weight:normal;line-height:120%;Margin:0;text-decoration:none;text-transform:none;" target="_blank">
+           |           <a href="$resetPasswordLink" style="background:#3c8e85;color:white;font-family:Noto Sans;font-size:13px;font-weight:normal;line-height:120%;Margin:0;text-decoration:none;text-transform:none;" target="_blank">
            |              Reset Password
            |            </a>
            |        </td>
@@ -429,7 +431,7 @@ object MailTemplate {
            |<tr>
            |  <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
            |    <div style="font-family:Noto Sans;font-size:10px;line-height:1;text-align:center;color:grey;">
-           |      Or copy this URL and visit the page in your browser:<br/><br/> $verificationLink
+           |      Or copy this URL and visit the page in your browser:<br/><br/> $resetPasswordLink
            |    </div>
            |  </td>
            |</tr>

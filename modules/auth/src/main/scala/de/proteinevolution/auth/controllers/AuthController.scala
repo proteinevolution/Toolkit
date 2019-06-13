@@ -32,7 +32,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import play.api.{Configuration, Environment, Logging}
+import play.api.{Configuration, Logging}
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.{ExecutionContext, Future}

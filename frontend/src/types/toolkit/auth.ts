@@ -34,6 +34,8 @@ export interface PasswordChangeData {
 
 export interface PasswordResetData {
     passwordNew: string;
+    token: string;
+    nameLogin: string;
 }
 
 export interface ForgotPasswordData {

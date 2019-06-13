@@ -3,7 +3,9 @@
          :class="{wrapperSecondary: variant==='secondary'}">
         <vue-simple-spinner :class="'vue-simple-spinner-' + variant"
                             :speed="variant === 'secondary' ? 2 : 0.8"></vue-simple-spinner>
-        <div class="message">{{ message }}</div>
+        <div v-if="message"
+             class="message">{{ message }}
+        </div>
     </div>
 </template>
 

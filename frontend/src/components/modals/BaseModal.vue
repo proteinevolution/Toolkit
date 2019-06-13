@@ -6,7 +6,9 @@
              no-fade
              :size="size"
              :body-class="bodyClass"
-             lazy>
+             lazy
+             @hide="$emit('hide')"
+             @show="$emit('show')">
         <slot name="header">
             <div class="tk-modal-header">
             <span class="tk-modal-title"

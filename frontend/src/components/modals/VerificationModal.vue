@@ -1,10 +1,13 @@
 <template>
     <BaseModal :title="title"
                id="verification"
-               :size="isPasswordReset ? 'sm' : 'm'">
-        <ResetPassword v-if="isPasswordReset"/>
+               size="sm"
+               @hide="onHide">
+        <Loading v-if="loading"
+                 variant="primary"
+                 class="mb-2"/>
         <p v-else
-           v-text="authMessage.message">
+           v-text="message">
         </p>
     </BaseModal>
 </template>
@@ -12,35 +15,57 @@
 <script lang="ts">
     import Vue from 'vue';
     import BaseModal from './BaseModal.vue';
-    import {AuthMessage} from '../../types/toolkit/auth';
-    import ResetPassword from '@/components/auth/ResetPassword.vue';
     import {TranslateResult} from 'vue-i18n';
+    import Loading from '@/components/utils/Loading.vue';
+    import AuthService from '@/services/AuthService';
 
     export default Vue.extend({
         name: 'VerificationModal',
         components: {
             BaseModal,
-            ResetPassword,
+            Loading,
+        },
+        data() {
+            return {
+                message: '',
+                successful: false,
+                loading: true,
+            };
         },
         computed: {
-            isPasswordReset(): boolean {
-                return this.authMessage.message === 'showPasswordResetView';
+            token(): string {
+                return <string>this.$route.query.token;
+            },
+            nameLogin(): string {
+                return <string>this.$route.query.nameLogin;
             },
             title(): TranslateResult {
-                if (this.isPasswordReset) {
-                    return this.$t('auth.resetPassword');
+                if (this.loading) {
+                    return this.$t('auth.verification.loading');
                 }
-                return this.$t(`auth.verification${this.authMessage.successful ? 'Succeeded' : 'Failed'}`);
+                return this.$t(`auth.verification.${this.successful ? 'succeeded' : 'failed'}`);
             },
         },
-        props: {
-            authMessage: {
-                /*
-                 Simply stating the interface type doesn't work, this is a workaround. See
-                 https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
-                */
-                type: Object as () => AuthMessage,
-                required: true,
+        watch: {
+            nameLogin: {
+                immediate: true,
+                handler() {
+                    this.verifyEmail();
+                },
+            },
+        },
+        methods: {
+            async verifyEmail() {
+                if (this.nameLogin != '' && this.token != '') {
+                    this.loading = true;
+                    const res = await AuthService.verifyToken(this.nameLogin, this.token);
+                    this.message = res.message;
+                    this.successful = res.successful;
+                    this.loading = false;
+                }
+            },
+            onHide() {
+                this.$router.replace('/');
             },
         },
     });

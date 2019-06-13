@@ -50,7 +50,8 @@
             <AlignmentViewerModal :sequences="modalProps.sequences"
                                   :format="modalProps.format"/>
             <HelpModal :toolName="modalProps.toolName"/>
-            <VerificationModal :authMessage="modalProps.authMessage"/>
+            <VerificationModal/>
+            <ResetPasswordModal/>
         </div>
 
         <notifications animation-type="velocity"/>
@@ -76,6 +77,7 @@
     import AlignmentViewerModal from '@/components/modals/AlignmentViewerModal.vue';
     import {ModalParams} from '@/types/toolkit/utils';
     import VerificationModal from '@/components/modals/VerificationModal.vue';
+    import ResetPasswordModal from '@/components/modals/ResetPasswordModal.vue';
 
     const logger = Logger.get('App');
 
@@ -91,6 +93,7 @@
             UpdatesModal,
             HelpModal,
             VerificationModal,
+            ResetPasswordModal,
             AlignmentViewerModal,
             AuthModal,
         },
@@ -101,11 +104,6 @@
                     toolName: '', // for Help Modal
                     sequences: '', // for AlignmentViewerModal
                     format: '', // for AlignmentViewerModal
-                    authMessage: { // for VerificationModal
-                        message: '',
-                        successful: true,
-                        user: null,
-                    },
                 },
             };
         },

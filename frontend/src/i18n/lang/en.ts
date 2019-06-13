@@ -64,12 +64,18 @@ export default {
             confirmPassword: 'Confirm Password',
             forgotPassword: 'Forgot Password?',
             forgotPasswordInstructions: 'Provide your account email address or username to receive an email to ' +
-                                        'reset your password.',
+                'reset your password.',
             eMailOrUsername: 'E-Mail or Username',
             privacyAccept: ' I accept the {0}',
             editProfile: 'Edit Profile',
-            verificationSucceeded: 'Verification succeeded',
-            verificationFailed: 'Verification failed',
+            verification: {
+                succeeded: 'Verification succeeded',
+                failed: 'Verification failed',
+                loading: 'Verifying...',
+            },
+            resetPasswordModal: {
+                loading: 'Loading...',
+            },
         },
         index: {
             welcomeTitle: 'Welcome to the Bioinformatics Toolkit',

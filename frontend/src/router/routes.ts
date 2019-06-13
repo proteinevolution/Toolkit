@@ -5,7 +5,6 @@ const ToolView = () => lazyLoadView(import(/* webpackChunkName: "tool" */ '../co
 const JobView = () => lazyLoadView(import(/* webpackChunkName: "job" */ '../components/jobs/JobView.vue'));
 const JobManagerView = () => lazyLoadView(import(/* webpackChunkName: "jobmanager" */ '../components/' +
                                                                             'jobmanager/JobManagerView.vue'));
-const Verification = () => lazyLoadView(import(/* webpackChunkName: "404" */ '../components/utils/Verification.vue'));
 const NotFoundView = () => lazyLoadView(import(/* webpackChunkName: "404" */ '../components/utils/NotFoundView.vue'));
 
 export default [
@@ -42,11 +41,19 @@ export default [
         },
     },
     {
-        path: '/verification/:nameLogin/:token',
-        name: 'verification',
-        component: Verification,
-        meta: {
-            showJobList: true,
+        path: '/verify/:nameLogin/:token',
+        redirect: (to: any) => {
+            const { params } = to;
+            params.action = 'verification';
+            return { name: 'index', query: params};
+        },
+    },
+    {
+        path: '/reset-password/:nameLogin/:token',
+        redirect: (to: any) => {
+            const { params } = to;
+            params.action = 'resetPassword';
+            return { name: 'index', query: params};
         },
     },
     {
