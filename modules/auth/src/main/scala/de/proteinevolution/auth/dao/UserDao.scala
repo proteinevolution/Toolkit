@@ -16,18 +16,24 @@
 
 package de.proteinevolution.auth.dao
 
-import de.proteinevolution.user.User
+import java.time.ZonedDateTime
+
+import de.proteinevolution.auth.services.UserSessionService
+import de.proteinevolution.user.{User, UserData}
 import javax.inject.{Inject, Singleton}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
-import reactivemongo.bson.{BSONArray, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{BSONArray, BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit ec: ExecutionContext) {
+class UserDao @Inject()(
+    private val reactiveMongoApi: ReactiveMongoApi,
+    userSessionService: UserSessionService
+)(implicit ec: ExecutionContext) {
 
   private[auth] lazy val userCollection: Future[BSONCollection] = {
     reactiveMongoApi.database.map(_.collection[BSONCollection]("users"))
@@ -42,7 +48,12 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
     userCollection.flatMap(_.find(BSONDocument(User.EMAIL -> email), None).one[User])
 
   def findUserByUsernameOrEmail(username: String, email: String): Future[Option[User]] =
-    userCollection.flatMap(_.find(BSONDocument("$or" -> List(BSONDocument(User.EMAIL -> email), BSONDocument(User.NAMELOGIN -> username))), None).one[User])
+    userCollection.flatMap(
+      _.find(
+        BSONDocument("$or" -> List(BSONDocument(User.EMAIL -> email), BSONDocument(User.NAMELOGIN -> username))),
+        None
+      ).one[User]
+    )
 
   def findUserBySessionId(sessionID: BSONObjectID): Future[Option[User]] =
     userCollection.flatMap(_.find(BSONDocument(User.SESSIONID -> sessionID), None).one[User])
@@ -51,32 +62,61 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
     userCollection.flatMap(_.find(BSONDocument(User.IDDB -> dbID), None).one[User])
 
   def findUsers(selector: BSONDocument): Future[scala.List[User]] =
-    userCollection.map(_.find(selector, None).cursor[User]())
+    userCollection
+      .map(_.find(selector, None).cursor[User]())
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[User]]()))
 
   /**
-    * @deprecated very bad practice to have db logic in controllers.
-    */
+   * @deprecated very bad practice to have db logic in controllers.
+   */
   @Deprecated
   def modifyUser(userID: BSONObjectID, modifier: BSONDocument): Future[Option[User]] =
-    userCollection.flatMap(_.findAndUpdate(BSONDocument(User.IDDB -> userID), modifier, fetchNewObject = true).map(_.result[User]))
+    userCollection.flatMap(
+      _.findAndUpdate(BSONDocument(User.IDDB -> userID), modifier, fetchNewObject = true).map(_.result[User])
+    )
+
+  def updateUserData(userID: BSONObjectID, userData: UserData): Future[Option[User]] = {
+    // create a modifier document to change the last login date in the Database
+    val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
+    val modifier = BSONDocument(
+      "$set" ->
+        BSONDocument(User.USERDATA      -> userData,
+          User.DATELASTLOGIN -> bsonCurrentTime,
+          User.DATEUPDATED   -> bsonCurrentTime)
+    )
+    modifyUser(userID, modifier, withCache = true)
+  }
+
+  private def modifyUser(userID: BSONObjectID, modifier: BSONDocument, withCache: Boolean): Future[Option[User]] = {
+    val f = userCollection.flatMap(
+      _.findAndUpdate(BSONDocument(User.IDDB -> userID), modifier, fetchNewObject = true).map(_.result[User])
+    )
+    if (withCache) {
+      f.map(_.map(userSessionService.updateUserCache))
+    }
+    f
+  }
 
   /**
-    * @deprecated very bad practice to have db logic in controllers.
-    */
+   * @deprecated very bad practice to have db logic in controllers.
+   */
   @Deprecated
   def modifyUsers(userIDs: List[BSONObjectID], modifier: BSONDocument): Future[WriteResult] =
-    userCollection.flatMap(_.update(ordered = false).one(BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs)), modifier, multi = true))
+    userCollection.flatMap(
+      _.update(ordered = false).one(BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs)), modifier, multi = true)
+    )
 
   def removeUsers(userIDs: List[BSONObjectID]): Future[WriteResult] =
     userCollection.flatMap(_.delete().one(BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs))))
 
   def upsertUser(user: User): Future[Option[User]] =
     userCollection.flatMap(
-      _.findAndUpdate(selector = BSONDocument(User.IDDB -> user.userID),
-                      update = user,
-                      upsert = true,
-                      fetchNewObject = true).map(_.result[User])
+      _.findAndUpdate(
+        selector = BSONDocument(User.IDDB -> user.userID),
+        update = user,
+        upsert = true,
+        fetchNewObject = true
+      ).map(_.result[User])
     )
 
   /* removes job association from user */

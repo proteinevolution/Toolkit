@@ -352,15 +352,7 @@ class AuthController @Inject()(
             // when there are no errors, then insert the user to the collection
             {
               case Some(editedProfileUserData) =>
-                // create a modifier document to change the last login date in the Database
-                val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-                val modifier = BSONDocument(
-                  "$set" ->
-                  BSONDocument(User.USERDATA      -> editedProfileUserData.copy(nameLogin = userData.nameLogin),
-                               User.DATELASTLOGIN -> bsonCurrentTime,
-                               User.DATEUPDATED   -> bsonCurrentTime)
-                )
-
+                // check that new email does not exist already
                 if (editedProfileUserData.eMail != user.getUserData.eMail) {
                   userDao.findUserByEmail(editedProfileUserData.eMail).flatMap {
                     case Some(_) =>
@@ -368,7 +360,8 @@ class AuthController @Inject()(
                     case None => fuccess(NotFound)
                   }
                 }
-                userSessions.modifyUserWithCache(user.userID, modifier).map {
+
+                userDao.updateUserData(user.userID, editedProfileUserData.copy(nameLogin = userData.nameLogin)).map {
                   case Some(updatedUser) =>
                     // Everything is ok, let the user know that they are logged in now
                     Ok(editSuccessful(updatedUser))
