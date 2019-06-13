@@ -49,7 +49,7 @@ import de.proteinevolution.user.User
 import javax.inject.Inject
 import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
-import play.api.{Configuration, Environment}
+import play.api.Configuration
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.Future
@@ -58,7 +58,6 @@ import scala.language.postfixOps
 
 class JobActor @Inject()(
                           runscriptManager: RunscriptManager,
-                          environment: Environment,
                           env: Env,
                           hashService: JobHasher,
                           jobDao: JobDao,
@@ -248,7 +247,7 @@ class JobActor @Inject()(
               log.info(
                 s"[JobActor[$jobActorNumber].sendJobUpdateMail] Sending eMail to job owner for job ${job.jobID}: Job is ${job.status.toString}"
               )
-              val eMail = JobFinishedMail(user, job.jobID, job.status, environment, env)
+              val eMail = JobFinishedMail(user, job.jobID, job.status, config)
               eMail.send
             case None => NotUsed
           }

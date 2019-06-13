@@ -29,10 +29,9 @@ import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobActorAccess
 import de.proteinevolution.statistics.{StatisticsObject, UserStatistic}
-import de.proteinevolution.tel.env.Env
-import de.proteinevolution.user.{User, AccountType}
+import de.proteinevolution.user.{AccountType, User}
 import javax.inject.{Inject, Singleton}
-import play.api.Environment
+import play.api.Configuration
 import play.api.libs.mailer.MailerClient
 import reactivemongo.bson.{BSONDateTime, BSONDocument}
 
@@ -45,8 +44,7 @@ final class DatabaseMonitor @Inject()(
     jobDao: JobDao,
     jobActorAccess: JobActorAccess,
     constants: ConstantsV2,
-    environment: Environment,
-    env: Env
+    config: Configuration
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
     extends Actor
     with ActorLogging {
@@ -176,7 +174,7 @@ final class DatabaseMonitor @Inject()(
           )
 
         val userIDs = users.map { user =>
-          val mail = OldAccountEmail(user, registeredUserDeletionDateForEmail, environment, env)
+          val mail = OldAccountEmail(user, registeredUserDeletionDateForEmail, config)
           mail.send
           if (verbose)
             log.info(

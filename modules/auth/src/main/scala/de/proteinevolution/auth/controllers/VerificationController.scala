@@ -24,26 +24,24 @@ import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.tel.env.Env
-import de.proteinevolution.user.{User, UserToken, AccountType}
-import javax.inject.{Inject, Singleton}
-import play.api.Environment
+import de.proteinevolution.user.{ AccountType, User, UserToken }
+import javax.inject.{ Inject, Singleton }
+import play.api.Configuration
 import play.api.cache._
 import play.api.libs.mailer._
 import play.api.mvc._
 import reactivemongo.bson._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class VerificationController @Inject()(
-                                              userDao: UserDao,
-                                              userSessionService: UserSessionService,
-                                              @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
-                                              environment: Environment,
-                                              cc: ControllerComponents,
-                                              env: Env,
-                                              userAction: UserAction
+    userDao: UserDao,
+    userSessionService: UserSessionService,
+    @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
+    cc: ControllerComponents,
+    config: Configuration,
+    userAction: UserAction
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
     extends ToolkitController(cc)
     with JSONTemplate {
@@ -98,7 +96,7 @@ final class VerificationController @Inject()(
                           case Some(modifiedUser) =>
                             // take use out of cache to prevent problems with invalid login states
                             userSessionService.removeUserFromCache(request.user)
-                            val eMail = PasswordChangedMail(modifiedUser, environment, env)
+                            val eMail = PasswordChangedMail(modifiedUser, config)
                             eMail.send
                             // User modified properly. Use new session id for user => login lost in all other sessions
                             Ok(passwordChangeAccepted(modifiedUser)).withSession(

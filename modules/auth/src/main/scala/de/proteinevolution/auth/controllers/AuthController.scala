@@ -26,14 +26,13 @@ import de.proteinevolution.auth.models.{FormDefinitions, JSONTemplate}
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.tel.env.Env
-import de.proteinevolution.user.{User, UserToken, AccountType}
+import de.proteinevolution.user.{AccountType, User, UserToken}
 import io.circe.syntax._
 import javax.inject.{Inject, Singleton}
 import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import play.api.{Environment, Logging}
+import play.api.{Configuration, Environment, Logging}
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,8 +43,7 @@ class AuthController @Inject()(
     userDao: UserDao,
     cc: ControllerComponents,
     @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
-    environment: Environment,
-    env: Env,
+    config: Configuration,
     userAction: UserAction
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
     extends ToolkitController(cc)
@@ -180,7 +178,7 @@ class AuthController @Inject()(
                         // All done. User is registered, now send the welcome eMail
                         registeredUser.userToken match {
                           case Some(token) =>
-                            val eMail = NewUserWelcomeMail(registeredUser, token.token, environment, env)
+                            val eMail = NewUserWelcomeMail(registeredUser, token.token, config)
                             eMail.send
                             Ok(signedUp)
                           case None => Ok(tokenMismatch())
@@ -225,7 +223,7 @@ class AuthController @Inject()(
                     case Some(registeredUser) =>
                       // All done. User is registered, now send the welcome eMail
                       val eMail =
-                        ResetPasswordMail(registeredUser, token.token, environment, env: Env)
+                        ResetPasswordMail(registeredUser, token.token, config)
                       eMail.send
                       Ok(passwordRequestSent)
                     case None =>
@@ -273,7 +271,7 @@ class AuthController @Inject()(
                     .map {
                       case Some(updatedUser) =>
                         // All done. Now send the eMail to notify the user that the password has been changed
-                        val eMail = PasswordChangedMail(updatedUser, environment, env: Env)
+                        val eMail = PasswordChangedMail(updatedUser, config)
                         eMail.send
                         Ok(passwordChanged(updatedUser))
                       case None =>
