@@ -43,6 +43,7 @@ object UserToken {
   val EMAIL_VERIFICATION_TOKEN = 1
   val PASSWORD_CHANGE_TOKEN = 2
   val PASSWORD_CHANGE_SEPARATE_WINDOW_TOKEN = 3 // TODO what is this for
+  val PASSWORD_CHANGE_VERIFIED_TOKEN = 4 // TODO what is this for
 
   val TYPE            = "type"
   val TOKEN           = "token"

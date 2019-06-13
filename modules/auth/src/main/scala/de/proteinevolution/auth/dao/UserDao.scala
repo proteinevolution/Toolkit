@@ -19,21 +19,18 @@ package de.proteinevolution.auth.dao
 import java.time.ZonedDateTime
 
 import de.proteinevolution.auth.services.UserSessionService
-import de.proteinevolution.user.{User, UserData}
-import javax.inject.{Inject, Singleton}
+import de.proteinevolution.user.{ User, UserData }
+import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
-import reactivemongo.bson.{BSONArray, BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.api.commands.{ UpdateWriteResult, WriteResult }
+import reactivemongo.bson.{ BSONArray, BSONDateTime, BSONDocument, BSONObjectID }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class UserDao @Inject()(
-    private val reactiveMongoApi: ReactiveMongoApi,
-    userSessionService: UserSessionService
-)(implicit ec: ExecutionContext) {
+class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit ec: ExecutionContext) {
 
   private[auth] lazy val userCollection: Future[BSONCollection] = {
     reactiveMongoApi.database.map(_.collection[BSONCollection]("users"))
@@ -67,7 +64,7 @@ class UserDao @Inject()(
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[User]]()))
 
   /**
-   * @deprecated very bad practice to have db logic in controllers.
+   * @deprecated very bad practice to have db logic in controllers. Should be private
    */
   @Deprecated
   def modifyUser(userID: BSONObjectID, modifier: BSONDocument): Future[Option[User]] =
@@ -75,26 +72,31 @@ class UserDao @Inject()(
       _.findAndUpdate(BSONDocument(User.IDDB -> userID), modifier, fetchNewObject = true).map(_.result[User])
     )
 
+  def changePassword(userID: BSONObjectID, newPasswordHash: String, newSessionId: BSONObjectID): Future[Option[User]] = {
+    // create a modifier document to change the last login date in the Database
+    val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
+    // Push to the database using modifier
+    val modifier =
+      BSONDocument("$set" -> BSONDocument(
+        User.DATEUPDATED -> bsonCurrentTime,
+        User.PASSWORD -> newPasswordHash,
+        User.SESSIONID -> newSessionId
+      ))
+    modifyUser(userID, modifier)
+  }
+
   def updateUserData(userID: BSONObjectID, userData: UserData): Future[Option[User]] = {
     // create a modifier document to change the last login date in the Database
     val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
     val modifier = BSONDocument(
       "$set" ->
-        BSONDocument(User.USERDATA      -> userData,
-          User.DATELASTLOGIN -> bsonCurrentTime,
-          User.DATEUPDATED   -> bsonCurrentTime)
+      BSONDocument(
+        User.USERDATA      -> userData,
+        User.DATELASTLOGIN -> bsonCurrentTime,
+        User.DATEUPDATED   -> bsonCurrentTime
+      )
     )
-    modifyUser(userID, modifier, withCache = true)
-  }
-
-  private def modifyUser(userID: BSONObjectID, modifier: BSONDocument, withCache: Boolean): Future[Option[User]] = {
-    val f = userCollection.flatMap(
-      _.findAndUpdate(BSONDocument(User.IDDB -> userID), modifier, fetchNewObject = true).map(_.result[User])
-    )
-    if (withCache) {
-      f.map(_.map(userSessionService.updateUserCache))
-    }
-    f
+    modifyUser(userID, modifier)
   }
 
   /**

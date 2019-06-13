@@ -178,7 +178,7 @@ class UserSessionService @Inject()(
   /**
    * updates a user in the cache
    */
-  def updateUserCache(user: User): User = {
+  def updateUserInCache(user: User): User = {
     //logger.info("User WatchList is now: " + user.jobs.mkString(", "))
     user.sessionID.foreach { sessionID =>
       userCache.set(sessionID.stringify, user, 10.minutes)
@@ -196,7 +196,7 @@ class UserSessionService @Inject()(
   def modifyUserWithCache(userID: BSONObjectID, modifier: BSONDocument): Future[Option[User]] = {
     userDao
       .modifyUser(userID, modifier)
-      .map(_.map(updateUserCache))
+      .map(_.map(updateUserInCache))
   }
 
   /**

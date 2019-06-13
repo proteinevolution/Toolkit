@@ -41,7 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthController @Inject()(
-                                userSessions: UserSessionService,
+                                userSessionService: UserSessionService,
                                 userDao: UserDao,
                                 cc: ControllerComponents,
                                 @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
@@ -54,7 +54,7 @@ class AuthController @Inject()(
     with Logging {
 
   def signOut: Action[AnyContent] = userAction { implicit request =>
-      userSessions.removeUserFromCache(request.user)
+      userSessionService.removeUserFromCache(request.user)
       Ok(loggedOut()).withNewSession
   }
 
@@ -83,13 +83,13 @@ class AuthController @Inject()(
                 if (databaseUser.checkPassword(signInFormUser.password) && databaseUser.accountType > 0) {
                   // Change the login time and give the new Session ID to the user.
                   // Additionally add the watched jobs to the users watchlist.
-                  val modifier = userSessions.getUserModifier(databaseUser, forceSessionID = true)
+                  val modifier = userSessionService.getUserModifier(databaseUser, forceSessionID = true)
                   // TODO this adds the non logged in user's jobs to the now logged in user's job list
                   //                            "$addToSet"        ->
                   //               BSONDocument(User.JOBS          ->
                   //               BSONDocument("$each"            -> user.jobs)))
                   // Finally add the edits to the collection
-                  userSessions.modifyUserWithCache(databaseUser.userID, modifier).map {
+                  userSessionService.modifyUserWithCache(databaseUser.userID, modifier).map {
                     case Some(loggedInUser) =>
                       logger.info(
                         "\n-[old user]-\n"
@@ -99,7 +99,7 @@ class AuthController @Inject()(
                       )
                       // Remove the old, not logged in user
                       //removeUser(BSONDocument(User.IDDB -> user.userID))
-                      userSessions.removeUserFromCache(user)
+                      userSessionService.removeUserFromCache(user)
 
                       // Tell the job actors to copy all jobs connected to the old user to the new user
                       wsActorCache.get[List[ActorRef]](user.userID.stringify) match {
@@ -113,7 +113,7 @@ class AuthController @Inject()(
 
                       // Everything is ok, let the user know that they are logged in now
                       Ok(loggedIn(loggedInUser)).withSession(
-                        userSessions.sessionCookie(request, loggedInUser.sessionID.get)
+                        userSessionService.sessionCookie(request, loggedInUser.sessionID.get)
                       )
                     case None =>
                       Ok(loginIncorrect())
@@ -218,7 +218,7 @@ class AuthController @Inject()(
                     "$set" ->
                     BSONDocument(User.USERTOKEN -> token)
                   )
-                  userSessions.modifyUserWithCache(user.userID, modifier).map {
+                  userSessionService.modifyUserWithCache(user.userID, modifier).map {
                     case Some(registeredUser) =>
                       // All done. User is registered, now send the welcome eMail
                       val eMail =
@@ -247,7 +247,7 @@ class AuthController @Inject()(
       errors => Future.successful(Ok(formError(errors.errors.mkString(",\n")))), { newPasswordHash =>
         request.user.userToken match {
           case Some(token) =>
-            if (token.tokenType == 4 && token.userID.isDefined) {
+            if (token.tokenType == UserToken.PASSWORD_CHANGE_VERIFIED_TOKEN && token.userID.isDefined) {
               val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
               // Push to the database using modifier
               val modifier =
@@ -257,9 +257,9 @@ class AuthController @Inject()(
                   "$unset" ->
                   BSONDocument(User.USERTOKEN -> "")
                 )
-              userSessions.modifyUserWithCache(token.userID.get, modifier).flatMap {
+              userSessionService.modifyUserWithCache(token.userID.get, modifier).flatMap {
                 case Some(userWithUpdatedAccount) =>
-                  userSessions
+                  userSessionService
                     .modifyUserWithCache(
                       userWithUpdatedAccount.userID,
                       BSONDocument(
@@ -291,6 +291,8 @@ class AuthController @Inject()(
 
   def passwordChangeSubmit(): Action[AnyContent] = userAction.async { implicit request =>
     val user = request.user
+    // remove user from cache to prevent invalid states
+    userSessionService.removeUserFromCache(user)
     user.userData match {
       case Some(_) =>
         // Validate the password and return the new password Hash
@@ -305,24 +307,14 @@ class AuthController @Inject()(
             // when there are no errors, then insert the user to the collection
             {
               case Some(newPasswordHash) =>
-                // Generate a new Token to wait for the confirmation eMail
-                val token = UserToken(tokenType = UserToken.PASSWORD_CHANGE_TOKEN, passwordHash = Some(newPasswordHash))
-                // create a modifier document to change the last login date in the Database
-                val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-                // Push to the database using modifier
-                val modifier = BSONDocument(
-                  "$set" ->
-                  BSONDocument(User.DATELASTLOGIN -> bsonCurrentTime, User.DATEUPDATED -> bsonCurrentTime),
-                  "$set" ->
-                  BSONDocument(User.USERTOKEN -> token)
-                )
-                userSessions.modifyUserWithCache(user.userID, modifier).map {
+                val newSessionId: BSONObjectID = BSONObjectID.generate()
+                userDao.changePassword(user.userID, newPasswordHash, newSessionId).map {
                   case Some(updatedUser) =>
-                    // All done. Now send the eMail
-                    val eMail = ChangePasswordMail(updatedUser, token.token, environment, env: Env)
-                    eMail.send
-                    // Everything is ok, let the user know that they are logged in now
-                    Ok(passwordChanged(updatedUser))
+                    userSessionService.updateUserInCache(updatedUser)
+                    // Logout all other clients by renewing session id only for request
+                    Ok(passwordChanged(updatedUser)).withSession(
+                      userSessionService.sessionCookie(request, newSessionId)
+                    )
                   case None =>
                     // User has been found in the DB at first but now it cant be retrieved
                     Ok(loginError())
@@ -364,6 +356,7 @@ class AuthController @Inject()(
                 userDao.updateUserData(user.userID, editedProfileUserData.copy(nameLogin = userData.nameLogin)).map {
                   case Some(updatedUser) =>
                     // Everything is ok, let the user know that they are logged in now
+                    userSessionService.updateUserInCache(updatedUser)
                     Ok(editSuccessful(updatedUser))
                   case None =>
                     // User has been found in the DB at first but now it cant be retrieved
