@@ -80,8 +80,6 @@ class AuthController @Inject()(
               case Some(databaseUser) =>
                 // Check the password
                 if (databaseUser.checkPassword(signInFormUser.password) && databaseUser.accountType > 0) {
-                  // create a modifier document to change the last login date in the Database
-                  val selector = BSONDocument(User.IDDB -> databaseUser.userID)
                   // Change the login time and give the new Session ID to the user.
                   // Additionally add the watched jobs to the users watchlist.
                   val modifier = userSessions.getUserModifier(databaseUser, forceSessionID = true)
@@ -90,7 +88,7 @@ class AuthController @Inject()(
                   //               BSONDocument(User.JOBS          ->
                   //               BSONDocument("$each"            -> user.jobs)))
                   // Finally add the edits to the collection
-                  userSessions.modifyUserWithCache(selector, modifier).map {
+                  userSessions.modifyUserWithCache(databaseUser.userID, modifier).map {
                     case Some(loggedInUser) =>
                       logger.info(
                         "\n-[old user]-\n"
@@ -212,15 +210,14 @@ class AuthController @Inject()(
                   val token = UserToken(tokenType = 3)
                   // create a modifier document to change the last login date in the Database
                   val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-                  // Push to the database using selector and modifier
-                  val selector = BSONDocument(User.IDDB -> user.userID)
+                  // Push to the database using modifier
                   val modifier = BSONDocument(
                     "$set" ->
                     BSONDocument(User.DATEUPDATED -> bsonCurrentTime),
                     "$set" ->
                     BSONDocument(User.USERTOKEN -> token)
                   )
-                  userSessions.modifyUserWithCache(selector, modifier).map {
+                  userSessions.modifyUserWithCache(user.userID, modifier).map {
                     case Some(registeredUser) =>
                       // All done. User is registered, now send the welcome eMail
                       val eMail =
@@ -251,8 +248,7 @@ class AuthController @Inject()(
           case Some(token) =>
             if (token.tokenType == 4 && token.userID.isDefined) {
               val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-              // Push to the database using selector and modifier
-              val selector = BSONDocument(User.IDDB -> token.userID)
+              // Push to the database using modifier
               val modifier =
                 BSONDocument(
                   "$set" ->
@@ -260,11 +256,11 @@ class AuthController @Inject()(
                   "$unset" ->
                   BSONDocument(User.USERTOKEN -> "")
                 )
-              userSessions.modifyUserWithCache(selector, modifier).flatMap {
+              userSessions.modifyUserWithCache(token.userID.get, modifier).flatMap {
                 case Some(userWithUpdatedAccount) =>
                   userSessions
                     .modifyUserWithCache(
-                      BSONDocument(User.IDDB -> userWithUpdatedAccount.userID),
+                      userWithUpdatedAccount.userID,
                       BSONDocument(
                         "$unset" ->
                         BSONDocument(User.USERTOKEN -> "")
@@ -312,15 +308,14 @@ class AuthController @Inject()(
                 val token = UserToken(tokenType = 2, passwordHash = Some(newPasswordHash))
                 // create a modifier document to change the last login date in the Database
                 val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-                // Push to the database using selector and modifier
-                val selector = BSONDocument(User.IDDB -> user.userID)
+                // Push to the database using modifier
                 val modifier = BSONDocument(
                   "$set" ->
                   BSONDocument(User.DATELASTLOGIN -> bsonCurrentTime, User.DATEUPDATED -> bsonCurrentTime),
                   "$set" ->
                   BSONDocument(User.USERTOKEN -> token)
                 )
-                userSessions.modifyUserWithCache(selector, modifier).map {
+                userSessions.modifyUserWithCache(user.userID, modifier).map {
                   case Some(updatedUser) =>
                     // All done. Now send the eMail
                     val eMail = ChangePasswordMail(updatedUser, token.token, environment, env: Env)
@@ -358,7 +353,6 @@ class AuthController @Inject()(
               case Some(editedProfileUserData) =>
                 // create a modifier document to change the last login date in the Database
                 val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-                val selector        = BSONDocument(User.IDDB -> user.userID)
                 val modifier = BSONDocument(
                   "$set" ->
                   BSONDocument(User.USERDATA      -> editedProfileUserData.copy(nameLogin = userData.nameLogin),
@@ -373,7 +367,7 @@ class AuthController @Inject()(
                     case None => fuccess(NotFound)
                   }
                 }
-                userSessions.modifyUserWithCache(selector, modifier).map {
+                userSessions.modifyUserWithCache(user.userID, modifier).map {
                   case Some(updatedUser) =>
                     // Everything is ok, let the user know that they are logged in now
                     Ok(editSuccessful(updatedUser))

@@ -542,8 +542,7 @@ class JobActor @Inject()(
         .map {
           case Some(updatedJob) =>
             userSessions
-              .modifyUserWithCache(BSONDocument(User.IDDB   -> userID),
-                                   BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> jobID)))
+              .modifyUserWithCache(userID, BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> jobID)))
               .foreach { _ =>
                 currentJobs = currentJobs.updated(jobID, updatedJob)
                 val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
@@ -559,8 +558,7 @@ class JobActor @Inject()(
         .foreach {
           case Some(updatedJob) =>
             userSessions
-              .modifyUserWithCache(BSONDocument(User.IDDB -> userID),
-                                   BSONDocument("$pull"   -> BSONDocument(User.JOBS -> jobID)))
+              .modifyUserWithCache(userID, BSONDocument("$pull"   -> BSONDocument(User.JOBS -> jobID)))
               .foreach { _ =>
                 currentJobs = currentJobs.updated(jobID, updatedJob)
                 val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]

@@ -50,47 +50,37 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
   def findUserByDBID(dbID: BSONObjectID): Future[Option[User]] =
     userCollection.flatMap(_.find(BSONDocument(User.IDDB -> dbID), None).one[User])
 
-  def findUsers(selector: BSONDocument): Future[scala.List[User]] = {
-    userCollection
-      .map(_.find(selector, None).cursor[User]())
+  def findUsers(selector: BSONDocument): Future[scala.List[User]] =
+    userCollection.map(_.find(selector, None).cursor[User]())
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[User]]()))
-  }
 
   /**
     * @deprecated very bad practice to have db logic in controllers.
     */
   @Deprecated
-  def modifyUser(selector: BSONDocument, modifier: BSONDocument): Future[Option[User]] = {
-    userCollection.flatMap(_.findAndUpdate(selector, modifier, fetchNewObject = true).map(_.result[User]))
-  }
+  def modifyUser(userID: BSONObjectID, modifier: BSONDocument): Future[Option[User]] =
+    userCollection.flatMap(_.findAndUpdate(BSONDocument(User.IDDB -> userID), modifier, fetchNewObject = true).map(_.result[User]))
 
   /**
     * @deprecated very bad practice to have db logic in controllers.
     */
   @Deprecated
-  def modifyUsers(selector: BSONDocument, modifier: BSONDocument): Future[WriteResult] = {
-    userCollection.flatMap(_.update(ordered = false).one(selector, modifier, multi = true))
-  }
+  def modifyUsers(userIDs: List[BSONObjectID], modifier: BSONDocument): Future[WriteResult] =
+    userCollection.flatMap(_.update(ordered = false).one(BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs)), modifier, multi = true))
 
-  /**
-    * @deprecated very bad practice to have db logic in controllers.
-    */
-  @Deprecated
-  def removeUsers(selector: BSONDocument): Future[WriteResult] = {
-    userCollection.flatMap(_.delete().one(selector))
-  }
+  def removeUsers(userIDs: List[BSONObjectID]): Future[WriteResult] =
+    userCollection.flatMap(_.delete().one(BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs))))
 
-  def upsertUser(user: User): Future[Option[User]] = {
+  def upsertUser(user: User): Future[Option[User]] =
     userCollection.flatMap(
       _.findAndUpdate(selector = BSONDocument(User.IDDB -> user.userID),
                       update = user,
                       upsert = true,
                       fetchNewObject = true).map(_.result[User])
     )
-  }
 
   /* removes job association from user */
-  def removeJob(jobId: String): Future[UpdateWriteResult] = {
+  def removeJob(jobId: String): Future[UpdateWriteResult] =
     userCollection.flatMap {
       _.update(ordered = false).one(
         BSONDocument.empty,
@@ -98,6 +88,5 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
         multi = true
       )
     }
-  }
 
 }

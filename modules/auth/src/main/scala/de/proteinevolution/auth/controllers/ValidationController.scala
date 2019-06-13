@@ -49,7 +49,7 @@ class ValidationController @Inject()(
         } else if (input == constants.modellerKey) {
           userSessions
             .modifyUserWithCache(
-              BSONDocument(User.IDDB -> user.userID),
+              user.userID,
               BSONDocument(
                 "$set" ->
                 BSONDocument(

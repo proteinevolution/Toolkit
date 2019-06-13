@@ -148,7 +148,7 @@ final class DatabaseMonitor @Inject()(
         }
 
         // Finally remove the users with their userID
-        userDao.removeUsers(BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs))).foreach { writeResult =>
+        userDao.removeUsers(userIDs).foreach { writeResult =>
           if (verbose)
             log.info(
               s"[User Deletion] Deleting of ${users.length} old users ${if (writeResult.ok) "successful" else "failed"}"
@@ -193,7 +193,7 @@ final class DatabaseMonitor @Inject()(
         // Set all the eMailed users to "User.CLOSETODELETIONUSER", so that they do not receive another eMail for the same reason
         userDao
           .modifyUsers(
-            BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs)),
+            userIDs,
             BSONDocument(
               "$set" ->
               BSONDocument(

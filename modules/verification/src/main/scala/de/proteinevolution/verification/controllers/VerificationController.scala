@@ -75,7 +75,7 @@ final class VerificationController @Inject()(
                 case 1 => // Token for eMail verification
                   userDao
                     .modifyUser(
-                      BSONDocument(User.IDDB -> userToVerify.userID),
+                      userToVerify.userID,
                       BSONDocument(
                         "$set" ->
                         BSONDocument(
@@ -98,7 +98,7 @@ final class VerificationController @Inject()(
                     case Some(newPassword) =>
                       userDao
                         .modifyUser(
-                          BSONDocument(User.IDDB -> userToVerify.userID),
+                          userToVerify.userID,
                           BSONDocument(
                             "$set" ->
                             BSONDocument(
@@ -134,14 +134,13 @@ final class VerificationController @Inject()(
                   // Give a token to the current user to allow him to change the password in a different view (Password Recovery)
                   val newToken =
                     UserToken(tokenType = 4, token = userToken.token, userID = Some(userToVerify.userID))
-                  val selector = BSONDocument(User.IDDB -> request.user.userID)
                   val modifier = BSONDocument(
                     "$set" -> BSONDocument(
                       User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli),
                       User.USERTOKEN   -> newToken
                     )
                   )
-                  userSessions.modifyUserWithCache(selector, modifier).map {
+                  userSessions.modifyUserWithCache(request.user.userID, modifier).map {
                     case Some(_) => Ok(showPasswordResetView)
                     case None => // Could not save the modified user to the DB
                       Ok(databaseError)
