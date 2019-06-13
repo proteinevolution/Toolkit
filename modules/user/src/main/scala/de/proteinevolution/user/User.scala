@@ -19,6 +19,7 @@ package de.proteinevolution.user
 import java.time.ZonedDateTime
 
 import de.proteinevolution.common.models.util.ZonedDateTimeHelper
+import de.proteinevolution.user.AccountType.AccountType
 import io.circe.syntax._
 import io.circe.{ Encoder, Json }
 import org.mindrot.jbcrypt.BCrypt
@@ -26,17 +27,17 @@ import reactivemongo.bson._
 
 case class User(
     userID: BSONObjectID = BSONObjectID.generate(), // ID of the User
-    sessionID: Option[BSONObjectID] = None, // Session ID
-    sessionData: List[SessionData] = List.empty, // Session data separately from sid
+    sessionID: Option[BSONObjectID] = None,         // Session ID
+    sessionData: List[SessionData] = List.empty,    // Session data separately from sid
     connected: Boolean = true,
-    accountType: Int = User.NORMALUSER, // User Access level
-    userData: Option[UserData] = None, // Personal Data of the User //TODO possibly encrypt?
-    userConfig: UserConfig = UserConfig(), // Configurable parts for the user
+    accountType: AccountType = AccountType.NORMALUSER, // User Access level
+    userData: Option[UserData] = None,                 // Personal Data of the User //TODO possibly encrypt?
+    userConfig: UserConfig = UserConfig(),             // Configurable parts for the user
     userToken: Option[UserToken] = None,
-    jobs: List[String] = List.empty, // List of Jobs the User has
-    dateDeletedOn: Option[ZonedDateTime] = None, // Date at which the account will be deleted on
+    jobs: List[String] = List.empty,                                // List of Jobs the User has
+    dateDeletedOn: Option[ZonedDateTime] = None,                    // Date at which the account will be deleted on
     dateLastLogin: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Last seen on
-    dateCreated: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Account creation date
+    dateCreated: Option[ZonedDateTime] = Some(ZonedDateTime.now),   // Account creation date
     dateUpdated: Option[ZonedDateTime] = Some(ZonedDateTime.now)
 ) { // Account updated on
 
@@ -52,13 +53,13 @@ case class User(
   // Mock up function to show how a possible function to check user levels could look like.
   def isSuperuser: Boolean = {
     accountType match {
-      case User.ADMINLEVEL     => true
-      case User.MODERATORLEVEL => true
-      case _                   => false
+      case AccountType.ADMINLEVEL     => true
+      case AccountType.MODERATORLEVEL => true
+      case _                          => false
     }
   }
 
-  def hasNotLoggedIn: Boolean = accountType == 3
+  def hasNotLoggedIn: Boolean = accountType == AccountType.CLOSETODELETIONUSER
 
   override def toString: String = {
     s"""userID: ${userID.stringify}
@@ -100,14 +101,6 @@ object User {
   final val DATECREATED   = "dateCreated" //              account created on field
   final val DATEUPDATED   = "dateUpdated" //              account data changed on field
 
-  final val ADMINLEVEL: Int                     = 11
-  final val MODERATORLEVEL: Int                 = 10
-  final val BANNEDUSER: Int                     = 4
-  final val CLOSETODELETIONUSER: Int            = 3
-  final val REGISTEREDUSER: Int                 = 1
-  final val NORMALUSERAWAITINGREGISTRATION: Int = 0
-  final val NORMALUSER: Int                     = -1
-
   implicit val encodeUser: Encoder[User] = (u: User) =>
     Json.obj(
       (ID, Json.fromString(u.userID.stringify)),
@@ -118,19 +111,25 @@ object User {
       (UserData.NAMELOGIN, Json.fromString(u.getUserData.nameLogin)),
       (UserData.EMAIL, Json.fromString(u.getUserData.eMail)),
       (JOBS, u.jobs.asJson),
-      (DATELASTLOGIN,
-       u.dateLastLogin
-         .map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter)))
-         .getOrElse(Json.Null)),
-      (DATECREATED,
-       u.dateCreated
-         .map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter)))
-         .getOrElse(Json.Null)),
-      (DATEUPDATED,
-       u.dateUpdated
-         .map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter)))
-         .getOrElse(Json.Null))
-  )
+      (
+        DATELASTLOGIN,
+        u.dateLastLogin
+          .map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter)))
+          .getOrElse(Json.Null)
+      ),
+      (
+        DATECREATED,
+        u.dateCreated
+          .map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter)))
+          .getOrElse(Json.Null)
+      ),
+      (
+        DATEUPDATED,
+        u.dateUpdated
+          .map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter)))
+          .getOrElse(Json.Null)
+      )
+    )
 
   implicit object Reader extends BSONDocumentReader[User] {
     override def read(bson: BSONDocument): User =
@@ -158,7 +157,7 @@ object User {
         SESSIONID     -> user.sessionID,
         SESSIONDATA   -> user.sessionData,
         CONNECTED     -> user.connected,
-        ACCOUNTTYPE   -> user.accountType,
+        ACCOUNTTYPE   -> user.accountType.toInt,
         USERDATA      -> user.userData,
         USERCONFIG    -> user.userConfig,
         USERTOKEN     -> user.userToken,

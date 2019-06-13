@@ -20,17 +20,17 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.base.helpers.ToolkitTypes
-import de.proteinevolution.user.{ SessionData, User }
+import de.proteinevolution.user.{SessionData, User, AccountType}
 import de.proteinevolution.util.LocationProvider
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{ mvc, Logging }
+import play.api.{Logging, mvc}
 import play.mvc.Http
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.duration._
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.hashing.MurmurHash3
 
 @Singleton
@@ -53,9 +53,9 @@ class UserSessionService @Inject()(
     BSONDocument("$set" -> BSONDocument(User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)))
       .merge(
         // In the case that the user has been emailed about their inactivity, reset that status to a regular user status
-        if (user.accountType == User.CLOSETODELETIONUSER) {
+        if (user.accountType == AccountType.CLOSETODELETIONUSER) {
           BSONDocument(
-            "$set"   -> BSONDocument(User.ACCOUNTTYPE   -> 1),
+            "$set"   -> BSONDocument(User.ACCOUNTTYPE   -> AccountType.REGISTEREDUSER.toInt),
             "$unset" -> BSONDocument(User.DATEDELETEDON -> "")
           )
         } else {

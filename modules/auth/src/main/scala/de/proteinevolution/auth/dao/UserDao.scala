@@ -71,6 +71,21 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       _.findAndUpdate(BSONDocument(User.IDDB -> userID), modifier, fetchNewObject = true).map(_.result[User])
     )
 
+  def updateAccountType(userID: BSONObjectID, accountType: Int, resetUserToken: Boolean = false) = {
+    var modifier = BSONDocument(      "$set" ->
+        BSONDocument(
+          User.ACCOUNTTYPE -> accountType,
+          User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
+        )    )
+    if (resetUserToken) {
+      modifier = modifier ++ BSONDocument(
+        "$unset" ->
+          BSONDocument(User.USERTOKEN -> "")
+      )
+    }
+    modifyUser(userID, modifier)
+  }
+
   def changePassword(
       userID: BSONObjectID,
       newPasswordHash: String,

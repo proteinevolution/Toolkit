@@ -18,23 +18,23 @@ package de.proteinevolution.backend.actors
 
 import java.time.ZonedDateTime
 
-import akka.actor.{ Actor, ActorLogging, Cancellable }
+import akka.actor.{Actor, ActorLogging, Cancellable}
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate.OldAccountEmail
-import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
+import de.proteinevolution.backend.actors.DatabaseMonitor.{DeleteOldJobs, DeleteOldUsers}
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.actors.JobActor.Delete
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobActorAccess
-import de.proteinevolution.statistics.{ StatisticsObject, UserStatistic }
+import de.proteinevolution.statistics.{StatisticsObject, UserStatistic}
 import de.proteinevolution.tel.env.Env
-import de.proteinevolution.user.User
-import javax.inject.{ Inject, Singleton }
+import de.proteinevolution.user.{User, AccountType}
+import javax.inject.{Inject, Singleton}
 import play.api.Environment
 import play.api.libs.mailer.MailerClient
-import reactivemongo.bson.{ BSONDateTime, BSONDocument }
+import reactivemongo.bson.{BSONDateTime, BSONDocument}
 
 import scala.concurrent.ExecutionContext
 
@@ -114,19 +114,19 @@ final class DatabaseMonitor @Inject()(
           List(
             BSONDocument( // Removing regular users with no privileges
               User.ACCOUNTTYPE ->
-              User.NORMALUSER,
+              AccountType.NORMALUSER.toInt,
               User.DATELASTLOGIN ->
               BSONDocument("$lt" -> BSONDateTime(regularUserDeletionDate.toInstant.toEpochMilli))
             ),
             BSONDocument( // Removing regular users who await registration
               User.ACCOUNTTYPE ->
-              User.NORMALUSERAWAITINGREGISTRATION,
+              AccountType.NORMALUSERAWAITINGREGISTRATION.toInt,
               User.DATELASTLOGIN ->
               BSONDocument("$lt" -> BSONDateTime(awaitingRegistrationUserDeletionDate.toInstant.toEpochMilli))
             ),
             BSONDocument( // Removing registered users with no privileges
               User.ACCOUNTTYPE ->
-              User.CLOSETODELETIONUSER,
+              AccountType.CLOSETODELETIONUSER.toInt,
               User.DATEDELETEDON ->
               BSONDocument("$lt" -> BSONDateTime(now.toInstant.toEpochMilli))
             )
@@ -166,7 +166,7 @@ final class DatabaseMonitor @Inject()(
           User.DATELASTLOGIN -> BSONDocument(
             "$lt" -> BSONDateTime(registeredUserDeletionEMailDate.toInstant.toEpochMilli)
           ),
-          User.ACCOUNTTYPE -> User.REGISTEREDUSER
+          User.ACCOUNTTYPE -> AccountType.REGISTEREDUSER.toInt
         )
       )
       .foreach { users =>
@@ -197,7 +197,7 @@ final class DatabaseMonitor @Inject()(
             BSONDocument(
               "$set" ->
               BSONDocument(
-                User.ACCOUNTTYPE   -> User.CLOSETODELETIONUSER,
+                User.ACCOUNTTYPE   -> AccountType.CLOSETODELETIONUSER.toInt,
                 User.DATEDELETEDON -> BSONDateTime(registeredUserDeletionDateForEmail.toInstant.toEpochMilli)
               )
             )

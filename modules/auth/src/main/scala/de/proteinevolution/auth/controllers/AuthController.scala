@@ -22,21 +22,21 @@ import akka.actor.ActorRef
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.auth.models.Session.ChangeSessionID
-import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
+import de.proteinevolution.auth.models.{FormDefinitions, JSONTemplate}
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.tel.env.Env
-import de.proteinevolution.user.{ User, UserToken }
+import de.proteinevolution.user.{User, UserToken, AccountType}
 import io.circe.syntax._
-import javax.inject.{ Inject, Singleton }
-import play.api.cache.{ NamedCache, SyncCacheApi }
+import javax.inject.{Inject, Singleton}
+import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
-import play.api.mvc.{ Action, AnyContent, ControllerComponents }
-import play.api.{ Environment, Logging }
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.{Environment, Logging}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthController @Inject()(
@@ -134,7 +134,7 @@ class AuthController @Inject()(
 
   def signUpSubmit: Action[AnyContent] = userAction.async { implicit request =>
     val user = request.user
-    if (user.accountType < User.NORMALUSERAWAITINGREGISTRATION) {
+    if (user.accountType < AccountType.NORMALUSERAWAITINGREGISTRATION) {
       // Create a new user from the information given in the form
       FormDefinitions
         .signUp(user)
@@ -147,7 +147,7 @@ class AuthController @Inject()(
             },
           // if no error, then insert the user to the collection
           signUpFormUser => {
-            if (signUpFormUser.accountType < User.NORMALUSERAWAITINGREGISTRATION) {
+            if (signUpFormUser.accountType < AccountType.NORMALUSERAWAITINGREGISTRATION) {
               // User did not accept the Terms of Service but managed to get around the JS form validation
               Future.successful {
                 Ok(mustAcceptToS())

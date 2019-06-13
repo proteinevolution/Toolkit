@@ -19,19 +19,19 @@ package de.proteinevolution.jobs.services
 import java.security.MessageDigest
 import java.time.ZonedDateTime
 
-import cats.data.{ EitherT, OptionT }
+import cats.data.{EitherT, OptionT}
 import cats.implicits._
 import de.proteinevolution.auth.services.UserSessionService
-import de.proteinevolution.common.models.{ ConstantsV2, ToolName }
+import de.proteinevolution.common.models.{ConstantsV2, ToolName}
 import de.proteinevolution.jobs.actors.JobActor.PrepareJob
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.models.{ Job, JobSubmitError }
-import de.proteinevolution.user.User
-import javax.inject.{ Inject, Singleton }
+import de.proteinevolution.jobs.models.{Job, JobSubmitError}
+import de.proteinevolution.user.{User, AccountType}
+import javax.inject.{Inject, Singleton}
 import play.api.Logging
 import reactivemongo.bson.BSONDocument
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 final class JobDispatcher @Inject()(
@@ -112,7 +112,7 @@ final class JobDispatcher @Inject()(
       jobID = jobID,
       ownerID = Some(user.userID),
       parentID = form.get("parent_id"),
-      isPublic = form.get("public").isDefined || user.accountType == User.NORMALUSER,
+      isPublic = form.get("public").isDefined || user.accountType == AccountType.NORMALUSER,
       emailUpdate = form.get("emailUpdate").isDefined,
       tool = toolName,
       watchList = List(user.userID),

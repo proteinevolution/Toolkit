@@ -25,25 +25,25 @@ import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.tel.env.Env
-import de.proteinevolution.user.{ User, UserToken }
-import javax.inject.{ Inject, Singleton }
+import de.proteinevolution.user.{User, UserToken, AccountType}
+import javax.inject.{Inject, Singleton}
 import play.api.Environment
 import play.api.cache._
 import play.api.libs.mailer._
 import play.api.mvc._
 import reactivemongo.bson._
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 final class VerificationController @Inject()(
-    userDao: UserDao,
-    userSessions: UserSessionService,
-    @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
-    environment: Environment,
-    cc: ControllerComponents,
-    env: Env,
-    userAction: UserAction
+                                              userDao: UserDao,
+                                              userSessionService: UserSessionService,
+                                              @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
+                                              environment: Environment,
+                                              cc: ControllerComponents,
+                                              env: Env,
+                                              userAction: UserAction
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
     extends ToolkitController(cc)
     with JSONTemplate {
@@ -66,27 +66,16 @@ final class VerificationController @Inject()(
           case Some(userToken) =>
             if (userToken.token == token) {
               userToken.tokenType match {
+
                 case UserToken.EMAIL_VERIFICATION_TOKEN =>
-                  userDao
-                    .modifyUser(
-                      userToVerify.userID,
-                      BSONDocument(
-                        "$set" ->
-                        BSONDocument(
-                          User.ACCOUNTTYPE -> 1,
-                          User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-                        ),
-                        BSONDocument(
-                          "$unset" ->
-                          BSONDocument(User.USERTOKEN -> "")
-                        )
-                      )
-                    )
-                    .map {
-                      case Some(_) => Ok(verificationSuccessful(userToVerify))
-                      case None => // Could not save the modified user to the DB
-                        Ok(databaseError)
-                    }
+                  userDao.updateAccountType(userToVerify.userID, AccountType.NORMALUSER).map {
+                    case Some(updatedUser) =>
+                      userSessionService.updateUserInCache(updatedUser)
+                      Ok(verificationSuccessful(userToVerify))
+                    case None => // Could not save the modified user to the DB
+                      Ok(databaseError)
+                  }
+
                 case UserToken.PASSWORD_CHANGE_TOKEN =>
                   userToken.passwordHash match {
                     case Some(newPassword) =>
@@ -108,12 +97,12 @@ final class VerificationController @Inject()(
                         .map {
                           case Some(modifiedUser) =>
                             // take use out of cache to prevent problems with invalid login states
-                            userSessions.removeUserFromCache(request.user)
+                            userSessionService.removeUserFromCache(request.user)
                             val eMail = PasswordChangedMail(modifiedUser, environment, env)
                             eMail.send
                             // User modified properly. Use new session id for user => login lost in all other sessions
                             Ok(passwordChangeAccepted(modifiedUser)).withSession(
-                              userSessions.sessionCookie(request, newSessionId)
+                              userSessionService.sessionCookie(request, newSessionId)
                             )
                           case None => // Could not save the modified user to the DB - failsave in case the DB is down
                             Ok(databaseError)
@@ -138,7 +127,7 @@ final class VerificationController @Inject()(
                       User.USERTOKEN   -> newToken
                     )
                   )
-                  userSessions.modifyUserWithCache(request.user.userID, modifier).map {
+                  userSessionService.modifyUserWithCache(request.user.userID, modifier).map {
                     case Some(_) => Ok(showPasswordResetView)
                     case None => // Could not save the modified user to the DB
                       Ok(databaseError)
