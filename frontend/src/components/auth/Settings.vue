@@ -1,6 +1,5 @@
 <template>
-    <div>
-
+    <b-form @submit.prevent="changePassword">
         <b-form-group :label="$t('auth.changePassword')">
             <b-form-input v-model="oldPassword"
                           type="password"
@@ -28,9 +27,9 @@
                  v-text="message"/>
         <b-btn v-text="$t('auth.changePassword')"
                :disabled="!valid"
-               @click="changePassword">
+               type="submit">
         </b-btn>
-    </div>
+    </b-form>
 </template>
 
 <script lang="ts">
@@ -73,6 +72,9 @@
                 this.confirmPasswordState = this.confirmPasswordValid ? null : false;
             },
             async changePassword() {
+                if (!this.valid) {
+                    return;
+                }
                 const data: PasswordChangeData = {
                     passwordOld: this.oldPassword,
                     passwordNew: this.newPassword,

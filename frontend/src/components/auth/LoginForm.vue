@@ -1,26 +1,28 @@
 <template>
     <div>
-        <b-form-group :label="$t('auth.eMailOrUsername')">
-            <b-form-input v-model="username"
-                          type="text"
-                          required>
-            </b-form-input>
-        </b-form-group>
-        <b-form-group :label="$t('auth.password')">
-            <b-form-input v-model="password"
-                          type="password"
-                          required>
-            </b-form-input>
-        </b-form-group>
-        <b-alert variant="danger"
-                 :show="message !== ''"
-                 v-text="message"/>
-        <b-btn @click="login"
-               v-text="$t('auth.signIn')"/>
-        <a class="password-link"
-           @click.stop="forgot.show = !forgot.show">
-            {{ $t('auth.forgotPassword') }}
-        </a>
+        <b-form @submit.prevent="login">
+            <b-form-group :label="$t('auth.eMailOrUsername')">
+                <b-form-input v-model="username"
+                              type="text"
+                              required>
+                </b-form-input>
+            </b-form-group>
+            <b-form-group :label="$t('auth.password')">
+                <b-form-input v-model="password"
+                              type="password"
+                              required>
+                </b-form-input>
+            </b-form-group>
+            <b-alert variant="danger"
+                     :show="message !== ''"
+                     v-text="message"/>
+            <b-btn type="submit"
+                   v-text="$t('auth.signIn')"/>
+            <a class="password-link"
+               @click.stop="forgot.show = !forgot.show">
+                {{ $t('auth.forgotPassword') }}
+            </a>
+        </b-form>
 
         <ExpandHeight>
             <b-alert variant="primary"
@@ -77,6 +79,9 @@
         },
         methods: {
             async login() {
+                if (this.eMailOrUsernameInvalid) {
+                    return;
+                }
                 const data: LoginData = {
                     nameLogin: this.username,
                     password: this.password,

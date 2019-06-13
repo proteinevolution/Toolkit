@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <b-form @submit.prevent="signUp">
         <b-form-group :label="$t('auth.username')"
                       :invalid-feedback="$t('constraints.username')">
             <b-form-input v-model="username"
@@ -49,11 +49,11 @@
         <b-alert :variant="successful ? 'info' : 'danger'"
                  :show="message !== ''"
                  v-text="message"/>
-        <b-btn @click="signUp"
+        <b-btn type="submit"
                variant="primary"
                :disabled="!valid"
                v-text="$t('auth.signUp')"/>
-    </div>
+    </b-form>
 </template>
 
 <script lang="ts">
@@ -114,6 +114,9 @@
                 this.passwordRepeatState = this.passwordRepeatValid ? null : false;
             },
             async signUp() {
+                if (!this.valid) {
+                    return;
+                }
                 const data: SignUpData = {
                     nameLogin: this.username,
                     password: this.password,

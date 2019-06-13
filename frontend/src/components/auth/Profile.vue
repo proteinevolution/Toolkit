@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <b-form @submit.prevent="onSubmit">
 
         <b-form-group :label="$t('auth.firstName')"
                       :invalid-feedback="$t('constraints.lengthMax', { max: 25 })">
@@ -38,7 +38,7 @@
 
 
         <ExpandHeight>
-            <b-alert variant="primary" show v-if="state === 1">
+            <b-alert variant="primary" show v-if="needsConfirmation">
                 <b-form-group :label="$t('auth.reenterPassword')">
                     <b-form-input v-model="password"
                                   type="password">
@@ -47,8 +47,8 @@
                 <b-btn @click="cancel"
                        v-text="$t('cancel')"
                        class="mr-1"/>
-                <b-btn @click="editProfileSubmit"
-                       :disabled="!valid"
+                <b-btn :disabled="!valid"
+                       type="submit"
                        v-text="$t('submit')" variant="primary"/>
             </b-alert>
         </ExpandHeight>
@@ -57,11 +57,12 @@
                  :show="message !== ''"
                  v-text="message"/>
 
-        <b-btn @click="state = 1"
+        <b-btn @click="needsConfirmation = true"
                v-text="$t('auth.editProfile')"
+               :type="needsConfirmation ? 'button' : 'submit'"
                :disabled="!editButtonEnabled"/>
 
-    </div>
+    </b-form>
 </template>
 
 <script lang="ts">
@@ -80,7 +81,7 @@
         },
         data() {
             return {
-                state: 0,
+                needsConfirmation: false,
                 firstName: '',
                 firstNameState: null as boolean | null,
                 lastName: '',
@@ -152,10 +153,20 @@
                 }
             },
             cancel() {
-                this.state = 0;
+                this.needsConfirmation = false;
                 this.resetValues();
             },
+            onSubmit() {
+                if (this.needsConfirmation) {
+                    this.editProfileSubmit();
+                } else {
+                    this.needsConfirmation = true
+                }
+            },
             async editProfileSubmit() {
+                if (!this.valid) {
+                    return;
+                }
                 const data: ProfileData = {
                     nameLogin: this.user !== null ? this.user.nameLogin : '',
                     nameFirst: this.firstName,

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <b-form @submit.prevent="resetPassword">
         <b-form-group :label="$t('auth.enterNewPassword')"
                       :invalid-feedback="$t('constraints.password')">
             <b-form-input v-model="newPassword"
@@ -22,9 +22,9 @@
                  v-text="message"/>
         <b-btn v-text="$t('auth.resetPassword')"
                :disabled="!valid"
-               @click="resetPassword">
+                type="submit">
         </b-btn>
-    </div>
+    </b-form>
 </template>
 
 <script lang="ts">
@@ -64,6 +64,9 @@
                 this.confirmPasswordState = this.confirmPasswordValid ? null : false;
             },
             async resetPassword() {
+                if (!this.valid) {
+                    return;
+                }
                 const data: PasswordResetData = {
                     passwordNew: this.newPassword,
                 };

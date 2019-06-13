@@ -65,7 +65,7 @@ export default {
             forgotPassword: 'Forgot Password?',
             forgotPasswordInstructions: 'Provide your account email address or username to receive an email to ' +
                                         'reset your password.',
-            eMailOrUsername: 'E-Mail or username',
+            eMailOrUsername: 'E-Mail or Username',
             privacyAccept: ' I accept the {0}',
             editProfile: 'Edit Profile',
             verificationSucceeded: 'Verification succeeded',
