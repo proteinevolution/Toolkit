@@ -55,9 +55,7 @@ class AuthController @Inject()(
 
   def signOut: Action[AnyContent] = userAction { implicit request =>
       userSessions.removeUserFromCache(request.user)
-      Redirect("/").withNewSession.flashing(
-        "success" -> "You've been logged out"
-      )
+      Ok(loggedOut()).withNewSession
   }
 
   def getUserData: Action[AnyContent] = userAction { implicit request =>
@@ -71,7 +69,10 @@ class AuthController @Inject()(
     if (user.accountType < 0) {
       // Evaluate the Form
       FormDefinitions.signIn.bindFromRequest.fold(
-        _ => fuccess(Ok(loginError())),
+        errors => {
+          logger.warn(s"Errors in Login Form: ${errors.errors}")
+          fuccess(Ok(loginError()))
+        },
         // if no error, then insert the user to the collection
         signInFormUser => {
           userDao
