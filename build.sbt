@@ -123,12 +123,6 @@ lazy val message = (project in file("modules/message"))
   .dependsOn(common, base, auth, cluster, jobs, tools)
   .disablePlugins(PlayLayoutPlugin)
 
-lazy val verification = (project in file("modules/verification"))
-  .commonSettings("de.proteinevolution.verification")
-  .enablePlugins(PlayScala)
-  .dependsOn(common, base, auth, ui, message, tel, tools, user)
-  .disablePlugins(PlayLayoutPlugin)
-
 lazy val migrations = (project in file("modules/migrations"))
   .commonSettings("de.proteinevolution.migrations")
   .enablePlugins(PlayScala)
@@ -168,7 +162,6 @@ lazy val root = (project in file("."))
     backend,
     ui,
     message,
-    verification,
     migrations,
     user
   )

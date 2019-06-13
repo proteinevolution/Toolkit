@@ -346,13 +346,13 @@ object MailTemplate {
       s"""Welcome ${user.getUserData.nameLogin},
          |your registration was successful. Please take a moment and verify that this is indeed your E-Mail account.
          |To do this, visit
-         |$origin/verification/${user.getUserData.nameLogin}/$token
+         |$origin/auth/verify/${user.getUserData.nameLogin}/$token
          |Your Toolkit Team
      """.stripMargin
     }
 
     val bodyHtml: String = {
-      val verificationLink = s"$origin/verification/${user.getUserData.nameLogin}/$token"
+      val verificationLink = s"$origin/auth/verify/${user.getUserData.nameLogin}/$token"
       super.bodyHtmlTemplate(
         subject,
         s"""<tr>
@@ -399,7 +399,7 @@ object MailTemplate {
       s"""Dear ${user.getUserData.nameLogin},
          |you requested a password change.
          |To complete the process, visit
-         |$origin/verification/${user.getUserData.nameLogin}/$token
+         |$origin/auth/verify/${user.getUserData.nameLogin}/$token
          |If you did not request this, then your account has been used by someone else.
          |Log in and change the password yourself to ensure that this other person can no longer access your account.
          |Your Toolkit Team
@@ -407,7 +407,7 @@ object MailTemplate {
     }
 
     val bodyHtml: String = {
-      val verificationLink = s"$origin/verification/${user.getUserData.nameLogin}/$token"
+      val verificationLink = s"$origin/auth/verify/${user.getUserData.nameLogin}/$token"
       super.bodyHtmlTemplate(
         subject,
         s"""<tr>
@@ -463,14 +463,14 @@ object MailTemplate {
       s"""Dear ${user.getUserData.nameLogin},
          |you requested to reset your password and set a new one.
          |To complete the process, visit
-         |$origin/verification/${user.getUserData.nameLogin}/$token
+         |$origin/auth/verify/${user.getUserData.nameLogin}/$token
          |If you did not request this, then someone may have tried to log into your account.
          |Your Toolkit Team
      """.stripMargin
     }
 
     val bodyHtml: String = {
-      val verificationLink = s"$origin/verification/${user.getUserData.nameLogin}/$token"
+      val verificationLink = s"$origin/auth/verify/${user.getUserData.nameLogin}/$token"
       super.bodyHtmlTemplate(
         subject,
         s"""<tr>

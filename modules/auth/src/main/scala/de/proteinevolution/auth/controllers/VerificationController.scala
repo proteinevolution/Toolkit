@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.proteinevolution.verification.controllers
+package de.proteinevolution.auth.controllers
 
 import java.time.ZonedDateTime
 
@@ -26,18 +26,16 @@ import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.message.actors.WebSocketActor.LogOut
 import de.proteinevolution.tel.env.Env
-import de.proteinevolution.tools.ToolConfig
-import de.proteinevolution.user.{ User, UserToken }
-import javax.inject.{ Inject, Singleton }
+import de.proteinevolution.user.{User, UserToken}
+import javax.inject.{Inject, Singleton}
 import play.api.Environment
 import play.api.cache._
 import play.api.libs.mailer._
 import play.api.mvc._
 import reactivemongo.bson._
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 final class VerificationController @Inject()(

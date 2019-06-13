@@ -21,7 +21,6 @@ import de.proteinevolution.help.HelpRouter
 import de.proteinevolution.jobs.JobsRouter
 import de.proteinevolution.message.MessageRouter
 import de.proteinevolution.results.ResultsRouter
-import de.proteinevolution.verification.VerificationRouter
 import de.proteinevolution.ui.UiRouter
 import javax.inject.{ Inject, Singleton }
 import play.api.routing.Router.Routes
@@ -39,8 +38,7 @@ class MainRouter @Inject()(
     backendRouter: BackendRouter,
     jobsRouter: JobsRouter,
     uiRouter: UiRouter,
-    messageRouter: MessageRouter,
-    verificationRouter: VerificationRouter
+    messageRouter: MessageRouter
 ) extends SimpleRouter {
 
   private lazy val mainRoutes: Routes = {
@@ -68,7 +66,6 @@ class MainRouter @Inject()(
       .orElse(backendRouter.withPrefix("/backend").routes)
       .orElse(helpRouter.withPrefix("/api/tools/help").routes)
       .orElse(authRouter.withPrefix("/api/auth").routes)
-      .orElse(verificationRouter.withPrefix("/api/verification").routes)
       .orElse(resultsRouter.withPrefix("/results").routes)
   }
 

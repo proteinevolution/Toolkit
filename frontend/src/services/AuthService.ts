@@ -80,7 +80,7 @@ export default class AuthService {
 
     public static verifyToken(nameLogin: string, token: string): Promise<AuthMessage> {
         return new Promise<AuthMessage>(((resolve, reject) => {
-            axios.get(`/api/verification/${nameLogin}/${token}`)
+            axios.get(`/api/auth/verify/${nameLogin}/${token}`)
                 .then((response) => resolve(response.data))
                 .catch(reject);
         }));
