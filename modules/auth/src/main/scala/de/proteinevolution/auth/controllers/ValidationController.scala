@@ -15,22 +15,22 @@
  */
 
 package de.proteinevolution.auth.controllers
+import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.common.models.ConstantsV2
-import de.proteinevolution.user.{User, UserConfig}
 import io.circe.syntax._
-import io.circe.{Json, JsonObject}
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import reactivemongo.bson.BSONDocument
+import io.circe.{ Json, JsonObject }
+import javax.inject.{ Inject, Singleton }
+import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class ValidationController @Inject()(
     userSessions: UserSessionService,
+    userDao: UserDao,
     constants: ConstantsV2,
     cc: ControllerComponents,
     userAction: UserAction
@@ -47,23 +47,13 @@ class ValidationController @Inject()(
         if (user.userConfig.hasMODELLERKey) {
           fuccess(Ok(isValid(true)))
         } else if (input == constants.modellerKey) {
-          userSessions
-            .modifyUserWithCache(
-              user.userID,
-              BSONDocument(
-                "$set" ->
-                BSONDocument(
-                  s"${User.USERCONFIG}.${UserConfig.HASMODELLERKEY}" ->
-                  true
-                )
-              )
-            )
-            .map {
-              case Some(_) =>
-                Ok(isValid(true))
-              case None =>
-                BadRequest
-            }
+          userDao.updateUserConfig(user.userID, user.userConfig.copy(hasMODELLERKey = true)).map {
+            case Some(updatedUser) =>
+              userSessions.updateUserInCache(updatedUser)
+              Ok(isValid(true))
+            case None =>
+              BadRequest
+          }
         } else {
           fuccess(Ok(isValid(false)))
         }

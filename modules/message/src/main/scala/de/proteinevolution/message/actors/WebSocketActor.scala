@@ -62,7 +62,7 @@ final class WebSocketActor @Inject()(
 
   override def preStart(): Unit = {
     context.system.eventStream.subscribe(self, classOf[UpdateLoad])
-    userSessions.getUser(sessionID).foreach {
+    userSessions.getUserBySessionID(sessionID).foreach {
       case Some(user) =>
         wsActorCache.get[List[ActorRef]](user.userID.stringify) match {
           case Some(wsActors) =>
@@ -85,7 +85,7 @@ final class WebSocketActor @Inject()(
 
   override def postStop(): Unit = {
     userSessions
-      .getUser(sessionID)
+      .getUserBySessionID(sessionID)
       .map(_.foreach { user =>
         wsActorCache.get[List[ActorRef]](user.userID.stringify).foreach { wsActors =>
           val actorSet: List[ActorRef] = wsActors: List[ActorRef]
@@ -100,7 +100,7 @@ final class WebSocketActor @Inject()(
   private def active(sid: BSONObjectID): Receive = {
 
     case json: Json =>
-      userSessions.getUser(sid).foreach {
+      userSessions.getUserBySessionID(sid).foreach {
         case Some(user) =>
         json.hcursor.get[String]("type").toOption.foreach {
 

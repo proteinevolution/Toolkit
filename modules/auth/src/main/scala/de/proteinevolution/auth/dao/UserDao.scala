@@ -18,15 +18,15 @@ package de.proteinevolution.auth.dao
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.user.{User, UserData, UserToken}
-import javax.inject.{Inject, Singleton}
+import de.proteinevolution.user._
+import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
-import reactivemongo.bson.{BSONArray, BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.api.commands.{ UpdateWriteResult, WriteResult }
+import reactivemongo.bson.{ BSONArray, BSONDateTime, BSONDocument, BSONObjectID }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit ec: ExecutionContext) {
@@ -66,70 +66,112 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
    * @deprecated very bad practice to have db logic in controllers. Should be private
    */
   @Deprecated
-  def modifyUser(userID: BSONObjectID, modifier: BSONDocument): Future[Option[User]] =
-    userCollection.flatMap(
-      _.findAndUpdate(BSONDocument(User.IDDB -> userID), modifier, fetchNewObject = true).map(_.result[User])
-    )
-
-  def setToken(userID: BSONObjectID, token: UserToken): Future[Option[User]] = {
+  def modifyUser(userID: BSONObjectID, modifier: BSONDocument): Future[Option[User]] = {
     val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-    // Push to the database using modifier
-    val modifier = BSONDocument(
-      "$set" ->
-        BSONDocument(User.DATEUPDATED -> bsonCurrentTime),
-      "$set" ->
-        BSONDocument(User.USERTOKEN -> token)
+    userCollection.flatMap(
+      _.findAndUpdate(
+        BSONDocument(User.IDDB -> userID),
+        modifier.merge(
+          BSONDocument(
+            "$set" ->
+            BSONDocument(User.DATEUPDATED -> bsonCurrentTime)
+          )
+        ),
+        fetchNewObject = true
+      ).map(_.result[User])
     )
-    modifyUser(userID, modifier)
   }
 
-  def updateAccountType(userID: BSONObjectID, accountType: Int, resetUserToken: Boolean = false): Future[Option[User]] = {
-    var modifier = BSONDocument(      "$set" ->
-        BSONDocument(
-          User.ACCOUNTTYPE -> accountType,
-          User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-        )    )
-    if (resetUserToken) {
-      modifier = modifier ++ BSONDocument(
-        "$unset" ->
-          BSONDocument(User.USERTOKEN -> "")
+  def setToken(userID: BSONObjectID, token: UserToken): Future[Option[User]] =
+    modifyUser(
+      userID,
+      BSONDocument(
+        "$set" ->
+        BSONDocument(User.USERTOKEN -> token)
       )
-    }
-    modifyUser(userID, modifier)
-  }
+    )
+
+  def updateAccountType(
+      userID: BSONObjectID,
+      accountType: Int,
+      resetUserToken: Boolean = false
+  ): Future[Option[User]] =
+    modifyUser(
+      userID,
+      BSONDocument(
+        "$set" ->
+        BSONDocument(User.ACCOUNTTYPE -> accountType)
+      ).merge {
+        if (resetUserToken) {
+          BSONDocument("$unset" -> BSONDocument(User.USERTOKEN -> ""))
+        } else {
+          BSONDocument.empty
+        }
+      }
+    )
 
   def changePassword(
       userID: BSONObjectID,
       newPasswordHash: String,
       newSessionId: BSONObjectID
-  ): Future[Option[User]] = {
-    // create a modifier document to change the last login date in the Database
-    val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-    // Push to the database using modifier
-    val modifier =
+  ): Future[Option[User]] =
+    modifyUser(
+      userID,
       BSONDocument(
         "$set" -> BSONDocument(
-          User.DATEUPDATED -> bsonCurrentTime,
-          User.PASSWORD    -> newPasswordHash,
-          User.SESSIONID   -> newSessionId
+          User.PASSWORD  -> newPasswordHash,
+          User.SESSIONID -> newSessionId
         )
       )
-    modifyUser(userID, modifier)
-  }
+    )
 
-  def updateUserData(userID: BSONObjectID, userData: UserData): Future[Option[User]] = {
-    // create a modifier document to change the last login date in the Database
-    val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-    val modifier = BSONDocument(
-      "$set" ->
+  def updateUserData(userID: BSONObjectID, userData: UserData): Future[Option[User]] =
+    modifyUser(
+      userID,
       BSONDocument(
-        User.USERDATA      -> userData,
-        User.DATELASTLOGIN -> bsonCurrentTime,
-        User.DATEUPDATED   -> bsonCurrentTime
+        "$set" ->
+        BSONDocument(
+          User.USERDATA -> userData
+        )
       )
     )
-    modifyUser(userID, modifier)
-  }
+
+  def updateUserConfig(userID: BSONObjectID, userConfig: UserConfig): Future[Option[User]] =
+    modifyUser(
+      userID,
+      BSONDocument(
+        "$set" ->
+          BSONDocument(
+            User.USERCONFIG -> userConfig
+          )
+      )
+    )
+
+  def saveNewLogin(user: User, sessionDataOption: Option[SessionData] = None): Future[Option[User]] =
+    modifyUser(
+      user.userID,
+      BSONDocument("$set" -> BSONDocument(User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)))
+        .merge(
+          // In the case that the user has been emailed about their inactivity, reset that status to a regular user status
+          if (user.accountType == AccountType.CLOSETODELETIONUSER) {
+            BSONDocument(
+              "$set"   -> BSONDocument(User.ACCOUNTTYPE   -> AccountType.REGISTEREDUSER.toInt),
+              "$unset" -> BSONDocument(User.DATEDELETEDON -> "")
+            )
+          } else {
+            BSONDocument.empty
+          }
+        )
+        .merge(
+          sessionDataOption
+            .map(
+              sessionData =>
+                // Add the session Data to the set
+                BSONDocument("$addToSet" -> BSONDocument(User.SESSIONDATA -> sessionData))
+            )
+            .getOrElse(BSONDocument.empty)
+        )
+    )
 
   /**
    * @deprecated very bad practice to have db logic in controllers.

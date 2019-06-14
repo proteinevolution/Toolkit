@@ -20,17 +20,17 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.base.helpers.ToolkitTypes
-import de.proteinevolution.user.{SessionData, User, AccountType}
+import de.proteinevolution.user.{ AccountType, SessionData, User }
 import de.proteinevolution.util.LocationProvider
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{Logging, mvc}
+import play.api.{ mvc, Logging }
 import play.mvc.Http
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 
 import scala.concurrent.duration._
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.hashing.MurmurHash3
 
 @Singleton
@@ -84,44 +84,6 @@ class UserSessionService @Inject()(
       )
   }
 
-  def putUser(implicit request: RequestHeader, sessionID: BSONObjectID): Future[User] = {
-    val newSessionData = SessionData(
-      ip = MurmurHash3.stringHash(request.remoteAddress).toString,
-      userAgent = request.headers.get(Http.HeaderNames.USER_AGENT).getOrElse("Not specified"),
-      location = locationProvider.getLocation(request)
-    )
-
-    userDao.findUserBySessionId(sessionID).flatMap {
-      case Some(user) =>
-        logger.info(s"User found by SessionID:\n${user.toString}")
-
-        // This resets the user's deletion date in case they have been eMailed for inactivity already
-        val modifier = getUserModifier(user, Some(newSessionData))
-
-        // Add the user to the cache and update the collection
-        modifyUserWithCache(user.userID, modifier).map {
-          case Some(updatedUser) =>
-            updatedUser
-          case None =>
-            user
-        }
-      case None =>
-        // Create a new user as there is no user with this sessionID
-        val user = User(
-          userID = BSONObjectID.generate(),
-          sessionID = Some(sessionID),
-          sessionData = List(newSessionData),
-          dateCreated = Some(ZonedDateTime.now),
-          dateLastLogin = Some(ZonedDateTime.now),
-          dateUpdated = Some(ZonedDateTime.now)
-        )
-        userDao.addUser(user).map { _ =>
-          logger.info(s"User is new:\n${user.toString}\nIP: ${request.remoteAddress.toString}")
-          user
-        }
-    }
-  }
-
   def getUser(implicit request: RequestHeader): Future[User] = {
     // Ignore our monitoring service and don't update it in the DB
     if (request.remoteAddress.contentEquals("10.3.7.70")) { // TODO Put this in the config?
@@ -137,20 +99,57 @@ class UserSessionService @Inject()(
       // cache related stuff should remain in the project where the cache is bound
       userCache.get[User](sessionID.stringify) match {
         case Some(user) => fuccess(user)
-        case None =>
-          putUser(request, sessionID)
+        case None => // session not known yet in cache
+          val newSessionData = SessionData(
+            ip = MurmurHash3.stringHash(request.remoteAddress).toString,
+            userAgent = request.headers.get(Http.HeaderNames.USER_AGENT).getOrElse("Not specified"),
+            location = locationProvider.getLocation(request)
+          )
+
+          userDao.findUserBySessionId(sessionID).flatMap {
+            case Some(user) =>
+              logger.info(s"User found by SessionID:\n${user.toString}")
+              // Add the user to the cache and update the collection
+              userDao.saveNewLogin(user, Some(newSessionData)).map {
+                case Some(updatedUser) =>
+                  updateUserInCache(updatedUser)
+                case None =>
+                  user
+              }
+            case None =>
+              saveNewAnonymousUser(sessionID, newSessionData)
+          }
       }
+    }
+  }
+
+  def saveNewAnonymousUser(sessionID: BSONObjectID, newSessionData: SessionData)(
+      implicit request: RequestHeader
+  ): Future[User] = {
+    // Create a new anonymous user as there is no user with this sessionID
+    val user = User(
+      userID = BSONObjectID.generate(),
+      sessionID = Some(sessionID),
+      sessionData = List(newSessionData),
+      dateCreated = Some(ZonedDateTime.now),
+      dateLastLogin = Some(ZonedDateTime.now),
+      dateUpdated = Some(ZonedDateTime.now)
+    )
+    userDao.addUser(user).map { _ =>
+      logger.info(s"User is new:\n${user.toString}\nIP: ${request.remoteAddress.toString}")
+      user
     }
   }
 
   /**
    * Grabs the user with the matching sessionID from the cache, or if there is
    * none, it will try to find it in the database and put it in the cache.
+   * Only used for the websocket where no request object is available.
    *
    * @param sessionID
    * @return
    */
-  def getUser(sessionID: BSONObjectID): Future[Option[User]] = {
+  def getUserBySessionID(sessionID: BSONObjectID): Future[Option[User]] = {
     // Try the cache
     userCache.get[User](sessionID.stringify) match {
       case Some(user) =>
@@ -161,10 +160,9 @@ class UserSessionService @Inject()(
         userDao.findUserBySessionId(sessionID).flatMap {
           case Some(user) =>
             // Update the last login time
-            val modifier = getUserModifier(user)
-            modifyUserWithCache(user.userID, modifier).map {
+            userDao.saveNewLogin(user).map {
               case Some(updatedUser) =>
-                Some(updatedUser)
+                Some(updateUserInCache(updatedUser))
               case None =>
                 // update was not possible, return the original user
                 Some(user)
@@ -192,13 +190,11 @@ class UserSessionService @Inject()(
    * @param selector
    * @param modifier
    * @return
-    * @deprecated needs to be split from dao in order to remove modifiers
+   * @deprecated needs to be split from dao in order to remove modifiers
    */
   @Deprecated
   def modifyUserWithCache(userID: BSONObjectID, modifier: BSONDocument): Future[Option[User]] = {
-    userDao
-      .modifyUser(userID, modifier)
-      .map(_.map(updateUserInCache))
+    userDao.modifyUser(userID, modifier).map(_.map(updateUserInCache))
   }
 
   /**
