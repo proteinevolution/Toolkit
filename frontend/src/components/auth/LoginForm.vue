@@ -4,6 +4,7 @@
             <b-form-group :label="$t('auth.eMailOrUsername')">
                 <b-form-input v-model="username"
                               type="text"
+                              autofocus
                               required>
                 </b-form-input>
             </b-form-group>

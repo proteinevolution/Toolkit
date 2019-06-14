@@ -37,7 +37,8 @@
             </b-form-input>
         </b-form-group>
         <b-form-group>
-            <b-form-checkbox v-model="privacyAccepted">
+            <b-form-checkbox v-model="privacyAccepted"
+                             required>
                 <i18n path="auth.privacyAccept" tag="span">
                     <a class="privacy-link"
                        @click.stop="openPrivacyPolicy">
