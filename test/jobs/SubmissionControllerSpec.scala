@@ -1,5 +1,8 @@
 package jobs
 
+import org.scalatestplus.play.PlaySpec
+import play.api.http.ContentTypes
+
 class SubmissionControllerSpec extends PlaySpec with ContentTypes {
 
 //  private val ctrl = new SubmissionController()
