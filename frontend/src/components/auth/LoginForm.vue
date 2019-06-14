@@ -20,29 +20,33 @@
             <b-btn type="submit"
                    v-text="$t('auth.signIn')"/>
             <a class="password-link"
-               @click.stop="forgot.show = !forgot.show">
+               @click.stop="toggleForgotContainer">
                 {{ $t('auth.forgotPassword') }}
             </a>
         </b-form>
 
         <ExpandHeight>
-            <b-alert variant="primary"
+            <b-alert :variant="!forgot.message || forgot.successful ? 'primary' : 'danger'"
                      show
-                     class="mt-3"
+                     class="mt-3 mb-0"
                      v-if="forgot.show">
-                <b-form-group :label="$t('auth.forgotPasswordInstructions')">
-                    <b-form-input v-model="forgot.eMailOrUsername"
-                                  :placeholder="$t('auth.eMailOrUsername')"
-                                  type="text">
-                    </b-form-input>
-                </b-form-group>
-                <b-alert :variant="forgot.successful ? 'info' : 'danger'"
-                         :show="forgot.message !== ''"
-                         v-text="forgot.message"/>
-                <b-btn @click="forgotPasswordSubmit"
-                       :disabled="eMailOrUsernameInvalid"
-                       v-text="$t('submit')"
-                       variant="primary"/>
+                <b-form @submit.prevent="forgotPasswordSubmit"
+                        v-show="!(forgot.message && forgot.successful)"
+                        :class="[forgot.successful ? '' : 'mb-3']">
+                    <b-form-group :label="$t('auth.forgotPasswordInstructions')">
+                        <b-form-input v-model="forgot.eMailOrUsername"
+                                      :placeholder="$t('auth.eMailOrUsername')"
+                                      type="text">
+                        </b-form-input>
+                    </b-form-group>
+                    <b-btn :disabled="eMailOrUsernameInvalid"
+                           type="submit"
+                           v-text="$t('submit')"
+                           variant="primary"/>
+                </b-form>
+                <div v-show="forgot.message"
+                     v-text="forgot.message">
+                </div>
             </b-alert>
         </ExpandHeight>
     </div>
@@ -111,6 +115,13 @@
                 } catch (error) {
                     this.forgot.message = error.message;
                     this.forgot.successful = false;
+                }
+            },
+            toggleForgotContainer(): void {
+                this.forgot.show = !this.forgot.show;
+                if (!this.forgot.successful) {
+                    this.forgot.successful = true;
+                    this.forgot.message = '';
                 }
             },
         },
