@@ -20,24 +20,25 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.base.helpers.ToolkitTypes
-import de.proteinevolution.user.{ SessionData, User }
+import de.proteinevolution.user.{SessionData, User}
 import de.proteinevolution.util.LocationProvider
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{ mvc, Logging }
+import play.api.{Configuration, Logging, mvc}
 import play.mvc.Http
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.duration._
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.hashing.MurmurHash3
 
 @Singleton
 class UserSessionService @Inject()(
     userDao: UserDao,
     @NamedCache("userCache") userCache: SyncCacheApi,
-    locationProvider: LocationProvider
+    locationProvider: LocationProvider,
+    config: Configuration
 )(implicit ec: ExecutionContext)
     extends ToolkitTypes
     with Logging {
@@ -46,7 +47,7 @@ class UserSessionService @Inject()(
 
   def getUser(implicit request: RequestHeader): Future[User] = {
     // Ignore our monitoring service and don't update it in the DB
-    if (request.remoteAddress.contentEquals("10.3.7.70")) { // TODO Put this in the config?
+    if (config.get[Seq[String]]("user_creation.ignore_ips").contains(request.remoteAddress)) {
       fuccess(User())
     } else {
       val sessionID = request.session.get(SID) match {
