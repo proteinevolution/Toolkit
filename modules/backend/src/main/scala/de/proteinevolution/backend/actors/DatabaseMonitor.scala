@@ -26,10 +26,8 @@ import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.actors.JobActor.Delete
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobActorAccess
 import play.api.Configuration
-import de.proteinevolution.statistics.{ StatisticsObject, UserStatistic }
 import de.proteinevolution.user.User
 import javax.inject.{ Inject, Singleton }
 import play.api.libs.mailer.MailerClient
