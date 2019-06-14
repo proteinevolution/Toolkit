@@ -138,9 +138,9 @@ echo "#Executing NetSurfP2" >> ../results/process.log
 python3 ${BIOPROGS}/tools/netsurfp2/from_hhm.py ../results/${JOBID}
 echo "done" >> ../results/process.log
 
-#RUN PiPred
+# PiPred, SPOT-D and SPIDER3 require the PSSM file to exist
 if [[ -f ../results/${JOBID}.pssm ]]; then
-
+    #RUN PiPred
     if [[ ${CHAR_COUNT} -gt "30" ]] && [[ ${CHAR_COUNT} -lt "700" ]] ; then
         echo "#Executing PiPred." >> ../results/process.log
         ${PIPRED}/pipred -i ../results/${JOBID}.fseq \
@@ -148,18 +148,15 @@ if [[ -f ../results/${JOBID}.pssm ]]; then
             -out_path ../results/
         echo "done" >> ../results/process.log
     fi
+    
+    #RUN SPOT-D and SPIDER3
+    echo "#Executing SPIDER3 and SPOT-Disorder." >> ../results/process.log
+    cd ../results/
+    ${SPOTD}/run_local.sh ${JOBID}.pssm
+    python2 ${BIOPROGS}/tools/SPIDER3-numpy-server/script/spider3_pred.py ${JOBID} --odir .
+    cd ../0/
+    echo "done" >> ../results/process.log   
 fi
-
-#RUN SPOT-D and SPIDER3
-
-echo "#Executing SPIDER3 and SPOT-Disorder." >> ../results/process.log
-
-cd ../results/
-${SPOTD}/run_local.sh ${JOBID}.pssm
-python2 ${BIOPROGS}/tools/SPIDER3-numpy-server/script/spider3_pred.py ${JOBID} --odir .
-cd ../0/
-
-echo "done" >> ../results/process.log
 
 echo "#Executing IUpred." >> ../results/process.log
 
