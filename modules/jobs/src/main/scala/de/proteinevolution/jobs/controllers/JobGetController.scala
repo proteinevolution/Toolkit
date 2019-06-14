@@ -50,7 +50,7 @@ class JobGetController @Inject()(
 
   def jobManagerListJobs: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
-      jobDao.findJobs(BSONDocument(Job.OWNERID -> user.userID, Job.DELETION -> BSONDocument("$exists" -> false))).map {
+      jobDao.findJobsByOwner(user.userID).map {
         jobs =>
           NoCache(Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.jobManagerJob()).asJson))
       }
@@ -59,7 +59,7 @@ class JobGetController @Inject()(
 
   def listJobs: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
-      jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> user.jobs))).map { jobs =>
+      jobDao.findJobsByIds(user.jobs).map { jobs =>
         Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.cleaned(toolConfig)).asJson)
       }
     }
@@ -67,7 +67,7 @@ class JobGetController @Inject()(
 
   def loadJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { _ =>
-      jobDao.selectJob(jobID).map {
+      jobDao.findJob(jobID).map {
         case Some(job) if jobFolderIsValid(job.jobID, constants) => Ok(job.cleaned(toolConfig).asJson)
         case _                                                   => NotFound
       }

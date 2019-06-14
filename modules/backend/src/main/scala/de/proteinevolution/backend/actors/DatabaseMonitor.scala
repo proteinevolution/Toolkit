@@ -137,12 +137,7 @@ final class DatabaseMonitor @Inject()(
         // Store the deleted users in the user statistics
         backendDao.getStats.foreach { statisticsObject =>
           val currentDeleted: Int = statisticsObject.userStatistics.currentDeleted + users.count(_.userData.nonEmpty)
-          val modifier: BSONDocument =
-            BSONDocument(
-              "$set" ->
-              BSONDocument(s"${StatisticsObject.USERSTATISTICS}.${UserStatistic.CURRENTDELETED}" -> currentDeleted)
-            )
-          backendDao.modifyStats(statisticsObject, modifier)
+          backendDao.setStatsCurrentDeleted(statisticsObject, currentDeleted)
         }
 
         // Finally remove the users with their userID
@@ -209,29 +204,7 @@ final class DatabaseMonitor @Inject()(
 
   private def deleteOldJobs(): Unit = {
     log.info("[Job Deletion] finding old jobs...")
-    // grab the current time
-    val now: ZonedDateTime = ZonedDateTime.now
-    // calculate the date at which the job should have been created at
-    val dateCreated: ZonedDateTime = now.minusDays(constants.jobDeletion.toLong)
-    // calculate the date at which it should have been viewed last
-    val lastViewedDate: ZonedDateTime = now.minusDays(constants.jobDeletionLastViewed.toLong)
-    jobDao
-      .findJobs(
-        BSONDocument(
-          Job.DATEVIEWED -> BSONDocument("$lt" -> BSONDateTime(lastViewedDate.toInstant.toEpochMilli)),
-          BSONDocument(
-            "$or" -> List(
-              BSONDocument(
-                Job.DATEDELETION -> BSONDocument("$lt" -> BSONDateTime(now.toInstant.toEpochMilli))
-              ),
-              BSONDocument(
-                Job.DATEDELETION -> BSONDocument("$exists" -> false),
-                Job.DATECREATED  -> BSONDocument("$lt"     -> BSONDateTime(dateCreated.toInstant.toEpochMilli))
-              )
-            )
-          )
-        )
-      )
+    jobDao.findOldJobs()
       .foreach { jobList =>
         log.info(s"[Job Deletion] found ${jobList.length} jobs for deletion. Sending to job actors.")
         jobList.foreach { job =>

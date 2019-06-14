@@ -16,7 +16,7 @@
 
 package de.proteinevolution.backend.dao
 
-import de.proteinevolution.statistics.StatisticsObject
+import de.proteinevolution.statistics.{ StatisticsObject, UserStatistic }
 import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.collections.bson.BSONCollection
@@ -39,18 +39,29 @@ class BackendDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(impli
 
   def updateStats(statisticsObject: StatisticsObject): Future[Option[StatisticsObject]] = {
     statisticsCol.flatMap(
-      _.findAndUpdate(selector = BSONDocument(StatisticsObject.IDDB -> statisticsObject.statisticsID),
-                      update = statisticsObject,
-                      upsert = true,
-                      fetchNewObject = true).map(_.result[StatisticsObject])
+      _.findAndUpdate(
+        selector = BSONDocument(StatisticsObject.IDDB -> statisticsObject.statisticsID),
+        update = statisticsObject,
+        upsert = true,
+        fetchNewObject = true
+      ).map(_.result[StatisticsObject])
     )
   }
 
-  def modifyStats(statisticsObject: StatisticsObject, modifier: BSONDocument): Future[Option[StatisticsObject]] = {
+  def setStatsCurrentDeleted(
+      statisticsObject: StatisticsObject,
+      currentDeleted: Int
+  ): Future[Option[StatisticsObject]] = {
     statisticsCol.flatMap(
-      _.findAndUpdate(selector = BSONDocument(StatisticsObject.IDDB -> statisticsObject.statisticsID),
-                      update = modifier,
-                      fetchNewObject = true).map(_.result[StatisticsObject])
+      _.findAndUpdate(
+        selector = BSONDocument(StatisticsObject.IDDB -> statisticsObject.statisticsID),
+        update = BSONDocument(
+          "$set" -> BSONDocument(
+            s"${StatisticsObject.USERSTATISTICS}.${UserStatistic.CURRENTDELETED}" -> currentDeleted
+          )
+        ),
+        fetchNewObject = true
+      ).map(_.result[StatisticsObject])
     )
   }
 

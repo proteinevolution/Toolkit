@@ -37,7 +37,7 @@ final class JobIdProvider @Inject()(jobDao: JobDao)(implicit ec: ExecutionContex
   )
 
   private[this] def validate(id: String): IO[Boolean] = {
-    IO.fromFuture(IO.pure(jobDao.selectJob(id).map(_.isEmpty)))
+    IO.fromFuture(IO.pure(jobDao.findJob(id).map(_.isEmpty)))
   }
 
   // recursively generate job ids which are not in the database
