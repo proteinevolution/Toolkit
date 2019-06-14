@@ -55,10 +55,10 @@
         },
         computed: {
             token(): string {
-              return <string>this.$route.query.token;
+              return this.$route.query.token as string;
             },
             nameLogin(): string {
-                return <string>this.$route.query.nameLogin;
+                return this.$route.query.nameLogin as string;
             },
             newPasswordValid(): boolean {
                 return /^.{8,128}$/.test(this.newPassword);
@@ -67,7 +67,7 @@
                 return this.confirmPassword === this.newPassword;
             },
             valid(): boolean {
-                return this.nameLogin != '' && this.token != '' &&
+                return this.nameLogin !== '' && this.token !== '' &&
                     this.newPasswordValid
                     && this.confirmPasswordValid;
             },

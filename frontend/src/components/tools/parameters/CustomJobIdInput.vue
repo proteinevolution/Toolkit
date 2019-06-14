@@ -55,12 +55,6 @@
                     }
                 },
             },
-            debouncedValidateCustomJobId() {
-                // There is a weird bug when the method is debounced directly, this is a workaround.
-                // When debouncing directly, the 'this' parameter somehow isn't bound correctly. This leads to
-                // wrong updates of the component data.
-                return debounce(this.validateCustomJobId, 500);
-            },
         },
         watch: {
             customJobId: {
@@ -77,7 +71,7 @@
             },
         },
         methods: {
-            validateCustomJobId(value: string) {
+            debouncedValidateCustomJobId: debounce(function(this: any, value: string) {
                 if (value.length < 3) {
                     this.setError({
                         textKey: 'constraints.customerJobIdTooShort',
@@ -97,7 +91,7 @@
                             }
                         });
                 }
-            },
+            }, 500),
             takeSuggestion() {
                 this.customJobId = this.suggestion;
             },

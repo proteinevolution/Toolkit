@@ -34,10 +34,10 @@
         },
         computed: {
             token(): string {
-                return <string>this.$route.query.token;
+                return this.$route.query.token as string;
             },
             nameLogin(): string {
-                return <string>this.$route.query.nameLogin;
+                return this.$route.query.nameLogin as string;
             },
             title(): TranslateResult {
                 if (this.loading) {
@@ -56,7 +56,7 @@
         },
         methods: {
             async verifyEmail() {
-                if (this.nameLogin != '' && this.token != '') {
+                if (this.nameLogin !== '' && this.token !== '') {
                     this.loading = true;
                     const res = await AuthService.verifyToken(this.nameLogin, this.token);
                     this.message = res.message;

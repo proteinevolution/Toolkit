@@ -45,7 +45,6 @@ import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecutio
 import de.proteinevolution.tel.execution.{ExecutionContext, WrapperExecutionFactory}
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
-import de.proteinevolution.user.User
 import javax.inject.Inject
 import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
