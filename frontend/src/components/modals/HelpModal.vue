@@ -1,7 +1,7 @@
 <template>
     <BaseModal :title="tool ? tool.longname : ''"
                id="helpModal">
-        <b-tabs v-if="toolName">
+        <b-tabs v-if="toolName && languageLoaded">
             <b-tab class="helpTab"
                    title="Overview"
                    v-html="$t(`toolHelpModals.${toolName}.overview`)">
@@ -12,7 +12,8 @@
             </b-tab>
             <b-tab class="helpTab"
                    title="References">
-                <div v-html="$t(`citation`)"></div><br>
+                <div v-html="$t(`citation`)"></div>
+                <br>
                 <div v-html="$t(`toolHelpModals.${toolName}.references`)"></div>
             </b-tab>
             <b-tab v-if="tool && tool.version"
@@ -30,6 +31,7 @@
     import Accordion from '@/components/utils/Accordion.vue';
     import {AccordionItem} from '@/types/toolkit/utils';
     import {Tool} from '@/types/toolkit/tools';
+    import {loadExtraTranslations} from '@/i18n';
 
     export default Vue.extend({
         name: 'HelpModal',
@@ -42,6 +44,11 @@
                 type: String,
                 required: true,
             },
+        },
+        data() {
+            return {
+                languageLoaded: false,
+            };
         },
         computed: {
             tool(): Tool {
@@ -59,6 +66,16 @@
                         title: (this.$t(`toolHelpModals.${this.toolName}.parameters[${index}].title`) as string),
                         content: (this.$t(`toolHelpModals.${this.toolName}.parameters[${index}].content`) as string),
                     }));
+            },
+        },
+        watch: {
+            toolName(name) {
+                this.languageLoaded = false;
+                loadExtraTranslations('modals/toolHelp/common');
+                loadExtraTranslations(`modals/toolHelp/${name}`)
+                    .finally(() => {
+                        this.languageLoaded = true;
+                    });
             },
         },
     });
