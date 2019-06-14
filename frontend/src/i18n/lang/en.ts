@@ -113,6 +113,9 @@ export default {
                 customJobId: {
                     placeholder: 'Custom Job ID',
                 },
+                modellerKey: {
+                    stored: 'MODELLER-key is stored in your profile.',
+                },
             },
             validation: {
                 invalidCharacters: 'Invalid Characters.',

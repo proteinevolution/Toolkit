@@ -1,12 +1,18 @@
 <template>
-    <b-form-group :label="parameter.label">
-        <b-form-input v-model="submissionValue"
-                      type="text"
-                      size="sm"
-                      :state="valid"
-                      required>
-        </b-form-input>
-    </b-form-group>
+    <div>
+        <b-form-group v-if="!valid"
+                      :label="parameter.label">
+            <b-form-input v-model="submissionValue"
+                          type="text"
+                          size="sm"
+                          :state="submissionValue.length > 0 ? valid : null"
+                          required>
+            </b-form-input>
+        </b-form-group>
+        <p v-else
+           v-t="'tools.parameters.modellerKey.stored'">
+        </p>
+    </div>
 </template>
 
 <script lang="ts">
@@ -16,6 +22,7 @@
     import {Parameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
     import {ConstraintError} from '@/types/toolkit/validation';
+    import {User} from '@/types/toolkit/auth';
 
     export default mixins(ToolParameterMixin).extend({
         name: 'ModellerParameter',
@@ -36,16 +43,20 @@
                 // overrides the property in ToolParameterMixin
                 return '';
             },
+            user(): User | null {
+                return this.$store.getters['auth/user'];
+            },
         },
         watch: {
             submissionValue: {
                 immediate: true,
                 handler(value: string) {
                     this.valid = null;
-                    if (value.length > 0) {
-                        this.validateModellerKey(value);
-                    }
+                    this.validateModellerKey(value);
                 },
+            },
+            user(user: User | null) {
+                this.validateModellerKey(this.submissionValue);
             },
         },
         methods: {
