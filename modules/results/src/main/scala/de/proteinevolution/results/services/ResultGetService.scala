@@ -34,7 +34,6 @@ import javax.inject.{ Inject, Singleton }
 import play.api.Logging
 import play.api.cache.{ AsyncCacheApi, NamedCache }
 import play.twirl.api.HtmlFormat
-import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.{ ExecutionContext, Future }
 
