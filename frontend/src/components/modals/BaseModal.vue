@@ -7,6 +7,7 @@
              :size="size"
              :body-class="bodyClass"
              lazy
+             scrollable
              @hide="$emit('hide')"
              @show="$emit('show')">
         <slot name="header">
