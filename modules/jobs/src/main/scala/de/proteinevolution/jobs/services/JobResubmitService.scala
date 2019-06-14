@@ -17,12 +17,11 @@
 package de.proteinevolution.jobs.services
 
 import de.proteinevolution.base.helpers.ToolkitTypes
+import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.{ Job, ResubmitData }
-import de.proteinevolution.common.models.ConstantsV2
 import javax.inject.{ Inject, Singleton }
 import play.api.Logging
-import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.{ ExecutionContext, Future }
 
