@@ -26,7 +26,6 @@ import de.proteinevolution.jobs.services.JobFolderValidation
 import de.proteinevolution.tools.{ Tool, ToolConfig }
 import de.proteinevolution.user.User
 import javax.inject.{ Inject, Singleton }
-import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -48,7 +47,7 @@ class SearchService @Inject()(
       .toList
     if (tools.isEmpty) {
       (for {
-        jobs     <- OptionT.liftF(jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$regex" -> queryString))))
+        jobs     <- OptionT.liftF(jobDao.findJobsByIdLike(queryString))
         filtered <- OptionT.pure[Future](jobs.filter(job => job.ownerID.contains(user.userID)))
       } yield filtered).flatMapF { jobs =>
         if (jobs.isEmpty) {
@@ -58,11 +57,7 @@ class SearchService @Inject()(
         }
       }
     } else {
-      OptionT.liftF(
-        jobDao.findJobs(
-          BSONDocument(Job.OWNERID -> user.userID, Job.TOOL -> BSONDocument("$in" -> tools.map(_.toolNameShort)))
-        )
-      )
+      OptionT.liftF(jobDao.findJobsByOwnerAndTools(user.userID, tools.map(_.toolNameShort)))
     }
   }
 

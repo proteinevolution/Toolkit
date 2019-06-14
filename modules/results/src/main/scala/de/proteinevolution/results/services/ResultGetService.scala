@@ -70,7 +70,7 @@ final class ResultGetService @Inject()(
       }
     }
     for {
-      job      <- OptionT(jobDao.selectJob(jobId))
+      job      <- OptionT(jobDao.findJob(jobId))
       toolForm <- OptionT.pure[Future](toolConfig.values(job.tool).toolForm)
       jobViews <- OptionT.liftF(jobViews(job, toolForm))
     } yield
@@ -100,7 +100,7 @@ final class ResultGetService @Inject()(
       job <- OptionT(jobDao.findJob(jobId))
       jobs <- OptionT.liftF(
         jobDao
-          .findJobs(BSONDocument(Job.HASH -> job.hash))
+          .findJobsByHash(job.hash)
           .map(_.filter(x => (Prepared :: Pending :: Nil).contains(x.status)))
       )
     } yield {

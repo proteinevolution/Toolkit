@@ -34,7 +34,8 @@ class JobResubmitService @Inject()(constants: ConstantsV2, jobDao: JobDao)(impli
   def resubmit(newJobId: String, resubmitForJobId: Option[String]): Future[ResubmitData] = {
     generateParentJobId((newJobId, resubmitForJobId)) match {
       case Some(parentJobId) =>
-        findJobs(parentJobId).map { jobs =>
+        // TODO: we should directly use the parent id connection
+        jobDao.findJobsByIdLike(parentJobId).map { jobs =>
           generateResubmitData(jobs, newJobId, resubmitForJobId, parentJobId)
         }
       case None =>
@@ -62,14 +63,6 @@ class JobResubmitService @Inject()(constants: ConstantsV2, jobDao: JobDao)(impli
           case _                                          => None
         }
     }
-  }
-
-  private def findJobs(parentJobId: String): Future[List[Job]] = {
-    jobDao.findJobs(
-      BSONDocument(
-        Job.JOBID -> BSONDocument("$regex" -> s"$parentJobId(${constants.jobIDVersioningCharacter}[0-9]{1,3})?")
-      )
-    )
   }
 
   private def generateResubmitData(

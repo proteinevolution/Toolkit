@@ -75,7 +75,7 @@ class JobActor @Inject()(
     with ToolkitTypes
     with JobTerminator {
 
-  // Attributes asssocidated with a Job
+  // Attributes associated with a Job
   @volatile private var currentJobs: Map[String, Job]                           = Map.empty[String, Job]
   @volatile private var currentJobLogs: Map[String, JobEventLog]                = Map.empty[String, JobEventLog]
   @volatile private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty[String, ExecutionContext]
@@ -397,37 +397,14 @@ class JobActor @Inject()(
         case Some(job) =>
           job.IPHash match {
             case Some(hash) =>
-              val selector = BSONDocument(
-                "$and" ->
-                List(
-                  BSONDocument(Job.IPHASH -> hash),
-                  BSONDocument(
-                    Job.DATECREATED ->
-                    BSONDocument(
-                      "$gt" -> BSONDateTime(
-                        ZonedDateTime.now.minusMinutes(constants.maxJobsWithin.toLong).toInstant.toEpochMilli
-                      )
-                    )
-                  )
-                )
-              )
-
-              val selectorDay = BSONDocument(
-                "$and" ->
-                List(
-                  BSONDocument(Job.IPHASH -> hash),
-                  BSONDocument(
-                    Job.DATECREATED ->
-                    BSONDocument(
-                      "$gt" -> BSONDateTime(
-                        ZonedDateTime.now.minusDays(constants.maxJobsWithinDay.toLong).toInstant.toEpochMilli
-                      )
-                    )
-                  )
-                )
-              )
-              jobDao.countJobs(selector).map { count =>
-                jobDao.countJobs(selectorDay).map { countDay =>
+              jobDao.countJobsForHashSinceTime(
+                hash,
+                ZonedDateTime.now.minusMinutes(constants.maxJobsWithin.toLong).toInstant.toEpochMilli
+              ).map { count =>
+                jobDao.countJobsForHashSinceTime(
+                  hash,
+                  ZonedDateTime.now.minusDays(constants.maxJobsWithinDay.toLong).toInstant.toEpochMilli
+                ).map { countDay =>
                   log.info(
                     BSONDateTime(
                       ZonedDateTime.now.minusMinutes(constants.maxJobsWithin.toLong).toInstant.toEpochMilli
