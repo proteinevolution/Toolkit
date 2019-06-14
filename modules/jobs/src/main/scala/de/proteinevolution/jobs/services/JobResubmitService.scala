@@ -22,7 +22,6 @@ import de.proteinevolution.jobs.models.{ Job, ResubmitData }
 import de.proteinevolution.common.models.ConstantsV2
 import javax.inject.{ Inject, Singleton }
 import play.api.Logging
-import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.{ ExecutionContext, Future }
 
