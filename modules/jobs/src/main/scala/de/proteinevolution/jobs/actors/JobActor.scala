@@ -62,7 +62,7 @@ class JobActor @Inject()(
                           hashService: JobHasher,
                           jobDao: JobDao,
                           userDao: UserDao,
-                          userSessions: UserSessionService,
+                          userSessionService: UserSessionService,
                           wrapperExecutionFactory: WrapperExecutionFactory,
                           @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
                           constants: ConstantsV2,
@@ -540,8 +540,12 @@ class JobActor @Inject()(
         .modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$addToSet" -> BSONDocument(Job.WATCHLIST -> userID)))
         .map {
           case Some(updatedJob) =>
-            userSessions
-              .modifyUserWithCache(userID, BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> jobID)))
+            userDao.addJobsToUser(userID, List(jobID))
+              .map {
+                case Some(user) =>
+                  userSessionService.updateUserInCache(user)
+                case None =>
+              }
               .foreach { _ =>
                 currentJobs = currentJobs.updated(jobID, updatedJob)
                 val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]
@@ -556,8 +560,12 @@ class JobActor @Inject()(
         .modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
         .foreach {
           case Some(updatedJob) =>
-            userSessions
-              .modifyUserWithCache(userID, BSONDocument("$pull"   -> BSONDocument(User.JOBS -> jobID)))
+            userDao.removeJobsFromUser(userID, List(jobID))
+              .map {
+                case Some(user) =>
+                  userSessionService.updateUserInCache(user)
+                case None =>
+              }
               .foreach { _ =>
                 currentJobs = currentJobs.updated(jobID, updatedJob)
                 val wsActors = wsActorCache.get(userID.stringify): Option[List[ActorRef]]

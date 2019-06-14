@@ -20,7 +20,7 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.base.helpers.ToolkitTypes
-import de.proteinevolution.user.{ AccountType, SessionData, User }
+import de.proteinevolution.user.{ SessionData, User }
 import de.proteinevolution.util.LocationProvider
 import javax.inject.{ Inject, Singleton }
 import play.api.cache._
@@ -43,46 +43,6 @@ class UserSessionService @Inject()(
     with Logging {
 
   private val SID = "sid"
-
-  def getUserModifier(
-      user: User,
-      sessionDataOption: Option[SessionData] = None,
-      forceSessionID: Boolean = false
-  ): BSONDocument = {
-    // Build the modifier - first the last login date
-    BSONDocument("$set" -> BSONDocument(User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)))
-      .merge(
-        // In the case that the user has been emailed about their inactivity, reset that status to a regular user status
-        if (user.accountType == AccountType.CLOSETODELETIONUSER) {
-          BSONDocument(
-            "$set"   -> BSONDocument(User.ACCOUNTTYPE   -> AccountType.REGISTEREDUSER.toInt),
-            "$unset" -> BSONDocument(User.DATEDELETEDON -> "")
-          )
-        } else {
-          BSONDocument.empty
-        }
-      )
-      .merge(
-        sessionDataOption
-          .map(
-            sessionData =>
-              // Add the session Data to the set
-              BSONDocument("$addToSet" -> BSONDocument(User.SESSIONDATA -> sessionData))
-          )
-          .getOrElse(BSONDocument.empty)
-      )
-      .merge(
-        // Add the session ID to the user
-        if (forceSessionID) {
-          BSONDocument(
-            "$set" ->
-            BSONDocument(User.SESSIONID -> Some(user.sessionID.getOrElse(BSONObjectID.generate())))
-          )
-        } else {
-          BSONDocument.empty
-        }
-      )
-  }
 
   def getUser(implicit request: RequestHeader): Future[User] = {
     // Ignore our monitoring service and don't update it in the DB
@@ -182,19 +142,6 @@ class UserSessionService @Inject()(
       userCache.set(sessionID.stringify, user, 10.minutes)
     }
     user
-  }
-
-  /**
-   * saves the user directly to the cache after modification in the DB
-   *
-   * @param selector
-   * @param modifier
-   * @return
-   * @deprecated needs to be split from dao in order to remove modifiers
-   */
-  @Deprecated
-  def modifyUserWithCache(userID: BSONObjectID, modifier: BSONDocument): Future[Option[User]] = {
-    userDao.modifyUser(userID, modifier).map(_.map(updateUserInCache))
   }
 
   /**

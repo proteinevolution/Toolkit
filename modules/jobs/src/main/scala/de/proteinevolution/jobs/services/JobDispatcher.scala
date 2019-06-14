@@ -19,19 +19,19 @@ package de.proteinevolution.jobs.services
 import java.security.MessageDigest
 import java.time.ZonedDateTime
 
-import cats.data.{EitherT, OptionT}
+import cats.data.{ EitherT, OptionT }
 import cats.implicits._
+import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.services.UserSessionService
-import de.proteinevolution.common.models.{ConstantsV2, ToolName}
+import de.proteinevolution.common.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.jobs.actors.JobActor.PrepareJob
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.models.{Job, JobSubmitError}
-import de.proteinevolution.user.{User, AccountType}
-import javax.inject.{Inject, Singleton}
+import de.proteinevolution.jobs.models.{ Job, JobSubmitError }
+import de.proteinevolution.user.{ AccountType, User }
+import javax.inject.{ Inject, Singleton }
 import play.api.Logging
-import reactivemongo.bson.BSONDocument
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class JobDispatcher @Inject()(
@@ -39,7 +39,8 @@ final class JobDispatcher @Inject()(
     constants: ConstantsV2,
     jobIdProvider: JobIdProvider,
     jobActorAccess: JobActorAccess,
-    userSessions: UserSessionService
+    userSessionService: UserSessionService,
+    userDao: UserDao
 )(implicit ec: ExecutionContext)
     extends Logging {
 
@@ -72,9 +73,13 @@ final class JobDispatcher @Inject()(
     !(toolName == ToolName.MODELLER.value && !user.userConfig.hasMODELLERKey)
   }
 
-  private[this] def assignJob(user: User, job: Job): Future[Option[User]] = {
-    userSessions.modifyUserWithCache(user.userID, BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> job.jobID))
-    )
+  private[this] def assignJob(user: User, job: Job): Future[User] = {
+    userDao.addJobsToUser(user.userID, List(job.jobID)).map {
+      case Some(dbUser) =>
+        userSessionService.updateUserInCache(dbUser)
+      case None =>
+        user
+    }
   }
 
   private[this] def isJobId(id: String): Boolean = constants.jobIDVersionOptionPattern.pattern.matcher(id).matches

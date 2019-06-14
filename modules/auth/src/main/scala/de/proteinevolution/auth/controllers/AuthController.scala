@@ -59,9 +59,9 @@ class AuthController @Inject()(
   }
 
   def signInSubmit: Action[AnyContent] = userAction.async { implicit request =>
-    val user = request.user
+    val anonymousUser = request.user
     // check if unregistered user (accountType == -1)
-    if (user.accountType < 0) {
+    if (anonymousUser.accountType < 0) {
       // Evaluate the Form
       FormDefinitions.signIn.bindFromRequest.fold(
         errors => {
@@ -74,33 +74,26 @@ class AuthController @Inject()(
             case Some(databaseUser) =>
               // Check the password
               if (databaseUser.checkPassword(signInFormUser.password) && databaseUser.accountType > 0) {
-                // Change the login time and give the new Session ID to the user.
-                // Additionally add the watched jobs to the users watchlist.
-                val modifier = userSessionService.getUserModifier(databaseUser, forceSessionID = true)
-                // TODO this adds the non logged in user's jobs to the now logged in user's job list
-                //                            "$addToSet"        ->
-                //               BSONDocument(User.JOBS          ->
-                //               BSONDocument("$each"            -> user.jobs)))
-                // Finally add the edits to the collection
-                userSessionService.modifyUserWithCache(databaseUser.userID, modifier).map {
+
+                userDao.saveNewLogin(databaseUser).map {
                   case Some(loggedInUser) =>
-                    logger.info(
-                      "\n-[old user]-\n"
-                      + user.toString
-                      + "\n-[new user]-\n"
-                      + loggedInUser.toString
+                    logger.info("-[new login]-\n"
+                        + loggedInUser.toString
                     )
                     // Remove the old, not logged in user
-                    //removeUser(BSONDocument(User.IDDB -> user.userID))
-                    userSessionService.removeUserFromCache(user)
+                    userDao.removeUsers(List(anonymousUser.userID))
+                    userSessionService.removeUserFromCache(anonymousUser)
+                    userSessionService.updateUserInCache(loggedInUser)
 
+                    // add the anonymous jobs to the user
+                    userDao.addJobsToUser(loggedInUser.userID, anonymousUser.jobs)
                     // Tell the job actors to copy all jobs connected to the old user to the new user
-                    wsActorCache.get[List[ActorRef]](user.userID.stringify) match {
+                    wsActorCache.get[List[ActorRef]](anonymousUser.userID.stringify) match {
                       case Some(wsActors) =>
                         val actorList: List[ActorRef] = wsActors: List[ActorRef]
                         wsActorCache.set(loggedInUser.userID.stringify, actorList)
                         actorList.foreach(_ ! ChangeSessionID(loggedInUser.sessionID.get))
-                        wsActorCache.remove(user.userID.stringify)
+                        wsActorCache.remove(anonymousUser.userID.stringify)
                       case None =>
                     }
 
@@ -111,6 +104,7 @@ class AuthController @Inject()(
                   case None =>
                     Ok(loginIncorrect())
                 }
+
               } else if (databaseUser.accountType < 1) {
                 // User needs to Verify first
                 fuccess(Ok(mustVerify()))

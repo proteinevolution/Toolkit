@@ -141,9 +141,28 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       userID,
       BSONDocument(
         "$set" ->
-          BSONDocument(
-            User.USERCONFIG -> userConfig
-          )
+        BSONDocument(
+          User.USERCONFIG -> userConfig
+        )
+      )
+    )
+
+  def addJobsToUser(userID: BSONObjectID, jobs: List[String]): Future[Option[User]] =
+    modifyUser(
+      userID,
+      BSONDocument(
+        "$addToSet" ->
+        BSONDocument(
+          User.JOBS -> BSONDocument("$each" -> jobs)
+        )
+      )
+    )
+
+  def removeJobsFromUser(userID: BSONObjectID, jobs: List[String]): Future[Option[User]] =
+    modifyUser(
+      userID,
+      BSONDocument(
+        "$pullAll" -> BSONDocument(User.JOBS -> BSONArray(jobs))
       )
     )
 
