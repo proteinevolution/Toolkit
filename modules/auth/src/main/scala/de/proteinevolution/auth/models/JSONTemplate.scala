@@ -93,6 +93,10 @@ trait JSONTemplate {
     authMessage("The given token does not match.")
   }
 
+  def verificationMailMismatch(): Json = {
+    authMessage("The email address you are trying to verify is not registered for your account.")
+  }
+
   def tokenNotFound(): Json = {
     authMessage("The given token is missing.")
   }

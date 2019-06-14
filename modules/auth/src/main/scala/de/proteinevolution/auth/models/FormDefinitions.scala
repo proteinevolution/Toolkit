@@ -18,7 +18,7 @@ package de.proteinevolution.auth.models
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.user.{ User, UserData }
+import de.proteinevolution.user.{User, UserData, UserToken}
 import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Form
 import play.api.data.Forms._
@@ -125,7 +125,7 @@ object FormDefinitions {
     }
   )
 
-  def forgottenPasswordEdit = Form(
+  def forgottenPasswordRequest = Form(
     mapping(UserData.EMAILORUSERNAME -> nonEmptyText.verifying(pattern(textRegex))) {
       Some(_)
     } { _ =>
@@ -134,9 +134,13 @@ object FormDefinitions {
   )
 
   def forgottenPasswordChange = Form(
-    mapping(UserData.PASSWORDNEW -> text(8, 128).verifying(pattern(textRegex, error = "error.NewPassword"))) {
-      passwordNew =>
-        BCrypt.hashpw(passwordNew, BCrypt.gensalt(LOG_ROUNDS))
+    mapping(
+      UserData.PASSWORDNEW -> text(8, 128).verifying(pattern(textRegex, error = "error.NewPassword")),
+      UserData.NAMELOGIN -> text(6, 40),
+      UserToken.TOKEN -> text(15, 15)
+    ) {
+      (passwordNew, nameLogin, token) =>
+        (BCrypt.hashpw(passwordNew, BCrypt.gensalt(LOG_ROUNDS)), nameLogin, token)
     } { _ =>
       None
     }

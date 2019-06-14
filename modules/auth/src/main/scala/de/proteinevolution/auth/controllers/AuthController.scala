@@ -16,26 +16,24 @@
 
 package de.proteinevolution.auth.controllers
 
-import java.time.ZonedDateTime
-
 import akka.actor.ActorRef
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.auth.models.Session.ChangeSessionID
-import de.proteinevolution.auth.models.{FormDefinitions, JSONTemplate}
+import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.user.{AccountType, User, UserToken}
+import de.proteinevolution.user.{ AccountType, UserToken }
 import io.circe.syntax._
-import javax.inject.{Inject, Singleton}
-import play.api.cache.{NamedCache, SyncCacheApi}
+import javax.inject.{ Inject, Singleton }
+import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import play.api.{Configuration, Logging}
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import play.api.mvc.{ Action, AnyContent, ControllerComponents }
+import play.api.{ Configuration, Logging }
+import reactivemongo.bson.BSONObjectID
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 class AuthController @Inject()(
@@ -138,10 +136,9 @@ class AuthController @Inject()(
         .signUp(user)
         .bindFromRequest
         .fold(
-          _ =>
-            // Something went wrong with the Form.
+          errors =>
             Future.successful {
-              Ok(formError())
+              Ok(formError(errors.errors.mkString(",\n")))
             },
           // if no error, then insert the user to the collection
           signUpFormUser => {
@@ -178,8 +175,7 @@ class AuthController @Inject()(
                         // All done. User is registered, now send the welcome eMail
                         registeredUser.userToken match {
                           case Some(token) =>
-                            val eMail = NewUserWelcomeMail(registeredUser, token.token, config)
-                            eMail.send
+                            NewUserWelcomeMail(registeredUser, token.token, config).send
                             Ok(signedUp)
                           case None => Ok(tokenMismatch())
                         }
@@ -195,11 +191,11 @@ class AuthController @Inject()(
     }
   }
 
-  def resetPassword: Action[AnyContent] = Action.async { implicit request =>
-    FormDefinitions.forgottenPasswordEdit.bindFromRequest.fold(
-      _ =>
+  def forgotPassword: Action[AnyContent] = Action.async { implicit request =>
+    FormDefinitions.forgottenPasswordRequest.bindFromRequest.fold(
+      errors =>
         Future.successful {
-          Ok(formError())
+          Ok(formError(errors.errors.mkString(",\n")))
         },
       // when there are no errors, then insert the user to the collection
       {
@@ -209,22 +205,12 @@ class AuthController @Inject()(
               user.userData match {
                 case Some(_) =>
                   // Generate a new Token to wait for the confirmation eMail
-                  val token = UserToken(tokenType = UserToken.PASSWORD_CHANGE_SEPARATE_WINDOW_TOKEN)
-                  // create a modifier document to change the last login date in the Database
-                  val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-                  // Push to the database using modifier
-                  val modifier = BSONDocument(
-                    "$set" ->
-                    BSONDocument(User.DATEUPDATED -> bsonCurrentTime),
-                    "$set" ->
-                    BSONDocument(User.USERTOKEN -> token)
-                  )
-                  userSessionService.modifyUserWithCache(user.userID, modifier).map {
+                  val token = UserToken(tokenType = UserToken.PASSWORD_CHANGE_TOKEN)
+                  userDao.setToken(user.userID, token).map {
                     case Some(registeredUser) =>
+                      userSessionService.updateUserInCache(registeredUser)
                       // All done. User is registered, now send the welcome eMail
-                      val eMail =
-                        ResetPasswordMail(registeredUser, token.token, config)
-                      eMail.send
+                      ResetPasswordMail(registeredUser, token.token, config).send
                       Ok(passwordRequestSent)
                     case None =>
                       Ok(formError())
@@ -242,55 +228,42 @@ class AuthController @Inject()(
     )
   }
 
-  def resetPasswordChange: Action[AnyContent] = userAction.async { implicit request =>
+  def changeForgottenPasswordSubmit: Action[AnyContent] = userAction.async { implicit request =>
     // Validate the password and return the new password Hash
     FormDefinitions.forgottenPasswordChange.bindFromRequest.fold(
-      errors => Future.successful(Ok(formError(errors.errors.mkString(",\n")))), { newPasswordHash =>
-        request.user.userToken match {
-          case Some(token) =>
-            if (token.tokenType == UserToken.PASSWORD_CHANGE_VERIFIED_TOKEN && token.userID.isDefined) {
-              val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-              // Push to the database using modifier
-              val modifier =
-                BSONDocument(
-                  "$set" ->
-                  BSONDocument(User.DATEUPDATED -> bsonCurrentTime, User.PASSWORD -> newPasswordHash),
-                  "$unset" ->
-                  BSONDocument(User.USERTOKEN -> "")
-                )
-              userSessionService.modifyUserWithCache(token.userID.get, modifier).flatMap {
-                case Some(userWithUpdatedAccount) =>
-                  userSessionService
-                    .modifyUserWithCache(
-                      userWithUpdatedAccount.userID,
-                      BSONDocument(
-                        "$unset" ->
-                        BSONDocument(User.USERTOKEN -> "")
+      errors => Future.successful(Ok(formError(errors.errors.mkString(",\n")))), { formContent =>
+        userDao.findUserByUsername(formContent._2).flatMap {
+          case Some(userToVerify) =>
+            userToVerify.userToken match {
+              case Some(userToken) =>
+                if (userToken.token == formContent._3 && userToken.tokenType == UserToken.PASSWORD_CHANGE_TOKEN) {
+                  val newSessionId: BSONObjectID = BSONObjectID.generate()
+                  userDao.changePassword(userToVerify.userID, formContent._1, newSessionId).map {
+                    case Some(updatedUser) =>
+                      userSessionService.updateUserInCache(updatedUser)
+                      // All done. Now send the eMail to notify the user that the password has been changed
+                      PasswordChangedMail(updatedUser, config).send
+                      // Logout all other clients by renewing session id only for request
+                      Ok(passwordChanged(updatedUser)).withSession(
+                        userSessionService.sessionCookie(request, newSessionId)
                       )
-                    )
-                    .map {
-                      case Some(updatedUser) =>
-                        // All done. Now send the eMail to notify the user that the password has been changed
-                        val eMail = PasswordChangedMail(updatedUser, config)
-                        eMail.send
-                        Ok(passwordChanged(updatedUser))
-                      case None =>
-                        Ok(databaseError)
-                    }
-                case None =>
-                  // User has been found in the DB at first but now it cant be retrieved
-                  Future.successful(Ok(databaseError))
-              }
-            } else {
-              Future.successful(Ok(tokenMismatch()))
+                    case None =>
+                      // User has been found in the DB at first but now it cant be retrieved
+                      Ok(databaseError)
+                  }
+                } else {
+                  // No Token in DB
+                  Future.successful(Ok(tokenMismatch()))
+                }
+              case None => Future.successful(Ok(tokenNotFound()))
             }
-          case None => Future.successful(Ok(tokenNotFound()))
+          case None => Future.successful(Ok(accountError()))
         }
       }
     )
   }
 
-  def passwordChangeSubmit(): Action[AnyContent] = userAction.async { implicit request =>
+  def changePasswordSubmit: Action[AnyContent] = userAction.async { implicit request =>
     val user = request.user
     // remove user from cache to prevent invalid states
     userSessionService.removeUserFromCache(user)
@@ -312,6 +285,8 @@ class AuthController @Inject()(
                 userDao.changePassword(user.userID, newPasswordHash, newSessionId).map {
                   case Some(updatedUser) =>
                     userSessionService.updateUserInCache(updatedUser)
+                    // All done. Now send the eMail to notify the user that the password has been changed
+                    PasswordChangedMail(updatedUser, config).send
                     // Logout all other clients by renewing session id only for request
                     Ok(passwordChanged(updatedUser)).withSession(
                       userSessionService.sessionCookie(request, newSessionId)
@@ -331,7 +306,7 @@ class AuthController @Inject()(
     }
   }
 
-  def profileSubmit(): Action[AnyContent] = userAction.async { implicit request =>
+  def profileSubmit: Action[AnyContent] = userAction.async { implicit request =>
     val user = request.user
     user.userData match {
       case Some(userData) =>
@@ -340,16 +315,19 @@ class AuthController @Inject()(
           .profileEdit(user)
           .bindFromRequest
           .fold(
-            _ => fuccess(Ok(formError())),
+            errors =>
+              Future.successful {
+                Ok(formError(errors.errors.mkString(",\n")))
+              },
             // when there are no errors, then insert the user to the collection
             {
               case Some(editedProfileUserData) =>
                 // check that new email does not exist already
                 if (editedProfileUserData.eMail != user.getUserData.eMail) {
-                  userDao.findUserByEmail(editedProfileUserData.eMail).flatMap {
+                  userDao.findUserByEmail(editedProfileUserData.eMail).map {
                     case Some(_) =>
-                      fuccess(Ok(accountEmailUsed()))
-                    case None => fuccess(NotFound)
+                      Ok(accountEmailUsed())
+                    case None => NotFound
                   }
                 }
 

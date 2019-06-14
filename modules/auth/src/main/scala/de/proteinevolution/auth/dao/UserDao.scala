@@ -18,15 +18,15 @@ package de.proteinevolution.auth.dao
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.user.{ User, UserData }
-import javax.inject.{ Inject, Singleton }
+import de.proteinevolution.user.{User, UserData, UserToken}
+import javax.inject.{Inject, Singleton}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.api.commands.{ UpdateWriteResult, WriteResult }
-import reactivemongo.bson.{ BSONArray, BSONDateTime, BSONDocument, BSONObjectID }
+import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
+import reactivemongo.bson.{BSONArray, BSONDateTime, BSONDocument, BSONObjectID}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit ec: ExecutionContext) {
@@ -71,7 +71,19 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       _.findAndUpdate(BSONDocument(User.IDDB -> userID), modifier, fetchNewObject = true).map(_.result[User])
     )
 
-  def updateAccountType(userID: BSONObjectID, accountType: Int, resetUserToken: Boolean = false) = {
+  def setToken(userID: BSONObjectID, token: UserToken): Future[Option[User]] = {
+    val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
+    // Push to the database using modifier
+    val modifier = BSONDocument(
+      "$set" ->
+        BSONDocument(User.DATEUPDATED -> bsonCurrentTime),
+      "$set" ->
+        BSONDocument(User.USERTOKEN -> token)
+    )
+    modifyUser(userID, modifier)
+  }
+
+  def updateAccountType(userID: BSONObjectID, accountType: Int, resetUserToken: Boolean = false): Future[Option[User]] = {
     var modifier = BSONDocument(      "$set" ->
         BSONDocument(
           User.ACCOUNTTYPE -> accountType,

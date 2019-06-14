@@ -33,10 +33,10 @@ class AuthRouter @Inject()(authController: AuthController,
     case GET(p"/logout")                 => authController.signOut
     case GET(p"/user/data")              => authController.getUserData
     case POST(p"/signup")                => authController.signUpSubmit
-    case POST(p"/reset/password")        => authController.resetPassword
-    case POST(p"/reset/password/change") => authController.resetPasswordChange
-    case POST(p"/password")              => authController.passwordChangeSubmit()
-    case POST(p"/profile")               => authController.profileSubmit()
+    case POST(p"/reset/password")        => authController.forgotPassword
+    case POST(p"/reset/password/change") => authController.changeForgottenPasswordSubmit
+    case POST(p"/password")              => authController.changePasswordSubmit
+    case POST(p"/profile")               => authController.profileSubmit
   }
 
   private lazy val validationRoutes: Routes = {
@@ -44,7 +44,7 @@ class AuthRouter @Inject()(authController: AuthController,
   }
 
   private lazy val verificationRoutes: Routes = {
-    case GET(p"/verify/$usernameOrEmail/$token") => verificationController.verification(usernameOrEmail, token)
+    case GET(p"/verify/$usernameOrEmail/$token") => verificationController.verifyEmailAddress(usernameOrEmail, token)
   }
 
   override def routes: Routes = {
