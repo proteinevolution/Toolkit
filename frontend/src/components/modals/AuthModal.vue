@@ -24,13 +24,6 @@
                        :title="$t('auth.settings')">
                     <Settings/>
                 </b-tab>
-                <template v-if="loggedIn"
-                          slot="tabs">
-                    <b-nav-item href="#"
-                                @click="signOut"
-                                v-b-tooltip.hover.bottom="$t('auth.signOut')"><i class="fas fa-sign-out-alt"></i>
-                    </b-nav-item>
-                </template>
             </b-tabs>
         </template>
     </BaseModal>
@@ -62,20 +55,6 @@
             },
             user(): User | null {
                 return this.$store.getters['auth/user'];
-            },
-        },
-        methods: {
-            async signOut() {
-                try {
-                    const msg = await AuthService.logout();
-                    if (msg.successful) {
-                        this.$store.commit('auth/setUser', null);
-                        EventBus.$emit('hide-modal', 'auth');
-                        this.$alert(msg.message);
-                    }
-                } catch (error) {
-                    this.$alert(error.message, 'danger');
-                }
             },
         },
     });

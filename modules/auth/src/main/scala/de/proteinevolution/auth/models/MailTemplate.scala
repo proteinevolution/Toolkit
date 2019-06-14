@@ -472,7 +472,7 @@ object MailTemplate {
            |  <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
            |    <div style="font-family:Noto Sans;font-size:14px;line-height:1;text-align:center;color:grey;">
            |      Dear ${user.getUserData.nameLogin},<br/><br/>
-           |      your password was successfully reset.<br/>
+           |      your password was reset successfully.<br/>
            |      You can change it at any time in your user profile.<br/><br/>
            |      If you did not request this, then someone else may have changed your password.<br/>
            |    </div>

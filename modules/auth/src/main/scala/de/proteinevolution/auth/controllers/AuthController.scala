@@ -259,8 +259,6 @@ class AuthController @Inject()(
 
   def changePasswordSubmit: Action[AnyContent] = userAction.async { implicit request =>
     val user = request.user
-    // remove user from cache to prevent invalid states
-    userSessionService.removeUserFromCache(user)
     user.userData match {
       case Some(_) =>
         // Validate the password and return the new password Hash
@@ -287,7 +285,9 @@ class AuthController @Inject()(
                     )
                   case None =>
                     // User has been found in the DB at first but now it cant be retrieved
-                    Ok(loginError())
+                    Ok(loginError()).withSession(
+                      userSessionService.sessionCookie(request, newSessionId)
+                    )
                 }
               case None =>
                 // Password was incorrect

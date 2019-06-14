@@ -120,7 +120,7 @@ trait JSONTemplate {
   }
 
   def passwordChanged(user: User): Json = {
-    authMessage("Password has been accepted.\nPlease check your emails in order to verify the password change.",
+    authMessage("Password changed successfully.",
                 success = true,
                 userOption = Some(user))
   }
