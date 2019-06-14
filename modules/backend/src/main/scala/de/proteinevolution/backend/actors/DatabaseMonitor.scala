@@ -137,12 +137,7 @@ final class DatabaseMonitor @Inject()(
         // Store the deleted users in the user statistics
         backendDao.getStats.foreach { statisticsObject =>
           val currentDeleted: Int = statisticsObject.userStatistics.currentDeleted + users.count(_.userData.nonEmpty)
-          val modifier: BSONDocument =
-            BSONDocument(
-              "$set" ->
-              BSONDocument(s"${StatisticsObject.USERSTATISTICS}.${UserStatistic.CURRENTDELETED}" -> currentDeleted)
-            )
-          backendDao.modifyStats(statisticsObject, modifier)
+          backendDao.setStatsCurrentDeleted(statisticsObject, currentDeleted)
         }
 
         // Finally remove the users with their userID
