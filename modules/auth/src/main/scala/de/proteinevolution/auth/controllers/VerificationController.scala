@@ -57,7 +57,7 @@ final class VerificationController @Inject()(
             case Some(userToken) =>
               if (userToken.token == token && userToken.tokenType == UserToken.EMAIL_VERIFICATION_TOKEN) {
                 if (userToken.eMail.get == userToVerify.userData.get.eMail) {
-                  userDao.updateAccountType(userToVerify.userID, AccountType.NORMALUSER).map {
+                  userDao.updateAccountType(userToVerify.userID, AccountType.REGISTEREDUSER, resetUserToken = true).map {
                     case Some(updatedUser) =>
                       userSessionService.updateUserInCache(updatedUser)
                       Ok(verificationSuccessful(userToVerify))

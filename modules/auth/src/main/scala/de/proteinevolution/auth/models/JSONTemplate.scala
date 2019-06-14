@@ -42,7 +42,7 @@ trait JSONTemplate {
   }
 
   def signedUp: Json = {
-    authMessage(s"Your Account has been created.\n Please Check your emails to Verify your Account.", success = true)
+    authMessage(s"Your account has been created.\n Please check your emails to verify your account.", success = true)
   }
 
   def loggedOut(): Json = {

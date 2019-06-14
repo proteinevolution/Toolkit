@@ -322,7 +322,10 @@ sealed trait MailTemplate {
 
   def config: Configuration
 
-  val origin: String = config.get[String]("mail.host")
+  val origin: String = {
+    val s = config.get[String]("mail.host")
+    if (s.endsWith("/")) s.substring(0, s.length - 1) else s
+  }
 
 }
 

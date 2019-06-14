@@ -63,10 +63,13 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[User]]()))
 
   /**
-   * @deprecated very bad practice to have db logic in controllers. Should be private
+   * modify the user internally. Do not expose any db logic to the outside.
+   *
+   * @param userID   identifier of the user
+   * @param modifier operations to perform on the user
+   * @return
    */
-  @Deprecated
-  def modifyUser(userID: BSONObjectID, modifier: BSONDocument): Future[Option[User]] = {
+  private def modifyUser(userID: BSONObjectID, modifier: BSONDocument): Future[Option[User]] = {
     val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
     userCollection.flatMap(
       _.findAndUpdate(
@@ -113,7 +116,8 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
   def changePassword(
       userID: BSONObjectID,
       newPasswordHash: String,
-      newSessionId: BSONObjectID
+      newSessionId: BSONObjectID,
+      resetUserToken: Boolean = false
   ): Future[Option[User]] =
     modifyUser(
       userID,
@@ -122,7 +126,13 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
           User.PASSWORD  -> newPasswordHash,
           User.SESSIONID -> newSessionId
         )
-      )
+      ).merge {
+        if (resetUserToken) {
+          BSONDocument("$unset" -> BSONDocument(User.USERTOKEN -> ""))
+        } else {
+          BSONDocument.empty
+        }
+      }
     )
 
   def updateUserData(userID: BSONObjectID, userData: UserData): Future[Option[User]] =
@@ -169,8 +179,12 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
   def saveNewLogin(user: User, sessionDataOption: Option[SessionData] = None): Future[Option[User]] =
     modifyUser(
       user.userID,
-      BSONDocument("$set" -> BSONDocument(User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)))
-        .merge(
+      BSONDocument(
+        "$set" -> BSONDocument(
+          User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli),
+          User.SESSIONID     -> user.sessionID.orElse(Some(BSONObjectID.generate())) // user needs session id
+        )
+      ).merge(
           // In the case that the user has been emailed about their inactivity, reset that status to a regular user status
           if (user.accountType == AccountType.CLOSETODELETIONUSER) {
             BSONDocument(
