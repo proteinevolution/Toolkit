@@ -27,10 +27,10 @@ import io.circe.{ Encoder, Json }
 import reactivemongo.bson._
 
 case class StatisticsObject(
-                             statisticsID: String = UUID.randomUUID().toString,
-                             userStatistics: UserStatistic = UserStatistic(),
-                             toolStatistics: List[ToolStatistic] = List.empty[ToolStatistic],
-                             datePushed: List[ZonedDateTime] = List.empty[ZonedDateTime]
+    statisticsID: String = UUID.randomUUID().toString,
+    userStatistics: UserStatistic = UserStatistic(),
+    toolStatistics: List[ToolStatistic] = List.empty[ToolStatistic],
+    datePushed: List[ZonedDateTime] = List.empty[ZonedDateTime]
 ) {
 
   /**
@@ -44,8 +44,6 @@ case class StatisticsObject(
 
   /**
    * Creates new and empty tool statistic elements with the provided name list
-   *
-   * @param toolNames
    * @return
    */
   def updateTools(toolNames: List[String]): StatisticsObject = {
@@ -69,8 +67,6 @@ case class StatisticsObject(
 
   /**
    * Adds the job events within the begin and end date to the tool statistics
-   *
-   * @param jobEventLogs
    * @return
    */
   def addMonthsToTools(
@@ -152,15 +148,12 @@ object StatisticsObject {
   val TOOLSTATISTICS = "toolStat"
   val DATEPUSHED     = "datePushed"
 
-  implicit val statObjEncoder: Encoder[StatisticsObject] = new Encoder[StatisticsObject] {
-    final override def apply(obj: StatisticsObject): Json =
-      Json.obj(
-        (ID, Json.fromString(obj.getStatisticsID)),
-        (USERSTATISTICS, obj.userStatistics.asJson),
-        (TOOLSTATISTICS, obj.toolStatistics.asJson),
-        (DATEPUSHED, obj.datePushed.asJson)
-      )
-  }
+  implicit val statObjEncoder: Encoder[StatisticsObject] = (obj: StatisticsObject) => Json.obj(
+    (ID, Json.fromString(obj.statisticsID)),
+    (USERSTATISTICS, obj.userStatistics.asJson),
+    (TOOLSTATISTICS, obj.toolStatistics.asJson),
+    (DATEPUSHED, obj.datePushed.asJson)
+  )
 
   implicit object Reader extends BSONDocumentReader[StatisticsObject] {
     def read(bson: BSONDocument): StatisticsObject = {
@@ -176,7 +169,7 @@ object StatisticsObject {
 
   implicit object Writer extends BSONDocumentWriter[StatisticsObject] {
     def write(statisticObject: StatisticsObject): BSONDocument = BSONDocument(
-      ID             -> statisticObject.getStatisticsID,
+      ID             -> statisticObject.statisticsID,
       USERSTATISTICS -> statisticObject.userStatistics,
       TOOLSTATISTICS -> statisticObject.toolStatistics,
       DATEPUSHED     -> statisticObject.datePushed.map(a => BSONDateTime(a.toInstant.toEpochMilli))
