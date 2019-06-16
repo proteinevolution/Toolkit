@@ -17,20 +17,21 @@
 package de.proteinevolution.auth
 
 import java.time.ZonedDateTime
+import java.util.UUID
 
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.base.helpers.ToolkitTypes
-import de.proteinevolution.user.{ SessionData, User }
+import de.proteinevolution.user.{SessionData, User}
 import de.proteinevolution.util.LocationProvider
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{ Logging, mvc }
+import play.api.{Logging, mvc}
 import play.mvc.Http
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.duration._
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.hashing.MurmurHash3
 
 @Singleton
@@ -94,7 +95,7 @@ class UserSessions @Inject()(
     userDao.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
       case Some(user) =>
         logger.info(s"User found by SessionID:\n${user.toString}")
-        val selector = BSONDocument(User.IDDB -> user.userIDDB)
+        val selector = BSONDocument(User.ID -> user.userID)
 
         // This resets the user's deletion date in case they have been eMailed for inactivity already
         val modifier = getUserModifier(user, Some(newSessionData))
@@ -109,7 +110,7 @@ class UserSessions @Inject()(
       case None =>
         // Create a new user as there is no user with this sessionID
         val user = User(
-          userIDDB = BSONObjectID.generate(),
+          userID = UUID.randomUUID().toString,
           sessionID = Some(sessionID),
           sessionData = List(newSessionData),
           dateCreated = Some(ZonedDateTime.now),
@@ -161,7 +162,7 @@ class UserSessions @Inject()(
         userDao.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
           case Some(user) =>
             // Update the last login time
-            val selector = BSONDocument(User.IDDB -> user.userIDDB)
+            val selector = BSONDocument(User.ID -> user.userID)
             val modifier = getUserModifier(user)
             modifyUserWithCache(selector, modifier).map {
               case Some(updatedUser) =>
@@ -214,7 +215,7 @@ class UserSessions @Inject()(
     if (withDB) {
       userDao.userCollection.flatMap(
         _.update(ordered = false).one(
-          BSONDocument(User.IDDB -> user.userIDDB),
+          BSONDocument(User.ID -> user.userID),
           BSONDocument(
             "$set" ->
             BSONDocument(

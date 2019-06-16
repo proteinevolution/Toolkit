@@ -25,8 +25,12 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
+import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ChangeLog
 public class DatabaseChangelog {
@@ -66,8 +70,7 @@ public class DatabaseChangelog {
 
     @ChangeSet(order = "003", id = "3", author = "Felix Gabler")
     public void changeJobEventLogKeysToSnakeCase(final MongoDatabase db) {
-        final Document rename = new Document();
-        rename.put("internalJob", "internal_job");
+        final Bson rename = Updates.rename("internalJob", "internal_job");
         Bson filters = Filters.and(
                 Filters.and(
                         Filters.exists("internalJob", true)
@@ -76,8 +79,7 @@ public class DatabaseChangelog {
                         Filters.exists("internal_job", false)
                 )
         );
-        Bson update = new Document("$rename", rename);
-        db.getCollection("jobevents").updateMany(filters, update);
+        db.getCollection("jobevents").updateMany(filters, rename);
     }
 
     @ChangeSet(order = "004", id = "4", author = "Felix Gabler")
@@ -110,10 +112,51 @@ public class DatabaseChangelog {
         MongoCollection<Document> users = db.getCollection("users");
         users.find().forEach((Block<Document>) document -> {
             Bson filter = Filters.eq("_id", document.get("_id"));
-            Bson update = new Document("$set", new Document("id", document.get("_id").toString()));
+            Bson update = Updates.set("id", document.get("_id").toString());
             users.updateOne(filter, update);
         });
         users.createIndex(Indexes.ascending("id"), new IndexOptions().unique(true));
+    }
+
+    @ChangeSet(order = "007", id = "7", author = "Felix Gabler")
+    public void migrateJobWatchList(final MongoDatabase db) {
+        MongoCollection<Document> jobs = db.getCollection("jobs");
+        jobs.find().forEach((Block<Document>) job -> {
+            Bson filter = Filters.eq("_id", job.get("_id"));
+            List watchList = job.get("watch_list", List.class);
+            Object res = watchList.stream().map(Object::toString).collect(Collectors.toList());
+            Bson update = Updates.set("watch_list", res);
+            jobs.updateOne(filter, update);
+        });
+    }
+
+    @ChangeSet(order = "008", id = "8", author = "Felix Gabler")
+    public void migrateJobOwner(final MongoDatabase db) {
+        MongoCollection<Document> jobs = db.getCollection("jobs");
+        jobs.find().forEach((Block<Document>) job -> {
+            Bson filter = Filters.eq("_id", job.get("_id"));
+            Bson update = Updates.set("owner_id", job.get("owner_id").toString());
+            jobs.updateOne(filter, update);
+        });
+    }
+
+    @ChangeSet(order = "009", id = "9", author = "Felix Gabler")
+    public void migrateUserToken(final MongoDatabase db) {
+        MongoCollection<Document> users = db.getCollection("users");
+        users.find().forEach((Block<Document>) user -> {
+            Bson filter = Filters.and(
+                    Filters.eq("_id", user.get("_id")),
+                    Filters.exists("userToken.userID", true)
+            );
+            Document userToken = user.get("userToken", Document.class);
+            if (userToken != null) {
+                Object userId = userToken.get("userID");
+                if (userId != null) {
+                    Bson update = Updates.set("userToken.userID", userId.toString());
+                    users.updateOne(filter, update);
+                }
+            }
+        });
     }
 
 //    @ChangeSet(order = "004", id = "4", author = "Felix Gabler")

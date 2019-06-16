@@ -27,7 +27,7 @@ import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.{ Index, IndexType }
 import reactivemongo.api.{ Cursor, ReadConcern }
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -69,10 +69,10 @@ class JobDao @Inject()(
   def findJobsByIds(jobs: List[String]): Future[List[Job]] =
     internalFindJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> jobs)))
 
-  def findJobsByOwner(userID: BSONObjectID): Future[List[Job]] =
+  def findJobsByOwner(userID: String): Future[List[Job]] =
     internalFindJobs(BSONDocument(Job.OWNERID -> userID, Job.DELETION -> BSONDocument("$exists" -> false)))
 
-  def findJobsByOwnerAndTools(userID: BSONObjectID, toolNames: List[String]): Future[List[Job]] =
+  def findJobsByOwnerAndTools(userID: String, toolNames: List[String]): Future[List[Job]] =
     internalFindJobs(BSONDocument(Job.OWNERID -> userID, Job.TOOL -> BSONDocument("$in" -> toolNames)))
 
   def findOldJobs(): Future[List[Job]] = {
@@ -112,7 +112,7 @@ class JobDao @Inject()(
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
   }
 
-  final def findSortedJob(userId: BSONObjectID, sort: Int = -1): Future[Option[Job]] = {
+  final def findSortedJob(userId: String, sort: Int = -1): Future[Option[Job]] = {
     jobCollection.flatMap(
       _.find(
         BSONDocument(

@@ -25,13 +25,13 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.JobHashError
-import de.proteinevolution.jobs.services.{ JobFolderValidation, JobHashCheckService }
+import de.proteinevolution.jobs.services.{JobFolderValidation, JobHashCheckService}
 import de.proteinevolution.tools.ToolConfig
 import io.circe.syntax._
-import io.circe.{ Json, JsonObject }
-import javax.inject.{ Inject, Singleton }
+import io.circe.{Json, JsonObject}
+import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import play.api.mvc.{ Action, AnyContent, ControllerComponents }
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 
 import scala.concurrent.ExecutionContext
 
@@ -49,7 +49,7 @@ class JobGetController @Inject()(
 
   def jobManagerListJobs: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
-      jobDao.findJobsByOwner(user.userIDDB).map {
+      jobDao.findJobsByOwner(user.userID).map {
         jobs =>
           NoCache(Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.jobManagerJob()).asJson))
       }

@@ -26,7 +26,6 @@ import org.mindrot.jbcrypt.BCrypt
 import reactivemongo.bson._
 
 case class User(
-    userIDDB: BSONObjectID = BSONObjectID.generate(), // db internal ID of the User
     userID: String = UUID.randomUUID().toString,      // ID of the User
     sessionID: Option[BSONObjectID] = None,           // Session ID
     sessionData: List[SessionData] = List.empty,      // Session data separately from sid
@@ -112,7 +111,7 @@ object User {
 
   implicit val encodeUser: Encoder[User] = (u: User) =>
     Json.obj(
-      (ID, Json.fromString(u.userIDDB.stringify)),
+      (ID, Json.fromString(u.userID)),
       (SESSIONID, u.sessionID.map(id => Json.fromString(id.stringify)).getOrElse(Json.Null)),
       (SESSIONDATA, u.sessionData.asJson),
       (CONNECTED, Json.fromBoolean(u.connected)),
@@ -137,7 +136,6 @@ object User {
   implicit object Reader extends BSONDocumentReader[User] {
     override def read(bson: BSONDocument): User =
       User(
-        userIDDB = bson.getAs[BSONObjectID](IDDB).get,
         userID = bson.getAs[String](ID).get,
         sessionID = bson.getAs[BSONObjectID](SESSIONID),
         sessionData = bson.getAs[List[SessionData]](SESSIONDATA).getOrElse(List.empty),
@@ -157,7 +155,6 @@ object User {
   implicit object Writer extends BSONDocumentWriter[User] {
     override def write(user: User): BSONDocument =
       BSONDocument(
-        IDDB          -> user.userIDDB,
         ID            -> user.userID,
         SESSIONID     -> user.sessionID,
         SESSIONDATA   -> user.sessionData,

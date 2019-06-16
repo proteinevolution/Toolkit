@@ -131,7 +131,7 @@ final class DatabaseMonitor @Inject()(
       )
       .foreach { users =>
         // Get the userIDs for all found users
-        val userIDs = users.map(_.userIDDB)
+        val userIDs = users.map(_.userID)
         // Store the deleted users in the user statistics
         backendDao.getStats.foreach { statisticsObject =>
           val currentDeleted: Int = statisticsObject.userStatistics.currentDeleted + users.count(_.userData.nonEmpty)
@@ -139,7 +139,7 @@ final class DatabaseMonitor @Inject()(
         }
 
         // Finally remove the users with their userID
-        userDao.removeUsers(BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs))).foreach { writeResult =>
+        userDao.removeUsers(BSONDocument(User.ID -> BSONDocument("$in" -> userIDs))).foreach { writeResult =>
           if (verbose)
             log.info(
               s"[User Deletion] Deleting of ${users.length} old users ${if (writeResult.ok) "successful" else "failed"}"
@@ -175,7 +175,7 @@ final class DatabaseMonitor @Inject()(
                 .map(_.toString())
                 .getOrElse("[no Date]")
             )
-          user.userIDDB
+          user.userID
         }
 
         if (verbose)
@@ -184,7 +184,7 @@ final class DatabaseMonitor @Inject()(
         // Set all the eMailed users to "User.CLOSETODELETIONUSER", so that they do not receive another eMail for the same reason
         userDao
           .modifyUsers(
-            BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs)),
+            BSONDocument(User.ID -> BSONDocument("$in" -> userIDs)),
             BSONDocument(
               "$set" ->
               BSONDocument(

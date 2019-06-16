@@ -66,7 +66,7 @@ class SubmissionController @Inject()(
   def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
     logger.info("Delete Action in JobController reached")
     userSessions.getUser.map { user =>
-      jobActorAccess.sendToJobActor(jobID, Delete(jobID, Some(user.userIDDB)))
+      jobActorAccess.sendToJobActor(jobID, Delete(jobID, Some(user.userID)))
       NoContent
     }
   }

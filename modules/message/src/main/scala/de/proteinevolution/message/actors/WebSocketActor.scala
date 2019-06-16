@@ -64,12 +64,12 @@ final class WebSocketActor @Inject()(
     context.system.eventStream.subscribe(self, classOf[UpdateLoad])
     userSessions.getUser(sessionID).foreach {
       case Some(user) =>
-        wsActorCache.get[List[ActorRef]](user.userIDDB.stringify) match {
+        wsActorCache.get[List[ActorRef]](user.userID) match {
           case Some(wsActors) =>
             val actorSet = (wsActors: List[ActorRef]).::(self)
-            wsActorCache.set(user.userIDDB.stringify, actorSet)
+            wsActorCache.set(user.userID, actorSet)
           case None =>
-            wsActorCache.set(user.userIDDB.stringify, List(self))
+            wsActorCache.set(user.userID, List(self))
         }
         val loadFuture = clusterSubscriber ? SGELoad.Ask
         loadFuture.mapTo[UpdateLoad].map { response =>
@@ -87,10 +87,10 @@ final class WebSocketActor @Inject()(
     userSessions
       .getUser(sessionID)
       .map(_.foreach { user =>
-        wsActorCache.get[List[ActorRef]](user.userIDDB.stringify).foreach { wsActors =>
+        wsActorCache.get[List[ActorRef]](user.userID).foreach { wsActors =>
           val actorSet: List[ActorRef] = wsActors: List[ActorRef]
           val newActorSet              = actorSet.filterNot(_ == self)
-          wsActorCache.set(user.userIDDB.stringify, newActorSet)
+          wsActorCache.set(user.userID, newActorSet)
         }
       })
     context.system.eventStream.unsubscribe(self, classOf[UpdateLoad])
@@ -108,7 +108,7 @@ final class WebSocketActor @Inject()(
             case "RegisterJobs" =>
               json.hcursor.get[List[String]]("jobIDs").map { jobIDs =>
                 jobIDs.foreach { jobID =>
-                  jobActorAccess.sendToJobActor(jobID, AddToWatchlist(jobID, user.userIDDB))
+                  jobActorAccess.sendToJobActor(jobID, AddToWatchlist(jobID, user.userID))
                 }
               }
 
@@ -116,7 +116,7 @@ final class WebSocketActor @Inject()(
             case "ClearJob" =>
               json.hcursor.get[List[String]]("jobIDs").map { jobIDs =>
                 jobIDs.foreach { jobID =>
-                  jobActorAccess.sendToJobActor(jobID, RemoveFromWatchlist(jobID, user.userIDDB))
+                  jobActorAccess.sendToJobActor(jobID, RemoveFromWatchlist(jobID, user.userID))
                 }
               }
 
