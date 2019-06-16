@@ -37,7 +37,7 @@ class SearchService @Inject()(
 )(implicit ec: ExecutionContext)
     extends JobFolderValidation {
 
-  def recentJob(user: User): Future[Option[Job]] = jobDao.findSortedJob(user.userID)
+  def recentJob(user: User): Future[Option[Job]] = jobDao.findSortedJob(user.userIDDB)
 
   def autoComplete(user: User, queryString_ : String): OptionT[Future, List[Job]] = {
     val queryString = queryString_.trim()
@@ -48,7 +48,7 @@ class SearchService @Inject()(
     if (tools.isEmpty) {
       (for {
         jobs     <- OptionT.liftF(jobDao.findJobsByIdLike(queryString))
-        filtered <- OptionT.pure[Future](jobs.filter(job => job.ownerID.contains(user.userID)))
+        filtered <- OptionT.pure[Future](jobs.filter(job => job.ownerID.contains(user.userIDDB)))
       } yield filtered).flatMapF { jobs =>
         if (jobs.isEmpty) {
           OptionT(jobDao.findJob(queryString)).filter(job => resultsExist(job.jobID, constants)).map(_ :: Nil).value
@@ -57,7 +57,7 @@ class SearchService @Inject()(
         }
       }
     } else {
-      OptionT.liftF(jobDao.findJobsByOwnerAndTools(user.userID, tools.map(_.toolNameShort)))
+      OptionT.liftF(jobDao.findJobsByOwnerAndTools(user.userIDDB, tools.map(_.toolNameShort)))
     }
   }
 

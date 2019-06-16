@@ -131,7 +131,7 @@ final class DatabaseMonitor @Inject()(
       )
       .foreach { users =>
         // Get the userIDs for all found users
-        val userIDs = users.map(_.userID)
+        val userIDs = users.map(_.userIDDB)
         // Store the deleted users in the user statistics
         backendDao.getStats.foreach { statisticsObject =>
           val currentDeleted: Int = statisticsObject.userStatistics.currentDeleted + users.count(_.userData.nonEmpty)
@@ -175,7 +175,7 @@ final class DatabaseMonitor @Inject()(
                 .map(_.toString())
                 .getOrElse("[no Date]")
             )
-          user.userID
+          user.userIDDB
         }
 
         if (verbose)

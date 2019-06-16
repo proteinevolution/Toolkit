@@ -89,7 +89,7 @@ class AuthController @Inject()(
                   // Check the password
                   if (databaseUser.checkPassword(signInFormUser.password) && databaseUser.accountType > 0) {
                     // create a modifier document to change the last login date in the Database
-                    val selector = BSONDocument(User.IDDB -> databaseUser.userID)
+                    val selector = BSONDocument(User.IDDB -> databaseUser.userIDDB)
                     // Change the login time and give the new Session ID to the user.
                     // Additionally add the watched jobs to the users watchlist.
                     val modifier = userSessions.getUserModifier(databaseUser, forceSessionID = true)
@@ -111,12 +111,12 @@ class AuthController @Inject()(
                         userSessions.removeUserFromCache(unregisteredUser)
 
                         // Tell the job actors to copy all jobs connected to the old user to the new user
-                        wsActorCache.get[List[ActorRef]](unregisteredUser.userID.stringify) match {
+                        wsActorCache.get[List[ActorRef]](unregisteredUser.userIDDB.stringify) match {
                           case Some(wsActors) =>
                             val actorList: List[ActorRef] = wsActors: List[ActorRef]
-                            wsActorCache.set(loggedInUser.userID.stringify, actorList)
+                            wsActorCache.set(loggedInUser.userIDDB.stringify, actorList)
                             actorList.foreach(_ ! ChangeSessionID(loggedInUser.sessionID.get))
-                            wsActorCache.remove(unregisteredUser.userID.stringify)
+                            wsActorCache.remove(unregisteredUser.userIDDB.stringify)
                           case None =>
                         }
 
@@ -183,7 +183,7 @@ class AuthController @Inject()(
                   case None =>
                     // Create the database entry.
                     val newUser = signUpFormUser.copy(
-                      userID = BSONObjectID.generate(),
+                      userIDDB = BSONObjectID.generate(),
                       sessionID = None,
                       userToken =
                         Some(UserToken(tokenType = User.REGISTEREDUSER, eMail = Some(signUpFormUser.getUserData.eMail)))
@@ -237,7 +237,7 @@ class AuthController @Inject()(
                   // create a modifier document to change the last login date in the Database
                   val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
                   // Push to the database using selector and modifier
-                  val selector = BSONDocument(User.IDDB -> user.userID)
+                  val selector = BSONDocument(User.IDDB -> user.userIDDB)
                   val modifier = BSONDocument(
                     "$set" ->
                     BSONDocument(User.DATEUPDATED -> bsonCurrentTime),
@@ -289,7 +289,7 @@ class AuthController @Inject()(
                   case Some(userWithUpdatedAccount) =>
                     userSessions
                       .modifyUserWithCache(
-                        BSONDocument(User.IDDB -> userWithUpdatedAccount.userID),
+                        BSONDocument(User.IDDB -> userWithUpdatedAccount.userIDDB),
                         BSONDocument(
                           "$unset" ->
                           BSONDocument(User.USERTOKEN -> "")
@@ -339,7 +339,7 @@ class AuthController @Inject()(
                   // create a modifier document to change the last login date in the Database
                   val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
                   // Push to the database using selector and modifier
-                  val selector = BSONDocument(User.IDDB -> user.userID)
+                  val selector = BSONDocument(User.IDDB -> user.userIDDB)
                   val modifier = BSONDocument(
                     "$set" ->
                     BSONDocument(User.DATELASTLOGIN -> bsonCurrentTime, User.DATEUPDATED -> bsonCurrentTime),
@@ -387,7 +387,7 @@ class AuthController @Inject()(
                 case Some(editedProfileUserData) =>
                   // create a modifier document to change the last login date in the Database
                   val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-                  val selector        = BSONDocument(User.IDDB -> user.userID)
+                  val selector        = BSONDocument(User.IDDB -> user.userIDDB)
                   val modifier = BSONDocument(
                     "$set" ->
                     BSONDocument(User.USERDATA      -> editedProfileUserData.copy(nameLogin = userData.nameLogin),

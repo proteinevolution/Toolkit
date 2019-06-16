@@ -94,7 +94,7 @@ class UserSessions @Inject()(
     userDao.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
       case Some(user) =>
         logger.info(s"User found by SessionID:\n${user.toString}")
-        val selector = BSONDocument(User.IDDB -> user.userID)
+        val selector = BSONDocument(User.IDDB -> user.userIDDB)
 
         // This resets the user's deletion date in case they have been eMailed for inactivity already
         val modifier = getUserModifier(user, Some(newSessionData))
@@ -109,7 +109,7 @@ class UserSessions @Inject()(
       case None =>
         // Create a new user as there is no user with this sessionID
         val user = User(
-          userID = BSONObjectID.generate(),
+          userIDDB = BSONObjectID.generate(),
           sessionID = Some(sessionID),
           sessionData = List(newSessionData),
           dateCreated = Some(ZonedDateTime.now),
@@ -161,7 +161,7 @@ class UserSessions @Inject()(
         userDao.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
           case Some(user) =>
             // Update the last login time
-            val selector = BSONDocument(User.IDDB -> user.userID)
+            val selector = BSONDocument(User.IDDB -> user.userIDDB)
             val modifier = getUserModifier(user)
             modifyUserWithCache(selector, modifier).map {
               case Some(updatedUser) =>
@@ -214,7 +214,7 @@ class UserSessions @Inject()(
     if (withDB) {
       userDao.userCollection.flatMap(
         _.update(ordered = false).one(
-          BSONDocument(User.IDDB -> user.userID),
+          BSONDocument(User.IDDB -> user.userIDDB),
           BSONDocument(
             "$set" ->
             BSONDocument(

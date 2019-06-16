@@ -17,6 +17,7 @@
 package de.proteinevolution.user
 
 import java.time.ZonedDateTime
+import java.util.UUID
 
 import de.proteinevolution.common.models.util.{ ZonedDateTimeHelper => helper }
 import io.circe.syntax._
@@ -25,18 +26,19 @@ import org.mindrot.jbcrypt.BCrypt
 import reactivemongo.bson._
 
 case class User(
-    userID: BSONObjectID = BSONObjectID.generate(), // ID of the User
-    sessionID: Option[BSONObjectID] = None, // Session ID
-    sessionData: List[SessionData] = List.empty, // Session data separately from sid
+    userIDDB: BSONObjectID = BSONObjectID.generate(), // db internal ID of the User
+    userID: String = UUID.randomUUID().toString,      // ID of the User
+    sessionID: Option[BSONObjectID] = None,           // Session ID
+    sessionData: List[SessionData] = List.empty,      // Session data separately from sid
     connected: Boolean = true,
-    accountType: Int = User.NORMALUSER, // User Access level
-    userData: Option[UserData] = None, // Personal Data of the User //TODO possibly encrypt?
+    accountType: Int = User.NORMALUSER,    // User Access level
+    userData: Option[UserData] = None,     // Personal Data of the User //TODO possibly encrypt?
     userConfig: UserConfig = UserConfig(), // Configurable parts for the user
     userToken: Option[UserToken] = None,
-    jobs: List[String] = List.empty, // List of Jobs the User has
-    dateDeletedOn: Option[ZonedDateTime] = None, // Date at which the account will be deleted on
+    jobs: List[String] = List.empty,                                // List of Jobs the User has
+    dateDeletedOn: Option[ZonedDateTime] = None,                    // Date at which the account will be deleted on
     dateLastLogin: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Last seen on
-    dateCreated: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Account creation date
+    dateCreated: Option[ZonedDateTime] = Some(ZonedDateTime.now),   // Account creation date
     dateUpdated: Option[ZonedDateTime] = Some(ZonedDateTime.now)
 ) { // Account updated on
 
@@ -61,7 +63,7 @@ case class User(
   def hasNotLoggedIn: Boolean = accountType == 3
 
   override def toString: String = {
-    s"""userID: ${userID.stringify}
+    s"""userID: $userID
        |sessionID: ${sessionID match {
          case Some(sid) => sid.stringify
          case None      => "not logged in"
@@ -110,7 +112,7 @@ object User {
 
   implicit val encodeUser: Encoder[User] = (u: User) =>
     Json.obj(
-      (ID, Json.fromString(u.userID.stringify)),
+      (ID, Json.fromString(u.userIDDB.stringify)),
       (SESSIONID, u.sessionID.map(id => Json.fromString(id.stringify)).getOrElse(Json.Null)),
       (SESSIONDATA, u.sessionData.asJson),
       (CONNECTED, Json.fromBoolean(u.connected)),
@@ -118,18 +120,25 @@ object User {
       (UserData.NAMELOGIN, Json.fromString(u.getUserData.nameLogin)),
       (UserData.EMAIL, Json.fromString(u.getUserData.eMail)),
       (JOBS, u.jobs.asJson),
-      (DATELASTLOGIN,
-       u.dateLastLogin.map(zdt => Json.fromString(zdt.format(helper.dateTimeFormatter))).getOrElse(Json.Null)),
-      (DATECREATED,
-       u.dateCreated.map(zdt => Json.fromString(zdt.format(helper.dateTimeFormatter))).getOrElse(Json.Null)),
-      (DATEUPDATED,
-       u.dateUpdated.map(zdt => Json.fromString(zdt.format(helper.dateTimeFormatter))).getOrElse(Json.Null))
-  )
+      (
+        DATELASTLOGIN,
+        u.dateLastLogin.map(zdt => Json.fromString(zdt.format(helper.dateTimeFormatter))).getOrElse(Json.Null)
+      ),
+      (
+        DATECREATED,
+        u.dateCreated.map(zdt => Json.fromString(zdt.format(helper.dateTimeFormatter))).getOrElse(Json.Null)
+      ),
+      (
+        DATEUPDATED,
+        u.dateUpdated.map(zdt => Json.fromString(zdt.format(helper.dateTimeFormatter))).getOrElse(Json.Null)
+      )
+    )
 
   implicit object Reader extends BSONDocumentReader[User] {
     override def read(bson: BSONDocument): User =
       User(
-        userID = bson.getAs[BSONObjectID](IDDB).get,
+        userIDDB = bson.getAs[BSONObjectID](IDDB).get,
+        userID = bson.getAs[String](ID).get,
         sessionID = bson.getAs[BSONObjectID](SESSIONID),
         sessionData = bson.getAs[List[SessionData]](SESSIONDATA).getOrElse(List.empty),
         connected = bson.getAs[Boolean](CONNECTED).getOrElse(false),
@@ -148,7 +157,8 @@ object User {
   implicit object Writer extends BSONDocumentWriter[User] {
     override def write(user: User): BSONDocument =
       BSONDocument(
-        IDDB          -> user.userID,
+        IDDB          -> user.userIDDB,
+        ID            -> user.userID,
         SESSIONID     -> user.sessionID,
         SESSIONDATA   -> user.sessionData,
         CONNECTED     -> user.connected,

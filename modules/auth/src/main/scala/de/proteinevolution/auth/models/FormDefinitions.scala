@@ -47,7 +47,7 @@ object FormDefinitions {
     ) { (nameLogin, password, eMail, acceptToS, dateLastLogin, dateCreated, dateUpdated) =>
       import de.proteinevolution.user.UserData
       User(
-        userID = user.userID,
+        userIDDB = user.userIDDB,
         sessionID = user.sessionID,
         sessionData = user.sessionData,
         connected = user.connected,

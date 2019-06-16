@@ -49,7 +49,7 @@ class JobGetController @Inject()(
 
   def jobManagerListJobs: Action[AnyContent] = Action.async { implicit request =>
     userSessions.getUser.flatMap { user =>
-      jobDao.findJobsByOwner(user.userID).map {
+      jobDao.findJobsByOwner(user.userIDDB).map {
         jobs =>
           NoCache(Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.jobManagerJob()).asJson))
       }

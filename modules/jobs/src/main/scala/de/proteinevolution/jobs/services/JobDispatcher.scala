@@ -92,7 +92,7 @@ final class JobDispatcher @Inject()(
 
   private[this] def assignJob(user: User, job: Job): Future[Option[User]] = {
     userSessions.modifyUserWithCache(
-      BSONDocument(User.IDDB   -> user.userID),
+      BSONDocument(User.IDDB   -> user.userIDDB),
       BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> job.jobID))
     )
   }
@@ -130,12 +130,12 @@ final class JobDispatcher @Inject()(
     val dateDeletion = user.userData.map(_ => now.plusDays(constants.jobDeletion.toLong))
     new Job(
       jobID = jobID,
-      ownerID = Some(user.userID),
+      ownerID = Some(user.userIDDB),
       parentID = form.get("parent_id"),
       isPublic = form.get("public").isDefined || user.accountType == User.NORMALUSER,
       emailUpdate = form.get("emailUpdate").isDefined,
       tool = toolName,
-      watchList = List(user.userID),
+      watchList = List(user.userIDDB),
       dateCreated = Some(now),
       dateUpdated = Some(now),
       dateViewed = Some(now),
