@@ -20,14 +20,13 @@ import com.github.mongobee.changeset.ChangeLog;
 import com.github.mongobee.changeset.ChangeSet;
 import com.mongodb.Block;
 import com.mongodb.DB;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @ChangeLog
 public class DatabaseChangelog {
@@ -104,6 +103,17 @@ public class DatabaseChangelog {
         Bson filters = Filters.exists("commentList", true);
         Bson update = new Document("$unset", unset);
         db.getCollection("jobs").updateMany(filters, update);
+    }
+
+    @ChangeSet(order = "006", id = "6", author = "Felix Gabler")
+    public void createUserID(final MongoDatabase db) {
+        MongoCollection<Document> users = db.getCollection("users");
+        users.find().forEach((Block<Document>) document -> {
+            Bson filter = Filters.eq("_id", document.get("_id"));
+            Bson update = new Document("$set", new Document("id", document.get("_id").toString()));
+            users.updateOne(filter, update);
+        });
+        users.createIndex(Indexes.ascending("id"), new IndexOptions().unique(true));
     }
 
 //    @ChangeSet(order = "004", id = "4", author = "Felix Gabler")
