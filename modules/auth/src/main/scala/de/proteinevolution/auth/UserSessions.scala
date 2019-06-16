@@ -28,7 +28,7 @@ import play.api.cache._
 import play.api.mvc.RequestHeader
 import play.api.{Logging, mvc}
 import play.mvc.Http
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{BSONDateTime, BSONDocument}
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
@@ -145,9 +145,9 @@ class UserSessions @Inject()(
    * @param sessionID
    * @return
    */
-  def getUser(sessionID: BSONObjectID): Future[Option[User]] = {
+  def getUser(sessionID: String): Future[Option[User]] = {
     // Try the cache
-    userCache.get[User](sessionID.stringify) match {
+    userCache.get[User](sessionID) match {
       case Some(user) =>
         // User successfully pulled from the cache
         fuccess(Some(user))

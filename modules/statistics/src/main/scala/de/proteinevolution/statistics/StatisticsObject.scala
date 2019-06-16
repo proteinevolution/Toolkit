@@ -18,6 +18,7 @@ package de.proteinevolution.statistics
 
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
+import java.util.UUID
 
 import de.proteinevolution.common.models.util.{ ZonedDateTimeHelper => helper }
 import io.circe.java8.time.encodeZonedDateTime
@@ -26,14 +27,15 @@ import io.circe.{ Encoder, Json }
 import reactivemongo.bson._
 
 case class StatisticsObject(
-    statisticsID: BSONObjectID = BSONObjectID.generate(),
-    userStatistics: UserStatistic = UserStatistic(),
-    toolStatistics: List[ToolStatistic] = List.empty[ToolStatistic],
-    datePushed: List[ZonedDateTime] = List.empty[ZonedDateTime]
+                             statisticsID: String = UUID.randomUUID().toString,
+                             userStatistics: UserStatistic = UserStatistic(),
+                             toolStatistics: List[ToolStatistic] = List.empty[ToolStatistic],
+                             datePushed: List[ZonedDateTime] = List.empty[ZonedDateTime]
 ) {
 
   /**
    * Returns the tool Statistic elements as a map
+   *
    * @return
    */
   def getToolStatisticMap: Map[String, ToolStatistic] = {
@@ -42,6 +44,7 @@ case class StatisticsObject(
 
   /**
    * Creates new and empty tool statistic elements with the provided name list
+   *
    * @param toolNames
    * @return
    */
@@ -59,13 +62,14 @@ case class StatisticsObject(
                 List.fill[Int](this.datePushed.length)(0),
                 List.fill[Int](this.datePushed.length)(0)
               )
-          )
+            )
       )
     )
   }
 
   /**
    * Adds the job events within the begin and end date to the tool statistics
+   *
    * @param jobEventLogs
    * @return
    */
@@ -78,8 +82,9 @@ case class StatisticsObject(
     val totalMonths: Int = beginDate.until(endDate, ChronoUnit.MONTHS).toInt
 
     // Get all months in between the two dates
-    val monthsInInterval = for (extraMonths <- 0 to totalMonths)
-      yield beginDate.plusMonths(extraMonths.toLong).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1)
+    val monthsInInterval =
+      for (extraMonths <- 0 to totalMonths)
+        yield beginDate.plusMonths(extraMonths.toLong).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1)
 
     // Group the job events by tool
     val jobEventsGroupedByTool = jobEventLogs.groupBy(_.toolName)
@@ -103,10 +108,12 @@ case class StatisticsObject(
                     jobEventsInMonths.get(startOfMonth) match {
                       case Some(jobEventLogsForMonth) =>
                         // Found events within this month.
-                        (jobEventLogsForMonth.length,
-                         jobEventLogsForMonth.count(_.hasFailed),
-                         jobEventLogsForMonth.count(_.isDeleted),
-                         jobEventLogsForMonth.count(_.internalJob))
+                        (
+                          jobEventLogsForMonth.length,
+                          jobEventLogsForMonth.count(_.hasFailed),
+                          jobEventLogsForMonth.count(_.isDeleted),
+                          jobEventLogsForMonth.count(_.internalJob)
+                        )
                       case None =>
                         // Found nothing for this month.
                         (0, 0, 0, 0)
@@ -127,6 +134,7 @@ case class StatisticsObject(
 
   /**
    * Returns the date when the last push happened
+   *
    * @return
    */
   def lastPushed: ZonedDateTime = {
@@ -139,8 +147,7 @@ case class StatisticsObject(
 
 object StatisticsObject {
 
-  val ID             = "statisticsID"
-  val IDDB           = "_id"
+  val ID             = "id"
   val USERSTATISTICS = "userStat"
   val TOOLSTATISTICS = "toolStat"
   val DATEPUSHED     = "datePushed"
@@ -148,7 +155,7 @@ object StatisticsObject {
   implicit val statObjEncoder: Encoder[StatisticsObject] = new Encoder[StatisticsObject] {
     final override def apply(obj: StatisticsObject): Json =
       Json.obj(
-        (IDDB, Json.fromString(obj.statisticsID.stringify)),
+        (ID, Json.fromString(obj.getStatisticsID)),
         (USERSTATISTICS, obj.userStatistics.asJson),
         (TOOLSTATISTICS, obj.toolStatistics.asJson),
         (DATEPUSHED, obj.datePushed.asJson)
@@ -158,7 +165,7 @@ object StatisticsObject {
   implicit object Reader extends BSONDocumentReader[StatisticsObject] {
     def read(bson: BSONDocument): StatisticsObject = {
       StatisticsObject(
-        statisticsID = bson.getAs[BSONObjectID](IDDB).getOrElse(BSONObjectID.generate()),
+        statisticsID = bson.getAs[String](ID).getOrElse(UUID.randomUUID().toString),
         userStatistics = bson.getAs[UserStatistic](USERSTATISTICS).getOrElse(UserStatistic()),
         toolStatistics = bson.getAs[List[ToolStatistic]](TOOLSTATISTICS).getOrElse(List.empty),
         datePushed =
@@ -169,7 +176,7 @@ object StatisticsObject {
 
   implicit object Writer extends BSONDocumentWriter[StatisticsObject] {
     def write(statisticObject: StatisticsObject): BSONDocument = BSONDocument(
-      IDDB           -> statisticObject.statisticsID,
+      ID             -> statisticObject.getStatisticsID,
       USERSTATISTICS -> statisticObject.userStatistics,
       TOOLSTATISTICS -> statisticObject.toolStatistics,
       DATEPUSHED     -> statisticObject.datePushed.map(a => BSONDateTime(a.toInstant.toEpochMilli))
