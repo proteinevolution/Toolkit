@@ -19,7 +19,8 @@ package de.proteinevolution.jobs.dao
 import java.time.ZonedDateTime
 
 import de.proteinevolution.common.models.ConstantsV2
-import de.proteinevolution.jobs.models.Job
+import de.proteinevolution.common.models.database.jobs.JobState
+import de.proteinevolution.jobs.models.{ Job, JobClusterData }
 import de.proteinevolution.statistics.{ JobEvent, JobEventLog }
 import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -100,8 +101,18 @@ class JobDao @Inject()(
     )
   }
 
-  final def removeJob(id: String): Future[WriteResult] = {
-    jobCollection.flatMap(_.delete().one(BSONDocument(Job.JOBID -> id)))
+  final def removeJob(jobID: String): Future[WriteResult] = {
+    eventLogCollection.foreach(
+      _.findAndUpdate(
+        BSONDocument(JobEventLog.JOBID -> jobID),
+        BSONDocument(
+          "$push" ->
+          BSONDocument(JobEventLog.EVENTS -> JobEvent(JobState.Deleted, Some(ZonedDateTime.now), Some(0L)))
+        ),
+        fetchNewObject = true
+      )
+    )
+    jobCollection.flatMap(_.delete().one(BSONDocument(Job.JOBID -> jobID)))
   }
 
   final def findAndSortJobs(hash: String, sort: Int = -1): Future[List[Job]] = {
@@ -134,8 +145,7 @@ class JobDao @Inject()(
     }
   }
 
-  // TODO this method is too generic, refactor into more specific ones
-  def modifyJob(selector: BSONDocument, modifier: BSONDocument): Future[Option[Job]] = {
+  private def modifyJob(selector: BSONDocument, modifier: BSONDocument): Future[Option[Job]] = {
     jobCollection.flatMap(
       _.findAndUpdate(
         selector,
@@ -148,6 +158,28 @@ class JobDao @Inject()(
       ).map(_.result[Job])
     )
   }
+
+  def updateJobStatus(jobID: String, jobState: JobState): Future[Option[Job]] =
+    modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> jobState)))
+
+  def updateSGEID(jobID: String, sgeID: String): Future[Option[Job]] =
+    modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$set" -> BSONDocument(Job.SGEID -> sgeID)))
+
+  def updateClusterDataAndHash(
+      jobID: String,
+      clusterData: JobClusterData,
+      jobHash: Option[String]
+  ): Future[Option[Job]] =
+    modifyJob(
+      BSONDocument(Job.JOBID -> jobID),
+      BSONDocument("$set"    -> BSONDocument(Job.CLUSTERDATA -> clusterData, Job.HASH -> jobHash))
+    )
+
+  def addUserToWatchList(jobID: String, userID: BSONObjectID): Future[Option[Job]] =
+    modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$addToSet" -> BSONDocument(Job.WATCHLIST -> userID)))
+
+  def removeUserFromWatchList(jobID: String, userID: BSONObjectID): Future[Option[Job]] =
+    modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
 
   def countJobsForHashSinceTime(hash: String, time: Long): Future[Long] = {
     jobCollection.flatMap(
