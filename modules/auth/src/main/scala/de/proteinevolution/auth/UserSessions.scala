@@ -77,7 +77,7 @@ class UserSessions @Inject()(
         if (forceSessionID) {
           BSONDocument(
             "$set" ->
-            BSONDocument(User.SESSIONID -> Some(user.sessionID.getOrElse(BSONObjectID.generate())))
+            BSONDocument(User.SESSIONID -> Some(user.sessionID.getOrElse(UUID.randomUUID().toString)))
           )
         } else {
           BSONDocument.empty
@@ -85,7 +85,7 @@ class UserSessions @Inject()(
       )
   }
 
-  def putUser(implicit request: RequestHeader, sessionID: BSONObjectID): Future[User] = {
+  def putUser(implicit request: RequestHeader, sessionID: String): Future[User] = {
     val newSessionData = SessionData(
       ip = MurmurHash3.stringHash(request.remoteAddress).toString,
       userAgent = request.headers.get(Http.HeaderNames.USER_AGENT).getOrElse("Not specified"),
@@ -129,15 +129,9 @@ class UserSessions @Inject()(
     if (request.remoteAddress.contentEquals("10.3.7.70")) { // TODO Put this in the config?
       fuccess(User())
     } else {
-      val sessionID = request.session.get(SID) match {
-        case Some(sid) =>
-          // Check if the session ID is parseable - otherwise generate a new one
-          BSONObjectID.parse(sid).getOrElse(BSONObjectID.generate())
-        case None =>
-          BSONObjectID.generate()
-      }
+      val sessionID: String = request.session.get(SID).getOrElse(UUID.randomUUID().toString)
       // cache related stuff should remain in the project where the cache is bound
-      userCache.get[User](sessionID.stringify) match {
+      userCache.get[User](sessionID) match {
         case Some(user) => fuccess(user)
         case None =>
           putUser(request, sessionID)
@@ -184,7 +178,7 @@ class UserSessions @Inject()(
     //logger.info("User WatchList is now: " + user.jobs.mkString(", "))
     user.sessionID match {
       case Some(sessionID) =>
-        userCache.set(sessionID.stringify, user, 10.minutes)
+        userCache.set(sessionID, user, 10.minutes)
       case None =>
     }
   }
@@ -210,7 +204,7 @@ class UserSessions @Inject()(
   def removeUserFromCache(user: User, withDB: Boolean = true): Any = {
     logger.info("Removing User: \n" + user.toString)
     // Remove user from the cache
-    user.sessionID.foreach(sessionID => userCache.remove(sessionID.stringify))
+    user.sessionID.foreach(sessionID => userCache.remove(sessionID))
 
     if (withDB) {
       userDao.userCollection.flatMap(
@@ -235,7 +229,7 @@ class UserSessions @Inject()(
   /**
    * Handles cookie creation
    */
-  def sessionCookie(implicit request: RequestHeader, sessionID: BSONObjectID): mvc.Session = {
-    request.session + (SID -> sessionID.stringify)
+  def sessionCookie(implicit request: RequestHeader, sessionID: String): mvc.Session = {
+    request.session + (SID -> sessionID)
   }
 }

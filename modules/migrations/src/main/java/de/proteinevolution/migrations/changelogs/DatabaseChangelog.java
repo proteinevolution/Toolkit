@@ -159,6 +159,19 @@ public class DatabaseChangelog {
         });
     }
 
+    @ChangeSet(order = "010", id = "10", author = "Felix Gabler")
+    public void migrateSessionID(final MongoDatabase db) {
+        MongoCollection<Document> users = db.getCollection("users");
+        users.find().forEach((Block<Document>) user -> {
+            Bson filter = Filters.eq("_id", user.get("_id"));
+            Object sessionID = user.get("sessionID");
+            if (sessionID != null) {
+                Bson update = Updates.set("sessionID", sessionID.toString());
+                users.updateOne(filter, update);
+            }
+        });
+    }
+
 //    @ChangeSet(order = "004", id = "4", author = "Felix Gabler")
 //    public void changeJobEventKeysToSnakeCase(final MongoDatabase db) {
 //        // TODO: does not work yet because events is an array of dynamic documents

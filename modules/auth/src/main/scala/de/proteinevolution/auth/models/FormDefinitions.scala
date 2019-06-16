@@ -44,7 +44,7 @@ object FormDefinitions {
       User.DATELASTLOGIN -> optional(longNumber),
       User.DATECREATED   -> optional(longNumber),
       User.DATEUPDATED   -> optional(longNumber)
-    ) { (nameLogin, password, eMail, acceptToS, dateLastLogin, dateCreated, dateUpdated) =>
+    ) { (nameLogin, password, eMail, acceptToS, _, _, _) =>
       import de.proteinevolution.user.UserData
       User(
         userID = user.userID,

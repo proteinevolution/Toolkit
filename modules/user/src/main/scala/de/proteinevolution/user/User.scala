@@ -27,7 +27,7 @@ import reactivemongo.bson._
 
 case class User(
     userID: String = UUID.randomUUID().toString,      // ID of the User
-    sessionID: Option[BSONObjectID] = None,           // Session ID
+    sessionID: Option[String] = None,           // Session ID
     sessionData: List[SessionData] = List.empty,      // Session data separately from sid
     connected: Boolean = true,
     accountType: Int = User.NORMALUSER,    // User Access level
@@ -63,10 +63,7 @@ case class User(
 
   override def toString: String = {
     s"""userID: $userID
-       |sessionID: ${sessionID match {
-         case Some(sid) => sid.stringify
-         case None      => "not logged in"
-       }}
+       |sessionID: ${sessionID.getOrElse("not logged in")}
        |connected: ${if (connected) "Yes" else "No"}
        |nameLogin: ${getUserData.nameLogin}
        |watched jobIDs: ${jobs.mkString(",")}
@@ -83,7 +80,6 @@ object User {
 
   // Constants for the JSON object identifiers
   final val ID            = "id" // name for the ID in scala
-  final val IDDB          = "_id" //              ID in MongoDB
   final val SESSIONID     = "sessionID" //              Session ID of the User
   final val SESSIONDATA   = "sessionData" //              session information
   final val CONNECTED     = "connected" // is the user online?
@@ -112,7 +108,7 @@ object User {
   implicit val encodeUser: Encoder[User] = (u: User) =>
     Json.obj(
       (ID, Json.fromString(u.userID)),
-      (SESSIONID, u.sessionID.map(id => Json.fromString(id.stringify)).getOrElse(Json.Null)),
+      (SESSIONID, u.sessionID.map(id => Json.fromString(id)).getOrElse(Json.Null)),
       (SESSIONDATA, u.sessionData.asJson),
       (CONNECTED, Json.fromBoolean(u.connected)),
       (ACCOUNTTYPE, Json.fromInt(u.accountType)),
@@ -137,7 +133,7 @@ object User {
     override def read(bson: BSONDocument): User =
       User(
         userID = bson.getAs[String](ID).get,
-        sessionID = bson.getAs[BSONObjectID](SESSIONID),
+        sessionID = bson.getAs[String](SESSIONID),
         sessionData = bson.getAs[List[SessionData]](SESSIONDATA).getOrElse(List.empty),
         connected = bson.getAs[Boolean](CONNECTED).getOrElse(false),
         accountType = bson.getAs[BSONNumberLike](ACCOUNTTYPE).get.toInt,
