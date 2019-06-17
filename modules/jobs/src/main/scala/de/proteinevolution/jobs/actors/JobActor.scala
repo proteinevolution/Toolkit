@@ -174,23 +174,11 @@ class JobActor @Inject()(
   }
 
   private def delete(job: Job): Future[Unit] = {
-    val now: ZonedDateTime = ZonedDateTime.now
     s"${constants.jobPath}${job.jobID}".toFile.delete(swallowIOExceptions = true)
     removeJob(job.jobID) // Remove the job from the current job map
     val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID): Option[List[ActorRef]])
     foundWatchers.flatten.foreach(_ ! ClearJob(job.jobID))
     job.clusterData.foreach(clusterData => Qdel.run(clusterData.sgeID))
-    // TODO delete this collection
-    jobDao.eventLogCollection.foreach(
-      _.findAndUpdate(
-        BSONDocument(JobEventLog.JOBID -> job.jobID),
-        BSONDocument(
-          "$push" ->
-          BSONDocument(JobEventLog.EVENTS -> JobEvent(Deleted, Some(now), Some(0L)))
-        ),
-        fetchNewObject = true
-      )
-    )
     for {
       _ <- jobDao.removeJob(job.jobID)
       _ <- userDao.removeJob(job.jobID)
@@ -207,7 +195,7 @@ class JobActor @Inject()(
 
       // Update job in the database and notify watcher upon completion
       jobDao
-        .modifyJob(BSONDocument(Job.JOBID -> job.jobID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> job.status)))
+        .updateJobStatus(job.jobID, job.status)
         .map { _ =>
           val jobLog = currentJobLogs.get(job.jobID) match {
             case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
@@ -469,10 +457,7 @@ class JobActor @Inject()(
               val clusterData = JobClusterData("", Some(h_vmem), Some(threads), Some(h_rt))
 
               jobDao
-                .modifyJob(
-                  BSONDocument(Job.JOBID -> job.jobID),
-                  BSONDocument("$set"    -> BSONDocument(Job.CLUSTERDATA -> clusterData, Job.HASH -> jobHash))
-                )
+                .updateClusterDataAndHash(job.jobID, clusterData, jobHash)
                 .foreach {
                   case Some(_) =>
                     // Get new runscript instance from the runscript manager
@@ -514,7 +499,7 @@ class JobActor @Inject()(
     // User Starts watching job
     case AddToWatchlist(jobID, userID) =>
       val _ = jobDao
-        .modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$addToSet" -> BSONDocument(Job.WATCHLIST -> userID)))
+        .addUserToWatchList(jobID, userID)
         .map {
           case Some(updatedJob) =>
             userSessions
@@ -531,7 +516,7 @@ class JobActor @Inject()(
     // User does no longer watch this Job (stays in JobManager)
     case RemoveFromWatchlist(jobID, userID) =>
       jobDao
-        .modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
+        .removeUserFromWatchList(jobID, userID)
         .foreach {
           case Some(updatedJob) =>
             userSessions
@@ -590,7 +575,7 @@ class JobActor @Inject()(
     // Sets the cluster job ID for a job
     case SetSGEID(jobID: String, sgeID: String) =>
       jobDao
-        .modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$set" -> BSONDocument(Job.SGEID -> sgeID)))
+        .updateSGEID(jobID, sgeID)
         .foreach {
           case Some(job) =>
             currentJobs = currentJobs.updated(job.jobID, job)
