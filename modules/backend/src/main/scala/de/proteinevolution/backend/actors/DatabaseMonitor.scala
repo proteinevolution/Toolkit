@@ -18,24 +18,20 @@ package de.proteinevolution.backend.actors
 
 import java.time.ZonedDateTime
 
-import akka.actor.{Actor, ActorLogging, Cancellable}
+import akka.actor.{ Actor, ActorLogging, Cancellable }
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate.OldAccountEmail
-import de.proteinevolution.backend.actors.DatabaseMonitor.{DeleteOldJobs, DeleteOldUsers}
+import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.actors.JobActor.Delete
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services.JobActorAccess
-import de.proteinevolution.statistics.{StatisticsObject, UserStatistic}
-import de.proteinevolution.user.{AccountType, User}
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import de.proteinevolution.tel.env.Env
-import de.proteinevolution.user.User
+import de.proteinevolution.user.{ AccountType, User }
 import javax.inject.{ Inject, Singleton }
+import play.api.Configuration
 import play.api.libs.mailer.MailerClient
-import reactivemongo.bson.{BSONDateTime, BSONDocument}
+import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
 import scala.concurrent.ExecutionContext
 
@@ -199,21 +195,24 @@ final class DatabaseMonitor @Inject()(
           )
           .foreach { writeResult =>
             if (verbose)
-              log.info(s"[User Deletion] Writing ${if (writeResult.ok) { "successful" } else { "failed" }}")
+              log.info(s"[User Deletion] Writing ${if (writeResult.ok) {
+                "successful"
+              } else {
+                "failed"
+              }}")
           }
       }
   }
 
   private def deleteOldJobs(): Unit = {
     log.info("[Job Deletion] finding old jobs...")
-    jobDao.findOldJobs()
-      .foreach { jobList =>
-        log.info(s"[Job Deletion] found ${jobList.length} jobs for deletion. Sending to job actors.")
-        jobList.foreach { job =>
-          // Just send a deletion request to the job actor responsible for the job
-          jobActorAccess.sendToJobActor(job.jobID, Delete(job.jobID))
-        }
+    jobDao.findOldJobs().foreach { jobList =>
+      log.info(s"[Job Deletion] found ${jobList.length} jobs for deletion. Sending to job actors.")
+      jobList.foreach { job =>
+        // Just send a deletion request to the job actor responsible for the job
+        jobActorAccess.sendToJobActor(job.jobID, Delete(job.jobID))
       }
+    }
   }
 
   override def preStart(): Unit = {
