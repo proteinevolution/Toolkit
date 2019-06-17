@@ -28,7 +28,7 @@ import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.{ Index, IndexType }
 import reactivemongo.api.{ Cursor, ReadConcern }
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -70,10 +70,10 @@ class JobDao @Inject()(
   def findJobsByIds(jobs: List[String]): Future[List[Job]] =
     internalFindJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> jobs)))
 
-  def findJobsByOwner(userID: BSONObjectID): Future[List[Job]] =
+  def findJobsByOwner(userID: String): Future[List[Job]] =
     internalFindJobs(BSONDocument(Job.OWNERID -> userID, Job.DELETION -> BSONDocument("$exists" -> false)))
 
-  def findJobsByOwnerAndTools(userID: BSONObjectID, toolNames: List[String]): Future[List[Job]] =
+  def findJobsByOwnerAndTools(userID: String, toolNames: List[String]): Future[List[Job]] =
     internalFindJobs(BSONDocument(Job.OWNERID -> userID, Job.TOOL -> BSONDocument("$in" -> toolNames)))
 
   def findOldJobs(): Future[List[Job]] = {
@@ -123,7 +123,7 @@ class JobDao @Inject()(
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
   }
 
-  final def findSortedJob(userId: BSONObjectID, sort: Int = -1): Future[Option[Job]] = {
+  final def findSortedJob(userId: String, sort: Int = -1): Future[Option[Job]] = {
     jobCollection.flatMap(
       _.find(
         BSONDocument(
@@ -175,10 +175,10 @@ class JobDao @Inject()(
       BSONDocument("$set"    -> BSONDocument(Job.CLUSTERDATA -> clusterData, Job.HASH -> jobHash))
     )
 
-  def addUserToWatchList(jobID: String, userID: BSONObjectID): Future[Option[Job]] =
+  def addUserToWatchList(jobID: String, userID: String): Future[Option[Job]] =
     modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$addToSet" -> BSONDocument(Job.WATCHLIST -> userID)))
 
-  def removeUserFromWatchList(jobID: String, userID: BSONObjectID): Future[Option[Job]] =
+  def removeUserFromWatchList(jobID: String, userID: String): Future[Option[Job]] =
     modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
 
   def countJobsForHashSinceTime(hash: String, time: Long): Future[Long] = {

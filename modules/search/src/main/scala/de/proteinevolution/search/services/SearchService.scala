@@ -23,11 +23,11 @@ import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobFolderValidation
-import de.proteinevolution.tools.{ Tool, ToolConfig }
+import de.proteinevolution.tools.{Tool, ToolConfig}
 import de.proteinevolution.user.User
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SearchService @Inject()(

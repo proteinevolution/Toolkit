@@ -79,7 +79,7 @@ final class VerificationController @Inject()(
                   case 1 => // Token for eMail verification
                     userDao
                       .modifyUser(
-                        BSONDocument(User.IDDB -> userToVerify.userID),
+                        BSONDocument(User.ID -> userToVerify.userID),
                         BSONDocument(
                           "$set" ->
                           BSONDocument(User.ACCOUNTTYPE -> 1,
@@ -117,7 +117,7 @@ final class VerificationController @Inject()(
                       case Some(newPassword) =>
                         userDao
                           .modifyUser(
-                            BSONDocument(User.IDDB -> userToVerify.userID),
+                            BSONDocument(User.ID -> userToVerify.userID),
                             BSONDocument(
                               "$set" ->
                               BSONDocument(
@@ -134,7 +134,7 @@ final class VerificationController @Inject()(
                               val eMail = PasswordChangedMail(modifiedUser, environment2, env)
                               eMail.send
                               // Force Log Out on all connected users.
-                              (wsActorCache.get(modifiedUser.userID.stringify): Option[List[ActorRef]]) match {
+                              (wsActorCache.get(modifiedUser.userID): Option[List[ActorRef]]) match {
                                 case Some(webSocketActors) =>
                                   webSocketActors.foreach(_ ! LogOut)
                                 case None =>
@@ -182,7 +182,7 @@ final class VerificationController @Inject()(
                     // Give a token to the current user to allow him to change the password in a different view (Password Recovery)
                     val newToken =
                       UserToken(tokenType = 4, token = userToken.token, userID = Some(userToVerify.userID))
-                    val selector = BSONDocument(User.IDDB -> user.userID)
+                    val selector = BSONDocument(User.ID -> user.userID)
                     val modifier = BSONDocument(
                       "$set" -> BSONDocument(
                         User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli),

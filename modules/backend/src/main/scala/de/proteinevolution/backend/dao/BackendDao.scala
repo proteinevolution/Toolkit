@@ -40,7 +40,7 @@ class BackendDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(impli
   def updateStats(statisticsObject: StatisticsObject): Future[Option[StatisticsObject]] = {
     statisticsCol.flatMap(
       _.findAndUpdate(
-        selector = BSONDocument(StatisticsObject.IDDB -> statisticsObject.statisticsID),
+        selector = BSONDocument(StatisticsObject.ID -> statisticsObject.statisticsID),
         update = statisticsObject,
         upsert = true,
         fetchNewObject = true
@@ -54,7 +54,7 @@ class BackendDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(impli
   ): Future[Option[StatisticsObject]] = {
     statisticsCol.flatMap(
       _.findAndUpdate(
-        selector = BSONDocument(StatisticsObject.IDDB -> statisticsObject.statisticsID),
+        selector = BSONDocument(StatisticsObject.ID -> statisticsObject.statisticsID),
         update = BSONDocument(
           "$set" -> BSONDocument(
             s"${StatisticsObject.USERSTATISTICS}.${UserStatistic.CURRENTDELETED}" -> currentDeleted

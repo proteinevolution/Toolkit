@@ -28,7 +28,7 @@ case class UserToken(
     token: String = UserToken.nextToken(15),
     passwordHash: Option[String] = None,
     eMail: Option[String] = None,
-    userID: Option[BSONObjectID] = None,
+    userID: Option[String] = None,
     changeDate: Option[ZonedDateTime] = Some(ZonedDateTime.now)
 )
 
@@ -57,7 +57,7 @@ object UserToken {
         token = doc.getAs[String](TOKEN).get,
         passwordHash = doc.getAs[String](NEWPASSWORDHASH),
         eMail = doc.getAs[String](NEWEMAIL),
-        userID = doc.getAs[BSONObjectID](USERID),
+        userID = doc.getAs[String](USERID),
         changeDate = doc.getAs[BSONDateTime](CHANGEDATE).map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
   }
