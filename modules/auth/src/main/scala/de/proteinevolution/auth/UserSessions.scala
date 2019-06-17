@@ -17,20 +17,21 @@
 package de.proteinevolution.auth
 
 import java.time.ZonedDateTime
+import java.util.UUID
 
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.base.helpers.ToolkitTypes
-import de.proteinevolution.user.{ SessionData, User }
+import de.proteinevolution.user.{SessionData, User}
 import de.proteinevolution.util.LocationProvider
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{ Logging, mvc }
+import play.api.{Logging, mvc}
 import play.mvc.Http
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import reactivemongo.bson.{BSONDateTime, BSONDocument}
 
 import scala.concurrent.duration._
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.hashing.MurmurHash3
 
 @Singleton
@@ -76,7 +77,7 @@ class UserSessions @Inject()(
         if (forceSessionID) {
           BSONDocument(
             "$set" ->
-            BSONDocument(User.SESSIONID -> Some(user.sessionID.getOrElse(BSONObjectID.generate())))
+            BSONDocument(User.SESSIONID -> Some(user.sessionID.getOrElse(UUID.randomUUID().toString)))
           )
         } else {
           BSONDocument.empty
@@ -84,7 +85,7 @@ class UserSessions @Inject()(
       )
   }
 
-  def putUser(implicit request: RequestHeader, sessionID: BSONObjectID): Future[User] = {
+  def putUser(implicit request: RequestHeader, sessionID: String): Future[User] = {
     val newSessionData = SessionData(
       ip = MurmurHash3.stringHash(request.remoteAddress).toString,
       userAgent = request.headers.get(Http.HeaderNames.USER_AGENT).getOrElse("Not specified"),
@@ -94,7 +95,7 @@ class UserSessions @Inject()(
     userDao.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
       case Some(user) =>
         logger.info(s"User found by SessionID:\n${user.toString}")
-        val selector = BSONDocument(User.IDDB -> user.userID)
+        val selector = BSONDocument(User.ID -> user.userID)
 
         // This resets the user's deletion date in case they have been eMailed for inactivity already
         val modifier = getUserModifier(user, Some(newSessionData))
@@ -109,7 +110,7 @@ class UserSessions @Inject()(
       case None =>
         // Create a new user as there is no user with this sessionID
         val user = User(
-          userID = BSONObjectID.generate(),
+          userID = UUID.randomUUID().toString,
           sessionID = Some(sessionID),
           sessionData = List(newSessionData),
           dateCreated = Some(ZonedDateTime.now),
@@ -128,15 +129,9 @@ class UserSessions @Inject()(
     if (request.remoteAddress.contentEquals("10.3.7.70")) { // TODO Put this in the config?
       fuccess(User())
     } else {
-      val sessionID = request.session.get(SID) match {
-        case Some(sid) =>
-          // Check if the session ID is parseable - otherwise generate a new one
-          BSONObjectID.parse(sid).getOrElse(BSONObjectID.generate())
-        case None =>
-          BSONObjectID.generate()
-      }
+      val sessionID: String = request.session.get(SID).getOrElse(UUID.randomUUID().toString)
       // cache related stuff should remain in the project where the cache is bound
-      userCache.get[User](sessionID.stringify) match {
+      userCache.get[User](sessionID) match {
         case Some(user) => fuccess(user)
         case None =>
           putUser(request, sessionID)
@@ -150,9 +145,9 @@ class UserSessions @Inject()(
    * @param sessionID
    * @return
    */
-  def getUser(sessionID: BSONObjectID): Future[Option[User]] = {
+  def getUser(sessionID: String): Future[Option[User]] = {
     // Try the cache
-    userCache.get[User](sessionID.stringify) match {
+    userCache.get[User](sessionID) match {
       case Some(user) =>
         // User successfully pulled from the cache
         fuccess(Some(user))
@@ -161,7 +156,7 @@ class UserSessions @Inject()(
         userDao.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
           case Some(user) =>
             // Update the last login time
-            val selector = BSONDocument(User.IDDB -> user.userID)
+            val selector = BSONDocument(User.ID -> user.userID)
             val modifier = getUserModifier(user)
             modifyUserWithCache(selector, modifier).map {
               case Some(updatedUser) =>
@@ -183,7 +178,7 @@ class UserSessions @Inject()(
     //logger.info("User WatchList is now: " + user.jobs.mkString(", "))
     user.sessionID match {
       case Some(sessionID) =>
-        userCache.set(sessionID.stringify, user, 10.minutes)
+        userCache.set(sessionID, user, 10.minutes)
       case None =>
     }
   }
@@ -209,12 +204,12 @@ class UserSessions @Inject()(
   def removeUserFromCache(user: User, withDB: Boolean = true): Any = {
     logger.info("Removing User: \n" + user.toString)
     // Remove user from the cache
-    user.sessionID.foreach(sessionID => userCache.remove(sessionID.stringify))
+    user.sessionID.foreach(sessionID => userCache.remove(sessionID))
 
     if (withDB) {
       userDao.userCollection.flatMap(
         _.update(ordered = false).one(
-          BSONDocument(User.IDDB -> user.userID),
+          BSONDocument(User.ID -> user.userID),
           BSONDocument(
             "$set" ->
             BSONDocument(
@@ -234,7 +229,7 @@ class UserSessions @Inject()(
   /**
    * Handles cookie creation
    */
-  def sessionCookie(implicit request: RequestHeader, sessionID: BSONObjectID): mvc.Session = {
-    request.session + (SID -> sessionID.stringify)
+  def sessionCookie(implicit request: RequestHeader, sessionID: String): mvc.Session = {
+    request.session + (SID -> sessionID)
   }
 }

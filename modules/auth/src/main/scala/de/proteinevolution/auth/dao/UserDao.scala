@@ -58,7 +58,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
 
   def upsertUser(user: User): Future[Option[User]] = {
     userCollection.flatMap(
-      _.findAndUpdate(selector = BSONDocument(User.IDDB -> user.userID),
+      _.findAndUpdate(selector = BSONDocument(User.ID -> user.userID),
                       update = user,
                       upsert = true,
                       fetchNewObject = true).map(_.result[User])

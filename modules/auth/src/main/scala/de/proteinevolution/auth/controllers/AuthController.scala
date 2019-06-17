@@ -17,24 +17,25 @@
 package de.proteinevolution.auth.controllers
 
 import java.time.ZonedDateTime
+import java.util.UUID
 
 import akka.actor.ActorRef
 import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.auth.models.Session.ChangeSessionID
-import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
+import de.proteinevolution.auth.models.{FormDefinitions, JSONTemplate}
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.user.{ User, UserToken }
 import io.circe.syntax._
+import play.api.cache.{NamedCache, SyncCacheApi}
 import javax.inject.{ Inject, Singleton }
 import play.api.{ Configuration, Logging }
-import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
-import play.api.mvc.{ Action, AnyContent, ControllerComponents }
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import reactivemongo.bson.{BSONDateTime, BSONDocument}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthController @Inject()(
@@ -88,7 +89,7 @@ class AuthController @Inject()(
                   // Check the password
                   if (databaseUser.checkPassword(signInFormUser.password) && databaseUser.accountType > 0) {
                     // create a modifier document to change the last login date in the Database
-                    val selector = BSONDocument(User.IDDB -> databaseUser.userID)
+                    val selector = BSONDocument(User.ID -> databaseUser.userID)
                     // Change the login time and give the new Session ID to the user.
                     // Additionally add the watched jobs to the users watchlist.
                     val modifier = userSessions.getUserModifier(databaseUser, forceSessionID = true)
@@ -110,12 +111,12 @@ class AuthController @Inject()(
                         userSessions.removeUserFromCache(unregisteredUser)
 
                         // Tell the job actors to copy all jobs connected to the old user to the new user
-                        wsActorCache.get[List[ActorRef]](unregisteredUser.userID.stringify) match {
+                        wsActorCache.get[List[ActorRef]](unregisteredUser.userID) match {
                           case Some(wsActors) =>
                             val actorList: List[ActorRef] = wsActors: List[ActorRef]
-                            wsActorCache.set(loggedInUser.userID.stringify, actorList)
+                            wsActorCache.set(loggedInUser.userID, actorList)
                             actorList.foreach(_ ! ChangeSessionID(loggedInUser.sessionID.get))
-                            wsActorCache.remove(unregisteredUser.userID.stringify)
+                            wsActorCache.remove(unregisteredUser.userID)
                           case None =>
                         }
 
@@ -182,7 +183,7 @@ class AuthController @Inject()(
                   case None =>
                     // Create the database entry.
                     val newUser = signUpFormUser.copy(
-                      userID = BSONObjectID.generate(),
+                      userID = UUID.randomUUID().toString,
                       sessionID = None,
                       userToken =
                         Some(UserToken(tokenType = User.REGISTEREDUSER, eMail = Some(signUpFormUser.getUserData.eMail)))
@@ -236,7 +237,7 @@ class AuthController @Inject()(
                   // create a modifier document to change the last login date in the Database
                   val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
                   // Push to the database using selector and modifier
-                  val selector = BSONDocument(User.IDDB -> user.userID)
+                  val selector = BSONDocument(User.ID -> user.userID)
                   val modifier = BSONDocument(
                     "$set" ->
                     BSONDocument(User.DATEUPDATED -> bsonCurrentTime),
@@ -276,7 +277,7 @@ class AuthController @Inject()(
               if (token.tokenType == 4 && token.userID.isDefined) {
                 val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
                 // Push to the database using selector and modifier
-                val selector = BSONDocument(User.IDDB -> token.userID)
+                val selector = BSONDocument(User.ID -> token.userID)
                 val modifier =
                   BSONDocument(
                     "$set" ->
@@ -288,7 +289,7 @@ class AuthController @Inject()(
                   case Some(userWithUpdatedAccount) =>
                     userSessions
                       .modifyUserWithCache(
-                        BSONDocument(User.IDDB -> userWithUpdatedAccount.userID),
+                        BSONDocument(User.ID -> userWithUpdatedAccount.userID),
                         BSONDocument(
                           "$unset" ->
                           BSONDocument(User.USERTOKEN -> "")
@@ -338,7 +339,7 @@ class AuthController @Inject()(
                   // create a modifier document to change the last login date in the Database
                   val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
                   // Push to the database using selector and modifier
-                  val selector = BSONDocument(User.IDDB -> user.userID)
+                  val selector = BSONDocument(User.ID -> user.userID)
                   val modifier = BSONDocument(
                     "$set" ->
                     BSONDocument(User.DATELASTLOGIN -> bsonCurrentTime, User.DATEUPDATED -> bsonCurrentTime),
@@ -386,7 +387,7 @@ class AuthController @Inject()(
                 case Some(editedProfileUserData) =>
                   // create a modifier document to change the last login date in the Database
                   val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-                  val selector        = BSONDocument(User.IDDB -> user.userID)
+                  val selector        = BSONDocument(User.ID -> user.userID)
                   val modifier = BSONDocument(
                     "$set" ->
                     BSONDocument(User.USERDATA      -> editedProfileUserData.copy(nameLogin = userData.nameLogin),

@@ -92,7 +92,7 @@ final class JobDispatcher @Inject()(
 
   private[this] def assignJob(user: User, job: Job): Future[Option[User]] = {
     userSessions.modifyUserWithCache(
-      BSONDocument(User.IDDB   -> user.userID),
+      BSONDocument(User.ID   -> user.userID),
       BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> job.jobID))
     )
   }
