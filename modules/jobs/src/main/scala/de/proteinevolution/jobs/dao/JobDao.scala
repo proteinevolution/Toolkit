@@ -175,10 +175,10 @@ class JobDao @Inject()(
       BSONDocument("$set"    -> BSONDocument(Job.CLUSTERDATA -> clusterData, Job.HASH -> jobHash))
     )
 
-  def addUserToWatchList(jobID: String, userID: BSONObjectID): Future[Option[Job]] =
+  def addUserToWatchList(jobID: String, userID: String): Future[Option[Job]] =
     modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$addToSet" -> BSONDocument(Job.WATCHLIST -> userID)))
 
-  def removeUserFromWatchList(jobID: String, userID: BSONObjectID): Future[Option[Job]] =
+  def removeUserFromWatchList(jobID: String, userID: String): Future[Option[Job]] =
     modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
 
   def countJobsForHashSinceTime(hash: String, time: Long): Future[Long] = {
