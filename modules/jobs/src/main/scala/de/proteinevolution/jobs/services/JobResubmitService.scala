@@ -17,12 +17,11 @@
 package de.proteinevolution.jobs.services
 
 import de.proteinevolution.base.helpers.ToolkitTypes
+import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.{ Job, ResubmitData }
-import de.proteinevolution.common.models.ConstantsV2
 import javax.inject.{ Inject, Singleton }
 import play.api.Logging
-import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -34,7 +33,8 @@ class JobResubmitService @Inject()(constants: ConstantsV2, jobDao: JobDao)(impli
   def resubmit(newJobId: String, resubmitForJobId: Option[String]): Future[ResubmitData] = {
     generateParentJobId((newJobId, resubmitForJobId)) match {
       case Some(parentJobId) =>
-        findJobs(parentJobId).map { jobs =>
+        // TODO: we should directly use the parent id connection
+        jobDao.findJobsByIdLike(parentJobId).map { jobs =>
           generateResubmitData(jobs, newJobId, resubmitForJobId, parentJobId)
         }
       case None =>
@@ -62,14 +62,6 @@ class JobResubmitService @Inject()(constants: ConstantsV2, jobDao: JobDao)(impli
           case _                                          => None
         }
     }
-  }
-
-  private def findJobs(parentJobId: String): Future[List[Job]] = {
-    jobDao.findJobs(
-      BSONDocument(
-        Job.JOBID -> BSONDocument("$regex" -> s"$parentJobId(${constants.jobIDVersioningCharacter}[0-9]{1,3})?")
-      )
-    )
   }
 
   private def generateResubmitData(

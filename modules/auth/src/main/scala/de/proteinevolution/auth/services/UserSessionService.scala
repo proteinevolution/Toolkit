@@ -17,20 +17,20 @@
 package de.proteinevolution.auth.services
 
 import java.time.ZonedDateTime
+import java.util.UUID
 
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.base.helpers.ToolkitTypes
-import de.proteinevolution.user.{SessionData, User}
+import de.proteinevolution.user.{ SessionData, User }
 import de.proteinevolution.util.LocationProvider
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{Configuration, Logging, mvc}
+import play.api.{ mvc, Configuration, Logging }
 import play.mvc.Http
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 import scala.concurrent.duration._
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.hashing.MurmurHash3
 
 @Singleton
@@ -50,15 +50,9 @@ class UserSessionService @Inject()(
     if (config.get[Seq[String]]("user_creation.ignore_ips").contains(request.remoteAddress)) {
       fuccess(User())
     } else {
-      val sessionID = request.session.get(SID) match {
-        case Some(sid) =>
-          // Check if the session ID is parseable - otherwise generate a new one
-          BSONObjectID.parse(sid).getOrElse(BSONObjectID.generate())
-        case None =>
-          BSONObjectID.generate()
-      }
+      val sessionID: String = request.session.get(SID).getOrElse(UUID.randomUUID().toString)
       // cache related stuff should remain in the project where the cache is bound
-      userCache.get[User](sessionID.stringify) match {
+      userCache.get[User](sessionID) match {
         case Some(user) => fuccess(user)
         case None => // session not known yet in cache
           val newSessionData = SessionData(
@@ -84,12 +78,12 @@ class UserSessionService @Inject()(
     }
   }
 
-  def saveNewAnonymousUser(sessionID: BSONObjectID, newSessionData: SessionData)(
+  def saveNewAnonymousUser(sessionID: String, newSessionData: SessionData)(
       implicit request: RequestHeader
   ): Future[User] = {
     // Create a new anonymous user as there is no user with this sessionID
     val user = User(
-      userID = BSONObjectID.generate(),
+      userID = UUID.randomUUID().toString,
       sessionID = Some(sessionID),
       sessionData = List(newSessionData),
       dateCreated = Some(ZonedDateTime.now),
@@ -110,9 +104,9 @@ class UserSessionService @Inject()(
    * @param sessionID
    * @return
    */
-  def getUserBySessionID(sessionID: BSONObjectID): Future[Option[User]] = {
+  def getUserBySessionID(sessionID: String): Future[Option[User]] = {
     // Try the cache
-    userCache.get[User](sessionID.stringify) match {
+    userCache.get[User](sessionID) match {
       case Some(user) =>
         // User successfully pulled from the cache
         fuccess(Some(user))
@@ -140,7 +134,7 @@ class UserSessionService @Inject()(
   def updateUserInCache(user: User): User = {
     //logger.info("User WatchList is now: " + user.jobs.mkString(", "))
     user.sessionID.foreach { sessionID =>
-      userCache.set(sessionID.stringify, user, 10.minutes)
+      userCache.set(sessionID, user, 10.minutes)
     }
     user
   }
@@ -151,32 +145,17 @@ class UserSessionService @Inject()(
   def removeUserFromCache(user: User, withDB: Boolean = true): Any = {
     logger.info("Removing User: \n" + user.toString)
     // Remove user from the cache
-    user.sessionID.foreach(sessionID => userCache.remove(sessionID.stringify))
+    user.sessionID.foreach(sessionID => userCache.remove(sessionID))
 
     if (withDB) {
-      userDao.userCollection.flatMap(
-        _.update(ordered = false).one(
-          BSONDocument(User.IDDB -> user.userID),
-          BSONDocument(
-            "$set" ->
-            BSONDocument(
-              User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
-            ),
-            "$unset" ->
-            BSONDocument(
-              User.SESSIONID -> "",
-              User.CONNECTED -> ""
-            )
-          )
-        )
-      )
+      userDao.afterRemoveFromCache(user.userID)
     }
   }
 
   /**
    * Handles cookie creation
    */
-  def sessionCookie(implicit request: RequestHeader, sessionID: BSONObjectID): mvc.Session = {
-    request.session + (SID -> sessionID.stringify)
+  def sessionCookie(implicit request: RequestHeader, sessionID: String): mvc.Session = {
+    request.session + (SID -> sessionID)
   }
 }

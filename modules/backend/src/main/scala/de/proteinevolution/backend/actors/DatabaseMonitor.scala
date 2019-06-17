@@ -26,12 +26,14 @@ import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.actors.JobActor.Delete
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobActorAccess
 import de.proteinevolution.statistics.{StatisticsObject, UserStatistic}
 import de.proteinevolution.user.{AccountType, User}
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import de.proteinevolution.tel.env.Env
+import de.proteinevolution.user.User
+import javax.inject.{ Inject, Singleton }
 import play.api.libs.mailer.MailerClient
 import reactivemongo.bson.{BSONDateTime, BSONDocument}
 
@@ -137,12 +139,7 @@ final class DatabaseMonitor @Inject()(
         // Store the deleted users in the user statistics
         backendDao.getStats.foreach { statisticsObject =>
           val currentDeleted: Int = statisticsObject.userStatistics.currentDeleted + users.count(_.userData.nonEmpty)
-          val modifier: BSONDocument =
-            BSONDocument(
-              "$set" ->
-              BSONDocument(s"${StatisticsObject.USERSTATISTICS}.${UserStatistic.CURRENTDELETED}" -> currentDeleted)
-            )
-          backendDao.modifyStats(statisticsObject, modifier)
+          backendDao.setStatsCurrentDeleted(statisticsObject, currentDeleted)
         }
 
         // Finally remove the users with their userID
@@ -209,29 +206,7 @@ final class DatabaseMonitor @Inject()(
 
   private def deleteOldJobs(): Unit = {
     log.info("[Job Deletion] finding old jobs...")
-    // grab the current time
-    val now: ZonedDateTime = ZonedDateTime.now
-    // calculate the date at which the job should have been created at
-    val dateCreated: ZonedDateTime = now.minusDays(constants.jobDeletion.toLong)
-    // calculate the date at which it should have been viewed last
-    val lastViewedDate: ZonedDateTime = now.minusDays(constants.jobDeletionLastViewed.toLong)
-    jobDao
-      .findJobs(
-        BSONDocument(
-          Job.DATEVIEWED -> BSONDocument("$lt" -> BSONDateTime(lastViewedDate.toInstant.toEpochMilli)),
-          BSONDocument(
-            "$or" -> List(
-              BSONDocument(
-                Job.DATEDELETION -> BSONDocument("$lt" -> BSONDateTime(now.toInstant.toEpochMilli))
-              ),
-              BSONDocument(
-                Job.DATEDELETION -> BSONDocument("$exists" -> false),
-                Job.DATECREATED  -> BSONDocument("$lt"     -> BSONDateTime(dateCreated.toInstant.toEpochMilli))
-              )
-            )
-          )
-        )
-      )
+    jobDao.findOldJobs()
       .foreach { jobList =>
         log.info(s"[Job Deletion] found ${jobList.length} jobs for deletion. Sending to job actors.")
         jobList.foreach { job =>

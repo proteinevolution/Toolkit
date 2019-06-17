@@ -33,7 +33,6 @@ import javax.inject.{ Inject, Singleton }
 import play.api.Logging
 import play.api.cache.{ AsyncCacheApi, NamedCache }
 import play.twirl.api.HtmlFormat
-import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -69,7 +68,7 @@ final class ResultGetService @Inject()(
       }
     }
     (for {
-      job      <- OptionT(jobDao.selectJob(jobId))
+      job      <- OptionT(jobDao.findJob(jobId))
       toolName <- OptionT.pure[Future](toolConfig.values(job.tool).toolFormSimple.name)
       jobViews <- OptionT.liftF(jobViews(job, toolName))
     } yield {
@@ -104,7 +103,7 @@ final class ResultGetService @Inject()(
       job <- OptionT(jobDao.findJob(jobId))
       jobs <- OptionT.liftF(
         jobDao
-          .findJobs(BSONDocument(Job.HASH -> job.hash))
+          .findJobsByHash(job.hash)
           .map(_.filter(x => (Prepared :: Pending :: Nil).contains(x.status)))
       )
     } yield {

@@ -32,12 +32,12 @@ case class Job(
     jobID: String,
     parentID: Option[String] = None,
     hash: Option[String] = None,
-    ownerID: Option[BSONObjectID] = None,
+    ownerID: Option[String] = None,
     isPublic: Boolean = false,
     status: JobState = Submitted,
     emailUpdate: Boolean = false,
     tool: String,
-    watchList: List[BSONObjectID] = List.empty,
+    watchList: List[String] = List.empty,
     clusterData: Option[JobClusterData] = None,
     dateCreated: Option[ZonedDateTime] = Some(ZonedDateTime.now),
     dateUpdated: Option[ZonedDateTime] = Some(ZonedDateTime.now),
@@ -65,7 +65,7 @@ case class Job(
         |parentID: ${this.parentID}
         |tool: ${this.tool}
         |state: ${this.status}
-        |ownerID: ${this.ownerID.map(_.stringify).getOrElse("no owner")}
+        |ownerID: ${this.ownerID.getOrElse("no owner")}
         |created on: ${this.dateCreated.map(_.toString()).getOrElse("--")}
         |--[Job Object end]--
      """.stripMargin
@@ -109,12 +109,12 @@ object Job {
         jobID = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
         parentID = bson.getAs[String](PARENTID),
         hash = bson.getAs[String](HASH),
-        ownerID = bson.getAs[BSONObjectID](OWNERID),
+        ownerID = bson.getAs[String](OWNERID),
         isPublic = bson.getAs[Boolean](ISPUBLIC).getOrElse(false),
         status = bson.getAs[JobState](STATUS).getOrElse(Error),
         emailUpdate = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
         tool = bson.getAs[String](TOOL).getOrElse(""),
-        watchList = bson.getAs[List[BSONObjectID]](WATCHLIST).getOrElse(List.empty),
+        watchList = bson.getAs[List[String]](WATCHLIST).getOrElse(List.empty),
         clusterData = bson.getAs[JobClusterData](CLUSTERDATA),
         dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
         dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),

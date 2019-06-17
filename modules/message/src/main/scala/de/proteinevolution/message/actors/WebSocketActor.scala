@@ -40,7 +40,6 @@ import io.circe.{Json, JsonObject}
 import javax.inject.{Inject, Named}
 import play.api.Configuration
 import play.api.cache.{NamedCache, SyncCacheApi}
-import reactivemongo.bson.BSONObjectID
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
@@ -51,7 +50,7 @@ final class WebSocketActor @Inject()(
                                       userSessions: UserSessionService,
                                       constants: ConstantsV2,
                                       @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
-                                      @Assisted("sessionID") sessionID: BSONObjectID,
+                                      @Assisted("sessionID") sessionID: String,
                                       toolConfig: ToolConfig,
                                       @Named("clusterSubscriber") clusterSubscriber: ActorRef
 )(implicit ec: ExecutionContext, config: Configuration)
@@ -64,12 +63,12 @@ final class WebSocketActor @Inject()(
     context.system.eventStream.subscribe(self, classOf[UpdateLoad])
     userSessions.getUserBySessionID(sessionID).foreach {
       case Some(user) =>
-        wsActorCache.get[List[ActorRef]](user.userID.stringify) match {
+        wsActorCache.get[List[ActorRef]](user.userID) match {
           case Some(wsActors) =>
             val actorSet = (wsActors: List[ActorRef]).::(self)
-            wsActorCache.set(user.userID.stringify, actorSet)
+            wsActorCache.set(user.userID, actorSet)
           case None =>
-            wsActorCache.set(user.userID.stringify, List(self))
+            wsActorCache.set(user.userID, List(self))
         }
         val loadFuture = clusterSubscriber ? SGELoad.Ask
         loadFuture.mapTo[UpdateLoad].map { response =>
@@ -87,17 +86,17 @@ final class WebSocketActor @Inject()(
     userSessions
       .getUserBySessionID(sessionID)
       .map(_.foreach { user =>
-        wsActorCache.get[List[ActorRef]](user.userID.stringify).foreach { wsActors =>
+        wsActorCache.get[List[ActorRef]](user.userID).foreach { wsActors =>
           val actorSet: List[ActorRef] = wsActors: List[ActorRef]
           val newActorSet              = actorSet.filterNot(_ == self)
-          wsActorCache.set(user.userID.stringify, newActorSet)
+          wsActorCache.set(user.userID, newActorSet)
         }
       })
     context.system.eventStream.unsubscribe(self, classOf[UpdateLoad])
-    log.info(s"[WSActor] Websocket closed for session ${sessionID.stringify}")
+    log.info(s"[WSActor] Websocket closed for session $sessionID")
   }
 
-  private def active(sid: BSONObjectID): Receive = {
+  private def active(sid: String): Receive = {
 
     case json: Json =>
       userSessions.getUserBySessionID(sid).foreach {
@@ -131,7 +130,7 @@ final class WebSocketActor @Inject()(
             case "Pong" =>
               json.hcursor.get[Long]("date").map { msTime =>
                 val ping = ZonedDateTime.now.toInstant.toEpochMilli - msTime
-                log.info(s"[WSActor] Ping of session ${sid.stringify} is ${ping}ms.")
+                log.info(s"[WSActor] Ping of session $sid is ${ping}ms.")
               }
           }
         case None =>
@@ -195,7 +194,7 @@ final class WebSocketActor @Inject()(
         "deleted"   -> Json.fromBoolean(deleted)
       ).asJson
 
-    case ChangeSessionID(newSid: BSONObjectID) =>
+    case ChangeSessionID(newSid: String) =>
       context.become(active(newSid))
 
     case LogOut =>
@@ -216,7 +215,7 @@ object WebSocketActor {
   case object MaintenanceAlert
 
   trait Factory {
-    def apply(@Assisted("sessionID") sessionID: BSONObjectID, @Assisted("out") out: ActorRef): Actor
+    def apply(@Assisted("sessionID") sessionID: String, @Assisted("out") out: ActorRef): Actor
   }
 
 }

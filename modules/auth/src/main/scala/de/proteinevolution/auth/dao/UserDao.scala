@@ -17,16 +17,17 @@
 package de.proteinevolution.auth.dao
 
 import java.time.ZonedDateTime
+import java.util.UUID
 
 import de.proteinevolution.user._
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.api.commands.{ UpdateWriteResult, WriteResult }
-import reactivemongo.bson.{ BSONArray, BSONDateTime, BSONDocument, BSONObjectID }
+import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
+import reactivemongo.bson.{BSONArray, BSONDateTime, BSONDocument}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit ec: ExecutionContext) {
@@ -51,11 +52,11 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       ).one[User]
     )
 
-  def findUserBySessionId(sessionID: BSONObjectID): Future[Option[User]] =
+  def findUserBySessionId(sessionID: String): Future[Option[User]] =
     userCollection.flatMap(_.find(BSONDocument(User.SESSIONID -> sessionID), None).one[User])
 
-  def findUserByDBID(dbID: BSONObjectID): Future[Option[User]] =
-    userCollection.flatMap(_.find(BSONDocument(User.IDDB -> dbID), None).one[User])
+  def findUserByID(userID: String): Future[Option[User]] =
+    userCollection.flatMap(_.find(BSONDocument(User.ID -> userID), None).one[User])
 
   def findUsers(selector: BSONDocument): Future[scala.List[User]] =
     userCollection
@@ -69,11 +70,11 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
    * @param modifier operations to perform on the user
    * @return
    */
-  private def modifyUser(userID: BSONObjectID, modifier: BSONDocument): Future[Option[User]] = {
+  private def modifyUser(userID: String, modifier: BSONDocument): Future[Option[User]] = {
     val bsonCurrentTime = BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
     userCollection.flatMap(
       _.findAndUpdate(
-        BSONDocument(User.IDDB -> userID),
+        BSONDocument(User.ID -> userID),
         modifier.merge(
           BSONDocument(
             "$set" ->
@@ -85,7 +86,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
     )
   }
 
-  def setToken(userID: BSONObjectID, token: UserToken): Future[Option[User]] =
+  def setToken(userID: String, token: UserToken): Future[Option[User]] =
     modifyUser(
       userID,
       BSONDocument(
@@ -95,7 +96,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
     )
 
   def updateAccountType(
-      userID: BSONObjectID,
+      userID: String,
       accountType: Int,
       resetUserToken: Boolean = false
   ): Future[Option[User]] =
@@ -114,9 +115,9 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
     )
 
   def changePassword(
-      userID: BSONObjectID,
+      userID: String,
       newPasswordHash: String,
-      newSessionId: BSONObjectID,
+      newSessionId: String,
       resetUserToken: Boolean = false
   ): Future[Option[User]] =
     modifyUser(
@@ -135,7 +136,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       }
     )
 
-  def updateUserData(userID: BSONObjectID, userData: UserData): Future[Option[User]] =
+  def updateUserData(userID: String, userData: UserData): Future[Option[User]] =
     modifyUser(
       userID,
       BSONDocument(
@@ -146,7 +147,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       )
     )
 
-  def updateUserConfig(userID: BSONObjectID, userConfig: UserConfig): Future[Option[User]] =
+  def updateUserConfig(userID: String, userConfig: UserConfig): Future[Option[User]] =
     modifyUser(
       userID,
       BSONDocument(
@@ -157,7 +158,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       )
     )
 
-  def addJobsToUser(userID: BSONObjectID, jobs: List[String]): Future[Option[User]] =
+  def addJobsToUser(userID: String, jobs: List[String]): Future[Option[User]] =
     modifyUser(
       userID,
       BSONDocument(
@@ -168,7 +169,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       )
     )
 
-  def removeJobsFromUser(userID: BSONObjectID, jobs: List[String]): Future[Option[User]] =
+  def removeJobsFromUser(userID: String, jobs: List[String]): Future[Option[User]] =
     modifyUser(
       userID,
       BSONDocument(
@@ -182,7 +183,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       BSONDocument(
         "$set" -> BSONDocument(
           User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli),
-          User.SESSIONID     -> user.sessionID.orElse(Some(BSONObjectID.generate())) // user needs session id
+          User.SESSIONID     -> user.sessionID.orElse(Some(UUID.randomUUID().toString)) // user needs session id
         )
       ).merge(
           // In the case that the user has been emailed about their inactivity, reset that status to a regular user status
@@ -206,22 +207,35 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
         )
     )
 
+  def afterRemoveFromCache(userID: String): Future[Option[User]] =
+    modifyUser(userID, BSONDocument(
+      "$set" ->
+        BSONDocument(
+          User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
+        ),
+      "$unset" ->
+        BSONDocument(
+          User.SESSIONID -> "",
+          User.CONNECTED -> ""
+        )
+    ))
+
   /**
    * @deprecated very bad practice to have db logic in controllers.
    */
   @Deprecated
-  def modifyUsers(userIDs: List[BSONObjectID], modifier: BSONDocument): Future[WriteResult] =
+  def modifyUsers(userIDs: List[String], modifier: BSONDocument): Future[WriteResult] =
     userCollection.flatMap(
-      _.update(ordered = false).one(BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs)), modifier, multi = true)
+      _.update(ordered = false).one(BSONDocument(User.ID -> BSONDocument("$in" -> userIDs)), modifier, multi = true)
     )
 
-  def removeUsers(userIDs: List[BSONObjectID]): Future[WriteResult] =
-    userCollection.flatMap(_.delete().one(BSONDocument(User.IDDB -> BSONDocument("$in" -> userIDs))))
+  def removeUsers(userIDs: List[String]): Future[WriteResult] =
+    userCollection.flatMap(_.delete().one(BSONDocument(User.ID -> BSONDocument("$in" -> userIDs))))
 
   def upsertUser(user: User): Future[Option[User]] =
     userCollection.flatMap(
       _.findAndUpdate(
-        selector = BSONDocument(User.IDDB -> user.userID),
+        selector = BSONDocument(User.ID -> user.userID),
         update = user,
         upsert = true,
         fetchNewObject = true
@@ -229,11 +243,11 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
     )
 
   /* removes job association from user */
-  def removeJob(jobId: String): Future[UpdateWriteResult] =
+  def removeJob(jobID: String): Future[UpdateWriteResult] =
     userCollection.flatMap {
       _.update(ordered = false).one(
         BSONDocument.empty,
-        BSONDocument("$pull" -> BSONDocument("jobs" -> BSONDocument("$in" -> BSONArray(jobId)))),
+        BSONDocument("$pull" -> BSONDocument("jobs" -> BSONDocument("$in" -> BSONArray(jobID)))),
         multi = true
       )
     }

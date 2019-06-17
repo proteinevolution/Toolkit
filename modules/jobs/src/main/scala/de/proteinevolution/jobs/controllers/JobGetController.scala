@@ -22,44 +22,42 @@ import cats.implicits._
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.models.{Job, JobHashError}
-import de.proteinevolution.jobs.services.{JobFolderValidation, JobHashCheckService, JobSearchService}
 import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.jobs.dao.JobDao
+import de.proteinevolution.jobs.models.JobHashError
+import de.proteinevolution.jobs.services.{JobFolderValidation, JobHashCheckService, JobSearchService}
 import de.proteinevolution.tools.ToolConfig
 import io.circe.syntax._
 import io.circe.{Json, JsonObject}
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class JobGetController @Inject()(
-                                  jobHashService: JobHashCheckService,
-                                  userSessions: UserSessionService,
-                                  jobDao: JobDao,
-                                  cc: ControllerComponents,
-                                  toolConfig: ToolConfig,
-                                  constants: ConstantsV2,
-                                  jobSearchService: JobSearchService,
-                                  userAction: UserAction
+  jobHashService: JobHashCheckService,
+  userSessions: UserSessionService,
+  jobDao: JobDao,
+  cc: ControllerComponents,
+  toolConfig: ToolConfig,
+  constants: ConstantsV2,
+  jobSearchService: JobSearchService,
+  userAction: UserAction
 )(implicit ec: ExecutionContext, config: Configuration)
     extends ToolkitController(cc)
     with JobFolderValidation {
 
   def jobManagerListJobs: Action[AnyContent] = userAction.async { implicit request =>
     jobDao
-      .findJobs(BSONDocument(Job.OWNERID -> request.user.userID, Job.DELETION -> BSONDocument("$exists" -> false)))
-      .map { jobs =>
+      .findJobsByOwner(request.user.userID).map { jobs =>
         NoCache(Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.cleaned(toolConfig)).asJson))
       }
   }
 
   def listJobs: Action[AnyContent] = userAction.async { implicit request =>
-    jobDao.findJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> request.user.jobs))).map { jobs =>
+    jobDao.findJobsByIds(request.user.jobs).map { jobs =>
       Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.cleaned(toolConfig)).asJson)
     }
   }
@@ -86,7 +84,7 @@ class JobGetController @Inject()(
   }
 
   def loadJob(jobID: String): Action[AnyContent] = userAction.async { implicit request =>
-    jobDao.selectJob(jobID).map {
+    jobDao.findJob(jobID).map {
       case Some(job) if jobFolderIsValid(job.jobID, constants) => Ok(job.cleaned(toolConfig).asJson)
       case _                                                   => NotFound
     }

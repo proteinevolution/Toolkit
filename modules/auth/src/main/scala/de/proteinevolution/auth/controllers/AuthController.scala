@@ -16,24 +16,25 @@
 
 package de.proteinevolution.auth.controllers
 
+import java.util.UUID
+
 import akka.actor.ActorRef
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.auth.models.Session.ChangeSessionID
-import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
+import de.proteinevolution.auth.models.{FormDefinitions, JSONTemplate}
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.user.{ AccountType, UserToken }
+import de.proteinevolution.user.{AccountType, UserToken}
 import io.circe.syntax._
-import javax.inject.{ Inject, Singleton }
-import play.api.cache.{ NamedCache, SyncCacheApi }
+import javax.inject.{Inject, Singleton}
+import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
-import play.api.mvc.{ Action, AnyContent, ControllerComponents }
-import play.api.{ Configuration, Logging }
-import reactivemongo.bson.BSONObjectID
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.{Configuration, Logging}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthController @Inject()(
@@ -88,12 +89,12 @@ class AuthController @Inject()(
                     // add the anonymous jobs to the user
                     userDao.addJobsToUser(loggedInUser.userID, anonymousUser.jobs)
                     // Tell the job actors to copy all jobs connected to the old user to the new user
-                    wsActorCache.get[List[ActorRef]](anonymousUser.userID.stringify) match {
+                    wsActorCache.get[List[ActorRef]](anonymousUser.userID) match {
                       case Some(wsActors) =>
                         val actorList: List[ActorRef] = wsActors: List[ActorRef]
-                        wsActorCache.set(loggedInUser.userID.stringify, actorList)
+                        wsActorCache.set(loggedInUser.userID, actorList)
                         actorList.foreach(_ ! ChangeSessionID(loggedInUser.sessionID.get))
-                        wsActorCache.remove(anonymousUser.userID.stringify)
+                        wsActorCache.remove(anonymousUser.userID)
                       case None =>
                     }
 
@@ -155,7 +156,7 @@ class AuthController @Inject()(
                   case None =>
                     // Create the database entry.
                     val newUser = signUpFormUser.copy(
-                      userID = BSONObjectID.generate(),
+                      userID = UUID.randomUUID().toString,
                       sessionID = None,
                       userToken = Some(
                         UserToken(
@@ -231,7 +232,7 @@ class AuthController @Inject()(
             userToVerify.userToken match {
               case Some(userToken) =>
                 if (userToken.token == formContent._3 && userToken.tokenType == UserToken.PASSWORD_CHANGE_TOKEN) {
-                  val newSessionId: BSONObjectID = BSONObjectID.generate()
+                  val newSessionId = UUID.randomUUID().toString
                   userDao.changePassword(userToVerify.userID, formContent._1, newSessionId).map {
                     case Some(updatedUser) =>
                       userSessionService.updateUserInCache(updatedUser)
@@ -273,7 +274,7 @@ class AuthController @Inject()(
             // when there are no errors, then insert the user to the collection
             {
               case Some(newPasswordHash) =>
-                val newSessionId: BSONObjectID = BSONObjectID.generate()
+                val newSessionId = UUID.randomUUID().toString
                 userDao.changePassword(user.userID, newPasswordHash, newSessionId).map {
                   case Some(updatedUser) =>
                     userSessionService.updateUserInCache(updatedUser)
@@ -335,15 +336,15 @@ class AuthController @Inject()(
                     Ok(loginError())
                 }
 
-              case None =>
-                // Password was incorrect
-                fuccess(Ok(passwordWrong()))
-            }
-          )
-      case None =>
-        // User was not logged in
-        fuccess(Ok(notLoggedIn()))
+                case None =>
+                  // Password was incorrect
+                  Future.successful(Ok(passwordWrong()))
+              }
+            )
+        case None =>
+          // User was not logged in
+          Future.successful(Ok(notLoggedIn()))
+      }
     }
-  }
 
 }

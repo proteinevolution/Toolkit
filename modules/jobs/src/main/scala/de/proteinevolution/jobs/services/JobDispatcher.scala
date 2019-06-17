@@ -102,7 +102,7 @@ final class JobDispatcher @Inject()(
   }
 
   private[this] def checkNotAlreadyTaken(jobId: String): EitherT[Future, JobSubmitError, Boolean] = {
-    OptionT(jobDao.selectJob(jobId)).toLeft[Boolean](true).leftMap(_ => JobSubmitError.AlreadyTaken)
+    OptionT(jobDao.findJob(jobId)).toLeft[Boolean](true).leftMap(_ => JobSubmitError.AlreadyTaken)
   }
 
   private[this] def generateJob(
