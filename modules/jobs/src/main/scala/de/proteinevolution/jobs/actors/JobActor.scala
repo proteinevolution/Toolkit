@@ -39,16 +39,15 @@ import de.proteinevolution.jobs.models.{ Job, JobClusterData }
 import de.proteinevolution.jobs.services.{ JobHasher, JobTerminator }
 import de.proteinevolution.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.tel.TEL
-import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
 import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecution
-import de.proteinevolution.tel.execution.{ ExecutionContext, WrapperExecutionFactory }
+import de.proteinevolution.tel.execution.{ExecutionContext, WrapperExecutionFactory}
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
 import de.proteinevolution.user.User
 import javax.inject.Inject
 import play.api.Configuration
-import play.api.cache.{ NamedCache, SyncCacheApi }
+import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
 import reactivemongo.bson.{ BSONDateTime, BSONDocument }
 
@@ -59,7 +58,6 @@ import scala.language.postfixOps
 class JobActor @Inject()(
     runscriptManager: RunscriptManager,
     environment: play.Environment,
-    env: Env,
     hashService: JobHasher,
     jobDao: JobDao,
     userDao: UserDao,
@@ -237,7 +235,7 @@ class JobActor @Inject()(
               log.info(
                 s"[JobActor[$jobActorNumber].sendJobUpdateMail] Sending eMail to job owner for job ${job.jobID}: Job is ${job.status.toString}"
               )
-              val eMail = JobFinishedMail(user, job.jobID, job.status, environment, env)
+              val eMail = JobFinishedMail(user, job.jobID, job.status, environment, config)
               eMail.send
             case None => NotUsed
           }
@@ -280,7 +278,7 @@ class JobActor @Inject()(
                                              events = List(JobEvent(job.status, Some(ZonedDateTime.now)))))
 
         // Get new runscript instance from the runscript manager
-        val runscript: Runscript = runscriptManager(job.tool).withEnvironment(env)
+        val runscript: Runscript = runscriptManager(job.tool).withEnvironment(config.get[Map[String, String]]("tel.env"))
 
         // Validate the Parameters right away
         val validParameters = validatedParameters(job, runscript, extendedParams)
@@ -326,7 +324,7 @@ class JobActor @Inject()(
             case Some(executionContext) =>
               // Ensure that the jobID is not being hashed
               val params  = executionContext.reloadParams
-              val jobHash = hashService.generateJobHash(job, params, env)
+              val jobHash = hashService.generateJobHash(job, params)
               log.info(s"[JobActor[$jobActorNumber].CheckJobHashes] Job hash: " + jobHash)
               // Find the Jobs in the Database
               jobDao.findAndSortJobs(jobHash).foreach { jobList =>
@@ -425,7 +423,7 @@ class JobActor @Inject()(
               // get the params
               val params = executionContext.reloadParams
               // generate job hash
-              val jobHash = Some(hashService.generateJobHash(job, params, env))
+              val jobHash = Some(hashService.generateJobHash(job, params))
 
               // Set memory allocation on the cluster and let the clusterMonitor define the multiplier.
               // To receive a catchable signal in an SGE job, one must set soft limits
@@ -440,15 +438,13 @@ class JobActor @Inject()(
               val s_vmem  = h_vmem * 0.95
               val threads = math.ceil(config.get[Int](s"Tools.${job.tool}.threads") * TEL.threadsFactor).toInt
 
-              env.configure(s"MEMORY", h_vmem.toString + "G")
-              env.configure(s"SOFTMEMORY", s_vmem.toString + "G")
-              env.configure(s"THREADS", threads.toString)
-              env.configure(s"HARDRUNTIME", h_rt.toString)
-              env.configure(s"SOFTRUNTIME", s_rt.toString)
-              env.configure(s"SUBMITMODE", config.get[String]("submit_mode"))
-              env.configure(s"SGENODES", config.get[String]("sge_nodes"))
-              env.configure(s"DATABASES", config.get[String]("db_root"))
-              env.configure(s"BIOPROGSROOT", config.get[String]("bioprogs_root"))
+              val newEnv: Map[String, String] = config.get[Map[String, String]]("tel.env") ++ Map(
+                "MEMORY" -> s"${h_vmem}G",
+                "SOFTMEMORY" -> s"${s_vmem}G",
+                "THREADS" -> threads.toString,
+                "HARDRUNTIME" -> h_rt.toString,
+                "SOFTRUNTIME" -> s_rt.toString
+              )
 
               log.info(s"$jobID is running with $h_vmem GB h_vmem")
               log.info(s"$jobID is running with $threads threads")
@@ -461,7 +457,7 @@ class JobActor @Inject()(
                 .foreach {
                   case Some(_) =>
                     // Get new runscript instance from the runscript manager
-                    val runscript: Runscript = runscriptManager(job.tool).withEnvironment(env)
+                    val runscript: Runscript = runscriptManager(job.tool).withEnvironment(newEnv)
                     // Load the parameters from the serialized parameters file
                     val params = executionContext.reloadParams
                     // Validate the Parameters (again) to ensure that everything works
@@ -474,7 +470,8 @@ class JobActor @Inject()(
 
                     if (isComplete(validParameters)) {
                       val pendingExecution = wrapperExecutionFactory.getInstance(
-                        runscript(validParameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument])))
+                        runscript(validParameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))),
+                        newEnv
                       )
 
                       if (!executionContext.blocked) {

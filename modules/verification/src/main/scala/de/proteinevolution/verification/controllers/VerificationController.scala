@@ -18,6 +18,7 @@ package de.proteinevolution.verification.controllers
 
 import java.time.ZonedDateTime
 
+import javax.inject.{Inject, Singleton}
 import akka.actor.ActorRef
 import controllers.AssetsFinder
 import de.proteinevolution.auth.UserSessions
@@ -26,18 +27,17 @@ import de.proteinevolution.auth.models.JSONTemplate
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.message.actors.WebSocketActor.LogOut
-import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tools.ToolConfig
 import de.proteinevolution.user.{ User, UserToken }
 import javax.inject.{ Inject, Singleton }
 import org.webjars.play.WebJarsUtil
-import play.api.Environment
 import play.api.cache._
 import play.api.libs.mailer._
 import play.api.mvc._
 import reactivemongo.bson._
+import play.api.{Configuration, Environment}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 final class VerificationController @Inject()(
@@ -50,7 +50,7 @@ final class VerificationController @Inject()(
     environment2: play.Environment,
     assets: AssetsFinder,
     cc: ControllerComponents,
-    env: Env
+    config: Configuration
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
     extends ToolkitController(cc)
     with JSONTemplate {
@@ -131,7 +131,7 @@ final class VerificationController @Inject()(
                           .map {
                             case Some(modifiedUser) =>
                               userSessions.removeUserFromCache(user)
-                              val eMail = PasswordChangedMail(modifiedUser, environment2, env)
+                              val eMail = PasswordChangedMail(modifiedUser, environment2, config)
                               eMail.send
                               // Force Log Out on all connected users.
                               (wsActorCache.get(modifiedUser.userID): Option[List[ActorRef]]) match {

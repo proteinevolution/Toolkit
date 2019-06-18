@@ -17,24 +17,26 @@
 package de.proteinevolution.tel.param
 
 import java.nio.file.attribute.PosixFilePermission
-import javax.inject.{ Inject, Singleton }
 
+import javax.inject.{Inject, Singleton}
 import better.files._
-import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tel.param.Implicits._
+import play.api.Configuration
+
 import scala.collection.immutable.ListMap
 
 /**
   Provides methods to read Generative Params from a file
  */
 @Singleton
-class GenerativeParamFileParser @Inject()(env: Env) {
+class GenerativeParamFileParser @Inject()(config: Configuration) {
 
   private final val genKeyword = "GEN" // Denotes the parameter in the descriptor file as generative
 
   def read(filePath: String): Iterator[GenerativeParam] = {
 
     val f = filePath.toFile
+    val env = config.get[Map[String, String]]("tel.env")
 
     f.lineIterator.noWSLines.map { line =>
       val spt = line.split("\\s+")
@@ -67,10 +69,10 @@ abstract class GenerativeParamFile(name: String) extends GenerativeParam(name) {
 class ExecGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String])
     extends GenerativeParamFile(name) {
 
-  private var env: Option[Env] = None
+  private var env: Option[Map[String, String]] = None
   import scala.sys.process.Process
 
-  override def withEnvironment(env: Env): ExecGenParamFile = {
+  def withEnvironment(env: Map[String, String]): ExecGenParamFile = {
     this.env = Some(env)
     this.load()
     this
@@ -93,7 +95,7 @@ class ExecGenParamFile(name: String, path: String, private var allowed: Set[Stri
             PosixFilePermission.GROUP_WRITE
           )
         )
-        tempFile.write(envString.replaceAllIn(path.toFile.contentAsString, m => e.get(m.group("constant"))))
+        tempFile.write(envString.replaceAllIn(path.toFile.contentAsString, m => e.getOrElse(m.group("constant"), "")))
         val x = Process(tempFile.pathAsString).!!.split('\n')
         tempFile.delete(swallowIOExceptions = true)
         x
@@ -114,7 +116,7 @@ class ListGenParamFile(name: String, path: String, private var allowed: Set[Stri
 
   private val f = path.toFile
 
-  override def withEnvironment(env: Env): ListGenParamFile = this
+  def withEnvironment(env: Map[String, String]): ListGenParamFile = this
 
   // Load file upon instantiation
   load()

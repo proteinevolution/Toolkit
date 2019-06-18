@@ -18,10 +18,10 @@ package de.proteinevolution.auth.models
 
 import java.time.ZonedDateTime
 
+import play.api.Configuration
 import de.proteinevolution.common.models.database.jobs.JobState.{ Done, Error }
 import de.proteinevolution.common.models.database.jobs._
 import de.proteinevolution.common.models.util.ZonedDateTimeHelper
-import de.proteinevolution.tel.env.Env
 import de.proteinevolution.user.User
 import play.api.libs.mailer.{ Email, MailerClient }
 
@@ -322,11 +322,11 @@ sealed trait MailTemplate {
 
   def environment: play.Environment
 
-  def env: Env
+  def config: Configuration
 
   val origin: String =
     if (environment.isProd) s"https://toolkit.tuebingen.mpg.de"
-    else s"http://${env.get("HOSTNAME")}:${env.get("PORT")}"
+    else config.get[String]("play.mailer.template_host")
 
 }
 
@@ -335,7 +335,7 @@ object MailTemplate {
   // Date time format for the "deleting your account on" mail
   val dtf = "EEEE, dd.MM.yyyy"
 
-  case class NewUserWelcomeMail(userParam: User, token: String, environment: play.Environment, env: Env)
+  case class NewUserWelcomeMail(userParam: User, token: String, environment: play.Environment, config: Configuration)
       extends MailTemplate {
     override def subject = "Account Verification - The MPI Bioinformatics Toolkit"
 
@@ -388,7 +388,7 @@ object MailTemplate {
     }
   }
 
-  case class ChangePasswordMail(userParam: User, token: String, environment: play.Environment, env: Env)
+  case class ChangePasswordMail(userParam: User, token: String, environment: play.Environment, config: Configuration)
       extends MailTemplate {
     override def subject = "Password Verification - The MPI Bioinformatics Toolkit"
 
@@ -452,7 +452,7 @@ object MailTemplate {
     }
   }
 
-  case class ResetPasswordMail(userParam: User, token: String, environment: play.Environment, env: Env)
+  case class ResetPasswordMail(userParam: User, token: String, environment: play.Environment, config: Configuration)
       extends MailTemplate {
     override def subject = "Password Verification - The MPI Bioinformatics Toolkit"
 
@@ -515,7 +515,8 @@ object MailTemplate {
     }
   }
 
-  case class PasswordChangedMail(userParam: User, environment: play.Environment, env: Env) extends MailTemplate {
+  case class PasswordChangedMail(userParam: User, environment: play.Environment, config: Configuration)
+      extends MailTemplate {
     override def subject = "Password Changed - The MPI Bioinformatics Toolkit"
 
     val user: User = userParam
@@ -551,7 +552,7 @@ object MailTemplate {
       jobId: String,
       jobState: JobState,
       environment: play.Environment,
-      env: Env
+      config: Configuration
   ) extends MailTemplate {
     override def subject: String = s"""Job $jobId finished running - The MPI Bioinformatics Toolkit""".stripMargin
 
@@ -611,8 +612,7 @@ object MailTemplate {
     }
   }
 
-  case class OldAccountEmail(userParam: User, deletionDate: ZonedDateTime, environment: play.Environment, env: Env)
-      extends MailTemplate {
+  case class OldAccountEmail(userParam: User, deletionDate: ZonedDateTime, environment: play.Environment, config: Configuration) extends MailTemplate {
     override def subject = "Old Account - The MPI Bioinformatics Toolkit"
 
     val user: User = userParam

@@ -17,11 +17,10 @@
 package de.proteinevolution.tel.param
 
 import de.proteinevolution.tel.TELRegex
-import de.proteinevolution.tel.env.EnvAware
 
 import scala.collection.immutable.ListMap
 
-abstract class Param(val name: String) extends EnvAware[Param] with TELRegex
+abstract class Param(val name: String) extends TELRegex
 
 abstract class PredicativeParam(name: String) extends Param(name) {
 
