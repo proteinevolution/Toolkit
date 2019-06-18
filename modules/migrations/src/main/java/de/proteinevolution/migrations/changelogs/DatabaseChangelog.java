@@ -183,17 +183,60 @@ public class DatabaseChangelog {
         statistics.createIndex(Indexes.ascending("id"), new IndexOptions().unique(true));
     }
 
-//    @ChangeSet(order = "004", id = "4", author = "Felix Gabler")
-//    public void changeJobEventKeysToSnakeCase(final MongoDatabase db) {
-//        // TODO: does not work yet because events is an array of dynamic documents
-//        List<Bson> pipeline = new ArrayList<>();
-//
-//        final Document project = new Document();
-//        project.put("job_state", "$events.$.jobState");
-//        Bson $project = new Document("$cproject", project);
-//        pipeline.add($project);
-//
-//        db.getCollection("jobevents").aggregate(pipeline);
-//    }
+    @ChangeSet(order = "012", id = "12", author = "Felix Gabler")
+    public void changeJobEventKeysToCamel(final MongoDatabase db) {
+        final Document rename = new Document();
+        rename.put("job_id", "jobID");
+        rename.put("internal_job", "internalJob");
 
+        Bson filters = Filters.and(
+                Filters.and(
+                        Filters.exists("jobID", false)
+                ),
+                Filters.and(
+                        Filters.exists("job_id", true)
+                )
+        );
+        Bson update = new Document("$rename", rename);
+        db.getCollection("jobevents").updateMany(filters, update);
+    }
+
+    @ChangeSet(order = "013", id = "13", author = "Felix Gabler")
+    public void changeJobKeysBackToCamelCase(final MongoDatabase db) {
+        final Document rename = new Document();
+        rename.put("job_id", "id");
+        rename.put("owner_id", "ownerID");
+        rename.put("parent_id", "parentID");
+        rename.put("is_public", "isPublic");
+        rename.put("email_update", "emailUpdate");
+        rename.put("watch_list", "watchList");
+        rename.put("cluster_data", "clusterData");
+        rename.put("date_created", "dateCreated");
+        rename.put("date_updated", "dateUpdated");
+        rename.put("date_viewed", "dateViewed");
+        rename.put("date_deleted", "dateDeleted");
+        rename.put("toolname_long", "toolnameLong");
+        rename.put("ip_hash", "ipHash");
+
+        Bson filters = Filters.and(
+                Filters.exists("id", false),
+                Filters.exists("job_id", true)
+        );
+        Bson update = new Document("$rename", rename);
+        db.getCollection("jobs").updateMany(filters, update);
+    }
+
+    @ChangeSet(order = "014", id = "14", author = "Felix Gabler")
+    public void changeJobClusterDataKeysToCamelCase(final MongoDatabase db) {
+        final Document rename = new Document();
+        rename.put("clusterData.sge_id", "clusterData.sgeID");
+        rename.put("clusterData.started", "clusterData.dateStarted");
+        rename.put("clusterData.finished", "clusterData.dateFinished");
+        Bson filters = Filters.and(
+                Filters.exists("clusterData.sgeID", false),
+                Filters.exists("clusterData.sge_id", true)
+        );
+        Bson update = new Document("$rename", rename);
+        db.getCollection("jobs").updateMany(filters, update);
+    }
 }

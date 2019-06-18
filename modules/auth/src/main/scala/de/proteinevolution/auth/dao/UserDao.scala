@@ -39,7 +39,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
   def addUser(user: User): Future[WriteResult] = userCollection.flatMap(_.insert(ordered = false).one(user))
 
   def findUserByUsername(username: String): Future[Option[User]] =
-    userCollection.flatMap(_.find(BSONDocument(User.NAMELOGIN -> username), None).one[User])
+    userCollection.flatMap(_.find(BSONDocument(User.NAME_LOGIN -> username), None).one[User])
 
   def findUserByEmail(email: String): Future[Option[User]] =
     userCollection.flatMap(_.find(BSONDocument(User.EMAIL -> email), None).one[User])
@@ -47,13 +47,13 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
   def findUserByUsernameOrEmail(username: String, email: String): Future[Option[User]] =
     userCollection.flatMap(
       _.find(
-        BSONDocument("$or" -> List(BSONDocument(User.EMAIL -> email), BSONDocument(User.NAMELOGIN -> username))),
+        BSONDocument("$or" -> List(BSONDocument(User.EMAIL -> email), BSONDocument(User.NAME_LOGIN -> username))),
         None
       ).one[User]
     )
 
   def findUserBySessionId(sessionID: String): Future[Option[User]] =
-    userCollection.flatMap(_.find(BSONDocument(User.SESSIONID -> sessionID), None).one[User])
+    userCollection.flatMap(_.find(BSONDocument(User.SESSION_ID -> sessionID), None).one[User])
 
   def findUserByID(userID: String): Future[Option[User]] =
     userCollection.flatMap(_.find(BSONDocument(User.ID -> userID), None).one[User])
@@ -78,7 +78,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
         modifier.merge(
           BSONDocument(
             "$set" ->
-            BSONDocument(User.DATEUPDATED -> bsonCurrentTime)
+            BSONDocument(User.DATE_UPDATED -> bsonCurrentTime)
           )
         ),
         fetchNewObject = true
@@ -91,7 +91,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       userID,
       BSONDocument(
         "$set" ->
-        BSONDocument(User.USERTOKEN -> token)
+        BSONDocument(User.USER_TOKEN -> token)
       )
     )
 
@@ -104,10 +104,10 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       userID,
       BSONDocument(
         "$set" ->
-        BSONDocument(User.ACCOUNTTYPE -> accountType)
+        BSONDocument(User.ACCOUNT_TYPE -> accountType)
       ).merge {
         if (resetUserToken) {
-          BSONDocument("$unset" -> BSONDocument(User.USERTOKEN -> ""))
+          BSONDocument("$unset" -> BSONDocument(User.USER_TOKEN -> ""))
         } else {
           BSONDocument.empty
         }
@@ -125,11 +125,11 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       BSONDocument(
         "$set" -> BSONDocument(
           User.PASSWORD  -> newPasswordHash,
-          User.SESSIONID -> newSessionId
+          User.SESSION_ID -> newSessionId
         )
       ).merge {
         if (resetUserToken) {
-          BSONDocument("$unset" -> BSONDocument(User.USERTOKEN -> ""))
+          BSONDocument("$unset" -> BSONDocument(User.USER_TOKEN -> ""))
         } else {
           BSONDocument.empty
         }
@@ -142,7 +142,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       BSONDocument(
         "$set" ->
         BSONDocument(
-          User.USERDATA -> userData
+          User.USER_DATA -> userData
         )
       )
     )
@@ -153,7 +153,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       BSONDocument(
         "$set" ->
         BSONDocument(
-          User.USERCONFIG -> userConfig
+          User.USER_CONFIG -> userConfig
         )
       )
     )
@@ -182,15 +182,15 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       user.userID,
       BSONDocument(
         "$set" -> BSONDocument(
-          User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli),
-          User.SESSIONID     -> user.sessionID.orElse(Some(UUID.randomUUID().toString)) // user needs session id
+          User.DATE_LAST_LOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli),
+          User.SESSION_ID     -> user.sessionID.orElse(Some(UUID.randomUUID().toString)) // user needs session id
         )
       ).merge(
           // In the case that the user has been emailed about their inactivity, reset that status to a regular user status
           if (user.accountType == AccountType.CLOSETODELETIONUSER) {
             BSONDocument(
-              "$set"   -> BSONDocument(User.ACCOUNTTYPE   -> AccountType.REGISTEREDUSER.toInt),
-              "$unset" -> BSONDocument(User.DATEDELETEDON -> "")
+              "$set"   -> BSONDocument(User.ACCOUNT_TYPE   -> AccountType.REGISTEREDUSER.toInt),
+              "$unset" -> BSONDocument(User.DATE_DELETED_ON -> "")
             )
           } else {
             BSONDocument.empty
@@ -201,7 +201,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
             .map(
               sessionData =>
                 // Add the session Data to the set
-                BSONDocument("$addToSet" -> BSONDocument(User.SESSIONDATA -> sessionData))
+                BSONDocument("$addToSet" -> BSONDocument(User.SESSION_DATA -> sessionData))
             )
             .getOrElse(BSONDocument.empty)
         )
@@ -211,11 +211,11 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
     modifyUser(userID, BSONDocument(
       "$set" ->
         BSONDocument(
-          User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
+          User.DATE_LAST_LOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
         ),
       "$unset" ->
         BSONDocument(
-          User.SESSIONID -> "",
+          User.SESSION_ID -> "",
           User.CONNECTED -> ""
         )
     ))
@@ -225,8 +225,8 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       _.update(ordered = false).one(BSONDocument(User.ID -> BSONDocument("$in" -> userIDs)), BSONDocument(
         "$set" ->
           BSONDocument(
-            User.ACCOUNTTYPE   -> AccountType.CLOSETODELETIONUSER.toInt,
-            User.DATEDELETEDON -> BSONDateTime(deletionDateMillis)
+            User.ACCOUNT_TYPE   -> AccountType.CLOSETODELETIONUSER.toInt,
+            User.DATE_DELETED_ON -> BSONDateTime(deletionDateMillis)
           )
       ), multi = true)
     )

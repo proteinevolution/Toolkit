@@ -37,13 +37,13 @@ object FormDefinitions {
    */
   def signUp(user: User) = Form(
     mapping(
-      UserData.NAMELOGIN -> text(6, 40).verifying(pattern(textRegex, error = "error.NameLogin")),
+      UserData.NAME_LOGIN -> text(6, 40).verifying(pattern(textRegex, error = "error.NameLogin")),
       UserData.PASSWORD  -> text(8, 128).verifying(pattern(textRegex, error = "error.Password")),
       UserData.EMAIL     -> email,
-      User.ACCEPTEDTOS   -> boolean,
-      User.DATELASTLOGIN -> optional(longNumber),
-      User.DATECREATED   -> optional(longNumber),
-      User.DATEUPDATED   -> optional(longNumber)
+      User.ACCEPTED_TOS   -> boolean,
+      User.DATE_LAST_LOGIN -> optional(longNumber),
+      User.DATE_CREATED   -> optional(longNumber),
+      User.DATE_UPDATED   -> optional(longNumber)
     ) { (nameLogin, password, eMail, acceptToS, _, _, _) =>
       User(
         userID = user.userID,
@@ -68,7 +68,7 @@ object FormDefinitions {
    * Form mapping for the Sign in form
    */
   lazy val signIn = Form(
-    mapping(UserData.NAMELOGIN -> text(6, 40), UserData.PASSWORD -> text(8, 128)) { (nameLogin, password) =>
+    mapping(UserData.NAME_LOGIN -> text(6, 40), UserData.PASSWORD -> text(8, 128)) { (nameLogin, password) =>
       User.Login(
         nameLogin,
         password
@@ -85,8 +85,8 @@ object FormDefinitions {
     Form(
       mapping(
         UserData.EMAIL     -> optional(email),
-        UserData.NAMEFIRST -> optional(text(1, 25).verifying(pattern(textRegex, error = "error.NameFirst"))),
-        UserData.NAMELAST  -> optional(text(1, 25).verifying(pattern(textRegex, error = "error.NameLast"))),
+        UserData.NAME_FIRST -> optional(text(1, 25).verifying(pattern(textRegex, error = "error.NameFirst"))),
+        UserData.NAME_LAST  -> optional(text(1, 25).verifying(pattern(textRegex, error = "error.NameLast"))),
         UserData.COUNTRY   -> optional(text(3, 3).verifying(pattern(textRegex, error = "error.Country"))),
         UserData.PASSWORD  -> text(8, 128).verifying(pattern(textRegex, error = "error.Password"))
       ) { (eMail, nameFirst, nameLast, country, password) =>
@@ -112,8 +112,8 @@ object FormDefinitions {
    */
   def profilePasswordEdit(user: User) = Form(
     mapping(
-      UserData.PASSWORDOLD -> text(8, 128).verifying(pattern(textRegex, error = "error.OldPassword")),
-      UserData.PASSWORDNEW -> text(8, 128).verifying(pattern(textRegex, error = "error.NewPassword"))
+      UserData.PASSWORD_OLD -> text(8, 128).verifying(pattern(textRegex, error = "error.OldPassword")),
+      UserData.PASSWORD_NEW -> text(8, 128).verifying(pattern(textRegex, error = "error.NewPassword"))
     ) { (passwordOld, passwordNew) =>
       if (user.checkPassword(passwordOld)) {
         Some(BCrypt.hashpw(passwordNew, BCrypt.gensalt(LOG_ROUNDS)))
@@ -126,7 +126,7 @@ object FormDefinitions {
   )
 
   def forgottenPasswordRequest = Form(
-    mapping(UserData.EMAILORUSERNAME -> nonEmptyText.verifying(pattern(textRegex))) {
+    mapping(UserData.EMAIL_OR_USERNAME -> nonEmptyText.verifying(pattern(textRegex))) {
       Some(_)
     } { _ =>
       None
@@ -135,8 +135,8 @@ object FormDefinitions {
 
   def forgottenPasswordChange = Form(
     mapping(
-      UserData.PASSWORDNEW -> text(8, 128).verifying(pattern(textRegex, error = "error.NewPassword")),
-      UserData.NAMELOGIN -> text(6, 40),
+      UserData.PASSWORD_NEW -> text(8, 128).verifying(pattern(textRegex, error = "error.NewPassword")),
+      UserData.NAME_LOGIN -> text(6, 40),
       UserToken.TOKEN -> text(15, 15)
     ) {
       (passwordNew, nameLogin, token) =>

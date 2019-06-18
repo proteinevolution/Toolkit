@@ -109,21 +109,21 @@ final class DatabaseMonitor @Inject()(
           "$or" ->
           List(
             BSONDocument( // Removing regular users with no privileges
-              User.ACCOUNTTYPE ->
+              User.ACCOUNT_TYPE ->
               AccountType.NORMALUSER.toInt,
-              User.DATELASTLOGIN ->
+              User.DATE_LAST_LOGIN ->
               BSONDocument("$lt" -> BSONDateTime(regularUserDeletionDate.toInstant.toEpochMilli))
             ),
             BSONDocument( // Removing regular users who await registration
-              User.ACCOUNTTYPE ->
+              User.ACCOUNT_TYPE ->
               AccountType.NORMALUSERAWAITINGREGISTRATION.toInt,
-              User.DATELASTLOGIN ->
+              User.DATE_LAST_LOGIN ->
               BSONDocument("$lt" -> BSONDateTime(awaitingRegistrationUserDeletionDate.toInstant.toEpochMilli))
             ),
             BSONDocument( // Removing registered users with no privileges
-              User.ACCOUNTTYPE ->
+              User.ACCOUNT_TYPE ->
               AccountType.CLOSETODELETIONUSER.toInt,
-              User.DATEDELETEDON ->
+              User.DATE_DELETED_ON ->
               BSONDocument("$lt" -> BSONDateTime(now.toInstant.toEpochMilli))
             )
           )
@@ -154,10 +154,10 @@ final class DatabaseMonitor @Inject()(
     userDao
       .findUsers(
         BSONDocument(
-          User.DATELASTLOGIN -> BSONDocument(
+          User.DATE_LAST_LOGIN -> BSONDocument(
             "$lt" -> BSONDateTime(registeredUserDeletionEMailDate.toInstant.toEpochMilli)
           ),
-          User.ACCOUNTTYPE -> AccountType.REGISTEREDUSER.toInt
+          User.ACCOUNT_TYPE -> AccountType.REGISTEREDUSER.toInt
         )
       )
       .foreach { users =>

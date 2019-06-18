@@ -155,7 +155,7 @@ final class BackendController @Inject()(
 
   def users: Action[AnyContent] = userAction.async { implicit request =>
     if (request.user.isSuperuser) {
-      userDao.findUsers(BSONDocument(User.USERDATA -> BSONDocument("$exists" -> true))).map { users =>
+      userDao.findUsers(BSONDocument(User.USER_DATA -> BSONDocument("$exists" -> true))).map { users =>
         NoCache(Ok(users.asJson))
       }
     } else {

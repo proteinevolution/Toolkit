@@ -48,7 +48,7 @@ final class JobHasher @Inject()(
    * TODO: we write all params into job descriptor files but we should model them, issue #705
    */
   private[this] final val EXCLUDED =
-    Set(Job.JOBID, Job.EMAILUPDATE, "public", "jobid", Job.IPHASH, "parentID", "htb_length", "alignment", "file")
+    Set(Job.ID, Job.EMAIL_UPDATE, "public", "jobid", Job.IP_HASH, "parentID", "htb_length", "alignment", "file")
 
   def generateJobHash(job: Job, params: Map[String, String]): String = {
     val hashable: Map[String, String] = params -- EXCLUDED

@@ -80,48 +80,48 @@ object User {
   final val LOG_ROUNDS: Int = 10
 
   // Constants for the JSON object identifiers
-  final val ID            = "id" // name for the ID in scala
-  final val SESSIONID     = "sessionID" //              Session ID of the User
-  final val SESSIONDATA   = "sessionData" //              session information
-  final val CONNECTED     = "connected" // is the user online?
-  final val ACCOUNTTYPE   = "accountType" //              account type field
-  final val USERDATA      = "userData" //              user data object field
-  final val NAMELOGIN     = s"$USERDATA.${UserData.NAMELOGIN}" //              login name field
-  final val EMAIL         = s"$USERDATA.${UserData.EMAIL}" //              email field
-  final val PASSWORD      = s"$USERDATA.${UserData.PASSWORD}" //              password field
-  final val USERCONFIG    = "userConfig"
-  final val USERTOKEN     = "userToken" //              token
-  final val JOBS          = "jobs" //              job reference pointers field
-  final val ACCEPTEDTOS   = "acceptToS" // needed for checking if the TOS was accepted
-  final val DATELASTLOGIN = "dateLastLogin" // name for the last login field
-  final val DATEDELETEDON = "dateDeletedOn" // name for the field which holds the date when the account is going to be deleted
-  final val DATECREATED   = "dateCreated" //              account created on field
-  final val DATEUPDATED   = "dateUpdated" //              account data changed on field
+  final val ID              = "id" // name for the ID in scala
+  final val SESSION_ID      = "sessionID" //              Session ID of the User
+  final val SESSION_DATA    = "sessionData" //              session information
+  final val CONNECTED       = "connected" // is the user online?
+  final val ACCOUNT_TYPE    = "accountType" //              account type field
+  final val USER_DATA       = "userData" //              user data object field
+  final val NAME_LOGIN      = s"$USER_DATA.${UserData.NAME_LOGIN}" //              login name field
+  final val EMAIL           = s"$USER_DATA.${UserData.EMAIL}" //              email field
+  final val PASSWORD        = s"$USER_DATA.${UserData.PASSWORD}" //              password field
+  final val USER_CONFIG     = "userConfig"
+  final val USER_TOKEN      = "userToken" //              token
+  final val JOBS            = "jobs" //              job reference pointers field
+  final val ACCEPTED_TOS    = "acceptToS" // needed for checking if the TOS was accepted
+  final val DATE_LAST_LOGIN = "dateLastLogin" // name for the last login field
+  final val DATE_DELETED_ON = "dateDeletedOn" // name for the field which holds the date when the account is going to be deleted
+  final val DATE_CREATED    = "dateCreated" //              account created on field
+  final val DATE_UPDATED    = "dateUpdated" //              account data changed on field
 
   implicit val encodeUser: Encoder[User] = (u: User) =>
     Json.obj(
       (ID, Json.fromString(u.userID)),
-      (SESSIONID, u.sessionID.map(id => Json.fromString(id)).getOrElse(Json.Null)),
-      (SESSIONDATA, u.sessionData.asJson),
+      (SESSION_ID, u.sessionID.map(id => Json.fromString(id)).getOrElse(Json.Null)),
+      (SESSION_DATA, u.sessionData.asJson),
       (CONNECTED, Json.fromBoolean(u.connected)),
-      (ACCOUNTTYPE, Json.fromInt(u.accountType)),
-      (UserData.NAMELOGIN, Json.fromString(u.getUserData.nameLogin)),
+      (ACCOUNT_TYPE, Json.fromInt(u.accountType)),
+      (UserData.NAME_LOGIN, Json.fromString(u.getUserData.nameLogin)),
       (UserData.EMAIL, Json.fromString(u.getUserData.eMail)),
       (JOBS, u.jobs.asJson),
       (
-        DATELASTLOGIN,
+        DATE_LAST_LOGIN,
         u.dateLastLogin
           .map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter)))
           .getOrElse(Json.Null)
       ),
       (
-        DATECREATED,
+        DATE_CREATED,
         u.dateCreated
           .map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter)))
           .getOrElse(Json.Null)
       ),
       (
-        DATEUPDATED,
+        DATE_UPDATED,
         u.dateUpdated
           .map(zdt => Json.fromString(zdt.format(ZonedDateTimeHelper.dateTimeFormatter)))
           .getOrElse(Json.Null)
@@ -132,18 +132,18 @@ object User {
     override def read(bson: BSONDocument): User =
       User(
         userID = bson.getAs[String](ID).get,
-        sessionID = bson.getAs[String](SESSIONID),
-        sessionData = bson.getAs[List[SessionData]](SESSIONDATA).getOrElse(List.empty),
+        sessionID = bson.getAs[String](SESSION_ID),
+        sessionData = bson.getAs[List[SessionData]](SESSION_DATA).getOrElse(List.empty),
         connected = bson.getAs[Boolean](CONNECTED).getOrElse(false),
-        accountType = bson.getAs[BSONNumberLike](ACCOUNTTYPE).get.toInt,
-        userData = bson.getAs[UserData](USERDATA),
-        userConfig = bson.getAs[UserConfig](USERCONFIG).getOrElse(UserConfig()),
-        userToken = bson.getAs[UserToken](USERTOKEN),
+        accountType = bson.getAs[BSONNumberLike](ACCOUNT_TYPE).get.toInt,
+        userData = bson.getAs[UserData](USER_DATA),
+        userConfig = bson.getAs[UserConfig](USER_CONFIG).getOrElse(UserConfig()),
+        userToken = bson.getAs[UserToken](USER_TOKEN),
         jobs = bson.getAs[List[String]](JOBS).getOrElse(List.empty),
-        dateDeletedOn = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateLastLogin = bson.getAs[BSONDateTime](DATELASTLOGIN).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt))
+        dateDeletedOn = bson.getAs[BSONDateTime](DATE_DELETED_ON).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateLastLogin = bson.getAs[BSONDateTime](DATE_LAST_LOGIN).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateCreated = bson.getAs[BSONDateTime](DATE_CREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateUpdated = bson.getAs[BSONDateTime](DATE_UPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt))
       )
   }
 
@@ -151,18 +151,18 @@ object User {
     override def write(user: User): BSONDocument =
       BSONDocument(
         ID            -> user.userID,
-        SESSIONID     -> user.sessionID,
-        SESSIONDATA   -> user.sessionData,
+        SESSION_ID     -> user.sessionID,
+        SESSION_DATA   -> user.sessionData,
         CONNECTED     -> user.connected,
-        ACCOUNTTYPE   -> user.accountType.toInt,
-        USERDATA      -> user.userData,
-        USERCONFIG    -> user.userConfig,
-        USERTOKEN     -> user.userToken,
+        ACCOUNT_TYPE   -> user.accountType.toInt,
+        USER_DATA      -> user.userData,
+        USER_CONFIG    -> user.userConfig,
+        USER_TOKEN     -> user.userToken,
         JOBS          -> user.jobs,
-        DATEDELETEDON -> user.dateDeletedOn.map(dt => BSONDateTime(dt.toInstant.toEpochMilli)),
-        DATELASTLOGIN -> BSONDateTime(user.dateLastLogin.fold(-1L)(_.toInstant.toEpochMilli)),
-        DATECREATED   -> BSONDateTime(user.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
-        DATEUPDATED   -> BSONDateTime(user.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli))
+        DATE_DELETED_ON -> user.dateDeletedOn.map(dt => BSONDateTime(dt.toInstant.toEpochMilli)),
+        DATE_LAST_LOGIN -> BSONDateTime(user.dateLastLogin.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATE_CREATED   -> BSONDateTime(user.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATE_UPDATED   -> BSONDateTime(user.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli))
       )
   }
 
