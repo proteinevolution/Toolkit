@@ -21,20 +21,20 @@ import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.results.models.HHContext
 import de.proteinevolution.results.results.Common
-import de.proteinevolution.tel.env.Env
-import javax.inject.{Inject, Singleton}
+import play.api.Configuration
+import javax.inject.{ Inject, Singleton }
 import play.api.http.ContentTypes
-import play.api.mvc.{AbstractController, Action, AnyContent}
+import play.api.mvc.{ AbstractController, Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class FileController @Inject()(
-                                ctx: HHContext,
-                                env: Env,
-                                constants: ConstantsV2,
-                                userSessions: UserSessionService,
-                                userAction: UserAction
+    ctx: HHContext,
+    config: Configuration,
+    constants: ConstantsV2,
+    userSessionService: UserSessionService,
+    userAction: UserAction
 )(implicit ec: ExecutionContext)
     extends AbstractController(ctx.controllerComponents)
     with ContentTypes {
@@ -43,11 +43,11 @@ class FileController @Inject()(
     val db = Common.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
     val filepath = db match {
       case "scop" =>
-        env.get("SCOPE")
+        config.get[String]("tel.env.SCOPE")
       case "ecod" =>
-        env.get("ECOD")
+        config.get[String]("tel.env.ECOD")
       case "mmcif" =>
-        env.get("CIF")
+        config.get[String]("tel.env.CIF")
     }
     Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$filename")).as(BINARY)
   }
@@ -58,7 +58,7 @@ class FileController @Inject()(
     )
     if (file.exists) {
       Ok.sendFile(file)
-        .withSession(userSessions.sessionCookie(request, request.user.sessionID.get))
+        .withSession(userSessionService.sessionCookie(request, request.user.sessionID.get))
         .as(TEXT) // text/plain in order to open the file in a new browser tab
     } else {
       NoContent

@@ -220,13 +220,15 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
         )
     ))
 
-  /**
-   * @deprecated very bad practice to have db logic in controllers.
-   */
-  @Deprecated
-  def modifyUsers(userIDs: List[String], modifier: BSONDocument): Future[WriteResult] =
+  def registerForDeletion(userIDs: List[String], deletionDateMillis: Long): Future[WriteResult] =
     userCollection.flatMap(
-      _.update(ordered = false).one(BSONDocument(User.ID -> BSONDocument("$in" -> userIDs)), modifier, multi = true)
+      _.update(ordered = false).one(BSONDocument(User.ID -> BSONDocument("$in" -> userIDs)), BSONDocument(
+        "$set" ->
+          BSONDocument(
+            User.ACCOUNTTYPE   -> AccountType.CLOSETODELETIONUSER.toInt,
+            User.DATEDELETEDON -> BSONDateTime(deletionDateMillis)
+          )
+      ), multi = true)
     )
 
   def removeUsers(userIDs: List[String]): Future[WriteResult] =

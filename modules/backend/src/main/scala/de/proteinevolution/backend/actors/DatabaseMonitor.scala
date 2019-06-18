@@ -167,8 +167,7 @@ final class DatabaseMonitor @Inject()(
           )
 
         val userIDs = users.map { user =>
-          val mail = OldAccountEmail(user, registeredUserDeletionDateForEmail, config)
-          mail.send
+          OldAccountEmail(user, registeredUserDeletionDateForEmail, config).send
           if (verbose)
             log.info(
               "[User Deletion] eMail sent to user: " + user.getUserData.nameLogin + " Last login: " + user.dateLastLogin
@@ -182,25 +181,15 @@ final class DatabaseMonitor @Inject()(
           log.info(s"[User Deletion] All ${userIDs.length} users eMailed.")
 
         // Set all the eMailed users to "User.CLOSETODELETIONUSER", so that they do not receive another eMail for the same reason
-        userDao
-          .modifyUsers(
-            userIDs,
-            BSONDocument(
-              "$set" ->
-              BSONDocument(
-                User.ACCOUNTTYPE   -> AccountType.CLOSETODELETIONUSER.toInt,
-                User.DATEDELETEDON -> BSONDateTime(registeredUserDeletionDateForEmail.toInstant.toEpochMilli)
-              )
-            )
-          )
-          .foreach { writeResult =>
+        userDao.registerForDeletion(userIDs, registeredUserDeletionDateForEmail.toInstant.toEpochMilli).foreach {
+          writeResult =>
             if (verbose)
               log.info(s"[User Deletion] Writing ${if (writeResult.ok) {
                 "successful"
               } else {
                 "failed"
               }}")
-          }
+        }
       }
   }
 

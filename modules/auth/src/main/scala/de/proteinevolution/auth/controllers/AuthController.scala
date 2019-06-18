@@ -22,19 +22,19 @@ import akka.actor.ActorRef
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate._
 import de.proteinevolution.auth.models.Session.ChangeSessionID
-import de.proteinevolution.auth.models.{FormDefinitions, JSONTemplate}
+import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.user.{AccountType, UserToken}
+import de.proteinevolution.user.{ AccountType, UserToken }
 import io.circe.syntax._
-import javax.inject.{Inject, Singleton}
-import play.api.cache.{NamedCache, SyncCacheApi}
+import javax.inject.{ Inject, Singleton }
+import play.api.cache.{ NamedCache, SyncCacheApi }
 import play.api.libs.mailer.MailerClient
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import play.api.{Configuration, Logging}
+import play.api.mvc.{ Action, AnyContent, ControllerComponents }
+import play.api.{ Configuration, Logging }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 class AuthController @Inject()(
@@ -78,8 +78,9 @@ class AuthController @Inject()(
 
                 userDao.saveNewLogin(databaseUser).map {
                   case Some(loggedInUser) =>
-                    logger.info("-[new login]-\n"
-                        + loggedInUser.toString
+                    logger.info(
+                      "-[new login]-\n"
+                      + loggedInUser.toString
                     )
                     // Remove the old, not logged in user
                     userDao.removeUsers(List(anonymousUser.userID))
@@ -336,15 +337,15 @@ class AuthController @Inject()(
                     Ok(loginError())
                 }
 
-                case None =>
-                  // Password was incorrect
-                  Future.successful(Ok(passwordWrong()))
-              }
-            )
-        case None =>
-          // User was not logged in
-          Future.successful(Ok(notLoggedIn()))
-      }
+              case None =>
+                // Password was incorrect
+                Future.successful(Ok(passwordWrong()))
+            }
+          )
+      case None =>
+        // User was not logged in
+        Future.successful(Ok(notLoggedIn()))
     }
+  }
 
 }

@@ -18,7 +18,6 @@ package de.proteinevolution.tel.runscripts
 
 import better.files._
 import de.proteinevolution.tel.TELRegex
-import de.proteinevolution.tel.env.{ Env, EnvAware }
 import de.proteinevolution.tel.execution.ExecutionContext
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import play.api.Logging
@@ -31,7 +30,7 @@ import scala.util.matching.Regex
  * Instances should be created via the companion object.
  *
  */
-class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript] with Logging {
+class Runscript(files: Seq[File]) extends TELRegex with Logging {
 
   val parameters: Seq[(String, Evaluation)] = parameterString
     .findAllIn(files.map(_.contentAsString).mkString("\n"))
@@ -81,10 +80,10 @@ class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript] with
     parameterString.replaceAllIn(init, replacer.apply _)
   }
 
-  override def withEnvironment(env: Env): Runscript = {
+  def withEnvironment(env: Map[String, String]): Runscript = {
 
     translationSteps.enqueue { s =>
-      envString.replaceAllIn(s, m => env.get(m.group("constant")))
+      envString.replaceAllIn(s, m => env.getOrElse(m.group("constant"), ""))
     }
     this
   }

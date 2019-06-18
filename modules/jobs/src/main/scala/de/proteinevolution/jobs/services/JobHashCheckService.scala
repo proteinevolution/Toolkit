@@ -23,14 +23,12 @@ import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.common.models.database.jobs.JobState.Done
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.Job
-import de.proteinevolution.tel.env.Env
 import javax.inject.{ Inject, Singleton }
 
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 class JobHashCheckService @Inject()(
-    env: Env,
     jobDao: JobDao,
     constants: ConstantsV2,
     hashService: JobHasher
@@ -46,7 +44,7 @@ class JobHashCheckService @Inject()(
   }
 
   private[this] def listSameJobsSorted(job: Job): Future[List[Job]] =
-    jobDao.findAndSortJobs(hashService.generateJobHash(job, params(job.jobID), env))
+    jobDao.findAndSortJobs(hashService.generateJobHash(job, params(job.jobID)))
 
   private[this] def filterJobs(job: Job, j: Job): Boolean =
     (j.isPublic || j.ownerID == job.ownerID) && j.status == Done && resultsExist(j.jobID, constants)

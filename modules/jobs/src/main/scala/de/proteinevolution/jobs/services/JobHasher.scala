@@ -21,7 +21,6 @@ import com.typesafe.config.Config
 import de.proteinevolution.common.parsers.FASTA
 import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.tel.RunscriptPathProvider
-import de.proteinevolution.tel.env.Env
 import de.proteinevolution.util.FNV
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
@@ -51,7 +50,7 @@ final class JobHasher @Inject()(
   private[this] final val EXCLUDED =
     Set(Job.JOBID, Job.EMAILUPDATE, "public", "jobid", Job.IPHASH, "parentID", "htb_length", "alignment", "file")
 
-  def generateJobHash(job: Job, params: Map[String, String], env: Env): String = {
+  def generateJobHash(job: Job, params: Map[String, String]): String = {
     val hashable: Map[String, String] = params -- EXCLUDED
 
     val sequenceHash: Option[Int] = for {
@@ -61,12 +60,14 @@ final class JobHasher @Inject()(
 
     val (dbName, dbVersion): (String, String) = params match {
       case p if p.isDefinedAt("standarddb") =>
-        ("standarddb",
-         (env.get("STANDARD") + "/" + params.getOrElse("standarddb", "")).toFile.lastModifiedTime.toString)
+        (
+          "standarddb",
+          (config.get[String]("tel.env.STANDARD") + "/" + params.getOrElse("standarddb", "")).toFile.lastModifiedTime.toString
+        )
       case p if p.isDefinedAt("hhsuitedb") =>
-        ("hhsuitedb", env.get("HHSUITE").toFile.lastModifiedTime.toString)
+        ("hhsuitedb", config.get[String]("tel.env.HHSUITE").toFile.lastModifiedTime.toString)
       case p if p.isDefinedAt("hhblitsdb") =>
-        ("hhblitsdb", env.get("HHBLITS").toFile.lastModifiedTime.toString)
+        ("hhblitsdb", config.get[String]("tel.env.HHBLITS").toFile.lastModifiedTime.toString)
       case _ => ("", "")
     }
 
