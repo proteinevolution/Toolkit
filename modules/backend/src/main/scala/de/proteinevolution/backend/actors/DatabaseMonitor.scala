@@ -109,21 +109,21 @@ final class DatabaseMonitor @Inject()(
           "$or" ->
           List(
             BSONDocument( // Removing regular users with no privileges
-              User.ACCOUNTTYPE ->
+              User.ACCOUNT_TYPE ->
               User.NORMALUSER,
-              User.DATELASTLOGIN ->
+              User.DATE_LAST_LOGIN ->
               BSONDocument("$lt" -> BSONDateTime(regularUserDeletionDate.toInstant.toEpochMilli))
             ),
             BSONDocument( // Removing regular users who await registration
-              User.ACCOUNTTYPE ->
+              User.ACCOUNT_TYPE ->
               User.NORMALUSERAWAITINGREGISTRATION,
-              User.DATELASTLOGIN ->
+              User.DATE_LAST_LOGIN ->
               BSONDocument("$lt" -> BSONDateTime(awaitingRegistrationUserDeletionDate.toInstant.toEpochMilli))
             ),
             BSONDocument( // Removing registered users with no privileges
-              User.ACCOUNTTYPE ->
+              User.ACCOUNT_TYPE ->
               User.CLOSETODELETIONUSER,
-              User.DATEDELETEDON ->
+              User.DATE_DELETED_ON ->
               BSONDocument("$lt" -> BSONDateTime(now.toInstant.toEpochMilli))
             )
           )
@@ -154,10 +154,10 @@ final class DatabaseMonitor @Inject()(
     userDao
       .findUsers(
         BSONDocument(
-          User.DATELASTLOGIN -> BSONDocument(
+          User.DATE_LAST_LOGIN -> BSONDocument(
             "$lt" -> BSONDateTime(registeredUserDeletionEMailDate.toInstant.toEpochMilli)
           ),
-          User.ACCOUNTTYPE -> User.REGISTEREDUSER
+          User.ACCOUNT_TYPE -> User.REGISTEREDUSER
         )
       )
       .foreach { users =>
@@ -188,8 +188,8 @@ final class DatabaseMonitor @Inject()(
             BSONDocument(
               "$set" ->
               BSONDocument(
-                User.ACCOUNTTYPE   -> User.CLOSETODELETIONUSER,
-                User.DATEDELETEDON -> BSONDateTime(registeredUserDeletionDateForEmail.toInstant.toEpochMilli)
+                User.ACCOUNT_TYPE   -> User.CLOSETODELETIONUSER,
+                User.DATE_DELETED_ON -> BSONDateTime(registeredUserDeletionDateForEmail.toInstant.toEpochMilli)
               )
             )
           )

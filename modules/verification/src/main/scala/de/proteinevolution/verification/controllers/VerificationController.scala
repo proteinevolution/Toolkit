@@ -70,7 +70,7 @@ final class VerificationController @Inject()(
     userSessions.getUser.flatMap { user: User =>
       // Grab the user from the database in case that the logged in user is not the user to verify
       // TODO check for both name or email
-      userDao.findUser(BSONDocument(User.NAMELOGIN -> nameLogin)).flatMap {
+      userDao.findUser(BSONDocument(User.NAME_LOGIN -> nameLogin)).flatMap {
         case Some(userToVerify) =>
           userToVerify.userToken match {
             case Some(userToken) =>
@@ -82,11 +82,11 @@ final class VerificationController @Inject()(
                         BSONDocument(User.ID -> userToVerify.userID),
                         BSONDocument(
                           "$set" ->
-                          BSONDocument(User.ACCOUNTTYPE -> 1,
-                                       User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)),
+                          BSONDocument(User.ACCOUNT_TYPE -> 1,
+                                       User.DATE_UPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)),
                           BSONDocument(
                             "$unset" ->
-                            BSONDocument(User.USERTOKEN -> "")
+                            BSONDocument(User.USER_TOKEN -> "")
                           )
                         )
                       )
@@ -122,10 +122,10 @@ final class VerificationController @Inject()(
                               "$set" ->
                               BSONDocument(
                                 User.PASSWORD    -> newPassword,
-                                User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
+                                User.DATE_UPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
                               ),
                               "$unset" ->
-                              BSONDocument(User.SESSIONID -> "", User.CONNECTED -> "", User.USERTOKEN -> "")
+                              BSONDocument(User.SESSION_ID -> "", User.CONNECTED -> "", User.USER_TOKEN -> "")
                             )
                           )
                           .map {
@@ -185,8 +185,8 @@ final class VerificationController @Inject()(
                     val selector = BSONDocument(User.ID -> user.userID)
                     val modifier = BSONDocument(
                       "$set" -> BSONDocument(
-                        User.DATEUPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli),
-                        User.USERTOKEN   -> newToken
+                        User.DATE_UPDATED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli),
+                        User.USER_TOKEN   -> newToken
                       )
                     )
                     userSessions.modifyUserWithCache(selector, modifier).map {

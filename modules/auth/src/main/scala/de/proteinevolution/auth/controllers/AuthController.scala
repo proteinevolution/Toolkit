@@ -81,7 +81,7 @@ class AuthController @Inject()(
               val futureUser = userDao.findUser(
                 BSONDocument(
                   "$or" -> List(BSONDocument(User.EMAIL -> signInFormUser.nameLogin),
-                                BSONDocument(User.NAMELOGIN -> signInFormUser.nameLogin))
+                                BSONDocument(User.NAME_LOGIN -> signInFormUser.nameLogin))
                 )
               )
               futureUser.flatMap {
@@ -171,7 +171,7 @@ class AuthController @Inject()(
                 // Check database for existing users with the same email
                 val selector = BSONDocument(
                   "$or" -> List(BSONDocument(User.EMAIL -> signUpFormUser.getUserData.eMail),
-                                BSONDocument(User.NAMELOGIN -> signUpFormUser.getUserData.nameLogin))
+                                BSONDocument(User.NAME_LOGIN -> signUpFormUser.getUserData.nameLogin))
                 )
                 userDao.findUser(selector).flatMap {
                   case Some(otherUser) =>
@@ -224,7 +224,7 @@ class AuthController @Inject()(
             BSONDocument(
               "$or" -> List(
                 BSONDocument(User.EMAIL     -> userNameOrEmail),
-                BSONDocument(User.NAMELOGIN -> userNameOrEmail)
+                BSONDocument(User.NAME_LOGIN -> userNameOrEmail)
               )
             )
 
@@ -240,9 +240,9 @@ class AuthController @Inject()(
                   val selector = BSONDocument(User.ID -> user.userID)
                   val modifier = BSONDocument(
                     "$set" ->
-                    BSONDocument(User.DATEUPDATED -> bsonCurrentTime),
+                    BSONDocument(User.DATE_UPDATED -> bsonCurrentTime),
                     "$set" ->
-                    BSONDocument(User.USERTOKEN -> token)
+                    BSONDocument(User.USER_TOKEN -> token)
                   )
                   userSessions.modifyUserWithCache(selector, modifier).map {
                     case Some(registeredUser) =>
@@ -281,9 +281,9 @@ class AuthController @Inject()(
                 val modifier =
                   BSONDocument(
                     "$set" ->
-                    BSONDocument(User.DATEUPDATED -> bsonCurrentTime, User.PASSWORD -> newPasswordHash),
+                    BSONDocument(User.DATE_UPDATED -> bsonCurrentTime, User.PASSWORD -> newPasswordHash),
                     "$unset" ->
-                    BSONDocument(User.USERTOKEN -> "")
+                    BSONDocument(User.USER_TOKEN -> "")
                   )
                 userSessions.modifyUserWithCache(selector, modifier).flatMap {
                   case Some(userWithUpdatedAccount) =>
@@ -292,7 +292,7 @@ class AuthController @Inject()(
                         BSONDocument(User.ID -> userWithUpdatedAccount.userID),
                         BSONDocument(
                           "$unset" ->
-                          BSONDocument(User.USERTOKEN -> "")
+                          BSONDocument(User.USER_TOKEN -> "")
                         )
                       )
                       .map {
@@ -342,9 +342,9 @@ class AuthController @Inject()(
                   val selector = BSONDocument(User.ID -> user.userID)
                   val modifier = BSONDocument(
                     "$set" ->
-                    BSONDocument(User.DATELASTLOGIN -> bsonCurrentTime, User.DATEUPDATED -> bsonCurrentTime),
+                    BSONDocument(User.DATE_LAST_LOGIN -> bsonCurrentTime, User.DATE_UPDATED -> bsonCurrentTime),
                     "$set" ->
-                    BSONDocument(User.USERTOKEN -> token)
+                    BSONDocument(User.USER_TOKEN -> token)
                   )
                   userSessions.modifyUserWithCache(selector, modifier).map {
                     case Some(updatedUser) =>
@@ -390,9 +390,9 @@ class AuthController @Inject()(
                   val selector        = BSONDocument(User.ID -> user.userID)
                   val modifier = BSONDocument(
                     "$set" ->
-                    BSONDocument(User.USERDATA      -> editedProfileUserData.copy(nameLogin = userData.nameLogin),
-                                 User.DATELASTLOGIN -> bsonCurrentTime,
-                                 User.DATEUPDATED   -> bsonCurrentTime)
+                    BSONDocument(User.USER_DATA      -> editedProfileUserData.copy(nameLogin = userData.nameLogin),
+                                 User.DATE_LAST_LOGIN -> bsonCurrentTime,
+                                 User.DATE_UPDATED   -> bsonCurrentTime)
                   )
 
                   if (editedProfileUserData.eMail != user.getUserData.eMail) {

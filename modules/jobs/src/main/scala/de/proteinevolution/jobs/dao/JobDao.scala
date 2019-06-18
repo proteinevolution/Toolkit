@@ -40,7 +40,7 @@ class JobDao @Inject()(
 
   private lazy val jobCollection: Future[BSONCollection] = {
     reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs")).map { collection =>
-      collection.indexesManager.ensure(Index(Seq(Job.JOBID -> IndexType.Text), background = true, unique = true))
+      collection.indexesManager.ensure(Index(Seq(Job.ID -> IndexType.Text), background = true, unique = true))
       collection
     }
   }
@@ -49,7 +49,7 @@ class JobDao @Inject()(
     reactiveMongoApi.database.map(_.collection[BSONCollection]("jobevents"))
 
   final def findJob(id: String): Future[Option[Job]] =
-    jobCollection.flatMap(_.find(BSONDocument(Job.JOBID -> id), None).one[Job])
+    jobCollection.flatMap(_.find(BSONDocument(Job.ID -> id), None).one[Job])
 
   private def internalFindJobs(selector: BSONDocument): Future[List[Job]] = {
     jobCollection
@@ -60,7 +60,7 @@ class JobDao @Inject()(
   def findJobsByIdLike(id: String): Future[List[Job]] =
     internalFindJobs(
       BSONDocument(
-        Job.JOBID -> BSONDocument("$regex" -> s"$id(${constants.jobIDVersioningCharacter}[0-9]{1,3})?")
+        Job.ID -> BSONDocument("$regex" -> s"$id(${constants.jobIDVersioningCharacter}[0-9]{1,3})?")
       )
     )
 
@@ -68,13 +68,13 @@ class JobDao @Inject()(
     internalFindJobs(BSONDocument(Job.HASH -> hash))
 
   def findJobsByIds(jobs: List[String]): Future[List[Job]] =
-    internalFindJobs(BSONDocument(Job.JOBID -> BSONDocument("$in" -> jobs)))
+    internalFindJobs(BSONDocument(Job.ID -> BSONDocument("$in" -> jobs)))
 
   def findJobsByOwner(userID: String): Future[List[Job]] =
-    internalFindJobs(BSONDocument(Job.OWNERID -> userID, Job.DELETION -> BSONDocument("$exists" -> false)))
+    internalFindJobs(BSONDocument(Job.OWNER_ID -> userID, Job.DATE_DELETED -> BSONDocument("$exists" -> false)))
 
   def findJobsByOwnerAndTools(userID: String, toolNames: List[String]): Future[List[Job]] =
-    internalFindJobs(BSONDocument(Job.OWNERID -> userID, Job.TOOL -> BSONDocument("$in" -> toolNames)))
+    internalFindJobs(BSONDocument(Job.OWNER_ID -> userID, Job.TOOL -> BSONDocument("$in" -> toolNames)))
 
   def findOldJobs(): Future[List[Job]] = {
     // grab the current time
@@ -85,15 +85,15 @@ class JobDao @Inject()(
     val lastViewedDate: ZonedDateTime = now.minusDays(constants.jobDeletionLastViewed.toLong)
     internalFindJobs(
       BSONDocument(
-        Job.DATEVIEWED -> BSONDocument("$lt" -> BSONDateTime(lastViewedDate.toInstant.toEpochMilli)),
+        Job.DATE_VIEWED -> BSONDocument("$lt" -> BSONDateTime(lastViewedDate.toInstant.toEpochMilli)),
         BSONDocument(
           "$or" -> List(
             BSONDocument(
-              Job.DATEDELETION -> BSONDocument("$lt" -> BSONDateTime(now.toInstant.toEpochMilli))
+              Job.DATE_DELETED -> BSONDocument("$lt" -> BSONDateTime(now.toInstant.toEpochMilli))
             ),
             BSONDocument(
-              Job.DATEDELETION -> BSONDocument("$exists" -> false),
-              Job.DATECREATED  -> BSONDocument("$lt"     -> BSONDateTime(dateCreated.toInstant.toEpochMilli))
+              Job.DATE_DELETED -> BSONDocument("$exists" -> false),
+              Job.DATE_CREATED  -> BSONDocument("$lt"     -> BSONDateTime(dateCreated.toInstant.toEpochMilli))
             )
           )
         )
@@ -112,13 +112,13 @@ class JobDao @Inject()(
         fetchNewObject = true
       )
     )
-    jobCollection.flatMap(_.delete().one(BSONDocument(Job.JOBID -> jobID)))
+    jobCollection.flatMap(_.delete().one(BSONDocument(Job.ID -> jobID)))
   }
 
   final def findAndSortJobs(hash: String, sort: Int = -1): Future[List[Job]] = {
     jobCollection
       .map(
-        _.find(BSONDocument(Job.HASH -> hash), None).sort(BSONDocument(Job.DATECREATED -> sort)).cursor[Job]()
+        _.find(BSONDocument(Job.HASH -> hash), None).sort(BSONDocument(Job.DATE_CREATED -> sort)).cursor[Job]()
       )
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
   }
@@ -127,11 +127,11 @@ class JobDao @Inject()(
     jobCollection.flatMap(
       _.find(
         BSONDocument(
-          BSONDocument(Job.DELETION -> BSONDocument("$exists" -> false)),
-          BSONDocument(Job.OWNERID  -> userId)
+          BSONDocument(Job.DATE_DELETED -> BSONDocument("$exists" -> false)),
+          BSONDocument(Job.OWNER_ID  -> userId)
         ),
         None
-      ).sort(BSONDocument(Job.DATEUPDATED -> sort)).one[Job]
+      ).sort(BSONDocument(Job.DATE_UPDATED -> sort)).one[Job]
     )
   }
 
@@ -151,7 +151,7 @@ class JobDao @Inject()(
         selector,
         modifier.merge(
           BSONDocument(
-            "$set" -> BSONDocument(Job.DATEVIEWED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli))
+            "$set" -> BSONDocument(Job.DATE_VIEWED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli))
           )
         ),
         fetchNewObject = true
@@ -160,10 +160,10 @@ class JobDao @Inject()(
   }
 
   def updateJobStatus(jobID: String, jobState: JobState): Future[Option[Job]] =
-    modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> jobState)))
+    modifyJob(BSONDocument(Job.ID -> jobID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> jobState)))
 
   def updateSGEID(jobID: String, sgeID: String): Future[Option[Job]] =
-    modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$set" -> BSONDocument(Job.SGEID -> sgeID)))
+    modifyJob(BSONDocument(Job.ID -> jobID), BSONDocument("$set" -> BSONDocument(Job.SGE_ID -> sgeID)))
 
   def updateClusterDataAndHash(
       jobID: String,
@@ -171,15 +171,15 @@ class JobDao @Inject()(
       jobHash: Option[String]
   ): Future[Option[Job]] =
     modifyJob(
-      BSONDocument(Job.JOBID -> jobID),
-      BSONDocument("$set"    -> BSONDocument(Job.CLUSTERDATA -> clusterData, Job.HASH -> jobHash))
+      BSONDocument(Job.ID -> jobID),
+      BSONDocument("$set"    -> BSONDocument(Job.CLUSTER_DATA -> clusterData, Job.HASH -> jobHash))
     )
 
   def addUserToWatchList(jobID: String, userID: String): Future[Option[Job]] =
-    modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$addToSet" -> BSONDocument(Job.WATCHLIST -> userID)))
+    modifyJob(BSONDocument(Job.ID -> jobID), BSONDocument("$addToSet" -> BSONDocument(Job.WATCH_LIST -> userID)))
 
   def removeUserFromWatchList(jobID: String, userID: String): Future[Option[Job]] =
-    modifyJob(BSONDocument(Job.JOBID -> jobID), BSONDocument("$pull" -> BSONDocument(Job.WATCHLIST -> userID)))
+    modifyJob(BSONDocument(Job.ID -> jobID), BSONDocument("$pull" -> BSONDocument(Job.WATCH_LIST -> userID)))
 
   def countJobsForHashSinceTime(hash: String, time: Long): Future[Long] = {
     jobCollection.flatMap(
@@ -188,9 +188,9 @@ class JobDao @Inject()(
           BSONDocument(
             "$and" ->
             List(
-              BSONDocument(Job.IPHASH -> hash),
+              BSONDocument(Job.IP_HASH -> hash),
               BSONDocument(
-                Job.DATECREATED ->
+                Job.DATE_CREATED ->
                 BSONDocument(
                   "$gt" -> BSONDateTime(time)
                 )
