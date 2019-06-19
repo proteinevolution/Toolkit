@@ -37,8 +37,8 @@ export function loadLanguageAsync(lang: string) {
             return import(
                 /* webpackChunkName: "lang-[request]",
                  webpackMode: "lazy",
-                 webpackPrefetch: false,
-                 webpackPreload: false */
+                 webpackPrefetch: 0,
+                 webpackPreload: 0 */
                 `./lang/${lang}`)
                 .then((msgs) => {
                     i18n.setLocaleMessage(lang, msgs.default[lang]);
@@ -57,8 +57,8 @@ export function loadExtraTranslations(path: string) {
         return import(
             /* webpackChunkName: "lang-extra-[request]",
              webpackMode: "lazy",
-             webpackPrefetch: false,
-             webpackPreload: false */
+             webpackPrefetch: 0,
+             webpackPreload: 0 */
             `./lang/extras/${path}.ts`)
             .then((msgs) => {
                 for (const itemLang in msgs.default) {

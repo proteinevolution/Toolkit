@@ -30,6 +30,7 @@
                                     <Section :section="section"
                                              :validationParams="tool.validationParams"
                                              :validation-errors="validationErrors"
+                                             :full-screen="fullScreen"
                                              :submission="submission"/>
                                 </div>
 

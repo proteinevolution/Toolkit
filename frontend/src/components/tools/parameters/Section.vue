@@ -4,14 +4,16 @@ import {ParameterType} from '../../../types/toolkit/enums';
     <div>
         <b-row>
             <b-col v-for="parameter in section.parameters"
-                   :sm="section.multiColumnLayout ? 6 : 12"
                    :md="mediumSize(parameter)"
+                   :sm="smallSize()"
+                   :lg="largeSize(parameter)"
                    :key="parameter.name">
                 <component :is="parameter.parameterType"
                            :parameter="parameter"
                            :validation-params="validationParams"
                            :validation-errors="validationErrors"
                            :submission="submission"
+                           :class="['size-' + mediumSize(parameter)]"
                            class="parameter-component">
                 </component>
             </b-col>
@@ -53,8 +55,26 @@ import {ParameterType} from '../../../types/toolkit/enums';
             validationParams: Object as () => ValidationParams,
             validationErrors: Object,
             submission: Object,
+            fullScreen: {
+                type: Boolean,
+                default: false,
+                required: false,
+            },
         },
         methods: {
+            largeSize(parameter: Parameter) {
+                if (this.section.multiColumnLayout) {
+                    return this.fullScreen ? 3 : 4;
+                } else if (
+                    parameter.parameterType === ParameterType.TextAreaParameter ||
+                    parameter.parameterType === ParameterType.ReformatView ||
+                    parameter.parameterType === ParameterType.AlignmentViewerView
+                ) {
+                    return 12;
+                } else {
+                    return this.fullScreen ? 4 : 6;
+                }
+            },
             mediumSize(parameter: Parameter) {
                 if (this.section.multiColumnLayout) {
                     return 4;
@@ -68,6 +88,9 @@ import {ParameterType} from '../../../types/toolkit/enums';
                     return 6;
                 }
             },
+            smallSize(): number {
+                return this.section.multiColumnLayout ? 6 : 12;
+            },
         },
     });
 </script>
@@ -75,5 +98,10 @@ import {ParameterType} from '../../../types/toolkit/enums';
 <style lang="scss" scoped>
     .parameter-component {
         width: 100%;
+        max-width: 15rem;
+
+        &.size-12 {
+            max-width: none;
+        }
     }
 </style>
