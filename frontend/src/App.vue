@@ -259,4 +259,8 @@
     .cursor-pointer {
         cursor: pointer;
     }
+
+    .no-scroll-y {
+        overflow-y: hidden !important;
+    }
 </style>

@@ -6,6 +6,7 @@
              no-fade
              :size="size"
              :body-class="bodyClass"
+             :modal-class="'tk-modal ' + modalClass"
              lazy
              scrollable
              @hide="$emit('hide')"
@@ -23,7 +24,7 @@
             </div>
         </slot>
         <slot name="body">
-            <div class="tk-modal-body">
+            <div class="tk-modal-content">
                 <slot></slot>
             </div>
         </slot>
@@ -47,14 +48,19 @@
             bodyClass: {
                 type: String,
                 required: false,
-                default: 'tk-modal',
+                default: '',
+            },
+            modalClass: {
+                type: String,
+                required: false,
+                default: '',
             },
         },
     });
 </script>
 
 <style lang="scss">
-    .tk-modal {
+    .tk-modal .modal-body {
         padding: 1.5rem 2rem;
         box-shadow: 0 20px 60px -2px rgba(27, 33, 58, 0.4);
 
@@ -77,7 +83,7 @@
             }
         }
 
-        .tk-modal-body {
+        .tk-modal-content {
             color: $tk-dark-gray;
 
             .section {
