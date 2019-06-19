@@ -34,7 +34,7 @@
                                 </div>
 
                                 <b-form-group v-if="showSubmitButtons"
-                                              class="submit-buttons card-body">
+                                              class="submit-buttons pt-3">
                                     <b-btn class="submit-button"
                                            variant="primary"
                                            @click="submitJob"
@@ -43,6 +43,10 @@
                                     </b-btn>
                                     <custom-job-id-input :validation-errors="validationErrors"
                                                          :submission="submission"/>
+                                    <email-notification-switch v-if="loggedIn"
+                                                               :validation-errors="validationErrors"
+                                                               :submission="submission"
+                                                               class="pull-left"/>
                                 </b-form-group>
                             </b-tab>
 
@@ -68,6 +72,7 @@
     import Vue from 'vue';
     import Section from '@/components/tools/parameters/Section.vue';
     import CustomJobIdInput from '@/components/tools/parameters/CustomJobIdInput.vue';
+    import EmailNotificationSwitch from '@/components/tools/parameters/EmailNotificationSwitch.vue';
     import {ParameterSection, Tool} from '@/types/toolkit/tools';
     import VelocityFade from '@/transitions/VelocityFade.vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
@@ -110,6 +115,7 @@
             NotFoundView,
             LoadingWrapper,
             CustomJobIdInput,
+            EmailNotificationSwitch,
         },
         data() {
             return {
@@ -145,6 +151,9 @@
             },
             preventSubmit(): boolean {
                 return Object.keys(this.validationErrors).length > 0;
+            },
+            loggedIn(): boolean {
+                return this.$store.getters['auth/loggedIn'];
             },
         },
         watch: {

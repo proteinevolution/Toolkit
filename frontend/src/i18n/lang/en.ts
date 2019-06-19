@@ -116,6 +116,7 @@ export default {
                 modellerKey: {
                     stored: 'MODELLER-key is stored in your profile.',
                 },
+                emailNotification: 'E-Mail notification',
             },
             validation: {
                 invalidCharacters: 'Invalid Characters.',
