@@ -5,7 +5,8 @@
         </b-row>
         <b-row>
             <b-col md="12"
-                   lg="2"
+                   lg="3"
+                   xl="2"
                    class="logo-container d-flex">
                 <router-link to="/"
                              class="logo-link">
@@ -13,7 +14,8 @@
                 </router-link>
             </b-col>
             <b-col md="12"
-                   lg="10">
+                   lg="9"
+                   xl="10">
                 <NavBar></NavBar>
             </b-col>
         </b-row>

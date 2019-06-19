@@ -27,7 +27,8 @@
                 <b-row class="pt-3 mb-2 main-content"
                        :class="[showJobList ? 'job-list-visible' : '']">
                     <b-col class="job-list-col"
-                           md="2">
+                           lg="3"
+                           xl="2">
                         <SideBar/>
                     </b-col>
                     <b-col>
@@ -144,10 +145,10 @@
         },
         mounted() {
             /* Modals are shown using EventBus.$emit('show-modal', {id: <MODAL_ID>, props: {<ANY PROPS TO BE PASSED>}});
-               where MODAL_ID is the prop "id" passed to the base modal. It is used by Bootstrap-Vue to access the modal
-               programmatically. The props are passed to the modal via data attributes of the App-component.
+             where MODAL_ID is the prop "id" passed to the base modal. It is used by Bootstrap-Vue to access the modal
+             programmatically. The props are passed to the modal via data attributes of the App-component.
 
-               They are hidden with EventBus.$emit('hide-modal', <MODAL_ID>). */
+             They are hidden with EventBus.$emit('hide-modal', <MODAL_ID>). */
 
             EventBus.$on('show-modal', this.showModal);
             EventBus.$on('hide-modal', this.hideModal);
