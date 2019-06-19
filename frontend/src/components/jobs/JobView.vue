@@ -114,7 +114,7 @@
             },
             goToParent() {
                 this.$router.push(`/jobs/${this.job.parentID}`);
-            }
+            },
         },
     });
 </script>

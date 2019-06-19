@@ -59,16 +59,16 @@ final class ResultGetService @Inject()(
     }
   }
 
-  def getJob(jobId: String): OptionT[Future, JobForm] = {
+  def getJob(jobID: String): OptionT[Future, JobForm] = {
     val paramValues: Map[String, String] = {
-      if (paramsExist(jobId, constants)) {
-        (constants.jobPath / jobId / "sparam").readDeserialized[Map[String, String]]()
+      if (paramsExist(jobID, constants)) {
+        (constants.jobPath / jobID / "sparam").readDeserialized[Map[String, String]]()
       } else {
         Map.empty[String, String]
       }
     }
     (for {
-      job      <- OptionT(jobDao.findJob(jobId))
+      job      <- OptionT(jobDao.findJob(jobID))
       toolName <- OptionT.pure[Future](toolConfig.values(job.tool).toolFormSimple.name)
       jobViews <- OptionT.liftF(jobViews(job, toolName))
     } yield {
@@ -77,6 +77,7 @@ final class ResultGetService @Inject()(
       case (job, jobViews) =>
         JobForm(
           job.jobID,
+          job.parentID,
           job.status,
           job.tool,
           toolConfig.values(job.tool).code,

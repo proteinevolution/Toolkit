@@ -152,7 +152,15 @@
                 immediate: true,
                 handler(value: object | undefined) {
                     if (value) {
-                        this.submission = {... value};
+                        this.submission = {...value};
+                    }
+                },
+            },
+            jobId: {
+                immediate: true,
+                handler(value: object | undefined) {
+                    if (value) {
+                        Vue.set(this.submission, 'parentID', value);
                     }
                 },
             },

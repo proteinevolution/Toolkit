@@ -116,7 +116,7 @@ final class JobDispatcher @Inject()(
     new Job(
       jobID = jobID,
       ownerID = Some(user.userID),
-      parentID = form.get("parent_id"),
+      parentID = form.get("parentID"),
       isPublic = form.get("public").isDefined || user.accountType == AccountType.NORMALUSER,
       emailUpdate = form.get("emailUpdate").isDefined,
       tool = toolName,

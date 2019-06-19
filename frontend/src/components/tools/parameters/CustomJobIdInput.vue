@@ -72,8 +72,8 @@
             },
         },
         methods: {
-            // TODO this is acting up when we debounce it
-            validateCustomJobId: function(value: string) {
+            // TODO debounce this function. Currently, this is acting up when we debounce it. Investigate
+            validateCustomJobId(value: string) {
                 if (value.length < 3) {
                     this.setError({
                         textKey: 'constraints.customerJobIdTooShort',
@@ -82,7 +82,6 @@
                     AuthService.validateJobId(value)
                         .then((result: CustomJobIdValidationResult) => {
                             if (this.customJobId === value) {
-                                console.log(result);
                                 // only update the error if value hasn't changed since api call
                                 const error: ConstraintError | undefined = !result.exists ? undefined : {
                                     textKey: 'constraints.invalidCustomJobId',

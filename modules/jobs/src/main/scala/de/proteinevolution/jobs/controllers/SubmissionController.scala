@@ -99,7 +99,7 @@ class SubmissionController @Inject()(
                   "message"    -> Json.fromString("Submission successful."),
                   "jobID"      -> Json.fromString(job.jobID)
                 ).asJson
-              ).withSession(userSessions.sessionCookie(request, request.user.sessionID.get))
+              )
             case Left(error) => BadRequest(errors(error.msg))
           }
     }

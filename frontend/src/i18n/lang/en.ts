@@ -152,7 +152,7 @@ export default {
             header: 'Jobs',
             details: {
                 jobID: 'Job ID: {jobID},',
-                parentID: 'Parent ID: {0},',
+                parentID: 'Parent Job ID: {0},',
                 dateCreated: 'Created: {dateCreated}',
             },
             states: {
