@@ -48,7 +48,7 @@ class ValidationController @Inject()(userSessions: UserSessions, constants: Cons
                 BSONDocument(
                   "$set" ->
                   BSONDocument(
-                    s"${User.USERCONFIG}.${UserConfig.HASMODELLERKEY}" ->
+                    s"${User.USER_CONFIG}.${UserConfig.HASMODELLERKEY}" ->
                     true
                   )
                 )

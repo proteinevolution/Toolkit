@@ -51,13 +51,13 @@ class UserSessions @Inject()(
       forceSessionID: Boolean = false
   ): BSONDocument = {
     // Build the modifier - first the last login date
-    BSONDocument("$set" -> BSONDocument(User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)))
+    BSONDocument("$set" -> BSONDocument(User.DATE_LAST_LOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)))
       .merge(
         // In the case that the user has been emailed about their inactivity, reset that status to a regular user status
         if (user.accountType == User.CLOSETODELETIONUSER) {
           BSONDocument(
-            "$set"   -> BSONDocument(User.ACCOUNTTYPE   -> 1),
-            "$unset" -> BSONDocument(User.DATEDELETEDON -> "")
+            "$set"   -> BSONDocument(User.ACCOUNT_TYPE   -> 1),
+            "$unset" -> BSONDocument(User.DATE_DELETED_ON -> "")
           )
         } else {
           BSONDocument.empty
@@ -68,7 +68,7 @@ class UserSessions @Inject()(
           .map(
             sessionData =>
               // Add the session Data to the set
-              BSONDocument("$addToSet" -> BSONDocument(User.SESSIONDATA -> sessionData))
+              BSONDocument("$addToSet" -> BSONDocument(User.SESSION_DATA -> sessionData))
           )
           .getOrElse(BSONDocument.empty)
       )
@@ -77,7 +77,7 @@ class UserSessions @Inject()(
         if (forceSessionID) {
           BSONDocument(
             "$set" ->
-            BSONDocument(User.SESSIONID -> Some(user.sessionID.getOrElse(UUID.randomUUID().toString)))
+            BSONDocument(User.SESSION_ID -> Some(user.sessionID.getOrElse(UUID.randomUUID().toString)))
           )
         } else {
           BSONDocument.empty
@@ -92,7 +92,7 @@ class UserSessions @Inject()(
       location = locationProvider.getLocation(request)
     )
 
-    userDao.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
+    userDao.findUser(BSONDocument(User.SESSION_ID -> sessionID)).flatMap {
       case Some(user) =>
         logger.info(s"User found by SessionID:\n${user.toString}")
         val selector = BSONDocument(User.ID -> user.userID)
@@ -153,7 +153,7 @@ class UserSessions @Inject()(
         fuccess(Some(user))
       case None =>
         // Pull it from the DB, as it is not in the cache
-        userDao.findUser(BSONDocument(User.SESSIONID -> sessionID)).flatMap {
+        userDao.findUser(BSONDocument(User.SESSION_ID -> sessionID)).flatMap {
           case Some(user) =>
             // Update the last login time
             val selector = BSONDocument(User.ID -> user.userID)
@@ -213,11 +213,11 @@ class UserSessions @Inject()(
           BSONDocument(
             "$set" ->
             BSONDocument(
-              User.DATELASTLOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
+              User.DATE_LAST_LOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
             ),
             "$unset" ->
             BSONDocument(
-              User.SESSIONID -> "",
+              User.SESSION_ID -> "",
               User.CONNECTED -> ""
             )
           )

@@ -71,13 +71,13 @@ case class Job(
 
   override def toString: String = {
     s"""--[Job Object]--
-        |jobID: ${this.jobID}
-        |parentID: ${this.parentID}
-        |tool: ${this.tool}
-        |state: ${this.status}
-        |ownerID: ${this.ownerID.getOrElse("no owner")}
-        |created on: ${this.dateCreated.map(_.toString()).getOrElse("--")}
-        |--[Job Object end]--
+       |jobID: ${this.jobID}
+       |parentID: ${this.parentID}
+       |tool: ${this.tool}
+       |state: ${this.status}
+       |ownerID: ${this.ownerID.getOrElse("no owner")}
+       |created on: ${this.dateCreated.map(_.toString()).getOrElse("--")}
+       |--[Job Object end]--
      """.stripMargin
   }
 
@@ -89,48 +89,45 @@ case class Job(
 
 object Job {
 
-  final val JOBID        = "job_id"
-  final val PARENTID     = "parent_id"
-  final val HASH         = "hash"
-  final val PROJECT      = "project"
-  final val OWNERID      = "owner_id"
-  final val OWNER        = "owner"
-  final val ISPUBLIC     = "is_public"
-  final val STATUS       = "status"
-  final val EMAILUPDATE  = "email_update"
-  final val DELETION     = "deletion"
-  final val TOOL         = "tool"
-  final val CODE         = "code"
-  final val LABEL        = "label"
-  final val WATCHLIST    = "watch_list"
-  final val CLUSTERDATA  = "cluster_data"
-  final val SGEID        = s"$CLUSTERDATA.${JobClusterData.SGEID}"
-  final val DATECREATED  = "date_created"
-  final val DATEUPDATED  = "date_updated"
-  final val DATEVIEWED   = "date_viewed"
-  final val DATEDELETION = "date_deleted"
-  final val TOOLNAMELONG = "toolname_long"
-  final val IPHASH       = "ip_hash"
+  final val ID            = "id"
+  final val PARENT_ID     = "parentID"
+  final val HASH          = "hash"
+  final val OWNER_ID      = "ownerID"
+  final val IS_PUBLIC     = "isPublic"
+  final val STATUS        = "status"
+  final val EMAIL_UPDATE  = "emailUpdate"
+  final val TOOL          = "tool"
+  final val CODE          = "code"
+  final val LABEL         = "label"
+  final val WATCH_LIST    = "watchList"
+  final val CLUSTER_DATA  = "clusterData"
+  final val SGE_ID        = s"$CLUSTER_DATA.${JobClusterData.SGE_ID}"
+  final val DATE_CREATED  = "dateCreated"
+  final val DATE_UPDATED  = "dateUpdated"
+  final val DATE_VIEWED   = "dateViewed"
+  final val DATE_DELETED  = "dateDeleted"
+  final val TOOLNAME_LONG = "toolnameLong"
+  final val IP_HASH       = "ipHash"
 
   // TODO Bson macros handler
   implicit object Reader extends BSONDocumentReader[Job] {
     def read(bson: BSONDocument): Job = {
       Job(
-        jobID = bson.getAs[String](JOBID).getOrElse("Error loading Job Name"),
-        parentID = bson.getAs[String](PARENTID),
+        jobID = bson.getAs[String](ID).getOrElse("Error loading Job Name"),
+        parentID = bson.getAs[String](PARENT_ID),
         hash = bson.getAs[String](HASH),
-        ownerID = bson.getAs[String](OWNERID),
-        isPublic = bson.getAs[Boolean](ISPUBLIC).getOrElse(false),
+        ownerID = bson.getAs[String](OWNER_ID),
+        isPublic = bson.getAs[Boolean](IS_PUBLIC).getOrElse(false),
         status = bson.getAs[JobState](STATUS).getOrElse(Error),
-        emailUpdate = bson.getAs[Boolean](EMAILUPDATE).getOrElse(false),
+        emailUpdate = bson.getAs[Boolean](EMAIL_UPDATE).getOrElse(false),
         tool = bson.getAs[String](TOOL).getOrElse(""),
-        watchList = bson.getAs[List[String]](WATCHLIST).getOrElse(List.empty),
-        clusterData = bson.getAs[JobClusterData](CLUSTERDATA),
-        dateCreated = bson.getAs[BSONDateTime](DATECREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateUpdated = bson.getAs[BSONDateTime](DATEUPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateViewed = bson.getAs[BSONDateTime](DATEVIEWED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateDeletion = bson.getAs[BSONDateTime](DATEDELETION).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        IPHash = bson.getAs[String](IPHASH)
+        watchList = bson.getAs[List[String]](WATCH_LIST).getOrElse(List.empty),
+        clusterData = bson.getAs[JobClusterData](CLUSTER_DATA),
+        dateCreated = bson.getAs[BSONDateTime](DATE_CREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateUpdated = bson.getAs[BSONDateTime](DATE_UPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateViewed = bson.getAs[BSONDateTime](DATE_VIEWED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        dateDeletion = bson.getAs[BSONDateTime](DATE_DELETED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
+        IPHash = bson.getAs[String](IP_HASH)
       )
     }
   }
@@ -138,21 +135,21 @@ object Job {
   implicit object Writer extends BSONDocumentWriter[Job] {
     def write(job: Job): BSONDocument = {
       BSONDocument(
-        JOBID        -> job.jobID,
-        PARENTID     -> job.parentID,
+        ID           -> job.jobID,
+        PARENT_ID    -> job.parentID,
         HASH         -> job.hash,
-        OWNERID      -> job.ownerID,
-        ISPUBLIC     -> job.isPublic,
+        OWNER_ID     -> job.ownerID,
+        IS_PUBLIC    -> job.isPublic,
         STATUS       -> job.status,
-        EMAILUPDATE  -> job.emailUpdate,
+        EMAIL_UPDATE -> job.emailUpdate,
         TOOL         -> job.tool,
-        WATCHLIST    -> job.watchList,
-        CLUSTERDATA  -> job.clusterData,
-        DATECREATED  -> BSONDateTime(job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
-        DATEUPDATED  -> BSONDateTime(job.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli)),
-        DATEVIEWED   -> BSONDateTime(job.dateViewed.fold(-1L)(_.toInstant.toEpochMilli)),
-        DATEDELETION -> job.dateDeletion.map(d => BSONDateTime(d.toInstant.toEpochMilli)),
-        IPHASH       -> job.IPHash
+        WATCH_LIST   -> job.watchList,
+        CLUSTER_DATA -> job.clusterData,
+        DATE_CREATED -> BSONDateTime(job.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATE_UPDATED -> BSONDateTime(job.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATE_VIEWED  -> BSONDateTime(job.dateViewed.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATE_DELETED -> job.dateDeletion.map(d => BSONDateTime(d.toInstant.toEpochMilli)),
+        IP_HASH      -> job.IPHash
       )
     }
   }
