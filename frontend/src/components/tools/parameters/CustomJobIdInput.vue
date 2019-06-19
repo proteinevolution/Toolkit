@@ -6,7 +6,7 @@
                       :state="valid">
         </b-form-input>
         <b-form-invalid-feedback id="custom-job-id-invalid"
-                                 v-if="valid === false">
+                                 v-if="hasError">
             <i18n :path="error.textKey" tag="span">
                 <span class="suggestion-link"
                       @click="takeSuggestion"
@@ -19,7 +19,6 @@
 <script lang="ts">
     import Vue from 'vue';
     import AuthService from '@/services/AuthService';
-    import {debounce} from 'lodash-es';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
     import {ConstraintError} from '@/types/toolkit/validation';
     import {CustomJobIdValidationResult} from '@/types/toolkit/jobs';
@@ -27,11 +26,9 @@
 
     export default mixins(ToolParameterMixin).extend({
         name: 'CustomJobIdInput',
-        props: {},
         data() {
             return {
-                valid: null as boolean | null,
-                suggestion: '',
+                suggestion: '' as string,
             };
         },
         computed: {
@@ -55,43 +52,47 @@
                     }
                 },
             },
+            valid(): boolean | null {
+                if (this.customJobId.length === 0) {
+                    return null;
+                }
+                return !this.hasError;
+            },
         },
         watch: {
             customJobId: {
                 immediate: true,
                 handler(value: string) {
-                    this.valid = null;
-                    this.suggestion = '';
                     if (value.length === 0) {
                         this.setError(undefined);
                         return;
                     }
-                    this.debouncedValidateCustomJobId(value);
+                    this.validateCustomJobId(value);
                 },
             },
         },
         methods: {
-            debouncedValidateCustomJobId: debounce(function(this: any, value: string) {
+            // TODO this is acting up when we debounce it
+            validateCustomJobId: function(value: string) {
                 if (value.length < 3) {
                     this.setError({
                         textKey: 'constraints.customerJobIdTooShort',
                     });
-                    this.valid = false;
                 } else {
                     AuthService.validateJobId(value)
                         .then((result: CustomJobIdValidationResult) => {
                             if (this.customJobId === value) {
+                                console.log(result);
                                 // only update the error if value hasn't changed since api call
                                 const error: ConstraintError | undefined = !result.exists ? undefined : {
                                     textKey: 'constraints.invalidCustomJobId',
                                 };
-                                this.setError(error);
                                 this.suggestion = result.suggested ? result.suggested : '';
-                                this.valid = !result.exists;
+                                this.setError(error);
                             }
                         });
                 }
-            }, 500),
+            },
             takeSuggestion() {
                 this.customJobId = this.suggestion;
             },

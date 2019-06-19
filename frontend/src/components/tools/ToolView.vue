@@ -93,6 +93,11 @@
                 required: false,
                 default: undefined,
             },
+            jobId: {
+                type: String,
+                required: false,
+                default: undefined,
+            },
             jobParamValues: {
                 type: Object,
                 required: false,

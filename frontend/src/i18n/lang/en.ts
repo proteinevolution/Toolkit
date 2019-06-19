@@ -150,7 +150,11 @@ export default {
         },
         jobs: {
             header: 'Jobs',
-            details: 'JobID: {jobID}, Created: {dateCreated}',
+            details: {
+                jobID: 'Job ID: {jobID},',
+                parentID: 'Parent ID: {0},',
+                dateCreated: 'Created: {dateCreated}',
+            },
             states: {
                 1: 'Prepared',
                 2: 'Queued',

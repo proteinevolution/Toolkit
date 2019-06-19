@@ -82,7 +82,7 @@ final class ResultGetService @Inject()(
           toolConfig.values(job.tool).code,
           job.dateCreated.getOrElse(ZonedDateTime.now).toInstant.toEpochMilli,
           jobViews,
-          paramValues
+          paramValues.updated("jobID", job.jobID) // TODO check if sparam jobid param can be renamed
         )
     }
   }

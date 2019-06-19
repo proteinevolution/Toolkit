@@ -105,9 +105,8 @@ class SubmissionController @Inject()(
     }
   }
 
-  def resubmitJob(newJobID: String, resubmitForJobID: Option[String]): Action[AnyContent] = Action.async {
-    implicit request =>
-      jobResubmitService.resubmit(newJobID, resubmitForJobID).map(r => Ok(r.asJson))
+  def checkJobID(newJobID: String): Action[AnyContent] = Action.async { implicit request =>
+      jobResubmitService.checkJobID(newJobID).map(r => Ok(r.asJson))
   }
 
 }

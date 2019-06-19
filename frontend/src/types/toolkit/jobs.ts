@@ -5,6 +5,7 @@ export interface Job {
     status: JobState;
     tool: string;
     code: string;
+    parentID?: string;
     hidden?: boolean;
     dateCreated?: number;
     dateUpdated?: number;
@@ -21,7 +22,6 @@ export interface SubmissionResponse {
 
 export interface CustomJobIdValidationResult {
     exists: boolean;
-    version?: number;
     suggested?: string;
 }
 

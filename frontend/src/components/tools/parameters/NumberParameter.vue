@@ -52,7 +52,7 @@
                     return {
                         textKey: 'constraints.notEmpty',
                     };
-                } else if (value < this.parameter.min || value > this.parameter.max) {
+                } else if (this.parameter.min && value < this.parameter.min || this.parameter.max && value > this.parameter.max) {
                     return {
                         textKey: 'constraints.range',
                         textKeyParams: {min: this.parameter.min, max: this.parameter.max},

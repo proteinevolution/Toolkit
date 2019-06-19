@@ -19,6 +19,9 @@ const ToolParameterMixin = Vue.extend({
             return this.error != null;
         },
         errorMessage(): TranslateResult {
+            if (!this.hasError) {
+                return '';
+            }
             return this.$t(this.error.textKey, this.error.textKeyParams);
         },
         defaultSubmissionValue(): any {

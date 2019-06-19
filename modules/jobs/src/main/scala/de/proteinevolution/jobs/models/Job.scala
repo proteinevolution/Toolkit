@@ -49,6 +49,7 @@ case class Job(
   def cleaned(toolConfig: ToolConfig)(implicit config: Configuration): JsonObject = {
     JsonObject(
       "jobID"        -> jobID.asJson,
+      "parentID"     -> parentID.asJson,
       "status"       -> status.asJson,
       "code"         -> toolConfig.values(tool).code.asJson,
       "tool"         -> tool.asJson,
