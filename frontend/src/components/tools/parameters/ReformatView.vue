@@ -94,6 +94,7 @@
                     {value: AlignmentSeqFormat.FASTA, text: 'FASTA', $isDisabled: false},
                     {value: AlignmentSeqFormat.CLUSTAL, text: 'CLUSTAL', $isDisabled: false},
                     {value: AlignmentSeqFormat.STOCKHOM, text: 'STOCKHOLM', $isDisabled: false},
+                    {value: AlignmentSeqFormat.PIR, text: 'PIR', $isDisabled: false},
                 ],
                 forwardingOptions: [] as SelectOption[],
                 selectedOutputFormat: undefined,

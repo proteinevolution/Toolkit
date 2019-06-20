@@ -14,6 +14,7 @@ import {STOCKHOLM} from '@/modules/reformat/formats/STOCKHOLM';
 import {PROTEIN} from './sequenceTypes/PROTEIN';
 import {DNA} from './sequenceTypes/DNA';
 import {RNA} from './sequenceTypes/RNA';
+import {PIR} from '@/modules/reformat/formats/PIR';
 
 /**
  * Register possible formats here.
@@ -23,6 +24,7 @@ const supportedFormats: Format[] = [
     CLUSTAL,
     A3M,
     STOCKHOLM,
+    PIR,
 ];
 
 
