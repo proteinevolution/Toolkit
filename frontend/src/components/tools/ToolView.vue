@@ -82,6 +82,7 @@
     import JobService from '@/services/JobService';
     import Logger from 'js-logger';
     import EventBus from '@/util/EventBus';
+    import {Job} from '@/types/toolkit/jobs';
 
     const logger = Logger.get('ToolView');
 
@@ -94,18 +95,8 @@
                 required: false,
                 default: false,
             },
-            jobToolName: {
-                type: String,
-                required: false,
-                default: undefined,
-            },
-            jobId: {
-                type: String,
-                required: false,
-                default: undefined,
-            },
-            jobParamValues: {
-                type: Object,
+            job: {
+                type: Object as () => Job,
                 required: false,
                 default: undefined,
             },
@@ -127,8 +118,8 @@
         },
         computed: {
             toolName(): string {
-                if (this.jobToolName) {
-                    return this.jobToolName;
+                if (this.job) {
+                    return this.job.tool;
                 }
                 return this.$route.params.toolName;
             },
@@ -158,19 +149,12 @@
             },
         },
         watch: {
-            jobParamValues: {
+            job: {
                 immediate: true,
-                handler(value: object | undefined) {
+                handler(value: Job | undefined) {
                     if (value) {
-                        this.submission = {...value};
-                    }
-                },
-            },
-            jobId: {
-                immediate: true,
-                handler(value: object | undefined) {
-                    if (value) {
-                        Vue.set(this.submission, 'parentID', value);
+                        this.submission = {...value.paramValues};
+                        Vue.set(this.submission, 'parentID', value.jobID);
                     }
                 },
             },

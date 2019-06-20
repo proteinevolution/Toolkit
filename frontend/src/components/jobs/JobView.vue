@@ -1,9 +1,7 @@
 <template>
     <tool-view v-if="job"
                isJobView
-               :job-tool-name="job.tool"
-               :job-id="job.jobID"
-               :job-param-values="job.paramValues">
+               :job="job">
 
         <template #job-details>
             <small class="text-muted mr-2"
