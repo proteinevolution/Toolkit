@@ -198,6 +198,7 @@
 
     body {
         overflow-y: scroll;
+        font-family: $font-family-sans-serif;
     }
 
     .toolkit .vue-notification {

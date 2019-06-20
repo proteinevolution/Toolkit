@@ -1,6 +1,6 @@
 <template>
     <footer>
-        <b-nav class="modals-nav">
+        <b-nav class="modals-nav justify-content-center">
             <b-nav-item v-for="simpleModal in simpleModals"
                         :key="simpleModal"
                         @click="launchHelpModal(simpleModal)">
@@ -9,7 +9,7 @@
             <b-nav-item @click="launchUpdatesModal">{{ $t('footerLinkModals.names.updates') }}</b-nav-item>
         </b-nav>
         <b-row>
-            <b-col>
+            <b-col class="text-center">
                 {{ $t('copyright', {currentYear: new Date().getFullYear()}) }}
             </b-col>
         </b-row>

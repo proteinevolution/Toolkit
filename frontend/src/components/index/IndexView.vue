@@ -1,6 +1,6 @@
 <template>
     <div class="index-view">
-        <div class="caption-container">
+        <div class="caption-container d-none d-sm-block">
             <img :src="require('../../assets/images/Toolkit100.png')"
                  class="img-fluid"/>
             <div class="caption d-none d-lg-block">

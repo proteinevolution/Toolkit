@@ -1,6 +1,6 @@
 <template>
     <b-col cols="12"
-           class="top-navbar">
+           class="top-navbar navbar-light">
 
         <div class="meta-user"></div>
         <div class="social-nav">
@@ -8,21 +8,21 @@
                       href="https://github.com/proteinevolution/Toolkit"
                       target="_blank"
                       rel="noopener"
-                      class="dark-link">
+                      class="social-link">
                 <i class="fab fa-github"></i>
             </b-button>
             <b-button variant="href"
                       href="https://www.facebook.com/mpitoolkit"
                       target="_blank"
                       rel="noopener"
-                      class="dark-link">
+                      class="social-link">
                 <i class="fab fa-facebook-f"></i>
             </b-button>
             <b-button variant="href"
                       href="https://twitter.com/mpitoolkit"
                       target="_blank"
                       rel="noopener"
-                      class="dark-link">
+                      class="social-link">
                 <i class="fab fa-twitter"></i>
             </b-button>
             <b-button v-if="!loggedIn"
@@ -63,6 +63,13 @@
             </div>
         </div>
 
+        <router-link to="/"
+                     class="small-logo-link d-md-none mx-auto">
+            <img :src="require('../../assets/images/minlogo.svg')" alt="MPI Bioinformatics Toolkit"/>
+        </router-link>
+
+        <b-navbar-toggle class="d-md-none mr-auto"
+                         target="nav_collapse"></b-navbar-toggle>
     </b-col>
 </template>
 
@@ -110,22 +117,36 @@
     });
 </script>
 
-<style lang="scss">
-    .profile-link {
-        color: $primary !important;
-    }
-</style>
-
 <style lang="scss" scoped>
     .top-navbar {
         width: 100%;
         display: flex;
         flex-direction: row-reverse;
+
+        @include media-breakpoint-down(sm) {
+            min-height: 50px;
+        }
+    }
+
+    .small-logo-link {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+
+        img {
+            height: 50px;
+        }
     }
 
     .social-nav {
-        .dark-link i {
-            color: $tk-dark-gray;
+        .social-link {
+            @include media-breakpoint-down(sm) {
+                display: none;
+            }
+
+            i {
+                color: $tk-dark-gray;
+            }
         }
 
         .sign-in-link {

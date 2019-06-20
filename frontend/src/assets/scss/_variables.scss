@@ -44,10 +44,14 @@ $modal-backdrop-opacity: 0.2;
 $modal-content-box-shadow-sm-up:    0 20px 60px -2px rgba(27, 33, 58, 0.4);
 $modal-sm: 350px;
 
-  // TYPOGRAPHY
+// TYPOGRAPHY
 $font-size-base: 0.9rem;
 $font-family-sans-serif: "Noto Sans", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 $font-family-monospace: Consolas, "SFMono-Regular", "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
 
 // MISC
 $global-radius: 3px;
+
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import '~bootstrap/scss/mixins';

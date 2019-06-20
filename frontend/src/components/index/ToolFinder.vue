@@ -1,8 +1,8 @@
 <template>
     <div class="tool-finder-container">
         <div class="tool-finder container">
-            <div class="live-table row">
-                <div class="col-md-6">
+            <b-row class="live-table">
+                <b-col cols="6">
                     <div class="live-table-child">
                         <div class="load-bar">
                             <div class="load-bar-label">
@@ -20,24 +20,26 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-6">
+                </b-col>
+                <b-col cols="6">
                     <div class="live-table-child">
                         <router-link to="/jobmanager"
                                      class="job-manager-link">
-                            Job Manager
+                            <span class="d-none d-sm-inline">Job Manager</span>
                             <i class="fas fa-list-ul"></i>
                         </router-link>
                     </div>
-                </div>
-            </div>
-            <div class="search-container row">
-                <div class="traffic-bar col-12"
-                     :class="'status-' + currentJobStatus"></div>
-                <div class="search-field-container col-12">
+                </b-col>
+            </b-row>
+            <b-row class="search-container">
+                <b-col class="traffic-bar"
+                       cols="12"
+                       :class="'status-' + currentJobStatus"></b-col>
+                <b-col class="search-field-container"
+                       cols="12">
                     <SearchField :placeholder="$t('index.searchPlaceholder')"/>
-                </div>
-            </div>
+                </b-col>
+            </b-row>
         </div>
     </div>
 </template>
@@ -109,8 +111,14 @@
     }
 
     .tool-finder-container {
-        width: 50%;
-        margin: -83px auto 0 auto;
+        width: 100%;
+        @include media-breakpoint-up(sm) {
+            width: 75%;
+            margin: -83px auto 0 auto;
+        }
+        @include media-breakpoint-up(md) {
+            width: 50%;
+        }
 
         .tool-finder {
             position: relative;

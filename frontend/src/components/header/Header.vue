@@ -4,16 +4,16 @@
             <TopNavBar></TopNavBar>
         </b-row>
         <b-row>
-            <b-col md="12"
+            <b-col sm="12"
                    lg="3"
                    xl="2"
-                   class="logo-container d-flex">
+                   class="logo-container d-none d-md-flex">
                 <router-link to="/"
                              class="logo-link">
                     <img :src="require('../../assets/images/minlogo.svg')" alt="MPI Bioinformatics Toolkit"/>
                 </router-link>
             </b-col>
-            <b-col md="12"
+            <b-col cols="12"
                    lg="9"
                    xl="10">
                 <NavBar></NavBar>

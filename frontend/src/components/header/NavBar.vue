@@ -2,7 +2,8 @@
     <div class="navbar-container">
         <b-navbar toggleable="md"
                   type="light">
-            <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+            <b-navbar-toggle target="nav_collapse"
+                             class="m-navbar-toggler"></b-navbar-toggle>
 
             <b-collapse is-nav id="nav_collapse">
                 <b-row>
@@ -111,6 +112,13 @@
     .navbar-container .navbar {
         padding-left: 0;
         max-width: 750px;
+
+
+        @include media-breakpoint-down(sm) {
+            .m-navbar-toggler {
+                display: none;
+            }
+        }
 
         .navbar-nav {
             .nav-item a {

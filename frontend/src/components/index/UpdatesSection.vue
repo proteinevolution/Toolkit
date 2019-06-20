@@ -1,5 +1,5 @@
 <template>
-    <b-row class="mt-3 mt-md-5 justify-content-center">
+    <div class="d-flex mt-3 mt-md-5 justify-content-center">
         <b-col md="9"
                class="tile-main-container">
             <b-row>
@@ -31,8 +31,7 @@
                 </b-col>
             </b-row>
         </b-col>
-    </b-row>
-
+    </div>
 </template>
 
 <script lang="ts">
@@ -124,15 +123,22 @@
         }
 
         .quick-link-section {
-            border-left: 1px dashed $tk-light-gray;
+            border-top: 1px dashed $tk-light-gray;
+            @include media-breakpoint-up(sm) {
+                border-left: 1px dashed $tk-light-gray;
+                border-top: none;
+            }
 
             .quick-link {
                 color: $tk-darker-gray;
                 display: flex;
                 justify-content: space-between;
                 text-decoration: none;
-                width: 80%;
+                max-width: 100px;
                 margin-bottom: 0.25em;
+                @include media-breakpoint-up(sm) {
+                    max-width: 150px;
+                }
 
                 i {
                     font-size: 1.4em;
