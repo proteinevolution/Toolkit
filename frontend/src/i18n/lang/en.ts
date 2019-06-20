@@ -116,6 +116,7 @@ export default {
                 modellerKey: {
                     stored: 'MODELLER-key is stored in your profile.',
                 },
+                emailNotification: 'E-Mail notification',
             },
             validation: {
                 invalidCharacters: 'Invalid Characters.',
@@ -150,7 +151,11 @@ export default {
         },
         jobs: {
             header: 'Jobs',
-            details: 'JobID: {jobID}, Created: {dateCreated}',
+            details: {
+                jobID: 'Job ID: {jobID},',
+                parentID: 'Parent Job ID: {0},',
+                dateCreated: 'Created: {dateCreated}',
+            },
             states: {
                 1: 'Prepared',
                 2: 'Queued',

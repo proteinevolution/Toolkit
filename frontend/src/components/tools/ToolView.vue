@@ -30,11 +30,12 @@
                                     <Section :section="section"
                                              :validationParams="tool.validationParams"
                                              :validation-errors="validationErrors"
+                                             :full-screen="fullScreen"
                                              :submission="submission"/>
                                 </div>
 
                                 <b-form-group v-if="showSubmitButtons"
-                                              class="submit-buttons card-body">
+                                              class="submit-buttons pt-3">
                                     <b-btn class="submit-button"
                                            variant="primary"
                                            @click="submitJob"
@@ -43,6 +44,10 @@
                                     </b-btn>
                                     <custom-job-id-input :validation-errors="validationErrors"
                                                          :submission="submission"/>
+                                    <email-notification-switch v-if="loggedIn"
+                                                               :validation-errors="validationErrors"
+                                                               :submission="submission"
+                                                               class="pull-left"/>
                                 </b-form-group>
                             </b-tab>
 
@@ -68,6 +73,7 @@
     import Vue from 'vue';
     import Section from '@/components/tools/parameters/Section.vue';
     import CustomJobIdInput from '@/components/tools/parameters/CustomJobIdInput.vue';
+    import EmailNotificationSwitch from '@/components/tools/parameters/EmailNotificationSwitch.vue';
     import {ParameterSection, Tool} from '@/types/toolkit/tools';
     import VelocityFade from '@/transitions/VelocityFade.vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
@@ -93,6 +99,11 @@
                 required: false,
                 default: undefined,
             },
+            jobId: {
+                type: String,
+                required: false,
+                default: undefined,
+            },
             jobParamValues: {
                 type: Object,
                 required: false,
@@ -105,6 +116,7 @@
             NotFoundView,
             LoadingWrapper,
             CustomJobIdInput,
+            EmailNotificationSwitch,
         },
         data() {
             return {
@@ -141,13 +153,24 @@
             preventSubmit(): boolean {
                 return Object.keys(this.validationErrors).length > 0;
             },
+            loggedIn(): boolean {
+                return this.$store.getters['auth/loggedIn'];
+            },
         },
         watch: {
             jobParamValues: {
                 immediate: true,
                 handler(value: object | undefined) {
                     if (value) {
-                        this.submission = {... value};
+                        this.submission = {...value};
+                    }
+                },
+            },
+            jobId: {
+                immediate: true,
+                handler(value: object | undefined) {
+                    if (value) {
+                        Vue.set(this.submission, 'parentID', value);
                     }
                 },
             },
@@ -234,7 +257,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
+            z-index: 11;
             overflow-y: auto;
             border-radius: 0;
         }

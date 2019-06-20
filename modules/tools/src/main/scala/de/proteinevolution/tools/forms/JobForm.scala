@@ -21,6 +21,7 @@ import io.circe.generic.JsonCodec
 
 @JsonCodec case class JobForm(
     jobID: String,
+    parentID: Option[String],
     status: JobState,
     tool: String,
     code: String,

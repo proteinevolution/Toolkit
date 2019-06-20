@@ -32,22 +32,19 @@
                       @click="openAuthModal"
                       v-text="$t('auth.signIn')">
             </b-button>
-            <b-dropdown v-else
-                        :text="user.nameLogin"
-                        right
-                        no-caret
-                        variant="href"
-                        size="sm"
-                        toggle-class="profile-link">
-                <b-dropdown-item @click="openAuthModal">
-                    <i class="fas fa-user mr-2"></i>
-                    <span v-text="$t('auth.profile')"></span>
-                </b-dropdown-item>
-                <b-dropdown-item @click="signOut">
-                    <i class="fas fa-sign-out-alt mr-2"></i>
-                    <span v-text="$t('auth.signOut')"></span>
-                </b-dropdown-item>
-            </b-dropdown>
+            <b-button v-else
+                      variant="href"
+                      size="sm"
+                      class="sign-in-link"
+                      @click="openAuthModal"
+                      v-text="user.nameLogin">
+            </b-button>
+            <b-button v-if="loggedIn"
+                      variant="href"
+                      size="sm"
+                      @click="signOut">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+            </b-button>
         </div>
 
         <div class="warnings-container">

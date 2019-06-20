@@ -1,12 +1,23 @@
 <template>
     <tool-view v-if="job"
                isJobView
-               :jobToolName="job.tool"
-               :jobParamValues="job.paramValues">
+               :job-tool-name="job.tool"
+               :job-id="job.jobID"
+               :job-param-values="job.paramValues">
 
         <template #job-details>
+            <small class="text-muted mr-2"
+                   v-text="$t('jobs.details.jobID', {jobID})"></small>
+            <i18n path="jobs.details.parentID"
+                  tag="small"
+                  class="text-muted mr-2"
+                  v-if="job.parentID">
+                <a class="cursor-pointer text-primary"
+                   @click="goToParent"
+                   v-text="job.parentID"></a>
+            </i18n>
             <small class="text-muted"
-                   v-text="$t('jobs.details', {jobID, dateCreated})"></small>
+                   v-text="$t('jobs.details.dateCreated', {dateCreated})"></small>
         </template>
 
         <template #job-tabs>
@@ -100,6 +111,9 @@
         methods: {
             loadJobDetails(jobID: string): void {
                 this.$store.dispatch('jobs/loadJobDetails', jobID);
+            },
+            goToParent() {
+                this.$router.push(`/jobs/${this.job.parentID}`);
             },
         },
     });

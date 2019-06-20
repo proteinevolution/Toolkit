@@ -94,9 +94,9 @@ export default class AuthService {
         }));
     }
 
-    public static validateJobId(jobId: string): Promise<CustomJobIdValidationResult> {
+    public static validateJobId(newJobID: string): Promise<CustomJobIdValidationResult> {
         return new Promise<CustomJobIdValidationResult>(((resolve, reject) => {
-            axios.get(`/api/jobs/check/jobid/${jobId}/?resubmitJobID=null`) // TODO: what does resubmitJobID do?
+            axios.get(`/api/jobs/check/job-id/${newJobID}/`)
                 .then((response) => resolve(response.data))
                 .catch(reject);
         }));

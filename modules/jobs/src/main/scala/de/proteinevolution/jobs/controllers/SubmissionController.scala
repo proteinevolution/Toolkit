@@ -99,15 +99,14 @@ class SubmissionController @Inject()(
                   "message"    -> Json.fromString("Submission successful."),
                   "jobID"      -> Json.fromString(job.jobID)
                 ).asJson
-              ).withSession(userSessions.sessionCookie(request, request.user.sessionID.get))
+              )
             case Left(error) => BadRequest(errors(error.msg))
           }
     }
   }
 
-  def resubmitJob(newJobID: String, resubmitForJobID: Option[String]): Action[AnyContent] = Action.async {
-    implicit request =>
-      jobResubmitService.resubmit(newJobID, resubmitForJobID).map(r => Ok(r.asJson))
+  def checkJobID(newJobID: String): Action[AnyContent] = Action.async { implicit request =>
+      jobResubmitService.checkJobID(newJobID).map(r => Ok(r.asJson))
   }
 
 }

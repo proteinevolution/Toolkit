@@ -2,27 +2,26 @@
     <BaseModal title=""
                id="auth"
                size="sm"
-               body-class="tk-auth-modal tk-modal">
+               body-class="no-scroll-y"
+               modal-class="tk-auth-modal">
         <template #header>
             &#8203;
         </template>
         <template #body>
-            <b-tabs>
-                <b-tab v-if="!loggedIn"
-                       :title="$t('auth.signIn')">
-                    <LoginForm/>
-                </b-tab>
-                <b-tab v-if="!loggedIn"
-                       :title="$t('auth.signUp')">
-                    <RegisterForm/>
-                </b-tab>
-                <b-tab v-if="loggedIn"
-                       :title="$t('auth.profile')">
+            <b-tabs v-if="loggedIn">
+                <b-tab :title="$t('auth.profile')">
                     <Profile/>
                 </b-tab>
-                <b-tab v-if="loggedIn"
-                       :title="$t('auth.settings')">
+                <b-tab :title="$t('auth.settings')">
                     <Settings/>
+                </b-tab>
+            </b-tabs>
+            <b-tabs v-else>
+                <b-tab :title="$t('auth.signIn')">
+                    <LoginForm/>
+                </b-tab>
+                <b-tab :title="$t('auth.signUp')">
+                    <RegisterForm/>
                 </b-tab>
             </b-tabs>
         </template>
@@ -61,62 +60,72 @@
 </script>
 
 <style lang="scss">
-    .tk-auth-modal.modal-body {
-        display: flex;
-        padding: 0;
+    .tk-auth-modal {
+        .modal-body {
+            display: flex;
+            padding: 0;
 
-        .tabs {
-            width: 100%;
-
-            .nav-tabs {
+            .tabs {
                 width: 100%;
                 display: flex;
+                flex-direction: column;
 
-                .nav-item {
-                    flex-grow: 1;
-                    text-align: center;
+                .nav-tabs {
+                    width: 100%;
+                    display: flex;
 
-                    .nav-link {
-                        background-color: $primary;
-                        color: white;
-                        padding: 0.9rem 1.2rem;
-                        border: 0;
-                        font-size: 1.1em;
-                    }
+                    .nav-item {
+                        flex-grow: 1;
+                        text-align: center;
 
-                    .nav-link:not(.active) {
-                        color: #e1e1e1;
-                        background-color: darken($primary, 3%);
-                    }
-
-                    &:first-of-type {
                         .nav-link {
-                            border-top-right-radius: 0;
-                            border-top-left-radius: $global-radius;
-                            box-shadow: -1px 0px 1px 0 darken($primary, 8%) inset;
+                            background-color: $primary;
+                            color: white;
+                            padding: 0.9rem 1.2rem;
+                            border: 0;
+                            font-size: 1.1em;
                         }
 
-                        .nav-link.active {
-                            box-shadow: none;
-                        }
-                    }
-
-                    &:last-of-type {
-                        .nav-link {
-                            border-top-left-radius: 0;
-                            border-top-right-radius: $global-radius;
-                            box-shadow: 1px 0px 1px 0 darken($primary, 8%) inset;
+                        .nav-link:not(.active) {
+                            color: #e1e1e1;
+                            background-color: darken($primary, 3%);
                         }
 
-                        .nav-link.active {
-                            box-shadow: none;
+                        &:first-of-type {
+                            .nav-link {
+                                border-top-right-radius: 0;
+                                border-top-left-radius: $global-radius;
+                                box-shadow: -1px 0px 1px 0 darken($primary, 8%) inset;
+                            }
+
+                            .nav-link.active {
+                                box-shadow: none;
+                            }
+                        }
+
+                        &:last-of-type {
+                            .nav-link {
+                                border-top-left-radius: 0;
+                                border-top-right-radius: $global-radius;
+                                box-shadow: 1px 0px 1px 0 darken($primary, 8%) inset;
+                            }
+
+                            .nav-link.active {
+                                box-shadow: none;
+                            }
                         }
                     }
                 }
-            }
 
-            .tab-content {
-                padding: 1.5rem;
+                .tab-content {
+                    overflow-y: auto;
+                    // trick to prevent shrinkage
+                    padding: 1.5rem 1.5rem 0;
+
+                    & > div {
+                        padding-bottom: 1.5rem;
+                    }
+                }
             }
         }
     }
