@@ -16,14 +16,15 @@
 
 package de.proteinevolution.tools
 
-import com.typesafe.config.{ Config, ConfigObject }
-import de.proteinevolution.parameters.{ ForwardingMode, Parameter, ParameterSection, ToolParameters }
+import com.typesafe.config.{Config, ConfigObject}
+import de.proteinevolution.parameters.{ForwardingMode, Parameter, ParameterSection, ToolParameters}
 import de.proteinevolution.params.ParamAccess
-import de.proteinevolution.tools.forms.{ ToolFormSimple, ValidationParamsForm }
-import javax.inject.{ Inject, Singleton }
+import de.proteinevolution.tools.forms.{ToolFormSimple, ValidationParamsForm}
+import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 
 import scala.collection.JavaConverters._
+import scala.util.Try
 
 @Singleton
 class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
@@ -46,7 +47,9 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
             paramAccess.getParam(param, config.getString("input_placeholder"), config.getString("sample_input_key"))
           },
           config.getStringList("forwarding.alignment").asScala,
-          config.getStringList("forwarding.multi_seq").asScala
+          config.getStringList("forwarding.multi_seq").asScala,
+          Try(config.getStringList("sequence_restrictions.formats").asScala).getOrElse(Seq("FASTA", "CLUSTAL")),
+          Try(config.getString("sequence_restrictions.type")).getOrElse("PROTEIN")
         )
       case (_, _) => throw new IllegalStateException("tool does not exist")
     }
@@ -70,7 +73,9 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       version: String,
       params: Seq[Parameter],
       forwardAlignment: Seq[String],
-      forwardMultiSeq: Seq[String]
+      forwardMultiSeq: Seq[String],
+      allowedSeqFormats: Seq[String],
+      allowedSeqType: String
   ): Tool = {
     val toolFormSimple = ToolFormSimple(
       toolNameShort,
@@ -78,7 +83,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       description,
       section,
       version,
-      ValidationParamsForm(Seq("FASTA", "CLUSTAL"), "PROTEIN") // TODO
+      ValidationParamsForm(allowedSeqFormats, allowedSeqType)
     )
     val inputGroup: Seq[String] = paramAccess.paramGroups("Input")
     val toolParameterForm = ToolParameters(
