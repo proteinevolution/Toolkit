@@ -22,7 +22,7 @@ export enum AlignmentSeqFormat {
     CLUSTAL = 'CLUSTAL',
     A3M = 'A3M',
     STOCKHOM = 'STOCKHOLM',
-    PIR = 'pir', // modeller
+    PIR = 'PIR', // modeller
 }
 
 export enum AlignmentSeqType {

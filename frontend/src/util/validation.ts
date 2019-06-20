@@ -25,7 +25,8 @@ function validateSequence(val: string, params: SequenceValidationParams): Valida
 
         if (detectedFormat === '') {
             return result(true, 'danger', 'invalidCharacters');
-        } else if (autoTransformToFormat) {
+        } else if (!params.allowedSeqFormats.map((v) => v.toString()).includes(detectedFormat)
+            && autoTransformToFormat) {
             return result(false, 'success', 'shouldAutoTransform', {
                 detected: detectedFormat,
                 transformFormat: autoTransformToFormat,
