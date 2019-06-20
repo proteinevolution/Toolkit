@@ -133,7 +133,7 @@ class JobActor @Inject()(
     var validParameters: Seq[(String, (Evaluation, Option[Argument]))] =
       runscript.parameters.map(t => t._1 -> (t._2 -> Some(ValidArgument(new LiteralRepresentation(RString("false"))))))
     params.foreach { pv =>
-      validParameters = supply(job.jobID, pv._1, pv._2, validParameters)
+      validParameters = supply(job.jobID, pv._1.toLowerCase(), pv._2, validParameters)
     }
     validParameters
   }
@@ -255,7 +255,7 @@ class JobActor @Inject()(
 
     case PrepareJob(job, params, startJob, isInternalJob) =>
       // jobid will also be available as parameter
-      val extendedParams = params + ("jobid" -> job.jobID)
+      val extendedParams = params + ("jobID" -> job.jobID)
 
       // Add job to the current jobs
       currentJobs = currentJobs.updated(job.jobID, job)
@@ -460,7 +460,7 @@ class JobActor @Inject()(
                     val validParameters = validatedParameters(job, runscript, params)
 
                     // adds the params of the disabled controls from formData, sets value of those to "false"
-                    validParameters.filterNot(pv => params.contains(pv._1)).foreach { pv =>
+                    validParameters.filterNot(pv => params.contains(pv._1.toLowerCase())).foreach { pv =>
                       params.+(pv._1 -> "false")
                     }
 
