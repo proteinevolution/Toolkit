@@ -132,6 +132,7 @@ export default {
                 maxLength: 'Input contains over {limit} characters.',
                 uniqueIDs: 'Identifiers are not unique.',
                 invalidSequenceType: 'Invalid sequence type. Expected {expected}.',
+                invalidSequenceFormat: 'Invalid sequence format. Expected {expected}.',
                 valid: '{type} {format}',
                 validRegex: 'Valid input.',
                 validPDB: 'Valid input.',

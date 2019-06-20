@@ -25,15 +25,18 @@ function validateSequence(val: string, params: SequenceValidationParams): Valida
 
         if (detectedFormat === '') {
             return result(true, 'danger', 'invalidCharacters');
-        } else if (!params.allowedSeqFormats.map((v) => v.toString()).includes(detectedFormat)
-            && autoTransformToFormat) {
+        } else if (!params.allowedSeqFormats.map((v) => v.toString().toUpperCase())
+                .includes(detectedFormat.toUpperCase()) && autoTransformToFormat) {
             return result(false, 'success', 'shouldAutoTransform', {
                 detected: detectedFormat,
                 transformFormat: autoTransformToFormat,
             });
         } else {
             // TODO order of validation checks
-            // TODO auto transform or refuse disallowed formats?
+            if (!params.allowedSeqFormats.map((v) => v.toString().toUpperCase())
+                .includes(detectedFormat.toUpperCase())) {
+                return result(true, 'danger', 'invalidSequenceFormat', {expected: params.allowedSeqFormats});
+            }
             if (!elem.isOfType(params.allowedSeqType)) {
                 return result(true, 'danger', 'invalidSequenceType', {expected: params.allowedSeqType});
             }
