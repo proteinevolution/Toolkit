@@ -30,19 +30,19 @@ class JobsRouter @Inject()(
 ) extends SimpleRouter {
 
   private lazy val getRoutes: Routes = {
-    case GET(p"/")                  => jobGetController.listJobs
-    case GET(p"/recent")            => jobGetController.recentJob
-    case GET(p"/load/$jobID")       => jobGetController.loadJob(jobID)
-    case GET(p"/suggest/$query")    => jobGetController.suggestJobsForJobId(query)
-    case GET(p"/check/hash/$jobID") => jobGetController.checkHash(jobID)
-    case GET(p"/manager/jobs")      => jobGetController.jobManagerListJobs
+    case GET(p"/")                        => jobGetController.listJobs
+    case GET(p"/recent")                  => jobGetController.recentJob
+    case GET(p"/$jobID")                  => jobGetController.loadJob(jobID)
+    case GET(p"/$jobID/start")            => submissionController.startJob(jobID)
+    case GET(p"/suggest/$query")          => jobGetController.suggestJobsForJobId(query)
+    case GET(p"/check/hash/$jobID")       => jobGetController.checkHash(jobID)
+    case GET(p"/check/job-id/$newJobID/") => submissionController.checkJobID(newJobID)
+    case GET(p"/manager/jobs")            => jobGetController.jobManagerListJobs
   }
 
   private lazy val submissionRoutes: Routes = {
     case POST(p"/" ? q"toolName=$toolName")  => submissionController.submitJob(toolName)
-    case GET(p"/check/job-id/$newJobID/")    => submissionController.checkJobID(newJobID)
     case DELETE(p"/$jobID")                  => submissionController.delete(jobID)
-    case POST(p"/start/$jobID")              => submissionController.startJob(jobID)
     case POST(p"/frontend/submit/$toolName") => submissionController.frontend(toolName)
   }
 

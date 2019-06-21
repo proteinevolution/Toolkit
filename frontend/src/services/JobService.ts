@@ -69,7 +69,10 @@ export default class JobService {
 
     public static startJob(jobID: string): Promise<void> {
         return new Promise<void>(((resolve, reject) => {
-            axios.post(`/api/jobs/start/${jobID}`) // TODO: use get and change order $jobID/start
+            axios.get(`/api/jobs/${jobID}/start`)
+                .then((response) => {
+                    resolve(response.data);
+                })
                 .catch(reject);
         }));
     }

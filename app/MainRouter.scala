@@ -41,11 +41,9 @@ class MainRouter @Inject()(
 
   private lazy val mainRoutes: Routes = {
     case GET(p"/")              => controller.index()
-    case GET(p"/sitemap.xml")   => assets.versioned(path = "/public", file = "sitemap.xml")
     case GET(p"/uptime")        => uptime.uptime
     case GET(p"/buildinfo")     => uptime.buildInfo
     case GET(p"/assets/$file*") => assets.versioned(path = "/public", file = file)
-    case GET(p"/robots.txt")    => controller.robots
   }
 
   override lazy val routes: Routes = {

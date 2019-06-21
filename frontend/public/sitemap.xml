@@ -1,172 +1,172 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" >
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/hhblits</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/hhblits</loc>
     <changefreq>yearly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/hhpred</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/hhpred</loc>
     <changefreq>yearly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/hmmer</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/hmmer</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/patsearch</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/patsearch</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/psiblast</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/psiblast</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/alnviz</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/alnviz</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/clustalo</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/clustalo</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/kalign</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/kalign</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/mafft</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/mafft</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/msaprobs</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/msaprobs</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/muscle</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/muscle</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/tcoffee</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/tcoffee</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/aln2plot</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/aln2plot</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/hhpredid</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/hhpredid</loc>
     <changefreq>yearly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/marcoil</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/marcoil</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/pcoils</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/pcoils</loc>
     <changefreq>yearly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/repper</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/repper</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/tprpred</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/tprpred</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/ali2d</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/ali2d</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/hhomp</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/hhomp</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/quick2d</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/quick2d</loc>
     <changefreq>yearly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/modeller</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/modeller</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/samcc</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/samcc</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/ancescon</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/ancescon</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/clans</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/clans</loc>
     <changefreq>yearly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/mmseqs2</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/mmseqs2</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/phyml</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/phyml</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/sixframe</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/sixframe</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/backtrans</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/backtrans</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/formatseq</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/formatseq</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/hhfilter</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/hhfilter</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/retseq</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/retseq</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/seq2id</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/seq2id</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://toolkit.tuebingen.mpg.de/#/tools/reformat</loc>
+    <loc>https://toolkit.tuebingen.mpg.de/tools/reformat</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>

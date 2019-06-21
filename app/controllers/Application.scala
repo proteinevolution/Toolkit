@@ -47,10 +47,4 @@ final class Application @Inject()(
     ).withSession(userSessions.sessionCookie(request, request.user.sessionID.get))
   }
 
-  val robots: Action[AnyContent] = Action { _ =>
-    Ok(
-      "User-agent: *\nAllow: /\nDisallow: /#/jobmanager/\nDisallow: /#/jobs/\nSitemap: https://toolkit.tuebingen.mpg.de/sitemap.xml"
-    )
-  }
-
 }
