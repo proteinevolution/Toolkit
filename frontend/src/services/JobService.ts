@@ -15,7 +15,7 @@ export default class JobService {
 
     public static fetchJob(jobID: string): Promise<Job> {
         return new Promise<Job>(((resolve, reject) => {
-            axios.get(`/results/job/${jobID}`)
+            axios.get(`/api/jobs/${jobID}`)
                 .then((response) => {
                     resolve(response.data);
                 })

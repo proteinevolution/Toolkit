@@ -80,7 +80,7 @@
                 return this.$route.params.jobID;
             },
             jobs(): Job[] {
-                return this.$store.getters['jobs/jobs'].slice(0).filter((j: Job) => !j.hidden);
+                return this.$store.getters['jobs/watchedJobs'].slice(0);
             },
             sortedJobs(): Job[] {
                 return this.jobs.sort(this.sortColumns[this.selectedSort].sort)
@@ -98,7 +98,7 @@
                 this.$router.push(`/jobs/${jobID}`);
             },
             hideJob(jobID: string): void {
-                this.$store.commit('jobs/setJobHidden', {jobID, hidden: true});
+                this.$store.commit('jobs/toggleJobWatched', {jobID});
             },
             scrollDown(): void {
                 if (this.startIndex > 0) {

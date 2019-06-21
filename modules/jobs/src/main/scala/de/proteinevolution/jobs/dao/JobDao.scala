@@ -51,9 +51,15 @@ class JobDao @Inject()(
   final def findJob(id: String): Future[Option[Job]] =
     jobCollection.flatMap(_.find(BSONDocument(Job.ID -> id), None).one[Job])
 
-  private def internalFindJobs(selector: BSONDocument): Future[List[Job]] = {
+  private def internalFindJobs(selector: BSONDocument, includeDeleted: Boolean = false): Future[List[Job]] = {
     jobCollection
-      .map(_.find(selector, None).cursor[Job]())
+      .map(_.find(selector.merge {
+        if (!includeDeleted) {
+          BSONDocument(Job.DATE_DELETED -> BSONDocument("$exists" -> false))
+        } else {
+          BSONDocument.empty
+        }
+      }, None).cursor[Job]())
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
   }
 
@@ -67,11 +73,11 @@ class JobDao @Inject()(
   def findJobsByHash(hash: Option[String]): Future[List[Job]] =
     internalFindJobs(BSONDocument(Job.HASH -> hash))
 
-  def findJobsByIds(jobs: List[String]): Future[List[Job]] =
-    internalFindJobs(BSONDocument(Job.ID -> BSONDocument("$in" -> jobs)))
-
-  def findJobsByOwner(userID: String): Future[List[Job]] =
-    internalFindJobs(BSONDocument(Job.OWNER_ID -> userID, Job.DATE_DELETED -> BSONDocument("$exists" -> false)))
+  def findJobsByOwnerAndWatched(userID: String, jobs: List[String]): Future[List[Job]] =
+    internalFindJobs(BSONDocument("$or" -> List(
+      BSONDocument(Job.ID -> BSONDocument("$in" -> jobs)),
+      BSONDocument(Job.OWNER_ID -> userID)
+    )))
 
   def findJobsByOwnerAndTools(userID: String, toolNames: List[String]): Future[List[Job]] =
     internalFindJobs(BSONDocument(Job.OWNER_ID -> userID, Job.TOOL -> BSONDocument("$in" -> toolNames)))

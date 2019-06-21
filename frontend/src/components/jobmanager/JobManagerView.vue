@@ -12,11 +12,12 @@
                       :fields="fields">
                 <template #joblist="{rowData}">
                     <i class="fas cursor-pointer"
-                       :class="[rowData.hidden ? 'fa-plus-circle':'fa-minus-circle']"
+                       :class="[rowData.watched ? 'fa-minus-circle':'fa-plus-circle']"
                        @click="toggleJobListStatus(rowData.jobID)"></i>
                 </template>
                 <template #actions="{rowData}">
                     <i class="fa fa-trash cursor-pointer"
+                       v-if="!rowData.foreign"
                        @click="deleteJob(rowData.jobID)"></i>
                 </template>
             </vuetable>
@@ -64,7 +65,7 @@
                 return 'Jobmanager';
             },
             jobs(): Job[] {
-                return this.$store.getters['jobs/jobs'].slice(0);
+                return this.$store.getters['jobs/ownedJobs'].slice(0);
             },
             tools(): Tool[] {
                 return this.$store.getters['tools/tools'];
@@ -73,15 +74,12 @@
         methods: {
             deleteJob(jobID: string): void {
                 JobService.deleteJob(jobID)
-                    .then(() => {
-                        this.$store.commit('jobs/removeJob', {jobID});
-                    })
                     .catch(() => {
                         this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
                     });
             },
             toggleJobListStatus(jobID: string): void {
-                this.$store.commit('jobs/toggleJobHidden', {jobID});
+                this.$store.commit('jobs/toggleJobWatched', {jobID});
             },
             fromNow(date: string): string {
                 return moment(date).fromNow();

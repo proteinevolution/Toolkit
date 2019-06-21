@@ -1,7 +1,8 @@
 <template>
     <tool-view v-if="job"
                isJobView
-               :job="job">
+               :job="job"
+               @delete-job="deleteJob">
 
         <template #job-details>
             <small class="text-muted mr-2"
@@ -49,6 +50,8 @@
         </template>
 
     </tool-view>
+    <not-found-view v-else
+                    errorMessage="errors.JobNotFound"/>
 </template>
 
 <script lang="ts">
@@ -65,6 +68,8 @@
     import moment from 'moment';
     import {JobState} from '@/types/toolkit/enums';
     import {Tool} from '@/types/toolkit/tools';
+    import JobService from '@/services/JobService';
+    import NotFoundView from '@/components/utils/NotFoundView.vue';
 
     export default Vue.extend({
         name: 'JobView',
@@ -77,6 +82,7 @@
             JobDoneTab,
             JobSubmittedTab,
             JobPendingTab,
+            NotFoundView,
         },
         data() {
             return {
@@ -107,6 +113,15 @@
             },
         },
         methods: {
+            deleteJob() {
+                JobService.deleteJob(this.jobID)
+                    .then(() => {
+                        this.$router.replace('/jobmanager');
+                    })
+                    .catch(() => {
+                        this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
+                    });
+            },
             loadJobDetails(jobID: string): void {
                 this.$store.dispatch('jobs/loadJobDetails', jobID);
             },

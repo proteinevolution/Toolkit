@@ -35,7 +35,7 @@ case class User(
     userData: Option[UserData] = None,                 // Personal Data of the User //TODO possibly encrypt?
     userConfig: UserConfig = UserConfig(),             // Configurable parts for the user
     userToken: Option[UserToken] = None,
-    jobs: List[String] = List.empty,                                // List of Jobs the User has
+    jobs: List[String] = List.empty,                                // List of Jobs the User is watching (counterpart to job.watchList)
     dateDeletedOn: Option[ZonedDateTime] = None,                    // Date at which the account will be deleted on
     dateLastLogin: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Last seen on
     dateCreated: Option[ZonedDateTime] = Some(ZonedDateTime.now),   // Account creation date

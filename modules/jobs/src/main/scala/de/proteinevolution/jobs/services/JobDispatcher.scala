@@ -115,9 +115,9 @@ final class JobDispatcher @Inject()(
     val dateDeletion = user.userData.map(_ => now.plusDays(constants.jobDeletion.toLong))
     new Job(
       jobID = jobID,
-      ownerID = Some(user.userID),
+      ownerID = user.userID,
       parentID = form.get("parentID"),
-      isPublic = form.get("public").isDefined || user.accountType == AccountType.NORMALUSER,
+      isPublic = form.get("isPublic").exists(_.toBoolean) || user.accountType == AccountType.NORMALUSER,
       emailUpdate = form.get("emailUpdate").exists(_.toBoolean),
       tool = toolName,
       watchList = List(user.userID),

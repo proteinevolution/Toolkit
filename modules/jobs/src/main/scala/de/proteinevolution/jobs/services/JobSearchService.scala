@@ -47,7 +47,7 @@ class JobSearchService @Inject()(
     if (tools.isEmpty) {
       (for {
         jobs     <- OptionT.liftF(jobDao.findJobsByIdLike(queryString))
-        filtered <- OptionT.pure[Future](jobs.filter(job => job.ownerID.contains(user.userID)))
+        filtered <- OptionT.pure[Future](jobs.filter(job => job.ownerID.equals(user.userID)))
       } yield filtered).flatMapF { jobs =>
         if (jobs.isEmpty) {
           OptionT(jobDao.findJob(queryString)).filter(job => resultsExist(job.jobID, constants)).map(_ :: Nil).value

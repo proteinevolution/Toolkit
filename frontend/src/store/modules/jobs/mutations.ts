@@ -2,6 +2,10 @@ import Vue from 'vue';
 import {MutationTree} from 'vuex';
 import {JobState} from '../../types';
 import {Job} from '@/types/toolkit/jobs';
+import {WebSocketActions} from '@/types/toolkit/enums';
+import Logger from 'js-logger';
+
+const logger = Logger.get('JobStore');
 
 const mutations: MutationTree<JobState> = {
     setJobs(state, jobs) {
@@ -9,22 +13,29 @@ const mutations: MutationTree<JobState> = {
     },
     setJob(state, {jobID, job}) {
         const index: number = state.jobs.findIndex((j) => j.jobID === jobID);
+        const existingJob: Job = state.jobs[index];
         if (index < 0) {
             state.jobs.push(job);
         } else {
-            Vue.set(state.jobs, index, job);
+            Vue.set(state.jobs, index, Object.assign(existingJob, job));
         }
     },
-    setJobHidden(state, {jobID, hidden}) {
+    toggleJobWatched(state, {jobID}) {
         const job = state.jobs.find((j) => j.jobID === jobID);
         if (job) {
-            Vue.set(job, 'hidden', hidden);
-        }
-    },
-    toggleJobHidden(state, {jobID}) {
-        const job = state.jobs.find((j) => j.jobID === jobID);
-        if (job) {
-            Vue.set(job, 'hidden', !job.hidden);
+            if (job.watched) {
+                logger.info('unsubscribing from job');
+                Vue.prototype.$socket.sendObj({
+                    type: WebSocketActions.UNSUBSCRIBE,
+                    jobIDs: [jobID],
+                });
+            } else {
+                logger.info('subscribing to job');
+                Vue.prototype.$socket.sendObj({
+                    type: WebSocketActions.SUBSCRIBE,
+                    jobIDs: [jobID],
+                });
+            }
         }
     },
     removeJob(state, {jobID}) {

@@ -48,7 +48,6 @@ class ResultsRouter @Inject()(
     case GET(p"/forward/modal/$toolName/$modalType") =>
       forwardModalController.getForwardModalOptions(modalType, toolName)
     case GET(p"/$jobID/$tool/$view") => resultGetController.get(jobID, tool, view)
-    case GET(p"/job/$jobID")         => resultGetController.getJob(jobID)
   }
 
 }

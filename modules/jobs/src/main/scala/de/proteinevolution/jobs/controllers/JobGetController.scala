@@ -49,16 +49,9 @@ class JobGetController @Inject()(
     extends ToolkitController(cc)
     with JobFolderValidation {
 
-  def jobManagerListJobs: Action[AnyContent] = userAction.async { implicit request =>
-    jobDao
-      .findJobsByOwner(request.user.userID).map { jobs =>
-        NoCache(Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.cleaned(toolConfig)).asJson))
-      }
-  }
-
-  def listJobs: Action[AnyContent] = userAction.async { implicit request =>
-    jobDao.findJobsByIds(request.user.jobs).map { jobs =>
-      Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.cleaned(toolConfig)).asJson)
+  def getAllJobs: Action[AnyContent] = userAction.async { implicit request =>
+    jobDao.findJobsByOwnerAndWatched(request.user.userID, request.user.jobs).map { jobs =>
+      Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.jsonPrepare(toolConfig, request.user)).asJson)
     }
   }
 
@@ -67,7 +60,7 @@ class JobGetController @Inject()(
    */
   def recentJob: Action[AnyContent] = userAction.async { implicit request =>
     jobSearchService.recentJob(request.user).map { lastJob =>
-      Ok(lastJob.map(_.cleaned(toolConfig)).asJson)
+      Ok(lastJob.map(_.jsonPrepare(toolConfig, request.user)).asJson)
     }
   }
 
@@ -78,14 +71,14 @@ class JobGetController @Inject()(
    */
   def suggestJobsForJobId(queryString_ : String): Action[AnyContent] = userAction.async { implicit request =>
     jobSearchService.autoComplete(request.user, queryString_).value.map {
-      case Some(jobs) => Ok(jobs.map(_.cleaned(toolConfig)).asJson)
+      case Some(jobs) => Ok(jobs.map(_.jsonPrepare(toolConfig, request.user)).asJson)
       case None       => NoContent
     }
   }
 
   def loadJob(jobID: String): Action[AnyContent] = userAction.async { implicit request =>
     jobDao.findJob(jobID).map {
-      case Some(job) if jobFolderIsValid(job.jobID, constants) => Ok(job.cleaned(toolConfig).asJson)
+      case Some(job) if jobFolderIsValid(job.jobID, constants) => Ok(job.jsonPrepare(toolConfig, request.user).asJson)
       case _                                                   => NotFound
     }
   }

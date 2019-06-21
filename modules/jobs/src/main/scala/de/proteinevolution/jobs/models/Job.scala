@@ -22,6 +22,7 @@ import de.proteinevolution.common.models.database.jobs.JobState._
 import de.proteinevolution.common.models.database.jobs.JobState
 import de.proteinevolution.common.models.util.ZonedDateTimeHelper
 import de.proteinevolution.tools.ToolConfig
+import de.proteinevolution.user.User
 import io.circe.JsonObject
 import io.circe.syntax._
 import play.api.Configuration
@@ -30,9 +31,9 @@ import reactivemongo.bson._
 // TODO remove default values
 case class Job(
     jobID: String,
+    ownerID: String,
     parentID: Option[String] = None,
     hash: Option[String] = None,
-    ownerID: Option[String] = None,
     isPublic: Boolean = false,
     status: JobState = Submitted,
     emailUpdate: Boolean = false,
@@ -46,11 +47,14 @@ case class Job(
     IPHash: Option[String]
 ) {
 
-  def cleaned(toolConfig: ToolConfig)(implicit config: Configuration): JsonObject = {
+  def jsonPrepare(toolConfig: ToolConfig, user: User)(implicit config: Configuration): JsonObject = {
     JsonObject(
       "jobID"        -> jobID.asJson,
       "parentID"     -> parentID.asJson,
       "status"       -> status.asJson,
+      "foreign"      -> (!ownerID.equals(user.userID)).asJson,
+      "watched"      -> watchList.contains(user.userID).asJson,
+      "isPublic"     -> isPublic.asJson,
       "code"         -> toolConfig.values(tool).code.asJson,
       "tool"         -> tool.asJson,
       "toolnameLong" -> config.get[String](s"Tools.$tool.longname").asJson,
@@ -66,13 +70,11 @@ case class Job(
        |parentID: ${this.parentID}
        |tool: ${this.tool}
        |state: ${this.status}
-       |ownerID: ${this.ownerID.getOrElse("no owner")}
+       |ownerID: ${this.ownerID}
        |created on: ${this.dateCreated.map(_.toString()).getOrElse("--")}
        |--[Job Object end]--
      """.stripMargin
   }
-
-  def isPrivate: Boolean = ownerID.isDefined && !isPublic
 
   def isFinished: Boolean = status == Done || status == Error
 
@@ -107,7 +109,7 @@ object Job {
         jobID = bson.getAs[String](ID).getOrElse("Error loading Job Name"),
         parentID = bson.getAs[String](PARENT_ID),
         hash = bson.getAs[String](HASH),
-        ownerID = bson.getAs[String](OWNER_ID),
+        ownerID = bson.getAs[String](OWNER_ID).getOrElse("Error loading Job Owner"),
         isPublic = bson.getAs[Boolean](IS_PUBLIC).getOrElse(false),
         status = bson.getAs[JobState](STATUS).getOrElse(Error),
         emailUpdate = bson.getAs[Boolean](EMAIL_UPDATE).getOrElse(false),

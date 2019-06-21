@@ -224,8 +224,8 @@ class JobActor @Inject()(
   }
 
   private def sendJobUpdateMail(job: Job): Boolean = {
-    if (job.emailUpdate && job.ownerID.isDefined) {
-      userDao.findUserByID(job.ownerID.get).foreach {
+    if (job.emailUpdate) {
+      userDao.findUserByID(job.ownerID).foreach {
         case Some(user) =>
           user.userData match {
             case Some(_) =>
@@ -360,7 +360,7 @@ class JobActor @Inject()(
         .foreach {
           case Some(job) =>
             // Delete the job when the user is the owner and clear it otherwise
-            if (userIDOption.isEmpty || userIDOption == job.ownerID) {
+            if (userIDOption.isEmpty || userIDOption.get == job.ownerID) {
               if (verbose)
                 log.info(s"[JobActor[$jobActorNumber].Delete] Found Job with ${job.jobID} - starting file deletion")
               delete(job)
@@ -524,7 +524,7 @@ class JobActor @Inject()(
               .foreach { _ =>
                 currentJobs = currentJobs.updated(jobID, updatedJob)
                 val wsActors = wsActorCache.get(userID): Option[List[ActorRef]]
-                wsActors.foreach(_.foreach(_ ! ClearJob(jobID)))
+                wsActors.foreach(_.foreach(_ ! PushJob(updatedJob)))
               }
           case None => NotUsed
         }

@@ -6,7 +6,9 @@ export interface Job {
     tool: string;
     code: string;
     parentID?: string;
-    hidden?: boolean;
+    watched?: boolean;
+    foreign?: boolean;
+    public?: boolean;
     dateCreated?: number;
     dateUpdated?: number;
     dateViewed?: number;

@@ -42,3 +42,8 @@ export enum JobState {
     LimitReached = 8,
     Deleted = 9,
 }
+
+export enum WebSocketActions { // TODO rename in backend
+    UNSUBSCRIBE = 'ClearJob',
+    SUBSCRIBE = 'RegisterJobs',
+}

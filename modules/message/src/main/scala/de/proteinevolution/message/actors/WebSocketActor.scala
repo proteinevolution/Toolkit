@@ -16,10 +16,10 @@
 
 package de.proteinevolution.message.actors
 
-import java.nio.file.{Files, Paths}
+import java.nio.file.{ Files, Paths }
 import java.time.ZonedDateTime
 
-import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
+import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
 import akka.event.LoggingReceive
 import akka.pattern.ask
 import akka.util.Timeout
@@ -33,26 +33,26 @@ import de.proteinevolution.common.models.database.jobs.JobState.Running
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobActorAccess
-import de.proteinevolution.message.actors.WebSocketActor.{LogOut, MaintenanceAlert}
+import de.proteinevolution.message.actors.WebSocketActor.{ LogOut, MaintenanceAlert }
 import de.proteinevolution.tools.ToolConfig
 import io.circe.syntax._
-import io.circe.{Json, JsonObject}
-import javax.inject.{Inject, Named}
+import io.circe.{ Json, JsonObject }
+import javax.inject.{ Inject, Named }
 import play.api.Configuration
-import play.api.cache.{NamedCache, SyncCacheApi}
+import play.api.cache.{ NamedCache, SyncCacheApi }
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
 final class WebSocketActor @Inject()(
-                                      @Assisted("out") out: ActorRef,
-                                      jobActorAccess: JobActorAccess,
-                                      userSessions: UserSessionService,
-                                      constants: ConstantsV2,
-                                      @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
-                                      @Assisted("sessionID") sessionID: String,
-                                      toolConfig: ToolConfig,
-                                      @Named("clusterSubscriber") clusterSubscriber: ActorRef
+    @Assisted("out") out: ActorRef,
+    jobActorAccess: JobActorAccess,
+    userSessions: UserSessionService,
+    constants: ConstantsV2,
+    @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
+    @Assisted("sessionID") sessionID: String,
+    toolConfig: ToolConfig,
+    @Named("clusterSubscriber") clusterSubscriber: ActorRef
 )(implicit ec: ExecutionContext, config: Configuration)
     extends Actor
     with ActorLogging {
@@ -101,7 +101,7 @@ final class WebSocketActor @Inject()(
     case json: Json =>
       userSessions.getUserBySessionID(sid).foreach {
         case Some(user) =>
-        json.hcursor.get[String]("type").toOption.foreach {
+          json.hcursor.get[String]("type").toOption.foreach {
 
             // Message containing a List of Jobs the user wants to register for the job list
             case "RegisterJobs" =>
@@ -132,16 +132,25 @@ final class WebSocketActor @Inject()(
                 val ping = ZonedDateTime.now.toInstant.toEpochMilli - msTime
                 log.info(s"[WSActor] Ping of session $sid is ${ping}ms.")
               }
+
+            case other: String =>
+              log.warning(s"[WSActor] No action for $other.")
           }
         case None =>
           self ! PoisonPill
       }
 
     case PushJob(job: Job) =>
-      out ! JsonObject("namespace" -> Json.fromString("jobs"),
-                       "mutation"  -> Json.fromString("SOCKET_UpdateJob"),
-                       "job"       -> job.cleaned(toolConfig).asJson).asJson
-
+      userSessions.getUserBySessionID(sid).foreach {
+        case Some(user) =>
+          out ! JsonObject(
+            "namespace" -> Json.fromString("jobs"),
+            "mutation"  -> Json.fromString("SOCKET_UpdateJob"),
+            "job"       -> job.jsonPrepare(toolConfig, user).asJson
+          ).asJson
+        case None =>
+          self ! PoisonPill
+      }
     case ShowNotification(title: String, body: String) =>
       out ! JsonObject(
         "mutation" -> Json.fromString("SOCKET_ShowNotification"),

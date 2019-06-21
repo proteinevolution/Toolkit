@@ -55,9 +55,14 @@
                             <slot name="job-tabs"></slot>
 
                             <template #tabs>
-                                <i class="fullscreen-toggler fa ml-auto mr-1"
-                                   @click="toggleFullScreen"
-                                   :class="[fullScreen ? 'fa-compress' : 'fa-expand']"></i>
+                                <div class="ml-auto">
+                                    <i class="tool-action tool-action-push-up fa fa-trash mr-4"
+                                       v-if="job && !job.foreign"
+                                       @click="$emit('delete-job')"></i>
+                                    <i class="tool-action tool-action-lg fa mr-1"
+                                       @click="toggleFullScreen"
+                                       :class="[fullScreen ? 'fa-compress' : 'fa-expand']"></i>
+                                </div>
                             </template>
                         </b-tabs>
                     </b-card>
@@ -206,10 +211,19 @@
     }
 
     .tool-form {
-        .fullscreen-toggler {
-            font-size: 1.625rem;
+        .tool-action {
+            font-size: 1.25rem;
             color: $tk-dark-gray;
             cursor: pointer;
+
+            &.tool-action-lg {
+                font-size: 1.625rem;
+            }
+
+            &.tool-action-push-up {
+                position: relative;
+                top: -2px;
+            }
         }
 
         .parameter-tabs {

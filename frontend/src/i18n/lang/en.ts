@@ -58,7 +58,7 @@ export default {
                 tool: 'Tool',
                 dateCreated: 'Created',
                 actions: 'Actions',
-                noData: 'No jobs available.',
+                noData: 'Currently you don\'t own any jobs.',
             },
         },
         jobList: {
@@ -225,6 +225,7 @@ J Mol Biol. 2018 Jul 20. S0022-2836(17)30587-9</a>.`,
             fileUnreadable: 'File could not be read.',
             PageNotFound: 'Page not found.',
             ToolNotFound: 'Tool not found.',
+            JobNotFound: 'Job not found.',
             couldNotDeleteJob: 'Could not delete job!',
         },
         constraints: {

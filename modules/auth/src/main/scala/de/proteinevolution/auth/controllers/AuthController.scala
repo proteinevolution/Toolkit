@@ -87,7 +87,7 @@ class AuthController @Inject()(
                     userSessionService.removeUserFromCache(anonymousUser)
                     userSessionService.updateUserInCache(loggedInUser)
 
-                    // add the anonymous jobs to the user
+                    // add the anonymous jobs to the user // TODO update jobs to new owner id
                     userDao.addJobsToUser(loggedInUser.userID, anonymousUser.jobs)
                     // Tell the job actors to copy all jobs connected to the old user to the new user
                     wsActorCache.get[List[ActorRef]](anonymousUser.userID) match {
