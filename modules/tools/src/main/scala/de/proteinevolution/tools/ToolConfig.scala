@@ -17,7 +17,7 @@
 package de.proteinevolution.tools
 
 import com.typesafe.config.{Config, ConfigObject}
-import de.proteinevolution.parameters.{ForwardingMode, Parameter, ParameterSection, ToolParameters}
+import de.proteinevolution.parameters.{ForwardingMode, Parameter, ParameterSection, TextAreaInputType, ToolParameters}
 import de.proteinevolution.params.ParamAccess
 import de.proteinevolution.tools.forms.{ToolFormSimple, ValidationParamsForm}
 import javax.inject.{Inject, Singleton}
@@ -44,7 +44,10 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
           config.getString("section").toLowerCase,
           config.getString("version"),
           config.getStringList("parameter").asScala.map { param =>
-            paramAccess.getParam(param, config.getString("input_placeholder"), config.getString("sample_input_key"))
+            paramAccess.getParam(param,
+              config.getString("input_placeholder"),
+              config.getString("sample_input_key"),
+              Try(config.getString("input_type")).getOrElse(TextAreaInputType.SEQUENCE))
           },
           config.getStringList("forwarding.alignment").asScala,
           config.getStringList("forwarding.multi_seq").asScala,

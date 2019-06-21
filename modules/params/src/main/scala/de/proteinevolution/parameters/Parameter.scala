@@ -16,6 +16,7 @@
 
 package de.proteinevolution.parameters
 
+import de.proteinevolution.parameters.TextAreaInputType.TextAreaInputType
 import io.circe.Encoder
 import io.circe.generic.extras.Configuration
 
@@ -36,7 +37,7 @@ object Parameter {
 
   case class TextAreaParameter(
       name: String,
-      inputType: String,
+      inputType: TextAreaInputType,
       inputPlaceholder: String,
       sampleInputKey: String,
       allowsTwoTextAreas: Boolean = false

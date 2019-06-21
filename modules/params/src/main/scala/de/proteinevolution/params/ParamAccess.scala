@@ -17,6 +17,7 @@
 package de.proteinevolution.params
 
 import de.proteinevolution.parameters.Parameter._
+import de.proteinevolution.parameters.TextAreaInputType.TextAreaInputType
 import de.proteinevolution.parameters._
 import de.proteinevolution.tel.TEL
 import javax.inject.{ Inject, Singleton }
@@ -28,10 +29,12 @@ import javax.inject.{ Inject, Singleton }
 class ParamAccess @Inject()(tel: TEL) {
 
   def select(name: String, label: String, maxSelectedOptions: Int = 1) =
-    SelectParameter(name,
-                    label,
-                    tel.generateValues(name).toSeq.map(option => SelectOption(option._1, option._2)),
-                    maxSelectedOptions)
+    SelectParameter(
+      name,
+      label,
+      tel.generateValues(name).toSeq.map(option => SelectOption(option._1, option._2)),
+      maxSelectedOptions
+    )
 
   final val alignmentFormats = Seq(
     "fas" -> "fas",
@@ -44,10 +47,15 @@ class ParamAccess @Inject()(tel: TEL) {
 
   final val samCCHelixRegex: Option[String] = Some("^[a-r];[a-zA-Z0-9];\\d+;\\d+$")
 
-  def getParam(paramName: String, placeholder: String = "", sampleInputKey: String = ""): Parameter = paramName match {
-    case "ALIGNMENT" => TextAreaParameter("alignment", TextAreaInputType.SEQUENCE, placeholder, sampleInputKey)
+  def getParam(
+      paramName: String,
+      placeholder: String = "",
+      sampleInputKey: String = "",
+      alignmentInputType: TextAreaInputType = TextAreaInputType.SEQUENCE
+  ): Parameter = paramName match {
+    case "ALIGNMENT" => TextAreaParameter("alignment", alignmentInputType, placeholder, sampleInputKey)
     case "TWOTEXTALIGNMENT" =>
-      TextAreaParameter("alignment", TextAreaInputType.SEQUENCE, placeholder, sampleInputKey, allowsTwoTextAreas = true)
+      TextAreaParameter("alignment", alignmentInputType, placeholder, sampleInputKey, allowsTwoTextAreas = true)
     case "HMMER_DB"    => select("hmmerdb", "Select database")
     case "STANDARD_DB" => select("standarddb", "Select standard database")
     // TODO fix max selected options (the SUM of selected dbs from hhsuiteddb and proteomes must not be > 4)
@@ -113,29 +121,37 @@ class ParamAccess @Inject()(tel: TEL) {
     case "EFF_CRICK_ANGLE"         => select("eff_crick_angle", "Effective Crick angle")
     case "REGKEY"                  => ModellerParameter("regkey", "Enter MODELLER-key (see help pages for details)")
     case "SAMCC_HELIXONE" =>
-      TextInputParameter("samcc_helixone",
-                         "Definition for helix 1",
-                         "CC_first_position;chain;start_pos;end_pos",
-                         samCCHelixRegex,
-                         Some("a;A;2;30"))
+      TextInputParameter(
+        "samcc_helixone",
+        "Definition for helix 1",
+        "CC_first_position;chain;start_pos;end_pos",
+        samCCHelixRegex,
+        Some("a;A;2;30")
+      )
     case "SAMCC_HELIXTWO" =>
-      TextInputParameter("samcc_helixtwo",
-                         "Definition for helix 2",
-                         "CC_first_position;chain;start_pos;end_pos",
-                         samCCHelixRegex,
-                         Some("a;B;2;30"))
+      TextInputParameter(
+        "samcc_helixtwo",
+        "Definition for helix 2",
+        "CC_first_position;chain;start_pos;end_pos",
+        samCCHelixRegex,
+        Some("a;B;2;30")
+      )
     case "SAMCC_HELIXTHREE" =>
-      TextInputParameter("samcc_helixthree",
-                         "Definition for helix 3",
-                         "CC_first_position;chain;start_pos;end_pos",
-                         samCCHelixRegex,
-                         Some("a;C;2;30"))
+      TextInputParameter(
+        "samcc_helixthree",
+        "Definition for helix 3",
+        "CC_first_position;chain;start_pos;end_pos",
+        samCCHelixRegex,
+        Some("a;C;2;30")
+      )
     case "SAMCC_HELIXFOUR" =>
-      TextInputParameter("samcc_helixfour",
-                         "Definition for helix 4",
-                         "CC_first_position;chain;start_pos;end_pos",
-                         samCCHelixRegex,
-                         Some("a;D;2;30"))
+      TextInputParameter(
+        "samcc_helixfour",
+        "Definition for helix 4",
+        "CC_first_position;chain;start_pos;end_pos",
+        samCCHelixRegex,
+        Some("a;D;2;30")
+      )
     case "INVOKE_PSIPRED" =>
       NumberParameter("invoke_psipred", "% identity cutoff to invoke a new PSIPRED run", Some(0), Some(100))
     case "CLANS_EVAL"       => select("clans_eval", "Extract BLAST HSP's up to E-values of")

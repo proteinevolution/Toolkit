@@ -11,10 +11,10 @@ export enum ParameterType {
 }
 
 export enum TextAreaInputType {
-    Sequence = 'sequence',
-    Regex = 'regex',
-    PDB = 'pdb', // samcc
-    AccessionID = 'accessionID', // retrieve Seq
+    SEQUENCE = 'SEQUENCE',
+    REGEX = 'REGEX',
+    PDB = 'PDB',
+    ACCESSION_ID = 'ACCESSION_ID',
 }
 
 export enum AlignmentSeqFormat {
@@ -22,7 +22,7 @@ export enum AlignmentSeqFormat {
     CLUSTAL = 'CLUSTAL',
     A3M = 'A3M',
     STOCKHOM = 'STOCKHOLM',
-    PIR = 'PIR', // modeller
+    PIR = 'PIR',
 }
 
 export enum AlignmentSeqType {

@@ -23,7 +23,7 @@ export default class JobService {
         }));
     }
 
-    public static getRecentJob(): Promise<Job> {
+    public static getRecentJob(): Promise<Job> { // TODO should not be necessary as we have it in store
         return new Promise<Job>(((resolve, reject) => {
             axios.get(`/api/jobs/recent`)
                 .then((response) => {

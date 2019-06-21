@@ -16,14 +16,20 @@
 
 package de.proteinevolution.parameters
 
+import shapeless.tag
+import shapeless.tag.@@
+
 object TextAreaInputType {
+  trait TextAreaInputTypeTag
+  type TextAreaInputType = String @@ TextAreaInputTypeTag
 
-  val SEQUENCE: String = "sequence"
+  val SEQUENCE: TextAreaInputType = "SEQUENCE"
 
-  val REGEX: String = "regex"
+  val REGEX: TextAreaInputType = "REGEX"
 
-  val PDB: String = "pdb"
+  val PDB: TextAreaInputType = "PDB"
 
-  val ACCESSION_ID: String = "accessionID"
+  val ACCESSION_ID: TextAreaInputType = "ACCESSION_ID"
 
+  implicit def StringToTextAreaInputType(s: String): TextAreaInputType = tag.apply[TextAreaInputTypeTag][String](s)
 }

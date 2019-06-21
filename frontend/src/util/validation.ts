@@ -5,13 +5,13 @@ import {SequenceValidationParams, ValidationParams} from '@/types/toolkit/tools'
 
 export function validation(val: string, inputType: TextAreaInputType, params: ValidationParams): ValidationResult {
     switch (inputType) {
-        case TextAreaInputType.Sequence:
+        case TextAreaInputType.SEQUENCE:
             return validateSequence(val, params as SequenceValidationParams);
-        case TextAreaInputType.Regex:
+        case TextAreaInputType.REGEX:
             return validateRegex(val);
         case TextAreaInputType.PDB:
             return validatePDB(val);
-        case TextAreaInputType.AccessionID:
+        case TextAreaInputType.ACCESSION_ID:
             return validateAccessionID(val);
     }
 }
