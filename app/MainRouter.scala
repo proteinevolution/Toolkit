@@ -17,7 +17,6 @@
 import controllers._
 import de.proteinevolution.auth.AuthRouter
 import de.proteinevolution.backend.BackendRouter
-import de.proteinevolution.help.HelpRouter
 import de.proteinevolution.jobs.JobsRouter
 import de.proteinevolution.message.MessageRouter
 import de.proteinevolution.results.ResultsRouter
@@ -34,7 +33,6 @@ class MainRouter @Inject()(
     resultsRouter: ResultsRouter,
     assets: Assets,
     authRouter: AuthRouter,
-    helpRouter: HelpRouter,
     backendRouter: BackendRouter,
     jobsRouter: JobsRouter,
     uiRouter: UiRouter,
@@ -50,21 +48,12 @@ class MainRouter @Inject()(
     case GET(p"/robots.txt")    => controller.robots
   }
 
-  private lazy val uiRoutes: Routes = {
-    case GET(p"/$static")         => controller.static(static)
-    case GET(p"/hhpred")          => controller.showTool(toolName = "hhpred")
-    case GET(p"/tools/$toolName") => controller.showTool(toolName)
-    case GET(p"/jobs/$idString")  => controller.showJob(idString)
-  }
-
   override lazy val routes: Routes = {
     mainRoutes
       .orElse(messageRouter.withPrefix("/ws").routes)
-      .orElse(uiRoutes)
       .orElse(uiRouter.withPrefix("/api/tools").routes)
       .orElse(jobsRouter.withPrefix("/api/jobs").routes)
       .orElse(backendRouter.withPrefix("/backend").routes)
-      .orElse(helpRouter.withPrefix("/api/tools/help").routes)
       .orElse(authRouter.withPrefix("/api/auth").routes)
       .orElse(resultsRouter.withPrefix("/results").routes)
   }

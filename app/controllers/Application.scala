@@ -47,19 +47,6 @@ final class Application @Inject()(
     ).withSession(userSessions.sessionCookie(request, request.user.sessionID.get))
   }
 
-  // Routes are handled by Mithril, redirect.
-  def showTool(toolName: String): Action[AnyContent] = Action { implicit request =>
-    PermanentRedirect(s"/#/tools/$toolName")
-  }
-
-  def showJob(idString: String): Action[AnyContent] = Action { implicit request =>
-    PermanentRedirect(s"/#/jobs/$idString")
-  }
-
-  def static(static: String): Action[AnyContent] = Action { implicit request =>
-    PermanentRedirect(s"/#/$static")
-  }
-
   val robots: Action[AnyContent] = Action { _ =>
     Ok(
       "User-agent: *\nAllow: /\nDisallow: /#/jobmanager/\nDisallow: /#/jobs/\nSitemap: https://toolkit.tuebingen.mpg.de/sitemap.xml"
