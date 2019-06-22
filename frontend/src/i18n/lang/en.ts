@@ -44,6 +44,7 @@ export default {
             resetPasswordModal: {
                 loading: 'Loading...',
             },
+            loggedOutByWS: 'You logged out on another device!',
         },
         index: {
             welcomeTitle: 'Welcome to the Bioinformatics Toolkit',

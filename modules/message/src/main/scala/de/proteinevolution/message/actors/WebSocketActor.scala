@@ -24,7 +24,7 @@ import akka.event.LoggingReceive
 import akka.pattern.ask
 import akka.util.Timeout
 import com.google.inject.assistedinject.Assisted
-import de.proteinevolution.auth.models.Session.ChangeSessionID
+import de.proteinevolution.auth.models.Session.{ ChangeSessionID, LogOut }
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.cluster.ClusterSubscriber.UpdateLoad
 import de.proteinevolution.cluster.api.SGELoad
@@ -33,7 +33,7 @@ import de.proteinevolution.common.models.database.jobs.JobState.Running
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobActorAccess
-import de.proteinevolution.message.actors.WebSocketActor.{ LogOut, MaintenanceAlert }
+import de.proteinevolution.message.actors.WebSocketActor.MaintenanceAlert
 import de.proteinevolution.tools.ToolConfig
 import io.circe.syntax._
 import io.circe.{ Json, JsonObject }
@@ -105,10 +105,14 @@ final class WebSocketActor @Inject()(
 
             case "SET_JOB_WATCHED" =>
               for {
-                jobID <- json.hcursor.get[String]("jobID")
+                jobID   <- json.hcursor.get[String]("jobID")
                 watched <- json.hcursor.get[Boolean]("watched")
               } yield {
-                jobActorAccess.sendToJobActor(jobID, if (watched) AddToWatchlist(jobID, user.userID) else RemoveFromWatchlist(jobID, user.userID))
+                jobActorAccess.sendToJobActor(
+                  jobID,
+                  if (watched) AddToWatchlist(jobID, user.userID)
+                  else RemoveFromWatchlist(jobID, user.userID)
+                )
               }
 
             // Received a ping, so we return a pong
@@ -198,11 +202,14 @@ final class WebSocketActor @Inject()(
     case ChangeSessionID(newSid: String) =>
       context.become(active(newSid))
 
-    case LogOut =>
-      out ! JsonObject("type" -> Json.fromString("LogOut")).asJson
+    case LogOut() =>
+      out ! JsonObject("mutation" -> Json.fromString("SOCKET_LogOut")).asJson
 
-    case MaintenanceAlert =>
-      out ! JsonObject("type" -> Json.fromString("MaintenanceAlert")).asJson
+    case MaintenanceAlert(maintenanceMode) =>
+      out ! JsonObject(
+        "mutation"        -> Json.fromString("SOCKET_MaintenanceAlert"),
+        "maintenanceMode" -> Json.fromBoolean(maintenanceMode)
+      ).asJson
   }
 
   override def receive = LoggingReceive {
@@ -212,8 +219,7 @@ final class WebSocketActor @Inject()(
 
 object WebSocketActor {
 
-  case object LogOut
-  case object MaintenanceAlert
+  case class MaintenanceAlert(maintenanceMode: Boolean)
 
   trait Factory {
     def apply(@Assisted("sessionID") sessionID: String, @Assisted("out") out: ActorRef): Actor

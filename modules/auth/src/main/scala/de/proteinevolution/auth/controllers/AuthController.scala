@@ -21,20 +21,20 @@ import java.util.UUID
 import akka.actor.ActorRef
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate._
-import de.proteinevolution.auth.models.Session.ChangeSessionID
-import de.proteinevolution.auth.models.{ FormDefinitions, JSONTemplate }
+import de.proteinevolution.auth.models.Session.{ChangeSessionID, LogOut}
+import de.proteinevolution.auth.models.{FormDefinitions, JSONTemplate}
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.user.{ AccountType, UserToken }
+import de.proteinevolution.user.{AccountType, UserToken}
 import io.circe.syntax._
-import javax.inject.{ Inject, Singleton }
-import play.api.cache.{ NamedCache, SyncCacheApi }
+import javax.inject.{Inject, Singleton}
+import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
-import play.api.mvc.{ Action, AnyContent, ControllerComponents }
-import play.api.{ Configuration, Logging }
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.{Configuration, Logging}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthController @Inject()(
@@ -50,6 +50,13 @@ class AuthController @Inject()(
     with Logging {
 
   def signOut: Action[AnyContent] = userAction { implicit request =>
+    wsActorCache.get[List[ActorRef]](request.user.userID) match {
+      case Some(wsActors) =>
+        val actorList: List[ActorRef] = wsActors: List[ActorRef]
+        actorList.foreach(_ ! LogOut())
+        wsActorCache.remove(request.user.userID)
+      case None =>
+    }
     userSessionService.removeUserFromCache(request.user)
     Ok(loggedOut()).withNewSession
   }
@@ -90,6 +97,7 @@ class AuthController @Inject()(
                     // add the anonymous jobs to the user // TODO update jobs to new owner id
                     userDao.addJobsToUser(loggedInUser.userID, anonymousUser.jobs)
                     // Tell the job actors to copy all jobs connected to the old user to the new user
+                    // TODO what exactly does this do
                     wsActorCache.get[List[ActorRef]](anonymousUser.userID) match {
                       case Some(wsActors) =>
                         val actorList: List[ActorRef] = wsActors: List[ActorRef]

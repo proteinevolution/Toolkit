@@ -47,8 +47,15 @@ const store: StoreOptions<RootState> = {
         SOCKET_UpdateLoad(state, message) {
             state.clusterWorkload = message.load;
         },
+        SOCKET_MaintenanceAlert(state, message) {
+            logger.log('Maintenance alert with message', message);
+            state.maintenanceMode = message.maintenanceMode;
+        },
         SOCKET_ONMESSAGE(state, message) {
             logger.log('Uncaught message from websocket', message);
+        },
+        SOCKET_LogOut() {
+            logger.log('Logged out by websocket');
         },
         SOCKET_ShowNotification() {
             // handled in App.vue

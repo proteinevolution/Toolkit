@@ -1,5 +1,8 @@
 import {MutationTree} from 'vuex';
 import {AuthState} from '../../types';
+import Logger from 'js-logger';
+
+const logger = Logger.get('AuthStore');
 
 const mutations: MutationTree<AuthState> = {
     setUser(state, user) {

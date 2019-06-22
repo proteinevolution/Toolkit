@@ -138,6 +138,12 @@
                     case 'SOCKET_ShowJobNotification':
                         this.showJobNotification(json.jobID, json.title, json.body);
                         break;
+                    case 'SOCKET_LogOut':
+                        if (this.$store.getters['auth/loggedIn']) {
+                            this.$alert(this.$t('auth.loggedOutByWS'));
+                            this.$store.commit('auth/setUser', null);
+                        }
+                        break;
                     default:
                         break;
                 }
