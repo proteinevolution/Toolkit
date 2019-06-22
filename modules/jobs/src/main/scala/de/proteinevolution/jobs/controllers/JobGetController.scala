@@ -54,14 +54,8 @@ class JobGetController @Inject()(
     }
   }
 
-  /**
-   * if no tool is found for a given query,
-   * it looks for jobs which belong to the current user.
-   * only jobIDs that belong to the user are autocompleted
-   */
-  def suggestJobsForJobId(queryString_ : String): Action[AnyContent] = userAction.async { implicit request =>
+  def suggestJobsForQuery(queryString: String): Action[AnyContent] = userAction.async { implicit request =>
     val user        = request.user
-    val queryString = queryString_.trim()
     val tools: List[Tool] = toolConfig.values.values
       .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
       .filterNot(_.toolNameShort == "hhpred_manual")

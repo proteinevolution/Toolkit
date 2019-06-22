@@ -31,7 +31,7 @@ class JobsRouter @Inject()(
 
   private lazy val getRoutes: Routes = {
     case GET(p"/")                        => jobGetController.getAllJobs
-    case GET(p"/suggest/$query")          => jobGetController.suggestJobsForJobId(query)
+    case GET(p"/suggest/$query")          => jobGetController.suggestJobsForQuery(query.trim)
     case GET(p"/$jobID")                  => jobGetController.loadJob(jobID)
     case GET(p"/$jobID/start")            => submissionController.startJob(jobID)
     case GET(p"/check/hash/$jobID")       => jobGetController.checkHash(jobID)
