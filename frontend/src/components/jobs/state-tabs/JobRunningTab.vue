@@ -76,7 +76,7 @@
         }
 
         .running {
-            background: url('../../assets/images/ellipsis.gif') no-repeat center center;
+            background: url('../../../assets/images/ellipsis.gif') no-repeat center center;
         }
 
         .done {

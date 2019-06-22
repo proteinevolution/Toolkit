@@ -56,13 +56,13 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import JobPreparedTab from './JobPreparedTab.vue';
-    import JobQueuedTab from './JobQueuedTab.vue';
-    import JobRunningTab from './JobRunningTab.vue';
-    import JobErrorTab from './JobErrorTab.vue';
-    import JobDoneTab from './JobDoneTab.vue';
-    import JobSubmittedTab from './JobSubmittedTab.vue';
-    import JobPendingTab from './JobPendingTab.vue';
+    import JobPreparedTab from './state-tabs/JobPreparedTab.vue';
+    import JobQueuedTab from './state-tabs/JobQueuedTab.vue';
+    import JobRunningTab from './state-tabs/JobRunningTab.vue';
+    import JobErrorTab from './state-tabs/JobErrorTab.vue';
+    import JobDoneTab from './state-tabs/JobDoneTab.vue';
+    import JobSubmittedTab from './state-tabs/JobSubmittedTab.vue';
+    import JobPendingTab from './state-tabs/JobPendingTab.vue';
     import ToolView from '../tools/ToolView.vue';
     import {Job} from '@/types/toolkit/jobs';
     import moment from 'moment';
