@@ -92,6 +92,8 @@
                     const msg = await AuthService.login(data);
                     if (msg.successful) {
                         this.$store.commit('auth/setUser', msg.user);
+                        // get jobs of user
+                        this.$store.dispatch('jobs/fetchAllJobs');
                         EventBus.$emit('hide-modal', 'auth');
                         this.$alert(msg.message);
                     }
