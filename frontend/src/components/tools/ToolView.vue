@@ -56,7 +56,7 @@
 
                             <template #tabs>
                                 <div class="ml-auto">
-                                    <job-public-toggle v-if="!isJobView || !job.foreign"
+                                    <job-public-toggle v-if="!isJobView && loggedIn || isJobView && !job.foreign"
                                                        :job="job"
                                                        :submission="submission"/>
                                     <i class="tool-action tool-action-push-up fa fa-trash mr-4"
