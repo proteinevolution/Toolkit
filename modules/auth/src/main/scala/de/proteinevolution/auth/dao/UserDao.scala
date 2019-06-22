@@ -19,18 +19,22 @@ package de.proteinevolution.auth.dao
 import java.time.ZonedDateTime
 import java.util.UUID
 
+import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.user._
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.Cursor
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
-import reactivemongo.bson.{BSONArray, BSONDateTime, BSONDocument}
+import reactivemongo.api.commands.{ UpdateWriteResult, WriteResult }
+import reactivemongo.bson.{ BSONArray, BSONDateTime, BSONDocument }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit ec: ExecutionContext) {
+class UserDao @Inject()(
+    private val reactiveMongoApi: ReactiveMongoApi,
+    constants: ConstantsV2
+)(implicit ec: ExecutionContext) {
 
   private[auth] lazy val userCollection: Future[BSONCollection] = {
     reactiveMongoApi.database.map(_.collection[BSONCollection]("users"))
@@ -58,8 +62,61 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
   def findUserByID(userID: String): Future[Option[User]] =
     userCollection.flatMap(_.find(BSONDocument(User.ID -> userID), None).one[User])
 
-  @Deprecated
-  def findUsers(selector: BSONDocument): Future[scala.List[User]] =
+  def findOldUsers(): Future[List[User]] = {
+    // Generate the dates to compare before deletion
+    val now = ZonedDateTime.now
+    // Date to compare last login of regular users to
+    val deleteRegularUserAfterCreationDate = now.minusMonths(constants.userDeleting.toLong)
+    // date to compare creation date of unconfirmed users to
+    val deleteUnconfirmedUserAfterCreationDate = now.minusDays(constants.userDeletingRegisterEmail.toLong)
+    // date to compare last login of registered users to
+    val deleteRegistratedUserAfterLoginDate = now.minusMonths(constants.userDeletingRegistered.toLong)
+    internalFindUsers(
+      BSONDocument(
+        "$or" ->
+        List(
+          BSONDocument( // Removing regular users with no privileges
+            User.ACCOUNT_TYPE ->
+            AccountType.NORMALUSER.toInt,
+            User.DATE_CREATED ->
+            BSONDocument("$lt" -> BSONDateTime(deleteRegularUserAfterCreationDate.toInstant.toEpochMilli))
+          ),
+          BSONDocument( // Removing regular users who await registration
+            User.ACCOUNT_TYPE ->
+            AccountType.NORMALUSERAWAITINGREGISTRATION.toInt,
+            User.DATE_CREATED ->
+            BSONDocument("$lt" -> BSONDateTime(deleteUnconfirmedUserAfterCreationDate.toInstant.toEpochMilli))
+          ),
+          BSONDocument( // Removing registered users with no privileges
+            User.ACCOUNT_TYPE ->
+            AccountType.REGISTEREDUSER.toInt,
+            User.DATE_LAST_LOGIN ->
+            BSONDocument("$lt" -> BSONDateTime(deleteRegistratedUserAfterLoginDate.toInstant.toEpochMilli))
+          )
+        )
+      )
+    )
+  }
+
+  def findUsersToWarn(): Future[List[User]] = {
+    val now = ZonedDateTime.now
+    // Date to warn registered accounts that they will soon be deleted
+    val warnRegistratedUserAfterLoginDate =
+      now.plusDays(constants.userDeletionWarning.toLong).toLocalDate.atStartOfDay(now.getZone)
+    internalFindUsers(
+      BSONDocument(
+        User.ACCOUNT_TYPE ->
+        AccountType.REGISTEREDUSER.toInt,
+        User.DATE_CREATED ->
+        BSONDocument("$lt" -> BSONDateTime(warnRegistratedUserAfterLoginDate.toInstant.toEpochMilli))
+      )
+    )
+  }
+
+  def findUsersWithInformation(): Future[List[User]] =
+    internalFindUsers(BSONDocument(User.USER_DATA -> BSONDocument("$exists" -> true)))
+
+  private def internalFindUsers(selector: BSONDocument): Future[scala.List[User]] =
     userCollection
       .map(_.find(selector, None).cursor[User]())
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[User]]()))
@@ -125,7 +182,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       userID,
       BSONDocument(
         "$set" -> BSONDocument(
-          User.PASSWORD  -> newPasswordHash,
+          User.PASSWORD   -> newPasswordHash,
           User.SESSION_ID -> newSessionId
         )
       ).merge {
@@ -184,52 +241,33 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
       BSONDocument(
         "$set" -> BSONDocument(
           User.DATE_LAST_LOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli),
-          User.SESSION_ID     -> user.sessionID.orElse(Some(UUID.randomUUID().toString)) // user needs session id
+          User.SESSION_ID      -> user.sessionID.orElse(Some(UUID.randomUUID().toString)) // user needs session id
         )
       ).merge(
-          // In the case that the user has been emailed about their inactivity, reset that status to a regular user status
-          if (user.accountType == AccountType.CLOSETODELETIONUSER) {
-            BSONDocument(
-              "$set"   -> BSONDocument(User.ACCOUNT_TYPE   -> AccountType.REGISTEREDUSER.toInt),
-              "$unset" -> BSONDocument(User.DATE_DELETED_ON -> "")
-            )
-          } else {
-            BSONDocument.empty
-          }
-        )
-        .merge(
-          sessionDataOption
-            .map(
-              sessionData =>
-                // Add the session Data to the set
-                BSONDocument("$addToSet" -> BSONDocument(User.SESSION_DATA -> sessionData))
-            )
-            .getOrElse(BSONDocument.empty)
-        )
+        sessionDataOption
+          .map(
+            sessionData =>
+              // Add the session Data to the set
+              BSONDocument("$addToSet" -> BSONDocument(User.SESSION_DATA -> sessionData))
+          )
+          .getOrElse(BSONDocument.empty)
+      )
     )
 
   def afterRemoveFromCache(userID: String): Future[Option[User]] =
-    modifyUser(userID, BSONDocument(
-      "$set" ->
+    modifyUser(
+      userID,
+      BSONDocument(
+        "$set" ->
         BSONDocument(
           User.DATE_LAST_LOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli)
         ),
-      "$unset" ->
+        "$unset" ->
         BSONDocument(
           User.SESSION_ID -> "",
-          User.CONNECTED -> ""
+          User.CONNECTED  -> ""
         )
-    ))
-
-  def registerForDeletion(userIDs: List[String], deletionDateMillis: Long): Future[WriteResult] =
-    userCollection.flatMap(
-      _.update(ordered = false).one(BSONDocument(User.ID -> BSONDocument("$in" -> userIDs)), BSONDocument(
-        "$set" ->
-          BSONDocument(
-            User.ACCOUNT_TYPE   -> AccountType.CLOSETODELETIONUSER.toInt,
-            User.DATE_DELETED_ON -> BSONDateTime(deletionDateMillis)
-          )
-      ), multi = true)
+      )
     )
 
   def removeUsers(userIDs: List[String]): Future[WriteResult] =

@@ -26,7 +26,6 @@ object AccountType {
   final val ADMINLEVEL: AccountType                     = 11
   final val MODERATORLEVEL: AccountType                 = 10
   final val BANNEDUSER: AccountType                     = 4
-  final val CLOSETODELETIONUSER: AccountType            = 3
   final val REGISTEREDUSER: AccountType                 = 1
   final val NORMALUSERAWAITINGREGISTRATION: AccountType = 0
   final val NORMALUSER: AccountType                     = -1

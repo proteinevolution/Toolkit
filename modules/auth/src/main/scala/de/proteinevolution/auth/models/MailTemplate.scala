@@ -547,7 +547,7 @@ object MailTemplate {
     }
   }
 
-  case class OldAccountEmail(userParam: User, deletionDate: ZonedDateTime, config: Configuration)
+  case class OldAccountEmail(userParam: User, daysUntilDeletion: Int, config: Configuration)
       extends MailTemplate {
     override def subject = "Old Account - The MPI Bioinformatics Toolkit"
 
@@ -555,14 +555,10 @@ object MailTemplate {
 
     val bodyText: String = {
       s"""Dear ${user.getUserData.nameLogin},
-         |we have noticed, that you have not logged in since ${user.dateLastLogin
-           .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
-           .getOrElse("[date not supplied]")}.
+         |we have noticed, that you have not logged in since ${user.dateLastLogin.format(ZonedDateTimeHelper.dateTimeFormatter)}.
          |To keep our system running smoothly and to keep the data we collect from our users to a minimum,
          |we delete old user accounts.
-         |This is why your account will be deleted on ${user.dateLastLogin
-           .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
-           .getOrElse("[date not supplied]")}.
+         |This is why your account will be deleted in $daysUntilDeletion days.
          |If you wish to continue using our services, log in before the specified date to let us know that you are still interested in our services.
          |
        |Your Toolkit Team
@@ -579,15 +575,10 @@ object MailTemplate {
            |    <div style="font-family:Noto Sans;font-size:14px;line-height:1;text-align:center;color:grey;">
            |      Dear ${user.getUserData.nameLogin},<br/><br/>
            |      we have noticed, that you have not logged in since
-           |      ${user.dateLastLogin
-             .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
-             .getOrElse("[date not supplied]")}.<br/><br/>
+           |      ${user.dateLastLogin.format(ZonedDateTimeHelper.dateTimeFormatter)}.<br/><br/>
            |      To keep our system running smoothly and to keep the data we collect from our users to a minimum,
            |      we remove unused user accounts.<br/><br/>
-           |      This is why your account will be deleted on<br />
-           |      ${user.dateLastLogin
-             .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
-             .getOrElse("[date not supplied]")}.<br/><br/>
+           |      This is why your account will be deleted in <b>$daysUntilDeletion</b> days.<br/><br/>
            |      If you wish to continue using our services, log in before the specified date to let us know that you are still interested in our services.
            |    </div>
            |  </td>

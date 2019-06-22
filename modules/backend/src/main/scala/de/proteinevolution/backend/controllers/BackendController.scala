@@ -23,31 +23,29 @@ import akka.actor.ActorRef
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
-import de.proteinevolution.backend.actors.DatabaseMonitor.{DeleteOldJobs, DeleteOldUsers}
+import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.tools.ToolConfig
-import de.proteinevolution.user.User
 import io.circe.Json
 import io.circe.syntax._
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 import play.api.Logging
 import play.api.mvc._
-import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
 final class BackendController @Inject()(
-                                         userSessions: UserSessionService,
-                                         backendDao: BackendDao,
-                                         userDao: UserDao,
-                                         jobDao: JobDao,
-                                         toolConfig: ToolConfig,
-                                         @Named("databaseMonitor") databaseMonitor: ActorRef,
-                                         cc: ControllerComponents,
-                                         userAction: UserAction
+    userSessions: UserSessionService,
+    backendDao: BackendDao,
+    userDao: UserDao,
+    jobDao: JobDao,
+    toolConfig: ToolConfig,
+    @Named("databaseMonitor") databaseMonitor: ActorRef,
+    cc: ControllerComponents,
+    userAction: UserAction
 )(implicit ec: ExecutionContext)
     extends ToolkitController(cc)
     with Logging {
@@ -155,7 +153,7 @@ final class BackendController @Inject()(
 
   def users: Action[AnyContent] = userAction.async { implicit request =>
     if (request.user.isSuperuser) {
-      userDao.findUsers(BSONDocument(User.USER_DATA -> BSONDocument("$exists" -> true))).map { users =>
+      userDao.findUsersWithInformation().map { users =>
         NoCache(Ok(users.asJson))
       }
     } else {

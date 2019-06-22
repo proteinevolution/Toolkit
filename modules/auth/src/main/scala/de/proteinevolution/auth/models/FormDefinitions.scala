@@ -16,8 +16,6 @@
 
 package de.proteinevolution.auth.models
 
-import java.time.ZonedDateTime
-
 import de.proteinevolution.user.{User, UserData, UserToken}
 import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Form
@@ -54,10 +52,7 @@ object FormDefinitions {
         userData = Some(
           UserData(nameLogin = nameLogin, password = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)), eMail = eMail)
         ),
-        jobs = user.jobs,
-        dateLastLogin = Some(ZonedDateTime.now),
-        dateCreated = Some(ZonedDateTime.now),
-        dateUpdated = Some(ZonedDateTime.now)
+        jobs = user.jobs
       )
     } { _ =>
       None

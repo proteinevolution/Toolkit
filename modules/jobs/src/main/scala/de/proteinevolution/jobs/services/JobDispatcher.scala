@@ -19,19 +19,19 @@ package de.proteinevolution.jobs.services
 import java.security.MessageDigest
 import java.time.ZonedDateTime
 
-import cats.data.{EitherT, OptionT}
+import cats.data.{ EitherT, OptionT }
 import cats.implicits._
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.services.UserSessionService
-import de.proteinevolution.common.models.{ConstantsV2, ToolName}
+import de.proteinevolution.common.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.jobs.actors.JobActor.PrepareJob
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.models.{Job, JobSubmitError}
-import de.proteinevolution.user.{AccountType, User}
-import javax.inject.{Inject, Singleton}
+import de.proteinevolution.jobs.models.{ Job, JobSubmitError }
+import de.proteinevolution.user.{ AccountType, User }
+import javax.inject.{ Inject, Singleton }
 import play.api.Logging
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class JobDispatcher @Inject()(
@@ -111,10 +111,10 @@ final class JobDispatcher @Inject()(
       form: Map[String, String],
       user: User
   ): Job = {
-    val now          = ZonedDateTime.now
+    val now = ZonedDateTime.now
     val dateDeletionOn = user.userData match {
-      case Some(_) =>now.plusDays(constants.jobDeletionRegistered.toLong)
-      case None =>now.plusDays(constants.jobDeletion.toLong)
+      case Some(_) => now.plusDays(constants.jobDeletionRegistered.toLong)
+      case None    => now.plusDays(constants.jobDeletion.toLong)
     }
     new Job(
       jobID = jobID,

@@ -16,21 +16,21 @@
 
 package de.proteinevolution.auth.services
 
-import java.time.ZonedDateTime
 import java.util.UUID
 
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.base.helpers.ToolkitTypes
-import de.proteinevolution.user.{ SessionData, User }
+import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.user.{SessionData, User}
 import de.proteinevolution.util.LocationProvider
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{ mvc, Configuration, Logging }
+import play.api.{Configuration, Logging, mvc}
 import play.mvc.Http
 
 import scala.concurrent.duration._
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.hashing.MurmurHash3
 
 @Singleton
@@ -38,7 +38,8 @@ class UserSessionService @Inject()(
     userDao: UserDao,
     @NamedCache("userCache") userCache: SyncCacheApi,
     locationProvider: LocationProvider,
-    config: Configuration
+    config: Configuration,
+    constants: ConstantsV2,
 )(implicit ec: ExecutionContext)
     extends ToolkitTypes
     with Logging {
@@ -85,10 +86,7 @@ class UserSessionService @Inject()(
     val user = User(
       userID = UUID.randomUUID().toString,
       sessionID = Some(sessionID),
-      sessionData = List(newSessionData),
-      dateCreated = Some(ZonedDateTime.now),
-      dateLastLogin = Some(ZonedDateTime.now),
-      dateUpdated = Some(ZonedDateTime.now)
+      sessionData = List(newSessionData)
     )
     userDao.addUser(user).map { _ =>
       logger.info(s"User is new:\n${user.toString}\nIP: ${request.remoteAddress.toString}")
@@ -101,7 +99,6 @@ class UserSessionService @Inject()(
    * none, it will try to find it in the database and put it in the cache.
    * Only used for the websocket where no request object is available.
    *
-   * @param sessionID
    * @return
    */
   def getUserBySessionID(sessionID: String): Future[Option[User]] = {
