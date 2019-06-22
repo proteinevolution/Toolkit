@@ -22,7 +22,7 @@
             },
             defaultSubmissionValue(): boolean {
                 return false;
-            }
+            },
         },
     });
 </script>
