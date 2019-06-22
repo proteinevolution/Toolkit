@@ -560,10 +560,10 @@ object MailTemplate {
            .getOrElse("[date not supplied]")}.
          |To keep our system running smoothly and to keep the data we collect from our users to a minimum,
          |we delete old user accounts.
-         |This is why Your account will be deleted on ${user.dateLastLogin
+         |This is why your account will be deleted on ${user.dateLastLogin
            .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
            .getOrElse("[date not supplied]")}.
-         |Just log into Your account to let us know that You are still interested in our services.
+         |If you wish to continue using our services, log in before the specified date to let us know that you are still interested in our services.
          |
        |Your Toolkit Team
          |

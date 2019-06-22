@@ -58,6 +58,7 @@ class UserDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit
   def findUserByID(userID: String): Future[Option[User]] =
     userCollection.flatMap(_.find(BSONDocument(User.ID -> userID), None).one[User])
 
+  @Deprecated
   def findUsers(selector: BSONDocument): Future[scala.List[User]] =
     userCollection
       .map(_.find(selector, None).cursor[User]())

@@ -239,4 +239,14 @@ public class DatabaseChangelog {
         Bson update = new Document("$rename", rename);
         db.getCollection("jobs").updateMany(filters, update);
     }
+
+    @ChangeSet(order = "015", id = "15", author = "Felix Gabler")
+    public void renameJobDeletionField(final MongoDatabase db) {
+        Bson rename = Updates.rename("dateDeleted", "dateDeletionOn");
+        Bson filters = Filters.and(
+                Filters.exists("dateDeletionOn", false),
+                Filters.exists("dateDeleted", true)
+        );
+        db.getCollection("jobs").updateMany(filters, rename);
+    }
 }

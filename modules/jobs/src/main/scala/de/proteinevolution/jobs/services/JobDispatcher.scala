@@ -112,7 +112,10 @@ final class JobDispatcher @Inject()(
       user: User
   ): Job = {
     val now          = ZonedDateTime.now
-    val dateDeletion = user.userData.map(_ => now.plusDays(constants.jobDeletion.toLong))
+    val dateDeletionOn = user.userData match {
+      case Some(_) =>now.plusDays(constants.jobDeletionRegistered.toLong)
+      case None =>now.plusDays(constants.jobDeletion.toLong)
+    }
     new Job(
       jobID = jobID,
       ownerID = user.userID,
@@ -121,10 +124,8 @@ final class JobDispatcher @Inject()(
       emailUpdate = form.get("emailUpdate").exists(_.toBoolean),
       tool = toolName,
       watchList = List(user.userID),
-      dateCreated = Some(now),
-      dateUpdated = Some(now),
-      dateViewed = Some(now),
-      dateDeletion = dateDeletion,
+      dateViewed = now,
+      dateDeletionOn = dateDeletionOn,
       IPHash = Some(MessageDigest.getInstance("MD5").digest(user.sessionData.head.ip.getBytes).mkString)
     )
   }

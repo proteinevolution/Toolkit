@@ -16,8 +16,6 @@
 
 package de.proteinevolution.results.services
 
-import java.time.ZonedDateTime
-
 import better.files._
 import cats.data.{ EitherT, OptionT }
 import cats.implicits._
@@ -81,7 +79,7 @@ final class ResultGetService @Inject()(
           job.status,
           job.tool,
           toolConfig.values(job.tool).code,
-          job.dateCreated.getOrElse(ZonedDateTime.now).toInstant.toEpochMilli,
+          job.dateCreated.toInstant.toEpochMilli,
           jobViews,
           paramValues
         )

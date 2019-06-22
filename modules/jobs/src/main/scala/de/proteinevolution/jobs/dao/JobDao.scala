@@ -20,23 +20,23 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.common.models.database.jobs.JobState
-import de.proteinevolution.jobs.models.{ Job, JobClusterData }
-import de.proteinevolution.statistics.{ JobEvent, JobEventLog }
-import javax.inject.{ Inject, Singleton }
+import de.proteinevolution.jobs.models.{Job, JobClusterData}
+import de.proteinevolution.statistics.{JobEvent, JobEventLog}
+import javax.inject.{Inject, Singleton}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.{ Index, IndexType }
-import reactivemongo.api.{ Cursor, ReadConcern }
-import reactivemongo.bson.{ BSONDateTime, BSONDocument }
+import reactivemongo.api.indexes.{Index, IndexType}
+import reactivemongo.api.{Cursor, ReadConcern}
+import reactivemongo.bson.{BSONDateTime, BSONDocument}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class JobDao @Inject()(
-    private val reactiveMongoApi: ReactiveMongoApi,
-    constants: ConstantsV2
-)(implicit ec: ExecutionContext) {
+                        private val reactiveMongoApi: ReactiveMongoApi,
+                        constants: ConstantsV2
+                      )(implicit ec: ExecutionContext) {
 
   private lazy val jobCollection: Future[BSONCollection] = {
     reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs")).map { collection =>
@@ -51,17 +51,10 @@ class JobDao @Inject()(
   final def findJob(id: String): Future[Option[Job]] =
     jobCollection.flatMap(_.find(BSONDocument(Job.ID -> id), None).one[Job])
 
-  private def internalFindJobs(selector: BSONDocument, includeDeleted: Boolean = false): Future[List[Job]] = {
+  private def internalFindJobs(selector: BSONDocument): Future[List[Job]] =
     jobCollection
-      .map(_.find(selector.merge {
-        if (!includeDeleted) {
-          BSONDocument(Job.DATE_DELETED -> BSONDocument("$exists" -> false))
-        } else {
-          BSONDocument.empty
-        }
-      }, None).cursor[Job]())
+      .map(_.find(selector, None).cursor[Job]())
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
-  }
 
   def findJobsByHash(hash: Option[String]): Future[List[Job]] =
     internalFindJobs(BSONDocument(Job.HASH -> hash))
@@ -71,7 +64,7 @@ class JobDao @Inject()(
       BSONDocument(
         "$or" -> List(
           BSONDocument(
-            Job.ID        -> BSONDocument("$in" -> jobs),
+            Job.ID -> BSONDocument("$in" -> jobs),
             Job.IS_PUBLIC -> true
           ),
           BSONDocument(Job.OWNER_ID -> userID)
@@ -80,22 +73,22 @@ class JobDao @Inject()(
     )
 
   /**
-   * This method gets all the jobs which satisfy one of the following criteria:
-   * 1. their tool matches the query string (only for owned jobs)
-   * 2. their id matches the query string (public and owned jobs)
-   *
-   * @param userID     requesting user
-   * @param jobs       jobs which are watched by the user
-   * @param jobIDQuery query string for job id
-   * @param toolNames  possible matches with tools
-   * @return
-   */
+    * This method gets all the jobs which satisfy one of the following criteria:
+    * 1. their tool matches the query string (only for owned jobs)
+    * 2. their id matches the query string (public and owned jobs)
+    *
+    * @param userID     requesting user
+    * @param jobs       jobs which are watched by the user
+    * @param jobIDQuery query string for job id
+    * @param toolNames  possible matches with tools
+    * @return
+    */
   def findJobsByAutocomplete(
-      userID: String,
-      jobs: List[String],
-      jobIDQuery: String,
-      toolNames: List[String]
-  ): Future[List[Job]] =
+                              userID: String,
+                              jobs: List[String],
+                              jobIDQuery: String,
+                              toolNames: List[String]
+                            ): Future[List[Job]] =
     internalFindJobs(
       BSONDocument(
         "$or" -> List(
@@ -105,7 +98,7 @@ class JobDao @Inject()(
             BSONDocument(
               "$or" -> List(
                 BSONDocument(Job.IS_PUBLIC -> true),
-                BSONDocument(Job.OWNER_ID  -> userID)
+                BSONDocument(Job.OWNER_ID -> userID)
               )
             )
           )
@@ -113,27 +106,20 @@ class JobDao @Inject()(
       )
     )
 
+  /**
+    * Get all non-deleted jobs which have not been viewed for the last days and which are scheduled to be deleted
+    *
+    * @return
+    */
   def findOldJobs(): Future[List[Job]] = {
     // grab the current time
     val now: ZonedDateTime = ZonedDateTime.now
-    // calculate the date at which the job should have been created at
-    val dateCreated: ZonedDateTime = now.minusDays(constants.jobDeletion.toLong)
-    // calculate the date at which it should have been viewed last
+    // jobs must not be viewed in the last few days
     val lastViewedDate: ZonedDateTime = now.minusDays(constants.jobDeletionLastViewed.toLong)
     internalFindJobs(
       BSONDocument(
         Job.DATE_VIEWED -> BSONDocument("$lt" -> BSONDateTime(lastViewedDate.toInstant.toEpochMilli)),
-        BSONDocument(
-          "$or" -> List(
-            BSONDocument(
-              Job.DATE_DELETED -> BSONDocument("$lt" -> BSONDateTime(now.toInstant.toEpochMilli))
-            ),
-            BSONDocument(
-              Job.DATE_DELETED -> BSONDocument("$exists" -> false),
-              Job.DATE_CREATED -> BSONDocument("$lt"     -> BSONDateTime(dateCreated.toInstant.toEpochMilli))
-            )
-          )
-        )
+        Job.DATE_DELETION_ON -> BSONDocument("$lt" -> BSONDateTime(now.toInstant.toEpochMilli))
       )
     )
   }
@@ -144,7 +130,7 @@ class JobDao @Inject()(
         BSONDocument(JobEventLog.JOBID -> jobID),
         BSONDocument(
           "$push" ->
-          BSONDocument(JobEventLog.EVENTS -> JobEvent(JobState.Deleted, Some(ZonedDateTime.now), Some(0L)))
+            BSONDocument(JobEventLog.EVENTS -> JobEvent(JobState.Deleted, Some(ZonedDateTime.now), Some(0L)))
         ),
         fetchNewObject = true
       )
@@ -160,13 +146,10 @@ class JobDao @Inject()(
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
   }
 
-  final def findSortedJob(userId: String, sort: Int = -1): Future[Option[Job]] = {
+  final def findSortedJob(userID: String, sort: Int = -1): Future[Option[Job]] = {
     jobCollection.flatMap(
       _.find(
-        BSONDocument(
-          BSONDocument(Job.DATE_DELETED -> BSONDocument("$exists" -> false)),
-          BSONDocument(Job.OWNER_ID     -> userId)
-        ),
+        BSONDocument(Job.OWNER_ID -> userID),
         None
       ).sort(BSONDocument(Job.DATE_UPDATED -> sort)).one[Job]
     )
@@ -206,10 +189,10 @@ class JobDao @Inject()(
     modifyJob(BSONDocument(Job.ID -> jobID), BSONDocument("$set" -> BSONDocument(Job.SGE_ID -> sgeID)))
 
   def updateClusterDataAndHash(
-      jobID: String,
-      clusterData: JobClusterData,
-      jobHash: Option[String]
-  ): Future[Option[Job]] =
+                                jobID: String,
+                                clusterData: JobClusterData,
+                                jobHash: Option[String]
+                              ): Future[Option[Job]] =
     modifyJob(
       BSONDocument(Job.ID -> jobID),
       BSONDocument("$set" -> BSONDocument(Job.CLUSTER_DATA -> clusterData, Job.HASH -> jobHash))
@@ -227,15 +210,15 @@ class JobDao @Inject()(
         Some(
           BSONDocument(
             "$and" ->
-            List(
-              BSONDocument(Job.IP_HASH -> hash),
-              BSONDocument(
-                Job.DATE_CREATED ->
+              List(
+                BSONDocument(Job.IP_HASH -> hash),
                 BSONDocument(
-                  "$gt" -> BSONDateTime(time)
+                  Job.DATE_CREATED ->
+                    BSONDocument(
+                      "$gt" -> BSONDateTime(time)
+                    )
                 )
               )
-            )
           )
         ),
         Some(0),
@@ -255,13 +238,13 @@ class JobDao @Inject()(
         _.find(
           BSONDocument(
             JobEventLog.EVENTS ->
-            BSONDocument(
-              "$elemMatch" ->
               BSONDocument(
-                JobEvent.TIMESTAMP ->
-                BSONDocument("$lt" -> BSONDateTime(instant))
+                "$elemMatch" ->
+                  BSONDocument(
+                    JobEvent.TIMESTAMP ->
+                      BSONDocument("$lt" -> BSONDateTime(instant))
+                  )
               )
-            )
           ),
           None
         ).cursor[JobEventLog]()
