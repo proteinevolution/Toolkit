@@ -56,15 +56,6 @@ class JobGetController @Inject()(
   }
 
   /**
-   * Returns the last updated job
-   */
-  def recentJob: Action[AnyContent] = userAction.async { implicit request =>
-    jobSearchService.recentJob(request.user).map { lastJob =>
-      Ok(lastJob.map(_.jsonPrepare(toolConfig, request.user)).asJson)
-    }
-  }
-
-  /**
    * if no tool is found for a given query,
    * it looks for jobs which belong to the current user.
    * only jobIDs that belong to the user are autocompleted
