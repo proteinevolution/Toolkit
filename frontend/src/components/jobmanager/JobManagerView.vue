@@ -45,7 +45,7 @@
                        @click="toggleJobListStatus(rowData.jobID, !rowData.watched)"></i>
                 </template>
                 <template #actions="{rowData}">
-                    <i class="fa fa-fw mr-3 cursor-pointer"
+                    <i class="fa fa-fw mr-3 hover-unlock cursor-pointer"
                        :class="[rowData.isPublic ? 'fa-lock-open text-primary' : 'fa-lock']"
                        :title="$t('tools.parameters.isPublic.' + rowData.isPublic)"
                        @click="setPublic(rowData.jobID, !rowData.isPublic)"></i>
@@ -184,5 +184,9 @@
             font-size: 1.25em;
             line-height: 1.6;
         }
+    }
+
+    .hover-unlock.fa-lock:hover::before {
+        content: "\f09c";
     }
 </style>
