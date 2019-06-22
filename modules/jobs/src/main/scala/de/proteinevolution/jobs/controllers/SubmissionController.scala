@@ -19,7 +19,7 @@ import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.common.models.ConstantsV2
-import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete }
+import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete, SetJobPublic }
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services._
 import de.proteinevolution.tools.ToolConfig
@@ -51,6 +51,26 @@ class SubmissionController @Inject()(
   def startJob(jobID: String): Action[AnyContent] = userAction { implicit request =>
     jobActorAccess.sendToJobActor(jobID, CheckIPHash(jobID))
     Ok(JsonObject("message" -> Json.fromString("Starting Job...")).asJson)
+  }
+
+  def changeJob(jobID: String): Action[Json] = userAction(circe.json).async { implicit request =>
+    jobDao.findJob(jobID).map {
+      case Some(job) =>
+        if (!job.ownerID.equals(request.user.userID)) {
+          Unauthorized
+        } else {
+          request.body.asObject match {
+            case None => BadRequest
+            case Some(obj) =>
+              if (obj.contains("isPublic")) {
+                jobActorAccess.sendToJobActor(jobID, SetJobPublic(jobID, obj("isPublic").get.asBoolean.getOrElse(false)))
+              }
+              Ok
+          }
+        }
+      case None => // job does not exist
+        NotFound
+    }
   }
 
   def frontend(toolName: String): Action[AnyContent] = Action.async { implicit request =>
@@ -106,7 +126,7 @@ class SubmissionController @Inject()(
   }
 
   def checkJobID(newJobID: String): Action[AnyContent] = Action.async { implicit request =>
-      jobResubmitService.checkJobID(newJobID).map(r => Ok(r.asJson))
+    jobResubmitService.checkJobID(newJobID).map(r => Ok(r.asJson))
   }
 
 }

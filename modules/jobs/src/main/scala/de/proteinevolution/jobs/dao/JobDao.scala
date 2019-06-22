@@ -168,6 +168,9 @@ class JobDao @Inject()(
   def updateJobStatus(jobID: String, jobState: JobState): Future[Option[Job]] =
     modifyJob(BSONDocument(Job.ID -> jobID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> jobState)))
 
+  def setJobPublic(jobID: String, isPublic: Boolean): Future[Option[Job]] =
+    modifyJob(BSONDocument(Job.ID -> jobID), BSONDocument("$set" -> BSONDocument(Job.IS_PUBLIC -> isPublic)))
+
   def updateSGEID(jobID: String, sgeID: String): Future[Option[Job]] =
     modifyJob(BSONDocument(Job.ID -> jobID), BSONDocument("$set" -> BSONDocument(Job.SGE_ID -> sgeID)))
 

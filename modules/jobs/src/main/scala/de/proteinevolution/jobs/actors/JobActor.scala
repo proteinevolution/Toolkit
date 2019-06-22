@@ -529,6 +529,26 @@ class JobActor @Inject()(
           case None => NotUsed
         }
 
+    case SetJobPublic(jobID, isPublic) =>
+      jobDao
+        .setJobPublic(jobID, isPublic)
+        .foreach {
+          case Some(updatedJob) =>
+              currentJobs = currentJobs.updated(jobID, updatedJob)
+              val wsActors = wsActorCache.get(updatedJob.ownerID): Option[List[ActorRef]]
+              wsActors.foreach(_.foreach(_ ! PushJob(updatedJob)))
+
+            if (!updatedJob.isPublic) {
+            // remove other watchers (now without access)
+              updatedJob.watchList.filterNot(_ == updatedJob.ownerID).foreach { otherUserID =>
+                val wsActors = wsActorCache.get(otherUserID): Option[List[ActorRef]]
+                wsActors.foreach(_.foreach(_ ! ClearJob(updatedJob.jobID)))
+              }
+            }
+
+          case None => NotUsed
+        }
+
     // Message from outside that the jobState has changed
     case JobStateChanged(jobID: String, jobState: JobState) =>
       getCurrentJob(jobID).foreach {
@@ -619,6 +639,8 @@ object JobActor {
 
   // User Actor starts watching
   case class AddToWatchlist(jobID: String, userID: String)
+
+  case class SetJobPublic(jobID: String, isPublic: Boolean)
 
   // checks if user has submitted max number of jobs
   // of jobs within a given time

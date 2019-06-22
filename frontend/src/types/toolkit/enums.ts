@@ -43,7 +43,6 @@ export enum JobState {
     Deleted = 9,
 }
 
-export enum WebSocketActions { // TODO rename in backend
-    UNSUBSCRIBE = 'ClearJob',
-    SUBSCRIBE = 'RegisterJobs',
+export enum WebSocketActions {
+    SET_JOB_WATCHED = 'SET_JOB_WATCHED',
 }

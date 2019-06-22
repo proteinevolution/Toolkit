@@ -20,6 +20,9 @@
                 // override mixin value
                 return 'emailUpdate';
             },
+            defaultSubmissionValue(): boolean {
+                return false;
+            }
         },
     });
 </script>

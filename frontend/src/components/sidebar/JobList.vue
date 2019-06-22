@@ -98,7 +98,7 @@
                 this.$router.push(`/jobs/${jobID}`);
             },
             hideJob(jobID: string): void {
-                this.$store.commit('jobs/toggleJobWatched', {jobID});
+                this.$store.dispatch('jobs/setJobWatched', {jobID, watched: false});
             },
             scrollDown(): void {
                 if (this.startIndex > 0) {

@@ -5,7 +5,7 @@
         </div>
 
         <b-card>
-            <vuetable ref="vuetable"
+            <vue-table ref="vuetable"
                       :api-mode="false"
                       :no-data-template="$t('jobManager.table.noData')"
                       :data="jobs"
@@ -13,14 +13,18 @@
                 <template #joblist="{rowData}">
                     <i class="fas cursor-pointer"
                        :class="[rowData.watched ? 'fa-minus-circle':'fa-plus-circle']"
-                       @click="toggleJobListStatus(rowData.jobID)"></i>
+                       @click="toggleJobListStatus(rowData.jobID, !rowData.watched)"></i>
                 </template>
                 <template #actions="{rowData}">
+                    <i class="fa mr-3 cursor-pointer"
+                       :class="[rowData.isPublic ? 'fa-lock-open' : 'fa-lock']"
+                       :title="$t('tools.parameters.isPublic.' + rowData.isPublic)"
+                       @click="setPublic(rowData.jobID, !rowData.isPublic)"></i>
                     <i class="fa fa-trash cursor-pointer"
                        v-if="!rowData.foreign"
                        @click="deleteJob(rowData.jobID)"></i>
                 </template>
-            </vuetable>
+            </vue-table>
         </b-card>
     </div>
 </template>
@@ -28,7 +32,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
-    import Vuetable from 'vuetable-2/src/components/Vuetable';
+    import VueTable from 'vuetable-2/src/components/Vuetable';
     import {Job} from '@/types/toolkit/jobs';
     import moment from 'moment';
     import {Tool} from '@/types/toolkit/tools';
@@ -37,7 +41,9 @@
     export default Vue.extend({
         name: 'JobManagerView',
         mixins: [hasHTMLTitle],
-        components: {Vuetable},
+        components: {
+            VueTable,
+        },
         data() {
             return {
                 fields: [{
@@ -78,8 +84,11 @@
                         this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
                     });
             },
-            toggleJobListStatus(jobID: string): void {
-                this.$store.commit('jobs/toggleJobWatched', {jobID});
+            setPublic(jobID: string, isPublic: boolean): void {
+                this.$store.dispatch('jobs/setJobPublic', {jobID, isPublic});
+            },
+            toggleJobListStatus(jobID: string, watched: boolean): void {
+                this.$store.dispatch('jobs/setJobWatched', {jobID, watched});
             },
             fromNow(date: string): string {
                 return moment(date).fromNow();

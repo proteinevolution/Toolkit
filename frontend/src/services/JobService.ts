@@ -77,6 +77,16 @@ export default class JobService {
         }));
     }
 
+    public static setJobPublic(jobID: string, isPublic: boolean): Promise<void> {
+        return new Promise<void>(((resolve, reject) => {
+            axios.put(`/api/jobs/${jobID}/`, {isPublic})
+                .then((response) => {
+                    resolve(response.data);
+                })
+                .catch(reject);
+        }));
+    }
+
     public static suggestJobsForJobId(query: string): Promise<Job[]> {
         return new Promise<Job[]>(((resolve, reject) => {
             axios.get(`/api/jobs/suggest/${query}`)

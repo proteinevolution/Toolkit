@@ -103,20 +103,12 @@ final class WebSocketActor @Inject()(
         case Some(user) =>
           json.hcursor.get[String]("type").toOption.foreach {
 
-            // Message containing a List of Jobs the user wants to register for the job list
-            case "RegisterJobs" =>
-              json.hcursor.get[List[String]]("jobIDs").map { jobIDs =>
-                jobIDs.foreach { jobID =>
-                  jobActorAccess.sendToJobActor(jobID, AddToWatchlist(jobID, user.userID))
-                }
-              }
-
-            // Request to remove a Job from the user's Joblist
-            case "ClearJob" =>
-              json.hcursor.get[List[String]]("jobIDs").map { jobIDs =>
-                jobIDs.foreach { jobID =>
-                  jobActorAccess.sendToJobActor(jobID, RemoveFromWatchlist(jobID, user.userID))
-                }
+            case "SET_JOB_WATCHED" =>
+              for {
+                jobID <- json.hcursor.get[String]("jobID")
+                watched <- json.hcursor.get[Boolean]("watched")
+              } yield {
+                jobActorAccess.sendToJobActor(jobID, if (watched) AddToWatchlist(jobID, user.userID) else RemoveFromWatchlist(jobID, user.userID))
               }
 
             // Received a ping, so we return a pong

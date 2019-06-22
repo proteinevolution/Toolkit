@@ -117,6 +117,10 @@ export default {
                     stored: 'MODELLER-key is stored in your profile.',
                 },
                 emailNotification: 'E-Mail notification',
+                isPublic: {
+                    true: 'Job is public',
+                    false: 'Job is private',
+                },
             },
             validation: {
                 invalidCharacters: 'Invalid Characters.',

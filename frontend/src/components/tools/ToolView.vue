@@ -56,6 +56,9 @@
 
                             <template #tabs>
                                 <div class="ml-auto">
+                                    <job-public-toggle v-if="!isJobView || !job.foreign"
+                                                       :job="job"
+                                                       :submission="submission"/>
                                     <i class="tool-action tool-action-push-up fa fa-trash mr-4"
                                        v-if="job && !job.foreign"
                                        @click="$emit('delete-job')"></i>
@@ -79,6 +82,7 @@
     import Section from '@/components/tools/parameters/Section.vue';
     import CustomJobIdInput from '@/components/tools/parameters/CustomJobIdInput.vue';
     import EmailNotificationSwitch from '@/components/tools/parameters/EmailNotificationSwitch.vue';
+    import JobPublicToggle from '@/components/tools/parameters/JobPublicToggle.vue';
     import {ParameterSection, Tool} from '@/types/toolkit/tools';
     import VelocityFade from '@/transitions/VelocityFade.vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
@@ -113,17 +117,18 @@
             LoadingWrapper,
             CustomJobIdInput,
             EmailNotificationSwitch,
+            JobPublicToggle,
         },
         data() {
             return {
                 fullScreen: false,
                 validationErrors: {},
-                submission: {},
+                submission: {} as any,
             };
         },
         computed: {
             toolName(): string {
-                if (this.job) {
+                if (this.isJobView) {
                     return this.job.tool;
                 }
                 return this.$route.params.toolName;

@@ -1,7 +1,12 @@
+import Vue from 'vue';
 import {ActionTree} from 'vuex';
 import {RootState, JobState} from '../../types';
 import {Job} from '@/types/toolkit/jobs';
 import JobService from '@/services/JobService';
+import {WebSocketActions} from '@/types/toolkit/enums';
+import Logger from 'js-logger';
+
+const logger = Logger.get('JobStore');
 
 const actions: ActionTree<JobState, RootState> = {
     async fetchAllJobs(context) {
@@ -14,7 +19,28 @@ const actions: ActionTree<JobState, RootState> = {
         context.commit('startLoading', 'jobDetails', {root: true});
         const job: Job = await JobService.fetchJob(jobID);
         context.commit('setJob', {jobID, job});
+        Vue.prototype.$socket.sendObj({
+            type: WebSocketActions.SET_JOB_WATCHED,
+            jobID,
+            watched: true,
+        });
         context.commit('stopLoading', 'jobDetails', {root: true});
+    },
+    async setJobPublic(context, {jobID, isPublic}) {
+        logger.info(`Setting job.isPublic to ${isPublic} for job id ${jobID}`);
+        await JobService.setJobPublic(jobID, isPublic);
+    },
+    setJobWatched(state, {jobID, watched}) {
+        Vue.prototype.$socket.sendObj({
+            type: WebSocketActions.SET_JOB_WATCHED,
+            jobID,
+            watched,
+        });
+        if (watched) {
+            logger.info('unsubscribing from job');
+        } else {
+            logger.info('subscribing to job');
+        }
     },
 };
 
