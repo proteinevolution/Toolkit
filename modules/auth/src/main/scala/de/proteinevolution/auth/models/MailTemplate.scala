@@ -16,8 +16,6 @@
 
 package de.proteinevolution.auth.models
 
-import java.time.ZonedDateTime
-
 import de.proteinevolution.common.models.database.jobs.JobState.{Done, Error}
 import de.proteinevolution.common.models.database.jobs._
 import de.proteinevolution.common.models.util.ZonedDateTimeHelper
