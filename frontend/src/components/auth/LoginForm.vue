@@ -88,6 +88,7 @@
                     nameLogin: this.username,
                     password: this.password,
                 };
+                this.$store.commit('startLoading', 'login');
                 try {
                     const msg = await AuthService.login(data);
                     if (msg.successful) {
@@ -102,6 +103,7 @@
                     this.message = '';
                     this.$alert(error.message, 'danger');
                 }
+                this.$store.commit('stopLoading', 'login');
             },
             async forgotPasswordSubmit() {
                 if (this.eMailOrUsernameInvalid) {

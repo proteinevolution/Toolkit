@@ -201,9 +201,10 @@ final class WebSocketActor @Inject()(
 
     case ChangeSessionID(newSid: String) =>
       context.become(active(newSid))
+      out ! JsonObject("mutation" -> Json.fromString("SOCKET_Login")).asJson
 
     case LogOut() =>
-      out ! JsonObject("mutation" -> Json.fromString("SOCKET_LogOut")).asJson
+      out ! JsonObject("mutation" -> Json.fromString("SOCKET_Logout")).asJson
 
     case MaintenanceAlert(maintenanceMode) =>
       out ! JsonObject(

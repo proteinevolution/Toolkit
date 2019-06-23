@@ -103,6 +103,7 @@
                 EventBus.$emit('show-modal', {id: 'auth'});
             },
             async signOut() {
+                this.$store.commit('startLoading', 'logout');
                 try {
                     const msg = await AuthService.logout();
                     if (msg.successful) {
@@ -114,6 +115,7 @@
                 } catch (error) {
                     this.$alert(error.message, 'danger');
                 }
+                this.$store.commit('stopLoading', 'logout');
             },
         },
     });

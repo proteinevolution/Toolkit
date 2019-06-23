@@ -45,6 +45,7 @@ export default {
                 loading: 'Loading...',
             },
             loggedOutByWS: 'You logged out on another device!',
+            loggedInByWS: 'You logged in on another tab!',
         },
         index: {
             welcomeTitle: 'Welcome to the Bioinformatics Toolkit',

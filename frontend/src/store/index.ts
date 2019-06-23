@@ -16,6 +16,8 @@ const store: StoreOptions<RootState> = {
         loading: {
             tools: false,
             toolParameters: false,
+            login: false,
+            logout: false,
         },
         maintenanceMode: false,
         reconnecting: true,
@@ -54,8 +56,13 @@ const store: StoreOptions<RootState> = {
         SOCKET_ONMESSAGE(state, message) {
             logger.log('Uncaught message from websocket', message);
         },
-        SOCKET_LogOut() {
+        SOCKET_Login() {
+            logger.log('Logged in by websocket');
+            // handled in App.vue
+        },
+        SOCKET_Logout() {
             logger.log('Logged out by websocket');
+            // handled in App.vue
         },
         SOCKET_ShowNotification() {
             // handled in App.vue

@@ -89,15 +89,8 @@ class AuthController @Inject()(
                       "-[new login]-\n"
                       + loggedInUser.toString
                     )
-                    // Remove the old, not logged in user
-                    userDao.removeUsers(List(anonymousUser.userID))
-                    userSessionService.removeUserFromCache(anonymousUser)
-                    userSessionService.updateUserInCache(loggedInUser)
 
-                    // add the anonymous jobs to the user // TODO update jobs to new owner id
-                    userDao.addJobsToUser(loggedInUser.userID, anonymousUser.jobs)
-                    // Tell the job actors to copy all jobs connected to the old user to the new user
-                    // TODO what exactly does this do
+                    // Tell other tabs that login happened
                     wsActorCache.get[List[ActorRef]](anonymousUser.userID) match {
                       case Some(wsActors) =>
                         val actorList: List[ActorRef] = wsActors: List[ActorRef]
@@ -106,6 +99,14 @@ class AuthController @Inject()(
                         wsActorCache.remove(anonymousUser.userID)
                       case None =>
                     }
+
+                    // Remove the old, not logged in user
+                    userDao.removeUsers(List(anonymousUser.userID))
+                    userSessionService.removeUserFromCache(anonymousUser)
+                    userSessionService.updateUserInCache(loggedInUser)
+
+                    // add the anonymous jobs to the user // TODO update jobs to new owner id
+                    userDao.addJobsToUser(loggedInUser.userID, anonymousUser.jobs)
 
                     // Everything is ok, let the user know that they are logged in now
                     Ok(loggedIn(loggedInUser)).withSession(
