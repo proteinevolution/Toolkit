@@ -34,6 +34,7 @@
             <b-row class="search-container">
                 <b-col class="traffic-bar"
                        cols="12"
+                       @click="goToCurrentJob"
                        :class="'status-' + currentJobStatus"></b-col>
                 <b-col class="search-field-container"
                        cols="12">
@@ -61,10 +62,12 @@
             SearchField,
         },
         computed: {
+            recentJob(): Job | undefined {
+                return this.$store.getters['jobs/recentJob'];
+            },
             currentJobStatus(): JobState {
-                const recentJob: Job | undefined = this.$store.getters['jobs/recentJob'];
-                if (recentJob) {
-                    return recentJob.status;
+                if (this.recentJob) {
+                    return this.recentJob.status;
                 } else {
                     return JobState.Done;
                 }
@@ -95,6 +98,11 @@
                         clearInterval(timer);
                     }
                 }, stepTime);
+            },
+            goToCurrentJob(): void {
+                if (this.recentJob) {
+                    this.$router.push(`/jobs/${this.recentJob.jobID}`);
+                }
             },
         },
     });
