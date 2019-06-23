@@ -36,6 +36,7 @@ case class User(
     userConfig: UserConfig = UserConfig(),             // Configurable parts for the user
     userToken: Option[UserToken] = None,
     jobs: List[String] = List.empty,                  // List of Jobs the User is watching (counterpart to job.watchList)
+    deletionWarningSent: Boolean = false,             // keep track if the mail was sent already
     dateLastLogin: ZonedDateTime = ZonedDateTime.now, // Last seen on
     dateCreated: ZonedDateTime = ZonedDateTime.now,   // Account creation date
     dateUpdated: ZonedDateTime = ZonedDateTime.now
@@ -73,22 +74,23 @@ object User {
   final val LOG_ROUNDS: Int = 10
 
   // Constants for the JSON object identifiers
-  final val ID              = "id" // name for the ID in scala
-  final val SESSION_ID      = "sessionID" //              Session ID of the User
-  final val SESSION_DATA    = "sessionData" //              session information
-  final val CONNECTED       = "connected" // is the user online?
-  final val ACCOUNT_TYPE    = "accountType" //              account type field
-  final val USER_DATA       = "userData" //              user data object field
-  final val NAME_LOGIN      = s"$USER_DATA.${UserData.NAME_LOGIN}" //              login name field
-  final val EMAIL           = s"$USER_DATA.${UserData.EMAIL}" //              email field
-  final val PASSWORD        = s"$USER_DATA.${UserData.PASSWORD}" //              password field
-  final val USER_CONFIG     = "userConfig"
-  final val USER_TOKEN      = "userToken" //              token
-  final val JOBS            = "jobs" //              job reference pointers field
-  final val ACCEPTED_TOS    = "acceptToS" // needed for checking if the TOS was accepted
-  final val DATE_LAST_LOGIN = "dateLastLogin" // name for the last login field
-  final val DATE_CREATED    = "dateCreated" //              account created on field
-  final val DATE_UPDATED    = "dateUpdated" //              account data changed on field
+  final val ID                    = "id" // name for the ID in scala
+  final val SESSION_ID            = "sessionID" // Session ID of the User
+  final val SESSION_DATA          = "sessionData" // session information
+  final val CONNECTED             = "connected" // is the user online?
+  final val ACCOUNT_TYPE          = "accountType" // account type field
+  final val USER_DATA             = "userData" // user data object field
+  final val NAME_LOGIN            = s"$USER_DATA.${UserData.NAME_LOGIN}" // login name field
+  final val EMAIL                 = s"$USER_DATA.${UserData.EMAIL}" // email field
+  final val PASSWORD              = s"$USER_DATA.${UserData.PASSWORD}" // password field
+  final val USER_CONFIG           = "userConfig"
+  final val USER_TOKEN            = "userToken" // token
+  final val JOBS                  = "jobs" // job reference pointers field
+  final val ACCEPTED_TOS          = "acceptToS" // needed for checking if the TOS was accepted
+  final val DELETION_WARNING_SENT = "deletionWarningSent" // make sure not to send mail twice
+  final val DATE_LAST_LOGIN       = "dateLastLogin" // name for the last login field
+  final val DATE_CREATED          = "dateCreated" // account created on field
+  final val DATE_UPDATED          = "dateUpdated" // account data changed on field
 
   implicit val encodeUser: Encoder[User] = (u: User) =>
     Json.obj(
@@ -117,6 +119,7 @@ object User {
         userConfig = bson.getAs[UserConfig](USER_CONFIG).getOrElse(UserConfig()),
         userToken = bson.getAs[UserToken](USER_TOKEN),
         jobs = bson.getAs[List[String]](JOBS).getOrElse(List.empty),
+        deletionWarningSent = bson.getAs[Boolean](DELETION_WARNING_SENT).getOrElse(false),
         dateLastLogin = bson.getAs[BSONDateTime](DATE_LAST_LOGIN).map(dt => ZonedDateTimeHelper.getZDT(dt)).get,
         dateCreated = bson.getAs[BSONDateTime](DATE_CREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)).get,
         dateUpdated = bson.getAs[BSONDateTime](DATE_UPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt)).get
@@ -126,18 +129,19 @@ object User {
   implicit object Writer extends BSONDocumentWriter[User] {
     override def write(user: User): BSONDocument =
       BSONDocument(
-        ID              -> user.userID,
-        SESSION_ID      -> user.sessionID,
-        SESSION_DATA    -> user.sessionData,
-        CONNECTED       -> user.connected,
-        ACCOUNT_TYPE    -> user.accountType.toInt,
-        USER_DATA       -> user.userData,
-        USER_CONFIG     -> user.userConfig,
-        USER_TOKEN      -> user.userToken,
-        JOBS            -> user.jobs,
-        DATE_LAST_LOGIN -> BSONDateTime(user.dateLastLogin.toInstant.toEpochMilli),
-        DATE_CREATED    -> BSONDateTime(user.dateCreated.toInstant.toEpochMilli),
-        DATE_UPDATED    -> BSONDateTime(user.dateUpdated.toInstant.toEpochMilli)
+        ID                    -> user.userID,
+        SESSION_ID            -> user.sessionID,
+        SESSION_DATA          -> user.sessionData,
+        CONNECTED             -> user.connected,
+        ACCOUNT_TYPE          -> user.accountType.toInt,
+        USER_DATA             -> user.userData,
+        USER_CONFIG           -> user.userConfig,
+        USER_TOKEN            -> user.userToken,
+        JOBS                  -> user.jobs,
+        DELETION_WARNING_SENT -> user.deletionWarningSent,
+        DATE_LAST_LOGIN       -> BSONDateTime(user.dateLastLogin.toInstant.toEpochMilli),
+        DATE_CREATED          -> BSONDateTime(user.dateCreated.toInstant.toEpochMilli),
+        DATE_UPDATED          -> BSONDateTime(user.dateUpdated.toInstant.toEpochMilli)
       )
   }
 

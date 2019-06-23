@@ -102,13 +102,15 @@ class UserDao @Inject()(
     val now = ZonedDateTime.now
     // Date to warn registered accounts that they will soon be deleted
     val warnRegistratedUserAfterLoginDate =
-      now.plusDays(constants.userDeletionWarning.toLong).toLocalDate.atStartOfDay(now.getZone)
+      now.minusDays(constants.userDeletionWarning.toLong).toLocalDate.atStartOfDay(now.getZone)
     internalFindUsers(
       BSONDocument(
-        User.ACCOUNT_TYPE ->
-        AccountType.REGISTEREDUSER.toInt,
-        User.DATE_CREATED ->
-        BSONDocument("$lt" -> BSONDateTime(warnRegistratedUserAfterLoginDate.toInstant.toEpochMilli))
+        User.ACCOUNT_TYPE          -> AccountType.REGISTEREDUSER.toInt,
+        User.DELETION_WARNING_SENT -> false,
+        User.CONNECTED             -> false,
+        User.DATE_LAST_LOGIN -> BSONDocument(
+          "$lt" -> BSONDateTime(warnRegistratedUserAfterLoginDate.toInstant.toEpochMilli)
+        )
       )
     )
   }
@@ -152,6 +154,9 @@ class UserDao @Inject()(
         BSONDocument(User.USER_TOKEN -> token)
       )
     )
+
+  def setDeletionWarningSent(userID: String): Future[Option[User]] =
+    modifyUser(userID, BSONDocument("$set" -> BSONDocument(User.DELETION_WARNING_SENT -> true)))
 
   def updateAccountType(
       userID: String,
@@ -240,8 +245,10 @@ class UserDao @Inject()(
       user.userID,
       BSONDocument(
         "$set" -> BSONDocument(
-          User.DATE_LAST_LOGIN -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli),
-          User.SESSION_ID      -> user.sessionID.orElse(Some(UUID.randomUUID().toString)) // user needs session id
+          User.DATE_LAST_LOGIN       -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli),
+          User.DELETION_WARNING_SENT -> false,
+          User.CONNECTED             -> true,
+          User.SESSION_ID            -> user.sessionID.orElse(Some(UUID.randomUUID().toString)) // user needs session id
         )
       ).merge(
         sessionDataOption
@@ -265,7 +272,7 @@ class UserDao @Inject()(
         "$unset" ->
         BSONDocument(
           User.SESSION_ID -> "",
-          User.CONNECTED  -> ""
+          User.CONNECTED  -> false
         )
       )
     )

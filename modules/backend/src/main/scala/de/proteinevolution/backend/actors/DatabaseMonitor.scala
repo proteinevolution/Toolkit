@@ -106,11 +106,14 @@ final class DatabaseMonitor @Inject()(
           log.info(
             "[User Deletion] eMail sent to user: " + user.getUserData.nameLogin + " Last login: " + user.dateLastLogin.toString
           )
+        userDao.setDeletionWarningSent(user.userID)
         user.userID
       }
 
       if (verbose)
         log.info(s"[User Deletion] All ${userIDs.length} users emailed.")
+
+      userDao
     }
   }
 
