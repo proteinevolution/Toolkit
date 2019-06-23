@@ -14,20 +14,13 @@ Vue.config.productionTip = false;
 Vue.config.silent = !devMode;
 Vue.config.devtools = devMode;
 
-let websocketUrl: string;
-const isSecure: boolean = location.protocol === 'https:';
-
 if (devMode) {
     Logger.get('Main').log('Running in Development Mode');
-    const loc = window.location;
     axios.defaults.withCredentials = true;
-    axios.defaults.baseURL = `${loc.protocol}//${loc.hostname}:${process.env.VUE_APP_BACKEND_PORT}`;
-    websocketUrl = isSecure ? `wss://${loc.hostname}:${process.env.VUE_APP_BACKEND_PORT}/ws/` :
-        `ws://${loc.hostname}:${process.env.VUE_APP_BACKEND_PORT}/ws/`;
-} else {
-    websocketUrl = isSecure ? 'wss://' + location.host + '/ws/' : 'ws://' + location.host + '/ws/';
 }
 
+const isSecure: boolean = location.protocol === 'https:';
+const websocketUrl: string = isSecure ? 'wss://' + location.host + '/ws/' : 'ws://' + location.host + '/ws/';
 Vue.use(VueNativeSock, websocketUrl, {
     store,
     format: 'json',

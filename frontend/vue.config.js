@@ -35,11 +35,26 @@ module.exports = {
         scssRule.oneOf('vue').use('sass-resources-loader')
             .loader('sass-resources-loader')
             .tap(args => {
-               return {
-                   resources: [
-                       './src/assets/scss/_variables.scss',
-                   ],
-               };
+                return {
+                    resources: [
+                        './src/assets/scss/_variables.scss',
+                    ],
+                };
             });
+    },
+    devServer: {
+        proxy: {
+            '^/api': {
+                target: 'http://localhost:' + process.env.VUE_APP_BACKEND_PORT || '9000',
+                pathRewrite: {
+                    '^/api/': '/api/', // use this to later remove base path
+                },
+            },
+            '/ws/': {
+                target: 'ws://localhost:' + process.env.VUE_APP_BACKEND_PORT || '9000',
+                secure: false,
+                ws: true,
+            }
+        },
     },
 };
