@@ -107,6 +107,8 @@
                     const msg = await AuthService.logout();
                     if (msg.successful) {
                         this.$store.commit('auth/setUser', null);
+                        // sync jobs
+                        this.$store.dispatch('jobs/fetchAllJobs');
                         this.$alert(msg.message);
                     }
                 } catch (error) {
