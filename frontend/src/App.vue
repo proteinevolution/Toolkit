@@ -126,6 +126,7 @@
 
             this.$store.dispatch('tools/fetchAllTools');
             this.$store.dispatch('jobs/fetchAllJobs');
+            // this also makes sure the session id is set
             this.$store.dispatch('auth/fetchUserData');
 
             // handle websocket messages which depend on the ui

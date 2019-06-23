@@ -63,7 +63,10 @@ class AuthController @Inject()(
 
   def getUserData: Action[AnyContent] = userAction { implicit request =>
     logger.info("Sending user data.")
-    Ok(request.user.userData.asJson)
+    Ok(request.user.userData.asJson).withSession(
+      // this is very important as it is a call every frontend makes. Perfect place to enforce a session
+      userSessionService.sessionCookie(request, request.user.sessionID.getOrElse(""))
+    )
   }
 
   def signInSubmit: Action[AnyContent] = userAction.async { implicit request =>

@@ -90,6 +90,7 @@ class UserSessionService @Inject()(
     )
     userDao.addUser(user).map { _ =>
       logger.info(s"User is new:\n${user.toString}\nIP: ${request.remoteAddress.toString}")
+      updateUserInCache(user)
       user
     }
   }
