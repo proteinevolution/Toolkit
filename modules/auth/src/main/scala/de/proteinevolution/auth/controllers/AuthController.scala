@@ -108,8 +108,8 @@ class AuthController @Inject()(
                     userSessionService.removeUserFromCache(anonymousUser)
                     userSessionService.updateUserInCache(loggedInUser)
 
-                    // add the anonymous jobs to the user // TODO update jobs to new owner id
-                    userDao.addJobsToUser(loggedInUser.userID, anonymousUser.jobs)
+                    // add the anonymous jobs to the user
+                    // userDao.addJobsToUser(loggedInUser.userID, anonymousUser.jobs)
 
                     // Everything is ok, let the user know that they are logged in now
                     Ok(loggedIn(loggedInUser)).withSession(

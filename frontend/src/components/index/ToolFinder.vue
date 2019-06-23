@@ -210,9 +210,14 @@
                     animation: background 10s cubic-bezier(1, 0, 0, 1) infinite;
                     box-shadow: -2px 0 4px $tk-lighter-gray;
 
-                    // queued
-                    &.status-2 {
-                        background: rgba(192, 181, 191, 1);
+                    // prepared, submitted
+                    &.status-1, &.status-6 {
+                        background-color: rgba(242, 242, 242, 0.91);
+                    }
+
+                    // queued, pending
+                    &.status-2, &.status-7 {
+                        background: rgba(192, 181, 191, 0.91);
                         height: 0.3em;
                     }
 
@@ -221,8 +226,8 @@
                         background: rgba(255, 255, 0, 0.9);
                     }
 
-                    // error
-                    &.status-4 {
+                    // error, limit reached
+                    &.status-4, &.status-8 {
                         background: rgba(180, 0, 40, 0.9);
                     }
 
