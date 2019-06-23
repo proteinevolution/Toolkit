@@ -56,7 +56,7 @@
         },
         methods: {
             async verifyEmail() {
-                if (this.nameLogin !== '' && this.token !== '') {
+                if (this.nameLogin && this.token) {
                     this.loading = true;
                     const res = await AuthService.verifyToken(this.nameLogin, this.token);
                     this.message = res.message;
