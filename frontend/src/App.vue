@@ -280,4 +280,44 @@
     .no-scroll-y {
         overflow-y: hidden !important;
     }
+
+    // prepared
+    .status-1 {
+        background-color: $job-status-1;
+    }
+
+    // queued
+    .status-2 {
+        background-color: $job-status-2;
+    }
+
+    // running
+    .status-3 {
+        background-color: $job-status-3;
+    }
+
+    // error
+    .status-4 {
+        background-color: $job-status-4;
+    }
+
+    // done
+    .status-5 {
+        background-color: $job-status-5;
+    }
+
+    // submitted
+    .status-6 {
+        background-color: $job-status-6;
+    }
+
+    // pending
+    .status-7 {
+        background-color: $job-status-7;
+    }
+
+    // limit reached
+    .status-8 {
+        background-color: $job-status-8;
+    }
 </style>

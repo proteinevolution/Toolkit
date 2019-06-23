@@ -53,7 +53,9 @@
                 </template>
 
                 <template slot="status" slot-scope="data">
-                    <b-badge variant="light">{{ data.value }}</b-badge>
+                    <b-badge variant="light"
+                             :class="'status-' + data.value"
+                             v-text="$t('jobs.states.' + data.value)"></b-badge>
                 </template>
 
                 <template #joblist="{item}">

@@ -40,7 +40,6 @@ export enum JobState {
     Submitted = 6,
     Pending = 7,
     LimitReached = 8,
-    Deleted = 9,
 }
 
 export enum WebSocketActions {

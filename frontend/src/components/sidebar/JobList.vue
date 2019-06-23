@@ -186,40 +186,11 @@
                 border: 1px solid $tk-light-gray;
                 border-bottom: 0;
                 width: 100%;
+                filter: grayscale(40%) sepia(10%);
 
                 &.selected {
                     margin: 0 2px;
-                    box-shadow: 1px 1px 6px 1px #8a8a8a;
-                }
-
-                // prepared, submitted
-                &.status-1, &.status-6 {
-                    background-color: #F2F2F2;
-                }
-
-                // queued, pending
-                &.status-2, &.status-7 {
-                    background-color: #C0B5BF;
-                }
-
-                // running
-                &.status-3 {
-                    background-color: #FFFF94;
-                }
-
-                // error, limit reached
-                &.status-4, &.status-8 {
-                    background-color: #FFDDDD;
-                }
-
-                // done
-                &.status-5 {
-                    background-color: #DBFFDB;
-                }
-
-                // deleted
-                &.status-9 {
-                    background-color: #DBDBFF;
+                    box-shadow: 1px 1px 4px 1px $tk-medium-gray;
                 }
             }
         }
