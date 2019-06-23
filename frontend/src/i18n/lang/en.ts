@@ -244,6 +244,7 @@ J Mol Biol. 2018 Jul 20. S0022-2836(17)30587-9</a>.`,
             PageNotFound: 'Page not found.',
             ToolNotFound: 'Tool not found.',
             JobNotFound: 'Job not found.',
+            JobNotAuthorized: 'Access denied to private job.',
             couldNotDeleteJob: 'Could not delete job!',
         },
         constraints: {

@@ -51,7 +51,7 @@
 
     </tool-view>
     <not-found-view v-else
-                    errorMessage="errors.JobNotFound"/>
+                    :errorMessage="errorMessage"/>
 </template>
 
 <script lang="ts">
@@ -70,6 +70,9 @@
     import {Tool} from '@/types/toolkit/tools';
     import JobService from '@/services/JobService';
     import NotFoundView from '@/components/utils/NotFoundView.vue';
+    import Logger from 'js-logger';
+
+    const logger = Logger.get('JobView');
 
     export default Vue.extend({
         name: 'JobView',
@@ -87,6 +90,7 @@
         data() {
             return {
                 JobState,
+                errorMessage: 'errors.JobNotFound',
             };
         },
         computed: {
@@ -123,7 +127,17 @@
                     });
             },
             loadJobDetails(jobID: string): void {
-                this.$store.dispatch('jobs/loadJobDetails', jobID);
+                this.$store.dispatch('jobs/loadJobDetails', jobID)
+                    .catch((err) => {
+                        logger.warn('Error when getting jobs', err);
+                        switch (err.request.status) {
+                            case 401:
+                                this.errorMessage = 'errors.JobNotAuthorized';
+                                break;
+                            default:
+                                this.errorMessage = 'errors.JobNotFound';
+                        }
+                    });
             },
             goToParent() {
                 this.$router.push(`/jobs/${this.job.parentID}`);

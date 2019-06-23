@@ -53,7 +53,7 @@ class JobGetController @Inject()(
   }
 
   def suggestJobsForQuery(queryString: String): Action[AnyContent] = userAction.async { implicit request =>
-    val user        = request.user
+    val user = request.user
     val tools: List[Tool] = toolConfig.values.values
       .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
       .filterNot(_.toolNameShort == "hhpred_manual")
@@ -66,8 +66,14 @@ class JobGetController @Inject()(
 
   def loadJob(jobID: String): Action[AnyContent] = userAction.async { implicit request =>
     jobDao.findJob(jobID).map {
-      case Some(job) if jobFolderIsValid(job.jobID, constants) => Ok(job.jsonPrepare(toolConfig, request.user).asJson)
-      case _                                                   => NotFound
+      case Some(job) if jobFolderIsValid(job.jobID, constants) => {
+        if (job.isPublic || job.ownerID.equals(request.user.userID)) {
+          Ok(job.jsonPrepare(toolConfig, request.user).asJson)
+        } else {
+          Unauthorized
+        }
+      }
+      case _ => NotFound
     }
   }
 
