@@ -61,6 +61,7 @@
 
                 <template #actions="{item}">
                     <i class="fa fa-fw mr-3 hover-unlock cursor-pointer"
+                       v-if="loggedIn"
                        :class="[item.isPublic ? 'fa-lock-open text-primary' : 'fa-lock']"
                        :title="$t('tools.parameters.isPublic.' + item.isPublic)"
                        @click="setPublic(item.jobID, !item.isPublic)"></i>
@@ -153,6 +154,9 @@
             },
             end(): number {
                 return Math.min(this.currentPage * this.perPage, this.totalRows);
+            },
+            loggedIn(): boolean {
+                return this.$store.getters['auth/loggedIn'];
             },
         },
         mounted() {
