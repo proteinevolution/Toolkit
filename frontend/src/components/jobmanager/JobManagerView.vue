@@ -52,6 +52,10 @@
                     </router-link>
                 </template>
 
+                <template slot="status" slot-scope="data">
+                    <b-badge variant="light">{{ data.value }}</b-badge>
+                </template>
+
                 <template #joblist="{item}">
                     <i class="fas cursor-pointer"
                        :class="[item.watched ? 'fa-eye':'fa-eye-slash']"
@@ -104,6 +108,10 @@
                 fields: [{
                     key: 'joblist',
                     label: this.$t('jobManager.table.jobListStatus'),
+                }, {
+                    key: 'status',
+                    label: this.$t('jobManager.table.status'),
+                    sortable: true,
                 }, {
                     key: 'jobID',
                     label: this.$t('jobManager.table.jobID'),

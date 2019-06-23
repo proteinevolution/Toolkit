@@ -57,6 +57,7 @@ export default {
             table: {
                 jobListStatus: 'Job List',
                 jobID: 'Job ID',
+                status: 'Status',
                 tool: 'Tool',
                 dateCreated: 'Created',
                 actions: 'Actions',
