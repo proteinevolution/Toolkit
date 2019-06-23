@@ -43,6 +43,8 @@
                      @filtered="onFiltered"
                      :empty-text="$t('jobManager.table.noData')"
                      :empty-filtered-text="$t('jobManager.table.noDataFiltered')"
+                     sort-by="dateCreated"
+                     sort-desc
                      show-empty
                      responsive>
 
