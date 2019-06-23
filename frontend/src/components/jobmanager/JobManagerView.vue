@@ -5,26 +5,84 @@
         </div>
 
         <b-card>
-            <vue-table ref="vuetable"
-                      :api-mode="false"
-                      :no-data-template="$t('jobManager.table.noData')"
-                      :data="jobs"
-                      :fields="fields">
-                <template #joblist="{rowData}">
+            <b-row class="mb-2">
+                <b-col cols="12"
+                       sm="5"
+                       md="3"
+                       lg="4"
+                       xl="3">
+                    <label class="d-flex align-items-center">
+                        <span v-text="$t('jobManager.perPage.show')"></span>
+                        <b-form-select v-model="perPage" :options="perPageOptions"
+                                       class="mx-2"></b-form-select>
+                        <span v-text="$t('jobManager.perPage.entries')"></span>
+                    </label>
+                </b-col>
+                <b-col cols="12"
+                       sm="7"
+                       md="6"
+                       offset-md="3"
+                       offset-lg="2"
+                       xl="4"
+                       offset-xl="5">
+                    <label class="d-flex align-items-center justify-content-end">
+                        <span v-text="$t('jobManager.filter')"></span>
+                        <div class="ml-3 flex-grow-1">
+                            <b-form-input v-model="filter"></b-form-input>
+                        </div>
+                    </label>
+                </b-col>
+            </b-row>
+            <b-table id="jobmanagerTable"
+                     primary-key="jobID"
+                     :items="jobs"
+                     :fields="fields"
+                     :current-page="currentPage"
+                     :per-page="perPage"
+                     :filter="filter"
+                     @filtered="onFiltered"
+                     :empty-text="$t('jobManager.table.noData')"
+                     :empty-filtered-text="$t('jobManager.table.noDataFiltered')"
+                     show-empty
+                     responsive>
+
+                <template slot="jobID" slot-scope="data">
+                    <router-link :to="`/jobs/${data.item.jobID}`"
+                                 class="job-link">{{ data.value }}
+                    </router-link>
+                </template>
+
+                <template #joblist="{item}">
                     <i class="fas cursor-pointer"
-                       :class="[rowData.watched ? 'fa-minus-circle':'fa-plus-circle']"
-                       @click="toggleJobListStatus(rowData.jobID, !rowData.watched)"></i>
+                       :class="[item.watched ? 'fa-eye':'fa-eye-slash']"
+                       :title="$t('jobManager.watched.' + item.isPublic)"
+                       @click="toggleJobListStatus(item.jobID, !item.watched)"></i>
                 </template>
-                <template #actions="{rowData}">
-                    <i class="fa mr-3 cursor-pointer"
-                       :class="[rowData.isPublic ? 'fa-lock-open' : 'fa-lock']"
-                       :title="$t('tools.parameters.isPublic.' + rowData.isPublic)"
-                       @click="setPublic(rowData.jobID, !rowData.isPublic)"></i>
-                    <i class="fa fa-trash cursor-pointer"
-                       v-if="!rowData.foreign"
-                       @click="deleteJob(rowData.jobID)"></i>
+
+                <template #actions="{item}">
+                    <i class="fa fa-fw mr-3 hover-unlock cursor-pointer"
+                       :class="[item.isPublic ? 'fa-lock-open text-primary' : 'fa-lock']"
+                       :title="$t('tools.parameters.isPublic.' + item.isPublic)"
+                       @click="setPublic(item.jobID, !item.isPublic)"></i>
+                    <i class="fa fa-fw fa-trash cursor-pointer"
+                       v-if="!item.foreign"
+                       :title="$t('jobs.delete')"
+                       @click="deleteJob(item.jobID)"></i>
                 </template>
-            </vue-table>
+
+            </b-table>
+            <div class="pagination-container"
+                 v-show="totalRows > perPage">
+                <span v-text="$t('jobManager.paginationInfo', {start, end, total: totalRows})"></span>
+                <b-pagination
+                        v-model="currentPage"
+                        :total-rows="totalRows"
+                        :per-page="perPage"
+                        align="right"
+                        class="mb-0"
+                        aria-controls="jobmanagerTable"
+                ></b-pagination>
+            </div>
         </b-card>
     </div>
 </template>
@@ -32,7 +90,6 @@
 <script lang="ts">
     import Vue from 'vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
-    import VueTable from 'vuetable-2/src/components/Vuetable';
     import {Job} from '@/types/toolkit/jobs';
     import moment from 'moment';
     import {Tool} from '@/types/toolkit/tools';
@@ -41,29 +98,41 @@
     export default Vue.extend({
         name: 'JobManagerView',
         mixins: [hasHTMLTitle],
-        components: {
-            VueTable,
-        },
         data() {
             return {
                 fields: [{
-                    name: '__slot:joblist',
-                    title: this.$t('jobManager.table.jobListStatus'),
+                    key: 'joblist',
+                    label: this.$t('jobManager.table.jobListStatus'),
                 }, {
-                    name: 'jobID',
-                    title: this.$t('jobManager.table.jobID'),
+                    key: 'jobID',
+                    label: this.$t('jobManager.table.jobID'),
+                    sortable: true,
                 }, {
-                    name: 'tool',
-                    title: this.$t('jobManager.table.tool'),
-                    callback: 'translateToolName',
+                    key: 'tool',
+                    label: this.$t('jobManager.table.tool'),
+                    formatter: 'translateToolName',
+                    sortable: true,
                 }, {
-                    name: 'dateCreated',
-                    title: this.$t('jobManager.table.dateCreated'),
-                    callback: 'fromNow',
+                    key: 'dateCreated',
+                    label: this.$t('jobManager.table.dateCreated'),
+                    formatter(date: string) {
+                        return moment(date).fromNow();
+                    },
+                    sortable: true,
                 }, {
-                    name: '__slot:actions',
-                    title: this.$t('jobManager.table.actions'),
+                    key: 'actions',
+                    label: this.$t('jobManager.table.actions'),
                 }],
+                totalRows: 1,
+                filter: '',
+                currentPage: 1,
+                perPage: 10,
+                perPageOptions: [
+                    5,
+                    10,
+                    25,
+                    50,
+                ],
             };
         },
         computed: {
@@ -76,6 +145,19 @@
             tools(): Tool[] {
                 return this.$store.getters['tools/tools'];
             },
+            start(): number {
+                if (this.totalRows === 0) {
+                    return 0;
+                }
+                return (this.currentPage - 1) * this.perPage + 1;
+            },
+            end(): number {
+                return Math.min(this.currentPage * this.perPage, this.totalRows);
+            },
+        },
+        mounted() {
+            // Set the initial number of items
+            this.totalRows = this.jobs.length;
         },
         methods: {
             deleteJob(jobID: string): void {
@@ -97,6 +179,10 @@
                 const tool: Tool | undefined = this.tools.find((t: Tool) => t.name === toolName);
                 return tool ? tool.longname : toolName;
             },
+            onFiltered(filteredItems: any) {
+                // Trigger pagination to update the number of buttons/pages due to filtering
+                this.totalRows = filteredItems.length;
+            },
         },
     });
 </script>
@@ -111,5 +197,19 @@
             font-size: 1.25em;
             line-height: 1.6;
         }
+    }
+
+    .hover-unlock.fa-lock:hover::before {
+        content: "\f09c";
+    }
+
+    .job-link:not(:hover) {
+        color: $gray-900;
+    }
+
+    .pagination-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 </style>

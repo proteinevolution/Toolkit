@@ -1,5 +1,5 @@
 <template>
-    <i class="tool-action tool-action-push-up fa mr-4"
+    <i class="tool-action tool-action-push-up fa mr-4 hover-unlock"
        :class="[isPublic ? 'fa-lock-open' : 'fa-lock']"
        :title="$t('tools.parameters.isPublic.' + isPublic)"
        @click="togglePublic"></i>
@@ -51,5 +51,7 @@
 </script>
 
 <style lang="scss" scoped>
-
+    .hover-unlock.fa-lock:hover::before {
+        content: "\f09c";
+    }
 </style>

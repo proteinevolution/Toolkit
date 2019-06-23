@@ -56,11 +56,12 @@
 
                             <template #tabs>
                                 <div class="ml-auto">
-                                    <job-public-toggle v-if="!isJobView && loggedIn || isJobView && !job.foreign"
+                                    <job-public-toggle v-if="loggedIn && (!isJobView || !job.foreign)"
                                                        :job="job"
                                                        :submission="submission"/>
                                     <i class="tool-action tool-action-push-up fa fa-trash mr-4"
                                        v-if="job && !job.foreign"
+                                       :title="$t('jobs.delete')"
                                        @click="$emit('delete-job')"></i>
                                     <i class="tool-action tool-action-lg fa mr-1"
                                        @click="toggleFullScreen"

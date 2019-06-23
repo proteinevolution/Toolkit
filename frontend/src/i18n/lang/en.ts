@@ -60,7 +60,18 @@ export default {
                 dateCreated: 'Created',
                 actions: 'Actions',
                 noData: 'Currently you don\'t own any jobs.',
+                noDataFiltered: 'There are no jobs matching your request.',
             },
+            watched: {
+                true: 'Display in Job List',
+                false: 'Hide in Job List',
+            },
+            paginationInfo: 'Displaying {start} to {end} of {total} items',
+            perPage: {
+                show: 'Show',
+                entries: 'Entries',
+            },
+            filter: 'Search:',
         },
         jobList: {
             sortColumns: {
@@ -175,6 +186,7 @@ export default {
             },
             submitJob: 'Submit Job',
             resubmitJob: 'Resubmit Job',
+            delete: 'Delete Job',
             foundIdenticalCopy: 'We found an identical copy of your job in our database!<br>' +
                 'Job ID: {jobID}, which was created {createdAt}.',
             startJob: 'Start job anyways',
