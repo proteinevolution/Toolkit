@@ -128,9 +128,7 @@
                 }, {
                     key: 'dateCreated',
                     label: this.$t('jobManager.table.dateCreated'),
-                    formatter(date: string) {
-                        return moment(date).fromNow();
-                    },
+                    formatter: 'fromNow',
                     sortable: true,
                 }, {
                     key: 'actions',
@@ -188,12 +186,12 @@
             toggleJobListStatus(jobID: string, watched: boolean): void {
                 this.$store.dispatch('jobs/setJobWatched', {jobID, watched});
             },
-            fromNow(date: string): string {
-                return moment(date).fromNow();
-            },
             translateToolName(toolName: string): string {
                 const tool: Tool | undefined = this.tools.find((t: Tool) => t.name === toolName);
                 return tool ? tool.longname : toolName;
+            },
+            fromNow(date: string): string {
+                return moment(date).from(moment.utc(this.$store.state.now));
             },
             onFiltered(filteredItems: any) {
                 // Trigger pagination to update the number of buttons/pages due to filtering

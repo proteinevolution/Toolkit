@@ -98,7 +98,7 @@
                 return this.$route.params.jobID;
             },
             dateCreated(): string {
-                return moment(this.job.dateCreated).format('lll');
+                return moment(this.job.dateCreated).from(moment.utc(this.$store.state.now));
             },
             job(): Job {
                 return this.$store.getters['jobs/jobs'].find((job: Job) => job.jobID === this.jobID);

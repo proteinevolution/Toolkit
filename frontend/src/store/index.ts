@@ -22,8 +22,13 @@ const store: StoreOptions<RootState> = {
         maintenanceMode: false,
         reconnecting: true,
         clusterWorkload: 0,
+        // allow for update of human readable time by updating reference point
+        now: Date.now(),
     },
     mutations: {
+        updateNow(state) {
+            state.now = Date.now();
+        },
         startLoading(state, loadingType: string) {
             state.loading[loadingType] = true;
         },

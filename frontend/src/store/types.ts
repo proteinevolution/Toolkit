@@ -11,6 +11,7 @@ export interface RootState {
     maintenanceMode: boolean;
     reconnecting: boolean;
     clusterWorkload: number;
+    now: number;
 }
 
 export interface ToolState {

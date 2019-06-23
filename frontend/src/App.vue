@@ -106,6 +106,8 @@
                     sequences: '', // for AlignmentViewerModal
                     format: '', // for AlignmentViewerModal
                 },
+                // allow for update of human readable time by updating reference point in store
+                refreshInterval: null as any,
             };
         },
         computed: {
@@ -157,6 +159,10 @@
                         break;
                 }
             };
+
+            this.refreshInterval = setInterval(() => {
+                this.$store.commit('updateNow');
+            }, 10000);
         },
         mounted() {
             /* Modals are shown using EventBus.$emit('show-modal', {id: <MODAL_ID>, props: {<ANY PROPS TO BE PASSED>}});
@@ -170,6 +176,9 @@
         },
         destroyed(): void {
             delete (this.$options as any).sockets.onmessage;
+            if (this.refreshInterval) {
+                clearInterval(this.refreshInterval);
+            }
         },
         methods: {
             showJobNotification(jobID: string, title: string, body: string): void {
