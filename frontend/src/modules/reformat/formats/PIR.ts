@@ -3,7 +3,6 @@ import {formatLongSeq} from '@/modules/reformat/utils';
 
 export const PIR: Format = {
     name: 'PIR',
-    autoTransformToFormat: 'FASTA',
 
     validate(value: string): boolean {
         if (!value) {
