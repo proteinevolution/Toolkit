@@ -20,7 +20,13 @@ import play.api.libs.json.{ Json, OWrites }
 
 case class ValidationParamsForm(
     allowedSeqFormats: Seq[String],
-    allowedSeqType: String
+    allowedSeqType: String,
+    minCharPerSeq: Option[Int],
+    maxCharPerSeq: Option[Int],
+    minNumSeq: Option[Int],
+    maxNumSeq: Option[Int],
+    requiresSameLengthSeq: Option[Boolean],
+    allowEmptySeq: Option[Boolean],
 )
 
 object ValidationParamsForm {

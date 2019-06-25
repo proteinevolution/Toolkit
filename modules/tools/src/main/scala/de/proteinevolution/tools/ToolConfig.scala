@@ -51,8 +51,17 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
           },
           config.getStringList("forwarding.alignment").asScala,
           config.getStringList("forwarding.multi_seq").asScala,
-          Try(config.getStringList("sequence_restrictions.formats").asScala).getOrElse(Seq("FASTA", "CLUSTAL")),
-          Try(config.getString("sequence_restrictions.type")).getOrElse("PROTEIN")
+          ValidationParamsForm(
+            // for simplicity, we always pass these default values even for non-sequence tools
+            Try(config.getStringList("sequence_restrictions.formats").asScala).getOrElse(Seq("FASTA", "CLUSTAL")),
+            Try(config.getString("sequence_restrictions.type")).getOrElse("PROTEIN"),
+            Try(config.getInt("sequence_restrictions.min_char_per_seq")).toOption,
+            Try(config.getInt("sequence_restrictions.max_char_per_seq")).toOption,
+            Try(config.getInt("sequence_restrictions.min_num_seq")).toOption,
+            Try(config.getInt("sequence_restrictions.max_num_seq")).toOption,
+            Try(config.getBoolean("sequence_restrictions.same_length")).toOption,
+            Try(config.getBoolean("sequence_restrictions.allow_empty")).toOption,
+          )
         )
       case (_, _) => throw new IllegalStateException("tool does not exist")
     }
@@ -67,18 +76,17 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
   }
 
   private def toTool(
-      toolNameShort: String,
-      toolNameLong: String,
-      order: Int,
-      description: String,
-      code: String,
-      section: String,
-      version: String,
-      params: Seq[Parameter],
-      forwardAlignment: Seq[String],
-      forwardMultiSeq: Seq[String],
-      allowedSeqFormats: Seq[String],
-      allowedSeqType: String
+                      toolNameShort: String,
+                      toolNameLong: String,
+                      order: Int,
+                      description: String,
+                      code: String,
+                      section: String,
+                      version: String,
+                      params: Seq[Parameter],
+                      forwardAlignment: Seq[String],
+                      forwardMultiSeq: Seq[String],
+                      validationParams: ValidationParamsForm,
   ): Tool = {
     val toolFormSimple = ToolFormSimple(
       toolNameShort,
@@ -86,7 +94,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       description,
       section,
       version,
-      ValidationParamsForm(allowedSeqFormats, allowedSeqType)
+      validationParams,
     )
     val inputGroup: Seq[String] = paramAccess.paramGroups("Input")
     val toolParameterForm = ToolParameters(
