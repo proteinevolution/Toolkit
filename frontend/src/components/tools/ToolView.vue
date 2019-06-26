@@ -5,7 +5,8 @@
              v-if="tool">
             <div class="tool-header d-flex align-items-baseline">
                 <h1>
-                    {{ tool.longname }}
+                    <a class="cursor-pointer mr-1"
+                       @click="refresh">{{ tool.longname }}</a>
                     <b-link class="help-icon" @click="launchHelpModal">
                         <i class="far fa-question-circle"></i>
                     </b-link>
@@ -193,6 +194,9 @@
             },
             launchHelpModal(): void {
                 EventBus.$emit('show-modal', {id: 'helpModal', props: {toolName: this.toolName}});
+            },
+            refresh(): void {
+                this.$emit('refresh');
             },
         },
     });

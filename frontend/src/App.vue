@@ -33,7 +33,8 @@
                     </b-col>
                     <b-col>
                         <VelocityFade :duration="1000">
-                            <router-view :key="$route.fullPath"/>
+                            <router-view :key="$route.fullPath + refreshCounter"
+                                         @refresh="refreshCounter++"/>
                         </VelocityFade>
                     </b-col>
                 </b-row>
@@ -108,6 +109,7 @@
                 },
                 // allow for update of human readable time by updating reference point in store
                 refreshInterval: null as any,
+                refreshCounter: 0,
             };
         },
         computed: {
