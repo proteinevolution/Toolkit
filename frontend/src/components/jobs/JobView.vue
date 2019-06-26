@@ -106,6 +106,9 @@
             tool(): Tool {
                 return this.$store.getters['tools/tools'].find((tool: Tool) => tool.name === this.job.tool);
             },
+            loggedIn(): boolean {
+                return this.$store.getters['auth/loggedIn'];
+            },
         },
         created() {
             this.loadJobDetails(this.jobID);
@@ -114,6 +117,21 @@
             // Use a watcher here - component cannot use 'beforeRouteUpdate' because of lazy loading
             $route(to, from) {
                 this.loadJobDetails(to.params.jobID);
+            },
+            loggedIn(login) {
+                if (login) {
+                    this.loadJobDetails(this.jobID);
+                } else {
+                    // need to handle error separately
+                    this.$store.dispatch('jobs/loadJobDetails', this.jobID)
+                        .catch((err) => {
+                            logger.info('Error when getting jobs!', err);
+                            if (err.request.status === 401) {
+                                logger.info('Redirecting to index');
+                                this.$router.push('/');
+                            }
+                        });
+                }
             },
         },
         methods: {
@@ -126,16 +144,14 @@
                         this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
                     });
             },
-            loadJobDetails(jobID: string): void {
-                this.$store.dispatch('jobs/loadJobDetails', jobID)
+            loadJobDetails(jobID: string): Promise<Job> {
+                return this.$store.dispatch('jobs/loadJobDetails', jobID)
                     .catch((err) => {
                         logger.warn('Error when getting jobs', err);
-                        switch (err.request.status) {
-                            case 401:
-                                this.errorMessage = 'errors.JobNotAuthorized';
-                                break;
-                            default:
-                                this.errorMessage = 'errors.JobNotFound';
+                        if (err.request.status === 401) {
+                            this.errorMessage = 'errors.JobNotAuthorized';
+                        } else {
+                            this.errorMessage = 'errors.JobNotFound';
                         }
                     });
             },
