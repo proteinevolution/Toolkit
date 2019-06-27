@@ -70,7 +70,7 @@ class ParamAccess @Inject()(tel: TEL) {
       NumberParameter("min_seqid_query", "Min. seq. identity of MSA hits with query (%)", min = Some(0), max = Some(100), default = Some(0))
 
     // HHblits
-    case "HHBLITSDB" => select("hhblitsdb", "Select database")
+    case "HHBLITSDB" => select("hhblitsdb", "Select database", default = Some("uniclust30_2018_08"))
     case "HHBLITS_INCL_EVAL" =>
       select("hhblits_incl_eval", "E-value inclusion threshold", default = Some("1e-3"))
 
@@ -145,7 +145,7 @@ class ParamAccess @Inject()(tel: TEL) {
       NumberParameter("invoke_psipred", "% identity cutoff to invoke a new PSIPRED run", min = Some(0), max = Some(100), default = Some(30))
 
     // HHomp
-    case "HHOMPDB" => select("hhompdb", "Select HMM databases", default = Some(""))
+    case "HHOMPDB" => select("hhompdb", "Select HMM databases", default = Some("HHompDB_v1.0"))
 
     // Quick2D
     case "TARGET_PSI_DB" => select("target_psi_db", "Select database for MSA generation", default = Some("nr90"))
