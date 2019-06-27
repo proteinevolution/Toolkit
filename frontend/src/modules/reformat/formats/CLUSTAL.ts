@@ -1,7 +1,7 @@
 import {Format, Sequence} from '@/modules/reformat/types';
 
 export const CLUSTAL: Format = {
-    name: 'Clustal',
+    name: 'CLUSTAL',
     autoTransformToFormat: 'FASTA',
 
     validate(value: string): boolean {

@@ -42,7 +42,7 @@
         computed: {
             defaultSubmissionValue(): any {
                 // overrides the property in ToolParameterMixin
-                return '';
+                return this.parameter.default || '';
             },
             selected: {
                 get(): SelectOption[] {

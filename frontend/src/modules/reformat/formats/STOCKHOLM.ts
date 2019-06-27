@@ -1,7 +1,7 @@
 import {Format, Sequence} from '@/modules/reformat/types';
 
 export const STOCKHOLM: Format = {
-    name: 'Stockholm',
+    name: 'STOCKHOLM',
     autoTransformToFormat: 'FASTA',
 
     validate(value: string): boolean {

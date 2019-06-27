@@ -67,7 +67,7 @@ const sampleSeqConfig = function(textAreaId: string) {
                 switch (toolname) {
 
                     case "formatseq":
-                        $a.val(a3mProtSeq);
+                        //$a.val(a3mProtSeq);
                         break;
 
                     case "hhblits":

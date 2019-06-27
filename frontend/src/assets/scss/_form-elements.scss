@@ -2,6 +2,7 @@
 .multiselect {
   font-size: $font-size-base;
   min-height: 0;
+  cursor: pointer;
 
   .multiselect__select {
     height: 28px;

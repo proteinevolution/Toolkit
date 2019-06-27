@@ -39,6 +39,10 @@ export const PIR: Format = {
             // validate sequence
             let seq: string = lines.slice(2).join('');
 
+            if (!seq.endsWith('*')) {
+                return false;
+            }
+
             seq = seq.replace(/\s/g, '');
 
             // Check if sequences contain invalid characters

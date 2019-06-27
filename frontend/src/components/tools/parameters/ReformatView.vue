@@ -94,7 +94,6 @@
                     {value: AlignmentSeqFormat.FASTA, text: 'FASTA', $isDisabled: false},
                     {value: AlignmentSeqFormat.CLUSTAL, text: 'CLUSTAL', $isDisabled: false},
                     {value: AlignmentSeqFormat.STOCKHOM, text: 'STOCKHOLM', $isDisabled: false},
-                    {value: AlignmentSeqFormat.PIR, text: 'PIR', $isDisabled: false},
                 ],
                 forwardingOptions: [] as SelectOption[],
                 selectedOutputFormat: undefined,
@@ -145,8 +144,12 @@
                                 return false;
                             }
                             const allowedFormats = (tool.validationParams as SequenceValidationParams).allowedSeqFormats;
+                            const maxNumSeqs = (tool.validationParams as SequenceValidationParams).maxNumSeq;
+                            const sameLength = (tool.validationParams as SequenceValidationParams).requiresSameLengthSeq;
+
                             return allowedFormats !== undefined &&
-                                allowedFormats.includes((selectedFormat.value as AlignmentSeqFormat));
+                                allowedFormats.includes((selectedFormat.value as AlignmentSeqFormat)) &&
+                                (maxNumSeqs && maxNumSeqs > 1) && (sameLength);
                         })
                         .map((tool: Tool) => ({
                             value: tool.name,

@@ -55,7 +55,7 @@ function validateSequence(val: string, params: SequenceValidationParams): Valida
             if (params.minCharPerSeq && !elem.minSeqLength(params.minCharPerSeq)) {
                 return result(true, 'danger', 'minSeqLength', {limit: params.minCharPerSeq});
             }
-            if (params.requiresSameLengthSeq && !elem.sameLength()) {
+            if (params.requiresSameLengthSeq && !elem.sameLength() && detectedFormat.toLocaleUpperCase() !== 'A3M') {
                 return result(true, 'danger', 'sameLength');
             }
             if (elem.hasEmptyHeaders()) {
@@ -88,17 +88,38 @@ export function transformToFormat(val: string, format: string): string {
 }
 
 export function validateRegex(val: string): ValidationResult {
-    // TODO regex validation
-    return result(false, 'success', 'validRegex');
+    if (val.length > 0) {
+        if (/\s/.test(val)) {
+            return result(true, 'danger', 'invalidWhiteSpace');
+        }
+        if (val.length > 200) {
+            return result(true, 'danger', 'maxRegexLength');
+        }
+        return result(false, 'success', 'validRegex');
+    }
+    return result(false, '', '');
 }
 
 export function validatePDB(val: string): ValidationResult {
-    // TODO pdb validation
-    return result(false, 'success', 'validPDB');
+    if (val.length > 0) {
+        let atomCounter = 0;
+        const atomRecords = val.split('\n');
+        for (const record of atomRecords) {
+            if (/^ATOM/.test(record)) {
+                atomCounter++;
+                if (atomCounter === 21) {
+                    return result(false, 'success', 'validPDB');
+                }
+            }
+        }
+    }
+    return result(true, 'danger', 'invalidPDB');
 }
 
 export function validateAccessionID(val: string): ValidationResult {
-    // TODO accession id validation
+    if (val.replace(/\s/g, '' ) === '') {
+        return result(true, 'danger', 'invalidAccessionID');
+    }
     return result(false, 'success', 'validAccessionID');
 }
 

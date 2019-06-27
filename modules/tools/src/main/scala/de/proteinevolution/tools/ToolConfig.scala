@@ -53,12 +53,12 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
           config.getStringList("forwarding.multi_seq").asScala,
           ValidationParamsForm(
             // for simplicity, we always pass these default values even for non-sequence tools
-            Try(config.getStringList("sequence_restrictions.formats").asScala).getOrElse(Seq("FASTA", "CLUSTAL")),
+            Try(config.getStringList("sequence_restrictions.formats").asScala).getOrElse(Seq("FASTA")),
             Try(config.getString("sequence_restrictions.type")).getOrElse("PROTEIN"),
             Try(config.getInt("sequence_restrictions.min_char_per_seq")).toOption,
-            Try(config.getInt("sequence_restrictions.max_char_per_seq")).toOption,
+            Some(Try(config.getInt("sequence_restrictions.max_char_per_seq")).getOrElse(20000)),
             Try(config.getInt("sequence_restrictions.min_num_seq")).toOption,
-            Try(config.getInt("sequence_restrictions.max_num_seq")).toOption,
+            Some(Try(config.getInt("sequence_restrictions.max_num_seq")).getOrElse(10000)),
             Try(config.getBoolean("sequence_restrictions.same_length")).toOption,
             Try(config.getBoolean("sequence_restrictions.allow_empty")).toOption,
           )

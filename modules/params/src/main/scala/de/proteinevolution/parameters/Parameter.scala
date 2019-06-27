@@ -49,6 +49,7 @@ object Parameter {
   case class SelectParameter(
       name: String,
       label: String,
+      default: Option[String],
       options: Seq[SelectOption],
       maxSelectedOptions: Int
   ) extends Parameter

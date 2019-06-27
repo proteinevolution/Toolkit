@@ -66,6 +66,7 @@ export interface TextAreaParameter extends Parameter {
 export interface SelectParameter extends Parameter {
     options: SelectOption[];
     maxSelectedOptions: number;
+    default: string;
 }
 
 export interface SelectOption {
