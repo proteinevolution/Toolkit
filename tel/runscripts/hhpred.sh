@@ -356,18 +356,20 @@ else
       echo "#Searching profile HMM database(s)." >> ../results/process.log
 fi
 
-if [ "%alignmode.content" = "loc" ] ; then
-    MACT_SCORE=%macthreshold.content
+if [ "%alignmacmode.content" = "loc" ] ; then
+    MACT="-norealign"
+    ALIGNMODE="-loc"
+fi
 
-    if [ "%macmode.content" = "-realign" ] ; then
-        MACT="-realign -mact ${MACT_SCORE}"
-    else
-        MACT="-norealign"
-    fi
+if [ "%alignmacmode.content" = "locrealign" ] ; then
+    MACT_SCORE=%macthreshold.content
+    MACT="-realign -mact ${MACT_SCORE}"
+    ALIGNMODE="-loc"
 fi
 
 if [ "%alignmode.content" = "glob" ] ; then
     MACT="-realign -mact 0.0"
+    ALIGNMODE="-glob"
 fi
 
 # Perform HHsearch #
@@ -378,7 +380,7 @@ hhsearch -cpu %THREADS \
          -oa3m ../results/${JOBID}.a3m \
          -p %pmin.content \
          -Z %desc.content \
-         -%alignmode.content \
+         ${ALIGNMODE} \
          -z 1 \
          -b 1 \
          -B %desc.content \

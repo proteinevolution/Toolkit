@@ -85,9 +85,7 @@ class ParamAccess @Inject()(tel: TEL) {
     case "HHPRED_INCL_EVAL" => select("hhpred_incl_eval", "E-value incl. threshold for MSA generation", default = Some("1e-3"))
     case "MIN_COV" => NumberParameter("min_cov", "Min. coverage of MSA hits (%)", min = Some(0), max = Some(100), default = Some(20))
     case "SS_SCORING" => select("ss_scoring", "Secondary structure scoring", default = Some("2"))
-    // TODO join aligmode/macmode into a single select component
-    case "ALIGNMODE" => select("alignmode", "Alignment Mode", default = Some("local"))
-    case "MACMODE" => select("macmode", "Realign with MAC", default = Some("off"))
+    case "ALIGNMACMODE" => select("alignmacmode", "Alignment Mode/Realign with MAC", default = Some("local"))
     case "MACTHRESHOLD" => select("macthreshold", "MAC realignment threshold", default = Some("0.3"))
 
     // HMMER
@@ -146,6 +144,7 @@ class ParamAccess @Inject()(tel: TEL) {
 
     // HHomp
     case "HHOMPDB" => select("hhompdb", "Select HMM databases", default = Some("HHompDB_v1.0"))
+    case "ALIGNMODE" => select("alignmode", "Alignment Mode", default = Some("local"))
 
     // Quick2D
     case "TARGET_PSI_DB" => select("target_psi_db", "Select database for MSA generation", default = Some("nr90"))
