@@ -21,4 +21,3 @@ class SampleSeqService {
 }
 
 export const sampleSeqService = new SampleSeqService();
-(window as any).sampleSeqService = sampleSeqService;
