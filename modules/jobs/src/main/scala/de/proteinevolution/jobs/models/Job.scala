@@ -46,7 +46,9 @@ case class Job(
     IPHash: Option[String]
 ) {
 
-  def jsonPrepare(toolConfig: ToolConfig, user: User)(implicit config: Configuration): JsonObject = {
+  def jsonPrepare(toolConfig: ToolConfig, user: User, paramValues: Option[Map[String, String]] = None)(
+      implicit config: Configuration
+  ): JsonObject = {
     JsonObject(
       "jobID"        -> jobID.asJson,
       "parentID"     -> parentID.asJson,
@@ -57,6 +59,7 @@ case class Job(
       "code"         -> toolConfig.values(tool).code.asJson,
       "tool"         -> tool.asJson,
       "toolnameLong" -> config.get[String](s"Tools.$tool.longname").asJson,
+      "paramValues"  -> paramValues.asJson,
       "dateCreated"  -> dateCreated.toInstant.toEpochMilli.asJson,
       "dateUpdated"  -> dateUpdated.toInstant.toEpochMilli.asJson,
       "dateViewed"   -> dateViewed.toInstant.toEpochMilli.asJson

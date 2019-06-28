@@ -16,6 +16,7 @@
 
 package de.proteinevolution.jobs.controllers
 
+import better.files._
 import cats.implicits._
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
@@ -66,13 +67,19 @@ class JobGetController @Inject()(
 
   def loadJob(jobID: String): Action[AnyContent] = userAction.async { implicit request =>
     jobDao.findJob(jobID).map {
-      case Some(job) if jobFolderIsValid(job.jobID, constants) => {
+      case Some(job) if jobFolderIsValid(job.jobID, constants) =>
         if (job.isPublic || job.ownerID.equals(request.user.userID)) {
-          Ok(job.jsonPrepare(toolConfig, request.user).asJson)
+          val paramValues: Map[String, String] = {
+            if (paramsExist(jobID, constants)) {
+              (constants.jobPath / jobID / "sparam").readDeserialized[Map[String, String]]()
+            } else {
+              Map.empty[String, String]
+            }
+          }
+          Ok(job.jsonPrepare(toolConfig, request.user, Some(paramValues)).asJson)
         } else {
           Unauthorized
         }
-      }
       case _ => NotFound
     }
   }

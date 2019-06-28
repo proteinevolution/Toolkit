@@ -9,11 +9,10 @@ const mutations: MutationTree<JobState> = {
     },
     setJob(state, {jobID, job}) {
         const index: number = state.jobs.findIndex((j) => j.jobID === jobID);
-        const existingJob: Job = state.jobs[index];
         if (index < 0) {
             state.jobs.push(job);
         } else {
-            Vue.set(state.jobs, index, Object.assign(existingJob, job));
+            Vue.set(state.jobs, index, job);
         }
     },
     removeJob(state, {jobID}) {
