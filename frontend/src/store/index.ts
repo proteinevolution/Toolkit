@@ -16,6 +16,7 @@ const store: StoreOptions<RootState> = {
         loading: {
             tools: false,
             toolParameters: false,
+            alignmentTextarea: false,
             login: false,
             logout: false,
         },

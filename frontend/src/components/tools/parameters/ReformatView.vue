@@ -11,7 +11,10 @@
                         class="mt-1 mb-3">
             <b-btn variant="link"
                    @click="handlePasteExample">
-                {{ $t('tools.parameters.textArea.pasteExample') }}
+                <loading v-if="$store.state.loading.alignmentTextarea"
+                         :size="20"/>
+                <span v-else
+                      v-text="$t('tools.parameters.textArea.pasteExample')"></span>
             </b-btn>
             <b-button variant="link"
                       :disabled="!detectedFormat"
@@ -83,6 +86,11 @@
     import Select from './SelectParameter.vue';
     import {AlignmentSeqFormat} from '@/types/toolkit/enums';
     import EventBus from '@/util/EventBus';
+    import Logger from 'js-logger';
+    import {sampleSeqService} from '@/services/SampleSeqService';
+    import Loading from '@/components/utils/Loading.vue';
+
+    const logger = Logger.get('ReformatView');
 
     export default Vue.extend({
         name: 'ReformatView',
@@ -103,6 +111,7 @@
         components: {
             Multiselect,
             Select,
+            Loading,
         },
         props: {
             /*
@@ -124,7 +133,18 @@
         },
         methods: {
             handlePasteExample(): void {
-                this.input = this.parameter.sampleInput;
+                this.$store.commit('startLoading', 'alignmentTextarea');
+                sampleSeqService.fetchSampleSequence(this.parameter.sampleInput)
+                    .then((res: string) => {
+                        this.input = res;
+                    })
+                    .catch((err: any) => {
+                        logger.error('error when fetching sample sequence', err);
+                        this.input = 'Error!';
+                    })
+                    .finally(() => {
+                        this.$store.commit('stopLoading', 'alignmentTextarea');
+                    });
             },
             showAlignmentViewer(): void {
                 EventBus.$emit('show-modal', {

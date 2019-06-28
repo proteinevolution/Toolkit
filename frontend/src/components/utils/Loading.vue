@@ -2,7 +2,8 @@
     <div class="wrapper"
          :class="{wrapperSecondary: variant==='secondary'}">
         <vue-simple-spinner :class="'vue-simple-spinner-' + variant"
-                            :speed="variant === 'secondary' ? 2 : 0.8"></vue-simple-spinner>
+                            :speed="variant === 'secondary' ? 2 : 0.8"
+                            :size="size"></vue-simple-spinner>
         <div v-if="message"
              class="message">{{ message }}
         </div>
@@ -25,6 +26,11 @@
                 type: String,
                 required: false,
                 default: '',
+            },
+            size: {
+                type: Number,
+                required: false,
+                default: 32,
             },
         },
         components: {

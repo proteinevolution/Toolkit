@@ -1,6 +1,5 @@
 import {FrontendToolParameter, Tool} from '@/types/toolkit/tools';
 import {ParameterType} from '@/types/toolkit/enums';
-import SampleSeqs from '@/conf/SampleSeqs';
 
 export const Reformat: Tool = {
     name: 'reformat',
@@ -20,7 +19,7 @@ export const Reformat: Tool = {
             multiColumnLayout: false,
             parameters: [({
                 parameterType: ParameterType.ReformatView,
-                sampleInput: SampleSeqs.inputClustal,
+                sampleInput: 'inputClustal',
                 inputPlaceholder: '',
                 label: '',
                 name: '',
@@ -47,7 +46,7 @@ export const AlignmentViewer: Tool = {
             multiColumnLayout: false,
             parameters: [({
                 parameterType: ParameterType.AlignmentViewerView,
-                sampleInput: SampleSeqs.multiProtSeq,
+                sampleInput: 'multiProtSeq',
                 inputPlaceholder: 'Enter Sequences in FASTA or CLUSTAL format.',
                 label: '',
                 name: '',

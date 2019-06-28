@@ -1,6 +1,6 @@
 <template>
     <b-form-group class="textarea-group"
-                  :class="[uploadingFile ? 'uploading-file' : '']">
+                  :class="{'uploading-file': uploadingFile}">
         <b-form-textarea class="textarea-alignment"
                          :placeholder="parameter.inputPlaceholder"
                          v-model="text"
@@ -14,7 +14,10 @@
                         class="mt-1 mb-3">
             <b-btn variant="link"
                    @click="handlePasteExample">
-                {{ $t('tools.parameters.textArea.pasteExample') }}
+                <loading v-if="$store.state.loading.alignmentTextarea"
+                         :size="20"/>
+                <span v-else
+                      v-text="$t('tools.parameters.textArea.pasteExample')"></span>
             </b-btn>
             <label class="btn btn-link mb-0">
                 {{ $t('tools.parameters.textArea.uploadFile') }}
@@ -48,13 +51,18 @@
     import {transformToFormat, validation} from '@/util/validation';
     import {ValidationResult} from '@/types/toolkit/validation';
     import VelocityFade from '@/transitions/VelocityFade.vue';
-    import SampleSeqs from '@/conf/SampleSeqs';
     import EventBus from '@/util/EventBus';
+    import Logger from 'js-logger';
+    import {sampleSeqService} from '@/services/SampleSeqService';
+    import Loading from '@/components/utils/Loading.vue';
+
+    const logger = Logger.get('TextAreaSubComponent');
 
     export default Vue.extend({
         name: 'TextAreaSubComponent',
         components: {
             VelocityFade,
+            Loading,
         },
         props: {
             /*
@@ -160,8 +168,19 @@
             },
             handlePasteExample(): void {
                 EventBus.$emit('paste-example');
-                const sampleSeqKeys: string[] = this.parameter.sampleInputKey.split(',');
-                this.text = SampleSeqs[sampleSeqKeys[this.second ? 1 : 0]];
+                this.$store.commit('startLoading', 'alignmentTextarea');
+                const sampleSeqKey: string = this.parameter.sampleInputKey.split(',')[this.second ? 1 : 0];
+                sampleSeqService.fetchSampleSequence(sampleSeqKey)
+                    .then((res: string) => {
+                        this.text = res;
+                    })
+                    .catch((err: any) => {
+                        logger.error('error when fetching sample sequence', err);
+                        this.text = 'Error!';
+                    })
+                    .finally(() => {
+                        this.$store.commit('stopLoading', 'alignmentTextarea');
+                    });
             },
         },
     });

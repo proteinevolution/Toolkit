@@ -278,6 +278,12 @@
         right: 0;
     }
 
+    .textarea-alignment.loading::before {
+        content: "test";
+        display: block;
+        width: 100px;
+    }
+
     .fetching-spinner {
         position: fixed;
         bottom: 1em;

@@ -1,5 +1,13 @@
 module.exports = {
     chainWebpack: config => {
+        // we don't want to prefetch languages
+        config.plugins.delete('preload');
+        config.plugins.delete('prefetch');
+        // config.plugin('prefetch').tap(options => {
+        //     options[0].fileBlacklist = options[0].fileBlacklist || [];
+        //     options[0].fileBlacklist.push(/lang(.)+?\.js$/);
+        //     return options;
+        // });
 
         // use image-webpack-loader for images
         const imageRule = config.module.rule('images');
@@ -10,7 +18,7 @@ module.exports = {
                     bypassOnDebug: true,
                     mozjpeg: {
                         progressive: true,
-                        quality: 10
+                        quality: 10,
                     },
                     // optipng.enabled: false will disable optipng
                     optipng: {
@@ -18,7 +26,7 @@ module.exports = {
                     },
                     pngquant: {
                         quality: '65-90',
-                        speed: 4
+                        speed: 4,
                     },
                     gifsicle: {
                         interlaced: true,
@@ -54,7 +62,7 @@ module.exports = {
                 target: 'ws://localhost:' + process.env.VUE_APP_BACKEND_PORT || '9000',
                 secure: false,
                 ws: true,
-            }
+            },
         },
     },
 };
