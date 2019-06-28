@@ -5,8 +5,10 @@
              v-if="tool">
             <div class="tool-header d-flex align-items-baseline">
                 <h1>
-                    <a class="cursor-pointer mr-1"
-                       @click="refresh">{{ tool.longname }}</a>
+                    <router-link class="cursor-pointer mr-1"
+                                 :to="'/tools/'+toolName">
+                        {{ tool.longname }}
+                    </router-link>
                     <b-link class="help-icon" @click="launchHelpModal">
                         <i class="far fa-question-circle"></i>
                     </b-link>
