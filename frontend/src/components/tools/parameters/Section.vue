@@ -95,10 +95,14 @@ import {ParameterType} from '../../../types/toolkit/enums';
     });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     .parameter-component {
         width: 100%;
         max-width: 15rem;
+
+        .col-form-label {
+            font-size: 0.8em;
+        }
 
         &.size-12 {
             max-width: none;
