@@ -80,12 +80,12 @@ class ParamAccess @Inject()(tel: TEL) {
     // TODO fix max selected options (the SUM of selected dbs from hhsuiteddb and proteomes must not be > 4)
     case "HHSUITEDB" => select("hhsuitedb", "Select database (PDB_mmCIF70 for modeling)", maxSelectedOptions = 4, default = Some("mmcif70/pdb70"))
     case "PROTEOMES" => select("proteomes", "Proteomes", maxSelectedOptions = 4, default = Some(""))
-    case "MSA_GEN_METHOD" => select("msa_gen_method", "MSA generation method", default = Some("hhblits"))
+    case "MSA_GEN_METHOD" => select("msa_gen_method", "MSA generation method", default = Some("uniclust30"))
     case "MSA_GEN_MAX_ITER" => select("msa_gen_max_iter", "Maximal no. of MSA generation steps", default = Some("3"))
     case "HHPRED_INCL_EVAL" => select("hhpred_incl_eval", "E-value incl. threshold for MSA generation", default = Some("1e-3"))
     case "MIN_COV" => NumberParameter("min_cov", "Min. coverage of MSA hits (%)", min = Some(0), max = Some(100), default = Some(20))
     case "SS_SCORING" => select("ss_scoring", "Secondary structure scoring", default = Some("2"))
-    case "ALIGNMACMODE" => select("alignmacmode", "Alignment Mode/Realign with MAC", default = Some("local"))
+    case "ALIGNMACMODE" => select("alignmacmode", "Alignment Mode:Realign with MAC", default = Some("loc"))
     case "MACTHRESHOLD" => select("macthreshold", "MAC realignment threshold", default = Some("0.3"))
 
     // HMMER

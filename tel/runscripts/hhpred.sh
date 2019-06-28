@@ -6,9 +6,9 @@ LOW_ALN_DEPTH=""
 #create file in which selected dbs are written
 touch ../params/dbs
 
-if [  "%hhpred_align.content" != "true" ] ; then
+if [[  "%hhpred_align.content" != "true" ]] ; then
     #splitting input databases into array and completing with -d
-    if [ "%hhsuitedb.content" != "false" ]
+    if [[ "%hhsuitedb.content" != "false" ]]
     then
         DBS=$(echo "%hhsuitedb.content" | tr " " "\n")
         DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
@@ -16,7 +16,7 @@ if [  "%hhpred_align.content" != "true" ] ; then
         printf "${DBS[@]}" >> ../params/dbs
         printf "\n" >> ../params/dbs
     fi
-    if [ "%proteomes.content" != "false" ]
+    if [[ "%proteomes.content" != "false" ]]
     then
         PROTEOMES=$(echo "%proteomes.content" | tr " " "\n")
         DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${PROTEOMES[@]}`
@@ -27,19 +27,19 @@ if [  "%hhpred_align.content" != "true" ] ; then
     DBARRAY=( ${DBJOINED} )
     DBCOUNT=${#DBARRAY[@]}
 
-    if [ ${DBCOUNT} -gt "8" ] ; then
+    if [[ ${DBCOUNT} -gt "8" ]] ; then
         echo "#Only 4 databases may be selected at a time!" >> ../results/process.log
         false
     fi
 fi
 
-if [ ${CHAR_COUNT} -gt "10000000" ] ; then
+if [[ ${CHAR_COUNT} -gt "10000000" ]] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
       false
 fi
 
 
-if [ ${A3M_INPUT} = "1" ] ; then
+if [[ ${A3M_INPUT} = "1" ]] ; then
 
     sed -i '1d' ../params/alignment
 
@@ -48,7 +48,7 @@ if [ ${A3M_INPUT} = "1" ] ; then
            $(readlink -f ../params/alignment.tmp) \
            -d 160 -uc -l 32000
 
-     if [ ! -f ../params/alignment.tmp ]; then
+     if [[ ! -f ../params/alignment.tmp ]]; then
             echo "#Input is not in valid A3M format." >> ../results/process.log
             false
      else
@@ -59,11 +59,11 @@ if [ ${A3M_INPUT} = "1" ] ; then
 fi
 
 
-if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
+if [[ ${SEQ_COUNT} = "0" ]] && [[ ${FORMAT} = "0" ]] ; then
       sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
       CHAR_COUNT=$(wc -m < ../params/alignment1)
 
-      if [ ${CHAR_COUNT} -gt "10000" ] ; then
+      if [[ ${CHAR_COUNT} -gt "10000" ]] ; then
             echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
             false
       else
@@ -72,7 +72,7 @@ if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
       fi
 fi
 
-if [ ${FORMAT} = "1" ] ; then
+if [[ ${FORMAT} = "1" ]] ; then
       reformatValidator.pl clu fas \
             $(readlink -f %alignment.path) \
             $(readlink -f ../results/${JOBID}.fas) \
@@ -84,19 +84,19 @@ else
             -d 160 -uc -l 32000
 fi
 
-if [ ! -f ../results/${JOBID}.fas ]; then
+if [[ ! -f ../results/${JOBID}.fas ]] ; then
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
     false
 fi
 
 SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
 
-if [ ${SEQ_COUNT} -gt "10000" ] ; then
+if [[ ${SEQ_COUNT} -gt "10000" ]] ; then
       echo "#Input contains more than 10000 sequences." >> ../results/process.log
       false
 fi
 
-if [ ${SEQ_COUNT} -gt "1" ] ; then
+if [[ ${SEQ_COUNT} -gt "1" ]] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
@@ -105,7 +105,7 @@ fi
 echo "done" >> ../results/process.log
 
 
-if [ "%hhpred_align.content" = "true" ] ; then
+if [[ "%hhpred_align.content" = "true" ]] ; then
         echo "#Pairwise comparison mode." >> ../results/process.log
 
         echo "done" >> ../results/process.log
@@ -117,13 +117,13 @@ if [ "%hhpred_align.content" = "true" ] ; then
         A3M_INPUT2=$(head -1 ../params/alignment_two | egrep "^#A3M#" | wc -l)
 
 
-        if [ ${CHAR_COUNT2} -gt "10000000" ] ; then
+        if [[ ${CHAR_COUNT2} -gt "10000000" ]] ; then
             echo "#Template sequence/MSA may not contain more than 10000000 characters." >> ../results/process.log
             false
         fi
 
 
-        if [ ${A3M_INPUT2} = "1" ] ; then
+        if [[ ${A3M_INPUT2} = "1" ]] ; then
 
             sed -i '1d' ../params/alignment_two
 
@@ -132,7 +132,7 @@ if [ "%hhpred_align.content" = "true" ] ; then
                 $(readlink -f ../params/alignment_two.tmp) \
                 -d 160 -uc -l 32000
 
-            if [ ! -f ../params/alignment_two.tmp ]; then
+            if [[ ! -f ../params/alignment_two.tmp ]]; then
                 echo "#Template is not in valid A3M format." >> ../results/process.log
                 false
             else
@@ -142,11 +142,11 @@ if [ "%hhpred_align.content" = "true" ] ; then
             fi
         fi
 
-        if [ ${SEQ_COUNT2} = "0" ] && [ ${FORMAT2} = "0" ] ; then
+        if [[ ${SEQ_COUNT2} = "0" ]] && [[ ${FORMAT2} = "0" ]] ; then
             sed 's/[^a-z^A-Z]//g' ../params/alignment_two > ../params/alignment2
             CHAR_COUNT2=$(wc -m < ../params/alignment2)
 
-            if [ ${CHAR_COUNT2} -gt "10000" ] ; then
+            if [[ ${CHAR_COUNT2} -gt "10000" ]] ; then
                 echo "#Template protein sequence contains more than 10000 characters." >> ../results/process.log
                 false
             else
@@ -155,7 +155,7 @@ if [ "%hhpred_align.content" = "true" ] ; then
             fi
         fi
 
-        if [ ${FORMAT2} = "1" ] ; then
+        if [[ ${FORMAT2} = "1" ]] ; then
             reformatValidator.pl clu fas \
             $(readlink -f %alignment_two.path) \
             $(readlink -f ../results/${JOBID}.2.fas) \
@@ -169,19 +169,19 @@ if [ "%hhpred_align.content" = "true" ] ; then
             -d 160 -uc -l 32000
         fi
 
-        if [ ! -f ../results/${JOBID}.2.fas ]; then
+        if [[ ! -f ../results/${JOBID}.2.fas ]] ; then
             echo "#Template MSA is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
             false
         fi
 
         SEQ_COUNT2=$(egrep '^>' ../results/${JOBID}.2.fas | wc -l)
 
-        if [ ${SEQ_COUNT2} -gt "10000" ] ; then
+        if [[ ${SEQ_COUNT2} -gt "10000" ]] ; then
             echo "#Template MSA contains more than 10000 sequences." >> ../results/process.log
             false
         fi
 
-        if [ ${SEQ_COUNT2} -gt "1" ] ; then
+        if [[ ${SEQ_COUNT2} -gt "1" ]] ; then
             echo "#Template is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
         else
             echo "#Template is a single protein sequence." >> ../results/process.log
@@ -205,7 +205,7 @@ rm ../results/firstSeq0.fas ../results/firstSeq.cc
 ITERS=%msa_gen_max_iter.content
 
 #CHECK IF MSA generation is required or not
-if [ ${ITERS} = "0" ] ; then
+if [[ ${ITERS} = "0" ]] ; then
         echo "#No MSA generation required for building A3M." >> ../results/process.log
         reformat_hhsuite.pl fas a3m ../results/${JOBID}.fas ${JOBID}.a3m -M first
         mv ${JOBID}.a3m ../results/${JOBID}.a3m
@@ -223,7 +223,7 @@ else
         echo "done" >> ../results/process.log
 
     #MSA generation by HHblits
-    if [ "%msa_gen_method.content" = "uniprot20" ] || [ "%msa_gen_method.content" = "uniclust30" ] ; then
+    if [[ "%msa_gen_method.content" = "uniclust30" ]] ; then
         echo "#Running ${ITERS} iteration(s) of HHblits against %msa_gen_method.content for query MSA generation." >> ../results/process.log
 
         reformat_hhsuite.pl fas a3m \
@@ -246,12 +246,12 @@ else
 
     fi
     #MSA generation by PSI-BLAST
-    if [ "%msa_gen_method.content" = "psiblast" ] ; then
+    if [[ "%msa_gen_method.content" = "psiblast" ]] ; then
 
         echo "#Running ${ITERS} iteration(s) of PSI-BLAST for query MSA generation." >> ../results/process.log
         #Check if input is a single sequence or an MSA
         INPUT="query"
-        if [ ${SEQ_COUNT} -gt 1 ] ; then
+        if [[ ${SEQ_COUNT} -gt 1 ]] ; then
             INPUT="in_msa"
         fi
 
@@ -321,12 +321,12 @@ echo "done" >> ../results/process.log
 
 
 # creating alignment of query and subject input
-if [  "%hhpred_align.content" = "true" ]
+if [[  "%hhpred_align.content" = "true" ]]
 then
 
     cd ../results
 
-    if [ ${ITERS} = "0" ] && [ ${SEQ_COUNT2} -gt "1" ] ; then
+    if [[ ${ITERS} = "0" ]] && [[ ${SEQ_COUNT2} -gt "1" ]] ; then
             echo "#No MSA generation required for building template A3M." >> ../results/process.log
             reformat_hhsuite.pl fas a3m %alignment_two.path db.a3m -M first
     else
@@ -350,24 +350,24 @@ then
 fi
 
 
-if [  "%hhpred_align.content" = "true" ] ; then
+if [[  "%hhpred_align.content" = "true" ]] ; then
       echo "#Comparing query profile HMM with template profile HMM." >> ../results/process.log
 else
       echo "#Searching profile HMM database(s)." >> ../results/process.log
 fi
 
-if [ "%alignmacmode.content" = "loc" ] ; then
+if [[ "%alignmacmode.content" = "loc" ]] ; then
     MACT="-norealign"
     ALIGNMODE="-loc"
 fi
 
-if [ "%alignmacmode.content" = "locrealign" ] ; then
+if [[ "%alignmacmode.content" = "locrealign" ]] ; then
     MACT_SCORE=%macthreshold.content
     MACT="-realign -mact ${MACT_SCORE}"
     ALIGNMODE="-loc"
 fi
 
-if [ "%alignmode.content" = "glob" ] ; then
+if [[ "%alignmacmode.content" = "glob" ]] ; then
     MACT="-realign -mact 0.0"
     ALIGNMODE="-glob"
 fi
@@ -429,7 +429,7 @@ manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/${JOBID}.json
 
 # For alerting user if too few homologs are found for building A3M
 
-if [ ${ITERS} = "0" ] ; then
+if [[ ${ITERS} = "0" ]] ; then
     manipulate_json.py -k 'MSA_GEN' -v "custom" ../results/${JOBID}.json
 else
     manipulate_json.py -k 'MSA_GEN' -v "%msa_gen_method.content" ../results/${JOBID}.json
