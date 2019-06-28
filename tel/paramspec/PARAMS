@@ -16,6 +16,7 @@ matrix_marcoil GEN matrix_marcoil.prop
 protblastprogram GEN protblastprogram.prop
 transition_probability GEN transition_probability.prop
 alignmode GEN alignmode.prop
+alignmacmode GEN alignmacmode.prop
 ss_scoring GEN ss_scoring.prop
 maxrounds GEN maxrounds.prop
 min_seqid GEN min_seqid.prop
@@ -25,7 +26,6 @@ seqcount GEN seqcount.prop
 inc_nucl GEN inc_nucl.prop
 amino_nucl_rel GEN amino_nucl_rel.prop
 codon_table GEN codon_table.prop
-macmode GEN macmode.prop
 macthreshold GEN macthreshold.prop
 max_hhblits_iter GEN max_hhblits_iter.prop
 proteomes GEN hhsuitedb.py
