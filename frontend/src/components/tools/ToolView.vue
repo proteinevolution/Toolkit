@@ -5,10 +5,10 @@
              v-if="tool">
             <div class="tool-header d-flex align-items-baseline">
                 <h1>
-                    <router-link class="cursor-pointer mr-1"
-                                 :to="'/tools/'+toolName">
+                    <a class="cursor-pointer mr-1"
+                       @click="refresh">
                         {{ tool.longname }}
-                    </router-link>
+                    </a>
                     <b-link class="help-icon" @click="launchHelpModal">
                         <i class="far fa-question-circle"></i>
                     </b-link>
@@ -198,7 +198,11 @@
                 EventBus.$emit('show-modal', {id: 'helpModal', props: {toolName: this.toolName}});
             },
             refresh(): void {
-                this.$emit('refresh');
+                if (this.$route.name === 'tools') {
+                    this.$emit('refresh');
+                } else {
+                    this.$router.push('/tools/' + this.toolName);
+                }
             },
         },
     });
