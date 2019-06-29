@@ -112,7 +112,7 @@
                     }
 
                     // emit event if msa detected
-                    if (val.msaDetected != undefined && this.validation.msaDetected !== val.msaDetected) {
+                    if (val.msaDetected !== undefined && this.validation.msaDetected !== val.msaDetected) {
                         EventBus.$emit('msa-detected-changed', val.msaDetected);
                     }
 

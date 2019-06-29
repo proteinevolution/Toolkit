@@ -48,8 +48,7 @@
             },
         },
         mounted() {
-            // use != to also catch null
-            if (this.parameter.onDetectedMSA != undefined) {
+            if (this.parameter.onDetectedMSA !== undefined && this.parameter.onDetectedMSA !== null) {
                 EventBus.$on('msa-detected-changed', this.msaDetectedChanged);
             }
         },
@@ -79,9 +78,9 @@
         },
         methods: {
             msaDetectedChanged(msaDetected: boolean): void {
-                if (typeof this.parameter.onDetectedMSA !== 'undefined') {
+                if (this.parameter.onDetectedMSA !== undefined && this.parameter.onDetectedMSA !== null) {
                     const val: string = msaDetected ? this.parameter.onDetectedMSA : this.parameter.default;
-                    const option: SelectOption = this.parameter.options.find((o: SelectOption) => o && o.value == val);
+                    const option: SelectOption = this.parameter.options.find((o: SelectOption) => o && o.value === val);
                     if (!option) {
                         logger.warn(`did not find option for value ${val}`);
                     } else {
