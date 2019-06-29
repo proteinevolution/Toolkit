@@ -46,7 +46,8 @@ object Parameter {
       name: String,
       default: Option[String],
       options: Seq[SelectOption],
-      maxSelectedOptions: Int
+      maxSelectedOptions: Int,
+      onDetectedMSA: Option[String]
   ) extends Parameter
 
   case class NumberParameter(

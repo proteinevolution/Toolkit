@@ -67,6 +67,7 @@ export interface SelectParameter extends Parameter {
     maxSelectedOptions: number;
     forceMulti?: boolean;
     default?: string;
+    onDetectedMSA?: string;
 }
 
 export interface SelectOption {

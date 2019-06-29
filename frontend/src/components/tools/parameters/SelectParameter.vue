@@ -24,7 +24,11 @@
     import Multiselect from 'vue-multiselect';
     import {SelectOption, SelectParameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
+    import EventBus from '@/util/EventBus';
     import mixins from 'vue-typed-mixins';
+    import Logger from 'js-logger';
+
+    const logger = Logger.get('SelectParameter');
 
     export default mixins(ToolParameterMixin).extend({
         name: 'SelectParameter',
@@ -42,6 +46,12 @@
                 required: false,
                 default: 'tools.parameters.select.maxElementsSelected',
             },
+        },
+        mounted() {
+            // use != to also catch null
+            if (this.parameter.onDetectedMSA != undefined) {
+                EventBus.$on('msa-detected-changed', this.msaDetectedChanged);
+            }
         },
         computed: {
             defaultSubmissionValue(): any {
@@ -65,6 +75,21 @@
             },
             isMulti(): boolean {
                 return this.parameter.forceMulti || this.parameter.maxSelectedOptions > 1;
+            },
+        },
+        methods: {
+            msaDetectedChanged(msaDetected: boolean): void {
+                if (typeof this.parameter.onDetectedMSA !== 'undefined') {
+                    const val: string = msaDetected ? this.parameter.onDetectedMSA : this.parameter.default;
+                    const option: SelectOption = this.parameter.options.find((o: SelectOption) => o && o.value == val);
+                    if (!option) {
+                        logger.warn(`did not find option for value ${val}`);
+                    } else {
+                        this.selected = option;
+                        logger.info(`msa detected: ${msaDetected}. Setting value for ${this.parameter.name} to "${val}"`);
+                        this.$emit('selectionChanged', this.selected);
+                    }
+                }
             },
         },
     });

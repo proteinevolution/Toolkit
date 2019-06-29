@@ -26,7 +26,7 @@ function validateSequence(val: string, params: SequenceValidationParams): Valida
         if (detectedFormat === '') {
             return result(true, 'danger', 'invalidCharacters');
         } else if (autoTransformToFormat && params.allowedSeqFormats.map((v) => v.toString().toUpperCase())
-                .includes(autoTransformToFormat)) {
+            .includes(autoTransformToFormat)) {
             return result(false, 'success', 'shouldAutoTransform', {
                 detected: detectedFormat,
                 transformFormat: autoTransformToFormat,
@@ -76,7 +76,7 @@ function validateSequence(val: string, params: SequenceValidationParams): Valida
 
             const typeName: string | undefined = elem.getTypes().find((type: string) =>
                 type.toUpperCase() === params.allowedSeqType.toUpperCase());
-            return result(false, 'success', 'valid', {type: typeName, format: detectedFormat});
+            return result(false, 'success', 'valid', {type: typeName, format: detectedFormat}, elem.getNumbers() > 1);
         }
     }
 
@@ -117,17 +117,19 @@ export function validatePDB(val: string): ValidationResult {
 }
 
 export function validateAccessionID(val: string): ValidationResult {
-    if (val.replace(/\s/g, '' ) === '') {
+    if (val.replace(/\s/g, '') === '') {
         return result(true, 'danger', 'invalidAccessionID');
     }
     return result(false, 'success', 'validAccessionID');
 }
 
-function result(failed: boolean, cssClass: string, textKey: string, textKeyParams?: any): ValidationResult {
+function result(failed: boolean, cssClass: string, textKey: string,
+                textKeyParams?: any, msaDetected?: boolean): ValidationResult {
     return {
         failed,
         cssClass,
         textKey,
         textKeyParams,
+        msaDetected,
     };
 }

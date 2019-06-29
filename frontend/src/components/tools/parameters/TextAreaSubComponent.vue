@@ -92,7 +92,7 @@
                 uploadingFile: false,
                 autoTransformedParams: null,
                 autoTransformMessageTimeout: 2500,
-                validation: {},
+                validation: {} as ValidationResult,
             };
         },
         watch: {
@@ -110,6 +110,12 @@
                         // trigger validation again
                         this.validation = validation(this.text, this.parameter.inputType, this.validationParams);
                     }
+
+                    // emit event if msa detected
+                    if (val.msaDetected != undefined && this.validation.msaDetected !== val.msaDetected) {
+                        EventBus.$emit('msa-detected-changed', val.msaDetected);
+                    }
+
                     this.validation = val;
                     this.$emit('validation', val);
                 },

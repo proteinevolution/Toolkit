@@ -28,12 +28,13 @@ import javax.inject.{ Inject, Singleton }
 @Singleton
 class ParamAccess @Inject()(tel: TEL) {
 
-  def select(name: String, default: Option[String], maxSelectedOptions: Int = 1) =
+  def select(name: String, default: Option[String], maxSelectedOptions: Int = 1, onDetectedMSA: Option[String] = None) =
     SelectParameter(
       name,
       default,
       tel.generateValues(name).toSeq.map(option => SelectOption(option._1, option._2)),
-      maxSelectedOptions
+      maxSelectedOptions,
+      onDetectedMSA
     )
 
   final val alignmentFormats = Seq(
@@ -68,7 +69,7 @@ class ParamAccess @Inject()(tel: TEL) {
     case "MAXROUNDS"         => select("maxrounds", default = Some("1"))
     case "EVALUE"            => select("evalue", default = Some("1e-3"))
     case "OUTPUT_ORDER"      => select("output_order", default = Some("input"))
-    case "PCOILS_INPUT_MODE" => select("pcoils_input_mode", default = Some("0"))
+    case "PCOILS_INPUT_MODE" => select("pcoils_input_mode", default = Some("0"), onDetectedMSA = Some("1"))
     case "MATRIX"            => select("matrix", default = Some("BLOSUM62"))
     case "MIN_SEQID_QUERY" =>
       NumberParameter("min_seqid_query", min = Some(0), max = Some(100), default = Some(0))
@@ -92,7 +93,7 @@ class ParamAccess @Inject()(tel: TEL) {
         defaultProteomes = None
       )
     case "MSA_GEN_METHOD"   => select("msa_gen_method", default = Some("uniclust30"))
-    case "MSA_GEN_MAX_ITER" => select("msa_gen_max_iter", default = Some("3"))
+    case "MSA_GEN_MAX_ITER" => select("msa_gen_max_iter", default = Some("3"), onDetectedMSA = Some("0"))
     case "HHPRED_INCL_EVAL" =>
       select("hhpred_incl_eval", default = Some("1e-3"))
     case "MIN_COV" =>
@@ -104,7 +105,7 @@ class ParamAccess @Inject()(tel: TEL) {
     // HMMER
     case "HMMER_DB" => select("hmmerdb", default = Some("nr50"))
     case "MAX_HHBLITS_ITER" =>
-      select("max_hhblits_iter", default = Some("1"))
+      select("max_hhblits_iter", default = Some("1"), onDetectedMSA = Some("0"))
 
     // PatternSearch
     case "PATSEARCH_DB" => select("patsearchdb", default = Some("nr50"))
@@ -150,7 +151,7 @@ class ParamAccess @Inject()(tel: TEL) {
 
     // HHrepID
     case "MSA_GEN_MAX_ITER_HHREPID" =>
-      select("msa_gen_max_iter_hhrepid", default = Some("3"))
+      select("msa_gen_max_iter_hhrepid", default = Some("3"), onDetectedMSA = Some("0"))
     case "SCORE_SS"           => select("score_ss", default = Some("2"))
     case "REP_PVAL_THRESHOLD" => select("rep_pval_threshold", default = Some("1e-2"))
     case "SELF_ALN_PVAL_THRESHOLD" =>
