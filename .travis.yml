@@ -27,14 +27,12 @@ install:
   - git submodule update --init --recursive
   - git clone https://github.com/felixgabler/maxmind-geoip2-scala.git $HOME/pizza
   - cd $HOME/pizza; sbt publishLocal; cd -
-  - git clone https://github.com/zy4/scalajs-mithril.git $HOME/scalajs-mithril
-  - cd $HOME/scalajs-mithril; sbt publishLocal; cd -
   - . $HOME/.nvm/nvm.sh
   - nvm install stable
   - nvm use stable
-  - npm install
-  - npm install jsdom@9.12.0
+  - cd frontend; yarn install; cd -
 script:
  - bin/validate-code
  - $SBT_BIN test stage
+ - cd frontend; yarn run test:unit; yarn run test:unit:reformat; cd -
  - $HOME/cloc/cloc $(git ls-files)
