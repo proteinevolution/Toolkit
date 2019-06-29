@@ -16,6 +16,7 @@ before_cache:
   - find $HOME/.ivy2/cache -name 'ivydata-*.properties' -delete
   - find $HOME/.sbt -name '*.lock' -delete
 cache:
+  yarn: true
   directories:
   - "$HOME/.ivy2/cache"
   - $HOME/.sbt
