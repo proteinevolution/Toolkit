@@ -25,5 +25,10 @@ describe('sameLength', () => {
     });
 });
 
-
-
+describe('onlyDashes', () => {
+    it('should detect only dashes or points', () => {
+        expect(new Reformat('....-----').onlyDashes()).to.be.true;
+        expect(new Reformat('....-A----').onlyDashes()).to.be.false;
+        expect(new Reformat('T....-A----').onlyDashes()).to.be.false;
+    });
+});

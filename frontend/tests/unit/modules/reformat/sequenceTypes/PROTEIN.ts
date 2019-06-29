@@ -6,6 +6,5 @@ describe('PROTEIN validation', () => {
         expect(isProteinSequence('AGAG')).to.be.true;
         expect(isProteinSequence('AGAG.--.DA')).to.be.true;
         expect(isProteinSequence('AGAG@')).to.be.false;
-        expect(isProteinSequence('....-----')).to.be.false;
     });
 });
