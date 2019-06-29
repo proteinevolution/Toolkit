@@ -1,5 +1,5 @@
 <template>
-    <b-form-group :label="parameter.label">
+    <b-form-group :label="$t('tools.parameters.labels.' + parameter.name)">
 
         <multiselect v-model="selected"
                      :multiple="isMulti"

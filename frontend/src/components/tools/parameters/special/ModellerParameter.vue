@@ -1,7 +1,7 @@
 <template>
     <div>
         <b-form-group v-if="!valid"
-                      :label="parameter.label">
+                      :label="$t('tools.parameters.labels.' + parameter.name)">
             <b-form-input v-model="submissionValue"
                           type="text"
                           size="sm"

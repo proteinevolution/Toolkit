@@ -1,5 +1,5 @@
 <template>
-    <b-form-group :label="parameter.label">
+    <b-form-group :label="$t('tools.parameters.labels.' + parameter.name)">
         <b-form-input v-model.number="submissionValue"
                       type="number"
                       :min="parameter.min"

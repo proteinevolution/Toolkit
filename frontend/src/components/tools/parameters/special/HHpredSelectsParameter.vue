@@ -61,7 +61,6 @@
                 }
                 return {
                     name: this.parameter.name,
-                    label: this.parameter.label,
                     options: this.parameter.options,
                     default: this.parameter.default,
                     parameterType: ParameterType.SelectParameter,
@@ -81,7 +80,6 @@
                 }
                 return {
                     name: this.parameter.nameProteomes,
-                    label: this.parameter.labelProteomes,
                     options: this.parameter.optionsProteomes,
                     default: this.parameter.defaultProteomes,
                     parameterType: ParameterType.SelectParameter,

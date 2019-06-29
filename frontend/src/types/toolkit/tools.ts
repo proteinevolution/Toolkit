@@ -47,7 +47,6 @@ export interface ParameterSection {
 export interface Parameter {
     parameterType: ParameterType;
     name: string;
-    label: string;
 }
 
 export interface TextInputParameter extends Parameter {
@@ -78,7 +77,6 @@ export interface SelectOption {
 
 export interface HHpredSelectsParameter extends Parameter {
     nameProteomes: string;
-    labelProteomes: string;
     options: SelectOption[];
     optionsProteomes: SelectOption[];
     maxSelectedOptions: number;

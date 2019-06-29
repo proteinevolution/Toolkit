@@ -21,14 +21,12 @@ import io.circe.generic.extras.Configuration
 
 sealed trait Parameter {
   def name: String
-  def label: String
 }
 
 object Parameter {
 
   case class TextInputParameter(
       name: String,
-      label: String,
       inputPlaceholder: String,
       regex: Option[String] = None,
       sampleInput: Option[String] = None
@@ -40,15 +38,12 @@ object Parameter {
       inputPlaceholder: String,
       sampleInputKey: String,
       allowsTwoTextAreas: Boolean = false
-  ) extends Parameter {
-    override val label: String = ""
-  }
+  ) extends Parameter
 
   case class SelectOption(value: String, text: String)
 
   case class SelectParameter(
       name: String,
-      label: String,
       default: Option[String],
       options: Seq[SelectOption],
       maxSelectedOptions: Int
@@ -56,7 +51,6 @@ object Parameter {
 
   case class NumberParameter(
       name: String,
-      label: String,
       min: Option[Double] = None,
       max: Option[Double] = None,
       step: Option[Double] = None,
@@ -65,7 +59,6 @@ object Parameter {
 
   case class BooleanParameter(
       name: String,
-      label: String,
       default: Option[Boolean]
   ) extends Parameter
 
@@ -76,10 +69,8 @@ object Parameter {
 
   case class HHpredSelectsParameter(
     name: String,
-    label: String,
     options: Seq[SelectOption],
     nameProteomes: String,
-    labelProteomes: String,
     optionsProteomes: Seq[SelectOption],
     maxSelectedOptions: Int,
     default: Option[String] = None,
