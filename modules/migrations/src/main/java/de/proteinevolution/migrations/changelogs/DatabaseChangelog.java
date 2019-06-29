@@ -249,4 +249,20 @@ public class DatabaseChangelog {
         );
         db.getCollection("jobs").updateMany(filters, rename);
     }
+
+    @ChangeSet(order = "016", id = "16", author = "Felix Gabler")
+    public void createIndexes(final MongoDatabase db) {
+        MongoCollection<Document> users = db.getCollection("users");
+        users.dropIndexes();
+        users.createIndex(Indexes.ascending("id"), new IndexOptions().unique(true));
+        users.createIndex(Indexes.ascending("userData.eMail"), new IndexOptions().sparse(true).unique(true));
+        users.createIndex(Indexes.ascending("userData.nameLogin"), new IndexOptions().sparse(true).unique(true));
+        users.createIndex(Indexes.ascending("dateLastLogin"));
+
+        MongoCollection<Document> jobs = db.getCollection("jobs");
+        jobs.dropIndexes();
+        jobs.createIndex(Indexes.ascending("id"), new IndexOptions().unique(true));
+        jobs.createIndex(Indexes.ascending("hash"));
+        jobs.createIndex(Indexes.ascending("ownerID"));
+    }
 }
