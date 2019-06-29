@@ -83,7 +83,7 @@
     import {FrontendToolParameter, SelectOption, SequenceValidationParams, Tool} from '@/types/toolkit/tools';
     import {Reformat} from '@/modules/reformat';
     import Multiselect from 'vue-multiselect';
-    import Select from './SelectParameter.vue';
+    import Select from '../SelectParameter.vue';
     import {AlignmentSeqFormat} from '@/types/toolkit/enums';
     import EventBus from '@/util/EventBus';
     import Logger from 'js-logger';

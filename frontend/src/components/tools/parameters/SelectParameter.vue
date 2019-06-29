@@ -4,18 +4,17 @@
         <multiselect v-model="selected"
                      :multiple="isMulti"
                      :max="isMulti ? parameter.maxSelectedOptions : null"
-                     :allowEmpty="false"
+                     :allowEmpty="isMulti"
                      :options="parameter.options"
                      track-by="value"
                      label="text"
-                     preselectFirst
                      :placeholder="$t(isMulti ? 'tools.parameters.select.multiplePlaceholder' : 'tools.parameters.select.singlePlaceholder')"
                      :searchable="false"
                      selectLabel=""
                      deselectLabel=""
                      selectedLabel=""
                      @input="$emit('selectionChanged', selected)">
-            <template #maxElements>{{ $t('tools.parameters.select.maxElementsSelected') }}</template>
+            <template #maxElements>{{ $t(maxElementTextKey) }}</template>
         </multiselect>
 
     </b-form-group>
@@ -38,6 +37,11 @@
              https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
              */
             parameter: Object as () => SelectParameter,
+            maxElementTextKey: {
+                type: String,
+                required: false,
+                default: 'tools.parameters.select.maxElementsSelected',
+            },
         },
         computed: {
             defaultSubmissionValue(): any {
@@ -60,7 +64,7 @@
                 },
             },
             isMulti(): boolean {
-                return this.parameter.maxSelectedOptions > 1;
+                return this.parameter.forceMulti || this.parameter.maxSelectedOptions > 1;
             },
         },
     });

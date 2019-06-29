@@ -8,6 +8,7 @@ export enum ParameterType {
     ModellerKey = 'ModellerKey',
     ReformatView = 'ReformatView',
     AlignmentViewerView = 'AlignmentViewerView',
+    HHpredSelectsParameter = 'HHpredSelectsParameter',
 }
 
 export enum TextAreaInputType {

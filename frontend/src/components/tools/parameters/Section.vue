@@ -1,11 +1,10 @@
-import {ParameterType} from '../../../types/toolkit/enums';
-import {ParameterType} from '../../../types/toolkit/enums';
+import {ParameterType} from "../../../types/toolkit/enums";
 <template>
     <div>
         <b-row>
             <b-col v-for="parameter in section.parameters"
                    :md="mediumSize(parameter)"
-                   :sm="smallSize()"
+                   :sm="smallSize(parameter)"
                    :lg="largeSize(parameter)"
                    :key="parameter.name">
                 <component :is="parameter.parameterType"
@@ -28,11 +27,12 @@ import {ParameterType} from '../../../types/toolkit/enums';
     import SelectParameter from './SelectParameter.vue';
     import NumberParameter from './NumberParameter.vue';
     import BooleanParameter from './BooleanParameter.vue';
-    import ModellerParameter from './ModellerParameter.vue';
-    import AlignmentViewerView from './AlignmentViewerView.vue';
-    import ReformatView from './ReformatView.vue';
+    import ModellerParameter from './special/ModellerParameter.vue';
+    import AlignmentViewerView from './special/AlignmentViewerView.vue';
+    import ReformatView from './special/ReformatView.vue';
     import {Parameter, ParameterSection, ValidationParams} from '@/types/toolkit/tools';
     import {ParameterType} from '@/types/toolkit/enums';
+    import HHpredSelectsParameter from '@/components/tools/parameters/special/HHpredSelectsParameter.vue';
 
     export default Vue.extend({
         name: 'Section',
@@ -43,6 +43,7 @@ import {ParameterType} from '../../../types/toolkit/enums';
             NumberParameter,
             BooleanParameter,
             ModellerParameter,
+            HHpredSelectsParameter,
             AlignmentViewerView,
             ReformatView,
         },
@@ -63,7 +64,9 @@ import {ParameterType} from '../../../types/toolkit/enums';
         },
         methods: {
             largeSize(parameter: Parameter) {
-                if (this.section.multiColumnLayout) {
+                if (parameter.parameterType === ParameterType.HHpredSelectsParameter) {
+                    return 12;
+                } else if (this.section.multiColumnLayout) {
                     return this.fullScreen ? 3 : 4;
                 } else if (
                     parameter.parameterType === ParameterType.TextAreaParameter ||
@@ -76,7 +79,9 @@ import {ParameterType} from '../../../types/toolkit/enums';
                 }
             },
             mediumSize(parameter: Parameter) {
-                if (this.section.multiColumnLayout) {
+                if (parameter.parameterType === ParameterType.HHpredSelectsParameter) {
+                    return 12;
+                } else if (this.section.multiColumnLayout) {
                     return 4;
                 } else if (
                     parameter.parameterType === ParameterType.TextAreaParameter ||
@@ -88,7 +93,10 @@ import {ParameterType} from '../../../types/toolkit/enums';
                     return 6;
                 }
             },
-            smallSize(): number {
+            smallSize(parameter: Parameter): number {
+                if (parameter.parameterType === ParameterType.HHpredSelectsParameter) {
+                    return 12;
+                }
                 return this.section.multiColumnLayout ? 6 : 12;
             },
         },

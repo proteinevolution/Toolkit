@@ -123,6 +123,7 @@ export default {
                     singlePlaceholder: 'Select one',
                     multiplePlaceholder: 'Select options',
                     maxElementsSelected: 'Max. elements selected',
+                    maxElementsSelectedHHpred: 'Only 4 databases may be selected at a time!',
                 },
                 customJobId: {
                     placeholder: 'Custom Job ID',

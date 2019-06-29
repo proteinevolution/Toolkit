@@ -10,7 +10,7 @@
             </b-form-input>
         </b-form-group>
         <p v-else
-           v-t="'tools.parameters.modellerKey.stored'">
+           v-text="$t('tools.parameters.modellerKey.stored')">
         </p>
     </div>
 </template>
@@ -55,7 +55,7 @@
                     this.validateModellerKey(value);
                 },
             },
-            user(user: User | null) {
+            user() {
                 this.validateModellerKey(this.submissionValue);
             },
         },

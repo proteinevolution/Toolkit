@@ -66,7 +66,8 @@ export interface TextAreaParameter extends Parameter {
 export interface SelectParameter extends Parameter {
     options: SelectOption[];
     maxSelectedOptions: number;
-    default: string;
+    forceMulti?: boolean;
+    default?: string;
 }
 
 export interface SelectOption {
@@ -75,11 +76,21 @@ export interface SelectOption {
     $isDisabled?: boolean;
 }
 
+export interface HHpredSelectsParameter extends Parameter {
+    nameProteomes: string;
+    labelProteomes: string;
+    options: SelectOption[];
+    optionsProteomes: SelectOption[];
+    maxSelectedOptions: number;
+    default?: string;
+    defaultProteomes?: string;
+}
+
 export interface NumberParameter extends Parameter {
-    min: number;
-    max: number;
+    min?: number;
+    max?: number;
     step?: number;
-    default: number;
+    default?: number;
 }
 
 export interface BooleanParameter extends Parameter {

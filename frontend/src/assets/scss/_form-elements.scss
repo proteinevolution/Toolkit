@@ -10,7 +10,7 @@
   }
 
   .multiselect__tags {
-    min-height: 0;
+    min-height: 29px;
     padding: 4px 30px 0 4px;
     border: $input-border-width solid $input-border-color;
     @if $enable-rounded {
@@ -44,6 +44,12 @@
 
     .multiselect__single {
       margin-bottom: 3px;
+    }
+
+    .multiselect__placeholder {
+      margin-bottom: 0;
+      padding-top: 0;
+      padding-bottom: 2px;
     }
   }
 
