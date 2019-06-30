@@ -111,8 +111,8 @@
                         this.validation = validation(this.text, this.parameter.inputType, this.validationParams);
                     }
 
-                    // emit event if msa detected
-                    if (val.msaDetected !== undefined && this.validation.msaDetected !== val.msaDetected) {
+                    // emit event if msa detected (except for second input)
+                    if (!this.second && val.msaDetected !== undefined && this.validation.msaDetected !== val.msaDetected) {
                         EventBus.$emit('msa-detected-changed', val.msaDetected);
                     }
 
