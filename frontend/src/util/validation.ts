@@ -22,6 +22,7 @@ function validateSequence(val: string, params: SequenceValidationParams): Valida
     if (val.length > 0) {
         const detectedFormat: string = elem.getFormat();
         const autoTransformToFormat: string = elem.getAutoTransformToFormat();
+        const msaDetected: boolean = elem.getNumbers() > 1;
 
         if (detectedFormat === '') {
             return result(true, 'danger', 'invalidCharacters');
@@ -68,15 +69,15 @@ function validateSequence(val: string, params: SequenceValidationParams): Valida
                 return result(true, 'danger', 'maxLength', {limit: 20000000});
             }
             if (!elem.uniqueIDs()) {
-                return result(false, 'warning', 'uniqueIDs');
+                return result(false, 'warning', 'uniqueIDs', msaDetected);
             }
             if (params.allowedSeqType === AlignmentSeqType.PROTEIN && elem.isNucleotide()) {
-                return result(false, 'warning', 'nucleotideError');
+                return result(false, 'warning', 'nucleotideError', msaDetected);
             }
 
             const typeName: string | undefined = elem.getTypes().find((type: string) =>
                 type.toUpperCase() === params.allowedSeqType.toUpperCase());
-            return result(false, 'success', 'valid', {type: typeName, format: detectedFormat}, elem.getNumbers() > 1);
+            return result(false, 'success', 'valid', {type: typeName, format: detectedFormat}, msaDetected);
         }
     }
 
