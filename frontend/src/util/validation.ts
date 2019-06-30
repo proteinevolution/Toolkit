@@ -69,10 +69,10 @@ function validateSequence(val: string, params: SequenceValidationParams): Valida
                 return result(true, 'danger', 'maxLength', {limit: 20000000});
             }
             if (!elem.uniqueIDs()) {
-                return result(false, 'warning', 'uniqueIDs', msaDetected);
+                return result(false, 'warning', 'uniqueIDs', undefined, msaDetected);
             }
             if (params.allowedSeqType === AlignmentSeqType.PROTEIN && elem.isNucleotide()) {
-                return result(false, 'warning', 'nucleotideError', msaDetected);
+                return result(false, 'warning', 'nucleotideError', undefined, msaDetected);
             }
 
             const typeName: string | undefined = elem.getTypes().find((type: string) =>
