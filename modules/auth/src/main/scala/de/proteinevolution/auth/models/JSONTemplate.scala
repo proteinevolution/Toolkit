@@ -51,12 +51,12 @@ trait JSONTemplate {
     )
   }
 
-  def signedUp(user: User): Json = {
-    authMessage("signedUp", success = true, userOption = Some(user))
+  def signedUp(): Json = {
+    authMessage("signedUp", success = true)
   }
 
-  def loggedOut(user: User): Json = {
-    authMessage("loggedOut", success = true, userOption = Some(user))
+  def loggedOut(): Json = {
+    authMessage("loggedOut", success = true)
   }
 
   def loginError(): Json = {
@@ -136,8 +136,8 @@ trait JSONTemplate {
     authMessage("passwordChanged", success = true, userOption = Some(user))
   }
 
-  def passwordRequestSent(user: User): Json = {
-    authMessage("passwordRequestSent", success = true, userOption = Some(user))
+  def passwordRequestSent(): Json = {
+    authMessage("passwordRequestSent", success = true)
   }
 
   def passwordChangeAccepted(user: User): Json = {
@@ -148,7 +148,7 @@ trait JSONTemplate {
     authMessage("passwordChangeFailed")
   }
 
-  def showPasswordResetView(user: User): Json = {
+  def showPasswordResetView(): Json = {
     authMessage(SHOWPASSWORDRESETVIEW, success = true)
   }
 
