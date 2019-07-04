@@ -36,6 +36,7 @@
     import Vue from 'vue';
     import {PasswordChangeData, AuthMessage} from '@/types/toolkit/auth';
     import AuthService from '@/services/AuthService';
+    import {TranslateResult} from 'vue-i18n';
 
     export default Vue.extend({
         name: 'Settings',
@@ -47,7 +48,7 @@
                 newPasswordState: null as boolean | null,
                 confirmPassword: '',
                 confirmPasswordState: null as boolean | null,
-                message: '',
+                message: '' as TranslateResult,
                 successful: true,
             };
         },
@@ -83,7 +84,7 @@
                     const msg: AuthMessage = await AuthService.changePassword(data);
                     this.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                     this.successful = msg.successful;
-                } catch (error: AuthMessage) {
+                } catch (error) {
                     this.message = this.$t('auth.responses.' + error.messageKey, error.messageArguments);
                     this.successful = false;
                 }

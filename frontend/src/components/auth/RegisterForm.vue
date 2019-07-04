@@ -62,6 +62,7 @@
     import EventBus from '@/util/EventBus';
     import AuthService from '@/services/AuthService';
     import {SignUpData, AuthMessage} from '@/types/toolkit/auth';
+    import {TranslateResult} from 'vue-i18n';
 
     export default Vue.extend({
         name: 'RegisterForm',
@@ -77,7 +78,7 @@
                 passwordRepeatState: null as boolean | null,
                 privacyAccepted: false,
                 successful: false,
-                message: '',
+                message: '' as TranslateResult,
             };
         },
         computed: {
@@ -128,7 +129,7 @@
                     const msg: AuthMessage = await AuthService.signUp(data);
                     this.successful = msg.successful;
                     this.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
-                } catch (error: AuthMessage) {
+                } catch (error) {
                     this.successful = false;
                     this.message = '';
                     this.$alert(this.$t('auth.responses.' + error.messageKey, error.messageArguments), 'danger');

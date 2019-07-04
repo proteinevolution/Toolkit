@@ -28,7 +28,7 @@
         },
         data() {
             return {
-                message: '',
+                message: '' as TranslateResult,
                 successful: false,
                 loading: true,
             };
@@ -63,7 +63,7 @@
                         const msg: AuthMessage = await AuthService.verifyToken(this.nameLogin, this.token);
                         this.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                         this.successful = msg.successful;
-                    } catch (error: AuthMessage) {
+                    } catch (error) {
                         this.message = '';
                         this.$alert(this.$t('auth.responses.' + error.messageKey, error.messageArguments), 'danger');
                     }

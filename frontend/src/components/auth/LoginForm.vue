@@ -58,6 +58,7 @@
     import AuthService from '@/services/AuthService';
     import EventBus from '@/util/EventBus';
     import ExpandHeight from '@/transitions/ExpandHeight.vue';
+    import {TranslateResult} from 'vue-i18n';
 
     export default Vue.extend({
         name: 'LoginForm',
@@ -68,12 +69,12 @@
             return {
                 username: '',
                 password: '',
-                message: '',
+                message: '' as TranslateResult,
                 forgot: {
                     show: false,
                     eMailOrUsername: '',
                     successful: true,
-                    message: '',
+                    message: '' as TranslateResult,
                 },
             };
         },
@@ -91,7 +92,7 @@
                 this.$store.commit('startLoading', 'login');
                 try {
                     const msg: AuthMessage = await AuthService.login(data);
-                    const message: string = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
+                    const message: TranslateResult = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                     if (msg.successful) {
                         this.$store.commit('auth/setUser', msg.user);
                         // get jobs of user
@@ -100,7 +101,7 @@
                         this.$alert(message);
                     }
                     this.message = message;
-                } catch (error: AuthMessage) {
+                } catch (error) {
                     this.message = '';
                     this.$alert(this.$t('auth.responses.' + error.messageKey, error.messageArguments), 'danger');
                 }
@@ -117,7 +118,7 @@
                     const msg: AuthMessage = await AuthService.forgotPassword(data);
                     this.forgot.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                     this.forgot.successful = msg.successful;
-                } catch (error: AuthMessage) {
+                } catch (error) {
                     this.forgot.message = this.$t('auth.responses.' + error.messageKey, error.messageArguments);
                     this.forgot.successful = false;
                 }

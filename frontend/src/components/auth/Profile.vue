@@ -71,6 +71,7 @@
     import countries from '@/i18n/lang/countries';
     import ExpandHeight from '@/transitions/ExpandHeight.vue';
     import AuthService from '@/services/AuthService';
+    import {TranslateResult} from 'vue-i18n';
 
     const options = countries.map((value: string[]) => ({value: value[0], text: value[1]}));
 
@@ -91,7 +92,7 @@
                 country: '',
                 countries: options,
                 password: '',
-                message: '',
+                message: '' as TranslateResult,
             };
         },
         computed: {
@@ -185,7 +186,7 @@
                     } else {
                         this.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                     }
-                } catch (error: AuthMessage) {
+                } catch (error) {
                     this.message = this.$t('auth.responses.' + error.messageKey, error.messageArguments);
                 }
                 this.cancel();
