@@ -72,7 +72,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import EventBus from '@/util/EventBus';
-    import {User} from '@/types/toolkit/auth';
+    import {User, AuthMessage} from '@/types/toolkit/auth';
     import AuthService from '@/services/AuthService';
 
     export default Vue.extend({
@@ -100,10 +100,10 @@
             },
             async signOut() {
                 try {
-                    const msg = await AuthService.logout();
+                    const msg: AuthMessage = await AuthService.logout();
                     if (msg.successful) {
                         this.$store.commit('auth/setUser', null);
-                        this.$alert(msg.message);
+                        this.$alert(this.$t('auth.responses.' + msg.messageKey, msg.messageArguments));
                     }
                 } catch (error) {
                     this.$alert(error.message, 'danger');

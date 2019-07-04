@@ -43,7 +43,8 @@ export interface ForgotPasswordData {
 }
 
 export interface AuthMessage {
-    message: string;
+    messageKey: string;
+    messageArguments: string[];
     successful: boolean;
     user: User | null;
 }

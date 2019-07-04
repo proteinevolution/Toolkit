@@ -44,6 +44,49 @@ export default {
             resetPasswordModal: {
                 loading: 'Loading...',
             },
+            responses: {
+                loginSuccess: 'Welcome, {0}.\n You are now logged in.',
+                // this message has an 's' in front of it for the en.ts file and uses ''success = true''
+                signedUp: 'Your account has been created.\n Please check your emails to verify your account.',
+                loggedOut: 'You have been logged out successfully. See you soon!',
+                // maybe use "There was an error trying to sign you in. Try again!"
+                loginError: 'There was an error while trying to sign you in. Try again!',
+                // "There already is an account using this username, please use a different one." ---- old text seems verbose
+                accountNameUsed: 'That username is taken. Please try another.',
+                accountEmailUsed: 'That email is taken. Please try another.',
+                // "There was an error finding your account." -- old text
+                accountError: 'Error finding your account.',
+                // "There was an error logging you in. Please check your account name and password."  -- doesnt need to use 'you' and 'your' - second part conveys the meaning
+                loginIncorrect: 'Error logging in. Please check your account name and password.',
+                // "Please accept the terms for our service to register." -- changed 'for our' to 'of our' -- both work fine though
+                mustAcceptToS: 'Please accept the terms of our service to register.',
+                // "Please verify your account.\n Check your emails for the verification link." -- changed to check your email, "emails" seems weird
+                mustVerify: 'Please verify your account.\nCheck your email for the verification link.',
+                alreadyLoggedIn: "You are already logged in.",
+                passwordMismatch: "Your passwords did not match.",
+                // "The Password was incorrect. Please try again." --- changed to use less words
+                passwordWrong: 'Wrong password. Please try again.',
+                tokenMismatch: 'The given token does not match.',
+                verificationMailMismatch: 'The email address you are trying to verify is not registered for your account.',
+                tokenNotFound: 'The given token is missing.',
+                // should be okay?
+                verificationSuccessful: 'Your E-Mail account has been verified, {0}.',
+                notLoggedIn: 'You are not logged in.',
+                // "The Password you have entered was insufficient, please create a new one."
+                passwordChangeFailed: 'The password you have entered was insufficient, please create a new one.',
+                // Form was capitalized - "There was a Form error:"
+                formError: 'There was a form error: {0}', // needs rest of this
+                editSuccessful: 'Changes have been saved.',
+                passwordChanged: 'Password changed successfully.',
+                // "We have sent You a link for resetting Your password.\nPlease check your emails.",
+                passwordRequestSent: 'We have sent you a link for resetting your password.\nPlease check your email.',
+                // "Password change verification was successful.\n Please log in with Your new password."
+                passwordChangeAccepted: 'Password change verification successful!\n Please log in with your new password.',
+                noSuchUser: 'Could not find any users with the matching user name or email address.',
+                oneParameterNeeded: 'Need either a user name or a email address.',
+                //'The Database could not be reached. Try again later.'
+                databaseError: 'The database could not be reached! Please try again later.'
+            }
         },
         index: {
             welcomeTitle: 'Welcome to the Bioinformatics Toolkit',

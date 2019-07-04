@@ -28,131 +28,139 @@ trait JSONTemplate {
     Json.obj("nameLogin" -> Json.fromString(user.getUserData.nameLogin))
   }
 
-  def authMessage(message: String, success: Boolean = false, userOption: Option[User] = None): Json = {
-    Json.obj("message"    -> Json.fromString(message),
-             "successful" -> Json.fromBoolean(success),
-             "user"       -> userOption.map(user => user.userData.asJson).getOrElse(Json.Null))
+  def authMessage(
+      messageKey: String,
+      messageArguments: List[String] = List(),
+      success: Boolean = false,
+      userOption: Option[User] = None
+  ): Json = {
+    Json.obj(
+      "messageKey"      -> Json.fromString(messageKey),
+      "messageArgument" -> messageArguments.asJson,
+      "successful"      -> Json.fromBoolean(success),
+      "user"            -> userOption.map(user => user.userData.asJson).getOrElse(Json.Null)
+    )
   }
 
   def loggedIn(user: User): Json = {
-
-    authMessage(s"Welcome, ${user.getUserData.nameLogin}. \n You are now logged in.",
-                success = true,
-                userOption = Some(user))
+    authMessage(
+      "loginSuccess",
+      messageArguments = List(user.getUserData.nameLogin),
+      success = true,
+      userOption = Some(user)
+    )
   }
 
-  def signedUp: Json = {
-    authMessage(s"Your account has been created.\n Please check your emails to verify your account.", success = true)
+  def signedUp(user: User): Json = {
+    authMessage("signedUp", success = true, userOption = Some(user))
   }
 
-  def loggedOut(): Json = {
-    authMessage("You have been logged out successfully. See you soon!", success = true)
+  def loggedOut(user: User): Json = {
+    authMessage("loggedOut", success = true, userOption = Some(user))
   }
 
   def loginError(): Json = {
-    authMessage("There was an error while trying to sign you in. Try again!")
+    authMessage("loginError")
   }
 
   def accountNameUsed(): Json = {
-    authMessage("There already is an account using this username, please use a different one.")
+    authMessage("accountNameUsed")
   }
 
   def accountEmailUsed(): Json = {
-    authMessage("This email is already used, please try a different one.")
+    authMessage("accountEmailUsed")
   }
 
   def accountError(): Json = {
-    authMessage("There was an error finding your account.")
+    authMessage("accountError")
   }
 
   def loginIncorrect(): Json = {
-    authMessage("There was an error logging you in. Please check your account name and password.")
+    authMessage("loginIncorrect")
   }
 
   def mustAcceptToS(): Json = {
-    authMessage("Please accept the terms for our service to register.")
+    authMessage("mustAcceptToS")
   }
 
   def mustVerify(): Json = {
-    authMessage("Please verify your account.\nCheck your emails for the verification link.")
+    authMessage("mustVerify")
   }
 
   def alreadyLoggedIn(): Json = {
-    authMessage("You are already logged in.")
+    authMessage("alreadyLoggedIn")
   }
 
   def passwordMismatch(): Json = {
-    authMessage("Your passwords did not match.")
+    authMessage("passwordMismatch")
   }
 
   def passwordWrong(): Json = {
-    authMessage("The Password was incorrect. Please try again.")
+    authMessage("passwordWrong")
   }
 
   def tokenMismatch(): Json = {
-    authMessage("The given token does not match.")
+    authMessage("tokenMismatch")
   }
 
   def verificationMailMismatch(): Json = {
-    authMessage("The email address you are trying to verify is not registered for your account.")
+    authMessage("verificationMailMismatch")
   }
 
   def tokenNotFound(): Json = {
-    authMessage("The given token is missing.")
+    authMessage("tokenNotFound")
   }
 
   def verificationSuccessful(user: User): Json = {
-    authMessage(s"Your E-Mail Account has been Verified, ${user.getUserData.nameLogin}.",
-                success = true,
-                userOption = Some(user))
+    authMessage(
+      "verificationSuccessful",
+      messageArguments = List(user.getUserData.nameLogin),
+      success = true,
+      userOption = Some(user)
+    )
   }
 
   def notLoggedIn(): Json = {
-    authMessage("You are not logged in.")
+    authMessage("notLoggedIn")
   }
 
   def formError(errorString: String = ""): Json = {
-    authMessage("There was a Form error:" + errorString)
+    authMessage("formError" + errorString, messageArguments = List(errorString))
   }
 
   def editSuccessful(user: User): Json = {
-    authMessage("Changes have been saved.", success = true, userOption = Some(user))
+    authMessage("editSuccessful", success = true, userOption = Some(user))
   }
 
   def passwordChanged(user: User): Json = {
-    authMessage("Password changed successfully.",
-                success = true,
-                userOption = Some(user))
+    authMessage("passwordChanged", success = true, userOption = Some(user))
   }
 
-  def passwordRequestSent: Json = {
-    authMessage("We have sent You a link for resetting Your password.\nPlease check your emails.", success = true)
+  def passwordRequestSent(user: User): Json = {
+    authMessage("passwordRequestSent", success = true, userOption = Some(user))
   }
 
   def passwordChangeAccepted(user: User): Json = {
-    authMessage("Password change verification was successful.\n Please log in with Your new password.",
-                success = true,
-                userOption = Some(user))
+    authMessage("passwordChangeAccepted", success = true, userOption = Some(user))
   }
 
   def passwordChangeFailed: Json = {
-    authMessage("The Password you have entered was insufficient, please create a new one.")
+    authMessage("passwordChangeFailed")
   }
 
-  def showPasswordResetView: Json = {
+  def showPasswordResetView(user: User): Json = {
     authMessage(SHOWPASSWORDRESETVIEW, success = true)
   }
 
   def noSuchUser: Json = {
-    authMessage("Could not find any Users with the matching user name or email address.")
+    authMessage("noSuchUser")
   }
 
   def oneParameterNeeded: Json = {
-    authMessage("Need either a user name or a email address.")
+    authMessage("oneParameterNeeded")
   }
 
   def databaseError: Json = {
-    authMessage("The Database could not be reached. Try again later.")
+    authMessage("databaseError")
   }
-
 }
