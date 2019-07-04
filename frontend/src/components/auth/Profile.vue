@@ -67,7 +67,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {ProfileData, User} from '@/types/toolkit/auth';
+    import {ProfileData, User, AuthMessage} from '@/types/toolkit/auth';
     import countries from '@/i18n/lang/countries';
     import ExpandHeight from '@/transitions/ExpandHeight.vue';
     import AuthService from '@/services/AuthService';
@@ -176,17 +176,17 @@
                     password: this.password,
                 };
                 try {
-                    const msg = await AuthService.editProfile(data);
+                    const msg: AuthMessage = await AuthService.editProfile(data);
                     if (msg.successful) {
                         if (msg.user !== null) {
                             this.$store.commit('auth/setUser', msg.user);
                         }
-                        this.$alert(msg.message);
+                        this.$alert(this.$t('auth.responses.' + msg.messageKey, msg.messageArguments));
                     } else {
-                        this.message = msg.message;
+                        this.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                     }
-                } catch (error) {
-                    this.message = error.message;
+                } catch (error: AuthMessage) {
+                    this.message = this.$t('auth.responses.' + error.messageKey, error.messageArguments);
                 }
                 this.cancel();
             },

@@ -61,7 +61,7 @@
     import Vue from 'vue';
     import EventBus from '@/util/EventBus';
     import AuthService from '@/services/AuthService';
-    import {SignUpData} from '@/types/toolkit/auth';
+    import {SignUpData, AuthMessage} from '@/types/toolkit/auth';
 
     export default Vue.extend({
         name: 'RegisterForm',
@@ -125,13 +125,13 @@
                     acceptToS: this.privacyAccepted,
                 };
                 try {
-                    const msg = await AuthService.signUp(data);
+                    const msg: AuthMessage = await AuthService.signUp(data);
                     this.successful = msg.successful;
-                    this.message = msg.message;
-                } catch (error) {
+                    this.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
+                } catch (error: AuthMessage) {
                     this.successful = false;
                     this.message = '';
-                    this.$alert(error.message, 'danger');
+                    this.$alert(this.$t('auth.responses.' + error.messageKey, error.messageArguments), 'danger');
                 }
             },
             openPrivacyPolicy() {

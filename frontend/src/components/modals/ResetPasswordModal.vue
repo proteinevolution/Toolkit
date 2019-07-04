@@ -35,7 +35,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import BaseModal from './BaseModal.vue';
-    import {PasswordResetData} from '@/types/toolkit/auth';
+    import {PasswordResetData, AuthMessage} from '@/types/toolkit/auth';
     import AuthService from '@/services/AuthService';
     import EventBus from '@/util/EventBus';
 
@@ -89,17 +89,18 @@
                     nameLogin: this.nameLogin,
                 };
                 try {
-                    const msg = await AuthService.resetPassword(data);
+                    const msg: AuthMessage = await AuthService.resetPassword(data);
+                    const message: string = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                     if (msg.successful) {
                         this.$store.commit('auth/setUser', msg.user);
                         EventBus.$emit('hide-modal', 'resetPassword');
                         this.$router.replace('/');
-                        this.$alert(msg.message);
+                        this.$alert(message);
                     }
-                    this.message = msg.message;
-                } catch (error) {
+                    this.message = message;
+                } catch (error: AuthMessage) {
                     this.message = '';
-                    this.$alert(error.message, 'danger');
+                    this.$alert(this.$t('auth.responses.' + error.messageKey, error.messageArguments), 'danger');
                 }
             },
         },
