@@ -32,3 +32,9 @@ export interface SimilarJobResult {
     jobID: string;
     dateCreated: number;
 }
+
+export interface AlignmentItem {
+    accession: string;
+    seq: string;
+    num: number;
+}

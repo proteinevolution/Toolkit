@@ -19,7 +19,7 @@ package de.proteinevolution.jobs.models
 import io.circe.Decoder
 import io.circe.generic.semiauto.deriveDecoder
 
-case class AlignmentLoadHitsForm(start: Int, end: Int, resultName: String)
+case class AlignmentLoadHitsForm(resultName: String, start: Option[Int], end: Option[Int])
 
 object AlignmentLoadHitsForm {
 

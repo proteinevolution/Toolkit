@@ -163,4 +163,28 @@ export default {
         copySuccess: 'Successfully copied',
         copyFailure: 'Unable to copy',
     },
+    citations: {
+        intro: 'If you use {tool} on our Toolkit for your research, please cite:',
+        clustalo: 'Fast, scalable generation of high-quality protein multiple sequence ' +
+            'alignments using Clustal Omega.<br>Sievers F et al. <a ' +
+            'href="http://msb.embopress.org/content/7/1/539" ' +
+            'target="_blank" rel="noopener">Mol Syst Biol. 2011 Oct 11;7:539</a>.',
+        kalign: 'Kalign2: high-performance multiple alignment of protein and nucleotide ' +
+            'sequences allowing external features.<br>Lassmann T, Frings O, Sonnhammer EL. ' +
+            '<a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkn1006" ' +
+            'target="_blank" rel="noopener">Nucleic Acids Res. 2009 Feb;37(3):858-65</a>.',
+        mafft: 'MAFFT multiple sequence alignment software version 7: improvements in performance ' +
+            'and usability.<br>Katoh K, Standley DM. <a ' +
+            'href="https://academic.oup.com/mbe/article-lookup/doi/10.1093/molbev/mst010" ' +
+            'target="_blank" rel="noopener">Mol Biol Evol. 2013 Apr;30(4):772-80</a>.',
+        msaprobs: 'Multiple protein sequence alignment with MSAProbs.<br>' +
+            'Liu Y, Schmidt B. <a href="https://link.springer.com/protocol/10.1007%2F978-1-62703-646-7_14" ' +
+            'target="_blank" rel="noopener">Methods Mol Biol. 2014;1079:211-8</a>.',
+        muscle: 'MUSCLE: multiple sequence alignment with high accuracy and high throughput.<br>' +
+            'Edgar RC. <a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkh340" ' +
+            'target="_blank" rel="noopener">Nucleic Acids Res. 2004 Mar 19;32(5):1792-7</a>.',
+        tcoffee: 'A novel method for fast and accurate multiple sequence alignment.<br>' +
+            'Notredame C, Higgins DG, Heringa J. <a href="https://www.ncbi.nlm.nih.gov/pubmed/10964570" ' +
+            'target="_blank" rel="noopener">J Mol Biol. 2000 Sep 8;302(1):205-17</a>.',
+    },
 };

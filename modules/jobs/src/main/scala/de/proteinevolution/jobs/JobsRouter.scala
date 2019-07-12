@@ -16,9 +16,9 @@
 
 package de.proteinevolution.jobs
 
-import de.proteinevolution.jobs.controllers.{AlignmentController, ClusterApiController, FileController, ForwardModalController, HHController, JobGetController, ProcessController, ResultGetController, SubmissionController}
+import de.proteinevolution.jobs.controllers._
 import de.proteinevolution.jobs.services.ForwardModeExtractor
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
 import play.api.routing.sird._
@@ -34,7 +34,8 @@ class JobsRouter @Inject()(
     fileController: FileController,
     forwardModalController: ForwardModalController,
     resultGetController: ResultGetController
-) extends SimpleRouter with ForwardModeExtractor {
+) extends SimpleRouter
+    with ForwardModeExtractor {
 
   private lazy val getRoutes: Routes = {
     case GET(p"/")                        => jobGetController.getAllJobs
@@ -58,15 +59,15 @@ class JobsRouter @Inject()(
   }
 
   private lazy val resultRoutes: Routes = {
-    case POST(p"/loadHits/$jobID")       => hhController.loadHits(jobID)
-    case GET(p"/dataTable/$jobID")       => hhController.dataTable(jobID)
-    case GET(p"/getStructure/$filename") => fileController.getStructureFile(filename)
+    case POST(p"/$jobID/results/alignment/") => alignmentController.loadAlignmentHits(jobID)
+    case POST(p"/loadHits/$jobID")          => hhController.loadHits(jobID)
+    case GET(p"/dataTable/$jobID")          => hhController.dataTable(jobID)
+    case GET(p"/getStructure/$filename")    => fileController.getStructureFile(filename)
     case POST(p"/forwardAlignment/$jobID/${forwardModeExtractor(mode) }") =>
       processController.forwardAlignment(jobID, mode)
     case GET(p"/templateAlignment/$jobID/$accession") => processController.templateAlignment(jobID, accession)
     case POST(p"/alignment/getAln/$jobID")            => alignmentController.getAln(jobID)
-    case POST(p"/alignment/loadHits/$jobID")          => alignmentController.loadHits(jobID)
-    case POST(p"/alignment/clustal/$jobID")           => alignmentController.loadHitsClustal(jobID)
+    case POST(p"/alignment/loadHits/$jobID")          => alignmentController.loadAlignmentHits(jobID) // former loadHits
     case GET(p"/files/$jobID/$filename")              => fileController.file(filename = filename, jobID = jobID)
     case GET(p"/forward/modal/$toolName/$modalType") =>
       forwardModalController.getForwardModalOptions(modalType, toolName)

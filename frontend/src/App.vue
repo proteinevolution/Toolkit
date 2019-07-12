@@ -31,7 +31,7 @@
                            xl="2">
                         <SideBar/>
                     </b-col>
-                    <b-col>
+                    <b-col :class="[showJobList ? 'col-lg-9 col-xl-10':'']">
                         <VelocityFade :duration="1000">
                             <router-view :key="$route.fullPath + refreshCounter"
                                          @refresh="refreshCounter++"/>
@@ -239,6 +239,7 @@
     @import "~vue-multiselect/dist/vue-multiselect.min.css";
     @import "./assets/scss/form-elements";
     @import "./assets/scss/modals";
+    @import "./assets/scss/sequence-coloring";
     @import url("https://use.fontawesome.com/releases/v5.2.0/css/all.css");
 
     body {
@@ -287,6 +288,7 @@
         max-width: 0;
         padding: 0;
         opacity: 0;
+        position: absolute;
     }
 
     .tk-particles {

@@ -18,21 +18,26 @@ package de.proteinevolution.jobs.controllers
 
 import cats.data.EitherT
 import cats.implicits._
+import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.db.ResultFileAccessor
-import de.proteinevolution.jobs.models.{AlignmentClustalLoadHitsForm, AlignmentGetForm, AlignmentLoadHitsForm}
-import de.proteinevolution.jobs.results.{AlignmentResult, Common}
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.{Action, ControllerComponents}
+import de.proteinevolution.jobs.models.{ AlignmentGetForm, AlignmentLoadHitsForm }
+import de.proteinevolution.jobs.results.AlignmentResult
+import io.circe.syntax._
+import javax.inject.{ Inject, Singleton }
+import play.api.mvc.{ Action, ControllerComponents }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class AlignmentController @Inject()(
     resultFiles: ResultFileAccessor,
     constants: ConstantsV2,
-    cc: ControllerComponents
+    cc: ControllerComponents,
+    jobDao: JobDao,
+    userAction: UserAction
 )(implicit ec: ExecutionContext)
     extends ToolkitController(cc) {
 
@@ -40,42 +45,32 @@ final class AlignmentController @Inject()(
     (for {
       json <- EitherT.liftF(resultFiles.getResults(jobID))
       r    <- EitherT.fromEither[Future](json.hcursor.downField(request.body.resultName).as[AlignmentResult])
-    } yield
-      request.body.checkboxes.distinct.map { num =>
-        ">" + r.alignment { num - 1 }.accession + "\n" + r.alignment { num - 1 }.seq + "\n"
-      }).value.map {
+    } yield request.body.checkboxes.distinct.map { num =>
+      ">" + r.alignment { num - 1 }.accession + "\n" + r.alignment { num - 1 }.seq + "\n"
+    }).value.map {
       case Right(list) => Ok(list.mkString)
       case Left(_)     => NotFound
     }
   }
 
-  def loadHits(jobID: String): Action[AlignmentLoadHitsForm] = Action(circe.json[AlignmentLoadHitsForm]).async {
-    implicit request =>
-      (for {
-        json <- EitherT.liftF(resultFiles.getResults(jobID))
-        r    <- EitherT.fromEither[Future](json.hcursor.downField(request.body.resultName).as[AlignmentResult])
-      } yield
-        (!(request.body.end > r.alignment.length || request.body.start > r.alignment.length),
-         r.alignment.slice(request.body.start, request.body.end).map(views.html.alignment.alignmentrow(_)))).value.map {
-        case Right((inRange, hits)) =>
-          if (inRange) {
-            Ok(hits.mkString)
+  def loadAlignmentHits(jobID: String): Action[AlignmentLoadHitsForm] =
+    userAction(circe.json[AlignmentLoadHitsForm]).async { implicit request =>
+      jobDao.findJob(jobID).flatMap {
+        case Some(job) =>
+          if (job.isPublic || job.ownerID.equals(request.user.userID)) {
+            // access allowed to job
+            (for {
+              json <- EitherT.liftF(resultFiles.getResults(jobID))
+              r    <- EitherT.fromEither[Future](json.hcursor.downField(request.body.resultName).as[AlignmentResult])
+            } yield r.alignment
+              .slice(request.body.start.getOrElse(0), request.body.end.getOrElse(r.alignment.length))).value.map {
+              case Right(hits) => Ok(hits.asJson)
+              case Left(_)     => NotFound
+            }
           } else {
-            BadRequest
+            fuccess(Unauthorized)
           }
-        case Left(_) => NotFound
-      }
-  }
-
-  def loadHitsClustal(jobID: String): Action[AlignmentClustalLoadHitsForm] =
-    Action(circe.json[AlignmentClustalLoadHitsForm]).async { implicit request =>
-      (for {
-        json <- EitherT.liftF(resultFiles.getResults(jobID))
-        r    <- EitherT.fromEither[Future](json.hcursor.downField(request.body.resultName).as[AlignmentResult])
-      } yield Common.clustal(r, 0, constants.breakAfterClustal, request.body.color)).value.map {
-        case Right(hits) => Ok(hits.mkString)
-        case Left(_)     => NotFound
+        case _ => fuccess(NotFound)
       }
     }
-
 }

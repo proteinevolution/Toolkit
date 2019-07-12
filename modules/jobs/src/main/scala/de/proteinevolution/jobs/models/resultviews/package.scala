@@ -23,8 +23,8 @@ package object resultviews {
   final val ALIGNMENT       = "fastaAlignment"
   final val CLUSTAL         = "clustalAlignment"
   final val ALIGNMENTVIEWER = "alignmentViewer"
-  final val TREE            = "tree"
-  final val SUMMARY         = "summary"
-  final val DATA            = "data"
+  final val TREE            = "treeView"
+  final val SUMMARY         = "summaryView"
+  final val DATA            = "dataView"
 
 }

@@ -27,6 +27,18 @@ export default {
             summary: 'Summary',
             data: 'Data',
         },
+        actions: {
+            selectAll: 'Select All',
+            deselectAll: 'Deselect All',
+            forwardSelected: 'Forward Selected',
+            downloadMSA: 'Download MSA',
+            exportMSA: 'Export MSA',
+            colorMSA: 'Color MSA',
+        },
+        alignment: {
+            numSeqs: 'Number of Sequences: <b>{num}</b>',
+            loadingHits: 'Loading hits...',
+        },
     },
     submitJob: 'Submit Job',
     resubmitJob: 'Resubmit Job',

@@ -23,9 +23,12 @@
 
             <b-tab v-if="job.status === JobState.Done && job.views"
                    v-for="(jobView, index) in job.views"
+                   :key="'jobview-' + index"
                    :title="$t('jobs.results.titles.' + jobView)"
                    :active="index === 0">
-                <component :is="jobView"></component>
+                <component :is="jobView"
+                           :job="job"
+                           :tool="tool"></component>
             </b-tab>
 
             <b-tab :title="$t('jobs.states.' + job.status)"
@@ -104,9 +107,9 @@
             alignmentViewer: AlignmentViewerTab,
             hitlist: HitlistTab,
             results: ResultsTab,
-            tree: TreeTab,
-            summary: SummaryTab,
-            data: DataTab,
+            treeView: TreeTab,
+            summaryView: SummaryTab,
+            dataView: DataTab,
         },
         data() {
             return {

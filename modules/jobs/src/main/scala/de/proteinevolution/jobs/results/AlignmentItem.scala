@@ -16,7 +16,8 @@
 
 package de.proteinevolution.jobs.results
 
-import io.circe.{ DecodingFailure, Json }
+import io.circe.generic.semiauto._
+import io.circe.{ DecodingFailure, Encoder, Json }
 
 case class AlignmentItem(accession: String, seq: String, num: Int)
 
@@ -27,5 +28,7 @@ object AlignmentItem {
       accession <- j.hcursor.downArray.first.as[String]
       seq       <- j.hcursor.downArray.right.as[String]
     } yield new AlignmentItem(accession, seq, i + 1)
+
+  implicit val ep: Encoder[AlignmentItem] = deriveEncoder[AlignmentItem]
 
 }

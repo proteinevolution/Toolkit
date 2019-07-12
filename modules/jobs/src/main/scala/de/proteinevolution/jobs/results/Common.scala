@@ -16,6 +16,8 @@
 
 package de.proteinevolution.jobs.results
 
+import io.circe.JsonObject
+import io.circe.syntax._
 import play.twirl.api.Html
 
 import scala.collection.mutable.ArrayBuffer
@@ -132,7 +134,7 @@ object Common {
       case "polyphobius" => TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
       case "spotd"       => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
       case "iupred"      => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
-      case "disopred"   => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
+      case "disopred"    => DO_pattern.replaceAllIn(sequence, "<span class=\"CC_do\">" + "$1" + "</span>")
       case "pipred"      => PIHELIX_pattern.replaceAllIn(sequence, "<span class=\"ss_pihelix\">" + "$1" + "</span>")
 
     }
@@ -339,27 +341,20 @@ object Common {
     inserted.mkString("")
   }
 
-  def clustal(alignment: AlignmentResult, begin: Int, breakAfter: Int, color: Boolean): String = {
-    if (begin >= alignment.alignment.head.seq.length) {
-      ""
-    } else {
-      val string = alignment.alignment.map { elem =>
-        "<tr>" +
-        "<td>" +
-        "<input type=\"checkbox\" data-id=\"" + elem.num + "\" value=\"" + elem.num + "\" name=\"alignment_elem\" class=\"checkbox\"><b>" +
-        "</b><td>" +
-        "<b><span class='clustalAcc'>" + elem.accession.take(20) + "</span></b><br />" +
-        "</td>" +
-        "</td>" +
-        "<td class=\"sequence\">" + {
-          if (color) colorRegexReplacer(elem.seq.slice(begin, Math.min(begin + breakAfter, elem.seq.length)))
-          else elem.seq.slice(begin, Math.min(begin + breakAfter, elem.seq.length))
-        } +
-        "</td>" +
-        "</tr>"
-      }
-      string.mkString + emptyRow + emptyRow + clustal(alignment, begin + breakAfter, breakAfter, color)
-    }
+  def clustal(alignment: AlignmentResult, breakAfter: Int, color: Boolean): JsonObject = {
+    JsonObject(
+      "breakAfter" -> breakAfter.asJson,
+      "alignment" -> alignment.alignment.map { elem =>
+        JsonObject(
+          "num"       -> elem.num.asJson,
+          "accession" -> elem.accession.take(20).asJson,
+          "seq" -> {
+            if (color) colorRegexReplacer(elem.seq)
+            else elem.seq
+          }.asJson
+        )
+      }.asJson
+    )
   }
 
   def hmmerHitWrapped(hit: HmmerHSP, charCount: Int, breakAfter: Int, beginQuery: Int, beginTemplate: Int): String = {
@@ -444,10 +439,14 @@ object Common {
         makeRow("sequence", Array("", "", queryCons)) +
         makeRow("sequence", Array("", "", midline)) +
         makeRow("sequence", Array("", "", templateCons)) +
-        makeRow("sequence",
-                Array("",
-                      "T " + beginTemplate,
-                      template + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")")) +
+        makeRow(
+          "sequence",
+          Array(
+            "",
+            "T " + beginTemplate,
+            template + "  " + (beginTemplate + templateEnd - 1) + " (" + hit.template.ref + ")"
+          )
+        ) +
         emptyRow + emptyRow +
         hhblitsHitWrapped(hit, charCount + breakAfter, breakAfter, beginQuery + queryEnd, beginTemplate + templateEnd)
       }
@@ -501,18 +500,24 @@ object Common {
             s"${if (color) colorRegexReplacer(query) else query}  ${beginQuery + queryEnd - 1} (${hit.query.ref})"
           )
         )
-        html += makeRow("sequence",
-                        Array("",
-                              "Q Consensus ",
-                              beginQuery.toString,
-                              queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"))
+        html += makeRow(
+          "sequence",
+          Array(
+            "",
+            "Q Consensus ",
+            beginQuery.toString,
+            queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"
+          )
+        )
         html += makeRow("sequence", Array("", "", "", midline))
         html += makeRow(
           "sequence",
-          Array("",
-                "T Consensus ",
-                beginTemplate.toString,
-                "%s  %d (%d)".format(templateCons, beginTemplate + templateEnd - 1, hit.template.ref))
+          Array(
+            "",
+            "T Consensus ",
+            beginTemplate.toString,
+            "%s  %d (%d)".format(templateCons, beginTemplate + templateEnd - 1, hit.template.ref)
+          )
         )
         html += makeRow(
           "sequence",
@@ -602,11 +607,15 @@ object Common {
             { if (color) colorRegexReplacer(query) else query } + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"
           )
         )
-        html += makeRow("sequence",
-                        Array("",
-                              "Q Consensus ",
-                              beginQuery.toString,
-                              queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"))
+        html += makeRow(
+          "sequence",
+          Array(
+            "",
+            "Q Consensus ",
+            beginQuery.toString,
+            queryCons + "  " + (beginQuery + queryEnd - 1) + " (" + hit.query.ref + ")"
+          )
+        )
         html += makeRow("sequence", Array("", "", "", midline))
         html += makeRow(
           "sequence",
@@ -645,12 +654,14 @@ object Common {
 
         html += emptyRow + emptyRow
 
-        html + hhompHitWrapped(hit,
-                               charCount + breakAfter,
-                               breakAfter,
-                               beginQuery + queryEnd,
-                               beginTemplate + templateEnd,
-                               color)
+        html + hhompHitWrapped(
+          hit,
+          charCount + breakAfter,
+          breakAfter,
+          beginQuery + queryEnd,
+          beginTemplate + templateEnd,
+          color
+        )
       }
     }
   }
@@ -671,117 +682,181 @@ object Common {
       val phobius    = result.phobius.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val polyphobius =
         result.polyphobius.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val spider   = result.spider.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val spider    = result.spider.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val spotd     = result.spotd.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val iupred    = result.iupred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val disopred = result.disopred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val disopred  = result.disopred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val psspred   = result.psspred.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       val deepcnf   = result.deepcnf.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val netsurfp   = result.netsurfp.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
-      val netsurfpd   = result.netsurfpd.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val netsurfp  = result.netsurfp.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
+      val netsurfpd = result.netsurfpd.seq.slice(charCount, Math.min(charCount + breakAfter, result.query.seq.length))
       htmlString += makeRow(
         "sequenceCompact",
-        Array("AA_QUERY",
-              (charCount + 1).toString,
-              Highlight(query) + "&nbsp;&nbsp;&nbsp;&nbsp;" + Math.min(length, charCount + breakAfter))
+        Array(
+          "AA_QUERY",
+          (charCount + 1).toString,
+          Highlight(query) + "&nbsp;&nbsp;&nbsp;&nbsp;" + Math.min(length, charCount + breakAfter)
+        )
       )
       if (!psipred.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("SS_" + result.psipred.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.psipred.name, psipred.replaceAll("C|T|S|B|G", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array(
+            "SS_" + result.psipred.name.toUpperCase(),
+            "",
+            Q2DColorReplace(result.psipred.name, psipred.replaceAll("C|T|S|B|G", "&nbsp;"))
+          )
+        )
       }
       if (!spider.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("SS_" + result.spider.name.toUpperCase() + "3",
-                                    "",
-                                    Q2DColorReplace(result.spider.name, spider.replace("C", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array(
+            "SS_" + result.spider.name.toUpperCase() + "3",
+            "",
+            Q2DColorReplace(result.spider.name, spider.replace("C", "&nbsp;"))
+          )
+        )
       }
       if (!psspred.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("SS_" + result.psspred.name.toUpperCase() + "4",
-                                    "",
-                                    Q2DColorReplace(result.psspred.name, psspred.replace("C", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array(
+            "SS_" + result.psspred.name.toUpperCase() + "4",
+            "",
+            Q2DColorReplace(result.psspred.name, psspred.replace("C", "&nbsp;"))
+          )
+        )
       }
       if (!deepcnf.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("SS_" + result.deepcnf.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.deepcnf.name, deepcnf.replace("C", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array(
+            "SS_" + result.deepcnf.name.toUpperCase(),
+            "",
+            Q2DColorReplace(result.deepcnf.name, deepcnf.replace("C", "&nbsp;"))
+          )
+        )
       }
       if (!netsurfp.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-          Array("SS_" + result.netsurfp.name.toUpperCase() + "2",
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array(
+            "SS_" + result.netsurfp.name.toUpperCase() + "2",
             "",
-            Q2DColorReplace(result.netsurfp.name, netsurfp.replace("C", "&nbsp;"))))
+            Q2DColorReplace(result.netsurfp.name, netsurfp.replace("C", "&nbsp;"))
+          )
+        )
       }
       if (!pipred.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("SS_" + result.pipred.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.pipred.name, pipred.replace("x", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array(
+            "SS_" + result.pipred.name.toUpperCase(),
+            "",
+            Q2DColorReplace(result.pipred.name, pipred.replace("x", "&nbsp;"))
+          )
+        )
       }
       if (!marcoil.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("CC_" + result.marcoil.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.marcoil.name, marcoil.replace("x", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array(
+            "CC_" + result.marcoil.name.toUpperCase(),
+            "",
+            Q2DColorReplace(result.marcoil.name, marcoil.replace("x", "&nbsp;"))
+          )
+        )
       }
       if (!coils.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("CC_" + result.coils.name.toUpperCase() + "_W28",
-                                    "",
-                                    Q2DColorReplace(result.coils.name, coils.replace("x", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array(
+            "CC_" + result.coils.name.toUpperCase() + "_W28",
+            "",
+            Q2DColorReplace(result.coils.name, coils.replace("x", "&nbsp;"))
+          )
+        )
       }
       if (!pcoils.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("CC_" + result.pcoils.name.toUpperCase() + "_W28",
-                                    "",
-                                    Q2DColorReplace(result.pcoils.name, pcoils.replace("x", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array(
+            "CC_" + result.pcoils.name.toUpperCase() + "_W28",
+            "",
+            Q2DColorReplace(result.pcoils.name, pcoils.replace("x", "&nbsp;"))
+          )
+        )
       }
       if (!tmhmm.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("TM_" + result.tmhmm.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.tmhmm.name, tmhmm.replace("x", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array(
+            "TM_" + result.tmhmm.name.toUpperCase(),
+            "",
+            Q2DColorReplace(result.tmhmm.name, tmhmm.replace("x", "&nbsp;"))
+          )
+        )
       }
       if (!phobius.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("TM_" + result.phobius.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.phobius.name, phobius.replace("x", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array(
+            "TM_" + result.phobius.name.toUpperCase(),
+            "",
+            Q2DColorReplace(result.phobius.name, phobius.replace("x", "&nbsp;"))
+          )
+        )
       }
       if (!polyphobius.isEmpty) {
         htmlString += makeRow(
           "sequenceCompact",
-          Array("TM_" + result.polyphobius.name.toUpperCase(),
-                "",
-                Q2DColorReplace(result.polyphobius.name, polyphobius.replace("x", "&nbsp;")))
+          Array(
+            "TM_" + result.polyphobius.name.toUpperCase(),
+            "",
+            Q2DColorReplace(result.polyphobius.name, polyphobius.replace("x", "&nbsp;"))
+          )
         )
       }
       if (!netsurfpd.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-          Array("DO_" + result.netsurfpd.name.toUpperCase() + "2",
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array(
+            "DO_" + result.netsurfpd.name.toUpperCase() + "2",
             "",
-            Q2DColorReplace(result.netsurfpd.name, netsurfpd.replace("O", "&nbsp;"))))
+            Q2DColorReplace(result.netsurfpd.name, netsurfpd.replace("O", "&nbsp;"))
+          )
+        )
       }
       if (!disopred.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("DO_" + result.disopred.name.toUpperCase() + "3",
-                                    "",
-                                    Q2DColorReplace(result.disopred.name, disopred.replace("O", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array(
+            "DO_" + result.disopred.name.toUpperCase() + "3",
+            "",
+            Q2DColorReplace(result.disopred.name, disopred.replace("O", "&nbsp;"))
+          )
+        )
       }
       if (!spotd.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("DO_" + result.spotd.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.spotd.name, spotd.replace("O", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array(
+            "DO_" + result.spotd.name.toUpperCase(),
+            "",
+            Q2DColorReplace(result.spotd.name, spotd.replace("O", "&nbsp;"))
+          )
+        )
       }
       if (!iupred.isEmpty) {
-        htmlString += makeRow("sequenceCompact",
-                              Array("DO_" + result.iupred.name.toUpperCase(),
-                                    "",
-                                    Q2DColorReplace(result.iupred.name, iupred.replace("O", "&nbsp;"))))
+        htmlString += makeRow(
+          "sequenceCompact",
+          Array(
+            "DO_" + result.iupred.name.toUpperCase(),
+            "",
+            Q2DColorReplace(result.iupred.name, iupred.replace("O", "&nbsp;"))
+          )
+        )
       }
 
       htmlString += emptyRow + emptyRow + emptyRow + emptyRow + emptyRow
