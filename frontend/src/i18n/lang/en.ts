@@ -74,6 +74,12 @@ export default {
             },
             content: modalContent,
         },
+        cookieLaw: {
+            message: 'We use cookies to ensure you get the best experience on our website. ' +
+                'By using our services you agree to our {0}.',
+            privacyLink: 'Privacy Policy',
+            accept: 'Got it!',
+        },
         copyright: '© 2008-{currentYear}, Dept. of Protein Evolution, ' +
             'Max Planck Institute for Developmental Biology, Tübingen',
         citation: `A Completely Reimplemented MPI Bioinformatics Toolkit

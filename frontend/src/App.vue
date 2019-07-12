@@ -57,6 +57,23 @@
         </div>
 
         <notifications animation-type="velocity"/>
+        <cookie-law theme="toolkit"
+                    :message="$t('cookieLaw.message')">
+            <template slot-scope="props">
+                <i18n path="cookieLaw.message"
+                      tag="div"
+                      class="Cookie__content">
+                    <b class="cursor-pointer"
+                       v-text="$t('cookieLaw.privacyLink')"
+                       @click="showModal({id: 'simple', props: {modal: 'privacy'}})"></b>
+                </i18n>
+                <div class="Cookie__buttons">
+                    <button class="Cookie__button"
+                            v-text="$t('cookieLaw.accept')"
+                            @click="props.accept"></button>
+                </div>
+            </template>
+        </cookie-law>
     </div>
 </template>
 
@@ -80,6 +97,7 @@
     import {ModalParams} from '@/types/toolkit/utils';
     import VerificationModal from '@/components/modals/VerificationModal.vue';
     import ResetPasswordModal from '@/components/modals/ResetPasswordModal.vue';
+    import CookieLaw from 'vue-cookie-law';
 
     const logger = Logger.get('App');
 
@@ -98,6 +116,7 @@
             ResetPasswordModal,
             AlignmentViewerModal,
             AuthModal,
+            CookieLaw,
         },
         data() {
             return {
@@ -278,8 +297,28 @@
         right: 0;
     }
 
+    .Cookie--toolkit {
+        background: $primary;
+        color: $white;
+        padding: 1.25em 2em;
+    }
+
+    .Cookie--toolkit .Cookie__button {
+        background: $tk-dark-green;
+        color: $white;
+        padding: .625em 3.125em;
+        border-radius: $global-radius;
+        border: 0;
+        font-size: 1em;
+        margin: 0;
+    }
+
+    .Cookie--toolkit .Cookie__button:hover {
+        background: $tk-darker-green;
+    }
+
     .textarea-alignment.loading::before {
-        content: "test";
+        content: "";
         display: block;
         width: 100px;
     }
