@@ -1,0 +1,82 @@
+@*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import de.proteinevolution.jobs.results.Common
+@import play.twirl.api.Html
+@import de.proteinevolution.jobs.results.PSIBlastHSP
+@(hit: PSIBlastHSP, db: String, wrapped: Boolean)()
+@* hit number, links *@
+<tr>
+    <td></td>
+    <td colspan="3">
+        @Common.getLinksDB(db, hit.accession)
+    </td>
+    <td></td>
+</tr>
+@* checkboxes, accession, name of hit*@
+<tr class="header">
+    <td class="indexCheckbox">
+        <input type="checkbox" name="alignment_elem" class="checkbox aln" value='@{hit.num}' data-id='@{hit.num}'>
+            @{hit.num}.
+    </td>
+<td class="hitInfo" colspan="4">
+    @{Common.getSingleLinkDB(db , hit.accession)}
+    @{"  "+hit.description}
+</td>
+</tr>
+@* Alignment Details*@
+<tr>
+    <td></td>
+    <td class="hitInfo" colspan="5">
+        E-value: @{
+        hit.eValue
+    },&emsp;
+        Length: @{hit.ref_len},&emsp;
+        Score: @{
+        hit.bitScore
+    }bits (@{
+        hit.score
+    }),&emsp;
+        Identities: @{hit.identity}/@{hit.hit_len}
+        (@{Common.calculatePercentage(hit.identity, hit.hit_len)}),&emsp;
+        Positives: @{hit.positive}/@{hit.hit_len}
+        (@{Common.calculatePercentage(hit.positive, hit.hit_len)}),&emsp;
+        Gaps: @{hit.gaps}/@{hit.hit_len}
+        (@{Common.calculatePercentage(hit.gaps, hit.hit_len)})
+        <br><br>
+    </td>
+</tr>
+    @* Query *@
+
+@if(wrapped) {
+
+    @Html(Common.psiblastHitWrapped(hit, 0, 85, hit.query_start, hit.hit_start))
+} else {
+    @{
+        Html(Common.makeRow("sequence", Array("", "Q " + hit.query_start.toString, hit.query_seq+ "   " + hit.query_end.toString)))
+    }
+    @* Midline *@
+    @{
+        Html(Common.makeRow("sequence", Array("", "", hit.midLine)))
+    }
+    @* Hit *@
+    @{
+        Html(Common.makeRow("sequence", Array("", "T " + hit.hit_start.toString, hit.hit_seq + "   " + hit.hit_end.toString)))
+    }
+}
+<tr>
+    <td colspan="5"><hr class="horizontal-line"></td>
+</tr>

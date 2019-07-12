@@ -19,7 +19,6 @@ import de.proteinevolution.auth.AuthRouter
 import de.proteinevolution.backend.BackendRouter
 import de.proteinevolution.jobs.JobsRouter
 import de.proteinevolution.message.MessageRouter
-import de.proteinevolution.results.ResultsRouter
 import de.proteinevolution.ui.UiRouter
 import javax.inject.{ Inject, Singleton }
 import play.api.routing.Router.Routes
@@ -30,7 +29,6 @@ import play.api.routing.sird._
 class MainRouter @Inject()(
     controller: Application,
     uptime: UptimeController,
-    resultsRouter: ResultsRouter,
     assets: Assets,
     authRouter: AuthRouter,
     backendRouter: BackendRouter,
@@ -51,9 +49,8 @@ class MainRouter @Inject()(
       .orElse(messageRouter.withPrefix("/ws").routes)
       .orElse(uiRouter.withPrefix("/api/tools").routes)
       .orElse(jobsRouter.withPrefix("/api/jobs").routes)
-      .orElse(backendRouter.withPrefix("/backend").routes)
+      .orElse(backendRouter.withPrefix("/api/backend").routes)
       .orElse(authRouter.withPrefix("/api/auth").routes)
-      .orElse(resultsRouter.withPrefix("/results").routes)
   }
 
 }

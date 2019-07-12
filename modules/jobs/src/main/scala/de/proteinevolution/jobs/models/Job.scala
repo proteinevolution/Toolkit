@@ -18,8 +18,8 @@ package de.proteinevolution.jobs.models
 
 import java.time.ZonedDateTime
 
-import de.proteinevolution.common.models.database.jobs.JobState._
 import de.proteinevolution.common.models.database.jobs.JobState
+import de.proteinevolution.common.models.database.jobs.JobState._
 import de.proteinevolution.common.models.util.ZonedDateTimeHelper
 import de.proteinevolution.tools.ToolConfig
 import de.proteinevolution.user.User
@@ -46,7 +46,12 @@ case class Job(
     IPHash: Option[String]
 ) {
 
-  def jsonPrepare(toolConfig: ToolConfig, user: User, paramValues: Option[Map[String, String]] = None)(
+  def jsonPrepare(
+      toolConfig: ToolConfig,
+      user: User,
+      paramValues: Option[Map[String, String]] = None,
+      views: Option[Seq[String]] = None
+  )(
       implicit config: Configuration
   ): JsonObject = {
     JsonObject(
@@ -60,6 +65,7 @@ case class Job(
       "tool"         -> tool.asJson,
       "toolnameLong" -> config.get[String](s"Tools.$tool.longname").asJson,
       "paramValues"  -> paramValues.asJson,
+      "views"        -> views.asJson,
       "dateCreated"  -> dateCreated.toInstant.toEpochMilli.asJson,
       "dateUpdated"  -> dateUpdated.toInstant.toEpochMilli.asJson,
       "dateViewed"   -> dateViewed.toInstant.toEpochMilli.asJson

@@ -46,21 +46,14 @@ lazy val common = (project in file("modules/common"))
   .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
   .dependsOn(base, tel)
 
-lazy val results = (project in file("modules/results"))
-  .commonSettings("de.proteinevolution.results")
-  .enablePlugins(PlayScala, SbtTwirl)
-  .dependsOn(common, auth, jobs, ui, base, tools, util)
+lazy val jobs = (project in file("modules/jobs"))
+  .commonSettings("de.proteinevolution.jobs")
+  .enablePlugins(PlayScala)
+  .dependsOn(common, auth, base, clusterApi, tel, tools, ui, util, user, statistics)
   .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
   .settings(addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9"))
   .disablePlugins(PlayLayoutPlugin)
   .settings(twirlHeaders)
-
-lazy val jobs = (project in file("modules/jobs"))
-  .commonSettings("de.proteinevolution.jobs")
-  .enablePlugins(PlayScala)
-  .dependsOn(common, auth, base, clusterApi, tel, tools, util, user, statistics)
-  .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
-  .disablePlugins(PlayLayoutPlugin)
 
 lazy val user = (project in file("modules/user"))
   .commonSettings("de.proteinevolution.user")
@@ -150,7 +143,7 @@ lazy val params = (project in file("modules/params"))
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, PlayAkkaHttp2Support, JavaAppPackaging, AutomateHeaderPlugin)
   .dependsOn(
-    results,
+    jobs,
     cluster,
     backend,
     ui,

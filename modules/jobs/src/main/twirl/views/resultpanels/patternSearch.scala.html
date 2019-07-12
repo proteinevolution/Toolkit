@@ -1,0 +1,93 @@
+@*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import de.proteinevolution.jobs.results.{ Common, PatSearchResult }
+@import de.proteinevolution.tools.Tool
+@import play.twirl.api.Html
+
+@(jobID: String, result: PatSearchResult, tool: Tool)()
+
+@if(result.hits.size < 1) {
+    <div class="note">
+        No hits found! You could consider picking a different target database.<br><br><br><br>
+    </div>
+}else{
+<div class="colorOptsAlignment">
+    <a onclick="download_()" type="button"><span id="downloadAlignment">Download Hits</span></a>
+    <a class="forwardModalOpenBtn" data-modal-type="simpler" data-result-name="@{tool.toolNameShort}" data-forward-issuer="PATTERN_SEARCH" type="button">
+        <span id="downloadAlignment">Forward All</span>
+    </a>
+    <hr class="horizontal-line">
+</div>
+<div id="alignmentResultView">
+    <br/>
+    Number of sequences: <b>@{result.hits.size}</b>
+    <br />
+    <br />
+    <form id="alignmentResult">
+        <table class="unstriped">
+            <tbody class="alignmentTBody">
+                @for((hit,index) <- result.hits.zipWithIndex) {
+                    <tr class="header">
+                        <td>
+                            @{hit.name.getOrElse(Html(""))}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="sequenceAlignment">
+                        @{ hit.seq.map(s => Html(Common.insertMatch(s, result.len, hit.pats.getOrElse(Nil))))
+                        }
+                        </td>
+                    </tr>
+                }
+                <tr><td><br/></td></tr>
+            </tbody>
+        </table>
+
+    </form>
+    }
+</div>
+    <br>
+<hr class="horizontal-line">
+    <div id="toolReferences">
+        If you use PatternSearch for your research, please cite:
+        <div class="citation">
+            @views.html.modals.toolkit_citation_results()
+        </div>
+    </div>
+<hr class="horizontal-line">
+
+<script>
+   // wrap seqs by default
+    $(function () {
+        wrapSequences()
+    });
+    new ForwardingModal($("#jobview"), "@{tool.toolNameShort}", "@{jobID}");
+    function wrapSequences(){
+            $(".sequenceAlignment").addClass("wrap");
+            $("#wrapSequences").addClass("colorToggleBar");
+    }
+    function download_(){
+        var downloadFilename = "@{tool.toolNameShort}_@{jobID}" + ".fas";
+        var fileURL="/results/files/@{jobID}/@{jobID}" + ".fas";
+        $.ajax({
+            method: "GET",
+            url: fileURL
+        }).done(function(data){
+            DownloadHelper.download(downloadFilename, data);
+        })
+    }
+</script>

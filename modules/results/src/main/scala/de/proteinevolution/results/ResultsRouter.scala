@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package de.proteinevolution.results
+package de.proteinevolution.jobs
 
-import de.proteinevolution.results.controllers._
-import de.proteinevolution.results.services.ForwardModeExtractor
-import javax.inject.{ Inject, Singleton }
+import de.proteinevolution.jobs.controllers.{AlignmentController, FileController, ForwardModalController, HHController, ProcessController, ResultGetController}
+import de.proteinevolution.jobs.services.ForwardModeExtractor
+import javax.inject.{Inject, Singleton}
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
 import play.api.routing.sird._
