@@ -16,15 +16,15 @@
 
 package de.proteinevolution.message.actors
 
-import java.nio.file.{ Files, Paths }
+import java.nio.file.{Files, Paths}
 import java.time.ZonedDateTime
 
-import akka.actor.{ Actor, ActorLogging, ActorRef, PoisonPill }
+import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill}
 import akka.event.LoggingReceive
 import akka.pattern.ask
 import akka.util.Timeout
 import com.google.inject.assistedinject.Assisted
-import de.proteinevolution.auth.models.Session.{ ChangeSessionID, LogOut }
+import de.proteinevolution.auth.models.Session.{ChangeSessionID, LogOut}
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.cluster.ClusterSubscriber.UpdateLoad
 import de.proteinevolution.cluster.api.SGELoad
@@ -32,14 +32,14 @@ import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.common.models.database.jobs.JobState.Running
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.models.Job
-import de.proteinevolution.jobs.services.JobActorAccess
+import de.proteinevolution.jobs.services.{JobActorAccess, ResultViewFactory}
 import de.proteinevolution.message.actors.WebSocketActor.MaintenanceAlert
 import de.proteinevolution.tools.ToolConfig
 import io.circe.syntax._
-import io.circe.{ Json, JsonObject }
-import javax.inject.{ Inject, Named }
+import io.circe.{Json, JsonObject}
+import javax.inject.{Inject, Named}
 import play.api.Configuration
-import play.api.cache.{ NamedCache, SyncCacheApi }
+import play.api.cache.{NamedCache, SyncCacheApi}
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
@@ -47,6 +47,7 @@ import scala.concurrent.duration._
 final class WebSocketActor @Inject()(
     @Assisted("out") out: ActorRef,
     jobActorAccess: JobActorAccess,
+    resultViewFactory: ResultViewFactory,
     userSessions: UserSessionService,
     constants: ConstantsV2,
     @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
@@ -139,11 +140,13 @@ final class WebSocketActor @Inject()(
     case PushJob(job: Job) =>
       userSessions.getUserBySessionID(sid).foreach {
         case Some(user) =>
-          out ! JsonObject(
-            "namespace" -> Json.fromString("jobs"),
-            "mutation"  -> Json.fromString("SOCKET_UpdateJob"),
-            "job"       -> job.jsonPrepare(toolConfig, user).asJson
-          ).asJson
+          resultViewFactory.getJobViewsForJob(job).map { views =>
+            out ! JsonObject(
+              "namespace" -> Json.fromString("jobs"),
+              "mutation"  -> Json.fromString("SOCKET_UpdateJob"),
+              "job"       -> job.jsonPrepare(toolConfig, user, views = Some(views)).asJson
+            ).asJson
+          }
         case None =>
           self ! PoisonPill
       }

@@ -26,6 +26,10 @@ const mutations: MutationTree<JobState> = {
         if (index < 0) {
             state.jobs.push(job);
         } else {
+            // the websocket does not push paramValues
+            if (!job.paramValues && state.jobs[index].paramValues) {
+                job.paramValues = state.jobs[index].paramValues;
+            }
             Vue.set(state.jobs, index, job);
         }
     },

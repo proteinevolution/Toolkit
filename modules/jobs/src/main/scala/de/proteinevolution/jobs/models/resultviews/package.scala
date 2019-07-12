@@ -18,13 +18,13 @@ package de.proteinevolution.jobs.models
 
 package object resultviews {
 
-  final val HITLIST         = "Hitlist"
-  final val RESULTS         = "Results"
-  final val ALIGNMENT       = "FASTA Alignment"
-  final val CLUSTAL         = "CLUSTAL Alignment"
-  final val ALIGNMENTVIEWER = "AlignmentViewer"
-  final val TREE            = "Tree"
-  final val SUMMARY         = "Summary"
-  final val DATA            = "Data"
+  final val HITLIST         = "hitlist"
+  final val RESULTS         = "results"
+  final val ALIGNMENT       = "fastaAlignment"
+  final val CLUSTAL         = "clustalAlignment"
+  final val ALIGNMENTVIEWER = "alignmentViewer"
+  final val TREE            = "tree"
+  final val SUMMARY         = "summary"
+  final val DATA            = "data"
 
 }

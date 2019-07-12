@@ -20,7 +20,16 @@
         </template>
 
         <template #job-tabs>
+
+            <b-tab v-if="job.status === JobState.Done && job.views"
+                   v-for="(jobView, index) in job.views"
+                   :title="$t('jobs.results.titles.' + jobView)"
+                   :active="index === 0">
+                <component :is="jobView"></component>
+            </b-tab>
+
             <b-tab :title="$t('jobs.states.' + job.status)"
+                   v-else
                    active>
                 <job-prepared-tab v-if="job.status === JobState.Prepared"
                                   :tool="tool"
@@ -34,9 +43,6 @@
                 <job-error-tab v-else-if="job.status === JobState.Error"
                                :tool="tool"
                                :job="job"/>
-                <job-done-tab v-else-if="job.status === JobState.Done"
-                              :tool="tool"
-                              :job="job"/>
                 <job-submitted-tab v-else-if="job.status === JobState.Submitted"
                                    :tool="tool"
                                    :job="job"/>
@@ -44,9 +50,10 @@
                                  :tool="tool"
                                  :job="job"/>
                 <span v-else>
-                    Not yet implemented
+                    Error!
                 </span>
             </b-tab>
+
         </template>
 
     </tool-view>
@@ -56,11 +63,18 @@
 
 <script lang="ts">
     import Vue from 'vue';
+    import ClustalAlignmentTab from './result-tabs/ClustalAlignmentTab.vue';
+    import FastaAlignmentTab from './result-tabs/FastaAlignmentTab.vue';
+    import AlignmentViewerTab from './result-tabs/AlignmentViewerTab.vue';
+    import DataTab from './result-tabs/DataTab.vue';
+    import TreeTab from './result-tabs/TreeTab.vue';
+    import HitlistTab from './result-tabs/HitlistTab.vue';
+    import ResultsTab from './result-tabs/ResultsTab.vue';
+    import SummaryTab from './result-tabs/SummaryTab.vue';
     import JobPreparedTab from './state-tabs/JobPreparedTab.vue';
     import JobQueuedTab from './state-tabs/JobQueuedTab.vue';
     import JobRunningTab from './state-tabs/JobRunningTab.vue';
     import JobErrorTab from './state-tabs/JobErrorTab.vue';
-    import JobDoneTab from './state-tabs/JobDoneTab.vue';
     import JobSubmittedTab from './state-tabs/JobSubmittedTab.vue';
     import JobPendingTab from './state-tabs/JobPendingTab.vue';
     import ToolView from '../tools/ToolView.vue';
@@ -82,10 +96,17 @@
             JobQueuedTab,
             JobRunningTab,
             JobErrorTab,
-            JobDoneTab,
             JobSubmittedTab,
             JobPendingTab,
             NotFoundView,
+            clustalAlignment: ClustalAlignmentTab,
+            fastaAlignment: FastaAlignmentTab,
+            alignmentViewer: AlignmentViewerTab,
+            hitlist: HitlistTab,
+            results: ResultsTab,
+            tree: TreeTab,
+            summary: SummaryTab,
+            data: DataTab,
         },
         data() {
             return {

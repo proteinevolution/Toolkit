@@ -12,7 +12,8 @@ export interface Job {
     dateCreated?: number;
     dateUpdated?: number;
     dateViewed?: number;
-    paramValues?: object;
+    paramValues?: { string: any };
+    views?: string[];
 }
 
 export interface SubmissionResponse {

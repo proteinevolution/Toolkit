@@ -22,9 +22,8 @@ import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.common.models.ConstantsV2
-import de.proteinevolution.common.models.database.jobs.JobState.Done
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.models.{ Job, JobHashError }
+import de.proteinevolution.jobs.models.JobHashError
 import de.proteinevolution.jobs.services.{ JobFolderValidation, JobHashCheckService, ResultViewFactory }
 import de.proteinevolution.tools.{ Tool, ToolConfig }
 import io.circe.syntax._
@@ -33,7 +32,7 @@ import javax.inject.{ Inject, Singleton }
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 import play.api.{ Configuration, Logging }
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class JobGetController @Inject()(
@@ -79,7 +78,7 @@ class JobGetController @Inject()(
               Map.empty[String, String]
             }
           }
-          jobViews(job).map { views =>
+          resultViewFactory.getJobViewsForJob(job).map { views =>
             Ok(job.jsonPrepare(toolConfig, request.user, Some(paramValues), Some(views)).asJson)
           }
         } else {
@@ -87,17 +86,6 @@ class JobGetController @Inject()(
         }
       case _ => fuccess(NotFound)
     }
-  }
-
-  private def jobViews(job: Job): Future[Seq[String]] = job.status match {
-    case Done =>
-      resultViewFactory(job.tool, job.jobID).value.map {
-        case Right(r) => r.tabs.keys.toSeq
-        case Left(_) =>
-          logger.error(s"no views found for $job")
-          Nil
-      }
-    case _ => fuccess(Nil)
   }
 
   def checkHash(jobID: String): Action[AnyContent] = userAction.async { implicit request =>

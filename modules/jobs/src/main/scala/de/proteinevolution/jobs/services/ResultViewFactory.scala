@@ -19,8 +19,10 @@ package de.proteinevolution.jobs.services
 import cats.data.EitherT
 import cats.implicits._
 import de.proteinevolution.common.models.ToolName._
+import de.proteinevolution.common.models.database.jobs.JobState.Done
 import de.proteinevolution.common.models.{ConstantsV2, ToolName}
 import de.proteinevolution.jobs.db.ResultFileAccessor
+import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.models.resultviews._
 import de.proteinevolution.jobs.results._
 import de.proteinevolution.tools.ToolConfig
@@ -45,6 +47,16 @@ final class ResultViewFactory @Inject()(
     } else {
       EitherT.pure(getResultViewsWithoutJson(toolName, jobId))
     }
+  }
+
+  def getJobViewsForJob(job: Job): Future[Seq[String]] = job.status match {
+    case Done =>
+      apply(job.tool, job.jobID).value.map {
+        case Right(r) => r.tabs.keys.toSeq
+        case Left(_) =>
+          Nil
+      }
+    case _ => Future.successful(Nil)
   }
 
   private def getResultViewsWithoutJson(toolName: String, jobId: String): ResultView = {

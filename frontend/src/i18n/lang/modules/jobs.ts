@@ -16,6 +16,18 @@ export default {
         8: 'Limit Reached',
         9: 'Deleted',
     },
+    results: {
+        titles: {
+            hitlist: 'Hitlist',
+            results: 'Results',
+            fastaAlignment: 'FASTA Alignment',
+            clustalAlignment: 'CLUSTAL Alignment',
+            alignmentViewer: 'AlignmentViewer',
+            tree: 'Tree',
+            summary: 'Summary',
+            data: 'Data',
+        },
+    },
     submitJob: 'Submit Job',
     resubmitJob: 'Resubmit Job',
     delete: 'Delete Job',

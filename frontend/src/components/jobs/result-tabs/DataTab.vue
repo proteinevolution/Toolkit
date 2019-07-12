@@ -1,12 +1,12 @@
 <template>
-    <span>Done</span>
+    <span>Data</span>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
 
     export default Vue.extend({
-        name: 'JobDoneTab',
+        name: 'DataTab',
     });
 </script>
 
