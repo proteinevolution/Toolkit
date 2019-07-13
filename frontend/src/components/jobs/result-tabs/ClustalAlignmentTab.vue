@@ -4,7 +4,7 @@
             <a @click="toggleAllSelected">{{$t('jobs.results.actions.' + (allSelected ? 'deselectAll' :
                 'selectAll'))}}</a>
             <a @click="todo">{{$t('jobs.results.actions.forwardSelected')}}</a>
-            <a @click="todo">{{$t('jobs.results.actions.downloadMSA')}}</a>
+            <a @click="downloadAlignment">{{$t('jobs.results.actions.downloadMSA')}}</a>
             <a @click="todo">{{$t('jobs.results.actions.exportMSA')}}</a>
             <a @click="toggleColor">{{$t('jobs.results.actions.colorMSA')}}</a>
         </div>
@@ -149,6 +149,13 @@
                 } else {
                     return seq;
                 }
+            },
+            downloadAlignment(): void {
+                const downloadFilename = `${this.tool.name}_alignment_${this.job.jobID}.clustal`;
+                resultsService.downloadFile(this.job.jobID, 'alignment.clustalw_aln', downloadFilename)
+                    .catch((e) => {
+                        logger.error(e);
+                    });
             },
             todo(): void {
                 alert('implement me!');

@@ -61,6 +61,8 @@ class JobsRouter @Inject()(
     // also: POST(p"/alignment/loadHits/$jobID") use this controller method
     case GET(p"/$jobID/results/alignment/" ? q_o"start=${int(start) }" & q_o"end=${int(end) }") =>
       alignmentController.loadAlignmentHits(jobID, start, end)
+    case GET(p"/$jobID/results/files/$filename") => fileController.file(filename = filename, jobID = jobID)
+
     case POST(p"/loadHits/$jobID")       => hhController.loadHits(jobID)
     case GET(p"/dataTable/$jobID")       => hhController.dataTable(jobID)
     case GET(p"/getStructure/$filename") => fileController.getStructureFile(filename)
@@ -68,7 +70,6 @@ class JobsRouter @Inject()(
       processController.forwardAlignment(jobID, mode)
     case GET(p"/templateAlignment/$jobID/$accession") => processController.templateAlignment(jobID, accession)
     case POST(p"/alignment/getAln/$jobID")            => alignmentController.getAln(jobID)
-    case GET(p"/files/$jobID/$filename")              => fileController.file(filename = filename, jobID = jobID)
     case GET(p"/forward/modal/$toolName/$modalType") =>
       forwardModalController.getForwardModalOptions(modalType, toolName)
   }
