@@ -27,6 +27,7 @@ case class Tool(
     code: String,
     section: String,
     toolParameterForm: ToolParameters,
+    resultViews: Map[String, AnyRef],
     toolFormSimple: ToolFormSimple
 ) {
 

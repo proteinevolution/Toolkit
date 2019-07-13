@@ -49,6 +49,8 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
               config.getString("sample_input_key"),
               Try(config.getString("input_type")).getOrElse(TextAreaInputType.SEQUENCE))
           },
+          // TODO remove Try when implemented for each tool
+          Try(config.getConfig("result_views").root().unwrapped().asScala.toMap).getOrElse(Map()),
           config.getStringList("forwarding.alignment").asScala,
           config.getStringList("forwarding.multi_seq").asScala,
           ValidationParamsForm(
@@ -84,6 +86,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
                       section: String,
                       version: String,
                       params: Seq[Parameter],
+                      resultViews: Map[String, AnyRef],
                       forwardAlignment: Seq[String],
                       forwardMultiSeq: Seq[String],
                       validationParams: ValidationParamsForm,
@@ -123,6 +126,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       code,
       section,
       toolParameterForm,
+      resultViews,
       toolFormSimple
     )
   }

@@ -23,11 +23,11 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.db.ResultFileAccessor
-import de.proteinevolution.jobs.models.{ AlignmentGetForm, AlignmentLoadHitsForm }
+import de.proteinevolution.jobs.models.AlignmentGetForm
 import de.proteinevolution.jobs.results.AlignmentResult
 import io.circe.syntax._
 import javax.inject.{ Inject, Singleton }
-import play.api.mvc.{ Action, ControllerComponents }
+import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -53,17 +53,16 @@ final class AlignmentController @Inject()(
     }
   }
 
-  def loadAlignmentHits(jobID: String): Action[AlignmentLoadHitsForm] =
-    userAction(circe.json[AlignmentLoadHitsForm]).async { implicit request =>
+  def loadAlignmentHits(jobID: String, start: Option[Int], end: Option[Int]): Action[AnyContent] =
+    userAction.async { implicit request =>
       jobDao.findJob(jobID).flatMap {
         case Some(job) =>
           if (job.isPublic || job.ownerID.equals(request.user.userID)) {
             // access allowed to job
             (for {
               json <- EitherT.liftF(resultFiles.getResults(jobID))
-              r    <- EitherT.fromEither[Future](json.hcursor.downField(request.body.resultName).as[AlignmentResult])
-            } yield r.alignment
-              .slice(request.body.start.getOrElse(0), request.body.end.getOrElse(r.alignment.length))).value.map {
+              r    <- EitherT.fromEither[Future](json.hcursor.downField("alignment").as[AlignmentResult])
+            } yield r.alignment.slice(start.getOrElse(0), end.getOrElse(r.alignment.length))).value.map {
               case Right(hits) => Ok(hits.asJson)
               case Left(_)     => NotFound
             }

@@ -49,11 +49,11 @@ case class Job(
   def jsonPrepare(
       toolConfig: ToolConfig,
       user: User,
-      paramValues: Option[Map[String, String]] = None,
-      views: Option[Seq[String]] = None
+      paramValues: Option[Map[String, String]] = None
   )(
       implicit config: Configuration
   ): JsonObject = {
+    val toolObj = toolConfig.values(tool)
     JsonObject(
       "jobID"        -> jobID.asJson,
       "parentID"     -> parentID.asJson,
@@ -61,14 +61,15 @@ case class Job(
       "foreign"      -> (!ownerID.equals(user.userID)).asJson,
       "watched"      -> watchList.contains(user.userID).asJson,
       "isPublic"     -> isPublic.asJson,
-      "code"         -> toolConfig.values(tool).code.asJson,
+      "code"         -> toolObj.code.asJson,
       "tool"         -> tool.asJson,
       "toolnameLong" -> config.get[String](s"Tools.$tool.longname").asJson,
       "paramValues"  -> paramValues.asJson,
-      "views"        -> views.asJson,
-      "dateCreated"  -> dateCreated.toInstant.toEpochMilli.asJson,
-      "dateUpdated"  -> dateUpdated.toInstant.toEpochMilli.asJson,
-      "dateViewed"   -> dateViewed.toInstant.toEpochMilli.asJson
+      // TODO eventually send a map with more configuration for complicated result views
+      "views"       -> toolObj.resultViews.keys.toSeq.reverse.asJson,
+      "dateCreated" -> dateCreated.toInstant.toEpochMilli.asJson,
+      "dateUpdated" -> dateUpdated.toInstant.toEpochMilli.asJson,
+      "dateViewed"  -> dateViewed.toInstant.toEpochMilli.asJson
     )
   }
 

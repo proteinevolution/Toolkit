@@ -24,7 +24,7 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.JobHashError
-import de.proteinevolution.jobs.services.{ JobFolderValidation, JobHashCheckService, ResultViewFactory }
+import de.proteinevolution.jobs.services.{ JobFolderValidation, JobHashCheckService }
 import de.proteinevolution.tools.{ Tool, ToolConfig }
 import io.circe.syntax._
 import io.circe.{ Json, JsonObject }
@@ -38,7 +38,6 @@ import scala.concurrent.ExecutionContext
 class JobGetController @Inject()(
     jobHashService: JobHashCheckService,
     userSessions: UserSessionService,
-    resultViewFactory: ResultViewFactory,
     jobDao: JobDao,
     cc: ControllerComponents,
     toolConfig: ToolConfig,
@@ -68,7 +67,7 @@ class JobGetController @Inject()(
   }
 
   def loadJob(jobID: String): Action[AnyContent] = userAction.async { implicit request =>
-    jobDao.findJob(jobID).flatMap {
+    jobDao.findJob(jobID).map {
       case Some(job) if jobFolderIsValid(job.jobID, constants) =>
         if (job.isPublic || job.ownerID.equals(request.user.userID)) {
           val paramValues: Map[String, String] = {
@@ -78,13 +77,11 @@ class JobGetController @Inject()(
               Map.empty[String, String]
             }
           }
-          resultViewFactory.getJobViewsForJob(job).map { views =>
-            Ok(job.jsonPrepare(toolConfig, request.user, Some(paramValues), Some(views)).asJson)
-          }
+          Ok(job.jsonPrepare(toolConfig, request.user, Some(paramValues)).asJson)
         } else {
-          fuccess(Unauthorized)
+          Unauthorized
         }
-      case _ => fuccess(NotFound)
+      case _ => NotFound
     }
   }
 

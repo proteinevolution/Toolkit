@@ -32,8 +32,7 @@ class JobsRouter @Inject()(
     processController: ProcessController,
     alignmentController: AlignmentController,
     fileController: FileController,
-    forwardModalController: ForwardModalController,
-    resultGetController: ResultGetController
+    forwardModalController: ForwardModalController
 ) extends SimpleRouter
     with ForwardModeExtractor {
 
@@ -59,19 +58,19 @@ class JobsRouter @Inject()(
   }
 
   private lazy val resultRoutes: Routes = {
-    case POST(p"/$jobID/results/alignment/") => alignmentController.loadAlignmentHits(jobID)
-    case POST(p"/loadHits/$jobID")          => hhController.loadHits(jobID)
-    case GET(p"/dataTable/$jobID")          => hhController.dataTable(jobID)
-    case GET(p"/getStructure/$filename")    => fileController.getStructureFile(filename)
+    // also: POST(p"/alignment/loadHits/$jobID") use this controller method
+    case GET(p"/$jobID/results/alignment/" ? q_o"start=${int(start) }" & q_o"end=${int(end) }") =>
+      alignmentController.loadAlignmentHits(jobID, start, end)
+    case POST(p"/loadHits/$jobID")       => hhController.loadHits(jobID)
+    case GET(p"/dataTable/$jobID")       => hhController.dataTable(jobID)
+    case GET(p"/getStructure/$filename") => fileController.getStructureFile(filename)
     case POST(p"/forwardAlignment/$jobID/${forwardModeExtractor(mode) }") =>
       processController.forwardAlignment(jobID, mode)
     case GET(p"/templateAlignment/$jobID/$accession") => processController.templateAlignment(jobID, accession)
     case POST(p"/alignment/getAln/$jobID")            => alignmentController.getAln(jobID)
-    case POST(p"/alignment/loadHits/$jobID")          => alignmentController.loadAlignmentHits(jobID) // former loadHits
     case GET(p"/files/$jobID/$filename")              => fileController.file(filename = filename, jobID = jobID)
     case GET(p"/forward/modal/$toolName/$modalType") =>
       forwardModalController.getForwardModalOptions(modalType, toolName)
-    case GET(p"/$jobID/$tool/$view") => resultGetController.get(jobID, tool, view)
   }
 
   override def routes: Routes = {

@@ -3,10 +3,9 @@ import {AlignmentItem} from '@/types/toolkit/jobs';
 
 class ResultsService {
 
-    public fetchAlignmentResults(jobId: string):
-        Promise<AlignmentItem[]> {
+    public fetchAlignmentResults(jobId: string): Promise<AlignmentItem[]> {
         return new Promise<AlignmentItem[]>((resolve, reject) => {
-            axios.post(`/api/jobs/${jobId}/results/alignment/`, {resultName: 'alignment'})
+            axios.get(`/api/jobs/${jobId}/results/alignment/`)
                 .then((response) => {
                     resolve(response.data);
                 })

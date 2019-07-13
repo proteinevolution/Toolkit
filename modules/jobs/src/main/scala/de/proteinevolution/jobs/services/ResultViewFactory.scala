@@ -31,6 +31,9 @@ import javax.inject.{Inject, Singleton}
 
 import scala.concurrent.{ExecutionContext, Future}
 
+/**
+* This class is only there as reference! It should not be used anymore.
+ */
 @Singleton
 final class ResultViewFactory @Inject()(
     constants: ConstantsV2,
