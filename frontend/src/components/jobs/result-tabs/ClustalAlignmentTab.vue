@@ -5,7 +5,7 @@
                 'selectAll'))}}</a>
             <a @click="todo">{{$t('jobs.results.actions.forwardSelected')}}</a>
             <a @click="downloadAlignment">{{$t('jobs.results.actions.downloadMSA')}}</a>
-            <a @click="todo">{{$t('jobs.results.actions.exportMSA')}}</a>
+            <a :href="downloadFilePath" target="_blank">{{$t('jobs.results.actions.exportMSA')}}</a>
             <a @click="toggleColor">{{$t('jobs.results.actions.colorMSA')}}</a>
         </div>
         <hr class="mt-2">
@@ -108,6 +108,9 @@
                 }
                 return res;
             },
+            downloadFilePath(): string {
+                return resultsService.getDownloadFilePath(this.job.jobID, 'alignment.clustalw_aln');
+            },
         },
         mounted() {
             this.loadAlignments();
@@ -194,10 +197,12 @@
         a {
             cursor: pointer;
             margin-right: 3rem;
+            color: inherit;
         }
 
         a:hover {
             color: $primary;
+            text-decoration: none;
         }
     }
 </style>

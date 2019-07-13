@@ -13,9 +13,13 @@ class ResultsService {
         });
     }
 
+    public getDownloadFilePath(jobId: string, file: string): string {
+        return `/api/jobs/${jobId}/results/files/${file}`;
+    }
+
     public downloadFile(jobId: string, file: string, downloadFilename: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            axios.get(`/api/jobs/${jobId}/results/files/${file}`)
+            axios.get(this.getDownloadFilePath(jobId, file))
                 .then((response) => {
                     const blob = new Blob([response.data], {type: 'application/octet-stream'});
                     if (window.navigator.msSaveOrOpenBlob) {
