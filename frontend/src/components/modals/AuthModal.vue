@@ -36,8 +36,6 @@
     import Profile from '../auth/Profile.vue';
     import Settings from '../auth/Settings.vue';
     import {User} from '@/types/toolkit/auth';
-    import AuthService from '@/services/AuthService';
-    import EventBus from '@/util/EventBus';
 
     export default Vue.extend({
         name: 'AuthModal',

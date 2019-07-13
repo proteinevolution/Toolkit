@@ -70,7 +70,7 @@
     import {ProfileData, User, AuthMessage} from '@/types/toolkit/auth';
     import countries from '@/i18n/lang/countries';
     import ExpandHeight from '@/transitions/ExpandHeight.vue';
-    import AuthService from '@/services/AuthService';
+    import {authService} from '@/services/AuthService';
     import {TranslateResult} from 'vue-i18n';
 
     const options = countries.map((value: string[]) => ({value: value[0], text: value[1]}));
@@ -177,7 +177,7 @@
                     password: this.password,
                 };
                 try {
-                    const msg: AuthMessage = await AuthService.editProfile(data);
+                    const msg: AuthMessage = await authService.editProfile(data);
                     if (msg.successful) {
                         if (msg.user !== null) {
                             this.$store.commit('auth/setUser', msg.user);

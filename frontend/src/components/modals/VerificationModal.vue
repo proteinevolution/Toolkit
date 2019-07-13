@@ -17,7 +17,7 @@
     import BaseModal from './BaseModal.vue';
     import {TranslateResult} from 'vue-i18n';
     import Loading from '@/components/utils/Loading.vue';
-    import AuthService from '@/services/AuthService';
+    import {authService} from '@/services/AuthService';
     import {AuthMessage} from '@/types/toolkit/auth';
 
     export default Vue.extend({
@@ -60,7 +60,7 @@
                 if (this.nameLogin && this.token) {
                     this.loading = true;
                     try {
-                        const msg: AuthMessage = await AuthService.verifyToken(this.nameLogin, this.token);
+                        const msg: AuthMessage = await authService.verifyToken(this.nameLogin, this.token);
                         this.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                         this.successful = msg.successful;
                     } catch (error) {

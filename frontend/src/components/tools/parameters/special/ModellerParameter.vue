@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-    import AuthService from '@/services/AuthService';
+    import {authService} from '@/services/AuthService';
     import {debounce} from 'lodash-es';
     import mixins from 'vue-typed-mixins';
     import {Parameter} from '@/types/toolkit/tools';
@@ -61,7 +61,7 @@
         },
         methods: {
             validateModellerKey: debounce(function(this: any, value: string) {
-                AuthService.validateModellerKey(value)
+                authService.validateModellerKey(value)
                     .then((result: boolean) => {
                         const error: ConstraintError | undefined = result ? undefined : {
                             textKey: 'constraints.invalidModellerKey',

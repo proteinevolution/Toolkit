@@ -36,7 +36,7 @@
     import Vue from 'vue';
     import BaseModal from './BaseModal.vue';
     import {PasswordResetData, AuthMessage} from '@/types/toolkit/auth';
-    import AuthService from '@/services/AuthService';
+    import {authService} from '@/services/AuthService';
     import EventBus from '@/util/EventBus';
     import {TranslateResult} from 'vue-i18n';
 
@@ -90,7 +90,7 @@
                     nameLogin: this.nameLogin,
                 };
                 try {
-                    const msg: AuthMessage = await AuthService.resetPassword(data);
+                    const msg: AuthMessage = await authService.resetPassword(data);
                     const message: TranslateResult = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                     if (msg.successful) {
                         this.$store.commit('auth/setUser', msg.user);

@@ -11,9 +11,9 @@ import {
     User,
 } from '@/types/toolkit/auth';
 
-export default class AuthService {
+class AuthService {
 
-    public static fetchUserData(): Promise<User> {
+    public fetchUserData(): Promise<User> {
         return new Promise<User>(((resolve, reject) => {
             axios.get(`/api/auth/user/data`)
                 .then((response) => resolve(response.data))
@@ -21,8 +21,7 @@ export default class AuthService {
         }));
     }
 
-
-    public static login(data: LoginData): Promise<AuthMessage> {
+    public login(data: LoginData): Promise<AuthMessage> {
         return new Promise<AuthMessage>(((resolve, reject) => {
             axios.post(`/api/auth/login`, data)
                 .then((response) => resolve(response.data))
@@ -30,7 +29,7 @@ export default class AuthService {
         }));
     }
 
-    public static logout(): Promise<AuthMessage> {
+    public logout(): Promise<AuthMessage> {
         return new Promise<AuthMessage>(((resolve, reject) => {
             axios.get(`/api/auth/logout`)
                 .then((response) => resolve(response.data))
@@ -38,7 +37,7 @@ export default class AuthService {
         }));
     }
 
-    public static signUp(data: SignUpData): Promise<AuthMessage> {
+    public signUp(data: SignUpData): Promise<AuthMessage> {
         return new Promise<AuthMessage>(((resolve, reject) => {
             axios.post(`/api/auth/signup`, data)
                 .then((response) => resolve(response.data))
@@ -46,7 +45,7 @@ export default class AuthService {
         }));
     }
 
-    public static editProfile(data: ProfileData): Promise<AuthMessage> {
+    public editProfile(data: ProfileData): Promise<AuthMessage> {
         return new Promise<AuthMessage>(((resolve, reject) => {
             axios.post(`/api/auth/profile`, data)
                 .then((response) => resolve(response.data))
@@ -54,7 +53,7 @@ export default class AuthService {
         }));
     }
 
-    public static changePassword(data: PasswordChangeData): Promise<AuthMessage> {
+    public changePassword(data: PasswordChangeData): Promise<AuthMessage> {
         return new Promise<AuthMessage>(((resolve, reject) => {
             axios.post(`/api/auth/password`, data)
                 .then((response) => resolve(response.data))
@@ -62,7 +61,7 @@ export default class AuthService {
         }));
     }
 
-    public static forgotPassword(data: ForgotPasswordData): Promise<AuthMessage> {
+    public forgotPassword(data: ForgotPasswordData): Promise<AuthMessage> {
         return new Promise<AuthMessage>(((resolve, reject) => {
             axios.post(`/api/auth/reset/password`, data)
                 .then((response) => resolve(response.data))
@@ -70,7 +69,7 @@ export default class AuthService {
         }));
     }
 
-    public static resetPassword(data: PasswordResetData): Promise<AuthMessage> {
+    public resetPassword(data: PasswordResetData): Promise<AuthMessage> {
         return new Promise<AuthMessage>(((resolve, reject) => {
             axios.post(`/api/auth/reset/password/change`, data)
                 .then((response) => resolve(response.data))
@@ -78,7 +77,7 @@ export default class AuthService {
         }));
     }
 
-    public static verifyToken(nameLogin: string, token: string): Promise<AuthMessage> {
+    public verifyToken(nameLogin: string, token: string): Promise<AuthMessage> {
         return new Promise<AuthMessage>(((resolve, reject) => {
             axios.get(`/api/auth/verify/${nameLogin}/${token}`)
                 .then((response) => resolve(response.data))
@@ -86,7 +85,7 @@ export default class AuthService {
         }));
     }
 
-    public static validateModellerKey(key: string): Promise<boolean> {
+    public validateModellerKey(key: string): Promise<boolean> {
         return new Promise<boolean>(((resolve, reject) => {
             axios.get(`/api/auth/validate/modeller?input=${key}`)
                 .then((response) => resolve(response.data.isValid))
@@ -94,7 +93,7 @@ export default class AuthService {
         }));
     }
 
-    public static validateJobId(newJobID: string): Promise<CustomJobIdValidationResult> {
+    public validateJobId(newJobID: string): Promise<CustomJobIdValidationResult> {
         return new Promise<CustomJobIdValidationResult>(((resolve, reject) => {
             axios.get(`/api/jobs/check/job-id/${newJobID}/`)
                 .then((response) => resolve(response.data))
@@ -103,3 +102,5 @@ export default class AuthService {
     }
 
 }
+
+export const authService = new AuthService();

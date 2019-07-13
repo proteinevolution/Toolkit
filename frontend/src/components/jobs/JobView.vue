@@ -85,7 +85,7 @@
     import moment from 'moment';
     import {JobState} from '@/types/toolkit/enums';
     import {Tool} from '@/types/toolkit/tools';
-    import JobService from '@/services/JobService';
+    import {jobService} from '@/services/JobService';
     import NotFoundView from '@/components/utils/NotFoundView.vue';
     import Logger from 'js-logger';
 
@@ -160,7 +160,7 @@
         },
         methods: {
             deleteJob() {
-                JobService.deleteJob(this.jobID)
+                jobService.deleteJob(this.jobID)
                     .then(() => {
                         this.$router.replace('/jobmanager');
                     })

@@ -35,7 +35,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import {PasswordChangeData, AuthMessage} from '@/types/toolkit/auth';
-    import AuthService from '@/services/AuthService';
+    import {authService} from '@/services/AuthService';
     import {TranslateResult} from 'vue-i18n';
 
     export default Vue.extend({
@@ -81,7 +81,7 @@
                     passwordNew: this.newPassword,
                 };
                 try {
-                    const msg: AuthMessage = await AuthService.changePassword(data);
+                    const msg: AuthMessage = await authService.changePassword(data);
                     this.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                     this.successful = msg.successful;
                 } catch (error) {

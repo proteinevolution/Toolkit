@@ -65,7 +65,7 @@
     import {Tool} from '@/types/toolkit/tools';
     import {Job} from '@/types/toolkit/jobs';
     import {sections} from '@/conf/ToolSections';
-    import JobService from '@/services/JobService';
+    import {jobService} from '@/services/JobService';
 
     export default Vue.extend({
         name: 'SearchField',
@@ -117,7 +117,7 @@
                 (this.suggestions.tools as Tool[]) = this.tools.filter((t: Tool) => {
                     return t.longname.toLowerCase().indexOf(this.search.toLowerCase()) > -1;
                 });
-                JobService.suggestJobsForJobId(this.search)
+                jobService.suggestJobsForJobId(this.search)
                     .then((jobs: Job[]) => {
                         (this.suggestions.jobs as Job[]) = jobs;
                     })

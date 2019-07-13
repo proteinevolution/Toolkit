@@ -102,7 +102,7 @@
     import {Job} from '@/types/toolkit/jobs';
     import moment from 'moment';
     import {Tool} from '@/types/toolkit/tools';
-    import JobService from '@/services/JobService';
+    import {jobService} from '@/services/JobService';
 
     export default Vue.extend({
         name: 'JobManagerView',
@@ -175,7 +175,7 @@
         },
         methods: {
             deleteJob(jobID: string): void {
-                JobService.deleteJob(jobID)
+                jobService.deleteJob(jobID)
                     .catch(() => {
                         this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
                     });

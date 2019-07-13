@@ -18,7 +18,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import AuthService from '@/services/AuthService';
+    import {authService} from '@/services/AuthService';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
     import {ConstraintError} from '@/types/toolkit/validation';
     import {CustomJobIdValidationResult} from '@/types/toolkit/jobs';
@@ -79,7 +79,7 @@
                         textKey: 'constraints.customerJobIdTooShort',
                     });
                 } else {
-                    AuthService.validateJobId(value)
+                    authService.validateJobId(value)
                         .then((result: CustomJobIdValidationResult) => {
                             if (this.customJobId === value) {
                                 // only update the error if value hasn't changed since api call

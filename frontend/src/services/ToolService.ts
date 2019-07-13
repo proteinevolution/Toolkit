@@ -1,9 +1,9 @@
 import axios from 'axios';
 import {Tool, ToolParameters} from '@/types/toolkit/tools';
 
-export default class ToolService {
+class ToolService {
 
-    public static fetchToolsVersion(): Promise<string> {
+    public fetchToolsVersion(): Promise<string> {
         return new Promise<string>(((resolve, reject) => {
             axios.get('/api/tools/version/')
                 .then((response) => resolve(response.data))
@@ -11,7 +11,7 @@ export default class ToolService {
         }));
     }
 
-    public static fetchTools(): Promise<Tool[]> {
+    public fetchTools(): Promise<Tool[]> {
         return new Promise<Tool[]>((resolve, reject) => {
             axios.get('/api/tools/')
                 .then((response) => {
@@ -21,7 +21,7 @@ export default class ToolService {
         });
     }
 
-    public static fetchToolParameters(toolName: string): Promise<ToolParameters> {
+    public fetchToolParameters(toolName: string): Promise<ToolParameters> {
         return new Promise<ToolParameters>((resolve, reject) => {
             axios.get(`/api/tools/${toolName}/`)
                 .then((response) => {
@@ -31,3 +31,5 @@ export default class ToolService {
         });
     }
 }
+
+export const toolService = new ToolService();

@@ -60,7 +60,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import EventBus from '@/util/EventBus';
-    import AuthService from '@/services/AuthService';
+    import {authService} from '@/services/AuthService';
     import {SignUpData, AuthMessage} from '@/types/toolkit/auth';
     import {TranslateResult} from 'vue-i18n';
 
@@ -126,7 +126,7 @@
                     acceptToS: this.privacyAccepted,
                 };
                 try {
-                    const msg: AuthMessage = await AuthService.signUp(data);
+                    const msg: AuthMessage = await authService.signUp(data);
                     this.successful = msg.successful;
                     this.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                 } catch (error) {

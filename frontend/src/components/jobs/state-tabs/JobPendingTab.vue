@@ -23,7 +23,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import moment from 'moment';
-    import JobService from '@/services/JobService';
+    import {jobService} from '@/services/JobService';
     import {SimilarJobResult} from '@/types/toolkit/jobs';
     import Logger from 'js-logger';
 
@@ -46,7 +46,7 @@
             };
         },
         created(): void {
-            JobService.getSimilarJob(this.job.jobID)
+            jobService.getSimilarJob(this.job.jobID)
                 .then((similarJob: SimilarJobResult) => {
                     this.similarJob = similarJob;
                 })
@@ -57,7 +57,7 @@
         },
         methods: {
             startJob() {
-                JobService.startJob(this.job.jobID)
+                jobService.startJob(this.job.jobID)
                     .catch(() => {
                         logger.error('Could not start job!');
                         this.$alert(this.$t('errors.general'), 'danger');
@@ -67,7 +67,7 @@
                 this.$router.push(`/jobs/${this.similarJob.jobID}`);
             },
             loadExistingJobAndDelete() {
-                JobService.deleteJob(this.job.jobID)
+                jobService.deleteJob(this.job.jobID)
                     .then(() => {
                         this.$store.commit('jobs/removeJob', {jobID: this.job.jobID});
                         this.$router.push(`/jobs/${this.similarJob.jobID}`);

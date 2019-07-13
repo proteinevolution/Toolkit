@@ -77,7 +77,7 @@
     import Vue from 'vue';
     import EventBus from '@/util/EventBus';
     import {User, AuthMessage} from '@/types/toolkit/auth';
-    import AuthService from '@/services/AuthService';
+    import {authService} from '@/services/AuthService';
 
     export default Vue.extend({
         name: 'TopNavBar',
@@ -105,7 +105,7 @@
             async signOut() {
                 this.$store.commit('startLoading', 'logout');
                 try {
-                    const msg: AuthMessage = await AuthService.logout();
+                    const msg: AuthMessage = await authService.logout();
                     if (msg.successful) {
                         this.$store.commit('auth/setUser', null);
                         // sync jobs

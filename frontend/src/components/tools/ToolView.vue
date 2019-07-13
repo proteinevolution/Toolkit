@@ -92,7 +92,7 @@
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
     import NotFoundView from '@/components/utils/NotFoundView.vue';
     import LoadingWrapper from '@/components/utils/LoadingWrapper.vue';
-    import JobService from '@/services/JobService';
+    import {jobService} from '@/services/JobService';
     import Logger from 'js-logger';
     import EventBus from '@/util/EventBus';
     import {Job} from '@/types/toolkit/jobs';
@@ -185,7 +185,7 @@
                 this.fullScreen = !this.fullScreen;
             },
             submitJob(): void {
-                JobService.submitJob(this.toolName, this.submission)
+                jobService.submitJob(this.toolName, this.submission)
                     .then((response) => {
                         this.$router.push(`/jobs/${response.jobID}`);
                     })

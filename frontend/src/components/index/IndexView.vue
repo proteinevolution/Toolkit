@@ -18,7 +18,6 @@
     import ToolFinder from './ToolFinder.vue';
     import UpdatesSection from './UpdatesSection.vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
-    import AuthService from '@/services/AuthService';
     import EventBus from '@/util/EventBus';
 
     export default Vue.extend({

@@ -55,7 +55,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import {ForgotPasswordData, LoginData, AuthMessage} from '@/types/toolkit/auth';
-    import AuthService from '@/services/AuthService';
+    import {authService} from '@/services/AuthService';
     import EventBus from '@/util/EventBus';
     import ExpandHeight from '@/transitions/ExpandHeight.vue';
     import {TranslateResult} from 'vue-i18n';
@@ -91,7 +91,7 @@
                 };
                 this.$store.commit('startLoading', 'login');
                 try {
-                    const msg: AuthMessage = await AuthService.login(data);
+                    const msg: AuthMessage = await authService.login(data);
                     const message: TranslateResult = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                     if (msg.successful) {
                         this.$store.commit('auth/setUser', msg.user);
@@ -115,7 +115,7 @@
                     eMailOrUsername: this.forgot.eMailOrUsername,
                 };
                 try {
-                    const msg: AuthMessage = await AuthService.forgotPassword(data);
+                    const msg: AuthMessage = await authService.forgotPassword(data);
                     this.forgot.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                     this.forgot.successful = msg.successful;
                 } catch (error) {

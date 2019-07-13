@@ -2,7 +2,7 @@ import Vue from 'vue';
 import {ActionTree} from 'vuex';
 import {RootState, JobState} from '../../types';
 import {Job} from '@/types/toolkit/jobs';
-import JobService from '@/services/JobService';
+import {jobService} from '@/services/JobService';
 import {WebSocketActions} from '@/types/toolkit/enums';
 import Logger from 'js-logger';
 
@@ -11,13 +11,13 @@ const logger = Logger.get('JobStore');
 const actions: ActionTree<JobState, RootState> = {
     async fetchAllJobs(context) {
         context.commit('startLoading', 'jobs', {root: true});
-        const jobs: Job[] = await JobService.fetchJobs();
+        const jobs: Job[] = await jobService.fetchJobs();
         context.commit('setJobs', jobs);
         context.commit('stopLoading', 'jobs', {root: true});
     },
     async loadJobDetails(context, jobID: string) {
         context.commit('startLoading', 'jobDetails', {root: true});
-        const job: Job = await JobService.fetchJob(jobID);
+        const job: Job = await jobService.fetchJob(jobID);
         context.commit('setJob', {jobID, job});
         Vue.prototype.$socket.sendObj({
             type: WebSocketActions.SET_JOB_WATCHED,
@@ -28,7 +28,7 @@ const actions: ActionTree<JobState, RootState> = {
     },
     async setJobPublic(context, {jobID, isPublic}) {
         logger.info(`Setting job.isPublic to ${isPublic} for job id ${jobID}`);
-        await JobService.setJobPublic(jobID, isPublic);
+        await jobService.setJobPublic(jobID, isPublic);
     },
     setJobWatched(state, {jobID, watched}) {
         Vue.prototype.$socket.sendObj({
