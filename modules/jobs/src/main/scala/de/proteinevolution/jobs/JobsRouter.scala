@@ -58,7 +58,6 @@ class JobsRouter @Inject()(
   }
 
   private lazy val resultRoutes: Routes = {
-    // also: POST(p"/alignment/loadHits/$jobID") use this controller method
     case GET(p"/$jobID/results/alignment/" ? q_o"start=${int(start) }" & q_o"end=${int(end) }") =>
       alignmentController.loadAlignmentHits(jobID, start, end)
     case GET(p"/$jobID/results/files/$filename") => fileController.file(filename = filename, jobID = jobID)

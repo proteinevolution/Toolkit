@@ -3,7 +3,7 @@
         <div class="alignment-options">
             <a @click="toggleAllSelected">{{$t('jobs.results.actions.' + (allSelected ? 'deselectAll' :
                 'selectAll'))}}</a>
-            <a @click="todo">{{$t('jobs.results.actions.forwardSelected')}}</a>
+            <a @click="forwardSelected">{{$t('jobs.results.actions.forwardSelected')}}</a>
             <a @click="downloadAlignment">{{$t('jobs.results.actions.downloadMSA')}}</a>
             <a :href="downloadFilePath" target="_blank">{{$t('jobs.results.actions.exportMSA')}}</a>
             <a @click="toggleColor">{{$t('jobs.results.actions.colorMSA')}}</a>
@@ -13,7 +13,7 @@
         <Loading :message="$t('jobs.results.alignment.loadingHits')"
                  v-if="loading"/>
 
-        <div class="alignment-results"
+        <div class="alignment-results mb-4"
              v-else>
             <p v-html="$t('jobs.results.alignment.numSeqs', {num: alignment.length})"></p>
             <div class="table-responsive">
@@ -33,10 +33,12 @@
                                 class="sequence">
                             </td>
                         </tr>
-                        <tr class="blank-row">
+                        <tr class="blank-row"
+                            v-if="groupI < brokenAlignments.length - 1">
                             <td colspan="3"></td>
                         </tr>
-                        <tr class="blank-row">
+                        <tr class="blank-row"
+                            v-if="groupI < brokenAlignments.length - 1">
                             <td colspan="3"></td>
                         </tr>
                     </template>
@@ -50,6 +52,11 @@
 </template>
 
 <script lang="ts">
+    /** TODO:
+     * - lazyloading?
+     * - it is very similar to clustal alignment tab.. is abstraction possible/advised?
+     * - get data one level higher? make available to other result views?
+     * */
     import Vue from 'vue';
     import ToolCitationInfo from '../ToolCitationInfo.vue';
     import {AlignmentItem, Job} from '@/types/toolkit/jobs';
@@ -160,7 +167,7 @@
                         logger.error(e);
                     });
             },
-            todo(): void {
+            forwardSelected(): void {
                 alert('implement me!');
             },
         },
