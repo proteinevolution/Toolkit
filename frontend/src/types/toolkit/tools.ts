@@ -100,3 +100,9 @@ export interface FrontendToolParameter extends Parameter {
     sampleInput: string;
     inputPlaceholder: string;
 }
+
+export interface MSAViewerSeq {
+    name: string;
+    id: string;
+    seq: string;
+}
