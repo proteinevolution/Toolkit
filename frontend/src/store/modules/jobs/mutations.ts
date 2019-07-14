@@ -15,6 +15,10 @@ const mutations: MutationTree<JobState> = {
             Vue.set(state.jobs, index, job);
         }
     },
+    setJobAlignments(state, {jobID, alignments}) {
+        const index: number = state.jobs.findIndex((j) => j.jobID === jobID);
+        Vue.set(state.jobs[index], 'alignments', alignments);
+    },
     removeJob(state, {jobID}) {
         state.jobs = state.jobs.filter((job: Job) => job.jobID !== jobID);
     },

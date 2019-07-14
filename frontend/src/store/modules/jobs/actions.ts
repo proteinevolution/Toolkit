@@ -1,10 +1,11 @@
 import Vue from 'vue';
 import {ActionTree} from 'vuex';
 import {RootState, JobState} from '../../types';
-import {Job} from '@/types/toolkit/jobs';
+import {AlignmentItem, Job} from '@/types/toolkit/jobs';
 import {jobService} from '@/services/JobService';
 import {WebSocketActions} from '@/types/toolkit/enums';
 import Logger from 'js-logger';
+import {resultsService} from '@/services/ResultsService';
 
 const logger = Logger.get('JobStore');
 
@@ -25,6 +26,10 @@ const actions: ActionTree<JobState, RootState> = {
             watched: true,
         });
         context.commit('stopLoading', 'jobDetails', {root: true});
+    },
+    async loadJobAlignments(context, jobID: string) {
+        const alignments: AlignmentItem[] = await resultsService.fetchAlignmentResults(jobID);
+        context.commit('setJobAlignments', {jobID, alignments});
     },
     async setJobPublic(context, {jobID, isPublic}) {
         logger.info(`Setting job.isPublic to ${isPublic} for job id ${jobID}`);

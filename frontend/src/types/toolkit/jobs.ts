@@ -14,6 +14,7 @@ export interface Job {
     dateViewed?: number;
     paramValues?: { string: any };
     views?: string[];
+    alignments?: AlignmentItem[];
 }
 
 export interface SubmissionResponse {
