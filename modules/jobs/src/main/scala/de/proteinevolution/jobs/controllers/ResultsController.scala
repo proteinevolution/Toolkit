@@ -32,7 +32,7 @@ import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-final class AlignmentController @Inject()(
+final class ResultsController @Inject()(
     resultFiles: ResultFileAccessor,
     constants: ConstantsV2,
     cc: ControllerComponents,
@@ -52,6 +52,23 @@ final class AlignmentController @Inject()(
       case Left(_)     => NotFound
     }
   }
+
+  def loadResults(jobID: String): Action[AnyContent] =
+    userAction.async { implicit request =>
+      jobDao.findJob(jobID).flatMap {
+        case Some(job) =>
+          if (job.isPublic || job.ownerID.equals(request.user.userID)) {
+            // access allowed to job
+            // TODO catch errors and serve NotFound
+            resultFiles.getResults(jobID).map { json =>
+              Ok(json)
+            }
+          } else {
+            fuccess(Unauthorized)
+          }
+        case _ => fuccess(NotFound)
+      }
+    }
 
   def loadAlignmentHits(jobID: String, start: Option[Int], end: Option[Int]): Action[AnyContent] =
     userAction.async { implicit request =>
