@@ -101,7 +101,6 @@
                         },
                         conf: {
                             dropImport: true,
-                            debug: false,
                         },
                         zoomer: {
                             // Alignment viewer is not scrolling with 'alignmentWidth: "auto"', use fixed numbers instead or
@@ -148,6 +147,11 @@
                 font-weight: 700;
                 background: none;
                 cursor: pointer;
+            }
+
+            // hide Debug Menu Item
+            div:last-of-type {
+                display: none !important;
             }
         }
 
