@@ -74,7 +74,7 @@
     import TreeTab from './result-tabs/TreeTab.vue';
     import HitlistTab from './result-tabs/HitlistTab.vue';
     import ClansResultsTab from '@/components/jobs/result-tabs/ClansResultsTab.vue';
-    import ResultsTab from './result-tabs/ResultsTab.vue';
+    import Quick2DResultsTab from './result-tabs/Quick2DResultsTab.vue';
     import SummaryTab from './result-tabs/SummaryTab.vue';
     import JobPreparedTab from './state-tabs/JobPreparedTab.vue';
     import JobQueuedTab from './state-tabs/JobQueuedTab.vue';
@@ -110,7 +110,7 @@
             alignmentViewer: AlignmentViewerTab,
             hitlist: HitlistTab,
             clansResults: ClansResultsTab,
-            results: ResultsTab,
+            quick2dResults: Quick2DResultsTab,
             treeView: TreeTab,
             summaryView: SummaryTab,
             dataView: DataTab,

@@ -19,7 +19,6 @@ export default {
     results: {
         titles: {
             hitlist: 'Hitlist',
-            results: 'Results',
             fastaAlignment: 'FASTA Alignment',
             clustalAlignment: 'CLUSTAL Alignment',
             alignmentViewer: 'AlignmentViewer',
