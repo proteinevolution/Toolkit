@@ -26,4 +26,3 @@ declare module 'vue-cookie-law';
 //     export = msa;
 // }
 declare const msa: any;
-declare const menu: any;

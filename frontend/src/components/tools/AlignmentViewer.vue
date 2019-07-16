@@ -56,7 +56,7 @@
             },
         },
         mounted() {
-            EventBus.$on('fullscreen', (fullScreen: boolean) => {
+            EventBus.$on('alignment-viewer-resize', (fullScreen: boolean) => {
                 this.$nextTick(() => {
                     this.autoResize(fullScreen);
                 });
@@ -64,7 +64,7 @@
             this.autoResize(false);
         },
         beforeDestroy() {
-            EventBus.$off('fullscreen');
+            EventBus.$off('alignment-viewer-resize');
         },
         methods: {
             autoResize(fullScreen: boolean) {
@@ -99,9 +99,9 @@
                             labelPartition: false,
                             labelCheckbox: false,
                         },
-                        bootstrapMenu: true,
                         conf: {
                             dropImport: true,
+                            debug: false,
                         },
                         zoomer: {
                             // Alignment viewer is not scrolling with 'alignmentWidth: "auto"', use fixed numbers instead or
@@ -126,7 +126,7 @@
                         el: this.$refs.menu,
                         msa: msaViewer,
                     };
-                    const defMenu = new menu.defaultmenu(menuOpts);
+                    const defMenu = new msa.menu.defaultmenu(menuOpts);
                     msaViewer.addView('menu', defMenu);
 
                     msaViewer.render();
@@ -170,16 +170,6 @@
 
         .biojs_msa_searchresult_ovbox {
             display: none
-        }
-
-        .biojs_msa_marker {
-            & > span {
-                display: inline-flex;
-            }
-
-            .msa-col-header {
-                white-space: nowrap;
-            }
         }
     }
 </style>

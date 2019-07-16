@@ -25,7 +25,8 @@
                    v-for="(jobView, index) in job.views"
                    :key="'jobview-' + index"
                    :title="$t('jobs.results.titles.' + jobView)"
-                   :active="index === 0">
+                   :active="index === 0"
+                   @click="tabActivated(jobView)">
                 <component :is="jobView"
                            :job="job"
                            :tool="tool"></component>
@@ -88,6 +89,7 @@
     import {jobService} from '@/services/JobService';
     import NotFoundView from '@/components/utils/NotFoundView.vue';
     import Logger from 'js-logger';
+    import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('JobView');
 
@@ -181,6 +183,9 @@
             },
             goToParent() {
                 this.$router.push(`/jobs/${this.job.parentID}`);
+            },
+            tabActivated(jobView: string): void {
+                EventBus.$emit('tool-tab-activated', jobView);
             },
         },
     });

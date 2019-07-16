@@ -14,6 +14,7 @@
     import AlignmentViewer from '@/components/tools/AlignmentViewer.vue';
     import {Tool} from '@/types/toolkit/tools';
     import Logger from 'js-logger';
+    import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('AlignmentViewerTab');
 
@@ -40,7 +41,19 @@
                 format: 'fasta',
             };
         },
+        beforeDestroy() {
+            EventBus.$off('fullscreen');
+            EventBus.$off('tool-tab-activated');
+        },
         mounted() {
+            EventBus.$on('fullscreen', (fullScreen: boolean) => {
+                EventBus.$emit('alignment-viewer-resize', fullScreen);
+            });
+            EventBus.$on('tool-tab-activated', (jobView: string) => {
+                if (jobView === 'alignmentViewer') {
+                    EventBus.$emit('alignment-viewer-resize', false);
+                }
+            });
             if (!this.job.alignments) {
                 this.loading = true;
                 this.$store.dispatch('jobs/loadJobAlignments', this.job.jobID)
