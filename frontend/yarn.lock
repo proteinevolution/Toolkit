@@ -9409,6 +9409,11 @@ timsort@^0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/timsort/-/timsort-0.3.0.tgz#405411a8e7e6339fe64db9a234de11dc31e02bd4"
 
+tiny-cookie@^2.1.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/tiny-cookie/-/tiny-cookie-2.3.1.tgz#f0ea9fa194f2aed631dcd5e69ac0d6587be928c8"
+  integrity sha512-C4x1e8dHfKf03ewuN9aIZzzOfN2a6QKhYlnHdzJxmmjMTLqcskI20F+EplszjODQ4SHmIGFJrvUUnBMS/bJbOA==
+
 tiny-emitter@^2.0.0:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/tiny-emitter/-/tiny-emitter-2.0.2.tgz#82d27468aca5ade8e5fd1e6d22b57dd43ebdfb7c"
@@ -9834,6 +9839,13 @@ vue-clipboard2@^0.3.0:
   integrity sha512-6/Y9NJErWb4LNBLMgsJSdKb7KpF6/jqXagvKlYut6VQzQsNj6515FpwH0r5hhmeJMqaPzf1kxAw8L8Qvw/QBJQ==
   dependencies:
     clipboard "^2.0.0"
+
+vue-cookie-law@^1.10.0:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/vue-cookie-law/-/vue-cookie-law-1.10.0.tgz#a7620b58fc16c193c69da2bdfeed83c5cc735a5e"
+  integrity sha512-5bj4TfZyGEDD71gQ2QoQQoJnxGzbIJh44KwCVXT7OO3/Cofk0PuJy9jZgoXQjiozF9nJg+lVZTfoAFjY9YPe3g==
+  dependencies:
+    tiny-cookie "^2.1.1"
 
 vue-functional-data-merge@^3.1.0:
   version "3.1.0"
