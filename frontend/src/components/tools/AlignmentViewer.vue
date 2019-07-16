@@ -150,7 +150,7 @@
             }
 
             // hide Debug Menu Item
-            div:last-of-type {
+            & > div:last-of-type {
                 display: none !important;
             }
         }
