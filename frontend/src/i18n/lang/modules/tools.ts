@@ -189,5 +189,13 @@ export default {
         tcoffee: 'A novel method for fast and accurate multiple sequence alignment.<br>' +
             'Notredame C, Higgins DG, Heringa J. <a href="https://www.ncbi.nlm.nih.gov/pubmed/10964570" ' +
             'target="_blank" rel="noopener">J Mol Biol. 2000 Sep 8;302(1):205-17</a>.',
+        clans: 'CLANS: a Java application for visualizing protein families based on pairwise similarity.<br>' +
+            'Frickey T, Lupas A.<a ' +
+            'href="https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/bth444" ' +
+            'target="_blank" rel="noopener"> Bioinformatics. 2004 Dec 12;20(18):3702-4.</a><br><br>' +
+            'BLAST+: architecture and applications.<br>Camacho C, Coulouris G, Avagyan V, Ma N, ' +
+            'Papadopoulos J, Bealer K, Madden TL. ' +
+            '<a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-10-421" ' +
+            'target="_blank" rel="noopener">BMC Bioinformatics. 2009 Dec 15;10:421</a>.',
     },
 };

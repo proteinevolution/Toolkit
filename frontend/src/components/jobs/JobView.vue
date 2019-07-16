@@ -73,6 +73,7 @@
     import DataTab from './result-tabs/DataTab.vue';
     import TreeTab from './result-tabs/TreeTab.vue';
     import HitlistTab from './result-tabs/HitlistTab.vue';
+    import ClansResultsTab from '@/components/jobs/result-tabs/ClansResultsTab.vue';
     import ResultsTab from './result-tabs/ResultsTab.vue';
     import SummaryTab from './result-tabs/SummaryTab.vue';
     import JobPreparedTab from './state-tabs/JobPreparedTab.vue';
@@ -108,6 +109,7 @@
             fastaAlignment: FastaAlignmentTab,
             alignmentViewer: AlignmentViewerTab,
             hitlist: HitlistTab,
+            clansResults: ClansResultsTab,
             results: ResultsTab,
             treeView: TreeTab,
             summaryView: SummaryTab,

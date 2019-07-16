@@ -26,6 +26,8 @@ export default {
             tree: 'Tree',
             summary: 'Summary',
             data: 'Data',
+            quick2dResults: 'Results',
+            clansResults: 'Results',
         },
         actions: {
             selectAll: 'Select All',
