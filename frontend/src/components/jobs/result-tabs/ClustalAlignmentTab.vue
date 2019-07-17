@@ -53,7 +53,8 @@
 <script lang="ts">
     import Vue from 'vue';
     import ToolCitationInfo from '../ToolCitationInfo.vue';
-    import {AlignmentItem, Job} from '@/types/toolkit/jobs';
+    import {AlignmentItem} from '@/types/toolkit/results';
+    import {Job} from '@/types/toolkit/jobs';
     import {Tool} from '@/types/toolkit/tools';
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
@@ -94,7 +95,7 @@
                 return this.alignments.length > 0 &&
                     this.selected.length === this.alignments.length;
             },
-            brokenAlignments(): any[] {
+            brokenAlignments(): AlignmentItem[][] {
                 // alignments need to be broken into pieces
                 const res: AlignmentItem[][] = [];
                 for (const a of this.alignments) {

@@ -167,7 +167,7 @@ export default {
         loading: 'Loading...',
     },
     citations: {
-        intro: 'If you use {tool} on our Toolkit for your research, please cite:',
+        intro: 'If you use {tool} on our Toolkit for your research, please cite as appropriate:',
         clustalo: 'Fast, scalable generation of high-quality protein multiple sequence ' +
             'alignments using Clustal Omega.<br>Sievers F et al. <a ' +
             'href="http://msb.embopress.org/content/7/1/539" ' +
@@ -197,5 +197,58 @@ export default {
             'Papadopoulos J, Bealer K, Madden TL. ' +
             '<a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-10-421" ' +
             'target="_blank" rel="noopener">BMC Bioinformatics. 2009 Dec 15;10:421</a>.',
+        quick2d: 'PSIPRED: Protein secondary structure prediction based on position-specific scoring matrices.<br>\n' +
+            'Jones DT.<a ' +
+            'href="http://www.sciencedirect.com/science/article/pii/S0022283699930917?via%3Dihub" target="_blank" ' +
+            'rel="noopener"> J Mol Biol. 1999 Sep 17;292(2):195-202</a>.<br><br>' +
+            'SPIDER3: Capturing non-local interactions by long short-term memory bidirectional recurrent neural ' +
+            'networks for improving prediction of protein secondary structure, backbone angles, contact numbers and ' +
+            'solvent accessibility.<br>Heffernan R, Yang Y, Paliwal K, Zhou Y.<a ' +
+            'href="https://academic.oup.com/bioinformatics/article/33/18/2842/3738544" target="_blank" ' +
+            'rel="noopener"> Bioinformatics. 2017 Sep 15;33(18):2842-2849</a>.<br><br>' +
+            'PSSPred: A comparative assessment and analysis of 20 representative sequence alignment methods for ' +
+            'protein structure prediction.<br>Yan R, Xu D, Yang J, Walker S, Zhang Y.<a ' +
+            'href="https://www.nature.com/articles/srep02619" target="_blank" rel="noopener"> ' +
+            'Sci Rep. 2013;3:2619</a>.<br><br>' +
+            'DeepCNF-SS: Protein Secondary Structure Prediction Using Deep Convolutional Neural Fields.<br>' +
+            'Wang S, Peng J, Ma J, Xu J.<a href="https://www.nature.com/articles/srep18962" target="_blank" ' +
+            'rel="noopener"> Sci Rep. 2016 Jan 11;6:18962</a>.<br><br>' +
+            'NetSurfP2: NetSurfP-2.0: Improved prediction of protein structural features by integrated deep ' +
+            'learning.<br>Klausen et al.<a href="https://onlinelibrary.wiley.com/doi/full/10.1002/prot.25674" ' +
+            'target="_blank" rel="noopener"> Proteins. 2019 Jun;87(6):520-527</a>.<br><br>' +
+            'COILS: Predicting coiled coils from protein sequences.<br>Lupas A, Van Dyke M, Stock J.' +
+            '<a href="http://science.sciencemag.org/content/252/5009/1162" target="_blank" rel="noopener"> ' +
+            'Science. 1991 May 24;252(5009):1162-4</a>.<br><br>' +
+            'PCOILS: Comparative analysis of coiled-coil prediction methods.<br>Gruber M, Söding J, Lupas AN.' +
+            '<a href="http://www.sciencedirect.com/science/article/pii/S1047847706000815?via%3Dihub" target="_blank" ' +
+            'rel="noopener"> J Struct Biol. 2006 Aug;155(2):140-5</a>.<br><br>' +
+            'MARCOIL: An HMM model for coiled-coil domains and a comparison with PSSM-based predictions.<br>' +
+            'Delorenzi M, Speed T.<a href="https://www.ncbi.nlm.nih.gov/pubmed/12016059?dopt=Abstract" ' +
+            'target="_blank" rel="noopener"> Bioinformatics. 2002 Apr;18(4):617-25</a>.<br><br>' +
+            'TMHMM: Predicting transmembrane protein topology with a hidden Markov model: application to complete ' +
+            'genomes.<br>Krogh A, Larsson B, von Heijne G, Sonnhammer EL.<a ' +
+            'href="http://www.sciencedirect.com/science/article/pii/S0022283600943158?via%3Dihub" target="_blank" ' +
+            'rel="noopener"> J Mol Biol. 2001 Jan 19;305(3):567-80</a>.<br><br>' +
+            'Phobius: A combined transmembrane topology and signal peptide prediction method.<br>Käll L, Krogh A, ' +
+            'Sonnhammer EL.<a href="http://www.sciencedirect.com/science/article/pii/S0022283604002943?via%3Dihub" ' +
+            'target="_blank" rel="noopener"> J Mol Biol. 2004 May 14;338(5):1027-36</a>.<br><br>' +
+            'PolyPhobius: An HMM posterior decoder for sequence feature prediction that includes homology ' +
+            'information.<br>Käll L, Krogh A, Sonnhammer EL.<a ' +
+            'href="https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/bti1014" ' +
+            'target="_blank" rel="noopener"> Bioinformatics. 2005 Jun;21</a>.<br><br>' +
+            'DISOPRED3: precise disordered region predictions with annotated protein-binding activity.<br>Jones DT, ' +
+            'Cozzetto D.<a href="https://academic.oup.com/bioinformatics/article/31/6/857/215129" target="_blank" ' +
+            'rel="noopener"> Bioinformatics. 2015 Mar 15;31(6):857-63</a>.<br><br>' +
+            'SPOT-Disorder: Improving protein disorder prediction by deep bidirectional long short-term memory ' +
+            'recurrent neural networks.<br>Hanson J, Yang Y, Paliwal K, Zhou Y.<a ' +
+            'href="https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/btw678" ' +
+            'target="_blank" rel="noopener"> Bioinformatics. 2017 Mar 1;33(5):685-692</a>.<br><br>' +
+            'IUPred: The pairwise energy content estimated from amino acid composition discriminates between folded ' +
+            'and intrinsically unstructured proteins.<br>Dosztányi Z, Csizmók V, Tompa P, Simon I.<a ' +
+            'href="http://www.sciencedirect.com/science/article/pii/S0022283605001294?via%3Dihub" target="_blank" ' +
+            'rel="noopener"> J Mol Biol. 2005 Apr 8;347(4):827-39</a>.<br><br>' +
+            'SignalP: SignalP 5.0 improves signal peptide predictions using deep neural networks.<br>' +
+            'Almagro Armenteros et al.<a href="https://www.nature.com/articles/s41587-019-0036-z" target="_blank" ' +
+            'rel="noopener"> Nat Biotechnol. 2019 Apr;37(4):420-423</a>.<br><br>',
     },
 };

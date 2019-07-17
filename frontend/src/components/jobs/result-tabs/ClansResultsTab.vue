@@ -1,5 +1,6 @@
 <template>
     <div>
+        <br/>
         Download the zipped CLANS file (<a :href="fileUrl" download>{{job.jobID + '.clans.zip'}}</a>) generated for your
         sequences and unzip it.
         <br/><br/>
@@ -13,6 +14,7 @@
         <em>java -Xmx4G -jar clans.jar -load {{job.jobID + '.clans'}}</em><br/><br/>
 
         If you face problems loading the CLANS file, please increase the maximum Java heap size (-Xmx).
+        <br/><br/>
 
         <tool-citation-info :tool="tool"/>
     </div>

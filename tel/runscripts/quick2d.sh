@@ -233,10 +233,14 @@ echo "#Generating output" >> ../results/process.log
 parseQ2D.pl ${JOBID}
 
 #Write query sequence without gaps into JSON
-fasta2json.py ../results/${JOBID}.fas ../results/query.json
+echo "{}" > ../results/query.json
+manipulate_json.py -k 'header' -v "$(sed -n '1{p;q;}' ../results/${JOBID}.fas)" ../results/query.json
+manipulate_json.py -k 'sequence' -v "$(sed -n '2{p;q;}' ../results/${JOBID}.fas)" ../results/query.json
+
+#fasta2json.py ../results/${JOBID}.fas ../results/query.json
 
 #Initialize JSON
-echo "{}" > ../results/${JOBID}.json
+echo "{}" > ../results/results.json
 
 #Write PSIPRED results into JSON
 PSIPRED="$(sed -n '2{p;q;}' ../results/${JOBID}.a3m)"
@@ -247,11 +251,11 @@ ALPHA=$(echo ${PSIPRED} | tr -cd "H" | wc -c)
 BETA=$(echo ${PSIPRED} | tr -cd "E" | wc -c)
 
 if [[ ${ALPHA} -gt "0" ]] || [[ ${BETA} -gt "0" ]] ; then
-    manipulate_json.py -k 'psipred' -v "$PSIPRED" ../results/${JOBID}.json
-    manipulate_json.py -k 'psipred_conf' -v "" ../results/${JOBID}.json
+    manipulate_json.py -k 'psipred' -v "$PSIPRED" ../results/results.json
+    manipulate_json.py -k 'psipred_conf' -v "" ../results/results.json
 else
-        manipulate_json.py -k 'psipred' -v "" ../results/${JOBID}.json
-        manipulate_json.py -k 'psipred_conf' -v "" ../results/${JOBID}.json
+        manipulate_json.py -k 'psipred' -v "" ../results/results.json
+        manipulate_json.py -k 'psipred_conf' -v "" ../results/results.json
 fi
 
 #Write PSSPRED results into JSON
@@ -262,9 +266,9 @@ BETA=$(tr -cd "E" <  ../results/${JOBID}.psspred | wc -c)
 
 if [[ ${ALPHA} -gt "0" ]] || [[ ${BETA} -gt "0" ]] ; then
     SS="$(sed -n '1{p;q;}' ../results/${JOBID}.psspred)"
-    manipulate_json.py -k 'psspred' -v "$SS" ../results/${JOBID}.json
+    manipulate_json.py -k 'psspred' -v "$SS" ../results/results.json
 else
-    manipulate_json.py -k 'psspred' -v "" ../results/${JOBID}.json
+    manipulate_json.py -k 'psspred' -v "" ../results/results.json
 fi
 
 #Write PiPred results into JSON
@@ -272,9 +276,9 @@ PI=$(tr -cd "I" <  ../results/${JOBID}.pipred | wc -c)
 
 if [[ ${PI} -gt "0" ]] ; then
     SS="$(sed -n '1{p;q;}' ../results/${JOBID}.pipred)"
-    manipulate_json.py -k 'pipred' -v "$SS" ../results/${JOBID}.json
+    manipulate_json.py -k 'pipred' -v "$SS" ../results/results.json
 else
-    manipulate_json.py -k 'pipred' -v "" ../results/${JOBID}.json
+    manipulate_json.py -k 'pipred' -v "" ../results/results.json
 fi
 
 #Write DeepCNF results into JSON
@@ -285,9 +289,9 @@ BETA=$(tr -cd "E" <  ../results/${JOBID}.deepcnf | wc -c)
 
 if [[ ${ALPHA} -gt "0" ]] || [[ ${BETA} -gt "0" ]] ; then
     SS="$(sed -n '1{p;q;}' ../results/${JOBID}.deepcnf)"
-    manipulate_json.py -k 'deepcnf' -v "$SS" ../results/${JOBID}.json
+    manipulate_json.py -k 'deepcnf' -v "$SS" ../results/results.json
 else
-    manipulate_json.py -k 'deepcnf' -v "" ../results/${JOBID}.json
+    manipulate_json.py -k 'deepcnf' -v "" ../results/results.json
 fi
 
 #Write NetSurfP2 results into JSON
@@ -298,18 +302,18 @@ BETA=$(tr -cd "E" <  ../results/${JOBID}.netsurfpss | wc -c)
 
 if [[ ${ALPHA} -gt "0" ]] || [[ ${BETA} -gt "0" ]] ; then
     SS="$(sed -n '1{p;q;}' ../results/${JOBID}.netsurfpss)"
-    manipulate_json.py -k 'netsurfpss' -v "$SS" ../results/${JOBID}.json
+    manipulate_json.py -k 'netsurfpss' -v "$SS" ../results/results.json
 else
-    manipulate_json.py -k 'netsurfpss' -v "" ../results/${JOBID}.json
+    manipulate_json.py -k 'netsurfpss' -v "" ../results/results.json
 fi
 
 IDR=$(tr -cd "D" <  ../results/${JOBID}.netsurfpd | wc -c)
 
 if [[ ${IDR} -gt "0" ]] ; then
     SS="$(sed -n '1{p;q;}' ../results/${JOBID}.netsurfpd)"
-    manipulate_json.py -k 'netsurfpd' -v "$SS" ../results/${JOBID}.json
+    manipulate_json.py -k 'netsurfpd' -v "$SS" ../results/results.json
 else
-    manipulate_json.py -k 'netsurfpd' -v "" ../results/${JOBID}.json
+    manipulate_json.py -k 'netsurfpd' -v "" ../results/results.json
 fi
 
 #Write SPIDER3 and SPOTD results into JSON
@@ -320,18 +324,18 @@ BETA=$(tr -cd "E" <  ../results/${JOBID}.spider3 | wc -c)
 
 if [[ ${ALPHA} -gt "0" ]] || [[ ${BETA} -gt "0" ]] ; then
     SS="$(sed -n '1{p;q;}' ../results/${JOBID}.spider3)"
-    manipulate_json.py -k 'spider' -v "$SS" ../results/${JOBID}.json
+    manipulate_json.py -k 'spider' -v "$SS" ../results/results.json
 else
-    manipulate_json.py -k 'spider' -v "" ../results/${JOBID}.json
+    manipulate_json.py -k 'spider' -v "" ../results/results.json
 fi
 
 IDR=$(tr -cd "D" <  ../results/${JOBID}.spot | wc -c)
 
 if [[ ${IDR} -gt "0" ]] ; then
     SS="$(sed -n '1{p;q;}' ../results/${JOBID}.spot)"
-    manipulate_json.py -k 'spot-d' -v "$SS" ../results/${JOBID}.json
+    manipulate_json.py -k 'spot-d' -v "$SS" ../results/results.json
 else
-    manipulate_json.py -k 'spot-d' -v "" ../results/${JOBID}.json
+    manipulate_json.py -k 'spot-d' -v "" ../results/results.json
 fi
 
 echo "done" >> ../results/process.log
@@ -342,9 +346,9 @@ IDR=$(tr -cd "D" <  ../results/${JOBID}.iupred | wc -c)
 
 if [[ ${IDR} -gt "0" ]] ; then
     SS="$(sed -n '1{p;q;}' ../results/${JOBID}.iupred)"
-    manipulate_json.py -k 'iupred' -v "$SS" ../results/${JOBID}.json
+    manipulate_json.py -k 'iupred' -v "$SS" ../results/results.json
 else
-    manipulate_json.py -k 'iupred' -v "" ../results/${JOBID}.json
+    manipulate_json.py -k 'iupred' -v "" ../results/results.json
 fi
 
 #Write DISORDER3 results into JSON
@@ -352,9 +356,9 @@ IDR=$(tr -cd "D" <  ../results/${JOBID}.disopred | wc -c)
 
 if [[ ${IDR} -gt "0" ]] ; then
     SS="$(sed -n '1{p;q;}' ../results/${JOBID}.disopred)"
-    manipulate_json.py -k 'disopred' -v "$SS" ../results/${JOBID}.json
+    manipulate_json.py -k 'disopred' -v "$SS" ../results/results.json
 else
-    manipulate_json.py -k 'disopred' -v "" ../results/${JOBID}.json
+    manipulate_json.py -k 'disopred' -v "" ../results/results.json
 fi
 
 #Write MARCOIL results
@@ -362,9 +366,9 @@ CC_COUNT=$(tr -cd "C" <  ../results/${JOBID}.marcoil | wc -c)
 
 if [[ ${CC_COUNT} -gt "7" ]] ; then
     MARCOIL="$(sed -n '1{p;q;}' ../results/${JOBID}.marcoil)"
-    manipulate_json.py -k 'marcoil' -v "$MARCOIL" ../results/${JOBID}.json
+    manipulate_json.py -k 'marcoil' -v "$MARCOIL" ../results/results.json
 else
-    manipulate_json.py -k 'marcoil' -v "" ../results/${JOBID}.json
+    manipulate_json.py -k 'marcoil' -v "" ../results/results.json
 fi
 
 #Write COILS results
@@ -373,9 +377,9 @@ CC_COUNT=$(tr -cd "C" <  ../results/${JOBID}.coils | wc -c)
 
 if [[ ${CC_COUNT} -gt "7" ]] ; then
     COILS="$(sed -n '1{p;q;}' ../results/${JOBID}.coils)"
-    manipulate_json.py -k 'coils_w28' -v "$COILS" ../results/${JOBID}.json
+    manipulate_json.py -k 'coils_w28' -v "$COILS" ../results/results.json
 else
-    manipulate_json.py -k 'coils_w28' -v "" ../results/${JOBID}.json
+    manipulate_json.py -k 'coils_w28' -v "" ../results/results.json
 fi
 
 #Write PCOILS results
@@ -384,9 +388,9 @@ CC_COUNT=$(tr -cd "C" <  ../results/${JOBID}.pcoils | wc -c)
 
 if [[ ${CC_COUNT} -gt "7" ]] ; then
     PCOILS="$(sed -n '1{p;q;}' ../results/${JOBID}.pcoils)"
-    manipulate_json.py -k 'pcoils_w28' -v "$PCOILS" ../results/${JOBID}.json
+    manipulate_json.py -k 'pcoils_w28' -v "$PCOILS" ../results/results.json
 else
-    manipulate_json.py -k 'pcoils_w28' -v "" ../results/${JOBID}.json
+    manipulate_json.py -k 'pcoils_w28' -v "" ../results/results.json
 fi
 
 #Write TMHMM results
@@ -395,9 +399,9 @@ TM_COUNT=$(tr -cd "M" <  ../results/${JOBID}.tmhmm | wc -c)
 
 if [[ ${TM_COUNT} -gt "5" ]] ; then
     TMH="$(sed -n '1{p;q;}' ../results/${JOBID}.tmhmm)"
-    manipulate_json.py -k 'tmhmm' -v "$TMH" ../results/${JOBID}.json
+    manipulate_json.py -k 'tmhmm' -v "$TMH" ../results/results.json
 else
-    manipulate_json.py -k 'tmhmm' -v "" ../results/${JOBID}.json
+    manipulate_json.py -k 'tmhmm' -v "" ../results/results.json
 fi
 
 #Write PHOBIUS results
@@ -406,9 +410,9 @@ TM_COUNT=$(tr -cd "M" <  ../results/${JOBID}.phobius | wc -c)
 
 if [[ ${TM_COUNT} -gt "5" ]] ; then
     TMH="$(sed -n '1{p;q;}' ../results/${JOBID}.phobius)"
-    manipulate_json.py -k 'phobius' -v "$TMH" ../results/${JOBID}.json
+    manipulate_json.py -k 'phobius' -v "$TMH" ../results/results.json
 else
-    manipulate_json.py -k 'phobius' -v "" ../results/${JOBID}.json
+    manipulate_json.py -k 'phobius' -v "" ../results/results.json
 fi
 
 TM_COUNT=0
@@ -416,9 +420,9 @@ TM_COUNT=$(tr -cd "M" <  ../results/${JOBID}.polyphobius | wc -c)
 
 if [[ ${TM_COUNT} -gt "5" ]] ; then
     TMH="$(sed -n '1{p;q;}' ../results/${JOBID}.polyphobius)"
-    manipulate_json.py -k 'polyphobius' -v "$TMH" ../results/${JOBID}.json
+    manipulate_json.py -k 'polyphobius' -v "$TMH" ../results/results.json
 else
-    manipulate_json.py -k 'polyphobius' -v "" ../results/${JOBID}.json
+    manipulate_json.py -k 'polyphobius' -v "" ../results/results.json
 fi
 
 # Write results of signal peptide prediction
@@ -427,9 +431,9 @@ SIGNALP=$(grep 'SP(Sec/SPI)' ../results/*.signalp5 | wc -l)
 
 if [[ ${SIGNALP} -gt "4" ]] || [[ ${PHOBIUSSIGNAL} -gt "0" ]] ; then
     TMH="$(sed -n '1{p;q;}' ../results/${JOBID}.tmhmm)"
-    manipulate_json.py -k 'signal' -v "yes" ../results/${JOBID}.json
+    manipulate_json.py -k 'signal' -v "yes" ../results/results.json
 else
-    manipulate_json.py -k 'signal' -v "no" ../results/${JOBID}.json
+    manipulate_json.py -k 'signal' -v "no" ../results/results.json
 fi
 
 cd ../results/

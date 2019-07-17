@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import {ActionTree} from 'vuex';
 import {RootState, JobState} from '../../types';
-import {AlignmentItem, Job} from '@/types/toolkit/jobs';
+import {Job} from '@/types/toolkit/jobs';
+import {AlignmentItem} from '@/types/toolkit/results';
 import {jobService} from '@/services/JobService';
 import {WebSocketActions} from '@/types/toolkit/enums';
 import Logger from 'js-logger';

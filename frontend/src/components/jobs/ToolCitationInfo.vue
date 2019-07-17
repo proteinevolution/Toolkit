@@ -28,7 +28,8 @@
 <style lang="scss" scoped>
     .citation {
         border-left: 2px solid rgba(0, 110, 98, 0.75);
-        margin: 0.5em 0.5em 0;
+        margin: 0.65rem 0.5em 0;
+        font-size: 0.95em;
 
         div {
             margin-left: 1em;

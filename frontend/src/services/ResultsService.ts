@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {AlignmentItem} from '@/types/toolkit/jobs';
+import {AlignmentItem} from '@/types/toolkit/results';
 
 class ResultsService {
 

@@ -23,7 +23,7 @@
                                 <td class="d-flex align-items-center">
                                     <b-form-checkbox :checked="selected.includes(elem.num)"
                                                      @change="selectedChanged(elem.num)"/>
-                                    <b v-text="index + '.'"
+                                    <b v-text="index+1 + '.'"
                                        class="ml-2"></b>
                                 </td>
                                 <td class="accession">
@@ -51,7 +51,8 @@
 <script lang="ts">
     import Vue from 'vue';
     import ToolCitationInfo from '../ToolCitationInfo.vue';
-    import {AlignmentItem, Job} from '@/types/toolkit/jobs';
+    import {Job} from '@/types/toolkit/jobs';
+    import {AlignmentItem} from '@/types/toolkit/results';
     import {Tool} from '@/types/toolkit/tools';
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';

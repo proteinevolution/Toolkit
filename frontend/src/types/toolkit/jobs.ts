@@ -1,4 +1,5 @@
 import {JobState} from '@/types/toolkit/enums';
+import {AlignmentItem} from '@/types/toolkit/results';
 
 export interface Job {
     jobID: string;
@@ -32,10 +33,4 @@ export interface CustomJobIdValidationResult {
 export interface SimilarJobResult {
     jobID: string;
     dateCreated: number;
-}
-
-export interface AlignmentItem {
-    accession: string;
-    seq: string;
-    num: number;
 }

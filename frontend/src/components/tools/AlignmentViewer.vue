@@ -10,7 +10,7 @@
     import Vue from 'vue';
     import {MSAViewerSeq} from '@/types/toolkit/tools';
     import Logger from 'js-logger';
-    import {AlignmentItem} from '@/types/toolkit/jobs';
+    import {AlignmentItem} from '@/types/toolkit/results';
     import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('AlignmentViewer');
