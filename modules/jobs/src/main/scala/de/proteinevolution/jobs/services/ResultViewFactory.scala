@@ -75,8 +75,6 @@ final class ResultViewFactory @Inject()(
       case HHREPID             => HHrepIdResultView(jobId, constants)
       case ALI2D               => Ali2DResultView(jobId, constants)
       case ALN2PLOT            => Aln2PlotResultView(jobId)
-      case ANCESCON            => AncesconResultView(jobId, constants)
-      case PHYML               => PhyMLResultView(jobId, constants)
       case MMSEQS2             => MMSeqsResultView(jobId, toolConfig)
       case RETSEQ              => RetSeqResultView(jobId, constants, toolConfig)
       case SAMCC               => SamCCResultView(jobId)

@@ -27,6 +27,16 @@ class ResultsService {
         return `/api/jobs/${jobId}/results/files/${file}`;
     }
 
+    public getFile(jobId: string, file: string): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            axios.get(this.getDownloadFilePath(jobId, file))
+                .then((response) => {
+                    resolve(response.data);
+                })
+                .catch(reject);
+        });
+    }
+
     public downloadFile(jobId: string, file: string, downloadFilename: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             axios.get(this.getDownloadFilePath(jobId, file))
