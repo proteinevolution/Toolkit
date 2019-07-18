@@ -10,5 +10,5 @@ export const PROTEIN: SequenceType = {
 
 // separate function to be able to unit test this
 export function isProteinSequence(seq: string): boolean {
-    return !/[^A-Z.-]/i.test(seq);
+    return !/[^\sA-Z.-]/i.test(seq);
 }
