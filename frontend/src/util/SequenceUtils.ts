@@ -11,34 +11,47 @@ export function quick2dColor(name: string, seq: string): string {
         case 'psspred':
         case 'deepcnf':
         case 'netsurfpss':
-            return seq.toUpperCase().replace(/[CHE]/g, function (m) {
-                if (m === 'C') return '&nbsp;';
-                else return '<span class="ss_' + m.toLowerCase() + '_b">' + m + '</span>';
+            return seq.toUpperCase().replace(/[CHE]/g, (m) => {
+                if (m === 'C') {
+                    return '&nbsp;';
+                }
+                return '<span class="ss_' + m.toLowerCase() + '_b">' + m + '</span>';
             });
         case 'netsurfpd':
         case 'spot-d':
         case 'iupred':
         case 'disopred':
-            return seq.toUpperCase().replace(/[DO]/g, function (m) {
-                if (m === 'O') return '&nbsp;';
-                else return '<span class="CC_do">' + m + '</span>';
+            return seq.toUpperCase().replace(/[DO]/g, (m) => {
+                if (m === 'O') {
+                    return '&nbsp;';
+                }
+                return '<span class="CC_do">' + m + '</span>';
             });
         case 'marcoil':
         case 'coils':
         case 'pcoils':
-            return seq.toUpperCase().replace(/[CX]/g, function (m) {
-                if (m === 'X') return '&nbsp;';
-                else return '<span class="CC_b">' + m + '</span>';
+            return seq.toUpperCase().replace(/[CX]/g, (m) => {
+                if (m === 'X') {
+                    return '&nbsp;';
+                }
+                return '<span class="CC_b">' + m + '</span>';
+            });
+        case 'tmhmm':
+        case 'phobius':
+        case 'polyphobius':
+            return seq.toUpperCase().replace(/[TX]/g, (m) => {
+                if (m === 'X') {
+                    return '&nbsp;';
+                }
+                return '<span class="CC_m">' + m + '</span>';
+            });
+        case 'pipred':
+            return seq.toUpperCase().replace(/[IX]/g, (m) => {
+                if (m === 'X') {
+                    return '&nbsp;';
+                }
+                return '<span class="ss_pihelix">' + m + '</span>';
             });
     }
-    return 'waiting';
+    return 'Error! Unknown tool';
 }
-
-// def Q2DColorReplace(name: String, sequence: String): String =
-//     name match {
-//       case "tmhmm"       => TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
-//       case "phobius"     => TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
-//       case "polyphobius" => TM_pattern.replaceAllIn(sequence, "<span class=\"CC_m\">" + "$1" + "</span>")
-//       case "pipred"      => PIHELIX_pattern.replaceAllIn(sequence, "<span class=\"ss_pihelix\">" + "$1" + "</span>")
-//
-//     }

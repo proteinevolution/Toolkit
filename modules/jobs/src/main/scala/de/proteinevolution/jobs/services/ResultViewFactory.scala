@@ -123,34 +123,6 @@ final class ResultViewFactory @Inject()(
         for {
           result <- json.as[HHPredResult]
         } yield HHPredAlignResultView(jobId, result, toolConfig, constants)
-      case QUICK2D =>
-        for {
-          result <- json.as[Quick2DResult]
-        } yield Quick2DResultView(result)
-      case CLUSTALO =>
-        for {
-          alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
-        } yield ClustalOmegaResultView(jobId, alignment, constants, toolConfig)
-      case KALIGN =>
-        for {
-          alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
-        } yield KalignResultView(jobId, alignment, constants, toolConfig)
-      case MAFFT =>
-        for {
-          alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
-        } yield MafftResultView(jobId, alignment, constants, toolConfig)
-      case MSAPROBS =>
-        for {
-          alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
-        } yield MsaProbsResultView(jobId, alignment, constants, toolConfig)
-      case MUSCLE =>
-        for {
-          alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
-        } yield MuscleResultView(jobId, alignment, constants, toolConfig)
-      case TCOFFEE =>
-        for {
-          alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
-        } yield TcoffeeResultView(jobId, alignment, constants, toolConfig)
       case SEQ2ID =>
         for {
           result <- json.as[Unchecked]

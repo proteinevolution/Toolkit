@@ -130,7 +130,8 @@
                         let breakIt = 0;
                         const value: string = this.results.results[key];
                         while (breakIt * this.breakAfter < value.length) {
-                            const colored: string = quick2dColor(key, value.slice(breakIt * this.breakAfter, (breakIt + 1) * this.breakAfter));
+                            const cut: string = value.slice(breakIt * this.breakAfter, (breakIt + 1) * this.breakAfter);
+                            const colored: string = quick2dColor(key, cut);
                             res[key].push(colored);
                             breakIt++;
                         }

@@ -12,6 +12,10 @@ const mutations: MutationTree<JobState> = {
         if (index < 0) {
             state.jobs.push(job);
         } else {
+            // alignments have to be fetched separately
+            if (!job.alignments && state.jobs[index].alignments) {
+                job.alignments = state.jobs[index].alignments;
+            }
             Vue.set(state.jobs, index, job);
         }
     },
@@ -33,6 +37,10 @@ const mutations: MutationTree<JobState> = {
             // the websocket does not push paramValues
             if (!job.paramValues && state.jobs[index].paramValues) {
                 job.paramValues = state.jobs[index].paramValues;
+            }
+            // the websocket does not push alignments
+            if (!job.alignments && state.jobs[index].alignments) {
+                job.alignments = state.jobs[index].alignments;
             }
             Vue.set(state.jobs, index, job);
         }
