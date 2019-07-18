@@ -61,12 +61,62 @@
                     this.autoResize(fullScreen);
                 });
             });
-            this.autoResize(false);
+            if (this.seqs) {
+                this.buildMSAViewer(this.seqs);
+            }
         },
         beforeDestroy() {
             EventBus.$off('alignment-viewer-resize');
         },
         methods: {
+            buildMSAViewer(seqs: MSAViewerSeq[]) {
+                const opts = {
+                    colorscheme: {
+                        scheme: 'clustal',
+                    },
+                    el: this.$refs.root,
+                    seqs,
+                    vis: {
+                        conserv: false,
+                        overviewbox: false,
+                        seqlogo: true,
+                        labels: true,
+                        labelName: true,
+                        labelId: false,
+                        labelPartition: false,
+                        labelCheckbox: false,
+                    },
+                    conf: {
+                        dropImport: true,
+                    },
+                    zoomer: {
+                        // Alignment viewer is not scrolling with 'alignmentWidth: "auto"', use fixed numbers instead or
+                        // use script for handling
+                        alignmentHeight: 400,
+                        alignmentWidth: 400,
+                        labelNameLength: 165,
+                        labelWidth: 85,
+                        labelFontsize: '13px',
+                        labelIdLength: 75,
+                        menuFontsize: '13px',
+                        menuPadding: '0px 10px 0px 0px',
+                        menuMarginLeft: '-6px',
+                        menuItemFontsize: '14px',
+                        menuItemLineHeight: '14px',
+                        autoResize: false,
+                    },
+                };
+                this.msaViewer = new msa(opts);
+
+                const menuOpts = {
+                    el: this.$refs.menu,
+                    msa: this.msaViewer,
+                };
+                const defMenu = new msa.menu.defaultmenu(menuOpts);
+                this.msaViewer.addView('menu', defMenu);
+
+                this.msaViewer.render();
+            },
             autoResize(fullScreen: boolean) {
                 const parent: HTMLElement = (this.$refs.container as HTMLElement);
                 if (this.msaViewer && parent) {
@@ -82,54 +132,7 @@
                     if (!seqs) {
                         return;
                     }
-
-                    const opts = {
-                        colorscheme: {
-                            scheme: 'clustal',
-                        },
-                        el: this.$refs.root,
-                        seqs,
-                        vis: {
-                            conserv: false,
-                            overviewbox: false,
-                            seqlogo: true,
-                            labels: true,
-                            labelName: true,
-                            labelId: false,
-                            labelPartition: false,
-                            labelCheckbox: false,
-                        },
-                        conf: {
-                            dropImport: true,
-                        },
-                        zoomer: {
-                            // Alignment viewer is not scrolling with 'alignmentWidth: "auto"', use fixed numbers instead or
-                            // use script for handling
-                            alignmentHeight: 400,
-                            alignmentWidth: 400,
-                            labelNameLength: 165,
-                            labelWidth: 85,
-                            labelFontsize: '13px',
-                            labelIdLength: 75,
-                            menuFontsize: '13px',
-                            menuPadding: '0px 10px 0px 0px',
-                            menuMarginLeft: '-6px',
-                            menuItemFontsize: '14px',
-                            menuItemLineHeight: '14px',
-                            autoResize: false,
-                        },
-                    };
-                    const msaViewer = new msa(opts);
-
-                    const menuOpts = {
-                        el: this.$refs.menu,
-                        msa: msaViewer,
-                    };
-                    const defMenu = new msa.menu.defaultmenu(menuOpts);
-                    msaViewer.addView('menu', defMenu);
-
-                    msaViewer.render();
-                    this.msaViewer = msaViewer;
+                    this.buildMSAViewer(seqs);
                 },
             },
         },
