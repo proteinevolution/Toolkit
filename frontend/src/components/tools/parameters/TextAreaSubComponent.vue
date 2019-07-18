@@ -3,7 +3,8 @@
                   :class="{'uploading-file': uploadingFile}">
         <b-form-textarea class="textarea-alignment"
                          :placeholder="parameter.inputPlaceholder"
-                         v-model="text"
+                         v-bind:value="value"
+                         v-on:input="handleInput"
                          cols="70"
                          spellcheck="false">
         </b-form-textarea>
@@ -26,7 +27,7 @@
                        @change="handleFileUpload"/>
             </label>
         </b-button-group>
-        <VelocityFade v-if="text">
+        <VelocityFade v-if="value">
             <b-alert show
                      key="autoTransformMessage"
                      v-if="autoTransformedParams"
@@ -87,7 +88,6 @@
         },
         data() {
             return {
-                text: this.value,
                 fileUploadProgress: 0,
                 uploadingFile: false,
                 autoTransformedParams: null,
@@ -96,19 +96,17 @@
             };
         },
         watch: {
-            text: {
+            value: {
                 immediate: true,
                 handler(value: string) {
-                    this.$emit('input', value);
-
                     // validate in watcher since somehow computed properties don't update on empty strings
-                    const val: ValidationResult = validation(this.text, this.parameter.inputType, this.validationParams);
+                    const val: ValidationResult = validation(value, this.parameter.inputType, this.validationParams);
                     if (val.textKey === 'shouldAutoTransform') {
-                        this.text = transformToFormat(this.text, val.textKeyParams.transformFormat);
+                        this.$emit('input', transformToFormat(value, val.textKeyParams.transformFormat));
                         this.displayAutoTransformMessage(val.textKeyParams);
 
                         // trigger validation again
-                        this.validation = validation(this.text, this.parameter.inputType, this.validationParams);
+                        this.validation = validation(value, this.parameter.inputType, this.validationParams);
                     }
 
                     // emit event if msa detected (except for second input)
@@ -133,7 +131,7 @@
                     const reader = new FileReader();
                     reader.onload = () => {
                         if (reader.result) {
-                            this.text = reader.result.toString();
+                            this.$emit('input', reader.result.toString());
                         }
                     };
                     reader.onerror = this.errorHandler;
@@ -178,15 +176,18 @@
                 const sampleSeqKey: string = this.parameter.sampleInputKey.split(',')[this.second ? 1 : 0];
                 sampleSeqService.fetchSampleSequence(sampleSeqKey)
                     .then((res: string) => {
-                        this.text = res;
+                        this.$emit('input', res);
                     })
                     .catch((err: any) => {
                         logger.error('error when fetching sample sequence', err);
-                        this.text = 'Error!';
+                        this.$emit('input', 'Error!');
                     })
                     .finally(() => {
                         this.$store.commit('stopLoading', 'alignmentTextarea');
                     });
+            },
+            handleInput(value: string): void {
+                this.$emit('input', value);
             },
         },
     });
