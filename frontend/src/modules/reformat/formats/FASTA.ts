@@ -67,7 +67,7 @@ export const FASTA: Format = {
             }
             while (i < newlines.length && !newlines[i].startsWith('>')) {
                 if (!newlines[i].startsWith(';')) {
-                    element.seq += newlines[i];
+                    element.seq += newlines[i].replace(/\s/g,'');
                 }
                 i++;
             }
