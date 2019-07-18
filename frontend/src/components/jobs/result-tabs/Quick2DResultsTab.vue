@@ -23,8 +23,9 @@
                             <td>
                         <span class="sequence"
                               v-text="brokenQuery[i - 1]"></span>
+                            <span v-text="'   ' + min(i * breakAfter, results.query.sequence.length)"></span>
                             </td>
-                            <td v-text="min(i * breakAfter, results.query.sequence.length)"></td>
+
                         </tr>
                         <tr v-for="(value, key) in subTools">
                             <td v-text="value"></td>
@@ -97,7 +98,15 @@
                     'psspred': 'SS_PSSPRED4',
                     'deepcnf': 'SS_DEEPCNF',
                     'netsurfpss': 'SS_NETSURFP2',
+                    'pipred': 'SS_PIPRED',
+                    'marcoil': 'CC_MARCOIL',
+                    'coils_w28': 'CC_COILS_W28',
+                    'pcoils_w28': 'CC_PCOILS_W28',
+                    'tmhmm': 'TM_TMHMM',
+                    'phobius': 'TM_PHOBIUS',
+                    'polyphobius': 'TM_POLYPHOBIUS',
                     'netsurfpd': 'DO_NETSURFPD2',
+                    'disopred': 'DO_DISOPRED',
                     'spot-d': 'DO_SPOTD',
                     'iupred': 'DO_IUPRED',
                 },

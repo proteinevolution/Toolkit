@@ -28,8 +28,8 @@ export function quick2dColor(name: string, seq: string): string {
                 return '<span class="CC_do">' + m + '</span>';
             });
         case 'marcoil':
-        case 'coils':
-        case 'pcoils':
+        case 'coils_w28':
+        case 'pcoils_w28':
             return seq.toUpperCase().replace(/[CX]/g, (m) => {
                 if (m === 'X') {
                     return '&nbsp;';
