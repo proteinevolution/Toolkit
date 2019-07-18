@@ -37,11 +37,6 @@ case class PsiBlastResultView(
       toolConfig.values("psiblast"),
       s"${constants.jobPath}$jobId/results/blastviz.html"
     ),
-    "Raw Output" -> views.html.resultpanels.fileviewWithDownload(
-      "output_psiblastp.html",
-      jobId,
-      "PSIBLAST_OUTPUT"
-    ),
     "E-Value Plot" -> views.html.resultpanels.evalues(result.HSPS.map(_.eValue))
   )
 

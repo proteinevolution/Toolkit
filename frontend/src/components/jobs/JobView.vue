@@ -82,7 +82,6 @@
     import HitlistTab from './result-tabs/HitlistTab.vue';
     import ClansResultsTab from '@/components/jobs/result-tabs/ClansResultsTab.vue';
     import Quick2DResultsTab from './result-tabs/Quick2DResultsTab.vue';
-    import SummaryTab from './result-tabs/SummaryTab.vue';
     import JobPreparedTab from './state-tabs/JobPreparedTab.vue';
     import JobQueuedTab from './state-tabs/JobQueuedTab.vue';
     import JobRunningTab from './state-tabs/JobRunningTab.vue';
@@ -121,7 +120,6 @@
             clansResults: ClansResultsTab,
             quick2dResults: Quick2DResultsTab,
             treeView: TreeTab,
-            summaryView: SummaryTab,
             dataView: DataTab,
         },
         data() {
