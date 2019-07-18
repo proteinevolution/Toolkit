@@ -57,7 +57,6 @@
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
     import Logger from 'js-logger';
-    import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('ClustalAlignmentTab');
 

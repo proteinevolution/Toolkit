@@ -21,7 +21,6 @@ package object resultviews {
   final val HITLIST         = "hitlist"
   final val RESULTS         = "results"
   final val ALIGNMENT       = "fastaAlignment"
-  final val CLUSTAL         = "clustalAlignment"
   final val ALIGNMENTVIEWER = "alignmentViewer"
   final val TREE            = "treeView"
   final val SUMMARY         = "summaryView"

@@ -68,4 +68,7 @@ else
     mv ../results/*phyml_stats.txt ../results/${JOBID}.stats
 fi
 
+# TODO @vikramalva is this possible?
+mv ../results/${JOBID}.phy_phyml_tree.txt  ../results/${JOBID}.tree
+
 echo "done" >> ../results/process.log

@@ -16,11 +16,11 @@
 
 package de.proteinevolution.tools
 
-import com.typesafe.config.{Config, ConfigObject}
-import de.proteinevolution.parameters.{ForwardingMode, Parameter, ParameterSection, TextAreaInputType, ToolParameters}
+import com.typesafe.config.{ Config, ConfigObject }
+import de.proteinevolution.parameters._
 import de.proteinevolution.params.ParamAccess
-import de.proteinevolution.tools.forms.{ToolFormSimple, ValidationParamsForm}
-import javax.inject.{Inject, Singleton}
+import de.proteinevolution.tools.forms.{ ToolFormSimple, ValidationParamsForm }
+import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 
 import scala.collection.JavaConverters._
@@ -44,13 +44,15 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
           config.getString("section").toLowerCase,
           config.getString("version"),
           config.getStringList("parameter").asScala.map { param =>
-            paramAccess.getParam(param,
+            paramAccess.getParam(
+              param,
               config.getString("input_placeholder"),
               config.getString("sample_input_key"),
-              Try(config.getString("input_type")).getOrElse(TextAreaInputType.SEQUENCE))
+              Try(config.getString("input_type")).getOrElse(TextAreaInputType.SEQUENCE)
+            )
           },
           // TODO remove Try when implemented for each tool
-          Try(config.getConfig("result_views").root().unwrapped().asScala.toMap).getOrElse(Map()),
+          Try(config.getStringList("result_views").asScala).getOrElse(Seq()),
           config.getStringList("forwarding.alignment").asScala,
           config.getStringList("forwarding.multi_seq").asScala,
           ValidationParamsForm(
@@ -62,7 +64,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
             Try(config.getInt("sequence_restrictions.min_num_seq")).toOption,
             Some(Try(config.getInt("sequence_restrictions.max_num_seq")).getOrElse(10000)),
             Try(config.getBoolean("sequence_restrictions.same_length")).toOption,
-            Try(config.getBoolean("sequence_restrictions.allow_empty")).toOption,
+            Try(config.getBoolean("sequence_restrictions.allow_empty")).toOption
           )
         )
       case (_, _) => throw new IllegalStateException("tool does not exist")
@@ -78,18 +80,18 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
   }
 
   private def toTool(
-                      toolNameShort: String,
-                      toolNameLong: String,
-                      order: Int,
-                      description: String,
-                      code: String,
-                      section: String,
-                      version: String,
-                      params: Seq[Parameter],
-                      resultViews: Map[String, AnyRef],
-                      forwardAlignment: Seq[String],
-                      forwardMultiSeq: Seq[String],
-                      validationParams: ValidationParamsForm,
+      toolNameShort: String,
+      toolNameLong: String,
+      order: Int,
+      description: String,
+      code: String,
+      section: String,
+      version: String,
+      params: Seq[Parameter],
+      resultViews: Seq[String],
+      forwardAlignment: Seq[String],
+      forwardMultiSeq: Seq[String],
+      validationParams: ValidationParamsForm
   ): Tool = {
     val toolFormSimple = ToolFormSimple(
       toolNameShort,
@@ -97,7 +99,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       description,
       section,
       version,
-      validationParams,
+      validationParams
     )
     val inputGroup: Seq[String] = paramAccess.paramGroups("Input")
     val toolParameterForm = ToolParameters(

@@ -156,6 +156,16 @@
             & > div:last-of-type {
                 display: none !important;
             }
+
+            & > div {
+                position: relative;
+
+                .smenu-dropdown {
+                    position: absolute;
+                    left: 0 !important;
+                    top: 1.5rem !important;
+                }
+            }
         }
 
         .biojs_msa_labelblock .biojs_msa_labelrow {
