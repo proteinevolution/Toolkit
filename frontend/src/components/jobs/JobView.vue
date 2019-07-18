@@ -31,6 +31,8 @@
                            :job="job"
                            :view-options="jobViewOptions"
                            :tool="tool"></component>
+
+                <tool-citation-info :tool="tool"/>
             </b-tab>
 
         </template>
@@ -95,6 +97,7 @@
     import NotFoundView from '@/components/utils/NotFoundView.vue';
     import Logger from 'js-logger';
     import EventBus from '@/util/EventBus';
+    import ToolCitationInfo from '@/components/jobs/ToolCitationInfo.vue';
 
     const logger = Logger.get('JobView');
 
@@ -109,6 +112,7 @@
             JobSubmittedTab,
             JobPendingTab,
             NotFoundView,
+            ToolCitationInfo,
             clustalAlignment: ClustalAlignmentTab,
             fastaAlignment: FastaAlignmentTab,
             alignmentViewer: AlignmentViewerTab,

@@ -15,14 +15,11 @@
 
         If you face problems loading the CLANS file, please increase the maximum Java heap size (-Xmx).
         <br/><br/>
-
-        <tool-citation-info :tool="tool"/>
     </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
-    import ToolCitationInfo from '@/components/jobs/ToolCitationInfo.vue';
     import Loading from '@/components/utils/Loading.vue';
     import {Tool} from '@/types/toolkit/tools';
     import {Job} from '@/types/toolkit/jobs';
@@ -31,7 +28,6 @@
     export default Vue.extend({
         name: 'ClansResultsTab',
         components: {
-            ToolCitationInfo,
             Loading,
         },
         props: {

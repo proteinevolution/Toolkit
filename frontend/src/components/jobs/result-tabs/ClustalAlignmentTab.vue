@@ -1,58 +1,54 @@
 <template>
-    <div>
-        <Loading :message="$t('jobs.results.alignment.loadingHits')"
-                 v-if="loading"/>
-        <div v-else>
-            <div class="result-options">
-                <a @click="toggleAllSelected">{{$t('jobs.results.actions.' + (allSelected ? 'deselectAll' :
-                    'selectAll'))}}</a>
-                <a @click="forwardSelected">{{$t('jobs.results.actions.forwardSelected')}}</a>
-                <a @click="downloadAlignment">{{$t('jobs.results.actions.downloadMSA')}}</a>
-                <a :href="downloadFilePath" target="_blank">{{$t('jobs.results.actions.exportMSA')}}</a>
-                <a @click="toggleColor">{{$t('jobs.results.actions.colorMSA')}}</a>
-            </div>
-            <hr class="mt-2">
+    <Loading :message="$t('jobs.results.alignment.loadingHits')"
+             v-if="loading"/>
+    <div v-else>
+        <div class="result-options">
+            <a @click="toggleAllSelected">{{$t('jobs.results.actions.' + (allSelected ? 'deselectAll' :
+                'selectAll'))}}</a>
+            <a @click="forwardSelected">{{$t('jobs.results.actions.forwardSelected')}}</a>
+            <a @click="downloadAlignment">{{$t('jobs.results.actions.downloadMSA')}}</a>
+            <a :href="downloadFilePath" target="_blank">{{$t('jobs.results.actions.exportMSA')}}</a>
+            <a @click="toggleColor">{{$t('jobs.results.actions.colorMSA')}}</a>
+        </div>
+        <hr class="mt-2">
 
-            <div class="alignment-results mb-4">
-                <p v-html="$t('jobs.results.alignment.numSeqs', {num: alignments.length})"></p>
-                <div class="table-responsive">
-                    <table>
-                        <tbody>
-                        <template v-for="(group, groupI) in brokenAlignments">
-                            <tr v-for="elem in group"
-                                :key="groupI + '-' + elem.num">
-                                <td>
-                                    <b-form-checkbox :checked="selected.includes(elem.num)"
-                                                     @change="selectedChanged(elem.num)"/>
-                                </td>
-                                <td class="accession">
-                                    <b v-text="elem.accession.slice(0, 20)"></b>
-                                </td>
-                                <td v-html="coloredSeq(elem.seq)"
-                                    class="sequence">
-                                </td>
-                            </tr>
-                            <tr class="blank-row"
-                                v-if="groupI < brokenAlignments.length - 1">
-                                <td colspan="3"></td>
-                            </tr>
-                            <tr class="blank-row"
-                                v-if="groupI < brokenAlignments.length - 1">
-                                <td colspan="3"></td>
-                            </tr>
-                        </template>
-                        </tbody>
-                    </table>
-                </div>
+        <div class="alignment-results mb-4">
+            <p v-html="$t('jobs.results.alignment.numSeqs', {num: alignments.length})"></p>
+            <div class="table-responsive">
+                <table>
+                    <tbody>
+                    <template v-for="(group, groupI) in brokenAlignments">
+                        <tr v-for="elem in group"
+                            :key="groupI + '-' + elem.num">
+                            <td>
+                                <b-form-checkbox :checked="selected.includes(elem.num)"
+                                                 @change="selectedChanged(elem.num)"/>
+                            </td>
+                            <td class="accession">
+                                <b v-text="elem.accession.slice(0, 20)"></b>
+                            </td>
+                            <td v-html="coloredSeq(elem.seq)"
+                                class="sequence">
+                            </td>
+                        </tr>
+                        <tr class="blank-row"
+                            v-if="groupI < brokenAlignments.length - 1">
+                            <td colspan="3"></td>
+                        </tr>
+                        <tr class="blank-row"
+                            v-if="groupI < brokenAlignments.length - 1">
+                            <td colspan="3"></td>
+                        </tr>
+                    </template>
+                    </tbody>
+                </table>
             </div>
         </div>
-        <tool-citation-info :tool="tool"/>
     </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
-    import ToolCitationInfo from '../ToolCitationInfo.vue';
     import {AlignmentItem} from '@/types/toolkit/results';
     import {Job} from '@/types/toolkit/jobs';
     import {Tool} from '@/types/toolkit/tools';
@@ -66,7 +62,6 @@
     export default Vue.extend({
         name: 'ClustalAlignmentTab',
         components: {
-            ToolCitationInfo,
             Loading,
         },
         props: {

@@ -1,56 +1,51 @@
 <template>
-    <div>
-        <Loading :message="$t('jobs.results.alignment.loadingHits')"
-                 v-if="loading"/>
-        <div v-else>
-            <div class="result-options">
-                <a @click="toggleAllSelected">
-                    {{$t('jobs.results.actions.' + (allSelected ? 'deselectAll' : 'selectAll'))}}
-                </a>
-                <a @click="forwardSelected">{{$t('jobs.results.actions.forwardSelected')}}</a>
-                <a @click="downloadAlignment">{{$t('jobs.results.actions.downloadMSA')}}</a>
-                <a :href="downloadFilePath" target="_blank">{{$t('jobs.results.actions.exportMSA')}}</a>
-            </div>
-            <hr class="mt-2">
+    <Loading :message="$t('jobs.results.alignment.loadingHits')"
+             v-if="loading"/>
+    <div v-else>
+        <div class="result-options">
+            <a @click="toggleAllSelected">
+                {{$t('jobs.results.actions.' + (allSelected ? 'deselectAll' : 'selectAll'))}}
+            </a>
+            <a @click="forwardSelected">{{$t('jobs.results.actions.forwardSelected')}}</a>
+            <a @click="downloadAlignment">{{$t('jobs.results.actions.downloadMSA')}}</a>
+            <a :href="downloadFilePath" target="_blank">{{$t('jobs.results.actions.exportMSA')}}</a>
+        </div>
+        <hr class="mt-2">
 
-            <div class="alignment-results mb-4">
-                <p v-html="$t('jobs.results.alignment.numSeqs', {num: alignments.length})"></p>
-                <div class="table-responsive">
-                    <table>
-                        <tbody>
-                        <template v-for="(elem, index) in alignments">
-                            <tr :key="'header' + elem.num">
-                                <td class="d-flex align-items-center">
-                                    <b-form-checkbox :checked="selected.includes(elem.num)"
-                                                     @change="selectedChanged(elem.num)"/>
-                                    <b v-text="index+1 + '.'"
-                                       class="ml-2"></b>
-                                </td>
-                                <td class="accession">
-                                    <b v-text="elem.accession"></b>
-                                </td>
-                            </tr>
-                            <tr v-for="(part, partI) in elem.seq.match(/.{1,95}/g)"
-                                :key="'sequence' + elem.num + '-' + partI">
-                                <td></td>
-                                <td v-text="part"
-                                    class="sequence">
-                                </td>
-                            </tr>
-                        </template>
-                        </tbody>
-                    </table>
-                </div>
+        <div class="alignment-results mb-4">
+            <p v-html="$t('jobs.results.alignment.numSeqs', {num: alignments.length})"></p>
+            <div class="table-responsive">
+                <table>
+                    <tbody>
+                    <template v-for="(elem, index) in alignments">
+                        <tr :key="'header' + elem.num">
+                            <td class="d-flex align-items-center">
+                                <b-form-checkbox :checked="selected.includes(elem.num)"
+                                                 @change="selectedChanged(elem.num)"/>
+                                <b v-text="index+1 + '.'"
+                                   class="ml-2"></b>
+                            </td>
+                            <td class="accession">
+                                <b v-text="elem.accession"></b>
+                            </td>
+                        </tr>
+                        <tr v-for="(part, partI) in elem.seq.match(/.{1,95}/g)"
+                            :key="'sequence' + elem.num + '-' + partI">
+                            <td></td>
+                            <td v-text="part"
+                                class="sequence">
+                            </td>
+                        </tr>
+                    </template>
+                    </tbody>
+                </table>
             </div>
         </div>
-
-        <tool-citation-info :tool="tool"/>
     </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
-    import ToolCitationInfo from '../ToolCitationInfo.vue';
     import {Job} from '@/types/toolkit/jobs';
     import {AlignmentItem} from '@/types/toolkit/results';
     import {Tool} from '@/types/toolkit/tools';
@@ -63,7 +58,6 @@
     export default Vue.extend({
         name: 'FastaAlignmentTab',
         components: {
-            ToolCitationInfo,
             Loading,
         },
         props: {
