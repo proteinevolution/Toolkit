@@ -19,10 +19,10 @@
                    v-text="$t('jobs.details.dateCreated', {dateCreated})"></small>
         </template>
 
-        <template #job-tabs>
+        <template #job-tabs
+                  v-if="job.status === JobState.Done && job.views">
 
-            <b-tab v-if="job.status === JobState.Done && job.views"
-                   v-for="(jobView, index) in job.views"
+            <b-tab v-for="(jobView, index) in job.views"
                    :key="'jobview-' + index"
                    :title="$t('jobs.results.titles.' + jobView)"
                    :active="index === 0"
@@ -32,8 +32,11 @@
                            :tool="tool"></component>
             </b-tab>
 
+        </template>
+        <template #job-tabs
+                  v-else>
+
             <b-tab :title="$t('jobs.states.' + job.status)"
-                   v-else
                    active>
                 <job-prepared-tab v-if="job.status === JobState.Prepared"
                                   :tool="tool"
