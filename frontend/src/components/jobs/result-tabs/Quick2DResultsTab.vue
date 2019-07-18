@@ -23,9 +23,10 @@
                         <span class="sequence"
                               v-text="brokenQuery[i - 1]"></span>
                             <span v-text="'   ' + min(i * breakAfter, results.query.sequence.length)"></span>
-                            </td>
+                        </td>
                     </tr>
-                    <tr v-for="(value, key) in subTools">
+                    <tr v-for="(value, key) in subTools"
+                        v-if="brokenResults[key]">
                         <td v-text="value"></td>
                         <td></td>
                         <td v-html="brokenResults[key][i - 1]"></td>
@@ -137,11 +138,11 @@
                         res[key] = [];
                         let breakIt = 0;
                         const value: string = this.results.results[key];
-                        while (breakIt * this.breakAfter < value.length) {
-                            const cut: string = value.slice(breakIt * this.breakAfter, (breakIt + 1) * this.breakAfter);
+                        while (breakIt < value.length) {
+                            const cut: string = value.slice(breakIt, breakIt + this.breakAfter);
                             const colored: string = quick2dColor(key, cut);
                             res[key].push(colored);
-                            breakIt++;
+                            breakIt += this.breakAfter;
                         }
                     }
                 }
