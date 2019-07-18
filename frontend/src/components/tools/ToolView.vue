@@ -93,9 +93,10 @@
     import NotFoundView from '@/components/utils/NotFoundView.vue';
     import LoadingWrapper from '@/components/utils/LoadingWrapper.vue';
     import {jobService} from '@/services/JobService';
+    import {authService} from '@/services/AuthService';
     import Logger from 'js-logger';
     import EventBus from '@/util/EventBus';
-    import {Job} from '@/types/toolkit/jobs';
+    import {CustomJobIdValidationResult, Job} from '@/types/toolkit/jobs';
 
     const logger = Logger.get('ToolView');
 
@@ -169,6 +170,8 @@
                     if (value) {
                         this.submission = {...value.paramValues};
                         Vue.set(this.submission, 'parentID', value.jobID);
+                        // Take the suggested Job ID immediately when loading existing job parameters into the tool
+                        this.checkJobId(value.jobID);
                     }
                 },
             },
@@ -204,6 +207,14 @@
                 } else {
                     this.$router.push('/tools/' + this.toolName);
                 }
+            },
+            checkJobId(jobId: string): void {
+                authService.validateJobId(jobId)
+                    .then((result: CustomJobIdValidationResult) => {
+                        if (result.suggested) {
+                            Vue.set(this.submission, 'jobID', result.suggested);
+                        }
+                    });
             },
         },
     });
