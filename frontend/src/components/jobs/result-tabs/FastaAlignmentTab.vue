@@ -3,7 +3,7 @@
         <Loading :message="$t('jobs.results.alignment.loadingHits')"
                  v-if="loading"/>
         <div v-else>
-            <div class="alignment-options">
+            <div class="result-options">
                 <a @click="toggleAllSelected">
                     {{$t('jobs.results.actions.' + (allSelected ? 'deselectAll' : 'selectAll'))}}
                 </a>
@@ -57,7 +57,6 @@
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
     import Logger from 'js-logger';
-    import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('ClustalAlignmentTab');
 
@@ -153,21 +152,6 @@
             letter-spacing: 0.025em;
             font-size: 0.75rem;
             white-space: pre;
-        }
-    }
-
-    .alignment-options {
-        font-size: 0.9em;
-
-        a {
-            cursor: pointer;
-            margin-right: 3rem;
-            color: inherit;
-        }
-
-        a:hover {
-            color: $primary;
-            text-decoration: none;
         }
     }
 </style>

@@ -2,7 +2,7 @@
     <div ref="container">
         <div ref="menu"></div>
         <div ref="root"
-             v-text="$t('tools.alignmentViewer.loading')"></div>
+             v-text="$t('loading')"></div>
     </div>
 </template>
 
@@ -155,6 +155,16 @@
             // hide Debug Menu Item
             & > div:last-of-type {
                 display: none !important;
+            }
+
+            & > div {
+                position: relative;
+
+                .smenu-dropdown {
+                    position: absolute;
+                    left: 0 !important;
+                    top: 1.5rem !important;
+                }
             }
         }
 

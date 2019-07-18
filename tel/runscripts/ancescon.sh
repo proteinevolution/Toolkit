@@ -60,6 +60,9 @@ echo "done" >> ../results/process.log
 
 cp ../results/${JOBID}.clu.tre  ../results/${JOBID}.clu.orig.tre
 ancescontreemerger.pl -n ../results/${JOBID}.names -t ../results/${JOBID}.clu.tre
+# TODO @vikramalva is this possible?
+mv ../results/${JOBID}.clu.tre  ../results/${JOBID}.tree
+mv ../results/${JOBID}.anc_out  ../results/${JOBID}.stats
 
 rm ../results/${JOBID}.clu.dis
 rm ../results/${JOBID}.names

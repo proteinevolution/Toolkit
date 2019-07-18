@@ -163,9 +163,6 @@ export default {
         copySuccess: 'Successfully copied',
         copyFailure: 'Unable to copy',
     },
-    alignmentViewer: {
-        loading: 'Loading...',
-    },
     citations: {
         intro: 'If you use {tool} on our Toolkit for your research, please cite as appropriate:',
         clustalo: 'Fast, scalable generation of high-quality protein multiple sequence ' +
@@ -250,5 +247,12 @@ export default {
             'SignalP: SignalP 5.0 improves signal peptide predictions using deep neural networks.<br>' +
             'Almagro Armenteros et al.<a href="https://www.nature.com/articles/s41587-019-0036-z" target="_blank" ' +
             'rel="noopener"> Nat Biotechnol. 2019 Apr;37(4):420-423</a>.<br><br>',
+        ancescon: 'Reconstruction of ancestral protein sequences and its applications.<br>Cai W, Pei J, Grishin NV. ' +
+            '<a href="https://bmcevolbiol.biomedcentral.com/articles/10.1186/1471-2148-4-33" ' +
+            'target="_blank" rel="noopener">BMC Evol Biol. 2004 Sep 17;4:33</a>.',
+        phyml: 'New algorithms and methods to estimate maximum-likelihood phylogenies: assessing the performance ' +
+            'of PhyML 3.0.<br>Guindon S, Dufayard JF, Lefort V, Anisimova M, Hordijk W, Gascuel O. <a ' +
+            'href="https://academic.oup.com/sysbio/article-lookup/doi/10.1093/sysbio/syq010" target="_blank" ' +
+            'rel="noopener">Syst Biol. 2010 May;59(3):307-21</a>.',
     },
 };

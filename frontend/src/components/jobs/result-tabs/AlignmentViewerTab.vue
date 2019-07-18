@@ -9,7 +9,6 @@
 <script lang="ts">
     import Vue from 'vue';
     import {Job} from '@/types/toolkit/jobs';
-    import Loading from '@/components/utils/Loading.vue';
     import ToolCitationInfo from '@/components/jobs/ToolCitationInfo.vue';
     import AlignmentViewer from '@/components/tools/AlignmentViewer.vue';
     import {Tool} from '@/types/toolkit/tools';
@@ -23,7 +22,6 @@
         components: {
             ToolCitationInfo,
             AlignmentViewer,
-            Loading,
         },
         props: {
             job: {

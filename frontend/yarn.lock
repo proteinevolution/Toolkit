@@ -1853,6 +1853,11 @@ biojs-events@0.0.4, biojs-events@^0.0.4:
   dependencies:
     backbone-events-standalone "^0.2.2"
 
+biojs-io-newick@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/biojs-io-newick/-/biojs-io-newick-1.5.0.tgz#f3b5e831ce2418b669e51dae1d7e3c96ec8d905a"
+  integrity sha1-87XoMc4kGLZp5R2uHX48luyNkFo=
+
 biojs-model@^0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/biojs-model/-/biojs-model-0.0.2.tgz#cb8890f2dbc9cd9a7f099f3f49e36a860b341261"
@@ -3115,6 +3120,11 @@ cyclist@~0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-0.2.2.tgz#1b33792e11e914a2fd6d6ed6447464444e5fa640"
 
+d3@^3.5.3:
+  version "3.5.17"
+  resolved "https://registry.yarnpkg.com/d3/-/d3-3.5.17.tgz#bc46748004378b21a360c9fc7cf5231790762fb8"
+  integrity sha1-vEZ0gAQ3iyGjYMn8fPUjF5B2L7g=
+
 dashdash@^1.12.0:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
@@ -3835,6 +3845,14 @@ executable@^4.1.0:
   integrity sha512-8iA79xD3uAch729dUG8xaaBBFGaEa0wdD2VkYLFHwlqosEj/jT66AzcreRDSgV7ehnNLBW2WR5jIXwGKjVdTLg==
   dependencies:
     pify "^2.2.0"
+
+exelixis@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/exelixis/-/exelixis-0.0.4.tgz#6fe838b541b13fde8093669c1555ebf93dbee5fb"
+  integrity sha1-b+g4tUGxP96Ak2acFVXr+T2+5fs=
+  dependencies:
+    biojs-io-newick "^1.5.0"
+    tnt.tree "0.0.13"
 
 expand-brackets@^2.1.4:
   version "2.1.4"
@@ -9417,6 +9435,49 @@ tiny-cookie@^2.1.1:
 tiny-emitter@^2.0.0:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/tiny-emitter/-/tiny-emitter-2.0.2.tgz#82d27468aca5ade8e5fd1e6d22b57dd43ebdfb7c"
+
+tnt.api@0.0.0, tnt.api@^0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/tnt.api/-/tnt.api-0.0.0.tgz#4169017a81700a13e51ccb5492cba38c95bd29e2"
+  integrity sha1-QWkBeoFwChPlHMtUksujjJW9KeI=
+
+tnt.newick@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/tnt.newick/-/tnt.newick-0.0.2.tgz#e12eae2f0721746d581980308ee1657eb035df3e"
+  integrity sha1-4S6uLwchdG1YGYAwjuFlfrA13z4=
+
+tnt.tooltip@0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/tnt.tooltip/-/tnt.tooltip-0.0.4.tgz#783f16a34dff56c8229920f858148613dc559e92"
+  integrity sha1-eD8Wo03/VsgimSD4WBSGE9xVnpI=
+  dependencies:
+    tnt.api "^0.0.0"
+
+tnt.tree.node@0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/tnt.tree.node/-/tnt.tree.node-0.0.0.tgz#4049bc6d768d2d95639d3c3a63424adc87166543"
+  integrity sha1-QEm8bXaNLZVjnTw6Y0JK3IcWZUM=
+  dependencies:
+    tnt.api "^0.0.0"
+    tnt.utils "^0.0.0"
+
+tnt.tree@0.0.13:
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/tnt.tree/-/tnt.tree-0.0.13.tgz#78a0febcac456e7a7dd7400773c15e64041fc073"
+  integrity sha1-eKD+vKxFbnp910AHc8FeZAQfwHM=
+  dependencies:
+    biojs-events "0.0.4"
+    d3 "^3.5.3"
+    tnt.api "0.0.0"
+    tnt.newick "0.0.2"
+    tnt.tooltip "0.0.4"
+    tnt.tree.node "0.0.0"
+    tnt.utils "0.0.0"
+
+tnt.utils@0.0.0, tnt.utils@^0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/tnt.utils/-/tnt.utils-0.0.0.tgz#3aa2b107b0f24ef97ae16ef40ab53b83deade382"
+  integrity sha1-OqKxB7DyTvl64W70CrU7g96t44I=
 
 to-arraybuffer@^1.0.0:
   version "1.0.1"
