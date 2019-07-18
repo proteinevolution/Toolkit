@@ -64,7 +64,6 @@ final class ResultViewFactory @Inject()(
 
   private def getResultViewsWithoutJson(toolName: String, jobId: String): ResultView = {
     (ToolName(toolName): @unchecked) match {
-      case FORMATSEQ           => FormatSeqResultView(jobId, toolConfig)
       case CLANS               => ClansResultView(jobId)
       case MARCOIL             => MarcoilResultView(jobId, toolConfig)
       case DEEPCOIL            => DeepCoilResultView(jobId, toolConfig, constants)
@@ -73,13 +72,8 @@ final class ResultViewFactory @Inject()(
       case MODELLER            => ModellerResultView(jobId, constants)
       case HHPRED_MANUAL       => HHPredManual(jobId, constants)
       case HHREPID             => HHrepIdResultView(jobId, constants)
-      case ALI2D               => Ali2DResultView(jobId, constants)
       case ALN2PLOT            => Aln2PlotResultView(jobId)
-      case MMSEQS2             => MMSeqsResultView(jobId, toolConfig)
-      case RETSEQ              => RetSeqResultView(jobId, constants, toolConfig)
       case SAMCC               => SamCCResultView(jobId)
-      case SIXFRAMETRANSLATION => SixFrameTranslationResultView(jobId)
-      case BACKTRANS           => BackTransResultView(jobId)
     }
   }
 

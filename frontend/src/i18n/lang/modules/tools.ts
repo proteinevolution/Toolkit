@@ -254,5 +254,15 @@ export default {
             'of PhyML 3.0.<br>Guindon S, Dufayard JF, Lefort V, Anisimova M, Hordijk W, Gascuel O. <a ' +
             'href="https://academic.oup.com/sysbio/article-lookup/doi/10.1093/sysbio/syq010" target="_blank" ' +
             'rel="noopener">Syst Biol. 2010 May;59(3):307-21</a>.',
+        ali2d: 'PSIPRED: Protein secondary structure prediction based on position-specific scoring matrices.<br>' +
+            'Jones DT. <a href="http://www.sciencedirect.com/science/article/pii/S0022283699930917?via%3Dihub" ' +
+            'target="_blank" rel="noopener">J Mol Biol. 1999 Sep 17;292(2):195-202</a>.<br><br>' +
+            'MEMSAT: Transmembrane protein topology prediction using support vector machines.<br>' +
+            'Nugent T, Jones DT.<a ' +
+            'href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-10-159" target="_blank" ' +
+            'rel="noopener"> BMC Bioinformatics. 2009 May 26;10:159.</a>',
+        mmseqs2: 'MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets.<br>' +
+            'Steinegger,M, Söding J. <a href="https://www.nature.com/articles/nbt.3988" target="_blank" ' +
+            'rel="noopener">Nat Biotechnol. 2017 Nov;35(11):1026-1028</a>.',
     },
 };

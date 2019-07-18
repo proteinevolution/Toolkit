@@ -35,8 +35,7 @@ case class SamCCResultView(jobId: String) extends ResultView {
       s"/results/files/$jobId/out1.png",
       s"/results/files/$jobId/out2.png",
       s"/results/files/$jobId/out3.png"
-    ),
-    "NumericalData" -> views.html.resultpanels.fileviewWithDownload(jobId + ".out", jobId, "samcc")
+    )
   )
 
 }

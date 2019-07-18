@@ -28,21 +28,6 @@ case class MarcoilResultView(jobId: String, toolConfig: ToolConfig) extends Resu
     "CC-Prob" -> views.html.resultpanels.marcoil(
       s"/results/files/$jobId/alignment_ncoils.png",
       toolConfig.values(ToolName.MARCOIL.value)
-    ),
-    "ProbList" -> views.html.resultpanels.fileviewWithDownload(
-      "alignment.ProbList",
-      jobId,
-      "marcoil_problist"
-    ),
-    "ProbState" -> views.html.resultpanels.fileviewWithDownload(
-      "alignment.ProbPerState",
-      jobId,
-      "marcoil_probperstate"
-    ),
-    "Predicted Domains" -> views.html.resultpanels.fileviewWithDownload(
-      "alignment.Domains",
-      jobId,
-      "marcoil_domains"
     )
   )
 

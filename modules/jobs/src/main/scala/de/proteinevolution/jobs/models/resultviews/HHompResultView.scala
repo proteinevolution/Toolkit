@@ -37,9 +37,7 @@ case class HHompResultView(
       result,
       toolConfig.values(ToolName.HHOMP.value),
       s"${constants.jobPath}/$jobId/results/$jobId.html_NOIMG"
-    ),
-    "Raw Output" ->
-    views.html.resultpanels.fileviewWithDownload(jobId + ".hhr", jobId, "hhomp")
+    )
   )
 
 }
