@@ -1,67 +1,61 @@
 <template>
-    <div>
-        <Loading :message="$t('loading')"
-                 v-if="loading"/>
-        <div v-else>
-            <h5>Protein ID: {{header}}</h5>
+    <Loading :message="$t('loading')"
+             v-if="loading"/>
+    <div v-else>
+        <h5>Protein ID: {{header}}</h5>
 
-            <div v-if="results && results.results.signal === 'yes'">
-                <br>
-                <span class="note"><b> We have detected a potential signal peptide in your query protein!</b></span>
-            </div>
-
+        <div v-if="results && results.results.signal === 'yes'">
             <br>
-            <br>
+            <span class="note"><b> We have detected a potential signal peptide in your query protein!</b></span>
+        </div>
 
-            <div class="table-responsive">
-                <table class="alignment-table">
-                    <tbody>
-                    <template v-for="i in brokenQuery.length">
-                        <tr>
-                            <td>AA_QUERY</td>
-                            <td v-text="(i - 1) * breakAfter + 1"></td>
-                            <td>
+        <br>
+        <br>
+
+        <div class="table-responsive">
+            <table class="alignment-table">
+                <tbody>
+                <template v-for="i in brokenQuery.length">
+                    <tr>
+                        <td>AA_QUERY</td>
+                        <td v-text="(i - 1) * breakAfter + 1"></td>
+                        <td>
                         <span class="sequence"
                               v-text="brokenQuery[i - 1]"></span>
                             <span v-text="'   ' + min(i * breakAfter, results.query.sequence.length)"></span>
                             </td>
-
-                        </tr>
-                        <tr v-for="(value, key) in subTools">
-                            <td v-text="value"></td>
-                            <td></td>
-                            <td v-html="brokenResults[key][i - 1]"></td>
-                            <td></td>
-                        </tr>
-                        <tr class="empty-row">
-                            <td colspan="4"></td>
-                        </tr>
-                    </template>
-                    </tbody>
-                </table>
-            </div>
-
-            <hr class="mt-0">
-            <br>
-
-            <div class="text-center mb-5">
-                SS = <span class="ss_h_b">&nbsp;&alpha;-helix&nbsp;</span><span
-                    class="ss_e_b">&nbsp;&beta;-strand&nbsp;</span><span
-                    class="ss_pihelix">&nbsp;&pi;-helix&nbsp;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CC
-                = <span class="CC_b">Coiled Coils</span>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TM = <span class="CC_m">Transmembrane</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DO
-                = <span class="CC_do">Disorder</span>
-            </div>
+                    </tr>
+                    <tr v-for="(value, key) in subTools">
+                        <td v-text="value"></td>
+                        <td></td>
+                        <td v-html="brokenResults[key][i - 1]"></td>
+                        <td></td>
+                    </tr>
+                    <tr class="empty-row">
+                        <td colspan="4"></td>
+                    </tr>
+                </template>
+                </tbody>
+            </table>
         </div>
 
-        <tool-citation-info :tool="tool"/>
+        <hr class="mt-0">
+        <br>
+
+        <div class="text-center mb-5">
+            SS = <span class="ss_h_b">&nbsp;&alpha;-helix&nbsp;</span><span
+                class="ss_e_b">&nbsp;&beta;-strand&nbsp;</span><span
+                class="ss_pihelix">&nbsp;&pi;-helix&nbsp;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CC
+            = <span class="CC_b">Coiled Coils</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TM = <span class="CC_m">Transmembrane</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DO
+            = <span class="CC_do">Disorder</span>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
     import Loading from '@/components/utils/Loading.vue';
-    import ToolCitationInfo from '@/components/jobs/ToolCitationInfo.vue';
     import {Tool} from '@/types/toolkit/tools';
     import {Job} from '@/types/toolkit/jobs';
     import Logger from 'js-logger';
@@ -74,7 +68,6 @@
     export default Vue.extend({
         name: 'Quick2DResultsTab',
         components: {
-            ToolCitationInfo,
             Loading,
         },
         props: {

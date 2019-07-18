@@ -1,29 +1,24 @@
 <template>
-    <div>
-        <Loading :message="$t('loading')"
-                 v-if="loading"/>
-        <div v-else>
-            <div class="result-options d-flex align-items-center">
-                <b-form-select @input="updateTree"
-                               v-model="treeOpts.tree.layoutInput"
-                               :options="layoutOptions"
-                               size="sm"
-                               class="w-auto"/>
-                <a @click="download"
-                   class="ml-auto">{{$t('jobs.results.actions.downloadTree')}}</a>
-            </div>
-            <hr class="mt-2">
-
-            <div ref="treeContainer"></div>
+    <Loading :message="$t('loading')"
+             v-if="loading"/>
+    <div v-else>
+        <div class="result-options d-flex align-items-center">
+            <b-form-select @input="updateTree"
+                           v-model="treeOpts.tree.layoutInput"
+                           :options="layoutOptions"
+                           size="sm"
+                           class="w-auto"/>
+            <a @click="download"
+               class="ml-auto">{{$t('jobs.results.actions.downloadTree')}}</a>
         </div>
+        <hr class="mt-2">
 
-        <tool-citation-info :tool="tool"/>
+        <div ref="treeContainer"></div>
     </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
-    import ToolCitationInfo from '@/components/jobs/ToolCitationInfo.vue';
     import Loading from '@/components/utils/Loading.vue';
     import {Tool} from '@/types/toolkit/tools';
     import {Job} from '@/types/toolkit/jobs';
@@ -36,7 +31,6 @@
     export default Vue.extend({
         name: 'TreeTab',
         components: {
-            ToolCitationInfo,
             Loading,
         },
         props: {

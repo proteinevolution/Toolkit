@@ -1,15 +1,10 @@
 <template>
-    <div>
-        <alignment-viewer :sequences="job.alignments"/>
-
-        <tool-citation-info :tool="tool"/>
-    </div>
+    <alignment-viewer :sequences="job.alignments"/>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
     import {Job} from '@/types/toolkit/jobs';
-    import ToolCitationInfo from '@/components/jobs/ToolCitationInfo.vue';
     import AlignmentViewer from '@/components/tools/AlignmentViewer.vue';
     import {Tool} from '@/types/toolkit/tools';
     import Logger from 'js-logger';
@@ -20,7 +15,6 @@
     export default Vue.extend({
         name: 'AlignmentViewerTab',
         components: {
-            ToolCitationInfo,
             AlignmentViewer,
         },
         props: {

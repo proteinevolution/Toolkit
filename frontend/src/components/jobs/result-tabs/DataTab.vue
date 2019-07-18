@@ -1,28 +1,23 @@
 <template>
-    <div>
-        <Loading :message="$t('loading')"
-                 v-if="loading"/>
-        <div v-else>
-            <div class="result-options">
-                <a @click="download"
-                   v-if="downloadEnabled">{{$t('jobs.results.actions.download')}}</a>
-                <a @click="forwardAll"
-                   v-if="forwardingEnabled">{{$t('jobs.results.actions.forwardAll')}}</a>
-            </div>
-            <hr class="mt-2"
-                v-if="downloadEnabled || forwardingEnabled">
-
-            <pre v-text="file"
-                 class="file-view"></pre>
+    <Loading :message="$t('loading')"
+             v-if="loading"/>
+    <div v-else>
+        <div class="result-options">
+            <a @click="download"
+               v-if="downloadEnabled">{{$t('jobs.results.actions.download')}}</a>
+            <a @click="forwardAll"
+               v-if="forwardingEnabled">{{$t('jobs.results.actions.forwardAll')}}</a>
         </div>
+        <hr class="mt-2"
+            v-if="downloadEnabled || forwardingEnabled">
 
-        <tool-citation-info :tool="tool"/>
+        <pre v-text="file"
+             class="file-view"></pre>
     </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
-    import ToolCitationInfo from '@/components/jobs/ToolCitationInfo.vue';
     import Loading from '@/components/utils/Loading.vue';
     import {Tool} from '@/types/toolkit/tools';
     import {Job} from '@/types/toolkit/jobs';
@@ -34,7 +29,6 @@
     export default Vue.extend({
         name: 'DataTab',
         components: {
-            ToolCitationInfo,
             Loading,
         },
         props: {
@@ -99,5 +93,9 @@
         font-size: 12px;
         height: 50vh;
         font-family: $font-family-monospace;
+    }
+
+    .fullscreen .file-view {
+        height: 85vh;
     }
 </style>
