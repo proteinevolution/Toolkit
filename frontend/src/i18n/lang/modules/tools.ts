@@ -163,9 +163,6 @@ export default {
         copySuccess: 'Successfully copied',
         copyFailure: 'Unable to copy',
     },
-    alignmentViewer: {
-        loading: 'Loading...',
-    },
     citations: {
         intro: 'If you use {tool} on our Toolkit for your research, please cite as appropriate:',
         clustalo: 'Fast, scalable generation of high-quality protein multiple sequence ' +

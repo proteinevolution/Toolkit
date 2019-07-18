@@ -1,52 +1,58 @@
 <template>
     <div>
-        <h5>Protein ID: {{header}}</h5>
+        <Loading :message="$t('loading')"
+                 v-if="loading"/>
+        <div v-else>
+            <h5>Protein ID: {{header}}</h5>
 
-        <div v-if="results && results.results.signal === 'yes'">
+            <div v-if="results && results.results.signal === 'yes'">
+                <br>
+                <span class="note"><b> We have detected a potential signal peptide in your query protein!</b></span>
+            </div>
+
             <br>
-            <span class="note"><b> We have detected a potential signal peptide in your query protein!</b></span>
-        </div>
+            <br>
 
-        <br>
-        <br>
-
-        <div class="table-responsive">
-            <table class="alignment-table">
-                <tbody>
-                <template v-for="i in brokenQuery.length">
-                    <tr>
-                        <td>AA_QUERY</td>
-                        <td v-text="(i - 1) * breakAfter + 1"></td>
-                        <td>
+            <div class="table-responsive">
+                <table class="alignment-table">
+                    <tbody>
+                    <template v-for="i in brokenQuery.length">
+                        <tr>
+                            <td>AA_QUERY</td>
+                            <td v-text="(i - 1) * breakAfter + 1"></td>
+                            <td>
                         <span class="sequence"
                               v-text="brokenQuery[i - 1]"></span>
-                        </td>
-                        <td v-text="min(i * breakAfter, results.query.sequence.length)"></td>
-                    </tr>
-                    <tr v-for="(value, key) in subTools">
-                        <td v-text="value"></td>
-                        <td></td>
-                        <td v-html="brokenResults[key][i - 1]"></td>
-                        <td></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td colspan="4"></td>
-                    </tr>
-                </template>
-                </tbody>
-            </table>
+                            </td>
+                            <td v-text="min(i * breakAfter, results.query.sequence.length)"></td>
+                        </tr>
+                        <tr v-for="(value, key) in subTools">
+                            <td v-text="value"></td>
+                            <td></td>
+                            <td v-html="brokenResults[key][i - 1]"></td>
+                            <td></td>
+                        </tr>
+                        <tr class="empty-row">
+                            <td colspan="4"></td>
+                        </tr>
+                    </template>
+                    </tbody>
+                </table>
+            </div>
+
+            <hr class="mt-0">
+            <br>
+
+            <div class="text-center mb-5">
+                SS = <span class="ss_h_b">&nbsp;&alpha;-helix&nbsp;</span><span
+                    class="ss_e_b">&nbsp;&beta;-strand&nbsp;</span><span
+                    class="ss_pihelix">&nbsp;&pi;-helix&nbsp;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CC
+                = <span class="CC_b">Coiled Coils</span>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TM = <span class="CC_m">Transmembrane</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DO
+                = <span class="CC_do">Disorder</span>
+            </div>
         </div>
 
-        <hr class="mt-0">
-        <br>
-
-        <div class="text-center mb-5">
-            SS = <span class="ss_h_b">&nbsp;&alpha;-helix&nbsp;</span><span
-                class="ss_e_b">&nbsp;&beta;-strand&nbsp;</span><span class="ss_pihelix">&nbsp;&pi;-helix&nbsp;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CC
-            = <span class="CC_b">Coiled Coils</span>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TM = <span class="CC_m">Transmembrane</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DO
-            = <span class="CC_do">Disorder</span>
-        </div>
         <tool-citation-info :tool="tool"/>
     </div>
 </template>

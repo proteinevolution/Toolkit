@@ -196,6 +196,19 @@
     });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+    .result-options {
+        font-size: 0.9em;
 
+        a {
+            cursor: pointer;
+            margin-right: 3rem;
+            color: inherit;
+        }
+
+        a:hover {
+            color: $primary;
+            text-decoration: none;
+        }
+    }
 </style>

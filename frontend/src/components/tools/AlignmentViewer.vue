@@ -2,7 +2,7 @@
     <div ref="container">
         <div ref="menu"></div>
         <div ref="root"
-             v-text="$t('tools.alignmentViewer.loading')"></div>
+             v-text="$t('loading')"></div>
     </div>
 </template>
 

@@ -1,15 +1,87 @@
 <template>
-    <span>Data</span>
+    <div>
+        <Loading :message="$t('loading')"
+                 v-if="loading"/>
+        <div v-else>
+            <div class="result-options">
+                <a @click="download">{{$t('jobs.results.actions.download')}}</a>
+            </div>
+            <hr class="mt-2">
+
+            <pre v-text="file"
+                 class="file-view"></pre>
+        </div>
+
+        <tool-citation-info :tool="tool"/>
+    </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
+    import ToolCitationInfo from '@/components/jobs/ToolCitationInfo.vue';
+    import Loading from '@/components/utils/Loading.vue';
+    import {Tool} from '@/types/toolkit/tools';
+    import {Job} from '@/types/toolkit/jobs';
+    import Logger from 'js-logger';
+    import {resultsService} from '@/services/ResultsService';
+
+    const logger = Logger.get('DataTab');
 
     export default Vue.extend({
         name: 'DataTab',
+        components: {
+            ToolCitationInfo,
+            Loading,
+        },
+        props: {
+            job: {
+                type: Object as () => Job,
+                required: true,
+            },
+            tool: {
+                type: Object as () => Tool,
+                required: true,
+            },
+        },
+        data() {
+            return {
+                file: '',
+                loading: false,
+            };
+        },
+        computed: {
+            filename(): string {
+                return `${this.job.jobID}.stats`;
+            },
+        },
+        mounted() {
+            resultsService.getFile(this.job.jobID, this.filename)
+                .then((data: string) => {
+                    this.file = data;
+                })
+                .catch((e) => {
+                    logger.error(e);
+                });
+        },
+        methods: {
+            download(): void {
+                const toolName = this.tool.name;
+                const ending = toolName === 'hhpred' || toolName === 'hhomp' ? 'hhr' : 'out';
+                const downloadFilename = `${this.tool.name}_${this.job.jobID}.${ending}`;
+                resultsService.downloadFile(this.job.jobID, this.filename, downloadFilename)
+                    .catch((e) => {
+                        logger.error(e);
+                    });
+            },
+        },
     });
 </script>
 
 <style lang="scss" scoped>
-
+    .file-view {
+        width: 100%;
+        font-size: 12px;
+        max-height: 55vh;
+        font-family: $font-family-monospace;
+    }
 </style>

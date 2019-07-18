@@ -32,9 +32,6 @@ export default {
         failed: 'Verification failed',
         loading: 'Verifying...',
     },
-    resetPasswordModal: {
-        loading: 'Loading...',
-    },
     loggedOutByWS: 'You logged out on another device!',
     loggedInByWS: 'You logged in on another tab!',
     responses: {

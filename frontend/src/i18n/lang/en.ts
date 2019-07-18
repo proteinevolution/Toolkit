@@ -7,6 +7,7 @@ export default {
     en: {
         cancel: 'Cancel',
         submit: 'Submit',
+        loading: 'Loading...',
         fetching: 'Fetching...',
         reconnecting: 'Reconnecting...',
         maintenanceWarning: 'Maintenance in a few seconds!',
@@ -49,7 +50,6 @@ export default {
         },
         search: {
             nothingFound: 'Nothing found.',
-            loading: 'Loading...',
         },
         tools,
         jobs,

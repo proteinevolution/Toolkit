@@ -32,6 +32,7 @@ export default {
             selectAll: 'Select All',
             deselectAll: 'Deselect All',
             forwardSelected: 'Forward Selected',
+            download: 'Download',
             downloadMSA: 'Download MSA',
             exportMSA: 'Export MSA',
             colorMSA: 'Color MSA',

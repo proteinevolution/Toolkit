@@ -39,7 +39,7 @@
                 <h6 class="autocomplete-group-header">{{ $t('jobs.header') }}</h6>
                 <li class="autocomplete-loading"
                     v-if="isLoading">
-                    {{ $t('search.loading') }}
+                    {{ $t('loading') }}
                 </li>
                 <div class="autocomplete-result"
                      v-if="!isLoading"

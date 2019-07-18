@@ -1,9 +1,9 @@
 <template>
     <div>
-        <Loading :message="$t('jobs.results.alignment.loadingHits')"
+        <Loading :message="$t('loading')"
                  v-if="loading"/>
         <div v-else>
-            <div class="alignment-options d-flex align-items-center">
+            <div class="result-options d-flex align-items-center">
                 <b-form-select @input="updateTree"
                                v-model="treeOpts.tree.layoutInput"
                                :options="layoutOptions"
@@ -116,7 +116,7 @@
                 }
             },
             download(): void {
-                const downloadFilename = `${this.tool.longname}_${this.job.jobID}.tree`;
+                const downloadFilename = `${this.tool.name}_${this.job.jobID}.tree`;
                 resultsService.downloadFile(this.job.jobID, this.filename, downloadFilename)
                     .catch((e) => {
                         logger.error(e);
@@ -127,20 +127,7 @@
 </script>
 
 <style lang="scss" scoped>
-    .alignment-options {
-        font-size: 0.9em;
 
-        a {
-            cursor: pointer;
-            margin-right: 3rem;
-            color: inherit;
-        }
-
-        a:hover {
-            color: $primary;
-            text-decoration: none;
-        }
-    }
 </style>
 
 <style lang="scss">
