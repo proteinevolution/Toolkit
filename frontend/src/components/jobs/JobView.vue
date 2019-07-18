@@ -26,6 +26,7 @@
                    :key="'jobview-' + index"
                    :title="$t('jobs.results.titles.' + (jobViewOptions.title || jobViewOptions.component))"
                    :active="index === 0"
+                   lazy
                    @click="tabActivated(jobViewOptions.component)">
                 <component :is="jobViewOptions.component"
                            :job="job"
