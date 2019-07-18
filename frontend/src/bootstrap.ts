@@ -5,6 +5,7 @@ import moment from 'moment';
 import VueParticles from 'vue-particles';
 import VueClipboard from 'vue-clipboard2';
 import Vue from 'vue';
+import 'msa/dist/msa';
 import 'es6-promise/auto';
 
 Vue.use(BootstrapVue);
