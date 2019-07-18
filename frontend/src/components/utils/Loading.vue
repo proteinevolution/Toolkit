@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper"
-         :class="{wrapperSecondary: variant==='secondary'}">
+         :class="['justify-content-' + justify, variant==='secondary' ? 'wrapper-secondary' : '']">
         <vue-simple-spinner :class="'vue-simple-spinner-' + variant"
                             :speed="variant === 'secondary' ? 2 : 0.8"
                             :size="size"></vue-simple-spinner>
@@ -32,6 +32,11 @@
                 required: false,
                 default: 32,
             },
+            justify: {
+                type: String,
+                required: false,
+                default: 'left',
+            },
         },
         components: {
             VueSimpleSpinner,
@@ -47,10 +52,9 @@
     .wrapper {
         display: flex;
         align-items: center;
-        justify-content: center;
     }
 
-    .wrapperSecondary {
+    .wrapper-secondary {
         opacity: 0.6;
     }
 </style>
