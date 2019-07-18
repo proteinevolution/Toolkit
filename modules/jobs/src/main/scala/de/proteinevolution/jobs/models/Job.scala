@@ -65,8 +65,7 @@ case class Job(
       "tool"         -> tool.asJson,
       "toolnameLong" -> config.get[String](s"Tools.$tool.longname").asJson,
       "paramValues"  -> paramValues.asJson,
-      // TODO eventually send a map with more configuration for complicated result views
-      "views"       -> toolObj.resultViews.keys.toSeq.reverse.asJson,
+      "views"       -> toolObj.resultViews.asJson,
       "dateCreated" -> dateCreated.toInstant.toEpochMilli.asJson,
       "dateUpdated" -> dateUpdated.toInstant.toEpochMilli.asJson,
       "dateViewed"  -> dateViewed.toInstant.toEpochMilli.asJson
