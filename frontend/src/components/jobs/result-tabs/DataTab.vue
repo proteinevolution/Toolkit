@@ -4,9 +4,13 @@
                  v-if="loading"/>
         <div v-else>
             <div class="result-options">
-                <a @click="download">{{$t('jobs.results.actions.download')}}</a>
+                <a @click="download"
+                   v-if="downloadEnabled">{{$t('jobs.results.actions.download')}}</a>
+                <a @click="forwardAll"
+                   v-if="forwardingEnabled">{{$t('jobs.results.actions.forwardAll')}}</a>
             </div>
-            <hr class="mt-2">
+            <hr class="mt-2"
+                v-if="downloadEnabled || forwardingEnabled">
 
             <pre v-text="file"
                  class="file-view"></pre>
@@ -34,6 +38,9 @@
             Loading,
         },
         props: {
+            viewOptions: {
+                type: Object,
+            },
             job: {
                 type: Object as () => Job,
                 required: true,
@@ -51,7 +58,13 @@
         },
         computed: {
             filename(): string {
-                return `${this.job.jobID}.stats`;
+                return this.viewOptions.filename.replace(':jobID', this.job.jobID);
+            },
+            downloadEnabled(): boolean {
+                return this.viewOptions.hasOwnProperty('download');
+            },
+            forwardingEnabled(): boolean {
+                return this.viewOptions.hasOwnProperty('forwarding');
             },
         },
         mounted() {
@@ -73,6 +86,9 @@
                         logger.error(e);
                     });
             },
+            forwardAll(): void {
+                alert('implement me!');
+            },
         },
     });
 </script>
@@ -81,7 +97,7 @@
     .file-view {
         width: 100%;
         font-size: 12px;
-        max-height: 55vh;
+        height: 50vh;
         font-family: $font-family-monospace;
     }
 </style>

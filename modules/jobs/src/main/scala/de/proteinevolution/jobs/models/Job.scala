@@ -65,10 +65,10 @@ case class Job(
       "tool"         -> tool.asJson,
       "toolnameLong" -> config.get[String](s"Tools.$tool.longname").asJson,
       "paramValues"  -> paramValues.asJson,
-      "views"       -> toolObj.resultViews.asJson,
-      "dateCreated" -> dateCreated.toInstant.toEpochMilli.asJson,
-      "dateUpdated" -> dateUpdated.toInstant.toEpochMilli.asJson,
-      "dateViewed"  -> dateViewed.toInstant.toEpochMilli.asJson
+      "views"        -> toolObj.resultViews.asJson,
+      "dateCreated"  -> dateCreated.toInstant.toEpochMilli.asJson,
+      "dateUpdated"  -> dateUpdated.toInstant.toEpochMilli.asJson,
+      "dateViewed"   -> dateViewed.toInstant.toEpochMilli.asJson
     )
   }
 

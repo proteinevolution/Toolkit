@@ -27,10 +27,13 @@ export default {
             dataView: 'Data',
             quick2dResults: 'Results',
             clansResults: 'Results',
+            reducedSet: 'Reduced Set',
+            clusters: 'Clusters',
         },
         actions: {
             selectAll: 'Select All',
             deselectAll: 'Deselect All',
+            forwardAll: 'Forward All',
             forwardSelected: 'Forward Selected',
             download: 'Download',
             downloadMSA: 'Download MSA',

@@ -52,7 +52,8 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
             )
           },
           // TODO remove Try when implemented for each tool
-          Try(config.getStringList("result_views").asScala).getOrElse(Seq()),
+          Try(config.getObjectList("result_views").asScala.map(entry =>
+          entry.unwrapped().asScala.toMap.map(a => a._1 -> a._2.toString))).getOrElse(Seq()),
           config.getStringList("forwarding.alignment").asScala,
           config.getStringList("forwarding.multi_seq").asScala,
           ValidationParamsForm(
@@ -88,7 +89,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       section: String,
       version: String,
       params: Seq[Parameter],
-      resultViews: Seq[String],
+      resultViews: Seq[Map[String, String]],
       forwardAlignment: Seq[String],
       forwardMultiSeq: Seq[String],
       validationParams: ValidationParamsForm

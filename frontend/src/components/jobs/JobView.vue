@@ -22,13 +22,14 @@
         <template #job-tabs
                   v-if="job.status === JobState.Done && job.views">
 
-            <b-tab v-for="(jobView, index) in job.views"
+            <b-tab v-for="(jobViewOptions, index) in job.views"
                    :key="'jobview-' + index"
-                   :title="$t('jobs.results.titles.' + jobView)"
+                   :title="$t('jobs.results.titles.' + (jobViewOptions.title || jobViewOptions.component))"
                    :active="index === 0"
-                   @click="tabActivated(jobView)">
-                <component :is="jobView"
+                   @click="tabActivated(jobViewOptions.component)">
+                <component :is="jobViewOptions.component"
                            :job="job"
+                           :view-options="jobViewOptions"
                            :tool="tool"></component>
             </b-tab>
 
