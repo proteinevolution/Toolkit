@@ -115,10 +115,6 @@ final class ResultViewFactory @Inject()(
         for {
           result <- json.as[HHPredResult]
         } yield HHPredAlignResultView(jobId, result, toolConfig, constants)
-      case SEQ2ID =>
-        for {
-          result <- json.as[Unchecked]
-        } yield Seq2IdResultView(jobId, result)
       case HHFILTER =>
         for {
           alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
