@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.proteinevolution.parameters
+package de.proteinevolution.tools.parameters
 
 import io.circe.Encoder
 import io.circe.generic.extras.Configuration

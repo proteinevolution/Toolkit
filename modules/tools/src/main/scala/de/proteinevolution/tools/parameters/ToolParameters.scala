@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-package de.proteinevolution.tools.forms
-import de.proteinevolution.params.Param
-import io.circe.generic.JsonCodec
+package de.proteinevolution.tools.parameters
 
-@JsonCodec case class ToolForm(
-    toolname: String,
-    toolnameLong: String,
-    toolnameAbbrev: String,
-    category: String,
-    params: Seq[(String, Seq[Param])]
+case class ToolParameters(
+    sections: Seq[ParameterSection],
+    forwarding: ForwardingMode
 )

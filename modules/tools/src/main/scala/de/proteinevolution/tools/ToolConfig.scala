@@ -16,11 +16,10 @@
 
 package de.proteinevolution.tools
 
-import com.typesafe.config.{ Config, ConfigObject }
-import de.proteinevolution.parameters._
-import de.proteinevolution.params.ParamAccess
-import de.proteinevolution.tools.forms.{ ToolFormSimple, ValidationParamsForm }
-import javax.inject.{ Inject, Singleton }
+import com.typesafe.config.{Config, ConfigObject}
+import de.proteinevolution.tools.forms.{ToolFormSimple, ValidationParamsForm}
+import de.proteinevolution.tools.parameters.{ForwardingMode, ParamAccess, Parameter, ParameterSection, TextAreaInputType, ToolParameters}
+import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 
 import scala.collection.JavaConverters._

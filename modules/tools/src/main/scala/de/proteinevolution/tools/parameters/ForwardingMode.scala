@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package de.proteinevolution.parameters
+package de.proteinevolution.tools.parameters
 
-case class ToolParameters(
-    sections: Seq[ParameterSection],
-    forwarding: ForwardingMode
+case class ForwardingMode(
+    alignment: Seq[String],
+    multiSeq: Seq[String]
 )

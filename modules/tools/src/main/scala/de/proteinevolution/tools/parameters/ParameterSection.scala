@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package de.proteinevolution.parameters
+package de.proteinevolution.tools.parameters
 
-case class ForwardingMode(
-    alignment: Seq[String],
-    multi_seq: Seq[String]
+case class ParameterSection(
+    name: String,
+    multiColumnLayout: Boolean,
+    parameters: Seq[Parameter]
 )

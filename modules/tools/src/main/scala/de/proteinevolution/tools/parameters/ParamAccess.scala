@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package de.proteinevolution.params
+package de.proteinevolution.tools.parameters
 
-import de.proteinevolution.parameters.Parameter._
-import de.proteinevolution.parameters.TextAreaInputType.TextAreaInputType
-import de.proteinevolution.parameters._
 import de.proteinevolution.tel.TEL
-import javax.inject.{ Inject, Singleton }
+import de.proteinevolution.tools.parameters.Parameter.{HHpredSelectsParameter, ModellerParameter, NumberParameter, SelectOption, SelectParameter, TextAreaParameter, TextInputParameter}
+import de.proteinevolution.tools.parameters.TextAreaInputType.TextAreaInputType
+import javax.inject.{Inject, Singleton}
 
 /**
  * Provides the specification of the Parameters as they appear in the individual tools

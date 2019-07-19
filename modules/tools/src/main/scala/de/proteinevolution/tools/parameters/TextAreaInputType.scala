@@ -13,14 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package de.proteinevolution.tools.parameters
 
-package de.proteinevolution.params
+import shapeless.tag
+import shapeless.tag.@@
 
-import io.circe.generic.JsonCodec
+object TextAreaInputType {
+  trait TextAreaInputTypeTag
+  type TextAreaInputType = String @@ TextAreaInputTypeTag
 
-@JsonCodec case class Param(
-    name: String,
-    paramType: ParamType,
-    internalOrdering: Int,
-    label: String
-)
+  val SEQUENCE: TextAreaInputType = "SEQUENCE"
+
+  val REGEX: TextAreaInputType = "REGEX"
+
+  val PDB: TextAreaInputType = "PDB"
+
+  val ACCESSION_ID: TextAreaInputType = "ACCESSION_ID"
+
+  implicit def StringToTextAreaInputType(s: String): TextAreaInputType = tag.apply[TextAreaInputTypeTag][String](s)
+}

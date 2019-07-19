@@ -30,7 +30,7 @@ class ForwardModalController @Inject()(cc: ControllerComponents, toolConfig: Too
   def getForwardModalOptions(modalType: String, toolName: String): Action[AnyContent] = Action { implicit request =>
     val tool             = toolConfig.values(toolName)
     val alignmentOptions = tool.toolParameterForm.forwarding.alignment.toArray
-    val multiSeqOptions  = tool.toolParameterForm.forwarding.multi_seq.toArray
+    val multiSeqOptions  = tool.toolParameterForm.forwarding.multiSeq.toArray
 
     val options: Either[ForwardingError, ForwardModalOptions] = modalType match {
       case "normal" =>
