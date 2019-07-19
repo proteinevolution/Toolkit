@@ -206,6 +206,11 @@
             cursor: pointer;
             margin-right: 3rem;
             color: inherit;
+
+            &[disabled] {
+                cursor: not-allowed;
+                color: $tk-gray;
+            }
         }
 
         a:hover {

@@ -6,7 +6,8 @@
             <a @click="toggleAllSelected">
                 {{$t('jobs.results.actions.' + (allSelected ? 'deselectAll' : 'selectAll'))}}
             </a>
-            <a @click="forwardSelected">{{$t('jobs.results.actions.forwardSelected')}}</a>
+            <a @click="forwardSelected"
+               :disabled="selected.length === 0">{{$t('jobs.results.actions.forwardSelected')}}</a>
             <a @click="downloadAlignment">{{$t('jobs.results.actions.downloadMSA')}}</a>
             <a :href="downloadFilePath" target="_blank">{{$t('jobs.results.actions.exportMSA')}}</a>
         </div>
@@ -20,8 +21,8 @@
                     <template v-for="(elem, index) in alignments">
                         <tr :key="'header' + elem.num">
                             <td class="d-flex align-items-center">
-                                <b-form-checkbox :checked="selected.includes(elem.num)"
-                                                 @change="selectedChanged(elem.num)"/>
+                                <b-form-checkbox :checked="selected.includes(elem)"
+                                                 @change="selectedChanged(elem)"/>
                                 <b v-text="index+1 + '.'"
                                    class="ml-2"></b>
                             </td>
@@ -52,6 +53,7 @@
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
     import Logger from 'js-logger';
+    import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('ClustalAlignmentTab');
 
@@ -72,7 +74,7 @@
         },
         data() {
             return {
-                selected: [] as number[],
+                selected: [] as AlignmentItem[],
                 loading: false,
             };
         },
@@ -101,18 +103,18 @@
             }
         },
         methods: {
-            selectedChanged(num: number): void {
-                if (this.selected.includes(num)) {
-                    this.selected = this.selected.filter((el: number) => el !== num);
+            selectedChanged(al: AlignmentItem): void {
+                if (this.selected.includes(al)) {
+                    this.selected = this.selected.filter((el: AlignmentItem) => el !== al);
                 } else {
-                    this.selected.push(num);
+                    this.selected.push(al);
                 }
             },
             toggleAllSelected(): void {
                 if (this.allSelected) {
                     this.selected = [];
                 } else {
-                    this.selected = this.alignments.map((a: AlignmentItem) => a.num);
+                    this.selected = this.alignments;
                 }
             },
             downloadAlignment(): void {
@@ -123,7 +125,19 @@
                     });
             },
             forwardSelected(): void {
-                alert('implement me!');
+                if (this.selected.length > 0) {
+                    if (this.tool.parameters) {
+                        EventBus.$emit('show-modal', {
+                            id: 'forwardingModal', props: {
+                                forwardingData: this.selected.reduce((acc: string, cur: AlignmentItem) =>
+                                    acc + '>' +cur.accession + '\n' + cur.seq + '\n', ''),
+                                forwardingMode: this.tool.parameters.forwarding,
+                            },
+                        });
+                    } else {
+                        logger.error('tool parameters not loaded. Cannot forward');
+                    }
+                }
             },
         },
     });

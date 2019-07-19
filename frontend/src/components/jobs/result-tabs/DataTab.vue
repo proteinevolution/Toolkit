@@ -23,6 +23,7 @@
     import {Job} from '@/types/toolkit/jobs';
     import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
+    import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('DataTab');
 
@@ -81,7 +82,16 @@
                     });
             },
             forwardAll(): void {
-                alert('implement me!');
+                if (this.tool.parameters) {
+                    EventBus.$emit('show-modal', {
+                        id: 'forwardingModal', props: {
+                            forwardingData: this.file,
+                            forwardingMode: this.tool.parameters.forwarding,
+                        },
+                    });
+                } else {
+                    logger.error('tool parameters not loaded. Cannot forward');
+                }
             },
         },
     });
