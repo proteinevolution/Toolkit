@@ -130,7 +130,7 @@
                         EventBus.$emit('show-modal', {
                             id: 'forwardingModal', props: {
                                 forwardingData: this.selected.reduce((acc: string, cur: AlignmentItem) =>
-                                    acc + '>' +cur.accession + '\n' + cur.seq + '\n', ''),
+                                    acc + '>' + cur.accession + '\n' + cur.seq + '\n', ''),
                                 forwardingMode: this.tool.parameters.forwarding,
                             },
                         });

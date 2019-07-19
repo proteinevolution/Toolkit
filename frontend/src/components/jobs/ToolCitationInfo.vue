@@ -4,8 +4,10 @@
         <span v-text="$t('tools.citations.intro', {tool: tool.longname})"></span>
         <div class="citation">
             <div v-html="$t('citation')"></div>
-            <br>
+
+            <br v-if="$t('tools.citations.' + tool.name)">
             <div v-html="$t('tools.citations.' + tool.name)"></div>
+
         </div>
     </div>
 </template>

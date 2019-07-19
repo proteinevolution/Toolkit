@@ -14,3 +14,19 @@ export interface Quick2dResults {
     query: QueryItem;
     results: {[key: string]: string};
 }
+
+export interface PatsearchResults {
+    jobID: string;
+    results: {
+        hits: PatsearchHit[];
+        len: number;
+        regex: string;
+    };
+}
+
+export interface PatsearchHit {
+    name: string;
+    pats: number[];
+    matches: string;
+    seq: string;
+}

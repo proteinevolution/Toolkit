@@ -264,5 +264,8 @@ export default {
         mmseqs2: 'MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets.<br>' +
             'Steinegger,M, Söding J. <a href="https://www.nature.com/articles/nbt.3988" target="_blank" ' +
             'rel="noopener">Nat Biotechnol. 2017 Nov;35(11):1026-1028</a>.',
+        sixframe: '',
+        backtrans: '',
+        patsearch: '',
     },
 };

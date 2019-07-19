@@ -17,7 +17,7 @@ echo "#Searching %patsearchdb.content DB for sequences '${PATTERN}' pattern." >>
 
 patsearch.pl        -i  %alignment.path \
                     -d %STANDARD/%patsearchdb.content \
-                    -o ../results/${JOBID}.json \
+                    -o ../results/results.json \
                     -sc %seqcount.content \
                     -%grammar.content > report_patsearch
 echo "done" >> ../results/process.log

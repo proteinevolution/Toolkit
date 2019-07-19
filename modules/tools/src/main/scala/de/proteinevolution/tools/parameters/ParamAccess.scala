@@ -108,7 +108,7 @@ class ParamAccess @Inject()(tel: TEL) {
 
     // PatternSearch
     case "PATSEARCH_DB" => select("patsearchdb", default = Some("nr50"))
-    case "GRAMMAR"      => select("grammar", default = Some("Prosite_grammar"))
+    case "GRAMMAR"      => select("grammar", default = Some("pro"))
     case "SEQCOUNT"     => select("seqcount", default = Some("500"))
 
     // PSI-BLAST
@@ -247,7 +247,7 @@ class ParamAccess @Inject()(tel: TEL) {
     case "CODON_TABLE"    => select("codon_table", default = Some("1"))
 
     // BackTranslator
-    case "INC_AMINO"            => select("inc_amino", default = Some("f"))
+    case "INC_AMINO"            => select("inc_amino", default = Some("fas"))
     case "GENETIC_CODE"         => select("genetic_code", default = Some("1"))
     case "CODON_TABLE_ORGANISM" => TextInputParameter("codon_table_organism", inputPlaceholder = "")
 
