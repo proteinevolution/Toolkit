@@ -3,16 +3,17 @@
              v-if="loading"/>
     <div v-else>
         <div class="result-options">
-            <a @click="download"
-               v-if="downloadEnabled">{{$t('jobs.results.actions.download')}}</a>
-            <a @click="forwardAll"
-               v-if="forwardingEnabled">{{$t('jobs.results.actions.forwardAll')}}</a>
+            <a @click="forwardAll">{{$t('jobs.results.actions.forwardAll')}}</a>
+            <a @click="download">{{$t('jobs.results.actions.download')}}</a>
         </div>
-        <hr class="mt-2"
-            v-if="downloadEnabled || forwardingEnabled">
+        <hr class="mt-2">
 
-        <pre v-text="file"
-             class="file-view"></pre>
+        <div class="file-view">
+            <b v-text="$t('jobs.results.seq2ID.numRetrieved', {num: accIds.length})"></b>
+            <br><br>
+            <div v-for="acc in accIds"
+                 v-text="acc"></div>
+        </div>
     </div>
 </template>
 
@@ -24,17 +25,14 @@
     import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
 
-    const logger = Logger.get('DataTab');
+    const logger = Logger.get('Seq2IDResultsTab');
 
     export default Vue.extend({
-        name: 'DataTab',
+        name: 'Seq2IDResultsTab',
         components: {
             Loading,
         },
         props: {
-            viewOptions: {
-                type: Object,
-            },
             job: {
                 type: Object as () => Job,
                 required: true,
@@ -46,25 +44,19 @@
         },
         data() {
             return {
-                file: '',
+                accIds: [],
                 loading: false,
             };
         },
         computed: {
             filename(): string {
-                return this.viewOptions.filename.replace(':jobID', this.job.jobID);
-            },
-            downloadEnabled(): boolean {
-                return this.viewOptions.hasOwnProperty('download');
-            },
-            forwardingEnabled(): boolean {
-                return this.viewOptions.hasOwnProperty('forwarding');
+                return 'ids.json';
             },
         },
         mounted() {
             resultsService.getFile(this.job.jobID, this.filename)
-                .then((data: string) => {
-                    this.file = data;
+                .then((data: any) => {
+                    this.accIds = data.ACC_IDS;
                 })
                 .catch((e) => {
                     logger.error(e);
@@ -72,13 +64,8 @@
         },
         methods: {
             download(): void {
-                const toolName = this.tool.name;
-                const ending = toolName === 'hhpred' || toolName === 'hhomp' ? 'hhr' : 'out';
-                const downloadFilename = `${toolName}_${this.job.jobID}.${ending}`;
-                resultsService.downloadFile(this.job.jobID, this.filename, downloadFilename)
-                    .catch((e) => {
-                        logger.error(e);
-                    });
+                const downloadFilename = `${this.tool.name}_${this.job.jobID}.fasta`;
+                resultsService.downloadAsFile(this.accIds.join('\n'), downloadFilename);
             },
             forwardAll(): void {
                 alert('implement me!');
@@ -91,11 +78,10 @@
     .file-view {
         width: 100%;
         font-size: 12px;
-        height: 50vh;
         font-family: $font-family-monospace;
     }
 
     .fullscreen .file-view {
-        height: 85vh;
+        height: 70vh;
     }
 </style>

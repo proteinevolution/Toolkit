@@ -41,22 +41,26 @@ class ResultsService {
         return new Promise<void>((resolve, reject) => {
             axios.get(this.getDownloadFilePath(jobId, file))
                 .then((response) => {
-                    const blob = new Blob([response.data], {type: 'application/octet-stream'});
-                    if (window.navigator.msSaveOrOpenBlob) {
-                        window.navigator.msSaveBlob(blob, downloadFilename);
-                    } else {
-                        const a = document.createElement('a');
-                        a.href = URL.createObjectURL(blob);
-                        a.download = downloadFilename;
-                        document.body.appendChild(a);
-                        a.click();
-                        URL.revokeObjectURL(a.href);
-                        a.remove();
-                    }
+                    this.downloadAsFile(response.data, downloadFilename);
                     resolve();
                 })
                 .catch(reject);
         });
+    }
+
+    public downloadAsFile(file: string, downloadFilename: string): void {
+        const blob = new Blob([file], {type: 'application/octet-stream'});
+        if (window.navigator.msSaveOrOpenBlob) {
+            window.navigator.msSaveBlob(blob, downloadFilename);
+        } else {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = downloadFilename;
+            document.body.appendChild(a);
+            a.click();
+            URL.revokeObjectURL(a.href);
+            a.remove();
+        }
     }
 }
 

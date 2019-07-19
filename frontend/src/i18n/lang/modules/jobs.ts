@@ -51,6 +51,9 @@ export default {
             numSeqs: 'Number of Sequences: <b>{num}</b>',
             loadingHits: 'Loading hits...',
         },
+        seq2ID: {
+            numRetrieved: 'Retrieved {num} IDs',
+        },
     },
     submitJob: 'Submit Job',
     resubmitJob: 'Resubmit Job',
