@@ -267,5 +267,11 @@ export default {
         sixframe: '',
         backtrans: '',
         patsearch: '',
+        samcc: 'Measuring the conformational space of square four-helical bundles with the program samCC.<br>' +
+            'Dunin-Horkawicz S, Lupas AN. <a href="http://www.sciencedirect.com/science/article/pii/S1047847710000353' +
+            '" target="_blank" rel="noopener">J Struct Biol. 2010 May;170(2):226-35</a>.',
+        modeller: 'Comparative Protein Structure Modeling Using MODELLER.<br>Webb B, Sali A. <a ' +
+            'href="http://onlinelibrary.wiley.com/doi/10.1002/cpps.20/abstract" target="_blank" rel="noopener">' +
+            'Curr Protoc Protein Sci. 2016 Nov 1;86:2.9.1-2.9.37</a>.',
     },
 };

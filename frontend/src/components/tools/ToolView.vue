@@ -190,7 +190,6 @@
             },
             toggleFullScreen(): void {
                 this.fullScreen = !this.fullScreen;
-                EventBus.$emit('fullscreen', this.fullScreen);
             },
             submitJob(): void {
                 jobService.submitJob(this.toolName, this.submission)

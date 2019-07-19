@@ -35,6 +35,8 @@ export default {
             probState: 'ProbState',
             predictedDomains: 'Predicted Domains',
             numericalData: 'Numerical Data',
+            structure3dWithAxes: '3D Structure With Axes',
+            plots: 'Plots',
         },
         actions: {
             selectAll: 'Select All',
@@ -47,6 +49,7 @@ export default {
             exportMSA: 'Export MSA',
             colorMSA: 'Color MSA',
             downloadTree: 'Download Tree',
+            downloadPDBFile: 'Download PDB File',
         },
         alignment: {
             numSeqs: 'Number of Sequences: <b>{num}</b>',

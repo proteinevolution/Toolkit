@@ -77,6 +77,7 @@
     import ClustalAlignmentTab from './result-tabs/ClustalAlignmentTab.vue';
     import FastaAlignmentTab from './result-tabs/FastaAlignmentTab.vue';
     import AlignmentViewerTab from './result-tabs/AlignmentViewerTab.vue';
+    import NGL3DStructureView from './result-tabs/NGL3DStructureView.vue';
     import DataTab from './result-tabs/DataTab.vue';
     import TreeTab from './result-tabs/TreeTab.vue';
     import HitlistTab from './result-tabs/HitlistTab.vue';
@@ -117,6 +118,7 @@
             clustalAlignment: ClustalAlignmentTab,
             fastaAlignment: FastaAlignmentTab,
             alignmentViewer: AlignmentViewerTab,
+            ngl3dStructureView: NGL3DStructureView,
             hitlist: HitlistTab,
             clansResults: ClansResultsTab,
             patsearchResults: PatsearchResultsTab,

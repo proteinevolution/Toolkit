@@ -7,6 +7,7 @@ declare module 'vue-switches';
 declare module 'vue-native-websocket';
 declare module 'vue-cookie-law';
 declare module 'exelixis';
+declare module 'ngl';
 // declare module 'msa' {
 //     interface MSA {
 //         render: () => void;

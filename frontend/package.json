@@ -20,6 +20,7 @@
     "lodash-es": "^4.17.11",
     "moment": "^2.24.0",
     "msa": "^1.0.3",
+    "ngl": "^0.10.4",
     "velocity-animate": "^1.5.2",
     "vue": "^2.6.10",
     "vue-clipboard2": "^0.3.0",

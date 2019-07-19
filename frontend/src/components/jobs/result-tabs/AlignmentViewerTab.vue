@@ -38,14 +38,7 @@
                 format: 'fasta',
             };
         },
-        beforeDestroy() {
-            EventBus.$off('fullscreen');
-        },
         mounted() {
-            EventBus.$emit('alignment-viewer-resize', this.fullScreen);
-            EventBus.$on('fullscreen', (fullScreen: boolean) => {
-                EventBus.$emit('alignment-viewer-resize', fullScreen);
-            });
             if (!this.job.alignments) {
                 this.loading = true;
                 this.$store.dispatch('jobs/loadJobAlignments', this.job.jobID)
@@ -56,6 +49,14 @@
                         this.loading = false;
                     });
             }
+        },
+        watch: {
+            fullScreen: {
+                immediate: true,
+                handler(value: boolean): void {
+                    EventBus.$emit('alignment-viewer-resize', value);
+                },
+            },
         },
     });
 </script>
