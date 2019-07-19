@@ -31,6 +31,7 @@ export default {
             reducedSet: 'Reduced Set',
             clusters: 'Clusters',
             rawOutput: 'Raw Output',
+            queryTemplateMSA: 'Query Template MSA',
             probList: 'ProbList',
             probState: 'ProbState',
             predictedDomains: 'Predicted Domains',

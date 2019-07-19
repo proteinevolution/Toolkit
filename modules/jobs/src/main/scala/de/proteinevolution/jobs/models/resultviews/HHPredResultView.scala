@@ -40,12 +40,6 @@ case class HHPredResultView(
       s"${constants.jobPath}/$jobId/results/$jobId.html_NOIMG"
     ),
     "Probability  Plot" -> views.html.resultpanels.probability(result.HSPS.map(_.info.probab)),
-    "Query Template MSA" -> views.html.resultpanels.alignment(
-      jobId,
-      alignment,
-      "querytemplate",
-      toolConfig.values(ToolName.HHPRED.value)
-    ),
     "Query MSA" -> views.html.resultpanels.alignmentQueryMSA(
       jobId,
       reduced,

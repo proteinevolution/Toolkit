@@ -64,7 +64,6 @@ final class ResultViewFactory @Inject()(
 
   private def getResultViewsWithoutJson(toolName: String, jobId: String): ResultView = {
     (ToolName(toolName): @unchecked) match {
-      case CLANS               => ClansResultView(jobId)
       case MARCOIL             => MarcoilResultView(jobId, toolConfig)
       case DEEPCOIL            => DeepCoilResultView(jobId, toolConfig, constants)
       case PCOILS              => PcoilsResultView(jobId, constants)
@@ -113,10 +112,6 @@ final class ResultViewFactory @Inject()(
         for {
           result <- json.as[HHPredResult]
         } yield HHPredAlignResultView(jobId, result, toolConfig, constants)
-      case HHFILTER =>
-        for {
-          alignment <- json.hcursor.downField("alignment").as[AlignmentResult]
-        } yield HHFilterResultView(jobId, alignment, constants, toolConfig)
       case PATSEARCH =>
         for {
           result <- PatSearchResult.patSearchResultDecoder(json, jobId)
