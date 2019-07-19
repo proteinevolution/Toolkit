@@ -31,6 +31,7 @@
         data() {
             return {
                 msaViewer: null as any,
+                fullScreen: false,
             };
         },
         computed: {
@@ -56,9 +57,11 @@
             },
         },
         mounted() {
+            window.addEventListener('resize', this.autoResize);
             EventBus.$on('alignment-viewer-resize', (fullScreen: boolean) => {
+                this.fullScreen = fullScreen;
                 this.$nextTick(() => {
-                    this.autoResize(fullScreen);
+                    this.autoResize();
                 });
             });
             if (this.seqs) {
@@ -67,6 +70,7 @@
         },
         beforeDestroy() {
             EventBus.$off('alignment-viewer-resize');
+            window.removeEventListener('resize', this.autoResize);
         },
         methods: {
             buildMSAViewer(seqs: MSAViewerSeq[]) {
@@ -117,10 +121,10 @@
 
                 this.msaViewer.render();
             },
-            autoResize(fullScreen: boolean) {
+            autoResize() {
                 const parent: HTMLElement = (this.$refs.container as HTMLElement);
                 if (this.msaViewer && parent) {
-                    this.msaViewer.g.zoomer.set('alignmentHeight', fullScreen ? window.innerHeight - 500 : 300);
+                    this.msaViewer.g.zoomer.set('alignmentHeight', this.fullScreen ? window.innerHeight - 500 : 300);
                     this.msaViewer.g.zoomer.set('alignmentWidth', parent.offsetWidth - 180);
                 }
             },

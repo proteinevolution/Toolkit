@@ -26,6 +26,11 @@
                 type: Object as () => Tool,
                 required: true,
             },
+            fullScreen: {
+                type: Boolean,
+                required: false,
+                default: false,
+            }
         },
         data() {
             return {
@@ -35,16 +40,11 @@
         },
         beforeDestroy() {
             EventBus.$off('fullscreen');
-            EventBus.$off('tool-tab-activated');
         },
         mounted() {
+            EventBus.$emit('alignment-viewer-resize', this.fullScreen);
             EventBus.$on('fullscreen', (fullScreen: boolean) => {
                 EventBus.$emit('alignment-viewer-resize', fullScreen);
-            });
-            EventBus.$on('tool-tab-activated', (jobView: string) => {
-                if (jobView === 'alignmentViewer') {
-                    EventBus.$emit('alignment-viewer-resize', false);
-                }
             });
             if (!this.job.alignments) {
                 this.loading = true;

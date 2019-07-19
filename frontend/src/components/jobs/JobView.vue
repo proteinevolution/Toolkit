@@ -19,18 +19,18 @@
                    v-text="$t('jobs.details.dateCreated', {dateCreated})"></small>
         </template>
 
-        <template #job-tabs
+        <template #job-tabs="{fullScreen}"
                   v-if="job.status === JobState.Done && job.views">
 
             <b-tab v-for="(jobViewOptions, index) in job.views"
                    :key="'jobview-' + index"
                    :title="$t('jobs.results.titles.' + (jobViewOptions.title || jobViewOptions.component))"
                    :active="index === 0"
-                   lazy
-                   @click="tabActivated(jobViewOptions.component)">
+                   lazy>
                 <component :is="jobViewOptions.component"
                            :job="job"
                            :view-options="jobViewOptions"
+                           :full-screen="fullScreen"
                            :tool="tool"></component>
 
                 <tool-citation-info :tool="tool"/>
@@ -96,7 +96,6 @@
     import {jobService} from '@/services/JobService';
     import NotFoundView from '@/components/utils/NotFoundView.vue';
     import Logger from 'js-logger';
-    import EventBus from '@/util/EventBus';
     import ToolCitationInfo from '@/components/jobs/ToolCitationInfo.vue';
 
     const logger = Logger.get('JobView');
@@ -192,9 +191,6 @@
             },
             goToParent() {
                 this.$router.push(`/jobs/${this.job.parentID}`);
-            },
-            tabActivated(jobView: string): void {
-                EventBus.$emit('tool-tab-activated', jobView);
             },
         },
     });

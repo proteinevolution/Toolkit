@@ -55,7 +55,8 @@
                             </b-tab>
 
                             <!-- the job form can insert more tabs here -->
-                            <slot name="job-tabs"></slot>
+                            <slot name="job-tabs"
+                                  :full-screen="fullScreen"></slot>
 
                             <template #tabs>
                                 <div class="ml-auto">
