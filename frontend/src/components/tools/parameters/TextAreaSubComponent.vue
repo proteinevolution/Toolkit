@@ -127,7 +127,9 @@
         },
         methods: {
             acceptForwardData(data: string): void {
-                // TODO
+                if (!this.second) {
+                    this.$emit('input', data);
+                }
             },
             handleFileUpload($event: Event): void {
                 const fileUpload: HTMLInputElement = $event.target as HTMLInputElement;
