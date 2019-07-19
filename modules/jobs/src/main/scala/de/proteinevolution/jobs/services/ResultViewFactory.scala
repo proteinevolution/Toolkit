@@ -72,7 +72,6 @@ final class ResultViewFactory @Inject()(
       case HHPRED_MANUAL       => HHPredManual(jobId, constants)
       case HHREPID             => HHrepIdResultView(jobId, constants)
       case ALN2PLOT            => Aln2PlotResultView(jobId)
-      case SAMCC               => SamCCResultView(jobId)
     }
   }
 

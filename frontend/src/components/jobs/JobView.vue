@@ -78,6 +78,7 @@
     import FastaAlignmentTab from './result-tabs/FastaAlignmentTab.vue';
     import AlignmentViewerTab from './result-tabs/AlignmentViewerTab.vue';
     import NGL3DStructureView from './result-tabs/NGL3DStructureView.vue';
+    import SamCCViewTab from './result-tabs/SamCCViewTab.vue';
     import DataTab from './result-tabs/DataTab.vue';
     import TreeTab from './result-tabs/TreeTab.vue';
     import HitlistTab from './result-tabs/HitlistTab.vue';
@@ -123,6 +124,7 @@
             clansResults: ClansResultsTab,
             patsearchResults: PatsearchResultsTab,
             quick2dResults: Quick2DResultsTab,
+            samccResults: SamCCViewTab,
             seq2IDResults: Seq2IDResultsTab,
             treeView: TreeTab,
             dataView: DataTab,
