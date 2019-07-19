@@ -36,6 +36,7 @@ export default {
             predictedDomains: 'Predicted Domains',
             numericalData: 'Numerical Data',
             structure3dWithAxes: '3D Structure With Axes',
+            structure3d: '3D Structure',
             plots: 'Plots',
         },
         actions: {

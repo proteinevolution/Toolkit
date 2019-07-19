@@ -69,7 +69,6 @@ final class ResultViewFactory @Inject()(
       case DEEPCOIL            => DeepCoilResultView(jobId, toolConfig, constants)
       case PCOILS              => PcoilsResultView(jobId, constants)
       case REPPER              => RepperResultView(jobId, constants)
-      case MODELLER            => ModellerResultView(jobId, constants)
       case HHPRED_MANUAL       => HHPredManual(jobId, constants)
       case HHREPID             => HHrepIdResultView(jobId, constants)
       case ALN2PLOT            => Aln2PlotResultView(jobId)
