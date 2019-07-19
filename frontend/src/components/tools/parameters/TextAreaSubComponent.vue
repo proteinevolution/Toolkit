@@ -95,12 +95,6 @@
                 validation: {} as ValidationResult,
             };
         },
-        mounted() {
-            EventBus.$on('forward-data', this.acceptForwardData);
-        },
-        beforeDestroy() {
-            EventBus.$off('forward-data', this.acceptForwardData);
-        },
         watch: {
             value: {
                 immediate: true,
@@ -108,7 +102,7 @@
                     // validate in watcher since somehow computed properties don't update on empty strings
                     const val: ValidationResult = validation(value, this.parameter.inputType, this.validationParams);
                     if (val.textKey === 'shouldAutoTransform') {
-                        this.$emit('input', transformToFormat(value, val.textKeyParams.transformFormat));
+                        this.handleInput(transformToFormat(value, val.textKeyParams.transformFormat));
                         this.displayAutoTransformMessage(val.textKeyParams);
 
                         // trigger validation again
@@ -126,11 +120,6 @@
             },
         },
         methods: {
-            acceptForwardData(data: string): void {
-                if (!this.second) {
-                    this.$emit('input', data);
-                }
-            },
             handleFileUpload($event: Event): void {
                 const fileUpload: HTMLInputElement = $event.target as HTMLInputElement;
                 if (fileUpload.files && fileUpload.files.length > 0) {
@@ -142,7 +131,7 @@
                     const reader = new FileReader();
                     reader.onload = () => {
                         if (reader.result) {
-                            this.$emit('input', reader.result.toString());
+                            this.handleInput(reader.result.toString());
                         }
                     };
                     reader.onerror = this.errorHandler;
@@ -187,11 +176,11 @@
                 const sampleSeqKey: string = this.parameter.sampleInputKey.split(',')[this.second ? 1 : 0];
                 sampleSeqService.fetchSampleSequence(sampleSeqKey)
                     .then((res: string) => {
-                        this.$emit('input', res);
+                        this.handleInput(res);
                     })
                     .catch((err: any) => {
                         logger.error('error when fetching sample sequence', err);
-                        this.$emit('input', 'Error!');
+                        this.handleInput('Error!');
                     })
                     .finally(() => {
                         this.$store.commit('stopLoading', 'alignmentTextarea');

@@ -33,6 +33,7 @@
     import ExpandHeight from '@/transitions/ExpandHeight.vue';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
     import {ValidationResult} from '@/types/toolkit/validation';
+    import EventBus from '@/util/EventBus';
 
     export default mixins(ToolParameterMixin).extend({
         name: 'TextAreaParameter',
@@ -81,15 +82,24 @@
                 },
             },
         },
+        mounted() {
+            EventBus.$on('forward-data', this.acceptForwardData);
+        },
+        beforeDestroy() {
+            EventBus.$off('forward-data', this.acceptForwardData);
+        },
         watch: {
             secondTextAreaEnabled(value: boolean) {
                 if (!value) {
                     this.submissionValueTwo = '';
-                    Vue.delete(this.validationErrors, this.parameterName + '_two');
+                    Vue.delete(this.validationErrors, this.parameterNameTwo);
                 }
             },
         },
         methods: {
+            acceptForwardData(data: string): void {
+                this.submissionValue = data;
+            },
             handleValidation(val: ValidationResult) {
                 if (val.failed) {
                     this.setError({textKey: val.textKey, textKeyParams: val.textKeyParams});

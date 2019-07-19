@@ -8,14 +8,14 @@
                        text-field="longname">
             <template slot="first">
                 <option :value="null"
-                        v-text="$t('jobs.forwarding.selectPlaceholder')"
-                        disabled></option>
+                        v-text="$t('jobs.forwarding.selectPlaceholder')"></option>
             </template>
         </b-form-select>
         <b-button variant="primary"
                   v-text="$t('jobs.results.actions.forward')"
                   @click="forward"
-                  class="mt-3"></b-button>
+                  class="mt-3"
+                  :disabled="!selectedTool"></b-button>
     </BaseModal>
 </template>
 
@@ -24,6 +24,9 @@
     import BaseModal from './BaseModal.vue';
     import {ForwardingMode, Tool} from '@/types/toolkit/tools';
     import EventBus from '@/util/EventBus';
+    import Logger from 'js-logger';
+
+    const logger = Logger.get('ForwardingModal');
 
     export default Vue.extend({
         name: 'ForwardingModal',
@@ -50,8 +53,8 @@
                 return this.$store.getters['tools/tools'];
             },
             toolOptions(): Tool[] {
-                if (this.forwardingMode) {
-                    const alignmentOptions: string[] = (this.forwardingMode as ForwardingMode).alignment;
+                const alignmentOptions: string[] = (this.forwardingMode as ForwardingMode).alignment;
+                if (alignmentOptions) {
                     return this.tools.filter((t: Tool) => alignmentOptions.includes(t.name));
                 } else {
                     return [];
@@ -62,10 +65,21 @@
             forward() {
                 if (this.selectedTool) {
                     this.$router.push('/tools/' + this.selectedTool, () => {
-                        EventBus.$emit('forward-data', this.forwardingData);
-                        EventBus.$emit('hide-modal');
+                        EventBus.$on('tool-parameters-loaded', this.pasteForwardData);
                     });
+                    EventBus.$emit('hide-modal', 'forwardingModal');
+                    this.resetData();
+                } else {
+                    logger.log('no tool selected');
                 }
+            },
+            pasteForwardData() {
+                EventBus.$emit('forward-data', this.forwardingData);
+                EventBus.$off('tool-parameters-loaded', this.pasteForwardData);
+            },
+            resetData() {
+                // reset data
+                this.selectedTool = null;
             },
         },
     });

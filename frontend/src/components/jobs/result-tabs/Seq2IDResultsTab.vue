@@ -55,12 +55,16 @@
             },
         },
         mounted() {
+            this.loading = true;
             resultsService.getFile(this.job.jobID, this.filename)
                 .then((data: any) => {
                     this.accIds = data.ACC_IDS;
                 })
                 .catch((e) => {
                     logger.error(e);
+                })
+                .finally(() => {
+                    this.loading = false;
                 });
         },
         methods: {
