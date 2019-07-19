@@ -62,7 +62,16 @@
                 return this.reformat.getFormat();
             },
         },
+        mounted() {
+            EventBus.$on('forward-data', this.acceptForwardData);
+        },
+        beforeDestroy() {
+            EventBus.$off('forward-data', this.acceptForwardData);
+        },
         methods: {
+            acceptForwardData(data: string): void {
+                this.input = data;
+            },
             handlePasteExample() {
                 this.$store.commit('startLoading', 'alignmentTextarea');
                 sampleSeqService.fetchSampleSequence(this.parameter.sampleInput)
