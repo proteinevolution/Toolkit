@@ -95,6 +95,12 @@
                 validation: {} as ValidationResult,
             };
         },
+        mounted() {
+            EventBus.$on('forward-data', this.acceptForwardData);
+        },
+        beforeDestroy() {
+            EventBus.$off('forward-data', this.acceptForwardData);
+        },
         watch: {
             value: {
                 immediate: true,
@@ -120,6 +126,9 @@
             },
         },
         methods: {
+            acceptForwardData(data: string): void {
+                // TODO
+            },
             handleFileUpload($event: Event): void {
                 const fileUpload: HTMLInputElement = $event.target as HTMLInputElement;
                 if (fileUpload.files && fileUpload.files.length > 0) {

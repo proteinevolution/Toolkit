@@ -136,7 +136,7 @@
                 }
             },
             openPrivacyPolicy() {
-                EventBus.$emit('show-modal', {id: 'simple', props: {modal: 'privacy'}});
+                EventBus.$emit('show-modal', {id: 'footerLink', props: {modal: 'privacy'}});
             },
         },
     });

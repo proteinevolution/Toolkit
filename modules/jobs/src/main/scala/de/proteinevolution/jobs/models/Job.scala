@@ -63,7 +63,7 @@ case class Job(
       "isPublic"     -> isPublic.asJson,
       "code"         -> toolObj.code.asJson,
       "tool"         -> tool.asJson,
-      "toolnameLong" -> config.get[String](s"Tools.$tool.longname").asJson,
+      "toolnameLong" -> toolObj.toolNameLong.asJson,
       "paramValues"  -> paramValues.asJson,
       "views"        -> toolObj.resultViews.asJson,
       "dateCreated"  -> dateCreated.toInstant.toEpochMilli.asJson,

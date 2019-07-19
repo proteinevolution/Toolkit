@@ -52,6 +52,8 @@
             <AlignmentViewerModal :sequences="modalProps.sequences"
                                   :format="modalProps.format"/>
             <HelpModal :toolName="modalProps.toolName"/>
+            <ForwardingModal :forwarding-data="modalProps.forwardingData"
+                             :forwardingMode="modalProps.forwardingMode"/>
             <VerificationModal/>
             <ResetPasswordModal/>
         </div>
@@ -65,7 +67,7 @@
                       class="Cookie__content">
                     <b class="cursor-pointer"
                        v-text="$t('cookieLaw.privacyLink')"
-                       @click="showModal({id: 'simple', props: {modal: 'privacy'}})"></b>
+                       @click="showModal({id: 'footerLink', props: {modal: 'privacy'}})"></b>
                 </i18n>
                 <div class="Cookie__buttons">
                     <button class="Cookie__button"
@@ -94,6 +96,7 @@
     import HelpModal from '@/components/modals/HelpModal.vue';
     import AuthModal from '@/components/modals/AuthModal.vue';
     import AlignmentViewerModal from '@/components/modals/AlignmentViewerModal.vue';
+    import ForwardingModal from '@/components/modals/ForwardingModal.vue';
     import {ModalParams} from '@/types/toolkit/utils';
     import VerificationModal from '@/components/modals/VerificationModal.vue';
     import ResetPasswordModal from '@/components/modals/ResetPasswordModal.vue';
@@ -115,6 +118,7 @@
             VerificationModal,
             ResetPasswordModal,
             AlignmentViewerModal,
+            ForwardingModal,
             AuthModal,
             CookieLaw,
         },
@@ -125,6 +129,8 @@
                     toolName: '', // for Help Modal
                     sequences: '', // for AlignmentViewerModal
                     format: '', // for AlignmentViewerModal
+                    forwardingMode: {}, // for ForwardingModal
+                    forwardingData: '', // for ForwardingModal
                 },
                 // allow for update of human readable time by updating reference point in store
                 refreshInterval: null as any,

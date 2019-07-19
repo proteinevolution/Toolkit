@@ -24,6 +24,7 @@
     import {Job} from '@/types/toolkit/jobs';
     import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
+    import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('Seq2IDResultsTab');
 
@@ -68,7 +69,16 @@
                 resultsService.downloadAsFile(this.accIds.join('\n'), downloadFilename);
             },
             forwardAll(): void {
-                alert('implement me!');
+                if (this.tool.parameters) {
+                    EventBus.$emit('show-modal', {
+                        id: 'forwardingModal', props: {
+                            forwardingData: this.accIds.join('\n'),
+                            forwardingMode: this.tool.parameters.forwarding,
+                        },
+                    });
+                } else {
+                    logger.error('tool parameters not loaded. Cannot forward');
+                }
             },
         },
     });

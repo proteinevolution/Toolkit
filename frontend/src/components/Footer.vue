@@ -36,7 +36,7 @@
         },
         methods: {
             launchHelpModal(modal: string): void {
-                EventBus.$emit('show-modal', {id: 'simple', props: {modal}});
+                EventBus.$emit('show-modal', {id: 'footerLink', props: {modal}});
             },
             launchUpdatesModal(): void {
                 EventBus.$emit('show-modal', {id: 'updates'});

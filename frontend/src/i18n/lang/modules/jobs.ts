@@ -39,6 +39,7 @@ export default {
         actions: {
             selectAll: 'Select All',
             deselectAll: 'Deselect All',
+            forward: 'Forward',
             forwardAll: 'Forward All',
             forwardSelected: 'Forward Selected',
             download: 'Download',
@@ -54,6 +55,9 @@ export default {
         seq2ID: {
             numRetrieved: 'Retrieved {num} IDs',
         },
+    },
+    forwarding: {
+        selectPlaceholder: 'Please select a tool',
     },
     submitJob: 'Submit Job',
     resubmitJob: 'Resubmit Job',
