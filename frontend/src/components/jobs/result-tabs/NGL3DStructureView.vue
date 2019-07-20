@@ -35,7 +35,6 @@
             return {
                 stage: undefined as any,
                 file: undefined as string | undefined,
-                loading: false,
             };
         },
         beforeDestroy() {

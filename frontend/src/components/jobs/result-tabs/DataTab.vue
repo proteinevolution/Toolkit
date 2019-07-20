@@ -34,7 +34,6 @@
         data() {
             return {
                 file: '',
-                loading: false,
             };
         },
         computed: {

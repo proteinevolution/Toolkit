@@ -40,9 +40,7 @@
 
             </form>
         </div>
-
     </div>
-
 </template>
 
 <script lang="ts">
@@ -65,7 +63,6 @@
         data() {
             return {
                 results: undefined as PatsearchResults | undefined,
-                loading: false,
             };
         },
         computed: {

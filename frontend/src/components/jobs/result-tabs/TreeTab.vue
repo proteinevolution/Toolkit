@@ -51,7 +51,6 @@
                     {value: 'radial', text: 'Radial'},
                     {value: 'vertical', text: 'Vertical'},
                 ],
-                loading: false,
             };
         },
         computed: {

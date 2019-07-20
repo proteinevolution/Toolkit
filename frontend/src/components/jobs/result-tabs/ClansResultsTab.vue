@@ -21,14 +21,10 @@
 <script lang="ts">
     import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
-    import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
 
     export default mixins(ResultTabMixin).extend({
         name: 'ClansResultsTab',
-        components: {
-            Loading,
-        },
         computed: {
             fileUrl() {
                 return resultsService.getDownloadFilePath(this.job.jobID, this.job.jobID + '.clans.zip');

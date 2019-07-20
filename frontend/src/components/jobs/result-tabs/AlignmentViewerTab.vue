@@ -21,12 +21,12 @@
         data() {
             return {
                 alignments: undefined as AlignmentItem[] | undefined,
-                loading: false,
             };
         },
         methods: {
             async init() {
-                this.alignments = await resultsService.fetchAlignmentResults(this.job.jobID);
+                const res = await resultsService.fetchAlignmentResults(this.job.jobID);
+                this.alignments = res.alignments;
             },
         },
         watch: {

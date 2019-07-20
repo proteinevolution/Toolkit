@@ -1,3 +1,10 @@
+export interface AlignmentResultResponse {
+    alignments: AlignmentItem[];
+    total: number;
+    start: number;
+    end: number;
+}
+
 export interface AlignmentItem {
     accession: string;
     seq: string;
@@ -12,7 +19,7 @@ export interface QueryItem {
 export interface Quick2dResults {
     jobID: string;
     query: QueryItem;
-    results: {[key: string]: string};
+    results: { [key: string]: string };
 }
 
 export interface PatsearchResults {

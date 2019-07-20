@@ -74,7 +74,6 @@
             return {
                 results: undefined as Quick2dResults | undefined,
                 breakAfter: 90,
-                loading: false,
                 subTools: {
                     'psipred': 'SS_PSIPRED',
                     'spider': 'SS_SPIDER3',
