@@ -1,6 +1,6 @@
 <template>
     <Loading :message="$t('jobs.results.alignment.loadingHits')"
-             v-if="loading"/>
+             v-if="loading || !alignments"/>
     <div v-else>
         <div class="result-options">
             <a @click="toggleAllSelected">
@@ -74,15 +74,16 @@
         },
         data() {
             return {
+                alignments: undefined as AlignmentItem[] | undefined,
                 selected: [] as AlignmentItem[],
                 loading: false,
             };
         },
         computed: {
-            alignments(): AlignmentItem[] {
-                return this.job.alignments || [];
-            },
             allSelected(): boolean {
+                if (!this.alignments) {
+                    return false;
+                }
                 return this.alignments.length > 0 &&
                     this.selected.length === this.alignments.length;
             },
@@ -90,16 +91,15 @@
                 return resultsService.getDownloadFilePath(this.job.jobID, 'alignment.fas');
             },
         },
-        mounted() {
-            if (!this.job.alignments) {
+        async mounted() {
+            if (!this.alignments) {
                 this.loading = true;
-                this.$store.dispatch('jobs/loadJobAlignments', this.job.jobID)
-                    .catch((e: any) => {
-                        logger.error(e);
-                    })
-                    .finally(() => {
-                        this.loading = false;
-                    });
+                try {
+                    this.alignments = await resultsService.fetchAlignmentResults(this.job.jobID);
+                } catch (e) {
+                    logger.error(e);
+                }
+                this.loading = false;
             }
         },
         methods: {
@@ -111,6 +111,9 @@
                 }
             },
             toggleAllSelected(): void {
+                if (!this.alignments) {
+                    return;
+                }
                 if (this.allSelected) {
                     this.selected = [];
                 } else {

@@ -1,5 +1,5 @@
 <template>
-    <alignment-viewer :sequences="job.alignments"/>
+    <alignment-viewer :sequences="alignments"/>
 </template>
 
 <script lang="ts">
@@ -9,6 +9,8 @@
     import {Tool} from '@/types/toolkit/tools';
     import Logger from 'js-logger';
     import EventBus from '@/util/EventBus';
+    import {AlignmentItem} from '@/types/toolkit/results';
+    import {resultsService} from '@/services/ResultsService';
 
     const logger = Logger.get('AlignmentViewerTab');
 
@@ -34,20 +36,19 @@
         },
         data() {
             return {
+                alignments: undefined as AlignmentItem[] | undefined,
                 loading: false,
-                format: 'fasta',
             };
         },
-        mounted() {
-            if (!this.job.alignments) {
+        async mounted() {
+            if (!this.alignments) {
                 this.loading = true;
-                this.$store.dispatch('jobs/loadJobAlignments', this.job.jobID)
-                    .catch((e: any) => {
-                        logger.error(e);
-                    })
-                    .finally(() => {
-                        this.loading = false;
-                    });
+                try {
+                    this.alignments = await resultsService.fetchAlignmentResults(this.job.jobID);
+                } catch (e) {
+                    logger.error(e);
+                }
+                this.loading = false;
             }
         },
         watch: {

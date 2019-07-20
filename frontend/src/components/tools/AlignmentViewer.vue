@@ -120,6 +120,7 @@
                 this.msaViewer.addView('menu', defMenu);
 
                 this.msaViewer.render();
+                this.autoResize();
             },
             autoResize() {
                 const parent: HTMLElement = (this.$refs.container as HTMLElement);
