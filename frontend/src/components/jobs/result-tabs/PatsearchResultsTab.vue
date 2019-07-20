@@ -51,6 +51,7 @@
     import Logger from 'js-logger';
     import {PatsearchResults} from '@/types/toolkit/results';
     import {patsearchColor} from '@/util/SequenceUtils';
+    import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('PatsearchResultsTab');
 
@@ -66,6 +67,12 @@
             };
         },
         computed: {
+            filename(): string {
+                if (!this.viewOptions.filename) {
+                    return '';
+                }
+                return this.viewOptions.filename.replace(':jobID', this.job.jobID);
+            },
             downloadEnabled(): boolean {
                 return this.viewOptions.hasOwnProperty('download');
             },
@@ -80,7 +87,28 @@
             colorHits(seq: string, matches: string, len: number): string {
                 return patsearchColor(seq, matches, len);
             },
+            download(): void {
+                const toolName = this.tool.name;
+                const downloadFilename = `${toolName}_${this.job.jobID}.fas`;
+                resultsService.downloadFile(this.job.jobID, this.filename, downloadFilename)
+                    .catch((e) => {
+                        logger.error(e);
+                    });
+            },
+            forwardAll(): void {
+                if (this.tool.parameters) {
+                    EventBus.$emit('show-modal', {
+                        id: 'forwardingModal', props: {
+                            forwardingData: this.filename,
+                            forwardingMode: this.tool.parameters.forwarding,
+                        },
+                    });
+                } else {
+                    logger.error('tool parameters not loaded. Cannot forward');
+                }
+            },
         },
+
     });
 
 </script>
@@ -120,5 +148,8 @@
         font-size: 0.8em;
         font-weight: bold;
         font-family: "Noto Sans", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+        margin-top: 10rem;
+        padding-top: 10em;
     }
+
 </style>

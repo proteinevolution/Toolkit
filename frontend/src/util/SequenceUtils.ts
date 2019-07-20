@@ -58,6 +58,6 @@ export function quick2dColor(name: string, seq: string): string {
 
 export function patsearchColor(seq: string, matches: string, len: number): string {
     return seq.replace(RegExp(matches, 'g'), (m) => {
-        return '<span style="color: red">' + m + '</span>';
+        return '<span class="patternMatch">' + m + '</span>';
     });
 }
