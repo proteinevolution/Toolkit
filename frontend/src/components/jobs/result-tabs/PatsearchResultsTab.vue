@@ -1,6 +1,6 @@
 <template>
     <Loading :message="$t('loading')"
-             v-if="loading"/>
+             v-if="loading || !results"/>
     <div v-else>
         <div class="note" v-if="results.results.hits.length === 0">
             No hits found! You could consider picking a different target database.<br><br><br><br>
