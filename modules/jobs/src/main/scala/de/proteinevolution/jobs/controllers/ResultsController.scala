@@ -25,6 +25,7 @@ import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.db.ResultFileAccessor
 import de.proteinevolution.jobs.models.AlignmentGetForm
 import de.proteinevolution.jobs.results.AlignmentResult
+import io.circe.JsonObject
 import io.circe.syntax._
 import javax.inject.{ Inject, Singleton }
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
@@ -79,9 +80,19 @@ final class ResultsController @Inject()(
             (for {
               json <- EitherT.liftF(resultFiles.getResults(jobID))
               r    <- EitherT.fromEither[Future](json.hcursor.downField("alignment").as[AlignmentResult])
-            } yield r.alignment.slice(start.getOrElse(0), end.getOrElse(r.alignment.length))).value.map {
-              case Right(hits) => Ok(hits.asJson)
-              case Left(_)     => NotFound
+            } yield r).value.map {
+              case Right(r) =>
+                val s = start.getOrElse(0)
+                val e = end.getOrElse(r.alignment.length)
+                Ok(
+                  JsonObject(
+                    "alignments" -> r.alignment.slice(s, e).asJson,
+                    "total"      -> r.alignment.length.asJson,
+                    "start"      -> s.asJson,
+                    "end"        -> e.asJson
+                  ).asJson
+                )
+              case Left(_) => NotFound
             }
           } else {
             fuccess(Unauthorized)

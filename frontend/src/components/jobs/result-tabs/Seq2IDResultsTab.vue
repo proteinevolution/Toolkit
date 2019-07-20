@@ -35,7 +35,6 @@
         data() {
             return {
                 accIds: [],
-                loading: false,
             };
         },
         computed: {

@@ -14,7 +14,7 @@
         <hr class="mt-2">
 
         <div class="alignment-results mb-4">
-            <p v-html="$t('jobs.results.alignment.numSeqs', {num: alignments.length})"></p>
+            <p v-html="$t('jobs.results.alignment.numSeqs', {num: total})"></p>
             <div class="table-responsive">
                 <table>
                     <tbody>
@@ -41,6 +41,11 @@
                     </tbody>
                 </table>
             </div>
+            <Loading :message="$t('jobs.results.alignment.loadingHits')"
+                     v-if="loadingMore"
+                     justify="center"
+                     class="mt-4"/>
+            <intersection-observer @intersect="intersected"/>
         </div>
     </div>
 </template>
@@ -48,11 +53,12 @@
 <script lang="ts">
     import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
-    import {AlignmentItem} from '@/types/toolkit/results';
+    import {AlignmentItem, AlignmentResultResponse} from '@/types/toolkit/results';
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
     import Logger from 'js-logger';
     import EventBus from '@/util/EventBus';
+    import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
 
     const logger = Logger.get('FastaAlignmentTab');
 
@@ -60,12 +66,15 @@
         name: 'FastaAlignmentTab',
         components: {
             Loading,
+            IntersectionObserver,
         },
         data() {
             return {
                 alignments: undefined as AlignmentItem[] | undefined,
                 selected: [] as AlignmentItem[],
-                loading: false,
+                loadingMore: false,
+                perPage: 20,
+                total: 0,
             };
         },
         computed: {
@@ -82,7 +91,27 @@
         },
         methods: {
             async init() {
-                this.alignments = await resultsService.fetchAlignmentResults(this.job.jobID);
+                await this.loadHits(0, this.perPage);
+            },
+            async intersected() {
+                if (!this.loadingMore && this.alignments && this.alignments.length < this.total) {
+                    this.loadingMore = true;
+                    try {
+                        await this.loadHits(this.alignments.length, this.alignments.length + this.perPage);
+                    } catch (e) {
+                        logger.error(e);
+                    }
+                    this.loadingMore = false;
+                }
+            },
+            async loadHits(start: number, end: number) {
+                const res: AlignmentResultResponse = await resultsService.fetchAlignmentResults(this.job.jobID, start, end);
+                this.total = res.total;
+                if (!this.alignments) {
+                    this.alignments = res.alignments;
+                } else {
+                    this.alignments.push(...res.alignments);
+                }
             },
             selectedChanged(al: AlignmentItem): void {
                 if (this.selected.includes(al)) {
