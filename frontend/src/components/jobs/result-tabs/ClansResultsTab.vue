@@ -19,26 +19,15 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
+    import mixins from 'vue-typed-mixins';
+    import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
-    import {Tool} from '@/types/toolkit/tools';
-    import {Job} from '@/types/toolkit/jobs';
     import {resultsService} from '@/services/ResultsService';
 
-    export default Vue.extend({
+    export default mixins(ResultTabMixin).extend({
         name: 'ClansResultsTab',
         components: {
             Loading,
-        },
-        props: {
-            job: {
-                type: Object as () => Job,
-                required: true,
-            },
-            tool: {
-                type: Object as () => Tool,
-                required: true,
-            },
         },
         computed: {
             fileUrl() {

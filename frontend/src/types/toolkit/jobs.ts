@@ -14,7 +14,14 @@ export interface Job {
     dateUpdated?: number;
     dateViewed?: number;
     paramValues?: { string: any };
-    views?: string[];
+    views?: JobViewOptions[];
+}
+
+export interface JobViewOptions {
+    component: string;
+    title?: string;
+    // data tab options
+    filename?: string;
 }
 
 export interface SubmissionResponse {

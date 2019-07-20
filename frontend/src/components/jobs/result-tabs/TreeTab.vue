@@ -18,30 +18,19 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
+    import mixins from 'vue-typed-mixins';
+    import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
-    import {Tool} from '@/types/toolkit/tools';
-    import {Job} from '@/types/toolkit/jobs';
     import {resultsService} from '@/services/ResultsService';
     import {createTree, updateTree} from 'exelixis';
     import Logger from 'js-logger';
 
     const logger = Logger.get('TreeTab');
 
-    export default Vue.extend({
+    export default mixins(ResultTabMixin).extend({
         name: 'TreeTab',
         components: {
             Loading,
-        },
-        props: {
-            job: {
-                type: Object as () => Job,
-                required: true,
-            },
-            tool: {
-                type: Object as () => Tool,
-                required: true,
-            },
         },
         data() {
             return {
@@ -73,23 +62,12 @@
                 return `${this.job.jobID}.tree`;
             },
         },
-        mounted() {
-            resultsService.getFile(this.job.jobID, this.filename)
-                .then((data: string) => {
-                    if (data) {
-                        this.init(data);
-                    }
-                })
-                .catch((e) => {
-                    logger.error(e);
-                });
-            window.addEventListener('resize', this.updateTree);
-        },
         beforeDestroy() {
             window.removeEventListener('resize', this.updateTree);
         },
         methods: {
-            init(data: string): void {
+            async init() {
+                const data: string = await resultsService.getFile(this.job.jobID, this.filename);
                 const opts = {
                     el: this.$refs.treeContainer,
                     tree: {
@@ -98,6 +76,7 @@
                 };
                 this.tree = createTree(opts);
                 this.updateTree();
+                window.addEventListener('resize', this.updateTree);
             },
             updateTree(): void {
                 if (this.tree) {

@@ -26,11 +26,13 @@
                    :key="'jobview-' + index"
                    :title="$t('jobs.results.titles.' + (jobViewOptions.title || jobViewOptions.component))"
                    :active="index === 0"
-                   lazy>
+                   @click="tabActivated(jobViewOptions.component)">
                 <component :is="jobViewOptions.component"
+                           :result-tab-name="jobViewOptions.component"
                            :job="job"
                            :view-options="jobViewOptions"
                            :full-screen="fullScreen"
+                           :render-on-create="index === 0"
                            :tool="tool"></component>
 
                 <tool-citation-info :tool="tool"/>
@@ -90,6 +92,7 @@
     import Logger from 'js-logger';
     import ToolCitationInfo from '@/components/jobs/ToolCitationInfo.vue';
     import {lazyLoadView} from '@/router/routes';
+    import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('JobView');
 
@@ -105,18 +108,30 @@
             JobPendingTab,
             NotFoundView,
             ToolCitationInfo,
-            clustalAlignment: () => lazyLoadView(import(/* webpackChunkName: "clustal-views" */'./result-tabs/ClustalAlignmentTab.vue')),
-            fastaAlignment: () => lazyLoadView(import(/* webpackChunkName: "clustal-views" */'./result-tabs/FastaAlignmentTab.vue')),
-            alignmentViewer: () => lazyLoadView(import(/* webpackChunkName: "alignment-viewer" */'./result-tabs/AlignmentViewerTab.vue')),
-            ngl3dStructureView: () => lazyLoadView(import(/* webpackChunkName: "ngl3d-viewer" */'./result-tabs/NGL3DStructureView.vue')),
-            hitlist: () => lazyLoadView(import(/* webpackChunkName: "hitlist-results" */'./result-tabs/HitlistTab.vue')),
-            clansResults: () => lazyLoadView(import(/* webpackChunkName: "clans-results" */'./result-tabs/ClansResultsTab.vue')),
-            patsearchResults: () => lazyLoadView(import(/* webpackChunkName: "patsearch-results" */'./result-tabs/PatsearchResultsTab.vue')),
-            quick2dResults: () => lazyLoadView(import(/* webpackChunkName: "quick2d-results" */'./result-tabs/Quick2DResultsTab.vue')),
-            samccResults: () => lazyLoadView(import(/* webpackChunkName: "samcc-results" */'./result-tabs/SamCCViewTab.vue')),
-            seq2IDResults: () => lazyLoadView(import(/* webpackChunkName: "seq2id-results" */'./result-tabs/Seq2IDResultsTab.vue')),
-            treeView: () => lazyLoadView(import(/* webpackChunkName: "tree-view" */'./result-tabs/TreeTab.vue')),
-            dataView: () => lazyLoadView(import(/* webpackChunkName: "data-view" */'./result-tabs/DataTab.vue')),
+            clustalAlignment: () => lazyLoadView(import(/* webpackChunkName: "clustal-views" */
+                './result-tabs/ClustalAlignmentTab.vue')),
+            fastaAlignment: () => lazyLoadView(import(/* webpackChunkName: "clustal-views" */
+                './result-tabs/FastaAlignmentTab.vue')),
+            alignmentViewer: () => lazyLoadView(import(/* webpackChunkName: "alignment-viewer" */
+                './result-tabs/AlignmentViewerTab.vue')),
+            ngl3dStructureView: () => lazyLoadView(import(/* webpackChunkName: "ngl3d-viewer" */
+                './result-tabs/NGL3DStructureView.vue')),
+            hitlist: () => lazyLoadView(import(/* webpackChunkName: "hitlist-results" */
+                './result-tabs/HitlistTab.vue')),
+            clansResults: () => lazyLoadView(import(/* webpackChunkName: "clans-results" */
+                './result-tabs/ClansResultsTab.vue')),
+            patsearchResults: () => lazyLoadView(import(/* webpackChunkName: "patsearch-results" */
+                './result-tabs/PatsearchResultsTab.vue')),
+            quick2dResults: () => lazyLoadView(import(/* webpackChunkName: "quick2d-results" */
+                './result-tabs/Quick2DResultsTab.vue')),
+            samccResults: () => lazyLoadView(import(/* webpackChunkName: "samcc-results" */
+                './result-tabs/SamCCViewTab.vue')),
+            seq2IDResults: () => lazyLoadView(import(/* webpackChunkName: "seq2id-results" */
+                './result-tabs/Seq2IDResultsTab.vue')),
+            treeView: () => lazyLoadView(import(/* webpackChunkName: "tree-view" */
+                './result-tabs/TreeTab.vue')),
+            dataView: () => lazyLoadView(import(/* webpackChunkName: "data-view" */
+                './result-tabs/DataTab.vue')),
         },
         data() {
             return {
@@ -188,6 +203,9 @@
             },
             goToParent() {
                 this.$router.push(`/jobs/${this.job.parentID}`);
+            },
+            tabActivated(jobView: string): void {
+                EventBus.$emit('tool-tab-activated', jobView);
             },
         },
     });

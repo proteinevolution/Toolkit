@@ -46,10 +46,9 @@
 </template>
 
 <script lang="ts">
+    import mixins from 'vue-typed-mixins';
+    import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
-    import {Tool} from '@/types/toolkit/tools';
-    import {Job} from '@/types/toolkit/jobs';
-    import Vue from 'vue';
     import {resultsService} from '@/services/ResultsService';
     import Logger from 'js-logger';
     import {PatsearchResults} from '@/types/toolkit/results';
@@ -58,23 +57,10 @@
     const logger = Logger.get('PatsearchResultsTab');
 
 
-    export default Vue.extend({
+    export default mixins(ResultTabMixin).extend({
         name: 'PatsearchResultsTab',
         components: {
             Loading,
-        },
-        props: {
-            viewOptions: {
-                type: Object,
-            },
-            job: {
-                type: Object as () => Job,
-                required: true,
-            },
-            tool: {
-                type: Object as () => Tool,
-                required: true,
-            },
         },
         data() {
             return {
@@ -90,20 +76,10 @@
                 return this.viewOptions.hasOwnProperty('forwarding');
             },
         },
-        mounted() {
-            this.loading = true;
-            resultsService.fetchResults(this.job.jobID)
-                .then((results: any) => {
-                    this.results = results as PatsearchResults;
-                })
-                .catch((e: any) => {
-                    logger.error(e);
-                })
-                .finally(() => {
-                    this.loading = false;
-                });
-        },
         methods: {
+            async init() {
+                this.results = await resultsService.fetchResults(this.job.jobID);
+            },
             colorHits(seq: string, matches: string, len: number): string {
                 return patsearchColor(seq, matches, len);
             },

@@ -9,23 +9,12 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import {Tool} from '@/types/toolkit/tools';
-    import {Job} from '@/types/toolkit/jobs';
+    import mixins from 'vue-typed-mixins';
+    import ResultTabMixin from '@/mixins/ResultTabMixin';
     import {resultsService} from '@/services/ResultsService';
 
-    export default Vue.extend({
+    export default mixins(ResultTabMixin).extend({
         name: 'SamCCViewTab',
-        props: {
-            job: {
-                type: Object as () => Job,
-                required: true,
-            },
-            tool: {
-                type: Object as () => Tool,
-                required: true,
-            },
-        },
         computed: {
             images(): string[] {
                 const jobID: string = this.job.jobID;

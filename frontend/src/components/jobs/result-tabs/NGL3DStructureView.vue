@@ -17,9 +17,8 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import {Job} from '@/types/toolkit/jobs';
-    import {Tool} from '@/types/toolkit/tools';
+    import mixins from 'vue-typed-mixins';
+    import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
     import {Stage} from 'ngl';
@@ -27,25 +26,10 @@
 
     const logger = Logger.get('NGL3DStructureView');
 
-    export default Vue.extend({
+    export default mixins(ResultTabMixin).extend({
         name: 'NGL3DStructureView',
         components: {
             Loading,
-        },
-        props: {
-            job: {
-                type: Object as () => Job,
-                required: true,
-            },
-            tool: {
-                type: Object as () => Tool,
-                required: true,
-            },
-            fullScreen: {
-                type: Boolean,
-                required: false,
-                default: false,
-            },
         },
         data() {
             return {
@@ -53,26 +37,6 @@
                 file: undefined as string | undefined,
                 loading: false,
             };
-        },
-        mounted() {
-            this.loading = true;
-            resultsService.getFile(this.job.jobID, `${this.job.jobID}.pdb`)
-                .then((file: string) => {
-                    this.file = file;
-                    this.stage = new Stage(this.$refs.viewport, {
-                        backgroundColor: 'white',
-                    });
-                    this.stage.loadFile(new Blob([this.file], {type: 'text/plain'}),
-                        {defaultRepresentation: true, ext: 'pdb'});
-                    window.addEventListener('resize', this.windowResized);
-                    this.windowResized();
-                })
-                .catch((e) => {
-                    logger.error(e);
-                })
-                .finally(() => {
-                    this.loading = false;
-                });
         },
         beforeDestroy() {
             window.removeEventListener('resize', this.windowResized);
@@ -86,6 +50,16 @@
             },
         },
         methods: {
+            async init() {
+                this.file = await resultsService.getFile(this.job.jobID, `${this.job.jobID}.pdb`);
+                this.stage = new Stage(this.$refs.viewport, {
+                    backgroundColor: 'white',
+                });
+                this.stage.loadFile(new Blob([this.file], {type: 'text/plain'}),
+                    {defaultRepresentation: true, ext: 'pdb'});
+                window.addEventListener('resize', this.windowResized);
+                this.windowResized();
+            },
             windowResized(): void {
                 this.resize(this.fullScreen);
             },

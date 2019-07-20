@@ -55,10 +55,9 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
+    import mixins from 'vue-typed-mixins';
+    import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
-    import {Tool} from '@/types/toolkit/tools';
-    import {Job} from '@/types/toolkit/jobs';
     import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
     import {Quick2dResults} from '@/types/toolkit/results';
@@ -66,20 +65,10 @@
 
     const logger = Logger.get('Quick2DResultsTab');
 
-    export default Vue.extend({
+    export default mixins(ResultTabMixin).extend({
         name: 'Quick2DResultsTab',
         components: {
             Loading,
-        },
-        props: {
-            job: {
-                type: Object as () => Job,
-                required: true,
-            },
-            tool: {
-                type: Object as () => Tool,
-                required: true,
-            },
         },
         data() {
             return {
@@ -149,20 +138,10 @@
                 return res;
             },
         },
-        mounted() {
-            this.loading = true;
-            resultsService.fetchResults(this.job.jobID)
-                .then((results: any) => {
-                    this.results = results as Quick2dResults;
-                })
-                .catch((e: any) => {
-                    logger.error(e);
-                })
-                .finally(() => {
-                    this.loading = false;
-                });
-        },
         methods: {
+            async init() {
+                this.results = await resultsService.fetchResults(this.job.jobID);
+            },
             min(a: number, b: number): number {
                 return Math.min(a, b);
             },

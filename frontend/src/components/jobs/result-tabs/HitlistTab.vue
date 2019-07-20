@@ -3,9 +3,10 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
+    import mixins from 'vue-typed-mixins';
+    import ResultTabMixin from '@/mixins/ResultTabMixin';
 
-    export default Vue.extend({
+    export default mixins(ResultTabMixin).extend({
         name: 'HitlistTab',
     });
 </script>

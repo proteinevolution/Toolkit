@@ -49,10 +49,9 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
+    import mixins from 'vue-typed-mixins';
+    import ResultTabMixin from '@/mixins/ResultTabMixin';
     import {AlignmentItem} from '@/types/toolkit/results';
-    import {Job} from '@/types/toolkit/jobs';
-    import {Tool} from '@/types/toolkit/tools';
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
     import Logger from 'js-logger';
@@ -61,20 +60,10 @@
 
     const logger = Logger.get('ClustalAlignmentTab');
 
-    export default Vue.extend({
+    export default mixins(ResultTabMixin).extend({
         name: 'ClustalAlignmentTab',
         components: {
             Loading,
-        },
-        props: {
-            job: {
-                type: Object as () => Job,
-                required: true,
-            },
-            tool: {
-                type: Object as () => Tool,
-                required: true,
-            },
         },
         data() {
             return {
@@ -117,18 +106,10 @@
                 return resultsService.getDownloadFilePath(this.job.jobID, 'alignment.clustalw_aln');
             },
         },
-        async created() {
-            if (!this.alignments) {
-                this.loading = true;
-                try {
-                    this.alignments = await resultsService.fetchAlignmentResults(this.job.jobID);
-                } catch (e) {
-                    logger.error(e);
-                }
-                this.loading = false;
-            }
-        },
         methods: {
+            async init() {
+                this.alignments = await resultsService.fetchAlignmentResults(this.job.jobID);
+            },
             toggleColor(): void {
                 this.color = !this.color;
             },

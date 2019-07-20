@@ -17,33 +17,19 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
+    import mixins from 'vue-typed-mixins';
+    import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
-    import {Tool} from '@/types/toolkit/tools';
-    import {Job} from '@/types/toolkit/jobs';
     import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
     import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('DataTab');
 
-    export default Vue.extend({
+    export default mixins(ResultTabMixin).extend({
         name: 'DataTab',
         components: {
             Loading,
-        },
-        props: {
-            viewOptions: {
-                type: Object,
-            },
-            job: {
-                type: Object as () => Job,
-                required: true,
-            },
-            tool: {
-                type: Object as () => Tool,
-                required: true,
-            },
         },
         data() {
             return {
@@ -53,6 +39,9 @@
         },
         computed: {
             filename(): string {
+                if (!this.viewOptions.filename) {
+                    return '';
+                }
                 return this.viewOptions.filename.replace(':jobID', this.job.jobID);
             },
             downloadEnabled(): boolean {
@@ -62,16 +51,10 @@
                 return this.viewOptions.hasOwnProperty('forwarding');
             },
         },
-        mounted() {
-            resultsService.getFile(this.job.jobID, this.filename)
-                .then((data: string) => {
-                    this.file = data;
-                })
-                .catch((e) => {
-                    logger.error(e);
-                });
-        },
         methods: {
+            async init() {
+                this.file = await resultsService.getFile(this.job.jobID, this.filename);
+            },
             download(): void {
                 const toolName = this.tool.name;
                 const ending = toolName === 'hhpred' || toolName === 'hhomp' ? 'hhr' : 'out';

@@ -18,30 +18,19 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
+    import mixins from 'vue-typed-mixins';
+    import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
-    import {Tool} from '@/types/toolkit/tools';
-    import {Job} from '@/types/toolkit/jobs';
     import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
     import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('Seq2IDResultsTab');
 
-    export default Vue.extend({
+    export default mixins(ResultTabMixin).extend({
         name: 'Seq2IDResultsTab',
         components: {
             Loading,
-        },
-        props: {
-            job: {
-                type: Object as () => Job,
-                required: true,
-            },
-            tool: {
-                type: Object as () => Tool,
-                required: true,
-            },
         },
         data() {
             return {
@@ -54,20 +43,11 @@
                 return 'ids.json';
             },
         },
-        mounted() {
-            this.loading = true;
-            resultsService.getFile(this.job.jobID, this.filename)
-                .then((data: any) => {
-                    this.accIds = data.ACC_IDS;
-                })
-                .catch((e) => {
-                    logger.error(e);
-                })
-                .finally(() => {
-                    this.loading = false;
-                });
-        },
         methods: {
+            async init() {
+                const data: any = await resultsService.getFile(this.job.jobID, this.filename);
+                this.accIds = data.ACC_IDS;
+            },
             download(): void {
                 const downloadFilename = `${this.tool.name}_${this.job.jobID}.fasta`;
                 resultsService.downloadAsFile(this.accIds.join('\n'), downloadFilename);

@@ -46,10 +46,9 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import {Job} from '@/types/toolkit/jobs';
+    import mixins from 'vue-typed-mixins';
+    import ResultTabMixin from '@/mixins/ResultTabMixin';
     import {AlignmentItem} from '@/types/toolkit/results';
-    import {Tool} from '@/types/toolkit/tools';
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
     import Logger from 'js-logger';
@@ -57,20 +56,10 @@
 
     const logger = Logger.get('FastaAlignmentTab');
 
-    export default Vue.extend({
+    export default mixins(ResultTabMixin).extend({
         name: 'FastaAlignmentTab',
         components: {
             Loading,
-        },
-        props: {
-            job: {
-                type: Object as () => Job,
-                required: true,
-            },
-            tool: {
-                type: Object as () => Tool,
-                required: true,
-            },
         },
         data() {
             return {
@@ -91,18 +80,10 @@
                 return resultsService.getDownloadFilePath(this.job.jobID, 'alignment.fas');
             },
         },
-        async created() {
-            if (!this.alignments) {
-                this.loading = true;
-                try {
-                    this.alignments = await resultsService.fetchAlignmentResults(this.job.jobID);
-                } catch (e) {
-                    logger.error(e);
-                }
-                this.loading = false;
-            }
-        },
         methods: {
+            async init() {
+                this.alignments = await resultsService.fetchAlignmentResults(this.job.jobID);
+            },
             selectedChanged(al: AlignmentItem): void {
                 if (this.selected.includes(al)) {
                     this.selected = this.selected.filter((el: AlignmentItem) => el !== al);

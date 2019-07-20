@@ -3,10 +3,9 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import {Job} from '@/types/toolkit/jobs';
+    import mixins from 'vue-typed-mixins';
+    import ResultTabMixin from '@/mixins/ResultTabMixin';
     import AlignmentViewer from '@/components/tools/AlignmentViewer.vue';
-    import {Tool} from '@/types/toolkit/tools';
     import Logger from 'js-logger';
     import EventBus from '@/util/EventBus';
     import {AlignmentItem} from '@/types/toolkit/results';
@@ -14,25 +13,10 @@
 
     const logger = Logger.get('AlignmentViewerTab');
 
-    export default Vue.extend({
+    export default mixins(ResultTabMixin).extend({
         name: 'AlignmentViewerTab',
         components: {
             AlignmentViewer,
-        },
-        props: {
-            job: {
-                type: Object as () => Job,
-                required: true,
-            },
-            tool: {
-                type: Object as () => Tool,
-                required: true,
-            },
-            fullScreen: {
-                type: Boolean,
-                required: false,
-                default: false,
-            },
         },
         data() {
             return {
@@ -40,16 +24,10 @@
                 loading: false,
             };
         },
-        async created() {
-            if (!this.alignments) {
-                this.loading = true;
-                try {
-                    this.alignments = await resultsService.fetchAlignmentResults(this.job.jobID);
-                } catch (e) {
-                    logger.error(e);
-                }
-                this.loading = false;
-            }
+        methods: {
+            async init() {
+                this.alignments = await resultsService.fetchAlignmentResults(this.job.jobID);
+            },
         },
         watch: {
             fullScreen: {
