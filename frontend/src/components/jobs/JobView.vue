@@ -122,6 +122,8 @@
                 './result-tabs/ClansResultsTab.vue')),
             patsearchResults: () => lazyLoadView(import(/* webpackChunkName: "patsearch-results" */
                 './result-tabs/PatsearchResultsTab.vue')),
+            tprpredResults: () => lazyLoadView(import(/* webpackChunkName: "tprpred-results" */
+                './result-tabs/TprpredResultsTab.vue')),
             quick2dResults: () => lazyLoadView(import(/* webpackChunkName: "quick2d-results" */
                 './result-tabs/Quick2DResultsTab.vue')),
             samccResults: () => lazyLoadView(import(/* webpackChunkName: "samcc-results" */

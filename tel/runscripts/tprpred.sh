@@ -37,4 +37,4 @@ tprpred_wrapper.pl -in ../results/${JOBID}.fas \
                    -cut %eval_tpr.content > ../results/${JOBID}.tpr
 
 #convert TPRpred output to JSON
-tprpred2json.pl ../results/${JOBID}.tpr > ../results/${JOBID}.json
+tprpred2json.pl ../results/${JOBID}.tpr > ../results/results.json

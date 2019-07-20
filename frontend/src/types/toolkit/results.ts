@@ -37,3 +37,8 @@ export interface PatsearchHit {
     matches: string;
     seq: string;
 }
+
+export interface TprpredResults {
+    desc: string[];
+    hits: string[];
+}

@@ -273,5 +273,9 @@ export default {
         modeller: 'Comparative Protein Structure Modeling Using MODELLER.<br>Webb B, Sali A. <a ' +
             'href="http://onlinelibrary.wiley.com/doi/10.1002/cpps.20/abstract" target="_blank" rel="noopener">' +
             'Curr Protoc Protein Sci. 2016 Nov 1;86:2.9.1-2.9.37</a>.',
+        tprpred: 'TPRpred: a tool for prediction of TPR-, PPR- and SEL1-like repeats from protein sequences.<br>' +
+            'Karpenahalli MR, Lupas AN, Söding J.<a ' +
+            'href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-8-2" target="_blank" ' +
+            'rel="noopener"> BMC Bioinformatics. 2007 Jan 3;8:2</a>.',
     },
 };
