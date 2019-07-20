@@ -74,18 +74,6 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import ClustalAlignmentTab from './result-tabs/ClustalAlignmentTab.vue';
-    import FastaAlignmentTab from './result-tabs/FastaAlignmentTab.vue';
-    import AlignmentViewerTab from './result-tabs/AlignmentViewerTab.vue';
-    import NGL3DStructureView from './result-tabs/NGL3DStructureView.vue';
-    import SamCCViewTab from './result-tabs/SamCCViewTab.vue';
-    import DataTab from './result-tabs/DataTab.vue';
-    import TreeTab from './result-tabs/TreeTab.vue';
-    import HitlistTab from './result-tabs/HitlistTab.vue';
-    import ClansResultsTab from '@/components/jobs/result-tabs/ClansResultsTab.vue';
-    import PatsearchResultsTab from '@/components/jobs/result-tabs/PatsearchResultsTab.vue';
-    import Quick2DResultsTab from './result-tabs/Quick2DResultsTab.vue';
-    import Seq2IDResultsTab from './result-tabs/Seq2IDResultsTab.vue';
     import JobPreparedTab from './state-tabs/JobPreparedTab.vue';
     import JobQueuedTab from './state-tabs/JobQueuedTab.vue';
     import JobRunningTab from './state-tabs/JobRunningTab.vue';
@@ -101,6 +89,7 @@
     import NotFoundView from '@/components/utils/NotFoundView.vue';
     import Logger from 'js-logger';
     import ToolCitationInfo from '@/components/jobs/ToolCitationInfo.vue';
+    import {lazyLoadView} from '@/router/routes';
 
     const logger = Logger.get('JobView');
 
@@ -116,18 +105,18 @@
             JobPendingTab,
             NotFoundView,
             ToolCitationInfo,
-            clustalAlignment: ClustalAlignmentTab,
-            fastaAlignment: FastaAlignmentTab,
-            alignmentViewer: AlignmentViewerTab,
-            ngl3dStructureView: NGL3DStructureView,
-            hitlist: HitlistTab,
-            clansResults: ClansResultsTab,
-            patsearchResults: PatsearchResultsTab,
-            quick2dResults: Quick2DResultsTab,
-            samccResults: SamCCViewTab,
-            seq2IDResults: Seq2IDResultsTab,
-            treeView: TreeTab,
-            dataView: DataTab,
+            clustalAlignment: () => lazyLoadView(import(/* webpackChunkName: "clustal-views" */'./result-tabs/ClustalAlignmentTab.vue')),
+            fastaAlignment: () => lazyLoadView(import(/* webpackChunkName: "clustal-views" */'./result-tabs/FastaAlignmentTab.vue')),
+            alignmentViewer: () => lazyLoadView(import(/* webpackChunkName: "alignment-viewer" */'./result-tabs/AlignmentViewerTab.vue')),
+            ngl3dStructureView: () => lazyLoadView(import(/* webpackChunkName: "ngl3d-viewer" */'./result-tabs/NGL3DStructureView.vue')),
+            hitlist: () => lazyLoadView(import(/* webpackChunkName: "hitlist-results" */'./result-tabs/HitlistTab.vue')),
+            clansResults: () => lazyLoadView(import(/* webpackChunkName: "clans-results" */'./result-tabs/ClansResultsTab.vue')),
+            patsearchResults: () => lazyLoadView(import(/* webpackChunkName: "patsearch-results" */'./result-tabs/PatsearchResultsTab.vue')),
+            quick2dResults: () => lazyLoadView(import(/* webpackChunkName: "quick2d-results" */'./result-tabs/Quick2DResultsTab.vue')),
+            samccResults: () => lazyLoadView(import(/* webpackChunkName: "samcc-results" */'./result-tabs/SamCCViewTab.vue')),
+            seq2IDResults: () => lazyLoadView(import(/* webpackChunkName: "seq2id-results" */'./result-tabs/Seq2IDResultsTab.vue')),
+            treeView: () => lazyLoadView(import(/* webpackChunkName: "tree-view" */'./result-tabs/TreeTab.vue')),
+            dataView: () => lazyLoadView(import(/* webpackChunkName: "data-view" */'./result-tabs/DataTab.vue')),
         },
         data() {
             return {

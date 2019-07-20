@@ -87,7 +87,7 @@ route-level guards instead or lazy-load the component directly:
 
 component: () => import('@views/my-view')
 */
-function lazyLoadView(AsyncView: Promise<typeof import ('*.vue')>) {
+export function lazyLoadView(AsyncView: Promise<typeof import ('*.vue')>) {
     const AsyncHandler = () => ({
         component: AsyncView,
         // A component to use while the component is loading.
