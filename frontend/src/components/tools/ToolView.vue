@@ -24,7 +24,8 @@
                             :class="[fullScreen ? 'fullscreen' : '']">
                         <b-tabs class="parameter-tabs"
                                 card
-                                nav-class="tabs-nav">
+                                nav-class="tabs-nav"
+                                no-fade>
                             <b-tab v-for="section in parameterSections"
                                    v-if="section.parameters.length > 0"
                                    :key="toolName + section.name"

@@ -55,7 +55,7 @@
     import Logger from 'js-logger';
     import EventBus from '@/util/EventBus';
 
-    const logger = Logger.get('ClustalAlignmentTab');
+    const logger = Logger.get('FastaAlignmentTab');
 
     export default Vue.extend({
         name: 'FastaAlignmentTab',
@@ -91,7 +91,7 @@
                 return resultsService.getDownloadFilePath(this.job.jobID, 'alignment.fas');
             },
         },
-        async mounted() {
+        async created() {
             if (!this.alignments) {
                 this.loading = true;
                 try {

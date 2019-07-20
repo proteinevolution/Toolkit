@@ -40,7 +40,7 @@
                 loading: false,
             };
         },
-        async mounted() {
+        async created() {
             if (!this.alignments) {
                 this.loading = true;
                 try {
