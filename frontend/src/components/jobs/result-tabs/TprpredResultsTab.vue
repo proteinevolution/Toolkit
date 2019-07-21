@@ -1,31 +1,34 @@
 <template>
     <Loading :message="$t('loading')"
              v-if="loading || !results"/>
-    <div v-else>
-        <div class="note" v-if="results.results.hits.length === 0">
-            No repeats found! You could consider picking a less stringent E-value inclusion cut-off.<br><br><br><br>
-        </div>
-        <div v-else class="tprResults">
-            <br>
-            <div v-for="hit in results.results.desc" class="tprInfo">
-                {{ hit[0]}}: <span> {{hit[1]}} </span>
+    <div v-else
+         class="font-small">
+        <b v-if="results.results.hits.length === 0">
+            No repeats found! You could consider picking a less stringent E-value inclusion cut-off.
+        </b>
+        <div v-else>
+            <div v-for="hit in results.results.desc"
+                 class="tpr-info">
+                {{ hit[0]}}: <b>{{hit[1]}}</b>
             </div>
-            <br><br><br>
 
-            <table class="unstriped">
-                <tbody class="alignmentTBody">
-                <tr class="header">
-                    <td>Repeat</td>
-                    <td>Begin</td>
-                    <td>Alignment</td>
-                    <td>End</td>
-                    <td>P-value</td>
+            <table class="alignment-table mt-4">
+                <thead>
+                <tr>
+                    <th>Repeat</th>
+                    <th>Begin</th>
+                    <th>Alignment</th>
+                    <th>End</th>
+                    <th>P-value</th>
                 </tr>
+                </thead>
+                <tbody>
                 <template v-for="hit in results.results.hits">
-                    <tr class="sequenceAlignment">
+                    <tr class="sequence-alignment">
                         <td v-text="hit[1]"></td>
                         <td v-text="hit[2]"></td>
-                        <td class="tprHit" v-html="coloredSeq(hit[0])"></td>
+                        <td class="tpr-hit"
+                            v-html="coloredSeq(hit[0])"></td>
                         <td v-text="hit[3]"></td>
                         <td v-text="hit[4]"></td>
                     </tr>
@@ -48,7 +51,6 @@
 
     const logger = Logger.get('PatsearchResultsTab');
 
-
     export default mixins(ResultTabMixin).extend({
         name: 'PatsearchResultsTab',
         components: {
@@ -59,55 +61,34 @@
                 results: undefined as TprpredResults | undefined,
             };
         },
-        computed: {},
         methods: {
             async init() {
                 this.results = await resultsService.fetchResults(this.job.jobID);
             },
-            coloredSeq(seq: string): string {
-                return colorSequence(seq);
-            },
+            coloredSeq: colorSequence,
         },
-
     });
-
 </script>
 
 <style lang="scss" scoped>
-    .note {
-        font-weight: bold;
+    .alignment-table {
+        width: 100%;
+        @include media-breakpoint-up(xl) {
+            width: 80%;
+        }
+        font-size: 0.9em;
+
+        .sequence-alignment {
+            font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+            letter-spacing: 0.05em;
+
+            .tpr-hit {
+                width: 27em;
+            }
+        }
+    }
+
+    .font-small {
         font-size: 0.9em;
     }
-
-    .alignmentTBody td {
-        padding: unset;
-    }
-
-    .tprHit {
-        width: 27em;
-        text-align: left;
-    }
-
-    .tprResults table {
-        width: 80%;
-    }
-
-    .tprInfo {
-        font-size: 0.9em !important;
-    }
-
-    .tprInfo span {
-        font-weight: bold;
-    }
-
-    .sequenceAlignment {
-        font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
-        letter-spacing: 0.05em;
-        font-size: 0.75rem;
-    }
-
-    .header {
-        font-weight: bold;
-    }
-
 </style>
