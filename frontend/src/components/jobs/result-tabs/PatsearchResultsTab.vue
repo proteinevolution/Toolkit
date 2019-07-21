@@ -24,7 +24,7 @@
                     </tr>
                     <tr>
                         <td class="sequence-alignment"
-                            v-html="colorHits(hit.seq, hit.matches, results.results.len)">
+                            v-html="colorHits(hit.seq, hit.matches)">
                             <!-- @{ hit.seq.map(s => Html(Common.insertMatch(s, result.len, hit.pats.getOrElse(Nil)))) -->
                         </td>
                     </tr>
@@ -41,7 +41,7 @@
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
     import Logger from 'js-logger';
-    import {PatsearchHit, PatsearchResults} from '@/types/toolkit/results';
+    import {PatsearchHit, PatsearchMatch, PatsearchResults} from '@/types/toolkit/results';
     import {patsearchColor} from '@/util/SequenceUtils';
     import EventBus from '@/util/EventBus';
 
@@ -69,8 +69,8 @@
             async init() {
                 this.results = await resultsService.fetchResults(this.job.jobID);
             },
-            colorHits(seq: string, matches: string, len: number): string {
-                return patsearchColor(seq, matches, len);
+            colorHits(seq: string, matches: PatsearchMatch[]): string {
+                return patsearchColor(seq, matches);
             },
             download(): void {
                 const toolName = this.tool.name;
@@ -108,6 +108,18 @@
             letter-spacing: 0.05em;
             word-break: break-all;
             white-space: unset;
+
+            .pattern-match {
+                color: red;
+                background-color: rgba(255, 0, 8, 0.1);
+            }
         }
+    }
+</style>
+
+<style lang="scss">
+    .pattern-match {
+        color: red;
+        background-color: rgba(255, 0, 8, 0.1);
     }
 </style>

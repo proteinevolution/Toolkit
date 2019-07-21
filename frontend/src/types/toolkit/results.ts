@@ -26,16 +26,19 @@ export interface PatsearchResults {
     jobID: string;
     results: {
         hits: PatsearchHit[];
-        len: number;
         regex: string;
     };
 }
 
 export interface PatsearchHit {
     name: string;
-    pats: number[];
-    matches: string;
     seq: string;
+    matches: PatsearchMatch[];
+}
+
+export interface PatsearchMatch {
+    i: number; //i: start index
+    n: number; //n: length of match
 }
 
 export interface TprpredResults {

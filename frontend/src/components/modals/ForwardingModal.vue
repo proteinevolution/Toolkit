@@ -78,7 +78,7 @@
                 // TODO find a way to get rid of timeout
                 setTimeout(() => {
                     EventBus.$emit('forward-data', this.forwardingData);
-                }, 100);
+                }, 300);
             },
             resetData() {
                 // reset data

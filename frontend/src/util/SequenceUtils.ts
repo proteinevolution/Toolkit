@@ -1,3 +1,5 @@
+import {PatsearchMatch} from '@/types/toolkit/results';
+
 export function colorSequence(seq: string): string {
     return seq.replace(/(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)/g, (m) => {
         return '<span class="aa_' + m.toString()[0] + '">' + m.toString() + '</span>';
@@ -56,8 +58,14 @@ export function quick2dColor(name: string, seq: string): string {
     return 'Error! Unknown tool';
 }
 
-export function patsearchColor(seq: string, matches: string, len: number): string {
-    return seq.replace(RegExp(matches, 'g'), (m) => {
-        return '<span class="patternMatch">' + m + '</span>';
-    });
+export function patsearchColor(seq: string, matches: PatsearchMatch[]): string {
+    let res: string = '';
+    let end: number = 0;
+    for (const match of matches) {
+        res += seq.slice(end, match.i);
+        res += '<span class="pattern-match">' + seq.slice(match.i, match.i + match.n) + '</span>';
+        end = match.i + match.n;
+    }
+    res += seq.slice(end, seq.length);
+    return res;
 }
