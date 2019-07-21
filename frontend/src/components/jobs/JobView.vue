@@ -219,6 +219,7 @@
         border-bottom: 1px solid rgba(10, 10, 10, 0.1);
         padding-bottom: 0.5rem;
         margin-bottom: 1rem;
+        background: $white;
 
         a {
             cursor: pointer;
@@ -234,6 +235,10 @@
         a:hover {
             color: $primary;
             text-decoration: none;
+        }
+
+        &.top-sticky {
+            padding: 1.5rem 0;
         }
     }
 </style>

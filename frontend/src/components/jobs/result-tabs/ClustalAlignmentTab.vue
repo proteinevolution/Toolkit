@@ -1,8 +1,10 @@
 <template>
     <Loading :message="$t('jobs.results.alignment.loadingHits')"
              v-if="loading || !alignments"/>
-    <div v-else>
-        <div class="result-options">
+    <div v-else
+         sticky-container>
+        <div class="result-options"
+             v-sticky>
             <a @click="toggleAllSelected">{{$t('jobs.results.actions.' + (allSelected ? 'deselectAll' :
                 'selectAll'))}}</a>
             <a @click="forwardSelected"

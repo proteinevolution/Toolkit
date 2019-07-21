@@ -9974,6 +9974,11 @@ vue-simple-spinner@^1.2.8:
   version "1.2.8"
   resolved "https://registry.yarnpkg.com/vue-simple-spinner/-/vue-simple-spinner-1.2.8.tgz#638249e9b25b43424ff906c14f1b7c7ed441ce9d"
 
+vue-sticky-directive@^0.0.9:
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/vue-sticky-directive/-/vue-sticky-directive-0.0.9.tgz#11615d02276473a2b6816f9b98720e565e3e24f8"
+  integrity sha512-mfRJypixmNDiu9X3Au0D1YilAN6HvZ3LvifbBWSczGBW2bmByhn0sJFEfYsz/pK7KxPRKgyjh5O7rTprw179bw==
+
 vue-style-loader@^4.1.0:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/vue-style-loader/-/vue-style-loader-4.1.2.tgz#dedf349806f25ceb4e64f3ad7c0a44fba735fcf8"
