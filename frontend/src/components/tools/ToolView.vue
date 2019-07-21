@@ -59,6 +59,14 @@
                             <slot name="job-tabs"
                                   :full-screen="fullScreen"></slot>
 
+                            <!-- hack to show the alignment viewer tool results -->
+                            <b-tab v-if="alignmentViewerSequences"
+                                   :title="$t('tools.alignmentViewer.visualization')"
+                                   active>
+                                <alignment-viewer :sequences="alignmentViewerSequences"
+                                                  :format="alignmentViewerFormat"/>
+                            </b-tab>
+
                             <template #tabs>
                                 <div class="ml-auto">
                                     <job-public-toggle v-if="loggedIn && (!isJobView || !job.foreign)"
@@ -99,6 +107,7 @@
     import Logger from 'js-logger';
     import EventBus from '@/util/EventBus';
     import {CustomJobIdValidationResult, Job} from '@/types/toolkit/jobs';
+    import AlignmentViewer from '@/components/tools/AlignmentViewer.vue';
 
     const logger = Logger.get('ToolView');
 
@@ -125,12 +134,16 @@
             CustomJobIdInput,
             EmailNotificationSwitch,
             JobPublicToggle,
+            AlignmentViewer,
         },
         data() {
             return {
                 fullScreen: false,
                 validationErrors: {},
                 submission: {} as any,
+                // hack to show the alignment viewer tool results
+                alignmentViewerSequences: '',
+                alignmentViewerFormat: '',
             };
         },
         computed: {
@@ -181,6 +194,10 @@
         created() {
             // tool view is never reused (see App.vue), therefore loading parameters in created hook only is sufficient
             this.loadToolParameters(this.toolName);
+            EventBus.$on('alignment-viewer-result-open', this.openAlignmentViewerResults);
+        },
+        beforeDestroy() {
+            EventBus.$off('alignment-viewer-result-open', this.openAlignmentViewerResults);
         },
         methods: {
             loadToolParameters(toolName: string): void {
@@ -191,6 +208,9 @@
             },
             toggleFullScreen(): void {
                 this.fullScreen = !this.fullScreen;
+                if (this.alignmentViewerSequences) {
+                    EventBus.$emit('alignment-viewer-resize', this.fullScreen);
+                }
             },
             submitJob(): void {
                 jobService.submitJob(this.toolName, this.submission)
@@ -201,6 +221,10 @@
                         logger.error('Could not submit job', response);
                         this.$alert(this.$t('errors.general'), 'danger');
                     });
+            },
+            openAlignmentViewerResults({sequences, format}: { sequences: string, format: string }): void {
+                this.alignmentViewerSequences = sequences;
+                this.alignmentViewerFormat = format;
             },
             launchHelpModal(): void {
                 EventBus.$emit('show-modal', {id: 'helpModal', props: {toolName: this.toolName}});

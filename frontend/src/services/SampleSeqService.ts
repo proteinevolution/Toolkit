@@ -9,7 +9,7 @@ class SampleSeqService {
             if (this.sampleSeqs.hasOwnProperty(sampleSequenceKey)) {
                 resolve(this.sampleSeqs[sampleSequenceKey]);
             } else {
-                axios.get(`/sample-seqs/${sampleSequenceKey}`)
+                axios.get(`/sample-seqs/${sampleSequenceKey}`, {headers: {'Content-Type': 'text/plain'}})
                     .then((response) => {
                         this.sampleSeqs[sampleSequenceKey] = response.data.trim();
                         resolve(this.sampleSeqs[sampleSequenceKey]);

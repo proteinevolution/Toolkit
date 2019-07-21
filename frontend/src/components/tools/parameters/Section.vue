@@ -1,4 +1,3 @@
-import {ParameterType} from "../../../types/toolkit/enums";
 <template>
     <div>
         <b-row>
@@ -48,10 +47,6 @@ import {ParameterType} from "../../../types/toolkit/enums";
             ReformatView,
         },
         props: {
-            /*
-             Simply stating the interface type doesn't work, this is a workaround. See
-             https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
-             */
             section: Object as () => ParameterSection,
             validationParams: Object as () => ValidationParams,
             validationErrors: Object,
