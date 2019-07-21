@@ -3,8 +3,8 @@
              v-if="loading || !results"/>
     <div v-else
          class="font-small">
-        <b v-if="results.results.hits.length === 0">
-            No repeats found! You could consider picking a less stringent E-value inclusion cut-off.
+        <b v-if="results.results.hits.length === 0"
+           v-text="$t('jobs.results.tprpred.noResults')">
         </b>
         <div v-else>
             <div v-for="hit in results.results.desc"
@@ -79,16 +79,12 @@
         font-size: 0.9em;
 
         .sequence-alignment {
-            font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
+            font-family: $font-family-monospace;
             letter-spacing: 0.05em;
 
             .tpr-hit {
                 width: 27em;
             }
         }
-    }
-
-    .font-small {
-        font-size: 0.9em;
     }
 </style>
