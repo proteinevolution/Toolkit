@@ -11,7 +11,7 @@
                 <a @click="download">{{$t('jobs.results.actions.downloadHits')}}</a>
                 <a @click="forwardAll">{{$t('jobs.results.actions.forwardAll')}}</a>
             </div>
-            <hr class="mt-2">
+
             Number of sequences: <b>{{results.results.hits.length}}</b>
 
             <table class="alignment-table mt-3">

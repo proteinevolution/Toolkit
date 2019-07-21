@@ -11,7 +11,6 @@
             <a :href="downloadFilePath" target="_blank">{{$t('jobs.results.actions.exportMSA')}}</a>
             <a @click="toggleColor">{{$t('jobs.results.actions.colorMSA')}}</a>
         </div>
-        <hr class="mt-2">
 
         <div class="alignment-results mb-4">
             <p v-html="$t('jobs.results.alignment.numSeqs', {num: total})"></p>
