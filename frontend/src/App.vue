@@ -345,6 +345,10 @@
         overflow-y: hidden !important;
     }
 
+    .font-small {
+        font-size: 0.9em;
+    }
+
     // prepared
     .status-1 {
         background-color: $job-status-1;

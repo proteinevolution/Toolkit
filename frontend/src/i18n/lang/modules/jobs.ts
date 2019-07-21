@@ -47,6 +47,7 @@ export default {
             forwardAll: 'Forward All',
             forwardSelected: 'Forward Selected',
             download: 'Download',
+            downloadHits: 'Download Hits',
             downloadMSA: 'Download MSA',
             exportMSA: 'Export MSA',
             colorMSA: 'Color MSA',
@@ -59,6 +60,12 @@ export default {
         },
         seq2ID: {
             numRetrieved: 'Retrieved {num} IDs',
+        },
+        tprpred: {
+            noResults: 'No repeats found! You could consider picking a less stringent E-value inclusion cut-off.',
+        },
+        patsearch: {
+            noResults: 'No hits found! You could consider picking a different target database.',
         },
     },
     forwarding: {

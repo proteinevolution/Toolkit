@@ -1,44 +1,36 @@
 <template>
     <Loading :message="$t('loading')"
              v-if="loading || !results"/>
-    <div v-else>
-        <div class="note" v-if="results.results.hits.length === 0">
-            No hits found! You could consider picking a different target database.<br><br><br><br>
-        </div>
+    <div v-else
+         class="font-small">
+        <b v-if="results.results.hits.length === 0"
+           v-text="$t('jobs.results.patsearch.noResults')">
+        </b>
         <div v-else>
             <div class="result-options">
-                <a @click="download"
-                   v-if="downloadEnabled">{{$t('jobs.results.actions.download')}}</a>
-                <a @click="forwardAll"
-                   v-if="forwardingEnabled">{{$t('jobs.results.actions.forwardAll')}}</a>
+                <a @click="download">{{$t('jobs.results.actions.downloadHits')}}</a>
+                <a @click="forwardAll">{{$t('jobs.results.actions.forwardAll')}}</a>
             </div>
-            <hr class="mt-2"
-                v-if="downloadEnabled || forwardingEnabled">
+            <hr class="mt-2">
             Number of sequences: <b>{{results.results.hits.length}}</b>
-            <br/><br/>
-            <form id="alignmentResult">
-                <table class="unstriped">
-                    <tbody class="alignmentTBody">
-                    <div v-for="hit in results.results.hits">
-                        <tr class="header">
-                            <td>
-                                {{ hit.name }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="sequenceAlignment wrap"
-                                v-html="colorHits(hit.seq, hit.matches, results.results.len)">
-                                <!-- @{ hit.seq.map(s => Html(Common.insertMatch(s, result.len, hit.pats.getOrElse(Nil)))) -->
-                            </td>
-                        </tr>
-                    </div>
-                    <tr>
-                        <td><br/></td>
-                    </tr>
-                    </tbody>
-                </table>
 
-            </form>
+            <table class="alignment-table mt-3">
+                <tbody>
+                <template v-for="hit in results.results.hits">
+                    <tr>
+                        <td>
+                            <b v-text="hit.name"></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="sequence-alignment"
+                            v-html="colorHits(hit.seq, hit.matches, results.results.len)">
+                            <!-- @{ hit.seq.map(s => Html(Common.insertMatch(s, result.len, hit.pats.getOrElse(Nil)))) -->
+                        </td>
+                    </tr>
+                </template>
+                </tbody>
+            </table>
         </div>
     </div>
 </template>
@@ -49,12 +41,11 @@
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
     import Logger from 'js-logger';
-    import {PatsearchResults} from '@/types/toolkit/results';
+    import {PatsearchHit, PatsearchResults} from '@/types/toolkit/results';
     import {patsearchColor} from '@/util/SequenceUtils';
     import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('PatsearchResultsTab');
-
 
     export default mixins(ResultTabMixin).extend({
         name: 'PatsearchResultsTab',
@@ -73,12 +64,6 @@
                 }
                 return this.viewOptions.filename.replace(':jobID', this.job.jobID);
             },
-            downloadEnabled(): boolean {
-                return this.viewOptions.hasOwnProperty('download');
-            },
-            forwardingEnabled(): boolean {
-                return this.viewOptions.hasOwnProperty('forwarding');
-            },
         },
         methods: {
             async init() {
@@ -96,10 +81,11 @@
                     });
             },
             forwardAll(): void {
-                if (this.tool.parameters) {
+                if (this.tool.parameters && this.results) {
                     EventBus.$emit('show-modal', {
                         id: 'forwardingModal', props: {
-                            forwardingData: this.filename,
+                            forwardingData: this.results.results.hits.reduce((acc: string, cur: PatsearchHit) =>
+                                acc + cur.name + '\n' + cur.seq + '\n', ''),
                             forwardingMode: this.tool.parameters.forwarding,
                         },
                     });
@@ -114,42 +100,14 @@
 </script>
 
 <style lang="scss" scoped>
-    .note {
-        font-weight: bold;
-    }
+    .alignment-table {
+        font-size: 0.9em;
 
-    .alignmentTBody td {
-        padding: unset;
+        .sequence-alignment {
+            font-family: $font-family-monospace;
+            letter-spacing: 0.05em;
+            word-break: break-all;
+            white-space: unset;
+        }
     }
-
-    .sequenceAlignment {
-        font-family: "SFMono-Regular", Consolas, "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
-        letter-spacing: 0.05em;
-        font-size: 0.75rem;
-    }
-
-    .file-view {
-        width: 100%;
-        font-size: 12px;
-        height: 50vh;
-        font-family: $font-family-monospace;
-    }
-
-    .fullscreen .file-view {
-        height: 85vh;
-    }
-
-    .wrap {
-        word-break: break-all;
-        white-space: unset;
-    }
-
-    .header {
-        font-size: 0.8em;
-        font-weight: bold;
-        font-family: "Noto Sans", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-        margin-top: 10rem;
-        padding-top: 10em;
-    }
-
 </style>

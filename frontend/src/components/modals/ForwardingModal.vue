@@ -74,8 +74,11 @@
                 }
             },
             pasteForwardData() {
-                EventBus.$emit('forward-data', this.forwardingData);
                 EventBus.$off('tool-parameters-loaded', this.pasteForwardData);
+                // TODO find a way to get rid of timeout
+                setTimeout(() => {
+                    EventBus.$emit('forward-data', this.forwardingData);
+                }, 100);
             },
             resetData() {
                 // reset data
