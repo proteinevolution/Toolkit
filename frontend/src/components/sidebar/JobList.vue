@@ -197,10 +197,14 @@
 
                 .job-id {
                     width: 5.5em;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
                 }
 
                 .tool-code {
                     width: 3.5em;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
                 }
             }
         }
