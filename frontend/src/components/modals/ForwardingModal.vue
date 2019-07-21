@@ -65,7 +65,7 @@
             forward() {
                 if (this.selectedTool) {
                     this.$router.push('/tools/' + this.selectedTool, () => {
-                        EventBus.$on('tool-parameters-loaded', this.pasteForwardData);
+                        EventBus.$on('paste-area-loaded', this.pasteForwardData);
                     });
                     EventBus.$emit('hide-modal', 'forwardingModal');
                     this.resetData();
@@ -74,11 +74,8 @@
                 }
             },
             pasteForwardData() {
-                EventBus.$off('tool-parameters-loaded', this.pasteForwardData);
-                // TODO find a way to get rid of timeout
-                setTimeout(() => {
-                    EventBus.$emit('forward-data', this.forwardingData);
-                }, 300);
+                EventBus.$off('paste-area-loaded', this.pasteForwardData);
+                EventBus.$emit('forward-data', this.forwardingData);
             },
             resetData() {
                 // reset data

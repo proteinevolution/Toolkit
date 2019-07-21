@@ -201,10 +201,7 @@
         },
         methods: {
             loadToolParameters(toolName: string): void {
-                this.$store.dispatch('tools/fetchToolParametersIfNotPresent', toolName)
-                    .then(() => {
-                        EventBus.$emit('tool-parameters-loaded');
-                    });
+                this.$store.dispatch('tools/fetchToolParametersIfNotPresent', toolName);
             },
             toggleFullScreen(): void {
                 this.fullScreen = !this.fullScreen;

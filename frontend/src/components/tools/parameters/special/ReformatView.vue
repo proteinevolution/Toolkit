@@ -133,6 +133,7 @@
         },
         mounted() {
             EventBus.$on('forward-data', this.acceptForwardData);
+            EventBus.$emit('paste-area-loaded');
         },
         beforeDestroy() {
             EventBus.$off('forward-data', this.acceptForwardData);
