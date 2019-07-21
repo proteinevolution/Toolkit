@@ -10,7 +10,7 @@
                v-if="forwardingEnabled">{{$t('jobs.results.actions.forwardAll')}}</a>
         </div>
 
-        <pre v-text="file"
+        <pre v-html="file"
              class="file-view"></pre>
     </div>
 </template>
