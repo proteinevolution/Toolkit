@@ -37,8 +37,8 @@ export interface PatsearchHit {
 }
 
 export interface PatsearchMatch {
-    i: number; //i: start index
-    n: number; //n: length of match
+    i: number; // i: start index
+    n: number; // n: length of match
 }
 
 export interface TprpredResults {

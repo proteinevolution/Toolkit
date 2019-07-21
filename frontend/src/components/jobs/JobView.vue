@@ -126,8 +126,8 @@
                 './result-tabs/TprpredResultsTab.vue')),
             quick2dResults: () => lazyLoadView(import(/* webpackChunkName: "quick2d-results" */
                 './result-tabs/Quick2DResultsTab.vue')),
-            samccResults: () => lazyLoadView(import(/* webpackChunkName: "samcc-results" */
-                './result-tabs/SamCCViewTab.vue')),
+            imagesView: () => lazyLoadView(import(/* webpackChunkName: "images-view" */
+                './result-tabs/ImagesViewTab.vue')),
             seq2IDResults: () => lazyLoadView(import(/* webpackChunkName: "seq2id-results" */
                 './result-tabs/Seq2IDResultsTab.vue')),
             treeView: () => lazyLoadView(import(/* webpackChunkName: "tree-view" */

@@ -44,7 +44,7 @@ fi
 echo "done" >> ../results/process.log
 
 aln2plot.pl ../results/${JOBID}.aln
-mv -- ../results/${JOBID}-1.png ../results/${JOBID}_hyd.png
-mv -- ../results/${JOBID}-2.png ../results/${JOBID}_scvol.png
+mv -- ../results/${JOBID}-1.png ../results/hyd.png
+mv -- ../results/${JOBID}-2.png ../results/scvol.png
 
 

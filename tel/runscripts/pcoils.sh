@@ -128,7 +128,7 @@ if [ "%pcoils_input_mode.content" = "0" ]; then
 
         echo "#Generating output." >> ../results/process.log
 
-        prepare_coils_gnuplot.pl ../results/${JOBID} ../results/${JOBID}.coils_n14 \
+        prepare_coils_gnuplot.pl ../results/img ../results/${JOBID}.coils_n14 \
                                  ../results/${JOBID}.coils_n21 ../results/${JOBID}.coils_n28 \
                                  ../results/${JOBID}.horiz
 
@@ -153,7 +153,7 @@ if [ "%pcoils_input_mode.content" = "1" ] || [ "%pcoils_input_mode.content" = "2
 
          echo "done" >> ../results/process.log
          echo "#Generating output." >> ../results/process.log
-         prepare_for_gnuplot.pl ../results/${JOBID} T 2 ../results/${JOBID}.coils_n14 ../results/${JOBID}.coils_n21 ../results/${JOBID}.coils_n28 ../results/${JOBID}.horiz
+         prepare_for_gnuplot.pl ../results/img T 2 ../results/${JOBID}.coils_n14 ../results/${JOBID}.coils_n21 ../results/${JOBID}.coils_n28 ../results/${JOBID}.horiz
          create_numerical.rb -i ../results/${JOBID} -m %pcoils_matrix.content -a ../params/${JOBID}.in -w %pcoils_weighting.content
 
          echo "done" >> ../results/process.log

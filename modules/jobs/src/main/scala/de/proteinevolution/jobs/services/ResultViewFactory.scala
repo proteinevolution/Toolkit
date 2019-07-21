@@ -64,13 +64,8 @@ final class ResultViewFactory @Inject()(
 
   private def getResultViewsWithoutJson(toolName: String, jobId: String): ResultView = {
     (ToolName(toolName): @unchecked) match {
-      case MARCOIL             => MarcoilResultView(jobId, toolConfig)
-      case DEEPCOIL            => DeepCoilResultView(jobId, toolConfig, constants)
-      case PCOILS              => PcoilsResultView(jobId, constants)
-      case REPPER              => RepperResultView(jobId, constants)
       case HHPRED_MANUAL       => HHPredManual(jobId, constants)
       case HHREPID             => HHrepIdResultView(jobId, constants)
-      case ALN2PLOT            => Aln2PlotResultView(jobId)
     }
   }
 
@@ -84,10 +79,6 @@ final class ResultViewFactory @Inject()(
         for {
           result <- json.as[PSIBlastResult]
         } yield PsiBlastResultView(jobId, result, toolConfig, constants)
-      case TPRPRED =>
-        for {
-          result <- TPRPredResult.tprpredDecoder(jobId, json)
-        } yield TprPredResultView(jobId, result)
       case HHBLITS =>
         for {
           result    <- json.as[HHBlitsResult]
@@ -112,10 +103,6 @@ final class ResultViewFactory @Inject()(
         for {
           result <- json.as[HHPredResult]
         } yield HHPredAlignResultView(jobId, result, toolConfig, constants)
-      case PATSEARCH =>
-        for {
-          result <- PatSearchResult.patSearchResultDecoder(json, jobId)
-        } yield PatSearchResultView(jobId, result, toolConfig)
     }
   }
 

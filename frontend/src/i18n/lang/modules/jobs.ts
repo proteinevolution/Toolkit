@@ -39,6 +39,7 @@ export default {
             structure3dWithAxes: '3D Structure With Axes',
             structure3d: '3D Structure',
             plots: 'Plots',
+            ccProb: 'CC-Prob',
         },
         actions: {
             selectAll: 'Select All',
@@ -66,6 +67,10 @@ export default {
         },
         patsearch: {
             noResults: 'No hits found! You could consider picking a different target database.',
+        },
+        imagesView: {
+            noPeriodicity: 'No periodicity spectrum found!',
+            noRepeats: 'No significant repeats found for given values!',
         },
     },
     forwarding: {

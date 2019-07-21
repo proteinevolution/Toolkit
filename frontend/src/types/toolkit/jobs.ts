@@ -1,5 +1,4 @@
 import {JobState} from '@/types/toolkit/enums';
-import {AlignmentItem} from '@/types/toolkit/results';
 
 export interface Job {
     jobID: string;
@@ -22,6 +21,12 @@ export interface JobViewOptions {
     title?: string;
     // data tab options
     filename?: string;
+    download?: string;
+    forwarding?: string;
+    // images view options
+    files?: string;
+    labels?: string;
+    altTexts?: string;
 }
 
 export interface SubmissionResponse {

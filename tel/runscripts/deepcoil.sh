@@ -110,4 +110,4 @@ else
 fi
 
 
-${DEEPCOIL}/prepare_deepcoil_gnuplot.pl ../results/${JOBID} ../results/${JOBID}.out
+${DEEPCOIL}/prepare_deepcoil_gnuplot.pl ../results/img ../results/${JOBID}.out
