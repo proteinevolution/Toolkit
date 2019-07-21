@@ -27,8 +27,10 @@
                  v-for="job in sortedJobs"
                  :class="['status-' + job.status, job.jobID === selectedJobID ? 'selected' : '']"
                  @click="goToJob(job.jobID)">
-                <span v-text="job.jobID"></span>
-                <span v-text="job.code.toUpperCase()"></span>
+                <span v-text="job.jobID"
+                      class="job-id"></span>
+                <span v-text="job.code.toUpperCase()"
+                      class="tool-code"></span>
                 <i class="fas fa-times"
                    @click.stop="hideJob(job.jobID)"></i>
             </div>
@@ -191,6 +193,14 @@
                 &.selected {
                     margin: 0 2px;
                     box-shadow: 1px 1px 4px 1px $tk-medium-gray;
+                }
+
+                .job-id {
+                    width: 5.5em;
+                }
+
+                .tool-code {
+                    width: 3.5em;
                 }
             }
         }
