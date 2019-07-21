@@ -2,14 +2,13 @@
     <Loading :message="$t('loading')"
              v-if="loading"/>
     <div v-else>
-        <div class="result-options">
+        <div class="result-options"
+             v-if="downloadEnabled || forwardingEnabled">
             <a @click="download"
                v-if="downloadEnabled">{{$t('jobs.results.actions.download')}}</a>
             <a @click="forwardAll"
                v-if="forwardingEnabled">{{$t('jobs.results.actions.forwardAll')}}</a>
         </div>
-        <hr class="mt-2"
-            v-if="downloadEnabled || forwardingEnabled">
 
         <pre v-text="file"
              class="file-view"></pre>

@@ -6,7 +6,6 @@
             <a @click="forwardAll">{{$t('jobs.results.actions.forwardAll')}}</a>
             <a @click="download">{{$t('jobs.results.actions.download')}}</a>
         </div>
-        <hr class="mt-2">
 
         <div class="file-view">
             <b v-text="$t('jobs.results.seq2ID.numRetrieved', {num: accIds.length})"></b>

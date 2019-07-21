@@ -216,6 +216,9 @@
 <style lang="scss">
     .result-options {
         font-size: 0.9em;
+        border-bottom: 1px solid rgba(10, 10, 10, 0.1);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
 
         a {
             cursor: pointer;

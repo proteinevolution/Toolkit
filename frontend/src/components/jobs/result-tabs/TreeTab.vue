@@ -11,7 +11,6 @@
             <a @click="download"
                class="ml-auto">{{$t('jobs.results.actions.downloadTree')}}</a>
         </div>
-        <hr class="mt-2">
 
         <div ref="treeContainer"></div>
     </div>

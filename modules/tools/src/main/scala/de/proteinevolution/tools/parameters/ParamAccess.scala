@@ -187,7 +187,7 @@ class ParamAccess @Inject()(tel: TEL) {
       )
 
     // HHomp
-    case "HHOMPDB"   => select("hhompdb", default = Some("HHompDB_v1.0"))
+    case "HHOMPDB"   => select("hhompdb", default = Some("HHompDB_1.0.hhm"))
     case "ALIGNMODE" => select("alignmode", default = Some("local"))
 
     // Quick2D

@@ -40,10 +40,6 @@
     export default Vue.extend({
         name: 'AlignmentViewerView',
         props: {
-            /*
-             Simply stating the interface type doesn't work, this is a workaround. See
-             https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
-             */
             parameter: Object as () => FrontendToolParameter,
         },
         components: {
@@ -87,12 +83,9 @@
                     });
             },
             showAlignment() {
-                EventBus.$emit('show-modal', {
-                    id: 'alignmentViewer',
-                    props: {
-                        sequences: this.input,
-                        format: this.detectedFormat.toLowerCase(),
-                    },
+                EventBus.$emit('alignment-viewer-result-open', {
+                    sequences: this.input,
+                    format: this.detectedFormat.toLowerCase(),
                 });
             },
         },

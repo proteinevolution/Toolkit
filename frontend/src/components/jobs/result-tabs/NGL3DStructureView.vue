@@ -6,7 +6,6 @@
             <div class="result-options">
                 <a @click="downloadPdb">{{$t('jobs.results.actions.downloadPDBFile')}}</a>
             </div>
-            <hr class="mt-2">
         </div>
 
         <!-- refs are only accessible when in DOM => don't hide -->
