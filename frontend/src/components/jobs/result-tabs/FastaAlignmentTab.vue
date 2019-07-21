@@ -20,8 +20,8 @@
                     <template v-for="(elem, index) in alignments">
                         <tr :key="'header' + elem.num">
                             <td class="d-flex align-items-center">
-                                <b-form-checkbox :checked="selected.includes(elem)"
-                                                 @change="selectedChanged(elem)"/>
+                                <b-form-checkbox :checked="selected.includes(elem.num)"
+                                                 @change="selectedChanged(elem.num)"/>
                                 <b v-text="index+1 + '.'"
                                    class="ml-2"></b>
                             </td>
@@ -72,7 +72,7 @@
         data() {
             return {
                 alignments: undefined as AlignmentItem[] | undefined,
-                selected: [] as AlignmentItem[],
+                selected: [] as number[],
                 loadingMore: false,
                 perPage: 20,
                 total: 0,
@@ -114,11 +114,11 @@
                     this.alignments.push(...res.alignments);
                 }
             },
-            selectedChanged(al: AlignmentItem): void {
-                if (this.selected.includes(al)) {
-                    this.selected = this.selected.filter((el: AlignmentItem) => el !== al);
+            selectedChanged(num: number): void {
+                if (this.selected.includes(num)) {
+                    this.selected = this.selected.filter((n: number) => num !== n);
                 } else {
-                    this.selected.push(al);
+                    this.selected.push(num);
                 }
             },
             toggleAllSelected(): void {
@@ -128,7 +128,7 @@
                 if (this.allSelected) {
                     this.selected = [];
                 } else {
-                    this.selected = this.alignments;
+                    this.selected = this.alignments.map((al: AlignmentItem) => al.num);
                 }
             },
             downloadAlignment(): void {
@@ -140,10 +140,12 @@
             },
             forwardSelected(): void {
                 if (this.selected.length > 0) {
-                    if (this.tool.parameters) {
+                    if (this.tool.parameters && this.alignments) {
+                        const selAl: AlignmentItem[] = this.alignments
+                            .filter((al: AlignmentItem) => this.selected.includes(al.num));
                         EventBus.$emit('show-modal', {
                             id: 'forwardingModal', props: {
-                                forwardingData: this.selected.reduce((acc: string, cur: AlignmentItem) =>
+                                forwardingData: selAl.reduce((acc: string, cur: AlignmentItem) =>
                                     acc + '>' + cur.accession + '\n' + cur.seq + '\n', ''),
                                 forwardingMode: this.tool.parameters.forwarding,
                             },

@@ -21,8 +21,8 @@
                         <tr v-for="elem in group"
                             :key="groupI + '-' + elem.num">
                             <td>
-                                <b-form-checkbox :checked="selected.includes(elem)"
-                                                 @change="selectedChanged(elem)"/>
+                                <b-form-checkbox :checked="selected.includes(elem.num)"
+                                                 @change="selectedChanged(elem.num)"/>
                             </td>
                             <td class="accession">
                                 <b v-text="elem.accession.slice(0, 20)"></b>
@@ -31,17 +31,17 @@
                                 class="sequence">
                             </td>
                         </tr>
-                        <div v-if="groupI === 0 && alignments.length !== total">
-                            <Loading :message="$t('jobs.results.alignment.loadingHits')"
-                                     v-if="loadingMore"
-                                     justify="center"
-                                     class="mt-4"/>
-                            <intersection-observer @intersect="intersected"/>
-                        </div>
-                        <tr class="blank-row"
-                            v-if="groupI < brokenAlignments.length - 1">
-                            <td colspan="3"></td>
+                        <tr>
+                            <td v-if="groupI === 0 && alignments.length !== total"
+                                colspan="3">
+                                <Loading :message="$t('jobs.results.alignment.loadingHits')"
+                                         v-if="loadingMore"
+                                         justify="center"
+                                         class="mt-4"/>
+                                <intersection-observer @intersect="intersected"/>
+                            </td>
                         </tr>
+
                         <tr class="blank-row"
                             v-if="groupI < brokenAlignments.length - 1">
                             <td colspan="3"></td>
@@ -76,7 +76,7 @@
         data() {
             return {
                 alignments: undefined as AlignmentItem[] | undefined,
-                selected: [] as AlignmentItem[],
+                selected: [] as number[],
                 breakAfter: 85, // clustal format breaks after n chars
                 color: false,
                 loadingMore: false,
@@ -143,11 +143,11 @@
             toggleColor(): void {
                 this.color = !this.color;
             },
-            selectedChanged(al: AlignmentItem): void {
-                if (this.selected.includes(al)) {
-                    this.selected = this.selected.filter((el: AlignmentItem) => el !== al);
+            selectedChanged(num: number): void {
+                if (this.selected.includes(num)) {
+                    this.selected = this.selected.filter((n: number) => num !== n);
                 } else {
-                    this.selected.push(al);
+                    this.selected.push(num);
                 }
             },
             toggleAllSelected(): void {
@@ -157,7 +157,7 @@
                 if (this.allSelected) {
                     this.selected = [];
                 } else {
-                    this.selected = this.alignments;
+                    this.selected = this.alignments.map((al: AlignmentItem) => al.num);
                 }
             },
             coloredSeq(seq: string): string {
@@ -176,10 +176,12 @@
             },
             forwardSelected(): void {
                 if (this.selected.length > 0) {
-                    if (this.tool.parameters) {
+                    if (this.tool.parameters && this.alignments) {
+                        const selAl: AlignmentItem[] = this.alignments
+                            .filter((al: AlignmentItem) => this.selected.includes(al.num));
                         EventBus.$emit('show-modal', {
                             id: 'forwardingModal', props: {
-                                forwardingData: this.selected.reduce((acc: string, cur: AlignmentItem) =>
+                                forwardingData: selAl.reduce((acc: string, cur: AlignmentItem) =>
                                     acc + '>' + cur.accession + '\n' + cur.seq + '\n', ''),
                                 forwardingMode: this.tool.parameters.forwarding,
                             },
@@ -198,11 +200,11 @@
         font-size: 0.9em;
 
         td {
-            padding-right: 2rem;
+            padding: 0 2rem 0 0;
         }
 
         .blank-row td {
-            height: 1em;
+            height: 2.5rem;
         }
 
         .accession {
