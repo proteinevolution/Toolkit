@@ -7,6 +7,7 @@
            v-text="$t('jobs.results.tprpred.noResults')">
         </b>
         <div v-else>
+            <br>
             <div v-for="hit in results.results.desc"
                  class="tpr-info">
                 {{ hit[0]}}: <b>{{hit[1]}}</b>

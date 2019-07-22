@@ -283,5 +283,32 @@ export default {
         hhomp: 'HHomp--prediction and classification of outer membrane proteins.<br>Remmert M, Linke D, Lupas AN, ' +
             'Söding J. <a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkp325" ' +
             'target="_blank" rel="noopener">Nucleic Acids Res. 2009 Jul;37:W446-51</a>.',
+        aln2plot: '',
+        deepcoil: 'DeepCoil - a fast and accurate prediction of coiled-coil domains in protein sequences.<br>' +
+            'Ludwiczak J, Winski A, Szczepaniak K, Alva V, Dunin-Horkawicz S.<a ' +
+            'href="https://www.ncbi.nlm.nih.gov/pubmed/?term=30601942" target="_blank" rel="noopener">\n' +
+            'Bioinformatics. 2019 Jan 2</a>.',
+        marcoil: 'MARCOIL: An HMM model for coiled-coil domains and a comparison with PSSM-based predictions.<br>' +
+            'Delorenzi M, Speed T.<a href="https://www.ncbi.nlm.nih.gov/pubmed/12016059" target="_blank" ' +
+            'rel="noopener"> Bioinformatics. 2002 Apr;18(4):617-25</a>.',
+        pcoils: 'PSIPRED: Protein secondary structure prediction based on position-specific scoring matrices.<br>' +
+            'Jones DT.<a href="http://www.sciencedirect.com/science/article/pii/S0022283699930917?via%3Dihub" ' +
+            'target="_blank" rel="noopener"> J Mol Biol. 1999 Sep 17;292(2):195-202</a>.<br><br>' +
+            'PCOILS: Comparative analysis of coiled-coil prediction methods.<br>Gruber M, Söding J, Lupas AN.' +
+            '<a href="http://www.sciencedirect.com/science/article/pii/S1047847706000815?via%3Dihub" target="_blank" ' +
+            'rel="noopener"> J Struct Biol. 2006 Aug;155(2):140-5</a>.',
+        repper: 'REPPER--repeats and their periodicities in fibrous proteins<br>Gruber M, Söding J, Lupas AN.<a ' +
+            'href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gki405" target="_blank" ' +
+            'rel="noopener"> Nucleic Acids Res. 2005 Jul 1;33(Web Server issue):W239-43</a>.<br><br>' +
+            'PSIPRED: Protein secondary structure prediction based on position-specific scoring matrices.<br>' +
+            'Jones DT.<a href="http://www.sciencedirect.com/science/article/pii/S0022283699930917?via%3Dihub" ' +
+            'target="_blank" rel="noopener"> J Mol Biol. 1999 Sep 17;292(2):195-202</a>.<br><br>' +
+            'PCOILS: Comparative analysis of coiled-coil prediction methods.<br>Gruber M, Söding J, Lupas AN.' +
+            '<a href="http://www.sciencedirect.com/science/article/pii/S1047847706000815?via%3Dihub" target="_blank" ' +
+            'rel="noopener"> J Struct Biol. 2006 Aug;155(2):140-5</a>.',
+        formatseq: '',
+        hhfilter: '',
+        retseq: '',
+        seq2id: '',
     },
 };

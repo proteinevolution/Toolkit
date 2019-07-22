@@ -1,11 +1,11 @@
 <template>
     <div>
         <br/>
-        Download the zipped CLANS file (<a :href="fileUrl" download>{{job.jobID + '.clans.zip'}}</a>) generated for your
+        Download the zipped CLANS file (<a :href="fileUrl" download><b>{{job.jobID + '.clans.zip'}}</b></a>) generated for your
         sequences and unzip it.
         <br/><br/>
         Download the CLANS application here: <a
-            href="ftp://ftp.tuebingen.mpg.de/pub/protevo/CLANS/clans.jar">clans.jar</a>
+            href="ftp://ftp.tuebingen.mpg.de/pub/protevo/CLANS/clans.jar"><b>clans.jar</b></a>
         and visualize your unzipped CLANS file (<b>{{job.jobID + '.clans'}}</b>) using the 'Load Run' option in the
         'File'
         menu.
@@ -13,7 +13,7 @@
         If your input contains large number of sequences, please consider running CLANS on the command line:<br/>
         <em>java -Xmx4G -jar clans.jar -load {{job.jobID + '.clans'}}</em><br/><br/>
 
-        If you face problems loading the CLANS file, please increase the maximum Java heap size (-Xmx).
+        If you encounter problems loading the CLANS file, please increase the maximum Java heap size (-Xmx).
         <br/><br/>
     </div>
 </template>

@@ -72,9 +72,9 @@ export default {
             noResults: 'No hits found! You could consider picking a different target database.',
         },
         hhomp: {
-            noResults: 'No hits found! Please re-run HHomp with an increased number of MSA generation steps or with a custom-built ' +
-                'multiple sequence alignment as input (set "Maximal no. of MSA generation steps" to 0). You could also ' +
-                'consider picking a different target database and/or using different parameters.',
+            noResults: 'No hits found! Please re-run HHomp with an increased number of MSA generation steps or with ' +
+                'a custom-built multiple sequence alignment as input (set "Maximal no. of MSA generation steps" to ' +
+                '0). You could also consider picking a different target database and/or using different parameters.',
             numHits: 'Number of Hits: <b>{num}</b>',
             ompProb: 'Overall probability of the query to be an OMP: <b>{prob}%</b>',
         },
