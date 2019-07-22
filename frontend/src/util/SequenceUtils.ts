@@ -41,7 +41,7 @@ export function quick2dColor(name: string, seq: string): string {
         case 'tmhmm':
         case 'phobius':
         case 'polyphobius':
-            return seq.toUpperCase().replace(/[TX]/g, (m) => {
+            return seq.toUpperCase().replace(/[MX]/g, (m) => {
                 if (m === 'X') {
                     return '&nbsp;';
                 }
