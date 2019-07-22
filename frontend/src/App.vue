@@ -58,6 +58,8 @@
             <ResetPasswordModal/>
         </div>
 
+        <scroll-top-button/>
+
         <notifications animation-type="velocity"/>
         <cookie-law theme="toolkit"
                     :message="$t('cookieLaw.message')">
@@ -101,6 +103,7 @@
     import VerificationModal from '@/components/modals/VerificationModal.vue';
     import ResetPasswordModal from '@/components/modals/ResetPasswordModal.vue';
     import CookieLaw from 'vue-cookie-law';
+    import ScrollTopButton from '@/components/utils/ScrollTopButton.vue';
 
     const logger = Logger.get('App');
 
@@ -121,6 +124,7 @@
             ForwardingModal,
             AuthModal,
             CookieLaw,
+            ScrollTopButton,
         },
         data() {
             return {
