@@ -6,7 +6,6 @@ declare module 'vue-simple-spinner';
 declare module 'vue-switches';
 declare module 'vue-native-websocket';
 declare module 'vue-cookie-law';
-declare module 'vue-sticky-directive';
 declare module 'intersection-observer-polyfill';
 declare module 'exelixis';
 declare module 'ngl';

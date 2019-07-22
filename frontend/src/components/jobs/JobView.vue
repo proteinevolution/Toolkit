@@ -216,10 +216,14 @@
 <style lang="scss">
     .result-options {
         font-size: 0.9em;
-        border-bottom: 1px solid rgba(10, 10, 10, 0.1);
-        padding-bottom: 0.5rem;
-        margin-bottom: 1rem;
         background: $white;
+        border-bottom: 1px solid rgba(10, 10, 10, 0.1);
+        margin-top: -1rem;
+        margin-bottom: 1rem;
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 1;
 
         a {
             cursor: pointer;
@@ -235,10 +239,6 @@
         a:hover {
             color: $primary;
             text-decoration: none;
-        }
-
-        &.top-sticky {
-            padding: 1.5rem 0;
         }
     }
 </style>
