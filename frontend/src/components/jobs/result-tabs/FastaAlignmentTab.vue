@@ -108,6 +108,9 @@
             async loadHits(start: number, end: number) {
                 const res: AlignmentResultResponse = await resultsService.fetchAlignmentResults(this.job.jobID, start, end);
                 this.total = res.total;
+                if (this.allSelected) {
+                    res.alignments.forEach((a: AlignmentItem) => this.selected.push(a.num));
+                }
                 if (!this.alignments) {
                     this.alignments = res.alignments;
                 } else {
