@@ -177,13 +177,13 @@ echo "#Executing MARCOIL." >> ../results/process.log
 # Switch on correct Matrix
 matrix_copy.sh "${MARCOILMTK}" ../0/R5.MTK
 matrix_copy.sh "${MARCOILMTIDK}" ../0/R5.MTIDK
-mv ../results/${JOBID}.fas .
+
                 marcoil  -C \
                       +dssSl \
                       -T ${MARCOILINPUT}/R3.transProbHigh \
                       -E ${MARCOILINPUT}/R2.emissProb \
                       -P ${JOBID}.fas \
-                      ${JOBID}.fas
+                      ../results/${JOBID}.fas
 mv *.fas.* ../results/
 echo "done" >> ../results/process.log
 
