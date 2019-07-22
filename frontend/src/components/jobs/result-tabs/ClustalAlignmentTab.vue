@@ -9,7 +9,8 @@
                :disabled="selected.length === 0">{{$t('jobs.results.actions.forwardSelected')}}</a>
             <a @click="downloadAlignment">{{$t('jobs.results.actions.downloadMSA')}}</a>
             <a :href="downloadFilePath" target="_blank">{{$t('jobs.results.actions.exportMSA')}}</a>
-            <a @click="toggleColor">{{$t('jobs.results.actions.colorMSA')}}</a>
+            <a @click="toggleColor"
+               :class="{active: color}">{{$t('jobs.results.actions.colorMSA')}}</a>
         </div>
 
         <div class="alignment-results mb-4">

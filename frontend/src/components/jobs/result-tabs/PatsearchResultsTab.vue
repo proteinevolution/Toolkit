@@ -12,7 +12,7 @@
                 <a @click="forwardAll">{{$t('jobs.results.actions.forwardAll')}}</a>
             </div>
 
-            Number of sequences: <b>{{results.results.hits.length}}</b>
+            <span v-html="$t('jobs.results.alignment.numSeqs', {num: results.results.hits.length})"></span>
 
             <table class="alignment-table mt-3">
                 <tbody>

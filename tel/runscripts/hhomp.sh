@@ -165,10 +165,10 @@ hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
 
 # Generate Hitlist in JSON for hhrfile
-${HHOMPPATH}/hhomp_hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/${JOBID}.json
+${HHOMPPATH}/hhomp_hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/results.json
 
 # add DB to json
-manipulate_json.py -k 'db' -v '%hhompdb.content' ../results/${JOBID}.json
+manipulate_json.py -k 'db' -v '%hhompdb.content' ../results/results.json
 
 # Generate Query in JSON
 fasta2json.py ../results/firstSeq.fas ../results/query.json

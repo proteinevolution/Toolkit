@@ -116,8 +116,8 @@
                 './result-tabs/AlignmentViewerTab.vue')),
             ngl3dStructureView: () => lazyLoadView(import(/* webpackChunkName: "ngl3d-viewer" */
                 './result-tabs/NGL3DStructureView.vue')),
-            hitlist: () => lazyLoadView(import(/* webpackChunkName: "hitlist-results" */
-                './result-tabs/HitlistTab.vue')),
+            hhompResults: () => lazyLoadView(import(/* webpackChunkName: "hhomp-results" */
+                './result-tabs/HHompResultsTab.vue')),
             clansResults: () => lazyLoadView(import(/* webpackChunkName: "clans-results" */
                 './result-tabs/ClansResultsTab.vue')),
             patsearchResults: () => lazyLoadView(import(/* webpackChunkName: "patsearch-results" */
@@ -234,11 +234,12 @@
                 cursor: not-allowed;
                 color: $tk-gray;
             }
-        }
 
-        a:hover {
-            color: $primary;
-            text-decoration: none;
+            &:hover,
+            &.active {
+                color: $primary !important;
+                text-decoration: none;
+            }
         }
     }
 </style>

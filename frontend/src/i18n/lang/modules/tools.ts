@@ -280,5 +280,8 @@ export default {
             'Karpenahalli MR, Lupas AN, Söding J.<a ' +
             'href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-8-2" target="_blank" ' +
             'rel="noopener"> BMC Bioinformatics. 2007 Jan 3;8:2</a>.',
+        hhomp: 'HHomp--prediction and classification of outer membrane proteins.<br>Remmert M, Linke D, Lupas AN, ' +
+            'Söding J. <a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkp325" ' +
+            'target="_blank" rel="noopener">Nucleic Acids Res. 2009 Jul;37:W446-51</a>.',
     },
 };

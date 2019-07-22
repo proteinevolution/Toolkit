@@ -47,11 +47,14 @@ export default {
             forward: 'Forward',
             forwardAll: 'Forward All',
             forwardSelected: 'Forward Selected',
+            forwardQueryA3M: 'Forward Query A3M',
             download: 'Download',
             downloadHits: 'Download Hits',
             downloadMSA: 'Download MSA',
             exportMSA: 'Export MSA',
             colorMSA: 'Color MSA',
+            colorSeqs: 'Color Seqs',
+            wrapSeqs: 'Wrap Seqs',
             downloadTree: 'Download Tree',
             downloadPDBFile: 'Download PDB File',
         },
@@ -68,9 +71,24 @@ export default {
         patsearch: {
             noResults: 'No hits found! You could consider picking a different target database.',
         },
+        hhomp: {
+            noResults: 'No hits found! Please re-run HHomp with an increased number of MSA generation steps or with a custom-built ' +
+                'multiple sequence alignment as input (set "Maximal no. of MSA generation steps" to 0). You could also ' +
+                'consider picking a different target database and/or using different parameters.',
+            numHits: 'Number of Hits: <b>{num}</b>',
+            ompProb: 'Overall probability of the query to be an OMP: <b>{prob}%</b>',
+        },
         imagesView: {
             noPeriodicity: 'No periodicity spectrum found!',
             noRepeats: 'No significant repeats found for given values!',
+        },
+        hitlist: {
+            visLink: 'Vis',
+            hitsLink: 'Hits',
+            alnLink: 'Aln',
+            vis: 'Visualization',
+            hits: 'Hitlist',
+            aln: 'Alignments',
         },
     },
     forwarding: {
