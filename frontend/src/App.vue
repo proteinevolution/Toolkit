@@ -251,6 +251,8 @@
     @import "./assets/scss/modals";
     @import "./assets/scss/sequence-coloring";
     @import url("https://use.fontawesome.com/releases/v5.2.0/css/all.css");
+    $themeColor: $primary;
+    @import '~vue-slider-component/lib/theme/default.scss';
 
     body {
         overflow-y: scroll;

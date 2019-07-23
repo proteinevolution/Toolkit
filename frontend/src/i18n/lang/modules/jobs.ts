@@ -89,6 +89,7 @@ export default {
             vis: 'Visualization',
             hits: 'Hitlist',
             aln: 'Alignments',
+            resubmitSection: 'Resubmit Section',
         },
     },
     forwarding: {
