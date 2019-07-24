@@ -89,6 +89,7 @@ export default {
             vis: 'Visualization',
             hits: 'Hitlist',
             aln: 'Alignments',
+            resubmitSection: 'Resubmit Section',
         },
         hhrepid: {
             noResults: 'No repeats found!<br> Please try increasing the number of MSA generation steps or input your ' +

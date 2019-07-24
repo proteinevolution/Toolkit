@@ -33,6 +33,7 @@
         },
         data() {
             return {
+                data: undefined as string | undefined,
                 tree: undefined as any,
                 treeOpts: {
                     tree: {
@@ -66,15 +67,18 @@
         methods: {
             async init() {
                 const data: string = await resultsService.getFile(this.job.jobID, this.filename);
-                const opts = {
-                    el: this.$refs.treeContainer,
-                    tree: {
-                        data,
-                    },
-                };
-                this.tree = createTree(opts);
-                this.updateTree();
-                window.addEventListener('resize', this.updateTree);
+                this.loading = false;
+                this.$nextTick(() => {
+                    const opts = {
+                        el: this.$refs.treeContainer,
+                        tree: {
+                            data,
+                        },
+                    };
+                    this.tree = createTree(opts);
+                    this.updateTree();
+                    window.addEventListener('resize', this.updateTree);
+                });
             },
             updateTree(): void {
                 if (this.tree) {
