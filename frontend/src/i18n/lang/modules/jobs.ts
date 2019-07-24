@@ -93,7 +93,11 @@ export default {
         },
         hhrepid: {
             noResults: 'No repeats found!<br> Please try increasing the number of MSA generation steps or input your ' +
-                'own custom MSA.<br><br>',
+                'own custom MSA.',
+            resultsForType: 'Results for repeats type {type}:',
+            numResults: 'No. of repeats: {num}',
+            pValue: 'P-value: {pval}',
+            length: 'Length: {pval}',
         },
     },
     forwarding: {

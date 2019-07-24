@@ -24,7 +24,7 @@
                                             class="list-complete-item"
                                             :key="tool.name"
                                             :to="'/tools/' + tool.name"
-                                            v-b-tooltip.click.bottom
+                                            v-b-tooltip.hover.bottom
                                             :title="tool.description">
                                     {{tool.longname}}
                                 </b-nav-item>

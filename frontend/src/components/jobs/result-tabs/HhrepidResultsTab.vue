@@ -11,21 +11,22 @@
                 <a @click="forwardQueryA3M">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
             </div>
             <template v-for="hit in results.results.reptypes">
-                <span>Results for repeats type {{hit.typ}}:</span><br><br>
+                <span v-text="$t('jobs.results.hhrepid.resultsForType', {type: hit.typ})"></span>
                 <img :src="getFilePath(hit.typ)"
                      :key="hit.typ"
-                     class="plot-img"
-                     alt=""/><br><br>
+                     class="mb-3"
+                     alt=""/>
+
                 <table class="alignment-table mt-2">
                     <tbody>
                     <tr>
-                        <td>No. of repeats: {{hit.num}}</td>
+                        <td v-text="$t('jobs.results.hhrepid.numResults', {num: hit.num})"></td>
                     </tr>
                     <tr>
-                        <td>P-value: {{hit.pval}}</td>
+                        <td v-text="$t('jobs.results.hhrepid.pValue', {pval: hit.pval})"></td>
                     </tr>
                     <tr>
-                        <td>Length: {{hit.len}}</td>
+                        <td v-text="$t('jobs.results.hhrepid.length', {len: hit.len})"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -125,9 +126,7 @@
             },
             coloredSeq: colorSequence,
         },
-
     });
-
 </script>
 
 <style lang="scss" scoped>

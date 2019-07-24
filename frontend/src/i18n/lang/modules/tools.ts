@@ -311,8 +311,8 @@ export default {
         retseq: '',
         seq2id: '',
         hhrepid: 'De novo identification of highly diverged protein repeats by probabilistic consistency.<br>' +
-            'Biegert A, Söding J.<a ' +
+            'Biegert A, Söding J. <a ' +
             'href="https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/btn039" ' +
-            'target="_blank" rel="noopener"> Bioinformatics. 2008 Mar 15;24(6):807-14</a>.',
+            'target="_blank" rel="noopener">Bioinformatics. 2008 Mar 15;24(6):807-14</a>.',
     },
 };
