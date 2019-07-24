@@ -90,6 +90,10 @@ export default {
             hits: 'Hitlist',
             aln: 'Alignments',
         },
+        hhrepid: {
+            noResults: 'No repeats found!<br> Please try increasing the number of MSA generation steps or input your ' +
+                'own custom MSA.<br><br>',
+        },
     },
     forwarding: {
         selectPlaceholder: 'Please select a tool',

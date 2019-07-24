@@ -126,6 +126,8 @@
                 './result-tabs/TprpredResultsTab.vue')),
             quick2dResults: () => lazyLoadView(import(/* webpackChunkName: "quick2d-results" */
                 './result-tabs/Quick2DResultsTab.vue')),
+            hhrepidResults: () => lazyLoadView(import(/* webpackChunkName: "hhrepid-results" */
+                './result-tabs/HhrepidResultsTab.vue')),
             imagesView: () => lazyLoadView(import(/* webpackChunkName: "images-view" */
                 './result-tabs/ImagesViewTab.vue')),
             seq2IDResults: () => lazyLoadView(import(/* webpackChunkName: "seq2id-results" */

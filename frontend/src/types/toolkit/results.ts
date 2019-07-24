@@ -45,3 +45,25 @@ export interface TprpredResults {
     desc: string[];
     hits: string[];
 }
+
+export interface HhrepidResults {
+    jobID: string;
+    results: {
+        reptypes: HhrepidReptypes[];
+    };
+}
+
+export interface HhrepidReptypes {
+    pval: string;
+    reps: HhrepidReptype[];
+    len: number;
+    typ: string;
+    num: number;
+}
+
+export interface HhrepidReptype {
+    prob: string;
+    pval: string;
+    loc: string;
+    seq: string;
+}
