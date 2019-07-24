@@ -18,6 +18,8 @@
 
 <script lang="ts">
     import Vue from 'vue';
+    import {parseProcessLog} from '@/util/Utils';
+    import {ProcessLogItem} from '@/types/toolkit/jobs';
 
     export default Vue.extend({
         name: 'JobRunningTab',
@@ -33,7 +35,7 @@
         },
         data() {
             return {
-                runningLog: [],
+                runningLog: [] as ProcessLogItem[],
             };
         },
         created() {
@@ -41,19 +43,7 @@
                 const json = JSON.parse(response.data);
                 if (json.mutation === 'SOCKET_WatchLogFile') {
                     if (json.jobID === this.job.jobID) {
-                        this.runningLog = json.lines.split('#')
-                            .filter((val: string) => val.trim() !== '')
-                            .map((val: string) => {
-                                const split = val.split('\n');
-                                const res = {
-                                    text: split[0],
-                                    class: 'running',
-                                };
-                                if (split.length > 1 && split[1].trim() !== '') {
-                                    res.class = split[1];
-                                }
-                                return res;
-                            });
+                        this.runningLog = parseProcessLog(json.lines);
                     }
                 }
             };

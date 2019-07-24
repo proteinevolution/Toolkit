@@ -45,3 +45,8 @@ export interface SimilarJobResult {
     jobID: string;
     dateCreated: number;
 }
+
+export interface ProcessLogItem {
+    text: string;
+    class: string;
+}

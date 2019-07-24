@@ -16,6 +16,13 @@ export default {
         8: 'Limit Reached',
         9: 'Deleted',
     },
+    stateMessages: {
+        queued: 'Your submission is queued!',
+        running: 'Your submission is being processed!',
+        error: 'Your job has reached error state!',
+        prepared: 'Your job is prepared!',
+        submitted: 'Your job was successfully submitted!',
+    },
     results: {
         titles: {
             hitlist: 'Hitlist',
@@ -122,8 +129,4 @@ export default {
 A Completely Reimplemented MPI Bioinformatics Toolkit with a New HHpred Server at its Core.
 </a>`,
     jobIDDetails: 'Job ID: {jobID}',
-    stateMessages: {
-        queued: 'Your submission is queued!',
-        running: 'Your submission is being processed!',
-    },
 };
