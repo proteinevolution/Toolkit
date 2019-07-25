@@ -8,6 +8,8 @@
                     :validation-errors="validationErrors"
                     :submission="submission"
                     max-element-text-key="tools.parameters.select.maxElementsSelectedHHpred"
+                    :disabled="disabled"
+                    :force-select-none="disabled"
                     class="parameter-component size-12">
             </select-parameter-component>
         </b-col>
@@ -20,6 +22,8 @@
                     :validation-errors="validationErrors"
                     :submission="submission"
                     max-element-text-key="tools.parameters.select.maxElementsSelectedHHpred"
+                    :disabled="disabled"
+                    :force-select-none="disabled"
                     class="parameter-component size-12">
             </select-parameter-component>
         </b-col>
@@ -32,11 +36,17 @@
     import SelectParameterComponent from '@/components/tools/parameters/SelectParameter.vue';
     import {ParameterType} from '@/types/toolkit/enums';
     import {ConstraintError} from '@/types/toolkit/validation';
+    import EventBus from '@/util/EventBus';
 
     export default Vue.extend({
         name: 'HHpredSelectsParameter',
         components: {
             SelectParameterComponent,
+        },
+        data() {
+            return {
+                disabled: false,
+            };
         },
         props: {
             validationParams: Object as () => ValidationParams,
@@ -47,6 +57,9 @@
              https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
              */
             parameter: Object as () => HHpredSelectsParameter,
+        },
+        mounted() {
+            EventBus.$on('second-text-area-enabled', this.onSecondTextAreaEnabled);
         },
         computed: {
             selectedOptionsHHSuite(): number {
@@ -96,20 +109,30 @@
             totalSelectedOptions(): number {
                 return this.selectedOptionsHHSuite + this.selectedOptionsProteomes;
             },
+            validationError(): ConstraintError | undefined {
+                if (this.totalSelectedOptions === 0 && !this.disabled) {
+                    return {
+                        textKey: 'constraints.notEmpty',
+                    };
+                }
+                return undefined;
+            },
         },
         watch: {
-            totalSelectedOptions: {
+            validationError: {
                 immediate: true,
-                handler(value: number) {
-                    if (value === 0) {
-                        const error: ConstraintError | undefined =  {
-                            textKey: 'constraints.notEmpty',
-                        };
-                        Vue.set(this.validationErrors, this.parameter.name, error);
+                handler(value: ConstraintError | undefined) {
+                    if (value) {
+                        Vue.set(this.validationErrors, this.parameter.name, value);
                     } else {
                         Vue.delete(this.validationErrors, this.parameter.name);
                     }
                 },
+            },
+        },
+        methods: {
+            onSecondTextAreaEnabled(enabled: boolean): void {
+                this.disabled = enabled;
             },
         },
     });

@@ -95,6 +95,7 @@
                     this.submissionValueTwo = '';
                     Vue.delete(this.validationErrors, this.parameterNameTwo);
                 }
+                EventBus.$emit('second-text-area-enabled', value);
             },
         },
         methods: {
@@ -114,6 +115,9 @@
                 if (val.failed) {
                     Vue.set(this.validationErrors, this.parameterNameTwo,
                         {textKey: val.textKey, textKeyParams: val.textKeyParams});
+                } else if (this.submissionValueTwo === '') {
+                    Vue.set(this.validationErrors, this.parameterNameTwo,
+                        {textKey: 'constraints.notEmpty'});
                 } else {
                     Vue.delete(this.validationErrors, this.parameterNameTwo);
                 }

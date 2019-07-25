@@ -11,10 +11,10 @@
                      label="text"
                      :placeholder="$t(isMulti ? 'tools.parameters.select.multiplePlaceholder' : 'tools.parameters.select.singlePlaceholder')"
                      :searchable="false"
+                     :disabled="disabled"
                      selectLabel=""
                      deselectLabel=""
-                     selectedLabel=""
-                     @input="$emit('selectionChanged', selected)">
+                     selectedLabel="">
             <template #maxElements>{{ $t(maxElementTextKey) }}</template>
         </multiselect>
 
@@ -46,6 +46,16 @@
                 type: String,
                 required: false,
                 default: 'tools.parameters.select.maxElementsSelected',
+            },
+            disabled: {
+                type: Boolean,
+                required: false,
+                default: false,
+            },
+            forceSelectNone: {
+                type: Boolean,
+                required: false,
+                default: false,
             },
         },
         mounted() {
@@ -79,7 +89,8 @@
             optionsLimit(): number {
                 // CARE: This is a workaround to simulate setting the maximum selected options to zero.
                 //       Currently, vue-multiselect interprets max == 0 as unlimited options (See:
-                //       https://github.com/shentao/vue-multiselect/blob/12726abf0618acdd617a4391244f25c8a267a95d/src/multiselectMixin.js#L238)
+                //       https://github.com/shentao/vue-multiselect/blob/12726abf0618acdd617a4391244f25c8a267a95d
+                //       /src/multiselectMixin.js#L238)
                 return this.parameter.maxSelectedOptions === 0 ? 0 : this.parameter.options.length;
             },
         },
@@ -93,9 +104,18 @@
                     } else {
                         this.selected = option;
                         logger.info(`msa detected: ${msaDetected}. Setting value for ${this.parameter.name} to "${val}"`);
-                        this.$emit('selectionChanged', this.selected);
                     }
                 }
+            },
+        },
+        watch: {
+            forceSelectNone: {
+                immediate: true,
+                handler(value: number) {
+                    if (value) {
+                        this.selected = [];
+                    }
+                },
             },
         },
     });
