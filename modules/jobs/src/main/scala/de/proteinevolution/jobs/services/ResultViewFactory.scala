@@ -65,7 +65,6 @@ final class ResultViewFactory @Inject()(
   private def getResultViewsWithoutJson(toolName: String, jobId: String): ResultView = {
     (ToolName(toolName): @unchecked) match {
       case HHPRED_MANUAL       => HHPredManual(jobId, constants)
-      case HHREPID             => HHrepIdResultView(jobId, constants)
     }
   }
 
