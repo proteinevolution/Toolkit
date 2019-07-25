@@ -1,3 +1,23 @@
+export interface ResultHitsResponse {
+    hits: HHompHitItem[] | any[];
+    total: number;
+    totalNoFilter: number;
+    start: number;
+    end: number;
+}
+
+export interface HHompHitItem {
+    num: number;
+    acc: string;
+    name: string;
+    alignedCols: number;
+    probabHit: number;
+    probabOMP: number;
+    eval: number;
+    ssScore: number;
+    templateRef: number;
+}
+
 export interface AlignmentResultResponse {
     alignments: AlignmentItem[];
     total: number;
@@ -6,9 +26,9 @@ export interface AlignmentResultResponse {
 }
 
 export interface AlignmentItem {
+    num: number;
     accession: string;
     seq: string;
-    num: number;
 }
 
 export interface QueryItem {

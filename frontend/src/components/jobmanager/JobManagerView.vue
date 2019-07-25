@@ -48,16 +48,16 @@
                      show-empty
                      responsive>
 
-                <template slot="jobID" slot-scope="data">
+                <template #jobID="data">
                     <router-link :to="`/jobs/${data.item.jobID}`"
                                  class="job-link">{{ data.value }}
                     </router-link>
                 </template>
 
-                <template slot="status" slot-scope="data">
+                <template #status="{value}">
                     <b-badge variant="light"
-                             :class="'status-' + data.value"
-                             v-text="$t('jobs.states.' + data.value)"></b-badge>
+                             :class="'status-' + value"
+                             v-text="$t('jobs.states.' + value)"></b-badge>
                 </template>
 
                 <template #joblist="{item}">
@@ -219,11 +219,5 @@
 
     .job-link:not(:hover) {
         color: $gray-900;
-    }
-
-    .pagination-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
     }
 </style>

@@ -21,7 +21,10 @@ import simulacrum._
 
 @typeclass trait SearchResult[+T] {
 
+  // TODO remove
   def hitsOrderBy(params: DTParam): List[T]
+
+  def hitsOrderBy(sortBy: String, desc: Boolean): List[T] = List()
 
   def num_hits: Int
 

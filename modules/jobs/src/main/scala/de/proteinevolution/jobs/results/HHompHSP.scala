@@ -30,20 +30,19 @@ case class HHompHSP(
     length: Int,
 ) extends HSP {
 
-  import SearchResultImplicits._
 
-  def toDataTable(db: String = ""): Json = {
+  def toJson(db: String = ""): Json = {
     val _ = db
-    Map[String, Either[Either[Double, Int], String]](
-      "0" -> Right(Common.getAddScrollLink(num)),
-      "1" -> Right(template.accession),
-      "2" -> Right(description.slice(0, 18)),
-      "3" -> Left(Left(info.probab_hit)),
-      "4" -> Left(Left(info.probab_OMP)),
-      "5" -> Left(Left(info.eval)),
-      "6" -> Left(Left(ss_score)),
-      "7" -> Left(Right(info.aligned_cols)),
-      "8" -> Left(Right(template.ref))
+    Map[String, Json](
+      "num" -> num.asJson,
+      "acc" -> template.accession.asJson,
+      "name" -> description.slice(0, 18).asJson,
+      "probabHit" -> info.probab_hit.asJson,
+      "probabOMP" -> info.probab_OMP.asJson,
+      "eval" -> info.eval.asJson,
+      "ssScore" -> ss_score.asJson,
+      "alignedCols" -> info.aligned_cols.asJson,
+      "templateRef" -> template.ref.asJson
     ).asJson
   }
 

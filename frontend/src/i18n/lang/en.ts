@@ -33,7 +33,7 @@ export default {
                 true: 'Display in Job List',
                 false: 'Hide in Job List',
             },
-            paginationInfo: 'Displaying {start} to {end} of {total} items',
+            paginationInfo: 'Displaying {start} to {end} of {total} jobs',
             perPage: {
                 show: 'Show',
                 entries: 'Entries',

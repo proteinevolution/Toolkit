@@ -82,14 +82,15 @@ final class ResultsController @Inject()(
               r    <- EitherT.fromEither[Future](json.hcursor.downField("alignment").as[AlignmentResult])
             } yield r).value.map {
               case Right(r) =>
-                val s = start.getOrElse(0)
-                val e = end.getOrElse(r.alignment.length)
+                val l = r.alignment.length
+                val s = Math.max(start.getOrElse(0), 0)
+                val e = Math.min(end.getOrElse(l), l)
                 Ok(
                   JsonObject(
-                    "alignments" -> r.alignment.slice(s, e).asJson,
-                    "total"      -> r.alignment.length.asJson,
+                    "total"      -> l.asJson,
                     "start"      -> s.asJson,
-                    "end"        -> e.asJson
+                    "end"        -> e.asJson,
+                    "alignments" -> r.alignment.slice(s, e).asJson
                   ).asJson
                 )
               case Left(_) => NotFound

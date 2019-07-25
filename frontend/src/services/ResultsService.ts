@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {AlignmentItem, AlignmentResultResponse} from '@/types/toolkit/results';
+import {AlignmentItem, AlignmentResultResponse, ResultHitsResponse} from '@/types/toolkit/results';
 
 class ResultsService {
 
@@ -15,11 +15,33 @@ class ResultsService {
 
     public fetchAlignmentResults(jobId: string, start?: number, end?: number): Promise<AlignmentResultResponse> {
         return new Promise<AlignmentResultResponse>((resolve, reject) => {
-            let url: string = `/api/jobs/${jobId}/results/alignment/`;
-            if (start || end) {
-                url += `?start=${start}&end=${end}`;
-            }
-            axios.get(url)
+            const url: string = `/api/jobs/${jobId}/results/alignment/`;
+            axios.get(url, {
+                params: {
+                    start,
+                    end,
+                },
+            })
+                .then((response) => {
+                    resolve(response.data);
+                })
+                .catch(reject);
+        });
+    }
+
+    public fetchHits(jobId: string, start?: number, end?: number, filter?: string, sortBy?: string, desc?: boolean):
+        Promise<ResultHitsResponse> {
+        return new Promise<ResultHitsResponse>((resolve, reject) => {
+            const url: string = `/api/jobs/${jobId}/results/hits/`;
+            axios.get(url, {
+                params: {
+                    start,
+                    end,
+                    filter,
+                    sortBy,
+                    desc,
+                },
+            })
                 .then((response) => {
                     resolve(response.data);
                 })

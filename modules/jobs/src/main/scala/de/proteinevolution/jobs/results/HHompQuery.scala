@@ -16,8 +16,8 @@
 
 package de.proteinevolution.jobs.results
 
-import io.circe.Decoder
-import io.circe.generic.semiauto.deriveDecoder
+import io.circe._
+import io.circe.generic.semiauto._
 
 case class HHompQuery(
     consensus: String,
@@ -38,5 +38,6 @@ case class HHompQuery(
 object HHompQuery {
 
   implicit val hhompQueryDecoder: Decoder[HHompQuery] = deriveDecoder
+  implicit val hhompQueryEncoder: Encoder[HHompQuery] = deriveEncoder
 
 }

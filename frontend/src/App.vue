@@ -331,6 +331,12 @@
         background: $tk-darker-green;
     }
 
+    .pagination-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
     .textarea-alignment.loading::before {
         content: "";
         display: block;

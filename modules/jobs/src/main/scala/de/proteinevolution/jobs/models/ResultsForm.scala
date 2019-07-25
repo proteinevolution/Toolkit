@@ -16,19 +16,10 @@
 
 package de.proteinevolution.jobs.models
 
-import io.circe.Decoder
-import io.circe.generic.semiauto.deriveDecoder
-
 case class ResultsForm(
-    start: Int,
-    end: Int,
-    wrapped: Option[Boolean],
-    isColor: Option[Boolean],
-    resultName: Option[String]
+    start: Option[Int],
+    end: Option[Int],
+    filter: Option[String],
+    sortBy: Option[String],
+    desc: Option[Boolean]
 )
-
-object ResultsForm {
-
-  implicit val resultsFormDecoder: Decoder[ResultsForm] = deriveDecoder[ResultsForm]
-
-}

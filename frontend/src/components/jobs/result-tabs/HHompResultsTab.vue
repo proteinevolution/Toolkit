@@ -25,7 +25,7 @@
 
             <div class="result-section"
                  ref="visualization">
-                <h5>{{$t('jobs.results.hitlist.vis')}}</h5>
+                <h4>{{$t('jobs.results.hitlist.vis')}}</h4>
 
                 <div class="px-5">
                     <div class="px-2 d-flex flex-column">
@@ -70,13 +70,15 @@
 
             <div class="result-section"
                  ref="hits">
-                <h5>{{$t('jobs.results.hitlist.hits')}}</h5>
-                <div class="huge"></div>
+                <h4 class="mb-4">{{$t('jobs.results.hitlist.hits')}}</h4>
+                <hit-list-table :job="job"
+                                :fields="hitListFields"
+                                @elem-clicked="scrollToElem"/>
             </div>
 
             <div class="result-section"
                  ref="alignments">
-                <h5>{{$t('jobs.results.hitlist.aln')}}</h5>
+                <h4>{{$t('jobs.results.hitlist.aln')}}</h4>
                 <div class="huge"></div>
             </div>
         </div>
@@ -90,6 +92,7 @@
     import Logger from 'js-logger';
     import VueSlider from 'vue-slider-component';
     import {resultsService} from '@/services/ResultsService';
+    import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
 
     const logger = Logger.get('HHompResultsTab');
 
@@ -98,6 +101,7 @@
         components: {
             Loading,
             VueSlider,
+            HitListTable,
         },
         data() {
             return {
@@ -109,6 +113,43 @@
                 hoverElem: undefined as any,
                 toolTipTop: 0,
                 toolTipText: '',
+                hitListFields: [{
+                    key: 'num',
+                    label: this.$t('jobs.results.hhomp.table.num'),
+                    sortable: true,
+                }, {
+                    key: 'acc',
+                    label: this.$t('jobs.results.hhomp.table.hit'),
+                    sortable: true,
+                }, {
+                    key: 'name',
+                    label: this.$t('jobs.results.hhomp.table.name'),
+                    sortable: true,
+                }, {
+                    key: 'probabHit',
+                    label: this.$t('jobs.results.hhomp.table.probHits'),
+                    sortable: true,
+                }, {
+                    key: 'probabOMP',
+                    label: this.$t('jobs.results.hhomp.table.probOMP'),
+                    sortable: true,
+                }, {
+                    key: 'eval',
+                    label: this.$t('jobs.results.hhomp.table.eVal'),
+                    sortable: true,
+                }, {
+                    key: 'ssScore',
+                    label: this.$t('jobs.results.hhomp.table.ssScore'),
+                    sortable: true,
+                }, {
+                    key: 'alignedCols',
+                    label: this.$t('jobs.results.hhomp.table.cols'),
+                    sortable: true,
+                }, {
+                    key: 'templateRef',
+                    label: this.$t('jobs.results.hhomp.table.targetLength'),
+                    sortable: true,
+                }],
             };
         },
         computed: {
@@ -134,7 +175,7 @@
                 }
             },
             scrollToElem(no: string): void {
-                alert('implement me!');
+                alert('implement me!' + no);
             },
             resubmitSection(): void {
                 alert('implement me!');
