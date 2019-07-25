@@ -337,5 +337,25 @@ export default {
             'Biegert A, Söding J. <a ' +
             'href="https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/btn039" ' +
             'target="_blank" rel="noopener">Bioinformatics. 2008 Mar 15;24(6):807-14</a>.',
+        hhblits: 'HHblits: lightning-fast iterative protein sequence searching by HMM-HMM alignment.<br>Remmert M, ' +
+            'Biegert A, Hauser A, Söding J.<a href="https://www.nature.com/nmeth/journal/v9/n2/full/nmeth.1818.html" ' +
+            'target="_blank" rel="noopener"> Nat Methods. 2011 Dec 25;9(2):173-5</a>.',
+        hmmer: 'Accelerated Profile HMM Searches.<br>Eddy SR.<a ' +
+            'href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002195" target="_blank" ' +
+            'rel="noopener"> PLoS Comput Biol. 2011 Oct;7(10):e1002195</a>.',
+        psiblast: 'BLAST+: architecture and applications.<br>Camacho C, Coulouris G, Avagyan V, Ma N, ' +
+            'Papadopoulos J, Bealer K, Madden TL.<a ' +
+            'href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-10-421" target="_blank" ' +
+            'rel="noopener"> BMC Bioinformatics. 2009 Dec 15;10:421</a>.',
+        hhpred: 'Protein homology detection by HMM-HMM comparison.<br>Söding J.<a ' +
+            'href="https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/bti125" ' +
+            'target="_blank" rel="noopener"> Bioinformatics. 2005 Apr 1;21(7):951-60</a>.<br><br>' +
+            'Fast and accurate automatic structure prediction with HHpred.<br>Hildebrand A, Remmert M, Biegert A, ' +
+            'Söding J.<a href="https://onlinelibrary.wiley.com/doi/full/10.1002/prot.22499" target="_blank" ' +
+            'rel="noopener"> Proteins. 2009;77 Suppl 9:128-32</a>.<br><br>' +
+            'Automatic Prediction of Protein 3D Structures by Probabilistic Multi-template Homology Modeling.<br>' +
+            'Meier A, Söding J.<a ' +
+            'href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004343" target="_blank" ' +
+            'rel="noopener"> PLoS Comput Biol. 2015 Oct 23;11(10):e1004343</a>.',
     },
 };
