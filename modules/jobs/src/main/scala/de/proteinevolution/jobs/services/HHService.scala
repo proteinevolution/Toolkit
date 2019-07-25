@@ -18,19 +18,15 @@ package de.proteinevolution.jobs.services
 
 import cats.data.EitherT
 import cats.implicits._
-import de.proteinevolution.common.models.ToolName
-import de.proteinevolution.common.models.ToolName._
 import de.proteinevolution.jobs.db.ResultFileAccessor
 import de.proteinevolution.jobs.models.ResultsForm
-import de.proteinevolution.jobs.results.General.DTParam
-import de.proteinevolution.jobs.results._
 import de.proteinevolution.jobs.services.ResultsRepository.ResultsService
-import io.circe.DecodingFailure
-import javax.inject.{Inject, Singleton}
+import io.circe.{ DecodingFailure, Json, JsonObject }
+import io.circe.syntax._
+import javax.inject.{ Inject, Singleton }
 import play.api.Logging
-import play.twirl.api.HtmlFormat
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 class HHService @Inject()(
@@ -41,71 +37,39 @@ class HHService @Inject()(
     with DTService
     with Logging {
 
-  private val resultsService = ResultsService(toolFinder, resultFiles)
+  private val resultsService = ResultsService(resultFiles)
 
-  def loadHits(jobId: String, form: ResultsForm): EitherT[Future, DecodingFailure, List[HtmlFormat.Appendable]] = {
+  def loadHits(jobID: String, form: ResultsForm): EitherT[Future, DecodingFailure, Json] = {
     EitherT((for {
-      json <- getResults(jobId).run(resultsService)
-      tool <- getTool(jobId).run(resultsService)
+      json <- getResults(jobID).run(resultsService)
+      tool <- toolFinder.getTool(jobID)
     } yield (json, tool)).map {
       case (json, tool) => parseResult(tool, json)
       case _ =>
         val error = "parsing result json failed."
         logger.error(error)
         Left(DecodingFailure(error, Nil))
-    }).subflatMap {
-      case (result, tool) =>
-        if (form.end > result.num_hits || form.start > result.num_hits) {
-          Left(DecodingFailure("", Nil))
-        } else {
-          Right(result.HSPS.slice(form.start, form.end).map(hsp => createView(jobId, tool, hsp, form, result)))
+    }).subflatMap { result =>
+      var hits = if (form.sortBy.nonEmpty) {
+        result.hitsOrderBy(form.sortBy.get, form.desc.getOrElse(false))
+      } else result.HSPS
+      if (form.filter.nonEmpty) {
+        hits = hits.filter { hit =>
+          (hit.description + hit.accession).toUpperCase.contains(form.filter.get.toUpperCase)
         }
+      }
+      val l = hits.length
+      val s = Math.max(form.start.getOrElse(0), 0)
+      val e = Math.min(form.end.getOrElse(l), l)
+      Right(
+        JsonObject(
+          "total" -> l.asJson,
+          "totalNoFilter" -> result.HSPS.length.asJson,
+          "start" -> s.asJson,
+          "end"   -> e.asJson,
+          "hits"  -> hits.slice(s, e).map(_.toJson("")).asJson
+        ).asJson
+      )
     }
   }
-
-  def dataTable(jobId: String, params: DTParam): EitherT[Future, DecodingFailure, (List[HSP], SearchResult[HSP])] = {
-    EitherT((for {
-      json <- getResults(jobId).run(resultsService)
-      tool <- getTool(jobId).run(resultsService)
-    } yield (json, tool)).map {
-      case (json, tool) => parseResult(tool, json)
-      case _ =>
-        val error = "parsing result json failed."
-        logger.error(error)
-        Left(DecodingFailure(error, Nil))
-    }).map {
-      case (result, tool) => (generateDTQuery(tool, params, result), result)
-    }
-  }
-
-  private[this] def generateDTQuery(tool: ToolName, params: DTParam, result: SearchResult[_]): List[HSP] = {
-    tool match {
-      case HHBLITS  => getHitsByKeyWord[HHBlitsHSP](result, params)
-      case HHOMP    => getHitsByKeyWord[HHompHSP](result, params)
-      case HHPRED   => getHitsByKeyWord[HHPredHSP](result, params)
-      case HMMER    => getHitsByKeyWord[HmmerHSP](result, params)
-      case PSIBLAST => getHitsByKeyWord[PSIBlastHSP](result, params)
-      case _        => throw new IllegalStateException("no search feature available for this tool")
-    }
-  }
-
-  private[this] def createView(
-      jobId: String,
-      tool: ToolName,
-      hsp: HSP,
-      form: ResultsForm,
-      result: SearchResult[HSP]
-  ): HtmlFormat.Appendable = {
-    val wrapped = form.wrapped.getOrElse(false)
-    val isColor = form.isColor.getOrElse(false)
-    tool match {
-      case HHBLITS  => views.html.hhblits.hit(hsp.asInstanceOf[HHBlitsHSP], wrapped, jobId)
-      case HHPRED   => views.html.hhpred.hit(hsp.asInstanceOf[HHPredHSP], isColor, wrapped, jobId)
-      case HHOMP    => views.html.hhomp.hit(hsp.asInstanceOf[HHompHSP], isColor, wrapped, jobId)
-      case HMMER    => views.html.hmmer.hit(hsp.asInstanceOf[HmmerHSP], result.db, wrapped)
-      case PSIBLAST => views.html.psiblast.hit(hsp.asInstanceOf[PSIBlastHSP], result.db, wrapped)
-      case _        => throw new IllegalArgumentException("tool has no hitlist")
-    }
-  }
-
 }

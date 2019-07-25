@@ -44,7 +44,7 @@ final class ProcessService @Inject()(
 
   private[this] val scriptPath: String = config.get[String]("server_scripts")
 
-  private[this] val resultsService = ResultsService(toolFinder, resultFiles)
+  private[this] val resultsService = ResultsService(resultFiles)
 
   def templateAlignment(jobId: String, accession: String): OptionT[Future, Int] = {
     for {
@@ -77,16 +77,15 @@ final class ProcessService @Inject()(
   ): EitherT[Future, DecodingFailure, Int] = {
     EitherT((for {
       json <- getResults(jobId).run(resultsService)
-      tool <- getTool(jobId).run(resultsService)
+      tool <- toolFinder.getTool(jobId)
     } yield {
       (json, tool)
     }).map {
       case (json, tool) =>
-        parseResult(tool, json).map {
-          case (result, _) =>
+        parseResult(tool, json).map { result =>
             val accStr = mode.toString match {
               case "alnEval" | "evalFull" => form.evalue.getOrElse("")
-              case "aln" | "full"         => form.checkboxes.toSeq.mkString("\n")
+              case "aln" | "full" => form.checkboxes.toSeq.mkString("\n")
             }
             val accStrParsed = parseAccString(tool, result, accStr, mode)
             ProcessFactory(

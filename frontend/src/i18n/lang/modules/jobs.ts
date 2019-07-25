@@ -84,6 +84,17 @@ export default {
                 '0). You could also consider picking a different target database and/or using different parameters.',
             numHits: 'Number of Hits: <b>{num}</b>',
             ompProb: 'Overall probability of the query to be an OMP: <b>{prob}%</b>',
+            table: {
+                num: 'Nr',
+                hit: 'Hit',
+                name: 'Name',
+                probHits: 'Prob (hits)',
+                probOMP: 'Prob (OMP)',
+                eVal: 'E-value',
+                ssScore: 'SS',
+                cols: 'Cols',
+                targetLength: 'Target Length',
+            },
         },
         imagesView: {
             noPeriodicity: 'No periodicity spectrum found!',
@@ -97,6 +108,18 @@ export default {
             hits: 'Hitlist',
             aln: 'Alignments',
             resubmitSection: 'Resubmit Section',
+            table: {
+                paginationInfo: 'Displaying {start} to {end} of {total} hits',
+                paginationInfoFiltered: 'Displaying {start} to {end} of ' +
+                    '{totalRows} hits (filtered from {totalNoFilter} total hits)',
+                noData: 'No hits found!',
+                noDataFiltered: 'No matching hits found.',
+                perPage: {
+                    show: 'Show',
+                    entries: 'Entries',
+                },
+                filter: 'Search:',
+            },
         },
         hhrepid: {
             noResults: 'No repeats found!<br> Please try increasing the number of MSA generation steps or input your ' +

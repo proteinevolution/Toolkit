@@ -33,29 +33,24 @@ trait ResultsRepository {
       rs.resultFiles.getResults(jobId)
     }
 
-  protected def getTool(jobId: String): Reader[ResultsService, Future[ToolName]] =
-    Reader[ResultsService, Future[ToolName]] { rs =>
-      rs.toolFinder.getTool(jobId)
-    }
-
   protected def parseResult(
       tool: ToolName,
       json: Json
-  ): Either[DecodingFailure, (SearchResult[HSP], ToolName)] = {
-    (tool match {
+  ): Either[DecodingFailure, SearchResult[HSP]] = {
+    tool match {
       case HHBLITS  => json.as[HHBlitsResult]
       case HHPRED   => json.as[HHPredResult]
       case HHOMP    => json.as[HHompResult]
       case HMMER    => json.as[HmmerResult]
       case PSIBLAST => json.as[PSIBlastResult]
       case _        => throw new IllegalArgumentException("tool has no hitlist")
-    }).map((_, tool))
+    }
   }
 
 }
 
 object ResultsRepository {
 
-  case class ResultsService(toolFinder: ToolNameGetService, resultFiles: ResultFileAccessor)
+  case class ResultsService(resultFiles: ResultFileAccessor)
 
 }

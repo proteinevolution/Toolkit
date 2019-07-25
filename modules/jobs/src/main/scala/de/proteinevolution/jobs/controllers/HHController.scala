@@ -16,12 +16,11 @@
 
 package de.proteinevolution.jobs.controllers
 
+import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
+import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.{HHContext, ResultsForm}
-import de.proteinevolution.jobs.results.General.DTParam
 import de.proteinevolution.jobs.services.HHService
-import io.circe.JsonObject
-import io.circe.syntax._
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent}
 
@@ -30,42 +29,32 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class HHController @Inject()(
     ctx: HHContext,
-    service: HHService
+    service: HHService,
+    jobDao: JobDao,
+    userAction: UserAction
 )(implicit ec: ExecutionContext)
     extends ToolkitController(ctx.controllerComponents) {
 
-  def loadHits(jobId: String): Action[ResultsForm] = Action(circe.json[ResultsForm]).async { implicit request =>
-    service.loadHits(jobId, request.body).value.map {
-      case Right(hits) => Ok(hits.mkString)
-      case Left(_)     => BadRequest
+  def loadHits(
+      jobID: String,
+      start: Option[Int],
+      end: Option[Int],
+      filter: Option[String],
+      sortBy: Option[String],
+      desc: Option[Boolean]
+  ): Action[AnyContent] = userAction.async { implicit request =>
+    jobDao.findJob(jobID).flatMap {
+      case Some(job) =>
+        if (job.isPublic || job.ownerID.equals(request.user.userID)) {
+          val form = ResultsForm(start, end, filter, sortBy, desc)
+          service.loadHits(jobID, form).value.map {
+            case Right(json) => Ok(json)
+            case Left(_)     => BadRequest
+          }
+        } else {
+          fuccess(Unauthorized)
+        }
+      case _ => fuccess(NotFound)
     }
   }
-
-  def dataTable(jobId: String): Action[AnyContent] = Action.async { implicit request =>
-    val params = DTParam(
-      request.getQueryString("draw").getOrElse("1").toInt,
-      request.getQueryString("search[value]").getOrElse(""),
-      request.getQueryString("start").getOrElse("0").toInt,
-      request.getQueryString("length").getOrElse("100").toInt,
-      request.getQueryString("order[0][column]").getOrElse("1").toInt,
-      request.getQueryString("order[0][dir]").getOrElse("asc")
-    )
-    service.dataTable(jobId, params).value.map {
-      case Right((hits, result)) =>
-        val config = Map(
-          "draw"            -> params.draw.asJson,
-          "recordsTotal"    -> result.num_hits.asJson,
-          "recordsFiltered" -> hits.length.asJson
-        )
-        val data = Map(
-          "data" -> hits
-            .slice(params.displayStart, params.displayStart + params.pageLength)
-            .map(_.toDataTable(result.db))
-            .asJson
-        )
-        Ok(JsonObject.fromMap(config ++ data).asJson)
-      case Left(_) => BadRequest
-    }
-  }
-
 }

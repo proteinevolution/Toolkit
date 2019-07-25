@@ -18,7 +18,7 @@ package de.proteinevolution.jobs
 
 import de.proteinevolution.jobs.controllers._
 import de.proteinevolution.jobs.services.ForwardModeExtractor
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
 import play.api.routing.sird._
@@ -58,13 +58,14 @@ class JobsRouter @Inject()(
   }
 
   private lazy val resultRoutes: Routes = {
-    case GET(p"/$jobID/results/alignment/" ? q_o"start=${int(start) }" & q_o"end=${int(end) }") =>
+    case GET(p"/$jobID/results/alignment/" ? q_o"start=${int(start)}" & q_o"end=${int(end)}") =>
       resultsController.loadAlignmentHits(jobID, start, end)
     case GET(p"/$jobID/results/files/$filename") => fileController.file(filename = filename, jobID = jobID)
-    case GET(p"/$jobID/results/")                => resultsController.loadResults(jobID)
+    case GET(p"/$jobID/results/hits/" ? q_o"start=${int(start)}" & q_o"end=${int(end)}"
+      & q_o"filter=${filter}" & q_o"sortBy=${sortBy}"& q_o"desc=${bool(desc)}") =>
+      hhController.loadHits(jobID, start, end, filter, sortBy, desc)
+    case GET(p"/$jobID/results/") => resultsController.loadResults(jobID)
 
-    case POST(p"/loadHits/$jobID")       => hhController.loadHits(jobID)
-    case GET(p"/dataTable/$jobID")       => hhController.dataTable(jobID)
     case GET(p"/getStructure/$filename") => fileController.getStructureFile(filename)
     case POST(p"/forwardAlignment/$jobID/${forwardModeExtractor(mode) }") =>
       processController.forwardAlignment(jobID, mode)
