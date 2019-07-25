@@ -6,6 +6,7 @@
                      :max="isMulti ? parameter.maxSelectedOptions : null"
                      :allowEmpty="isMulti"
                      :options="parameter.options"
+                     :optionsLimit="optionsLimit"
                      track-by="value"
                      label="text"
                      :placeholder="$t(isMulti ? 'tools.parameters.select.multiplePlaceholder' : 'tools.parameters.select.singlePlaceholder')"
@@ -74,6 +75,12 @@
             },
             isMulti(): boolean {
                 return this.parameter.forceMulti || this.parameter.maxSelectedOptions > 1;
+            },
+            optionsLimit(): number {
+                // CARE: This is a workaround to simulate setting the maximum selected options to zero.
+                //       Currently, vue-multiselect interprets max == 0 as unlimited options (See:
+                //       https://github.com/shentao/vue-multiselect/blob/12726abf0618acdd617a4391244f25c8a267a95d/src/multiselectMixin.js#L238)
+                return this.parameter.maxSelectedOptions === 0 ? 0 : this.parameter.options.length;
             },
         },
         methods: {
