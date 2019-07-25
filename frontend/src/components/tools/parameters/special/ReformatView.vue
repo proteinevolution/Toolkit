@@ -3,7 +3,7 @@
         <b-form-textarea class="textarea-input"
                          v-model="input"
                          @input="clearOutput"
-                         :placeholder="$t('tools.reformat.inputPlaceholder')"
+                         :placeholder="$t('tools.inputPlaceholder.' + parameter.placeholderKey)"
                          cols="70"
                          spellcheck="false">
         </b-form-textarea>

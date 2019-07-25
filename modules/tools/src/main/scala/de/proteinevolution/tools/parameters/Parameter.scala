@@ -35,7 +35,7 @@ object Parameter {
   case class TextAreaParameter(
       name: String,
       inputType: String,
-      inputPlaceholder: String,
+      placeholderKey: String,
       sampleInputKey: String,
       allowsTwoTextAreas: Boolean = false
   ) extends Parameter

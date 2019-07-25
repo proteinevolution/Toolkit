@@ -1,8 +1,8 @@
 <template>
     <div>
         <b-form-group class="textarea-group">
-            <b-form-textarea class="alignment-viewer-alignment"
-                             :placeholder="parameter.inputPlaceholder"
+            <b-form-textarea class="textarea-input"
+                             :placeholder="$t('tools.inputPlaceholder.' + parameter.placeholderKey)"
                              v-model="input"
                              cols="70"
                              spellcheck="false">
@@ -94,7 +94,10 @@
 </script>
 
 <style lang="scss" scoped>
-    .alignment-viewer-alignment {
+    .textarea-input {
+        background-color: $white;
+        font-family: $font-family-monospace;
+        font-size: 0.8em;
         height: 20em;
     }
 </style>

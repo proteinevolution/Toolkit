@@ -45,7 +45,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
           config.getStringList("parameter").asScala.map { param =>
             paramAccess.getParam(
               param,
-              config.getString("input_placeholder"),
+              config.getString("placeholder_key"),
               config.getString("sample_input_key"),
               Try(config.getString("input_type")).getOrElse(TextAreaInputType.SEQUENCE)
             )

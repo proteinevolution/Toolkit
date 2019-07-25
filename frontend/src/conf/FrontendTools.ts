@@ -20,7 +20,7 @@ export const Reformat: Tool = {
             parameters: [({
                 parameterType: ParameterType.ReformatView,
                 sampleInput: 'inputClustal',
-                inputPlaceholder: '',
+                placeholderKey: 'protMSA',
                 label: '',
                 name: '',
             } as FrontendToolParameter)],
@@ -47,7 +47,7 @@ export const AlignmentViewer: Tool = {
             parameters: [({
                 parameterType: ParameterType.AlignmentViewerView,
                 sampleInput: 'multiProtSeq',
-                inputPlaceholder: 'Enter Sequences in FASTA or CLUSTAL format.',
+                placeholderKey: 'protMSA',
                 label: '',
                 name: '',
             } as FrontendToolParameter)],

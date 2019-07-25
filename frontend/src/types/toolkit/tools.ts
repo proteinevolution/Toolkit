@@ -57,7 +57,7 @@ export interface TextInputParameter extends Parameter {
 
 export interface TextAreaParameter extends Parameter {
     inputType: TextAreaInputType;
-    inputPlaceholder: string;
+    placeholderKey: string;
     sampleInputKey: string;
     allowsTwoTextAreas: boolean;
 }
@@ -98,7 +98,7 @@ export interface BooleanParameter extends Parameter {
 
 export interface FrontendToolParameter extends Parameter {
     sampleInput: string;
-    inputPlaceholder: string;
+    placeholderKey: string;
 }
 
 export interface MSAViewerSeq {
