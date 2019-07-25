@@ -49,8 +49,6 @@
             <AuthModal/>
             <FooterLinkModal :modal="modalProps.modal"/>
             <UpdatesModal/>
-            <AlignmentViewerModal :sequences="modalProps.sequences"
-                                  :format="modalProps.format"/>
             <HelpModal :toolName="modalProps.toolName"/>
             <ForwardingModal :forwarding-data="modalProps.forwardingData"
                              :forwardingMode="modalProps.forwardingMode"/>
@@ -97,7 +95,6 @@
     import UpdatesModal from '@/components/modals/UpdatesModal.vue';
     import HelpModal from '@/components/modals/HelpModal.vue';
     import AuthModal from '@/components/modals/AuthModal.vue';
-    import AlignmentViewerModal from '@/components/modals/AlignmentViewerModal.vue';
     import ForwardingModal from '@/components/modals/ForwardingModal.vue';
     import {ModalParams} from '@/types/toolkit/utils';
     import VerificationModal from '@/components/modals/VerificationModal.vue';
@@ -120,7 +117,6 @@
             HelpModal,
             VerificationModal,
             ResetPasswordModal,
-            AlignmentViewerModal,
             ForwardingModal,
             AuthModal,
             CookieLaw,

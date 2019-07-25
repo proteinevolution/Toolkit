@@ -184,6 +184,7 @@ export default {
         copyToClipboard: 'Copy to clipboard',
         copySuccess: 'Successfully copied',
         copyFailure: 'Unable to copy',
+        viewAlignment: 'View Alignment',
     },
     alignmentViewer: {
         visualization: 'Visualization',

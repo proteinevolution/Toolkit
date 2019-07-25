@@ -18,8 +18,9 @@
             </b-btn>
             <b-button variant="link"
                       :disabled="!detectedFormat"
-                      @click="showAlignmentViewer">
-                AlignmentViewer
+                      @click="showAlignmentViewer"
+                      v-text="$t('tools.reformat.viewAlignment')"
+                      v-if="!alignmentViewerActive">
             </b-button>
         </b-button-group>
         <b-alert show
@@ -94,6 +95,9 @@
 
     export default Vue.extend({
         name: 'ReformatView',
+        props: {
+            parameter: Object as () => FrontendToolParameter,
+        },
         data() {
             return {
                 input: '',
@@ -106,19 +110,13 @@
                 forwardingOptions: [] as SelectOption[],
                 selectedOutputFormat: undefined,
                 selectedForwardingTool: undefined,
+                alignmentViewerActive: false,
             };
         },
         components: {
             Multiselect,
             Select,
             Loading,
-        },
-        props: {
-            /*
-             Simply stating the interface type doesn't work, this is a workaround. See
-             https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
-             */
-            parameter: Object as () => FrontendToolParameter,
         },
         computed: {
             tools(): Tool[] {
@@ -157,12 +155,10 @@
                     });
             },
             showAlignmentViewer(): void {
-                EventBus.$emit('show-modal', {
-                    id: 'alignmentViewer',
-                    props: {
-                        sequences: this.input,
-                        format: this.detectedFormat.toLowerCase(),
-                    },
+                this.alignmentViewerActive = true;
+                EventBus.$emit('alignment-viewer-result-open', {
+                    sequences: this.input,
+                    format: this.detectedFormat.toLowerCase(),
                 });
             },
             computeOutput(selectedFormat: SelectOption): void {
