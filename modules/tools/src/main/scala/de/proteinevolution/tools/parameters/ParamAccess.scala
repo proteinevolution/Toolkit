@@ -49,13 +49,13 @@ class ParamAccess @Inject()(tel: TEL) {
 
   def getParam(
       paramName: String,
-      placeholder: String = "",
+      placeholderKey: String = "",
       sampleInputKey: String = "",
       alignmentInputType: TextAreaInputType = TextAreaInputType.SEQUENCE
   ): Parameter = paramName match {
 
     // Common
-    case "ALIGNMENT"   => TextAreaParameter("alignment", alignmentInputType, placeholder, sampleInputKey)
+    case "ALIGNMENT"   => TextAreaParameter("alignment", alignmentInputType, placeholderKey, sampleInputKey)
     case "STANDARD_DB" => select("standarddb", default = Some("nr50"))
     case "PMIN" =>
       NumberParameter(
@@ -80,7 +80,7 @@ class ParamAccess @Inject()(tel: TEL) {
 
     // HHpred
     case "TWOTEXTALIGNMENT" =>
-      TextAreaParameter("alignment", alignmentInputType, placeholder, sampleInputKey, allowsTwoTextAreas = true)
+      TextAreaParameter("alignment", alignmentInputType, placeholderKey, sampleInputKey, allowsTwoTextAreas = true)
     case "HHPRED_DB_PROTEOMES" =>
       HHpredSelectsParameter(
         "hhsuitedb",

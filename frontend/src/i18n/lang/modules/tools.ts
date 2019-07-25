@@ -128,6 +128,29 @@ export default {
             num_seqs_extract: 'No. of most dissimilar sequences to extract',
         },
     },
+    inputPlaceholder: {
+        multiProtNuclSeq: 'Enter up to 4000 protein/nucleotide sequences in FASTA format.',
+        regex: 'Enter a PROSITE grammar/regular expression.',
+        ali2dMSA: 'Enter a protein multiple sequence alignment with up to 100 sequences in CLUSTAL/FASTA/STOCKHOLM ' +
+            'format. Runtime of ~30 mins for N=100 sequences of length L=200; scales as N*L.',
+        singleProtSeq: 'Enter a protein sequence in FASTA format.',
+        modellerPIR: 'Please note: MODELLER is configured to work with PIR alignments forwarded by HHpred. Run a ' +
+            'HHpred search with your query, select the top-scoring templates and click ' +
+            'on "Create model using selection". This will generate a PIR file that can be subsequently submitted to ' +
+            'MODELLER. To obtain a key for MODELLER go to: http://salilab.org/modeller/registration.shtml.',
+        pdbCoordinates: 'Enter PDB coordinates of a four-helical bundle.',
+        phymlMSA: 'Enter a protein multiple sequence alignment with up to 100 sequences in ' +
+            'CLUSTAL/FASTA/STOCKHOLM format.',
+        dnaSeq: 'Enter a DNA sequence in FASTA format.',
+        hhMSA: 'Enter a protein sequence/multiple sequence alignment in A3M/CLUSTAL/FASTA/STOCKHOLM format.',
+        psiMSA: 'Enter a protein sequence/multiple sequence alignment in CLUSTAL/FASTA/STOCKHOLM format.',
+        protMSA: 'Enter a protein multiple sequence alignment in CLUSTAL/FASTA/STOCKHOLM format.',
+        a3mMSA: 'Enter a multiple sequence alignment in A3M/CLUSTAL/FASTA/STOCKHOLM format.',
+        protIdentifiers: 'Enter a newline separated list of identifiers and choose the corresponding database.',
+        protFasta: 'Enter protein sequences in FASTA format.',
+        protFastaClans: 'Enter protein sequences with up to 10000 sequences in FASTA format.',
+        protFastaMmseqs: 'Enter up to 20000 protein sequences in FASTA format.',
+    },
     validation: {
         invalidCharacters: 'Invalid Characters.',
         autoTransformedToFasta: '{detected} detected. Auto-transformed to FASTA.',
@@ -154,7 +177,6 @@ export default {
         emptySequences: 'Empty sequences are not allowed.',
     },
     reformat: {
-        inputPlaceholder: 'Enter a sequence...',
         detectedFormat: 'Found format: <b>{format}</b>',
         selectOutputFormat: 'Select Output Format',
         forwardTo: 'Forward to',

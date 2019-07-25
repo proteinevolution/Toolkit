@@ -8,7 +8,7 @@ touch ../params/dbs
 
 if [[  "%hhpred_align.content" != "true" ]] ; then
     #splitting input databases into array and completing with -d
-    if [[ "%hhsuitedb.content" != "false" ]]
+    if [[ "%hhsuitedb.content" != "" ]]
     then
         DBS=$(echo "%hhsuitedb.content" | tr " " "\n")
         DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${DBS[@]}`
@@ -16,7 +16,7 @@ if [[  "%hhpred_align.content" != "true" ]] ; then
         printf "${DBS[@]}" >> ../params/dbs
         printf "\n" >> ../params/dbs
     fi
-    if [[ "%proteomes.content" != "false" ]]
+    if [[ "%proteomes.content" != "" ]]
     then
         PROTEOMES=$(echo "%proteomes.content" | tr " " "\n")
         DBJOINED+=`printf -- '-d %HHSUITE/%s ' ${PROTEOMES[@]}`

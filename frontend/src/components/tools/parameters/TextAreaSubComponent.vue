@@ -2,7 +2,7 @@
     <b-form-group class="textarea-group"
                   :class="{'uploading-file': uploadingFile}">
         <b-form-textarea class="textarea-alignment"
-                         :placeholder="parameter.inputPlaceholder"
+                         :placeholder="$t('tools.inputPlaceholder.' + parameter.placeholderKey)"
                          v-bind:value="value"
                          v-on:input="handleInput"
                          cols="70"
@@ -225,6 +225,7 @@
         font-family: $font-family-monospace;
         width: 100%;
         height: 20em;
+        font-size: 0.9em;
 
         &.shrink {
             height: 14em;

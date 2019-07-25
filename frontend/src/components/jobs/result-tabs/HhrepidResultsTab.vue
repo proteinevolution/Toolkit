@@ -1,8 +1,7 @@
 <template>
     <Loading :message="$t('loading')"
              v-if="loading || !results"/>
-    <div v-else
-         class="font-small">
+    <div v-else>
         <b v-if="results.results.length === 0"
            v-html="$t('jobs.results.hhrepid.noResults')">
         </b>
@@ -11,7 +10,8 @@
                 <a @click="forwardQueryA3M">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
             </div>
             <template v-for="hit in results.results.reptypes">
-                <span v-text="$t('jobs.results.hhrepid.resultsForType', {type: hit.typ})"></span>
+                <h4 v-text="$t('jobs.results.hhrepid.resultsForType', {type: hit.typ})"
+                    class="mb-4"></h4>
                 <img :src="getFilePath(hit.typ)"
                      :key="hit.typ"
                      class="mb-3"
@@ -140,14 +140,6 @@
         .sequence-alignment {
             font-family: $font-family-monospace;
             letter-spacing: 0.05em;
-        }
-    }
-
-    .font-small {
-        font-size: 1em;
-
-        span {
-            font-size: 1.3em;
         }
     }
 
