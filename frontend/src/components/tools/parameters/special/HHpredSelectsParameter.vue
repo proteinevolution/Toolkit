@@ -31,6 +31,7 @@
     import {HHpredSelectsParameter, SelectParameter, ValidationParams} from '@/types/toolkit/tools';
     import SelectParameterComponent from '@/components/tools/parameters/SelectParameter.vue';
     import {ParameterType} from '@/types/toolkit/enums';
+    import {ConstraintError} from '@/types/toolkit/validation';
 
     export default Vue.extend({
         name: 'HHpredSelectsParameter',
@@ -48,12 +49,14 @@
             parameter: Object as () => HHpredSelectsParameter,
         },
         computed: {
-            maxSelectedOptionsHHSuite(): number {
-                if (this.submission[this.parameter.nameProteomes]) {
-                    return this.parameter.maxSelectedOptions
-                        - this.submission[this.parameter.nameProteomes].split(' ').length;
+            selectedOptionsHHSuite(): number {
+                if (this.submission[this.parameter.name]) {
+                    return this.submission[this.parameter.name].split(' ').length;
                 }
-                return this.parameter.maxSelectedOptions;
+                return 0;
+            },
+            maxSelectedOptionsHHSuite(): number {
+                return this.parameter.maxSelectedOptions - this.selectedOptionsProteomes;
             },
             hhsuiteDBParameter(): SelectParameter | null {
                 if (!this.parameter) {
@@ -68,11 +71,14 @@
                     forceMulti: true,
                 };
             },
-            maxSelectedOptionsProteomes(): number {
-                if (this.submission[this.parameter.name]) {
-                    return this.parameter.maxSelectedOptions - this.submission[this.parameter.name].split(' ').length;
+            selectedOptionsProteomes(): number {
+                if (this.submission[this.parameter.nameProteomes]) {
+                    return this.submission[this.parameter.nameProteomes].split(' ').length;
                 }
-                return this.parameter.maxSelectedOptions;
+                return 0;
+            },
+            maxSelectedOptionsProteomes(): number {
+                return this.parameter.maxSelectedOptions - this.selectedOptionsHHSuite;
             },
             proteomesParameter(): SelectParameter | null {
                 if (!this.parameter) {
@@ -86,6 +92,24 @@
                     maxSelectedOptions: this.maxSelectedOptionsProteomes,
                     forceMulti: true,
                 };
+            },
+            totalSelectedOptions(): number {
+                return this.selectedOptionsHHSuite + this.selectedOptionsProteomes;
+            },
+        },
+        watch: {
+            totalSelectedOptions: {
+                immediate: true,
+                handler(value: number) {
+                    if (value === 0) {
+                        const error: ConstraintError | undefined =  {
+                            textKey: 'constraints.notEmpty',
+                        };
+                        Vue.set(this.validationErrors, this.parameter.name, error);
+                    } else {
+                        Vue.delete(this.validationErrors, this.parameter.name);
+                    }
+                },
             },
         },
     });
