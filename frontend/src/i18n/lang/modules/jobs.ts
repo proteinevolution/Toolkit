@@ -39,6 +39,7 @@ export default {
             clusters: 'Clusters',
             rawOutput: 'Raw Output',
             queryTemplateMSA: 'Query Template MSA',
+            probabilityPlot: 'Probability Plot',
             probList: 'ProbList',
             probState: 'ProbState',
             predictedDomains: 'Predicted Domains',

@@ -87,3 +87,38 @@ export interface HhrepidReptype {
     loc: string;
     seq: string;
 }
+
+export interface HHPredResults {
+    jobID: string;
+    query: QueryItem[];
+    querytemplate: QueryItem[];
+    reduced: QueryItem[];
+    results: {
+        COILPRED: string;
+        MSA_GEN: string;
+        QA3M_COUNT: number;
+        TMPRED: string;
+        alignment: any; // TODO type this
+        db: string;
+        hits: HHPredHit[];
+        info: any; // TODO type this
+        proteomes: string;
+    };
+}
+
+export interface HHPredHit {
+    cols: number;
+    eval: number;
+    hit: string;
+    no: number;
+    prob: number;
+    pval: number;
+    query_begin: number;
+    query_end: number;
+    ref: number;
+    score: number;
+    ss: number;
+    struc: string;
+    template_begin: number;
+    template_end: number;
+}

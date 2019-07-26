@@ -409,34 +409,34 @@ fasta2json.py ../results/alignment.fas ../results/querytemplate.json
 
 
 # Generate Hitlist in JSON for hhrfile
-hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/${JOBID}.json
+hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/results.json
 
 # Generate Query in JSON
 fasta2json.py ../results/firstSeq.fas ../results/query.json
 
 # add DB to json
-manipulate_json.py -k 'db' -v '%hhsuitedb.content' ../results/${JOBID}.json
+manipulate_json.py -k 'db' -v '%hhsuitedb.content' ../results/results.json
 
 # add Proteomes to json
-manipulate_json.py -k 'proteomes' -v '%proteomes.content' ../results/${JOBID}.json
+manipulate_json.py -k 'proteomes' -v '%proteomes.content' ../results/results.json
 
 
 # add transmembrane prediction info to json
-manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/${JOBID}.json
+manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/results.json
 
 # add coiled coil prediction info to json
-manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/${JOBID}.json
+manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/results.json
 
 # For alerting user if too few homologs are found for building A3M
 
 if [[ ${ITERS} = "0" ]] ; then
-    manipulate_json.py -k 'MSA_GEN' -v "custom" ../results/${JOBID}.json
+    manipulate_json.py -k 'MSA_GEN' -v "custom" ../results/results.json
 else
-    manipulate_json.py -k 'MSA_GEN' -v "%msa_gen_method.content" ../results/${JOBID}.json
+    manipulate_json.py -k 'MSA_GEN' -v "%msa_gen_method.content" ../results/results.json
 fi
 
 # Number of sequences in the query A3M
-manipulate_json.py -k 'QA3M_COUNT' -v "${QA3M_COUNT}" ../results/${JOBID}.json
+manipulate_json.py -k 'QA3M_COUNT' -v "${QA3M_COUNT}" ../results/results.json
 
 echo "done" >> ../results/process.log
 
