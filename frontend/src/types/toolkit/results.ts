@@ -92,3 +92,20 @@ export interface ProbEvalList {
     type: string;
     vals: number[];
 }
+
+export interface HitMapResponse {
+    hitAreas: HitMapItem[];
+    queryLength: number;
+    resubmitStart: number;
+    resubmitEnd: number;
+    numHits: number;
+}
+
+export interface HitMapItem {
+    num: number;
+    title: string;
+    b: number;
+    t: number;
+    l: number;
+    r: number;
+}
