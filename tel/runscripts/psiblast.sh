@@ -6,16 +6,16 @@ INPUT="query"
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 
-if [ ${CHAR_COUNT} -gt "10000000" ] ; then
+if [[ ${CHAR_COUNT} -gt "10000000" ]] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
       false
 fi
 
-if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
+if [[ ${SEQ_COUNT} = "0" ]] && [[ ${FORMAT} = "0" ]] ; then
       sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
       CHAR_COUNT=$(wc -m < ../params/alignment1)
 
-      if [ ${CHAR_COUNT} -gt "10000" ] ; then
+      if [[ ${CHAR_COUNT} -gt "10000" ]] ; then
             echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
             false
       else
@@ -24,7 +24,7 @@ if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
       fi
 fi
 
-if [ ${FORMAT} = "1" ] ; then
+if [[ ${FORMAT} = "1" ]] ; then
       reformatValidator.pl clu fas \
             $(readlink -f %alignment.path) \
             $(readlink -f ../results/${JOBID}.fas) \
@@ -36,36 +36,36 @@ else
             -d 160 -uc -l 32000
 fi
 
-if [ ! -f ../results/${JOBID}.fas ]; then
+if [[ ! -f ../results/${JOBID}.fas ]]; then
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
     false
 fi
 
 SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
 
-if [ ${SEQ_COUNT} -gt "5000" ] ; then
+if [[ ${SEQ_COUNT} -gt "5000" ]] ; then
       echo "#Input contains more than 5000 sequences." >> ../results/process.log
       false
 fi
 
-if [ ${SEQ_COUNT} -gt "1" ] ; then
+if [[ ${SEQ_COUNT} -gt "1" ]] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
 fi
 echo "done" >> ../results/process.log
 
-if [ ${SEQ_COUNT} -gt 1 ] ; then
+if [[ ${SEQ_COUNT} -gt 1 ]] ; then
     INPUT="in_msa"
 fi
 
-if [ "%matrix.content" = "BLOSUM80" ] || [ "%matrix.content" = "PAM70" ] ; then
+if [[ "%matrix.content" = "BLOSUM80" ]] || [[ "%matrix.content" = "PAM70" ]] ; then
     GAPOPEN=10
 fi
-if [ "%matrix.content" = "PAM30" ] ; then
+if [[ "%matrix.content" = "PAM30" ]] ; then
     GAPOPEN=9
 fi
-if [ "%matrix.content" = "BLOSUM45" ] ; then
+if [[ "%matrix.content" = "BLOSUM45" ]] ; then
     GAPOPEN=15
     GAPEXT=2
 fi

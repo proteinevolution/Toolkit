@@ -1,16 +1,16 @@
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 
-if [ ${CHAR_COUNT} -gt "10000000" ] ; then
+if [[ ${CHAR_COUNT} -gt "10000000" ]] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
       false
 fi
 
-if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
+if [[ ${SEQ_COUNT} = "0" ]] && [[ ${FORMAT} = "0" ]] ; then
       sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
       CHAR_COUNT=$(wc -m < ../params/alignment1)
 
-      if [ ${CHAR_COUNT} -gt "10000" ] ; then
+      if [[ ${CHAR_COUNT} -gt "10000" ]] ; then
             echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
             false
       else
@@ -19,7 +19,7 @@ if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
       fi
 fi
 
-if [ ${FORMAT} = "1" ] ; then
+if [[ ${FORMAT} = "1" ]] ; then
       reformatValidator.pl clu fas \
             $(readlink -f %alignment.path) \
             $(readlink -f ../results/${JOBID}.fas) \
@@ -31,19 +31,19 @@ else
             -d 160 -uc -l 32000
 fi
 
-if [ ! -f ../results/${JOBID}.fas ]; then
+if [[ ! -f ../results/${JOBID}.fas ]]; then
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
     false
 fi
 
 SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
 
-if [ ${SEQ_COUNT} -gt "2000" ] ; then
+if [[ ${SEQ_COUNT} -gt "2000" ]] ; then
       echo "#Input contains more than 2000 sequences." >> ../results/process.log
       false
 fi
 
-if [ ${SEQ_COUNT} -gt "1" ] ; then
+if [[ ${SEQ_COUNT} -gt "1" ]] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
@@ -58,16 +58,16 @@ declare -a COMMAND_TO_RUN_MSA=(run_PCoils_iterated run_PCoils_pdb run_PCoils run
 
 reformat_hhsuite.pl fas fas %alignment.path %alignment.path -uc -r -M first -l 32000
 
-if [ "%pcoils_weighting.content" = "0" ]; then
+if [[ "%pcoils_weighting.content" = "0" ]]; then
     WEIGHTING_MODE="-nw"
 fi
 
-if [ "%pcoils_input_mode.content" = "2" ]; then
+if [[ "%pcoils_input_mode.content" = "2" ]]; then
 
         echo "#MSA generation required. Running 1 iteration of PSI-BLAST against nr70." >> ../results/process.log
 
         INPUT="query"
-        if [ ${SEQ_COUNT} -gt 1 ] ; then
+        if [[ ${SEQ_COUNT} -gt 1 ]] ; then
             INPUT="in_msa"
         fi
 
@@ -119,7 +119,7 @@ ${REPPERDIR}/addss.pl -i ../results/${JOBID}.alignment.a3m \
 
 echo "#Predicting coiled coils using PCOILS." >> ../results/process.log
 
-if [ "%pcoils_input_mode.content" = "0" ]; then
+if [[ "%pcoils_input_mode.content" = "0" ]]; then
         ${COMMAND_TO_RUN_SINGLE[%pcoils_matrix.content]} ${WEIGHTING_MODE} -win 14 < ../results/${JOBID}.buffer > ../results/${JOBID}.coils_n14
         ${COMMAND_TO_RUN_SINGLE[%pcoils_matrix.content]} ${WEIGHTING_MODE} -win 21 < ../results/${JOBID}.buffer > ../results/${JOBID}.coils_n21
         ${COMMAND_TO_RUN_SINGLE[%pcoils_matrix.content]} ${WEIGHTING_MODE} -win 28 < ../results/${JOBID}.buffer > ../results/${JOBID}.coils_n28
@@ -137,7 +137,7 @@ if [ "%pcoils_input_mode.content" = "0" ]; then
         echo "done" >> ../results/process.log
 fi
 
-if [ "%pcoils_input_mode.content" = "1" ] || [ "%pcoils_input_mode.content" = "2" ]; then
+if [[ "%pcoils_input_mode.content" = "1" ]] || [[ "%pcoils_input_mode.content" = "2" ]]; then
          reformat_hhsuite.pl fas a3m \
          $(readlink -f ../params/${JOBID}.in) \
          $(readlink -f ../results/${JOBID}.alignment.a3m) \

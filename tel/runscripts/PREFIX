@@ -19,11 +19,11 @@ trap 'sig_handler USR1' SIGUSR2
 #HANDLE errors related to SGE
 function sig_handler () {
 
-    if [ -e ../results/process.log ]
+    if [[ -e ../results/process.log ]]
     then
         STATUS=$(tail -n 1 ../results/process.log | cut -c 1)
 
-        if [ ${STATUS} = "#" ] ; then
+        if [[ ${STATUS} = "#" ]] ; then
             echo "error" >> ../results/process.log
         fi
     fi
@@ -66,9 +66,9 @@ mkdir ../logs
 source %ENVIRONMENT
 
 
-if [ -f ../params/alignment ]; then
+if [[ -f ../params/alignment ]]; then
     FORMAT=$(head -1 ../params/alignment | egrep "^CLUSTAL" | wc -l)
-    if [ ${FORMAT} = "0" ] ; then
+    if [[ ${FORMAT} = "0" ]] ; then
         #remove empty lines
         sed -i '/^\s*$/d' ../params/alignment
     fi

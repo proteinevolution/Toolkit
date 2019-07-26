@@ -1,17 +1,17 @@
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 
-if [ ${CHAR_COUNT} -gt "10000000" ] ; then
+if [[ ${CHAR_COUNT} -gt "10000000" ]] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
       false
 fi
 
-if [ ${SEQ_COUNT} = "0" ] ; then
+if [[ ${SEQ_COUNT} = "0" ]] ; then
       echo "#Invalid input format. Input should be in FASTA format." >> ../results/process.log
       false
 fi
 
-if [ ${SEQ_COUNT} -lt "2" ] ; then
+if [[ ${SEQ_COUNT} -lt "2" ]] ; then
       echo "#Input should contain at least 2 sequences." >> ../results/process.log
       false
 fi
@@ -21,7 +21,7 @@ OUTFORMAT=$(reformatValidator.pl fas ufas \
             $(readlink -f ../params/alignment) \
             -d 160 -uc -l 32000)
 
-if [ "${OUTFORMAT}" = "ufas" ] ; then
+if [[ "${OUTFORMAT}" = "ufas" ]] ; then
     SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
     echo "#Read ${SEQ_COUNT} sequences." >> ../results/process.log
 else
@@ -30,14 +30,14 @@ else
 fi
 echo "done"  >> ../results/process.log
 
-if [ ${SEQ_COUNT} -gt "2000" ] ; then
+if [[ ${SEQ_COUNT} -gt "2000" ]] ; then
       echo "#Input contains more than 2000 sequences." >> ../results/process.log
       false
 fi
 
 echo "#Aligning sequences with MSAProbs."  >> ../results/process.log
 
-if [ %output_order.content == "input"] ; then
+if [[ %output_order.content == "input" ]] ; then
     msaprobs %alignment.path \
                 -num_threads %THREADS \
                 -o ../results/alignment.fas
