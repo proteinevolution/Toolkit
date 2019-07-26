@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {AlignmentItem, AlignmentResultResponse, ResultHitsResponse} from '@/types/toolkit/results';
+import {AlignmentItem, AlignmentResultResponse, HHompHitsResponse} from '@/types/toolkit/results';
 
 class ResultsService {
 
@@ -46,8 +46,8 @@ class ResultsService {
     }
 
     public fetchHits(jobId: string, start?: number, end?: number, filter?: string, sortBy?: string, desc?: boolean):
-        Promise<ResultHitsResponse> {
-        return new Promise<ResultHitsResponse>((resolve, reject) => {
+        Promise<HHompHitsResponse> {
+        return new Promise<HHompHitsResponse>((resolve, reject) => {
             const url: string = `/api/jobs/${jobId}/results/hits/`;
             axios.get(url, {
                 params: {

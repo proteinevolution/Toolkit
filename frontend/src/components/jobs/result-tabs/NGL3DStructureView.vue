@@ -49,7 +49,7 @@
         },
         methods: {
             async init() {
-                this.file = await resultsService.getFile(this.job.jobID, `${this.job.jobID}.pdb`);
+                this.file = await resultsService.getFile(this.job.jobID, `${this.job.jobID}.pdb`) as string;
                 this.stage = new Stage(this.$refs.viewport, {
                     backgroundColor: 'white',
                 });

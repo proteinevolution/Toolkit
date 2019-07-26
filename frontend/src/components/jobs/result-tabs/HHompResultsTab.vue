@@ -1,6 +1,6 @@
 <template>
     <Loading :message="$t('loading')"
-             v-if="loading"/>
+             v-if="loading || !alignments"/>
     <div v-else
          class="font-small">
         <b v-if="total === 0"
@@ -26,8 +26,7 @@
                  ref="visualization">
                 <h4>{{$t('jobs.results.hitlist.vis')}}</h4>
                 <hit-map :job="job"
-                         @elem-clicked="scrollToElem"
-                         @total-changed="totalChanged"/>
+                         @elem-clicked="scrollToElem"/>
             </div>
 
             <div class="result-section"
@@ -41,7 +40,18 @@
             <div class="result-section"
                  ref="alignments">
                 <h4>{{$t('jobs.results.hitlist.aln')}}</h4>
-                <div class="huge"></div>
+
+                <div v-for="alignment in alignments">
+                    {{alignment.acc}}
+                </div>
+
+                <div v-if="alignments.length !== total">
+                    <Loading :message="$t('jobs.results.alignment.loadingHits')"
+                             v-if="loadingMore"
+                             justify="center"
+                             class="mt-4"/>
+                    <intersection-observer @intersect="intersected"/>
+                </div>
             </div>
         </div>
     </div>
@@ -54,6 +64,8 @@
     import Logger from 'js-logger';
     import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
     import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
+    import {HHompAlignmentItem, HHompAlignmentsResponse} from '@/types/toolkit/results';
+    import {resultsService} from '@/services/ResultsService';
 
     const logger = Logger.get('HHompResultsTab');
 
@@ -66,7 +78,10 @@
         },
         data() {
             return {
+                alignments: undefined as HHompAlignmentItem[] | undefined,
                 total: 100,
+                loadingMore: false,
+                perPage: 40,
                 color: false,
                 wrap: true,
                 hitListFields: [{
@@ -110,6 +125,27 @@
         },
         methods: {
             async init() {
+                await this.loadAlignments(0, this.perPage);
+            },
+            async intersected() {
+                if (!this.loadingMore && this.alignments && this.alignments.length < this.total) {
+                    this.loadingMore = true;
+                    try {
+                        await this.loadAlignments(this.alignments.length, this.alignments.length + this.perPage);
+                    } catch (e) {
+                        logger.error(e);
+                    }
+                    this.loadingMore = false;
+                }
+            },
+            async loadAlignments(start: number, end: number) {
+                const res: HHompAlignmentsResponse = await resultsService.fetchHHAlignmentResults(this.job.jobID, start, end);
+                this.total = res.total;
+                if (!this.alignments) {
+                    this.alignments = res.alignments;
+                } else {
+                    this.alignments.push(...res.alignments);
+                }
             },
             scrollTo(ref: string): void {
                 if (this.$refs[ref]) {
@@ -133,9 +169,6 @@
             },
             toggleWrap(): void {
                 this.wrap = !this.wrap;
-            },
-            totalChanged(value: number): void {
-                this.total = value;
             },
         },
     });

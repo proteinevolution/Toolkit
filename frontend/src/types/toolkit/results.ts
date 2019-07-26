@@ -1,7 +1,14 @@
-export interface ResultHitsResponse {
+export interface HHompHitsResponse {
     hits: HHompHitItem[] | any[];
     total: number;
     totalNoFilter: number;
+    start: number;
+    end: number;
+}
+
+export interface HHompAlignmentsResponse {
+    alignments: HHompAlignmentItem[] | any[];
+    total: number;
     start: number;
     end: number;
 }
@@ -16,6 +23,21 @@ export interface HHompHitItem {
     eval: number;
     ssScore: number;
     templateRef: number;
+}
+
+export interface HHompAlignmentItem {
+    num: number;
+    acc: string;
+    name: string;
+    alignedCols: number;
+    probabHit: number;
+    probabOMP: number;
+    eval: number;
+    score: number;
+    identities: number;
+    // TODO type
+    query: any;
+    template: any;
 }
 
 export interface AlignmentResultResponse {
@@ -98,7 +120,6 @@ export interface HitMapResponse {
     queryLength: number;
     resubmitStart: number;
     resubmitEnd: number;
-    numHits: number;
 }
 
 export interface HitMapItem {

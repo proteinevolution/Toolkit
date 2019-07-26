@@ -69,7 +69,7 @@
     import Vue from 'vue';
     import {resultsService} from '@/services/ResultsService';
     import {Job} from '@/types/toolkit/jobs';
-    import {ResultHitsResponse} from '@/types/toolkit/results';
+    import {HHompHitsResponse} from '@/types/toolkit/results';
 
     export default Vue.extend({
         name: 'HitListTable',
@@ -107,7 +107,7 @@
                 const end: number = ctx.currentPage * ctx.perPage;
                 return resultsService.fetchHits(this.job.jobID, start, end,
                     ctx.filter, ctx.sortBy, ctx.sortDesc)
-                    .then((data: ResultHitsResponse) => {
+                    .then((data: HHompHitsResponse) => {
                         const items = data.hits;
                         this.totalRows = data.total;
                         this.totalNoFilter = data.totalNoFilter;

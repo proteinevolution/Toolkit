@@ -90,7 +90,6 @@
         },
         async mounted() {
             this.hitMap = await resultsService.getFile(this.job.jobID, 'hitmap.json') as HitMapResponse;
-            this.$emit('total-changed', this.hitMap.numHits);
             this.$nextTick(() => {
                 if (!this.hitMap) {
                     return;
