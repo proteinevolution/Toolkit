@@ -12,20 +12,20 @@
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
     import Logger from 'js-logger';
-    import {HHPredHit, HHPredResults} from '@/types/toolkit/results';
+    import {ProbEvalList} from '@/types/toolkit/results';
     import {Chart} from 'highcharts-vue';
 
-    const logger = Logger.get('ProbabilityPlotTab');
+    const logger = Logger.get('PlotTab');
 
     export default mixins(ResultTabMixin).extend({
-        name: 'ProbabilityPlotTab',
+        name: 'PlotTab',
         components: {
             Loading,
             highcharts: Chart,
         },
         data() {
             return {
-                results: undefined as HHPredResults | undefined,
+                results: undefined as ProbEvalList | undefined,
                 loading: true,
             };
         },
@@ -33,17 +33,17 @@
             chartOptions(): any {
                 return {
                     title: {
-                        text: 'Probability Distribution',
+                        text: this.$t(`jobs.results.plot.${this.type}.title`),
                         x: -20, // center
                     },
                     xAxis: {
                         title: {
-                            text: 'Probability',
+                            text: this.$t(`jobs.results.plot.${this.type}.xLabel`),
                         },
                     },
                     yAxis: {
                         title: {
-                            text: 'No. of matches',
+                            text: this.$t(`jobs.results.plot.${this.type}.yLabel`),
                         },
                         plotLines: [{
                             value: 0,
@@ -62,7 +62,7 @@
                         width: 750,
                     },
                     series: [{
-                        name: 'No. HSPs',
+                        name: this.$t(`jobs.results.plot.${this.type}.legend`),
                         data: this.probabilities,
                     }],
                     credits: {
@@ -73,17 +73,23 @@
             probabilities(): number[][] | undefined {
                 if (this.results !== undefined) {
                     const bins: number[][] = [];
-                    for (let i = 0; i < this.results.results.hits.length; i++) {
-                        bins.push([this.results.results.hits[i].prob, i]);
+                    for (let i = 0; i < this.results.vals.length; i++) {
+                        bins.push([this.results.vals[i], i]);
                     }
                     return bins;
                 }
                 return undefined;
             },
+            type(): string {
+                if (!this.results) {
+                    return '';
+                }
+                return this.results.type;
+            },
         },
         methods: {
             async init() {
-                this.results = await resultsService.fetchResults(this.job.jobID) as HHPredResults;
+                this.results = await resultsService.getFile(this.job.jobID, 'plot_data.json') as ProbEvalList;
                 this.loading = false;
             },
         },

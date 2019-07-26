@@ -140,7 +140,7 @@ rm ../results/tmp ../results/querytemplateMSA.a3m
 fasta2json.py ../results/reducedQT.fas ../results/querytemplate.json
 
 
-hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > $(readlink -f ../results/${JOBID}.json)
+hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > $(readlink -f ../results/results.json)
 #Visualization
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
@@ -174,14 +174,17 @@ rm ../results/tmp0 ../results/tmp1
 #create full alignment json; use for forwarding
 fasta2json.py ../results/alignment.fas ../results/reduced.json
 
+# Create a JSON with -log10(E-values) of the hits
+extract_from_json.py -k 'hits':'eval' ../results/results.json ../results/plot_data.json -log 1 -type "eval"
+
 # add DB to json
-manipulate_json.py -k 'db' -v '%hhblitsdb.content' ../results/${JOBID}.json
+manipulate_json.py -k 'db' -v '%hhblitsdb.content' ../results/results.json
 
 # add transmembrane prediction info to json
-manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/${JOBID}.json
+manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/results.json
 
 # add coiled coil prediction info to json
-manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/${JOBID}.json
+manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/results.json
 
 # Generate Query in JSON
 fasta2json.py ../results/firstSeq.fas ../results/query.json

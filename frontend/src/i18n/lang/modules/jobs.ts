@@ -40,6 +40,7 @@ export default {
             rawOutput: 'Raw Output',
             queryTemplateMSA: 'Query Template MSA',
             probabilityPlot: 'Probability Plot',
+            evaluePlot: 'E-Value Plot',
             probList: 'ProbList',
             probState: 'ProbState',
             predictedDomains: 'Predicted Domains',
@@ -100,6 +101,20 @@ export default {
         imagesView: {
             noPeriodicity: 'No periodicity spectrum found!',
             noRepeats: 'No significant repeats found for given values!',
+        },
+        plot: {
+            prob: {
+                title: 'Probability Distribution',
+                xLabel: 'Probability',
+                yLabel: 'No. of matches',
+                legend: 'No. HSPs',
+            },
+            eval: {
+                title: 'E-Value Distribution',
+                xLabel: '-log10(E-Value)',
+                yLabel: 'No. of matches',
+                legend: 'No. HSPs',
+            },
         },
         hitlist: {
             visLink: 'Vis',
