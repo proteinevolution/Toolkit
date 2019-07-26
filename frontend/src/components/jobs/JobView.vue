@@ -122,6 +122,8 @@
                 './result-tabs/ClansResultsTab.vue')),
             patsearchResults: () => lazyLoadView(import(/* webpackChunkName: "patsearch-results" */
                 './result-tabs/PatsearchResultsTab.vue')),
+            probabilityPlot: () => lazyLoadView(import(/* webpackChunkName: "probability-plot" */
+                './result-tabs/ProbabilityPlotTab.vue')),
             tprpredResults: () => lazyLoadView(import(/* webpackChunkName: "tprpred-results" */
                 './result-tabs/TprpredResultsTab.vue')),
             quick2dResults: () => lazyLoadView(import(/* webpackChunkName: "quick2d-results" */
