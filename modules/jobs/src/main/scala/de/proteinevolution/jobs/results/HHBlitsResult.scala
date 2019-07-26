@@ -29,26 +29,21 @@ case class HHBlitsResult(
     COILPRED: String
 ) extends SearchResult[HHBlitsHSP] {
 
-  def hitsOrderBy(params: DTParam): List[HHBlitsHSP] = {
-    (params.orderCol, params.orderDir) match {
-      case (1, "asc")  => HSPS.sortBy(_.template.accession)
-      case (1, "desc") => HSPS.sortWith(_.template.accession > _.template.accession)
-      case (2, "asc")  => HSPS.sortBy(_.description)
-      case (2, "desc") => HSPS.sortWith(_.description > _.description)
-      case (3, "asc")  => HSPS.sortBy(_.info.probab)
-      case (3, "desc") => HSPS.sortWith(_.info.probab > _.info.probab)
-      case (4, "asc")  => HSPS.sortBy(_.info.eval)
-      case (4, "desc") => HSPS.sortWith(_.info.eval > _.info.eval)
-      case (5, "asc")  => HSPS.sortBy(_.info.aligned_cols)
-      case (5, "desc") => HSPS.sortWith(_.info.aligned_cols > _.info.aligned_cols)
-      case (6, "asc")  => HSPS.sortBy(_.template.ref)
-      case (6, "desc") => HSPS.sortWith(_.template.ref > _.template.ref)
-      case (_, "asc")  => HSPS.sortBy(_.num)
-      case (_, "desc") => HSPS.sortWith(_.num > _.num)
-      case (_, _)      => HSPS.sortBy(_.num)
+  override def hitsOrderBy(sortBy: String, desc: Boolean): List[HHBlitsHSP] = {
+    val l = sortBy match {
+      case "acc"         => HSPS.sortBy(_.template.accession)
+      case "name"        => HSPS.sortBy(_.description)
+      case "probab"   => HSPS.sortBy(_.info.probab)
+      case "eval"        => HSPS.sortBy(_.info.eval)
+      case "alignedCols" => HSPS.sortBy(_.info.aligned_cols)
+      case "templateRef" => HSPS.sortBy(_.template.ref)
+      case _             => HSPS.sortBy(_.num)
     }
+    if (desc) l.reverse else l
   }
 
+  // TODO remove
+  def hitsOrderBy(params: DTParam): List[HHBlitsHSP] = List()
 }
 
 object HHBlitsResult {

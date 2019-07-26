@@ -16,7 +16,8 @@
 
 package de.proteinevolution.jobs.results
 
-import io.circe.{ Decoder, HCursor }
+import io.circe.generic.semiauto.deriveEncoder
+import io.circe.{Decoder, Encoder, HCursor}
 
 case class HHBlitsTemplate(
     consensus: String,
@@ -41,5 +42,7 @@ object HHBlitsTemplate {
         val accession = General.refineAccession(struct)
         new HHBlitsTemplate(consensus, end, accession, ref, seq, start)
     }
+
+  implicit val hhblitsTemplateEncoder: Encoder[HHBlitsTemplate] = deriveEncoder
 
 }

@@ -16,8 +16,8 @@
 
 package de.proteinevolution.jobs.results
 
-import io.circe.Decoder
-import io.circe.generic.semiauto.deriveDecoder
+import io.circe.{Decoder, Encoder}
+import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 
 case class HHBlitsQuery(
     consensus: String,
@@ -35,5 +35,6 @@ case class HHBlitsQuery(
 object HHBlitsQuery {
 
   implicit val hhblitsQueryDecoder: Decoder[HHBlitsQuery] = deriveDecoder
+  implicit val hhblitsQueryEncoder: Encoder[HHBlitsQuery] = deriveEncoder
 
 }

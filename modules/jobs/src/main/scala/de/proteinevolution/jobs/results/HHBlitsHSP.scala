@@ -29,18 +29,31 @@ case class HHBlitsHSP(
     length: Int
 ) extends HSP {
 
-  import SearchResultImplicits._
-
   def toTableJson(db: String = ""): Json = {
     val _ = db
-    Map[String, Either[Either[Double, Int], String]](
-      "0" -> Right(Common.getCheckbox(num)),
-      "1" -> Right(Common.getSingleLinkHHBlits(template.accession).toString),
-      "2" -> Right(Common.addBreak(description)),
-      "3" -> Left(Left(info.probab)),
-      "4" -> Left(Left(info.eval)),
-      "5" -> Left(Right(info.aligned_cols)),
-      "6" -> Left(Right(template.ref))
+    Map[String, Json](
+    "num"         -> num.asJson,
+    "acc"         -> template.accession.asJson,
+    "name"        -> description.slice(0, 18).asJson,
+    "probab"   -> info.probab.asJson,
+    "eval"        -> info.eval.asJson,
+    "alignedCols" -> info.aligned_cols.asJson,
+    "templateRef" -> template.ref.asJson
+    ).asJson
+  }
+
+  override def toAlignmentSectionJson: Json = {
+    Map[String, Json](
+      "num"         -> num.asJson,
+      "acc"         -> template.accession.asJson,
+      "name"        -> description.asJson,
+      "probab"   -> info.probab.asJson,
+      "eval"        -> info.eval.asJson,
+      "score"       -> info.score.asJson,
+      "alignedCols" -> info.aligned_cols.asJson,
+      "identities"  -> info.identities.asJson,
+      "query"       -> query.asJson,
+      "template"    -> template.asJson
     ).asJson
   }
 
