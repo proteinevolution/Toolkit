@@ -32,7 +32,7 @@ case class HHPredHSP(
     eValue: Double = -1,
 ) extends HSP {
 
-  def toJson(db: String = ""): Json = {
+  def toTableJson(db: String = ""): Json = {
     import SearchResultImplicits._
     val _ = db
     Map[String, Either[Either[Double, Int], String]](

@@ -19,10 +19,11 @@ package de.proteinevolution.jobs.controllers
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.models.{HHContext, ResultsForm}
+import de.proteinevolution.jobs.db.ResultFileAccessor
+import de.proteinevolution.jobs.models.{ HHContext, ResultsForm }
 import de.proteinevolution.jobs.services.HHService
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.{Action, AnyContent}
+import javax.inject.{ Inject, Singleton }
+import play.api.mvc.{ Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
 
@@ -31,7 +32,8 @@ class HHController @Inject()(
     ctx: HHContext,
     service: HHService,
     jobDao: JobDao,
-    userAction: UserAction
+    userAction: UserAction,
+    resultFiles: ResultFileAccessor
 )(implicit ec: ExecutionContext)
     extends ToolkitController(ctx.controllerComponents) {
 
@@ -57,4 +59,20 @@ class HHController @Inject()(
       case _ => fuccess(NotFound)
     }
   }
+
+  def loadAlignments(jobID: String, start: Option[Int], end: Option[Int]): Action[AnyContent] =
+    userAction.async { implicit request =>
+      jobDao.findJob(jobID).flatMap {
+        case Some(job) =>
+          if (job.isPublic || job.ownerID.equals(request.user.userID)) {
+            service.loadAlignments(jobID, start, end).value.map {
+              case Right(json) => Ok(json)
+              case Left(_)     => BadRequest
+            }
+          } else {
+            fuccess(Unauthorized)
+          }
+        case _ => fuccess(NotFound)
+      }
+    }
 }

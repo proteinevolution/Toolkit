@@ -42,7 +42,7 @@ case class PSIBlastHSP(
 
   import SearchResultImplicits._
 
-  def toJson(db: String): Json = {
+  def toTableJson(db: String): Json = {
     Map[String, Either[Double, String]](
       "0" -> Right(Common.getCheckbox(num)),
       "1" -> Right(Common.getSingleLinkDB(db, accession).toString),

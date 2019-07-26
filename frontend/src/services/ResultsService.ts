@@ -15,7 +15,23 @@ class ResultsService {
 
     public fetchAlignmentResults(jobId: string, start?: number, end?: number): Promise<AlignmentResultResponse> {
         return new Promise<AlignmentResultResponse>((resolve, reject) => {
-            const url: string = `/api/jobs/${jobId}/results/alignment/`;
+            const url: string = `/api/jobs/${jobId}/results/alignments/`;
+            axios.get(url, {
+                params: {
+                    start,
+                    end,
+                },
+            })
+                .then((response) => {
+                    resolve(response.data);
+                })
+                .catch(reject);
+        });
+    }
+
+    public fetchHHAlignmentResults(jobId: string, start?: number, end?: number): Promise<AlignmentResultResponse> {
+        return new Promise<AlignmentResultResponse>((resolve, reject) => {
+            const url: string = `/api/jobs/${jobId}/results/hh-alignments/`;
             axios.get(url, {
                 params: {
                     start,

@@ -22,7 +22,9 @@ trait HSP {
 
   def description: String
 
-  def toJson(db: String): Json
+  def toTableJson(db: String): Json
+
+  def toAlignmentSectionJson: Json = toTableJson("")
 
   def num: Int
 

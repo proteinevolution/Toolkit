@@ -67,7 +67,32 @@ class HHService @Inject()(
           "totalNoFilter" -> result.HSPS.length.asJson,
           "start" -> s.asJson,
           "end"   -> e.asJson,
-          "hits"  -> hits.slice(s, e).map(_.toJson("")).asJson
+          "hits"  -> hits.slice(s, e).map(_.toTableJson("")).asJson
+        ).asJson
+      )
+    }
+  }
+
+  def loadAlignments(jobID: String, start: Option[Int], end: Option[Int]): EitherT[Future, DecodingFailure, Json] = {
+    EitherT((for {
+      json <- getResults(jobID).run(resultsService)
+      tool <- toolFinder.getTool(jobID)
+    } yield (json, tool)).map {
+      case (json, tool) => parseResult(tool, json)
+      case _ =>
+        val error = "parsing result json failed."
+        logger.error(error)
+        Left(DecodingFailure(error, Nil))
+    }).subflatMap { result =>
+      val l = result.HSPS.length
+      val s = Math.max(start.getOrElse(0), 0)
+      val e = Math.min(end.getOrElse(l), l)
+      Right(
+        JsonObject(
+          "total" -> l.asJson,
+          "start" -> s.asJson,
+          "end"   -> e.asJson,
+          "alignments"  -> result.HSPS.slice(s, e).map(_.toAlignmentSectionJson).asJson
         ).asJson
       )
     }

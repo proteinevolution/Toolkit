@@ -31,7 +31,7 @@ case class HHBlitsHSP(
 
   import SearchResultImplicits._
 
-  def toJson(db: String = ""): Json = {
+  def toTableJson(db: String = ""): Json = {
     val _ = db
     Map[String, Either[Either[Double, Int], String]](
       "0" -> Right(Common.getCheckbox(num)),

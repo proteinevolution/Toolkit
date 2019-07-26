@@ -37,7 +37,7 @@ case class HmmerHSP(
     description: String,
     domain_obs_num: Int
 ) extends HSP {
-  def toJson(db: String): Json = {
+  def toTableJson(db: String): Json = {
     import SearchResultImplicits._
     Map[String, Either[Either[Double, Int], String]](
       "0" -> Right(Common.getCheckbox(num)),

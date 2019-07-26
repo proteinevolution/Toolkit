@@ -27,22 +27,37 @@ case class HHompHSP(
     description: String,
     num: Int,
     ss_score: Double,
-    length: Int,
+    length: Int
 ) extends HSP {
 
-
-  def toJson(db: String = ""): Json = {
+  def toTableJson(db: String = ""): Json = {
     val _ = db
     Map[String, Json](
-      "num" -> num.asJson,
-      "acc" -> template.accession.asJson,
-      "name" -> description.slice(0, 18).asJson,
-      "probabHit" -> info.probab_hit.asJson,
-      "probabOMP" -> info.probab_OMP.asJson,
-      "eval" -> info.eval.asJson,
-      "ssScore" -> ss_score.asJson,
+      "num"         -> num.asJson,
+      "acc"         -> template.accession.asJson,
+      "name"        -> description.slice(0, 18).asJson,
+      "probabHit"   -> info.probab_hit.asJson,
+      "probabOMP"   -> info.probab_OMP.asJson,
+      "eval"        -> info.eval.asJson,
+      "ssScore"     -> ss_score.asJson,
       "alignedCols" -> info.aligned_cols.asJson,
       "templateRef" -> template.ref.asJson
+    ).asJson
+  }
+
+  override def toAlignmentSectionJson: Json = {
+    Map[String, Json](
+      "num"         -> num.asJson,
+      "acc"         -> template.accession.asJson,
+      "name"        -> description.asJson,
+      "probabHit"   -> info.probab_hit.asJson,
+      "probabOMP"   -> info.probab_OMP.asJson,
+      "eval"        -> info.eval.asJson,
+      "score"       -> info.score.asJson,
+      "alignedCols" -> info.aligned_cols.asJson,
+      "identities"  -> info.identities.asJson,
+      "query"       -> query.asJson,
+      "template"    -> template.asJson
     ).asJson
   }
 
@@ -63,16 +78,15 @@ object HHompHSP {
         agree          <- c.downField("agree").as[String]
         description    <- c.downField("header").as[String]
         num            <- c.downField("no").as[Int]
-      } yield
-        new HHompHSP(
-          queryResult,
-          templateResult,
-          infoResult,
-          agree,
-          description,
-          num,
-          ss_score,
-          agree.length
+      } yield new HHompHSP(
+        queryResult,
+        templateResult,
+        infoResult,
+        agree,
+        description,
+        num,
+        ss_score,
+        agree.length
       )
 
   def hhompHSPListDecoder(hits: List[Json], alignments: List[Json]): List[HHompHSP] = {

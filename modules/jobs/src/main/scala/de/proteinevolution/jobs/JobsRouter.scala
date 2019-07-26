@@ -58,8 +58,10 @@ class JobsRouter @Inject()(
   }
 
   private lazy val resultRoutes: Routes = {
-    case GET(p"/$jobID/results/alignment/" ? q_o"start=${int(start)}" & q_o"end=${int(end)}") =>
+    case GET(p"/$jobID/results/alignments/" ? q_o"start=${int(start)}" & q_o"end=${int(end)}") =>
       resultsController.loadAlignmentHits(jobID, start, end)
+    case GET(p"/$jobID/results/hh-alignments/" ? q_o"start=${int(start)}" & q_o"end=${int(end)}") =>
+      hhController.loadAlignments(jobID, start, end)
     case GET(p"/$jobID/results/files/$filename") => fileController.file(filename = filename, jobID = jobID)
     case GET(p"/$jobID/results/hits/" ? q_o"start=${int(start)}" & q_o"end=${int(end)}"
       & q_o"filter=${filter}" & q_o"sortBy=${sortBy}"& q_o"desc=${bool(desc)}") =>
