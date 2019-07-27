@@ -96,6 +96,10 @@ export default {
                 cols: 'Cols',
                 targetLength: 'Target Length',
             },
+            templateAlignment: 'Template alignment',
+            alignmentInfo: 'Probability (hit): {probabHit}%&emsp;&emsp;Probability (OMP): {probabOMP}%&emsp;&emsp;' +
+                'E-value: {eval}&emsp;&emsp;Score: {score}&emsp;&emsp;Aligned Cols: {alignedCols}&emsp;&emsp;' +
+                'Identities: {identities}%',
         },
         imagesView: {
             noPeriodicity: 'No periodicity spectrum found!',

@@ -6,6 +6,12 @@ export function colorSequence(seq: string): string {
     });
 }
 
+export function ssColorSequence(seq: string): string {
+    return seq.replace(/[HE]/g, (m) => {
+        return '<span class="ss_' + m.toString()[0].toLowerCase() + '">' + m.toString() + '</span>';
+    });
+}
+
 export function quick2dColor(name: string, seq: string): string {
     switch (name) {
         case 'psipred':

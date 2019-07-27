@@ -1,3 +1,9 @@
+export interface SearchAlignmentItem {
+    query: any;
+    agree: string;
+    template: any;
+}
+
 export interface HHompHitsResponse {
     hits: HHompHitItem[] | any[];
     total: number;
@@ -25,7 +31,7 @@ export interface HHompHitItem {
     templateRef: number;
 }
 
-export interface HHompAlignmentItem {
+export interface HHompAlignmentItem extends SearchAlignmentItem {
     num: number;
     acc: string;
     name: string;
@@ -35,9 +41,6 @@ export interface HHompAlignmentItem {
     eval: number;
     score: number;
     identities: number;
-    // TODO type
-    query: any;
-    template: any;
 }
 
 export interface AlignmentResultResponse {
