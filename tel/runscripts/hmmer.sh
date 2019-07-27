@@ -132,6 +132,10 @@ if [[ -s "../results/${JOBID}.msa_sto" ]]; then
 
     extractFasta.py ../results/${JOBID}.msa_a3m ../results/${JOBID}.list
 
+
+    # Create a JSON with -log10 of  e-values of the hits
+    extract_from_json.py -tool hmmer ../results/${JOBID}.json ../results/plot_data.json
+
     reformat_hhsuite.pl a3m fas ../results/${JOBID}.msa_a3m.subset $(readlink -f ../results/output.aln_fas) -uc -l 32000
 
     manipulate_json.py -k 'db' -v '%hmmerdb.content' ../results/${JOBID}.json

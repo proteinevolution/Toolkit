@@ -75,15 +75,15 @@ export default {
             numRetrieved: 'Retrieved {num} IDs',
         },
         tprpred: {
-            noResults: 'No repeats found! You could consider picking a less stringent E-value inclusion cut-off.',
+            noResults: 'No repeats found! Please consider picking a less stringent E-value inclusion cut-off.',
         },
         patsearch: {
-            noResults: 'No hits found! You could consider picking a different target database.',
+            noResults: 'No hits found! Please consider picking a different target database.',
         },
         hhomp: {
             noResults: 'No hits found! Please re-run HHomp with an increased number of MSA generation steps or with ' +
                 'a custom-built multiple sequence alignment as input (set "Maximal no. of MSA generation steps" to ' +
-                '0). You could also consider picking a different target database and/or using different parameters.',
+                '0). Please also consider picking a different target database and/or using different parameters.',
             numHits: 'Number of Hits: <b>{num}</b>',
             table: {
                 num: 'Nr',
@@ -106,16 +106,19 @@ export default {
             noRepeats: 'No significant repeats found for given values!',
         },
         plot: {
+            numHits: 'Number of Hits: <b>{num}</b>',
+            noResults: 'No hits found! <br> Please consider picking a less stringent E-value/probability cut-off.' +
+                'and/or pick a different target database.',
             prob: {
-                title: 'Probability Distribution',
+                title: 'Cumulative histogram of probability values',
                 xLabel: 'Probability',
-                yLabel: 'No. of matches',
+                yLabel: 'Count',
                 legend: 'No. HSPs',
             },
             eval: {
-                title: 'E-Value Distribution',
+                title: 'Cumulative histogram of E-values',
                 xLabel: '-log10(E-Value)',
-                yLabel: 'No. of matches',
+                yLabel: 'Count',
                 legend: 'No. HSPs',
             },
         },

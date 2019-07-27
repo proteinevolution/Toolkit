@@ -175,7 +175,7 @@ rm ../results/tmp0 ../results/tmp1
 fasta2json.py ../results/alignment.fas ../results/reduced.json
 
 # Create a JSON with -log10(E-values) of the hits
-extract_from_json.py -k 'hits':'eval' ../results/results.json ../results/plot_data.json -log 1 -type "eval"
+extract_from_json.py -tool hhblits ../results/results.json ../results/plot_data.json
 
 # add DB to json
 manipulate_json.py -k 'db' -v '%hhblitsdb.content' ../results/results.json

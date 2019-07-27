@@ -412,7 +412,7 @@ fasta2json.py ../results/alignment.fas ../results/querytemplate.json
 hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/results.json
 
 # Create a JSON with probability values of the hits
-extract_from_json.py -k 'hits':'prob' ../results/results.json ../results/plot_data.json -type "prob"
+extract_from_json.py -tool hhpred ../results/results.json ../results/plot_data.json
 
 # Generate Query in JSON
 fasta2json.py ../results/firstSeq.fas ../results/query.json

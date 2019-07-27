@@ -1,8 +1,15 @@
 <template>
     <Loading :message="$t('loading')"
              v-if="loading"/>
-    <div class="hcontainer" v-else>
-        <highcharts :options="chartOptions"></highcharts>
+    <div v-else class="font-small">
+        <b v-if="results.vals.length === 0"
+           v-html="$t('jobs.results.plot.noResults')">
+        </b>
+        <div class="hcontainer" v-else>
+            <div v-html="$t('jobs.results.plot.numHits', {num: results.vals.length})"></div>
+            <br><br>
+            <highcharts :options="chartOptions"></highcharts>
+        </div>
     </div>
 </template>
 

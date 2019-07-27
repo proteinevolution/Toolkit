@@ -148,6 +148,9 @@ manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/output_psiblastp.json
 # add coiled coil prediction info to json
 manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/output_psiblastp.json
 
+# Create a JSON with -log10(E-values) of the hits
+extract_from_json.py -tool psiblast ../results/output_psiblastp.json ../results/plot_data.json
+
 cd ../results
 
 rm output_psiblastp.asn output_psiblastp.tab

@@ -167,6 +167,9 @@ hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 # Generate Hitlist in JSON for hhrfile
 ${HHOMPPATH}/hhomp_hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/results.json
 
+# Create a JSON with probability values of the hits
+extract_from_json.py -tool hhomp ../results/results.json ../results/plot_data.json
+
 # add DB to json
 manipulate_json.py -k 'db' -v '%hhompdb.content' ../results/results.json
 
