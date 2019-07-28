@@ -41,6 +41,14 @@
                  responsive
                  striped
                  show-empty>
+            <template #numCheck="data">
+                <div class="no-wrap">
+                    <b-checkbox @change="check($event, data.value)"
+                                class="d-inline"
+                                :checked="selectedItems.includes(data.value)"/>
+                    <a @click="$emit('elem-clicked', data.value)">{{ data.value }}</a>
+                </div>
+            </template>
             <template #num="data">
                 <a @click="$emit('elem-clicked', data.value)">{{ data.value }}</a>
             </template>
@@ -77,6 +85,11 @@
     export default Vue.extend({
         name: 'HitListTable',
         props: {
+            selectedItems: {
+                type: Array as () => number[],
+                required: false,
+                default: () => [],
+            },
             fields: {
                 type: Array as () => any[],
                 required: true,
@@ -118,6 +131,16 @@
                         this.end = Math.min(data.end + 1, data.total);
                         return items || [];
                     });
+            },
+            check(val: boolean, num: number): void {
+                if (val && !this.selectedItems.includes(num)) {
+                    this.selectedItems.push(num);
+                } else {
+                    const i: number = this.selectedItems.indexOf(num);
+                    if (i > -1) {
+                        this.selectedItems.splice(i, 1);
+                    }
+                }
             },
         },
     });

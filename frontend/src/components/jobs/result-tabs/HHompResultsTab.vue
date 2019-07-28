@@ -282,7 +282,7 @@
             },
             scrollTo(ref: string): void {
                 if (this.$refs[ref]) {
-                    const elem: HTMLElement = typeof (this.$refs[ref] as any).length ?
+                    const elem: HTMLElement = (this.$refs[ref] as any).length ?
                         (this.$refs[ref] as HTMLElement[])[0] : this.$refs[ref] as HTMLElement;
                     elem.scrollIntoView({
                         block: 'start',

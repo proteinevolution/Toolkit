@@ -353,6 +353,10 @@
         overflow-y: hidden !important;
     }
 
+    .no-wrap {
+        white-space: nowrap;
+    }
+
     .font-small {
         font-size: 0.9em;
     }

@@ -32,7 +32,7 @@ case class HHBlitsHSP(
   def toTableJson(db: String = ""): Json = {
     val _ = db
     Map[String, Json](
-    "num"         -> num.asJson,
+    "numCheck"      -> num.asJson,
     "acc"         -> Common.getSingleLinkHHBlits(template.accession).toString().asJson,
     "name"        -> description.asJson,
     "probab"      -> info.probab.asJson,

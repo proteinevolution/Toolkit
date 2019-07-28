@@ -13,7 +13,8 @@
                 <a @click="scrollTo('alignments')"
                    class="mr-4">{{$t('jobs.results.hitlist.alnLink')}}</a>
                 <a class="border-right mr-4"></a>
-                <a @click="selectAll">{{$t('jobs.results.actions.selectAll')}}</a>
+                <a @click="toggleAllSelected">{{$t('jobs.results.actions.' + (allSelected ? 'deselectAll' :
+                    'selectAll'))}}</a>
                 <a @click="forwardQuery">{{$t('jobs.results.actions.forward')}}</a>
                 <a @click="forwardQueryA3M">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
                 <a @click="toggleColor"
@@ -35,7 +36,8 @@
                 <h4 class="mb-4">{{$t('jobs.results.hitlist.hits')}}</h4>
                 <hit-list-table :job="job"
                                 :fields="hitListFields"
-                                @elem-clicked="scrollToElem"/>
+                                @elem-clicked="scrollToElem"
+                                :selected-items="selectedItems"/>
             </div>
 
             <div class="result-section"
@@ -62,7 +64,12 @@
                                 </td>
                             </tr>
                             <tr class="font-weight-bold">
-                                <td v-text="al.num + '.'"></td>
+                                <td class="no-wrap">
+                                    <b-checkbox @change="check($event, al.num)"
+                                                class="d-inline"
+                                                :checked="selectedItems.includes(al.num)"/>
+                                    <span v-text="al.num + '.'"></span>
+                                </td>
                                 <td colspan="3"
                                     v-html="al.acc + ' ' + al.name"></td>
                             </tr>
@@ -79,7 +86,7 @@
                                 <tr v-if="alPart.query.seq"
                                     class="sequence">
                                     <td></td>
-                                    <td>Q </td>
+                                    <td>Q</td>
                                     <td v-text="alPart.query.start"></td>
                                     <td v-html="coloredSeq(alPart.query.seq) + alQEnd(alPart)"></td>
                                 </tr>
@@ -107,7 +114,7 @@
                                 <tr v-if="alPart.template.seq"
                                     class="sequence">
                                     <td></td>
-                                    <td>T </td>
+                                    <td>T</td>
                                     <td v-text="alPart.template.start"></td>
                                     <td v-html="coloredSeq(alPart.template.seq) + alTEnd(alPart)"></td>
                                 </tr>
@@ -163,8 +170,9 @@
                 color: false,
                 wrap: true,
                 breakAfter: 85,
+                selectedItems: [] as number[],
                 hitListFields: [{
-                    key: 'num',
+                    key: 'numCheck',
                     label: this.$t('jobs.results.hhblits.table.num'),
                     sortable: true,
                 }, {
@@ -194,6 +202,15 @@
                 }],
             };
         },
+        computed: {
+            allSelected(): boolean {
+                if (!this.total) {
+                    return false;
+                }
+                return this.total > 0 &&
+                    this.selectedItems.length === this.total;
+            },
+        },
         methods: {
             async init(): Promise<void> {
                 await this.loadAlignments(0, this.perPage);
@@ -221,7 +238,7 @@
             },
             scrollTo(ref: string): void {
                 if (this.$refs[ref]) {
-                    const elem: HTMLElement = typeof (this.$refs[ref] as any).length ?
+                    const elem: HTMLElement = (this.$refs[ref] as any).length ?
                         (this.$refs[ref] as HTMLElement[])[0] : this.$refs[ref] as HTMLElement;
                     elem.scrollIntoView({
                         block: 'start',
@@ -238,8 +255,27 @@
                     this.scrollTo('alignment-' + num);
                 }
             },
-            selectAll(): void {
-                alert('implement me!');
+            toggleAllSelected(): void {
+                if (!this.total) {
+                    return;
+                }
+                if (this.allSelected) {
+                    this.selectedItems = [];
+                } else {
+                    for (let i = 1; i <= this.total; i++) {
+                        this.selectedItems.push(i);
+                    }
+                }
+            },
+            check(val: boolean, num: number): void {
+                if (val && !this.selectedItems.includes(num)) {
+                    this.selectedItems.push(num);
+                } else {
+                    const i: number = this.selectedItems.indexOf(num);
+                    if (i > -1) {
+                        this.selectedItems.splice(i, 1);
+                    }
+                }
             },
             displayTemplateAlignment(num: number): void {
                 alert('implement me!' + num);
