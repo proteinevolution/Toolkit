@@ -302,9 +302,6 @@
             displayTemplateAlignment(num: number): void {
                 alert('implement me!' + num);
             },
-            resubmitSection(): void {
-                alert('implement me!');
-            },
             forwardQuery(): void {
                 alert('implement me!');
             },

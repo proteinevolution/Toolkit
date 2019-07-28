@@ -7,6 +7,7 @@
             <b-btn variant="secondary"
                    class="ml-auto"
                    v-text="$t('jobs.results.hitlist.resubmitSection')"
+                   @click="resubmitSection"
                    size="sm"/>
             <div class="mt-3 px-2">
                 <vue-slider ref="slider"
@@ -98,6 +99,9 @@
             });
         },
         methods: {
+            resubmitSection(): void {
+                alert('implement me!');
+            },
             coords(area: HitMapItem): string {
                 return `${area.l},${area.t},${area.r},${area.b}`;
             },
