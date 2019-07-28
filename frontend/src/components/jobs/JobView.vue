@@ -118,6 +118,10 @@
                 './result-tabs/NGL3DStructureView.vue')),
             hhompResults: () => lazyLoadView(import(/* webpackChunkName: "hhomp-results" */
                 './result-tabs/HHompResultsTab.vue')),
+            hhblitsResults: () => lazyLoadView(import(/* webpackChunkName: "hhblits-results" */
+                './result-tabs/HHblitsResultsTab.vue')),
+            hhpredResults: () => lazyLoadView(import(/* webpackChunkName: "hhpred-results" */
+                './result-tabs/HHpredResultsTab.vue')),
             clansResults: () => lazyLoadView(import(/* webpackChunkName: "clans-results" */
                 './result-tabs/ClansResultsTab.vue')),
             patsearchResults: () => lazyLoadView(import(/* webpackChunkName: "patsearch-results" */

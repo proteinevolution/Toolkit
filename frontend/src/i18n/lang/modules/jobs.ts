@@ -101,6 +101,36 @@ export default {
                 'E-value: {eval}&emsp;&emsp;Score: {score}&emsp;&emsp;Aligned Cols: {alignedCols}&emsp;&emsp;' +
                 'Identities: {identities}%',
         },
+        hhblits: {
+            noResults: 'No hits found! Please re-run HHblits with a custom-built multiple sequence alignment as ' +
+                'input. Please also consider using different parameters.',
+            numHits: 'Number of Hits: <b>{num}</b>',
+            table: {
+                num: 'Nr',
+                hit: 'Hit',
+                name: 'Name',
+                probHits: 'Probability',
+                eVal: 'E-value',
+                cols: 'Cols',
+                targetLength: 'Target Length',
+            },
+        },
+        hhpred: {
+            noResults: 'No hits found! Please re-run HHpred with an increased number of MSA generation steps or with ' +
+                'a custom-built multiple sequence alignment as input (set "Maximal no. of MSA generation steps" to ' +
+                '0). You could also consider picking a different target database and/or using different parameters.',
+            numHits: 'Number of Hits: <b>{num}</b>',
+            table: {
+                num: 'Nr',
+                hit: 'Hit',
+                name: 'Name',
+                probHits: 'Probability',
+                eVal: 'E-value',
+                ssScore: 'SS',
+                cols: 'Cols',
+                targetLength: 'Target Length',
+            },
+        },
         imagesView: {
             noPeriodicity: 'No periodicity spectrum found!',
             noRepeats: 'No significant repeats found for given values!',
