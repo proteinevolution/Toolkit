@@ -33,9 +33,9 @@ case class HHBlitsHSP(
     val _ = db
     Map[String, Json](
     "num"         -> num.asJson,
-    "acc"         -> template.accession.asJson,
-    "name"        -> description.slice(0, 18).asJson,
-    "probab"   -> info.probab.asJson,
+    "acc"         -> Common.getSingleLinkHHBlits(template.accession).toString().asJson,
+    "name"        -> description.asJson,
+    "probab"      -> info.probab.asJson,
     "eval"        -> info.eval.asJson,
     "alignedCols" -> info.aligned_cols.asJson,
     "templateRef" -> template.ref.asJson
@@ -45,9 +45,9 @@ case class HHBlitsHSP(
   override def toAlignmentSectionJson: Json = {
     Map[String, Json](
       "num"         -> num.asJson,
-      "acc"         -> template.accession.asJson,
+      "acc"         -> Common.getSingleLinkHHBlits(template.accession).toString().asJson,
       "name"        -> description.asJson,
-      "probab"   -> info.probab.asJson,
+      "probab"      -> info.probab.asJson,
       "eval"        -> info.eval.asJson,
       "score"       -> info.score.asJson,
       "alignedCols" -> info.aligned_cols.asJson,

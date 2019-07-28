@@ -44,6 +44,9 @@
             <template #num="data">
                 <a @click="$emit('elem-clicked', data.value)">{{ data.value }}</a>
             </template>
+            <template #acc="data">
+                <span v-html="data.value"></span>
+            </template>
         </b-table>
 
         <div class="pagination-container"

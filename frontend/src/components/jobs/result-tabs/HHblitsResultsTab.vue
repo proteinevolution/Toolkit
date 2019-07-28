@@ -64,7 +64,7 @@
                             <tr class="font-weight-bold">
                                 <td v-text="al.num + '.'"></td>
                                 <td colspan="3"
-                                    v-text="al.acc + ' ' + al.name"></td>
+                                    v-html="al.acc + ' ' + al.name"></td>
                             </tr>
                             <tr>
                                 <td></td>
