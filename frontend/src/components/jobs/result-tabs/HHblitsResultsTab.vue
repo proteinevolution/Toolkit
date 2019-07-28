@@ -44,10 +44,10 @@
                  ref="alignments">
                 <h4>{{$t('jobs.results.hitlist.aln')}}</h4>
 
-                <div class="table-responsive">
+                <div class="table-responsive"
+                     ref="scrollElem">
                     <table class="alignments-table">
                         <tbody>
-
                         <template v-for="(al, i) in alignments">
                             <tr class="blank-row"
                                 :key="'alignment-' + al.num"
@@ -147,6 +147,7 @@
     import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
     import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
     import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
+    import handyScroll from 'handy-scroll';
     import {HHblitsAlignmentItem, SearchAlignmentItem, SearchAlignmentsResponse} from '@/types/toolkit/results';
     import {colorSequence} from '@/util/SequenceUtils';
     import {resultsService} from '@/services/ResultsService';
@@ -210,6 +211,9 @@
                 return this.total > 0 &&
                     this.selectedItems.length === this.total;
             },
+        },
+        beforeDestroy(): void {
+            handyScroll.destroy(this.$refs.scrollElem);
         },
         methods: {
             async init(): Promise<void> {
@@ -292,6 +296,13 @@
             },
             toggleWrap(): void {
                 this.wrap = !this.wrap;
+                this.$nextTick(() => {
+                    if (!handyScroll.mounted(this.$refs.scrollElem)) {
+                        handyScroll.mount(this.$refs.scrollElem);
+                    } else {
+                        handyScroll.update(this.$refs.scrollElem);
+                    }
+                });
             },
             coloredSeq(seq: string): string {
                 return this.color ? colorSequence(seq) : seq;

@@ -118,7 +118,7 @@ export default {
             templateAlignment: 'Template alignment',
             alignmentInfo: 'Probability: {probabHit}%&emsp;&emsp;E-value: {eval}&emsp;&emsp;' +
                 'Score: {score}&emsp;&emsp;Aligned Cols: {alignedCols}&emsp;&emsp;' +
-                'Identities: {identities}%&emsp;&emsp;Similarity: {similarity}%',
+                'Identities: {identities}%&emsp;&emsp;Similarity: {similarity}',
         },
         hhpred: {
             noResults: 'No hits found! Please re-run HHpred with an increased number of MSA generation steps or with ' +

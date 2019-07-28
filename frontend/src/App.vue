@@ -249,6 +249,7 @@
     @import url("https://use.fontawesome.com/releases/v5.2.0/css/all.css");
     $themeColor: $primary;
     @import '~vue-slider-component/lib/theme/default.scss';
+    @import "~handy-scroll/dist/handy-scroll.css";
 
     body {
         overflow-y: scroll;

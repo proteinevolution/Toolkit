@@ -4664,6 +4664,11 @@ handle-thing@^2.0.0:
   resolved "https://registry.yarnpkg.com/handle-thing/-/handle-thing-2.0.0.tgz#0e039695ff50c93fc288557d696f3c1dc6776754"
   integrity sha512-d4sze1JNC454Wdo2fkuyzCr6aHcbL6PGGuFAz0Li/NcOm1tCHGnWDRmJP85dh9IhQErTc2svWFEX5xHIOo//kQ==
 
+handy-scroll@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/handy-scroll/-/handy-scroll-1.0.4.tgz#548c761e39b70460a48345db10b003985832818b"
+  integrity sha512-oQW+bW8u2dOCiaZmaMcQJIGPZrxdqH7En7gTf6Nl2EAZquzcXzoLdvxDr0/RMwYZWU11jOEAcG2xwCSTmSRE3A==
+
 har-schema@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/har-schema/-/har-schema-2.0.0.tgz#a94c2224ebcac04782a0d9035521f24735b7ec92"
@@ -10017,7 +10022,7 @@ vue-switches@^2.0.1:
   dependencies:
     vue "^2.2.6"
 
-vue-template-compiler@^2.6.10:
+vue-template-compiler@^2.4.2, vue-template-compiler@^2.6.10:
   version "2.6.10"
   resolved "https://registry.yarnpkg.com/vue-template-compiler/-/vue-template-compiler-2.6.10.tgz#323b4f3495f04faa3503337a82f5d6507799c9cc"
   integrity sha512-jVZkw4/I/HT5ZMvRnhv78okGusqe0+qH2A0Em0Cp8aq78+NK9TII263CDVz2QXZsIT+yyV/gZc/j/vlwa+Epyg==
@@ -10040,11 +10045,19 @@ vue-typed-mixins@^0.1.0:
   resolved "https://registry.yarnpkg.com/vue-typed-mixins/-/vue-typed-mixins-0.1.0.tgz#e91f32175533a38a4e19b03e4c26ed48a3115207"
   integrity sha512-EFl+MRwssuibUgF6D5v4ZMvNIb/B3CbaeFlptJYhso0d2glMqd4xJmnoVyr5TAezJ0QuVgfFWObzfe4aRzkvKQ==
 
+vue2-scrollbar@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/vue2-scrollbar/-/vue2-scrollbar-0.0.3.tgz#2db07eea49f1330e483c2b1312862f37711c1d57"
+  integrity sha1-LbB+6knxMw5IPCsTEoYvN3EcHVc=
+  dependencies:
+    vue "^2.4.2"
+    vue-template-compiler "^2.4.2"
+
 vue@^2.2.6:
   version "2.5.17"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.17.tgz#0f8789ad718be68ca1872629832ed533589c6ada"
 
-vue@^2.6.10:
+vue@^2.4.2, vue@^2.6.10:
   version "2.6.10"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.10.tgz#a72b1a42a4d82a721ea438d1b6bf55e66195c637"
   integrity sha512-ImThpeNU9HbdZL3utgMCq0oiMzAkt1mcgy3/E6zWC/G6AaQoeuFdsl9nDhTDU3X1R6FK7nsIUuRACVcjI+A2GQ==
