@@ -262,6 +262,7 @@
                 if (this.allSelected) {
                     this.selectedItems = [];
                 } else {
+                    this.selectedItems = [];
                     for (let i = 1; i <= this.total; i++) {
                         this.selectedItems.push(i);
                     }
