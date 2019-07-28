@@ -130,7 +130,7 @@ rm ../results/firstSeq0.fas
 
 # create HTML and PNG for blastviz visualisation
 blastJson2tab.py ../results/output_psiblastp.json ../results/output_psiblastp.tab
-blastviz_json.pl ../results/output_psiblastp.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
+blastviz.pl ../results/output_psiblastp.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
 
 # Generate Query in JSON
 fasta2json.py ../results/firstSeq.fas ../results/query.json

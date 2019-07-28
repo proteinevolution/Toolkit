@@ -66,6 +66,7 @@ export default {
             wrapSeqs: 'Wrap Seqs',
             downloadTree: 'Download Tree',
             downloadPDBFile: 'Download PDB File',
+            model: 'Model using selection',
         },
         alignment: {
             numSeqs: 'Number of Sequences: <b>{num}</b>',
@@ -133,6 +134,36 @@ export default {
                 ssScore: 'SS',
                 cols: 'Cols',
                 targetLength: 'Target Length',
+            },
+        },
+        psiblast: {
+            noResults: 'No hits found! Please re-run ProtBLAST/PSI-BLAST with a custom-built multiple sequence ' +
+                'alignment. You could also consider picking a different target database and/or using ' +
+                'different parameters.',
+            numHits: 'Number of Hits: <b>{num}</b>',
+            table: {
+                num: 'Nr',
+                accession: 'Accession ID',
+                description: 'Title',
+                eValue: 'E-value',
+                bitscore: 'Bitscore',
+                ref_len: 'Length',
+                hit_len: 'Aligned Positions',
+            },
+        },
+        hmmer: {
+            noResults: 'No hits found! Please re-run HMMER with a custom-built multiple sequence alignment as input ' +
+                '(set "MSA enrichment iterations using HHblits" to 0). You could also consider picking a different ' +
+                'target database and/or using different parameters.',
+            numHits: 'Number of Hits: <b>{num}</b>',
+            table: {
+                num: 'Nr',
+                accession: 'ID',
+                description: 'Title',
+                full_evalue: 'E-value',
+                eValue: 'Ind. E-value',
+                bitscore: 'Bitscore',
+                hit_len: 'Aligned Positions',
             },
         },
         imagesView: {

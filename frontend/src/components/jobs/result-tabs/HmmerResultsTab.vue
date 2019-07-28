@@ -4,7 +4,7 @@
     <div v-else
          class="font-small">
         <b v-if="total === 0"
-           v-text="$t('jobs.results.hhpred.noResults')">
+           v-text="$t('jobs.results.hmmer.noResults')">
         </b>
         <div v-else>
             <div class="result-options">
@@ -15,15 +15,13 @@
                 <a class="border-right mr-4"></a>
                 <a @click="forwardQuery">{{$t('jobs.results.actions.selectAll')}}</a>
                 <a @click="forwardQuery">{{$t('jobs.results.actions.forward')}}</a>
-                <a @click="forwardQuery">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
-                <a @click="forwardQuery">{{$t('jobs.results.actions.model')}}</a>
                 <a @click="toggleColor"
                    :class="{active: color}">{{$t('jobs.results.actions.colorSeqs')}}</a>
                 <a @click="toggleWrap"
                    :class="{active: wrap}">{{$t('jobs.results.actions.wrapSeqs')}}</a>
             </div>
 
-            <div v-html="$t('jobs.results.hhpred.numHits', {num: total})"></div>
+            <div v-html="$t('jobs.results.hmmer.numHits', {num: total})"></div>
             <div class="result-section"
                  ref="visualization">
                 <h4>{{$t('jobs.results.hitlist.vis')}}</h4>
@@ -52,10 +50,10 @@
     import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
     import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
 
-    const logger = Logger.get('HHpredResultsTab');
+    const logger = Logger.get('HmmerResultsTab');
 
     export default mixins(ResultTabMixin).extend({
-        name: 'HHpredResultsTab',
+        name: 'HmmerResultsTab',
         components: {
             Loading,
             HitListTable,
@@ -67,35 +65,31 @@
                 total: 100,
                 hitListFields: [{
                     key: 'num',
-                    label: this.$t('jobs.results.hhpred.table.num'),
+                    label: this.$t('jobs.results.hmmer.table.num'),
                     sortable: true,
                 }, {
-                    key: 'acc',
-                    label: this.$t('jobs.results.hhpred.table.hit'),
+                    key: 'accession',
+                    label: this.$t('jobs.results.hmmer.table.accession'),
                     sortable: true,
                 }, {
-                    key: 'name',
-                    label: this.$t('jobs.results.hhpred.table.name'),
+                    key: 'description',
+                    label: this.$t('jobs.results.hmmer.table.description'),
                     sortable: true,
                 }, {
-                    key: 'probab',
-                    label: this.$t('jobs.results.hhpred.table.probHits'),
+                    key: 'full_evalue',
+                    label: this.$t('jobs.results.hmmer.table.full_evalue'),
                     sortable: true,
                 }, {
-                    key: 'eval',
-                    label: this.$t('jobs.results.hhpred.table.eVal'),
+                    key: 'eValue',
+                    label: this.$t('jobs.results.hmmer.table.eValue'),
                     sortable: true,
                 }, {
-                    key: 'ssScore',
-                    label: this.$t('jobs.results.hhpred.table.ssScore'),
+                    key: 'bitscore',
+                    label: this.$t('jobs.results.hmmer.table.bitscore'),
                     sortable: true,
                 }, {
-                    key: 'alignedCols',
-                    label: this.$t('jobs.results.hhpred.table.cols'),
-                    sortable: true,
-                }, {
-                    key: 'templateRef',
-                    label: this.$t('jobs.results.hhpred.table.targetLength'),
+                    key: 'hit_len',
+                    label: this.$t('jobs.results.hmmer.table.hit_len'),
                     sortable: true,
                 }],
             };

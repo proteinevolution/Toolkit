@@ -122,6 +122,10 @@
                 './result-tabs/HHblitsResultsTab.vue')),
             hhpredResults: () => lazyLoadView(import(/* webpackChunkName: "hhpred-results" */
                 './result-tabs/HHpredResultsTab.vue')),
+            psiblastResults: () => lazyLoadView(import(/* webpackChunkName: "psiblast-results" */
+                './result-tabs/PsiblastResultsTab.vue')),
+            hmmerResults: () => lazyLoadView(import(/* webpackChunkName: "hmmer-results" */
+                './result-tabs/HmmerResultsTab.vue')),
             clansResults: () => lazyLoadView(import(/* webpackChunkName: "clans-results" */
                 './result-tabs/ClansResultsTab.vue')),
             patsearchResults: () => lazyLoadView(import(/* webpackChunkName: "patsearch-results" */

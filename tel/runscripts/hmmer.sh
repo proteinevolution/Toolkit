@@ -141,7 +141,7 @@ if [[ -s "../results/${JOBID}.msa_sto" ]]; then
     manipulate_json.py -k 'db' -v '%hmmerdb.content' ../results/${JOBID}.json
     #create tab separated file to feed into blastviz
     hmmerJson2tab.py ../results/${JOBID}.json ../results/query.json ../results/${JOBID}.tab
-    blastviz_json.pl ../results/${JOBID}.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
+    blastviz.pl ../results/${JOBID}.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
 
     # add transmembrane prediction info to json
     manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/${JOBID}.json
