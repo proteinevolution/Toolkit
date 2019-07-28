@@ -52,7 +52,9 @@ case class HHBlitsHSP(
       "score"       -> info.score.asJson,
       "alignedCols" -> info.aligned_cols.asJson,
       "identities"  -> info.identities.asJson,
+      "similarity"  -> info.similarity.asJson,
       "query"       -> query.asJson,
+      "agree"       -> agree.asJson,
       "template"    -> template.asJson
     ).asJson
   }

@@ -13,9 +13,9 @@
                 <a @click="scrollTo('alignments')"
                    class="mr-4">{{$t('jobs.results.hitlist.alnLink')}}</a>
                 <a class="border-right mr-4"></a>
-                <a @click="forwardQuery">{{$t('jobs.results.actions.selectAll')}}</a>
+                <a @click="selectAll">{{$t('jobs.results.actions.selectAll')}}</a>
                 <a @click="forwardQuery">{{$t('jobs.results.actions.forward')}}</a>
-                <a @click="forwardQuery">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
+                <a @click="forwardQueryA3M">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
                 <a @click="toggleColor"
                    :class="{active: color}">{{$t('jobs.results.actions.colorSeqs')}}</a>
                 <a @click="toggleWrap"
@@ -37,8 +37,98 @@
                                 :fields="hitListFields"
                                 @elem-clicked="scrollToElem"/>
             </div>
+
+            <div class="result-section"
+                 ref="alignments">
+                <h4>{{$t('jobs.results.hitlist.aln')}}</h4>
+
+                <div class="table-responsive">
+                    <table class="alignments-table">
+                        <tbody>
+
+                        <template v-for="(al, i) in alignments">
+                            <tr class="blank-row"
+                                :key="'alignment-' + al.num"
+                                :ref="'alignment-' + al.num">
+                                <td colspan="4">
+                                    <hr v-if="i !== 0"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td colspan="3">
+                                    <a @click="displayTemplateAlignment(al.num)"
+                                       v-text="$t('jobs.results.hhblits.templateAlignment')"></a>
+                                </td>
+                            </tr>
+                            <tr class="font-weight-bold">
+                                <td v-text="al.num + '.'"></td>
+                                <td colspan="3"
+                                    v-text="al.acc + ' ' + al.name"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td colspan="3"
+                                    v-html="$t('jobs.results.hhblits.alignmentInfo', al)"></td>
+                            </tr>
+
+                            <template v-for="alPart in wrapAlignments(al)">
+                                <tr class="blank-row">
+                                    <td></td>
+                                </tr>
+                                <tr v-if="alPart.query.seq"
+                                    class="sequence">
+                                    <td></td>
+                                    <td>Q </td>
+                                    <td v-text="alPart.query.start"></td>
+                                    <td v-html="coloredSeq(alPart.query.seq) + alQEnd(alPart)"></td>
+                                </tr>
+                                <tr v-if="alPart.query.consensus"
+                                    class="sequence">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td v-html="alPart.query.consensus"></td>
+                                </tr>
+                                <tr v-if="alPart.agree"
+                                    class="sequence">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td v-text="alPart.agree"></td>
+                                </tr>
+                                <tr v-if="alPart.template.consensus"
+                                    class="sequence">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td v-html="alPart.template.consensus"></td>
+                                </tr>
+                                <tr v-if="alPart.template.seq"
+                                    class="sequence">
+                                    <td></td>
+                                    <td>T </td>
+                                    <td v-text="alPart.template.start"></td>
+                                    <td v-html="coloredSeq(alPart.template.seq) + alTEnd(alPart)"></td>
+                                </tr>
+                            </template>
+
+                        </template>
+
+                        <tr v-if="alignments.length !== total">
+                            <td colspan="4">
+                                <Loading :message="$t('jobs.results.alignment.loadingHits')"
+                                         v-if="loadingMore"
+                                         justify="center"
+                                         class="mt-4"/>
+                                <intersection-observer @intersect="intersected"/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
     </div>
 </template>
 
@@ -50,6 +140,9 @@
     import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
     import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
     import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
+    import {HHblitsAlignmentItem, SearchAlignmentItem, SearchAlignmentsResponse} from '@/types/toolkit/results';
+    import {colorSequence} from '@/util/SequenceUtils';
+    import {resultsService} from '@/services/ResultsService';
 
     const logger = Logger.get('HHblitsResultsTab');
 
@@ -63,7 +156,13 @@
         },
         data() {
             return {
+                alignments: undefined as HHblitsAlignmentItem[] | undefined,
                 total: 100,
+                loadingMore: false,
+                perPage: 20,
+                color: false,
+                wrap: true,
+                breakAfter: 85,
                 hitListFields: [{
                     key: 'num',
                     label: this.$t('jobs.results.hhblits.table.num'),
@@ -94,6 +193,119 @@
                     sortable: true,
                 }],
             };
+        },
+        methods: {
+            async init(): Promise<void> {
+                await this.loadAlignments(0, this.perPage);
+            },
+            async intersected(): Promise<void> {
+                if (!this.loadingMore && this.alignments && this.alignments.length < this.total) {
+                    this.loadingMore = true;
+                    try {
+                        await this.loadAlignments(this.alignments.length, this.alignments.length + this.perPage);
+                    } catch (e) {
+                        logger.error(e);
+                    }
+                    this.loadingMore = false;
+                }
+            },
+            async loadAlignments(start: number, end: number): Promise<void> {
+                const res: SearchAlignmentsResponse<HHblitsAlignmentItem> =
+                    await resultsService.fetchHHAlignmentResults(this.job.jobID, start, end);
+                this.total = res.total;
+                if (!this.alignments) {
+                    this.alignments = res.alignments;
+                } else {
+                    this.alignments.push(...res.alignments);
+                }
+            },
+            scrollTo(ref: string): void {
+                if (this.$refs[ref]) {
+                    const elem: HTMLElement = typeof (this.$refs[ref] as any).length ?
+                        (this.$refs[ref] as HTMLElement[])[0] : this.$refs[ref] as HTMLElement;
+                    elem.scrollIntoView({
+                        block: 'start',
+                        behavior: 'smooth',
+                    });
+                }
+            },
+            async scrollToElem(num: number): Promise<void> {
+                const loadNum: number = num + 2; // load some more for better scrolling
+                if (this.alignments && this.alignments.map((a: HHblitsAlignmentItem) => a.num).includes(loadNum)) {
+                    this.scrollTo('alignment-' + num);
+                } else if (this.alignments) {
+                    await this.loadAlignments(this.alignments.length, loadNum);
+                    this.scrollTo('alignment-' + num);
+                }
+            },
+            selectAll(): void {
+                alert('implement me!');
+            },
+            displayTemplateAlignment(num: number): void {
+                alert('implement me!' + num);
+            },
+            resubmitSection(): void {
+                alert('implement me!');
+            },
+            forwardQuery(): void {
+                alert('implement me!');
+            },
+            forwardQueryA3M(): void {
+                alert('implement me!');
+            },
+            toggleColor(): void {
+                this.color = !this.color;
+            },
+            toggleWrap(): void {
+                this.wrap = !this.wrap;
+            },
+            coloredSeq(seq: string): string {
+                return this.color ? colorSequence(seq) : seq;
+            },
+            alQEnd(al: HHblitsAlignmentItem): string {
+                return ` &nbsp; ${al.query.end} (${al.query.ref})`;
+            },
+            alTEnd(al: HHblitsAlignmentItem): string {
+                return ` &nbsp; ${al.template.end} (${al.template.ref})`;
+            },
+            wrapAlignments(al: HHblitsAlignmentItem): SearchAlignmentItem[] {
+                if (this.wrap) {
+                    const res: SearchAlignmentItem[] = [];
+                    let qStart: number = al.query.start;
+                    let tStart: number = al.template.start;
+                    for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
+                        const end: number = start + this.breakAfter;
+                        const qSeq: string = al.query.seq.slice(start, end);
+                        const tSeq: string = al.template.seq.slice(start, end);
+                        const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
+                        const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
+                        res.push({
+                            agree: al.agree.slice(start, end),
+                            query: {
+                                consensus: al.query.consensus.slice(start, end),
+                                end: qEnd,
+                                name: al.query.name,
+                                ref: al.query.ref,
+                                seq: qSeq,
+                                start: qStart,
+                            },
+                            template: {
+                                accession: al.template.accession,
+                                consensus: al.template.consensus.slice(start, end),
+                                end: tEnd,
+                                ref: al.template.ref,
+                                seq: tSeq,
+                                start: tStart,
+                            },
+                        });
+                        qStart = qEnd + 1;
+                        tStart = tEnd + 1;
+                    }
+                    return res;
+                } else {
+                    return [al];
+                }
+            },
         },
     });
 </script>

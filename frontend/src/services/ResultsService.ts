@@ -1,5 +1,9 @@
 import axios from 'axios';
-import {AlignmentItem, AlignmentResultResponse, HHompHitsResponse} from '@/types/toolkit/results';
+import {
+    AlignmentResultResponse, SearchAlignmentItem,
+    SearchAlignmentsResponse,
+    SearchHitsResponse,
+} from '@/types/toolkit/results';
 
 class ResultsService {
 
@@ -29,8 +33,9 @@ class ResultsService {
         });
     }
 
-    public fetchHHAlignmentResults(jobId: string, start?: number, end?: number): Promise<AlignmentResultResponse> {
-        return new Promise<AlignmentResultResponse>((resolve, reject) => {
+    public fetchHHAlignmentResults<T extends SearchAlignmentItem>(jobId: string, start?: number, end?: number):
+        Promise<SearchAlignmentsResponse<T>> {
+        return new Promise<SearchAlignmentsResponse<T>>((resolve, reject) => {
             const url: string = `/api/jobs/${jobId}/results/hh-alignments/`;
             axios.get(url, {
                 params: {
@@ -46,8 +51,8 @@ class ResultsService {
     }
 
     public fetchHits(jobId: string, start?: number, end?: number, filter?: string, sortBy?: string, desc?: boolean):
-        Promise<HHompHitsResponse> {
-        return new Promise<HHompHitsResponse>((resolve, reject) => {
+        Promise<SearchHitsResponse> {
+        return new Promise<SearchHitsResponse>((resolve, reject) => {
             const url: string = `/api/jobs/${jobId}/results/hits/`;
             axios.get(url, {
                 params: {
