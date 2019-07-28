@@ -55,9 +55,8 @@ case class HHompHSP(
       "eval"        -> info.eval.asJson,
       "score"       -> info.score.asJson,
       "alignedCols" -> info.aligned_cols.asJson,
-      "identities"  -> (info.identities * 100).asJson,
+      "identities"  -> info.identities.asJson,
       "query"       -> query.asJson,
-      "agree"       -> agree.asJson,
       "template"    -> template.asJson
     ).asJson
   }
