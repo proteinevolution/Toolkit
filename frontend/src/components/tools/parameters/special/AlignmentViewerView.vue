@@ -20,9 +20,8 @@
         </b-form-group>
         <b-btn class="submit-button float-right"
                @click="showAlignment"
-               variant="primary">
-            View Alignment
-        </b-btn>
+               variant="primary"
+               v-text="$t('tools.alignmentViewer.viewAlignment')"></b-btn>
     </div>
 </template>
 
