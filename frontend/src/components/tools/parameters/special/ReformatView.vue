@@ -90,6 +90,7 @@
     import Logger from 'js-logger';
     import {sampleSeqService} from '@/services/SampleSeqService';
     import Loading from '@/components/utils/Loading.vue';
+    import {jobService} from '@/services/JobService';
 
     const logger = Logger.get('ReformatView');
 
@@ -163,6 +164,7 @@
             },
             computeOutput(selectedFormat: SelectOption): void {
                 if (selectedFormat !== undefined && this.reformat !== undefined) {
+                    jobService.logFrontendJob(this.$route.params.toolName);
                     this.output = this.reformat.reformat(selectedFormat.value);
                     this.forwardingOptions = this.tools
                         .filter((tool: Tool) => {
