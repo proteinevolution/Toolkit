@@ -50,14 +50,13 @@ object HHBlitsResult {
 
   implicit val hhblitsResultDecoder: Decoder[HHBlitsResult] = (c: HCursor) =>
     for {
-      jobId      <- c.downField("jobID").as[String]
-      hits       <- c.downField(jobId).downField("hits").as[List[Json]]
-      alignments <- c.downField(jobId).downField("alignments").as[List[Json]]
-      db         <- c.downField(jobId).downField("db").as[String]
+      hits       <- c.downField("results").downField("hits").as[List[Json]]
+      alignments <- c.downField("results").downField("alignments").as[List[Json]]
+      db         <- c.downField("results").downField("db").as[String]
       alignment  <- c.downField("reduced").as[AlignmentResult]
       query      <- c.downField("query").as[SingleSeq]
-      tmpred     <- c.downField(jobId).downField("TMPRED").as[Option[String]]
-      coilpred   <- c.downField(jobId).downField("COILPRED").as[Option[String]]
+      tmpred     <- c.downField("results").downField("TMPRED").as[Option[String]]
+      coilpred   <- c.downField("results").downField("COILPRED").as[Option[String]]
     } yield {
       val hspList = HHBlitsHSP.hhblitsHSPListDecoder(hits, alignments)
       new HHBlitsResult(hspList, alignment, hspList.length, query, db, tmpred.getOrElse("0"), coilpred.getOrElse("1"))

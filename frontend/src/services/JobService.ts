@@ -33,6 +33,16 @@ class JobService {
         });
     }
 
+    public logFrontendJob(toolName: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            axios.get(`/api/jobs/?toolName=${toolName}`)
+                .then(() => {
+                    resolve();
+                })
+                .catch(reject);
+        });
+    }
+
     /**
      * Ask for delete of job. Job will get cleared over websockets as well.
      * @param jobID

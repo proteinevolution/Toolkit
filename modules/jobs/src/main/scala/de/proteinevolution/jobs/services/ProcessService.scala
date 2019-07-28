@@ -24,7 +24,6 @@ import de.proteinevolution.common.models.{ConstantsV2, ToolName}
 import de.proteinevolution.jobs.db.ResultFileAccessor
 import de.proteinevolution.jobs.models.{ForwardMode, ForwardingData}
 import de.proteinevolution.jobs.results.{HSP, SearchResult}
-import de.proteinevolution.jobs.services.ResultsRepository.ResultsService
 import io.circe.DecodingFailure
 import javax.inject.{Inject, Singleton}
 import play.api.{Configuration, Logging}
@@ -39,12 +38,9 @@ final class ProcessService @Inject()(
     resultFiles: ResultFileAccessor,
     constants: ConstantsV2
 )(implicit ec: ExecutionContext)
-    extends ResultsRepository
-    with Logging {
+    extends Logging {
 
   private[this] val scriptPath: String = config.get[String]("server_scripts")
-
-  private[this] val resultsService = ResultsService(resultFiles)
 
   def templateAlignment(jobId: String, accession: String): OptionT[Future, Int] = {
     for {
@@ -76,13 +72,13 @@ final class ProcessService @Inject()(
       form: ForwardingData
   ): EitherT[Future, DecodingFailure, Int] = {
     EitherT((for {
-      json <- getResults(jobId).run(resultsService)
+      json <- resultFiles.getResults(jobId)
       tool <- toolFinder.getTool(jobId)
     } yield {
       (json, tool)
     }).map {
       case (json, tool) =>
-        parseResult(tool, json).map { result =>
+        resultFiles.parseResult(tool, json).map { result =>
             val accStr = mode.toString match {
               case "alnEval" | "evalFull" => form.evalue.getOrElse("")
               case "aln" | "full" => form.checkboxes.toSeq.mkString("\n")

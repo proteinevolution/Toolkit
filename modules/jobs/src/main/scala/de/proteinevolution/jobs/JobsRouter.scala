@@ -46,10 +46,10 @@ class JobsRouter @Inject()(
   }
 
   private lazy val submissionRoutes: Routes = {
-    case POST(p"/" ? q"toolName=$toolName")  => submissionController.submitJob(toolName)
-    case PUT(p"/$jobID")                     => submissionController.changeJob(jobID)
-    case DELETE(p"/$jobID")                  => submissionController.delete(jobID)
-    case POST(p"/frontend/submit/$toolName") => submissionController.frontend(toolName)
+    case POST(p"/" ? q"toolName=$toolName")          => submissionController.submitJob(toolName)
+    case GET(p"/frontend/" ? q"toolName=$toolName") => submissionController.frontend(toolName)
+    case PUT(p"/$jobID")                             => submissionController.changeJob(jobID)
+    case DELETE(p"/$jobID")                          => submissionController.delete(jobID)
   }
 
   private lazy val clusterApiRoutes: Routes = {

@@ -123,7 +123,7 @@
                                     <td v-text="alPart.template.start"></td>
                                     <td v-html="alPart.template.consensus + alTEnd(alPart)"></td>
                                 </tr>
-                                <tr v-if="alPart.template.accession"
+                                <tr v-if="alPart.template.seq"
                                     class="sequence">
                                     <td></td>
                                     <td v-text="'Q ' + alPart.template.accession"></td>
@@ -168,9 +168,8 @@
                             </template>
 
                         </template>
-                        <tr>
-                            <td v-if="alignments.length !== total"
-                                colspan="4">
+                        <tr v-if="alignments.length !== total">
+                            <td colspan="4">
                                 <Loading :message="$t('jobs.results.alignment.loadingHits')"
                                          v-if="loadingMore"
                                          justify="center"
@@ -194,7 +193,7 @@
     import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
     import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
     import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-    import {HHompAlignmentItem, HHompAlignmentsResponse, SearchAlignmentItem} from '@/types/toolkit/results';
+    import {HHompAlignmentItem, SearchAlignmentsResponse, SearchAlignmentItem} from '@/types/toolkit/results';
     import {resultsService} from '@/services/ResultsService';
     import {colorSequence, ssColorSequence} from '@/util/SequenceUtils';
 
@@ -272,7 +271,7 @@
                 }
             },
             async loadAlignments(start: number, end: number): Promise<void> {
-                const res: HHompAlignmentsResponse =
+                const res: SearchAlignmentsResponse<HHompAlignmentItem> =
                     await resultsService.fetchHHAlignmentResults(this.job.jobID, start, end);
                 this.total = res.total;
                 if (!this.alignments) {

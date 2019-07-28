@@ -188,6 +188,7 @@ export default {
     },
     alignmentViewer: {
         visualization: 'Visualization',
+        viewAlignment: 'View Alignment',
     },
     citations: {
         intro: 'If you use {tool} on our Toolkit for your research, please cite as appropriate:',

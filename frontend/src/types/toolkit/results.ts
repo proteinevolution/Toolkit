@@ -4,31 +4,23 @@ export interface SearchAlignmentItem {
     template: any;
 }
 
-export interface HHompHitsResponse {
-    hits: HHompHitItem[] | any[];
+export interface SearchHitItem {
+    num: number;
+}
+
+export interface SearchHitsResponse {
+    hits: SearchHitItem[];
     total: number;
     totalNoFilter: number;
     start: number;
     end: number;
 }
 
-export interface HHompAlignmentsResponse {
-    alignments: HHompAlignmentItem[] | any[];
+export interface SearchAlignmentsResponse<T extends SearchAlignmentItem> {
+    alignments: T[];
     total: number;
     start: number;
     end: number;
-}
-
-export interface HHompHitItem {
-    num: number;
-    acc: string;
-    name: string;
-    alignedCols: number;
-    probabHit: number;
-    probabOMP: number;
-    eval: number;
-    ssScore: number;
-    templateRef: number;
 }
 
 export interface HHompAlignmentItem extends SearchAlignmentItem {
@@ -38,6 +30,17 @@ export interface HHompAlignmentItem extends SearchAlignmentItem {
     alignedCols: number;
     probabHit: number;
     probabOMP: number;
+    eval: number;
+    score: number;
+    identities: number;
+}
+
+export interface HHblitsAlignmentItem extends SearchAlignmentItem {
+    num: number;
+    acc: string;
+    name: string;
+    alignedCols: number;
+    probab: number;
     eval: number;
     score: number;
     identities: number;

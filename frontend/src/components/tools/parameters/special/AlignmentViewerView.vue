@@ -20,9 +20,8 @@
         </b-form-group>
         <b-btn class="submit-button float-right"
                @click="showAlignment"
-               variant="primary">
-            View Alignment
-        </b-btn>
+               variant="primary"
+               v-text="$t('tools.alignmentViewer.viewAlignment')"></b-btn>
     </div>
 </template>
 
@@ -34,6 +33,7 @@
     import Logger from 'js-logger';
     import {sampleSeqService} from '@/services/SampleSeqService';
     import Loading from '@/components/utils/Loading.vue';
+    import {jobService} from '@/services/JobService';
 
     const logger = Logger.get('AlignmentViewerView');
 
@@ -84,6 +84,7 @@
                     });
             },
             showAlignment() {
+                jobService.logFrontendJob(this.$route.params.toolName);
                 EventBus.$emit('alignment-viewer-result-open', {
                     sequences: this.input,
                     format: this.detectedFormat.toLowerCase(),

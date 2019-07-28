@@ -20,7 +20,6 @@ import cats.data.EitherT
 import cats.implicits._
 import de.proteinevolution.jobs.db.ResultFileAccessor
 import de.proteinevolution.jobs.models.ResultsForm
-import de.proteinevolution.jobs.services.ResultsRepository.ResultsService
 import io.circe.{ DecodingFailure, Json, JsonObject }
 import io.circe.syntax._
 import javax.inject.{ Inject, Singleton }
@@ -33,18 +32,14 @@ class HHService @Inject()(
     toolFinder: ToolNameGetService,
     resultFiles: ResultFileAccessor
 )(implicit ec: ExecutionContext)
-    extends ResultsRepository
-    with DTService
-    with Logging {
-
-  private val resultsService = ResultsService(resultFiles)
+    extends Logging {
 
   def loadHits(jobID: String, form: ResultsForm): EitherT[Future, DecodingFailure, Json] = {
     EitherT((for {
-      json <- getResults(jobID).run(resultsService)
+      json <- resultFiles.getResults(jobID)
       tool <- toolFinder.getTool(jobID)
     } yield (json, tool)).map {
-      case (json, tool) => parseResult(tool, json)
+      case (json, tool) => resultFiles.parseResult(tool, json)
       case _ =>
         val error = "parsing result json failed."
         logger.error(error)
@@ -75,10 +70,10 @@ class HHService @Inject()(
 
   def loadAlignments(jobID: String, start: Option[Int], end: Option[Int]): EitherT[Future, DecodingFailure, Json] = {
     EitherT((for {
-      json <- getResults(jobID).run(resultsService)
+      json <- resultFiles.getResults(jobID)
       tool <- toolFinder.getTool(jobID)
     } yield (json, tool)).map {
-      case (json, tool) => parseResult(tool, json)
+      case (json, tool) => resultFiles.parseResult(tool, json)
       case _ =>
         val error = "parsing result json failed."
         logger.error(error)
