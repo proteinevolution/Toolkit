@@ -18,7 +18,7 @@ package de.proteinevolution.jobs.controllers
 
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.models.{ForwardMode, ForwardingData, HHContext}
-import de.proteinevolution.jobs.services.{ProcessService, ResultsRepository}
+import de.proteinevolution.jobs.services.ProcessService
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent}
 
@@ -29,8 +29,7 @@ class ProcessController @Inject()(
     ctx: HHContext,
     service: ProcessService
 )(implicit ec: ExecutionContext)
-    extends ToolkitController(ctx.controllerComponents)
-    with ResultsRepository {
+    extends ToolkitController(ctx.controllerComponents) {
 
   def templateAlignment(jobId: String, accession: String): Action[AnyContent] = Action.async { implicit request =>
     service.templateAlignment(jobId, accession).value.map {

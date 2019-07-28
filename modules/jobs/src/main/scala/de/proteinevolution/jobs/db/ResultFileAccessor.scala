@@ -19,9 +19,19 @@ package de.proteinevolution.jobs.db
 import java.io.FileNotFoundException
 
 import better.files._
-import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.common.models.{ ConstantsV2, ToolName }
+import de.proteinevolution.common.models.ToolName.{ HHBLITS, HHOMP, HHPRED, HMMER, PSIBLAST }
+import de.proteinevolution.jobs.results.{
+  HHBlitsResult,
+  HHPredResult,
+  HHompResult,
+  HSP,
+  HmmerResult,
+  PSIBlastResult,
+  SearchResult
+}
 import de.proteinevolution.jobs.services.JobFolderValidation
-import io.circe.Json
+import io.circe.{ DecodingFailure, Json }
 import io.circe.parser._
 import io.circe.syntax._
 import javax.inject.{ Inject, Singleton }
@@ -60,6 +70,20 @@ final class ResultFileAccessor @Inject()(
       }
     } else {
       throw new FileNotFoundException(s"result file for $jobID not found")
+    }
+  }
+
+  def parseResult(
+      tool: ToolName,
+      json: Json
+  ): Either[DecodingFailure, SearchResult[HSP]] = {
+    tool match {
+      case HHBLITS  => json.as[HHBlitsResult]
+      case HHPRED   => json.as[HHPredResult]
+      case HHOMP    => json.as[HHompResult]
+      case HMMER    => json.as[HmmerResult]
+      case PSIBLAST => json.as[PSIBlastResult]
+      case _        => throw new IllegalArgumentException("tool has no hitlist")
     }
   }
 
