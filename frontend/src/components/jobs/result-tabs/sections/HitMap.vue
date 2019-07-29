@@ -141,6 +141,7 @@
 
             .tooltip-inner {
                 max-width: 90%;
+                min-width: 15rem;
             }
         }
     }
