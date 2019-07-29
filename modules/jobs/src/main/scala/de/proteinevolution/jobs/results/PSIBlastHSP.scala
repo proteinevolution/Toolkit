@@ -54,6 +54,18 @@ case class PSIBlastHSP(
     ).asJson
   }
 
+  def toAlignmentSectionJson(db: String): Json = {
+    Map[String, Either[Double, String]](
+      "0" -> Right(Common.getCheckbox(num)),
+      "1" -> Right(Common.getSingleLinkDB(db, accession).toString),
+      "2" -> Right(Common.addBreak(description.slice(0, 84))),
+      "3" -> Right("%.2e".format(eValue)),
+      "4" -> Left(bitScore),
+      "5" -> Left(ref_len.toDouble),
+      "6" -> Left(hit_len.toDouble)
+    ).asJson
+  }
+
 }
 
 object PSIBlastHSP {

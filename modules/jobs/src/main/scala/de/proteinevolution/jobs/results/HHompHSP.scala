@@ -30,8 +30,7 @@ case class HHompHSP(
     length: Int
 ) extends HSP {
 
-  def toTableJson(db: String = ""): Json = {
-    val _ = db
+  def toTableJson(db: String): Json = {
     Map[String, Json](
       "num"         -> num.asJson,
       "acc"         -> template.accession.asJson,
@@ -45,7 +44,7 @@ case class HHompHSP(
     ).asJson
   }
 
-  override def toAlignmentSectionJson: Json = {
+  def toAlignmentSectionJson(db: String): Json = {
     Map[String, Json](
       "num"         -> num.asJson,
       "acc"         -> template.accession.asJson,

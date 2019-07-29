@@ -23,7 +23,7 @@ case class HmmerHSP(
     eValue: Double,
     full_evalue: Double,
     num: Int,
-    bitscore: Double,
+    bitScore: Double,
     hit_start: Int,
     hit_end: Int,
     hit_seq: String,
@@ -37,18 +37,31 @@ case class HmmerHSP(
     description: String,
     domain_obs_num: Int
 ) extends HSP {
+
   def toTableJson(db: String): Json = {
-    import SearchResultImplicits._
-    Map[String, Either[Either[Double, Int], String]](
-      "0" -> Right(Common.getCheckbox(num)),
-      "1" -> Right(Common.getSingleLinkDB(db, accession).toString),
-      "2" -> Right(Common.addBreak(description.slice(0, 84))),
-      "3" -> Left(Left(full_evalue)),
-      "4" -> Left(Left(eValue)),
-      "5" -> Left(Left(bitscore)),
-      "6" -> Left(Right(hit_len))
+    Map[String, Json](
+      "numCheck" -> num.asJson,
+      "acc"      -> Common.getSingleLinkDB(db, accession).toString.asJson,
+      "name"     -> description.slice(0, 84).asJson,
+      "fullEval" -> full_evalue.asJson,
+      "eval"     -> eValue.asJson,
+      "bitScore" -> bitScore.asJson,
+      "hitLen"   -> hit_len.asJson
     ).asJson
   }
+
+  def toAlignmentSectionJson(db: String): Json = {
+    Map[String, Json](
+      "num"         -> num.asJson,
+      "acc"         -> Common.getSingleLinkDB(db, accession).toString.asJson,
+      "name"        -> description.asJson,
+      "fullEval" -> full_evalue.asJson,
+      "eval"     -> eValue.asJson,
+      "bitScore" -> bitScore.asJson,
+      "hitLen"   -> hit_len.asJson
+    ).asJson
+  }
+
 }
 
 object HmmerHSP {
@@ -59,7 +72,7 @@ object HmmerHSP {
         evalue         <- c.downField("evalue").as[Double]
         full_evalue    <- c.downField("full_evalue").as[Double]
         num            <- c.downField("num").as[Int]
-        bitscore       <- c.downField("bitscore").as[Double]
+        bitScore       <- c.downField("bitscore").as[Double]
         hit_start      <- c.downField("hit_start").as[Int]
         hit_end        <- c.downField("hit_end").as[Int]
         hit_seq        <- c.downField("hit_seq").as[String]
@@ -78,7 +91,7 @@ object HmmerHSP {
           evalue,
           full_evalue,
           num,
-          bitscore,
+          bitScore,
           hit_start,
           hit_end,
           hit_seq.toUpperCase,
@@ -92,6 +105,6 @@ object HmmerHSP {
           description,
           domain_obs_num
         )
-    }
+      }
 
 }

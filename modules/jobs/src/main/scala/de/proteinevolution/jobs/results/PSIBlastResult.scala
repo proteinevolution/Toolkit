@@ -16,7 +16,7 @@
 
 package de.proteinevolution.jobs.results
 
-import de.proteinevolution.jobs.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.jobs.results.General.SingleSeq
 import io.circe._
 
 case class PSIBlastResult(
@@ -32,24 +32,17 @@ case class PSIBlastResult(
     alignment: AlignmentResult = AlignmentResult(Nil)
 ) extends SearchResult[PSIBlastHSP] {
 
-  override def hitsOrderBy(params: DTParam): List[PSIBlastHSP] = {
-    (params.orderCol, params.orderDir) match {
-      case (1, "asc")  => HSPS.sortBy(_.accession)
-      case (1, "desc") => HSPS.sortWith(_.accession > _.accession)
-      case (2, "asc")  => HSPS.sortBy(_.description)
-      case (2, "desc") => HSPS.sortWith(_.description > _.description)
-      case (3, "asc")  => HSPS.sortBy(_.eValue)
-      case (3, "desc") => HSPS.sortWith(_.eValue > _.eValue)
-      case (4, "asc")  => HSPS.sortBy(_.bitScore)
-      case (4, "desc") => HSPS.sortWith(_.bitScore > _.bitScore)
-      case (5, "asc")  => HSPS.sortBy(_.ref_len)
-      case (5, "desc") => HSPS.sortWith(_.ref_len > _.ref_len)
-      case (6, "asc")  => HSPS.sortBy(_.hit_len)
-      case (6, "desc") => HSPS.sortWith(_.hit_len > _.hit_len)
-      case (_, "asc")  => HSPS.sortBy(_.num)
-      case (_, "desc") => HSPS.sortWith(_.num > _.num)
-      case (_, _)      => HSPS.sortBy(_.num)
+  def hitsOrderBy(sortBy: String, desc: Boolean): List[PSIBlastHSP] = {
+    val l = sortBy match {
+      case "acc"      => HSPS.sortBy(_.accession)
+      case "name"     => HSPS.sortBy(_.description)
+      case "eval"     => HSPS.sortBy(_.eValue)
+      case "bitScore" => HSPS.sortBy(_.bitScore)
+      case "refLen"   => HSPS.sortBy(_.ref_len)
+      case "hitLen"   => HSPS.sortBy(_.hit_len)
+      case _          => HSPS.sortBy(_.num)
     }
+    if (desc) l.reverse else l
   }
 
 }

@@ -126,7 +126,7 @@ if [[ -s "../results/${JOBID}.msa_sto" ]]; then
     prepareForHMMER.py ../results/${JOBID}.outfile ../results/${JOBID}.outfilefl
 
     hmmer2json.py -i ../results/${JOBID}.outfilefl \
-                  -o ../results/${JOBID}.json \
+                  -o ../results/results.json \
                   -m %desc.content \
                   -e %evalue.content > ../results/${JOBID}.list
 
@@ -134,20 +134,20 @@ if [[ -s "../results/${JOBID}.msa_sto" ]]; then
 
 
     # Create a JSON with -log10 of  e-values of the hits
-    extract_from_json.py -tool hmmer ../results/${JOBID}.json ../results/plot_data.json
+    extract_from_json.py -tool hmmer ../results/results.json ../results/plot_data.json
 
     reformat_hhsuite.pl a3m fas ../results/${JOBID}.msa_a3m.subset $(readlink -f ../results/output.aln_fas) -uc -l 32000
 
-    manipulate_json.py -k 'db' -v '%hmmerdb.content' ../results/${JOBID}.json
+    manipulate_json.py -k 'db' -v '%hmmerdb.content' ../results/results.json
     #create tab separated file to feed into blastviz
-    hmmerJson2tab.py ../results/${JOBID}.json ../results/query.json ../results/${JOBID}.tab
+    hmmerJson2tab.py ../results/results.json ../results/query.json ../results/${JOBID}.tab
     blastviz.pl ../results/${JOBID}.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
 
     # add transmembrane prediction info to json
-    manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/${JOBID}.json
+    manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/results.json
 
     # add coiled coil prediction info to json
-    manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/${JOBID}.json
+    manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/results.json
 
     # Generate MSA in JSON
     fasta2json.py ../results/output.aln_fas ../results/alignment.json

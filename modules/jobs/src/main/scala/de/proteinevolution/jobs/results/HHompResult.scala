@@ -16,7 +16,7 @@
 
 package de.proteinevolution.jobs.results
 
-import de.proteinevolution.jobs.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.jobs.results.General.SingleSeq
 import io.circe.{ Decoder, HCursor, Json }
 
 case class HHompResult(
@@ -43,8 +43,6 @@ case class HHompResult(
     if (desc) l.reverse else l
   }
 
-  // TODO remove
-  def hitsOrderBy(params: DTParam): List[HHompHSP] = List()
 }
 
 object HHompResult {

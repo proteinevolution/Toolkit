@@ -56,13 +56,14 @@ class HHService @Inject()(
       val l = hits.length
       val s = Math.max(form.start.getOrElse(0), 0)
       val e = Math.min(form.end.getOrElse(l), l)
+      // TODO get db
       Right(
         JsonObject(
-          "total" -> l.asJson,
+          "total"         -> l.asJson,
           "totalNoFilter" -> result.HSPS.length.asJson,
-          "start" -> s.asJson,
-          "end"   -> e.asJson,
-          "hits"  -> hits.slice(s, e).map(_.toTableJson("")).asJson
+          "start"         -> s.asJson,
+          "end"           -> e.asJson,
+          "hits"          -> hits.slice(s, e).map(_.toTableJson("")).asJson
         ).asJson
       )
     }
@@ -82,12 +83,13 @@ class HHService @Inject()(
       val l = result.HSPS.length
       val s = Math.max(start.getOrElse(0), 0)
       val e = Math.min(end.getOrElse(l), l)
+      // TODO get db
       Right(
         JsonObject(
-          "total" -> l.asJson,
-          "start" -> s.asJson,
-          "end"   -> e.asJson,
-          "alignments"  -> result.HSPS.slice(s, e).map(_.toAlignmentSectionJson).asJson
+          "total"      -> l.asJson,
+          "start"      -> s.asJson,
+          "end"        -> e.asJson,
+          "alignments" -> result.HSPS.slice(s, e).map(_.toAlignmentSectionJson("")).asJson
         ).asJson
       )
     }

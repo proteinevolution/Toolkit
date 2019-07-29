@@ -40,7 +40,6 @@ case class Quick2DResult(
     deepcnf: Deepcnf,
     netsurfp: Netsurfp,
     netsurfpd: Netsurfpd
-
 )
 
 object Quick2DResult {

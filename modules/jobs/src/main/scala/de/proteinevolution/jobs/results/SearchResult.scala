@@ -16,15 +16,11 @@
 
 package de.proteinevolution.jobs.results
 
-import de.proteinevolution.jobs.results.General.DTParam
 import simulacrum._
 
 @typeclass trait SearchResult[+T] {
 
-  // TODO remove
-  def hitsOrderBy(params: DTParam): List[T]
-
-  def hitsOrderBy(sortBy: String, desc: Boolean): List[T] = List()
+  def hitsOrderBy(sortBy: String, desc: Boolean): List[T]
 
   def num_hits: Int
 

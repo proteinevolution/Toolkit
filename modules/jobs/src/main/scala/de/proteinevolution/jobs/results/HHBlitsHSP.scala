@@ -29,11 +29,10 @@ case class HHBlitsHSP(
     length: Int
 ) extends HSP {
 
-  def toTableJson(db: String = ""): Json = {
-    val _ = db
+  def toTableJson(db: String): Json = {
     Map[String, Json](
     "numCheck"      -> num.asJson,
-    "acc"         -> Common.getSingleLinkHHBlits(template.accession).toString().asJson,
+    "acc"         -> Common.getSingleLinkHHBlits(template.accession).toString.asJson,
     "name"        -> description.asJson,
     "probab"      -> info.probab.asJson,
     "eval"        -> info.eval.asJson,
@@ -42,10 +41,10 @@ case class HHBlitsHSP(
     ).asJson
   }
 
-  override def toAlignmentSectionJson: Json = {
+  def toAlignmentSectionJson(db: String): Json = {
     Map[String, Json](
       "num"         -> num.asJson,
-      "acc"         -> Common.getSingleLinkHHBlits(template.accession).toString().asJson,
+      "acc"         -> Common.getSingleLinkHHBlits(template.accession).toString.asJson,
       "name"        -> description.asJson,
       "probab"      -> info.probab.asJson,
       "eval"        -> info.eval.asJson,

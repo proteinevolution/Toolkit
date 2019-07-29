@@ -47,6 +47,21 @@ case class HHPredHSP(
     ).asJson
   }
 
+  def toAlignmentSectionJson(db: String = ""): Json = {
+    import SearchResultImplicits._
+    val _ = db
+    Map[String, Either[Either[Double, Int], String]](
+      "0" -> Right(Common.getCheckbox(num)),
+      "1" -> Right(Common.getSingleLink(template.accession).toString),
+      "2" -> Right(Common.addBreakHHpred(description)),
+      "3" -> Left(Left(info.probab)),
+      "4" -> Left(Left(info.eval)),
+      "5" -> Left(Left(ss_score)),
+      "6" -> Left(Right(info.aligned_cols)),
+      "7" -> Left(Right(template.ref))
+    ).asJson
+  }
+
   override val accession: String = template.accession
 
 }

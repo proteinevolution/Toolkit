@@ -16,7 +16,7 @@
 
 package de.proteinevolution.jobs.results
 
-import de.proteinevolution.jobs.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.jobs.results.General.SingleSeq
 import io.circe.{ Decoder, HCursor }
 
 case class HmmerResult(
@@ -28,47 +28,40 @@ case class HmmerResult(
     TMPRED: String,
     COILPRED: String
 ) extends SearchResult[HmmerHSP] {
-  def hitsOrderBy(params: DTParam): List[HmmerHSP] = {
-    (params.orderCol, params.orderDir) match {
-      case (1, "asc")  => HSPS.sortBy(_.accession)
-      case (1, "desc") => HSPS.sortWith(_.accession > _.accession)
-      case (2, "asc")  => HSPS.sortBy(_.description)
-      case (2, "desc") => HSPS.sortWith(_.description > _.description)
-      case (3, "asc")  => HSPS.sortBy(_.full_evalue)
-      case (3, "desc") => HSPS.sortWith(_.full_evalue > _.full_evalue)
-      case (4, "asc")  => HSPS.sortBy(_.eValue)
-      case (4, "desc") => HSPS.sortWith(_.eValue > _.eValue)
-      case (5, "asc")  => HSPS.sortBy(_.bitscore)
-      case (5, "desc") => HSPS.sortWith(_.bitscore > _.bitscore)
-      case (6, "asc")  => HSPS.sortBy(_.hit_len)
-      case (6, "desc") => HSPS.sortWith(_.hit_len > _.hit_len)
-      case (_, "asc")  => HSPS.sortBy(_.num)
-      case (_, "desc") => HSPS.sortWith(_.num > _.num)
-      case (_, _)      => HSPS.sortBy(_.num)
+
+  def hitsOrderBy(sortBy: String, desc: Boolean): List[HmmerHSP] = {
+    val l = sortBy match {
+      case "acc"      => HSPS.sortBy(_.accession)
+      case "name"     => HSPS.sortBy(_.description)
+      case "fullEval" => HSPS.sortBy(_.full_evalue)
+      case "eval"     => HSPS.sortBy(_.eValue)
+      case "bitScore" => HSPS.sortBy(_.bitScore)
+      case "hitLen"   => HSPS.sortBy(_.hit_len)
+      case _          => HSPS.sortBy(_.num)
     }
+    if (desc) l.reverse else l
   }
+
 }
 
 object HmmerResult {
 
   implicit val hmmerResultDecoder: Decoder[HmmerResult] = (c: HCursor) =>
     for {
-      jobId           <- c.downField("jobID").as[String]
       alignmentResult <- c.downField("alignment").as[Option[AlignmentResult]]
-      hsps            <- c.downField(jobId).downField("hsps").as[List[HmmerHSP]]
-      db              <- c.downField(jobId).downField("db").as[Option[String]]
+      hsps            <- c.downField("results").downField("hsps").as[List[HmmerHSP]]
+      db              <- c.downField("results").downField("db").as[Option[String]]
       query           <- c.downField("query").as[SingleSeq]
-      tmpred          <- c.downField(jobId).downField("TMPRED").as[Option[String]]
-      coilpred        <- c.downField(jobId).downField("COILPRED").as[Option[String]]
-    } yield
-      new HmmerResult(
-        hsps,
-        hsps.length,
-        alignmentResult.getOrElse(AlignmentResult(Nil)),
-        query,
-        db.getOrElse(""),
-        tmpred.getOrElse("0"),
-        coilpred.getOrElse("1")
+      tmpred          <- c.downField("results").downField("TMPRED").as[Option[String]]
+      coilpred        <- c.downField("results").downField("COILPRED").as[Option[String]]
+    } yield new HmmerResult(
+      hsps,
+      hsps.length,
+      alignmentResult.getOrElse(AlignmentResult(Nil)),
+      query,
+      db.getOrElse(""),
+      tmpred.getOrElse("0"),
+      coilpred.getOrElse("1")
     )
 
 }

@@ -16,7 +16,7 @@
 
 package de.proteinevolution.jobs.results
 
-import de.proteinevolution.jobs.results.General.{ DTParam, SingleSeq }
+import de.proteinevolution.jobs.results.General.SingleSeq
 import io.circe.{ Decoder, HCursor, Json }
 
 case class HHBlitsResult(
@@ -29,11 +29,11 @@ case class HHBlitsResult(
     COILPRED: String
 ) extends SearchResult[HHBlitsHSP] {
 
-  override def hitsOrderBy(sortBy: String, desc: Boolean): List[HHBlitsHSP] = {
+  def hitsOrderBy(sortBy: String, desc: Boolean): List[HHBlitsHSP] = {
     val l = sortBy match {
       case "acc"         => HSPS.sortBy(_.template.accession)
       case "name"        => HSPS.sortBy(_.description)
-      case "probab"   => HSPS.sortBy(_.info.probab)
+      case "probab"      => HSPS.sortBy(_.info.probab)
       case "eval"        => HSPS.sortBy(_.info.eval)
       case "alignedCols" => HSPS.sortBy(_.info.aligned_cols)
       case "templateRef" => HSPS.sortBy(_.template.ref)
@@ -42,8 +42,6 @@ case class HHBlitsResult(
     if (desc) l.reverse else l
   }
 
-  // TODO remove
-  def hitsOrderBy(params: DTParam): List[HHBlitsHSP] = List()
 }
 
 object HHBlitsResult {
@@ -60,6 +58,6 @@ object HHBlitsResult {
     } yield {
       val hspList = HHBlitsHSP.hhblitsHSPListDecoder(hits, alignments)
       new HHBlitsResult(hspList, alignment, hspList.length, query, db, tmpred.getOrElse("0"), coilpred.getOrElse("1"))
-  }
+    }
 
 }

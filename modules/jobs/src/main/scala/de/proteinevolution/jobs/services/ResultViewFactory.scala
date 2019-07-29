@@ -78,26 +78,12 @@ final class ResultViewFactory @Inject()(
         for {
           result <- json.as[PSIBlastResult]
         } yield PsiBlastResultView(jobId, result, toolConfig, constants)
-      case HHBLITS =>
-        for {
-          result    <- json.as[HHBlitsResult]
-          alignment <- json.hcursor.downField("querytemplate").as[AlignmentResult]
-          reduced   <- json.hcursor.downField("reduced").as[AlignmentResult]
-        } yield HHBlitsResultView(jobId, result, alignment, reduced, toolConfig, constants)
-      case HMMER =>
-        for {
-          result <- json.as[HmmerResult]
-        } yield HmmerResultView(jobId, result, toolConfig, constants)
       case HHPRED =>
         for {
           result    <- json.as[HHPredResult]
           alignment <- json.hcursor.downField("querytemplate").as[AlignmentResult]
           reduced   <- json.hcursor.downField("reduced").as[AlignmentResult]
         } yield HHPredResultView(jobId, result, alignment, reduced, toolConfig, constants)
-      case HHOMP =>
-        for {
-          result <- json.as[HHompResult]
-        } yield HHompResultView(jobId, result, constants, toolConfig)
       case HHPRED_ALIGN =>
         for {
           result <- json.as[HHPredResult]
