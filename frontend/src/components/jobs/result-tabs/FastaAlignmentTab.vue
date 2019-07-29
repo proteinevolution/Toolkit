@@ -106,16 +106,16 @@
                 return `${this.tool.name}_${this.resultField}_${this.job.jobID}.fasta`;
             },
             downloadFileReducedA3M(): string {
-                return this.viewOptions.reducedFilename + ".a3m" || "";
+                return this.viewOptions.reducedFilename + '.a3m' || '';
             },
             downloadFilenameReducedA3M(): string {
-                return `${this.tool.name}_${this.viewOptions.reducedFilename || ""}_${this.job.jobID}.a3m`;
+                return `${this.tool.name}_${this.viewOptions.reducedFilename || ''}_${this.job.jobID}.a3m`;
             },
             downloadFileFullA3M(): string {
-                return this.viewOptions.fullFilename + ".a3m" || "";
+                return this.viewOptions.fullFilename + '.a3m' || '';
             },
             downloadFilenameFullA3M(): string {
-                return `${this.tool.name}_${this.viewOptions.fullFilename || ""}_${this.job.jobID}.a3m`;
+                return `${this.tool.name}_${this.viewOptions.fullFilename || ''}_${this.job.jobID}.a3m`;
             },
             isReduced(): boolean {
                 return Boolean(this.viewOptions.reduced);
