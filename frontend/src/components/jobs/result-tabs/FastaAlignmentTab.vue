@@ -8,12 +8,21 @@
             </a>
             <a @click="forwardSelected"
                :disabled="selected.length === 0">{{$t('jobs.results.actions.forwardSelected')}}</a>
-            <a @click="downloadAlignment">{{$t('jobs.results.actions.downloadMSA')}}</a>
-            <a :href="downloadFilePath" target="_blank">{{$t('jobs.results.actions.exportMSA')}}</a>
+            <a v-if="!isReduced" @click="download(downloadFilenameMSA, downloadFileMSA)">
+                {{$t('jobs.results.actions.downloadMSA')}}
+            </a>
+            <a v-if="isReduced" @click="download(downloadFilenameReducedA3M, downloadFileReducedA3M)">
+                {{$t('jobs.results.actions.downloadReducedA3M')}}
+            </a>
+            <a v-if="isReduced" @click="download(downloadFilenameFullA3M, downloadFileFullA3M)">
+                {{$t('jobs.results.actions.downloadFullA3M')}}
+            </a>
+            <a v-if="!isReduced" :href="downloadMSAFilePath"
+               target="_blank">{{$t('jobs.results.actions.exportMSA')}}</a>
         </div>
 
         <div class="alignment-results mb-4">
-            <p v-html="$t('jobs.results.alignment.numSeqs', {num: total})"></p>
+            <p v-html="$t(alignmentNumTextKey, {num: total, reduced: viewOptions.reduced})"></p>
             <div class="table-responsive">
                 <table>
                     <tbody>
@@ -76,9 +85,13 @@
                 loadingMore: false,
                 perPage: 20,
                 total: 0,
+                downloadFileMSA: 'alignment.fas',
             };
         },
         computed: {
+            resultField(): string {
+                return this.viewOptions.resultField ? this.viewOptions.resultField : 'alignment';
+            },
             allSelected(): boolean {
                 if (!this.alignments) {
                     return false;
@@ -86,8 +99,29 @@
                 return this.alignments.length > 0 &&
                     this.selected.length === this.alignments.length;
             },
-            downloadFilePath(): string {
-                return resultsService.getDownloadFilePath(this.job.jobID, 'alignment.fas');
+            downloadMSAFilePath(): string {
+                return resultsService.getDownloadFilePath(this.job.jobID, this.downloadFileMSA);
+            },
+            downloadFilenameMSA(): string {
+                return `${this.tool.name}_${this.resultField}_${this.job.jobID}.fasta`;
+            },
+            downloadFileReducedA3M(): string {
+                return this.viewOptions.reducedFilename + ".a3m" || "";
+            },
+            downloadFilenameReducedA3M(): string {
+                return `${this.tool.name}_${this.viewOptions.reducedFilename || ""}_${this.job.jobID}.a3m`;
+            },
+            downloadFileFullA3M(): string {
+                return this.viewOptions.fullFilename + ".a3m" || "";
+            },
+            downloadFilenameFullA3M(): string {
+                return `${this.tool.name}_${this.viewOptions.fullFilename || ""}_${this.job.jobID}.a3m`;
+            },
+            isReduced(): boolean {
+                return Boolean(this.viewOptions.reduced);
+            },
+            alignmentNumTextKey(): string {
+                return `jobs.results.alignment.numSeqs${this.isReduced ? 'Reduced' : ''}`;
             },
         },
         methods: {
@@ -106,7 +140,8 @@
                 }
             },
             async loadHits(start: number, end: number) {
-                const res: AlignmentResultResponse = await resultsService.fetchAlignmentResults(this.job.jobID, start, end);
+                const res: AlignmentResultResponse = await resultsService.fetchAlignmentResults(this.job.jobID, start,
+                    end, this.resultField);
                 this.total = res.total;
                 if (this.allSelected) {
                     res.alignments.forEach((a: AlignmentItem) => this.selected.push(a.num));
@@ -134,9 +169,8 @@
                     this.selected = this.alignments.map((al: AlignmentItem) => al.num);
                 }
             },
-            downloadAlignment(): void {
-                const downloadFilename = `${this.tool.name}_alignment_${this.job.jobID}.fasta`;
-                resultsService.downloadFile(this.job.jobID, 'alignment.fas', downloadFilename)
+            download(downloadFilename: string, file: string): void {
+                resultsService.downloadFile(this.job.jobID, file, downloadFilename)
                     .catch((e) => {
                         logger.error(e);
                     });

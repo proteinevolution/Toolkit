@@ -39,6 +39,7 @@ export default {
             clusters: 'Clusters',
             rawOutput: 'Raw Output',
             queryTemplateMSA: 'Query Template MSA',
+            queryMSA: 'Query MSA',
             probabilityPlot: 'Probability Plot',
             evaluePlot: 'E-Value Plot',
             probList: 'ProbList',
@@ -60,6 +61,8 @@ export default {
             download: 'Download',
             downloadHits: 'Download Hits',
             downloadMSA: 'Download MSA',
+            downloadReducedA3M: 'Download Reduced A3M',
+            downloadFullA3M: 'Download Full A3M',
             exportMSA: 'Export MSA',
             colorMSA: 'Color MSA',
             colorSeqs: 'Color Seqs',
@@ -70,6 +73,7 @@ export default {
         },
         alignment: {
             numSeqs: 'Number of Sequences: <b>{num}</b>',
+            numSeqsReduced: 'Number of Sequences (up to {reduced} best matches): <b>{num}</b>',
             loadingHits: 'Loading hits...',
         },
         seq2ID: {

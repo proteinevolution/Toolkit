@@ -27,6 +27,11 @@ export interface JobViewOptions {
     files?: string;
     labels?: string;
     altTexts?: string;
+    // fasta alignment tab
+    resultField?: string;
+    reduced?: number;
+    reducedFilename?: string;
+    fullFilename?: string;
 }
 
 export interface SubmissionResponse {
