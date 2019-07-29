@@ -166,8 +166,11 @@
                                     <td></td>
                                     <td v-text="alPart.template.bb_conf"></td>
                                 </tr>
+                                <tr class="blank-row">
+                                    <td>
+                                    </td>
+                                </tr>
                             </template>
-
                         </template>
                         <tr v-if="alignments.length !== total">
                             <td colspan="4">
@@ -215,7 +218,7 @@
                 total: 100,
                 loadingMore: false,
                 perPage: 20,
-                color: false,
+                color: true,
                 wrap: true,
                 breakAfter: 70,
                 hitListFields: [{
@@ -398,7 +401,7 @@
         font-size: 0.95em;
 
         .blank-row {
-            height: 2rem;
+            height: 0.8rem;
         }
 
         .sequence td {
