@@ -3,7 +3,7 @@
              v-if="!hitMap"/>
     <div v-else
          class="px-5">
-        <div class="px-2 d-flex flex-column">
+        <div class="px-2 mb-3 d-flex flex-column">
             <b-btn variant="secondary"
                    class="ml-auto"
                    v-text="$t('jobs.results.hitlist.resubmitSection')"
@@ -141,6 +141,7 @@
 
             .tooltip-inner {
                 max-width: 90%;
+                min-width: 15rem;
             }
         }
     }

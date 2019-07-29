@@ -20,12 +20,13 @@ import cats.data.EitherT
 import cats.implicits._
 import de.proteinevolution.jobs.db.ResultFileAccessor
 import de.proteinevolution.jobs.models.ResultsForm
-import io.circe.{ DecodingFailure, Json, JsonObject }
+import de.proteinevolution.jobs.results.{HSP, SearchResult}
+import io.circe.{DecodingFailure, Json, JsonObject}
 import io.circe.syntax._
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.Logging
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HHService @Inject()(
@@ -34,7 +35,7 @@ class HHService @Inject()(
 )(implicit ec: ExecutionContext)
     extends Logging {
 
-  def loadHits(jobID: String, form: ResultsForm): EitherT[Future, DecodingFailure, Json] = {
+  private def getResults(jobID: String): EitherT[Future, DecodingFailure, SearchResult[HSP]] = {
     EitherT((for {
       json <- resultFiles.getResults(jobID)
       tool <- toolFinder.getTool(jobID)
@@ -44,7 +45,11 @@ class HHService @Inject()(
         val error = "parsing result json failed."
         logger.error(error)
         Left(DecodingFailure(error, Nil))
-    }).subflatMap { result =>
+    })
+  }
+
+  def loadHits(jobID: String, form: ResultsForm): EitherT[Future, DecodingFailure, Json] = {
+    getResults(jobID).subflatMap { result =>
       var hits = if (form.sortBy.nonEmpty) {
         result.hitsOrderBy(form.sortBy.get, form.desc.getOrElse(false))
       } else result.HSPS
@@ -56,40 +61,29 @@ class HHService @Inject()(
       val l = hits.length
       val s = Math.max(form.start.getOrElse(0), 0)
       val e = Math.min(form.end.getOrElse(l), l)
-      // TODO get db
       Right(
         JsonObject(
           "total"         -> l.asJson,
           "totalNoFilter" -> result.HSPS.length.asJson,
           "start"         -> s.asJson,
           "end"           -> e.asJson,
-          "hits"          -> hits.slice(s, e).map(_.toTableJson("")).asJson
+          "hits"          -> hits.slice(s, e).map(_.toTableJson(result.db)).asJson
         ).asJson
       )
     }
   }
 
   def loadAlignments(jobID: String, start: Option[Int], end: Option[Int]): EitherT[Future, DecodingFailure, Json] = {
-    EitherT((for {
-      json <- resultFiles.getResults(jobID)
-      tool <- toolFinder.getTool(jobID)
-    } yield (json, tool)).map {
-      case (json, tool) => resultFiles.parseResult(tool, json)
-      case _ =>
-        val error = "parsing result json failed."
-        logger.error(error)
-        Left(DecodingFailure(error, Nil))
-    }).subflatMap { result =>
+    getResults(jobID).subflatMap { result =>
       val l = result.HSPS.length
       val s = Math.max(start.getOrElse(0), 0)
       val e = Math.min(end.getOrElse(l), l)
-      // TODO get db
       Right(
         JsonObject(
           "total"      -> l.asJson,
           "start"      -> s.asJson,
           "end"        -> e.asJson,
-          "alignments" -> result.HSPS.slice(s, e).map(_.toAlignmentSectionJson("")).asJson
+          "alignments" -> result.HSPS.slice(s, e).map(_.toAlignmentSectionJson(result.db)).asJson
         ).asJson
       )
     }

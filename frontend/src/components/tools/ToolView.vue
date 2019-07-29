@@ -4,7 +4,7 @@
              :key="toolName + 'view'"
              v-if="tool">
             <div class="tool-header d-flex align-items-baseline">
-                <h1>
+                <h1 class="no-wrap mr-3">
                     <a class="cursor-pointer mr-1"
                        @click="refresh">
                         {{ tool.longname }}
@@ -13,7 +13,7 @@
                         <i class="far fa-question-circle"></i>
                     </b-link>
                 </h1>
-                <div class="job-details ml-auto text-muted">
+                <div class="job-details ml-auto text-muted mb-2">
                     <slot name="job-details"></slot>
                 </div>
             </div>
@@ -247,7 +247,9 @@
 
 <style lang="scss">
     .tool-header {
-        height: 2.75rem;
+        @include media-breakpoint-up(sm) {
+            height: 2.75rem;
+        }
 
         h1 {
             color: $primary;
