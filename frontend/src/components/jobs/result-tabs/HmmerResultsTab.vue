@@ -13,7 +13,8 @@
                 <a @click="scrollTo('alignments')"
                    class="mr-4">{{$t('jobs.results.hitlist.alnLink')}}</a>
                 <a class="border-right mr-4"></a>
-                <a @click="forwardQuery">{{$t('jobs.results.actions.selectAll')}}</a>
+                <a @click="toggleAllSelected">{{$t('jobs.results.actions.' + (allSelected ? 'deselectAll' :
+                    'selectAll'))}}</a>
                 <a @click="forwardQuery">{{$t('jobs.results.actions.forward')}}</a>
                 <a @click="toggleColor"
                    :class="{active: color}">{{$t('jobs.results.actions.colorSeqs')}}</a>
@@ -34,10 +35,16 @@
                 <h4 class="mb-4">{{$t('jobs.results.hitlist.hits')}}</h4>
                 <hit-list-table :job="job"
                                 :fields="hitListFields"
-                                @elem-clicked="scrollToElem"/>
+                                @elem-clicked="scrollToElem"
+                                :selected-items="selectedItems"/>
+            </div>
+
+            <div class="result-section"
+                 ref="alignments">
+                <h4>{{$t('jobs.results.hitlist.aln')}}</h4>
+
             </div>
         </div>
-    </div>
     </div>
 </template>
 
@@ -49,6 +56,10 @@
     import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
     import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
     import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
+    import handyScroll from 'handy-scroll';
+    import {HMMERAlignmentItem, SearchAlignmentItem, SearchAlignmentsResponse} from '@/types/toolkit/results';
+    import {colorSequence} from '@/util/SequenceUtils';
+    import {resultsService} from '@/services/ResultsService';
 
     const logger = Logger.get('HmmerResultsTab');
 
@@ -62,37 +73,190 @@
         },
         data() {
             return {
+                alignments: undefined as HMMERAlignmentItem[] | undefined,
                 total: 100,
+                loadingMore: false,
+                perPage: 20,
+                color: false,
+                wrap: true,
+                breakAfter: 85,
+                selectedItems: [] as number[],
                 hitListFields: [{
-                    key: 'num',
+                    key: 'numCheck',
                     label: this.$t('jobs.results.hmmer.table.num'),
                     sortable: true,
                 }, {
-                    key: 'accession',
+                    key: 'acc',
                     label: this.$t('jobs.results.hmmer.table.accession'),
                     sortable: true,
                 }, {
-                    key: 'description',
+                    key: 'name',
                     label: this.$t('jobs.results.hmmer.table.description'),
                     sortable: true,
                 }, {
-                    key: 'full_evalue',
+                    key: 'fullEval',
                     label: this.$t('jobs.results.hmmer.table.full_evalue'),
                     sortable: true,
                 }, {
-                    key: 'eValue',
+                    key: 'eval',
                     label: this.$t('jobs.results.hmmer.table.eValue'),
                     sortable: true,
                 }, {
-                    key: 'bitscore',
+                    key: 'bitScore',
                     label: this.$t('jobs.results.hmmer.table.bitscore'),
                     sortable: true,
                 }, {
-                    key: 'hit_len',
+                    key: 'hitLen',
                     label: this.$t('jobs.results.hmmer.table.hit_len'),
                     sortable: true,
                 }],
             };
+        },
+        computed: {
+            allSelected(): boolean {
+                if (!this.total) {
+                    return false;
+                }
+                return this.total > 0 &&
+                    this.selectedItems.length === this.total;
+            },
+        },
+        beforeDestroy(): void {
+            handyScroll.destroy(this.$refs.scrollElem);
+        },
+        methods: {
+            async init(): Promise<void> {
+                await this.loadAlignments(0, this.perPage);
+            },
+            async intersected(): Promise<void> {
+                if (!this.loadingMore && this.alignments && this.alignments.length < this.total) {
+                    this.loadingMore = true;
+                    try {
+                        await this.loadAlignments(this.alignments.length, this.alignments.length + this.perPage);
+                    } catch (e) {
+                        logger.error(e);
+                    }
+                    this.loadingMore = false;
+                }
+            },
+            async loadAlignments(start: number, end: number): Promise<void> {
+                const res: SearchAlignmentsResponse<HMMERAlignmentItem> =
+                    await resultsService.fetchHHAlignmentResults(this.job.jobID, start, end);
+                this.total = res.total;
+                if (!this.alignments) {
+                    this.alignments = res.alignments;
+                } else {
+                    this.alignments.push(...res.alignments);
+                }
+            },
+            scrollTo(ref: string): void {
+                if (this.$refs[ref]) {
+                    const elem: HTMLElement = (this.$refs[ref] as any).length ?
+                        (this.$refs[ref] as HTMLElement[])[0] : this.$refs[ref] as HTMLElement;
+                    elem.scrollIntoView({
+                        block: 'start',
+                        behavior: 'smooth',
+                    });
+                }
+            },
+            async scrollToElem(num: number): Promise<void> {
+                const loadNum: number = num + 2; // load some more for better scrolling
+                if (this.alignments && this.alignments.map((a: HMMERAlignmentItem) => a.num).includes(loadNum)) {
+                    this.scrollTo('alignment-' + num);
+                } else if (this.alignments) {
+                    await this.loadAlignments(this.alignments.length, loadNum);
+                    this.scrollTo('alignment-' + num);
+                }
+            },
+            toggleAllSelected(): void {
+                if (!this.total) {
+                    return;
+                }
+                if (this.allSelected) {
+                    this.selectedItems = [];
+                } else {
+                    this.selectedItems = [];
+                    for (let i = 1; i <= this.total; i++) {
+                        this.selectedItems.push(i);
+                    }
+                }
+            },
+            check(val: boolean, num: number): void {
+                if (val && !this.selectedItems.includes(num)) {
+                    this.selectedItems.push(num);
+                } else {
+                    const i: number = this.selectedItems.indexOf(num);
+                    if (i > -1) {
+                        this.selectedItems.splice(i, 1);
+                    }
+                }
+            },
+            displayTemplateAlignment(num: number): void {
+                alert('implement me!' + num);
+            },
+            forwardQuery(): void {
+                alert('implement me!');
+            },
+            toggleColor(): void {
+                this.color = !this.color;
+            },
+            toggleWrap(): void {
+                this.wrap = !this.wrap;
+                this.$nextTick(() => {
+                    if (!handyScroll.mounted(this.$refs.scrollElem)) {
+                        handyScroll.mount(this.$refs.scrollElem);
+                    } else {
+                        handyScroll.update(this.$refs.scrollElem);
+                    }
+                });
+            },
+            coloredSeq(seq: string): string {
+                return this.color ? colorSequence(seq) : seq;
+            },
+            alQEnd(al: HMMERAlignmentItem): string {
+                return ` &nbsp; ${al.query.end} (${al.query.ref})`;
+            },
+            alTEnd(al: HMMERAlignmentItem): string {
+                return ` &nbsp; ${al.template.end} (${al.template.ref})`;
+            },
+            wrapAlignments(al: HMMERAlignmentItem): SearchAlignmentItem[] {
+                if (this.wrap) {
+                    const res: SearchAlignmentItem[] = [];
+                    let qStart: number = al.query.start;
+                    let tStart: number = al.template.start;
+                    for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
+                        const end: number = start + this.breakAfter;
+                        const qSeq: string = al.query.seq.slice(start, end);
+                        const tSeq: string = al.template.seq.slice(start, end);
+                        const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
+                        const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
+                        res.push({
+                            agree: al.agree.slice(start, end),
+                            query: {
+                                consensus: al.query.consensus.slice(start, end),
+                                end: qEnd,
+                                name: al.query.name,
+                                ref: al.query.ref,
+                                seq: qSeq,
+                                start: qStart,
+                            },
+                            template: {
+                                accession: al.template.accession,
+                                consensus: al.template.consensus.slice(start, end),
+                                end: tEnd,
+                                ref: al.template.ref,
+                                seq: tSeq,
+                                start: tStart,
+                            },
+                        });
+                        qStart = qEnd + 1;
+                        tStart = tEnd + 1;
+                    }
+                    return res;
+                } else {
+                    return [al];
+                }
+            },
         },
     });
 </script>

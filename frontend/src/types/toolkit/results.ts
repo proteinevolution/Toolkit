@@ -46,6 +46,16 @@ export interface HHblitsAlignmentItem extends SearchAlignmentItem {
     identities: number;
 }
 
+export interface HMMERAlignmentItem extends SearchAlignmentItem {
+    num: number;
+    acc: string;
+    name: string;
+    fullEval: number;
+    eval: number;
+    bitScore: number;
+    hitLen: number;
+}
+
 export interface AlignmentResultResponse {
     alignments: AlignmentItem[];
     total: number;
