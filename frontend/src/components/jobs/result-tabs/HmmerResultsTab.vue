@@ -154,7 +154,7 @@
                 perPage: 20,
                 color: false,
                 wrap: true,
-                breakAfter: 80,
+                breakAfter: 90,
                 selectedItems: [] as number[],
                 hitListFields: [{
                     key: 'numCheck',

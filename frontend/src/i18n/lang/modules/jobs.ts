@@ -154,6 +154,9 @@ export default {
                 ref_len: 'Length',
                 hit_len: 'Aligned Positions',
             },
+            alignmentInfo: 'E-value: {eval},&emsp;Length: {refLen},&emsp; Score: {bitScore} bits ({score})' +
+                ',&emsp;Identities: {ident}/{hitLen} ({perIdent}%),&emsp;Positives: {pos}/{hitLen}  ' +
+                '({perPos}%),&emsp;Gaps: {gap}/{hitLen}  ({perGap}%)',
         },
         hmmer: {
             noResults: 'No hits found! Please re-run HMMER with a custom-built multiple sequence alignment as input ' +

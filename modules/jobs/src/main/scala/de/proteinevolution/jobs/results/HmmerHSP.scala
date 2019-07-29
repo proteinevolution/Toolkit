@@ -54,7 +54,7 @@ case class HmmerHSP(
     Map[String, Json](
       "num"             -> num.asJson,
       "acc"             -> Common.getSingleLinkDB(db, accession).toString.asJson,
-      "fastaLink"       -> Common.getHmmerFastaLink(accession).toString.asJson,
+      "fastaLink"       -> Common.getLinksDB(db, accession).toString.asJson,
       "name"            -> description.asJson,
       "fullEval"        -> full_evalue.asJson,
       "eval"            -> eValue.asJson,

@@ -58,6 +58,25 @@ export interface HMMERAlignmentItem extends SearchAlignmentItem {
     observedDomains: number;
 }
 
+export interface PSIBLASTAlignmentItem extends SearchAlignmentItem {
+    num: number;
+    acc: string;
+    fastaLink: string;
+    name: string;
+    eval: number;
+    bitScore: number;
+    score: number;
+    ident: number;
+    perIdent: number;
+    pos: number;
+    perPos: number;
+    gap: number;
+    perGap: number;
+    refLen: number;
+    hitLen: number;
+    fullEval: number;
+}
+
 export interface AlignmentResultResponse {
     alignments: AlignmentItem[];
     total: number;

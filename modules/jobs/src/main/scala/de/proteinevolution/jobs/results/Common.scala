@@ -26,10 +26,10 @@ import scala.collection.mutable.ArrayBuffer
 
 object Common {
 
-  private val color_regex     = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
-  private val helix_pattern   = """([Hh]+)""".r
-  private val sheet_pattern   = """([Ee]+)""".r
-  private val helix_sheets    = """([Hh]+|[Ee]+)""".r("ss")
+  private val color_regex   = """(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)""".r
+  private val helix_pattern = """([Hh]+)""".r
+  private val sheet_pattern = """([Ee]+)""".r
+  private val helix_sheets  = """([Hh]+|[Ee]+)""".r("ss")
 
   private val uniprotReg    = """([A-Z0-9]{10}|[A-Z0-9]{6})""".r
   private val scopReg       = """([defgh][0-9a-zA-Z\.\_]+)""".r
@@ -58,7 +58,7 @@ object Common {
   private val scopBaseLink        = "http://scop.berkeley.edu/sid="
   private val pfamBaseLink        = "http://pfam.xfam.org/family/"
   private val cddBaseLink         = "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid="
-  private val uniprotBaseLik      = "http://www.uniprot.org/uniprot/"
+  private val uniprotBaseLink     = "http://www.uniprot.org/uniprot/"
   private val smartBaseLink       = "http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN="
   private val ecodBaseLink        = "http://prodata.swmed.edu/ecod/complete/domain/"
 
@@ -105,7 +105,7 @@ object Common {
       case "tigr"    => generateLink(cddBaseLink, id, id)
       case "pfam"    => generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
       case "ncbi"    => generateLink(ncbiProteinBaseLink, id, id)
-      case "uniprot" => generateLink(uniprotBaseLik, id, id)
+      case "uniprot" => generateLink(uniprotBaseLink, id, id)
       case "smart"   => generateLink(smartBaseLink, id, id)
       case "ecod"    => val idEcod = id.slice(5, 14); generateLink(ecodBaseLink, idEcod, id)
       case _         => id
@@ -138,7 +138,7 @@ object Common {
     val link = db match {
       case envNrNameReg(_)   => generateLink(ncbiProteinBaseLink, id, id)
       case pdbNameReg(_)     => generateLink(pdbBaseLink, idPdb, id)
-      case uniprotNameReg(_) => generateLink(uniprotBaseLik, id, id)
+      case uniprotNameReg(_) => generateLink(uniprotBaseLink, id, id)
       case pfamNameReg(_)    => generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
       case _                 => id
     }
@@ -153,13 +153,13 @@ object Common {
       case envNrNameReg(_)   => generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
       case pdbNameReg(_)     => generateLink(pdbeBaseLink, idPdb, "PDBe")
       case pfamNameReg(_)    => generateLink(cddBaseLink, idCDD, "CDD")
-      case uniprotNameReg(_) => ""
+      case uniprotNameReg(_) => generateLink(uniprotBaseLink, id + ".fasta", "UniProt")
     }
     Html(links)
   }
 
   def getSingleLinkHHBlits(id: String): Html = {
-    Html(generateLink(uniprotBaseLik, id, id))
+    Html(generateLink(uniprotBaseLink, id, id))
   }
 
   def getLinksHHBlits(jobID: String, id: String): Html = {
@@ -200,16 +200,6 @@ object Common {
       case _ => ()
     }
     Html(links.mkString(" | "))
-  }
-
-  def getHmmerFastaLink(id: String): Html = {
-    val db     = identifyDatabase(id)
-    val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
-    val link = db match {
-      case "ncbi" => generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
-      case _      => ""
-    }
-    Html(link)
   }
 
   def generateLink(baseLink: String, id: String, name: String): String =

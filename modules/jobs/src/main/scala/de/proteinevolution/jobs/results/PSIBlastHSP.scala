@@ -42,7 +42,7 @@ case class PSIBlastHSP(
 
   def toTableJson(db: String): Json = {
     Map[String, Json](
-      "num"      -> num.asJson,
+      "numCheck" -> num.asJson,
       "acc"      -> Common.getSingleLinkDB(db, accession).toString.asJson,
       "name"     -> description.slice(0, 84).asJson,
       "eval"     -> "%.2e".format(eValue).asJson,
@@ -55,14 +55,22 @@ case class PSIBlastHSP(
   def toAlignmentSectionJson(db: String): Json = {
     // TODO adapt
     Map[String, Json](
-      "num"      -> num.asJson,
-      "acc"      -> Common.getSingleLinkDB(db, accession).toString.asJson,
-      "name"     -> description.slice(0, 84).asJson,
-      "eval"     -> "%.2e".format(eValue).asJson,
-      "bitScore" -> bitScore.asJson,
-      "refLen"   -> ref_len.asJson,
-      "hitLen"   -> hit_len.asJson,
-      "agree"    -> midLine.asJson,
+      "num"       -> num.asJson,
+      "acc"       -> Common.getSingleLinkDB(db, accession).toString.asJson,
+      "fastaLink" -> Common.getLinksDB(db, accession).toString.asJson,
+      "name"      -> description.slice(0, 84).asJson,
+      "eval"      -> "%.2e".format(eValue).asJson,
+      "score"     -> score.asJson,
+      "bitScore"  -> bitScore.asJson,
+      "ident"     -> identity.asJson,
+      "perIdent"  -> "%1.0f".format(((identity.toFloat / hit_len) * 100)).asJson,
+      "pos"       -> positive.asJson,
+      "perPos"    -> "%1.0f".format(((positive.toFloat / hit_len) * 100)).asJson,
+      "gap"       -> gaps.asJson,
+      "perGap"    -> "%1.0f".format(((gaps.toFloat / hit_len) * 100)).asJson,
+      "refLen"    -> ref_len.asJson,
+      "hitLen"    -> hit_len.asJson,
+      "agree"     -> midLine.asJson,
       "query" -> Map(
         "start" -> query_start.asJson,
         "end"   -> query_end.asJson,
