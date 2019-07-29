@@ -118,6 +118,9 @@
                                     <td v-text="alPart.template.start"></td>
                                     <td v-html="coloredSeq(alPart.template.seq) + alTEnd(alPart)"></td>
                                 </tr>
+                                <tr class="blank-row">
+                                    <td></td>
+                                </tr>
                             </template>
 
                         </template>
@@ -368,7 +371,7 @@
         font-size: 0.95em;
 
         .blank-row {
-            height: 2rem;
+            height: 0.8rem;
         }
 
         .sequence td {

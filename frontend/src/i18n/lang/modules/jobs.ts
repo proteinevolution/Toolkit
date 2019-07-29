@@ -94,7 +94,7 @@ export default {
                 probOMP: 'Prob (OMP)',
                 eVal: 'E-value',
                 ssScore: 'SS',
-                cols: 'Cols',
+                cols: ' Aligned cols',
                 targetLength: 'Target Length',
             },
             templateAlignment: 'Template alignment',
@@ -112,11 +112,11 @@ export default {
                 name: 'Name',
                 probHits: 'Probability',
                 eVal: 'E-value',
-                cols: 'Cols',
+                cols: 'Aligned cols',
                 targetLength: 'Target Length',
             },
             templateAlignment: 'Template alignment',
-            alignmentInfo: 'Probability: {probabHit}%&emsp;&emsp;E-value: {eval}&emsp;&emsp;' +
+            alignmentInfo: 'Probability: {probab}%&emsp;&emsp;E-value: {eval}&emsp;&emsp;' +
                 'Score: {score}&emsp;&emsp;Aligned Cols: {alignedCols}&emsp;&emsp;' +
                 'Identities: {identities}%&emsp;&emsp;Similarity: {similarity}',
         },

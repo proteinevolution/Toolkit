@@ -128,7 +128,7 @@
                         this.totalRows = data.total;
                         this.totalNoFilter = data.totalNoFilter;
                         this.start = data.start + 1;
-                        this.end = Math.min(data.end + 1, data.total);
+                        this.end = Math.min(data.end, data.total);
                         return items || [];
                     });
             },
