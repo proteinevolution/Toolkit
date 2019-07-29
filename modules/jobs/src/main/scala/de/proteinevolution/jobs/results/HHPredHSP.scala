@@ -29,36 +29,33 @@ case class HHPredHSP(
     ss_score: Double,
     confidence: String,
     length: Int,
-    eValue: Double = -1,
+    eValue: Double = -1
 ) extends HSP {
 
   def toTableJson(db: String = ""): Json = {
-    import SearchResultImplicits._
-    val _ = db
-    Map[String, Either[Either[Double, Int], String]](
-      "0" -> Right(Common.getCheckbox(num)),
-      "1" -> Right(Common.getSingleLink(template.accession).toString),
-      "2" -> Right(Common.addBreakHHpred(description)),
-      "3" -> Left(Left(info.probab)),
-      "4" -> Left(Left(info.eval)),
-      "5" -> Left(Left(ss_score)),
-      "6" -> Left(Right(info.aligned_cols)),
-      "7" -> Left(Right(template.ref))
+    Map[String, Json](
+      "numCheck"    -> num.asJson,
+      "acc"         -> Common.getSingleLink(accession).toString.asJson,
+      "name"        -> description.asJson,
+      "probab"      -> info.probab.asJson,
+      "eval"        -> eValue.asJson,
+      "ssScore"     -> ss_score.asJson,
+      "alignedCols" -> info.aligned_cols.asJson,
+      "templateRef" -> template.ref.asJson
     ).asJson
   }
 
   def toAlignmentSectionJson(db: String = ""): Json = {
-    import SearchResultImplicits._
-    val _ = db
-    Map[String, Either[Either[Double, Int], String]](
-      "0" -> Right(Common.getCheckbox(num)),
-      "1" -> Right(Common.getSingleLink(template.accession).toString),
-      "2" -> Right(Common.addBreakHHpred(description)),
-      "3" -> Left(Left(info.probab)),
-      "4" -> Left(Left(info.eval)),
-      "5" -> Left(Left(ss_score)),
-      "6" -> Left(Right(info.aligned_cols)),
-      "7" -> Left(Right(template.ref))
+    // TODO adapt
+    Map[String, Json](
+      "numCheck"    -> num.asJson,
+      "acc"         -> Common.getSingleLink(accession).toString.asJson,
+      "name"        -> description.asJson,
+      "probab"      -> info.probab.asJson,
+      "eval"        -> eValue.asJson,
+      "ssScore"     -> ss_score.asJson,
+      "alignedCols" -> info.aligned_cols.asJson,
+      "templateRef" -> template.ref.asJson
     ).asJson
   }
 
@@ -78,17 +75,16 @@ object HHPredHSP {
         description    <- c.downField("header").as[String]
         num            <- c.downField("no").as[Int]
         confidence     <- c.downField("confidence").as[Option[String]]
-      } yield
-        new HHPredHSP(
-          queryResult,
-          templateResult,
-          infoResult,
-          agree,
-          description,
-          num,
-          ss_score,
-          confidence.getOrElse(""),
-          agree.length
+      } yield new HHPredHSP(
+        queryResult,
+        templateResult,
+        infoResult,
+        agree,
+        description,
+        num,
+        ss_score,
+        confidence.getOrElse(""),
+        agree.length
       )
 
   def hhpredHSPListDecoder(hits: List[Json], alignments: List[Json]): List[HHPredHSP] = {
@@ -97,7 +93,7 @@ object HHPredHSP {
         (for {
           struct   <- h.hcursor.downField("struc").as[Option[String]]
           ss_score <- h.hcursor.downField("ss").as[Option[Double]]
-          hsp      <- a.hcursor.as[HHPredHSP](hhpredHSPDecoder(struct.getOrElse(""), ss_score.getOrElse(-1D)))
+          hsp      <- a.hcursor.as[HHPredHSP](hhpredHSPDecoder(struct.getOrElse(""), ss_score.getOrElse(-1d)))
         } yield hsp).toOption
     }
   }

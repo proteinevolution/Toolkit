@@ -49,11 +49,13 @@ export interface HHblitsAlignmentItem extends SearchAlignmentItem {
 export interface HMMERAlignmentItem extends SearchAlignmentItem {
     num: number;
     acc: string;
+    fastaLink: string;
     name: string;
     fullEval: number;
     eval: number;
     bitScore: number;
     hitLen: number;
+    observedDomains: number;
 }
 
 export interface AlignmentResultResponse {

@@ -40,29 +40,39 @@ case class PSIBlastHSP(
     description: String
 ) extends HSP {
 
-  import SearchResultImplicits._
-
   def toTableJson(db: String): Json = {
-    Map[String, Either[Double, String]](
-      "0" -> Right(Common.getCheckbox(num)),
-      "1" -> Right(Common.getSingleLinkDB(db, accession).toString),
-      "2" -> Right(Common.addBreak(description.slice(0, 84))),
-      "3" -> Right("%.2e".format(eValue)),
-      "4" -> Left(bitScore),
-      "5" -> Left(ref_len.toDouble),
-      "6" -> Left(hit_len.toDouble)
+    Map[String, Json](
+      "num"      -> num.asJson,
+      "acc"      -> Common.getSingleLinkDB(db, accession).toString.asJson,
+      "name"     -> description.slice(0, 84).asJson,
+      "eval"     -> "%.2e".format(eValue).asJson,
+      "bitScore" -> bitScore.asJson,
+      "refLen"   -> ref_len.asJson,
+      "hitLen"   -> hit_len.asJson
     ).asJson
   }
 
   def toAlignmentSectionJson(db: String): Json = {
-    Map[String, Either[Double, String]](
-      "0" -> Right(Common.getCheckbox(num)),
-      "1" -> Right(Common.getSingleLinkDB(db, accession).toString),
-      "2" -> Right(Common.addBreak(description.slice(0, 84))),
-      "3" -> Right("%.2e".format(eValue)),
-      "4" -> Left(bitScore),
-      "5" -> Left(ref_len.toDouble),
-      "6" -> Left(hit_len.toDouble)
+    // TODO adapt
+    Map[String, Json](
+      "num"      -> num.asJson,
+      "acc"      -> Common.getSingleLinkDB(db, accession).toString.asJson,
+      "name"     -> description.slice(0, 84).asJson,
+      "eval"     -> "%.2e".format(eValue).asJson,
+      "bitScore" -> bitScore.asJson,
+      "refLen"   -> ref_len.asJson,
+      "hitLen"   -> hit_len.asJson,
+      "agree"    -> midLine.asJson,
+      "query" -> Map(
+        "start" -> query_start.asJson,
+        "end"   -> query_end.asJson,
+        "seq"   -> query_seq.asJson
+      ).asJson,
+      "template" -> Map(
+        "start" -> hit_start.asJson,
+        "end"   -> hit_end.asJson,
+        "seq"   -> hit_seq.asJson
+      ).asJson
     ).asJson
   }
 

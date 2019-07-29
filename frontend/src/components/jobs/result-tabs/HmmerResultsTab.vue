@@ -43,6 +43,81 @@
                  ref="alignments">
                 <h4>{{$t('jobs.results.hitlist.aln')}}</h4>
 
+                <div class="table-responsive"
+                     ref="scrollElem">
+                    <table class="alignments-table">
+                        <tbody>
+                        <template v-for="(al, i) in alignments">
+                            <tr class="blank-row"
+                                :key="'alignment-' + al.num"
+                                :ref="'alignment-' + al.num">
+                                <td colspan="4">
+                                    <hr v-if="i !== 0"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td colspan="3"
+                                    v-html="al.fastaLink">
+                                </td>
+                            </tr>
+                            <tr class="font-weight-bold">
+                                <td class="no-wrap">
+                                    <b-checkbox @change="check($event, al.num)"
+                                                class="d-inline"
+                                                :checked="selectedItems.includes(al.num)"/>
+                                    <span v-text="al.num + '.'"></span>
+                                </td>
+                                <td colspan="3"
+                                    v-html="al.acc + ' ' + al.name"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td colspan="3"
+                                    v-html="$t('jobs.results.hmmer.alignmentInfo', al)"></td>
+                            </tr>
+
+                            <template v-for="alPart in wrapAlignments(al)">
+                                <tr class="blank-row">
+                                    <td></td>
+                                </tr>
+                                <tr v-if="alPart.query.seq"
+                                    class="sequence">
+                                    <td></td>
+                                    <td>Q</td>
+                                    <td v-text="alPart.query.start"></td>
+                                    <td v-html="coloredSeq(alPart.query.seq) + alEnd(alPart.query)"></td>
+                                </tr>
+                                <tr v-if="alPart.agree"
+                                    class="sequence">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td v-text="alPart.agree"></td>
+                                </tr>
+                                <tr v-if="alPart.template.seq"
+                                    class="sequence">
+                                    <td></td>
+                                    <td>T</td>
+                                    <td v-text="alPart.template.start"></td>
+                                    <td v-html="coloredSeq(alPart.template.seq) + alEnd(alPart.template)"></td>
+                                </tr>
+                            </template>
+
+                        </template>
+
+                        <tr v-if="alignments.length !== total">
+                            <td colspan="4">
+                                <Loading :message="$t('jobs.results.alignment.loadingHits')"
+                                         v-if="loadingMore"
+                                         justify="center"
+                                         class="mt-4"/>
+                                <intersection-observer @intersect="intersected"/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -79,7 +154,7 @@
                 perPage: 20,
                 color: false,
                 wrap: true,
-                breakAfter: 85,
+                breakAfter: 80,
                 selectedItems: [] as number[],
                 hitListFields: [{
                     key: 'numCheck',
@@ -213,11 +288,8 @@
             coloredSeq(seq: string): string {
                 return this.color ? colorSequence(seq) : seq;
             },
-            alQEnd(al: HMMERAlignmentItem): string {
-                return ` &nbsp; ${al.query.end} (${al.query.ref})`;
-            },
-            alTEnd(al: HMMERAlignmentItem): string {
-                return ` &nbsp; ${al.template.end} (${al.template.ref})`;
+            alEnd(al: any): string {
+                return ` &nbsp; ${al.end}`;
             },
             wrapAlignments(al: HMMERAlignmentItem): SearchAlignmentItem[] {
                 if (this.wrap) {
@@ -233,18 +305,12 @@
                         res.push({
                             agree: al.agree.slice(start, end),
                             query: {
-                                consensus: al.query.consensus.slice(start, end),
                                 end: qEnd,
-                                name: al.query.name,
-                                ref: al.query.ref,
                                 seq: qSeq,
                                 start: qStart,
                             },
                             template: {
-                                accession: al.template.accession,
-                                consensus: al.template.consensus.slice(start, end),
                                 end: tEnd,
-                                ref: al.template.ref,
                                 seq: tSeq,
                                 start: tStart,
                             },

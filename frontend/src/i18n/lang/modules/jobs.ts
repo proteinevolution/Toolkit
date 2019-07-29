@@ -165,6 +165,9 @@ export default {
                 bitscore: 'Bitscore',
                 hit_len: 'Aligned Positions',
             },
+            alignmentInfo: 'E-value: {fullEval}&emsp;&emsp;Ind. E-value: {eval}&emsp;&emsp;' +
+                'Score: {bitScore}&emsp;&emsp;Aligned positions: {hitLen}&emsp;&emsp;' +
+                'Observed domains: {observedDomains}',
         },
         imagesView: {
             noPeriodicity: 'No periodicity spectrum found!',

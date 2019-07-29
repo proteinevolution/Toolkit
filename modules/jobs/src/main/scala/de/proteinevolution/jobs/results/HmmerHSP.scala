@@ -52,13 +52,26 @@ case class HmmerHSP(
 
   def toAlignmentSectionJson(db: String): Json = {
     Map[String, Json](
-      "num"         -> num.asJson,
-      "acc"         -> Common.getSingleLinkDB(db, accession).toString.asJson,
-      "name"        -> description.asJson,
-      "fullEval" -> full_evalue.asJson,
-      "eval"     -> eValue.asJson,
-      "bitScore" -> bitScore.asJson,
-      "hitLen"   -> hit_len.asJson
+      "num"             -> num.asJson,
+      "acc"             -> Common.getSingleLinkDB(db, accession).toString.asJson,
+      "fastaLink"       -> Common.getHmmerFastaLink(accession).toString.asJson,
+      "name"            -> description.asJson,
+      "fullEval"        -> full_evalue.asJson,
+      "eval"            -> eValue.asJson,
+      "bitScore"        -> bitScore.asJson,
+      "hitLen"          -> hit_len.asJson,
+      "observedDomains" -> domain_obs_num.asJson,
+      "agree"           -> midline.asJson,
+      "query" -> Map(
+        "start" -> query_start.asJson,
+        "end"   -> query_end.asJson,
+        "seq"   -> query_seq.asJson
+      ).asJson,
+      "template" -> Map(
+        "start" -> hit_start.asJson,
+        "end"   -> hit_end.asJson,
+        "seq"   -> hit_seq.asJson
+      ).asJson
     ).asJson
   }
 
@@ -92,11 +105,11 @@ object HmmerHSP {
           full_evalue,
           num,
           bitScore,
-          hit_start,
+          hit_start + 1,
           hit_end,
           hit_seq.toUpperCase,
           query_seq.toUpperCase,
-          query_start,
+          query_start + 1,
           query_end,
           query_id,
           hit_len,

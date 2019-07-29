@@ -202,7 +202,7 @@ object Common {
     Html(links.mkString(" | "))
   }
 
-  def getLinksHmmer(id: String): Html = {
+  def getHmmerFastaLink(id: String): Html = {
     val db     = identifyDatabase(id)
     val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
     val link = db match {
