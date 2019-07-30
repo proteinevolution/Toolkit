@@ -154,7 +154,7 @@
     import {HHblitsAlignmentItem, SearchAlignmentItem, SearchAlignmentsResponse} from '@/types/toolkit/results';
     import {colorSequence} from '@/util/SequenceUtils';
     import {resultsService} from '@/services/ResultsService';
-    import EventBus from "@/util/EventBus";
+    import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('HHblitsResultsTab');
 
@@ -290,7 +290,7 @@
                 EventBus.$emit('show-modal', {
                     id: 'templateAlignmentModal', props: {
                         jobID: this.job.jobID,
-                        accession: accession,
+                        accession,
                     },
                 });
             },

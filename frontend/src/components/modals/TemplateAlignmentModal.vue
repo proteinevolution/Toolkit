@@ -5,7 +5,7 @@
         <Loading v-if="loading"/>
         <div v-else>
             <b-form-select v-model="selectedOption"
-                            :options="forwardingOptions"
+                           :options="forwardingOptions"
                            class="select">
                 <template slot="first">
                     <option :value="null"
@@ -21,16 +21,16 @@
 </template>
 
 <script lang="ts">
-    import Vue from "vue";
-    import BaseModal from "./BaseModal.vue";
-    import Loading from "@/components/utils/Loading.vue";
-    import Logger from "js-logger";
-    import {resultsService} from "@/services/ResultsService";
+    import Vue from 'vue';
+    import BaseModal from './BaseModal.vue';
+    import Loading from '@/components/utils/Loading.vue';
+    import Logger from 'js-logger';
+    import {resultsService} from '@/services/ResultsService';
 
-    const logger = Logger.get("TemplateAlignmentModal");
+    const logger = Logger.get('TemplateAlignmentModal');
 
     export default Vue.extend({
-        name: "TemplateAlignmentModal",
+        name: 'TemplateAlignmentModal',
         components: {
             BaseModal,
             Loading,
@@ -48,12 +48,12 @@
         data() {
             return {
                 loading: true,
-                data: "",
+                data: '',
                 selectedOption: null,
                 forwardingOptions: [
                     // TODO: Implement correct forwarding options
-                    {value: "TODO", text: "TODO"},
-                    {value: "TODO", text: "TODO"},
+                    {value: 'TODO', text: 'TODO'},
+                    {value: 'TODO', text: 'TODO'},
                 ],
             };
         },
@@ -85,7 +85,7 @@
                     this.data = String(res);
                     this.loading = false;
                 } catch (err) {
-                    this.$alert(this.$t("errors.templateAlignmentFailed"), "danger");
+                    this.$alert(this.$t('errors.templateAlignmentFailed'), 'danger');
                 }
             },
         },
