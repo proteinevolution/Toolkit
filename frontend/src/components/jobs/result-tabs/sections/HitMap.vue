@@ -5,13 +5,14 @@
          class="px-5">
         <div class="px-2 mb-3 d-flex flex-column">
             <b-btn variant="secondary"
-                   class="ml-auto"
+                   class="ml-auto mb-2"
                    v-text="$t('jobs.results.hitlist.resubmitSection')"
                    @click="resubmitSection"
                    size="sm"/>
             <div class="mt-3 px-2">
                 <vue-slider ref="slider"
                             v-model="resubmitSelection"
+                            :tooltip="'always'"
                             :min="1"
                             :max="hitMap.queryLength"
                             :enable-cross="false"/>

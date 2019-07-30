@@ -247,6 +247,7 @@
     @import "./assets/scss/modals";
     @import "./assets/scss/sequence-coloring";
     @import url("https://use.fontawesome.com/releases/v5.2.0/css/all.css");
+
     $themeColor: $primary;
     @import '~vue-slider-component/lib/theme/default.scss';
     @import "~handy-scroll/dist/handy-scroll.css";
@@ -400,5 +401,19 @@
     // limit reached
     .status-8 {
         background-color: $job-status-8;
+    }
+
+    .vue-slider-dot {
+        @at-root &-tooltip {
+            @at-root &-inner {
+                margin-bottom: -0.75em;
+                color: $gray-700;
+                border: none;
+                background: none;
+            }
+        }
+        div:after {
+            display: none;
+        }
     }
 </style>
