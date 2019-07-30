@@ -96,6 +96,7 @@ J Mol Biol. 2018 Jul 20. S0022-2836(17)30587-9</a>.`,
             JobNotFound: 'Job not found.',
             JobNotAuthorized: 'Access denied to private job.',
             couldNotDeleteJob: 'Could not delete job!',
+            templateAlignmentFailed: 'Sorry, failed to fetch Template Alignment.',
         },
         constraints: {
             range: 'has to be between {min} and {max}',

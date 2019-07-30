@@ -112,6 +112,14 @@ class ResultsService {
             a.remove();
         }
     }
+
+    public generateTemplateAlignment(jobId: string, accession: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            axios.get(`/api/jobs/templateAlignment/${jobId}/${accession}`)
+                .then(() => resolve())
+                .catch(reject);
+        });
+    }
 }
 
 export const resultsService = new ResultsService();

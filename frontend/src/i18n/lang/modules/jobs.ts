@@ -229,6 +229,10 @@ export default {
             pValue: 'P-value: {pval}',
             length: 'Length: {pval}',
         },
+        templateAlignment: {
+            title: 'Template Alignment (~100 most distinct sequences)',
+            forwardTo: 'Forward to',
+        }
     },
     forwarding: {
         selectPlaceholder: 'Please select a tool',
