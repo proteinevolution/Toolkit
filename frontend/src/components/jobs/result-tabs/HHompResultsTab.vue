@@ -198,9 +198,11 @@
     import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
     import handyScroll from 'handy-scroll';
     import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-    import {HHompAlignmentItem, SearchAlignmentsResponse, SearchAlignmentItem} from '@/types/toolkit/results';
+    import {HHompAlignmentItem, SearchAlignmentItem, SearchAlignmentsResponse} from '@/types/toolkit/results';
     import {resultsService} from '@/services/ResultsService';
     import {colorSequence, ssColorSequence} from '@/util/SequenceUtils';
+    import EventBus from '@/util/EventBus';
+    import {Reformat} from '@/modules/reformat';
 
     const logger = Logger.get('HHompResultsTab');
 
@@ -311,7 +313,19 @@
                 alert('implement me!' + num);
             },
             forwardQuery(): void {
-                alert('implement me!');
+                if (this.alignments) {
+                    const fasta: string = this.alignments.reduce((acc: string, cur: HHompAlignmentItem) =>
+                        acc + '>' + cur.query.name + '\n' + cur.query.seq + '\n', '');
+                    const reformatted: string = new Reformat(fasta).reformat('a3m');
+                    EventBus.$emit('show-modal', {
+                        id: 'forwardingModal', props: {
+                            forwardingData: reformatted,
+                            forwardingMode: {
+                                alignment: ['formatseq', 'hhblits', 'hhpred', 'hhomp', 'hhrepid'],
+                            },
+                        },
+                    });
+                }
             },
             toggleColor(): void {
                 this.color = !this.color;
