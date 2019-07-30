@@ -38,24 +38,30 @@ case class HHPredHSP(
       "acc"         -> Common.getSingleLink(accession).toString.asJson,
       "name"        -> description.asJson,
       "probab"      -> info.probab.asJson,
-      "eval"        -> eValue.asJson,
+      "eval"        -> info.eval.asJson,
       "ssScore"     -> ss_score.asJson,
       "alignedCols" -> info.aligned_cols.asJson,
       "templateRef" -> template.ref.asJson
     ).asJson
   }
 
+  // TODO
   def toAlignmentSectionJson(db: String = ""): Json = {
-    // TODO adapt
     Map[String, Json](
-      "numCheck"    -> num.asJson,
+      "num"         -> num.asJson,
       "acc"         -> Common.getSingleLink(accession).toString.asJson,
+      "dbLink"      -> Common.getLinksHHpred("11", accession).toString.asJson,
       "name"        -> description.asJson,
       "probab"      -> info.probab.asJson,
-      "eval"        -> eValue.asJson,
+      "eval"        -> info.eval.asJson,
+      "score"       -> info.score.asJson,
       "ssScore"     -> ss_score.asJson,
+      "ident"       -> "%1.0f".format(info.identities.toFloat * 100).asJson,
+      "similarity"  -> info.similarity.asJson,
       "alignedCols" -> info.aligned_cols.asJson,
-      "templateRef" -> template.ref.asJson
+      "template"    -> template.asJson,
+      "agree"       -> agree.asJson,
+      "query"       -> query.asJson
     ).asJson
   }
 

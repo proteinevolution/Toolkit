@@ -139,6 +139,9 @@ export default {
                 cols: 'Cols',
                 targetLength: 'Target Length',
             },
+            alignmentInfo: 'Probability: {probab}&emsp;&emsp;E-value: {eval}&emsp;&emsp;Score: {score}&emsp;&emsp;' +
+                'Aligned cols: {alignedCols}&emsp;&emsp;Identities: {ident}%&emsp;&emsp;Similarity: ' +
+                '{similarity}&emsp;&emsp;',
         },
         psiblast: {
             noResults: 'No hits found! Please re-run ProtBLAST/PSI-BLAST with a custom-built multiple sequence ' +

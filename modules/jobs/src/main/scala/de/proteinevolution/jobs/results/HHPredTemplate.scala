@@ -16,7 +16,8 @@
 
 package de.proteinevolution.jobs.results
 
-import io.circe.{ Decoder, HCursor }
+import io.circe.generic.semiauto.deriveEncoder
+import io.circe.{ Decoder, Encoder, HCursor }
 
 case class HHPredTemplate(
     consensus: String,
@@ -53,6 +54,7 @@ object HHPredTemplate {
           ss_pred,
           start
         )
-    }
+      }
+  implicit val hhpredTemplateEncoder: Encoder[HHPredTemplate] = deriveEncoder
 
 }

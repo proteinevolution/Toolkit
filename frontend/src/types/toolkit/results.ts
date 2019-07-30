@@ -46,6 +46,20 @@ export interface HHblitsAlignmentItem extends SearchAlignmentItem {
     identities: number;
 }
 
+export interface HHpredAlignmentItem extends SearchAlignmentItem {
+    num: number;
+    acc: string;
+    dbLink: string;
+    name: string;
+    probab: number;
+    eval: number;
+    score: number;
+    ident: number;
+    similarity: number;
+    ssScore: number;
+    alignedCols: number;
+}
+
 export interface HMMERAlignmentItem extends SearchAlignmentItem {
     num: number;
     acc: string;
