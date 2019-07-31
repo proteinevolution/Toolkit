@@ -181,3 +181,39 @@ export interface HitMapItem {
     l: number;
     r: number;
 }
+
+export interface HHInfoResult {
+    num_hits: number;
+}
+
+export interface PsiblastHHInfoResult extends HHInfoResult {
+    tm: number;
+    coil: number;
+    signal: string;
+}
+
+export interface HHblitsHHInfoResult extends HHInfoResult {
+    tm: number;
+    coil: number;
+    signal: string;
+}
+
+export interface HMMERHHInfoResult extends HHInfoResult {
+    tm: number;
+    coil: number;
+    signal: string;
+}
+
+export interface HHompHHInfoResult extends HHInfoResult {
+    probOMP: string;
+}
+
+export interface HHpredHHInfoResult extends HHInfoResult {
+    tm: number;
+    coil: number;
+    signal: string;
+    db: string;
+    proteomes: string;
+    msa_gen: string;
+    qa3m_count: string;
+}

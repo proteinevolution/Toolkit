@@ -1,7 +1,8 @@
 <template>
     <div>
         <br/>
-        Download the zipped CLANS file (<a :href="fileUrl" download><b>{{job.jobID + '.clans.zip'}}</b></a>) generated for your
+        Download the zipped CLANS file (<a :href="fileUrl" download><b>{{job.jobID + '.clans.zip'}}</b></a>) generated
+        for your
         sequences and unzip it.
         <br/><br/>
         Download the CLANS application here: <a

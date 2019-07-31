@@ -74,16 +74,6 @@ final class ResultViewFactory @Inject()(
       json: Json
   ): Either[DecodingFailure, ResultView] = {
     (ToolName(toolName): @unchecked) match {
-      case PSIBLAST =>
-        for {
-          result <- json.as[PSIBlastResult]
-        } yield PsiBlastResultView(jobId, result, toolConfig, constants)
-      case HHPRED =>
-        for {
-          result    <- json.as[HHPredResult]
-          alignment <- json.hcursor.downField("querytemplate").as[AlignmentResult]
-          reduced   <- json.hcursor.downField("reduced").as[AlignmentResult]
-        } yield HHPredResultView(jobId, result, alignment, reduced, toolConfig, constants)
       case HHPRED_ALIGN =>
         for {
           result <- json.as[HHPredResult]

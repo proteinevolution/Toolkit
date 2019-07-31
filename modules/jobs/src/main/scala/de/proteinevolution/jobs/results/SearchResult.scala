@@ -16,6 +16,7 @@
 
 package de.proteinevolution.jobs.results
 
+import io.circe.Json
 import simulacrum._
 
 @typeclass trait SearchResult[+T] {
@@ -29,5 +30,7 @@ import simulacrum._
   def HSPS: List[T]
 
   def alignment: AlignmentResult
+
+  def toInfoJson: Json
 
 }

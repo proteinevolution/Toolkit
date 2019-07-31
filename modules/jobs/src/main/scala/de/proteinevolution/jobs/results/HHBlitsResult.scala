@@ -17,6 +17,7 @@
 package de.proteinevolution.jobs.results
 
 import de.proteinevolution.jobs.results.General.SingleSeq
+import io.circe.syntax._
 import io.circe.{ Decoder, HCursor, Json }
 
 case class HHBlitsResult(
@@ -25,8 +26,9 @@ case class HHBlitsResult(
     num_hits: Int,
     query: SingleSeq,
     db: String,
-    TMPRED: String,
-    COILPRED: String
+    tmpred: String,
+    coilpred: String,
+    signal: String
 ) extends SearchResult[HHBlitsHSP] {
 
   def hitsOrderBy(sortBy: String, desc: Boolean): List[HHBlitsHSP] = {
@@ -42,6 +44,15 @@ case class HHBlitsResult(
     if (desc) l.reverse else l
   }
 
+  def toInfoJson: Json = {
+    Map[String, Json](
+      "num_hits" -> num_hits.asJson,
+      "tm"       -> tmpred.asJson,
+      "coil"     -> coilpred.asJson,
+      "signal"   -> signal.asJson
+    ).asJson
+  }
+
 }
 
 object HHBlitsResult {
@@ -53,11 +64,21 @@ object HHBlitsResult {
       db         <- c.downField("results").downField("db").as[String]
       alignment  <- c.downField("reduced").as[AlignmentResult]
       query      <- c.downField("query").as[SingleSeq]
-      tmpred     <- c.downField("results").downField("TMPRED").as[Option[String]]
-      coilpred   <- c.downField("results").downField("COILPRED").as[Option[String]]
+      tmpred     <- c.downField("results").downField("tmpred").as[Option[String]]
+      coilpred   <- c.downField("results").downField("coilpred").as[Option[String]]
+      signal     <- c.downField("results").downField("signal").as[Option[String]]
     } yield {
       val hspList = HHBlitsHSP.hhblitsHSPListDecoder(hits, alignments)
-      new HHBlitsResult(hspList, alignment, hspList.length, query, db, tmpred.getOrElse("0"), coilpred.getOrElse("1"))
+      new HHBlitsResult(
+        hspList,
+        alignment,
+        hspList.length,
+        query,
+        db,
+        tmpred.getOrElse("0"),
+        coilpred.getOrElse("1"),
+        signal.getOrElse("0")
+      )
     }
 
 }

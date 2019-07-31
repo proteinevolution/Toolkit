@@ -23,6 +23,14 @@
             </div>
 
             <div v-html="$t('jobs.results.hmmer.numHits', {num: total})"></div>
+
+            <div v-if="info.coil === '0' || info.tm === '1' || info.signal === '1'">
+                Detected sequence features:
+                <b v-if="info.coil === '0'" v-html="$t('jobs.results.sequenceFeatures.coil')"></b>
+                <b v-if="info.tm === '1'" v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
+                <b v-if="info.signal === '1'" v-html="$t('jobs.results.sequenceFeatures.signal')"></b>
+            </div>
+
             <div class="result-section"
                  ref="visualization">
                 <h4>{{$t('jobs.results.hitlist.vis')}}</h4>
@@ -132,7 +140,12 @@
     import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
     import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
     import handyScroll from 'handy-scroll';
-    import {HMMERAlignmentItem, SearchAlignmentItem, SearchAlignmentsResponse} from '@/types/toolkit/results';
+    import {
+        HMMERAlignmentItem,
+        HMMERHHInfoResult,
+        SearchAlignmentItem,
+        SearchAlignmentsResponse,
+    } from '@/types/toolkit/results';
     import {colorSequence} from '@/util/SequenceUtils';
     import {resultsService} from '@/services/ResultsService';
 
@@ -149,6 +162,7 @@
         data() {
             return {
                 alignments: undefined as HMMERAlignmentItem[] | undefined,
+                info: undefined as HMMERHHInfoResult | undefined,
                 total: 100,
                 loadingMore: false,
                 perPage: 20,
@@ -202,6 +216,7 @@
         methods: {
             async init(): Promise<void> {
                 await this.loadAlignments(0, this.perPage);
+                await this.loadInfo();
             },
             async intersected(): Promise<void> {
                 if (!this.loadingMore && this.alignments && this.alignments.length < this.total) {
@@ -223,6 +238,9 @@
                 } else {
                     this.alignments.push(...res.alignments);
                 }
+            },
+            async loadInfo(): Promise<void> {
+                this.info = await resultsService.fetchHHInfo(this.job.jobID) as HMMERHHInfoResult;
             },
             scrollTo(ref: string): void {
                 if (this.$refs[ref]) {

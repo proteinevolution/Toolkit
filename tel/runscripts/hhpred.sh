@@ -195,12 +195,20 @@ fi
 head -n 2 ../results/${JOBID}.fas > ../results/firstSeq0.fas
 sed 's/[\.\-]//g' ../results/firstSeq0.fas > ../results/firstSeq.fas
 
+echo "#Predicting sequence features." >> ../results/process.log
 TMPRED=`tmhmm ../results/firstSeq.fas -short`
 
 run_Coils -c -min_P 0.8 < ../results/firstSeq.fas >& ../results/firstSeq.cc
 COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
 
+# Run SignalP; since the source organism is unknown, check all four cases
+${BIOPROGS}/tools/signalp/bin/signalp -org 'euk' -format 'short' -fasta ../results/firstSeq.fas -prefix "../results/${JOBID}_euk" -tmp '../results/'
+${BIOPROGS}/tools/signalp/bin/signalp -org 'gram+' -format 'short' -fasta ../results/firstSeq.fas -prefix "../results/${JOBID}_gramp" -tmp '../results/'
+${BIOPROGS}/tools/signalp/bin/signalp -org 'gram-' -format 'short' -fasta ../results/firstSeq.fas -prefix "../results/${JOBID}_gramn" -tmp '../results/'
+${BIOPROGS}/tools/signalp/bin/signalp -org 'arch' -format 'short' -fasta ../results/firstSeq.fas -prefix "../results/${JOBID}_arch" -tmp '../results/'
+
 rm ../results/firstSeq0.fas ../results/firstSeq.cc
+echo "done" >> ../results/process.log
 
 ITERS=%msa_gen_max_iter.content
 
@@ -425,13 +433,20 @@ manipulate_json.py -k 'proteomes' -v '%proteomes.content' ../results/results.jso
 
 
 # add transmembrane prediction info to json
-manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/results.json
+manipulate_json.py -k 'tmpred' -v "${TMPRED}" ../results/results.json
 
 # add coiled coil prediction info to json
-manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/results.json
+manipulate_json.py -k 'coilpred' -v "${COILPRED}" ../results/results.json
+
+# Write results of signal peptide prediction
+SIGNALP=$(grep 'SP(Sec/SPI)' ../results/*.signalp5 | wc -l)
+if [[ ${SIGNALP} -gt "4" ]]; then
+    manipulate_json.py -k 'signal' -v "1" ../results/results.json
+else
+    manipulate_json.py -k 'signal' -v "0" ../results/results.json
+fi
 
 # For alerting user if too few homologs are found for building A3M
-
 if [[ ${ITERS} = "0" ]] ; then
     manipulate_json.py -k 'MSA_GEN' -v "custom" ../results/results.json
 else

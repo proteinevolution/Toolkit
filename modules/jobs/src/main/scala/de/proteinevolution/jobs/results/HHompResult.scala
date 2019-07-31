@@ -17,6 +17,7 @@
 package de.proteinevolution.jobs.results
 
 import de.proteinevolution.jobs.results.General.SingleSeq
+import io.circe.syntax._
 import io.circe.{ Decoder, HCursor, Json }
 
 case class HHompResult(
@@ -41,6 +42,12 @@ case class HHompResult(
       case _             => HSPS.sortBy(_.num)
     }
     if (desc) l.reverse else l
+  }
+
+  def toInfoJson: Json = {
+    Map[String, Json](
+      "probOMP" -> overall_prob.asJson
+    ).asJson
   }
 
 }

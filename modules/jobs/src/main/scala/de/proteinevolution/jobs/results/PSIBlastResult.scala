@@ -18,6 +18,7 @@ package de.proteinevolution.jobs.results
 
 import de.proteinevolution.jobs.results.General.SingleSeq
 import io.circe._
+import io.circe.syntax._
 
 case class PSIBlastResult(
     HSPS: List[PSIBlastHSP],
@@ -27,8 +28,9 @@ case class PSIBlastResult(
     eValue: Double,
     query: SingleSeq,
     belowEvalThreshold: Int,
-    TMPRED: String,
-    COILPRED: String,
+    tmpred: String,
+    coilpred: String,
+    signal: String,
     alignment: AlignmentResult = AlignmentResult(Nil)
 ) extends SearchResult[PSIBlastHSP] {
 
@@ -43,6 +45,15 @@ case class PSIBlastResult(
       case _          => HSPS.sortBy(_.num)
     }
     if (desc) l.reverse else l
+  }
+
+  def toInfoJson: Json = {
+    Map[String, Json](
+      "num_hits" -> num_hits.asJson,
+      "tm"       -> tmpred.asJson,
+      "coil"     -> coilpred.asJson,
+      "signal"   -> signal.asJson
+    ).asJson
   }
 
 }
@@ -64,8 +75,9 @@ object PSIBlastResult {
       db        <- c.downField("output_psiblastp").downField("db").as[String]
       eValue    <- c.downField("output_psiblastp").downField("evalue").as[String]
       hits      <- iterations.downArray.rightN(iter_list.size - 1).downField("search").downField("hits").as[List[Json]]
-      tmpred    <- c.downField("output_psiblastp").downField("TMPRED").as[Option[String]]
-      coilpred  <- c.downField("output_psiblastp").downField("COILPRED").as[Option[String]]
+      tmpred    <- c.downField("output_psiblastp").downField("tmpred").as[Option[String]]
+      coilpred  <- c.downField("output_psiblastp").downField("coilpred").as[Option[String]]
+      signal    <- c.downField("output_psiblastp").downField("signal").as[Option[String]]
     } yield {
       val num_hits   = hits.length
       val hspList    = hits.flatMap(_.hcursor.as[PSIBlastHSP](PSIBlastHSP.parseHSP(db)).toOption)
@@ -79,7 +91,8 @@ object PSIBlastResult {
         query,
         upperBound,
         tmpred.getOrElse("0"),
-        coilpred.getOrElse("1")
+        coilpred.getOrElse("1"),
+        signal.getOrElse("0")
       )
     }
   }

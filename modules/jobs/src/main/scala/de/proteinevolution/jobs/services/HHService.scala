@@ -88,4 +88,13 @@ class HHService @Inject()(
       )
     }
   }
+
+  def loadInfo(jobID: String): EitherT[Future, DecodingFailure, Json] = {
+    getResults(jobID).subflatMap { result =>
+      Right(
+        result.toInfoJson
+      )
+    }
+  }
+
 }

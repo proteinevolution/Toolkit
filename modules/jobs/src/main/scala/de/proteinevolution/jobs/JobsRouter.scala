@@ -63,6 +63,7 @@ class JobsRouter @Inject()(
       resultsController.loadAlignmentHits(jobID, start, end,resultField)
     case GET(p"/$jobID/results/hh-alignments/" ? q_o"start=${int(start)}" & q_o"end=${int(end)}") =>
       hhController.loadAlignments(jobID, start, end)
+    case GET(p"/$jobID/results/hh-info/") => hhController.loadInfo(jobID)
     case GET(p"/$jobID/results/files/$filename") => fileController.file(filename = filename, jobID = jobID)
     case GET(p"/$jobID/results/hits/" ? q_o"start=${int(start)}" & q_o"end=${int(end)}"
       & q_o"filter=${filter}" & q_o"sortBy=${sortBy}"& q_o"desc=${bool(desc)}") =>

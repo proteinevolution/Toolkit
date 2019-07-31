@@ -21,6 +21,8 @@
             </div>
 
             <div v-html="$t('jobs.results.hhomp.numHits', {num: total})"></div>
+            <div v-html="$t('jobs.results.hhomp.probOMP', {num: info.probOMP})"></div>
+
 
             <div class="result-section"
                  ref="visualization">
@@ -198,7 +200,12 @@
     import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
     import handyScroll from 'handy-scroll';
     import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-    import {HHompAlignmentItem, SearchAlignmentsResponse, SearchAlignmentItem} from '@/types/toolkit/results';
+    import {
+        HHompAlignmentItem,
+        HHompHHInfoResult,
+        SearchAlignmentItem,
+        SearchAlignmentsResponse,
+    } from '@/types/toolkit/results';
     import {resultsService} from '@/services/ResultsService';
     import {colorSequence, ssColorSequence} from '@/util/SequenceUtils';
 
@@ -215,6 +222,7 @@
         data() {
             return {
                 alignments: undefined as HHompAlignmentItem[] | undefined,
+                info: undefined as HHompHHInfoResult | undefined,
                 total: 100,
                 loadingMore: false,
                 perPage: 20,
@@ -266,6 +274,7 @@
         methods: {
             async init(): Promise<void> {
                 await this.loadAlignments(0, this.perPage);
+                await this.loadInfo();
             },
             async intersected(): Promise<void> {
                 if (!this.loadingMore && this.alignments && this.alignments.length < this.total) {
@@ -287,6 +296,9 @@
                 } else {
                     this.alignments.push(...res.alignments);
                 }
+            },
+            async loadInfo(): Promise<void> {
+                this.info = await resultsService.fetchHHInfo(this.job.jobID) as HHompHHInfoResult;
             },
             scrollTo(ref: string): void {
                 if (this.$refs[ref]) {

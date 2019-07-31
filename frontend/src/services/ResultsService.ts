@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {
-    AlignmentResultResponse,
+    AlignmentResultResponse, HHInfoResult,
     SearchAlignmentItem,
     SearchAlignmentsResponse,
     SearchHitsResponse,
@@ -46,6 +46,16 @@ class ResultsService {
                     end,
                 },
             })
+                .then((response) => {
+                    resolve(response.data);
+                })
+                .catch(reject);
+        });
+    }
+
+    public fetchHHInfo(jobId: string): Promise<HHInfoResult> {
+        return new Promise<HHInfoResult>((resolve, reject) => {
+            axios.get(`/api/jobs/${jobId}/results/hh-info/`)
                 .then((response) => {
                     resolve(response.data);
                 })

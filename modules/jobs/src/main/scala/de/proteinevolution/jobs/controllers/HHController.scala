@@ -20,10 +20,10 @@ import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.db.ResultFileAccessor
-import de.proteinevolution.jobs.models.{ HHContext, ResultsForm }
+import de.proteinevolution.jobs.models.{HHContext, ResultsForm}
 import de.proteinevolution.jobs.services.HHService
-import javax.inject.{ Inject, Singleton }
-import play.api.mvc.{ Action, AnyContent }
+import javax.inject.{Inject, Singleton}
+import play.api.mvc.{Action, AnyContent}
 
 import scala.concurrent.ExecutionContext
 
@@ -75,4 +75,22 @@ class HHController @Inject()(
         case _ => fuccess(NotFound)
       }
     }
+
+  def loadInfo(jobID: String): Action[AnyContent] =
+    userAction.async { implicit request =>
+      jobDao.findJob(jobID).flatMap {
+        case Some(job) =>
+          if (job.isPublic || job.ownerID.equals(request.user.userID)) {
+            service.loadInfo(jobID).value.map {
+              case Right(json) => Ok(json)
+              case Left(_)     => BadRequest
+            }
+          } else {
+            fuccess(Unauthorized)
+          }
+        case _ => fuccess(NotFound)
+      }
+    }
+
+
 }

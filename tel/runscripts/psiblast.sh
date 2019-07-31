@@ -75,14 +75,20 @@ sed -n '1p' ../results/${JOBID}.fas | cut -c -25 > ../results/firstSeq0.fas
 sed -n '2p' ../results/${JOBID}.fas >> ../results/firstSeq0.fas
 sed 's/[\.\-]//g' ../results/firstSeq0.fas > ../results/firstSeq.fas
 
+echo "#Running PSI-BLAST against the %standarddb.content DB." >> ../results/process.log
+
 TMPRED=`tmhmm ../results/firstSeq.fas -short`
 
 run_Coils -c -min_P 0.8 < ../results/firstSeq.fas >& ../results/firstSeq.cc
 COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
 
-rm ../results/firstSeq.cc
+# Run SignalP; since the source organism is unknown, check all four cases
+${BIOPROGS}/tools/signalp/bin/signalp -org 'euk' -format 'short' -fasta ../results/firstSeq.fas -prefix "../results/${JOBID}_euk" -tmp '../results/'
+${BIOPROGS}/tools/signalp/bin/signalp -org 'gram+' -format 'short' -fasta ../results/firstSeq.fas -prefix "../results/${JOBID}_gramp" -tmp '../results/'
+${BIOPROGS}/tools/signalp/bin/signalp -org 'gram-' -format 'short' -fasta ../results/firstSeq.fas -prefix "../results/${JOBID}_gramn" -tmp '../results/'
+${BIOPROGS}/tools/signalp/bin/signalp -org 'arch' -format 'short' -fasta ../results/firstSeq.fas -prefix "../results/${JOBID}_arch" -tmp '../results/'
 
-echo "#Running PSI-BLAST against the %standarddb.content DB." >> ../results/process.log
+rm ../results/firstSeq.cc
 
 psiblast -db %STANDARD/%standarddb.content \
          -matrix %matrix.content \
@@ -143,16 +149,23 @@ manipulate_json.py -k 'db' -v '%standarddb.content' ../results/output_psiblastp.
 manipulate_json.py -k 'evalue' -v '%blast_incl_eval.content' ../results/output_psiblastp.json
 
 # add transmembrane prediction info to json
-manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/output_psiblastp.json
+manipulate_json.py -k 'tmpred' -v "${TMPRED}" ../results/output_psiblastp.json
 
 # add coiled coil prediction info to json
-manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/output_psiblastp.json
+manipulate_json.py -k 'coilpred' -v "${COILPRED}" ../results/output_psiblastp.json
+
+# Write results of signal peptide prediction
+SIGNALP=$(grep 'SP(Sec/SPI)' ../results/*.signalp5 | wc -l)
+if [[ ${SIGNALP} -gt "4" ]]; then
+    manipulate_json.py -k 'signal' -v "1" ../results/output_psiblastp.json
+else
+    manipulate_json.py -k 'signal' -v "0" ../results/output_psiblastp.json
+fi
 
 # Create a JSON with -log10(E-values) of the hits
 extract_from_json.py -tool psiblast ../results/output_psiblastp.json ../results/plot_data.json
 
 cd ../results
-
-rm output_psiblastp.asn output_psiblastp.tab
+rm output_psiblastp.asn output_psiblastp.tab *.signalp5
 
 echo "done" >> ../results/process.log

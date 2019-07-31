@@ -90,6 +90,7 @@ export default {
                 'a custom-built multiple sequence alignment as input (set "Maximal no. of MSA generation steps" to ' +
                 '0). Please also consider picking a different target database and/or using different parameters.',
             numHits: 'Number of Hits: <b>{num}</b>',
+            probOMP: 'Overall probability of the query to be an OMP: <b>{num}%</b>',
             table: {
                 num: 'Nr',
                 hit: 'Hit',
@@ -228,6 +229,11 @@ export default {
             numResults: 'No. of repeats: {num}',
             pValue: 'P-value: {pval}',
             length: 'Length: {pval}',
+        },
+        sequenceFeatures: {
+            coil: '&#9726;Coiled coil segment(s)&emsp;',
+            tm: '&#9726;Transmembrane segment(s)&emsp;',
+            signal: '&#9726;Signal peptide&emsp;',
         },
     },
     forwarding: {
