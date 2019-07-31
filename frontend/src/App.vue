@@ -52,6 +52,8 @@
             <HelpModal :toolName="modalProps.toolName"/>
             <ForwardingModal :forwarding-data="modalProps.forwardingData"
                              :forwardingMode="modalProps.forwardingMode"/>
+            <TemplateAlignmentModal :job-i-d="modalProps.jobID"
+                                    :accession="modalProps.accession"/>
             <VerificationModal/>
             <ResetPasswordModal/>
         </div>
@@ -96,6 +98,7 @@
     import HelpModal from '@/components/modals/HelpModal.vue';
     import AuthModal from '@/components/modals/AuthModal.vue';
     import ForwardingModal from '@/components/modals/ForwardingModal.vue';
+    import TemplateAlignmentModal from '@/components/modals/TemplateAlignmentModal.vue';
     import {ModalParams} from '@/types/toolkit/utils';
     import VerificationModal from '@/components/modals/VerificationModal.vue';
     import ResetPasswordModal from '@/components/modals/ResetPasswordModal.vue';
@@ -118,6 +121,7 @@
             VerificationModal,
             ResetPasswordModal,
             ForwardingModal,
+            TemplateAlignmentModal,
             AuthModal,
             CookieLaw,
             ScrollTopButton,
@@ -131,6 +135,8 @@
                     format: '', // for AlignmentViewerModal
                     forwardingMode: {}, // for ForwardingModal
                     forwardingData: '', // for ForwardingModal
+                    jobID: '', // for TemplateAlignmentModal
+                    accession: '', // for TemplateAlignmentModal
                 },
                 // allow for update of human readable time by updating reference point in store
                 refreshInterval: null as any,

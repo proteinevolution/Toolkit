@@ -67,7 +67,7 @@
                             <tr>
                                 <td></td>
                                 <td colspan="3">
-                                    <a @click="displayTemplateAlignment(al.num)"
+                                    <a @click="displayTemplateAlignment(al.template.accession)"
                                        v-text="$t('jobs.results.hhblits.templateAlignment')"></a>
                                 </td>
                             </tr>
@@ -167,6 +167,7 @@
     } from '@/types/toolkit/results';
     import {colorSequence} from '@/util/SequenceUtils';
     import {resultsService} from '@/services/ResultsService';
+    import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('HHblitsResultsTab');
 
@@ -303,8 +304,13 @@
                     }
                 }
             },
-            displayTemplateAlignment(num: number): void {
-                alert('implement me!' + num);
+            displayTemplateAlignment(accession: string): void {
+                EventBus.$emit('show-modal', {
+                    id: 'templateAlignmentModal', props: {
+                        jobID: this.job.jobID,
+                        accession,
+                    },
+                });
             },
             forwardQuery(): void {
                 alert('implement me!');
