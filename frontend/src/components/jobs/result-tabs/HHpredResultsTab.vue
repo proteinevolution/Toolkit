@@ -71,7 +71,7 @@
                                 <td colspan="3">
                                     <a @click="displayTemplateAlignment(al.template.accession)"
                                        v-text="$t('jobs.results.hhpred.templateAlignment')"></a>
-                                     |
+                                    |
                                     <span v-html="al.dbLink"></span>
                                 </td>
                             </tr>
@@ -101,21 +101,21 @@
                                     <td></td>
                                     <td>Q ss_pred</td>
                                     <td></td>
-                                    <td v-html="coloredSS(alPart.query.ss_pred)"></td>
+                                    <td v-html="coloredSeqSS(alPart.query.ss_pred)"></td>
                                 </tr>
                                 <tr v-if="alPart.query.seq"
                                     class="sequence">
                                     <td></td>
                                     <td v-text="'Q '+alPart.query.name"></td>
                                     <td v-text="alPart.query.start"></td>
-                                    <td v-html="coloredSeq(alPart.query.seq) + alQEnd(alPart)"></td>
+                                    <td v-html="coloredSeq(alPart.query.seq) + alEndRef(alPart.query)"></td>
                                 </tr>
                                 <tr v-if="alPart.query.consensus"
                                     class="sequence">
                                     <td></td>
                                     <td>Q Consensus</td>
                                     <td v-text="alPart.query.start"></td>
-                                    <td v-html="alPart.query.consensus  + alQEnd(alPart)"></td>
+                                    <td v-html="alPart.query.consensus  + alEndRef(alPart.query)"></td>
                                 </tr>
                                 <tr v-if="alPart.agree"
                                     class="sequence">
@@ -129,28 +129,28 @@
                                     <td></td>
                                     <td v-text="">Q Consensus</td>
                                     <td v-text="alPart.template.start"></td>
-                                    <td v-html="alPart.template.consensus  + alTEnd(alPart)"></td>
+                                    <td v-html="alPart.template.consensus  + alEndRef(alPart.template)"></td>
                                 </tr>
                                 <tr v-if="alPart.template.seq"
                                     class="sequence">
                                     <td></td>
                                     <td v-text="'T '+alPart.query.name"></td>
                                     <td v-text="alPart.template.start"></td>
-                                    <td v-html="coloredSeq(alPart.template.seq) + alTEnd(alPart)"></td>
+                                    <td v-html="coloredSeq(alPart.template.seq) + alEndRef(alPart.template)"></td>
                                 </tr>
                                 <tr v-if="alPart.template.ss_dssp"
                                     class="sequence">
                                     <td></td>
                                     <td>T ss_dssp</td>
                                     <td></td>
-                                    <td v-html="coloredSS(alPart.template.ss_dssp)"></td>
+                                    <td v-html="coloredSeqSS(alPart.template.ss_dssp)"></td>
                                 </tr>
                                 <tr v-if="alPart.template.ss_pred"
                                     class="sequence">
                                     <td></td>
                                     <td>T ss_pred</td>
                                     <td></td>
-                                    <td v-html="coloredSS(alPart.template.ss_pred)"></td>
+                                    <td v-html="coloredSeqSS(alPart.template.ss_pred)"></td>
                                 </tr>
                                 <tr class="blank-row">
                                     <td></td>
@@ -188,10 +188,9 @@
     import {
         HHpredAlignmentItem,
         HHpredHHInfoResult,
-        SearchAlignmentItem,
+        SearchAlignmentItemRender,
         SearchAlignmentsResponse,
     } from '@/types/toolkit/results';
-    import {colorSequence, ssColorSequence} from '@/util/SequenceUtils';
     import {resultsService} from '@/services/ResultsService';
     import EventBus from '@/util/EventBus';
     import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
@@ -213,7 +212,6 @@
                 total: 100,
                 loadingMore: false,
                 perPage: 20,
-                color: true,
                 wrap: true,
                 breakAfter: 80,
                 selectedItems: [] as number[],
@@ -290,16 +288,6 @@
                     this.alignments.push(...res.alignments);
                 }
             },
-            scrollTo(ref: string): void {
-                if (this.$refs[ref]) {
-                    const elem: HTMLElement = (this.$refs[ref] as any).length ?
-                        (this.$refs[ref] as HTMLElement[])[0] : this.$refs[ref] as HTMLElement;
-                    elem.scrollIntoView({
-                        block: 'start',
-                        behavior: 'smooth',
-                    });
-                }
-            },
             async scrollToElem(num: number): Promise<void> {
                 const loadNum: number = num + 2; // load some more for better scrolling
                 if (this.alignments && this.alignments.map((a: HHpredAlignmentItem) => a.num).includes(loadNum)) {
@@ -354,9 +342,6 @@
             forwardQueryA3M(): void {
                 alert('implement me!');
             },
-            toggleColor(): void {
-                this.color = !this.color;
-            },
             toggleWrap(): void {
                 this.wrap = !this.wrap;
                 this.$nextTick(() => {
@@ -367,21 +352,9 @@
                     }
                 });
             },
-            coloredSeq(seq: string): string {
-                return this.color ? colorSequence(seq) : seq;
-            },
-            coloredSS(seq: string): string {
-                return ssColorSequence(seq);
-            },
-            alQEnd(al: HHpredAlignmentItem): string {
-                return ` &nbsp; ${al.query.end} (${al.query.ref})`;
-            },
-            alTEnd(al: HHpredAlignmentItem): string {
-                return ` &nbsp; ${al.template.end} (${al.template.ref})`;
-            },
-            wrapAlignments(al: HHpredAlignmentItem): SearchAlignmentItem[] {
+            wrapAlignments(al: HHpredAlignmentItem): SearchAlignmentItemRender[] {
                 if (this.wrap) {
-                    const res: SearchAlignmentItem[] = [];
+                    const res: SearchAlignmentItemRender[] = [];
                     let qStart: number = al.query.start;
                     let tStart: number = al.template.start;
                     for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
