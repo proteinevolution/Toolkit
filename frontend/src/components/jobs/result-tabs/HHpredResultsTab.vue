@@ -194,10 +194,11 @@
     import {colorSequence, ssColorSequence} from '@/util/SequenceUtils';
     import {resultsService} from '@/services/ResultsService';
     import EventBus from '@/util/EventBus';
+    import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
     const logger = Logger.get('HHpredResultsTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default mixins(ResultTabMixin, SearchResultTabMixin).extend({
         name: 'HHpredResultsTab',
         components: {
             Loading,
@@ -330,13 +331,6 @@
                         this.selectedItems.splice(i, 1);
                     }
                 }
-            },
-            resubmitSection([start, end]: [number, number]): void {
-                if (!this.info) {
-                    return;
-                }
-                const section: string = '>' + this.info.query.accession + '\n' + this.info.query.seq.slice(start, end);
-                EventBus.$emit('resubmit-section', section);
             },
             displayTemplateAlignment(accession: string): void {
                 if (this.tool.parameters) {

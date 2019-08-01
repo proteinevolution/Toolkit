@@ -153,10 +153,11 @@
     import {colorSequence} from '@/util/SequenceUtils';
     import {resultsService} from '@/services/ResultsService';
     import EventBus from '@/util/EventBus';
+    import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
     const logger = Logger.get('PsiblastResultsTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default mixins(ResultTabMixin, SearchResultTabMixin).extend({
         name: 'PsiblastResultsTab',
         components: {
             Loading,
@@ -288,13 +289,6 @@
             },
             displayTemplateAlignment(num: number): void {
                 alert('implement me!' + num);
-            },
-            resubmitSection([start, end]: [number, number]): void {
-                if (!this.info) {
-                    return;
-                }
-                const section: string = '>' + this.info.query.accession + '\n' + this.info.query.seq.slice(start, end);
-                EventBus.$emit('resubmit-section', section);
             },
             forwardQuery(): void {
                 alert('implement me!');

@@ -212,10 +212,11 @@
     import {colorSequence, ssColorSequence} from '@/util/SequenceUtils';
     import EventBus from '@/util/EventBus';
     import {Reformat} from '@/modules/reformat';
+    import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
     const logger = Logger.get('HHompResultsTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default mixins(ResultTabMixin, SearchResultTabMixin).extend({
         name: 'HHompResultsTab',
         components: {
             Loading,
@@ -332,13 +333,6 @@
                 } else {
                     logger.error('tool parameters not loaded. Cannot forward');
                 }
-            },
-            resubmitSection([start, end]: [number, number]): void {
-                if (!this.info) {
-                    return;
-                }
-                const section: string = '>' + this.info.query.accession + '\n' + this.info.query.seq.slice(start, end);
-                EventBus.$emit('resubmit-section', section);
             },
             forwardQuery(): void {
                 if (this.alignments) {

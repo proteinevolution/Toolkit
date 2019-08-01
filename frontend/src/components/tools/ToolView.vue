@@ -139,7 +139,7 @@
         },
         data() {
             return {
-                tabIndex: 1,
+                tabIndex: 0,
                 fullScreen: false,
                 validationErrors: {},
                 submission: {} as any,
