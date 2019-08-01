@@ -181,15 +181,12 @@ object Common {
     val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
     db match {
       case "scop" =>
-        links += s"<a class='structureModalOpenBtn' data-structure-id='$id'>Template 3D structure</a>"
         links += generateLink(pdbBaseLink, idTrimmed, "PDB")
         links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
       case "ecod" =>
         val idPdbEcod = id.slice(16, 20)
-        links += s"<a class='structureModalOpenBtn' data-structure-id='$id'>Template 3D structure</a>"
         links += generateLink(pdbBaseLink, idPdbEcod, "PDB")
       case "mmcif" =>
-        links += s"<a class='structureModalOpenBtn' data-structure-id='$id'>Template 3D structure</a>"
         links += generateLink(pdbeBaseLink, idPdb, "PDBe")
       case "pfam" =>
         val idCDDPfam = idCDD.replaceAll("\\..*", "")

@@ -55,6 +55,7 @@
             <TemplateAlignmentModal :job-i-d="modalProps.jobID"
                                     :accession="modalProps.accession"
                                     :forwardingMode="modalProps.forwardingMode"/>
+            <TemplateStructureModal :accession="modalProps.accessionStructure"/>
             <VerificationModal/>
             <ResetPasswordModal/>
         </div>
@@ -100,6 +101,7 @@
     import AuthModal from '@/components/modals/AuthModal.vue';
     import ForwardingModal from '@/components/modals/ForwardingModal.vue';
     import TemplateAlignmentModal from '@/components/modals/TemplateAlignmentModal.vue';
+    import TemplateStructureModal from '@/components/modals/TemplateStructureModal.vue';
     import {ModalParams} from '@/types/toolkit/utils';
     import VerificationModal from '@/components/modals/VerificationModal.vue';
     import ResetPasswordModal from '@/components/modals/ResetPasswordModal.vue';
@@ -123,6 +125,7 @@
             ResetPasswordModal,
             ForwardingModal,
             TemplateAlignmentModal,
+            TemplateStructureModal,
             AuthModal,
             CookieLaw,
             ScrollTopButton,
@@ -138,6 +141,8 @@
                     forwardingData: '', // for ForwardingModal
                     jobID: '', // for TemplateAlignmentModal
                     accession: '', // for TemplateAlignmentModal
+                    // care: Don't share the accession properties between modals, otherwise they react to the wrong updates!
+                    accessionStructure: '', // for TemplateStructureModal
                 },
                 // allow for update of human readable time by updating reference point in store
                 refreshInterval: null as any,

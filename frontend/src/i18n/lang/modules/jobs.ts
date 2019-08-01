@@ -141,6 +141,7 @@ export default {
                 targetLength: 'Target Length',
             },
             templateAlignment: 'Template alignment',
+            templateStructure: 'Template 3D Structure',
             alignmentInfo: 'Probability: {probab}&emsp;&emsp;E-value: {eval}&emsp;&emsp;Score: {score}&emsp;&emsp;' +
                 'Aligned cols: {alignedCols}&emsp;&emsp;Identities: {ident}%&emsp;&emsp;Similarity: ' +
                 '{similarity}&emsp;&emsp;',
@@ -234,6 +235,9 @@ export default {
         templateAlignment: {
             title: 'Template Alignment (~100 most distinct sequences)',
             forwardTo: 'Forward to',
+        },
+        templateStructure: {
+            title: 'Template 3D Structure',
         },
         sequenceFeatures: {
             coil: '&#9726;Coiled coil segment(s)&emsp;',

@@ -69,7 +69,7 @@ class JobsRouter @Inject()(
       hhController.loadHits(jobID, start, end, filter, sortBy, desc)
     case GET(p"/$jobID/results/") => resultsController.loadResults(jobID)
 
-    case GET(p"/getStructure/$filename") => fileController.getStructureFile(filename)
+    case GET(p"/getStructure/$accession") => fileController.getStructureFile(accession)
     case POST(p"/forwardAlignment/$jobID/${forwardModeExtractor(mode) }") =>
       processController.forwardAlignment(jobID, mode)
     case GET(p"/templateAlignment/$jobID/$accession") => processController.templateAlignment(jobID, accession)

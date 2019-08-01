@@ -71,6 +71,9 @@
                                     <a @click="displayTemplateAlignment(al.template.accession)"
                                        v-text="$t('jobs.results.hhpred.templateAlignment')"></a>
                                      |
+                                    <a @click="displayTemplateStructure(al.template.accession)"
+                                       v-text="$t('jobs.results.hhpred.templateStructure')"></a>
+                                    |
                                     <span v-html="al.dbLink"></span>
                                 </td>
                             </tr>
@@ -342,6 +345,11 @@
                 } else {
                     logger.error('tool parameters not loaded. Cannot forward');
                 }
+            },
+            displayTemplateStructure(accession: string): void {
+                EventBus.$emit('show-modal', {
+                    id: 'templateStructureModal', props: { accessionStructure: accession },
+                });
             },
             forwardQuery(): void {
                 alert('implement me!');

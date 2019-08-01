@@ -218,3 +218,9 @@ export interface HHpredHHInfoResult extends HHInfoResult {
     msa_gen: string;
     qa3m_count: string;
 }
+
+
+export interface StructureFileResponse {
+    data: any;
+    filename?: string;
+}
