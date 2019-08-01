@@ -13,7 +13,7 @@
                 <a @click="scrollTo('alignments')"
                    class="mr-4">{{$t('jobs.results.hitlist.alnLink')}}</a>
                 <a class="border-right mr-4"></a>
-                <a @click="forwardQuery">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
+                <a @click="forwardQueryA3M">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
                 <a @click="toggleColor"
                    :class="{active: color}">{{$t('jobs.results.actions.colorSeqs')}}</a>
                 <a @click="toggleWrap"
@@ -200,7 +200,6 @@
     import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
     import handyScroll from 'handy-scroll';
     import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-
     import {
         HHompAlignmentItem,
         HHompHHInfoResult,
@@ -208,8 +207,6 @@
         SearchAlignmentsResponse,
     } from '@/types/toolkit/results';
     import {resultsService} from '@/services/ResultsService';
-    import EventBus from '@/util/EventBus';
-    import {Reformat} from '@/modules/reformat';
     import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
     const logger = Logger.get('HHompResultsTab');
@@ -306,21 +303,6 @@
                 } else if (this.alignments) {
                     await this.loadAlignments(this.alignments.length, loadNum);
                     this.scrollTo('alignment-' + num);
-                }
-            },
-            forwardQuery(): void {
-                if (this.alignments) {
-                    const fasta: string = this.alignments.reduce((acc: string, cur: HHompAlignmentItem) =>
-                        acc + '>' + cur.query.name + '\n' + cur.query.seq + '\n', '');
-                    const reformatted: string = new Reformat(fasta).reformat('a3m');
-                    EventBus.$emit('show-modal', {
-                        id: 'forwardingModal', props: {
-                            forwardingData: reformatted,
-                            forwardingMode: {
-                                alignment: ['formatseq', 'hhblits', 'hhpred', 'hhomp', 'hhrepid'],
-                            },
-                        },
-                    });
                 }
             },
             toggleWrap(): void {

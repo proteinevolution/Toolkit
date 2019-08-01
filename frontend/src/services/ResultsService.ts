@@ -118,7 +118,7 @@ class ResultsService {
 
     public generateTemplateAlignment(jobId: string, accession: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            axios.get(`/api/jobs/templateAlignment/${jobId}/${accession}`)
+            axios.get(`/api/jobs/${jobId}/results/template-alignment//${accession}`)
                 .then(() => resolve())
                 .catch(reject);
         });
@@ -126,7 +126,7 @@ class ResultsService {
 
     public getStructureFile(accession: string): Promise<StructureFileResponse> {
         return new Promise<StructureFileResponse>((resolve, reject) => {
-            axios.get(`/api/jobs/getStructure/${accession}`)
+            axios.get(`/api/jobs/structure-file/${accession}`)
                 .then((response) => {
                     resolve({data: response.data, filename: this.getResponseFilename(response)});
                 })

@@ -15,7 +15,7 @@
                 <a class="border-right mr-4"></a>
                 <a @click="toggleAllSelected">{{$t('jobs.results.actions.' + (allSelected ? 'deselectAll' :
                     'selectAll'))}}</a>
-                <a @click="forwardQuery">{{$t('jobs.results.actions.forward')}}</a>
+                <a @click="forward">{{$t('jobs.results.actions.forward')}}</a>
                 <a @click="toggleColor"
                    :class="{active: color}">{{$t('jobs.results.actions.colorSeqs')}}</a>
                 <a @click="toggleWrap"
@@ -270,7 +270,7 @@
                     }
                 }
             },
-            forwardQuery(): void {
+            forward(): void {
                 alert('implement me!');
             },
             toggleWrap(): void {

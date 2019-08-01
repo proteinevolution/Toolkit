@@ -18,7 +18,7 @@ package de.proteinevolution.jobs
 
 import de.proteinevolution.jobs.controllers._
 import de.proteinevolution.jobs.services.ForwardModeExtractor
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
 import play.api.routing.sird._
@@ -46,10 +46,10 @@ class JobsRouter @Inject()(
   }
 
   private lazy val submissionRoutes: Routes = {
-    case POST(p"/" ? q"toolName=$toolName")          => submissionController.submitJob(toolName)
+    case POST(p"/" ? q"toolName=$toolName")         => submissionController.submitJob(toolName)
     case GET(p"/frontend/" ? q"toolName=$toolName") => submissionController.frontend(toolName)
-    case PUT(p"/$jobID")                             => submissionController.changeJob(jobID)
-    case DELETE(p"/$jobID")                          => submissionController.delete(jobID)
+    case PUT(p"/$jobID")                            => submissionController.changeJob(jobID)
+    case DELETE(p"/$jobID")                         => submissionController.delete(jobID)
   }
 
   private lazy val clusterApiRoutes: Routes = {
@@ -67,13 +67,13 @@ class JobsRouter @Inject()(
     case GET(p"/$jobID/results/hits/" ? q_o"start=${int(start)}" & q_o"end=${int(end)}"
       & q_o"filter=${filter}" & q_o"sortBy=${sortBy}"& q_o"desc=${bool(desc)}") =>
       hhController.loadHits(jobID, start, end, filter, sortBy, desc)
-    case GET(p"/$jobID/results/") => resultsController.loadResults(jobID)
+    case GET(p"/$jobID/results/template-alignment/$accession") => processController.templateAlignment(jobID, accession)
+    case GET(p"/$jobID/results/")                               => resultsController.loadResults(jobID)
+    case GET(p"/structure-file/$accession")                     => fileController.getStructureFile(accession)
 
-    case GET(p"/getStructure/$accession") => fileController.getStructureFile(accession)
     case POST(p"/forwardAlignment/$jobID/${forwardModeExtractor(mode) }") =>
       processController.forwardAlignment(jobID, mode)
-    case GET(p"/templateAlignment/$jobID/$accession") => processController.templateAlignment(jobID, accession)
-    case POST(p"/alignment/getAln/$jobID")            => resultsController.getAln(jobID)
+    case POST(p"/alignment/getAln/$jobID") => resultsController.getAln(jobID)
     case GET(p"/forward/modal/$toolName/$modalType") =>
       forwardModalController.getForwardModalOptions(modalType, toolName)
   }

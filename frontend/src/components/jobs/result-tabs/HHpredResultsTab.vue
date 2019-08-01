@@ -15,7 +15,7 @@
                 <a class="border-right mr-4"></a>
                 <a @click="toggleAllSelected">{{$t('jobs.results.actions.' + (allSelected ? 'deselectAll' :
                     'selectAll'))}}</a>
-                <a @click="forwardQuery">{{$t('jobs.results.actions.forward')}}</a>
+                <a @click="forward">{{$t('jobs.results.actions.forward')}}</a>
                 <a @click="forwardQueryA3M">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
                 <a v-if="((info.db === 'mmcif70/pdb70' || info.db === 'mmcif30/pdb30') && info.proteomes === '')"
                    @click="modelSelection">{{$t('jobs.results.actions.model')}}</a>
@@ -335,13 +335,10 @@
                     id: 'templateStructureModal', props: {accessionStructure: accession},
                 });
             },
-            forwardQuery(): void {
+            forward(): void {
                 alert('implement me!');
             },
             modelSelection(): void {
-                alert('implement me!');
-            },
-            forwardQueryA3M(): void {
                 alert('implement me!');
             },
             toggleWrap(): void {
