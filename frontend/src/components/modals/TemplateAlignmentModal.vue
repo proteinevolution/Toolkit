@@ -4,9 +4,13 @@
                size="lg">
         <Loading v-if="loading"/>
         <div v-else>
-            <b-form-select v-model="selectedOption"
-                           :options="forwardingOptions"
-                           class="select">
+            <b-form-select v-model="selectedTool"
+                           v-if="forwardingEnabled"
+                           :options="toolOptions"
+                           value-field="name"
+                           text-field="longname"
+                           class="select"
+                           @change="forward">
                 <template slot="first">
                     <option :value="null"
                             v-text="$t('jobs.results.templateAlignment.forwardTo')"></option>
@@ -26,6 +30,8 @@
     import Loading from '@/components/utils/Loading.vue';
     import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
+    import {ForwardingMode, Tool} from '@/types/toolkit/tools';
+    import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('TemplateAlignmentModal');
 
@@ -44,18 +50,32 @@
                 type: String,
                 required: true,
             },
+            forwardingMode: {
+                type: Object as () => ForwardingMode,
+                required: true,
+            },
         },
         data() {
             return {
                 loading: true,
                 data: '',
-                selectedOption: null,
-                forwardingOptions: [
-                    // TODO: Implement correct forwarding options
-                    {value: 'TODO', text: 'TODO'},
-                    {value: 'TODO', text: 'TODO'},
-                ],
+                selectedTool: null,
             };
+        },
+        computed: {
+            tools(): Tool[] {
+                return this.$store.getters['tools/tools'];
+            },
+            forwardingEnabled(): boolean {
+                return Boolean(this.forwardingMode.templateAlignment);
+            },
+            toolOptions(): Tool[] {
+                if (this.forwardingEnabled) {
+                    const options: string[] = (this.forwardingMode.templateAlignment as string[]);
+                    return this.tools.filter((t: Tool) => options.includes(t.name));
+                }
+                return [];
+            },
         },
         watch: {
             jobID: {
@@ -80,13 +100,31 @@
                 this.loading = true;
                 try {
                     await resultsService.generateTemplateAlignment(this.jobID, this.accession);
-                    // TODO: change extension based on tool, currently only works for hhblits
-                    const res: any = await resultsService.getFile(this.jobID, `${this.accession}.ra3m`);
+                    const res: any = await resultsService.getFile(this.jobID, this.accession);
                     this.data = String(res);
-                    this.loading = false;
                 } catch (err) {
                     this.$alert(this.$t('errors.templateAlignmentFailed'), 'danger');
+                } finally {
+                    this.loading = false;
                 }
+            },
+            forward() {
+                if (this.selectedTool) {
+                    this.$router.push('/tools/' + this.selectedTool, () => {
+                        EventBus.$on('paste-area-loaded', this.pasteForwardData);
+                    });
+                    EventBus.$emit('hide-modal', 'templateAlignmentModal');
+                    this.resetData();
+                } else {
+                    logger.log('no tool selected');
+                }
+            },
+            pasteForwardData() {
+                EventBus.$off('paste-area-loaded', this.pasteForwardData);
+                EventBus.$emit('forward-data', this.data);
+            },
+            resetData() {
+                this.selectedTool = null;
             },
         },
     });

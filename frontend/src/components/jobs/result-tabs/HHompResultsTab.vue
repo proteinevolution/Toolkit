@@ -59,7 +59,7 @@
                             <tr>
                                 <td></td>
                                 <td colspan="3">
-                                    <a @click="displayTemplateAlignment(al.num)"
+                                    <a @click="displayTemplateAlignment(al.template.accession)"
                                        v-text="$t('jobs.results.hhomp.templateAlignment')"></a>
                                 </td>
                             </tr>
@@ -320,8 +320,18 @@
                     this.scrollTo('alignment-' + num);
                 }
             },
-            displayTemplateAlignment(num: number): void {
-                alert('implement me!' + num);
+            displayTemplateAlignment(accession: string): void {
+                if (this.tool.parameters) {
+                    EventBus.$emit('show-modal', {
+                        id: 'templateAlignmentModal', props: {
+                            jobID: this.job.jobID,
+                            accession,
+                            forwardingMode: this.tool.parameters.forwarding,
+                        },
+                    });
+                } else {
+                    logger.error('tool parameters not loaded. Cannot forward');
+                }
             },
             resubmitSection([start, end]: [number, number]): void {
                 if (!this.info) {

@@ -53,7 +53,8 @@
             <ForwardingModal :forwarding-data="modalProps.forwardingData"
                              :forwardingMode="modalProps.forwardingMode"/>
             <TemplateAlignmentModal :job-i-d="modalProps.jobID"
-                                    :accession="modalProps.accession"/>
+                                    :accession="modalProps.accession"
+                                    :forwardingMode="modalProps.forwardingMode"/>
             <VerificationModal/>
             <ResetPasswordModal/>
         </div>
@@ -133,7 +134,7 @@
                     toolName: '', // for Help Modal
                     sequences: '', // for AlignmentViewerModal
                     format: '', // for AlignmentViewerModal
-                    forwardingMode: {}, // for ForwardingModal
+                    forwardingMode: {}, // for ForwardingModal and TemplateAlignmentModal
                     forwardingData: '', // for ForwardingModal
                     jobID: '', // for TemplateAlignmentModal
                     accession: '', // for TemplateAlignmentModal

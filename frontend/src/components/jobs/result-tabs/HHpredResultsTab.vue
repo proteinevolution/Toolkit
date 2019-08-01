@@ -68,8 +68,11 @@
                             </tr>
                             <tr>
                                 <td></td>
-                                <td colspan="3"
-                                    v-html="al.dbLink">
+                                <td colspan="3">
+                                    <a @click="displayTemplateAlignment(al.template.accession)"
+                                       v-text="$t('jobs.results.hhpred.templateAlignment')"></a>
+                                     |
+                                    <span v-html="al.dbLink"></span>
                                 </td>
                             </tr>
                             <tr class="font-weight-bold">
@@ -335,8 +338,18 @@
                 const section: string = '>' + this.info.query.accession + '\n' + this.info.query.seq.slice(start, end);
                 EventBus.$emit('resubmit-section', section);
             },
-            displayTemplateAlignment(num: number): void {
-                alert('implement me!' + num);
+            displayTemplateAlignment(accession: string): void {
+                if (this.tool.parameters) {
+                    EventBus.$emit('show-modal', {
+                        id: 'templateAlignmentModal', props: {
+                            jobID: this.job.jobID,
+                            accession,
+                            forwardingMode: this.tool.parameters.forwarding,
+                        },
+                    });
+                } else {
+                    logger.error('tool parameters not loaded. Cannot forward');
+                }
             },
             forwardQuery(): void {
                 alert('implement me!');
