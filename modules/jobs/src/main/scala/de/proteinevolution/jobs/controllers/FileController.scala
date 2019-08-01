@@ -39,8 +39,13 @@ class FileController @Inject()(
     extends AbstractController(ctx.controllerComponents)
     with ContentTypes {
 
-  def getStructureFile(filename: String): Action[AnyContent] = Action { implicit request =>
-    val db = Common.identifyDatabase(filename.replaceAll("(.cif)|(.pdb)", ""))
+  def getStructureFile(accession: String): Action[AnyContent] = Action { implicit request =>
+    val db = Common.identifyDatabase(accession)
+    val ending = db match {
+      case "scop"  => "pdb"
+      case "ecod"  => "pdb"
+      case "mmcif" => "cif"
+    }
     val filepath = db match {
       case "scop" =>
         config.get[String]("tel.env.SCOPE")
@@ -49,7 +54,7 @@ class FileController @Inject()(
       case "mmcif" =>
         config.get[String]("tel.env.CIF")
     }
-    Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$filename")).as(BINARY)
+    Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$accession.$ending")).as(BINARY)
   }
 
   def file(filename: String, jobID: String): Action[AnyContent] = userAction { implicit request =>

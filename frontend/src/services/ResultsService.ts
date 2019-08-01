@@ -1,10 +1,11 @@
-import axios from 'axios';
+import axios, {AxiosResponse} from 'axios';
 import {
     AlignmentResultResponse,
     HHInfoResult,
     SearchAlignmentItem,
     SearchAlignmentsResponse,
     SearchHitsResponse,
+    StructureFileResponse,
 } from '@/types/toolkit/results';
 
 class ResultsService {
@@ -121,6 +122,30 @@ class ResultsService {
                 .then(() => resolve())
                 .catch(reject);
         });
+    }
+
+    public getStructureFile(accession: string): Promise<StructureFileResponse> {
+        return new Promise<StructureFileResponse>((resolve, reject) => {
+            axios.get(`/api/jobs/getStructure/${accession}`)
+                .then((response) => {
+                    resolve({data: response.data, filename: this.getResponseFilename(response)});
+                })
+                .catch(reject);
+        });
+    }
+
+    private getResponseFilename(response: AxiosResponse): string | undefined {
+        if (response.headers.hasOwnProperty('content-disposition')) {
+            const header: string = response.headers['content-disposition'];
+            const filenameIndex = header.indexOf('filename=');
+            if (filenameIndex === -1) {
+                return undefined;
+            }
+            const startIndex = filenameIndex + 10;
+            const endIndex = header.length - 1;
+            return header.substring(startIndex, endIndex);
+        }
+        return undefined;
     }
 }
 
