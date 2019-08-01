@@ -247,7 +247,7 @@ export default {
             forwardTo: 'Forward to',
         },
         templateStructure: {
-            title: 'Template 3D Structure',
+            title: 'Template 3D Structure: {accession}',
         },
         sequenceFeatures: {
             coil: '&#9726;Coiled coil segment(s)&emsp;',

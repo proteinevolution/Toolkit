@@ -1,13 +1,9 @@
 <template>
-    <BaseModal :title="$t('jobs.results.templateStructure.title')"
+    <BaseModal :title="$t('jobs.results.templateStructure.title', {accession})"
                id="templateStructureModal"
                size="lg">
         <Loading :message="$t('loading')"
                  v-if="loading"/>
-        <h6 v-else
-            class='structureAccession'>
-            3D Structure: {{accession}}
-        </h6>
 
         <!-- refs are only accessible when in DOM => don't hide -->
         <div ref="viewport"
@@ -44,6 +40,9 @@
                 stage: undefined as any,
             };
         },
+        beforeDestroy() {
+            window.removeEventListener('resize', this.resize);
+        },
         watch: {
             accession: {
                 immediate: false,
@@ -58,11 +57,22 @@
             getExtension(filename: string): string {
                 return filename.split('.')[1];
             },
+            resize(): void {
+                const viewport: HTMLElement = (this.$refs.viewport as HTMLElement);
+                if (!viewport) {
+                    return;
+                }
+                const width: number = (viewport.parentElement as HTMLElement).clientWidth;
+                const height: number = 500;
+                viewport.style.height = height + 'px';
+                viewport.style.width = width + 'px';
+                this.stage.setSize(width, height);
+            },
             async loadData() {
                 this.loading = true;
                 try {
                     const response = await resultsService.getStructureFile(this.accession);
-                    if (response.filename === undefined) {
+                    if (!response.filename) {
                         logger.error('Filename couldn\'t be read from axios response.');
                         this.$alert(this.$t('errors.templateStructureFailed'), 'danger');
                         return;
@@ -73,6 +83,8 @@
                     });
                     this.stage.loadFile(new Blob([response.data]),
                         {defaultRepresentation: true, binary: true, sele: ':A or :B or DPPC', ext});
+                    window.addEventListener('resize', this.resize);
+                    this.resize();
                     this.loading = false;
                 } catch (err) {
                     this.$alert(this.$t('errors.templateStructureFailed'), 'danger');
@@ -82,5 +94,12 @@
     });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+    .stage {
+        margin: 0 auto;
+
+        canvas {
+            border: 1px solid lightgray;
+        }
+    }
 </style>
