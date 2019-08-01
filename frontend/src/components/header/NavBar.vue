@@ -90,7 +90,8 @@
                         }
                     }
                     if (toolName) {
-                        const matchingTools = this.tools.filter((tool: Tool) => tool.name === toolName);
+                        const matchingTools = this.tools.filter((tool: Tool) => tool.name === toolName
+                            && sections.includes(tool.section));
                         if (matchingTools.length > 0) {
                             this.defaultSelectedSection = matchingTools[0].section;
                         } else {

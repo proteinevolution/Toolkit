@@ -204,6 +204,7 @@
     import {resultsService} from '@/services/ResultsService';
     import EventBus from '@/util/EventBus';
     import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
+    import {jobService} from '@/services/JobService';
 
     const logger = Logger.get('HHpredResultsTab');
 
@@ -336,7 +337,27 @@
                 });
             },
             modelSelection(): void {
-                alert('implement me!');
+                if (!this.alignments) {
+                    return;
+                }
+                const selected: number[] = Array.from(this.selectedItems);
+                if (selected.length < 1) {
+                    selected.push(this.alignments[0].num);
+                    this.$alert(this.$t('jobs.results.hhpred.modelUsingFirst'), 'warning');
+                }
+                const submission: any = {
+                    parentID: this.job.jobID,
+                    parent_id: this.job.jobID, // parent id is also an argument
+                    templates: selected.join(' '),
+                };
+                jobService.submitJob('hhpred_manual', submission)
+                    .then((response) => {
+                        this.$router.push(`/jobs/${response.jobID}`);
+                    })
+                    .catch((response) => {
+                        logger.error('Could not submit job', response);
+                        this.$alert(this.$t('errors.general'), 'danger');
+                    });
             },
             toggleWrap(): void {
                 this.wrap = !this.wrap;

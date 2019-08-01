@@ -146,6 +146,8 @@
                 './result-tabs/TreeTab.vue')),
             dataView: () => lazyLoadView(import(/* webpackChunkName: "data-view" */
                 './result-tabs/DataTab.vue')),
+            templateSelection: () => lazyLoadView(import(/* webpackChunkName: "data-view" */
+                './result-tabs/TemplateSelectionViewTab.vue')),
         },
         data() {
             return {

@@ -58,6 +58,7 @@ export default {
             forwardAll: 'Forward All',
             forwardSelected: 'Forward Selected',
             forwardQueryA3M: 'Forward Query A3M',
+            forwardToModeller: 'Forward to Modeller',
             download: 'Download',
             downloadHits: 'Download Hits',
             downloadMSA: 'Download MSA',
@@ -155,6 +156,7 @@ export default {
             alignmentInfo: 'Probability: {probab}&emsp;&emsp;E-value: {eval}&emsp;&emsp;Score: {score}&emsp;&emsp;' +
                 'Aligned cols: {alignedCols}&emsp;&emsp;Identities: {ident}%&emsp;&emsp;Similarity: ' +
                 '{similarity}&emsp;&emsp;',
+            modelUsingFirst: 'No templates selected! Using the first template for modelling.',
         },
         psiblast: {
             noResults: 'No hits found! Please re-run ProtBLAST/PSI-BLAST with a custom-built multiple sequence ' +

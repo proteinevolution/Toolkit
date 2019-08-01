@@ -42,14 +42,10 @@ final class ResultViewFactory @Inject()(
 )(implicit ec: ExecutionContext) {
 
   def apply(toolName: String, jobId: String): EitherT[Future, _, ResultView] = {
-    if (ToolName(toolName).hasJson) {
       for {
         result <- EitherT.liftF(resultFiles.getResults(jobId))
         view   <- EitherT.fromEither[Future](getResultViewsWithJson(toolName, jobId, result))
       } yield view
-    } else {
-      EitherT.pure(getResultViewsWithoutJson(toolName, jobId))
-    }
   }
 
   def getJobViewsForJob(job: Job): Future[Seq[String]] = job.status match {
@@ -60,12 +56,6 @@ final class ResultViewFactory @Inject()(
           Nil
       }
     case _ => Future.successful(Nil)
-  }
-
-  private def getResultViewsWithoutJson(toolName: String, jobId: String): ResultView = {
-    (ToolName(toolName): @unchecked) match {
-      case HHPRED_MANUAL       => HHPredManual(jobId, constants)
-    }
   }
 
   private def getResultViewsWithJson(

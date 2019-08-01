@@ -45,7 +45,7 @@
         },
         data() {
             return {
-                selectedTool: null,
+                selectedTool: undefined as string | undefined,
             };
         },
         computed: {
@@ -79,7 +79,7 @@
             },
             resetData() {
                 // reset data
-                this.selectedTool = null;
+                this.selectedTool = undefined;
             },
         },
     });
