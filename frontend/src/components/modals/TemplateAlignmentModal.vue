@@ -18,7 +18,7 @@
             </b-form-select>
             <b-form-textarea v-model="data"
                              readonly
-                             class="file-view">
+                             class="file-view mb-2">
             </b-form-textarea>
         </div>
     </BaseModal>
