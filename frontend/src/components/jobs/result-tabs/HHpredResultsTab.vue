@@ -274,7 +274,7 @@
                 }
             },
             async loadAlignments(start: number, end: number): Promise<void> {
-                const res: SearchAlignmentsResponse<HHpredAlignmentItem> =
+                const res: SearchAlignmentsResponse<HHpredAlignmentItem, HHpredHHInfoResult> =
                     await resultsService.fetchHHAlignmentResults(this.job.jobID, start, end);
                 this.total = res.total;
                 this.info = res.info;
