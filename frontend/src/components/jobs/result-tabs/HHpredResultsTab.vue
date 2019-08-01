@@ -27,12 +27,21 @@
 
             <div v-html="$t('jobs.results.hhpred.numHits', {num: info.num_hits})"></div>
 
-            <div v-if="info.coil === '0' || info.tm === '1' || info.signal === '1'">
-                Detected sequence features:
+            <div v-if="info.coil === '0' || info.tm === '1' || info.signal === '1'" class="mt-2">
+                <b> Detected sequence features:</b>
                 <b v-if="info.coil === '0'" v-html="$t('jobs.results.sequenceFeatures.coil')"></b>
-                <b v-if="info.tm === '1'" v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
+                <b v-if="info.tm > '1'" v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
                 <b v-if="info.signal === '1'" v-html="$t('jobs.results.sequenceFeatures.signal')"></b>
             </div>
+
+
+            <div v-if="info.qa3m_count < '10'" class="mt-2">
+                <b v-html="$t('jobs.results.hhpred.qa3mWarning', {num: info.qa3m_count})" class="mt-2"></b>
+                <b v-if="info.msa_gen === 'uniclust30'" v-html="$t('jobs.results.hhpred.uniclustWarning')"></b>
+                <b v-if="info.msa_gen === 'psiblast'" v-html="$t('jobs.results.hhpred.psiblastWarning')"></b>
+                <b v-if="info.msa_gen === 'custom'" v-html="$t('jobs.results.hhpred.customWarning')"></b>
+            </div>
+
 
             <div class="result-section"
                  ref="visualization">
@@ -274,7 +283,7 @@
                 }
             },
             async loadAlignments(start: number, end: number): Promise<void> {
-                const res: SearchAlignmentsResponse<HHpredAlignmentItem> =
+                const res: SearchAlignmentsResponse<HHpredAlignmentItem, HHpredHHInfoResult> =
                     await resultsService.fetchHHAlignmentResults(this.job.jobID, start, end);
                 this.total = res.total;
                 this.info = res.info;
