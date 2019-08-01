@@ -55,6 +55,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
           entry.unwrapped().asScala.toMap.map(a => a._1 -> a._2.toString))).getOrElse(Seq()),
           config.getStringList("forwarding.alignment").asScala,
           config.getStringList("forwarding.multi_seq").asScala,
+          Try(config.getStringList("forwarding.template_alignment").asScala).toOption,
           ValidationParamsForm(
             // for simplicity, we always pass these default values even for non-sequence tools
             Try(config.getStringList("sequence_restrictions.formats").asScala).getOrElse(Seq("FASTA")),
@@ -91,6 +92,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       resultViews: Seq[Map[String, String]],
       forwardAlignment: Seq[String],
       forwardMultiSeq: Seq[String],
+      forwardTemplateAlignment: Option[Seq[String]],
       validationParams: ValidationParamsForm
   ): Tool = {
     val toolFormSimple = ToolFormSimple(
@@ -117,7 +119,8 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
       ),
       ForwardingMode(
         forwardAlignment,
-        forwardMultiSeq
+        forwardMultiSeq,
+        forwardTemplateAlignment,
       )
     )
     Tool(

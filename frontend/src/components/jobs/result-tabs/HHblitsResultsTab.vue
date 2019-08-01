@@ -305,12 +305,17 @@
                 }
             },
             displayTemplateAlignment(accession: string): void {
-                EventBus.$emit('show-modal', {
-                    id: 'templateAlignmentModal', props: {
-                        jobID: this.job.jobID,
-                        accession,
-                    },
-                });
+                if (this.tool.parameters) {
+                    EventBus.$emit('show-modal', {
+                        id: 'templateAlignmentModal', props: {
+                            jobID: this.job.jobID,
+                            accession,
+                            forwardingMode: this.tool.parameters.forwarding,
+                        },
+                    });
+                } else {
+                    logger.error('tool parameters not loaded. Cannot forward');
+                }
             },
             forwardQuery(): void {
                 alert('implement me!');

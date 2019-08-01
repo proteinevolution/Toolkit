@@ -16,7 +16,10 @@
 
 package de.proteinevolution.tools.parameters
 
-case class ForwardingMode(
+import io.circe.generic.JsonCodec
+
+@JsonCodec case class ForwardingMode(
     alignment: Seq[String],
-    multiSeq: Seq[String]
+    multiSeq: Seq[String],
+    templateAlignment: Option[Seq[String]]
 )
