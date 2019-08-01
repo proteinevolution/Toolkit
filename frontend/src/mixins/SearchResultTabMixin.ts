@@ -28,7 +28,7 @@ const SearchResultTabMixin = Vue.extend({
             if (!this.info) {
                 return;
             }
-            const section: string = '>' + this.info.query.accession + '\n' + this.info.query.seq.slice(start, end+1);
+            const section: string = '>' + this.info.query.accession + '\n' + this.info.query.seq.slice(start, end + 1);
             EventBus.$emit('resubmit-section', section);
         },
         toggleColor(): void {

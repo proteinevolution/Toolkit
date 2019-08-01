@@ -214,7 +214,6 @@ export interface HHpredHHInfoResult extends HHInfoResult {
     qa3m_count: string;
 }
 
-
 export interface StructureFileResponse {
     data: any;
     filename?: string;
