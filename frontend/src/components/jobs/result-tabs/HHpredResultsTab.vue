@@ -18,7 +18,7 @@
                 <a @click="forwardQuery">{{$t('jobs.results.actions.forward')}}</a>
                 <a @click="forwardQueryA3M">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
                 <a v-if="info.db.includes('mmcif70/pdb70') || info.db.includes('mmcif30/pdb30')"
-                   @click="forwardQuery">{{$t('jobs.results.actions.model')}}</a>
+                   @click="modelSelection">{{$t('jobs.results.actions.model')}}</a>
                 <a @click="toggleColor"
                    :class="{active: color}">{{$t('jobs.results.actions.colorSeqs')}}</a>
                 <a @click="toggleWrap"
@@ -38,7 +38,8 @@
                  ref="visualization">
                 <h4>{{$t('jobs.results.hitlist.vis')}}</h4>
                 <hit-map :job="job"
-                         @elem-clicked="scrollToElem"/>
+                         @elem-clicked="scrollToElem"
+                         @resubmit-section="resubmitSection"/>
             </div>
 
             <div class="result-section"
@@ -189,6 +190,7 @@
     } from '@/types/toolkit/results';
     import {colorSequence, ssColorSequence} from '@/util/SequenceUtils';
     import {resultsService} from '@/services/ResultsService';
+    import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('HHpredResultsTab');
 
@@ -326,10 +328,20 @@
                     }
                 }
             },
+            resubmitSection([start, end]: [number, number]): void {
+                if (!this.info) {
+                    return;
+                }
+                const section: string = '>' + this.info.query.accession + '\n' + this.info.query.seq.slice(start, end);
+                EventBus.$emit('resubmit-section', section);
+            },
             displayTemplateAlignment(num: number): void {
                 alert('implement me!' + num);
             },
             forwardQuery(): void {
+                alert('implement me!');
+            },
+            modelSelection(): void {
                 alert('implement me!');
             },
             forwardQueryA3M(): void {

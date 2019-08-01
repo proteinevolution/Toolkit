@@ -16,7 +16,7 @@ export interface SearchHitsResponse {
     end: number;
 }
 
-export interface SearchAlignmentsResponse<T extends SearchAlignmentItem, S extends  HHInfoResult> {
+export interface SearchAlignmentsResponse<T extends SearchAlignmentItem, S extends HHInfoResult> {
     alignments: T[];
     info: S;
     total: number;
@@ -185,6 +185,10 @@ export interface HitMapItem {
 
 export interface HHInfoResult {
     num_hits: number;
+    query: {
+        accession: string;
+        seq: string;
+    };
 }
 
 export interface PsiblastHHInfoResult extends HHInfoResult {

@@ -36,7 +36,8 @@
                  ref="visualization">
                 <h4>{{$t('jobs.results.hitlist.vis')}}</h4>
                 <hit-map :job="job"
-                         @elem-clicked="scrollToElem"/>
+                         @elem-clicked="scrollToElem"
+                         @resubmit-section="resubmitSection"/>
             </div>
 
             <div class="result-section"
@@ -151,6 +152,7 @@
     } from '@/types/toolkit/results';
     import {colorSequence} from '@/util/SequenceUtils';
     import {resultsService} from '@/services/ResultsService';
+    import EventBus from '@/util/EventBus';
 
     const logger = Logger.get('PsiblastResultsTab');
 
@@ -286,6 +288,13 @@
             },
             displayTemplateAlignment(num: number): void {
                 alert('implement me!' + num);
+            },
+            resubmitSection([start, end]: [number, number]): void {
+                if (!this.info) {
+                    return;
+                }
+                const section: string = '>' + this.info.query.accession + '\n' + this.info.query.seq.slice(start, end);
+                EventBus.$emit('resubmit-section', section);
             },
             forwardQuery(): void {
                 alert('implement me!');

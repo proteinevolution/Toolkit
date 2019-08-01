@@ -23,6 +23,7 @@
                     <b-card no-body
                             :class="[fullScreen ? 'fullscreen' : '']">
                         <b-tabs class="parameter-tabs"
+                                v-model="tabIndex"
                                 card
                                 nav-class="tabs-nav"
                                 no-fade>
@@ -138,6 +139,7 @@
         },
         data() {
             return {
+                tabIndex: 1,
                 fullScreen: false,
                 validationErrors: {},
                 submission: {} as any,
@@ -195,9 +197,11 @@
             // tool view is never reused (see App.vue), therefore loading parameters in created hook only is sufficient
             this.loadToolParameters(this.toolName);
             EventBus.$on('alignment-viewer-result-open', this.openAlignmentViewerResults);
+            EventBus.$on('resubmit-section', this.resubmitSectionReceive);
         },
         beforeDestroy() {
             EventBus.$off('alignment-viewer-result-open', this.openAlignmentViewerResults);
+            EventBus.$off('resubmit-section', this.resubmitSectionReceive);
         },
         methods: {
             loadToolParameters(toolName: string): void {
@@ -222,6 +226,10 @@
             openAlignmentViewerResults({sequences, format}: { sequences: string, format: string }): void {
                 this.alignmentViewerSequences = sequences;
                 this.alignmentViewerFormat = format;
+            },
+            resubmitSectionReceive(section: string): void {
+                Vue.set(this.submission, 'alignment', section);
+                this.tabIndex = 0;
             },
             launchHelpModal(): void {
                 EventBus.$emit('show-modal', {id: 'helpModal', props: {toolName: this.toolName}});

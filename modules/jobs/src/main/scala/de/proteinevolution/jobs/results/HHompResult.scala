@@ -46,7 +46,8 @@ case class HHompResult(
 
   def toInfoJson: Json = {
     Map[String, Json](
-      "probOMP" -> overall_prob.asJson
+      "probOMP" -> overall_prob.asJson,
+      "query"   -> query.asJson
     ).asJson
   }
 

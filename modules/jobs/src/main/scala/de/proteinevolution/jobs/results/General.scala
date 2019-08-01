@@ -17,6 +17,7 @@
 package de.proteinevolution.jobs.results
 
 import io.circe._
+import io.circe.generic.semiauto._
 
 import scala.util.matching.Regex
 
@@ -39,6 +40,7 @@ object General {
         seq       <- c.downArray.first.downArray.right.as[String]
       } yield new SingleSeq(accession, seq)
 
+    implicit val singleSeqEncoder: Encoder[SingleSeq] = deriveEncoder
   }
 
 }
