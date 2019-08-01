@@ -17,7 +17,7 @@
                     'selectAll'))}}</a>
                 <a @click="forwardQuery">{{$t('jobs.results.actions.forward')}}</a>
                 <a @click="forwardQueryA3M">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
-                <a v-if="info.db.includes('mmcif70/pdb70') || info.db.includes('mmcif30/pdb30')"
+                <a v-if="((info.db === 'mmcif70/pdb70' || info.db === 'mmcif30/pdb30') && info.proteomes === '')"
                    @click="modelSelection">{{$t('jobs.results.actions.model')}}</a>
                 <a @click="toggleColor"
                    :class="{active: color}">{{$t('jobs.results.actions.colorSeqs')}}</a>
@@ -26,7 +26,6 @@
             </div>
 
             <div v-html="$t('jobs.results.hhpred.numHits', {num: info.num_hits})"></div>
-
             <div v-if="info.coil === '0' || info.tm === '1' || info.signal === '1'" class="mt-2">
                 <b> Detected sequence features:</b>
                 <b v-if="info.coil === '0'" v-html="$t('jobs.results.sequenceFeatures.coil')"></b>
