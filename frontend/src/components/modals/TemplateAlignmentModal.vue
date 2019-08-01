@@ -80,12 +80,12 @@
                 this.loading = true;
                 try {
                     await resultsService.generateTemplateAlignment(this.jobID, this.accession);
-                    // TODO: change extension based on tool, currently only works for hhblits
-                    const res: any = await resultsService.getFile(this.jobID, `${this.accession}.ra3m`);
+                    const res: any = await resultsService.getFile(this.jobID, this.accession);
                     this.data = String(res);
-                    this.loading = false;
                 } catch (err) {
                     this.$alert(this.$t('errors.templateAlignmentFailed'), 'danger');
+                } finally {
+                    this.loading = false;
                 }
             },
         },
