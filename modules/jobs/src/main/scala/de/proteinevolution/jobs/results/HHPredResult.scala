@@ -57,7 +57,8 @@ case class HHPredResult(
       "db"         -> db.asJson,
       "proteomes"  -> proteomes.asJson,
       "msa_gen"    -> msa_gen.asJson,
-      "qa3m_count" -> qa3m_count.asJson
+      "qa3m_count" -> qa3m_count.asJson,
+      "query"      -> query.asJson
     ).asJson
   }
 

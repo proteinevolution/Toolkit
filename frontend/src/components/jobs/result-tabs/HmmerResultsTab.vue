@@ -24,10 +24,10 @@
 
             <div v-html="$t('jobs.results.hmmer.numHits', {num: total})"></div>
 
-            <div v-if="info.coil === '0' || info.tm === '1' || info.signal === '1'">
+            <div v-if="info.coil === '0' || info.tm === '1' || info.signal === '1'" class="mt-2">
                 Detected sequence features:
                 <b v-if="info.coil === '0'" v-html="$t('jobs.results.sequenceFeatures.coil')"></b>
-                <b v-if="info.tm === '1'" v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
+                <b v-if="info.tm > '1'" v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
                 <b v-if="info.signal === '1'" v-html="$t('jobs.results.sequenceFeatures.signal')"></b>
             </div>
 
@@ -35,7 +35,8 @@
                  ref="visualization">
                 <h4>{{$t('jobs.results.hitlist.vis')}}</h4>
                 <hit-map :job="job"
-                         @elem-clicked="scrollToElem"/>
+                         @elem-clicked="scrollToElem"
+                         @resubmit-section="resubmitSection"/>
             </div>
 
             <div class="result-section"
@@ -143,15 +144,15 @@
     import {
         HMMERAlignmentItem,
         HMMERHHInfoResult,
-        SearchAlignmentItem,
+        SearchAlignmentItemRender,
         SearchAlignmentsResponse,
     } from '@/types/toolkit/results';
-    import {colorSequence} from '@/util/SequenceUtils';
     import {resultsService} from '@/services/ResultsService';
+    import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
     const logger = Logger.get('HmmerResultsTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default mixins(ResultTabMixin, SearchResultTabMixin).extend({
         name: 'HmmerResultsTab',
         components: {
             Loading,
@@ -166,7 +167,6 @@
                 total: 100,
                 loadingMore: false,
                 perPage: 20,
-                color: false,
                 wrap: true,
                 breakAfter: 90,
                 selectedItems: [] as number[],
@@ -239,16 +239,6 @@
                     this.alignments.push(...res.alignments);
                 }
             },
-            scrollTo(ref: string): void {
-                if (this.$refs[ref]) {
-                    const elem: HTMLElement = (this.$refs[ref] as any).length ?
-                        (this.$refs[ref] as HTMLElement[])[0] : this.$refs[ref] as HTMLElement;
-                    elem.scrollIntoView({
-                        block: 'start',
-                        behavior: 'smooth',
-                    });
-                }
-            },
             async scrollToElem(num: number): Promise<void> {
                 const loadNum: number = num + 2; // load some more for better scrolling
                 if (this.alignments && this.alignments.map((a: HMMERAlignmentItem) => a.num).includes(loadNum)) {
@@ -287,9 +277,6 @@
             forwardQuery(): void {
                 alert('implement me!');
             },
-            toggleColor(): void {
-                this.color = !this.color;
-            },
             toggleWrap(): void {
                 this.wrap = !this.wrap;
                 this.$nextTick(() => {
@@ -300,15 +287,9 @@
                     }
                 });
             },
-            coloredSeq(seq: string): string {
-                return this.color ? colorSequence(seq) : seq;
-            },
-            alEnd(al: any): string {
-                return ` &nbsp; ${al.end}`;
-            },
-            wrapAlignments(al: HMMERAlignmentItem): SearchAlignmentItem[] {
+            wrapAlignments(al: HMMERAlignmentItem): SearchAlignmentItemRender[] {
                 if (this.wrap) {
-                    const res: SearchAlignmentItem[] = [];
+                    const res: SearchAlignmentItemRender[] = [];
                     let qStart: number = al.query.start;
                     let tStart: number = al.template.start;
                     for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {

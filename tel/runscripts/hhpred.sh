@@ -217,11 +217,6 @@ if [[ ${ITERS} = "0" ]] ; then
         echo "#No MSA generation required for building A3M." >> ../results/process.log
         reformat_hhsuite.pl fas a3m ../results/${JOBID}.fas ${JOBID}.a3m -M first
         mv ${JOBID}.a3m ../results/${JOBID}.a3m
-        hhfilter -i ../results/${JOBID}.a3m \
-                 -o ../results/${JOBID}.a3m \
-                 -cov %min_cov.content\
-                 -qid %min_seqid_query.content
-
         echo "done" >> ../results/process.log
 else
     #MSA generation required
@@ -448,13 +443,13 @@ fi
 
 # For alerting user if too few homologs are found for building A3M
 if [[ ${ITERS} = "0" ]] ; then
-    manipulate_json.py -k 'MSA_GEN' -v "custom" ../results/results.json
+    manipulate_json.py -k 'msa_gen' -v "custom" ../results/results.json
 else
-    manipulate_json.py -k 'MSA_GEN' -v "%msa_gen_method.content" ../results/results.json
+    manipulate_json.py -k 'msa_gen' -v "%msa_gen_method.content" ../results/results.json
 fi
 
 # Number of sequences in the query A3M
-manipulate_json.py -k 'QA3M_COUNT' -v "${QA3M_COUNT}" ../results/results.json
+manipulate_json.py -k 'qa3m_count' -v ${QA3M_COUNT} ../results/results.json
 
 echo "done" >> ../results/process.log
 

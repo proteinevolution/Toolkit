@@ -25,10 +25,10 @@
 
             <div v-html="$t('jobs.results.hhblits.numHits', {num: info.num_hits})"></div>
 
-            <div v-if="info.coil === '0' || info.tm === '1' || info.signal === '1'">
+            <div v-if="info.coil === '0' || info.tm === '1' || info.signal === '1'" class="mt-2">
                 Detected sequence features:
                 <b v-if="info.coil === '0'" v-html="$t('jobs.results.sequenceFeatures.coil')"></b>
-                <b v-if="info.tm === '1'" v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
+                <b v-if="info.tm > '1'" v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
                 <b v-if="info.signal === '1'" v-html="$t('jobs.results.sequenceFeatures.signal')"></b>
             </div>
 
@@ -36,7 +36,8 @@
                  ref="visualization">
                 <h4>{{$t('jobs.results.hitlist.vis')}}</h4>
                 <hit-map :job="job"
-                         @elem-clicked="scrollToElem"/>
+                         @elem-clicked="scrollToElem"
+                         @resubmit-section="resubmitSection"/>
             </div>
 
             <div class="result-section"
@@ -96,7 +97,7 @@
                                     <td></td>
                                     <td>Q</td>
                                     <td v-text="alPart.query.start"></td>
-                                    <td v-html="coloredSeq(alPart.query.seq) + alQEnd(alPart)"></td>
+                                    <td v-html="coloredSeq(alPart.query.seq) + alEndRef(alPart.query)"></td>
                                 </tr>
                                 <tr v-if="alPart.query.consensus"
                                     class="sequence">
@@ -124,7 +125,7 @@
                                     <td></td>
                                     <td>T</td>
                                     <td v-text="alPart.template.start"></td>
-                                    <td v-html="coloredSeq(alPart.template.seq) + alTEnd(alPart)"></td>
+                                    <td v-html="coloredSeq(alPart.template.seq) + alEndRef(alPart.template)"></td>
                                 </tr>
                                 <tr class="blank-row">
                                     <td></td>
@@ -162,16 +163,16 @@
     import {
         HHblitsAlignmentItem,
         HHblitsHHInfoResult,
-        SearchAlignmentItem,
+        SearchAlignmentItemRender,
         SearchAlignmentsResponse,
     } from '@/types/toolkit/results';
-    import {colorSequence} from '@/util/SequenceUtils';
     import {resultsService} from '@/services/ResultsService';
     import EventBus from '@/util/EventBus';
+    import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
     const logger = Logger.get('HHblitsResultsTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default mixins(ResultTabMixin, SearchResultTabMixin).extend({
         name: 'HHblitsResultsTab',
         components: {
             Loading,
@@ -186,7 +187,6 @@
                 total: 100,
                 loadingMore: false,
                 perPage: 20,
-                color: false,
                 wrap: true,
                 breakAfter: 85,
                 selectedItems: [] as number[],
@@ -259,16 +259,6 @@
                     this.alignments.push(...res.alignments);
                 }
             },
-            scrollTo(ref: string): void {
-                if (this.$refs[ref]) {
-                    const elem: HTMLElement = (this.$refs[ref] as any).length ?
-                        (this.$refs[ref] as HTMLElement[])[0] : this.$refs[ref] as HTMLElement;
-                    elem.scrollIntoView({
-                        block: 'start',
-                        behavior: 'smooth',
-                    });
-                }
-            },
             async scrollToElem(num: number): Promise<void> {
                 const loadNum: number = num + 2; // load some more for better scrolling
                 if (this.alignments && this.alignments.map((a: HHblitsAlignmentItem) => a.num).includes(loadNum)) {
@@ -320,9 +310,6 @@
             forwardQueryA3M(): void {
                 alert('implement me!');
             },
-            toggleColor(): void {
-                this.color = !this.color;
-            },
             toggleWrap(): void {
                 this.wrap = !this.wrap;
                 this.$nextTick(() => {
@@ -333,18 +320,9 @@
                     }
                 });
             },
-            coloredSeq(seq: string): string {
-                return this.color ? colorSequence(seq) : seq;
-            },
-            alQEnd(al: HHblitsAlignmentItem): string {
-                return ` &nbsp; ${al.query.end} (${al.query.ref})`;
-            },
-            alTEnd(al: HHblitsAlignmentItem): string {
-                return ` &nbsp; ${al.template.end} (${al.template.ref})`;
-            },
-            wrapAlignments(al: HHblitsAlignmentItem): SearchAlignmentItem[] {
+            wrapAlignments(al: HHblitsAlignmentItem): SearchAlignmentItemRender[] {
                 if (this.wrap) {
-                    const res: SearchAlignmentItem[] = [];
+                    const res: SearchAlignmentItemRender[] = [];
                     let qStart: number = al.query.start;
                     let tStart: number = al.template.start;
                     for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
