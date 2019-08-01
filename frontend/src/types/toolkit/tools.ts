@@ -36,6 +36,7 @@ export interface SequenceValidationParams extends ValidationParams {
 export interface ForwardingMode {
     alignment: string[];
     multiSeq: string[];
+    templateAlignment?: string[];
 }
 
 export interface ParameterSection {

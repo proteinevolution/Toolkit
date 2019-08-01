@@ -18,7 +18,7 @@
                 <a @click="forwardQuery">{{$t('jobs.results.actions.forward')}}</a>
                 <a @click="forwardQueryA3M">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
                 <a v-if="info.db.includes('mmcif70/pdb70') || info.db.includes('mmcif30/pdb30')"
-                   @click="forwardQuery">{{$t('jobs.results.actions.model')}}</a>
+                   @click="modelSelection">{{$t('jobs.results.actions.model')}}</a>
                 <a @click="toggleColor"
                    :class="{active: color}">{{$t('jobs.results.actions.colorSeqs')}}</a>
                 <a @click="toggleWrap"
@@ -47,7 +47,8 @@
                  ref="visualization">
                 <h4>{{$t('jobs.results.hitlist.vis')}}</h4>
                 <hit-map :job="job"
-                         @elem-clicked="scrollToElem"/>
+                         @elem-clicked="scrollToElem"
+                         @resubmit-section="resubmitSection"/>
             </div>
 
             <div class="result-section"
@@ -76,8 +77,11 @@
                             </tr>
                             <tr>
                                 <td></td>
-                                <td colspan="3"
-                                    v-html="al.dbLink">
+                                <td colspan="3">
+                                    <a @click="displayTemplateAlignment(al.template.accession)"
+                                       v-text="$t('jobs.results.hhpred.templateAlignment')"></a>
+                                    |
+                                    <span v-html="al.dbLink"></span>
                                 </td>
                             </tr>
                             <tr class="font-weight-bold">
@@ -106,21 +110,21 @@
                                     <td></td>
                                     <td>Q ss_pred</td>
                                     <td></td>
-                                    <td v-html="coloredSS(alPart.query.ss_pred)"></td>
+                                    <td v-html="coloredSeqSS(alPart.query.ss_pred)"></td>
                                 </tr>
                                 <tr v-if="alPart.query.seq"
                                     class="sequence">
                                     <td></td>
                                     <td v-text="'Q '+alPart.query.name"></td>
                                     <td v-text="alPart.query.start"></td>
-                                    <td v-html="coloredSeq(alPart.query.seq) + alQEnd(alPart)"></td>
+                                    <td v-html="coloredSeq(alPart.query.seq) + alEndRef(alPart.query)"></td>
                                 </tr>
                                 <tr v-if="alPart.query.consensus"
                                     class="sequence">
                                     <td></td>
                                     <td>Q Consensus</td>
                                     <td v-text="alPart.query.start"></td>
-                                    <td v-html="alPart.query.consensus  + alQEnd(alPart)"></td>
+                                    <td v-html="alPart.query.consensus  + alEndRef(alPart.query)"></td>
                                 </tr>
                                 <tr v-if="alPart.agree"
                                     class="sequence">
@@ -134,28 +138,28 @@
                                     <td></td>
                                     <td v-text="">Q Consensus</td>
                                     <td v-text="alPart.template.start"></td>
-                                    <td v-html="alPart.template.consensus  + alTEnd(alPart)"></td>
+                                    <td v-html="alPart.template.consensus  + alEndRef(alPart.template)"></td>
                                 </tr>
                                 <tr v-if="alPart.template.seq"
                                     class="sequence">
                                     <td></td>
                                     <td v-text="'T '+alPart.query.name"></td>
                                     <td v-text="alPart.template.start"></td>
-                                    <td v-html="coloredSeq(alPart.template.seq) + alTEnd(alPart)"></td>
+                                    <td v-html="coloredSeq(alPart.template.seq) + alEndRef(alPart.template)"></td>
                                 </tr>
                                 <tr v-if="alPart.template.ss_dssp"
                                     class="sequence">
                                     <td></td>
                                     <td>T ss_dssp</td>
                                     <td></td>
-                                    <td v-html="coloredSS(alPart.template.ss_dssp)"></td>
+                                    <td v-html="coloredSeqSS(alPart.template.ss_dssp)"></td>
                                 </tr>
                                 <tr v-if="alPart.template.ss_pred"
                                     class="sequence">
                                     <td></td>
                                     <td>T ss_pred</td>
                                     <td></td>
-                                    <td v-html="coloredSS(alPart.template.ss_pred)"></td>
+                                    <td v-html="coloredSeqSS(alPart.template.ss_pred)"></td>
                                 </tr>
                                 <tr class="blank-row">
                                     <td></td>
@@ -193,15 +197,16 @@
     import {
         HHpredAlignmentItem,
         HHpredHHInfoResult,
-        SearchAlignmentItem,
+        SearchAlignmentItemRender,
         SearchAlignmentsResponse,
     } from '@/types/toolkit/results';
-    import {colorSequence, ssColorSequence} from '@/util/SequenceUtils';
     import {resultsService} from '@/services/ResultsService';
+    import EventBus from '@/util/EventBus';
+    import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
     const logger = Logger.get('HHpredResultsTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default mixins(ResultTabMixin, SearchResultTabMixin).extend({
         name: 'HHpredResultsTab',
         components: {
             Loading,
@@ -216,7 +221,6 @@
                 total: 100,
                 loadingMore: false,
                 perPage: 20,
-                color: true,
                 wrap: true,
                 breakAfter: 80,
                 selectedItems: [] as number[],
@@ -293,16 +297,6 @@
                     this.alignments.push(...res.alignments);
                 }
             },
-            scrollTo(ref: string): void {
-                if (this.$refs[ref]) {
-                    const elem: HTMLElement = (this.$refs[ref] as any).length ?
-                        (this.$refs[ref] as HTMLElement[])[0] : this.$refs[ref] as HTMLElement;
-                    elem.scrollIntoView({
-                        block: 'start',
-                        behavior: 'smooth',
-                    });
-                }
-            },
             async scrollToElem(num: number): Promise<void> {
                 const loadNum: number = num + 2; // load some more for better scrolling
                 if (this.alignments && this.alignments.map((a: HHpredAlignmentItem) => a.num).includes(loadNum)) {
@@ -335,17 +329,27 @@
                     }
                 }
             },
-            displayTemplateAlignment(num: number): void {
-                alert('implement me!' + num);
+            displayTemplateAlignment(accession: string): void {
+                if (this.tool.parameters) {
+                    EventBus.$emit('show-modal', {
+                        id: 'templateAlignmentModal', props: {
+                            jobID: this.job.jobID,
+                            accession,
+                            forwardingMode: this.tool.parameters.forwarding,
+                        },
+                    });
+                } else {
+                    logger.error('tool parameters not loaded. Cannot forward');
+                }
             },
             forwardQuery(): void {
                 alert('implement me!');
             },
-            forwardQueryA3M(): void {
+            modelSelection(): void {
                 alert('implement me!');
             },
-            toggleColor(): void {
-                this.color = !this.color;
+            forwardQueryA3M(): void {
+                alert('implement me!');
             },
             toggleWrap(): void {
                 this.wrap = !this.wrap;
@@ -357,21 +361,9 @@
                     }
                 });
             },
-            coloredSeq(seq: string): string {
-                return this.color ? colorSequence(seq) : seq;
-            },
-            coloredSS(seq: string): string {
-                return ssColorSequence(seq);
-            },
-            alQEnd(al: HHpredAlignmentItem): string {
-                return ` &nbsp; ${al.query.end} (${al.query.ref})`;
-            },
-            alTEnd(al: HHpredAlignmentItem): string {
-                return ` &nbsp; ${al.template.end} (${al.template.ref})`;
-            },
-            wrapAlignments(al: HHpredAlignmentItem): SearchAlignmentItem[] {
+            wrapAlignments(al: HHpredAlignmentItem): SearchAlignmentItemRender[] {
                 if (this.wrap) {
-                    const res: SearchAlignmentItem[] = [];
+                    const res: SearchAlignmentItemRender[] = [];
                     let qStart: number = al.query.start;
                     let tStart: number = al.template.start;
                     for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {

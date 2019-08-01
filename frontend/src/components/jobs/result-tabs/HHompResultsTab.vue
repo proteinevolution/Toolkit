@@ -28,7 +28,8 @@
                  ref="visualization">
                 <h4>{{$t('jobs.results.hitlist.vis')}}</h4>
                 <hit-map :job="job"
-                         @elem-clicked="scrollToElem"/>
+                         @elem-clicked="scrollToElem"
+                         @resubmit-section="resubmitSection"/>
             </div>
 
             <div class="result-section"
@@ -58,7 +59,7 @@
                             <tr>
                                 <td></td>
                                 <td colspan="3">
-                                    <a @click="displayTemplateAlignment(al.num)"
+                                    <a @click="displayTemplateAlignment(al.template.accession)"
                                        v-text="$t('jobs.results.hhomp.templateAlignment')"></a>
                                 </td>
                             </tr>
@@ -89,28 +90,28 @@
                                     <td></td>
                                     <td>Q ss_pred</td>
                                     <td></td>
-                                    <td v-html="ssColoredSeq(alPart.query.ss_dssp)"></td>
+                                    <td v-html="coloredSeqSS(alPart.query.ss_dssp)"></td>
                                 </tr>
                                 <tr v-if="alPart.query.ss_pred"
                                     class="sequence">
                                     <td></td>
                                     <td>Q ss_pred</td>
                                     <td></td>
-                                    <td v-html="ssColoredSeq(alPart.query.ss_pred)"></td>
+                                    <td v-html="coloredSeqSS(alPart.query.ss_pred)"></td>
                                 </tr>
                                 <tr v-if="alPart.query.seq"
                                     class="sequence">
                                     <td></td>
                                     <td v-text="'Q ' + alPart.query.name"></td>
                                     <td v-text="alPart.query.start"></td>
-                                    <td v-html="coloredSeq(alPart.query.seq) + alQEnd(alPart)"></td>
+                                    <td v-html="coloredSeq(alPart.query.seq) + alEndRef(alPart.query)"></td>
                                 </tr>
                                 <tr v-if="alPart.query.consensus"
                                     class="sequence">
                                     <td></td>
                                     <td>Q Consensus</td>
                                     <td v-text="alPart.query.start"></td>
-                                    <td v-html="alPart.query.consensus + alQEnd(alPart)"></td>
+                                    <td v-html="alPart.query.consensus + alEndRef(alPart.query)"></td>
                                 </tr>
                                 <tr v-if="alPart.agree"
                                     class="sequence">
@@ -124,28 +125,28 @@
                                     <td></td>
                                     <td>T Consensus</td>
                                     <td v-text="alPart.template.start"></td>
-                                    <td v-html="alPart.template.consensus + alTEnd(alPart)"></td>
+                                    <td v-html="alPart.template.consensus + alEndRef(alPart.template)"></td>
                                 </tr>
                                 <tr v-if="alPart.template.seq"
                                     class="sequence">
                                     <td></td>
                                     <td v-text="'Q ' + alPart.template.accession"></td>
                                     <td v-text="alPart.template.start"></td>
-                                    <td v-html="coloredSeq(alPart.template.seq) + alTEnd(alPart)"></td>
+                                    <td v-html="coloredSeq(alPart.template.seq) + alEndRef(alPart.template)"></td>
                                 </tr>
                                 <tr v-if="alPart.template.ss_pred"
                                     class="sequence">
                                     <td></td>
                                     <td>T ss_pred</td>
                                     <td></td>
-                                    <td v-html="ssColoredSeq(alPart.template.ss_pred)"></td>
+                                    <td v-html="coloredSeqSS(alPart.template.ss_pred)"></td>
                                 </tr>
                                 <tr v-if="alPart.template.ss_dssp"
                                     class="sequence">
                                     <td></td>
                                     <td>T ss_dssp</td>
                                     <td></td>
-                                    <td v-html="ssColoredSeq(alPart.template.ss_dssp)"></td>
+                                    <td v-html="coloredSeqSS(alPart.template.ss_dssp)"></td>
                                 </tr>
                                 <tr v-if="alPart.template.ss_conf"
                                     class="sequence">
@@ -204,17 +205,17 @@
     import {
         HHompAlignmentItem,
         HHompHHInfoResult,
-        SearchAlignmentItem,
+        SearchAlignmentItemRender,
         SearchAlignmentsResponse,
     } from '@/types/toolkit/results';
     import {resultsService} from '@/services/ResultsService';
-    import {colorSequence, ssColorSequence} from '@/util/SequenceUtils';
     import EventBus from '@/util/EventBus';
     import {Reformat} from '@/modules/reformat';
+    import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
     const logger = Logger.get('HHompResultsTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default mixins(ResultTabMixin, SearchResultTabMixin).extend({
         name: 'HHompResultsTab',
         components: {
             Loading,
@@ -229,7 +230,6 @@
                 total: 100,
                 loadingMore: false,
                 perPage: 20,
-                color: true,
                 wrap: true,
                 breakAfter: 70,
                 hitListFields: [{
@@ -300,16 +300,6 @@
                     this.alignments.push(...res.alignments);
                 }
             },
-            scrollTo(ref: string): void {
-                if (this.$refs[ref]) {
-                    const elem: HTMLElement = (this.$refs[ref] as any).length ?
-                        (this.$refs[ref] as HTMLElement[])[0] : this.$refs[ref] as HTMLElement;
-                    elem.scrollIntoView({
-                        block: 'start',
-                        behavior: 'smooth',
-                    });
-                }
-            },
             async scrollToElem(num: number): Promise<void> {
                 const loadNum: number = num + 2; // load some more for better scrolling
                 if (this.alignments && this.alignments.map((a: HHompAlignmentItem) => a.num).includes(loadNum)) {
@@ -319,8 +309,18 @@
                     this.scrollTo('alignment-' + num);
                 }
             },
-            displayTemplateAlignment(num: number): void {
-                alert('implement me!' + num);
+            displayTemplateAlignment(accession: string): void {
+                if (this.tool.parameters) {
+                    EventBus.$emit('show-modal', {
+                        id: 'templateAlignmentModal', props: {
+                            jobID: this.job.jobID,
+                            accession,
+                            forwardingMode: this.tool.parameters.forwarding,
+                        },
+                    });
+                } else {
+                    logger.error('tool parameters not loaded. Cannot forward');
+                }
             },
             forwardQuery(): void {
                 if (this.alignments) {
@@ -337,9 +337,6 @@
                     });
                 }
             },
-            toggleColor(): void {
-                this.color = !this.color;
-            },
             toggleWrap(): void {
                 this.wrap = !this.wrap;
                 this.$nextTick(() => {
@@ -350,21 +347,9 @@
                     }
                 });
             },
-            coloredSeq(seq: string): string {
-                return this.color ? colorSequence(seq) : seq;
-            },
-            ssColoredSeq(seq: string): string {
-                return this.color ? ssColorSequence(seq) : seq;
-            },
-            alQEnd(al: HHompAlignmentItem): string {
-                return ` &nbsp; ${al.query.end} (${al.query.ref})`;
-            },
-            alTEnd(al: HHompAlignmentItem): string {
-                return ` &nbsp; ${al.template.end} (${al.template.ref})`;
-            },
-            wrapAlignments(al: HHompAlignmentItem): SearchAlignmentItem[] {
+            wrapAlignments(al: HHompAlignmentItem): SearchAlignmentItemRender[] {
                 if (this.wrap) {
-                    const res: SearchAlignmentItem[] = [];
+                    const res: SearchAlignmentItemRender[] = [];
                     let qStart: number = al.query.start;
                     let tStart: number = al.template.start;
                     for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {

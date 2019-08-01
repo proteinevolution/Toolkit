@@ -150,6 +150,7 @@ export default {
                 cols: 'Cols',
                 targetLength: 'Target Length',
             },
+            templateAlignment: 'Template alignment',
             alignmentInfo: 'Probability: {probab}&emsp;&emsp;E-value: {eval}&emsp;&emsp;Score: {score}&emsp;&emsp;' +
                 'Aligned cols: {alignedCols}&emsp;&emsp;Identities: {ident}%&emsp;&emsp;Similarity: ' +
                 '{similarity}&emsp;&emsp;',

@@ -101,7 +101,7 @@
         },
         methods: {
             resubmitSection(): void {
-                alert('implement me!');
+                this.$emit('resubmit-section', this.resubmitSelection);
             },
             coords(area: HitMapItem): string {
                 return `${area.l},${area.t},${area.r},${area.b}`;

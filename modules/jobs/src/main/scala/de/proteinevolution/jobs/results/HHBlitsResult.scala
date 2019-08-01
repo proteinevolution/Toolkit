@@ -49,7 +49,8 @@ case class HHBlitsResult(
       "num_hits" -> num_hits.asJson,
       "tm"       -> tmpred.asJson,
       "coil"     -> coilpred.asJson,
-      "signal"   -> signal.asJson
+      "signal"   -> signal.asJson,
+      "query"    -> query.asJson
     ).asJson
   }
 

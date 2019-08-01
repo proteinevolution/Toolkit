@@ -1,7 +1,13 @@
-export interface SearchAlignmentItem {
+export interface SearchAlignmentItemRender {
     query: any;
     agree: string;
     template: any;
+}
+
+export interface SearchAlignmentItem extends SearchAlignmentItemRender {
+    num: number;
+    acc: string;
+    name: string;
 }
 
 export interface SearchHitItem {
@@ -16,7 +22,7 @@ export interface SearchHitsResponse {
     end: number;
 }
 
-export interface SearchAlignmentsResponse<T extends SearchAlignmentItem, S extends  HHInfoResult> {
+export interface SearchAlignmentsResponse<T extends SearchAlignmentItem, S extends HHInfoResult> {
     alignments: T[];
     info: S;
     total: number;
@@ -25,9 +31,6 @@ export interface SearchAlignmentsResponse<T extends SearchAlignmentItem, S exten
 }
 
 export interface HHompAlignmentItem extends SearchAlignmentItem {
-    num: number;
-    acc: string;
-    name: string;
     alignedCols: number;
     probabHit: number;
     probabOMP: number;
@@ -37,9 +40,6 @@ export interface HHompAlignmentItem extends SearchAlignmentItem {
 }
 
 export interface HHblitsAlignmentItem extends SearchAlignmentItem {
-    num: number;
-    acc: string;
-    name: string;
     alignedCols: number;
     probab: number;
     eval: number;
@@ -48,10 +48,7 @@ export interface HHblitsAlignmentItem extends SearchAlignmentItem {
 }
 
 export interface HHpredAlignmentItem extends SearchAlignmentItem {
-    num: number;
-    acc: string;
     dbLink: string;
-    name: string;
     probab: number;
     eval: number;
     score: number;
@@ -62,10 +59,7 @@ export interface HHpredAlignmentItem extends SearchAlignmentItem {
 }
 
 export interface HMMERAlignmentItem extends SearchAlignmentItem {
-    num: number;
-    acc: string;
     fastaLink: string;
-    name: string;
     fullEval: number;
     eval: number;
     bitScore: number;
@@ -74,10 +68,7 @@ export interface HMMERAlignmentItem extends SearchAlignmentItem {
 }
 
 export interface PSIBLASTAlignmentItem extends SearchAlignmentItem {
-    num: number;
-    acc: string;
     fastaLink: string;
-    name: string;
     eval: number;
     bitScore: number;
     score: number;
@@ -185,6 +176,10 @@ export interface HitMapItem {
 
 export interface HHInfoResult {
     num_hits: number;
+    query: {
+        accession: string;
+        seq: string;
+    };
 }
 
 export interface PsiblastHHInfoResult extends HHInfoResult {

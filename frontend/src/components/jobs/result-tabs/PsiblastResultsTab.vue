@@ -36,7 +36,8 @@
                  ref="visualization">
                 <h4>{{$t('jobs.results.hitlist.vis')}}</h4>
                 <hit-map :job="job"
-                         @elem-clicked="scrollToElem"/>
+                         @elem-clicked="scrollToElem"
+                         @resubmit-section="resubmitSection"/>
             </div>
 
             <div class="result-section"
@@ -146,15 +147,15 @@
     import {
         PSIBLASTAlignmentItem,
         PsiblastHHInfoResult,
-        SearchAlignmentItem,
+        SearchAlignmentItemRender,
         SearchAlignmentsResponse,
     } from '@/types/toolkit/results';
-    import {colorSequence} from '@/util/SequenceUtils';
     import {resultsService} from '@/services/ResultsService';
+    import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
     const logger = Logger.get('PsiblastResultsTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default mixins(ResultTabMixin, SearchResultTabMixin).extend({
         name: 'PsiblastResultsTab',
         components: {
             Loading,
@@ -169,7 +170,6 @@
                 total: 100,
                 loadingMore: false,
                 perPage: 20,
-                color: false,
                 wrap: true,
                 breakAfter: 90,
                 selectedItems: [] as number[],
@@ -242,16 +242,6 @@
                     this.alignments.push(...res.alignments);
                 }
             },
-            scrollTo(ref: string): void {
-                if (this.$refs[ref]) {
-                    const elem: HTMLElement = (this.$refs[ref] as any).length ?
-                        (this.$refs[ref] as HTMLElement[])[0] : this.$refs[ref] as HTMLElement;
-                    elem.scrollIntoView({
-                        block: 'start',
-                        behavior: 'smooth',
-                    });
-                }
-            },
             async scrollToElem(num: number): Promise<void> {
                 const loadNum: number = num + 2; // load some more for better scrolling
                 if (this.alignments && this.alignments.map((a: PSIBLASTAlignmentItem) => a.num).includes(loadNum)) {
@@ -290,9 +280,6 @@
             forwardQuery(): void {
                 alert('implement me!');
             },
-            toggleColor(): void {
-                this.color = !this.color;
-            },
             toggleWrap(): void {
                 this.wrap = !this.wrap;
                 this.$nextTick(() => {
@@ -303,15 +290,9 @@
                     }
                 });
             },
-            coloredSeq(seq: string): string {
-                return this.color ? colorSequence(seq) : seq;
-            },
-            alEnd(al: any): string {
-                return ` &nbsp; ${al.end}`;
-            },
-            wrapAlignments(al: PSIBLASTAlignmentItem): SearchAlignmentItem[] {
+            wrapAlignments(al: PSIBLASTAlignmentItem): SearchAlignmentItemRender[] {
                 if (this.wrap) {
-                    const res: SearchAlignmentItem[] = [];
+                    const res: SearchAlignmentItemRender[] = [];
                     let qStart: number = al.query.start;
                     let tStart: number = al.template.start;
                     for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
