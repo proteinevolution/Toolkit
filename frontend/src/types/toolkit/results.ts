@@ -16,8 +16,9 @@ export interface SearchHitsResponse {
     end: number;
 }
 
-export interface SearchAlignmentsResponse<T extends SearchAlignmentItem> {
+export interface SearchAlignmentsResponse<T extends SearchAlignmentItem, S extends  HHInfoResult> {
     alignments: T[];
+    info: S;
     total: number;
     start: number;
     end: number;

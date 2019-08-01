@@ -20,13 +20,13 @@ import cats.data.EitherT
 import cats.implicits._
 import de.proteinevolution.jobs.db.ResultFileAccessor
 import de.proteinevolution.jobs.models.ResultsForm
-import de.proteinevolution.jobs.results.{HSP, SearchResult}
-import io.circe.{DecodingFailure, Json, JsonObject}
+import de.proteinevolution.jobs.results.{ HSP, SearchResult }
 import io.circe.syntax._
-import javax.inject.{Inject, Singleton}
+import io.circe.{ DecodingFailure, Json, JsonObject }
+import javax.inject.{ Inject, Singleton }
 import play.api.Logging
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 class HHService @Inject()(
@@ -83,16 +83,9 @@ class HHService @Inject()(
           "total"      -> l.asJson,
           "start"      -> s.asJson,
           "end"        -> e.asJson,
-          "alignments" -> result.HSPS.slice(s, e).map(_.toAlignmentSectionJson(result.db)).asJson
+          "alignments" -> result.HSPS.slice(s, e).map(_.toAlignmentSectionJson(result.db)).asJson,
+          "info"       -> result.toInfoJson
         ).asJson
-      )
-    }
-  }
-
-  def loadInfo(jobID: String): EitherT[Future, DecodingFailure, Json] = {
-    getResults(jobID).subflatMap { result =>
-      Right(
-        result.toInfoJson
       )
     }
   }

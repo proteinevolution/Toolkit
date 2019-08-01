@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
-    AlignmentResultResponse, HHInfoResult,
+    AlignmentResultResponse,
+    HHInfoResult,
     SearchAlignmentItem,
     SearchAlignmentsResponse,
     SearchHitsResponse,
@@ -36,9 +37,10 @@ class ResultsService {
         });
     }
 
-    public fetchHHAlignmentResults<T extends SearchAlignmentItem>(jobId: string, start?: number, end?: number):
-        Promise<SearchAlignmentsResponse<T>> {
-        return new Promise<SearchAlignmentsResponse<T>>((resolve, reject) => {
+    public fetchHHAlignmentResults<T extends SearchAlignmentItem, S extends HHInfoResult>(jobId: string,
+                                                                                          start?: number, end?: number):
+        Promise<SearchAlignmentsResponse<T, S>> {
+        return new Promise<SearchAlignmentsResponse<T, S>>((resolve, reject) => {
             const url: string = `/api/jobs/${jobId}/results/hh-alignments/`;
             axios.get(url, {
                 params: {
@@ -46,16 +48,6 @@ class ResultsService {
                     end,
                 },
             })
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(reject);
-        });
-    }
-
-    public fetchHHInfo(jobId: string): Promise<HHInfoResult> {
-        return new Promise<HHInfoResult>((resolve, reject) => {
-            axios.get(`/api/jobs/${jobId}/results/hh-info/`)
                 .then((response) => {
                     resolve(response.data);
                 })
