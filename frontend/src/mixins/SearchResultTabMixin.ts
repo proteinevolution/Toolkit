@@ -40,6 +40,9 @@ const SearchResultTabMixin = mixins(ResultTabMixin).extend({
                 logger.error('tool parameters not loaded. Cannot forward');
             }
         },
+        forward(): void {
+            alert('implement me!');
+        },
         forwardQueryA3M(): void {
             if (!this.info) {
                 return;

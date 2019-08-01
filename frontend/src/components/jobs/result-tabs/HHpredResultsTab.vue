@@ -335,9 +335,6 @@
                     id: 'templateStructureModal', props: {accessionStructure: accession},
                 });
             },
-            forward(): void {
-                alert('implement me!');
-            },
             modelSelection(): void {
                 alert('implement me!');
             },

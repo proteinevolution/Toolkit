@@ -289,9 +289,6 @@
                     }
                 }
             },
-            forward(): void {
-                alert('implement me!');
-            },
             toggleWrap(): void {
                 this.wrap = !this.wrap;
                 this.$nextTick(() => {
