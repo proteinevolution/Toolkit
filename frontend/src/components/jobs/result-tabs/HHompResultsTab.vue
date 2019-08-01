@@ -277,7 +277,6 @@
         methods: {
             async init(): Promise<void> {
                 await this.loadAlignments(0, this.perPage);
-                await this.loadInfo();
             },
             async intersected(): Promise<void> {
                 if (!this.loadingMore && this.alignments && this.alignments.length < this.total) {
@@ -291,17 +290,15 @@
                 }
             },
             async loadAlignments(start: number, end: number): Promise<void> {
-                const res: SearchAlignmentsResponse<HHompAlignmentItem> =
+                const res: SearchAlignmentsResponse<HHompAlignmentItem, HHompHHInfoResult> =
                     await resultsService.fetchHHAlignmentResults(this.job.jobID, start, end);
                 this.total = res.total;
+                this.info = res.info;
                 if (!this.alignments) {
                     this.alignments = res.alignments;
                 } else {
                     this.alignments.push(...res.alignments);
                 }
-            },
-            async loadInfo(): Promise<void> {
-                this.info = await resultsService.fetchHHInfo(this.job.jobID) as HHompHHInfoResult;
             },
             scrollTo(ref: string): void {
                 if (this.$refs[ref]) {
