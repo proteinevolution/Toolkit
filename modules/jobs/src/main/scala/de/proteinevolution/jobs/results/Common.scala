@@ -179,7 +179,6 @@ object Common {
     }
     val idCDD  = id.replaceAll("PF", "pfam")
     val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
-    links += s"<a data-open='templateAlignmentModal' onclick='new TemplateAlignment(${'"'}hhpred${'"'}).get(${'"'}$jobID${'"'},${'"'}$id${'"'})'>Template alignment</a>"
     db match {
       case "scop" =>
         links += s"<a class='structureModalOpenBtn' data-structure-id='$id'>Template 3D structure</a>"
