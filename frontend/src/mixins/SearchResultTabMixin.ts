@@ -3,10 +3,12 @@ import EventBus from '@/util/EventBus';
 import Logger from 'js-logger';
 import {HHInfoResult} from '@/types/toolkit/results';
 import {colorSequence, ssColorSequence} from '@/util/SequenceUtils';
+import ResultTabMixin from '@/mixins/ResultTabMixin';
+import mixins from 'vue-typed-mixins';
 
 const logger = Logger.get('SearchResultTabMixin');
 
-const SearchResultTabMixin = Vue.extend({
+const SearchResultTabMixin = mixins(ResultTabMixin).extend({
     data() {
         return {
             color: true,
@@ -22,6 +24,19 @@ const SearchResultTabMixin = Vue.extend({
                     block: 'start',
                     behavior: 'smooth',
                 });
+            }
+        },
+        displayTemplateAlignment(accession: string): void {
+            if (this.tool.parameters) {
+                EventBus.$emit('show-modal', {
+                    id: 'templateAlignmentModal', props: {
+                        jobID: this.job.jobID,
+                        accession,
+                        forwardingMode: this.tool.parameters.forwarding,
+                    },
+                });
+            } else {
+                logger.error('tool parameters not loaded. Cannot forward');
             }
         },
         resubmitSection([start, end]: [number, number]): void {

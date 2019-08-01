@@ -153,7 +153,6 @@
 
 <script lang="ts">
     import mixins from 'vue-typed-mixins';
-    import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
     import Logger from 'js-logger';
     import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
@@ -167,12 +166,11 @@
         SearchAlignmentsResponse,
     } from '@/types/toolkit/results';
     import {resultsService} from '@/services/ResultsService';
-    import EventBus from '@/util/EventBus';
     import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
     const logger = Logger.get('HHblitsResultsTab');
 
-    export default mixins(ResultTabMixin, SearchResultTabMixin).extend({
+    export default mixins(SearchResultTabMixin).extend({
         name: 'HHblitsResultsTab',
         components: {
             Loading,
@@ -289,19 +287,6 @@
                     if (i > -1) {
                         this.selectedItems.splice(i, 1);
                     }
-                }
-            },
-            displayTemplateAlignment(accession: string): void {
-                if (this.tool.parameters) {
-                    EventBus.$emit('show-modal', {
-                        id: 'templateAlignmentModal', props: {
-                            jobID: this.job.jobID,
-                            accession,
-                            forwardingMode: this.tool.parameters.forwarding,
-                        },
-                    });
-                } else {
-                    logger.error('tool parameters not loaded. Cannot forward');
                 }
             },
             forwardQuery(): void {

@@ -134,7 +134,6 @@
 
 <script lang="ts">
     import mixins from 'vue-typed-mixins';
-    import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
     import Logger from 'js-logger';
     import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
@@ -152,7 +151,7 @@
 
     const logger = Logger.get('HmmerResultsTab');
 
-    export default mixins(ResultTabMixin, SearchResultTabMixin).extend({
+    export default mixins(SearchResultTabMixin).extend({
         name: 'HmmerResultsTab',
         components: {
             Loading,
@@ -270,9 +269,6 @@
                         this.selectedItems.splice(i, 1);
                     }
                 }
-            },
-            displayTemplateAlignment(num: number): void {
-                alert('implement me!' + num);
             },
             forwardQuery(): void {
                 alert('implement me!');

@@ -79,7 +79,7 @@
                                 <td colspan="3">
                                     <a @click="displayTemplateAlignment(al.template.accession)"
                                        v-text="$t('jobs.results.hhpred.templateAlignment')"></a>
-                                     |
+                                    |
                                     <a @click="displayTemplateStructure(al.template.accession)"
                                        v-text="$t('jobs.results.hhpred.templateStructure')"></a>
                                     |
@@ -189,7 +189,6 @@
 
 <script lang="ts">
     import mixins from 'vue-typed-mixins';
-    import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
     import Logger from 'js-logger';
     import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
@@ -208,7 +207,7 @@
 
     const logger = Logger.get('HHpredResultsTab');
 
-    export default mixins(ResultTabMixin, SearchResultTabMixin).extend({
+    export default mixins(SearchResultTabMixin).extend({
         name: 'HHpredResultsTab',
         components: {
             Loading,
@@ -331,22 +330,9 @@
                     }
                 }
             },
-            displayTemplateAlignment(accession: string): void {
-                if (this.tool.parameters) {
-                    EventBus.$emit('show-modal', {
-                        id: 'templateAlignmentModal', props: {
-                            jobID: this.job.jobID,
-                            accession,
-                            forwardingMode: this.tool.parameters.forwarding,
-                        },
-                    });
-                } else {
-                    logger.error('tool parameters not loaded. Cannot forward');
-                }
-            },
             displayTemplateStructure(accession: string): void {
                 EventBus.$emit('show-modal', {
-                    id: 'templateStructureModal', props: { accessionStructure: accession },
+                    id: 'templateStructureModal', props: {accessionStructure: accession},
                 });
             },
             forwardQuery(): void {
