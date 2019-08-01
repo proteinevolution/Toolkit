@@ -25,10 +25,10 @@
 
             <div v-html="$t('jobs.results.psiblast.numHits', {num: info.num_hits})"></div>
 
-            <div v-if="info.coil === '0' || info.tm === '1' || info.signal === '1'">
+            <div v-if="info.coil === '0' || info.tm === '1' || info.signal === '1'" class="mt-2">
                 Detected sequence features:
                 <b v-if="info.coil === '0'" v-html="$t('jobs.results.sequenceFeatures.coil')"></b>
-                <b v-if="info.tm === '1'" v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
+                <b v-if="info.tm > '1'" v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
                 <b v-if="info.signal === '1'" v-html="$t('jobs.results.sequenceFeatures.signal')"></b>
             </div>
 

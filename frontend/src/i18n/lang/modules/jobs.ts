@@ -67,6 +67,7 @@ export default {
             colorMSA: 'Color MSA',
             colorSeqs: 'Color Seqs',
             wrapSeqs: 'Wrap Seqs',
+            unwrapSeqs: 'Unwrap Seqs',
             downloadTree: 'Download Tree',
             downloadPDBFile: 'Download PDB File',
             model: 'Model using selection',
@@ -129,7 +130,16 @@ export default {
             noResults: 'No hits found! Please re-run HHpred with an increased number of MSA generation steps or with ' +
                 'a custom-built multiple sequence alignment as input (set "Maximal no. of MSA generation steps" to ' +
                 '0). You could also consider picking a different target database and/or using different parameters.',
-            numHits: 'Number of Hits: <b>{num}</b>',
+            qa3mWarning: 'Note: your query alignment consists of only <b>{num}</b> sequence(s).',
+            uniclustWarning: ' You could improve the sensitivity of your search vastly by building a larger query ' +
+                'alignment with PSI-BLAST over nre70. You could also consider increasing the number of MSA ' +
+                'generation iterations and/or relaxing the E-value threshold.',
+            psiblastWarning: ' You could improve the sensitivity of your search vastly by building a larger query ' +
+                'alignment; for instance, by increasing the number of MSA generation iterations and/or relaxing the ' +
+                'E-value threshold. Alternatively, you could input your own alignment.',
+            customWarning: ' You could improve the sensitivity of your search vastly by providing a larger ' +
+                'query alignment.',
+            numHits: '<b>Number of Hits: {num}</b>',
             table: {
                 num: 'Nr',
                 hit: 'Hit',
