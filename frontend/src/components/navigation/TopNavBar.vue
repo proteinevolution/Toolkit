@@ -68,15 +68,16 @@
             <img :src="require('../../assets/images/minlogo.svg')" alt="MPI Bioinformatics Toolkit"/>
         </router-link>
 
-        <b-navbar-toggle class="d-md-none mr-auto"
-                         target="nav_collapse"></b-navbar-toggle>
+        <b-navbar-toggle class="d-lg-none mr-auto"
+                         target="offscreenMenu"
+                         @click="toggleOffscreenMenu"/>
     </b-col>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
     import EventBus from '@/util/EventBus';
-    import {User, AuthMessage} from '@/types/toolkit/auth';
+    import {AuthMessage, User} from '@/types/toolkit/auth';
     import {authService} from '@/services/AuthService';
 
     export default Vue.extend({
@@ -102,6 +103,9 @@
             openAuthModal(): void {
                 EventBus.$emit('show-modal', {id: 'auth'});
             },
+            toggleOffscreenMenu(): void {
+                this.$store.commit('setOffscreenMenuShow', true);
+            },
             async signOut() {
                 this.$store.commit('startLoading', 'logout');
                 try {
@@ -126,6 +130,8 @@
         width: 100%;
         display: flex;
         flex-direction: row-reverse;
+        align-items: flex-start;
+        padding-top: 0.5rem;
 
         @include media-breakpoint-down(sm) {
             min-height: 50px;
@@ -176,5 +182,4 @@
             cursor: pointer;
         }
     }
-
 </style>

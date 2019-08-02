@@ -238,10 +238,15 @@
         position: sticky;
         top: 0;
         z-index: 10;
+        overflow-x: auto;
+        white-space: nowrap;
 
         a {
             cursor: pointer;
-            margin-right: 3rem;
+            margin-right: 1rem;
+            @include media-breakpoint-up(lg) {
+                margin-right: 3rem;
+            }
             color: inherit;
 
             &[disabled] {

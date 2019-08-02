@@ -8,7 +8,8 @@
                  :class="[selectedSort === index ? 'selected':'']">
                 {{ $t('jobList.sortColumns.' + sortCol.name) }}
             </div>
-            <div class="open-job-manager">
+            <div class="open-job-manager"
+                 @click="$emit('click')">
                 <router-link to="/jobmanager">
                     <i class="fas fa-list-ul"></i>
                 </router-link>
@@ -98,6 +99,7 @@
         methods: {
             goToJob(jobID: string): void {
                 this.$router.push(`/jobs/${jobID}`);
+                this.$emit('click');
             },
             hideJob(jobID: string): void {
                 this.$store.dispatch('jobs/setJobWatched', {jobID, watched: false});

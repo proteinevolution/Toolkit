@@ -2,10 +2,8 @@
     <div class="navbar-container">
         <b-navbar toggleable="md"
                   type="light">
-            <b-navbar-toggle target="nav_collapse"
-                             class="m-navbar-toggler"></b-navbar-toggle>
-
-            <b-collapse is-nav id="nav_collapse">
+            <b-collapse is-nav
+                        id="nav_collapse">
                 <b-row>
                     <b-col>
                         <b-navbar-nav class="upper-nav">
@@ -50,6 +48,7 @@
                 userSelectedSection: '',
                 defaultSelectedSection: sections[0],
                 sectionColors,
+                sections,
             };
         },
         computed: {
@@ -61,9 +60,6 @@
             },
             jobs(): Job[] {
                 return this.$store.getters['jobs/jobs'];
-            },
-            sections(): string[] {
-                return sections;
             },
             sectionColor(): string {
                 const index = this.sections.indexOf(this.selectedSection) % this.sections.length;
@@ -113,13 +109,6 @@
     .navbar-container .navbar {
         padding-left: 0;
         max-width: 750px;
-
-
-        @include media-breakpoint-down(sm) {
-            .m-navbar-toggler {
-                display: none;
-            }
-        }
 
         .navbar-nav {
             .nav-item a {
