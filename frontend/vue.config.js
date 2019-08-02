@@ -1,3 +1,5 @@
+const webpack = require('webpack');
+
 module.exports = {
     chainWebpack: config => {
         // we don't want to prefetch languages
@@ -64,5 +66,11 @@ module.exports = {
                 ws: true,
             },
         },
+    },
+    configureWebpack: {
+        plugins: [
+            // add languages here
+            new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /de/),
+        ],
     },
 };

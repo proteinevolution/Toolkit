@@ -20,7 +20,6 @@
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
-    import {Stage} from 'ngl';
     import Loading from '@/components/utils/Loading.vue';
 
     const logger = Logger.get('NGL3DStructureView');
@@ -50,13 +49,17 @@
         methods: {
             async init() {
                 this.file = await resultsService.getFile(this.job.jobID, `${this.job.jobID}.pdb`) as string;
-                this.stage = new Stage(this.$refs.viewport, {
-                    backgroundColor: 'white',
-                });
-                this.stage.loadFile(new Blob([this.file], {type: 'text/plain'}),
-                    {defaultRepresentation: true, ext: 'pdb'});
-                window.addEventListener('resize', this.windowResized);
-                this.windowResized();
+                import(/* webpackChunkName: "ngl" */
+                    'ngl')
+                    .then(({Stage}) => {
+                        this.stage = new Stage(this.$refs.viewport, {
+                            backgroundColor: 'white',
+                        });
+                        this.stage.loadFile(new Blob([(this.file as string)], {type: 'text/plain'}),
+                            {defaultRepresentation: true, ext: 'pdb'});
+                        window.addEventListener('resize', this.windowResized);
+                        this.windowResized();
+                    });
             },
             windowResized(): void {
                 this.resize(this.fullScreen);

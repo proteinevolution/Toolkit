@@ -108,7 +108,6 @@
     import Logger from 'js-logger';
     import EventBus from '@/util/EventBus';
     import {CustomJobIdValidationResult, Job} from '@/types/toolkit/jobs';
-    import AlignmentViewer from '@/components/tools/AlignmentViewer.vue';
 
     const logger = Logger.get('ToolView');
 
@@ -135,7 +134,8 @@
             CustomJobIdInput,
             EmailNotificationSwitch,
             JobPublicToggle,
-            AlignmentViewer,
+            AlignmentViewer: () => import(/* webpackChunkName: "alignment-viewer" */
+                '@/components/tools/AlignmentViewer.vue'),
         },
         data() {
             return {

@@ -12,6 +12,7 @@
     import Logger from 'js-logger';
     import {AlignmentItem} from '@/types/toolkit/results';
     import EventBus from '@/util/EventBus';
+    import 'msa/dist/msa';
 
     const logger = Logger.get('AlignmentViewer');
 
