@@ -50,6 +50,7 @@ case class HHPredHSP(
     Map[String, Json](
       "num"         -> num.asJson,
       "acc"         -> Common.getSingleLink(accession).toString.asJson,
+      "structLink"  -> Common.displayStructLink(accession).asJson,
       "dbLink"      -> Common.getLinksHHpred("11", accession).toString.asJson,
       "name"        -> description.asJson,
       "probab"      -> info.probab.asJson,
