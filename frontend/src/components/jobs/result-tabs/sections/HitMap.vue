@@ -128,7 +128,6 @@
 <style lang="scss" scoped>
     .hit-map-container {
         position: relative;
-        overflow: auto;
 
         .tooltip {
             display: flex;
