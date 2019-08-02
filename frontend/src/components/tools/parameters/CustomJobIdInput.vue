@@ -87,7 +87,6 @@
                             };
                             this.setError(error);
                             this.suggestion = result.suggested ? result.suggested : '';
-                            console.log(this.suggestion);
                         }
                     });
             },
