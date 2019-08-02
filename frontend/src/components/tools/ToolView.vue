@@ -255,7 +255,7 @@
 
 <style lang="scss">
     .tool-header {
-        @include media-breakpoint-up(sm) {
+        @include media-breakpoint-up(md) {
             height: 2.75rem;
         }
 

@@ -55,5 +55,6 @@
         background: url(../../assets/images/arrow-top.svg) no-repeat;
         background-size: 40px 40px;
         outline: 0;
+        z-index: 10;
     }
 </style>
