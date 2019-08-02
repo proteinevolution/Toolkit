@@ -6,7 +6,7 @@ mkdir -p ../results/cif
 
 echo "#Converting selected template alignments into PIR format." >> ../results/process.log
 
-checkTemplates.pl -i   ../params/%parent_id.content.hhr \
+checkTemplates.pl -i   ../params/%parentid.content.hhr \
                   -pir ../results/tomodel.pir \
                   -cif %CIFALL \
                   -o   $(readlink -f ../results/cif) \

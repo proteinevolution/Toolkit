@@ -345,7 +345,6 @@
                 }
                 const submission: any = {
                     parentID: this.job.jobID,
-                    parent_id: this.job.jobID, // parent id is also an argument
                     templates: selected.join(' '),
                 };
                 jobService.submitJob('hhpred_manual', submission)
