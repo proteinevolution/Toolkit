@@ -6,7 +6,7 @@ LOW_ALN_DEPTH=""
 #create file in which selected dbs are written
 touch ../params/dbs
 
-if [[  "%hhpred_align.content" != "true" ]] ; then
+if [[ ! -f "../params/alignment_two" ]] ; then
     #splitting input databases into array and completing with -d
     if [[ "%hhsuitedb.content" != "" ]]
     then
@@ -105,7 +105,7 @@ fi
 echo "done" >> ../results/process.log
 
 
-if [[ "%hhpred_align.content" = "true" ]] ; then
+if [[ -f ../params/alignment_two ]] ; then
         echo "#Pairwise comparison mode." >> ../results/process.log
 
         echo "done" >> ../results/process.log
@@ -324,7 +324,7 @@ echo "done" >> ../results/process.log
 
 
 # creating alignment of query and subject input
-if [[  "%hhpred_align.content" = "true" ]]
+if [[ -f ../params/alignment_two ]]
 then
 
     cd ../results
@@ -342,18 +342,19 @@ then
         rm ../results/${JOBID}.in2.a3m
     fi
 
-    ffindex_build -as db_a3m_wo_ss.ff{data,index} db.a3m
-    mpirun -np 2 ffindex_apply_mpi db_a3m_wo_ss.ffdata db_a3m_wo_ss.ffindex -i db_a3m.ffindex -d db_a3m.ffdata -- addss.pl -v 0 stdin stdout
-    mpirun -np 2 ffindex_apply_mpi db_a3m.ffdata db_a3m.ffindex -i db_hhm.ffindex -d db_hhm.ffdata -- hhmake -i stdin -o stdout -v 0
-    OMP_NUM_THREADS=2 cstranslate -A ${HHLIB}/data/cs219.lib -D ${HHLIB}/data/context_data.lib -x 0.3 -c 4 -f -i db_a3m -o db_cs219 -I a3m -b
-    ffindex_build -as db_cs219.ffdata db_cs219.ffindex
+    addss.pl db.a3m
+    ffindex_build -as db_a3m.ff{data,index} db.a3m
+    hhmake -i db.a3m -o db.hhm
+    ffindex_build -as db_hhm.ff{data,index} db.hhm
+    cstranslate -A ${HHLIB}/data/cs219.lib -D ${HHLIB}/data/context_data.lib -x 0.3 -c 4 -f -i db_a3m -o db_cs219 -I a3m -b
+    ffindex_build -as db_cs219.ff{data,index}
     DBJOINED+="-d ../results/db"
     cd ../0
     echo "done" >> ../results/process.log
 fi
 
 
-if [[  "%hhpred_align.content" = "true" ]] ; then
+if [[ -f ../params/alignment_two ]] ; then
       echo "#Comparing query profile HMM with template profile HMM." >> ../results/process.log
 else
       echo "#Searching profile HMM database(s)." >> ../results/process.log
@@ -440,6 +441,8 @@ if [[ ${SIGNALP} -gt "4" ]]; then
 else
     manipulate_json.py -k 'signal' -v "0" ../results/results.json
 fi
+
+rm ../results/*.signalp5
 
 # For alerting user if too few homologs are found for building A3M
 if [[ ${ITERS} = "0" ]] ; then
