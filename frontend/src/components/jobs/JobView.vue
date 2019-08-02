@@ -245,7 +245,7 @@
             cursor: pointer;
             margin-right: 1rem;
             @include media-breakpoint-up(lg) {
-                margin-right: 3rem;
+                margin-right: 2.5rem;
             }
             color: inherit;
 
