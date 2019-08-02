@@ -56,6 +56,7 @@ case class HHPredResult(
       "signal"     -> signal.asJson,
       "db"         -> db.asJson,
       "proteomes"  -> proteomes.asJson,
+      "modeller"   -> Common.displayModellerLink(db, proteomes).asJson,
       "msa_gen"    -> msa_gen.asJson,
       "qa3m_count" -> qa3m_count.asJson,
       "query"      -> query.asJson

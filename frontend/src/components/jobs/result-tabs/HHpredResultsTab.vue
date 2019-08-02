@@ -17,8 +17,7 @@
                     'selectAll'))}}</a>
                 <a @click="forward">{{$t('jobs.results.actions.forward')}}</a>
                 <a @click="forwardQueryA3M">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
-                <a v-if="((info.db === 'mmcif70/pdb70' || info.db === 'mmcif30/pdb30') && info.proteomes === '')"
-                   @click="modelSelection">{{$t('jobs.results.actions.model')}}</a>
+                <a v-if="info.modeller" @click="modelSelection" v-text="$t('jobs.results.actions.model')"></a>
                 <a @click="toggleColor"
                    :class="{active: color}">{{$t('jobs.results.actions.colorSeqs')}}</a>
                 <a @click="toggleWrap"
@@ -26,13 +25,13 @@
             </div>
 
             <div v-html="$t('jobs.results.hhpred.numHits', {num: info.num_hits})"></div>
+
             <div v-if="info.coil === '0' || info.tm === '1' || info.signal === '1'" class="mt-2">
                 <b> Detected sequence features:</b>
                 <b v-if="info.coil === '0'" v-html="$t('jobs.results.sequenceFeatures.coil')"></b>
                 <b v-if="info.tm > '1'" v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
                 <b v-if="info.signal === '1'" v-html="$t('jobs.results.sequenceFeatures.signal')"></b>
             </div>
-
 
             <div v-if="info.qa3m_count < '10'" class="mt-2">
                 <b v-html="$t('jobs.results.hhpred.qa3mWarning', {num: info.qa3m_count})" class="mt-2"></b>
@@ -79,11 +78,10 @@
                                 <td colspan="3">
                                     <a @click="displayTemplateAlignment(al.template.accession)"
                                        v-text="$t('jobs.results.hhpred.templateAlignment')"></a>
-                                    |
-                                    <a @click="displayTemplateStructure(al.template.accession)"
+                                    <a class="db-list" v-if="al.structLink"
+                                       @click="displayTemplateStructure(al.template.accession)"
                                        v-text="$t('jobs.results.hhpred.templateStructure')"></a>
-                                    |
-                                    <span v-html="al.dbLink"></span>
+                                    <span v-if="al.dbLink" class="db-list" v-html="al.dbLink"></span>
                                 </td>
                             </tr>
                             <tr class="font-weight-bold">
@@ -446,5 +444,12 @@
                 color: $tk-dark-green;
             }
         }
+    }
+
+    .db-list {
+        border-left: 1px solid;
+        border-left-color: black;
+        margin-left: .5em;
+        padding-left: .5em;
     }
 </style>

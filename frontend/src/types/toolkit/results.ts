@@ -48,6 +48,7 @@ export interface HHblitsAlignmentItem extends SearchAlignmentItem {
 }
 
 export interface HHpredAlignmentItem extends SearchAlignmentItem {
+    structLink: boolean;
     dbLink: string;
     probab: number;
     eval: number;
@@ -209,7 +210,8 @@ export interface HHpredHHInfoResult extends HHInfoResult {
     coil: number;
     signal: string;
     db: string;
-    proteomes: string;
+    proteomes: number;
+    modeller: boolean;
     msa_gen: string;
     qa3m_count: string;
 }

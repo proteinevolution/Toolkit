@@ -158,6 +158,20 @@ object Common {
     Html(links)
   }
 
+  def displayModellerLink(db: String, proteome: String): Boolean = {
+    db == "mmcif70/pdb70" || db == "mmcif30/pdb30" && proteome.isEmpty
+  }
+
+  def displayStructLink(id: String): Boolean = {
+    val db = identifyDatabase(id)
+    db match {
+      case "scop"  => true
+      case "mmcif" => true
+      case "ecod"  => true
+      case _       => false
+    }
+  }
+
   def getSingleLinkHHBlits(id: String): Html = {
     Html(generateLink(uniprotBaseLink, id, id))
   }

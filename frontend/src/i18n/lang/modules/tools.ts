@@ -358,5 +358,6 @@ export default {
             'Meier A, Söding J.<a ' +
             'href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004343" target="_blank" ' +
             'rel="noopener"> PLoS Comput Biol. 2015 Oct 23;11(10):e1004343</a>.',
+        hhpred_manual: '',
     },
 };
