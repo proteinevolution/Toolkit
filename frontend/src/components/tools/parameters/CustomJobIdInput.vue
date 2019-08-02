@@ -3,7 +3,8 @@
         <b-form-input v-model="customJobId"
                       :placeholder="$t('tools.parameters.customJobId.placeholder')"
                       aria-describedby="custom-job-id-invalid"
-                      :state="valid">
+                      :state="valid"
+                      @input="inputChanged">
         </b-form-input>
         <b-form-invalid-feedback id="custom-job-id-invalid"
                                  v-if="hasError">
@@ -23,6 +24,7 @@
     import {ConstraintError} from '@/types/toolkit/validation';
     import {CustomJobIdValidationResult} from '@/types/toolkit/jobs';
     import mixins from 'vue-typed-mixins';
+    import {debounce} from 'lodash-es';
 
     export default mixins(ToolParameterMixin).extend({
         name: 'CustomJobIdInput',
@@ -59,41 +61,39 @@
                 return !this.hasError;
             },
         },
-        watch: {
-            customJobId: {
-                immediate: true,
-                handler(value: string) {
-                    if (value.length === 0) {
-                        this.setError(undefined);
-                        return;
-                    }
-                    this.validateCustomJobId(value);
-                },
-            },
+        created() {
+            (this as any).debouncedValidateCustomJobId = debounce(this.validateCustomJobId, 400);
         },
         methods: {
-            // TODO debounce this function. Currently, this is acting up when we debounce it. Investigate
-            validateCustomJobId(value: string) {
-                if (value.length < 3) {
+            inputChanged(value: string) {
+                if (value.length === 0) {
+                    this.setError(undefined);
+                    return;
+                } else if (value.length < 3) {
                     this.setError({
                         textKey: 'constraints.customerJobIdTooShort',
                     });
-                } else {
-                    authService.validateJobId(value)
-                        .then((result: CustomJobIdValidationResult) => {
-                            if (this.customJobId === value) {
-                                // only update the error if value hasn't changed since api call
-                                const error: ConstraintError | undefined = !result.exists ? undefined : {
-                                    textKey: 'constraints.invalidCustomJobId',
-                                };
-                                this.suggestion = result.suggested ? result.suggested : '';
-                                this.setError(error);
-                            }
-                        });
+                    return;
                 }
+                (this as any).debouncedValidateCustomJobId(value);
+            },
+            validateCustomJobId(value: string) {
+                authService.validateJobId(value)
+                    .then((result: CustomJobIdValidationResult) => {
+                        if (this.customJobId === value) {
+                            // only update the error if value hasn't changed since api call
+                            const error: ConstraintError | undefined = !result.exists ? undefined : {
+                                textKey: 'constraints.invalidCustomJobId',
+                            };
+                            this.setError(error);
+                            this.suggestion = result.suggested ? result.suggested : '';
+                            console.log(this.suggestion);
+                        }
+                    });
             },
             takeSuggestion() {
                 this.customJobId = this.suggestion;
+                this.validateCustomJobId(this.customJobId);
             },
         },
     });
