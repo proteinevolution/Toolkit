@@ -4,9 +4,7 @@ import TitleManager from '@/modules/title_manager';
 import moment from 'moment';
 import VueParticles from 'vue-particles';
 import VueClipboard from 'vue-clipboard2';
-import HighchartsVue from 'highcharts-vue';
 import Vue from 'vue';
-import 'msa/dist/msa';
 import 'es6-promise/auto';
 
 Vue.use(BootstrapVue);
@@ -21,4 +19,3 @@ Vue.use(TitleManager);
 Vue.prototype.moment = moment;
 Vue.use(VueParticles);
 Vue.use(VueClipboard);
-Vue.use(HighchartsVue);

@@ -18,7 +18,6 @@
     import Loading from '@/components/utils/Loading.vue';
     import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
-    import {Stage} from 'ngl';
 
     const logger = Logger.get('TemplateStructureModal');
 
@@ -78,14 +77,18 @@
                         return;
                     }
                     const ext: string = this.getExtension(response.filename);
-                    this.stage = new Stage(this.$refs.viewport, {
-                        backgroundColor: 'white',
-                    });
-                    this.stage.loadFile(new Blob([response.data]),
-                        {defaultRepresentation: true, binary: true, sele: ':A or :B or DPPC', ext});
-                    window.addEventListener('resize', this.resize);
-                    this.resize();
-                    this.loading = false;
+                    import(/* webpackChunkName: "ngl" */
+                        'ngl')
+                        .then(({Stage}) => {
+                            this.stage = new Stage(this.$refs.viewport, {
+                                backgroundColor: 'white',
+                            });
+                            this.stage.loadFile(new Blob([response.data]),
+                                {defaultRepresentation: true, binary: true, sele: ':A or :B or DPPC', ext});
+                            window.addEventListener('resize', this.resize);
+                            this.resize();
+                            this.loading = false;
+                        });
                 } catch (err) {
                     this.$alert(this.$t('errors.templateStructureFailed'), 'danger');
                 }

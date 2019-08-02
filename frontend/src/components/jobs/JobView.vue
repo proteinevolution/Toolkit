@@ -112,7 +112,7 @@
                 './result-tabs/ClustalAlignmentTab.vue')),
             fastaAlignment: () => lazyLoadView(import(/* webpackChunkName: "clustal-views" */
                 './result-tabs/FastaAlignmentTab.vue')),
-            alignmentViewer: () => lazyLoadView(import(/* webpackChunkName: "alignment-viewer" */
+            alignmentViewer: () => lazyLoadView(import(/* webpackChunkName: "alignment-viewer-tab" */
                 './result-tabs/AlignmentViewerTab.vue')),
             ngl3dStructureView: () => lazyLoadView(import(/* webpackChunkName: "ngl3d-viewer" */
                 './result-tabs/NGL3DStructureView.vue')),
