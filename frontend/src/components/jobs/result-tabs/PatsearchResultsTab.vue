@@ -84,6 +84,7 @@
                 if (this.tool.parameters && this.results) {
                     EventBus.$emit('show-modal', {
                         id: 'forwardingModal', props: {
+                            forwardingJobID: this.job.jobID,
                             forwardingData: this.results.results.hits.reduce((acc: string, cur: PatsearchHit) =>
                                 acc + cur.name + '\n' + cur.seq + '\n', ''),
                             forwardingMode: this.tool.parameters.forwarding,

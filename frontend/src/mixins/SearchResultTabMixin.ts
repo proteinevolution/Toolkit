@@ -51,6 +51,7 @@ const SearchResultTabMixin = mixins(ResultTabMixin).extend({
             const reformatted: string = new Reformat(fasta).reformat('a3m');
             EventBus.$emit('show-modal', {
                 id: 'forwardingModal', props: {
+                    forwardingJobID: this.job.jobID,
                     forwardingData: reformatted,
                     forwardingMode: {
                         alignment: ['formatseq', 'hhblits', 'hhpred', 'hhomp', 'hhrepid'],

@@ -53,7 +53,8 @@
             <UpdatesModal/>
             <HelpModal :toolName="modalProps.toolName"/>
             <ForwardingModal :forwarding-data="modalProps.forwardingData"
-                             :forwardingMode="modalProps.forwardingMode"/>
+                             :forwardingMode="modalProps.forwardingMode"
+                             :forwarding-job-i-d="modalProps.forwardingJobID"/>
             <TemplateAlignmentModal :job-i-d="modalProps.jobID"
                                     :accession="modalProps.accession"
                                     :forwardingMode="modalProps.forwardingMode"/>
@@ -143,6 +144,7 @@
                     format: '', // for AlignmentViewerModal
                     forwardingMode: {}, // for ForwardingModal and TemplateAlignmentModal
                     forwardingData: '', // for ForwardingModal
+                    forwardingJobID: '', // for ForwardingModal
                     jobID: '', // for TemplateAlignmentModal
                     accession: '', // for TemplateAlignmentModal
                     // care: Don't share the accession properties between modals, otherwise they react to the wrong updates!

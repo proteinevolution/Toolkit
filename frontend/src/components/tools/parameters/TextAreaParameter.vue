@@ -107,8 +107,9 @@
             },
         },
         methods: {
-            acceptForwardData(data: string): void {
+            acceptForwardData({data, jobID}: { data: string, jobID: string }): void {
                 this.submissionValue = data;
+                Vue.set(this.submission, 'parentID', jobID);
             },
             handleValidation(val: ValidationResult) {
                 if (val.failed) {

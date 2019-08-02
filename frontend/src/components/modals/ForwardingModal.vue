@@ -42,6 +42,10 @@
                 type: String,
                 required: true,
             },
+            forwardingJobID: {
+                type: String,
+                required: true,
+            },
         },
         data() {
             return {
@@ -75,7 +79,7 @@
             },
             pasteForwardData() {
                 EventBus.$off('paste-area-loaded', this.pasteForwardData);
-                EventBus.$emit('forward-data', this.forwardingData);
+                EventBus.$emit('forward-data', {data: this.forwardingData, jobID: this.forwardingJobID});
             },
             resetData() {
                 // reset data

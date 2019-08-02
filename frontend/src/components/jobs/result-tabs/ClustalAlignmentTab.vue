@@ -185,6 +185,7 @@
                             .filter((al: AlignmentItem) => this.selected.includes(al.num));
                         EventBus.$emit('show-modal', {
                             id: 'forwardingModal', props: {
+                                forwardingJobID: this.job.jobID,
                                 forwardingData: selAl.reduce((acc: string, cur: AlignmentItem) =>
                                     acc + '>' + cur.accession + '\n' + cur.seq + '\n', ''),
                                 forwardingMode: this.tool.parameters.forwarding,

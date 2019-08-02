@@ -121,7 +121,7 @@
             },
             pasteForwardData() {
                 EventBus.$off('paste-area-loaded', this.pasteForwardData);
-                EventBus.$emit('forward-data', this.data);
+                EventBus.$emit('forward-data', {data: this.data, jobID: this.jobID});
             },
             resetData() {
                 this.selectedTool = null;
