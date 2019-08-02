@@ -20,6 +20,7 @@ const store: StoreOptions<RootState> = {
             login: false,
             logout: false,
         },
+        offscreenMenuShow: false,
         maintenanceMode: false,
         reconnecting: true,
         clusterWorkload: 0,
@@ -27,6 +28,9 @@ const store: StoreOptions<RootState> = {
         now: Date.now(),
     },
     mutations: {
+        setOffscreenMenuShow(state, value: boolean) {
+            state.offscreenMenuShow = value;
+        },
         updateNow(state) {
             state.now = Date.now();
         },

@@ -5,6 +5,7 @@ import auth from '@/i18n/lang/modules/auth';
 
 export default {
     en: {
+        back: 'Back',
         cancel: 'Cancel',
         submit: 'Submit',
         loading: 'Loading...',

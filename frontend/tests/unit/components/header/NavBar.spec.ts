@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import BootstrapVue from 'bootstrap-vue';
 import {createLocalVue, shallowMount} from '@vue/test-utils';
-import NavBar from '@/components/header/NavBar.vue';
+import NavBar from '@/components/navigation/NavBar.vue';
 import {tools1} from '../../mocks/tools';
 
 const localVue = createLocalVue();

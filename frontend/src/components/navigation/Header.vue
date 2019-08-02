@@ -7,7 +7,7 @@
             <b-col sm="12"
                    lg="3"
                    xl="2"
-                   class="logo-container d-none d-md-flex">
+                   class="logo-container d-none d-lg-flex">
                 <router-link to="/"
                              class="logo-link">
                     <img :src="require('../../assets/images/minlogo.svg')" alt="MPI Bioinformatics Toolkit"/>
@@ -24,8 +24,8 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import NavBar from '@/components/header/NavBar.vue';
-    import TopNavBar from '@/components/header/TopNavBar.vue';
+    import NavBar from '@/components/navigation/NavBar.vue';
+    import TopNavBar from '@/components/navigation/TopNavBar.vue';
 
     export default Vue.extend({
         name: 'Header',

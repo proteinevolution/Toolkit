@@ -20,13 +20,15 @@
         <VelocityFade>
             <LoadingView v-if="$store.state.loading.tools">
             </LoadingView>
-            <b-container v-else class="main-container">
+            <b-container v-else
+                         class="main-container">
+                <OffscreenMenu/>
                 <b-row>
                     <Header></Header>
                 </b-row>
                 <b-row class="pt-3 mb-2 main-content"
                        :class="[showJobList ? 'job-list-visible' : '']">
-                    <b-col class="job-list-col"
+                    <b-col class="job-list-col d-none d-lg-block"
                            lg="3"
                            xl="2">
                         <SideBar/>
@@ -85,8 +87,8 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import Header from '@/components/header/Header.vue';
-    import Footer from '@/components/Footer.vue';
+    import Header from '@/components/navigation/Header.vue';
+    import Footer from '@/components/navigation/Footer.vue';
     import SideBar from '@/components/sidebar/SideBar.vue';
     import VelocityFade from '@/transitions/VelocityFade.vue';
     import LoadingView from '@/components/utils/LoadingView.vue';
@@ -107,12 +109,14 @@
     import ResetPasswordModal from '@/components/modals/ResetPasswordModal.vue';
     import CookieLaw from 'vue-cookie-law';
     import ScrollTopButton from '@/components/utils/ScrollTopButton.vue';
+    import OffscreenMenu from '@/components/navigation/OffscreenMenu.vue';
 
     const logger = Logger.get('App');
 
     export default Vue.extend({
         name: 'App',
         components: {
+            OffscreenMenu,
             Header,
             SideBar,
             Footer,
