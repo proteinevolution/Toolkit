@@ -47,7 +47,7 @@
             },
             pasteForwardData(): void {
                 EventBus.$off('paste-area-loaded', this.pasteForwardData);
-                EventBus.$emit('forward-data', this.file);
+                EventBus.$emit('forward-data', {data: this.file, jobID: this.job.jobID});
             },
         },
     });

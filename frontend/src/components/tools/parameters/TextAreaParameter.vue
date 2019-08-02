@@ -54,7 +54,7 @@
         },
         data() {
             return {
-                secondTextAreaEnabled: false,
+                secondTextAreaEnabledInternal: false,
             };
         },
         computed: {
@@ -64,6 +64,14 @@
             defaultSubmissionValue(): any {
                 // overrides property in ToolParameterMixin
                 return this.$route.params.input ? this.$route.params.input : '';
+            },
+            secondTextAreaEnabled: {
+                get(): boolean {
+                    return this.secondTextAreaEnabledInternal || this.submissionValueTwo.length > 0;
+                },
+                set(value: boolean): void {
+                    this.secondTextAreaEnabledInternal = value;
+                },
             },
             submissionValueTwo: { // has to be handled manually, not covered by the ToolParameterMixin
                 get(): string {
@@ -90,7 +98,7 @@
             EventBus.$off('forward-data', this.acceptForwardData);
         },
         watch: {
-            secondTextAreaEnabled(value: boolean) {
+            secondTextAreaEnabledInternal(value: boolean) {
                 if (!value) {
                     this.submissionValueTwo = '';
                     Vue.delete(this.validationErrors, this.parameterNameTwo);
@@ -99,8 +107,9 @@
             },
         },
         methods: {
-            acceptForwardData(data: string): void {
+            acceptForwardData({data, jobID}: { data: string, jobID: string }): void {
                 this.submissionValue = data;
+                Vue.set(this.submission, 'parentID', jobID);
             },
             handleValidation(val: ValidationResult) {
                 if (val.failed) {

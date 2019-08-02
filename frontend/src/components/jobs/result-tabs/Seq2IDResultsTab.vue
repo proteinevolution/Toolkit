@@ -54,6 +54,7 @@
                 if (this.tool.parameters) {
                     EventBus.$emit('show-modal', {
                         id: 'forwardingModal', props: {
+                            forwardingJobID: this.job.jobID,
                             forwardingData: this.accIds.join('\n'),
                             forwardingMode: this.tool.parameters.forwarding,
                         },

@@ -138,7 +138,7 @@
             EventBus.$off('forward-data', this.acceptForwardData);
         },
         methods: {
-            acceptForwardData(data: string): void {
+            acceptForwardData({data}: { data: string }): void {
                 this.input = data;
             },
             handlePasteExample(): void {

@@ -20,7 +20,7 @@
                 <span v-else
                       v-text="$t('tools.parameters.textArea.pasteExample')"></span>
             </b-btn>
-            <label class="btn btn-link mb-0">
+            <label class="btn btn-link mb-0 cursor-pointer">
                 {{ $t('tools.parameters.textArea.uploadFile') }}
                 <input type="file"
                        class="d-none"
