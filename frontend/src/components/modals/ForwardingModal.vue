@@ -49,7 +49,7 @@
         },
         data() {
             return {
-                selectedTool: undefined as string | undefined,
+                selectedTool: null,
             };
         },
         computed: {
