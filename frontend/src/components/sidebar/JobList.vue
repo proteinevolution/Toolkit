@@ -20,7 +20,7 @@
             <div class="job-list-up"
                  @click="scrollDown"
                  v-if="jobs.length > itemsPerPage"
-                 :class="[startIndex > 0 ? '' : 'disabled']">
+                 :class="[scrollDownPossible ? '' : 'disabled']">
                 <i class="fas fa-caret-up"></i>
             </div>
 
@@ -39,7 +39,7 @@
             <div class="job-list-down d-flex flex-column"
                  @click="scrollUp"
                  v-if="jobs.length > itemsPerPage"
-                 :class="[startIndex + itemsPerPage < jobs.length ? '' : 'disabled']">
+                 :class="[scrollUpPossible ? '' : 'disabled']">
                 <small class="text-muted"
                        v-text="$t('jobList.pagination', {currentPage, pageCount})"></small>
                 <i class="fas fa-caret-down"></i>
@@ -52,6 +52,7 @@
     import Vue from 'vue';
     import {Job} from '@/types/toolkit/jobs';
     import moment from 'moment';
+    import {Route} from 'vue-router';
 
     export default Vue.extend({
         name: 'JobList',
@@ -87,13 +88,19 @@
             },
             sortedJobs(): Job[] {
                 return this.jobs.sort(this.sortColumns[this.selectedSort].sort)
-                    .slice(this.startIndex, this.startIndex + this.itemsPerPage);
+                    .slice(this.startIndex * this.itemsPerPage, (this.startIndex + 1) * this.itemsPerPage);
             },
             currentPage(): number {
-                return Math.floor(this.startIndex / this.itemsPerPage) + 1;
+                return this.startIndex + 1;
             },
             pageCount(): number {
                 return Math.ceil(this.jobs.length / this.itemsPerPage);
+            },
+            scrollDownPossible(): boolean {
+                return this.startIndex > 0;
+            },
+            scrollUpPossible(): boolean {
+                return (this.startIndex + 1) * this.itemsPerPage < this.jobs.length;
             },
         },
         methods: {
@@ -105,13 +112,22 @@
                 this.$store.dispatch('jobs/setJobWatched', {jobID, watched: false});
             },
             scrollDown(): void {
-                if (this.startIndex > 0) {
+                if (this.scrollDownPossible) {
                     this.startIndex--;
                 }
             },
             scrollUp(): void {
-                if (this.startIndex + this.itemsPerPage < this.jobs.length) {
+                if (this.scrollUpPossible) {
                     this.startIndex++;
+                }
+            },
+        },
+        watch: {
+            $route({name, params}: Route): void {
+                if (name === 'jobs') {
+                    const jobID: string = params.jobID;
+                    const index: number = this.jobs.findIndex((job: Job) => job.jobID === jobID);
+                    this.startIndex = Math.max(0, Math.floor(index / this.itemsPerPage));
                 }
             },
         },
