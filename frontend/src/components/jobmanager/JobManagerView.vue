@@ -176,6 +176,9 @@
         methods: {
             deleteJob(jobID: string): void {
                 jobService.deleteJob(jobID)
+                    .then(() => {
+                        this.$store.commit('jobs/removeJob', {jobID});
+                    })
                     .catch(() => {
                         this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
                     });

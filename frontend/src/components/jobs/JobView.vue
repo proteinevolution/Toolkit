@@ -200,6 +200,7 @@
             deleteJob() {
                 jobService.deleteJob(this.jobID)
                     .then(() => {
+                        this.$store.commit('jobs/removeJob', {jobID: this.jobID});
                         this.$router.replace('/jobmanager');
                     })
                     .catch(() => {
