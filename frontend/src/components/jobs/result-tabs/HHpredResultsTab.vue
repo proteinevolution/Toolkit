@@ -78,10 +78,13 @@
                                 <td colspan="3">
                                     <a @click="displayTemplateAlignment(al.template.accession)"
                                        v-text="$t('jobs.results.hhpred.templateAlignment')"></a>
-                                    <a class="db-list" v-if="al.structLink"
+                                    <a class="db-list"
+                                       v-if="al.structLink"
                                        @click="displayTemplateStructure(al.template.accession)"
                                        v-text="$t('jobs.results.hhpred.templateStructure')"></a>
-                                    <span v-if="al.dbLink" class="db-list" v-html="al.dbLink"></span>
+                                    <span v-if="al.dbLink"
+                                          class="db-list"
+                                          v-html="al.dbLink"></span>
                                 </td>
                             </tr>
                             <tr class="font-weight-bold">
@@ -447,8 +450,8 @@
 
     .db-list {
         border-left: 1px solid;
-        border-left-color: black;
-        margin-left: .5em;
-        padding-left: .5em;
+        border-left-color: $tk-gray;
+        margin-left: 0.5em;
+        padding-left: 0.5em;
     }
 </style>

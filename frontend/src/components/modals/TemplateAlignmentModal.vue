@@ -1,7 +1,7 @@
 <template>
     <BaseModal :title="$t('jobs.results.templateAlignment.title')"
                id="templateAlignmentModal"
-               size="lg">
+               size="lmd">
         <Loading v-if="loading"/>
         <div v-else>
             <b-form-select v-model="selectedTool"

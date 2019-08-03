@@ -1,7 +1,10 @@
 <template>
     <BaseModal :title="$t('jobs.results.templateStructure.title', {accession})"
                id="templateStructureModal"
-               size="lg">
+               size="lmd"
+               :static="true"
+               :lazy="false"
+               @shown="resize">
         <Loading :message="$t('loading')"
                  v-if="loading"/>
 
@@ -43,13 +46,10 @@
             window.removeEventListener('resize', this.resize);
         },
         watch: {
-            accession: {
-                immediate: false,
-                async handler(value: string) {
-                    if (value) {
-                        this.loadData();
-                    }
-                },
+            accession(value: string) {
+                if (value) {
+                    this.loadData();
+                }
             },
         },
         methods: {
@@ -58,7 +58,7 @@
             },
             resize(): void {
                 const viewport: HTMLElement = (this.$refs.viewport as HTMLElement);
-                if (!viewport) {
+                if (!viewport || !this.stage) {
                     return;
                 }
                 const width: number = (viewport.parentElement as HTMLElement).clientWidth;
@@ -77,21 +77,22 @@
                         return;
                     }
                     const ext: string = this.getExtension(response.filename);
-                    import(/* webpackChunkName: "ngl" */
-                        'ngl')
-                        .then(({Stage}) => {
-                            this.stage = new Stage(this.$refs.viewport, {
-                                backgroundColor: 'white',
-                            });
-                            this.stage.loadFile(new Blob([response.data]),
-                                {defaultRepresentation: true, binary: true, sele: ':A or :B or DPPC', ext});
-                            window.addEventListener('resize', this.resize);
-                            this.resize();
-                            this.loading = false;
-                        });
+                    if (this.stage) {
+                        this.stage.dispose();
+                        (this.$refs.viewport as HTMLElement).innerHTML = '';
+                    }
+                    const ngl: any = await import(/* webpackChunkName: "ngl" */ 'ngl');
+                    this.stage = new ngl.Stage(this.$refs.viewport, {
+                        backgroundColor: 'white',
+                    });
+                    this.stage.loadFile(new Blob([response.data]),
+                        {defaultRepresentation: true, binary: true, sele: ':A or :B or DPPC', ext});
+                    window.addEventListener('resize', this.resize);
+                    this.resize();
                 } catch (err) {
                     this.$alert(this.$t('errors.templateStructureFailed'), 'danger');
                 }
+                this.loading = false;
             },
         },
     });

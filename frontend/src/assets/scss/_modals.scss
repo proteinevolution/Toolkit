@@ -14,3 +14,9 @@
     margin-bottom: 1rem;
   }
 }
+
+@include media-breakpoint-up(md) {
+  .modal-lmd {
+    max-width: 840px;
+  }
+}

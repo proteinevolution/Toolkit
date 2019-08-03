@@ -7,10 +7,12 @@
              :size="size"
              :body-class="bodyClass"
              :modal-class="'tk-modal ' + modalClass"
-             lazy
+             :lazy="lazy"
+             :static="static"
              scrollable
              @hide="$emit('hide')"
-             @show="$emit('show')">
+             @show="$emit('show')"
+             @shown="$emit('shown')">
         <slot name="header">
             <div class="tk-modal-header">
             <span class="tk-modal-title"
@@ -54,6 +56,16 @@
                 type: String,
                 required: false,
                 default: '',
+            },
+            lazy: {
+                type: Boolean,
+                required: false,
+                default: true,
+            },
+            static: {
+                type: Boolean,
+                required: false,
+                default: false,
             },
         },
     });
