@@ -153,7 +153,7 @@
             .sort {
                 font-weight: bold;
                 color: $tk-dark-gray;
-                font-size: 0.7em;
+                font-size: 0.8em;
                 padding: 0.4rem 6%;
 
                 &.selected {
@@ -200,7 +200,7 @@
                 align-items: baseline;
                 justify-content: space-around;
                 cursor: pointer;
-                font-size: 0.7em;
+                font-size: 0.8em;
                 color: $tk-gray;
                 padding: 0.5rem 0;
                 border: 1px solid $tk-light-gray;
