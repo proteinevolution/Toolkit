@@ -50,10 +50,10 @@
     import {colorSequence} from '@/util/SequenceUtils';
     import {TprpredResults} from '@/types/toolkit/results';
 
-    const logger = Logger.get('PatsearchResultsTab');
+    const logger = Logger.get('TprpredResultsTab');
 
     export default mixins(ResultTabMixin).extend({
-        name: 'PatsearchResultsTab',
+        name: 'TprpredResultsTab',
         components: {
             Loading,
         },

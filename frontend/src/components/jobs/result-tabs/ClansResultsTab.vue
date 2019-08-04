@@ -23,6 +23,9 @@
     import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import {resultsService} from '@/services/ResultsService';
+    import Logger from 'js-logger';
+
+    const logger = Logger.get('ClansResultsTab');
 
     export default mixins(ResultTabMixin).extend({
         name: 'ClansResultsTab',
