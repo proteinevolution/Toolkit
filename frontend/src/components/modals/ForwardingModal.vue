@@ -83,7 +83,7 @@
             },
             resetData() {
                 // reset data
-                this.selectedTool = undefined;
+                this.selectedTool = null;
             },
         },
     });
