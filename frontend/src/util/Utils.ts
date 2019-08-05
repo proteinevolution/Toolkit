@@ -15,3 +15,9 @@ export function parseProcessLog(file: string): ProcessLogItem[] {
             return res;
         });
 }
+
+export function timeout(ms: number) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}

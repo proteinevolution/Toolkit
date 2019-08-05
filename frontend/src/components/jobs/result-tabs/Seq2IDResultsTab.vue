@@ -1,6 +1,6 @@
 <template>
     <Loading :message="$t('loading')"
-             v-if="loading"/>
+             v-if="loading || !accIds"/>
     <div v-else>
         <div class="result-options">
             <a @click="forwardAll">{{$t('jobs.results.actions.forwardAll')}}</a>
@@ -23,6 +23,7 @@
     import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
     import EventBus from '@/util/EventBus';
+    import {timeout} from '@/util/Utils';
 
     const logger = Logger.get('Seq2IDResultsTab');
 
@@ -34,6 +35,9 @@
         data() {
             return {
                 accIds: [],
+                len: 0,
+                maxTries: 50,
+                tries: 0,
             };
         },
         computed: {
@@ -44,7 +48,17 @@
         methods: {
             async init() {
                 const data: any = await resultsService.getFile(this.job.jobID, this.filename);
-                this.accIds = data.ACC_IDS;
+                if (data) {
+                    this.accIds = data.ACC_IDS;
+                } else {
+                    ++this.tries;
+                    if (this.tries === this.maxTries) {
+                        logger.error('Couldn\'t fetch files.');
+                        return;
+                    }
+                    await timeout(300);
+                    await this.init();
+                }
             },
             download(): void {
                 const downloadFilename = `${this.tool.name}_${this.job.jobID}.fasta`;
@@ -64,7 +78,8 @@
                 }
             },
         },
-    });
+    })
+    ;
 </script>
 
 <style lang="scss" scoped>

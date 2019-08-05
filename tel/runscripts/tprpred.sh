@@ -28,6 +28,9 @@ echo "#Query is a protein sequence with ${CHAR_COUNT} residues." >> ../results/p
 echo "done" >> ../results/process.log
 
 
+echo "#Executing TPRpred." >> ../results/process.log
+
+
 reformat_hhsuite.pl fas fas %alignment.path ${JOBID}.fas -l 32000 -uc
 
 mv ${JOBID}.fas ../results
@@ -38,3 +41,5 @@ tprpred_wrapper.pl -in ../results/${JOBID}.fas \
 
 #convert TPRpred output to JSON
 tprpred2json.pl ../results/${JOBID}.tpr > ../results/results.json
+
+echo "done" >> ../results/process.log

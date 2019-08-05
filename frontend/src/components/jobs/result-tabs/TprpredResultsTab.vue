@@ -49,6 +49,7 @@
     import Logger from 'js-logger';
     import {colorSequence} from '@/util/SequenceUtils';
     import {TprpredResults} from '@/types/toolkit/results';
+    import {timeout} from '@/util/Utils';
 
     const logger = Logger.get('TprpredResultsTab');
 
@@ -60,11 +61,22 @@
         data() {
             return {
                 results: undefined as TprpredResults | undefined,
+                maxTries: 50,
+                tries: 0,
             };
         },
         methods: {
             async init() {
-                this.results = await resultsService.fetchResults(this.job.jobID);
+                try {
+                    this.results = await resultsService.fetchResults(this.job.jobID);
+                } catch (e) {
+                    ++this.tries;
+                    if (this.tries === this.maxTries) {
+                        throw e;
+                    }
+                    await timeout(300);
+                    await this.init();
+                }
             },
             coloredSeq: colorSequence,
         },

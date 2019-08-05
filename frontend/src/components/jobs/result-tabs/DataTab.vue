@@ -22,6 +22,7 @@
     import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
     import EventBus from '@/util/EventBus';
+    import {timeout} from '@/util/Utils';
 
     const logger = Logger.get('DataTab');
 
@@ -33,6 +34,8 @@
         data() {
             return {
                 file: '',
+                maxTries: 50,
+                tries: 0,
             };
         },
         computed: {
@@ -52,6 +55,15 @@
         methods: {
             async init() {
                 this.file = await resultsService.getFile(this.job.jobID, this.filename);
+                if (!this.file) {
+                    ++this.tries;
+                    if (this.tries === this.maxTries) {
+                        logger.error('Couldn\'t fetch files.');
+                        return;
+                    }
+                    await timeout(300);
+                    await this.init();
+                }
             },
             download(): void {
                 const toolName = this.tool.name;
