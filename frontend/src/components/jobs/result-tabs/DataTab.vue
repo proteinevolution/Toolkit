@@ -58,7 +58,7 @@
                 if (!this.file) {
                     ++this.tries;
                     if (this.tries === this.maxTries) {
-                        logger.error('Couldn\'t fetch files.');
+                        logger.info('Couldn\'t fetch files.');
                         return;
                     }
                     await timeout(300);
