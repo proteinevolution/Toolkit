@@ -20,8 +20,8 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.tools.ToolConfig
 import io.circe.generic.auto._
 import io.circe.syntax._
-import javax.inject.{ Inject, Singleton }
-import play.api.mvc.ControllerComponents
+import javax.inject.{Inject, Singleton}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 
 @Singleton
 class UiController @Inject()(
@@ -29,14 +29,14 @@ class UiController @Inject()(
     toolConfig: ToolConfig
 ) extends ToolkitController(cc) {
 
-  def getToolParameters(toolname: String) = Action {
+  def getToolParameters(toolname: String): Action[AnyContent] = Action {
     toolConfig.values.get(toolname) match {
       case Some(tool) => Ok(tool.toolParameterForm.asJson)
       case None       => NotFound
     }
   }
 
-  def getTools = Action {
+  def getTools: Action[AnyContent] = Action {
     val sorted = toolConfig.values.toSeq
       .sortWith((l, r) => {
         val lTool = l._2
@@ -50,7 +50,7 @@ class UiController @Inject()(
     Ok(sorted.asJson)
   }
 
-  def getToolsVersion = Action {
+  def getToolsVersion: Action[AnyContent] = Action {
     Ok(toolConfig.version)
   }
 

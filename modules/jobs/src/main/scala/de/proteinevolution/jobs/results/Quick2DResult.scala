@@ -18,7 +18,7 @@ package de.proteinevolution.jobs.results
 
 import de.proteinevolution.jobs.results.General.SingleSeq
 import de.proteinevolution.jobs.results.Quick2DResult._
-import io.circe.{ Decoder, HCursor }
+import io.circe.{Decoder, HCursor}
 
 case class Quick2DResult(
     jobID: String,
@@ -56,37 +56,36 @@ object Quick2DResult {
       tmhmm       <- c.downField(jobId).as[Tmhmm]
       phobius     <- c.downField(jobId).as[Phobius]
       polyphobius <- c.downField(jobId).as[Polyphobius]
-      spider     <- c.downField(jobId).as[Spider]
+      spider      <- c.downField(jobId).as[Spider]
       spotd       <- c.downField(jobId).as[Spotd]
       iupred      <- c.downField(jobId).as[Iupred]
-      disopred   <- c.downField(jobId).as[Disopred]
+      disopred    <- c.downField(jobId).as[Disopred]
       signal      <- c.downField(jobId).as[Signal]
       psspred     <- c.downField(jobId).as[Psspred]
       deepcnf     <- c.downField(jobId).as[Deepcnf]
       netsurfp    <- c.downField(jobId).as[Netsurfp]
-      netsurfpd    <- c.downField(jobId).as[Netsurfpd]
-    } yield
-      new Quick2DResult(
-        jobId,
-        query,
-        psipred,
-        pipred,
-        marcoil,
-        coils,
-        pcoils,
-        tmhmm,
-        phobius,
-        polyphobius,
-        spider,
-        spotd,
-        iupred,
-        disopred,
-        signal,
-        psspred,
-        deepcnf,
-        netsurfp,
-        netsurfpd
-      )
+      netsurfpd   <- c.downField(jobId).as[Netsurfpd]
+    } yield new Quick2DResult(
+      jobId,
+      query,
+      psipred,
+      pipred,
+      marcoil,
+      coils,
+      pcoils,
+      tmhmm,
+      phobius,
+      polyphobius,
+      spider,
+      spotd,
+      iupred,
+      disopred,
+      signal,
+      psspred,
+      deepcnf,
+      netsurfp,
+      netsurfpd
+    )
   }
 
   case class Psipred(name: String, seq: String, conf: String)

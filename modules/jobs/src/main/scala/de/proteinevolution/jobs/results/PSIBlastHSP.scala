@@ -43,7 +43,7 @@ case class PSIBlastHSP(
   def toTableJson(db: String): Json = {
     Map[String, Json](
       "numCheck" -> num.asJson,
-      "acc"      -> Common.getSingleLinkDB(db, accession).toString.asJson,
+      "acc"      -> LinkUtil.getSingleLinkDB(db, accession).asJson,
       "name"     -> description.slice(0, 84).asJson,
       "eval"     -> "%.2e".format(eValue).asJson,
       "bitScore" -> bitScore.asJson,
@@ -56,8 +56,8 @@ case class PSIBlastHSP(
     // TODO adapt
     Map[String, Json](
       "num"       -> num.asJson,
-      "acc"       -> Common.getSingleLinkDB(db, accession).toString.asJson,
-      "fastaLink" -> Common.getLinksDB(db, accession).toString.asJson,
+      "acc"       -> LinkUtil.getSingleLinkDB(db, accession).asJson,
+      "fastaLink" -> LinkUtil.getLinksDB(db, accession).asJson,
       "name"      -> description.slice(0, 84).asJson,
       "eval"      -> "%.2e".format(eValue).asJson,
       "score"     -> score.asJson,
@@ -88,7 +88,7 @@ case class PSIBlastHSP(
 
 object PSIBlastHSP {
 
-  import io.circe.{ Decoder, HCursor }
+  import io.circe.{Decoder, HCursor}
 
   def parseHSP(db: String): Decoder[PSIBlastHSP] = (c: HCursor) => {
     val hsps            = c.downField("hsps").downArray.first

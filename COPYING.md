@@ -13,14 +13,13 @@ The MPI Toolkit is distributed in the hope that it will be useful, but WITHOUT A
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 A PARTICULAR PURPOSE. 
 
+
 Exceptions (free)
 -----------------
 
 Files | Author(s) | License
 --- | --- | ---
-public/font/mfglabs*, public/font/gibson*, public/styles/mfglabs* | [MFGLabs](https://github.com/MfgLabs/mfglabs-iconset) | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/deed.fr)
-public/javascripts/vendor/msa.min.js | [Sebastian Wilzbach](https://github.com/wilzbach/msa) | [BSL-1.0](http://www.boost.org/LICENSE_1_0.txt)
-public/javascripts/vendor/reformat | Seung-Zin Nam and [David Rau](https://github.com/davidmrau) |  [MIT](https://github.com/gosquared/flags/blob/master/LICENSE.txt)
+
 
 Exceptions (non-free)
 ---------------------
@@ -28,9 +27,7 @@ Exceptions (non-free)
 Files | Author(s) | License
 --- | --- | ---
 
-
-
-* The other artwork in public/images.
+* The other artwork in frontend/src/assets/images.
 
 
 External services

@@ -17,7 +17,7 @@
 package de.proteinevolution.jobs.results
 
 import io.circe.syntax._
-import io.circe.{ Decoder, HCursor, Json }
+import io.circe.{Decoder, HCursor, Json}
 
 case class HmmerHSP(
     eValue: Double,
@@ -41,7 +41,7 @@ case class HmmerHSP(
   def toTableJson(db: String): Json = {
     Map[String, Json](
       "numCheck" -> num.asJson,
-      "acc"      -> Common.getSingleLinkDB(db, accession).toString.asJson,
+      "acc"      -> LinkUtil.getSingleLinkDB(db, accession).asJson,
       "name"     -> description.slice(0, 84).asJson,
       "fullEval" -> full_evalue.asJson,
       "eval"     -> eValue.asJson,
@@ -53,8 +53,8 @@ case class HmmerHSP(
   def toAlignmentSectionJson(db: String): Json = {
     Map[String, Json](
       "num"             -> num.asJson,
-      "acc"             -> Common.getSingleLinkDB(db, accession).toString.asJson,
-      "fastaLink"       -> Common.getLinksDB(db, accession).toString.asJson,
+      "acc"             -> LinkUtil.getSingleLinkDB(db, accession).asJson,
+      "fastaLink"       -> LinkUtil.getLinksDB(db, accession).asJson,
       "name"            -> description.asJson,
       "fullEval"        -> full_evalue.asJson,
       "eval"            -> eValue.asJson,

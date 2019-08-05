@@ -17,7 +17,7 @@
 package de.proteinevolution.jobs.results
 
 import io.circe.syntax._
-import io.circe.{ Decoder, HCursor, Json }
+import io.circe.{Decoder, HCursor, Json}
 
 case class HHPredHSP(
     query: HHPredQuery,
@@ -35,7 +35,7 @@ case class HHPredHSP(
   def toTableJson(db: String = ""): Json = {
     Map[String, Json](
       "numCheck"    -> num.asJson,
-      "acc"         -> Common.getSingleLink(accession).toString.asJson,
+      "acc"         -> LinkUtil.getSingleLink(accession).asJson,
       "name"        -> description.asJson,
       "probab"      -> info.probab.asJson,
       "eval"        -> info.eval.asJson,
@@ -49,9 +49,9 @@ case class HHPredHSP(
   def toAlignmentSectionJson(db: String = ""): Json = {
     Map[String, Json](
       "num"         -> num.asJson,
-      "acc"         -> Common.getSingleLink(accession).toString.asJson,
-      "structLink"  -> Common.displayStructLink(accession).asJson,
-      "dbLink"      -> Common.getLinksHHpred("11", accession).toString.asJson,
+      "acc"         -> LinkUtil.getSingleLink(accession).asJson,
+      "structLink"  -> LinkUtil.displayStructLink(accession).asJson,
+      "dbLink"      -> LinkUtil.getLinksHHpred("11", accession).asJson,
       "name"        -> description.asJson,
       "probab"      -> info.probab.asJson,
       "eval"        -> info.eval.asJson,

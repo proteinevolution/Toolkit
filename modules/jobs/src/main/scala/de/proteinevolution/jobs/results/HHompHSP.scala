@@ -57,7 +57,7 @@ case class HHompHSP(
       "identities"  -> info.identities.asJson,
       "query"       -> query.asJson,
       "template"    -> template.asJson,
-      "agree"       -> agree.asJson,
+      "agree"       -> agree.asJson
     ).asJson
   }
 

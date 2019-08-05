@@ -73,7 +73,6 @@ class JobsRouter @Inject()(
 
     case POST(p"/forwardAlignment/$jobID/${forwardModeExtractor(mode) }") =>
       processController.forwardAlignment(jobID, mode)
-    case POST(p"/alignment/getAln/$jobID") => resultsController.getAln(jobID)
     case GET(p"/forward/modal/$toolName/$modalType") =>
       forwardModalController.getForwardModalOptions(modalType, toolName)
   }

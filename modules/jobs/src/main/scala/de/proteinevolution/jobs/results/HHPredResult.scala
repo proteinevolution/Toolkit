@@ -18,7 +18,7 @@ package de.proteinevolution.jobs.results
 
 import de.proteinevolution.jobs.results.General.SingleSeq
 import io.circe.syntax._
-import io.circe.{ Decoder, HCursor, Json }
+import io.circe.{Decoder, HCursor, Json}
 
 case class HHPredResult(
     HSPS: List[HHPredHSP],
@@ -56,7 +56,7 @@ case class HHPredResult(
       "signal"     -> signal.asJson,
       "db"         -> db.asJson,
       "proteomes"  -> proteomes.asJson,
-      "modeller"   -> Common.displayModellerLink(db, proteomes).asJson,
+      "modeller"   -> LinkUtil.displayModellerLink(db, proteomes).asJson,
       "msa_gen"    -> msa_gen.asJson,
       "qa3m_count" -> qa3m_count.asJson,
       "query"      -> query.asJson

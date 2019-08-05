@@ -1,6 +1,4 @@
 import Settings._
-import de.heikoseeberger.sbtheader.FileType
-import play.twirl.sbt.Import.TwirlKeys
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
 import java.util.Properties
 
@@ -27,14 +25,7 @@ lazy val buildInfoSettings = Seq(
   buildInfoPackage := "build"
 )
 
-lazy val twirlHeaders = Seq(
-  headerMappings := headerMappings.value + (FileType("html") -> HeaderCommentStyle.twirlStyleBlockComment),
-  headerSources.in(Compile) ++= sources.in(Compile, TwirlKeys.compileTemplates).value
-)
-
-lazy val coreSettings = Seq(
-  TwirlKeys.templateImports := Nil
-) ++ Settings.compileSettings ++ Release.settings
+lazy val coreSettings = Settings.compileSettings ++ Release.settings
 
 lazy val common = (project in file("modules/common"))
   .settings(
@@ -53,7 +44,6 @@ lazy val jobs = (project in file("modules/jobs"))
   .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
   .settings(addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9"))
   .disablePlugins(PlayLayoutPlugin)
-  .settings(twirlHeaders)
 
 lazy val user = (project in file("modules/user"))
   .commonSettings("de.proteinevolution.user")
@@ -98,9 +88,9 @@ lazy val statistics = (project in file("modules/statistics"))
 
 lazy val ui = (project in file("modules/ui"))
   .commonSettings("de.proteinevolution.ui")
-  .enablePlugins(PlayScala, SbtTwirl, BuildInfoPlugin)
+  .enablePlugins(PlayScala, BuildInfoPlugin)
   .dependsOn(common, base, tools)
-  .settings(buildInfoSettings, twirlHeaders)
+  .settings(buildInfoSettings)
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val message = (project in file("modules/message"))

@@ -17,7 +17,8 @@
 package de.proteinevolution.jobs.results
 
 import de.proteinevolution.jobs.results.PatSearchResult.Hit
-import io.circe._, io.circe.generic.semiauto._
+import io.circe._
+import io.circe.generic.semiauto._
 
 case class PatSearchResult(hits: List[Hit], len: Int)
 

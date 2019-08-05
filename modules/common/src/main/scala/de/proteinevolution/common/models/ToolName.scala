@@ -16,7 +16,6 @@
 
 package de.proteinevolution.common.models
 
-import cats.data.{ NonEmptyList => NEL }
 import de.proteinevolution.common.models.ToolName._
 
 import scala.collection.immutable
@@ -24,29 +23,6 @@ import scala.collection.immutable
 case class ToolName(value: String) extends AnyVal {
 
   override def toString: String = toolTitlesDictionary(value)
-
-  def hasJson: Boolean =
-    NEL
-      .of[ToolName](
-        PSIBLAST,
-        TPRPRED,
-        HHBLITS,
-        HMMER,
-        HHPRED,
-        HHOMP,
-        HHPRED_ALIGN,
-        QUICK2D,
-        CLUSTALO,
-        KALIGN,
-        MAFFT,
-        MSAPROBS,
-        MUSCLE,
-        TCOFFEE,
-        SEQ2ID,
-        HHFILTER,
-        PATSEARCH
-      )
-      .exists(_ == this)
 
 }
 

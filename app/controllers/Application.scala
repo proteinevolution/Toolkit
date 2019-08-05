@@ -34,17 +34,14 @@ final class Application @Inject()(
     userSessions: UserSessionService,
     cc: ControllerComponents,
     environment: Environment,
-    assetsFinder: AssetsFinder,
     userAction: UserAction
 )(implicit ec: ExecutionContext)
     extends ToolkitController(cc)
     with Logging {
 
-  def index(message: String = ""): Action[AnyContent] = userAction { implicit request =>
+  def index: Action[AnyContent] = userAction { implicit request =>
     logger.info(InetAddress.getLocalHost.getHostName + "\n" + request.user.toString)
-    Ok(
-      views.html.main(assetsFinder, toolConfig.values.values.toSeq.sortBy(_.toolNameLong), message, "", environment)
-    ).withSession(userSessions.sessionCookie(request, request.user.sessionID.get))
+    Ok("The old frontend does not work!").withSession(userSessions.sessionCookie(request, request.user.sessionID.get))
   }
 
 }

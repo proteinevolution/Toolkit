@@ -31,26 +31,26 @@ case class HHBlitsHSP(
 
   def toTableJson(db: String): Json = {
     Map[String, Json](
-    "numCheck"      -> num.asJson,
-    "acc"         -> Common.getSingleLinkHHBlits(template.accession).toString.asJson,
-    "name"        -> description.asJson,
-    "probab"      -> info.probab.asJson,
-    "eval"        -> info.eval.asJson,
-    "alignedCols" -> info.aligned_cols.asJson,
-    "templateRef" -> template.ref.asJson
+      "numCheck"    -> num.asJson,
+      "acc"         -> LinkUtil.getSingleLinkHHBlits(template.accession).asJson,
+      "name"        -> description.asJson,
+      "probab"      -> info.probab.asJson,
+      "eval"        -> info.eval.asJson,
+      "alignedCols" -> info.aligned_cols.asJson,
+      "templateRef" -> template.ref.asJson
     ).asJson
   }
 
   def toAlignmentSectionJson(db: String): Json = {
     Map[String, Json](
       "num"         -> num.asJson,
-      "acc"         -> Common.getSingleLinkHHBlits(template.accession).toString.asJson,
+      "acc"         -> LinkUtil.getSingleLinkHHBlits(template.accession).asJson,
       "name"        -> description.asJson,
       "probab"      -> info.probab.asJson,
       "eval"        -> info.eval.asJson,
       "score"       -> info.score.asJson,
       "alignedCols" -> info.aligned_cols.asJson,
-      "identities"  -> (info.identities*100).asJson,
+      "identities"  -> (info.identities * 100).asJson,
       "similarity"  -> info.similarity.asJson,
       "query"       -> query.asJson,
       "agree"       -> agree.asJson,
@@ -75,15 +75,14 @@ object HHBlitsHSP {
         agree          <- c.downField("agree").as[String]
         description    <- c.downField("header").as[String]
         num            <- c.downField("no").as[Int]
-      } yield
-        new HHBlitsHSP(
-          queryResult,
-          templateResult,
-          infoResult,
-          agree,
-          description,
-          num,
-          agree.length
+      } yield new HHBlitsHSP(
+        queryResult,
+        templateResult,
+        infoResult,
+        agree,
+        description,
+        num,
+        agree.length
       )
 
   def hhblitsHSPListDecoder(hits: List[Json], alignments: List[Json]): List[HHBlitsHSP] = {

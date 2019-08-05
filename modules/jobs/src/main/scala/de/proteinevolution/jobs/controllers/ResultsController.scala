@@ -23,7 +23,6 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.db.ResultFileAccessor
-import de.proteinevolution.jobs.models.AlignmentGetForm
 import de.proteinevolution.jobs.results.AlignmentResult
 import io.circe.JsonObject
 import io.circe.syntax._
@@ -41,18 +40,6 @@ final class ResultsController @Inject()(
     userAction: UserAction
 )(implicit ec: ExecutionContext)
     extends ToolkitController(cc) {
-
-  def getAln(jobID: String): Action[AlignmentGetForm] = Action(circe.json[AlignmentGetForm]).async { implicit request =>
-    (for {
-      json <- EitherT.liftF(resultFiles.getResults(jobID))
-      r    <- EitherT.fromEither[Future](json.hcursor.downField(request.body.resultName).as[AlignmentResult])
-    } yield request.body.checkboxes.distinct.map { num =>
-      ">" + r.alignment { num - 1 }.accession + "\n" + r.alignment { num - 1 }.seq + "\n"
-    }).value.map {
-      case Right(list) => Ok(list.mkString)
-      case Left(_)     => NotFound
-    }
-  }
 
   def loadResults(jobID: String): Action[AnyContent] =
     userAction.async { implicit request =>

@@ -41,7 +41,7 @@ object HHBlitsTemplate {
       } yield {
         val accession = General.refineAccession(struct)
         new HHBlitsTemplate(consensus, end, accession, ref, seq, start)
-    }
+      }
 
   implicit val hhblitsTemplateEncoder: Encoder[HHBlitsTemplate] = deriveEncoder
 

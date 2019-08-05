@@ -17,7 +17,7 @@
 package de.proteinevolution.jobs.results
 
 import de.proteinevolution.jobs.results.TPRPredResult._
-import io.circe.{ Decoder, DecodingFailure, HCursor, Json }
+import io.circe.{Decoder, DecodingFailure, HCursor, Json}
 
 case class TPRPredResult(info: List[Desc], hits: List[Hit])
 

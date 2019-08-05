@@ -20,7 +20,7 @@ import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.models.HHContext
-import de.proteinevolution.jobs.results.Common
+import de.proteinevolution.jobs.results.LinkUtil
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.http.ContentTypes
@@ -40,7 +40,7 @@ class FileController @Inject()(
     with ContentTypes {
 
   def getStructureFile(accession: String): Action[AnyContent] = Action { implicit request =>
-    val db = Common.identifyDatabase(accession)
+    val db = LinkUtil.identifyDatabase(accession)
     val ending = db match {
       case "scop"  => "pdb"
       case "ecod"  => "pdb"

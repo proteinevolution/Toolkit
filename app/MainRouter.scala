@@ -38,10 +38,9 @@ class MainRouter @Inject()(
 ) extends SimpleRouter {
 
   private lazy val mainRoutes: Routes = {
-    case GET(p"/")              => controller.index()
+    case GET(p"/")              => controller.index
     case GET(p"/uptime")        => uptime.uptime
     case GET(p"/buildinfo")     => uptime.buildInfo
-    case GET(p"/assets/$file*") => assets.versioned(path = "/public", file = file)
   }
 
   override lazy val routes: Routes = {
