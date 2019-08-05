@@ -2,7 +2,7 @@
     <Loading :message="$t('loading')"
              v-if="!hitMap"/>
     <div v-else
-         class="px-5">
+         class="px-lg-5">
         <div class="px-2 mb-3 hit-slider">
             <b-btn variant="secondary"
                    class="ml-auto mb-2"
@@ -128,6 +128,9 @@
 <style lang="scss" scoped>
     .hit-map-container {
         position: relative;
+        @include media-breakpoint-down(lg) {
+            overflow-x: auto;
+        }
 
         .tooltip {
             display: flex;
