@@ -3,7 +3,7 @@
              v-if="!hitMap"/>
     <div v-else
          class="px-5">
-        <div class="px-2 mb-3 d-flex flex-column">
+        <div class="px-2 mb-3 hit-slider">
             <b-btn variant="secondary"
                    class="ml-auto mb-2"
                    v-text="$t('jobs.results.hitlist.resubmitSection')"
@@ -145,5 +145,11 @@
                 min-width: 15rem;
             }
         }
+    }
+
+    .hit-slider {
+        display: flex;
+        flex-direction: column;
+        max-width: 800px;
     }
 </style>
