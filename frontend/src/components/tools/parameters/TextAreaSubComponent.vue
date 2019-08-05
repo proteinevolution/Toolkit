@@ -3,11 +3,16 @@
                   :class="{'uploading-file': uploadingFile}">
         <b-form-textarea class="textarea-alignment"
                          :placeholder="$t('tools.inputPlaceholder.' + parameter.placeholderKey)"
-                         v-bind:value="value"
-                         v-on:input="handleInput"
+                         :value="value"
+                         @input="handleInput"
                          cols="70"
                          spellcheck="false">
         </b-form-textarea>
+        <input type="file"
+               :id="'file-upload-' + parameter.name + '-' + second"
+               :class="{'d-none': !fileDragged}"
+               class="file-upload-dropzone"
+               @change="handleFileUpload"/>
         <b-progress :value="fileUploadProgress"
                     class="file-upload-progress"
                     :max="100"/>
@@ -20,11 +25,9 @@
                 <span v-else
                       v-text="$t('tools.parameters.textArea.pasteExample')"></span>
             </b-btn>
-            <label class="btn btn-link mb-0 cursor-pointer">
-                {{ $t('tools.parameters.textArea.uploadFile') }}
-                <input type="file"
-                       class="d-none"
-                       @change="handleFileUpload"/>
+            <label class="btn btn-link mb-0 cursor-pointer"
+                   :for="'file-upload-' + parameter.name + '-' + second"
+                   v-text="$t('tools.parameters.textArea.uploadFile')">
             </label>
         </b-button-group>
         <VelocityFade v-if="value">
@@ -89,11 +92,20 @@
         data() {
             return {
                 fileUploadProgress: 0,
+                fileDragged: false,
+                dragInterval: undefined as any,
                 uploadingFile: false,
                 autoTransformedParams: null,
                 autoTransformMessageTimeout: 2500,
                 validation: {} as ValidationResult,
             };
+        },
+        created() {
+            (this as any).boundDragOver = this.handleDragOver.bind(this);
+            document.addEventListener('dragover', (this as any).boundDragOver);
+        },
+        beforeDestroy() {
+            document.removeEventListener('dragover', (this as any).boundDragOver);
         },
         watch: {
             value: {
@@ -120,6 +132,20 @@
             },
         },
         methods: {
+            handleDragOver(e: Event): void {
+                e.preventDefault();
+                if (this.dragInterval) {
+                    clearInterval(this.dragInterval);
+                }
+
+                this.dragInterval = setInterval(() => {
+                    this.fileDragged = false;
+                    clearInterval(this.dragInterval);
+                }, 100);
+                if (!this.fileDragged) {
+                    this.fileDragged = true;
+                }
+            },
             handleFileUpload($event: Event): void {
                 const fileUpload: HTMLInputElement = $event.target as HTMLInputElement;
                 if (fileUpload.files && fileUpload.files.length > 0) {
@@ -236,5 +262,18 @@
         margin-top: 0.5rem;
         float: right;
         padding: 0.4rem 0.5rem;
+    }
+
+    .file-upload-dropzone {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background-color: $tk-lighter-gray;
+        border: 1px dashed $tk-light-gray;
+        border-radius: $global-radius;
+        z-index: 1;
+        padding: 2rem;
     }
 </style>
