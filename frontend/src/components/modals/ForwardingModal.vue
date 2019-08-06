@@ -2,7 +2,7 @@
     <BaseModal :title="$t('jobs.results.actions.forward')"
                id="forwardingModal"
                :size="forwardingApiOptions ? 'lmd' : 'sm'"
-               @hidden="$emit('hidden')">
+               @hidden="onHidden">
         <b-row>
             <b-col cols="12"
                    v-if="forwardingApiOptions"
@@ -163,6 +163,10 @@
             pasteForwardData() {
                 EventBus.$off('paste-area-loaded', this.pasteForwardData);
                 EventBus.$emit('forward-data', {data: this.internalForwardData, jobID: this.forwardingJobID});
+            },
+            onHidden(): void {
+                this.resetData();
+                this.$emit('hidden');
             },
             resetData() {
                 // reset data
