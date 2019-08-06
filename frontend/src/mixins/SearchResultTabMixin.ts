@@ -1,22 +1,65 @@
 import EventBus from '@/util/EventBus';
 import Logger from 'js-logger';
-import {HHInfoResult, SearchAlignmentItem} from '@/types/toolkit/results';
+import {HHInfoResult, SearchAlignmentItem, SearchAlignmentsResponse} from '@/types/toolkit/results';
 import {colorSequence, ssColorSequence} from '@/util/SequenceUtils';
 import ResultTabMixin from '@/mixins/ResultTabMixin';
 import mixins from 'vue-typed-mixins';
 import {resultsService} from '@/services/ResultsService';
+import handyScroll from 'handy-scroll';
 
 const logger = Logger.get('SearchResultTabMixin');
 
 const SearchResultTabMixin = mixins(ResultTabMixin).extend({
     data() {
         return {
-            color: true,
+            total: 100,
             info: undefined as HHInfoResult | undefined,
             alignments: undefined as SearchAlignmentItem[] | undefined,
+            selectedItems: [] as number[],
+            perPage: 20,
+            color: true,
+            wrap: true,
+            loadingMore: false,
         };
     },
+    computed: {
+        allSelected(): boolean {
+            if (!this.total) {
+                return false;
+            }
+            return this.total > 0 &&
+                this.selectedItems.length === this.total;
+        },
+    },
+    beforeDestroy(): void {
+        handyScroll.destroy(this.$refs.scrollElem);
+    },
     methods: {
+        async init(): Promise<void> {
+            await this.loadAlignments(0, this.perPage);
+        },
+        async intersected(): Promise<void> {
+            if (!this.loadingMore && this.alignments && this.alignments.length < this.total) {
+                this.loadingMore = true;
+                try {
+                    await this.loadAlignments(this.alignments.length, this.alignments.length + this.perPage);
+                } catch (e) {
+                    logger.error(e);
+                }
+                this.loadingMore = false;
+            }
+        },
+        async loadAlignments(start: number, end: number): Promise<void> {
+            const res: SearchAlignmentsResponse<SearchAlignmentItem, HHInfoResult> =
+                await resultsService.fetchHHAlignmentResults(this.job.jobID, start, end);
+            this.total = res.total;
+            this.info = res.info;
+            if (!this.alignments) {
+                this.alignments = res.alignments;
+            } else {
+                this.alignments.push(...res.alignments);
+            }
+        },
         scrollTo(ref: string): void {
             if (this.$refs[ref]) {
                 const elem: HTMLElement = (this.$refs[ref] as any).length ?
@@ -25,6 +68,15 @@ const SearchResultTabMixin = mixins(ResultTabMixin).extend({
                     block: 'start',
                     behavior: 'smooth',
                 });
+            }
+        },
+        async scrollToElem(num: number): Promise<void> {
+            const loadNum: number = num + 2; // load some more for better scrolling
+            if (this.alignments && this.alignments.map((a: SearchAlignmentItem) => a.num).includes(loadNum)) {
+                this.scrollTo('alignment-' + num);
+            } else if (this.alignments) {
+                await this.loadAlignments(this.alignments.length, loadNum);
+                this.scrollTo('alignment-' + num);
             }
         },
         displayTemplateAlignment(accession: string): void {
@@ -61,6 +113,39 @@ const SearchResultTabMixin = mixins(ResultTabMixin).extend({
             }
             const section: string = '>' + this.info.query.accession + '\n' + this.info.query.seq.slice(start, end + 1);
             EventBus.$emit('resubmit-section', section);
+        },
+        toggleAllSelected(): void {
+            if (!this.total) {
+                return;
+            }
+            if (this.allSelected) {
+                this.selectedItems = [];
+            } else {
+                this.selectedItems = [];
+                for (let i = 1; i <= this.total; i++) {
+                    this.selectedItems.push(i);
+                }
+            }
+        },
+        check(val: boolean, num: number): void {
+            if (val && !this.selectedItems.includes(num)) {
+                this.selectedItems.push(num);
+            } else {
+                const i: number = this.selectedItems.indexOf(num);
+                if (i > -1) {
+                    this.selectedItems.splice(i, 1);
+                }
+            }
+        },
+        toggleWrap(): void {
+            this.wrap = !this.wrap;
+            this.$nextTick(() => {
+                if (!handyScroll.mounted(this.$refs.scrollElem)) {
+                    handyScroll.mount(this.$refs.scrollElem);
+                } else {
+                    handyScroll.update(this.$refs.scrollElem);
+                }
+            });
         },
         toggleColor(): void {
             this.color = !this.color;

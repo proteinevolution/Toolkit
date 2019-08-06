@@ -198,15 +198,8 @@
     import Logger from 'js-logger';
     import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
     import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
-    import handyScroll from 'handy-scroll';
     import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-    import {
-        HHompAlignmentItem,
-        HHompHHInfoResult,
-        SearchAlignmentItemRender,
-        SearchAlignmentsResponse,
-    } from '@/types/toolkit/results';
-    import {resultsService} from '@/services/ResultsService';
+    import {HHompAlignmentItem, HHompHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
     import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
     const logger = Logger.get('HHompResultsTab');
@@ -223,10 +216,6 @@
             return {
                 alignments: undefined as HHompAlignmentItem[] | undefined,
                 info: undefined as HHompHHInfoResult | undefined,
-                total: 100,
-                loadingMore: false,
-                perPage: 20,
-                wrap: true,
                 breakAfter: 70,
                 hitListFields: [{
                     key: 'num',
@@ -267,54 +256,7 @@
                 }],
             };
         },
-        beforeDestroy(): void {
-            handyScroll.destroy(this.$refs.scrollElem);
-        },
         methods: {
-            async init(): Promise<void> {
-                await this.loadAlignments(0, this.perPage);
-            },
-            async intersected(): Promise<void> {
-                if (!this.loadingMore && this.alignments && this.alignments.length < this.total) {
-                    this.loadingMore = true;
-                    try {
-                        await this.loadAlignments(this.alignments.length, this.alignments.length + this.perPage);
-                    } catch (e) {
-                        logger.error(e);
-                    }
-                    this.loadingMore = false;
-                }
-            },
-            async loadAlignments(start: number, end: number): Promise<void> {
-                const res: SearchAlignmentsResponse<HHompAlignmentItem, HHompHHInfoResult> =
-                    await resultsService.fetchHHAlignmentResults(this.job.jobID, start, end);
-                this.total = res.total;
-                this.info = res.info;
-                if (!this.alignments) {
-                    this.alignments = res.alignments;
-                } else {
-                    this.alignments.push(...res.alignments);
-                }
-            },
-            async scrollToElem(num: number): Promise<void> {
-                const loadNum: number = num + 2; // load some more for better scrolling
-                if (this.alignments && this.alignments.map((a: HHompAlignmentItem) => a.num).includes(loadNum)) {
-                    this.scrollTo('alignment-' + num);
-                } else if (this.alignments) {
-                    await this.loadAlignments(this.alignments.length, loadNum);
-                    this.scrollTo('alignment-' + num);
-                }
-            },
-            toggleWrap(): void {
-                this.wrap = !this.wrap;
-                this.$nextTick(() => {
-                    if (!handyScroll.mounted(this.$refs.scrollElem)) {
-                        handyScroll.mount(this.$refs.scrollElem);
-                    } else {
-                        handyScroll.update(this.$refs.scrollElem);
-                    }
-                });
-            },
             wrapAlignments(al: HHompAlignmentItem): SearchAlignmentItemRender[] {
                 if (this.wrap) {
                     const res: SearchAlignmentItemRender[] = [];
@@ -366,10 +308,6 @@
 </script>
 
 <style lang="scss" scoped>
-    .huge {
-        height: 500px;
-    }
-
     .result-section {
         padding-top: 3.5rem;
     }

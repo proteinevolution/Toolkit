@@ -158,14 +158,7 @@
     import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
     import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
     import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-    import handyScroll from 'handy-scroll';
-    import {
-        HHblitsAlignmentItem,
-        HHblitsHHInfoResult,
-        SearchAlignmentItemRender,
-        SearchAlignmentsResponse,
-    } from '@/types/toolkit/results';
-    import {resultsService} from '@/services/ResultsService';
+    import {HHblitsAlignmentItem, HHblitsHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
     import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
     const logger = Logger.get('HHblitsResultsTab');
@@ -182,12 +175,7 @@
             return {
                 alignments: undefined as HHblitsAlignmentItem[] | undefined,
                 info: undefined as HHblitsHHInfoResult | undefined,
-                total: 100,
-                loadingMore: false,
-                perPage: 20,
-                wrap: true,
                 breakAfter: 85,
-                selectedItems: [] as number[],
                 hitListFields: [{
                     key: 'numCheck',
                     label: this.$t('jobs.results.hhblits.table.num'),
@@ -219,86 +207,7 @@
                 }],
             };
         },
-        computed: {
-            allSelected(): boolean {
-                if (!this.total) {
-                    return false;
-                }
-                return this.total > 0 &&
-                    this.selectedItems.length === this.total;
-            },
-        },
-        beforeDestroy(): void {
-            handyScroll.destroy(this.$refs.scrollElem);
-        },
         methods: {
-            async init(): Promise<void> {
-                await this.loadAlignments(0, this.perPage);
-            },
-            async intersected(): Promise<void> {
-                if (!this.loadingMore && this.alignments && this.alignments.length < this.total) {
-                    this.loadingMore = true;
-                    try {
-                        await this.loadAlignments(this.alignments.length, this.alignments.length + this.perPage);
-                    } catch (e) {
-                        logger.error(e);
-                    }
-                    this.loadingMore = false;
-                }
-            },
-            async loadAlignments(start: number, end: number): Promise<void> {
-                const res: SearchAlignmentsResponse<HHblitsAlignmentItem, HHblitsHHInfoResult> =
-                    await resultsService.fetchHHAlignmentResults(this.job.jobID, start, end);
-                this.total = res.total;
-                this.info = res.info;
-                if (!this.alignments) {
-                    this.alignments = res.alignments;
-                } else {
-                    this.alignments.push(...res.alignments);
-                }
-            },
-            async scrollToElem(num: number): Promise<void> {
-                const loadNum: number = num + 2; // load some more for better scrolling
-                if (this.alignments && this.alignments.map((a: HHblitsAlignmentItem) => a.num).includes(loadNum)) {
-                    this.scrollTo('alignment-' + num);
-                } else if (this.alignments) {
-                    await this.loadAlignments(this.alignments.length, loadNum);
-                    this.scrollTo('alignment-' + num);
-                }
-            },
-            toggleAllSelected(): void {
-                if (!this.total) {
-                    return;
-                }
-                if (this.allSelected) {
-                    this.selectedItems = [];
-                } else {
-                    this.selectedItems = [];
-                    for (let i = 1; i <= this.total; i++) {
-                        this.selectedItems.push(i);
-                    }
-                }
-            },
-            check(val: boolean, num: number): void {
-                if (val && !this.selectedItems.includes(num)) {
-                    this.selectedItems.push(num);
-                } else {
-                    const i: number = this.selectedItems.indexOf(num);
-                    if (i > -1) {
-                        this.selectedItems.splice(i, 1);
-                    }
-                }
-            },
-            toggleWrap(): void {
-                this.wrap = !this.wrap;
-                this.$nextTick(() => {
-                    if (!handyScroll.mounted(this.$refs.scrollElem)) {
-                        handyScroll.mount(this.$refs.scrollElem);
-                    } else {
-                        handyScroll.update(this.$refs.scrollElem);
-                    }
-                });
-            },
             wrapAlignments(al: HHblitsAlignmentItem): SearchAlignmentItemRender[] {
                 if (this.wrap) {
                     const res: SearchAlignmentItemRender[] = [];
@@ -342,10 +251,6 @@
 </script>
 
 <style lang="scss" scoped>
-    .huge {
-        height: 500px;
-    }
-
     .result-section {
         padding-top: 3.5rem;
     }

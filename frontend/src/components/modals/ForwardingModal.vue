@@ -6,26 +6,24 @@
                        :options="toolOptions"
                        value-field="name"
                        text-field="longname"
-                       :disabled="!this.forwardingData">
+                       :disabled="!forwardingData">
             <template slot="first">
-                <option v-if="this.forwardingData" :value="null"
-                        v-text="$t('jobs.forwarding.selectPlaceholder')"></option>
-                <option v-else :value="null"
-                        v-text="$t('jobs.forwarding.noData')"></option>
+                <option :value="null"
+                        v-text="$t('jobs.forwarding.' + forwardingData ? 'selectPlaceholder' : 'noData')"></option>
             </template>
         </b-form-select>
         <b-button variant="primary"
                   v-text="$t('jobs.results.actions.forward')"
                   @click="forward"
                   class="mt-3"
-                  :disabled="!selectedTool || !this.forwardingData"></b-button>
+                  :disabled="!selectedTool || !forwardingData"></b-button>
     </BaseModal>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
     import BaseModal from './BaseModal.vue';
-    import {ForwardingMode, Tool} from '@/types/toolkit/tools';
+    import {ForwardingApiOptions, ForwardingMode, Tool} from '@/types/toolkit/tools';
     import EventBus from '@/util/EventBus';
     import Logger from 'js-logger';
 
@@ -41,9 +39,13 @@
                 type: Object as () => ForwardingMode,
                 required: true,
             },
+            forwardingApiOptions: {
+                type: Object as () => ForwardingApiOptions,
+                required: false,
+            },
             forwardingData: {
                 type: String,
-                required: true,
+                required: false,
             },
             forwardingJobID: {
                 type: String,
