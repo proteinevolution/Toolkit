@@ -259,6 +259,7 @@ export default {
     },
     forwarding: {
         selectPlaceholder: 'Please select a tool',
+        noData: 'No data to forward!'
     },
     submitJob: 'Submit Job',
     resubmitJob: 'Resubmit Job',

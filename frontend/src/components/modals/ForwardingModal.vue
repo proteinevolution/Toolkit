@@ -5,17 +5,20 @@
         <b-form-select v-model="selectedTool"
                        :options="toolOptions"
                        value-field="name"
-                       text-field="longname">
+                       text-field="longname"
+                       :disabled="!this.forwardingData">
             <template slot="first">
-                <option :value="null"
+                <option v-if="this.forwardingData" :value="null"
                         v-text="$t('jobs.forwarding.selectPlaceholder')"></option>
+                <option v-else :value="null"
+                        v-text="$t('jobs.forwarding.noData')"></option>
             </template>
         </b-form-select>
         <b-button variant="primary"
                   v-text="$t('jobs.results.actions.forward')"
                   @click="forward"
                   class="mt-3"
-                  :disabled="!selectedTool"></b-button>
+                  :disabled="!selectedTool || !this.forwardingData"></b-button>
     </BaseModal>
 </template>
 

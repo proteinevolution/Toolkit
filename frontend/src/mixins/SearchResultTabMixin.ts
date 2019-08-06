@@ -44,9 +44,6 @@ const SearchResultTabMixin = mixins(ResultTabMixin).extend({
             alert('implement me!');
         },
         async forwardQueryA3M() {
-            if (!this.info) {
-                return;
-            }
             const a3mData: any = await resultsService.getFile(this.job.jobID, 'reduced.a3m');
             EventBus.$emit('show-modal', {
                 id: 'forwardingModal', props: {
