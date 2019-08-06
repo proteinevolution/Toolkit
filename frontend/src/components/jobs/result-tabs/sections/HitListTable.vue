@@ -114,11 +114,16 @@
                     25,
                     50,
                     100,
+                    'All',
                 ],
             };
         },
         methods: {
             hitsProvider(ctx: any) {
+
+                if (ctx.perPage === 0) {
+                    ctx.perPage = this.totalRows;
+                }
                 const start: number = (ctx.currentPage - 1) * ctx.perPage;
                 const end: number = ctx.currentPage * ctx.perPage;
                 return resultsService.fetchHits(this.job.jobID, start, end,
