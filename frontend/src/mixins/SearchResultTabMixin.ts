@@ -4,7 +4,7 @@ import {HHInfoResult, SearchAlignmentItem} from '@/types/toolkit/results';
 import {colorSequence, ssColorSequence} from '@/util/SequenceUtils';
 import ResultTabMixin from '@/mixins/ResultTabMixin';
 import mixins from 'vue-typed-mixins';
-import {Reformat} from '@/modules/reformat';
+import {resultsService} from '@/services/ResultsService';
 
 const logger = Logger.get('SearchResultTabMixin');
 
@@ -43,16 +43,15 @@ const SearchResultTabMixin = mixins(ResultTabMixin).extend({
         forward(): void {
             alert('implement me!');
         },
-        forwardQueryA3M(): void {
+        async forwardQueryA3M() {
             if (!this.info) {
                 return;
             }
-            const fasta: string = '>' + this.info.query.accession + '\n' + this.info.query.seq;
-            const reformatted: string = new Reformat(fasta).reformat('a3m');
+            const a3mData: any = await resultsService.getFile(this.job.jobID, 'reduced.a3m');
             EventBus.$emit('show-modal', {
                 id: 'forwardingModal', props: {
                     forwardingJobID: this.job.jobID,
-                    forwardingData: reformatted,
+                    forwardingData: a3mData,
                     forwardingMode: {
                         alignment: ['formatseq', 'hhblits', 'hhpred', 'hhomp', 'hhrepid'],
                     },
