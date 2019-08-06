@@ -17,18 +17,16 @@
 package de.proteinevolution.jobs.services
 
 import better.files._
-import cats.data.{EitherT, OptionT}
+import cats.data.{ EitherT, OptionT }
 import cats.implicits._
+import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.common.models.ToolName._
-import de.proteinevolution.common.models.{ConstantsV2, ToolName}
 import de.proteinevolution.jobs.db.ResultFileAccessor
-import de.proteinevolution.jobs.models.{ForwardMode, ForwardingData}
-import de.proteinevolution.jobs.results.{HSP, SearchResult}
 import io.circe.DecodingFailure
-import javax.inject.{Inject, Singleton}
-import play.api.{Configuration, Logging}
+import javax.inject.{ Inject, Singleton }
+import play.api.{ Configuration, Logging }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.sys.process.Process
 
 @Singleton
@@ -68,9 +66,11 @@ final class ProcessService @Inject()(
 
   def forwardAlignment(
       jobId: String,
-      mode: ForwardMode,
-      form: ForwardingData
-  ): EitherT[Future, DecodingFailure, Int] = {
+      forwardHitsMode: String,
+      sequenceLengthMode: String,
+      eval: Double,
+      selected: Seq[Int]
+  ): EitherT[Future, DecodingFailure, java.io.File] = {
     EitherT((for {
       json <- resultFiles.getResults(jobId)
       tool <- toolFinder.getTool(jobId)
@@ -78,65 +78,65 @@ final class ProcessService @Inject()(
       (json, tool)
     }).map {
       case (json, tool) =>
-        resultFiles.parseResult(tool, json).map { result =>
-            val accStr = mode.toString match {
-              case "alnEval" | "evalFull" => form.evalue.getOrElse("")
-              case "aln" | "full" => form.checkboxes.toSeq.mkString("\n")
+        resultFiles.parseResult(tool, json).flatMap {
+          result =>
+            val accStrParsed: String = (tool, forwardHitsMode, sequenceLengthMode) match {
+              case (HHBLITS, "eval", "aln") | (HHPRED, "eval", "aln") =>
+                result.HSPS.filter(_.eValue <= eval).map { _.num }.mkString(" ")
+              case (HMMER, "eval", "aln") =>
+                result.HSPS
+                  .filter(_.eValue <= eval)
+                  .map { hit =>
+                    result.alignment.alignment(hit.num - 1).accession + "\n"
+                  }
+                  .size
+                  .toString
+              case (PSIBLAST, "eval", "aln") =>
+                eval.toString
+              case (HMMER, "eval", "full") | (PSIBLAST, "eval", "full") | (HHBLITS, "eval", "full")=>
+                result.HSPS.filter(_.eValue <= eval).map { _.accession + " " }.mkString
+              case (_, "selected", "aln") => selected.mkString("\n")
+              case (_, "selected", "full") =>
+                selected.map { num =>
+                  "%s ".format(result.HSPS(num - 1).accession)
+                }.mkString
+              case _ => throw new IllegalStateException("parsing accession identifiers failed")
             }
-            val accStrParsed = parseAccString(tool, result, accStr, mode)
+            val tempFileName = "forwardingFile"
             ProcessFactory(
               (constants.jobPath + jobId).toFile,
+              tempFileName,
               jobId,
-              tool.value,
-              form.fileName.getOrElse(""),
-              mode,
+              tool,
+              forwardHitsMode,
+              sequenceLengthMode,
               accStrParsed,
               result.db,
               scriptPath,
               config
-            ).run().exitValue()
+            ).run().exitValue() match {
+              case 0 =>
+                val file = new java.io.File(
+                  s"${constants.jobPath}${constants.SEPARATOR}$jobId${constants.SEPARATOR}results${constants.SEPARATOR}$tempFileName"
+                )
+                if (file.exists) {
+                  Right(file)
+                } else {
+                  val error = "Could not generate forwarding data"
+                  logger.error(error)
+                  Left(DecodingFailure(error, Nil))
+                }
+              case _ =>
+                val error = "Could not generate forwarding data"
+                logger.error(error)
+                Left(DecodingFailure(error, Nil))
+            }
         }
       case _ =>
         val error = "parsing result json failed."
         logger.error(error)
         Left(DecodingFailure(error, Nil))
     })
-  }
-
-  private[this] def parseAccString(
-      toolName: ToolName,
-      result: SearchResult[HSP],
-      accStr: String,
-      mode: ForwardMode
-  ): String = {
-    (toolName, mode.toString) match {
-      case (HHBLITS, "alnEval") | (HHPRED, "alnEval") =>
-        result.HSPS.filter(_.eValue <= accStr.toDouble).map { _.num }.mkString(" ")
-      case (HMMER, "alnEval") =>
-        result.HSPS
-          .filter(_.eValue <= accStr.toDouble)
-          .map { hit =>
-            result.alignment.alignment(hit.num - 1).accession + "\n"
-          }
-          .size
-          .toString
-      case (PSIBLAST, "alnEval") =>
-        accStr
-      case (_, "aln") => accStr
-      case (HMMER, "evalFull") | (PSIBLAST, "evalFull") =>
-        result.HSPS.filter(_.eValue <= accStr.toDouble).map { _.accession + " " }.mkString
-      case (HHBLITS, "evalFull") =>
-        result.HSPS.filter(_.eValue <= accStr.toDouble).map { _.accession + " " }.mkString
-      case (_, "full") =>
-        val numList = accStr.split("\n").map(_.toInt)
-        numList.map { num =>
-          if (toolName == HHBLITS)
-            "%s ".format(result.HSPS(num - 1).accession)
-          else
-            "%s ".format(result.HSPS(num - 1).accession)
-        }.mkString
-      case _ => throw new IllegalStateException("parsing accession identifiers failed")
-    }
   }
 
 }

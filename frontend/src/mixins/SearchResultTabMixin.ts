@@ -92,8 +92,21 @@ const SearchResultTabMixin = mixins(ResultTabMixin).extend({
                 logger.error('tool parameters not loaded. Cannot forward');
             }
         },
-        forward(): void {
-            alert('implement me!');
+        forward(disableSequenceLengthSelect: boolean = false): void {
+            if (this.tool.parameters) {
+                EventBus.$emit('show-modal', {
+                    id: 'forwardingModal', props: {
+                        forwardingJobID: this.job.jobID,
+                        forwardingMode: this.tool.parameters.forwarding,
+                        forwardingApiOptions: {
+                            disableSequenceLengthSelect,
+                            selectedItems: this.selectedItems,
+                        },
+                    },
+                });
+            } else {
+                logger.error('tool parameters not loaded. Cannot forward');
+            }
         },
         async forwardQueryA3M() {
             const a3mData: any = await resultsService.getFile(this.job.jobID, 'reduced.a3m');

@@ -54,7 +54,9 @@
             <HelpModal :toolName="modalProps.toolName"/>
             <ForwardingModal :forwarding-data="modalProps.forwardingData"
                              :forwardingMode="modalProps.forwardingMode"
-                             :forwarding-job-i-d="modalProps.forwardingJobID"/>
+                             :forwarding-job-i-d="modalProps.forwardingJobID"
+                             :forwarding-api-options="modalProps.forwardingApiOptions"
+                             @hidden="clearForwardingModalData"/>
             <TemplateAlignmentModal :job-i-d="modalProps.jobID"
                                     :accession="modalProps.accession"
                                     :forwardingMode="modalProps.forwardingMode"/>
@@ -96,7 +98,7 @@
     import {Job} from '@/types/toolkit/jobs';
     import Logger from 'js-logger';
     import {TKNotificationOptions} from '@/modules/notifications/types';
-    import {Tool} from '@/types/toolkit/tools';
+    import {ForwardingApiOptions, Tool} from '@/types/toolkit/tools';
     import EventBus from '@/util/EventBus';
     import FooterLinkModal from '@/components/modals/FooterLinkModal.vue';
     import UpdatesModal from '@/components/modals/UpdatesModal.vue';
@@ -145,6 +147,7 @@
                     forwardingMode: {}, // for ForwardingModal and TemplateAlignmentModal
                     forwardingData: '', // for ForwardingModal
                     forwardingJobID: '', // for ForwardingModal
+                    forwardingApiOptions: undefined as ForwardingApiOptions | undefined, // for ForwardingModal
                     jobID: '', // for TemplateAlignmentModal
                     accession: '', // for TemplateAlignmentModal
                     // care: Don't share the accession properties between modals, otherwise they react to the wrong updates!
@@ -250,6 +253,9 @@
             },
             hideModal(id: string) {
                 this.$root.$emit('bv::hide::modal', id);
+            },
+            clearForwardingModalData(): void {
+                this.modalProps.forwardingApiOptions = undefined;
             },
         },
     });

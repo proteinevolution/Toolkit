@@ -15,7 +15,7 @@
                 <a class="border-right mr-4"></a>
                 <a @click="toggleAllSelected">{{$t('jobs.results.actions.' + (allSelected ? 'deselectAll' :
                     'selectAll'))}}</a>
-                <a @click="forward">{{$t('jobs.results.actions.forward')}}</a>
+                <a @click="forward(false)">{{$t('jobs.results.actions.forward')}}</a>
                 <a @click="forwardQueryA3M">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
                 <a @click="toggleColor"
                    :class="{active: color}">{{$t('jobs.results.actions.colorSeqs')}}</a>

@@ -16,33 +16,62 @@
 
 package de.proteinevolution.jobs.controllers
 
+import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.jobs.models.{ForwardMode, ForwardingData, HHContext}
+import de.proteinevolution.jobs.dao.JobDao
+import de.proteinevolution.jobs.models.HHContext
 import de.proteinevolution.jobs.services.ProcessService
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.{Action, AnyContent}
+import javax.inject.{ Inject, Singleton }
+import play.api.mvc.{ Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class ProcessController @Inject()(
     ctx: HHContext,
-    service: ProcessService
+    jobDao: JobDao,
+    service: ProcessService,
+    userAction: UserAction
 )(implicit ec: ExecutionContext)
     extends ToolkitController(ctx.controllerComponents) {
 
-  def templateAlignment(jobId: String, accession: String): Action[AnyContent] = Action.async { implicit request =>
-    service.templateAlignment(jobId, accession).value.map {
-      case Some(0) => NoContent
-      case _       => BadRequest
+  def templateAlignment(jobID: String, accession: String): Action[AnyContent] = userAction.async { implicit request =>
+    jobDao.findJob(jobID).flatMap {
+      case Some(job) =>
+        if (job.isPublic || job.ownerID.equals(request.user.userID)) {
+          service.templateAlignment(jobID, accession).value.map {
+            case Some(0) => NoContent
+            case _       => BadRequest
+          }
+        } else {
+          fuccess(Unauthorized)
+        }
+      case _ => fuccess(NotFound)
     }
   }
 
-  def forwardAlignment(jobId: String, mode: ForwardMode): Action[ForwardingData] =
-    Action(circe.json[ForwardingData]).async { implicit request =>
-      service.forwardAlignment(jobId, mode, request.body).value.map {
-        case Right(res) if res == 0 => NoContent
-        case _                      => BadRequest
+  def forwardAlignment(
+      jobID: String,
+      forwardHitsMode: String,
+      sequenceLengthMode: String,
+      eval: Double,
+      selected: String
+  ): Action[AnyContent] =
+    userAction.async { implicit request =>
+      jobDao.findJob(jobID).flatMap {
+        case Some(job) =>
+          if (job.isPublic || job.ownerID.equals(request.user.userID)) {
+            service
+              .forwardAlignment(jobID, forwardHitsMode, sequenceLengthMode, eval, selected.split(",").map(_.toInt))
+              .value
+              .map {
+                case Right(res) => Ok.sendFile(res)
+                case _          => BadRequest
+              }
+          } else {
+            fuccess(Unauthorized)
+          }
+        case _ => fuccess(NotFound)
       }
     }
 

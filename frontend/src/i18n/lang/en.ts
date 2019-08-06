@@ -99,6 +99,7 @@ J Mol Biol. 2018 Jul 20. S0022-2836(17)30587-9</a>.`,
             couldNotDeleteJob: 'Could not delete job!',
             templateAlignmentFailed: 'Sorry, failed to fetch Template Alignment.',
             templateStructureFailed: 'Sorry, failed to fetch structure.',
+            couldNotLoadForwardData: 'Sorry, failed to fetch forwarding data.',
         },
         constraints: {
             range: 'has to be between {min} and {max}',

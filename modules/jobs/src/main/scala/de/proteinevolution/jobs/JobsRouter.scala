@@ -17,7 +17,6 @@
 package de.proteinevolution.jobs
 
 import de.proteinevolution.jobs.controllers._
-import de.proteinevolution.jobs.services.ForwardModeExtractor
 import javax.inject.{ Inject, Singleton }
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
@@ -31,10 +30,8 @@ class JobsRouter @Inject()(
     hhController: HHController,
     processController: ProcessController,
     resultsController: ResultsController,
-    fileController: FileController,
-    forwardModalController: ForwardModalController
-) extends SimpleRouter
-    with ForwardModeExtractor {
+    fileController: FileController
+) extends SimpleRouter {
 
   private lazy val getRoutes: Routes = {
     case GET(p"/")                        => jobGetController.getAllJobs
@@ -68,13 +65,11 @@ class JobsRouter @Inject()(
       & q_o"filter=${filter}" & q_o"sortBy=${sortBy}"& q_o"desc=${bool(desc)}") =>
       hhController.loadHits(jobID, start, end, filter, sortBy, desc)
     case GET(p"/$jobID/results/template-alignment/$accession") => processController.templateAlignment(jobID, accession)
+    case POST(p"/$jobID/results/forward-data/"  ? q"forwardHitsMode=$forwardHitsMode" & q"eval=${double(eval)}"
+      & q"selected=$selected" & q"sequenceLengthMode=$sequenceLengthMode") =>
+      processController.forwardAlignment(jobID, forwardHitsMode, sequenceLengthMode, eval, selected)
     case GET(p"/$jobID/results/")                               => resultsController.loadResults(jobID)
     case GET(p"/structure-file/$accession")                     => fileController.getStructureFile(accession)
-
-    case POST(p"/forwardAlignment/$jobID/${forwardModeExtractor(mode) }") =>
-      processController.forwardAlignment(jobID, mode)
-    case GET(p"/forward/modal/$toolName/$modalType") =>
-      forwardModalController.getForwardModalOptions(modalType, toolName)
   }
 
   override def routes: Routes = {

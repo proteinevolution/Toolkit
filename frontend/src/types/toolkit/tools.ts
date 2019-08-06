@@ -39,6 +39,11 @@ export interface ForwardingMode {
     templateAlignment?: string[];
 }
 
+export interface ForwardingApiOptions {
+    disableSequenceLengthSelect: boolean;
+    selectedItems: number[];
+}
+
 export interface ParameterSection {
     name: string;
     multiColumnLayout: boolean;

@@ -118,7 +118,15 @@ class ResultsService {
 
     public generateTemplateAlignment(jobId: string, accession: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            axios.get(`/api/jobs/${jobId}/results/template-alignment//${accession}`)
+            axios.get(`/api/jobs/${jobId}/results/template-alignment/${accession}`)
+                .then(() => resolve())
+                .catch(reject);
+        });
+    }
+
+    public generateForwardingData(jobId: string, params: any): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            axios.get(`/api/jobs/${jobId}/results/forward-data/`, {params})
                 .then(() => resolve())
                 .catch(reject);
         });

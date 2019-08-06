@@ -12,6 +12,7 @@
              scrollable
              @hide="$emit('hide')"
              @show="$emit('show')"
+             @hidden="$emit('hidden')"
              @shown="$emit('shown')">
         <slot name="header">
             <div class="tk-modal-header">
