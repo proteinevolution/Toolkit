@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import controllers._
+import controllers.UptimeController
 import de.proteinevolution.auth.AuthRouter
 import de.proteinevolution.backend.BackendRouter
 import de.proteinevolution.jobs.JobsRouter
@@ -27,9 +27,7 @@ import play.api.routing.sird._
 
 @Singleton
 class MainRouter @Inject()(
-    controller: Application,
     uptime: UptimeController,
-    assets: Assets,
     authRouter: AuthRouter,
     backendRouter: BackendRouter,
     jobsRouter: JobsRouter,
@@ -38,7 +36,6 @@ class MainRouter @Inject()(
 ) extends SimpleRouter {
 
   private lazy val mainRoutes: Routes = {
-    case GET(p"/")          => controller.index
     case GET(p"/uptime")    => uptime.uptime
     case GET(p"/buildinfo") => uptime.buildInfo
   }
