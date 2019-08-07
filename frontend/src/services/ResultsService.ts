@@ -127,7 +127,9 @@ class ResultsService {
     public generateForwardingData(jobId: string, params: any): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             axios.get(`/api/jobs/${jobId}/results/forward-data/`, {params})
-                .then(() => resolve())
+                .then((response) => {
+                    resolve(response.data);
+                })
                 .catch(reject);
         });
     }

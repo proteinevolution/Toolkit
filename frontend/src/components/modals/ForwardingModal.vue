@@ -1,8 +1,9 @@
 <template>
     <BaseModal :title="$t('jobs.results.actions.forward')"
                id="forwardingModal"
-               :size="forwardingApiOptions ? 'lmd' : 'sm'"
-               @hidden="onHidden">
+               :size="largeModal ? 'lmd' : 'sm'"
+               @hidden="onHidden"
+               @shown="onShown">
         <b-row>
             <b-col cols="12"
                    v-if="forwardingApiOptions"
@@ -13,6 +14,7 @@
                             <b>Forward hits</b>
                             <b-form-radio v-model="forwardHitsMode"
                                           value="selected"
+                                          :disabled="!selectModePossible"
                                           class="mt-4">
                                 Selected
                             </b-form-radio>
@@ -20,7 +22,7 @@
                                           value="eval"
                                           class="mt-3">
                                 E-value better than
-                                <b-form-input v-model="evalThreshold"
+                                <b-form-input v-model.number="evalThreshold"
                                               placeholder="E-value threshold"
                                               class="mt-1"
                                               size="sm"
@@ -28,7 +30,7 @@
                             </b-form-radio>
 
                         </b-col>
-                        <b-col v-if="!forwardingApiOptions.disableSequenceLengthSelect">
+                        <b-col v-if="largeModal">
                             <b>Select sequence length</b>
                             <b-form-radio v-model="sequenceLengthMode"
                                           value="aln"
@@ -45,7 +47,7 @@
                 </div>
             </b-col>
             <b-col cols="12"
-                   :lg="forwardingApiOptions ? '4': '12'">
+                   :md="largeModal ? '4': '12'">
                 <b-form-select v-model="selectedTool"
                                :options="toolOptions"
                                value-field="name"
@@ -58,7 +60,7 @@
                 </b-form-select>
             </b-col>
             <b-col cols="12"
-                   :lg="forwardingApiOptions ? '8': '12'">
+                   :md="largeModal ? '8': '12'">
                 <b-alert :show="sequenceLengthMode === 'full'"
                          variant="warning"
                          class="warning-alert">
@@ -67,7 +69,8 @@
                 <b-button variant="primary"
                           v-text="$t('jobs.results.actions.forward')"
                           @click="forward"
-                          :class="forwardingApiOptions ? 'float-right' : 'mt-3'"
+                          class="mt-3"
+                          :class="{'float-right' : forwardingApiOptions, 'mt-md-0': largeModal}"
                           :disabled="forwardingDisabled"></b-button>
             </b-col>
         </b-row>
@@ -109,10 +112,10 @@
         },
         data() {
             return {
-                selectedTool: null,
+                selectedTool: undefined as string | undefined,
                 forwardHitsMode: 'selected',
                 sequenceLengthMode: 'aln',
-                evalThreshold: 0.001,
+                evalThreshold: 0.001 as number,
                 internalForwardData: '',
             };
         },
@@ -124,13 +127,39 @@
                 const alignmentOptions: string[] = this.sequenceLengthMode === 'aln' ?
                     this.forwardingMode.alignment : this.forwardingMode.multiSeq;
                 if (alignmentOptions) {
-                    return this.tools.filter((t: Tool) => alignmentOptions.includes(t.name));
+                    return this.tools
+                        .filter((t: Tool) => alignmentOptions.includes(t.name))
+                        .sort((t1: Tool, t2: Tool) => {
+                            const t1Name = t1.longname.toLowerCase(),
+                                t2Name = t2.longname.toLowerCase();
+                            if (t1Name < t2Name) //sort string ascending
+                                return -1;
+                            if (t1Name > t2Name)
+                                return 1;
+                            return 0;
+                        });
                 } else {
                     return [];
                 }
             },
             forwardingDisabled(): boolean {
-                return !this.selectedTool || (!this.forwardingData && !this.forwardingApiOptions);
+                return !this.selectedTool
+                    || (!this.forwardingData && !this.forwardingApiOptions)
+                    || (this.forwardingApiOptions && this.forwardHitsMode === 'selected'
+                        && this.forwardingApiOptions.selectedItems.length < 1)
+                    || (this.forwardingApiOptions && this.forwardHitsMode === 'eval'
+                        && typeof this.evalThreshold !== 'number');
+            },
+            selectModePossible(): boolean {
+                return this.forwardingApiOptions && this.forwardingApiOptions.selectedItems.length > 0;
+            },
+            largeModal(): boolean {
+                return this.forwardingApiOptions && !this.forwardingApiOptions.disableSequenceLengthSelect;
+            },
+        },
+        watch: {
+            sequenceLengthMode(value: string): void {
+                this.presetSelectedTool(value);
             },
         },
         methods: {
@@ -145,6 +174,7 @@
                                 eval: this.evalThreshold,
                                 selected: this.forwardingApiOptions.selectedItems.join(','),
                             });
+                            logger.log(this.internalForwardData);
                         } catch (e) {
                             logger.error(e);
                             this.$alert(this.$t('errors.couldNotLoadForwardData'), 'danger');
@@ -162,7 +192,24 @@
             },
             pasteForwardData() {
                 EventBus.$off('paste-area-loaded', this.pasteForwardData);
+                logger.log(this.internalForwardData);
                 EventBus.$emit('forward-data', {data: this.internalForwardData, jobID: this.forwardingJobID});
+            },
+            onShown(): void {
+                if (this.forwardingApiOptions) {
+                    if (this.forwardingApiOptions.selectedItems.length === 0) {
+                        this.forwardHitsMode = 'eval';
+                    } else {
+                        this.forwardHitsMode = 'selected';
+                    }
+                }
+                this.presetSelectedTool(this.sequenceLengthMode);
+            },
+            presetSelectedTool(sequenceLengthMode: string): void {
+                if (sequenceLengthMode && this.forwardingMode.alignment) {
+                    this.selectedTool = sequenceLengthMode === 'aln' ?
+                        this.forwardingMode.alignment[0] : this.forwardingMode.multiSeq[0];
+                }
             },
             onHidden(): void {
                 this.resetData();
@@ -170,7 +217,7 @@
             },
             resetData() {
                 // reset data
-                this.selectedTool = null;
+                this.selectedTool = undefined;
             },
         },
     });

@@ -61,13 +61,11 @@ class ProcessController @Inject()(
       jobDao.findJob(jobID).flatMap {
         case Some(job) =>
           if (job.isPublic || job.ownerID.equals(request.user.userID)) {
-            service
-              .forwardAlignment(jobID, forwardHitsMode, sequenceLengthMode, eval, selected.split(",").map(_.toInt))
-              .value
-              .map {
-                case Right(res) => Ok.sendFile(res)
-                case _          => BadRequest
-              }
+            val sel: Seq[Int] = if (selected.nonEmpty) selected.split(",").map(_.toInt) else Seq()
+            service.forwardAlignment(jobID, forwardHitsMode, sequenceLengthMode, eval, sel).value.map {
+              case Right(res) => Ok.sendFile(res)
+              case _          => BadRequest
+            }
           } else {
             fuccess(Unauthorized)
           }

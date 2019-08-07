@@ -16,17 +16,19 @@
 
 package de.proteinevolution.jobs.services
 
+import java.util.UUID
+
 import better.files._
-import cats.data.{ EitherT, OptionT }
+import cats.data.{EitherT, OptionT}
 import cats.implicits._
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.common.models.ToolName._
 import de.proteinevolution.jobs.db.ResultFileAccessor
 import io.circe.DecodingFailure
-import javax.inject.{ Inject, Singleton }
-import play.api.{ Configuration, Logging }
+import javax.inject.{Inject, Singleton}
+import play.api.{Configuration, Logging}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import scala.sys.process.Process
 
 @Singleton
@@ -94,7 +96,7 @@ final class ProcessService @Inject()(
                   "%s ".format(result.HSPS(num - 1).accession)
                 }.mkString
 
-            val tempFileName = "forwardingFile"
+            val tempFileName = UUID.randomUUID().toString
             val (script, params) = (tool, forwardHitsMode, sequenceLengthMode) match {
               case (HHBLITS, "eval", "aln") | (HHPRED, "eval", "aln") =>
                 (
@@ -186,7 +188,7 @@ final class ProcessService @Inject()(
             Process(script.pathAsString, (constants.jobPath + jobId).toFile.toJava, params ++ env: _*).run().exitValue() match {
               case 0 =>
                 val file = new java.io.File(
-                  s"${constants.jobPath}${constants.SEPARATOR}$jobId${constants.SEPARATOR}results${constants.SEPARATOR}$tempFileName"
+                  s"${constants.jobPath}${constants.SEPARATOR}$jobId${constants.SEPARATOR}results${constants.SEPARATOR}$tempFileName.fa"
                 )
                 if (file.exists) {
                   Right(file)
