@@ -34,7 +34,7 @@
                 <span v-text="job.code.toUpperCase()"
                       class="tool-code"></span>
                 <i class="fas fa-times"
-                   @click.stop="hideJob(job.jobID)"></i>
+                   @click.stop.prevent="hideJob(job.jobID)"></i>
             </a>
 
             <div class="job-list-down d-flex flex-column"
