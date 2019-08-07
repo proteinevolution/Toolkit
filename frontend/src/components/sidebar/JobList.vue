@@ -27,7 +27,8 @@
             <div class="job-element"
                  v-for="job in sortedJobs"
                  :class="['status-' + job.status, job.jobID === selectedJobID ? 'selected' : '']"
-                 @click="goToJob(job.jobID)">
+                 @click="goToJob(job.jobID)"
+                 @click.middle="openJobInNewTab(job.jobID)">
                 <span v-text="job.jobID"
                       class="job-id"></span>
                 <span v-text="job.code.toUpperCase()"
@@ -107,6 +108,9 @@
             goToJob(jobID: string): void {
                 this.$router.push(`/jobs/${jobID}`);
                 this.$emit('click');
+            },
+            openJobInNewTab(jobID: string): void {
+                window.open(`/jobs/${jobID}`, '_blank');
             },
             hideJob(jobID: string): void {
                 this.$store.dispatch('jobs/setJobWatched', {jobID, watched: false});
@@ -223,6 +227,10 @@
                     width: 3.5em;
                     text-overflow: ellipsis;
                     overflow: hidden;
+                }
+
+                &:hover {
+                    filter: grayscale(40%) sepia(10%) brightness(95%);
                 }
             }
         }
