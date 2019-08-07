@@ -61,11 +61,6 @@
             </b-col>
             <b-col cols="12"
                    :md="largeModal ? '8': '12'">
-                <b-alert :show="sequenceLengthMode === SequenceLengthMode.FULL"
-                         variant="warning"
-                         class="warning-alert">
-                    Only some tools accept full-length sequences as input!
-                </b-alert>
                 <b-button variant="primary"
                           @click="forward"
                           class="mt-3"

@@ -214,6 +214,7 @@
             return {
                 alignments: undefined as HHpredAlignmentItem[] | undefined,
                 info: undefined as HHpredHHInfoResult | undefined,
+                color: true,
                 breakAfter: 80,
                 hitListFields: [{
                     key: 'numCheck',

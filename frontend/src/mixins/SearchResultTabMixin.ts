@@ -17,7 +17,7 @@ const SearchResultTabMixin = mixins(ResultTabMixin).extend({
             alignments: undefined as SearchAlignmentItem[] | undefined,
             selectedItems: [] as number[],
             perPage: 20,
-            color: true,
+            color: false,
             wrap: true,
             loadingMore: false,
         };
@@ -115,7 +115,7 @@ const SearchResultTabMixin = mixins(ResultTabMixin).extend({
                     forwardingJobID: this.job.jobID,
                     forwardingData: a3mData,
                     forwardingMode: {
-                        alignment: ['formatseq', 'hhblits', 'hhpred', 'hhomp', 'hhrepid'],
+                        alignment: ['hhpred', 'formatseq', 'hhblits', 'hhomp', 'hhrepid'],
                     },
                 },
             });

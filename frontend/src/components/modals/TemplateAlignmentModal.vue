@@ -1,7 +1,8 @@
 <template>
     <BaseModal :title="$t('jobs.results.templateAlignment.title')"
                id="templateAlignmentModal"
-               size="lmd">
+               size="lmd"
+               @shown="onShown">
         <Loading v-if="loading"/>
         <div v-else>
             <b-form-select v-model="selectedTool"
@@ -10,7 +11,8 @@
                            value-field="name"
                            text-field="longname"
                            class="select"
-                           @change="forward">
+                           @change="forward"
+                           :disabled="nodata">
                 <template slot="first">
                     <option :value="null"
                             v-text="$t('jobs.results.templateAlignment.forwardTo')"></option>
@@ -59,7 +61,8 @@
             return {
                 loading: true,
                 data: '',
-                selectedTool: null,
+                nodata: false,
+                selectedTool: undefined as string | undefined,
             };
         },
         computed: {
@@ -72,7 +75,17 @@
             toolOptions(): Tool[] {
                 if (this.forwardingEnabled) {
                     const options: string[] = (this.forwardingMode.templateAlignment as string[]);
-                    return this.tools.filter((t: Tool) => options.includes(t.name));
+                    return this.tools.filter((t: Tool) => options.includes(t.name))
+                        .sort((t1: Tool, t2: Tool) => {
+                            const t1Name = t1.longname.toLowerCase();
+                            const t2Name = t2.longname.toLowerCase();
+                            if (t1Name < t2Name) { // sort string ascending
+                                return -1;
+                            } else if (t1Name > t2Name) {
+                                return 1;
+                            }
+                            return 0;
+                        });
                 }
                 return [];
             },
@@ -98,15 +111,15 @@
         methods: {
             async loadData() {
                 this.loading = true;
-                try {
-                    await resultsService.generateTemplateAlignment(this.jobID, this.accession);
-                    const res: any = await resultsService.getFile(this.jobID, this.accession);
-                    this.data = String(res);
-                } catch (err) {
+                await resultsService.generateTemplateAlignment(this.jobID, this.accession);
+                const res: any = await resultsService.getFile(this.jobID, this.accession);
+                this.data = String(res);
+                if (!this.data) {
                     this.$alert(this.$t('errors.templateAlignmentFailed'), 'danger');
-                } finally {
-                    this.loading = false;
+                    this.data = 'Sorry, failed to fetch Template Alignment.';
+                    this.nodata = true;
                 }
+                this.loading = false;
             },
             forward() {
                 if (this.selectedTool) {
@@ -123,8 +136,13 @@
                 EventBus.$off('paste-area-loaded', this.pasteForwardData);
                 EventBus.$emit('forward-data', {data: this.data, jobID: this.jobID});
             },
+            onShown(): void {
+                if (this.forwardingMode.templateAlignment) {
+                    this.selectedTool = this.forwardingMode.templateAlignment[0];
+                }
+            },
             resetData() {
-                this.selectedTool = null;
+                this.selectedTool = undefined;
             },
         },
     });
