@@ -49,11 +49,12 @@ case class PSIBlastResult(
 
   def toInfoJson: Json = {
     Map[String, Json](
-      "num_hits" -> num_hits.asJson,
-      "tm"       -> tmpred.asJson,
-      "coil"     -> coilpred.asJson,
-      "signal"   -> signal.asJson,
-      "query"    -> query.asJson
+      "num_hits"           -> num_hits.asJson,
+      "tm"                 -> tmpred.asJson,
+      "coil"               -> coilpred.asJson,
+      "signal"             -> signal.asJson,
+      "query"              -> query.asJson,
+      "belowEvalThreshold" -> belowEvalThreshold.asJson
     ).asJson
   }
 

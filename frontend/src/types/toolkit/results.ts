@@ -187,6 +187,7 @@ export interface PsiblastHHInfoResult extends HHInfoResult {
     tm: number;
     coil: number;
     signal: string;
+    belowEvalThreshold: number;
 }
 
 export interface HHblitsHHInfoResult extends HHInfoResult {

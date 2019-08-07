@@ -75,7 +75,7 @@ sed -n '1p' ../results/${JOBID}.fas | cut -c -25 > ../results/firstSeq0.fas
 sed -n '2p' ../results/${JOBID}.fas >> ../results/firstSeq0.fas
 sed 's/[\.\-]//g' ../results/firstSeq0.fas > ../results/firstSeq.fas
 
-echo "#Running PSI-BLAST against the %standarddb.content DB." >> ../results/process.log
+echo "#Predicting sequence features." >> ../results/process.log
 
 TMPRED=`tmhmm ../results/firstSeq.fas -short`
 
@@ -89,6 +89,9 @@ ${BIOPROGS}/tools/signalp/bin/signalp -org 'gram-' -format 'short' -fasta ../res
 ${BIOPROGS}/tools/signalp/bin/signalp -org 'arch' -format 'short' -fasta ../results/firstSeq.fas -prefix "../results/${JOBID}_arch" -tmp '../results/'
 
 rm ../results/firstSeq.cc
+echo "done" >> ../results/process.log
+
+echo "#Running PSI-BLAST against the %standarddb.content DB." >> ../results/process.log
 
 psiblast -db %STANDARD/%standarddb.content \
          -matrix %matrix.content \
@@ -103,8 +106,6 @@ psiblast -db %STANDARD/%standarddb.content \
          -out ../results/output_psiblastp.asn \
          -outfmt 11 \
          -max_hsps 1
-
-echo "done" >> ../results/process.log
 
 echo "#Preparing output." >> ../results/process.log
 

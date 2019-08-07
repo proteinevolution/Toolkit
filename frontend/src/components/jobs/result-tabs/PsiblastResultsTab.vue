@@ -192,6 +192,14 @@
             };
         },
         methods: {
+            async init(): Promise<void> {
+                await this.loadAlignments(0, this.perPage);
+                if (this.info) {
+                    for (let i = 1; i <= this.info.belowEvalThreshold; i++) {
+                        this.selectedItems.push(i);
+                    }
+                }
+            },
             wrapAlignments(al: PSIBLASTAlignmentItem): SearchAlignmentItemRender[] {
                 if (this.wrap) {
                     const res: SearchAlignmentItemRender[] = [];
