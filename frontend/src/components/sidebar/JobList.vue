@@ -24,18 +24,18 @@
                 <i class="fas fa-caret-up"></i>
             </div>
 
-            <div class="job-element"
-                 v-for="job in sortedJobs"
-                 :class="['status-' + job.status, job.jobID === selectedJobID ? 'selected' : '']"
-                 @click="goToJob(job.jobID)"
-                 @click.middle="openJobInNewTab(job.jobID)">
+            <a class="job-element"
+               v-for="job in sortedJobs"
+               :class="['status-' + job.status, job.jobID === selectedJobID ? 'selected' : '']"
+               @click.prevent="goToJob(job.jobID)"
+               :href="`/jobs/${job.jobID}`">
                 <span v-text="job.jobID"
                       class="job-id"></span>
                 <span v-text="job.code.toUpperCase()"
                       class="tool-code"></span>
                 <i class="fas fa-times"
                    @click.stop="hideJob(job.jobID)"></i>
-            </div>
+            </a>
 
             <div class="job-list-down d-flex flex-column"
                  @click="scrollUp"
@@ -108,9 +108,6 @@
             goToJob(jobID: string): void {
                 this.$router.push(`/jobs/${jobID}`);
                 this.$emit('click');
-            },
-            openJobInNewTab(jobID: string): void {
-                window.open(`/jobs/${jobID}`, '_blank');
             },
             hideJob(jobID: string): void {
                 this.$store.dispatch('jobs/setJobWatched', {jobID, watched: false});
@@ -211,6 +208,7 @@
                 border-bottom: 0;
                 width: 100%;
                 filter: grayscale(40%) sepia(10%);
+                text-decoration: none;
 
                 &.selected {
                     margin: 0 2px;
