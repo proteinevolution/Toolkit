@@ -13,32 +13,32 @@
                         <b-col>
                             <b>Forward hits</b>
                             <b-form-radio v-model="forwardHitsMode"
-                                          value="selected"
+                                          :value="ForwardHitsMode.SELECTED"
                                           :disabled="!selectModePossible"
                                           class="mt-4">
                                 Selected
                             </b-form-radio>
                             <b-form-radio v-model="forwardHitsMode"
-                                          value="eval"
+                                          :value="ForwardHitsMode.EVALUE"
                                           class="mt-3">
                                 E-value better than
-                                <b-form-input v-model.number="evalThreshold"
+                                <b-form-input v-model="evalThreshold"
                                               placeholder="E-value threshold"
                                               class="mt-1"
                                               size="sm"
-                                              @focus="forwardHitsMode = 'eval'"/>
+                                              @focus="forwardHitsMode = ForwardHitsMode.EVALUE"/>
                             </b-form-radio>
 
                         </b-col>
                         <b-col v-if="largeModal">
                             <b>Select sequence length</b>
                             <b-form-radio v-model="sequenceLengthMode"
-                                          value="aln"
+                                          :value="SequenceLengthMode.ALN"
                                           class="mt-4">
                                 Aligned regions
                             </b-form-radio>
                             <b-form-radio v-model="sequenceLengthMode"
-                                          value="full"
+                                          :value="SequenceLengthMode.FULL"
                                           class="mt-3">
                                 Full length sequences
                             </b-form-radio>
@@ -61,17 +61,22 @@
             </b-col>
             <b-col cols="12"
                    :md="largeModal ? '8': '12'">
-                <b-alert :show="sequenceLengthMode === 'full'"
+                <b-alert :show="sequenceLengthMode === SequenceLengthMode.FULL"
                          variant="warning"
                          class="warning-alert">
                     Only some tools accept full-length sequences as input!
                 </b-alert>
                 <b-button variant="primary"
-                          v-text="$t('jobs.results.actions.forward')"
                           @click="forward"
                           class="mt-3"
                           :class="{'float-right' : forwardingApiOptions, 'mt-md-0': largeModal}"
-                          :disabled="forwardingDisabled"></b-button>
+                          :disabled="forwardingDisabled">
+                    <Loading v-if="loading"
+                             :size="16"
+                             :message="$t('loading')"/>
+                    <span v-else
+                          v-text="$t('jobs.results.actions.forward')"></span>
+                </b-button>
             </b-col>
         </b-row>
     </BaseModal>
@@ -84,6 +89,8 @@
     import EventBus from '@/util/EventBus';
     import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
+    import Loading from '@/components/utils/Loading.vue';
+    import {ForwardHitsMode, SequenceLengthMode} from '@/types/toolkit/enums';
 
     const logger = Logger.get('ForwardingModal');
 
@@ -91,6 +98,7 @@
         name: 'ForwardingModal',
         components: {
             BaseModal,
+            Loading,
         },
         props: {
             forwardingMode: {
@@ -113,10 +121,13 @@
         data() {
             return {
                 selectedTool: undefined as string | undefined,
-                forwardHitsMode: 'selected',
-                sequenceLengthMode: 'aln',
-                evalThreshold: 0.001 as number,
+                forwardHitsMode: ForwardHitsMode.SELECTED,
+                sequenceLengthMode: SequenceLengthMode.ALN,
+                evalThreshold: 0.001 as number | string,
                 internalForwardData: '',
+                loading: false,
+                SequenceLengthMode,
+                ForwardHitsMode,
             };
         },
         computed: {
@@ -124,18 +135,19 @@
                 return this.$store.getters['tools/tools'];
             },
             toolOptions(): Tool[] {
-                const alignmentOptions: string[] = this.sequenceLengthMode === 'aln' ?
+                const alignmentOptions: string[] = this.sequenceLengthMode === SequenceLengthMode.ALN ?
                     this.forwardingMode.alignment : this.forwardingMode.multiSeq;
                 if (alignmentOptions) {
                     return this.tools
                         .filter((t: Tool) => alignmentOptions.includes(t.name))
                         .sort((t1: Tool, t2: Tool) => {
-                            const t1Name = t1.longname.toLowerCase(),
-                                t2Name = t2.longname.toLowerCase();
-                            if (t1Name < t2Name) //sort string ascending
+                            const t1Name = t1.longname.toLowerCase();
+                            const t2Name = t2.longname.toLowerCase();
+                            if (t1Name < t2Name) { // sort string ascending
                                 return -1;
-                            if (t1Name > t2Name)
+                            } else if (t1Name > t2Name) {
                                 return 1;
+                            }
                             return 0;
                         });
                 } else {
@@ -143,12 +155,12 @@
                 }
             },
             forwardingDisabled(): boolean {
-                return !this.selectedTool
+                return this.loading || !this.selectedTool
                     || (!this.forwardingData && !this.forwardingApiOptions)
-                    || (this.forwardingApiOptions && this.forwardHitsMode === 'selected'
+                    || (this.forwardingApiOptions && this.forwardHitsMode === ForwardHitsMode.SELECTED
                         && this.forwardingApiOptions.selectedItems.length < 1)
-                    || (this.forwardingApiOptions && this.forwardHitsMode === 'eval'
-                        && typeof this.evalThreshold !== 'number');
+                    || (this.forwardingApiOptions && this.forwardHitsMode === ForwardHitsMode.EVALUE
+                        && isNaN(parseFloat(this.evalThreshold.toString())));
             },
             selectModePossible(): boolean {
                 return this.forwardingApiOptions && this.forwardingApiOptions.selectedItems.length > 0;
@@ -158,13 +170,14 @@
             },
         },
         watch: {
-            sequenceLengthMode(value: string): void {
+            sequenceLengthMode(value: SequenceLengthMode): void {
                 this.presetSelectedTool(value);
             },
         },
         methods: {
             async forward() {
                 if (this.selectedTool) {
+                    this.loading = true;
                     this.internalForwardData = this.forwardingData;
                     if (this.forwardingApiOptions) {
                         try {
@@ -178,6 +191,7 @@
                         } catch (e) {
                             logger.error(e);
                             this.$alert(this.$t('errors.couldNotLoadForwardData'), 'danger');
+                            this.loading = false;
                             return;
                         }
                     }
@@ -185,6 +199,7 @@
                         EventBus.$on('paste-area-loaded', this.pasteForwardData);
                     });
                     EventBus.$emit('hide-modal', 'forwardingModal');
+                    this.loading = false;
                     this.resetData();
                 } else {
                     logger.log('no tool selected');
@@ -198,16 +213,16 @@
             onShown(): void {
                 if (this.forwardingApiOptions) {
                     if (this.forwardingApiOptions.selectedItems.length === 0) {
-                        this.forwardHitsMode = 'eval';
+                        this.forwardHitsMode = ForwardHitsMode.EVALUE;
                     } else {
-                        this.forwardHitsMode = 'selected';
+                        this.forwardHitsMode = ForwardHitsMode.SELECTED;
                     }
                 }
                 this.presetSelectedTool(this.sequenceLengthMode);
             },
-            presetSelectedTool(sequenceLengthMode: string): void {
+            presetSelectedTool(sequenceLengthMode: SequenceLengthMode): void {
                 if (sequenceLengthMode && this.forwardingMode.alignment) {
-                    this.selectedTool = sequenceLengthMode === 'aln' ?
+                    this.selectedTool = sequenceLengthMode === SequenceLengthMode.ALN ?
                         this.forwardingMode.alignment[0] : this.forwardingMode.multiSeq[0];
                 }
             },
@@ -217,6 +232,8 @@
             },
             resetData() {
                 // reset data
+                this.forwardHitsMode = ForwardHitsMode.SELECTED;
+                this.sequenceLengthMode = SequenceLengthMode.ALN;
                 this.selectedTool = undefined;
             },
         },

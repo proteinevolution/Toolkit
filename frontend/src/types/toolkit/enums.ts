@@ -46,3 +46,13 @@ export enum JobState {
 export enum WebSocketActions {
     SET_JOB_WATCHED = 'SET_JOB_WATCHED',
 }
+
+export enum ForwardHitsMode {
+    SELECTED = 'selected',
+    EVALUE = 'eval',
+}
+
+export enum SequenceLengthMode {
+    ALN = 'aln',
+    FULL = 'full',
+}
