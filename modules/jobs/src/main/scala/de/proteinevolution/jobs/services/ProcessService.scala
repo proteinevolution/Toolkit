@@ -80,41 +80,110 @@ final class ProcessService @Inject()(
       case (json, tool) =>
         resultFiles.parseResult(tool, json).flatMap {
           result =>
-            val accStrParsed: String = (tool, forwardHitsMode, sequenceLengthMode) match {
+            val generateAlignmentScript = (scriptPath + "/generateAlignment.sh").toFile // HHPRED, HHBLITS alnEval
+            val retrieveFullSeq         = (scriptPath + "/retrieveFullSeq.sh").toFile
+            val retrieveAlnEval         = (scriptPath + "/retrieveAlnEval.sh").toFile // Hmmer & PSIBLAST alnEval
+            val retrieveFullSeqHHblits  = (scriptPath + "/retrieveFullSeqHHblits.sh").toFile // why so little abstractions ???
+
+            val fullEvalAccs: () => String =
+              () => result.HSPS.filter(_.eValue <= eval).map { _.accession + " " }.mkString
+
+            val fullSelectedAccs: () => String =
+              () =>
+                selected.map { num =>
+                  "%s ".format(result.HSPS(num - 1).accession)
+                }.mkString
+
+            val tempFileName = "forwardingFile"
+            val (script, params) = (tool, forwardHitsMode, sequenceLengthMode) match {
               case (HHBLITS, "eval", "aln") | (HHPRED, "eval", "aln") =>
-                result.HSPS.filter(_.eValue <= eval).map { _.num }.mkString(" ")
+                (
+                  generateAlignmentScript,
+                  List(
+                    "jobID"    -> jobId,
+                    "filename" -> tempFileName,
+                    "numList" ->
+                    result.HSPS.filter(_.eValue <= eval).map { _.num }.mkString(" ")
+                  )
+                )
               case (HMMER, "eval", "aln") =>
-                result.HSPS
+                val accStr: String = result.HSPS
                   .filter(_.eValue <= eval)
                   .map { hit =>
                     result.alignment.alignment(hit.num - 1).accession + "\n"
                   }
                   .size
                   .toString
+                (retrieveAlnEval, List("accessionsStr" -> accStr, "filename" -> tempFileName, "mode" -> "count"))
               case (PSIBLAST, "eval", "aln") =>
-                eval.toString
-              case (HMMER, "eval", "full") | (PSIBLAST, "eval", "full") | (HHBLITS, "eval", "full")=>
-                result.HSPS.filter(_.eValue <= eval).map { _.accession + " " }.mkString
-              case (_, "selected", "aln") => selected.mkString("\n")
-              case (_, "selected", "full") =>
-                selected.map { num =>
-                  "%s ".format(result.HSPS(num - 1).accession)
-                }.mkString
-              case _ => throw new IllegalStateException("parsing accession identifiers failed")
+                (retrieveAlnEval, List("accessionsStr" -> eval.toString, "filename" -> tempFileName, "mode" -> "eval"))
+
+              case (HMMER, "selected", "aln") =>
+                (
+                  retrieveAlnEval,
+                  List("accessionsStr" -> selected.mkString("\n"), "filename" -> tempFileName, "mode" -> "selHmmer")
+                )
+              case (PSIBLAST, "selected", "aln") =>
+                (
+                  retrieveAlnEval,
+                  List("accessionsStr" -> selected.mkString("\n"), "filename" -> tempFileName, "mode" -> "sel")
+                )
+              case (HHPRED, "selected", "aln") | (HHBLITS, "selected", "aln") =>
+                (
+                  generateAlignmentScript,
+                  List("jobID" -> jobId, "filename" -> tempFileName, "numList" -> selected.mkString("\n"))
+                )
+              case (PSIBLAST, "eval", "full") | (HMMER, "eval", "full") =>
+                (
+                  retrieveFullSeq,
+                  List(
+                    "jobID"         -> jobId,
+                    "accessionsStr" -> fullEvalAccs(),
+                    "filename"      -> tempFileName,
+                    "db"            -> result.db
+                  )
+                )
+              case (HHBLITS, "eval", "full") =>
+                (
+                  retrieveFullSeqHHblits,
+                  List(
+                    "jobID"         -> jobId,
+                    "accessionsStr" -> fullEvalAccs(),
+                    "filename"      -> tempFileName,
+                    "db"            -> result.db
+                  )
+                )
+              case (HHBLITS, "selected", "full") =>
+                (
+                  retrieveFullSeqHHblits,
+                  List(
+                    "jobID"         -> jobId,
+                    "accessionsStr" -> fullSelectedAccs(),
+                    "filename"      -> tempFileName,
+                    "db"            -> result.db
+                  )
+                )
+              case (PSIBLAST, "selected", "full") | (HMMER, "selected", "full") =>
+                (
+                  retrieveFullSeq,
+                  List(
+                    "jobID"         -> jobId,
+                    "accessionsStr" -> fullSelectedAccs(),
+                    "filename"      -> tempFileName,
+                    "db"            -> result.db
+                  )
+                )
+
+              case _ => throw new IllegalArgumentException("no valid parameters for processing a forwarding job")
             }
-            val tempFileName = "forwardingFile"
-            ProcessFactory(
-              (constants.jobPath + jobId).toFile,
-              tempFileName,
-              jobId,
-              tool,
-              forwardHitsMode,
-              sequenceLengthMode,
-              accStrParsed,
-              result.db,
-              scriptPath,
-              config
-            ).run().exitValue() match {
+
+            val env: List[(String, String)] = List(
+              "ENVIRONMENT"  -> config.get[String]("environment"),
+              "BIOPROGSROOT" -> config.get[String]("bioprogs_root"),
+              "DATABASES"    -> config.get[String]("db_root")
+            )
+
+            Process(script.pathAsString, (constants.jobPath + jobId).toFile.toJava, params ++ env: _*).run().exitValue() match {
               case 0 =>
                 val file = new java.io.File(
                   s"${constants.jobPath}${constants.SEPARATOR}$jobId${constants.SEPARATOR}results${constants.SEPARATOR}$tempFileName"
