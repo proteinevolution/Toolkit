@@ -3,14 +3,16 @@
              v-if="loading || !alignments"/>
     <div v-else>
         <div class="result-options">
-            <a @click="toggleAllSelected">{{$t('jobs.results.actions.' + (allSelected ? 'deselectAll' :
-                'selectAll'))}}</a>
-            <a @click="forwardSelected"
-               :disabled="selected.length === 0">{{$t('jobs.results.actions.forwardSelected')}}</a>
-            <a @click="downloadAlignment">{{$t('jobs.results.actions.downloadMSA')}}</a>
-            <a :href="downloadFilePath" target="_blank">{{$t('jobs.results.actions.exportMSA')}}</a>
-            <a @click="toggleColor"
-               :class="{active: color}">{{$t('jobs.results.actions.colorMSA')}}</a>
+            <a @click="toggleAllSelected" :class="{active: allSelected}">
+                {{$t('jobs.results.actions.selectAll')}}</a>
+            <a @click="forwardSelected" :disabled="selected.length === 0">
+                {{$t('jobs.results.actions.forwardSelected')}}</a>
+            <a @click="downloadAlignment">
+                {{$t('jobs.results.actions.downloadMSA')}}</a>
+            <a :href="downloadFilePath" target="_blank">
+                {{$t('jobs.results.actions.exportMSA')}}</a>
+            <a @click="toggleColor" :class="{active: color}">
+                {{$t('jobs.results.actions.colorMSA')}}</a>
         </div>
 
         <div class="alignment-results mb-4">

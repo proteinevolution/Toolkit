@@ -13,8 +13,8 @@
                 <a @click="scrollTo('alignments')"
                    class="mr-4">{{$t('jobs.results.hitlist.alnLink')}}</a>
                 <a class="border-right mr-4"></a>
-                <a @click="toggleAllSelected">{{$t('jobs.results.actions.' + (allSelected ? 'deselectAll' :
-                    'selectAll'))}}</a>
+                <a @click="toggleAllSelected" :class="{active: allSelected}">
+                    {{$t('jobs.results.actions.selectAll')}}</a>
                 <a @click="forward(false)">{{$t('jobs.results.actions.forward')}}</a>
                 <a @click="toggleColor"
                    :class="{active: color}">{{$t('jobs.results.actions.colorSeqs')}}</a>

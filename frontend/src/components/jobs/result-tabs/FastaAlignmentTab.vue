@@ -3,22 +3,18 @@
              v-if="loading || !alignments"/>
     <div v-else>
         <div class="result-options">
-            <a @click="toggleAllSelected">
-                {{$t('jobs.results.actions.' + (allSelected ? 'deselectAll' : 'selectAll'))}}
-            </a>
-            <a @click="forwardSelected"
-               :disabled="selected.length === 0">{{$t('jobs.results.actions.forwardSelected')}}</a>
+            <a @click="toggleAllSelected" :class="{active: allSelected}">
+                {{$t('jobs.results.actions.selectAll')}}</a>
+            <a @click="forwardSelected" :disabled="selected.length === 0">
+                {{$t('jobs.results.actions.forwardSelected')}}</a>
             <a v-if="!isReduced" @click="download(downloadFilenameMSA, downloadFileMSA)">
-                {{$t('jobs.results.actions.downloadMSA')}}
-            </a>
+                {{$t('jobs.results.actions.downloadMSA')}}</a>
             <a v-if="isReduced" @click="download(downloadFilenameReducedA3M, downloadFileReducedA3M)">
-                {{$t('jobs.results.actions.downloadReducedA3M')}}
-            </a>
+                {{$t('jobs.results.actions.downloadReducedA3M')}}</a>
             <a v-if="isReduced" @click="download(downloadFilenameFullA3M, downloadFileFullA3M)">
-                {{$t('jobs.results.actions.downloadFullA3M')}}
-            </a>
-            <a v-if="!isReduced" :href="downloadMSAFilePath"
-               target="_blank">{{$t('jobs.results.actions.exportMSA')}}</a>
+                {{$t('jobs.results.actions.downloadFullA3M')}}</a>
+            <a v-if="!isReduced" :href="downloadMSAFilePath" target="_blank">
+                {{$t('jobs.results.actions.exportMSA')}}</a>
         </div>
 
         <div class="alignment-results mb-4">

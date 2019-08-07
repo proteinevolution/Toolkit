@@ -53,7 +53,6 @@ export default {
         },
         actions: {
             selectAll: 'Select All',
-            deselectAll: 'Deselect All',
             forward: 'Forward',
             forwardAll: 'Forward All',
             forwardSelected: 'Forward Selected',
