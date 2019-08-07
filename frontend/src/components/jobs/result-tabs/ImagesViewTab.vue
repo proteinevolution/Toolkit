@@ -1,5 +1,5 @@
 <template>
-    <div class="text-center">
+    <div class="text-center img-container">
         <div v-for="(img, index) in images">
             <div v-if="labels[index]"
                  v-text="labels[index]"
@@ -50,6 +50,10 @@
 </script>
 
 <style lang="scss" scoped>
+    .img-container {
+        overflow-x: auto;
+    }
+
     .plot-img {
         margin-bottom: 2rem;
     }

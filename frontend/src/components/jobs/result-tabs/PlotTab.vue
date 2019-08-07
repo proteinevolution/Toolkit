@@ -5,10 +5,12 @@
         <b v-if="results.vals.length === 0"
            v-html="$t('jobs.results.plot.noResults')">
         </b>
-        <div class="hcontainer" v-else>
+        <div class="high-chart-container"
+             v-else>
             <div v-html="$t('jobs.results.plot.numHits', {num: results.vals.length})"></div>
             <br><br>
-            <highcharts :options="chartOptions"></highcharts>
+            <highcharts :options="chartOptions"
+                        class="high-chart"></highcharts>
         </div>
     </div>
 </template>
@@ -104,10 +106,14 @@
 </script>
 
 <style lang="scss" scoped>
-    .hcontainer {
+    .high-chart-container {
         padding-left: 50px;
         @include media-breakpoint-down(md) {
             padding-left: 0;
+        }
+
+        .high-chart {
+            overflow-x: auto !important;
         }
     }
 </style>
