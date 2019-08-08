@@ -11,7 +11,6 @@ const router = new Router({
     routes,
 });
 
-// soon to be removed/refactored
 router.beforeEach((to, from, next) => {
     const lang: string = (to.query.lang as string);
     if (lang !== undefined && lang !== from.query.lang) {
@@ -27,6 +26,17 @@ router.beforeEach((to, from, next) => {
     } else {
         next();
     }
+});
+
+// fallback for hash mode
+router.beforeEach((to, from, next) => {
+    // Redirect if fullPath begins with a hash (ignore hashes later in path)
+    if (to.fullPath.substr(0, 2) === '/#') {
+        const path = to.fullPath.substr(2);
+        next(path);
+        return;
+    }
+    next();
 });
 
 export default router;
