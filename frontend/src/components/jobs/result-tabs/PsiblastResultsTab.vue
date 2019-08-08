@@ -16,7 +16,7 @@
                 <a @click="toggleAllSelected" :class="{active: allSelected}">
                     {{$t('jobs.results.actions.selectAll')}}</a>
                 <a @click="forward(false)">{{$t('jobs.results.actions.forward')}}</a>
-                <a @click="forward">{{$t('jobs.results.actions.downloadMSA')}}</a>
+                <a @click="download">{{$t('jobs.results.actions.downloadMSA')}}</a>
                 <a @click="toggleColor"
                    :class="{active: color}">{{$t('jobs.results.actions.colorSeqs')}}</a>
                 <a @click="toggleWrap"
@@ -144,6 +144,7 @@
     import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
     import {PSIBLASTAlignmentItem, PsiblastHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
     import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
+    import {resultsService} from '@/services/ResultsService';
 
     const logger = Logger.get('PsiblastResultsTab');
 
@@ -230,6 +231,16 @@
                     return res;
                 } else {
                     return [al];
+                }
+            },
+            download(): void {
+                if (this.viewOptions.filename) {
+                    const toolName = this.tool.name;
+                    const downloadFilename = `${toolName}_${this.job.jobID}.aln`;
+                    resultsService.downloadFile(this.job.jobID, this.viewOptions.filename, downloadFilename)
+                        .catch((e) => {
+                            logger.error(e);
+                        });
                 }
             },
         },

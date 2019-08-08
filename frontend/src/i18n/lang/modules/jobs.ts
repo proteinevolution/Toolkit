@@ -104,8 +104,8 @@ export default {
                 targetLength: 'Target Length',
             },
             templateAlignment: 'Template alignment',
-            alignmentInfo: 'Probability (hit): {probabHit}%&emsp;&emsp;Probability (OMP): {probabOMP}%&emsp;&emsp;' +
-                'E-value: {eval}&emsp;&emsp;Score: {score}&emsp;&emsp;Aligned Cols: {alignedCols}&emsp;&emsp;' +
+            alignmentInfo: 'Probability (hit): {probabHit}%,&emsp;Probability (OMP): {probabOMP}%,&emsp;' +
+                'E-value: {eval},&emsp;Score: {score},&emsp;Aligned Cols: {alignedCols},&emsp;' +
                 'Identities: {identities}%',
         },
         hhblits: {
@@ -122,9 +122,9 @@ export default {
                 targetLength: 'Target Length',
             },
             templateAlignment: 'Template alignment',
-            alignmentInfo: 'Probability: {probab}%&emsp;&emsp;E-value: {eval}&emsp;&emsp;' +
-                'Score: {score}&emsp;&emsp;Aligned Cols: {alignedCols}&emsp;&emsp;' +
-                'Identities: {identities}%&emsp;&emsp;Similarity: {similarity}',
+            alignmentInfo: 'Probability: {probab}%,&emsp;E-value: {eval},&emsp;' +
+                'Score: {score},&emsp;Aligned Cols: {alignedCols},&emsp;' +
+                'Identities: {identities},&emsp;Similarity: {similarity}',
         },
         hhpred: {
             noResults: 'No hits found! Please re-run HHpred with an increased number of MSA generation steps or with ' +
@@ -152,9 +152,9 @@ export default {
             },
             templateAlignment: 'Template alignment',
             templateStructure: 'Template 3D Structure',
-            alignmentInfo: 'Probability: {probab}&emsp;&emsp;E-value: {eval}&emsp;&emsp;Score: {score}&emsp;&emsp;' +
-                'Aligned cols: {alignedCols}&emsp;&emsp;Identities: {ident}%&emsp;&emsp;Similarity: ' +
-                '{similarity}&emsp;&emsp;',
+            alignmentInfo: 'Probability: {probab}%,&emsp;E-value: {eval},&emsp;Score: {score},&emsp;' +
+                'Aligned cols: {alignedCols},&emsp;Identities: {ident}%,&emsp;Similarity: ' +
+                '{similarity},&emsp;',
             modelUsingFirst: 'No templates selected! Using the first template for modelling.',
         },
         psiblast: {
@@ -189,8 +189,8 @@ export default {
                 bitscore: 'Bitscore',
                 hit_len: 'Aligned Positions',
             },
-            alignmentInfo: 'E-value: {fullEval}&emsp;&emsp;Ind. E-value: {eval}&emsp;&emsp;' +
-                'Score: {bitScore}&emsp;&emsp;Aligned positions: {hitLen}&emsp;&emsp;' +
+            alignmentInfo: 'E-value: {fullEval},&emsp;Ind. E-value: {eval},&emsp;' +
+                'Score: {bitScore},&emsp;Aligned positions: {hitLen},&emsp;' +
                 'Observed domains: {observedDomains}',
         },
         imagesView: {

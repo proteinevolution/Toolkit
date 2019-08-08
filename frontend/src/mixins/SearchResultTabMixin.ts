@@ -16,7 +16,7 @@ const SearchResultTabMixin = mixins(ResultTabMixin).extend({
             info: undefined as HHInfoResult | undefined,
             alignments: undefined as SearchAlignmentItem[] | undefined,
             selectedItems: [] as number[],
-            perPage: 20,
+            perPage: 50,
             color: false,
             wrap: true,
             loadingMore: false,
