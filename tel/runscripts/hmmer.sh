@@ -93,8 +93,8 @@ else
     #MSA generation required; generation by HHblits
     hhblits -cpu %THREADS \
             -v 2 \
+            -e 1e-10 \
             -i ../results/${JOBID}.in.a3m \
-            -M first \
             -d %UNICLUST  \
             -oa3m ../results/${JOBID}.a3m \
             -n %max_hhblits_iter.content \
@@ -117,13 +117,13 @@ echo "done" >> ../results/process.log
 echo "#Running hmmsearch against the %hmmerdb.content DB." >> ../results/process.log
 
     ${HMMERPATH}/hmmsearch --cpu %THREADS \
-          -E %evalue.content \
-          --incE %evalue.content \
-          --incdomE 100000000 \
+          -E %evalue.content \          
+          --domE %evalue.content \
+          --incE 0.01 \
+          --incdomE 0.03 \
           -o ../results/${JOBID}.outfile \
           -A ../results/${JOBID}.msa_sto \
           ../results/${JOBID}.hmm  %STANDARD/%hmmerdb.content
-
 
 echo "done" >> ../results/process.log
 
