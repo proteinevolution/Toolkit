@@ -1,7 +1,7 @@
 import modalContent from './help/en';
-import tools from '@/i18n/lang/modules/tools';
-import jobs from '@/i18n/lang/modules/jobs';
-import auth from '@/i18n/lang/modules/auth';
+import tools from '@/i18n/lang/modules/tools-en';
+import jobs from '@/i18n/lang/modules/jobs-en';
+import auth from '@/i18n/lang/modules/auth-en';
 
 export default {
     en: {
@@ -12,6 +12,11 @@ export default {
         fetching: 'Fetching...',
         reconnecting: 'Reconnecting...',
         maintenanceWarning: 'Maintenance in a few seconds!',
+        language: {
+            lang: 'Language',
+            de: 'Deutsch',
+            en: 'English',
+        },
         auth,
         index: {
             welcomeTitle: 'Welcome to the Bioinformatics Toolkit',

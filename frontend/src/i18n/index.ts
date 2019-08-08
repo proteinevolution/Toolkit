@@ -11,7 +11,7 @@ Vue.use(VueI18n);
 const logger = Logger.get('i18n');
 
 const i18n = new VueI18n({
-    locale: defaultLanguage, // set locale
+    locale: localStorage.getItem('tk-locale') || defaultLanguage, // set locale
     fallbackLocale: defaultLanguage,
     messages, // set locale messages
     silentTranslationWarn: process.env.NODE_ENV === 'production',
@@ -23,6 +23,7 @@ const loadedExtraTranslations: string[] = [];
 
 function setI18nLanguage(lang: string) {
     i18n.locale = lang;
+    localStorage.setItem('tk-locale', lang);
     moment.locale(lang);
     const html = document.querySelector('html');
     if (html != null) {

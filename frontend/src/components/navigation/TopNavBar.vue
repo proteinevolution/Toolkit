@@ -4,6 +4,28 @@
 
         <div class="meta-user"></div>
         <div class="social-nav">
+            <b-dropdown no-caret
+                        class="lang-dropdown"
+                        v-if="false">
+                <template slot="button-content">
+                    <img :src="require('../../assets/images/flag-' + $i18n.locale + '.png')"
+                         alt=""/>
+                    <span class="sr-only"
+                          v-text="$t('language.lang')"></span>
+                </template>
+                <b-dropdown-item @click="changeLanguage('en')">
+                    <img :src="require('../../assets/images/flag-en.png')"
+                         class="mr-2"
+                         alt=""/>
+                    <span v-text="$t('language.en')"></span>
+                </b-dropdown-item>
+                <b-dropdown-item @click="changeLanguage('de')">
+                    <img :src="require('../../assets/images/flag-de.png')"
+                         class="mr-2"
+                         alt=""/>
+                    <span v-text="$t('language.de')"></span>
+                </b-dropdown-item>
+            </b-dropdown>
             <b-button variant="href"
                       href="https://github.com/proteinevolution/Toolkit"
                       target="_blank"
@@ -79,6 +101,10 @@
     import EventBus from '@/util/EventBus';
     import {AuthMessage, User} from '@/types/toolkit/auth';
     import {authService} from '@/services/AuthService';
+    import Logger from 'js-logger';
+    import {loadLanguageAsync, possibleLanguages} from '@/i18n';
+
+    const logger = Logger.get('TopNavBar');
 
     export default Vue.extend({
         name: 'TopNavBar',
@@ -105,6 +131,14 @@
             },
             toggleOffscreenMenu(): void {
                 this.$store.commit('setOffscreenMenuShow', true);
+            },
+            changeLanguage(lang: string): void {
+                if (possibleLanguages.includes(lang)) {
+                    loadLanguageAsync(lang)
+                        .catch(logger.error);
+                } else {
+                    logger.warn('trying to switch to unrecognized language: ' + lang);
+                }
             },
             async signOut() {
                 this.$store.commit('startLoading', 'logout');
@@ -180,6 +214,19 @@
         .offline-alert {
             color: $danger;
             cursor: pointer;
+        }
+    }
+</style>
+
+<style lang="scss">
+    .lang-dropdown {
+        .dropdown-toggle {
+            line-height: 1;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
         }
     }
 </style>
