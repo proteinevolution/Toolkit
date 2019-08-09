@@ -234,7 +234,7 @@
         font-size: 0.95em;
 
         .blank-row {
-            height: 2rem;
+            height: 0.8rem;
         }
 
         .sequence td {

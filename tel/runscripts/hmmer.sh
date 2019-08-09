@@ -117,7 +117,7 @@ echo "done" >> ../results/process.log
 echo "#Running hmmsearch against the %hmmerdb.content DB." >> ../results/process.log
 
     ${HMMERPATH}/hmmsearch --cpu %THREADS \
-          -E %evalue.content \          
+          -E %evalue.content \
           --domE %evalue.content \
           --incE 0.01 \
           --incdomE 0.03 \

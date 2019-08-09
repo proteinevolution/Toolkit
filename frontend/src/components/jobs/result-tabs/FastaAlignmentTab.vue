@@ -79,7 +79,7 @@
                 alignments: undefined as AlignmentItem[] | undefined,
                 selected: [] as number[],
                 loadingMore: false,
-                perPage: 20,
+                perPage: 50,
                 total: 0,
                 downloadFileMSA: 'alignment.fas',
             };

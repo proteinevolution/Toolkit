@@ -83,7 +83,7 @@
                 breakAfter: 85, // clustal format breaks after n chars
                 color: false,
                 loadingMore: false,
-                perPage: 40,
+                perPage: 50,
                 total: 0,
             };
         },

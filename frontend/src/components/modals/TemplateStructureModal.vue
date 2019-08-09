@@ -4,7 +4,8 @@
                size="lmd"
                :static="true"
                :lazy="false"
-               @shown="resize">
+               @shown="onShow"
+               @hide="resetView">
         <Loading :message="$t('loading')"
                  v-if="loading"/>
 
@@ -45,14 +46,11 @@
         beforeDestroy() {
             window.removeEventListener('resize', this.resize);
         },
-        watch: {
-            accession(value: string) {
-                if (value) {
-                    this.loadData();
-                }
-            },
-        },
         methods: {
+            onShow(): void {
+                this.resize();
+                this.loadData();
+            },
             getExtension(filename: string): string {
                 return filename.split('.')[1];
             },
@@ -66,6 +64,9 @@
                 viewport.style.height = height + 'px';
                 viewport.style.width = width + 'px';
                 this.stage.setSize(width, height);
+            },
+            resetView(): void {
+                (this.$refs.viewport as HTMLElement).innerHTML = '';
             },
             async loadData() {
                 this.loading = true;
@@ -91,6 +92,7 @@
                     this.resize();
                 } catch (err) {
                     this.$alert(this.$t('errors.templateStructureFailed'), 'danger');
+                    (this.$refs.viewport as HTMLElement).innerHTML = this.$t('errors.templateStructureFailed').toString();
                 }
                 this.loading = false;
             },
