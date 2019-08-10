@@ -178,6 +178,7 @@
                 jobService.deleteJob(jobID)
                     .then(() => {
                         this.$store.commit('jobs/removeJob', {jobID});
+                        this.totalRows = this.jobs.length;
                     })
                     .catch(() => {
                         this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');

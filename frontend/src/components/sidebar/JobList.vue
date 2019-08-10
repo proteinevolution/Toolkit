@@ -33,8 +33,10 @@
                       class="job-id"></span>
                 <span v-text="job.code.toUpperCase()"
                       class="tool-code"></span>
-                <i class="fas fa-times"
-                   @click.stop.prevent="hideJob(job.jobID)"></i>
+                <span class="job-delete-btn"
+                      @click.stop.prevent="hideJob(job.jobID)">
+                    <i class="fas fa-lg fa-times"></i>
+                </span>
             </a>
 
             <div class="job-list-down d-flex flex-column"
@@ -225,6 +227,10 @@
                     width: 3.5em;
                     text-overflow: ellipsis;
                     overflow: hidden;
+                }
+
+                .job-delete-btn {
+                    line-height: 1;
                 }
 
                 &:hover {

@@ -172,10 +172,12 @@
                 }, {
                     key: 'fullEval',
                     label: this.$t('jobs.results.hmmer.table.full_evalue'),
+                    class: 'no-wrap',
                     sortable: true,
                 }, {
                     key: 'eval',
                     label: this.$t('jobs.results.hmmer.table.eValue'),
+                    class: 'no-wrap',
                     sortable: true,
                 }, {
                     key: 'bitScore',

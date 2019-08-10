@@ -6,6 +6,7 @@ import ResultTabMixin from '@/mixins/ResultTabMixin';
 import mixins from 'vue-typed-mixins';
 import {resultsService} from '@/services/ResultsService';
 import handyScroll from 'handy-scroll';
+import {debounce} from 'lodash-es';
 
 const logger = Logger.get('SearchResultTabMixin');
 
@@ -31,12 +32,17 @@ const SearchResultTabMixin = mixins(ResultTabMixin).extend({
                 this.selectedItems.length === this.total;
         },
     },
+    created() {
+        (this as any).debouncedUpdateHandyScroll = debounce(this.updateHandyScroll.bind(this), 100);
+    },
     beforeDestroy(): void {
         handyScroll.destroy(this.$refs.scrollElem);
+        window.removeEventListener('resize', (this as any).debouncedUpdateHandyScroll);
     },
     methods: {
         async init(): Promise<void> {
             await this.loadAlignments(0, this.perPage);
+            window.addEventListener('resize', (this as any).debouncedUpdateHandyScroll);
         },
         async intersected(): Promise<void> {
             if (!this.loadingMore && this.alignments && this.alignments.length < this.total) {
@@ -152,13 +158,17 @@ const SearchResultTabMixin = mixins(ResultTabMixin).extend({
         },
         toggleWrap(): void {
             this.wrap = !this.wrap;
-            this.$nextTick(() => {
-                if (!handyScroll.mounted(this.$refs.scrollElem)) {
-                    handyScroll.mount(this.$refs.scrollElem);
+            this.$nextTick(this.updateHandyScroll.bind(this));
+        },
+        updateHandyScroll(): void {
+            const scrollElem: Element = this.$refs.scrollElem as Element;
+            if (scrollElem) {
+                if (!handyScroll.mounted(scrollElem)) {
+                    handyScroll.mount(scrollElem);
                 } else {
-                    handyScroll.update(this.$refs.scrollElem);
+                    handyScroll.update(scrollElem);
                 }
-            });
+            }
         },
         toggleColor(): void {
             this.color = !this.color;

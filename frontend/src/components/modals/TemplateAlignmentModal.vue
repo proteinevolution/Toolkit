@@ -1,28 +1,31 @@
 <template>
     <BaseModal :title="$t('jobs.results.templateAlignment.title')"
                id="templateAlignmentModal"
-               size="lmd"
-               @shown="onShown">
-        <Loading v-if="loading"/>
-        <div v-else>
-            <b-form-select v-model="selectedTool"
-                           v-if="forwardingEnabled"
-                           :options="toolOptions"
-                           value-field="name"
-                           text-field="longname"
-                           class="select"
-                           @change="forward"
-                           :disabled="nodata">
-                <template slot="first">
-                    <option :value="null"
-                            v-text="$t('jobs.results.templateAlignment.forwardTo')"></option>
-                </template>
-            </b-form-select>
-            <b-form-textarea v-model="data"
-                             readonly
-                             class="file-view mb-2">
-            </b-form-textarea>
-        </div>
+               size="lmd">
+
+        <b-form-select v-else v-model="selectedTool"
+                       v-if="forwardingEnabled"
+                       :options="toolOptions"
+                       value-field="name"
+                       text-field="longname"
+                       class="select"
+                       @change="forward"
+                       :disabled="nodata">
+            <template slot="first">
+                <option :value="null"
+                        v-text="$t('jobs.results.templateAlignment.forwardTo')"></option>
+            </template>
+        </b-form-select>
+
+        <Loading :message="$t('loading')"
+                 class="float-right"
+                 :size="24"
+                 v-if="loading"/>
+
+        <b-form-textarea v-model="data"
+                         readonly
+                         class="file-view mb-2">
+        </b-form-textarea>
     </BaseModal>
 </template>
 
@@ -62,7 +65,7 @@
                 loading: true,
                 data: '',
                 nodata: false,
-                selectedTool: undefined as string | undefined,
+                selectedTool: null,
             };
         },
         computed: {
@@ -110,10 +113,10 @@
         },
         methods: {
             async loadData() {
+                this.data = '';
                 this.loading = true;
                 await resultsService.generateTemplateAlignment(this.jobID, this.accession);
-                const res: any = await resultsService.getFile(this.jobID, this.accession);
-                this.data = String(res);
+                this.data = await resultsService.getFile(this.jobID, this.accession);
                 if (!this.data) {
                     this.$alert(this.$t('errors.templateAlignmentFailed'), 'danger');
                     this.data = 'Sorry, failed to fetch Template Alignment.';
@@ -136,13 +139,8 @@
                 EventBus.$off('paste-area-loaded', this.pasteForwardData);
                 EventBus.$emit('forward-data', {data: this.data, jobID: this.jobID});
             },
-            onShown(): void {
-                if (this.forwardingMode.templateAlignment) {
-                    this.selectedTool = this.forwardingMode.templateAlignment[0];
-                }
-            },
             resetData() {
-                this.selectedTool = undefined;
+                this.selectedTool = null;
             },
         },
     });
@@ -159,5 +157,9 @@
     .select {
         width: 12em;
         margin-bottom: 1em;
+    }
+
+    .vue-simple-spinner {
+        margin-left: 20rem !important;
     }
 </style>

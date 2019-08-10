@@ -12,9 +12,10 @@
             <div class="mt-3 px-2">
                 <vue-slider ref="slider"
                             v-model="resubmitSelection"
-                            :tooltip="'always'"
+                            tooltip="always"
                             :min="1"
                             :max="hitMap.queryLength"
+                            :height="6"
                             :enable-cross="false"/>
             </div>
         </div>

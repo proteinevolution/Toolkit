@@ -176,6 +176,7 @@
                 }, {
                     key: 'eval',
                     label: this.$t('jobs.results.psiblast.table.eValue'),
+                    class: 'no-wrap',
                     sortable: true,
                 }, {
                     key: 'bitScore',

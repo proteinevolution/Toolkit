@@ -63,8 +63,8 @@
                    :md="largeModal ? '8': '12'">
                 <b-button variant="primary"
                           @click="forward"
-                          class="mt-3"
-                          :class="{'float-right' : forwardingApiOptions, 'mt-md-0': largeModal}"
+                          class="mt-3 float-right"
+                          :class="{'mt-md-0': largeModal}"
                           :disabled="forwardingDisabled">
                     <Loading v-if="loading"
                              :size="16"

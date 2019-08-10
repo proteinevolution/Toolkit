@@ -195,6 +195,7 @@
                 }, {
                     key: 'eval',
                     label: this.$t('jobs.results.hhblits.table.eVal'),
+                    class: 'no-wrap',
                     sortable: true,
                 }, {
                     key: 'alignedCols',

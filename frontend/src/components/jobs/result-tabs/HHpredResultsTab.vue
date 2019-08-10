@@ -235,6 +235,7 @@
                 }, {
                     key: 'eval',
                     label: this.$t('jobs.results.hhpred.table.eVal'),
+                    class: 'no-wrap',
                     sortable: true,
                 }, {
                     key: 'ssScore',
