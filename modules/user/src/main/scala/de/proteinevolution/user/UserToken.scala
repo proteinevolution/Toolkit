@@ -40,6 +40,9 @@ object UserToken {
     new BigInteger(nrChars * 5, random).toString(32)
   }
 
+  val EMAIL_VERIFICATION_TOKEN = 1
+  val PASSWORD_CHANGE_TOKEN = 2
+
   val TYPE            = "type"
   val TOKEN           = "token"
   val NEWPASSWORDHASH = "nPWH"

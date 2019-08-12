@@ -10,8 +10,6 @@ production
 target
 .DS_Store
 application-ext.conf
-public/javascripts/typescriptc.js
-public/javascripts/typescriptc.js.map
 native
 *.swp
 .ensime
@@ -21,3 +19,4 @@ package-lock.json
 main.log
 conf/.env
 frontend/.env*
+frontend/yarn.lock

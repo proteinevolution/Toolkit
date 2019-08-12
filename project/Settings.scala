@@ -1,4 +1,3 @@
-import play.twirl.sbt.Import.TwirlKeys
 import sbt.Keys._
 import sbt.{ Compile, Def, Project, Setting, Task }
 
@@ -59,8 +58,6 @@ object Settings {
 
   lazy val compileSettings: Seq[Def.Setting[Task[Seq[String]]]] = Seq(scalacOptions ++= allFlags)
 
-  lazy val sjsCompileSettings: Seq[Def.Setting[Task[Seq[String]]]] = Seq(scalacOptions ++= coreFlags)
-
   lazy val disableDocs: Seq[Def.Setting[_]] = Seq[Setting[_]](
     sources in (Compile, doc) := Seq.empty,
     publishArtifact in (Compile, packageDoc) := false
@@ -74,7 +71,6 @@ object Settings {
           name := projectName,
           libraryDependencies ++= Dependencies.commonDeps,
           Settings.compileSettings,
-          TwirlKeys.templateImports := Nil,
           disableDocs
         )
         .enablePlugins(AutomateHeaderPlugin)

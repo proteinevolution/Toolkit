@@ -3,7 +3,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4213b23fbf83450ba6ba091f2ded2c8c)](https://www.codacy.com/app/zy4/Toolkit_2?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=proteinevolution/Toolkit&amp;utm_campaign=Badge_Grade)
 # MPI Bioinformatics Toolkit
 
-<img src="https://raw.githubusercontent.com/proteinevolution/Toolkit/master/public/images/toolkitscreenshot.png" alt="MPI Bioinformatics Toolkit" />
+<img src="https://raw.githubusercontent.com/proteinevolution/Toolkit/master/doc/toolkit.png" alt="MPI Bioinformatics Toolkit" />
 
 The [MPI Bioinformatics Toolkit](https://toolkit.tue.mpg.de/#/) is a platform that integrates a great variety of tools for protein sequence analysis. Many tools are developed in-house, and several public tools are offered with extended functionality.
 

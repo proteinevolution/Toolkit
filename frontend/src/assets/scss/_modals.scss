@@ -1,0 +1,22 @@
+.toolkit {
+  .v--modal {
+    @include media-breakpoint-down(md) {
+      width: auto !important;
+      left: 0 !important;
+      right: 0 !important;
+      margin-left: 1rem;
+      margin-right: 1rem;
+    }
+  }
+
+  .v--modal-overlay.scrollable .v--modal-box {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  .modal-lmd {
+    max-width: 840px;
+  }
+}

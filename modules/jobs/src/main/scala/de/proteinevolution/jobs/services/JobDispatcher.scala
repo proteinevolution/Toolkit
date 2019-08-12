@@ -19,20 +19,17 @@ package de.proteinevolution.jobs.services
 import java.security.MessageDigest
 import java.time.ZonedDateTime
 
-import better.files._
 import cats.data.{ EitherT, OptionT }
 import cats.implicits._
-import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.auth.dao.UserDao
+import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.common.models.{ ConstantsV2, ToolName }
 import de.proteinevolution.jobs.actors.JobActor.PrepareJob
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.{ Job, JobSubmitError }
-import de.proteinevolution.user.User
+import de.proteinevolution.user.{ AccountType, User }
 import javax.inject.{ Inject, Singleton }
 import play.api.Logging
-import play.api.libs.Files
-import play.api.mvc.MultipartFormData
-import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -42,21 +39,20 @@ final class JobDispatcher @Inject()(
     constants: ConstantsV2,
     jobIdProvider: JobIdProvider,
     jobActorAccess: JobActorAccess,
-    userSessions: UserSessions
+    userSessionService: UserSessionService,
+    userDao: UserDao
 )(implicit ec: ExecutionContext)
     extends Logging {
 
   def submitJob(
       toolName: String,
-      dataParts: Map[String, Seq[String]],
-      filePart: Seq[MultipartFormData.FilePart[Files.TemporaryFile]],
+      parts: Map[String, String],
       user: User
   ): EitherT[Future, JobSubmitError, Job] = {
     if (!modellerKeyIsValid(toolName, user)) {
       EitherT.leftT(JobSubmitError.ModellerKeyInvalid)
     } else {
       for {
-        parts           <- EitherT.pure[Future, JobSubmitError](readForm(dataParts, filePart))
         generatedId     <- generateJobId(parts)
         _               <- validateJobId(generatedId)
         _               <- checkNotAlreadyTaken(generatedId)
@@ -69,19 +65,6 @@ final class JobDispatcher @Inject()(
     }
   }
 
-  private[this] def readForm(
-      dataParts: Map[String, Seq[String]],
-      fileParts: Seq[MultipartFormData.FilePart[Files.TemporaryFile]]
-  ): Map[String, String] = {
-    val form = dataParts.mapValues(_.mkString(constants.formMultiValueSeparator))
-    val fileParams = for {
-      file <- fileParts
-      lines = File(file.ref.path).newInputStream.autoClosed.map(_.lines.mkString("\n")).get()
-      if ("alignment" :: "alignment_two" :: Nil).contains(file.filename) && lines.nonEmpty
-    } yield (file.filename, lines)
-    form ++ fileParams
-  }
-
   private[this] def send(gid: String, job: Job, parts: Map[String, String], isFromInstitute: Boolean): Unit = {
     jobActorAccess.sendToJobActor(gid, PrepareJob(job, parts, startJob = false, isFromInstitute))
   }
@@ -90,11 +73,13 @@ final class JobDispatcher @Inject()(
     !(toolName == ToolName.MODELLER.value && !user.userConfig.hasMODELLERKey)
   }
 
-  private[this] def assignJob(user: User, job: Job): Future[Option[User]] = {
-    userSessions.modifyUserWithCache(
-      BSONDocument(User.ID   -> user.userID),
-      BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> job.jobID))
-    )
+  private[this] def assignJob(user: User, job: Job): Future[User] = {
+    userDao.addJobsToUser(user.userID, List(job.jobID)).map {
+      case Some(dbUser) =>
+        userSessionService.updateUserInCache(dbUser)
+      case None =>
+        user
+    }
   }
 
   private[this] def isJobId(id: String): Boolean = constants.jobIDVersionOptionPattern.pattern.matcher(id).matches
@@ -126,20 +111,21 @@ final class JobDispatcher @Inject()(
       form: Map[String, String],
       user: User
   ): Job = {
-    val now          = ZonedDateTime.now
-    val dateDeletion = user.userData.map(_ => now.plusDays(constants.jobDeletion.toLong))
+    val now = ZonedDateTime.now
+    val dateDeletionOn = user.userData match {
+      case Some(_) => now.plusDays(constants.jobDeletionRegistered.toLong)
+      case None    => now.plusDays(constants.jobDeletion.toLong)
+    }
     new Job(
       jobID = jobID,
-      ownerID = Some(user.userID),
-      parentID = form.get("parent_id"),
-      isPublic = form.get("public").isDefined || user.accountType == User.NORMALUSER,
-      emailUpdate = form.get("emailUpdate").isDefined,
+      ownerID = user.userID,
+      parentID = form.get("parentID"),
+      isPublic = form.get("isPublic").exists(_.toBoolean) || user.accountType == AccountType.NORMALUSER,
+      emailUpdate = form.get("emailUpdate").exists(_.toBoolean),
       tool = toolName,
       watchList = List(user.userID),
-      dateCreated = Some(now),
-      dateUpdated = Some(now),
-      dateViewed = Some(now),
-      dateDeletion = dateDeletion,
+      dateViewed = now,
+      dateDeletionOn = dateDeletionOn,
       IPHash = Some(MessageDigest.getInstance("MD5").digest(user.sessionData.head.ip.getBytes).mkString)
     )
   }

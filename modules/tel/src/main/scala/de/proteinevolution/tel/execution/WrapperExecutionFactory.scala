@@ -16,12 +16,16 @@
 
 package de.proteinevolution.tel.execution
 
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 import better.files._
 import de.proteinevolution.tel.TELRegex
 import java.nio.file.attribute.PosixFilePermission
 
-import de.proteinevolution.tel.execution.WrapperExecutionFactory.{PendingExecution, RegisteredExecution, RunningExecution}
+import de.proteinevolution.tel.execution.WrapperExecutionFactory.{
+  PendingExecution,
+  RegisteredExecution,
+  RunningExecution
+}
 
 import scala.sys.process.Process
 

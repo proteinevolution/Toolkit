@@ -16,14 +16,12 @@
 
 package de.proteinevolution.auth.models
 
-import java.time.ZonedDateTime
-
-import play.api.Configuration
-import de.proteinevolution.common.models.database.jobs.JobState.{ Done, Error }
+import de.proteinevolution.common.models.database.jobs.JobState.{Done, Error}
 import de.proteinevolution.common.models.database.jobs._
 import de.proteinevolution.common.models.util.ZonedDateTimeHelper
+import play.api.Configuration
 import de.proteinevolution.user.User
-import play.api.libs.mailer.{ Email, MailerClient }
+import play.api.libs.mailer.{Email, MailerClient}
 
 sealed trait MailTemplate {
 
@@ -320,13 +318,12 @@ sealed trait MailTemplate {
          |</html>
     """.stripMargin
 
-  def environment: play.Environment
-
   def config: Configuration
 
-  val origin: String =
-    if (environment.isProd) s"https://toolkit.tuebingen.mpg.de"
-    else config.get[String]("play.mailer.template_host")
+  val origin: String = {
+    val s = config.get[String]("mail.host")
+    if (s.endsWith("/")) s.substring(0, s.length - 1) else s
+  }
 
 }
 
@@ -335,23 +332,24 @@ object MailTemplate {
   // Date time format for the "deleting your account on" mail
   val dtf = "EEEE, dd.MM.yyyy"
 
-  case class NewUserWelcomeMail(userParam: User, token: String, environment: play.Environment, config: Configuration)
+  case class NewUserWelcomeMail(userParam: User, token: String, config: Configuration)
       extends MailTemplate {
     override def subject = "Account Verification - The MPI Bioinformatics Toolkit"
 
     val user: User = userParam
 
+    val verificationLink = s"$origin/verify/${user.getUserData.nameLogin}/$token"
+
     val bodyText: String = {
       s"""Welcome ${user.getUserData.nameLogin},
          |your registration was successful. Please take a moment and verify that this is indeed your E-Mail account.
          |To do this, visit
-         |$origin/verification/${user.getUserData.nameLogin}/$token
+         |$verificationLink
          |Your Toolkit Team
      """.stripMargin
     }
 
     val bodyHtml: String = {
-      val verificationLink = s"$origin/verification/${user.getUserData.nameLogin}/$token"
       super.bodyHtmlTemplate(
         subject,
         s"""<tr>
@@ -388,88 +386,25 @@ object MailTemplate {
     }
   }
 
-  case class ChangePasswordMail(userParam: User, token: String, environment: play.Environment, config: Configuration)
+  case class ResetPasswordMail(userParam: User, token: String, config: Configuration)
       extends MailTemplate {
     override def subject = "Password Verification - The MPI Bioinformatics Toolkit"
 
     val user: User = userParam
 
-    val bodyText: String = {
-      s"""Dear ${user.getUserData.nameLogin},
-         |you requested a password change.
-         |To complete the process, visit
-         |$origin/verification/${user.getUserData.nameLogin}/$token
-         |If you did not request this, then your account has been used by someone else.
-         |Log in and change the password yourself to ensure that this other person can no longer access your account.
-         |Your Toolkit Team
-     """.stripMargin
-    }
-
-    val bodyHtml: String = {
-      val verificationLink = s"$origin/verification/${user.getUserData.nameLogin}/$token"
-      super.bodyHtmlTemplate(
-        subject,
-        s"""<tr>
-           |  <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-           |    <div style="font-family:Noto Sans;font-size:14px;line-height:1;text-align:center;color:grey;">
-           |      Dear ${user.getUserData.nameLogin},<br/><br/>
-           |      you requested a password change. Please take a moment to verify and complete the process.<br/>
-           |    </div>
-           |  </td>
-           |</tr>
-           |
-           |<tr>
-           |  <td align="center" vertical-align="middle" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-           |    <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%;">
-           |      <tr>
-           |        <td align="center" bgcolor="#3c8e85" role="presentation" style="border:none;border-radius:3px;color:white;cursor:auto;padding:10px 25px;" valign="middle">
-           |           <a href="$verificationLink" style="background:#3c8e85;color:white;font-family:Noto Sans;font-size:13px;font-weight:normal;line-height:120%;Margin:0;text-decoration:none;text-transform:none;" target="_blank">
-           |              Reset Password
-           |            </a>
-           |        </td>
-           |      </tr>
-           |    </table>
-           |  </td>
-           |</tr>
-           |<tr>
-           |  <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-           |    <div style="font-family:Noto Sans;font-size:10px;line-height:1;text-align:center;color:grey;">
-           |      Or copy this URL and visit the page in your browser:<br/><br/> $verificationLink
-           |    </div>
-           |  </td>
-           |</tr>
-           |
-           |<tr>
-           |  <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-           |    <div style="font-family:Noto Sans;font-size:14px;line-height:1;text-align:center;color:grey;">
-           |      If you did not request this, then your account has been used by someone else.<br />
-           |      Log in and change the password yourself to ensure that this other person can no longer access your account.<br />
-           |    </div>
-           |  </td>
-           |</tr>
-     """.stripMargin
-      )
-    }
-  }
-
-  case class ResetPasswordMail(userParam: User, token: String, environment: play.Environment, config: Configuration)
-      extends MailTemplate {
-    override def subject = "Password Verification - The MPI Bioinformatics Toolkit"
-
-    val user: User = userParam
+    val resetPasswordLink = s"$origin/reset-password/${user.getUserData.nameLogin}/$token"
 
     val bodyText: String = {
       s"""Dear ${user.getUserData.nameLogin},
          |you requested to reset your password and set a new one.
          |To complete the process, visit
-         |$origin/verification/${user.getUserData.nameLogin}/$token
+         |$resetPasswordLink
          |If you did not request this, then someone may have tried to log into your account.
          |Your Toolkit Team
      """.stripMargin
     }
 
     val bodyHtml: String = {
-      val verificationLink = s"$origin/verification/${user.getUserData.nameLogin}/$token"
       super.bodyHtmlTemplate(
         subject,
         s"""<tr>
@@ -486,7 +421,7 @@ object MailTemplate {
            |    <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%;">
            |      <tr>
            |        <td align="center" bgcolor="#3c8e85" role="presentation" style="border:none;border-radius:3px;color:white;cursor:auto;padding:10px 25px;" valign="middle">
-           |           <a href="$verificationLink" style="background:#3c8e85;color:white;font-family:Noto Sans;font-size:13px;font-weight:normal;line-height:120%;Margin:0;text-decoration:none;text-transform:none;" target="_blank">
+           |           <a href="$resetPasswordLink" style="background:#3c8e85;color:white;font-family:Noto Sans;font-size:13px;font-weight:normal;line-height:120%;Margin:0;text-decoration:none;text-transform:none;" target="_blank">
            |              Reset Password
            |            </a>
            |        </td>
@@ -497,7 +432,7 @@ object MailTemplate {
            |<tr>
            |  <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
            |    <div style="font-family:Noto Sans;font-size:10px;line-height:1;text-align:center;color:grey;">
-           |      Or copy this URL and visit the page in your browser:<br/><br/> $verificationLink
+           |      Or copy this URL and visit the page in your browser:<br/><br/> $resetPasswordLink
            |    </div>
            |  </td>
            |</tr>
@@ -515,8 +450,7 @@ object MailTemplate {
     }
   }
 
-  case class PasswordChangedMail(userParam: User, environment: play.Environment, config: Configuration)
-      extends MailTemplate {
+  case class PasswordChangedMail(userParam: User, config: Configuration) extends MailTemplate {
     override def subject = "Password Changed - The MPI Bioinformatics Toolkit"
 
     val user: User = userParam
@@ -536,7 +470,7 @@ object MailTemplate {
            |  <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
            |    <div style="font-family:Noto Sans;font-size:14px;line-height:1;text-align:center;color:grey;">
            |      Dear ${user.getUserData.nameLogin},<br/><br/>
-           |      your password was successfully reset.<br/>
+           |      your password was reset successfully.<br/>
            |      You can change it at any time in your user profile.<br/><br/>
            |      If you did not request this, then someone else may have changed your password.<br/>
            |    </div>
@@ -551,7 +485,6 @@ object MailTemplate {
       userParam: User,
       jobId: String,
       jobState: JobState,
-      environment: play.Environment,
       config: Configuration
   ) extends MailTemplate {
     override def subject: String = s"""Job $jobId finished running - The MPI Bioinformatics Toolkit""".stripMargin
@@ -612,22 +545,19 @@ object MailTemplate {
     }
   }
 
-  case class OldAccountEmail(userParam: User, deletionDate: ZonedDateTime, environment: play.Environment, config: Configuration) extends MailTemplate {
+  case class OldAccountEmail(userParam: User, daysUntilDeletion: Int, config: Configuration)
+      extends MailTemplate {
     override def subject = "Old Account - The MPI Bioinformatics Toolkit"
 
     val user: User = userParam
 
     val bodyText: String = {
       s"""Dear ${user.getUserData.nameLogin},
-         |we have noticed, that you have not logged in since ${user.dateLastLogin
-           .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
-           .getOrElse("[date not supplied]")}.
+         |we have noticed, that you have not logged in since ${user.dateLastLogin.format(ZonedDateTimeHelper.dateTimeFormatter)}.
          |To keep our system running smoothly and to keep the data we collect from our users to a minimum,
          |we delete old user accounts.
-         |This is why Your account will be deleted on ${user.dateLastLogin
-           .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
-           .getOrElse("[date not supplied]")}.
-         |Just log into Your account to let us know that You are still interested in our services.
+         |This is why your account will be deleted in $daysUntilDeletion days.
+         |If you wish to continue using our services, log in before the specified date to let us know that you are still interested in our services.
          |
        |Your Toolkit Team
          |
@@ -643,15 +573,10 @@ object MailTemplate {
            |    <div style="font-family:Noto Sans;font-size:14px;line-height:1;text-align:center;color:grey;">
            |      Dear ${user.getUserData.nameLogin},<br/><br/>
            |      we have noticed, that you have not logged in since
-           |      ${user.dateLastLogin
-             .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
-             .getOrElse("[date not supplied]")}.<br/><br/>
+           |      ${user.dateLastLogin.format(ZonedDateTimeHelper.dateTimeFormatter)}.<br/><br/>
            |      To keep our system running smoothly and to keep the data we collect from our users to a minimum,
            |      we remove unused user accounts.<br/><br/>
-           |      This is why your account will be deleted on<br />
-           |      ${user.dateLastLogin
-             .map(_.format(ZonedDateTimeHelper.dateTimeFormatter))
-             .getOrElse("[date not supplied]")}.<br/><br/>
+           |      This is why your account will be deleted in <b>$daysUntilDeletion</b> days.<br/><br/>
            |      If you wish to continue using our services, log in before the specified date to let us know that you are still interested in our services.
            |    </div>
            |  </td>

@@ -31,14 +31,15 @@ case class UserData(
 
 object UserData {
 
-  final val NAME_LOGIN   = "nameLogin"
-  final val PASSWORD    = "password"
-  final val PASSWORD_OLD = "passwordOld"
-  final val EMAIL       = "eMail"
-  final val PASSWORD_NEW = "passwordNew"
-  final val NAME_FIRST   = "nameFirst"
-  final val NAME_LAST    = "nameLast"
-  final val COUNTRY     = "country"
+  final val NAME_LOGIN        = "nameLogin"
+  final val PASSWORD          = "password"
+  final val PASSWORD_OLD      = "passwordOld"
+  final val EMAIL             = "eMail"
+  final val PASSWORD_NEW      = "passwordNew"
+  final val NAME_FIRST        = "nameFirst"
+  final val NAME_LAST         = "nameLast"
+  final val COUNTRY           = "country"
+  final val EMAIL_OR_USERNAME = "eMailOrUsername"
 
   implicit val userDataEncoder: Encoder[UserData] = deriveEncoder[UserData]
 

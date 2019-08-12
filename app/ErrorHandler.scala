@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import controllers.AssetsFinder
 import de.proteinevolution.base.helpers.ToolkitTypes
 import javax.inject.{ Inject, Singleton }
 import play.api.http.HttpErrorHandler
@@ -24,10 +23,10 @@ import play.api.mvc._
 import scala.concurrent._
 
 @Singleton
-final class ErrorHandler @Inject()(assets: AssetsFinder) extends HttpErrorHandler with ToolkitTypes {
+final class ErrorHandler @Inject()() extends HttpErrorHandler with ToolkitTypes {
 
   def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
-    fuccess(Status(statusCode)(views.html.errors.pagenotfound(assets)))
+    fuccess(Status(statusCode)("Not Found"))
   }
 
   def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {

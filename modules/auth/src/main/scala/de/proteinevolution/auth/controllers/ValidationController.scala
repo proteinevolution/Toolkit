@@ -15,53 +15,47 @@
  */
 
 package de.proteinevolution.auth.controllers
-
-import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.auth.dao.UserDao
+import de.proteinevolution.auth.services.UserSessionService
+import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.common.models.ConstantsV2
-import de.proteinevolution.user.{ User, UserConfig }
 import io.circe.syntax._
 import io.circe.{ Json, JsonObject }
 import javax.inject.{ Inject, Singleton }
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
-import reactivemongo.bson.BSONDocument
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ValidationController @Inject()(userSessions: UserSessions, constants: ConstantsV2, cc: ControllerComponents)(
+class ValidationController @Inject()(
+    userSessions: UserSessionService,
+    userDao: UserDao,
+    constants: ConstantsV2,
+    cc: ControllerComponents,
+    userAction: UserAction
+)(
     implicit ec: ExecutionContext
 ) extends ToolkitController(cc) {
 
   final private[this] def isValid(v: Boolean): Json = JsonObject("isValid" -> Json.fromBoolean(v)).asJson
 
-  def validateModellerKey(inputOpt: Option[String]): Action[AnyContent] = Action.async { implicit request =>
+  def validateModellerKey(inputOpt: Option[String]): Action[AnyContent] = userAction.async { implicit request =>
     inputOpt match {
       case Some(input) =>
-        userSessions.getUser.flatMap { user =>
-          if (user.userConfig.hasMODELLERKey) {
-            fuccess(Ok(isValid(true)))
-          } else if (input == constants.modellerKey) {
-            userSessions
-              .modifyUserWithCache(
-                BSONDocument(User.ID -> user.userID),
-                BSONDocument(
-                  "$set" ->
-                  BSONDocument(
-                    s"${User.USER_CONFIG}.${UserConfig.HASMODELLERKEY}" ->
-                    true
-                  )
-                )
-              )
-              .map {
-                case Some(_) =>
-                  Ok(isValid(true))
-                case None =>
-                  BadRequest
-              }
-          } else {
-            fuccess(Ok(isValid(false)))
+        val user = request.user
+        if (user.userConfig.hasMODELLERKey) {
+          fuccess(Ok(isValid(true)))
+        } else if (input == constants.modellerKey) {
+          userDao.updateUserConfig(user.userID, user.userConfig.copy(hasMODELLERKey = true)).map {
+            case Some(updatedUser) =>
+              userSessions.updateUserInCache(updatedUser)
+              Ok(isValid(true))
+            case None =>
+              BadRequest
           }
+        } else {
+          fuccess(Ok(isValid(false)))
         }
       case None =>
         fuccess(BadRequest)

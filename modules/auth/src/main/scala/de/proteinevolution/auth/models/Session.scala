@@ -20,4 +20,6 @@ object Session {
 
   case class ChangeSessionID(sessionID: String)
 
+  case class LogOut()
+
 }

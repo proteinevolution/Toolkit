@@ -16,9 +16,7 @@
 
 package de.proteinevolution.auth.models
 
-import java.time.ZonedDateTime
-
-import de.proteinevolution.user.{ User, UserData }
+import de.proteinevolution.user.{User, UserData, UserToken}
 import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Form
 import play.api.data.Forms._
@@ -37,15 +35,14 @@ object FormDefinitions {
    */
   def signUp(user: User) = Form(
     mapping(
-      UserData.NAME_LOGIN -> text(6, 40).verifying(pattern(textRegex, error = "error.NameLogin")) ,
-      UserData.PASSWORD  -> text(8, 128).verifying(pattern(textRegex, error = "error.Password")) ,
+      UserData.NAME_LOGIN -> text(6, 40).verifying(pattern(textRegex, error = "error.NameLogin")),
+      UserData.PASSWORD  -> text(8, 128).verifying(pattern(textRegex, error = "error.Password")),
       UserData.EMAIL     -> email,
       User.ACCEPTED_TOS   -> boolean,
       User.DATE_LAST_LOGIN -> optional(longNumber),
       User.DATE_CREATED   -> optional(longNumber),
       User.DATE_UPDATED   -> optional(longNumber)
     ) { (nameLogin, password, eMail, acceptToS, _, _, _) =>
-      import de.proteinevolution.user.UserData
       User(
         userID = user.userID,
         sessionID = user.sessionID,
@@ -55,10 +52,7 @@ object FormDefinitions {
         userData = Some(
           UserData(nameLogin = nameLogin, password = BCrypt.hashpw(password, BCrypt.gensalt(LOG_ROUNDS)), eMail = eMail)
         ),
-        jobs = user.jobs,
-        dateLastLogin = Some(ZonedDateTime.now),
-        dateCreated = Some(ZonedDateTime.now),
-        dateUpdated = Some(ZonedDateTime.now)
+        jobs = user.jobs
       )
     } { _ =>
       None
@@ -126,8 +120,8 @@ object FormDefinitions {
     }
   )
 
-  def forgottenPasswordEdit = Form(
-    mapping(UserData.EMAIL -> email) {
+  def forgottenPasswordRequest = Form(
+    mapping(UserData.EMAIL_OR_USERNAME -> nonEmptyText.verifying(pattern(textRegex))) {
       Some(_)
     } { _ =>
       None
@@ -135,9 +129,13 @@ object FormDefinitions {
   )
 
   def forgottenPasswordChange = Form(
-    mapping(UserData.PASSWORD_NEW -> text(8, 128).verifying(pattern(textRegex, error = "error.NewPassword"))) {
-      passwordNew =>
-        BCrypt.hashpw(passwordNew, BCrypt.gensalt(LOG_ROUNDS))
+    mapping(
+      UserData.PASSWORD_NEW -> text(8, 128).verifying(pattern(textRegex, error = "error.NewPassword")),
+      UserData.NAME_LOGIN -> text(6, 40),
+      UserToken.TOKEN -> text(15, 15)
+    ) {
+      (passwordNew, nameLogin, token) =>
+        (BCrypt.hashpw(passwordNew, BCrypt.gensalt(LOG_ROUNDS)), nameLogin, token)
     } { _ =>
       None
     }

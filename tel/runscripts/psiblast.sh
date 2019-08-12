@@ -6,16 +6,16 @@ INPUT="query"
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 
-if [ ${CHAR_COUNT} -gt "10000000" ] ; then
+if [[ ${CHAR_COUNT} -gt "10000000" ]] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
       false
 fi
 
-if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
+if [[ ${SEQ_COUNT} = "0" ]] && [[ ${FORMAT} = "0" ]] ; then
       sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
       CHAR_COUNT=$(wc -m < ../params/alignment1)
 
-      if [ ${CHAR_COUNT} -gt "10000" ] ; then
+      if [[ ${CHAR_COUNT} -gt "10000" ]] ; then
             echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
             false
       else
@@ -24,7 +24,7 @@ if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
       fi
 fi
 
-if [ ${FORMAT} = "1" ] ; then
+if [[ ${FORMAT} = "1" ]] ; then
       reformatValidator.pl clu fas \
             $(readlink -f %alignment.path) \
             $(readlink -f ../results/${JOBID}.fas) \
@@ -36,36 +36,36 @@ else
             -d 160 -uc -l 32000
 fi
 
-if [ ! -f ../results/${JOBID}.fas ]; then
+if [[ ! -f ../results/${JOBID}.fas ]]; then
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
     false
 fi
 
 SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
 
-if [ ${SEQ_COUNT} -gt "5000" ] ; then
+if [[ ${SEQ_COUNT} -gt "5000" ]] ; then
       echo "#Input contains more than 5000 sequences." >> ../results/process.log
       false
 fi
 
-if [ ${SEQ_COUNT} -gt "1" ] ; then
+if [[ ${SEQ_COUNT} -gt "1" ]] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
 fi
 echo "done" >> ../results/process.log
 
-if [ ${SEQ_COUNT} -gt 1 ] ; then
+if [[ ${SEQ_COUNT} -gt 1 ]] ; then
     INPUT="in_msa"
 fi
 
-if [ "%matrix.content" = "BLOSUM80" ] || [ "%matrix.content" = "PAM70" ] ; then
+if [[ "%matrix.content" = "BLOSUM80" ]] || [[ "%matrix.content" = "PAM70" ]] ; then
     GAPOPEN=10
 fi
-if [ "%matrix.content" = "PAM30" ] ; then
+if [[ "%matrix.content" = "PAM30" ]] ; then
     GAPOPEN=9
 fi
-if [ "%matrix.content" = "BLOSUM45" ] ; then
+if [[ "%matrix.content" = "BLOSUM45" ]] ; then
     GAPOPEN=15
     GAPEXT=2
 fi
@@ -75,12 +75,21 @@ sed -n '1p' ../results/${JOBID}.fas | cut -c -25 > ../results/firstSeq0.fas
 sed -n '2p' ../results/${JOBID}.fas >> ../results/firstSeq0.fas
 sed 's/[\.\-]//g' ../results/firstSeq0.fas > ../results/firstSeq.fas
 
+echo "#Predicting sequence features." >> ../results/process.log
+
 TMPRED=`tmhmm ../results/firstSeq.fas -short`
 
 run_Coils -c -min_P 0.8 < ../results/firstSeq.fas >& ../results/firstSeq.cc
 COILPRED=$(egrep ' 0 in coil' ../results/firstSeq.cc | wc -l)
 
+# Run SignalP; since the source organism is unknown, check all four cases
+${BIOPROGS}/tools/signalp/bin/signalp -org 'euk' -format 'short' -fasta ../results/firstSeq.fas -prefix "../results/${JOBID}_euk" -tmp '../results/'
+${BIOPROGS}/tools/signalp/bin/signalp -org 'gram+' -format 'short' -fasta ../results/firstSeq.fas -prefix "../results/${JOBID}_gramp" -tmp '../results/'
+${BIOPROGS}/tools/signalp/bin/signalp -org 'gram-' -format 'short' -fasta ../results/firstSeq.fas -prefix "../results/${JOBID}_gramn" -tmp '../results/'
+${BIOPROGS}/tools/signalp/bin/signalp -org 'arch' -format 'short' -fasta ../results/firstSeq.fas -prefix "../results/${JOBID}_arch" -tmp '../results/'
+
 rm ../results/firstSeq.cc
+echo "done" >> ../results/process.log
 
 echo "#Running PSI-BLAST against the %standarddb.content DB." >> ../results/process.log
 
@@ -97,8 +106,6 @@ psiblast -db %STANDARD/%standarddb.content \
          -out ../results/output_psiblastp.asn \
          -outfmt 11 \
          -max_hsps 1
-
-echo "done" >> ../results/process.log
 
 echo "#Preparing output." >> ../results/process.log
 
@@ -130,7 +137,7 @@ rm ../results/firstSeq0.fas
 
 # create HTML and PNG for blastviz visualisation
 blastJson2tab.py ../results/output_psiblastp.json ../results/output_psiblastp.tab
-blastviz_json.pl ../results/output_psiblastp.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
+blastviz.pl ../results/output_psiblastp.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
 
 # Generate Query in JSON
 fasta2json.py ../results/firstSeq.fas ../results/query.json
@@ -143,13 +150,23 @@ manipulate_json.py -k 'db' -v '%standarddb.content' ../results/output_psiblastp.
 manipulate_json.py -k 'evalue' -v '%blast_incl_eval.content' ../results/output_psiblastp.json
 
 # add transmembrane prediction info to json
-manipulate_json.py -k 'TMPRED' -v "${TMPRED}" ../results/output_psiblastp.json
+manipulate_json.py -k 'tmpred' -v "${TMPRED}" ../results/output_psiblastp.json
 
 # add coiled coil prediction info to json
-manipulate_json.py -k 'COILPRED' -v "${COILPRED}" ../results/output_psiblastp.json
+manipulate_json.py -k 'coilpred' -v "${COILPRED}" ../results/output_psiblastp.json
+
+# Write results of signal peptide prediction
+SIGNALP=$(grep 'SP(Sec/SPI)' ../results/*.signalp5 | wc -l)
+if [[ ${SIGNALP} -gt "4" ]]; then
+    manipulate_json.py -k 'signal' -v "1" ../results/output_psiblastp.json
+else
+    manipulate_json.py -k 'signal' -v "0" ../results/output_psiblastp.json
+fi
+
+# Create a JSON with -log10(E-values) of the hits
+extract_from_json.py -tool psiblast ../results/output_psiblastp.json ../results/plot_data.json
 
 cd ../results
-
-rm output_psiblastp.asn output_psiblastp.tab
+rm output_psiblastp.asn output_psiblastp.tab *.signalp5
 
 echo "done" >> ../results/process.log

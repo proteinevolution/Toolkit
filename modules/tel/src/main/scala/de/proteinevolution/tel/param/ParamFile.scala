@@ -26,8 +26,8 @@ import play.api.Configuration
 import scala.collection.immutable.ListMap
 
 /**
-  Provides methods to read Generative Params from a file
- */
+  * Provides methods to read Generative Params from a file
+  */
 @Singleton
 class GenerativeParamFileParser @Inject()(config: Configuration) {
 
@@ -48,10 +48,10 @@ class GenerativeParamFileParser @Inject()(config: Configuration) {
         s"${f.parent.pathAsString}/${spt(2)}"
       }
       (spt(1), spt(2).substring(spt(2).lastIndexOf('.'))) match {
-        case (this.genKeyword, ".sh")   => new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
-        case (this.genKeyword, ".py")   => new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
+        case (this.genKeyword, ".sh") => new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
+        case (this.genKeyword, ".py") => new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
         case (this.genKeyword, ".prop") => new ListGenParamFile(spt(0), paramPath).withEnvironment(env)
-        case _                          => throw new IllegalStateException("no valid paramfile extension found. Must be .sh, .py, or .prop")
+        case _ => throw new IllegalStateException("no valid paramfile extension found. Must be .sh, .py, or .prop")
       }
     }
   }
@@ -67,9 +67,10 @@ abstract class GenerativeParamFile(name: String) extends GenerativeParam(name) {
 }
 
 class ExecGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String])
-    extends GenerativeParamFile(name) {
+  extends GenerativeParamFile(name) {
 
   private var env: Option[Map[String, String]] = None
+
   import scala.sys.process.Process
 
   def withEnvironment(env: Map[String, String]): ExecGenParamFile = {
@@ -108,11 +109,12 @@ class ExecGenParamFile(name: String, path: String, private var allowed: Set[Stri
       spt(0)
     }.toSet
   }
+
   def generate: ListMap[String, String] = this.clearTextNames
 }
 
 class ListGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String])
-    extends GenerativeParamFile(name) {
+  extends GenerativeParamFile(name) {
 
   private val f = path.toFile
 

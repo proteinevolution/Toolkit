@@ -16,69 +16,80 @@
 
 package de.proteinevolution.jobs.controllers
 
-import java.time.ZonedDateTime
-
-import cats.data.OptionT
+import better.files._
 import cats.implicits._
-import de.proteinevolution.auth.UserSessions
+import de.proteinevolution.auth.services.UserSessionService
+import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.JobHashError
-import de.proteinevolution.jobs.services.{JobFolderValidation, JobHashCheckService}
-import de.proteinevolution.tools.ToolConfig
+import de.proteinevolution.jobs.services.{ JobFolderValidation, JobHashCheckService }
+import de.proteinevolution.tools.{ Tool, ToolConfig }
 import io.circe.syntax._
-import io.circe.{Json, JsonObject}
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import io.circe.{ Json, JsonObject }
+import javax.inject.{ Inject, Singleton }
+import play.api.mvc.{ Action, AnyContent, ControllerComponents }
+import play.api.{ Configuration, Logging }
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class JobGetController @Inject()(
     jobHashService: JobHashCheckService,
-    userSessions: UserSessions,
+    userSessions: UserSessionService,
     jobDao: JobDao,
     cc: ControllerComponents,
     toolConfig: ToolConfig,
-    constants: ConstantsV2
+    constants: ConstantsV2,
+    userAction: UserAction
 )(implicit ec: ExecutionContext, config: Configuration)
     extends ToolkitController(cc)
-    with JobFolderValidation {
+    with JobFolderValidation
+    with Logging {
 
-  def jobManagerListJobs: Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      jobDao.findJobsByOwner(user.userID).map {
-        jobs =>
-          NoCache(Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.jobManagerJob()).asJson))
-      }
+  def getAllJobs: Action[AnyContent] = userAction.async { implicit request =>
+    jobDao.findJobsByOwnerOrPublicWatched(request.user.userID, request.user.jobs).map { jobs =>
+      Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.jsonPrepare(toolConfig, request.user)).asJson)
     }
   }
 
-  def listJobs: Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { user =>
-      jobDao.findJobsByIds(user.jobs).map { jobs =>
-        Ok(jobs.filter(job => jobFolderIsValid(job.jobID, constants)).map(_.cleaned(toolConfig)).asJson)
-      }
+  def suggestJobsForQuery(queryString: String): Action[AnyContent] = userAction.async { implicit request =>
+    val user = request.user
+    val tools: List[Tool] = toolConfig.values.values
+      .filter(t => queryString.toLowerCase.r.findFirstIn(t.toolNameLong.toLowerCase()).isDefined)
+      .filterNot(_.toolNameShort == "hhpred_manual")
+      .toList
+
+    jobDao.findJobsByAutocomplete(user.userID, user.jobs, queryString, tools.map(_.toolNameShort)).map { jobs =>
+      Ok(jobs.map(_.jsonPrepare(toolConfig, request.user)).asJson)
     }
   }
 
-  def loadJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.flatMap { _ =>
-      jobDao.findJob(jobID).map {
-        case Some(job) if jobFolderIsValid(job.jobID, constants) => Ok(job.cleaned(toolConfig).asJson)
-        case _                                                   => NotFound
-      }
+  def loadJob(jobID: String): Action[AnyContent] = userAction.async { implicit request =>
+    jobDao.findJob(jobID).map {
+      case Some(job) if jobFolderIsValid(job.jobID, constants) =>
+        if (job.isPublic || job.ownerID.equals(request.user.userID)) {
+          val paramValues: Map[String, String] = {
+            if (paramsExist(jobID, constants)) {
+              (constants.jobPath / jobID / "sparam").readDeserialized[Map[String, String]]()
+            } else {
+              Map.empty[String, String]
+            }
+          }
+          Ok(job.jsonPrepare(toolConfig, request.user, Some(paramValues)).asJson)
+        } else {
+          Unauthorized
+        }
+      case _ => NotFound
     }
   }
 
-  def checkHash(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+  def checkHash(jobID: String): Action[AnyContent] = userAction.async { implicit request =>
     (for {
-      _   <- OptionT.liftF(userSessions.getUser)
       job <- jobHashService.checkHash(jobID)
     } yield {
-      (job.jobID, job.dateCreated.getOrElse(ZonedDateTime.now).toInstant.toEpochMilli)
+      (job.jobID, job.dateCreated.toInstant.toEpochMilli)
     }).value.map {
       case Some((latestJobId, dateCreated)) =>
         Ok(JsonObject("jobID" -> Json.fromString(latestJobId), "dateCreated" -> Json.fromLong(dateCreated)).asJson)

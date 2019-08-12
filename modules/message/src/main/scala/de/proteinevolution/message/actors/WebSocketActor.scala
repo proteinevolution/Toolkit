@@ -24,8 +24,8 @@ import akka.event.LoggingReceive
 import akka.pattern.ask
 import akka.util.Timeout
 import com.google.inject.assistedinject.Assisted
-import de.proteinevolution.auth.UserSessions
-import de.proteinevolution.auth.models.Session.ChangeSessionID
+import de.proteinevolution.auth.models.Session.{ ChangeSessionID, LogOut }
+import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.cluster.ClusterSubscriber.UpdateLoad
 import de.proteinevolution.cluster.api.SGELoad
 import de.proteinevolution.common.models.ConstantsV2
@@ -33,7 +33,7 @@ import de.proteinevolution.common.models.database.jobs.JobState.Running
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.models.Job
 import de.proteinevolution.jobs.services.JobActorAccess
-import de.proteinevolution.message.actors.WebSocketActor.{ LogOut, MaintenanceAlert }
+import de.proteinevolution.message.actors.WebSocketActor.MaintenanceAlert
 import de.proteinevolution.tools.ToolConfig
 import io.circe.syntax._
 import io.circe.{ Json, JsonObject }
@@ -47,7 +47,7 @@ import scala.concurrent.duration._
 final class WebSocketActor @Inject()(
     @Assisted("out") out: ActorRef,
     jobActorAccess: JobActorAccess,
-    userSessions: UserSessions,
+    userSessions: UserSessionService,
     constants: ConstantsV2,
     @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
     @Assisted("sessionID") sessionID: String,
@@ -61,7 +61,7 @@ final class WebSocketActor @Inject()(
 
   override def preStart(): Unit = {
     context.system.eventStream.subscribe(self, classOf[UpdateLoad])
-    userSessions.getUser(sessionID).foreach {
+    userSessions.getUserBySessionID(sessionID).foreach {
       case Some(user) =>
         wsActorCache.get[List[ActorRef]](user.userID) match {
           case Some(wsActors) =>
@@ -84,7 +84,7 @@ final class WebSocketActor @Inject()(
 
   override def postStop(): Unit = {
     userSessions
-      .getUser(sessionID)
+      .getUserBySessionID(sessionID)
       .map(_.foreach { user =>
         wsActorCache.get[List[ActorRef]](user.userID).foreach { wsActors =>
           val actorSet: List[ActorRef] = wsActors: List[ActorRef]
@@ -99,24 +99,20 @@ final class WebSocketActor @Inject()(
   private def active(sid: String): Receive = {
 
     case json: Json =>
-      userSessions.getUser(sid).foreach {
+      userSessions.getUserBySessionID(sid).foreach {
         case Some(user) =>
           json.hcursor.get[String]("type").toOption.foreach {
 
-            // Message containing a List of Jobs the user wants to register for the job list
-            case "RegisterJobs" =>
-              json.hcursor.get[List[String]]("jobIDs").map { jobIDs =>
-                jobIDs.foreach { jobID =>
-                  jobActorAccess.sendToJobActor(jobID, AddToWatchlist(jobID, user.userID))
-                }
-              }
-
-            // Request to remove a Job from the user's Joblist
-            case "ClearJob" =>
-              json.hcursor.get[List[String]]("jobIDs").map { jobIDs =>
-                jobIDs.foreach { jobID =>
-                  jobActorAccess.sendToJobActor(jobID, RemoveFromWatchlist(jobID, user.userID))
-                }
+            case "SET_JOB_WATCHED" =>
+              for {
+                jobID   <- json.hcursor.get[String]("jobID")
+                watched <- json.hcursor.get[Boolean]("watched")
+              } yield {
+                jobActorAccess.sendToJobActor(
+                  jobID,
+                  if (watched) AddToWatchlist(jobID, user.userID)
+                  else RemoveFromWatchlist(jobID, user.userID)
+                )
               }
 
             // Received a ping, so we return a pong
@@ -132,21 +128,38 @@ final class WebSocketActor @Inject()(
                 val ping = ZonedDateTime.now.toInstant.toEpochMilli - msTime
                 log.info(s"[WSActor] Ping of session $sid is ${ping}ms.")
               }
+
+            case other: String =>
+              log.warning(s"[WSActor] No action for $other.")
           }
         case None =>
           self ! PoisonPill
       }
 
     case PushJob(job: Job) =>
-      out ! JsonObject("type" -> Json.fromString("PushJob"), "job" -> job.cleaned(toolConfig).asJson).asJson
-
-    case ShowNotification(notificationType: String, tag: String, title: String, body: String) =>
+      userSessions.getUserBySessionID(sid).foreach {
+        case Some(user) =>
+          out ! JsonObject(
+            "namespace" -> Json.fromString("jobs"),
+            "mutation"  -> Json.fromString("SOCKET_UpdateJob"),
+            "job"       -> job.jsonPrepare(toolConfig, user).asJson
+          ).asJson
+        case None =>
+          self ! PoisonPill
+      }
+    case ShowNotification(title: String, body: String) =>
       out ! JsonObject(
-        "type"             -> Json.fromString("ShowNotification"),
-        "tag"              -> Json.fromString(tag),
-        "title"            -> Json.fromString(title),
-        "body"             -> Json.fromString(body),
-        "notificationType" -> Json.fromString(notificationType)
+        "mutation" -> Json.fromString("SOCKET_ShowNotification"),
+        "title"    -> Json.fromString(title),
+        "body"     -> Json.fromString(body)
+      ).asJson
+
+    case ShowJobNotification(jobID: String, title: String, body: String) =>
+      out ! JsonObject(
+        "mutation" -> Json.fromString("SOCKET_ShowJobNotification"),
+        "jobID"    -> Json.fromString(jobID),
+        "title"    -> Json.fromString(title),
+        "body"     -> Json.fromString(body)
       ).asJson
 
     case UpdateLog(jobID: String) =>
@@ -164,9 +177,9 @@ final class WebSocketActor @Inject()(
           val lines  = source.mkString
           // val lines = File(file).lineIterator.mkString // use buffered source since it behaves differently
           out ! JsonObject(
-            "type"  -> Json.fromString("WatchLogFile"),
-            "jobID" -> Json.fromString(job.jobID),
-            "lines" -> Json.fromString(lines)
+            "mutation" -> Json.fromString("SOCKET_WatchLogFile"),
+            "jobID"    -> Json.fromString(job.jobID),
+            "lines"    -> Json.fromString(lines)
           ).asJson
           source.close()
         }
@@ -174,25 +187,30 @@ final class WebSocketActor @Inject()(
 
     case UpdateLoad(load: Double) =>
       out ! JsonObject(
-        "type" -> Json.fromString("UpdateLoad"),
-        "load" -> Json.fromDoubleOrNull(load)
+        "mutation" -> Json.fromString("SOCKET_UpdateLoad"),
+        "load"     -> Json.fromDoubleOrNull(load)
       ).asJson
 
     case ClearJob(jobID: String, deleted: Boolean) =>
       out ! JsonObject(
-        "type"    -> Json.fromString("ClearJob"),
-        "jobID"   -> Json.fromString(jobID),
-        "deleted" -> Json.fromBoolean(deleted)
+        "namespace" -> Json.fromString("jobs"),
+        "mutation"  -> Json.fromString("SOCKET_ClearJob"),
+        "jobID"     -> Json.fromString(jobID),
+        "deleted"   -> Json.fromBoolean(deleted)
       ).asJson
 
     case ChangeSessionID(newSid: String) =>
       context.become(active(newSid))
+      out ! JsonObject("mutation" -> Json.fromString("SOCKET_Login")).asJson
 
-    case LogOut =>
-      out ! JsonObject("type" -> Json.fromString("LogOut")).asJson
+    case LogOut() =>
+      out ! JsonObject("mutation" -> Json.fromString("SOCKET_Logout")).asJson
 
-    case MaintenanceAlert =>
-      out ! JsonObject("type" -> Json.fromString("MaintenanceAlert")).asJson
+    case MaintenanceAlert(maintenanceMode) =>
+      out ! JsonObject(
+        "mutation"        -> Json.fromString("SOCKET_MaintenanceAlert"),
+        "maintenanceMode" -> Json.fromBoolean(maintenanceMode)
+      ).asJson
   }
 
   override def receive = LoggingReceive {
@@ -202,8 +220,7 @@ final class WebSocketActor @Inject()(
 
 object WebSocketActor {
 
-  case object LogOut
-  case object MaintenanceAlert
+  case class MaintenanceAlert(maintenanceMode: Boolean)
 
   trait Factory {
     def apply(@Assisted("sessionID") sessionID: String, @Assisted("out") out: ActorRef): Actor

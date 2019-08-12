@@ -51,52 +51,75 @@ class JobDao @Inject()(
   final def findJob(id: String): Future[Option[Job]] =
     jobCollection.flatMap(_.find(BSONDocument(Job.ID -> id), None).one[Job])
 
-  private def internalFindJobs(selector: BSONDocument): Future[List[Job]] = {
+  private def internalFindJobs(selector: BSONDocument): Future[List[Job]] =
     jobCollection
       .map(_.find(selector, None).cursor[Job]())
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
-  }
-
-  def findJobsByIdLike(id: String): Future[List[Job]] =
-    internalFindJobs(
-      BSONDocument(
-        Job.ID -> BSONDocument("$regex" -> s"$id(${constants.jobIDVersioningCharacter}[0-9]{1,3})?")
-      )
-    )
 
   def findJobsByHash(hash: Option[String]): Future[List[Job]] =
     internalFindJobs(BSONDocument(Job.HASH -> hash))
 
-  def findJobsByIds(jobs: List[String]): Future[List[Job]] =
-    internalFindJobs(BSONDocument(Job.ID -> BSONDocument("$in" -> jobs)))
-
-  def findJobsByOwner(userID: String): Future[List[Job]] =
-    internalFindJobs(BSONDocument(Job.OWNER_ID -> userID, Job.DATE_DELETED -> BSONDocument("$exists" -> false)))
-
-  def findJobsByOwnerAndTools(userID: String, toolNames: List[String]): Future[List[Job]] =
-    internalFindJobs(BSONDocument(Job.OWNER_ID -> userID, Job.TOOL -> BSONDocument("$in" -> toolNames)))
-
-  def findOldJobs(): Future[List[Job]] = {
-    // grab the current time
-    val now: ZonedDateTime = ZonedDateTime.now
-    // calculate the date at which the job should have been created at
-    val dateCreated: ZonedDateTime = now.minusDays(constants.jobDeletion.toLong)
-    // calculate the date at which it should have been viewed last
-    val lastViewedDate: ZonedDateTime = now.minusDays(constants.jobDeletionLastViewed.toLong)
+  def findJobsByOwnerOrPublicWatched(userID: String, jobs: List[String]): Future[List[Job]] =
     internalFindJobs(
       BSONDocument(
-        Job.DATE_VIEWED -> BSONDocument("$lt" -> BSONDateTime(lastViewedDate.toInstant.toEpochMilli)),
-        BSONDocument(
-          "$or" -> List(
+        "$or" -> List(
+          BSONDocument(
+            Job.ID        -> BSONDocument("$in" -> jobs),
+            Job.IS_PUBLIC -> true
+          ),
+          BSONDocument(Job.OWNER_ID -> userID)
+        )
+      )
+    )
+
+  /**
+   * This method gets all the jobs which satisfy one of the following criteria:
+   * 1. their tool matches the query string (only for owned jobs)
+   * 2. their id matches the query string (public and owned jobs)
+   *
+   * @param userID     requesting user
+   * @param jobs       jobs which are watched by the user
+   * @param jobIDQuery query string for job id
+   * @param toolNames  possible matches with tools
+   * @return
+   */
+  def findJobsByAutocomplete(
+      userID: String,
+      jobs: List[String],
+      jobIDQuery: String,
+      toolNames: List[String]
+  ): Future[List[Job]] =
+    internalFindJobs(
+      BSONDocument(
+        "$or" -> List(
+          BSONDocument(Job.OWNER_ID -> userID, Job.TOOL -> BSONDocument("$in" -> toolNames)),
+          BSONDocument(
+            Job.ID -> BSONDocument("$regex" -> s"$jobIDQuery.*"),
             BSONDocument(
-              Job.DATE_DELETED -> BSONDocument("$lt" -> BSONDateTime(now.toInstant.toEpochMilli))
-            ),
-            BSONDocument(
-              Job.DATE_DELETED -> BSONDocument("$exists" -> false),
-              Job.DATE_CREATED  -> BSONDocument("$lt"     -> BSONDateTime(dateCreated.toInstant.toEpochMilli))
+              "$or" -> List(
+                BSONDocument(Job.IS_PUBLIC -> true),
+                BSONDocument(Job.OWNER_ID  -> userID)
+              )
             )
           )
         )
+      )
+    )
+
+  /**
+   * Get all non-deleted jobs which have not been viewed for the last days and which are scheduled to be deleted
+   *
+   * @return
+   */
+  def findOldJobs(): Future[List[Job]] = {
+    // grab the current time
+    val now: ZonedDateTime = ZonedDateTime.now
+    // jobs must not be viewed in the last few days
+    val lastViewedDate: ZonedDateTime = now.minusDays(constants.jobDeletionLastViewed.toLong)
+    internalFindJobs(
+      BSONDocument(
+        Job.DATE_VIEWED      -> BSONDocument("$lt" -> BSONDateTime(lastViewedDate.toInstant.toEpochMilli)),
+        Job.DATE_DELETION_ON -> BSONDocument("$lt" -> BSONDateTime(now.toInstant.toEpochMilli))
       )
     )
   }
@@ -123,13 +146,10 @@ class JobDao @Inject()(
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
   }
 
-  final def findSortedJob(userId: String, sort: Int = -1): Future[Option[Job]] = {
+  final def findSortedJob(userID: String, sort: Int = -1): Future[Option[Job]] = {
     jobCollection.flatMap(
       _.find(
-        BSONDocument(
-          BSONDocument(Job.DATE_DELETED -> BSONDocument("$exists" -> false)),
-          BSONDocument(Job.OWNER_ID  -> userId)
-        ),
+        BSONDocument(Job.OWNER_ID -> userID),
         None
       ).sort(BSONDocument(Job.DATE_UPDATED -> sort)).one[Job]
     )
@@ -162,6 +182,9 @@ class JobDao @Inject()(
   def updateJobStatus(jobID: String, jobState: JobState): Future[Option[Job]] =
     modifyJob(BSONDocument(Job.ID -> jobID), BSONDocument("$set" -> BSONDocument(Job.STATUS -> jobState)))
 
+  def setJobPublic(jobID: String, isPublic: Boolean): Future[Option[Job]] =
+    modifyJob(BSONDocument(Job.ID -> jobID), BSONDocument("$set" -> BSONDocument(Job.IS_PUBLIC -> isPublic)))
+
   def updateSGEID(jobID: String, sgeID: String): Future[Option[Job]] =
     modifyJob(BSONDocument(Job.ID -> jobID), BSONDocument("$set" -> BSONDocument(Job.SGE_ID -> sgeID)))
 
@@ -172,7 +195,7 @@ class JobDao @Inject()(
   ): Future[Option[Job]] =
     modifyJob(
       BSONDocument(Job.ID -> jobID),
-      BSONDocument("$set"    -> BSONDocument(Job.CLUSTER_DATA -> clusterData, Job.HASH -> jobHash))
+      BSONDocument("$set" -> BSONDocument(Job.CLUSTER_DATA -> clusterData, Job.HASH -> jobHash))
     )
 
   def addUserToWatchList(jobID: String, userID: String): Future[Option[Job]] =

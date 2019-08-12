@@ -16,20 +16,19 @@
 
 package de.proteinevolution.tools
 
-import de.proteinevolution.params.Param
-import de.proteinevolution.tools.forms.ToolForm
+import de.proteinevolution.tools.forms.ToolFormSimple
+import de.proteinevolution.tools.parameters.ToolParameters
 
 case class Tool(
     toolNameShort: String,
     toolNameLong: String,
+    order: Int,
+    description: String,
     code: String,
-    category: String,
-    params: Map[String, Param],
-    toolForm: ToolForm,
-    paramGroups: Map[String, Seq[String]],
-    forwardAlignment: Seq[String],
-    forwardMultiSeq: Seq[String],
-    title: String
+    section: String,
+    toolParameterForm: ToolParameters,
+    resultViews: Seq[Map[String, String]],
+    toolFormSimple: ToolFormSimple
 ) {
 
   def isToolName(toolName: String, caseSensitive: Boolean = false): Boolean = {

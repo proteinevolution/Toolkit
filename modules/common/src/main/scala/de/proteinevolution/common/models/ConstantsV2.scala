@@ -48,7 +48,6 @@ class ConstantsV2 @Inject()(config: Configuration) {
   final val serializedParam: String = "sparam"
 
   final val formMultiValueSeparator: String = " "
-  final val breakAfterClustal: Int          = 85 // clustal format breaks after n chars
 
   // Job limitation settings
   final val maxJobNum: Int        = 100  // max number of jobs that can be submitted from one ip within maxJobsWithin

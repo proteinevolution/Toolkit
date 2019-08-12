@@ -23,33 +23,32 @@ import akka.actor._
 import akka.event.LoggingReceive
 import better.files._
 import com.google.inject.assistedinject.Assisted
-import de.proteinevolution.auth.UserSessions
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate.JobFinishedMail
+import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.cluster.api.Polling.PolledJobs
 import de.proteinevolution.cluster.api.SGELoad._
-import de.proteinevolution.cluster.api.{ QStat, Qdel }
+import de.proteinevolution.cluster.api.{QStat, Qdel}
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.common.models.database.jobs.JobState._
 import de.proteinevolution.common.models.database.jobs._
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.models.{ Job, JobClusterData }
-import de.proteinevolution.jobs.services.{ JobHasher, JobTerminator }
-import de.proteinevolution.statistics.{ JobEvent, JobEventLog }
+import de.proteinevolution.jobs.models.{Job, JobClusterData}
+import de.proteinevolution.jobs.services.{JobHasher, JobTerminator}
+import de.proteinevolution.statistics.{JobEvent, JobEventLog}
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
 import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecution
 import de.proteinevolution.tel.execution.{ExecutionContext, WrapperExecutionFactory}
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
-import de.proteinevolution.user.User
 import javax.inject.Inject
-import play.api.Configuration
 import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
-import reactivemongo.bson.{ BSONDateTime, BSONDocument }
+import play.api.Configuration
+import reactivemongo.bson.BSONDateTime
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -57,11 +56,10 @@ import scala.language.postfixOps
 
 class JobActor @Inject()(
     runscriptManager: RunscriptManager,
-    environment: play.Environment,
     hashService: JobHasher,
     jobDao: JobDao,
     userDao: UserDao,
-    userSessions: UserSessions,
+    userSessionService: UserSessionService,
     wrapperExecutionFactory: WrapperExecutionFactory,
     @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
     constants: ConstantsV2,
@@ -135,7 +133,7 @@ class JobActor @Inject()(
     var validParameters: Seq[(String, (Evaluation, Option[Argument]))] =
       runscript.parameters.map(t => t._1 -> (t._2 -> Some(ValidArgument(new LiteralRepresentation(RString("false"))))))
     params.foreach { pv =>
-      validParameters = supply(job.jobID, pv._1, pv._2, validParameters)
+      validParameters = supply(job.jobID, pv._1.toLowerCase(), pv._2, validParameters)
     }
     validParameters
   }
@@ -208,11 +206,10 @@ class JobActor @Inject()(
           foundWatchers.flatten.foreach(_ ! PushJob(job))
           if (job.status == Done) {
             foundWatchers.flatten.foreach(
-              _ ! ShowNotification(
-                "job_update",
+              _ !ShowJobNotification(
                 job.jobID,
-                "Job Update",
-                "Your " + config.get[String](s"Tools.${job.tool}.longname") + " job has finished!"
+                "jobs.notifications.titles.update",
+                "jobs.notifications.jobFinished"
               )
             )
           }
@@ -227,16 +224,15 @@ class JobActor @Inject()(
   }
 
   private def sendJobUpdateMail(job: Job): Boolean = {
-    if (job.emailUpdate && job.ownerID.isDefined) {
-      userDao.findUser(BSONDocument(User.ID -> job.ownerID.get)).foreach {
+    if (job.emailUpdate) {
+      userDao.findUserByID(job.ownerID).foreach {
         case Some(user) =>
           user.userData match {
             case Some(_) =>
               log.info(
                 s"[JobActor[$jobActorNumber].sendJobUpdateMail] Sending eMail to job owner for job ${job.jobID}: Job is ${job.status.toString}"
               )
-              val eMail = JobFinishedMail(user, job.jobID, job.status, environment, config)
-              eMail.send
+              JobFinishedMail(user, job.jobID, job.status, config).send
             case None => NotUsed
           }
         case None => NotUsed
@@ -259,7 +255,7 @@ class JobActor @Inject()(
 
     case PrepareJob(job, params, startJob, isInternalJob) =>
       // jobid will also be available as parameter
-      val extendedParams = params + ("jobid" -> job.jobID)
+      val extendedParams = params + ("jobID" -> job.jobID)
 
       // Add job to the current jobs
       currentJobs = currentJobs.updated(job.jobID, job)
@@ -364,7 +360,7 @@ class JobActor @Inject()(
         .foreach {
           case Some(job) =>
             // Delete the job when the user is the owner and clear it otherwise
-            if (userIDOption.isEmpty || userIDOption == job.ownerID) {
+            if (userIDOption.isEmpty || userIDOption.get == job.ownerID) {
               if (verbose)
                 log.info(s"[JobActor[$jobActorNumber].Delete] Found Job with ${job.jobID} - starting file deletion")
               delete(job)
@@ -464,7 +460,7 @@ class JobActor @Inject()(
                     val validParameters = validatedParameters(job, runscript, params)
 
                     // adds the params of the disabled controls from formData, sets value of those to "false"
-                    validParameters.filterNot(pv => params.contains(pv._1)).foreach { pv =>
+                    validParameters.filterNot(pv => params.contains(pv._1.toLowerCase())).foreach { pv =>
                       params.+(pv._1 -> "false")
                     }
 
@@ -499,9 +495,12 @@ class JobActor @Inject()(
         .addUserToWatchList(jobID, userID)
         .map {
           case Some(updatedJob) =>
-            userSessions
-              .modifyUserWithCache(BSONDocument(User.ID   -> userID),
-                                   BSONDocument("$addToSet" -> BSONDocument(User.JOBS -> jobID)))
+            userDao.addJobsToUser(userID, List(jobID))
+              .map {
+                case Some(user) =>
+                  userSessionService.updateUserInCache(user)
+                case None =>
+              }
               .foreach { _ =>
                 currentJobs = currentJobs.updated(jobID, updatedJob)
                 val wsActors = wsActorCache.get(userID): Option[List[ActorRef]]
@@ -516,14 +515,37 @@ class JobActor @Inject()(
         .removeUserFromWatchList(jobID, userID)
         .foreach {
           case Some(updatedJob) =>
-            userSessions
-              .modifyUserWithCache(BSONDocument(User.ID -> userID),
-                                   BSONDocument("$pull"   -> BSONDocument(User.JOBS -> jobID)))
+            userDao.removeJobsFromUser(userID, List(jobID))
+              .map {
+                case Some(user) =>
+                  userSessionService.updateUserInCache(user)
+                case None =>
+              }
               .foreach { _ =>
                 currentJobs = currentJobs.updated(jobID, updatedJob)
                 val wsActors = wsActorCache.get(userID): Option[List[ActorRef]]
-                wsActors.foreach(_.foreach(_ ! ClearJob(jobID)))
+                wsActors.foreach(_.foreach(_ ! PushJob(updatedJob)))
               }
+          case None => NotUsed
+        }
+
+    case SetJobPublic(jobID, isPublic) =>
+      jobDao
+        .setJobPublic(jobID, isPublic)
+        .foreach {
+          case Some(updatedJob) =>
+              currentJobs = currentJobs.updated(jobID, updatedJob)
+              val wsActors = wsActorCache.get(updatedJob.ownerID): Option[List[ActorRef]]
+              wsActors.foreach(_.foreach(_ ! PushJob(updatedJob)))
+
+            if (!updatedJob.isPublic) {
+            // remove other watchers (now without access)
+              updatedJob.watchList.filterNot(_ == updatedJob.ownerID).foreach { otherUserID =>
+                val wsActors = wsActorCache.get(otherUserID): Option[List[ActorRef]]
+                wsActors.foreach(_.foreach(_ ! ClearJob(updatedJob.jobID)))
+              }
+            }
+
           case None => NotUsed
         }
 
@@ -618,6 +640,8 @@ object JobActor {
   // User Actor starts watching
   case class AddToWatchlist(jobID: String, userID: String)
 
+  case class SetJobPublic(jobID: String, isPublic: Boolean)
+
   // checks if user has submitted max number of jobs
   // of jobs within a given time
   case class CheckIPHash(jobID: String)
@@ -634,7 +658,8 @@ object JobActor {
   case class SetSGEID(jobID: String, sgeID: String)
 
   // show browser notification
-  case class ShowNotification(notificationType: String, tag: String, title: String, body: String)
+  case class ShowNotification(title: String, body: String)
+  case class ShowJobNotification(jobID: String, title: String, body: String)
 
   // Job Controller receives push message to update the log
   case class UpdateLog(jobID: String)

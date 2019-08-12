@@ -19,7 +19,8 @@ package de.proteinevolution.user
 import java.time.ZonedDateTime
 import java.util.UUID
 
-import de.proteinevolution.common.models.util.{ ZonedDateTimeHelper => helper }
+import de.proteinevolution.common.models.util.ZonedDateTimeHelper
+import de.proteinevolution.user.AccountType.AccountType
 import io.circe.syntax._
 import io.circe.{ Encoder, Json }
 import org.mindrot.jbcrypt.BCrypt
@@ -30,15 +31,15 @@ case class User(
     sessionID: Option[String] = None,            // Session ID
     sessionData: List[SessionData] = List.empty, // Session data separately from sid
     connected: Boolean = true,
-    accountType: Int = User.NORMALUSER,    // User Access level
-    userData: Option[UserData] = None,     // Personal Data of the User //TODO possibly encrypt?
-    userConfig: UserConfig = UserConfig(), // Configurable parts for the user
+    accountType: AccountType = AccountType.NORMALUSER, // User Access level
+    userData: Option[UserData] = None,                 // Personal Data of the User //TODO possibly encrypt?
+    userConfig: UserConfig = UserConfig(),             // Configurable parts for the user
     userToken: Option[UserToken] = None,
-    jobs: List[String] = List.empty,                                // List of Jobs the User has
-    dateDeletedOn: Option[ZonedDateTime] = None,                    // Date at which the account will be deleted on
-    dateLastLogin: Option[ZonedDateTime] = Some(ZonedDateTime.now), // Last seen on
-    dateCreated: Option[ZonedDateTime] = Some(ZonedDateTime.now),   // Account creation date
-    dateUpdated: Option[ZonedDateTime] = Some(ZonedDateTime.now)
+    jobs: List[String] = List.empty,                  // List of Jobs the User is watching (counterpart to job.watchList)
+    deletionWarningSent: Boolean = false,             // keep track if the mail was sent already
+    dateLastLogin: ZonedDateTime = ZonedDateTime.now, // Last seen on
+    dateCreated: ZonedDateTime = ZonedDateTime.now,   // Account creation date
+    dateUpdated: ZonedDateTime = ZonedDateTime.now
 ) { // Account updated on
 
   def checkPassword(plainPassword: String): Boolean = {
@@ -53,24 +54,18 @@ case class User(
   // Mock up function to show how a possible function to check user levels could look like.
   def isSuperuser: Boolean = {
     accountType match {
-      case User.ADMINLEVEL     => true
-      case User.MODERATORLEVEL => true
-      case _                   => false
+      case AccountType.ADMINLEVEL     => true
+      case AccountType.MODERATORLEVEL => true
+      case _                          => false
     }
   }
-
-  def hasNotLoggedIn: Boolean = accountType == 3
 
   override def toString: String = {
     s"""userID: $userID
        |sessionID: ${sessionID.getOrElse("not logged in")}
        |connected: ${if (connected) "Yes" else "No"}
        |nameLogin: ${getUserData.nameLogin}
-       |watched jobIDs: ${jobs.mkString(",")}
-       |Deletion on: ${dateDeletedOn match {
-         case Some(dateTime) => dateTime.toString
-         case None           => "no deletion date set"
-       }}""".stripMargin
+       |watched jobIDs: ${jobs.mkString(",")}""".stripMargin
   }
 }
 
@@ -79,31 +74,23 @@ object User {
   final val LOG_ROUNDS: Int = 10
 
   // Constants for the JSON object identifiers
-  final val ID              = "id" // name for the ID in scala
-  final val SESSION_ID      = "sessionID" //              Session ID of the User
-  final val SESSION_DATA    = "sessionData" //              session information
-  final val CONNECTED       = "connected" // is the user online?
-  final val ACCOUNT_TYPE    = "accountType" //              account type field
-  final val USER_DATA       = "userData" //              user data object field
-  final val NAME_LOGIN      = s"$USER_DATA.${UserData.NAME_LOGIN}" //              login name field
-  final val EMAIL           = s"$USER_DATA.${UserData.EMAIL}" //              email field
-  final val PASSWORD        = s"$USER_DATA.${UserData.PASSWORD}" //              password field
-  final val USER_CONFIG     = "userConfig"
-  final val USER_TOKEN      = "userToken" //              token
-  final val JOBS            = "jobs" //              job reference pointers field
-  final val ACCEPTED_TOS    = "acceptToS" // needed for checking if the TOS was accepted
-  final val DATE_LAST_LOGIN = "dateLastLogin" // name for the last login field
-  final val DATE_DELETED_ON = "dateDeletedOn" // name for the field which holds the date when the account is going to be deleted
-  final val DATE_CREATED    = "dateCreated" //              account created on field
-  final val DATE_UPDATED    = "dateUpdated" //              account data changed on field
-
-  final val ADMINLEVEL: Int                     = 11
-  final val MODERATORLEVEL: Int                 = 10
-  final val BANNEDUSER: Int                     = 4
-  final val CLOSETODELETIONUSER: Int            = 3
-  final val REGISTEREDUSER: Int                 = 1
-  final val NORMALUSERAWAITINGREGISTRATION: Int = 0
-  final val NORMALUSER: Int                     = -1
+  final val ID                    = "id" // name for the ID in scala
+  final val SESSION_ID            = "sessionID" // Session ID of the User
+  final val SESSION_DATA          = "sessionData" // session information
+  final val CONNECTED             = "connected" // is the user online?
+  final val ACCOUNT_TYPE          = "accountType" // account type field
+  final val USER_DATA             = "userData" // user data object field
+  final val NAME_LOGIN            = s"$USER_DATA.${UserData.NAME_LOGIN}" // login name field
+  final val EMAIL                 = s"$USER_DATA.${UserData.EMAIL}" // email field
+  final val PASSWORD              = s"$USER_DATA.${UserData.PASSWORD}" // password field
+  final val USER_CONFIG           = "userConfig"
+  final val USER_TOKEN            = "userToken" // token
+  final val JOBS                  = "jobs" // job reference pointers field
+  final val ACCEPTED_TOS          = "acceptToS" // needed for checking if the TOS was accepted
+  final val DELETION_WARNING_SENT = "deletionWarningSent" // make sure not to send mail twice
+  final val DATE_LAST_LOGIN       = "dateLastLogin" // name for the last login field
+  final val DATE_CREATED          = "dateCreated" // account created on field
+  final val DATE_UPDATED          = "dateUpdated" // account data changed on field
 
   implicit val encodeUser: Encoder[User] = (u: User) =>
     Json.obj(
@@ -115,18 +102,9 @@ object User {
       (UserData.NAME_LOGIN, Json.fromString(u.getUserData.nameLogin)),
       (UserData.EMAIL, Json.fromString(u.getUserData.eMail)),
       (JOBS, u.jobs.asJson),
-      (
-        DATE_LAST_LOGIN,
-        u.dateLastLogin.map(zdt => Json.fromString(zdt.format(helper.dateTimeFormatter))).getOrElse(Json.Null)
-      ),
-      (
-        DATE_CREATED,
-        u.dateCreated.map(zdt => Json.fromString(zdt.format(helper.dateTimeFormatter))).getOrElse(Json.Null)
-      ),
-      (
-        DATE_UPDATED,
-        u.dateUpdated.map(zdt => Json.fromString(zdt.format(helper.dateTimeFormatter))).getOrElse(Json.Null)
-      )
+      (DATE_LAST_LOGIN, Json.fromString(u.dateLastLogin.format(ZonedDateTimeHelper.dateTimeFormatter))),
+      (DATE_CREATED, Json.fromString(u.dateCreated.format(ZonedDateTimeHelper.dateTimeFormatter))),
+      (DATE_UPDATED, Json.fromString(u.dateUpdated.format(ZonedDateTimeHelper.dateTimeFormatter)))
     )
 
   implicit object Reader extends BSONDocumentReader[User] {
@@ -141,29 +119,29 @@ object User {
         userConfig = bson.getAs[UserConfig](USER_CONFIG).getOrElse(UserConfig()),
         userToken = bson.getAs[UserToken](USER_TOKEN),
         jobs = bson.getAs[List[String]](JOBS).getOrElse(List.empty),
-        dateDeletedOn = bson.getAs[BSONDateTime](DATE_LAST_LOGIN).map(dt => helper.getZDT(dt)),
-        dateLastLogin = bson.getAs[BSONDateTime](DATE_LAST_LOGIN).map(dt => helper.getZDT(dt)),
-        dateCreated = bson.getAs[BSONDateTime](DATE_CREATED).map(dt => helper.getZDT(dt)),
-        dateUpdated = bson.getAs[BSONDateTime](DATE_UPDATED).map(dt => helper.getZDT(dt))
+        deletionWarningSent = bson.getAs[Boolean](DELETION_WARNING_SENT).getOrElse(false),
+        dateLastLogin = bson.getAs[BSONDateTime](DATE_LAST_LOGIN).map(dt => ZonedDateTimeHelper.getZDT(dt)).get,
+        dateCreated = bson.getAs[BSONDateTime](DATE_CREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)).get,
+        dateUpdated = bson.getAs[BSONDateTime](DATE_UPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt)).get
       )
   }
 
   implicit object Writer extends BSONDocumentWriter[User] {
     override def write(user: User): BSONDocument =
       BSONDocument(
-        ID              -> user.userID,
-        SESSION_ID      -> user.sessionID,
-        SESSION_DATA    -> user.sessionData,
-        CONNECTED       -> user.connected,
-        ACCOUNT_TYPE    -> user.accountType,
-        USER_DATA       -> user.userData,
-        USER_CONFIG     -> user.userConfig,
-        USER_TOKEN      -> user.userToken,
-        JOBS            -> user.jobs,
-        DATE_DELETED_ON -> user.dateDeletedOn.map(dt => BSONDateTime(dt.toInstant.toEpochMilli)),
-        DATE_LAST_LOGIN -> BSONDateTime(user.dateLastLogin.fold(-1L)(_.toInstant.toEpochMilli)),
-        DATE_CREATED    -> BSONDateTime(user.dateCreated.fold(-1L)(_.toInstant.toEpochMilli)),
-        DATE_UPDATED    -> BSONDateTime(user.dateUpdated.fold(-1L)(_.toInstant.toEpochMilli))
+        ID                    -> user.userID,
+        SESSION_ID            -> user.sessionID,
+        SESSION_DATA          -> user.sessionData,
+        CONNECTED             -> user.connected,
+        ACCOUNT_TYPE          -> user.accountType.toInt,
+        USER_DATA             -> user.userData,
+        USER_CONFIG           -> user.userConfig,
+        USER_TOKEN            -> user.userToken,
+        JOBS                  -> user.jobs,
+        DELETION_WARNING_SENT -> user.deletionWarningSent,
+        DATE_LAST_LOGIN       -> BSONDateTime(user.dateLastLogin.toInstant.toEpochMilli),
+        DATE_CREATED          -> BSONDateTime(user.dateCreated.toInstant.toEpochMilli),
+        DATE_UPDATED          -> BSONDateTime(user.dateUpdated.toInstant.toEpochMilli)
       )
   }
 

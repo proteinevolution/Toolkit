@@ -1,3 +1,1 @@
-class ToolkitSpec {
-
-}
+class ToolkitSpec {}
