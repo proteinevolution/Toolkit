@@ -6,7 +6,7 @@ HHSUITE=${DATABASES}/hh-suite/
 FILESTRING=$(tr "\n" " " < params/dbs)
 DBS=(${FILESTRING})
 
-if [ ! -e "results/${accession}" ]
+if [[ ! -e "results/${accession}" ]]
 then
     for i in "${DBS[@]}"
     do
@@ -26,5 +26,6 @@ then
 
     sed -i '/^#/d' results/${accession}
     sed -i "1 i\#A3M#" results/${accession}
+    rm results/${accession}
 
 fi

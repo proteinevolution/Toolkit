@@ -2,11 +2,10 @@
 # Set environment
 source ${ENVIRONMENT}
 
-if [ ! -e "results/$accession" ]
+if [[ ! -e "results/$accession" ]]
 then
     HHBLITS=${DATABASES}/hhblits/
     DB=$( grep "^[^#]" ${DATABASES}/hhblits/DB | awk 'NR==1{print $1}')
-
 
     MAPPINGFILE="uniclust_uniprot_mapping.tsv"
     echo $HHBLITS$MAPPINGFILE
@@ -16,5 +15,4 @@ then
     sed -i '1d' results/$accession.a3m
     hhfilter -i results/$accession.a3m -o results/$accession -diff 100
     sed -i "1 i\#A3M#" results/$accession
-
 fi

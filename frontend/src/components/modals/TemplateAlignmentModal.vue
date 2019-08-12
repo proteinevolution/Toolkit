@@ -10,7 +10,7 @@
                        text-field="longname"
                        class="select"
                        @change="forward"
-                       :disabled="nodata">
+                       :disabled="!data || loading">
             <template slot="first">
                 <option :value="null"
                         v-text="$t('jobs.results.templateAlignment.forwardTo')"></option>
@@ -22,10 +22,9 @@
                  :size="24"
                  v-if="loading"/>
 
-        <b-form-textarea v-model="data"
+        <b-form-textarea :value="displayData"
                          readonly
-                         class="file-view mb-2">
-        </b-form-textarea>
+                         class="file-view mb-2"/>
     </BaseModal>
 </template>
 
@@ -64,7 +63,6 @@
             return {
                 loading: true,
                 data: '',
-                nodata: false,
                 selectedTool: null,
             };
         },
@@ -91,6 +89,15 @@
                         });
                 }
                 return [];
+            },
+            displayData(): string {
+                if (this.loading) {
+                    return '';
+                } else if (!this.data) {
+                    return this.$t('errors.templateAlignmentFailed') as string;
+                } else {
+                    return this.data;
+                }
             },
         },
         watch: {
@@ -119,8 +126,6 @@
                 this.data = await resultsService.getFile(this.jobID, this.accession);
                 if (!this.data) {
                     this.$alert(this.$t('errors.templateAlignmentFailed'), 'danger');
-                    this.data = 'Sorry, failed to fetch Template Alignment.';
-                    this.nodata = true;
                 }
                 this.loading = false;
             },
