@@ -1,22 +1,5 @@
 <template>
     <div class="toolkit">
-        <vue-particles class="tk-particles"
-                       color="#d0d0d0"
-                       :particleOpacity="0.7"
-                       :particlesNumber="80"
-                       shapeType="circle"
-                       :particleSize="4"
-                       linesColor="#ccc"
-                       :linesWidth="1"
-                       :lineLinked="true"
-                       :lineOpacity="0.4"
-                       :linesDistance="150"
-                       :moveSpeed="2"
-                       :hoverEffect="true"
-                       hoverMode="grab"
-                       :clickEffect="true"
-                       clickMode="push"/>
-
         <VelocityFade>
             <LoadingView v-if="$store.state.loading.tools">
             </LoadingView>
@@ -323,14 +306,6 @@
         padding: 0;
         opacity: 0;
         position: absolute;
-    }
-
-    .tk-particles {
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
     }
 
     .Cookie--toolkit {
