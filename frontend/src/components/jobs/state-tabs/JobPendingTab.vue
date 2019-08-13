@@ -3,12 +3,14 @@
         <p v-html="$t('jobs.foundIdenticalCopy', {jobID: similarJob.jobID, createdAt: fromNow(similarJob.dateCreated)})"
            class="text-center">
         </p>
-        <div class="d-flex justify-content-around mt-3 mx-5">
+        <div class="d-flex flex-column flex-md-row justify-content-around mt-3 mx-md-5">
             <b-btn variant="primary"
+                   class="mb-3 mb-md-0"
                    @click="startJob"
                    v-text="$t('jobs.startJob')">
             </b-btn>
             <b-btn variant="primary"
+                   class="mb-3 mb-md-0"
                    @click="loadExistingJob"
                    v-text="$t('jobs.loadExistingJob')">
             </b-btn>

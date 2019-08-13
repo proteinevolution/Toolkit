@@ -30,7 +30,8 @@
                  v-html="$t('tools.reformat.detectedFormat', {format: detectedFormat})">
         </b-alert>
         <b-row align-h="center" class="mb-3">
-            <b-col cols="4">
+            <b-col cols="12"
+                   md="4">
                 <multiselect v-model="selectedOutputFormat"
                              @select="computeOutput"
                              :allowEmpty="true"
