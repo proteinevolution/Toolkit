@@ -2,12 +2,11 @@
     <Loading :message="$t('loading')"
              v-if="loading"/>
     <div v-else>
-        <div class="result-options">
-            <a @click="forwardToModeller">{{$t('jobs.results.actions.forwardToModeller')}}</a>
-        </div>
-
         <pre v-html="file"
              class="file-view"></pre>
+        <div class="result-options">
+            <b-btn type="button" variant="primary" class="submit-button float-right" @click="forwardToModeller">{{$t('jobs.results.actions.forwardToModeller')}}</b-btn>
+        </div>
     </div>
 </template>
 
@@ -54,6 +53,11 @@
 </script>
 
 <style lang="scss" scoped>
+    .result-options {
+        border-bottom: none;
+        border-top: 1px solid rgba(10, 10, 10, 0.1);
+    }
+
     .file-view {
         width: 100%;
         font-size: 12px;
