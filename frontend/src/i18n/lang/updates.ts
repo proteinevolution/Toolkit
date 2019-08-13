@@ -1,5 +1,63 @@
 export default [
     {
+        date: '2019-08-13',
+        html: ` <p>
+        The UI of the Toolkit was completely reimplemented using <a href="https://vuejs.org/" 
+        target="_blank">Vue.js</a>.
+        </p>`,
+    },
+    {
+        date: '2019-07-28',
+        html: ` <p>
+        HHpred: Profile HMM database of the <em>Solanum lycopersicum</em> (tomato) proteome is now online.
+        </p>`,
+    },
+    {
+        date: '2019-05-06',
+        html: ` <p>
+        HHpred: profile HMM DBs for the proteomes of <em>Bombyx mori</em> (domestic silkmoth) and the human gut
+        bacterium <em>Christensenella minuta</em> are online.
+        </p>`,
+    },
+    {
+        date: '2019-05-03',
+        html: ` <p>
+        We have included a new tool, PiPred, for the prediction of π-helices in protein sequences.
+        </p>`,
+    },
+    {
+        date: '2019-01-04',
+        html: ` <p>
+        We have included a further tool, DeepCoil, for the prediction of coiled coils in protein sequences.
+        </p>`,
+    },
+    {
+        date: '2018-12-09',
+        html: ` <p>
+        HHpred: profile HMM database of the unicellular ciliate <em>Paramecium tetraurelia</em> is online.
+        </p>`,
+    },
+    {
+        date: '2018-11-22',
+        html: ` <p>
+        HHpred: profile HMM databases of <em>Salmonella enterica</em> serovar Typhi (CT18) and <em>Trichomonas
+        vaginalis</em> are online.
+        </p>`,
+    },
+    {
+        date: '2018-11-10',
+        html: ` <p>
+        HHpred: profile HMM database of the latest version of Pfam (v32.0) is online.
+        </p>`,
+    },
+    {
+        date: '2018-10-31',
+        html: ` <p>
+        HHpred: profile HMM database of the composite metagenome-assembled genome <em>Lokiarchaeum sp. GC14_75</em>,
+        a reference for exploring eukaryogenesis, is online.
+        </p>`,
+    },
+    {
         date: '2018-06-01',
         html: ` <p>
         HHpred: profile HMM databases of <em>Bacteriovorax sp., Bdellovibrio bacteriovorus, Enterococcus faecalis,
