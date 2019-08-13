@@ -2,7 +2,7 @@ export default [
     {
         date: '2019-08-13',
         html: ` <p>
-        The UI of the Toolkit was completely reimplemented using <a href="https://vuejs.org/" 
+        The UI of the Toolkit was completely reimplemented using <a href="https://vuejs.org/"
         target="_blank">Vue.js</a>.
         </p>`,
     },
