@@ -1,8 +1,7 @@
 # fetch parameters from the parent here
-cp ../../%parent_id.content/results/%parent_id.content.hhr ../params
+cp ../../%parentid.content/results/%parentid.content.hhr ../params
 
 mkdir -p ../results/cif
-
 
 echo "#Converting selected template alignments into PIR format." >> ../results/process.log
 
