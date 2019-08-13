@@ -26,6 +26,4 @@ then
 
     sed -i '/^#/d' results/${accession}
     sed -i "1 i\#A3M#" results/${accession}
-    rm results/${accession}
-
 fi

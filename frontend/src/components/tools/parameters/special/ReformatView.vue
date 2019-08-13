@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-form-textarea class="textarea-input"
+        <b-form-textarea class="textarea-input break-all"
                          v-model="input"
                          @input="clearOutput"
                          :placeholder="$t('tools.inputPlaceholder.' + parameter.placeholderKey)"
@@ -208,7 +208,7 @@
     .textarea-input, .textarea-output {
         background-color: $white;
         font-family: $font-family-monospace;
-        font-size: 0.8em;
+        font-size: 0.9em;
         height: 15em;
     }
 

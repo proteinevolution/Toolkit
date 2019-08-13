@@ -1,7 +1,7 @@
 <template>
     <b-form-group class="textarea-group"
                   :class="{'uploading-file': uploadingFile}">
-        <b-form-textarea class="textarea-alignment"
+        <b-form-textarea class="textarea-alignment break-all"
                          :placeholder="$t('tools.inputPlaceholder.' + parameter.placeholderKey)"
                          :value="value"
                          @input="handleInput"

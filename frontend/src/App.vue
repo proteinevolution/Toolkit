@@ -358,6 +358,10 @@
         white-space: nowrap;
     }
 
+    .break-all {
+        word-break: break-all
+    }
+
     .font-small {
         font-size: 0.9em;
     }

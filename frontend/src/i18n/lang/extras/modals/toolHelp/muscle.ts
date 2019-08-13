@@ -12,10 +12,6 @@ export default {
                         title: 'Input',
                         content: `@:toolHelpModals.common.multiseq`,
                     },
-                    {
-                        title: 'Maximum number of iterations',
-                        content: `Specify the maximum number of iterations.`,
-                    },
                 ],
                 references: `<p>Edgar RC. (2004) <b>MUSCLE: multiple sequence alignment with high accuracy and high throughput.</b>
         Nucl Acid Res 32(5):1792-1797.

@@ -5,7 +5,9 @@
         <pre v-html="file"
              class="file-view"></pre>
         <div class="result-options">
-            <b-btn type="button" variant="primary" class="submit-button float-right" @click="forwardToModeller">{{$t('jobs.results.actions.forwardToModeller')}}</b-btn>
+            <b-btn type="button" variant="primary" class="submit-button float-right"
+                   @click="forwardToModeller">{{$t('jobs.results.actions.forwardToModeller')}}
+            </b-btn>
         </div>
     </div>
 </template>

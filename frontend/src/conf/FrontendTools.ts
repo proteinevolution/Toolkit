@@ -46,7 +46,7 @@ export const AlignmentViewer: Tool = {
             multiColumnLayout: false,
             parameters: [({
                 parameterType: ParameterType.AlignmentViewerView,
-                sampleInput: 'multiProtSeq',
+                sampleInput: 'msaProtSeq',
                 placeholderKey: 'protMSA',
                 label: '',
                 name: '',

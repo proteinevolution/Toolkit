@@ -529,5 +529,10 @@ erfassen und wie genau diese verwendet werden:
             Opt-Out: <a href="https://adssettings.google.com/authenticated" target="_blank" rel="noopener">
                 https://adssettings.google.com/authenticated</a>.
         </p>
+        <h5>Font Awesome</h5>
+        <p>
+            Wir binden die Schriftarten "Font Awesome" ein (<a href="https://fontawesome.com/privacy"
+            target="_blank" rel="noopener"> https://fontawesome.com/privacy</a>).
+        </p>
 </div>`,
 };
