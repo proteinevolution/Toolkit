@@ -338,7 +338,7 @@ then
                   $(readlink -f %alignment_two.path) \
                   $(readlink -f ../results/${JOBID}.in2.a3m)
 
-        hhblits -d %HHBLITS%msa_gen_method.content -i ../results/${JOBID}.in2.a3m -oa3m db.a3m -n 3 -cpu %THREADS -v 2
+        hhblits -d %UNICLUST -i ../results/${JOBID}.in2.a3m -oa3m db.a3m -n 3 -cpu %THREADS -v 2
         rm ../results/${JOBID}.in2.a3m
     fi
 

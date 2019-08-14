@@ -789,6 +789,5 @@ section, we explain which data we record when you visit one of our websites, and
             We also use the typeface "Font Awesome" (<a href="https://fontawesome.com/privacy"
             target="_blank" rel="noopener"> https://fontawesome.com/privacy</a>).
         </p>
-</div>
-`,
+</div>`,
 };
