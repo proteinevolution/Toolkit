@@ -16,12 +16,6 @@
                 <span v-else
                       v-text="$t('tools.parameters.textArea.pasteExample')"></span>
             </b-btn>
-            <b-button variant="link"
-                      :disabled="!detectedFormat"
-                      @click="showAlignmentViewer"
-                      v-text="$t('tools.reformat.viewAlignment')"
-                      v-if="!alignmentViewerActive">
-            </b-button>
         </b-button-group>
         <b-alert show
                  v-if="detectedFormat"
@@ -48,7 +42,7 @@
             </b-col>
         </b-row>
         <div v-if="output">
-            <b-form-textarea class="textarea-output"
+            <b-form-textarea class="textarea-output break-all"
                              v-model="output"
                              cols="70"
                              spellcheck="false"
@@ -112,7 +106,6 @@
                 forwardingOptions: [] as SelectOption[],
                 selectedOutputFormat: undefined,
                 selectedForwardingTool: undefined,
-                alignmentViewerActive: false,
             };
         },
         components: {
@@ -156,13 +149,6 @@
                         this.$store.commit('stopLoading', 'alignmentTextarea');
                     });
             },
-            showAlignmentViewer(): void {
-                this.alignmentViewerActive = true;
-                EventBus.$emit('alignment-viewer-result-open', {
-                    sequences: this.input,
-                    format: this.detectedFormat.toLowerCase(),
-                });
-            },
             computeOutput(selectedFormat: SelectOption): void {
                 if (selectedFormat !== undefined && this.reformat !== undefined) {
                     jobService.logFrontendJob(this.$route.params.toolName);
@@ -179,6 +165,16 @@
                             return allowedFormats !== undefined &&
                                 allowedFormats.includes((selectedFormat.value as AlignmentSeqFormat)) &&
                                 (maxNumSeqs && maxNumSeqs > 1) && (sameLength);
+                        })
+                        .sort((t1: Tool, t2: Tool) => {
+                            const t1Name = t1.longname.toLowerCase();
+                            const t2Name = t2.longname.toLowerCase();
+                            if (t1Name < t2Name) { // sort string ascending
+                                return -1;
+                            } else if (t1Name > t2Name) {
+                                return 1;
+                            }
+                            return 0;
                         })
                         .map((tool: Tool) => ({
                             value: tool.name,
