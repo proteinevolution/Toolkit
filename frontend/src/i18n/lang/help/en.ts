@@ -265,7 +265,7 @@ export default {
 </div>`,
 
     privacy: `
-(<sup>*</sup>An English version will follow soon)<br><br>
+(<sup>*</sup><a href="#eng_version">English version</a>)<br><br>
 Die Max-Planck-Gesellschaft zur Förderung der Wissenschaften e.V. (MPG) nimmt den Schutz Ihrer personenbezogenen Daten
 sehr ernst. Wir verarbeiten personenbezogene Daten, die beim Besuch unserer Webseiten erhoben werden, unter Beachtung
 der geltenden datenschutzrechtlichen Bestimmungen. Ihre Daten werden von uns weder veröffentlicht, noch unberechtigt
@@ -320,8 +320,9 @@ erfassen und wie genau diese verwendet werden:
         Hofgartenstraße 8<br>
         D-80539 München<br>
         Telefon: +49 (89) 2108-0<br>
-        Kontaktformular: https://www.mpg.de/kontakt/anfragen<br>
-        Internet: https://www.mpg.de<br><br>
+        Kontaktformular: <a href="https://www.mpg.de/kontakt/anfragen" target="_blank">
+        https://www.mpg.de/kontakt/anfragen</a><br>
+        Internet: <a href="https://www.mpg.de" target="_blank">https://www.mpg.de</a><br><br>
 
     <h6>5. Kontaktdaten der Datenschutzbeauftragten</h6>
     <p>Die Datenschutzbeauftragte der Verantwortlichen ist</p>
@@ -331,7 +332,6 @@ erfassen und wie genau diese verwendet werden:
         Telefon: +49 (89) 2108-1554<br>
         <a href="mailto:datenschutz@mpg.de">datenschutz[at]mpg.de</a><br><br>
 </div>
-
 
 <div class="section">
 <h5>B. Bereitstellung der Website und Erstellung von Logfiles</h5>
@@ -389,7 +389,7 @@ erfassen und wie genau diese verwendet werden:
         <ul>
             <li>Spracheinstellungen (Lokalisation) des Browsers: Sessioncookie i18next</li>
             <li>Sitzungsdaten (Klickstrecke, aufgerufene Seiten, aktuelle Sprache, sowie ggf. Fehlermeldungen für
-                Formulare: Sessioncookie mpg_session_r</li>
+                Formulare: Sessioncookie MPG_session_r</li>
         </ul>
     <p>
         Beide Cookies werden nach dem Schließen der Sitzung gelöscht.
@@ -534,5 +534,261 @@ erfassen und wie genau diese verwendet werden:
             Wir binden die Schriftarten "Font Awesome" ein (<a href="https://fontawesome.com/privacy"
             target="_blank" rel="noopener"> https://fontawesome.com/privacy</a>).
         </p>
-</div>`,
+</div><br><hr><br>
+<h3 id="eng_version">Privacy Policy</h3>
+<br>
+The Max-Planck-Gesellschaft zur Förderung der Wissenschaften e.V. (MPG) takes the protection of your personal data very
+seriously. We process personal data gathered when visiting our websites in compliance with applicable data protection
+legislation. We neither publish your data nor transmit them to third parties on an unauthorized basis. In the following
+section, we explain which data we record when you visit one of our websites, and exactly how they are utilized:
+
+<div class="section">
+    <h5>A. General information</h5><br>
+    <h6>1. Scope of data processing</h6>
+    <p>
+        As a matter of principle, we gather and utilize users&apos; personal data only to the extent required to ensure
+        the functioning of our website and of our contents and services. The gathering and utilization of our
+        users&apos; personal data normally occurs after users have granted their consent. An exception occurs where
+        data processing is legally permitted.
+    </p>
+
+
+    <h6>2. Legal basis of data processing</h6>
+    <p>
+        To the extent that permission of the affected individual is obtained for the processing of personal data,
+        Article 6 (1) lit. a of the EU General Data Protection Regulation (GDPR) serves as the legal basis.
+    </p>
+    <p>
+        In the processing of personal data to fulfil a contract whose contractual party is the individual affected,
+        Article 6 (1) lit. b GDPR serves as the legal basis. This also applies to processing required to implement
+        pre-contractual measures.
+    </p>
+    <p>
+        If processing is required to safeguard the justified interest of the MPG or a third party and the interests,
+        basic rights and basic freedoms of the affected individual do not outweigh the first-mentioned interest,
+        Article 6 (1) lit. f GDPR serves as the basis for such processing.
+    </p>
+
+
+    <h6>3. Data deletion and storage duration</h6>
+    <p>
+        The affected individual&apos;s personal data are deleted or blocked as soon as the purpose of the storage
+        ceases to apply. Storage can also occur if provided for by European or national legislators in EU
+        regulations, acts or other legislation to which the MPG is subject. A blocking or deletion of data then
+        occurs only if a storage period prescribed by one of the aforementioned norms expires, unless a necessity
+        exists in relation to the further storage of the data for the arrangement of a contract or the fulfilment
+        of a contract.
+    </p>
+    <h6>4. Contact details of the individuals responsible</h6>
+    <p>
+        The entity responsible in the meaning of the General Data Protection Regulation and other national data
+        protection acts as well as other data protection legislation is the
+    </p>
+        Max-Planck-Gesellschaft zur Förderung der Wissenschaften e.V. (MPG)<br>
+        Hofgartenstraße 8<br>
+        D-80539 Munich<br>
+        Telephone: +49 (89) 2108-0<br>
+        Contact form: <a href="https://www.mpg.de/contact/requests" target="_blank">
+        https://www.mpg.de/contact/requests</a><br>
+        Internet: <a href="https://www.mpg.de/en" target="_blank">
+        https://www.mpg.de</a><br><br>
+
+    <h6>5. Data Protection Officer&apos;s contact details</h6>
+    <p>The Data Protection Officer at the entity responsible is</p>
+        Heidi Schuster<br>
+        Hofgartenstraße 8<br>
+        D-80539 Munich<br>
+        Telefon: +49 (89) 2108-1554<br>
+        <a href="mailto:datenschutz@mpg.de">datenschutz[at]mpg.de</a><br><br>
+</div>
+
+
+<div class="section">
+<h5>B. Provision of the website and creation of log files</h5>
+    <p>
+        Each time you visit our website, our service and applications automatically record data and information from
+        the computer system of the visiting computer.
+    </p>
+    The following data are gathered temporarily:<br>
+    <ul>
+        <li>Your IP address</li>
+        <li>Date and time of your access to the website</li>
+        <li>Address of the page visited</li>
+        <li>Address of the previously visited website (<i>referrer</i>)</li>
+        <li>Name and version of your browser/operating system (if transmitted)</li>
+    </ul>
+    <p>
+        These data are stored in our systems&apos; log files. These data are not stored together with the user&apos;s
+        other personal data.
+    </p>
+    <p>
+        The legal basis for the temporary saving of data and log files is Article 6 (1) lit. f GDPR. Storage occurs in
+        log files in order to ensure the website&apos;s functionality. The data also help us optimize the websites,
+        eliminate malfunctions and ensure our IT system security. Our justified interest in data processing pursuant
+        to Article 6 (1) lit. f GDPR also lies in such purposes.
+    </p>
+    <p>
+        The data are deleted as soon as they are no longer required to achieve the purpose for which they were
+        gathered. If data are gathered for the provision of the website, this is the case if the respective visit
+        is ended. In the instance that data are stored in log files, this is the case after seven days at the latest.
+        Storage above and beyond this period is possible. In this case, the users&apos; IP addresses are deleted or
+        removed so they can no longer be allocated to the visiting client.
+    </p>
+    <p>
+        The recording of data for the provision of the website and the storage of data in log files is essential to
+        operate the website. As a consequence, users do not have an option to revoke such data recording.
+    </p>
+</div>
+
+<div class="section">
+    <h5>C. Utilization of cookies</h5>
+    <p>
+        Our website utilizes cookies. Cookies are text files stored in the Internet browser or by the Internet browser
+        on the user&apos;s computer system. If a user visits a website, a cookie can be stored on the user&apos;s
+        operating system. This cookie contains a sequence of characters enabling the browser to be clearly identified
+        when visiting the website again.
+    </p>
+    <p>
+        We deploy cookies to make our website more user-friendly. Some elements of our website also technically require
+        the identification of the visiting browser after a change of page. The following data are saved and transmitted
+        in the cookies:
+    </p>
+        <ul>
+            <li>Language settings (localization) of the browser: session cookie i18next</li>
+            <li>Session data (click path, pages visited, current language, and, where relevant, error messages for
+            forms: session cookie MPG_session_r</li>
+        </ul>
+    <p>
+        Both cookies are deleted when the session is closed.
+    </p>
+    <p>
+        The legal basis for personal data processing while utilizing cookies is Article 6 (1) lit. f GDPR. The purpose
+        of utilizing technically necessary cookies is to simplify the utilization of websites for users. Some of our
+        website&apos;s functions cannot be offered without the utilization of cookies. For these, it is necessary that
+        the browser can also be re-identified following a change of page. We require cookies for the following
+        applications:
+    </p>
+        <ul>
+            <li>Transferring the browser&apos;s language setting: automatic selection of the homepage and spelling</li>
+            <li>Noting of form data entered: terms and entries in the contact form utilized in searches within the
+            website (section <b>D</b>)</li>
+        </ul>
+    <p>
+        User data gathered by technically necessary cookies are not utilized to prepare user profiles. Our justified
+        interest in personal data processing pursuant to Article 6 (1) lit. f GDPR also lies in such purposes.
+    </p>
+    <p>
+        Cookies are stored on the user&apos;s computer, which transmits them to our site. For this reason, you, as the
+        user, also have full control over the utilization of cookies. You can deactivate or restrict the transmission
+        of cookies through changing your Internet browser settings. Cookies that have already been saved can be deleted
+        at any time. This can also occur automatically. If cookies for our website are deactivated, you may find not
+        all of the website&apos;s functions can continue to be utilized in full.
+    </p>
+    <p>
+        In addition, we also utilize cookies on our website to enable users&apos; utilization behaviour to be analyzed.
+    </p>
+</div>
+
+
+<div class="section">
+    <h5> D. Contact form (contact through E-Mail)</h5>
+    <p>
+        A contact E-mail is available on our website for the purposes of making contact electronically. If a user opts
+        to email us, we save the data contained in the email. These are generally your email address, family name and
+        first name. We inform you about the specific processing of the data and we obtain your consent as part
+        of the utilization procedure. Reference is also made to this data protection statement. The data are utilized
+        exclusively to process the conversation.
+    </p>
+    <p>
+        The legal basis for the processing of data when utilizing the contact form (email) is the user&apos;s consent
+        pursuant to Article 6 (1) lit. a GDPR. We employ the processing of personal data from the data entry form
+        solely to process the initiation of the contact. The data are deleted as soon as they are no longer required
+        for the purpose for which they were gathered. This occurs if the respective conversation with the user ends
+        or if the user&apos;s issue has been processed conclusively. The conversation has ended if the circumstances
+        suggest that the respective matter has been clarified conclusively. At any time, users can notify the listed
+        contact partners that they are revoking their consent to the processing of personal data.
+    </p>
+</div>
+
+
+<div class="section">
+    <h5>E. Registration</h5>
+    <p>
+        On our websites, we offer users the option to register, entailing the entry of personal data in a data entry
+        form. We generally gather your email address, family name and first name. We inform you about the specific
+        processing of the data and we obtain your consent as part of the registration procedure. Reference is also
+        made to this data protection statement.
+    </p>
+    <p>
+        The legal basis for the processing of data is the user&apos;s consent pursuant to Article 6 (1) lit. a GDPR. If
+        registration serves to fulfil a contract whose contractual party is the user or to implement pre-contractual
+        measures, the additional legal basis for the processing of data is Article 6 (1) lit. b GDPR. Registering the
+        user is necessary to provide certain contents and services on our website or to fulfil a contract with the user
+        or to implement pre-contractual measures. The data are deleted as soon as they are no longer required to
+        achieve the purpose for which they were gathered. This is the case for data gathered during the registration
+        process if registration is cancelled or modified on our websites. For the registration process to fulfil a
+        contract or to implement pre-contractual measures, this is the case if the data are no longer required to
+        fulfil the contract. After the contract ends, it may be necessary to continue to store the contractual
+        partner&apos;s personal data in order to fulfil contractual or statutory obligations.
+    </p>
+    <p>
+        As a user, you can cancel the registration at any time. You can have the data saved in connection with yourself
+        modified at any time. The procedure is described in more detail in the specific registration procedure. If
+        the data are required to fulfil a contract or to implement pre-contractual measures, early deletion of the
+        data is possible only to the extent that no contractual or statutory obligations prevent such deletion.
+    </p>
+</div>
+
+<div class="section">
+    <h5>F. Data transmission</h5>
+    <p>
+        The management and storage of your personal information occurs in the case of selected services
+    </p>
+    <ul>
+        <li>Contact form (section <b>D</b>)</li>
+        <li>Registering for subscription management (section <b>E</b>)</li>
+    </ul>
+    <p>
+    Your personal data will only be conveyed to state institutions and authorities in legally essential cases or for
+    criminal prosecution based on attacks on our network infrastructure. The data are not transmitted to third parties
+    for other purposes.
+    </p>
+
+</div>
+
+<div class="section">
+    <h5>G. Rights of individuals affected</h5>
+        <p>
+            As an individual whose personal data are gathered as part of the aforementioned services, you have, in
+            principle, the following rights, to the extent that no legal exceptions are applicable in individual cases:
+        </p>
+            <ul>
+                <li>Information (Article 15 GDPR)</li>
+                <li>Correction (Article 16 GDPR)</li>
+                <li>Deletion (Article 17 (1) GDPR)</li>
+                <li>Restriction of processing (Article 18 GDPR)</li>
+                <li>Data transmission (Article 20 GDPR)</li>
+                <li>Revocation of processing (Article 21 GDPR)</li>
+                <li>Revocation of consent (Article 7 (3) GDPR)</li>
+                <li>Right to complain to the regulator (Article 77 GDPR). For the MPG, this is the Bavarian Data
+                Protection Authority (BayLDA), Postbox 606, 91511 Ansbach.</li>
+            </ul>
+</div>
+
+<div class="section">
+    <h5>Google Fonts</h5>
+        <p>
+            We use the typeface "Google Fonts" provided by Google LLC, 1600 Amphitheatre Parkway,
+            Mountain View, CA 94043, USA, ein. Privacy Policy: <a href="https://www.google.com/policies/privacy/"
+            target="_blank" rel="noopener"> https://www.google.com/policies/privacy/</a>,
+            Opt-Out: <a href="https://adssettings.google.com/authenticated" target="_blank" rel="noopener">
+                https://adssettings.google.com/authenticated</a>.
+        </p>
+        <h5>Font Awesome</h5>
+        <p>
+            We also use the typeface "Font Awesome" (<a href="https://fontawesome.com/privacy"
+            target="_blank" rel="noopener"> https://fontawesome.com/privacy</a>).
+        </p>
+</div>
+`,
 };
