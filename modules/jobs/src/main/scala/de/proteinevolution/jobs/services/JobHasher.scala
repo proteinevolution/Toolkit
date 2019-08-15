@@ -64,8 +64,19 @@ final class JobHasher @Inject()(
           "standarddb",
           (config.get[String]("tel.env.STANDARD") + "/" + params.getOrElse("standarddb", "")).toFile.lastModifiedTime.toString
         )
+      case p if p.isDefinedAt("hmmerdb") =>
+        (
+          "hmmerdb",
+          (config.get[String]("tel.env.STANDARD") + "/" + params.getOrElse("hmmerdb", "")).toFile.lastModifiedTime.toString
+        )
+      case p if p.isDefinedAt("patsearchdb") =>
+        (
+          "patsearchdb",
+          (config.get[String]("tel.env.STANDARD") + "/" + params.getOrElse("patsearchdb", "")).toFile.lastModifiedTime.toString
+        )
       case p if p.isDefinedAt("hhsuitedb") =>
         ("hhsuitedb", config.get[String]("tel.env.HHSUITE").toFile.lastModifiedTime.toString)
+
       case p if p.isDefinedAt("hhblitsdb") =>
         ("hhblitsdb", config.get[String]("tel.env.HHBLITS").toFile.lastModifiedTime.toString)
       case _ => ("", "")
