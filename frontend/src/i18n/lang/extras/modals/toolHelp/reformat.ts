@@ -8,7 +8,7 @@ export default {
                 parameters: [
                     {
                         title: 'Input',
-                        content: `You have the option to enter a multiple sequence alignment (MSA) in FASTA or 
+                        content: `You have the option to enter a multiple sequence alignment (MSA) in FASTA or
                         CLUSTAL format.<br/><br/>
                         @:toolHelpModals.common.msa`,
                     },

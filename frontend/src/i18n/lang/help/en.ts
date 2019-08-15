@@ -265,7 +265,7 @@ export default {
 </div>`,
 
     privacy: `
-(<sup>*</sup><a href="#eng_version">English version</a>)<br><br>
+(<sup>*</sup>For English version, see below)<br><br>
 Die Max-Planck-Gesellschaft zur Förderung der Wissenschaften e.V. (MPG) nimmt den Schutz Ihrer personenbezogenen Daten
 sehr ernst. Wir verarbeiten personenbezogene Daten, die beim Besuch unserer Webseiten erhoben werden, unter Beachtung
 der geltenden datenschutzrechtlichen Bestimmungen. Ihre Daten werden von uns weder veröffentlicht, noch unberechtigt
@@ -535,7 +535,7 @@ erfassen und wie genau diese verwendet werden:
             target="_blank" rel="noopener"> https://fontawesome.com/privacy</a>).
         </p>
 </div><br><hr><br>
-<h3 id="eng_version">Privacy Policy</h3>
+<h3>Privacy Policy</h3>
 <br>
 The Max-Planck-Gesellschaft zur Förderung der Wissenschaften e.V. (MPG) takes the protection of your personal data very
 seriously. We process personal data gathered when visiting our websites in compliance with applicable data protection
