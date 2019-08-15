@@ -401,6 +401,8 @@ echo "done" >> ../results/process.log
 
 echo "#Preparing output." >> ../results/process.log
 
+md5sum ../results/${JOBID}.hhr | awk '{ print $1 }'> ../results/${JOBID}.hhr.md5
+
 #create full alignment json; use for forwarding
 fasta2json.py ../results/reduced.fas ../results/reduced.json
 

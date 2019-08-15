@@ -199,6 +199,7 @@
     import EventBus from '@/util/EventBus';
     import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
     import {jobService} from '@/services/JobService';
+    import {resultsService} from '@/services/ResultsService';
 
     const logger = Logger.get('HHpredResultsTab');
 
@@ -215,6 +216,7 @@
                 alignments: undefined as HHpredAlignmentItem[] | undefined,
                 info: undefined as HHpredHHInfoResult | undefined,
                 color: true,
+                hhrdata: null,
                 breakAfter: 80,
                 hitListFields: [{
                     key: 'numCheck',
@@ -258,10 +260,13 @@
                     id: 'templateStructureModal', props: {accessionStructure: accession},
                 });
             },
-            modelSelection(): void {
+            async modelSelection(): Promise<void> {
                 if (!this.alignments) {
                     return;
                 }
+
+                this.hhrdata = await resultsService.getFile(this.job.jobID, this.job.jobID + '.hhr.md5');
+
                 const selected: number[] = Array.from(this.selectedItems);
                 if (selected.length < 1) {
                     selected.push(this.alignments[0].num);
@@ -270,6 +275,7 @@
                 const submission: any = {
                     parentID: this.job.jobID,
                     templates: selected.join(' '),
+                    hhr: this.hhrdata,
                 };
                 jobService.submitJob('hhpred_manual', submission)
                     .then((response) => {
