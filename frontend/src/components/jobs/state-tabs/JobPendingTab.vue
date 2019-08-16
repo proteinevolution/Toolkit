@@ -3,20 +3,16 @@
         <p v-html="$t('jobs.foundIdenticalCopy', {jobID: similarJob.jobID, createdAt: fromNow(similarJob.dateCreated)})"
            class="text-center">
         </p>
-        <div class="d-flex flex-column flex-md-row justify-content-around mt-3 mx-md-5">
+        <div class="d-flex flex-column flex-md-row justify-content-center mt-4 mx-md-5">
             <b-btn variant="primary"
-                   class="mb-3 mb-md-0"
+                   class="mb-3 mb-md-0 mr-5 ml-5"
                    @click="startJob"
                    v-text="$t('jobs.startJob')">
             </b-btn>
             <b-btn variant="primary"
-                   class="mb-3 mb-md-0"
-                   @click="loadExistingJob"
-                   v-text="$t('jobs.loadExistingJob')">
-            </b-btn>
-            <b-btn variant="primary"
+                   class="mr-5 ml-5"
                    @click="loadExistingJobAndDelete"
-                   v-text="$t('jobs.loadExistingJobAndDelete')">
+                   v-text="$t('jobs.loadExistingJob')">
             </b-btn>
         </div>
     </div>
@@ -64,9 +60,6 @@
                         logger.error('Could not start job!');
                         this.$alert(this.$t('errors.general'), 'danger');
                     });
-            },
-            loadExistingJob() {
-                this.$router.push(`/jobs/${this.similarJob.jobID}`);
             },
             loadExistingJobAndDelete() {
                 jobService.deleteJob(this.job.jobID)

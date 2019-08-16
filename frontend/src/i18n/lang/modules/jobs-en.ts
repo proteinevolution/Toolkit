@@ -267,7 +267,6 @@ export default {
         'Job ID: {jobID}, which was created {createdAt}.',
     startJob: 'Start job anyways',
     loadExistingJob: 'Load existing job',
-    loadExistingJobAndDelete: 'Load existing job and delete this one',
     notifications: {
         titles: {
             update: 'Job Update',
