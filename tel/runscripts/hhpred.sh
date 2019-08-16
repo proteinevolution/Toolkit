@@ -311,7 +311,6 @@ reformat_hhsuite.pl a3m fas \
 
 rm ../results/tmp0 ../results/tmp1
 
-
 # Here assume that the query alignment exists
 # prepare histograms
 # Reformat query into fasta format ('full' alignment, i.e. 100 maximally diverse sequences, to limit amount of data to transfer)
@@ -322,11 +321,9 @@ addss.pl ../results/full.a3m
 
 echo "done" >> ../results/process.log
 
-
 # creating alignment of query and subject input
 if [[ -f ../params/alignment_two ]]
 then
-
     cd ../results
 
     if [[ ${ITERS} = "0" ]] && [[ ${SEQ_COUNT2} -gt "1" ]] ; then
@@ -396,12 +393,9 @@ hhsearch -cpu %THREADS \
          -maxres 32000 \
          -contxt ${HHLIB}/data/context_data.crf
 
-
 echo "done" >> ../results/process.log
 
 echo "#Preparing output." >> ../results/process.log
-
-md5sum ../results/${JOBID}.hhr | awk '{ print $1 }'> ../results/${JOBID}.hhr.md5
 
 #create full alignment json; use for forwarding
 fasta2json.py ../results/reduced.fas ../results/reduced.json
@@ -412,7 +406,6 @@ hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 hhmakemodel.pl -i ../results/${JOBID}.hhr -fas ../results/alignment.fas -p %pmin.content
 # Generate Query in JSON
 fasta2json.py ../results/alignment.fas ../results/querytemplate.json
-
 
 # Generate Hitlist in JSON for hhrfile
 hhr2json.py "$(readlink -f ../results/${JOBID}.hhr)" > ../results/results.json
@@ -428,7 +421,6 @@ manipulate_json.py -k 'db' -v '%hhsuitedb.content' ../results/results.json
 
 # add Proteomes to json
 manipulate_json.py -k 'proteomes' -v '%proteomes.content' ../results/results.json
-
 
 # add transmembrane prediction info to json
 manipulate_json.py -k 'tmpred' -v "${TMPRED}" ../results/results.json
@@ -457,4 +449,3 @@ fi
 manipulate_json.py -k 'qa3m_count' -v ${QA3M_COUNT} ../results/results.json
 
 echo "done" >> ../results/process.log
-
