@@ -23,11 +23,8 @@ cache:
 before_install:
   - chmod +x bin/validate-code
   - git clone https://github.com/AlDanial/cloc.git $HOME/cloc
-  - docker pull gawbul/docker-sge
 install:
   - git submodule update --init --recursive
-  - git clone https://github.com/felixgabler/maxmind-geoip2-scala.git $HOME/pizza
-  - cd $HOME/pizza; sbt publishLocal; cd -
   - . $HOME/.nvm/nvm.sh
   - nvm install stable
   - nvm use stable
