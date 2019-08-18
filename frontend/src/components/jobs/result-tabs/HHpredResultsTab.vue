@@ -134,7 +134,7 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    <td v-text="alPart.agree"></td>
+                                    <td class="consensus-agree" v-text="alPart.agree"></td>
                                 </tr>
                                 <tr v-if="alPart.template.consensus"
                                     class="sequence">
@@ -268,19 +268,22 @@
                     selected.push(this.alignments[0].num);
                     this.$alert(this.$t('jobs.results.hhpred.modelUsingFirst'), 'warning');
                 }
-                const submission: any = {
-                    parentID: this.job.jobID,
-                    templates: selected.join(' '),
-                    alignments: this.alignments,
-                };
-                jobService.submitJob('hhpred_manual', submission)
-                    .then((response) => {
-                        this.$router.push(`/jobs/${response.jobID}`);
-                    })
-                    .catch((response) => {
-                        logger.error('Could not submit job', response);
-                        this.$alert(this.$t('errors.general'), 'danger');
-                    });
+
+                if (this.info) {
+                    const submission: any = {
+                        parentID: this.job.jobID,
+                        templates: selected.join(' '),
+                        alnHash: this.info.alignmentHash,
+                    };
+                    jobService.submitJob('hhpred_manual', submission)
+                        .then((response) => {
+                            this.$router.push(`/jobs/${response.jobID}`);
+                        })
+                        .catch((response) => {
+                            logger.error('Could not submit job', response);
+                            this.$alert(this.$t('errors.general'), 'danger');
+                        });
+                }
             },
             wrapAlignments(al: HHpredAlignmentItem): SearchAlignmentItemRender[] {
                 if (this.wrap) {
@@ -340,11 +343,17 @@
             height: 0.8rem;
         }
 
-        .sequence td {
-            word-break: keep-all;
-            white-space: nowrap;
-            font-family: $font-family-monospace;
-            padding: 0 1rem 0 0;
+        .sequence {
+            td {
+                word-break: keep-all;
+                white-space: nowrap;
+                font-family: $font-family-monospace;
+                padding: 0 1rem 0 0;
+            }
+
+            .consensus-agree {
+                white-space: pre-wrap;
+            }
         }
 
         a {
@@ -355,6 +364,7 @@
                 color: $tk-dark-green;
             }
         }
+
     }
 
     .db-list {

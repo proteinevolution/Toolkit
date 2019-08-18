@@ -103,7 +103,7 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    <td v-text="alPart.agree"></td>
+                                    <td class="consensus-agree" v-text="alPart.agree"></td>
                                 </tr>
                                 <tr v-if="alPart.template.seq"
                                     class="sequence">
@@ -261,11 +261,17 @@
             height: 0.8rem;
         }
 
-        .sequence td {
-            word-break: keep-all;
-            white-space: nowrap;
-            font-family: $font-family-monospace;
-            padding: 0 1rem 0 0;
+        .sequence {
+            td {
+                word-break: keep-all;
+                white-space: nowrap;
+                font-family: $font-family-monospace;
+                padding: 0 1rem 0 0;
+            }
+
+            .consensus-agree {
+                white-space: pre-wrap;
+            }
         }
 
         a {

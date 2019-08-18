@@ -215,6 +215,7 @@ export interface HHpredHHInfoResult extends HHInfoResult {
     modeller: boolean;
     msa_gen: string;
     qa3m_count: string;
+    alignmentHash: string;
 }
 
 export interface StructureFileResponse {
