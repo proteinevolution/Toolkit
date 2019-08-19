@@ -120,6 +120,7 @@
                 sequenceLengthMode: SequenceLengthMode.ALN,
                 evalThreshold: 0.001 as number | string,
                 internalForwardData: '',
+                submission: {} as any,
                 loading: false,
                 SequenceLengthMode,
                 ForwardHitsMode,
@@ -178,14 +179,15 @@
 
                     if (this.forwardingApiOptions) {
                         try {
-                            this.internalForwardData = await resultsService.generateForwardingData(this.forwardingJobID, {
-                                forwardHitsMode: this.forwardHitsMode,
-                                sequenceLengthMode: this.sequenceLengthMode,
-                                eval: this.evalThreshold,
-                                selected: this.forwardHitsMode === ForwardHitsMode.SELECTED ?
-                                    this.forwardingApiOptions.selectedItems.join(',') : '',
-                            });
-                            logger.log(this.internalForwardData);
+                            Vue.set(this.submission, 'forwardHitsMode', this.forwardHitsMode);
+                            Vue.set(this.submission, 'sequenceLengthMode', this.sequenceLengthMode);
+                            Vue.set(this.submission, 'eval', this.evalThreshold);
+                            Vue.set(this.submission, 'selected', this.forwardHitsMode === ForwardHitsMode.SELECTED ?
+                                this.forwardingApiOptions.selectedItems.join(',') : '');
+
+                            this.internalForwardData = await resultsService.generateForwardingData(this.forwardingJobID,
+                                this.submission);
+
                         } catch (e) {
                             logger.error(e);
                             this.$alert(this.$t('errors.couldNotLoadForwardData'), 'danger');

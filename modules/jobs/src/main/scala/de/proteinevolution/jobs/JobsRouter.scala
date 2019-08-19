@@ -65,9 +65,7 @@ class JobsRouter @Inject()(
       & q_o"filter=${filter}" & q_o"sortBy=${sortBy}"& q_o"desc=${bool(desc)}") =>
       hhController.loadHits(jobID, start, end, filter, sortBy, desc)
     case GET(p"/$jobID/results/template-alignment/$accession") => processController.templateAlignment(jobID, accession)
-    case GET(p"/$jobID/results/forward-data/"  ? q"forwardHitsMode=$forwardHitsMode" & q"eval=${double(eval)}"
-      & q"selected=$selected" & q"sequenceLengthMode=$sequenceLengthMode") =>
-      processController.forwardAlignment(jobID, forwardHitsMode, sequenceLengthMode, eval, selected)
+    case POST(p"/$jobID/results/forward-data/") => processController.forwardAlignment(jobID)
     case GET(p"/$jobID/results/")                               => resultsController.loadResults(jobID)
     case GET(p"/structure-file/$accession")                     => fileController.getStructureFile(accession)
   }
