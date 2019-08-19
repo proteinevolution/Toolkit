@@ -183,7 +183,7 @@
                             Vue.set(this.submission, 'sequenceLengthMode', this.sequenceLengthMode);
                             Vue.set(this.submission, 'eval', this.evalThreshold);
                             Vue.set(this.submission, 'selected', this.forwardHitsMode === ForwardHitsMode.SELECTED ?
-                                this.forwardingApiOptions.selectedItems.join(',') : '');
+                                this.forwardingApiOptions.selectedItems : '');
 
                             this.internalForwardData = await resultsService.generateForwardingData(this.forwardingJobID,
                                 this.submission);
