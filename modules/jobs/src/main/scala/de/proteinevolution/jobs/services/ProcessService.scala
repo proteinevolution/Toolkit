@@ -19,16 +19,17 @@ package de.proteinevolution.jobs.services
 import java.util.UUID
 
 import better.files._
-import cats.data.{EitherT, OptionT}
+import cats.data.{ EitherT, OptionT }
 import cats.implicits._
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.common.models.ToolName._
 import de.proteinevolution.jobs.db.ResultFileAccessor
+import de.proteinevolution.results.models.ForwardingData
 import io.circe.DecodingFailure
-import javax.inject.{Inject, Singleton}
-import play.api.{Configuration, Logging}
+import javax.inject.{ Inject, Singleton }
+import play.api.{ Configuration, Logging }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.sys.process.Process
 
 @Singleton
@@ -68,10 +69,7 @@ final class ProcessService @Inject()(
 
   def forwardAlignment(
       jobId: String,
-      forwardHitsMode: String,
-      sequenceLengthMode: String,
-      eval: Double,
-      selected: Seq[Int]
+      form: ForwardingData
   ): EitherT[Future, DecodingFailure, java.io.File] = {
     EitherT((for {
       json <- resultFiles.getResults(jobId)
@@ -88,16 +86,16 @@ final class ProcessService @Inject()(
             val retrieveFullSeqHHblits  = (scriptPath + "/retrieveFullSeqHHblits.sh").toFile // why so little abstractions ???
 
             val fullEvalAccs: () => String =
-              () => result.HSPS.filter(_.eValue <= eval).map { _.accession + " " }.mkString
+              () => result.HSPS.filter(_.eValue <= form.eval).map { _.accession + " " }.mkString
 
             val fullSelectedAccs: () => String =
               () =>
-                selected.map { num =>
+                form.selected.map { num =>
                   "%s ".format(result.HSPS(num - 1).accession)
                 }.mkString
 
             val tempFileName = UUID.randomUUID().toString
-            val (script, params) = (tool, forwardHitsMode, sequenceLengthMode) match {
+            val (script, params) = (tool, form.forwardHitsMode, form.sequenceLengthMode) match {
               case (HHBLITS, "eval", "aln") | (HHPRED, "eval", "aln") =>
                 (
                   generateAlignmentScript,
@@ -105,12 +103,12 @@ final class ProcessService @Inject()(
                     "jobID"    -> jobId,
                     "filename" -> tempFileName,
                     "numList" ->
-                    result.HSPS.filter(_.eValue <= eval).map { _.num }.mkString(" ")
+                    result.HSPS.filter(_.eValue <= form.eval).map { _.num }.mkString(" ")
                   )
                 )
               case (HMMER, "eval", "aln") =>
                 val accStr: String = result.HSPS
-                  .filter(_.eValue <= eval)
+                  .filter(_.eValue <= form.eval)
                   .map { hit =>
                     result.alignment.alignment(hit.num - 1).accession + "\n"
                   }
@@ -118,22 +116,29 @@ final class ProcessService @Inject()(
                   .toString
                 (retrieveAlnEval, List("accessionsStr" -> accStr, "filename" -> tempFileName, "mode" -> "count"))
               case (PSIBLAST, "eval", "aln") =>
-                (retrieveAlnEval, List("accessionsStr" -> eval.toString, "filename" -> tempFileName, "mode" -> "eval"))
+                (
+                  retrieveAlnEval,
+                  List("accessionsStr" -> form.eval.toString, "filename" -> tempFileName, "mode" -> "eval")
+                )
 
               case (HMMER, "selected", "aln") =>
                 (
                   retrieveAlnEval,
-                  List("accessionsStr" -> selected.mkString("\n"), "filename" -> tempFileName, "mode" -> "selHmmer")
+                  List(
+                    "accessionsStr" -> form.selected.mkString("\n"),
+                    "filename"      -> tempFileName,
+                    "mode"          -> "selHmmer"
+                  )
                 )
               case (PSIBLAST, "selected", "aln") =>
                 (
                   retrieveAlnEval,
-                  List("accessionsStr" -> selected.mkString("\n"), "filename" -> tempFileName, "mode" -> "sel")
+                  List("accessionsStr" -> form.selected.mkString("\n"), "filename" -> tempFileName, "mode" -> "sel")
                 )
               case (HHPRED, "selected", "aln") | (HHBLITS, "selected", "aln") =>
                 (
                   generateAlignmentScript,
-                  List("jobID" -> jobId, "filename" -> tempFileName, "numList" -> selected.mkString("\n"))
+                  List("jobID" -> jobId, "filename" -> tempFileName, "numList" -> form.selected.mkString("\n"))
                 )
               case (PSIBLAST, "eval", "full") | (HMMER, "eval", "full") =>
                 (
@@ -185,7 +190,9 @@ final class ProcessService @Inject()(
               "DATABASES"    -> config.get[String]("db_root")
             )
 
-            Process(script.pathAsString, (constants.jobPath + jobId).toFile.toJava, params ++ env: _*).run().exitValue() match {
+            Process(script.pathAsString, (constants.jobPath + jobId).toFile.toJava, params ++ env: _*)
+              .run()
+              .exitValue() match {
               case 0 =>
                 val file = new java.io.File(
                   s"${constants.jobPath}${constants.SEPARATOR}$jobId${constants.SEPARATOR}results${constants.SEPARATOR}$tempFileName.fa"

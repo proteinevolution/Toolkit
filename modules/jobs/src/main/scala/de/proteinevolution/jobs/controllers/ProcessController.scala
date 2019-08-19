@@ -22,8 +22,8 @@ import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.HHContext
 import de.proteinevolution.jobs.services.ProcessService
 import de.proteinevolution.results.models.ForwardingData
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.{Action, AnyContent}
+import javax.inject.{ Inject, Singleton }
+import play.api.mvc.{ Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
 
@@ -51,10 +51,9 @@ class ProcessController @Inject()(
     }
   }
 
-
   def forwardAlignment(jobId: String): Action[ForwardingData] =
     Action(circe.json[ForwardingData]).async { implicit request =>
-      service.forwardAlignment(jobId, request.body.forwardHitsMode, request.body.sequenceLengthMode, request.body.eval, request.body.selected).value.map {
+      service.forwardAlignment(jobId, request.body).value.map {
         case Right(res) if res == 0 => NoContent
         case _                      => BadRequest
       }

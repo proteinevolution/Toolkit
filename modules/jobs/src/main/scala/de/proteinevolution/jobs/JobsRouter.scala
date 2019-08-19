@@ -55,19 +55,23 @@ class JobsRouter @Inject()(
   }
 
   private lazy val resultRoutes: Routes = {
-    case GET(p"/$jobID/results/alignments/" ? q_o"start=${int(start)}"
-      & q_o"end=${int(end)}" & q_o"resultField=${resultField}") =>
-      resultsController.loadAlignmentHits(jobID, start, end,resultField)
-    case GET(p"/$jobID/results/hh-alignments/" ? q_o"start=${int(start)}" & q_o"end=${int(end)}") =>
+    case GET(
+        p"/$jobID/results/alignments/" ? q_o"start=${int(start) }"
+        & q_o"end=${int(end) }" & q_o"resultField=${resultField }"
+        ) =>
+      resultsController.loadAlignmentHits(jobID, start, end, resultField)
+    case GET(p"/$jobID/results/hh-alignments/" ? q_o"start=${int(start) }" & q_o"end=${int(end) }") =>
       hhController.loadAlignments(jobID, start, end)
     case GET(p"/$jobID/results/files/$filename") => fileController.file(filename = filename, jobID = jobID)
-    case GET(p"/$jobID/results/hits/" ? q_o"start=${int(start)}" & q_o"end=${int(end)}"
-      & q_o"filter=${filter}" & q_o"sortBy=${sortBy}"& q_o"desc=${bool(desc)}") =>
+    case GET(
+        p"/$jobID/results/hits/" ? q_o"start=${int(start) }" & q_o"end=${int(end) }"
+        & q_o"filter=${filter }" & q_o"sortBy=${sortBy }" & q_o"desc=${bool(desc) }"
+        ) =>
       hhController.loadHits(jobID, start, end, filter, sortBy, desc)
     case GET(p"/$jobID/results/template-alignment/$accession") => processController.templateAlignment(jobID, accession)
-    case POST(p"/$jobID/results/forward-data/") => processController.forwardAlignment(jobID)
-    case GET(p"/$jobID/results/")                               => resultsController.loadResults(jobID)
-    case GET(p"/structure-file/$accession")                     => fileController.getStructureFile(accession)
+    case POST(p"/$jobID/results/forward-data/")                => processController.forwardAlignment(jobID)
+    case GET(p"/$jobID/results/")                              => resultsController.loadResults(jobID)
+    case GET(p"/structure-file/$accession")                    => fileController.getStructureFile(accession)
   }
 
   override def routes: Routes = {
