@@ -21,8 +21,9 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.HHContext
 import de.proteinevolution.jobs.services.ProcessService
-import javax.inject.{ Inject, Singleton }
-import play.api.mvc.{ Action, AnyContent }
+import de.proteinevolution.results.models.ForwardingData
+import javax.inject.{Inject, Singleton}
+import play.api.mvc.{Action, AnyContent}
 
 import scala.concurrent.ExecutionContext
 
@@ -50,27 +51,12 @@ class ProcessController @Inject()(
     }
   }
 
-  def forwardAlignment(
-      jobID: String,
-      forwardHitsMode: String,
-      sequenceLengthMode: String,
-      eval: Double,
-      selected: String
-  ): Action[AnyContent] =
-    userAction.async { implicit request =>
-      jobDao.findJob(jobID).flatMap {
-        case Some(job) =>
-          if (job.isPublic || job.ownerID.equals(request.user.userID)) {
-            val sel: Seq[Int] = if (selected.nonEmpty) selected.split(",").map(_.toInt) else Seq()
-            service.forwardAlignment(jobID, forwardHitsMode, sequenceLengthMode, eval, sel).value.map {
-              case Right(res) => Ok.sendFile(res)
-              case _          => BadRequest
-            }
-          } else {
-            fuccess(Unauthorized)
-          }
-        case _ => fuccess(NotFound)
+
+  def forwardAlignment(jobId: String): Action[ForwardingData] =
+    Action(circe.json[ForwardingData]).async { implicit request =>
+      service.forwardAlignment(jobId, request.body.forwardHitsMode, request.body.sequenceLengthMode, request.body.eval, request.body.selected).value.map {
+        case Right(res) if res == 0 => NoContent
+        case _                      => BadRequest
       }
     }
-
 }
