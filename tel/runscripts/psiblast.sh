@@ -107,6 +107,8 @@ psiblast -db %STANDARD/%standarddb.content \
          -outfmt 11 \
          -max_hsps 1
 
+echo "done" >> ../results/process.log
+
 echo "#Preparing output." >> ../results/process.log
 
 #converst ASN.1 output to JSON

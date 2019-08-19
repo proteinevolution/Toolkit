@@ -174,13 +174,16 @@
                 if (this.selectedTool) {
                     this.loading = true;
                     this.internalForwardData = this.forwardingData;
+
+
                     if (this.forwardingApiOptions) {
                         try {
                             this.internalForwardData = await resultsService.generateForwardingData(this.forwardingJobID, {
                                 forwardHitsMode: this.forwardHitsMode,
                                 sequenceLengthMode: this.sequenceLengthMode,
                                 eval: this.evalThreshold,
-                                selected: this.forwardingApiOptions.selectedItems.join(','),
+                                selected: this.forwardHitsMode === ForwardHitsMode.SELECTED ?
+                                    this.forwardingApiOptions.selectedItems.join(',') : '',
                             });
                             logger.log(this.internalForwardData);
                         } catch (e) {
