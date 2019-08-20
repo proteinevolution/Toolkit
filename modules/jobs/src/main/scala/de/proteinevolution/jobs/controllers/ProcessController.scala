@@ -51,11 +51,20 @@ class ProcessController @Inject()(
     }
   }
 
-  def forwardAlignment(jobId: String): Action[ForwardingData] =
-    Action(circe.json[ForwardingData]).async { implicit request =>
-      service.forwardAlignment(jobId, request.body).value.map {
-        case Right(res) if res == 0 => NoContent
-        case _                      => BadRequest
+  def forwardAlignment(jobID: String): Action[ForwardingData] =
+    userAction((circe.json[ForwardingData])).async { implicit request =>
+      jobDao.findJob(jobID).flatMap {
+        case Some(job) =>
+          if (job.isPublic || job.ownerID.equals(request.user.userID)) {
+            service.forwardAlignment(jobID, request.body).value.map {
+              case Right(res) => Ok.sendFile(res)
+              case _          => BadRequest
+            }
+          } else {
+            fuccess(Unauthorized)
+          }
+        case _ => fuccess(NotFound)
       }
     }
+
 }

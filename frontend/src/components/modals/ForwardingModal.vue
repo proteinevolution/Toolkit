@@ -89,7 +89,7 @@
 
     const logger = Logger.get('ForwardingModal');
     const submission: any = {};
-    
+
     export default Vue.extend({
         name: 'ForwardingModal',
         components: {
@@ -176,14 +176,13 @@
                     this.loading = true;
                     this.internalForwardData = this.forwardingData;
 
-
                     if (this.forwardingApiOptions) {
                         try {
                             Vue.set(submission, 'forwardHitsMode', this.forwardHitsMode);
                             Vue.set(submission, 'sequenceLengthMode', this.sequenceLengthMode);
                             Vue.set(submission, 'eval', this.evalThreshold);
                             Vue.set(submission, 'selected', this.forwardHitsMode === ForwardHitsMode.SELECTED ?
-                                this.forwardingApiOptions.selectedItems : '');
+                                this.forwardingApiOptions.selectedItems : []);
 
                             this.internalForwardData = await resultsService.generateForwardingData(this.forwardingJobID,
                                 submission);
