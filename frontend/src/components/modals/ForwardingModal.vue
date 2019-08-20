@@ -88,7 +88,8 @@
     import {ForwardHitsMode, SequenceLengthMode} from '@/types/toolkit/enums';
 
     const logger = Logger.get('ForwardingModal');
-
+    const submission: any = {};
+    
     export default Vue.extend({
         name: 'ForwardingModal',
         components: {
@@ -120,7 +121,6 @@
                 sequenceLengthMode: SequenceLengthMode.ALN,
                 evalThreshold: 0.001 as number | string,
                 internalForwardData: '',
-                submission: {} as any,
                 loading: false,
                 SequenceLengthMode,
                 ForwardHitsMode,
@@ -179,14 +179,14 @@
 
                     if (this.forwardingApiOptions) {
                         try {
-                            Vue.set(this.submission, 'forwardHitsMode', this.forwardHitsMode);
-                            Vue.set(this.submission, 'sequenceLengthMode', this.sequenceLengthMode);
-                            Vue.set(this.submission, 'eval', this.evalThreshold);
-                            Vue.set(this.submission, 'selected', this.forwardHitsMode === ForwardHitsMode.SELECTED ?
+                            Vue.set(submission, 'forwardHitsMode', this.forwardHitsMode);
+                            Vue.set(submission, 'sequenceLengthMode', this.sequenceLengthMode);
+                            Vue.set(submission, 'eval', this.evalThreshold);
+                            Vue.set(submission, 'selected', this.forwardHitsMode === ForwardHitsMode.SELECTED ?
                                 this.forwardingApiOptions.selectedItems : '');
 
                             this.internalForwardData = await resultsService.generateForwardingData(this.forwardingJobID,
-                                this.submission);
+                                submission);
 
                         } catch (e) {
                             logger.error(e);
