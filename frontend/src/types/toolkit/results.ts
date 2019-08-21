@@ -222,3 +222,10 @@ export interface StructureFileResponse {
     data: any;
     filename?: string;
 }
+
+export interface ForwardingSubmission {
+    forwardHitsMode: string;
+    sequenceLengthMode: string;
+    eval: number | string;
+    selected: number[];
+}
