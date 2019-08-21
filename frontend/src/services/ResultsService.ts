@@ -1,6 +1,7 @@
 import axios, {AxiosResponse} from 'axios';
 import {
     AlignmentResultResponse,
+    ForwardingSubmission,
     HHInfoResult,
     SearchAlignmentItem,
     SearchAlignmentsResponse,
@@ -124,7 +125,7 @@ class ResultsService {
         });
     }
 
-    public generateForwardingData(jobId: string, submission: any): Promise<string> {
+    public generateForwardingData(jobId: string, submission: ForwardingSubmission): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             axios.post(`/api/jobs/${jobId}/results/forward-data/`, submission)
                 .then((response) => {
