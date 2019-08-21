@@ -161,6 +161,7 @@ export default {
         maxSeqLength: 'Maximum allowed sequence length is {limit}.',
         minSeqLength: 'Minimum required sequence length is {limit}.',
         onlyDashes: 'Sequence contains only dots/dashes.',
+        maxIDNumber: 'Input contains more than {limit} identifiers.',
         sameLength: 'Sequences should have the same length.',
         maxLength: 'Input contains over {limit} characters.',
         uniqueIDs: 'Identifiers are not unique.',

@@ -8,11 +8,11 @@ export function validation(val: string, inputType: TextAreaInputType, params: Va
         case TextAreaInputType.SEQUENCE:
             return validateSequence(val, params as SequenceValidationParams);
         case TextAreaInputType.REGEX:
-            return validateRegex(val);
+            return validateRegex(val, params as SequenceValidationParams);
         case TextAreaInputType.PDB:
             return validatePDB(val);
         case TextAreaInputType.ACCESSION_ID:
-            return validateAccessionID(val);
+            return validateAccessionID(val, params as SequenceValidationParams);
     }
 }
 
@@ -88,12 +88,12 @@ export function transformToFormat(val: string, format: string): string {
     return new Reformat(val).reformat(format);
 }
 
-export function validateRegex(val: string): ValidationResult {
+export function validateRegex(val: string, params: SequenceValidationParams): ValidationResult {
     if (val.length > 0) {
         if (/\s/.test(val)) {
             return result(true, 'danger', 'invalidWhiteSpace');
         }
-        if (val.length > 200) {
+        if (params.maxCharPerSeq && (val.length > params.maxCharPerSeq)) {
             return result(true, 'danger', 'maxRegexLength');
         }
         return result(false, 'success', 'validRegex');
@@ -117,9 +117,12 @@ export function validatePDB(val: string): ValidationResult {
     return result(true, 'danger', 'invalidPDB');
 }
 
-export function validateAccessionID(val: string): ValidationResult {
+export function validateAccessionID(val: string, params: SequenceValidationParams): ValidationResult {
     if (val.replace(/\s/g, '') === '') {
         return result(true, 'danger', 'invalidAccessionID');
+    }
+    if (params.maxNumSeq && val.split(/[\r\n]+/).length > params.maxNumSeq) {
+        return result(true, 'danger', 'maxIDNumber', {limit: params.maxNumSeq});
     }
     return result(false, 'success', 'validAccessionID');
 }
