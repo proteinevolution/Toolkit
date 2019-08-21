@@ -175,17 +175,17 @@
                     this.loading = true;
                     this.internalForwardData = this.forwardingData;
 
-
                     if (this.forwardingApiOptions) {
                         try {
-                            this.internalForwardData = await resultsService.generateForwardingData(this.forwardingJobID, {
-                                forwardHitsMode: this.forwardHitsMode,
-                                sequenceLengthMode: this.sequenceLengthMode,
-                                eval: this.evalThreshold,
-                                selected: this.forwardHitsMode === ForwardHitsMode.SELECTED ?
-                                    this.forwardingApiOptions.selectedItems.join(',') : '',
-                            });
-                            logger.log(this.internalForwardData);
+                            this.internalForwardData = await resultsService.generateForwardingData(this.forwardingJobID,
+                                {
+                                    forwardHitsMode: this.forwardHitsMode,
+                                    sequenceLengthMode: this.sequenceLengthMode,
+                                    eval: this.evalThreshold,
+                                    selected: this.forwardHitsMode === ForwardHitsMode.SELECTED ?
+                                        this.forwardingApiOptions.selectedItems : [],
+                                });
+
                         } catch (e) {
                             logger.error(e);
                             this.$alert(this.$t('errors.couldNotLoadForwardData'), 'danger');
@@ -193,19 +193,25 @@
                             return;
                         }
                     }
-                    this.$router.push('/tools/' + this.selectedTool, () => {
-                        EventBus.$on('paste-area-loaded', this.pasteForwardData);
-                    });
-                    EventBus.$emit('hide-modal', 'forwardingModal');
+
+                    if (this.internalForwardData) {
+
+                        this.$router.push('/tools/' + this.selectedTool, () => {
+                            EventBus.$on('paste-area-loaded', this.pasteForwardData);
+                        });
+                        EventBus.$emit('hide-modal', 'forwardingModal');
+                        this.resetData();
+                    } else {
+                        this.$alert(this.$t('jobs.forwarding.noData'), 'danger');
+                    }
                     this.loading = false;
-                    this.resetData();
+
                 } else {
                     logger.log('no tool selected');
                 }
             },
             pasteForwardData() {
                 EventBus.$off('paste-area-loaded', this.pasteForwardData);
-                logger.log(this.internalForwardData);
                 EventBus.$emit('forward-data', {data: this.internalForwardData, jobID: this.forwardingJobID});
             },
             onShown(): void {
@@ -233,6 +239,7 @@
                 this.forwardHitsMode = ForwardHitsMode.SELECTED;
                 this.sequenceLengthMode = SequenceLengthMode.ALN;
                 this.selectedTool = undefined;
+                this.evalThreshold = 0.001;
             },
         },
     });

@@ -21,6 +21,7 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.HHContext
 import de.proteinevolution.jobs.services.ProcessService
+import de.proteinevolution.results.models.ForwardingData
 import javax.inject.{ Inject, Singleton }
 import play.api.mvc.{ Action, AnyContent }
 
@@ -50,19 +51,12 @@ class ProcessController @Inject()(
     }
   }
 
-  def forwardAlignment(
-      jobID: String,
-      forwardHitsMode: String,
-      sequenceLengthMode: String,
-      eval: Double,
-      selected: String
-  ): Action[AnyContent] =
-    userAction.async { implicit request =>
+  def forwardAlignment(jobID: String): Action[ForwardingData] =
+    userAction((circe.json[ForwardingData])).async { implicit request =>
       jobDao.findJob(jobID).flatMap {
         case Some(job) =>
           if (job.isPublic || job.ownerID.equals(request.user.userID)) {
-            val sel: Seq[Int] = if (selected.nonEmpty) selected.split(",").map(_.toInt) else Seq()
-            service.forwardAlignment(jobID, forwardHitsMode, sequenceLengthMode, eval, sel).value.map {
+            service.forwardAlignment(jobID, request.body).value.map {
               case Right(res) => Ok.sendFile(res)
               case _          => BadRequest
             }
