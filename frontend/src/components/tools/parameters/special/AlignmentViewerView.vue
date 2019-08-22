@@ -17,9 +17,22 @@
                           v-text="$t('tools.parameters.textArea.pasteExample')"></span>
                 </b-btn>
             </b-button-group>
+            <b-alert show
+                     v-if="detectedFormat"
+                     variant="success"
+                     class="validation-alert mb-0"
+                     v-html="$t('tools.reformat.detectedFormat', {format: detectedFormat})">
+            </b-alert>
+            <b-alert show
+                     v-if="!detectedFormat && this.input"
+                     variant="danger"
+                     class="validation-alert mb-0"
+                     v-html="$t('tools.reformat.invalidFormat')">
+            </b-alert>
         </b-form-group>
         <b-btn class="submit-button float-right"
                @click="showAlignment"
+               :disabled="!detectedFormat"
                variant="primary"
                v-text="$t('tools.alignmentViewer.viewAlignment')"></b-btn>
     </div>
@@ -55,7 +68,10 @@
                 return new Reformat(this.input);
             },
             detectedFormat(): string {
-                return this.reformat.getFormat();
+                if (this.input.replace(/\s/g, '') !== '') {
+                    return this.reformat.getFormat();
+                }
+                return '';
             },
         },
         mounted() {
@@ -85,6 +101,7 @@
             },
             showAlignment() {
                 jobService.logFrontendJob(this.$route.params.toolName);
+                this.input = new Reformat(this.input).reformat('FASTA');
                 EventBus.$emit('alignment-viewer-result-open', {
                     sequences: this.input,
                     format: this.detectedFormat.toLowerCase(),
@@ -100,6 +117,12 @@
         font-family: $font-family-monospace;
         font-size: 0.9em;
         height: 20em;
+    }
+
+    .validation-alert {
+        margin-top: 0.5rem;
+        float: right;
+        padding: 0.4rem 0.5rem;
     }
 
 </style>

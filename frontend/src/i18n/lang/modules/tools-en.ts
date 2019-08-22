@@ -179,6 +179,7 @@ export default {
     },
     reformat: {
         detectedFormat: 'Found format: <b>{format}</b>',
+        invalidFormat: 'Expecting an MSA in FASTA/CLUSTAL/STOCKHOLM format',
         selectOutputFormat: 'Select Output Format',
         forwardTo: 'Forward to',
         download: 'Download',
