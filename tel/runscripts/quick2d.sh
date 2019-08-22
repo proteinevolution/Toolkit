@@ -23,13 +23,13 @@ if [[ ${SEQ_COUNT} = "0" ]] && [[ ${FORMAT} = "0" ]] ; then
       fi
 fi
 
-# remove invalid characters from sequencee
-sed -i "2 s/[^a-z^A-Z]//g" ../params/alignment
-
 reformatValidator.pl fas fas \
     $(readlink -f %alignment.path) \
     $(readlink -f ../results/${JOBID}.fas) \
     -d 160 -uc -l 32000
+
+# remove invalid characters from sequence
+sed -i "2 s/[^a-z^A-Z]//g" ../results/${JOBID}.fas
 
 if [[ ! -f ../results/${JOBID}.fas ]]; then
     echo "#Input is not in FASTA format." >> ../results/process.log
