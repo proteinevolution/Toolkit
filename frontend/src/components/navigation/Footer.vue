@@ -9,7 +9,8 @@
             <b-nav-item @click="launchUpdatesModal">{{ $t('footerLinkModals.names.updates') }}</b-nav-item>
         </b-nav>
         <b-row>
-            <b-col class="text-center">
+            <b-col class="text-center"
+                   cols="12">
                 {{ $t('copyright', {currentYear: new Date().getFullYear()}) }}
             </b-col>
         </b-row>
