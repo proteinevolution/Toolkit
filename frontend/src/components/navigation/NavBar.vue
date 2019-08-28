@@ -15,19 +15,19 @@
                             </b-nav-item>
                         </b-navbar-nav>
 
-                        <b-navbar-nav class="lower-nav"
-                                      :style="{borderTopColor: sectionColor}">
-                            <transition-group name="list-complete">
-                                <b-nav-item v-for="tool in displayedTools"
-                                            class="list-complete-item"
-                                            :key="tool.name"
-                                            :to="'/tools/' + tool.name"
-                                            v-b-tooltip.hover.bottom
-                                            :title="tool.description">
-                                    {{tool.longname}}
-                                </b-nav-item>
-                            </transition-group>
-                        </b-navbar-nav>
+                        <transition-group name="list-complete"
+                                          tag="ul"
+                                          class="navbar-nav lower-nav"
+                                          :style="{borderTopColor: sectionColor}">
+                            <b-nav-item v-for="tool in displayedTools"
+                                        class="list-complete-item"
+                                        :key="tool.name"
+                                        :to="'/tools/' + tool.name"
+                                        v-b-tooltip.hover.bottom
+                                        :title="tool.description">
+                                {{tool.longname}}
+                            </b-nav-item>
+                        </transition-group>
                     </b-col>
                 </b-row>
             </b-collapse>
