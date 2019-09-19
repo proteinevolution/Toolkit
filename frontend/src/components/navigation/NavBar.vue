@@ -5,7 +5,7 @@
             <b-collapse is-nav
                         id="nav_collapse">
                 <b-row>
-                    <b-col>
+                    <b-col cols="auto">
                         <b-navbar-nav class="upper-nav">
                             <b-nav-item v-for="section in sections"
                                         :key="section"
