@@ -152,7 +152,7 @@
         data() {
             return {
                 JobState,
-                errorMessage: 'errors.JobNotFound',
+                errorMessage: '',
             };
         },
         computed: {
