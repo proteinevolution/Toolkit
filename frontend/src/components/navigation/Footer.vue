@@ -10,7 +10,7 @@
         </b-nav>
         <b-row>
             <b-col class="text-center"
-                   cols="12">
+                   cols="auto">
                 {{ $t('copyright', {currentYear: new Date().getFullYear()}) }}
             </b-col>
         </b-row>
