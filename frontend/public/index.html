@@ -11,10 +11,11 @@
     <meta name="description" content="The MPI Bioinformatics Toolkit is an interactive web service
                                           which offers access to a great variety of public and in-house bioinformatics tools.
                                           They are grouped into different sections that support sequence searches,
-                                          multiple alignment, secondary and tertiary structure prediction and classification." />
+                                          multiple alignment, secondary and tertiary structure prediction and classification."/>
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700|Roboto:300|Source+Code+Pro:400,700|Vollkorn:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700|Roboto:300|Source+Code+Pro:400,700|Vollkorn:400,700"
+          rel="stylesheet">
 
     <link rel="shortcut icon" href="<%= BASE_URL %>favicon-green.svg">
     <link id="tk-favicon" rel="shortcut icon" href="<%= BASE_URL %>favicon-32x32.png">
@@ -23,8 +24,24 @@
 
 </head>
 <body>
+<center>
+    <script>
+        var ua = window.navigator.userAgent;
+        <!-- IE 10 or older -->
+        var msie = ua.indexOf('MSIE ');
+        <!-- IE 11 -->
+        var trident = ua.indexOf('Trident/');
+        <!-- Edge (IE 12+) -->
+        var edge = ua.indexOf('Edge/');
+        if (msie > 0 || trident > 0 || edge > 0) {
+            document.write('<strong>The Toolkit is not compatible with Microsoft Internet Explorer ' +
+                'and Edge browsers. Please use Chrome/Firefox/Safari.</strong>');
+        }
+    </script>
+</center>
 <noscript>
-    <strong>We're sorry but the Toolkit doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    <strong>We're sorry but the Toolkit doesn't work properly without JavaScript enabled. Please enable it to
+        continue.</strong>
 </noscript>
 <div id="app"></div>
 <!-- built files will be auto injected -->
