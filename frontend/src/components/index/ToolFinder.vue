@@ -205,7 +205,7 @@
                 .traffic-bar {
                     cursor: pointer;
                     z-index: 99;
-                    height: 0.2em;
+                    height: 0.3em;
                     border-radius: 3px;
                     opacity: 0.9;
                     animation: background 10s cubic-bezier(1, 0, 0, 1) infinite;

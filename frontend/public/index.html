@@ -24,21 +24,21 @@
 
 </head>
 <body>
-<center>
-    <script>
-        var ua = window.navigator.userAgent;
-        <!-- IE 10 or older -->
-        var msie = ua.indexOf('MSIE ');
-        <!-- IE 11 -->
-        var trident = ua.indexOf('Trident/');
-        <!-- Edge (IE 12+) -->
-        var edge = ua.indexOf('Edge/');
-        if (msie > 0 || trident > 0 || edge > 0) {
-            document.write('<strong>The Toolkit is not compatible with Microsoft Internet Explorer ' +
-                'and Edge browsers. Please use Chrome/Firefox/Safari.</strong>');
-        }
-    </script>
-</center>
+<script>
+    var ua = window.navigator.userAgent;
+    <!-- IE 10 or older -->
+    var msie = ua.indexOf('MSIE ');
+    <!-- IE 11 -->
+    var trident = ua.indexOf('Trident/');
+    <!-- Edge (IE 12+) -->
+    <!-- var edge = ua.indexOf('Edge/'); -->
+    if (msie > 0 || trident > 0) {
+        document.write('<div style="text-align: center; background-color: #c8c8c8;">');
+        document.write(('The Toolkit is not compatible with Microsoft Internet Explorer. For the best viewing experience, ' +
+            'please use Chrome/Firefox.'));
+        document.write('</div>');
+    }
+</script>
 <noscript>
     <strong>We're sorry but the Toolkit doesn't work properly without JavaScript enabled. Please enable it to
         continue.</strong>
