@@ -94,15 +94,9 @@ export default {
                         content: `This parameter controls how many matches will be displayed in the results.`,
                     },
                 ],
-                references: ` <p>Söding J. (2005) Protein homology detection by HMM-HMM comparison. Bioinformatics 21: 951-960.
-        <a href = https://www.ncbi.nlm.nih.gov/pubmed/15531603 target="_blank" rel="noopener">PMID: 15531603</a></p>
-        <p>Hildebrand A., Remmert A., Biegert A., Söding J. (2009). Fast and accurate automatic structure prediction
-            with HHpred. Proteins 77(Suppl 9):128-32. doi: 10.1002/prot.22499.
-            <a href = https://www.ncbi.nlm.nih.gov/pubmed/19626712 target="_blank" rel="noopener">PMID: 19626712</a></p>
-        <p>Meier A., Söding J. (2015). Automatic Prediction of Protein 3D Structures by Probabilistic Multi-template
-        Homology Modeling. PLoS Comput Biol. 11(10):e1004343. doi: 10.1371/journal.pcbi.1004343.
-        <a href = https://www.ncbi.nlm.nih.gov/pubmed/26496371 target="_blank" rel="noopener">PMID: 26496371</a></p>
-    `,
+                references: `<p>HHomp--prediction and classification of outer membrane proteins. <br>Remmert M, Linke D, 
+                             Lupas AN, Söding J. <a href = https://www.ncbi.nlm.nih.gov/pubmed/19429691 target="_blank" 
+                             rel="noopener">Nucleic Acids Res. 2009 Jul; 37:W446-51.</a></p>`,
             },
         },
     },
