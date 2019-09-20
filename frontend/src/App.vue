@@ -298,7 +298,7 @@
     }
 
     .main-content .job-list-col {
-        transition: padding 0.6s, opacity 0.6s, max-width 0.6s;
+        transition: padding 0.6s, opacity 0.1s, max-width 0.6s;
     }
 
     .main-content:not(.job-list-visible) .job-list-col {
