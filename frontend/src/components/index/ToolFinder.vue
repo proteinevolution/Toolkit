@@ -87,14 +87,15 @@
             },
         },
         methods: {
-            animateClusterload(end: number, duration: number = 1000): void {
+            animateClusterload(end: number, duration: number = 10): void {
                 const start: number = this.clusterWorkload;
                 const range: number = end - start;
                 const increment: number = end > start ? 1 : -1;
                 const stepTime: number = Math.abs(Math.floor(duration / range));
                 const timer = setInterval(() => {
                     this.clusterWorkload += increment;
-                    if (this.clusterWorkload === end || this.clusterWorkload <= 0 || this.clusterWorkload >= 100) {
+                    if (this.clusterWorkload === Math.floor(end * 100) || this.clusterWorkload <= 0
+                        || this.clusterWorkload >= 100) {
                         clearInterval(timer);
                     }
                 }, stepTime);
