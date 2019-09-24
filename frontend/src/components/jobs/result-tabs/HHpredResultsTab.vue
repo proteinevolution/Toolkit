@@ -139,14 +139,14 @@
                                 <tr v-if="alPart.template.consensus"
                                     class="sequence">
                                     <td></td>
-                                    <td v-text="">Q Consensus</td>
+                                    <td v-text="">T Consensus</td>
                                     <td v-text="alPart.template.start"></td>
                                     <td v-html="alPart.template.consensus  + alEndRef(alPart.template)"></td>
                                 </tr>
                                 <tr v-if="alPart.template.seq"
                                     class="sequence">
                                     <td></td>
-                                    <td v-text="'T '+alPart.query.name"></td>
+                                    <td v-text="'T '+alPart.template.accession"></td>
                                     <td v-text="alPart.template.start"></td>
                                     <td v-html="coloredSeq(alPart.template.seq) + alEndRef(alPart.template)"></td>
                                 </tr>
