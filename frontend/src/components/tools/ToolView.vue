@@ -10,7 +10,7 @@
                         {{ tool.longname }}
                     </a>
                     <b-link class="help-icon" @click="launchHelpModal">
-                        <i class="far fa-question-circle"></i>
+                        <i class="far fa-question-circle" :title="$t('jobs.help')"></i>
                     </b-link>
                 </h1>
                 <div class="job-details ml-auto text-muted mb-2">
@@ -77,13 +77,13 @@
                                        v-if="job && !job.foreign"
                                        :title="$t('jobs.delete')"
                                        @click="$emit('delete-job')"></i>
-                                    <b-button v-if="hasRememberedParameters"
-                                              @click="clearParameterRemember">
-                                        Reset
-                                        <!-- TODO style this, maybe icon? -->
-                                    </b-button>
+                                    <i v-if="hasRememberedParameters"
+                                       class="tool-action fa mr-1 fa-undo  mr-4"
+                                       :title="$t('jobs.resetParams')"
+                                       @click="clearParameterRemember"></i>
                                     <i class="tool-action tool-action-lg fa mr-1"
                                        @click="toggleFullScreen"
+                                       :title="$t('jobs.toggleFullscreen')"
                                        :class="[fullScreen ? 'fa-compress' : 'fa-expand']"></i>
                                 </div>
                             </template>
@@ -223,14 +223,18 @@
                 this.submission = parameterRememberService.load(toolName);
             },
             saveParametersToRemember(toolName: string, submission: any): void {
-                const filtered = submission;
-                // TODO filter parameters which do not need to be saved (alignment, ...).
-                // TODO Maybe add a flag to the parameter class in tools.conf and type file
-                parameterRememberService.save(toolName, filtered);
+                delete submission.alignment;
+                delete submission.jobID;
+                if ('alignment_two' in submission) {
+                    delete submission.alignment_two;
+                    delete submission.hhsuitedb;
+                    delete submission.proteomes;
+                }
+                parameterRememberService.save(toolName, submission);
             },
             clearParameterRemember(): void {
                 parameterRememberService.reset(this.toolName);
-                // TODO reload to load defaults (or other way)
+                this.loadToolParameters(this.toolName);
             },
             toggleFullScreen(): void {
                 this.fullScreen = !this.fullScreen;
@@ -315,6 +319,7 @@
                 position: relative;
                 top: -2px;
             }
+
         }
 
         .parameter-tabs {

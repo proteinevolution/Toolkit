@@ -260,9 +260,12 @@ export default {
         selectPlaceholder: 'Please select a tool',
         noData: 'No data to forward!',
     },
+    help: 'Help Pages',
     submitJob: 'Submit Job',
     resubmitJob: 'Resubmit Job',
     delete: 'Delete Job',
+    resetParams: 'Reset Parameters',
+    toggleFullscreen: 'Toggle Fullscreen',
     foundIdenticalCopy: 'We found an identical copy of your job in our database!<br>' +
         'Job ID: {jobID}, which was created {createdAt}.',
     startJob: 'Start job anyways',
