@@ -9,8 +9,10 @@
                        @click="refresh">
                         {{ tool.longname }}
                     </a>
-                    <b-link class="help-icon" @click="launchHelpModal">
-                        <i class="far fa-question-circle" :title="$t('jobs.help')"></i>
+                    <b-link class="help-icon"
+                            @click="launchHelpModal">
+                        <i class="far fa-question-circle"
+                           :title="$t('jobs.help')"></i>
                     </b-link>
                 </h1>
                 <div class="job-details ml-auto text-muted mb-2">
@@ -78,7 +80,7 @@
                                        :title="$t('jobs.delete')"
                                        @click="$emit('delete-job')"></i>
                                     <i v-if="hasRememberedParameters"
-                                       class="tool-action fa mr-1 fa-undo  mr-4"
+                                       class="tool-action fa fa-undo mr-4"
                                        :title="$t('jobs.resetParams')"
                                        @click="clearParameterRemember"></i>
                                     <i class="tool-action tool-action-lg fa mr-1"
@@ -216,7 +218,9 @@
             async loadToolParameters(toolName: string): Promise<void> {
                 await this.$store.dispatch('tools/fetchToolParametersIfNotPresent', toolName);
                 // wait until parameters are loaded before trying to load remembered values
-                this.loadParameterRemember(toolName);
+                if (!this.job) {
+                    this.loadParameterRemember(toolName);
+                }
             },
             loadParameterRemember(toolName: string): void {
                 logger.debug(`loading remembered parameters for ${toolName}`);
