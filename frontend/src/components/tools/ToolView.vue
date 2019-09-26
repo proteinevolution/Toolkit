@@ -224,7 +224,7 @@
             },
             loadParameterRemember(toolName: string): void {
                 logger.debug(`loading remembered parameters for ${toolName}`);
-                this.submission = parameterRememberService.load(toolName);
+                this.submission = Object.assign(this.submission, parameterRememberService.load(toolName));
             },
             saveParametersToRemember(toolName: string, submission: any): void {
                 delete submission.alignment;
