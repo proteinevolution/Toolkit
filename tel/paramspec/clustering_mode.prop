@@ -1,2 +1,2 @@
-cluster normal->slow_sensitive
+cluster normal->slow_sensitive*
 linclust  linclust->fast_less_sensitive
