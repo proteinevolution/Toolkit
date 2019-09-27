@@ -239,6 +239,7 @@
             clearParameterRemember(): void {
                 parameterRememberService.reset(this.toolName);
                 this.loadToolParameters(this.toolName);
+                this.refresh();
             },
             toggleFullScreen(): void {
                 this.fullScreen = !this.fullScreen;
