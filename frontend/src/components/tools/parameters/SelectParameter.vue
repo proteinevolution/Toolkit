@@ -2,6 +2,7 @@
     <b-form-group :label="$t('tools.parameters.labels.' + parameter.name)">
 
         <multiselect v-model="selected"
+                     :color='red'
                      :multiple="isMulti"
                      :max="isMulti ? parameter.maxSelectedOptions : null"
                      :allowEmpty="isMulti"
@@ -17,6 +18,9 @@
                      deselectLabel=""
                      selectedLabel="">
             <template #maxElements>{{ $t(maxElementTextKey) }}</template>
+            <template slot="option" slot-scope="{ option }" v-if="parameter.default === option.value">
+                {{ option.text }} (default)
+            </template>
         </multiselect>
 
     </b-form-group>
