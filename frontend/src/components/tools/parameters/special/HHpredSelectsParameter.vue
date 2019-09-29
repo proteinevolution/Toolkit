@@ -132,7 +132,7 @@
         },
         methods: {
             onSecondTextAreaEnabled(enabled: boolean): void {
-                this.disabled = false;
+                this.disabled = enabled;
             },
         },
     });

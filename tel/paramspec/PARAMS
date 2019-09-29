@@ -8,12 +8,10 @@ msa_gen_max_iter_hhrepid GEN msa_gen_max_iter_hhrepid.prop
 quick_iters GEN quick_iters.prop
 inc_amino GEN inc_amino.prop
 genetic_code GEN genetic_code.prop
-inclusion_ethresh GEN inclusion_ethresh.prop
 min_cov GEN min_cov.prop
 matrix GEN matrix.prop
 matrix_phyml GEN matrix_phyml.prop
 matrix_marcoil GEN matrix_marcoil.prop
-protblastprogram GEN protblastprogram.prop
 transition_probability GEN transition_probability.prop
 alignmode GEN alignmode.prop
 alignmacmode GEN alignmacmode.prop
@@ -57,3 +55,5 @@ in_format GEN in_format.prop
 out_format GEN out_format.prop
 desc GEN desc.prop
 clustering_mode GEN clustering_mode.prop
+pmin GEN pmin.prop
+min_seqid_query GEN min_seqid_query.prop

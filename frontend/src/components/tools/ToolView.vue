@@ -9,8 +9,10 @@
                        @click="refresh">
                         {{ tool.longname }}
                     </a>
-                    <b-link class="help-icon" @click="launchHelpModal">
-                        <i class="far fa-question-circle"></i>
+                    <b-link class="help-icon"
+                            @click="launchHelpModal">
+                        <i class="far fa-question-circle"
+                           :title="$t('jobs.help')"></i>
                     </b-link>
                 </h1>
                 <div class="job-details ml-auto text-muted mb-2">
@@ -77,8 +79,13 @@
                                        v-if="job && !job.foreign"
                                        :title="$t('jobs.delete')"
                                        @click="$emit('delete-job')"></i>
+                                    <i v-if="hasRememberedParameters"
+                                       class="tool-action fa fa-undo mr-4"
+                                       :title="$t('jobs.resetParams')"
+                                       @click="clearParameterRemember"></i>
                                     <i class="tool-action tool-action-lg fa mr-1"
                                        @click="toggleFullScreen"
+                                       :title="$t('jobs.toggleFullscreen')"
                                        :class="[fullScreen ? 'fa-compress' : 'fa-expand']"></i>
                                 </div>
                             </template>
@@ -108,6 +115,7 @@
     import Logger from 'js-logger';
     import EventBus from '@/util/EventBus';
     import {CustomJobIdValidationResult, Job} from '@/types/toolkit/jobs';
+    import {parameterRememberService} from '@/services/ParameterRememberService';
 
     const logger = Logger.get('ToolView');
 
@@ -179,6 +187,9 @@
             loggedIn(): boolean {
                 return this.$store.getters['auth/loggedIn'];
             },
+            hasRememberedParameters(): boolean {
+                return parameterRememberService.has(this.toolName);
+            },
         },
         watch: {
             job: {
@@ -204,8 +215,31 @@
             EventBus.$off('resubmit-section', this.resubmitSectionReceive);
         },
         methods: {
-            loadToolParameters(toolName: string): void {
-                this.$store.dispatch('tools/fetchToolParametersIfNotPresent', toolName);
+            async loadToolParameters(toolName: string): Promise<void> {
+                await this.$store.dispatch('tools/fetchToolParametersIfNotPresent', toolName);
+                // wait until parameters are loaded before trying to load remembered values
+                if (!this.job) {
+                    this.loadParameterRemember(toolName);
+                }
+            },
+            loadParameterRemember(toolName: string): void {
+                logger.debug(`loading remembered parameters for ${toolName}`);
+                this.submission = Object.assign(this.submission, parameterRememberService.load(toolName));
+            },
+            saveParametersToRemember(toolName: string, submission: any): void {
+                delete submission.alignment;
+                delete submission.jobID;
+                if ('alignment_two' in submission) {
+                    delete submission.alignment_two;
+                    delete submission.hhsuitedb;
+                    delete submission.proteomes;
+                }
+                parameterRememberService.save(toolName, submission);
+            },
+            clearParameterRemember(): void {
+                parameterRememberService.reset(this.toolName);
+                this.loadToolParameters(this.toolName);
+                this.refresh();
             },
             toggleFullScreen(): void {
                 this.fullScreen = !this.fullScreen;
@@ -214,8 +248,11 @@
                 }
             },
             submitJob(): void {
-                jobService.submitJob(this.toolName, this.submission)
+                const toolName = this.toolName;
+                const submission = this.submission;
+                jobService.submitJob(this.toolName, submission)
                     .then((response) => {
+                        this.saveParametersToRemember(toolName, submission);
                         this.$router.push(`/jobs/${response.jobID}`);
                     })
                     .catch((response) => {
@@ -287,6 +324,7 @@
                 position: relative;
                 top: -2px;
             }
+
         }
 
         .parameter-tabs {
