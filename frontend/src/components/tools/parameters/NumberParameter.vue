@@ -8,6 +8,8 @@
                       :state="hasError ? false : null"
                       :aria-describedby="parameter.name + '-invalid'"
                       size="sm"
+                      :placeholder="parameter.default + ' (default)'"
+                      :title="parameter.default + ' (default)'"
                       required>
         </b-form-input>
         <b-form-invalid-feedback :id="parameter.name + '-invalid'"
