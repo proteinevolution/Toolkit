@@ -17,7 +17,15 @@ const localStoragePlugin = (store: Store<RootState>) => {
     // save tools and version in localStorage whenever they are updated
     store.subscribe((mutation, state) => {
         if (mutation.type.startsWith('tools')) {
-            localStorage.setItem('tools', JSON.stringify((state as any).tools.tools));
+
+            const tools = JSON.parse(JSON.stringify((state as any).tools.tools));
+
+            // do not save parameters in localStorage as they updated frequently (e.g. databases of HHpred, PSI-BLAST)
+            tools.forEach((element: { parameters: any; }) => {
+                delete element.parameters;
+            });
+
+            localStorage.setItem('tools', JSON.stringify(tools));
             localStorage.setItem('toolsVersion', (state as any).tools.version);
         } else if (mutation.type.startsWith('jobs')) {
             localStorage.setItem('jobs', JSON.stringify((state as any).jobs.jobs));
