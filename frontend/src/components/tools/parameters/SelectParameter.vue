@@ -2,7 +2,6 @@
     <b-form-group :label="$t('tools.parameters.labels.' + parameter.name)">
 
         <multiselect v-model="selected"
-                     :color='red'
                      :multiple="isMulti"
                      :max="isMulti ? parameter.maxSelectedOptions : null"
                      :allowEmpty="isMulti"
