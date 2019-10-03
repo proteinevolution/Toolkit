@@ -3,9 +3,9 @@ import sbt._
 
 object Dependencies {
 
-  val akkaVersion = "2.5.23"
-  val catsV       = "1.6.0"
-  val circeV      = "0.11.1"
+  val akkaVersion = "2.5.25"
+  val catsV       = "2.0.0"
+  val circeV      = "0.12.1"
 
   lazy val commonDeps: Seq[ModuleID] = Seq(
     ws,
@@ -29,10 +29,10 @@ object Dependencies {
       .exclude("com.typesafe.akka", "*") // provided
       .exclude("com.typesafe.play", "*"), // provided
     "org.typelevel" %% "cats-core"            % catsV,
-    "org.typelevel" %% "cats-effect"          % "1.3.1",
+    "org.typelevel" %% "cats-effect"          % "2.0.0",
     "com.chuusai"   %% "shapeless"            % "2.3.3",
     "com.mohiva"    %% "play-html-compressor" % "0.7.1",
-    "com.dripower"  %% "play-circe"           % "2711.0",
+    "com.dripower"  %% "play-circe"           % "2712.0",
     "io.circe"      %% "circe-generic"        % circeV,
     "io.circe"      %% "circe-generic-extras" % circeV,
     "io.circe"      %% "circe-java8"          % circeV,
