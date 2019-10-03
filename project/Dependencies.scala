@@ -5,7 +5,7 @@ object Dependencies {
 
   val akkaVersion = "2.5.25"
   val catsV       = "2.0.0"
-  val circeV      = "0.12.1"
+  val circeV      = "0.11.1"
 
   lazy val commonDeps: Seq[ModuleID] = Seq(
     ws,
