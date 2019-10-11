@@ -342,6 +342,7 @@
             .submit-button {
                 margin-left: 1em;
                 float: right;
+                width: 8em;
             }
 
             .custom-job-id {
