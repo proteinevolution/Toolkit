@@ -92,7 +92,6 @@
         methods: {
 
 
-
             close(): void {
                 this.$store.commit('setOffscreenMenuShow', false);
                 this.selectedSection = '';
@@ -123,15 +122,11 @@
                 color: $tk-dark-gray;
                 cursor: pointer;
                 line-height: 0.4;
-
                 padding: 0.8rem 0.7rem 0.77rem 0.67rem;
-
-                //border: 1px solid #dadce0;
-                //border-radius: 50%;
                 background-color: $tk-lighter-gray;
             }
 
-            .offscreen-menu-close:hover{
+            .offscreen-menu-close:hover {
                 background: $tk-light-gray;
             }
 
@@ -139,7 +134,6 @@
                 color: $tk-darker-gray;
             }
 
-            // change colors with hover over menu links
             .nav-link:hover {
                 background: $tk-light-gray;
             }
@@ -150,6 +144,7 @@
                 align-items: center;
 
                 color: $tk-darker-gray;
+
                 i {
                     font-size: 1.4em;
                 }
