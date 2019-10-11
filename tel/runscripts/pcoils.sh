@@ -105,7 +105,7 @@ else
 fi
 
 deal_with_sequence.pl ../params/${JOBID} ../params/${JOBID}.in  ../results/${JOBID}.buffer
-cp ../params/${JOBID}.deal_with_sequence ../results
+cp ../params/${JOBID}.deal_with_sequence ../results/img.deal_with_sequence
 
 reformat_hhsuite.pl fas a3m \
          $(readlink -f ../params/${JOBID}.in) \

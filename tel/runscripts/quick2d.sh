@@ -55,8 +55,9 @@ psiblast -db ${STANDARD}/%target_psi_db.content \
          -num_threads %THREADS \
          -query ../results/${JOBID}.fas \
          -out ../results/output_psiblastp.html \
-          -num_descriptions 25000 \
-          -num_alignments 25000 \
+         -num_descriptions 10000 \
+         -num_alignments 10000 \
+         -max_hsps 1 \
          -out_ascii_pssm ../results/${JOBID}.pssm
 
 # keep results only of the last iteration parse out an alignment
