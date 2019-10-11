@@ -219,7 +219,10 @@
                 await this.$store.dispatch('tools/fetchToolParametersIfNotPresent', toolName);
                 // wait until parameters are loaded before trying to load remembered values
                 if (!this.job) {
-                    this.loadParameterRemember(toolName);
+                    if (parameterRememberService.has(this.toolName)) {
+                        this.loadParameterRemember(toolName);
+                        this.$alert(this.$t('jobs.loadLastUsedParams', {tool: this.tool.longname}), 'warning');
+                    }
                 }
             },
             loadParameterRemember(toolName: string): void {
