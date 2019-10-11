@@ -21,7 +21,18 @@ const actions: ActionTree<ToolState, RootState> = {
         const tool: Tool = context.state.tools.filter((t: Tool) => t.name === toolName)[0];
         if (tool && !tool.parameters) {
             context.commit('startLoading', 'toolParameters', {root: true});
-            const parameters: ToolParameters = await toolService.fetchToolParameters(toolName);
+            let parameters: ToolParameters | undefined;
+            switch (toolName) {
+                case 'alnviz':
+                    parameters = AlignmentViewer.parameters;
+                    break;
+                case 'reformat':
+                    parameters = Reformat.parameters;
+                    break;
+                default:
+                    // Parameters for frontend tools are not fetched
+                    parameters = await toolService.fetchToolParameters(toolName);
+            }
             context.commit('setToolParameters', {toolName, parameters});
             context.commit('stopLoading', 'toolParameters', {root: true});
         }
