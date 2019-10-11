@@ -62,6 +62,10 @@
             .nav-item a {
                 color: $tk-gray;
             }
+
+            .nav-item a:hover {
+                color: $primary;
+            }
         }
     }
 </style>

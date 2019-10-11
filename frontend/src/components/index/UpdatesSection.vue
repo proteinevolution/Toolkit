@@ -17,7 +17,13 @@
                         <p v-html="update.html"></p>
                     </div>
                 </b-col>
-                <b-col class="py-4 px-4 quick-link-section">
+                <!-- <b-col class="tile-image d-md-none d-sm-none small-width-image"> -->
+                    <!-- <b-col class="tile-image d-md-none d-sm-none d-sm-flex"> -->
+                <!-- </b-col> -->
+                <!-- <b-col class="left-of-quick-links d-md-none d-sm-none"> -->
+                    <!-- <b-col class="tile-image d-md-none d-sm-none d-sm-flex"> -->
+                <!-- </b-col> -->
+                <b-col class="py-4 px-4 quick-link-section justify-content-center">
                     <h4>Quick Links</h4>
                     <b-nav vertical>
                         <router-link v-for="quickLink in quickLinks"
@@ -29,16 +35,17 @@
                         </router-link>
                     </b-nav>
                 </b-col>
+                <!-- <b-col class="right-of-quick-links d-md-none d-sm-none"> -->
+                    <!-- <b-col class="tile-image d-md-none d-sm-none d-sm-flex"> -->
+                <!-- </b-col> -->
             </b-row>
         </b-col>
     </div>
 </template>
-
 <script lang="ts">
     import Vue from 'vue';
     import updates from '@/i18n/lang/updates';
     import EventBus from '@/util/EventBus';
-
     export default Vue.extend({
         name: 'UpdatesSection',
         data() {
@@ -85,7 +92,6 @@
         },
     });
 </script>
-
 <style lang="scss" scoped>
     .tile-main-container {
         background-color: $white;
@@ -103,48 +109,64 @@
         .tile-image {
             border-top-left-radius: $global-radius;
             border-bottom-left-radius: $global-radius;
-            opacity: 0.85;
+            opacity: 1;
             background: url(../../assets/images/fold_galaxy.png) no-repeat center;
             background-size: cover;
         }
 
         .update-section .update-item {
             cursor: pointer;
-
             h6 {
                 color: $primary;
                 margin-bottom: 0.25em;
             }
-
             p {
                 color: $tk-darker-gray;
                 font-size: 0.8em;
             }
         }
-
         .quick-link-section {
             border-top: 1px dashed $tk-light-gray;
+
             @include media-breakpoint-up(sm) {
                 border-left: 1px dashed $tk-light-gray;
                 border-top: none;
+                padding-left: 1.4em;
+                margin-left: 1em;
             }
+
 
             .quick-link {
                 color: $tk-darker-gray;
                 display: flex;
                 justify-content: space-between;
                 text-decoration: none;
-                max-width: 100px;
+                padding-right: 0.2em;
+                padding-left: 0.2em;
+                max-width: 100%;
                 margin-bottom: 0.25em;
+
+
                 @include media-breakpoint-up(sm) {
                     max-width: 150px;
                 }
 
+                @media (max-width: 575px) {
+                    border: 1px solid #dadce0;
+                    border-radius: 7px;
+                    padding: 0.5em;
+                }
                 i {
                     font-size: 1.4em;
                     color: $primary;
                 }
             }
         }
+        .quick-link-section a:hover {
+            // nearly white color
+            background: #F8F8F8;
+            color: $primary;
+        }
+
     }
 </style>
