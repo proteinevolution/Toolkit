@@ -17,13 +17,8 @@
                         <p v-html="update.html"></p>
                     </div>
                 </b-col>
-                <!-- <b-col class="tile-image d-md-none d-sm-none small-width-image"> -->
-                    <!-- <b-col class="tile-image d-md-none d-sm-none d-sm-flex"> -->
-                <!-- </b-col> -->
-                <!-- <b-col class="left-of-quick-links d-md-none d-sm-none"> -->
-                    <!-- <b-col class="tile-image d-md-none d-sm-none d-sm-flex"> -->
-                <!-- </b-col> -->
-                <b-col class="py-4 px-4 quick-link-section justify-content-center">
+
+                <b-col class="py-4 px-4 quick-link-section">
                     <h4>Quick Links</h4>
                     <b-nav vertical>
                         <router-link v-for="quickLink in quickLinks"
@@ -35,9 +30,6 @@
                         </router-link>
                     </b-nav>
                 </b-col>
-                <!-- <b-col class="right-of-quick-links d-md-none d-sm-none"> -->
-                    <!-- <b-col class="tile-image d-md-none d-sm-none d-sm-flex"> -->
-                <!-- </b-col> -->
             </b-row>
         </b-col>
     </div>
@@ -46,6 +38,7 @@
     import Vue from 'vue';
     import updates from '@/i18n/lang/updates';
     import EventBus from '@/util/EventBus';
+
     export default Vue.extend({
         name: 'UpdatesSection',
         data() {
@@ -116,25 +109,25 @@
 
         .update-section .update-item {
             cursor: pointer;
+
             h6 {
                 color: $primary;
                 margin-bottom: 0.25em;
             }
+
             p {
                 color: $tk-darker-gray;
                 font-size: 0.8em;
             }
         }
+
         .quick-link-section {
             border-top: 1px dashed $tk-light-gray;
 
             @include media-breakpoint-up(sm) {
                 border-left: 1px dashed $tk-light-gray;
                 border-top: none;
-                padding-left: 1.4em;
-                margin-left: 1em;
             }
-
 
             .quick-link {
                 color: $tk-darker-gray;
@@ -146,7 +139,6 @@
                 max-width: 100%;
                 margin-bottom: 0.25em;
 
-
                 @include media-breakpoint-up(sm) {
                     max-width: 150px;
                 }
@@ -156,12 +148,14 @@
                     border-radius: 7px;
                     padding: 0.5em;
                 }
+
                 i {
                     font-size: 1.4em;
                     color: $primary;
                 }
             }
         }
+
         .quick-link-section a:hover {
             // nearly white color
             background: #F8F8F8;
