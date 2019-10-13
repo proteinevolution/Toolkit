@@ -138,7 +138,12 @@
                     if (!seqs) {
                         return;
                     }
-                    this.buildMSAViewer(seqs);
+                    if (this.msaViewer) {
+                        // Simply update when modified sequences are re-submitted
+                        this.msaViewer.seqs.reset(seqs);
+                    } else {
+                        this.buildMSAViewer(seqs);
+                    }
                 },
             },
         },

@@ -266,6 +266,7 @@
             openAlignmentViewerResults({sequences, format}: { sequences: string, format: string }): void {
                 this.alignmentViewerSequences = sequences;
                 this.alignmentViewerFormat = format;
+                this.tabIndex = 1;
             },
             resubmitSectionReceive(section: string): void {
                 Vue.set(this.submission, 'alignment', section);
