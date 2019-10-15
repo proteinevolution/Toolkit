@@ -10,7 +10,7 @@
                      track-by="value"
                      label="text"
                      :placeholder="$t(isMulti ? 'tools.parameters.select.multiplePlaceholder' : 'tools.parameters.select.singlePlaceholder')"
-                     :searchable="isMulti"
+                     :searchable="true"
                      :showNoResults="false"
                      :disabled="disabled"
                      selectLabel=""
