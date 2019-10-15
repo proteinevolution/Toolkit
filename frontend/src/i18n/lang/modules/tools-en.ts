@@ -31,7 +31,7 @@ export default {
             alignTwoSeqToggle: 'Align two sequences or MSAs',
         },
         select: {
-            singlePlaceholder: 'Select one',
+            singlePlaceholder: 'Select option',
             multiplePlaceholder: 'Select options',
             maxElementsSelected: 'Max. elements selected',
             maxElementsSelectedHHpred: 'Only 4 databases may be selected at a time!',
