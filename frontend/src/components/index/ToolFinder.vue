@@ -153,6 +153,10 @@
                         align-items: center;
                         flex-direction: column;
                         width: 100%;
+                        @include media-breakpoint-down(sm) {
+                            margin-left: 2.8em;
+
+                        }
 
                         .load-bar-label {
                             font-size: 0.75em;

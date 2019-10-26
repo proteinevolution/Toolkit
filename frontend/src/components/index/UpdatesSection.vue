@@ -1,13 +1,10 @@
 <template>
     <div class="d-flex mt-3 mt-md-5 justify-content-center">
-        <b-col md="9"
-               class="tile-main-container">
+        <b-col md="9" class="tile-main-container">
             <b-row>
                 <b-col class="tile-image d-none d-md-flex">
                 </b-col>
-                <b-col class="py-4 px-4 update-section"
-                       cols="12"
-                       sm="7">
+                <b-col class="update-section col-md-6 col-sm-7 col-lg-7 col-xl-7 px-4 py-4">
                     <h4>Recent Updates</h4>
                     <div v-for="update in updates"
                          :key="update.date"
@@ -18,7 +15,7 @@
                     </div>
                 </b-col>
 
-                <b-col class="py-4 px-4 quick-link-section">
+                <b-col class="quick-link-section ol-sm-3 col-md-4 col-lg-3 col-xl-3 px-sm-4 py-4 px-sm-2 px-3">
                     <h4>Quick Links</h4>
                     <b-nav vertical>
                         <router-link v-for="quickLink in quickLinks"
@@ -34,6 +31,7 @@
         </b-col>
     </div>
 </template>
+
 <script lang="ts">
     import Vue from 'vue';
     import updates from '@/i18n/lang/updates';
@@ -85,6 +83,7 @@
         },
     });
 </script>
+
 <style lang="scss" scoped>
     .tile-main-container {
         background-color: $white;
@@ -93,16 +92,25 @@
         box-shadow: 1px 1px 2px $tk-light-gray;
 
         h4 {
+            white-space: nowrap; //stop headers from breaking text
             color: $primary;
             font-size: 1.1em;
             font-weight: bold;
             margin-bottom: 0.9rem;
         }
 
+        .h4-padding-left{
+            margin-left: 0.2em;
+            @media (max-width: 575px) {
+                margin-left: 0.4em;
+            }
+
+        }
+
         .tile-image {
             border-top-left-radius: $global-radius;
             border-bottom-left-radius: $global-radius;
-            opacity: 1;
+            opacity: 0.85;
             background: url(../../assets/images/fold_galaxy.png) no-repeat center;
             background-size: cover;
         }
@@ -119,14 +127,28 @@
                 color: $tk-darker-gray;
                 font-size: 0.8em;
             }
+            @media (max-width: 300px) {
+                width: 100%;
+            }
         }
 
         .quick-link-section {
             border-top: 1px dashed $tk-light-gray;
 
-            @include media-breakpoint-up(sm) {
+            @media (min-width: 334px) {
                 border-left: 1px dashed $tk-light-gray;
                 border-top: none;
+            }
+
+            @media (width: 333px){
+                border-top: none;
+                border-left: none;
+            }
+
+
+            @media (max-width: 332px) {
+                border-left: none;
+                border-top: 1px dashed $tk-light-gray;
             }
 
             .quick-link {
@@ -137,16 +159,21 @@
                 padding-right: 0.2em;
                 padding-left: 0.2em;
                 max-width: 100%;
-                margin-bottom: 0.25em;
+
+                @include media-breakpoint-up(lg) {
+                    max-width: 170px;
+                    padding: 0.15rem
+                }
 
                 @include media-breakpoint-up(sm) {
-                    max-width: 150px;
+                    max-width: 100%;
+                    padding: 0.15rem
                 }
 
                 @media (max-width: 575px) {
-                    border: 1px solid #dadce0;
-                    border-radius: 7px;
+                    border-radius: 0px;
                     padding: 0.5em;
+                    border-top: 1px solid #dadce0;
                 }
 
                 i {
@@ -160,6 +187,7 @@
             // nearly white color
             background: #F8F8F8;
             color: $primary;
+            border-radius: 2px;
         }
 
     }
