@@ -295,6 +295,9 @@
         border-bottom-right-radius: $global-radius;
         z-index: 1;
         position: relative;
+        @include media-breakpoint-down(sm) {
+            padding: 10px 0.6rem 0 0.6rem;
+        }
     }
 
     .main-content .job-list-col {
