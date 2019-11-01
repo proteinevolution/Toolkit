@@ -4,7 +4,7 @@
             <b-row>
                 <b-col class="tile-image d-none d-md-flex">
                 </b-col>
-                <b-col class="update-section col-sm-8 col-md-6 col-lg-6 col-xl-6 px-4 py-4">
+                <b-col class="update-section col-sm-7 col-md-6 col-lg-7 col-xl-7 px-4 py-4">
                     <h4>Recent Updates</h4>
                     <div v-for="update in updates"
                          :key="update.date"
@@ -15,7 +15,7 @@
                     </div>
                 </b-col>
 
-                <b-col class="quick-link-section col-sm-4 col-md-4 col-lg-3 px-sm-4 py-4 px-sm-2 px-3">
+                <b-col class="quick-link-section col-sm-4 col-md-4 col-lg-3 py-4 px-sm-4 px-3">
                     <h4>Quick Links</h4>
                     <b-nav vertical>
                         <router-link v-for="quickLink in quickLinks"
@@ -99,12 +99,11 @@
             margin-bottom: 0.9rem;
         }
 
-        .h4-padding-left{
+        .h4-padding-left {
             margin-left: 0.2em;
             @media (max-width: 575px) {
                 margin-left: 0.4em;
             }
-
         }
 
         .tile-image {
@@ -127,6 +126,7 @@
                 color: $tk-darker-gray;
                 font-size: 0.8em;
             }
+
             @media (max-width: 300px) {
                 width: 100%;
             }
@@ -140,11 +140,10 @@
                 border-top: none;
             }
 
-            @media (width: 333px){
+            @media (width: 333px) {
                 border-top: none;
                 border-left: none;
             }
-
 
             @media (max-width: 332px) {
                 border-left: none;

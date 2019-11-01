@@ -9,22 +9,22 @@
                                 {{ $t('index.loadBarLabel', {load: clusterWorkload}) }}
                             </div>
                             <div class="load-bar-graph">
-                                <div class="load-bar-segment"
-                                     :class="[clusterWorkload > 0 ? 'green' : '']"></div>
-                                <div class="load-bar-segment"
-                                     :class="[clusterWorkload > 25 ? 'green' : '']"></div>
-                                <div class="load-bar-segment"
-                                     :class="[clusterWorkload > 50 ? 'green' : '']"></div>
-                                <div class="load-bar-segment"
-                                     :class="[clusterWorkload > 75 ? 'green' : '']"></div>
+                                <div :class="[clusterWorkload > 0 ? 'green' : '']"
+                                     class="load-bar-segment"></div>
+                                <div :class="[clusterWorkload > 25 ? 'green' : '']"
+                                     class="load-bar-segment"></div>
+                                <div :class="[clusterWorkload > 50 ? 'green' : '']"
+                                     class="load-bar-segment"></div>
+                                <div :class="[clusterWorkload > 75 ? 'green' : '']"
+                                     class="load-bar-segment"></div>
                             </div>
                         </div>
                     </div>
                 </b-col>
                 <b-col cols="6">
                     <div class="live-table-child">
-                        <router-link to="/jobmanager"
-                                     class="job-manager-link">
+                        <router-link class="job-manager-link"
+                                     to="/jobmanager">
                             <span class="d-none d-sm-inline">Job Manager</span>
                             <i class="fas fa-list-ul"></i>
                         </router-link>
@@ -32,10 +32,10 @@
                 </b-col>
             </b-row>
             <b-row class="search-container">
-                <b-col class="traffic-bar"
-                       cols="12"
+                <b-col :class="'status-' + currentJobStatus"
                        @click="goToCurrentJob"
-                       :class="'status-' + currentJobStatus"></b-col>
+                       class="traffic-bar"
+                       cols="12"></b-col>
                 <b-col class="search-field-container"
                        cols="12">
                     <SearchField :placeholder="$t('index.searchPlaceholder')"/>
@@ -155,7 +155,6 @@
                         width: 100%;
                         @include media-breakpoint-down(sm) {
                             margin-left: 2.8em;
-
                         }
 
                         .load-bar-label {
