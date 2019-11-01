@@ -1,5 +1,5 @@
 <template>
-    <div class="page-not-found">
+    <div v-if="errorMessage" class="page-not-found">
         <div class="error-message border text-muted mt-5">
             <table><i class="fas fa-exclamation-triangle pl-3"></i>
                 <span class="ml-2" v-html="$t(errorMessage)"></span>
