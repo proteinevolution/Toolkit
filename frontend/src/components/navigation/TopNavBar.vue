@@ -167,8 +167,9 @@
         align-items: flex-start;
         padding-top: 0.5rem;
 
-        @include media-breakpoint-down(sm) {
-            min-height: 50px;
+        @media (max-width: 305px) {
+            min-height: 75px;
+            //min-height: 50px; --- old values
         }
     }
 
@@ -176,9 +177,13 @@
         position: absolute;
         left: 50%;
         transform: translateX(-50%);
+        padding-left: 1.25em; //center the actual image itself, not the cut out image
 
         img {
             height: 50px;
+        }
+        @media (max-width: 305px) {
+            margin-top:3em;
         }
     }
 
