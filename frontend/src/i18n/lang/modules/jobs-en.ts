@@ -269,7 +269,7 @@ export default {
     toggleFullscreen: 'Toggle Fullscreen',
     foundIdenticalCopy: 'We found an identical copy of your job in our database!<br>' +
         'Job ID: {jobID}, which was created {createdAt}.',
-    startJob: 'Start job anyways',
+    startJob: 'Start job anyway',
     loadExistingJob: 'Load existing job',
     notifications: {
         titles: {
