@@ -63,6 +63,7 @@ export default {
             downloadMSA: 'Download MSA',
             downloadReducedA3M: 'Download Reduced A3M',
             downloadFullA3M: 'Download Full A3M',
+            downloadHHR: 'Download HHR',
             exportMSA: 'Export MSA',
             colorMSA: 'Color MSA',
             colorSeqs: 'Color Seqs',
