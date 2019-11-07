@@ -18,6 +18,7 @@
                 <a @click="forward(true)">{{$t('jobs.results.actions.forward')}}</a>
                 <a @click="forwardQueryA3M">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
                 <a v-if="info.modeller" @click="modelSelection" v-text="$t('jobs.results.actions.model')"></a>
+                <a @click="download" v-text="$t('jobs.results.actions.downloadHHR')"></a>
                 <a @click="toggleColor"
                    :class="{active: color}">{{$t('jobs.results.actions.colorSeqs')}}</a>
                 <a @click="toggleWrap"
@@ -199,6 +200,7 @@
     import EventBus from '@/util/EventBus';
     import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
     import {jobService} from '@/services/JobService';
+    import {resultsService} from '@/services/ResultsService';
 
     const logger = Logger.get('HHpredResultsTab');
 
@@ -252,11 +254,28 @@
                 }],
             };
         },
+        computed: {
+            filename(): string {
+                if (!this.viewOptions.filename) {
+                    return '';
+                }
+                return this.viewOptions.filename.replace(':jobID', this.job.jobID);
+            },
+
+        },
         methods: {
             displayTemplateStructure(accession: string): void {
                 EventBus.$emit('show-modal', {
                     id: 'templateStructureModal', props: {accessionStructure: accession},
                 });
+            },
+            download(): void {
+                const toolName = this.tool.name;
+                const downloadFilename = `${toolName}_${this.job.jobID}.hhr`;
+                resultsService.downloadFile(this.job.jobID, this.filename, downloadFilename)
+                    .catch((e) => {
+                        logger.error(e);
+                    });
             },
             modelSelection(): void {
                 if (!this.alignments) {
@@ -334,6 +353,14 @@
 <style lang="scss" scoped>
     .result-section {
         padding-top: 3.5rem;
+    }
+
+    .result-options {
+        a {
+            @include media-breakpoint-up(lg) {
+                margin-right: 1.9rem;
+            }
+        }
     }
 
     .alignments-table {
