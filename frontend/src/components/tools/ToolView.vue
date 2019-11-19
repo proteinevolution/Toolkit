@@ -116,6 +116,7 @@
     import EventBus from '@/util/EventBus';
     import {CustomJobIdValidationResult, Job} from '@/types/toolkit/jobs';
     import {parameterRememberService} from '@/services/ParameterRememberService';
+    import {calculateRememberedParameters} from '@/util/ParameterUtils';
 
     const logger = Logger.get('ToolView');
 
@@ -230,14 +231,12 @@
                 this.submission = Object.assign(this.submission, parameterRememberService.load(toolName));
             },
             saveParametersToRemember(toolName: string, submission: any): void {
-                delete submission.alignment;
-                delete submission.jobID;
-                if ('alignment_two' in submission) {
-                    delete submission.alignment_two;
-                    delete submission.hhsuitedb;
-                    delete submission.proteomes;
+                if (this.parameterSections) {
+                    const rememberedParams = calculateRememberedParameters(submission, this.parameterSections);
+                    if (Object.keys(rememberedParams).length > 0) {
+                        parameterRememberService.save(toolName, rememberedParams);
+                    }
                 }
-                parameterRememberService.save(toolName, submission);
             },
             clearParameterRemember(): void {
                 parameterRememberService.reset(this.toolName);
