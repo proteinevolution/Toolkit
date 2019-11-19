@@ -4,7 +4,7 @@
             <div v-for="(sortCol, index) in sortColumns"
                  :key="sortCol.name"
                  class="sort"
-                 @click="selectedSort = index"
+                 @click="selectSort(index)"
                  :class="[selectedSort === index ? 'selected':'']">
                 {{ $t('jobList.sortColumns.' + sortCol.name) }}
             </div>
@@ -78,6 +78,7 @@
                     },
                 }],
                 selectedSort: 1,
+                sortDescending: false,
                 itemsPerPage: 10,
                 startIndex: 0,
             };
@@ -90,8 +91,11 @@
                 return this.$store.getters['jobs/watchedJobs'].slice(0);
             },
             sortedJobs(): Job[] {
-                return this.jobs.sort(this.sortColumns[this.selectedSort].sort)
-                    .slice(this.startIndex * this.itemsPerPage, (this.startIndex + 1) * this.itemsPerPage);
+                let sorted: Job[] = this.jobs.sort(this.sortColumns[this.selectedSort].sort);
+                if (this.sortDescending) {
+                    sorted = sorted.reverse();
+                }
+                return sorted.slice(this.startIndex * this.itemsPerPage, (this.startIndex + 1) * this.itemsPerPage);
             },
             currentPage(): number {
                 return this.startIndex + 1;
@@ -122,6 +126,14 @@
             scrollUp(): void {
                 if (this.scrollUpPossible) {
                     this.startIndex++;
+                }
+            },
+            selectSort(index: number): void {
+                if (this.selectedSort === index) {
+                    this.sortDescending = !this.sortDescending;
+                } else {
+                    this.selectedSort = index;
+                    this.sortDescending = false;
                 }
             },
         },
