@@ -81,8 +81,7 @@ class ParamAccess @Inject()(tel: TEL) {
         "proteomes",
         tel.generateValues("proteomes").toSeq.map(option => SelectOption(option._1, option._2)),
         maxSelectedOptions = 4,
-        default = Some("mmcif70/pdb70"),
-        defaultProteomes = None
+        default = "mmcif70/pdb70",
       )
     case "MSA_GEN_METHOD"   => select("msa_gen_method", default = Some("uniclust30"))
     case "MSA_GEN_MAX_ITER" => select("msa_gen_max_iter", default = Some("3"), onDetectedMSA = Some("0"))

@@ -74,8 +74,8 @@ object Parameter {
     nameProteomes: String,
     optionsProteomes: Seq[SelectOption],
     maxSelectedOptions: Int,
-    default: Option[String] = None,
-    defaultProteomes: Option[String] = None,
+    default: String = "",
+    defaultProteomes: String = "",
   ) extends Parameter
 
   implicit val ep: Encoder[Parameter] = {

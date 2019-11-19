@@ -87,8 +87,8 @@ export interface HHpredSelectsParameter extends Parameter {
     options: SelectOption[];
     optionsProteomes: SelectOption[];
     maxSelectedOptions: number;
-    default?: string;
-    defaultProteomes?: string;
+    default: string;
+    defaultProteomes: string;
 }
 
 export interface NumberParameter extends Parameter {
