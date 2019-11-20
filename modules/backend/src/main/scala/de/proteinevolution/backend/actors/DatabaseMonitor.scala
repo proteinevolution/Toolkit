@@ -46,7 +46,7 @@ final class DatabaseMonitor @Inject()(
   // interval calling the user deletion method automatically
   private val userDeletionScheduler: Cancellable = {
     // scheduler should use the system dispatcher
-    context.system.scheduler.schedule(
+    context.system.scheduler.scheduleWithFixedDelay(
       constants.userDeletionDelay,
       constants.userDeletionInterval,
       self,
@@ -57,7 +57,7 @@ final class DatabaseMonitor @Inject()(
   // interval calling the user deletion method automatically
   private val jobDeletionScheduler: Cancellable = {
     // scheduler should use the system dispatcher
-    context.system.scheduler.schedule(constants.jobDeletionDelay, constants.userDeletionInterval, self, DeleteOldJobs)(
+    context.system.scheduler.scheduleWithFixedDelay(constants.jobDeletionDelay, constants.userDeletionInterval, self, DeleteOldJobs)(
       context.system.dispatcher
     )
   }

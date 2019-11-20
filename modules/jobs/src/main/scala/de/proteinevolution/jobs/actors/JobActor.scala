@@ -79,7 +79,7 @@ class JobActor @Inject()(
   private val fetchLatestInterval = 500 millis
   private val Tick: Cancellable = {
     // scheduler should use the system dispatcher
-    context.system.scheduler.schedule(Duration.Zero, fetchLatestInterval, self, UpdateLog)(context.system.dispatcher)
+    context.system.scheduler.scheduleWithFixedDelay(Duration.Zero, fetchLatestInterval, self, UpdateLog)(context.system.dispatcher)
   }
 
   // Running executions
