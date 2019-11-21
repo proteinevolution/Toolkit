@@ -13,10 +13,11 @@
 <script lang="ts">
     import {TextInputParameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
+    import ParameterRememberMixin from '@/mixins/ParameterRememberMixin';
     import mixins from 'vue-typed-mixins';
     import EventBus from '@/util/EventBus';
 
-    export default mixins(ToolParameterMixin).extend({
+    export default mixins(ToolParameterMixin, ParameterRememberMixin).extend({
         name: 'TextInputParameter',
         props: {
             /*

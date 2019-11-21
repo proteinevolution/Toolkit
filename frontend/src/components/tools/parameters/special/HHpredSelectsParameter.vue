@@ -7,6 +7,7 @@
                     :validation-params="validationParams"
                     :validation-errors="validationErrors"
                     :submission="submission"
+                    :remember-params="rememberParams"
                     max-element-text-key="tools.parameters.select.maxElementsSelectedHHpred"
                     :disabled="disabled"
                     :force-select-none="disabled"
@@ -21,6 +22,7 @@
                     :validation-params="validationParams"
                     :validation-errors="validationErrors"
                     :submission="submission"
+                    :remember-params="rememberParams"
                     max-element-text-key="tools.parameters.select.maxElementsSelectedHHpred"
                     :disabled="disabled"
                     :force-select-none="disabled"
@@ -52,6 +54,7 @@
             validationParams: Object as () => ValidationParams,
             validationErrors: Object,
             submission: Object,
+            rememberParams: Object,
             /*
              Simply stating the interface type doesn't work, this is a workaround. See
              https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480

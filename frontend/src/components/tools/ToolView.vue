@@ -38,7 +38,8 @@
                                              :validationParams="tool.validationParams"
                                              :validation-errors="validationErrors"
                                              :full-screen="fullScreen"
-                                             :submission="submission"/>
+                                             :submission="submission"
+                                             :remember-params="rememberParams"/>
                                 </div>
 
                                 <b-form-group v-if="showSubmitButtons"
@@ -116,7 +117,6 @@
     import EventBus from '@/util/EventBus';
     import {CustomJobIdValidationResult, Job} from '@/types/toolkit/jobs';
     import {parameterRememberService} from '@/services/ParameterRememberService';
-    import {calculateRememberedParameters} from '@/util/ParameterUtils';
 
     const logger = Logger.get('ToolView');
 
@@ -152,6 +152,7 @@
                 fullScreen: false,
                 validationErrors: {},
                 submission: {} as any,
+                rememberParams: {} as any,
                 // hack to show the alignment viewer tool results
                 alignmentViewerSequences: '',
                 alignmentViewerFormat: '',
@@ -230,12 +231,9 @@
                 logger.debug(`loading remembered parameters for ${toolName}`);
                 this.submission = Object.assign(this.submission, parameterRememberService.load(toolName));
             },
-            saveParametersToRemember(toolName: string, submission: any): void {
-                if (this.parameterSections) {
-                    const rememberedParams = calculateRememberedParameters(submission, this.parameterSections);
-                    if (Object.keys(rememberedParams).length > 0) {
-                        parameterRememberService.save(toolName, rememberedParams);
-                    }
+            saveParametersToRemember(toolName: string): void {
+                if (Object.keys(this.rememberParams).length > 0) {
+                    parameterRememberService.save(toolName, this.rememberParams);
                 }
             },
             clearParameterRemember(): void {
@@ -254,7 +252,7 @@
                 const submission = this.submission;
                 jobService.submitJob(this.toolName, submission)
                     .then((response) => {
-                        this.saveParametersToRemember(toolName, submission);
+                        this.saveParametersToRemember(toolName);
                         this.$router.push(`/jobs/${response.jobID}`);
                     })
                     .catch((response) => {

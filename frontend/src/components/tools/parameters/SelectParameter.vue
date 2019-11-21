@@ -29,13 +29,14 @@
     import Multiselect from 'vue-multiselect';
     import {SelectOption, SelectParameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
+    import ParameterRememberMixin from '@/mixins/ParameterRememberMixin';
     import EventBus from '@/util/EventBus';
     import mixins from 'vue-typed-mixins';
     import Logger from 'js-logger';
 
     const logger = Logger.get('SelectParameter');
 
-    export default mixins(ToolParameterMixin).extend({
+    export default mixins(ToolParameterMixin, ParameterRememberMixin).extend({
         name: 'SelectParameter',
         components: {
             Multiselect,
