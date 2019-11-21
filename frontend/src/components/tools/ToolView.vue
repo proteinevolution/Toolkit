@@ -229,7 +229,9 @@
             },
             loadParameterRemember(toolName: string): void {
                 logger.debug(`loading remembered parameters for ${toolName}`);
-                this.submission = Object.assign(this.submission, parameterRememberService.load(toolName));
+                // We need to create a fresh object here to trigger the correct reactivity
+                // (see https://vuejs.org/v2/guide/reactivity.html)
+                this.submission = Object.assign({}, this.submission, parameterRememberService.load(toolName));
             },
             saveParametersToRemember(toolName: string): void {
                 if (Object.keys(this.rememberParams).length > 0) {
