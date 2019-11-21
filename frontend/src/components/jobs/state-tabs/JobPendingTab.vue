@@ -64,8 +64,8 @@
             loadExistingJobAndDelete() {
                 jobService.deleteJob(this.job.jobID)
                     .then(() => {
-                        this.$store.commit('jobs/removeJob', {jobID: this.job.jobID});
                         this.$router.push(`/jobs/${this.similarJob.jobID}`);
+                        this.$store.commit('jobs/removeJob', {jobID: this.job.jobID});
                     })
                     .catch(() => {
                         this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');

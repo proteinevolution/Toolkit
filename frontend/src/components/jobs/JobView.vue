@@ -200,8 +200,8 @@
             deleteJob() {
                 jobService.deleteJob(this.jobID)
                     .then(() => {
-                        this.$store.commit('jobs/removeJob', {jobID: this.jobID});
                         this.$router.replace('/jobmanager');
+                        this.$store.commit('jobs/removeJob', {jobID: this.jobID});
                     })
                     .catch(() => {
                         this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
