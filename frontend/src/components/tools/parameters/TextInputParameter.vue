@@ -34,6 +34,10 @@
                 // overrides the property in ToolParameterMixin
                 return '';
             },
+            disableRemember(): boolean {
+                // overrides property in ParameterRememberMixin
+                return this.parameter.disableRemember || false;
+            },
             state() {
                 if (this.submissionValue.length === 0) {
                     return null;
