@@ -56,6 +56,12 @@
                                                                :validation-errors="validationErrors"
                                                                :submission="submission"
                                                                class="pull-left"/>
+                                    <b-btn v-if="hasRememberedParameters"
+                                           class="reset-params-button"
+                                           :title="$t('jobs.resetParams')"
+                                           @click="clearParameterRemember"
+                                           v-text="$t('jobs.resetParams')">
+                                    </b-btn>
                                 </b-form-group>
                             </b-tab>
 
@@ -80,10 +86,6 @@
                                        v-if="job && !job.foreign"
                                        :title="$t('jobs.delete')"
                                        @click="$emit('delete-job')"></i>
-                                    <i v-if="hasRememberedParameters"
-                                       class="tool-action fa fa-undo mr-4"
-                                       :title="$t('jobs.resetParams')"
-                                       @click="clearParameterRemember"></i>
                                     <i class="tool-action tool-action-lg fa mr-1"
                                        @click="toggleFullScreen"
                                        :title="$t('jobs.toggleFullscreen')"
@@ -190,7 +192,7 @@
                 return this.$store.getters['auth/loggedIn'];
             },
             hasRememberedParameters(): boolean {
-                return parameterRememberService.has(this.toolName);
+                return Object.keys(this.rememberParams).length > 0;
             },
         },
         watch: {
@@ -203,6 +205,12 @@
                         // Take the suggested Job ID immediately when loading existing job parameters into the tool
                         this.checkJobId(value.jobID);
                     }
+                },
+            },
+            rememberParams: {
+                immediate: true,
+                handler() {
+                    this.saveParametersToRemember(this.toolName);
                 },
             },
         },
@@ -223,7 +231,6 @@
                 if (!this.job) {
                     if (parameterRememberService.has(this.toolName)) {
                         this.loadParameterRemember(toolName);
-                        this.$alert(this.$t('jobs.loadLastUsedParams', {tool: this.tool.longname}), 'warning');
                     }
                 }
             },
@@ -346,6 +353,12 @@
                 margin-left: 1em;
                 float: right;
                 width: 8em;
+            }
+
+            .reset-params-button {
+                float: right;
+                margin-right: 1em;
+                background: $warning-light;
             }
 
             .custom-job-id {

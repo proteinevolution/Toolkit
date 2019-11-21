@@ -24,10 +24,10 @@ const ParameterRememberMixin = Vue.extend({
                 if (!this.disableRemember) {
                     if (this.isNonDefaultValue) {
                         // @ts-ignore
-                        this.rememberParams[this.parameterName] = value;
+                        Vue.set(this.rememberParams, this.parameterName, value);
                     } else {
                         // @ts-ignore
-                        delete this.rememberParams[this.parameterName];
+                        Vue.delete(this.rememberParams, this.parameterName);
                     }
                 }
             },

@@ -3,6 +3,7 @@
         <b-form-input v-model="submissionValue"
                       :placeholder="parameter.inputPlaceholder"
                       :state="state"
+                      :class="{nonDefault: !disableRemember && isNonDefaultValue}"
                       type="text"
                       size="sm"
                       required>
@@ -75,5 +76,7 @@
 </script>
 
 <style lang="scss" scoped>
-
+    .nonDefault {
+        background: $non-default-highlight;
+    }
 </style>

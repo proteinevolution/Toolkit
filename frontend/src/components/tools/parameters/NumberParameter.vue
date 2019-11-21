@@ -2,6 +2,7 @@
     <b-form-group :label="$t('tools.parameters.labels.' + parameter.name)">
         <b-form-input v-model.number="submissionValue"
                       type="number"
+                      :class="{nonDefault: isNonDefaultValue}"
                       :min="parameter.min"
                       :max="parameter.max"
                       :step="parameter.step"
@@ -68,5 +69,7 @@
 </script>
 
 <style lang="scss" scoped>
-
+    .nonDefault {
+        background: $non-default-highlight;
+    }
 </style>

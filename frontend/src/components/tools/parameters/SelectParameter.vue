@@ -15,7 +15,8 @@
                      :disabled="disabled"
                      selectLabel=""
                      deselectLabel=""
-                     selectedLabel="">
+                     selectedLabel=""
+                     :class="{nonDefault: !disabled && isNonDefaultValue}">
             <template #maxElements>{{ $t(maxElementTextKey) }}</template>
             <template slot="option" slot-scope="{ option }" v-if="parameter.default === option.value">
                 {{ option.text }} (default)
@@ -72,6 +73,10 @@
             defaultSubmissionValue(): any {
                 // overrides the property in ToolParameterMixin
                 return this.parameter.default || '';
+            },
+            disableRemember(): boolean {
+                // overrides property in ParameterRememberMixin
+                return this.disabled;
             },
             selected: {
                 get(): SelectOption[] {
