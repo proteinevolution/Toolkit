@@ -2,6 +2,7 @@
     <b-form-group :label="$t('tools.parameters.labels.' + parameter.name)">
         <b-form-input v-model.number="submissionValue"
                       type="number"
+                      :class="{nonDefault: isNonDefaultValue}"
                       :min="parameter.min"
                       :max="parameter.max"
                       :step="parameter.step"
@@ -22,9 +23,10 @@
     import {NumberParameter} from '@/types/toolkit/tools';
     import {ConstraintError} from '@/types/toolkit/validation';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
+    import ParameterRememberMixin from '@/mixins/ParameterRememberMixin';
     import mixins from 'vue-typed-mixins';
 
-    export default mixins(ToolParameterMixin).extend({
+    export default mixins(ToolParameterMixin, ParameterRememberMixin).extend({
         name: 'NumberParameter',
         props: {
             /*
@@ -67,5 +69,7 @@
 </script>
 
 <style lang="scss" scoped>
-
+    .nonDefault {
+        background: $non-default-highlight;
+    }
 </style>

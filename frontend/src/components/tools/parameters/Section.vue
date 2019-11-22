@@ -11,6 +11,7 @@
                            :validation-params="validationParams"
                            :validation-errors="validationErrors"
                            :submission="submission"
+                           :remember-params="rememberParams"
                            :class="['size-' + mediumSize(parameter)]"
                            class="parameter-component">
                 </component>
@@ -51,6 +52,7 @@
             validationParams: Object as () => ValidationParams,
             validationErrors: Object,
             submission: Object,
+            rememberParams: Object,
             fullScreen: {
                 type: Boolean,
                 default: false,

@@ -59,6 +59,7 @@ export interface TextInputParameter extends Parameter {
     inputPlaceholder: string;
     regex?: string;
     sampleInput?: string;
+    disableRemember?: boolean;
 }
 
 export interface TextAreaParameter extends Parameter {

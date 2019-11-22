@@ -195,28 +195,32 @@ class ParamAccess @Inject()(tel: TEL) {
         "samcc_helixone",
         "CC_first_position;chain;start_pos;end_pos",
         samCCHelixRegex,
-        Some("a;A;2;30")
+        Some("a;A;2;30"),
+        disableRemember = Some(true)
       )
     case "SAMCC_HELIXTWO" =>
       TextInputParameter(
         "samcc_helixtwo",
         "CC_first_position;chain;start_pos;end_pos",
         samCCHelixRegex,
-        Some("a;B;2;30")
+        Some("a;B;2;30"),
+        disableRemember = Some(true)
       )
     case "SAMCC_HELIXTHREE" =>
       TextInputParameter(
         "samcc_helixthree",
         "CC_first_position;chain;start_pos;end_pos",
         samCCHelixRegex,
-        Some("a;C;2;30")
+        Some("a;C;2;30"),
+        disableRemember = Some(true)
       )
     case "SAMCC_HELIXFOUR" =>
       TextInputParameter(
         "samcc_helixfour",
         "CC_first_position;chain;start_pos;end_pos",
         samCCHelixRegex,
-        Some("a;D;2;30")
+        Some("a;D;2;30"),
+        disableRemember = Some(true)
       )
     case "SAMCC_PERIODICITY" => select("samcc_periodicity", default = Some("7"))
     case "EFF_CRICK_ANGLE"   => select("eff_crick_angle", default = Some("1"))
