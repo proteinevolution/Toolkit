@@ -15,7 +15,8 @@
                      :disabled="disabled"
                      selectLabel=""
                      deselectLabel=""
-                     selectedLabel="">
+                     selectedLabel=""
+                     :class="{nonDefault: !disabled && isNonDefaultValue}">
             <template #maxElements>{{ $t(maxElementTextKey) }}</template>
             <template slot="option" slot-scope="{ option }" v-if="parameter.default === option.value">
                 {{ option.text }} (default)
@@ -29,13 +30,14 @@
     import Multiselect from 'vue-multiselect';
     import {SelectOption, SelectParameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
+    import ParameterRememberMixin from '@/mixins/ParameterRememberMixin';
     import EventBus from '@/util/EventBus';
     import mixins from 'vue-typed-mixins';
     import Logger from 'js-logger';
 
     const logger = Logger.get('SelectParameter');
 
-    export default mixins(ToolParameterMixin).extend({
+    export default mixins(ToolParameterMixin, ParameterRememberMixin).extend({
         name: 'SelectParameter',
         components: {
             Multiselect,
@@ -71,6 +73,10 @@
             defaultSubmissionValue(): any {
                 // overrides the property in ToolParameterMixin
                 return this.parameter.default || '';
+            },
+            disableRemember(): boolean {
+                // overrides property in ParameterRememberMixin
+                return this.disabled;
             },
             selected: {
                 get(): SelectOption[] {

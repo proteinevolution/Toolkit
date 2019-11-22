@@ -3,6 +3,7 @@
         <b-form-input v-model="submissionValue"
                       :placeholder="parameter.inputPlaceholder"
                       :state="state"
+                      :class="{nonDefault: !disableRemember && isNonDefaultValue}"
                       type="text"
                       size="sm"
                       required>
@@ -13,10 +14,11 @@
 <script lang="ts">
     import {TextInputParameter} from '@/types/toolkit/tools';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
+    import ParameterRememberMixin from '@/mixins/ParameterRememberMixin';
     import mixins from 'vue-typed-mixins';
     import EventBus from '@/util/EventBus';
 
-    export default mixins(ToolParameterMixin).extend({
+    export default mixins(ToolParameterMixin, ParameterRememberMixin).extend({
         name: 'TextInputParameter',
         props: {
             /*
@@ -32,6 +34,10 @@
             defaultSubmissionValue(): any {
                 // overrides the property in ToolParameterMixin
                 return '';
+            },
+            disableRemember(): boolean {
+                // overrides property in ParameterRememberMixin
+                return this.parameter.disableRemember || false;
             },
             state() {
                 if (this.submissionValue.length === 0) {
@@ -70,5 +76,7 @@
 </script>
 
 <style lang="scss" scoped>
-
+    .nonDefault {
+        background: $non-default-highlight;
+    }
 </style>

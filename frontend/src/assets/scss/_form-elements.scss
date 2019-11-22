@@ -71,6 +71,12 @@
       box-shadow: 0 0 0 0.2rem rgba(46, 140, 129, 0.25);
     }
   }
+
+  &:not(.multiselect--active).nonDefault {
+    .multiselect__tags, .multiselect__single {
+      background: $non-default-highlight;
+    }
+  }
 }
 
 /* Switches */

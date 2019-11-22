@@ -38,7 +38,8 @@
                                              :validationParams="tool.validationParams"
                                              :validation-errors="validationErrors"
                                              :full-screen="fullScreen"
-                                             :submission="submission"/>
+                                             :submission="submission"
+                                             :remember-params="rememberParams"/>
                                 </div>
 
                                 <b-form-group v-if="showSubmitButtons"
@@ -55,6 +56,13 @@
                                                                :validation-errors="validationErrors"
                                                                :submission="submission"
                                                                class="pull-left"/>
+                                    <b-btn v-if="hasRememberedParameters"
+                                           class="reset-params-button"
+                                           variant="secondary"
+                                           :title="$t('jobs.resetParamsTitle')"
+                                           @click="clearParameterRemember"
+                                           v-text="$t('jobs.resetParams')">
+                                    </b-btn>
                                 </b-form-group>
                             </b-tab>
 
@@ -79,10 +87,6 @@
                                        v-if="job && !job.foreign"
                                        :title="$t('jobs.delete')"
                                        @click="$emit('delete-job')"></i>
-                                    <i v-if="hasRememberedParameters"
-                                       class="tool-action fa fa-undo mr-4"
-                                       :title="$t('jobs.resetParams')"
-                                       @click="clearParameterRemember"></i>
                                     <i class="tool-action tool-action-lg fa mr-1"
                                        @click="toggleFullScreen"
                                        :title="$t('jobs.toggleFullscreen')"
@@ -151,6 +155,7 @@
                 fullScreen: false,
                 validationErrors: {},
                 submission: {} as any,
+                rememberParams: {} as any,
                 // hack to show the alignment viewer tool results
                 alignmentViewerSequences: '',
                 alignmentViewerFormat: '',
@@ -188,7 +193,7 @@
                 return this.$store.getters['auth/loggedIn'];
             },
             hasRememberedParameters(): boolean {
-                return parameterRememberService.has(this.toolName);
+                return Object.keys(this.rememberParams).length > 0;
             },
         },
         watch: {
@@ -201,6 +206,12 @@
                         // Take the suggested Job ID immediately when loading existing job parameters into the tool
                         this.checkJobId(value.jobID);
                     }
+                },
+            },
+            rememberParams: {
+                immediate: true,
+                handler() {
+                    this.saveParametersToRemember(this.toolName);
                 },
             },
         },
@@ -221,23 +232,19 @@
                 if (!this.job) {
                     if (parameterRememberService.has(this.toolName)) {
                         this.loadParameterRemember(toolName);
-                        this.$alert(this.$t('jobs.loadLastUsedParams', {tool: this.tool.longname}), 'warning');
                     }
                 }
             },
             loadParameterRemember(toolName: string): void {
                 logger.debug(`loading remembered parameters for ${toolName}`);
-                this.submission = Object.assign(this.submission, parameterRememberService.load(toolName));
+                // We need to create a fresh object here to trigger the correct reactivity
+                // (see https://vuejs.org/v2/guide/reactivity.html)
+                this.submission = Object.assign({}, this.submission, parameterRememberService.load(toolName));
             },
-            saveParametersToRemember(toolName: string, submission: any): void {
-                delete submission.alignment;
-                delete submission.jobID;
-                if ('alignment_two' in submission) {
-                    delete submission.alignment_two;
-                    delete submission.hhsuitedb;
-                    delete submission.proteomes;
+            saveParametersToRemember(toolName: string): void {
+                if (Object.keys(this.rememberParams).length > 0) {
+                    parameterRememberService.save(toolName, this.rememberParams);
                 }
-                parameterRememberService.save(toolName, submission);
             },
             clearParameterRemember(): void {
                 parameterRememberService.reset(this.toolName);
@@ -255,7 +262,7 @@
                 const submission = this.submission;
                 jobService.submitJob(this.toolName, submission)
                     .then((response) => {
-                        this.saveParametersToRemember(toolName, submission);
+                        this.saveParametersToRemember(toolName);
                         this.$router.push(`/jobs/${response.jobID}`);
                     })
                     .catch((response) => {
@@ -347,6 +354,17 @@
                 margin-left: 1em;
                 float: right;
                 width: 8em;
+            }
+
+            .reset-params-button {
+                float: right;
+                margin-right: 1em;
+            }
+
+            .btn-secondary, .btn-secondary:active {
+                color: $white;
+                background-color: $tk-medium-gray;
+                border-color: $tk-medium-gray;
             }
 
             .custom-job-id {

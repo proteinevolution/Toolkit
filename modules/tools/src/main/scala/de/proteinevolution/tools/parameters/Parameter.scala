@@ -29,7 +29,8 @@ object Parameter {
       name: String,
       inputPlaceholder: String,
       regex: Option[String] = None,
-      sampleInput: Option[String] = None
+      sampleInput: Option[String] = None,
+      disableRemember: Option[Boolean] = None
   ) extends Parameter
 
   case class TextAreaParameter(
