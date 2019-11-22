@@ -58,7 +58,8 @@
                                                                class="pull-left"/>
                                     <b-btn v-if="hasRememberedParameters"
                                            class="reset-params-button"
-                                           :title="$t('jobs.resetParams')"
+                                           variant="secondary"
+                                           :title="$t('jobs.resetParamsTitle')"
                                            @click="clearParameterRemember"
                                            v-text="$t('jobs.resetParams')">
                                     </b-btn>
@@ -358,7 +359,12 @@
             .reset-params-button {
                 float: right;
                 margin-right: 1em;
-                background: $warning-light;
+            }
+
+            .btn-secondary, .btn-secondary:active {
+                color: $white;
+                background-color: $tk-medium-gray;
+                border-color: $tk-medium-gray;
             }
 
             .custom-job-id {
