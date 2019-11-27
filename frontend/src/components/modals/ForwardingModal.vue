@@ -52,10 +52,10 @@
                                :options="toolOptions"
                                value-field="name"
                                text-field="longname"
-                               :disabled="!forwardingData && !forwardingApiOptions">
+                               :disabled="!hasData">
                     <template slot="first">
                         <option :value="null"
-                                v-text="$t('jobs.forwarding.' + ((forwardingData || forwardingApiOptions) ? 'selectPlaceholder' : 'noData'))"></option>
+                                v-text="$t('jobs.forwarding.' + (hasData ? 'selectPlaceholder' : 'noData'))"></option>
                     </template>
                 </b-form-select>
             </b-col>
@@ -80,12 +80,13 @@
 <script lang="ts">
     import Vue from 'vue';
     import BaseModal from './BaseModal.vue';
-    import {ForwardingApiOptions, ForwardingMode, Tool} from '@/types/toolkit/tools';
+    import {ForwardingApiOptions, ForwardingApiOptionsAlignment, ForwardingMode, Tool} from '@/types/toolkit/tools';
     import EventBus from '@/util/EventBus';
     import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
     import Loading from '@/components/utils/Loading.vue';
     import {ForwardHitsMode, SequenceLengthMode} from '@/types/toolkit/enums';
+    import {AlignmentItem} from '@/types/toolkit/results';
 
     const logger = Logger.get('ForwardingModal');
 
@@ -102,6 +103,10 @@
             },
             forwardingApiOptions: {
                 type: Object as () => ForwardingApiOptions,
+                required: false,
+            },
+            forwardingApiOptionsAlignment: {
+                type: Object as () => ForwardingApiOptionsAlignment,
                 required: false,
             },
             forwardingData: {
@@ -129,6 +134,10 @@
             tools(): Tool[] {
                 return this.$store.getters['tools/tools'];
             },
+            hasData(): boolean {
+                return (Boolean(this.forwardingApiOptions) || Boolean(this.forwardingData) ||
+                    Boolean(this.forwardingApiOptionsAlignment));
+            },
             toolOptions(): Tool[] {
                 const alignmentOptions: string[] = this.sequenceLengthMode === SequenceLengthMode.ALN ?
                     this.forwardingMode.alignment : this.forwardingMode.multiSeq;
@@ -151,7 +160,7 @@
             },
             forwardingDisabled(): boolean {
                 return this.loading || !this.selectedTool
-                    || (!this.forwardingData && !this.forwardingApiOptions)
+                    || !this.hasData
                     || (this.forwardingApiOptions && this.forwardHitsMode === ForwardHitsMode.SELECTED
                         && this.forwardingApiOptions.selectedItems.length < 1)
                     || (this.forwardingApiOptions && this.forwardHitsMode === ForwardHitsMode.EVALUE
@@ -175,8 +184,8 @@
                     this.loading = true;
                     this.internalForwardData = this.forwardingData;
 
-                    if (this.forwardingApiOptions) {
-                        try {
+                    try {
+                        if (this.forwardingApiOptions) {
                             this.internalForwardData = await resultsService.generateForwardingData(this.forwardingJobID,
                                 {
                                     forwardHitsMode: this.forwardHitsMode,
@@ -185,17 +194,26 @@
                                     selected: this.forwardHitsMode === ForwardHitsMode.SELECTED ?
                                         this.forwardingApiOptions.selectedItems : [],
                                 });
-
-                        } catch (e) {
-                            logger.error(e);
-                            this.$alert(this.$t('errors.couldNotLoadForwardData'), 'danger');
-                            this.loading = false;
-                            return;
+                        } else if (this.forwardingApiOptionsAlignment) {
+                            // care: items are one-based
+                            const start = Math.min(...this.forwardingApiOptionsAlignment.selectedItems) - 1;
+                            const end = Math.max(...this.forwardingApiOptionsAlignment.selectedItems);
+                            const response = await resultsService.fetchAlignmentResults(this.forwardingJobID,
+                                start, end, this.forwardingApiOptionsAlignment.resultField);
+                            this.internalForwardData = response.alignments
+                                .filter((a: AlignmentItem) =>
+                                    this.forwardingApiOptionsAlignment.selectedItems.includes(a.num))
+                                .reduce((acc: string, cur: AlignmentItem) =>
+                                    acc + '>' + cur.accession + '\n' + cur.seq + '\n', '');
                         }
+                    } catch (e) {
+                        logger.error(e);
+                        this.$alert(this.$t('errors.couldNotLoadForwardData'), 'danger');
+                        this.loading = false;
+                        return;
                     }
 
                     if (this.internalForwardData) {
-
                         this.$router.push('/tools/' + this.selectedTool, () => {
                             EventBus.$on('paste-area-loaded', this.pasteForwardData);
                         });

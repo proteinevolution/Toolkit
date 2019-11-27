@@ -63,6 +63,7 @@
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
     import Logger from 'js-logger';
+    import {range} from 'lodash-es';
     import EventBus from '@/util/EventBus';
     import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
 
@@ -92,8 +93,7 @@
                 if (!this.alignments) {
                     return false;
                 }
-                return this.alignments.length > 0 &&
-                    this.selected.length === this.alignments.length;
+                return this.alignments.length > 0 && this.selected.length === this.total;
             },
             downloadMSAFilePath(): string {
                 return resultsService.getDownloadFilePath(this.job.jobID, this.downloadFileMSA);
@@ -139,9 +139,6 @@
                 const res: AlignmentResultResponse = await resultsService.fetchAlignmentResults(this.job.jobID, start,
                     end, this.resultField);
                 this.total = res.total;
-                if (this.allSelected) {
-                    res.alignments.forEach((a: AlignmentItem) => this.selected.push(a.num));
-                }
                 if (!this.alignments) {
                     this.alignments = res.alignments;
                 } else {
@@ -162,7 +159,7 @@
                 if (this.allSelected) {
                     this.selected = [];
                 } else {
-                    this.selected = this.alignments.map((al: AlignmentItem) => al.num);
+                    this.selected = range(1, this.total + 1); // numbers are one-based
                 }
             },
             download(downloadFilename: string, file: string): void {
@@ -174,13 +171,13 @@
             forwardSelected(): void {
                 if (this.selected.length > 0) {
                     if (this.tool.parameters && this.alignments) {
-                        const selAl: AlignmentItem[] = this.alignments
-                            .filter((al: AlignmentItem) => this.selected.includes(al.num));
                         EventBus.$emit('show-modal', {
                             id: 'forwardingModal', props: {
                                 forwardingJobID: this.job.jobID,
-                                forwardingData: selAl.reduce((acc: string, cur: AlignmentItem) =>
-                                    acc + '>' + cur.accession + '\n' + cur.seq + '\n', ''),
+                                forwardingApiOptionsAlignment: {
+                                    selectedItems: this.selected,
+                                    resultField: this.resultField,
+                                },
                                 forwardingMode: this.tool.parameters.forwarding,
                             },
                         });
