@@ -44,6 +44,11 @@ export interface ForwardingApiOptions {
     selectedItems: number[];
 }
 
+export interface ForwardingApiOptionsAlignment {
+    selectedItems: number[];
+    resultField: string;
+}
+
 export interface ParameterSection {
     name: string;
     multiColumnLayout: boolean;

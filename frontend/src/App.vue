@@ -39,6 +39,7 @@
                              :forwardingMode="modalProps.forwardingMode"
                              :forwarding-job-i-d="modalProps.forwardingJobID"
                              :forwarding-api-options="modalProps.forwardingApiOptions"
+                             :forwarding-api-options-alignment="modalProps.forwardingApiOptionsAlignment"
                              @hidden="clearForwardingModalData"/>
             <TemplateAlignmentModal :job-i-d="modalProps.jobID"
                                     :accession="modalProps.accession"
@@ -81,7 +82,7 @@
     import {Job} from '@/types/toolkit/jobs';
     import Logger from 'js-logger';
     import {TKNotificationOptions} from '@/modules/notifications/types';
-    import {ForwardingApiOptions, Tool} from '@/types/toolkit/tools';
+    import {ForwardingApiOptions, ForwardingApiOptionsAlignment, Tool} from '@/types/toolkit/tools';
     import EventBus from '@/util/EventBus';
     import FooterLinkModal from '@/components/modals/FooterLinkModal.vue';
     import UpdatesModal from '@/components/modals/UpdatesModal.vue';
@@ -131,6 +132,8 @@
                     forwardingData: '', // for ForwardingModal
                     forwardingJobID: '', // for ForwardingModal
                     forwardingApiOptions: undefined as ForwardingApiOptions | undefined, // for ForwardingModal
+                    forwardingApiOptionsAlignment: undefined as
+                        ForwardingApiOptionsAlignment | undefined, // for ForwardingModal
                     jobID: '', // for TemplateAlignmentModal
                     accession: '', // for TemplateAlignmentModal
                     // care: Don't share the accession properties between modals, otherwise they react to the wrong updates!
@@ -239,6 +242,8 @@
             },
             clearForwardingModalData(): void {
                 this.modalProps.forwardingApiOptions = undefined;
+                this.modalProps.forwardingApiOptionsAlignment = undefined;
+                this.modalProps.forwardingData = '';
             },
         },
     });
@@ -295,7 +300,7 @@
         border-bottom-right-radius: $global-radius;
         z-index: 1;
         position: relative;
-        
+
         @include media-breakpoint-down(sm) {
             padding: 10px 0.6rem 0 0.6rem;
         }
