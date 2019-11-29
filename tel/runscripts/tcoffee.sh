@@ -30,8 +30,8 @@ else
 fi
 echo "done"  >> ../results/process.log
 
-if [[ ${SEQ_COUNT} -gt "500" ]] ; then
-      echo "#Input contains more than 500 sequences." >> ../results/process.log
+if [[ ${SEQ_COUNT} -gt "4000" ]] ; then
+      echo "#Input contains more than 4000 sequences." >> ../results/process.log
       false
 fi
 
