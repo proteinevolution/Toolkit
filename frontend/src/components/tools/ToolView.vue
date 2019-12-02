@@ -43,7 +43,7 @@
                                 </div>
 
                                 <b-form-group v-if="showSubmitButtons"
-                                              class="submit-buttons pt-3">
+                                              class="submit-buttons pt-4">
                                     <b-btn class="submit-button"
                                            variant="primary"
                                            @click="submitJob"
@@ -52,10 +52,6 @@
                                     </b-btn>
                                     <custom-job-id-input :validation-errors="validationErrors"
                                                          :submission="submission"/>
-                                    <email-notification-switch v-if="loggedIn"
-                                                               :validation-errors="validationErrors"
-                                                               :submission="submission"
-                                                               class="pull-left"/>
                                     <b-btn v-if="hasRememberedParameters"
                                            class="reset-params-button"
                                            variant="secondary"
@@ -63,6 +59,10 @@
                                            @click="clearParameterRemember"
                                            v-text="$t('jobs.resetParams')">
                                     </b-btn>
+                                    <email-notification-switch v-if="loggedIn"
+                                                               :validation-errors="validationErrors"
+                                                               :submission="submission"
+                                                               class="pull-left"/>
                                 </b-form-group>
                             </b-tab>
 
@@ -350,15 +350,26 @@
             padding-bottom: 0;
             padding-right: 0;
 
+
             .submit-button {
-                margin-left: 1em;
+                margin-left: 0.5em;
                 float: right;
-                width: 8em;
+                width: 7.9em;
+
+                @media (max-width: 560px) {
+                    width: 100%;
+                    margin-top: 3em;
+                }
             }
 
             .reset-params-button {
                 float: right;
-                margin-right: 1em;
+                width: 7.9em;
+
+                @media (max-width: 560px) {
+                    width: 100%;
+                    margin-top: 1em;
+                }
             }
 
             .btn-secondary, .btn-secondary:active {
@@ -368,8 +379,18 @@
             }
 
             .custom-job-id {
+                margin-left: 0.5em;
                 float: right;
                 width: 10em;
+
+                @media (max-width: 560px) {
+                    width: 100%;
+                    margin-top: 1em;
+                }
+
+                ::placeholder {
+                    text-align: center;
+                }
             }
         }
 
@@ -383,5 +404,16 @@
             overflow-y: auto;
             border-radius: 0;
         }
+
+        .vue-switcher__label {
+            font-size: 11px;
+            margin-top: -1em;
+            white-space: nowrap;
+
+            @media (max-width: 560px) {
+                margin-top: -2.5em;
+            }
+        }
+
     }
 </style>

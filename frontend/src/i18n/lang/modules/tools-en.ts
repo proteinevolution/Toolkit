@@ -28,7 +28,7 @@ export default {
             pasteExample: 'Paste Example',
             uploadFile: 'Upload File',
             uploadedFile: 'Uploaded File',
-            alignTwoSeqToggle: 'Align two sequences or MSAs',
+            alignTwoSeqToggle: 'Align two sequences/MSAs',
         },
         select: {
             singlePlaceholder: 'Select option',
@@ -42,7 +42,7 @@ export default {
         modellerKey: {
             stored: 'MODELLER-key is stored in your profile.',
         },
-        emailNotification: 'E-Mail notification',
+        emailNotification: 'E-mail notification',
         isPublic: {
             true: 'Job is public',
             false: 'Job is private',
@@ -59,8 +59,8 @@ export default {
             min_seqid_query: 'Min. seq. identity of MSA hits with query (%)',
             hhblitsdb: 'Select database',
             hhblits_incl_eval: 'E-value inclusion threshold',
-            hhsuitedb: 'Select database (PDB_mmCIF70 for modeling)',
-            proteomes: 'Proteomes',
+            hhsuitedb: 'Select structural/domain databases',
+            proteomes: 'Select proteomes',
             msa_gen_method: 'MSA generation method',
             msa_gen_max_iter: 'Maximal no. of MSA generation steps',
             hhpred_incl_eval: 'E-value incl. threshold for MSA generation',
@@ -143,6 +143,8 @@ export default {
             'CLUSTAL/FASTA/STOCKHOLM format.',
         dnaSeq: 'Enter a DNA sequence in FASTA format.',
         hhMSA: 'Enter a protein sequence/multiple sequence alignment in A3M/CLUSTAL/FASTA/STOCKHOLM format.',
+        hhpredMSA: 'Enter a protein sequence/multiple sequence alignment in A3M/CLUSTAL/FASTA/STOCKHOLM format. ' +
+            'For template-based homology modeling using MODELLER, select the PDB_mmCIF70 or PDB_mmCIF30 database. ',
         psiMSA: 'Enter a protein sequence/multiple sequence alignment in CLUSTAL/FASTA/STOCKHOLM format.',
         protMSA: 'Enter a protein multiple sequence alignment in CLUSTAL/FASTA/STOCKHOLM format.',
         a3mMSA: 'Enter a multiple sequence alignment in A3M/CLUSTAL/FASTA/STOCKHOLM format.',
