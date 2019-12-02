@@ -1,9 +1,7 @@
 <template>
-    <div class="mb-0 mt-2 d-flex align-items-baseline">
+    <div class="d-flex">
         <switches v-model="submissionValue"
-                  class="mr-2"/>
-        <div v-text="$t('tools.parameters.emailNotification')"
-             class="mb-2"></div>
+                  :label="$t('tools.parameters.emailNotification')"/>
     </div>
 </template>
 
