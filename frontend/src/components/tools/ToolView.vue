@@ -45,6 +45,7 @@
                                 <b-form-group v-if="showSubmitButtons"
                                               class="submit-buttons pt-4">
                                     <b-btn class="submit-button"
+                                           v-bind:class="{ 'submit-button-margin' : loggedIn }"
                                            variant="primary"
                                            @click="submitJob"
                                            :disabled="preventSubmit"
@@ -358,6 +359,11 @@
 
                 @media (max-width: 560px) {
                     width: 100%;
+                }
+            }
+
+            .submit-button-margin {
+                @media (max-width: 560px) {
                     margin-top: 3em;
                 }
             }
