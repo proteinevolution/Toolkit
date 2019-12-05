@@ -31,12 +31,12 @@ const ToolParameterMixin = Vue.extend({
         submissionValue: {
             get(): any {
                 if (!this.submission.hasOwnProperty(this.parameterName)) {
-                    Vue.set(this.submission, this.parameterName, this.defaultSubmissionValue);
+                    this.setSubmissionValue(this.defaultSubmissionValue);
                 }
-                return this.submission[this.parameterName];
+                return this.submissionValueFromString(this.submission[this.parameterName]);
             },
             set(value: any) {
-                Vue.set(this.submission, this.parameterName, value);
+                this.setSubmissionValue(value);
             },
         },
     },
@@ -47,6 +47,16 @@ const ToolParameterMixin = Vue.extend({
             } else {
                 Vue.delete(this.validationErrors, this.parameterName);
             }
+        },
+        setSubmissionValue(value: any) {
+            Vue.set(this.submission, this.parameterName, this.submissionValueToString(value));
+        },
+        submissionValueFromString(value: string): any {
+            // can be overridden in the component depending on the parameter type
+            return value;
+        },
+        submissionValueToString(value: any): string {
+            return String(value);
         },
     },
 });

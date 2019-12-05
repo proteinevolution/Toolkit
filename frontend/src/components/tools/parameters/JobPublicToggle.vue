@@ -46,6 +46,9 @@
                     this.submissionValue = !this.isPublic;
                 }
             },
+            submissionValueFromString(value: string): boolean {
+                return value === 'true';
+            },
         },
     });
 </script>

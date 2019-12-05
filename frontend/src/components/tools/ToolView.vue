@@ -211,6 +211,7 @@
             },
             rememberParams: {
                 immediate: true,
+                deep: true,
                 handler() {
                     this.saveParametersToRemember(this.toolName);
                 },

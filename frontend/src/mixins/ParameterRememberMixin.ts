@@ -9,8 +9,7 @@ const ParameterRememberMixin = Vue.extend({
     computed: {
         isNonDefaultValue(): boolean {
             // @ts-ignore
-            // Use string comparison here since the job params are all string values upon being returned by the backend
-            return String(this.submissionValue) !== String(this.defaultSubmissionValue);
+            return this.submissionValue !== this.defaultSubmissionValue;
         },
         disableRemember(): boolean {
             // can be overridden to disable remembering;
@@ -24,7 +23,7 @@ const ParameterRememberMixin = Vue.extend({
                 if (!this.disableRemember) {
                     if (this.isNonDefaultValue) {
                         // @ts-ignore
-                        Vue.set(this.rememberParams, this.parameterName, value);
+                        Vue.set(this.rememberParams, this.parameterName, this.submissionValueToString(value));
                     } else {
                         // @ts-ignore
                         Vue.delete(this.rememberParams, this.parameterName);

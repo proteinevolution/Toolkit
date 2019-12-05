@@ -64,6 +64,9 @@
                     };
                 }
             },
+            submissionValueFromString(value: string): number {
+                return parseFloat(value);
+            },
         },
     });
 </script>

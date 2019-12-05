@@ -37,6 +37,11 @@
                 this.submissionValue = this.enabledOverride || this.submissionValue;
             },
         },
+        methods: {
+            submissionValueFromString(value: string): boolean {
+                return value === 'true';
+            },
+        },
     });
 </script>
 
