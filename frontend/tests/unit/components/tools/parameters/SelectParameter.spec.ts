@@ -33,6 +33,7 @@ function initSelectParameter(maxSelectedOptions: number, submission?: string) {
                 select: submission ? submission : '',
             },
             validationErrors: {},
+            rememberParams: {},
             parameter: {
                 parameterType: ParameterType.SelectParameter,
                 name: 'select',

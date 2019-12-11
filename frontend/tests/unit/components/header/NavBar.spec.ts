@@ -3,11 +3,10 @@ import BootstrapVue from 'bootstrap-vue';
 import {createLocalVue, shallowMount} from '@vue/test-utils';
 import NavBar from '@/components/navigation/NavBar.vue';
 import {tools1} from '../../mocks/tools';
+import {sections} from '@/conf/ToolSections';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
-
-const sections: string[] = [];
 
 function initNavBar(toolNameRouteParam: string | undefined) {
     const $route = {
@@ -25,8 +24,6 @@ function initNavBar(toolNameRouteParam: string | undefined) {
         computed: {
             tools: () => tools1,
             jobs: () => [],
-            sections: () => sections,
-            sectionColor: () => '#FFFFFF',
         },
     });
 }
@@ -39,25 +36,25 @@ Note: Somehow finding an element by class doesn't work...
 
 describe('NavBar', () => {
     it('selects correct section if route parameter is set', () => {
-        const wrapper = initNavBar('Tool2');
-        expect((wrapper.vm as any).selectedSection).to.equal('Section2');
+        const wrapper = initNavBar(tools1[1].name);
+        expect((wrapper.vm as any).selectedSection).to.equal(tools1[1].section);
     });
 
     it('selects first section if invalid route parameter is set', () => {
         const wrapper = initNavBar('ToolXYZ');
-        expect((wrapper.vm as any).selectedSection).to.equal('search');
+        expect((wrapper.vm as any).selectedSection).to.equal(sections[0]);
     });
 
     it('selects first section if no route parameter is set', () => {
         const wrapper = initNavBar(undefined);
-        expect((wrapper.vm as any).selectedSection).to.equal('search');
+        expect((wrapper.vm as any).selectedSection).to.equal(sections[0]);
     });
 
     it('updates manually selected selection correctly', () => {
         const wrapper = initNavBar(undefined);
-        (wrapper.vm as any).selectSection('Section2');
-        expect((wrapper.vm as any).selectedSection).to.equal('Section2');
-        (wrapper.vm as any).selectSection('Section1');
-        expect((wrapper.vm as any).selectedSection).to.equal('Section1');
+        (wrapper.vm as any).selectSection(tools1[1].section);
+        expect((wrapper.vm as any).selectedSection).to.equal(tools1[1].section);
+        (wrapper.vm as any).selectSection(tools1[0].section);
+        expect((wrapper.vm as any).selectedSection).to.equal(tools1[0].section);
     });
 });

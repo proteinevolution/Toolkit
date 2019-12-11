@@ -13,9 +13,13 @@ function initBooleanParameter(defaultValue: boolean, enabledOverride: boolean) {
 
     return shallowMount(BooleanParameter, {
         localVue,
+        mocks: {
+            $t: (arg: string) => arg,
+        },
         propsData: {
             submission: {},
             validationErrors: {},
+            rememberParams: {},
             parameter: {
                 parameterType: ParameterType.BooleanParameter,
                 name: 'Test',

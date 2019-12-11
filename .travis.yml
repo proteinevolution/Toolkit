@@ -32,5 +32,7 @@ install:
 script:
  - bin/validate-code
  - $SBT_BIN test stage
- - cd frontend; yarn run test:unit; yarn run test:unit:reformat; cd -
+ - cd frontend
+ - yarn run test:unit
+ - cd -
  - $HOME/cloc/cloc $(git ls-files)
