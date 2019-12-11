@@ -1,18 +1,23 @@
 import {ValidationResult} from '@/types/toolkit/validation';
 import {Reformat} from '@/modules/reformat';
 import {AlignmentSeqType, TextAreaInputType} from '@/types/toolkit/enums';
-import {SequenceValidationParams, ValidationParams} from '@/types/toolkit/tools';
+import {
+    AccessionIDValidationParams,
+    RegexValidationParams,
+    SequenceValidationParams,
+    ValidationParams,
+} from '@/types/toolkit/tools';
 
 export function validation(val: string, inputType: TextAreaInputType, params: ValidationParams): ValidationResult {
     switch (inputType) {
         case TextAreaInputType.SEQUENCE:
             return validateSequence(val, params as SequenceValidationParams);
         case TextAreaInputType.REGEX:
-            return validateRegex(val, params as SequenceValidationParams);
+            return validateRegex(val, params as RegexValidationParams);
         case TextAreaInputType.PDB:
             return validatePDB(val);
         case TextAreaInputType.ACCESSION_ID:
-            return validateAccessionID(val, params as SequenceValidationParams);
+            return validateAccessionID(val, params as AccessionIDValidationParams);
     }
 }
 
@@ -88,13 +93,13 @@ export function transformToFormat(val: string, format: string): string {
     return new Reformat(val).reformat(format);
 }
 
-export function validateRegex(val: string, params: SequenceValidationParams): ValidationResult {
+export function validateRegex(val: string, params: RegexValidationParams): ValidationResult {
     if (val.length > 0) {
         if (/\s/.test(val)) {
             return result(true, 'danger', 'invalidWhiteSpace');
         }
-        if (params.maxCharPerSeq && (val.length > params.maxCharPerSeq)) {
-            return result(true, 'danger', 'maxRegexLength');
+        if (val.length > params.maxRegexLength) {
+            return result(true, 'danger', 'maxRegexLength', {limit: params.maxRegexLength});
         }
         return result(false, 'success', 'validRegex');
     }
@@ -117,12 +122,13 @@ export function validatePDB(val: string): ValidationResult {
     return result(true, 'danger', 'invalidPDB');
 }
 
-export function validateAccessionID(val: string, params: SequenceValidationParams): ValidationResult {
+
+export function validateAccessionID(val: string, params: AccessionIDValidationParams): ValidationResult {
     if (val.replace(/\s/g, '') === '') {
         return result(true, 'danger', 'invalidAccessionID');
     }
-    if (params.maxNumSeq && val.split(/[\r\n]+/).length > params.maxNumSeq) {
-        return result(true, 'danger', 'maxIDNumber', {limit: params.maxNumSeq});
+    if (val.split(/[\r\n]+/).length > params.maxNumIDs) {
+        return result(true, 'danger', 'maxIDNumber', {limit: params.maxNumIDs});
     }
     return result(false, 'success', 'validAccessionID');
 }

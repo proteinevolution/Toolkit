@@ -172,7 +172,7 @@ export default {
         valid: '{type} {format}',
         validRegex: 'Valid input.',
         invalidWhiteSpace: 'White spaces are not allowed!',
-        maxRegexLength: 'Maximum allowed length is 200 characters.',
+        maxRegexLength: 'Maximum allowed length is {limit} characters.',
         invalidPDB: 'Invalid PDB input. Expected at least 21 ATOM records.',
         validPDB: 'Valid PDB input.',
         invalidAccessionID: 'Invalid input. Expecting accession ID(s).',
