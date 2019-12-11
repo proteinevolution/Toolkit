@@ -33,6 +33,10 @@ export interface SequenceValidationParams extends ValidationParams {
     allowEmptySeq?: boolean;
 }
 
+export interface PlainTextValidationParams extends ValidationParams {
+    maxNumChars: number;
+}
+
 export interface ForwardingMode {
     alignment: string[];
     multiSeq: string[];

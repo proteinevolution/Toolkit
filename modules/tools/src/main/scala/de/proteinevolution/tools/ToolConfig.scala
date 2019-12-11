@@ -45,8 +45,8 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
           config.getStringList("parameter").asScala.map { param =>
             paramAccess.getParam(
               param,
-              config.getString("placeholder_key"),
-              config.getString("sample_input_key"),
+              Try(config.getString("placeholder_key")).getOrElse(""),
+              Try(config.getString("sample_input_key")).getOrElse(""),
               Try(config.getString("input_type")).getOrElse(TextAreaInputType.SEQUENCE)
             )
           },
@@ -65,7 +65,8 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
             Try(config.getInt("sequence_restrictions.min_num_seq")).toOption,
             Some(Try(config.getInt("sequence_restrictions.max_num_seq")).getOrElse(10000)),
             Try(config.getBoolean("sequence_restrictions.same_length")).toOption,
-            Try(config.getBoolean("sequence_restrictions.allow_empty")).toOption
+            Try(config.getBoolean("sequence_restrictions.allow_empty")).toOption,
+            Try(config.getInt("sequence_restrictions.max_num_chars")).toOption
           )
         )
       case (_, _) => throw new IllegalStateException("tool does not exist")

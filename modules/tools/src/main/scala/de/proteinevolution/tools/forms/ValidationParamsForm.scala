@@ -16,8 +16,6 @@
 
 package de.proteinevolution.tools.forms
 
-import play.api.libs.json.{ Json, OWrites }
-
 case class ValidationParamsForm(
     allowedSeqFormats: Seq[String],
     allowedSeqType: String,
@@ -27,10 +25,8 @@ case class ValidationParamsForm(
     maxNumSeq: Option[Int],
     requiresSameLengthSeq: Option[Boolean],
     allowEmptySeq: Option[Boolean],
+
+    // plain text
+    maxNumChars: Option[Int],
 )
 
-object ValidationParamsForm {
-
-  implicit val writes: OWrites[ValidationParamsForm] = Json.writes[ValidationParamsForm]
-
-}

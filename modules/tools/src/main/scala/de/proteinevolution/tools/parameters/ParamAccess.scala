@@ -66,6 +66,10 @@ class ParamAccess @Inject()(tel: TEL) {
     case "MATRIX"            => select("matrix", default = Some("BLOSUM62"))
     case "MIN_SEQID_QUERY" => select("min_seqid_query", default = Some("0"))
 
+    // New Tool
+    case "NEW_TOOL_MATRIX" => TextAreaParameter("matrix", TextAreaInputType.PLAIN_TEXT, "new_tool_matrix", "singleProtSeq")
+    case "NEW_TOOL_PLAIN_TEXT" => TextAreaParameter("text", TextAreaInputType.PLAIN_TEXT, "new_tool_plain_text", "multiProtSeq")
+
     // HHblits
     case "HHBLITSDB" => select("hhblitsdb", default = Some("uniclust30_2018_08"))
     case "HHBLITS_INCL_EVAL" =>
@@ -267,6 +271,8 @@ class ParamAccess @Inject()(tel: TEL) {
   val paramGroups: Map[String, Seq[String]] = Map(
     "Input" -> Seq(
       getParam("ALIGNMENT").name,
+      getParam("NEW_TOOL_MATRIX").name,
+      getParam("NEW_TOOL_PLAIN_TEXT").name,
       getParam("STANDARD_DB").name,
       getParam("HHPRED_DB_PROTEOMES").name,
       getParam("HHBLITSDB").name,

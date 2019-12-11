@@ -129,6 +129,8 @@ export default {
         },
     },
     inputPlaceholder: {
+        new_tool_matrix: 'Input matrix',
+        new_tool_plain_text: 'Input plain text',
         multiProtNuclSeq: 'Enter up to 4000 protein/nucleotide sequences in FASTA format.',
         regex: 'Enter a PROSITE grammar/regular expression.',
         ali2dMSA: 'Enter a protein multiple sequence alignment with up to 100 sequences in CLUSTAL/FASTA/STOCKHOLM ' +

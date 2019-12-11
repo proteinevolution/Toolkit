@@ -1,7 +1,7 @@
 import {ValidationResult} from '@/types/toolkit/validation';
 import {Reformat} from '@/modules/reformat';
 import {AlignmentSeqType, TextAreaInputType} from '@/types/toolkit/enums';
-import {SequenceValidationParams, ValidationParams} from '@/types/toolkit/tools';
+import {PlainTextValidationParams, SequenceValidationParams, ValidationParams} from '@/types/toolkit/tools';
 
 export function validation(val: string, inputType: TextAreaInputType, params: ValidationParams): ValidationResult {
     switch (inputType) {
@@ -13,6 +13,8 @@ export function validation(val: string, inputType: TextAreaInputType, params: Va
             return validatePDB(val);
         case TextAreaInputType.ACCESSION_ID:
             return validateAccessionID(val, params as SequenceValidationParams);
+        case TextAreaInputType.PLAIN_TEXT:
+            return validatePlainText(val, params as PlainTextValidationParams);
     }
 }
 
@@ -125,6 +127,16 @@ export function validateAccessionID(val: string, params: SequenceValidationParam
         return result(true, 'danger', 'maxIDNumber', {limit: params.maxNumSeq});
     }
     return result(false, 'success', 'validAccessionID');
+}
+
+export function validatePlainText(val: string, params: PlainTextValidationParams): ValidationResult {
+    if (val.replace(/\s/g, '') === '') {
+        return result(true, 'danger', 'invalidAccessionID'); // TODO key
+    }
+    if (val.length > params.maxNumChars) {
+        return result(true, 'danger', 'maxLength'); // TODO key
+    }
+    return result(false, 'success', 'validAccessionID'); // TODO key
 }
 
 function result(failed: boolean, cssClass: string, textKey: string,
