@@ -16,17 +16,46 @@
 
 package de.proteinevolution.tools.forms
 
-case class ValidationParamsForm(
-    allowedSeqFormats: Seq[String],
-    allowedSeqType: String,
-    minCharPerSeq: Option[Int],
-    maxCharPerSeq: Option[Int],
-    minNumSeq: Option[Int],
-    maxNumSeq: Option[Int],
-    requiresSameLengthSeq: Option[Boolean],
-    allowEmptySeq: Option[Boolean],
+import io.circe.Encoder
+import io.circe.generic.auto._
+import io.circe.syntax._
 
-    // plain text
-    maxNumChars: Option[Int],
-)
+sealed trait ValidationParamsForm
 
+object ValidationParamsForm {
+
+  case class SequenceValidationParamsForm(
+      allowedSeqFormats: Seq[String],
+      allowedSeqType: String,
+      minCharPerSeq: Option[Int],
+      maxCharPerSeq: Option[Int],
+      minNumSeq: Option[Int],
+      maxNumSeq: Option[Int],
+      requiresSameLengthSeq: Option[Boolean],
+      allowEmptySeq: Option[Boolean]
+  ) extends ValidationParamsForm
+
+  case class RegexValidationParamsForm(
+      maxRegexLength: Int,
+  ) extends ValidationParamsForm
+
+  case class AccessionIDValidationParamsForm(
+      maxNumIDs: Int,
+  ) extends ValidationParamsForm
+
+  case class PlainTextValidationParamsForm(
+      maxNumChars: Int,
+  ) extends ValidationParamsForm
+
+  case class EmptyValidationParamsForm() extends ValidationParamsForm
+
+  // encode different cases without discriminator (https://circe.github.io/circe/codecs/adt.html)
+  implicit val ep: Encoder[ValidationParamsForm] = Encoder.instance {
+    case seq @ SequenceValidationParamsForm(_, _, _, _, _, _, _, _) => seq.asJson
+    case regex @ RegexValidationParamsForm(_) => regex.asJson
+    case acc @ AccessionIDValidationParamsForm(_) => acc.asJson
+    case pt @ PlainTextValidationParamsForm(_) => pt.asJson
+    case empty @ EmptyValidationParamsForm() => empty.asJson
+  }
+
+}
