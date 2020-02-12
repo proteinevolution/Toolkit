@@ -3,7 +3,7 @@
 source ${ENVIRONMENT}
 
 HHBLITS=${DATABASES}/hhblits/
-DB=${STANDARD}/uniprot_trembl
+DB=${STANDARD}/uniref100
 
 #separate accessions in string by whitespace
 ACCESSIONS=$(echo $accessionsStr | tr " " "\n")

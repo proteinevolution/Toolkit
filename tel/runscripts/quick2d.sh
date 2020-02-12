@@ -90,7 +90,7 @@ echo "#Running HHblits for HMM generation." >> ../results/process.log
 
 hhblits -i ../results/${JOBID}.fas \
         -ohhm ../results/${JOBID}.hhm \
-        -d %HHBLITS/uniclust30 \
+        -d %HHBLITS/UniRef30 \
         -n 2 \
         -v 0 \
         -maxres 40000 \
