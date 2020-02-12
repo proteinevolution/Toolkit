@@ -91,7 +91,7 @@ else
     hhblits -cpu  %THREADS \
             -v 2 \
             -i  ../results/${JOBID}.a3m \
-            -d %UNICLUST  \
+            -d %UNIREF  \
             -o /dev/null \
             -oa3m ../results/query.a3m \
             -n ${ITERS}

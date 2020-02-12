@@ -48,6 +48,7 @@ object LinkUtil {
   private val pfamBaseLink        = "http://pfam.xfam.org/family/"
   private val cddBaseLink         = "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid="
   private val uniprotBaseLink     = "http://www.uniprot.org/uniprot/"
+  private val unirefBaseLink     = "http://www.uniprot.org/uniref/"
   private val smartBaseLink       = "http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN="
   private val ecodBaseLink        = "http://prodata.swmed.edu/ecod/complete/domain/"
 
@@ -111,7 +112,7 @@ object LinkUtil {
     }
   }
 
-  def getSingleLinkHHBlits(id: String): String = generateLink(uniprotBaseLink, id, id)
+  def getSingleLinkHHBlits(id: String): String = generateLink(unirefBaseLink, id, id)
 
   def getLinksHHpred(jobID: String, id: String): String = {
     val db    = identifyDatabase(id)

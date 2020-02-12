@@ -67,7 +67,7 @@ class ParamAccess @Inject()(tel: TEL) {
     case "MIN_SEQID_QUERY" => select("min_seqid_query", default = Some("0"))
 
     // HHblits
-    case "HHBLITSDB" => select("hhblitsdb", default = Some("uniclust30_2018_08"))
+    case "HHBLITSDB" => select("hhblitsdb", default = Some("UniRef30"))
     case "HHBLITS_INCL_EVAL" =>
       select("hhblits_incl_eval", default = Some("1e-3"))
 
@@ -84,7 +84,7 @@ class ParamAccess @Inject()(tel: TEL) {
         default = Some("mmcif70/pdb70"),
         defaultProteomes = None
       )
-    case "MSA_GEN_METHOD"   => select("msa_gen_method", default = Some("uniclust30"))
+    case "MSA_GEN_METHOD"   => select("msa_gen_method", default = Some("UniRef30"))
     case "MSA_GEN_MAX_ITER" => select("msa_gen_max_iter", default = Some("3"), onDetectedMSA = Some("0"))
     case "HHPRED_INCL_EVAL" =>
       select("hhpred_incl_eval", default = Some("1e-3"))

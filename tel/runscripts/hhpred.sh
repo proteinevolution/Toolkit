@@ -226,7 +226,7 @@ else
         echo "done" >> ../results/process.log
 
     #MSA generation by HHblits
-    if [[ "%msa_gen_method.content" = "uniclust30" ]] ; then
+    if [[ "%msa_gen_method.content" = "UniRef30" ]] ; then
         echo "#Running ${ITERS} iteration(s) of HHblits against %msa_gen_method.content for query MSA generation." >> ../results/process.log
 
         reformat_hhsuite.pl fas a3m \
@@ -335,7 +335,7 @@ then
                   $(readlink -f %alignment_two.path) \
                   $(readlink -f ../results/${JOBID}.in2.a3m)
 
-        hhblits -d %UNICLUST -i ../results/${JOBID}.in2.a3m -oa3m db.a3m -n 3 -cpu %THREADS -v 2
+        hhblits -d %UNIREF -i ../results/${JOBID}.in2.a3m -oa3m db.a3m -n 3 -cpu %THREADS -v 2
         rm ../results/${JOBID}.in2.a3m
     fi
 
