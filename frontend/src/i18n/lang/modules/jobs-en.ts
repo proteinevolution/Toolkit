@@ -133,7 +133,7 @@ export default {
                 '0). You could also consider picking a different target database and/or using different parameters.',
             qa3mWarning: 'Note: your query alignment consists of only <b>{num}</b> sequence(s).',
             uniclustWarning: ' You could improve the sensitivity of your search vastly by building a larger query ' +
-                'alignment with PSI-BLAST over nre70. You could also consider increasing the number of MSA ' +
+                'alignment with PSI-BLAST over nr70. You could also consider increasing the number of MSA ' +
                 'generation iterations and/or relaxing the E-value threshold.',
             psiblastWarning: ' You could improve the sensitivity of your search vastly by building a larger query ' +
                 'alignment; for instance, by increasing the number of MSA generation iterations and/or relaxing the ' +

@@ -21,13 +21,13 @@ export default {
                         title: 'Select standard database',
                         content: `<p>The selected databases are used to perform the search.</p>
                     <ul>
-                        <li><b>nr:</b> the non-redundant sequence database at the NCBI, updated weekly. (See NCBI's BLAST tutorial).</li>
-                        <li><b>env:</b> NCBI's env database with environmental sequences, usually from unknown organisms.</li>
-                        <li><b>nre:</b> nr+env database. Updated weekly.</li>
-                        <li><b>nr90, nr70, env90 etc.:</b> representative sequences, filtered for a maximum pairwise sequence identity of ~90% or 70% with kClust. Updated bimonthly.</li>
-                        <li><b>nr_euk, nr_bac, nr_arc, nr_pro, nr_vir:</b> eukaryotic, bacterial, archaeal, prokaryotic, and viral sequences from the non-redundant database nr. Updated weekly.</li>
-                        <li><b>pdb_nr: </b>Sequences from proteins whose structures have been deposited in the Protein
-                            Data Bank PDB.</li>
+                        <li><b>nr:</b> the non-redundant sequence database at the NCBI. (See NCBI's BLAST tutorial).</li>                  
+                        <li><b>nr90, nr70, etc.:</b> nr filtered for a maximum pairwise sequence identity of ~90% or 70% 
+                        with MMseqs2.</li>
+                        <li><b>nr_euk, nr_bac, nr_arc, nr_pro, nr_vir:</b> eukaryotic, bacterial, archaeal, prokaryotic, 
+                        and viral sequences from the non-redundant database nr.</li>
+                        <li><b>pdb_nr: </b>Sequences of proteins whose structures have been deposited in the Protein
+                            Data Bank (PDB).</li>
                         <li><b>Uniprot_sprot:</b> manually annotated and reviewed sequences from the
                             <a href="http://www.expasy.org/sprot/" target="_blank" rel="noopener">UniProtKB.</a></li>
                         <li><b>Uniprot_trembl:</b> automatically annotated and not reviewed sequences from the

@@ -258,7 +258,7 @@ else
             INPUT="in_msa"
         fi
 
-        psiblast -db ${STANDARD}/nre70 \
+        psiblast -db ${STANDARD}/nr70 \
                  -num_iterations ${ITERS} \
                  -evalue %hhpred_incl_eval.content \
                  -inclusion_ethresh 0.001 \

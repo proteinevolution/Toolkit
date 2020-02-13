@@ -109,7 +109,7 @@ export default {
         <p><b>Build the query and/or database MSAs more aggressively:</b> If your query (or template)
             MSA is not diverse enough, you could increase sensitivity substantially by trying to include more
             remotely homologous sequences into the MSA. You can, for instance, make the MSA building criteria less
-            stringent, or search with PSI-BLAST over nre70.</p>
+            stringent, or search with PSI-BLAST over nr70.</p>
 
         <p><b>Verify predictions experimentally:</b> The ultimate confirmation of a homologous relationship
             or structural model is, of course, the experimental verification of some of its key predictions, such
@@ -192,7 +192,7 @@ export default {
                     {
                         title: 'MSA generation method',
                         content: `This option sets the multiple sequence alignment (MSA) generation method used by HHpred. The query MSA
-                        could be built with HHblits over Uniprot20 or Uniclust30, or with PSI-BLAST over nre70, which is
+                        could be built with HHblits over Uniprot20 or Uniclust30, or with PSI-BLAST over nr70, which is
                         a version of the NCBI nonredundant and environmental databases reduced to a maximum
                         pairwise sequence identity of 70%.`,
                     },
