@@ -65,9 +65,6 @@
                                     <hr v-if="i !== 0"/>
                                 </td>
                             </tr>
-                            <!-- TODO: The file containing mapping between unirep30 hhsuite DB IDs to uniref IDs is
-                              unavailable presently. -->
-                            <!--
                             <tr>
                                 <td></td>
                                 <td colspan="3">
@@ -75,7 +72,6 @@
                                        v-text="$t('jobs.results.hhblits.templateAlignment')"></a>
                                 </td>
                             </tr>
-                            -->
                             <tr class="font-weight-bold">
                                 <td class="no-wrap">
                                     <b-checkbox @change="check($event, al.num)"
