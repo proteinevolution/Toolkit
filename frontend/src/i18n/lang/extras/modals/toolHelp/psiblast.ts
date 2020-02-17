@@ -21,10 +21,10 @@ export default {
                         title: 'Select standard database',
                         content: `<p>The selected databases are used to perform the search.</p>
                     <ul>
-                        <li><b>nr:</b> the non-redundant sequence database at the NCBI. (See NCBI's BLAST tutorial).</li>                  
-                        <li><b>nr90, nr70, etc.:</b> nr filtered for a maximum pairwise sequence identity of ~90% or 70% 
+                        <li><b>nr:</b> the non-redundant sequence database at the NCBI. (See NCBI's BLAST tutorial).</li>
+                        <li><b>nr90, nr70, etc.:</b> nr filtered for a maximum pairwise sequence identity of ~90% or 70%
                         with MMseqs2.</li>
-                        <li><b>nr_euk, nr_bac, nr_arc, nr_pro, nr_vir:</b> eukaryotic, bacterial, archaeal, prokaryotic, 
+                        <li><b>nr_euk, nr_bac, nr_arc, nr_pro, nr_vir:</b> eukaryotic, bacterial, archaeal, prokaryotic,
                         and viral sequences from the non-redundant database nr.</li>
                         <li><b>pdb_nr: </b>Sequences of proteins whose structures have been deposited in the Protein
                             Data Bank (PDB).</li>
