@@ -32,7 +32,7 @@ object Dependencies {
     "org.typelevel" %% "cats-effect"          % "1.3.1",
     "com.chuusai"   %% "shapeless"            % "2.3.3",
     "com.mohiva"    %% "play-html-compressor" % "0.7.1",
-    "com.dripower"  %% "play-circe"           % "2711.0",
+    "com.dripower"  %% "play-circe"           % "2812.0",
     "io.circe"      %% "circe-generic"        % circeV,
     "io.circe"      %% "circe-generic-extras" % circeV,
     "io.circe"      %% "circe-java8"          % circeV,
