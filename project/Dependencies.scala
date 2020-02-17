@@ -19,7 +19,7 @@ object Dependencies {
     "com.typesafe.akka"    %% "akka-slf4j"           % akkaVersion,
     "com.typesafe.akka"    %% "akka-stream"          % akkaVersion,
     "com.typesafe.play"    %% "play-mailer"          % "8.0.0",
-    "com.typesafe.play"    %% "play-mailer-guice"    % "7.0.1",
+    "com.typesafe.play"    %% "play-mailer-guice"    % "8.0.0",
     "com.github.pathikrit" %% "better-files"         % "3.8.0",
     "org.mindrot"          % "jbcrypt"               % "0.4",
     ("org.reactivemongo" %% "play2-reactivemongo" % "0.16.2-play27")
