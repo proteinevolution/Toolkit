@@ -48,7 +48,7 @@ object Dependencies {
     "org.scalatestplus.play"   %% "scalatestplus-play"  % "4.0.1"     % Test,
     "org.mockito"              % "mockito-core"         % "2.11.0"    % Test,
     "com.softwaremill.macwire" %% "macros"              % "2.3.1"     % Test,
-    "org.awaitility"           % "awaitility"           % "3.0.0"     % Test
+    "org.awaitility"           % "awaitility"           % "3.1.6"     % Test
   )
 
 }
