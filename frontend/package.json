@@ -60,7 +60,7 @@
     "typescript": "^3.5.3",
     "vue-template-compiler": "^2.6.10",
     "vue-typed-mixins": "^0.1.0",
-    "yarn": "^1.17.3"
+    "yarn": "^1.22.0"
   },
   "browserslist": [
     "> 1%",
