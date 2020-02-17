@@ -25,7 +25,7 @@ object Dependencies {
     ("org.reactivemongo" %% "play2-reactivemongo" % "0.16.2-play27")
       .exclude("com.typesafe.akka", "*") // provided
       .exclude("com.typesafe.play", "*"), // provided
-    ("org.reactivemongo" %% "reactivemongo-akkastream" % "0.16.2")
+    ("org.reactivemongo" %% "reactivemongo-akkastream" % "0.16.6")
       .exclude("com.typesafe.akka", "*") // provided
       .exclude("com.typesafe.play", "*"), // provided
     "org.typelevel" %% "cats-core"            % catsV,
