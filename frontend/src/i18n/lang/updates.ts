@@ -2,16 +2,16 @@ export default [
     {
         date: '2020-02-12',
         html: `<p>
-        HHpred, HMMER, HHrepID, and HHomp now use the 
-        <a href="http://gwdu111.gwdg.de/~compbiol/uniclust/current_release/" target="_blank"> UniRef30 
-        </a> database (instead of UniClust30) for query MSA generation. Additionally, UniRef30 is also 
+        HHpred, HMMER, HHrepID, and HHomp now use the
+        <a href="http://gwdu111.gwdg.de/~compbiol/uniclust/current_release/" target="_blank"> UniRef30
+        </a> database (instead of UniClust30) for query MSA generation. Additionally, UniRef30 is also
         offered as the standard database for HHblits.
         </p>`,
     },
     {
         date: '2020-02-06',
         html: ` <p>
-        Pre-formatted nr, nr90, nr70, nr50, and nr30 BLAST databases are now available for download at our 
+        Pre-formatted nr, nr90, nr70, nr50, and nr30 BLAST databases are now available for download at our
          <a href="ftp://ftp.tuebingen.mpg.de/pub/protevo/toolkit/databases/blast/" target="_blank">
          FTP site</a>.
         </p>`,
