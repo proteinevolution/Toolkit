@@ -39,7 +39,7 @@ object Dependencies {
     ("io.circe" %% "circe-bson" % "0.3.1").exclude("org.reactivemongo", "*"), // provided by play2-reactivemongo
     "com.github.mpilquist" %% "simulacrum"    % "0.19.0",
     "com.github.mongobee"  % "mongobee"       % "0.13",
-    "com.maxmind.geoip2"   % "geoip2"         % "2.12.0"
+    "com.maxmind.geoip2"   % "geoip2"         % "2.13.0"
   )
 
   lazy val testDeps: Seq[ModuleID] = Seq(
