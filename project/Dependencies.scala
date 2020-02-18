@@ -19,13 +19,13 @@ object Dependencies {
     "com.typesafe.akka"    %% "akka-slf4j"           % akkaVersion,
     "com.typesafe.akka"    %% "akka-stream"          % akkaVersion,
     "com.typesafe.play"    %% "play-mailer"          % "8.0.0",
-    "com.typesafe.play"    %% "play-mailer-guice"    % "7.0.1",
+    "com.typesafe.play"    %% "play-mailer-guice"    % "8.0.0",
     "com.github.pathikrit" %% "better-files"         % "3.8.0",
     "org.mindrot"          % "jbcrypt"               % "0.4",
-    ("org.reactivemongo" %% "play2-reactivemongo" % "0.16.2-play27")
+    ("org.reactivemongo" %% "play2-reactivemongo" % "0.16.6-play27")
       .exclude("com.typesafe.akka", "*") // provided
       .exclude("com.typesafe.play", "*"), // provided
-    ("org.reactivemongo" %% "reactivemongo-akkastream" % "0.16.2")
+    ("org.reactivemongo" %% "reactivemongo-akkastream" % "0.16.6")
       .exclude("com.typesafe.akka", "*") // provided
       .exclude("com.typesafe.play", "*"), // provided
     "org.typelevel" %% "cats-core"            % catsV,
@@ -36,8 +36,8 @@ object Dependencies {
     "io.circe"      %% "circe-generic"        % circeV,
     "io.circe"      %% "circe-generic-extras" % circeV,
     "io.circe"      %% "circe-java8"          % circeV,
-    ("io.circe" %% "circe-bson" % "0.4.0").exclude("org.reactivemongo", "*"), // provided by play2-reactivemongo
-    "com.github.mpilquist" %% "simulacrum"    % "0.19.0",
+    ("io.circe" %% "circe-bson" % "0.3.1").exclude("org.reactivemongo", "*"), // provided by play2-reactivemongo
+    "org.typelevel" %% "simulacrum"    % "1.0.0",
     "com.github.mongobee"  % "mongobee"       % "0.13",
     "com.maxmind.geoip2"   % "geoip2"         % "2.13.0"
   )
@@ -45,10 +45,10 @@ object Dependencies {
   lazy val testDeps: Seq[ModuleID] = Seq(
     "com.typesafe.akka"        %% "akka-testkit"        % akkaVersion % Test,
     "com.typesafe.akka"        %% "akka-stream-testkit" % akkaVersion % Test,
-    "org.scalatestplus.play"   %% "scalatestplus-play"  % "4.0.3"     % Test,
-    "org.mockito"              % "mockito-core"         % "2.28.2"    % Test,
+    "org.scalatestplus.play"   %% "scalatestplus-play"  % "5.0.0"     % Test,
+    "org.mockito"              % "mockito-core"         % "3.2.4"     % Test,
     "com.softwaremill.macwire" %% "macros"              % "2.3.3"     % Test,
-    "org.awaitility"           % "awaitility"           % "3.1.6"     % Test
+    "org.awaitility"           % "awaitility"           % "4.0.2"     % Test
   )
 
 }
