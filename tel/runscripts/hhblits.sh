@@ -102,7 +102,7 @@ echo "#Searching %hhblitsdb.content." >> ../results/process.log
 
 hhblits -cpu %THREADS \
         -i ../results/${JOBID}.in.a3m \
-        -d %HHBLITS/%hhblitsdb.content     \
+        -d %UNIREF \
         -o $(readlink -f ../results/${JOBID}.hhr) \
         -oa3m $(readlink -f ../results/${JOBID}.a3m)  \
         -e %hhblits_incl_eval.content \

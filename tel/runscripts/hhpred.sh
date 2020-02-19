@@ -225,32 +225,8 @@ else
         echo "#Query MSA generation required." >> ../results/process.log
         echo "done" >> ../results/process.log
 
-    #MSA generation by HHblits
-    if [[ "%msa_gen_method.content" = "UniRef30" ]] ; then
-        echo "#Running ${ITERS} iteration(s) of HHblits against %msa_gen_method.content for query MSA generation." >> ../results/process.log
-
-        reformat_hhsuite.pl fas a3m \
-                            $(readlink -f ../results/${JOBID}.fas) \
-                            $(readlink -f ../results/${JOBID}.in.a3m)
-
-        hhblits -cpu %THREADS \
-                -v 2 \
-                -e %hhpred_incl_eval.content \
-                -i ../results/${JOBID}.in.a3m \
-                -d %HHBLITS%msa_gen_method.content  \
-                -oa3m ../results/${JOBID}.a3m \
-                -n ${ITERS} \
-                -qid %min_seqid_query.content \
-                -cov %min_cov.content \
-                -mact 0.35
-        rm ../results/${JOBID}.in.a3m
-
-        echo "done" >> ../results/process.log
-
-    fi
     #MSA generation by PSI-BLAST
     if [[ "%msa_gen_method.content" = "psiblast" ]] ; then
-
         echo "#Running ${ITERS} iteration(s) of PSI-BLAST for query MSA generation." >> ../results/process.log
         #Check if input is a single sequence or an MSA
         INPUT="query"
@@ -281,6 +257,27 @@ else
                     -blastplus
         echo "done" >> ../results/process.log
 
+    else
+    #MSA generation by HHblits
+        echo "#Running ${ITERS} iteration(s) of HHblits against %msa_gen_method.content for query MSA generation." >> ../results/process.log
+
+        reformat_hhsuite.pl fas a3m \
+                            $(readlink -f ../results/${JOBID}.fas) \
+                            $(readlink -f ../results/${JOBID}.in.a3m)
+
+        hhblits -cpu %THREADS \
+                -v 2 \
+                -e %hhpred_incl_eval.content \
+                -i ../results/${JOBID}.in.a3m \
+                -d %HHBLITS%msa_gen_method.content  \
+                -oa3m ../results/${JOBID}.a3m \
+                -n ${ITERS} \
+                -qid %min_seqid_query.content \
+                -cov %min_cov.content \
+                -mact 0.35
+        rm ../results/${JOBID}.in.a3m
+
+        echo "done" >> ../results/process.log
     fi
 fi
 
