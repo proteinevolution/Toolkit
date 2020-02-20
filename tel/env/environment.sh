@@ -1,72 +1,77 @@
 #!/bin/bash
 
-#TK_ROOT is required by the PCOILS binary
+# TK_ROOT is required by the PCOILS binary
 export TK_ROOT="${BIOPROGSROOT}"
+
+# Starting with the 2.10.0 release, BLAST+ makeblastdb uses LMDB.
+# When not set, makeblastdb crashes. LMDB requires virtual memory of at least 600 GB.
+# https://www.ncbi.nlm.nih.gov/books/NBK279688/
+export BLASTDB_LMDB_MAP_SIZE=800000000
 
 export BIOPROGS="${BIOPROGSROOT}/bioprogs"
 
 export STANDARD="${DATABASES}/standard"
 
-#HHomp database
+# HHomp database
 export HHOMPDBPATH="${DATABASES}/hhomp/db"
 
-#JAVA
+# JAVA
 ##########################################################
 export JAVA_HOME="${BIOPROGS}/dependencies/jdk1.8.0"
 export JRE_HOME="${BIOPROGS}/dependencies/jdk1.8.0/jre"
-#PERL
+# PERL
 ##########################################################
 export PERL5LIB="${BIOPROGS}/lib"
-#COILS/PCOILS
+# COILS/PCOILS
 export COILSDIR="${BIOPROGS}/pcoils"
-#ALI2D
+# ALI2D
 export ALI2DPATH="${BIOPROGS}/tools/ali2d"
-#HHpred
+# HHpred
 export HHPRED_CONFIG="${BIOPROGS}/env/hhpred.config"
-#CLANS
+# CLANS
 export CLANSPATH="${BIOPROGS}/tools/clans"
-#REPPER
+# REPPER
 export REPPERDIR="${BIOPROGS}/tools/repper"
-#BACKTRANSLATOR
+# BACKTRANSLATOR
 export BACKTRANSLATORPATH="${BIOPROGS}/tools/backtranslate"
-#SamCC
+# SamCC
 export SAMCCPATH="${BIOPROGS}/tools/samcc"
-#HHomp
+# HHomp
 export HHOMPPATH="${BIOPROGS}/tools/hhomp"
-#PolyPhobius
+# PolyPhobius
 export POLYPHOBIUS="${BIOPROGS}/tools/Phobius/PolyPhobius"
-#SPOT-D and SPIDER2
+# SPOT-D and SPIDER2
 export SPOTD="${BIOPROGS}/tools/SPOT-disorder_local/misc"
-#IUPred
+# IUPred
 export IUPred_PATH="${BIOPROGS}/tools/iupred"
-#PSSPRED
+# PSSPRED
 export PSSPRED="${BIOPROGS}/tools/PSSpred"
-#DeepCNF_SS
+# DeepCNF_SS
 export DEEPCNF="${BIOPROGS}/tools/DeepCNF_SS_v1.02_release"
-#PiPred
+# PiPred
 export PIPRED="${BIOPROGS}/tools/pipred"
-#DeepCoil
+# DeepCoil
 export DEEPCOIL="${BIOPROGS}/tools/deepcoil"
-#Setup HHrepid
+# Setup HHrepid
 export HHREPIDPATH="${BIOPROGS}/tools/hhrepid"
-#Setup HMMER
+# Setup HMMER
 export HMMERPATH="${BIOPROGS}/tools/hmmer/bin"
 export HMMERBINARIES="${BIOPROGS}/tools/hmmer/binaries"
-#Setup Mafft
+# Setup Mafft
 export MAFFT_BINARIES="${BIOPROGS}/tools/mafft2/binaries"
-#Setup MARCOIL
+# Setup MARCOIL
 export MARCOILMTIDK="${BIOPROGS}/tools/marcoil/R5.MTIDK"
 export MARCOILMTK="${BIOPROGS}/tools/marcoil/R5.MTK"
 export MARCOILINPUT="${BIOPROGS}/tools/marcoil/Inputs"
-#PYTHONPATH FOR PDBX AND MODELLER
+# PYTHONPATH FOR PDBX AND MODELLER
 export PYTHONPATH="${BIOPROGS}/tools/modeller/modlib/:${BIOPROGS}/dependencies/pdbx"
-#Setup PHYLIP (needed by the Perl Script of Phylip)
+# Setup PHYLIP (needed by the Perl Script of Phylip)
 export PHYLIPBIN="${BIOPROGS}/tools/phylip/current/bin64"
-#Reformat version with PHYLIP Support (new reformat.pl does not have this support)
+# Reformat version with PHYLIP Support (new reformat.pl does not have this support)
 export REFORMAT_PHYLIP="${BIOPROGS}/helpers/reformat_protblast.pl"
-#HHLIB
-#Rye and its nodes have slightly different architectures.
-#hh-suite needs to be compiled separately on them
+# HHLIB
+# Rye and its nodes have slightly different architectures.
+# hh-suite needs to be compiled separately on them
 if [[ $(hostname) = "rye" ]]; then
         export HHLIB="${BIOPROGS}/tools/hh-suite-build-prod"
         export PATH="${BIOPROGS}/tools/hh-suite-build-prod/scripts:${PATH}" #HHSCRIPTS
@@ -76,7 +81,7 @@ else
         export PATH="${BIOPROGS}/tools/hh-suite-build/scripts:${PATH}" #HHSCRIPTS
         export PATH="${BIOPROGS}/tools/hh-suite-build/bin:${PATH}" #HHBINS
 fi
-#PATH variable
+# PATH variable
 export PATH="${BIOPROGS}/dependencies/anaconda3/bin:${PATH}"
 export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}" #Python binary
 export PATH="${BIOPROGS}/pcoils:${PATH}" #PCOILS
