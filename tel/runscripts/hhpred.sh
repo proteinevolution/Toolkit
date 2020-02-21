@@ -269,7 +269,7 @@ else
                 -v 2 \
                 -e %hhpred_incl_eval.content \
                 -i ../results/${JOBID}.in.a3m \
-                -d %HHBLITS%msa_gen_method.content  \
+                -d %UNIREF \
                 -oa3m ../results/${JOBID}.a3m \
                 -n ${ITERS} \
                 -qid %min_seqid_query.content \
