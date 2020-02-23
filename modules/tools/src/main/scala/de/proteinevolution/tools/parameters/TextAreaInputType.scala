@@ -31,5 +31,7 @@ object TextAreaInputType {
 
   val ACCESSION_ID: TextAreaInputType = "ACCESSION_ID"
 
+  val PLAIN_TEXT: TextAreaInputType = "PLAIN_TEXT"
+
   implicit def StringToTextAreaInputType(s: String): TextAreaInputType = tag.apply[TextAreaInputTypeTag][String](s)
 }

@@ -16,6 +16,7 @@ export enum TextAreaInputType {
     REGEX = 'REGEX',
     PDB = 'PDB',
     ACCESSION_ID = 'ACCESSION_ID',
+    PLAIN_TEXT = 'PLAIN_TEXT',
 }
 
 export enum AlignmentSeqFormat {

@@ -129,6 +129,8 @@ export default {
         },
     },
     inputPlaceholder: {
+        new_tool_matrix: 'Input matrix',
+        new_tool_plain_text: 'Input plain text',
         multiProtNuclSeq: 'Enter up to 4000 protein/nucleotide sequences in FASTA format.',
         regex: 'Enter a PROSITE grammar/regular expression.',
         ali2dMSA: 'Enter a protein multiple sequence alignment with up to 100 sequences in CLUSTAL/FASTA/STOCKHOLM ' +
@@ -172,7 +174,7 @@ export default {
         valid: '{type} {format}',
         validRegex: 'Valid input.',
         invalidWhiteSpace: 'White spaces are not allowed!',
-        maxRegexLength: 'Maximum allowed length is 200 characters.',
+        maxRegexLength: 'Maximum allowed length is {limit} characters.',
         invalidPDB: 'Invalid PDB input. Expected at least 21 ATOM records.',
         validPDB: 'Valid PDB input.',
         invalidAccessionID: 'Invalid input. Expecting accession ID(s).',

@@ -33,6 +33,18 @@ export interface SequenceValidationParams extends ValidationParams {
     allowEmptySeq?: boolean;
 }
 
+export interface AccessionIDValidationParams extends ValidationParams {
+    maxNumIDs: number;
+}
+
+export interface RegexValidationParams extends ValidationParams {
+    maxRegexLength: number;
+}
+
+export interface PlainTextValidationParams extends ValidationParams {
+    maxNumChars: number;
+}
+
 export interface ForwardingMode {
     alignment: string[];
     multiSeq: string[];

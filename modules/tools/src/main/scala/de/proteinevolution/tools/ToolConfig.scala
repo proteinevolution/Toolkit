@@ -17,7 +17,9 @@
 package de.proteinevolution.tools
 
 import com.typesafe.config.{Config, ConfigObject}
+import de.proteinevolution.tools.forms.ValidationParamsForm.{AccessionIDValidationParamsForm, EmptyValidationParamsForm, PlainTextValidationParamsForm, RegexValidationParamsForm, SequenceValidationParamsForm}
 import de.proteinevolution.tools.forms.{ToolFormSimple, ValidationParamsForm}
+import de.proteinevolution.tools.parameters.TextAreaInputType.TextAreaInputType
 import de.proteinevolution.tools.parameters.{ForwardingMode, ParamAccess, Parameter, ParameterSection, TextAreaInputType, ToolParameters}
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
@@ -34,6 +36,7 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
     config.get[Config]("Tools").root.asScala.map {
       case (_, configObject: ConfigObject) =>
         val config = configObject.toConfig
+        val inputType = Try(config.getString("input_type")).getOrElse(TextAreaInputType.SEQUENCE)
         config.getString("name") -> toTool(
           config.getString("name"),
           config.getString("longname"),
@@ -45,9 +48,9 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
           config.getStringList("parameter").asScala.map { param =>
             paramAccess.getParam(
               param,
-              config.getString("placeholder_key"),
-              config.getString("sample_input_key"),
-              Try(config.getString("input_type")).getOrElse(TextAreaInputType.SEQUENCE)
+              Try(config.getString("placeholder_key")).getOrElse(""),
+              Try(config.getString("sample_input_key")).getOrElse(""),
+              inputType
             )
           },
           // TODO remove Try when implemented for each tool
@@ -56,21 +59,11 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
           config.getStringList("forwarding.alignment").asScala,
           config.getStringList("forwarding.multi_seq").asScala,
           Try(config.getStringList("forwarding.template_alignment").asScala).toOption,
-          ValidationParamsForm(
-            // for simplicity, we always pass these default values even for non-sequence tools
-            Try(config.getStringList("sequence_restrictions.formats").asScala).getOrElse(Seq("FASTA")),
-            Try(config.getString("sequence_restrictions.type")).getOrElse("PROTEIN"),
-            Try(config.getInt("sequence_restrictions.min_char_per_seq")).toOption,
-            Some(Try(config.getInt("sequence_restrictions.max_char_per_seq")).getOrElse(20000)),
-            Try(config.getInt("sequence_restrictions.min_num_seq")).toOption,
-            Some(Try(config.getInt("sequence_restrictions.max_num_seq")).getOrElse(10000)),
-            Try(config.getBoolean("sequence_restrictions.same_length")).toOption,
-            Try(config.getBoolean("sequence_restrictions.allow_empty")).toOption
-          )
+          getValidationParams(inputType, config)
         )
       case (_, _) => throw new IllegalStateException("tool does not exist")
     }
-  }.toMap
+    }.toMap
 
   def isTool(toolName: String): Boolean = {
     toolName.toUpperCase == "REFORMAT" || toolName.toUpperCase == "ALNVIZ" || values.exists {
@@ -78,6 +71,29 @@ class ToolConfig @Inject()(config: Configuration, paramAccess: ParamAccess) {
         tool.isToolName(toolName)
       case _ => false
     }
+  }
+
+  def getValidationParams(inputType: TextAreaInputType, config: Config): ValidationParamsForm = inputType match {
+    case TextAreaInputType.SEQUENCE => SequenceValidationParamsForm(
+      Try(config.getStringList("sequence_restrictions.formats").asScala).getOrElse(Seq("FASTA")),
+      Try(config.getString("sequence_restrictions.type")).getOrElse("PROTEIN"),
+      Try(config.getInt("sequence_restrictions.min_char_per_seq")).toOption,
+      Some(Try(config.getInt("sequence_restrictions.max_char_per_seq")).getOrElse(20000)),
+      Try(config.getInt("sequence_restrictions.min_num_seq")).toOption,
+      Some(Try(config.getInt("sequence_restrictions.max_num_seq")).getOrElse(10000)),
+      Try(config.getBoolean("sequence_restrictions.same_length")).toOption,
+      Try(config.getBoolean("sequence_restrictions.allow_empty")).toOption
+    )
+    case TextAreaInputType.REGEX => RegexValidationParamsForm(
+      config.getInt("sequence_restrictions.max_regex_length")
+    )
+    case TextAreaInputType.ACCESSION_ID => AccessionIDValidationParamsForm(
+      config.getInt("sequence_restrictions.max_num_ids")
+    )
+    case TextAreaInputType.PLAIN_TEXT => PlainTextValidationParamsForm(
+      config.getInt("sequence_restrictions.max_num_chars")
+    )
+    case _ => EmptyValidationParamsForm()
   }
 
   private def toTool(
