@@ -18,6 +18,7 @@ package de.proteinevolution.ui.controllers
 
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.tools.ToolConfig
+import io.circe.Printer
 import io.circe.generic.auto._
 import io.circe.syntax._
 import javax.inject.{Inject, Singleton}
@@ -47,7 +48,7 @@ class UiController @Inject()(
         case (_, v) =>
           v.toolFormSimple
       }
-    Ok(sorted.asJson)
+    Ok(sorted.asJson.pretty(Printer.noSpaces.copy(dropNullValues = true)))
   }
 
   def getToolsVersion: Action[AnyContent] = Action {
