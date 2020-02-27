@@ -24,10 +24,10 @@
 
             <div v-html="$t('jobs.results.hmmer.numHits', {num: total})"></div>
 
-            <div v-if="info.coil === '0' || info.tm === '1' || info.signal === '1'" class="mt-2">
-                Detected sequence features:
+            <div v-if="info.coil === '0' || info.tm > '0' || info.signal === '1'" class="mt-2">
+                {{$t('jobs.results.sequenceFeatures.header')}}
                 <b v-if="info.coil === '0'" v-html="$t('jobs.results.sequenceFeatures.coil')"></b>
-                <b v-if="info.tm > '1'" v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
+                <b v-if="info.tm > '0'" v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
                 <b v-if="info.signal === '1'" v-html="$t('jobs.results.sequenceFeatures.signal')"></b>
             </div>
 

@@ -140,7 +140,7 @@ export default {
                 'E-value threshold. Alternatively, you could input your own alignment.',
             customWarning: ' You could improve the sensitivity of your search vastly by providing a larger ' +
                 'query alignment.',
-            numHits: '<b>Number of Hits: {num}</b>',
+            numHits: 'Number of Hits: <b>{num}</b>',
             table: {
                 num: 'Nr',
                 hit: 'Hit',
@@ -252,6 +252,7 @@ export default {
             title: 'Template 3D Structure: {accession}',
         },
         sequenceFeatures: {
+            header: 'Detected sequence features:',
             coil: '&#9726;Coiled coil segment(s)&emsp;',
             tm: '&#9726;Transmembrane segment(s)&emsp;',
             signal: '&#9726;Signal peptide&emsp;',
