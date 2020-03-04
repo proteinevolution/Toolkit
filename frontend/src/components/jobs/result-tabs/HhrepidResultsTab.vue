@@ -131,6 +131,11 @@
 </script>
 
 <style lang="scss" scoped>
+
+    img {
+        max-width: 100%;
+    }
+
     .alignment-table {
         width: 100%;
         @include media-breakpoint-up(xl) {
