@@ -1,5 +1,14 @@
 export default [
     {
+        date: '2020-03-09',
+        html: `<p>
+        HHpred: a new version of the <a href="http://prodata.swmed.edu/ecod/" target="_blank"> ECOD_F70 database </a>,
+        version 20200221 (develop265), is now online. It is also available for download at our
+         <a href="ftp://ftp.tuebingen.mpg.de/pub/protevo/toolkit/databases/hhsuite_dbs/" target="_blank">
+         FTP site</a>.
+        </p>`,
+    },
+    {
         date: '2020-02-12',
         html: `<p>
         HHpred, HMMER, HHrepID, and HHomp now use the
