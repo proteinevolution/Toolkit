@@ -89,7 +89,7 @@ export default {
     </p>
 </div>
 <div class="section">
-    <h6>How can I fetch back results of a jobI ran yesterday on my computer at home (I wasn't logged in)?</h6>
+    <h6>How can I fetch back results of a job I ran yesterday on my computer at home (I wasn't logged in)?</h6>
     <p>
          If you still remember the job ID, you can fetch your job back
          by typing the ID into the search box on the index page.
@@ -247,13 +247,23 @@ export default {
     <p>
         Send your feature requests, comments or bug reports to:
         <a href="mailto:mpi-toolkit@tuebingen.mpg.de">
-            mpi-toolkit@tuebingen.mpg.de
-        </a>
+            mpi-toolkit@tuebingen.mpg.de</a>.
     </p>
+    <ul>
+    <li>
     <p>
         Please contact the <a href="http://www.mpibpc.mpg.de/soeding" target="_blank" rel="noopener">Södinglab</a>
         regarding issues pertaining to local installations of HHpred/HHblits.
     </p>
+    </li>
+    <li>
+    <p>
+        To obtain a license key for MODELLER, please visit the following page:
+        <a href="https://salilab.org/modeller/registration.html" target="_blank" rel="noopener">
+        https://salilab.org/modeller/registration.htmlb</a>.
+    </p>
+    </ul>
+    </li>
 </div>`,
 
     cite: `
