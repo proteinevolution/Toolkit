@@ -104,6 +104,7 @@ class ResultsService {
 
     public downloadAsFile(file: string, downloadFilename: string): void {
         const blob = new Blob([file], {type: 'application/octet-stream'});
+        // @ts-ignore
         if (window.navigator.msSaveOrOpenBlob) {
             window.navigator.msSaveBlob(blob, downloadFilename);
         } else {
