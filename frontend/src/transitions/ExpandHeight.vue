@@ -22,9 +22,9 @@
 
                 const height = getComputedStyle(element).height;
 
-                element.style.width = null;
-                element.style.position = null;
-                element.style.visibility = null;
+                element.style.removeProperty('width');
+                element.style.removeProperty('position');
+                element.style.removeProperty('visibility');
                 element.style.height = '0';
 
                 // Trigger the animation.
