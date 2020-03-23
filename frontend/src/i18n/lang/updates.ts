@@ -1,5 +1,12 @@
 export default [
     {
+        date: '2020-03-23',
+        html: `<p>
+        HHpred: profile HMM database for the proteome of <em>Capsaspora owczarzaki </em>
+        (strain ATCC 30864), a close unicellular relative of animals, is now online.
+        </p>`,
+    },
+    {
         date: '2020-03-10',
         html: `<p>
         HHpred: profile HMM database for a new version of the
