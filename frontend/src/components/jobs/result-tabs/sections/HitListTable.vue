@@ -41,7 +41,7 @@
                  responsive
                  striped
                  show-empty>
-            <template #numCheck="data">
+            <template v-slot:cell(numCheck)="data">
                 <div class="no-wrap">
                     <b-checkbox @change="check($event, data.value)"
                                 class="d-inline"
@@ -49,10 +49,10 @@
                     <a @click="$emit('elem-clicked', data.value)">{{ data.value }}</a>
                 </div>
             </template>
-            <template #num="data">
+            <template v-slot:cell(num)="data">
                 <a @click="$emit('elem-clicked', data.value)">{{ data.value }}</a>
             </template>
-            <template #acc="data">
+            <template v-slot:cell(acc)="data">
                 <span v-html="data.value"></span>
             </template>
         </b-table>
