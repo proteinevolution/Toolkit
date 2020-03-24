@@ -14,7 +14,7 @@
     "axios": "^0.19.0",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^4.3.1",
-    "bootstrap-vue": "^2.0.0-rc.23",
+    "bootstrap-vue": "^2.0.0",
     "es6-promise": "^4.2.8",
     "exelixis": "^0.0.4",
     "handy-scroll": "^1.0.4",
