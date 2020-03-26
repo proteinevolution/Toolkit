@@ -63,9 +63,10 @@
             },
             loadExistingJobAndDelete() {
                 const oldJobID: string = this.job.jobID;
+                logger.debug(`loading existing job ${this.similarJob.jobID}, deleting job ${oldJobID}`);
+                this.$router.push(`/jobs/${this.similarJob.jobID}`);
                 jobService.deleteJob(oldJobID)
                     .then(() => {
-                        this.$router.push(`/jobs/${this.similarJob.jobID}`);
                         this.$store.commit('jobs/removeJob', {jobID: oldJobID});
                     })
                     .catch(() => {

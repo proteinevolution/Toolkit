@@ -173,6 +173,7 @@
             },
         },
         created() {
+            logger.debug(`created JobView with jobID ${this.jobID}`);
             this.loadJobDetails(this.jobID);
         },
         watch: {
