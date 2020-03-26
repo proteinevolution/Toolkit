@@ -62,12 +62,14 @@
                     });
             },
             loadExistingJobAndDelete() {
-                jobService.deleteJob(this.job.jobID)
+                const oldJobID: string = this.job.jobID;
+                jobService.deleteJob(oldJobID)
                     .then(() => {
                         this.$router.push(`/jobs/${this.similarJob.jobID}`);
-                        this.$store.commit('jobs/removeJob', {jobID: this.job.jobID});
+                        this.$store.commit('jobs/removeJob', {jobID: oldJobID});
                     })
                     .catch(() => {
+                        logger.error('Could not delete old job!');
                         this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
                     });
             },
