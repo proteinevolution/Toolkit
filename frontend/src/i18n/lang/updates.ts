@@ -1,5 +1,19 @@
 export default [
     {
+        date: '2020-03-31',
+        html: `<p>
+        HHpred: profile HMM database for the proteome of <em>SARS coronavirus 2 (SARS-CoV-2)</em>
+        is now online.
+        </p>`,
+    },
+    {
+        date: '2020-03-31',
+        html: `<p>
+        HHpred: profile HMM database for the proteome of <em>SARS coronavirus 2 (SARS-CoV-2)</em>
+        is now online.
+        </p>`,
+    },
+    {
         date: '2020-03-23',
         html: `<p>
         HHpred: profile HMM database for the proteome of <em>Capsaspora owczarzaki </em>
