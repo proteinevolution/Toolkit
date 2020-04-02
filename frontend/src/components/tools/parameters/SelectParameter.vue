@@ -108,12 +108,14 @@
             msaDetectedChanged(msaDetected: boolean): void {
                 if (this.parameter.onDetectedMSA !== undefined && this.parameter.onDetectedMSA !== null) {
                     const val: string = msaDetected ? this.parameter.onDetectedMSA : this.parameter.default;
-                    const option: SelectOption = this.parameter.options.find((o: SelectOption) => o && o.value === val);
-                    if (!option) {
-                        logger.warn(`did not find option for value ${val}`);
-                    } else {
-                        this.selected = option;
-                        logger.info(`msa detected: ${msaDetected}. Setting value for ${this.parameter.name} to "${val}"`);
+                    if (msaDetected) {
+                        const option: SelectOption = this.parameter.options.find((o: SelectOption) => o && o.value === val);
+                        if (!option) {
+                            logger.warn(`did not find option for value ${val}`);
+                        } else {
+                            this.selected = option;
+                            logger.info(`msa detected: ${msaDetected}. Setting value for ${this.parameter.name} to "${val}"`);
+                        }
                     }
                 }
             },
