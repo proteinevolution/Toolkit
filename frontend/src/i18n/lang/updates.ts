@@ -1,5 +1,15 @@
 export default [
     {
+        date: '2020-04-09',
+        html: `<p>
+        HHpred: profile HMM database for a new version of the
+        <a href="https://www.ncbi.nlm.nih.gov/Structure/cdd/cdd.shtml" target="_blank">
+        NCBI Conserved Domains Database</a>, version 3.18, is now online. It is also available for download at our
+         <a href="ftp://ftp.tuebingen.mpg.de/pub/protevo/toolkit/databases/hhsuite_dbs/" target="_blank">
+         FTP site</a>.
+        </p>`,
+    },
+    {
         date: '2020-03-31',
         html: `<p>
         HHpred: profile HMM database for the proteome of <em>SARS coronavirus 2 (SARS-CoV-2)</em>

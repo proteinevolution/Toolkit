@@ -114,7 +114,8 @@
                             logger.warn(`did not find option for value ${val}`);
                         } else {
                             this.selected = option;
-                            logger.info(`msa detected: ${msaDetected}. Setting value for ${this.parameter.name} to "${val}"`);
+                            logger.info(`msa detected: ${msaDetected}. Setting value for ${this.parameter.name}
+                                to "${val}"`);
                         }
                     }
                 }
