@@ -34,14 +34,14 @@ lazy val common = (project in file("modules/common"))
     Settings.compileSettings,
     disableDocs
   )
-  .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
+  .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.1").cross(CrossVersion.full)))
   .dependsOn(base, tel)
 
 lazy val jobs = (project in file("modules/jobs"))
   .commonSettings("de.proteinevolution.jobs")
   .enablePlugins(PlayScala)
   .dependsOn(common, auth, base, clusterApi, tel, tools, ui, util, user, statistics)
-  .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
+  .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.1").cross(CrossVersion.full)))
   .settings(addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9"))
   .disablePlugins(PlayLayoutPlugin)
 
@@ -114,7 +114,7 @@ lazy val tools = (project in file("modules/tools"))
   .commonSettings("de.proteinevolution.tools")
   .enablePlugins(PlayScala)
   .dependsOn(common)
-  .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.0").cross(CrossVersion.full)))
+  .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.1").cross(CrossVersion.full)))
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val util = (project in file("modules/util"))
