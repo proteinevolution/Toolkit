@@ -6,7 +6,7 @@ scala:
 jdk:
   - openjdk8
   - openjdk9
-  - openjdk13
+  - openjdk10
 services:
   - mongodb
   - docker
