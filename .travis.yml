@@ -1,12 +1,11 @@
 language: scala
 dist: xenial
-sudo: required
+sudo: false
 scala:
   - 2.12.11
 jdk:
   - openjdk8
-  - openjdk9
-  - openjdk10
+  - openjdk11
 services:
   - mongodb
   - docker
