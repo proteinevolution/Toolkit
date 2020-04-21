@@ -36,7 +36,8 @@ $job-status-8: #ffb7b5;
 
 $bg-gray: $tk-lighter-gray;
 $primary: $tk-green;
-$secondary: $tk-lighter-gray;
+$secondary-1: #f08e8e;
+$secondary-2: #db7f7f;
 $warning: $yellow;
 $danger: $red;
 
@@ -45,7 +46,7 @@ $warning-light: lighten($warning, 15%);
 $danger-light: lighten($danger, 15%);
 
 $input-border-color: #ddd;
-$non-default-highlight: $tk-lighter-gray;
+$non-default-highlight: #ffebeb;
 
 // MODALS
 $modal-content-border-width: 0;

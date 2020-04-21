@@ -266,7 +266,7 @@ export default {
     submitJob: 'Submit',
     resubmitJob: 'Resubmit',
     delete: 'Delete Job',
-    resetParams: 'Use Defaults',
+    resetParams: 'Reset',
     resetParamsTitle: 'Reset parameters to their default values',
     toggleFullscreen: 'Toggle Fullscreen',
     foundIdenticalCopy: 'We found an identical copy of your job in our database!<br>' +

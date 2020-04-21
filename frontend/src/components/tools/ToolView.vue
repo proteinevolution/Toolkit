@@ -381,8 +381,13 @@
 
             .btn-secondary, .btn-secondary:active {
                 color: $white;
-                background-color: $tk-medium-gray;
-                border-color: $tk-medium-gray;
+                background-color: $secondary-1;
+                border-color: $secondary-1;
+            }
+
+            .btn-secondary:hover {
+                background-color: $secondary-2;
+                border-color: $secondary-2;
             }
 
             .custom-job-id {
