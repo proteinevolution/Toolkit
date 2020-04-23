@@ -48,7 +48,7 @@ object LinkUtil {
   private val pfamBaseLink        = "http://pfam.xfam.org/family/"
   private val cddBaseLink         = "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid="
   private val uniprotBaseLink     = "http://www.uniprot.org/uniprot/"
-  private val unirefBaseLink     = "http://www.uniprot.org/uniref/"
+  private val unirefBaseLink      = "http://www.uniprot.org/uniref/"
   private val smartBaseLink       = "http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN="
   private val ecodBaseLink        = "http://prodata.swmed.edu/ecod/complete/domain/"
 
@@ -99,7 +99,7 @@ object LinkUtil {
   }
 
   def displayModellerLink(db: String, proteome: String): Boolean = {
-    db == "mmcif70/pdb70" || db == "mmcif30/pdb30" && proteome.isEmpty
+    db.contains("mmcif70/pdb70") || db.contains("mmcif30/pdb30")
   }
 
   def displayStructLink(id: String): Boolean = {
