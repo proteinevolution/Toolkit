@@ -50,9 +50,9 @@ export default {
             than sequences and homologous proteins may have very similar structures even when their sequences have
             diverged beyond recognition. But sensitivity in homology detection is crucial for success since many
             proteins have only remote relatives in the structure database.</p>
-            <p>To generates a homology model, please chose PDB_mmCIF70 as the target database. Once the search has run
-            through, analyse the obtained hits and select the best hits as templates for modelling. Next, click on the
-            'Model using selection' option located at the top of the Results page.</p>
+            <p>To generates a homology model, please chose PDB_mmCIF70 or PDB_mmCIF30 as the target database. Once the
+            search has run through, analyse the obtained hits and select the best hits as templates for modelling.
+            Next, click on the 'Model using selection' option located at the top of the Results page.</p>
 
         <h5><b>How can I verify if a database match is homologous?</b></h5>
         <p>Here is a list of things to check if a database match really is at least locally homologous.</p>
@@ -234,7 +234,7 @@ export default {
                     for high-scoring non-homologous matches is still small.`,
                     },
                     {
-                        title: 'Alignment mode',
+                        title: 'Alignment Mode:Realign with MAC',
                         content: `In local mode, HHpred will use local alignments to score your query sequence with the
                         database sequences. In global mode, it uses global alignments with no end gap penalties
                         (sometimes called 'global-local' alignments), i.e. the query-template alignments extend up to
@@ -249,18 +249,15 @@ export default {
                         negatives score distribution for global alignments does not follow an extreme-value distribution.
                         You may generate global alignments and at the same time score alignments with the more sensitive
                         local Viterbi alignment by selecting the 'local' option in combination with the option
-                        'Realign with MAC' and setting the 'MAC realignment threshold' to 0.0.`,
-                    },
-                    {
-                        title: 'Realign with MAC',
-                        content: `After the search with the standard Viterbi algorithm, this option will cause HHpred to realign all
-                        query-template alignments with the more accurate Maximum ACcuracy alignment algorithm. Since for
-                        technical reasons the scores, E-values, and probabilities from the Viterbi alignment and NOT the
-                        MAC alignment are displayed and used for ranking, the MAC realignment option may lead to high-scoring
-                        alignments of length 1. This happens when the MAC algorithm cannot find any acceptable alignment
-                        path, which is an indication for a non-homologous relationship. When the MAC realignment option
-                        is activated, the 'global' and 'local' options now refer to both the Viterbi search stage as well
-                        as the MAC realignment stage.`,
+                        'Realign with MAC' set to 'realign' and setting the 'MAC realignment threshold' to 0.0.<br/><br/>
+                        After the search with the standard Viterbi algorithm, the 'Realign with MAC' option will cause
+                        HHpred to realign all query-template alignments with the more accurate Maximum Accuracy alignment
+                        algorithm. Since for technical reasons the scores, E-values, and probabilities from the Viterbi
+                        alignment and NOT the MAC alignment are displayed and used for ranking, the MAC realignment
+                        option may lead to high-scoring alignments of length 1. This happens when the MAC algorithm
+                        cannot find any acceptable alignment path, which is an indication for a non-homologous
+                        relationship. When the MAC realignment option is activated, the 'global' and 'local' options now
+                        refer to both the Viterbi search stage as well as the MAC realignment stage.`,
                     },
                     {
                         title: 'MAC realignment threshold',
