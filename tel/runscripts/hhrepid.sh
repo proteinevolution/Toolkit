@@ -73,7 +73,7 @@ fi
 echo "done" >> ../results/process.log
 
 #CHECK IF MSA generation is required or not
-if [[ %msa_gen_max_iter_hhrepid.content == "0" ]] && [[ ${SEQ_COUNT} -gt "1" ]] ; then
+if [[ %msa_gen_max_iter_hhrepid.content == "0" ]] ; then
         echo "#No MSA generation required." >> ../results/process.log
 
         mv ../results/${JOBID}.a3m ../results/query.a3m
