@@ -22,7 +22,7 @@ object Dependencies {
     "com.typesafe.play"    %% "play-mailer-guice"    % "8.0.0",
     "com.github.pathikrit" %% "better-files"         % "3.8.0",
     "org.mindrot"          % "jbcrypt"               % "0.4",
-    ("org.reactivemongo" %% "play2-reactivemongo" % "0.16.6-play27")
+    ("org.reactivemongo" %% "play2-reactivemongo" % "0.20.9-play28")
       .exclude("com.typesafe.akka", "*") // provided
       .exclude("com.typesafe.play", "*"), // provided
     ("org.reactivemongo" %% "reactivemongo-akkastream" % "0.16.6")
