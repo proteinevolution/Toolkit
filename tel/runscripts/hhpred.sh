@@ -400,7 +400,7 @@ fasta2json.py ../results/reduced.fas ../results/reduced.json
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
 #Generate query template alignment
-hhmakemodel.pl -i ../results/${JOBID}.hhr -fas ../results/alignment.fas -p %pmin.content
+hhmakemodel.pl -i ../results/${JOBID}.hhr -fas ../results/alignment.fas
 # Generate Query in JSON
 fasta2json.py ../results/alignment.fas ../results/querytemplate.json
 
