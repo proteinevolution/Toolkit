@@ -28,10 +28,15 @@ export default {
                         and viral sequences from the non-redundant database nr.</li>
                         <li><b>pdb_nr: </b>Sequences of proteins whose structures have been deposited in the Protein
                             Data Bank (PDB).</li>
-                        <li><b>Uniprot_sprot:</b> manually annotated and reviewed sequences from the
+                        <li><b>uniprot_sprot:</b> manually annotated and reviewed sequences from the
                             <a href="http://www.expasy.org/sprot/" target="_blank" rel="noopener">UniProtKB.</a></li>
-                        <li><b>Uniprot_trembl:</b> automatically annotated and not reviewed sequences from the
+                        <li><b>uniprot_trembl:</b> automatically annotated and not reviewed sequences from the
                             <a href="http://www.ebi.ac.uk/swissprot/" target="_blank" rel="noopener">UniProtKB.</a></li>
+                        <li><b>uniprot_ribodb:</b> collection of ribosomal proteins from uniprot_sprot.</a></li>
+                        <li><b>uniref90:</b> the
+                        <a href="https://www.uniprot.org/help/uniref" target="_blank" rel="noopener">UniRef database</a>
+                        offers clustered sets of sequences from the UniProtKB and selected UniParc records. UniRef90 is
+                        a filtered down version of UniRef100.</li>
                     </ul>`,
                     },
                     {
