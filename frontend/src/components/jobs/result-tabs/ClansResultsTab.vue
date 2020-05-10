@@ -8,10 +8,12 @@
         Download the CLANS application here: <a
             href="ftp://ftp.tuebingen.mpg.de/pub/protevo/CLANS/clans.jar"><b>clans.jar</b></a>
         and visualize your unzipped CLANS file (<b>{{job.jobID + '.clans'}}</b>) using the 'Load Run' option in the
-        'File'
-        menu.
+        'File' menu. Please refer to the <a href="ftp://ftp.tuebingen.mpg.de/pub/protevo/CLANS/CLANS_userguide.pdf">
+        <b>CLANS user guide</b></a> for detailed instructions.
+
         <br/><br/>Please make sure you have Java Runtime Environment (JRE) installed. <br/><br/>
-        If your input contains large number of sequences, please consider running CLANS on the command line:<br/>
+
+        CLANS can be launched from the command line as follows:<br/>
         <em>java -Xmx4G -jar clans.jar -load {{job.jobID + '.clans'}}</em><br/><br/>
 
         If you encounter problems loading the CLANS file, please increase the maximum Java heap size (-Xmx).
