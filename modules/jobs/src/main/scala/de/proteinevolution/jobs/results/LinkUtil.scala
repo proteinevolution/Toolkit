@@ -36,6 +36,7 @@ object LinkUtil {
   private val envNrNameReg   = """(env.*|nr.*)""".r
   private val pdbNameReg     = """(pdb.*)""".r
   private val uniprotNameReg = """(uniprot.*)""".r
+  private val unirefNameReg  = """(uniref.*)""".r
   private val pfamNameReg    = """(Pfam.*)""".r
 
   private val pdbBaseLink = "http://www.rcsb.org/pdb/explore/explore.do?structureId="
@@ -81,6 +82,7 @@ object LinkUtil {
       case envNrNameReg(_)   => generateLink(ncbiProteinBaseLink, id, id)
       case pdbNameReg(_)     => generateLink(pdbBaseLink, idPdb, id)
       case uniprotNameReg(_) => generateLink(uniprotBaseLink, id, id)
+      case unirefNameReg(_)  => generateLink(unirefBaseLink, id, id)
       case pfamNameReg(_)    => generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
       case _                 => id
     }
@@ -95,6 +97,7 @@ object LinkUtil {
       case pdbNameReg(_)     => generateLink(pdbeBaseLink, idPdb, "PDBe")
       case pfamNameReg(_)    => generateLink(cddBaseLink, idCDD, "CDD")
       case uniprotNameReg(_) => generateLink(uniprotBaseLink, id + ".fasta", "UniProt")
+      case unirefNameReg(_)  => generateLink(unirefBaseLink, id + ".fasta", "UniRef")
     }
   }
 
