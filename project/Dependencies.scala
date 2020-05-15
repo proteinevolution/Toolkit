@@ -20,7 +20,7 @@ object Dependencies {
     "com.typesafe.akka"    %% "akka-stream"          % akkaVersion,
     "com.typesafe.play"    %% "play-mailer"          % "8.0.0",
     "com.typesafe.play"    %% "play-mailer-guice"    % "8.0.0",
-    "com.github.pathikrit" %% "better-files"         % "3.8.0",
+    "com.github.pathikrit" %% "better-files"         % "3.9.0",
     "org.mindrot"          % "jbcrypt"               % "0.4",
     ("org.reactivemongo" %% "play2-reactivemongo" % "0.16.6-play27")
       .exclude("com.typesafe.akka", "*") // provided
