@@ -1,5 +1,11 @@
 export default [
     {
+        date: '2020-06-11',
+        html: ` <p>
+        HHpred: profile HMM database for the new version of Pfam (v33.1) is online.
+        </p>`,
+    },
+    {
         date: '2020-04-09',
         html: `<p>
         HHpred: profile HMM database for a new version of the
