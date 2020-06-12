@@ -19,7 +19,7 @@ fi
 OUTFORMAT=$(reformatValidator.pl fas ufas \
 	        $(readlink -f ../params/alignment) \
             $(readlink -f ../params/alignment) \
-            -d 160 -uc -l 32000)
+            -d 5000 -uc -l 32000)
 
 if [[ "${OUTFORMAT}" = "ufas" ]] ; then
     SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
