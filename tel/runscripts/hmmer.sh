@@ -98,9 +98,9 @@ else
             -d %UNIREF \
             -oa3m ../results/${JOBID}.a3m \
             -n %max_hhblits_iter.content \
-            -mact 0.35 \
-            -cov 20 \
-            -qid 20
+            -cov 50 \
+            -qid 20 \
+            -neff 5
 
     #Convert to fasta format
     reformat_hhsuite.pl a3m fas ../results/${JOBID}.a3m $(readlink -f ../results/${JOBID}.fas)
@@ -130,24 +130,20 @@ echo "done" >> ../results/process.log
 echo "#Preparing output." >> ../results/process.log
 
 if [[ -s "../results/${JOBID}.msa_sto" ]]; then
-
-    #Convert to fasta format
-    reformat_hhsuite.pl sto a3m ../results/${JOBID}.msa_sto $(readlink -f ../results/${JOBID}.msa_a3m)
-
-    prepareForHMMER.py ../results/${JOBID}.outfile ../results/${JOBID}.outfilefl
-
-    hmmer2json.py -i ../results/${JOBID}.outfilefl \
+    # convert hmmer output to json
+    hmmer2json.py -i ../results/${JOBID}.outfile\
                   -o ../results/results.json \
                   -m %desc.content \
                   -e %evalue.content > ../results/${JOBID}.list
 
-    extractFasta.py ../results/${JOBID}.msa_a3m ../results/${JOBID}.list
-
+    ${HMMERPATH}/esl-alimanip --informat stockholm \
+                   --outformat afa \
+                   --seq-k ../results/${JOBID}.list \
+                   -o ../results/output.aln_fas \
+                   ../results/${JOBID}.msa_sto
 
     # Create a JSON with -log10 of  e-values of the hits
     extract_from_json.py -tool hmmer ../results/results.json ../results/plot_data.json
-
-    reformat_hhsuite.pl a3m fas ../results/${JOBID}.msa_a3m.subset $(readlink -f ../results/output.aln_fas) -uc -l 32000
 
     manipulate_json.py -k 'db' -v '%hmmerdb.content' ../results/results.json
     #create tab separated file to feed into blastviz
@@ -168,12 +164,10 @@ if [[ -s "../results/${JOBID}.msa_sto" ]]; then
         manipulate_json.py -k 'signal' -v "0" ../results/results.json
     fi
 
-    # Generate MSA in JSON
-    fasta2json.py ../results/output.aln_fas ../results/alignment.json
 else
     echo '{"hsps": []}' > ../results/results.json
 fi
 cd ../results
-rm -f *.hmm *.outfile* *.list *.msa_* ${JOBID}.fas firstSeq.fas *.signalp5
+rm -f *.hmm *.outfile* *.list *.msa_* ${JOBID}.fas firstSeq.fas *.signalp5 *.hhr *.a3m *.tab
 
 echo "done" >> ../results/process.log
