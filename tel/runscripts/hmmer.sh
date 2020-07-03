@@ -119,8 +119,8 @@ echo "#Running hmmsearch against the %hmmerdb.content DB." >> ../results/process
     ${HMMERPATH}/hmmsearch --cpu %THREADS \
           -E %evalue.content \
           --domE %evalue.content \
-          --incE 0.01 \
-          --incdomE 0.03 \
+          --incE %evalue.content \
+          --incdomE %evalue.content \
           -o ../results/${JOBID}.outfile \
           -A ../results/${JOBID}.msa_sto \
           ../results/${JOBID}.hmm  %STANDARD/%hmmerdb.content
@@ -147,7 +147,7 @@ if [[ -s "../results/${JOBID}.msa_sto" ]]; then
 
     manipulate_json.py -k 'db' -v '%hmmerdb.content' ../results/results.json
     #create tab separated file to feed into blastviz
-    hmmerJson2tab.py ../results/results.json ../results/query.json ../results/${JOBID}.tab
+    hmmerJson2tab.py ../results/results.json ../results/${JOBID}.tab
     blastviz.pl ../results/${JOBID}.tab %jobid.content ../results/ ../results/ >> ../logs/blastviz.log
 
     # add transmembrane prediction info to json

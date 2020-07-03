@@ -100,7 +100,7 @@
                                 <tr v-if="alPart.agree"
                                     class="sequence">
                                     <td></td>
-                                    <td></td>
+                                    <td>PP</td>
                                     <td></td>
                                     <td v-text="alPart.agree"></td>
                                 </tr>
