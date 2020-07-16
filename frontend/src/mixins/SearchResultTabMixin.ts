@@ -130,7 +130,7 @@ const SearchResultTabMixin = mixins(ResultTabMixin).extend({
             if (!this.info) {
                 return;
             }
-            const section: string = '>' + this.info.query.accession + '\n' + this.info.query.seq.slice(start, end + 1);
+            const section: string = '>' + this.info.query.accession + '\n' + this.info.query.seq.slice(start - 1, end);
             EventBus.$emit('resubmit-section', section);
         },
         toggleAllSelected(): void {
