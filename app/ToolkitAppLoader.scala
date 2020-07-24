@@ -15,14 +15,13 @@
  */
 
 import akka.stream.Materializer
+import com.typesafe.config.ConfigFactory
 import de.proteinevolution.migrations.services.MongobeeRunner
 import play.api.ApplicationLoader
 import play.api.ApplicationLoader.Context
 import play.api.inject.bind
 import play.api.inject.guice.{ GuiceApplicationBuilder, GuiceApplicationLoader, GuiceableModule }
 import play.api.libs.concurrent.MaterializerProvider
-
-import com.typesafe.config.ConfigFactory
 
 class ToolkitAppLoader extends GuiceApplicationLoader {
 
