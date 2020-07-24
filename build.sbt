@@ -141,7 +141,7 @@ lazy val root = (project in file("."))
     pipelineStages := Seq(digest, gzip)
   )
 
-resolvers += "scalaz-bintray".at("http://dl.bintray.com/scalaz/releases")
+resolvers += "scalaz-bintray".at("https://dl.bintray.com/scalaz/releases")
 resolvers ++= Resolver.sonatypeRepo("releases") :: Resolver.sonatypeRepo("snapshots") :: Nil
 
 fork := true // required for "sbt run" to pick up javaOptions
