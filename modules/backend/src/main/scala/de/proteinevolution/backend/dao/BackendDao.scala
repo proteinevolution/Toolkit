@@ -16,13 +16,13 @@
 
 package de.proteinevolution.backend.dao
 
-import de.proteinevolution.statistics.{ StatisticsObject, UserStatistic }
-import javax.inject.{ Inject, Singleton }
+import de.proteinevolution.statistics.{StatisticsObject, UserStatistic}
+import javax.inject.{Inject, Singleton}
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.bson.BSONDocument
+import reactivemongo.api.bson.BSONDocument
+import reactivemongo.api.bson.collection.BSONCollection
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class BackendDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(implicit ec: ExecutionContext) {
@@ -32,7 +32,7 @@ class BackendDao @Inject()(private val reactiveMongoApi: ReactiveMongoApi)(impli
 
   def getStats: Future[StatisticsObject] = {
     statisticsCol
-      .map(_.find(BSONDocument(), None))
+      .map(_.find(BSONDocument(), Option.empty[BSONDocument]))
       .flatMap(_.one[StatisticsObject])
       .map(_.getOrElse(StatisticsObject()))
   }

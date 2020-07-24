@@ -21,7 +21,7 @@ import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.HHContext
 import de.proteinevolution.jobs.services.ProcessService
-import de.proteinevolution.results.models.ForwardingData
+import de.proteinevolution.jobs.models.ForwardingData
 import javax.inject.{ Inject, Singleton }
 import play.api.mvc.{ Action, AnyContent }
 

@@ -24,7 +24,9 @@ import de.proteinevolution.user.AccountType.AccountType
 import io.circe.syntax._
 import io.circe.{ Encoder, Json }
 import org.mindrot.jbcrypt.BCrypt
-import reactivemongo.bson._
+import reactivemongo.api.bson._
+
+import scala.util.{ Success, Try }
 
 case class User(
     userID: String = UUID.randomUUID().toString, // ID of the User
@@ -74,23 +76,23 @@ object User {
   final val LOG_ROUNDS: Int = 10
 
   // Constants for the JSON object identifiers
-  final val ID                    = "id" // name for the ID in scala
-  final val SESSION_ID            = "sessionID" // Session ID of the User
-  final val SESSION_DATA          = "sessionData" // session information
-  final val CONNECTED             = "connected" // is the user online?
-  final val ACCOUNT_TYPE          = "accountType" // account type field
-  final val USER_DATA             = "userData" // user data object field
+  final val ID                    = "id"                                 // name for the ID in scala
+  final val SESSION_ID            = "sessionID"                          // Session ID of the User
+  final val SESSION_DATA          = "sessionData"                        // session information
+  final val CONNECTED             = "connected"                          // is the user online?
+  final val ACCOUNT_TYPE          = "accountType"                        // account type field
+  final val USER_DATA             = "userData"                           // user data object field
   final val NAME_LOGIN            = s"$USER_DATA.${UserData.NAME_LOGIN}" // login name field
-  final val EMAIL                 = s"$USER_DATA.${UserData.EMAIL}" // email field
-  final val PASSWORD              = s"$USER_DATA.${UserData.PASSWORD}" // password field
+  final val EMAIL                 = s"$USER_DATA.${UserData.EMAIL}"      // email field
+  final val PASSWORD              = s"$USER_DATA.${UserData.PASSWORD}"   // password field
   final val USER_CONFIG           = "userConfig"
-  final val USER_TOKEN            = "userToken" // token
-  final val JOBS                  = "jobs" // job reference pointers field
-  final val ACCEPTED_TOS          = "acceptToS" // needed for checking if the TOS was accepted
-  final val DELETION_WARNING_SENT = "deletionWarningSent" // make sure not to send mail twice
-  final val DATE_LAST_LOGIN       = "dateLastLogin" // name for the last login field
-  final val DATE_CREATED          = "dateCreated" // account created on field
-  final val DATE_UPDATED          = "dateUpdated" // account data changed on field
+  final val USER_TOKEN            = "userToken"                          // token
+  final val JOBS                  = "jobs"                               // job reference pointers field
+  final val ACCEPTED_TOS          = "acceptToS"                          // needed for checking if the TOS was accepted
+  final val DELETION_WARNING_SENT = "deletionWarningSent"                // make sure not to send mail twice
+  final val DATE_LAST_LOGIN       = "dateLastLogin"                      // name for the last login field
+  final val DATE_CREATED          = "dateCreated"                        // account created on field
+  final val DATE_UPDATED          = "dateUpdated"                        // account data changed on field
 
   implicit val encodeUser: Encoder[User] = (u: User) =>
     Json.obj(
@@ -108,40 +110,44 @@ object User {
     )
 
   implicit object Reader extends BSONDocumentReader[User] {
-    override def read(bson: BSONDocument): User =
-      User(
-        userID = bson.getAs[String](ID).get,
-        sessionID = bson.getAs[String](SESSION_ID),
-        sessionData = bson.getAs[List[SessionData]](SESSION_DATA).getOrElse(List.empty),
-        connected = bson.getAs[Boolean](CONNECTED).getOrElse(false),
-        accountType = bson.getAs[BSONNumberLike](ACCOUNT_TYPE).get.toInt,
-        userData = bson.getAs[UserData](USER_DATA),
-        userConfig = bson.getAs[UserConfig](USER_CONFIG).getOrElse(UserConfig()),
-        userToken = bson.getAs[UserToken](USER_TOKEN),
-        jobs = bson.getAs[List[String]](JOBS).getOrElse(List.empty),
-        deletionWarningSent = bson.getAs[Boolean](DELETION_WARNING_SENT).getOrElse(false),
-        dateLastLogin = bson.getAs[BSONDateTime](DATE_LAST_LOGIN).map(dt => ZonedDateTimeHelper.getZDT(dt)).get,
-        dateCreated = bson.getAs[BSONDateTime](DATE_CREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)).get,
-        dateUpdated = bson.getAs[BSONDateTime](DATE_UPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt)).get
+    override def readDocument(bson: BSONDocument): Try[User] =
+      Success(
+        User(
+          userID = bson.getAsOpt[String](ID).get,
+          sessionID = bson.getAsOpt[String](SESSION_ID),
+          sessionData = bson.getAsOpt[List[SessionData]](SESSION_DATA).getOrElse(List.empty),
+          connected = bson.getAsOpt[Boolean](CONNECTED).getOrElse(false),
+          accountType = bson.getAsOpt[Int](ACCOUNT_TYPE).get,
+          userData = bson.getAsOpt[UserData](USER_DATA),
+          userConfig = bson.getAsOpt[UserConfig](USER_CONFIG).getOrElse(UserConfig()),
+          userToken = bson.getAsOpt[UserToken](USER_TOKEN),
+          jobs = bson.getAsOpt[List[String]](JOBS).getOrElse(List.empty),
+          deletionWarningSent = bson.getAsOpt[Boolean](DELETION_WARNING_SENT).getOrElse(false),
+          dateLastLogin = bson.getAsOpt[BSONDateTime](DATE_LAST_LOGIN).map(dt => ZonedDateTimeHelper.getZDT(dt)).get,
+          dateCreated = bson.getAsOpt[BSONDateTime](DATE_CREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)).get,
+          dateUpdated = bson.getAsOpt[BSONDateTime](DATE_UPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt)).get
+        )
       )
   }
 
   implicit object Writer extends BSONDocumentWriter[User] {
-    override def write(user: User): BSONDocument =
-      BSONDocument(
-        ID                    -> user.userID,
-        SESSION_ID            -> user.sessionID,
-        SESSION_DATA          -> user.sessionData,
-        CONNECTED             -> user.connected,
-        ACCOUNT_TYPE          -> user.accountType.toInt,
-        USER_DATA             -> user.userData,
-        USER_CONFIG           -> user.userConfig,
-        USER_TOKEN            -> user.userToken,
-        JOBS                  -> user.jobs,
-        DELETION_WARNING_SENT -> user.deletionWarningSent,
-        DATE_LAST_LOGIN       -> BSONDateTime(user.dateLastLogin.toInstant.toEpochMilli),
-        DATE_CREATED          -> BSONDateTime(user.dateCreated.toInstant.toEpochMilli),
-        DATE_UPDATED          -> BSONDateTime(user.dateUpdated.toInstant.toEpochMilli)
+    override def writeTry(user: User): Try[BSONDocument] =
+      Success(
+        BSONDocument(
+          ID                    -> user.userID,
+          SESSION_ID            -> user.sessionID,
+          SESSION_DATA          -> user.sessionData,
+          CONNECTED             -> user.connected,
+          ACCOUNT_TYPE          -> user.accountType.toInt,
+          USER_DATA             -> user.userData,
+          USER_CONFIG           -> user.userConfig,
+          USER_TOKEN            -> user.userToken,
+          JOBS                  -> user.jobs,
+          DELETION_WARNING_SENT -> user.deletionWarningSent,
+          DATE_LAST_LOGIN       -> BSONDateTime(user.dateLastLogin.toInstant.toEpochMilli),
+          DATE_CREATED          -> BSONDateTime(user.dateCreated.toInstant.toEpochMilli),
+          DATE_UPDATED          -> BSONDateTime(user.dateUpdated.toInstant.toEpochMilli)
+        )
       )
   }
 

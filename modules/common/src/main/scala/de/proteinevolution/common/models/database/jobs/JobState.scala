@@ -18,10 +18,11 @@ package de.proteinevolution.common.models.database.jobs
 
 import de.proteinevolution.base.helpers.ToolkitTypes._
 import io.circe.{ Decoder, Encoder, HCursor }
-import reactivemongo.bson.{ BSONInteger, BSONReader, BSONWriter }
+import reactivemongo.api.bson.{ BSONInteger, BSONReader, BSONValue, BSONWriter }
 import shapeless._
 
 import scala.collection.immutable
+import scala.util.{ Success, Try }
 
 sealed trait JobState {
   def toInt: Int
@@ -84,14 +85,15 @@ object JobState {
 
   implicit val jobStateEncoder: Encoder[JobState] = Encoder[Int].contramap(_.toInt)
 
-  implicit object JobStateReader extends BSONReader[BSONInteger, JobState] {
-    def read(state: BSONInteger): JobState = {
-      states.find(_.toInt == state.value).getOrElse(Error)
-    }
+  implicit object JobStateReader extends BSONReader[JobState] {
+    def readTry(state: BSONValue): Try[JobState] =
+      for {
+        i <- state.asTry[BSONInteger]
+      } yield states.find(_.toInt == i.value).getOrElse(Error)
   }
 
-  implicit object JobStateWriter extends BSONWriter[JobState, BSONInteger] {
-    def write(state: JobState): BSONInteger = BSONInteger(state.toInt)
+  implicit object JobStateWriter extends BSONWriter[JobState] {
+    def writeTry(state: JobState): Try[BSONValue] = Success(BSONInteger(state.toInt))
   }
 
 }

@@ -85,7 +85,7 @@ object Parameter {
     implicit val config: Configuration =
       io.circe.generic.extras.defaults.defaultGenericConfiguration.copy(discriminator = Some("parameterType"))
     val _ = config
-    io.circe.generic.extras.semiauto.deriveEncoder[Parameter]
+    io.circe.generic.extras.semiauto.deriveConfiguredEncoder[Parameter]
 
   }
 

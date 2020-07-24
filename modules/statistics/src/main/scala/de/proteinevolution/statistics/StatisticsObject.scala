@@ -21,10 +21,11 @@ import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 import de.proteinevolution.common.models.util.{ ZonedDateTimeHelper => helper }
-import io.circe.java8.time.encodeZonedDateTime
 import io.circe.syntax._
 import io.circe.{ Encoder, Json }
-import reactivemongo.bson._
+import reactivemongo.api.bson._
+
+import scala.util.{ Success, Try }
 
 case class StatisticsObject(
     statisticsID: String = UUID.randomUUID().toString,
@@ -48,19 +49,18 @@ case class StatisticsObject(
    */
   def updateTools(toolNames: List[String]): StatisticsObject = {
     this.copy(
-      toolStatistics = toolNames.map(
-        toolName =>
-          this.toolStatistics
-            .find(_.toolName == toolName)
-            .getOrElse(
-              ToolStatistic(
-                toolName,
-                List.fill[Int](this.datePushed.length)(0),
-                List.fill[Int](this.datePushed.length)(0),
-                List.fill[Int](this.datePushed.length)(0),
-                List.fill[Int](this.datePushed.length)(0)
-              )
+      toolStatistics = toolNames.map(toolName =>
+        this.toolStatistics
+          .find(_.toolName == toolName)
+          .getOrElse(
+            ToolStatistic(
+              toolName,
+              List.fill[Int](this.datePushed.length)(0),
+              List.fill[Int](this.datePushed.length)(0),
+              List.fill[Int](this.datePushed.length)(0),
+              List.fill[Int](this.datePushed.length)(0)
             )
+          )
       )
     )
   }
@@ -89,38 +89,36 @@ case class StatisticsObject(
     this.copy(
       toolStatistics = {
         // map over all tool statistics
-        this.toolStatistics.map {
-          toolStatistic =>
-            // check if there are any elements available for this tool
-            jobEventsGroupedByTool.get(toolStatistic.toolName) match {
-              case Some(jobEventLogsForMonths) =>
-                // since there are elements from this tool, group them by month
-                val jobEventsInMonths =
-                  jobEventLogsForMonths.groupBy(_.dateCreated.truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1))
-                // iterate over all months
-                val counts = monthsInInterval.map {
-                  startOfMonth =>
-                    // check if the month is in the group
-                    jobEventsInMonths.get(startOfMonth) match {
-                      case Some(jobEventLogsForMonth) =>
-                        // Found events within this month.
-                        (
-                          jobEventLogsForMonth.length,
-                          jobEventLogsForMonth.count(_.hasFailed),
-                          jobEventLogsForMonth.count(_.isDeleted),
-                          jobEventLogsForMonth.count(_.internalJob)
-                        )
-                      case None =>
-                        // Found nothing for this month.
-                        (0, 0, 0, 0)
-                    }
-                }.toList
-                // add the months to the old tool statistics
-                toolStatistic.addMonths(counts.map(_._1), counts.map(_._2), counts.map(_._3), counts.map(_._4))
-              case None =>
-                // add the empty months to the old tool statistics
-                toolStatistic.addEmptyMonths(totalMonths)
-            }
+        this.toolStatistics.map { toolStatistic =>
+          // check if there are any elements available for this tool
+          jobEventsGroupedByTool.get(toolStatistic.toolName) match {
+            case Some(jobEventLogsForMonths) =>
+              // since there are elements from this tool, group them by month
+              val jobEventsInMonths =
+                jobEventLogsForMonths.groupBy(_.dateCreated.truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1))
+              // iterate over all months
+              val counts = monthsInInterval.map { startOfMonth =>
+                // check if the month is in the group
+                jobEventsInMonths.get(startOfMonth) match {
+                  case Some(jobEventLogsForMonth) =>
+                    // Found events within this month.
+                    (
+                      jobEventLogsForMonth.length,
+                      jobEventLogsForMonth.count(_.hasFailed),
+                      jobEventLogsForMonth.count(_.isDeleted),
+                      jobEventLogsForMonth.count(_.internalJob)
+                    )
+                  case None =>
+                    // Found nothing for this month.
+                    (0, 0, 0, 0)
+                }
+              }.toList
+              // add the months to the old tool statistics
+              toolStatistic.addMonths(counts.map(_._1), counts.map(_._2), counts.map(_._3), counts.map(_._4))
+            case None =>
+              // add the empty months to the old tool statistics
+              toolStatistic.addEmptyMonths(totalMonths)
+          }
         }
       },
       // add the months which have been added to the list
@@ -148,32 +146,39 @@ object StatisticsObject {
   val TOOLSTATISTICS = "toolStat"
   val DATEPUSHED     = "datePushed"
 
-  implicit val statObjEncoder: Encoder[StatisticsObject] = (obj: StatisticsObject) => Json.obj(
-    (ID, Json.fromString(obj.statisticsID)),
-    (USERSTATISTICS, obj.userStatistics.asJson),
-    (TOOLSTATISTICS, obj.toolStatistics.asJson),
-    (DATEPUSHED, obj.datePushed.asJson)
-  )
+  implicit val statObjEncoder: Encoder[StatisticsObject] = (obj: StatisticsObject) =>
+    Json.obj(
+      (ID, Json.fromString(obj.statisticsID)),
+      (USERSTATISTICS, obj.userStatistics.asJson),
+      (TOOLSTATISTICS, obj.toolStatistics.asJson),
+      (DATEPUSHED, obj.datePushed.asJson)
+    )
 
   implicit object Reader extends BSONDocumentReader[StatisticsObject] {
-    def read(bson: BSONDocument): StatisticsObject = {
-      StatisticsObject(
-        statisticsID = bson.getAs[String](ID).getOrElse(UUID.randomUUID().toString),
-        userStatistics = bson.getAs[UserStatistic](USERSTATISTICS).getOrElse(UserStatistic()),
-        toolStatistics = bson.getAs[List[ToolStatistic]](TOOLSTATISTICS).getOrElse(List.empty),
-        datePushed =
-          bson.getAs[List[BSONDateTime]](DATEPUSHED).getOrElse(List.empty[BSONDateTime]).map(dt => helper.getZDT(dt))
+    def readDocument(bson: BSONDocument): Try[StatisticsObject] =
+      Success(
+        StatisticsObject(
+          statisticsID = bson.getAsOpt[String](ID).getOrElse(UUID.randomUUID().toString),
+          userStatistics = bson.getAsOpt[UserStatistic](USERSTATISTICS).getOrElse(UserStatistic()),
+          toolStatistics = bson.getAsOpt[List[ToolStatistic]](TOOLSTATISTICS).getOrElse(List.empty),
+          datePushed = bson
+            .getAsOpt[List[BSONDateTime]](DATEPUSHED)
+            .getOrElse(List.empty[BSONDateTime])
+            .map(dt => helper.getZDT(dt))
+        )
       )
-    }
   }
 
   implicit object Writer extends BSONDocumentWriter[StatisticsObject] {
-    def write(statisticObject: StatisticsObject): BSONDocument = BSONDocument(
-      ID             -> statisticObject.statisticsID,
-      USERSTATISTICS -> statisticObject.userStatistics,
-      TOOLSTATISTICS -> statisticObject.toolStatistics,
-      DATEPUSHED     -> statisticObject.datePushed.map(a => BSONDateTime(a.toInstant.toEpochMilli))
-    )
+    def writeTry(statisticObject: StatisticsObject): Try[BSONDocument] =
+      Success(
+        BSONDocument(
+          ID             -> statisticObject.statisticsID,
+          USERSTATISTICS -> statisticObject.userStatistics,
+          TOOLSTATISTICS -> statisticObject.toolStatistics,
+          DATEPUSHED     -> statisticObject.datePushed.map(a => BSONDateTime(a.toInstant.toEpochMilli))
+        )
+      )
   }
 
 }

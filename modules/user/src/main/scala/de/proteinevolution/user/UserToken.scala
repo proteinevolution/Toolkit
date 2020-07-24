@@ -21,7 +21,9 @@ import java.security.SecureRandom
 import java.time.ZonedDateTime
 
 import de.proteinevolution.common.models.util.ZonedDateTimeHelper
-import reactivemongo.bson._
+import reactivemongo.api.bson._
+
+import scala.util.{ Success, Try }
 
 case class UserToken(
     tokenType: Int,
@@ -41,7 +43,7 @@ object UserToken {
   }
 
   val EMAIL_VERIFICATION_TOKEN = 1
-  val PASSWORD_CHANGE_TOKEN = 2
+  val PASSWORD_CHANGE_TOKEN    = 2
 
   val TYPE            = "type"
   val TOKEN           = "token"
@@ -53,30 +55,34 @@ object UserToken {
   /**
    * Object containing the reader for the job state
    */
-  implicit object UserTokenReader extends BSONReader[BSONDocument, UserToken] {
-    def read(doc: BSONDocument) =
-      UserToken(
-        tokenType = doc.getAs[Int](TYPE).getOrElse(-1),
-        token = doc.getAs[String](TOKEN).get,
-        passwordHash = doc.getAs[String](NEWPASSWORDHASH),
-        eMail = doc.getAs[String](NEWEMAIL),
-        userID = doc.getAs[String](USERID),
-        changeDate = doc.getAs[BSONDateTime](CHANGEDATE).map(dt => ZonedDateTimeHelper.getZDT(dt))
+  implicit object UserTokenReader extends BSONDocumentReader[UserToken] {
+    def readDocument(doc: BSONDocument): Try[UserToken] =
+      Success(
+        UserToken(
+          tokenType = doc.getAsOpt[Int](TYPE).getOrElse(-1),
+          token = doc.getAsOpt[String](TOKEN).get,
+          passwordHash = doc.getAsOpt[String](NEWPASSWORDHASH),
+          eMail = doc.getAsOpt[String](NEWEMAIL),
+          userID = doc.getAsOpt[String](USERID),
+          changeDate = doc.getAsOpt[BSONDateTime](CHANGEDATE).map(dt => ZonedDateTimeHelper.getZDT(dt))
+        )
       )
   }
 
   /**
    * Object containing the writer for the job state
    */
-  implicit object UserTokenWriter extends BSONWriter[UserToken, BSONDocument] {
-    def write(userToken: UserToken) =
-      BSONDocument(
-        TYPE            -> userToken.tokenType,
-        TOKEN           -> userToken.token,
-        NEWPASSWORDHASH -> userToken.passwordHash,
-        NEWEMAIL        -> userToken.eMail,
-        USERID          -> userToken.userID,
-        CHANGEDATE      -> BSONDateTime(userToken.changeDate.fold(-1L)(_.toInstant.toEpochMilli))
+  implicit object UserTokenWriter extends BSONDocumentWriter[UserToken] {
+    def writeTry(userToken: UserToken): Try[BSONDocument] =
+      Success(
+        BSONDocument(
+          TYPE            -> userToken.tokenType,
+          TOKEN           -> userToken.token,
+          NEWPASSWORDHASH -> userToken.passwordHash,
+          NEWEMAIL        -> userToken.eMail,
+          USERID          -> userToken.userID,
+          CHANGEDATE      -> BSONDateTime(userToken.changeDate.fold(-1L)(_.toInstant.toEpochMilli))
+        )
       )
   }
 }

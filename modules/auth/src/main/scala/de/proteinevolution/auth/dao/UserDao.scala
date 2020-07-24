@@ -24,14 +24,14 @@ import de.proteinevolution.user._
 import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.Cursor
-import reactivemongo.api.collections.bson.BSONCollection
+import reactivemongo.api.bson.collection.BSONCollection
+import reactivemongo.api.bson.{ BSONArray, BSONDateTime, BSONDocument }
 import reactivemongo.api.commands.{ UpdateWriteResult, WriteResult }
-import reactivemongo.bson.{ BSONArray, BSONDateTime, BSONDocument }
 
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class UserDao @Inject()(
+class UserDao @Inject() (
     private val reactiveMongoApi: ReactiveMongoApi,
     constants: ConstantsV2
 )(implicit ec: ExecutionContext) {
@@ -43,24 +43,24 @@ class UserDao @Inject()(
   def addUser(user: User): Future[WriteResult] = userCollection.flatMap(_.insert(ordered = false).one(user))
 
   def findUserByUsername(username: String): Future[Option[User]] =
-    userCollection.flatMap(_.find(BSONDocument(User.NAME_LOGIN -> username), None).one[User])
+    userCollection.flatMap(_.find(BSONDocument(User.NAME_LOGIN -> username), Option.empty[BSONDocument]).one[User])
 
   def findUserByEmail(email: String): Future[Option[User]] =
-    userCollection.flatMap(_.find(BSONDocument(User.EMAIL -> email), None).one[User])
+    userCollection.flatMap(_.find(BSONDocument(User.EMAIL -> email), Option.empty[BSONDocument]).one[User])
 
   def findUserByUsernameOrEmail(username: String, email: String): Future[Option[User]] =
     userCollection.flatMap(
       _.find(
         BSONDocument("$or" -> List(BSONDocument(User.EMAIL -> email), BSONDocument(User.NAME_LOGIN -> username))),
-        None
+        Option.empty[BSONDocument]
       ).one[User]
     )
 
   def findUserBySessionId(sessionID: String): Future[Option[User]] =
-    userCollection.flatMap(_.find(BSONDocument(User.SESSION_ID -> sessionID), None).one[User])
+    userCollection.flatMap(_.find(BSONDocument(User.SESSION_ID -> sessionID), Option.empty[BSONDocument]).one[User])
 
   def findUserByID(userID: String): Future[Option[User]] =
-    userCollection.flatMap(_.find(BSONDocument(User.ID -> userID), None).one[User])
+    userCollection.flatMap(_.find(BSONDocument(User.ID -> userID), Option.empty[BSONDocument]).one[User])
 
   def findOldUsers(): Future[List[User]] = {
     // Generate the dates to compare before deletion
@@ -120,7 +120,7 @@ class UserDao @Inject()(
 
   private def internalFindUsers(selector: BSONDocument): Future[scala.List[User]] =
     userCollection
-      .map(_.find(selector, None).cursor[User]())
+      .map(_.find(selector, Option.empty[BSONDocument]).cursor[User]())
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[User]]()))
 
   /**
@@ -135,11 +135,9 @@ class UserDao @Inject()(
     userCollection.flatMap(
       _.findAndUpdate(
         BSONDocument(User.ID -> userID),
-        modifier.merge(
-          BSONDocument(
-            "$set" ->
-            BSONDocument(User.DATE_UPDATED -> bsonCurrentTime)
-          )
+        modifier ++ BSONDocument(
+          "$set" ->
+          BSONDocument(User.DATE_UPDATED -> bsonCurrentTime)
         ),
         fetchNewObject = true
       ).map(_.result[User])
@@ -168,7 +166,7 @@ class UserDao @Inject()(
       BSONDocument(
         "$set" ->
         BSONDocument(User.ACCOUNT_TYPE -> accountType)
-      ).merge {
+      ) ++ {
         if (resetUserToken) {
           BSONDocument("$unset" -> BSONDocument(User.USER_TOKEN -> ""))
         } else {
@@ -190,7 +188,7 @@ class UserDao @Inject()(
           User.PASSWORD   -> newPasswordHash,
           User.SESSION_ID -> newSessionId
         )
-      ).merge {
+      ) ++ {
         if (resetUserToken) {
           BSONDocument("$unset" -> BSONDocument(User.USER_TOKEN -> ""))
         } else {
@@ -250,15 +248,12 @@ class UserDao @Inject()(
           User.CONNECTED             -> true,
           User.SESSION_ID            -> user.sessionID.orElse(Some(UUID.randomUUID().toString)) // user needs session id
         )
-      ).merge(
-        sessionDataOption
-          .map(
-            sessionData =>
-              // Add the session Data to the set
-              BSONDocument("$addToSet" -> BSONDocument(User.SESSION_DATA -> sessionData))
-          )
-          .getOrElse(BSONDocument.empty)
-      )
+      ) ++ sessionDataOption
+        .map(sessionData =>
+          // Add the session Data to the set
+          BSONDocument("$addToSet" -> BSONDocument(User.SESSION_DATA -> sessionData))
+        )
+        .getOrElse(BSONDocument.empty)
     )
 
   def afterRemoveFromCache(userID: String): Future[Option[User]] =

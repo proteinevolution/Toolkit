@@ -16,7 +16,9 @@
 
 package de.proteinevolution.user
 
-import reactivemongo.bson._
+import reactivemongo.api.bson._
+
+import scala.util.{ Success, Try }
 
 case class UserConfig(defaultPublic: Boolean = false, defaultComments: Boolean = false, hasMODELLERKey: Boolean = false)
 
@@ -26,22 +28,27 @@ object UserConfig {
   final val HASMODELLERKEY  = "modellerKey"
 
   implicit object Reader extends BSONDocumentReader[UserConfig] {
-    override def read(bson: BSONDocument): UserConfig = UserConfig(
-      defaultPublic = bson.getAs[Boolean](DEFAULTPUBLIC).getOrElse(false),
-      defaultComments = bson.getAs[Boolean](DEFAULTCOMMENTS).getOrElse(false),
-      hasMODELLERKey = bson.getAs[Boolean](HASMODELLERKEY).getOrElse(false)
-    )
+    override def readDocument(bson: BSONDocument): Try[UserConfig] =
+      Success(
+        UserConfig(
+          defaultPublic = bson.getAsOpt[Boolean](DEFAULTPUBLIC).getOrElse(false),
+          defaultComments = bson.getAsOpt[Boolean](DEFAULTCOMMENTS).getOrElse(false),
+          hasMODELLERKey = bson.getAsOpt[Boolean](HASMODELLERKEY).getOrElse(false)
+        )
+      )
   }
 
   implicit object Writer extends BSONDocumentWriter[UserConfig] {
-    override def write(userConfig: UserConfig): BSONDocument =
-      if (userConfig == UserConfig())
-        BSONDocument.empty
-      else
-        BSONDocument(
-          DEFAULTPUBLIC   -> BSONBoolean(userConfig.defaultPublic),
-          DEFAULTCOMMENTS -> BSONBoolean(userConfig.defaultPublic),
-          HASMODELLERKEY  -> BSONBoolean(userConfig.hasMODELLERKey)
-        )
+    override def writeTry(userConfig: UserConfig): Try[BSONDocument] =
+      Success(
+        if (userConfig == UserConfig())
+          BSONDocument.empty
+        else
+          BSONDocument(
+            DEFAULTPUBLIC   -> BSONBoolean(userConfig.defaultPublic),
+            DEFAULTCOMMENTS -> BSONBoolean(userConfig.defaultPublic),
+            HASMODELLERKEY  -> BSONBoolean(userConfig.hasMODELLERKey)
+          )
+      )
   }
 }
