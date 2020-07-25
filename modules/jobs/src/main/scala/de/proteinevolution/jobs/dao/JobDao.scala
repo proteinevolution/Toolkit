@@ -24,11 +24,10 @@ import de.proteinevolution.jobs.models.{ Job, JobClusterData }
 import de.proteinevolution.statistics.{ JobEvent, JobEventLog }
 import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.bson.collection.{ BSONCollection, BSONSerializationPack }
+import reactivemongo.api.bson.collection.BSONCollection
 import reactivemongo.api.bson.{ BSONDateTime, BSONDocument }
 import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.{ Index, IndexType }
-import reactivemongo.api.{ Cursor, ReadConcern }
+import reactivemongo.api.{ Cursor, ReadConcern, WriteConcern }
 
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -39,11 +38,7 @@ class JobDao @Inject() (
 )(implicit ec: ExecutionContext) {
 
   private lazy val jobCollection: Future[BSONCollection] = {
-    reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs")).map { collection =>
-      collection.indexesManager
-        .ensure(Index(BSONSerializationPack)(Seq(Job.ID -> IndexType.Text), background = true, unique = true))
-      collection
-    }
+    reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
   }
 
   private[jobs] lazy val eventLogCollection: Future[BSONCollection] =
@@ -133,7 +128,17 @@ class JobDao @Inject() (
           "$push" ->
           BSONDocument(JobEventLog.EVENTS -> JobEvent(JobState.Deleted, Some(ZonedDateTime.now), Some(0L)))
         ),
-        fetchNewObject = true
+        fetchNewObject = true,
+        // the following values are default values that are used to distinguish findAndUpdate from deprecated version
+        // TODO: why won't it accept it with values left out like in documentation
+        upsert = false,
+        None,
+        None,
+        bypassDocumentValidation = false,
+        WriteConcern.Default,
+        Option.empty,
+        Option.empty,
+        Seq.empty
       )
     )
     jobCollection.flatMap(_.delete().one(BSONDocument(Job.ID -> jobID)))
@@ -142,7 +147,9 @@ class JobDao @Inject() (
   final def findAndSortJobs(hash: String, sort: Int = -1): Future[List[Job]] = {
     jobCollection
       .map(
-        _.find(BSONDocument(Job.HASH -> hash), Option.empty[BSONDocument]).sort(BSONDocument(Job.DATE_CREATED -> sort)).cursor[Job]()
+        _.find(BSONDocument(Job.HASH -> hash), Option.empty[BSONDocument])
+          .sort(BSONDocument(Job.DATE_CREATED -> sort))
+          .cursor[Job]()
       )
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
   }
@@ -174,7 +181,17 @@ class JobDao @Inject() (
         BSONDocument(
           "$set" -> BSONDocument(Job.DATE_VIEWED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli))
         ),
-        fetchNewObject = true
+        fetchNewObject = true,
+        // the following values are default values that are used to distinguish findAndUpdate from deprecated version
+        // TODO: why won't it accept it with values left out like in documentation
+        upsert = false,
+        None,
+        None,
+        bypassDocumentValidation = false,
+        WriteConcern.Default,
+        Option.empty,
+        Option.empty,
+        Seq.empty
       ).map(_.result[Job])
     )
   }

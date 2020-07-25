@@ -23,10 +23,10 @@ import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.user._
 import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.Cursor
 import reactivemongo.api.bson.collection.BSONCollection
 import reactivemongo.api.bson.{ BSONArray, BSONDateTime, BSONDocument }
-import reactivemongo.api.commands.{ UpdateWriteResult, WriteResult }
+import reactivemongo.api.commands.WriteResult
+import reactivemongo.api.{ Cursor, WriteConcern }
 
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -139,7 +139,17 @@ class UserDao @Inject() (
           "$set" ->
           BSONDocument(User.DATE_UPDATED -> bsonCurrentTime)
         ),
-        fetchNewObject = true
+        fetchNewObject = true,
+        // the following values are default values that are used to distinguish findAndUpdate from deprecated version
+        // TODO: why won't it accept it with values left out like in documentation
+        upsert = false,
+        None,
+        None,
+        bypassDocumentValidation = false,
+        WriteConcern.Default,
+        Option.empty,
+        Option.empty,
+        Seq.empty
       ).map(_.result[User])
     )
   }
@@ -278,15 +288,24 @@ class UserDao @Inject() (
   def upsertUser(user: User): Future[Option[User]] =
     userCollection.flatMap(
       _.findAndUpdate(
-        selector = BSONDocument(User.ID -> user.userID),
-        update = user,
+        BSONDocument(User.ID -> user.userID),
+        user,
+        fetchNewObject = true,
         upsert = true,
-        fetchNewObject = true
+        // the following values are default values that are used to distinguish findAndUpdate from deprecated version
+        // TODO: why won't it accept it with values left out like in documentation
+        None,
+        None,
+        bypassDocumentValidation = false,
+        WriteConcern.Default,
+        Option.empty,
+        Option.empty,
+        Seq.empty
       ).map(_.result[User])
     )
 
   /* removes job association from user */
-  def removeJob(jobID: String): Future[UpdateWriteResult] =
+  def removeJob(jobID: String): Future[WriteResult] =
     userCollection.flatMap {
       _.update(ordered = false).one(
         BSONDocument.empty,

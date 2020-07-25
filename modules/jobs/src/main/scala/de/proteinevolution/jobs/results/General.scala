@@ -36,8 +36,8 @@ object General {
 
     implicit val decodeSingleSeq: Decoder[SingleSeq] = (c: HCursor) =>
       for {
-        accession <- c.downArray.first.downArray.first.as[String]
-        seq       <- c.downArray.first.downArray.right.as[String]
+        accession <- c.downArray.downArray.as[String]
+        seq       <- c.downArray.downArray.right.as[String]
       } yield new SingleSeq(accession, seq)
 
     implicit val singleSeqEncoder: Encoder[SingleSeq] = deriveEncoder

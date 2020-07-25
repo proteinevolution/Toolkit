@@ -91,8 +91,8 @@ object PSIBlastHSP {
   import io.circe.{ Decoder, HCursor }
 
   def parseHSP(db: String): Decoder[PSIBlastHSP] = (c: HCursor) => {
-    val hsps            = c.downField("hsps").downArray.first
-    val descriptionBase = c.downField("description").downArray.first
+    val hsps            = c.downField("hsps").downArray
+    val descriptionBase = c.downField("description").downArray
     for {
       eValue      <- hsps.downField("evalue").as[Double]
       num         <- c.downField("num").as[Int]

@@ -16,10 +16,10 @@
 
 package de.proteinevolution.jobs.services
 
-import cats.effect.{ IO, Resource }
+import cats.effect.{ContextShift, IO, Resource}
 import cats.effect.concurrent.Ref
 import de.proteinevolution.jobs.dao.JobDao
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
 import scala.collection.immutable.HashSet
 import scala.concurrent.ExecutionContext
@@ -27,6 +27,7 @@ import scala.util.Random
 
 @Singleton
 final class JobIdProvider @Inject()(jobDao: JobDao)(implicit ec: ExecutionContext) {
+  implicit val contextShift: ContextShift[IO] = IO.contextShift(ec)
 
   private[this] val generateSafe: HashSet[String] => IO[String] = { x =>
     IO(Iterator.continually[String](Random.nextInt(9999999).toString.padTo(7, '0')).filterNot(x.contains).next())
