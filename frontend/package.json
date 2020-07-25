@@ -60,7 +60,8 @@
     "sass-resources-loader": "^2.0.3",
     "typescript": "^3.5.3",
     "vue-template-compiler": "^2.6.11",
-    "vue-typed-mixins": "^0.1.0"
+    "vue-typed-mixins": "^0.1.0",
+    "webpack": "^4.44.0"
   },
   "browserslist": [
     "> 1%",
