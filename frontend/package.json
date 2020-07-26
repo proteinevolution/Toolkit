@@ -15,6 +15,7 @@
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^4.5.0",
     "bootstrap-vue": "^2.15.0",
+    "core-js": "^3.6.5",
     "es6-promise": "^4.2.8",
     "exelixis": "^0.0.4",
     "handy-scroll": "^1.0.5",
