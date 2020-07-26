@@ -45,15 +45,16 @@
                     class="autocomplete-loading">
                     {{ $t('loading') }}
                 </li>
-                <div v-for="(job, i) in suggestions.jobs.slice(0, itemsPerGroup)"
-                     v-if="!isLoading"
-                     :key="i"
-                     class="autocomplete-result"
-                     :class="{ 'is-active': (i + suggestions.tools.length) === arrowCounter }">
-                    <a class="search-results"
-                       @click="goToJob(job)">
-                        {{ job.jobID }} ({{ job.tool.substr(0, 4).toUpperCase() }})
-                    </a>
+                <div v-else>
+                    <div v-for="(job, i) in suggestions.jobs.slice(0, itemsPerGroup)"
+                         :key="i"
+                         class="autocomplete-result"
+                         :class="{ 'is-active': (i + suggestions.tools.length) === arrowCounter }">
+                        <a class="search-results"
+                           @click="goToJob(job)">
+                            {{ job.jobID }} ({{ job.tool.substr(0, 4).toUpperCase() }})
+                        </a>
+                    </div>
                 </div>
                 <div v-if="suggestions.tools.length > itemsPerGroup && !isLoading"
                      class="autocomplete-more-results">

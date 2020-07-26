@@ -155,7 +155,7 @@
                                     <tr v-if="alPart.template.consensus"
                                         class="sequence">
                                         <td></td>
-                                        <td v-text="">
+                                        <td>
                                             T Consensus
                                         </td>
                                         <td v-text="alPart.template.start"></td>
