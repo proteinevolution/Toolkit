@@ -121,7 +121,7 @@
 
     const logger = Logger.get('ToolView');
 
-    export default Vue.extend({
+    export default hasHTMLTitle.extend({
         name: 'ToolView',
         components: {
             Section,
@@ -134,7 +134,6 @@
             AlignmentViewer: () => import(/* webpackChunkName: "alignment-viewer" */
                 '@/components/tools/AlignmentViewer.vue'),
         },
-        mixins: [hasHTMLTitle],
         props: {
             isJobView: {
                 type: Boolean,

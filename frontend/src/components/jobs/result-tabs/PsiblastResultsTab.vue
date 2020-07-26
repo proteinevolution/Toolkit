@@ -142,7 +142,6 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import Loading from '@/components/utils/Loading.vue';
     import Logger from 'js-logger';
     import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
@@ -154,7 +153,7 @@
 
     const logger = Logger.get('PsiblastResultsTab');
 
-    export default mixins(SearchResultTabMixin).extend({
+    export default SearchResultTabMixin.extend({
         name: 'PsiblastResultsTab',
         components: {
             Loading,

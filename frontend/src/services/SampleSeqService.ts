@@ -6,7 +6,7 @@ class SampleSeqService {
 
     public fetchSampleSequence(sampleSequenceKey: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {
-            if (this.sampleSeqs.hasOwnProperty(sampleSequenceKey)) {
+            if (sampleSequenceKey in this.sampleSeqs) {
                 resolve(this.sampleSeqs[sampleSequenceKey]);
             } else {
                 axios.get(`/sample-seqs/${sampleSequenceKey}`, {headers: {'Content-Type': 'text/plain'}})

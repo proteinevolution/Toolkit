@@ -7,11 +7,9 @@
 <script lang="ts">
     import Switches from 'vue-switches';
     import {BooleanParameter} from '@/types/toolkit/tools';
-    import ToolParameterMixin from '@/mixins/ToolParameterMixin';
     import ParameterRememberMixin from '@/mixins/ParameterRememberMixin';
-    import mixins from 'vue-typed-mixins';
 
-    export default mixins(ToolParameterMixin, ParameterRememberMixin).extend({
+    export default ParameterRememberMixin.extend({
         name: 'BooleanParameter',
         components: {
             Switches,

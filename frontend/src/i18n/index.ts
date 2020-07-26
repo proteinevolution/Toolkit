@@ -63,7 +63,7 @@ export function loadExtraTranslations(path: string) {
             `./lang/extras/${path}.ts`)
             .then((msgs) => {
                 for (const itemLang in msgs.default) {
-                    if (msgs.default.hasOwnProperty(itemLang)) {
+                    if (itemLang in msgs.default) {
                         const itemMsgs = msgs.default[itemLang];
                         const curMsgs = i18n.getLocaleMessage(itemLang);
                         const newMsgs = mergeWith(curMsgs, itemMsgs);

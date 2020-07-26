@@ -22,10 +22,9 @@
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
     import {ConstraintError} from '@/types/toolkit/validation';
     import {CustomJobIdValidationResult} from '@/types/toolkit/jobs';
-    import mixins from 'vue-typed-mixins';
     import {debounce} from 'lodash-es';
 
-    export default mixins(ToolParameterMixin).extend({
+    export default ToolParameterMixin.extend({
         name: 'CustomJobIdInput',
         data() {
             return {
@@ -39,7 +38,7 @@
             },
             customJobId: { // handle submission manually (not via ToolParameterMixin) to exclude empty strings
                 get(): string {
-                    if (!this.submission.hasOwnProperty(this.parameterName)) {
+                    if (!(this.parameterName in this.submission)) {
                         return '';
                     }
                     return this.submission[this.parameterName];

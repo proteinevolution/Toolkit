@@ -21,11 +21,9 @@
 <script lang="ts">
     import {NumberParameter} from '@/types/toolkit/tools';
     import {ConstraintError} from '@/types/toolkit/validation';
-    import ToolParameterMixin from '@/mixins/ToolParameterMixin';
     import ParameterRememberMixin from '@/mixins/ParameterRememberMixin';
-    import mixins from 'vue-typed-mixins';
 
-    export default mixins(ToolParameterMixin, ParameterRememberMixin).extend({
+    export default ParameterRememberMixin.extend({
         name: 'NumberParameter',
         props: {
             /*

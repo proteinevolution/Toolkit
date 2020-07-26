@@ -3,14 +3,13 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import AlignmentViewer from '@/components/tools/AlignmentViewer.vue';
     import EventBus from '@/util/EventBus';
     import {AlignmentItem} from '@/types/toolkit/results';
     import {resultsService} from '@/services/ResultsService';
 
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'AlignmentViewerTab',
         components: {
             AlignmentViewer,

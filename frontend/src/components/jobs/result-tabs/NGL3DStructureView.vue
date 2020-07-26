@@ -16,15 +16,11 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
-    import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
     import Loading from '@/components/utils/Loading.vue';
 
-    const logger = Logger.get('NGL3DStructureView');
-
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'NGL3DStructureView',
         components: {
             Loading,

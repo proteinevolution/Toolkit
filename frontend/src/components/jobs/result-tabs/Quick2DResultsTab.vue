@@ -16,7 +16,7 @@
             <table class="alignment-table">
                 <tbody>
                     <template v-for="i in brokenQuery.length">
-                        <tr>
+                        <tr :key="'1-' + i">
                             <td>AA_QUERY</td>
                             <td v-text="(i - 1) * breakAfter + 1"></td>
                             <td>
@@ -25,14 +25,15 @@
                                 <span v-text="'   ' + min(i * breakAfter, results.query.sequence.length)"></span>
                             </td>
                         </tr>
-                        <tr v-for="(value, key) in subTools"
-                            v-if="brokenResults[key]">
+                        <tr v-for="(value, key) in filteredSubTools"
+                            :key="'2-' + i + '-' + key">
                             <td v-text="value"></td>
                             <td></td>
                             <td v-html="brokenResults[key][i - 1]"></td>
                             <td></td>
                         </tr>
-                        <tr class="empty-row">
+                        <tr :key="'3-' + i"
+                            class="empty-row">
                             <td colspan="4"></td>
                         </tr>
                     </template>
@@ -55,17 +56,13 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
-    import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
     import {Quick2dResults} from '@/types/toolkit/results';
     import {quick2dColor} from '@/util/SequenceUtils';
 
-    const logger = Logger.get('Quick2DResultsTab');
-
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'Quick2DResultsTab',
         components: {
             Loading,
@@ -101,6 +98,9 @@
                 }
                 return this.results.query.header.slice(1, 50);
             },
+            filteredSubTools(): Record<string, string> {
+                return Object.fromEntries(Object.entries(this.subTools).filter(([k]) => k in this.brokenResults));
+            },
             brokenQuery(): string[] {
                 if (!this.results) {
                     return [];
@@ -121,7 +121,7 @@
                 // alignments need to be broken into pieces
                 const res: { [key: string]: string[] } = {};
                 for (const key in this.subTools) {
-                    if (this.results.results.hasOwnProperty(key)
+                    if (key in this.results.results
                         && this.results.results[key].length > 0) {
                         res[key] = [];
                         let breakIt = 0;

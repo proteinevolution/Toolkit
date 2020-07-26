@@ -103,9 +103,8 @@
     import {Tool} from '@/types/toolkit/tools';
     import {jobService} from '@/services/JobService';
 
-    export default Vue.extend({
+    export default hasHTMLTitle.extend({
         name: 'JobManagerView',
-        mixins: [hasHTMLTitle],
         data() {
             return {
                 fields: [{

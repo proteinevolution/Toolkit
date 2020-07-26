@@ -16,17 +16,13 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
-    import Logger from 'js-logger';
     import {ProbEvalList} from '@/types/toolkit/results';
     import {Chart} from 'highcharts-vue';
 
-    const logger = Logger.get('PlotTab');
-
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'PlotTab',
         components: {
             Loading,

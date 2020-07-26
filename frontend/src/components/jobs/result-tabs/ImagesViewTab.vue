@@ -16,11 +16,10 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import {resultsService} from '@/services/ResultsService';
 
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'ImagesViewTab',
         computed: {
             images(): string[] {

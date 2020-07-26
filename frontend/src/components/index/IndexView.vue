@@ -18,19 +18,17 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
     import ToolFinder from './ToolFinder.vue';
     import UpdatesSection from './UpdatesSection.vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
     import EventBus from '@/util/EventBus';
 
-    export default Vue.extend({
+    export default hasHTMLTitle.extend({
         name: 'IndexView',
         components: {
             ToolFinder,
             UpdatesSection,
         },
-        mixins: [hasHTMLTitle],
         watch: {
             // Use a watcher here - component cannot use 'beforeRouteEnter' because of lazy loading
             '$route.query': {

@@ -17,13 +17,11 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
     import hasHTMLTitle from '../../mixins/hasHTMLTitle';
     import {colorSequence} from '@/util/SequenceUtils';
 
-    export default Vue.extend({
+    export default hasHTMLTitle.extend({
         name: 'NotFoundView',
-        mixins: [hasHTMLTitle],
         props: {
             errorMessage: {
                 type: String,

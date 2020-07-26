@@ -60,7 +60,6 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
@@ -71,7 +70,7 @@
 
     const logger = Logger.get('HhrepidResultsTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'HhrepidResultsTab',
         components: {
             Loading,
@@ -91,7 +90,7 @@
                 return this.viewOptions.filename.replace(':jobID', this.job.jobID);
             },
             forwardingEnabled(): boolean {
-                return this.viewOptions.hasOwnProperty('forwarding');
+                return 'forwarding' in this.viewOptions;
             },
         },
         methods: {

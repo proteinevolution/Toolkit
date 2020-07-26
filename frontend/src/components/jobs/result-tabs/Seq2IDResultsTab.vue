@@ -17,7 +17,6 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
     import Logger from 'js-logger';
@@ -27,7 +26,7 @@
 
     const logger = Logger.get('Seq2IDResultsTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'Seq2IDResultsTab',
         components: {
             Loading,

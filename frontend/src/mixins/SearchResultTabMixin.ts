@@ -3,14 +3,13 @@ import Logger from 'js-logger';
 import {HHInfoResult, SearchAlignmentItem, SearchAlignmentsResponse} from '@/types/toolkit/results';
 import {colorSequence, ssColorSequence} from '@/util/SequenceUtils';
 import ResultTabMixin from '@/mixins/ResultTabMixin';
-import mixins from 'vue-typed-mixins';
 import {resultsService} from '@/services/ResultsService';
 import handyScroll from 'handy-scroll';
 import {debounce} from 'lodash-es';
 
 const logger = Logger.get('SearchResultTabMixin');
 
-const SearchResultTabMixin = mixins(ResultTabMixin).extend({
+const SearchResultTabMixin = ResultTabMixin.extend({
     data() {
         return {
             total: 100,

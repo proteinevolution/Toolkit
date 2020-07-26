@@ -71,14 +71,15 @@
                                         <hr v-if="i !== 0">
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr :key="'template-alignment-' + al.num">
                                     <td></td>
                                     <td colspan="3">
                                         <a @click="displayTemplateAlignment(al.template.accession)"
                                            v-text="$t('jobs.results.hhblits.templateAlignment')"></a>
                                     </td>
                                 </tr>
-                                <tr class="font-weight-bold">
+                                <tr :key="'select-alignment-' + al.num"
+                                    class="font-weight-bold">
                                     <td class="no-wrap">
                                         <b-checkbox class="d-inline"
                                                     :checked="selectedItems.includes(al.num)"
@@ -88,17 +89,19 @@
                                     <td colspan="3"
                                         v-html="al.acc + ' ' + al.name"></td>
                                 </tr>
-                                <tr>
+                                <tr :key="'alignment-info-' + al.num">
                                     <td></td>
                                     <td colspan="3"
                                         v-html="$t('jobs.results.hhblits.alignmentInfo', al)"></td>
                                 </tr>
 
-                                <template v-for="alPart in wrapAlignments(al)">
-                                    <tr class="blank-row">
+                                <template v-for="(alPart, pi) in wrapAlignments(al)">
+                                    <tr :key="'alignment-part-' + pi"
+                                        class="blank-row">
                                         <td></td>
                                     </tr>
                                     <tr v-if="alPart.query.seq"
+                                        :key="'alignment-seq-' + pi"
                                         class="sequence">
                                         <td></td>
                                         <td>Q</td>
@@ -106,6 +109,7 @@
                                         <td v-html="coloredSeq(alPart.query.seq) + alEndRef(alPart.query)"></td>
                                     </tr>
                                     <tr v-if="alPart.query.consensus"
+                                        :key="'alignment-consensus-' + pi"
                                         class="sequence">
                                         <td></td>
                                         <td></td>
@@ -113,6 +117,7 @@
                                         <td v-html="alPart.query.consensus"></td>
                                     </tr>
                                     <tr v-if="alPart.agree"
+                                        :key="'alignment-agree-' + pi"
                                         class="sequence">
                                         <td></td>
                                         <td></td>
@@ -121,6 +126,7 @@
                                             v-text="alPart.agree"></td>
                                     </tr>
                                     <tr v-if="alPart.template.consensus"
+                                        :key="'alignment-tpl-consensus-' + pi"
                                         class="sequence">
                                         <td></td>
                                         <td></td>
@@ -128,13 +134,15 @@
                                         <td v-html="alPart.template.consensus"></td>
                                     </tr>
                                     <tr v-if="alPart.template.seq"
+                                        :key="'alignment-tpls-seq-' + pi"
                                         class="sequence">
                                         <td></td>
                                         <td>T</td>
                                         <td v-text="alPart.template.start"></td>
                                         <td v-html="coloredSeq(alPart.template.seq) + alEndRef(alPart.template)"></td>
                                     </tr>
-                                    <tr class="blank-row">
+                                    <tr :key="'alignment-br-' + pi"
+                                        class="blank-row">
                                         <td></td>
                                     </tr>
                                 </template>
@@ -158,18 +166,14 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import Loading from '@/components/utils/Loading.vue';
-    import Logger from 'js-logger';
     import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
     import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
     import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
     import {HHblitsAlignmentItem, HHblitsHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
     import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
-    const logger = Logger.get('HHblitsResultsTab');
-
-    export default mixins(SearchResultTabMixin).extend({
+    export default SearchResultTabMixin.extend({
         name: 'HHblitsResultsTab',
         components: {
             Loading,

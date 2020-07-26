@@ -71,7 +71,6 @@
     "sass-resources-loader": "^2.0.3",
     "typescript": "^3.9.7",
     "vue-template-compiler": "^2.6.11",
-    "vue-typed-mixins": "^0.2.0",
     "webpack": "^4.44.0"
   },
   "browserslist": [

@@ -24,7 +24,6 @@
 <script lang="ts">
     import Vue from 'vue';
     import Switches from 'vue-switches';
-    import mixins from 'vue-typed-mixins';
     import TextAreaSubComponent from './TextAreaSubComponent.vue';
     import {TextAreaParameter, ValidationParams} from '@/types/toolkit/tools';
     import ExpandHeight from '@/transitions/ExpandHeight.vue';
@@ -32,7 +31,7 @@
     import {ValidationResult} from '@/types/toolkit/validation';
     import EventBus from '@/util/EventBus';
 
-    export default mixins(ToolParameterMixin).extend({
+    export default ToolParameterMixin.extend({
         name: 'TextAreaParameter',
         components: {
             Switches,
@@ -72,7 +71,7 @@
             },
             submissionValueTwo: { // has to be handled manually, not covered by the ToolParameterMixin
                 get(): string {
-                    if (!this.submission.hasOwnProperty(this.parameterNameTwo)) {
+                    if (!(this.parameterNameTwo in this.submission)) {
                         return '';
                     }
                     return this.submission[this.parameterNameTwo];

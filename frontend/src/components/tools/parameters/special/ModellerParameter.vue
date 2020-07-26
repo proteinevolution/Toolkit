@@ -16,13 +16,12 @@
 <script lang="ts">
     import {authService} from '@/services/AuthService';
     import {debounce} from 'lodash-es';
-    import mixins from 'vue-typed-mixins';
     import {Parameter} from '@/types/toolkit/tools';
-    import ToolParameterMixin from '@/mixins/ToolParameterMixin';
     import {ConstraintError} from '@/types/toolkit/validation';
     import {User} from '@/types/toolkit/auth';
+    import ToolParameterMixin from '@/mixins/ToolParameterMixin';
 
-    export default mixins(ToolParameterMixin).extend({
+    export default ToolParameterMixin.extend({
         name: 'ModellerParameter',
         props: {
             /*
@@ -58,7 +57,7 @@
             },
         },
         methods: {
-            validateModellerKey: debounce(function(this: any, value: string) {
+            validateModellerKey: debounce(function (this: any, value: string) {
                 authService.validateModellerKey(value)
                     .then((result: boolean) => {
                         const error: ConstraintError | undefined = result ? undefined : {

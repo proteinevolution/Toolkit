@@ -63,7 +63,6 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import {AlignmentItem, AlignmentResultResponse} from '@/types/toolkit/results';
     import Loading from '@/components/utils/Loading.vue';
@@ -75,7 +74,7 @@
 
     const logger = Logger.get('FastaAlignmentTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'FastaAlignmentTab',
         components: {
             Loading,

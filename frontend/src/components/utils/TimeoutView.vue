@@ -3,16 +3,14 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
     import hasHTMLTitle from '../../mixins/hasHTMLTitle';
     import NotFoundView from '@/components/utils/NotFoundView.vue';
 
-    export default Vue.extend({
+    export default hasHTMLTitle.extend({
         name: 'TimeoutView',
         components: {
             NotFoundView,
         },
-        mixins: [hasHTMLTitle],
         computed: {
             htmlTitle() {
                 return 'Timeout';

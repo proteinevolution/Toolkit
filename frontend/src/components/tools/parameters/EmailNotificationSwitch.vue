@@ -6,11 +6,10 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import Switches from 'vue-switches';
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
 
-    export default mixins(ToolParameterMixin).extend({
+    export default ToolParameterMixin.extend({
         name: 'EmailNotificationSwitch',
         components: {Switches},
         computed: {

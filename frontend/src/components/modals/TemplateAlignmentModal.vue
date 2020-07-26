@@ -2,8 +2,7 @@
     <BaseModal id="templateAlignmentModal"
                :title="$t('jobs.results.templateAlignment.title')"
                size="lmd">
-        <b-form-select v-else
-                       v-if="forwardingEnabled"
+        <b-form-select v-if="forwardingEnabled && !loading"
                        v-model="selectedTool"
                        :options="toolOptions"
                        value-field="name"

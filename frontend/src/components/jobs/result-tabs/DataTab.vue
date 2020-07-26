@@ -16,7 +16,6 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
     import Logger from 'js-logger';
@@ -26,7 +25,7 @@
 
     const logger = Logger.get('DataTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'DataTab',
         components: {
             Loading,
@@ -46,10 +45,10 @@
                 return this.viewOptions.filename.replace(':jobID', this.job.jobID);
             },
             downloadEnabled(): boolean {
-                return this.viewOptions.hasOwnProperty('download');
+                return 'download' in this.viewOptions;
             },
             forwardingEnabled(): boolean {
-                return this.viewOptions.hasOwnProperty('forwarding');
+                return 'forwarding' in this.viewOptions;
             },
         },
         methods: {

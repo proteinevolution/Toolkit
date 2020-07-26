@@ -136,7 +136,7 @@ export class Reformat {
         return false;
     }
 
-    public maxLength(charLimit: number) {
+    public maxLength(charLimit: number): boolean {
         return this.seqs.length < charLimit;
     }
 
@@ -166,7 +166,7 @@ export class Reformat {
     }
 
     public onlyDashes(): boolean {
-        return this.sequences ? this.sequences.every((val: Sequence) => /^[.\-]*$/.test(val.seq)) : false;
+        return this.sequences ? this.sequences.every((val: Sequence) => /^[.-]*$/.test(val.seq)) : false;
     }
 }
 
