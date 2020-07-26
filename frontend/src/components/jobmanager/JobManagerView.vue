@@ -96,7 +96,6 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
     import {Job} from '@/types/toolkit/jobs';
     import moment from 'moment';

@@ -1,6 +1,7 @@
 <template>
     <div class="text-center img-container">
-        <div v-for="(img, index) in images">
+        <div v-for="(img, index) in images"
+             :key="'img-' + index">
             <div v-if="labels[index]"
                  class="text-left border-bottom mb-3"
                  v-text="labels[index]"></div>

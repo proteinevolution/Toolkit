@@ -70,12 +70,13 @@
                                         <hr v-if="i !== 0">
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr :key="'alignment-fasta-' + i">
                                     <td></td>
                                     <td colspan="3"
                                         v-html="al.fastaLink"></td>
                                 </tr>
-                                <tr class="font-weight-bold">
+                                <tr :key="'alignment-num-' + i"
+                                    class="font-weight-bold">
                                     <td class="no-wrap">
                                         <b-checkbox class="d-inline"
                                                     :checked="selectedItems.includes(al.num)"
@@ -85,17 +86,19 @@
                                     <td colspan="3"
                                         v-html="al.acc + ' ' + al.name"></td>
                                 </tr>
-                                <tr>
+                                <tr :key="'alignment-alinf-' + i">
                                     <td></td>
                                     <td colspan="3"
                                         v-html="$t('jobs.results.hmmer.alignmentInfo', al)"></td>
                                 </tr>
 
-                                <template v-for="alPart in wrapAlignments(al)">
-                                    <tr class="blank-row">
+                                <template v-for="(alPart, alIdx) in wrapAlignments(al)">
+                                    <tr :key="'alignment-' + i + '-blank-' + alIdx"
+                                        class="blank-row">
                                         <td></td>
                                     </tr>
                                     <tr v-if="alPart.query.seq"
+                                        :key="'alignment-' + i + '-seq-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td>Q</td>
@@ -103,6 +106,7 @@
                                         <td v-html="coloredSeq(alPart.query.seq) + alEnd(alPart.query)"></td>
                                     </tr>
                                     <tr v-if="alPart.agree"
+                                        :key="'alignment-' + i + '-agree-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td>PP</td>
@@ -110,6 +114,7 @@
                                         <td v-text="alPart.agree"></td>
                                     </tr>
                                     <tr v-if="alPart.template.seq"
+                                        :key="'alignment-' + i + '-tplseq-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td>T</td>

@@ -57,29 +57,32 @@
                                         <hr v-if="i !== 0">
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr :key="'alignment-acc-' + i">
                                     <td></td>
                                     <td colspan="3">
                                         <a @click="displayTemplateAlignment(al.template.accession)"
                                            v-text="$t('jobs.results.hhomp.templateAlignment')"></a>
                                     </td>
                                 </tr>
-                                <tr class="font-weight-bold">
+                                <tr :key="'alignment-num-' + i"
+                                    class="font-weight-bold">
                                     <td v-text="al.num + '.'"></td>
                                     <td colspan="3"
                                         v-text="al.acc + ' ' + al.name"></td>
                                 </tr>
-                                <tr>
+                                <tr :key="'alignment-alinf-' + i">
                                     <td></td>
                                     <td colspan="3"
                                         v-html="$t('jobs.results.hhomp.alignmentInfo', al)"></td>
                                 </tr>
 
-                                <template v-for="alPart in wrapAlignments(al)">
-                                    <tr class="blank-row">
+                                <template v-for="(alPart, alIdx) in wrapAlignments(al)">
+                                    <tr :key="'alignment-' + i + '-blank-' + alIdx"
+                                        class="blank-row">
                                         <td></td>
                                     </tr>
                                     <tr v-if="alPart.query.ss_conf"
+                                        :key="'alignment-' + i + '-ss_conf-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td>Q ss_conf</td>
@@ -87,6 +90,7 @@
                                         <td v-html="alPart.query.ss_conf"></td>
                                     </tr>
                                     <tr v-if="alPart.query.ss_dssp"
+                                        :key="'alignment-' + i + '-ss_dssp-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td>Q ss_pred</td>
@@ -94,6 +98,7 @@
                                         <td v-html="coloredSeqSS(alPart.query.ss_dssp)"></td>
                                     </tr>
                                     <tr v-if="alPart.query.ss_pred"
+                                        :key="'alignment-' + i + '-ss_pred-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td>Q ss_pred</td>
@@ -101,6 +106,7 @@
                                         <td v-html="coloredSeqSS(alPart.query.ss_pred)"></td>
                                     </tr>
                                     <tr v-if="alPart.query.seq"
+                                        :key="'alignment-' + i + '-seq-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td v-text="'Q ' + alPart.query.name"></td>
@@ -108,6 +114,7 @@
                                         <td v-html="coloredSeq(alPart.query.seq) + alEndRef(alPart.query)"></td>
                                     </tr>
                                     <tr v-if="alPart.query.consensus"
+                                        :key="'alignment-' + i + '-consensus-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td>Q Consensus</td>
@@ -115,6 +122,7 @@
                                         <td v-html="alPart.query.consensus + alEndRef(alPart.query)"></td>
                                     </tr>
                                     <tr v-if="alPart.agree"
+                                        :key="'alignment-' + i + '-agree-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td></td>
@@ -123,6 +131,7 @@
                                             v-text="alPart.agree"></td>
                                     </tr>
                                     <tr v-if="alPart.template.consensus"
+                                        :key="'alignment-' + i + '-tpl-cons-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td>T Consensus</td>
@@ -130,6 +139,7 @@
                                         <td v-html="alPart.template.consensus + alEndRef(alPart.template)"></td>
                                     </tr>
                                     <tr v-if="alPart.template.seq"
+                                        :key="'alignment-' + i + '-tplseq-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td v-text="'Q ' + alPart.template.accession"></td>
@@ -137,6 +147,7 @@
                                         <td v-html="coloredSeq(alPart.template.seq) + alEndRef(alPart.template)"></td>
                                     </tr>
                                     <tr v-if="alPart.template.ss_pred"
+                                        :key="'alignment-' + i + '-tplss_pred-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td>T ss_pred</td>
@@ -144,6 +155,7 @@
                                         <td v-html="coloredSeqSS(alPart.template.ss_pred)"></td>
                                     </tr>
                                     <tr v-if="alPart.template.ss_dssp"
+                                        :key="'alignment-' + i + '-tplss_dssp-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td>T ss_dssp</td>
@@ -151,6 +163,7 @@
                                         <td v-html="coloredSeqSS(alPart.template.ss_dssp)"></td>
                                     </tr>
                                     <tr v-if="alPart.template.ss_conf"
+                                        :key="'alignment-' + i + '-tplss_conf-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td>T ss_conf</td>
@@ -158,6 +171,7 @@
                                         <td v-text="alPart.template.ss_conf"></td>
                                     </tr>
                                     <tr v-if="alPart.template.bb_pred"
+                                        :key="'alignment-' + i + '-tplbb_pred-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td>T bb_pred</td>
@@ -165,13 +179,15 @@
                                         <td v-text="alPart.template.bb_pred"></td>
                                     </tr>
                                     <tr v-if="alPart.template.bb_conf"
+                                        :key="'alignment-' + i + '-tplbb_conf-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td>T bb_conf</td>
                                         <td></td>
                                         <td v-text="alPart.template.bb_conf"></td>
                                     </tr>
-                                    <tr class="blank-row">
+                                    <tr :key="'alignment-' + i + '-br-' + alIdx"
+                                        class="blank-row">
                                         <td></td>
                                     </tr>
                                 </template>

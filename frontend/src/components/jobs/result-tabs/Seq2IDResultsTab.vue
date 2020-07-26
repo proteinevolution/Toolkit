@@ -10,7 +10,8 @@
         <div class="file-view">
             <b v-text="$t('jobs.results.seq2ID.numRetrieved', {num: accIds.length})"></b>
             <br><br>
-            <div v-for="acc in accIds"
+            <div v-for="(acc, i) in accIds"
+                 :key="'accession-' + i"
                  v-text="acc"></div>
         </div>
     </div>

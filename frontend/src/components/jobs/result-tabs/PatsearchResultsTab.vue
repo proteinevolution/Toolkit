@@ -15,13 +15,13 @@
 
             <table class="alignment-table mt-3">
                 <tbody>
-                    <template v-for="hit in results.results.hits">
-                        <tr>
+                    <template v-for="(hit, i) in results.results.hits">
+                        <tr :key="'hit-name-' + i">
                             <td>
                                 <b v-text="hit.name"></b>
                             </td>
                         </tr>
-                        <tr>
+                        <tr :key="'hit-seq-' + i">
                             <td class="sequence-alignment"
                                 v-html="colorHits(hit.seq, hit.matches)">
                             <!-- @{ hit.seq.map(s => Html(Common.insertMatch(s, result.len, hit.pats.getOrElse(Nil)))) -->

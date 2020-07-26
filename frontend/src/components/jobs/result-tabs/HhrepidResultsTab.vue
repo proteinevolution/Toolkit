@@ -8,15 +8,17 @@
             <div class="result-options">
                 <a @click="forwardQueryA3M">{{ $t('jobs.results.actions.forwardQueryA3M') }}</a>
             </div>
-            <template v-for="hit in results.results.reptypes">
-                <h4 class="mb-4"
+            <template v-for="(hit, i) in results.results.reptypes">
+                <h4 :key="'hit-' + i"
+                    class="mb-4"
                     v-text="$t('jobs.results.hhrepid.resultsForType', {type: hit.typ})"></h4>
                 <img :key="hit.typ"
                      :src="getFilePath(hit.typ)"
                      class="mb-3"
                      alt="">
 
-                <table class="alignment-table mt-2">
+                <table :key="'hit-table-' + i"
+                       class="alignment-table mt-2">
                     <tbody>
                         <tr>
                             <td v-text="$t('jobs.results.hhrepid.numResults', {num: hit.num})"></td>
@@ -29,7 +31,8 @@
                         </tr>
                     </tbody>
                 </table>
-                <table class="alignment-table mt-4">
+                <table :key="'hit-table2-' + i"
+                       class="alignment-table mt-4">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -40,20 +43,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <template v-for="i in breakIndices(hit.len)">
+                        <template v-for="hitIdx in breakIndices(hit.len)">
                             <tr v-for="rep in hit.reps"
+                                :key="'hit-' + i + '-seqal-' + hitIdx + '-' + rep.id"
                                 class="sequence-alignment">
                                 <td v-text="rep.id"></td>
                                 <td v-text="rep.prob"></td>
                                 <td v-text="rep.pval"></td>
                                 <td v-text="rep.loc"></td>
-                                <td v-html="coloredSeq(rep.seq.slice(i, i + breakAfter))"></td>
+                                <td v-html="coloredSeq(rep.seq.slice(hitIdx, hitIdx + breakAfter))"></td>
                             </tr>
-                            <tr class="empty-row"></tr>
+                            <tr :key="'br-' + hitIdx"
+                                class="empty-row"></tr>
                         </template>
                     </tbody>
                 </table>
-                <br>
+                <br :key="'hit-br-' + i">
             </template>
         </div>
     </div>
