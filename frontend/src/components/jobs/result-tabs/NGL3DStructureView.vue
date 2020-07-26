@@ -1,10 +1,10 @@
 <template>
     <div>
-        <Loading :message="$t('loading')"
-                 v-if="loading"/>
+        <Loading v-if="loading"
+                 :message="$t('loading')"/>
         <div v-else>
             <div class="result-options">
-                <a @click="downloadPdb">{{$t('jobs.results.actions.downloadPDBFile')}}</a>
+                <a @click="downloadPdb">{{ $t('jobs.results.actions.downloadPDBFile') }}</a>
             </div>
         </div>
 

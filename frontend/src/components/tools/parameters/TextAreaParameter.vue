@@ -1,25 +1,22 @@
 <template>
     <div>
         <ExpandHeight>
-            <TextAreaSubComponent :parameter="parameter"
+            <TextAreaSubComponent v-model="submissionValue"
+                                  :parameter="parameter"
                                   :validation-params="validationParams"
-                                  v-model="submissionValue"
-                                  @validation="handleValidation">
-            </TextAreaSubComponent>
+                                  @validation="handleValidation"/>
         </ExpandHeight>
         <ExpandHeight>
             <TextAreaSubComponent v-if="secondTextAreaEnabled"
+                                  v-model="submissionValueTwo"
                                   :second="true"
                                   :parameter="parameter"
                                   :validation-params="validationParams"
-                                  v-model="submissionValueTwo"
-                                  @validation="handleValidationSecond">
-            </TextAreaSubComponent>
+                                  @validation="handleValidationSecond"/>
         </ExpandHeight>
         <b-form-group v-if="parameter.allowsTwoTextAreas">
             <switches v-model="secondTextAreaEnabled"
-                      :label="$t('tools.parameters.textArea.alignTwoSeqToggle')">
-            </switches>
+                      :label="$t('tools.parameters.textArea.alignTwoSeqToggle')"/>
         </b-form-group>
     </div>
 </template>

@@ -1,14 +1,13 @@
 <template>
-    <BaseModal :title="title"
-               id="verification"
+    <BaseModal id="verification"
+               :title="title"
                size="sm"
                @hide="onHide">
         <Loading v-if="loading"
                  variant="primary"
                  class="mb-2"/>
         <p v-else
-           v-text="message">
-        </p>
+           v-text="message"></p>
     </BaseModal>
 </template>
 

@@ -1,12 +1,15 @@
 <template>
-    <Loading :message="$t('loading')"
-             v-if="loading"/>
+    <Loading v-if="loading"
+             :message="$t('loading')"/>
     <div v-else>
-        <pre v-html="file"
-             class="file-view"></pre>
+        <pre class="file-view"
+             v-html="file"></pre>
         <div class="result-options">
-            <b-btn type="button" variant="primary" class="submit-button float-right"
-                   @click="forwardToModeller">{{$t('jobs.results.actions.forwardToModeller')}}
+            <b-btn type="button"
+                   variant="primary"
+                   class="submit-button float-right"
+                   @click="forwardToModeller">
+                {{ $t('jobs.results.actions.forwardToModeller') }}
             </b-btn>
         </div>
     </div>

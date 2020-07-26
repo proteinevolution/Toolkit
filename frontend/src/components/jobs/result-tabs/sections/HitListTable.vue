@@ -8,8 +8,9 @@
                    xl="3">
                 <label class="d-flex align-items-center">
                     <span v-text="$t('jobs.results.hitlist.table.perPage.show')"></span>
-                    <b-form-select v-model="perPage" :options="perPageOptions"
-                                   class="mx-2"></b-form-select>
+                    <b-form-select v-model="perPage"
+                                   :options="perPageOptions"
+                                   class="mx-2"/>
                     <span v-text="$t('jobs.results.hitlist.table.perPage.entries')"></span>
                 </label>
             </b-col>
@@ -23,7 +24,7 @@
                 <label class="d-flex align-items-center justify-content-end">
                     <span v-text="$t('jobs.results.hitlist.table.filter')"></span>
                     <div class="ml-3 flex-grow-1">
-                        <b-form-input v-model="filter"></b-form-input>
+                        <b-form-input v-model="filter"/>
                     </div>
                 </label>
             </b-col>
@@ -43,9 +44,9 @@
                  show-empty>
             <template v-slot:cell(numCheck)="data">
                 <div class="no-wrap">
-                    <b-checkbox @change="check($event, data.value)"
-                                class="d-inline"
-                                :checked="selectedItems.includes(data.value)"/>
+                    <b-checkbox class="d-inline"
+                                :checked="selectedItems.includes(data.value)"
+                                @change="check($event, data.value)"/>
                     <a @click="$emit('elem-clicked', data.value)">{{ data.value }}</a>
                 </div>
             </template>
@@ -57,21 +58,20 @@
             </template>
         </b-table>
 
-        <div class="pagination-container"
-             v-show="totalRows > perPage">
-            <span v-text="$t('jobs.results.hitlist.table.paginationInfo', {start, end, total: totalRows})"
-                  v-if="totalNoFilter === totalRows"></span>
-            <span v-text="$t('jobs.results.hitlist.table.paginationInfoFiltered',
-            {start, end, totalRows, totalNoFilter})"
-                  v-else></span>
+        <div v-show="totalRows > perPage"
+             class="pagination-container">
+            <span v-if="totalNoFilter === totalRows"
+                  v-text="$t('jobs.results.hitlist.table.paginationInfo', {start, end, total: totalRows})"></span>
+            <span v-else
+                  v-text="$t('jobs.results.hitlist.table.paginationInfoFiltered',
+                             {start, end, totalRows, totalNoFilter})"></span>
             <b-pagination
-                    v-model="currentPage"
-                    :total-rows="totalRows"
-                    :per-page="perPage"
-                    align="right"
-                    class="mb-0"
-                    aria-controls="hitListTable"
-            ></b-pagination>
+                v-model="currentPage"
+                :total-rows="totalRows"
+                :per-page="perPage"
+                align="right"
+                class="mb-0"
+                aria-controls="hitListTable"/>
         </div>
     </div>
 </template>

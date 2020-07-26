@@ -1,19 +1,16 @@
 <template>
     <div class="d-flex flex-column my-2">
-        <p v-html="$t('jobs.foundIdenticalCopy', {jobID: similarJob.jobID, createdAt: fromNow(similarJob.dateCreated)})"
-           class="text-center">
-        </p>
+        <p class="text-center"
+           v-html="$t('jobs.foundIdenticalCopy', {jobID: similarJob.jobID, createdAt: fromNow(similarJob.dateCreated)})"></p>
         <div class="d-flex flex-column flex-md-row justify-content-center mt-4 mx-md-5">
             <b-btn variant="primary"
                    class="mb-3 mb-md-0 mr-5 ml-5"
                    @click="startJob"
-                   v-text="$t('jobs.startJob')">
-            </b-btn>
+                   v-text="$t('jobs.startJob')"/>
             <b-btn variant="primary"
                    class="mr-5 ml-5"
                    @click="loadExistingJobAndDelete"
-                   v-text="$t('jobs.loadExistingJob')">
-            </b-btn>
+                   v-text="$t('jobs.loadExistingJob')"/>
         </div>
     </div>
 </template>

@@ -3,13 +3,16 @@
         <h3 class="mb-3 h5"
             v-text="$t('jobs.stateMessages.running')"></h3>
         <p v-html="$t('jobs.citationInfo', {tool: tool.longname})"></p>
-        <p class="mb-3" v-text="$t('jobs.jobIDDetails', job)"></p>
+        <p class="mb-3"
+           v-text="$t('jobs.jobIDDetails', job)"></p>
         <table v-for="logElem in runningLog"
                :key="logElem.text"
                class="job-log-element mb-2">
             <tr>
-                <td><i :class="logElem.class"
-                       class="fas text-center mr-1"></i></td>
+                <td>
+                    <i :class="logElem.class"
+                       class="fas text-center mr-1"></i>
+                </td>
                 <td>{{ logElem.text }}</td>
             </tr>
         </table>

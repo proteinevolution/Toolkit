@@ -1,10 +1,10 @@
 <template>
     <transition
-            name="expand"
-            @enter="enter"
-            @after-enter="afterEnter"
-            @leave="leave">
-        <slot/>
+        name="expand"
+        @enter="enter"
+        @after-enter="afterEnter"
+        @leave="leave">
+        <slot></slot>
     </transition>
 </template>
 

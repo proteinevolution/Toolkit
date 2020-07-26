@@ -1,8 +1,11 @@
 <template>
-    <div v-if="errorMessage" class="page-not-found">
+    <div v-if="errorMessage"
+         class="page-not-found">
         <div class="error-message border text-muted mt-5">
-            <table><i class="fas fa-exclamation-triangle pl-3"></i>
-                <span class="ml-2" v-html="$t(errorMessage)"></span>
+            <table>
+                <i class="fas fa-exclamation-triangle pl-3"></i>
+                <span class="ml-2"
+                      v-html="$t(errorMessage)"></span>
             </table>
         </div>
         <div class="border banner-area text-center scrolling-wrapper">
@@ -21,17 +24,17 @@
     export default Vue.extend({
         name: 'NotFoundView',
         mixins: [hasHTMLTitle],
-        data() {
-            return {
-                alignment: '',
-            };
-        },
         props: {
             errorMessage: {
                 type: String,
                 required: false,
                 default: 'errors.PageNotFound',
             },
+        },
+        data() {
+            return {
+                alignment: '',
+            };
         },
         computed: {
             htmlTitle() {

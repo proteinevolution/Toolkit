@@ -2,10 +2,14 @@
     <div class="index-view">
         <div class="caption-container d-none d-sm-block">
             <img :src="require('../../assets/images/Toolkit100.png')"
-                 class="img-fluid"/>
+                 class="img-fluid">
             <div class="caption d-none d-lg-block">
-                <div class="caption-header">{{ $t('index.welcomeTitle') }}</div>
-                <div class="caption-body">{{ $t('index.welcomeBody') }}</div>
+                <div class="caption-header">
+                    {{ $t('index.welcomeTitle') }}
+                </div>
+                <div class="caption-body">
+                    {{ $t('index.welcomeBody') }}
+                </div>
             </div>
         </div>
         <ToolFinder/>
@@ -22,11 +26,11 @@
 
     export default Vue.extend({
         name: 'IndexView',
-        mixins: [hasHTMLTitle],
         components: {
             ToolFinder,
             UpdatesSection,
         },
+        mixins: [hasHTMLTitle],
         watch: {
             // Use a watcher here - component cannot use 'beforeRouteEnter' because of lazy loading
             '$route.query': {

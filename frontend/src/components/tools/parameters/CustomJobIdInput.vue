@@ -4,14 +4,13 @@
                       :placeholder="$t('tools.parameters.customJobId.placeholder')"
                       aria-describedby="custom-job-id-invalid"
                       :state="valid"
-                      @input="inputChanged">
-        </b-form-input>
-        <b-form-invalid-feedback id="custom-job-id-invalid"
-                                 v-if="hasError">
-            <i18n :path="error.textKey" tag="span">
+                      @input="inputChanged"/>
+        <b-form-invalid-feedback v-if="hasError"
+                                 id="custom-job-id-invalid">
+            <i18n :path="error.textKey"
+                  tag="span">
                 <span class="suggestion-link"
-                      @click="takeSuggestion"
-                >{{ suggestion }}</span>
+                      @click="takeSuggestion">{{ suggestion }}</span>
             </i18n>
         </b-form-invalid-feedback>
     </div>

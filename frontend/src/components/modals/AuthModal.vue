@@ -1,6 +1,6 @@
 <template>
-    <BaseModal title=""
-               id="auth"
+    <BaseModal id="auth"
+               title=""
                size="sm"
                body-class="no-scroll-y"
                modal-class="tk-auth-modal">

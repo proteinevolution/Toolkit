@@ -1,61 +1,59 @@
 <template>
-    <Loading :message="$t('loading')"
-             v-if="loading || !results"/>
+    <Loading v-if="loading || !results"
+             :message="$t('loading')"/>
     <div v-else>
         <b v-if="results.results.length === 0"
-           v-html="$t('jobs.results.hhrepid.noResults')">
-        </b>
+           v-html="$t('jobs.results.hhrepid.noResults')"></b>
         <div v-else>
             <div class="result-options">
-                <a @click="forwardQueryA3M">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
+                <a @click="forwardQueryA3M">{{ $t('jobs.results.actions.forwardQueryA3M') }}</a>
             </div>
             <template v-for="hit in results.results.reptypes">
-                <h4 v-text="$t('jobs.results.hhrepid.resultsForType', {type: hit.typ})"
-                    class="mb-4"></h4>
-                <img :src="getFilePath(hit.typ)"
-                     :key="hit.typ"
+                <h4 class="mb-4"
+                    v-text="$t('jobs.results.hhrepid.resultsForType', {type: hit.typ})"></h4>
+                <img :key="hit.typ"
+                     :src="getFilePath(hit.typ)"
                      class="mb-3"
-                     alt=""/>
+                     alt="">
 
                 <table class="alignment-table mt-2">
                     <tbody>
-                    <tr>
-                        <td v-text="$t('jobs.results.hhrepid.numResults', {num: hit.num})"></td>
-                    </tr>
-                    <tr>
-                        <td v-text="$t('jobs.results.hhrepid.pValue', {pval: hit.pval})"></td>
-                    </tr>
-                    <tr>
-                        <td v-text="$t('jobs.results.hhrepid.length', {len: hit.len})"></td>
-                    </tr>
+                        <tr>
+                            <td v-text="$t('jobs.results.hhrepid.numResults', {num: hit.num})"></td>
+                        </tr>
+                        <tr>
+                            <td v-text="$t('jobs.results.hhrepid.pValue', {pval: hit.pval})"></td>
+                        </tr>
+                        <tr>
+                            <td v-text="$t('jobs.results.hhrepid.length', {len: hit.len})"></td>
+                        </tr>
                     </tbody>
                 </table>
                 <table class="alignment-table mt-4">
                     <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Prob</th>
-                        <th>P-val</th>
-                        <th>Loc</th>
-                        <th>Sequence</th>
-                    </tr>
+                        <tr>
+                            <th>ID</th>
+                            <th>Prob</th>
+                            <th>P-val</th>
+                            <th>Loc</th>
+                            <th>Sequence</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    <template v-for="i in breakIndices(hit.len)">
-                        <tr v-for="rep in hit.reps"
-                            class="sequence-alignment">
-                            <td v-text="rep.id"></td>
-                            <td v-text="rep.prob"></td>
-                            <td v-text="rep.pval"></td>
-                            <td v-text="rep.loc"></td>
-                            <td v-html="coloredSeq(rep.seq.slice(i, i + breakAfter))"></td>
-                        </tr>
-                        <tr class="empty-row"></tr>
-                    </template>
+                        <template v-for="i in breakIndices(hit.len)">
+                            <tr v-for="rep in hit.reps"
+                                class="sequence-alignment">
+                                <td v-text="rep.id"></td>
+                                <td v-text="rep.prob"></td>
+                                <td v-text="rep.pval"></td>
+                                <td v-text="rep.loc"></td>
+                                <td v-html="coloredSeq(rep.seq.slice(i, i + breakAfter))"></td>
+                            </tr>
+                            <tr class="empty-row"></tr>
+                        </template>
                     </tbody>
                 </table>
                 <br>
-
             </template>
         </div>
     </div>

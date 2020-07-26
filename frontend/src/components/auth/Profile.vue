@@ -1,55 +1,54 @@
 <template>
     <b-form @submit.prevent="onSubmit">
-
         <b-form-group :label="$t('auth.firstName')"
                       :invalid-feedback="$t('constraints.lengthMax', { max: 25 })">
             <b-form-input v-model="firstName"
                           type="text"
                           :state="firstNameState"
-                          @change="validateFirstName"
-                          :placeholder="$t('auth.firstNameEnter')">
-            </b-form-input>
+                          :placeholder="$t('auth.firstNameEnter')"
+                          @change="validateFirstName"/>
         </b-form-group>
         <b-form-group :label="$t('auth.lastName')"
                       :invalid-feedback="$t('constraints.lengthMax', { max: 25 })">
             <b-form-input v-model="lastName"
                           type="text"
                           :state="lastNameState"
-                          @change="validateLastName"
-                          :placeholder="$t('auth.lastNameEnter')">
-            </b-form-input>
+                          :placeholder="$t('auth.lastNameEnter')"
+                          @change="validateLastName"/>
         </b-form-group>
         <b-form-group :label="$t('auth.eMail')"
                       :invalid-feedback="$t('constraints.email')">
             <b-form-input v-model="eMail"
                           type="text"
                           :state="eMailState"
-                          @change="validateEmail">
-            </b-form-input>
+                          @change="validateEmail"/>
         </b-form-group>
         <b-form-group :label="$t('auth.country')">
             <b-form-select v-model="country"
                            :options="countries">
                 <template slot="first">
-                    <option :value="''" v-text="$t('auth.countrySelect')"></option>
+                    <option :value="''"
+                            v-text="$t('auth.countrySelect')"></option>
                 </template>
             </b-form-select>
         </b-form-group>
 
 
         <ExpandHeight>
-            <b-alert variant="primary" show v-if="needsConfirmation">
+            <b-alert v-if="needsConfirmation"
+                     variant="primary"
+                     :show="true">
                 <b-form-group :label="$t('auth.reenterPassword')">
                     <b-form-input v-model="password"
-                                  type="password">
-                    </b-form-input>
+                                  type="password"/>
                 </b-form-group>
-                <b-btn @click="cancel"
-                       v-text="$t('cancel')"
-                       class="mr-1"/>
+                <b-btn class="mr-1"
+                       @click="cancel"
+                       v-text="$t('cancel')"/>
                 <b-btn :disabled="!valid"
                        type="submit"
-                       v-text="$t('submit')" variant="primary"/>
+                       variant="primary"
+                       v-text="$t('submit')"/>
             </b-alert>
         </ExpandHeight>
 
@@ -57,11 +56,10 @@
                  :show="message !== ''"
                  v-text="message"/>
 
-        <b-btn @click="needsConfirmation = true"
-               v-text="$t('auth.editProfile')"
-               :type="needsConfirmation ? 'button' : 'submit'"
-               :disabled="!editButtonEnabled"/>
-
+        <b-btn :type="needsConfirmation ? 'button' : 'submit'"
+               :disabled="!editButtonEnabled"
+               @click="needsConfirmation = true"
+               v-text="$t('auth.editProfile')"/>
     </b-form>
 </template>
 

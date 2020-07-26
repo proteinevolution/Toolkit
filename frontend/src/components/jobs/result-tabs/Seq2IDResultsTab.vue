@@ -1,10 +1,10 @@
 <template>
-    <Loading :message="$t('loading')"
-             v-if="loading || !accIds"/>
+    <Loading v-if="loading || !accIds"
+             :message="$t('loading')"/>
     <div v-else>
         <div class="result-options">
-            <a @click="forwardAll">{{$t('jobs.results.actions.forwardAll')}}</a>
-            <a @click="download">{{$t('jobs.results.actions.download')}}</a>
+            <a @click="forwardAll">{{ $t('jobs.results.actions.forwardAll') }}</a>
+            <a @click="download">{{ $t('jobs.results.actions.download') }}</a>
         </div>
 
         <div class="file-view">

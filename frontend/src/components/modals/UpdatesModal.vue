@@ -1,6 +1,6 @@
 <template>
-    <BaseModal :title="$t('footerLinkModals.titles.updates')"
-               id="updates">
+    <BaseModal id="updates"
+               :title="$t('footerLinkModals.titles.updates')">
         <div v-for="(update, index) in updates"
              :key="update.date"
              class="update-item">

@@ -1,6 +1,6 @@
 <template>
-    <BaseModal :title="$t('auth.resetPassword')"
-               id="resetPassword"
+    <BaseModal id="resetPassword"
+               :title="$t('auth.resetPassword')"
                size="sm">
         <b-form @submit.prevent="resetPassword">
             <b-form-group :label="$t('auth.enterNewPassword')"
@@ -8,26 +8,23 @@
                 <b-form-input v-model="newPassword"
                               type="password"
                               :state="newPasswordState"
-                              @change="validateNewPassword"
-                              :placeholder="$t('auth.newPassword')">
-                </b-form-input>
+                              :placeholder="$t('auth.newPassword')"
+                              @change="validateNewPassword"/>
             </b-form-group>
             <b-form-group :invalid-feedback="$t('constraints.passwordsMatch')">
                 <b-form-input v-model="confirmPassword"
                               type="password"
                               :state="confirmPasswordState"
-                              @change="validateConfirmPassword"
-                              :placeholder="$t('auth.confirmPassword')">
-                </b-form-input>
+                              :placeholder="$t('auth.confirmPassword')"
+                              @change="validateConfirmPassword"/>
             </b-form-group>
             <b-alert variant="danger"
                      :show="message !== ''"
                      v-text="message"/>
-            <b-btn v-text="$t('auth.resetPassword')"
-                   :disabled="!valid"
+            <b-btn :disabled="!valid"
                    variant="primary"
-                   type="submit">
-            </b-btn>
+                   type="submit"
+                   v-text="$t('auth.resetPassword')"/>
         </b-form>
     </BaseModal>
 </template>

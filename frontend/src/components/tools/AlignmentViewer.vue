@@ -7,6 +7,8 @@
 </template>
 
 <script lang="ts">
+    /*global msa*/
+
     import Vue from 'vue';
     import {MSAViewerSeq} from '@/types/toolkit/tools';
     import Logger from 'js-logger';
@@ -22,6 +24,7 @@
             sequences: {
                 type: [String, Array],
                 required: false,
+                default: undefined,
             },
             format: {
                 type: String,
@@ -55,6 +58,22 @@
                         logger.error(`invalid type for sequences "${t}"`);
                         return undefined;
                 }
+            },
+        },
+        watch: {
+            seqs: {
+                immediate: true,
+                handler(seqs: MSAViewerSeq[] | undefined): void {
+                    if (!seqs) {
+                        return;
+                    }
+                    if (this.msaViewer) {
+                        // Simply update when modified sequences are re-submitted
+                        this.msaViewer.seqs.reset(seqs);
+                    } else {
+                        this.buildMSAViewer(seqs);
+                    }
+                },
             },
         },
         mounted() {
@@ -129,22 +148,6 @@
                     this.msaViewer.g.zoomer.set('alignmentHeight', this.fullScreen ? window.innerHeight - 500 : 300);
                     this.msaViewer.g.zoomer.set('alignmentWidth', parent.offsetWidth - 180);
                 }
-            },
-        },
-        watch: {
-            seqs: {
-                immediate: true,
-                handler(seqs: MSAViewerSeq[] | undefined): void {
-                    if (!seqs) {
-                        return;
-                    }
-                    if (this.msaViewer) {
-                        // Simply update when modified sequences are re-submitted
-                        this.msaViewer.seqs.reset(seqs);
-                    } else {
-                        this.buildMSAViewer(seqs);
-                    }
-                },
             },
         },
     });

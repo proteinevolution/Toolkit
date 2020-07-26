@@ -1,28 +1,30 @@
 <template>
     <b-form-group :label="$t('tools.parameters.labels.' + parameter.name)">
-
         <multiselect v-model="selected"
                      :multiple="isMulti"
                      :max="isMulti ? parameter.maxSelectedOptions : null"
-                     :allowEmpty="isMulti"
+                     :allow-empty="isMulti"
                      :options="parameter.options"
-                     :optionsLimit="optionsLimit"
+                     :options-limit="optionsLimit"
                      track-by="value"
                      label="text"
                      :placeholder="$t(isMulti ? 'tools.parameters.select.multiplePlaceholder' : 'tools.parameters.select.singlePlaceholder')"
                      :searchable="true"
-                     :showNoResults="false"
+                     :show-no-results="false"
                      :disabled="disabled"
-                     selectLabel=""
-                     deselectLabel=""
-                     selectedLabel=""
+                     select-label=""
+                     deselect-label=""
+                     selected-label=""
                      :class="{nonDefault: !disabled && isNonDefaultValue}">
-            <template #maxElements>{{ $t(maxElementTextKey) }}</template>
-            <template slot="option" slot-scope="{ option }" v-if="parameter.default === option.value">
+            <template #maxElements>
+                {{ $t(maxElementTextKey) }}
+            </template>
+            <template v-if="parameter.default === option.value"
+                      slot="option"
+                      slot-scope="{ option }">
                 {{ option.text }} (default)
             </template>
         </multiselect>
-
     </b-form-group>
 </template>
 

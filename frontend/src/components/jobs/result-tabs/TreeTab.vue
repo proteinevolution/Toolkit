@@ -1,15 +1,15 @@
 <template>
-    <Loading :message="$t('loading')"
-             v-if="loading"/>
+    <Loading v-if="loading"
+             :message="$t('loading')"/>
     <div v-else>
         <div class="result-options d-flex align-items-center">
-            <b-form-select @input="updateTree"
-                           v-model="treeOpts.tree.layoutInput"
+            <b-form-select v-model="treeOpts.tree.layoutInput"
                            :options="layoutOptions"
                            size="sm"
-                           class="w-auto"/>
-            <a @click="download"
-               class="ml-auto">{{$t('jobs.results.actions.downloadTree')}}</a>
+                           class="w-auto"
+                           @input="updateTree"/>
+            <a class="ml-auto"
+               @click="download">{{ $t('jobs.results.actions.downloadTree') }}</a>
         </div>
 
         <div ref="treeContainer"></div>

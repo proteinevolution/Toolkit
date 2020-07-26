@@ -3,22 +3,22 @@
         <div v-for="item in items"
              :key="item.title"
              class="card mb-2">
-            <b-card-header class="p-1 header" role="tab">
-                <b-btn block
+            <b-card-header class="p-1 header"
+                           role="tab">
+                <b-btn v-b-toggle="item.title"
+                       block
                        href="#"
-                       v-b-toggle="item.title"
                        variant="link"
                        class="button">
-                        <i class="icon fas fa-angle-right mr-2"></i>
+                    <i class="icon fas fa-angle-right mr-2"></i>
                     <b>{{ item.title }}</b>
                 </b-btn>
             </b-card-header>
             <b-collapse :id="item.title"
                         accordion="my-accordion"
                         role="tabpanel">
-                    <div v-html="item.content"
-                         class="content">
-                    </div>
+                <div class="content"
+                     v-html="item.content"></div>
             </b-collapse>
         </div>
     </div>

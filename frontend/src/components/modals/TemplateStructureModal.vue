@@ -1,13 +1,13 @@
 <template>
-    <BaseModal :title="$t('jobs.results.templateStructure.title', {accession})"
-               id="templateStructureModal"
+    <BaseModal id="templateStructureModal"
+               :title="$t('jobs.results.templateStructure.title', {accession})"
                size="lmd"
                :static="true"
                :lazy="false"
                @shown="onShow"
                @hide="resetView">
-        <Loading :message="$t('loading')"
-                 v-if="loading"/>
+        <Loading v-if="loading"
+                 :message="$t('loading')"/>
 
         <!-- refs are only accessible when in DOM => don't hide -->
         <div ref="viewport"
@@ -60,7 +60,7 @@
                     return;
                 }
                 const width: number = (viewport.parentElement as HTMLElement).clientWidth;
-                const height: number = 500;
+                const height = 500;
                 viewport.style.height = height + 'px';
                 viewport.style.width = width + 'px';
                 this.stage.setSize(width, height);

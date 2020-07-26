@@ -1,17 +1,17 @@
 <template>
-    <Loading :message="$t('loading')"
-             v-if="loading"/>
+    <Loading v-if="loading"
+             :message="$t('loading')"/>
     <div v-else>
-        <div class="result-options"
-             v-if="downloadEnabled || forwardingEnabled">
-            <a @click="download"
-               v-if="downloadEnabled">{{$t('jobs.results.actions.download')}}</a>
-            <a @click="forwardAll"
-               v-if="forwardingEnabled">{{$t('jobs.results.actions.forwardAll')}}</a>
+        <div v-if="downloadEnabled || forwardingEnabled"
+             class="result-options">
+            <a v-if="downloadEnabled"
+               @click="download">{{ $t('jobs.results.actions.download') }}</a>
+            <a v-if="forwardingEnabled"
+               @click="forwardAll">{{ $t('jobs.results.actions.forwardAll') }}</a>
         </div>
 
-        <pre v-html="file"
-             class="file-view"></pre>
+        <pre class="file-view"
+             v-html="file"></pre>
     </div>
 </template>
 

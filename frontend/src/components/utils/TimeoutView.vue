@@ -1,5 +1,5 @@
 <template>
-    <NotFoundView :errorMessage="'Connection Timeout!'"></NotFoundView>
+    <NotFoundView :error-message="'Connection Timeout!'"/>
 </template>
 
 <script lang="ts">
@@ -9,10 +9,10 @@
 
     export default Vue.extend({
         name: 'TimeoutView',
-        mixins: [hasHTMLTitle],
         components: {
             NotFoundView,
         },
+        mixins: [hasHTMLTitle],
         computed: {
             htmlTitle() {
                 return 'Timeout';

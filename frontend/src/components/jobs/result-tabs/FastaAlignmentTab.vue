@@ -1,20 +1,27 @@
 <template>
-    <Loading :message="$t('jobs.results.alignment.loadingHits')"
-             v-if="loading || !alignments"/>
+    <Loading v-if="loading || !alignments"
+             :message="$t('jobs.results.alignment.loadingHits')"/>
     <div v-else>
         <div class="result-options">
-            <a @click="toggleAllSelected" :class="{active: allSelected}">
-                {{$t('jobs.results.actions.selectAll')}}</a>
-            <a @click="forwardSelected" :disabled="selected.length === 0">
-                {{$t('jobs.results.actions.forwardSelected')}}</a>
-            <a v-if="!isReduced" @click="download(downloadFilenameMSA, downloadFileMSA)">
-                {{$t('jobs.results.actions.downloadMSA')}}</a>
-            <a v-if="isReduced" @click="download(downloadFilenameReducedA3M, downloadFileReducedA3M)">
-                {{$t('jobs.results.actions.downloadReducedA3M')}}</a>
-            <a v-if="isReduced" @click="download(downloadFilenameFullA3M, downloadFileFullA3M)">
-                {{$t('jobs.results.actions.downloadFullA3M')}}</a>
-            <a v-if="!isReduced" :href="downloadMSAFilePath" target="_blank">
-                {{$t('jobs.results.actions.exportMSA')}}</a>
+            <a :class="{active: allSelected}"
+               @click="toggleAllSelected">
+                {{ $t('jobs.results.actions.selectAll') }}</a>
+            <a :disabled="selected.length === 0"
+               @click="forwardSelected">
+                {{ $t('jobs.results.actions.forwardSelected') }}</a>
+            <a v-if="!isReduced"
+               @click="download(downloadFilenameMSA, downloadFileMSA)">
+                {{ $t('jobs.results.actions.downloadMSA') }}</a>
+            <a v-if="isReduced"
+               @click="download(downloadFilenameReducedA3M, downloadFileReducedA3M)">
+                {{ $t('jobs.results.actions.downloadReducedA3M') }}</a>
+            <a v-if="isReduced"
+               @click="download(downloadFilenameFullA3M, downloadFileFullA3M)">
+                {{ $t('jobs.results.actions.downloadFullA3M') }}</a>
+            <a v-if="!isReduced"
+               :href="downloadMSAFilePath"
+               target="_blank">
+                {{ $t('jobs.results.actions.exportMSA') }}</a>
         </div>
 
         <div class="alignment-results mb-4">
@@ -22,32 +29,31 @@
             <div class="table-responsive">
                 <table>
                     <tbody>
-                    <template v-for="(elem, index) in alignments">
-                        <tr :key="'header' + elem.num">
-                            <td class="d-flex align-items-center">
-                                <b-form-checkbox :checked="selected.includes(elem.num)"
-                                                 @change="selectedChanged(elem.num)"/>
-                                <b v-text="index+1 + '.'"
-                                   class="ml-2"></b>
-                            </td>
-                            <td class="accession">
-                                <b v-text="elem.accession"></b>
-                            </td>
-                        </tr>
-                        <tr v-for="(part, partI) in elem.seq.match(/.{1,95}/g)"
-                            :key="'sequence' + elem.num + '-' + partI">
-                            <td></td>
-                            <td v-text="part"
-                                class="sequence">
-                            </td>
-                        </tr>
-                    </template>
+                        <template v-for="(elem, index) in alignments">
+                            <tr :key="'header' + elem.num">
+                                <td class="d-flex align-items-center">
+                                    <b-form-checkbox :checked="selected.includes(elem.num)"
+                                                     @change="selectedChanged(elem.num)"/>
+                                    <b class="ml-2"
+                                       v-text="index+1 + '.'"></b>
+                                </td>
+                                <td class="accession">
+                                    <b v-text="elem.accession"></b>
+                                </td>
+                            </tr>
+                            <tr v-for="(part, partI) in elem.seq.match(/.{1,95}/g)"
+                                :key="'sequence' + elem.num + '-' + partI">
+                                <td></td>
+                                <td class="sequence"
+                                    v-text="part"></td>
+                            </tr>
+                        </template>
                     </tbody>
                 </table>
             </div>
             <div v-if="alignments.length !== total">
-                <Loading :message="$t('jobs.results.alignment.loadingHits')"
-                         v-if="loadingMore"
+                <Loading v-if="loadingMore"
+                         :message="$t('jobs.results.alignment.loadingHits')"
                          justify="center"
                          class="mt-4"/>
                 <intersection-observer @intersect="intersected"/>

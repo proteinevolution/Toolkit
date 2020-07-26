@@ -1,16 +1,16 @@
 <template>
-    <Loading :message="$t('loading')"
-             v-if="loading"/>
-    <div v-else class="font-small">
+    <Loading v-if="loading"
+             :message="$t('loading')"/>
+    <div v-else
+         class="font-small">
         <b v-if="results.vals.length === 0"
-           v-html="$t('jobs.results.plot.noResults')">
-        </b>
-        <div class="high-chart-container"
-             v-else>
+           v-html="$t('jobs.results.plot.noResults')"></b>
+        <div v-else
+             class="high-chart-container">
             <div v-html="$t('jobs.results.plot.numHits', {num: results.vals.length})"></div>
             <br><br>
             <highcharts :options="chartOptions"
-                        class="high-chart"></highcharts>
+                        class="high-chart"/>
         </div>
     </div>
 </template>

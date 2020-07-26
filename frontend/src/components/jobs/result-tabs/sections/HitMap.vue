@@ -1,14 +1,14 @@
 <template>
-    <Loading :message="$t('loading')"
-             v-if="!hitMap"/>
+    <Loading v-if="!hitMap"
+             :message="$t('loading')"/>
     <div v-else
          class="px-lg-5">
         <div class="px-2 mb-3 hit-slider">
             <b-btn variant="secondary"
                    class="ml-auto mb-2"
-                   v-text="$t('jobs.results.hitlist.resubmitSection')"
+                   size="sm"
                    @click="resubmitSection"
-                   size="sm"/>
+                   v-text="$t('jobs.results.hitlist.resubmitSection')"/>
             <div class="mt-3 px-2">
                 <vue-slider ref="slider"
                             v-model="resubmitSelection"
@@ -28,19 +28,18 @@
                       :coords="coords(area)"
                       @click="$emit('elem-clicked', area.num)"
                       @mouseenter="onMouseEnter(area)"
-                      @mouseleave="onMouseLeave(area)"/>
+                      @mouseleave="onMouseLeave(area)">
             </map>
             <div class="tooltip bs-tooltip-bottom"
                  :class="[hoverElem !== undefined ? 'show' : '']"
                  :style="toolTipPosition">
                 <div class="arrow"></div>
                 <div class="tooltip-inner"
-                     v-text="toolTipText">
-                </div>
+                     v-text="toolTipText"></div>
             </div>
-            <img :src="hitMapImgPath"
+            <img ref="blastMapImg"
+                 :src="hitMapImgPath"
                  alt="Hits"
-                 ref="blastMapImg"
                  usemap="#hitMap">
         </div>
     </div>

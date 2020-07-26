@@ -1,6 +1,6 @@
 <template>
-    <b-modal centered
-             :id="id"
+    <b-modal :id="id"
+             centered
              hide-header
              hide-footer
              no-fade
@@ -16,14 +16,13 @@
              @shown="$emit('shown')">
         <slot name="header">
             <div class="tk-modal-header">
-            <span class="tk-modal-title"
-                  v-html="title">
-            </span>
+                <span class="tk-modal-title"
+                      v-html="title"></span>
 
                 <span class="tk-modal-close"
                       @click="$root.$emit('bv::hide::modal',id)">
-                &times;
-            </span>
+                    &times;
+                </span>
             </div>
         </slot>
         <slot name="body">

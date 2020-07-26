@@ -1,16 +1,15 @@
 <template>
     <tool-view v-if="job"
-               isJobView
+               is-job-view
                :job="job"
                @delete-job="deleteJob">
-
         <template #job-details>
             <small class="text-muted mr-2"
                    v-text="$t('jobs.details.jobID', {jobID})"></small>
-            <i18n path="jobs.details.parentID"
+            <i18n v-if="job.parentID"
+                  path="jobs.details.parentID"
                   tag="small"
-                  class="text-muted mr-2"
-                  v-if="job.parentID">
+                  class="text-muted mr-2">
                 <a class="cursor-pointer text-primary"
                    @click="goToParent"
                    v-text="job.parentID"></a>
@@ -19,9 +18,8 @@
                    v-text="$t('jobs.details.dateCreated', {dateCreated})"></small>
         </template>
 
-        <template #job-tabs="{fullScreen}"
-                  v-if="job.status === JobState.Done && job.views">
-
+        <template v-if="job.status === JobState.Done && job.views"
+                  #job-tabs="{fullScreen}">
             <b-tab v-for="(jobViewOptions, index) in job.views"
                    :key="'jobview-' + index"
                    :title="$t('jobs.results.titles.' + (jobViewOptions.title || jobViewOptions.component))"
@@ -33,15 +31,13 @@
                            :view-options="jobViewOptions"
                            :full-screen="fullScreen"
                            :render-on-create="index === 0"
-                           :tool="tool"></component>
+                           :tool="tool"/>
 
                 <tool-citation-info :tool="tool"/>
             </b-tab>
-
         </template>
-        <template #job-tabs
-                  v-else>
-
+        <template v-else
+                  #job-tabs>
             <b-tab :title="$t('jobs.states.' + job.status)"
                    active>
                 <job-prepared-tab v-if="job.status === JobState.Prepared"
@@ -66,12 +62,10 @@
                     Error!
                 </span>
             </b-tab>
-
         </template>
-
     </tool-view>
     <not-found-view v-else
-                    :errorMessage="errorMessage"/>
+                    :error-message="errorMessage"/>
 </template>
 
 <script lang="ts">
@@ -172,10 +166,6 @@
                 return this.$store.getters['auth/loggedIn'];
             },
         },
-        created() {
-            logger.debug(`created JobView with jobID ${this.jobID}`);
-            this.loadJobDetails(this.jobID);
-        },
         watch: {
             // Use a watcher here - component cannot use 'beforeRouteUpdate' because of lazy loading
             $route(to, from) {
@@ -196,6 +186,10 @@
                         });
                 }
             },
+        },
+        created() {
+            logger.debug(`created JobView with jobID ${this.jobID}`);
+            this.loadJobDetails(this.jobID);
         },
         methods: {
             deleteJob() {

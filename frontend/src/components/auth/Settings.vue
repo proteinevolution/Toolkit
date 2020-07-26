@@ -3,32 +3,28 @@
         <b-form-group :label="$t('auth.changePassword')">
             <b-form-input v-model="oldPassword"
                           type="password"
-                          :placeholder="$t('auth.oldPassword')">
-            </b-form-input>
+                          :placeholder="$t('auth.oldPassword')"/>
         </b-form-group>
         <b-form-group :invalid-feedback="$t('constraints.password')">
             <b-form-input v-model="newPassword"
                           type="password"
                           :state="newPasswordState"
-                          @change="validateNewPassword"
-                          :placeholder="$t('auth.newPassword')">
-            </b-form-input>
+                          :placeholder="$t('auth.newPassword')"
+                          @change="validateNewPassword"/>
         </b-form-group>
         <b-form-group :invalid-feedback="$t('constraints.passwordsMatch')">
             <b-form-input v-model="confirmPassword"
                           type="password"
                           :state="confirmPasswordState"
-                          @change="validateConfirmPassword"
-                          :placeholder="$t('auth.confirmPassword')">
-            </b-form-input>
+                          :placeholder="$t('auth.confirmPassword')"
+                          @change="validateConfirmPassword"/>
         </b-form-group>
         <b-alert :variant="successful ? 'info' : 'danger'"
                  :show="message !== ''"
                  v-text="message"/>
-        <b-btn v-text="$t('auth.changePassword')"
-               :disabled="!valid"
-               type="submit">
-        </b-btn>
+        <b-btn :disabled="!valid"
+               type="submit"
+               v-text="$t('auth.changePassword')"/>
     </b-form>
 </template>
 

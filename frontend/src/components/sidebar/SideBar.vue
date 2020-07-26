@@ -1,6 +1,6 @@
 <template>
     <div class="side-bar">
-        <SearchField targetClass="form-control-sm form-control-gray"></SearchField>
+        <SearchField target-class="form-control-sm form-control-gray"/>
         <JobList/>
     </div>
 </template>

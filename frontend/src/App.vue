@@ -1,13 +1,12 @@
 <template>
     <div class="toolkit">
         <VelocityFade>
-            <LoadingView v-if="$store.state.loading.tools">
-            </LoadingView>
+            <LoadingView v-if="$store.state.loading.tools"/>
             <b-container v-else
                          class="main-container">
                 <OffscreenMenu/>
                 <b-row>
-                    <Header></Header>
+                    <Header/>
                 </b-row>
                 <b-row class="pt-3 mb-2 main-content"
                        :class="[showJobList ? 'job-list-visible' : '']">
@@ -24,7 +23,7 @@
                     </b-col>
                 </b-row>
                 <b-row>
-                    <Footer></Footer>
+                    <Footer/>
                 </b-row>
             </b-container>
         </VelocityFade>
@@ -34,16 +33,16 @@
             <AuthModal/>
             <FooterLinkModal :modal="modalProps.modal"/>
             <UpdatesModal/>
-            <HelpModal :toolName="modalProps.toolName"/>
+            <HelpModal :tool-name="modalProps.toolName"/>
             <ForwardingModal :forwarding-data="modalProps.forwardingData"
-                             :forwardingMode="modalProps.forwardingMode"
+                             :forwarding-mode="modalProps.forwardingMode"
                              :forwarding-job-i-d="modalProps.forwardingJobID"
                              :forwarding-api-options="modalProps.forwardingApiOptions"
                              :forwarding-api-options-alignment="modalProps.forwardingApiOptionsAlignment"
                              @hidden="clearForwardingModalData"/>
             <TemplateAlignmentModal :job-i-d="modalProps.jobID"
                                     :accession="modalProps.accession"
-                                    :forwardingMode="modalProps.forwardingMode"/>
+                                    :forwarding-mode="modalProps.forwardingMode"/>
             <TemplateStructureModal :accession="modalProps.accessionStructure"/>
             <VerificationModal/>
             <ResetPasswordModal/>
@@ -59,13 +58,13 @@
                       tag="div"
                       class="Cookie__content">
                     <b class="cursor-pointer"
-                       v-text="$t('cookieLaw.privacyLink')"
-                       @click="showModal({id: 'footerLink', props: {modal: 'privacy'}})"></b>
+                       @click="showModal({id: 'footerLink', props: {modal: 'privacy'}})"
+                       v-text="$t('cookieLaw.privacyLink')"></b>
                 </i18n>
                 <div class="Cookie__buttons">
                     <button class="Cookie__button"
-                            v-text="$t('cookieLaw.accept')"
-                            @click="props.accept"></button>
+                            @click="props.accept"
+                            v-text="$t('cookieLaw.accept')"></button>
                 </div>
             </template>
         </cookie-law>

@@ -6,12 +6,10 @@
                           type="text"
                           size="sm"
                           :state="submissionValue.length > 0 ? valid : null"
-                          required>
-            </b-form-input>
+                          required/>
         </b-form-group>
         <p v-else
-           v-text="$t('tools.parameters.modellerKey.stored')">
-        </p>
+           v-text="$t('tools.parameters.modellerKey.stored')"></p>
     </div>
 </template>
 

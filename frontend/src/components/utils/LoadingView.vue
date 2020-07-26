@@ -1,6 +1,7 @@
 <template>
     <div class="loading-view">
-        <img :src="require('../../assets/images/minlogo.svg')" alt="MPI Bioinformatics Toolkit"/>
+        <img :src="require('../../assets/images/minlogo.svg')"
+             alt="MPI Bioinformatics Toolkit">
     </div>
 </template>
 

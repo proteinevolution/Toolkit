@@ -1,8 +1,8 @@
 <template>
-    <Loading :message="$t('loading')"
-             v-if="loading"/>
+    <Loading v-if="loading"
+             :message="$t('loading')"/>
     <div v-else>
-        <h5>Protein ID: {{header}}</h5>
+        <h5>Protein ID: {{ header }}</h5>
 
         <div v-if="results && results.results.signal === 'yes'">
             <br>
@@ -15,27 +15,27 @@
         <div class="table-responsive">
             <table class="alignment-table">
                 <tbody>
-                <template v-for="i in brokenQuery.length">
-                    <tr>
-                        <td>AA_QUERY</td>
-                        <td v-text="(i - 1) * breakAfter + 1"></td>
-                        <td>
-                        <span class="sequence"
-                              v-text="brokenQuery[i - 1]"></span>
-                            <span v-text="'   ' + min(i * breakAfter, results.query.sequence.length)"></span>
-                        </td>
-                    </tr>
-                    <tr v-for="(value, key) in subTools"
-                        v-if="brokenResults[key]">
-                        <td v-text="value"></td>
-                        <td></td>
-                        <td v-html="brokenResults[key][i - 1]"></td>
-                        <td></td>
-                    </tr>
-                    <tr class="empty-row">
-                        <td colspan="4"></td>
-                    </tr>
-                </template>
+                    <template v-for="i in brokenQuery.length">
+                        <tr>
+                            <td>AA_QUERY</td>
+                            <td v-text="(i - 1) * breakAfter + 1"></td>
+                            <td>
+                                <span class="sequence"
+                                      v-text="brokenQuery[i - 1]"></span>
+                                <span v-text="'   ' + min(i * breakAfter, results.query.sequence.length)"></span>
+                            </td>
+                        </tr>
+                        <tr v-for="(value, key) in subTools"
+                            v-if="brokenResults[key]">
+                            <td v-text="value"></td>
+                            <td></td>
+                            <td v-html="brokenResults[key][i - 1]"></td>
+                            <td></td>
+                        </tr>
+                        <tr class="empty-row">
+                            <td colspan="4"></td>
+                        </tr>
+                    </template>
                 </tbody>
             </table>
         </div>
