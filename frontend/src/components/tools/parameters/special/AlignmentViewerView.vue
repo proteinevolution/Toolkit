@@ -5,13 +5,13 @@
                              class="textarea-input break-all"
                              :placeholder="$t('tools.inputPlaceholder.' + parameter.placeholderKey)"
                              cols="70"
-                             spellcheck="false"/>
+                             spellcheck="false" />
             <b-button-group size="sm"
                             class="mt-1 mb-3">
                 <b-btn variant="link"
                        @click="handlePasteExample">
                     <loading v-if="$store.state.loading.alignmentTextarea"
-                             :size="20"/>
+                             :size="20" />
                     <span v-else
                           v-text="$t('tools.parameters.textArea.pasteExample')"></span>
                 </b-btn>
@@ -20,18 +20,18 @@
                      :show="true"
                      variant="success"
                      class="validation-alert mb-0"
-                     v-html="$t('tools.reformat.detectedFormat', {format: detectedFormat})"/>
+                     v-html="$t('tools.reformat.detectedFormat', {format: detectedFormat})" />
             <b-alert v-if="!detectedFormat && input"
                      :show="true"
                      variant="danger"
                      class="validation-alert mb-0"
-                     v-html="$t('tools.reformat.invalidFormat')"/>
+                     v-html="$t('tools.reformat.invalidFormat')" />
         </b-form-group>
         <b-btn class="submit-button float-right"
                :disabled="!detectedFormat"
                variant="primary"
                @click="showAlignment"
-               v-text="$t('tools.alignmentViewer.viewAlignment')"/>
+               v-text="$t('tools.alignmentViewer.viewAlignment')" />
     </div>
 </template>
 

@@ -9,22 +9,22 @@
                               type="password"
                               :state="newPasswordState"
                               :placeholder="$t('auth.newPassword')"
-                              @change="validateNewPassword"/>
+                              @change="validateNewPassword" />
             </b-form-group>
             <b-form-group :invalid-feedback="$t('constraints.passwordsMatch')">
                 <b-form-input v-model="confirmPassword"
                               type="password"
                               :state="confirmPasswordState"
                               :placeholder="$t('auth.confirmPassword')"
-                              @change="validateConfirmPassword"/>
+                              @change="validateConfirmPassword" />
             </b-form-group>
             <b-alert variant="danger"
                      :show="message !== ''"
-                     v-text="message"/>
+                     v-text="message" />
             <b-btn :disabled="!valid"
                    variant="primary"
                    type="submit"
-                   v-text="$t('auth.resetPassword')"/>
+                   v-text="$t('auth.resetPassword')" />
         </b-form>
     </BaseModal>
 </template>

@@ -5,13 +5,13 @@
                          :placeholder="$t('tools.inputPlaceholder.' + parameter.placeholderKey)"
                          cols="70"
                          spellcheck="false"
-                         @input="clearOutput"/>
+                         @input="clearOutput" />
         <b-button-group size="sm"
                         class="mt-1 mb-3">
             <b-btn variant="link"
                    @click="handlePasteExample">
                 <loading v-if="$store.state.loading.alignmentTextarea"
-                         :size="20"/>
+                         :size="20" />
                 <span v-else
                       v-text="$t('tools.parameters.textArea.pasteExample')"></span>
             </b-btn>
@@ -20,7 +20,7 @@
                  :show="true"
                  variant="success"
                  class="validation-alert mb-0"
-                 v-html="$t('tools.reformat.detectedFormat', {format: detectedFormat})"/>
+                 v-html="$t('tools.reformat.detectedFormat', {format: detectedFormat})" />
         <b-row align-h="center"
                class="mb-3">
             <b-col cols="12"
@@ -36,7 +36,7 @@
                              select-label=""
                              deselect-label=""
                              selected-label=""
-                             @select="computeOutput"/>
+                             @select="computeOutput" />
             </b-col>
         </b-row>
         <div v-if="output">
@@ -44,7 +44,7 @@
                              class="textarea-output break-all"
                              cols="70"
                              spellcheck="false"
-                             readonly/>
+                             readonly />
             <div class="halign-center-wrapper mt-2">
                 <b-button-group class="mt-2 output-button-group">
                     <b-dropdown :text="$t('tools.reformat.forwardTo')"

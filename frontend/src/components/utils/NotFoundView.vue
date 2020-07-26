@@ -84,7 +84,6 @@
 </script>
 
 <style lang="scss">
-
     .error-message {
         border-radius: $global-radius;
         height: 45px;

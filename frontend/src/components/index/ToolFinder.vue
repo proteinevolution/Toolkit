@@ -35,10 +35,10 @@
                 <b-col :class="'status-' + currentJobStatus"
                        class="traffic-bar"
                        cols="12"
-                       @click="goToCurrentJob"/>
+                       @click="goToCurrentJob" />
                 <b-col class="search-field-container"
                        cols="12">
-                    <SearchField :placeholder="$t('index.searchPlaceholder')"/>
+                    <SearchField :placeholder="$t('index.searchPlaceholder')" />
                 </b-col>
             </b-row>
         </div>

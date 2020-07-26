@@ -1,6 +1,6 @@
 <template>
     <b-form-group :label="$t('tools.parameters.labels.' + parameter.name)">
-        <switches v-model="submissionValue"/>
+        <switches v-model="submissionValue" />
     </b-form-group>
 </template>
 
@@ -43,7 +43,3 @@
         },
     });
 </script>
-
-<style lang="scss" scoped>
-
-</style>

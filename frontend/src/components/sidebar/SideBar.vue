@@ -1,7 +1,7 @@
 <template>
     <div class="side-bar">
-        <SearchField target-class="form-control-sm form-control-gray"/>
-        <JobList/>
+        <SearchField target-class="form-control-sm form-control-gray" />
+        <JobList />
     </div>
 </template>
 

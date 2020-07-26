@@ -1,5 +1,5 @@
 <template>
-    <NotFoundView :error-message="'Connection Timeout!'"/>
+    <NotFoundView :error-message="'Connection Timeout!'" />
 </template>
 
 <script lang="ts">
@@ -20,7 +20,3 @@
         },
     });
 </script>
-
-<style lang="scss" scoped>
-
-</style>

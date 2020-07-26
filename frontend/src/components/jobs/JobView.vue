@@ -31,9 +31,9 @@
                            :view-options="jobViewOptions"
                            :full-screen="fullScreen"
                            :render-on-create="index === 0"
-                           :tool="tool"/>
+                           :tool="tool" />
 
-                <tool-citation-info :tool="tool"/>
+                <tool-citation-info :tool="tool" />
             </b-tab>
         </template>
         <template v-else
@@ -42,22 +42,22 @@
                    active>
                 <job-prepared-tab v-if="job.status === JobState.Prepared"
                                   :tool="tool"
-                                  :job="job"/>
+                                  :job="job" />
                 <job-queued-tab v-else-if="job.status === JobState.Queued"
                                 :tool="tool"
-                                :job="job"/>
+                                :job="job" />
                 <job-running-tab v-else-if="job.status === JobState.Running"
                                  :tool="tool"
-                                 :job="job"/>
+                                 :job="job" />
                 <job-error-tab v-else-if="job.status === JobState.Error"
                                :tool="tool"
-                               :job="job"/>
+                               :job="job" />
                 <job-submitted-tab v-else-if="job.status === JobState.Submitted"
                                    :tool="tool"
-                                   :job="job"/>
+                                   :job="job" />
                 <job-pending-tab v-else-if="job.status === JobState.Pending"
                                  :tool="tool"
-                                 :job="job"/>
+                                 :job="job" />
                 <span v-else>
                     Error!
                 </span>
@@ -65,7 +65,7 @@
         </template>
     </tool-view>
     <not-found-view v-else
-                    :error-message="errorMessage"/>
+                    :error-message="errorMessage" />
 </template>
 
 <script lang="ts">

@@ -3,28 +3,28 @@
         <b-form-group :label="$t('auth.changePassword')">
             <b-form-input v-model="oldPassword"
                           type="password"
-                          :placeholder="$t('auth.oldPassword')"/>
+                          :placeholder="$t('auth.oldPassword')" />
         </b-form-group>
         <b-form-group :invalid-feedback="$t('constraints.password')">
             <b-form-input v-model="newPassword"
                           type="password"
                           :state="newPasswordState"
                           :placeholder="$t('auth.newPassword')"
-                          @change="validateNewPassword"/>
+                          @change="validateNewPassword" />
         </b-form-group>
         <b-form-group :invalid-feedback="$t('constraints.passwordsMatch')">
             <b-form-input v-model="confirmPassword"
                           type="password"
                           :state="confirmPasswordState"
                           :placeholder="$t('auth.confirmPassword')"
-                          @change="validateConfirmPassword"/>
+                          @change="validateConfirmPassword" />
         </b-form-group>
         <b-alert :variant="successful ? 'info' : 'danger'"
                  :show="message !== ''"
-                 v-text="message"/>
+                 v-text="message" />
         <b-btn :disabled="!valid"
                type="submit"
-               v-text="$t('auth.changePassword')"/>
+               v-text="$t('auth.changePassword')" />
     </b-form>
 </template>
 
@@ -88,6 +88,3 @@
         },
     });
 </script>
-
-<style lang="scss" scoped>
-</style>

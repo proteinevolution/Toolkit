@@ -5,7 +5,7 @@
                @hide="onHide">
         <Loading v-if="loading"
                  variant="primary"
-                 class="mb-2"/>
+                 class="mb-2" />
         <p v-else
            v-text="message"></p>
     </BaseModal>

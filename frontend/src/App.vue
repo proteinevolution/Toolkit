@@ -1,56 +1,56 @@
 <template>
     <div class="toolkit">
         <VelocityFade>
-            <LoadingView v-if="$store.state.loading.tools"/>
+            <LoadingView v-if="$store.state.loading.tools" />
             <b-container v-else
                          class="main-container">
-                <OffscreenMenu/>
+                <OffscreenMenu />
                 <b-row>
-                    <Header/>
+                    <Header />
                 </b-row>
                 <b-row class="pt-3 mb-2 main-content"
                        :class="[showJobList ? 'job-list-visible' : '']">
                     <b-col class="job-list-col d-none d-lg-block"
                            lg="3"
                            xl="2">
-                        <SideBar/>
+                        <SideBar />
                     </b-col>
                     <b-col :class="[showJobList ? 'col-lg-9 col-xl-10':'']">
                         <VelocityFade :duration="1000">
                             <router-view :key="$route.fullPath + refreshCounter"
-                                         @refresh="refreshCounter++"/>
+                                         @refresh="refreshCounter++" />
                         </VelocityFade>
                     </b-col>
                 </b-row>
                 <b-row>
-                    <Footer/>
+                    <Footer />
                 </b-row>
             </b-container>
         </VelocityFade>
 
         <div>
             <!-- Place modals here -->
-            <AuthModal/>
-            <FooterLinkModal :modal="modalProps.modal"/>
-            <UpdatesModal/>
-            <HelpModal :tool-name="modalProps.toolName"/>
+            <AuthModal />
+            <FooterLinkModal :modal="modalProps.modal" />
+            <UpdatesModal />
+            <HelpModal :tool-name="modalProps.toolName" />
             <ForwardingModal :forwarding-data="modalProps.forwardingData"
                              :forwarding-mode="modalProps.forwardingMode"
                              :forwarding-job-i-d="modalProps.forwardingJobID"
                              :forwarding-api-options="modalProps.forwardingApiOptions"
                              :forwarding-api-options-alignment="modalProps.forwardingApiOptionsAlignment"
-                             @hidden="clearForwardingModalData"/>
+                             @hidden="clearForwardingModalData" />
             <TemplateAlignmentModal :job-i-d="modalProps.jobID"
                                     :accession="modalProps.accession"
-                                    :forwarding-mode="modalProps.forwardingMode"/>
-            <TemplateStructureModal :accession="modalProps.accessionStructure"/>
-            <VerificationModal/>
-            <ResetPasswordModal/>
+                                    :forwarding-mode="modalProps.forwardingMode" />
+            <TemplateStructureModal :accession="modalProps.accessionStructure" />
+            <VerificationModal />
+            <ResetPasswordModal />
         </div>
 
-        <scroll-top-button/>
+        <scroll-top-button />
 
-        <notifications animation-type="velocity"/>
+        <notifications animation-type="velocity" />
         <cookie-law theme="toolkit"
                     :message="$t('cookieLaw.message')">
             <template slot-scope="props">

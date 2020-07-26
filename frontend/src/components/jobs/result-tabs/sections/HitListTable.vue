@@ -10,7 +10,7 @@
                     <span v-text="$t('jobs.results.hitlist.table.perPage.show')"></span>
                     <b-form-select v-model="perPage"
                                    :options="perPageOptions"
-                                   class="mx-2"/>
+                                   class="mx-2" />
                     <span v-text="$t('jobs.results.hitlist.table.perPage.entries')"></span>
                 </label>
             </b-col>
@@ -24,7 +24,7 @@
                 <label class="d-flex align-items-center justify-content-end">
                     <span v-text="$t('jobs.results.hitlist.table.filter')"></span>
                     <div class="ml-3 flex-grow-1">
-                        <b-form-input v-model="filter"/>
+                        <b-form-input v-model="filter" />
                     </div>
                 </label>
             </b-col>
@@ -46,7 +46,7 @@
                 <div class="no-wrap">
                     <b-checkbox class="d-inline"
                                 :checked="selectedItems.includes(data.value)"
-                                @change="check($event, data.value)"/>
+                                @change="check($event, data.value)" />
                     <a @click="$emit('elem-clicked', data.value)">{{ data.value }}</a>
                 </div>
             </template>
@@ -71,7 +71,7 @@
                 :per-page="perPage"
                 align="right"
                 class="mb-0"
-                aria-controls="hitListTable"/>
+                aria-controls="hitListTable" />
         </div>
     </div>
 </template>

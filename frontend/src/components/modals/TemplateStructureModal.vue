@@ -7,7 +7,7 @@
                @shown="onShow"
                @hide="resetView">
         <Loading v-if="loading"
-                 :message="$t('loading')"/>
+                 :message="$t('loading')" />
 
         <!-- refs are only accessible when in DOM => don't hide -->
         <div ref="viewport"

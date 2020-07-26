@@ -1,6 +1,6 @@
 <template>
     <Loading v-if="loading"
-             :message="$t('loading')"/>
+             :message="$t('loading')" />
     <div v-else
          class="font-small">
         <b v-if="results.vals.length === 0"
@@ -10,7 +10,7 @@
             <div v-html="$t('jobs.results.plot.numHits', {num: results.vals.length})"></div>
             <br><br>
             <highcharts :options="chartOptions"
-                        class="high-chart"/>
+                        class="high-chart" />
         </div>
     </div>
 </template>

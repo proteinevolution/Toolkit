@@ -1,6 +1,6 @@
 <template>
     <Loading v-if="loading"
-             :message="$t('loading')"/>
+             :message="$t('loading')" />
     <div v-else
          class="font-small">
         <b v-if="total === 0"
@@ -59,7 +59,7 @@
                 <h4>{{ $t('jobs.results.hitlist.vis') }}</h4>
                 <hit-map :job="job"
                          @elem-clicked="scrollToElem"
-                         @resubmit-section="resubmitSection"/>
+                         @resubmit-section="resubmitSection" />
             </div>
 
             <div ref="hits"
@@ -70,7 +70,7 @@
                 <hit-list-table :job="job"
                                 :fields="hitListFields"
                                 :selected-items="selectedItems"
-                                @elem-clicked="scrollToElem"/>
+                                @elem-clicked="scrollToElem" />
             </div>
             <div ref="alignments"
                  class="result-section">
@@ -106,7 +106,7 @@
                                     <td class="no-wrap">
                                         <b-checkbox class="d-inline"
                                                     :checked="selectedItems.includes(al.num)"
-                                                    @change="check($event, al.num)"/>
+                                                    @change="check($event, al.num)" />
                                         <span v-text="al.num + '.'"></span>
                                     </td>
                                     <td colspan="3"
@@ -193,8 +193,8 @@
                                     <Loading v-if="loadingMore"
                                              :message="$t('jobs.results.alignment.loadingHits')"
                                              justify="center"
-                                             class="mt-4"/>
-                                    <intersection-observer @intersect="intersected"/>
+                                             class="mt-4" />
+                                    <intersection-observer @intersect="intersected" />
                                 </td>
                             </tr>
                         </tbody>

@@ -5,18 +5,18 @@
                 <b-form-input v-model="username"
                               type="text"
                               autofocus
-                              required/>
+                              required />
             </b-form-group>
             <b-form-group :label="$t('auth.password')">
                 <b-form-input v-model="password"
                               type="password"
-                              required/>
+                              required />
             </b-form-group>
             <b-alert variant="danger"
                      :show="message !== ''"
-                     v-text="message"/>
+                     v-text="message" />
             <b-btn type="submit"
-                   v-text="$t('auth.signIn')"/>
+                   v-text="$t('auth.signIn')" />
             <a class="password-link"
                @click.stop="toggleForgotContainer">
                 {{ $t('auth.forgotPassword') }}
@@ -34,12 +34,12 @@
                     <b-form-group :label="$t('auth.forgotPasswordInstructions')">
                         <b-form-input v-model="forgot.eMailOrUsername"
                                       :placeholder="$t('auth.eMailOrUsername')"
-                                      type="text"/>
+                                      type="text" />
                     </b-form-group>
                     <b-btn :disabled="eMailOrUsernameInvalid"
                            type="submit"
                            variant="primary"
-                           v-text="$t('submit')"/>
+                           v-text="$t('submit')" />
                 </b-form>
                 <div v-show="forgot.message"
                      v-text="forgot.message"></div>

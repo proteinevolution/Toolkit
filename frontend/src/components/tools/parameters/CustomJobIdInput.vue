@@ -4,7 +4,7 @@
                       :placeholder="$t('tools.parameters.customJobId.placeholder')"
                       aria-describedby="custom-job-id-invalid"
                       :state="valid"
-                      @input="inputChanged"/>
+                      @input="inputChanged" />
         <b-form-invalid-feedback v-if="hasError"
                                  id="custom-job-id-invalid">
             <i18n :path="error.textKey"

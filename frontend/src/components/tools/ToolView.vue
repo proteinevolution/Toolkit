@@ -38,7 +38,7 @@
                                              :validation-errors="validationErrors"
                                              :full-screen="fullScreen"
                                              :submission="submission"
-                                             :remember-params="rememberParams"/>
+                                             :remember-params="rememberParams" />
                                 </div>
 
                                 <b-form-group v-if="showSubmitButtons"
@@ -48,19 +48,19 @@
                                            variant="primary"
                                            :disabled="preventSubmit"
                                            @click="submitJob"
-                                           v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"/>
+                                           v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')" />
                                     <custom-job-id-input :validation-errors="validationErrors"
-                                                         :submission="submission"/>
+                                                         :submission="submission" />
                                     <b-btn v-if="hasRememberedParameters"
                                            class="reset-params-button"
                                            variant="secondary"
                                            :title="$t('jobs.resetParamsTitle')"
                                            @click="clearParameterRemember"
-                                           v-text="$t('jobs.resetParams')"/>
+                                           v-text="$t('jobs.resetParams')" />
                                     <email-notification-switch v-if="loggedIn"
                                                                :validation-errors="validationErrors"
                                                                :submission="submission"
-                                                               class="pull-left"/>
+                                                               class="pull-left" />
                                 </b-form-group>
                             </b-tab>
 
@@ -73,14 +73,14 @@
                                    :title="$t('tools.alignmentViewer.visualization')"
                                    active>
                                 <alignment-viewer :sequences="alignmentViewerSequences"
-                                                  :format="alignmentViewerFormat"/>
+                                                  :format="alignmentViewerFormat" />
                             </b-tab>
 
                             <template v-slot:tabs-end>
                                 <div class="ml-auto">
                                     <job-public-toggle v-if="loggedIn && (!isJobView || !job.foreign)"
                                                        :job="job"
-                                                       :submission="submission"/>
+                                                       :submission="submission" />
                                     <i v-if="job && !job.foreign"
                                        class="tool-action tool-action-push-up fa fa-trash mr-4"
                                        :title="$t('jobs.delete')"
@@ -97,7 +97,7 @@
             </LoadingWrapper>
         </div>
         <not-found-view v-else
-                        error-message="errors.ToolNotFound"/>
+                        error-message="errors.ToolNotFound" />
     </VelocityFade>
 </template>
 

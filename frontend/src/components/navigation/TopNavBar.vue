@@ -51,13 +51,13 @@
                       size="sm"
                       class="sign-in-link"
                       @click="openAuthModal"
-                      v-text="$t('auth.signIn')"/>
+                      v-text="$t('auth.signIn')" />
             <b-button v-else
                       variant="href"
                       size="sm"
                       class="sign-in-link"
                       @click="openAuthModal"
-                      v-text="user.nameLogin"/>
+                      v-text="user.nameLogin" />
             <b-button v-if="loggedIn"
                       variant="href"
                       size="sm"
@@ -90,7 +90,7 @@
 
         <b-navbar-toggle class="d-lg-none mr-auto"
                          target="offscreenMenu"
-                         @click="toggleOffscreenMenu"/>
+                         @click="toggleOffscreenMenu" />
     </b-col>
 </template>
 

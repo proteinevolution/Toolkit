@@ -47,7 +47,7 @@
                     </b-nav>
                 </transition>
 
-                <JobList @click="close"/>
+                <JobList @click="close" />
 
                 <span class="offscreen-menu-close"
                       @click="close">

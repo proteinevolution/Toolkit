@@ -1,6 +1,6 @@
 <template>
     <Loading v-if="!hitMap"
-             :message="$t('loading')"/>
+             :message="$t('loading')" />
     <div v-else
          class="px-lg-5">
         <div class="px-2 mb-3 hit-slider">
@@ -8,7 +8,7 @@
                    class="ml-auto mb-2"
                    size="sm"
                    @click="resubmitSection"
-                   v-text="$t('jobs.results.hitlist.resubmitSection')"/>
+                   v-text="$t('jobs.results.hitlist.resubmitSection')" />
             <div class="mt-3 px-2">
                 <vue-slider ref="slider"
                             v-model="resubmitSelection"
@@ -16,7 +16,7 @@
                             :min="1"
                             :max="hitMap.queryLength"
                             :height="6"
-                            :enable-cross="false"/>
+                            :enable-cross="false" />
             </div>
         </div>
         <div class="hit-map-container">

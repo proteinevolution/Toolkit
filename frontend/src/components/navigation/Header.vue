@@ -1,7 +1,7 @@
 <template>
     <b-container class="header">
         <b-row>
-            <TopNavBar/>
+            <TopNavBar />
         </b-row>
         <b-row>
             <b-col sm="12"
@@ -17,7 +17,7 @@
             <b-col cols="12"
                    lg="9"
                    xl="10">
-                <NavBar/>
+                <NavBar />
             </b-col>
         </b-row>
     </b-container>

@@ -1,6 +1,6 @@
 <template>
     <Loading v-if="loading || !results"
-             :message="$t('loading')"/>
+             :message="$t('loading')" />
     <div v-else>
         <b v-if="results.results.length === 0"
            v-html="$t('jobs.results.hhrepid.noResults')"></b>
@@ -129,7 +129,6 @@
 </script>
 
 <style lang="scss" scoped>
-
     img {
         max-width: 100%;
     }

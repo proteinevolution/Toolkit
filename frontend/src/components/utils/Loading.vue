@@ -3,7 +3,7 @@
          :class="['justify-content-' + justify, variant==='secondary' ? 'wrapper-secondary' : '']">
         <vue-simple-spinner :class="'vue-simple-spinner-' + variant"
                             :speed="variant === 'secondary' ? 2 : 0.8"
-                            :size="size"/>
+                            :size="size" />
         <div v-if="message"
              class="message">
             {{ message }}

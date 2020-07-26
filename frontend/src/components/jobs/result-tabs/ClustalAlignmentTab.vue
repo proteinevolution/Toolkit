@@ -1,6 +1,6 @@
 <template>
     <Loading v-if="loading || !alignments"
-             :message="$t('jobs.results.alignment.loadingHits')"/>
+             :message="$t('jobs.results.alignment.loadingHits')" />
     <div v-else>
         <div class="result-options">
             <a :class="{active: allSelected}"
@@ -29,7 +29,7 @@
                                 :key="groupI + '-' + elem.num">
                                 <td>
                                     <b-form-checkbox :checked="selected.includes(elem.num)"
-                                                     @change="selectedChanged(elem.num)"/>
+                                                     @change="selectedChanged(elem.num)" />
                                 </td>
                                 <td class="accession">
                                     <b v-text="elem.accession.slice(0, 20)"></b>
@@ -43,8 +43,8 @@
                                     <Loading v-if="loadingMore"
                                              :message="$t('jobs.results.alignment.loadingHits')"
                                              justify="center"
-                                             class="mt-4"/>
-                                    <intersection-observer @intersect="intersected"/>
+                                             class="mt-4" />
+                                    <intersection-observer @intersect="intersected" />
                                 </td>
                             </tr>
 

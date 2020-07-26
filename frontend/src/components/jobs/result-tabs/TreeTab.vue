@@ -1,13 +1,13 @@
 <template>
     <Loading v-if="loading"
-             :message="$t('loading')"/>
+             :message="$t('loading')" />
     <div v-else>
         <div class="result-options d-flex align-items-center">
             <b-form-select v-model="treeOpts.tree.layoutInput"
                            :options="layoutOptions"
                            size="sm"
                            class="w-auto"
-                           @input="updateTree"/>
+                           @input="updateTree" />
             <a class="ml-auto"
                @click="download">{{ $t('jobs.results.actions.downloadTree') }}</a>
         </div>
@@ -100,10 +100,6 @@
         },
     });
 </script>
-
-<style lang="scss" scoped>
-
-</style>
 
 <style lang="scss">
     .tnt_groupDiv {

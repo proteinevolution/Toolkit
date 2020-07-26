@@ -6,11 +6,11 @@
             <b-btn variant="primary"
                    class="mb-3 mb-md-0 mr-5 ml-5"
                    @click="startJob"
-                   v-text="$t('jobs.startJob')"/>
+                   v-text="$t('jobs.startJob')" />
             <b-btn variant="primary"
                    class="mr-5 ml-5"
                    @click="loadExistingJobAndDelete"
-                   v-text="$t('jobs.loadExistingJob')"/>
+                   v-text="$t('jobs.loadExistingJob')" />
         </div>
     </div>
 </template>
@@ -77,7 +77,3 @@
         },
     });
 </script>
-
-<style lang="scss" scoped>
-
-</style>

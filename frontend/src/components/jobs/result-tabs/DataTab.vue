@@ -1,6 +1,6 @@
 <template>
     <Loading v-if="loading"
-             :message="$t('loading')"/>
+             :message="$t('loading')" />
     <div v-else>
         <div v-if="downloadEnabled || forwardingEnabled"
              class="result-options">

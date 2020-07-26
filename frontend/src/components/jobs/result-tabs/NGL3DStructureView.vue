@@ -1,7 +1,7 @@
 <template>
     <div>
         <Loading v-if="loading"
-                 :message="$t('loading')"/>
+                 :message="$t('loading')" />
         <div v-else>
             <div class="result-options">
                 <a @click="downloadPdb">{{ $t('jobs.results.actions.downloadPDBFile') }}</a>

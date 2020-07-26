@@ -11,10 +11,10 @@
                       size="sm"
                       :placeholder="parameter.default + ' (default)'"
                       :title="parameter.default + ' (default)'"
-                      required/>
+                      required />
         <b-form-invalid-feedback v-if="hasError"
                                  :id="parameter.name + '-invalid'"
-                                 v-text="errorMessage"/>
+                                 v-text="errorMessage" />
     </b-form-group>
 </template>
 

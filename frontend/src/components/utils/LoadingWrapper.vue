@@ -1,6 +1,6 @@
 <template>
     <VelocityFade>
-        <Loading v-if="loading"/>
+        <Loading v-if="loading" />
         <slot v-else></slot>
     </VelocityFade>
 </template>
@@ -25,6 +25,3 @@
         },
     });
 </script>
-
-<style lang="scss" scoped>
-</style>

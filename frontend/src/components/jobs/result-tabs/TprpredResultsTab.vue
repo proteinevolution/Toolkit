@@ -1,6 +1,6 @@
 <template>
     <Loading v-if="loading || !results"
-             :message="$t('loading')"/>
+             :message="$t('loading')" />
     <div v-else
          class="font-small">
         <b v-if="results.results.hits.length === 0"

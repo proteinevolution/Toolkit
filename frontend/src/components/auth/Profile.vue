@@ -6,7 +6,7 @@
                           type="text"
                           :state="firstNameState"
                           :placeholder="$t('auth.firstNameEnter')"
-                          @change="validateFirstName"/>
+                          @change="validateFirstName" />
         </b-form-group>
         <b-form-group :label="$t('auth.lastName')"
                       :invalid-feedback="$t('constraints.lengthMax', { max: 25 })">
@@ -14,14 +14,14 @@
                           type="text"
                           :state="lastNameState"
                           :placeholder="$t('auth.lastNameEnter')"
-                          @change="validateLastName"/>
+                          @change="validateLastName" />
         </b-form-group>
         <b-form-group :label="$t('auth.eMail')"
                       :invalid-feedback="$t('constraints.email')">
             <b-form-input v-model="eMail"
                           type="text"
                           :state="eMailState"
-                          @change="validateEmail"/>
+                          @change="validateEmail" />
         </b-form-group>
         <b-form-group :label="$t('auth.country')">
             <b-form-select v-model="country"
@@ -40,26 +40,26 @@
                      :show="true">
                 <b-form-group :label="$t('auth.reenterPassword')">
                     <b-form-input v-model="password"
-                                  type="password"/>
+                                  type="password" />
                 </b-form-group>
                 <b-btn class="mr-1"
                        @click="cancel"
-                       v-text="$t('cancel')"/>
+                       v-text="$t('cancel')" />
                 <b-btn :disabled="!valid"
                        type="submit"
                        variant="primary"
-                       v-text="$t('submit')"/>
+                       v-text="$t('submit')" />
             </b-alert>
         </ExpandHeight>
 
         <b-alert variant="danger"
                  :show="message !== ''"
-                 v-text="message"/>
+                 v-text="message" />
 
         <b-btn :type="needsConfirmation ? 'button' : 'submit'"
                :disabled="!editButtonEnabled"
                @click="needsConfirmation = true"
-               v-text="$t('auth.editProfile')"/>
+               v-text="$t('auth.editProfile')" />
     </b-form>
 </template>
 
@@ -192,7 +192,3 @@
         },
     });
 </script>
-
-<style lang="scss" scoped>
-
-</style>

@@ -6,7 +6,7 @@
                          :value="value"
                          cols="70"
                          spellcheck="false"
-                         @input="handleInput"/>
+                         @input="handleInput" />
         <input :id="'file-upload-' + parameter.name + '-' + second"
                type="file"
                :class="{'d-none': !fileDragged}"
@@ -14,13 +14,13 @@
                @change="handleFileUpload">
         <b-progress :value="fileUploadProgress"
                     class="file-upload-progress"
-                    :max="100"/>
+                    :max="100" />
         <b-button-group size="sm"
                         class="mt-1 mb-3">
             <b-btn variant="link"
                    @click="handlePasteExample">
                 <loading v-if="$store.state.loading.alignmentTextarea"
-                         :size="20"/>
+                         :size="20" />
                 <span v-else
                       v-text="$t('tools.parameters.textArea.pasteExample')"></span>
             </b-btn>

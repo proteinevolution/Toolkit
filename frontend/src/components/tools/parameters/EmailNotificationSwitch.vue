@@ -1,7 +1,7 @@
 <template>
     <div class="d-flex">
         <switches v-model="submissionValue"
-                  :label="$t('tools.parameters.emailNotification')"/>
+                  :label="$t('tools.parameters.emailNotification')" />
     </div>
 </template>
 
@@ -29,7 +29,3 @@
         },
     });
 </script>
-
-<style lang="scss" scoped>
-
-</style>

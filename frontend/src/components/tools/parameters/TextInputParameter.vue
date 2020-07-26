@@ -6,7 +6,7 @@
                       :class="{nonDefault: !disableRemember && isNonDefaultValue}"
                       type="text"
                       size="sm"
-                      required/>
+                      required />
     </b-form-group>
 </template>
 

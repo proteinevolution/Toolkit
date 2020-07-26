@@ -26,7 +26,7 @@
                                               placeholder="E-value threshold"
                                               class="mt-1"
                                               size="sm"
-                                              @focus="forwardHitsMode = ForwardHitsMode.EVALUE"/>
+                                              @focus="forwardHitsMode = ForwardHitsMode.EVALUE" />
                             </b-form-radio>
                         </b-col>
                         <b-col v-if="largeModal">
@@ -67,7 +67,7 @@
                           @click="forward">
                     <Loading v-if="loading"
                              :size="16"
-                             :message="$t('loading')"/>
+                             :message="$t('loading')" />
                     <span v-else
                           v-text="$t('jobs.results.actions.forward')"></span>
                 </b-button>

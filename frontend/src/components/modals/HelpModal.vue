@@ -4,10 +4,10 @@
         <b-tabs v-if="toolName && languageLoaded">
             <b-tab class="helpTab"
                    title="Overview"
-                   v-html="$t(`toolHelpModals.${toolName}.overview`)"/>
+                   v-html="$t(`toolHelpModals.${toolName}.overview`)" />
             <b-tab class="helpTab"
                    title="Input & Parameters">
-                <Accordion :items="accordionItems"/>
+                <Accordion :items="accordionItems" />
             </b-tab>
             <b-tab class="helpTab"
                    title="References">
@@ -18,7 +18,7 @@
             <b-tab v-if="tool && tool.version"
                    class="helpTab"
                    title="Version"
-                   v-html="$t(`toolHelpModals.common.version`, [tool.version])"/>
+                   v-html="$t(`toolHelpModals.common.version`, [tool.version])" />
         </b-tabs>
     </BaseModal>
 </template>

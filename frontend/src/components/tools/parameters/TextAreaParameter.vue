@@ -4,7 +4,7 @@
             <TextAreaSubComponent v-model="submissionValue"
                                   :parameter="parameter"
                                   :validation-params="validationParams"
-                                  @validation="handleValidation"/>
+                                  @validation="handleValidation" />
         </ExpandHeight>
         <ExpandHeight>
             <TextAreaSubComponent v-if="secondTextAreaEnabled"
@@ -12,11 +12,11 @@
                                   :second="true"
                                   :parameter="parameter"
                                   :validation-params="validationParams"
-                                  @validation="handleValidationSecond"/>
+                                  @validation="handleValidationSecond" />
         </ExpandHeight>
         <b-form-group v-if="parameter.allowsTwoTextAreas">
             <switches v-model="secondTextAreaEnabled"
-                      :label="$t('tools.parameters.textArea.alignTwoSeqToggle')"/>
+                      :label="$t('tools.parameters.textArea.alignTwoSeqToggle')" />
         </b-form-group>
     </div>
 </template>
@@ -140,8 +140,4 @@
     .vue-switcher-theme--default.vue-switcher-color--default div:after {
         background-color: $primary;
     }
-</style>
-
-<style lang="scss" scoped>
-
 </style>

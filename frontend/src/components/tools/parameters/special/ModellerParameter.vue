@@ -6,7 +6,7 @@
                           type="text"
                           size="sm"
                           :state="submissionValue.length > 0 ? valid : null"
-                          required/>
+                          required />
         </b-form-group>
         <p v-else
            v-text="$t('tools.parameters.modellerKey.stored')"></p>
@@ -72,7 +72,3 @@
         },
     });
 </script>
-
-<style lang="scss" scoped>
-
-</style>

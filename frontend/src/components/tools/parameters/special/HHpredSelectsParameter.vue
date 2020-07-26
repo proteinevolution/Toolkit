@@ -11,7 +11,7 @@
                 max-element-text-key="tools.parameters.select.maxElementsSelectedHHpred"
                 :disabled="disabled"
                 :force-select-none="disabled"
-                class="parameter-component size-12"/>
+                class="parameter-component size-12" />
         </b-col>
 
         <b-col cols="12"
@@ -25,7 +25,7 @@
                 max-element-text-key="tools.parameters.select.maxElementsSelectedHHpred"
                 :disabled="disabled"
                 :force-select-none="disabled"
-                class="parameter-component size-12"/>
+                class="parameter-component size-12" />
         </b-col>
     </b-row>
 </template>
@@ -138,7 +138,3 @@
         },
     });
 </script>
-
-<style lang="scss" scoped>
-
-</style>

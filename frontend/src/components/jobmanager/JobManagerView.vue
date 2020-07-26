@@ -15,7 +15,7 @@
                         <span v-text="$t('jobManager.perPage.show')"></span>
                         <b-form-select v-model="perPage"
                                        :options="perPageOptions"
-                                       class="mx-2"/>
+                                       class="mx-2" />
                         <span v-text="$t('jobManager.perPage.entries')"></span>
                     </label>
                 </b-col>
@@ -29,7 +29,7 @@
                     <label class="d-flex align-items-center justify-content-end">
                         <span v-text="$t('jobManager.filter')"></span>
                         <div class="ml-3 flex-grow-1">
-                            <b-form-input v-model="filter"/>
+                            <b-form-input v-model="filter" />
                         </div>
                     </label>
                 </b-col>
@@ -58,7 +58,7 @@
                 <template v-slot:cell(status)="{value}">
                     <b-badge variant="light"
                              :class="'status-' + value"
-                             v-text="$t('jobs.states.' + value)"/>
+                             v-text="$t('jobs.states.' + value)" />
                 </template>
 
                 <template v-slot:cell(joblist)="{item}">
@@ -89,7 +89,7 @@
                     :per-page="perPage"
                     align="right"
                     class="mb-0"
-                    aria-controls="jobmanagerTable"/>
+                    aria-controls="jobmanagerTable" />
             </div>
         </b-card>
     </div>

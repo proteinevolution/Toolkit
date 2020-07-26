@@ -13,7 +13,7 @@
                            :submission="submission"
                            :remember-params="rememberParams"
                            :class="['size-' + mediumSize(parameter)]"
-                           class="parameter-component"/>
+                           class="parameter-component" />
             </b-col>
         </b-row>
     </div>

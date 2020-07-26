@@ -20,11 +20,11 @@
         <Loading v-if="loading"
                  :message="$t('loading')"
                  class="float-right"
-                 :size="24"/>
+                 :size="24" />
 
         <b-form-textarea :value="displayData"
                          readonly
-                         class="file-view mb-2"/>
+                         class="file-view mb-2" />
     </BaseModal>
 </template>
 

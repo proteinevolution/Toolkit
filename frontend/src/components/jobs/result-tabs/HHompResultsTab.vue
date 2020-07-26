@@ -1,6 +1,6 @@
 <template>
     <Loading v-if="loading || !alignments"
-             :message="$t('loading')"/>
+             :message="$t('loading')" />
     <div v-else
          class="font-small">
         <b v-if="total === 0"
@@ -28,7 +28,7 @@
                 <h4>{{ $t('jobs.results.hitlist.vis') }}</h4>
                 <hit-map :job="job"
                          @elem-clicked="scrollToElem"
-                         @resubmit-section="resubmitSection"/>
+                         @resubmit-section="resubmitSection" />
             </div>
 
             <div ref="hits"
@@ -38,7 +38,7 @@
                 </h4>
                 <hit-list-table :job="job"
                                 :fields="hitListFields"
-                                @elem-clicked="scrollToElem"/>
+                                @elem-clicked="scrollToElem" />
             </div>
 
             <div ref="alignments"
@@ -181,8 +181,8 @@
                                     <Loading v-if="loadingMore"
                                              :message="$t('jobs.results.alignment.loadingHits')"
                                              justify="center"
-                                             class="mt-4"/>
-                                    <intersection-observer @intersect="intersected"/>
+                                             class="mt-4" />
+                                    <intersection-observer @intersect="intersected" />
                                 </td>
                             </tr>
                         </tbody>

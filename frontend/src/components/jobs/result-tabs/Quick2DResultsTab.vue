@@ -1,6 +1,6 @@
 <template>
     <Loading v-if="loading"
-             :message="$t('loading')"/>
+             :message="$t('loading')" />
     <div v-else>
         <h5>Protein ID: {{ header }}</h5>
 

@@ -12,8 +12,8 @@
                 </div>
             </div>
         </div>
-        <ToolFinder/>
-        <UpdatesSection/>
+        <ToolFinder />
+        <UpdatesSection />
     </div>
 </template>
 

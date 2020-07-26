@@ -1,6 +1,6 @@
 <template>
     <Loading v-if="loading || !alignments"
-             :message="$t('jobs.results.alignment.loadingHits')"/>
+             :message="$t('jobs.results.alignment.loadingHits')" />
     <div v-else>
         <div class="result-options">
             <a :class="{active: allSelected}"
@@ -33,7 +33,7 @@
                             <tr :key="'header' + elem.num">
                                 <td class="d-flex align-items-center">
                                     <b-form-checkbox :checked="selected.includes(elem.num)"
-                                                     @change="selectedChanged(elem.num)"/>
+                                                     @change="selectedChanged(elem.num)" />
                                     <b class="ml-2"
                                        v-text="index+1 + '.'"></b>
                                 </td>
@@ -55,8 +55,8 @@
                 <Loading v-if="loadingMore"
                          :message="$t('jobs.results.alignment.loadingHits')"
                          justify="center"
-                         class="mt-4"/>
-                <intersection-observer @intersect="intersected"/>
+                         class="mt-4" />
+                <intersection-observer @intersect="intersected" />
             </div>
         </div>
     </div>

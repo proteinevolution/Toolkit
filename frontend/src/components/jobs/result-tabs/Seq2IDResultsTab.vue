@@ -1,6 +1,6 @@
 <template>
     <Loading v-if="loading || !accIds"
-             :message="$t('loading')"/>
+             :message="$t('loading')" />
     <div v-else>
         <div class="result-options">
             <a @click="forwardAll">{{ $t('jobs.results.actions.forwardAll') }}</a>

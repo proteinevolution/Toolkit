@@ -6,7 +6,7 @@
                           type="text"
                           :state="usernameState"
                           required
-                          @change="validateUsername"/>
+                          @change="validateUsername" />
         </b-form-group>
         <b-form-group :label="$t('auth.eMail')"
                       :invalid-feedback="$t('constraints.email')">
@@ -14,7 +14,7 @@
                           type="email"
                           :state="emailState"
                           required
-                          @change="validateEmail"/>
+                          @change="validateEmail" />
         </b-form-group>
         <b-form-group :label="$t('auth.password')"
                       :invalid-feedback="$t('constraints.password')">
@@ -22,7 +22,7 @@
                           type="password"
                           :state="passwordState"
                           required
-                          @change="validatePassword"/>
+                          @change="validatePassword" />
         </b-form-group>
         <b-form-group :label="$t('auth.passwordRepeat')"
                       :invalid-feedback="$t('constraints.passwordsMatch')">
@@ -30,7 +30,7 @@
                           type="password"
                           :state="passwordRepeatState"
                           required
-                          @change="validatePasswordRepeat"/>
+                          @change="validatePasswordRepeat" />
         </b-form-group>
         <b-form-group>
             <b-form-checkbox v-model="privacyAccepted"
@@ -46,11 +46,11 @@
         </b-form-group>
         <b-alert :variant="successful ? 'info' : 'danger'"
                  :show="message !== ''"
-                 v-text="message"/>
+                 v-text="message" />
         <b-btn type="submit"
                variant="primary"
                :disabled="!valid"
-               v-text="$t('auth.signUp')"/>
+               v-text="$t('auth.signUp')" />
     </b-form>
 </template>
 
