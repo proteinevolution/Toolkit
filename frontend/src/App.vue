@@ -250,18 +250,18 @@
 
 <!-- This should generally be the only global CSS in the app. -->
 <style lang="scss">
-    @import "./assets/scss/reset";
-    @import "~bootstrap/scss/bootstrap";
-    @import "~bootstrap-vue/dist/bootstrap-vue.css";
-    @import "~vue-multiselect/dist/vue-multiselect.min.css";
-    @import "./assets/scss/form-elements";
-    @import "./assets/scss/modals";
-    @import "./assets/scss/sequence-coloring";
-    @import url("https://use.fontawesome.com/releases/v5.2.0/css/all.css");
+    @import './assets/scss/reset';
+    @import '~bootstrap/scss/bootstrap';
+    @import '~bootstrap-vue/dist/bootstrap-vue.css';
+    @import '~vue-multiselect/dist/vue-multiselect.min.css';
+    @import './assets/scss/form-elements';
+    @import './assets/scss/modals';
+    @import './assets/scss/sequence-coloring';
+    @import url('https://use.fontawesome.com/releases/v5.2.0/css/all.css');
 
     $themeColor: $primary;
     @import '~vue-slider-component/lib/theme/default.scss';
-    @import "~handy-scroll/dist/handy-scroll.css";
+    @import '~handy-scroll/dist/handy-scroll.css';
 
     body {
         overflow-y: scroll;
@@ -279,12 +279,14 @@
         background: $primary-light;
         border-left: 5px solid $primary;
 
-        &.warning, &.warn {
+        &.warning,
+        &.warn {
             background: $warning-light;
             border-left-color: $warning;
         }
 
-        &.danger, &.error {
+        &.danger,
+        &.error {
             background: $danger-light;
             border-left-color: $danger;
         }
@@ -325,7 +327,7 @@
     .Cookie--toolkit .Cookie__button {
         background: $tk-dark-green;
         color: $white;
-        padding: .625em 3.125em;
+        padding: 0.625em 3.125em;
         border-radius: $global-radius;
         border: 0;
         font-size: 1em;
@@ -343,7 +345,7 @@
     }
 
     .textarea-alignment.loading::before {
-        content: "";
+        content: '';
         display: block;
         width: 100px;
     }
@@ -367,7 +369,7 @@
     }
 
     .break-all {
-        word-break: break-all
+        word-break: break-all;
     }
 
     .font-small {
