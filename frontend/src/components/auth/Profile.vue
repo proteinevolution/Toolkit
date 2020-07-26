@@ -128,7 +128,7 @@
         watch: {
             user: {
                 immediate: true,
-                handler(value: User) {
+                handler() {
                     this.resetValues();
                 },
             },

@@ -8,7 +8,7 @@ const titleProperties: TitleProperties = {
 };
 
 const TitleManager = {
-    install(vconst: VueConstructor, args: any = {}) {
+    install(vconst: VueConstructor): void {
         vconst.prototype.$title = {
             addon(value: string) {
                 titleProperties.addon = value;

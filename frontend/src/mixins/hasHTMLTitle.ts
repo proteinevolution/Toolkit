@@ -6,6 +6,11 @@ const hasHTMLTitle = Vue.extend({
             return '';
         },
     },
+    watch: {
+        htmlTitle(val: string) {
+            this.$title.addon(val);
+        },
+    },
     beforeMount() {
         this.$title.addon(this.htmlTitle);
     },
@@ -14,11 +19,6 @@ const hasHTMLTitle = Vue.extend({
     },
     beforeDestroy() {
         this.$title.addon('');
-    },
-    watch: {
-        htmlTitle(val: string) {
-            this.$title.addon(val);
-        },
     },
 });
 

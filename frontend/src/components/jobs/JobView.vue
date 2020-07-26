@@ -168,7 +168,7 @@
         },
         watch: {
             // Use a watcher here - component cannot use 'beforeRouteUpdate' because of lazy loading
-            $route(to, from) {
+            $route(to) {
                 this.loadJobDetails(to.params.jobID);
             },
             loggedIn(login) {

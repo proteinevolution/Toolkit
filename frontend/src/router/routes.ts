@@ -2,14 +2,14 @@ import IndexView from '../components/index/IndexView.vue';
 import Loading from '../components/utils/Loading.vue';
 import TimeoutView from '../components/utils/TimeoutView.vue';
 import {Component, CreateElement, VNode, VNodeChildren, VNodeData} from 'vue';
+import {Location, Route, RouteConfig} from 'vue-router';
 
 const ToolView = (): Promise<Component> => lazyLoadView(import(/* webpackChunkName: "tool" */ '../components/tools/ToolView.vue'));
 const JobView = (): Promise<Component> => lazyLoadView(import(/* webpackChunkName: "job" */ '../components/jobs/JobView.vue'));
-const JobManagerView = (): Promise<Component> => lazyLoadView(import(/* webpackChunkName: "jobmanager" */ '../components/' +
-                                                                            'jobmanager/JobManagerView.vue'));
+const JobManagerView = (): Promise<Component> => lazyLoadView(import(/* webpackChunkName: "jobmanager" */ '../components/jobmanager/JobManagerView.vue'));
 const NotFoundView = (): Promise<Component> => lazyLoadView(import(/* webpackChunkName: "404" */ '../components/utils/NotFoundView.vue'));
 
-export default [
+const routes: RouteConfig[] = [
     {
         path: '/',
         name: 'index',
@@ -44,18 +44,18 @@ export default [
     },
     {
         path: '/verify/:nameLogin/:token',
-        redirect: (to: any): any => {
-            const { params } = to;
+        redirect: (to: Route): Location => {
+            const {params} = to;
             params.action = 'verification';
-            return { name: 'index', query: params};
+            return {name: 'index', query: params};
         },
     },
     {
         path: '/reset-password/:nameLogin/:token',
-        redirect: (to: any) => {
-            const { params } = to;
+        redirect: (to: Route): Location => {
+            const {params} = to;
             params.action = 'resetPassword';
-            return { name: 'index', query: params};
+            return {name: 'index', query: params};
         },
     },
     {
@@ -67,6 +67,8 @@ export default [
         },
     },
 ];
+
+export default routes;
 
 /*
 REMARK: This function is taken from
@@ -104,7 +106,7 @@ export function lazyLoadView(AsyncView: Promise<typeof import ('*.vue')>): Promi
 
     return Promise.resolve({
         functional: true,
-        render(h: CreateElement, { data, children }: {data: VNodeData, children: VNodeChildren}): VNode {
+        render(h: CreateElement, {data, children}: { data: VNodeData, children: VNodeChildren }): VNode {
             // Transparently pass any props or children to the view component.
             return h(AsyncHandler, data, children);
         },
