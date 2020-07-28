@@ -80,6 +80,6 @@ jobs:
 
       - name: Run linters
         uses: samuelmeuli/lint-action@v1
-        working-directory: ./frontend
+        eslint_dir: ./frontend
         with:
           eslint: true
