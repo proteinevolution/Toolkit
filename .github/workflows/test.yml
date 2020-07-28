@@ -79,11 +79,17 @@ jobs:
         run: ./bin/install-local-deps.sh
 
       - name: Compile sbt
-        run: sbt compile
+        run: sbt compile stage
         timeout-minutes: 30
 
       - name: Run backend tests
-        run: sbt test stage
+        run: sbt coverage test
+
+      - name: Create coverage report
+        run: sbt coverageReport
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
 
       - name: Install frontend dependencies
         working-directory: ./frontend
