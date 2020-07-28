@@ -85,3 +85,4 @@ jobs:
           # auto_fix: true
           eslint: true
           eslint_dir: ./frontend
+          eslint_extensions: js,ts,vue
