@@ -82,6 +82,6 @@ jobs:
         uses: samuelmeuli/lint-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          auto_fix: true
+          # auto_fix: true
           eslint: true
           eslint_dir: ./frontend

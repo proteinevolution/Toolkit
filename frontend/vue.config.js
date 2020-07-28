@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const webpack = require('webpack');
 
 module.exports = {
@@ -15,7 +16,7 @@ module.exports = {
         const imageRule = config.module.rule('images');
         imageRule.use('image-webpack-loader')
             .loader('image-webpack-loader')
-            .tap(args => {
+            .tap(() => {
                 return {
                     bypassOnDebug: true,
                     mozjpeg: {
