@@ -23,10 +23,10 @@ object Dependencies {
     "com.github.pathikrit" %% "better-files"         % "3.8.0",
     "org.mindrot"          % "jbcrypt"               % "0.4",
     ("org.reactivemongo" %% "play2-reactivemongo" % "0.16.6-play27")
-      .exclude("com.typesafe.akka", "*") // provided
+      .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
     ("org.reactivemongo" %% "reactivemongo-akkastream" % "0.16.6")
-      .exclude("com.typesafe.akka", "*") // provided
+      .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
     "org.typelevel" %% "cats-core"            % catsV,
     "org.typelevel" %% "cats-effect"          % "1.4.0",
@@ -37,9 +37,9 @@ object Dependencies {
     "io.circe"      %% "circe-generic-extras" % circeV,
     "io.circe"      %% "circe-java8"          % circeV,
     ("io.circe" %% "circe-bson" % "0.3.1").exclude("org.reactivemongo", "*"), // provided by play2-reactivemongo
-    "org.typelevel" %% "simulacrum"    % "1.0.0",
-    "com.github.mongobee"  % "mongobee"       % "0.13",
-    "com.maxmind.geoip2"   % "geoip2"         % "2.13.0"
+    "org.typelevel"       %% "simulacrum" % "1.0.0",
+    "com.github.mongobee" % "mongobee"    % "0.13",
+    "com.maxmind.geoip2"  % "geoip2"      % "2.13.0"
   )
 
   lazy val testDeps: Seq[ModuleID] = Seq(

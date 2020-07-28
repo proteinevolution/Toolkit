@@ -14,4 +14,4 @@ addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.1.0-M9")
 
 addSbtPlugin("de.heikoseeberger" % "sbt-header" % "5.4.0")
 
-resolvers += "Typesafe Repository" at "https://repo.typesafe.com/typesafe/maven-releases"
+resolvers += "Typesafe Repository".at("https://repo.typesafe.com/typesafe/maven-releases")

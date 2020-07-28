@@ -16,12 +16,12 @@ inThisBuild(
 
 lazy val buildInfoSettings = Seq(
   buildInfoKeys := Seq[BuildInfoKey](
-    name,
-    version,
-    scalaVersion,
-    sbtVersion,
-    "playVersion" -> play.core.PlayVersion.current
-  ),
+      name,
+      version,
+      scalaVersion,
+      sbtVersion,
+      "playVersion" -> play.core.PlayVersion.current
+    ),
   buildInfoPackage := "build"
 )
 
@@ -148,7 +148,6 @@ fork := true // required for "sbt run" to pick up javaOptions
 javaOptions += "-Dplay.editor=http://localhost:63342/api/file/?file=%s&line=%s"
 fork in Test := true
 logLevel in Test := Level.Info
-
 
 scalacOptions in Test ++= Seq("-Yrangepos")
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
