@@ -23,10 +23,10 @@ object Dependencies {
     "com.github.pathikrit" %% "better-files"         % "3.9.1",
     "org.mindrot"          % "jbcrypt"               % "0.4",
     ("org.reactivemongo" %% "play2-reactivemongo" % "0.20.12-play27")
-      .exclude("com.typesafe.akka", "*") // provided
+      .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
     ("org.reactivemongo" %% "reactivemongo-akkastream" % "0.20.12")
-      .exclude("com.typesafe.akka", "*") // provided
+      .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
     "org.typelevel" %% "cats-core"            % catsV,
     "org.typelevel" %% "cats-effect"          % "2.1.4",
@@ -36,7 +36,7 @@ object Dependencies {
     "io.circe"      %% "circe-generic"        % circeV,
     "io.circe"      %% "circe-generic-extras" % circeV,
     ("io.circe" %% "circe-bson" % "0.4.0").exclude("org.reactivemongo", "*"), // provided by play2-reactivemongo
-    "org.typelevel" %% "simulacrum"    % "1.0.0",
+    "org.typelevel"        %% "simulacrum"    % "1.0.0",
     "com.github.mongobee"  % "mongobee"       % "0.13",
     "com.maxmind.geoip2"   % "geoip2"         % "2.13.0"
   )
