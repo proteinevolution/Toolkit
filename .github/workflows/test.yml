@@ -1,0 +1,99 @@
+name: Toolkit Tests
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Java ${{ matrix.java }}
+    strategy:
+      matrix:
+        java: [8, 11]
+        node: [12, 14]
+    env:
+      SBT_BIN: sbt -Dsbt.override.build.repos=true
+      MONGODB_URI: mongodb://127.0.0.1:27017/test
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
+
+      - name: Cache Scala packages
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-scala-deps
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Cache SBT
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.ivy2/cache
+            ~/.sbt
+          key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache Yarn
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Setup Scala
+        uses: olafurpg/setup-scala@v5
+        with:
+          java-version: openjdk@1.${{ matrix.java }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.3.0
+        with:
+          mongodb-version: 4.2
+
+      - name: Run backend tests
+        run: sbt test stage
+
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: yarn install
+
+      - name: Run frontend tests
+        working-directory: ./frontend
+        run: yarn run test:unit
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
+
+      - name: Formatting Scala
+        run: sbt scalafmtSbtCheck scalafmtCheck test:scalafmtCheck
+
+      - name: Count Lines of Code (cloc)
+        uses: djdefi/cloc-action@2
