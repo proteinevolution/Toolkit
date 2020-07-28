@@ -1,5 +1,4 @@
-[![CircleCI](https://circleci.com/gh/proteinevolution/Toolkit.svg?style=svg)](https://circleci.com/gh/proteinevolution/Toolkit)
-[![Build Status](https://travis-ci.com/proteinevolution/Toolkit.svg?branch=master)](https://travis-ci.com/proteinevolution/Toolkit)
+![Toolkit Tests](https://github.com/proteinevolution/Toolkit/workflows/Test%20and%20Build/badge.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4213b23fbf83450ba6ba091f2ded2c8c)](https://www.codacy.com/app/zy4/Toolkit_2?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=proteinevolution/Toolkit&amp;utm_campaign=Badge_Grade)
 # MPI Bioinformatics Toolkit
 

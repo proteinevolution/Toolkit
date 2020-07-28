@@ -1,4 +1,4 @@
-name: Toolkit Tests
+name: Test and Build
 
 on:
   push:
