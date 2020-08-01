@@ -55,13 +55,13 @@ module.exports = {
     devServer: {
         proxy: {
             '^/api': {
-                target: 'http://localhost:' + process.env.VUE_APP_BACKEND_PORT || '9000',
+                target: 'http://' + process.env.VUE_APP_BACKEND_URL || 'localhost:9000',
                 pathRewrite: {
                     '^/api/': '/api/', // use this to later remove base path
                 },
             },
             '/ws/': {
-                target: 'ws://localhost:' + process.env.VUE_APP_BACKEND_PORT || '9000',
+                target: 'ws://' + process.env.VUE_APP_BACKEND_URL || 'localhost:9000',
                 secure: false,
                 ws: true,
             },
