@@ -5,7 +5,6 @@ import play.api.http.ContentTypes
 
 class SubmissionControllerSpec extends PlaySpec with ContentTypes {
 
-
 //  private val ctrl = new SubmissionController()
 //
 //  "SubmissionController#submitJob" should {

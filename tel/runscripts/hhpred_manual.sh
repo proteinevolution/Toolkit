@@ -1,24 +1,23 @@
 # fetch parameters from the parent here
-cp ../../%parent_id.content/results/%parent_id.content.hhr ../params
+cp ../../%parentid.content/results/%parentid.content.hhr ../params
 
 mkdir -p ../results/cif
 
-
 echo "#Converting selected template alignments into PIR format." >> ../results/process.log
 
-checkTemplates.pl -i   ../params/%parent_id.content.hhr \
+checkTemplates.pl -i   ../params/%parentid.content.hhr \
                   -pir ../results/tomodel.pir \
                   -cif %CIFALL \
                   -o   $(readlink -f ../results/cif) \
-                  -m   %templates.content  >   ../results/results.out
+                  -m   %templates.content \
+                  -l ../results/results.out
 
 echo "done" >> ../results/process.log
 
-# Remove line which reveals a path from the result
-sed -i '/create/d' $(readlink -f ../results/results.out)
+SEQ_COUNT=$(egrep '^>' ../results/tomodel.pir | wc -l)
 
-# Remove whitespace lines and whitespace at line start
-sed -i 's/^\s+//' $(readlink -f ../results/tomodel.pir)
-sed -i '/^\s+$/d' $(readlink -f ../results/tomodel.pir)
-
-
+if [[ ${SEQ_COUNT} -lt "2" ]] ; then
+      echo "#Selected template(s) failed our sanity checks. Only PDB entries maybe selected as templates for modelling.\
+      Please re-run your job with new templates." >> ../results/process.log
+      false
+fi

@@ -1,134 +1,166 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.auth.models
 
-import de.proteinevolution.models.database.users.User
-import play.api.libs.json.{ JsObject, JsValue, Json }
+import de.proteinevolution.user.User
+import io.circe.Json
+import io.circe.syntax._
 
 trait JSONTemplate {
 
-  /**
-   * Creates a simplified JSON Object from a User Object
-   *
-   * @param user
-   * @return
-   */
-  def userToJSON(user: User): JsObject = {
-    Json.obj("nameLogin" -> user.getUserData.nameLogin)
+  final val SHOWPASSWORDRESETVIEW = "showPasswordResetView"
+
+  def userToJSON(user: User): Json = {
+    Json.obj("nameLogin" -> Json.fromString(user.getUserData.nameLogin))
   }
 
-  /**
-   * Creates a JSON Object from an Auth Action Object
-   *
-   * @param userOption
-   * @return
-   */
-  def authMessage(message: String, success: Boolean = false, userOption: Option[User] = None): JsValue = {
-    Json.obj("message"    -> message,
-             "successful" -> success,
-             "user"       -> userOption.map(user => Json.toJson(user.userData)))
+  def authMessage(
+      messageKey: String,
+      messageArguments: List[String] = List(),
+      success: Boolean = false,
+      userOption: Option[User] = None
+  ): Json = {
+    Json.obj(
+      "messageKey"      -> Json.fromString(messageKey),
+      "messageArguments" -> messageArguments.asJson,
+      "successful"      -> Json.fromBoolean(success),
+      "user"            -> userOption.map(user => user.userData.asJson).getOrElse(Json.Null)
+    )
   }
 
-  def loggedIn(user: User): JsValue = {
-
-    authMessage(s"Welcome, ${user.getUserData.nameLogin}. \n You are now logged in.",
-                success = true,
-                userOption = Some(user))
+  def loggedIn(user: User): Json = {
+    authMessage(
+      "loginSuccess",
+      messageArguments = List(user.getUserData.nameLogin),
+      success = true,
+      userOption = Some(user)
+    )
   }
 
-  def signedUp: JsValue = {
-    authMessage(s"Your Account has been created.\n Please Check your emails to Verify your Account.", success = true)
+  def signedUp(): Json = {
+    authMessage("signedUp", success = true)
   }
 
-  def loggedOut(): JsValue = {
-    authMessage("You have been logged out successfully. See you soon!", success = true)
+  def loggedOut(): Json = {
+    authMessage("loggedOut", success = true)
   }
 
-  def loginError(): JsValue = {
-    authMessage("There was an error while trying to sign you in. Try again!", success = false)
+  def loginError(): Json = {
+    authMessage("loginError")
   }
 
-  def accountNameUsed(): JsValue = {
-    authMessage("There already is an Account using this username, please use a different one.")
+  def accountNameUsed(): Json = {
+    authMessage("accountNameUsed")
   }
 
-  def accountEmailUsed(): JsValue = {
-    authMessage("This email is already used, please try a different one.")
+  def accountEmailUsed(): Json = {
+    authMessage("accountEmailUsed")
   }
 
-  def loginIncorrect(): JsValue = {
-    authMessage("There was an error logging you in. Please check your account name and password.")
+  def accountError(): Json = {
+    authMessage("accountError")
   }
 
-  def mustAcceptToS(): JsValue = {
-    authMessage("Please accept the terms for our service to register.")
+  def loginIncorrect(): Json = {
+    authMessage("loginIncorrect")
   }
 
-  def mustVerify(): JsValue = {
-    authMessage("Please verify your account.\nCheck Your emails for the verification link.")
+  def mustAcceptToS(): Json = {
+    authMessage("mustAcceptToS")
   }
 
-  def alreadyLoggedIn(): JsValue = {
-    authMessage("You are already logged in.")
+  def mustVerify(): Json = {
+    authMessage("mustVerify")
   }
 
-  def passwordMismatch(): JsValue = {
-    authMessage("Your passwords did not match.")
+  def alreadyLoggedIn(): Json = {
+    authMessage("alreadyLoggedIn")
   }
 
-  def passwordWrong(): JsValue = {
-    authMessage("The Password was incorrect. Please try again.")
+  def passwordMismatch(): Json = {
+    authMessage("passwordMismatch")
   }
 
-  def tokenMismatch(): JsValue = {
-    authMessage("The given token does not match.")
+  def passwordWrong(): Json = {
+    authMessage("passwordWrong")
   }
 
-  def tokenNotFound(): JsValue = {
-    authMessage("The given token is missing.")
+  def tokenMismatch(): Json = {
+    authMessage("tokenMismatch")
   }
 
-  def verificationSuccessful(user: User): JsValue = {
-    authMessage(s"Your E-Mail Account has been Verified, ${user.getUserData.nameLogin}.",
-                success = true,
-                userOption = Some(user))
+  def verificationMailMismatch(): Json = {
+    authMessage("verificationMailMismatch")
   }
 
-  def notLoggedIn(): JsValue = {
-    authMessage("You are not logged in.")
+  def tokenNotFound(): Json = {
+    authMessage("tokenNotFound")
   }
 
-  def formError(errorString: String = ""): JsValue = {
-    authMessage("There was a Form error:" + errorString)
+  def verificationSuccessful(user: User): Json = {
+    authMessage(
+      "verificationSuccessful",
+      messageArguments = List(user.getUserData.nameLogin),
+      success = true,
+      userOption = Some(user)
+    )
   }
 
-  def editSuccessful(user: User): JsValue = {
-    authMessage("Changes have been saved.", success = true, userOption = Some(user))
+  def notLoggedIn(): Json = {
+    authMessage("notLoggedIn")
   }
 
-  def passwordChanged(user: User): JsValue = {
-    authMessage("Password has been accepted.\nPlease check your emails in order to verify the password change.",
-                success = true,
-                userOption = Some(user))
+  def formError(errorString: String = ""): Json = {
+    authMessage("formError" + errorString, messageArguments = List(errorString))
   }
 
-  def passwordRequestSent: JsValue = {
-    authMessage("We have sent You a link for resetting Your password.\nPlease check your emails.", success = true)
+  def editSuccessful(user: User): Json = {
+    authMessage("editSuccessful", success = true, userOption = Some(user))
   }
 
-  def passwordResetChanged(user: User): JsValue = {
-    authMessage("Password has been accepted.\nPlease sign in with your new Password.",
-                success = true,
-                userOption = Some(user))
+  def passwordChanged(user: User): Json = {
+    authMessage("passwordChanged", success = true, userOption = Some(user))
   }
 
-  def noSuchUser: JsValue = {
-    authMessage("Could not find any Users with the matching user name or email address.", success = false)
+  def passwordRequestSent(): Json = {
+    authMessage("passwordRequestSent", success = true)
   }
 
-  def oneParameterNeeded: JsValue = {
-    authMessage("Need either a user name or a email address.", success = false)
+  def passwordChangeAccepted(user: User): Json = {
+    authMessage("passwordChangeAccepted", success = true, userOption = Some(user))
   }
 
-  def databaseError: JsValue = {
-    authMessage("The Database could not be reached. Try again later.", success = false)
+  def passwordChangeFailed: Json = {
+    authMessage("passwordChangeFailed")
+  }
+
+  def showPasswordResetView(): Json = {
+    authMessage(SHOWPASSWORDRESETVIEW, success = true)
+  }
+
+  def noSuchUser: Json = {
+    authMessage("noSuchUser")
+  }
+
+  def oneParameterNeeded: Json = {
+    authMessage("oneParameterNeeded")
+  }
+
+  def databaseError: Json = {
+    authMessage("databaseError")
   }
 }

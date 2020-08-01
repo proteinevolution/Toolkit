@@ -1,11 +1,26 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.tel.runscripts
 
 import better.files._
 import de.proteinevolution.tel.TELRegex
-import de.proteinevolution.tel.env.{ Env, EnvAware }
 import de.proteinevolution.tel.execution.ExecutionContext
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
-import play.api.Logger
+import play.api.Logging
 
 import scala.collection.mutable
 import scala.util.matching.Regex
@@ -15,7 +30,7 @@ import scala.util.matching.Regex
  * Instances should be created via the companion object.
  *
  */
-class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript] {
+class Runscript(files: Seq[File]) extends TELRegex with Logging {
 
   val parameters: Seq[(String, Evaluation)] = parameterString
     .findAllIn(files.map(_.contentAsString).mkString("\n"))
@@ -42,8 +57,6 @@ class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript] {
 
   private case class Replacer(arguments: Seq[(String, ValidArgument)]) {
     private var counter = -1
-    private val logger  = Logger(this.getClass)
-
     def apply(m: Regex.Match): String = {
       m.groupNames.foreach(s => logger.debug(s)) // just use m because of https://stackoverflow.com/questions/43964571/scala-2-12-2-emits-a-ton-of-useless-warning-parameter-value-in-method
       counter += 1
@@ -67,10 +80,10 @@ class Runscript(files: Seq[File]) extends TELRegex with EnvAware[Runscript] {
     parameterString.replaceAllIn(init, replacer.apply _)
   }
 
-  override def withEnvironment(env: Env): Runscript = {
+  def withEnvironment(env: Map[String, String]): Runscript = {
 
     translationSteps.enqueue { s =>
-      envString.replaceAllIn(s, m => env.get(m.group("constant")))
+      envString.replaceAllIn(s, m => env.getOrElse(m.group("constant"), ""))
     }
     this
   }

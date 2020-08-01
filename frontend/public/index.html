@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Bioinformatics Toolkit</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <!-- SEO -->
+    <meta name="description" content="The MPI Bioinformatics Toolkit is an interactive web service
+                                          which offers access to a great variety of public and in-house bioinformatics tools.
+                                          They are grouped into different sections that support sequence searches,
+                                          multiple alignment, secondary and tertiary structure prediction and classification."/>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700|Roboto:300|Source+Code+Pro:400,700|Vollkorn:400,700"
+          rel="stylesheet">
+
+    <link rel="shortcut icon" href="<%= BASE_URL %>favicon-green.svg">
+    <link id="tk-favicon" rel="shortcut icon" href="<%= BASE_URL %>favicon-32x32.png">
+    <link rel="apple-touch-icon" href="<%= BASE_URL %>apple-touch-icon.png">
+    <link rel="manifest" href="<%= BASE_URL %>manifest.json">
+
+</head>
+<body>
+<script>
+    var ua = window.navigator.userAgent;
+    <!-- IE 10 or older -->
+    var msie = ua.indexOf('MSIE ');
+    <!-- IE 11 -->
+    var trident = ua.indexOf('Trident/');
+    <!-- Edge (IE 12+) -->
+    <!-- var edge = ua.indexOf('Edge/'); -->
+    if (msie > 0 || trident > 0) {
+        document.write('<div style="text-align: center; background-color: #c8c8c8;">');
+        document.write(('The Toolkit is not compatible with Microsoft Internet Explorer. For the best viewing experience, ' +
+            'please use Chrome/Firefox.'));
+        document.write('</div>');
+    }
+</script>
+<noscript>
+    <strong>We're sorry but the Toolkit doesn't work properly without JavaScript enabled. Please enable it to
+        continue.</strong>
+</noscript>
+<div id="app"></div>
+<!-- built files will be auto injected -->
+</body>
+</html>

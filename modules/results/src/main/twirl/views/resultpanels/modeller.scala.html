@@ -1,8 +1,0 @@
-@import de.proteinevolution.models.results.FileLoader
-@(filepathImage : String,filepathText : String)()
-
-@views.html.resultpanels.image(filepathImage)
-
-<pre class="modeller-results">
-  @FileLoader.loadFile(filepathText)
-</pre>

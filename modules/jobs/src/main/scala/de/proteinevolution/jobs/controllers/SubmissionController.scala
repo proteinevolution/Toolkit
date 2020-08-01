@@ -1,41 +1,75 @@
-package de.proteinevolution.jobs.controllers
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import de.proteinevolution.auth.UserSessions
+package de.proteinevolution.jobs.controllers
+import de.proteinevolution.auth.services.UserSessionService
+import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
-import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete }
+import de.proteinevolution.common.models.ConstantsV2
+import de.proteinevolution.jobs.actors.JobActor.{ CheckIPHash, Delete, SetJobPublic }
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services._
 import de.proteinevolution.tools.ToolConfig
-import io.circe.{ Json, JsonObject }
 import io.circe.syntax._
+import io.circe.{ Json, JsonObject }
 import javax.inject.{ Inject, Singleton }
-import play.api.Logger
-import play.api.libs.Files
-import play.api.mvc.{ Action, AnyContent, ControllerComponents, MultipartFormData }
-import play.mvc.Http.MimeTypes
+import play.api.Logging
+import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class SubmissionController @Inject()(
     jobActorAccess: JobActorAccess,
-    userSessions: UserSessions,
+    userSessions: UserSessionService,
     jobDispatcher: JobDispatcher,
+    constants: ConstantsV2,
     cc: ControllerComponents,
     jobDao: JobDao,
     toolConfig: ToolConfig,
     jobResubmitService: JobResubmitService,
     jobIdProvider: JobIdProvider,
-    jobFrontendToolsService: JobFrontendToolsService
+    jobFrontendToolsService: JobFrontendToolsService,
+    userAction: UserAction
 )(implicit ec: ExecutionContext)
-    extends ToolkitController(cc) {
+    extends ToolkitController(cc)
+    with Logging {
 
-  private val logger = Logger(this.getClass)
+  def startJob(jobID: String): Action[AnyContent] = userAction { implicit request =>
+    jobActorAccess.sendToJobActor(jobID, CheckIPHash(jobID))
+    Ok(JsonObject("message" -> Json.fromString("Starting Job...")).asJson)
+  }
 
-  def startJob(jobID: String): Action[AnyContent] = Action.async { implicit request =>
-    userSessions.getUser.map { _ =>
-      jobActorAccess.sendToJobActor(jobID, CheckIPHash(jobID))
-      Ok(JsonObject("message" -> Json.fromString("Starting Job...")).asJson)
+  def changeJob(jobID: String): Action[Json] = userAction(circe.json).async { implicit request =>
+    jobDao.findJob(jobID).map {
+      case Some(job) =>
+        if (!job.ownerID.equals(request.user.userID)) {
+          Unauthorized
+        } else {
+          request.body.asObject match {
+            case None => BadRequest
+            case Some(obj) =>
+              if (obj.contains("isPublic")) {
+                jobActorAccess.sendToJobActor(jobID, SetJobPublic(jobID, obj("isPublic").get.asBoolean.getOrElse(false)))
+              }
+              Ok
+          }
+        }
+      case None => // job does not exist
+        NotFound
     }
   }
 
@@ -48,23 +82,32 @@ class SubmissionController @Inject()(
     }
   }
 
-  def delete(jobID: String): Action[AnyContent] = Action.async { implicit request =>
+  def delete(jobID: String): Action[AnyContent] = userAction { implicit request =>
     logger.info("Delete Action in JobController reached")
-    userSessions.getUser.map { user =>
-      jobActorAccess.sendToJobActor(jobID, Delete(jobID, Some(user.userID)))
-      NoContent
-    }
+    jobActorAccess.sendToJobActor(jobID, Delete(jobID, Some(request.user.userID)))
+    NoContent
   }
 
-  def submitJob(toolName: String): Action[MultipartFormData[Files.TemporaryFile]] =
-    Action(parse.multipartFormData).async { implicit request =>
-      userSessions.getUser.flatMap { user =>
+  def submitJob(toolName: String): Action[Json] = userAction(circe.json).async { implicit request =>
+    request.body.asObject match {
+      case None => fuccess(BadRequest)
+      case Some(obj) =>
+        val parts: Iterable[(String, String)] = for {
+          (key, json) <- obj.toIterable
+          str = json.fold[String](
+            "",
+            bool => bool.toString,
+            num => num.toString,
+            identity,
+            vec => vec.toString,
+            obj => obj.toString
+          )
+        } yield (key, str)
         jobDispatcher
           .submitJob(
             toolName,
-            request.body.dataParts,
-            request.body.files.filter(f => java.nio.file.Files.probeContentType(f.ref.path).contains(MimeTypes.TEXT)),
-            user
+            parts.toMap,
+            request.user
           )
           .value
           .map {
@@ -76,15 +119,14 @@ class SubmissionController @Inject()(
                   "message"    -> Json.fromString("Submission successful."),
                   "jobID"      -> Json.fromString(job.jobID)
                 ).asJson
-              ).withSession(userSessions.sessionCookie(request, user.sessionID.get))
+              )
             case Left(error) => BadRequest(errors(error.msg))
           }
-      }
     }
+  }
 
-  def resubmitJob(newJobID: String, resubmitForJobID: Option[String]): Action[AnyContent] = Action.async {
-    implicit request =>
-      jobResubmitService.resubmit(newJobID, resubmitForJobID).map(r => Ok(r.asJson))
+  def checkJobID(newJobID: String): Action[AnyContent] = Action.async { implicit request =>
+    jobResubmitService.checkJobID(newJobID).map(r => Ok(r.asJson))
   }
 
 }

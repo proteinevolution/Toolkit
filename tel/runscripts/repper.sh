@@ -1,16 +1,16 @@
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 
-if [ ${CHAR_COUNT} -gt "10000000" ] ; then
+if [[ ${CHAR_COUNT} -gt "10000000" ]] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
       false
 fi
 
-if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
+if [[ ${SEQ_COUNT} = "0" ]] && [[ ${FORMAT} = "0" ]] ; then
       sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
       CHAR_COUNT=$(wc -m < ../params/alignment1)
 
-      if [ ${CHAR_COUNT} -gt "10000" ] ; then
+      if [[ ${CHAR_COUNT} -gt "10000" ]] ; then
             echo "#Single protein sequence inputs may not contain more than 10000 characters." >> ../results/process.log
             false
       else
@@ -19,7 +19,7 @@ if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
       fi
 fi
 
-if [ ${FORMAT} = "1" ] ; then
+if [[ ${FORMAT} = "1" ]] ; then
       reformatValidator.pl clu fas \
             $(readlink -f %alignment.path) \
             $(readlink -f ../results/${JOBID}.fas) \
@@ -31,19 +31,19 @@ else
             -d 160 -uc -r -M first -l 32000
 fi
 
-if [ ! -f ../results/${JOBID}.fas ]; then
+if [[ ! -f ../results/${JOBID}.fas ]]; then
     echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
     false
 fi
 
 SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.fas | wc -l)
 
-if [ ${SEQ_COUNT} -gt "2000" ] ; then
+if [[ ${SEQ_COUNT} -gt "2000" ]] ; then
       echo "#Input contains more than 2000 sequences." >> ../results/process.log
       false
 fi
 
-if [ ${SEQ_COUNT} -gt "1" ] ; then
+if [[ ${SEQ_COUNT} -gt "1" ]] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
@@ -52,12 +52,12 @@ echo "done" >> ../results/process.log
 
 mv ../results/${JOBID}.fas ../params/alignment
 
-if [ "%repper_input_mode.content" = "1" ]; then
+if [[ "%repper_input_mode.content" = "1" ]]; then
 
         echo "#MSA generation required. Running 1 iteration of PSI-BLAST against nr70." >> ../results/process.log
 
         INPUT="query"
-        if [ ${SEQ_COUNT} -gt 1 ] ; then
+        if [[ ${SEQ_COUNT} -gt 1 ]] ; then
             INPUT="in_msa"
         fi
 
@@ -97,13 +97,11 @@ else
 fi
 
 
-
-
 ${REPPERDIR}/deal_with_sequence.pl ../results/${JOBID} %window_size.content %periodicity_min.content \
                                    %periodicity_max.content 0 %ftwin_threshold.content \
                                    ../results/${JOBID}.ftwin_par ../results/${JOBID}.in ../results/${JOBID}.buffer
 
-echo "#Excecuting FTwin." >> ../results/process.log
+echo "#Executing FTwin." >> ../results/process.log
 
 ${REPPERDIR}/complete_profile ../results/${JOBID}.in ../results/${JOBID}.ftwin_par \
                               ../results/${JOBID}.ftwin_plot ${REPPERDIR}/hydro.dat
@@ -119,7 +117,7 @@ reformat.pl fas a3m \
             -uc -num -r -M first
 
 
-echo "#Excecuting PSIPRED." >> ../results/process.log
+echo "#Executing PSIPRED." >> ../results/process.log
 
 ${REPPERDIR}/addss.pl -i ../results/${JOBID}.alignment.a3m -o ../results/${JOBID}.alignment.ss -t ../results/${JOBID}.horiz
 INPUT_MODE=1
@@ -133,7 +131,7 @@ hhmake -i ../results/${JOBID}.alignment.a3m \
 
 ${REPPERDIR}/deal_with_profile.pl ../results/${JOBID}.hhmake.out ../results/${JOBID}.myhmmmake.out
 
-echo "#Excecuting PCOILS." >> ../results/process.log
+echo "#Executing PCOILS." >> ../results/process.log
 cd ../results
 
 run_PCoils -win 14 -prof ${JOBID}.myhmmmake.out < ${JOBID}.buffer > ${JOBID}.ftwin_n14
@@ -143,7 +141,7 @@ run_PCoils -win 28 -prof ${JOBID}.myhmmmake.out < ${JOBID}.buffer > ${JOBID}.ftw
 cd ../0
 echo "done" >> ../results/process.log
 
-echo "#Excecuting REPwin." >> ../results/process.log
+echo "#Executing REPwin." >> ../results/process.log
 
 ${REPPERDIR}/repper64 -i ../results/${JOBID}.buffer \
                       -w %window_size.content \
@@ -160,6 +158,25 @@ ${REPPERDIR}/prepare_for_gnuplot.pl ../results/${JOBID} ../results/${JOBID}.ftwi
                                     ../results/${JOBID}.ftwin_n21 \
                                     ../results/${JOBID}.ftwin_n28 \
                                     ../results/${JOBID}.horiz
+cd ../results/
 
-rm ../results/*.a3m ../results/*.out ../results/*.ss ../results/*.ftwin* ../results/*.dat
-echo "done" >> ../results/process.log
+# TODO change prepare_for_gnuplot.pl to not use basename for images
+
+if [[ -f ${JOBID}_ncoils.png ]] ; then
+    mv ${JOBID}_ncoils.png ncoils.png
+fi
+
+if [[ -f ${JOBID}_overview.png ]] ; then
+    mv ${JOBID}_overview.png overview.png
+fi
+
+if [[ -f ${JOBID}_psipred ]] ; then
+    mv ${JOBID}_psipred.png psipred.png
+fi
+
+if [[ -f ${JOBID}_repper.png ]] ; then
+    mv ${JOBID}_repper.png repper.png
+fi
+
+rm *.a3m *.out *.ss *.ftwin* *.dat
+echo "done" >> process.log

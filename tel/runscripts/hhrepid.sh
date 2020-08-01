@@ -2,12 +2,12 @@ SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 A3M_INPUT=$(head -1 ../params/alignment | egrep "^#A3M#" | wc -l)
 
-if [ ${CHAR_COUNT} -gt "10000000" ] ; then
+if [[ ${CHAR_COUNT} -gt "10000000" ]] ; then
       echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
       false
 fi
 
-if [ ${A3M_INPUT} = "1" ] ; then
+if [[ ${A3M_INPUT} = "1" ]] ; then
 
     sed -i '1d' ../params/alignment
     cp ../params/alignment ../results/${JOBID}.a3m
@@ -17,7 +17,7 @@ if [ ${A3M_INPUT} = "1" ] ; then
            $(readlink -f ../params/alignment.tmp) \
            -d 160 -l 32000
 
-     if [ ! -f ../params/alignment.tmp ]; then
+     if [[ ! -f ../params/alignment.tmp ]]; then
             echo "#Input is not in valid A3M format." >> ../results/process.log
             false
      else
@@ -27,7 +27,7 @@ if [ ${A3M_INPUT} = "1" ] ; then
      fi
 else
 
-    if [ ${SEQ_COUNT} = "0" ] && [ ${FORMAT} = "0" ] ; then
+    if [[ ${SEQ_COUNT} = "0" ]] && [ ${FORMAT} = "0" ] ; then
           sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
           CHAR_COUNT=$(wc -m < ../params/alignment1)
 
@@ -40,7 +40,7 @@ else
           fi
     fi
 
-    if [ ${FORMAT} = "1" ] ; then
+    if [[ ${FORMAT} = "1" ]] ; then
           reformatValidator.pl clu a3m \
                 $(readlink -f %alignment.path) \
                 $(readlink -f ../results/${JOBID}.a3m) \
@@ -52,7 +52,7 @@ else
                 -d 160 -l 32000
     fi
 
-    if [ ! -f ../results/${JOBID}.a3m ]; then
+    if [[ ! -f ../results/${JOBID}.a3m ]]; then
         echo "#Input is not in aligned FASTA/CLUSTAL format." >> ../results/process.log
         false
     fi
@@ -60,12 +60,12 @@ fi
 
 SEQ_COUNT=$(egrep '^>' ../results/${JOBID}.a3m | wc -l)
 
-if [ ${SEQ_COUNT} -gt "10000" ] ; then
+if [[ ${SEQ_COUNT} -gt "10000" ]] ; then
       echo "#Input contains more than 10000 sequences." >> ../results/process.log
       false
 fi
 
-if [ ${SEQ_COUNT} -gt "1" ] ; then
+if [[ ${SEQ_COUNT} -gt "1" ]] ; then
        echo "#Query is an MSA with ${SEQ_COUNT} sequences." >> ../results/process.log
 else
        echo "#Query is a single protein sequence." >> ../results/process.log
@@ -73,14 +73,14 @@ fi
 echo "done" >> ../results/process.log
 
 #CHECK IF MSA generation is required or not
-if [ %msa_gen_max_iter_hhrepid.content == "0" ] && [ ${SEQ_COUNT} -gt "1" ] ; then
+if [[ %msa_gen_max_iter_hhrepid.content == "0" ]] ; then
         echo "#No MSA generation required." >> ../results/process.log
 
         mv ../results/${JOBID}.a3m ../results/query.a3m
 else
     #MSA generation required
     #MSA generation by HHblits
-    if [ %msa_gen_max_iter_hhrepid.content -lt "2" ] ; then
+    if [[ %msa_gen_max_iter_hhrepid.content -lt "2" ]] ; then
         echo "#MSA generation required. Running 1 iteration of HHblits." >> ../results/process.log
         ITERS=1
     else
@@ -91,7 +91,7 @@ else
     hhblits -cpu  %THREADS \
             -v 2 \
             -i  ../results/${JOBID}.a3m \
-            -d %UNICLUST  \
+            -d %UNIREF  \
             -o /dev/null \
             -oa3m ../results/query.a3m \
             -n ${ITERS}
@@ -115,6 +115,13 @@ hhrepid  -qsc 0.0 \
         -mrgr %merge_iters.content \
         -ssm %score_ss.content \
         -domm %domain_bound_detection.content
+
+if [[ -f ../results/query.hhrepid ]] ; then
+    #parse out results to a json file
+    hhrepid2json.py ../results/query.hhrepid ../results/results.json
+else
+    echo "[]" > ../results/results.json
+fi
 
 #100 maximally diverse sequences
 hhfilter -i ../results/query.a3m \

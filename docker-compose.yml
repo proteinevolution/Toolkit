@@ -1,54 +1,52 @@
 version: '3.7'
-# Here we configure the Containers to run.
 services:
 
-  toolkit:
+  backend:
     image: proteinevolution/toolkit-docker:latest
-    container_name: toolkit
+    container_name: tk-backend
     environment:
       - SUBMIT_MODE=LOCAL
       - SBT_OPTS=-Xms2G -Xmx4G -Xss2M
-    stdin_open: true
-    tty: true
     ports:
-      - 1234:1234
-      - 8080:8080
+      - 9000:9000
+    # [UP] Uncomment the following three lines for docker-compose up
+    # stdin_open: true
+    # tty: true
+    # command: ["run"]
     volumes:
-      - .:/toolkit
+      - .:/toolkit/backend
+      # Uncommenting following 3 lines will speed up sbt boot time significatnly providing you have GeoIP built locally
+      - ~/.ivy2:/root/.ivy2
+      - ~/.sbt:/root/.sbt
+      - ~/.coursier:/root/.coursier
     links:
       - mongodb
     depends_on:
       - mongodb
-    networks:
-      tk-network:
-        ipv4_address: 174.18.0.2
 
-  # The container for the MongoDB Database
+  frontend:
+    image: proteinevolution/toolkit-docker-frontend:latest
+    container_name: tk-frontend
+    ports:
+      - 8080:8080
+    # [UP] Uncomment the following three lines for docker-compose up
+    # stdin_open: true
+    # tty: true
+    # command: ["sh","-c", "yarn install && yarn run serve"]
+    volumes:
+      - ./frontend:/toolkit/frontend
+
   mongodb:
     image: mongo:4.0
     container_name: tk-mongodb
     environment:
       - MONGO_DATA_DIR=/data/db
       - MONGO_LOG_DIR=/data/log
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=rootPassXX
-    volumes:
-      - mongodb:/data/db
     ports:
       - 27017:27017
-    command: mongod --auth
-    networks:
-      tk-network:
-        ipv4_address: 174.18.0.3
+    command: mongod
+    volumes:
+      - mongodb:/data/db
 
 volumes:
   mongodb:
-
-networks:
-  tk-network:
-    name: tk-network
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-      - subnet: 174.18.0.1/24

@@ -1,6 +1,21 @@
+/*
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.proteinevolution.tel
 
-import de.proteinevolution.tel.env.Env
 import de.proteinevolution.tel.param.Params
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
@@ -10,10 +25,10 @@ import play.api.Configuration
  *
  */
 @Singleton
-class TEL @Inject()(env: Env, params: Params, config: Configuration) extends TELRegex with TELConstants {
+class TEL @Inject()(params: Params, config: Configuration) extends TELRegex with TELConstants {
 
   // Ignore the following keys when writing parameters // TODO This is a hack and must be changed
-  val ignore: Seq[String] = Array("jobid", "newSubmission", "start", "edit")
+  val ignore: Seq[String] = Array("jobID", "newSubmission", "start", "edit")
 
   // Each tool exection consists of the following subdirectories
   val subdirs: Seq[String] = Array("params", "results", "temp", "logs")

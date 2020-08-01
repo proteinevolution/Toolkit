@@ -1,0 +1,8 @@
+* {
+  outline: 0;
+}
+
+body {
+  overflow-x: hidden;
+  margin-right: calc(-1 * (100vw - 100%));
+}

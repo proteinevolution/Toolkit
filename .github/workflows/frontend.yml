@@ -1,0 +1,49 @@
+name: Frontend
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
+
+jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+    name: Build with Node ${{ matrix.node }}
+    strategy:
+      matrix:
+        node: [12, 14]
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache Yarn
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: yarn install
+
+      - name: Run frontend tests
+        working-directory: ./frontend
+        run: yarn run test:unit

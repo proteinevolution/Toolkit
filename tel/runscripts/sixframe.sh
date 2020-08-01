@@ -1,22 +1,22 @@
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 
-if [ ${CHAR_COUNT} -gt "30000" ] ; then
+if [[ ${CHAR_COUNT} -gt "30000" ]] ; then
       echo "#Input may not contain more than 30000 characters." >> ../results/process.log
       false
 fi
 
-if [ ${FORMAT} = "1" ] || [ ${SEQ_COUNT} -gt "1" ] ; then
+if [[ ${FORMAT} = "1" ]] || [[ ${SEQ_COUNT} -gt "1" ]] ; then
       echo "#Input is a multiple sequence alignment; expecting a single DNA sequence." >> ../results/process.log
       false
 fi
 
-if [ ${SEQ_COUNT} = "0" ] ; then
+if [[ ${SEQ_COUNT} = "0" ]] ; then
       sed 's/[^a-z^A-Z]//g' ../params/alignment > ../params/alignment1
       perl -pe 's/\s+//g' ../params/alignment1 > ../params/alignment
       CHAR_COUNT=$(wc -m < ../params/alignment)
 
-      if [ ${CHAR_COUNT} -gt "30000" ] ; then
+      if [[ ${CHAR_COUNT} -gt "30000" ]] ; then
             echo "#Input may not contain more than 30000 characters." >> ../results/process.log
             false
       else
