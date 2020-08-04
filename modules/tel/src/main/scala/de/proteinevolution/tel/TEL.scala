@@ -28,10 +28,10 @@ import play.api.Configuration
 class TEL @Inject()(params: Params, config: Configuration) extends TELRegex with TELConstants {
 
   // Ignore the following keys when writing parameters // TODO This is a hack and must be changed
-  val ignore: Seq[String] = Array("jobID", "newSubmission", "start", "edit")
+  val ignore: Seq[String] = Seq("jobID", "newSubmission", "start", "edit")
 
   // Each tool exection consists of the following subdirectories
-  val subdirs: Seq[String] = Array("params", "results", "temp", "logs")
+  val subdirs: Seq[String] = Seq("params", "results", "temp", "logs")
 
   val context: String = config.get[String]("submit_mode")
 
