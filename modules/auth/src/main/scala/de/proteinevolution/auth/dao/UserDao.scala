@@ -21,15 +21,14 @@ import java.util.UUID
 
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.user._
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.bson.collection.BSONCollection
-import reactivemongo.api.bson.{BSONArray, BSONDateTime, BSONDocument}
+import reactivemongo.api.bson.{ BSONArray, BSONDateTime, BSONDocument }
 import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.{Cursor, WriteConcern}
+import reactivemongo.api.{ Cursor, WriteConcern }
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 class UserDao @Inject() (
