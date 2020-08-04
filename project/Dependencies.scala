@@ -3,7 +3,7 @@ import sbt._
 
 object Dependencies {
 
-  val akkaVersion = "2.6.3"
+  val akkaVersion = "2.6.5"
   val catsV       = "2.1.0"
   val circeV      = "0.13.0"
 
@@ -22,7 +22,7 @@ object Dependencies {
     "com.typesafe.play"    %% "play-mailer-guice"    % "8.0.1",
     "com.github.pathikrit" %% "better-files"         % "3.9.1",
     "org.mindrot"           % "jbcrypt"              % "0.4",
-    ("org.reactivemongo"   %% "play2-reactivemongo"  % "0.20.12-play27-fix1")
+    ("org.reactivemongo"   %% "play2-reactivemongo"  % "0.20.12-play28-fix1")
       .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
     ("org.reactivemongo" %% "reactivemongo-akkastream" % "0.20.12-fix1")
@@ -32,7 +32,7 @@ object Dependencies {
     "org.typelevel"      %% "cats-effect"          % "2.1.4",
     "com.chuusai"        %% "shapeless"            % "2.3.3",
     "com.mohiva"         %% "play-html-compressor" % "0.7.1",
-    "com.dripower"       %% "play-circe"           % "2712.0",
+    "com.dripower"       %% "play-circe"           % "2812.0",
     "io.circe"           %% "circe-generic"        % circeV,
     "io.circe"           %% "circe-generic-extras" % circeV,
     ("io.circe"          %% "circe-bson"           % "0.4.0").exclude("org.reactivemongo", "*"), // provided by play2-reactivemongo
