@@ -25,8 +25,6 @@ import io.circe.syntax._
 import io.circe.{ Encoder, Json }
 import reactivemongo.api.bson._
 
-import scala.util.{ Success, Try }
-
 case class StatisticsObject(
     statisticsID: String = UUID.randomUUID().toString,
     userStatistics: UserStatistic = UserStatistic(),
@@ -154,31 +152,24 @@ object StatisticsObject {
       (DATEPUSHED, obj.datePushed.asJson)
     )
 
-  implicit object Reader extends BSONDocumentReader[StatisticsObject] {
-    def readDocument(bson: BSONDocument): Try[StatisticsObject] =
-      Success(
-        StatisticsObject(
-          statisticsID = bson.getAsOpt[String](ID).getOrElse(UUID.randomUUID().toString),
-          userStatistics = bson.getAsOpt[UserStatistic](USERSTATISTICS).getOrElse(UserStatistic()),
-          toolStatistics = bson.getAsOpt[List[ToolStatistic]](TOOLSTATISTICS).getOrElse(List.empty),
-          datePushed = bson
-            .getAsOpt[List[BSONDateTime]](DATEPUSHED)
-            .getOrElse(List.empty[BSONDateTime])
-            .map(dt => helper.getZDT(dt))
-        )
+  implicit def reader: BSONDocumentReader[StatisticsObject] =
+    BSONDocumentReader[StatisticsObject] { bson =>
+      StatisticsObject(
+        statisticsID = bson.getAsTry[String](ID).getOrElse(UUID.randomUUID().toString),
+        userStatistics = bson.getAsTry[UserStatistic](USERSTATISTICS).getOrElse(UserStatistic()),
+        toolStatistics = bson.getAsTry[List[ToolStatistic]](TOOLSTATISTICS).getOrElse(List.empty),
+        datePushed =
+          bson.getAsTry[List[BSONDateTime]](DATEPUSHED).getOrElse(List.empty[BSONDateTime]).map(helper.getZDT)
       )
-  }
+    }
 
-  implicit object Writer extends BSONDocumentWriter[StatisticsObject] {
-    def writeTry(statisticObject: StatisticsObject): Try[BSONDocument] =
-      Success(
-        BSONDocument(
-          ID             -> statisticObject.statisticsID,
-          USERSTATISTICS -> statisticObject.userStatistics,
-          TOOLSTATISTICS -> statisticObject.toolStatistics,
-          DATEPUSHED     -> statisticObject.datePushed.map(a => BSONDateTime(a.toInstant.toEpochMilli))
-        )
+  implicit def writer: BSONDocumentWriter[StatisticsObject] =
+    BSONDocumentWriter[StatisticsObject] { statisticObject =>
+      BSONDocument(
+        ID             -> statisticObject.statisticsID,
+        USERSTATISTICS -> statisticObject.userStatistics,
+        TOOLSTATISTICS -> statisticObject.toolStatistics,
+        DATEPUSHED     -> statisticObject.datePushed.map(a => BSONDateTime(a.toInstant.toEpochMilli))
       )
-  }
-
+    }
 }

@@ -22,10 +22,10 @@ object Dependencies {
     "com.typesafe.play"    %% "play-mailer-guice"    % "8.0.1",
     "com.github.pathikrit" %% "better-files"         % "3.9.1",
     "org.mindrot"           % "jbcrypt"              % "0.4",
-    ("org.reactivemongo"   %% "play2-reactivemongo"  % "0.20.12-play27")
+    ("org.reactivemongo"   %% "play2-reactivemongo"  % "0.20.12-play27-fix1")
       .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
-    ("org.reactivemongo" %% "reactivemongo-akkastream" % "0.20.12")
+    ("org.reactivemongo" %% "reactivemongo-akkastream" % "0.20.12-fix1")
       .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
     "org.typelevel"      %% "cats-core"            % catsV,

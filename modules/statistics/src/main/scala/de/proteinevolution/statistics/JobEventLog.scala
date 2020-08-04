@@ -22,8 +22,6 @@ import de.proteinevolution.common.models.database.jobs.JobState
 import de.proteinevolution.common.models.database.jobs.JobState._
 import reactivemongo.api.bson._
 
-import scala.util.{ Success, Try }
-
 case class JobEventLog(
     jobID: String,
     toolName: String,
@@ -90,30 +88,25 @@ object JobEventLog {
       (l.jobID, l.toolName, l.internalJob, l.events, l.runtime)
     )
 
-  implicit object Reader extends BSONDocumentReader[JobEventLog] {
-    def readDocument(bson: BSONDocument): Try[JobEventLog] =
-      Success(
-        JobEventLog(
-          jobID = bson.getAsOpt[String](JOBID).getOrElse(""),
-          toolName = bson.getAsOpt[String](TOOLNAME).getOrElse(""),
-          internalJob = bson.getAsOpt[Boolean](INTERNALJOB).getOrElse(false),
-          events = bson.getAsOpt[List[JobEvent]](EVENTS).getOrElse(List.empty),
-          runtime = bson.getAsOpt[Long](RUNTIME).getOrElse(0L)
-        )
+  implicit def reader: BSONDocumentReader[JobEventLog] =
+    BSONDocumentReader[JobEventLog] { bson =>
+      JobEventLog(
+        jobID = bson.getAsTry[String](JOBID).getOrElse(""),
+        toolName = bson.getAsTry[String](TOOLNAME).getOrElse(""),
+        internalJob = bson.getAsTry[Boolean](INTERNALJOB).getOrElse(false),
+        events = bson.getAsTry[List[JobEvent]](EVENTS).getOrElse(List.empty),
+        runtime = bson.getAsTry[Long](RUNTIME).getOrElse(0L)
       )
-  }
+    }
 
-  implicit object Writer extends BSONDocumentWriter[JobEventLog] {
-    def writeTry(jobEventLog: JobEventLog): Try[BSONDocument] =
-      Success(
-        BSONDocument(
-          JOBID       -> jobEventLog.jobID,
-          TOOLNAME    -> jobEventLog.toolName,
-          INTERNALJOB -> jobEventLog.internalJob,
-          EVENTS      -> jobEventLog.events,
-          RUNTIME     -> jobEventLog.runtime
-        )
+  implicit def writer: BSONDocumentWriter[JobEventLog] =
+    BSONDocumentWriter[JobEventLog] { jobEventLog =>
+      BSONDocument(
+        JOBID       -> jobEventLog.jobID,
+        TOOLNAME    -> jobEventLog.toolName,
+        INTERNALJOB -> jobEventLog.internalJob,
+        EVENTS      -> jobEventLog.events,
+        RUNTIME     -> jobEventLog.runtime
       )
-  }
-
+    }
 }

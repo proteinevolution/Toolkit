@@ -20,8 +20,6 @@ import io.circe.Encoder
 import io.circe.generic.semiauto._
 import reactivemongo.api.bson._
 
-import scala.util.{ Success, Try }
-
 case class ToolStatistic(
     toolName: String,
     monthly: List[Int] = List.empty[Int],
@@ -98,30 +96,25 @@ object ToolStatistic {
 
   implicit val toolStatsEncoder: Encoder[ToolStatistic] = deriveEncoder[ToolStatistic]
 
-  implicit object Reader extends BSONDocumentReader[ToolStatistic] {
-    def readDocument(bson: BSONDocument): Try[ToolStatistic] =
-      Success(
-        ToolStatistic(
-          toolName = bson.getAsOpt[String](TOOLNAME).getOrElse("invalid"),
-          monthly = bson.getAsOpt[List[Int]](MONTHLY).getOrElse(List.empty),
-          monthlyFailed = bson.getAsOpt[List[Int]](MONTHLYFAILED).getOrElse(List.empty),
-          monthlyDeleted = bson.getAsOpt[List[Int]](MONTHLYDELETED).getOrElse(List.empty),
-          monthlyInternal = bson.getAsOpt[List[Int]](MONTHLYINTERNAL).getOrElse(List.empty)
-        )
+  implicit def reader: BSONDocumentReader[ToolStatistic] =
+    BSONDocumentReader[ToolStatistic] { bson =>
+      ToolStatistic(
+        toolName = bson.getAsTry[String](TOOLNAME).getOrElse("invalid"),
+        monthly = bson.getAsTry[List[Int]](MONTHLY).getOrElse(List.empty),
+        monthlyFailed = bson.getAsTry[List[Int]](MONTHLYFAILED).getOrElse(List.empty),
+        monthlyDeleted = bson.getAsTry[List[Int]](MONTHLYDELETED).getOrElse(List.empty),
+        monthlyInternal = bson.getAsTry[List[Int]](MONTHLYINTERNAL).getOrElse(List.empty)
       )
-  }
+    }
 
-  implicit object Writer extends BSONDocumentWriter[ToolStatistic] {
-    def writeTry(toolStatistic: ToolStatistic): Try[BSONDocument] =
-      Success(
-        BSONDocument(
-          TOOLNAME        -> toolStatistic.toolName,
-          MONTHLY         -> toolStatistic.monthly,
-          MONTHLYFAILED   -> toolStatistic.monthlyFailed,
-          MONTHLYDELETED  -> toolStatistic.monthlyDeleted,
-          MONTHLYINTERNAL -> toolStatistic.monthlyDeleted
-        )
+  implicit def writer: BSONDocumentWriter[ToolStatistic] =
+    BSONDocumentWriter[ToolStatistic] { toolStatistic =>
+      BSONDocument(
+        TOOLNAME        -> toolStatistic.toolName,
+        MONTHLY         -> toolStatistic.monthly,
+        MONTHLYFAILED   -> toolStatistic.monthlyFailed,
+        MONTHLYDELETED  -> toolStatistic.monthlyDeleted,
+        MONTHLYINTERNAL -> toolStatistic.monthlyDeleted
       )
-  }
-
+    }
 }

@@ -18,8 +18,6 @@ package de.proteinevolution.user
 
 import reactivemongo.api.bson._
 
-import scala.util.{ Success, Try }
-
 case class UserConfig(defaultPublic: Boolean = false, defaultComments: Boolean = false, hasMODELLERKey: Boolean = false)
 
 object UserConfig {
@@ -27,28 +25,24 @@ object UserConfig {
   final val DEFAULTCOMMENTS = "defaultComments"
   final val HASMODELLERKEY  = "modellerKey"
 
-  implicit object Reader extends BSONDocumentReader[UserConfig] {
-    override def readDocument(bson: BSONDocument): Try[UserConfig] =
-      Success(
-        UserConfig(
-          defaultPublic = bson.getAsOpt[Boolean](DEFAULTPUBLIC).getOrElse(false),
-          defaultComments = bson.getAsOpt[Boolean](DEFAULTCOMMENTS).getOrElse(false),
-          hasMODELLERKey = bson.getAsOpt[Boolean](HASMODELLERKEY).getOrElse(false)
-        )
+  implicit def reader: BSONDocumentReader[UserConfig] =
+    BSONDocumentReader[UserConfig] { bson =>
+      UserConfig(
+        defaultPublic = bson.getAsTry[Boolean](DEFAULTPUBLIC).getOrElse(false),
+        defaultComments = bson.getAsTry[Boolean](DEFAULTCOMMENTS).getOrElse(false),
+        hasMODELLERKey = bson.getAsTry[Boolean](HASMODELLERKEY).getOrElse(false)
       )
-  }
+    }
 
-  implicit object Writer extends BSONDocumentWriter[UserConfig] {
-    override def writeTry(userConfig: UserConfig): Try[BSONDocument] =
-      Success(
-        if (userConfig == UserConfig())
-          BSONDocument.empty
-        else
-          BSONDocument(
-            DEFAULTPUBLIC   -> BSONBoolean(userConfig.defaultPublic),
-            DEFAULTCOMMENTS -> BSONBoolean(userConfig.defaultPublic),
-            HASMODELLERKEY  -> BSONBoolean(userConfig.hasMODELLERKey)
-          )
-      )
-  }
+  implicit def writer: BSONDocumentWriter[UserConfig] =
+    BSONDocumentWriter[UserConfig] { userConfig =>
+      if (userConfig == UserConfig())
+        BSONDocument.empty
+      else
+        BSONDocument(
+          DEFAULTPUBLIC   -> BSONBoolean(userConfig.defaultPublic),
+          DEFAULTCOMMENTS -> BSONBoolean(userConfig.defaultPublic),
+          HASMODELLERKEY  -> BSONBoolean(userConfig.hasMODELLERKey)
+        )
+    }
 }

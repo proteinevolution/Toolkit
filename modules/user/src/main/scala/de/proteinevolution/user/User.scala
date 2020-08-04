@@ -26,8 +26,6 @@ import io.circe.{ Encoder, Json }
 import org.mindrot.jbcrypt.BCrypt
 import reactivemongo.api.bson._
 
-import scala.util.{ Success, Try }
-
 case class User(
     userID: String = UUID.randomUUID().toString, // ID of the User
     sessionID: Option[String] = None,            // Session ID
@@ -109,47 +107,46 @@ object User {
       (DATE_UPDATED, Json.fromString(u.dateUpdated.format(ZonedDateTimeHelper.dateTimeFormatter)))
     )
 
-  implicit object Reader extends BSONDocumentReader[User] {
-    override def readDocument(bson: BSONDocument): Try[User] =
-      Success(
-        User(
-          userID = bson.getAsOpt[String](ID).get,
-          sessionID = bson.getAsOpt[String](SESSION_ID),
-          sessionData = bson.getAsOpt[List[SessionData]](SESSION_DATA).getOrElse(List.empty),
-          connected = bson.getAsOpt[Boolean](CONNECTED).getOrElse(false),
-          accountType = bson.getAsOpt[Int](ACCOUNT_TYPE).get,
-          userData = bson.getAsOpt[UserData](USER_DATA),
-          userConfig = bson.getAsOpt[UserConfig](USER_CONFIG).getOrElse(UserConfig()),
-          userToken = bson.getAsOpt[UserToken](USER_TOKEN),
-          jobs = bson.getAsOpt[List[String]](JOBS).getOrElse(List.empty),
-          deletionWarningSent = bson.getAsOpt[Boolean](DELETION_WARNING_SENT).getOrElse(false),
-          dateLastLogin = bson.getAsOpt[BSONDateTime](DATE_LAST_LOGIN).map(dt => ZonedDateTimeHelper.getZDT(dt)).get,
-          dateCreated = bson.getAsOpt[BSONDateTime](DATE_CREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)).get,
-          dateUpdated = bson.getAsOpt[BSONDateTime](DATE_UPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt)).get
-        )
+  implicit def reader: BSONDocumentReader[User] =
+    BSONDocumentReader[User] { bson =>
+      User(
+        userID = bson.getAsOpt[String](ID).get,
+        sessionID = bson.getAsOpt[String](SESSION_ID),
+        sessionData = bson.getAsOpt[List[SessionData]](SESSION_DATA).getOrElse(List.empty),
+        connected = bson.getAsOpt[Boolean](CONNECTED).getOrElse(false),
+        accountType = bson
+          .getAsTry[BSONNumberLike](ACCOUNT_TYPE)
+          .flatMap(_.toInt)
+          .getOrElse(AccountType.NORMALUSERAWAITINGREGISTRATION),
+        userData = bson.getAsOpt[UserData](USER_DATA),
+        userConfig = bson.getAsOpt[UserConfig](USER_CONFIG).getOrElse(UserConfig()),
+        userToken = bson.getAsOpt[UserToken](USER_TOKEN),
+        jobs = bson.getAsOpt[List[String]](JOBS).getOrElse(List.empty),
+        deletionWarningSent = bson.getAsOpt[Boolean](DELETION_WARNING_SENT).getOrElse(false),
+        dateLastLogin = bson.getAsOpt[BSONDateTime](DATE_LAST_LOGIN).map(ZonedDateTimeHelper.getZDT).get,
+        dateCreated = bson.getAsOpt[BSONDateTime](DATE_CREATED).map(ZonedDateTimeHelper.getZDT).get,
+        dateUpdated = bson.getAsOpt[BSONDateTime](DATE_UPDATED).map(ZonedDateTimeHelper.getZDT).get
       )
-  }
+    }
 
-  implicit object Writer extends BSONDocumentWriter[User] {
-    override def writeTry(user: User): Try[BSONDocument] =
-      Success(
-        BSONDocument(
-          ID                    -> user.userID,
-          SESSION_ID            -> user.sessionID,
-          SESSION_DATA          -> user.sessionData,
-          CONNECTED             -> user.connected,
-          ACCOUNT_TYPE          -> user.accountType.toInt,
-          USER_DATA             -> user.userData,
-          USER_CONFIG           -> user.userConfig,
-          USER_TOKEN            -> user.userToken,
-          JOBS                  -> user.jobs,
-          DELETION_WARNING_SENT -> user.deletionWarningSent,
-          DATE_LAST_LOGIN       -> BSONDateTime(user.dateLastLogin.toInstant.toEpochMilli),
-          DATE_CREATED          -> BSONDateTime(user.dateCreated.toInstant.toEpochMilli),
-          DATE_UPDATED          -> BSONDateTime(user.dateUpdated.toInstant.toEpochMilli)
-        )
+  implicit def writer: BSONDocumentWriter[User] =
+    BSONDocumentWriter[User] { user =>
+      BSONDocument(
+        ID                    -> user.userID,
+        SESSION_ID            -> user.sessionID,
+        SESSION_DATA          -> user.sessionData,
+        CONNECTED             -> user.connected,
+        ACCOUNT_TYPE          -> user.accountType.toInt,
+        USER_DATA             -> user.userData,
+        USER_CONFIG           -> user.userConfig,
+        USER_TOKEN            -> user.userToken,
+        JOBS                  -> user.jobs,
+        DELETION_WARNING_SENT -> user.deletionWarningSent,
+        DATE_LAST_LOGIN       -> BSONDateTime(user.dateLastLogin.toInstant.toEpochMilli),
+        DATE_CREATED          -> BSONDateTime(user.dateCreated.toInstant.toEpochMilli),
+        DATE_UPDATED          -> BSONDateTime(user.dateUpdated.toInstant.toEpochMilli)
       )
-  }
+    }
 
   final case class Login(nameLogin: String, password: String)
 

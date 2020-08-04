@@ -25,8 +25,6 @@ import io.circe.generic.semiauto.{ deriveDecoder, deriveEncoder }
 import io.circe.{ Decoder, Encoder }
 import reactivemongo.api.bson.{ BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter }
 
-import scala.util.{ Success, Try }
-
 final case class JobEvent(
     jobState: JobState,
     timestamp: Option[ZonedDateTime],
@@ -44,26 +42,21 @@ object JobEvent {
 
   implicit val jobEventEncoder: Encoder[JobEvent] = deriveEncoder
 
-  implicit object Reader extends BSONDocumentReader[JobEvent] {
-    def readDocument(bson: BSONDocument): Try[JobEvent] =
-      Success(
-        JobEvent(
-          bson.getAsOpt[JobState](JOBSTATE).getOrElse(Error),
-          bson.getAsOpt[BSONDateTime](TIMESTAMP).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-          bson.getAsOpt[Long](RUNTIME)
-        )
+  implicit def reader: BSONDocumentReader[JobEvent] =
+    BSONDocumentReader[JobEvent] { bson =>
+      JobEvent(
+        bson.getAsTry[JobState](JOBSTATE).getOrElse(Error),
+        bson.getAsOpt[BSONDateTime](TIMESTAMP).map(ZonedDateTimeHelper.getZDT),
+        bson.getAsOpt[Long](RUNTIME)
       )
-  }
+    }
 
-  implicit object Writer extends BSONDocumentWriter[JobEvent] {
-    def writeTry(jobEvent: JobEvent): Try[BSONDocument] =
-      Success(
-        BSONDocument(
-          JOBSTATE  -> jobEvent.jobState,
-          TIMESTAMP -> BSONDateTime(jobEvent.timestamp.fold(-1L)(_.toInstant.toEpochMilli)),
-          RUNTIME   -> jobEvent.runtime
-        )
+  implicit def writer: BSONDocumentWriter[JobEvent] =
+    BSONDocumentWriter[JobEvent] { jobEvent =>
+      BSONDocument(
+        JOBSTATE  -> jobEvent.jobState,
+        TIMESTAMP -> BSONDateTime(jobEvent.timestamp.fold(-1L)(_.toInstant.toEpochMilli)),
+        RUNTIME   -> jobEvent.runtime
       )
-  }
-
+    }
 }
