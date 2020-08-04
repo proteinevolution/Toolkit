@@ -101,7 +101,7 @@ lazy val message = (project in file("modules/message"))
 lazy val migrations = (project in file("modules/migrations"))
   .commonSettings("de.proteinevolution.migrations")
   .enablePlugins(PlayScala)
-  .settings(scalacOptions --= Seq("-Ywarn-unused:imports"))
+  .settings(scalacOptions -= "-Wunused:imports")
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val tel = (project in file("modules/tel"))
