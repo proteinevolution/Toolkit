@@ -3,9 +3,10 @@
          :class="['justify-content-' + justify, variant==='secondary' ? 'wrapper-secondary' : '']">
         <vue-simple-spinner :class="'vue-simple-spinner-' + variant"
                             :speed="variant === 'secondary' ? 2 : 0.8"
-                            :size="size"></vue-simple-spinner>
+                            :size="size" />
         <div v-if="message"
-             class="message">{{ message }}
+             class="message">
+            {{ message }}
         </div>
     </div>
 </template>
@@ -16,6 +17,9 @@
 
     export default Vue.extend({
         name: 'Loading',
+        components: {
+            VueSimpleSpinner,
+        },
         props: {
             variant: {
                 type: String,
@@ -37,9 +41,6 @@
                 required: false,
                 default: 'left',
             },
-        },
-        components: {
-            VueSimpleSpinner,
         },
     });
 </script>

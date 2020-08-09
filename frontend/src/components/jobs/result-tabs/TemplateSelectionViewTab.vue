@@ -1,28 +1,27 @@
 <template>
-    <Loading :message="$t('loading')"
-             v-if="loading"/>
+    <Loading v-if="loading"
+             :message="$t('loading')" />
     <div v-else>
-        <pre v-html="file"
-             class="file-view"></pre>
+        <pre class="file-view"
+             v-html="file"></pre>
         <div class="result-options">
-            <b-btn type="button" variant="primary" class="submit-button float-right"
-                   @click="forwardToModeller">{{$t('jobs.results.actions.forwardToModeller')}}
+            <b-btn type="button"
+                   variant="primary"
+                   class="submit-button float-right"
+                   @click="forwardToModeller">
+                {{ $t('jobs.results.actions.forwardToModeller') }}
             </b-btn>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
-    import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
     import EventBus from '@/util/EventBus';
 
-    const logger = Logger.get('TemplateSelectionViewTab');
-
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'TemplateSelectionViewTab',
         components: {
             Loading,

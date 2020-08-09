@@ -26,7 +26,7 @@ import play.api.routing.SimpleRouter
 import play.api.routing.sird._
 
 @Singleton
-class MainRouter @Inject()(
+class MainRouter @Inject() (
     uptime: UptimeController,
     authRouter: AuthRouter,
     backendRouter: BackendRouter,

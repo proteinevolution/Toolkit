@@ -104,8 +104,7 @@ class ResultsService {
 
     public downloadAsFile(file: string, downloadFilename: string): void {
         const blob = new Blob([file], {type: 'application/octet-stream'});
-        // @ts-ignore
-        if (window.navigator.msSaveOrOpenBlob) {
+        if ((window as any).navigator.msSaveOrOpenBlob) {
             window.navigator.msSaveBlob(blob, downloadFilename);
         } else {
             const a = document.createElement('a');
@@ -140,14 +139,14 @@ class ResultsService {
         return new Promise<StructureFileResponse>((resolve, reject) => {
             axios.get(`/api/jobs/structure-file/${accession}`)
                 .then((response) => {
-                    resolve({data: response.data, filename: this.getResponseFilename(response)});
+                    resolve({data: response.data, filename: ResultsService.getResponseFilename(response)});
                 })
                 .catch(reject);
         });
     }
 
-    private getResponseFilename(response: AxiosResponse): string | undefined {
-        if (response.headers.hasOwnProperty('content-disposition')) {
+    private static getResponseFilename(response: AxiosResponse): string | undefined {
+        if ('content-disposition' in response.headers) {
             const header: string = response.headers['content-disposition'];
             const filenameIndex = header.indexOf('filename=');
             if (filenameIndex === -1) {

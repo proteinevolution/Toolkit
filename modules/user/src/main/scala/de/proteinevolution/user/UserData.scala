@@ -18,7 +18,7 @@ package de.proteinevolution.user
 
 import io.circe.Encoder
 import io.circe.generic.semiauto._
-import reactivemongo.bson._
+import reactivemongo.api.bson._
 
 case class UserData(
     nameLogin: String,
@@ -43,6 +43,6 @@ object UserData {
 
   implicit val userDataEncoder: Encoder[UserData] = deriveEncoder[UserData]
 
-  implicit val userDataBSONHandler: BSONHandler[BSONDocument, UserData] = Macros.handler[UserData]
+  implicit val userDataBSONHandler: BSONDocumentHandler[UserData] = Macros.handler[UserData]
 
 }

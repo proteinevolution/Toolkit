@@ -1,43 +1,43 @@
 <template>
     <b-form-group :label="$t('tools.parameters.labels.' + parameter.name)">
-
         <multiselect v-model="selected"
                      :multiple="isMulti"
                      :max="isMulti ? parameter.maxSelectedOptions : null"
-                     :allowEmpty="isMulti"
+                     :allow-empty="isMulti"
                      :options="parameter.options"
-                     :optionsLimit="optionsLimit"
+                     :options-limit="optionsLimit"
                      track-by="value"
                      label="text"
                      :placeholder="$t(isMulti ? 'tools.parameters.select.multiplePlaceholder' : 'tools.parameters.select.singlePlaceholder')"
                      :searchable="true"
-                     :showNoResults="false"
+                     :show-no-results="false"
                      :disabled="disabled"
-                     selectLabel=""
-                     deselectLabel=""
-                     selectedLabel=""
+                     select-label=""
+                     deselect-label=""
+                     selected-label=""
                      :class="{nonDefault: !disabled && isNonDefaultValue}">
-            <template #maxElements>{{ $t(maxElementTextKey) }}</template>
-            <template slot="option" slot-scope="{ option }" v-if="parameter.default === option.value">
+            <template #maxElements>
+                {{ $t(maxElementTextKey) }}
+            </template>
+            <template v-if="parameter.default === option.value"
+                      slot="option"
+                      slot-scope="{ option }">
                 {{ option.text }} (default)
             </template>
         </multiselect>
-
     </b-form-group>
 </template>
 
 <script lang="ts">
     import Multiselect from 'vue-multiselect';
     import {SelectOption, SelectParameter} from '@/types/toolkit/tools';
-    import ToolParameterMixin from '@/mixins/ToolParameterMixin';
     import ParameterRememberMixin from '@/mixins/ParameterRememberMixin';
     import EventBus from '@/util/EventBus';
-    import mixins from 'vue-typed-mixins';
     import Logger from 'js-logger';
 
     const logger = Logger.get('SelectParameter');
 
-    export default mixins(ToolParameterMixin, ParameterRememberMixin).extend({
+    export default ParameterRememberMixin.extend({
         name: 'SelectParameter',
         components: {
             Multiselect,
@@ -133,7 +133,3 @@
         },
     });
 </script>
-
-<style lang="scss" scoped>
-
-</style>

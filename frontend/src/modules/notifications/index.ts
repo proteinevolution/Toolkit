@@ -4,11 +4,10 @@ import VueNotifications from 'vue-notification';
 import velocity from 'velocity-animate';
 import {TKNotificationOptions} from './types';
 
-// @ts-ignore wait until it is fixed in vue-notification
 Vue.use(VueNotifications, {velocity});
 
 const Notifications = {
-    install(vconst: VueConstructor, args: any = {}) {
+    install(vconst: VueConstructor, args: any = {}): void {
         vconst.prototype.$alert = (params: TKNotificationOptions | string, type?: string) => {
             const newParams: TKNotificationOptions = (typeof params === 'string') ?
                 {

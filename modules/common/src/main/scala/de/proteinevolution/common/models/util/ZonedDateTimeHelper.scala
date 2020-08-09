@@ -19,7 +19,7 @@ package de.proteinevolution.common.models.util
 import java.time.format.DateTimeFormatter
 import java.time.{ Instant, ZoneId, ZonedDateTime }
 
-import reactivemongo.bson.BSONDateTime
+import reactivemongo.api.bson.BSONDateTime
 
 object ZonedDateTimeHelper {
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const webpack = require('webpack');
 
 module.exports = {
@@ -15,19 +16,19 @@ module.exports = {
         const imageRule = config.module.rule('images');
         imageRule.use('image-webpack-loader')
             .loader('image-webpack-loader')
-            .tap(args => {
+            .tap(() => {
                 return {
                     bypassOnDebug: true,
                     mozjpeg: {
                         progressive: true,
-                        quality: 10,
+                        quality: 95,
                     },
                     // optipng.enabled: false will disable optipng
                     optipng: {
                         enabled: true,
                     },
                     pngquant: {
-                        quality: '65-90',
+                        quality: [0.7, 0.9],
                         speed: 4,
                     },
                     gifsicle: {
@@ -39,18 +40,15 @@ module.exports = {
                     // }
                 };
             });
-
-        // use sass-resources-loader to supply global variables
-        const scssRule = config.module.rule('scss');
-        scssRule.oneOf('vue').use('sass-resources-loader')
-            .loader('sass-resources-loader')
-            .tap(args => {
-                return {
-                    resources: [
-                        './src/assets/scss/_variables.scss',
-                    ],
-                };
-            });
+    },
+    css: {
+        loaderOptions: {
+            sass: {
+                additionalData: `
+          @import "@/assets/scss/_variables.scss";
+        `,
+            },
+        },
     },
     devServer: {
         proxy: {

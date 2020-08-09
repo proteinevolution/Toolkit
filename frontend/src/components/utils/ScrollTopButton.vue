@@ -1,7 +1,7 @@
 <template>
-    <div ref="scrollTop"
+    <div v-show="display"
+         ref="scrollTop"
          class="scroll-top-button"
-         v-show="display"
          @click="scrollTop"></div>
 </template>
 

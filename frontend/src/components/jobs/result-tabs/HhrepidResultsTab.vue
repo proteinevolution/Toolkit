@@ -1,68 +1,70 @@
 <template>
-    <Loading :message="$t('loading')"
-             v-if="loading || !results"/>
+    <Loading v-if="loading || !results"
+             :message="$t('loading')" />
     <div v-else>
         <b v-if="results.results.length === 0"
-           v-html="$t('jobs.results.hhrepid.noResults')">
-        </b>
+           v-html="$t('jobs.results.hhrepid.noResults')"></b>
         <div v-else>
             <div class="result-options">
-                <a @click="forwardQueryA3M">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
+                <a @click="forwardQueryA3M">{{ $t('jobs.results.actions.forwardQueryA3M') }}</a>
             </div>
-            <template v-for="hit in results.results.reptypes">
-                <h4 v-text="$t('jobs.results.hhrepid.resultsForType', {type: hit.typ})"
-                    class="mb-4"></h4>
-                <img :src="getFilePath(hit.typ)"
-                     :key="hit.typ"
+            <template v-for="(hit, i) in results.results.reptypes">
+                <h4 :key="'hit-' + i"
+                    class="mb-4"
+                    v-text="$t('jobs.results.hhrepid.resultsForType', {type: hit.typ})"></h4>
+                <img :key="hit.typ"
+                     :src="getFilePath(hit.typ)"
                      class="mb-3"
-                     alt=""/>
+                     alt="">
 
-                <table class="alignment-table mt-2">
+                <table :key="'hit-table-' + i"
+                       class="alignment-table mt-2">
                     <tbody>
-                    <tr>
-                        <td v-text="$t('jobs.results.hhrepid.numResults', {num: hit.num})"></td>
-                    </tr>
-                    <tr>
-                        <td v-text="$t('jobs.results.hhrepid.pValue', {pval: hit.pval})"></td>
-                    </tr>
-                    <tr>
-                        <td v-text="$t('jobs.results.hhrepid.length', {len: hit.len})"></td>
-                    </tr>
+                        <tr>
+                            <td v-text="$t('jobs.results.hhrepid.numResults', {num: hit.num})"></td>
+                        </tr>
+                        <tr>
+                            <td v-text="$t('jobs.results.hhrepid.pValue', {pval: hit.pval})"></td>
+                        </tr>
+                        <tr>
+                            <td v-text="$t('jobs.results.hhrepid.length', {len: hit.len})"></td>
+                        </tr>
                     </tbody>
                 </table>
-                <table class="alignment-table mt-4">
+                <table :key="'hit-table2-' + i"
+                       class="alignment-table mt-4">
                     <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Prob</th>
-                        <th>P-val</th>
-                        <th>Loc</th>
-                        <th>Sequence</th>
-                    </tr>
+                        <tr>
+                            <th>ID</th>
+                            <th>Prob</th>
+                            <th>P-val</th>
+                            <th>Loc</th>
+                            <th>Sequence</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    <template v-for="i in breakIndices(hit.len)">
-                        <tr v-for="rep in hit.reps"
-                            class="sequence-alignment">
-                            <td v-text="rep.id"></td>
-                            <td v-text="rep.prob"></td>
-                            <td v-text="rep.pval"></td>
-                            <td v-text="rep.loc"></td>
-                            <td v-html="coloredSeq(rep.seq.slice(i, i + breakAfter))"></td>
-                        </tr>
-                        <tr class="empty-row"></tr>
-                    </template>
+                        <template v-for="hitIdx in breakIndices(hit.len)">
+                            <tr v-for="rep in hit.reps"
+                                :key="'hit-' + i + '-seqal-' + hitIdx + '-' + rep.id"
+                                class="sequence-alignment">
+                                <td v-text="rep.id"></td>
+                                <td v-text="rep.prob"></td>
+                                <td v-text="rep.pval"></td>
+                                <td v-text="rep.loc"></td>
+                                <td v-html="coloredSeq(rep.seq.slice(hitIdx, hitIdx + breakAfter))"></td>
+                            </tr>
+                            <tr :key="'br-' + hitIdx"
+                                class="empty-row"></tr>
+                        </template>
                     </tbody>
                 </table>
-                <br>
-
+                <br :key="'hit-br-' + i">
             </template>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
@@ -73,7 +75,7 @@
 
     const logger = Logger.get('HhrepidResultsTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'HhrepidResultsTab',
         components: {
             Loading,
@@ -93,7 +95,7 @@
                 return this.viewOptions.filename.replace(':jobID', this.job.jobID);
             },
             forwardingEnabled(): boolean {
-                return this.viewOptions.hasOwnProperty('forwarding');
+                return 'forwarding' in this.viewOptions;
             },
         },
         methods: {
@@ -131,7 +133,6 @@
 </script>
 
 <style lang="scss" scoped>
-
     img {
         max-width: 100%;
     }

@@ -1,18 +1,22 @@
 <template>
-    <Loading :message="$t('jobs.results.alignment.loadingHits')"
-             v-if="loading || !alignments"/>
+    <Loading v-if="loading || !alignments"
+             :message="$t('jobs.results.alignment.loadingHits')" />
     <div v-else>
         <div class="result-options">
-            <a @click="toggleAllSelected" :class="{active: allSelected}">
-                {{$t('jobs.results.actions.selectAll')}}</a>
-            <a @click="forwardSelected" :disabled="selected.length === 0">
-                {{$t('jobs.results.actions.forwardSelected')}}</a>
+            <a :class="{active: allSelected}"
+               @click="toggleAllSelected">
+                {{ $t('jobs.results.actions.selectAll') }}</a>
+            <a :disabled="selected.length === 0"
+               @click="forwardSelected">
+                {{ $t('jobs.results.actions.forwardSelected') }}</a>
             <a @click="downloadAlignment">
-                {{$t('jobs.results.actions.downloadMSA')}}</a>
-            <a :href="downloadFilePath" target="_blank">
-                {{$t('jobs.results.actions.exportMSA')}}</a>
-            <a @click="toggleColor" :class="{active: color}">
-                {{$t('jobs.results.actions.colorMSA')}}</a>
+                {{ $t('jobs.results.actions.downloadMSA') }}</a>
+            <a :href="downloadFilePath"
+               target="_blank">
+                {{ $t('jobs.results.actions.exportMSA') }}</a>
+            <a :class="{active: color}"
+               @click="toggleColor">
+                {{ $t('jobs.results.actions.colorMSA') }}</a>
         </div>
 
         <div class="alignment-results mb-4">
@@ -20,36 +24,36 @@
             <div class="table-responsive">
                 <table>
                     <tbody>
-                    <template v-for="(group, groupI) in brokenAlignments">
-                        <tr v-for="elem in group"
-                            :key="groupI + '-' + elem.num">
-                            <td>
-                                <b-form-checkbox :checked="selected.includes(elem.num)"
-                                                 @change="selectedChanged(elem.num)"/>
-                            </td>
-                            <td class="accession">
-                                <b v-text="elem.accession.slice(0, 20)"></b>
-                            </td>
-                            <td v-html="coloredSeq(elem.seq)"
-                                class="sequence">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td v-if="groupI === 0 && alignments.length !== total"
-                                colspan="3">
-                                <Loading :message="$t('jobs.results.alignment.loadingHits')"
-                                         v-if="loadingMore"
-                                         justify="center"
-                                         class="mt-4"/>
-                                <intersection-observer @intersect="intersected"/>
-                            </td>
-                        </tr>
+                        <template v-for="(group, groupI) in brokenAlignments">
+                            <tr v-for="elem in group"
+                                :key="groupI + '-' + elem.num">
+                                <td>
+                                    <b-form-checkbox :checked="selected.includes(elem.num)"
+                                                     @change="selectedChanged(elem.num)" />
+                                </td>
+                                <td class="accession">
+                                    <b v-text="elem.accession.slice(0, 20)"></b>
+                                </td>
+                                <td class="sequence"
+                                    v-html="coloredSeq(elem.seq)"></td>
+                            </tr>
+                            <tr :key="'hits-' + groupI">
+                                <td v-if="groupI === 0 && alignments.length !== total"
+                                    colspan="3">
+                                    <Loading v-if="loadingMore"
+                                             :message="$t('jobs.results.alignment.loadingHits')"
+                                             justify="center"
+                                             class="mt-4" />
+                                    <intersection-observer @intersect="intersected" />
+                                </td>
+                            </tr>
 
-                        <tr class="blank-row"
-                            v-if="groupI < brokenAlignments.length - 1">
-                            <td colspan="3"></td>
-                        </tr>
-                    </template>
+                            <tr v-if="groupI < brokenAlignments.length - 1"
+                                :key="'blank-' + groupI"
+                                class="blank-row">
+                                <td colspan="3"></td>
+                            </tr>
+                        </template>
                     </tbody>
                 </table>
             </div>
@@ -58,7 +62,6 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import {AlignmentItem, AlignmentResultResponse} from '@/types/toolkit/results';
     import Loading from '@/components/utils/Loading.vue';
@@ -71,7 +74,7 @@
 
     const logger = Logger.get('ClustalAlignmentTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'ClustalAlignmentTab',
         components: {
             Loading,

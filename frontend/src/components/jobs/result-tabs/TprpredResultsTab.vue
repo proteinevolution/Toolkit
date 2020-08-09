@@ -1,39 +1,40 @@
 <template>
-    <Loading :message="$t('loading')"
-             v-if="loading || !results"/>
+    <Loading v-if="loading || !results"
+             :message="$t('loading')" />
     <div v-else
          class="font-small">
         <b v-if="results.results.hits.length === 0"
-           v-text="$t('jobs.results.tprpred.noResults')">
-        </b>
+           v-text="$t('jobs.results.tprpred.noResults')"></b>
         <div v-else>
             <br>
-            <div v-for="hit in results.results.desc"
+            <div v-for="(hit, hidx) in results.results.desc"
+                 :key="hidx"
                  class="tpr-info">
-                {{ hit[0]}}: <b>{{hit[1]}}</b>
+                {{ hit[0] }}: <b>{{ hit[1] }}</b>
             </div>
 
             <table class="alignment-table mt-4">
                 <thead>
-                <tr>
-                    <th>Repeat</th>
-                    <th>Begin</th>
-                    <th>Alignment</th>
-                    <th>End</th>
-                    <th>P-value</th>
-                </tr>
+                    <tr>
+                        <th>Repeat</th>
+                        <th>Begin</th>
+                        <th>Alignment</th>
+                        <th>End</th>
+                        <th>P-value</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <template v-for="hit in results.results.hits">
-                    <tr class="sequence-alignment">
-                        <td v-text="hit[1]"></td>
-                        <td v-text="hit[2]"></td>
-                        <td class="tpr-hit"
-                            v-html="coloredSeq(hit[0])"></td>
-                        <td v-text="hit[3]"></td>
-                        <td v-text="hit[4]"></td>
-                    </tr>
-                </template>
+                    <template v-for="(hit, hidx) in results.results.hits">
+                        <tr :key="'tr' + hidx"
+                            class="sequence-alignment">
+                            <td v-text="hit[1]"></td>
+                            <td v-text="hit[2]"></td>
+                            <td class="tpr-hit"
+                                v-html="coloredSeq(hit[0])"></td>
+                            <td v-text="hit[3]"></td>
+                            <td v-text="hit[4]"></td>
+                        </tr>
+                    </template>
                 </tbody>
             </table>
             <br>
@@ -42,7 +43,6 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
@@ -53,7 +53,7 @@
 
     const logger = Logger.get('TprpredResultsTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'TprpredResultsTab',
         components: {
             Loading,

@@ -5,5 +5,5 @@ export interface AccordionItem {
 
 export interface ModalParams {
     id: string; // the id of the modal to be shown as passed to the BaseModal
-    props: object | undefined; // optional modal props to be set in App.vue before showing the modal
+    props: Record<string, unknown> | undefined; // optional modal props to be set in App.vue before showing the modal
 }

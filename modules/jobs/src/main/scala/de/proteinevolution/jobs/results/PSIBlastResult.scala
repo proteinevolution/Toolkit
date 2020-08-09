@@ -67,7 +67,6 @@ object PSIBlastResult {
       .downField("output_psiblastp")
       .downField("BlastOutput2")
       .downArray
-      .first
       .downField("report")
       .downField("results")
       .downField("iterations")
@@ -76,7 +75,7 @@ object PSIBlastResult {
       iter_list <- iterations.as[List[Json]]
       db        <- c.downField("output_psiblastp").downField("db").as[String]
       eValue    <- c.downField("output_psiblastp").downField("evalue").as[String]
-      hits      <- iterations.downArray.rightN(iter_list.size - 1).downField("search").downField("hits").as[List[Json]]
+      hits      <- iterations.downN(iter_list.size - 1).downField("search").downField("hits").as[List[Json]]
       tmpred    <- c.downField("output_psiblastp").downField("tmpred").as[Option[String]]
       coilpred  <- c.downField("output_psiblastp").downField("coilpred").as[Option[String]]
       signal    <- c.downField("output_psiblastp").downField("signal").as[Option[String]]
@@ -104,7 +103,7 @@ object PSIBlastResult {
     (for {
       hit <- hits
       cursor = hit.hcursor
-      eval <- cursor.downField("hsps").downArray.first.downField("evalue").as[Double].toOption
+      eval <- cursor.downField("hsps").downArray.downField("evalue").as[Double].toOption
       if eval <= eValue.toDouble
     } yield eval).length
   }

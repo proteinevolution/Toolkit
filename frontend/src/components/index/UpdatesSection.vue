@@ -1,9 +1,9 @@
 <template>
     <div class="d-flex mt-3 mt-md-5 justify-content-center">
-        <b-col md="9" class="tile-main-container">
+        <b-col md="9"
+               class="tile-main-container">
             <b-row>
-                <b-col class="tile-image d-none d-md-flex">
-                </b-col>
+                <b-col class="tile-image d-none d-md-flex" />
                 <b-col class="update-section col-sm-7 col-md-6 col-lg-7 col-xl-7 px-4 py-4">
                     <h4>Recent Updates</h4>
                     <div v-for="update in updates"

@@ -18,7 +18,7 @@ package de.proteinevolution.user
 
 import io.circe._
 import io.circe.generic.semiauto._
-import reactivemongo.bson._
+import reactivemongo.api.bson._
 
 case class SessionData(ip: String, userAgent: String, location: Location)
 
@@ -26,6 +26,6 @@ object SessionData {
 
   implicit val sessionDataEncoder: Encoder[SessionData] = deriveEncoder[SessionData]
 
-  implicit val sessionDataHandler: BSONHandler[BSONDocument, SessionData] = Macros.handler[SessionData]
+  implicit val sessionDataHandler: BSONDocumentHandler[SessionData] = Macros.handler[SessionData]
 
 }

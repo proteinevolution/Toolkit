@@ -4,8 +4,8 @@
             <div v-for="(sortCol, index) in sortColumns"
                  :key="sortCol.name"
                  class="sort"
-                 @click="selectSort(index)"
-                 :class="[selectedSort === index ? 'selected':'']">
+                 :class="[selectedSort === index ? 'selected':'']"
+                 @click="selectSort(index)">
                 {{ $t('jobList.sortColumns.' + sortCol.name) }}
             </div>
             <div class="open-job-manager"
@@ -17,32 +17,33 @@
         </div>
 
         <div class="job-list-elements">
-            <div class="job-list-up"
-                 @click="scrollDown"
-                 v-if="jobs.length > itemsPerPage"
-                 :class="[scrollDownPossible ? '' : 'disabled']">
+            <div v-if="jobs.length > itemsPerPage"
+                 class="job-list-up"
+                 :class="[scrollDownPossible ? '' : 'disabled']"
+                 @click="scrollDown">
                 <i class="fas fa-caret-up"></i>
             </div>
 
-            <a class="job-element"
-               v-for="job in sortedJobs"
+            <a v-for="job in sortedJobs"
+               :key="'link-' + job.jobID"
+               class="job-element"
                :class="['status-' + job.status, job.jobID === selectedJobID ? 'selected' : '']"
-               @click.prevent="goToJob(job.jobID)"
-               :href="`/jobs/${job.jobID}`">
-                <span v-text="job.jobID"
-                      class="job-id"></span>
-                <span v-text="job.code.toUpperCase()"
-                      class="tool-code"></span>
+               :href="`/jobs/${job.jobID}`"
+               @click.prevent="goToJob(job.jobID)">
+                <span class="job-id"
+                      v-text="job.jobID"></span>
+                <span class="tool-code"
+                      v-text="job.code.toUpperCase()"></span>
                 <span class="job-delete-btn"
                       @click.stop.prevent="hideJob(job.jobID)">
                     <i class="fas fa-lg fa-times"></i>
                 </span>
             </a>
 
-            <div class="job-list-down d-flex flex-column"
-                 @click="scrollUp"
-                 v-if="jobs.length > itemsPerPage"
-                 :class="[scrollUpPossible ? '' : 'disabled']">
+            <div v-if="jobs.length > itemsPerPage"
+                 class="job-list-down d-flex flex-column"
+                 :class="[scrollUpPossible ? '' : 'disabled']"
+                 @click="scrollUp">
                 <small class="text-muted"
                        v-text="$t('jobList.pagination', {currentPage, pageCount})"></small>
                 <i class="fas fa-caret-down"></i>
@@ -91,7 +92,7 @@
                 return this.$store.getters['jobs/watchedJobs'].slice(0);
             },
             sortedJobs(): Job[] {
-                let sorted: Job[] = this.jobs.sort(this.sortColumns[this.selectedSort].sort);
+                let sorted: Job[] = [...this.jobs].sort(this.sortColumns[this.selectedSort].sort);
                 if (this.sortDescending) {
                     sorted = sorted.reverse();
                 }
@@ -108,6 +109,15 @@
             },
             scrollUpPossible(): boolean {
                 return (this.startIndex + 1) * this.itemsPerPage < this.jobs.length;
+            },
+        },
+        watch: {
+            $route({name, params}: Route): void {
+                if (name === 'jobs') {
+                    const jobID: string = params.jobID;
+                    const index: number = this.jobs.findIndex((job: Job) => job.jobID === jobID);
+                    this.startIndex = Math.max(0, Math.floor(index / this.itemsPerPage));
+                }
             },
         },
         methods: {
@@ -134,15 +144,6 @@
                 } else {
                     this.selectedSort = index;
                     this.sortDescending = false;
-                }
-            },
-        },
-        watch: {
-            $route({name, params}: Route): void {
-                if (name === 'jobs') {
-                    const jobID: string = params.jobID;
-                    const index: number = this.jobs.findIndex((job: Job) => job.jobID === jobID);
-                    this.startIndex = Math.max(0, Math.floor(index / this.itemsPerPage));
                 }
             },
         },

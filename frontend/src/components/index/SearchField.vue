@@ -1,58 +1,63 @@
 <template>
     <div class="autocomplete">
         <input ref="searchInput"
+               v-model.trim="search"
                class="form-control search-field"
                :class="targetClass"
                v-bind="$attrs"
-               v-model.trim="search"
                @input="onChange"
                @keydown.down="onArrowDown"
                @keydown.up="onArrowUp"
                @keydown.enter="onEnter"
-               @focus="onFocus"/>
+               @focus="onFocus">
         <i class="fas fa-search search-icon"></i>
-        <div class="autocomplete-results"
-             v-show="isOpen">
-            <div class="autocomplete-no-results"
-                 v-show="!isLoading && suggestions.jobs.length === 0 && suggestions.tools.length === 0">
+        <div v-show="isOpen"
+             class="autocomplete-results">
+            <div v-show="!isLoading && suggestions.jobs.length === 0 && suggestions.tools.length === 0"
+                 class="autocomplete-no-results">
                 {{ $t('search.nothingFound') }}
             </div>
-            <div class="autocomplete-group"
-                 v-show="suggestions.tools.length > 0"
+            <div v-show="suggestions.tools.length > 0"
+                 class="autocomplete-group"
                  :class="[suggestions.jobs.length > 0 ? 'mb-3' : '']">
-                <h6 class="autocomplete-group-header">{{ $t('tools.header') }}</h6>
-                <div class="autocomplete-result"
-                     v-for="(tool, i) in suggestions.tools.slice(0, itemsPerGroup)"
-                     :class="{ 'is-active': i === arrowCounter }"
-                     :key="i">
+                <h6 class="autocomplete-group-header">
+                    {{ $t('tools.header') }}
+                </h6>
+                <div v-for="(tool, i) in suggestions.tools.slice(0, itemsPerGroup)"
+                     :key="i"
+                     class="autocomplete-result"
+                     :class="{ 'is-active': i === arrowCounter }">
                     <a class="search-results"
                        @click="goToTool(tool)"
                        v-text="tool.longname"></a>
                 </div>
-                <div class="autocomplete-more-results"
-                     v-if="suggestions.tools.length > itemsPerGroup">
+                <div v-if="suggestions.tools.length > itemsPerGroup"
+                     class="autocomplete-more-results">
                     ...
                 </div>
             </div>
-            <div class="autocomplete-group"
-                 v-show="!isLoading && suggestions.jobs.length > 0">
-                <h6 class="autocomplete-group-header">{{ $t('jobs.header') }}</h6>
-                <li class="autocomplete-loading"
-                    v-if="isLoading">
+            <div v-show="!isLoading && suggestions.jobs.length > 0"
+                 class="autocomplete-group">
+                <h6 class="autocomplete-group-header">
+                    {{ $t('jobs.header') }}
+                </h6>
+                <li v-if="isLoading"
+                    class="autocomplete-loading">
                     {{ $t('loading') }}
                 </li>
-                <div class="autocomplete-result"
-                     v-if="!isLoading"
-                     v-for="(job, i) in suggestions.jobs.slice(0, itemsPerGroup)"
-                     :class="{ 'is-active': (i + suggestions.tools.length) === arrowCounter }"
-                     :key="i">
-                    <a class="search-results"
-                       @click="goToJob(job)">
-                        {{ job.jobID }} ({{ job.tool.substr(0, 4).toUpperCase() }})
-                    </a>
+                <div v-else>
+                    <div v-for="(job, i) in suggestions.jobs.slice(0, itemsPerGroup)"
+                         :key="i"
+                         class="autocomplete-result"
+                         :class="{ 'is-active': (i + suggestions.tools.length) === arrowCounter }">
+                        <a class="search-results"
+                           @click="goToJob(job)">
+                            {{ job.jobID }} ({{ job.tool.substr(0, 4).toUpperCase() }})
+                        </a>
+                    </div>
                 </div>
-                <div class="autocomplete-more-results"
-                     v-if="suggestions.tools.length > itemsPerGroup && !isLoading">
+                <div v-if="suggestions.tools.length > itemsPerGroup && !isLoading"
+                     class="autocomplete-more-results">
                     ...
                 </div>
             </div>

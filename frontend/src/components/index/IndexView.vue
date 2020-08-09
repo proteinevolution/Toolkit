@@ -2,27 +2,29 @@
     <div class="index-view">
         <div class="caption-container d-none d-sm-block">
             <img :src="require('../../assets/images/Toolkit100.png')"
-                 class="img-fluid"/>
+                 class="img-fluid">
             <div class="caption d-none d-lg-block">
-                <div class="caption-header">{{ $t('index.welcomeTitle') }}</div>
-                <div class="caption-body">{{ $t('index.welcomeBody') }}</div>
+                <div class="caption-header">
+                    {{ $t('index.welcomeTitle') }}
+                </div>
+                <div class="caption-body">
+                    {{ $t('index.welcomeBody') }}
+                </div>
             </div>
         </div>
-        <ToolFinder/>
-        <UpdatesSection/>
+        <ToolFinder />
+        <UpdatesSection />
     </div>
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
     import ToolFinder from './ToolFinder.vue';
     import UpdatesSection from './UpdatesSection.vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
     import EventBus from '@/util/EventBus';
 
-    export default Vue.extend({
+    export default hasHTMLTitle.extend({
         name: 'IndexView',
-        mixins: [hasHTMLTitle],
         components: {
             ToolFinder,
             UpdatesSection,

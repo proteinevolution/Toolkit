@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.proteinevolution.results.models
+package de.proteinevolution.jobs.models
 
 import io.circe.Decoder
 import io.circe.generic.semiauto.deriveDecoder

@@ -26,7 +26,7 @@ import de.proteinevolution.user.User
 import io.circe.JsonObject
 import io.circe.syntax._
 import play.api.Configuration
-import reactivemongo.bson._
+import reactivemongo.api.bson._
 
 case class Job(
     jobID: String,
@@ -50,8 +50,8 @@ case class Job(
       toolConfig: ToolConfig,
       user: User,
       paramValues: Option[Map[String, String]] = None
-  )(
-      implicit config: Configuration
+  )(implicit
+      config: Configuration
   ): JsonObject = {
     val toolObj = toolConfig.values(tool)
     JsonObject(
@@ -111,36 +111,35 @@ object Job {
   final val IP_HASH          = "ipHash"
 
   // TODO Bson macros handler
-  implicit object Reader extends BSONDocumentReader[Job] {
-    def read(bson: BSONDocument): Job = {
+  implicit def reader: BSONDocumentReader[Job] =
+    BSONDocumentReader[Job] { bson =>
       Job(
-        jobID = bson.getAs[String](ID).getOrElse("Error loading Job Name"),
-        parentID = bson.getAs[String](PARENT_ID),
-        hash = bson.getAs[String](HASH),
-        ownerID = bson.getAs[String](OWNER_ID).getOrElse("Error loading Job Owner"),
-        isPublic = bson.getAs[Boolean](IS_PUBLIC).getOrElse(false),
-        status = bson.getAs[JobState](STATUS).getOrElse(Error),
-        emailUpdate = bson.getAs[Boolean](EMAIL_UPDATE).getOrElse(false),
-        tool = bson.getAs[String](TOOL).getOrElse(""),
-        watchList = bson.getAs[List[String]](WATCH_LIST).getOrElse(List.empty),
-        clusterData = bson.getAs[JobClusterData](CLUSTER_DATA),
+        jobID = bson.getAsTry[String](ID).getOrElse("Error loading Job Name"),
+        parentID = bson.getAsOpt[String](PARENT_ID),
+        hash = bson.getAsOpt[String](HASH),
+        ownerID = bson.getAsTry[String](OWNER_ID).getOrElse("Error loading Job Owner"),
+        isPublic = bson.getAsTry[Boolean](IS_PUBLIC).getOrElse(false),
+        status = bson.getAsTry[JobState](STATUS).getOrElse(Error),
+        emailUpdate = bson.getAsTry[Boolean](EMAIL_UPDATE).getOrElse(false),
+        tool = bson.getAsTry[String](TOOL).getOrElse(""),
+        watchList = bson.getAsTry[List[String]](WATCH_LIST).getOrElse(List.empty),
+        clusterData = bson.getAsOpt[JobClusterData](CLUSTER_DATA),
         dateCreated =
-          bson.getAs[BSONDateTime](DATE_CREATED).map(dt => ZonedDateTimeHelper.getZDT(dt)).getOrElse(ZonedDateTime.now),
+          bson.getAsTry[BSONDateTime](DATE_CREATED).map(ZonedDateTimeHelper.getZDT).getOrElse(ZonedDateTime.now),
         dateUpdated =
-          bson.getAs[BSONDateTime](DATE_UPDATED).map(dt => ZonedDateTimeHelper.getZDT(dt)).getOrElse(ZonedDateTime.now),
+          bson.getAsTry[BSONDateTime](DATE_UPDATED).map(ZonedDateTimeHelper.getZDT).getOrElse(ZonedDateTime.now),
         dateViewed =
-          bson.getAs[BSONDateTime](DATE_VIEWED).map(dt => ZonedDateTimeHelper.getZDT(dt)).getOrElse(ZonedDateTime.now),
+          bson.getAsTry[BSONDateTime](DATE_VIEWED).map(ZonedDateTimeHelper.getZDT).getOrElse(ZonedDateTime.now),
         dateDeletionOn = bson
-          .getAs[BSONDateTime](DATE_DELETION_ON)
-          .map(dt => ZonedDateTimeHelper.getZDT(dt))
+          .getAsTry[BSONDateTime](DATE_DELETION_ON)
+          .map(ZonedDateTimeHelper.getZDT)
           .getOrElse(ZonedDateTime.now.plusDays(5)),
-        IPHash = bson.getAs[String](IP_HASH)
+        IPHash = bson.getAsOpt[String](IP_HASH)
       )
     }
-  }
 
-  implicit object Writer extends BSONDocumentWriter[Job] {
-    def write(job: Job): BSONDocument = {
+  implicit def writer: BSONDocumentWriter[Job] =
+    BSONDocumentWriter[Job] { job =>
       BSONDocument(
         ID               -> job.jobID,
         PARENT_ID        -> job.parentID,
@@ -159,6 +158,4 @@ object Job {
         IP_HASH          -> job.IPHash
       )
     }
-  }
-
 }

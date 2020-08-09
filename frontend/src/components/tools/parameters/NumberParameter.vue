@@ -11,22 +11,19 @@
                       size="sm"
                       :placeholder="parameter.default + ' (default)'"
                       :title="parameter.default + ' (default)'"
-                      required>
-        </b-form-input>
-        <b-form-invalid-feedback :id="parameter.name + '-invalid'"
-                                 v-if="hasError"
-                                 v-text="errorMessage"/>
+                      required />
+        <b-form-invalid-feedback v-if="hasError"
+                                 :id="parameter.name + '-invalid'"
+                                 v-text="errorMessage" />
     </b-form-group>
 </template>
 
 <script lang="ts">
     import {NumberParameter} from '@/types/toolkit/tools';
     import {ConstraintError} from '@/types/toolkit/validation';
-    import ToolParameterMixin from '@/mixins/ToolParameterMixin';
     import ParameterRememberMixin from '@/mixins/ParameterRememberMixin';
-    import mixins from 'vue-typed-mixins';
 
-    export default mixins(ToolParameterMixin, ParameterRememberMixin).extend({
+    export default ParameterRememberMixin.extend({
         name: 'NumberParameter',
         props: {
             /*

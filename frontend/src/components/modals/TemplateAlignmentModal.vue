@@ -1,30 +1,29 @@
 <template>
-    <BaseModal :title="$t('jobs.results.templateAlignment.title')"
-               id="templateAlignmentModal"
+    <BaseModal id="templateAlignmentModal"
+               :title="$t('jobs.results.templateAlignment.title')"
                size="lmd">
-
-        <b-form-select v-else v-model="selectedTool"
-                       v-if="forwardingEnabled"
+        <b-form-select v-if="forwardingEnabled && !loading"
+                       v-model="selectedTool"
                        :options="toolOptions"
                        value-field="name"
                        text-field="longname"
                        class="select"
-                       @change="forward"
-                       :disabled="!data || loading">
+                       :disabled="!data || loading"
+                       @change="forward">
             <template slot="first">
                 <option :value="null"
                         v-text="$t('jobs.results.templateAlignment.forwardTo')"></option>
             </template>
         </b-form-select>
 
-        <Loading :message="$t('loading')"
+        <Loading v-if="loading"
+                 :message="$t('loading')"
                  class="float-right"
-                 :size="24"
-                 v-if="loading"/>
+                 :size="24" />
 
         <b-form-textarea :value="displayData"
                          readonly
-                         class="file-view mb-2"/>
+                         class="file-view mb-2" />
     </BaseModal>
 </template>
 

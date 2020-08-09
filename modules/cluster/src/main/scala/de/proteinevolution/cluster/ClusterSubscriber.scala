@@ -51,7 +51,7 @@ final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
 
   private[this] def active(runningJobs: Int): Receive = {
 
-    case SGELoad.Ask => sender ! UpdateLoad(calculated(runningJobs))
+    case SGELoad.Ask => sender() ! UpdateLoad(calculated(runningJobs))
 
     case UpdateRunningJobs(t) =>
       val newJobCount = t match {

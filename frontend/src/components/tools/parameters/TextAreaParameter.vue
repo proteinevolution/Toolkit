@@ -1,25 +1,22 @@
 <template>
     <div>
         <ExpandHeight>
-            <TextAreaSubComponent :parameter="parameter"
+            <TextAreaSubComponent v-model="submissionValue"
+                                  :parameter="parameter"
                                   :validation-params="validationParams"
-                                  v-model="submissionValue"
-                                  @validation="handleValidation">
-            </TextAreaSubComponent>
+                                  @validation="handleValidation" />
         </ExpandHeight>
         <ExpandHeight>
             <TextAreaSubComponent v-if="secondTextAreaEnabled"
+                                  v-model="submissionValueTwo"
                                   :second="true"
                                   :parameter="parameter"
                                   :validation-params="validationParams"
-                                  v-model="submissionValueTwo"
-                                  @validation="handleValidationSecond">
-            </TextAreaSubComponent>
+                                  @validation="handleValidationSecond" />
         </ExpandHeight>
         <b-form-group v-if="parameter.allowsTwoTextAreas">
             <switches v-model="secondTextAreaEnabled"
-                      :label="$t('tools.parameters.textArea.alignTwoSeqToggle')">
-            </switches>
+                      :label="$t('tools.parameters.textArea.alignTwoSeqToggle')" />
         </b-form-group>
     </div>
 </template>
@@ -27,7 +24,6 @@
 <script lang="ts">
     import Vue from 'vue';
     import Switches from 'vue-switches';
-    import mixins from 'vue-typed-mixins';
     import TextAreaSubComponent from './TextAreaSubComponent.vue';
     import {TextAreaParameter, ValidationParams} from '@/types/toolkit/tools';
     import ExpandHeight from '@/transitions/ExpandHeight.vue';
@@ -35,7 +31,7 @@
     import {ValidationResult} from '@/types/toolkit/validation';
     import EventBus from '@/util/EventBus';
 
-    export default mixins(ToolParameterMixin).extend({
+    export default ToolParameterMixin.extend({
         name: 'TextAreaParameter',
         components: {
             Switches,
@@ -75,7 +71,7 @@
             },
             submissionValueTwo: { // has to be handled manually, not covered by the ToolParameterMixin
                 get(): string {
-                    if (!this.submission.hasOwnProperty(this.parameterNameTwo)) {
+                    if (!(this.parameterNameTwo in this.submission)) {
                         return '';
                     }
                     return this.submission[this.parameterNameTwo];
@@ -143,8 +139,4 @@
     .vue-switcher-theme--default.vue-switcher-color--default div:after {
         background-color: $primary;
     }
-</style>
-
-<style lang="scss" scoped>
-
 </style>

@@ -1,23 +1,23 @@
 <template>
-    <Loading :message="$t('loading')"
-             v-if="loading || !accIds"/>
+    <Loading v-if="loading || !accIds"
+             :message="$t('loading')" />
     <div v-else>
         <div class="result-options">
-            <a @click="forwardAll">{{$t('jobs.results.actions.forwardAll')}}</a>
-            <a @click="download">{{$t('jobs.results.actions.download')}}</a>
+            <a @click="forwardAll">{{ $t('jobs.results.actions.forwardAll') }}</a>
+            <a @click="download">{{ $t('jobs.results.actions.download') }}</a>
         </div>
 
         <div class="file-view">
             <b v-text="$t('jobs.results.seq2ID.numRetrieved', {num: accIds.length})"></b>
             <br><br>
-            <div v-for="acc in accIds"
+            <div v-for="(acc, i) in accIds"
+                 :key="'accession-' + i"
                  v-text="acc"></div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
     import Logger from 'js-logger';
@@ -27,7 +27,7 @@
 
     const logger = Logger.get('Seq2IDResultsTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'Seq2IDResultsTab',
         components: {
             Loading,

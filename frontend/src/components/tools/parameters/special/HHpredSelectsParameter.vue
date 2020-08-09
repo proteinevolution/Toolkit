@@ -3,31 +3,29 @@
         <b-col cols="12"
                sm="6">
             <select-parameter-component
-                    :parameter="hhsuiteDBParameter"
-                    :validation-params="validationParams"
-                    :validation-errors="validationErrors"
-                    :submission="submission"
-                    :remember-params="rememberParams"
-                    max-element-text-key="tools.parameters.select.maxElementsSelectedHHpred"
-                    :disabled="disabled"
-                    :force-select-none="disabled"
-                    class="parameter-component size-12">
-            </select-parameter-component>
+                :parameter="hhsuiteDBParameter"
+                :validation-params="validationParams"
+                :validation-errors="validationErrors"
+                :submission="submission"
+                :remember-params="rememberParams"
+                max-element-text-key="tools.parameters.select.maxElementsSelectedHHpred"
+                :disabled="disabled"
+                :force-select-none="disabled"
+                class="parameter-component size-12" />
         </b-col>
 
         <b-col cols="12"
                sm="6">
             <select-parameter-component
-                    :parameter="proteomesParameter"
-                    :validation-params="validationParams"
-                    :validation-errors="validationErrors"
-                    :submission="submission"
-                    :remember-params="rememberParams"
-                    max-element-text-key="tools.parameters.select.maxElementsSelectedHHpred"
-                    :disabled="disabled"
-                    :force-select-none="disabled"
-                    class="parameter-component size-12">
-            </select-parameter-component>
+                :parameter="proteomesParameter"
+                :validation-params="validationParams"
+                :validation-errors="validationErrors"
+                :submission="submission"
+                :remember-params="rememberParams"
+                max-element-text-key="tools.parameters.select.maxElementsSelectedHHpred"
+                :disabled="disabled"
+                :force-select-none="disabled"
+                class="parameter-component size-12" />
         </b-col>
     </b-row>
 </template>
@@ -45,11 +43,6 @@
         components: {
             SelectParameterComponent,
         },
-        data() {
-            return {
-                disabled: false,
-            };
-        },
         props: {
             validationParams: Object as () => ValidationParams,
             validationErrors: Object,
@@ -61,8 +54,10 @@
              */
             parameter: Object as () => HHpredSelectsParameter,
         },
-        mounted() {
-            EventBus.$on('second-text-area-enabled', this.onSecondTextAreaEnabled);
+        data() {
+            return {
+                disabled: false,
+            };
         },
         computed: {
             selectedOptionsHHSuite(): number {
@@ -133,6 +128,9 @@
                 },
             },
         },
+        mounted() {
+            EventBus.$on('second-text-area-enabled', this.onSecondTextAreaEnabled);
+        },
         methods: {
             onSecondTextAreaEnabled(enabled: boolean): void {
                 this.disabled = enabled;
@@ -140,7 +138,3 @@
         },
     });
 </script>
-
-<style lang="scss" scoped>
-
-</style>

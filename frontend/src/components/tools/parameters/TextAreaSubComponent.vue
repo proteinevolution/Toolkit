@@ -4,43 +4,41 @@
         <b-form-textarea class="textarea-alignment break-all"
                          :placeholder="$t('tools.inputPlaceholder.' + parameter.placeholderKey)"
                          :value="value"
-                         @input="handleInput"
                          cols="70"
-                         spellcheck="false">
-        </b-form-textarea>
-        <input type="file"
-               :id="'file-upload-' + parameter.name + '-' + second"
+                         spellcheck="false"
+                         @input="handleInput" />
+        <input :id="'file-upload-' + parameter.name + '-' + second"
+               type="file"
                :class="{'d-none': !fileDragged}"
                class="file-upload-dropzone"
-               @change="handleFileUpload"/>
+               @change="handleFileUpload">
         <b-progress :value="fileUploadProgress"
                     class="file-upload-progress"
-                    :max="100"/>
+                    :max="100" />
         <b-button-group size="sm"
                         class="mt-1 mb-3">
             <b-btn variant="link"
                    @click="handlePasteExample">
                 <loading v-if="$store.state.loading.alignmentTextarea"
-                         :size="20"/>
+                         :size="20" />
                 <span v-else
                       v-text="$t('tools.parameters.textArea.pasteExample')"></span>
             </b-btn>
             <label class="btn btn-link mb-0 cursor-pointer"
                    :for="'file-upload-' + parameter.name + '-' + second"
-                   v-text="$t('tools.parameters.textArea.uploadFile')">
-            </label>
+                   v-text="$t('tools.parameters.textArea.uploadFile')"></label>
         </b-button-group>
         <VelocityFade v-if="value">
-            <b-alert show
+            <b-alert v-if="autoTransformedParams"
                      key="autoTransformMessage"
-                     v-if="autoTransformedParams"
+                     :show="true"
                      variant="success"
                      class="validation-alert mb-0 mr-2">
                 {{ $t('tools.validation.autoTransformedToFasta', autoTransformedParams) }}
             </b-alert>
-            <b-alert show
+            <b-alert v-if="validation.cssClass && !autoTransformedParams"
                      key="validationMessage"
-                     v-if="validation.cssClass && !autoTransformedParams"
+                     :show="true"
                      :variant="validation.cssClass"
                      class="validation-alert mb-0">
                 {{ $t('tools.validation.' + validation.textKey, validation.textKeyParams) }}
@@ -100,13 +98,6 @@
                 validation: {} as ValidationResult,
             };
         },
-        created() {
-            (this as any).boundDragOver = this.handleDragOver.bind(this);
-            document.addEventListener('dragover', (this as any).boundDragOver);
-        },
-        beforeDestroy() {
-            document.removeEventListener('dragover', (this as any).boundDragOver);
-        },
         watch: {
             value: {
                 immediate: true,
@@ -130,6 +121,13 @@
                     this.$emit('validation', val);
                 },
             },
+        },
+        created() {
+            (this as any).boundDragOver = this.handleDragOver.bind(this);
+            document.addEventListener('dragover', (this as any).boundDragOver);
+        },
+        beforeDestroy() {
+            document.removeEventListener('dragover', (this as any).boundDragOver);
         },
         methods: {
             handleDragOver(e: Event): void {

@@ -2,8 +2,8 @@
     <div class="navbar-container">
         <b-navbar toggleable="md"
                   type="light">
-            <b-collapse is-nav
-                        id="nav_collapse">
+            <b-collapse id="nav_collapse"
+                        is-nav>
                 <b-row>
                     <b-col cols="auto">
                         <b-navbar-nav class="upper-nav">
@@ -20,12 +20,12 @@
                                           class="navbar-nav lower-nav"
                                           :style="{borderTopColor: sectionColor}">
                             <b-nav-item v-for="tool in displayedTools"
-                                        class="list-complete-item"
                                         :key="tool.name"
-                                        :to="'/tools/' + tool.name"
                                         v-b-tooltip.hover.bottom
+                                        class="list-complete-item"
+                                        :to="'/tools/' + tool.name"
                                         :title="tool.description">
-                                {{tool.longname}}
+                                {{ tool.longname }}
                             </b-nav-item>
                         </transition-group>
                     </b-col>
@@ -75,7 +75,7 @@
                 handler() {
                     // clear user selection to select correct tool/group upon programmatic routing
                     this.userSelectedSection = '';
-                    let toolName: string = '';
+                    let toolName = '';
                     if (this.$route.params.toolName) {
                         toolName = this.$route.params.toolName;
                     } else {

@@ -1,28 +1,27 @@
 <template>
     <b-col cols="12"
            class="top-navbar navbar-light">
-
         <div class="meta-user"></div>
         <div class="social-nav">
-            <b-dropdown no-caret
-                        class="lang-dropdown"
-                        v-if="false">
+            <b-dropdown v-if="false"
+                        no-caret
+                        class="lang-dropdown">
                 <template slot="button-content">
                     <img :src="require('../../assets/images/flag-' + $i18n.locale + '.png')"
-                         alt=""/>
+                         alt="">
                     <span class="sr-only"
                           v-text="$t('language.lang')"></span>
                 </template>
                 <b-dropdown-item @click="changeLanguage('en')">
                     <img :src="require('../../assets/images/flag-en.png')"
                          class="mr-2"
-                         alt=""/>
+                         alt="">
                     <span v-text="$t('language.en')"></span>
                 </b-dropdown-item>
                 <b-dropdown-item @click="changeLanguage('de')">
                     <img :src="require('../../assets/images/flag-de.png')"
                          class="mr-2"
-                         alt=""/>
+                         alt="">
                     <span v-text="$t('language.de')"></span>
                 </b-dropdown-item>
             </b-dropdown>
@@ -52,15 +51,13 @@
                       size="sm"
                       class="sign-in-link"
                       @click="openAuthModal"
-                      v-text="$t('auth.signIn')">
-            </b-button>
+                      v-text="$t('auth.signIn')" />
             <b-button v-else
                       variant="href"
                       size="sm"
                       class="sign-in-link"
                       @click="openAuthModal"
-                      v-text="user.nameLogin">
-            </b-button>
+                      v-text="user.nameLogin" />
             <b-button v-if="loggedIn"
                       variant="href"
                       size="sm"
@@ -77,9 +74,9 @@
                 <i class="fa fa-wrench"></i>
                 <b v-text="$t('maintenanceWarning')"></b>
             </b-alert>
-            <div class="offline-alert"
-                 @click="reloadApp"
-                 v-if="reconnecting">
+            <div v-if="reconnecting"
+                 class="offline-alert"
+                 @click="reloadApp">
                 <i class="fas fa-retweet"></i>
                 <b v-text="$t('reconnecting')"></b>
             </div>
@@ -87,12 +84,13 @@
 
         <router-link to="/"
                      class="small-logo-link d-md-none mx-auto">
-            <img :src="require('../../assets/images/minlogo.svg')" alt="MPI Bioinformatics Toolkit"/>
+            <img :src="require('../../assets/images/minlogo.svg')"
+                 alt="MPI Bioinformatics Toolkit">
         </router-link>
 
         <b-navbar-toggle class="d-lg-none mr-auto"
                          target="offscreenMenu"
-                         @click="toggleOffscreenMenu"/>
+                         @click="toggleOffscreenMenu" />
     </b-col>
 </template>
 

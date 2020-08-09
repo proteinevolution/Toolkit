@@ -1,6 +1,6 @@
 <template>
     <VelocityFade>
-        <Loading v-if="loading"></Loading>
+        <Loading v-if="loading" />
         <slot v-else></slot>
     </VelocityFade>
 </template>
@@ -12,6 +12,10 @@
 
     export default Vue.extend({
         name: 'LoadingWrapper',
+        components: {
+            VelocityFade,
+            Loading,
+        },
         props: {
             loading: {
                 type: Boolean,
@@ -19,12 +23,5 @@
                 default: true,
             },
         },
-        components: {
-            VelocityFade,
-            Loading,
-        },
     });
 </script>
-
-<style lang="scss" scoped>
-</style>

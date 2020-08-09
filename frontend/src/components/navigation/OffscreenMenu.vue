@@ -1,24 +1,22 @@
 <template>
-    <div class="offscreen-menu-wrapper"
-         id="offscreenMenu">
+    <div id="offscreenMenu"
+         class="offscreen-menu-wrapper">
         <transition name="fade">
-            <div class="offscreen-backdrop"
-                 @click="close"
-                 v-if="isOpen">
-            </div>
+            <div v-if="isOpen"
+                 class="offscreen-backdrop"
+                 @click="close"></div>
         </transition>
         <transition name="slide">
-            <div class="offscreen-menu"
-                 v-if="isOpen">
-
+            <div v-if="isOpen"
+                 class="offscreen-menu">
                 <transition mode="out-in">
-                    <b-nav vertical
-                           class="mt-2"
-                           v-if="!selectedSection"
-                           key="top-level">
+                    <b-nav v-if="!selectedSection"
+                           key="top-level"
+                           vertical
+                           class="mt-2">
                         <b-nav-item key="home"
-                                    @click="close"
-                                    to="/">
+                                    to="/"
+                                    @click="close">
                             Home
                         </b-nav-item>
                         <b-nav-item v-for="(section, i) in sections"
@@ -31,10 +29,10 @@
                                :style="{color: sectionColors[i]}"></i>
                         </b-nav-item>
                     </b-nav>
-                    <b-nav vertical
-                           class="mt-2"
-                           v-else
-                           key="bottom-level">
+                    <b-nav v-else
+                           key="bottom-level"
+                           vertical
+                           class="mt-2">
                         <b-nav-item key="back"
                                     @click="selectedSection = ''">
                             <i class="fa fa-angle-left mr-2"></i>
@@ -44,12 +42,12 @@
                                     :key="tool.name"
                                     :to="'/tools/' + tool.name"
                                     @click="close">
-                            {{tool.longname}}
+                            {{ tool.longname }}
                         </b-nav-item>
                     </b-nav>
                 </transition>
 
-                <JobList @click="close"/>
+                <JobList @click="close" />
 
                 <span class="offscreen-menu-close"
                       @click="close">

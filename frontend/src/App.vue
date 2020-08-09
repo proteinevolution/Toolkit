@@ -1,57 +1,56 @@
 <template>
     <div class="toolkit">
         <VelocityFade>
-            <LoadingView v-if="$store.state.loading.tools">
-            </LoadingView>
+            <LoadingView v-if="$store.state.loading.tools" />
             <b-container v-else
                          class="main-container">
-                <OffscreenMenu/>
+                <OffscreenMenu />
                 <b-row>
-                    <Header></Header>
+                    <Header />
                 </b-row>
                 <b-row class="pt-3 mb-2 main-content"
                        :class="[showJobList ? 'job-list-visible' : '']">
                     <b-col class="job-list-col d-none d-lg-block"
                            lg="3"
                            xl="2">
-                        <SideBar/>
+                        <SideBar />
                     </b-col>
                     <b-col :class="[showJobList ? 'col-lg-9 col-xl-10':'']">
                         <VelocityFade :duration="1000">
                             <router-view :key="$route.fullPath + refreshCounter"
-                                         @refresh="refreshCounter++"/>
+                                         @refresh="refreshCounter++" />
                         </VelocityFade>
                     </b-col>
                 </b-row>
                 <b-row>
-                    <Footer></Footer>
+                    <Footer />
                 </b-row>
             </b-container>
         </VelocityFade>
 
         <div>
             <!-- Place modals here -->
-            <AuthModal/>
-            <FooterLinkModal :modal="modalProps.modal"/>
-            <UpdatesModal/>
-            <HelpModal :toolName="modalProps.toolName"/>
+            <AuthModal />
+            <FooterLinkModal :modal="modalProps.modal" />
+            <UpdatesModal />
+            <HelpModal :tool-name="modalProps.toolName" />
             <ForwardingModal :forwarding-data="modalProps.forwardingData"
-                             :forwardingMode="modalProps.forwardingMode"
+                             :forwarding-mode="modalProps.forwardingMode"
                              :forwarding-job-i-d="modalProps.forwardingJobID"
                              :forwarding-api-options="modalProps.forwardingApiOptions"
                              :forwarding-api-options-alignment="modalProps.forwardingApiOptionsAlignment"
-                             @hidden="clearForwardingModalData"/>
+                             @hidden="clearForwardingModalData" />
             <TemplateAlignmentModal :job-i-d="modalProps.jobID"
                                     :accession="modalProps.accession"
-                                    :forwardingMode="modalProps.forwardingMode"/>
-            <TemplateStructureModal :accession="modalProps.accessionStructure"/>
-            <VerificationModal/>
-            <ResetPasswordModal/>
+                                    :forwarding-mode="modalProps.forwardingMode" />
+            <TemplateStructureModal :accession="modalProps.accessionStructure" />
+            <VerificationModal />
+            <ResetPasswordModal />
         </div>
 
-        <scroll-top-button/>
+        <scroll-top-button />
 
-        <notifications animation-type="velocity"/>
+        <notifications animation-type="velocity" />
         <cookie-law theme="toolkit"
                     :message="$t('cookieLaw.message')">
             <template slot-scope="props">
@@ -59,13 +58,13 @@
                       tag="div"
                       class="Cookie__content">
                     <b class="cursor-pointer"
-                       v-text="$t('cookieLaw.privacyLink')"
-                       @click="showModal({id: 'footerLink', props: {modal: 'privacy'}})"></b>
+                       @click="showModal({id: 'footerLink', props: {modal: 'privacy'}})"
+                       v-text="$t('cookieLaw.privacyLink')"></b>
                 </i18n>
                 <div class="Cookie__buttons">
                     <button class="Cookie__button"
-                            v-text="$t('cookieLaw.accept')"
-                            @click="props.accept"></button>
+                            @click="props.accept"
+                            v-text="$t('cookieLaw.accept')"></button>
                 </div>
             </template>
         </cookie-law>
@@ -251,18 +250,18 @@
 
 <!-- This should generally be the only global CSS in the app. -->
 <style lang="scss">
-    @import "./assets/scss/reset";
-    @import "~bootstrap/scss/bootstrap";
-    @import "~bootstrap-vue/dist/bootstrap-vue.css";
-    @import "~vue-multiselect/dist/vue-multiselect.min.css";
-    @import "./assets/scss/form-elements";
-    @import "./assets/scss/modals";
-    @import "./assets/scss/sequence-coloring";
-    @import url("https://use.fontawesome.com/releases/v5.2.0/css/all.css");
+    @import './assets/scss/reset';
+    @import '~bootstrap/scss/bootstrap';
+    @import '~bootstrap-vue/dist/bootstrap-vue.css';
+    @import '~vue-multiselect/dist/vue-multiselect.min.css';
+    @import './assets/scss/form-elements';
+    @import './assets/scss/modals';
+    @import './assets/scss/sequence-coloring';
+    @import url('https://use.fontawesome.com/releases/v5.2.0/css/all.css');
 
     $themeColor: $primary;
     @import '~vue-slider-component/lib/theme/default.scss';
-    @import "~handy-scroll/dist/handy-scroll.css";
+    @import '~handy-scroll/dist/handy-scroll.css';
 
     body {
         overflow-y: scroll;
@@ -280,12 +279,14 @@
         background: $primary-light;
         border-left: 5px solid $primary;
 
-        &.warning, &.warn {
+        &.warning,
+        &.warn {
             background: $warning-light;
             border-left-color: $warning;
         }
 
-        &.danger, &.error {
+        &.danger,
+        &.error {
             background: $danger-light;
             border-left-color: $danger;
         }
@@ -326,7 +327,7 @@
     .Cookie--toolkit .Cookie__button {
         background: $tk-dark-green;
         color: $white;
-        padding: .625em 3.125em;
+        padding: 0.625em 3.125em;
         border-radius: $global-radius;
         border: 0;
         font-size: 1em;
@@ -344,7 +345,7 @@
     }
 
     .textarea-alignment.loading::before {
-        content: "";
+        content: '';
         display: block;
         width: 100px;
     }
@@ -368,7 +369,7 @@
     }
 
     .break-all {
-        word-break: break-all
+        word-break: break-all;
     }
 
     .font-small {

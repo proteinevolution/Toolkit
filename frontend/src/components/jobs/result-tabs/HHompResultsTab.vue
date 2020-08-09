@@ -1,189 +1,206 @@
 <template>
-    <Loading :message="$t('loading')"
-             v-if="loading || !alignments"/>
+    <Loading v-if="loading || !alignments"
+             :message="$t('loading')" />
     <div v-else
          class="font-small">
         <b v-if="total === 0"
-           v-text="$t('jobs.results.hhomp.noResults')">
-        </b>
+           v-text="$t('jobs.results.hhomp.noResults')"></b>
         <div v-else>
             <div class="result-options">
-                <a @click="scrollTo('visualization')">{{$t('jobs.results.hitlist.visLink')}}</a>
-                <a @click="scrollTo('hits')">{{$t('jobs.results.hitlist.hitsLink')}}</a>
-                <a @click="scrollTo('alignments')"
-                   class="mr-4">{{$t('jobs.results.hitlist.alnLink')}}</a>
+                <a @click="scrollTo('visualization')">{{ $t('jobs.results.hitlist.visLink') }}</a>
+                <a @click="scrollTo('hits')">{{ $t('jobs.results.hitlist.hitsLink') }}</a>
+                <a class="mr-4"
+                   @click="scrollTo('alignments')">{{ $t('jobs.results.hitlist.alnLink') }}</a>
                 <a class="border-right mr-4"></a>
-                <a @click="forwardQueryA3M">{{$t('jobs.results.actions.forwardQueryA3M')}}</a>
-                <a @click="toggleColor"
-                   :class="{active: color}">{{$t('jobs.results.actions.colorSeqs')}}</a>
-                <a @click="toggleWrap"
-                   :class="{active: wrap}">{{$t('jobs.results.actions.wrapSeqs')}}</a>
+                <a @click="forwardQueryA3M">{{ $t('jobs.results.actions.forwardQueryA3M') }}</a>
+                <a :class="{active: color}"
+                   @click="toggleColor">{{ $t('jobs.results.actions.colorSeqs') }}</a>
+                <a :class="{active: wrap}"
+                   @click="toggleWrap">{{ $t('jobs.results.actions.wrapSeqs') }}</a>
             </div>
 
             <div v-html="$t('jobs.results.hhomp.numHits', {num: total})"></div>
             <div v-html="$t('jobs.results.hhomp.probOMP', {num: info.probOMP})"></div>
 
 
-            <div class="result-section"
-                 ref="visualization">
-                <h4>{{$t('jobs.results.hitlist.vis')}}</h4>
+            <div ref="visualization"
+                 class="result-section">
+                <h4>{{ $t('jobs.results.hitlist.vis') }}</h4>
                 <hit-map :job="job"
                          @elem-clicked="scrollToElem"
-                         @resubmit-section="resubmitSection"/>
+                         @resubmit-section="resubmitSection" />
             </div>
 
-            <div class="result-section"
-                 ref="hits">
-                <h4 class="mb-4">{{$t('jobs.results.hitlist.hits')}}</h4>
+            <div ref="hits"
+                 class="result-section">
+                <h4 class="mb-4">
+                    {{ $t('jobs.results.hitlist.hits') }}
+                </h4>
                 <hit-list-table :job="job"
                                 :fields="hitListFields"
-                                @elem-clicked="scrollToElem"/>
+                                @elem-clicked="scrollToElem" />
             </div>
 
-            <div class="result-section"
-                 ref="alignments">
-                <h4>{{$t('jobs.results.hitlist.aln')}}</h4>
+            <div ref="alignments"
+                 class="result-section">
+                <h4>{{ $t('jobs.results.hitlist.aln') }}</h4>
 
-                <div class="table-responsive"
-                     ref="scrollElem">
+                <div ref="scrollElem"
+                     class="table-responsive">
                     <table class="alignments-table">
                         <tbody>
-                        <template v-for="(al, i) in alignments">
-                            <tr class="blank-row"
-                                :key="'alignment-' + al.num"
-                                :ref="'alignment-' + al.num">
-                                <td colspan="4">
-                                    <hr v-if="i !== 0"/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td colspan="3">
-                                    <a @click="displayTemplateAlignment(al.template.accession)"
-                                       v-text="$t('jobs.results.hhomp.templateAlignment')"></a>
-                                </td>
-                            </tr>
-                            <tr class="font-weight-bold">
-                                <td v-text="al.num + '.'"></td>
-                                <td colspan="3"
-                                    v-text="al.acc + ' ' + al.name"></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td colspan="3"
-                                    v-html="$t('jobs.results.hhomp.alignmentInfo', al)"></td>
-                            </tr>
-
-                            <template v-for="alPart in wrapAlignments(al)">
-                                <tr class="blank-row">
-                                    <td></td>
-                                </tr>
-                                <tr v-if="alPart.query.ss_conf"
-                                    class="sequence">
-                                    <td></td>
-                                    <td>Q ss_conf</td>
-                                    <td></td>
-                                    <td v-html="alPart.query.ss_conf"></td>
-                                </tr>
-                                <tr v-if="alPart.query.ss_dssp"
-                                    class="sequence">
-                                    <td></td>
-                                    <td>Q ss_pred</td>
-                                    <td></td>
-                                    <td v-html="coloredSeqSS(alPart.query.ss_dssp)"></td>
-                                </tr>
-                                <tr v-if="alPart.query.ss_pred"
-                                    class="sequence">
-                                    <td></td>
-                                    <td>Q ss_pred</td>
-                                    <td></td>
-                                    <td v-html="coloredSeqSS(alPart.query.ss_pred)"></td>
-                                </tr>
-                                <tr v-if="alPart.query.seq"
-                                    class="sequence">
-                                    <td></td>
-                                    <td v-text="'Q ' + alPart.query.name"></td>
-                                    <td v-text="alPart.query.start"></td>
-                                    <td v-html="coloredSeq(alPart.query.seq) + alEndRef(alPart.query)"></td>
-                                </tr>
-                                <tr v-if="alPart.query.consensus"
-                                    class="sequence">
-                                    <td></td>
-                                    <td>Q Consensus</td>
-                                    <td v-text="alPart.query.start"></td>
-                                    <td v-html="alPart.query.consensus + alEndRef(alPart.query)"></td>
-                                </tr>
-                                <tr v-if="alPart.agree"
-                                    class="sequence">
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td class="consensus-agree" v-text="alPart.agree"></td>
-                                </tr>
-                                <tr v-if="alPart.template.consensus"
-                                    class="sequence">
-                                    <td></td>
-                                    <td>T Consensus</td>
-                                    <td v-text="alPart.template.start"></td>
-                                    <td v-html="alPart.template.consensus + alEndRef(alPart.template)"></td>
-                                </tr>
-                                <tr v-if="alPart.template.seq"
-                                    class="sequence">
-                                    <td></td>
-                                    <td v-text="'Q ' + alPart.template.accession"></td>
-                                    <td v-text="alPart.template.start"></td>
-                                    <td v-html="coloredSeq(alPart.template.seq) + alEndRef(alPart.template)"></td>
-                                </tr>
-                                <tr v-if="alPart.template.ss_pred"
-                                    class="sequence">
-                                    <td></td>
-                                    <td>T ss_pred</td>
-                                    <td></td>
-                                    <td v-html="coloredSeqSS(alPart.template.ss_pred)"></td>
-                                </tr>
-                                <tr v-if="alPart.template.ss_dssp"
-                                    class="sequence">
-                                    <td></td>
-                                    <td>T ss_dssp</td>
-                                    <td></td>
-                                    <td v-html="coloredSeqSS(alPart.template.ss_dssp)"></td>
-                                </tr>
-                                <tr v-if="alPart.template.ss_conf"
-                                    class="sequence">
-                                    <td></td>
-                                    <td>T ss_conf</td>
-                                    <td></td>
-                                    <td v-text="alPart.template.ss_conf"></td>
-                                </tr>
-                                <tr v-if="alPart.template.bb_pred"
-                                    class="sequence">
-                                    <td></td>
-                                    <td>T bb_pred</td>
-                                    <td></td>
-                                    <td v-text="alPart.template.bb_pred"></td>
-                                </tr>
-                                <tr v-if="alPart.template.bb_conf"
-                                    class="sequence">
-                                    <td></td>
-                                    <td>T bb_conf</td>
-                                    <td></td>
-                                    <td v-text="alPart.template.bb_conf"></td>
-                                </tr>
-                                <tr class="blank-row">
-                                    <td>
+                            <template v-for="(al, i) in alignments">
+                                <tr :key="'alignment-' + al.num"
+                                    :ref="'alignment-' + al.num"
+                                    class="blank-row">
+                                    <td colspan="4">
+                                        <hr v-if="i !== 0">
                                     </td>
                                 </tr>
+                                <tr :key="'alignment-acc-' + i">
+                                    <td></td>
+                                    <td colspan="3">
+                                        <a @click="displayTemplateAlignment(al.template.accession)"
+                                           v-text="$t('jobs.results.hhomp.templateAlignment')"></a>
+                                    </td>
+                                </tr>
+                                <tr :key="'alignment-num-' + i"
+                                    class="font-weight-bold">
+                                    <td v-text="al.num + '.'"></td>
+                                    <td colspan="3"
+                                        v-text="al.acc + ' ' + al.name"></td>
+                                </tr>
+                                <tr :key="'alignment-alinf-' + i">
+                                    <td></td>
+                                    <td colspan="3"
+                                        v-html="$t('jobs.results.hhomp.alignmentInfo', al)"></td>
+                                </tr>
+
+                                <template v-for="(alPart, alIdx) in wrapAlignments(al)">
+                                    <tr :key="'alignment-' + i + '-blank-' + alIdx"
+                                        class="blank-row">
+                                        <td></td>
+                                    </tr>
+                                    <tr v-if="alPart.query.ss_conf"
+                                        :key="'alignment-' + i + '-ss_conf-' + alIdx"
+                                        class="sequence">
+                                        <td></td>
+                                        <td>Q ss_conf</td>
+                                        <td></td>
+                                        <td v-html="alPart.query.ss_conf"></td>
+                                    </tr>
+                                    <tr v-if="alPart.query.ss_dssp"
+                                        :key="'alignment-' + i + '-ss_dssp-' + alIdx"
+                                        class="sequence">
+                                        <td></td>
+                                        <td>Q ss_pred</td>
+                                        <td></td>
+                                        <td v-html="coloredSeqSS(alPart.query.ss_dssp)"></td>
+                                    </tr>
+                                    <tr v-if="alPart.query.ss_pred"
+                                        :key="'alignment-' + i + '-ss_pred-' + alIdx"
+                                        class="sequence">
+                                        <td></td>
+                                        <td>Q ss_pred</td>
+                                        <td></td>
+                                        <td v-html="coloredSeqSS(alPart.query.ss_pred)"></td>
+                                    </tr>
+                                    <tr v-if="alPart.query.seq"
+                                        :key="'alignment-' + i + '-seq-' + alIdx"
+                                        class="sequence">
+                                        <td></td>
+                                        <td v-text="'Q ' + alPart.query.name"></td>
+                                        <td v-text="alPart.query.start"></td>
+                                        <td v-html="coloredSeq(alPart.query.seq) + alEndRef(alPart.query)"></td>
+                                    </tr>
+                                    <tr v-if="alPart.query.consensus"
+                                        :key="'alignment-' + i + '-consensus-' + alIdx"
+                                        class="sequence">
+                                        <td></td>
+                                        <td>Q Consensus</td>
+                                        <td v-text="alPart.query.start"></td>
+                                        <td v-html="alPart.query.consensus + alEndRef(alPart.query)"></td>
+                                    </tr>
+                                    <tr v-if="alPart.agree"
+                                        :key="'alignment-' + i + '-agree-' + alIdx"
+                                        class="sequence">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="consensus-agree"
+                                            v-text="alPart.agree"></td>
+                                    </tr>
+                                    <tr v-if="alPart.template.consensus"
+                                        :key="'alignment-' + i + '-tpl-cons-' + alIdx"
+                                        class="sequence">
+                                        <td></td>
+                                        <td>T Consensus</td>
+                                        <td v-text="alPart.template.start"></td>
+                                        <td v-html="alPart.template.consensus + alEndRef(alPart.template)"></td>
+                                    </tr>
+                                    <tr v-if="alPart.template.seq"
+                                        :key="'alignment-' + i + '-tplseq-' + alIdx"
+                                        class="sequence">
+                                        <td></td>
+                                        <td v-text="'Q ' + alPart.template.accession"></td>
+                                        <td v-text="alPart.template.start"></td>
+                                        <td v-html="coloredSeq(alPart.template.seq) + alEndRef(alPart.template)"></td>
+                                    </tr>
+                                    <tr v-if="alPart.template.ss_pred"
+                                        :key="'alignment-' + i + '-tplss_pred-' + alIdx"
+                                        class="sequence">
+                                        <td></td>
+                                        <td>T ss_pred</td>
+                                        <td></td>
+                                        <td v-html="coloredSeqSS(alPart.template.ss_pred)"></td>
+                                    </tr>
+                                    <tr v-if="alPart.template.ss_dssp"
+                                        :key="'alignment-' + i + '-tplss_dssp-' + alIdx"
+                                        class="sequence">
+                                        <td></td>
+                                        <td>T ss_dssp</td>
+                                        <td></td>
+                                        <td v-html="coloredSeqSS(alPart.template.ss_dssp)"></td>
+                                    </tr>
+                                    <tr v-if="alPart.template.ss_conf"
+                                        :key="'alignment-' + i + '-tplss_conf-' + alIdx"
+                                        class="sequence">
+                                        <td></td>
+                                        <td>T ss_conf</td>
+                                        <td></td>
+                                        <td v-text="alPart.template.ss_conf"></td>
+                                    </tr>
+                                    <tr v-if="alPart.template.bb_pred"
+                                        :key="'alignment-' + i + '-tplbb_pred-' + alIdx"
+                                        class="sequence">
+                                        <td></td>
+                                        <td>T bb_pred</td>
+                                        <td></td>
+                                        <td v-text="alPart.template.bb_pred"></td>
+                                    </tr>
+                                    <tr v-if="alPart.template.bb_conf"
+                                        :key="'alignment-' + i + '-tplbb_conf-' + alIdx"
+                                        class="sequence">
+                                        <td></td>
+                                        <td>T bb_conf</td>
+                                        <td></td>
+                                        <td v-text="alPart.template.bb_conf"></td>
+                                    </tr>
+                                    <tr :key="'alignment-' + i + '-br-' + alIdx"
+                                        class="blank-row">
+                                        <td></td>
+                                    </tr>
+                                </template>
                             </template>
-                        </template>
-                        <tr v-if="alignments.length !== total">
-                            <td colspan="4">
-                                <Loading :message="$t('jobs.results.alignment.loadingHits')"
-                                         v-if="loadingMore"
-                                         justify="center"
-                                         class="mt-4"/>
-                                <intersection-observer @intersect="intersected"/>
-                            </td>
-                        </tr>
+                            <tr v-if="alignments.length !== total">
+                                <td colspan="4">
+                                    <Loading v-if="loadingMore"
+                                             :message="$t('jobs.results.alignment.loadingHits')"
+                                             justify="center"
+                                             class="mt-4" />
+                                    <intersection-observer @intersect="intersected" />
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -193,18 +210,14 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import Loading from '@/components/utils/Loading.vue';
-    import Logger from 'js-logger';
     import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
     import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
     import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
     import {HHompAlignmentItem, HHompHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
     import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
-    const logger = Logger.get('HHompResultsTab');
-
-    export default mixins(SearchResultTabMixin).extend({
+    export default SearchResultTabMixin.extend({
         name: 'HHompResultsTab',
         components: {
             Loading,

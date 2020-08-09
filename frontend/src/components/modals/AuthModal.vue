@@ -1,6 +1,6 @@
 <template>
-    <BaseModal title=""
-               id="auth"
+    <BaseModal id="auth"
+               title=""
                size="sm"
                body-class="no-scroll-y"
                modal-class="tk-auth-modal">
@@ -10,18 +10,18 @@
         <template #body>
             <b-tabs v-if="loggedIn">
                 <b-tab :title="$t('auth.profile')">
-                    <Profile/>
+                    <Profile />
                 </b-tab>
                 <b-tab :title="$t('auth.settings')">
-                    <Settings/>
+                    <Settings />
                 </b-tab>
             </b-tabs>
             <b-tabs v-else>
                 <b-tab :title="$t('auth.signIn')">
-                    <LoginForm/>
+                    <LoginForm />
                 </b-tab>
                 <b-tab :title="$t('auth.signUp')">
-                    <RegisterForm/>
+                    <RegisterForm />
                 </b-tab>
             </b-tabs>
         </template>

@@ -1,34 +1,33 @@
 <template>
-    <Loading :message="$t('loading')"
-             v-if="loading || !results"/>
+    <Loading v-if="loading || !results"
+             :message="$t('loading')" />
     <div v-else
          class="font-small">
         <b v-if="results.results.hits.length === 0"
-           v-text="$t('jobs.results.patsearch.noResults')">
-        </b>
+           v-text="$t('jobs.results.patsearch.noResults')"></b>
         <div v-else>
             <div class="result-options">
-                <a @click="download">{{$t('jobs.results.actions.downloadHits')}}</a>
-                <a @click="forwardAll">{{$t('jobs.results.actions.forwardAll')}}</a>
+                <a @click="download">{{ $t('jobs.results.actions.downloadHits') }}</a>
+                <a @click="forwardAll">{{ $t('jobs.results.actions.forwardAll') }}</a>
             </div>
 
             <span v-html="$t('jobs.results.alignment.numSeqs', {num: results.results.hits.length})"></span>
 
             <table class="alignment-table mt-3">
                 <tbody>
-                <template v-for="hit in results.results.hits">
-                    <tr>
-                        <td>
-                            <b v-text="hit.name"></b>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="sequence-alignment"
-                            v-html="colorHits(hit.seq, hit.matches)">
+                    <template v-for="(hit, i) in results.results.hits">
+                        <tr :key="'hit-name-' + i">
+                            <td>
+                                <b v-text="hit.name"></b>
+                            </td>
+                        </tr>
+                        <tr :key="'hit-seq-' + i">
+                            <td class="sequence-alignment"
+                                v-html="colorHits(hit.seq, hit.matches)">
                             <!-- @{ hit.seq.map(s => Html(Common.insertMatch(s, result.len, hit.pats.getOrElse(Nil)))) -->
-                        </td>
-                    </tr>
-                </template>
+                            </td>
+                        </tr>
+                    </template>
                 </tbody>
             </table>
         </div>
@@ -36,7 +35,6 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
@@ -47,7 +45,7 @@
 
     const logger = Logger.get('PatsearchResultsTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'PatsearchResultsTab',
         components: {
             Loading,

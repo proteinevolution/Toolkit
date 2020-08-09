@@ -1,10 +1,10 @@
 <template>
     <div>
-        <Loading :message="$t('loading')"
-                 v-if="loading"/>
+        <Loading v-if="loading"
+                 :message="$t('loading')" />
         <div v-else>
             <div class="result-options">
-                <a @click="downloadPdb">{{$t('jobs.results.actions.downloadPDBFile')}}</a>
+                <a @click="downloadPdb">{{ $t('jobs.results.actions.downloadPDBFile') }}</a>
             </div>
         </div>
 
@@ -16,15 +16,11 @@
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
-    import Logger from 'js-logger';
     import {resultsService} from '@/services/ResultsService';
     import Loading from '@/components/utils/Loading.vue';
 
-    const logger = Logger.get('NGL3DStructureView');
-
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'NGL3DStructureView',
         components: {
             Loading,

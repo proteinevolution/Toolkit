@@ -1,7 +1,7 @@
 <template>
-    <BaseModal :title="$t('footerLinkModals.titles.' + modal)"
-               id="footerLink">
-        <div v-html="$t('footerLinkModals.content.' + modal)"/>
+    <BaseModal id="footerLink"
+               :title="$t('footerLinkModals.titles.' + modal)">
+        <div v-html="$t('footerLinkModals.content.' + modal)"></div>
     </BaseModal>
 </template>
 

@@ -1,12 +1,12 @@
 <template>
-    <BaseModal :title="$t('jobs.results.actions.forward')"
-               id="forwardingModal"
+    <BaseModal id="forwardingModal"
+               :title="$t('jobs.results.actions.forward')"
                :size="largeModal ? 'lmd' : 'sm'"
                @hidden="onHidden"
                @shown="onShown">
         <b-row>
-            <b-col cols="12"
-                   v-if="forwardingApiOptions"
+            <b-col v-if="forwardingApiOptions"
+                   cols="12"
                    class="mb-4">
                 <div class="bg-secondary rounded p-4">
                     <b-row>
@@ -26,9 +26,8 @@
                                               placeholder="E-value threshold"
                                               class="mt-1"
                                               size="sm"
-                                              @focus="forwardHitsMode = ForwardHitsMode.EVALUE"/>
+                                              @focus="forwardHitsMode = ForwardHitsMode.EVALUE" />
                             </b-form-radio>
-
                         </b-col>
                         <b-col v-if="largeModal">
                             <b>Select sequence length</b>
@@ -62,13 +61,13 @@
             <b-col cols="12"
                    :md="largeModal ? '8': '12'">
                 <b-button variant="primary"
-                          @click="forward"
                           class="mt-3 float-right"
                           :class="{'mt-md-0': largeModal}"
-                          :disabled="forwardingDisabled">
+                          :disabled="forwardingDisabled"
+                          @click="forward">
                     <Loading v-if="loading"
                              :size="16"
-                             :message="$t('loading')"/>
+                             :message="$t('loading')" />
                     <span v-else
                           v-text="$t('jobs.results.actions.forward')"></span>
                 </b-button>

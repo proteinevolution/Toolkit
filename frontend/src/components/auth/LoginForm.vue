@@ -5,20 +5,18 @@
                 <b-form-input v-model="username"
                               type="text"
                               autofocus
-                              required>
-                </b-form-input>
+                              required />
             </b-form-group>
             <b-form-group :label="$t('auth.password')">
                 <b-form-input v-model="password"
                               type="password"
-                              required>
-                </b-form-input>
+                              required />
             </b-form-group>
             <b-alert variant="danger"
                      :show="message !== ''"
-                     v-text="message"/>
+                     v-text="message" />
             <b-btn type="submit"
-                   v-text="$t('auth.signIn')"/>
+                   v-text="$t('auth.signIn')" />
             <a class="password-link"
                @click.stop="toggleForgotContainer">
                 {{ $t('auth.forgotPassword') }}
@@ -26,27 +24,25 @@
         </b-form>
 
         <ExpandHeight>
-            <b-alert :variant="!forgot.message || forgot.successful ? 'primary' : 'danger'"
-                     show
-                     class="mt-3 mb-0"
-                     v-if="forgot.show">
-                <b-form @submit.prevent="forgotPasswordSubmit"
-                        v-show="!(forgot.message && forgot.successful)"
-                        :class="[forgot.successful ? '' : 'mb-3']">
+            <b-alert v-if="forgot.show"
+                     :variant="!forgot.message || forgot.successful ? 'primary' : 'danger'"
+                     :show="true"
+                     class="mt-3 mb-0">
+                <b-form v-show="!(forgot.message && forgot.successful)"
+                        :class="[forgot.successful ? '' : 'mb-3']"
+                        @submit.prevent="forgotPasswordSubmit">
                     <b-form-group :label="$t('auth.forgotPasswordInstructions')">
                         <b-form-input v-model="forgot.eMailOrUsername"
                                       :placeholder="$t('auth.eMailOrUsername')"
-                                      type="text">
-                        </b-form-input>
+                                      type="text" />
                     </b-form-group>
                     <b-btn :disabled="eMailOrUsernameInvalid"
                            type="submit"
-                           v-text="$t('submit')"
-                           variant="primary"/>
+                           variant="primary"
+                           v-text="$t('submit')" />
                 </b-form>
                 <div v-show="forgot.message"
-                     v-text="forgot.message">
-                </div>
+                     v-text="forgot.message"></div>
             </b-alert>
         </ExpandHeight>
     </div>

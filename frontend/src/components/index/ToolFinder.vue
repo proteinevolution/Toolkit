@@ -33,12 +33,12 @@
             </b-row>
             <b-row class="search-container">
                 <b-col :class="'status-' + currentJobStatus"
-                       @click="goToCurrentJob"
                        class="traffic-bar"
-                       cols="12"></b-col>
+                       cols="12"
+                       @click="goToCurrentJob" />
                 <b-col class="search-field-container"
                        cols="12">
-                    <SearchField :placeholder="$t('index.searchPlaceholder')"/>
+                    <SearchField :placeholder="$t('index.searchPlaceholder')" />
                 </b-col>
             </b-row>
         </div>
@@ -53,13 +53,13 @@
 
     export default Vue.extend({
         name: 'ToolFinder',
+        components: {
+            SearchField,
+        },
         data() {
             return {
                 clusterWorkload: 0,
             };
-        },
-        components: {
-            SearchField,
         },
         computed: {
             recentJob(): Job | undefined {
@@ -87,7 +87,7 @@
             },
         },
         methods: {
-            animateClusterload(end: number, duration: number = 10): void {
+            animateClusterload(end: number, duration = 10): void {
                 const start: number = this.clusterWorkload;
                 const range: number = end - start;
                 const increment: number = end > start ? 1 : -1;

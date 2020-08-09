@@ -1,6 +1,7 @@
+import java.util.Properties
+
 import Settings._
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
-import java.util.Properties
 
 val appProperties = settingKey[Properties]("The application properties")
 
@@ -10,7 +11,7 @@ inThisBuild(
     organizationName := "Dept. Protein Evolution, Max Planck Institute for Developmental Biology",
     startYear := Some(2018),
     licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
-    scalaVersion := "2.12.11"
+    scalaVersion := "2.13.3"
   )
 )
 
@@ -34,15 +35,15 @@ lazy val common = (project in file("modules/common"))
     Settings.compileSettings,
     disableDocs
   )
-  .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.1").cross(CrossVersion.full)))
+  .settings(scalacOptions += "-Ymacro-annotations")
   .dependsOn(base, tel)
 
 lazy val jobs = (project in file("modules/jobs"))
   .commonSettings("de.proteinevolution.jobs")
   .enablePlugins(PlayScala)
   .dependsOn(common, auth, base, clusterApi, tel, tools, ui, util, user, statistics)
-  .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.1").cross(CrossVersion.full)))
-  .settings(addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9"))
+  .settings(scalacOptions += "-Ymacro-annotations")
+  .settings(addCompilerPlugin(("org.typelevel" %% "kind-projector" % "0.11.0").cross(CrossVersion.full)))
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val user = (project in file("modules/user"))
@@ -102,7 +103,7 @@ lazy val message = (project in file("modules/message"))
 lazy val migrations = (project in file("modules/migrations"))
   .commonSettings("de.proteinevolution.migrations")
   .enablePlugins(PlayScala)
-  .settings(scalacOptions --= Seq("-Ywarn-unused:imports"))
+  .settings(scalacOptions -= "-Wunused:imports")
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val tel = (project in file("modules/tel"))
@@ -114,7 +115,7 @@ lazy val tools = (project in file("modules/tools"))
   .commonSettings("de.proteinevolution.tools")
   .enablePlugins(PlayScala)
   .dependsOn(common)
-  .settings(addCompilerPlugin(("org.scalamacros" % "paradise" % "2.1.1").cross(CrossVersion.full)))
+  .settings(scalacOptions += "-Ymacro-annotations")
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val util = (project in file("modules/util"))
@@ -141,7 +142,7 @@ lazy val root = (project in file("."))
     pipelineStages := Seq(digest, gzip)
   )
 
-resolvers += "scalaz-bintray".at("http://dl.bintray.com/scalaz/releases")
+resolvers += "scalaz-bintray".at("https://dl.bintray.com/scalaz/releases")
 resolvers ++= Resolver.sonatypeRepo("releases") :: Resolver.sonatypeRepo("snapshots") :: Nil
 
 fork := true // required for "sbt run" to pick up javaOptions

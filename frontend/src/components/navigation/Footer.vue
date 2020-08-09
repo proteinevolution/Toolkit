@@ -6,7 +6,9 @@
                         @click="launchHelpModal(simpleModal)">
                 {{ $t('footerLinkModals.names.' + simpleModal) }}
             </b-nav-item>
-            <b-nav-item @click="launchUpdatesModal">{{ $t('footerLinkModals.names.updates') }}</b-nav-item>
+            <b-nav-item @click="launchUpdatesModal">
+                {{ $t('footerLinkModals.names.updates') }}
+            </b-nav-item>
         </b-nav>
         <b-row>
             <b-col class="text-center"

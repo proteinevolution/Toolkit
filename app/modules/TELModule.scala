@@ -17,8 +17,8 @@
 package modules
 
 import com.google.inject.AbstractModule
-import de.proteinevolution.tel.param.Params
 import com.google.inject.name.Names
+import de.proteinevolution.tel.param.Params
 import de.proteinevolution.tel.{ ParamCollectorProvider, RunscriptPathProvider, WrapperPathProvider }
 
 class TELModule extends AbstractModule {

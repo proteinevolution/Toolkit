@@ -4,14 +4,13 @@
                       :placeholder="$t('tools.parameters.customJobId.placeholder')"
                       aria-describedby="custom-job-id-invalid"
                       :state="valid"
-                      @input="inputChanged">
-        </b-form-input>
-        <b-form-invalid-feedback id="custom-job-id-invalid"
-                                 v-if="hasError">
-            <i18n :path="error.textKey" tag="span">
+                      @input="inputChanged" />
+        <b-form-invalid-feedback v-if="hasError"
+                                 id="custom-job-id-invalid">
+            <i18n :path="error.textKey"
+                  tag="span">
                 <span class="suggestion-link"
-                      @click="takeSuggestion"
-                >{{ suggestion }}</span>
+                      @click="takeSuggestion">{{ suggestion }}</span>
             </i18n>
         </b-form-invalid-feedback>
     </div>
@@ -23,10 +22,9 @@
     import ToolParameterMixin from '@/mixins/ToolParameterMixin';
     import {ConstraintError} from '@/types/toolkit/validation';
     import {CustomJobIdValidationResult} from '@/types/toolkit/jobs';
-    import mixins from 'vue-typed-mixins';
     import {debounce} from 'lodash-es';
 
-    export default mixins(ToolParameterMixin).extend({
+    export default ToolParameterMixin.extend({
         name: 'CustomJobIdInput',
         data() {
             return {
@@ -40,7 +38,7 @@
             },
             customJobId: { // handle submission manually (not via ToolParameterMixin) to exclude empty strings
                 get(): string {
-                    if (!this.submission.hasOwnProperty(this.parameterName)) {
+                    if (!(this.parameterName in this.submission)) {
                         return '';
                     }
                     return this.submission[this.parameterName];

@@ -32,7 +32,7 @@ function setI18nLanguage(lang: string) {
     return lang;
 }
 
-export function loadLanguageAsync(lang: string) {
+export function loadLanguageAsync(lang: string): Promise<string> {
     if (i18n.locale !== lang) {
         if (!loadedLanguages.includes(lang)) {
             return import(
@@ -52,7 +52,7 @@ export function loadLanguageAsync(lang: string) {
     return Promise.resolve(lang);
 }
 
-export function loadExtraTranslations(path: string) {
+export function loadExtraTranslations(path: string): Promise<void> {
     if (!loadedExtraTranslations.includes(path)) {
         logger.info('loading extra translations for ' + path);
         return import(
@@ -63,7 +63,7 @@ export function loadExtraTranslations(path: string) {
             `./lang/extras/${path}.ts`)
             .then((msgs) => {
                 for (const itemLang in msgs.default) {
-                    if (msgs.default.hasOwnProperty(itemLang)) {
+                    if (itemLang in msgs.default) {
                         const itemMsgs = msgs.default[itemLang];
                         const curMsgs = i18n.getLocaleMessage(itemLang);
                         const newMsgs = mergeWith(curMsgs, itemMsgs);
