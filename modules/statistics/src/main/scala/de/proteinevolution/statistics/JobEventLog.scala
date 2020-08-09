@@ -20,7 +20,7 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.common.models.database.jobs.JobState
 import de.proteinevolution.common.models.database.jobs.JobState._
-import reactivemongo.bson._
+import reactivemongo.api.bson._
 
 case class JobEventLog(
     jobID: String,
@@ -50,7 +50,8 @@ case class JobEventLog(
     s"""---[JobEventLog Object]---
        |jobID: $jobID
        |tool name: $toolName
-       |internalJob? ${if (internalJob) { "yes" } else { "no" }}
+       |internalJob? ${if (internalJob) { "yes" }
+    else { "no" }}
        |events: ${events.mkString(",")}""".stripMargin
   }
 
@@ -73,41 +74,39 @@ object JobEventLog {
       internalJob <- c.downField(INTERNALJOB).as[Boolean]
       runtime     <- c.downField(RUNTIME).as[Long]
       events      <- c.downField(EVENTS).as[List[Json]]
-    } yield
-      new JobEventLog(
-        id,
-        toolName,
-        internalJob,
-        events.flatMap(_.hcursor.as[JobEvent].toOption),
-        runtime
+    } yield new JobEventLog(
+      id,
+      toolName,
+      internalJob,
+      events.flatMap(_.hcursor.as[JobEvent].toOption),
+      runtime
     )
 
   // TODO make fully automatically encodable by adjusting the keys in the frontend
   implicit val jobEventLogEncoder: Encoder[JobEventLog] =
-    Encoder.forProduct5(JOBID, TOOLNAME, INTERNALJOB, EVENTS, RUNTIME)(
-      l => (l.jobID, l.toolName, l.internalJob, l.events, l.runtime)
+    Encoder.forProduct5(JOBID, TOOLNAME, INTERNALJOB, EVENTS, RUNTIME)(l =>
+      (l.jobID, l.toolName, l.internalJob, l.events, l.runtime)
     )
 
-  implicit object Reader extends BSONDocumentReader[JobEventLog] {
-    def read(bson: BSONDocument): JobEventLog = {
+  implicit def reader: BSONDocumentReader[JobEventLog] =
+    BSONDocumentReader[JobEventLog] { bson =>
       JobEventLog(
-        jobID = bson.getAs[String](JOBID).getOrElse(""),
-        toolName = bson.getAs[String](TOOLNAME).getOrElse(""),
-        internalJob = bson.getAs[Boolean](INTERNALJOB).getOrElse(false),
-        events = bson.getAs[List[JobEvent]](EVENTS).getOrElse(List.empty),
-        runtime = bson.getAs[Long](RUNTIME).getOrElse(0L)
+        jobID = bson.getAsTry[String](JOBID).getOrElse(""),
+        toolName = bson.getAsTry[String](TOOLNAME).getOrElse(""),
+        internalJob = bson.getAsTry[Boolean](INTERNALJOB).getOrElse(false),
+        events = bson.getAsTry[List[JobEvent]](EVENTS).getOrElse(List.empty),
+        runtime = bson.getAsTry[Long](RUNTIME).getOrElse(0L)
       )
     }
-  }
 
-  implicit object Writer extends BSONDocumentWriter[JobEventLog] {
-    def write(jobEventLog: JobEventLog): BSONDocument = BSONDocument(
-      JOBID       -> jobEventLog.jobID,
-      TOOLNAME    -> jobEventLog.toolName,
-      INTERNALJOB -> jobEventLog.internalJob,
-      EVENTS      -> jobEventLog.events,
-      RUNTIME     -> jobEventLog.runtime
-    )
-  }
-
+  implicit def writer: BSONDocumentWriter[JobEventLog] =
+    BSONDocumentWriter[JobEventLog] { jobEventLog =>
+      BSONDocument(
+        JOBID       -> jobEventLog.jobID,
+        TOOLNAME    -> jobEventLog.toolName,
+        INTERNALJOB -> jobEventLog.internalJob,
+        EVENTS      -> jobEventLog.events,
+        RUNTIME     -> jobEventLog.runtime
+      )
+    }
 }

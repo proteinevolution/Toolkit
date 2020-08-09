@@ -1,7 +1,7 @@
 import {Store} from 'vuex';
 import {RootState} from '@/store/types';
 
-const localStoragePlugin = (store: Store<RootState>) => {
+const localStoragePlugin = (store: Store<RootState>): void => {
     // initialize store from local storage
     const localTools = localStorage.getItem('tools');
     const localToolsVersion = localStorage.getItem('toolsVersion');

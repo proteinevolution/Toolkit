@@ -48,7 +48,7 @@ class UiController @Inject()(
         case (_, v) =>
           v.toolFormSimple
       }
-    Ok(sorted.asJson.pretty(Printer.noSpaces.copy(dropNullValues = true)))
+    Ok(sorted.asJson.printWith(Printer.noSpaces.copy(dropNullValues = true)))
   }
 
   def getToolsVersion: Action[AnyContent] = Action {

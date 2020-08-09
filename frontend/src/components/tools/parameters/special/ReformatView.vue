@@ -1,53 +1,50 @@
 <template>
     <div>
-        <b-form-textarea class="textarea-input break-all"
-                         v-model="input"
-                         @input="clearOutput"
+        <b-form-textarea v-model="input"
+                         class="textarea-input break-all"
                          :placeholder="$t('tools.inputPlaceholder.' + parameter.placeholderKey)"
                          cols="70"
-                         spellcheck="false">
-        </b-form-textarea>
+                         spellcheck="false"
+                         @input="clearOutput" />
         <b-button-group size="sm"
                         class="mt-1 mb-3">
             <b-btn variant="link"
                    @click="handlePasteExample">
                 <loading v-if="$store.state.loading.alignmentTextarea"
-                         :size="20"/>
+                         :size="20" />
                 <span v-else
                       v-text="$t('tools.parameters.textArea.pasteExample')"></span>
             </b-btn>
         </b-button-group>
-        <b-alert show
-                 v-if="detectedFormat"
+        <b-alert v-if="detectedFormat"
+                 :show="true"
                  variant="success"
                  class="validation-alert mb-0"
-                 v-html="$t('tools.reformat.detectedFormat', {format: detectedFormat})">
-        </b-alert>
-        <b-row align-h="center" class="mb-3">
+                 v-html="$t('tools.reformat.detectedFormat', {format: detectedFormat})" />
+        <b-row align-h="center"
+               class="mb-3">
             <b-col cols="12"
                    md="4">
                 <multiselect v-model="selectedOutputFormat"
-                             @select="computeOutput"
-                             :allowEmpty="true"
+                             :allow-empty="true"
                              :options="outputFormatOptions"
                              :disabled="!detectedFormat"
                              track-by="value"
                              label="text"
                              :placeholder="$t('tools.reformat.selectOutputFormat')"
                              :searchable="false"
-                             selectLabel=""
-                             deselectLabel=""
-                             selectedLabel="">
-                </multiselect>
+                             select-label=""
+                             deselect-label=""
+                             selected-label=""
+                             @select="computeOutput" />
             </b-col>
         </b-row>
         <div v-if="output">
-            <b-form-textarea class="textarea-output break-all"
-                             v-model="output"
+            <b-form-textarea v-model="output"
+                             class="textarea-output break-all"
                              cols="70"
                              spellcheck="false"
-                             readonly>
-            </b-form-textarea>
+                             readonly />
             <div class="halign-center-wrapper mt-2">
                 <b-button-group class="mt-2 output-button-group">
                     <b-dropdown :text="$t('tools.reformat.forwardTo')"
@@ -55,16 +52,16 @@
                         <b-dropdown-item v-for="option in forwardingOptions"
                                          :key="option.value"
                                          @click="forward(option)">
-                            {{option.text}}
+                            {{ option.text }}
                         </b-dropdown-item>
                     </b-dropdown>
-                    <b-button @click="copyToClipboard"
-                              variant="primary">
+                    <b-button variant="primary"
+                              @click="copyToClipboard">
                         {{ $t('tools.reformat.copyToClipboard') }}
                     </b-button>
                     <b-button download="reformat_download.txt"
                               :href="'data:application/octet-stream;content-disposition:attachment;filename=file.txt;charset=utf-8,'
-                                        + encodeURIComponent(this.output)"
+                                  + encodeURIComponent(output)"
                               variant="primary">
                         {{ $t('tools.reformat.download') }}
                     </b-button>
@@ -79,7 +76,6 @@
     import {FrontendToolParameter, SelectOption, SequenceValidationParams, Tool} from '@/types/toolkit/tools';
     import {Reformat} from '@/modules/reformat';
     import Multiselect from 'vue-multiselect';
-    import Select from '../SelectParameter.vue';
     import {AlignmentSeqFormat} from '@/types/toolkit/enums';
     import EventBus from '@/util/EventBus';
     import Logger from 'js-logger';
@@ -91,8 +87,15 @@
 
     export default Vue.extend({
         name: 'ReformatView',
+        components: {
+            Multiselect,
+            Loading,
+        },
         props: {
-            parameter: Object as () => FrontendToolParameter,
+            parameter: {
+                type: Object as () => FrontendToolParameter,
+                default: undefined,
+            },
         },
         data() {
             return {
@@ -107,11 +110,6 @@
                 selectedOutputFormat: undefined,
                 selectedForwardingTool: undefined,
             };
-        },
-        components: {
-            Multiselect,
-            Select,
-            Loading,
         },
         computed: {
             tools(): Tool[] {

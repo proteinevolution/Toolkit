@@ -25,7 +25,7 @@ import play.api.libs.ws.WSClient
 sealed trait Configuration
 
 @Singleton
-final class ConfigurationImpl @Inject()(
+final class ConfigurationImpl @Inject() (
     appLifecycle: ApplicationLifecycle,
     ws: WSClient,
     environment: Environment

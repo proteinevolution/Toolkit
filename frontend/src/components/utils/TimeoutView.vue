@@ -1,15 +1,13 @@
 <template>
-    <NotFoundView :errorMessage="'Connection Timeout!'"></NotFoundView>
+    <NotFoundView :error-message="'Connection Timeout!'" />
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
     import hasHTMLTitle from '../../mixins/hasHTMLTitle';
     import NotFoundView from '@/components/utils/NotFoundView.vue';
 
-    export default Vue.extend({
+    export default hasHTMLTitle.extend({
         name: 'TimeoutView',
-        mixins: [hasHTMLTitle],
         components: {
             NotFoundView,
         },
@@ -20,7 +18,3 @@
         },
     });
 </script>
-
-<style lang="scss" scoped>
-
-</style>

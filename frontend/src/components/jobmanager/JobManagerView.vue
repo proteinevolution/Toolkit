@@ -13,8 +13,9 @@
                        xl="3">
                     <label class="d-flex align-items-center">
                         <span v-text="$t('jobManager.perPage.show')"></span>
-                        <b-form-select v-model="perPage" :options="perPageOptions"
-                                       class="mx-2"></b-form-select>
+                        <b-form-select v-model="perPage"
+                                       :options="perPageOptions"
+                                       class="mx-2" />
                         <span v-text="$t('jobManager.perPage.entries')"></span>
                     </label>
                 </b-col>
@@ -28,7 +29,7 @@
                     <label class="d-flex align-items-center justify-content-end">
                         <span v-text="$t('jobManager.filter')"></span>
                         <div class="ml-3 flex-grow-1">
-                            <b-form-input v-model="filter"></b-form-input>
+                            <b-form-input v-model="filter" />
                         </div>
                     </label>
                 </b-col>
@@ -40,24 +41,24 @@
                      :current-page="currentPage"
                      :per-page="perPage"
                      :filter="filter"
-                     @filtered="onFiltered"
                      :empty-text="$t('jobManager.table.noData')"
                      :empty-filtered-text="$t('jobManager.table.noDataFiltered')"
                      sort-by="dateCreated"
                      sort-desc
                      show-empty
-                     responsive>
-
+                     responsive
+                     @filtered="onFiltered">
                 <template v-slot:cell(jobID)="data">
                     <router-link :to="`/jobs/${data.item.jobID}`"
-                                 class="job-link">{{ data.value }}
+                                 class="job-link">
+                        {{ data.value }}
                     </router-link>
                 </template>
 
                 <template v-slot:cell(status)="{value}">
                     <b-badge variant="light"
                              :class="'status-' + value"
-                             v-text="$t('jobs.states.' + value)"></b-badge>
+                             v-text="$t('jobs.states.' + value)" />
                 </template>
 
                 <template v-slot:cell(joblist)="{item}">
@@ -68,45 +69,41 @@
                 </template>
 
                 <template v-slot:cell(actions)="{item}">
-                    <i class="fa fa-fw mr-3 hover-unlock cursor-pointer"
-                       v-if="loggedIn"
+                    <i v-if="loggedIn"
+                       class="fa fa-fw mr-3 hover-unlock cursor-pointer"
                        :class="[item.isPublic ? 'fa-lock-open text-primary' : 'fa-lock']"
                        :title="$t('tools.parameters.isPublic.' + item.isPublic)"
                        @click="setPublic(item.jobID, !item.isPublic)"></i>
-                    <i class="fa fa-fw fa-trash cursor-pointer"
-                       v-if="!item.foreign"
+                    <i v-if="!item.foreign"
+                       class="fa fa-fw fa-trash cursor-pointer"
                        :title="$t('jobs.delete')"
                        @click="deleteJob(item.jobID)"></i>
                 </template>
-
             </b-table>
-            <div class="pagination-container"
-                 v-show="totalRows > perPage">
+            <div v-show="totalRows > perPage"
+                 class="pagination-container">
                 <span v-text="$t('jobManager.paginationInfo', {start, end, total: totalRows})"></span>
                 <b-pagination
-                        v-model="currentPage"
-                        :total-rows="totalRows"
-                        :per-page="perPage"
-                        align="right"
-                        class="mb-0"
-                        aria-controls="jobmanagerTable"
-                ></b-pagination>
+                    v-model="currentPage"
+                    :total-rows="totalRows"
+                    :per-page="perPage"
+                    align="right"
+                    class="mb-0"
+                    aria-controls="jobmanagerTable" />
             </div>
         </b-card>
     </div>
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
     import hasHTMLTitle from '@/mixins/hasHTMLTitle';
     import {Job} from '@/types/toolkit/jobs';
     import moment from 'moment';
     import {Tool} from '@/types/toolkit/tools';
     import {jobService} from '@/services/JobService';
 
-    export default Vue.extend({
+    export default hasHTMLTitle.extend({
         name: 'JobManagerView',
-        mixins: [hasHTMLTitle],
         data() {
             return {
                 fields: [{

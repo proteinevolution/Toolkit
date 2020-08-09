@@ -24,36 +24,32 @@ import de.proteinevolution.jobs.models.{ Job, JobClusterData }
 import de.proteinevolution.statistics.{ JobEvent, JobEventLog }
 import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.collections.bson.BSONCollection
+import reactivemongo.api.bson.collection.BSONCollection
+import reactivemongo.api.bson.{ BSONDateTime, BSONDocument }
 import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.{ Index, IndexType }
-import reactivemongo.api.{ Cursor, ReadConcern }
-import reactivemongo.bson.{ BSONDateTime, BSONDocument }
+import reactivemongo.api.{ Cursor, ReadConcern, WriteConcern }
 
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class JobDao @Inject()(
+class JobDao @Inject() (
     private val reactiveMongoApi: ReactiveMongoApi,
     constants: ConstantsV2
 )(implicit ec: ExecutionContext) {
 
   private lazy val jobCollection: Future[BSONCollection] = {
-    reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs")).map { collection =>
-      collection.indexesManager.ensure(Index(Seq(Job.ID -> IndexType.Text), background = true, unique = true))
-      collection
-    }
+    reactiveMongoApi.database.map(_.collection[BSONCollection]("jobs"))
   }
 
   private[jobs] lazy val eventLogCollection: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection[BSONCollection]("jobevents"))
 
   final def findJob(id: String): Future[Option[Job]] =
-    jobCollection.flatMap(_.find(BSONDocument(Job.ID -> id), None).one[Job])
+    jobCollection.flatMap(_.find(BSONDocument(Job.ID -> id), Option.empty[BSONDocument]).one[Job])
 
   private def internalFindJobs(selector: BSONDocument): Future[List[Job]] =
     jobCollection
-      .map(_.find(selector, None).cursor[Job]())
+      .map(_.find(selector, Option.empty[BSONDocument]).cursor[Job]())
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
 
   def findJobsByHash(hash: Option[String]): Future[List[Job]] =
@@ -132,7 +128,17 @@ class JobDao @Inject()(
           "$push" ->
           BSONDocument(JobEventLog.EVENTS -> JobEvent(JobState.Deleted, Some(ZonedDateTime.now), Some(0L)))
         ),
-        fetchNewObject = true
+        fetchNewObject = true,
+        // the following values are default values that are used to distinguish findAndUpdate from deprecated version
+        // TODO: why won't it accept it with values left out like in documentation
+        upsert = false,
+        None,
+        None,
+        bypassDocumentValidation = false,
+        WriteConcern.Default,
+        Option.empty,
+        Option.empty,
+        Seq.empty
       )
     )
     jobCollection.flatMap(_.delete().one(BSONDocument(Job.ID -> jobID)))
@@ -141,7 +147,9 @@ class JobDao @Inject()(
   final def findAndSortJobs(hash: String, sort: Int = -1): Future[List[Job]] = {
     jobCollection
       .map(
-        _.find(BSONDocument(Job.HASH -> hash), None).sort(BSONDocument(Job.DATE_CREATED -> sort)).cursor[Job]()
+        _.find(BSONDocument(Job.HASH -> hash), Option.empty[BSONDocument])
+          .sort(BSONDocument(Job.DATE_CREATED -> sort))
+          .cursor[Job]()
       )
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[Job]]()))
   }
@@ -150,7 +158,7 @@ class JobDao @Inject()(
     jobCollection.flatMap(
       _.find(
         BSONDocument(Job.OWNER_ID -> userID),
-        None
+        Option.empty[BSONDocument]
       ).sort(BSONDocument(Job.DATE_UPDATED -> sort)).one[Job]
     )
   }
@@ -169,12 +177,21 @@ class JobDao @Inject()(
     jobCollection.flatMap(
       _.findAndUpdate(
         selector,
-        modifier.merge(
-          BSONDocument(
-            "$set" -> BSONDocument(Job.DATE_VIEWED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli))
-          )
+        modifier ++
+        BSONDocument(
+          "$set" -> BSONDocument(Job.DATE_VIEWED -> BSONDateTime(ZonedDateTime.now.toInstant.toEpochMilli))
         ),
-        fetchNewObject = true
+        fetchNewObject = true,
+        // the following values are default values that are used to distinguish findAndUpdate from deprecated version
+        // TODO: why won't it accept it with values left out like in documentation
+        upsert = false,
+        None,
+        None,
+        bypassDocumentValidation = false,
+        WriteConcern.Default,
+        Option.empty,
+        Option.empty,
+        Seq.empty
       ).map(_.result[Job])
     )
   }
@@ -246,7 +263,7 @@ class JobDao @Inject()(
               )
             )
           ),
-          None
+          Option.empty[BSONDocument]
         ).cursor[JobEventLog]()
       )
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[JobEventLog]]()))

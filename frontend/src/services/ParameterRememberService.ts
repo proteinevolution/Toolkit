@@ -3,18 +3,18 @@ class ParameterRememberService {
     private KEY = 'remember_parameters';
 
     public has(toolName: string): boolean {
-        return this.getStorage().hasOwnProperty(toolName);
+        return toolName in this.getStorage();
     }
 
-    public save(toolName: string, parameters: object): void {
+    public save(toolName: string, parameters: Record<string, unknown>): void {
         const storage = this.getStorage();
         storage[toolName] = parameters;
         this.setStorage(storage);
     }
 
-    public load(toolName: string): object {
+    public load(toolName: string): Record<string, unknown> {
         const storage = this.getStorage();
-        if (storage.hasOwnProperty(toolName)) {
+        if (toolName in storage) {
             return storage[toolName];
         }
         return {};

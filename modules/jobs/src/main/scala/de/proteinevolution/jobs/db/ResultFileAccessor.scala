@@ -58,7 +58,7 @@ final class ResultFileAccessor @Inject()(
         Future {
           files
             .map { file =>
-              file.nameWithoutExtension -> parse(file.contentAsString).right.toOption.getOrElse {
+              file.nameWithoutExtension -> parse(file.contentAsString).toOption.getOrElse {
                 logger.error("Invalid result json")
                 throw new NoSuchElementException
               }

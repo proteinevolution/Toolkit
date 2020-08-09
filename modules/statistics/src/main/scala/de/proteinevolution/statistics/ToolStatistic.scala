@@ -18,7 +18,7 @@ package de.proteinevolution.statistics
 
 import io.circe.Encoder
 import io.circe.generic.semiauto._
-import reactivemongo.bson._
+import reactivemongo.api.bson._
 
 case class ToolStatistic(
     toolName: String,
@@ -96,26 +96,25 @@ object ToolStatistic {
 
   implicit val toolStatsEncoder: Encoder[ToolStatistic] = deriveEncoder[ToolStatistic]
 
-  implicit object Reader extends BSONDocumentReader[ToolStatistic] {
-    def read(bson: BSONDocument): ToolStatistic = {
+  implicit def reader: BSONDocumentReader[ToolStatistic] =
+    BSONDocumentReader[ToolStatistic] { bson =>
       ToolStatistic(
-        toolName = bson.getAs[String](TOOLNAME).getOrElse("invalid"),
-        monthly = bson.getAs[List[Int]](MONTHLY).getOrElse(List.empty),
-        monthlyFailed = bson.getAs[List[Int]](MONTHLYFAILED).getOrElse(List.empty),
-        monthlyDeleted = bson.getAs[List[Int]](MONTHLYDELETED).getOrElse(List.empty),
-        monthlyInternal = bson.getAs[List[Int]](MONTHLYINTERNAL).getOrElse(List.empty)
+        toolName = bson.getAsTry[String](TOOLNAME).getOrElse("invalid"),
+        monthly = bson.getAsTry[List[Int]](MONTHLY).getOrElse(List.empty),
+        monthlyFailed = bson.getAsTry[List[Int]](MONTHLYFAILED).getOrElse(List.empty),
+        monthlyDeleted = bson.getAsTry[List[Int]](MONTHLYDELETED).getOrElse(List.empty),
+        monthlyInternal = bson.getAsTry[List[Int]](MONTHLYINTERNAL).getOrElse(List.empty)
       )
     }
-  }
 
-  implicit object Writer extends BSONDocumentWriter[ToolStatistic] {
-    def write(toolStatistic: ToolStatistic): BSONDocument = BSONDocument(
-      TOOLNAME        -> toolStatistic.toolName,
-      MONTHLY         -> toolStatistic.monthly,
-      MONTHLYFAILED   -> toolStatistic.monthlyFailed,
-      MONTHLYDELETED  -> toolStatistic.monthlyDeleted,
-      MONTHLYINTERNAL -> toolStatistic.monthlyDeleted
-    )
-  }
-
+  implicit def writer: BSONDocumentWriter[ToolStatistic] =
+    BSONDocumentWriter[ToolStatistic] { toolStatistic =>
+      BSONDocument(
+        TOOLNAME        -> toolStatistic.toolName,
+        MONTHLY         -> toolStatistic.monthly,
+        MONTHLYFAILED   -> toolStatistic.monthlyFailed,
+        MONTHLYDELETED  -> toolStatistic.monthlyDeleted,
+        MONTHLYINTERNAL -> toolStatistic.monthlyDeleted
+      )
+    }
 }

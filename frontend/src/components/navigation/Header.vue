@@ -1,7 +1,7 @@
 <template>
     <b-container class="header">
         <b-row>
-            <TopNavBar></TopNavBar>
+            <TopNavBar />
         </b-row>
         <b-row>
             <b-col sm="12"
@@ -10,13 +10,14 @@
                    class="logo-container d-none d-lg-flex">
                 <router-link to="/"
                              class="logo-link">
-                    <img :src="require('../../assets/images/minlogo.svg')" alt="MPI Bioinformatics Toolkit"/>
+                    <img :src="require('../../assets/images/minlogo.svg')"
+                         alt="MPI Bioinformatics Toolkit">
                 </router-link>
             </b-col>
             <b-col cols="12"
                    lg="9"
                    xl="10">
-                <NavBar></NavBar>
+                <NavBar />
             </b-col>
         </b-row>
     </b-container>

@@ -1,32 +1,28 @@
 <template>
-    <Loading :message="$t('loading')"
-             v-if="loading"/>
-    <div v-else class="font-small">
+    <Loading v-if="loading"
+             :message="$t('loading')" />
+    <div v-else
+         class="font-small">
         <b v-if="results.vals.length === 0"
-           v-html="$t('jobs.results.plot.noResults')">
-        </b>
-        <div class="high-chart-container"
-             v-else>
+           v-html="$t('jobs.results.plot.noResults')"></b>
+        <div v-else
+             class="high-chart-container">
             <div v-html="$t('jobs.results.plot.numHits', {num: results.vals.length})"></div>
             <br><br>
             <highcharts :options="chartOptions"
-                        class="high-chart"></highcharts>
+                        class="high-chart" />
         </div>
     </div>
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
     import {resultsService} from '@/services/ResultsService';
-    import Logger from 'js-logger';
     import {ProbEvalList} from '@/types/toolkit/results';
     import {Chart} from 'highcharts-vue';
 
-    const logger = Logger.get('PlotTab');
-
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'PlotTab',
         components: {
             Loading,

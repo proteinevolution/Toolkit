@@ -2,10 +2,10 @@
     <div>
         <b-row>
             <b-col v-for="parameter in section.parameters"
+                   :key="parameter.name"
                    :md="mediumSize(parameter)"
                    :sm="smallSize(parameter)"
-                   :lg="largeSize(parameter)"
-                   :key="parameter.name">
+                   :lg="largeSize(parameter)">
                 <component :is="parameter.parameterType"
                            :parameter="parameter"
                            :validation-params="validationParams"
@@ -13,8 +13,7 @@
                            :submission="submission"
                            :remember-params="rememberParams"
                            :class="['size-' + mediumSize(parameter)]"
-                           class="parameter-component">
-                </component>
+                           class="parameter-component" />
             </b-col>
         </b-row>
     </div>

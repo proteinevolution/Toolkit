@@ -48,7 +48,7 @@ import javax.inject.Inject
 import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
 import play.api.Configuration
-import reactivemongo.bson.BSONDateTime
+import reactivemongo.api.bson.BSONDateTime
 
 import scala.concurrent.Future
 import scala.concurrent.duration._

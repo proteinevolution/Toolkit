@@ -1,11 +1,11 @@
 <template>
     <transition
-            name="fade"
-            mode="out-in"
-            :before-enter="beforeEnter"
-            :enter="enter"
-            :before-leave="beforeLeave"
-            :leave="leave">
+        name="fade"
+        mode="out-in"
+        :before-enter="beforeEnter"
+        :enter="enter"
+        :before-leave="beforeLeave"
+        :leave="leave">
         <slot></slot>
     </transition>
 </template>

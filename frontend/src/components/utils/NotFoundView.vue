@@ -1,8 +1,11 @@
 <template>
-    <div v-if="errorMessage" class="page-not-found">
+    <div v-if="errorMessage"
+         class="page-not-found">
         <div class="error-message border text-muted mt-5">
-            <table><i class="fas fa-exclamation-triangle pl-3"></i>
-                <span class="ml-2" v-html="$t(errorMessage)"></span>
+            <table>
+                <i class="fas fa-exclamation-triangle pl-3"></i>
+                <span class="ml-2"
+                      v-html="$t(errorMessage)"></span>
             </table>
         </div>
         <div class="border banner-area text-center scrolling-wrapper">
@@ -14,24 +17,22 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
     import hasHTMLTitle from '../../mixins/hasHTMLTitle';
     import {colorSequence} from '@/util/SequenceUtils';
 
-    export default Vue.extend({
+    export default hasHTMLTitle.extend({
         name: 'NotFoundView',
-        mixins: [hasHTMLTitle],
-        data() {
-            return {
-                alignment: '',
-            };
-        },
         props: {
             errorMessage: {
                 type: String,
                 required: false,
                 default: 'errors.PageNotFound',
             },
+        },
+        data() {
+            return {
+                alignment: '',
+            };
         },
         computed: {
             htmlTitle() {
@@ -81,7 +82,6 @@
 </script>
 
 <style lang="scss">
-
     .error-message {
         border-radius: $global-radius;
         height: 45px;

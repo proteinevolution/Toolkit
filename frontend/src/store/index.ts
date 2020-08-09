@@ -50,7 +50,7 @@ const store: StoreOptions<RootState> = {
             Vue.prototype.$socket = event.currentTarget;
             state.reconnecting = false;
         },
-        SOCKET_ONCLOSE(state, event) {
+        SOCKET_ONCLOSE(state) {
             state.reconnecting = true;
         },
         SOCKET_ONERROR(state, event) {

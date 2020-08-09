@@ -1,8 +1,8 @@
 <template>
     <VelocityFade :duration="100">
-        <div class="tool-view"
+        <div v-if="tool"
              :key="toolName + 'view'"
-             v-if="tool">
+             class="tool-view">
             <div class="tool-header d-flex align-items-baseline">
                 <h1 class="no-wrap mr-3">
                     <a class="cursor-pointer mr-1"
@@ -24,46 +24,43 @@
                 <b-form class="tool-form">
                     <b-card no-body
                             :class="[fullScreen ? 'fullscreen' : '']">
-                        <b-tabs class="parameter-tabs"
-                                v-model="tabIndex"
+                        <b-tabs v-model="tabIndex"
+                                class="parameter-tabs"
                                 card
                                 nav-class="tabs-nav"
                                 no-fade>
                             <b-tab v-for="section in parameterSections"
-                                   v-if="section.parameters.length > 0"
                                    :key="toolName + section.name"
                                    :title="section.name">
                                 <div class="tabs-panel">
                                     <Section :section="section"
-                                             :validationParams="tool.validationParams"
+                                             :validation-params="tool.validationParams"
                                              :validation-errors="validationErrors"
                                              :full-screen="fullScreen"
                                              :submission="submission"
-                                             :remember-params="rememberParams"/>
+                                             :remember-params="rememberParams" />
                                 </div>
 
                                 <b-form-group v-if="showSubmitButtons"
                                               class="submit-buttons pt-4">
                                     <b-btn class="submit-button"
-                                           v-bind:class="{ 'submit-button-margin' : loggedIn }"
+                                           :class="{ 'submit-button-margin' : loggedIn }"
                                            variant="primary"
-                                           @click="submitJob"
                                            :disabled="preventSubmit"
-                                           v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')">
-                                    </b-btn>
+                                           @click="submitJob"
+                                           v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')" />
                                     <custom-job-id-input :validation-errors="validationErrors"
-                                                         :submission="submission"/>
+                                                         :submission="submission" />
                                     <b-btn v-if="hasRememberedParameters"
                                            class="reset-params-button"
                                            variant="secondary"
                                            :title="$t('jobs.resetParamsTitle')"
                                            @click="clearParameterRemember"
-                                           v-text="$t('jobs.resetParams')">
-                                    </b-btn>
+                                           v-text="$t('jobs.resetParams')" />
                                     <email-notification-switch v-if="loggedIn"
                                                                :validation-errors="validationErrors"
                                                                :submission="submission"
-                                                               class="pull-left"/>
+                                                               class="pull-left" />
                                 </b-form-group>
                             </b-tab>
 
@@ -76,22 +73,22 @@
                                    :title="$t('tools.alignmentViewer.visualization')"
                                    active>
                                 <alignment-viewer :sequences="alignmentViewerSequences"
-                                                  :format="alignmentViewerFormat"/>
+                                                  :format="alignmentViewerFormat" />
                             </b-tab>
 
                             <template v-slot:tabs-end>
                                 <div class="ml-auto">
                                     <job-public-toggle v-if="loggedIn && (!isJobView || !job.foreign)"
                                                        :job="job"
-                                                       :submission="submission"/>
-                                    <i class="tool-action tool-action-push-up fa fa-trash mr-4"
-                                       v-if="job && !job.foreign"
+                                                       :submission="submission" />
+                                    <i v-if="job && !job.foreign"
+                                       class="tool-action tool-action-push-up fa fa-trash mr-4"
                                        :title="$t('jobs.delete')"
                                        @click="$emit('delete-job')"></i>
                                     <i class="tool-action tool-action-lg fa mr-1"
-                                       @click="toggleFullScreen"
                                        :title="$t('jobs.toggleFullscreen')"
-                                       :class="[fullScreen ? 'fa-compress' : 'fa-expand']"></i>
+                                       :class="[fullScreen ? 'fa-compress' : 'fa-expand']"
+                                       @click="toggleFullScreen"></i>
                                 </div>
                             </template>
                         </b-tabs>
@@ -100,7 +97,7 @@
             </LoadingWrapper>
         </div>
         <not-found-view v-else
-                        errorMessage="errors.ToolNotFound"/>
+                        error-message="errors.ToolNotFound" />
     </VelocityFade>
 </template>
 
@@ -124,9 +121,19 @@
 
     const logger = Logger.get('ToolView');
 
-    export default Vue.extend({
+    export default hasHTMLTitle.extend({
         name: 'ToolView',
-        mixins: [hasHTMLTitle],
+        components: {
+            Section,
+            VelocityFade,
+            NotFoundView,
+            LoadingWrapper,
+            CustomJobIdInput,
+            EmailNotificationSwitch,
+            JobPublicToggle,
+            AlignmentViewer: () => import(/* webpackChunkName: "alignment-viewer" */
+                '@/components/tools/AlignmentViewer.vue'),
+        },
         props: {
             isJobView: {
                 type: Boolean,
@@ -138,17 +145,6 @@
                 required: false,
                 default: undefined,
             },
-        },
-        components: {
-            Section,
-            VelocityFade,
-            NotFoundView,
-            LoadingWrapper,
-            CustomJobIdInput,
-            EmailNotificationSwitch,
-            JobPublicToggle,
-            AlignmentViewer: () => import(/* webpackChunkName: "alignment-viewer" */
-                '@/components/tools/AlignmentViewer.vue'),
         },
         data() {
             return {
@@ -176,7 +172,8 @@
                 if (!this.tool || !this.tool.parameters) {
                     return undefined;
                 }
-                return this.tool.parameters.sections;
+                return this.tool.parameters.sections
+                    .filter((section: ParameterSection) => section.parameters.length > 0);
             },
             showSubmitButtons(): boolean {
                 return this.tool.parameters !== undefined && !this.tool.parameters.hideSubmitButtons;

@@ -30,7 +30,7 @@ const ToolParameterMixin = Vue.extend({
         },
         submissionValue: {
             get(): any {
-                if (!this.submission.hasOwnProperty(this.parameterName)) {
+                if (!(this.parameterName in this.submission)) {
                     this.setSubmissionValue(this.defaultSubmissionValue);
                 }
                 return this.submissionValueFromString(this.submission[this.parameterName]);

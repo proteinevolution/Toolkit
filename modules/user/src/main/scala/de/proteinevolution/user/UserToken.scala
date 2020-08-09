@@ -21,7 +21,7 @@ import java.security.SecureRandom
 import java.time.ZonedDateTime
 
 import de.proteinevolution.common.models.util.ZonedDateTimeHelper
-import reactivemongo.bson._
+import reactivemongo.api.bson._
 
 case class UserToken(
     tokenType: Int,
@@ -41,7 +41,7 @@ object UserToken {
   }
 
   val EMAIL_VERIFICATION_TOKEN = 1
-  val PASSWORD_CHANGE_TOKEN = 2
+  val PASSWORD_CHANGE_TOKEN    = 2
 
   val TYPE            = "type"
   val TOKEN           = "token"
@@ -50,26 +50,20 @@ object UserToken {
   val USERID          = "userID"
   val CHANGEDATE      = "changeDate"
 
-  /**
-   * Object containing the reader for the job state
-   */
-  implicit object UserTokenReader extends BSONReader[BSONDocument, UserToken] {
-    def read(doc: BSONDocument) =
+  implicit def reader: BSONDocumentReader[UserToken] =
+    BSONDocumentReader[UserToken] { bson =>
       UserToken(
-        tokenType = doc.getAs[Int](TYPE).getOrElse(-1),
-        token = doc.getAs[String](TOKEN).get,
-        passwordHash = doc.getAs[String](NEWPASSWORDHASH),
-        eMail = doc.getAs[String](NEWEMAIL),
-        userID = doc.getAs[String](USERID),
-        changeDate = doc.getAs[BSONDateTime](CHANGEDATE).map(dt => ZonedDateTimeHelper.getZDT(dt))
+        tokenType = bson.getAsOpt[Int](TYPE).getOrElse(-1),
+        token = bson.getAsOpt[String](TOKEN).get,
+        passwordHash = bson.getAsOpt[String](NEWPASSWORDHASH),
+        eMail = bson.getAsOpt[String](NEWEMAIL),
+        userID = bson.getAsOpt[String](USERID),
+        changeDate = bson.getAsOpt[BSONDateTime](CHANGEDATE).map(ZonedDateTimeHelper.getZDT)
       )
-  }
+    }
 
-  /**
-   * Object containing the writer for the job state
-   */
-  implicit object UserTokenWriter extends BSONWriter[UserToken, BSONDocument] {
-    def write(userToken: UserToken) =
+  implicit def writer: BSONDocumentWriter[UserToken] =
+    BSONDocumentWriter[UserToken] { userToken =>
       BSONDocument(
         TYPE            -> userToken.tokenType,
         TOKEN           -> userToken.token,
@@ -78,5 +72,5 @@ object UserToken {
         USERID          -> userToken.userID,
         CHANGEDATE      -> BSONDateTime(userToken.changeDate.fold(-1L)(_.toInstant.toEpochMilli))
       )
-  }
+    }
 }

@@ -20,26 +20,24 @@ import java.util.UUID
 
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.base.helpers.ToolkitTypes
-import de.proteinevolution.common.models.ConstantsV2
-import de.proteinevolution.user.{SessionData, User}
+import de.proteinevolution.user.{ SessionData, User }
 import de.proteinevolution.util.LocationProvider
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import play.api.cache._
 import play.api.mvc.RequestHeader
-import play.api.{Configuration, Logging, mvc}
+import play.api.{ mvc, Configuration, Logging }
 import play.mvc.Http
 
 import scala.concurrent.duration._
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.hashing.MurmurHash3
 
 @Singleton
-class UserSessionService @Inject()(
+class UserSessionService @Inject() (
     userDao: UserDao,
     @NamedCache("userCache") userCache: SyncCacheApi,
     locationProvider: LocationProvider,
-    config: Configuration,
-    constants: ConstantsV2,
+    config: Configuration
 )(implicit ec: ExecutionContext)
     extends ToolkitTypes
     with Logging {
@@ -79,8 +77,8 @@ class UserSessionService @Inject()(
     }
   }
 
-  def saveNewAnonymousUser(sessionID: String, newSessionData: SessionData)(
-      implicit request: RequestHeader
+  def saveNewAnonymousUser(sessionID: String, newSessionData: SessionData)(implicit
+      request: RequestHeader
   ): Future[User] = {
     // Create a new anonymous user as there is no user with this sessionID
     val user = User(

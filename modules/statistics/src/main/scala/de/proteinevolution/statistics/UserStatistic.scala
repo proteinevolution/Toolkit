@@ -18,7 +18,7 @@ package de.proteinevolution.statistics
 
 import io.circe.Encoder
 import io.circe.generic.semiauto._
-import reactivemongo.bson._
+import reactivemongo.api.bson._
 
 case class UserStatistic(
     currentDeleted: Int = 0,
@@ -41,6 +41,6 @@ object UserStatistic {
 
   implicit val userStatsEncoder: Encoder[UserStatistic] = deriveEncoder[UserStatistic]
 
-  implicit val bsonHandler: BSONHandler[BSONDocument, UserStatistic] = Macros.handler[UserStatistic]
+  implicit val bsonHandler: BSONDocumentHandler[UserStatistic] = Macros.handler[UserStatistic]
 
 }

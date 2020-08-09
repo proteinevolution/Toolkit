@@ -7,7 +7,6 @@
 
             <br v-if="$t('tools.citations.' + tool.name)">
             <div v-html="$t('tools.citations.' + tool.name)"></div>
-
         </div>
     </div>
 </template>

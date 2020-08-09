@@ -74,7 +74,7 @@ class AuthController @Inject()(
     // check if unregistered user (accountType == -1)
     if (anonymousUser.accountType < 0) {
       // Evaluate the Form
-      FormDefinitions.signIn.bindFromRequest.fold(
+      FormDefinitions.signIn.bindFromRequest().fold(
         errors => {
           logger.warn(s"Errors in Login Form: ${errors.errors}")
           fuccess(Ok(loginError()))
@@ -142,7 +142,7 @@ class AuthController @Inject()(
       // Create a new user from the information given in the form
       FormDefinitions
         .signUp(user)
-        .bindFromRequest
+        .bindFromRequest()
         .fold(
           errors =>
             Future.successful {
@@ -184,7 +184,7 @@ class AuthController @Inject()(
                         registeredUser.userToken match {
                           case Some(token) =>
                             NewUserWelcomeMail(registeredUser, token.token, config).send
-                            Ok(signedUp)
+                            Ok(signedUp())
                           case None => Ok(tokenMismatch())
                         }
                       case None =>
@@ -200,7 +200,7 @@ class AuthController @Inject()(
   }
 
   def forgotPassword: Action[AnyContent] = Action.async { implicit request =>
-    FormDefinitions.forgottenPasswordRequest.bindFromRequest.fold(
+    FormDefinitions.forgottenPasswordRequest.bindFromRequest().fold(
       errors =>
         Future.successful {
           Ok(formError(errors.errors.mkString(",\n")))
@@ -219,7 +219,7 @@ class AuthController @Inject()(
                       userSessionService.updateUserInCache(registeredUser)
                       // All done. User is registered, now send the welcome eMail
                       ResetPasswordMail(registeredUser, token.token, config).send
-                      Ok(passwordRequestSent)
+                      Ok(passwordRequestSent())
                     case None =>
                       Ok(formError())
                   }
@@ -238,7 +238,7 @@ class AuthController @Inject()(
 
   def changeForgottenPasswordSubmit: Action[AnyContent] = userAction.async { implicit request =>
     // Validate the password and return the new password Hash
-    FormDefinitions.forgottenPasswordChange.bindFromRequest.fold(
+    FormDefinitions.forgottenPasswordChange.bindFromRequest().fold(
       errors => Future.successful(Ok(formError(errors.errors.mkString(",\n")))), { formContent =>
         userDao.findUserByUsername(formContent._2).flatMap {
           case Some(userToVerify) =>
@@ -278,7 +278,7 @@ class AuthController @Inject()(
         // Validate the password and return the new password Hash
         FormDefinitions
           .profilePasswordEdit(user)
-          .bindFromRequest
+          .bindFromRequest()
           .fold(
             errors =>
               Future.successful {
@@ -321,7 +321,7 @@ class AuthController @Inject()(
         // change the userData with the help of the form input
         FormDefinitions
           .profileEdit(user)
-          .bindFromRequest
+          .bindFromRequest()
           .fold(
             errors =>
               Future.successful {

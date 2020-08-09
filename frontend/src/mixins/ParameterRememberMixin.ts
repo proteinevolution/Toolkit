@@ -1,14 +1,12 @@
 import Vue from 'vue';
+import ToolParameterMixin from '@/mixins/ToolParameterMixin';
 
-// This mixin only works in combination with the ToolParameterMixin (Thus, the ts-ignores)
-
-const ParameterRememberMixin = Vue.extend({
+const ParameterRememberMixin = ToolParameterMixin.extend({
     props: {
         rememberParams: Object,
     },
     computed: {
         isNonDefaultValue(): boolean {
-            // @ts-ignore
             return this.submissionValue !== this.defaultSubmissionValue;
         },
         disableRemember(): boolean {
@@ -22,10 +20,8 @@ const ParameterRememberMixin = Vue.extend({
             handler(value: any) {
                 if (!this.disableRemember) {
                     if (this.isNonDefaultValue) {
-                        // @ts-ignore
                         Vue.set(this.rememberParams, this.parameterName, this.submissionValueToString(value));
                     } else {
-                        // @ts-ignore
                         Vue.delete(this.rememberParams, this.parameterName);
                     }
                 }

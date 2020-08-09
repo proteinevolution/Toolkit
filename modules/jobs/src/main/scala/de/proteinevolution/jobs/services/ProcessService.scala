@@ -24,7 +24,7 @@ import cats.implicits._
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.common.models.ToolName._
 import de.proteinevolution.jobs.db.ResultFileAccessor
-import de.proteinevolution.results.models.ForwardingData
+import de.proteinevolution.jobs.models.ForwardingData
 import io.circe.DecodingFailure
 import javax.inject.{ Inject, Singleton }
 import play.api.{ Configuration, Logging }

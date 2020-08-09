@@ -4,7 +4,7 @@ import {formatLongSeq} from '@/modules/reformat/utils';
 export const FASTA: Format = {
     name: 'FASTA',
 
-    validate(value: string, allowEmpty?: boolean): boolean {
+    validate(value: string): boolean { // allowEmpty?: boolean
 
         // remove preceding spaces and newlines
         value = value.trimLeft();

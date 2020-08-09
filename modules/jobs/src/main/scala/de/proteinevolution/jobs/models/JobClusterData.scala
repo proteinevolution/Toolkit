@@ -20,7 +20,7 @@ import java.time.ZonedDateTime
 
 import de.proteinevolution.common.models.util.ZonedDateTimeHelper
 import io.circe.generic.JsonCodec
-import reactivemongo.bson._
+import reactivemongo.api.bson._
 
 @JsonCodec case class JobClusterData(
     sgeID: String,
@@ -41,34 +41,33 @@ import reactivemongo.bson._
 object JobClusterData {
 
   final val SGE_ID        = "sgeID"
-  final val MEMORY       = "memory"
-  final val THREADS      = "threads"
-  final val HARDRUNTIME  = "hardruntime"
+  final val MEMORY        = "memory"
+  final val THREADS       = "threads"
+  final val HARDRUNTIME   = "hardruntime"
   final val DATE_STARTED  = "dateStarted"
   final val DATE_FINISHED = "dateFinished"
 
-  implicit object Reader extends BSONDocumentReader[JobClusterData] {
-    def read(bson: BSONDocument): JobClusterData = {
+  implicit def reader: BSONDocumentReader[JobClusterData] =
+    BSONDocumentReader[JobClusterData] { bson =>
       JobClusterData(
-        sgeID = bson.getAs[String](SGE_ID).getOrElse(""),
-        memory = bson.getAs[Int](MEMORY),
-        threads = bson.getAs[Int](THREADS),
-        hardruntime = bson.getAs[Int](HARDRUNTIME),
-        dateStarted = bson.getAs[BSONDateTime](DATE_STARTED).map(dt => ZonedDateTimeHelper.getZDT(dt)),
-        dateFinished = bson.getAs[BSONDateTime](DATE_STARTED).map(dt => ZonedDateTimeHelper.getZDT(dt))
+        sgeID = bson.getAsTry[String](SGE_ID).getOrElse(""),
+        memory = bson.getAsOpt[Int](MEMORY),
+        threads = bson.getAsOpt[Int](THREADS),
+        hardruntime = bson.getAsOpt[Int](HARDRUNTIME),
+        dateStarted = bson.getAsOpt[BSONDateTime](DATE_STARTED).map(ZonedDateTimeHelper.getZDT),
+        dateFinished = bson.getAsOpt[BSONDateTime](DATE_STARTED).map(ZonedDateTimeHelper.getZDT)
       )
     }
-  }
 
-  implicit object Writer extends BSONDocumentWriter[JobClusterData] {
-    def write(clusterData: JobClusterData): BSONDocument = BSONDocument(
-      SGE_ID        -> clusterData.sgeID,
-      MEMORY       -> clusterData.memory,
-      THREADS      -> clusterData.threads,
-      HARDRUNTIME  -> clusterData.hardruntime,
-      DATE_STARTED  -> BSONDateTime(clusterData.dateStarted.fold(-1L)(_.toInstant.toEpochMilli)),
-      DATE_FINISHED -> BSONDateTime(clusterData.dateStarted.fold(-1L)(_.toInstant.toEpochMilli))
-    )
-  }
-
+  implicit def writer: BSONDocumentWriter[JobClusterData] =
+    BSONDocumentWriter[JobClusterData] { clusterData =>
+      BSONDocument(
+        SGE_ID        -> clusterData.sgeID,
+        MEMORY        -> clusterData.memory,
+        THREADS       -> clusterData.threads,
+        HARDRUNTIME   -> clusterData.hardruntime,
+        DATE_STARTED  -> BSONDateTime(clusterData.dateStarted.fold(-1L)(_.toInstant.toEpochMilli)),
+        DATE_FINISHED -> BSONDateTime(clusterData.dateStarted.fold(-1L)(_.toInstant.toEpochMilli))
+      )
+    }
 }

@@ -34,7 +34,7 @@ object TPRPredResult {
   object Desc {
     implicit val descDecoder: Decoder[Desc] = (c: HCursor) =>
       for {
-        title <- c.downArray.first.as[Option[String]]
+        title <- c.downArray.as[Option[String]]
         value <- c.downArray.right.as[Option[String]]
       } yield new Desc(title, value)
   }
@@ -50,11 +50,11 @@ object TPRPredResult {
   object Hit {
     implicit val hitDecoder: Decoder[Hit] = (c: HCursor) =>
       for {
-        alignment <- c.downArray.first.as[Option[String]]
-        repeat    <- c.downArray.right.as[Option[String]]
-        begin     <- c.downArray.rightN(2).as[Option[String]]
-        end       <- c.downArray.rightN(3).as[Option[String]]
-        pValue    <- c.downArray.rightN(4).as[Option[String]]
+        alignment <- c.downArray.as[Option[String]]
+        repeat    <- c.downN(1).as[Option[String]]
+        begin     <- c.downN(2).as[Option[String]]
+        end       <- c.downN(3).as[Option[String]]
+        pValue    <- c.downN(4).as[Option[String]]
       } yield new Hit(alignment, repeat, begin, end, pValue)
   }
 

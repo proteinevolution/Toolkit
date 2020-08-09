@@ -1,14 +1,13 @@
 <template>
-    <BaseModal :title="tool ? tool.longname : ''"
-               id="helpModal">
+    <BaseModal id="helpModal"
+               :title="tool ? tool.longname : ''">
         <b-tabs v-if="toolName && languageLoaded">
             <b-tab class="helpTab"
                    title="Overview"
-                   v-html="$t(`toolHelpModals.${toolName}.overview`)">
-            </b-tab>
+                   v-html="$t(`toolHelpModals.${toolName}.overview`)" />
             <b-tab class="helpTab"
                    title="Input & Parameters">
-                <Accordion :items="accordionItems"></Accordion>
+                <Accordion :items="accordionItems" />
             </b-tab>
             <b-tab class="helpTab"
                    title="References">
@@ -19,8 +18,7 @@
             <b-tab v-if="tool && tool.version"
                    class="helpTab"
                    title="Version"
-                   v-html="$t(`toolHelpModals.common.version`, [tool.version])">
-            </b-tab>
+                   v-html="$t(`toolHelpModals.common.version`, [tool.version])" />
         </b-tabs>
     </BaseModal>
 </template>

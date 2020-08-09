@@ -5,41 +5,38 @@
             <b-form-input v-model="username"
                           type="text"
                           :state="usernameState"
-                          @change="validateUsername"
-                          required>
-            </b-form-input>
+                          required
+                          @change="validateUsername" />
         </b-form-group>
         <b-form-group :label="$t('auth.eMail')"
                       :invalid-feedback="$t('constraints.email')">
             <b-form-input v-model="email"
                           type="email"
                           :state="emailState"
-                          @change="validateEmail"
-                          required>
-            </b-form-input>
+                          required
+                          @change="validateEmail" />
         </b-form-group>
         <b-form-group :label="$t('auth.password')"
                       :invalid-feedback="$t('constraints.password')">
             <b-form-input v-model="password"
                           type="password"
                           :state="passwordState"
-                          @change="validatePassword"
-                          required>
-            </b-form-input>
+                          required
+                          @change="validatePassword" />
         </b-form-group>
         <b-form-group :label="$t('auth.passwordRepeat')"
                       :invalid-feedback="$t('constraints.passwordsMatch')">
             <b-form-input v-model="passwordRepeat"
                           type="password"
                           :state="passwordRepeatState"
-                          @change="validatePasswordRepeat"
-                          required>
-            </b-form-input>
+                          required
+                          @change="validatePasswordRepeat" />
         </b-form-group>
         <b-form-group>
             <b-form-checkbox v-model="privacyAccepted"
                              required>
-                <i18n path="auth.privacyAccept" tag="span">
+                <i18n path="auth.privacyAccept"
+                      tag="span">
                     <a class="privacy-link"
                        @click.stop="openPrivacyPolicy">
                         {{ $t('footerLinkModals.names.privacy') }}
@@ -49,11 +46,11 @@
         </b-form-group>
         <b-alert :variant="successful ? 'info' : 'danger'"
                  :show="message !== ''"
-                 v-text="message"/>
+                 v-text="message" />
         <b-btn type="submit"
                variant="primary"
                :disabled="!valid"
-               v-text="$t('auth.signUp')"/>
+               v-text="$t('auth.signUp')" />
     </b-form>
 </template>
 

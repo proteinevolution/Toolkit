@@ -1,22 +1,21 @@
 <template>
-    <Loading :message="$t('loading')"
-             v-if="loading"/>
+    <Loading v-if="loading"
+             :message="$t('loading')" />
     <div v-else>
-        <div class="result-options"
-             v-if="downloadEnabled || forwardingEnabled">
-            <a @click="download"
-               v-if="downloadEnabled">{{$t('jobs.results.actions.download')}}</a>
-            <a @click="forwardAll"
-               v-if="forwardingEnabled">{{$t('jobs.results.actions.forwardAll')}}</a>
+        <div v-if="downloadEnabled || forwardingEnabled"
+             class="result-options">
+            <a v-if="downloadEnabled"
+               @click="download">{{ $t('jobs.results.actions.download') }}</a>
+            <a v-if="forwardingEnabled"
+               @click="forwardAll">{{ $t('jobs.results.actions.forwardAll') }}</a>
         </div>
 
-        <pre v-html="file"
-             class="file-view"></pre>
+        <pre class="file-view"
+             v-html="file"></pre>
     </div>
 </template>
 
 <script lang="ts">
-    import mixins from 'vue-typed-mixins';
     import ResultTabMixin from '@/mixins/ResultTabMixin';
     import Loading from '@/components/utils/Loading.vue';
     import Logger from 'js-logger';
@@ -26,7 +25,7 @@
 
     const logger = Logger.get('DataTab');
 
-    export default mixins(ResultTabMixin).extend({
+    export default ResultTabMixin.extend({
         name: 'DataTab',
         components: {
             Loading,
@@ -46,10 +45,10 @@
                 return this.viewOptions.filename.replace(':jobID', this.job.jobID);
             },
             downloadEnabled(): boolean {
-                return this.viewOptions.hasOwnProperty('download');
+                return 'download' in this.viewOptions;
             },
             forwardingEnabled(): boolean {
-                return this.viewOptions.hasOwnProperty('forwarding');
+                return 'forwarding' in this.viewOptions;
             },
         },
         methods: {
