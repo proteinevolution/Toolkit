@@ -1,26 +1,26 @@
 <template>
     <div role="tablist">
-        <div v-for="item in items"
-             :key="item.title"
-             class="card mb-2">
+        <b-card v-for="(item, i) in items"
+                :key="i"
+                no-body
+                class="mb-2">
             <b-card-header class="p-1 header"
                            role="tab">
-                <b-btn v-b-toggle="item.title"
+                <b-btn v-b-toggle="'accordion-' + i"
                        block
-                       href="#"
                        variant="link"
                        class="button">
                     <i class="icon fas fa-angle-right mr-2"></i>
                     <b>{{ item.title }}</b>
                 </b-btn>
             </b-card-header>
-            <b-collapse :id="item.title"
-                        accordion="my-accordion"
+            <b-collapse :id="'accordion-' + i"
+                        accordion="help-accordion"
                         role="tabpanel">
                 <div class="content"
                      v-html="item.content"></div>
             </b-collapse>
-        </div>
+        </b-card>
     </div>
 </template>
 
