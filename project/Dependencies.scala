@@ -44,7 +44,7 @@ object Dependencies {
     "com.typesafe.akka"        %% "akka-testkit"        % akkaVersion % Test,
     "com.typesafe.akka"        %% "akka-stream-testkit" % akkaVersion % Test,
     "org.scalatestplus.play"   %% "scalatestplus-play"  % "5.1.0"     % Test,
-    "org.mockito"               % "mockito-core"        % "3.4.6"     % Test,
+    "org.mockito"               % "mockito-core"        % "3.5.7"     % Test,
     "com.softwaremill.macwire" %% "macros"              % "2.3.7"     % Test,
     "org.awaitility"            % "awaitility"          % "4.0.3"     % Test
   )
