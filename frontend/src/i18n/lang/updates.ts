@@ -1,5 +1,22 @@
 export default [
     {
+        date: '2020-08-28',
+        html: `<p>
+        HHpred: profile HMM database for a new version of the
+        <a href="http://prodata.swmed.edu/ecod/" target="_blank"> ECOD_F70 database</a>, version 20200717 (develop276),
+        is now online.
+        </p>`,
+    },
+    {
+        date: '2020-08-10',
+        html: ` <p>
+        HHpred: profile HMM database (UniProt_SwissProt_viral70) for manually reviewed viral proteins from the 
+        <a href="https://www.uniprot.org/uniprot/?query=taxonomy:%22Viruses%20[10239]%22&fil=reviewed%3Ayes&sort=score" 
+        target="_blank">UniProt/Swiss-Prot database</a>, filtered for a maximum pairwise sequence identity of 70%,
+        is online.
+        </p>`,
+    },
+    {
         date: '2020-06-11',
         html: ` <p>
         HHpred: profile HMM database for the new version of Pfam (v33.1) is online.
