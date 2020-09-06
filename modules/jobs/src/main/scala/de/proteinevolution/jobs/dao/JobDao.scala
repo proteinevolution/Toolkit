@@ -163,15 +163,8 @@ class JobDao @Inject() (
     )
   }
 
-  final def insertJob(job: Job): Future[Option[Job]] = {
-    jobCollection.flatMap(_.insert(ordered = false).one(job)).map { a =>
-      if (a.ok) {
-        Some(job)
-      } else {
-        None
-      }
-    }
-  }
+  final def insertJob(job: Job): Future[WriteResult] =
+    jobCollection.flatMap(_.insert(ordered = false).one(job))
 
   private def modifyJob(selector: BSONDocument, modifier: BSONDocument): Future[Option[Job]] = {
     jobCollection.flatMap(
