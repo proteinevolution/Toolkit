@@ -20,9 +20,9 @@ sealed trait SGELoad
 
 object SGELoad {
 
-  final case object + extends SGELoad
+  final case object Add extends SGELoad
 
-  final case object - extends SGELoad
+  final case object Subtract extends SGELoad
 
   final case class UpdateRunningJobs(`type`: SGELoad)
 

@@ -55,9 +55,9 @@ final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
 
     case UpdateRunningJobs(t) =>
       val newJobCount = t match {
-        case SGELoad.+ =>
+        case SGELoad.Add =>
           runningJobs + 1
-        case SGELoad.- =>
+        case SGELoad.Subtract =>
           if (runningJobs > 0) runningJobs - 1 else runningJobs
       }
       if (newJobCount > constants.loadPercentageMarker) log.info(s"cluster load critical: > $newJobCount jobs")

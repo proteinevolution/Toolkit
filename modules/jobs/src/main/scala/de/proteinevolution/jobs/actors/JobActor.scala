@@ -161,7 +161,7 @@ class JobActor @Inject()(
       if (runningExecutions.contains(jobID)) {
         runningExecutions(jobID).terminate()
         runningExecutions = runningExecutions.filter(_._1 != jobID)
-        context.system.eventStream.publish(UpdateRunningJobs(-))
+        context.system.eventStream.publish(UpdateRunningJobs(Subtract))
       }
       if (currentExecutionContexts.contains(jobID)) {
         currentExecutionContexts = currentExecutionContexts.filter(_._1 != jobID)
@@ -187,7 +187,7 @@ class JobActor @Inject()(
 
     // update the cluster load
     if (job.status == JobState.Queued)
-      context.system.eventStream.publish(UpdateRunningJobs(+))
+      context.system.eventStream.publish(UpdateRunningJobs(Add))
 
       // Update job in the database and notify watcher upon completion
       jobDao
