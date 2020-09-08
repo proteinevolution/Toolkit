@@ -41,23 +41,23 @@ The query-template and query alignments can be visualized, downloaded, and forwa
                 @:toolHelpModals.common.a3m`,
                     },
                     {
-                        title: 'Select database',
+                        title: 'Select target database',
                         content: `Database of template HMMs against which the query sequence or alignment is compared. The <a href = https://uniclust.mmseqs.com target="_blank" rel="noopener">Uniclust30 database</a> is a version of the Uniclust database clustered down to a maximum pairwise sequence identity of 30%.`,
                     },
                     {
-                        title: 'E-value inclusion threshold',
+                        title: 'E-value cutoff for inclusion',
                         content: `E-value cutoff for inclusion in result alignment.`,
                     },
                     {
-                        title: 'Max. number of iterations',
+                        title: 'Number of iterations',
                         content: `This specifies the number of iterations that are performed by HHblits. The iterations stop in any case when no further sequences are found.`,
                     },
                     {
-                        title: 'Minimum probability in hit list (> 10%)',
+                        title: 'Min probability in hitlist (%)',
                         content: `Only hits above this cut-off probability will be displayed.`,
                     },
                     {
-                        title: 'No. of target sequences',
+                        title: 'Max target hits',
                         content: `This parameter controls how many matches will be displayed in the results.`,
                     },
                 ],

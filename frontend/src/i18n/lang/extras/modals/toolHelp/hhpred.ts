@@ -126,11 +126,11 @@ export default {
                 @:toolHelpModals.common.a3m`,
                     },
                     {
-                        title: 'Align two sequences or MSAs',
+                        title: 'Align two sequences/MSAs',
                         content: `Enable this option to compare two sequences or alignments with each other.`,
                     },
                     {
-                        title: 'Select database',
+                        title: 'Select structural/domain databases',
                         content: `<p>Select domain database(s) of template HMMs against which you want to compare the query.</p>
                     <em>PDB_mmCIF70, PDB_mmCIF30</em>
                     <p>A search against our PDB_mmCIF70 database is the first step when trying to predict a structure
@@ -186,7 +186,7 @@ export default {
                         plasmids and genomes.</p>`,
                     },
                     {
-                        title: 'Proteomes',
+                        title: 'Select proteomes',
                         content: `<p>Here you can select databases of HMMs representing each of the proteins of an organism.</p>`,
                     },
                     {
@@ -197,26 +197,26 @@ export default {
                         pairwise sequence identity of 70%.`,
                     },
                     {
-                        title: 'Maximal no. of MSA generation steps',
+                        title: 'MSA generation iterations',
                         content: `This specifies the number of iterations performed by the MSA generation method, to build an
                     alignment from the input sequence or input alignment. The iterations stop in any case when no
                     further sequences are found. If you want to use exactly your input alignment choose 0 here.
                     This will ensure that only predicted secondary structure is added to your input alignment.`,
                     },
                     {
-                        title: 'E-value threshold for MSA generation',
+                        title: 'E-value cutoff for MSA generation',
                         content: `All sequence matches ("hits") with an E-value better than this threshold are included in the alignment for
                     the next MSA generation iteration or, in the last iteration, for building the HMM for HHsearch.`,
                     },
                     {
-                        title: 'Min. seq. identity of MSA hits with query',
+                        title: 'Min seq identity of MSA hits with query (%)',
                         content: `This parameter controls what percentage of residues from a hit of the MSA algorithm needs to be
                     identical to their aligned query residues in order for the hit to be included in the MSA alignment.
                     More precisely, the sequence identity of a hit by the MSA algorithm is defined as the number of
                     residues identical with aligned query residues divided by the length of the MSA hit.`,
                     },
                     {
-                        title: 'Min. coverage of MSA hits',
+                        title: 'Min coverage of MSA hits (%)',
                         content: `This parameter controls what percentage of the query residues needs to be covered by the hits of the
                     MSA algorithm in order for the hit to be included into the alignment for the next iteration. More
                     precisely, the coverage of a sequence found by the MSA algorithm is defined as the number of
@@ -269,11 +269,11 @@ export default {
                     0.3, which produces alignments of roughly the same length as the Viterbi algorithm.`,
                     },
                     {
-                        title: 'No. of target sequences',
+                        title: 'Max target hits',
                         content: `This parameter controls how many matches will be displayed in the results.`,
                     },
                     {
-                        title: 'Min. probability in hit list',
+                        title: 'Min probability in hitlist',
                         content: `Only hits above this cut-off probability will be displayed.`,
                     },
                 ],

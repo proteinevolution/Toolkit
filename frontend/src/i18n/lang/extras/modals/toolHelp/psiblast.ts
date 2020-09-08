@@ -18,7 +18,7 @@ export default {
                 @:toolHelpModals.common.msa`,
                     },
                     {
-                        title: 'Select standard database',
+                        title: 'Select target database',
                         content: `<p>The selected databases are used to perform the search.</p>
                     <ul>
                         <li><b>nr:</b> the non-redundant sequence database at the NCBI. (See NCBI's BLAST tutorial).</li>
@@ -44,23 +44,23 @@ export default {
                         content: `Specify an alternate scoring matrix.`,
                     },
                     {
-                        title: 'Max. number of iterations',
+                        title: 'Number of iterations',
                         content: `Specify the maximum number of rounds of search.`,
                     },
                     {
-                        title: 'E-value',
+                        title: 'E-value cutoff for reporting',
                         content: `The statistical significance threshold for reporting matches against database sequences. If the
                     statistical significance ascribed to a match is greater than the e-value threshold, the match will
                     not be reported. Lower e-value thresholds are more stringent, leading to fewer chance matches being
                     reported. Increasing the threshold shows less stringent matches. Fractional values are acceptable.`,
                     },
                     {
-                        title: 'E-value inclusion threshold',
+                        title: 'E-value cutoff for inclusion',
                         content: `The statistical significance threshold for including a sequence in the model used to
                     create the PSSM for the next iteration.`,
                     },
                     {
-                        title: 'No. of target sequences',
+                        title: 'Max target hits',
                         content: `This parameter controls how many matches will be displayed in the results.`,
                     },
                 ],

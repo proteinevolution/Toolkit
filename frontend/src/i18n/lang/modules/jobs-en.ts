@@ -75,7 +75,7 @@ export default {
         },
         alignment: {
             numSeqs: 'Number of Sequences: <b>{num}</b>',
-            numSeqsReduced: 'Number of Sequences (up to {reduced} best matches): <b>{num}</b>',
+            numSeqsReduced: 'Number of Sequences (up to {reduced} most diverse sequences): <b>{num}</b>',
             loadingHits: 'Loading hits...',
         },
         seq2ID: {
@@ -141,21 +141,23 @@ export default {
             customWarning: ' You could improve the sensitivity of your search vastly by providing a larger ' +
                 'query alignment.',
             numHits: 'Number of Hits: <b>{num}</b>',
+            queryNeff: 'Query MSA diversity (Neff): <b>{num}</b>',
             table: {
                 num: 'Nr',
                 hit: 'Hit',
                 name: 'Name',
                 probHits: 'Probability',
                 eVal: 'E-value',
+                score: 'Score',
                 ssScore: 'SS',
-                cols: 'Cols',
+                cols: 'Aligned cols',
                 targetLength: 'Target Length',
             },
             templateAlignment: 'Template alignment',
             templateStructure: 'Template 3D Structure',
             alignmentInfo: 'Probability: {probab}%,&emsp;E-value: {eval},&emsp;Score: {score},&emsp;' +
                 'Aligned cols: {alignedCols},&emsp;Identities: {ident}%,&emsp;Similarity: ' +
-                '{similarity},&emsp;',
+                '{similarity},&emsp;Template Neff: {template_neff}',
             modelUsingFirst: 'No templates selected! Using the first template for modelling.',
         },
         psiblast: {

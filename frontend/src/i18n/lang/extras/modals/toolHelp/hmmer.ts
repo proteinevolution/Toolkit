@@ -39,11 +39,11 @@ export default {
                         content: `Specifies the number of HHblits iterations over Uniprot20 to build an MSA when the input is a single sequence.`,
                     },
                     {
-                        title: 'E-value',
+                        title: 'E-value cutoff for reporting',
                         content: `Report target sequences with an E-value of <= the specified value.`,
                     },
                     {
-                        title: 'No. of target sequences',
+                        title: 'Max target hits',
                         content: `This parameter controls how many matches will be displayed in the results.`,
                     },
                 ],

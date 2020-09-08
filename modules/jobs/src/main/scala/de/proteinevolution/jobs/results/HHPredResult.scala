@@ -33,7 +33,8 @@ case class HHPredResult(
     coilpred: String,
     signal: String,
     msa_gen: String,
-    qa3m_count: Int
+    qa3m_count: Int,
+    query_neff: Double
 ) extends SearchResult[HHPredHSP] {
 
   def hitsOrderBy(sortBy: String, desc: Boolean): List[HHPredHSP] = {
@@ -42,6 +43,7 @@ case class HHPredResult(
       case "name"        => HSPS.sortBy(_.description)
       case "probab"      => HSPS.sortBy(_.info.probab)
       case "eval"        => HSPS.sortBy(_.info.eval)
+      case "score"       => HSPS.sortBy(_.info.score)
       case "ssScore"     => HSPS.sortBy(_.ss_score)
       case "alignedCols" => HSPS.sortBy(_.info.aligned_cols)
       case "templateRef" => HSPS.sortBy(_.template.ref)
@@ -61,6 +63,7 @@ case class HHPredResult(
       "modeller"      -> LinkUtil.displayModellerLink(db, proteomes).asJson,
       "msa_gen"       -> msa_gen.asJson,
       "qa3m_count"    -> qa3m_count.asJson,
+      "query_neff"    -> query_neff.asJson,
       "query"         -> query.asJson,
       "alignmentHash" -> MurmurHash3.stringHash(alignment.toString).asJson
     ).asJson
@@ -83,6 +86,7 @@ object HHPredResult {
       signal     <- c.downField("results").downField("signal").as[Option[String]]
       msa_gen    <- c.downField("results").downField("msa_gen").as[Option[String]]
       qa3m_count <- c.downField("results").downField("qa3m_count").as[Option[Int]]
+      query_neff <- c.downField("results").downField("info").downField("Neff").as[Option[Double]]
     } yield {
       val hspList = HHPredHSP.hhpredHSPListDecoder(hits, alignments)
       new HHPredResult(
@@ -96,7 +100,8 @@ object HHPredResult {
         coilpred.getOrElse("1"),
         signal.getOrElse("0"),
         msa_gen.getOrElse(""),
-        qa3m_count.getOrElse(1)
+        qa3m_count.getOrElse(1),
+        query_neff.getOrElse(1)
       )
     }
 
