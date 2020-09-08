@@ -16,20 +16,21 @@
 
 package de.proteinevolution.backend.actors
 
-import akka.actor.{ Actor, ActorLogging, Cancellable }
+import akka.actor.{Actor, ActorLogging, Cancellable}
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate.OldAccountEmail
-import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
+import de.proteinevolution.backend.actors.DatabaseMonitor.{DeleteOldJobs, DeleteOldUsers}
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.actors.JobActor.Delete
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services.JobActorAccess
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.libs.mailer.MailerClient
 
 import scala.concurrent.ExecutionContext
+import scala.util.{Failure, Success}
 
 @Singleton
 final class DatabaseMonitor @Inject()(
@@ -82,11 +83,11 @@ final class DatabaseMonitor @Inject()(
       }
 
       // Finally remove the users with their userID
-      userDao.removeUsers(userIDs).foreach { writeResult =>
-        if (verbose)
-          log.info(
-            s"[User Deletion] Deleting of ${users.length} old users ${if (writeResult.ok) "successful" else "failed"}"
-          )
+      userDao.removeUsers(userIDs).onComplete {
+        case Failure(exception) => if (verbose)
+          log.info(s"[User Deletion] Deleting of ${users.length} old users failed with error: $exception")
+        case Success(_) => if (verbose)
+          log.info(s"[User Deletion] Deleting of ${users.length} old users successful")
       }
     }
 
