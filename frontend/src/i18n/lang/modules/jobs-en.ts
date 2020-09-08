@@ -57,7 +57,7 @@ export default {
             forwardAll: 'Forward All',
             forwardSelected: 'Forward Selected',
             forwardQueryA3M: 'Forward Query A3M',
-            forwardToModeller: 'Forward to Modeller',
+            forwardToModeller: 'Forward to MODELLER',
             download: 'Download',
             downloadHits: 'Download Hits',
             downloadMSA: 'Download MSA',
