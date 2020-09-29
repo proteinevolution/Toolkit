@@ -17,12 +17,12 @@ inThisBuild(
 
 lazy val buildInfoSettings = Seq(
   buildInfoKeys := Seq[BuildInfoKey](
-      name,
-      version,
-      scalaVersion,
-      sbtVersion,
-      "playVersion" -> play.core.PlayVersion.current
-    ),
+    name,
+    version,
+    scalaVersion,
+    sbtVersion,
+    "playVersion" -> play.core.PlayVersion.current
+  ),
   buildInfoPackage := "build"
 )
 
