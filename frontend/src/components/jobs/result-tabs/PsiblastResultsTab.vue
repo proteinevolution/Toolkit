@@ -87,7 +87,7 @@
                                     <td colspan="3"
                                         v-html="al.acc + ' ' + al.name"></td>
                                 </tr>
-                                <tr :key="'alignment-num-' + i">
+                                <tr :key="'alignment-info-' + i">
                                     <td></td>
                                     <td colspan="3"
                                         v-html="$t('jobs.results.psiblast.alignmentInfo', al)"></td>
